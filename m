@@ -1,145 +1,278 @@
-Return-Path: <linux-kernel+bounces-791734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C444FB3BB27
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:21:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F346B3BB28
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912591B21397
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924152029FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA12314B86;
-	Fri, 29 Aug 2025 12:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7C4314B67;
+	Fri, 29 Aug 2025 12:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UJCkVPum"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="acLKRBqw"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6912C0F78
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0308A1FCFEF
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470067; cv=none; b=ftYfF0JsGsqUn3sBOtnZO1xk7rZTYSw/54De9JA5lEm1c67zrlrXpxEHSe8CkTtaG3YIWJzQM2t8APSUayU7J4RERsaSUgNGCngzLV68EqXu0dNOEOteLGoIpbE4af5G5gnwtw7dsrQJiJCsN6yz6qroibkK5pYW9H+LzGDmPs0=
+	t=1756470104; cv=none; b=jNIhiT0xfR+9Vw1kUrKGZdq8hg6and6XL53Zunalke5snk1nig03RwkpX44hnE7iuKzB5hJQ9PgSBYZQkGMOZge+gI4Ta4aKiuKP3KDShmPVtwTkhcUxkAHgkS2ff11uDEpO8hu5E5WQWRpdXFsl5+FThrA/4wCRSWzOgmMspRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470067; c=relaxed/simple;
-	bh=aWDmcKQxJLeLFc2zLkg59VZBRjE8kpjJMy4W/8wPRag=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mWV/o5O/xAE8n0kx+o4cDhm21uYeSFo8vZpFQBR0H94SNwwN38tkj87gHc0Z3wcw05BwEHjWRHqcfDw93EhYB1gFL0oOeoVzohaa90KWR1IVcMfgUNbTGVAVvmI4nkHK5BRr5q7537SjdCfBmo67FZ884TcZ3t6CLVMjZ4yk/WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UJCkVPum; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f53efe803so2445845e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756470062; x=1757074862; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zW4AqSEKv0kJ/6/OBgXVXAF4o8+R44pXfVrj6w3QMT8=;
-        b=UJCkVPumwxbKg8DOUW9LEQ2cD49u+20hj1tYg5PsFQ8VZ55Yml8r8tTnnQvyXyZGVl
-         PyWrZpqHv3q1g/6QL5dMI6q2mltxE2PEwLi8Ww5AXjog54ZyC+n2+2Yn82tEsajkXNJ2
-         Ky/SumRPgiEYNQTjyry2zVe+10zWc10NPEbVM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470062; x=1757074862;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zW4AqSEKv0kJ/6/OBgXVXAF4o8+R44pXfVrj6w3QMT8=;
-        b=S4unJCZ+DXfVdPPRSbbmKE49Q7BHSTqxSokpWPb62hbps9JUUMLIa7fivyrYujeFz1
-         SXrTjc/ChT7oILqpmGSh+oyt4Xqxqfmsy+yvYludnX0U5uKEYBm6C3UQESQ1Qg+A/xC+
-         g6gKfF9/hjOvg9mIrtUyoT6QObXR3thQq0kbsIvFPeduaoraxgdrO33I7nVa7XaTbHse
-         kVPpekymt9JKxb0ucRNSCO85Ih6AYGOwLiOiF1EzYzSJ8hTsdywd77vFELcfV1Xvlgol
-         YXtTiHulPjMZGKi0V7RzQm6V0elBeqvzTZfBVQLLWsFs1cMjKC2Tic7+9gre721QW5b1
-         +j8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWYWQZg1c7SEWFKa+gjcPJBtgdMt7e6HLiLkLYHVpC9bLqdSqgn+PX2TPrXpiaTGYKgxLvgu0hYOihhTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXvPYoz/efZKFpR1Hwp9x6KfeRmZCmJdBmmeDZe5K+TFQqkex+
-	djdjx1xJV9PEQ9X1+XJ7qmdv0/G+jcPGqvy8bgXoXz3vvuomQsfDZltOK6vCFKZasQ==
-X-Gm-Gg: ASbGncuaoX+7EVq6p39u1VJBMEI/ounsh68ZIzmfNMv8QAGG6q4B2r4HHzoxWoq+vA/
-	J5dZOkc0hfryQQX8m7SGM330LQZfgu/fFJtVsydPVF4Fz3mHbQaV8P24ifL7trekSeiMHoP60Ho
-	0ZmA7+4uJCELlTBftzPivGCGR2XfKNMy+uNA97Dg1cPfDG5KZzYgTDfraj2eFvuaDLq7/Rukxet
-	Cn+iXcGwl74oihuEZwFgXlPtbxGBPfbDP0F2/GxNsTptt+3opKbQQbMYCp4I2RwvBxIflBoX/4V
-	VLw/6qT+rjV93cc+oABEZaiJwON342s/E99JgYIQmkaU1lWWS3sIs9bUsh4b9CFIRr2rYy6b4aL
-	/3VkrkGqFUB+lAIC9RSUy2Fj+fy6aNDOiC1br0teQ/oQKv8MoES2YbWOBuJ2aSMyS5ig4yeDkJO
-	I=
-X-Google-Smtp-Source: AGHT+IF2QWCHbTAObS7nDBaTJMvC3i63bxSUzXfhy7g5nsIjei4FJvSWRcK9EvWQJ5ryoIHlYZkW/g==
-X-Received: by 2002:a05:6512:2282:b0:55f:4f99:f3cb with SMTP id 2adb3069b0e04-55f4f99f618mr3561895e87.15.1756470061985;
-        Fri, 29 Aug 2025 05:21:01 -0700 (PDT)
-Received: from ribalda.c.googlers.com (237.65.88.34.bc.googleusercontent.com. [34.88.65.237])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f676dbb6dsm600774e87.13.2025.08.29.05.21.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 05:21:01 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 29 Aug 2025 12:21:00 +0000
-Subject: [PATCH] media: i2c: imx214: Exit early on control init errors
+	s=arc-20240116; t=1756470104; c=relaxed/simple;
+	bh=QcNrel/EaV1GtKzz91WehSWO1weENSNqyhEAV6F2RVw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SmwLehfvCJW4hpAHEJEcUetWizu+xqQ6XdFeZdw2xjO36CVGrBwv4PMykDX5NE2dqiaEJoOSPH3UkUDG4yyngS2+5FEzi0qdutE3dSSomwT4xMV/rA5yv5ykDOKY7sroUk4SpnjjGnrJHtjx7XyHery/IeNj/8F054o2dobxmSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=acLKRBqw; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p4284234-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [153.201.197.234])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57TCLWNf059909
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 29 Aug 2025 21:21:32 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=Wx1rCVZP3oFaDCKj3lQnD1g+V9mPan0AUC2YN+4/xgA=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1756470092; v=1;
+        b=acLKRBqw7Qzz2gE2UXXGGjGeMjtIlXlrCqZ44HogiBFnjP6Bm+MCkQhJSNE3QSSz
+         rqZA7LnRfksEEkpc5LaNriaTJsL0ejTUzjIIgH4uZWKxY7h9ZU39rkfgv2rd3uRx
+         JEP4OsFxnnvkh6yXRzTxSsGpzEqu7SinoLhOvd/zkNgjVlSKw9/h71ZVUgh9Rk/g
+         De8aXLXQQFMdDeqnkByKHEok68skUQTalSjOv6yDLi+Bu1idQd2b02xQFFSgeKf+
+         2EQzModgxhciSQRsVdEdKclKPT2O7xNkkVQ+zHpTf2v9z30PS8kbnZCaVdLkbfD6
+         6LKjTg3RH3JS87wVhDbGbA==
+Message-ID: <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
+Date: Fri, 29 Aug 2025 21:21:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-imx214-smatch-v1-1-f3d1653b48e4@chromium.org>
-X-B4-Tracking: v=1; b=H4sIACubsWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCyNL3czcCiNDE93i3MSS5AzdZJMUIDQ3MbJIMVUC6ikoSk3LrACbFx1
- bWwsAlYcLi18AAAA=
-X-Change-ID: 20250829-imx214-smatch-c4d4d47428d5
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kenta Akagi <k@mgml.me>
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
+        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+ <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+Content-Language: en-US
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Now we try to initialize all the controls and at the very end check
-ctrl_hdlr->error to check if one of them has failed.
 
-This confuses smatch, who do not know how to track the state of
-imx214->link_freq.
 
-drivers/media/i2c/imx214.c:1109 imx214_ctrls_init() error: we previously assumed 'imx214->link_freq' could be null (see line 1017)
+On 2025/08/29 11:54, Li Nan wrote:
+> 
+> 在 2025/8/29 0:32, Kenta Akagi 写道:
+>> This commit ensures that an MD_FAILFAST IO failure does not put
+>> the array into a broken state.
+>>
+>> When failfast is enabled on rdev in RAID1 or RAID10,
+>> the array may be flagged MD_BROKEN in the following cases.
+>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
+>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
+> 
+> [...]
+> 
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index 408c26398321..8a61fd93b3ff 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>>               (bio->bi_opf & MD_FAILFAST) &&
+>>               /* We never try FailFast to WriteMostly devices */
+>>               !test_bit(WriteMostly, &rdev->flags)) {
+>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>               md_error(r1_bio->mddev, rdev);
+>>           }
+>>   @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>    *    - recovery is interrupted.
+>>    *    - &mddev->degraded is bumped.
+>>    *
+>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>> - * &mddev->fail_last_dev is off.
+>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+>> + * then @mddev and @rdev will not be marked as failed.
+>> + *
+>> + * @rdev is marked as &Faulty excluding any cases:
+>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>    */
+>>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>   {
+>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>         if (test_bit(In_sync, &rdev->flags) &&
+>>           (conf->raid_disks - mddev->degraded) == 1) {
+>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
+>> +                "last device but ignoring it\n",
+>> +                mdname(mddev), rdev->bdev);
+>> +            return;
+>> +        }
+>>           set_bit(MD_BROKEN, &mddev->flags);
+>>             if (!mddev->fail_last_dev) {
+>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+>>       if (test_bit(FailFast, &rdev->flags)) {
+>>           /* Don't try recovering from here - just fail it
+>>            * ... unless it is the last working device of course */
+>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>           md_error(mddev, rdev);
+>>           if (test_bit(Faulty, &rdev->flags))
+>>               /* Don't try to read from here, but make sure
+>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>>           fix_read_error(conf, r1_bio);
+>>           unfreeze_array(conf);
+>>       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>           md_error(mddev, rdev);
+>>       } else {
+>>           r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>> index b60c30bfb6c7..530ad6503189 100644
+>> --- a/drivers/md/raid10.c
+>> +++ b/drivers/md/raid10.c
+>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+>>               dec_rdev = 0;
+>>               if (test_bit(FailFast, &rdev->flags) &&
+>>                   (bio->bi_opf & MD_FAILFAST)) {
+>> +                set_bit(FailfastIOFailure, &rdev->flags);
+>>                   md_error(rdev->mddev, rdev);
+>>               }
+>>   
+> 
+> Thank you for the patch. There may be an issue with 'test_and_clear'.
+> 
+> If two write IO go to the same rdev, MD_BROKEN may be set as below:
 
-Fix this by exiting early on control initi errors.
+> IO1                    IO2
+> set FailfastIOFailure
+>                     set FailfastIOFailure       
+>  md_error
+>   raid1_error
+>    test_and_clear FailfastIOFailur
+>                        md_error
+>                       raid1_error
+>                        //FailfastIOFailur is cleared
+>                        set MD_BROKEN
+> 
+> Maybe we should check whether FailfastIOFailure is already set before
+> setting it. It also needs to be considered in metadata writes.
+Thank you for reviewing.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Right now we are handling this with a quirk in media-ci, if Dan cannot
-fix smatch in a kernel cycle we should merge this patch.
----
- drivers/media/i2c/imx214.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+I agree, this seems to be as you described.
+So, should it be implemented as follows?
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 94ebe625c9e6ee0fb67fe1d89b48b2f1bf58ffc6..7da9e8fa2b622adba53fa6b544bca9859da23e3e 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -1014,8 +1014,10 @@ static int imx214_ctrls_init(struct imx214 *imx214)
- 						   V4L2_CID_LINK_FREQ,
- 						   imx214->bus_cfg.nr_of_link_frequencies - 1,
- 						   0, imx214->bus_cfg.link_frequencies);
--	if (imx214->link_freq)
--		imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-+	if (!imx214->link_freq)
-+		goto err_init_ctrl;
-+
-+	imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
- 
- 	/*
- 	 * WARNING!
-@@ -1101,6 +1103,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
- 
- 	ret = ctrl_hdlr->error;
- 	if (ret) {
-+err_init_ctrl:
- 		v4l2_ctrl_handler_free(ctrl_hdlr);
- 		dev_err(imx214->dev, "failed to add controls: %d\n", ret);
- 		return ret;
+bool old=false;
+do{
+ spin_lock_irqsave(&conf->device_lock, flags);
+ old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
+ spin_unlock_irqrestore(&conf->device_lock, flags);
+}while(old);
 
----
-base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-change-id: 20250829-imx214-smatch-c4d4d47428d5
+However, since I am concerned about potential deadlocks, 
+so I am considering two alternative approaches:
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+* Add an atomic_t counter to md_rdev to track failfast IO failures.
+
+This may set MD_BROKEN at a slightly incorrect timing, but mixing
+error handling of Failfast and non-Failfast IOs appears to be rare.
+In any case, the final outcome would be the same, i.e. the array
+ends up with MD_BROKEN. Therefore, I think this should not cause
+issues. I think the same applies to test_and_set_bit.
+
+IO1                    IO2                    IO3
+FailfastIOFailure      Normal IOFailure       FailfastIOFailure
+atomic_inc                            
+                                              
+ md_error                                     atomic_inc 
+  raid1_error
+   atomic_dec //2to1          
+                       md_error          
+                        raid1_error           md_error
+                         atomic_dec //1to0     raid1_error
+                                                atomic_dec //0
+                                                  set MD_BROKEN
+
+* Alternatively, create a separate error handler,
+  e.g. md_error_failfast(), that clearly does not fail the array.
+
+This approach would require somewhat larger changes and may not
+be very elegant, but it seems to be a reliable way to ensure 
+MD_BROKEN is never set at the wrong timing.
+
+Which of these three approaches would you consider preferable?
+I would appreciate your feedback.
+
+
+For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
+when the array is degraded.
+
+Thanks,
+Akagi
+
+>> @@ -1995,8 +1996,12 @@ static int enough(struct r10conf *conf, int ignore)
+>>    *    - recovery is interrupted.
+>>    *    - &mddev->degraded is bumped.
+>>    *
+>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>> - * &mddev->fail_last_dev is off.
+>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+>> + * then @mddev and @rdev will not be marked as failed.
+>> + *
+>> + * @rdev is marked as &Faulty excluding any cases:
+>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>    */
+>>   static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>   {
+>> @@ -2006,6 +2011,13 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>       spin_lock_irqsave(&conf->device_lock, flags);
+>>         if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
+>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>> +            pr_warn_ratelimited("md/raid10:%s: Failfast IO failure on %pg, "
+>> +                "last device but ignoring it\n",
+>> +                mdname(mddev), rdev->bdev);
+>> +            return;
+>> + >           set_bit(MD_BROKEN, &mddev->flags);
+>>             if (!mddev->fail_last_dev) {
+>> @@ -2413,6 +2425,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
+>>                   continue;
+>>           } else if (test_bit(FailFast, &rdev->flags)) {
+>>               /* Just give up on this device */
+>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>               md_error(rdev->mddev, rdev);
+>>               continue;
+>>           }
+>> @@ -2865,8 +2878,10 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+>>           freeze_array(conf, 1);
+>>           fix_read_error(conf, mddev, r10_bio);
+>>           unfreeze_array(conf);
+>> -    } else
+>> +    } else {
+>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>           md_error(mddev, rdev);
+>> +    }
+>>         rdev_dec_pending(rdev, mddev);
+>>       r10_bio->state = 0;
+> 
+> -- 
+> Thanks,
+> Nan
+> 
+> 
 
 
