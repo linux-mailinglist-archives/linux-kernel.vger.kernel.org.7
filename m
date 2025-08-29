@@ -1,60 +1,92 @@
-Return-Path: <linux-kernel+bounces-791656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B22B3B9BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:11:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52263B3B9C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB4FA0785C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:11:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ED897AC5FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9578A311592;
-	Fri, 29 Aug 2025 11:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F96A3128BA;
+	Fri, 29 Aug 2025 11:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/B0EQdt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQBplTPW"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D953431195B;
-	Fri, 29 Aug 2025 11:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9D4CA52;
+	Fri, 29 Aug 2025 11:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465864; cv=none; b=tKO2PyGbDNErrWTdu/r7DjUxFsSEcFvWWLoJtswqvlYDUI15HL049XvsKJH1yxzqy5pTVzVhRMxiMY1Gxc9Da0Ydumf7Ys1qkQ1CU5pkj0NwIGrCYYBA5eLXotaeJhmPGGUwVZ36YqmmkLcyUpGFyKHl3+v/27de8AcQH7GpJes=
+	t=1756465891; cv=none; b=nLgN6YhdjdeiMIuLx5t9NXPuip1nYQZk/Ot5MnZFGxo+PedqrCHk2rMB2GKkkCKxg2hkT2SjEJnQcL0TVRDjoeXXQ0jbw1KwxE9KHbaDcwLC/SB1/exU4usrSojhG/CavfddftYcudla3ZfMCaWTodR/sTYSvYN566S2qO4znzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465864; c=relaxed/simple;
-	bh=XrISwkshv/fm4VJp+80IDI8Zvux51pHfYKBB7IzD38s=;
+	s=arc-20240116; t=1756465891; c=relaxed/simple;
+	bh=GrchNdWYzgpQWMdULTh27jCHo9UrMJz3lOa3PgY0Ixk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCSkXMQiDiuegFWvGlR5MAu3UVmPUa3HjpnMm6WJ/azDIbgGA7VVKXkNmlo6ECacKF8a5dO5CPtbHs9myTbaCmoXIBjWqP4q9MHIRDEvh0rEkSkrMMYOfqnCMYbX7v7UaLkMCaufHjk34jkCl6DttXgNzaGMvotJgB5jL36TE2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/B0EQdt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4F9C4CEF0;
-	Fri, 29 Aug 2025 11:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756465863;
-	bh=XrISwkshv/fm4VJp+80IDI8Zvux51pHfYKBB7IzD38s=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=s/B0EQdtsKOIuA4rBjxph2wZiLkga9SJa0VIureD7fnGJw/57ikwvISWxlCCP4Zjd
-	 +z7Tg8E/udCHSdwNdhC2Yai+S7oMW+QuXONTrIg+gGWZ0UTFP4WyFcj/fiE4CajUu2
-	 wM+mr0jkuGf0uzYyy+CJl3pkx5/Dsky42+lgvBbNnH63zsrkJc+/9N87R1SMrD4nxO
-	 FuTUq0+JfFZzDPsPUTl7/7agJGFXwUIgXREFJ6tG0HTKRlxa846ztnZL7Si/2eVWNz
-	 ZMjMvxMBuUR7jxW0lG52He/6OMa0vLyBNv1j0ydhL4DmKGlg/wWP4DjxnjEKza+yFV
-	 dj6fpBcktp+Jw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EDC16CE0B2A; Fri, 29 Aug 2025 04:11:02 -0700 (PDT)
-Date: Fri, 29 Aug 2025 04:11:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Menglong Dong <dongml2@chinatelecom.cn>, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>, tgraf@suug.ch,
-	herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
-Message-ID: <d1da3939-62e6-4ad1-afcc-5710ce3f6cbd@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
- <20250828222357.55fab4c2@batman.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwQDdYLzfN7rsqS5itwvmuXy1bGzcTk8UYFDcqsOEeZDZUTAMskaKnNo6JdT7vp0o5GQprFM1pbcoCDUUYpSTCT/Mp3VXY8K8sqTUY99HAerHBWGFLoVIcfbfUc6QDZUhCIC4athFRwzpkI8J6MnfG65rEyACSj7d6zHOp5G7aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQBplTPW; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so1173040f8f.3;
+        Fri, 29 Aug 2025 04:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756465888; x=1757070688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WLYDZuVT2T68gRNe6jq6AaWcsJa7DLlaSxR9N646BA=;
+        b=GQBplTPWktloObVr19C61928nVAz2TpVUMT2i5+FpBbfNZMYScVCKp9EBejU89D9Cg
+         1IJltBNXsV1VWRPC6lcqS4yV1fUI2zXtdFiBCqHKM4SDXGFVl9IPoxCPLwlBuUHkr9Bq
+         Eagc8HZuea190zbiyNdFOUqMch1bJfFFBtzma9hgXK2BL914DC6MGKz/Wevju8I2a9Fx
+         nSL+/ofuAFjyeM66P4m7V+dHQ3XSUi9EKgiWgRmGRSaQc6UTp61VzwkKZgiz2pRd+BUE
+         MPa6g7aZYoJD4nTKIZr02mQZEFmO9TnZ31qvSjHhhWjtj9kB/CT6E8lkyVu8Y20TXYWw
+         946w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756465888; x=1757070688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9WLYDZuVT2T68gRNe6jq6AaWcsJa7DLlaSxR9N646BA=;
+        b=Njy8lPUsk+KPgwSrFkNiZy7ot8O6FllFE0qOjmd/vXlo3PasfzoRvPcCPUEPcd0hP2
+         v/54FKPFyHK1TwIGtxJfeXdaQEdfDgtgO3htJ3jUBT9jkbKFwdfIN3teGkfdPhCeSNiV
+         a3P1rYv1dCEEMGnsMCzXwiXo6/a7W7+8EBG8qCGH8nqhp7AbpXENmOLEx8q9b1KOTGGD
+         xxvIXTFu/o28ndgoiYPfZ/F8Pp9w44+m3A4t+fUxKf2dZnaW9A8CaGtQHiXyT1qOxdNY
+         s9/2hk/m0zDhlEJBeJVLI+f5CqtOmoCtUX2n+lQ4nqJc6LNc43JYVXn/41RntMh/j2pb
+         uHXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVC+4qdbODwoXvo3l/O8j22YfpBOIXKbHAzNGgOa3chCqZfecNivy1pbzJXzh0bQ3wmyUpf7BRSdJVAdOwx@vger.kernel.org, AJvYcCVVGsNSKxk5i4nl6FVyN0orFb/s2ohB8zkWMK9tWUpRb9xJ+mVRN4/6a9TVyVZz/BUkEzgtRY25k4e+3xM=@vger.kernel.org, AJvYcCVYnNcPYb8pkdZrqsC6u9USzqni4GW41GTF/YwAXSE3b6k6L5NmQBT22SslhAYiU8oNt2PvXpSMstQtjME=@vger.kernel.org, AJvYcCWQSlKqhr9gcuNxM5jIuR/m6zQ37hnv4CuQhiN1n8JfQ2BBFvTp6R/dOlVobw7rwK1Z3r64NmxWJGPG@vger.kernel.org, AJvYcCX+NhHhV94tux8ZcP1DvpROZvczus7lrv/dAX230qEXwA1TvKqrlZbKBIXe5dFDg71hCTdvhhnNvCpJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4NFYHEH6z/pS4TDm3EyDJuj8gLR19xDvAqh+VGu4yNhJmJ3dg
+	3UkLYlNBgiQeEEL5/fMcL8Hvv+UrbjphQeZbUZOfedQlQP6Q1xUFTJ/t
+X-Gm-Gg: ASbGncvq7WBRcKf6u8jRRaz1cZIzwySr6vW0x+ISc7FWubnJxGiCs4mJW9B0K1TF+hy
+	8RLoIsPGOWhbywjdVyRuFAccqbq+zIwDKAS6SjdhohOTF6WY2eMB/j5tlBHRSxr/J/bFGRHc4bt
+	ItnhucAK/TyApOismugjqcSE8ucnMjDCOzlPE5Btb63g9i/bB5KPor/CqU4pE/ko7buvtGRdYiS
+	uMCzItCNJ2ILAR56A2iHZN0EinVxBVelcOtW0OSQ4Q4pTpuDqCQjI+xp27EALftZEE5b36Fpqtv
+	pF2tGcXOy9Dvjwj97loNB9CMb7WHNJR4piwNWn5fS2VFeNxNEBAibHfs5XcMWmeekvBDSFqSsFy
+	otthXsRvCtyrbh01zHfHzbXy0MaJt8UGG5oQ43rzL7lA76A==
+X-Google-Smtp-Source: AGHT+IEhgsyB+xV4naRe7U+vGBG91GNLDzqLCMMGY7f5dp8nau5ERArTK4tcf5uChYU0pp1hjF9bJA==
+X-Received: by 2002:a05:6000:2307:b0:3d0:ebf6:90d2 with SMTP id ffacd0b85a97d-3d0ebf69376mr1035051f8f.43.1756465887932;
+        Fri, 29 Aug 2025 04:11:27 -0700 (PDT)
+Received: from google.com (brn-rj-tbond06.sa.cz. [185.94.55.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fbe7dsm2929064f8f.9.2025.08.29.04.11.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 04:11:27 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:11:22 +0000
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org, 
+	Hector Martin <marcan@marcan.st>
+Subject: Re: [PATCH v2 07/11] input: macsmc-hid: New driver to handle the
+ Apple Mac SMC buttons/lid
+Message-ID: <qffp7kadq3xojla5k6f5pr37irgytqfsqvabr6ydvulxnkcgnn@bv5mrraxrhhe>
+References: <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com>
+ <20250827-macsmc-subdevs-v2-7-ce5e99d54c28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,103 +95,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828222357.55fab4c2@batman.local.home>
+In-Reply-To: <20250827-macsmc-subdevs-v2-7-ce5e99d54c28@gmail.com>
 
-On Thu, Aug 28, 2025 at 10:23:57PM -0400, Steven Rostedt wrote:
-> On Fri, 29 Aug 2025 10:14:36 +0800
-> Menglong Dong <dongml2@chinatelecom.cn> wrote:
-> 
-> > rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
-> > is used in rhltable_lookup(), which causes suspicious RCU usage warning:
-> > 
-> >   WARNING: suspicious RCU usage
-> >   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
-> >   -----------------------------
-> >   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
-> >   ......
-> >   stack backtrace:
-> >   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
-> >   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
-> >   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
-> >   Call Trace:
-> >    <TASK>
-> >    dump_stack_lvl+0x7c/0x90
-> >    lockdep_rcu_suspicious+0x14f/0x1c0
-> >    __rhashtable_lookup+0x1e0/0x260
-> >    ? __pfx_kernel_clone+0x10/0x10
-> >    fprobe_entry+0x9a/0x450
-> >    ? __lock_acquire+0x6b0/0xca0
-> >    ? find_held_lock+0x2b/0x80
-> >    ? __pfx_fprobe_entry+0x10/0x10
-> >    ? __pfx_kernel_clone+0x10/0x10
-> >    ? lock_acquire+0x14c/0x2d0
-> >    ? __might_fault+0x74/0xc0
-> >    function_graph_enter_regs+0x2a0/0x550
-> >    ? __do_sys_clone+0xb5/0x100
-> >    ? __pfx_function_graph_enter_regs+0x10/0x10
-> >    ? _copy_to_user+0x58/0x70
-> >    ? __pfx_kernel_clone+0x10/0x10
-> >    ? __x64_sys_rt_sigprocmask+0x114/0x180
-> >    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
-> >    ? __pfx_kernel_clone+0x10/0x10
-> >    ftrace_graph_func+0x87/0xb0
-> > 
-> > Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
-> > can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
-> > However, it's not a common usage :/
-> 
-> So this is needed even though it's called under preempt_disable().
-> 
-> Paul, do we need to add an rcu_read_lock() because the code in rht
-> (rhashtable) requires RCU read lock?
-> 
-> I thought that rcu_read_lock() and preempt_disable() have been merged?
+Hi James,
 
-Yes, preempt_disable() does indeed start an RCU read-side critical section,
-just as surely as rcu_read_lock() does.
+On Wed, Aug 27, 2025 at 09:22:41PM +1000, James Calligeros wrote:
+> +static void macsmc_hid_event_button(struct macsmc_hid *smchid, unsigned long event)
+> +{
+> +	u8 button = (event >> 8) & 0xff;
+> +	u8 state = !!(event & 0xff);
+> +
+> +	switch (button) {
+> +	case BTN_POWER:
+> +	case BTN_TOUCHID:
+> +		if (smchid->wakeup_mode) {
+> +			if (state)
+> +				pm_wakeup_hard_event(smchid->dev);
+> +		} else {
+> +			input_report_key(smchid->input, KEY_POWER, state);
+> +			input_sync(smchid->input);
+> +		}
 
-However, this is a lockdep check inside of __rhashtable_lookup():
+I believe you should be using pm_wakeup_event() in all cases so that
+pressing power would interrupt suspend even if resume() handler has not
+been run yet. Also I do not think suppressing KEY_POWER is needed.
+Userspace should be smart and decide whether to shutdown the system or
+not when receiving KEY_POWER depending on the overall system state.
 
-	rht_dereference_rcu(ht->tbl, ht)
+...
+> +
+> +static int macsmc_hid_probe(struct platform_device *pdev)
+> +{
+> +	struct apple_smc *smc = dev_get_drvdata(pdev->dev.parent);
+> +	struct macsmc_hid *smchid;
+> +	bool have_lid, have_power;
+> +	int ret;
 
-Which is defined as:
+	int error;
 
-	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht));
+> +
+> +	/* Bail early if this SMC neither supports power button nor lid events */
+> +	have_lid = apple_smc_key_exists(smc, SMC_KEY(MSLD));
+> +	have_power = apple_smc_key_exists(smc, SMC_KEY(bHLD));
+> +	if (!have_lid && !have_power)
+> +		return -ENODEV;
+> +
+> +	smchid = devm_kzalloc(&pdev->dev, sizeof(*smchid), GFP_KERNEL);
+> +	if (!smchid)
+> +		return -ENOMEM;
+> +
+> +	smchid->dev = &pdev->dev;
+> +	smchid->smc = smc;
+> +	platform_set_drvdata(pdev, smchid);
+> +
+> +	smchid->input = devm_input_allocate_device(&pdev->dev);
+> +	if (!smchid->input)
+> +		return -ENOMEM;
+> +
+> +	smchid->input->phys = "macsmc-hid (0)";
+> +	smchid->input->name = "Apple SMC power/lid events";
+> +
+> +	if (have_lid)
+> +		input_set_capability(smchid->input, EV_SW, SW_LID);
+> +	if (have_power)
+> +		input_set_capability(smchid->input, EV_KEY, KEY_POWER);
+> +
+> +	ret = input_register_device(smchid->input);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to register input device: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (have_lid) {
+> +		u8 val;
+> +
+> +		ret = apple_smc_read_u8(smc, SMC_KEY(MSLD), &val);
+> +		if (ret < 0)
+> +			dev_warn(&pdev->dev, "Failed to read initial lid state\n");
+> +		else
+> +			input_report_switch(smchid->input, SW_LID, val);
+> +	}
+> +
+> +	if (have_power) {
+> +		u32 val;
+> +
+> +		ret = apple_smc_read_u32(smc, SMC_KEY(bHLD), &val);
+> +		if (ret < 0)
+> +			dev_warn(&pdev->dev, "Failed to read initial power button state\n");
+> +		else
+> +			input_report_key(smchid->input, KEY_POWER, val & 1);
+> +	}
 
-This is explicitly telling lockdep that rcu_read_lock() is OK and
-holding ht->mutex is OK, but nothing else is.
+Since you are doing this to seed initial switch/button state I would do
+this before registering input device (this is safe to do so).
 
-So an alternative way to fix this is to declare it to be a false positive,
-and then avoid that false positive by adding a check that preemption
-is disabled.  Adding the rhashtable maintainers for their perspective.
+Thanks.
 
-							Thanx, Paul
-
-> -- Steve
-> 
-> 
-> > 
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
-> > Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  kernel/trace/fprobe.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > index fb127fa95f21..fece0f849c1c 100644
-> > --- a/kernel/trace/fprobe.c
-> > +++ b/kernel/trace/fprobe.c
-> > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >  	if (WARN_ON_ONCE(!fregs))
-> >  		return 0;
-> >  
-> > +	rcu_read_lock();
-> >  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> > +	rcu_read_unlock();
-> >  	reserved_words = 0;
-> >  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> >  		if (node->addr != func)
-> 
+-- 
+Dmitry
 
