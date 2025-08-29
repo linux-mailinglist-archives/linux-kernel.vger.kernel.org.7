@@ -1,171 +1,165 @@
-Return-Path: <linux-kernel+bounces-791218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55401B3B38E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C382DB3B395
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 856897B94FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:39:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E21947A4905
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742DD257826;
-	Fri, 29 Aug 2025 06:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E32257855;
+	Fri, 29 Aug 2025 06:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OgosZh56"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn09N6k9"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF13256C7E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB4F25394A;
+	Fri, 29 Aug 2025 06:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756449681; cv=none; b=oyR91TLYwJZ9zViX4tdsJQu4rkeMWg7KhDTbsyhGgGM4AAWoej8f5V09z4iSiFgiURB30l/LuSbuFAHU31zrB7eVAyR11vpIK4PtCC/jpwQD9GI32t+28E0aqu9QUNWTUzTdUTo2VZtcZIaFIj7WULgKbeCK67bpTo7vkVoLwr0=
+	t=1756449765; cv=none; b=dVSEYuppMYh0nj7nP2/AxQkqVI2hWC9G7nMnr6poMS0zMccky3yLhmrDUrB93/hk/tJCmtY6TWYpTVRMCwUD7b4IKb8SGWmnIIXTtk2sT5w8/SFSNub0x2hLhdlDKvKYNifaTBJagsVVUT0kYUZWd3HstKcrKY79zrgRlhxGkgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756449681; c=relaxed/simple;
-	bh=bVBwqE+tWpLL3gtk4pcNTZ4t51SIxeiaUf1nZbx9ERg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rl2I2max8QuptLozzn/+pmMxq5dQC0e/Z6Lv2WPxUscigaqerEVHRrHay+lbLp+foPxx4fVyt3YfEGIGValYQZThAKrckXdHyw0Pjvskz0zjO4UKKhyRzJD2M1b4Al0JV9gBAahFuWtQPWic+1dWtfzdJMt1iOnymCJi6QCVZiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OgosZh56; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso12147815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:41:18 -0700 (PDT)
+	s=arc-20240116; t=1756449765; c=relaxed/simple;
+	bh=kVuD7W376c6FrZNyHaO5XNEGImOvvlZo36DWNaRRpy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EbmgXf/z41UNBUOp6L14IIS9SChQRWsxJVGlJMK4lFX9qQQK7y9PxI3mqQdFYCERIq49pklWnHhbr50JNySf9glzQKhR7Em21HqPNJQgMNaXav/P9nJcgVQfNlhvhSmRpCl/Cc9xQb1YzLZrKfGDSGHY3XOXveHh+nAk+MW45Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn09N6k9; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c73d3ebff0so1313410f8f.1;
+        Thu, 28 Aug 2025 23:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756449677; x=1757054477; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XtxEKMLsj3BJjqsAEZBWzNWvadtCwMY5ynf5Rrf8/UU=;
-        b=OgosZh56AWBnGaiIJHrqhKQ+254zvnmH/ms3p4wjI5FO71s1zn9p8jQdLpm0FtheE0
-         PdvKPwPpaXdztkQRLxJkjUfh+dklFzPnCG/8/m7Np2vvxMNsfdczkAEh02nphMe1nk6f
-         eDpKwszrXFi3PtP1kHb6Qzy0ITmw7Jc12yRd+zKaL6qki4RQJZbz8CjMAulQ3gSaezPr
-         MCSdIvqRMI2xJ6jS9JU2lP1GhLACQX1XIprXRAiqKVaQMwxk425w+1QWBaLo8mAJYHGh
-         LFR/+sizy36tK9r81iXEsKgZFJZ2jOYFWVzY8uEt+76cN74a7vteh/JWvBJAFVVASHo0
-         BJsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756449677; x=1757054477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756449762; x=1757054562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XtxEKMLsj3BJjqsAEZBWzNWvadtCwMY5ynf5Rrf8/UU=;
-        b=bKrqukCjO2uE7HrQv+uEjO5uIq4B4yjiIaX7OZyFfrnytAOMECljoS86O1lEw2OsCt
-         xldASnJ4NXo9N9GZM4O/8TkZ9tfsY8RbK1wAuYsl5WGAXVpfTqDjgvTnUZMfZi5CnMOs
-         qSRzBe0PuwGCxz+GCeg2n3PtwesVGimMn3/BY97VzK199QhuFRWahd+RUhYC92NVYArk
-         SM6oqlvf3UozoO7q6WYIEUrMAeL+1cVtRQ+KUuleuor0BZ9KI+noErhhQTlw5NCwiakT
-         ATRxYJHBSBUQc6voAlxFFrk6275+vTIecpRtoRII2Cl5hDur7nZdu0JvFbAwH9fpPr7Q
-         wCJA==
-X-Gm-Message-State: AOJu0YxiCTTStAWZBWbzrCxtAXGJFQ+JEx8C6yICujvJ31XjLVNTPJUt
-	cFQ51489Hf/AJXDK8sbM5P2kRhMTbB3r5Dl1+UXohuq9pfDdIgDsPglfW1oQ/2CgRWmOB4jYC3t
-	xIltz
-X-Gm-Gg: ASbGncvBJh/sbwstwz23EraHAHjeMSAIH9yr+0fdrWlpZEL0qvT0CaCdFWSkNBO5xoo
-	z+mfD7O+X6DSSsmYxQrgZR7zlGpn0cOihQQFBV4Wm8ydIwuzvZeqV+mUoe50AREZY0ZpcHfVfJS
-	YWcD4tSwyWZJR0wOy/8OFuqayBMlmrJfR3y3X/QIG+e1UmDPfVC8rMJ/Q3WDUs1m9rg8Zyiv0CE
-	t8DauwSecZqjiWxlcO4kqo8xrZn1naolbbhpuu34o7pfjsukAy4X+yXFHSdI6v4yghP9HbmflMF
-	r8ny+IKo4zJaTK4Vy7cyTW/4Opu1i9SvUeMzYf+B8ZyEn1vkVVQVWSmbWJH2mH07G3Ei9pOvX/n
-	Sm2or4U6cqvWc1gYd/cRa3c44hvpFemh7XbU=
-X-Google-Smtp-Source: AGHT+IE0hHze9wkthqzJK2uktPvYHUKC/p/KFjdPRhXF7UeVVigicm5+RRf0+8vpXcyjUnGU8Of9lA==
-X-Received: by 2002:a05:600c:4fc8:b0:45b:7be1:be1f with SMTP id 5b1f17b1804b1-45b7be1bfcemr30585535e9.32.1756449677281;
-        Thu, 28 Aug 2025 23:41:17 -0700 (PDT)
-Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e8966acsm25768415e9.17.2025.08.28.23.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 23:41:16 -0700 (PDT)
-Date: Fri, 29 Aug 2025 08:41:15 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Mel Gorman <mgorman@techsingularity.net>, kernel-dev@igalia.com,
-	Helen Koike <koike@igalia.com>,
-	Matthew Wilcox <willy@infradead.org>, NeilBrown <neilb@suse.de>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: only set ALLOC_HIGHATOMIC for __GPF_HIGH
- allocations
-Message-ID: <aLFLi4B5smIMY4u8@tiehlicka>
-References: <20250814172245.1259625-1-cascardo@igalia.com>
+        bh=QWSNy/JRqLkLoJxnOEcFDdNep+6HQzRpiS/0aFPTMrQ=;
+        b=nn09N6k9F65ztBjTgb/lbslL/gqROChSuBduyEO8+2QuOo2nCmo1/QWvZ10eqI2f3g
+         TGcr0lhl/shkmLgn0e/b7gTVFJDMHRTUSzDGGBoouMv0lLyCMVn885ZkBfD7PHVzL2An
+         PMytXSjkR6XPfN3jKa2lFYIbQOUmZUOeMZ6rHWGICS/nD98V8/Pe8P+0aTmPvT6bUP5h
+         mQGRyELKKQZPlNUhFsdBcM56bAnawdQdVKxfIf+okq7ETHd+nVRdWn+rEkuxqdEHomNo
+         XUEbTWs/cuxluCXhXIKUOJPi9yv0kow6p6XL20x5Ne8TGEDd9sRgnaYkCsNsxu4W4pgI
+         43bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756449762; x=1757054562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWSNy/JRqLkLoJxnOEcFDdNep+6HQzRpiS/0aFPTMrQ=;
+        b=q/5HB/8zFNZyan0nZVrrOqINm5ZxRLV3PPfm4JGIFmkJKKfER8J/jOpgwMtzOcnZnw
+         m6IrbG5no/FLCTZHBrCMYO1A9NxxpUWAZ0g1+BjTjrOo1ZHkq4kFAeuk8n3Y/Wc5PzAg
+         kpEcAH2iuoNhEfgRkDYpzdhyBe6B9ju7HDuMKccz2+yI/8dSz4ZJSdrdYqVZKm9qYwWU
+         yO4bmnjCAjamA34Apby3J1NlP4L7JJNWES4BRtoTHQ4OdsmOsCwdX5wqVQTfrXLP4PdM
+         nUKtsgAhzdwwz9vtUyj/zrWX5F6NEgO5SYqEVr3oC7hKH6sVKrLDjmpJscKDUq+cCnS3
+         gA2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVY3Re4VRlUdqzMEf+WVWiGtiDg1sbvEOvB9/Xk7iy7NpU4lXljHqDpDQtmYDSxV6v/4+jwAknrZD5gViw=@vger.kernel.org, AJvYcCWBcYxjAYth3k4XUcfmAxUpFs07oxkGrKAwDuETGdJ1jOP+JEh7AsC9o1UC/FE729sH11obiAMxOu5W@vger.kernel.org, AJvYcCWRhrR8fDTYq4jsA8hrhl5LaBt7qPwyBSVVzYHt/BpCW/4I0m/6b2SYAiwYDdCIvToe1pDOTsDe9gFpK4k=@vger.kernel.org, AJvYcCWYyRiS1JL410XTZR4o4caRv8yCynQuO2XaPuzRkz+F1NCQyEId1USrnamSFZaikZgbdBeedyEGyESG@vger.kernel.org, AJvYcCXJT1LVJ3BrKiqh9/H2YJspa74b97yt5aQi08i7pbRe3TO3WYOEdWu9x177iuHOUiMxTu4zOtmUAOjrfDb4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhGSASguC2Wr65cRGHpnXAgR12xoppRt1VLfp9bSRsSDY28Xc5
+	vteKpraYCw1z9HsGrSiEevOE82RNJXuWDXwtb3ZPn8cnfVek6zp3y2PdLTGyOJAzQzBfs5yBQ/L
+	VUm0KozQnUoXvcbmRdEl6E5c2BVb/mqs=
+X-Gm-Gg: ASbGnctyNqH95wps2pe36QSrlkdtHOXLgK/X89/6kWEHUPxFzngxNnc+DWZBmgz3U3V
+	sWWkdDV1QiZbQaAHfIunztuwUVEKL+FgbVANZ2ofbmA3FQHFbesWhw22O9gJGO96qNUiM7lofBH
+	THLiwVf9SZw+dPYh0BWWq41LaNhHUHEAwcZ4QE/hDzfFYZzOFTckSoiF/H0MgN7v+i21SFq90W4
+	tscYTm/
+X-Google-Smtp-Source: AGHT+IHjRL9sOfRC6KlJXM91TuBldUFCTWN+6IKyuNVfAGqivuS+QA4CO7lbMYhZ/89R1DWqkhTaNLnSJ6XXeiMAmew=
+X-Received: by 2002:a05:6000:40ca:b0:3d0:c6bf:60c6 with SMTP id
+ ffacd0b85a97d-3d0c6bf6478mr507752f8f.13.1756449761912; Thu, 28 Aug 2025
+ 23:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814172245.1259625-1-cascardo@igalia.com>
+References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-5-clamor95@gmail.com>
+ <20250819202722.GA1264491-robh@kernel.org>
+In-Reply-To: <20250819202722.GA1264491-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 29 Aug 2025 09:42:30 +0300
+X-Gm-Features: Ac12FXxicf5syu3ZrQDe1liim-jpvbuNbb6FjdElmnqfyMSBMVU7aVm-Nae8-uI
+Message-ID: <CAPVz0n1CN_rXu6EvgiMBeCvpOK6Ep96pax+naRha-=9THBifZQ@mail.gmail.com>
+Subject: Re: [PATCH v1 04/19] dt-bindings: display: tegra: document Tegra30 VIP
+To: Rob Herring <robh@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	Charan Pedumuru <charan.pedumuru@gmail.com>, linux-media@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 14-08-25 14:22:45, Thadeu Lima de Souza Cascardo wrote:
-> Commit 524c48072e56 ("mm/page_alloc: rename ALLOC_HIGH to
-> ALLOC_MIN_RESERVE") is the start of a series that explains how __GFP_HIGH,
-> which implies ALLOC_MIN_RESERVE, is going to be used instead of
-> __GFP_ATOMIC for high atomic reserves.
-> 
-> Commit eb2e2b425c69 ("mm/page_alloc: explicitly record high-order atomic
-> allocations in alloc_flags") introduced ALLOC_HIGHATOMIC for such
-> allocations of order higher than 0. It still used __GFP_ATOMIC, though.
-> 
-> Then, commit 1ebbb21811b7 ("mm/page_alloc: explicitly define how __GFP_HIGH
-> non-blocking allocations accesses reserves") just turned that check for
-> !__GFP_DIRECT_RECLAIM, ignoring that high atomic reserves were expected to
-> test for __GFP_HIGH.
-> 
-> This leads to high atomic reserves being added for high-order GFP_NOWAIT
-> allocations and others that clear __GFP_DIRECT_RECLAIM, which is
-> unexpected. Later, those reserves lead to 0-order allocations going to the
-> slow path and starting reclaim.
-> 
-> >From /proc/pagetypeinfo, without the patch:
-> 
-> Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> Node    0, zone    DMA32, type   HighAtomic      1      8     10      9      7      3      0      0      0      0      0
-> Node    0, zone   Normal, type   HighAtomic     64     20     12      5      0      0      0      0      0      0      0
-> 
-> With the patch:
-> 
-> Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-> 
-> Fixes: 1ebbb21811b7 ("mm/page_alloc: explicitly define how __GFP_HIGH non-blocking allocations accesses reserves")
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> Tested-by: Helen Koike <koike@igalia.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: NeilBrown <neilb@suse.de>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
+=D0=B2=D1=82, 19 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 23:2=
+7 Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Aug 19, 2025 at 03:16:16PM +0300, Svyatoslav Ryhel wrote:
+> > Parallel VI interface found in Tegra30 is exactly the same as Tegra20 h=
+as.
+>
+> That's not what the compatible schema says. 'exactly the same' implies a
+> fallback to whatever it is exactly the same as.
+>
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml    | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
+ra20-vip.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
+a20-vip.yaml
+> > index 14294edb8d8c..39e9b3297dbd 100644
+> > --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
+p.yaml
+> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi=
+p.yaml
+> > @@ -13,6 +13,7 @@ properties:
+> >    compatible:
+> >      enum:
+> >        - nvidia,tegra20-vip
+> > +      - nvidia,tegra30-vip
+> >
 
-Yes, this makes a lot of sense to me. GFP_NOWAIT allocations should be
-opportunistic and quick to fail rather than dipping into memory
-reserves. We must have overlooked that during the review.
-Acked-by: Michal Hocko <mhocko@suse.com>
+Rob, may I use this:
 
-> ---
->  mm/page_alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2ef3c07266b3..bf52e3bef626 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4219,7 +4219,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
->  		if (!(gfp_mask & __GFP_NOMEMALLOC)) {
->  			alloc_flags |= ALLOC_NON_BLOCK;
->  
-> -			if (order > 0)
-> +			if (order > 0 && (alloc_flags & ALLOC_MIN_RESERVE))
->  				alloc_flags |= ALLOC_HIGHATOMIC;
->  		}
->  
-> -- 
-> 2.47.2
+properties:
+  compatible:
+    one0f:
+      - const: nvidia,tegra20-vip
+      - items:
+          - const: nvidia,tegra30-vip
+          - const: nvidia,tegra20-vip
 
--- 
-Michal Hocko
-SUSE Labs
+Among all Tegra SoC only 2 have VIP support Tegra20 and Tegra30.
+Tegra30 is backwards compatible with Tegra20 so we can use fallback.
+There should be no new generation added to this schema.
+
+OR should I use enum?
+
+properties:
+  compatible:
+      one0f:
+        - enum:
+          - nvidia,tegra20-vip
+
+        - items:
+          - const: nvidia,tegra30-vip
+          - const: nvidia,tegra20-vip
+
+> >    ports:
+> >      $ref: /schemas/graph.yaml#/properties/ports
+> > --
+> > 2.48.1
+> >
 
