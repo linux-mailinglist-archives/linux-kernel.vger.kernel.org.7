@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-792152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71BAB3C0D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:34:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B401AB3C0D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7825620FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540172017CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C473277B4;
-	Fri, 29 Aug 2025 16:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fDvC81Ed"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F4E321F35;
+	Fri, 29 Aug 2025 16:33:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794261917ED;
-	Fri, 29 Aug 2025 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD1F1C1F05;
+	Fri, 29 Aug 2025 16:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485205; cv=none; b=Wh4zriOpSju2GBBVr5XgUWdO9pZFhYYerL/Loz7PibyJ7JkifTTy/O146XkrI6fCClxE1MEtMjijVLIe8h9LXhwAW+dkzsG2HMe7qayrStT34L3t/r4W5OjqA88T5UT+RWFuNBZCoUDZdGWYP4SIZWJ0AXSw33EI/csQPTHdlxI=
+	t=1756485189; cv=none; b=e9vNKvlxmB+Bvk5/f9S2dG+Xrs6ohegr6ZZfbrh+jvCD530vi3TB9L8M2x93RzjPIggptsYelAB+Q5WQxo3wiy6WbMpXD6vovv0dHZdGoTwujfgVlL2WjqNQEazg4Mc/r0pJ4lgTW0akEDsOOLqtWSJb0G1dnVb7nGmXZ/l4w+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485205; c=relaxed/simple;
-	bh=jgKCSrHUv6K524VE1l0gFO14QqQhak8oamgEm7Ome3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4TBnTysFkSb0utOEBubz/WzIwzz5tyo28l506rg7jvwsnSCDIVBRO2P7037aCWxkiHlojIQ4l0i/ysq/EnnletuAWp9AdVXiUQ4OjARQLKQlfOACSu4Ov1FqQE7NiIkOiU7wKUk7tPSA7qX6r+neOPClVe70+MS5mjklkh8CTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fDvC81Ed; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94756C4CEF0;
-	Fri, 29 Aug 2025 16:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756485205;
-	bh=jgKCSrHUv6K524VE1l0gFO14QqQhak8oamgEm7Ome3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fDvC81EdV68n1C2rjUnPP0FGw7Ro+eO2SKfgVaNU53F46YJnPfz0uHojZ+hM+b912
-	 e5UuCgDEslujPigKXynTswZGejWJnsPnogn5b0CztVhjZEiU32X5SVpODA01DxqLRB
-	 PRJO47xgWBLI1QdBK6gSSadZmivfOJMw86AuxagM=
-Date: Fri, 29 Aug 2025 18:33:21 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
-	"Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
-	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] USB/IP VHCI suspend fix and driver cleanup
-Message-ID: <2025082941-frenzied-chaos-890c@gregkh>
-References: <20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com>
- <2025072637-corny-careless-8523@gregkh>
- <3dd94c4f-0971-4744-91e1-3a5474e1576c@collabora.com>
- <5b39ce10-9845-4429-95bb-18b03513cdaf@collabora.com>
+	s=arc-20240116; t=1756485189; c=relaxed/simple;
+	bh=nvG0E5ZhYK5MJoTg4GDlBaItGIBcw2d9WraWaihQzpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lfFJAWFtf7bE1zlfJwGrQ3nca8xV0oYuOVHSGl8bZ/qp5FAQX9JwNtdNdkZmY6mrOipaL3BwEdyCtRK7bU6DeMhhKa5cwDPG/RuZp9isGXZPZJh7rCu9qQ7jub+UcvQ+HNVevi/0tcOWJaOTKq32OvyfwWOWr/gXwHJOYvoq3KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 3C9FCC0896;
+	Fri, 29 Aug 2025 16:33:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id ECA1E80015;
+	Fri, 29 Aug 2025 16:32:58 +0000 (UTC)
+Date: Fri, 29 Aug 2025 12:33:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
+ <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250829123321.63c9f525@gandalf.local.home>
+In-Reply-To: <CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<20250828180357.223298134@kernel.org>
+	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
+	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+	<20250828161718.77cb6e61@batman.local.home>
+	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+	<20250828164819.51e300ec@batman.local.home>
+	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b39ce10-9845-4429-95bb-18b03513cdaf@collabora.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fajkd43mw64d5hsx51m4n734ki86gnp7
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: ECA1E80015
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+bqOqdpN7LTQMsmPjOiNjsKgQJjfUekco=
+X-HE-Tag: 1756485178-347167
+X-HE-Meta: U2FsdGVkX1/6r0lfSm84U5iVNsJiuqkZyHmu8dDfJFZxSk088FqCrEwXM1xBNjtM/svUyMJqVyYDcj8rUIM8ey1O6me8UarWSysyky7t8Dhku/ztC/hmCRVdIbQ55BgEr+niMHY6tGbXoLK4Q+Sib9dxiPjTg8OJlknfZcUuB0cDKbZNeyI/wdBLbByfvV7P/79/jxCz+xDLMpysW3EV3xNGAH5In15Sg/USnJeI8OfnOMp1O03QSSeH13ZXwAEBAFN+n1Nf99qWBI6mGhlB23BG/M6jKk983TOLysz+btWdso1WM1YcEGzF4pj8kWu23fvF3TDfz8yPH4I+sX/3FwBeeChPdzu4wanQYcUuRmSdA+sZfjVW7krSUvy2BoW9
 
-On Wed, Aug 27, 2025 at 12:14:15PM +0300, Cristian Ciocaltea wrote:
-> On 7/28/25 12:41 PM, Cristian Ciocaltea wrote:
-> > Hi Greg,
-> > 
-> > On 7/26/25 9:43 AM, Greg Kroah-Hartman wrote:
-> >> On Sat, Jul 26, 2025 at 01:08:02AM +0300, Cristian Ciocaltea wrote:
-> >>> The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
-> >>> prevent entering system suspend when at least one remote device is
-> >>> attached to the virtual USB root hub.
-> >>>
-> >>> However, in some cases, the detection logic for active USB/IP
-> >>> connections doesn't seem to work reliably, e.g. when all devices
-> >>> attached to the virtual hub have been already suspended.  This will
-> >>> normally lead to a broken suspend state, with unrecoverable resume.
-> >>>
-> >>> The first patch of the series provides a workaround to ensure the
-> >>> virtually attached devices do not enter suspend.  Note this is currently
-> >>> limited to the client side (vhci_hcd) only, since the server side
-> >>> (usbip_host) doesn't implement system suspend prevention.
-> >>>
-> >>> Additionally, during the investigation I noticed and fixed a bunch of
-> >>> coding style issues, hence the subsequent patches contain all the
-> >>> changes needed to make checkpatch happy for the entire driver.
-> >>
-> >> You are doing two major things here, fixing suspend, and cleaning up
-> >> checkpatch issues.  Please make that two different patch sets as those
-> >> are not logical things to put together at all.  Work on the suspend
-> >> issue first, and after that is all done and working, then consider
-> >> checkpatch cleanups, those are not that important overall :)
-> > 
-> > Yeah, the cleanup part ended up larger than initially anticipated, but I
-> > don't really expect further changes on the fixup side.  I can handle the
-> > split if another revision would be still required, or would you like me to
-> > do this regardless?  I've just made a quick test moving the first patch to
-> > the end of the series and it didn't cause any conflicts, hence there won't 
-> > be any dependencies between the two patch sets.
+On Fri, 29 Aug 2025 09:07:58 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> The dentry pointer will typically stick around rather aggressively,
+> and will likely remain the same when you delete a file and create
+> another one with the same name, and the mnt pointer will stick around
+> too, so the contents of 'struct path' will be the exact same for two
+> completely different files across a delete/create event.
+
+I'm not sure how often a trace would expand the event of running code,
+deleting the code, recreating it, and running it again. But that means the
+stack traces of the original code will be useless regardless. But at a
+minimum, the recreating of the code should trigger another print, and this
+would give it a different build-id (which I'm not recording as well as the
+path).
+
 > 
-> This continues to apply cleanly on recent linux-next, hence I'm not sure if
-> there's still a need to resend as two separate patch sets.
+> So hashing the path is very likely to stay the same as long as the
+> actual path stays the same, but would be fairly insensitive to the
+> underlying data changing. People might not care, particularly with
+> executables and libraries that simply don't get switched around much.
+> 
+> And, 'struct file *' will get reused randomly just based on memory
+> allocation issues, but I wouldn't be surprised if a close/open
+> sequence would get the same 'struct file *' pointer.
+> 
+> So these will all have various different 'value stays the same, but
+> the underlying data changed' patterns. I really think that you should
+> just treat the hash as a very random number, not assign it *any*
+> meaning at trace collection time, and the more random the better.
+> 
+> And then do all the "figure it out" work in user space when *looking*
+> at the traces. It might be a bit more work, and involve a bit more
+> data, but I _think_ it should be very straightforward to just do a
+> "what was the last mmap that had this hash"
 
-As I no longer have any of these in my review queue, yes, you are going
-to have to resend whatever you want us to accept :)
+I just realized that I'm using the rhashtable as an "does this hash exist".
+I could get the content of the item that matches the hash and compare it to
+what was used to create the hash in the first place. If there's a reference
+counter or some other identifier I could use to know that the passed in vma
+is the same as what is in the hash table, I can use this to know if the
+hash needs to be updated with the new information or not.
 
-thanks,
-
-greg k-h
+-- Steve
 
