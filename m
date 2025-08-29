@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-791294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AD3B3B4C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0325BB3B4CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99EA77AA890
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689053BE361
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD868285CB8;
-	Fri, 29 Aug 2025 07:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ABB286892;
+	Fri, 29 Aug 2025 07:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KGOt9k6J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRld4nrX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A40285040;
-	Fri, 29 Aug 2025 07:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D662628507E;
+	Fri, 29 Aug 2025 07:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756454019; cv=none; b=Xc7YVLYMierNgBEBX/NXtO+DAg59gkVsBBw4TaxwdFzQ404Msvj4EKeFq8LFLQHpVdOqK2vVL2jZNBh2ZU6YhTK+EFXnLrvZvvzPRL1KhiwPlNvlKQNjNkxw+JrZC5hrGS8VWa2P4vP/0b1KZXfS99d0rcMbQDoOJkn0PNb0QX0=
+	t=1756454027; cv=none; b=l0m7/bvBrIOBk+0hn5DRXCEbRaTukXSeYkT6KkMTYSBrUijqRx3fKapIjOhUs4rUfS9ydSv2HRLrPv7t5N32DRJexQVJj2zr+bfxtIbnlAeyw0pnaNchV/up6+X6fhwCTQvV+gS3Sw/1xdVbUB6p7wBzzOpSTcLVo3JXvrDU3ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756454019; c=relaxed/simple;
-	bh=lGnjYgv5elXMwfPyxfMjkMn1zViVKrlNZ159H/ar7Us=;
+	s=arc-20240116; t=1756454027; c=relaxed/simple;
+	bh=T08v851Q2crHdE5uCS95kO54ArUzsuo7GpEza0t3CRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsCvG/W1sL6mB/16TdwlgiG6wDTs9nQ8mY4spVuywlplrBC9FtbAs5ySeCCaGOM2Awr1B2k0DOSMwGeRqo5IRmsy3XoIuRVn56C4+SlZURaJFqKxbPr86fJjnz+MdY/1+fYVgr2cjnB2gwgzTR5rjW2sXp1lDbJrLljiv0zQCb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KGOt9k6J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C5FC4CEF0;
-	Fri, 29 Aug 2025 07:53:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yi8zS+h8OBIBw6vBdEZCG5FzYgbBX2UEMVMtnOBjbeYb5d2gSnvKmcxjmvnfwUSt91ZAb5zalqeW531bGHpMIp7HQ8/ZPnGoZ8CrmH6nesojlGKEeUmr+iipRQQhGik/Cc1ESzXEKSx92huwUfO90EAlkf8y2PIgCyPDSPswgFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRld4nrX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE117C4CEF0;
+	Fri, 29 Aug 2025 07:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756454018;
-	bh=lGnjYgv5elXMwfPyxfMjkMn1zViVKrlNZ159H/ar7Us=;
+	s=k20201202; t=1756454026;
+	bh=T08v851Q2crHdE5uCS95kO54ArUzsuo7GpEza0t3CRM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KGOt9k6JGUZm/s/BiB2row7YwILB1Wv9QyejLhNWD2L1ohpPgQtX52KGXrGK1Trd1
-	 C+WV3xgYVoOVvrGKjrDxxZ9DXMIkAu9wg5pc/QWoZImosfpFINNXIfEHNb6MV4XxsL
-	 i3Jyh6T+vdnEi26V2a1CQlNksFjbyCgzEybK7NydCv2Rx+TIIf/7jmqAUV0IsG9aX4
-	 DvejgTIDG3gV8I+89DKvFjUK4wZpQkcdhWOiNKs1H+riOkIzIUr47oY6TFWjYPvn2P
-	 jBzvaMohNV0D3/pWSGgdSgNpBScQbXwcZWfPMpzV/xrKX9/RXAPIkp6KoeZe6p29oR
-	 h1Ka89zJ+O5PA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1urtvL-000000000g6-3mNQ;
-	Fri, 29 Aug 2025 09:53:27 +0200
-Date: Fri, 29 Aug 2025 09:53:27 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, "Nancy.Lin" <nancy.lin@mediatek.com>
-Subject: Re: [PATCH] drm/mediatek: fix device leaks at bind
-Message-ID: <aLFcd1ZLr0HUm-CM@hovoldconsulting.com>
-References: <20250722092722.425-1-johan@kernel.org>
- <aK7VCJ9yOKntjgKX@hovoldconsulting.com>
- <CAAOTY_-CijzQqrRUf_=cQbTUSybN3GT46q0vx1139mmZub_OfQ@mail.gmail.com>
- <aLFbcznLUutbMo6r@hovoldconsulting.com>
+	b=vRld4nrX3VpK7Gv76nwsR16PaFiM0vmCCIUU1zJ1XeVJPa9EpH4YyrHKWvbLp6Rtj
+	 eWwpj9xjmEqG8CyUtY2tcHvqrdS4phxUBh/w0h3Ik8+s0X8/3uFWN4zd14LS/N9sLe
+	 kVoaGj4dp3Z14YR6CLFo7cma8GSI34LpZibVDOoOsO3v0INm69ZYtCPUW7FuP5jOv6
+	 YkNJD8uNn6QvLYLqo3DsYbeXCYyDjH8gEdnBD4lJvLHm+t1DcsTPqmZONwGFZKHs7c
+	 KOtEpfF+m5zUHeJXN37IKu8iOQ+pff0JdE5OyoZo5r1QTED/qwEALO2VGQtz82UxRl
+	 qQuZUrSr2k+hA==
+Date: Fri, 29 Aug 2025 09:53:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nino Zhang <ninozhang001@gmail.com>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, vkoul@kernel.org, rahulbedarkar89@gmail.com, 
+	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: dma: img-mdc-dma: convert to DT schema
+Message-ID: <20250829-peculiar-pug-of-argument-1bfec0@kuoka>
+References: <20250825074141.560141-1-ninozhang001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,39 +57,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLFbcznLUutbMo6r@hovoldconsulting.com>
+In-Reply-To: <20250825074141.560141-1-ninozhang001@gmail.com>
 
-On Fri, Aug 29, 2025 at 09:49:07AM +0200, Johan Hovold wrote:
-> On Fri, Aug 29, 2025 at 07:51:23AM +0800, Chun-Kuang Hu wrote:
-> > Johan Hovold <johan@kernel.org> 於 2025年8月27日 週三 下午5:51寫道：
+On Mon, Aug 25, 2025 at 03:41:41PM +0800, Nino Zhang wrote:
+> Convert the img-mdc-dma binding from txt to YAML schema.
+> No functional changes except dropping the consumer node
+> (spi@18100f00) from the example, which belongs to the
+> consumer binding instead.
 > 
-> > > On Tue, Jul 22, 2025 at 11:27:22AM +0200, Johan Hovold wrote:
-> > > > Make sure to drop the references to the sibling platform devices and
-> > > > their child drm devices taken by of_find_device_by_node() and
-> > > > device_find_child() when initialising the driver data during bind().
-> > > >
-> > > > Fixes: 1ef7ed48356c ("drm/mediatek: Modify mediatek-drm for mt8195 multi mmsys support")
-> > > > Cc: stable@vger.kernel.org    # 6.4
-> > > > Cc: Nancy.Lin <nancy.lin@mediatek.com>
-> > > > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > >
-> > > Can this one be picked up?
-> > 
-> > Ma Ke has sent a similar patch [1] before you. And that patch fix more things.
-> > I've already pick up the final version [2].
-> > 
-> > [1] https://patchwork.kernel.org/project/dri-devel/patch/20250718033226.3390054-1-make24@iscas.ac.cn/
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/commit/?h=mediatek-drm-fixes-20250825&id=1f403699c40f0806a707a9a6eed3b8904224021a
-> 
-> I'm afraid that patch is completely broken and introduces a potential
-> use-after-free by adding a bogus decrement of the OF node refcount.
-> 
-> I suggest you drop that one and pick up mine instead which is correct
-> and cleaner.
+> Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
+> ---
+> v2 -> v3:
+> - Fix remaining issues based on Rob's and Krzysztof's comments.
 
-I see now that that patch was included in a drm pull request for rc4.
-I'll send an incremental fix instead.
+That's vague. What exactly did you change?
 
-Johan
+Especially that this is not true. You never responded to comments, never
+implemented them.
+
+> - Link to v2: https://lore.kernel.org/all/20250824034509.445743-1-ninozhang001@gmail.com/
+> 
+> v1 -> v2:
+> - Addressed review comments from Rob.
+> - Link to v1: https://lore.kernel.org/all/20250821150255.236884-1-ninozhang001@gmail.com/
+> 
+>  .../bindings/dma/img,pistachio-mdc-dma.yaml   | 89 +++++++++++++++++++
+>  .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 ------------
+>  2 files changed, 89 insertions(+), 57 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+> new file mode 100644
+> index 000000000000..198e80b528c8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/img,pistachio-mdc-dma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: IMG Multi-threaded DMA Controller (MDC)
+> +
+> +maintainers:
+> +  - Rahul Bedarkar <rahulbedarkar89@gmail.com>
+> +  - linux-mips@vger.kernel.org
+> +
+> +allOf:
+> +  - $ref: /schemas/dma/dma-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: img,pistachio-mdc-dma
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 32
+
+Nothing improved, so with vague commit msg it means you just ignored my
+comment.
+
+Best regards,
+Krzysztof
+
 
