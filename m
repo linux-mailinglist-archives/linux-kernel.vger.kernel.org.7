@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-791282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA385B3B494
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:44:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389C8B3B49A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398C11C83609
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C783BC59E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D727B33C;
-	Fri, 29 Aug 2025 07:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94625284B59;
+	Fri, 29 Aug 2025 07:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vjx01uYh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GYB4SZcU"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2A22A4D5;
-	Fri, 29 Aug 2025 07:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA323ABBD;
+	Fri, 29 Aug 2025 07:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756453460; cv=none; b=Nox2edtW1S1sM+RBLGdwPEyeOL+aFWmH42aiTtvauXEWn+vjHD+hkEyw10nT+1FlvTVJbuE+E/uvKo/bFElFRzJTkFCv0SqiT+3osxP1z4jD+W2bO6Umv1SDzjOwCaYpqq3Vphg8uz06l/KzX7tEgU26nIf8Ix3KEB3C0OA7QPM=
+	t=1756453635; cv=none; b=fOzxjIaFLcQ+M4QuxkmOPo39Y+/i8x77l8/HIhTr4zkIZJ04Ey6CvAdvOzjWSFbLqYtKLJGhxSfQ5TglBZy+y1uZqyEIf4bF7YALKbqziIXfE+8Z5XGTH1O5rBO68Rde5qJQFLEjUrBsu9XglsvCbY3m54a9YcH1oBHPr8O9h8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756453460; c=relaxed/simple;
-	bh=nMvebug/8aKBzyMnj8cDMWfLOrd+I+pKXhPg7EME4vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixe9r4gXh+vfqpcyrSEeI1ffILq3o57GYxzD7pNu6rRiHPG+KjsluG52YPxv1biY0O8azstvF+kdJJnHxaPmy2P2zQ33+hsyogNPVYBDpEdqDI0jBTFxtNbDTH/pKBlNDkdLcbv7DBCW8jNawBTMZvVZRFisFQHizH1blYI+M84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vjx01uYh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD31C4CEF4;
-	Fri, 29 Aug 2025 07:44:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756453459;
-	bh=nMvebug/8aKBzyMnj8cDMWfLOrd+I+pKXhPg7EME4vk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vjx01uYhuY7ysGvUDRQnccZcPl1S2rnoL2GRt9uHIO8R8kBXUw0FyO89wrumtXRc3
-	 HKLiCsdUwk/ySu0HZmC5szGw0LM2IbgEJenbi6sZPYs849o6Uofxz08WaaX7HCFvjd
-	 bcVyOUh7V3l+Q9aGKCgx5HmRT9STMjOQWWpuevJ+/4VwyUjhAemwLYexIbCnukSF53
-	 6R0pDMb5Xa9r3jrqSNxbSDx0pAPeo1NFhpk8bJ4jLbGwW4hpjyArBL2rsKeI4NEzHd
-	 cjDe6e9ZLyOqhbDhZ0I8emtbZM0pIOR5OipJLOzFB/mEYAObMWZB7dCXRiGkTNsUWg
-	 qavyfN+q8lO3A==
-Message-ID: <aeef4f20-03c6-42a7-aac0-e385419a05f3@kernel.org>
-Date: Fri, 29 Aug 2025 09:44:14 +0200
+	s=arc-20240116; t=1756453635; c=relaxed/simple;
+	bh=b3789sOpnYbcUUtFo/25BZu2nfwApljd8zKm0RqVYFI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gJOYZz7VaRdHdOYAv+2QlsCQ2QCJ3DrKhpCy3UFbmosET7VDkwdGBsgvu3qgD49sxoPI914GiRV0LscvowWxeWKK61krS+om1LD6lvNWeUBLSV2V+K+S4ec4W9wYBS4+ar/1N6y4A0koYygNkuPJQWlXDyEr76dDulgbXwlqoYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GYB4SZcU; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57T7l6Ok1704553;
+	Fri, 29 Aug 2025 02:47:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756453626;
+	bh=SSbzDEs4DoD1Kv6Y2ZtI25mfCIzDcnm2Cf5crMrd5eA=;
+	h=From:To:CC:Subject:Date;
+	b=GYB4SZcUazgWqd1t1R/PuJRUixUdaNPUbpfrY+0F3dvgHVigeVPdJJ/u23lvb8qj5
+	 E+JfK+doEmqqK8HnluFuJ4I36vWHjLD1rRdP8repxQ/MhKbm+SYqMGA12uzLrnNR4p
+	 3YRgx5htqXU2J8gl4EWr/uhHlcKVuowe4Tj50chE=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57T7l5C2384084
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 02:47:05 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 02:47:05 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 02:47:05 -0500
+Received: from hp-z2-tower.dhcp.ti.com (hp-z2-tower.dhcp.ti.com [172.24.231.157])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57T7l1fP1717407;
+	Fri, 29 Aug 2025 02:47:02 -0500
+From: Hrushikesh Salunke <h-salunke@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <h-salunke@ti.com>, <danishanwar@ti.com>
+Subject: [PATCH 0/3] arm64: dts: ti: Add bootph-all tag to USB PHY controllers
+Date: Fri, 29 Aug 2025 13:16:57 +0530
+Message-ID: <20250829074700.1531562-1-h-salunke@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Nick Chan <towinchenmi@gmail.com>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org
-References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
- <20250818-t8015-nvme-v2-3-65648cd189e0@gmail.com>
- <20250820222044.GA1513864-robh@kernel.org>
- <3147ebf4-054c-4777-811f-86d0ad14caf6@kernel.org>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <3147ebf4-054c-4777-811f-86d0ad14caf6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 27.08.25 15:20, Krzysztof Kozlowski wrote:
-> 
-> What commit fails to explain (folks, please fix that) is that device is
-> incompatible with existing ones. Right?
+This patch series adds the bootph-all property to USB0 PHY controller 
+nodes across multiple TI SoCs (AM62, AM62A, AM62P, J722S). 
 
-I've already applied this [1] but I can still rebase and change the 
-commit message to "Add apple,t8015-sart for SARTv0 found on the Apple 
-A11 SoC, which uses a different MMIO layout and is thus incompatible 
-with the previously described versions".
+The bootph-all tag ensures that these USB PHY controller nodes are 
+available during all boot phases, which is required for USB DFU 
+(Device Firmware Upgrade) boot functionality.
 
+This series is based on commit:
+8cd53fb40a30 Add linux-next specific files for 20250828
 
-Sven
+Hrushikesh Salunke (3):
+  arm64: dts: ti: k3-am62p-j722s-common-wakeup: Add bootph-all tag to
+    usb0-phy-ctrl node
+  arm64: dts: ti: k3-am62-wakeup: Add bootph-all tag to usb0-phy-ctrl
+    node
+  arm64: dts: ti: k3-am62a-wakeup: Add bootph-all tag to usb0-phy-ctrl
+    node
 
+ arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi               | 1 +
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi              | 1 +
+ arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi | 1 +
+ 3 files changed, 3 insertions(+)
 
-[1] 
-https://lore.kernel.org/all/175593408419.53541.12520438370584715457.b4-ty@kernel.org/
+-- 
+2.34.1
 
 
