@@ -1,222 +1,159 @@
-Return-Path: <linux-kernel+bounces-791968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2834EB3BEDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E641B3BEE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D864C3B6F0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3BE1C82E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58048321F5A;
-	Fri, 29 Aug 2025 15:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3360E322549;
+	Fri, 29 Aug 2025 15:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdXaaKgd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="OvGqZzsx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WansO7sm"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7DC321F37;
-	Fri, 29 Aug 2025 15:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9104314A79
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480062; cv=none; b=lIs67Nolg3trh1i2a3RCELXqlTMvzjXumQZWTw3jxV5L56htm+NUl39C7CTf8BcOM0WWgbPsAzsPcJBeMVsH1gFGTUTV91GEOZVUoFfIYOES0wC3aiRyna/F80SNCsFjA0VQqRpJubBmFl1rD3d31BFiuEkQ71NbYgFNvBZqCq8=
+	t=1756480222; cv=none; b=K0yriLVvnPeNu2utVf/BU5dchSXy3Q11NCeuk+Lo1KOB4Q9gXGu13rHTUzL/JJGaIMsz3nyL8MYVFDou0PubUhuQpTUJNWN9qef9N4KqcIQSSG/sr+N2FsNBbzZw0/l7oI6pba8QTt8H97TMcd1VCYLqvdOgAmbU8wSP/B2zzfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480062; c=relaxed/simple;
-	bh=97CGla5pB7DKcJ8OJXm4108wxl3hH8kDUjnW5dSe6yE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1uAC9AIjSuaGIYxciV7EwRVRYCF/EPfJNqWLz15BjuUrOJJXoclkxJ64Lz8g0GKD82f9Vm2I8VyhXRs+HTlDSnpP/mR8uT2nBMyCv3pbsr6AlwaaH1no7hZTFS157qLOuNCqDOOdecc2Uf63TDbTHvQZU1fKqzYEMKtqKRwvuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdXaaKgd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 063FEC4CEF0;
-	Fri, 29 Aug 2025 15:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756480062;
-	bh=97CGla5pB7DKcJ8OJXm4108wxl3hH8kDUjnW5dSe6yE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=IdXaaKgdAjB9Krugil/NAPNZh7tGr7cArL8+TTYtzq2g9HeEmfGHXWnEcg3SZnU30
-	 Z460TU0rXaU+z/5Ze8C/gP1y6sxVmEkOJRoMVfEBNjHX85YVrpz3MDWg91q21DW3ax
-	 eQ3ssz7L4tf8dBt2xfXtC/ruzMKbL5niNHD+ezGeVJBNlUGx9jWYBq1qXCQwHp21QZ
-	 ugU1/wWRErYWFqtiWK7xT1mMXI3k9L1DBYauly6DjMO3sUsLVzVg3e63WsrONMh+Xv
-	 RahNjyAPsBlDzbuRGa27IUalf3ViGgaWKyquHDr7Fg1c9gtmXG/hKafAlc0uzLp/QA
-	 RbjP1OXB9tadA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A4CF5CE0BB0; Fri, 29 Aug 2025 08:07:41 -0700 (PDT)
-Date: Fri, 29 Aug 2025 08:07:41 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [paulmck-rcu:dev.2025.08.13a] [tracing]  364ac25d46:
- WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault
-Message-ID: <68044ea3-32c1-4d72-9bd3-fe2031669d79@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202508211038.c93e8603-lkp@intel.com>
+	s=arc-20240116; t=1756480222; c=relaxed/simple;
+	bh=qsV/u9Nwr0h7M/C3VeO1oeIS2ynCNx5VPqSz8xyvcZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ezJUMKU6Kyx8ESPRf8GCrkUyp3w8HAj1/He/fypgoictRCS+0HwLZJ+WT5hbAsJR3xgYn+/mTuFITrmzfc43vmM6lzRnkaceca6Vy0WdT+vNpDZuUX+XtRHClMAdjFyAs1OnC9klGiGThiuJ6w8owVg7KvKP+pLxqU/yqTq7f7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=OvGqZzsx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WansO7sm; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9CD171D001E7;
+	Fri, 29 Aug 2025 11:10:18 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 29 Aug 2025 11:10:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1756480218; x=1756566618; bh=5O3s3cpJyL9ApAILIp2T0
+	tGI4d5H31t5BPcHpcF2ayA=; b=OvGqZzsx/FzdATbJoy0unXrm8eWlKJfc0OMiG
+	MWVXwBK5LHIDIwz3bfF7R0bvL9wFqFaA/NZsfoVRs7jwC94cdVfNR85Yz0xNznrc
+	owpw+EILrx5OnfhGsxCnxHu0wFjryXOc076zRQv/JTztKO0yI4hrp8xbqH1cqXHk
+	mOOcP+a3BztT2oyZgCw2P8BUgzfqqE6nrK/R2vn8vsouDKOIfINU19qtuiNN379i
+	7Ws5LUKl0YAjndvXcvSy6SCOiMHzRqDW14JVZPnhR0V2uMejhb1LDOqpZtqGMqMG
+	YCQk/dckKvO/MuPyJYsIoma4Bjr1l9NiHqw2KiV8BivuFqF9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756480218; x=1756566618; bh=5O3s3cpJyL9ApAILIp2T0tGI4d5H31t5BPc
+	HpcF2ayA=; b=WansO7smqDH58YZ0VWJCiw5PO+2UgGn4QVRtzvzn2NB5r4qUS7x
+	sRPhndFcfDK3ZODb8xeRwYF4ikHC3XxgIEWup2eH2vWW1HK6eOhKOnx8gUpOai7C
+	UQkqVIhzMPzZrWB3Vm2VMNicRLOtFbd74wq8+/+capo3YcSWZFiRKOypUKcehZd4
+	vQKPAfo1zEN5y+GdLnKT6OiFIWQ3ytaR6B7ZUa4d9Hz3dGWDa1V/tjLal/JKA3d7
+	7W/KqIDZMU2AXO10sJ1zmyv/rIZQCEEeIQYFtbXXmrhLDr8Yo163Y4y+crbIj8Ts
+	NgfvJsQ6txQMdnksP4xtQA/EkcHHrpoD7kQ==
+X-ME-Sender: <xms:2cKxaAo1SJNO-WANuasZO9muLaUaloYliqhstWgcUU26k0SSpGg-ew>
+    <xme:2cKxaOAHpjTPnlh7wxiMOMOarNdIY2dK3Gyu6l8qKK6xlfvSr1BWmm00SLa_7VcaZ
+    qbfbQBfsqyiOxvtmw>
+X-ME-Received: <xmr:2cKxaKyeEhdwMvf0AmSxBk86cnWmPj45vNt40sLuOa2bmd6sxKXxl1BvWTbwi4tX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeegvddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomheptehlhihsshgrucft
+    ohhsshcuoehhihesrghlhihsshgrrdhisheqnecuggftrfgrthhtvghrnhepueefiedvhe
+    ffveegieejjeevgfejjeduveekffeiveeuvedvtedvhfelieeutdfgnecuffhomhgrihhn
+    pehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehhihesrghlhihsshgrrdhishdpnhgspghrtghpthhtohepiedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepgihurghniihhuhhosehlihhnuhigrdgrlh
+    hisggrsggrrdgtohhmpdhrtghpthhtohepvhhirhhtuhgrlhhiiigrthhiohhnsehlihhs
+    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepvghpvghrvgiimhgrsehrvgguhhgrth
+    drtghomhdprhgtphhtthhopehjrghsohifrghnghesrhgvughhrghtrdgtohhmpdhrtghp
+    thhtohepmhhsthesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:2cKxaD3zT-coK3j3igEonjeljXp6s9kRXB9_fW6k9fHkeMRs-zAC9A>
+    <xmx:2cKxaCzNfgIsP4CEb7mMXbiV-m62ySFXkI2FoHoQNEk7rs5Wm9bvmg>
+    <xmx:2cKxaCG4l5BRGTm6j2HHdOw2FhATmLM4f6mmb_0kUjCBk15tclmqgw>
+    <xmx:2cKxaNZrwI6yRoNAzADiZOCjcDNpuPRTNrzRdAtyxqIRB2xTs-tNgw>
+    <xmx:2sKxaKJVO60jLd2B0zYj9y0sFHnTjPxtpXdoex2wIOtroviN2_3Je6jd>
+Feedback-ID: i12284293:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 29 Aug 2025 11:10:17 -0400 (EDT)
+Received: by mbp.qyliss.net (Postfix, from userid 1000)
+	id 214EE14F3423; Fri, 29 Aug 2025 17:10:06 +0200 (CEST)
+From: Alyssa Ross <hi@alyssa.is>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] virtio_config: clarify output parameters
+Date: Fri, 29 Aug 2025 17:09:44 +0200
+Message-ID: <20250829150944.233505-1-hi@alyssa.is>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202508211038.c93e8603-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 01:26:45PM +0800, kernel test robot wrote:
-> 
-> hi, Paul,
-> 
-> we also noticed there is similar commit in newer branch
->   dev.2025.08.14a
->   dev.2025.08.19a
-> but we didn't finish any bisect for them so far.
-> 
-> if the issue is already known and fixed in newer version, please just ignore
-> this report. sorry if any inconvenience.
-> 
-> below full report FYI.
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault" on:
-> 
-> commit: 364ac25d46eea504eb90229d2a1f92e18c1a1eae ("tracing: Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast")
-> https://git.kernel.org/cgit/linux/kernel/git/paulmck/linux-rcu.git dev.2025.08.13a
-> 
-> in testcase: boot
-> 
-> config: i386-randconfig-004-20250819
-> compiler: clang-20
-> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
+This was ambiguous enough for a broken patch (206cc44588f7 ("virtio:
+reject shm region if length is zero")) to make it into the kernel, so
+make it clearer.
 
-Thank you for your testing efforts, and apologies for being slow!
+Link: https://lore.kernel.org/r/20250816071600-mutt-send-email-mst@kernel.org/
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+---
+ include/linux/virtio_config.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Could you please try the diagnostic patch at the end of this email?
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index 8bf156dde554..7427b79d6f3d 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -193,14 +193,15 @@ static inline bool virtio_has_feature(const struct virtio_device *vdev,
+ }
+ 
+ static inline void virtio_get_features(struct virtio_device *vdev,
+-				       u64 *features)
++				       u64 *features_out)
+ {
+ 	if (vdev->config->get_extended_features) {
+-		vdev->config->get_extended_features(vdev, features);
++		vdev->config->get_extended_features(vdev, features_out);
+ 		return;
+ 	}
+ 
+-	virtio_features_from_u64(features, vdev->config->get_features(vdev));
++	virtio_features_from_u64(features_out,
++		vdev->config->get_features(vdev));
+ }
+ 
+ /**
+@@ -326,11 +327,11 @@ int virtqueue_set_affinity(struct virtqueue *vq, const struct cpumask *cpu_mask)
+ 
+ static inline
+ bool virtio_get_shm_region(struct virtio_device *vdev,
+-			   struct virtio_shm_region *region, u8 id)
++			   struct virtio_shm_region *region_out, u8 id)
+ {
+ 	if (!vdev->config->get_shm_region)
+ 		return false;
+-	return vdev->config->get_shm_region(vdev, region, id);
++	return vdev->config->get_shm_region(vdev, region_out, id);
+ }
+ 
+ static inline bool virtio_is_little_endian(struct virtio_device *vdev)
 
-							Thanx, Paul
+base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
+-- 
+2.50.1
 
-> +----------------------------------------------------+------------+------------+
-> |                                                    | c0e2a3f449 | 364ac25d46 |
-> +----------------------------------------------------+------------+------------+
-> | WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault | 0          | 12         |
-> | EIP:do_user_addr_fault                             | 0          | 12         |
-> | BUG:kernel_NULL_pointer_dereference,address        | 0          | 12         |
-> | Oops                                               | 0          | 12         |
-> | EIP:do_int80_syscall_32                            | 0          | 12         |
-> | Kernel_panic-not_syncing:Fatal_exception           | 0          | 12         |
-> +----------------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202508211038.c93e8603-lkp@intel.com
-> 
-> 
-> [    5.974959][  T117] ------------[ cut here ]------------
-> [ 5.975530][ T117] WARNING: CPU: 1 PID: 117 at arch/x86/mm/fault.c:1276 do_user_addr_fault (ld-temp.o:?) 
-> [    5.976496][  T117] Modules linked in:
-> [    5.976924][  T117] CPU: 1 UID: 0 PID: 117 Comm: sh Not tainted 6.17.0-rc1-00010-g364ac25d46ee #1 NONE  7aaffa6b74f3c55be0a24cdbe6593fcd4ccf301d
-> [    5.978263][  T117] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [ 5.979306][ T117] EIP: do_user_addr_fault (ld-temp.o:?) 
-> [ 5.979859][ T117] Code: 15 fe ff ff 89 f9 ff 75 f0 e8 96 04 00 00 83 c4 04 e9 03 fe ff ff 89 f9 89 da ff 75 f0 e8 72 01 00 00 83 c4 04 e9 ef fd ff ff <0f> 0b 89 f9 89 da ff 75 f0 e8 fc 03 00 00 83 c4 04 e9 d9 fd ff ff
-> All code
-> ========
->    0:	15 fe ff ff 89       	adc    $0x89fffffe,%eax
->    5:	f9                   	stc
->    6:	ff 75 f0             	push   -0x10(%rbp)
->    9:	e8 96 04 00 00       	call   0x4a4
->    e:	83 c4 04             	add    $0x4,%esp
->   11:	e9 03 fe ff ff       	jmp    0xfffffffffffffe19
->   16:	89 f9                	mov    %edi,%ecx
->   18:	89 da                	mov    %ebx,%edx
->   1a:	ff 75 f0             	push   -0x10(%rbp)
->   1d:	e8 72 01 00 00       	call   0x194
->   22:	83 c4 04             	add    $0x4,%esp
->   25:	e9 ef fd ff ff       	jmp    0xfffffffffffffe19
->   2a:*	0f 0b                	ud2		<-- trapping instruction
->   2c:	89 f9                	mov    %edi,%ecx
->   2e:	89 da                	mov    %ebx,%edx
->   30:	ff 75 f0             	push   -0x10(%rbp)
->   33:	e8 fc 03 00 00       	call   0x434
->   38:	83 c4 04             	add    $0x4,%esp
->   3b:	e9 d9 fd ff ff       	jmp    0xfffffffffffffe19
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	0f 0b                	ud2
->    2:	89 f9                	mov    %edi,%ecx
->    4:	89 da                	mov    %ebx,%edx
->    6:	ff 75 f0             	push   -0x10(%rbp)
->    9:	e8 fc 03 00 00       	call   0x40a
->    e:	83 c4 04             	add    $0x4,%esp
->   11:	e9 d9 fd ff ff       	jmp    0xfffffffffffffdef
-> [    5.981783][  T117] EAX: 80000000 EBX: 00000000 ECX: 00000000 EDX: 4875de00
-> [    5.982461][  T117] ESI: 46bf1f14 EDI: 46bf1f14 EBP: 46bf1ef0 ESP: 46bf1ec4
-> [    5.983152][  T117] DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068 EFLAGS: 00010046
-> [    5.983885][  T117] CR0: 80050033 CR2: 00000004 CR3: 06fc8000 CR4: 00040690
-> [    5.984575][  T117] Call Trace:
-> [ 5.984911][ T117] ? exc_page_fault (ld-temp.o:?) 
-> [ 5.985376][ T117] ? pvclock_clocksource_read_nowd (ld-temp.o:?) 
-> [ 5.985971][ T117] ? handle_exception (arch/x86/entry/entry_32.S:1048) 
-> [ 5.986454][ T117] ? do_int80_syscall_32 (ld-temp.o:?) 
-> [ 5.986948][ T117] ? entry_INT80_32 (arch/x86/entry/entry_32.S:945) 
-> [ 5.987410][ T117] ? insn_get_code_seg_params (ld-temp.o:?) 
-> [ 5.987948][ T117] ? pvclock_clocksource_read_nowd (ld-temp.o:?) 
-> [ 5.988547][ T117] ? do_int80_syscall_32 (ld-temp.o:?) 
-> [ 5.989050][ T117] ? pvclock_clocksource_read_nowd (ld-temp.o:?) 
-> [ 5.989645][ T117] ? do_int80_syscall_32 (ld-temp.o:?) 
-> [ 5.990146][ T117] ? entry_INT80_32 (arch/x86/entry/entry_32.S:945) 
-> [ 5.990611][ T117] ? irqentry_exit (ld-temp.o:?) 
-> [ 5.991053][ T117] ? exc_page_fault (ld-temp.o:?) 
-> [ 5.991512][ T117] ? entry_INT80_32 (arch/x86/entry/entry_32.S:945) 
-> [    5.991915][  T117] irq event stamp: 5810
-> [ 5.992173][ T117] hardirqs last enabled at (5809): do_wait (ld-temp.o:?) 
-> [ 5.992686][ T117] hardirqs last disabled at (5810): do_int80_syscall_32 (ld-temp.o:?) 
-> [ 5.993245][ T117] softirqs last enabled at (5692): local_bh_enable (ld-temp.o:?) 
-> [ 5.993776][ T117] softirqs last disabled at (5690): local_bh_disable (ld-temp.o:?) 
-> [    5.994304][  T117] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250821/202508211038.c93e8603-lkp@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-
-
-commit 2d6142ce44dca77fb173bb96850634b169277214
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Thu Aug 28 12:56:42 2025 -0700
-
-    EXP tracing: Diagnostic for __DECLARE_TRACE() use of SRCU-fast
-    
-    This patch is intended to test the theory that preemption needs to be
-    disabled in some portion of the tracing infrastructure extending from
-    the __DECLARE_TRACE() macro to the target BPF program.
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index a22c1ab88560b8..c422e4c5ed51ed 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -273,7 +273,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	static inline void __do_trace_##name(proto)			\
- 	{								\
- 		if (cond) {						\
--			guard(srcu_fast_notrace)(&tracepoint_srcu);	\
-+			guard(preempt_notrace)();			\
- 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
- 		}							\
- 	}								\
 
