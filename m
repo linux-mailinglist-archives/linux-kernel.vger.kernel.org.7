@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-791973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3DCB3BEE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:12:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D11B3BEF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8097B25FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857563BD1BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05C632277D;
-	Fri, 29 Aug 2025 15:11:40 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C3D322A09;
+	Fri, 29 Aug 2025 15:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhHRRbhI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E192135CE;
-	Fri, 29 Aug 2025 15:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB931E25F9;
+	Fri, 29 Aug 2025 15:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480300; cv=none; b=ap2CUOvds+CMh7FSW8kG6KFjn+k1cOkdft2HLHn9+iqEJCIwRiTrAFXspzMY+cKr8WdAvixeJ2O9U0XYj/2lXe1parto1tJVbvfxJjYkBTkVGZD9/hG/tVZlwOUNpgk2buWi9d6XmvAzOJXAwip1JW2XZYrix/VIsA6s/Yeie0Y=
+	t=1756480433; cv=none; b=pJIXVCMiwSFBdbjunNmmX0KtFusj8IHQRkCgrHfHCkSxKXKGs5Xp4vaKb/of8JGHAx+84BHv9Q+oK9qh4rFuPOHA5II/haJF/XGmY4+J/iX5dwJTNEdXZb+f+wv0YOVlX2jso42flpmQTlRFby/eCz73H0+rfF6cu6cm7kaWfVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480300; c=relaxed/simple;
-	bh=cPsnRheiY6qhu7s/fOGrllQCxeJSjbDMRwYV5cJ/Zmk=;
+	s=arc-20240116; t=1756480433; c=relaxed/simple;
+	bh=M4ZFAtBXnhHid/kXClWiR6yLGswDzXLC71DhzzXbeR8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyhcWbi5JfhIFCfnkW0Se5qtsE62b0lVONXt/Tlm8jKeCeG8DWRhb1IRw5tBABWIufITYtQYh6fL8WZimXjyySc773DCXJVS7E0DvdstVFTgEa1+tTCymGTemoTglI9cn12rjannz8p913OGl1JEi/sLxIga3yinIMs5I+N5xN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1us0lF-000000002sN-0iyL;
-	Fri, 29 Aug 2025 15:11:29 +0000
-Date: Fri, 29 Aug 2025 16:11:25 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v3 4/6] net: dsa: lantiq_gswip: support offset of MII
- registers
-Message-ID: <aLHDHbdBYTLzCMiL@pidgin.makrotopia.org>
-References: <cover.1756472076.git.daniel@makrotopia.org>
- <ece46fdecbfb75ade8400f96f8649d04b4f1a2f7.1756472076.git.daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEqLdd//HPDvNv+awn7iMF8M6j0uJr68u/XkaLuB3TBvnvBKvhP121bitVVpWMGQOkFhgOCW+Q+V+myrQDrIsjdP5bSQ6y/iO509nPv+nmhCQV2PI3bx6BuW47NDaSp3JnWOYRs1SK5tmDmjxCL4p6g5ZGI1oQ15dJdLq1k963o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhHRRbhI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E72EC4CEF0;
+	Fri, 29 Aug 2025 15:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756480432;
+	bh=M4ZFAtBXnhHid/kXClWiR6yLGswDzXLC71DhzzXbeR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RhHRRbhIXC9QLGd8swlqTnR3Ky+1cQZDs6bS3FcozvB3YpBzxB8PIrVRGEZjMpnBk
+	 kNBpVO+cxJMdWeAHt5IlaClz8YAztIBKhmkljgRc/ZBT3+fDQhCYyL+9KBAXvydDnr
+	 5EhCs3VseuCp8AonBfMm9QSN/8dK4ZjSnyqPn5FJ2TPE1pBW3O7lJTIkBaF94FMggY
+	 4t5bsfEnrnEfCNzyajMqcmKsfv57cV9wSf7BTs7Ri8s41z72QJ4OIC2F9rFm/ToTDv
+	 O/dBjjszzBxgHbm7SO6D3ij7dVuvoEAaqyYNzESXwYKRoEGLkwC+mTEXteUUfUBBGt
+	 4J8S4Wtk29w+w==
+Date: Fri, 29 Aug 2025 16:13:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/6] dt-bindings: iio: adc: add ade9000
+Message-ID: <20250829-freckles-cytoplasm-81cedd872215@spud>
+References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+ <20250829115227.47712-4-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2IWGEOdF0WqegXag"
+Content-Disposition: inline
+In-Reply-To: <20250829115227.47712-4-antoniu.miclaus@analog.com>
+
+
+--2IWGEOdF0WqegXag
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ece46fdecbfb75ade8400f96f8649d04b4f1a2f7.1756472076.git.daniel@makrotopia.org>
-
-On Fri, Aug 29, 2025 at 02:02:16PM +0100, Daniel Golle wrote:
-> The MaxLinear GSW1xx family got a single (R)(G)MII port at index 5 but
-> the registers MII_PCDU and MII_CFG are those of port 0.
-> Allow applying an offset for the port index to access those registers.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Reviewed-by: Hauke Mehrtens <hauke@hauke-m.de>
-> ---
-> v3: no changes
-> v2: no changes
-
-I forgot to include the change I made upon Hauke's request, and it's even
-wrong. Sorry for the noise. I will send v4 tomorrow...
 
 
-> @@ -2027,6 +2035,7 @@ static const struct gswip_hw_info gswip_xrx200 = {
->  	.max_ports = 7,
->  	.allowed_cpu_ports = BIT(6),
->  	.mii_ports = BIT(0) | BIT(1) | BIT(5),
-> +	.mii_port_reg_offset = 0;
->  	.phylink_get_caps = gswip_xrx200_phylink_get_caps,
->  	.pce_microcode = &gswip_pce_microcode,
->  	.pce_microcode_size = ARRAY_SIZE(gswip_pce_microcode),
-> @@ -2037,6 +2046,7 @@ static const struct gswip_hw_info gswip_xrx300 = {
->  	.max_ports = 7,
->  	.allowed_cpu_ports = BIT(6),
->  	.mii_ports = BIT(0) | BIT(5),
-> +	.mii_port_reg_offset = 0;
->  	.phylink_get_caps = gswip_xrx300_phylink_get_caps,
->  	.pce_microcode = &gswip_pce_microcode,
->  	.pce_microcode_size = ARRAY_SIZE(gswip_pce_microcode),
 
-Both above will triger compiler error, should be ',' instead ';'.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
+--2IWGEOdF0WqegXag
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLHDrAAKCRB4tDGHoIJi
+0nCMAP4lOT4YeLX3fQZGEkaBE3vbt9fWSKxZa3W++z8Kk9cU8AEAsOT2PjPFR1fo
+CCtIvQIzBHjqxU328vD5ojF5qg1x9Qs=
+=WM/+
+-----END PGP SIGNATURE-----
+
+--2IWGEOdF0WqegXag--
 
