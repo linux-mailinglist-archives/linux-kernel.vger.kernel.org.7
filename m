@@ -1,131 +1,81 @@
-Return-Path: <linux-kernel+bounces-792042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2EDB3BFB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51EEB3BFC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B71179E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D913A3C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4705E322C65;
-	Fri, 29 Aug 2025 15:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B560322A1A;
+	Fri, 29 Aug 2025 15:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="BGQOo6If"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+cFdOFh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7261FDA8E;
-	Fri, 29 Aug 2025 15:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE8126C02;
+	Fri, 29 Aug 2025 15:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482279; cv=none; b=J365BMkKZTioZuF9ANDHj4d9jtt32SEYb7E/LTMEEiX9QP/EFsXvy4dzpqCCcocyGKkhQQNHuvFG4yACpLHF7qpbNV3ByTpm0ae8wMKaKQ8LLsB3q6yYZk1bSFpNnQGNx+h7PUJnergc1yRyVtAnPn8V4nC1lfurjbVLkbb1N/U=
+	t=1756482306; cv=none; b=qa48qIlMngG0WZd+lnJPXy/PM2pGVazPUnzFoVih5iiZ/zjxObjPZWI1seVyNj6CG75rQmI5NunEglnfgRGbVL5/3yn394ntBY9lpmkPy6ANA4UzGy2Ztb/3NHyX9c8Jfz8n3jZfSGCTMiEIHDxgdk3cNu9IwzoZQdQrV61IEf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482279; c=relaxed/simple;
-	bh=GY4YcHhXANaRXUN5v/oNVJnbYtXngHQL+dFjSPU183s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KpycIN+ALsRyHjZLo73QfhVW0xIaWHvPohEksdocKCAh+GfbLpdhTOfFPHEZe4nJwvoR0VQovZJPg3QNQzPUY3zLwbbZBD762GjLdxrX1ynERmF6D5mHHWsSYLyn+iBGzQTlYj1L6HdHAMhRrUqEVyvDP5XEtSeZnA/vQaVBSv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=BGQOo6If; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=lj1esDKPdL4RaCu4uortpISWOMs2R7Lb2+RYaV1G1XI=; t=1756482277;
-	x=1757087077; b=BGQOo6If1eq/0RHClTanzxfUJT86btCgeScBzD5ruukPTrYaolwqC0xK81JpV
-	gJKX37GSYcaYksZKWk5DwUHxCeqcJUYsHHWSgSEiXD58I6tNMKMb6cHHTXFxmJWRdXiUlDeBXFlYH
-	I9d9B1IsA7Oaok0+egBZ2h1d1riKsis0MbRkmaa3XBhwDuK2rji15x/i04tO6yETIg/y1IduErYfh
-	drAiRCJLSjq6bhC47YXVzMeH1qqWJHCfnw4KYKD/GVzuQlqNQs/oh6QVG0qJZI9iGifcdzr725gRh
-	hiB4ssO4GiVNkj/R5xN6zGFVrpJgxrFiGrqNonspqnsrSaSdGg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1us1HD-00000002HWK-1kXn; Fri, 29 Aug 2025 17:44:31 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1us1HD-00000001gMI-0j29; Fri, 29 Aug 2025 17:44:31 +0200
-Message-ID: <1019a5f6d0d097beb15f70acfd695d5add4d6582.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Andreas Larsson <andreas@gaisler.com>, Thomas
- =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-  Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
- <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,  Nagarathnam
- Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock
- <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,  Stephen Boyd
- <sboyd@kernel.org>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Date: Fri, 29 Aug 2025 17:44:30 +0200
-In-Reply-To: <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
-References: 
-	<20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
-	 <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
-	 <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
-	 <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
-	 <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
-	 <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
-	 <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
-	 <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756482306; c=relaxed/simple;
+	bh=DtVgMgHCkemr2oZjqBAjxslmOlZU7lofDcxKF0w+s1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JP+JZPt2gL9u/3fvH0ViJdtYIBKXTgxCqX2CpLQiZqoklMpwH/lSWjcmfBkVEzd748LccXfUCchaR7GdJbyKbdhkCujq4BNCRw+ANIBJ0PWq63YgppCfF1r7E5T+2ZXI/QvHXJKNCoY589zopSj0fztau5MiPCFb+D8Hs+1tp1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+cFdOFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF61C4CEF0;
+	Fri, 29 Aug 2025 15:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756482305;
+	bh=DtVgMgHCkemr2oZjqBAjxslmOlZU7lofDcxKF0w+s1k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c+cFdOFh5z0Y2+6drnecFUUlQBT3FA/1OVyi1Qy7RA5bC5xxCgHHlpphPJd1M2aQv
+	 qzCB1xtjCSFt7khGKWdgOPeRZ/UcRua+r2NrHLjXJMbpTM3/mr7orL0Ew+Nwy2X3HZ
+	 qkZ6RfziVhAwL+d2R6NfdscIjjOUJX94vlu3CE0dca0NWEX6Rg/CCaD0EJPH75Pzc/
+	 EW4dS56FPBrkFf6ZuwmmaN22v9E1jrLepJaAfK6eIAruUACWoM/Nys8fKYl/0lg+K0
+	 E3GuTy30Q2dc5407Oh3E6YskVLAjXuY0sLvUtGAAMUdOkbzSBvpbw9UP0Tri/N4hlM
+	 8a7jihM68dZjQ==
+Date: Fri, 29 Aug 2025 08:45:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Hauke Mehrtens
+ <hauke@hauke-m.de>, Russell King <linux@armlinux.org.uk>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Andreas Schirm
+ <andreas.schirm@siemens.com>, Lukas Stockmann
+ <lukas.stockmann@siemens.com>, Alexander Sverdlin
+ <alexander.sverdlin@siemens.com>, Peter Christen
+ <peter.christen@siemens.com>, Avinash Jayaraman <ajayaraman@maxlinear.com>,
+ Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>, Juraj
+ Povazanec <jpovazanec@maxlinear.com>, "Fanni (Fang-Yi) Chan"
+ <fchan@maxlinear.com>, "Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+ "Livia M. Rosu" <lrosu@maxlinear.com>, John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v3 0/6] net: dsa: lantiq_gswip: prepare for supporting
+ MaxLinear GSW1xx
+Message-ID: <20250829084503.35f792c1@kernel.org>
+In-Reply-To: <aLGlMJcEe7ZAfPFy@pidgin.makrotopia.org>
+References: <cover.1756472076.git.daniel@makrotopia.org>
+	<aLGlMJcEe7ZAfPFy@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Andreas,
+On Fri, 29 Aug 2025 14:03:44 +0100 Daniel Golle wrote:
+> The whole series is intended for net-next, I messed up putting that into
+> the subject line. Let me know if I should resend another time for that or
+> if it is fine to go into net-next like that.
 
-On Fri, 2025-08-29 at 15:41 +0200, Andreas Larsson wrote:
-> I based my config on the SMP config that was in use on the system.
-> Produces an tremendous amount of modules unfortunately, so I'll have
-> to cut down in the config. Right now the turnaround time for testing
-> a new kernel with this setup for this system is quite bad.
-
-You can just use sparc64_defconfig, just make sure you enable support
-for CGroups, Sun Partition tables and the Sun virtual disk and console
-drivers as well as hypervisor support.
-
-Also, make sure to disable kernel debugging support unless you need it.
-
->=20
-> > * Which toolchain are you using?
->=20
-> A toolchain built in Buildroot with GCC 13.2.0. Old kernel headers, but
-> I only use it to build kernels. Do you think the kernel headers of the
-> toolchain would play a role for vDSO?
-
-FWIW, the latest toolchain is always available from kernel.org:
-
-https://mirrors.edge.kernel.org/pub/tools/crosstool/
-
-> > * This is a 64-bit userland?
->=20
-> Yes.
-
-Most if not all SPARC-V9-compatible distributions use a 64-bit userland the=
-se days.
-
->=20
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+It's alright, FWIW. If all the changes are under drivers/net/ the CI
+will default to net-next.
 
