@@ -1,192 +1,215 @@
-Return-Path: <linux-kernel+bounces-792085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5EEB3C00A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:58:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AFEB3BFF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093121884F73
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:55:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E7161618
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B688634A32B;
-	Fri, 29 Aug 2025 15:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D0C342CA3;
+	Fri, 29 Aug 2025 15:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkYd/pOm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwkIXzN/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE59D33437F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA45D342C96;
+	Fri, 29 Aug 2025 15:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482591; cv=none; b=AeddXrbIx+ABO/PUnnWwcjhVz+rY3KuYt2EcXSm2NU3pROHVU/5kkGxRodhn8l9JFg/Fgl/lu+WVK9Y62OlDlsA54RC1TPG+QX/LoNFJJcDR7Yr2NajALsox7FUjc2JdwtD3JQ4cRLGh7foGafyf5Y9W+RxIR3oxLrJsNKvrqqQ=
+	t=1756482569; cv=none; b=X3ykQ7GJdP0ejYGWVymQUt6zGCo0MO5uqb8s+S1t/3NTOQW2aRzNb46xAY3waYQsQDv6OLT1q7j9Zllfn5J4p7dDLC8CYzCoF3MFcSnG57bS7YzjjmRmO2vBP9RZM29yt6cGYCIWlTAhpLax2bnSjAlgvsUK2a6FvkTVCkcNOzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482591; c=relaxed/simple;
-	bh=Jrc2SP9zuO/q8lVKXeMSZQ2TjjYp5fXU9+UkI2oxxh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=POT1kIPacOFO2Ya4bHrmh5M9ph39q01gPPdppew9lAJxtW6c8JA5nGE2NnuQG4dTilFwMlHsPENQoDE+py3zKa59Po6qydlTWOdhvCHBDpf3WzpiTLHrgFzczaXz1rcwuztO0bS+WNHDV6s5IlpGWGWSqVUEtS7lskJgBkm95oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkYd/pOm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09F0C4CEF6;
-	Fri, 29 Aug 2025 15:49:48 +0000 (UTC)
+	s=arc-20240116; t=1756482569; c=relaxed/simple;
+	bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TQumgpVO4vR9WYJfSzuxjqxULTkgSUG6Q/8hK3RCMbZMtaxYp5zFXhzUZzSpAYIy1ulQRzRdi3lx87PlUxiNahjANRVeCV7bdUmhjsZ+JdRKfTdLz7eBf2TAitUlzMFsam0AuklSh3zrzYBxvgK5CepIto5zNkF1SdYyAgyfMp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwkIXzN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F006C4CEF0;
+	Fri, 29 Aug 2025 15:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482590;
-	bh=Jrc2SP9zuO/q8lVKXeMSZQ2TjjYp5fXU9+UkI2oxxh8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lkYd/pOmb9GnGKg5lfavP7nDSvh/s8W9bL6YX4KotaTa+2qjTPlmnudrn1vD/k9QS
-	 oJcz+Akb4MOrivK6cknt4ZqSpiLWVnTD4nHf1gTxtH6XsGXzBlAIGpCEsrblxNP46A
-	 iXeQXkXVGjJqkA4MUT46nkS+QCQSW66qGj0UWbaE+COLFUWKPsYPvrdZ8S1nyTm1bx
-	 +6e+9+oyapC4lYTFTm8aGzbUPNa4Gd8d+sIL+9GXW08U4YFtVkDO2j9ve46E6uf60J
-	 yNqI40EOQ/wPTRJ8J1c9EzRcQdKQgC6KAAF4X4DaWaaqg0SLucqT54i5eojQooCT95
-	 u8kbLlTMAt/jQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 33/33] doc: Add housekeeping documentation
-Date: Fri, 29 Aug 2025 17:48:14 +0200
-Message-ID: <20250829154814.47015-34-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
-References: <20250829154814.47015-1-frederic@kernel.org>
+	s=k20201202; t=1756482569;
+	bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cwkIXzN/v/E28su3XbViCIg82IG8EBxEz6WDxN3oZFfyf7EVSxZr/TyphDZKeu2T9
+	 QMnkognR3FjzfCLA8N7zxaqGSERlbOmtMyPqe3Xefro81sucFwSSPd4ZnVFnLnLwC2
+	 5pM4IOI2TcnqeB/EQiwEr82VGFu+OOfYoK+PcvfWSQZf/gE3SeU4Zc/Z3tLY5ujnVk
+	 bL2qSRSqmTJ1/gdStZxE7zU4x0VyDfs+DTQbZ1Mpu28AQFwhNqOySN/xTswdAxqvsg
+	 QziFUHKRr/zZnBUP7vSoV5EN8Rl+W5mHH+fX+AgngXd0v6VSM0tL0x5EvMuEm9et20
+	 V2fa/biAaOZzQ==
+From: Kees Cook <kees@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
+Date: Fri, 29 Aug 2025 08:49:21 -0700
+Message-Id: <20250829154913.work.943-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4495; i=kees@kernel.org; h=from:subject:message-id; bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkbzzAc3+vq1b5NWP+dObefBodGiciG5X4tDNs7lFn9d /y6onOjo5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCJiZxn+meW6V0ySW7lJWoJ5 9Zs/fq1fPles32HruLLzkV6DWOF7TUaGtZKf/RL2THeRX7oi3vGtU0/ghwP8e8I6bG7OLV6ce3U dPwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- Documentation/cpu_isolation/housekeeping.rst | 111 +++++++++++++++++++
- 1 file changed, 111 insertions(+)
- create mode 100644 Documentation/cpu_isolation/housekeeping.rst
+Seen during KPTI initialization:
 
-diff --git a/Documentation/cpu_isolation/housekeeping.rst b/Documentation/cpu_isolation/housekeeping.rst
-new file mode 100644
-index 000000000000..e5417302774c
---- /dev/null
-+++ b/Documentation/cpu_isolation/housekeeping.rst
-@@ -0,0 +1,111 @@
-+======================================
-+Housekeeping
-+======================================
+  CFI failure at create_kpti_ng_temp_pgd+0x124/0xce8 (target: kpti_ng_pgd_alloc+0x0/0x14; expected type: 0xd61b88b6)
+
+The call site is alloc_init_pud() at arch/arm64/mm/mmu.c:
+
+  pud_phys = pgtable_alloc(TABLE_PUD);
+
+alloc_init_pud() has the prototype:
+
+  static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+                             phys_addr_t phys, pgprot_t prot,
+                             phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+                             int flags)
+
+where the pgtable_alloc() prototype is declared.
+
+The target (kpti_ng_pgd_alloc) is used in arch/arm64/kernel/cpufeature.c:
+
+  create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc), KPTI_NG_TEMP_VA,
+                          PAGE_SIZE, PAGE_KERNEL, kpti_ng_pgd_alloc, 0);
+
+which is an alias for __create_pgd_mapping_locked() with prototype:
+
+  extern __alias(__create_pgd_mapping_locked)
+  void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
+                               unsigned long virt,
+                               phys_addr_t size, pgprot_t prot,
+                               phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+                               int flags);
+
+__create_pgd_mapping_locked() passes the function pointer down:
+
+  __create_pgd_mapping_locked() -> alloc_init_p4d() -> alloc_init_pud()
+
+But the target function (kpti_ng_pgd_alloc) has the wrong signature:
+
+  static phys_addr_t __init kpti_ng_pgd_alloc(int shift);
+
+The "int" should be "enum pgtable_type".
+
+To make "enum pgtable_type" available to cpufeature.c, move
+enum pgtable_type definition from arch/arm64/mm/mmu.c to
+arch/arm64/include/asm/mmu.h.
+
+Adjust kpti_ng_pgd_alloc to use "enum pgtable_type" instead of "int".
+The function behavior remains identical (parameter is unused).
+
+Fixes: 47546a1912fc ("arm64: mm: install KPTI nG mappings with MMU enabled")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Yue Haibing <yuehaibing@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
+---
+ arch/arm64/include/asm/mmu.h   | 7 +++++++
+ arch/arm64/kernel/cpufeature.c | 5 +++--
+ arch/arm64/mm/mmu.c            | 7 -------
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index 6e8aa8e72601..49f1a810df16 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -17,6 +17,13 @@
+ #include <linux/refcount.h>
+ #include <asm/cpufeature.h>
+ 
++enum pgtable_type {
++	TABLE_PTE,
++	TABLE_PMD,
++	TABLE_PUD,
++	TABLE_P4D,
++};
 +
-+
-+CPU Isolation moves away kernel work that may otherwise run on any CPU.
-+The purpose of its related features is to reduce the OS jitter that some
-+extreme workloads can't stand, such as in some DPDK usecases.
-+
-+The kernel work moved away by CPU isolation is commonly described as
-+"housekeeping" because it includes ground work that performs cleanups,
-+statistics maintainance and actions relying on them, memory release,
-+various deferrals etc...
-+
-+Sometimes housekeeping is just some unbound work (unbound workqueues,
-+unbound timers, ...) that gets easily assigned to non-isolated CPUs.
-+But sometimes housekeeping is tied to a specific CPU and requires
-+elaborated tricks to be offloaded to non-isolated CPUs (RCU_NOCB, remote
-+scheduler tick, etc...).
-+
-+Thus, a housekeeping CPU can be considered as the reverse of an isolated
-+CPU. It is simply a CPU that can execute housekeeping work. There must
-+always be at least one online housekeeping CPU at any time. The CPUs that
-+are not	isolated are automatically assigned as housekeeping.
-+
-+Housekeeping is currently divided in four features described
-+by the ``enum hk_type type``:
-+
-+1.	HK_TYPE_DOMAIN matches the work moved away by scheduler domain
-+	isolation performed through ``isolcpus=domain`` boot parameter or
-+	isolated cpuset partitions in cgroup v2. This includes scheduler
-+	load balancing, unbound workqueues and timers.
-+
-+2.	HK_TYPE_KERNEL_NOISE matches the work moved away by tick isolation
-+	performed through ``nohz_full=`` or ``isolcpus=nohz`` boot
-+	parameters. This includes remote scheduler tick, vmstat and lockup
-+	watchdog.
-+
-+3.	HK_TYPE_MANAGED_IRQ matches the IRQ handlers moved away by managed
-+	IRQ isolation performed through ``isolcpus=managed_irq``.
-+
-+4.	HK_TYPE_DOMAIN_BOOT matches the work moved away by scheduler domain
-+	isolation performed through ``isolcpus=domain`` only. It is similar
-+	to HK_TYPE_DOMAIN except it ignores the isolation performed by
-+	cpusets.
-+
-+
-+Housekeeping cpumasks
-+=================================
-+
-+Housekeeping cpumasks include the CPUs that can execute the work moved
-+away by the matching isolation feature. These cpumasks are returned by
-+the following function::
-+
-+	const struct cpumask *housekeeping_cpumask(enum hk_type type)
-+
-+By default, if neither ``nohz_full=``, nor ``isolcpus``, nor cpuset's
-+isolated partitions are used, which covers most usecases, this function
-+returns the cpu_possible_mask.
-+
-+Otherwise the function returns the cpumask complement of the isolation
-+feature. For example:
-+
-+With isolcpus=domain,7 the following will return a mask with all possible
-+CPUs except 7::
-+
-+	housekeeping_cpumask(HK_TYPE_DOMAIN)
-+
-+Similarly with nohz_full=5,6 the following will return a mask with all
-+possible CPUs except 5,6::
-+
-+	housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)
-+
-+
-+Synchronization against cpusets
-+=================================
-+
-+Cpuset can modify the HK_TYPE_DOMAIN housekeeping cpumask while creating,
-+modifying or deleting an isolated partition.
-+
-+The users of HK_TYPE_DOMAIN cpumask must then make sure to synchronize
-+properly against cpuset in order to make sure that:
-+
-+1.	The cpumask snapshot stays coherent.
-+
-+2.	No housekeeping work is queued on a newly made isolated CPU.
-+
-+3.	Pending housekeeping work that was queued to a non isolated
-+	CPU which just turned isolated through cpuset must be flushed
-+	before the related created/modified isolated partition is made
-+	available to userspace.
-+
-+This synchronization is maintained by an RCU based scheme. The cpuset update
-+side waits for an RCU grace period after updating the HK_TYPE_DOMAIN
-+cpumask and before flushing pending works. On the read side, care must be
-+taken to gather the housekeeping target election and the work enqueue within
-+the same RCU read side critical section.
-+
-+A typical layout example would look like this on the update side
-+(``housekeeping_update()``)::
-+
-+	rcu_assign_pointer(housekeeping_cpumasks[type], trial);
-+	synchronize_rcu();
-+	flush_workqueue(example_workqueue);
-+
-+And then on the read side::
-+
-+	rcu_read_lock();
-+	cpu = housekeeping_any_cpu(HK_TYPE_DOMAIN);
-+	queue_work_on(cpu, example_workqueue, work);
-+	rcu_read_unlock();
+ typedef struct {
+ 	atomic64_t	id;
+ #ifdef CONFIG_COMPAT
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 9ad065f15f1d..e49d142a281f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -84,6 +84,7 @@
+ #include <asm/hwcap.h>
+ #include <asm/insn.h>
+ #include <asm/kvm_host.h>
++#include <asm/mmu.h>
+ #include <asm/mmu_context.h>
+ #include <asm/mte.h>
+ #include <asm/hypervisor.h>
+@@ -1945,11 +1946,11 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
+ extern
+ void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+ 			     phys_addr_t size, pgprot_t prot,
+-			     phys_addr_t (*pgtable_alloc)(int), int flags);
++			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+ 
+ static phys_addr_t __initdata kpti_ng_temp_alloc;
+ 
+-static phys_addr_t __init kpti_ng_pgd_alloc(int shift)
++static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+ {
+ 	kpti_ng_temp_alloc -= PAGE_SIZE;
+ 	return kpti_ng_temp_alloc;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 34e5d78af076..183801520740 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -47,13 +47,6 @@
+ #define NO_CONT_MAPPINGS	BIT(1)
+ #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+ 
+-enum pgtable_type {
+-	TABLE_PTE,
+-	TABLE_PMD,
+-	TABLE_PUD,
+-	TABLE_P4D,
+-};
+-
+ u64 kimage_voffset __ro_after_init;
+ EXPORT_SYMBOL(kimage_voffset);
+ 
 -- 
-2.51.0
+2.34.1
 
 
