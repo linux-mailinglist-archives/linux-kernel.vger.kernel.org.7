@@ -1,173 +1,413 @@
-Return-Path: <linux-kernel+bounces-791771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABD5B3BBC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A96B3BBC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C23D1BA7A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDAB61C88122
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EED331A052;
-	Fri, 29 Aug 2025 12:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dUE0sO8o"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010030.outbound.protection.outlook.com [52.101.69.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C169EEDE;
-	Fri, 29 Aug 2025 12:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472088; cv=fail; b=WwHOaCRCwAEvSS6mMrOlxu/bienLAWZA5VRtvllQS3OD14vEWKbggWcmQDAhGWlQl/LSn2fu78KFsvX26l/H/0gLga3zSGTVZQ8fCz349hgXZbdPsyeBnnENkaU0VM7HR0VtGHUPxX2qea4Gj29CUW2a/0ardFf7PArd6TR3jxg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472088; c=relaxed/simple;
-	bh=pWp47ox+J6pOMReRsJkQHAQ2+vNCyiPvjCKoWsy5rM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UyVX8yyIpoPFnLeoC7FjhlZTIPK+SNNr/aFhfDGh/KEIsOjfNAoLsAbZtCgq0+LJZEAW1Ctv7MXObZfqDnYG5Ytay7zSGFJHwS813puJqtxRt6Tr9J/TuCO+ykK22mevLa2SXsdwnRAN3oAX0YTkYak/q5hFRNSIF8mbYP52I1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dUE0sO8o; arc=fail smtp.client-ip=52.101.69.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GKFHaZhjZ5ye9T1i56xVBCrkvzFA8pY+Vr9boODNQBIOsOo+PZtYRKcZzosyT7aWr0ap75pXBHfBYsWMDkUrFqq9hQndxQAIHwgrXp8Qzsi4sDcby0mDUJqHP69jmZtAPFmUyjOOuI1WT9JPnRLW/CgTCqowMIHWRFZKt4nFOTlkqJybcvUniHSuvTAjEiqoF6dfzqtP4y44ciIrfLP1dqSZR5+8pjNFdAciiQ/sDG1ZpQjUFESbWOEi97QDH1Ba1kNlFh0Aitq7EA7OOzRhDKkyb/7qKDQYWVls1CuzygcWX2IUEOzEEDE5ajuLWMxZg2Inhwa+Eapf+1QIDiRpMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pWp47ox+J6pOMReRsJkQHAQ2+vNCyiPvjCKoWsy5rM4=;
- b=i9bTTHdBP3XjE+WzxQkSapANWrAwnGR5qeHUGbJNgBRihU5KXoaNN7MRkczqoaK+ac2Fw9dHA6zhZfSbS0x5qA0Na7v80BAKlvIZoOzrywpoXqwIdPsiMqVPkTm4F0iTe8jpAkONHUFF0EZbCfGU5tn8yTnP3FJ1vZAl4+qVX1VWu8+MFW8pEd8nLKliKuJ38WJypNAhGJoj3NW/cvsDbMK032TqFUkOkv95ob8Ia3fxCQAsJYDSfCN5PnbTzqSNA3mU2un/h7r3/NE1CDmAMezsLAPzsQDYILo/ksjsYTB0AAL0WM5ID8Z9iXHHelcL+HB89yHIVL/lTWIJWOseCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pWp47ox+J6pOMReRsJkQHAQ2+vNCyiPvjCKoWsy5rM4=;
- b=dUE0sO8ompO+Qx61IBBR62TPS81eP76OYxGQ5nJNtCVEOgdh4SjC59rXJ94XUSHAj4edEFQ7PSqtGPOps9MHoHTIa7VLv7jyp6FjcmzLTJ4kchHUnR17uZYun646OEcrfhvDk46eLMDa5HWya0t2OlLnO9b286HKYLA1de//t5MlC3AutlBN/1lDF5rgoZ2JzVJy/EfWzOlOeTt0ljLj+mcdmcF/OrAPCuKP2O979MlNp0heWpM8QsZ300gNUzjRi0VWf97W89R1EbtfJEeCes0MwVYjOvh261HBi2ZgbFh5kZHTjddEIKeDtr6VVRWbCFReYOK5kOGomV5HZw6Yiw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PAXPR04MB8491.eurprd04.prod.outlook.com (2603:10a6:102:1df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.12; Fri, 29 Aug
- 2025 12:54:43 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
- 12:54:43 +0000
-Date: Fri, 29 Aug 2025 15:54:40 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Frank Li <Frank.li@nxp.com>, Christoph Hellwig <hch@lst.de>,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] spi: fsl-dspi: Avoid using -EINPROGRESS error code
-Message-ID: <20250829125440.fuxwiekll53myiui@skbuf>
-References: <20250829-james-nxp-spi-dma-v5-0-3246957a6ea9@linaro.org>
- <20250829-james-nxp-spi-dma-v5-1-3246957a6ea9@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829-james-nxp-spi-dma-v5-1-3246957a6ea9@linaro.org>
-X-ClientProxiedBy: VI1PR07CA0150.eurprd07.prod.outlook.com
- (2603:10a6:802:16::37) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC4F31A05E;
+	Fri, 29 Aug 2025 12:56:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA5B1EB36;
+	Fri, 29 Aug 2025 12:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756472183; cv=none; b=r+BGrqS8RF+YESp/iamdsa+DAeNfQvkUodrTuDTvf7I+552SwKpFcgJG1+XCYY/5dbFh9+q2r9R2E1TujC+WFqx8qBJ9ko7WXA3Y4UlhcILVLFCtMnXo2cysEwFnuWZdDr5TP6feDed1HNrbRVs2PwSHQubWCZwAPW2XegzDmgE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756472183; c=relaxed/simple;
+	bh=Xr+kglqetfd45B5RB/AnXtkz8hYOCj3eKpvIgpI1v7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PwUB7YOLYoECDKtGKLSvf8A5Zw9S9sX61gnAy9a74ON5yU0XGD4uHlSc4cFZIYlQus3Wchhdtj6zV4fcha15VU68r3E68mIGzaGJFfjKXD6vxheUxSxNhyjDAodzVY0b3x0AWdXILTUBpCtnZOjDnWAhagZbM/7/0niYJwcP5TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33C8D19F0;
+	Fri, 29 Aug 2025 05:56:11 -0700 (PDT)
+Received: from [10.57.2.173] (unknown [10.57.2.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D01FD3F738;
+	Fri, 29 Aug 2025 05:56:17 -0700 (PDT)
+Message-ID: <3b481ddf-7cc2-4c3d-9ef5-60907c8aaf8b@arm.com>
+Date: Fri, 29 Aug 2025 13:56:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PAXPR04MB8491:EE_
-X-MS-Office365-Filtering-Correlation-Id: f09e0e92-7ba6-4631-3458-08dde6fb3963
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|19092799006|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?p2Iyj2wjsh2Y19D7TnUwnDGtkPdSN2QZvHCUMvT0BCjYwxgfeeur/2Jf8bFx?=
- =?us-ascii?Q?q2aMHdloKcReDb5UEA4yt7PTNfCrF0bjkEwxeFnJcsfdVR1wP4SXNKJ5YCp8?=
- =?us-ascii?Q?hI4XBp7/qjvDmCEIwr47y0TqD/IP6lsMqNxWTEYlc+8Dq5ZLZI4HKjgxdyT8?=
- =?us-ascii?Q?y4XOvSVTEzEhN0UmlZq560Tx7UgkZ0osWvO6WY4pIFWIcLjp7glteNkkyQVS?=
- =?us-ascii?Q?j0jsymmxMIaXdYrbuH35EO6hi94GstcvNwWS/DFt3wHeiVzs9HCIV00b+/X0?=
- =?us-ascii?Q?bi5lsOru8SiN0bVM9yTU22Zn4Yu01h9mS5KOFj94Vk9o9t2pLKpHzd0opTX2?=
- =?us-ascii?Q?bfkVkYkXMjWKEOTAZo/D2cCyBgXQ1q4Z5JxwFbqYzO9i/oC/qJcCkF4MJxvB?=
- =?us-ascii?Q?Au1uORiyAquTXMCimTtcRZBMmfYfT6AS+HcQk6//SU30uXeHI/spLG2fFvAW?=
- =?us-ascii?Q?j97U25JouvOcDtPyVgivzfjrokU84QkWcJqSeNVX7b/acl5nbMybmvyNK2Bu?=
- =?us-ascii?Q?R7wYlV2+GWOiPopnuZDNClwsMGZkIqIKwwCFeOUvPM4woltapV+HM35vFZHj?=
- =?us-ascii?Q?gKUzihtRPQSzzd7XbcEsYDqqHyo3PSowjY1BFBQ57Trzc8Dd7kOTdHp92SYm?=
- =?us-ascii?Q?pVKJqlpp97HNxAEIspP0yJZ4bA6o0a6jFRSCK2hOQiQBfZs61u922uHvUGuP?=
- =?us-ascii?Q?dweEEPMzkn2QlBN6PHtxTrFI5PsuSj1g1I1diuErtHuVx1kXOYCcPcLiePUD?=
- =?us-ascii?Q?aKlZasJ7qrq+zSaYfLj6yjdinehao4dWl28Btj7YJNVyClSH9n8snBQMZSTR?=
- =?us-ascii?Q?Q/rqCGR/VCzM8J8p8KVFjRDJNmt03tcIhT8YCxfkYWOpTaps4jATv4n5oBDM?=
- =?us-ascii?Q?EMxVDQ4sFSTntGTimEPopMkymkQ39XdmVB+uJbd4sFz2xWfMZD2RXRymuF/T?=
- =?us-ascii?Q?5kVgV8nN0DO4gcMgtINd4Z8WXnr+lVk5EnkVeGaol0+1idcjP9EHDJpbFUw0?=
- =?us-ascii?Q?JE9zhgT6jhgrFPCqdwJFFUzaV/cw/0IhImcwf/lvFSzpeE2KuQd3mr5cgjWF?=
- =?us-ascii?Q?kq0xjb8D36EFfDzITmftjTDETz5GLNvVtoH2uso1AfQfEVaeGdWOyVuAEMsW?=
- =?us-ascii?Q?9fZ83p4zterOVDQrSCg9DP3LmzgLPA2RqhaG8Q52lqrfzezjOmJasFBYA210?=
- =?us-ascii?Q?KO0ZmTLQ1wRGh3Q5p/6pUi4T4wYu9YwNa9fftgOEB6V0uau8kAFLI923LyFp?=
- =?us-ascii?Q?Y7Xdu8yfl3GOWxaZXE6eTvHOjj2Ayjo3uBdPOfP6kMfaLZg+HgQo3p2ohev4?=
- =?us-ascii?Q?iPypHt8LfthxNjpJLLZBEAxwThuaa2atumGdVMxRBX+FVauTGmiqjniiTZbf?=
- =?us-ascii?Q?Uzdxf7P7vky0ddAyFb46idGgf+TgckGA5bfF9dBRXsgDzSwOn2y6EdpAAeV5?=
- =?us-ascii?Q?XL158oc9GLw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(19092799006)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hArn9kta/jeB+yEdKXqX8eRl3WSBWDaWVHgkaWZqbDJkfClk1aAdkRDtY/hd?=
- =?us-ascii?Q?DscMk6Mzgli9/fev32+46QUMaiij2ryjo84jRxmDaVnrmqwnhcZAwJBqOLAy?=
- =?us-ascii?Q?xoOhYku1lWAkSjKjXhUBw7RBWXN+gNK/Xna8Q+O8YOwfHoz4M0LFRjfxTfqI?=
- =?us-ascii?Q?UTebuGzCPBoB+nwyVAst3j2VCqHHg7nlJNhzY1sjamBtMYrpFofW98v4TQ3p?=
- =?us-ascii?Q?qxUvro8rF9OTlNrxCDVEMEL1P42PiNZt9CCzJkLoWGCuN63VqZil2BNqfDQA?=
- =?us-ascii?Q?S7AFQi99jNf6T6BPtALQUZioI6U4gSTQL2h7kvTULO+CfB98anS5LZd3zqFc?=
- =?us-ascii?Q?RQXE5Sfnn+7fsCmH7wcv9KLlHLpNMJ0sK90qMHJQ4aJQBck/wz6qeyPPdSVy?=
- =?us-ascii?Q?/scMHNAuhZ2xRbDs0SS2P8l/D1GxuvzKnR0J2c3kvudU+PAMG38qSgpvftyL?=
- =?us-ascii?Q?fozbPz29pIrxyH8lAvkKvFHADvb4kX3xe2KBag0zSU/yBJCF4+jueNxvMx85?=
- =?us-ascii?Q?yvyUWYTtoZFbq39Rb0Cv6Gw0mXjgU5miv7JxoV2jJ3su1vRJWbE7c8++1opd?=
- =?us-ascii?Q?PqgQPBN0xCKyKk64R2mCJcd5p+qHzqot6YNhwrEzQjzDYtIxIhH3tjO6srmI?=
- =?us-ascii?Q?qh+8H+ODx6CXfsk+R3IMEvw1apl7OhNeqtzsNKM8hl8pT5HXkgFBE2WsesAE?=
- =?us-ascii?Q?10FH71hLH3DUd5Vt/a69LIK8jmILFIO8zjP121xNNYRTILF7UinjXt/CVzlW?=
- =?us-ascii?Q?AZHVHdgLWOqglQpgXPPYX/xH+s41goNn//F0AAhfI0yl2hMR2Wd4ngfBGTmG?=
- =?us-ascii?Q?FhbCZNmQ3tsfWO39aG29KuXK8rbQ0fm43pmfryvmGra1tJEVrG9cqMSUbCxq?=
- =?us-ascii?Q?l58XQvX3J/0CR554H9ZyMX84F7E4g3vZD4o/rO4zcaaLkTje3Wbi3Z0ZaBKX?=
- =?us-ascii?Q?2HjWfz6pqsbyy53ZZiJa0q8DvwGRmciKCvDfKPAEAv0xWnOWI3ssPuapeV40?=
- =?us-ascii?Q?Q0SKKZzRVbATRvc4xuHOF6xkPsFhrskWyU0ytN7F2hg3NF+u35a5NWLuSxA9?=
- =?us-ascii?Q?erNTh6qmTwlNSJfya5VVOea0Jca1ZjdZ6BFtX0/ImBJiepkX/I+OoAoJnwLN?=
- =?us-ascii?Q?9o2meAOjsq/WnovKYVqlONrkghX16Kn0XWcqtuoHhVYAIoGCBspfApe/EnJt?=
- =?us-ascii?Q?EeVmxu/vPEDsF6B52NfGyTVHmDyPcpTIV6fhzfB/qd2rGQ/NoTV7/L3dXMIF?=
- =?us-ascii?Q?XjjqoC0B6jPpPv8bA99HMPc7maj3JPOwD9Wr6V2y8aeXawifVsIoYwLqCeUp?=
- =?us-ascii?Q?sGsE3fZCIY60TwBZ3ijF3dKwHJ4v1K8l2t57Bp7tHP8Kp46910p5AvKlUD1t?=
- =?us-ascii?Q?+FH9SEHvncGa+C9YqR4eHjHbSDDap0fh4ieKrk/G00lgrGFdmeQULNRuukHP?=
- =?us-ascii?Q?XZyhHdkd5Rgjq+CnJhuTxK9ZQy0Le5gnziIF34ff/gXVkQiKe9zccvH1ZQWS?=
- =?us-ascii?Q?hZE1LZFFtoIF/vt9YjzcvjGAgioVar5bB14OR9ObDMXkVdGaZBAKOHGTwEo7?=
- =?us-ascii?Q?hJnZ2hIaOMNT7OLIdg8949hg7GSbEn4qD/BqJkzVT3pk7Ml4mZ0j4GEr5IdW?=
- =?us-ascii?Q?7lsiQQw+pyLkfn7rh/IVc4JdDHsVpY82mBId+YllLbLwg+ykT55hS6WIeBJM?=
- =?us-ascii?Q?0dqrGQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f09e0e92-7ba6-4631-3458-08dde6fb3963
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 12:54:43.2441
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JyrmekfVQV/4ce5mU4A6A3Xa4QabDttvQJ4R0Oyx58fva4eXS2aATi5UPNCKHSflpIFZMwbVt+sW325L6oxQsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8491
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/14] dmaengine: dma350: Alloc command[] from dma pool
+To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250823154009.25992-1-jszhang@kernel.org>
+ <20250823154009.25992-11-jszhang@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250823154009.25992-11-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 12:46:43PM +0100, James Clark wrote:
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+On 2025-08-23 4:40 pm, Jisheng Zhang wrote:
+> Currently, the command[] is allocated with kzalloc(), but dma350 may be
+> used on dma-non-coherent platforms, to prepare the support of peripheral
+> and scatter-gather chaining on both dma-coherent and dma-non-coherent
+> platforms, let's alloc them from dma pool.
 
-The way I'm understanding these tags is: you wrote the patch, I submitted it
-(which is not what is happening).
+FWIW my plan was to use dma_map_single() for command linking, since the 
+descriptors themselves are short-lived one-way data transfers which 
+really don't need any of the (potentially costly) properties of a 
+dma-coherent allocation.
 
-I think the conventional way of describing it is:
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>   drivers/dma/arm-dma350.c | 143 +++++++++++++++++++++++++++++++--------
+>   1 file changed, 113 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
+> index 72067518799e..3d26a1f020df 100644
+> --- a/drivers/dma/arm-dma350.c
+> +++ b/drivers/dma/arm-dma350.c
+> @@ -4,6 +4,7 @@
+>   
+>   #include <linux/bitfield.h>
+>   #include <linux/dmaengine.h>
+> +#include <linux/dmapool.h>
+>   #include <linux/dma-mapping.h>
+>   #include <linux/io.h>
+>   #include <linux/of.h>
+> @@ -143,6 +144,7 @@
+>   #define LINK_LINKADDR		BIT(30)
+>   #define LINK_LINKADDRHI		BIT(31)
+>   
+> +#define D350_MAX_CMDS		16
 
-Co-developed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
+What's that based on? We should be able to link arbitrarily-long chains 
+of commands, no?
+
+>   enum ch_ctrl_donetype {
+>   	CH_CTRL_DONETYPE_NONE = 0,
+> @@ -169,18 +171,25 @@ enum ch_cfg_memattr {
+>   	MEMATTR_WB = 0xff
+>   };
+>   
+> -struct d350_desc {
+> -	struct virt_dma_desc vd;
+> -	u32 command[16];
+> +struct d350_sg {
+> +	u32 *command;
+> +	dma_addr_t phys;
+>   	u16 xsize;
+>   	u16 xsizehi;
+>   	u8 tsz;
+>   };
+>   
+> +struct d350_desc {
+> +	struct virt_dma_desc vd;
+> +	u32 sglen;
+> +	struct d350_sg sg[] __counted_by(sglen);
+> +};
+
+Perhaps it's mostly the naming, but this seems rather hard to make sense 
+of. To clarify, the current driver design was in anticipation of a split 
+more like so:
+
+struct d350_cmd {
+	u32 command[16];
+	u16 xsize;
+	u16 xsizehi;
+	u8 tsz;
+	struct d350_cmd *next;
+};
+
+struct d350_desc {
+	struct virt_dma_desc vd;
+	// any totals etc. to help with residue calculation
+	struct d350_cmd cmd;
+};
+
+Or perhaps what I'd more likely have ended up with (which is maybe sort 
+of what you've tried to do?):
+
+struct d350_cmd {
+	u32 command[16];
+	u16 xsize;
+	u16 xsizehi;
+	u8 tsz;
+};
+
+struct d350_desc {
+	struct virt_dma_desc vd;
+	// anything else as above
+	int num_cmds;
+	struct d350_cmd cmd[1]; //extensible
+};
+
+Conveniently taking advantage of the fact that either way the DMA 
+address will inherently be stored in the LINKADDR fields of the first 
+command (which doesn't need DMA mapping itself), so at worst we still 
+only need one or two allocations plus a single dma_map per prep 
+operation (since we can keep all the linked commands as a single block). 
+I don't see a DMA pool approach being beneficial here, since it seems 
+like it's always going to be considerably less efficient.
+
+(Not to mention that separate pools per channel is complete overkill 
+anyway.)
+
+Thanks,
+Robin.
+
+> +
+>   struct d350_chan {
+>   	struct virt_dma_chan vc;
+>   	struct d350_desc *desc;
+>   	void __iomem *base;
+> +	struct dma_pool *cmd_pool;
+>   	int irq;
+>   	enum dma_status status;
+>   	dma_cookie_t cookie;
+> @@ -210,7 +219,14 @@ static inline struct d350_desc *to_d350_desc(struct virt_dma_desc *vd)
+>   
+>   static void d350_desc_free(struct virt_dma_desc *vd)
+>   {
+> -	kfree(to_d350_desc(vd));
+> +	struct d350_chan *dch = to_d350_chan(vd->tx.chan);
+> +	struct d350_desc *desc = to_d350_desc(vd);
+> +	int i;
+> +
+> +	for (i = 0; i < desc->sglen; i++)
+> +		dma_pool_free(dch->cmd_pool, desc->sg[i].command, desc->sg[i].phys);
+> +
+> +	kfree(desc);
+>   }
+>   
+>   static struct dma_async_tx_descriptor *d350_prep_memcpy(struct dma_chan *chan,
+> @@ -218,22 +234,32 @@ static struct dma_async_tx_descriptor *d350_prep_memcpy(struct dma_chan *chan,
+>   {
+>   	struct d350_chan *dch = to_d350_chan(chan);
+>   	struct d350_desc *desc;
+> +	struct d350_sg *sg;
+> +	dma_addr_t phys;
+>   	u32 *cmd;
+>   
+> -	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
+> +	desc = kzalloc(struct_size(desc, sg, 1), GFP_NOWAIT);
+>   	if (!desc)
+>   		return NULL;
+>   
+> -	desc->tsz = __ffs(len | dest | src | (1 << dch->tsz));
+> -	desc->xsize = lower_16_bits(len >> desc->tsz);
+> -	desc->xsizehi = upper_16_bits(len >> desc->tsz);
+> +	sg = &desc->sg[0];
+> +	sg->command = dma_pool_zalloc(dch->cmd_pool, GFP_NOWAIT, &phys);
+> +	if (unlikely(!sg->command)) {
+> +		kfree(desc);
+> +		return NULL;
+> +	}
+> +	sg->phys = phys;
+> +
+> +	sg->tsz = __ffs(len | dest | src | (1 << dch->tsz));
+> +	sg->xsize = lower_16_bits(len >> sg->tsz);
+> +	sg->xsizehi = upper_16_bits(len >> sg->tsz);
+>   
+> -	cmd = desc->command;
+> +	cmd = sg->command;
+>   	cmd[0] = LINK_CTRL | LINK_SRCADDR | LINK_SRCADDRHI | LINK_DESADDR |
+>   		 LINK_DESADDRHI | LINK_XSIZE | LINK_XSIZEHI | LINK_SRCTRANSCFG |
+>   		 LINK_DESTRANSCFG | LINK_XADDRINC | LINK_LINKADDR;
+>   
+> -	cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, desc->tsz) |
+> +	cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, sg->tsz) |
+>   		 FIELD_PREP(CH_CTRL_XTYPE, CH_CTRL_XTYPE_CONTINUE) |
+>   		 FIELD_PREP(CH_CTRL_DONETYPE, CH_CTRL_DONETYPE_CMD);
+>   
+> @@ -241,13 +267,15 @@ static struct dma_async_tx_descriptor *d350_prep_memcpy(struct dma_chan *chan,
+>   	cmd[3] = upper_32_bits(src);
+>   	cmd[4] = lower_32_bits(dest);
+>   	cmd[5] = upper_32_bits(dest);
+> -	cmd[6] = FIELD_PREP(CH_XY_SRC, desc->xsize) | FIELD_PREP(CH_XY_DES, desc->xsize);
+> -	cmd[7] = FIELD_PREP(CH_XY_SRC, desc->xsizehi) | FIELD_PREP(CH_XY_DES, desc->xsizehi);
+> +	cmd[6] = FIELD_PREP(CH_XY_SRC, sg->xsize) | FIELD_PREP(CH_XY_DES, sg->xsize);
+> +	cmd[7] = FIELD_PREP(CH_XY_SRC, sg->xsizehi) | FIELD_PREP(CH_XY_DES, sg->xsizehi);
+>   	cmd[8] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
+>   	cmd[9] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
+>   	cmd[10] = FIELD_PREP(CH_XY_SRC, 1) | FIELD_PREP(CH_XY_DES, 1);
+>   	cmd[11] = 0;
+>   
+> +	mb();
+> +
+>   	return vchan_tx_prep(&dch->vc, &desc->vd, flags);
+>   }
+>   
+> @@ -256,34 +284,46 @@ static struct dma_async_tx_descriptor *d350_prep_memset(struct dma_chan *chan,
+>   {
+>   	struct d350_chan *dch = to_d350_chan(chan);
+>   	struct d350_desc *desc;
+> +	struct d350_sg *sg;
+> +	dma_addr_t phys;
+>   	u32 *cmd;
+>   
+> -	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
+> +	desc = kzalloc(struct_size(desc, sg, 1), GFP_NOWAIT);
+>   	if (!desc)
+>   		return NULL;
+>   
+> -	desc->tsz = __ffs(len | dest | (1 << dch->tsz));
+> -	desc->xsize = lower_16_bits(len >> desc->tsz);
+> -	desc->xsizehi = upper_16_bits(len >> desc->tsz);
+> +	sg = &desc->sg[0];
+> +	sg->command = dma_pool_zalloc(dch->cmd_pool, GFP_NOWAIT, &phys);
+> +	if (unlikely(!sg->command)) {
+> +		kfree(desc);
+> +		return NULL;
+> +	}
+> +	sg->phys = phys;
+> +
+> +	sg->tsz = __ffs(len | dest | (1 << dch->tsz));
+> +	sg->xsize = lower_16_bits(len >> sg->tsz);
+> +	sg->xsizehi = upper_16_bits(len >> sg->tsz);
+>   
+> -	cmd = desc->command;
+> +	cmd = sg->command;
+>   	cmd[0] = LINK_CTRL | LINK_DESADDR | LINK_DESADDRHI |
+>   		 LINK_XSIZE | LINK_XSIZEHI | LINK_DESTRANSCFG |
+>   		 LINK_XADDRINC | LINK_FILLVAL | LINK_LINKADDR;
+>   
+> -	cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, desc->tsz) |
+> +	cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, sg->tsz) |
+>   		 FIELD_PREP(CH_CTRL_XTYPE, CH_CTRL_XTYPE_FILL) |
+>   		 FIELD_PREP(CH_CTRL_DONETYPE, CH_CTRL_DONETYPE_CMD);
+>   
+>   	cmd[2] = lower_32_bits(dest);
+>   	cmd[3] = upper_32_bits(dest);
+> -	cmd[4] = FIELD_PREP(CH_XY_DES, desc->xsize);
+> -	cmd[5] = FIELD_PREP(CH_XY_DES, desc->xsizehi);
+> +	cmd[4] = FIELD_PREP(CH_XY_DES, sg->xsize);
+> +	cmd[5] = FIELD_PREP(CH_XY_DES, sg->xsizehi);
+>   	cmd[6] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
+>   	cmd[7] = FIELD_PREP(CH_XY_DES, 1);
+>   	cmd[8] = (u8)value * 0x01010101;
+>   	cmd[9] = 0;
+>   
+> +	mb();
+> +
+>   	return vchan_tx_prep(&dch->vc, &desc->vd, flags);
+>   }
+>   
+> @@ -319,8 +359,9 @@ static int d350_resume(struct dma_chan *chan)
+>   
+>   static u32 d350_get_residue(struct d350_chan *dch)
+>   {
+> -	u32 res, xsize, xsizehi, hi_new;
+> -	int retries = 3; /* 1st time unlucky, 2nd improbable, 3rd just broken */
+> +	u32 res, xsize, xsizehi, linkaddr, linkaddrhi, hi_new;
+> +	int i, sgcur, retries = 3; /* 1st time unlucky, 2nd improbable, 3rd just broken */
+> +	struct d350_desc *desc = dch->desc;
+>   
+>   	hi_new = readl_relaxed(dch->base + CH_XSIZEHI);
+>   	do {
+> @@ -329,10 +370,26 @@ static u32 d350_get_residue(struct d350_chan *dch)
+>   		hi_new = readl_relaxed(dch->base + CH_XSIZEHI);
+>   	} while (xsizehi != hi_new && --retries);
+>   
+> +	hi_new = readl_relaxed(dch->base + CH_LINKADDRHI);
+> +	do {
+> +		linkaddrhi = hi_new;
+> +		linkaddr = readl_relaxed(dch->base + CH_LINKADDR);
+> +		hi_new = readl_relaxed(dch->base + CH_LINKADDRHI);
+> +	} while (linkaddrhi != hi_new && --retries);
+> +
+> +	for (i = 0; i < desc->sglen; i++) {
+> +		if (desc->sg[i].phys == (((u64)linkaddrhi << 32) | (linkaddr & ~CH_LINKADDR_EN)))
+> +			sgcur = i;
+> +	}
+> +
+>   	res = FIELD_GET(CH_XY_DES, xsize);
+>   	res |= FIELD_GET(CH_XY_DES, xsizehi) << 16;
+> +	res <<= desc->sg[sgcur].tsz;
+> +
+> +	for (i = sgcur + 1; i < desc->sglen; i++)
+> +		res += (((u32)desc->sg[i].xsizehi << 16 | desc->sg[i].xsize) << desc->sg[i].tsz);
+>   
+> -	return res << dch->desc->tsz;
+> +	return res;
+>   }
+>   
+>   static int d350_terminate_all(struct dma_chan *chan)
+> @@ -365,7 +422,13 @@ static void d350_synchronize(struct dma_chan *chan)
+>   
+>   static u32 d350_desc_bytes(struct d350_desc *desc)
+>   {
+> -	return ((u32)desc->xsizehi << 16 | desc->xsize) << desc->tsz;
+> +	int i;
+> +	u32 bytes = 0;
+> +
+> +	for (i = 0; i < desc->sglen; i++)
+> +		bytes += (((u32)desc->sg[i].xsizehi << 16 | desc->sg[i].xsize) << desc->sg[i].tsz);
+> +
+> +	return bytes;
+>   }
+>   
+>   static enum dma_status d350_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+> @@ -415,8 +478,8 @@ static void d350_start_next(struct d350_chan *dch)
+>   	dch->cookie = dch->desc->vd.tx.cookie;
+>   	dch->residue = d350_desc_bytes(dch->desc);
+>   
+> -	hdr = dch->desc->command[0];
+> -	reg = &dch->desc->command[1];
+> +	hdr = dch->desc->sg[0].command[0];
+> +	reg = &dch->desc->sg[0].command[1];
+>   
+>   	if (hdr & LINK_INTREN)
+>   		writel_relaxed(*reg++, dch->base + CH_INTREN);
+> @@ -512,11 +575,29 @@ static irqreturn_t d350_irq(int irq, void *data)
+>   static int d350_alloc_chan_resources(struct dma_chan *chan)
+>   {
+>   	struct d350_chan *dch = to_d350_chan(chan);
+> -	int ret = request_irq(dch->irq, d350_irq, IRQF_SHARED,
+> -			      dev_name(&dch->vc.chan.dev->device), dch);
+> -	if (!ret)
+> -		writel_relaxed(CH_INTREN_DONE | CH_INTREN_ERR, dch->base + CH_INTREN);
+> +	int ret;
+> +
+> +	dch->cmd_pool = dma_pool_create(dma_chan_name(chan),
+> +					  chan->device->dev,
+> +					  D350_MAX_CMDS * sizeof(u32),
+> +					  sizeof(u32), 0);
+> +	if (!dch->cmd_pool) {
+> +		dev_err(chan->device->dev, "No memory for cmd pool\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = request_irq(dch->irq, d350_irq, 0,
+> +			  dev_name(&dch->vc.chan.dev->device), dch);
+> +	if (ret < 0)
+> +		goto err_irq;
+> +
+> +	writel_relaxed(CH_INTREN_DONE | CH_INTREN_ERR, dch->base + CH_INTREN);
+> +
+> +	return 0;
+>   
+> +err_irq:
+> +	dma_pool_destroy(dch->cmd_pool);
+> +	dch->cmd_pool = NULL;
+>   	return ret;
+>   }
+>   
+> @@ -527,6 +608,8 @@ static void d350_free_chan_resources(struct dma_chan *chan)
+>   	writel_relaxed(0, dch->base + CH_INTREN);
+>   	free_irq(dch->irq, dch);
+>   	vchan_free_chan_resources(&dch->vc);
+> +	dma_pool_destroy(dch->cmd_pool);
+> +	dch->cmd_pool = NULL;
+>   }
+>   
+>   static int d350_probe(struct platform_device *pdev)
 
