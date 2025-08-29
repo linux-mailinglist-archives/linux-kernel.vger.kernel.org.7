@@ -1,144 +1,163 @@
-Return-Path: <linux-kernel+bounces-791192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA0BB3B33D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7385EB3B33F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5963B791D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:19:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421B21758AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A56723ABBD;
-	Fri, 29 Aug 2025 06:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE2823B61A;
+	Fri, 29 Aug 2025 06:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VlAr7cp1"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1F4rJLD"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D699207A20;
-	Fri, 29 Aug 2025 06:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0001F09BF;
+	Fri, 29 Aug 2025 06:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756448342; cv=none; b=bllLAzzvLZygy6YSNG8mzD/5a5pYu1EkHhb1BCY8Wc0gl72wCLXHSqcMaDjvzV/YLU5KEIt4qyox9t94eixCaFbNLEKA6KTycIjY5yrG7VKi6KmkLXAi1+Fp0iC61RJ2YaKmFFhN10C89w7fH2hTfVfGxYF9wM7qPFBFLKLcigc=
+	t=1756448375; cv=none; b=fGZqeWGbTHXJM14QHyb0UbujI9WjHFmgWlI7SOnY8rRn2/B1pHvUz8QudjOB1kyFRD/cS2c7r/zp6cwourQzkhPskX0uY78Q73wEEgyco1QC+P6YMAY0UQ41CB13/Y1tZ98K2w3WAU7dfVtUWbEvqrAsVUhtlaDA7gR3tHgJ1ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756448342; c=relaxed/simple;
-	bh=P9Q0SmdKT4+QR+pS62JZey3140CaFSXQyb5AfpmgPrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kMIBOUhLauIr5WA84CaULcEJx971avEC7WuEqDP13mdyiOIU2Zp28t1BQjo6kfX907pElhFByZJ5HAvEYkT65u39amIee8kfeFAhEyDXvbCF5mLZEeoToAq/W6tzw37f7I2Z6Hw+jsK0rp537tYU3qjlApnjGfaaexIAeP1Bl84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VlAr7cp1; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57T6IrnH2151732;
-	Fri, 29 Aug 2025 01:18:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756448333;
-	bh=3IPwZazoSn4ZeSr5DFrwiRXhN0snIHoAAJIH9eLfr9U=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VlAr7cp1b4CRn3SlUE3hf7hIh7IZy/hHvtEir/A8wQug1degH7AhhyKmubIkPa5vl
-	 9lfYiNyPXKy4wnhWicf7HGtm5Nhzt5rkxHrpwHVirZBN72EcpOaIC1QZfRBNW0/Szi
-	 pYdaqIVn8+Ff7bc2ksiE7BHEllszOJ4pIEEFRTKc=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57T6IqF43805307
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 29 Aug 2025 01:18:53 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
- Aug 2025 01:18:52 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 29 Aug 2025 01:18:52 -0500
-Received: from [172.24.20.139] (lt5cd2489kgj.dhcp.ti.com [172.24.20.139])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57T6ImNR1891002;
-	Fri, 29 Aug 2025 01:18:48 -0500
-Message-ID: <c542ad3f-8e6d-405a-92d3-4e45cbcfc2a3@ti.com>
-Date: Fri, 29 Aug 2025 11:48:47 +0530
+	s=arc-20240116; t=1756448375; c=relaxed/simple;
+	bh=g9JPHOm4Qzq7NOwWVks/w0CGNhTZ0lSavt8D+9snWT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bBaccb9ZhCo9ynTar0sjvKz9FLSJHt0E5vf7qfNM/cRsyJDWXvhnZge4Xi1W+cZs+Kncwn5fkeK/i0Zhn5eB2PNeD5sLYbIB01O8N/VMLeZ8sYK7b1WrRMN7pmO4YVdVU4zSRn3ohcfE21Tr/nm62Vf5M57+aN9dhd8NYs7yNhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1F4rJLD; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-327ae052173so954780a91.0;
+        Thu, 28 Aug 2025 23:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756448373; x=1757053173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLXzUPmsk5RxcWHSnTFCy0G8ysakJ2dAKE94Fnosk38=;
+        b=P1F4rJLDzkRe7TqRRy2aadcXpCeetfg8IE7pKihFDFpE6Qca25NxSP9TMnAmzRZwJj
+         RWYaH6R++x8lpFj/bjy371E/rug3uK9X3awLaxeMK846iqst3g+xzjrid8svIjvelXRm
+         C0omdTDrhkQKYaGJbG2ZiKUprp2lQ7yvziKBkc/8uJrDg1npI4jopuWk+ypTr2R05lJY
+         yv2DRs3DvRO1XOjuuWcV2zf/vvX3sElwwXptb35XW38JoFeLp/bbAxAqgDdN2e86hKDG
+         xUNlH8Pgi4BAuOf+ItIRj50eWf44N9KBjZzzTBWWs3ID/ZwX4iqwHKsq0Ge3/qqj4B//
+         ki5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756448373; x=1757053173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wLXzUPmsk5RxcWHSnTFCy0G8ysakJ2dAKE94Fnosk38=;
+        b=fjYbp2BcANPTlysPfh8XIBm2HCu0GUTRzxWOkpuU7VKvDwISOnHA2YyilVsoUtPIK8
+         0FV9gH1ljFBWrfafcHRdfk+9V+DAOoBNXh9EiA/T022aARRvfGb+e935ybHwMVV9AKCb
+         zm0EdfPxZ3wf6FbDccGzz0LcwILmtZ/YExUfAGNpNYKlUPk+2aRqY4Ed4191q4S/Fof9
+         kYSukJO01zphMdW8u/pIx8VFQFfdkCKja7+R3zDKyOdZcZRUehUXZ5157MfL5Z9woYTM
+         d561OfA6g1Vr/oUyeGc8N6LYzi+SC/gvFjmUZ/wlXlCh6+6OwjFtrs5CfPBBbX67xX4h
+         fuNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC8PJdhauN5s/hI6lJ745btvAoXcQeYDqONH1cx3TO3GYjwEOQGW6nHKJYcDGye3ilQ0A+whHpxWhdOg==@vger.kernel.org, AJvYcCXxI4WfYiTlVzoEl8hMfhGC0lJlOFAkR955qul8in7eLxzQtJ9lRKLo2qJ7A4bhyzc2sMmpnDAudlsFVMCO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlTDHIhNW09Lh2BXJ0zVsf756nbqKcxUfekxtA8doztf2FnVOX
+	H+EFgTqpCfNXLMIeAYuQk1ryrt6EMyAe4jpRXI7nkl4kLV+nm/5RvuzJOQi1zektPzBo79m8UN4
+	WFOXs+Co+Zwe54/piwbfrK/U4hDMbcsQ=
+X-Gm-Gg: ASbGncvNnDq5Xmfg2mbTCufwJJuYe0cNlgHAVVIDDHXypq5Hm2PGpytld6wyXlXDjC0
+	4OwLeNfs4D8O0ZJfRRLZXTzqTwpfr8BO+x+C3Ex2J+rFsIcTaLT3QoIY9Wm/VlmW3iAvbLM9QeZ
+	EtzGRRdGu0dLVAhEmL4r3ihYl+ZEobEouDKwjC7ky48LAFe6LxX9LJWd3zGf58RH4M0CtSwLXqs
+	U7fjqdwzR6JWfMf
+X-Google-Smtp-Source: AGHT+IGf1tNPq40f3BUgdXUWiW+vto3YnZyLXBveOF9fPfkTS+h1IGzYK6jHMT9UWDgzxXpCeUF5HhsydpAWTbE3D1A=
+X-Received: by 2002:a17:90b:5484:b0:327:a625:f43c with SMTP id
+ 98e67ed59e1d1-327a625f4f5mr7617442a91.22.1756448372605; Thu, 28 Aug 2025
+ 23:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-j742s2-mcu-wakeup: Override
- firmware-name for MCU R5F cores
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <u-kumar1@ti.com>
-References: <20250823163111.2237199-1-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20250823163111.2237199-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250829015444.91369-1-pilgrimtao@gmail.com> <62c9b68f-6adc-41d8-b504-4bce4d721e64@acm.org>
+In-Reply-To: <62c9b68f-6adc-41d8-b504-4bce4d721e64@acm.org>
+From: Tao pilgrim <pilgrimtao@gmail.com>
+Date: Fri, 29 Aug 2025 14:19:21 +0800
+X-Gm-Features: Ac12FXzY3J8vnVEbGE-x6nEfOpsr6cNmiGLmwyrMmhGUbC5B6N7eWbLQJT48ucY
+Message-ID: <CAAWJmAbumBHVo-8neC+b8WqJzzLbWqARpc3vkBsgs9j08wh3kA@mail.gmail.com>
+Subject: Re: [PATCH] block/mq-deadline: Replace DD_PRIO_MAX with DD_PRIO_COUNT
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	chengkaitao <chengkaitao@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 8/23/2025 10:01 PM, Beleswar Padhi wrote:
-> The J742S2 SoC reuses the common k3-j784s4-j742s2-mcu-wakeup-common.dtsi
-> for its MCU domain, but it does not override the firmware-name property
-> for its R5F cores. This causes the wrong firmware binaries to be
-> referenced.
+On Fri, Aug 29, 2025 at 12:38=E2=80=AFPM Bart Van Assche <bvanassche@acm.or=
+g> wrote:
 >
-> Introduce a new k3-j742s2-mcu-wakeup.dtsi file to override the
-> firmware-name property with correct names for J742s2.
+> On 8/28/25 6:54 PM, chengkaitao wrote:
+> > diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> > index b9b7cdf1d3c9..1a031922c447 100644
+> > --- a/block/mq-deadline.c
+> > +++ b/block/mq-deadline.c
+> > @@ -41,19 +41,16 @@ static const int fifo_batch =3D 16;       /* # of s=
+equential requests treated as o
+> >   enum dd_data_dir {
+> >       DD_READ         =3D READ,
+> >       DD_WRITE        =3D WRITE,
+> > +     DD_DIR_COUNT    =3D 2
+> >   };
+> >
+> > -enum { DD_DIR_COUNT =3D 2 };
+> > -
 >
-> Fixes: 38fd90a3e1ac ("arm64: dts: ti: Introduce J742S2 SoC family")
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> v2: Changelog:
-> 1. Posted this patch as a fix as decided in v1, so added Fixes tag.
+> This change is not an improvement in my opinion because it makes it
+> less clear what the role of DD_DIR_COUNT is.
+
+DD_DIR_COUNT is used to count the number of members in the
+enum dd_data_dir{}, and should be placed inside the enum dd_data_dir.
+There are many such examples in the kernel, such as:
+KFENCE_COUNTER_COUNT,__MTHP_STAT_COUNT,CHANNELMSG_COUNT,
+ETH_RSS_HASH_FUNCS_COUNT,DEPOT_COUNTER_COUNT....
 >
-> Link to v1:
-> https://lore.kernel.org/all/20250522073426.329344-2-b-padhi@ti.com/
+> >   enum dd_prio {
+> > -     DD_RT_PRIO      =3D 0,
+> > -     DD_BE_PRIO      =3D 1,
+> > -     DD_IDLE_PRIO    =3D 2,
+> > -     DD_PRIO_MAX     =3D 2,
+> > +     DD_RT_PRIO,
+> > +     DD_BE_PRIO,
+> > +     DD_IDLE_PRIO,
 >
->   .../arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi | 17 +++++++++++++++++
->   arch/arm64/boot/dts/ti/k3-j742s2.dtsi           |  1 +
->   2 files changed, 18 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+> There is code that depends on DD_RT_PRIO < DD_BE_PRIO < DD_IDLE_PRIO so
+> I'd like to keep the explicit enum values.
+
+Wouldn't it be better to simply add a comment for this purpose?
 >
-> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
-> new file mode 100644
-> index 000000000000..61db2348d6a4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for J742S2 SoC Family
-> + *
-> + * TRM: https://www.ti.com/lit/pdf/spruje3
-> + *
-> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-> + *
-> + */
-> +
-> +&mcu_r5fss0_core0 {
-> +	firmware-name = "j742s2-mcu-r5f0_0-fw";
-> +};
-> +
-> +&mcu_r5fss0_core1 {
-> +	firmware-name = "j742s2-mcu-r5f0_1-fw";
-> +};
+> > +     DD_PRIO_COUNT
+> >   };
+> >
+> > -enum { DD_PRIO_COUNT =3D 3 };
+>
+> I see the above change as a step backwards because it makes the role of
+> DD_PRIO_COUNT less clear.
 
+Defining DD_PRIO_COUNT within the enum dd_prio{} clearly indicates
+that DD_PRIO_COUNT serves solely for the enum dd_prio{}. If a new
+member is added to enum dd_prio{} in the future, DD_PRIO_COUNT
+would not need to be modified separately.
+>
+> > -     for (prio =3D DD_BE_PRIO; prio <=3D DD_PRIO_MAX; prio++) {
+> > +     for (prio =3D DD_BE_PRIO; prio < DD_PRIO_COUNT; prio++) {
+>
+> The current code is easier to read IMHO than the new code.
 
-Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+I believe programmers are intelligent enough to understand the meanings
+of *_COUNT and *_MAX without needing to define them independently,
+especially in cases like *_COUNT =3D *_MAX + 1, where _MAX seems rather
+redundant.
+>
+The above are my personal thoughts. The purpose of this patch is to make
+the code more concise, and not merging it into the mainline won't have any
+significant impact.
 
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
-> index 7a72f82f56d6..d265df1abade 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
-> @@ -96,3 +96,4 @@ cpu3: cpu@3 {
->   };
->   
->   #include "k3-j742s2-main.dtsi"
-> +#include "k3-j742s2-mcu-wakeup.dtsi"
+Looking forward to your reply.
+--=20
+Yours,
+Kaitao Cheng
 
