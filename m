@@ -1,89 +1,211 @@
-Return-Path: <linux-kernel+bounces-791320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37746B3B555
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:03:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A942B3B5C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF466168361
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:02:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F4827BCB04
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9AD28980F;
-	Fri, 29 Aug 2025 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZbow2as"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EBE29AB1A;
+	Fri, 29 Aug 2025 08:13:21 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC019CC28;
-	Fri, 29 Aug 2025 08:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37390262FC7;
+	Fri, 29 Aug 2025 08:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756454499; cv=none; b=KG5v9XXli1K71v3hHkaO11h5h97ivwa2+K669N92S2AYwrmYQoywiWI8d/EoDUzncMS61gWbeuqOrjg6Ky5ZRW7tiA05ZABJyINCt4oUHiOCSsCXxekH6GcXJhJoH6obWPtF3+CdSG7h8QQK1EBYMW73YynPR2oNtTGNnicXB9Y=
+	t=1756455200; cv=none; b=SitBrMnjrBguXyyGhHG1SFcaIw+25p4PJ0uP8lultE5QsQkctfM5ZGDGnW4rrbBmfyNy8r/hLMdI5fDjRbgemsqjRwwSwRbEE9jTh3bozSvg0jXTwf+xS2WEPeYWAYWZUK4IZGGRoLwsDCs+rZ+rBXvMK7n8L03WRBUwhSH4tBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756454499; c=relaxed/simple;
-	bh=JsqSYUFY71T/FozS0NYvmOp7npQw+HrhzSRNRp5JVCI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=iSUinavgaWuel5DIvgpiOxAl3b34Qr35Aej7CZbiOr/bG8YDwtSyfUyfOOqyyfsrFT+EXp4/7wYGNRzT9wXfiZfV5SMKIQgjcQVyiqCaihtr71yy++pf4EBPFmTloyenI+uylmtrv+MAqGe8xDyBF23xcs5Dpa27PVZvKdwLS4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZbow2as; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EE6C4CEF0;
-	Fri, 29 Aug 2025 08:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756454498;
-	bh=JsqSYUFY71T/FozS0NYvmOp7npQw+HrhzSRNRp5JVCI=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=lZbow2as6el92Vbw1I33IWpZPr5TY2TotYichgG3/9fDybdxNE4idD41qglrSrGJw
-	 qM6NW/rpfbTfdWZ6ABMeq0KRItNiVkvWbGfwx49Ds9WIbzJzqL9YW+nr+y4eVpfZjF
-	 6O9z6dxwgbXRx/ga1m7jTW//0PiL5RXXi/6abvlDxFFztSATnN7X7tMCq5M6l+UHRb
-	 HLACyGyr9t7TFWihKt9tmcZmnqS3KHliJilubUhjSsbyZtoiosdCaSGyJHWr1hannD
-	 4ciZwl2uVaRXE2HtOIWge99Pzs+wjLqB3EDG95cgcGhdgl4/jJ8M7DLFUye2+0qNoJ
-	 NfV1MAzBz3QZw==
+	s=arc-20240116; t=1756455200; c=relaxed/simple;
+	bh=A0V8NrU+/d9oOJrAnfiuCrLAa4Kzy73YPCwn4yCQios=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AV3jYosYvwEbcye65V9RWm33sVKALen6tXfqA8MUKlC0fjXTeC1Cty9dDLO4Py+qSlBUi9PqxFFVZbkshgozBCE9x+k1eL5ALQDsFLptCzy3GE1OUGzzMV0AsJfbitzx46L/paErJCaNUirv2EEwmWCAfUFGkV78slnS+PCA1Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCrcR6VTDzYQvd8;
+	Fri, 29 Aug 2025 16:13:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D28D1A1A26;
+	Fri, 29 Aug 2025 16:13:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgB3wY0RYbFohAO2Ag--.45648S4;
+	Fri, 29 Aug 2025 16:13:08 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@infradead.org,
+	xni@redhat.com,
+	colyli@kernel.org,
+	linan122@huawei.com,
+	corbet@lwn.net,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	hare@suse.de
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com,
+	hailan@yukuai.org.cn
+Subject: [PATCH v7 md-6.18 00/11] md/llbitmap: md/md-llbitmap: introduce a new lockless bitmap
+Date: Fri, 29 Aug 2025 16:04:15 +0800
+Message-Id: <20250829080426.1441678-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 29 Aug 2025 10:01:35 +0200
-Message-Id: <DCER5JXJYKB0.2FVV3H6S55YQN@kernel.org>
-Cc: "Simona Vetter" <simona.vetter@ffwll.ch>, "Alice Ryhl"
- <aliceryhl@google.com>, "Intel Graphics" <intel-gfx@lists.freedesktop.org>,
- "DRI" <dri-devel@lists.freedesktop.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-References: <20250829122343.4b31642f@canb.auug.org.au>
-In-Reply-To: <20250829122343.4b31642f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3wY0RYbFohAO2Ag--.45648S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKr1rGF45Cr4rXF4fXF1kXwb_yoW7Xr4Upa
+	9aqr43CwsxJr4fWa17J342vFyrKan5XrZrKr1fG3yF93yqyrn8Ga1SgF4ru34DGryfWF9F
+	qr45ArnrKryj9FJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri Aug 29, 2025 at 4:23 AM CEST, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the drm-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/gpu/drm/tests/drm_exec_test.c: In function 'test_prepare_array':
-> drivers/gpu/drm/tests/drm_exec_test.c:171:1: error: the frame size of 213=
-6 bytes is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
->   171 | }
->       | ^
-> cc1: all warnings being treated as errors
->
-> Possibly caused by commit
->
->   e7fa80e2932c ("drm_gem: add mutex to drm_gem_object.gpuva")
+From: Yu Kuai <yukuai3@huawei.com>
 
-Thanks for reporting!
+Changes from v6:
+ - fix special case in degraded mode in patch 11, also add description
+ about this case;
+ - fix some typos in patch 11;
+Changes from v5:
+ - fix wrong place to check is blocks are synced in patch 8; (Xiao)
+ - raid5 is using recover to build initial xor data, fix that unexpected
+ resync is triggered, patch 9 and patch 11; (Myself by test)
+ - flush bitmap after it's initialized the first time, patch 11; (Xiao)
+ - some coding style, patch 11; (Xiao)
+Changes from v4:
+ - fix dm-raid regerssion in patch 6, skip creating bitmap attributes
+ under mddev gendisk which is NULL;
+ - some minor cleanups and error handling fixes in patch 11;
+ - add review tag:
+  - patch 1-10 from Li Nan
+  - patch 4,5,6,8 from Xiao
+  - patch 6 from Hannes
+Changes from v3:
+ - fix redundant setting mddev->bitmap_id in patch 6;
+ - add explanation of bitmap attributes in Documentation;
+ - add llbitmap/barrier_idle in patch 11;
+ - add some comments in patch 11;
+Changes from v2:
+ - add comments about KOBJECT_CHANGE uevent in patch 6;
+ - convert llbitmap_suspend() to llbitmap_suspend_timeout() in patch 11;
+ - add some comments in patch 11;
+ - add review tag:
+  - patch 3,4,5,9 from Hannes
+Changes from v1:
+ - explain md_bitmap_fn in commit message, patch 3;
+ - handle the case CONFIG_MD_BITMAP is disabled, patch 4;
+ - split patch 7 from v1 into patch 5 + 6;
+ - rewrite bitmap_type_store, patch 5;
+ - fix dm-raid regerssion that md-bitmap sysfs entries should not be
+ created under mddev kobject, patch 6
+ - merge llbitmap patches into one patch, with lots of cleanups;
+ - add review tag:
+  - patch 1,2,7,8,9,10 from Christoph
+  - patch 1,2,7,8,10 from Hannes
+  - patch 1,2,3,7 from Xiao
 
-Unfortunately, it didn't happen with my configuration, but I could reproduc=
-e it
-with a simple allmodconfig. I've send a fix for this [1].
+v4: https://lore.kernel.org/all/20250721171557.34587-1-yukuai@kernel.org/
+v3: https://lore.kernel.org/linux-raid/20250718092336.3346644-1-yukuai1@huaweicloud.com/
+v2: https://lore.kernel.org/all/20250707165202.11073-12-yukuai@kernel.org/
+v1: https://lore.kernel.org/all/20250524061320.370630-1-yukuai1@huaweicloud.com/
+RFC: https://lore.kernel.org/all/20250512011927.2809400-1-yukuai1@huaweicloud.com/
 
-[1] https://lore.kernel.org/dri-devel/20250829075633.2306-1-dakr@kernel.org=
-/
+Redundant data is used to enhance data fault tolerance, and the storage
+method for redundant data vary depending on the RAID levels. And it's
+important to maintain the consistency of redundant data.
+
+Bitmap is used to record which data blocks have been synchronized and which
+ones need to be resynchronized or recovered. Each bit in the bitmap
+represents a segment of data in the array. When a bit is set, it indicates
+that the multiple redundant copies of that data segment may not be
+consistent. Data synchronization can be performed based on the bitmap after
+power failure or readding a disk. If there is no bitmap, a full disk
+synchronization is required.
+
+Due to known performance issues with md-bitmap and the unreasonable
+implementations:
+
+ - self-managed IO submitting like filemap_write_page();
+ - global spin_lock
+
+I have decided not to continue optimizing based on the current bitmap
+implementation, this new bitmap is invented without locking from IO fast
+path and can be used with fast disks.
+
+For designs and details, see patch 11;
+
+Performance Test:
+Simple fio randwrite test to build array with 20GB ramdisk in my VM:
+
+|                      | none      | bitmap    | llbitmap  |
+| -------------------- | --------- | --------- | --------- |
+| raid1                | 13.7MiB/s | 9696KiB/s | 19.5MiB/s |
+| raid1(assume clean)  | 19.5MiB/s | 11.9MiB/s | 19.5MiB/s |
+| raid10               | 21.9MiB/s | 11.6MiB/s | 27.8MiB/s |
+| raid10(assume clean) | 27.8MiB/s | 15.4MiB/s | 27.8MiB/s |
+| raid5                | 14.0MiB/s | 11.6MiB/s | 12.9MiB/s |
+| raid5(assume clean)  | 17.8MiB/s | 13.4MiB/s | 13.9MiB/s |
+
+For raid1/raid10 llbitmap can be better than none bitmap with background
+initial resync, and it's the same as none bitmap without it.
+
+Noted that llbitmap performance improvement for raid5 is not obvious,
+this is due to raid5 has many other performance bottleneck, perf
+results still shows that bitmap overhead will be much less.
+
+Yu Kuai (11):
+  md: add a new parameter 'offset' to md_super_write()
+  md: factor out a helper raid_is_456()
+  md/md-bitmap: support discard for bitmap ops
+  md: add a new mddev field 'bitmap_id'
+  md/md-bitmap: add a new sysfs api bitmap_type
+  md/md-bitmap: delay registration of bitmap_ops until creating bitmap
+  md/md-bitmap: add a new method skip_sync_blocks() in bitmap_operations
+  md/md-bitmap: add a new method blocks_synced() in bitmap_operations
+  md: add a new recovery_flag MD_RECOVERY_LAZY_RECOVER
+  md/md-bitmap: make method bitmap_ops->daemon_work optional
+  md/md-llbitmap: introduce new lockless bitmap
+
+ Documentation/admin-guide/md.rst |   86 +-
+ drivers/md/Kconfig               |   11 +
+ drivers/md/Makefile              |    1 +
+ drivers/md/md-bitmap.c           |   15 +-
+ drivers/md/md-bitmap.h           |   45 +-
+ drivers/md/md-llbitmap.c         | 1625 ++++++++++++++++++++++++++++++
+ drivers/md/md.c                  |  332 ++++--
+ drivers/md/md.h                  |   20 +-
+ drivers/md/raid5.c               |   34 +-
+ 9 files changed, 2046 insertions(+), 123 deletions(-)
+ create mode 100644 drivers/md/md-llbitmap.c
+
+-- 
+2.39.2
+
 
