@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-791163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE27B3B2B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:47:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DE0B3B2B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B970B7B03CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:46:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F4B566EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF17221C186;
-	Fri, 29 Aug 2025 05:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22059220F38;
+	Fri, 29 Aug 2025 05:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE5t6oE+"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FC01401B
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iyJOyVe7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171737404E;
+	Fri, 29 Aug 2025 05:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756446457; cv=none; b=eo9vlbnhAraAOyor2bh7ukaG4r4ssbBj8NDAZwgh0zV/dqnIYQH0GHPX42VFpuILJVx64qbyTBXEhY/u747ywwqMECZzn1hTyUAtA3iI7AQpJUzLk9EORHL2nGAuVBtv4odF7dg3kp1myrYVH5tj1QTx/ND42qO7jYyk8SI8i1U=
+	t=1756446779; cv=none; b=hryhmANg68WgUsGzgFxw5+UyEkty7zwrb+JUb9oo4GA3L/X5JXsOOSClwii6gaXXHaMHq15nQBE7KKVjRA8vXao9tkPlvL+9B9MvT070J+8l3lzG0K8aUizvQ+Hr7dEsf7Qa1J4Ai5fSRqgpICKJ0YEdTZEiSUsoMQSPTfdKCLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756446457; c=relaxed/simple;
-	bh=Uc/dxRivCX32A5tn4YeaGlRsjiI0bzG6wUPU4K0jjr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJw+/gU4TIC87dTYouCezfTJEx/bEyyVFAAZkVOsWTga1LNOV8n7z+HMv5LHI9mJ/QdVKP5gX9HQdt/J16a2A58cCvdjXet2MQp95E81CR+9cgoYT8x5bUzOl8Tb/f64cGFSG+94ivRl731JnZaUiVaSy99KzcgOXbj2FhZ4KLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TE5t6oE+; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32326789e06so1484815a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756446455; x=1757051255; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVM2NB/+Q5TwegaC+cQ6efQn2fgkr/tPokgrfCaQZxo=;
-        b=TE5t6oE+sSNp0wtZAsyN7SGkWm5OBrOZGJ2WSMgvlBpJ9J/mr+CTynl2bwrO2qcxXA
-         yHg6RoGLseTsTCmhccPBImAAxoYTxkpNihWmAGljgrb7EBCFYrf5uFoLP/04vWt2Piep
-         YGKg/6ww1CV4IPg1zWNLmMzvjufUI3HofaLMyqEM4tZxbeVUZJK7PllhWFLVJxVgS0f/
-         yNRJ61OgazNG6G1MatJ/qNbiEhDE2hPMXYdUwcb5i9TDoLKd0EtZDhz/rL8SAIk4kt7o
-         j2C0GfQPjlKUqnzrJczczOtZnGoAVIuJnI/8lOAZg1KMciVg1Iv29u40ZwbwApnmEF8l
-         Q1yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756446455; x=1757051255;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVM2NB/+Q5TwegaC+cQ6efQn2fgkr/tPokgrfCaQZxo=;
-        b=TPVzHFUBAbvMNMcJA5+GJZ8G+0K2RYMV2wJLIYygD7rsmTxwFf1JtxRh0VqZhSnoYp
-         jq2w8MLzRfvkez1YPjGuHwuqZLcbZb5e0Gs+ieldBlLjCfco8OnNb1KTz+pNNLiOjARE
-         SFKZbnjOQRcOLPCb496kmqnElF8uE1XEzpnze/2WAeZna5hh3gtEv5aFd46Oy3+KCVvw
-         oXPhQzCCHLJhgZjoOw7PpsSFwNaZdMlQUEYJ1+QT4LsmD7D/k1uD8jkcNqCCUiCkRF4E
-         vlY1/qyF+Mn9ZHZiV8zzKDv8R50UIy77wOGkWOavjR8XIvj8wVPeItzLo7AEBPLPd8MT
-         mx0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWH7T/atJqKYIwrJ+kUoFvtEE5/k+/Yq11fHubmQ12hLwrvdsE2KGNUIEynuyswtKvhlnCgiCP9ADmuWfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0arq3FG+CukyTclqsOtwnSeWkvbkEcYfB6pv9QgOb2Hjrw2sw
-	ikKieR5r95oiukrKZGBbQNpBoDdrgBgJWXAzks7ALalDVkZEZqHjjaHNXDGtltdd/pk=
-X-Gm-Gg: ASbGncsV1AkAVrvlaaGv1csBqaH9joMPFdeGGKqaNSW2bBYntHwAzpv0uAox8+ROR+D
-	Mr8bJqJ6RFpuRoGF0ucCeYDxb68KNsTxDAjlQpmnquI6H8/DmatGsrtinCQLGfgT1B1qPEUOt47
-	9tio7V05a1BjzBacHz0EdQQDT3eutrv1lCuwqxoijZeRRYq+VFMWNbo38+FBSAiIbkSmYWC5MDk
-	S+1kM1M18nyZu6kW3Rr7xjJa9Z9a/AubNu+D5LNkUp0AAsyVjRpsVaGY79DMI23ZC2VKgctC5cU
-	qxQPAAHuV6P5G2e6RVRSGadCTIhtc4P9U+VpOlPHkd+VWalpCJp4lQtgM36iTCSplFwmCk2J3cY
-	Wi7Zy71ODyZaHdAx1MWUAO+wen/7bCGFSatE=
-X-Google-Smtp-Source: AGHT+IFGFRX8jr8klOJHgeApacbbUnrvb94Dt+QaaXsozbhIjGsZDvjH/LL4aUVoWgpbErAkB6CKrg==
-X-Received: by 2002:a17:90b:3c0e:b0:327:dce5:f635 with SMTP id 98e67ed59e1d1-327dce5f897mr3153327a91.25.1756446454625;
-        Thu, 28 Aug 2025 22:47:34 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327d93547f4sm1536101a91.11.2025.08.28.22.47.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 22:47:33 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:17:31 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>,
-	"kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
-	"cw00.choi@samsung.com" <cw00.choi@samsung.com>,
-	Chun-Jen Tseng =?utf-8?B?KOabvuS/iuS7gSk=?= <Chun-Jen.Tseng@mediatek.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH v3 1/3] cpufreq: mediatek: using global lock avoid race
- condition
-Message-ID: <20250829054731.utl6pmgan6sg4mfn@vireshk-i7>
-References: <20250219054209.erwfp7sgzchaiuds@vireshk-i7>
- <e8337c5eee0cadb797bacf26b00f1ca303c5147f.camel@mediatek.com>
- <20250321045624.mwm2mnkqeow5uids@vireshk-i7>
- <2a73b5ca35692c8ffa68c9ff0df73e24a592967d.camel@mediatek.com>
- <20250321060148.adhxjexpnm4dkpnt@vireshk-i7>
- <e1c2c12bace22d1803d16ecbfb32129518d87157.camel@mediatek.com>
- <20250324054333.sgwwksawnybx3lp4@vireshk-i7>
- <06356a55cdb3c34dfc716349d1967f95655b0ab2.camel@mediatek.com>
- <20250416080517.feansrkpycsynk6t@vireshk-i7>
- <CAGXv+5FyR8bt16nLvS0V=_YRWM6G7V0OOpxctA+_4hVnnCjDtg@mail.gmail.com>
+	s=arc-20240116; t=1756446779; c=relaxed/simple;
+	bh=LG8tzpGW4xmEbi+NqiDEg4/hoFt/I5LMddcB/akqt6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkv9+4DIEqocduKgXAZet1GlyDlFlNRZQQjP5/sf7t8wQUAc1YYlh6rjoZiEa8uMJxeuCgUsUyvbxhnKGgMXVIRpIIQAiNvb3ATOua0AM+2rNBIWKqjD2cyM6BKTJWJXvGww+Iygf8x4n+HxtKD74hkM3vsHdir8fT6T+vWCFu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iyJOyVe7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.129.125] (unknown [4.194.122.136])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 08EB1211080D;
+	Thu, 28 Aug 2025 22:52:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 08EB1211080D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756446771;
+	bh=pgQVYTbJ2GLvLrSRzex4vEnPKoTWOLwxiHE6X1U+Qtk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iyJOyVe72o7jHGrUHNM+/cOH6ln7WpCgeCXdLjLz3xbcQbfRzu66dTaK3Nisze0zh
+	 S1yWsE6JZGWoRdj6U6vQdDaWa5wgXpGBaEPw3LwP8mddxCuPidJKMFOQ/L9NzzPZTo
+	 txCai/QP+h8QrPirBr5yQOEmbqlSJxni2L8RylFg=
+Message-ID: <1bb599ee-fe28-409d-b430-2fc086268936@linux.microsoft.com>
+Date: Fri, 29 Aug 2025 11:22:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXv+5FyR8bt16nLvS0V=_YRWM6G7V0OOpxctA+_4hVnnCjDtg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] uio_hv_generic: Let userspace take care of interrupt
+ mask
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>,
+ Long Li <longli@microsoft.com>, stable@vger.kernel.org
+References: <20250828044200.492030-1-namjain@linux.microsoft.com>
+ <20250828080207.6d9d3426@hermes.local>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20250828080207.6d9d3426@hermes.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 28-08-25, 15:26, Chen-Yu Tsai wrote:
-> Maybe a different set of eyes will help. I talked to Chun-Jen offline,
-> and I'll try to explain what I understand.
-> 
-> First of all, the issue lies not in cpufreq, but in the CCI devfreq,
-> and how the passive devfreq governor is linked to cpufreq.
-> 
-> The CCI hardware unit on the MT8186 is sensitive to frequency changes.
-> If the performance level of the CCI unit is much lower than either
-> of the CPU clusters, it  will hard hang the whole system. So the CCI
-> devfreq must always take into account the performance level of both
-> clusters, or in other words the settings of both cpufreq policies.
-> 
-> Since the cpufreq policies only serialize with themselves, it is possible
-> for one policy to change and trigger a devfreq update, and when the
-> CCI devfreq driver is doing its calculations, the other policy changes
-> and causes a big deviation from the assumed performance levels, leaving the
-> CCI into a non-matching performance level and causing a system hang.
-> 
-> So I think we need to handle CPUFREQ_PRECHANGE events for the frequency
-> increase direction, as well as enlarging the devfreq mutex to cover
-> the CPU frequency tracking bits in the passive governor.
-> 
-> I hope that makes sense.
 
-If some sort of serialization is required in the CCI driver, then a
-lock must be present there to prevent the issues.
 
--- 
-viresh
+On 8/28/2025 8:32 PM, Stephen Hemminger wrote:
+> On Thu, 28 Aug 2025 10:12:00 +0530
+> Naman Jain <namjain@linux.microsoft.com> wrote:
+> 
+>> Remove the logic to set interrupt mask by default in uio_hv_generic
+>> driver as the interrupt mask value is supposed to be controlled
+>> completely by the user space. If the mask bit gets changed
+>> by the driver, concurrently with user mode operating on the ring,
+>> the mask bit may be set when it is supposed to be clear, and the
+>> user-mode driver will miss an interrupt which will cause a hang.
+>>
+>> For eg- when the driver sets inbound ring buffer interrupt mask to 1,
+>> the host does not interrupt the guest on the UIO VMBus channel.
+>> However, setting the mask does not prevent the host from putting a
+>> message in the inbound ring buffer. So let’s assume that happens,
+>> the host puts a message into the ring buffer but does not interrupt.
+>>
+>> Subsequently, the user space code in the guest sets the inbound ring
+>> buffer interrupt mask to 0, saying “Hey, I’m ready for interrupts”.
+>> User space code then calls pread() to wait for an interrupt.
+>> Then one of two things happens:
+>>
+>> * The host never sends another message. So the pread() waits forever.
+>> * The host does send another message. But because there’s already a
+>>    message in the ring buffer, it doesn’t generate an interrupt.
+>>    This is the correct behavior, because the host should only send an
+>>    interrupt when the inbound ring buffer transitions from empty to
+>>    not-empty. Adding an additional message to a ring buffer that is not
+>>    empty is not supposed to generate an interrupt on the guest.
+>>    Since the guest is waiting in pread() and not removing messages from
+>>    the ring buffer, the pread() waits forever.
+>>
+>> This could be easily reproduced in hv_fcopy_uio_daemon if we delay
+>> setting interrupt mask to 0.
+>>
+>> Similarly if hv_uio_channel_cb() sets the interrupt_mask to 1,
+>> there’s a race condition. Once user space empties the inbound ring
+>> buffer, but before user space sets interrupt_mask to 0, the host could
+>> put another message in the ring buffer but it wouldn’t interrupt.
+>> Then the next pread() would hang.
+>>
+>> Fix these by removing all instances where interrupt_mask is changed,
+>> while keeping the one in set_event() unchanged to enable userspace
+>> control the interrupt mask by writing 0/1 to /dev/uioX.
+>>
+>> Fixes: 95096f2fbd10 ("uio-hv-generic: new userspace i/o driver for VMBus")
+>> Suggested-by: John Starks <jostarks@microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> Cc: <stable@vger.kernel.org>
+> 
+> Makes sense. I think the logic got carried over from uio.
+> Does it need to make sure interrupt is masked by default to avoid
+> races at startup?
+
+No, initially I also figured that this would be required, and that's why
+this was added in the first place. But my experiments with userspace
+told me otherwise and I don't think this is required.
+
+Thanks.
+
+Regards,
+Naman
 
