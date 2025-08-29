@@ -1,230 +1,113 @@
-Return-Path: <linux-kernel+bounces-792350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14D8B3C301
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BC6B3C305
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80827A607D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2375A0C9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFE4241686;
-	Fri, 29 Aug 2025 19:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB8B23F424;
+	Fri, 29 Aug 2025 19:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFFIf2CG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MvyacE+V"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B179B19D093;
-	Fri, 29 Aug 2025 19:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B16423C50F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756495596; cv=none; b=bTn8vgLzZQya9Kh2+DcTxeL2r3XcO5zyiu22qun3LaFPe7log3XkqrbUQV/KVdWY4frbx65Y0VoJ2BYuZXJTl2m9nwtBvFff+lb1sZh94sJIDHu1JE8a62xHus6OqFTaP2Bnke/0aarCOk87A6yjb75YnOQGjrbkywOEzqSCJNk=
+	t=1756495745; cv=none; b=kOiDhbspOWw4FcjtFxicz8fE8dzDS7CGGZC5Ps5nIMHMw4pNW1UGvETUR4W0sLFqrb01fiQ5ptiUXNeb96NnvgQWITNGpxHt63KHbkPARkPoPZpzdnOO0TZsEB41bpCJiJjDuZFRQ1ahXoy3F9xOhCNHe9ykBYLa6U1RX0lOdxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756495596; c=relaxed/simple;
-	bh=/7vZA9ZkA77vASufHDyIg4Jlwsl643VicajB9U3uPBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZ2+05bPjCoenbwRmjqb+99Avw2jbKZBiF2YmaQ8yZyoZlRgLp/3rWGuqecyrmcf8Y5fWFysnthOQqaDO6mmu6AUoOoQkVeNFzCGymfOmR9YJM7jiPLFIUAfY9LWpy542Ga/6xroFvLAfUZHMv/cx5iRWoVoGuJ7d8rFU9n1TcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFFIf2CG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC3FC4CEF0;
-	Fri, 29 Aug 2025 19:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756495596;
-	bh=/7vZA9ZkA77vASufHDyIg4Jlwsl643VicajB9U3uPBQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TFFIf2CGTiD4a21mikT3G5vsYDqUo6Lx8v1o7mBcHg5qold4UVWAFXEIYuRrvQYmZ
-	 IS+RgaSgnPoTpi165qWBimlLuW0+KcKV0JoSZPaOuB1vfz9uAIOu1568ttmYLZ5Bao
-	 NbABFOQcw3TZ9M66kUfdZm7w4PDdI6lIhhQgr6RP8GWs0PNULMMHvJEgoDe4wX69WV
-	 JjAg5pX9iZTqyPb5pYZKJSAhwqZHnQwnVRGJFmq2KezKO0trrMUANmtzvb7HDu0+Wi
-	 3ttKuiCfq7ksFXU0U5gNZamEnhbrteeFkqpMz1yo99jK3JPo/YUIfO7xViAt+zv2VL
-	 SFB4yTIscxFOw==
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7454509f088so1726969a34.1;
-        Fri, 29 Aug 2025 12:26:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMHjj2Zx21spDnZWn03y+B8BvaGPCvbav5G3YQn0zAndQv721F8psKaBrrZDCDOSOjTL6DOhgeNioZ0tE=@vger.kernel.org, AJvYcCUWK15rJFAV/eEJPdE3pHyZRpDemYzrCuv5Aparn6Fef1XjSMk819QZKPKjUQ+bGFsx6Al0+uJsIPY=@vger.kernel.org, AJvYcCUs9+m1l+spEJ+0LjpEkve0wbOw7+dISCAa2TkeHsF2mnzooRr9JF9bnqhSb9jwcTcskbmtuUEMB9ge@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Zzl2fP2eevGPRJMzGoZLCWn/qiiNrbK/pSTxyTfF/KZ5OMDX
-	vtwjk97y5ljDp7USczUQcEDK07VmUG5tgcqhBGLnabFS/mVeophKG+4jOwpMXqLDrrEWnu2Ql9h
-	ojnaDu0fiU17abIbw4u9uiLK+kp91X6E=
-X-Google-Smtp-Source: AGHT+IFXTGy50xFt4Qiw2Jji7yZ0OHWD+i+E98ZFE0W6EZPes45rZtJYgmMdS50MPFyt7HjYWAiaPxZyCTxHg3WPZrI=
-X-Received: by 2002:a05:6830:6994:b0:744:f113:fef8 with SMTP id
- 46e09a7af769-74500b95c22mr14400309a34.35.1756495595543; Fri, 29 Aug 2025
- 12:26:35 -0700 (PDT)
+	s=arc-20240116; t=1756495745; c=relaxed/simple;
+	bh=i+INH5PIUZ5fungsOczI6sZiAKm2LRX8A3qW19oUiZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aHRsChNP+9dRSLAtNrxeQ+gqeoubOHuwcrA0na2XBgJCvLH6ejG2xFd65ZyZL5/Btf723GrucF1u0u26QQAy58GyJKcYFdwlS1Gzi4itIUYYtYkoQNWc94hSasYSf8T1jO57JQ6e8r4XWs4olujOboxglFO0zkw9K8UFR9W3U7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MvyacE+V; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30cce86052cso1476661fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756495742; x=1757100542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=M2+wT5He58Nk4ycI9gGI+sEh59JOmnfZJky17dXY3FY=;
+        b=MvyacE+VbzR/rlHHOyYqbkPUt5nGlFnChMysLkH8a3YxpttS96PxUHel1Q8eLws6eb
+         m5gRpkTRonUzJ0BCBdr8CQ7ad4+JEOdVx5IJfbjGvsoJTm+10RdjMJyescrNvn3l0Ng+
+         8sdEEcZN9Cxl7vYqEYvyrLL0lQTR15jyOcvBVFeEUX9pmmPdIfXlHW1hKARff++srJup
+         H9qtx22ULnHgY0Travd7brxt7zPWzfBduUdBlOUMXt9TVzt6ONHc3K+Jll8xI78xubWe
+         9Q5FWA5Dq44mOZa1gUueyyARb0BYM62tjay++0scQ7GqdIoeoTlbMJELN5mY7e1x2d5F
+         bGxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756495742; x=1757100542;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2+wT5He58Nk4ycI9gGI+sEh59JOmnfZJky17dXY3FY=;
+        b=bG9qBKAiT17LX0Q8EjOHRvOtL7YEHNIF6LDjhlkNI1fyixIgJVPkqQf6TeMkWL9ayN
+         JweWgx9HB2LFtKCYCUkIvjiGJ+U2XXjaXRgkzKUhAI7EEUDGsrPKs6V409LYFg9mfPuD
+         7DLS5zJOEhuA7Yw3oBGD3gSdYavfnGyGf+p7A57rGDULIsiwdcmKd79Z+LPbGk0o0Z+P
+         NQU9Dr8/TNWxFhwmmAHhM8bn/j8H4m4pA/sFtOdKVfzzkdN/4m5rpqNKbXPT8G+GO8pR
+         uk+fffIswcijffwFdceB+UpAujiG/8dV+gwDRqbwRInSLdOQ7EQKELVxr6ghCKgKy91d
+         8wTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdFAXlUAFU/70eD096UG1jWR1nwLFyyI+H0cbfv+wdDbdww3bS5TCV0wyfTvBKFw0as4Y9nWxYujz3GkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHUsJ7R9d3WvPsI4JLul9t4BhTMmGi1efeTKwU5uWM+Wd0I9Lu
+	oyhfR0ZncLeVFocmd4XY7NPAaDB0plw3DRj9bt+xi/RKh+G9k1FWBwp7Ebhx3Ujc5/w=
+X-Gm-Gg: ASbGnctlYqN5s970uEs9exOY4JnGFBnMO0Duo/hGCH8L37Jfip0+21q4eCY/fQal08R
+	V4It+PXbsVCExCKRFdN03ogzm1Yhz4uZ/3lYTmWQ4kflvKTC4Qhf9IBf7C36aLIjFwcCstEdHb+
+	7cZKHbG4vpALI+uP50mPxhYpwxkzgf1GbKV64WvsJ2jPqQCh2eeTQsgVBxNGRuEu3retUGly0j6
+	k6D99Fy3Tuy6kL3rwnLWMb18mImbng1nkfU5IaX4F2ISEsVSbiZFx5nKIGIx0glMf/ZQVxQX20J
+	9mn+tk4XGgsKUcK0CRJHtGOKZTSsAz3qvdGCE1FpWkI0rnkJNrIG/9OZJzLlvA4EStz8vnbNqDQ
+	sa2l+8qAggRIr8g8YmMyVn7M5Ujjv6SDzPjerue6/FcsMCWZQi51MOjbm47mUHZ3pVMw03grZRF
+	2DhvuBkCHEAg==
+X-Google-Smtp-Source: AGHT+IFUI0HBrruEpYPUGPVj0o1naQM5URQdPGR0MpXZecuoseh/XCOIleBc4ls6rYo0uNS6K9zvvA==
+X-Received: by 2002:a05:6871:4:10b0:315:b558:1584 with SMTP id 586e51a60fabf-315b5582503mr1655470fac.21.1756495742127;
+        Fri, 29 Aug 2025 12:29:02 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afe62235sm1585849fac.23.2025.08.29.12.29.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 12:29:01 -0700 (PDT)
+Message-ID: <9971205b-6e92-46f8-978d-31b074305410@baylibre.com>
+Date: Fri, 29 Aug 2025 14:29:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
- <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
- <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
- <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
- <20250829190731.gx2xrgdz3tor5a2v@synopsys.com>
-In-Reply-To: <20250829190731.gx2xrgdz3tor5a2v@synopsys.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 29 Aug 2025 21:26:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gY=w1G-R1EdpJi+Hm5+YmDWY2yJDHgVVVeOvQAkO1ffQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzDb0ZEopGbmv5UjBef3-NzCfFYadVsYE6RMNoqJ3nt6irTry7nYExHnxI
-Message-ID: <CAJZ5v0gY=w1G-R1EdpJi+Hm5+YmDWY2yJDHgVVVeOvQAkO1ffQ@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/6] dt-bindings: iio: adc: add ade9000
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+ <20250829115227.47712-4-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250829115227.47712-4-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 9:07=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys=
-.com> wrote:
->
-> On Thu, Aug 28, 2025, Alan Stern wrote:
-> > On Fri, Aug 29, 2025 at 12:43:17AM +0000, Thinh Nguyen wrote:
-> > > On Wed, Aug 27, 2025, Rafael J. Wysocki wrote:
-> > > > On Wed, Aug 27, 2025 at 4:52=E2=80=AFPM Alan Stern <stern@rowland.h=
-arvard.edu> wrote:
-> > > > >
-> > > > > Ryan:
-> > > > >
-> > > > > You should present your questions to the maintainer of the kernel=
-'s
-> > > > > Power Management subsystem, Rafael Wysocki (added to the To: list=
- for
-> > > > > this email).
-> > > >
-> > > > Thanks Alan!
-> > > >
-> > > >
-> > > > > On Wed, Aug 27, 2025 at 10:09:10PM +0800, ryan zhou wrote:
-> > > > > > Hi Roy,
-> > > > > > Thank you for reviewing my patch.
-> > > > > > >
-> > > > > > > Wouldn't the parent glue dev already resume before resuming t=
-he child dwc3?
-> > > > > > >
-> > > > > > No, in the following case, the parent device will not be review=
-ed
-> > > > > > before resuming the child device.
-> > > > > > Taking the 'imx8mp-dwc3' driver as an example.
-> > > > > > Step 1.usb disconnect trigger: the child device dwc3 enter runt=
-ime
-> > > > > > suspend state firstly, followed by
-> > > > > > the parent device imx8mp-dwc3 enters runtime suspend
-> > > > > > flow:dwc3_runtime_suspend->dwc3_imx8mp_runtime_suspend
-> > > > > > Step2.system deep trigger:consistent with the runtime suspend f=
-low,
-> > > > > > child enters pm suspend and followed
-> > > > > > by parent
-> > > > > > flow: dwc3_pm_suspend->dwc3_imx8mp_pm_suspend
-> > > > > > Step3: After dwc3_pm_suspend, and before dwc3_imx8mp_pm_suspend=
-, a
-> > > > > > task terminated the system suspend process
-> > > > > > . The system will resume from the checkpoint, and resume device=
-s in
-> > > > > > the suspended state in the reverse
-> > > > > > of pm suspend, but excluding the parent device imx8mp-dwc3 sinc=
-e it
-> > > > > > did not execute the suspend process.
-> > > > > >
-> > > > > > >
-> > > > > > >Why would 'runtime PM trying to activate child device xxx.dwc3=
- but parent is not active' happen in the first place?
-> > > > > > >
-> > > > > > Following the above analysis, dwc3_resume calls
-> > > >
-> > > > I assume that dwc3_pm_resume() is meant here.
-> > > >
-> > > > > > pm_runtime_set_active(dev), it checks the
-> > > > > > parent.power->runtime_status is not RPM_ACTIVE and outputs the =
-error log.
-> > > >
-> > > > And it does so because enabling runtime PM for the child with
-> > > > runtime_status =3D=3D RPM_ACTIVE does not make sense when the paren=
-t has
-> > > > runtime PM enabled and its status is not RPM_ACTIVE.
-> > > >
-> > > > It looks like the runtime PM status of the parent is not as expecte=
-d,
-> > >
-> > > So is the scenario Ryan brought up unexpected? What are we missing he=
-re
-> > > and where should the fix be in?
-> > >
-> > > > but quite frankly I don't quite follow the logic in dwc3_pm_resume(=
-).
-> > > >
-> > > > Why does it disable runtime PM just for the duration of
-> > > > dwc3_resume_common()?  If runtime PM is functional before the
-> > > > pm_runtime_disable() call in dwc3_pm_resume(), the device may as we=
-ll
-> > > > be resumed by calling pm_runtime_resume() on it without disabling
-> > > > runtime PM.  In turn, if runtime PM is not functional at that point=
-,
-> > > > it should not be enabled.
-> > >
-> > > Base on git-blame, I hope this will answer your question:
-> > >
-> > >     68c26fe58182 ("usb: dwc3: set pm runtime active before resume com=
-mon")
-> > >
-> > >     For device mode, if PM runtime autosuspend feature enabled, the
-> > >     runtime power status of dwc3 may be suspended when run dwc3_resum=
-e(),
-> > >     and dwc3 gadget would not be configured in dwc3_gadget_run_stop()=
-.
-> > >     It would cause gadget connected failed if USB cable has been plug=
-ged
-> > >     before PM resume. So move forward pm_runtime_set_active() to fix =
-it.
-> > >
-> > >
-> > > In certain platforms, they probably need the phy to be active to perf=
-orm
-> > > dwc3_resume_common().
-> >
-> > It sounds like the real question is how we should deal with an
-> > interrupted system suspend.  Suppose parent device A and child device B
-> > are both in runtime suspend when a system sleep transition begins.  The
-> > PM core invokes the ->suspend callback of B (and let's say the callback
-> > doesn't need to do anything because B is already suspended with the
-> > appropriate wakeup setting).
-> >
-> > But then before the PM core invokes the ->suspend callback of A, the
-> > system sleep transition is cancelled.  So the PM core goes through the
-> > device tree from parents to children, invoking the ->resume callback fo=
-r
-> > all the devices whose ->suspend callback was called earlier.  Thus, A's
-> > ->resume is skipped because A's ->suspend wasn't called, but B's
-> > ->resume callback _is_ invoked.  This callback fails, because it can't
-> > resume B while A is still in runtime suspend.
-> >
-> > The same problem arises if A isn't a parent of B but there is a PM
-> > dependency from B to A.
-> >
-> > It's been so long since I worked on the system suspend code that I don'=
-t
-> > remember how we decided to handle this scenario.
-> >
->
-> Alan, Rafael,
->
-> What are your thoughts on how we should handle this.
+On 8/29/25 6:41 AM, Antoniu Miclaus wrote:
+> Add devicetree bindings support for ade9000.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
-I'm not really sure what you mean by "this": the scenario described by
-Alan or something else?
+...
 
-I was pulled into the thread in the middle of it and I don't know the
-full context.
+> +  clock-names:
+> +    items:
+> +      - const: clkin
+> +
+https://lore.kernel.org/linux-iio/20250820205838.GA986565-robh@kernel.org/
 
-> Should the fix be at the PM core? Sounds like the PM core needs to check
-> more than whether the ->suspend callback was called earlier to determine
-> whether to skip ->resume.
+Rob's comment about dropping clock-names was never addressed.
 
-But the core doesn't know what happened in the ->suspend callback in
-the first place, so how can it know what's the right thing to do?
 
