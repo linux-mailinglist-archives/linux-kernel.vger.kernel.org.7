@@ -1,139 +1,215 @@
-Return-Path: <linux-kernel+bounces-790992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC674B3B0C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E3B3B0C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCFC9880ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:13:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B111E1C231EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18FB219E8D;
-	Fri, 29 Aug 2025 02:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="kyFZ8A9B"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2437921B9FD;
+	Fri, 29 Aug 2025 02:13:21 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3A5216E23;
-	Fri, 29 Aug 2025 02:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B926202980;
+	Fri, 29 Aug 2025 02:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756433587; cv=none; b=ov9zRt+uLOTUaNroM1R/R6r6rX8PrK7Kaa41bU8R2PGVbe15/qGpVzqHi3OT6wpWgOAvfJXZ/0toyVqZNZKihrkF6Fe5YZWRJTjGZuiHuw4ok4hLsCt2fNEW0i3vh5UHnCriqxNUniaHOfhlQPobhPgJD9y6zk469vL7Fscpm+c=
+	t=1756433600; cv=none; b=j08qjoNhpI9J46GwApCC79vxUZFMoBagHT2U4QkFcSg46PNK7LiNAVqEvHx0VJXYuStCoAtpVT8J1r9t7e7pwxGTMwO5JjKZP0Y9Zg2R03BFmqVqk3NHga4D/I/PCWE2zQtqwVAkYDGZzmJFz4iPw4gcHHTKfaU8rhCsl5g+87k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756433587; c=relaxed/simple;
-	bh=r3NhNNsdcjyn2NydOe6LXmwIej9/2rxK2ZEu0sf6tyw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=MIB/PTwOUqm2cHgnuzK9jf2VMgvTQUSZb+AqWXDt4iN7MC07Vgjhj3eq/Zugi0Ztak/vmooPebNfulA7C9pThQFEZo4PsSbqSgvH09rU6wX0KEZiiYg+nPsfzI2qTL620wPKFga8xNbojV/J+DyX58ZKp3ewHkS6nRGFJ3BMnGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=kyFZ8A9B; arc=none smtp.client-ip=43.163.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756433580;
-	bh=wk9OTq2gPyfN5UN6D4SANjHxn6IM8+AcpCCFfjf/dF0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kyFZ8A9BmXiIy9bsJvmh5HYkQWC5qv1di3FttvfZty/mul7SN90/sEE95ZUFiHvgU
-	 SWtSOsbUxm4Vg9fYigorFYhVNFCZwY2k5+kXYIy6AVHTgw/c4wC3prPDuwzFbID0j2
-	 KXbzFrpLUQsHBrgrkI2MbqMPOybW7LK6KqmVgQl4=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 3380EED3; Fri, 29 Aug 2025 10:12:56 +0800
-X-QQ-mid: xmsmtpt1756433576tegh0rgec
-Message-ID: <tencent_CBD40091C14056E8298BE3725B65EE156405@qq.com>
-X-QQ-XMAILINFO: NhUkPfKlCtQwOYEk1arIQnhW8S2wzUvYwqw4teA2hYMBcKJCU1BHTZe8/jlcg/
-	 F5X9lVIzMlnttbVjrBvdpOINvNQ0yEUKGLg5+Syy+AwLMkGV6x9unUa2gm2W4IbLCE+KYajYyBK/
-	 iulCmgZwCVP5Xk3eFbTX6ATqetdurobWe3qQrhgnoXUHC0bwjS79rbGNM4iscoRc967yggTw1e+i
-	 TenQyXrUQ+d1Ix01YUi8W6BLlIk52mIlAopUSSCnQrq5KGI1IFBUlCY3u7WKkv2LOf6leHleVKdF
-	 CBQksbUY4GQBFw4ZFFmq0CbpHyA+0pRuyTcjXS/oH/i0B7rgMIPIWC7ckgmWyCXX52g0FKHVXmUR
-	 LtZFFs2Jr3byD8HoMm7dVzE1TueaOuXSCESBPAI5H1BDfFww7JWDn/AUcIWI0onBET3M4gtxmdS0
-	 Nuyv9LNDTY3NcWM7dVvdyz5fC7/JPZdVWDEBdtJVPIWPnkpK9+K2zfLZDirhM4JdEjRCwaNky1ui
-	 yMYOdWC5kJH9SwUYToJ6KBHtBZXp/cVT/2q070UMQzEulpZgWxcSFvkMeYHZQ3oORB+1eQ3i582o
-	 KfnzYS2LAeEMkNJ0E+MypVCuV7Gz0ZN998d8+IIeM9Hj74N16CRD8Gp0WyPgmQCbrlc7EIuU+/Se
-	 dgpXLEb0Dwv0AUAliLSJ8HbOM8itMGLuNAyqlDulb+QsZhkku3BOHC2HgBkzHEv7PDMmxWLCDkm2
-	 QYytiKy2h9rpJUXSCCxOmPTL8+nxGS4EX4IKAOaezVSaNznDTWlN60vmS/r167wY9wOl1IzUyZZG
-	 e3jSsgULRx5SPXa5XC9vW6l081KPUaHehDXSbMTKj7UmZzJXTqEV4LC/WP1JXnldysjVnusqSTwS
-	 VAqCU5V+sqaUvJ1xjmMFphRsBy8YIN6v9X6nBN2pPBQ23kQloP5joPI30oVpK/5KrwqfX/rz5nK7
-	 PiV3hjt9ee/r7amiYGCiOHA0ZR3LF0Rvb7sx/BXRqCZSThvkFc/GHPxQ2ijjm7c93D/5cdaM0wM1
-	 nP6oD8TE6+SHeE7Bcf
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	vmalik@redhat.com
-Cc: Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v4 1/2] bpf/helpers: bpf_strnstr: Exact match length
-Date: Fri, 29 Aug 2025 10:12:41 +0800
-X-OQ-MSGID: <4143fba2781e7fb72aac09fe893629bc2d08e826.1756433400.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756433400.git.rongtao@cestc.cn>
-References: <cover.1756433400.git.rongtao@cestc.cn>
+	s=arc-20240116; t=1756433600; c=relaxed/simple;
+	bh=bn36VH6fLv38tAROLVseb78fk0ahQrjwo5qQOr7SelU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zil6krD0vn2o1lSDHM7LEzewH99mdYVyaAxa/VqKCxEzVOTbgX96oDDlpfjkS8qPVgzzriZ8SxzdFa8ItKvJlzC987vF5b8oefzQU0tJhooLWrqCSKgdfOFpqKx5mk/m9UCmmPrzxQ8Csdn2eWJN7FVsY6RS1GSMkDT0L2VCKy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz4t1756433576t23706f55
+X-QQ-Originating-IP: p046whFzyUY8taJB0Gc2SR98nVSkqVtDSMRR9p6MXGA=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 29 Aug 2025 10:12:54 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8592654146579979855
+Date: Fri, 29 Aug 2025 10:12:54 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v9 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <DB12A33105BC0233+20250829021254.GA904254@nic-Precision-5820-Tower>
+References: <20250828025547.568563-1-dong100@mucse.com>
+ <20250828025547.568563-5-dong100@mucse.com>
+ <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OAj1qrjhA85Aij9gO9YcsnUCJUqHISXM9E4WgsZcAV3J71kpptWBA0nY
+	muP4H9klQqERQIoPhB4RnxnnqyPU8QshvwZHk6jQ14w9Pv8lCYbZlrrcl2hp74KQ63jh0GD
+	2k3InfEJ25UOA+8xNJh+iUKf8z/MaueAqE767dSqQ5wd70BAj9iNhxnadeRWS0icka0GGPK
+	B+j/5POyDAmoJtEQP9Jt/qAOoO4Ays3MbWmmR8kKRbgVNaoCDOahaF70+47chdQCnkXEz3j
+	9enGWaWBICC5wjNn7bj2YRGnKLR2HGiDM3BQ+a6F8UAfQjF3F5xiPtoSJJf/vIqrcxFMla9
+	EzbUQwR7Px5mPwI+siPMD9a2loL9kVYVJMMfVoHtT24dPV60cM39hbV2RyVdapgcb16i+Cl
+	mhsxlFY49nd72uSdlYHuCdxJ+pTpt5gsedtpb6PB5r62cXhj8j3velDR218K4BogipsfFiw
+	gbqFSKShKuPFBch3f2SlAqqzjwA3Zrmy4U/m1IRbzswo8oJzLf0zLIbL2nZgFogouVVwqw8
+	2Sy6TzRiYx3ESnteCqIo+52YI/B2L3XRV2xZu4ZxySy6heUnCMmzqed/kSmLhKL6jYVElok
+	AHWMhdp92aAW2tP8dYmJVpRpzVu7mRDFlbK0sMgBney+1k1wDPiy8gkBgk9hT8DXsP8R/cO
+	XH5A7HY+OTmIqT+S9aNFg8IP5ONk4Yf+JhiwnfQ1zGMVc0eDJj/hPAxYZpGWGbFKsHF+efL
+	xdMpomW17Z5it5itkkcc0UWOlNCyrTrnuHbvWDrCroH2hxaIMvyS0oige2qDCr7Ih4wg/Xy
+	SY5CbSs6/DdFL8UQ7bxfzjlOtyiPUhZ6wbmt0Va8SdbLLq53gbOZyWw/19vSxi73a85bZw/
+	PaTUiZRZYsqVFk62KJqf69CWZHeEKOiLV+x1z5LMWNVWqVYeSsR/vVzq8nsmgKmEzy7dt0I
+	vIALI7tlGROqGemkokqscGDmzM6lXgdVm7kOmH8P5FYfgwdynyijppHs2
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-From: Rong Tao <rongtao@cestc.cn>
+On Thu, Aug 28, 2025 at 03:09:51PM +0200, Andrew Lunn wrote:
+> > +/**
+> > + * mucse_mbx_get_capability - Get hw abilities from fw
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * mucse_mbx_get_capability tries to get capabities from
+> > + * hw. Many retrys will do if it is failed.
+> > + *
+> > + * Return: 0 on success, negative errno on failure
+> > + **/
+> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> > +{
+> > +	struct hw_abilities ability = {};
+> > +	int try_cnt = 3;
+> > +	int err;
+> > +	/* It is called once in probe, if failed nothing
+> > +	 * (register network) todo. Try more times to get driver
+> > +	 * and firmware in sync.
+> > +	 */
+> > +	do {
+> > +		err = mucse_fw_get_capability(hw, &ability);
+> > +		if (err)
+> > +			continue;
+> > +		break;
+> > +	} while (try_cnt--);
+> > +
+> > +	if (!err)
+> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> > +	return err;
+> > +}
+> 
+> I still think this should be a dedicated function to get the MAC
+> driver and firmware in sync, using a NOP or version request to the
+> firmware. The name mucse_mbx_get_capability() does not indicate this
+> function is special in any way, which is it.
+> 
 
-strnstr should not treat the ending '\0' of s2 as a matching character
-if the parameter 'len' equal to s2 string length, for example:
+Maybe I should rename it like this?
 
-    1. bpf_strnstr("openat", "open", 4) = -ENOENT
-    2. bpf_strnstr("openat", "open", 5) = 0
+/**
+ * mucse_mbx_sync_fw_by_get_capability - Try to sync driver and fw
+ * @hw: pointer to the HW structure
+ *
+ * mucse_mbx_sync_fw_by_get_capability tries to sync driver and fw
+ * by get capabitiy mbx cmd. Many retrys will do if it is failed.
+ *
+ * Return: 0 on success, negative errno on failure
+ **/
+int mucse_mbx_sync_fw_by_get_capability(struct mucse_hw *hw)
+{
+	struct hw_abilities ability = {};
+	int try_cnt = 3;
+	int err;
+	/* It is called once in probe, if failed nothing
+	 * (register network) todo. Try more times to get driver
+	 * and firmware in sync.
+	 */
+	do {
+		err = mucse_fw_get_capability(hw, &ability);
+		if (err)
+			continue;
+		break;
+	} while (try_cnt--);
 
-This patch makes (1) return 0, indicating a successful match.
+	if (!err)
+		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+	return err;
+}
 
-Fixes: e91370550f1f ("bpf: Add kfuncs for read-only string operations")
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- kernel/bpf/helpers.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+> > +/**
+> > + * build_ifinsmod - build req with insmod opcode
+> > + * @req: pointer to the cmd req structure
+> > + * @is_insmod: true for insmod, false for rmmod
+> > + **/
+> > +static void build_ifinsmod(struct mbx_fw_cmd_req *req,
+> > +			   bool is_insmod)
+> > +{
+> > +	req->flags = 0;
+> > +	req->opcode = cpu_to_le16(DRIVER_INSMOD);
+> > +	req->datalen = cpu_to_le16(sizeof(req->ifinsmod) +
+> > +				   MBX_REQ_HDR_LEN);
+> > +	req->reply_lo = 0;
+> > +	req->reply_hi = 0;
+> > +#define FIXED_VERSION 0xFFFFFFFF
+> > +	req->ifinsmod.version = cpu_to_le32(FIXED_VERSION);
+> > +	if (is_insmod)
+> > +		req->ifinsmod.status = cpu_to_le32(1);
+> > +	else
+> > +		req->ifinsmod.status = cpu_to_le32(0);
+> > +}
+> 
+> Why does the firmware care? What does the firmware do when there is no
+> kernel driver? How does it behaviour change when the driver loads?
+> 
 
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 401b4932cc49..bf04881f96ec 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -3672,10 +3672,18 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
- 
- 	guard(pagefault)();
- 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
--		for (j = 0; i + j < len && j < XATTR_SIZE_MAX; j++) {
-+		for (j = 0; i + j <= len && j < XATTR_SIZE_MAX; j++) {
- 			__get_kernel_nofault(&c2, s2__ign + j, char, err_out);
- 			if (c2 == '\0')
- 				return i;
-+			/**
-+			 * corner case i+j==len to ensure that we matched
-+			 * entire s2. for example, param len=3:
-+			 *     s1: A B C D E F  -> i==1
-+			 *     s2:   B C D      -> j==2
-+			 */
-+			if (i + j == len)
-+				break;
- 			__get_kernel_nofault(&c1, s1__ign + j, char, err_out);
- 			if (c1 == '\0')
- 				return -ENOENT;
--- 
-2.51.0
+fw reduce working frequency to save power if no driver is probed to this
+chip. And fw change frequency to normal after recieve insmod mbx cmd.
+
+Maybe I should add the comment to func "mucse_mbx_ifinsmod"? 
+/**
+ * mucse_mbx_ifinsmod - Echo driver insmod status to fw
+ * @hw: pointer to the HW structure
+ * @is_insmod: true for insmod, false for rmmod
+ *
+ * mucse_mbx_ifinsmod echo driver insmod status to fw. fw changes working
+ * frequency to normal after recieve insmod status, and reduce working
+ * frequency if no driver is probed.
+ *
+ * Return: 0 on success, negative errno on failure
+ **/
+int mucse_mbx_ifinsmod(struct mucse_hw *hw, bool is_insmod)
+{
+
+
+}
+
+> Please try to ensure comment say why you are doing something, not what
+> you are doing.
+> 
+> 
+>     Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+
+Thanks for your feedback.
 
 
