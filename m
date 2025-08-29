@@ -1,220 +1,114 @@
-Return-Path: <linux-kernel+bounces-791665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99808B3B9DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1283B3B9DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B64D3BA860
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C971C84117
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF7E3128BA;
-	Fri, 29 Aug 2025 11:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C8F30FF2B;
+	Fri, 29 Aug 2025 11:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O1+QZq5W"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hyZPEndN"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA046263F32;
-	Fri, 29 Aug 2025 11:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1680C3043CA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756466407; cv=none; b=b0Eiogv9xhPzzt4gKN4wzsojKzpELi3jZ5gNTgfAS9IB+e1MTsgbcQusfVTduU6JlAUvFkXpXELigaGFetyYfVcg8VV1oYi6booGgxqIRQJ0ivYpfoUmeLsqo8pGkZHCRS49QvXxJQx8SryA05JQ2PrPv4gSRdSocP1DeElbzWI=
+	t=1756466440; cv=none; b=dolBE4xwKwH+DiIX7NkPDqGUjMbSeadQ/Wt8ICxCjqPDU5jbub6cuDFMSqHUL9bVsCkESIURdDWzVOz1lS1nrvciZxoDeu82+7TuwNxmkX5+CLceJwv8Mnmgou0o6YExziWPwywGEZ6Lh8qkf2JBMNNeBA3BBMKjs+r1rLblijo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756466407; c=relaxed/simple;
-	bh=IioMTMZQJQtqp5e9OUPbFXmKxVgnVdVkwhMa/QyEbxs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QjN/6JXFsbjRh3RAALE46YJuGEITxcyelRcC3SkdXaJgJvp9chHt4NNwcnqP3wvXHotW/6xpohnJwbJL1iTQlzWZ4TWA4Y8fb9MtcKmEaAd0gk/JF0bXPnBvYd3eN87Nkjf5yMNhOB36OcHPeb/CFIq3pGQqAO9Ye6WeTr5mWi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O1+QZq5W; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IioMTMZQJQtqp5e9OUPbFXmKxVgnVdVkwhMa/QyEbxs=; b=O1+QZq5WpX4gPELsLhug0lgwOk
-	S792j5Xwqu2qO96h1az7tJFPw/q3aKVb91fYdwsAJDbbP+1dEPjK0kD6CXSRSNLzfOBGoimzlmyqN
-	zUx4Tvj9dcwH/PL8qddiKNeDsE1ePm+3c3PwfuEuPNMMxAvE0a+1mFkw4Q7MVl0uuTdNiBnrCPUC4
-	yM2ooJTRAHwCaRhpCaB5KeLuuL/54P3viJ/gfhqNFhcmLkykOHuXpmo+TmNaAlvDbahlXlf0SGc3+
-	aBPM347xZFfXjdAwau8i7uatcSsOxMI+eiOxVi1sDVzlvlmzhPT/0AkQPYtHF4afCdqN/OzB/M27A
-	FrMmQAJg==;
-Received: from 54-240-197-239.amazon.com ([54.240.197.239] helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urx97-0000000AbP1-3CKw;
-	Fri, 29 Aug 2025 11:19:54 +0000
-Message-ID: <caf7b1ea18eb25e817af5ea907b2f6ea31ecc3e1.camel@infradead.org>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: David Woodhouse <dwmw2@infradead.org>
-To: "Durrant, Paul" <pdurrant@amazon.co.uk>, Sean Christopherson
-	 <seanjc@google.com>, "Griffoul, Fred" <fgriffo@amazon.co.uk>
-Cc: Colin Percival <cperciva@tarsnap.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H. Peter
- Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>, 
- Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov
- <alexey.makhalov@broadcom.com>
-Date: Fri, 29 Aug 2025 12:19:53 +0100
-In-Reply-To: <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk>
-References: <20250816101308.2594298-1-dwmw2@infradead.org>
-	 <aKdIvHOKCQ14JlbM@google.com>
-	 <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
-	 <aKdzH2b8ShTVeWhx@google.com>
-	 <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
-	 <aKeGBkv6ZjwM6V9T@google.com>
-	 <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
-	 <01000198cf7ec03e-dfc78632-42ee-480b-8b51-3446fbb555d1-000000@email.amazonses.com>
-	 <aK4LamiDBhKb-Nm_@google.com>
-	 <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
-	 <aLDo3F3KKW0MzlcH@google.com>
-	 <ea0d7f43d910cee9600b254e303f468722fa355b.camel@infradead.org>
-	 <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-Wy4hrKJuq7zEuBbhX7n/"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756466440; c=relaxed/simple;
+	bh=MAgkG6oiBfZ1BR1iIsEQsox016XwbS/bjOqWXO/ViQE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pOz/68nTbx+kk1/pCCE+WxvGpfsWfdP3LazbH+ezwjxLUCvNy4nD7tNnsDlIpD3Oxjm5IafopTcgcmgyqw5RgMTNYRdf8p79H15OYhRsZ+U8GQasYOhydh408ZvgGeJ/Y+E0jtb06+TMc8Loei6Urm+p8G/OxYV8bnOTQ50altw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hyZPEndN; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so20705635e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756466437; x=1757071237; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMZx+r0Hud3j//XxrS83eFfSTnjOGkzpkCOkpFgd4O0=;
+        b=hyZPEndN5gJMNE6Hxag7yRFQ4erVsOpkjMuKW302+EWLWvu2m8fTQ37/cEIFN03dHF
+         T7A3AVa21/S999+BEI3RI0gEb0qZLn03MXj06+/zrg74IrQ3V+tkUmcgncIPkojpB3yQ
+         lDGn1IZUk4EFOW4auQaQJv9h9CcnPSrtXg++nvS7TALDok5rb+SWvXHaQz1ZHPCBWRIR
+         fdkMnvJCmwZUuvJgRL4e4Sr0ubKirNn30K96Vo9gnvkwdN5zkKo3jRshP2hY6XFLADe9
+         I364PM1a/HxgIm8XirUD9es+JaNRlA43cZnA0mI+UNY7fLkK+dwInzqUPrYYTP3JReZc
+         0+mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756466437; x=1757071237;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMZx+r0Hud3j//XxrS83eFfSTnjOGkzpkCOkpFgd4O0=;
+        b=MMYMGCXpWYF9KKt7PpyYWS19pXI0UzBTgHYZppnfZE3WSp/MdxkOimX5/zXSYSChAc
+         CwFNAYnUncONBONhyiIcDauvJeJlWZWJw9szATgDq3o9ttR0YkA4FmnjSPvJIAaAX3Ho
+         L9NUXL2H+j0TM611pMPnpf0kNjn9JGEATrZgyvd+FA4kq5a8wUWdcid44SqbIlT0V/ya
+         oPialHM0EeuoJ4i0k9X2Im2EEj0W8/6jboDKpcFOuC1lp9jxd10sVp7CXNDYbtl7l2kQ
+         K18kOx4RYwZdSrBjHGlhBnvBkBIjfQqXkUvVmX3BwTCc5I8oh2JsOxJ4vRHvFUHH5aLD
+         e+3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUK0BUFaXtfNxo+StlSFVebKGbwdUd6QuU5Qu/hAlfe0Slj3LYDAj6a+BWHZr6WaLFUGlRg/MCQD4kAF9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUNpC6ldb/7g/KTuM9bt8Xn8v/0Hhgaj1fLMf7d6P9MojBS9Hy
+	95V65If4z01pQ0ZXRjCwIH4vpf2PfcGtLKrqFhc5RAKin7xXpVrDYOAouDUF7Rph0n4i1xY2Gdr
+	uNMLE4NBXBLPZgA==
+X-Google-Smtp-Source: AGHT+IFoJKnXd+Meni3wLFOMGsEYNQl20W186Gg6WN3MmwOInaFlSnun4yJtYAcqczMV8kqIowcrP3+LUood6Q==
+X-Received: from wmrm4.prod.google.com ([2002:a05:600c:37c4:b0:45b:6360:643f])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5c84:0:b0:3ca:b6da:a5ce with SMTP id ffacd0b85a97d-3cbb15cbcf3mr9482921f8f.23.1756466437518;
+ Fri, 29 Aug 2025 04:20:37 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:20:36 +0000
+In-Reply-To: <a6571b18-a63a-4e9f-b911-7cc10c72a4c1@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-Wy4hrKJuq7zEuBbhX7n/
+Mime-Version: 1.0
+References: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+ <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
+ <DCDBG4WR1ZDF.23COVR1IO2OSJ@google.com> <a6571b18-a63a-4e9f-b911-7cc10c72a4c1@suse.cz>
+X-Mailer: aerc 0.20.1
+Message-ID: <DCEVDXL7WZYH.320PPWEYJI0NN@google.com>
+Subject: Re: [PATCH] mm/page_alloc: Harmonize should_compact_retry() type
+From: Brendan Jackman <jackmanb@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, <linux-mm@kvack.org>, 
+	<linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-08-29 at 11:08 +0000, Durrant, Paul wrote:
-> On 29/08/2025, 10:51, "David Woodhouse" <dwmw2@infradead.org=C2=A0<mailto=
-:dwmw2@infradead.org>> wrote:
-> [snip]
-> > =E2=80=A2 Declare that we don't care that it's strictly an ABI change, =
-and
-> > VMMs which used to just populate the leaf and let KVM fill it in
-> > for Xen guests now *have* to use the new API.
-> >=20
-> >=20
-> > I'm actually OK with that, even the last one, because I've just noticed
-> > that KVM is updating the *wrong* Xen leaf. 0x40000x03/2 EAX is supposed
-> > to be the *host* TSC frequency, and the guest frequency is supposed to
-> > be in 0x40000x03/0 ECX. And Linux as a Xen guest doesn't even use it
-> > anyway, AFAICT
-> >=20
-> > Paul, it was your code originally; are you happy with removing it?
->=20
-> Yes, if it is incorrect then please fix it. I must have become
-> confused whilst reading the original Xen code.=20
+On Thu Aug 28, 2025 at 6:31 PM UTC, Vlastimil Babka wrote:
+> On 8/27/25 17:30, Brendan Jackman wrote:
+>> On Wed Aug 27, 2025 at 2:13 AM UTC, Andrew Morton wrote:
+>>> On Tue, 26 Aug 2025 14:06:54 +0000 Brendan Jackman <jackmanb@google.com> wrote:
+>>>
+>>>> Currently order is signed in one version of the function and unsigned in
+>>>> the other. Tidy that up.
+>>>> 
+>>>> In page_alloc.c, order is unsigned in the vast majority of cases. But,
+>>>> there is a cluster of exceptions in compaction-related code (probably
+>>>> stemming from the fact that compact_control.order is signed). So, prefer
+>>>> local consistency and make this one signed too.
+>>>> 
+>>>
+>>> grumble, pet peeve.  Negative orders make no sense.  Can we make
+>>> cc->order unsigned in order (heh) to make everything nice?
+>> 
+>> I think we can't "just" do that:
+>
+> That part should be easy to convert to a compact_control flag.
+> Zi's point about going negative seems like more prone to overlook some case.
+> But worth trying and the cleanups I'd say.
 
-The proposal is not to *fix* it but just to rip it out entirely and
-provide userspace with some way of knowing the effective TSC frequency.
-
-This does mean userspace would have to set the vCPU's TSC frequency and
-then query the kernel before setting up its CPUID. And in the absence
-of scaling, this KVM API would report the hardware TSC frequency. I
-guess the API would have to return -EHARDWARETOOSTUPID if the TSC
-frequency *isn't* the same across all CPUs and all power states, etc.
-
---=-Wy4hrKJuq7zEuBbhX7n/
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyOTExMTk1
-M1owLwYJKoZIhvcNAQkEMSIEIPq35HnxMVLk+0gJ6K/dVc3q3nvLurVskOiMUEe2yA6EMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAI6qa2KbjPd8r
-wNzynioYArbT9ARQQtdCwrIYefpzqp5r9wQdC+RhtRAdqA0vpfyQ7vr+BSYXmpq0AP0VmSZg9qkp
-lG2wnj3GuJhqsdMZk+Qf4jChMW5ktJnkPtMMOqKVo+zkAfodiBkKLU4srkS3e/KITpsvEj94K69w
-Y6oWRqBeYQMN0NSjFnhj6vD0WGAErBlc57YI29SgeBlj7fvflv+8hqKvkEKw/d6WZTP4EZeZFVgO
-zXC7ot0C7hCDlJ5e5+YuKWiMcne82bs4hjR/6KbXYXFry9GGIB95dD/huaFHj1Lbss56p9qd8iDd
-qfXacGBvnrjcs9XLrJW2vS+sbL+HtnT2shNA7Ly5d0UcMaNWD284elYeoLF4Hz+23tl6ScLqQXmB
-SMunOLFp1ayvZMgiPUhL9f66Q9O2nuV7ziY8AJFjn/N4oxBeKlchfW+JaEa79WLn4U+F0tHcRlW8
-blx6AMIeUnT31kKoZDeZkTTv1anKHdG+e/S7jydyERCZETty66Y6e9zhil6jzNaSYdZxngD3TpS1
-MqMXUmy2GvpfB+/X96S5aHwmx1K4rJBRVSq3odVxJCVTQbr3v/bfrNyZ5n5i1+P66qX6rJRKHhSv
-/dk6ZoLfRwxFxUZeDfYXwN/HpOo1/W8ezq+JNKtYP3jdJI5SLlyTc61gTnT6FRgAAAAAAAA=
-
-
---=-Wy4hrKJuq7zEuBbhX7n/--
+OK, I can take a look next week. From a quick glance it does seem to be
+worth having a sniff, there could be bugs in there where code is
+expecting non-negative and doing stuff like using it as a shift index,
+in cases where it can actually be negative.
 
