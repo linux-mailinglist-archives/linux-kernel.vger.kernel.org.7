@@ -1,81 +1,192 @@
-Return-Path: <linux-kernel+bounces-791576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA16B3B8C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9ADB3B89D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EB05E7CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAF33B3F60
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26C30AD19;
-	Fri, 29 Aug 2025 10:31:24 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D05F3090C4;
-	Fri, 29 Aug 2025 10:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BEC2F617B;
+	Fri, 29 Aug 2025 10:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ApglThvA"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC452BDC29;
+	Fri, 29 Aug 2025 10:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463484; cv=none; b=BgVYhBn7KFRwEoLX77aWpQgdircOQkLSWvYYLk/Ivoa+pQg6izdLoqcfXx+R4EbszBsqtBevEUF0uzejNgop4qXshgDoVjhFW6vQ7AnwU64LPefp9GJweKwB71ASJ4Ae9R16PnshX+qcOyegivocSyqxo6VQtFV4w3HxCYr4lnU=
+	t=1756462859; cv=none; b=As2EQLhJOk/IeD43lgtza6BgHOFhWzn1SkFh9N/GGDI+8lPQ2vsfCDV3FafxRy83mkGdWI7pBIsjTD5L5xyVrOXmSYFCkPUSfD0jfv+c8R0w3BLx5iPbzThILPcMCT6SfeZFObZm/IGWoRRPfk9ma1fb1Rl6Na5tNPK/AI9DjtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463484; c=relaxed/simple;
-	bh=rIVAe+5zOnI8iPSxCtn65W8wFSx36zlykAVqfz8ppfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwAkP8m/wEwevRUBKUGckQ/wL7A5+mn7FGL55DQSh1gwwdIOCcV7wV6XYjxhL7MB6xBwe28CeBBzUPyzb++ZPwH4k70tvS62SQimZfLf7VtuofkE23z43cmuJrgWX7dTWlurDED19TQ2BdGEwUd9yeXNN+0p3YjcbJqyq/9iHe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1urwO1-0004FS-00; Fri, 29 Aug 2025 12:31:13 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 6CEC5C0770; Fri, 29 Aug 2025 12:20:45 +0200 (CEST)
-Date: Fri, 29 Aug 2025 12:20:45 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mips/octeon/smp: Remove space before newline
-Message-ID: <aLF-_UgIHaWW8n96@alpha.franken.de>
-References: <20250729112141.1924206-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1756462859; c=relaxed/simple;
+	bh=rTuM4HyLXv0HkKhzB1HqfKGUw2X9cj0CbvmTtW6kJQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g92AMgpCp+1O1dC0xCY6kr4f5AvLYolwDdrReFAVDzYphV2eZxmb9tjLmEzLq2JqB1ltm/66FO98kxg4jmGEPuZiVnKL/+Gs57Mkcg+oPj1IrSQN6XvyQqZrks1/ZlqrnAugElP12x0RF2A7vvZk+uJ2xFUQCvORaG39ZHRBL6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ApglThvA; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b109c58e29so30946631cf.3;
+        Fri, 29 Aug 2025 03:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756462857; x=1757067657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjJb244je6yF5o7DG4HZYvptosAOCAiUrRmEuRTr5Ko=;
+        b=ApglThvAFKJ4ROva9PtgzvquGlq8BmCwBcyBpTZY+d3T9XLZ0DMTSHG4Yd+FhKijrt
+         mHNwauuiGQQIFrqAgqyqBEVma5HiPfZmztzLKqR28jJZAM6HhQWaQcLzDlcbARlfDGdN
+         apYEQ+OjtUN4cZVi2ZXKFOLrr3d/HYcDEPHtoMyX4MW97iH+UG2OwkRkHebP9XYI85aD
+         QGMCJg9LSp4eUV/wX5FhMcPhomvsx4/rYdjqsbbro6HUConMa2S5RE5zPJuVG9LIVebm
+         8rFrmwrVaDEjhJW3G6zb2Y3K0nqIqz3SBH2Kf88WKENk9SKaQq+y6qO74wXfzbLOxSv+
+         0H/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756462857; x=1757067657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WjJb244je6yF5o7DG4HZYvptosAOCAiUrRmEuRTr5Ko=;
+        b=xN95hqTjmht4WUvF7/PVGQNg9CcpJ8neIG4cVX7ai89+ANy6+CxtW4sjEvFtpzIS6O
+         Vv/ml5qcvBulIh2AtWKik4L8zsDDQN+UVjEISDfEkmNIsC0RTTej55jv9Qp9qXv/k7KY
+         PstOM1qjCGvwLOhxjEkMLZXK2P/U+vSscMYBkI0y0z52IIzqRGZR535RkW2PP3eYuFrd
+         IOibMtXsfSJsCTUlUmWUe2b9WgeQdE2bK7SQuGR3b3OLHLsN90FtJ+1f4MsjxMMgX8Lz
+         GHMCAPRBcuofhTlk6fujpyioKyQTDKH9SNGkmznV8jI8XVPPVcklRq1DdUN3iThHVnor
+         V7rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzkZe0ikoxZdTX+weCAWVid2WSNKWWXo4InE8n0ceHeT+uV5E7rou8ZtvbI/LtBV4qSa6EcdNtdq1PWGo=@vger.kernel.org, AJvYcCXM4eLnZdb/6iFZfhCPRJyKqdY7q3RZIS+FzER+9F4tQnmL96UHU3kJwSKMpkl0lyHxPYZbN7Z8t37aODlSWazT9hvr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtNrYGn4r9v6TOARTbU6l9lhLpCg5TTezpWzAOhZcan482dq6U
+	/rGooa8pA4S1GiTXp5ck4T4dYRhobz85VmXgBgSp4+XZW+wF0jzKRPPJ
+X-Gm-Gg: ASbGnctD2uzBZVNl5r6w4ETmEWQiLH3r+GedQLGqo8xIBAXiCg9vJ8ua+0b+i2ziLl9
+	5HKodDVcSBO6FIw3jtb1d4fyqj5sX9pDTBUfUybCsdmKYzia1kVDWiuqZh0wm0wERWFJmnOcTA9
+	uC04XVYTMPrJgNnyQRWmszA2Cgv47XGs1CUPUY6dm0z3hP1DQ/XUaB0nvY0r450Jw8miPGUkR5v
+	7JKiDxS0xGm4GBvjT7/g40Qc//g1lhE+dAf14uwtdgeSqXWgkagOdDER7KXnd0EXm7Q9HAkWs1S
+	IsmYtz/v6YEYEGYLPl2UB/UU2xmmG5m7DBj6nc7UX3fwryVKQvnlpluZk8oOxZLBkKtKgeF6x1m
+	Jk9mG0kEq2LlRKq0QD7lwD0ehswpYjlBQBkPXz3dMFhYYP6u/r1OCIbtcquO2jqUYCzfUp20V9V
+	mkbw==
+X-Google-Smtp-Source: AGHT+IEpiZCq5IpcaeDaADmwLkP+lAph4VKUk68Z76kgVzdnxSfiYvwF84kDgpFXT5A50iCWzlmDzQ==
+X-Received: by 2002:a05:622a:254:b0:4b3:10f0:15d9 with SMTP id d75a77b69052e-4b310f0473bmr10494911cf.67.1756462856623;
+        Fri, 29 Aug 2025 03:20:56 -0700 (PDT)
+Received: from seokw-960QHA.mynetworksettings.com ([2600:4041:4491:2000:a7bc:32f2:59b0:ebe2])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b6de6absm12321771cf.45.2025.08.29.03.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 03:20:56 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: [PATCH v2] trace_fprobe.c: TODO: handle filter, nofilter or symbol list
+Date: Fri, 29 Aug 2025 19:20:50 +0900
+Message-ID: <20250829102050.232291-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729112141.1924206-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 12:21:41PM +0100, Colin Ian King wrote:
-> There is an extraneous space before a newline in a pr_info message.
-> Remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  arch/mips/cavium-octeon/smp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/cavium-octeon/smp.c b/arch/mips/cavium-octeon/smp.c
-> index 08ea2cde1eb5..054e331b3202 100644
-> --- a/arch/mips/cavium-octeon/smp.c
-> +++ b/arch/mips/cavium-octeon/smp.c
-> @@ -334,7 +334,7 @@ static void octeon_cpu_die(unsigned int cpu)
->  		new_mask = *p;
->  	}
->  
-> -	pr_info("Reset core %d. Available Coremask = 0x%x \n", coreid, new_mask);
-> +	pr_info("Reset core %d. Available Coremask = 0x%x\n", coreid, new_mask);
->  	mb();
->  	cvmx_write_csr(CVMX_CIU_PP_RST, 1 << coreid);
->  	cvmx_write_csr(CVMX_CIU_PP_RST, 0);
+This v2 addresses the TODO in trace_fprobe to handle comma-separated
+symbol lists and the '!' prefix. Tokens starting with '!' are collected
+as "nofilter", and the others as "filter", then passed to
+register_fprobe() accordingly. Empty tokens are rejected and errors are
+reported with trace_probe_log_err().
 
-applied to mips-next.
+Questions for maintainers (to confirm my understanding):
+  * Parsing location: Masami suggested doing the parsing in the parse
+    stage (e.g., via parse_symbol_and_return()). v2 keeps the logic in
+    __register_trace_fprobe(), but I can move the call into the parsing
+    path in v3 if that is the preferred place. Is that correct?
+  * Documentation: I plan to update the user-facing docs for fprobe
+    syntax. Is Documentation/trace/ the right place (e.g., 
+    Documentation/trace/fprobetrace.rst)?
 
-Thomas.
+Link: https://lore.kernel.org/linux-trace-kernel/20250812162101.5981-1-seokwoo.chung130@gmail.com/
+Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+---
 
+Changes in v2:
+  * Classify '!' tokens as nofilter, others as filter; pass both to
+    register_fprobe().
+  * Reject empty tokens; log errors with trace_probe_log_*().
+  * Use __free(kfree) for temporary buffers.
+  * Keep subject and style per "Submitting patches" (tabs, wrapping).
+  * No manual dedup (leave to ftrace).
+
+ kernel/trace/trace_fprobe.c | 48 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index b36ade43d4b3..d731d9754a39 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -815,6 +815,11 @@ static int trace_fprobe_verify_target(struct trace_fprobe *tf)
+ static int __register_trace_fprobe(struct trace_fprobe *tf)
+ {
+ 	int i, ret;
++	const char *p, *q;
++	size_t spec_len, flen = 0, nflen = 0, tlen;
++	bool have_f = false, have_nf = false;
++	char *filter __free(kfree) = NULL;
++	char *nofilter __free(kfree) = NULL;
+ 
+ 	/* Should we need new LOCKDOWN flag for fprobe? */
+ 	ret = security_locked_down(LOCKDOWN_KPROBES);
+@@ -835,8 +840,47 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+ 	if (trace_fprobe_is_tracepoint(tf))
+ 		return __regsiter_tracepoint_fprobe(tf);
+ 
+-	/* TODO: handle filter, nofilter or symbol list */
+-	return register_fprobe(&tf->fp, tf->symbol, NULL);
++	spec_len = strlen(tf->symbol);
++	filter = kzalloc(spec_len + 1, GFP_KERNEL);
++	nofilter = kzalloc(spec_len + 1, GFP_KERNEL);
++	if (!filter || !nofilter)
++		return -ENOMEM;
++
++	p = tf->symbol;
++	for (p = tf->symbol; p; p = q ? q + 1 : NULL) {
++		q = strchr(p, ',');
++		tlen = q ? (size_t)(q-p) : strlen(p);
++
++		/* reject empty token */
++		if (!tlen) {
++			trace_probe_log_set_index(1);
++			trace_probe_log_err(0, BAD_TP_NAME);
++			return -EINVAL;
++		}
++
++		if (*p == '!') {
++			if (tlen == 1) {
++				trace_probe_log_set_index(1);
++				trace_probe_log_err(0, BAD_TP_NAME);
++				return -EINVAL;
++			}
++			if (have_nf)
++				nofilter[nflen++] = ',';
++			memcpy(nofilter + nflen, p + 1, tlen - 1);
++			nflen += tlen - 1;
++			have_nf = true;
++		} else {
++			if (have_f)
++				filter[flen++] = ',';
++			memcpy(filter + flen, p, tlen);
++			flen += tlen;
++			have_f = true;
++		}
++	}
++
++	return register_fprobe(&tf->fp,
++			have_f ? filter : NULL,
++			have_nf ? nofilter : NULL);
+ }
+ 
+ /* Internal unregister function - just handle fprobe and flags */
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.43.0
+
 
