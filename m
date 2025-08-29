@@ -1,147 +1,176 @@
-Return-Path: <linux-kernel+bounces-791634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70306B3B981
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA39BB3B984
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F241CC00F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842801CC092A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F94311C06;
-	Fri, 29 Aug 2025 10:56:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A4D31064A;
-	Fri, 29 Aug 2025 10:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FEB313E04;
+	Fri, 29 Aug 2025 10:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2srUIEY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076BE31280B
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464982; cv=none; b=KtrNpWH/ogAacUAY+hgc9kKC4uhrnaTNIyWiZcZmtotJXmR+hLYssnxr7EU2ktnpivCm6VxfFK4LcMQ4v9tCX4ZFJeRoj6BOE1rpzmOLMBMmZK0Fr2X2kwp3mv6eK7N47eG8rvLYKCNkxIplzvtO0GMBDUPlAtQPMtY9s00zD1w=
+	t=1756465005; cv=none; b=oEEPYISp+KzgZXERh5NJ3j4ZsHqg6XD3+mUNlTQX2HM2+t919Uveh6isAmmGsmsnh7lV/biTJuq9BVE1UQQQs3QbIbEKYLyNszbgYZyRUHl2ZQnMYqEEh1zuIThEQEl1oYoAEenoD0Tvsp/nnsRTwUk71tbCgS1uQexITZBpzOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464982; c=relaxed/simple;
-	bh=NutHLx0+H5ZwLVLIAixtk99qOjwb6krNHUoiCx1NjRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIN3HvEagPiSv1c6eqErk354XPItwgzvFYa0Xp3wKj3riyEgQmg7XtIb8+kbiMJ6+cJp2F91aVpKw+0O7Yj1b3ejE2crBIEtO+OoadaGa6gbpda39KyB0ari/XMV8IZ7fJ4jy22wgwbe7ZrGLu1yXI4m1ugvCrv2gGnQXu1f5X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5A5F19F0;
-	Fri, 29 Aug 2025 03:56:11 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48C0F3F738;
-	Fri, 29 Aug 2025 03:56:18 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:56:15 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/6] firmware: arm_scmi: imx: Support getting cfg info
- of MISC protocol
-Message-ID: <20250829-sophisticated-lemon-porcupine-8dffa4@sudeepholla>
-References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
- <20250827-sm-misc-api-v1-v3-3-82c982c1815a@nxp.com>
+	s=arc-20240116; t=1756465005; c=relaxed/simple;
+	bh=inbltJcud415RfOLdtDWb4ZRPiVNmpE13gKJhy8SUBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iC+hOD/dveH47diYWxnhws35gVzaWHNnQEYHAPEe4IQECDTr6hhD0q7toLGdaerV7PTQAWFdxrXscqrPMPbTp6JS1KMDvF3ljCw8gdn/TQKJ2dx1lyhtoofGT7SM3mC1gBnNgcnkZifnrFvYjrC0PFpN8PR/WyYzVL1jhC7xhUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2srUIEY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756465003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EaP7Ha620z7PGq0bZ/BqrUJv9Q8RkZ+3RzVayMVbaTE=;
+	b=D2srUIEYXfStuj8ptWfVdvcq14JNe+GEoC1DcTbArICDEN5gn13414iY5KEwCXuHf4jJar
+	OTJZfhNBEjIV+i09YmeEHKLKWNNVxxZa1eRNt+tbeRQxkgOq/qCT9aMVM2XqrXsH2WsxH0
+	XkmI/IUuV5LF1Fiu2K9Dpzh09PpHv5Q=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-677-bK_kDyCfMVGbGqg0aAJGEA-1; Fri, 29 Aug 2025 06:56:41 -0400
+X-MC-Unique: bK_kDyCfMVGbGqg0aAJGEA-1
+X-Mimecast-MFC-AGG-ID: bK_kDyCfMVGbGqg0aAJGEA_1756465000
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b74ec7cd0so12550785e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:56:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756465000; x=1757069800;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EaP7Ha620z7PGq0bZ/BqrUJv9Q8RkZ+3RzVayMVbaTE=;
+        b=EMb8Lg0l8PLkoi9JSd7lcg2+kq/dcMTXvQQ295A4JUTFFPP60/FgcrBRK2OF3LQVZJ
+         NuoAdxpo71y8NW+2K00yrZO8KPXprTFtQY9f7tpn/2OhU8KFVJ30Tz3dH025Q/ejoCHt
+         3yeNIWRCb5bU7qEYhxFNYsvO2vMnlIeo58HndoPSaMqccjK7AKjMCUZKT4uJ0YVDTMop
+         sXzO6f+FSEIsMLrYhqHND1vviSMagBE1C6/HlbBzW/d9e8JHgHdNY+y4d8gaR6ilx5qf
+         MCOy/Mh4y0K1/9HazgTdo5t3JbrbXVj+RrGrTLDFWBW1dq6yvJfWBPiRtiLuPo5AzUZ8
+         gJqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUijdaUUOPvCB5cMlOtaNzyiBGzyMZ1seHxkdPPF5FomlzXB0521FP3ikQN7q5VMR6xQdnN68OtpY7kgCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ+TC2+RvRM9k8TKZhUYqPGfip5Ynhs58AsRwjPcm0RcKGTlEJ
+	szJvefUbOfBMgVxZVKq8BXCQ0oGniHXfrlnUe1YLZL+CKvMUFZf++KqYKl712nY2J87TTYry1SC
+	SRsbq6N9F+XUiQXy0XQ1CF1GdwFpjycX8/7ttuSOzwaiSsFYM5KXe9+oRMUjWJdQG
+X-Gm-Gg: ASbGncsmoY3S1Fauigd+wzdjHywJcmS2fvRldBzQZaJ7zb1FOpnCVAfEzVljkpjFr0Q
+	5OteFLL7NFloLmQZe9X0GVOsuE4mBrpeHth/YbXIB2MnhgpfGJOb508+f30fUVdxUKnwgZtLKBC
+	TDUvfMACaQCa5yyDo8qczsHZ+Iw3xJjgxO4S2+/Ypasrf9uLyyGVx3gwBC3SFKpgD0K5tl0CkMR
+	kZN4SqQhgwCKLBNquME88UekhZaJWwMBAXJnuFFLlHFcKps24qUxtMDac4fECj53J4dY6pZkiEp
+	P98oeJeBFLf3SMEftaCh7uus5Defm9U8geNhUJDy8Gxb/F8Oz7NK32pC56iRJetiNGPLqcMGdA=
+	=
+X-Received: by 2002:a05:600c:1c96:b0:45b:7608:3ca5 with SMTP id 5b1f17b1804b1-45b761d6183mr63569425e9.6.1756465000391;
+        Fri, 29 Aug 2025 03:56:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFuVwvGfPI/MYjQRGZTZ+NOvbRfl9s4GjAwqHmXYox48PYZsps29gxhwdHfvLN5DCLN/+ixVg==
+X-Received: by 2002:a05:600c:1c96:b0:45b:7608:3ca5 with SMTP id 5b1f17b1804b1-45b761d6183mr63569115e9.6.1756464999966;
+        Fri, 29 Aug 2025 03:56:39 -0700 (PDT)
+Received: from [192.168.0.102] (185-219-167-205-static.vivo.cz. [185.219.167.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e887fdcsm33676505e9.13.2025.08.29.03.56.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 03:56:39 -0700 (PDT)
+Message-ID: <9a1973bf-88d7-4270-b979-d3ea0280a80b@redhat.com>
+Date: Fri, 29 Aug 2025 12:56:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-sm-misc-api-v1-v3-3-82c982c1815a@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v4 1/2] bpf/helpers: bpf_strnstr: Exact match
+ length
+To: Rong Tao <rtoax@foxmail.com>, andrii.nakryiko@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net
+Cc: Rong Tao <rongtao@cestc.cn>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>,
+ "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <cover.1756433400.git.rongtao@cestc.cn>
+ <tencent_CBD40091C14056E8298BE3725B65EE156405@qq.com>
+From: Viktor Malik <vmalik@redhat.com>
+Content-Language: en-US
+In-Reply-To: <tencent_CBD40091C14056E8298BE3725B65EE156405@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 12:59:15PM +0800, Peng Fan wrote:
-> MISC protocol supports getting the System Manager(SM) mode selection
-> and configuration name. Retrieve the information from SM.
+On 8/29/25 04:12, Rong Tao wrote:
+> From: Rong Tao <rongtao@cestc.cn>
 > 
-> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> strnstr should not treat the ending '\0' of s2 as a matching character
+> if the parameter 'len' equal to s2 string length, for example:
+
+A good catch, thanks!
+
+But this doesn't fix just the `len == strlen(s2)` case but a more
+general case when s2 is a suffix of the first len characters of s1,
+right? The commit message should reflect that.
+
+> 
+>     1. bpf_strnstr("openat", "open", 4) = -ENOENT
+>     2. bpf_strnstr("openat", "open", 5) = 0
+> 
+> This patch makes (1) return 0, indicating a successful match.
+> 
+> Fixes: e91370550f1f ("bpf: Add kfuncs for read-only string operations")
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
 > ---
->  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>  kernel/bpf/helpers.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> index 464afeae8267d8c1eca4c4d5e008eca6d741c6ff..220b9369fb537306f9e1a105930ad4d65e6b10aa 100644
-> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> @@ -26,6 +26,7 @@ enum scmi_imx_misc_protocol_cmd {
->  	SCMI_IMX_MISC_CTRL_SET	= 0x3,
->  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
->  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
-> +	SCMI_IMX_MISC_CFG_INFO = 0xC,
-
-1. Order it by command number
-2. Be consistent with the document, MISC_CFG_INFO_GET is used there.
-
->  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
->  };
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 401b4932cc49..bf04881f96ec 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3672,10 +3672,18 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
 >  
-> @@ -75,6 +76,12 @@ struct scmi_imx_misc_buildinfo_out {
->  	u8 buildtime[MISC_MAX_BUILDTIME];
->  };
->  
-> +struct scmi_imx_misc_cfg_info_out {
-> +	__le32 msel;
-> +#define MISC_MAX_CFGNAME	16
-> +	u8 cfgname[MISC_MAX_CFGNAME];
-> +};
-> +
->  static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
->  					struct scmi_imx_misc_info *mi)
->  {
-> @@ -309,6 +316,30 @@ static int scmi_imx_misc_discover_build_info(const struct scmi_protocol_handle *
->  	return ret;
->  }
->  
-> +static int scmi_imx_misc_cfg_info(const struct scmi_protocol_handle *ph)
-> +{
-> +	struct scmi_imx_misc_cfg_info_out *out;
-> +	char name[MISC_MAX_CFGNAME];
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_CFG_INFO, 0, sizeof(*out), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret) {
-> +		out = t->rx.buf;
-> +		strscpy(name, out->cfgname, MISC_MAX_CFGNAME);
-> +		dev_info(ph->dev, "SM Config\t= %s, mSel = %u\n",
-> +			 name, le32_to_cpu(out->msel));
-> +	}
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
->  	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
->  	.misc_ctrl_get = scmi_imx_misc_ctrl_get,
-> @@ -340,6 +371,10 @@ static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
->  	if (ret)
->  		return ret;
->  
-> +	ret = scmi_imx_misc_cfg_info(ph);
+>  	guard(pagefault)();
+>  	for (i = 0; i < XATTR_SIZE_MAX; i++) {
+> -		for (j = 0; i + j < len && j < XATTR_SIZE_MAX; j++) {
+> +		for (j = 0; i + j <= len && j < XATTR_SIZE_MAX; j++) {
+>  			__get_kernel_nofault(&c2, s2__ign + j, char, err_out);
+>  			if (c2 == '\0')
+>  				return i;
+> +			/**
+> +			 * corner case i+j==len to ensure that we matched
+> +			 * entire s2. for example, param len=3:
+> +			 *     s1: A B C D E F  -> i==1
+> +			 *     s2:   B C D      -> j==2
+> +			 */
 
-s/scmi_imx_misc_cfg_info/scmi_imx_misc_cfg_info_get/
+This is not really a good example as it's not clear whether D is a null
+byte or not. How about something like:
 
-> +	if (ret)
+/**
+ * We allow reading an extra byte from s2 (note the
+ * `i + j <= len` above) to cover the case when s2 is
+ * a suffix of the first len chars of s1.
+ */
 
-Again the document hasn't mark it as mandatory, so handle NOT_SUPPORTED
-gracefully.
+> +			if (i + j == len)
+> +				break;
 
--- 
-Regards,
-Sudeep
+Viktor
+
+>  			__get_kernel_nofault(&c1, s1__ign + j, char, err_out);
+>  			if (c1 == '\0')
+>  				return -ENOENT;
+
 
