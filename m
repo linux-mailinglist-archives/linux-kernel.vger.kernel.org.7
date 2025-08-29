@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-792031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E35B3BFA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B85B3BF1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACA21CC457E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFADFA01F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5935B33CE81;
-	Fri, 29 Aug 2025 15:37:58 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5950322C7A;
+	Fri, 29 Aug 2025 15:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="WcJJZrBM"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104DC33A029
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDCE314B82
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756481877; cv=none; b=HJlpHeADBhOPlIMtNjXxLvWgUkEO/sv0Ko/0IV2PaZSAGHBepAOB9GptI4eVJA4gTZ4xAIsmdHzBuSzh0+42mM57ykUyBl8seyP9tai92vP6vU4sljUiLm/JKF6SKpUXO3iY1ULVFX/uMxnjqPnjI2Q8NXwrwCPLodGrZYeqiL8=
+	t=1756480893; cv=none; b=V1j5cEXmo+zOuCTwr8gYvTz4MJv9jPgjQTPC37btFmh65NW7IW31dQtEOn5LFUEpVdUVvGeII5SSmpbuLblqV/N2AZs995WvFn+2nDsXMerNa/9ZC3Ee2+gzS7JG2IOYs7eI31QmYCuIi6aUMXzQHTcyBbXzDZFaQ686U/mCBX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756481877; c=relaxed/simple;
-	bh=0BYq9Ath32/GzxTKvFxYgqSTN1wYyZb6k+KxvfGhV6M=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UgaMlWUgszv1IrVz0dyM9IErf13LbGamGZcr88c6ofu37w0+v60z6PlMAJSABw62A4mRPAPWq67pvSDK0iC1Rajr+IHWAvJrbdca1tSeF2vcr85eNoL9SE/Jhv4JdMU0OegccFNxy2DWoAHCFcT8SWMSKthhVEkmYvwFjuUy3UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: David Hildenbrand <david@redhat.com>, "muchun.song@linux.dev"
-	<muchun.song@linux.dev>, "osalvador@suse.de" <osalvador@suse.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "giorgitchankvetadze1997@gmail.com"
-	<giorgitchankvetadze1997@gmail.com>
-Subject: RE:  Re: [PATCH][v3] mm/hugetlb: Retry to allocate for early boot
- hugepage allocation
-Thread-Topic: Re: [PATCH][v3] mm/hugetlb: Retry to allocate for early boot
- hugepage allocation
-Thread-Index: AdwY9uGXrnuAuxl1TGyGaxSR6Bk9Gw==
-Date: Fri, 29 Aug 2025 15:20:47 +0000
-Message-ID: <8c6e91ecb80c4707a52c253481cba51c@baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1756480893; c=relaxed/simple;
+	bh=9qGTzUnZwA5hWGSzDvo3QOcy9ASgXGkwL37lH0AAk0w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MCQis/DJVcpKSkXA/dNhByOhJCoXaFvgQRGkzpr7/VIeBKJmRMQRnb/N3PuEh6ZyCLFGZ0vZm9YVP8odCW/XijxIfpqkQ27B0WqHOISDgOuM/FzE4qPAieYbDoQ1j+6y6QjbV859HqA0sLy3Lj5xvcBOisAOt6MJFwd+EMtKuBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=WcJJZrBM; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7f6f367a1f0so264133385a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1756480890; x=1757085690; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IYwgECH2Vb0kFa6dag8ngSP8oduCmQ/9S3DpTHTLEQ=;
+        b=WcJJZrBM/MickWCR2HxmcM8TnQzOoXB3jSChueSUHzvirocZDurwXaDkPsBNajkaoe
+         h+o4OZM/0n5aso7xjQZCH5nhBpLwrrD8m4dmxchRgtZ67eVw5AXqjwQMlnqKAy5/Un8y
+         4QrqmRy3lYbNdgZyCfJnWZ/8KHqzLg2/ZZ10P8Qc4g7v5HVyUe1RUjZdPRBYyaJqT0jo
+         elmVSo5E1la4+QRQdPS3OkUTOHOjfQ7EZKYkGMY1kir/r56P/ydTfi98Fu2D1BducWMD
+         Xm+cC4JEZF7ETiCVfOfeFIjl48IXWQk3BSZ9uupj4vxY8Rd24acJwfQv7COY1o6sxka0
+         OSXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756480890; x=1757085690;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2IYwgECH2Vb0kFa6dag8ngSP8oduCmQ/9S3DpTHTLEQ=;
+        b=lex+Zt7tWz8ZpV/Qb3W83akJapAFvt7jkTbZQgIGYUgnuIpi9gMPFIB1rzp2DKSk5Q
+         Xw4quKYuZdFSPbXX4tfplORtbP2EnMq4zNaWEUNVKaTdWFbb7GUnKpemANfBdJrICVYu
+         xX6LTbAxanLFjeylVI/lcq1M/RXGababYAW5zGZHOVkAP0C1fCLS5WkMwXx++vTRAZnC
+         K4pvTKGrVC4YbC1gijQ+rAO1sikIc2lCLbPStmLQDfUWjkmba57A4bDUiASPobn9wqLE
+         Fyv5vVGx0euL913vvu2VN4uDW0f2YiaHyNbfEP+NvO1CN5ha+ma2TfhHAOiTfreHdrDe
+         YDpg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0VL4dd97+B5IyEiVKuGH9YvH2h5FBEFVMHQi+Ug7buS5S2WBo14sADE3ezF1tAiEZXo+BC1+Qjx9501I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdEjX/cG/txQL0AkIt0RKzoV13PZAcq1ZMy2ojAjdmNQlI3mPr
+	je5Kgt6TiNP/lsoHbjpYyyi981ypk0+iT84ESOrdzmxDTGU/g3zXW7Puw0LzwkZhTVTMOQMB6UW
+	HO4ZG3VTR20cSLOaLost7qbAkJt0JbT6M5EGtF6OEKQ==
+X-Gm-Gg: ASbGncsHSBgRo3vC0b0ftAHvjzA+57ptg/ffZItmO7xy6XnQHdu1oHJUy2GXt5Wkglo
+	ci1s4hYgur9IERRzCjvU3z8GZ3fWSIMDczVSCP71Rxd2nSuy+6z4mI1tBYB7It3Dtwhid7JG8M7
+	ec2Qe9cNyDN4aAb/K16uNLOIhv2Vx0PeD0SBUoAjKm0D3NK3h0GCmbK+HqfHdypUJMnIdnFksI1
+	XViuF4fxVrxeJHg
+X-Google-Smtp-Source: AGHT+IGeGmVh1iUNjv0FS+p5OGgAJSDw8wtHxZUJDzpWlckzaiRoFpBbLnvjd7wozfAnhZJNzyKKXYePs5Pqdj4L88E=
+X-Received: by 2002:a05:620a:a10c:b0:7ec:7a3:8376 with SMTP id
+ af79cd13be357-7ec07a38426mr2536339485a.30.1756480890408; Fri, 29 Aug 2025
+ 08:21:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.3.13
-X-FE-Policy-ID: 52:10:53:SYSTEM
+References: <20250825-rk3588-hdmi-cec-v3-0-95324fb22592@collabora.com> <20250825-rk3588-hdmi-cec-v3-2-95324fb22592@collabora.com>
+In-Reply-To: <20250825-rk3588-hdmi-cec-v3-2-95324fb22592@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 29 Aug 2025 17:21:18 +0200
+X-Gm-Features: Ac12FXytZj_E6GvxXMIzP02g9SBaLQPs3U8ehFPd5hZi21QBz_4X9pHHnSFdqno
+Message-ID: <CAPj87rN55DOhWeCU1o0=rOkGbrP4M8v+a6xeB5eboLdCiJ-vzw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] drm/bridge: dw-hdmi-qp: Fixup timer base setup
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-DQoNCj4gT24gMjkuMDguMjUgMTE6NTIsIGxpcm9uZ3Fpbmcgd3JvdGU6DQo+ID4gRnJvbTogTGkg
-Um9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiA+DQo+ID4gSW4gY2xvdWQgZW52aXJv
-bm1lbnRzIHdpdGggbWFzc2l2ZSBodWdlcGFnZSByZXNlcnZhdGlvbnMgKDk1JSsgb2YNCj4gPiBz
-eXN0ZW0gUkFNKSwgc2luZ2xlLWF0dGVtcHQgYWxsb2NhdGlvbiBkdXJpbmcgZWFybHkgYm9vdCBv
-ZnRlbiBmYWlscw0KPiA+IGR1ZSB0byBtZW1vcnkgcHJlc3N1cmUuDQo+ID4NCj4gPiBDb21taXQg
-OTFmMzg2YmYwNzcyICgiaHVnZXRsYjogYmF0Y2ggZnJlZWluZyBvZiB2bWVtbWFwIHBhZ2VzIikN
-Cj4gPiBpbnRlbnNpZmllZCB0aGlzIGJ5IGRlZmVycmluZyBwYWdlIGZyZWVzLCBpbmNyZWFzZSBw
-ZWFrIG1lbW9yeSB1c2FnZSBkdXJpbmcNCj4gYWxsb2NhdGlvbi4NCj4gPg0KPiA+IEludHJvZHVj
-ZSBhIHJldHJ5IG1lY2hhbmlzbSB0aGF0IGxldmVyYWdlcyB2bWVtbWFwIG9wdGltaXphdGlvbg0K
-PiA+IHJlY2xhaW0gKH4xLjYlIG1lbW9yeSkgd2hlbiBhdmFpbGFibGUuIFVwb24gaW5pdGlhbCBh
-bGxvY2F0aW9uDQo+ID4gZmFpbHVyZSwgdGhlIHN5c3RlbSByZXRyaWVzIHVudGlsIHN1Y2Nlc3Nm
-dWwgb3Igbm8gZnVydGhlciBwcm9ncmVzcyBpcw0KPiA+IG1hZGUsIGVuc3VyaW5nIHJlbGlhYmxl
-IGh1Z2VwYWdlIGFsbG9jYXRpb24gd2hpbGUgcHJlc2VydmluZyBiYXRjaGVkDQo+IHZtZW1tYXAg
-ZnJlZWluZyBiZW5lZml0cy4NCj4gPg0KPiA+IFRlc3Rpbmcgb24gYSAyNTZHIG1hY2hpbmUgYWxs
-b2NhdGluZyAyNTJHIG9mIGh1Z2VwYWdlczoNCj4gPiBCZWZvcmU6IDEyODA1Ni8xMjkwMjQgaHVn
-ZXBhZ2VzIGFsbG9jYXRlZA0KPiA+IEFmdGVyOiAgU3VjY2Vzc2Z1bGx5IGFsbG9jYXRlZCBhbGwg
-MTI5MDI0IGh1Z2VwYWdlcw0KPiA+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBEYXZpZCBIaWxkZW5icmFu
-ZCA8ZGF2aWRAcmVkaGF0LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMaSBSb25nUWluZyA8bGly
-b25ncWluZ0BiYWlkdS5jb20+DQo+ID4gLS0tDQo+ID4gRGlmZiB3aXRoIHYyOiBhdXRvIHJldHJ5
-IG1lY2hhbmlzbQ0KPiA+IERpZmYgd2l0aCB2MTogYWRkIGxvZyBpZiB0d28tcGhhc2UgaHVnZXBh
-Z2UgYWxsb2NhdGlvbiBpcyB0cmlnZ2VyZWQNCj4gPiAJCWFkZCB0aGUga25vZCB0byBjb250cm9s
-IHNwbGl0IHJhdGlvDQo+ID4NCj4gPiAgIG1tL2h1Z2V0bGIuYyB8IDI3ICsrKysrKysrKysrKysr
-KysrKysrKysrLS0tLQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDQg
-ZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvbW0vaHVnZXRsYi5jIGIvbW0vaHVn
-ZXRsYi5jIGluZGV4IDc1M2Y5OWIuLjE4ZTU0ZWEgMTAwNjQ0DQo+ID4gLS0tIGEvbW0vaHVnZXRs
-Yi5jDQo+ID4gKysrIGIvbW0vaHVnZXRsYi5jDQo+ID4gQEAgLTM1ODksMTAgKzM1ODksOSBAQCBz
-dGF0aWMgdW5zaWduZWQgbG9uZyBfX2luaXQNCj4gPiBodWdldGxiX3BhZ2VzX2FsbG9jX2Jvb3Qo
-c3RydWN0IGhzdGF0ZSAqaCkNCj4gPg0KPiA+ICAgCXVuc2lnbmVkIGxvbmcgamlmZmllc19zdGFy
-dDsNCj4gPiAgIAl1bnNpZ25lZCBsb25nIGppZmZpZXNfZW5kOw0KPiA+ICsJdW5zaWduZWQgbG9u
-ZyByZW1haW5pbmc7DQo+ID4NCj4gPiAgIAlqb2IudGhyZWFkX2ZuCT0gaHVnZXRsYl9wYWdlc19h
-bGxvY19ib290X25vZGU7DQo+ID4gLQlqb2Iuc3RhcnQJPSAwOw0KPiA+IC0Jam9iLnNpemUJPSBo
-LT5tYXhfaHVnZV9wYWdlczsNCj4gPg0KPiA+ICAgCS8qDQo+ID4gICAJICogam9iLm1heF90aHJl
-YWRzIGlzIDI1JSBvZiB0aGUgYXZhaWxhYmxlIGNwdSB0aHJlYWRzIGJ5IGRlZmF1bHQuDQo+ID4g
-QEAgLTM2MTYsMTAgKzM2MTUsMzAgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgX19pbml0DQo+IGh1
-Z2V0bGJfcGFnZXNfYWxsb2NfYm9vdChzdHJ1Y3QgaHN0YXRlICpoKQ0KPiA+ICAgCX0NCj4gPg0K
-PiA+ICAgCWpvYi5tYXhfdGhyZWFkcwk9IGh1Z2VwYWdlX2FsbG9jYXRpb25fdGhyZWFkczsNCj4g
-PiAtCWpvYi5taW5fY2h1bmsJPSBoLT5tYXhfaHVnZV9wYWdlcyAvDQo+IGh1Z2VwYWdlX2FsbG9j
-YXRpb25fdGhyZWFkczsNCj4gPg0KPiA+ICAgCWppZmZpZXNfc3RhcnQgPSBqaWZmaWVzOw0KPiA+
-IC0JcGFkYXRhX2RvX211bHRpdGhyZWFkZWQoJmpvYik7DQo+ID4gKwlkbyB7DQo+ID4gKwkJcmVt
-YWluaW5nID0gaC0+bWF4X2h1Z2VfcGFnZXMgLSBoLT5ucl9odWdlX3BhZ2VzOw0KPiA+ICsNCj4g
-PiArCQlqb2Iuc3RhcnQgICAgID0gaC0+bnJfaHVnZV9wYWdlczsNCj4gPiArCQlqb2Iuc2l6ZSAg
-ICAgID0gcmVtYWluaW5nOw0KPiA+ICsJCWpvYi5taW5fY2h1bmsgPSByZW1haW5pbmcgLyBodWdl
-cGFnZV9hbGxvY2F0aW9uX3RocmVhZHM7DQo+ID4gKwkJcGFkYXRhX2RvX211bHRpdGhyZWFkZWQo
-JmpvYik7DQo+ID4gKw0KPiA+ICsJCWlmIChoLT5ucl9odWdlX3BhZ2VzID09IGgtPm1heF9odWdl
-X3BhZ2VzKQ0KPiA+ICsJCQlicmVhazsNCg0KSWYgYWxsIHBhZ2VzIGFyZSBhbGxvY2F0ZWQsIGl0
-IHdpbGwgYnJlYWsgb3V0IGZyb20gaGVyZS4gU2luY2UgaW4gbW9zdCBjYXNlcyB0aGUgZmlyc3Qg
-YWxsb2NhdGlvbiBpcyBzdWNjZXNzZnVsLCBJIGhhdmUgbW92ZWQgdGhpcyBjaGVjayB0byB0aGUg
-dmVyeSBiZWdpbm5pbmcuDQoNCj4gPiArDQo+ID4gKwkJLyoNCj4gPiArCQkgKiBSZXRyeSBhbGxv
-Y2F0aW9uIGlmIHZtZW1tYXAgb3B0aW1pemF0aW9uIGlzIGF2YWlsYWJsZSwgdGhlDQo+ID4gKwkJ
-ICogb3B0aW1pemF0aW9uIGZyZWVzIH4xLjYlIG9mIG1lbW9yeSBvZiBodWdlcGFnZXMsIHRoaXMg
-cmVjbGFpbWVkDQo+ID4gKwkJICogbWVtb3J5IGVuYWJsZXMgYWRkaXRpb25hbCBodWdlcGFnZSBh
-bGxvY2F0aW9ucw0KPiANCj4gQXMgSSBzYWlkLCBwbGVhc2UgcmVtb3ZlIGFueSBjYWxjdWxhdGlv
-biBkZXRhaWxzIGFib3V0IHRoZSB2bWVtbWFwLg0KPiBUaGF0J3Mgbm90IHRoZSBwbGFjZSB0byBo
-YXZlIHN1Y2ggY2FsY3VsYXRpb25zIGVhc2lseSBiZWNvbWUgc3RhbGUuDQo+IA0KPiBTb21ldGhp
-bmcgbGlrZSB0aGUgZm9sbG93aW5nOg0KPiANCj4gLyoNCj4gICAqIFJldHJ5IG9ubHkgaWYgdGhl
-IHZtZW1tYXAgb3B0aW1pemF0aW9uIG1pZ2h0IGhhdmUgYmVlbiBhYmxlIHRvIGZyZWUNCj4gICAq
-IHNvbWUgbWVtb3J5IGJhY2sgdG8gdGhlIHN5c3RlbS4NCj4gICAqLw0KPiANCg0KVGhhbmtzLCBJ
-IHdpbGwgZml4IGl0DQoNCj4gPiArCQkgKi8NCj4gPiArCQlpZiAoIWh1Z2V0bGJfdm1lbW1hcF9v
-cHRpbWl6YWJsZShoKSkNCj4gPiArCQkJYnJlYWs7DQo+ID4gKw0KPiA+ICsJLyogQ29udGludWUg
-aWYgcHJvZ3Jlc3Mgd2FzIG1hZGUgaW4gbGFzdCBpdGVyYXRpb24gKi8NCj4gDQo+IENvbW1lbnQg
-d3JvbmdseSBpbmRlbnRlZC4NCj4gDQoNCmNoZWNrcGF0Y2ggZGlkIG5vdCByZXBvcnQgZXJyb3Is
-IEkgd2lsbCBmaXggaXQgDQoNCj4gPiArCX0gd2hpbGUgKHJlbWFpbmluZyAhPSAoaC0+bWF4X2h1
-Z2VfcGFnZXMgLSBoLT5ucl9odWdlX3BhZ2VzKSk7DQo+IA0KPiBXaHkgd291bGQgeW91IHdhbnQg
-dG8gcmV0cnkgaWYgeW91IGFsbG9jYXRlZCBhbGwgcGFnZXMgKElPVyB0aGUgY29tbW9uDQo+IGNh
-c2UpPw0KPiANCg0KU2VlIHRoZSByZXBseSBiZWZvcmUgImlmIChoLT5ucl9odWdlX3BhZ2VzID09
-IGgtPm1heF9odWdlX3BhZ2VzKSINCg0KVGhhbmtzDQoNCg0KPiBFLmcuLA0KPiANCj4gcmVtYWlu
-aW5nID09IDENCj4gaC0+bWF4X2h1Z2VfcGFnZXMgPT0gMQ0KPiBoLT5ucl9odWdlX3BhZ2VzID09
-IDENCj4gDQo+IHdoaWxlICgxICE9IDEgLTEpIC0+IHdoaWxlICgxICE9IDApDQo+IA0KPiANCj4g
-eW91IHNob3VsZCBwcm9iYWJseSBkbw0KPiANCj4gZG8gew0KPiAJLi4uDQo+IA0KPiAJLyogU3Rv
-cCBpZiB0aGVyZSBpcyBubyBwcm9ncmVzcyAqLw0KPiAJaWYgKHJlbWFpbmluZyA9PSBoLT5tYXhf
-aHVnZV9wYWdlcyAtIGgtPm5yX2h1Z2VfcGFnZXMpDQo+IAkJYnJlYWs7DQo+IH0gKGgtPm1heF9o
-dWdlX3BhZ2VzICE9IGgtPm5yX2h1Z2VfcGFnZXMpOw0KPiANCj4gLS0NCj4gQ2hlZXJzDQo+IA0K
-PiBEYXZpZCAvIGRoaWxkZW5iDQoNCg==
+Hi Cristian,
+
+On Mon, 25 Aug 2025 at 10:57, Cristian Ciocaltea
+<cristian.ciocaltea@collabora.com> wrote:
+> @@ -1255,6 +1254,11 @@ struct dw_hdmi_qp *dw_hdmi_qp_bind(struct platform_device *pdev,
+>                 return ERR_PTR(-ENODEV);
+>         }
+>
+> +       if (!plat_data->ref_clk_rate) {
+> +               dev_err(dev, "Missing ref_clk rate\n");
+> +               return ERR_PTR(-ENODEV);
+> +       }
+
+This introduces another bisect cliff, as the Rockchip integration
+isn't added until patch 5/6, meaning together with the previous patch
+the driver isn't usable between patches 1-5. It would be most sensible
+I think to keep a default until the users have been fixed up. But
+maybe a better sequence for this series would be:
+* dev_err_probe() cleanup (easy, no dependencies)
+* add refclk to plat_data (populated but unused)
+* use refclk instead of hardcoded frequency in bridge driver, make it mandatory
+* add CEC IRQ to plat_data (populated but unused)
+* add CEC support to driver, probably make it not mandatory to provide
+CEC IRQ in DT since it doesn't seem required for correct operation?
+* enable CEC in defconfig
+
+Cheers,
+Daniel
 
