@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-791639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB994B3B98F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:01:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F11B3B991
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B40687ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49960A00694
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66753112AB;
-	Fri, 29 Aug 2025 11:00:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462972BEFFE;
-	Fri, 29 Aug 2025 11:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C383128C1;
+	Fri, 29 Aug 2025 11:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="REASU3wD"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3313081C7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465257; cv=none; b=MsYditCC7TQZhqnw39Owdc/9bgEulAO4eojT+Krc0Jd0EFCClHOmE6irE1oC/QdwsCfIybiD6ppZLO2IpEwD0FkudK58TWscT/8WmzX0wUl1fkkkgQmVT/RQE+xK5yldZZeMGyV4MK/kKHNr7CvDwOYDRoQVhIMH7aeBTWEWeoU=
+	t=1756465263; cv=none; b=oYvKi8Fb86KqLtgi2bd7C0j7EoUWC2OExlEUBs8S2UssNFR7ldYo6fK2luCbRqqNArDXg7wuSVErOOH2HvIDTMGNJ2p/UWMaQV/q9+xWMO3CKQZvqwh5Ex24eNiY/2Klim+92OBXWiG1Vh+ttGTUSUOvhzhQ7frGoef49wH4HtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465257; c=relaxed/simple;
-	bh=JqkfAbOwMjDSRO2xJdz1XvgyaE1mG9XvJSxk1upfKtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tI+0n6EuY0A7rIl7kWl/Q4R/jbR5uQ/nITVK2b2k0J3qdXc+Ghb8uHwyX4rWKebFq92VSlPUvDjAQ2w0J0CW2yy0XrrYOefNe9sGIBU4t+LN9Fmz2yCxya9Modw1KIuWuntp25N3xQiQklqS0Xb5QpjEuK2K9zO0Yl3AMiL89Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5124F19F0;
-	Fri, 29 Aug 2025 04:00:47 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD9BC3F738;
-	Fri, 29 Aug 2025 04:00:53 -0700 (PDT)
-Date: Fri, 29 Aug 2025 12:00:51 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/6] firmware: arm_scmi: imx: Support getting board
- info of MISC protocol
-Message-ID: <20250829-nostalgic-skylark-of-fruition-d50d26@sudeepholla>
-References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
- <20250827-sm-misc-api-v1-v3-4-82c982c1815a@nxp.com>
+	s=arc-20240116; t=1756465263; c=relaxed/simple;
+	bh=aPgQdRftW+MPJm/ScWqWeD+k9GOL06cZoXpzePwzSYI=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Qv5T1E+6SbcX10ImFt2FYF3KJuwVjI26W0xLZIr32yrO6sdPdfAjVUTFAzLMrR3fJxCmLAee3csCyCcEsZx6tDRjAbpiZr7PB4SR4mb/5117S/T7iaNBZ7L31FlTf3EFPQxVK/N36auwd2O+Qt1/eOOBa/nXwOK0tqWgPxw1fq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=REASU3wD; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250829110059epoutp01388159443f4d867f2e68ea4d0f10cdf4~gN9jpued91691116911epoutp018
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:00:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250829110059epoutp01388159443f4d867f2e68ea4d0f10cdf4~gN9jpued91691116911epoutp018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756465259;
+	bh=aPgQdRftW+MPJm/ScWqWeD+k9GOL06cZoXpzePwzSYI=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=REASU3wDLBTazBjUUN6CSV10k3nzQPDf9/XjvmttU7nF5FGTy5HB6N5CTf2n5SZka
+	 0/ZFIFQ3AgQEfWjaZPGZJZ4Ql1vtr+dwhbfPMHgj4vLYbM7M1uh1JmjfyRa3SL1/pL
+	 eNN9dj9nkuEotOcfmMkUKauYx/6Wmad6rwMFXYco=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250829110058epcas5p115d5fa830820191971707c8d7cc6ab89~gN9jEzUgw3096530965epcas5p1X;
+	Fri, 29 Aug 2025 11:00:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cCwL20y3zz6B9m8; Fri, 29 Aug
+	2025 11:00:58 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250829110056epcas5p1de7c054c261d077f66688e4539ea63d1~gN9hJ8fZY3099430994epcas5p1K;
+	Fri, 29 Aug 2025 11:00:56 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250829110055epsmtip23b5c3d53b927185e53c3c59a2a8c9789~gN9fhcY7a0750007500epsmtip2q;
+	Fri, 29 Aug 2025 11:00:54 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Ivaylo
+ Ivanov'" <ivo.ivanov.ivanov1@gmail.com>, "'Rob Herring'" <robh@kernel.org>,
+	"'Krzysztof Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'"
+	<conor+dt@kernel.org>, "'Peter Griffin'" <peter.griffin@linaro.org>,
+	=?UTF-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'Tudor
+ Ambarus'" <tudor.ambarus@linaro.org>, <linux-fsd@tesla.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250822121423.228500-7-krzysztof.kozlowski@linaro.org>
+Subject: RE: [PATCH 3/4] arm64: dts: fsd: Add default GIC address cells
+Date: Fri, 29 Aug 2025 16:30:53 +0530
+Message-ID: <263901dc18d4$32051700$960f4500$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-sm-misc-api-v1-v3-4-82c982c1815a@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJyWVpz9P/Dzbtkobqw1IWAkgYZWwJfCO3YAL3x8o+zNA2QIA==
+Content-Language: en-us
+X-CMS-MailID: 20250829110056epcas5p1de7c054c261d077f66688e4539ea63d1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250822121438epcas5p48dd8463382036e86f1422300427b2189
+References: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
+	<CGME20250822121438epcas5p48dd8463382036e86f1422300427b2189@epcas5p4.samsung.com>
+	<20250822121423.228500-7-krzysztof.kozlowski@linaro.org>
 
-On Wed, Aug 27, 2025 at 12:59:16PM +0800, Peng Fan wrote:
-> MISC protocol supports getting board information. Retrieve the information
-> from SM.
-> 
-> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> index 220b9369fb537306f9e1a105930ad4d65e6b10aa..f934b4fbc6ec9f1e6b24d1c6c8cd07b45ce548e3 100644
-> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> @@ -27,6 +27,7 @@ enum scmi_imx_misc_protocol_cmd {
->  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
->  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
->  	SCMI_IMX_MISC_CFG_INFO = 0xC,
-> +	SCMI_IMX_MISC_BOARD_INFO = 0xE,
+Hi Krzysztof
 
-Again keep it ordered by command number ?
-
->  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
->  };
->  
-> @@ -76,6 +77,12 @@ struct scmi_imx_misc_buildinfo_out {
->  	u8 buildtime[MISC_MAX_BUILDTIME];
->  };
->  
-> +struct scmi_imx_misc_board_info_out {
-> +	__le32 attributes;
-> +#define MISC_MAX_BRDNAME	16
-> +	u8 brdname[MISC_MAX_BRDNAME];
-> +};
-> +
->  struct scmi_imx_misc_cfg_info_out {
->  	__le32 msel;
->  #define MISC_MAX_CFGNAME	16
-> @@ -316,6 +323,30 @@ static int scmi_imx_misc_discover_build_info(const struct scmi_protocol_handle *
->  	return ret;
->  }
->  
-> +static int scmi_imx_misc_board_info(const struct scmi_protocol_handle *ph)
-> +{
-> +	struct scmi_imx_misc_board_info_out *out;
-> +	char name[MISC_MAX_BRDNAME];
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_BOARD_INFO, 0, sizeof(*out), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret) {
-> +		out = t->rx.buf;
-> +		strscpy(name, out->brdname, MISC_MAX_BRDNAME);
-> +		dev_info(ph->dev, "Board\t\t= %s, attr=0x%08x\n",
-> +			 name, le32_to_cpu(out->attributes));
-> +	}
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
->  static int scmi_imx_misc_cfg_info(const struct scmi_protocol_handle *ph)
->  {
->  	struct scmi_imx_misc_cfg_info_out *out;
-> @@ -371,6 +402,10 @@ static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
->  	if (ret)
->  		return ret;
->  
-> +	ret = scmi_imx_misc_board_info(ph);
-> +	if (ret)
-> +		return ret;
-> +
-
-Ditto, not mandatory, graceful return on NOT_SUPPORTED please.
-
--- 
-Regards,
-Sudeep
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: Friday, August 22, 2025 5:44 PM
+> To: Ivaylo Ivanov <ivo.ivanov.ivanov1=40gmail.com>; Rob Herring
+> <robh=40kernel.org>; Krzysztof Kozlowski <krzk+dt=40kernel.org>; Conor
+> Dooley <conor+dt=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>;
+> Peter Griffin <peter.griffin=40linaro.org>; Andr=C3=A9=20Draszik=0D=0A>=
+=20<andre.draszik=40linaro.org>;=20Tudor=20Ambarus=20<tudor.ambarus=40linar=
+o.org>;=0D=0A>=20linux-fsd=40tesla.com;=20linux-arm-kernel=40lists.infradea=
+d.org;=20linux-samsung-=0D=0A>=20soc=40vger.kernel.org;=20devicetree=40vger=
+.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org=0D=0A>=20Cc:=20Krzy=
+sztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=20Subject:=20=
+=5BPATCH=203/4=5D=20arm64:=20dts:=20fsd:=20Add=20default=20GIC=20address=20=
+cells=0D=0A>=20=0D=0A>=20Add=20missing=20address-cells=200=20to=20GIC=20int=
+errupt=20node.=20=20Value=20'0'=20is=20correct=0D=0A>=20because=20GIC=20int=
+errupt=20controller=20does=20not=20have=20children.=0D=0A>=20=0D=0A>=20Sign=
+ed-off-by:=20Krzysztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.org>=0D=
+=0A>=20---=0D=0AReviewed-by:=20Alim=20Akhtar=20<alim.akhtar=40samsung.com>=
+=0D=0A=0D=0A>=20=20arch/arm64/boot/dts/tesla/fsd.dtsi=20=7C=201=20+=0D=0A>=
+=20=201=20file=20changed,=201=20insertion(+)=0D=0A>=20=0D=0A>=20diff=20--gi=
+t=20a/arch/arm64/boot/dts/tesla/fsd.dtsi=0D=0A>=20b/arch/arm64/boot/dts/tes=
+la/fsd.dtsi=0D=0A>=20index=20a5ebb3f9b18f..5b06e2667b89=20100644=0D=0A>=20-=
+--=20a/arch/arm64/boot/dts/tesla/fsd.dtsi=0D=0A>=20+++=20b/arch/arm64/boot/=
+dts/tesla/fsd.dtsi=0D=0A>=20=40=40=20-363,6=20+363,7=20=40=40=20soc:=20soc=
+=400=20=7B=0D=0A>=20=0D=0A>=20=20=09=09gic:=20interrupt-controller=40104000=
+00=20=7B=0D=0A>=20=20=09=09=09compatible=20=3D=20=22arm,gic-v3=22;=0D=0A>=
+=20+=09=09=09=23address-cells=20=3D=20<0>;=0D=0A>=20=20=09=09=09=23interrup=
+t-cells=20=3D=20<3>;=0D=0A>=20=20=09=09=09interrupt-controller;=0D=0A>=20=
+=20=09=09=09reg=20=3D=20<0x0=200x10400000=200x0=200x10000>,=20/*=20GICD=20*=
+/=0D=0A>=20--=0D=0A>=202.48.1=0D=0A=0D=0A=0D=0A
 
