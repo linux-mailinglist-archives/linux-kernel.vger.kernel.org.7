@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-791675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA352B3BA06
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0F5B3BA08
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3648189C1A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B7E56206F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B082D24AE;
-	Fri, 29 Aug 2025 11:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE82NuKE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF1D2D5A10;
+	Fri, 29 Aug 2025 11:38:36 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCB02BE032;
-	Fri, 29 Aug 2025 11:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E594D2D12E4;
+	Fri, 29 Aug 2025 11:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756467499; cv=none; b=UNrJmK0S4kmKFnD5QdIVyb4GcDxVzaHMxe+0+YLIGhO+y3uVmRSNOrC08TxsusOqtvBHa2g+PLOKFsSiLUN3nKThTG9SvZHLV3eyOYOMDH8b23oRUY35NA7B4v3BhU/AAOsZ0XkwXY2a0GqvkN0Ym0VYmsiSXKd5YVS46/Pilu0=
+	t=1756467516; cv=none; b=BdlGWR2q+WawGM45zZ+CDMMYxPP0RjqP8wTGkrvJ9S+++J84e7RZoTSjz3QoHt+6aZ0Kt1lb9F8iBz7x9KvinWhpRQrUqv44ahs2YRlgI8wmKPuJMAZVHfSy+JXNU5RtR3Qf48iXsHthO738rXghH8540725gEYmQksYJZZGZMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756467499; c=relaxed/simple;
-	bh=nHAYpo6wXjpLKv+/CXT76ilRJMZZ8lJzeKl3nb/cOpw=;
+	s=arc-20240116; t=1756467516; c=relaxed/simple;
+	bh=RbED3PlV9vYyuIZxS54jBVlU5JqZD372U4HX1JRVHlA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEB7IZECjDaTbZhy0/b3vAG73slI7cqwjug3eeaEwuxluHM1985ZOqK+CHrHe8MVraY7AbB1kxn+A64SfExDCtWOwRMxVJK+AaDmmReS5zEwXR6UtvhB1TsWLqK6G00LubckvGY93DdfGmvhxyWXd8klIMWontZLXMGpkhJ1vs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE82NuKE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45F9C4CEF0;
-	Fri, 29 Aug 2025 11:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756467498;
-	bh=nHAYpo6wXjpLKv+/CXT76ilRJMZZ8lJzeKl3nb/cOpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nE82NuKE+B/pSpMI5LpYWzYZhImueEVotH91cK0zQCoyIJqHwme+zHQaGw4/OGY5m
-	 AaGRxk7Hm/IWEG7GOULbM3UWhZh+oWynz6OZXuG6K+97+3gB49iGCs3XWVxbuK3tFf
-	 //8Hw88cdT88dmCh39doUET0vDTQ/u0+6WiA5fStVKs19fLu/XHxnt6W5WYjksOcYd
-	 1DgN51OQMLhKjYB1rLV/D/NsbNBNPlabNt10z1PQQLYLHR9p44zzANmX75YOLYbvtN
-	 h2Esw65Tyl1XhHm1TTtSDr7N6wxgQham5w43rPfuodJS1EERCxOJ6LkWgfY+E0UU6g
-	 1L8JatzGpYdRQ==
-Date: Fri, 29 Aug 2025 13:38:15 +0200
-From: Mark Brown <broonie@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Larisa Grigore <larisa.grigore@oss.nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] spi: spi-fsl-lpspi: Fix transmissions when using
- CONT
-Message-ID: <aLGRJxK5Lr44P5hG@finisterre.sirena.org.uk>
-References: <20250828-james-nxp-lpspi-v2-0-6262b9aa9be4@linaro.org>
- <20250828-james-nxp-lpspi-v2-1-6262b9aa9be4@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZLfKAaktxX8OpWS4drDEEBLsatuT9r44XHrxMZQLVkkwg8lQ4n2hrbm3NvROY5jLodlNaqPqpDzI1ieRC1kUMtx5fiuu+moRwe+hvdz851rs1cxu3m0YwYnL8oYTS/9U2+DGqT19DR9nzvlmszeiHr+hPrl6SEeCRQBypp9CWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A227BC4CEF1;
+	Fri, 29 Aug 2025 11:38:31 +0000 (UTC)
+Date: Fri, 29 Aug 2025 12:38:29 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>
+Subject: Re: [PATCH v10 02/43] arm64: RME: Handle Granule Protection Faults
+ (GPFs)
+Message-ID: <aLGRNc5u1EPlCpyb@arm.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+ <20250820145606.180644-3-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pd6qdlkt/5wcHhzI"
-Content-Disposition: inline
-In-Reply-To: <20250828-james-nxp-lpspi-v2-1-6262b9aa9be4@linaro.org>
-X-Cookie: Filmed before a live audience.
-
-
---pd6qdlkt/5wcHhzI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250820145606.180644-3-steven.price@arm.com>
 
-On Thu, Aug 28, 2025 at 11:14:40AM +0100, James Clark wrote:
-> From: Larisa Grigore <larisa.grigore@nxp.com>
->=20
-> Commit 6a130448498c ("spi: lpspi: Fix wrong transmission when don't use
-> CONT") breaks transmissions when CONT is used. The TDIE interrupt should
-> not be disabled in all cases. If CONT is used and the TX transfer is not
-> yet completed yet, but the interrupt handler is called because there are
-> characters to be received, TDIE is replaced with FCIE. When the transfer
-> is finally completed, SR_TDF is set but the interrupt handler isn't
-> called again.
+On Wed, Aug 20, 2025 at 03:55:22PM +0100, Steven Price wrote:
+> If the host attempts to access granules that have been delegated for use
+> in a realm these accesses will be caught and will trigger a Granule
+> Protection Fault (GPF).
+> 
+> A fault during a page walk signals a bug in the kernel and is handled by
+> oopsing the kernel. A non-page walk fault could be caused by user space
+> having access to a page which has been delegated to the kernel and will
+> trigger a SIGBUS to allow debugging why user space is trying to access a
+> delegated page.
+> 
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v2:
+>  * Include missing "Granule Protection Fault at level -1"
+> ---
+>  arch/arm64/mm/fault.c | 31 +++++++++++++++++++++++++------
+>  1 file changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index d816ff44faff..e4237637cd8f 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -854,6 +854,25 @@ static int do_tag_check_fault(unsigned long far, unsigned long esr,
+>  	return 0;
+>  }
+>  
+> +static int do_gpf_ptw(unsigned long far, unsigned long esr, struct pt_regs *regs)
+> +{
+> +	const struct fault_info *inf = esr_to_fault_info(esr);
+> +
+> +	die_kernel_fault(inf->name, far, esr, regs);
+> +	return 0;
+> +}
 
-Frank, you've reviewed the whole series except for this patch - is there
-some issue with it?
+This is fine, it's irrelevant whether the fault happened at EL0 or EL1.
 
---pd6qdlkt/5wcHhzI
-Content-Type: application/pgp-signature; name="signature.asc"
+> +static int do_gpf(unsigned long far, unsigned long esr, struct pt_regs *regs)
+> +{
+> +	const struct fault_info *inf = esr_to_fault_info(esr);
+> +
+> +	if (!is_el1_instruction_abort(esr) && fixup_exception(regs, esr))
+> +		return 0;
+> +
+> +	arm64_notify_die(inf->name, regs, inf->sig, inf->code, far, esr);
+> +	return 0;
+> +}
 
------BEGIN PGP SIGNATURE-----
+The end result is somewhat similar but why not just return 1 and avoid
+the arm64_notify_die() call? Let do_mem_abort() handle the oops vs user
+signal. With die_kernel_fault() we print the "Unable to handle
+kernel..." message and some more information.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmixkSYACgkQJNaLcl1U
-h9Db0gf6AoJSvZDKXJviUVG0Yqs+SG3QxzNw3w5A9NAfgh4rui8jEqjcmRlusFLT
-2rm2b4mLIiqNNowLA0Qn4JchSalEbgdLjA6yRik1NE4qvPKET0YOge0VZBUGhqRl
-UmzvmFmqrZ0pHzqqUH6AKFR88L0/+I02OMNEUoWGLPCb6uh21n5FVVynFxYNfbdK
-W4LNje4uyMu1EsoiVP0z6H3wl1xFQwFEEkm2HVOoEY7Y56Ku5JYUC8nEByY4UCr0
-79cu1i/ioR5UfVpCuM6XHF+E61Zwb5AiYzLOJCrCSLjPS5xgKRFaiSDIE015zNBD
-ItUVYx2za1SsgiyXzMPeIgn8868Lcg==
-=qJji
------END PGP SIGNATURE-----
-
---pd6qdlkt/5wcHhzI--
+-- 
+Catalin
 
