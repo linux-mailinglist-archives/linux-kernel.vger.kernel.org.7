@@ -1,405 +1,252 @@
-Return-Path: <linux-kernel+bounces-792323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829EBB3C2B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47828B3C2B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9816F3A6678
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B1AA01B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFCE188734;
-	Fri, 29 Aug 2025 18:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E7423315A;
+	Fri, 29 Aug 2025 18:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="uO3GOCQ5"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSc/h3Tt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21A630CD9F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C6D30CD9F;
+	Fri, 29 Aug 2025 18:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756493393; cv=none; b=q0AkQuTU09yZhzbt/CGfXk0HTYQtF0nZ0JJEYeCSDRpQXFRJ9x9G235V9XUJWK55RzLI3Wjk4y9dAedNPYdhvPEGXuev9OLR+yJeYqKKpRuaojSebJmIGeIp4GBzbc2SD6n+STMejsCSoUN880jooISqV6fLmA21sDxscaAJvqc=
+	t=1756493405; cv=none; b=CpKQA3RDJYxSzFn1nrU4f0vw/XmFz08rnNNxejhJCB04d1MYvjF12HhZYTBYa8MxZIBQE/OX5pkt0AaYnKjiMwmFR1i7NIPn0pwrfZ88H1ICLf2DOxSPM2iiX0sj8SXAro5+Rvr9eEUVqLYQW17K8opXGWngb9wNgTEL2SutRDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756493393; c=relaxed/simple;
-	bh=hu5cy2XzMU5JwpEtNeq0ZtxjqZztkBgJv6uTmvrRBPc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uQ9GUXadIm+UZF0qAWIyLTPwxp5alTfMJ4zcWMvd4D7R6dGNsZhCsNvVfuEB0ygl1dLPsSQ4i5nhKXqTvS7RS76LQai9uKH86G4Ds9pGcnLWys3Lgsbuk7/z7QqAZs7Ylagy4eFXSN5EhnESeUmFtesEoCT8Vm7vFgHn7DfaWwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=uO3GOCQ5; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7f6f367a248so219454185a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1756493391; x=1757098191; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Nn2QZqBEULdZ0VrKD8SCB1v1paB+n/b0AG9QGhllqo=;
-        b=uO3GOCQ5skmC5Gs2w5QhzfU0wHWhC6OZJx30QnzU2FuopqnCtuQd0q9O8nVfVFwCCs
-         94op14+el5qtwg8CuZyMyAit+ebrSynK1D+M4TF6a5H6jx7baY1DrM1yuo4Etj5zQf4U
-         ANMLI3I9UPZ6ZcHEa47pPUs5ZZZ3t2Y4iTgx/GFXkjhI5F17jb5tysmzizqzU1exbfhd
-         Ydu4g8ktlxNTi5iGJdaVwD82ArDQ6qBT1dooF+KbyXgUcDXsRV/amhgZomjOvY9pU2pO
-         vuOEDZbAEK5Gj9Vd1lGPIH97WhsWkpCv3tbYtNjj5x5OJokSs7Tw49YHy/dBWiMgwMMp
-         i5jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756493391; x=1757098191;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Nn2QZqBEULdZ0VrKD8SCB1v1paB+n/b0AG9QGhllqo=;
-        b=LWWFnLuAthw8hsvVRN78auvdDXqVRt8txZd861Dq9otIQjsmYUimA8WhQZnCEtZrdn
-         Tm2bugTCn0nmRrjH3OyD+2pt248US5KrNlDMjAhDAheukTkDNX/Oe/T8TjPXjP+5inVZ
-         yBJVaiUbTjt9LzBpCux1m6AfLjAW9wbeqXPo5VF6cTAhlNH77/nzRX9rtXvHg12igWW/
-         k4xfz3VOlDcfnyIx4cVbhWZGXP+xyAf5oxspI3ZZn40lGX0ICHCcUbYm8DXQMcto3xFS
-         3k0AATmZqiptbDobPBPOzsw9lKiiB/49u35F7SrDlEg9DM/25AR4LpBBnJq4bgyhS86R
-         aF8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVqgvmjsvo275nkNjQiaty1KbvCmQnImOyXCIajUjF/LyM3qYJMGB8ocKdRJb+5PUUKHV+j3Nc1BvB6zg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeYkaaCJp5LuG/5i9DkoWQP77DEtvmGjf/dA84BFp2ToPX0S/s
-	fIJxuSerHQkyaajAkosvcaxHH9f+Fi7O8l63NILeFPC+JL8hlloSA7C84JpNa7vqVXY=
-X-Gm-Gg: ASbGncuVe6yr5B8e0FA57oqu0FhNnVeRL0WcAXuY7TZ36uU+suTlkWiNGvAeA+MPUGJ
-	TMk9IwaPOdEpz8vwAT1MHJR+WX4VnMMtRKV3zzTz1IB9GTqAUXjyv39TfbowXfmpV1iUEq+NNTz
-	N6RovxgYbeIVCDHmMCfjy1Ij4qVg9Jaoi55rqZhw8d1UOMYRCdBRlRQYj6RgDkuMTc8rhbnTxkB
-	ie8UbAcIoesY0xNG97wwV4heUR8fxYCrF1TcwxafMqLANbphsCeufF/O1CzFh2Y9Ho8QLBheq83
-	wyhtVt6+HfgTdS6ZT2i9QRJSARwx9rRjeg2Eyw8543e31iK0qLyOovT1AkeLqI27Dc+wnB92eTD
-	Q8huT+U+iPuaDOZ8ans+MNelvOq0Fk58V9wOoaA==
-X-Google-Smtp-Source: AGHT+IFF4atVHdhmNaYBglzT5H5NmjrqYD114uUbppJKPp9HhceW11yaoBubIq39XRYoVHnaxgxYcA==
-X-Received: by 2002:a05:620a:aa1a:b0:7e6:5f1c:4d7f with SMTP id af79cd13be357-7ea1107fb69mr3513677685a.65.1756493390631;
-        Fri, 29 Aug 2025 11:49:50 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc151f2a12sm227700585a.49.2025.08.29.11.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 11:49:49 -0700 (PDT)
-Message-ID: <d76038453bfd06ea9d0c90e7583078abc85ce280.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: mediatek: vcodec: use = { } instead of memset()
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Tiffany Lin	
- <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Matthias Brugger	 <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>, Hans
- Verkuil <hverkuil@kernel.org>,  Andrzej Pietrasiewicz
- <andrzejtp2010@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- linux-media@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org
-Date: Fri, 29 Aug 2025 14:49:47 -0400
-In-Reply-To: <20250803135514.118892-1-rongqianfeng@vivo.com>
-References: <20250803135514.118892-1-rongqianfeng@vivo.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-xig5edR/x3ap943HT9k2"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756493405; c=relaxed/simple;
+	bh=kRzuQPQvzBNdotMBP7pTnWR1VHUeXzZCdlNmYEGfLEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCs2Pys2BuBLYkTSGcoLil969Z5vy5PsdLoLL1LAu/JU9rdclCUvUeH6uLkEMef5wnD52HTbCtpDINNOaeOHznWK+wS0jLpj8gYCivXJe0RlMxwDM0rGmu2iZETOue6UcpA4ZxYYztwQdwB7vvGkFcgpsbZthCaS8FYlGx+Ed08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSc/h3Tt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2809C4CEFA;
+	Fri, 29 Aug 2025 18:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756493404;
+	bh=kRzuQPQvzBNdotMBP7pTnWR1VHUeXzZCdlNmYEGfLEI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pSc/h3TtTy66683UtsDFjw5lfDUKOX657sak2OgwgcNNq8iAF2xrzqwbaGjLCl6f9
+	 gMUiA8FQFKciBfUWGxeAFKmv4EivlxR6NMzZm0EUiZE06VFFq0AvnWE5jai8HvfewA
+	 VNcdLxiKLxViNlBPEohTpFP57ldZJciAsjLAVWfRWPhvZtMAbMuhOxLo/kzBbQ5AwW
+	 0ABh+4brs214VNfQCNKcgUqPBjWrS2joxC00kJjkKSNmC2HPFT9mXc0Lz4Rt28zkiz
+	 RIO3jV77ZsszpwA6njjtwVx2hnhV6v58lZg6hxYxn/lMxmMpZDMvYl4y9etBiL5Vs4
+	 sf2uYuX0CRx0w==
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7f7e89e4b37so233845185a.3;
+        Fri, 29 Aug 2025 11:50:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1tSsR5kMP7WQF1hsueleSbDT6sdyuCOpCP+IFhpLU/dziHaTC+zbZqYia9c/sKNiotCttiYdD3GvdMib6@vger.kernel.org, AJvYcCWHAnL+XpchO0b/KBFodxC3xipBldobCzmHgjIInobYeNwCWKrOzb1B/6gZno26BpaemZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0udDmHmWphj9RHa2rRLrrKGiqEP1Bcf8l6guTQcAZ+i8nixSJ
+	8uDC2kMZS8bE1L1eH3edyiLYi/VbqKRkj7eNw+L4rr1Et9BcKy9a/hbYCKb/nLLDVGqi2NJPzIo
+	3XOmjzydAnp9Sf8fcnoNm48dyvcAzJBA=
+X-Google-Smtp-Source: AGHT+IGk+2e+MtbMfwnwjvMNj8yikW5bC6K516UGdm2sSFuCWKS1iZedV3T1faNau0Cipnb+kFsu14fOLq5avBSWm94=
+X-Received: by 2002:a05:620a:4706:b0:7fc:b747:3168 with SMTP id
+ af79cd13be357-7fcb74734a0mr375745085a.71.1756493403865; Fri, 29 Aug 2025
+ 11:50:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-xig5edR/x3ap943HT9k2
+References: <20250826212229.143230-1-contact@arnaud-lcm.com>
+ <20250826212352.143299-1-contact@arnaud-lcm.com> <CAADnVQ+6bV3h3i-A1LHbEk=nY_PMx69BiogWjf5GtGaLxWSQVg@mail.gmail.com>
+In-Reply-To: <CAADnVQ+6bV3h3i-A1LHbEk=nY_PMx69BiogWjf5GtGaLxWSQVg@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 29 Aug 2025 11:49:52 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5P4sOHmMCmVTZw2vfuz7Rny-xkhuPkRBitfoATQkm=eA@mail.gmail.com>
+X-Gm-Features: Ac12FXx2yvfNrnZ_hVhKtaFpA_xeHScVvOotbYo86wZxc1kdVMhhG9MXCo_IIb4
+Message-ID: <CAPhsuW5P4sOHmMCmVTZw2vfuz7Rny-xkhuPkRBitfoATQkm=eA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Arnaud Lecomte <contact@arnaud-lcm.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Aug 29, 2025 at 10:29=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+[...]
+> >
+> >  static long __bpf_get_stackid(struct bpf_map *map,
+> > -                             struct perf_callchain_entry *trace, u64 f=
+lags)
+> > +                             struct perf_callchain_entry *trace, u64 f=
+lags, u32 max_depth)
+> >  {
+> >         struct bpf_stack_map *smap =3D container_of(map, struct bpf_sta=
+ck_map, map);
+> >         struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+> > @@ -263,6 +263,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+> >
+> >         trace_nr =3D trace->nr - skip;
+> >         trace_len =3D trace_nr * sizeof(u64);
+> > +       trace_nr =3D min(trace_nr, max_depth - skip);
+> > +
+>
+> The patch might have fixed this particular syzbot repro
+> with OOB in stackmap-with-buildid case,
+> but above two line looks wrong.
+> trace_len is computed before being capped by max_depth.
+> So non-buildid case below is using
+> memcpy(new_bucket->data, ips, trace_len);
+>
+> so OOB is still there?
+
++1 for this observation.
+
+We are calling __bpf_get_stackid() from two functions: bpf_get_stackid
+and bpf_get_stackid_pe. The check against max_depth is only needed
+from bpf_get_stackid_pe, so it is better to just check here.
+
+I have got the following on top of patch 1/2. This makes more sense to
+me.
+
+PS: The following also includes some clean up in __bpf_get_stack.
+I include those because it also uses stack_map_calculate_max_depth.
+
+Does this look better?
+
+Thanks,
+Song
 
 
-Le dimanche 03 ao=C3=BBt 2025 =C3=A0 21:55 +0800, Qianfeng Rong a =C3=A9cri=
-t=C2=A0:
-> Based on testing and recommendations by David Lechner et al. [1][2],
-> using =3D { } to initialize a structure or array is the preferred way
-> to do this in the kernel.
->=20
-> This patch converts memset() to =3D { }, thereby:
-> - Eliminating the risk of sizeof() mismatches.
-> - Simplifying the code.
+diff --git c/kernel/bpf/stackmap.c w/kernel/bpf/stackmap.c
+index 796cc105eacb..08554fb146e1 100644
+--- c/kernel/bpf/stackmap.c
++++ w/kernel/bpf/stackmap.c
+@@ -262,7 +262,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+                return -EFAULT;
 
-Last month, Irui Wang sent an actual fix [0] for uninitialized data in this
-driver. Your patch seems to be related, yet the previous fix is not covered=
- and
-this is not marked as a V2. Since this refactoring collide with an actual f=
-ix
-that I'm waiting for a V2, I'd rather not take it and wait.
+        trace_nr =3D trace->nr - skip;
+-       trace_len =3D trace_nr * sizeof(u64);
++
+        ips =3D trace->ip + skip;
+        hash =3D jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+        id =3D hash & (smap->n_buckets - 1);
+@@ -297,6 +297,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+                        return -EEXIST;
+                }
+        } else {
++               trace_len =3D trace_nr * sizeof(u64);
+                if (hash_matches && bucket->nr =3D=3D trace_nr &&
+                    memcmp(bucket->data, ips, trace_len) =3D=3D 0)
+                        return id;
+@@ -322,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+           u64, flags)
+ {
+-       u32 max_depth =3D map->value_size / stack_map_data_size(map);
+-       u32 skip =3D flags & BPF_F_SKIP_FIELD_MASK;
++       u32 elem_size =3D stack_map_data_size(map);
+        bool user =3D flags & BPF_F_USER_STACK;
+        struct perf_callchain_entry *trace;
+        bool kernel =3D !user;
++       u32 max_depth;
 
-Any chances you can respin this with a second patches covering Irui's fix ?
+        if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+                               BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID))=
+)
+                return -EINVAL;
 
-cheers,
-Nicolas
+-       max_depth +=3D skip;
+-       if (max_depth > sysctl_perf_event_max_stack)
+-               max_depth =3D sysctl_perf_event_max_stack;
++       max_depth =3D stack_map_calculate_max_depth(map->value_size,
+elem_size, flags);
 
+        trace =3D get_perf_callchain(regs, 0, kernel, user, max_depth,
+                                   false, false);
+@@ -375,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct
+bpf_perf_event_data_kern *, ctx,
+        bool kernel, user;
+        __u64 nr_kernel;
+        int ret;
++       u32 elem_size, max_depth;
 
-[0] https://patchwork.linuxtv.org/project/linux-media/patch/20250715081547.=
-18076-1-irui.wang@mediatek.com/
+        /* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+        if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+@@ -393,11 +393,12 @@ BPF_CALL_3(bpf_get_stackid_pe, struct
+bpf_perf_event_data_kern *, ctx,
+                return -EFAULT;
 
->=20
-> [1]: https://lore.kernel.org/linux-iio/202505090942.48EBF01B@keescook/
-> [2]: https://lore.kernel.org/lkml/20250614151844.50524610@jic23-huawei/
->=20
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
-> =C2=A0.../mediatek/vcodec/decoder/vdec/vdec_vp9_if.c=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 3 +--
-> =C2=A0.../mediatek/vcodec/decoder/vdec_vpu_if.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 12 ++++--------
-> =C2=A0.../mediatek/vcodec/encoder/mtk_vcodec_enc.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 6 ++----
-> =C2=A0.../mediatek/vcodec/encoder/venc_vpu_if.c=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 15 +++++----------
-> =C2=A04 files changed, 12 insertions(+), 24 deletions(-)
->=20
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
-_if.c
-> b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_if.c
-> index eb3354192853..80554b2c26c0 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_if.c
-> @@ -548,10 +548,9 @@ static bool vp9_wait_dec_end(struct vdec_vp9_inst *i=
-nst)
-> =C2=A0static struct vdec_vp9_inst *vp9_alloc_inst(struct mtk_vcodec_dec_c=
-tx *ctx)
-> =C2=A0{
-> =C2=A0	int result;
-> -	struct mtk_vcodec_mem mem;
-> +	struct mtk_vcodec_mem mem =3D { };
-> =C2=A0	struct vdec_vp9_inst *inst;
-> =C2=A0
-> -	memset(&mem, 0, sizeof(mem));
-> =C2=A0	mem.size =3D sizeof(struct vdec_vp9_inst);
-> =C2=A0	result =3D mtk_vcodec_mem_alloc(ctx, &mem);
-> =C2=A0	if (result)
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> index 145958206e38..d5e943f81c15 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> @@ -181,12 +181,11 @@ static int vcodec_vpu_send_msg(struct vdec_vpu_inst
-> *vpu, void *msg, int len)
-> =C2=A0
-> =C2=A0static int vcodec_send_ap_ipi(struct vdec_vpu_inst *vpu, unsigned i=
-nt msg_id)
-> =C2=A0{
-> -	struct vdec_ap_ipi_cmd msg;
-> +	struct vdec_ap_ipi_cmd msg =3D { };
-> =C2=A0	int err =3D 0;
-> =C2=A0
-> =C2=A0	mtk_vdec_debug(vpu->ctx, "+ id=3D%X", msg_id);
-> =C2=A0
-> -	memset(&msg, 0, sizeof(msg));
-> =C2=A0	msg.msg_id =3D msg_id;
-> =C2=A0	if (vpu->fw_abi_version < 2)
-> =C2=A0		msg.vpu_inst_addr =3D vpu->inst_addr;
-> @@ -201,7 +200,7 @@ static int vcodec_send_ap_ipi(struct vdec_vpu_inst *v=
-pu,
-> unsigned int msg_id)
-> =C2=A0
-> =C2=A0int vpu_dec_init(struct vdec_vpu_inst *vpu)
-> =C2=A0{
-> -	struct vdec_ap_ipi_init msg;
-> +	struct vdec_ap_ipi_init msg =3D { };
-> =C2=A0	int err;
-> =C2=A0
-> =C2=A0	init_waitqueue_head(&vpu->wq);
-> @@ -225,7 +224,6 @@ int vpu_dec_init(struct vdec_vpu_inst *vpu)
-> =C2=A0		}
-> =C2=A0	}
-> =C2=A0
-> -	memset(&msg, 0, sizeof(msg));
-> =C2=A0	msg.msg_id =3D AP_IPIMSG_DEC_INIT;
-> =C2=A0	msg.ap_inst_addr =3D (unsigned long)vpu;
-> =C2=A0	msg.codec_type =3D vpu->codec_type;
-> @@ -245,7 +243,7 @@ int vpu_dec_init(struct vdec_vpu_inst *vpu)
-> =C2=A0
-> =C2=A0int vpu_dec_start(struct vdec_vpu_inst *vpu, uint32_t *data, unsign=
-ed int
-> len)
-> =C2=A0{
-> -	struct vdec_ap_ipi_dec_start msg;
-> +	struct vdec_ap_ipi_dec_start msg =3D { };
-> =C2=A0	int i;
-> =C2=A0	int err =3D 0;
-> =C2=A0
-> @@ -254,7 +252,6 @@ int vpu_dec_start(struct vdec_vpu_inst *vpu, uint32_t
-> *data, unsigned int len)
-> =C2=A0		return -EINVAL;
-> =C2=A0	}
-> =C2=A0
-> -	memset(&msg, 0, sizeof(msg));
-> =C2=A0	msg.msg_id =3D AP_IPIMSG_DEC_START;
-> =C2=A0	if (vpu->fw_abi_version < 2)
-> =C2=A0		msg.vpu_inst_addr =3D vpu->inst_addr;
-> @@ -273,7 +270,7 @@ int vpu_dec_start(struct vdec_vpu_inst *vpu, uint32_t
-> *data, unsigned int len)
-> =C2=A0int vpu_dec_get_param(struct vdec_vpu_inst *vpu, uint32_t *data,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int len, unsigned int par=
-am_type)
-> =C2=A0{
-> -	struct vdec_ap_ipi_get_param msg;
-> +	struct vdec_ap_ipi_get_param msg =3D { };
-> =C2=A0	int err;
-> =C2=A0
-> =C2=A0	if (len > ARRAY_SIZE(msg.data)) {
-> @@ -281,7 +278,6 @@ int vpu_dec_get_param(struct vdec_vpu_inst *vpu, uint=
-32_t
-> *data,
-> =C2=A0		return -EINVAL;
-> =C2=A0	}
-> =C2=A0
-> -	memset(&msg, 0, sizeof(msg));
-> =C2=A0	msg.msg_id =3D AP_IPIMSG_DEC_GET_PARAM;
-> =C2=A0	msg.inst_id =3D vpu->inst_id;
-> =C2=A0	memcpy(msg.data, data, sizeof(unsigned int) * len);
-> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_en=
-c.c
-> b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
-> index a01dc25a7699..bc6435a7543f 100644
-> --- a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
-> +++ b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
-> @@ -1064,7 +1064,7 @@ static int mtk_venc_encode_header(void *priv)
-> =C2=A0
-> =C2=A0static int mtk_venc_param_change(struct mtk_vcodec_enc_ctx *ctx)
-> =C2=A0{
-> -	struct venc_enc_param enc_prm;
-> +	struct venc_enc_param enc_prm =3D { };
-> =C2=A0	struct vb2_v4l2_buffer *vb2_v4l2 =3D v4l2_m2m_next_src_buf(ctx-
-> >m2m_ctx);
-> =C2=A0	struct mtk_video_enc_buf *mtk_buf;
-> =C2=A0	int ret =3D 0;
-> @@ -1075,7 +1075,6 @@ static int mtk_venc_param_change(struct
-> mtk_vcodec_enc_ctx *ctx)
-> =C2=A0
-> =C2=A0	mtk_buf =3D container_of(vb2_v4l2, struct mtk_video_enc_buf,
-> m2m_buf.vb);
-> =C2=A0
-> -	memset(&enc_prm, 0, sizeof(enc_prm));
-> =C2=A0	if (mtk_buf->param_change =3D=3D MTK_ENCODE_PARAM_NONE)
-> =C2=A0		return 0;
-> =C2=A0
-> @@ -1138,7 +1137,7 @@ static void mtk_venc_worker(struct work_struct *wor=
-k)
-> =C2=A0	struct mtk_vcodec_enc_ctx *ctx =3D container_of(work, struct
-> mtk_vcodec_enc_ctx,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 encode_work);
-> =C2=A0	struct vb2_v4l2_buffer *src_buf, *dst_buf;
-> -	struct venc_frm_buf frm_buf;
-> +	struct venc_frm_buf frm_buf =3D { };
-> =C2=A0	struct mtk_vcodec_mem bs_buf;
-> =C2=A0	struct venc_done_result enc_result;
-> =C2=A0	int ret, i;
-> @@ -1168,7 +1167,6 @@ static void mtk_venc_worker(struct work_struct *wor=
-k)
-> =C2=A0		return;
-> =C2=A0	}
-> =C2=A0
-> -	memset(&frm_buf, 0, sizeof(frm_buf));
-> =C2=A0	for (i =3D 0; i < src_buf->vb2_buf.num_planes ; i++) {
-> =C2=A0		frm_buf.fb_addr[i].dma_addr =3D
-> =C2=A0				vb2_dma_contig_plane_dma_addr(&src_buf-
-> >vb2_buf, i);
-> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> index 51bb7ee141b9..55627b71348d 100644
-> --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> @@ -132,7 +132,7 @@ static int vpu_enc_send_msg(struct venc_vpu_inst *vpu=
-,
-> void *msg,
-> =C2=A0int vpu_enc_init(struct venc_vpu_inst *vpu)
-> =C2=A0{
-> =C2=A0	int status;
-> -	struct venc_ap_ipi_msg_init out;
-> +	struct venc_ap_ipi_msg_init out =3D { };
-> =C2=A0
-> =C2=A0	init_waitqueue_head(&vpu->wq_hd);
-> =C2=A0	vpu->signaled =3D 0;
-> @@ -148,7 +148,6 @@ int vpu_enc_init(struct venc_vpu_inst *vpu)
-> =C2=A0		return -EINVAL;
-> =C2=A0	}
-> =C2=A0
-> -	memset(&out, 0, sizeof(out));
-> =C2=A0	out.msg_id =3D AP_IPIMSG_ENC_INIT;
-> =C2=A0	out.venc_inst =3D (unsigned long)vpu;
-> =C2=A0	if (vpu_enc_send_msg(vpu, &out, sizeof(out))) {
-> @@ -191,11 +190,10 @@ int vpu_enc_set_param(struct venc_vpu_inst *vpu,
-> =C2=A0	size_t msg_size =3D is_ext ?
-> =C2=A0		sizeof(struct venc_ap_ipi_msg_set_param_ext) :
-> =C2=A0		sizeof(struct venc_ap_ipi_msg_set_param);
-> -	struct venc_ap_ipi_msg_set_param_ext out;
-> +	struct venc_ap_ipi_msg_set_param_ext out =3D { };
-> =C2=A0
-> =C2=A0	mtk_venc_debug(vpu->ctx, "id %d ->", id);
-> =C2=A0
-> -	memset(&out, 0, sizeof(out));
-> =C2=A0	out.base.msg_id =3D AP_IPIMSG_ENC_SET_PARAM;
-> =C2=A0	out.base.vpu_inst_addr =3D vpu->inst_addr;
-> =C2=A0	out.base.param_id =3D id;
-> @@ -258,11 +256,10 @@ static int vpu_enc_encode_32bits(struct venc_vpu_in=
-st
-> *vpu,
-> =C2=A0	size_t msg_size =3D is_ext ?
-> =C2=A0		sizeof(struct venc_ap_ipi_msg_enc_ext) :
-> =C2=A0		sizeof(struct venc_ap_ipi_msg_enc);
-> -	struct venc_ap_ipi_msg_enc_ext out;
-> +	struct venc_ap_ipi_msg_enc_ext out =3D { };
-> =C2=A0
-> =C2=A0	mtk_venc_debug(vpu->ctx, "bs_mode %d ->", bs_mode);
-> =C2=A0
-> -	memset(&out, 0, sizeof(out));
-> =C2=A0	out.base.msg_id =3D AP_IPIMSG_ENC_ENCODE;
-> =C2=A0	out.base.vpu_inst_addr =3D vpu->inst_addr;
-> =C2=A0	out.base.bs_mode =3D bs_mode;
-> @@ -302,12 +299,11 @@ static int vpu_enc_encode_34bits(struct venc_vpu_in=
-st
-> *vpu,
-> =C2=A0				 struct mtk_vcodec_mem *bs_buf,
-> =C2=A0				 struct venc_frame_info *frame_info)
-> =C2=A0{
-> -	struct venc_ap_ipi_msg_enc_ext_34 out;
-> +	struct venc_ap_ipi_msg_enc_ext_34 out =3D { };
-> =C2=A0	size_t msg_size =3D sizeof(struct venc_ap_ipi_msg_enc_ext_34);
-> =C2=A0
-> =C2=A0	mtk_venc_debug(vpu->ctx, "bs_mode %d ->", bs_mode);
-> =C2=A0
-> -	memset(&out, 0, sizeof(out));
-> =C2=A0	out.msg_id =3D AP_IPIMSG_ENC_ENCODE;
-> =C2=A0	out.vpu_inst_addr =3D vpu->inst_addr;
-> =C2=A0	out.bs_mode =3D bs_mode;
-> @@ -367,9 +363,8 @@ int vpu_enc_encode(struct venc_vpu_inst *vpu, unsigne=
-d int
-> bs_mode,
-> =C2=A0
-> =C2=A0int vpu_enc_deinit(struct venc_vpu_inst *vpu)
-> =C2=A0{
-> -	struct venc_ap_ipi_msg_deinit out;
-> +	struct venc_ap_ipi_msg_deinit out =3D { };
-> =C2=A0
-> -	memset(&out, 0, sizeof(out));
-> =C2=A0	out.msg_id =3D AP_IPIMSG_ENC_DEINIT;
-> =C2=A0	out.vpu_inst_addr =3D vpu->inst_addr;
-> =C2=A0	if (vpu_enc_send_msg(vpu, &out, sizeof(out))) {
+        nr_kernel =3D count_kernel_ip(trace);
+-
++       elem_size =3D stack_map_data_size(map);
+        if (kernel) {
+                __u64 nr =3D trace->nr;
 
---=-xig5edR/x3ap943HT9k2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+-               trace->nr =3D nr_kernel;
++               max_depth =3D
+stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++               trace->nr =3D min_t(u32, nr_kernel, max_depth);
+                ret =3D __bpf_get_stackid(map, trace, flags);
 
------BEGIN PGP SIGNATURE-----
+                /* restore nr */
+@@ -410,6 +411,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct
+bpf_perf_event_data_kern *, ctx,
+                        return -EFAULT;
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLH2SwAKCRDZQZRRKWBy
-9PWCAP0f1LmgksUyx6vPfKgnmSguVVzWU8MFLBRY7MOiMUd/iwD7BSsl2QkA8Wmk
-z0Yo33ECEf32b/vaR8jSGT2efz6WqAI=
-=KG+R
------END PGP SIGNATURE-----
+                flags =3D (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
++               max_depth =3D
+stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++               trace->nr =3D min_t(u32, trace->nr, max_depth);
+                ret =3D __bpf_get_stackid(map, trace, flags);
+        }
+        return ret;
+@@ -428,7 +431,7 @@ static long __bpf_get_stack(struct pt_regs *regs,
+struct task_struct *task,
+                            struct perf_callchain_entry *trace_in,
+                            void *buf, u32 size, u64 flags, bool may_fault)
+ {
+-       u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
++       u32 trace_nr, copy_len, elem_size, max_depth;
+        bool user_build_id =3D flags & BPF_F_USER_BUILD_ID;
+        bool crosstask =3D task && task !=3D current;
+        u32 skip =3D flags & BPF_F_SKIP_FIELD_MASK;
+@@ -465,13 +468,15 @@ static long __bpf_get_stack(struct pt_regs
+*regs, struct task_struct *task,
+        if (may_fault)
+                rcu_read_lock(); /* need RCU for perf's callchain below */
 
---=-xig5edR/x3ap943HT9k2--
+-       if (trace_in)
++       if (trace_in) {
+                trace =3D trace_in;
+-       else if (kernel && task)
++               trace->nr =3D min_t(u32, trace->nr, max_depth);
++       } else if (kernel && task) {
+                trace =3D get_callchain_entry_for_task(task, max_depth);
+-       else
++       } else {
+                trace =3D get_perf_callchain(regs, 0, kernel, user, max_dep=
+th,
+                                           crosstask, false);
++       }
+
+        if (unlikely(!trace) || trace->nr < skip) {
+                if (may_fault)
+@@ -479,9 +484,7 @@ static long __bpf_get_stack(struct pt_regs *regs,
+struct task_struct *task,
+                goto err_fault;
+        }
+
+-       num_elem =3D size / elem_size;
+        trace_nr =3D trace->nr - skip;
+-       trace_nr =3D (trace_nr <=3D num_elem) ? trace_nr : num_elem;
+        copy_len =3D trace_nr * elem_size;
+
+        ips =3D trace->ip + skip;
 
