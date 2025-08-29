@@ -1,89 +1,177 @@
-Return-Path: <linux-kernel+bounces-791618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359C5B3B946
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086FCB3B94C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6CD167F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4B93B2F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF33310655;
-	Fri, 29 Aug 2025 10:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD61430FF13;
+	Fri, 29 Aug 2025 10:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Z+nz1taA"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="MD6DcYc9"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF338310764
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B61430FC1E;
+	Fri, 29 Aug 2025 10:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464796; cv=none; b=blgEQuZLRpxIHwsBsD8M2E+L3aSa2ZMou7pSBRKO/W9Q5SmVUm7TyZLc9Wx73NLnKc1mHSyidhsIGRcdDd5xjPpqwrzI44HMdSeqkXf6Cc279CRaPAaxRaxohs4lqGynsLeG/MtWg+ylNiNMyp2WaI9VcbaHtaLPbS0DtL/8LMs=
+	t=1756464819; cv=none; b=i6+NcA4zPRVd9if+5F9MrqwcObpsyHa/Nlq82CZpPdOTUeECiTO7phEZh22ym3pksg06rE488JSdP52Y8af71eb75K1t2jAwIA607QmJXdZYxZSIxrDqianRbJVQHOpumSmgvYu7Gcm1IgnNLVEh/WLrGpjtdcEb8mW0HxNpGco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464796; c=relaxed/simple;
-	bh=WQdwzz6q9eAjbBzKBHklBItXSbQR9QZQCqps1gmAqJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvfafpE8e4chwvKSs48bgWBDdDOwsOWRQOlOPECbcIKOSxtIKU78oEfj+l7sm0TYVYnwCZI7QlFd4mmiY34RR+d0UZ0VkboFtFbAlUbaVlQiUdM2mLnHm8+99ek0d7vpoPSfaIkCKl//RDCedahBVNsjZxttPif7GwdeCQw/mi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Z+nz1taA; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=E2se
-	b6RdzeP44v6HWYjoVuEzf39+ad3i9v38SGIR650=; b=Z+nz1taA3zHfqbeUagJY
-	jvBend6sl1lhVZAyvWeeMCtt1l8k/VcROV4s4iVGxJC52/p2BsPBz4eQxfKJJJ5f
-	Dfcu/WFDnjSvOK8n0xP/AMOSTXOKllyjoGPtFTk7oPbwqSZy+V6aeyqOgCM9USIO
-	3WdH0Oiflcr22+8JYkgLkOL+7Ul7rSu/6Fx3T20ucjY7wsJittD3XkR98SDIMpWI
-	yvJlpLBmTmKT4sp3+qgNvVwcn2byqPbzMWGak27TXFqfED6s/5STlT3aNl0Wk6uw
-	8Z5ovYCpoLdvMunoGsDoSznB4DXchatRH4l/JcW7foTcpCc7jF+LtPytuvL0fBUy
-	gw==
-Received: (qmail 1425040 invoked from network); 29 Aug 2025 12:53:12 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Aug 2025 12:53:12 +0200
-X-UD-Smtp-Session: l3s3148p1@3KsB1H49CucgAwDPXwOZADQgI+b4m0Li
-Date: Fri, 29 Aug 2025 12:53:12 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 0/7] Add initial USB support for the Renesas RZ/G3S SoC
-Message-ID: <aLGGmI8bpKNVaSAa@shikoro>
-References: <20250819054212.486426-1-claudiu.beznea.uj@bp.renesas.com>
- <aLAZprjeKtk4pusw@shikoro>
- <ae53d367-2ee5-49aa-82ba-86f9e84d4d25@tuxon.dev>
+	s=arc-20240116; t=1756464819; c=relaxed/simple;
+	bh=i7qYvN+gUQaQBarnp2pt+8DDZGXFIz26kvITmDlxiMM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PRx2Z2kjcnMA47vDB6ieFVswCsgpUImiclrizA/mzp5LgoQU0I5DVlV34zyinK4ZHt0OC5KQ9CNEjwfjxOApqvAZJF8A+NEXQjd4nidHzoQetn8bL/JvdjR4KZ+9WMTThjNZntD5qFbSTT/VTHOfr2jsS+w6GGOyvWtDW3FIeow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=MD6DcYc9; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=yE/OT2jp/IXfF+ZhJViU2n0O8v9qo02f44rsJAl1lKE=; t=1756464816;
+	x=1757069616; b=MD6DcYc94Y/4MfefezHwsgnTVSBqNZ/YNnUMHCTBgPuEPvHQgzIkVcFXAfQiu
+	d4IxJDSBDlmGQqD2mwKPXHcB3mGCNafIldbSvWATXw40Z6JWxCNjGRTqLG+VF3LFhye97Gtu6afD4
+	VAg0Fi0u8sgx3VQIOwMMBS8Dw0NX3fQurvQfl2tAzb8YLX1xDPbm8JoCUeEK1wTm+nuokI7wQcWc6
+	YzC8b5GK68vrwOrg7o/aXNK8D5yUwQjo2Lj2CfY+z1zOHvqOfHIJRmHiDQtSUQ4FTWZ9sxWpxCF6N
+	ZnMcxUeyYyI4FNcElTSMc47NlAqnubSunLuEAwSCypWKIFcUWQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1urwje-00000000eFc-0Xyf; Fri, 29 Aug 2025 12:53:34 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1urwjd-00000001Ca4-3o5t; Fri, 29 Aug 2025 12:53:34 +0200
+Message-ID: <05acb1676ddc1881e2b9b3fa82f1335c42c2f47e.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	linux-kernel@vger.kernel.org
+Cc: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
+ Anthony Yznaga <anthony.yznaga@oracle.com>
+Date: Fri, 29 Aug 2025 12:53:33 +0200
+In-Reply-To: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+	 <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae53d367-2ee5-49aa-82ba-86f9e84d4d25@tuxon.dev>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi Claudiu,
+Hello,
 
-> I just checked it on latest linux-next and all good on my side. Would it be
-> possible that you don't have commit 2da2740fb9c8 ("soc: renesas: rz-sysc:
-> Add syscon/regmap support") in your tree?
+On Tue, 2025-08-26 at 18:03 +0200, Michael Karcher wrote:
+> Fixes: cb736fdbb208 ("sparc64: Convert U1copy_{from,to}_user to accurate =
+exception reporting.")
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> ---
+>  arch/sparc/lib/U1memcpy.S | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/arch/sparc/lib/U1memcpy.S b/arch/sparc/lib/U1memcpy.S
+> index 635398ec7540..154fbd35400c 100644
+> --- a/arch/sparc/lib/U1memcpy.S
+> +++ b/arch/sparc/lib/U1memcpy.S
+> @@ -164,17 +164,18 @@ ENTRY(U1_gs_40_fp)
+>  	retl
+>  	 add		%o0, %o2, %o0
+>  ENDPROC(U1_gs_40_fp)
+> -ENTRY(U1_g3_0_fp)
+> -	VISExitHalf
+> -	retl
+> -	 add		%g3, %o2, %o0
+> -ENDPROC(U1_g3_0_fp)
+>  ENTRY(U1_g3_8_fp)
+>  	VISExitHalf
+>  	add		%g3, 8, %g3
+>  	retl
+>  	 add		%g3, %o2, %o0
+>  ENDPROC(U1_g3_8_fp)
+> +ENTRY(U1_g3_16_fp)
+> +	VISExitHalf
+> +	add		%g3, 16, %g3
+> +	retl
+> +	 add		%g3, %o2, %o0
+> +ENDPROC(U1_g3_16_fp)
+>  ENTRY(U1_o2_0_fp)
+>  	VISExitHalf
+>  	retl
+> @@ -547,18 +548,18 @@ FUNC_NAME:		/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  62:	FINISH_VISCHUNK(o0, f44, f46)
+>  63:	UNEVEN_VISCHUNK_LAST(o0, f46, f0)
+> =20
+> -93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_0_fp)
+> +93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_8_fp)
+>  	add		%o1, 8, %o1
+>  	subcc		%g3, 8, %g3
+>  	faligndata	%f0, %f2, %f8
+> -	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
+> +	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
+>  	bl,pn		%xcc, 95f
+>  	 add		%o0, 8, %o0
+> -	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_0_fp)
+> +	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_8_fp)
+>  	add		%o1, 8, %o1
+>  	subcc		%g3, 8, %g3
+>  	faligndata	%f2, %f0, %f8
+> -	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
+> +	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
+>  	bge,pt		%xcc, 93b
+>  	 add		%o0, 8, %o0
+> =20
 
-Yes, I added it and it made the error go away, but still no USB. I
-switched to linux-next as of today, did neither help.
+Verified to work on QEMU which emulates an UltraSPARC II:
 
-> This is how my tree looks like:
+root@debian:~# cat /proc/cpuinfo=20
+cpu             : TI UltraSparc IIi (Sabre)
+fpu             : UltraSparc IIi integrated FPU
+pmu             : ultra12
+prom            : OBP 3.10.24 1999/01/01 01:01
+type            : sun4u
+ncpus probed    : 1
+ncpus active    : 1
+D$ parity tl1   : 0
+I$ parity tl1   : 0
+cpucaps         : flush,stbar,swap,muldiv,v9,mul32,div32,v8plus,vis
+Cpu0ClkTck      : 0000000005f5e100
+MMU Type        : Spitfire
+MMU PGSZs       : 8K,64K,512K,4MB
+State:
+CPU0:           online
+root@debian:~#=20
 
-Mine is similar, except for a newer -next.
+While there were no obvious problems on UltraSPARC before, these may show a=
+fter several
+days of uptime, similar to Niagara 4. I remember though that there were use=
+r reports of
+unstable kernels on real UltraSPARC I and II machines.
 
-Let's try your config file next?
+Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-Thanks for the support,
+Adrian
 
-   Wolfram
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
