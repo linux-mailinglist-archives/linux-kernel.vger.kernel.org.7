@@ -1,71 +1,66 @@
-Return-Path: <linux-kernel+bounces-792524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD33B3C534
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E1BB3C536
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD397BBBE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:41:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8A9188CF1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349962D3EDE;
-	Fri, 29 Aug 2025 22:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C465F2D6625;
+	Fri, 29 Aug 2025 22:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eieRm8NN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ipnLxohC"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946022D2389
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DE72D660A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756507330; cv=none; b=t4Ria5gholK/ZTToCIAwwgXz3G13KfrzMnOzKP70JR57KqIfVmQU35qad+p+TRtPqKHf4ad2ezGqLxv9oSuW6O4CTf+MEgHvDvbv/oibJAyNbKn358bdBM+S98LC2q5c8DpQAtBQZo7j+DaV3g4PUUad3SUY37cAFxwB6L9+0zQ=
+	t=1756507336; cv=none; b=Tp8rX6q0CWGTCT2FOZBEfP6f1sIJBelvDHnuXxuBXJ4+FBhGD9MCvspcztt4BvEGyl88ckBj0NwM1uWd/4Y8HT7yV10tr/n63QxonmUA05hvxGO2aE5Nri7bcsJ6y5fKuCD/xQ0s5MHnarZf3CGL0A0npZKnEFBSF0rOCF2rJOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756507330; c=relaxed/simple;
-	bh=mUwK/xsFfwuzsq3kyWVjdRlk2pq182o2/gqikyETILc=;
+	s=arc-20240116; t=1756507336; c=relaxed/simple;
+	bh=U8UnERAkfxzUAjGAE7pOlGorLb2FYdbdJBYSzttv4aQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tdvWoT6jBPXjsICMBsl8u1EkuAqLLUCAZVw3Z4MeRwbWiPL/NX35z3DLJxaRZvmxzl4chI54zWMWxIlaOw+VOXKOz7K1gL6DxbqarcF0gfweUe29Y5BhRD0mxwVspb2+LarvPQawNgcq5nUQhsfFP+zhMVyUojZP/SOSVgrwYMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eieRm8NN; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=KGzhIykQVRnNmFkaMia1URw46t5snVnORkRMCdKQW41HuNjndDmSjqeox8lNRBGwY7v6z2qgSNT+0Dm9HXgQDTMff5tjaB6VnAa6wqpZV7hi7zpbvsa6ahf//+xKGpztKtNxBYvoukRla6GKJXZNS6uflnasyzKxg9vWFfLyB+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ipnLxohC; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756507327;
+	s=mimecast20190719; t=1756507333;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cr7Z5SnqFnSoE6cxmV2l32qPVo05acQnlSmqa8BLLuw=;
-	b=eieRm8NNr4yi80OnciFcsQt8ChXMs2pmToB0lB9sbxV5HoBeRA+rx+vWnrOLgfvSzWsvKG
-	7llfDJVhJwqhWv5nYpb4DkZMwPyc7LrYHPsuHxOLgSKGhsCMd5lSTl4gab7IgaDHPMA3fH
-	Mw2FGytCXCC8+WgHOmItwHRllrwT0Ws=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=IKybner1GmKgcTnqqF43UsfxL3oL5QNO4lMcxBfIxqQ=;
+	b=ipnLxohCrhmzESf7kEJMr7f9/peZMlnl4A5MGsdEdMK/ww8ZSYJexURX1X9x+j+bS4Epq+
+	y27o23sDoPzdLrtmmIG+lccYzZUNsiDXI9mcsEz+ICzG8TYQNqZjUYWow/aMOTRmd8OSV7
+	AP7Lh4LInGvIBrnjnAFuVQZ3VQaDrrQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-114-IJgjwKlTMvOBSB8COVyeAw-1; Fri,
- 29 Aug 2025 18:42:02 -0400
-X-MC-Unique: IJgjwKlTMvOBSB8COVyeAw-1
-X-Mimecast-MFC-AGG-ID: IJgjwKlTMvOBSB8COVyeAw_1756507319
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-HVLOyX7aO1u5bu5ue-B6og-1; Fri,
+ 29 Aug 2025 18:42:11 -0400
+X-MC-Unique: HVLOyX7aO1u5bu5ue-B6og-1
+X-Mimecast-MFC-AGG-ID: HVLOyX7aO1u5bu5ue-B6og_1756507327
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 19F231800451;
-	Fri, 29 Aug 2025 22:41:59 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 176841800347;
+	Fri, 29 Aug 2025 22:42:07 +0000 (UTC)
 Received: from chopper.redhat.com (unknown [10.22.80.78])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A091518003FC;
-	Fri, 29 Aug 2025 22:41:54 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A460518003FC;
+	Fri, 29 Aug 2025 22:42:01 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: dri-devel@lists.freedesktop.org,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
+Cc: Asahi Lina <lina@asahilina.net>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
@@ -75,12 +70,21 @@ Cc: Danilo Krummrich <dakr@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Asahi Lina <lina+kernel@asahilina.net>,
-	nouveau@lists.freedesktop.org (open list:DRM DRIVER FOR NVIDIA GPUS [RUST])
-Subject: [PATCH v3 04/14] rust: drm: gem: Support driver-private GEM object types
-Date: Fri, 29 Aug 2025 18:35:19 -0400
-Message-ID: <20250829224116.477990-5-lyude@redhat.com>
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Krishna Ketan Rai <prafulrai522@gmail.com>,
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v3 05/14] rust: helpers: Add bindings/wrappers for dma_resv_lock
+Date: Fri, 29 Aug 2025 18:35:20 -0400
+Message-ID: <20250829224116.477990-6-lyude@redhat.com>
 In-Reply-To: <20250829224116.477990-1-lyude@redhat.com>
 References: <20250829224116.477990-1-lyude@redhat.com>
 Precedence: bulk
@@ -92,210 +96,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-One of the original intents with the gem bindings was that drivers could
-specify additional gem implementations, in order to enable for driver
-private gem objects. This wasn't really possible however, as up until now
-our GEM bindings have always assumed that the only GEM object we would run
-into was driver::Driver::Object - meaning that implementing another GEM
-object type would result in all of the BaseDriverObject callbacks assuming
-the wrong type.
+From: Asahi Lina <lina@asahilina.net>
 
-This is a pretty easy fix though, all we need to do is specify a
-BaseDriverObject in driver::Driver instead of an AllocImpl, and then add an
-associated type for AllocImpl in BaseDriverObject. That way each
-BaseDriverObject has its own AllocImpl allowing it to know which type to
-provide in BaseDriverObject callbacks, and driver::Driver can simply go
-through the BaseDriverObject to its AllocImpl type in order to get access
-to ALLOC_OPS.
+This is just for basic usage in the DRM shmem abstractions for implied
+locking, not intended as a full DMA Reservation abstraction yet.
 
-So, let's do this and update Nova for these changes.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-
----
-V4:
-* Update trait bounds. This looks gnarlier then it is:
-
-    Self: AllocImpl<Driver = D>, <-- Get the driver for this GEM object
-    D: drm::Driver<Object = O, File = F>, <-- Get the driver's Object, File
-                                              impl
-    F: drm::file::DriverFile,
-    O: BaseDriverObject<Object = Self>, <-- Make sure we're the driver's
-                                            main GEM object impl.
-  (don't worry, the compiler can always figure out what D, F, O are)
-* Also, rename the commit. I realized I should be clearer about what this
-  does so people can stop me if this isn't what was meant by private gem
-  object implementations :).
-
+Signed-off-by: Asahi Lina <lina@asahilina.net>
+Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/gpu/drm/nova/driver.rs |  8 ++++++--
- drivers/gpu/drm/nova/gem.rs    |  1 +
- rust/kernel/drm/device.rs      | 17 ++++++++++-------
- rust/kernel/drm/driver.rs      |  2 +-
- rust/kernel/drm/gem/mod.rs     | 21 +++++++++++++--------
- 5 files changed, 31 insertions(+), 18 deletions(-)
+ rust/bindings/bindings_helper.h |  1 +
+ rust/helpers/dma-resv.c         | 13 +++++++++++++
+ rust/helpers/helpers.c          |  1 +
+ 3 files changed, 15 insertions(+)
+ create mode 100644 rust/helpers/dma-resv.c
 
-diff --git a/drivers/gpu/drm/nova/driver.rs b/drivers/gpu/drm/nova/driver.rs
-index 91b7380f83ab4..4c252426056c5 100644
---- a/drivers/gpu/drm/nova/driver.rs
-+++ b/drivers/gpu/drm/nova/driver.rs
-@@ -1,7 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- use kernel::{
--    auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, sync::aref::ARef,
-+    auxiliary, c_str,
-+    device::Core,
-+    drm::{self, gem, ioctl},
-+    prelude::*,
-+    types::ARef,
- };
- 
- use crate::file::File;
-@@ -59,7 +63,7 @@ fn probe(adev: &auxiliary::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBo
- impl drm::Driver for NovaDriver {
-     type Data = NovaData;
-     type File = File;
--    type Object = gem::Object<NovaObject>;
-+    type Object = NovaObject;
- 
-     const INFO: drm::DriverInfo = INFO;
- 
-diff --git a/drivers/gpu/drm/nova/gem.rs b/drivers/gpu/drm/nova/gem.rs
-index 2760ba4f3450b..10e3053f1a246 100644
---- a/drivers/gpu/drm/nova/gem.rs
-+++ b/drivers/gpu/drm/nova/gem.rs
-@@ -18,6 +18,7 @@ pub(crate) struct NovaObject {}
- 
- impl gem::DriverObject for NovaObject {
-     type Driver = NovaDriver;
-+    type Object = gem::Object<Self>;
- 
-     fn new(_dev: &NovaDevice, _size: usize) -> impl PinInit<Self, Error> {
-         try_pin_init!(NovaObject {})
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index 3bb7c83966cf2..16cf6cb53d9a7 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -60,6 +60,9 @@ pub struct Device<T: drm::Driver> {
-     data: T::Data,
- }
- 
-+/// A type alias for referring to the [`AllocImpl`] implementation for a DRM driver.
-+type DriverAllocImpl<T> = <<T as drm::Driver>::Object as drm::gem::DriverObject>::Object;
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index c2cc52ee9945b..00fe0449ed6de 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -46,6 +46,7 @@
+ #include <linux/cpufreq.h>
+ #include <linux/cpumask.h>
+ #include <linux/cred.h>
++#include <linux/dma-resv.h>
+ #include <linux/device/faux.h>
+ #include <linux/dma-direction.h>
+ #include <linux/dma-mapping.h>
+diff --git a/rust/helpers/dma-resv.c b/rust/helpers/dma-resv.c
+new file mode 100644
+index 0000000000000..05501cb814513
+--- /dev/null
++++ b/rust/helpers/dma-resv.c
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- impl<T: drm::Driver> Device<T> {
-     const VTABLE: bindings::drm_driver = drm_legacy_fields! {
-         load: None,
-@@ -70,13 +73,13 @@ impl<T: drm::Driver> Device<T> {
-         master_set: None,
-         master_drop: None,
-         debugfs_init: None,
--        gem_create_object: T::Object::ALLOC_OPS.gem_create_object,
--        prime_handle_to_fd: T::Object::ALLOC_OPS.prime_handle_to_fd,
--        prime_fd_to_handle: T::Object::ALLOC_OPS.prime_fd_to_handle,
--        gem_prime_import: T::Object::ALLOC_OPS.gem_prime_import,
--        gem_prime_import_sg_table: T::Object::ALLOC_OPS.gem_prime_import_sg_table,
--        dumb_create: T::Object::ALLOC_OPS.dumb_create,
--        dumb_map_offset: T::Object::ALLOC_OPS.dumb_map_offset,
-+        gem_create_object: DriverAllocImpl::<T>::ALLOC_OPS.gem_create_object,
-+        prime_handle_to_fd: DriverAllocImpl::<T>::ALLOC_OPS.prime_handle_to_fd,
-+        prime_fd_to_handle: DriverAllocImpl::<T>::ALLOC_OPS.prime_fd_to_handle,
-+        gem_prime_import: DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import,
-+        gem_prime_import_sg_table: DriverAllocImpl::<T>::ALLOC_OPS.gem_prime_import_sg_table,
-+        dumb_create: DriverAllocImpl::<T>::ALLOC_OPS.dumb_create,
-+        dumb_map_offset: DriverAllocImpl::<T>::ALLOC_OPS.dumb_map_offset,
-         show_fdinfo: None,
-         fbdev_probe: None,
- 
-diff --git a/rust/kernel/drm/driver.rs b/rust/kernel/drm/driver.rs
-index dae0f4d1bbe3c..2500a61f45a6a 100644
---- a/rust/kernel/drm/driver.rs
-+++ b/rust/kernel/drm/driver.rs
-@@ -103,7 +103,7 @@ pub trait Driver {
-     type Data: Sync + Send;
- 
-     /// The type used to manage memory for this driver.
--    type Object: AllocImpl;
-+    type Object: drm::gem::DriverObject;
- 
-     /// The type used to represent a DRM File (client)
-     type File: drm::file::DriverFile;
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index b27b9fbf28bbb..ec36cd9ea69ed 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -26,16 +26,19 @@ pub trait DriverObject: Sync + Send + Sized {
-     /// Parent `Driver` for this object.
-     type Driver: drm::Driver;
- 
-+    /// The GEM object type that will be passed to various callbacks.
-+    type Object: AllocImpl;
++#include <linux/dma-resv.h>
 +
-     /// Create a new driver data object for a GEM object of a given size.
-     fn new(dev: &drm::Device<Self::Driver>, size: usize) -> impl PinInit<Self, Error>;
- 
-     /// Open a new handle to an existing object, associated with a File.
--    fn open(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) -> Result {
-+    fn open(_obj: &Self::Object, _file: &DriverFile<Self>) -> Result {
-         Ok(())
-     }
- 
-     /// Close a handle to an existing object, associated with a File.
--    fn close(_obj: &<Self::Driver as drm::Driver>::Object, _file: &DriverFile<Self>) {}
-+    fn close(_obj: &Self::Object, _file: &DriverFile<Self>) {}
- }
- 
- /// Trait that represents a GEM object subtype
-@@ -83,7 +86,7 @@ extern "C" fn open_callback<T: DriverObject>(
- 
-     // SAFETY: `open_callback` is specified in the AllocOps structure for `DriverObject<T>`,
-     // ensuring that `raw_obj` is contained within a `DriverObject<T>`
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj) };
-+    let obj = unsafe { T::Object::from_raw(raw_obj) };
- 
-     match T::open(obj, file) {
-         Err(e) => e.to_errno(),
-@@ -100,7 +103,7 @@ extern "C" fn close_callback<T: DriverObject>(
- 
-     // SAFETY: `close_callback` is specified in the AllocOps structure for `Object<T>`, ensuring
-     // that `raw_obj` is indeed contained within a `Object<T>`.
--    let obj = unsafe { <<T::Driver as drm::Driver>::Object as IntoGEMObject>::from_raw(raw_obj) };
-+    let obj = unsafe { T::Object::from_raw(raw_obj) };
- 
-     T::close(obj, file);
- }
-@@ -127,11 +130,12 @@ fn size(&self) -> usize {
- 
-     /// Creates a new handle for the object associated with a given `File`
-     /// (or returns an existing one).
--    fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-+    fn create_handle<D, F, O>(&self, file: &drm::File<F>) -> Result<u32>
-     where
-         Self: AllocImpl<Driver = D>,
--        D: drm::Driver<Object = Self, File = F>,
-+        D: drm::Driver<Object = O, File = F>,
-         F: drm::file::DriverFile,
-+        O: DriverObject<Object = Self>,
-     {
-         let mut handle: u32 = 0;
-         // SAFETY: The arguments are all valid per the type invariants.
-@@ -142,11 +146,12 @@ fn create_handle<D, F>(&self, file: &drm::File<F>) -> Result<u32>
-     }
- 
-     /// Looks up an object by its handle for a given `File`.
--    fn lookup_handle<D, F>(file: &drm::File<F>, handle: u32) -> Result<ARef<Self>>
-+    fn lookup_handle<D, F, O>(file: &drm::File<F>, handle: u32) -> Result<ARef<Self>>
-     where
-         Self: AllocImpl<Driver = D>,
--        D: drm::Driver<Object = Self, File = F>,
-+        D: drm::Driver<Object = O, File = F>,
-         F: drm::file::DriverFile,
-+        O: DriverObject<Object = Self>,
-     {
-         // SAFETY: The arguments are all valid per the type invariants.
-         let ptr = unsafe { bindings::drm_gem_object_lookup(file.as_raw().cast(), handle) };
++int rust_helper_dma_resv_lock(struct dma_resv *obj, struct ww_acquire_ctx *ctx)
++{
++	return dma_resv_lock(obj, ctx);
++}
++
++void rust_helper_dma_resv_unlock(struct dma_resv *obj)
++{
++	dma_resv_unlock(obj);
++}
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index e94542bf6ea74..77354382fbea0 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -20,6 +20,7 @@
+ #include "cred.c"
+ #include "device.c"
+ #include "dma.c"
++#include "dma-resv.c"
+ #include "drm.c"
+ #include "err.c"
+ #include "fs.c"
 -- 
 2.50.0
 
