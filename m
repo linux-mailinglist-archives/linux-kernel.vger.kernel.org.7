@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-791852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4AAB3BCD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:51:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24033B3BCD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 206607A34F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159AB168141
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605C131CA72;
-	Fri, 29 Aug 2025 13:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93FC31DDB4;
+	Fri, 29 Aug 2025 13:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J08iN6Rd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u21tUjf1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45F41EE7DD;
-	Fri, 29 Aug 2025 13:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639C31DD88;
+	Fri, 29 Aug 2025 13:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756475459; cv=none; b=p8bkhB2Rnit/eON7/CVcIS18ZXcvCHnq+B+byZcQR/IaDJZ5bIChR+5ZMd0qU0NPXppE9atnXhkRFe9M6/iKb1PyJjtQS0uDms5WlfyvAFFmf7xFGHXX/RLaknAy30IdpsZW4xbLSqa6svS2teJWmSw73lQYPH4wX2lxMnlW91o=
+	t=1756475461; cv=none; b=Ub0PET7YMSE51Ogk7+zuij2r9JKiC58LJ+YcDxDQ5jewUZkJdbUFJqmeyaaQCV+0p9IAUguhuXqa8LSo0vcur+f+UTxrA6/CcZTu6tdzH3eFXsseuSdHemdCFB0jQ50L1k+6pCrpnkPIPiKXdowQSBAsyOeMXMzShd0WAgm0njY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756475459; c=relaxed/simple;
-	bh=iMyE22m+SMBuDDViYX2YsQUqlBSUcMMIUputDrUwsPo=;
+	s=arc-20240116; t=1756475461; c=relaxed/simple;
+	bh=OBzkyZTISMayaZ8Cyos03TZvoAM7tbY8jXJS1KHHvT4=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=occ4AQbdWW+3x6vF7f0kIpuzEgXJfuR6rmK4KxLObF8WLuPm8HfQtfTCCrwrbRw/Q1Yg+ioi5daMGBEZKTOL4InJm4pQyL8GloM33ixAj0gSVy5XmCPSOdDsVw3Gy09U9+htYG7mjaReglc2ob0+6xf9rfYdkleXPgNrDGGSK0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J08iN6Rd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166FBC4CEF5;
-	Fri, 29 Aug 2025 13:50:58 +0000 (UTC)
+	 Message-Id:Subject; b=X+93kQVmq5CYLZeU0on5JdWPYK0SnEi03BOIE7cb6nSky3k49KB+pC1PBNfYYAoYSuMNWRVmSFL+JVWOBJObWlwAToetY+kyvS7D3N9UWz8+8g5L3Yf+Rn2Z96fM3JCh5w+yCv2yanWbsVmx52ub3hFCkR31GmJwMMgD2glvypM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u21tUjf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80197C4CEF5;
+	Fri, 29 Aug 2025 13:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756475459;
-	bh=iMyE22m+SMBuDDViYX2YsQUqlBSUcMMIUputDrUwsPo=;
+	s=k20201202; t=1756475460;
+	bh=OBzkyZTISMayaZ8Cyos03TZvoAM7tbY8jXJS1KHHvT4=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=J08iN6RdW+t2gMQ59Tr1GMVwa3UffcElZFqa4Zg99HY8zZzGt08x/uKqmpkG3ubKu
-	 8TrwqgVR9+6I7fMDTZau5j1fIgrT2uDHUJ1priylIHzrnyc3fR3hIpJ8eTY8ey8x7P
-	 yLjGFysK0NlqW3ZnoBjqFzZlX1vxIVPDnnWMy+kC0t12AUmzfX9idKKzeSc5A89pg4
-	 b2xpZlqyBvyquHWQKX8Xb+U/E8UTUXQNo3dWmER5QMINukZ7pGdDqmLST4KVRDuv6W
-	 qe93O16t/bYXFGKjMEY8G56asDFR9GSQg8s7cyzLMJ0UHOEhFTUr4jfqB+KHxTiQA0
-	 tEPnD46DuqdnA==
-Date: Fri, 29 Aug 2025 08:50:56 -0500
+	b=u21tUjf1YOV9Av9A5wWtcdnQyUAjgJgLyxbSAepV7rWJhKzFk51vUjB25yNuw7SJd
+	 DnElto4V0p+hll6zA2pfaA6aL1+MAr8u+dPFDc8BZkCDx3gZ79QjmLVZY/56udVqcG
+	 LGZWXcUU/Xq0TYJGUPr5monvH24ChEqHRBQM8qvyWwnw4lCYjr6ZhRLV1e4dz7IFjT
+	 fjADXD2HEdMcrEyrrDiFyrLPdZU1CJNBpKG1vTkLd72DR0xHMUuOEo3vW05CZYKt66
+	 uhaWnBZePm6d9wNCd8iZWhWwBqUvCKHUt3P47l5gkARcxF4c802b/89DWntc+RFHd+
+	 ek6hUBDmJ4hjw==
+Date: Fri, 29 Aug 2025 08:50:59 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,31 +50,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- joel@jms.id.au, andrew@codeconstruct.com.au, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com, linus.walleij@linaro.org, 
- lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- openbmc@lists.ozlabs.org, brgl@bgdev.pl
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-In-Reply-To: <20250829073030.2749482-3-billy_tsai@aspeedtech.com>
-References: <20250829073030.2749482-1-billy_tsai@aspeedtech.com>
- <20250829073030.2749482-3-billy_tsai@aspeedtech.com>
-Message-Id: <175647456196.394574.546840408984626348.robh@kernel.org>
-Subject: Re: [PATCH v1 2/4] dt-bindings: pinctrl: aspeed: Add support for
- AST27xx
+Cc: devicetree@vger.kernel.org, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+ linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+In-Reply-To: <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
+References: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
+ <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
+Message-Id: <175647456257.394630.17282056537152186661.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: add support for NXPs TJA1145
+ CAN transceiver
 
 
-On Fri, 29 Aug 2025 15:30:28 +0800, Billy Tsai wrote:
-> Add bindings for the pin controller found in the ASPEED AST27xx SoC.
+On Fri, 29 Aug 2025 11:19:58 +0200, Dimitri Fedrau wrote:
+> Adding documentation for NXPs TJA1145 CAN transceiver.
 > 
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > ---
->  .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml  | 135 ++++++
->  .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml  | 452 ++++++++++++++++++
->  2 files changed, 587 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.yaml
+>  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -82,22 +79,12 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.example.dtb: /: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.example.dtb: /: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.example.dtb: syscon@14c02000 (aspeed,ast2700-scu1): #size-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.example.dtb: /: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.example.dtb: /: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.example.dtb: syscon@12c02000 (aspeed,ast2700-scu0): #size-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+Documentation/devicetree/bindings/phy/nxp,tja1145-can.example.dts:21.21-33.15: Warning (unit_address_vs_reg): /example-0/spi/can-phy: node has a reg or ranges property, but no unit name
+Documentation/devicetree/bindings/phy/nxp,tja1145-can.example.dts:21.21-33.15: Warning (spi_bus_reg): /example-0/spi/can-phy: SPI bus unit address format error, expected "0"
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250829073030.2749482-3-billy_tsai@aspeedtech.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250829-tja1145-support-v2-1-60997f328979@liebherr.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
