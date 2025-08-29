@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-791542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B381CB3B858
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082F3B3B860
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054291CC04D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1467C1944
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A0E3081C8;
-	Fri, 29 Aug 2025 10:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0133081C7;
+	Fri, 29 Aug 2025 10:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="trC8TmGG"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMLlyFpE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895983093CB
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FD12FE07C;
+	Fri, 29 Aug 2025 10:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462319; cv=none; b=Ac2x2TylogHwVH8biP7e0XuTVF+yJqo1P71YvzMet5KMY3xkKRGRutY93IOAecdHfEgZKnQYw8sv9TTaTCbJJoTP9Fkvsqfh1Dj7hL+UGbIjAdDQO0KJLgyU3mnr0bcO1R2Mb04XcNPeGj9db8YCdCL5Je9p218r4kV/k5sv0TI=
+	t=1756462407; cv=none; b=l8Rsaum5YoduHyXY/qRxBmmnxqL+MiFNGwh3wAfhPgLnbm2Zve70S4B4yrcwDiQEirPJ+bTCE2DyNRRRIPNUBmNv57fLMuoZyXgwkvWW5jw4dVsrzwMOyRVA9hZItdnKbyOewaZPrNbUWNfrQ0lrj5FbwzX60GoYuuH0VEVgOQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462319; c=relaxed/simple;
-	bh=M5mqqu6lY1kpvsliyHMCkk1JVMsBobZ+0BTdJ715Qz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzdm7ElXtdJY1KxLpxAF9AgJBAZ3G6wNBkv092DhGUdL264Gk9DLocJTYhnV7QWMDtlfVTbN788x+dMO5fH9CKfyJfpSyvomJ1rvNR4mlkRMJykHaIro9Xh1ECRCVXNMhct/vW1YxDNTV0VA9cfQQSnLNUu9WA5+TIy4SlETHnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=trC8TmGG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HLKEYWCOQmMDQNx/pwPo3zfJS6SvTUi5l0tmvLYsX6k=; b=trC8TmGGWkV8XmJ1xRQnsYuKML
-	M0TU/7fG2aZwTUA+lL6h1cxZ8BsaytI/TiRCPNmG8nlnjdvH9iK7hEKQL4AeDagDt7Cod89RU4L5t
-	hLT9oh1r3vaBMAPOEzZ6VDgkp6stVbN9oNlZBfpjqpXOvSDzjQ48Oak+ZbJWg2iaFdV9+JH1QDOmN
-	ZDJGVkRtkBBir9MO/9yT70Nd9I0nm+77chksqmliT9JEuAKmIAQHEUOgPtEFG+bFcDzCg1inajMs9
-	JNzSE547v35E7KyQzppx9BnLh5YOYkGBd2k4pXpvQHiiRi9ZbJprblv8goc7zd/EbL9fkJhM9n1U6
-	l72bP7qg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47766)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1urw5I-000000002dF-4159;
-	Fri, 29 Aug 2025 11:11:53 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1urw5G-000000003yZ-3YcK;
-	Fri, 29 Aug 2025 11:11:51 +0100
-Date: Fri, 29 Aug 2025 11:11:50 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: module: Ensure the override of
- module_arch_freeing_init()
-Message-ID: <aLF85tovbkn5vjav@shell.armlinux.org.uk>
-References: <20250829090726.834456-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1756462407; c=relaxed/simple;
+	bh=sfatOopvVhU+pGUeNgSTPSm6N8YxhwlJmZkrU8pfqOw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JCWIvx/dCGK1MfPFUUEx21RaucIUSFmo4sODDFrQ3gR/Ce/kGWZWr9xzQCnQUhLxhBkVcOGWBu3gdL24UNtlEAT0bO3kPv39ndlTsWMx2CsL+AA/0V2B2zd6leglY/S0bGtTq2eJo7hldrjx4lWEIW/JRiM9sOCZkTbEPRVQdzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMLlyFpE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9001DC4CEF4;
+	Fri, 29 Aug 2025 10:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756462406;
+	bh=sfatOopvVhU+pGUeNgSTPSm6N8YxhwlJmZkrU8pfqOw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nMLlyFpEJK7X/bWG5W2gHsIA0jRTWUzYmyhx8mjdju8+4jOedxFdnoLGKuU73uKT2
+	 pXfE9T91TuAj8AgZyDNSJzpRP16Iv0oBLcw0vV3VbWrzp9cLAi94GeBZicxVNpCOk7
+	 iA2OqeM+fnLpIvuRD2LMQE7MjemoGlB/vU4AkcUJKtjJkIB2QE7dnY4yZZ+5n/dwgV
+	 pi3Kyt4LSG8qiNV3zvqgVBIvre8DvFwkvwa+kSaH9uk/+bZ9lop3ivPurUsFebGDwl
+	 lE4Pxw6aGspLgKZDpfNBmGgeC2kfyLpfLpCCU+fOIdkOGISrPRBWxxj6I7qQV0Fn6g
+	 Z9hHJ/vzG+ZRA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afeceee8bb1so280269266b.3;
+        Fri, 29 Aug 2025 03:13:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUY9ohjtTjHw7uFqasdS8ZvRBSlQ8xCl1mOTyeSTeNgyofM26SCAHAOjuYJvhyKif2nFFXwlbYH8foMDTwc@vger.kernel.org, AJvYcCW/2yJ5eDGoRC98TjqbjA/81DFKe3bcKcz87AjK7Yb5FVCr5N0XYaZJe23ZQyCvQupP1j8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaBLOWjGF7B0xRK8z0CPgMH4RJLz7AUeZ1pbLfzk5rNHMPTMiw
+	C0oBkOi5DMYkB+TS+AjSzNrUPRsOM+CNq4sQ9k04mi+EqwGZoJ3/46kTz5Z9bhvBOrSgrsL0X/a
+	kNrDjYW0onyjHOVR4n4M7idL9rz131pw=
+X-Google-Smtp-Source: AGHT+IHLddUbYRy+BM+Sh0MTWUqk2T0rzSD/e1kuvihsBzjXdCdktKsTj20/zAF+CKh4JQliiUrP03WEy1Qf81wmikw=
+X-Received: by 2002:a17:907:7fa1:b0:afe:7b35:9c8e with SMTP id
+ a640c23a62f3a-afe7b359d2fmr1835749466b.12.1756462405153; Fri, 29 Aug 2025
+ 03:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829090726.834456-1-petr.pavlu@suse.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250811021344.3678306-1-maobibo@loongson.cn>
+In-Reply-To: <20250811021344.3678306-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 29 Aug 2025 18:13:09 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5E6UMo2zQiDLr3nBUGUt0HCfmCza5zja9eqL9jThKhoA@mail.gmail.com>
+X-Gm-Features: Ac12FXzD1STqE5bjaWBZPYP3xxWwomWdGTRTvX_rsKShPydoI_UwB46XIN4hSKo
+Message-ID: <CAAhV-H5E6UMo2zQiDLr3nBUGUt0HCfmCza5zja9eqL9jThKhoA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] LoongArch: KVM: Support various access size with
+ pch_pic emulation
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 11:06:44AM +0200, Petr Pavlu wrote:
-> The function module_arch_freeing_init() defined in arch/arm/kernel/module.c
-> is supposed to override a weak function of the same name defined in
-> kernel/module/main.c. However, the ARM override is also marked as weak,
-> which means that selecting the correct function unnecessarily depends on
-> the order in which object files with both functions are passed to the
-> linker. Although it happens to be correct at the moment, the proper pattern
-> is to make the ARM override a strong definition.
-> 
-> Fixes: cdcb07e45a91 ("ARM: 8975/1: module: fix handling of unwind init sections")
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Applied with some modifications (e.g. rename LoongArchPIC_ID to
+pch_pic_id for kernel coding style), so you'd better test it [1].
 
-LGTM, please ensure it ends up in the patch system (see signature
-below). Thanks.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongs=
+on.git/log/?h=3Dloongarch-kvm
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+Huacai
+
+On Mon, Aug 11, 2025 at 10:13=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
+te:
+>
+> With PCH PIC interrupt controller emulation driver, its access size is
+> hardcoded now. Instead the MMIO register can be accessed with different
+> size such 1/2/4/8.
+>
+> This patchset adds various read/write size support with emulation
+> function loongarch_pch_pic_read() and loongarch_pch_pic_write().
+>
+> Bibo Mao (5):
+>   LoongArch: KVM: Set version information at initial stage
+>   LoongArch: KVM: Add read length support in loongarch_pch_pic_read()
+>   LoongArch: KVM: Add IRR and ISR register read emulation
+>   LoongArch: KVM: Add different length support in
+>     loongarch_pch_pic_write()
+>   LoongArch: KVM: Add address alignment check in pch_pic register access
+>
+>  arch/loongarch/include/asm/kvm_pch_pic.h |  15 +-
+>  arch/loongarch/kvm/intc/pch_pic.c        | 239 ++++++++++-------------
+>  2 files changed, 120 insertions(+), 134 deletions(-)
+>
+>
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> --
+> 2.39.3
+>
+>
 
