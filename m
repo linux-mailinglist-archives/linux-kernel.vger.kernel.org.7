@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-791220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB4CB3B397
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 952C0B3B399
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6563C7A553B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:42:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66DE67AB424
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE71525783B;
-	Fri, 29 Aug 2025 06:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B12C25E816;
+	Fri, 29 Aug 2025 06:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yYm34lB+"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H70S8V7r"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488BE2AEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD70B1FC0F3
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756449857; cv=none; b=hNa6T3zSVZS00P9GMGVU9ngmzE2ndIGrP5yxN75xRECGX/0uZtAHtlwMnaRCpdWoPeoFg2hPewO088db5my9OW9/9yhlrEWD5IAFnE4xUmB2dT30k4C0pWnYtb5/BfHJJeDWCHh/4F/XQvoF8S7o5640CWdLYpX5FqQR2/0EeYk=
+	t=1756449935; cv=none; b=CWhyFyUYHhgGKIr+C3W2annOJVek87tEP3EeXTMQkRwTKnRhNsUPvN6iNccxMccdyJbKDfuC1rtZdsWYHOJsfIrHyob8CVQh4N0GM4V81crr4HFi0ZQU3UhB/qKNqm+Dj8WgrYMeCMtDu7cBef2Cyn2u2gGYJXXQffK3rpTaQDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756449857; c=relaxed/simple;
-	bh=aW/STypnoYS2xy8qzUHRpUVErrScdjOQ9fkzUsRXA+M=;
+	s=arc-20240116; t=1756449935; c=relaxed/simple;
+	bh=+Nbhht8OttmuwtvhGh2bKsz4qLFRFOJciViOoAl+BGo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FaM7sziDn64ihqyM6Qn1Ek+F2I7/uKNc80rsv9k2b7VNzEQrdiwY4IsM75gzGVLcrwN2W0cD8CHrvw01H5Bvbi+Pd6+jUktKoB6bTdV5cBLhkt/ZmM6qmwvsPfwJEnnOLhvxm0OybdmBs5wOMZ6dVbcb5AitzvlmnYNQdN91rPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yYm34lB+; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:Content-Type; b=fLy38DoIC4JFdfv7uqwBI842UNYaCa00awxooqqYl+dhmyHDMWtm9qaqoK/1qAcm1KZes+/3quHVqeDERhW51QYVicnOy14PxpkEzyUb8rDTqYYa0ggmrQaQk5vtm65MMMyaCqww9Ns8MywC9tg/+TG6k79Xb/ahVhNxjbVEvio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H70S8V7r; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afe8493a5b7so26245766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:44:14 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afe6a3ba50aso22941166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:45:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756449853; x=1757054653; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756449932; x=1757054732; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=83BybW7Yt93cu72oVI9pCaitFHTKxmYkB5u+/G4lDRY=;
-        b=yYm34lB+tWjBk0Jj/gPrBQkZNwvVZKLmCXCQ9xKw4apVHRdGUqR3acNnS4VWvZYuue
-         T589dnbX5DOqClwp63rGuzyqEXoQoM4XfnK0Iq5hAxk8fOvH4VFnXs3Y2AHVMtMwz87O
-         gCVuvQSozaifRh7H4SXRc1M4fXvFsuhO2xmelmGYMw/5RQTpja/19h8L/mIuXVajLEy/
-         /h4rKYWXZx4PraJpBCUAnvNQNt70Oftc3zwdvUWD3BvCATYKYdrrbuIZeY5qpNDp5k3g
-         lNW95Mhxux+bDl8w0FkJYaveLV+TjgxCLub1xap35YhqFmPR57vREu6F3HC3Y3zoOaNg
-         NXmA==
+        bh=PCHzGqkgYmIfqgWjVZZUJtVWZa1LO5nYjlu+Fkm0M9Q=;
+        b=H70S8V7rK3PNmAGkh/sEbq2OTiHMM2rjJ0wbyj5wGLLEPy8iTkLwVaYGQ/oHi46VrN
+         koIwm1Xs3X1RaLmD1z6CEvHZZI6S24waV4ie2Z6iw2pghBZMzVvOMuU7Dv2NP0WAhNQF
+         x2zwZT4/8yvEuZ1NMokn+ysoTVNaozRhwzzsv7k7v15OGg/gNI7L1S+Ze+Fzmzc9disD
+         jdp9yFl5SQfoBosoxCxXAbbLPLD0OqZ7a/aUQTYD2DlFIv5hr7kTkqAJkX0NU4mNglj4
+         UbLR0qkjPSsl6hdFOT4o8GK3FYj8skiZpYHhxdal/LfyaxFxTUnJQrUVbiwbDU+72s8Z
+         9HRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756449853; x=1757054653;
+        d=1e100.net; s=20230601; t=1756449932; x=1757054732;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=83BybW7Yt93cu72oVI9pCaitFHTKxmYkB5u+/G4lDRY=;
-        b=kVOasr7X83CeuoFMCCImvRoIf17j/IaWhXcoKSdM6Yl+uFFSLNtOuWFFPbJk+gheu4
-         B55/jrmihWashOl7SOJBTMDz7fwYczqN9oyiThTobLgxFBDC48tc8tPo9l4uQGkcG3IO
-         AynC8ZPef4qGMBLdkds0pwd5VG3amVzHadjEDpJSAiR9f1wP/JcgAKMl1z/402DX/lS/
-         BpsKxFdzQ24M4juiSXsAFLawDS7XbS9VjjyiILVbV3gt6DsFUw5iHSJGwsKR4jASVmCt
-         u7HjiX55le74nIRj8RSzn3vmBscC442q8aWdS858jzQ2oEcTFt2kgFqq1LJJpGahmAeF
-         3bIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOfoY/Ms43cZlvm31EMCbtoMprwOfeqTJlpdoEj4jvwf4zCc7rWrV4Y5y8XoNVu68phqIDdcLnPqb+xlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG+EWd0C62DMosAhhMFqFHgzYvm36lQy1FuQjhIXsWuXHBWDG3
-	2Xemo5UQE3E6v7awVFi9VDWKfmRkMaGdcu1C7Vt4kxx+/2SEKZNE8DRh7TSYXeIzyeo=
-X-Gm-Gg: ASbGncuzFpNTZcctFnAcGqnO0GMPMaQgi81paXS8GmfimDBCxP+Jf5TIqVSHZFU+cMW
-	vhSmOvhqzxWmvh/UbWYO7sD3UpPR92dShlO1/0hn/h2JCcXPK/jtRG2rYrLa113msqgDWdrrZnR
-	D5fPxpeC+WVLuHMtv1c6vB2RaXjRvMuW2eJU3u8tgIlczRaSA54eqOtMENr7DAs9Y7Nh+sxfhPO
-	aTKxrynb/j3FW3WfxQPQUhwFRiAooF9LkRRu2IBY+p+IsvXtzjunXK7WD3U4gFa5GLTTiXpj9N0
-	MHsizpngeQNBY3/I1oRLJosAix9ISdbq2Tmq/Fty7icsdHYhYeYhqwIvHX1qOJy6FBG0IQPmC8j
-	asMfi/ua8jjyIHldvuofoOLU2C20737SC5cBvAkqO8o4=
-X-Google-Smtp-Source: AGHT+IFHvJprnlETPQ+XeK9pQw0PrgtskKauEHZYdi65x+37D2xQfXJzG17NhjuMvTbbZsu2fiCaIA==
-X-Received: by 2002:a17:907:26c3:b0:af9:3758:a85a with SMTP id a640c23a62f3a-aff0ee81aa2mr13066166b.5.1756449853478;
-        Thu, 28 Aug 2025 23:44:13 -0700 (PDT)
+        bh=PCHzGqkgYmIfqgWjVZZUJtVWZa1LO5nYjlu+Fkm0M9Q=;
+        b=QHR2KRdfSyP/ckTdMSjxhfk7C8Z13Fr8JOrpNsOFe6EXSu4J10xMr6SFidef4ezdh4
+         qgoXRB2VxFT5GWpweBIhiEJUYDyvt8DiVahRboI73qUHr8q8OwZ1z/NafpYAirKF1/i6
+         hIkYk+EhTuKC8qvdXBAR8IusmwkOa5N+uNgj49n/5euu+HBeEqxl3kDCNb41mcKAxedd
+         r9sersq1cLn1spWENKMfM/gxNBZ/OCQXdjCJd/KcizD8LyCQguM3GWZYgu+bhpyFpd2r
+         kky7b+Lb/D5qaDGgFeFAFS0iY70ZK4a0TnSIP6CawJasaO1O/DSLx961b/O/2DbgwvEZ
+         YLwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfiyQAoZlWhCsiQE5aYTW/Oklzb/d7q2a4f6rMamYXeVyZMC3tc76zh1WZscVNv+FRP0gGf5jyfaOGKUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoBA3BLN1155jxIMSUKL3rRejsS0lQoybJzkwVG03YTi/8DajI
+	Ep4mo2EdN2EeltZIWcTgtm57dqVN/U9qdG4VYdE+0wi+jbKIXZPGVoVoSuj52WvB06w=
+X-Gm-Gg: ASbGncu1/OIpMnlFjtkIfdkU5QlmSlqpexvVGyM9oqRkpw6X0kbk7n5M1g4WNR10pTT
+	tzt9jzgC2bBeYYuW2xrMvCEuAzUQp8fzt8VoSetjK76cfr1TL6RY1JZmkG2fNg7dAYVAV2qvtmq
+	cyjQqoIGbc00BW55J722doTNu3/MrlDOYEJeCCSk2sa0IS+pWomG1pBqeMCb6kbqpytkCX8QfPp
+	O82lfgg/ZY0ez4yg0a93fJHWoruasf8UDXHQfdBbVFzVTLDmhIzWYKN81C2p/7kGf+U3smhpCVX
+	OWKR3GN06c8bAMIFyL//oQcY9tglB1Ka7wMwT4i+jLQkx+ohRn5B27ZtvfQrjOMvJxJLC9vpgO8
+	T1Ky8SnlA4WCZvYNM8AE5JMYbhAPsLODfglIILS0FMYtWgQ6vmu4JqA==
+X-Google-Smtp-Source: AGHT+IF+oDYGTRu3XEA/GuUdAGOMifZUefmmktxV2vhd7IP4r9v2Eq985abdUQBQIcwC5jqgiouUFA==
+X-Received: by 2002:a05:6402:5203:b0:61c:484c:a533 with SMTP id 4fb4d7f45d1cf-61d0d2a91ecmr115449a12.1.1756449932192;
+        Thu, 28 Aug 2025 23:45:32 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefc7eda86sm139359566b.3.2025.08.28.23.44.12
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c77f9sm1174034a12.8.2025.08.28.23.45.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 23:44:12 -0700 (PDT)
-Message-ID: <ba78f528-dd3c-49b6-920a-0c0758946f16@linaro.org>
-Date: Fri, 29 Aug 2025 08:44:11 +0200
+        Thu, 28 Aug 2025 23:45:31 -0700 (PDT)
+Message-ID: <c103da1f-b4ef-4f2f-8648-dda636094bde@linaro.org>
+Date: Fri, 29 Aug 2025 08:45:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,15 +81,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: qcom: audioreach: Add support for Speaker
- Protection module
+Subject: Re: [PATCH 2/2] ASoC: qcom: audioreach: Add support for VI Sense
+ module
 To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
  Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250821141625.131990-3-krzysztof.kozlowski@linaro.org>
- <2566eea5-a153-42e6-9a43-1c0af5a4c11c@oss.qualcomm.com>
+ <20250821141625.131990-4-krzysztof.kozlowski@linaro.org>
+ <6a4a601b-937e-441f-80a7-3f733fc86445@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -136,75 +137,35 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <2566eea5-a153-42e6-9a43-1c0af5a4c11c@oss.qualcomm.com>
+In-Reply-To: <6a4a601b-937e-441f-80a7-3f733fc86445@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/08/2025 12:39, Srinivas Kandagatla wrote:
->> +static int audioreach_speaker_protection(struct q6apm_graph *graph,
->> +					 struct audioreach_module *module,
->> +					 uint32_t operation_mode)
->> +{
->> +	return audioreach_send_u32_param(graph, module, PARAM_ID_SP_OP_MODE,
->> +					 operation_mode);
->> +}
+On 22/08/2025 12:55, Srinivas Kandagatla wrote:
 >> +
+>> +	pkt = audioreach_alloc_apm_cmd_pkt(payload_size, APM_CMD_SET_CFG, 0);
+>> +	if (IS_ERR(pkt))
+>> +		return PTR_ERR(pkt);
 >> +
->>  int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_module *module,
->>  				struct audioreach_module_config *cfg)
->>  {
->> @@ -1299,6 +1308,10 @@ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_mod
->>  	case MODULE_ID_GAPLESS:
->>  		rc = audioreach_gapless_set_media_format(graph, module, cfg);
->>  		break;
->> +	case MODULE_ID_SPEAKER_PROTECTION:
->> +		rc = audioreach_speaker_protection(graph, module,
->> +						   PARAM_ID_SP_OP_MODE_CALIBRATION);
-> 
-> Are we leaving this in calibration mode forever? When does the mode change?
-
-That should be a normal mode, thanks for catching this.
-
-> 
->> +		break;
->>  	default:
->>  		rc = 0;
->>  	}
->> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
->> index 790fba96e34d..0ad566e45e09 100644
->> --- a/sound/soc/qcom/qdsp6/audioreach.h
->> +++ b/sound/soc/qcom/qdsp6/audioreach.h
->> @@ -31,6 +31,7 @@ struct q6apm_graph;
->>  #define MODULE_ID_MP3_DECODE		0x0700103B
->>  #define MODULE_ID_GAPLESS		0x0700104D
->>  #define MODULE_ID_DISPLAY_PORT_SINK	0x07001069
->> +#define MODULE_ID_SPEAKER_PROTECTION	0x070010E2
->>  
->>  #define APM_CMD_GET_SPF_STATE		0x01001021
->>  #define APM_CMD_RSP_GET_SPF_STATE	0x02001007
->> @@ -542,6 +543,16 @@ struct data_logging_config {
->>  	uint32_t mode;
->>  } __packed;
->>  
->> +/* Speaker Protection */
->> +#define PARAM_ID_SP_OP_MODE			0x080011e9
-> 
-> 
-> Are we missing
-> 
-> #define PARAM_ID_SP_OP_MODE_NORMAL		0
-
-I'll double check with the docs, but indeed feels like that.
-
-> ?
-> 
->> +#define PARAM_ID_SP_OP_MODE_CALIBRATION		1
->> +#define PARAM_ID_SP_OP_MODE_FACTORY_TEST	2
->> +#define PARAM_ID_SP_OP_MODE_VALIDATION		3
-> 
+>> +	p = (void *)pkt + GPR_HDR_SIZE + APM_CMD_HDR_SIZE;
 >> +
+>> +	op_cfg = p;
+>> +	param_data = &op_cfg->param_data;
+>> +	param_data->module_instance_id = module->instance_id;
+>> +	param_data->error_code = 0;
+>> +	param_data->param_id = PARAM_ID_SP_VI_OP_MODE_CFG;
+>> +	param_data->param_size = op_sz - APM_MODULE_PARAM_DATA_SIZE;
+>> +
+>> +	op_cfg->cfg.num_channels = num_channels;
+>> +	op_cfg->cfg.operation_mode = PARAM_ID_SP_VI_OP_MODE_CALIBRATION;
+>> +	op_cfg->cfg.quick_calibration = 1;
+>> +	/*
+>> +	 * op_cfg->cfg.r0_t0_selection should be set only for normal mode, keep
+>> +	 * as 0 for calibration
+> 
+> How do we move from calibration to a normal mode?
 
-
+The same as in previous patch - this should be normal mode.
 
 Best regards,
 Krzysztof
