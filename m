@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-791869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA36B3BD15
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E54B3BD17
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179E11C8717D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724011C866A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C78531E0EA;
-	Fri, 29 Aug 2025 14:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C9431A05D;
+	Fri, 29 Aug 2025 14:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpBy2cT9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vs1Ao6hH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpBy2cT9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vs1Ao6hH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YjPlQ3Ki"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D8D31DDB4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABD62701DC
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476176; cv=none; b=NC+bDG4OXimpUiNMj9oQaEtf7Nv6HDwYJIUGcNgjiMsmgwp5tK2ArLyr1cdHRG4aHmP6KgotlDwlkkQjhlzzK5FL0RXoxT9qsGqHYTNFIBnsHVYTL4gaDqlhZA/w2KmW9WX5dCeFikqvmpUsgA2v8+2S/lWRbiqZibYXwHH82nA=
+	t=1756476242; cv=none; b=cUNaUxq0iyiQuNZ7Z0LCaq9xOeN+1+q/dc+sDJzERJi+PuyrgdLS3sWx4JpExtHTU4B4lheUF1wiil7NmgkJfQJIrBp766O79rGqnaS4TinlHbsvfSks6y9sWKeB86JQlnyURgWLZXAPmTVPNJSCd2lAuUBeLNsxzwGZgmueWJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476176; c=relaxed/simple;
-	bh=O/P3Y6x+fwDSwTIRg7CVfYOSwCRPvQ4Or8YJ56ji69U=;
+	s=arc-20240116; t=1756476242; c=relaxed/simple;
+	bh=BKtwzTVws+GlX1U8hYHvrnuzxLWlwSNrMt8x+/6N9MA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmY9w92HUEGyov22FcrNtY7uwXXu2zCcGIeWR7jwzXBzKtYgFjUN1hHmkPtC7rSnIqgS51YPmEhjeGxL02utNpqrpEp08igQZ+UVfrVh9/sbdRpGLcnkIUjLh3kKlcAzdo6VIDh9QZrgy4aTVoh8uZEHNApp1zdRwh+HXCQeM6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpBy2cT9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vs1Ao6hH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpBy2cT9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vs1Ao6hH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 12F7C33EA5;
-	Fri, 29 Aug 2025 14:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756476173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
-	b=qpBy2cT9WYM04TiwM6xJn7XUHzeZUsuzcwFjxv775SW6i7wl/IfrIuMXLu7pffzEhHz8Mo
-	yIS0S0cWRINr7eq4sxwcRbTS6naS/sfFR48rEkb197DxSfxzIG0BTlEfgje5Ckbppwdmnx
-	Np2qgzXafD4DE43NpeeP+md+31RXEfE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756476173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
-	b=vs1Ao6hHnS8baKmc7v5u9G/CjU5ZQoMS8n4htU+RerXf/iMihlN+noohyzkHY65T+lg6ko
-	yy3FVRea31gk5oCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756476173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
-	b=qpBy2cT9WYM04TiwM6xJn7XUHzeZUsuzcwFjxv775SW6i7wl/IfrIuMXLu7pffzEhHz8Mo
-	yIS0S0cWRINr7eq4sxwcRbTS6naS/sfFR48rEkb197DxSfxzIG0BTlEfgje5Ckbppwdmnx
-	Np2qgzXafD4DE43NpeeP+md+31RXEfE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756476173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
-	b=vs1Ao6hHnS8baKmc7v5u9G/CjU5ZQoMS8n4htU+RerXf/iMihlN+noohyzkHY65T+lg6ko
-	yy3FVRea31gk5oCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0574113A3E;
-	Fri, 29 Aug 2025 14:02:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g+pPAQ2zsWgADAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 14:02:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4B8F6A099C; Fri, 29 Aug 2025 16:02:52 +0200 (CEST)
-Date: Fri, 29 Aug 2025 16:02:52 +0200
-From: Jan Kara <jack@suse.cz>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <fkq7gvtjqx4jilgu75nbmckmwdndl7d7fzljuycqfzmvumdft2@jiycade6gzgo>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
- <20250829-diskette-landbrot-aa01bc844435@brauner>
- <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
- <20250829-therapieren-datteln-13c31741c856@brauner>
- <9d492620-1a58-68c0-2b47-c8b16c99b113@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZLPTDnOfjLTeiuTfXVHmaFIM3nn5p6Dq0RKMlqcaccrfswOhy24jU2cnLEvD9XFJ30d318wRQ4XD7o75zh3x6kjiAULLhrC2iM7XAfoLvG9FO6gYupSE541sggqnSDJDfIdPoVUVeqZZJQ8wJOxMswMu2i/KGh6vmBOxSUvyRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YjPlQ3Ki; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so5973044a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:03:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756476238; x=1757081038; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Flku/FfqVL4tI6qgngPLxQJOqs/mCsrPLjGqczpSXU=;
+        b=YjPlQ3KiswZJneyaa2hBstFL3QrVU9zqFaSGLF2fmfo/0hiXZNtNN+DFH+elCrD1/Y
+         qxrhRJorMpbZgdWg2MPrK+2tYRmu+TUKfHnHRhP0bTzHy1R8OMfoJXeWvQ0y+f1/sXco
+         FsPBrx87tXUUGw/xjqFweJ5TGM8/xspMCeLRffgcobGpUpYX7uq1pnMGIXIg23iFG1FK
+         svfoYgjpQ5hUHkQRakvB7pnAyHAkPkdzpNnKZu60QahDBObS6ktLt1ScG6u2zLKZ/w7Q
+         O1Rra5N9SASYdIi4xAXBENwu36fpUBj15I2wYXxJj36CQHS+dBKNLHD+MSSNuIomQlB1
+         e9Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756476238; x=1757081038;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Flku/FfqVL4tI6qgngPLxQJOqs/mCsrPLjGqczpSXU=;
+        b=V0E+IH1l53iCC+vbVfWRsN9RPfG0ixi9Jhw6FyBAjj0pd3XBVStiAhlTLfeTwuwK2/
+         1kOZp5ZQIENJAcBEECbgyj56eB1S0u8IZ4042EGAqdie2g0qAvPcYSQwWvnP3GaQv222
+         Wdp510hMuoo5kT+vRBny0DnQxU1wjojjM6hwkRNuaUHIeRjzRKDXAcMyfHyf/V6jWyYk
+         ziqLj4OxKK17nC/Y/eEc4fFGWpZIYqZqXrZhG1AY4MaaJJ9F2/FGHKRoQxnKL9pamNfo
+         YL405Kci3r0Zk9iE7HMXhaZDDF/MhVg8EfkKvpTmYwvIZ84t/7qEzNtkBwWIuOVI5t/l
+         DkmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvxhMIUBgWSFKwHRBMddp5BOyuIZZIAPd5nEQPXBVBk7qrk1D70TdspfVm6eS+bjKFHYlKoQv6CaZKvgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNPoTaLvwke7exZeYueLgAzWvlr6pClxawF18dAQEIV1W1TRj9
+	CO69pvfBUauyvkoqeQ0h2xWy4z9ASqc/SunE2pdAflLO0rycJN6nZSALqxeqJDqQmtM=
+X-Gm-Gg: ASbGnctmgaGJ0vWOKlGrKKBMPrJqmO5sFINP1g0NWN5gBBvNj05vrfM/eF9xA8ExRqE
+	vPK4wQngzaqp+77uUc4T3Dio/bCMpKkbCyJlZQbZJ7OdluE7WiZ+l9gUXxiC3lANPV659Z3X4C6
+	qAJKnB6aE9d2mdnj6y9EAcP8WRMHG60l/NM8xcIr1iBsgaWFDFG979lunu44JSosl29JvYS7Gxi
+	ZUCFt0lI8TTJMul6s/74KKCIQKyByxzpiWXBUzfAchjiOBXwpo3Yd9zOQvJryd2hh/tB5eycXp3
+	8CRdZ9a5Ehj8iSZtPcg6LMO381L7Yh64akJBYl2a6CrccGDAuZZRcdBedPjuyCNJUiRTVEi/It+
+	36tMHZeEkziqj5r8trCVyT3aLdg==
+X-Google-Smtp-Source: AGHT+IEJpCcVBGwLT63uR40OqtpXMTDym64sstxy0mkGNMJ/UmQe0s4O6ji+pD1mM5wqu9huNMtrMA==
+X-Received: by 2002:a17:907:7f0f:b0:afe:ee36:2eb8 with SMTP id a640c23a62f3a-afeee36354emr509518966b.8.1756476238350;
+        Fri, 29 Aug 2025 07:03:58 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff16b57124sm22088666b.28.2025.08.29.07.03.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 07:03:57 -0700 (PDT)
+Date: Fri, 29 Aug 2025 16:03:55 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Jinchao Wang <wangjinchao600@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Qianqiang Liu <qianqiang.liu@163.com>, linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] panic: use angle-bracket include for panic.h
+Message-ID: <aLGzS48jcYX_U0FO@pathway.suse.cz>
+References: <20250829051312.33773-1-wangjinchao600@gmail.com>
+ <84349ainse.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,66 +91,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9d492620-1a58-68c0-2b47-c8b16c99b113@ispras.ru>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+In-Reply-To: <84349ainse.fsf@jogness.linutronix.de>
 
-Hello!
+On Fri 2025-08-29 09:40:41, John Ogness wrote:
+> Added CC printk folks...
 
-On Fri 29-08-25 14:45:57, Alexander Monakov wrote:
-> On Fri, 29 Aug 2025, Christian Brauner wrote:
-> 
-> > > > Even if we fix this there's no guarantee that the kernel will give that
-> > > > letting the close() of a writably opened file race against a concurrent
-> > > > exec of the same file will not result in EBUSY in some arcane way
-> > > > currently or in the future.
-> > > 
-> > > Forget Go and execve. Take the two-process scenario from my last email.
-> > > The program waiting on flock shouldn't be able to observe elevated
-> > > refcounts on the file after the lock is released. It matters not only
-> > > for execve, but also for unmounting the underlying filesystem, right?
-> > 
-> > What? No. How?: with details, please.
-> 
-> Apologies if there's a misunderstanding on my side, but put_file_access
-> does file_put_write_access, which in turn does
-> 
->   mnt_put_write_access(file->f_path.mnt);
-> 
-> and I think elevated refcount on mnt will cause -EBUSY from mnt_hold_writers.
-> Which is then checked in mnt_make_readonly. I expect it affects unmount too,
-> just don't see exactly where.
+Thanks for adding me into Cc.
 
-Umount (may_umount_tree()) looks at mnt->mnt_count which is decremented by
-mntput() completely at the end of __fput(). I tend to agree with Christian
-here: We've never promised that all effects of open fd are cleaned up
-before the flock is released and as Christian explained it will be actually
-pretty hard to implement such behavior. So attempts to wait for fd to close
-by waiting for its flock are racy...
+> On 2025-08-29, Jinchao Wang <wangjinchao600@gmail.com> wrote:
+> > Replace quoted includes of panic.h with `#include <linux/panic.h>` for
+> > consistency across the kernel.
+> >
+> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> 
+> Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
 
