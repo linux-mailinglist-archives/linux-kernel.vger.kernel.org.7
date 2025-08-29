@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-791875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA90B3BD25
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2A8B3BD29
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E06F5816F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7D5A476B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AEE31E0F0;
-	Fri, 29 Aug 2025 14:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF63E31E0FB;
+	Fri, 29 Aug 2025 14:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3MRbU1l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSE0djRP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75087215077;
-	Fri, 29 Aug 2025 14:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5AF31AF21;
+	Fri, 29 Aug 2025 14:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476462; cv=none; b=EMB0DTw1llcf0Dq4Sin3zvfKNDq6njfTxhcMyujhluZF6P0OiuHAxS3BHXmRjkynYnvr026VEtTjzH24mQ89zs8n1IedbvU81rtxA5QkxLkoYDOFMA5eJbQCswOC9Ui9FijveOrms3vqh1gzlFqDxr6fIYTblJifGICVV07fzqA=
+	t=1756476512; cv=none; b=k8fJUjpe2eyKY9WLMOHSDBWtaAUJ2STM9XtbV+FDwno7nuSUXd4j2vwW4SemRJcMKa5zeNfk9XPHlpfgw1GLU8XQFx/I5KraEjeNwkkaRRr4481mdU8K9vyL4P+Vpv5hbe114TS/iB4iM1vo5VQCxTxjJE/OGoTYs3GSmCRLPuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476462; c=relaxed/simple;
-	bh=ntn50gtHJC0b6s+uwh0tz+PAXnlaGmO9Hp1kmeMcwog=;
+	s=arc-20240116; t=1756476512; c=relaxed/simple;
+	bh=IGa1wXzUuxm/JAmmEyNFjDan3E+nHzgxQoSepLQnSvw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aEzzodGJ5c8+eJRhVIoaT+iykEK6Oq38T5apyI1bmbwDwLnJUYOiNEmw0SP/qAkop475hJTWXbqBRcNqrOSsyA+p/2eSvSSiFMAJ9MebbnM44pNWDeYHfEQKo7oWa7opqHKi8HCal1lwJ4Ev02tmwqchnGldux41kfhTdji8CYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3MRbU1l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC12C4CEF0;
-	Fri, 29 Aug 2025 14:07:37 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MQQqvyMMsgLJ/tqW5CBCMZNFmqOJoJ/+MP8Gaz2Hx/fYQ0cITlFV68jpyIME/R5UvEjkGEnJkWhs6u3AguyudZltV03FKXwE6HcrN3OekdhL56Fjv9j666sGanVE4P2GVJC0buieODWWvBMWIh4jO0UdwB8zIs1auxcCIJFKiZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSE0djRP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90310C4CEF0;
+	Fri, 29 Aug 2025 14:08:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756476462;
-	bh=ntn50gtHJC0b6s+uwh0tz+PAXnlaGmO9Hp1kmeMcwog=;
+	s=k20201202; t=1756476512;
+	bh=IGa1wXzUuxm/JAmmEyNFjDan3E+nHzgxQoSepLQnSvw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j3MRbU1leo4Pge1iS45yOWS4V+TrvXWbx82y0ib/1s0c50Y74MTlf+i/tBKHO0CYI
-	 0GGEcl3/Ru2+q+QkRx9ij7DfPWwtsX8W9SZ+tXeBv9uw7JSMeA5bdFpzEf8IA3pSwL
-	 FCaYjbi1BGNHrqnlrRGxpeE9nTO2obwddSfndlETN8IYxBTp13PBpU44VOk3zq+aWT
-	 tU4AhS3MEzRCM4zkbm5wFjNZBOjY9aKvM4uBvz54d6vVUgOhpV3kzHOhmeiacGPY+7
-	 GXkiReUSUxRcbblfJ1EFUSFU0hm74g0flTdYDgmzRKLEgVQ7F9XTsmgxhtHXVdsKzR
-	 Z8eZXBF+mTybQ==
-Message-ID: <6801197c-ccf7-47ea-bab6-5f567dfca418@kernel.org>
-Date: Fri, 29 Aug 2025 16:07:36 +0200
+	b=cSE0djRPJp7LahSKQwnuDTlRlYq9yRdoPMFOkm9qsBWfipWQ1Y+0iIixD022dCf+s
+	 d+rNzzYB4tCzvZduh1mT5cplV03O41tZE+lsANB6a9cwbzctH1D7iLIXKt/E5TewDd
+	 h+zr5PlF9lg5lvD6yWd1mqCgmstTK6nDh8eg/nLNjCmPIhaKbjV2KcEIV5/L0MVsjO
+	 7H99hwQSnKQkbLB2Xz+yyMC/AOjyFaXUsn/dnH6wW9CYIrDEu7Wmu7gaxt58Whdm22
+	 dmQZG4HwP/6/7pSdLgi5d613nbT9kBp142d2/CJrHZjJluiYnmCph9DYODHmWWi2t5
+	 L1AviF6yOKgCg==
+Message-ID: <ad42068f-8528-4974-80cc-2f99cd628809@kernel.org>
+Date: Fri, 29 Aug 2025 16:08:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] arm64: dts: freescale: imx95: Add video codec node
-To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org, jackson.lee@chipsnmedia.com,
- lafley.kim@chipsnmedia.com
-References: <20250829084649.359-1-nas.chung@chipsnmedia.com>
- <20250829084649.359-10-nas.chung@chipsnmedia.com>
+Subject: Re: [PATCH] watchdog: s3c2410: Add FSD support
+To: Varada Pavani <v.pavani@samsung.com>, alim.akhtar@samsung.com,
+ wim@linux-watchdog.org, linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gost.dev@samsung.com, aswani.reddy@samsung.com
+References: <CGME20250829140010epcas5p1bc06faf0001ab2695f0199db65fe678d@epcas5p1.samsung.com>
+ <20250829140003.109588-1-v.pavani@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,58 +102,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250829084649.359-10-nas.chung@chipsnmedia.com>
+In-Reply-To: <20250829140003.109588-1-v.pavani@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2025 10:46, Nas Chung wrote:
-> diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-> index 2f949a0d48d2..c9d8b78d5768 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-> @@ -75,6 +75,11 @@ linux_cma: linux,cma {
->  			linux,cma-default;
->  			reusable;
->  		};
+On 29/08/2025 16:00, Varada Pavani wrote:
 > +
-> +		vpu_boot: vpu_boot@a0000000 {
+>  static const struct of_device_id s3c2410_wdt_match[] = {
+>  	{ .compatible = "google,gs101-wdt",
+>  	  .data = &drv_data_gs101_cl0 },
+> @@ -352,6 +380,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+>  	  .data = &drv_data_exynosautov9_cl0 },
+>  	{ .compatible = "samsung,exynosautov920-wdt",
+>  	  .data = &drv_data_exynosautov920_cl0 },
+> +	{ .compatible = "tesla,fsd-wdt",
 
-Follow DTS coding style.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-> +			reg = <0 0xa0000000 0 0x100000>;
-> +			no-map;
-> +		};
->  	};
->  
->  	flexcan1_phy: can-phy0 {
-> @@ -1044,3 +1049,8 @@ &tpm6 {
->  	pinctrl-0 = <&pinctrl_tpm6>;
->  	status = "okay";
->  };
-> +
-> +&vpu {
-> +	memory-region = <&vpu_boot>;
-> +	sram = <&sram1>;
-> +};
-> diff --git a/arch/arm64/boot/dts/freescale/imx95-phycore-fpsc.dtsi b/arch/arm64/boot/dts/freescale/imx95-phycore-fpsc.dtsi
-> index 7519d5bd06ba..73c84ab60dfd 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95-phycore-fpsc.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx95-phycore-fpsc.dtsi
-> @@ -59,6 +59,11 @@ linux,cma {
->  			size = <0 0x3c000000>;
->  			linux,cma-default;
->  		};
-> +
-> +		vpu_boot: vpu_boot@a0000000 {
 
-Same problem.
-
-> +			reg = <0 0xa0000000 0 0x100000>;
-> +			no-map;
-> +		};
->  	};
-
-> +
 Best regards,
 Krzysztof
 
