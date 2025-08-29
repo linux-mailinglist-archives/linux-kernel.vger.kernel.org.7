@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-791100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991A6B3B202
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6268B3B209
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551FE17FF3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88E91BA7FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA46248F5E;
-	Fri, 29 Aug 2025 04:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3C422B8B6;
+	Fri, 29 Aug 2025 04:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3Ky7oZH7"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiWGIvIz"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF9724503F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0756C2472BA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756440709; cv=none; b=vFq7+SP6YU7RBWU3MKWpTTiY2+8ecS0T7rWmYxMxmabX4AAvDaMtvvB3yRh7TVQlLUBcemY17kwrqeSXwuf4wGVXPmiL8vF+NNeAOWBLUth0nRa1Nx9fHsObaCAPpbS1T7RovYlLIL0ECbioZzV8VNuj0pGZek9SSbYHC2moBfw=
+	t=1756440711; cv=none; b=UHCWxR2v8dp0mfAkfQs+Am1RxDq7hRWS+LvBlaN1Vc0Bd0jTy4BRKoOwJcttGuGA5ldDB7uwgrw2qiV6qndyDhYnlavE0FEigHMFIXVxFXpPywMhwqgB9VplzZJwlipw81Fc9r50WZuc7Sj5LMxVcOVR9AkxcWjMReUFTq2sRdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756440709; c=relaxed/simple;
-	bh=gvDcjeOLTicwy7bFNk0EZzC8tlfe6ooyxBVvzKAOyhA=;
+	s=arc-20240116; t=1756440711; c=relaxed/simple;
+	bh=iQ0JxbwfKDxqvEgTX3uSAYFB+KqUzk+ISHbXFJ36mxU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hdz3boU9DUX20N/ACboDLNlzuVeCsrsMLo2YezhTgn2QMot3ig2ubEWybpIfrPUQv2AhSn8rtftwHlYmgttH1kG7XaJ3SsDFHdd42qbtlu2FGO1B5X9LsBCVgDJhaZ7g482G3N70dt/vf/JVxcddOFmIixfv7skYi2U2ZmYxXIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3Ky7oZH7; arc=none smtp.client-ip=209.85.216.74
+	 To:Content-Type; b=YU9lhqpyTGnPaRy01A0BxRJdPKsVy9gQ7DGRXpIaZIN+Fy73KcVEiwKKUBFaH1h5okRnMTwfx5OFJyzxK6AoYLOnmwqfaTpA/UTlf5q1psCqLDMkTGbZ4OFz0XjFOppFkuOAAiAOTTDsSsUwvhNfPHyF4XtLqL+eYpDOQUMnJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiWGIvIz; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325ce108e45so1715938a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:11:47 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47174b3427so1420729a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756440707; x=1757045507; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756440709; x=1757045509; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mydIbqYmeD+M1E5aaMsoMeL1BEQRJsGP9G4Ak+dwwN4=;
-        b=3Ky7oZH7sfPtJm/QGi1mhj+ULBoTbLiUSA6a2F0V+zcUvowsGXNDFwe9wXFSl/bWwu
-         u/1aOs2BTmaZTLPu8+hH7ifZSXq8Ph15b7mK+igOn4dI8+NvP6ulTEqLmJ6Mm+9kw8HF
-         J3gL8Ldefkj/X7KGnT8zwNaTyypa+s/DdQJcz1rLjGIjFcU3sY/D3YJ53p5FnkV6EZqB
-         F+4HJ0ipK4+qKYWV0mppYQ5hMoCEwILXVTQy6ZIsRsXdYmmflH6fMls+OoSQMQ4kqvM9
-         M95v/uaUIxGY0qpLdFStP8Zcti/F+zpZ+94VZqhcCO4yKNtOGKsJmMExO8dtEeAJY35o
-         WrHg==
+        bh=7lU92ZApmkWPRDApvNzDuJBwqNr0PRLP3cl0lgj5yrM=;
+        b=NiWGIvIzlpV4TD0r0clpp3qMgpETPHlDUkCtdmJBAcJS9s/fgXpXOx/i4s8MuHIwkc
+         /RC6Ez4hSdgv1V1/lzKJJTGmcW19LbFssUGjLn7D8jRlOyWBtgu3xpyfD/ozsJRzJc5Y
+         1e/KOcwilkQ/TNs8XVyZnsnOniPfJulQ6sH2Snf0W/PLtJWFWuGzyLnzslzZLsp+9c8S
+         iWqakVkAeJbml0VIzeUaTyfSrqr/uUNfeQdQTdNBxOR5kYw3R6MBF+rooAuLEwNhdvMp
+         VjGM676FKchNmyk4TxlWzNajYkGSJxKepcb7Vb8lqiM6q69eZS6OPL/1JVN2P3MXYmLk
+         iGUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756440707; x=1757045507;
+        d=1e100.net; s=20230601; t=1756440709; x=1757045509;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mydIbqYmeD+M1E5aaMsoMeL1BEQRJsGP9G4Ak+dwwN4=;
-        b=cHl/CXMxiWbUDFvRJpSNGZJQF5GPIoCHht+xHNq8oedvAvpSJEsyHDEoH8KGu+4V6s
-         nd/XC4QoNz/ighVGVQlOCOSKG16zZAMTbntSuzocBNQCAcrDp+rCokoABdV4/aUrb7JE
-         gYhviVQdJ5Lu1zk2uYSeaNppHDyQFsNd+lAE7ehuu1Q3/w6irLaCgLCjd2tKl674ZE24
-         c6SOsUR/Yavcm3Rq6PY0hLO4ssVS9CqYPyWdFF4bibBNHgQjN8bOqBhgmfeeRKfrOOrn
-         nBqX7ry5heIYQ9fKv9v9GRbgX8X8ay0vb+p7l6D2BEQkrpvSMNzReIOnasR5SQeAmSHF
-         hwmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwEIQXcHwZbYXtQ97zv616b20yoyQcEICezwjXtYJVPONarJo49ffIbgP999w7YVS9L7FHMX+szXJB4fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8fgIkqi0gzE8/UBowdT8a9ONdSZWcwGsVSimXjC9dpXLEZDs5
-	7mEOKNmsOfpknhReN5UI52aJwCjczqOFptsW4e1xWImiEM39ccJmQ1GXtf/QaZaJe+SVifKl0IO
-	ErgZT7z/kFw==
-X-Google-Smtp-Source: AGHT+IGBXv4x9Go3sBjwsmooSP0mKc90r/3w0gn0eX/4RYSA6tl0Im98SRzCkTyRv1oqlbkQKN1mq3wfsXpG
-X-Received: from pjcc15.prod.google.com ([2002:a17:90b:574f:b0:325:8e70:8d5e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:19cc:b0:327:be52:966e
- with SMTP id 98e67ed59e1d1-327be529936mr3287030a91.11.1756440707399; Thu, 28
- Aug 2025 21:11:47 -0700 (PDT)
-Date: Thu, 28 Aug 2025 21:10:51 -0700
+        bh=7lU92ZApmkWPRDApvNzDuJBwqNr0PRLP3cl0lgj5yrM=;
+        b=Saw26h+FPoj9rZK6Xfkl4NqOmmwVpolVIR+yfkKWniDu7/gN5rzwR02wJeDXnorCi6
+         pamhj7ZpAlGBVMtarWL2CKx1KValbS6IfyN13ii4DfdsT6UtnUYj/xqspcXqqZduL25J
+         wcmFMyJ5K2PM0O8JniFaik4XsF66F0Kpg9aPKIAdy84LH+pYgqHQQjZEAjppzg59vzuV
+         5biVTa4ge71PTpfpR1NMdhEVaFAtepskDwqJdPt8P9GgaNmBScVgB+DpFpNMj2QThnMw
+         KWgzNrgUyq8h+8PLKzttpnNvv4hFNdUJtF/vW0b8iGJA4sgFz/GcIkLJkP4kOmB7jdrE
+         YMbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQGErKMrOQj8BM30gUjviBpIDEuY4oixSIUt520F2+OryGQmo9RZBt2pB9f+l5CKuJiaTCRFsKgNWwGYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2l7K8n0wwoGecqoeuWlK+Oja0DLFAp7Ug8WrDzBVWywB2TKQH
+	BZf8IleHOy23vMHQTfCr1YA3A9N66u+4GTxQQsOUpnPdQrp92hUO/miroEPqekAmSbC5edwIxOd
+	7VCwD7SHWzw==
+X-Google-Smtp-Source: AGHT+IFEdDkRRitZ8GEh7HxeyHdlak/t/w7h0SDQCKXO1VCeMBEVCX7vgWnKpqZrSQdfvYpWowv8d5mJsJ+k
+X-Received: from plrs18.prod.google.com ([2002:a17:902:b192:b0:237:cedc:1467])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d2cc:b0:246:a543:199
+ with SMTP id d9443c01a7336-246a54304demr302132845ad.54.1756440709309; Thu, 28
+ Aug 2025 21:11:49 -0700 (PDT)
+Date: Thu, 28 Aug 2025 21:10:52 -0700
 In-Reply-To: <20250829041104.4186320-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250829041104.4186320-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250829041104.4186320-11-irogers@google.com>
-Subject: [PATCH v5 10/22] perf jevents: Add L2 metrics for Intel
+Message-ID: <20250829041104.4186320-12-irogers@google.com>
+Subject: [PATCH v5 11/22] perf jevents: Add load store breakdown metrics ldst
+ for Intel
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,199 +92,122 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Give a breakdown of various L2 counters as metrics, including totals,
-reads, hardware prefetcher, RFO, code and evictions.
+Give breakdown of number of instructions. Use the counter mask (cmask)
+to show the number of cycles taken to retire the instructions.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/intel_metrics.py | 170 +++++++++++++++++++++++++
- 1 file changed, 170 insertions(+)
+ tools/perf/pmu-events/intel_metrics.py | 86 +++++++++++++++++++++++++-
+ 1 file changed, 85 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index 288903707bc8..1bac424aca6a 100755
+index 1bac424aca6a..03983107c5c0 100755
 --- a/tools/perf/pmu-events/intel_metrics.py
 +++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -262,6 +262,175 @@ def IntelBr():
-                      description="breakdown of retired branch instructions")
+@@ -2,7 +2,7 @@
+ # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+ from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEncodeMetric,
+                     JsonEncodeMetricGroupDescriptions, Literal, LoadEvents,
+-                    Metric, MetricGroup, MetricRef, Select)
++                    Metric, MetricConstraint, MetricGroup, MetricRef, Select)
+ import argparse
+ import json
+ import math
+@@ -522,6 +522,89 @@ def IntelSwpf() -> Optional[MetricGroup]:
+   ], description="Software prefetch instruction breakdown")
  
  
-+def IntelL2() -> Optional[MetricGroup]:
-+  try:
-+    DC_HIT = Event("L2_RQSTS.DEMAND_DATA_RD_HIT")
-+  except:
++def IntelLdSt() -> Optional[MetricGroup]:
++  if _args.model in [
++      "bonnell",
++      "nehalemep",
++      "nehalemex",
++      "westmereep-dp",
++      "westmereep-sp",
++      "westmereex",
++  ]:
 +    return None
++  LDST_LD = Event("MEM_INST_RETIRED.ALL_LOADS", "MEM_UOPS_RETIRED.ALL_LOADS")
++  LDST_ST = Event("MEM_INST_RETIRED.ALL_STORES", "MEM_UOPS_RETIRED.ALL_STORES")
++  LDST_LDC1 = Event(f"{LDST_LD.name}/cmask=1/")
++  LDST_STC1 = Event(f"{LDST_ST.name}/cmask=1/")
++  LDST_LDC2 = Event(f"{LDST_LD.name}/cmask=2/")
++  LDST_STC2 = Event(f"{LDST_ST.name}/cmask=2/")
++  LDST_LDC3 = Event(f"{LDST_LD.name}/cmask=3/")
++  LDST_STC3 = Event(f"{LDST_ST.name}/cmask=3/")
++  ins = Event("instructions")
++  LDST_CYC = Event("CPU_CLK_UNHALTED.THREAD",
++                   "CPU_CLK_UNHALTED.CORE_P",
++                   "CPU_CLK_UNHALTED.THREAD_P")
++  LDST_PRE = None
 +  try:
-+    DC_MISS = Event("L2_RQSTS.DEMAND_DATA_RD_MISS")
-+    l2_dmnd_miss = DC_MISS
-+    l2_dmnd_rd_all = DC_MISS + DC_HIT
++    LDST_PRE = Event("LOAD_HIT_PREFETCH.SWPF", "LOAD_HIT_PRE.SW_PF")
 +  except:
-+    DC_ALL = Event("L2_RQSTS.ALL_DEMAND_DATA_RD")
-+    l2_dmnd_miss = DC_ALL - DC_HIT
-+    l2_dmnd_rd_all = DC_ALL
-+  l2_dmnd_mrate = d_ratio(l2_dmnd_miss, interval_sec)
-+  l2_dmnd_rrate = d_ratio(l2_dmnd_rd_all, interval_sec)
++    pass
++  LDST_AT = None
++  try:
++    LDST_AT = Event("MEM_INST_RETIRED.LOCK_LOADS")
++  except:
++    pass
++  cyc  = LDST_CYC
 +
-+  DC_PFH = None
-+  DC_PFM = None
-+  l2_pf_all = None
-+  l2_pf_mrate = None
-+  l2_pf_rrate = None
-+  try:
-+    DC_PFH = Event("L2_RQSTS.PF_HIT")
-+    DC_PFM = Event("L2_RQSTS.PF_MISS")
-+    l2_pf_all = DC_PFH + DC_PFM
-+    l2_pf_mrate = d_ratio(DC_PFM, interval_sec)
-+    l2_pf_rrate = d_ratio(l2_pf_all, interval_sec)
-+  except:
-+    pass
++  ld_rate = d_ratio(LDST_LD, interval_sec)
++  st_rate = d_ratio(LDST_ST, interval_sec)
++  pf_rate = d_ratio(LDST_PRE, interval_sec) if LDST_PRE else None
++  at_rate = d_ratio(LDST_AT, interval_sec) if LDST_AT else None
 +
-+  DC_RFOH = None
-+  DC_RFOM = None
-+  l2_rfo_all = None
-+  l2_rfo_mrate  = None
-+  l2_rfo_rrate  = None
-+  try:
-+    DC_RFOH = Event("L2_RQSTS.RFO_HIT")
-+    DC_RFOM = Event("L2_RQSTS.RFO_MISS")
-+    l2_rfo_all = DC_RFOH + DC_RFOM
-+    l2_rfo_mrate  = d_ratio(DC_RFOM, interval_sec)
-+    l2_rfo_rrate  = d_ratio(l2_rfo_all, interval_sec)
-+  except:
-+    pass
++  ldst_ret_constraint = MetricConstraint.GROUPED_EVENTS
++  if LDST_LD.name == "MEM_UOPS_RETIRED.ALL_LOADS":
++    ldst_ret_constraint = MetricConstraint.NO_GROUP_EVENTS_NMI
 +
-+  DC_CH = None
-+  try:
-+    DC_CH = Event("L2_RQSTS.CODE_RD_HIT")
-+  except:
-+    pass
-+  DC_CM = Event("L2_RQSTS.CODE_RD_MISS")
-+  DC_IN = Event("L2_LINES_IN.ALL")
-+  DC_OUT_NS = None
-+  DC_OUT_S = None
-+  l2_lines_out = None
-+  l2_out_rate = None
-+  wbn = None
-+  isd = None
-+  try:
-+    DC_OUT_NS = Event("L2_LINES_OUT.NON_SILENT",
-+                      "L2_LINES_OUT.DEMAND_DIRTY",
-+                      "L2_LINES_IN.S")
-+    DC_OUT_S = Event("L2_LINES_OUT.SILENT",
-+                     "L2_LINES_OUT.DEMAND_CLEAN",
-+                     "L2_LINES_IN.I")
-+    if DC_OUT_S.name == "L2_LINES_OUT.SILENT" and (
-+        args.model.startswith("skylake") or
-+        args.model == "cascadelakex"):
-+      DC_OUT_S.name = "L2_LINES_OUT.SILENT/any/"
-+    # bring is back to per-CPU
-+    l2_s  = Select(DC_OUT_S / 2, Literal("#smt_on"), DC_OUT_S)
-+    l2_ns = DC_OUT_NS
-+    l2_lines_out = l2_s + l2_ns;
-+    l2_out_rate = d_ratio(l2_lines_out, interval_sec);
-+    nlr = max(l2_ns - DC_WB_U - DC_WB_D, 0)
-+    wbn = d_ratio(nlr, interval_sec)
-+    isd = d_ratio(l2_s, interval_sec)
-+  except:
-+    pass
-+  DC_OUT_U = None
-+  l2_pf_useless = None
-+  l2_useless_rate = None
-+  try:
-+    DC_OUT_U = Event("L2_LINES_OUT.USELESS_HWPF")
-+    l2_pf_useless = DC_OUT_U
-+    l2_useless_rate = d_ratio(l2_pf_useless, interval_sec)
-+  except:
-+    pass
-+  DC_WB_U = None
-+  DC_WB_D = None
-+  wbu = None
-+  wbd = None
-+  try:
-+    DC_WB_U = Event("IDI_MISC.WB_UPGRADE")
-+    DC_WB_D = Event("IDI_MISC.WB_DOWNGRADE")
-+    wbu = d_ratio(DC_WB_U, interval_sec)
-+    wbd = d_ratio(DC_WB_D, interval_sec)
-+  except:
-+    pass
-+
-+  l2_lines_in = DC_IN
-+  l2_code_all = (DC_CH + DC_CM) if DC_CH else None
-+  l2_code_rate = d_ratio(l2_code_all, interval_sec) if DC_CH else None
-+  l2_code_miss_rate = d_ratio(DC_CM, interval_sec)
-+  l2_in_rate = d_ratio(l2_lines_in, interval_sec)
-+
-+  return MetricGroup("lpm_l2", [
-+    MetricGroup("lpm_l2_totals", [
-+      Metric("lpm_l2_totals_in", "L2 cache total in per second",
-+             l2_in_rate, "In/s"),
-+      Metric("lpm_l2_totals_out", "L2 cache total out per second",
-+             l2_out_rate, "Out/s") if l2_out_rate else None,
-+    ]),
-+    MetricGroup("lpm_l2_rd", [
-+      Metric("lpm_l2_rd_hits", "L2 cache data read hits",
-+             d_ratio(DC_HIT, l2_dmnd_rd_all), "100%"),
-+      Metric("lpm_l2_rd_hits", "L2 cache data read hits",
-+             d_ratio(l2_dmnd_miss, l2_dmnd_rd_all), "100%"),
-+      Metric("lpm_l2_rd_requests", "L2 cache data read requests per second",
-+             l2_dmnd_rrate, "requests/s"),
-+      Metric("lpm_l2_rd_misses", "L2 cache data read misses per second",
-+             l2_dmnd_mrate, "misses/s"),
-+    ]),
-+    MetricGroup("lpm_l2_hwpf", [
-+      Metric("lpm_l2_hwpf_hits", "L2 cache hardware prefetcher hits",
-+             d_ratio(DC_PFH, l2_pf_all), "100%"),
-+      Metric("lpm_l2_hwpf_misses", "L2 cache hardware prefetcher misses",
-+             d_ratio(DC_PFM, l2_pf_all), "100%"),
-+      Metric("lpm_l2_hwpf_useless", "L2 cache hardware prefetcher useless prefetches per second",
-+             l2_useless_rate, "100%") if l2_useless_rate else None,
-+      Metric("lpm_l2_hwpf_requests", "L2 cache hardware prefetcher requests per second",
-+             l2_pf_rrate, "100%"),
-+      Metric("lpm_l2_hwpf_misses", "L2 cache hardware prefetcher misses per second",
-+             l2_pf_mrate, "100%"),
-+    ]) if DC_PFH else None,
-+    MetricGroup("lpm_l2_rfo", [
-+      Metric("lpm_l2_rfo_hits", "L2 cache request for ownership (RFO) hits",
-+             d_ratio(DC_RFOH, l2_rfo_all), "100%"),
-+      Metric("lpm_l2_rfo_misses", "L2 cache request for ownership (RFO) misses",
-+             d_ratio(DC_RFOM, l2_rfo_all), "100%"),
-+      Metric("lpm_l2_rfo_requests", "L2 cache request for ownership (RFO) requests per second",
-+             l2_rfo_rrate, "requests/s"),
-+      Metric("lpm_l2_rfo_misses", "L2 cache request for ownership (RFO) misses per second",
-+             l2_rfo_mrate, "misses/s"),
-+    ]) if DC_RFOH else None,
-+    MetricGroup("lpm_l2_code", [
-+      Metric("lpm_l2_code_hits", "L2 cache code hits",
-+             d_ratio(DC_CH, l2_code_all), "100%") if DC_CH else None,
-+      Metric("lpm_l2_code_misses", "L2 cache code misses",
-+             d_ratio(DC_CM, l2_code_all), "100%") if DC_CH else None,
-+      Metric("lpm_l2_code_requests", "L2 cache code requests per second",
-+             l2_code_rate, "requests/s") if DC_CH else None,
-+      Metric("lpm_l2_code_misses", "L2 cache code misses per second",
-+             l2_code_miss_rate, "misses/s"),
-+    ]),
-+    MetricGroup("lpm_l2_evict", [
-+      MetricGroup("lpm_l2_evict_mef_lines", [
-+        Metric("lpm_l2_evict_mef_lines_l3_hot_lru", "L2 evictions M/E/F lines L3 hot LRU per second",
-+               wbu, "HotLRU/s") if wbu else None,
-+        Metric("lpm_l2_evict_mef_lines_l3_norm_lru", "L2 evictions M/E/F lines L3 normal LRU per second",
-+               wbn, "NormLRU/s") if wbn else None,
-+        Metric("lpm_l2_evict_mef_lines_dropped", "L2 evictions M/E/F lines dropped per second",
-+               wbd, "dropped/s") if wbd else None,
-+        Metric("lpm_l2_evict_is_lines_dropped", "L2 evictions I/S lines dropped per second",
-+               isd, "dropped/s") if isd else None,
++  return MetricGroup("lpm_ldst", [
++      MetricGroup("lpm_ldst_total", [
++          Metric("lpm_ldst_total_loads", "Load/store instructions total loads",
++                 ld_rate, "loads"),
++          Metric("lpm_ldst_total_stores", "Load/store instructions total stores",
++                 st_rate, "stores"),
 +      ]),
-+    ]),
-+  ], description = "L2 data cache analysis")
++      MetricGroup("lpm_ldst_prcnt", [
++          Metric("lpm_ldst_prcnt_loads", "Percent of all instructions that are loads",
++                 d_ratio(LDST_LD, ins), "100%"),
++          Metric("lpm_ldst_prcnt_stores", "Percent of all instructions that are stores",
++                 d_ratio(LDST_ST, ins), "100%"),
++      ]),
++      MetricGroup("lpm_ldst_ret_lds", [
++          Metric("lpm_ldst_ret_lds_1", "Retired loads in 1 cycle",
++                 d_ratio(max(LDST_LDC1 - LDST_LDC2, 0), cyc), "100%",
++                 constraint = ldst_ret_constraint),
++          Metric("lpm_ldst_ret_lds_2", "Retired loads in 2 cycles",
++                 d_ratio(max(LDST_LDC2 - LDST_LDC3, 0), cyc), "100%",
++                 constraint = ldst_ret_constraint),
++          Metric("lpm_ldst_ret_lds_3", "Retired loads in 3 or more cycles",
++                 d_ratio(LDST_LDC3, cyc), "100%"),
++      ]),
++      MetricGroup("lpm_ldst_ret_sts", [
++          Metric("lpm_ldst_ret_sts_1", "Retired stores in 1 cycle",
++                 d_ratio(max(LDST_STC1 - LDST_STC2, 0), cyc), "100%",
++                 constraint = ldst_ret_constraint),
++          Metric("lpm_ldst_ret_sts_2", "Retired stores in 2 cycles",
++                 d_ratio(max(LDST_STC2 - LDST_STC3, 0), cyc), "100%",
++                 constraint = ldst_ret_constraint),
++          Metric("lpm_ldst_ret_sts_3", "Retired stores in 3 more cycles",
++                 d_ratio(LDST_STC3, cyc), "100%"),
++      ]),
++      Metric("lpm_ldst_ld_hit_swpf", "Load hit software prefetches per second",
++             pf_rate, "swpf/s") if pf_rate else None,
++      Metric("lpm_ldst_atomic_lds", "Atomic loads per second",
++             at_rate, "loads/s") if at_rate else None,
++  ], description = "Breakdown of load/store instructions")
 +
 +
- def IntelPorts() -> Optional[MetricGroup]:
-   pipeline_events = json.load(open(f"{_args.events_path}/x86/{_args.model}/pipeline.json"))
+ def main() -> None:
+   global _args
  
-@@ -381,6 +550,7 @@ def main() -> None:
-       Smi(),
+@@ -551,6 +634,7 @@ def main() -> None:
        Tsx(),
        IntelBr(),
-+      IntelL2(),
+       IntelL2(),
++      IntelLdSt(),
        IntelPorts(),
        IntelSwpf(),
    ])
