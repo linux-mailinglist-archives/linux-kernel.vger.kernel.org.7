@@ -1,117 +1,187 @@
-Return-Path: <linux-kernel+bounces-791866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82B3B3BD0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77FCB3BD0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078041C84F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CEF567FFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F068231DDBA;
-	Fri, 29 Aug 2025 14:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA68527D77B;
+	Fri, 29 Aug 2025 14:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdkEcwst"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="hbAiHAXo"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013027.outbound.protection.outlook.com [40.107.44.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E7D273800;
-	Fri, 29 Aug 2025 14:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476099; cv=none; b=u4iDQ0rm/JYgQyAoc73PUTldJNw1Ek02jWoOazmp2biwksVu0UK5P9IXCX5ExiPCY/Y3Tvh3UZsVL3kxFajIBzmFqhlHHVxRWK8JVp50B80UulsluSSLSEeTu/tJKTW/uN9/WAfnyQKcMh0NqFp+JodXOJPOpV+Pk3PXPAdEpGk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476099; c=relaxed/simple;
-	bh=S+f7bjMSJ6cH6GXdyXwQ/0KEPGSbaOnqko7y4xJFJ7s=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Fsv1HVfUjjVcTLKMq0pJ5ZD4n4THybbCtYvJ5/EQ09aNb9ZHCiNtg/rMvGWLwXCnunHnp7bjGbqpgHJrSSDJgSPFUsf1USLcHKZBdAXOfpM5ijMVuKR3j2+BX0EycRAE63fCjuyaXW6mV7z3Lss+CTFdOIkXfacatIB0qKnZEzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdkEcwst; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ddadde494so18105766d6.1;
-        Fri, 29 Aug 2025 07:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756476096; x=1757080896; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4lOdWyVg9el4e3f96sl922Opfq9i8gxq6BU3ptDNPzI=;
-        b=IdkEcwstrtdfJfSNH2NR7WkZaxVkxIx0jSYLQ93bqg2iCGfKeCiSP4theQn1VGmarV
-         ZjZjpf16TNudNpV/T1/z5UuPekfGUocJC1Mxd93DnqaXNkoTPRySeXva1qgH0HsmMS/B
-         X5IiKM7+owUx3U4cfYM07gMvqGC4VHXkppVrP4XjdUs0+jqN0Z/UEvPQoptsS2t+cw05
-         ncFqnqHTauJTHBGP4g6YhSluOw11IRbD55ydVhc852/8nuMfI8O0q4ZWG2y7jr6oMrnL
-         ncTSttCmWFU+7HuMNyq4Vjb7AczzR0TEXAfn4NX9mfVL9lJ4w8E72B4R8GE9Nj93g3Ma
-         Bsiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756476096; x=1757080896;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4lOdWyVg9el4e3f96sl922Opfq9i8gxq6BU3ptDNPzI=;
-        b=MsOGsfN70FXKQiTlX1MkcnNo9Lhvj3WxMHW+68mzx7QNY5zzH6lNeA50KPw9KyGIvU
-         xmsxROUjYeIyeEKrAkTVsOMnBy+YssLqM6ckrHOjuUlfSnuuIzeAiy+/Ya7ZcLnAcNmH
-         nE5omWdq7M4o9jOCs1mKQUEELQPcjTdMvCjyFxnFKYLHiBJahrkOY58YMZpXo6D9Eqkh
-         bGaHmy6gYPYsfBAtSlKTqV8qyaPggtQyg5kBso4hEKrOhWjOPDNqHEwfRWg4luuAW9JF
-         79MB45UYTI6fJ2iP5snTNGvnmJ/LCUkPA+W/C96mt1UX6aSZcAJIklNBAkd7frlatlAu
-         rBzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVObTt+fpUU9jbWtNYoIit2DupIYC6mXN9GichGki8VjcsCNPPqGU6O01fxuxos5MYWb79tNsfknPs4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf3kFPtWxazVdlJgTPczzOdsEgaUXPsvdbfR3/SMESpZCBi475
-	Xtw1/r94NP/W3EEXQTcQBQPu6A8nz303FrHN67CGNRAJ0UFMqQCOrzvSUH5jx44LVPT7Oufit24
-	XCpbMVIGoP8dI0Hpe9Gy+SRHiP0mor2UJBQ==
-X-Gm-Gg: ASbGncuQ4mA6jY3BuTtVpR84SPD0lBYF5PwNq2Oa8ndowk65mXQ0p1wJr4PulgwtbXX
-	HqM7KYwFTFyLdtqGl66Ucq+LWvIiWMK9H/NUwsRojO+VZ4C1cSaYxhkNYpW6/kCC0E7HaXrTAlI
-	o6zjZXCwBc+UkBavW3tBSpGLO0Qoc0zpNLVj+12t1nkTp3zRcNY4vl6ckiCHIfZ/Gthmr21JKLF
-	o78ZPa9dFM2rTtTBQJ0ITzthE6U3SJ6hC1hs21hkGrOwSzjNdgENw8xFR4YMQBhq7R3nUBsAYl4
-	6Y/bRX+iKTocjTCS3v7Yhg==
-X-Google-Smtp-Source: AGHT+IH7v/8xvmVrJq36sX5xYfiEuPF9UXagF3uyrjA8NdOdl97k6GmF2dzbtzN/YlDOD438ofRlHD8zdYXHPLCLm2k=
-X-Received: by 2002:a05:6214:2345:b0:70d:f7ce:fe5b with SMTP id
- 6a1803df08f44-70df7cf02d3mr61191166d6.57.1756476095674; Fri, 29 Aug 2025
- 07:01:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E451273800
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756476159; cv=fail; b=aI7WyoQ74/oVODwE02T52AJJ6OVMKiefH4PGvrg63kHIQpo+pA8uI8cZS4U2YS8wQb90bL/bYWhDgxB1vsG/NH3AgeKNphNXD68IKSMj2kRCOAJRRe9k7sVEtCEY4Hsfc27LQLFoyTT/7C1Lv6KX5T9v1fKl9ua0tg18rmAfrqM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756476159; c=relaxed/simple;
+	bh=90L5ecOC9+HDqQ8jLKnptzW9+9U2vgJAwXQOrdWrVI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kd9pO1kTcUol02LmHSHscRePMAfTKDLA4QdnyzCLRXEKGs2MHSNjkjCOiNrhBox0bJQrnVuhD25uI4bqgSIRjicmpYVMW1WFK1jLjuOkoHzTjFlQP2U2t1xWcSisD5cKKYMQiXc0I58yFb1xCZWJErKAeoxS9F6tncP2yO/ELAI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=hbAiHAXo; arc=fail smtp.client-ip=40.107.44.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DtI3151M1dXieop8dHikR5arMbkjjLAEEONt3mT6Aqj2AhD/mwoojOWsn+BCaDQ1rbD0hwpSIbsd71W97v+pUYZ8JSBOdROpEAXgq0UV6qvmIbf8Wguteay/Yxpm2y3Z0X/NZI3tKRDJYRkr3XxdI3B+nYzqRvMrg90rgkw+SrRebRDgPm3Li0mf3O5yApO9YXuE0No/m5pfP69bFA3Ss8L6KShjixcahVZWxrY4ggl4WvB0cj3AYoXPKGNadsT0njzFdilqeAVytomMm18YYhVfZa2r015CIQ4Kxs4gR7fKgzZERvds4duyA3MLZVH8hfsm96ptkRqGrvaGYXBLpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8inOdD+yYyxIepPGy50CRP1SimmHEw0/3nKh05z46Rk=;
+ b=W7JafUam+PaT5SohZjEE5JZL6FH0yTTWwMQ+19OqKpfDMIQsxAn2OuaZSTCpOb++mHeWarHI6KEUY/07Jgxn/xv6Ef0gAhFQEKzXgg+Bu4Qg/pa8UWGByweLejma/DyrhndLz9Up4OeHjzbeARzEnsOWXA1iOoVMDmVdnbZUXcy+t6/OKldhUpsyvEpsqPeKTEubT16E3UtplWp5vx3rxbT4s6PzotukKKWE+mBlA7kZe2XNqaUrBqKk/Rg9ELiEdYNBcP9o1rSt1QxRi3BySV/emuMZvNtpEE0kgaIRBT86sXh4FkIBZG9HUCEuvuWUxJzKk3MHfsYwDyDm7pyxKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8inOdD+yYyxIepPGy50CRP1SimmHEw0/3nKh05z46Rk=;
+ b=hbAiHAXoFKSiHV42vvGFxeZHOdfVJFKgOgl2Sv5ASeaE4pirLc3QampdxbhZsL70VJtlsKYHnvDNAYxELQqfbSnqgpQ04Lw7/nFpxLGdpkjy0Eq8e0Vv7kHdDE9DDbzE2lda5zsQmL8RZqoQUMqGsGUghRemKrMUbKPaPqhztBSr/WZ/hxeQ0ADtUdTFRaoWF8eIuhPv421T7+nR9Nkk5G4s1c19ApHUt/xD+jJjqEv/AoUDqWkyW8oQLeK7G2/sFalegmNoiov9pLh+HCPPZd+zWbFgNLGmxDD7pM5KQ1hERyTiYenYHFUpgDUVUMD2dOSeTpYt9WQA77CW+g+PYw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SE2PPF927A03F6A.apcprd06.prod.outlook.com (2603:1096:108:1::7e2) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Fri, 29 Aug
+ 2025 14:02:34 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
+ 14:02:34 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] iommu/omap: Use int type to store negative error codes
+Date: Fri, 29 Aug 2025 22:02:19 +0800
+Message-Id: <20250829140219.121783-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0029.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::8) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 29 Aug 2025 09:01:24 -0500
-X-Gm-Features: Ac12FXw9hiNrAj6fVYKlliy6nhmnyL6mW3iO4ZOjKNlkMGGC2OigUgoyJHobOZI
-Message-ID: <CAH2r5mvT2dSmW_pvop2A2GKYBRdXzyHGomg3dFEhF2n1N_XCHA@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SE2PPF927A03F6A:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a8d427d-9fff-4a9c-2a51-08dde704b41d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yQEn+xRlViCmEL/e6sihIwMvqTA7GAc+vaP2VYpzdfj2JOtdd97uoHkpUfSb?=
+ =?us-ascii?Q?nYyn7rNvPJyIxOu+/7wlVZ2s9CDEYgAci6WkzZCMEp8FBIq3bZpGaubAX8Q4?=
+ =?us-ascii?Q?MTapeDEBLnEcvy+2KsZCtjYSGjdM1QNXz3f6c4CSA8KHVQC/nHVyDyNpg6b7?=
+ =?us-ascii?Q?tMLwXIM+S9QndB27WZEazjc6pcw8zxOSBDtwVELzZUie8pMT6YVaVcH/2R9v?=
+ =?us-ascii?Q?PvFTb1JOySaaNqmLlXaeFwN95YD+bw9sWEG0Re4IIqzBmAp0SWYWKWCGPSi2?=
+ =?us-ascii?Q?X8KifJEZKW8VqlcczlmapRWupr1tbBBxBBjV9cHmSGnclGf4Pe2NyEqdPMqR?=
+ =?us-ascii?Q?kxENPOwnEveDtWT3ya+YpGbX6EWOjxG5mnTpqXnJhjurxgzaInNlj7B878Mo?=
+ =?us-ascii?Q?EsGR2gk28MP5i5bY1xoNY9rEPB/smM3JZi72XRgPqiR71F3eouM/p45LaeAz?=
+ =?us-ascii?Q?tdSSCwBPBdUB/BYaBKaF7uxEdHkRan34aHS75sjAeYS7FT6q8wdtOHKMa0lG?=
+ =?us-ascii?Q?bi+rntmHd3Bvgv5JrDUxUJ3eEZ5XbkvB7KPpV5b4eUfNV2x+c3OynQm3nzEx?=
+ =?us-ascii?Q?CSqyH+GKRgWCHLbS92+cQ1O7mtktqU7qFExply9VD+hdxq494Cw+k3d3jKyK?=
+ =?us-ascii?Q?tYkAJBuw43qiD59ZXTbJj6Uuyh6a1Aqut8ndFHjuXu50kDSPV+AVhZYceoYs?=
+ =?us-ascii?Q?UIuKIK1MgM3x4XABGvsFhG1oBWrJ+XQLiTd6Li9fLBH20GuPDE/zEt4k99gF?=
+ =?us-ascii?Q?VvxfhONchUpBewQ7W+hlb/XN0DFbXDzUnmCGgd1Rb0so69tyg7tQ4RP7wVkJ?=
+ =?us-ascii?Q?7/J2RqIdt1QRSHju9iSXlzdvO881lnVlzagZSi2lD76INZKGMxnmKbQieAAC?=
+ =?us-ascii?Q?1h1grtmgtQhjrbkDJPc2aHGlkHQ9iebp5IFivROdc8mYU7LVdFVSCKJXJRVo?=
+ =?us-ascii?Q?YV13sdRLfwWa4d0+cZEbZaUb6290gp7LaLISEttz7lncKKfnj9VFbYQJ/FNO?=
+ =?us-ascii?Q?wEE9khwlLcc9kLZJ+pLO1Yaa/FBE76aGhjWtZaxEOAosLWMO7WoYIn6bH5jW?=
+ =?us-ascii?Q?vzAGqiY8UViTFsjg+UtC70HpDERMfCbmkBxCVj/nHgEDaLK07KCRLkigeyoL?=
+ =?us-ascii?Q?q1uIeQcydbeL/AVIr+PL9L8zvNU3EFxcevmZb1SkhVZx4+0nLjG2P6IrNjnb?=
+ =?us-ascii?Q?E9v9SiplRke9hIae+XU4Y1KgRqJeVPxsFPewJFCR09aSuLINtfMMK1hSlB6q?=
+ =?us-ascii?Q?xUdlB+anOBSk2ON7zxBeubYUHRxdnAlw778InfoL+D4xgr2J+wpuf07LFGpT?=
+ =?us-ascii?Q?OYl0t9B3QrnaFcxmDcpurt+zQzk0WOuXmilWm6TC+b1BOxq2QiAJfLDG/8Oy?=
+ =?us-ascii?Q?w3QP+4wbunsl5i4uIhMXSKDUQGGDpPx/P6YLNDva2hjXHjtK20UBWx+n0nBD?=
+ =?us-ascii?Q?YauEplQAdLq4pCU8Fc1LCmbj7u0+5Pzqn9zuUj0TnDNAr8HFLjhtwA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?z6tLRzGrdgCCdIcSalBrfUjMMbbLQtK0I3sVU3nY0qqkhVFnnDPj3AZj48oc?=
+ =?us-ascii?Q?mQmsGM0B61JE0Z3SUjVJ1VAb1eL4jAfAS8+5P6rkYYo5o8fMkdE1IC6IFIf4?=
+ =?us-ascii?Q?cgrLmky1g8SkMNmaP4TCmtjWlLLBkjFJVtnBsHmIFcUrAEF+0WvU1VPp5y+3?=
+ =?us-ascii?Q?ZAtPye1f2kItMvdcNzSkNKzV+WmDCz0eiOycAPBZftXdKO3K5oQVojDPu5db?=
+ =?us-ascii?Q?USgcFJn7t+X946i1ptkP8XilgDv8j+OimoU8VsV2r1GOc0RRb/+BkslSlbBr?=
+ =?us-ascii?Q?Zpo9HiQFqcRQ0921GM8P6Q2NDRaeFyhP6+sZWsH5n6qBZD2xfd+Mxlj7da7K?=
+ =?us-ascii?Q?sdR5RbrGzA1SDqSKMPtudcz/NL9z+46Vex2aP1gD03ExxFZ9tPgAIUlLzLUq?=
+ =?us-ascii?Q?U2UenbEITJB7301G5pdBmh7Gv1UeC15oIKnvLDt4h/x53WLBUSqq0vCOKirZ?=
+ =?us-ascii?Q?pf7Hl85Su5YesYnpgNAVCn8n/LYAiyl+PowO+uu+WvTl/b5cvzhfXytVHBFp?=
+ =?us-ascii?Q?KsfIoFWxnGKXE1mQZ87BIkJ1LIGWscMncZJ0manrSCqLS2PE/Eng1/CSRe1x?=
+ =?us-ascii?Q?ShFESK6tRf3w/mtC8mJNHU3d+bQeA6h1VXeSRwZ0z2iwL+fFMhA8pjr+H2pU?=
+ =?us-ascii?Q?hcXB3qLCeBGZomzx1/HaBHK0dlhTI2dcFGV2g4tyj/zteyTQIuR8gTP6uiK7?=
+ =?us-ascii?Q?Jyw/mqkRjzEIDgUt0zCvKDRQWjziFLiZQzWT1lunO3SAYTwbgmtn2NkG6bsP?=
+ =?us-ascii?Q?ewYou0AvO9eroN/BYla7dZ3GgG48WDA3SfXlxNylOFy2HeT16h7Ii/VImkxy?=
+ =?us-ascii?Q?a9IYO1EEppnooaBJXSQwFbgO/iR+wH1viRSMCDRtvjM/SGEfAmXVXV+nOpie?=
+ =?us-ascii?Q?QFQO8eXrY0afDXC4and8On7AUSprR4mVcR4ak/b2LECItg15g7ZSCW/G4R/N?=
+ =?us-ascii?Q?/j6MXj7DzlcMTzMy1OlSRFOBa8aWTg27YPd748F0SOV3r+N7cMkrCq/HqyRF?=
+ =?us-ascii?Q?n3V/7qJV2YIuqECaQpQ+UtN2F2mWSR69negzwccNdyp5s5P3iutdUfqBvwIy?=
+ =?us-ascii?Q?TqK3P7nhpfTENJ0v8I1RS2lSh++xd6PzHoLtqSnNmxMDCNl5V+MQ55dhR0on?=
+ =?us-ascii?Q?JYz/bk/2rXlhfNLbkAy1OY3bcuqnVkN3RXc+Fzx+7y7mbNOMFXyJFShBBksA?=
+ =?us-ascii?Q?mKdV+eejEJeMNa6n5ypRWzOovHbV12xQhx9DdxNX7hna6Y0VSdu2dbZaRuhx?=
+ =?us-ascii?Q?Xo2psEiTLY31G6nNzQac0XSiGCFNi74Cp26frFrwaYsFAkP37tdc3VRQoBJk?=
+ =?us-ascii?Q?9XPVzmNiHZ49tdbUbesYpEmT2Eb7yeKhM+xTps2/Dm63mBqU2oAm4spoFQ+g?=
+ =?us-ascii?Q?2Pjay1KIrKTOqETErrxtAMBDG5oDSoTiu0LmITi/+B0ouaH3bDLwUfsKkhLf?=
+ =?us-ascii?Q?zV+TTpHQMDPP9FsHY3cBZTvuIiqA5OQrAGJNS9uRqQVU4EDi6rYdUFAsiPWg?=
+ =?us-ascii?Q?gvdTDZcLjXjPhjDhXVoMeAnxkUooaDf7alPHsPg99lLr4lBqdqTQAQpo61Hy?=
+ =?us-ascii?Q?rjM3P3t/GksggpS0KSrokd+EjY2PECMYHBQdjgBR?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a8d427d-9fff-4a9c-2a51-08dde704b41d
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 14:02:34.6860
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ck+GnTONnJU/Ud/Mk0CXvABYcafvnyTudrSCLZPokTnaFbjPhNx9vu0Lp7OWw8rW7hwxz49cpyg3YzvI20effg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2PPF927A03F6A
 
-Please pull the following changes since commit
-1b237f190eb3d36f52dffe07a40b5eb210280e00:
+Change the 'ret' variable from u32 to int to store negative error codes
+or zero;
 
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+Storing the negative error codes in unsigned type, doesn't cause an issue
+at runtime but it's ugly. Additionally, assigning negative error codes to
+unsigned type may trigger a GCC warning when the -Wsign-conversion flag
+is enabled.
 
-are available in the Git repository at:
+No effect on runtime.
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.17-rc3-smb3-client-fixes
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ drivers/iommu/omap-iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-for you to fetch changes up to ab529e6ca1f67bcf31f3ea80c72bffde2e9e053e:
+diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+index 6fb93927bdb9..5c6f5943f44b 100644
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1303,8 +1303,8 @@ static int omap_iommu_map(struct iommu_domain *domain, unsigned long da,
+ 	struct omap_iommu_device *iommu;
+ 	struct omap_iommu *oiommu;
+ 	struct iotlb_entry e;
++	int ret = -EINVAL;
+ 	int omap_pgsz;
+-	u32 ret = -EINVAL;
+ 	int i;
+ 
+ 	omap_pgsz = bytes_to_iopgsz(bytes);
+-- 
+2.34.1
 
-  fs/smb: Fix inconsistent refcnt update (2025-08-27 14:59:06 -0500)
-
-----------------------------------------------------------------
-Two smb3 client fixes, both also for stable
-- Fix possible refcount leak in compound operations
-- Fix remap_file_range() return code mapping, found by generic/157
-----------------------------------------------------------------
-Shuhao Fu (1):
-      fs/smb: Fix inconsistent refcnt update
-
-Steve French (1):
-      smb3 client: fix return code mapping of remap_file_range
-
- fs/smb/client/cifsfs.c    | 14 ++++++++++++++
- fs/smb/client/smb2inode.c |  7 +++++--
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-
---
-Thanks,
-
-Steve
 
