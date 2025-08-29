@@ -1,563 +1,234 @@
-Return-Path: <linux-kernel+bounces-791262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F26CB3B420
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEBDB3B425
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1805C1C86FD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0A75807B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59AD261B9C;
-	Fri, 29 Aug 2025 07:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="ScJyEpEX";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="odPTH+GP"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D943026462E;
+	Fri, 29 Aug 2025 07:19:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C593FC7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC3B54279;
+	Fri, 29 Aug 2025 07:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756451914; cv=none; b=Y44YEU2qzGsZCFDvKMtbUR0YZiu+n8GMN+W5r6BjHt7dhP7BrcGiXmA8bq3QaAyadhfN8caLwGKv/ls9pc2x9bA9zb4HOw+plU9zh65gSYE6TsFsAfzAIKIvhgSOh8ZSq1AZzzWpxpqb9ntBxjmhW2rNXMZVwyowMlfPYPtNU9E=
+	t=1756451999; cv=none; b=AJpM9mb7EwQdb8mnA2Napf+Hyea7xEXy16WKfko6ikyEclhepxV4AjSDaUiQx7aR+Hdw8so/ZTjJdT9kq2op2Rei0qlYZa6L3g5oYFAnaIforxxolXGScXsn+KmPwmQ21WdYqZHAOhAFHvrQXAk1zj3pE6xaog2z+auPH5JBY+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756451914; c=relaxed/simple;
-	bh=lYqKeWj8pxpi7Q+bLJjXC6H+KWNvHcw7mX2gMVghkMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oQPMMRlUXZezHSOi9BE/QNsB4sC9Jx+JQepR5u27yT4Lpqg/eMzu6iL6jigPS8tSyTELrR5k6jsgbeTdWMnx83qgpQG5PNNc3ahMq2Ff1Hy4hLQCV7H+5sWb/L75x81bpE8FO1x1WZcWkeveIE7zFypvJbBKRWNu4yMC26o2hg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=ScJyEpEX; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=odPTH+GP; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756451910; x=1757056710;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=T9Y+Fj2hUAr+t/jILO9pLud/GiihvaaYAyjQAhHGMt8=;
-	b=ScJyEpEXWezoa4612nRrHoaPm29GLVRGKU1pF8W0eBAPnUfqZgDUwsUnAr+5CLjfiHX7hzOuCTiTc
-	 9rFpOMCvKkSETzXMq2v54YS6q1d6xZOsOCBsXamAqp9T3kr9HtpENWsJ8BDoi3cw3sJvPzZUYvyMvc
-	 TI/l53PYxsEY34GU6E/GW+7QhsYp8IavPTd5kCG1+ucMV81jzbZHEQXkzYdt9xC60VZO16b9jK9weW
-	 7aKDwGm8SvWtZBhTNc1IMUmSG1YW2Ff+u9LPiHFbFLzVJ/OOmcikoEcU/G+Ni5JjEIP7Nzfu45wpwu
-	 gCwub8XzzNFJ6bxvTs7dKV56W9zDKvA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756451910; x=1757056710;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=T9Y+Fj2hUAr+t/jILO9pLud/GiihvaaYAyjQAhHGMt8=;
-	b=odPTH+GPiXF8CDbBXZtXOShz9t2kAkrLWa9JC2VAVzCEPFD0zKPNhEiACcLwbf+T9Dqq23kHQA9Y2
-	 iDrs8AZAw==
-X-HalOne-ID: 5b54343f-84a8-11f0-8d94-fb5fec76084d
-Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 5b54343f-84a8-11f0-8d94-fb5fec76084d;
-	Fri, 29 Aug 2025 07:18:29 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>,
-	linux-mm@kvack.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v5 2/2] rust: zpool: add abstraction for zpool drivers
-Date: Fri, 29 Aug 2025 09:18:27 +0200
-Message-Id: <20250829071827.1973212-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250829071709.1973086-1-vitaly.wool@konsulko.se>
-References: <20250829071709.1973086-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1756451999; c=relaxed/simple;
+	bh=9ZZDicF89XaFxqoOkA/eseBFWRwCoxHtf7yIIFi7nRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGTRuK/GZhLLEZkZieRMbNWvP66ul71DUSgjC2YaJf5R5aZkCitUae7oJrurFFi2o8c7qzMUriKZTAqCW3aWBC5RCZYpS2gIkhb6VJyBh8AOas00Ps5TeS8aZSII6+HzRIUEKn6tP+Bl3uac3RzUkJMxtZQe2q+t+xyv7hdtdZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EDDC4CEF0;
+	Fri, 29 Aug 2025 07:19:58 +0000 (UTC)
+Date: Fri, 29 Aug 2025 09:19:56 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org, lumag@kernel.org, 
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org, daniel.lezcano@linaro.org, 
+	sboyd@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org, 
+	rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com, 
+	david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com, 
+	kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org, 
+	quic_kotarake@quicinc.com, neil.armstrong@linaro.org, stephan.gerhold@linaro.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+Message-ID: <20250829-classic-dynamic-clam-addbd8@kuoka>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
 
-Zpool is a common frontend for memory storage pool implementations.
-These pools are typically used to store compressed memory objects,
-e. g. for Zswap, the lightweight compressed cache for swap pages.
+On Tue, Aug 26, 2025 at 02:06:55PM +0530, Jishnu Prakash wrote:
+> For the PMIC5-Gen3 type PMICs, ADC peripheral is present in HW for the
+> following PMICs: PMK8550, PM8550, PM8550B and PM8550VX PMICs.
+> 
+> It is similar to PMIC5-Gen2, with SW communication to ADCs on all PMICs
+> going through PBS(Programmable Boot Sequence) firmware through a single
+> register interface. This interface is implemented on SDAM (Shared
+> Direct Access Memory) peripherals on the master PMIC PMK8550 rather
+> than a dedicated ADC peripheral.
+> 
+> Add documentation for PMIC5 Gen3 ADC and macro definitions for ADC
+> channels and virtual channels (combination of ADC channel number and
+> PMIC SID number) per PMIC, to be used by clients of this device. Also
+> update SPMI PMIC bindings to allow ADC5 Gen3 as adc@ subnode.
+> 
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+> ---
+> Changes since v6:
+> - Updated SPMI PMIC bindings to allow ADC5 Gen3 as adc@ subnode and
+>   copyright license in newly added files.
 
-This patch provides the interface to use Zpool in Rust kernel code,
-thus enabling Rust implementations of Zpool allocators for Zswap.
+So you did not implement my requests/comments from v5? I did not request
+above, I had many, many other comments.
 
-Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- MAINTAINERS                     |   2 +
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/helpers.c          |   1 +
- rust/helpers/zpool.c            |   8 +
- rust/kernel/lib.rs              |   2 +
- rust/kernel/zpool.rs            | 377 ++++++++++++++++++++++++++++++++
- 6 files changed, 391 insertions(+)
- create mode 100644 rust/helpers/zpool.c
- create mode 100644 rust/kernel/zpool.rs
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b6f7c6939ff8..42b68dc800fb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16267,9 +16267,11 @@ W:	http://www.linux-mm.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
- F:	rust/helpers/mm.c
- F:	rust/helpers/page.c
-+F:	rust/helpers/zpool.c
- F:	rust/kernel/mm.rs
- F:	rust/kernel/mm/
- F:	rust/kernel/page.rs
-+F:	rust/kernel/zpool.rs
- 
- MEMORY MAPPING
- M:	Andrew Morton <akpm@linux-foundation.org>
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 84d60635e8a9..f0c4c454882b 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -75,6 +75,7 @@
- #include <linux/wait.h>
- #include <linux/workqueue.h>
- #include <linux/xarray.h>
-+#include <linux/zpool.h>
- #include <trace/events/rust_sample.h>
- 
- #if defined(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 7cf7fe95e41d..e1a7556cc700 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -51,3 +51,4 @@
- #include "wait.c"
- #include "workqueue.c"
- #include "xarray.c"
-+#include "zpool.c"
-diff --git a/rust/helpers/zpool.c b/rust/helpers/zpool.c
-new file mode 100644
-index 000000000000..6dd3edfc7fc8
---- /dev/null
-+++ b/rust/helpers/zpool.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/zpool.h>
-+
-+void rust_helper_zpool_register_driver(struct zpool_driver *driver)
-+{
-+	zpool_register_driver(driver);
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ed53169e795c..165d52feeea4 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -129,6 +129,8 @@
- pub mod uaccess;
- pub mod workqueue;
- pub mod xarray;
-+#[cfg(CONFIG_ZPOOL)]
-+pub mod zpool;
- 
- #[doc(hidden)]
- pub use bindings;
-diff --git a/rust/kernel/zpool.rs b/rust/kernel/zpool.rs
-new file mode 100644
-index 000000000000..ae564ea22b77
---- /dev/null
-+++ b/rust/kernel/zpool.rs
-@@ -0,0 +1,377 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Implementation of Rust interface towards zpool API.
-+
-+use crate::{
-+    bindings,
-+    error::{from_result, Result},
-+    kernel::alloc::Flags,
-+    str::{CString, CStr},
-+    types::{ForeignOwnable, Opaque},
-+};
-+use core::ffi::{c_int, c_uchar, c_void};
-+use core::ptr::{null_mut, NonNull};
-+use kernel::alloc::NumaNode;
-+use kernel::driver;
-+use kernel::ThisModule;
-+
-+/// The Rust representation of zpool handle.
-+pub struct ZpoolHandle(usize);
-+
-+impl ZpoolHandle {
-+    /// Create `ZpoolHandle` from the raw representation.
-+    pub fn from_raw(h: usize) -> Self {
-+        Self(h)
-+    }
-+
-+    /// Get the raw representation of the handle.
-+    pub fn as_raw(self) -> usize {
-+        self.0
-+    }
-+}
-+
-+/// Zpool API.
-+///
-+/// The [`ZpoolDriver`] trait serves as an interface for Zpool drivers implemented in Rust.
-+/// Such drivers implement memory storage pools in accordance with the zpool API.
-+///
-+/// # Example
-+///
-+/// A zpool driver implementation which uses KVec of 2**n sizes, n = 6, 7, ..., PAGE_SHIFT.
-+/// Every zpool object is packed into a KVec that is sufficiently large, and n (the
-+/// denominator) is saved in the least significant bits of the handle, which is guaranteed
-+/// to be at least 2**6 aligned by kmalloc.
-+///
-+/// ```
-+/// use core::ptr::{NonNull, copy_nonoverlapping};
-+/// use core::sync::atomic::{AtomicU64, Ordering};
-+/// use kernel::alloc::{Flags, KBox, KVec, NumaNode};
-+/// use kernel::page::PAGE_SHIFT;
-+/// use kernel::prelude::EINVAL;
-+/// use kernel::str::CString;
-+/// use kernel::zpool::*;
-+///
-+/// struct MyZpool {
-+///     name: CString,
-+///     bytes_used: AtomicU64,
-+/// }
-+///
-+/// struct MyZpoolDriver;
-+///
-+/// impl ZpoolDriver for MyZpoolDriver {
-+///     type Pool = KBox<MyZpool>;
-+///
-+///     fn create(name: CString, gfp: Flags) -> Result<KBox<MyZpool>> {
-+///         let my_pool = MyZpool { name, bytes_used: AtomicU64::new(0) };
-+///         let pool = KBox::new(my_pool, gfp)?;
-+///
-+///         pr_debug!("Pool {:?} created\n", pool.name);
-+///         Ok(pool)
-+///     }
-+///
-+///     fn malloc(pool: &MyZpool, size: usize, _gfp: Flags, _nid: NumaNode) -> Result<ZpoolHandle> {
-+///         let pow = size.next_power_of_two().trailing_zeros().max(6);
-+///         match pow {
-+///             0 => Err(EINVAL),
-+///             m if m > PAGE_SHIFT as u32 => Err(ENOSPC),
-+///             _ => {
-+///                 let vec = KVec::<u8>::with_capacity(1 << pow, GFP_KERNEL)?;
-+///                 let (ptr, _len, _cap) = vec.into_raw_parts();
-+///
-+///                 // We assume that kmalloc-64, kmalloc-128 etc. kmem caches will be used for
-+///                 // our allocations, so it's actually `1 << pow` bytes that we have consumed.
-+///                 pool.bytes_used.fetch_add(1 << pow, Ordering::Relaxed);
-+///
-+///                 // `kmalloc` guarantees that an allocation of size x*2^n is 2^n aligned.
-+///                 // Therefore the 6 lower bits are zeros and we can use these to store `pow`.
-+///                 Ok(ZpoolHandle::from_raw(ptr as usize | (pow as usize - 6)))
-+///             }
-+///         }
-+///     }
-+///
-+///     unsafe fn free(pool: &MyZpool, handle: ZpoolHandle) {
-+///         let h = handle.as_raw();
-+///         let n = (h & 0x3F) + 6;
-+///         let uptr = h & !0x3F;
-+///
-+///         // SAFETY:
-+///         // - we derive `uptr` from handle by zeroing 6 lower bits where we store the power
-+///         //   denominator for the vector capacity. As noted above, the result will be exactly the
-+///         //   pointer to the area allocated by `KVec`. Thus, uptr is a valid pointer pointing to
-+///         //   the vector allocated by `alloc` function above.
-+///         // - 1 << n == capacity and is coming from the first 6 bits of handle.
-+///         let vec = unsafe { KVec::<u8>::from_raw_parts(uptr as *mut u8, 0, 1 << n) };
-+///         drop(vec);
-+///         pool.bytes_used.fetch_sub(1 << n, Ordering::Relaxed);
-+///     }
-+///
-+///     unsafe fn read_begin(_pool: &MyZpool, handle: ZpoolHandle) -> NonNull<u8> {
-+///         let uptr = handle.as_raw() & !0x3F;
-+///         // SAFETY:
-+///         // - we derive `uptr` from handle by zeroing 6 lower bits where we store the power
-+///         //   denominator for the vector capacity. As noted above, the result will be exactly the
-+///         //   pointer to the area allocated by `KVec`. Thus, uptr is a valid pointer pointing to
-+///         //   the vector allocated by `alloc` function above.
-+///         unsafe { NonNull::new_unchecked(uptr as *mut u8) }
-+///     }
-+///
-+///     unsafe fn read_end(_pool: &MyZpool, _handle: ZpoolHandle, _handle_mem: NonNull<u8>) {}
-+///
-+///     unsafe fn write(_p: &MyZpool, handle: ZpoolHandle, h_mem: NonNull<u8>, mem_len: usize) {
-+///         let uptr = handle.as_raw() & !0x3F;
-+///         // SAFETY:
-+///         // - `h_mem` is a valid non-null pointer provided by zpool.
-+///         // - `uptr` is derived from handle by zeroing 6 lower bits where we store the power
-+///         //   denominator for the vector capacity. As noted above, the result will be exactly the
-+///         //   pointer to the area allocated by `KVec`. Thus, uptr is a valid pointer pointing to
-+///         //   the vector allocated by `alloc` function above.
-+///         unsafe {
-+///             copy_nonoverlapping(h_mem.as_ptr().cast(), uptr as *mut c_void, mem_len)
-+///         };
-+///     }
-+///
-+///     fn total_pages(pool: &MyZpool) -> u64 {
-+///         pool.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
-+///     }
-+/// }
-+/// ```
-+///
-+pub trait ZpoolDriver {
-+    /// Opaque Rust representation of `struct zpool`.
-+    type Pool: ForeignOwnable;
-+
-+    /// Create a pool.
-+    fn create(name: CString, gfp: Flags) -> Result<Self::Pool>;
-+
-+    /// Allocate an object of `size` bytes from `pool`, with the allocation flags `gfp` and
-+    /// preferred NUMA node `nid`. If the allocation is successful, an opaque handle is returned.
-+    fn malloc(
-+        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-+        size: usize,
-+        gfp: Flags,
-+        nid: NumaNode,
-+    ) -> Result<ZpoolHandle>;
-+
-+    /// Free an object previously allocated from the `pool`, represented by `handle`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `handle` must be a valid handle previously returned by `malloc`.
-+    /// - `handle` must not be used any more after the call to `free`.
-+    unsafe fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: ZpoolHandle);
-+
-+    /// Make all the necessary preparations for the caller to be able to read from the object
-+    /// represented by `handle` and return a valid pointer to that object's memory to be read.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `handle` must be a valid handle previously returned by `malloc`.
-+    /// - `read_end` with the same `handle` must be called for each `read_begin`.
-+    unsafe fn read_begin(
-+        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-+        handle: ZpoolHandle,
-+    ) -> NonNull<u8>;
-+
-+    /// Finish reading from a previously allocated `handle`. `handle_mem` must be the pointer
-+    /// previously returned by `read_begin`.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `handle` must be a valid handle previously returned by `malloc`.
-+    /// - `handle_mem` must be the pointer previously returned by `read_begin`.
-+    unsafe fn read_end(
-+        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-+        handle: ZpoolHandle,
-+        handle_mem: NonNull<u8>,
-+    );
-+
-+    /// Write to the object represented by a previously allocated `handle`. `handle_mem` points
-+    /// to the memory to copy data from, and `mem_len` defines the length of the data block to
-+    /// be copied.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `handle` must be a valid handle previously returned by `malloc`.
-+    /// - `handle_mem` must be a valid pointer into the allocated memory aread represented by
-+    ///   `handle`.
-+    /// - `handle_mem + mem_len - 1` must not point outside the allocated memory area.
-+    unsafe fn write(
-+        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-+        handle: ZpoolHandle,
-+        handle_mem: NonNull<u8>,
-+        mem_len: usize,
-+    );
-+
-+    /// Get the number of pages used by the `pool`.
-+    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>) -> u64;
-+}
-+
-+/// An "adapter" for the registration of zpool drivers.
-+pub struct Adapter<T: ZpoolDriver>(T);
-+
-+impl<T: ZpoolDriver> Adapter<T> {
-+    extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void {
-+        match (|| -> Result<T::Pool> {
-+            // SAFETY: the memory pointed to by name is guaranteed by `zpool` to be a valid string.
-+            let name_r = unsafe { CStr::from_char_ptr(name).to_cstring() }?;
-+            T::create(name_r, Flags::from_raw(gfp))
-+        }) () {
-+            Err(_) => null_mut(),
-+            Ok(pool) => T::Pool::into_foreign(pool),
-+        }
-+    }
-+
-+    extern "C" fn destroy_(pool: *mut c_void) {
-+        // SAFETY: The pointer originates from an `into_foreign` call.
-+        drop(unsafe { T::Pool::from_foreign(pool) })
-+    }
-+
-+    extern "C" fn malloc_(
-+        pool: *mut c_void,
-+        size: usize,
-+        gfp: u32,
-+        handle: *mut usize,
-+        nid: c_int,
-+    ) -> c_int {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+
-+        from_result(|| {
-+            let real_nid = match nid {
-+                bindings::NUMA_NO_NODE => NumaNode::NO_NODE,
-+                _ => NumaNode::new(nid)?,
-+            };
-+            let h = T::malloc(pool, size, Flags::from_raw(gfp), real_nid)?;
-+            // SAFETY: `handle` is guaranteed to be a valid pointer by `zpool`.
-+            unsafe { *handle = h.as_raw() };
-+            Ok(0)
-+        })
-+    }
-+
-+    extern "C" fn free_(pool: *mut c_void, handle: usize) {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+
-+        // SAFETY:
-+        // - the caller (`zpool`) guarantees that `handle` is a valid handle previously allocated
-+        //   by `malloc`.
-+        // - the caller (`zpool`) guarantees that it will not call any other function with this
-+        //   `handle` as a parameter after this call.
-+        unsafe { T::free(pool, ZpoolHandle::from_raw(handle)) }
-+    }
-+
-+    extern "C" fn obj_read_begin_(
-+        pool: *mut c_void,
-+        handle: usize,
-+        _local_copy: *mut c_void,
-+    ) -> *mut c_void {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+
-+        // SAFETY: the caller (`zpool`) guarantees that `handle` is a valid handle previously
-+        // allocated by `malloc`.
-+        let non_null_ptr = unsafe { T::read_begin(pool, ZpoolHandle::from_raw(handle)) };
-+        non_null_ptr.as_ptr().cast()
-+    }
-+
-+    extern "C" fn obj_read_end_(pool: *mut c_void, handle: usize, handle_mem: *mut c_void) {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+
-+        // SAFETY: `handle_mem` is guaranteed to be non-null by the caller (`zpool`).
-+        let handle_mem_ptr = unsafe { NonNull::new_unchecked(handle_mem.cast()) };
-+
-+        // SAFETY: the caller (`zpool`) guarantees that `handle` is a valid handle previously
-+        // allocated by `malloc`.
-+        unsafe { T::read_end(pool, ZpoolHandle::from_raw(handle), handle_mem_ptr) }
-+    }
-+
-+    extern "C" fn obj_write_(
-+        pool: *mut c_void,
-+        handle: usize,
-+        handle_mem: *mut c_void,
-+        mem_len: usize,
-+    ) {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+
-+        // SAFETY: `handle_mem` is guaranteed to be non-null by the caller (zpool).
-+        let handle_mem_ptr = unsafe { NonNull::new_unchecked(handle_mem.cast()) };
-+
-+        // SAFETY: the caller (`zpool`) guarantees that `handle` is a valid handle previously
-+        // allocated by `malloc`.
-+        unsafe {
-+            T::write(pool, ZpoolHandle::from_raw(handle), handle_mem_ptr, mem_len);
-+        }
-+    }
-+    extern "C" fn total_pages_(pool: *mut c_void) -> u64 {
-+        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
-+        // `from_foreign`, then that happens in `destroy_` which will not be called during this
-+        // method.
-+        let pool = unsafe { T::Pool::borrow(pool) };
-+        T::total_pages(pool)
-+    }
-+}
-+
-+// SAFETY: A call to `unregister` for a given instance of `RegType` is guaranteed to be valid
-+// because preceding call to `register` never fails for zpool.
-+unsafe impl<T: ZpoolDriver + 'static> driver::RegistrationOps for Adapter<T> {
-+    type RegType = bindings::zpool_driver;
-+
-+    unsafe fn register(
-+        pdrv: &Opaque<Self::RegType>,
-+        name: &'static CStr,
-+        _module: &'static ThisModule,
-+    ) -> Result {
-+        // SAFETY: It's safe to set the fields of `struct zpool_driver` on initialization.
-+        unsafe {
-+            (*(pdrv.get())).type_ = name.as_char_ptr().cast_mut();
-+            (*(pdrv.get())).create = Some(Self::create_);
-+            (*(pdrv.get())).destroy = Some(Self::destroy_);
-+            (*(pdrv.get())).malloc = Some(Self::malloc_);
-+            (*(pdrv.get())).free = Some(Self::free_);
-+            (*(pdrv.get())).obj_read_begin = Some(Self::obj_read_begin_);
-+            (*(pdrv.get())).obj_read_end = Some(Self::obj_read_end_);
-+            (*(pdrv.get())).obj_write = Some(Self::obj_write_);
-+            (*(pdrv.get())).total_pages = Some(Self::total_pages_);
-+
-+            bindings::zpool_register_driver(pdrv.get());
-+        }
-+        Ok(())
-+    }
-+    unsafe fn unregister(pdrv: &Opaque<Self::RegType>) {
-+        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-+        unsafe { bindings::zpool_unregister_driver(pdrv.get()) };
-+    }
-+}
-+
-+/// Declares a kernel module that exposes a zpool driver (i. e. an implementation of the zpool
-+/// API).
-+///
-+/// # Examples
-+///
-+///```ignore
-+/// kernel::module_zpool_driver! {
-+///     type: MyDriver,
-+///     name: "Module name",
-+///     authors: ["Author name"],
-+///     description: "Description",
-+///     license: "GPL",
-+/// }
-+///```
-+#[macro_export]
-+macro_rules! module_zpool_driver {
-+    ($($f:tt)*) => {
-+        $crate::module_driver!(<T>, $crate::zpool::Adapter<T>, { $($f)* });
-+    };
-+}
--- 
-2.39.2
+
+> 
+> Changes since v5:
+> - Added more details in binding description explaining how number
+>   of SDAM peripherals used for ADC is allocated per SoC.
+> - Renamed per-PMIC binding files listing ADC channel macro names 
+>   and addressed other reviewer comments.
+> 
+> Changes since v4:
+> - Added ADC5 Gen3 documentation in a separate new file to avoid complicating
+>   existing VADC documentation file further to accomodate this device, as
+>   suggested by reviewer.
+> 
+> Changes since v3:
+> - Added ADC5 Gen3 documentation changes in existing qcom,spmi-vadc.yaml file
+>   instead of adding separate file and updated top-level constraints in documentation
+>   file based on discussion with reviewers.
+> - Dropped default SID definitions.
+> - Addressed other reviewer comments.
+> 
+> Changes since v2:
+> - Moved ADC5 Gen3 documentation into a separate new file.
+> 
+> Changes since v1:
+> - Updated properties separately for all compatibles to clarify usage
+>   of new properties and updates in usage of old properties for ADC5 Gen3.
+> - Avoided updating 'adc7' name to 'adc5 gen2' and just left a comment
+>   mentioning this convention.
+> - Used predefined channel IDs in individual PMIC channel definitions
+>   instead of numeric IDs.
+> - Addressed other comments from reviewers.
+> 
+>  .../bindings/iio/adc/qcom,spmi-adc5-gen3.yaml | 155 ++++++++++++++++++
+>  .../iio/adc/qcom,spmi-vadc-common.yaml        |   4 +-
+>  .../bindings/iio/adc/qcom,spmi-vadc.yaml      |   2 +
+>  .../bindings/mfd/qcom,spmi-pmic.yaml          |   1 +
+>  .../iio/adc/qcom,pm8550-adc5-gen3.h           |  46 ++++++
+>  .../iio/adc/qcom,pm8550b-adc5-gen3.h          |  85 ++++++++++
+>  .../iio/adc/qcom,pm8550vx-adc5-gen3.h         |  22 +++
+>  .../iio/adc/qcom,pmk8550-adc5-gen3.h          |  52 ++++++
+>  include/dt-bindings/iio/adc/qcom,spmi-vadc.h  |  79 +++++++++
+>  9 files changed, 444 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml
+>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h
+>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550b-adc5-gen3.h
+>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h
+>  create mode 100644 include/dt-bindings/iio/adc/qcom,pmk8550-adc5-gen3.h
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml
+> new file mode 100644
+> index 000000000000..40eb20b9d9de
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml
+> @@ -0,0 +1,155 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/qcom,spmi-adc5-gen3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm's SPMI PMIC ADC5 Gen3
+> +
+> +maintainers:
+> +  - Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+> +
+> +description: |
+> +  SPMI PMIC5 Gen3 voltage ADC (ADC) provides interface to clients to read
+> +  voltage. It is a 16-bit sigma-delta ADC. It also performs the same thermal
+> +  monitoring function as the existing ADC_TM devices.
+> +
+> +  The interface is implemented on SDAM (Shared Direct Access Memory) peripherals
+> +  on the master PMIC rather than a dedicated ADC peripheral. The number of PMIC
+> +  SDAM peripherals allocated for ADC is not correlated with the PMIC used, it is
+> +  programmed in FW (PBS) and is fixed per SOC, based on the SOC requirements.
+> +  All boards using a particular (SOC + master PMIC) combination will have the
+> +  same number of ADC SDAMs supported on that PMIC.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,spmi-adc5-gen3
+> +
+> +  reg:
+> +    items:
+> +      - description: SDAM0 base address in the SPMI PMIC register map
+> +      - description: SDAM1 base address
+> +    minItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  '#io-channel-cells':
+> +    const: 1
+> +
+> +  "#thermal-sensor-cells":
+
+Nothing improved here, still mess with quotes.
+
+I am not going to check the rest of comments, because:
+1. Your changelog is vague and claims you did not implement them,
+2. b4 diff does not work, base-commit is unknown.
+3. Main changelog is even more vague.
+
+You make it difficult for us to review your patches, fine. You will get:
+
+NAK (plus one more comment below)
+
+> diff --git a/include/dt-bindings/iio/adc/qcom,spmi-vadc.h b/include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+> index ef07ecd4d585..b1b89e874316 100644
+> --- a/include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+> +++ b/include/dt-bindings/iio/adc/qcom,spmi-vadc.h
+> @@ -300,4 +300,83 @@
+>  #define ADC7_SBUx				0x94
+>  #define ADC7_VBAT_2S_MID			0x96
+>  
+> +/* ADC channels for PMIC5 Gen3 */
+> +
+> +#define ADC5_GEN3_REF_GND			0x00
+> +#define ADC5_GEN3_1P25VREF			0x01
+> +#define ADC5_GEN3_VREF_VADC			0x02
+> +#define ADC5_GEN3_DIE_TEMP			0x03
+> +
+> +#define ADC5_GEN3_AMUX1_THM			0x04
+> +#define ADC5_GEN3_AMUX2_THM			0x05
+> +#define ADC5_GEN3_AMUX3_THM			0x06
+> +#define ADC5_GEN3_AMUX4_THM			0x07
+> +#define ADC5_GEN3_AMUX5_THM			0x08
+> +#define ADC5_GEN3_AMUX6_THM			0x09
+> +#define ADC5_GEN3_AMUX1_GPIO			0x0a
+> +#define ADC5_GEN3_AMUX2_GPIO			0x0b
+> +#define ADC5_GEN3_AMUX3_GPIO			0x0c
+> +#define ADC5_GEN3_AMUX4_GPIO			0x0d
+> +
+> +#define ADC5_GEN3_CHG_TEMP			0x10
+> +#define ADC5_GEN3_USB_SNS_V_16			0x11
+> +#define ADC5_GEN3_VIN_DIV16_MUX			0x12
+> +#define ADC5_GEN3_VREF_BAT_THERM		0x15
+
+You cannot have empty spaces in ID constants. These are abstract
+numbers.
+
+Otherwise please point me to driver using this constant.
+
+Best regards,
+Krzysztof
 
 
