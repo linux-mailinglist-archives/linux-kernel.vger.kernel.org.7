@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-791612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AD4B3B928
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:49:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA9DB3B931
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BC4567E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6329B1B2591F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E269630F7FE;
-	Fri, 29 Aug 2025 10:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4030FC11;
+	Fri, 29 Aug 2025 10:50:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C5626B77B;
-	Fri, 29 Aug 2025 10:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CFA30F813;
+	Fri, 29 Aug 2025 10:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464546; cv=none; b=iGZaBX5/OiJ00BHJz1e06shPERTGNB8HMfXPydMoQyuO3AmdANpNJBNzqOo4OBL0nBkcJT7ZmokM20pLDnxvBu+/FSFC8MWxTo4AMuHqbjigC1YEh6Wpr6t1qwsjcWiVNl6/fg1WHv7P3Qc7xxBxEK55iRzkrggnvpPtNzIiSA0=
+	t=1756464627; cv=none; b=HHU2sSI/FqkOs3yHge3j+Q4CfOqb/5+TOj4Rob1wXJExs3g4eQMhMqBwx1T98+PojCExoqtUtIGNQG9uaPT7vLML8aq991Tit5+SeyBJaUFFhsA45NTN6oZm0BJh8XPH1vHwhyHCA/L4gyRR9MaK1wMuLC2KW96dopcou7o8F14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464546; c=relaxed/simple;
-	bh=pf60yOCYu6UeHBzU3k2qIPPUe5wYD1ZLuf41B/NPuEI=;
+	s=arc-20240116; t=1756464627; c=relaxed/simple;
+	bh=DQ8ssogXZkvnCVE3uT5BWAUe/YqLqrQMJHQmW/wRDs0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYAPQ5paaqAjNIfG1hgpRPiXBIYblMhRziEW8stSpeXA93UXrxso5p+sBM2zRrFhaUJY4gbGSAZH/tO75sbNcxSMAW0eDIzIkvCzHfVuhPI7tcXeKQ0QwkfiGuSFYnx9OzNmk7kGzqHUA2Ua+gHujjG6RGfAClJ73wp6JxDzs/I=
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqOpQobBvrcyPEfQ+lIhXLUuM888DoeIdwSVvrGtImz6Y/XEn+glh7CcQYgMnT1CRxkRYkTZe2wN2W1deEz/HsNjbeMpMvWaEze+13mk+yljjykfvO4q4L78+9RXPhQIHAAnJv6mKBpLd4MgQmLribGwfiJN0T0gI9tFHpHQ/ps=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E44C419F0;
-	Fri, 29 Aug 2025 03:48:52 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49FC91BCB;
+	Fri, 29 Aug 2025 03:50:17 -0700 (PDT)
 Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 588D73F694;
-	Fri, 29 Aug 2025 03:48:59 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:48:56 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42AF3F694;
+	Fri, 29 Aug 2025 03:50:23 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:50:20 +0100
 From: Sudeep Holla <sudeep.holla@arm.com>
 To: Peng Fan <peng.fan@nxp.com>
 Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
 	Sudeep Holla <sudeep.holla@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
@@ -45,7 +45,7 @@ Cc: Cristian Marussi <cristian.marussi@arm.com>,
 	<linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v3 2/6] firmware: arm_scmi: imx: Support discovering
  buildinfo of MISC protocol
-Message-ID: <20250829-satisfied-carp-from-camelot-bddbfa@sudeepholla>
+Message-ID: <20250829-woodoo-acoustic-lynx-7ffaba@sudeepholla>
 References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
  <20250827-sm-misc-api-v1-v3-2-82c982c1815a@nxp.com>
 Precedence: bulk
@@ -121,30 +121,8 @@ On Wed, Aug 27, 2025 at 12:59:14PM +0800, Peng Fan wrote:
 > +		dev_info(ph->dev, "SM Version\t= Build %u, Commit %08x %s %s\n",
 > +			le32_to_cpu(out->buildnum), le32_to_cpu(out->buildcommit),
 > +			date, time);
-> +	}
-> +
-> +	ph->xops->xfer_put(ph, t);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
->  	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
->  	.misc_ctrl_get = scmi_imx_misc_ctrl_get,
-> @@ -299,6 +336,10 @@ static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
->  	if (ret)
->  		return ret;
->  
-> +	ret = scmi_imx_misc_discover_build_info(ph);
 
-To align with other naming,
-
-s/scmi_imx_misc_discover_build_info/scmi_imx_misc_build_info_discover/
-
-> +		return ret;
-
-The document in 1/6 didn't state this as mandatory. IMO, it is not
-fair to return error if the return is NOT_SUPPORTED.
+And fix the alignment above, just noticed after hitting enter.
 
 -- 
 Regards,
