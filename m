@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-792142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95885B3C0B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC3FB3C0B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F7317D7D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266C458576B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4FA327798;
-	Fri, 29 Aug 2025 16:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8DD334387;
+	Fri, 29 Aug 2025 16:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J3fkulsD"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D6B66iWh"
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640E322DAA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087EE32BF41
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485000; cv=none; b=HLU/XATN5QB5RaA8e0Cw5MHdWpBmz2cnFhXRWtKwl558NKLq9TNWKv4PLbXl74e/0SMllHpOqAYlyC8lXE1VcNcGvXBGSN/8Y/0lMUBJWizohTmwD9JR7jJ3cmp895dw/FUD/AKW3KqAd8r+zwsZQGPtJSG/rsxMZ2qO2bm43dk=
+	t=1756485006; cv=none; b=YZIBvf4NO5N0TdC13Ll2r6Mf1HxevvqJJ4WDeIh1IKSEjdpEB7z9Ap7LZ9ssXeZWrnMR7rfrW7Fyp5+LSdvpDseu3HYSq7JlxMh2K+BdP4H1S+sbeqydfGPxMPFP/CHabFsIYIKJM+4BQs8y88lHiPnmgJo5x0+PcC7aPrulRh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485000; c=relaxed/simple;
-	bh=p3JqtUSSx0HxxWGt1wJsKnufY7nH+uaI1v2POiauOb4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z25fdLCuasESNZfGlkrpPI3GBQ9xVzPlc5mb0Y6HLYepk7us6iWrDBrT/ayczc6YZ+rINTADI6HJ4dEuK/PylBFQMszQtVRTBTMggFS/ClQxl/Mc2f3h41BB8mU/inEJkIqNZvBI0ElA47yJbV1wZ7V/8XVav7rgOYt0NeXb2zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J3fkulsD; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1756485006; c=relaxed/simple;
+	bh=eI1aiFNYryO+t5nHeumpPB+dsVNw8uOQsJ0Hivfxi60=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rhQQrkPeAxRqbKxG+wqvk/sAe3psiDr3cNXMr/qgh+P8ZaPC2t+uIGrcUGSmdH147U3mrA3dJBCDi7zCYDQPYYN/yqCTxt1cCVErC1FLqaAJa8Gfh4HtEDDZGEJbOBDqJmV66HaL02Z8d1JyyTvH1fBOB304eDiBouel5UxiuGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D6B66iWh; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D6E071A0DC6;
-	Fri, 29 Aug 2025 16:29:55 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 93F041A0DC6;
+	Fri, 29 Aug 2025 16:30:02 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AD79D605F1;
-	Fri, 29 Aug 2025 16:29:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49B821C22DB2E;
-	Fri, 29 Aug 2025 18:29:33 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A77D9605F1;
+	Fri, 29 Aug 2025 16:30:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66CC91C228022;
+	Fri, 29 Aug 2025 18:29:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756484994; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=fYBSTx5Yv8g5Uib1uT5+nAf3T9cNxeyce5RqsqKnN0o=;
-	b=J3fkulsDLvPuAHZxcwgTDQbisnHKcpFIwk0yfl7sM+R3FDVaAL54q7R/fp/NiApJKQRxQd
-	diCrYZCOsXq6Uun6WKRROyM6R2564T5STtP7Xuf7p2jdfLXA0oQ15398t1YSYtdgJEndxR
-	cY/VLFZEgk8O9SjynNItMPG5dcMG4ZO7iJ2ZabLdWc+Nt7wEOBrQF51J9gD2wy4oSjne+9
-	oB/Df3Y4Dem+muI5kG6rvFVT19Wsf6Ux6cf7ts51y5RACw12keN5cLz7ckScv/1v8jm7VO
-	8uQCcNJUwr7VTuO37A+7jk6+MQNySixn7UXSOgW7BOVgRe95oMcFhGEm2N3uHQ==
+	t=1756485000; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=G5hFWIHn9ebEQkKaq4cychymeANjC1DTgGmjV0wrK34=;
+	b=D6B66iWhhIkneh6Of/grY33WCc1fdZG14R0ITLbqgX8JoY0egDLm4lqQAPPxw2tjCujfMQ
+	NraUFtveckrHI4GoKj2+cXJ4wmAwCsqn12O96aRD5LXMWYRSJ2trizHmDBav5aVXH7FRTO
+	7/+NHZEjFUgHniZYJ8YqBTu0bfWjj5wWGZwW0zwIho4SfMFsiQlMM0ycnYlWFg16QtrrO3
+	PocKThLwG6qj1nd99lowsFu4Guwl2MsNIydEz7RUKPrALb2onj/RM/SwWPfg+4x7aN/gcH
+	EsV+Z0GIlsZWs5zvqYcAXFOo6H8QHZqIYKwSaXX0h/6gXHCGwSbyMbdu9/D0Aw==
 From: Kory Maincent <kory.maincent@bootlin.com>
-Subject: [PATCH net-next v2 0/4] net: pse-pd: pd692x0: Add permanent
- configuration management support
-Date: Fri, 29 Aug 2025 18:28:42 +0200
-Message-Id: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
+Date: Fri, 29 Aug 2025 18:28:43 +0200
+Subject: [PATCH net-next v2 1/4] net: pse-pd: pd692x0: Replace __free macro
+ with explicit kfree calls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,11 +58,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIADrVsWgC/32NwQrCMBBEf6Xs2UgSo6gn/0NKicnGLthNSWKpl
- P67od49zOExw7wFMibCDNdmgYQTZYpcQe8acL3lJwrylUFLfZRndRABbXkn7MZYg2mwjFw6Fzk
- IdCcjvXWogoZ6MCYMNG/nd2AsgnEu0Namp1xi+mzWSW39T6D1P8GkhBTeeaP0pc6Nvz1iLC/iv
- YsDtOu6fgFCsQFs0AAAAA==
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250829-feature_poe_permanent_conf-v2-1-8bb6f073ec23@bootlin.com>
+References: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
+In-Reply-To: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
 To: Oleksij Rempel <o.rempel@pengutronix.de>, 
  Andrew Lunn <andrew+netdev@lunn.ch>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -79,41 +79,61 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-This patch series adds support for saving and resetting the PD692x0
-device's permanent configuration through driver devlink param attributes:
-PD692X0_DEVLINK_PARAM_ID_SAVE_CONF and PD692X0_DEVLINK_PARAM_ID_RESET_CONF.
+Replace __free(kfree) with explicit kfree() calls to follow the net
+subsystem policy of avoiding automatic cleanup macros as described in
+the documentation.
 
-The permanent configuration allows settings to persist across device
-resets and power cycles, providing better control over PSE behavior
-in production environments.
-
-Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
+
 Changes in v2:
-- Move from sysfs interface to devlink interface for the permanent
-  configuration support
-- Remove the __free macro from pd692x0 driver following net policy.
-- Link to v1: https://lore.kernel.org/r/20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com
-
+- New patch
 ---
-Kory Maincent (4):
-      net: pse-pd: pd692x0: Replace __free macro with explicit kfree calls
-      net: pse-pd: pd692x0: Separate configuration parsing from hardware setup
-      docs: devlink: Sort table of contents alphabetically
-      net: pse-pd: pd692x0: Add devlink interface for configuration save/reset
+ drivers/net/pse-pd/pd692x0.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
- Documentation/networking/devlink/index.rst   |  21 +-
- Documentation/networking/devlink/pd692x0.rst |  32 +++
- drivers/net/pse-pd/pd692x0.c                 | 325 +++++++++++++++++++++++----
- 3 files changed, 325 insertions(+), 53 deletions(-)
----
-base-commit: 01a8d87c13cc9ccd3692d3e750075a772b3626da
-change-id: 20250813-feature_poe_permanent_conf-ec640dace1f2
+diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+index f4e91ba64a666..055e925c853ef 100644
+--- a/drivers/net/pse-pd/pd692x0.c
++++ b/drivers/net/pse-pd/pd692x0.c
+@@ -1200,9 +1200,9 @@ static void pd692x0_managers_free_pw_budget(struct pd692x0_priv *priv)
+ 
+ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
+ {
+-	struct pd692x0_manager *manager __free(kfree) = NULL;
+ 	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
+ 	struct pd692x0_matrix port_matrix[PD692X0_MAX_PIS];
++	struct pd692x0_manager *manager;
+ 	int ret, nmanagers;
+ 
+ 	/* Should we flash the port matrix */
+@@ -1216,7 +1216,7 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
+ 
+ 	ret = pd692x0_of_get_managers(priv, manager);
+ 	if (ret < 0)
+-		return ret;
++		goto err_free_manager;
+ 
+ 	nmanagers = ret;
+ 	ret = pd692x0_register_managers_regulator(priv, manager, nmanagers);
+@@ -1236,12 +1236,15 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
+ 		goto err_managers_req_pw;
+ 
+ 	pd692x0_of_put_managers(priv, manager, nmanagers);
++	kfree(manager);
+ 	return 0;
+ 
+ err_managers_req_pw:
+ 	pd692x0_managers_free_pw_budget(priv);
+ err_of_managers:
+ 	pd692x0_of_put_managers(priv, manager, nmanagers);
++err_free_manager:
++	kfree(manager);
+ 	return ret;
+ }
+ 
 
-Best regards,
 -- 
-Köry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+2.43.0
 
 
