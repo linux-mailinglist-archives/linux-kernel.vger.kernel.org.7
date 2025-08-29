@@ -1,159 +1,196 @@
-Return-Path: <linux-kernel+bounces-792177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E38CB3C118
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:43:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD55FB3C119
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB8C1CC4E18
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:43:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11107BD3B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81B6334369;
-	Fri, 29 Aug 2025 16:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3B632BF3F;
+	Fri, 29 Aug 2025 16:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WCd8diMV"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O6USxrhb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245A432C32E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B41C72626
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485747; cv=none; b=eUxlghFEiy3NHPwo1XS/qcpIxtpcR/Yz2adjd9eBMz4/YiePgYcHzFc1JPMg9MPmUdl7u8Kt8kl4dwUTgTCQmwCU9aPWC928JsNApc2heJmbuq0R8pOhvt5cINUF4Eq8WN0/Q0neduhzY4hSnToMeDd55qER5KKHt8vgZ9wmMA0=
+	t=1756485815; cv=none; b=T0DpDsYB/MRFWdSaGXz5oKEeoxifesRVU74LRwEA9OVaip1NrWaWoDO6uVG/R064mfr1RfnIVeaFX91MN0N+iUH9rK++s0bBllZ64IG+sxb3sURgBNPvn3zlR6kEWv1KhZXcz138LeE93eKdmnPoUg50xHAT8x4QNLWnHPOwn6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485747; c=relaxed/simple;
-	bh=upVsUuMpOdHRiGkETwVJlsIxvbf0n85rijqW3icJrTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DZdQhdKJO/feTML7tad8yENLC/oVL/QgEMnGjEPChqZdP49VLxCWvKSTJmprtxgMzuSiaZNUJwE/WCl04Q97i7IHxeee3yEcqVPxC1+mjvMia2FgTGKIfktDAUlfdwwLZn/GN648Uh6j4YvlQxDF3d5zCH/s5vVuKyiTgfCekzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WCd8diMV; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cdab7eee8so3212935a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1756485743; x=1757090543; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcseL9VLwiGrQMBX6gFapN6MvL8wsPhkJRSj/QHz9Rs=;
-        b=WCd8diMV3w2ZaAxEe/uUOtRXCXjC1SnFjkaOX+rGeGoHJNl4Ot/l7oAUv4FtMWnhV3
-         hnrPnedq08pQBlbVXF+uslLWI/8eQcC/JWEqSzAdcuc/D5RcPlVCHrjUe7Y8YCqBZ+xB
-         o9TaIjxxUIn/TAaTqPrWLQ7tcAXQB0xBb2LbI=
+	s=arc-20240116; t=1756485815; c=relaxed/simple;
+	bh=hVzQVoVx1d0CdeilHCWJlAw37yeEobJbP+BbMXYDgFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BKJwqoeFxu5AGMz5ocWKwaAIwCZokaD72WheftO/WXL5kgWxMmKmBdWIAOG7edFzxGOzlxWGfvw7Vxy4g5y6gxBhES2lz4C1FNPEADXX90+f4CSi2yyOWtbHvrd/iI27sQLv9FRgwszwKo5xjwteugXkkJ7jkl5hvJxHpPg6RY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O6USxrhb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756485812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MydhvUM3XDxN2oekHKxPLAYTbfd82t8/FYemVbXNiCg=;
+	b=O6USxrhb8U86YV1ZygwHLt6z2dWemOfHqveWFl5biZezYOJwDjpH79dSg6x5yOULH5S9up
+	BzBaCZh1SZVU/JwKEvcL5PmYdPMEONJKJ4q9d8NojJZtpXDD2JaxgR8qwm/22GwsR3gz4h
+	JXcD+7YKVMLMyX03NJ+iLFSp5Epn18Y=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-Ll8ZPdScPTiRFNY5iNQARw-1; Fri, 29 Aug 2025 12:43:30 -0400
+X-MC-Unique: Ll8ZPdScPTiRFNY5iNQARw-1
+X-Mimecast-MFC-AGG-ID: Ll8ZPdScPTiRFNY5iNQARw_1756485810
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109be525eso49272051cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:43:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756485743; x=1757090543;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pcseL9VLwiGrQMBX6gFapN6MvL8wsPhkJRSj/QHz9Rs=;
-        b=n31Fl9NH7/BTeL/pkVuwqhiroY7W5Bchg9sH5WQwvsfXuNlC8k832W6lROOxrcjOwV
-         ZilADfLKtfuTjKMpNQZO0t95BK1+PF+u8EHrI1104/iVYvvPFg7nvQfgD2JwfIetEvgh
-         PoSbLjxGCALBtLyID9Xxeeao6FsjzGPXtt0sEYebdKq6CJtPuCks9LFmdQDJ39k5RoVA
-         wiZWJiZbZUZrF7ujztWce+fespmAz+Y11u74xj5NjGLtSBSGV6z6MeICLK7f6nQ1Tx0N
-         RlOiFnot84xJQqqxo3TJbhT6uLMZRtC/cbysoG/wHS9DAKQkfhjq64AHudQoLWCaLKOM
-         63Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW2adaT5XIMcXNdFkqK5IuhiPd2rPInEBEb7pybitnF9zPwGLilvRi+KkSbDYeU/Bt/1sHpsFNgHlKmRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmdyyNbmFfPrHkivcCYoKZtPaMl+pQGUV037/68MFqs76NgfyR
-	Xl79Z7SeBjDgkTlSY1sZxlJphKQOeL9Vk3MHucK5UGCDeIddUgdh/JBdhOZ+RHYPElxks+eQ4p+
-	3yf7OAkL/cQ==
-X-Gm-Gg: ASbGnct2J9V4mdhPplkYYjGnWseSdiIqCZ5WokEz5RfCzPTrICt4aNr5wWu0HslB9Gq
-	3tO25ONVfUYhmt5QS+4GjcLU4NhBhM/cEwKZoSzCiei9ibdqkQyaUARdssxR4+r9vtACU1sU25B
-	/MDBWgqr8QDx1Zlv/f4HlSEq5E8vY2KVPIqWlLuwRTwHklXuFFmZdV6EFs8Iw2Nn9rdxzQHYO+1
-	QCUmcZindBRtoTsXPmmXc+1PVNUo+o2NjiNpyLYqEwihwNQgo7gptliJ3vthQDosyw8NyC4nRdR
-	zT39J4B9FYAcmotOAtOCsM1z+J743opIaNBwXokR2itlRysSY77Uj3HigbNA7D3x5Z1PUznFxHd
-	dS0Ue/ARtTsM0b4r/J+i23ihrgOcQJibcPSm0TAN1oliJlM7BnagzL/YflSIRrCb4uXfv2Gb8
-X-Google-Smtp-Source: AGHT+IE4dIxX2cOpNT0DCIKo6SJPz/ciXBnh/sZCXeA55CbBaX/a6AE2e9DeRQFarQRrTJbzFw4NtQ==
-X-Received: by 2002:a05:6402:42d6:b0:61c:9cd7:e5cc with SMTP id 4fb4d7f45d1cf-61c9cd7e8a2mr10768811a12.19.1756485743184;
-        Fri, 29 Aug 2025 09:42:23 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc51e0c1sm2005656a12.42.2025.08.29.09.42.20
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1756485810; x=1757090610;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MydhvUM3XDxN2oekHKxPLAYTbfd82t8/FYemVbXNiCg=;
+        b=PBDePKLngKXw0Fe77V1hEIdtaGNEZBa6ZmvTB5M07YvVLe73PECwWlYzcBPo0rKKr3
+         bLcWiOSUVZj/vMleToh2BtYifxSPeoucpHS7i+3O9mZ+pJJUllHwMZxEUIF134nwlyRY
+         9bGwns4KU+L/LB5f9lqIcuLpLCE0uwR9oISgCRlJOFeYA3Zc+7isf+PJDN7y4qkmio0h
+         YhxigH8mH8JnMicPknzu7ExxgEnfG0HkZmKCVTUXV4WljfHJU5fW5Xcs0BFATxI1nXUS
+         Gn9tCOMHhwhd/hR74+AhDmnyGs9gMOJ1U8VzgOh3AAX2V/W60+FFzEeSr4vc8rRG1dK9
+         1xUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOIhpAxVi1gw12nVizpnJOINguI5k4Nev0Z8mhk+VqKEGQBDWgSTR+F/Txbc/PQF0MSZ+FbZo7CjkHPxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWEcA8HC+BnxvyZ0wHXj0wt2gcJ94e4L2QK+7ge6cSFkjYH5cf
+	bzjauEgcZjjDxJzG12MoXDu93nuPF2emXkk/pA2unHbWBnXgyk/zH4z3LDGXugaT5rBWCjRMBwA
+	iVvknFTaX86MPSOv7j5jA6yLOtXY6oasHBaMCwfXdLgaQJNLP+DPj0pG0tuzadPKbug==
+X-Gm-Gg: ASbGncvse++P8Y69mChj9dFe59gVtfHx8LALv1yxGkvYe/GDe/JSCgnJSUt5OlFRsyG
+	ahN/kyOZUaS3Sk4qcXecVnDD378jG4VZSVvNw1aBzObk+9/PRaJSPABBXC9GAhgvhXDAa597CKq
+	sEb3lYHDdgnxALDC0rztcMmSDfruv6VDsdUTj9cEhFtqw6R8ilitse8C0172WXS14Nln14eYZ7u
+	1TwlJr18qfdNArZm1PvLAf1gldqFHbM2nkniqgQhfj2wvNxWt1WW/geiHuGsELexfk55hk0Cg11
+	I/y9uIvbJLA6HGO02IHo9N+UYlAYhQZAE0nDUuEg
+X-Received: by 2002:a05:622a:181c:b0:4b1:103b:bb82 with SMTP id d75a77b69052e-4b2aab5caf9mr381960511cf.64.1756485810252;
+        Fri, 29 Aug 2025 09:43:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEb4t90LjIX/uOcTYBBbi1cwL33tb3NRcrVgxs/yi7g7risy3Su/mMj3j1w2iGZs7m0W5ku1A==
+X-Received: by 2002:a05:622a:181c:b0:4b1:103b:bb82 with SMTP id d75a77b69052e-4b2aab5caf9mr381960021cf.64.1756485809572;
+        Fri, 29 Aug 2025 09:43:29 -0700 (PDT)
+Received: from [192.168.0.241] ([198.48.244.52])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b538153sm19110151cf.7.2025.08.29.09.43.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 09:42:21 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so325978666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:42:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsAgGP3lP1CQ/XWA4/NhVto4VXyFcCGV2JI8N4M7rfdykPYBjDdWRzPOuVezMyQO457QxuoZYPDUGesck=@vger.kernel.org
-X-Received: by 2002:a17:907:9405:b0:ad8:9c97:c2e5 with SMTP id
- a640c23a62f3a-afe2875bfdcmr2604625966b.0.1756485740538; Fri, 29 Aug 2025
- 09:42:20 -0700 (PDT)
+        Fri, 29 Aug 2025 09:43:28 -0700 (PDT)
+Message-ID: <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
+Date: Fri, 29 Aug 2025 12:43:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org>
- <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
- <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
- <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
- <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
- <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
- <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
- <CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com> <20250829123321.63c9f525@gandalf.local.home>
-In-Reply-To: <20250829123321.63c9f525@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 29 Aug 2025 09:42:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com>
-X-Gm-Features: Ac12FXyxaMJRB_uNJ16NrW9PwMVmli5CdBpfhgymWkTxGXIEdjwFXvJ_jKjFZ2M
-Message-ID: <CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, 
-	Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-man@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
+References: <20250829160200.756194-1-bigeasy@linutronix.de>
+ <20250829160200.756194-4-bigeasy@linutronix.de>
+From: Carlos O'Donell <carlos@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=carlos@redhat.com; keydata=
+ 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
+ m/A+1AHg4g==
+Organization: Red Hat
+In-Reply-To: <20250829160200.756194-4-bigeasy@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Aug 2025 at 09:33, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> I just realized that I'm using the rhashtable as an "does this hash exist".
+On 8/29/25 12:01 PM, Sebastian Andrzej Siewior wrote:
+> Based on the date in the comment, the here provided URLs should point to
+> the mails that the gmane URL no longer can.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>   man/man2/futex.2 | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/man/man2/futex.2 b/man/man2/futex.2
+> index 69df4036ada7f..027e91b826bf1 100644
+> --- a/man/man2/futex.2
+> +++ b/man/man2/futex.2
+> @@ -6,10 +6,10 @@
+>   .\"
+>   .\" FIXME Still to integrate are some points from Torvald Riegel's mail of
+>   .\" 2015-01-23:
+> -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=7977
+> +.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triegel.csb
 
-The question is still *why*?
+Wrong link?
 
-Just use the hash. Don't do anything to it. Don't mess with it.
+Should be this link:
+https://lore.kernel.org/lkml/1422037145.27573.0.camel@triegel.csb/
 
-> I could get the content of the item that matches the hash and compare it to
-> what was used to create the hash in the first place. If there's a reference
-> counter or some other identifier I could use to know that the passed in vma
-> is the same as what is in the hash table, I can use this to know if the
-> hash needs to be updated with the new information or not.
+Where the discussion is about the unresolved constraint to guarantee FIFO order.
 
-No such information exists.
+>   .\"
+>   .\" FIXME Do we need to add some text regarding Torvald Riegel's 2015-01-24 mail
+> -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=1873242
+> +.\"       https://lore.kernel.org/lkml/1422105142.29655.16.camel@triegel.csb
 
-Sure, we have reference counts for everything: to a very close
-approximation, any memory allocation with external visibility has to
-be reference counted for correctness.
+Confirmed, this is correct.
 
-But those reference counts are never going to tell you whether they
-are the *same* object that they were last time you looked at it, or
-just a new allocation that happens to have the same pointer.
+>   .\"
+>   .TH futex 2 (date) "Linux man-pages (unreleased)"
+>   .SH NAME
 
-Don't even *TRY*.
 
-You still haven't explained why you would care. Your patch that used
-inode numbers didn't care. It just used the numbers.
+-- 
+Cheers,
+Carlos.
 
-SO JUST USE THE NUMBERS, for chissake! Don't make them mean anything.
-Don't try to think they mean something.
-
-The *reason* I htink hashing 'struct file *' is better than the
-alternative is exactly that it *cannot* mean anything. It will get
-re-used quite actively, even when nobody actually changes any of the
-files. So you are forced to deal with this correctly, even though you
-seem to be fighting dealing with it correctly tooth and nail.
-
-And at no point have you explained why you can't just treat it as
-meaningless numbers. The patch that started this all did exactly that.
-It just used the *wrong* numbers, and I pointed out why they were
-wrong, and why you shouldn't use those numbers.
-
-          Linus
 
