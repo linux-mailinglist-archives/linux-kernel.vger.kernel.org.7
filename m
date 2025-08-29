@@ -1,164 +1,139 @@
-Return-Path: <linux-kernel+bounces-791165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90E1B3B2C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD5DB3B2C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B89E16B4D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CEE987CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE0E220686;
-	Fri, 29 Aug 2025 05:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6131D8A10;
+	Fri, 29 Aug 2025 05:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ez7R80Br"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="flugKghJ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DBF1FF1D1
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A5A1A5B8D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447145; cv=none; b=TmtIsVZ4tYuoTBV6Lg+NX8clHYH2+N/Mx+qsiOF7eOQvsWAgyqwURjPZPqy7Din2muoILfR5UxQTWcOTTAwwnQYiBqKIco3K3mtlFr2FgZsXhruALvn+XavV2weRu+BmXZ1M3OTQVPPcYNNkyMb2dq77rophc+NDdJN2E5EESZ0=
+	t=1756447174; cv=none; b=ppkGdPYYZ6chmWuEyK2JUJklHFzzGyj9QkyKjuyG0KqkvNz2aBKOYB5mRi2HJCYvdGLld5ECPVpZgu9zqeljpROpsjVkCqO/ruo4rb5TJVKhQfQOtvvficJZcYwsBQLmWLuHbePHG+A/Z3Lbr5TZ5sjQ7Go88NpcvErfELx+uyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447145; c=relaxed/simple;
-	bh=kCfQ8ISGxKI+1ym5WMCNEewc5989yFoQC7vkJ/V7emA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=apa21pTUXvW1WO62YETe/DvlXqRw7K/AlOeqP0SWFe3LK9EEdr3ba3X1iWetLNungMj2hjymfPG2rUXZT18Gin0yex6k7/iutDJdNvjuA8y9bYxqH3rxagwtYpR/8qtsylOtReY6aHRKHAdZ9mHqw1P5NzFwdbl0S58xsXj17BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ez7R80Br; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7a5cff3so28520966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:59:03 -0700 (PDT)
+	s=arc-20240116; t=1756447174; c=relaxed/simple;
+	bh=HQHfXVXKCqm565Dn42Z59+LNgV1U4UlkiCvPgaZSeQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KpZfsTMiS8dg63HWb58pembKBk+HsFxyU418EoPDK0D/7YWf3sF3wdJEFV4b7zuu3YiAnfMNVs7Xin6JlBekNkVe6aQeJnRBorlXQxeUBGw87enXUjyocxnKoNn6nd4QG60AOosvXtbItZuyVLyttD235oz5rrGcAgscL9i3Ew4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=flugKghJ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336630769a6so16429061fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756447142; x=1757051942; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a8nLSUsm88QMj2KXiJKv/xrkbZBm4Zb7nYR0CSmM3jI=;
-        b=Ez7R80BrNnbHs2A2NDuLU/W3ATfGGPi/DFFWiIJd002J6NbMczmaOPr90HfaiCA19+
-         8nca2JZH/ilw0HUtfMP94c4bYWEVDe/mFCKlPKaeUkYnJJ0GDJ6LrsMHrSN2aqCsGo8f
-         L64Mp+4qDRGmhAiiwPZOpVb6mW99JE+4ABASbJkS82Mn9/O5t1aGdv5Y+ehG06yvo52v
-         j1RlQ7OHQZ3nqbrzzT9vI4sQ/r8xI7B1vD/tSinC0nwixiU+nhhiUKZEyWJczRhW8R8f
-         aPDh2HZeR+7cC4ZnDtXdaRD4xb4zhUIHBuDiNxI0bPqCT37+1om339AoVdAr1yBdxvGk
-         /uAQ==
+        d=google.com; s=20230601; t=1756447171; x=1757051971; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P9b89mWcH1WRoi8NB6LCKkiGizr7phQg5j8xmHQXvrc=;
+        b=flugKghJYfGrHrmWu5n6xDWoYY4uL0G/5bmZOOtwiqKdHk+Kb6vfw428PSR60W91Z1
+         xXFqqG3HScK+ibXsuKTmfjGCNPu/a7edeGERKa4Dz3QGIv5u5Nj1muqxW/uBO8zmA7JS
+         vaxBY5uetsyvTpmIbeDIx5g/z/r2DkOlXf4m5kSLSYGiR+Uv3W6x6+tUy4+25SjwTVz3
+         iQGNrVgnTTnoi2x2PJSG6HPasEKrYM6AVTQTTGiQU+Pv4xjTjPOfXLK+8LGGDDLp5+E4
+         U+TICFsJ0fO7AsDtgRNRmpGrHbRMy7Rw0rzPyjT+/MMUjYLtW54pUO2bujM827yvqrAM
+         qxJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756447142; x=1757051942;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756447171; x=1757051971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a8nLSUsm88QMj2KXiJKv/xrkbZBm4Zb7nYR0CSmM3jI=;
-        b=bmZ1fX92ZpaoT97c9FQCCe4H0RLeVLB2tmD1hqfvZbaC705STGvW0wOpCsgTH+GnFV
-         KgmR989W9r0GmujD+yzQFJQ0V6Sa5kBqEhWJdnrp9i17if5Pj7MpUwvajdo4+gU2Vmfa
-         omibTBKGgh0SNZeHhVcsBasZ2MBOJJPpiAgNoU1Hm9/JysHuPZCEXVuRtwReDKWJ44bV
-         CxWeKoyPcZEhKIiPyeGnAFRFgbo8Q4MLYgPnm+NXUSz8+hikZOOfxj9kTUftZUHjWnIC
-         0g5sVnT+Uvn8SCS4YXztWwJr4QWNY+02XX3+7Oob8SozJjlhx/7UR4LJBxnTmfPa/VzJ
-         rH5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1WYOnE2G9wSNpMkCOphZJijvZjarcJXlweJziwFe1KBnKlQnmmBg09wj66ura2zG1982Ta3eOHyf42Lg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwplC5264IAvwnG3UJIx4bJ0nkIuYQfxdi5/w13pJkFVcMQg55i
-	cDH+f107E+ZDbS1Q8Oc7L0gKpBCW8/rb4i8pGv8psy119NI3i70CG56CfhIisy/RsGo=
-X-Gm-Gg: ASbGncvTnxgbdhAjxTsUXo+7bsm1Da6ZUZpbz2hrIkjypJIoD3D/uFGoCpTjRB5+N5O
-	Bwf06jpQb1J2YiaIgvPwAuf3L0ZSRI5XvIp5OOa/+j84Wz5Jrt/mVSwplpwLCpXpwxu0VVjXpP9
-	6/Y4ISDP9t+PgHz8ZhWiZ+qgynyq2Fxir3RAeciyA5y3GBPSWn9w9UjDvgnDULwR6eM2EiXTaSh
-	1zxHLAKoOupCZh88TdISTVQd3AM2ortCJ9GfxRUiuOOCxx6oM/KmWtlzaglsU/NqbujsiNNgJPS
-	CGqNxG6CRZXhLEniKI4RxkdaU0essG7ISugMWJ8smNv7na4enBgYJcXIyJVnkiis/Y42Ast0V1W
-	py26W+bWLP0hg08sHDgS294vzaYIxyXq35y2K6jBVYhKb0Hl5PFTQnA==
-X-Google-Smtp-Source: AGHT+IFJoBS+3mvK22Fgj6iGPN4/Io1Wtp2BF5CgdO2geYPYBqSJlkS1FUSI5IVAmVO8bCseZE6bPw==
-X-Received: by 2002:a17:907:3c95:b0:afe:ee31:4b93 with SMTP id a640c23a62f3a-aff0e28a1demr8112766b.0.1756447142009;
-        Thu, 28 Aug 2025 22:59:02 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff00a5e96esm99362866b.88.2025.08.28.22.59.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 22:59:01 -0700 (PDT)
-Message-ID: <4e51bbdc-744b-4a23-a695-a6c49d82e779@linaro.org>
-Date: Fri, 29 Aug 2025 07:58:59 +0200
+        bh=P9b89mWcH1WRoi8NB6LCKkiGizr7phQg5j8xmHQXvrc=;
+        b=P9d0NkYvNMl9kgb9BVJUeDpgJ5wqOift2GTT9W96cJa7C5/yjlsTgXkoFbjlc21Aq3
+         SamHIrYDy+HfQtZW/TQIKCABzrFkdQ0P4oYYhwNcvdwtlo0uUVTsn4h4o5V73PLw09lb
+         FeI/ysn4JKqKuqTXsRBRmxc/a8h6Kjxdm3iMvWhNxSvCTpwoEfm7pQNRhGn1mqxPDwcW
+         rtOOLCnlH7wBQ+o/i+9fqUhFc3pgT0U2mX39nVx6icibda+WKWwqeawDz9KhWunTsAiD
+         gB/PfFvJk+NgXQUhwEXNYYYAjiXVOA3vOPLOmJQQDY1xjG6EY6ORfqCUR8gSSlvRtKqM
+         +Q+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWAxwRcF9VWq8oQnpMXOH0EGUY38COsdctJa0mLdKWfpCy5vrCgFwbTELhg0MC16CymAW9CQcadvHkw7aY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD8iqcU09pfSc4TMXNhs23QRtBDtnR0LWYSFi7WscY/ubB1Dt/
+	OfTzmpkS+yFh9DJlHXK9x4DMSDVGrQr/+EY4vZHthLdVDw38MrLhZNKWylwpCXewpJ+29Gwwjsl
+	4tsg46VpLJpRSEe0IXKW9L8yCbpr2v5rA/6OkByGR
+X-Gm-Gg: ASbGnct90nqxy6QmOIbpjK+Rt5VzXS8Adh84T3Fdc8gVpV/to0wTm6OQh2020oXtuo6
+	noQfPCx931LrhQl7BnGHD68pi3NVgVcfj8Zf1RUDPXXbTTox4PG+WWXP4zoZgnYamoTe8dVce8b
+	jyS5Hrgt2PSuLQ62NaC52dSGv/ZT9Xx6bXiTyBnmYgxIRafnFUnYcWqNCnKpAzPNN7EFSbjc4+p
+	/u2E8vZEiLdd8+pv3j6D9CGO6X+vfHpbLX/fFYHsslUlODq9zK8mYC8mw==
+X-Google-Smtp-Source: AGHT+IGpsSHWaCkR84qNI3V45LpCTM6KTwnsCQMP483IEziQLGCDzdNJpFNTpDClHjL7Rp31C5D88TK18RjtyhkTPDc=
+X-Received: by 2002:a05:651c:1118:10b0:333:7e5b:15c0 with SMTP id
+ 38308e7fff4ca-33650ea0b23mr53475191fa.13.1756447171269; Thu, 28 Aug 2025
+ 22:59:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: axiado: Add missing UART aliases
-To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev,
- soc@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250828-axiado-ax3000-missing-serial-alias-v3-1-393111f4bd9e@axiado.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250828-axiado-ax3000-missing-serial-alias-v3-1-393111f4bd9e@axiado.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aKYEpf7xp3NnkBWm@x1> <CACT4Y+YX-ROx0cW4pkDnqbdfbigVycwPLwO12RNbbtX9-Qp73A@mail.gmail.com>
+ <aKv_FjtkPIR86inu@google.com>
+In-Reply-To: <aKv_FjtkPIR86inu@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 29 Aug 2025 07:59:19 +0200
+X-Gm-Features: Ac12FXzOVh7BPaHMQclLjPZcl1R6uL53TzQPya8c8MkZgMLcA8AbQsulHRMdbNg
+Message-ID: <CACT4Y+ZxqgqAGoSgUaVKk6_=h1dO7iV8qrVHDOrmbBS3VW8-=g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Revert "perf hist: Fix bogus profiles when filters
+ are enabled"
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/08/2025 20:27, Harshit Shah wrote:
-> Axiado AX3000 EVK has total of 4 UART ports. Add missing alias for uart0,
-> uart1, uart2.
-> 
-> This fixes the probe failures on the remaining UARTs.
-> 
-> Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Harshit Shah <hshah@axiado.com>
-> ---
-> - Run "b4 trailes -u"
-> - Link to v3: https://lore.kernel.org/r/20250824-axiado-ax3000-missing-serial-alias-v3-1-5db4143bf189@axiado.com
+On Mon, 25 Aug 2025 at 08:13, Namhyung Kim <namhyung@kernel.org> wrote:
+>
+> Hello,
+>
+> On Wed, Aug 20, 2025 at 06:14:08PM -0700, Dmitry Vyukov wrote:
+> > On Wed, 20 Aug 2025 at 10:23, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > >
+> > > This reverts commit 8b4799e4f0f40a4ec737bf870aa38d06288bf0fb.
+> > >
+> > > Not combining entries in 'perf top', so we're getting multiple lines for
+> > > the same symbol, with the same address.
+> > >
+> > > To test it, simply run 'perf top', then do /acpi to see just symbols
+> > > starting with acpi_ and notice that there are various lines with the
+> > > same symbol, press V to see the address and its the same.
+> >
+> > With this revert, does it show 1 entry but with a wrong percent?
+> > I am not sure why there are 2 entries for the same symbol, but if we
+> > merge them, we can sum of percents. Is it the right thing to do?
+>
+> I don't think it'd have a wrong percent.  The hists maintain stats for
+> filtered entries separately.
 
-Please don't do this. It just generates unnecessary traffic. See my
-instructions you receive on your first submissions.... unless you want
-to send patches to soc@ (which looks added here) but then this is also
-wrong - we do not send patch by patch. Collect *all* the patches for the
-next merge window and send them around rc5 (rc6 being the latest).
+I still don't fully follow.
 
-Best regards,
-Krzysztof
+If we merge a filtered entry into non-filtered entry (with the
+revert), now we attribute what was filtered out to the non-filtered
+entry, and the non-filtered entry has wrong overhead, no?
+
+If we merge the other way around: non-filtered entry into filtered
+entry, then we won't show it at all.
+
+> Based on the position of filtered entries in the RB tree, I think it
+> might not merge correct samples together and create multiple entries
+> with the same info.
+
+The second thing I don't understand: without this revert we don't
+merge filtered and non-filtered entries, top shows duplicate entries,
+does it mean it shows filtered out entries? This also looks wrong...
+
+> Filtering by unused sort keys would be undefined.  We probably want to
+> warn users instead.
+
+Do you mean that the filtered=1 is set incorrectly in this case?
+Do you mean that with this revert 2 bugs just compensate each other by
+luck: we wrongly set filtered=1, and then wrongly merge them together,
+so it all works out in the end?
 
