@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-792081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09145B3BFEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:54:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27959B3BFF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F0007B2E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:52:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29716564BE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C838345722;
-	Fri, 29 Aug 2025 15:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A392C3451D5;
+	Fri, 29 Aug 2025 15:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCsXZhJJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YD8acBty"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4DC3451D5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EB6345741
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482581; cv=none; b=uGof+BfW7Mw1AEGEUfithJt7uFVGQmbylSVv1DTH9ahlOJNoH//f6KAl4WFKFBqrn/Zxj7B6qkPyL2wPCPOpZS8n5Pw5FNW/lVlocqnq0dJOC0bpY8OjvwnRDUL1r+WoQHnASV+W6wVY91nOOUT5MuonNEHelbKmAAm1+/Cqf2A=
+	t=1756482584; cv=none; b=sPlrLnwlUYuVJOGhE3kU37K7HdyTxQlBxk6ML70md92sy+VjjluqKXWdmBotf0CHvYcgf85kDHdTM8NDlVWa/yfT3Zsl3e1upAJQGCdJ1NwKc4bMSLAQNtIITLj8yEMC9+S+27Mk/kr2uDpE3NFGh2CaWjbd7o3xhVvEsE235/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482581; c=relaxed/simple;
-	bh=n52cAu7bEMYLK1x1CARbNE9gVHxK/1DrMBlj3TyiG6U=;
+	s=arc-20240116; t=1756482584; c=relaxed/simple;
+	bh=tmme1GHCRZttEH0fzbesyJQ/RQ0GFTr99io8B0/CrOM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e2HGndQTMRi/UtkInXnlmq4x1tbVRD07gEMtBYYnFB42aQXU96gLUFWUDtcxQCP6hCP8bgy99bdoGh5av+SuhXOhFanQRVqzkStfijzjWpUFbfbQjFXAp5Ib0wSkptDXYdpp2oivJ7ulRi8x6BaP6VeOdf/lY7XZ+HIvHb2psHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCsXZhJJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33CDC4CEF0;
-	Fri, 29 Aug 2025 15:49:39 +0000 (UTC)
+	 MIME-Version; b=Zh+36ly9G9O6bMyGpBw5eYsuoiRz8nAj5lP7ZOHkIbu1NJ9FOg/U4PZUiLxfHjpeybGtV+OaoTTCkGwWbslOF3R6IgyKiqU9RdRHzmRmDVnuXkFIRPk2TpTOi+bmlVnMN9AqnGCFdthH7rTCdVh1W8QiPitH+s90QgNtrYS4R6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YD8acBty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CE1C4CEF0;
+	Fri, 29 Aug 2025 15:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482581;
-	bh=n52cAu7bEMYLK1x1CARbNE9gVHxK/1DrMBlj3TyiG6U=;
+	s=k20201202; t=1756482583;
+	bh=tmme1GHCRZttEH0fzbesyJQ/RQ0GFTr99io8B0/CrOM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hCsXZhJJuSzcbOV2emvF2IXQgJKhCJ5oXujhVYoIeYfxonhIaXF1jE2yHzbGZYJXd
-	 1Tu8OzFhVZWH7+vWC7MhmuMqTOYc5Fq5Wnw8cNre6suETrByplGsG3SKt04IhqgeND
-	 oJDUGuQ/Fau+jhxaHoGCUkrCtVsiWgSI1a21uUFqCIzh3iYNJj2GWhcQqSc2+BIWVH
-	 O6sLuILxwt7yS+fb7mNUEAdKUU7pIUJymgQcll6mi70e8TFJYyR3pB2sxFkyOT0zJ1
-	 klNAg/j5Ikn09eV0Sqv5cleve0i75Eat0A2vpSXtBZjm0ZVvSwioiUiTK8LveYC+7u
-	 jFRGj4rua0aLA==
+	b=YD8acBty7uTe7lkSuCFwOxAFRxYC5vf1qSBSyYfi9nuYsNCz00UrngZDNNcqK3V9U
+	 yIoIfAd26AaLADYX44IpcqZfR0Hl/v0/yPPzOiBoSqDJfi2+4M9mw2/rT8NIUA2s74
+	 nGys6NvCAR+TnGTIZe48AVOU6jQo+632thLRetDWZzANMdXHvvhGSDp635jVK90gPp
+	 P2/geXdYLXNwNvet6/gvEwe4j4/hrdyt7hqyE46adZxVBU8BnLOZYaRg9kM/p25E3J
+	 7c2ANkdQfiq6lD5HrtoUxYHMBtBrGZXCA6FajhotONZnjOx6lDeIhAkeLoA0H55UvP
+	 b3Yhb81AeUJQQ==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -48,11 +48,10 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Tejun Heo <tj@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH 29/33] kthread: Comment on the purpose and placement of kthread_affine_node() call
-Date: Fri, 29 Aug 2025 17:48:10 +0200
-Message-ID: <20250829154814.47015-30-frederic@kernel.org>
+Subject: [PATCH 30/33] kthread: Add API to update preferred affinity on kthread runtime
+Date: Fri, 29 Aug 2025 17:48:11 +0200
+Message-ID: <20250829154814.47015-31-frederic@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
 References: <20250829154814.47015-1-frederic@kernel.org>
@@ -64,36 +63,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It may not appear obvious why kthread_affine_node() is not called before
-the kthread creation completion instead of after the first wake-up.
+Kthreads can apply for a preferred affinity upon creation but they have
+no means to update that preferred affinity after the first wake up.
+kthread_affine_preferred() is optimized by assuming the kthread
+is sleeping while applying the allowed cpumask.
 
-The reason is that kthread_affine_node() applies a default affinity
-behaviour that only takes place if no affinity preference have already
-been passed by the kthread creation call site.
+Therefore introduce a new API to further update the preferred affinity.
 
-Add a comment to clarify that.
+It will be used by IRQ kthreads.
 
-Reported-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/kthread.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/kthread.h |  1 +
+ kernel/kthread.c        | 55 +++++++++++++++++++++++++++++++++++------
+ 2 files changed, 48 insertions(+), 8 deletions(-)
 
+diff --git a/include/linux/kthread.h b/include/linux/kthread.h
+index c92c1149ee6e..a06cae7f2c55 100644
+--- a/include/linux/kthread.h
++++ b/include/linux/kthread.h
+@@ -86,6 +86,7 @@ void free_kthread_struct(struct task_struct *k);
+ void kthread_bind(struct task_struct *k, unsigned int cpu);
+ void kthread_bind_mask(struct task_struct *k, const struct cpumask *mask);
+ int kthread_affine_preferred(struct task_struct *p, const struct cpumask *mask);
++int kthread_affine_preferred_update(struct task_struct *p, const struct cpumask *mask);
+ int kthread_stop(struct task_struct *k);
+ int kthread_stop_put(struct task_struct *k);
+ bool kthread_should_stop(void);
 diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 4d3cc04e5e8b..d36bdfbd004e 100644
+index d36bdfbd004e..f3397cf7542a 100644
 --- a/kernel/kthread.c
 +++ b/kernel/kthread.c
-@@ -453,6 +453,10 @@ static int kthread(void *_create)
+@@ -322,17 +322,16 @@ EXPORT_SYMBOL_GPL(kthread_parkme);
+ void __noreturn kthread_exit(long result)
+ {
+ 	struct kthread *kthread = to_kthread(current);
++	struct cpumask *to_free = NULL;
+ 	kthread->result = result;
+-	if (!list_empty(&kthread->affinity_node)) {
+-		mutex_lock(&kthread_affinity_lock);
+-		list_del(&kthread->affinity_node);
+-		mutex_unlock(&kthread_affinity_lock);
  
- 	self->started = 1;
+-		if (kthread->preferred_affinity) {
+-			kfree(kthread->preferred_affinity);
+-			kthread->preferred_affinity = NULL;
+-		}
++	scoped_guard(mutex, &kthread_affinity_lock) {
++		if (!list_empty(&kthread->affinity_node))
++			list_del_init(&kthread->affinity_node);
++		to_free = kthread->preferred_affinity;
++		kthread->preferred_affinity = NULL;
+ 	}
++	kfree(to_free);
+ 	do_exit(0);
+ }
+ EXPORT_SYMBOL(kthread_exit);
+@@ -900,6 +899,46 @@ int kthread_affine_preferred(struct task_struct *p, const struct cpumask *mask)
+ }
+ EXPORT_SYMBOL_GPL(kthread_affine_preferred);
  
-+	/*
-+	 * Apply default node affinity if no call to kthread_bind[_mask]() nor
-+	 * kthread_affine_preferred() was issued before the first wake-up.
-+	 */
- 	if (!(current->flags & PF_NO_SETAFFINITY) && !self->preferred_affinity)
- 		kthread_affine_node();
- 
++/**
++ * kthread_affine_preferred_update - update a kthread's preferred affinity
++ * @p: thread created by kthread_create().
++ * @cpumask: new mask of CPUs (might not be online, must be possible) for @k
++ *           to run on.
++ *
++ * Update the cpumask of the desired kthread's affinity that was passed by
++ * a previous call to kthread_affine_preferred(). This can be called either
++ * before or after the first wakeup of the kthread.
++ *
++ * Returns 0 if the affinity has been applied.
++ */
++int kthread_affine_preferred_update(struct task_struct *p,
++				    const struct cpumask *mask)
++{
++	struct kthread *kthread = to_kthread(p);
++	cpumask_var_t affinity;
++	int ret = 0;
++
++	if (!zalloc_cpumask_var(&affinity, GFP_KERNEL))
++		return -ENOMEM;
++
++	scoped_guard(mutex, &kthread_affinity_lock) {
++		if (WARN_ON_ONCE(!kthread->preferred_affinity ||
++				 list_empty(&kthread->affinity_node))) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		cpumask_copy(kthread->preferred_affinity, mask);
++		kthread_fetch_affinity(kthread, affinity);
++		set_cpus_allowed_ptr(p, affinity);
++	}
++out:
++	free_cpumask_var(affinity);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kthread_affine_preferred_update);
++
+ static int kthreads_update_affinity(bool force)
+ {
+ 	cpumask_var_t affinity;
 -- 
 2.51.0
 
