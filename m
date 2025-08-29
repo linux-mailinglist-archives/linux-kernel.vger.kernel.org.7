@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-791599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8795CB3B8FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:37:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15295B3B901
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41AE1364CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E6A1890FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D72309DA5;
-	Fri, 29 Aug 2025 10:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8B01DF256;
+	Fri, 29 Aug 2025 10:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrpuH4vt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9bIU6j4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFBB21B9E2;
-	Fri, 29 Aug 2025 10:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7926304BD7;
+	Fri, 29 Aug 2025 10:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463826; cv=none; b=HcFZK185gDTwzqtI/eT9QARcIKVKCAN9pO3Zh32i8GjNd3T1AiYfapnNd7kNi4jORG2YRDwy5rzInTwOeJ9Y8UE6WVfKRGaAOmvxvFUNiml18HFQcxOMjAdiRnjZqEHbKES2zWexNCRFn4JYbcrnHbh/phCbDCHU/pA3EZspNho=
+	t=1756463874; cv=none; b=PgBvrtPMsP6SJ4R0oeDHlY/ZKOlRO2RA8L9m0pQbHdkxnozC/hkT7F/uCVykpfqDrjcTxWusRWpheBpWYytNllg5/X+SLFSBP78Bt4PCvczTVlFfWVoEHlWN2EZqxD65zmFYYMTK87bo3amV4v3Ell868ww/ghyQi0HsRR8lMGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463826; c=relaxed/simple;
-	bh=twpmMydgICDDkUVDIvDfY78Sj0i19Dq/UEGfEUuux1s=;
+	s=arc-20240116; t=1756463874; c=relaxed/simple;
+	bh=6+IneIRXnN1BtRMi9Cul7I1x7ymoX1yi29SUkCkGlZs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b7IPflKO1bQwBYfeW7CvbBDuddtMPA4bFP2BaxnVhYNf26A2+2i/LpFv/9Sdsh7Zr+7YK9W4uukw/5a394axHXM0MNiUaF9gmtxntZq/aJPa5TWwW2b5T1YDb41uFlTi5uq5lqar0pqOrDH46Ssr/1jVK3iu9ASDF4e7OFmvgxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrpuH4vt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 208D4C4CEF0;
-	Fri, 29 Aug 2025 10:36:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gRq3uZuMFuSuFSjeSZNq0q70N5Ksa7ieWWdJZkxu5LhPr8IRF0UFpvRrTVG+EGM/OMxYqNrKqRAba5snoH8pXzxFBI6OECy7R1rLzCLyvwxnvptrOKXqNHYVXe+QI/r+0MQyfFjkeluSxuKz02mTmI8TDRqWv+v56+w3+p+X74k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9bIU6j4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4549C4CEF4;
+	Fri, 29 Aug 2025 10:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756463826;
-	bh=twpmMydgICDDkUVDIvDfY78Sj0i19Dq/UEGfEUuux1s=;
+	s=k20201202; t=1756463874;
+	bh=6+IneIRXnN1BtRMi9Cul7I1x7ymoX1yi29SUkCkGlZs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JrpuH4vt9h+7I5uDIi1z32DF4FivnQM8qzJuzSgvUdjD0ilUL0EYSlJiyQm0iMzpI
-	 4ZZONeMbba+BvmXZ4T+1b/Y1eqR/sXHv/A+vRZGIrx8L/762U5dLVc5UPABesqhSci
-	 vdC072mLRISyravqh5voJmkTWqmvXP1TYREVmvN5wheZsyHG6B4yZTas4gAbhq+ffJ
-	 uf4eEjvODHB2ahVjtrkTxIcQfSLMM8av3U9HL5WSK9ltQa4BPZOUY//05CjeuBLtiI
-	 c9G1uWViAlyQL4764sDSQF/R+x8uv9ENDj4IvGIJNXGMOo8V5fykEMw3kRCpb/2NTG
-	 I0jloOUhgM62A==
-Message-ID: <e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
-Date: Fri, 29 Aug 2025 12:36:58 +0200
+	b=t9bIU6j4hHvqXcrCYkruZfMHBSejaoEkmGnT3v2LE09vwrOdO0jrhzsX5+qPxzN72
+	 2YcJgepC7FhjzNQhH1Ror3Kyk7H+I6NGZkW/EocJoD9s6kYSJYhBPCVppoL9QJhZxK
+	 78o13UpN6h9/IRzaOFpJedRKMLY1QEt0GZoH+F1kQwDTqvD2RXprcraOSOtX11z51m
+	 Vy8eV0GU17giqlm3VShZ+JCOgAdTXhNtdaIRPipIZvjCNlYOvHjVU5wQmMKzFKN/Ju
+	 wtvrn+W8R7+P1ox14bFI96fI37SbGRmnH8bGJFMsi3HhCYVO/lrpqQ2gWBgsmIr1lb
+	 MxByKS8W50jGA==
+Message-ID: <dcb0c746-62ed-48f6-9247-03bdf36c6e92@kernel.org>
+Date: Fri, 29 Aug 2025 12:37:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kauschluss@disroot.org,
- ivo.ivanov.ivanov1@gmail.com, igor.belwon@mentallysanemainliners.org,
- johan@kernel.org, m.szyprowski@samsung.com, s.nawrocki@samsung.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
- <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
- <20250822093845.1179395-6-pritam.sutar@samsung.com>
- <20250824-rough-fresh-orangutan-eecb2f@kuoka>
- <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
- <83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
- <000401dc18cd$ec02a1b0$c407e510$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 0/2] brcmstb-memc-ddr binding updates for MIPS boards
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-mips@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ "open list:MEMORY CONTROLLER DRIVERS" <linux-kernel@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+References: <20250729205213.3392481-1-florian.fainelli@broadcom.com>
+ <aLF_DEu6YNSCSRxu@alpha.franken.de>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -114,63 +108,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000401dc18cd$ec02a1b0$c407e510$@samsung.com>
+In-Reply-To: <aLF_DEu6YNSCSRxu@alpha.franken.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
-> Hi Krzysztof
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 26 August 2025 02:05 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
-> .
-> .
-> [snip]
-> .
-> .
->>>> Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy:
->>>> add
->>>> ExynosAutov920 combo ssphy
->>>>
->>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
->>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
->>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
->>>>> "phy" and "ref". The required supplies for USB3.1 are named as
->>>>> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
->>>>
->>>> Please do not describe the schema, but hardware. This sentence does
->>>> not help me in my question further.
->>>
->>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2 phys are
->> totally different).
->>> One PHY only supports usb2.0 and data rates whereas another one does
->>> usb3.1 ssp+ and usb3.1 ssp
->>>
->>> This patch only explains about usb30 (since these are two different phys) phy
->> and omitted inclusion of usb20 reference (added separate patch for this patch
->> no 3).
->>>
->>> Hope this is clear.
+On 29/08/2025 12:21, Thomas Bogendoerfer wrote:
+> On Tue, Jul 29, 2025 at 01:52:11PM -0700, Florian Fainelli wrote:
+>> This patch series updates the MIPS-based Broadcom STB chips to use a
+>> proper compatible string for their memory controller node(s) after
+>> 501be7cecec9 ("dt-bindings: memory-controller: Define fallback
+>> compatible").
 >>
->> No. That sentence still explains what schema is doing.
+>> Florian Fainelli (2):
+>>   dt-bindings: memory: Update brcmstb-memc-ddr binding with older chips
+>>   MIPS: BMIPS: Properly define memory controller compatible
 >>
+>>  .../bindings/memory-controllers/brcm,brcmstb-memc-ddr.yaml  | 4 ++++
+>>  arch/mips/boot/dts/brcm/bcm7346.dtsi                        | 3 ++-
+>>  arch/mips/boot/dts/brcm/bcm7360.dtsi                        | 3 ++-
+>>  arch/mips/boot/dts/brcm/bcm7362.dtsi                        | 3 ++-
+>>  arch/mips/boot/dts/brcm/bcm7425.dtsi                        | 6 ++++--
+>>  arch/mips/boot/dts/brcm/bcm7435.dtsi                        | 6 ++++--
+>>  6 files changed, 18 insertions(+), 7 deletions(-)
 > 
-> Ok, let me simplify the commit message further something like below. 
-> Anyways, the coverletter contains more details about it.
-> 
-> "dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo ssphy
-> 
->   Add schema for combo ssphy found on this SoC.
-> "
-> 
-> Please confirm if this looks fine?
-> If so, will reflect the similar commit messages in patch 1 and 3.
+> series applied to mips-next.
 
-Please read my first comment again. I do not see how does this satisfy
-hardware explanation.
+Why entire series? You were notified two weeks ago that I already took
+the driver subsystem patch.
 
 Best regards,
 Krzysztof
