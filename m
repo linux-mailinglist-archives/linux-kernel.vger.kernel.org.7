@@ -1,356 +1,361 @@
-Return-Path: <linux-kernel+bounces-790947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603BAB3B01A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A56B3B01D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2043A566733
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88D67C7370
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F301A4F3C;
-	Fri, 29 Aug 2025 00:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731719F40B;
+	Fri, 29 Aug 2025 00:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pcNyzL7Z"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SRwOjidb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6B42AEFD;
-	Fri, 29 Aug 2025 00:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756428990; cv=fail; b=EcPxxpjj9fbEemoVaUuYDDn5Noin2/eEvS2ia2mlx8sZ0H/rCcCOmeZ7OH4RhmL67kBy/nmNUaZaQ++8RZjdLf9A7UsOEWW1dBuoqGsKO79Om32RrEFSXuGOyyjfhQ5e5zBM7LP4qFezUtIT8VWt60HCTOV3cd7JyA/o3fmIXWk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756428990; c=relaxed/simple;
-	bh=DgaTTllQ2koKw9cCSZ/yxSKzU7RoXr2+cWWW4Bbej3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GhIycru3jRFWeLi+i43joY5YFf6p2xPXQc0AHt4GINjbGwN2NGoPNFhfm1KAy8umdfAY+HzF99+88yO9BAu/7/VLgzKZaHCxDFe4SAk4O/TJi8vRY3sc1RwK27wg4oPDGI1IDz2hw1eH9MZv7PlcN2NaVePJ47WKcL+3O/aT3Nc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pcNyzL7Z; arc=fail smtp.client-ip=40.107.223.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yXs8d1z9PgcsqSTXIz+IG5NU6IdkEAtenNBX10eMC3KOeAF7jqUS5hS2cE3k9n/5K3ALjAnJGcTn/5R7iQGnG/bWp4jQmOzLtCD4/byrcYS8A/o3eJmki3YnE5yuDIZE17WJu2qEQ6n3+6y078kqQTrWBFjQmIp56E7nx4brdtlG8FivF2WKFImTBpQSp7fOyj4QBqBXq0IT3bGmC/TSG3Du21F1DUsuhdTAX7xqKTAz/ZELd2pV/HL4puhnJrgwouHBFXq44g6b6fCDn8MIjR19u7YJ1s3E0KoJizOlSWQFQYU0wGjzGmPYVapyV+CNbKyrNaAjTH0FIiBsRZhEug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ElV8c7UXYWpDa86Yt0jvN7wvxWF0XAijYX6lzQqg9UE=;
- b=qOr3U8cCIL26d2qQvNKBwrkai2EzeEwBMo4UCnZBJxvc4MO8GNHeZI9XqB+3LFb1TdIuSyYmozgBn/i3BYFhFK0WtYeFoiw0Q7XsWZEgwyKRXDfos+D3nXSJDsDEKApK99ZWxVFGvegKuoEC1/B8MApunUPKHTmCAujPGaClecPM3EgJ6yS8ZmJRkBIOQ4yhkNyvzAscYFGkMZVFcg0BgPAO4a+GdH3471CQ3DEq/6FLak19MsS7NoLpS9JA9Zd0kXIpDTC0hKNT/vz79Emv4x4z5gjWBq3oYprVY0dvIoTSyfidMa+zW7hIAiGctlxLG8YJ0LxJvMyHHf8IiZwEGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ElV8c7UXYWpDa86Yt0jvN7wvxWF0XAijYX6lzQqg9UE=;
- b=pcNyzL7ZkcEq27uL1IWn5CtWNMci+LFVZFvG2F1eWY27yLaVR0q33whndwxbIENjGNdk2rQq+pXF9v0sivSJcVwGV0LZLDdYY7pXVgkfEulLNzxthH1Gu2MDbag7vrjmu8JRaM/hwnWVpNST5mdPZsICIE4rSOQ4aijtfxTwNiaMfupfr5X71HUv0CwFEWVNp3N3/y9gJZCAJNY7E6OMrtzYM/pWabP84ryiFrRUktWEXWADBhjrfar2PacRjSklW1UapcMLxsJwvltowSH5OWvcV9x4a0Zhp4TnwNHd9nMHWjzZ1jpuynfiBzVAtYu42/8yT/1tkgrE9OoUv8LRwQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- SN7PR12MB6930.namprd12.prod.outlook.com (2603:10b6:806:262::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.17; Fri, 29 Aug 2025 00:56:25 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
- 00:56:25 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>, Svyatoslav <clamor95@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v1 05/19] staging: media: tegra-video: expand VI and VIP support
- to Tegra30
-Date: Fri, 29 Aug 2025 09:56:15 +0900
-Message-ID: <2289640.ZfL8zNpBrT@senjougahara>
-In-Reply-To: <4BD9010B-3F5B-4EE3-B57C-A20DFAEC5276@gmail.com>
-References:
- <20250819121631.84280-1-clamor95@gmail.com> <2271797.NgBsaNRSFp@senjougahara>
- <4BD9010B-3F5B-4EE3-B57C-A20DFAEC5276@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP301CA0030.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:381::20) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EAA13D512
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756429025; cv=none; b=HSOMgLQezz87wPtroCbjfWCHsaqD2v81xTd5YEOusBqYXuRtrkHRo+S2Qc65s34/9Cynj4XicUmkwQJb4DQpAcU/rrWpWRL1LZIqaD7V+m/DRwRjcmanYWjzgU7mG+gunvucV2tYfHCjj9RGPPbv0eDxbC8CNNnQ7jzF1Ug/zY8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756429025; c=relaxed/simple;
+	bh=5VpBiD1bh8tENaMhlfTz0Xgm05LQYN+MAMED3oSVybY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y1njYgDMVym7WZ//reIqPDkaQ5jsCvyGSL0F9LURGXDMQZpmIdYLLmI8/TE2mJZYDrXXhkFI9eTgVheqyKJpb6U4590Ma11BgFhlo16FRIDUL4/Bm6quofNU4/cA/CyaZWde505gDn2l9PUaYeKemHPxPomAipqhgAz2FfqbKmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SRwOjidb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SLWfpA025067
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:57:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IKiaxI/p6jV7V+oPFUa1K2Xd/nFwPPTLeu8CrcN5bXE=; b=SRwOjidbtIHaO8pJ
+	cpOfV2tuKn3E6c1mhVUDorC2y9mjTZjPNX21mAN/eLYQX0RfHdBRMAlmDyzJv9nC
+	mvV0Mg6bxKCYf5aWiHtIPC7Np7VOtiACnDIHsaV4AwEQMoRDRtu2or5WJlyWzQum
+	dQetYUpH67u3Z+Oag9qrVQUxSq7to4N35fpFds26Y6mq/91RyoUuIn/SW050Wpw/
+	REV/tZ5nz93wQaqK64BbRw0QslFr22Xmq2dN+IeOXu3vgb9WhyYTHTNzPzXfPvYX
+	8OG3aTKHZJtmeEfzICblC7N+BwnZ2+ny3mbI1kOuPJQATjkAPVaNFvVx+bZRXUq6
+	/d48hQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q615t791-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:57:02 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-244581953b8so16006765ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:57:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756429022; x=1757033822;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKiaxI/p6jV7V+oPFUa1K2Xd/nFwPPTLeu8CrcN5bXE=;
+        b=mChHgZyH4xxadwAdycpEkqWNYkeoxCzalcml7oTUwBLdG8UoCErGOST5U9qlmYSkET
+         n0bGFXeJQtYFIQTrXwUAntEaR3Y7PrynxBjvIn+8+6G2N8iPM3F3kxZ8O15I2xEWmbpg
+         VyYUrpYwOaRVOEx3TseuJN6YXK+Ikzpfza+0TyJjd+Q8a64TWkLOAvs1MjuhTd25Engm
+         Z8JPzvqoZrOgDbVS4ieroie+L6PJB2tIi6ZGbCSSQ/xw5jyAjUwSzbyEQ8IJ5Sw1G8fF
+         Hss52KnsDsWl8nEuVb+HxsM/qlDficiGn0WB4Msd5D0GwAT35BRMIAMMju0CpIf1V1AK
+         St8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVTiBVaRdmrzh5mdp/lrUxIJqIM9/csec+OBmzWn8H3AOd4bxBYeHYyY7a9llheToVFypCkROAdKtRuTok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbIouSYmKuXTg1NbPnsTBE4s4Z+aXzYHqwNyr6+++wlmTOS6hF
+	K9iX3S8UPjHRbzCXgjLBLfNnsYU5OQDR6qL0ZfUxP46fa6iYYFcXR+Sw6HUcYHHUi0s8g9AMLqd
+	2IHi/d7trnoiU3XPBNnt7qj8MzXZ6/KIq1j+2Z+4kbXo25doCCXLMOFsjzkLtGlLI03k=
+X-Gm-Gg: ASbGnctsTNF5/Rwz+v48ln1k5KrgkPxYfcLUM14d23Fly6Eg/sROgYj2jtIyKgghBB1
+	YvYcb93Mcgyp2nW3fTR24pwV3aoYkzERlPjkpYBAzX7QKv+S3ceS4xlJqMbT7Xf93KotNyFXMNa
+	Ow/7ySil7X+lp8Sy1I6w5BeAlYa8cwdigGdvevI/VySi/z35/UstBhRNoT57V9V6Cs21GEEIqu+
+	5gtBTYoi7UB5x8qoZIwd7JoQjwIj1CAzWKZm52mEsB0rq5vYB3r6GIc2KIg2SpTt8Wfp9CUms1G
+	2mm1Z6kwB+MByKREBKi2Eds+LABAp/ls5if9li/QtIVv2HQzife/IAGoOfIAOS6VWiHtAPMyGJU
+	1B6FAPsYxVX0kioBFXfvZEIue4dU4/R0SZQ==
+X-Received: by 2002:a17:902:f64a:b0:246:8b9d:2519 with SMTP id d9443c01a7336-2468b9d27e8mr234886655ad.23.1756429021593;
+        Thu, 28 Aug 2025 17:57:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTJFC4qjj4YqaBpxnHZ+CcQLia3qSMORPl2dhJnZ/UiAPbctm4+aTBBM3i8lHcGkNVdMU7ow==
+X-Received: by 2002:a17:902:f64a:b0:246:8b9d:2519 with SMTP id d9443c01a7336-2468b9d27e8mr234886345ad.23.1756429021115;
+        Thu, 28 Aug 2025 17:57:01 -0700 (PDT)
+Received: from [10.133.33.203] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd006e546sm624210a12.4.2025.08.28.17.56.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 17:57:00 -0700 (PDT)
+Message-ID: <744e56ac-5421-49af-832b-61142ebb681c@oss.qualcomm.com>
+Date: Fri, 29 Aug 2025 08:56:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SN7PR12MB6930:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4720403f-1076-45ed-c323-08dde696e0cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2htb1RlU0IwMEVJNTJoNXRxVUhuNXR4aDRENCsrZEFCQTRFbEVjTElzQTBt?=
- =?utf-8?B?MTU1K2lHbEtqbEMrN0F3bjFkM0tWeWNhMXgxcUNSWFN4Nno5RUZpejlsY1RU?=
- =?utf-8?B?MXBISmJEVG9vMGhzLzVGUzJsYndkK3dzSStnMGExWmx3QUhQLzhVcndBRnRI?=
- =?utf-8?B?WEg5Vk5EeXZnM082eDJkem5QQ21HKzhKaE5iME1ZRUdEYWRRcHlrUGZ2UkpM?=
- =?utf-8?B?c2JVM3prRTZya0I4Q3J6Q0s5ZVlaK1hUYXE1eC96L0d0c20rTVRSaldxNHoz?=
- =?utf-8?B?azdaRmNibUIvbk1EZUoyTjZOOE1xbUhjbUdqdm56S25WNjVJbWErY0praVUz?=
- =?utf-8?B?YWVRdlRLMWRKUnBUNUJCb1BlY1RiL09KcjBiL0VmbXdxbXNTb1VXOVYyZUxt?=
- =?utf-8?B?UW00RytmNW9jUVk3YzhlZ1lsZU92V3ZxRjhsTVJBaFFNUXVTZUxHM3l3bWgw?=
- =?utf-8?B?dlVqd3ljcmRGQW5XSm5hRHNsbnYzbVNzR2VOK3hHbW0yWFROOGsrRVN6T3NP?=
- =?utf-8?B?QmRiZnd2WWgvVTRraUpCTmpyYVRpaUMrNFA4UithbnhzMkwrb2E5WnRqUEgr?=
- =?utf-8?B?c2kxaVk1VHNpeE1VdzhkK1pMRHZCRHYzbE50ZjBKM0JNWHlLVitiVzNwdXlL?=
- =?utf-8?B?Uko1cWVTTjVYQ0dzNjZJOG5sdmY4VndIS0FhMGd5c053NG96NlJ1SkQ4WGVF?=
- =?utf-8?B?TjZUNmVEK3kxK3BlZEhvYzhTVGdnYnRWWXZPQjlzMlpKbE5IZ1UvK2NUTVow?=
- =?utf-8?B?OWorNGJjV2VNMzQ4MTZpQU5WSHRGZmJ6WTBqMGNSbjRwNURMQmxCMVFQS2k1?=
- =?utf-8?B?R1UwQm54WjZkbjJnTUVCanE0WWZtM2tkU1QrZHZsaWVMZ1c5bk54a09LVVQw?=
- =?utf-8?B?T3owSjRkTzJIVlh5TkZIYmc2NU9DOU4rbW0wcGtIbkRUaUV0bmd1emZEeTRK?=
- =?utf-8?B?SkVUNmp5S3hFN3ZoTGlGNkZUYjlmWjVMcXptYUVHM1c2azc3cEphV3VnUE02?=
- =?utf-8?B?aUE3Ym5LY2FZTWJuek9HWXZTeTFFRkdOZHh5YytmM2YxRkxVa3VKTWVmTmxz?=
- =?utf-8?B?RmRyQ0hIRHBSK1FmZ05XdG1XNWZwSDlaaVRWaHBiOWtoQkxEWU9rTUF6Mksx?=
- =?utf-8?B?VS9wZi9BTS9XN1RHVDVuY09DYVg3NjN6Nml3K3dDd1JsL3J3UGFKM2tNdDQr?=
- =?utf-8?B?dko0REVna3o1ak81d3pWY1VSVTZZUXJxTTBHT2Rxb1pWdVNPcE9ZYldLSWcr?=
- =?utf-8?B?K04wMFRObnUzZkQ3VTU2bzdLWmtxMVliNCtxa1UzMm1tY0JOWDRNVDRQSldp?=
- =?utf-8?B?N0dmZDArQURwRkNOWkN2cDV0NmNObjFIaHdhb1JrLzEvVkZkNEIvL0duWXBo?=
- =?utf-8?B?TXg5Ni9PVzkyUnlKTUlVK21MUTJ4TndUTHdTVnNaVWl0UFdqU1JpelJUa3hy?=
- =?utf-8?B?UlFJYkNBc1VWWDBad0c4elRaNU56bEN4NlBHZTBSR0tnZWpUZFNmcUo5RFln?=
- =?utf-8?B?VENXNUxtdEZ4QURpV091YzFJazZZdldEbTNENHFDYmxJR0FvMUFLSTljU25S?=
- =?utf-8?B?ZU5POFdtaXN5amdDUG9XR2RraUt0cWZyejlnb1lqVzlJZTFPTTczMS9ReU1h?=
- =?utf-8?B?VGZ0eHBKNHJ3TE1iVHdvRStCUUw3QnBrUjBBMXdBeU5uZ2xwa0dKOW15eDR3?=
- =?utf-8?B?QTNLRi90bjVJSDIvLzM1eUVEb1NxVTdtaDR1U0NUYlBnWjJsajBoTTl6V25Y?=
- =?utf-8?B?RHZMb0NYeXplZHpWK2ppTWZ0RDY4YkNkMHhkMTVqOXp3OEVEd0VXODI1czZ6?=
- =?utf-8?B?MWZNV2QyOE1vWityN2pvQUYxSHUrbmxMbmxZS0FHZ2todjgxNVBvUFQ4REla?=
- =?utf-8?B?bGg2cVF5QmJaZHhsTXIxLzlqVWlQa1NuNE04Z2ZmS2lQSHpiM2V4SlozbEJN?=
- =?utf-8?B?blVnb1pGWW9Sdnp0VVBLNEU4SEIybG80N1Q0VUc1Z0Z3MFBwajRCSiszeTJv?=
- =?utf-8?B?YXdPcitvVFBnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RUVaSFZ5MCtXM1NUcmkyM1hPV3J6b1hJNWo5WWsySjVES1hhN1hvRmhjUGw2?=
- =?utf-8?B?eko0ZU1UWG1Sb1dhVUlheXQrbXpKbTFjZWVwaSswcWxXOTJ4ZTh0QmZTUzFW?=
- =?utf-8?B?ZEJ2dG9OSFlNRE5RTVhGUWw1KzZNaXJKTDNmS21JbWUvQjJWOGxSblVjTmhw?=
- =?utf-8?B?TzNrYTdXbW5JVHhKbWpQN2tCRkJmUGlrbUllQlpqKzBIaXJsU0VUV21BWHFW?=
- =?utf-8?B?NXppVVlwcFpvTS9za01JQldDRzdhNStUSm5Mdk1raGpEZWM2UHdFWUo2eXFs?=
- =?utf-8?B?eUxzeE5WeCtvL3N0TUFpOWIwcnAwQy9mZnFISG52UnhRblRrbnZCVFVmMUhS?=
- =?utf-8?B?Yyt3YnplTVhyT3ZMMmc2OGwwWURYNGVKZjRjRmUyWU1iVER0Y2VzOWpUMnhE?=
- =?utf-8?B?cnphZGNxcUhyd01BSmRheWJVdnpaTkZpWFl3NUJZZ2NscWU5dUsyeUlSWW1S?=
- =?utf-8?B?aTRHVXp2RGMxbFBMcUY4NTRRVitKVVloSG1waTZ1V2UrdUR3S3JDdG12Z1N3?=
- =?utf-8?B?ZWhjWnc2eU1nb3Z5V3YwcFB1YktHOWJ0L3crRTZMY1l4VEJMeWhoUzdzRCt5?=
- =?utf-8?B?cFJIM2dIMkMvemE4dHhkTnVZRnpYbElOZzltNzVENWlwZWxhZUR3MVJ1V01a?=
- =?utf-8?B?a0E5ckdrOUVUT0JMQjFIeUgzam9Eajl5WU5sVFUwU2xIT1JyN1lLYXJDZVk5?=
- =?utf-8?B?UlRhc0s3Vkp2by81M21va1B6YmE1NUxCLzlZMmF2ekcwbjQvUGdMWldkL0wy?=
- =?utf-8?B?cUNaY28vYWlBQ2ZHOFJoWXZUaytxZTVBVHJSOE5uWm8wcDloU2NWRXZUaWZC?=
- =?utf-8?B?bGFFUWpacVVwNmFMMU45ek5Pcy90SjdKY0E5ZzVWaVgxdGEyVDhrZG5mdDRB?=
- =?utf-8?B?ZW91U3hFSGxyVmRLeUJNNG1ibFUzOWgvL0g1aTRidzdJOVhsUzNCYnBIUDNh?=
- =?utf-8?B?QnBDNVA5dE5jS1pTaXd6dzlqYXltTVpBRUZaSEpKOFJ5L2hCTmFuRThmTmZU?=
- =?utf-8?B?TFpZdkFwRlRwMURKSHowQTdZZFlQL2oxbkR6MkdNNS9sMVBJYms3ZlBoMmNi?=
- =?utf-8?B?WFRWRWN6eldtZXZyWFJ3b3BKY0QrKzVKWmhCbjZoTVJyMkRsWllPNzVWc3NG?=
- =?utf-8?B?ZXZ2QTRLdmpOT1BvblpDazdGRThONkh3cERnZm50eEZUbzZMakJKRkx5dE1r?=
- =?utf-8?B?T21pdmVrSHM0MktQZGxybXlkTkVtZTB0aDVoTUNiaVcwTGQrdVlTRUs3WEEx?=
- =?utf-8?B?Nkl4YTlYajVtNXlMRlVGR25vc3RLVDhKOWdMTEdWVFF5K1pIamZIdXpLWlJz?=
- =?utf-8?B?Yzh4RHYxWmEyWndiR3hwSE9KNWJna2ZRa0hCMGpjNUcyZGFHWnJ4cTdneENH?=
- =?utf-8?B?OWFnVjZhaFRKdFBkSkFmYWhDeEtJV0taeW5qWWU2UGRrVUhnNEcwcW4wRkho?=
- =?utf-8?B?QW1STSs0enVZRUxGa1ptQms5S1k3WXpEYU93c0x4aVVTUWU1SHNJNVgxdnp2?=
- =?utf-8?B?RE1KNXNzaDFOU3NLbEtKZWlKeFdIVWhFOEN0NzJ2blVNMVBBekxia1pudzc5?=
- =?utf-8?B?T01paUMwdURGNkdWRjdhWHlZRFZFODJsV3RzWno3YlhYY0NYRGRPRjlsMlZF?=
- =?utf-8?B?Z0loUFBNeDU1NHpTV0FVOVJLbnZiK0YxU0RIUE9JYVBVbGJibUgyditzMmxl?=
- =?utf-8?B?aHNJUkdQbzQva0FwM1l3QlZYSENuaUxLWFdDN0FMQ1FMVlVzOVF4MGJ2SDdN?=
- =?utf-8?B?V204dUxtbzBKdmNFSTFhMExjVHJxQ2NKWHdVenFQejNHN0FGc3U0TjEvZ0V3?=
- =?utf-8?B?U3p4OVB5MGNZQ3QyU0phSGxWRUxhT2gvTWdsd2dTRCtNUi9sdnd4bVZOWFVR?=
- =?utf-8?B?SWFBa1hZazQrZGpHUTcwWndLYXdDWGZsZU9BZGxVcUxxUkhKelpORXhmaVly?=
- =?utf-8?B?NUpLTDFCbzZmVytuZDExRUd5WVMyUWNoWEM5cmZMOTBTbnFadTBoeWlDSzZ0?=
- =?utf-8?B?K3NZcC9ncTZrcXRpNkxBeU9PTC81VE1KUFdnSVYyWWpBVDkxM0JPRDczUmt3?=
- =?utf-8?B?ZUg5RzZrTVNDU01SOGJ2TlpBd0g3WTEvbWNkdjBCTkhCWDBlTmFPMEM0c1Vi?=
- =?utf-8?Q?Pd9J7Mcbtpnfb7+SshpLDBijt?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4720403f-1076-45ed-c323-08dde696e0cf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 00:56:25.0856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lP58oMPw0WWX3EdahHD4crvLnJYgK91UEzHHYRHRnB+c9Lvdh/pb2/aUAEUYxVVW1RIJv9NHuPf88MSihUaaRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6930
-
-On Wednesday, August 27, 2025 1:47=E2=80=AFPM Svyatoslav wrote:
-> 27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80. 07:29:40 GMT=
-+03:00, Mikko Perttunen=20
-<mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
-> >> Exisitng VI and VIP implementation for Tegra20 is fully compatible wit=
-h
-> >> Tegra30.
-> >>=20
-> >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >> ---
-> >>=20
-> >>  drivers/staging/media/tegra-video/Makefile | 1 +
-> >>  drivers/staging/media/tegra-video/vi.c     | 3 +++
-> >>  drivers/staging/media/tegra-video/vi.h     | 2 +-
-> >>  drivers/staging/media/tegra-video/video.c  | 4 ++++
-> >>  drivers/staging/media/tegra-video/vip.c    | 5 ++++-
-> >>  5 files changed, 13 insertions(+), 2 deletions(-)
-> >>=20
-> >> diff --git a/drivers/staging/media/tegra-video/Makefile
-> >> b/drivers/staging/media/tegra-video/Makefile index
-> >> 6c7552e05109..96380b5dbd8b 100644
-> >> --- a/drivers/staging/media/tegra-video/Makefile
-> >> +++ b/drivers/staging/media/tegra-video/Makefile
-> >> @@ -6,5 +6,6 @@ tegra-video-objs :=3D \
-> >>=20
-> >>  		csi.o
-> >> =20
-> >>  tegra-video-$(CONFIG_ARCH_TEGRA_2x_SOC)  +=3D tegra20.o
-> >>=20
-> >> +tegra-video-$(CONFIG_ARCH_TEGRA_3x_SOC)  +=3D tegra20.o
-> >>=20
-> >>  tegra-video-$(CONFIG_ARCH_TEGRA_210_SOC) +=3D tegra210.o
-> >>  obj-$(CONFIG_VIDEO_TEGRA) +=3D tegra-video.o
-> >>=20
-> >> diff --git a/drivers/staging/media/tegra-video/vi.c
-> >> b/drivers/staging/media/tegra-video/vi.c index c9276ff76157..71be205ca=
-cb5
-> >> 100644
-> >> --- a/drivers/staging/media/tegra-video/vi.c
-> >> +++ b/drivers/staging/media/tegra-video/vi.c
-> >> @@ -1959,6 +1959,9 @@ static const struct of_device_id
-> >> tegra_vi_of_id_table[] =3D { #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-> >>=20
-> >>  	{ .compatible =3D "nvidia,tegra20-vi",  .data =3D &tegra20_vi_soc },
-> >> =20
-> >>  #endif
-> >>=20
-> >> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >> +	{ .compatible =3D "nvidia,tegra30-vi",  .data =3D &tegra20_vi_soc },
-> >> +#endif
-> >>=20
-> >>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
-> >> =20
-> >>  	{ .compatible =3D "nvidia,tegra210-vi", .data =3D &tegra210_vi_soc }=
-,
-> >> =20
-> >>  #endif
-> >>=20
-> >> diff --git a/drivers/staging/media/tegra-video/vi.h
-> >> b/drivers/staging/media/tegra-video/vi.h index 1e6a5caa7082..cac0c0d0e=
-225
-> >> 100644
-> >> --- a/drivers/staging/media/tegra-video/vi.h
-> >> +++ b/drivers/staging/media/tegra-video/vi.h
-> >> @@ -296,7 +296,7 @@ struct tegra_video_format {
-> >>=20
-> >>  	u32 fourcc;
-> >> =20
-> >>  };
-> >>=20
-> >> -#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-> >> +#if defined(CONFIG_ARCH_TEGRA_2x_SOC) ||
-> >> defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >>=20
-> >>  extern const struct tegra_vi_soc tegra20_vi_soc;
-> >>  #endif
-> >>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
-> >>=20
-> >> diff --git a/drivers/staging/media/tegra-video/video.c
-> >> b/drivers/staging/media/tegra-video/video.c index
-> >> 074ad0dc56ca..a25885f93cd7 100644
-> >> --- a/drivers/staging/media/tegra-video/video.c
-> >> +++ b/drivers/staging/media/tegra-video/video.c
-> >> @@ -127,6 +127,10 @@ static const struct of_device_id
-> >> host1x_video_subdevs[] =3D { { .compatible =3D "nvidia,tegra20-vip", }=
-,
-> >>=20
-> >>  	{ .compatible =3D "nvidia,tegra20-vi", },
-> >> =20
-> >>  #endif
-> >>=20
-> >> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >> +	{ .compatible =3D "nvidia,tegra30-vip", },
-> >> +	{ .compatible =3D "nvidia,tegra30-vi", },
-> >> +#endif
-> >>=20
-> >>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
-> >> =20
-> >>  	{ .compatible =3D "nvidia,tegra210-csi", },
-> >>  	{ .compatible =3D "nvidia,tegra210-vi", },
-> >>=20
-> >> diff --git a/drivers/staging/media/tegra-video/vip.c
-> >> b/drivers/staging/media/tegra-video/vip.c index
-> >> 5ec717f3afd5..00e08a9971d5
-> >> 100644
-> >> --- a/drivers/staging/media/tegra-video/vip.c
-> >> +++ b/drivers/staging/media/tegra-video/vip.c
-> >> @@ -263,13 +263,16 @@ static void tegra_vip_remove(struct platform_dev=
-ice
-> >> *pdev) pm_runtime_disable(&pdev->dev);
-> >>=20
-> >>  }
-> >>=20
-> >> -#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-> >> +#if defined(CONFIG_ARCH_TEGRA_2x_SOC) ||
-> >> defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >>=20
-> >>  extern const struct tegra_vip_soc tegra20_vip_soc;
-> >>  #endif
-> >> =20
-> >>  static const struct of_device_id tegra_vip_of_id_table[] =3D {
-> >>  #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
-> >> =20
-> >>  	{ .compatible =3D "nvidia,tegra20-vip", .data =3D &tegra20_vip_soc }=
-,
-> >>=20
-> >> +#endif
-> >> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >> +	{ .compatible =3D "nvidia,tegra30-vip", .data =3D &tegra20_vip_soc }=
-,
-> >>=20
-> >>  #endif
-> >> =20
-> >>  	{ }
-> >> =20
-> >>  };
-> >
-> >If tegra30-vip is compatible with tegra20-vip, we don't need to add the
-> >compatible string into the driver. Just mark it as 'compatible =3D
-> >"nvidia,tegra30-vip", "nvidia,tegra20-vip";' in the device tree (and as =
-Rob
-> >alluded, have this compat string pair as an option in the device tree
-> >schema).
-> While I am fine with using fallback but it may be a good idea to have a
-> separate compatible so in case tegra30 would need a specific set of ops
-> (tegra20 and tegra30 VIs are not exact match) no additional changes into
-> schema would be required.
-
-The standard practice is to use the compatible string fallback in device tr=
-ee=20
-when we believe the hardware to be compatible. If that later turns out not =
-to=20
-be the case (which should be unlikely), the schema can be adjusted along wi=
-th=20
-the source code changes.
-
-> >Cheers,
-> >Mikko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com>
+ <20250828-hamoa_initial-v8-3-c9d173072a5c@oss.qualcomm.com>
+ <hbvc72fy2bnx5ggmmcpbrgy5jkhrlvewfv3ofh7z6blnj5l27e@4m2js7nf3g6b>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <hbvc72fy2bnx5ggmmcpbrgy5jkhrlvewfv3ofh7z6blnj5l27e@4m2js7nf3g6b>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNCBTYWx0ZWRfX91TXArla/i+y
+ o5dmeNrB3B0X6aR7h9aAL5vTS6SGNEIXUuLgm5f1NJLAql/7C1MfPZani6EOvY4kT92gttGY/zZ
+ h59sTfyqX2k+eCDo9+qmZN1T+qXhyW6Lnx46F+Y7owlXnlI0GINuf8rG1R7u3Zge8dugri/j7z5
+ qQcStB2uaBkqqs7UflkMpszy3x986r0qR4flMqwuCbSAl1SjLurz/xZKiLDF2hiP0uJQXUefmeS
+ yKTtRWxkM66mnydBwNSFrX/D7TWj6h6jsOekJD9/w8OjORLVahwDmtRJh9/12CwFpDcjSSDy8gZ
+ m/yZIRrxLsQyS1KCbSPbdoYSRk9/8MXPcU3RbdBwhuxLasr7Q4qSQXy7dEOgplmXDOugHIh9Fuj
+ ZuKtJYXJ
+X-Proofpoint-GUID: _vgczh2KUP0AglHOHftZ6y3OZMGvxO60
+X-Authority-Analysis: v=2.4 cv=K+AiHzWI c=1 sm=1 tr=0 ts=68b0fade cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=Cujq2m1fB0P6q8KZPf8A:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: _vgczh2KUP0AglHOHftZ6y3OZMGvxO60
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230034
 
 
 
+On 2025-08-28 19:15, Dmitry Baryshkov wrote:
+> On Thu, Aug 28, 2025 at 12:48:47PM +0800, Yijie Yang wrote:
+>> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+>> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+>> embedded system capable of booting to UART.
+>>
+>> This change enables the following peripherals on the carrier board:
+>> - UART
+>> - On-board regulators
+>> - USB Type-C mux
+>> - Pinctrl
+>> - Embedded USB (EUSB) repeaters
+>> - NVMe
+>> - pmic-glink
+>> - USB DisplayPorts
+>> - Bluetooth
+>> - Graphic
+>> - Audio
+>>
+>> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+>> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+>> <quic_shuaz@quicinc.com>, and Yongxing Mou (USB DisplayPorts)
+>> <quic_yongmou@quicinc.com>.
+>>
+>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile          |    1 +
+>>   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1247 ++++++++++++++++++++++++++++
+>>   2 files changed, 1248 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 94a84770b080..5e19535ad63d 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8039-t2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= hamoa-iot-evk.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-tplink-archer-ax55-v1.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> new file mode 100644
+>> index 000000000000..b1a8380d6639
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> @@ -0,0 +1,1247 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "hamoa-iot-som.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. Hamoa IoT EVK";
+>> +	compatible = "qcom,hamoa-iot-evk", "qcom,hamoa-iot-som", "qcom,x1e80100";
+>> +	chassis-type = "embedded";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart21;
+>> +		serial1 = &uart14;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	pmic-glink {
+>> +		compatible = "qcom,x1e80100-pmic-glink",
+>> +			     "qcom,sm8550-pmic-glink",
+>> +			     "qcom,pmic-glink";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+>> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
+>> +				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		connector@0 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <0>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss0_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss0_ss_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss0_sbu: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_sbu_mux>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		connector@1 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <1>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss1_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss1_ss_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss1_ss_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss1_con_sbu_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss1_con_sbu_out>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		connector@2 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <2>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss2_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss2_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss2_ss_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss2_ss_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss2_con_sbu_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss2_con_sbu_out>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	vreg_edp_3p3: regulator-edp-3p3 {
+> 
+> Here is a list of the top-level nodes defined in this DT. Does it look
+> sorted?
+> 
+> 	aliases
+> 	chosen
+> 	pmic-glink
+> 	regulator-edp-3p3
+> 	sound
+> 	regulator-vph-pwr
+> 	regulator-nvme
+> 	regulator-rtmr0-1p15
+> 	regulator-rtmr0-1p8
+> 	regulator-rtmr0-3p3
+> 	regulator-rtmr1-1p15
+> 	regulator-rtmr1-1p8
+> 	regulator-rtmr1-3p3
+> 	regulator-rtmr2-1p15
+> 	regulator-rtmr2-1p8
+> 	regulator-rtmr2-3p3
+> 	regulator-wcn-3p3
+> 	usb-1-ss0-sbu-mux
+> 	regulator-wcn-0p95
+> 	regulator-wcn-1p9
+> 	regulator-wwan
+> 	audio-codec
+> 	wcn7850-pmu
+> 
+
+I'll get them sorted.
+
+> 
+
+-- 
+Best Regards,
+Yijie
 
 
