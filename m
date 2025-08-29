@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-792381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B95B3C32D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:38:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B803B3C32A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EDB27AF133
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB171CC3ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A132459FE;
-	Fri, 29 Aug 2025 19:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4F34A313;
+	Fri, 29 Aug 2025 19:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CB+IV6Qk"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kma/7UAF"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0176133CEA8
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A116314B6C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496053; cv=none; b=goUtjfyQGktryuzqtjc0DQioJWS/bGN9AsHyqUlh3hq2cpKw05E1KDmhtp+7paZrBn/6c7PjmKadWmTlA5gSmzwXFU6yE4G+/9FkLuiihLeMRdB1d3F9GdVn4cyu6EfZ1DFdWUeNT3Bmm6QmtpSqkxg7S+uzZEbuIoycihdMEHc=
+	t=1756496052; cv=none; b=Aaw2it4LamKfI0GakGkDI+fQuSXzey0H322sFE23QGdfAnBn5c57yqtHfzR1aLOvmI+2kClZWVLAFZuVux4J8+dUfJ2yH2H7BFTeMuHMPc9Ou2q4BiXuHhI+rRudeIq3jNcEB04TX7XF4h63xzeKyxFcXjb/X3Sly3YBAcP00q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496053; c=relaxed/simple;
-	bh=5oGyELJWVH1ytFZohOtSXyI2IO16Lqdcqw3i9C8XZLU=;
+	s=arc-20240116; t=1756496052; c=relaxed/simple;
+	bh=jiulF38hrV5VG0cK4TzLddi4RpYVUDqHWNzidI8dD4o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N7Q8Y4Fg7nPaza8SLLJGOEiY6qsoVskQl7jFaZN1KJx4Sk4zJO7FayBbiXW+iEmFlziXAEmiSFhBzVvYyluJHjBxw3ne4Hm2EttTGPDZ/Bp/wKpqeUMkzfspQfYShJMCdQVqGuB9MAq/jbrfg00FoUNuISHh9/wjzkOw/19F5yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CB+IV6Qk; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=gP1LMPSD7Z1F22ZFPkJOggcBhHG8StQdQOIVOYchb7xHYOMgX8WEbeZyZ+CnyHSguDqQoGvBuEafKDLSEZt7IS/e5eoKX3LXfxRw4075/RcCKkXSOqTnzEa1zEl5PlROxmE1rCqy+OHJtQzyMhL2gy6FJO2LWC+/IzIgAKBKrIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kma/7UAF; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756496051; x=1788032051;
+  t=1756496049; x=1788032049;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=5oGyELJWVH1ytFZohOtSXyI2IO16Lqdcqw3i9C8XZLU=;
-  b=CB+IV6Qkg8uG5REHTBeBfgRv0twYVV6H/fp7R+/w95wFPzHYMnVDQOTE
-   Tb/xjHf6WvXFeTlaFF3Shl0SgC/3/uKQ29Nk+zOmg016TezZlZZxi9KYW
-   N2+U8oYMRb1p1+FUXlSYrk0dIwKshpXXgL0Xr5X2dqL6Y/IVImnlFQ3rj
-   Z0iRVKAg+rNvSCwspdFaL1hzh9rsrwTykhoUYQnJTCCrEsJiTlBZo6eYY
-   E5WyonxIOKJYtpYLn9qjcC+lU18uWwJzm4OgSLI8Xi17iwh+69KkO68CS
-   V4Dh992OUEAdrH+RMzWPO7ycLVJi7l+jmDRzzpUpQOLLNUIzHmn6+XdCu
-   A==;
-X-CSE-ConnectionGUID: Zu6ntXL7SjC97diwkV7l/Q==
-X-CSE-MsgGUID: 2upkZINzSZe85gPs/zRjcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625335"
+  bh=jiulF38hrV5VG0cK4TzLddi4RpYVUDqHWNzidI8dD4o=;
+  b=Kma/7UAFKF2Y7hkvltuWM5DTphYvO26GUBnGziPtCTw4u5xaktukuYKo
+   oVozENiuc0kKoPTBNiq7M3hJ7WVmQvu5P1BP9vJJTSbZ5d9tQ0Bj4+f2Y
+   4LkSUMycG6gx4HTIQ+ibKw1+Ug3pplBEhDEx9sGDh1VA3oMicd9G1REt4
+   yG5eIAzZeklnl2ExSjRc9qzAyijtVXbitLegXTxRB6Ewzppu6c3RGj35M
+   EbK9XP9fBXUBUsK5iy2VvFYPccJiBybezc5HgdsIPJIhfopobd4qxJyed
+   hYdRBYWYa0s0uh7ZOmWuXXem9DBBiqXyowGu5k7vtIie3zZ9zqS9c6pnz
+   Q==;
+X-CSE-ConnectionGUID: 6jZGLhrzRjW6wrh1JmXdwQ==
+X-CSE-MsgGUID: rgAdQ+buThqapKahlwA60A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625338"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62625335"
+   d="scan'208";a="62625338"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:56 -0700
-X-CSE-ConnectionGUID: io3c2al7Q7GhVxDTGPltyA==
-X-CSE-MsgGUID: l8tvNeLuQaSzxAoDwyHeFw==
+X-CSE-ConnectionGUID: glCNMx6vSMmfbyTNnQ7tmA==
+X-CSE-MsgGUID: m3eF1lJiTLy+S1NeofxsTw==
 X-ExtLoop1: 1
 Received: from ldmartin-desk2.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.202])
   by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:56 -0700
@@ -69,9 +69,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v9 24/31] x86/resctrl: Handle number of RMIDs supported by telemetry resources
-Date: Fri, 29 Aug 2025 12:33:36 -0700
-Message-ID: <20250829193346.31565-25-tony.luck@intel.com>
+Subject: [PATCH v9 25/31] fs/resctrl: Move allocation/free of closid_num_dirty_rmid
+Date: Fri, 29 Aug 2025 12:33:37 -0700
+Message-ID: <20250829193346.31565-26-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250829193346.31565-1-tony.luck@intel.com>
 References: <20250829193346.31565-1-tony.luck@intel.com>
@@ -83,250 +83,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are now three meanings for "number of RMIDs":
+closid_num_dirty_rmid[] is allocated in dom_data_init() during resctrl
+initialization and freed by dom_data_exit() during resctrl exit giving
+it the same life cycle as rmid_ptrs[].
 
-1) The number for legacy features enumerated by CPUID leaf 0xF. This
-is the maximum number of distinct values that can be loaded into the
-IA32_PQR_ASSOC MSR. Note that systems with Sub-NUMA Cluster mode enabled
-will force scaling down the CPUID enumerated value by the number of SNC
-nodes per L3-cache.
-
-2) The number of registers in MMIO space for each event. This
-is enumerated in the XML files and is the value initialized into
-event_group::num_rmids. This will be overwritten with a lower
-value if hardware does not support all these registers at the
-same time (see next case).
-
-3) The number of "hardware counters" (this isn't a strictly accurate
-description of how things work, but serves as a useful analogy that
-does describe the limitations) feeding to those MMIO registers. This
-is enumerated in telemetry_region::num_rmids returned from the call to
-intel_pmt_get_regions_by_feature()
-
-Event groups with insufficient "hardware counters" to track all RMIDs
-are difficult for users to use, since the system may reassign "hardware
-counters" at any time. This means that users cannot reliably collect
-two consecutive event counts to compute the rate at which events are
-occurring.
-
-Use rdt_set_feature_disabled() to mark any under-resourced event groups
-(those with telemetry_region::num_rmids < event_group::num_rmids) as
-unusable.  Note that the rdt_options[] structure must now be writable
-at run-time.  The request to disable will be overridden if the user
-explicitly requests to enable using the "rdt=" Linux boot argument.
-
-Scan all enabled event groups and assign the RDT_RESOURCE_PERF_PKG
-resource "num_rmids" value to the smallest of these values as this value
-will be used later to compare against the number of RMIDs supported by
-other resources.
-
-N.B. Changed type of rdt_resource::num_rmid to u32 to match type of
-event_group::num_rmids so that min(r->num_rmid, e->num_rmids) won't
-complain about mixing signed and unsigned types.  Print r->num_rmid as
-unsigned value in rdt_num_rmids_show().
+Move closid_num_dirty_rmid[] allocaction/free out to
+resctrl_l3_mon_resource_init() and resctrl_l3_mon_resource_exit() in
+preparation for rmid_ptrs[] to be allocated on resctrl mount in support
+of the new telemetry events.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl.h                 |  2 +-
- arch/x86/kernel/cpu/resctrl/internal.h  |  2 ++
- arch/x86/kernel/cpu/resctrl/core.c      | 18 +++++++++-
- arch/x86/kernel/cpu/resctrl/intel_aet.c | 47 +++++++++++++++++++++++++
- fs/resctrl/rdtgroup.c                   |  2 +-
- 5 files changed, 68 insertions(+), 3 deletions(-)
+ fs/resctrl/monitor.c | 56 ++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index cb50991544b4..1f42bc761377 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -288,7 +288,7 @@ struct rdt_resource {
- 	int			rid;
- 	bool			alloc_capable;
- 	bool			mon_capable;
--	int			num_rmid;
-+	u32			num_rmid;
- 	enum resctrl_scope	ctrl_scope;
- 	enum resctrl_scope	mon_scope;
- 	struct resctrl_cache	cache;
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 6948803721e4..4b1516948804 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -179,6 +179,8 @@ void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
- 
- bool rdt_is_feature_enabled(char *name);
- 
-+void rdt_set_feature_disabled(char *name);
-+
- #ifdef CONFIG_X86_CPU_RESCTRL_INTEL_AET
- bool intel_aet_get_events(void);
- void __exit intel_aet_exit(void);
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index d6e7a9125a10..dbad8d301e03 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -779,7 +779,7 @@ struct rdt_options {
- 	bool	force_off, force_on;
- };
- 
--static struct rdt_options rdt_options[]  __ro_after_init = {
-+static struct rdt_options rdt_options[] = {
- 	RDT_OPT(RDT_FLAG_CMT,	    "cmt",	X86_FEATURE_CQM_OCCUP_LLC),
- 	RDT_OPT(RDT_FLAG_MBM_TOTAL, "mbmtotal", X86_FEATURE_CQM_MBM_TOTAL),
- 	RDT_OPT(RDT_FLAG_MBM_LOCAL, "mbmlocal", X86_FEATURE_CQM_MBM_LOCAL),
-@@ -841,6 +841,22 @@ bool rdt_cpu_has(int flag)
- 	return ret;
- }
- 
-+/*
-+ * Can be called during feature enumeration if sanity check of
-+ * a feature's parameters indicates problems with the feature.
-+ */
-+void rdt_set_feature_disabled(char *name)
-+{
-+	struct rdt_options *o;
-+
-+	for (o = rdt_options; o < &rdt_options[NUM_RDT_OPTIONS]; o++) {
-+		if (!strcmp(name, o->name)) {
-+			o->force_off = true;
-+			return;
-+		}
-+	}
-+}
-+
- /*
-  * Hardware features that do not have X86_FEATURE_* bits.
-  * There is no "hardware does not support this at all" case.
-diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-index 71aed96f9499..f06f71c06029 100644
---- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-+++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-@@ -15,6 +15,7 @@
- #include <linux/cpu.h>
- #include <linux/intel_vsec.h>
- #include <linux/io.h>
-+#include <linux/minmax.h>
- #include <linux/resctrl.h>
- 
- #include "internal.h"
-@@ -36,20 +37,26 @@ struct pmt_event {
- 
- /**
-  * struct event_group - All information about a group of telemetry events.
-+ * @name:		Name for this group (used by boot rdt= option)
-  * @pfg:		Points to the aggregated telemetry space information
-  *			within the INTEL_PMT_TELEMETRY driver that contains data for all
-  *			telemetry regions.
-  * @guid:		Unique number per XML description file.
-+ * @num_rmids:		Number of RMIDs supported by this group. May be djusted downwards
-+ *			if enumeration from intel_pmt_get_regions_by_feature() indicates
-+ *			fewer RMIDs can be tracked simultaneously.
-  * @mmio_size:		Number of bytes of MMIO registers for this group.
-  * @num_events:		Number of events in this group.
-  * @evts:		Array of event descriptors.
-  */
- struct event_group {
- 	/* Data fields for additional structures to manage this group. */
-+	char				*name;
- 	struct pmt_feature_group	*pfg;
- 
- 	/* Remaining fields initialized from XML file. */
- 	u32				guid;
-+	u32				num_rmids;
- 	size_t				mmio_size;
- 	unsigned int			num_events;
- 	struct pmt_event		evts[] __counted_by(num_events);
-@@ -63,7 +70,9 @@ struct event_group {
-  * File: xml/CWF/OOBMSM/RMID-ENERGY/cwf_aggregator.xml
-  */
- static struct event_group energy_0x26696143 = {
-+	.name		= "energy",
- 	.guid		= 0x26696143,
-+	.num_rmids	= 576,
- 	.mmio_size	= XML_MMIO_SIZE(576, 2, 3),
- 	.num_events	= 2,
- 	.evts		= {
-@@ -77,7 +86,9 @@ static struct event_group energy_0x26696143 = {
-  * File: xml/CWF/OOBMSM/RMID-PERF/cwf_aggregator.xml
-  */
- static struct event_group perf_0x26557651 = {
-+	.name		= "perf",
- 	.guid		= 0x26557651,
-+	.num_rmids	= 576,
- 	.mmio_size	= XML_MMIO_SIZE(576, 7, 3),
- 	.num_events	= 7,
- 	.evts		= {
-@@ -121,10 +132,35 @@ static bool skip_this_region(struct telemetry_region *tr, struct event_group *e)
- 	return false;
- }
- 
-+static bool all_regions_have_sufficient_rmid(struct event_group *e, struct pmt_feature_group *p)
-+{
-+	struct telemetry_region *tr;
-+
-+	for (int i = 0; i < p->count; i++) {
-+		tr = &p->regions[i];
-+		if (skip_this_region(tr, e))
-+			continue;
-+
-+		if (tr->num_rmids < e->num_rmids)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static bool enable_events(struct event_group *e, struct pmt_feature_group *p)
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 33432a7f56da..d5b96aca5d03 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -805,36 +805,14 @@ void mbm_setup_overflow_handler(struct rdt_l3_mon_domain *dom, unsigned long del
+ static int dom_data_init(struct rdt_resource *r)
  {
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_PERF_PKG].r_resctrl;
- 	bool usable_events = false;
+ 	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
+-	u32 num_closid = resctrl_arch_get_num_closid(r);
+ 	struct rmid_entry *entry = NULL;
+ 	int err = 0, i;
+ 	u32 idx;
  
-+	/* Disable feature if insufficient RMIDs */
-+	if (!all_regions_have_sufficient_rmid(e, p))
-+		rdt_set_feature_disabled(e->name);
-+
-+	/* User can override above disable from kernel command line */
-+	if (!rdt_is_feature_enabled(e->name))
-+		return false;
-+
- 	for (int i = 0; i < p->count; i++) {
- 		if (skip_this_region(&p->regions[i], e)) {
- 			/*
-@@ -134,12 +170,23 @@ static bool enable_events(struct event_group *e, struct pmt_feature_group *p)
- 			p->regions[i].addr = NULL;
- 			continue;
- 		}
+ 	mutex_lock(&rdtgroup_mutex);
+-	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
+-		u32 *tmp;
+-
+-		/*
+-		 * If the architecture hasn't provided a sanitised value here,
+-		 * this may result in larger arrays than necessary. Resctrl will
+-		 * use a smaller system wide value based on the resources in
+-		 * use.
+-		 */
+-		tmp = kcalloc(num_closid, sizeof(*tmp), GFP_KERNEL);
+-		if (!tmp) {
+-			err = -ENOMEM;
+-			goto out_unlock;
+-		}
+-
+-		closid_num_dirty_rmid = tmp;
+-	}
+ 
+ 	rmid_ptrs = kcalloc(idx_limit, sizeof(struct rmid_entry), GFP_KERNEL);
+ 	if (!rmid_ptrs) {
+-		if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
+-			kfree(closid_num_dirty_rmid);
+-			closid_num_dirty_rmid = NULL;
+-		}
+ 		err = -ENOMEM;
+ 		goto out_unlock;
+ 	}
+@@ -870,11 +848,6 @@ static void dom_data_exit(struct rdt_resource *r)
+ 	if (!r->mon_capable)
+ 		goto out_unlock;
+ 
+-	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
+-		kfree(closid_num_dirty_rmid);
+-		closid_num_dirty_rmid = NULL;
+-	}
+-
+ 	kfree(rmid_ptrs);
+ 	rmid_ptrs = NULL;
+ 
+@@ -957,9 +930,31 @@ int resctrl_l3_mon_resource_init(void)
+ 	if (!r->mon_capable)
+ 		return 0;
+ 
++	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
++		u32 num_closid = resctrl_arch_get_num_closid(r);
++		u32 *tmp;
 +
 +		/*
-+		 * e->num_rmids only adjusted lower if user forces an unusable
-+		 * region to be usable
++		 * If the architecture hasn't provided a sanitised value here,
++		 * this may result in larger arrays than necessary. Resctrl will
++		 * use a smaller system wide value based on the resources in
++		 * use.
 +		 */
-+		e->num_rmids = min(e->num_rmids, p->regions[i].num_rmids);
- 		usable_events = true;
- 	}
- 
- 	if (!usable_events)
- 		return false;
- 
-+	if (r->num_rmid)
-+		r->num_rmid = min(r->num_rmid, e->num_rmids);
-+	else
-+		r->num_rmid = e->num_rmids;
++		tmp = kcalloc(num_closid, sizeof(*tmp), GFP_KERNEL);
++		if (!tmp)
++			return -ENOMEM;
 +
- 	for (int j = 0; j < e->num_events; j++)
- 		resctrl_enable_mon_event(e->evts[j].id, true,
- 					 e->evts[j].bin_bits, &e->evts[j]);
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 1832840ad11c..01e42130e98b 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -1135,7 +1135,7 @@ static int rdt_num_rmids_show(struct kernfs_open_file *of,
++		closid_num_dirty_rmid = tmp;
++	}
++
+ 	ret = dom_data_init(r);
+-	if (ret)
++	if (ret) {
++		if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
++			kfree(closid_num_dirty_rmid);
++			closid_num_dirty_rmid = NULL;
++		}
+ 		return ret;
++	}
+ 
+ 	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_TOTAL_EVENT_ID)) {
+ 		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].configurable = true;
+@@ -984,5 +979,10 @@ void resctrl_l3_mon_resource_exit(void)
  {
- 	struct rdt_resource *r = rdt_kn_parent_priv(of->kn);
+ 	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
  
--	seq_printf(seq, "%d\n", r->num_rmid);
-+	seq_printf(seq, "%u\n", r->num_rmid);
- 
- 	return 0;
++	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
++		kfree(closid_num_dirty_rmid);
++		closid_num_dirty_rmid = NULL;
++	}
++
+ 	dom_data_exit(r);
  }
 -- 
 2.50.1
