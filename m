@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-791972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D95B3BEE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:11:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3DCB3BEE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BA797A6CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8097B25FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470F8322521;
-	Fri, 29 Aug 2025 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="nuViS/F7"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05C632277D;
+	Fri, 29 Aug 2025 15:11:40 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A102135CE
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E192135CE;
+	Fri, 29 Aug 2025 15:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480290; cv=none; b=Mi9Sktd9DCJDdvrY7CeJ6eIrWihtEAy5NaX2epnrKT+R0J9QUv7uWcptFkT+4oS8y/EF2ZApmB1qaxGjS4XCGAduVYS/sFEcjfMjGZV4WqOJ0ze1mmADL0YcqCPHWa5I/sJlCvJb6dFVpQrvDr0fhpjPSw8clMRNB7fn5sOufn8=
+	t=1756480300; cv=none; b=ap2CUOvds+CMh7FSW8kG6KFjn+k1cOkdft2HLHn9+iqEJCIwRiTrAFXspzMY+cKr8WdAvixeJ2O9U0XYj/2lXe1parto1tJVbvfxJjYkBTkVGZD9/hG/tVZlwOUNpgk2buWi9d6XmvAzOJXAwip1JW2XZYrix/VIsA6s/Yeie0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480290; c=relaxed/simple;
-	bh=MKVIGNn1cEq2YWpF5MnDqFEUCjnk9rekqsdebgbty2M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jCl4B9X+DbBJq09A1UUTX/gw1RRvn+fxdRV1PR+kENN2zQ1IRQFhEeg1jLoER1Yd3/PYzUlhNbH/EwTzbl/FLNuPaGYv9TvSwUn4JxNxgdBhKXlF1kuI+ST0wxB0WdBhE+kcowR1mw28r01G8r7uuGKmSf9DfLtIkUWBL1w8Al8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=nuViS/F7; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2445826fd9dso26285025ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1756480288; x=1757085088; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MKVIGNn1cEq2YWpF5MnDqFEUCjnk9rekqsdebgbty2M=;
-        b=nuViS/F7FeH323M0y5cTX6mQX8efvYqxWSyhH08NuPp4VLWdFlJHLyKlVsck/xfb17
-         RmQ6C6aEiuKcp+6JV6pTN4HsoQYEgrQL17N76c0ZBmSrcMe6VoVrSnH1akFkAXwdv77s
-         1vcy9cA3iS+dty9N1xY6eEVxZzNh23z+W8WW3Z9kU/Dacp4gYLZemJPB1yVf1UFxzmoZ
-         PAO9y1lQNNAoElZ6ylwkbZ4mTYad1BepvV0YmCZAz1frVvRpimSkmDIAa3ED6w5Pug+Y
-         oeTF4AJMW2/ySLKyyiqUg/PwSRIwkCpEsegdbsvmjsAOhvKkJA0gSoGE/p2BbMoG+sNX
-         RCkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756480288; x=1757085088;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MKVIGNn1cEq2YWpF5MnDqFEUCjnk9rekqsdebgbty2M=;
-        b=DMKssUhKrM9NQRc2Xbg2D90ZB3DIki9u9kxbBQaFGqhUM3D043RhO9jgqjxZUxPT5G
-         TQ7H9WcI9025WI3rcqOxkM14NF0jz6XjFTTG4Hn1W5cIngDsA9TZEPfnGKSLygo7EzNY
-         7jY0qFZHIYjQNxzIXbN+tXqsl1j6Sh+mCqJ6Q5ifOHiUhJYPeguP8XO6+7SJQ6L7TuXd
-         tHfE+xr1PCJqAYka+QeYK8RNJ6s6jCoFzCVxUdZP+rs7TbFeZ8BCLQCHXs3gkhytZZWh
-         /Yuyg5cZWe/jZZB9Qn+q6hR7WcJoXw9SGqE3nl4InoMtI6ni2qaUcbajUeHhVnA/Qoud
-         umAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx1YxYY4rGLIXXRWLGKk2pL+zTMdqbxZqTqwZrSUGwWF+29YXtzcUU/b9jX7kUQ29zN+VrPmse2b3GRP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQul+Sz7EjZfy0JWOmddUIA2Bik6vv5lPCfK/h1sqDBoZ/P/Nw
-	hcf/QsrN3RupueABc4lRR2dLngbkClyTl1IazUatU+c/2uJ7G4vhf+BbX0UZaGSKo7dBnH6xV+x
-	jpR+DTjBD4N+gwwA2feFg20cpm0kAAYE5Xr2p8EmfTQ==
-X-Gm-Gg: ASbGncsoTydMTvVw7WbCU3nYhV5Hrwjq3m20D3nE/aLZnDsSvrBMcdShNEyD/XK7o07
-	cT+ohekZ3sSr8+lGKqWxN/v+0PoICYiRh4XChmX/LHd5dhwhiVms8PAOztBIIcFiyAexJPyDph0
-	Y9sotxmxXEwLyj94pAWfaY9KRFamL0Hg9wZGyX86Kof98xMnP3563bm1n84jK3t0Mlk4FTrp7uz
-	Muig+pH13Y+gXCY
-X-Google-Smtp-Source: AGHT+IHGuK+XPEJZnoxSJC5I7lDP0ZoQ+n66AiaBsrF0OgVB4dkv+81+YUciDWeRwKYQ7j4CfvTN3OcksYb1HiKXD3Q=
-X-Received: by 2002:a17:903:b0d:b0:246:d70e:ea82 with SMTP id
- d9443c01a7336-246d70eee46mr278790365ad.5.1756480288279; Fri, 29 Aug 2025
- 08:11:28 -0700 (PDT)
+	s=arc-20240116; t=1756480300; c=relaxed/simple;
+	bh=cPsnRheiY6qhu7s/fOGrllQCxeJSjbDMRwYV5cJ/Zmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyhcWbi5JfhIFCfnkW0Se5qtsE62b0lVONXt/Tlm8jKeCeG8DWRhb1IRw5tBABWIufITYtQYh6fL8WZimXjyySc773DCXJVS7E0DvdstVFTgEa1+tTCymGTemoTglI9cn12rjannz8p913OGl1JEi/sLxIga3yinIMs5I+N5xN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1us0lF-000000002sN-0iyL;
+	Fri, 29 Aug 2025 15:11:29 +0000
+Date: Fri, 29 Aug 2025 16:11:25 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH v3 4/6] net: dsa: lantiq_gswip: support offset of MII
+ registers
+Message-ID: <aLHDHbdBYTLzCMiL@pidgin.makrotopia.org>
+References: <cover.1756472076.git.daniel@makrotopia.org>
+ <ece46fdecbfb75ade8400f96f8649d04b4f1a2f7.1756472076.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-rk3588-hdmi-cec-v3-0-95324fb22592@collabora.com> <20250825-rk3588-hdmi-cec-v3-4-95324fb22592@collabora.com>
-In-Reply-To: <20250825-rk3588-hdmi-cec-v3-4-95324fb22592@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Fri, 29 Aug 2025 17:11:16 +0200
-X-Gm-Features: Ac12FXw0jSvkKD9n-NKvt8cWwlJ3T6SlQZFX3ax5d_8FYdRiZJRd202BjgA0Vpg
-Message-ID: <CAPj87rNf3JHveEbtBB-DpmpobDG-kE5nOeNPUaVW-xn70V1jTQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] drm/rockchip: dw_hdmi_qp: Provide CEC IRQ in dw_hdmi_qp_plat_data
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ece46fdecbfb75ade8400f96f8649d04b4f1a2f7.1756472076.git.daniel@makrotopia.org>
 
-On Mon, 25 Aug 2025 at 10:57, Cristian Ciocaltea
-<cristian.ciocaltea@collabora.com> wrote:
-> In order to support the CEC interface of the DesignWare HDMI QP IP
-> block, setup platform data to include the required IRQ number.
+On Fri, Aug 29, 2025 at 02:02:16PM +0100, Daniel Golle wrote:
+> The MaxLinear GSW1xx family got a single (R)(G)MII port at index 5 but
+> the registers MII_PCDU and MII_CFG are those of port 0.
+> Allow applying an offset for the port index to access those registers.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Reviewed-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
+> v3: no changes
+> v2: no changes
 
-Reviewed-by: Daniel Stone <daniels@collabora.com>
+I forgot to include the change I made upon Hauke's request, and it's even
+wrong. Sorry for the noise. I will send v4 tomorrow...
+
+
+> @@ -2027,6 +2035,7 @@ static const struct gswip_hw_info gswip_xrx200 = {
+>  	.max_ports = 7,
+>  	.allowed_cpu_ports = BIT(6),
+>  	.mii_ports = BIT(0) | BIT(1) | BIT(5),
+> +	.mii_port_reg_offset = 0;
+>  	.phylink_get_caps = gswip_xrx200_phylink_get_caps,
+>  	.pce_microcode = &gswip_pce_microcode,
+>  	.pce_microcode_size = ARRAY_SIZE(gswip_pce_microcode),
+> @@ -2037,6 +2046,7 @@ static const struct gswip_hw_info gswip_xrx300 = {
+>  	.max_ports = 7,
+>  	.allowed_cpu_ports = BIT(6),
+>  	.mii_ports = BIT(0) | BIT(5),
+> +	.mii_port_reg_offset = 0;
+>  	.phylink_get_caps = gswip_xrx300_phylink_get_caps,
+>  	.pce_microcode = &gswip_pce_microcode,
+>  	.pce_microcode_size = ARRAY_SIZE(gswip_pce_microcode),
+
+Both above will triger compiler error, should be ',' instead ';'.
+
 
