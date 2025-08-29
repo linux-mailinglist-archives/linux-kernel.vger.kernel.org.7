@@ -1,136 +1,152 @@
-Return-Path: <linux-kernel+bounces-791216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7635AB3B38A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:37:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525FCB3B38D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2EF7C05D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075C216D599
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DE6257824;
-	Fri, 29 Aug 2025 06:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA7E257459;
+	Fri, 29 Aug 2025 06:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="biDH6Hna"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2YTYQwU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5B8250BEC;
-	Fri, 29 Aug 2025 06:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00842AEFD;
+	Fri, 29 Aug 2025 06:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756449441; cv=none; b=p2yKR3IbQmQSv+aXO2m4GdGcBp7h2Akn/PZW8apE3vUxddo1kB0d/3KeKd/GTvVY0QuLuw3bSgEj+QjQ1fQLEUQpMwaKcXby4GAO0qvS4g1FLkJIk4hOYpbyA8JiIyBSO9qhF4KB54CJxei6zthOJKHV+zx7s8uOsVT94aJCce8=
+	t=1756449670; cv=none; b=fyBdWZ1sn1zAmcWrzC8WuB7H5eZkTuslHCz8pAff1tnhpGCVR6Yy6ETm4PhY+Jkb7zWYClGlHgrjfy1Q4U4pk4k2+/HAH+LDD3tkZ6HtLjsvhKH9TFzZ3uRbLJstPEbB+BKarru2scbV92+jIK6DgQPGPExySJHFYhLxUqV0F5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756449441; c=relaxed/simple;
-	bh=A3ZnxoHMDZxruzcSDLOsn1mrsCjJu/QnHwbCBkGRwPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J0CPacdakjd90Nz1RZmPmdRcmEjicMGFpHlRcu/9QDemAYGeHCzHwgVlpaKWkGSNDkJr3Rhd2laeQ8VjgG1UjiHarsYp++QcOI+7IERdQqihofqZD1/BJF3vHTTddr2gsjsMSy+rtQZnfU5C+ZJFx5mExH54VRotl9q49C3hY3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=biDH6Hna; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756449440; x=1787985440;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=A3ZnxoHMDZxruzcSDLOsn1mrsCjJu/QnHwbCBkGRwPs=;
-  b=biDH6HnarjhpBkyGCyPPgg8AaH9TZPf9YYlKkhOIuheEaluZiQgXB9o8
-   C6YEKxKG9fRL+GEBxtPxuL9SnUlouGnWOZIqlHTsgK4vvOtoTdMnggjJK
-   4ymoQHOyTX8Vr6/YUJHtsuQ6xOBBpSsSxCqu3RZrDSXJot5NfuP8eYzQH
-   RQoiKFiLRtHr+M0mkyJ4rfQS5kI7DKb3dzeupnoXcaBX4t3DRimDhapq/
-   ucXmUvfCvCWlsUwneD595rJqOIkLoacGrxOaBFQi9DzYZDMXyfxooDMIT
-   bzR5/dZR19cW4NpXiKF75WjOtmMx9MKIOoXMCXIXuaW0HWfiAYCYxrTdd
-   w==;
-X-CSE-ConnectionGUID: Stxz4/JBQSWOVUmK5wXeiw==
-X-CSE-MsgGUID: j+rgZYHHTweRBLHT5+joyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="46301674"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="46301674"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:37:12 -0700
-X-CSE-ConnectionGUID: qLVDycIETH2+Jr81JpgWUw==
-X-CSE-MsgGUID: gByn24WPQ+eRKatCAsKdSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="169565167"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:37:06 -0700
-Message-ID: <8368132d-dc31-4820-99ba-b3af76a99d54@intel.com>
-Date: Fri, 29 Aug 2025 14:37:03 +0800
+	s=arc-20240116; t=1756449670; c=relaxed/simple;
+	bh=8i6fbXOb5z0SkuR45STk52XtRArKAtCKXukEnXHdhT8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=szOQdpeqPQQQ5mUeKl5TsnkTRxpNDD8+5Xisw/o2kN9EEbnaiYB2/p5tIqwwj2f7HMS+Hgbr+mIKxMK7xcLsHc8QyjsHDtNfr8gVM46NoUTc1ZabHlhfHMR9WJ1ftRh00dYqLcoCYlFtumf8lGMxkNpYYWFUibiPB+gRyUESsFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2YTYQwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4FF36C4CEF0;
+	Fri, 29 Aug 2025 06:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756449670;
+	bh=8i6fbXOb5z0SkuR45STk52XtRArKAtCKXukEnXHdhT8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=S2YTYQwUBysvH9gtvO+FKfA6L9BMRTzjIQpHrpX0wY9xss7tc58d7/2rMUmB9rPOI
+	 qTSa3mpjP/VsQXSNGUpy31EgPie/8sY4i5MmjfhApvDNQQKqDgaQyCfNxthJfpB6PK
+	 4ARLhWAAoAr6IeP7rN5VMuGMBDIjCuAroqbanIS1Vl6Bfz0FiiUgiav4p+bYJ+7/U6
+	 HWCNuPVVLVh0Ih4WS5bmBfvh5YwH3/Su5Bkzn9A5jpRIHdG8bd3iDXclBOscmfqzwP
+	 V4WPycFdp7jkeC8GLb0QkYrVa5XUnUDa8GpfhiMNf/L0jp4gUYVL4dTdToZIHuc3Z5
+	 zU3D/bs7FCEDg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44447CA0FFD;
+	Fri, 29 Aug 2025 06:41:10 +0000 (UTC)
+From: qaqland via B4 Relay <devnull+anguoli.uniontech.com@kernel.org>
+Date: Fri, 29 Aug 2025 14:40:48 +0800
+Subject: [PATCH] ALSA: usb-audio: Add mute TLV for playback volumes on more
+ devices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 02/21] KVM: x86: Report XSS as to-be-saved if there
- are supported features
-To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- john.allen@amd.com, mingo@redhat.com, minipli@grsecurity.net,
- mlevitsk@redhat.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com,
- seanjc@google.com, tglx@linutronix.de, weijiang.yang@intel.com,
- x86@kernel.org, xin@zytor.com
-References: <20250821133132.72322-1-chao.gao@intel.com>
- <20250821133132.72322-3-chao.gao@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250821133132.72322-3-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250829-sound_quirk-v1-1-745529b44440@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAG9LsWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNL3eL80ryU+MLSzKJsXRODpNRU02RLY1MDIyWgjoKi1LTMCrBp0bG
+ 1tQD9alItXQAAAA==
+X-Change-ID: 20250829-sound_quirk-40bee5c93502
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
+ Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
+ Feng Yuan <fengyuan@uniontech.com>, 
+ Cryolitia PukNgae <cryolitia@uniontech.com>, 
+ qaqland <anguoli@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756449669; l=3151;
+ i=anguoli@uniontech.com; s=20250829; h=from:subject:message-id;
+ bh=Hpktb+CQ4vd5dzIX+ki+zIh0ybyRu/1SRUs42KE6TK8=;
+ b=LV4XUBokc49WaeVA5A9i9im5sdmxa1hF80JhOMs+Lb+JYP0H/clCAxAn0dvwCaQQbFgoWqYnk
+ lO5adVEN5lBD6tfgMn0b2u3TEW5W5xxKtXR3MOcvNDmZhbQX8cX+OpS
+X-Developer-Key: i=anguoli@uniontech.com; a=ed25519;
+ pk=boYZUYN5CUcKxq2lHODsag4XCrry/KC4N81H4GYjPpU=
+X-Endpoint-Received: by B4 Relay for anguoli@uniontech.com/20250829 with
+ auth_id=503
+X-Original-From: qaqland <anguoli@uniontech.com>
+Reply-To: anguoli@uniontech.com
 
-On 8/21/2025 9:30 PM, Chao Gao wrote:
-> From: Sean Christopherson <seanjc@google.com>
-> 
-> Add MSR_IA32_XSS to list of MSRs reported to userspace if supported_xss
-> is non-zero, i.e. KVM supports at least one XSS based feature.
-> 
-> Before enabling CET virtualization series, guest IA32_MSR_XSS is
-> guaranteed to be 0, i.e., XSAVES/XRSTORS is executed in non-root mode
-> with XSS == 0, which equals to the effect of XSAVE/XRSTOR.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
+From: qaqland <anguoli@uniontech.com>
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Applying the quirk of that, the lowest Playback mixer volume setting
+mutes the audio output, on more devices.
 
-> ---
->   arch/x86/kvm/x86.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 31a7e7ad310a..569583943779 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -335,7 +335,7 @@ static const u32 msrs_to_save_base[] = {
->   	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
->   	MSR_IA32_UMWAIT_CONTROL,
->   
-> -	MSR_IA32_XFD, MSR_IA32_XFD_ERR,
-> +	MSR_IA32_XFD, MSR_IA32_XFD_ERR, MSR_IA32_XSS,
->   };
->   
->   static const u32 msrs_to_save_pmu[] = {
-> @@ -7474,6 +7474,10 @@ static void kvm_probe_msr_to_save(u32 msr_index)
->   		if (!(kvm_get_arch_capabilities() & ARCH_CAP_TSX_CTRL_MSR))
->   			return;
->   		break;
-> +	case MSR_IA32_XSS:
-> +		if (!kvm_caps.supported_xss)
-> +			return;
-> +		break;
->   	default:
->   		break;
->   	}
+Suggested-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+Signed-off-by: qaqland <anguoli@uniontech.com>
+---
+ sound/usb/quirks.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 8bc1e247cdf1af0a3e9c506830d8428a86c25595..766db7d00cbc95984afa834200ebe3adfdf182ef 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -2199,6 +2199,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+ 		   QUIRK_FLAG_SET_IFACE_FIRST),
+ 	DEVICE_FLG(0x0556, 0x0014, /* Phoenix Audio TMX320VC */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE),
++	DEVICE_FLG(0x0572, 0x1b08, /* Conexant Systems (Rockwell), Inc. */
++		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x0572, 0x1b09, /* Conexant Systems (Rockwell), Inc. */
+ 		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x05a3, 0x9420, /* ELP HD USB Camera */
+@@ -2243,6 +2245,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+ 		   QUIRK_FLAG_CTL_MSG_DELAY_1M),
+ 	DEVICE_FLG(0x0b0e, 0x0349, /* Jabra 550a */
+ 		   QUIRK_FLAG_CTL_MSG_DELAY_1M),
++	DEVICE_FLG(0x0bda, 0x498a, /* Realtek Semiconductor Corp. */
++		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x0c45, 0x6340, /* Sonix HD USB Camera */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE),
+ 	DEVICE_FLG(0x0c45, 0x636b, /* Microdia JP001 USB Camera */
+@@ -2259,6 +2263,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+ 		   QUIRK_FLAG_SHARE_MEDIA_DEVICE | QUIRK_FLAG_ALIGN_TRANSFER),
+ 	DEVICE_FLG(0x1101, 0x0003, /* Audioengine D1 */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE),
++	DEVICE_FLG(0x12d1, 0x3a07, /* Huawei Technologies Co., Ltd. */
++		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x1224, 0x2a25, /* Jieli Technology USB PHY 2.0 */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE | QUIRK_FLAG_MIC_RES_16),
+ 	DEVICE_FLG(0x1395, 0x740a, /* Sennheiser DECT */
+@@ -2349,6 +2355,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+ 		   QUIRK_FLAG_IGNORE_CTL_ERROR),
+ 	DEVICE_FLG(0x2912, 0x30c8, /* Audioengine D1 */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE),
++	DEVICE_FLG(0x2a70, 0x1881, /* OnePlus Technology (Shenzhen) Co., Ltd. BE02T */
++		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x2b53, 0x0023, /* Fiero SC-01 (firmware v1.0.0 @ 48 kHz) */
+ 		   QUIRK_FLAG_GENERIC_IMPLICIT_FB),
+ 	DEVICE_FLG(0x2b53, 0x0024, /* Fiero SC-01 (firmware v1.0.0 @ 96 kHz) */
+@@ -2365,6 +2373,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+ 		   QUIRK_FLAG_CTL_MSG_DELAY_1M),
+ 	DEVICE_FLG(0x30be, 0x0101, /* Schiit Hel */
+ 		   QUIRK_FLAG_IGNORE_CTL_ERROR),
++	DEVICE_FLG(0x339b, 0x3a07, /* Synaptics HONOR USB-C HEADSET */
++		   QUIRK_FLAG_MIXER_MIN_MUTE),
+ 	DEVICE_FLG(0x413c, 0xa506, /* Dell AE515 sound bar */
+ 		   QUIRK_FLAG_GET_SAMPLE_RATE),
+ 	DEVICE_FLG(0x534d, 0x0021, /* MacroSilicon MS2100/MS2106 */
+
+---
+base-commit: 112f7d3cff02e357c2f7a116fd7ab6a366ed27f4
+change-id: 20250829-sound_quirk-40bee5c93502
+
+Best regards,
+-- 
+qaqland <anguoli@uniontech.com>
+
 
 
