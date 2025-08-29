@@ -1,295 +1,314 @@
-Return-Path: <linux-kernel+bounces-791503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA9EB3B79D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D866EB3B7BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1258B7BB1AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4446858F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53193304BB5;
-	Fri, 29 Aug 2025 09:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="w2wzKJQZ"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B193043B8;
-	Fri, 29 Aug 2025 09:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FD93054E9;
+	Fri, 29 Aug 2025 09:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B52283FD4;
+	Fri, 29 Aug 2025 09:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460483; cv=none; b=P+LeIsiKFWcLErlyjA2d7JSo4PS1ZHweAbTquBpKRC3gSZPzYtUMmAhrqw0UWRXXR+hLp4FrqwBQml05VDRKV9iPdEE+J9K11FWku6EQNDOj9jV0913uscjEheeRG/LXPVkkt2NXolm+lPSL3IiwEkBv/KJ1V13U3h5I8JU69q4=
+	t=1756461036; cv=none; b=eglRDZ4QvrODvtyppzB3EHjujOVJaqKyZLYiVegZ6U0kR38FadIpDZCP0IPx9RtNtf0pakr+3TWnQ02lSrIDh6HONg2/HUJdZ6G44kg9Az5aLHzccTFfHlKChocQcEhBzFKmqU2Vz+Amz68N4rk74pdQ0CyBpZVL8i8P6JKfUH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460483; c=relaxed/simple;
-	bh=CkSf9nDgRBzfKl3t2CBt/uXviW28S25xi5AxQQDIpZA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YKbQBAvRGkVBenkpOuWciHFlpIoqPORyTYTV/sTYmdnqMtoGQsgvaudAPTtnyw3mlxzh4cT1c/l/4clEX3+ZfBXRcUci3u+5DqnKHszAELVWsG69N3rQVtJx3zfoUJUg1gCiMeLoMJpBps5bMW/4sOPHTpPJ14KedgMBwdkR3Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=w2wzKJQZ; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57T9evOF33335886, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1756460457; bh=4moyHNWba+bebLk0dnMJdhTozC/x1rqIuMhlvLYSABU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=w2wzKJQZSaO+lwXJZ90eud0if16WJE2DlOnS4WMcUX/TFg9qlAJqkML8vqF7weVFT
-	 RyibEtmDeWOnIBEjtqjzW8RTwplg6Cm5gzZjrhCyvWAHWAh+dS0ZhHf8f+xY30hsWU
-	 rK9OkV5F7cwkPkAQZ3LXqeKc9uuvZRlqKfU2zwWxNEjS+PxNf3tLH/CncX085W8got
-	 AtIyhokWGtC8jlawNvjOjZ7KwSz2oWApk3KgvWsYPjQ6e6ds/kgA7so2HXBafGPcDc
-	 mo4pfHs8DygKOVUzYQPRM9Gs6YFjlOJOlomtgPaDI9+Z6Xob9rrvovNmkL+uV8OwnB
-	 uSHkWgapgbKRQ==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57T9evOF33335886
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 17:40:57 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Fri, 29 Aug 2025 17:40:57 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d]) by
- RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d%2]) with mapi id
- 15.01.2507.035; Fri, 29 Aug 2025 17:40:57 +0800
-From: Zong-Zhe Yang <kevin_yang@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>, Ping-Ke Shih <pkshih@realtek.com>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>
-CC: Bernie Huang <phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>,
-        "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH rtw v3 2/5] wifi: rtw89: fix tx_wait initialization race
-Thread-Topic: [PATCH rtw v3 2/5] wifi: rtw89: fix tx_wait initialization race
-Thread-Index: AQHcGGCjH5eSvzlnzk+EPaGXQpbFnLR5Tksw
-Date: Fri, 29 Aug 2025 09:40:57 +0000
-Message-ID: <99e8d23ce3314a76a2a50db1e7d386f3@realtek.com>
-References: <20250828211245.178843-1-pchelkin@ispras.ru>
- <20250828211245.178843-3-pchelkin@ispras.ru>
-In-Reply-To: <20250828211245.178843-3-pchelkin@ispras.ru>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756461036; c=relaxed/simple;
+	bh=vfH2RRa8w5fMFY0S+x1MW37jLrAsMWY41G/9e42RGyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lbn9FxtnXvOS23pANVfn+davGcLhvg2xMk0eSQJSFsmGAWPY0ZtX7GgiDDTMRDS1VCEHZMMcw4cZ0zJ/rRPD0Psr3SQ62LNHJ9cYeG5SdA8WhGP6A8chpEeOKSre2G6/sRa/bI4dahLdSehYRPu2qruo5u1gjH+LIXv0PXLoVfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cCtZG1F0Jz9sSq;
+	Fri, 29 Aug 2025 11:41:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id GrXZn4W0Vaq7; Fri, 29 Aug 2025 11:41:26 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cCtZG028qz9sSm;
+	Fri, 29 Aug 2025 11:41:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DDA448B778;
+	Fri, 29 Aug 2025 11:41:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id KZaq5q-SPjdO; Fri, 29 Aug 2025 11:41:25 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3DD938B776;
+	Fri, 29 Aug 2025 11:41:25 +0200 (CEST)
+Message-ID: <bf5444e4-8f3f-4a56-be67-29857726b119@csgroup.eu>
+Date: Fri, 29 Aug 2025 11:41:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] dt-bindings: soc: fsl: qe: Add support of IRQ in
+ QE GPIO
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1756104334.git.christophe.leroy@csgroup.eu>
+ <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
+ <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
+ <f21e27da-de26-4835-9660-b39e99695281@csgroup.eu>
+ <0f716362-07f4-4c79-bb0a-e71d2630a797@kernel.org>
+ <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
+ <c314b7c6-f5b7-4f3e-8d67-e3c92ff8ff37@kernel.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <c314b7c6-f5b7-4f3e-8d67-e3c92ff8ff37@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> Now that nullfunc skbs are recycled in a separate work item in the driver=
-, the following race
-> during initialization and processing of those skbs might lead to noticeab=
-le bugs:
->=20
->       Waiting thread                          Completing thread
->=20
-> rtw89_core_send_nullfunc()
->   rtw89_core_tx_write_link()
->     ...
->     rtw89_pci_txwd_submit()
->       skb_data->wait =3D NULL
->       /* add skb to the queue */
->       skb_queue_tail(&txwd->queue, skb)
->                                             rtw89_pci_napi_poll()
->                                             ...
->                                               rtw89_pci_release_txwd_skb(=
-)
->                                                 /* get skb from the queue=
- */
->                                                 skb_unlink(skb, &txwd->qu=
-eue)
->                                                 rtw89_pci_tx_status()
->                                                   rtw89_core_tx_wait_comp=
-lete()
->                                                   /* use incorrect skb_da=
-ta->wait
-> */
->   rtw89_core_tx_kick_off_and_wait()
->   /* assign skb_data->wait but too late */
->=20
-> The value of skb_data->wait indicates whether skb is passed on to the cor=
-e ieee80211 stack
-> or released by the driver itself.  So assure that by the time skb is adde=
-d to txwd queue and
-> becomes visible to the completing side, it has already allocated tx_wait-=
-related data (in case
-> it's needed).
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Fixes: 1ae5ca615285 ("wifi: rtw89: add function to wait for completion of=
- TX skbs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
->  drivers/net/wireless/realtek/rtw89/core.c | 30 ++++++++++++++---------
-> drivers/net/wireless/realtek/rtw89/pci.c  |  2 --
->  2 files changed, 18 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw89/core.c
-> b/drivers/net/wireless/realtek/rtw89/core.c
-> index 5c964283cd67..57f20559dfde 100644
-> --- a/drivers/net/wireless/realtek/rtw89/core.c
-> +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> @@ -1094,20 +1094,12 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_=
-dev *rtwdev,
-> struct sk_buff *sk
->                                     int qsel, unsigned int timeout)  {
->         struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
-> -       struct rtw89_tx_wait_info *wait;
-> +       struct rtw89_tx_wait_info *wait =3D skb_data->wait;
 
-wiphy_dereference(rtwdev->hw->wiphy, skb_data->wait)
 
->         unsigned long time_left;
->         int ret =3D 0;
->=20
->         lockdep_assert_wiphy(rtwdev->hw->wiphy);
->=20
-> -       wait =3D kzalloc(sizeof(*wait), GFP_KERNEL);
-> -       if (!wait) {
-> -               rtw89_core_tx_kick_off(rtwdev, qsel);
-> -               return 0;
-> -       }
-> -
-> -       init_completion(&wait->completion);
-> -       rcu_assign_pointer(skb_data->wait, wait);
->         wait->skb =3D skb;
+Le 29/08/2025 à 11:16, Krzysztof Kozlowski a écrit :
+> On 29/08/2025 10:35, Christophe Leroy wrote:
+>>
+>>
+>> Le 29/08/2025 à 09:47, Krzysztof Kozlowski a écrit :
+>>> On 28/08/2025 16:12, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 28/08/2025 à 15:28, Rob Herring a écrit :
+>>>>> On Mon, Aug 25, 2025 at 2:20 AM Christophe Leroy
+>>>>> <christophe.leroy@csgroup.eu> wrote:
+>>>>>>
+>>>>>> In the QE, a few GPIOs are IRQ capable. Similarly to
+>>>>>> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+>>>>>> GPIO"), add IRQ support to QE GPIO.
+>>>>>>
+>>>>>> Add property 'fsl,qe-gpio-irq-mask' similar to
+>>>>>> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+>>>>>
+>>>>> Why do you need to know this? The ones that have interrupts will be
+>>>>> referenced by an 'interrupts' property somewhere.
+>>>>
+>>>> I don't follow you. The ones that have interrupts need to be reported by
+>>>> gc->qe_gpio_to_irq[] so that gpiod_to_irq() return the IRQ number, for
+>>>> instance to gpio_sysfs_request_irq() so that it can install an irq
+>>>> handler. I can't see where they would be referenced by an "interrupts"
+>>>> property.
+>>>
+>>> They would be referenced by every consumer of these interrupts. IOW,
+>>> this property is completely redundant, because DT holds this information
+>>> already in other place.
+>>
+>> But the gpio controller _is_ the consumer of these interrupts, it it
+>> _not_ the provider.
+>>
+>> The interrupts are provided by a separate interrupt controller. Let's
+>> take the exemple of powerpc 8xx. Here is the list of interrupts handled
+>> by the CPM interrupt controller on the 8xx:
+>>
+>> 1 - GPIO Port C Line 4 interrupt
+>> 2 - GPIO Port C Line 5 interrupt
+>> 3 - SMC2 Serial controller interrupt
+>> 4 - SMC1 Serial controller interrupt
+>> 5 - SPI controller interrupt
+>> 6 - GPIO Port C Line 6 interrupt
+>> 7 - Timer 4 interrupt
+>> 8 - SCCd Serial controller interrupt
+>> 9 - GPIO Port C Line 7 interrupt
+>> 10 - GPIO Port C Line 8 interrupt
+>> 11 - GPIO Port C Line 9 interrupt
+>> 12 - Timer 3 interrupt
+>> 13 - SCCc Serial controller interrupt
+>> 14 - GPIO Port C Line 10 interrupt
+>> 15 - GPIO Port C Line 11 interrupt
+>> 16 - I2C Controller interrupt
+>> 17 - RISC timer table interrupt
+>> 18 - Timer 2 interrupt
+>> 19 - SCCb Serial controller interrupt
+>> 20 - IDMA2 interrupt
+>> 21 - IDMA1 interrupt
+>> 22 - SDMA channel bus error interrupt
+>> 23 - GPIO Port C Line 12 interrupt
+>> 24 - GPIO Port C Line 13 interrupt
+>> 25 - Timer 1 interrupt
+>> 26 - GPIO Port C Line 14 interrupt
+>> 27 - SCCd Serial controller interrupt
+>> 28 - SCCc Serial controller interrupt
+>> 29 - SCCb Serial controller interrupt
+>> 30 - SCCa Serial controller interrupt
+>> 31 - GPIO Port C Line 15 interrupt
+> 
+> That list is fixed per soc/device, so already implied by compatible.
+> 
+>>
+>> As you can see in the list, the GPIO line interrupts are nested with
+>> other types of interrupts so GPIO controller and Interrupt controller
+>> are to be keept independant.
+>>
+>> That's more or less the same here with my series, patch 1 implements an
+>> interrupt controller (documented in patch 6) and then the GPIO
+>> controllers consume the interrupts, for instance in gpiolib functions
+>> gpio_sysfs_request_irq() [drivers/gpio/gpiolib-sysfs.c] or
+>> edge_detector_setup() or debounce_setup() [drivers/gpio/gpiolib-cdev.c]
+>>
+>> External drivers also use interrupts indirectly. For example driver
+>> sound/soc/soc-jack.c, it doesn't have any direct reference to an
+>> interrupt. The driver is given an array of GPIOs and then installs an
+>> IRQ in function snd_soc_jack_add_gpios() by doing
+>>
+>> 	request_any_context_irq(gpiod_to_irq(gpios[i].desc),
+>> 					      gpio_handler,
+>> 					      IRQF_SHARED |
+>> 					      IRQF_TRIGGER_RISING |
+>> 					      IRQF_TRIGGER_FALLING,
+>> 					      gpios[i].name,
+>> 					      &gpios[i]);
+> 
+> 
+> External drivers do not matter then. Your GPIO controller receives
+> specific interrupts (that's the interrupt property) and knows exactly
+> how each GPIO maps to it.
+> 
 
-Also, move "wait->skb =3D skb" to where wait is initialized.
+Do you mean then that the GPIO driver should already know which line has 
+an interrupt and which one doesn't ?
 
->=20
->         rtw89_core_tx_kick_off(rtwdev, qsel); @@ -1172,10 +1164,12 @@ int
-> rtw89_h2c_tx(struct rtw89_dev *rtwdev,  static int rtw89_core_tx_write_li=
-nk(struct
-> rtw89_dev *rtwdev,
->                                     struct rtw89_vif_link *rtwvif_link,
->                                     struct rtw89_sta_link *rtwsta_link,
-> -                                   struct sk_buff *skb, int *qsel, bool =
-sw_mld)
-> +                                   struct sk_buff *skb, int *qsel, bool =
-sw_mld,
-> +                                   struct rtw89_tx_wait_info *wait)
->  {
->         struct ieee80211_sta *sta =3D rtwsta_link_to_sta_safe(rtwsta_link=
-);
->         struct ieee80211_vif *vif =3D rtwvif_link_to_vif(rtwvif_link);
-> +       struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
->         struct rtw89_vif *rtwvif =3D rtwvif_link->rtwvif;
->         struct rtw89_core_tx_request tx_req =3D {};
->         int ret;
-> @@ -1192,6 +1186,8 @@ static int rtw89_core_tx_write_link(struct rtw89_de=
-v *rtwdev,
->         rtw89_core_tx_update_desc_info(rtwdev, &tx_req);
->         rtw89_core_tx_wake(rtwdev, &tx_req);
->=20
-> +       rcu_assign_pointer(skb_data->wait, wait);
-> +
->         ret =3D rtw89_hci_tx_write(rtwdev, &tx_req);
->         if (ret) {
->                 rtw89_err(rtwdev, "failed to transmit skb to HCI\n"); @@ =
--1228,7 +1224,8
-> @@ int rtw89_core_tx_write(struct rtw89_dev *rtwdev, struct ieee80211_vif=
- *vif,
->                 }
->         }
->=20
-> -       return rtw89_core_tx_write_link(rtwdev, rtwvif_link, rtwsta_link,=
- skb, qsel, false);
-> +       return rtw89_core_tx_write_link(rtwdev, rtwvif_link, rtwsta_link,=
- skb, qsel, false,
-> +                                       NULL);
->  }
->=20
->  static __le32 rtw89_build_txwd_body0(struct rtw89_tx_desc_info *desc_inf=
-o) @@ -3426,6
-> +3423,7 @@ int rtw89_core_send_nullfunc(struct rtw89_dev *rtwdev, struct =
-rtw89_vif_link
-> *rt
->         struct ieee80211_vif *vif =3D rtwvif_link_to_vif(rtwvif_link);
->         int link_id =3D ieee80211_vif_is_mld(vif) ? rtwvif_link->link_id =
-: -1;
->         struct rtw89_sta_link *rtwsta_link;
-> +       struct rtw89_tx_wait_info *wait;
->         struct ieee80211_sta *sta;
->         struct ieee80211_hdr *hdr;
->         struct rtw89_sta *rtwsta;
-> @@ -3435,6 +3433,12 @@ int rtw89_core_send_nullfunc(struct rtw89_dev *rtw=
-dev, struct
-> rtw89_vif_link *rt
->         if (vif->type !=3D NL80211_IFTYPE_STATION || !vif->cfg.assoc)
->                 return 0;
->=20
-> +       wait =3D kzalloc(sizeof(*wait), GFP_KERNEL);
-> +       if (!wait)
-> +               return -ENOMEM;
-> +
-> +       init_completion(&wait->completion);
-> +
->         rcu_read_lock();
->         sta =3D ieee80211_find_sta(vif, vif->cfg.ap_addr);
->         if (!sta) {
-> @@ -3459,7 +3463,8 @@ int rtw89_core_send_nullfunc(struct rtw89_dev *rtwd=
-ev, struct
-> rtw89_vif_link *rt
->                 goto out;
->         }
->=20
+The interrupts are fixed per soc, but today the GPIO driver is generic 
+and used on different SOCs that don't have interrupts on the same lines. 
+And even on the given SOCs, not all ports have interrupts on the same 
+lines. Should all possibilities be hard-coded inside the driver for each 
+possible compatible ? The property 'fsl,qe-gpio-irq-mask' is there to 
+avoid that and keep the GPIO driver as generic as possible with a single 
+compatible 'fsl,mpc8323-qe-pario-bank' that is found in the DTS of 8323 
+but also in DTS of 8360, in DTS of 8569, etc... :
 
-Fill wait->skb as mentioned above.
+arch/powerpc/boot/dts/fsl/mpc8569mds.dts: 
+             "fsl,mpc8323-qe-pario-bank";
+arch/powerpc/boot/dts/fsl/mpc8569mds.dts: 
+             "fsl,mpc8323-qe-pario-bank";
+arch/powerpc/boot/dts/kmeter1.dts: 
+     "fsl,mpc8323-qe-pario-bank";
+arch/powerpc/boot/dts/mpc832x_rdb.dts: 
+compatible = "fsl,mpc8323-qe-pario-bank";
+arch/powerpc/boot/dts/mpc836x_rdk.dts: 
+"fsl,mpc8323-qe-pario-bank";
+arch/powerpc/boot/dts/mpc836x_rdk.dts: 
+"fsl,mpc8323-qe-pario-bank";
 
-> -       ret =3D rtw89_core_tx_write_link(rtwdev, rtwvif_link, rtwsta_link=
-, skb, &qsel, true);
-> +       ret =3D rtw89_core_tx_write_link(rtwdev, rtwvif_link, rtwsta_link=
-, skb, &qsel, true,
-> +                                      wait);
->         if (ret) {
->                 rtw89_warn(rtwdev, "nullfunc transmit failed: %d\n", ret)=
-;
->                 dev_kfree_skb_any(skb);
-> @@ -3472,6 +3477,7 @@ int rtw89_core_send_nullfunc(struct rtw89_dev *rtwd=
-ev, struct
-> rtw89_vif_link *rt
->                                                timeout);
->  out:
->         rcu_read_unlock();
-> +       kfree(wait);
->=20
->         return ret;
->  }
-> diff --git a/drivers/net/wireless/realtek/rtw89/pci.c b/drivers/net/wirel=
-ess/realtek/rtw89/pci.c
-> index 4e3034b44f56..cb9682f306a6 100644
-> --- a/drivers/net/wireless/realtek/rtw89/pci.c
-> +++ b/drivers/net/wireless/realtek/rtw89/pci.c
-> @@ -1372,7 +1372,6 @@ static int rtw89_pci_txwd_submit(struct rtw89_dev *=
-rtwdev,
->         struct pci_dev *pdev =3D rtwpci->pdev;
->         struct sk_buff *skb =3D tx_req->skb;
->         struct rtw89_pci_tx_data *tx_data =3D RTW89_PCI_TX_SKB_CB(skb);
-> -       struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
->         bool en_wd_info =3D desc_info->en_wd_info;
->         u32 txwd_len;
->         u32 txwp_len;
-> @@ -1388,7 +1387,6 @@ static int rtw89_pci_txwd_submit(struct rtw89_dev *=
-rtwdev,
->         }
->=20
->         tx_data->dma =3D dma;
-> -       rcu_assign_pointer(skb_data->wait, NULL);
->=20
->         txwp_len =3D sizeof(*txwp_info);
->         txwd_len =3D chip->txwd_body_size;
-> --
-> 2.51.0
->=20
+Do you mean we should define one compatible for each of the ports of 
+each soc, and encode the mask of interrupts that define which line of 
+the port has interrupts in the data field ?
 
+Something like:
+
+static const struct of_device_id qe_gpio_match[] = {
+	{
+		.compatible = "fsl,mpc8323-qe-pario-bank-a",
+		.data = (void *)0x00a00028,
+	},
+	{
+		.compatible = "fsl,mpc8323-qe-pario-bank-b",
+		.data = (void *)0x01400050,
+	},
+	{
+		.compatible = "fsl,mpc8323-qe-pario-bank-c",
+		.data = (void *)0x00000084,
+	},
+	{
+		.compatible = "fsl,mpc8323-qe-pario-bank-d",
+		.data = (void *)0,
+	},
+	{
+		.compatible = "fsl,mpc8360-qe-pario-bank-a",
+		.data = (void *)0xXXXXXXXX,
+	},
+	{
+		.compatible = "fsl,mpc8360-qe-pario-bank-b",
+		.data = (void *)0xXXXXXXXX,
+	},
+....
+	{},
+};
+MODULE_DEVICE_TABLE(of, qe_gpio_match);
+
+That would be feasible but would mean updating the driver each time a 
+new SOC is added.
+
+Do you mean it should be done that way ?
+
+Isn't the purpose of the device tree to keep drivers as generic as 
+possible ?
+
+
+
+
+>>
+>>>
+>>>>
+>>>>>
+>>>>>> Here is an exemple for port B of mpc8323 which has IRQs for
+>>>>>
+>>>>> typo
+>>>>>
+>>>>>> GPIOs PB7, PB9, PB25 and PB27.
+>>>>>>
+>>>>>>            qe_pio_b: gpio-controller@1418 {
+>>>>>>                    compatible = "fsl,mpc8323-qe-pario-bank";
+>>>>>>                    reg = <0x1418 0x18>;
+>>>>>>                    interrupts = <4 5 6 7>;
+>>>>>>                    interrupt-parent = <&qepic>;
+>>>>>>                    gpio-controller;
+>>>>>>                    #gpio-cells = <2>;
+>>>>>>                    fsl,qe-gpio-irq-mask = <0x01400050>;
+>>>>>>            };
+>>>>>
+>>>>> You are missing #interrupt-cells and interrupt-controller properties.
+>>>>
+>>>> The gpio controller is not an interrupt controller. The GPIO controller
+>>>> is brought by patch 1/6 and documented in patch 6/6.
+>>>
+>>> Then the IRQ mask property is not right here. If you say "this GPIOs
+>>> have IRQs" it means this is an interrupt controller.
+>>
+>> The mask tells to the GPIO controller which GPIO line has an interrupt
+>> (so it can install the edge detector) and which doesn't have an
+>> interrupt. The "interrupts" property gives a flat list of interrupts,
+>> the mask in the above example tells: interrupt 4 is for line 7,
+>> interrupt 5 is for line 9, interrupt 6 is for line 25, interrupt 7 is
+>> for line 27. Other lines don't have interrupts.
+>>
+>>>
+>>> If you say this is not an interrupt controller, then you cannot have
+>>> here interrupts per some GPIOs, obviously.
+>>
+>> It has been working that way on powerpc 8xx for 8 years, since commit
+>> 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx GPIO")
+>>
+>> I don't understand why you say you cannot have
+>> here interrupts per some GPIOs. What am I missing ?
+> 
+> I used conditional. English conditional. If you claim this GPIO
+> controller is not an interrupt controller, then obviously it is not an
+> interrupt controller and cannot be used as interrupt controller.
+> 
+> If you use "foo" as interrupt controller, then clearly foo is an
+> interrupt controller.
+> 
+
+Ah ! ok. I didn't read it like that, sorry.
+
+Thanks
+Christophe
 
