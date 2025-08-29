@@ -1,192 +1,199 @@
-Return-Path: <linux-kernel+bounces-792089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD66CB3C00B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:58:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96381B3C016
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034EC3AD055
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00AD41886F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B196334703;
-	Fri, 29 Aug 2025 15:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CB832BF54;
+	Fri, 29 Aug 2025 15:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHfCCbCM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hYRdS1rp"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E485832C32C
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482793; cv=none; b=TMU+rrf9NW2BAFKqCnrWL3+xW62CGKpCy+54bJdd5KrrHDomhJPjhquOZbDscKq+wvhk7ZgEuB6VWuOnKI2rDCwSYSmVh4mqFwesVGrIbPkb+Wp5XD4rLIrzArm3l7t/OxJTmgI7Xy81tTHkF9N/rKi3bDuuuV0A992XzQADIQk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482793; c=relaxed/simple;
-	bh=r6o6tZrAu3+w3lcyJAMYfuRXyaYgtSBycjjyO1n469Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FnyZ4xhlYA43526HD1cg3egHgPNwb2KrgMlEjPqQO54eLDajtcb33RF5T13IFHLqcphd+us7PEa2mBfSFRvlpBOXOxnzaKSehxROTPzmna812UamxBSYuM07+ZNyXBwjCC4uDuT8xkmn9Wy/hCU/kLlfjdP5hMZC5U7tWbd4MQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHfCCbCM; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756482792; x=1788018792;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=r6o6tZrAu3+w3lcyJAMYfuRXyaYgtSBycjjyO1n469Y=;
-  b=hHfCCbCMmGrKUh+N7qwc5+ZM1CGKc5ibwAtUK36p9ftZ0hAhlvkFHJR/
-   WzF1WOv4pQUV50LMSpLOnnzlBJF8jLbDSNwT2+z9Yzm4g8MnalpLGTbfe
-   Yl+p4fPHG1Q3S+2i51wIntfXxRiQBj/n+hSNjb6qWB52603568jh2Zg9P
-   mDPCff9f9SbWQlkdtekOYiatNo9+sbcNLgbVx7v+mOfvaVTvaT2uAKMoM
-   BpdizoP4C7VFxngNodaAYOvncYqbBgaqGhNNoNO/r4jNXsLEzZu6/LiAc
-   n7ylbkUs45yV9Znb3/oS9iFEuZJvfmB1SvMBAg6VQXG6o8nrPG5pRSYqY
-   w==;
-X-CSE-ConnectionGUID: OSGLrUzQTWSboDJqzdS3mQ==
-X-CSE-MsgGUID: 7CTJVCIxSTKLTSdQJtBvng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69479396"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="69479396"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 08:53:11 -0700
-X-CSE-ConnectionGUID: QImWmryqRbOtWb01gAjz0A==
-X-CSE-MsgGUID: opv4oweYSoisGenrwSOezA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="174582244"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 29 Aug 2025 08:53:10 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1us1PX-000UjF-0y;
-	Fri, 29 Aug 2025 15:53:07 +0000
-Date: Fri, 29 Aug 2025 23:52:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250814 2/8]
- security/integrity/integrity.h:37:67: error: invalid application of 'sizeof'
- to incomplete type 'struct evm_ima_xattr_data_hdr'
-Message-ID: <202508292352.Q9sA9NNG-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777F732A3F1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756482761; cv=fail; b=gvXqor2B7l4VG/sBr+jc5tDb/wbcl9BdlpO9cBECAwIpQTqSeAro9Xed8Q098tIYlBkpzR44dEkuKTu7/2FMMWuuksjf7F8T+UiwPASbIgIlL5SuXwDwuP2dDiVkNlD3sgFNOJYbBfeuVUgMRIRwVCrQROCFbLrp4ae8n26zNCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756482761; c=relaxed/simple;
+	bh=HieRNGlh97ieCh3Qg/ow+7HNfyQqOkfc3AL6aym5Grg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pf339hBe130ytZQsn7LuzUTi45SxApgT+jEINsjnzHAejDoXcG08YpvFEpY1YUMvTeuMVjsioOVUS/9O4bYDw0QsA6E9PtQ2H88fuuxrbbl6ExGmk9/kvhCp/ZsUXGfZtzZPoxCmRuT6H5buMPr8SZEiqxHxrYHtZ26APF/xNvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hYRdS1rp; arc=fail smtp.client-ip=40.107.237.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tEtosoDZ8D4/Yc0zK3u25TJAOdPV0IevCwb4aH7CgeUbLqCPVERfy2iwVEPSOi76FHF1YOzu+eQe3DvsItH4wsURSMcuUy0XvOq+J73kBlY9vabomr2nYPWsCQvz8Hf+aPGk0ub3G5+qK/StSFdebFFuccUslmrSDTCj7V7HjzWvYEpfm9PXycO+m37/P+RXvTHW7K82Uaj11N8NCjY9qEoFjMq+qDwAJGUCev3rXNCoATQzY02w13OQiOQcA+/5EDG7bFMns30MoVLgcdMOdWos0plLTmGKj525q7KlumasLcQFirsMaBqzHcoE2nnD+rN7Vs+l7C5ItVGroJa9/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O/iaNgkhBMzGX9fvgrNa7r9245puRvO3O4+yWwaKqOE=;
+ b=UyoLuyJXX6qd/6tM4NrPwyl7+zjI3NM2ng1zAndtzoT4cHJTvmXv0ph5DtjSE2OhbNUAfqI4ydQp4Oes5AZn9qMyL+P+TbktJz9Fzv6kRnuYUPZ+5hZZjo9jPrLcZAbkFCnpIZjWK3d+ooFb2knDCCRUMHy+IjI44ZD2jWM5gFBuValPiHKYE3YnLtF2dtbRUySgFERybRYfn2LRIeAr6OfNoCu64qOkUxoVaXBGOBTSNALGTmqVMh6YlcLDgDqIIbE0q67g1vTUk0GOfWAigUy6gZ8IGon//KJ5uAEV2P7OgqhOWD9k5cgnK78/RtQ0wLzYvd45J+bXOekLyjOhJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O/iaNgkhBMzGX9fvgrNa7r9245puRvO3O4+yWwaKqOE=;
+ b=hYRdS1rpEk1mi4/MKES06NPg7aRHzaE8ZOYbcp/Odon7rYW04x3g1YFiE9pqXXsnX0RteWQV5iNNU2qPwkZ/GtfOWKyiHztTKU+7SAb2H4XKN6sIqKFYyzYOz9wSGJ7YEIvTlS8paXyS688KRVxepKBd/UpWSAx31B92ss+VG5Y=
+Received: from BY3PR05CA0031.namprd05.prod.outlook.com (2603:10b6:a03:39b::6)
+ by CH1PR12MB9671.namprd12.prod.outlook.com (2603:10b6:610:2b0::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Fri, 29 Aug
+ 2025 15:52:32 +0000
+Received: from SJ5PEPF000001F6.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b:cafe::43) by BY3PR05CA0031.outlook.office365.com
+ (2603:10b6:a03:39b::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.9 via Frontend Transport; Fri,
+ 29 Aug 2025 15:52:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ5PEPF000001F6.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Fri, 29 Aug 2025 15:52:31 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 29 Aug
+ 2025 10:52:30 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Fri, 29 Aug
+ 2025 08:52:30 -0700
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 29 Aug 2025 10:52:30 -0500
+Message-ID: <dc0227cb-7e02-10c6-9790-2e2331ddfd6e@amd.com>
+Date: Fri, 29 Aug 2025 08:52:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] MAINTAINERS: Update Min Ma's email for AMD XDNA driver
+Content-Language: en-US
+To: Min Ma <mamin506@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>, <jacek.lawrynowicz@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>
+References: <09906ca7-62c7-2ca7-5436-662a6c4b19f5@amd.com>
+ <20250829063607.789-1-mamin506@gmail.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <20250829063607.789-1-mamin506@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F6:EE_|CH1PR12MB9671:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82fd6ef5-dcb7-4cdf-e679-08dde71410a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?LzE3b1RvNkp1SGxpR1o5NWFSenB5UUtEZzFkYm13MHBFWnFnQVUyaFVjenJ3?=
+ =?utf-8?B?TnFyN2wxQVZzSUNDNXdIQ1FKbDFEK2xzYVRRV1MvMldnSStWYTEwVEw1TWkw?=
+ =?utf-8?B?b1BJcWh1TFRyektoajdtVHphbzRra3lOT21KbWlHWWprQktXUFBRTjlpL0Zo?=
+ =?utf-8?B?MWsrampCSmF3bE5wZUQ2UWJGd0JuZDJxWXlMOTcwZndjSkVjeUVic1lhVTZ2?=
+ =?utf-8?B?VGtZV1FVQ1ZxY1AzNHp4MjduL0I4S0dYcUJ3NVBsZ01mbWxGV0krc09xd2Y1?=
+ =?utf-8?B?VFltbDI0RUhiYzhBMVBHbXB6cW9EaGcremE5TWI2QmdjQWUwSHpKSHRaRnBL?=
+ =?utf-8?B?K3NxclRGQVY1Mi9aQ21hSDA2KysxazkvME9lZEV6MzAxanE3MlVUR1pVUUVM?=
+ =?utf-8?B?bGluSUpaRmFyVUtjemJUdVVtL3lLcnFuY3pCZVBIMTk5VDZ1cElFd1ZBRzAy?=
+ =?utf-8?B?S01ybG9kdHYwWnRCNVBGVHFLeEs0TVpmRDFKRVpNdkdaTHFPZ2k5MmI2cXh2?=
+ =?utf-8?B?RDhvaEhwWEQyYzJwR0FERXJ6YThjUUtCWWNzMWpEQ2Q0RnhFTGZZbVkranRG?=
+ =?utf-8?B?TWdneWJhWkUvcG5lL1V0TmZNbzEyZWpHbXdldi9CVmNXaDRBYXlnMzZpbGlr?=
+ =?utf-8?B?dndTYWZoOWdnWGwyUTA2cWF6c3pQUlBUOXFTeVJKcm9lcXQ0Wmp1SWZBOWtp?=
+ =?utf-8?B?SnRkaThOdE84em9QRitIekU5dVZHTVozQWhhSHhGQUFLR0Q5bTBkMEJWRXds?=
+ =?utf-8?B?VWQ1ZGNQSHpoQWU5d0ZkL3lhSHhHNzdYYXBTRmJNZTNYNkhtbWdQbm16Q0NN?=
+ =?utf-8?B?dnk4WmQ2Zkc5QnJkSTRaSEU3NWlqNCtYUXFGOTRjWHBxdmtmRzJBMG5manFM?=
+ =?utf-8?B?UEJ4WkNQb2dlWnZ2eUNqWnRCM2dOL0l0YXJ1dk1ySktGUmNMeFlEMU9UakZp?=
+ =?utf-8?B?U29NaUlmSkdMbGRLTFh5eHBHRjY1ZEJSam1Ld2ZQMlNKWW9SMUpMQW9WZk90?=
+ =?utf-8?B?M0JxT2JYWndFczYrdXRKTXJocDRvOE95RUhLZVdBZzFuN3dBWHU3Um8yTEp1?=
+ =?utf-8?B?a3Z6TU45NENaaWdwRlN2bE9SZnE5b1V4SGJ2SWNGcGgrRmE5VWpZV3lPNko5?=
+ =?utf-8?B?d1YxcVZHV3ZMdmpGSk11VHZoNjdCcU94Ni9rUHM1b21DUUdvU3JncDJrVzQ1?=
+ =?utf-8?B?emhGOXpuWnMvSTNnSStmNzVFM1Yxd0MrUHQyOW9NKzlMWTlJWHJaRFlYM1A1?=
+ =?utf-8?B?M1kzR2VpcHpLMmlMR3BXTk1wRnphWTZndzJPc1ZKM1pHY0lhZU5TM2tJMDZJ?=
+ =?utf-8?B?VkRYZzkyczV6R01mNmZZR2RUOVllR0VjKzVtRldsdjdjMDhCUGFqTWloWHZy?=
+ =?utf-8?B?TnRpT3BpbXcvYU5jZ29OcDgvaDhRNW0waWlHY0JWWUV6dGJxT05vbjJVZmNn?=
+ =?utf-8?B?SVRibURYVTBnbVB2SzE1TENDVWVDZVpHb2p4SHpRUnErOEZ1aGsvNGhHa1JK?=
+ =?utf-8?B?T1ZaeXZRYnpEb1RQbDdHaHhxNHAxMnVIR0lrT2hTcHpqa3RzOFc3VitRaTY2?=
+ =?utf-8?B?S01vaGJFYkpXV3I2bnVKNk5neHhodHZZWUN4MXQzOFJEVWl3TTFBUTZZYlpU?=
+ =?utf-8?B?NXNWeTk0TzhYcmFrYzJpVng5SWhvVklYYTRzOW1ncEVpVlJxU3YzTDN6M21E?=
+ =?utf-8?B?Y29RM0N2YzdxQTIxWGR5U0J3dzkzdzJleXJLd0tmK08zd0lxM3laSEVqZHNL?=
+ =?utf-8?B?bTVJczBmNHVvODRsL3dvS1pUVHE1R09DRGdNQ1NmZFI3WU9uNG9JbTVMemtj?=
+ =?utf-8?B?Tm8rVzVNZGNiZVpxdGJ5OS9BekhXNWFEMWF4SXZBdlNQNUNtOVJxSk1kUFpH?=
+ =?utf-8?B?SHFtakVsOXZneFhnWkNNNTdiR2RmQnhIdzVjMWxhREtUNDBablhibkhIQ1pa?=
+ =?utf-8?B?dkRUdEZvQ29OaDJpcEdJaGd2ejcwMXc0QkhVajVQdzlOK1RPVXZ3NFVaUGFJ?=
+ =?utf-8?B?bnFSSkFTcHl1VVFyRmxyVTlrVXRNRUJBRkVqUDN0eVd0ZkVSTml3Q3Y3ZUp6?=
+ =?utf-8?Q?QlsAOr?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 15:52:31.9736
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82fd6ef5-dcb7-4cdf-e679-08dde71410a4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9671
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250814
-head:   4774a38f9cf278ece929331bdef17ab5db24684c
-commit: c2ca48406d8d7e98ac35251db90286b3b86f01c1 [2/8] Revert "integrity: Avoid -Wflex-array-member-not-at-end warnings"
-config: csky-randconfig-001-20250829 (https://download.01.org/0day-ci/archive/20250829/202508292352.Q9sA9NNG-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250829/202508292352.Q9sA9NNG-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508292352.Q9sA9NNG-lkp@intel.com/
+On 8/28/25 23:36, Min Ma wrote:
+> I recently left AMD and would like to continue participating in
+> the review and maintenance of the XDNA driver using my personal email address.
 
-All errors (new ones prefixed by >>):
+Check patch warning
 
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/key.h:14,
-                    from include/linux/security.h:27,
-                    from security/integrity/iint.c:12:
->> security/integrity/integrity.h:37:67: error: invalid application of 'sizeof' to incomplete type 'struct evm_ima_xattr_data_hdr'
-      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
-         |                                                                   ^~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   security/integrity/integrity.h:37:1: note: in expansion of macro 'static_assert'
-      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
-         | ^~~~~~~~~~~~~
->> include/linux/stddef.h:16:32: error: expression in static assertion is not an integer
-      16 | #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
-         |                                ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   security/integrity/integrity.h:37:1: note: in expansion of macro 'static_assert'
-      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
-         | ^~~~~~~~~~~~~
-   security/integrity/integrity.h:37:15: note: in expansion of macro 'offsetof'
-      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
-         |               ^~~~~~~~
->> security/integrity/integrity.h:64:66: error: invalid application of 'sizeof' to incomplete type 'struct ima_digest_data_hdr'
-      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
-         |                                                                  ^~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   security/integrity/integrity.h:64:1: note: in expansion of macro 'static_assert'
-      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
-         | ^~~~~~~~~~~~~
->> include/linux/stddef.h:16:32: error: expression in static assertion is not an integer
-      16 | #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
-         |                                ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   security/integrity/integrity.h:64:1: note: in expansion of macro 'static_assert'
-      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
-         | ^~~~~~~~~~~~~
-   security/integrity/integrity.h:64:15: note: in expansion of macro 'offsetof'
-      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
-         |               ^~~~~~~~
+-:7: WARNING:COMMIT_LOG_LONG_LINE: Prefer a maximum 75 chars per line 
+(possible unwrapped commit description?)
+
+> This commit updates my contact information accordingly.
+
+s/This commit updates/Update/     or remove this this line.
+
+See: https://docs.kernel.org/process/submitting-patches.html
 
 
-vim +37 security/integrity/integrity.h
+Thanks,
 
-6be5cc5246f807f Dmitry Kasatkin       2011-03-09  32  
-6be5cc5246f807f Dmitry Kasatkin       2011-03-09  33  struct evm_ima_xattr_data {
-6be5cc5246f807f Dmitry Kasatkin       2011-03-09  34  	u8 type;
-650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  35  	u8 data[];
-650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  36  } __packed;
-08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08 @37  static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
-08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08  38  	      "struct member likely outside of __struct_group()");
-650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  39  
-650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  40  /* Only used in the EVM HMAC code. */
-650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  41  struct evm_xattr {
-c2ca48406d8d7e9 Gustavo A. R. Silva   2025-08-22  42  	struct evm_ima_xattr_data data;
-6be5cc5246f807f Dmitry Kasatkin       2011-03-09  43  	u8 digest[SHA1_DIGEST_SIZE];
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  44  } __packed;
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  45  
-398c42e2c46c88b Mimi Zohar            2021-11-24  46  #define IMA_MAX_DIGEST_SIZE	HASH_MAX_DIGESTSIZE
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  47  
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  48  struct ima_digest_data {
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  49  	u8 algo;
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  50  	u8 length;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  51  	union {
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  52  		struct {
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  53  			u8 unused;
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  54  			u8 type;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  55  		} sha1;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  56  		struct {
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  57  			u8 type;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  58  			u8 algo;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  59  		} ng;
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  60  		u8 data[2];
-3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  61  	} xattr;
-eb492c627a61b56 Gustavo A. R. Silva   2020-05-28  62  	u8 digest[];
-c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  63  } __packed;
-08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08 @64  static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
-08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08  65  	      "struct member likely outside of __struct_group()");
-6be5cc5246f807f Dmitry Kasatkin       2011-03-09  66  
+Lizhi
 
-:::::: The code at line 37 was first introduced by commit
-:::::: 08ae3e5f5fc8edb9bd0c7ef9696ff29ef18b26ef integrity: Use static_assert() to check struct sizes
-
-:::::: TO: Gustavo A. R. Silva <gustavoars@kernel.org>
-:::::: CC: Mimi Zohar <zohar@linux.ibm.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Signed-off-by: Min Ma <mamin506@gmail.com>
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 10850512c118..6eefa494000c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1231,7 +1231,7 @@ F:	drivers/spi/spi-amd.c
+>   F:	drivers/spi/spi-amd.h
+>   
+>   AMD XDNA DRIVER
+> -M:	Min Ma <min.ma@amd.com>
+> +M:	Min Ma <mamin506@gmail.com>
+>   M:	Lizhi Hou <lizhi.hou@amd.com>
+>   L:	dri-devel@lists.freedesktop.org
+>   S:	Supported
 
