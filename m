@@ -1,144 +1,272 @@
-Return-Path: <linux-kernel+bounces-791451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C78CB3B6F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50697B3B6DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498CD1C287B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBDBA036C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED0A305054;
-	Fri, 29 Aug 2025 09:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB482FE07C;
+	Fri, 29 Aug 2025 09:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fFa2JM+k"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVV01k+w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044AC304973;
-	Fri, 29 Aug 2025 09:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636452FE06B;
+	Fri, 29 Aug 2025 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459063; cv=none; b=d2IL2CpukAOuy7Ljf8gIgplnKzjt7ncegV6bJh2fUolYuPy+T1qHus3C10X5p9cs/QpTVx6yAPwFeJpDrceIm5IjlHX/AVnFRqab9qWWvCK57MfBblPZRh0KOdkU5H6YTV08zJsodxQdo5hHInFnU81aKBVx0uL06lQTYKKDxcM=
+	t=1756458970; cv=none; b=kd/ZXf/P98N5hoqESPVU5smSHvo/kB/iehMDdZdiXoDbOA5KIHSTdEWJSAl0n/FsnhuBqR43um35AMeHpTDo2+HmnxXw16EGcj2jJ+0DvKnN9cX6KmR6ZZINV5ichsAbo0wWjujy6WBi2IWMh6h1VZbHHQRUdpr+puWbIG9Pw20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459063; c=relaxed/simple;
-	bh=c/tJtF9fMiC/gfsIIeJBBc0fi/SYftvTh80Mcl8YuRU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G6obC1u0Dzusm4PEo+A7hXZuVDcnga1d3QgBTnkuQKbJudoD1etcp3olr/nIa09Xe2lbPNG+R/OW5pbwLVKBcUwBLqGBkVRJXUPB5WO0Oz9OygFmfmm5oV5cPTeawr6rF5KVmihmKOKebjTa9HGv84wDXhHsedHNMzwZXbXmtL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fFa2JM+k; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: fce927e084b811f0b33aeb1e7f16c2b6-20250829
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=gJ0fGW8LBFDyCYyGl0z+4IhGB806t2gObXrk4IGCHXQ=;
-	b=fFa2JM+kuvyWdCo8RZn/Zalnc6hhneVr5jLDpVU16RFt3M44Og6hXWBU9s2VMsBBuF9chpgCWhf5FZMnkGAHlu1fHFn/3qVENoKEx86Zi5L2Y2NgRUWgk56oH3v+dtOqMfsZDjvBdcMb3Plh4YraYDGjEAx5J9evsh2iZjxPbfw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:73de13f5-ff43-498b-88b7-0867abf6a52a,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:8e37fe6b-8443-424b-b119-dc42e68239b0,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: fce927e084b811f0b33aeb1e7f16c2b6-20250829
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1471814497; Fri, 29 Aug 2025 17:17:30 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 29 Aug 2025 17:17:28 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 29 Aug 2025 17:17:28 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Jassi Brar
-	<jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Jason-JH Lin <jason-jh.lin@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>,
-	Paul-PL Chen <paul-pl.chen@mediatek.com>, Yongqiang Niu
-	<yongqiang.niu@mediatek.com>, Zhenxing Qin <zhenxing.qin@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang
-	<sirius.wang@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
-	"Jarried Lin" <jarried.lin@mediatek.com>, Fei Shao <fshao@chromium.org>,
-	Chen-yu Tsai <wenst@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-media@vger.kernel.org>
-Subject: [PATCH v2 3/3] media: platform: mtk-mdp3: Add pm_runtime support for GCE power control
-Date: Fri, 29 Aug 2025 17:16:00 +0800
-Message-ID: <20250829091727.3745415-4-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250829091727.3745415-1-jason-jh.lin@mediatek.com>
-References: <20250829091727.3745415-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1756458970; c=relaxed/simple;
+	bh=UNbnxLyQqtgjYolstb23lpIvcWuMg/oYLAEbNfpM3sA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bqWJadAbqq7bxWGVs4eLXAuBzPoiixCTsmrOIkIrHnAqyuG65x4BoVHAShoX8DPLgjK6hwMbUSG7YBQ+FAPX/w7yslxZeZ7DpbQnvXFffxwqz0nxyLzVoCzSG5tLgVoysGIc+/SSvASyLNNLRmH3CxaE+7KeAGuuP27h9qWwT14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVV01k+w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE4FC4CEFB;
+	Fri, 29 Aug 2025 09:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756458970;
+	bh=UNbnxLyQqtgjYolstb23lpIvcWuMg/oYLAEbNfpM3sA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UVV01k+wUDjQytZyC317riPX3ZY95mPuYL30zH90vRVC8nIUI9ulSp48R0iT8qqVx
+	 I4p3ByfFNrZ5StjBkULCl8LFWAzf8WoAu60OiBE27d6SnAxc9dD9sPFyLtPHHZUzgy
+	 UuTOcHkDAf8O0YB/0tN+YXEad+sdssI9mDj5I06Btq10Km7255Ar2J/k+oqODFGC8j
+	 jtKa0rZV0LXXRKMX5wzruQlNef8sMMFVHr05qCC9tAuDSM8JYjYmZA7y1HcO+Bw8VT
+	 Po4sgrP07ufDUoNs6wIF3uUGm1c1Mu0Cb1rB13dg6gZvoK7dswTFjhs6Ul5XwkFw6J
+	 BWi7hIRqkfR3Q==
+Message-ID: <c314b7c6-f5b7-4f3e-8d67-e3c92ff8ff37@kernel.org>
+Date: Fri, 29 Aug 2025 11:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] dt-bindings: soc: fsl: qe: Add support of IRQ in
+ QE GPIO
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Rob Herring <robh@kernel.org>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1756104334.git.christophe.leroy@csgroup.eu>
+ <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
+ <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
+ <f21e27da-de26-4835-9660-b39e99695281@csgroup.eu>
+ <0f716362-07f4-4c79-bb0a-e71d2630a797@kernel.org>
+ <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-Call pm_runtime_resume_and_get() before accessing GCE hardware in
-mbox_send_message(), and invoke pm_runtime_put_autosuspend() in the
-cmdq callback to release the PM reference and start autosuspend for
-GCE. This ensures correct power management for the GCE device.
+On 29/08/2025 10:35, Christophe Leroy wrote:
+> 
+> 
+> Le 29/08/2025 à 09:47, Krzysztof Kozlowski a écrit :
+>> On 28/08/2025 16:12, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 28/08/2025 à 15:28, Rob Herring a écrit :
+>>>> On Mon, Aug 25, 2025 at 2:20 AM Christophe Leroy
+>>>> <christophe.leroy@csgroup.eu> wrote:
+>>>>>
+>>>>> In the QE, a few GPIOs are IRQ capable. Similarly to
+>>>>> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+>>>>> GPIO"), add IRQ support to QE GPIO.
+>>>>>
+>>>>> Add property 'fsl,qe-gpio-irq-mask' similar to
+>>>>> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+>>>>
+>>>> Why do you need to know this? The ones that have interrupts will be
+>>>> referenced by an 'interrupts' property somewhere.
+>>>
+>>> I don't follow you. The ones that have interrupts need to be reported by
+>>> gc->qe_gpio_to_irq[] so that gpiod_to_irq() return the IRQ number, for
+>>> instance to gpio_sysfs_request_irq() so that it can install an irq
+>>> handler. I can't see where they would be referenced by an "interrupts"
+>>> property.
+>>
+>> They would be referenced by every consumer of these interrupts. IOW,
+>> this property is completely redundant, because DT holds this information
+>> already in other place.
+> 
+> But the gpio controller _is_ the consumer of these interrupts, it it 
+> _not_ the provider.
+> 
+> The interrupts are provided by a separate interrupt controller. Let's 
+> take the exemple of powerpc 8xx. Here is the list of interrupts handled 
+> by the CPM interrupt controller on the 8xx:
+> 
+> 1 - GPIO Port C Line 4 interrupt
+> 2 - GPIO Port C Line 5 interrupt
+> 3 - SMC2 Serial controller interrupt
+> 4 - SMC1 Serial controller interrupt
+> 5 - SPI controller interrupt
+> 6 - GPIO Port C Line 6 interrupt
+> 7 - Timer 4 interrupt
+> 8 - SCCd Serial controller interrupt
+> 9 - GPIO Port C Line 7 interrupt
+> 10 - GPIO Port C Line 8 interrupt
+> 11 - GPIO Port C Line 9 interrupt
+> 12 - Timer 3 interrupt
+> 13 - SCCc Serial controller interrupt
+> 14 - GPIO Port C Line 10 interrupt
+> 15 - GPIO Port C Line 11 interrupt
+> 16 - I2C Controller interrupt
+> 17 - RISC timer table interrupt
+> 18 - Timer 2 interrupt
+> 19 - SCCb Serial controller interrupt
+> 20 - IDMA2 interrupt
+> 21 - IDMA1 interrupt
+> 22 - SDMA channel bus error interrupt
+> 23 - GPIO Port C Line 12 interrupt
+> 24 - GPIO Port C Line 13 interrupt
+> 25 - Timer 1 interrupt
+> 26 - GPIO Port C Line 14 interrupt
+> 27 - SCCd Serial controller interrupt
+> 28 - SCCc Serial controller interrupt
+> 29 - SCCb Serial controller interrupt
+> 30 - SCCa Serial controller interrupt
+> 31 - GPIO Port C Line 15 interrupt
 
-Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM with autosuspend")
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
----
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+That list is fixed per soc/device, so already implied by compatible.
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-index e5ccf673e152..bb7a895318af 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/mailbox_controller.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include "mtk-mdp3-cfg.h"
- #include "mtk-mdp3-cmdq.h"
- #include "mtk-mdp3-comp.h"
-@@ -521,6 +522,9 @@ static void mdp_handle_cmdq_callback(struct mbox_client *cl, void *mssg)
- 	mdp = cmd->mdp;
- 	dev = &mdp->pdev->dev;
- 
-+	pm_runtime_mark_last_busy(mdp->cmdq_clt[cmd->pp_idx]->chan->mbox->dev);
-+	pm_runtime_put_autosuspend(mdp->cmdq_clt[cmd->pp_idx]->chan->mbox->dev);
-+
- 	INIT_WORK(&cmd->auto_release_work, mdp_auto_release_work);
- 	if (!queue_work(mdp->clock_wq, &cmd->auto_release_work)) {
- 		struct mtk_mutex *mutex;
-@@ -702,6 +706,13 @@ int mdp_cmdq_send(struct mdp_dev *mdp, struct mdp_cmdq_param *param)
- 					   cmd[i]->pkt.pa_base, cmd[i]->pkt.cmd_buf_size,
- 					   DMA_TO_DEVICE);
- 
-+		ret = pm_runtime_resume_and_get(mdp->cmdq_clt[i]->chan->mbox->dev);
-+		if (ret < 0) {
-+			dev_err(dev, "pm_runtime_resume_and_get fail: %d!\n", ret);
-+			i = pp_used;
-+			goto err_clock_off;
-+		}
-+
- 		ret = mbox_send_message(mdp->cmdq_clt[i]->chan, &cmd[i]->pkt);
- 		if (ret < 0) {
- 			dev_err(dev, "mbox send message fail %d!\n", ret);
--- 
-2.43.0
+> 
+> As you can see in the list, the GPIO line interrupts are nested with 
+> other types of interrupts so GPIO controller and Interrupt controller 
+> are to be keept independant.
+> 
+> That's more or less the same here with my series, patch 1 implements an 
+> interrupt controller (documented in patch 6) and then the GPIO 
+> controllers consume the interrupts, for instance in gpiolib functions 
+> gpio_sysfs_request_irq() [drivers/gpio/gpiolib-sysfs.c] or 
+> edge_detector_setup() or debounce_setup() [drivers/gpio/gpiolib-cdev.c]
+> 
+> External drivers also use interrupts indirectly. For example driver 
+> sound/soc/soc-jack.c, it doesn't have any direct reference to an 
+> interrupt. The driver is given an array of GPIOs and then installs an 
+> IRQ in function snd_soc_jack_add_gpios() by doing
+> 
+> 	request_any_context_irq(gpiod_to_irq(gpios[i].desc),
+> 					      gpio_handler,
+> 					      IRQF_SHARED |
+> 					      IRQF_TRIGGER_RISING |
+> 					      IRQF_TRIGGER_FALLING,
+> 					      gpios[i].name,
+> 					      &gpios[i]);
 
+
+External drivers do not matter then. Your GPIO controller receives
+specific interrupts (that's the interrupt property) and knows exactly
+how each GPIO maps to it.
+
+> 
+>>
+>>>
+>>>>
+>>>>> Here is an exemple for port B of mpc8323 which has IRQs for
+>>>>
+>>>> typo
+>>>>
+>>>>> GPIOs PB7, PB9, PB25 and PB27.
+>>>>>
+>>>>>           qe_pio_b: gpio-controller@1418 {
+>>>>>                   compatible = "fsl,mpc8323-qe-pario-bank";
+>>>>>                   reg = <0x1418 0x18>;
+>>>>>                   interrupts = <4 5 6 7>;
+>>>>>                   interrupt-parent = <&qepic>;
+>>>>>                   gpio-controller;
+>>>>>                   #gpio-cells = <2>;
+>>>>>                   fsl,qe-gpio-irq-mask = <0x01400050>;
+>>>>>           };
+>>>>
+>>>> You are missing #interrupt-cells and interrupt-controller properties.
+>>>
+>>> The gpio controller is not an interrupt controller. The GPIO controller
+>>> is brought by patch 1/6 and documented in patch 6/6.
+>>
+>> Then the IRQ mask property is not right here. If you say "this GPIOs
+>> have IRQs" it means this is an interrupt controller.
+> 
+> The mask tells to the GPIO controller which GPIO line has an interrupt 
+> (so it can install the edge detector) and which doesn't have an 
+> interrupt. The "interrupts" property gives a flat list of interrupts, 
+> the mask in the above example tells: interrupt 4 is for line 7, 
+> interrupt 5 is for line 9, interrupt 6 is for line 25, interrupt 7 is 
+> for line 27. Other lines don't have interrupts.
+> 
+>>
+>> If you say this is not an interrupt controller, then you cannot have
+>> here interrupts per some GPIOs, obviously.
+> 
+> It has been working that way on powerpc 8xx for 8 years, since commit 
+> 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx GPIO")
+> 
+> I don't understand why you say you cannot have
+> here interrupts per some GPIOs. What am I missing ?
+
+I used conditional. English conditional. If you claim this GPIO
+controller is not an interrupt controller, then obviously it is not an
+interrupt controller and cannot be used as interrupt controller.
+
+If you use "foo" as interrupt controller, then clearly foo is an
+interrupt controller.
+
+Best regards,
+Krzysztof
 
