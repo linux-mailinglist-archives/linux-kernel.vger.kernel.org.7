@@ -1,653 +1,212 @@
-Return-Path: <linux-kernel+bounces-792198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A7FB3C15A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B712B3C160
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FF41898187
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:56:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F843BA6E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559F133A034;
-	Fri, 29 Aug 2025 16:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWFJOc2D"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4566341650;
-	Fri, 29 Aug 2025 16:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85AB33CEAC;
+	Fri, 29 Aug 2025 16:57:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664A03081BE;
+	Fri, 29 Aug 2025 16:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756486469; cv=none; b=EMlPmDjAnb086R0gSshj6Ud5BpclvPFbyGVXYoM4D3b/4ySNDoxmMZiflxTM3AY4F38TdKGbp7RB9FmuIPbDa7qyRW2KCQnSrpiPLmVsyblfnqX8NJGH9niVCoGpuG+KCHWiqyYGt40a7F6xa4im6XdR+QqFJaUzzzS+ipfHVAg=
+	t=1756486620; cv=none; b=dyV5sd32wRE8CaRClPuHTH7MEsJ0i0VmGFWKd31fnaaFWzE6Z07yiKX0kspyVCeVBwQ3k1VsPZ6bNEfUkoqJuPzWs+E1IgCjEFU7QRwbceUcbsYqTHEtJVIzsZ2n4OZ8Fe8oevQEAodsmxiPjVwfEcuPFilSU4kRIfp3OhU2R+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756486469; c=relaxed/simple;
-	bh=7hDdT/YSvZkuaFRfF5TVkNmv2qK8TsHyYzzP5IinWTw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rgBbm/Iw3w6pPO1QBdHRsPKtYQpx0HbxN955tb/hO3VyKt2z/RkFpRvBMgQOMbDBiUJiTlG9WV9F7EyHFKGlzGaqj94bxvIG3bK9lLVwVJxCgDL8PqpT/hFySYKQOefHCsO/fvHkfTv+YdjKWxSi5V4rNjq6bRy9itN3+0yTKZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWFJOc2D; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c51f57224so3302103a12.2;
-        Fri, 29 Aug 2025 09:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756486465; x=1757091265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yT10QP5oqK3F446exZD0KGLZ5sek1iKMmJaaT6TvqMs=;
-        b=cWFJOc2DKw1PFk0F4JGaKijc6vFIirj5LmKBm7whxedCW1TqUX12UUPlAhIHYvJ3hK
-         c2rb7msG8RvZMw+Yu+pOpsc5IBne9QOeGgt0CbtBRn4cyFW0I2sa+W4NQc+cLX1Zgt+S
-         Az1VqHkuuYVVlRzqbY2GPFlC62GO5kIHVkEm/9WXnMF11K9zJE00AtMWW8iguz9ZFiNZ
-         +dXuBsILy5828nIMVv1cK2+B1pcKPDB5xd7FeA2D4UP51SjgVw+O3fcCiAV4cQij6HHP
-         U9iFA0K0n/QtlU+2fRsA2CTM+RsvOESLBI6ea7sCkmInRko/A5Qeb8eJsTDvFPxiRHPe
-         kcmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756486465; x=1757091265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yT10QP5oqK3F446exZD0KGLZ5sek1iKMmJaaT6TvqMs=;
-        b=ZZcU2gzJ61JFBWG2YIjeloB7Cu3u5liJXb43QfsOuPleI2xYyrUBCuQ683leumul00
-         iyVaIv+Ul+gcH97SD/noxBXBrEB6g5Z3P/2H4MjxcgeoeARKBYYkF4JqzLUHTNm+s1bL
-         Ikjtsv9HrFXIYZp/qs/fIYPk34gZzsj1A7FggC2G9nMvLtj/VvTCA2kJldX3phSsmRTR
-         Zdydm69mL4JbyPxA+bo7i7ms75f4oRYHAv6SQlDOLvx6rlpMU2AqaCK+YzOa/UQJuvlx
-         zN7h1dwsjPvGG6pFbhDx7X6NxwHfuWRA28Fq30cluSVg8qXMROTmtoEX7rfY+RUQU2A9
-         0Dbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQyykZG7PQN/PN42gEU3fHRzlD6sLhSO9NZjhRrnLSW/GHIghLFyCc5Ga1YKTTHMe6tFnw9fBA0C7bKQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzngKaRbIzEcO2psyjJ3DBzWRf181WfSsEcf3BNXePjBpMrTKFb
-	SI6WfVwFdlIJDZnxoBT5KAAtWqKL4rp5LZzcmBHyiCOEYBeEGk043m7AsVYJwxNb
-X-Gm-Gg: ASbGncv3G/CISkf00Qa64qSWUmA7BfyPtt5K0vEdvu7+My3oKD6IW5EJC9aV63/r3wg
-	aSRqoAIECnPnrvgKOfyatY+9n/0D1NV6gnhB1Z2THtqrrwxR6phmt83Um5ftLommk0KHW5z72iC
-	O46osIV5QoaJ7Vk5icJF2bCr3M1NQPtpeg1oM12g2Qc5XgttCQBcYrFpKqO8Um4ZIVoWLxNhuQI
-	eLDNa1OjsNaPAyNgbFEFQcZ5KiPX0tsr1XqP+jn8tL/4QvnqkJxE0BgEBGQUpexJ9gU4uwts5hD
-	44/Frqj0uyifVdEWf0sAJBtKg1bBZLNuTiqFxWfzLXE0IwyPR+kIO+6XVuZifg2dZIVLw4oH8BP
-	Qth0QlzxO+2ka99RNGG3zHJ9pdFiTipyh1k0K0y/mPRaoEVd0iIzFZuFMiWicz4dRwbgGF7+nq+
-	SMeiYYEQ==
-X-Google-Smtp-Source: AGHT+IH7TnXdjUkDJAD0KN3DsyxDKNR01RKR6hxKKsu5V+aRo8KE1h6UBi3/LaGUZLLJyhqx3GuoCg==
-X-Received: by 2002:a05:6402:4381:b0:609:9115:60f1 with SMTP id 4fb4d7f45d1cf-61c1b4a27c7mr25374326a12.16.1756486464884;
-        Fri, 29 Aug 2025 09:54:24 -0700 (PDT)
-Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7848sm2130350a12.2.2025.08.29.09.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 09:54:23 -0700 (PDT)
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 3/3] arm64: dts: ti: var-som-am62p: Add support for Variscite Symphony Board
-Date: Fri, 29 Aug 2025 18:53:19 +0200
-Message-ID: <20250829165327.20007-4-stefano.radaelli21@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250829165327.20007-1-stefano.radaelli21@gmail.com>
-References: <20250829165327.20007-1-stefano.radaelli21@gmail.com>
+	s=arc-20240116; t=1756486620; c=relaxed/simple;
+	bh=kb2fY1IV7K43cE3ikrAg8qLiIqn49GbYUA49McI1fGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s+67bu1+pA0EuJ1anv7uStET9zvYz5HaeAJBBApiduye7oeUJfKGdLPEAJ16ew76iHenTdQqPJsHj090lagcC1jClZ/xX8u0xICNwBindGfGfSceeokre7yZCTa2DSA9ojxi7Vc6xQ9f9gFUiFU+uvr9VNqmcs46hDcO9zVmcd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2033B12FC;
+	Fri, 29 Aug 2025 09:56:49 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F50B3F738;
+	Fri, 29 Aug 2025 09:56:51 -0700 (PDT)
+Message-ID: <ee847bec-ad08-473e-96b5-407872c2a0f2@arm.com>
+Date: Fri, 29 Aug 2025 17:56:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 32/33] arm_mpam: Add kunit test for bitmap reset
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-33-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250822153048.2287-33-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add device tree support for the Variscite Symphony carrier board with
-the VAR-SOM-AM62P system on module.
+Hi James,
 
-The Symphony board includes
-- uSD Card support
-- USB ports and OTG
-- Additional Gigabit Ethernet interface
-- Uart interfaces
-- OV5640 Camera support
-- GPIO Expander
-- CAN, I2C and general purpose interfaces
+On 8/22/25 16:30, James Morse wrote:
+> The bitmap reset code has been a source of bugs. Add a unit test.
+> 
+> This currently has to be built in, as the rest of the driver is
+> builtin.
+> 
+> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  drivers/resctrl/Kconfig             | 13 ++++++
+>  drivers/resctrl/mpam_devices.c      |  4 ++
+>  drivers/resctrl/test_mpam_devices.c | 68 +++++++++++++++++++++++++++++
+>  3 files changed, 85 insertions(+)
+>  create mode 100644 drivers/resctrl/test_mpam_devices.c
+> 
+> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
+> index dff7b87280ab..f5e0609975e4 100644
+> --- a/drivers/resctrl/Kconfig
+> +++ b/drivers/resctrl/Kconfig
+> @@ -4,8 +4,21 @@ config ARM64_MPAM_DRIVER
+>  	bool "MPAM driver for System IP, e,g. caches and memory controllers"
+>  	depends on ARM64_MPAM && EXPERT
+>  
+> +menu "ARM64 MPAM driver options"
+> +
+>  config ARM64_MPAM_DRIVER_DEBUG
+>  	bool "Enable debug messages from the MPAM driver."
+>  	depends on ARM64_MPAM_DRIVER
+>  	help
+>  	  Say yes here to enable debug messages from the MPAM driver.
+> +
+> +config MPAM_KUNIT_TEST
+> +	bool "KUnit tests for MPAM driver " if !KUNIT_ALL_TESTS
+> +	depends on KUNIT=y
+It depends on ARM64_MPAM_DRIVER as well.
 
-Link: https://www.variscite.it/product/single-board-computers/symphony-board/
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +	  Enable this option to run tests in the MPAM driver.
+> +
+> +	  If unsure, say N.
+> +
+> +endmenu
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 65c30ebfe001..4cf5aae88c53 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -2903,3 +2903,7 @@ static int __init mpam_msc_driver_init(void)
+>  }
+>  /* Must occur after arm64_mpam_register_cpus() from arch_initcall() */
+>  subsys_initcall(mpam_msc_driver_init);
+> +
+> +#ifdef CONFIG_MPAM_KUNIT_TEST
+> +#include "test_mpam_devices.c"
+> +#endif
+> diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
+> new file mode 100644
+> index 000000000000..8e9d6c88171c
+> --- /dev/null
+> +++ b/drivers/resctrl/test_mpam_devices.c
+> @@ -0,0 +1,68 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2024 Arm Ltd.
+> +/* This file is intended to be included into mpam_devices.c */
+> +
+> +#include <kunit/test.h>
+> +
+> +static void test_mpam_reset_msc_bitmap(struct kunit *test)
+> +{
+> +	char *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
+> +	struct mpam_msc fake_msc;
+> +	u32 *test_result;
+> +
+> +	if (!buf)
+> +		return;
+> +
+> +	fake_msc.mapped_hwpage = buf;
+> +	fake_msc.mapped_hwpage_sz = SZ_16K;
+> +	cpumask_copy(&fake_msc.accessibility, cpu_possible_mask);
+> +
+> +	mutex_init(&fake_msc.part_sel_lock);
+> +	mutex_lock(&fake_msc.part_sel_lock);
+> +
+> +	test_result = (u32 *)(buf + MPAMCFG_CPBM);
+> +
+> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 0);
+> +	KUNIT_EXPECT_EQ(test, test_result[0], 0);
+> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
+> +	test_result[0] = 0;
+> +	test_result[1] = 0;
+> +
+> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 1);
+> +	KUNIT_EXPECT_EQ(test, test_result[0], 1);
+> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
+> +	test_result[0] = 0;
+> +	test_result[1] = 0;
+> +
+> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 16);
+> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffff);
+> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
+> +	test_result[0] = 0;
+> +	test_result[1] = 0;
+> +
+> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 32);
+> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
+> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
+> +	test_result[0] = 0;
+> +	test_result[1] = 0;
+> +
+> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 33);
+> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
+> +	KUNIT_EXPECT_EQ(test, test_result[1], 1);
+> +	test_result[0] = 0;
+> +	test_result[1] = 0;
+> +
+> +	mutex_unlock(&fake_msc.part_sel_lock);
+> +}
+> +
+> +static struct kunit_case mpam_devices_test_cases[] = {
+> +	KUNIT_CASE(test_mpam_reset_msc_bitmap),
+> +	{}
+> +};
+> +
+> +static struct kunit_suite mpam_devices_test_suite = {
+> +	.name = "mpam_devices_test_suite",
+> +	.test_cases = mpam_devices_test_cases,
+> +};
+> +
+> +kunit_test_suites(&mpam_devices_test_suite);
 
-Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
----
-v5:
- - Update to match up with coding guidelines for device tree
-v4:
- - Moved every MCUs-related node into the SOM dtsi
-v3:
- - Change compatible string to match existing mainline format
- - Fixed underscore typo
-v2:
- - Fixed warnings and cleanup
+Thanks,
 
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../dts/ti/k3-am62p5-var-som-symphony.dts     | 500 ++++++++++++++++++
- 2 files changed, 501 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index aad9177930e6..b11cbf33422d 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -38,6 +38,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am62d2-evm.dtb
- 
- # Boards with AM62Px SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-sk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am62p5-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-dev.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62p5-verdin-nonwifi-ivy.dtb
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-new file mode 100644
-index 000000000000..76c8dd31616c
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-var-som-symphony.dts
-@@ -0,0 +1,500 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Variscite Symphony carrier board for VAR-SOM-AM62P
-+ *
-+ * Link: https://www.variscite.it/product/single-board-computers/symphony-board/
-+ *
-+ * Copyright (C) 2025 Variscite Ltd. - https://www.variscite.com/
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include "k3-am62p5-var-som.dtsi"
-+
-+/ {
-+	model = "Variscite VAR-SOM-AM62P on Symphony-Board";
-+	compatible = "variscite,var-som-am62p-symphony", "variscite,var-som-am62p", "ti,am62p5";
-+
-+	aliases {
-+		ethernet0 = &cpsw_port1;
-+		ethernet1 = &cpsw_port2;
-+		mmc0 = &sdhci0;
-+		mmc1 = &sdhci1;
-+		mmc2 = &sdhci2;
-+		serial0 = &main_uart0;
-+		serial2 = &main_uart2;
-+		serial5 = &main_uart5;
-+		serial6 = &main_uart6;
-+		spi5 = &main_spi2;
-+		usb0 = &usb0;
-+		usb1 = &usb1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	clk_ov5640_fixed: clock-24000000 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		button-back {
-+			label = "Back";
-+			linux,code = <KEY_BACK>;
-+			gpios = <&pca9534 1 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button-home {
-+			label = "Home";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&pca9534 2 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button-menu {
-+			label = "Menu";
-+			linux,code = <KEY_MENU>;
-+			gpios = <&pca9534 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		led-heartbeat {
-+			label = "Heartbeat";
-+			linux,default-trigger = "heartbeat";
-+			gpios = <&pca9534 0 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	reg_2p8v: regulator-2p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "2P8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_1p5v: regulator-1p5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "1P5V";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		vin-supply = <&reg_3v3>;
-+		regulator-always-on;
-+	};
-+
-+	reg_sdhc1_vmmc: regulator-sdhc1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_SD";
-+		vin-supply = <&reg_sdhc1_vmmc_int>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&main_gpio0 30 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
-+	};
-+
-+	reg_sdhc1_vmmc_int: regulator-sdhc1-int {
-+		compatible = "regulator-fixed";
-+		regulator-name = "+V3.3_SD_INT";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_sd1_vmmc>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpio = <&main_gpio0 53 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
-+	};
-+
-+	reg_sdhc1_vqmmc: regulator-sdhci1-vqmmc {
-+		compatible = "regulator-gpio";
-+		regulator-name = "+V3.3_SD_VQMMC";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_sd1_vqmmc>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		gpios = <&main_gpio0 56 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x0>,
-+			 <3300000 0x1>;
-+		bootph-all;
-+	};
-+
-+	reg_ov5640_buf_en: regulator-camera-buf-en {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ov5640_buf_en";
-+		gpios = <&main_gpio0 21 GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	transceiver1: can-phy {
-+		compatible = "ti,tcan1042";
-+		#phy-cells = <0>;
-+		max-bitrate = <5000000>;
-+	};
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_extcon>;
-+		label = "USB-C";
-+		id-gpios = <&main_gpio1 12 GPIO_ACTIVE_HIGH>;
-+		status = "okay";
-+
-+		port {
-+			usb_con_hs: endpoint {
-+				remote-endpoint = <&typec_hs>;
-+			};
-+		};
-+	};
-+};
-+
-+&cdns_csi2rx0 {
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi0_port0: port@0 {
-+			reg = <0>;
-+			status = "okay";
-+
-+			csi2rx0_in_sensor: endpoint {
-+				remote-endpoint = <&csi2_cam0>;
-+				bus-type = <4>; /* CSI2 DPHY. */
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+};
-+
-+&cpsw3g {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rgmii1>,
-+		    <&pinctrl_rgmii2>;
-+	status = "okay";
-+};
-+
-+&cpsw3g_mdio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mdio1>;
-+	status = "okay";
-+
-+	cpsw3g_phy1: ethernet-phy@5 {
-+		compatible = "ethernet-phy-id0283.bc30";
-+		reg = <5>;
-+		reset-gpios = <&pca9534 5 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <100000>;
-+	};
-+};
-+
-+&cpsw_port2 {
-+	/*
-+	 * The required RGMII TX and RX 2ns delays are implemented directly
-+	 * in hardware via passive delay elements on the Symphony PCB.
-+	 * No delay configuration is needed in software via PHY driver.
-+	 */
-+	phy-mode = "rgmii";
-+	phy-handle = <&cpsw3g_phy1>;
-+	status = "okay";
-+};
-+
-+&dphy0 {
-+	status = "okay";
-+};
-+
-+&main_i2c0{
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c0>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	ov5640: camera@3c {
-+		compatible = "ovti,ov5640";
-+		reg = <0x3c>;
-+		clocks = <&clk_ov5640_fixed>;
-+		clock-names = "xclk";
-+		AVDD-supply = <&reg_2p8v>;
-+		DOVDD-supply = <&reg_1p8v>;
-+		DVDD-supply = <&reg_1p5v>;
-+		powerdown-gpios = <&main_gpio0 10 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&main_gpio0 22 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_ov5640>;
-+
-+		port {
-+			csi2_cam0: endpoint {
-+				remote-endpoint = <&csi2rx0_in_sensor>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+			};
-+		};
-+	};
-+
-+	/* GPIO expander */
-+	pca9534: gpio@20 {
-+		compatible = "nxp,pca9534";
-+		reg = <0x20>;
-+		gpio-controller;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pca9534>;
-+		interrupt-parent = <&main_gpio1>;
-+		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
-+		#gpio-cells = <2>;
-+		status = "okay";
-+
-+		usb3-sel-hog {
-+			gpio-hog;
-+			gpios = <4 0>;
-+			output-low;
-+			line-name = "usb3_sel";
-+		};
-+
-+		eth-som-vselect-hog {
-+			gpio-hog;
-+			gpios = <6 0>;
-+			output-low;
-+			line-name = "eth-vselect";
-+		};
-+
-+		eth-mdio-enable-hog {
-+			gpio-hog;
-+			gpios = <7 0>;
-+			output-high;
-+			line-name = "eth-mdio-enable";
-+		};
-+	};
-+};
-+
-+&main_i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1337";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&main_mcan0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mcan0>;
-+	phys = <&transceiver1>;
-+	status = "okay";
-+};
-+
-+&main_pmx0 {
-+	pinctrl_extcon: main-extcon-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01a8, PIN_INPUT, 7) /* (F25) MCASP0_AFSX.GPIO1_12 */
-+		>;
-+	};
-+
-+	pinctrl_i2c0: main-i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01e0, PIN_INPUT_PULLUP, 0) /* (B25) I2C0_SCL */
-+			AM62PX_IOPAD(0x01e4, PIN_INPUT_PULLUP, 0) /* (A24) I2C0_SDA */
-+		>;
-+	};
-+
-+	pinctrl_i2c1: main-i2c1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01e8, PIN_INPUT_PULLUP, 0) /* (C24) I2C1_SCL */
-+			AM62PX_IOPAD(0x01ec, PIN_INPUT_PULLUP, 0) /* (B24) I2C1_SDA */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_mcan0: main-mcan0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01dc, PIN_INPUT, 0) /* (F20) MCAN0_RX */
-+			AM62PX_IOPAD(0x01d8, PIN_OUTPUT, 0) /* (B23) MCAN0_TX */
-+		>;
-+	};
-+
-+	pinctrl_mmc1: main-mmc1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x023c, PIN_INPUT, 0) /* (H20) MMC1_CMD */
-+			AM62PX_IOPAD(0x0234, PIN_OUTPUT, 0) /* (J24) MMC1_CLK */
-+			AM62PX_IOPAD(0x0230, PIN_INPUT, 0) /* (H21) MMC1_DAT0 */
-+			AM62PX_IOPAD(0x022c, PIN_INPUT_PULLUP, 0) /* (H23) MMC1_DAT1 */
-+			AM62PX_IOPAD(0x0228, PIN_INPUT_PULLUP, 0) /* (H22) MMC1_DAT2 */
-+			AM62PX_IOPAD(0x0224, PIN_INPUT_PULLUP, 0) /* (H25) MMC1_DAT3 */
-+			AM62PX_IOPAD(0x0240, PIN_INPUT, 0) /* (D23) MMC1_SDCD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_rgmii2: main-rgmii2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0184, PIN_INPUT, 0) /* (E19) RGMII2_RD0 */
-+			AM62PX_IOPAD(0x0188, PIN_INPUT, 0) /* (E16) RGMII2_RD1 */
-+			AM62PX_IOPAD(0x018c, PIN_INPUT, 0) /* (E17) RGMII2_RD2 */
-+			AM62PX_IOPAD(0x0190, PIN_INPUT, 0) /* (C19) RGMII2_RD3 */
-+			AM62PX_IOPAD(0x0180, PIN_INPUT, 0) /* (D19) RGMII2_RXC */
-+			AM62PX_IOPAD(0x017c, PIN_INPUT, 0) /* (F19) RGMII2_RX_CTL */
-+			AM62PX_IOPAD(0x016c, PIN_INPUT, 0) /* (B19) RGMII2_TD0 */
-+			AM62PX_IOPAD(0x0170, PIN_INPUT, 0) /* (A21) RGMII2_TD1 */
-+			AM62PX_IOPAD(0x0174, PIN_INPUT, 0) /* (D17) RGMII2_TD2 */
-+			AM62PX_IOPAD(0x0178, PIN_INPUT, 0) /* (A19) RGMII2_TD3 */
-+			AM62PX_IOPAD(0x0168, PIN_INPUT_PULLDOWN, 0) /* (D16) RGMII2_TXC */
-+			AM62PX_IOPAD(0x0164, PIN_INPUT, 0) /* (A20) RGMII2_TX_CTL */
-+		>;
-+	};
-+
-+	pinctrl_spi2: main-spi2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01b0, PIN_INPUT, 1) /* (G20) MCASP0_ACLKR.SPI2_CLK */
-+			AM62PX_IOPAD(0x0194, PIN_OUTPUT, 1) /* (D25) MCASP0_AXR3.SPI2_D0 */
-+			AM62PX_IOPAD(0x0198, PIN_INPUT, 1) /* (E25) MCASP0_AXR2.SPI2_D1 */
-+			AM62PX_IOPAD(0x01ac, PIN_OUTPUT, 7) /* (G23) MCASP0_AFSR.GPIO1_13 */
-+		>;
-+	};
-+
-+	pinctrl_uart0: main-uart0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x1c8, PIN_INPUT, 0)	/* (A22) UART0_RXD */
-+			AM62PX_IOPAD(0x1cc, PIN_OUTPUT, 0)	/* (B22) UART0_TXD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_uart2: main-uart2-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x005c, PIN_INPUT_PULLUP, 2) /* (AC25) GPMC0_AD8.UART2_RXD */
-+			AM62PX_IOPAD(0x0060, PIN_OUTPUT, 2) /* (AB25) GPMC0_AD9.UART2_TXD */
-+		>;
-+	};
-+
-+	pinctrl_uart6: main-uart6-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x009c, PIN_INPUT_PULLUP, 3) /* (AD24) GPMC0_WAIT1.UART6_RXD */
-+			AM62PX_IOPAD(0x0244, PIN_OUTPUT, 1) /* (D24) MMC1_SDWP.UART6_TXD */
-+		>;
-+	};
-+
-+	pinctrl_usb1: main-usb1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0258, PIN_OUTPUT, 0) /* (G21) USB1_DRVVBUS */
-+		>;
-+	};
-+
-+	pinctrl_ov5640: main-ov5640-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0028, PIN_OUTPUT, 7) /* (N20) OSPI0_D7.GPIO0_10 */
-+			AM62PX_IOPAD(0x0054, PIN_OUTPUT, 7) /* (V24) GPMC0_AD6.GPIO0_21 */
-+			AM62PX_IOPAD(0x0058, PIN_OUTPUT, 7) /* (W25) GPMC0_AD7.GPIO0_22 */
-+		>;
-+	};
-+
-+	pinctrl_pca9534: main-pca9534-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x01f0, PIN_INPUT, 7) /* (C25) EXT_REFCLK1.GPIO1_30 */
-+		>;
-+	};
-+
-+	pinctrl_sd1_vmmc: main-sd1-vmmc-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x0078, PIN_OUTPUT, 7) /* (AC24) GPMC0_AD15.GPIO0_30 */
-+			AM62PX_IOPAD(0x00d8, PIN_OUTPUT, 7) /* (AE22) VOUT0_DATA8.GPIO0_53 */
-+		>;
-+		bootph-all;
-+	};
-+
-+	pinctrl_sd1_vqmmc: main-sd1-vqmmc-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_IOPAD(0x00e4, PIN_OUTPUT, 7) /* (AE21) VOUT0_DATA11.GPIO0_56 */
-+		>;
-+		bootph-all;
-+	};
-+};
-+
-+&main_spi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi2>;
-+	ti,pindir-d0-out-d1-in;
-+	cs-gpios = <&main_gpio1 13 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&main_uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart0>;
-+	status = "okay";
-+};
-+
-+&main_uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	status = "okay";
-+};
-+
-+&main_uart6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart6>;
-+	status = "okay";
-+};
-+
-+&sdhci1 {
-+	/* SD Card */
-+	vmmc-supply = <&reg_sdhc1_vmmc>;
-+	vqmmc-supply = <&reg_sdhc1_vqmmc>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mmc1>;
-+	disable-wp;
-+	bootph-all;
-+	status="okay";
-+};
-+
-+&ti_csi2rx0 {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		typec_hs: endpoint {
-+			remote-endpoint = <&usb_con_hs>;
-+		};
-+	};
-+};
-+
-+&usb1 {
-+	dr_mode = "host";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usb1>;
-+	status = "okay";
-+};
-+
-+&usbss0 {
-+	status = "okay";
-+};
-+
-+&usbss1 {
-+	status = "okay";
-+};
--- 
-2.43.0
+Ben
 
 
