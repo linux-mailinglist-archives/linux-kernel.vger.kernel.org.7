@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-792153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE80BB3C0DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F40B3C0CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79262161E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEFC1C88840
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB94A32A3E4;
-	Fri, 29 Aug 2025 16:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="QgY5OlkN"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6360432C32E;
+	Fri, 29 Aug 2025 16:31:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621E9101DE;
-	Fri, 29 Aug 2025 16:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB79D32254F;
+	Fri, 29 Aug 2025 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485341; cv=none; b=WyXSOY5ZTDsRo42hT2i6riBChyoMqj2+ppVbsCqJrerhst4xjU8mTWu2DXbowFcwYeTHcMeUr4CnXcHzY4WwfJ+rcIU/wv78V8nNtMjG1vCp7BrxMptYs9EBQLsKRDv9Z+FXjVE5Dthb/P+PWEbWb8uYsbKTEKegn8Hn/pfBiI0=
+	t=1756485085; cv=none; b=PbzAMOKvdeFB/qfvRHYigOS7JOtphX6yMFnGuy0mK1LH3dqme9qTeAaYfYWZxXOwLbM+L/Nz3z5mCHwFZSAIAedUZ4OJjLG6hmLdpIQS0Uc3RQRMiap0osvSBAccCWfArpWJJFIQKMKuQqWhRLAUUcRJNBRPcN8ZKnZRlkIzCsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485341; c=relaxed/simple;
-	bh=avsdQAMCmTpxO9RaTShWc6B8/8TxZU+wQEr0gTzhhCY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=TgKLfyvod/LuAgjsbqq/EVTVtSDjnfg5ytfQS5I0bOgf776jr4Do5RL18+eaHnZCsbo1AWzG03OAXnCdgYnSiDud/Nd+dwbgLMSROeTQKN8u/OAuQ60CW0NWR82t2C1A9a1yK5peyjllkTUY0u78RaigFvfIqZbBIt7yV4wCi0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=QgY5OlkN; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756485027;
-	bh=Mq3b9/nym6/6DESK+e6R9ME6Y/BHiTYd9Ad87/o6mr4=;
-	h=From:To:Cc:Subject:Date;
-	b=QgY5OlkNHcl0xkwhvxjQT5iRMV6rHamPcbBpKO0pnPA8Vkds0GWzfxC9qY5T1NiMI
-	 kF/MCu8s3kstNeQDMDkVZWzO3HR0W2ijvOTFafh3xkMD/IrGerRTuD87Uz61on+BYt
-	 5bjZr9jWnQYvq2SM1mP8r6QHdctcMUVe4Cawui6U=
-Received: from f41.lan ([240e:305:1bb6:7c10:7285:c2ff:fe86:1af4])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 79781438; Sat, 30 Aug 2025 00:30:23 +0800
-X-QQ-mid: xmsmtpt1756485023t8ndhyyre
-Message-ID: <tencent_E72A37AF03A3B18853066E421B5969976208@qq.com>
-X-QQ-XMAILINFO: NY3HYYTs4gYSGokr56ObDQiMcHSG6y/gjR1giVFmEfQAyv6IS4Qg4XXGf0cHOA
-	 vkrkQM2YmxgrFnMe/x6NL0iBJq6XTGJIuO0giTdGCJBnfiSVQhJ6Tn3KptNmFW3AlUGzvO7qm3Az
-	 08NnGGZHBUPnDYzZ2q5wvv2dpg1aP8Mo9MgVv+1y40iibPozBxs78YhpkdxM4HwT0dwBZFC9GQwX
-	 iVmGgrFah3/h0nkXmBXDs355cNGFC6TNywSldJxVnKR26sdytItJkPxBxuYTRu4IF98+2o0bfSRh
-	 BECyn4JyybBZoB+uO6aEUCXzRUwVDTGuls6pgdbgbakmlqSnIkWroG9GfoL4J5ESpFeak89+IsVa
-	 waTQIhGiGuVSMZu5AwQDYFn1MN4Y+8BpdPTmzAD7Y7FHAs1pwS3nS+vaMzCK6xyCjVW0KrX4MU3x
-	 u7l4fU2Z884QR1DNrUhXEZA92+JGN0OT4Y3rJZ6CvduQUELdv3tEjx9LfpyyJxAViy8GbIJzyM9J
-	 cNQQ5W7hLdF+8FoAw8Lwg86abRSlJrheS7/CyrL7vVpV1W1RZnw3/HJoDKa230VTm/z/Pw0h8Q4W
-	 PZgwtMjsqZxW4o7iFxjei/epmfoUplxQvOyZO8oP4y4QplbWaLwCTltSEGvWKDa5YSCU5ML/jKB2
-	 e2bGjPSMb5PdQDn/8NuetZAfKTn2PYE4NtDCvcrP1g6XZTc2MszTfDJOsyLqyNHH9x28Yw5YF1Pf
-	 wDziQZOuK4edUl48mfRdWDraTAZhtmEOB6RlHAcgCHjeAL3BAU0JVcm4REOLlGZtu1pBfswu9GDP
-	 OMEOtLNv3jsvIwLQro39G5iUJt9PDlQwaNZ8YYjNg/ybP+3Uv8H7VlDBEiFBhqj7rCGd++0UeCjY
-	 yVOvts+TTyyihVPUiZ0OG9wpFlWGZvtoJCadT/TIyCJS66bExFI2ON/pFCUFCgdgBpdJ5quye5d5
-	 RV6BrlvRWsz2GqB2L1N8T/jpy3kPnizc2Za9o7EznfS4N6y3RQ9R9qroW6j6SvFeHrv8L/ytEbr2
-	 w4LHkS9b6rJZFmebpD+QaN54yUsPO63/HYZN8uv85CluA0oFb1
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Rong Tao <rtoax@foxmail.com>
-To: vmalik@redhat.com,
-	andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v5 0/2] Fix bpf_strnstr len error
-Date: Sat, 30 Aug 2025 00:30:16 +0800
-X-OQ-MSGID: <cover.1756484762.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756485085; c=relaxed/simple;
+	bh=KsN9haKZUzNYjRtO2PLxiJ7ZD5EUe6g/Jd3HCROYaEo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mO91mlJnjpC5axE7o+AYeQSDxfwOW6ykT/NS688AKSFh9zKryocmg76CF28dTT/yZJceuIKkYjr+G2120s1PE7wyqrlwCSC1Sv1NBDgnV9QlPMoZZ0tNxJ9Pqyh5DVjmCCDfi2uuI2Ff8JrAQf/fahREN7YZHLd7oBAYTXI0XMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD3b734Tqz6L5vG;
+	Sat, 30 Aug 2025 00:27:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 860FA140145;
+	Sat, 30 Aug 2025 00:31:19 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
+ 2025 18:31:18 +0200
+Date: Fri, 29 Aug 2025 17:31:17 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Jishnu Prakash
+	<jishnu.prakash@oss.qualcomm.com>, <jic23@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <agross@kernel.org>,
+	<andersson@kernel.org>, <lumag@kernel.org>, <konradybcio@kernel.org>,
+	<daniel.lezcano@linaro.org>, <sboyd@kernel.org>, <amitk@kernel.org>,
+	<thara.gopinath@gmail.com>, <lee@kernel.org>, <rafael@kernel.org>,
+	<subbaraman.narayanamurthy@oss.qualcomm.com>,
+	<david.collins@oss.qualcomm.com>, <anjelique.melendez@oss.qualcomm.com>,
+	<kamal.wadhwa@oss.qualcomm.com>, <rui.zhang@intel.com>,
+	<lukasz.luba@arm.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<cros-qcom-dts-watchers@chromium.org>, <quic_kotarake@quicinc.com>,
+	<neil.armstrong@linaro.org>, <stephan.gerhold@linaro.org>
+Subject: Re: [PATCH V7 0/5] Add support for QCOM SPMI PMIC5 Gen3 ADC
+Message-ID: <20250829173117.000029e6@huawei.com>
+In-Reply-To: <nsyhau4pnn2nbxdf35npwq4gvjiphocrftrwi4seirxqzurww6@6jgyzzmjyg7q>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+	<20250829-demonic-soft-guppy-512c13@kuoka>
+	<zgm2k2osmasdal6anba66pw24a7fiypgwlf3c36kvteshz7uef@wee4had7x54u>
+	<8fdc99b6-4ad2-4a08-9dca-6289c8fdddd6@linaro.org>
+	<nsyhau4pnn2nbxdf35npwq4gvjiphocrftrwi4seirxqzurww6@6jgyzzmjyg7q>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Rong Tao <rongtao@cestc.cn>
+On Fri, 29 Aug 2025 12:20:45 +0300
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-Fix bpf_strnstr() wrong 'len' parameter, bpf_strnstr("open", "open", 4)
-should return 0 instead of -ENOENT. And fix a more general case when s2
-is a suffix of the first len characters of s1.
+> On Fri, Aug 29, 2025 at 11:11:48AM +0200, Krzysztof Kozlowski wrote:
+> > On 29/08/2025 10:09, Dmitry Baryshkov wrote:  
+> > > On Fri, Aug 29, 2025 at 09:12:59AM +0200, Krzysztof Kozlowski wrote:  
+> > >> On Tue, Aug 26, 2025 at 02:06:52PM +0530, Jishnu Prakash wrote:  
+> > >>>  create mode 100644 drivers/iio/adc/qcom-spmi-adc5-gen3.c
+> > >>>  create mode 100644 drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c
+> > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h
+> > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550b-adc5-gen3.h
+> > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h
+> > >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pmk8550-adc5-gen3.h
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm7325.h (98%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350.h (98%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350b.h (99%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmk8350.h (97%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735a.h (95%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735b.h (95%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-smb139x.h (93%)
+> > >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-vadc.h (78%)
+> > >>>  create mode 100644 include/linux/iio/adc/qcom-adc5-gen3-common.h
+> > >>>
+> > >>>
+> > >>> base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf  
+> > >>
+> > >> What's the base commit?
+> > >>
+> > >> git show 0f4c93f7eb861acab537dbe94441817a270537bf
+> > >> fatal: bad object 0f4c93f7eb861acab537dbe94441817a270537bf  
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250822&id=0f4c93f7eb861acab537dbe94441817a270537bf  
+> > 
+> > I see:
+> > "Notice: this object is not reachable from any branch."
+> > 
+> > I guess you think this is 20250822?  
+> 
+> Well, it kinda is. It's a commit by Stephen, it has proper contents,
+> etc.  next-20250822 is not a branch, but a tag, that's why you observe
+> the warning from gitweb. You can verify it yourself by manually pulling
+> the tag from the repo.
+> 
 
-Rong Tao (2):
-  bpf/helpers: bpf_strnstr: Exact match length
-  selftests/bpf: Add tests for bpf_strnstr
+Kind of immaterial.  Typically subsystem maintainers want a base of
+*-rc1 unless there is a dependency in their tree.
 
- kernel/bpf/helpers.c                                     | 9 ++++++++-
- .../testing/selftests/bpf/progs/string_kfuncs_success.c  | 8 ++++++--
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
----
-v5: Add more commit message and change the patch 0001's comment;
-v4: Add comment and more selftests;
-    https://lore.kernel.org/all/tencent_CBD40091C14056E8298BE3725B65EE156405@qq.com/
-v3: Fix selftests/bpf error in v2, sorry about that;
-    https://lore.kernel.org/lkml/tencent_69BD268FBA201219240B51661D5E96A8D80A@qq.com/
-v2: Follow Andrii Nakryiko's advise, fix the 'wrong fix';
-    https://lore.kernel.org/lkml/tencent_DF4DA83EEBFB9246E5E3357BB40911CCA005@qq.com/
-v1: https://lore.kernel.org/lkml/tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com/
--- 
-2.51.0
-
+J
 
