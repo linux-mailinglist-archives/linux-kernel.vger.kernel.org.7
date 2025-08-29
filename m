@@ -1,172 +1,85 @@
-Return-Path: <linux-kernel+bounces-792269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC67B3C20D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D64B3C211
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1845A0903
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA257AA1C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995BA2F3636;
-	Fri, 29 Aug 2025 17:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77983342C9D;
+	Fri, 29 Aug 2025 17:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAFZQ45K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iy1WN3LL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C11A0B0E;
-	Fri, 29 Aug 2025 17:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83501F4631;
+	Fri, 29 Aug 2025 17:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489802; cv=none; b=rp4gM1kM9Rh0JS7GekeOKTnchXYMntDKPwtojDwYAIag5Rd1jx838f+e2LkOoY/lQ1zdzebXYvfnJOIkQ8qICkqS31hdcSggvwMW9YHXLQO4A2lUgl9/kd/1V1wVVjDcPP9/yqw4nGk1qVkT68ydw+YnkH0Ntcer9D4p6zCk6aM=
+	t=1756489849; cv=none; b=IIhEpY/tAJ2PNLMgcO6uNWCD6O2kzztr/ToVq6yFOs5yeNcuXfSEoXdB743b/dNR/FxvUUXzZK/69noQAfP+TTiez32B48VhJyTktbgl5X5fWwBg8Zne0a96VSkYyw34OB/+NN17WjRZ3SuLrVVgYG1ncyUDoRUC8nhhf++oLJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489802; c=relaxed/simple;
-	bh=HO/RW4o9Nu4vySZPP932OA2JN2QhGXtVX+onF0gTyCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kjdNY+qE6hcu6OlFI5RQQU2Nc+GKcV21my2D2QoUZ37TW89/Mld/pWQMHNEBDGFOGLb1jII8Qx8W2qCLOwqQ8vscxF1+S0XiVVMpUhMNxdZAyz42RqE0g5TxZ/ATaeootfR0YdBr20aRgFBZtFEVqewKQhqmnRAOuvgosutXrMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAFZQ45K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA38C4CEF0;
-	Fri, 29 Aug 2025 17:50:00 +0000 (UTC)
+	s=arc-20240116; t=1756489849; c=relaxed/simple;
+	bh=7qIvpZlYTi//fSzjgZvpyX5N/FgxRpkmRhI5BQCHWyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNJkT/+uhAXJBPrxa06NJupTa0+Gdc3jHA7AM3oUZCMZIU2p+sMAD5Kk+/5W0xpVTTuBu8xk35LSfXz4o17+Dot/WapRFPENSRYmHMCoJJvICks7FlREWgSIyq1h1QWa15VZqfZ7VhscyC+hL+/SK5QBrGLQ6yhZ4bO9JR4j16M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iy1WN3LL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E33C4CEF0;
+	Fri, 29 Aug 2025 17:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756489800;
-	bh=HO/RW4o9Nu4vySZPP932OA2JN2QhGXtVX+onF0gTyCM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rAFZQ45KrOxVq/z08MDEu8Fi2wFRq3vTPTLCl8CIHzckBY3L+J/uyxHmLdHA5tQLv
-	 k6Ktm2gbbOgMv6+oMrF2CHvD3OiCOQ8TVSdhUxQBsVe+AA5wRG8z9gKTqAKKcUoOSr
-	 ewtdcI0jnveU9pq7+m7eKaae19SoaSdfoc+BQQpSfADXZHB5ire9fS40Qp2pHdi89r
-	 No6FwAxHsTHEVPhKJjrOJ1M0t+8zjMBAvCwPQjnkFOnnszLJCrvWR38Aaeb1rOJcP5
-	 4CjyuJTSVWMLsAKltZthfEPHH+zoScoYUYtQDaorws+nff6756aCQPMs2iqIjwPH2H
-	 Y0jnRhUz4Wa4Q==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-61e1c0229b3so476017eaf.3;
-        Fri, 29 Aug 2025 10:50:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVc/9SY+YX6zU5VT4vryBCqH6Z87/ggnfC/Y+HlmUXk9U/k6vyJ5SUsCs9NRRu5twhf2ojoVZT9qdTe3uk=@vger.kernel.org, AJvYcCXb6nvlQyv9h13qahIsXiS9aev5nQjpSqxQRjTDU97a4pWtpij2MBUiQPuwXd+0o81xxoLIokkj6SQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuLSc6ppDECpt3cWj1GSZzTU/F0KiSBUackrU5pzJ2DdVCaxTe
-	75WV4R6F3KOYnNCk8gEQYCvHDWnBwGXC2K6WxLQciwP6PkIC96tGM0agI/V6ZNGMyndIcBbzt5/
-	IQqFvq+ojbOyXPH9M9mqzL5ZQITnK8w8=
-X-Google-Smtp-Source: AGHT+IH/4F7Y95yhr9HrfP2y6CmzjnYvNG/JUIFAcP9Ob3lK6l1fgTQA3LRGsf4/wxue1OwoidXj6aV8jDWQoNf/QI4=
-X-Received: by 2002:a05:6820:824:b0:61e:14fe:dae7 with SMTP id
- 006d021491bc7-61e14fee174mr3278356eaf.1.1756489799828; Fri, 29 Aug 2025
- 10:49:59 -0700 (PDT)
+	s=k20201202; t=1756489849;
+	bh=7qIvpZlYTi//fSzjgZvpyX5N/FgxRpkmRhI5BQCHWyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iy1WN3LLMTh8o28cBvQ2uz8LR2949jBvHlcSEag1c6FkEswp5kPcpdnM8oJyTt/Tu
+	 hBKNMlhvZpUXkkvoryVlxfH3gfZM4OYVZ8v/M+WKlgdZcxGaw/pKyQ16bdmcF4QGa4
+	 zB4J/T1fuluugizSv00DOXYekb9hauLY69nOyusgmM8NgT4jUXlSn9Y7UWW74G2VBQ
+	 dlT+jNyIa3zC0iWqD2tKdI745xbuxi9BUA7fyfgIdvngQc96Zx1y4HdHgwWAdgPDVf
+	 PHfQYNt4qYn7LjMQNimQ6xgA2T5L95TzF4ZNLyJ38o62nwV/r+nZVDZAhjL5Jq+EdK
+	 X0/WWfIdsZLhw==
+Date: Fri, 29 Aug 2025 12:50:47 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, kernel@oss.qualcomm.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: arm: qcom: Add Coresight
+ Interconnect TNOC
+Message-ID: <175648984746.1068381.2779865131984484045.robh@kernel.org>
+References: <20250828-itnoc-v3-0-f1b55dea7a27@oss.qualcomm.com>
+ <20250828-itnoc-v3-1-f1b55dea7a27@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <724616a2-6374-4ba3-8ce3-ea9c45e2ae3b@arm.com> <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
- <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
- <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com> <39dccf98-41da-4c54-a200-50f367cd0147@arm.com>
-In-Reply-To: <39dccf98-41da-4c54-a200-50f367cd0147@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 29 Aug 2025 19:49:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ii4sdpjfNpbxiLKZrooTKgvvSsSbPMc6j3fjZNckhkvQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxQ6SEzJLNJ7-awPOC2SCeXVGjRGQgCs2L0cKVq4ssD9m6qbbsk0eU_0aY
-Message-ID: <CAJZ5v0ii4sdpjfNpbxiLKZrooTKgvvSsSbPMc6j3fjZNckhkvQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "intel_idle: Rescan "dead" SMT siblings during, initialization"
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-itnoc-v3-1-f1b55dea7a27@oss.qualcomm.com>
 
-On Thu, Aug 28, 2025 at 11:44=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 8/28/25 20:06, Rafael J. Wysocki wrote:
-> > On Thu, Aug 28, 2025 at 6:13=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> >>
-> >> On Thu, Aug 28, 2025 at 4:44=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
-el.org> wrote:
-> >>>
-> >>> On Thu, Aug 28, 2025 at 4:26=E2=80=AFPM Christian Loehle
-> >>> <christian.loehle@arm.com> wrote:
-> >>>>
-> >>>> This reverts commit a430c11f401589a0f4f57fd398271a5d85142c7a.
-> >>>>
-> >>>> Calling arch_cpu_rescan_dead_smt_siblings() in intel_idle_init with
-> >>>> boot parameter nosmt and maxcpus active hotplugged boot-offline CPUs
-> >>>> in (and leave them online) which weren't supposed to be online.
-> >>>>
-> >>>> With the revert and nosmt and maxcpus=3D12 on a raptor lake:
-> >>>> cpu     online  capacity
-> >>>> cpu0    1       1009
-> >>>> cpu1    0       -
-> >>>> cpu2    1       1009
-> >>>> cpu3    0       -
-> >>>> cpu4    1       1009
-> >>>> cpu5    0       -
-> >>>> cpu6    1       1009
-> >>>> cpu7    0       -
-> >>>> cpu8    1       1024
-> >>>> cpu9    0       -
-> >>>> cpu10   1       1024
-> >>>> cpu11   0       -
-> >>>> cpu12   1       1009
-> >>>> cpu13   0       -
-> >>>> cpu14   1       1009
-> >>>> cpu15   0       -
-> >>>> cpu16   1       623
-> >>>> cpu17   1       623
-> >>>> cpu18   1       623
-> >>>> cpu19   1       623
-> >>>> cpu20   0       -
-> >>>> cpu21   0       -
-> >>>> cpu22   0       -
-> >>>> cpu23   0       -
-> >>>>
-> >>>> Previously:
-> >>>> cpu     online  capacity
-> >>>> cpu0    1       1009
-> >>>> cpu1    0       -
-> >>>> cpu2    1       1009
-> >>>> cpu3    0       -
-> >>>> cpu4    1       1009
-> >>>> cpu5    0       -
-> >>>> cpu6    1       1009
-> >>>> cpu7    0       -
-> >>>> cpu8    1       1024
-> >>>> cpu9    0       -
-> >>>> cpu10   1       1024
-> >>>> cpu11   0       -
-> >>>> cpu12   1       1009
-> >>>> cpu13   0       -
-> >>>> cpu14   1       1009
-> >>>> cpu15   0       -
-> >>>> cpu16   1       623
-> >>>> cpu17   1       623
-> >>>> cpu18   1       623
-> >>>> cpu19   1       623
-> >>>> cpu20   1       623
-> >>>> cpu21   1       623
-> >>>> cpu22   1       623
-> >>>> cpu23   1       623
-> >>>>
-> >>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> >>>> ---
-> >>>> Rafael, I don't immediately see how to fix this properly so I won't
-> >>>> try to, feel free to treat this as a bug report.
-> >>>
-> >>> Sure, thanks for reporting this!
-> >>>
-> >>> Well, I think that cpuhp_smt_enable() is missing a check.  It looks t=
-o
-> >>> me like it should do the topology_is_primary_thread(cpu) check like
-> >>> cpuhp_smt_disable().
-> >>>
-> >>> I'll cut a test patch for this later.
-> >>
-> >> Something like the attached one, perhaps.  I haven't tested it yet,
-> >> but I'll do that later.
-> >
-> > Works here AFAICS, but my test system is not hybrid.
->
-> Yep, on my end as well, thanks!
-> Tested-by: Christian Loehle <christian.loehle@arm.com>
 
-Thanks for testing and let me submit a proper patch.
+On Thu, 28 Aug 2025 02:27:22 -0700, Yuanfang Zhang wrote:
+> Add device tree binding for Qualcomm Coresight Interconnect Trace
+> Network On Chip (ITNOC). This TNOC acts as a CoreSight
+> graph link that forwards trace data from a subsystem to the
+> Aggregator TNOC, without aggregation or ATID functionality.
+> 
+> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+> ---
+>  .../bindings/arm/qcom,coresight-itnoc.yaml         | 90 ++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
