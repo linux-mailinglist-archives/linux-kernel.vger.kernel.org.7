@@ -1,202 +1,210 @@
-Return-Path: <linux-kernel+bounces-791736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562EDB3BB2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D029BB3BC89
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F6746860A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A163AB85D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D21314B7E;
-	Fri, 29 Aug 2025 12:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="TvHQVmRY"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012019.outbound.protection.outlook.com [52.101.66.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8EB30C60A;
-	Fri, 29 Aug 2025 12:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470130; cv=fail; b=DRcDxqsJm0ri0qdVWOVO1xuckcm4dyfRApGdbPBtlYNQprKdorH0/JkJEnE8Ps2XxzL1nXwartcAN8lzoUziyiPBQJdSnF822gnOLVOA8kWVeLgsj9vQH7PkBlL7ihdSdse4ETFZ7vJoLJca7FgwtgnlxURomXRVQwLcssziUiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470130; c=relaxed/simple;
-	bh=0gJaM3KEWNjZvTJJL4suKeEv6tx9wyq2jnPhK4vfdyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KXE2ZtSPA5rORWR5nNqvPYuJqQ4qrksEELCXFjstFVgbT56P4KNSZPhGlMrtmhSHtJXFCdjywzsZaQSk/st01AdDoYP00ulnvBGacahBq5q6dqgDGkXCKelgoFHkAD47f4aH7GTCOjLTMIDmJ7F/nQFZ5pQQzjP7lm4RZ2D8lX0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=TvHQVmRY; arc=fail smtp.client-ip=52.101.66.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ovwGGl9dCcCfYKpdwkTRtrSyVsYOP4MDjjjMyhYmdqxzt6C+6EeL0JuC83oudr+GpLh6V6p6mehADAy5pyt3cGKa6iUcKmkD3P8xxM64itmXooU4DnH2bEy0wNacWTM/bBCQ4OPvVaPNGGm67lKZmLfM3niFYFUcuJKdof4wIp3BQbfQQyDSDyT3sM5aqBT5QXl52KIp9xdTmgCxoNSzQFHyxfKBVWh6aLvbypYPP0NakQ2GxFVY/u9Ifawm6WXzomGPZUrhCOmQlbv5shFaWTXb8uEQtQ347plNcGTmdTSlO+SmNw13uoJoyQSltFAshKZWLaNMjXyl6xTHxBk3kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lx+kBNu3qEkV7prHxTjcI9oa/dRZ+TFcfCNE4xjEqho=;
- b=YQ7/E2CaMYkKuumzcPLyv9L6cAOfeDVW5Sf+Rgz0dlXV8HFBnId1+pcD1Gnon8ggvBSQD1MWJ7nSmdY1H0OmiONOi3K7sF93VDJV+e8U/z6rXKoqIPYNmdU/JFfnKiun7rsZprxnOKFL+zu9rOZsoMr9VKYhi40oblJ6CyKA/pAeGprsVS7PSTBWFoKYRDM9oDXzCaqVVNiuof+27ybmdkZCeM460+uUyHNa10dbuFzjSYztNnYOSusTzfU6jaoX5oZxobOOJs8KuHnp+fTHhVH3uXEzMpAJgq4ErNs1mrLk7c0xFeVQRaHLuasBuqtr7C6JVp8f1usgRXvLP3QVRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lx+kBNu3qEkV7prHxTjcI9oa/dRZ+TFcfCNE4xjEqho=;
- b=TvHQVmRYfxUflFDYff8NyS/zas27aRQQG/EllMLRrjjhpMeQ+70irlxO3BUdhevT+wtQ4WxOv/7Kw3ukutr1zT69biSnd32dJOvf7jWhiWlHLGxnMzuF1zYBcPVPdQ+9PHOuzXqWKNg+Qr/2/+Visb7isqdSnM7vN/afgT3pbe595N+PcXPvT4lx9Nwst3qDvELIFDDqQbtJ+Zu0wXMbjnOIeJIM4odrLURXoowAdcwfnPPxaBSjmH6gDmCU3CHPkuK8OBFeZZXfDaMB1s03/rfs4drYSOtzDpQ8yIJfVQK+d8UmlzdQG3ZODaSh9FtcYuZIcMxb5yF60eiftrYe7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PA4PR04MB9637.eurprd04.prod.outlook.com (2603:10a6:102:272::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Fri, 29 Aug
- 2025 12:22:04 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
- 12:22:04 +0000
-Date: Fri, 29 Aug 2025 21:33:14 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: scmi: migrate round_rate() to determine_rate()
-Message-ID: <20250829133314.GA30579@nxa18884-linux.ap.freescale.net>
-References: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
- <20250829100903.GB16625@nxa18884-linux.ap.freescale.net>
- <20250829-fine-tacky-sturgeon-0ba3c4@sudeepholla>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829-fine-tacky-sturgeon-0ba3c4@sudeepholla>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0079.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ae::7) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D561302CB9;
+	Fri, 29 Aug 2025 13:34:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E026FC5
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756474496; cv=none; b=k8mvkmkQGiz8yYhwUnHdoASHn+Jfa3QMAzPOqVrC6Y/QwPd5L0DkADOVxi44tXST1uXZPbBQP+yvJ3mr6EeFN9hIDVFQo09cWWLQzqu00upZLBODJjHSuH1y/eKBsOVIPuVsFQgZxkSiFVrosWVUw1qJdxS3PyxSDm+qqDt3xxU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756474496; c=relaxed/simple;
+	bh=06S49XJLuAUYge08zydpaCOeBIj+tylQDwe3TQ/h8gQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lUQ71Rh4nHqcAA8M/5LtNJmaugB5a1lpYQFRjTk7ftF3ZGh22KJK+kYlGKcARgCJYJUuz9WEATlZvTJtDp55Vx/t1t8tXXaVV54dsdT5HdcVSTD1Ap3cyCOj9FzJHGMSwC47jyDeJwqUgLMNSEa/v2PKgCRHAm+7FGaEUuIPmqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19D5815A1;
+	Fri, 29 Aug 2025 06:34:46 -0700 (PDT)
+Received: from [10.163.69.116] (unknown [10.163.69.116])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BBC33F738;
+	Fri, 29 Aug 2025 06:34:51 -0700 (PDT)
+Message-ID: <143768ff-3363-4a30-be87-08a382b3c445@arm.com>
+Date: Fri, 29 Aug 2025 19:04:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9637:EE_
-X-MS-Office365-Filtering-Correlation-Id: cabcb72e-4947-4772-29b3-08dde6f6a983
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|19092799006|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Mpq3v/jXfpq6fOgQsD3GqztpMPBZbW42IUNyk3jtyycr/3dprZmFeY3BcBPa?=
- =?us-ascii?Q?k2szSYAMT3FP54aq1wUuLK01BWQeyvtqYWsYBhCtLh3foSP+fVlJxnptR1Au?=
- =?us-ascii?Q?uFMMZSuy2y4eBYIEoBe6R5aIBvKGcu9TLcQStIA5+Odao5zKeCYSepHB4W8P?=
- =?us-ascii?Q?h5rYyUf3ejf/DxqHcTnyfiizGiw3oyp/ibus4K+tDhoQSvGWz3MFesvXYbXY?=
- =?us-ascii?Q?TziQP1psQDodzkUsNDGTnhrpWKt/TVZIXB/A71INtyRJ8B9XshZUyrq6WmT3?=
- =?us-ascii?Q?o4Eye+Y+jlsC9Y8m7vBwBHQLoB9osaaNk2UycaXOvHMD5BXajhRSfuj0z9Us?=
- =?us-ascii?Q?3gysxjP4BNZg34XSKyVviaTjqXT5OeQost6DPSzqMrDuudMBqiO1J/ZYabQi?=
- =?us-ascii?Q?U75dcggYTmMkaoiqPrLhztKWHjemZDsm1EmSnQy+5A7nzOZ1WdWMDQVlNvgD?=
- =?us-ascii?Q?yDSbRi0jNkL0jmnWuQdI3n3c0vMFguDguXoyQ8E1pTNI6jJv0fZQRhvCqMmH?=
- =?us-ascii?Q?byRSNkkhTh9PerlEIXoBaJe7lgD1bOMf0suFcaJ7CgouZT+H6UVM10yJVbhL?=
- =?us-ascii?Q?PAdGeqB4lZlYXIWY2ZOOPuJe74z7B1Kd+4kSZeNIlda4qmAMc5O85me4B+DW?=
- =?us-ascii?Q?YzCZ80kRUzOQmQ39gyMXUjfBDm69294XJa8SBuNVBFr4b734W14mH4WVQZcl?=
- =?us-ascii?Q?EGApCf9sytvxsuLgGrStWyPywhgaPwU6miSYTA04NIDsIoAoOTlZryG1/NcX?=
- =?us-ascii?Q?91tmucwjwF4cI+RBLGL4vxF/uCaZjABwXT1qJUvH0M7ZocUROyRWd+lN7vTz?=
- =?us-ascii?Q?A6yHK6wEy+q9pf3jB0m0SgG8j1bIq3+tL3J//ukZAHV3Ltvg3Tssxntjh/BA?=
- =?us-ascii?Q?aGpYwobtB1ZT+hzRrGpdVPDvGJfkiy4EQ3HVWOQHI7rtVuS/Qm5Us4IPcTaf?=
- =?us-ascii?Q?3UuLlSyIP1duoSHAivProTivpGleWeDENmqklZVFqyiOBzB+B90EZBMVN6HP?=
- =?us-ascii?Q?FNYBjkzPDrlXCgb1HhFpX7QdIbE6S6YYxNBIbjCFDHiD9FjzMMILr+FWeqSw?=
- =?us-ascii?Q?TOf1i6Ojgp279BxXuLCHrrYm+374kenxJRRBm1zu30s9Wb6ZNt3cKV9dY69g?=
- =?us-ascii?Q?EWkWzlG6EZdN1f25zgWn1ARqiIAAtCc+QhuJEFQzJiPa6e4qdPskilZy6qWs?=
- =?us-ascii?Q?DUYE3POCaYKdRJEZ9ga3ucm8Mo74fDZKoxq++fVTdX/+wSnSElez2OP007Wf?=
- =?us-ascii?Q?QUm7qNKFHWJkr3NBgapxKZxJPlZf7ZweT/7kJKfMMYGRJhLpMr+nQUIa2d3G?=
- =?us-ascii?Q?unm7oZbvFpN76tAJg7vOuew/xrudeG+PRsqFy5SMBsIRA8ykLSznnnr2cBxX?=
- =?us-ascii?Q?K/uUjXDItGpnGyY7e0bWCm869SHQGDMJRpa5n3cbjK9FTZCs+oIUfgSNhzQk?=
- =?us-ascii?Q?V8NO2H3b2Xf3kgmMNn9BTOrZ3mwCwT1jPD4qJWp+c4+Uvxx6hjqNAQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MciZzCXg6HmTrR1w8BMVpBwC0OaR4NQWXcFgXG4u+Mlh1Uxjr0IMgTpb++co?=
- =?us-ascii?Q?LerU1e/OK2j9CE8ucBEZwuX1g4PNB/CxCm+uv6ukS9V7HeRyGso0mzR8kIVY?=
- =?us-ascii?Q?0KUwgFUT0jG3Ga7HoCC8Hb829/TYldDxBvb4iuh56/2H+G4T96a8GWrHmmxi?=
- =?us-ascii?Q?hBmatoSiG8VWJXBdDAZbDRtnks44oA81Lj2l0ZmlpjxbWTfRe/gp+qFJlA8B?=
- =?us-ascii?Q?1omyQctEROSSZag7UJvMpjMlFK4otdoxTs/YUHaW1WwvsItRh3Uf64GIx/At?=
- =?us-ascii?Q?7utjxJ+f2ooRfVP4cAwu/Z+p1t7QxP5SizFCCRirxJ2/IsKxurthh3djVe2g?=
- =?us-ascii?Q?sYLVmWzFqFQOwcIWrxXISxnaNasaIFjdXGzyyEl4HEtz3k/mMYrl68btpK7V?=
- =?us-ascii?Q?ATKU6jKgi+gh3mxnckUxokM9jY3w4IjkIabxl9WTL1SiGMRkTIhWpoYqF/UO?=
- =?us-ascii?Q?xt1bhfPTx2tgxugElwCTTzx2dWbKLrr3msKSVACWWIAxzgEoSLSPO6ATGCTn?=
- =?us-ascii?Q?E7tjesw+6eYezdEARX84VRzX7YQeoH/1xMSXmClFDhbXXXL89kq4P8a61Zhv?=
- =?us-ascii?Q?HoQWQ5i/QaaHyVLMV0BeyIUz5io6cmwThUn1WhJi3KqoAUy+2ao2NkkQ1oTz?=
- =?us-ascii?Q?pBVkdEtgJ4iwciJsE6M767G6osM7J5GldIROIYYlu5E4GCdAoDZjhsc/mKCg?=
- =?us-ascii?Q?nNl0A9qxFPupVZOHaZqbv9kHGYXn1/Zgs/9jzeKdEDomAgcX6sUIbgTaDPyp?=
- =?us-ascii?Q?4BJxNFSwlAVTVMC34BLcmEerskI1YN4Nj6uABOCPs5hYDE5R0HzCAJZMBAzk?=
- =?us-ascii?Q?IKzstPHFj1k2E+09FUzfw3J7vph2mEfoFeMV+7NslUzoEwqdCJMG5xntb/0a?=
- =?us-ascii?Q?rlzpqEAvTFmpoV4s1S6rIbaTIlb9AUgYHCSeGqUPdIhX8uVkU2a6Vtez+xxL?=
- =?us-ascii?Q?nrYkMayssxZLez/IBFET9mSRMM2s3IZh8DiJi0AbrcDtX8O8wdli9h2H+Pe0?=
- =?us-ascii?Q?vrt+mywDn5AQ98aQ5pZQT93cffDV3UKQ4AyJbTViWuiETmMDOqTVEzVTXUUO?=
- =?us-ascii?Q?kFUA5BtZ/oim3xF7pBnVQ2Mg9eUmFciVzS/bcdoHT/nNVNGEMiqQJmDpSr7X?=
- =?us-ascii?Q?McmaaUhW5XNb7gi/FzPrlxtOef4CsOCAcjtBcQl1GZqGlZqEYWwkN1oAAvMr?=
- =?us-ascii?Q?cLoXy+0iNwZzu6Nvi6gHhcacH4VR9Rpn/v7YdMooWJlq+FFMImibIMbSPQtH?=
- =?us-ascii?Q?FUEfNIyXPaGNaXlMQaDoq6odkeFfrHTdd+XRyV/oMJ28KJ0rNOSob0FNPD0j?=
- =?us-ascii?Q?VFm+cILlX2X8kqNBInpOrPpnA7+mBd42EIsejC/L/MqsocyclzWUBAVtRQii?=
- =?us-ascii?Q?1Zi9Y2+LXTKAbnWPaKlcDbGL+kIox8rSf5V9pZYFY+/n8zbnr2gFtux5JvIv?=
- =?us-ascii?Q?HCg500RgPmvPX4J1QctlXf8WazEZ/IS7hidm86z9VvfJNfqQCrXitGyLNw29?=
- =?us-ascii?Q?peOI4GjH78Y1E1vFQMlMpaJf8xZrjsi6+URoIj7o/TNTaNfJ7hsP5guxJbou?=
- =?us-ascii?Q?9N2CDmnJx62/MUhM7ADV2kiAPSfvUUr8DZsiwoPA?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cabcb72e-4947-4772-29b3-08dde6f6a983
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 12:22:04.0648
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8cl00MX69RYtritC00xcSw59jI4rP/+9haVJb6uUESiqWJooaaHChlfs7JO82Bf4XkIF1E1OtobLMn4yIG8GZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9637
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64/sysreg: Replace TCR_EL1 field macros
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Mark Brown <broonie@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250829060215.1086792-1-anshuman.khandual@arm.com>
+ <20250829060215.1086792-3-anshuman.khandual@arm.com>
+ <867bymeean.wl-maz@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <867bymeean.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 10:59:15AM +0100, Sudeep Holla wrote:
->On Fri, Aug 29, 2025 at 06:09:03PM +0800, Peng Fan wrote:
->> On Wed, Aug 27, 2025 at 01:12:07PM -0400, Brian Masney wrote:
->> >This driver implements both the determine_rate() and round_rate() clk
->> >ops, and the round_rate() clk ops is deprecated. When both are defined,
->> >clk_core_determine_round_nolock() from the clk core will only use the
->> >determine_rate() clk ops.
->> >
->> >The existing scmi_clk_determine_rate() is a noop implementation that
->> >lets the firmware round the rate as appropriate. Drop the existing
->> >determine_rate implementation and convert the existing round_rate()
->> >implementation over to determine_rate().
->> >
->> >scmi_clk_determine_rate() was added recently when the clock parent
->> >support was added, so it's not expected that this change will regress
->> >anything.
->> >
->> >Signed-off-by: Brian Masney <bmasney@redhat.com>
->> 
->> Reviewed-by: Peng Fan <peng.fan@nxp.com>
->
->Peng,
->
->It would be great if you can test it with parent clock support on i.MX
->platforms just to be sure this doesn't regress anything.
 
-Just gave a test on i.MX95-EVK, it boots well and eth0 works, 
-the results in /sys/kernel/debug/clk/clk_summary also looks correct.
 
-Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95-19x19-EVK
+On 29/08/25 1:43 PM, Marc Zyngier wrote:
+> On Fri, 29 Aug 2025 07:02:15 +0100,
+> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>
+>> This just replaces all used TCR_EL1 field macros with tools sysreg variant
+>> based fields and subsequently drops them from the header (pgtable-hwdef.h)
+>> and moves them into KVM header (asm/kvm_arm.h) for continued usage in KVM.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: kvmarm@lists.linux.dev
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> Changes in V2:
+>>
+>> - Dropped all TCR_EL1 replacements from KVM code
+>> - Moved existing TCR_XXX macros from (asm/pgtable-hwdef.h) into KVM header
+>>   (asm/kvm_arm.h) for their continued usage
+>>
+>>  arch/arm64/include/asm/assembler.h     |   6 +-
+>>  arch/arm64/include/asm/cputype.h       |   2 +-
+>>  arch/arm64/include/asm/kvm_arm.h       |  92 +++++++++++++++++++++++
+>>  arch/arm64/include/asm/mmu_context.h   |   4 +-
+>>  arch/arm64/include/asm/pgtable-hwdef.h | 100 +------------------------
+>>  arch/arm64/include/asm/pgtable-prot.h  |   2 +-
+>>  arch/arm64/kernel/cpufeature.c         |   4 +-
+>>  arch/arm64/kernel/pi/map_kernel.c      |   8 +-
+>>  arch/arm64/kernel/vmcore_info.c        |   2 +-
+>>  arch/arm64/mm/proc.S                   |  36 +++++----
+>>  tools/arch/arm64/include/asm/cputype.h |   2 +-
+>>  11 files changed, 134 insertions(+), 124 deletions(-)
+>>
+> 
+> [...]
+> 
+>> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+>> index 1da290aeedce..ad3c305c6374 100644
+>> --- a/arch/arm64/include/asm/kvm_arm.h
+>> +++ b/arch/arm64/include/asm/kvm_arm.h
+>> @@ -107,6 +107,98 @@
+>>  
+>>  #define MPAMHCR_HOST_FLAGS	0
+>>  
+>> +#define TCR_T0SZ_OFFSET		0
+>> +#define TCR_T1SZ_OFFSET		16
+> 
+> These are unused by KVM.
 
-Regards
-Peng
+I have dropped them for now.
 
->
->-- 
->Regards,
->Sudeep
+But shall I audit these moved macros here and drop the ones
+that are not used in KVM currently ?
+ > 
+>> +#define TCR_TxSZ(x)		(TCR_T0SZ(x) | TCR_T1SZ(x))
+>> +#define TCR_TxSZ_WIDTH		6
+>> +#define TCR_T0SZ_MASK		(((UL(1) << TCR_TxSZ_WIDTH) - 1) << TCR_T0SZ_OFFSET)
+>> +#define TCR_T1SZ_MASK		(((UL(1) << TCR_TxSZ_WIDTH) - 1) << TCR_T1SZ_OFFSET)
+> 
+> [eyeroll]
+> 
+> Why do you need to repeat all of this, while you just introduced
+> new definitions? Surely you can write a script that express one in
+> term of the other, and add that to KVM, instead of just blindly moving
+> stuff around?
+
+Tried expressing them in terms of TCR_EL1_XXX field definitions added
+earlier. I hope this works.
+
+#define TCR_T0SZ_MASK		TCR_EL1_T0SZ_MASK
+#define TCR_T1SZ_MASK		TCR_EL1_T1SZ_MASK
+
+#define TCR_EPD0_MASK		TCR_EL1_EPD0_MASK
+#define TCR_IRGN0_MASK		TCR_EL1_IRGN0_MASK
+#define TCR_IRGN0_NC		(TCR_EL1_IRGN0_NC << TCR_EL1_IRGN0_SHIFT)
+#define TCR_IRGN0_WBWA		(TCR_EL1_IRGN0_WBWA << TCR_EL1_IRGN0_SHIFT)
+#define TCR_IRGN0_WT		(TCR_EL1_IRGN0_WT << TCR_EL1_IRGN0_SHIFT)
+#define TCR_IRGN0_WBnWA		(TCR_EL1_IRGN0_WBnWA << TCR_EL1_IRGN0_SHIFT)
+
+#define TCR_EPD1_MASK		TCR_EL1_EPD1_MASK
+#define TCR_IRGN1_MASK		TCR_EL1_IRGN1_MASK
+#define TCR_IRGN1_NC		(TCR_EL1_IRGN1_NC << TCR_EL1_IRGN1_SHIFT)
+#define TCR_IRGN1_WBWA		(TCR_EL1_IRGN1_WBWA << TCR_EL1_IRGN1_SHIFT)
+#define TCR_IRGN1_WT		(TCR_EL1_IRGN1_WT << TCR_EL1_IRGN1_SHIFT)
+#define TCR_IRGN1_WBnWA		(TCR_EL1_IRGN1_WBnWA << TCR_EL1_IRGN1_SHIFT)
+
+#define TCR_IRGN_NC		(TCR_EL1_IRGN0_NC | TCR_EL1_IRGN1_NC)
+#define TCR_IRGN_WT		(TCR_EL1_IRGN0_WT | TCR_EL1_IRGN1_WT)
+#define TCR_IRGN_WBnWA		(TCR_EL1_IRGN0_WBnWA | TCR_EL1_IRGN1_WBnWA)
+#define TCR_IRGN_MASK		(TCR_EL1_IRGN0_MASK | TCR_EL1_IRGN1_MASK)
+
+#define TCR_ORGN0_MASK		TCR_EL1_ORGN0_MASK
+#define TCR_ORGN0_NC		(TCR_EL1_ORGN0_NC << TCR_EL1_ORGN0_SHIFT)
+#define TCR_ORGN0_WBWA		(TCR_EL1_ORGN0_WBWA << TCR_EL1_ORGN0_SHIFT)
+#define TCR_ORGN0_WT		(TCR_EL1_ORGN0_WT << TCR_EL1_ORGN0_SHIFT)
+#define TCR_ORGN0_WBnWA		(TCR_EL1_ORGN0_WBnWA << TCR_EL1_ORGN0_SHIFT)
+
+#define TCR_ORGN1_MASK		TCR_EL1_ORGN1_MASK
+#define TCR_ORGN1_NC		TCR_EL1_ORGN1_NC
+#define TCR_ORGN1_WBWA		TCR_EL1_ORGN1_WBWA
+#define TCR_ORGN1_WT		TCR_EL1_ORGN1_WT
+#define TCR_ORGN1_WBnWA		TCR_EL1_ORGN1_WBnWA
+
+#define TCR_ORGN_NC		(TCR_EL1_ORGN0_NC | TCR_EL1_ORGN1_NC)
+#define TCR_ORGN_WT		(TCR_EL1_ORGN0_WT | TCR_EL1_ORGN1_WT)
+#define TCR_ORGN_WBnWA		(TCR_EL1_ORGN0_WBnWA | TCR_EL1_ORGN1_WBnWA)
+#define TCR_ORGN_MASK		(TCR_EL1_ORGN0_MASK | TCR_EL1_ORGN1_MASK)
+
+#define TCR_SH0_MASK		TCR_EL1_SH0_MASK
+#define TCR_SH0_INNER		(TCR_EL1_SH0_INNER << TCR_EL1_SH0_SHIFT)
+
+#define TCR_SH1_MASK		TCR_EL1_SH1_MASK
+#define TCR_SH1_INNER		(TCR_EL1_SH1_INNER << TCR_EL1_SH1_SHIFT)
+
+#define TCR_TG0_SHIFT		TCR_EL1_TG0_SHIFT
+#define TCR_TG0_MASK		TCR_EL1_TG0_MASK
+#define TCR_TG0_4K		(TCR_EL1_TG0_4K << TCR_EL1_TG0_SHIFT)
+#define TCR_TG0_64K		(TCR_EL1_TG0_64K << TCR_EL1_TG0_SHIFT)
+#define TCR_TG0_16K		(TCR_EL1_TG0_16K << TCR_EL1_TG0_SHIFT)
+
+#define TCR_TG1_SHIFT		TCR_EL1_TG1_SHIFT
+#define TCR_TG1_MASK		TCR_EL1_TG1_MASK
+#define TCR_TG1_16K		(TCR_EL1_TG1_16K << TCR_EL1_TG1_SHIFT)
+#define TCR_TG1_4K		(TCR_EL1_TG1_4K << TCR_EL1_TG1_SHIFT)
+#define TCR_TG1_64K		(TCR_EL1_TG1_64K << TCR_EL1_TG1_SHIFT)
+
+#define TCR_IPS_SHIFT		TCR_EL1_IPS_SHIFT
+#define TCR_IPS_MASK		TCR_EL1_IPS_MASK
+#define TCR_A1			TCR_EL1_A1
+#define TCR_ASID16		TCR_EL1_AS
+#define TCR_TBI0		TCR_EL1_TBI0
+#define TCR_TBI1		TCR_EL1_TBI1
+#define TCR_HA			TCR_EL1_HA
+#define TCR_HD			TCR_EL1_HD
+#define TCR_HPD0		TCR_EL1_HPD0
+#define TCR_HPD1		TCR_EL1_HPD1
+#define TCR_TBID0		TCR_EL1_TBID0
+#define TCR_TBID1		TCR_EL1_TBID1
+#define TCR_NFD0		TCR_EL1_NFD0
+#define TCR_NFD1		TCR_EL1_NFD1
+#define TCR_E0PD0		TCR_EL1_E0PD0
+#define TCR_E0PD1		TCR_EL1_E0PD1
+#define TCR_TCMA0		TCR_EL1_TCMA0
+#define TCR_TCMA1		TCR_EL1_TCMA1
+#define TCR_DS			TCR_EL1_DS
 
