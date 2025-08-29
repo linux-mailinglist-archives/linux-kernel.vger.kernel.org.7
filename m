@@ -1,99 +1,71 @@
-Return-Path: <linux-kernel+bounces-791379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD53B3B621
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4CAB3B624
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCBBCA01056
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B10983EDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AB628032D;
-	Fri, 29 Aug 2025 08:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xEDWOLTi"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8272857C2
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7668A29AB1A;
+	Fri, 29 Aug 2025 08:41:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1551A1CD215;
+	Fri, 29 Aug 2025 08:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756456774; cv=none; b=djQ+hrYzCTOvwVDxPlt4YxeGifsiHzT4nVuXYPLmA753b2EEc/EK20yyF8JvECsq9QT9k9Q0xwuQzYpTWqpm6knQep4rDiRM4xA9PqtskwnJP5nMIfvFGcYq+ymzBwiyglJ+mZA88Vp/lTDYbpLssRUk6E5nkRAQe3anadvIzqA=
+	t=1756456884; cv=none; b=cOtJm3PDjaIPbW5isxk7YALrUm1yf9i7fbLjJWjISgCpfouz43+JQFgQHdV6bAKJuk0wtv+vkkSXFt11XXI+fI+U+tXaVpZLjnrzRUHvFvkGZ3+yBhRrxtnIhd6ZhkoJiwYIUQzeiSJ1zPCHF/zo5IKNRs6WG+veATP7Z3oNDS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756456774; c=relaxed/simple;
-	bh=ofdbL1dQDmdAjVuEgLtTz6fjrHzlLyxHt5yz8i38J8w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YJOfL3aV0hmRWBLeT0sTL2aHKu49LGJsR760ZQwvdOl79NVe1eFcIKpnJ6rkP3IRHte4IqtwwBe45l7H1zI2pkhvrjnSFVH4R7pgcauROCKSePbwGNhX9/xfpIM6lqIMaPvXBjYZqPOuuDstq8ONO6aho31TXq07l1b33OaKrFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xEDWOLTi; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b80aecb97so2398355e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756456770; x=1757061570; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UQEvQJki2jorAxK4pPiRW9zu4FuyXo0Nk/MFVc+zew=;
-        b=xEDWOLTit1UdQuamVURP5KKi1HXLZGl+EnsP2NdDScYA5wXp7mI8FOK4oRO7du8rtV
-         m4NG9+sCMxsDI980ukIgXGgNQtEDdEPCd0GviNnAok+7wt0uc0iQddtNfg+YkPwcz9sw
-         0OHpwTNVYMPys9QBpvINAHq5DUOKgqpvUQxOqgf+BGucphSw/Xwua52CMTOZSCpV0JFM
-         jqwFlfsV1AhVD9p9jncM1Der8CYJC15Q+CkM7btp0BDgG4wOnKnUb0WNbJT7/FQZhQl6
-         N5V8sq+d1UiQyxCx2DR9deuEoLJWMdniVjJQ/hUGE0hU6imZtrbdHZDqEDTIslfzNcvp
-         z9TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756456770; x=1757061570;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UQEvQJki2jorAxK4pPiRW9zu4FuyXo0Nk/MFVc+zew=;
-        b=Z6Ct7UZnU5m6e7JfV5PF3jYIWEHj8J1Gx7//UfeDS5ObmH6GnzECwLZzOopT5yx2iY
-         Y8QHSVYxzYSoD/T0wOyiX8OsxHGxD9jLb4baASecykG0yukJNlLG2XbN/vVD9gjruxPF
-         LSynSF7eEIQc6pWwcZjLLar21Tm1vGUHwFDO7XhMbt0ZNVMwRdF6Pry4dobzuW415FcI
-         KnwMxxiZ+BBH2udOOFZqs3mRYn/xevpj1tbv3Rji9Okv20yvGr1O9IIZRgO4fGHmyZSj
-         /b7S25mrzVUBae6KGXv3KeJeKI3u6GKrHf8lkyGipaD1uw359GqmltQwXnO4iYR8o93G
-         NYZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTpUGUZlOiaEOC94hOAPUoh2j8Ozghv+Z0v2t8qn21pWkGz7dThZizY7ilndBfvpL7goAgw2IpZLMIIpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcLLMeZiEvNexojh132veimDWKs+ZdIclak5nBsM6sUVH+3zrD
-	ogLpRCS9Hmm0I1AZRbFveCKEy1Qvqvzqj0u8GfwMrngCFbZ7Kwcm7E7eaCoFv6Wx3mmuwukJSKF
-	1cBO7nUS70u0b4qe3gg==
-X-Google-Smtp-Source: AGHT+IH3eYiN3fOA8XEY4ERscZ8isUlUhXtUHiGo3BZ8cQY2Ya/Sc9lUa6ETxq2sNQrBnDxAFOKNYLqb5kL+CSo=
-X-Received: from wmbfa15.prod.google.com ([2002:a05:600c:518f:b0:45b:63e6:8e28])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5491:b0:456:1d4e:c127 with SMTP id 5b1f17b1804b1-45b5179cdf4mr239952455e9.8.1756456770629;
- Fri, 29 Aug 2025 01:39:30 -0700 (PDT)
-Date: Fri, 29 Aug 2025 08:39:29 +0000
-In-Reply-To: <20250828133323.53311-5-dakr@kernel.org>
+	s=arc-20240116; t=1756456884; c=relaxed/simple;
+	bh=+TkQduhHeqp88AnpMMHoIn/oa6jhoLgxvZhJsC3ptBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VRaq9uq2/JHkMY2UwmH1UD6mQzHegpbIyKId82hVHfjVS0T0JF+9kAqTZkB8zPVG+9okkeSoqLXVY4XxO1TjZEUEZrzaNhvvIZAYUxQ+MUFSg13nDadlNAqm53DPdCUKAnJsO7mO+QuIjevqKyIumTkvS3sCv0UDCed9sfCTIl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F32D61BCB;
+	Fri, 29 Aug 2025 01:41:12 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE35B3F694;
+	Fri, 29 Aug 2025 01:41:20 -0700 (PDT)
+Date: Fri, 29 Aug 2025 09:41:18 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	kernel@oss.qualcomm.com, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] coresight-tnoc: Add runtime PM support for
+ Interconnect TNOC
+Message-ID: <20250829084118.GG745921@e132581.arm.com>
+References: <20250828-itnoc-v3-0-f1b55dea7a27@oss.qualcomm.com>
+ <20250828-itnoc-v3-3-f1b55dea7a27@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828133323.53311-1-dakr@kernel.org> <20250828133323.53311-5-dakr@kernel.org>
-Message-ID: <aLFnQbSq3O0R5X_c@google.com>
-Subject: Re: [PATCH v4 4/5] samples: rust: dma: add sample code for SGTable
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	abdiel.janulgue@gmail.com, acourbot@nvidia.com, jgg@ziepe.ca, 
-	lyude@redhat.com, robin.murphy@arm.com, daniel.almeida@collabora.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-itnoc-v3-3-f1b55dea7a27@oss.qualcomm.com>
 
-On Thu, Aug 28, 2025 at 03:32:17PM +0200, Danilo Krummrich wrote:
-> Add sample code for allocating and mapping a scatter-gather table
-> (`SGTable`).
+On Thu, Aug 28, 2025 at 02:27:24AM -0700, Yuanfang Zhang wrote:
+> This patch adds runtime power management support for platform-based
+> CoreSight Interconnect TNOC (ITNOC) devices. It introduces suspend and
+> resume callbacks to manage the APB clock (`pclk`) during device runtime
+> transitions.
 > 
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
-> Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
