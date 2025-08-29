@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-791881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701CFB3BD42
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:13:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D297B3BD40
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A99A17AD7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:13:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960D27A97A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83B9320395;
-	Fri, 29 Aug 2025 14:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D65031E110;
+	Fri, 29 Aug 2025 14:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="jbXl/IS9"
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1IY3a8V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A905931E0FD;
-	Fri, 29 Aug 2025 14:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6002627F9;
+	Fri, 29 Aug 2025 14:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476774; cv=none; b=phn8UfwF4e0t4Ye/FrAZnELaX4Jc5rgmZdO2fuBmA+P0WH2XeJ0CAkZrHIRKeSVUgfHeCtokGzIQf0GnBuLQO6IJ12lYwGO3HaEZ4W05nezo04xuMvPKrnLN/GHIfigLTu5n27Or4KTDIf+n1/b6MhOt3J8Xm7YWWDmPgj1rDY8=
+	t=1756476765; cv=none; b=hZ1ma0WCZUFnVcEnbq/8u01OQaNyb1eYxNfWO+RdIXLx5olEmyikgaxinkcTSK4MXVr7IvcJHgdSUxEXxr1qDHccUJaWNmzH017b0d4vEIcgZNvs/dVQSw1rGpSI9/Qxf0lvEvoHsL4ES67lj+IoUzglvrDXKg0mzVFSgjQ2pKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476774; c=relaxed/simple;
-	bh=ch/WPJ0SpGlKhGdbMaEE09OSg0fskIs8Peezyjl3UVc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RlVMHjdZR7RYdMDeXHYOV8UJAWXDvlFcBFsSk7tfsM8uOdE1dCnic69YyN6OW0tP/cVVPBm2eGANab4LZKKWbAiU/W+s4XE56zBQGShWfbIGAjl0Jj7EdHD+ygbz7lAR5rrHPMyTK+rrly26vhMfkQF1WUE76q8bPeavnwfsE0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=jbXl/IS9; arc=none smtp.client-ip=44.246.77.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1756476772; x=1788012772;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+dXaDJZBFHeDcF9Dv8HHRJWOZiMC9GrTqoDlaXRW0MM=;
-  b=jbXl/IS9+eQFkxIUozUzQvF0NP7irqrgYr6Zs0FNGV7mYIJ1TjOGH7lg
-   P+lUsWb12zSR+YMbOXJdTNGG7nN//C0mUnSeo46Dym3kcjf3XzlvISsoz
-   VFNGOONisRFT+Jl4aQQtb9DJm/JAq0XuxpOvwjJZat97rjcC2Kscrwj62
-   w4W6aQ7j6lj3bAEHFgGEGufgpMlkcvewc1+YCFwfpiQxiiYpt8+2htSVi
-   zz4PkOJekv1cRoKvBXKFHDktJ46779rG9gC51N6xbCTx8MjMAEIDLQhM4
-   nzEQ6W2QScuneN1JvGfyhcVQWxYJb27d/0NP89LeHNqyvLUnVxB4QpaSC
-   w==;
-X-CSE-ConnectionGUID: h6plwO5yRFGsw022X0z4hg==
-X-CSE-MsgGUID: +YOvAcYRRze0h8XS3xrFlA==
-X-IronPort-AV: E=Sophos;i="6.18,221,1751241600"; 
-   d="scan'208";a="2046458"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 14:12:50 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:63219]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.12.13:2525] with esmtp (Farcaster)
- id f3f00cc4-895b-4387-991c-0b829f105757; Fri, 29 Aug 2025 14:12:50 +0000 (UTC)
-X-Farcaster-Flow-ID: f3f00cc4-895b-4387-991c-0b829f105757
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Fri, 29 Aug 2025 14:12:50 +0000
-Received: from dev-dsk-aqibaf-1b-17060f52.eu-west-1.amazon.com (10.253.72.42)
- by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Fri, 29 Aug 2025 14:12:48 +0000
-From: Aqib Faruqui <aqibaf@amazon.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <nh-open-source@amazon.com>, <aqibaf@amazon.com>
-Subject: [PATCH 1/1] KVM: selftests: Fix force_emulation_prefix parameter type mismatch
-Date: Fri, 29 Aug 2025 14:12:32 +0000
-Message-ID: <20250829141233.58081-1-aqibaf@amazon.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1756476765; c=relaxed/simple;
+	bh=CPujCojsEdEJ23RIIfgOEmPVGJrHEjssoVjfvYtZVf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=THWQhqwl/km7VmOKdEVmPWRKlsZC+2S9UQyCT/m7lq2rdYcYkvySoxJg9B8U8CEsYOeVmSLru5vf+kjMH9xvP5i3SXDBqemWqkTNAR/EZpYulSN+sy4qabpT/mcgxJL8/8SjRItMkb7ah5TXmWloky71+L3Ex8WEnWED15lI0OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1IY3a8V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5949FC4CEF5;
+	Fri, 29 Aug 2025 14:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756476765;
+	bh=CPujCojsEdEJ23RIIfgOEmPVGJrHEjssoVjfvYtZVf4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y1IY3a8V6pa/HovY0fIOjSdKwVjr7WAhbPVRF3q0/1tPYIM4SAYp4rtBC3xP1sF8Q
+	 JzAYGUBZVGPAdu18qgkf4W+2uQg1SMsY/EYpei2MML0L9fOTNQXGDMWfS78lzgWUfD
+	 MiM5KQRRr3H5GbqEa9OAMAz6pzEJna1I9iXutYyMdEeMoYLhwpqlXMrRoRG5zEvVWO
+	 x7ZqfZjiFXjttWawf9+BNc2XvO7TnbinaSlNc5Q4njaKK0oP3/57qWY3pjyE6p4geH
+	 xn+HY1kKgTxnE31hN2tvQrTpH4pOmYPsGOvvnH9v+1DaABocE0nZ5MhDt7PwTtClX1
+	 LF8RfEJuokR2w==
+Message-ID: <726456a1-e6ff-47dd-aeab-434fa43ef1f6@kernel.org>
+Date: Fri, 29 Aug 2025 16:12:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA003.ant.amazon.com (10.13.139.86) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Modify tesla fsd bindings
+To: Varada Pavani <v.pavani@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: aswani.reddy@samsung.com, gost.dev@samsung.com
+References: <20250829135643.105406-1-v.pavani@samsung.com>
+ <CGME20250829135703epcas5p14bbcc16e8d3622950a28e0ce40ff2dcd@epcas5p1.samsung.com>
+ <20250829135643.105406-2-v.pavani@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250829135643.105406-2-v.pavani@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix kvm_is_forced_enabled() to use get_kvm_param_bool() instead of
-get_kvm_param_integer() when reading the "force_emulation_prefix" kernel
-module parameter.
+On 29/08/2025 15:56, Varada Pavani wrote:
+> FSD SoC WDT is using Samsung legacy WDT driver with
+> "samsung,exynos7-wdt" compatibility. Now change the compatibility due to
+> few driver changes (PMU bit changes for each WDT instance and Clocks)
+> for WDT found in FSD SoC.
 
-The force_emulation_prefix parameter is a boolean that accepts Y/N
-values, but the function was incorrectly trying to parse it as an
-integer using strtol().
+Eh, no, this does not work like that. FSD SoC was released like 8 years
+ago, so how hardware can change now?
 
-Signed-off-by: Aqib Faruqui <aqibaf@amazon.com>
----
- tools/testing/selftests/kvm/include/x86/processor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You cannot claim ABI needs changes because your driver does something,
+it's just misinterpretation of bindings.
 
-diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-index 3f93d1b4f..8edf48b5a 100644
---- a/tools/testing/selftests/kvm/include/x86/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86/processor.h
-@@ -1323,7 +1323,7 @@ static inline bool kvm_is_pmu_enabled(void)
- 
- static inline bool kvm_is_forced_emulation_enabled(void)
- {
--	return !!get_kvm_param_integer("force_emulation_prefix");
-+	return get_kvm_param_bool("force_emulation_prefix");
- }
- 
- static inline bool kvm_is_unrestricted_guest_enabled(void)
--- 
-2.47.3
+Please read writing bindings. DTS was added recently, in 2022, but 3
+years is long enough to test it, so I must assume this was tested.
 
+Otherwise you need to REALLY carefully explain that.
+
+Best regards,
+Krzysztof
 
