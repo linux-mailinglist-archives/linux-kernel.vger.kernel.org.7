@@ -1,175 +1,178 @@
-Return-Path: <linux-kernel+bounces-791458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A26B3B706
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:21:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E38DB3B70F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70CB1C85F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8085E56AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B928F2FF657;
-	Fri, 29 Aug 2025 09:20:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96812F7477
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FEE6F53E;
+	Fri, 29 Aug 2025 09:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DRyib/iq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2653043A1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459250; cv=none; b=kAvRkddmtLBTc9ZeASNGyJH+cUPvK1fVQh5lyS55qoCHjFy2f86ue77avrss/NpYQJLWh+5Cc8JB6aRT6XCLQD+p7H/wq6Mds41pks1d154D5/9UPadBqXk7xPBLz0WoExQo/6mkVcocOwGoFPd0zg4VGmDszR/XtMOtkjWt7vw=
+	t=1756459253; cv=none; b=mc64Ee6GtrGaykalC/ETmDewpIMoKBnoHjBurLbPkSSYDJUuL8L2e8XXqD4ofbW1USaS4s4NcRvOLu58hYCVYTmi+Nk5Xw7QuYHqp5r0lsVh5VFWLx5z1Cm/V3G8BuxErzmCwesTYvcq7KV7JBDWb0VAgr/4bMyZjZFekXxR5ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459250; c=relaxed/simple;
-	bh=mg1Teb4fAk/j8aBrThlJWz+yWC0/kkcLbmp5w5M5CL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JoINhHsojsbl1alK09tN3RhJOdvj6FraLNGxXoenaiJvqfDXxDmOlJpMvM6xVVP4C/wM97pvaY7u68fPL9IKzjeFnFNiQpKudVOL8MQYLQmvAYNsuKGk7wKUio8PhyraGnWqwPWY/BC3ocOZvaVSqquH8I2dhyICfoQyfoudSJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE1FD1756;
-	Fri, 29 Aug 2025 02:20:38 -0700 (PDT)
-Received: from [10.1.29.20] (unknown [10.1.29.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1F6B3F738;
-	Fri, 29 Aug 2025 02:20:44 -0700 (PDT)
-Message-ID: <2b076729-8a34-444c-8ee0-44a08f5a2731@arm.com>
-Date: Fri, 29 Aug 2025 10:20:43 +0100
+	s=arc-20240116; t=1756459253; c=relaxed/simple;
+	bh=41cPbZW2JuUamvHD0ni/4zW5qEt98VIFHzay0uJyE64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktkQ/TCazm3pTEbif3MA4g4Q101vw9vLTQ/4FT5gSK9vB6eLiQM1kwjtXbdt4+caZqIX8G2/YYBXZoFI8s7uBl7byJBnZ+7z6d3GrS+9YngPg/4OsmPMHXLq76+VQry17iCFT7m4GZ248u8bMR5hQh09mnB7lFQuzfdj0VSAJ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DRyib/iq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85YR4028264
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:20:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=VsGRi9TWtut80xRESvMijlEz
+	Jj+9BIG8rviOsUN+Q2w=; b=DRyib/iqMVUgY+4U2/xa1PZEfrNYqH+CO6TheLAM
+	f754gQa0ypq9f/ZcukNVmys08FJn+FxHy1J22okyW5Sb8nIUWpHGAjLDQoBaSNyz
+	Kv/+IfVKWqKJMBfn2XtQMUIC/lj1JBTbjMudKe/c0HfCVJCrclLXhYwxIr44m4Sy
+	cyyl3s1k3F+H47dD7qF4OHNWDkXq3KGkP/uj15XGoBit9PPFJSTpwnYbaJlP+Kqv
+	TpVVCx8N0k0FHJGoSYDC7Xk6lJVFiZklYyvXo6qOCXfbynPAjcT0VUMuqqPmfOhS
+	Ze80Ap2WaPsTEU6KQ1IeVoOdZPDjKLV2RztEoLrPWKEMYg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5umkhf5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:20:50 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109bc103bso41013391cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 02:20:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756459249; x=1757064049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VsGRi9TWtut80xRESvMijlEzJj+9BIG8rviOsUN+Q2w=;
+        b=UawFjcPMWG5Qb7gEe3RkYqV8r/rpz0y5NT1N+Ti//9XGzN3HCy4UCnJ7kYiysvAiq4
+         O+LgUYaOM/gY7HqwXba6KyGOox+FyWLjXR4rWjQqeWYcVpNCheSlUlvziiqijJJP6yeF
+         nzCeMYL1gOlZZr8lNVVrWxbgUp++DfE5hvreYHcAOoVEzfUsHS2jT5YXI8bCmNjh5qYl
+         7411UdUIjPT3Tca6zndYBND20fw82kPPSxvu1xn1618FvRWU3LHwvqqYNyekDx4NiW1E
+         bvZcDo6+wn2LcJn1goLcsAJtbgikqqDs5DFnYvlIQJ+uLMgZqUDLqJYW8l2rGLtY0jfb
+         1tXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGMUxYKHvgo1qNPHTH4QovJWi50LzIEjInDr7RL98SwebcdfVZvyahk1ncka2ZD07UEOVKK2YzlIBL49w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwWnGFtwBnCSjENxq13di8P1ZvpB2nkugwkail1fc3hH2rghVS
+	NFjWgt07twAm867oPqwln9Vr6HXxZ87Ndc6xYhGbwuR/cHJBZtu0/sI9NfTt4nObLONvtC7lQ8M
+	FbkgCTSFgfXqkzsIMguX7p9X7GcbuiP2iEWWLcMITxRRpMXQt2Eqbw2hWvkSmWYVIKeY=
+X-Gm-Gg: ASbGnctOuY78XJvGErDgZ15qPk2OQ2aL8iFgXanJOZ2D7AxJepB4L46vYOZYtn0sWk+
+	4jM++uWN7JXRbioKFGBH1n76ktca/pM6igH33FREPQHiPdfI+Vwu0tdAZpyOHP68sfA3kqJBDjd
+	bTOGt3vynphP/XdaW7dejG2H2cwqc4IVxpGZMvnFRrig4QFLpNpZ5uMIZr1ST++fZAoVHljupTb
+	0LIdlPSj8HrQY+/fuiBPre1ZmqesQp1YwMk8soHHunY83QNzIGOuQRRSN22xH3f26/ILxKURjft
+	n8PpQepcvCsck9kSSifpvLHg2GsoUuJNi9DJ/1kyYFSGlM8GaScGpeKVjtTSBOK2Bzw7xNl1EgT
+	aodTt5yntA89Q7SGw6FlBHOuL9YudwMtQ7LwiQme201m9bIxHSCgv
+X-Received: by 2002:ad4:5ce4:0:b0:70d:d5eb:cb09 with SMTP id 6a1803df08f44-70dd5ebccafmr134046266d6.20.1756459249024;
+        Fri, 29 Aug 2025 02:20:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFu+l8+GZuUy+NaTPLiPmyXfppCCrSzXfTWjiiARcq2CiwkxvRqPIvCjYJyzT2ulw8LGLrwHQ==
+X-Received: by 2002:ad4:5ce4:0:b0:70d:d5eb:cb09 with SMTP id 6a1803df08f44-70dd5ebccafmr134046086d6.20.1756459248542;
+        Fri, 29 Aug 2025 02:20:48 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336b9462e97sm2472451fa.11.2025.08.29.02.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 02:20:47 -0700 (PDT)
+Date: Fri, 29 Aug 2025 12:20:45 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, jic23@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        agross@kernel.org, andersson@kernel.org, lumag@kernel.org,
+        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
+        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
+        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
+        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
+        kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com,
+        lukasz.luba@arm.com, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
+        neil.armstrong@linaro.org, stephan.gerhold@linaro.org
+Subject: Re: [PATCH V7 0/5] Add support for QCOM SPMI PMIC5 Gen3 ADC
+Message-ID: <nsyhau4pnn2nbxdf35npwq4gvjiphocrftrwi4seirxqzurww6@6jgyzzmjyg7q>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250829-demonic-soft-guppy-512c13@kuoka>
+ <zgm2k2osmasdal6anba66pw24a7fiypgwlf3c36kvteshz7uef@wee4had7x54u>
+ <8fdc99b6-4ad2-4a08-9dca-6289c8fdddd6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: assign unique names to queues
-To: Chia-I Wu <olvaffe@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250828200532.3534201-1-olvaffe@gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250828200532.3534201-1-olvaffe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fdc99b6-4ad2-4a08-9dca-6289c8fdddd6@linaro.org>
+X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68b170f2 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=cXZZpXjwJqeueyEXUCgA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfXxX69YnL5Zwc3
+ dhPlDbkOzFb3PHWyE8DSQ/jrUt++WgH9/4bN4kqjd1tiqPETrGXUAKpkCb2XdHVdcvNxK1gkQUl
+ tM7Qw1VucLIFc9Q2zWMylnoG7OB5s55JJfyqh2k6RLnsKtbJIP21MBaCXt62/tLTYSc+1Cmxg89
+ jjd4c3eOSiQjjIkmpCt3AFl4rNFYN99IPrpuw/PSQZbcUzXUm3zq4TKhyrHFZmM3ohIglmCeJJw
+ g7UFpr0LW5Opj3eGekVo4CZasLa4U2RXHqh+PqjCXaADZNUuHAjtcEeFsUnMbSG/xADD7Kegi72
+ 4wXK0hJYK2ooudZSKZin/OkXhx4elseatigwoog2uIYa2fKtNFhKC8YsR42HuwWrDKXXE8H3dsq
+ 7aqy0jx7
+X-Proofpoint-GUID: Lex-EfM25ObDtQtAqSMG-E3wdKAZO-Jz
+X-Proofpoint-ORIG-GUID: Lex-EfM25ObDtQtAqSMG-E3wdKAZO-Jz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230032
 
-On 28/08/2025 21:05, Chia-I Wu wrote:
-> Userspace relies on the ring field of gpu_scheduler tracepoints to
-> identify a drm_gpu_scheduler.  The value of the ring field is taken from
-> sched->name.
+On Fri, Aug 29, 2025 at 11:11:48AM +0200, Krzysztof Kozlowski wrote:
+> On 29/08/2025 10:09, Dmitry Baryshkov wrote:
+> > On Fri, Aug 29, 2025 at 09:12:59AM +0200, Krzysztof Kozlowski wrote:
+> >> On Tue, Aug 26, 2025 at 02:06:52PM +0530, Jishnu Prakash wrote:
+> >>>  create mode 100644 drivers/iio/adc/qcom-spmi-adc5-gen3.c
+> >>>  create mode 100644 drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c
+> >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h
+> >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550b-adc5-gen3.h
+> >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h
+> >>>  create mode 100644 include/dt-bindings/iio/adc/qcom,pmk8550-adc5-gen3.h
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm7325.h (98%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350.h (98%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350b.h (99%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmk8350.h (97%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735a.h (95%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735b.h (95%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-smb139x.h (93%)
+> >>>  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-vadc.h (78%)
+> >>>  create mode 100644 include/linux/iio/adc/qcom-adc5-gen3-common.h
+> >>>
+> >>>
+> >>> base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
+> >>
+> >> What's the base commit?
+> >>
+> >> git show 0f4c93f7eb861acab537dbe94441817a270537bf
+> >> fatal: bad object 0f4c93f7eb861acab537dbe94441817a270537bf
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250822&id=0f4c93f7eb861acab537dbe94441817a270537bf
 > 
-> Because we typically have multiple schedulers running in parallel in
-> each process, assign unique names to schedulers such that userspace can
-> distinguish them.
+> I see:
+> "Notice: this object is not reachable from any branch."
 > 
-> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> I guess you think this is 20250822?
 
-One nit below, but otherwise:
+Well, it kinda is. It's a commit by Stephen, it has proper contents,
+etc.  next-20250822 is not a branch, but a tag, that's why you observe
+the warning from gitweb. You can verify it yourself by manually pulling
+the tag from the repo.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 32 ++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index ba5dc3e443d9c..26616b6cb110d 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -360,6 +360,9 @@ struct panthor_queue {
->  	/** @entity: DRM scheduling entity used for this queue. */
->  	struct drm_sched_entity entity;
->  
-> +	/** @name: DRM scheduler name for this queue. */
-> +	char name[32];
-> +
->  	/**
->  	 * @remaining_time: Time remaining before the job timeout expires.
->  	 *
-> @@ -3308,9 +3311,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->  
->  static struct panthor_queue *
->  group_create_queue(struct panthor_group *group,
-> -		   const struct drm_panthor_queue_create *args)
-> +		   const struct drm_panthor_queue_create *args, u32 gid,
-> +		   u32 qid)
->  {
-> -	const struct drm_sched_init_args sched_args = {
-> +	struct drm_sched_init_args sched_args = {
->  		.ops = &panthor_queue_sched_ops,
->  		.submit_wq = group->ptdev->scheduler->wq,
->  		.num_rqs = 1,
-> @@ -3323,7 +3327,7 @@ group_create_queue(struct panthor_group *group,
->  		.credit_limit = args->ringbuf_size / sizeof(u64),
->  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
->  		.timeout_wq = group->ptdev->reset.wq,
-> -		.name = "panthor-queue",
-> +		.name = NULL, /* will point to queue->name */
-
-NIT: There's no need to explicitly assign NULL here.
-
-Thanks,
-Steve
-
->  		.dev = group->ptdev->base.dev,
->  	};
->  	struct drm_gpu_scheduler *drm_sched;
-> @@ -3398,6 +3402,11 @@ group_create_queue(struct panthor_group *group,
->  	if (ret)
->  		goto err_free_queue;
->  
-> +	/* assign a unique name */
-> +	snprintf(queue->name, sizeof(queue->name), "panthor-queue-%d-%d", gid,
-> +		 qid);
-> +	sched_args.name = queue->name;
-> +
->  	ret = drm_sched_init(&queue->scheduler, &sched_args);
->  	if (ret)
->  		goto err_free_queue;
-> @@ -3540,12 +3549,18 @@ int panthor_group_create(struct panthor_file *pfile,
->  	memset(group->syncobjs->kmap, 0,
->  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
->  
-> +	ret = xa_alloc(&gpool->xa, &gid, group,
-> +		       XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
-> +	if (ret)
-> +		goto err_put_group;
-> +
->  	for (i = 0; i < group_args->queues.count; i++) {
-> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
-> +		group->queues[i] =
-> +			group_create_queue(group, &queue_args[i], gid, i);
->  		if (IS_ERR(group->queues[i])) {
->  			ret = PTR_ERR(group->queues[i]);
->  			group->queues[i] = NULL;
-> -			goto err_put_group;
-> +			goto err_erase_gid;
->  		}
->  
->  		group->queue_count++;
-> @@ -3553,10 +3568,6 @@ int panthor_group_create(struct panthor_file *pfile,
->  
->  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
->  
-> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
-> -	if (ret)
-> -		goto err_put_group;
-> -
->  	mutex_lock(&sched->reset.lock);
->  	if (atomic_read(&sched->reset.in_progress)) {
->  		panthor_group_stop(group);
-> @@ -3575,6 +3586,9 @@ int panthor_group_create(struct panthor_file *pfile,
->  
->  	return gid;
->  
-> +err_erase_gid:
-> +	xa_erase(&gpool->xa, gid);
-> +
->  err_put_group:
->  	group_put(group);
->  	return ret;
-
+-- 
+With best wishes
+Dmitry
 
