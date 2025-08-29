@@ -1,174 +1,120 @@
-Return-Path: <linux-kernel+bounces-792024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FC5B3BF9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5662AB3BF92
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B85C189816F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A39167B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090C033439D;
-	Fri, 29 Aug 2025 15:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A6B335BC1;
+	Fri, 29 Aug 2025 15:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxRjy6JU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIjAQDXy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8BC3314B5;
-	Fri, 29 Aug 2025 15:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BCF334723
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756481821; cv=none; b=HFQK+i1BkoweWh+BDSVEZDu5TZac3GMoZgJUDHT/q+ExtXvmNvUuPT8nPjxV1gPgbwPFPTvhtYCA3LT5IbcgMPbCsSOhhWBsjK/MfCuqCajso5dwh0qgknDOYgNhZudyKj1TcQ05S6CauQXrCqSllT6u++ajsn1jo538d2o5DLk=
+	t=1756481853; cv=none; b=sw/ToX4YZbqEQGKVJE9cUr3NlqIVQwrYNf6SeaduGPY3fvPAccCmQRiwSNyQN/t5QfO40sWNn2NsrIduHtz6fjPVseU3/2G2986mQCntuFzEeqnaT61+4cF2/M8h4ZDmE5wcTD8t2o9Tc4zxuIIN3FSvigwnxoldpwg9Sd56iJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756481821; c=relaxed/simple;
-	bh=Z0Bv7WaDdOXi4UMDM6ZgBS7CKcxMZ6kvuSO3nqYq5X8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tsIfPZa7mQzdBEr0SQkeuIybGgclalZa2TMbE3XaXUV70tsaXAjZZ0QnaymCyqt0KvlDCCwP/TShTmqFVpEeBu8C7VkMRbnFocgkvDBUWaB2fRNyHScrjbOxuMhy62lbhebt3XO5L19lEbhC7fg8CfBo0laeTWqUN5obMTgFhMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxRjy6JU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61569C4CEFC;
-	Fri, 29 Aug 2025 15:37:00 +0000 (UTC)
+	s=arc-20240116; t=1756481853; c=relaxed/simple;
+	bh=6pYeQyWaLKkJ+BDYnkitu7taheegSWA/VRkcoPPeuFc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XgbIKvz3fHv5Dt+z3jicCfaPuLK7V4pDWwN3CBuVNLfBJ6C7P4oIDePl70hA3S7o2TtxUk+8jDTE99732eUnhiuMfMM07yobqhdv/gC/82XkFiLNiVmjiOViAGSt6Qcz7MAD7pAnerHU4BNaCrqsUaDQu9syE+zZ4LHEAkKt8NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIjAQDXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9143C4CEF5;
+	Fri, 29 Aug 2025 15:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756481820;
-	bh=Z0Bv7WaDdOXi4UMDM6ZgBS7CKcxMZ6kvuSO3nqYq5X8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hxRjy6JU/oDw6RINsxcmGRsTVGeDOVIb4ykJmLCqUX+QQzeylWuLrDXAGu73hmOa8
-	 cXkBsFfxubx34foFYG+QHJojJeqb3QzXsHL83AkHDPdn/Qv4/IIR3e2qaYlaHVj7X8
-	 /ujZy8fCtuvOl+p3ABN9mW0y/L62IEPa3LIB45zqcEIJiII+iaRRjvCxcFZVIe4UIP
-	 kaEKsYFY6b00ExIR7mNyizMsT0mnem6gSXppPc1I0E+Yiwnl2Whyv7VtVp7zbfroC1
-	 buwbPy49vW/4gXiHEGPpC1YTGlyYCgxjAJ+Hb56S4jwabvggJ+9rHuCjN6QDMZMzu7
-	 EVcfRMiw+6syA==
-From: SeongJae Park <sj@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux DAMON <damon@lists.linux.dev>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Linux Power Management <linux-pm@vger.kernel.org>,
-	Linux Block Devices <linux-block@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>,
-	Linux Kernel Workflows <workflows@vger.kernel.org>,
-	Linux KASAN <kasan-dev@googlegroups.com>,
-	Linux Devicetree <devicetree@vger.kernel.org>,
-	Linux fsverity <fsverity@lists.linux.dev>,
-	Linux MTD <linux-mtd@lists.infradead.org>,
-	Linux DRI Development <dri-devel@lists.freedesktop.org>,
-	Linux Kernel Build System <linux-lbuild@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	Linux Sound <linux-sound@vger.kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Huang Rui <ray.huang@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	tytso@mit.edu,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shay Agroskin <shayagr@amazon.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	David Arinzon <darinzon@amazon.com>,
-	Saeed Bishara <saeedb@amazon.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Alexandru Ciobotaru <alcioa@amazon.com>,
-	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Steve French <stfrench@microsoft.com>,
-	Meetakshi Setiya <msetiya@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH 02/14] Documentation: damon: reclaim: Convert "Free Page Reporting" citation link
-Date: Fri, 29 Aug 2025 08:36:58 -0700
-Message-Id: <20250829153658.69466-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250829075524.45635-3-bagasdotme@gmail.com>
-References: 
+	s=k20201202; t=1756481852;
+	bh=6pYeQyWaLKkJ+BDYnkitu7taheegSWA/VRkcoPPeuFc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=pIjAQDXyzdlj5WrHtUK2PprPk85Eox3uJ3Ll++ZaxwmNCzgc800J5dZEjnEoscpxK
+	 g7VE/Bftpxl7dDT4AfYcYUmgEKc7Mn+HgWHmpjme1OWhagExjmCKnkDa3gYc5wnPyY
+	 QxZE2eZUWMNIvFJWZZfLfuE+K26s1THlRE6hFad43AnHPQU67lb0alisdvAZDHmwo7
+	 RHbDkgf6V65UMj7HSPudQBM0CJFNgxprxKc2FY6tyYK7WKkL0FzLyT6RP8PJ4B49TX
+	 9+sF/C+zO9f2DLb14/ORluMiD5lKRuTpBllfggv+6lPIenyIJhSLgBs17TYH2xW57L
+	 S7LhsAXeGX0QA==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v3 0/4] nvme-fc: fix blktests nvme/041
+Date: Fri, 29 Aug 2025 17:37:24 +0200
+Message-Id: <20250829-nvme-fc-sync-v3-0-d69c87e63aee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADTJsWgC/y3MQQ5AMBCF4avIrE3StCmNq4gFNZiFokWIuLsGy
+ +8l778gkGcKUCQXeNo58OQiVJqAHWrXE3IbDVJILYw06PaRsLMYTmexaWyuapVJrVuIl9lTx8e
+ bK6vPnpYtVtd/vO8HWH0sE3MAAAA=
+X-Change-ID: 20250828-nvme-fc-sync-bbc73a36255d
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, James Smart <james.smart@broadcom.com>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
+ Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Fri, 29 Aug 2025 14:55:12 +0700 Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+Another attempt to get the nvme/041 fixed. I've decided to make the
+synchronous connect an opt-in feature, so that we don't break existing
+users. I need to do some changes for libnvme and nvme-cli so all works
+fine when users update either the userspace or kernel.
 
-> Use internal cross-reference for the citation link to Free Page
-> Reporting docs.
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+v3:
+ - rebased to current master
+ - use explicit initial connect flag to distiguish between retry and
+   initial connect. Necessary to keep nvme/061 working.
+ - added 'nvme-fc: refactore nvme_fc_reconnect_or_delete'
+ - updated commit messages
 
-Thank you for fixing this!
+v2:
+ - renamed flag to connect_async, default false
+ - add info to commit message why nvme-fc is different
+ - merged connect_async with 'nvme-fc: wait for
+   initial connect attempt to finish'
+ - https://lore.kernel.org/all/20240221132404.6311-1-dwagner@suse.de/
 
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+v1:
+ - renamed 'nvme-fc: redesign locking and refcounting'
+   to 'nvme-fc: reorder ctrl ref counting and cleanup code path'
+ - testing with scsi/nvme dev_loss_tmo on real hw
+ - removed rport ref counting part
+ - collected RB tags
+ - https://lore.kernel.org/linux-nvme/20240219131531.15134-1-dwagner@suse.de/
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+v0:
+ - initial version
+ - https://lore.kernel.org/linux-nvme/20240216084526.14133-1-dwagner@suse.de/
 
+---
+Daniel Wagner (4):
+      nvme-fabrics: introduce ref-counting for nvmf_ctrl_options
+      nvme-fc: reorganize ctrl ref-counting and cleanup code
+      nvme-fc: refactore nvme_fc_reconnect_or_delete
+      nvme-fc: wait for initial connect attempt to finish
 
-Thanks,
-SJ
+ drivers/nvme/host/fabrics.c |  40 ++++++++-
+ drivers/nvme/host/fabrics.h |   9 +-
+ drivers/nvme/host/fc.c      | 212 ++++++++++++++++++++++----------------------
+ drivers/nvme/host/rdma.c    |  18 ++--
+ drivers/nvme/host/tcp.c     |  21 +++--
+ drivers/nvme/target/loop.c  |  19 ++--
+ 6 files changed, 192 insertions(+), 127 deletions(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250828-nvme-fc-sync-bbc73a36255d
 
-[...]
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
+
 
