@@ -1,151 +1,168 @@
-Return-Path: <linux-kernel+bounces-791743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88754B3BB43
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E3EB3BB41
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB381640E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6095658558A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1CF314B97;
-	Fri, 29 Aug 2025 12:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAVOW1sB"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238A5314B7E;
+	Fri, 29 Aug 2025 12:25:49 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB5314B7B;
-	Fri, 29 Aug 2025 12:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D8A265CC0;
+	Fri, 29 Aug 2025 12:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470368; cv=none; b=KthGWdqj5+kp1+Aoo8VmWldxhzopW9r52gghcL2P/DvOUBJREwqrJ4cHPLHO3ZDakW2CFO7afRKVOCme3XFT5fC2gGKTuUXqWbQDo5K4vmQhx3TbvNSKvbWlI4yXzzGn3R+umLDBPYOT4471dUtHH+4G33cnUyOjiXGtQSDH/tM=
+	t=1756470348; cv=none; b=AWQig3H/7STtCixTWi9dBdzCtgXT50QQ8nIdrqcvI1HAdXhrdX2diR6zwaU+MoTAlz3+jlekDOPwpDRZ1GVcWeCHRW30KxxE2UbQ/F+FHizaX5orU41G15/FY4K8Q4LjoMYCCmQPRNCXk9TwZj2LkrP5B4pnNsjmBr9pUUBIubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470368; c=relaxed/simple;
-	bh=iFI0/yI+74yAbMsl6eOM0bAZHRVDdpiKUdiXmY6Wy+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgs+0GWjZviIKAfwFDuYWyB7V33Zmzt4oOrRXb+Xae7pgXHCvFDlqL3cJGeU2urtlBdXvfD9fEQ/m/OZNuNFazGRQ+hK24KbujUnXcPQWEDEJZgFU3YgPdSTFpNr2b+7uHMHGteQIC68qlpZJER9CtSqg6d8uR2zSmr4U61aNCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAVOW1sB; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-328015abe0bso173142a91.0;
-        Fri, 29 Aug 2025 05:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756470366; x=1757075166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lH1VzVsUexxcYyR6V/xEZQCfjvjSZYifMhkfJzyrGGM=;
-        b=FAVOW1sBWxH1aB7OHpj8H9cM2Ui4CzSV4uhR8LnDIByBkeopeT79pPHuwwUIEqPzGg
-         akObfCdMvcp68n+P8fTGCuPW3XL88j/C6D7l/4sX/2/Ccdwbw5h1LZ0UQKCOhoSVvgIa
-         HvTcNcyXoCHqy2UaER5ppXp1e/w/O8CROiPNSNoU0OizY/9PMZmWLz6JsZ7Z946zOTAr
-         YAo5cPUyrjTkMlU2fxMf0FtxO8v/chl2DbpBqd1J8goyDk/0eq/rIVAP/xDHffXXTssa
-         2aWnCgsuVdfyRPtSe8S+pLY5/cXV7RMj9jmrsG0T+TxFu4fzd22Q4x0tCcf/WrFDkMT9
-         QB6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470366; x=1757075166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lH1VzVsUexxcYyR6V/xEZQCfjvjSZYifMhkfJzyrGGM=;
-        b=fXvtOpd9aRz+7oI1+BG/+HZeyk/R+dHl/bj2V0yBL4geaP/E1Hn+D8XSQcKpbU6hMk
-         1M0siXkO36HrsMv6Qu07PolOJFCqYnykpC3afQyDBDApRe3TIq6IOce/IQa2dQrihrVR
-         Hc1bbOThKW/HbEiSYQAjGSjDa+vhtyhPJtqnYW0QKHPxrw+bxU1Ylvyi/qF8NB58oO2f
-         SOcVq5mlv1RGpZT1U+PI7w8ubc+V6kpy0b3tflhIYPpCF3CePYGGPZiHAqFlqNo9gJhr
-         7HJ8vR44VYLZpshgtjuA/u0GuQ6OBVDmaDr3PjBoTXdFiT1giLmv9hTCugXkd/fJwJYX
-         OioA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdJQFBIiwduyjxC77CSpEelmqwiVi3jOkbEAkBRVY8x9/MO9IMYMJf5QfNvY+Weq/oIVm2cEPmkg==@vger.kernel.org, AJvYcCXeci6fBZ68ywRDiQ+m3oW2SSHr6kOpArktmkyrvpWWkt4FCQqET1WbpQVvfu0OBhAJVkhKaA1WFCqVdqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu+4u9pcaMzIzsQLfryk/WxegQ+t+kNa2IP4QC1xIgp2TFAlGe
-	JB4td9/iM29YyNtcMd+nLWtgMa+/iI21O5FMLdfvgZofiLJvUva8R58zC/zfg2kSBoTkNJZUhur
-	8HCO1q0w93pqYVT7HlhzvvKte0fLUjXo=
-X-Gm-Gg: ASbGnctaRbDeUNR9GjR0o065YUVRYbG4wKfY+gdqhOdTcqmRJkuY1J94iKCBQ3j6mvy
-	Jm0wSecKI5yZlTO7MmGdzV6eyDVgxBTPC1lwIneQHkx+ACyrQe25zZKw3LZ6sqQpSIjiR3WP34d
-	jrZvubo9mH4gQr8JGhUrUFZ/SPFym+pQpR/BE9hJ1QxiGZQx2ZqayZPQrsILnwdGobvkdKWTFTm
-	Osqlol78oreJFyTQg==
-X-Google-Smtp-Source: AGHT+IEgHTaTHOh+lA6JUZHbnapTEWK9wRoncZ2E1VWm92awnld772e7CvAH/uBvGsK4QIuBWefrUpAvTJufdHehSXo=
-X-Received: by 2002:a17:90b:1f8a:b0:327:53f0:6368 with SMTP id
- 98e67ed59e1d1-32753f06524mr15768520a91.2.1756470366534; Fri, 29 Aug 2025
- 05:26:06 -0700 (PDT)
+	s=arc-20240116; t=1756470348; c=relaxed/simple;
+	bh=3u1+i5KWMvzk3PcIfscyZ1ILqglDLdFXMkr2wdThA14=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IEyP9lFQkziefZNradTymoHkdMN6DZSN2Ip0VeKKNtcZAmDfCO+RpsrBneBd/MYUocjQn6R3b5zjMRLzkx8qFRH0+6ffbMJ1H62CW2GI9b+/+xE7TFvctt/cEv7oWg7naPcopPTX8tjRKZVy/6VdFLKyLjrqbeEmYf8EKUw2eAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 5EE46BADE0;
+	Fri, 29 Aug 2025 12:25:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 5CCF120027;
+	Fri, 29 Aug 2025 12:25:42 +0000 (UTC)
+Date: Fri, 29 Aug 2025 08:26:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Luo Gengkun <luogengkun@huaweicloud.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <20250829082604.1e3fd06e@gandalf.local.home>
+In-Reply-To: <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+	<20250819135008.5f1ba00e@gandalf.local.home>
+	<436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828170503.2323187-1-nkapron@google.com>
-In-Reply-To: <20250828170503.2323187-1-nkapron@google.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 29 Aug 2025 08:25:55 -0400
-X-Gm-Features: Ac12FXx1oSX4EXBH9uiLUrEqV8tzBGv8orc8GPDBy3QXtzhALhvI1DVsZ8SdY9o
-Message-ID: <CAEjxPJ6C4zALr7UDh2Psgt2KqPhhGuMW_aWZuko9+RqtNtb15A@mail.gmail.com>
-Subject: Re: [PATCH v3] libsepol: Support functionfs_seclabel policycap
-To: Neill Kapron <nkapron@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5CCF120027
+X-Stat-Signature: z4qee96ax9gocnkpiu6zi9es954bzpw8
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1//eG0SPh1gXzSvhvFw/mS6TyA0QJDKqYs=
+X-HE-Tag: 1756470342-908911
+X-HE-Meta: U2FsdGVkX195ZgDOTbivrDBTaufOHEnsk6PH2OHOVpi9ojybHHHjo+zy+PeSzr/EOxHT+tJW9yhUm44IbnMOZIbQ9I5ne1xKch07oeuKvb843vUBYWVLBhmzJmPTdMMwUrD3UZ5jKD0jWcwB+oouhMyHzFKenViz4q+lSCtfhzKxn5fCJBjZAfjiF/lS7i1B8eE2ND5nI+rBiA9a6ZWJ+2UiTAhUWYAmR4C5ooFf7VFPF/LXnrAnb36shVcxzstQwJp5t9eeyJhrs0mn5AH8v/zHwvU1YGJLeG9Xsavq3ongCZTqfdoVEMKzCcz1SMRbh1dgLJSiwgD1jxqrLBzE2r8JHLs5DsA8h53z7hGGNQ8SjLGpCFqkWqYEhEpLDX+r
 
-On Thu, Aug 28, 2025 at 1:05=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
-rote:
->
-> This adds the necessary userspace pieces to support the
-> functionfs_seclabel policycap which enables per-file labels in
-> functionfs and the ability for userspace to apply the labels.
->
-> With the policycap disabled, legacy behaviors are maintained and
-> per-file labeling is disallowed.
->
-> Signed-off-by: Neill Kapron <nkapron@google.com>
 
-Same caveat here - don't rely on this policy capability bit remaining
-stable until the kernel patch is merged and de-conflicted with the
-other recent patches introducing policy capabilities.
-And likewise, again doesn't require re-spinning IMHO but the changelog
-below should go after the "---" so it doesn't get included in the
-commit message since it becomes irrelevant once the patch is merged.
-Will wait to Ack this one until the kernel patch is merged.
+[ Adding arm64 maintainers ]
 
->
-> Changes since v2:
-> - Sending as separate patches
-> ---
->  libsepol/include/sepol/policydb/polcaps.h | 1 +
->  libsepol/src/polcaps.c                    | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/libsepol/include/sepol/policydb/polcaps.h b/libsepol/include=
-/sepol/policydb/polcaps.h
-> index 0835ea21..bbaebf1a 100644
-> --- a/libsepol/include/sepol/policydb/polcaps.h
-> +++ b/libsepol/include/sepol/policydb/polcaps.h
-> @@ -19,6 +19,7 @@ enum {
->         POLICYDB_CAP_NETLINK_XPERM,
->         POLICYDB_CAP_NETIF_WILDCARD,
->         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
-> +       POLICYDB_CAP_FUNCTIONFS_SECLABEL,
->         __POLICYDB_CAP_MAX
->  };
->  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
-> diff --git a/libsepol/src/polcaps.c b/libsepol/src/polcaps.c
-> index 7ac0ae7c..83eb6143 100644
-> --- a/libsepol/src/polcaps.c
-> +++ b/libsepol/src/polcaps.c
-> @@ -18,6 +18,7 @@ static const char * const polcap_names[POLICYDB_CAP_MAX=
- + 1] =3D {
->         [POLICYDB_CAP_NETLINK_XPERM]                    =3D "netlink_xper=
-m",
->         [POLICYDB_CAP_NETIF_WILDCARD]                   =3D "netif_wildca=
-rd",
->         [POLICYDB_CAP_GENFS_SECLABEL_WILDCARD]          =3D "genfs_seclab=
-el_wildcard",
-> +       [POLICYDB_CAP_FUNCTIONFS_SECLABEL]              =3D "functionfs_s=
-eclabel",
->  };
->
->  int sepol_polcap_getnum(const char *name)
-> --
-> 2.51.0.318.gd7df087d1a-goog
->
+On Fri, 29 Aug 2025 16:29:07 +0800
+Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+
+> On 2025/8/20 1:50, Steven Rostedt wrote:
+> > On Tue, 19 Aug 2025 10:51:52 +0000
+> > Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+> >  
+> >> Both tracing_mark_write and tracing_mark_raw_write call
+> >> __copy_from_user_inatomic during preempt_disable. But in some case,
+> >> __copy_from_user_inatomic may trigger page fault, and will call schedule()
+> >> subtly. And if a task is migrated to other cpu, the following warning will  
+> > Wait! What?
+> >
+> > __copy_from_user_inatomic() is allowed to be called from in atomic context.
+> > Hence the name it has. How the hell can it sleep? If it does, it's totally
+> > broken!
+> >
+> > Now, I'm not against using nofault() as it is better named, but I want to
+> > know why you are suggesting this change. Did you actually trigger a bug here?  
+> 
+> yes, I trigger this bug in arm64.
+
+And I still think this is an arm64 bug.
+
+> 
+> >  
+> >> be trigger:
+> >>          if (RB_WARN_ON(cpu_buffer,
+> >>                         !local_read(&cpu_buffer->committing)))
+> >>
+> >> An example can illustrate this issue:
+> >>
+> >> process flow						CPU
+> >> ---------------------------------------------------------------------
+> >>
+> >> tracing_mark_raw_write():				cpu:0
+> >>     ...
+> >>     ring_buffer_lock_reserve():				cpu:0
+> >>        ...
+> >>        cpu = raw_smp_processor_id()			cpu:0
+> >>        cpu_buffer = buffer->buffers[cpu]			cpu:0
+> >>        ...
+> >>     ...
+> >>     __copy_from_user_inatomic():				cpu:0
+> >>        ...
+> >>        # page fault
+> >>        do_mem_abort():					cpu:0  
+> > Sounds to me that arm64 __copy_from_user_inatomic() may be broken.
+> >  
+> >>           ...
+> >>           # Call schedule
+> >>           schedule()					cpu:0
+> >> 	 ...
+> >>     # the task schedule to cpu1
+> >>     __buffer_unlock_commit():				cpu:1
+> >>        ...
+> >>        ring_buffer_unlock_commit():			cpu:1
+> >> 	 ...
+> >> 	 cpu = raw_smp_processor_id()			cpu:1
+> >> 	 cpu_buffer = buffer->buffers[cpu]		cpu:1
+> >>
+> >> As shown above, the process will acquire cpuid twice and the return values
+> >> are not the same.
+> >>
+> >> To fix this problem using copy_from_user_nofault instead of
+> >> __copy_from_user_inatomic, as the former performs 'access_ok' before
+> >> copying.
+> >>
+> >> Fixes: 656c7f0d2d2b ("tracing: Replace kmap with copy_from_user() in trace_marker writing")  
+> > The above commit was intorduced in 2016. copy_from_user_nofault() was
+> > introduced in 2020. I don't think this would be the fix for that kernel.
+> >
+> > So no, I'm not taking this patch. If you see __copy_from_user_inatomic()
+> > sleeping, it's users are not the issue. That function is.
+> >
+> > -- Steve
+> >
+> >  
+> I noticed that in most places where __copy_from_user_inatomic() is used,
+
+"most" but not all?
+
+> it is within the pagefault_disable/enable() section. When pagefault_disable()
+> is called, user access methods will no sleep. So I'm going to send a v2patch which use pagefault_disable/enable()to fix this problem. -- Gengkun
+
+No, I don't want that either. __copy_from_user_inatomic() SHOULD NOT SLEEP!
+If it does, than it is a bug!
+
+If it can sleep, "inatomic" is a very bad name. The point of being
+"inatomic" is that you are in a location that IS NOT ALLOWED TO SLEEP!
+
+I don't want to fix a symptom and leave a bug around.
+
+BTW, the reason not to fault is because this might be called in code that is
+already doing a fault and could cause deadlocks. The no sleeping part is a
+side effect.
+
+-- Steve
 
