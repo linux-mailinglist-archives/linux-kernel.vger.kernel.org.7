@@ -1,171 +1,120 @@
-Return-Path: <linux-kernel+bounces-791725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFB6B3BADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C37B3BAEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F9E6189CB12
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF117C0387
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDC6314A60;
-	Fri, 29 Aug 2025 12:10:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE65314A84;
+	Fri, 29 Aug 2025 12:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Zg7ByeUR"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA12E229B1F
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069B2D739F;
+	Fri, 29 Aug 2025 12:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756469414; cv=none; b=u8Sv3b/MDmk6vJ2iBBW8rULWekE/gwPyY65Q6VHgfQtuHAhfaNud9hGyCKhCNqq0GAAFj3ynr0R2swbV6mhwqLWTiyjlZIJZ5gfREicfZuW54gEM2keuCTogfmcfyaMA9PiOC79YY6sah6VxP0f7e3wUNOQd9X8pQ4X3R85ySlk=
+	t=1756469468; cv=none; b=ClUlA+0EutklsUI3RTTDNmwsZ2NF/1A1bE9QZ5lSYcJ/ZBIsxm4rpsIckoh+qg4sUkKZbUF3Y7yBjTpj/uLFBDqWiF5KmajMON3IO6TtRpAUs67tnkZHXALLJPY6RmTIauzqChTluhTo5ZnUuJWfv1+Kw05bPdFHtqI5aTgD61Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756469414; c=relaxed/simple;
-	bh=+9MVFc7DASe1FmR0cm3m6TMF8xTuVhtzNT54l8kTPjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bmu2axdy3EtUuaRiU3W6bkI5kqBSrArmtOCy/sQwaXTuJC8QftKeW/H9Ci4KLnNm/3WYKakRKdmFZ8sCANPXs6TRHHQA9KJ+EFM5F9j5G7AdnPFiHL2VTVkoI1gG4TqTr3/q4qKVHFs6HZ8bFLoWaswy1ZKmN7STK7A43+EGQok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 98F1B1A0715;
-	Fri, 29 Aug 2025 12:10:04 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 9EF6320024;
-	Fri, 29 Aug 2025 12:10:02 +0000 (UTC)
-Date: Fri, 29 Aug 2025 08:10:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [for-next][PATCH 0/3] tracing: Trigger a warning on build if a
- tracepoint is defined but unused
-Message-ID: <20250829081024.4a42e5be@gandalf.local.home>
-In-Reply-To: <20250829070224.503ddc8a@canb.auug.org.au>
-References: <20250828182754.733989525@kernel.org>
-	<20250829070224.503ddc8a@canb.auug.org.au>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756469468; c=relaxed/simple;
+	bh=iJlXLAh/Cq8Ehz0a6jVPQ/WpSBBR2VKHdv3finz+WcA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6eC2MwsBLCJ/xdkrbFyPxCLs6x5DSROhSQw1tkCWnw9tjEa19339ahxvujmnAs1zsC0/aerJFp/sj9Oy16ubLDVa3LFtX11pklxyUUPYzyWeIyMXpbue1Gnb3OG6CCrlLET7NsRojzrjRoo2lPrywwsI+c+jNG28cOxVQfpNIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Zg7ByeUR; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57TCAt6Q1799616;
+	Fri, 29 Aug 2025 07:10:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756469455;
+	bh=lanWemLgTewjisr1au66Z82yIZduuEspAqHlYzzfJ3A=;
+	h=From:To:CC:Subject:Date;
+	b=Zg7ByeURT+AMd9UrkkV1lm9kmqmIAhMWr7lYYiVCXR2XOs6eRRVNvry1qmHUJTD05
+	 +yApTAO9LEi0Ouc8GerM2Fuf5TXv/Ws+QfzUwu5Iti+duqLAJDu4rtoPhFdzLFbRFF
+	 /IUzEc9ZxYZr90Nn++Dpa1Ge49wdn5/6SHEInYGc=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57TCAshr534034
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 07:10:54 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 07:10:54 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 07:10:54 -0500
+Received: from localhost (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.231.164])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57TCArJV2315227;
+	Fri, 29 Aug 2025 07:10:53 -0500
+From: Chintan Vankar <c-vankar@ti.com>
+To: Michael Walle <mwalle@kernel.org>, Simon Horman <horms@kernel.org>,
+        Roger
+ Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Andrew Lunn <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <nm@ti.com>,
+        <s-vadapalli@ti.com>, <danishanwar@ti.com>,
+        Chintan Vankar <c-vankar@ti.com>
+Subject: [PATCH net] net: ethernet: ti: am65-cpsw-nuss: Fix null pointer dereference for ndev
+Date: Fri, 29 Aug 2025 17:40:51 +0530
+Message-ID: <20250829121051.2031832-1-c-vankar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: y1u4q9zo7ze1uws1absd9yctcmmwnn1n
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 9EF6320024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX196yDeeqTDDoMS2+OzzTqLDbzVdGeFDfV8=
-X-HE-Tag: 1756469402-276621
-X-HE-Meta: U2FsdGVkX18Lqv0KFlMIqQDfCwJI6lFNSS/87nfL18+NJOAgsT3hxcDo9UIVXkK8954dSQWiJQOOq1Tjsdeq4yysHjenAlhui9vn3uqugSNuvgxLNLBpg9dZYjJRpwPizuCJew8IkA+RPDmVp+Rrt0FDrOKtrEGE9ftjkqypAw4/SaefYKQ4HMlmnF/Wjt41ugIwIRIj3uMvXJlcCZFF+IdeaQwE1QBS8IxntzfRldT2rpBaZRt2XzmDG7tGr7VOKJCeMsz8gkA3xZdsfG0EJblQlpCW8kH+JYGeKS8gm61+1IGbVi/tfXiaWY1wjsjvkgYNEAfYWJyoAKwMqhyDCo+Sa/JyxmQabf63sKtjZoMiJob+PGOI4boT9xnxz5XQ
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, 29 Aug 2025 07:02:24 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: Nishanth Menon <nm@ti.com>
 
-> But, really, these known warnings can just make it so much harder to
-> notice new ones.
+In the TX completion packet stage of TI SoCs with CPSW2G instance, which
+has single external ethernet port, ndev is accessed without being
+initialized if no TX packets have been processed. It results into null
+pointer dereference, causing kernel to crash. Fix this by having a check
+on the number of TX packets which have been processed.
 
-They all should be fixed. Note, this is not a compiler warning. It's a tool
-that states "Your code is causing wasted memory to be allocate in the
-running machine". If your tracepoint shows up in this list, then you should
-fix it.
+Fixes: 9a369ae3d143 ("net: ethernet: ti: am65-cpsw: remove am65_cpsw_nuss_tx_compl_packets_2g()")
+Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+---
 
-On an allyesconfig for x86_64:
+Hello All,
 
-warning: tracepoint 'kvm_iocsr' is unused.
-warning: tracepoint 'nfs4_rename' is unused.
-warning: tracepoint 'nfs4_renew' is unused.
-warning: tracepoint 'xfs_metadir_link' is unused.
-warning: tracepoint 'xfs_metadir_start_link' is unused.
-warning: tracepoint 'xrep_rtbitmap_load_word' is unused.
-warning: tracepoint 'xrep_rtbitmap_load_words' is unused.
-warning: tracepoint 'xrep_rtbitmap_load' is unused.
-warning: tracepoint 'xrep_nlinks_set_record' is unused.
-warning: tracepoint 'xrep_cow_free_staging' is unused.
-warning: tracepoint 'ocfs2_encode_fh_begin' is unused.
-warning: tracepoint 'ocfs2_duplicate_clusters_by_jbd' is unused.
-warning: tracepoint 'trans_restart_relock_key_cache_fill' is unused.
-warning: tracepoint 'zonefs_file_dio_append' is unused.
-warning: tracepoint 'edma_readb' is unused.
-warning: tracepoint 'edma_readw' is unused.
-warning: tracepoint 'host1x_syncpt_wait_check' is unused.
-warning: tracepoint 'host1x_channel_submit_complete' is unused.
-warning: tracepoint 'host1x_channel_release' is unused.
-warning: tracepoint 'host1x_channel_open' is unused.
-warning: tracepoint 'amdgpu_reset_reg_dumps' is unused.
-warning: tracepoint 'amdgpu_dm_atomic_state_template' is unused.
-warning: tracepoint 'xe_exec_queue_supress_resume' is unused.
-warning: tracepoint 'xe_vm_restart' is unused.
-warning: tracepoint 'xe_vma_userptr_rebind_exec' is unused.
-warning: tracepoint 'xe_vma_userptr_rebind_worker' is unused.
-warning: tracepoint 'xe_vma_flush' is unused.
-warning: tracepoint 'dpu_rm_reserve_intf' is unused.
-warning: tracepoint 'dpu_enc_atomic_check_flags' is unused.
-warning: tracepoint 'dpu_crtc_runtime_resume' is unused.
-warning: tracepoint 'dpu_enc_atomic_check' is unused.
-warning: tracepoint 'dpu_trace_counter' is unused.
-warning: tracepoint 'scsi_zone_wp_update' is unused.
-warning: tracepoint 'scsi_prepare_zone_append' is unused.
-warning: tracepoint 'ath12k_htt_rxdesc' is unused.
-warning: tracepoint 'ath12k_htt_ppdu_stats' is unused.
-warning: tracepoint 'ath12k_htt_pktlog' is unused.
-warning: tracepoint 'brcms_dpc' is unused.
-warning: tracepoint 'brcms_timer' is unused.
-warning: tracepoint 'mt_tx_status' is unused.
-warning: tracepoint 'ee_read' is unused.
-warning: tracepoint 'cdns3_mapped_request' is unused.
-warning: tracepoint 'cdns3_map_request' is unused.
-warning: tracepoint 'cdns3_stream_transfer_split_next_part' is unused.
-warning: tracepoint 'cdns3_stream_transfer_split' is unused.
-warning: tracepoint 'cdnsp_handle_cmd_flush_ep' is unused.
-warning: tracepoint 'cdnsp_setup_device' is unused.
-warning: tracepoint 'cdnsp_free_priv_device' is unused.
-warning: tracepoint 'cdnsp_defered_event' is unused.
-warning: tracepoint 'cdnsp_ep0_halted' is unused.
-warning: tracepoint 'cdns2_iso_out_ep_disable' is unused.
-warning: tracepoint 'cdns2_mapped_request' is unused.
-warning: tracepoint 'cdns2_map_request' is unused.
-warning: tracepoint 'cdns2_ep0_enqueue' is unused.
-warning: tracepoint 'cdns2_ep_queue' is unused.
-warning: tracepoint 'cdns2_ep0_set_config' is unused.
-warning: tracepoint 'cdns2_may_wakeup' is unused.
-warning: tracepoint 'cdns2_lpm' is unused.
-warning: tracepoint 'ucsi_reset_ppm' is unused.
-warning: tracepoint 'ucsi_run_command' is unused.
-warning: tracepoint 'icm_send_mra' is unused.
-warning: tracepoint 'open_err_template' is unused.
-warning: tracepoint 'irdma_send_cm_event_no_node' is unused.
-warning: tracepoint 'hfi1_txq_xmit_stopped' is unused.
-warning: tracepoint 'hfi1_mmu_invalidate' is unused.
-warning: tracepoint 'rvt_mr_fmr_seg' is unused.
-warning: tracepoint 'camera_debug' is unused.
-warning: tracepoint 'camera_meminfo' is unused.
-warning: tracepoint 'rpc_socket_reset_connection' is unused.
-warning: tracepoint 'rxrpc_drop_ack' is unused.
-warning: tracepoint 'cfg80211_return_u32' is unused.
-warning: tracepoint 'cfg80211_return_uint' is unused.
-warning: tracepoint 'cfg80211_chandef_dfs_required' is unused.
-warning: tracepoint 'cfg80211_send_rx_auth' is unused.
-warning: tracepoint 'rdev_return_void_tx_rx' is unused.
-warning: tracepoint 'drv_offchannel_tx_cancel_wait' is unused.
-warning: tracepoint 'tipc_node_dump' is unused.
-warning: tracepoint '802154_new_scan_event' is unused.
-warning: tracepoint '802154_drv_set_pan_coord' is unused.
+This patch is based on the commit '5189446ba995' of
+origin/main branch of Linux-net repository.
 
-Each one of those causes around 5K of wasted memory on your machine.
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Most of them is because of some crazy config combinations the maintainer
-has, as they are used, but for some reason an allyesconfig isn't the right
-config option to enable them.
-
-I'll push this branch up, and if it causes issues for you, I'll remove it.
-But then, I'm not doing anymore work on fixing this.
-
--- Steve
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index ecd6ecac87bb..8b2364f5f731 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -1522,7 +1522,7 @@ static int am65_cpsw_nuss_tx_compl_packets(struct am65_cpsw_common *common,
+ 		}
+ 	}
+ 
+-	if (single_port) {
++	if (single_port && num_tx) {
+ 		netif_txq = netdev_get_tx_queue(ndev, chn);
+ 		netdev_tx_completed_queue(netif_txq, num_tx, total_bytes);
+ 		am65_cpsw_nuss_tx_wake(tx_chn, ndev, netif_txq);
+-- 
+2.34.1
 
 
