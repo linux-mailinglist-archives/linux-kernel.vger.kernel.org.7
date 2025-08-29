@@ -1,232 +1,132 @@
-Return-Path: <linux-kernel+bounces-791982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258BAB3BF0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:20:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E35B3BFA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCE717D7CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACA21CC457E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3F322C78;
-	Fri, 29 Aug 2025 15:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="ubHKogH3"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5935B33CE81;
+	Fri, 29 Aug 2025 15:37:58 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03948314B82;
-	Fri, 29 Aug 2025 15:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104DC33A029
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480837; cv=none; b=NvDm6OOu6jKzrStuy1WzVEZRZ7cZsYqGbbUhU3KrwCNM9GA9LjrZzN1FSdDSUb5hp8ZjiP7ABKVLLPBt4v2mLMjyqLa9GAKEESZPV904UbfHGASS09gDKDxilfskZFFRdCOeEZryPn97NaML8NT1ZM6YDwqyDsl0vh2GK0JvlaI=
+	t=1756481877; cv=none; b=HJlpHeADBhOPlIMtNjXxLvWgUkEO/sv0Ko/0IV2PaZSAGHBepAOB9GptI4eVJA4gTZ4xAIsmdHzBuSzh0+42mM57ykUyBl8seyP9tai92vP6vU4sljUiLm/JKF6SKpUXO3iY1ULVFX/uMxnjqPnjI2Q8NXwrwCPLodGrZYeqiL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480837; c=relaxed/simple;
-	bh=T8VUd2JD/kzWzvbmfVYvtWKcNtsmaPwe0r8nEevSY7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NWnkVYbRt+wz/5Ydt3sv/un01FZIGi9yXvewCG4Vt55QR1BL0pyuCNGWexZKIBJ+3SY8GzRLYn/KjbRYV4n8UDxbJBZ/q7luoM0buAhqdS4NPGNsua3EzxGF/1qq+o5j+aVUYpjtXHjSl5j0n6hTTweKG/8CGx86O6SssoYGqgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=ubHKogH3; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=3QQYotBOPK5tBpX1HJ+fA7Ibti4EjTziQULJn+9wQ7U=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1756480818; v=1; x=1756912818;
- b=ubHKogH3XFmdIwW+4CYDv5zm6Wb2oh3E0UxOVTJOLksZWi6RjnTuK4pLiULN01kU9CgK+aKv
- vLjc+o5dr2AyEeecwWfFm/Wu2LUWAyuPI/65m36+BykzucvygmGXO8ojGlEA8d5VcvNmRqf0xk/
- qpciPB4AkkssIfQueAql7RybLWcLe44TNQ1DxcMO+3sciAGwaSfE4mKsgtlGJjji17CFGSkX7QH
- 0gW8pzBcc7Z6gXSg6uLTOg3wE5qR+UZqmnx5z4jCvK/lJq7rnKbMC5I1OO+v9xsqr7/W1T4da42
- 1jGXtmk6ZzMme4QtBA3aViRYn6ydWDD8uBHCIHOu/W+aw==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id e6b3fbc8; Fri, 29 Aug 2025 17:20:18 +0200
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>,
- Lee Jones <lee@kernel.org>, David Wronek <david@mainlining.org>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-Date: Fri, 29 Aug 2025 17:20:17 +0200
-Message-ID: <2250556.Mh6RI2rZIc@radijator>
-In-Reply-To: <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com>
-References:
- <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <20250829-88pm886-gpadc-v1-1-f60262266fea@dujemihanovic.xyz>
- <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com>
+	s=arc-20240116; t=1756481877; c=relaxed/simple;
+	bh=0BYq9Ath32/GzxTKvFxYgqSTN1wYyZb6k+KxvfGhV6M=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UgaMlWUgszv1IrVz0dyM9IErf13LbGamGZcr88c6ofu37w0+v60z6PlMAJSABw62A4mRPAPWq67pvSDK0iC1Rajr+IHWAvJrbdca1tSeF2vcr85eNoL9SE/Jhv4JdMU0OegccFNxy2DWoAHCFcT8SWMSKthhVEkmYvwFjuUy3UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: David Hildenbrand <david@redhat.com>, "muchun.song@linux.dev"
+	<muchun.song@linux.dev>, "osalvador@suse.de" <osalvador@suse.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "giorgitchankvetadze1997@gmail.com"
+	<giorgitchankvetadze1997@gmail.com>
+Subject: RE:  Re: [PATCH][v3] mm/hugetlb: Retry to allocate for early boot
+ hugepage allocation
+Thread-Topic: Re: [PATCH][v3] mm/hugetlb: Retry to allocate for early boot
+ hugepage allocation
+Thread-Index: AdwY9uGXrnuAuxl1TGyGaxSR6Bk9Gw==
+Date: Fri, 29 Aug 2025 15:20:47 +0000
+Message-ID: <8c6e91ecb80c4707a52c253481cba51c@baidu.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-FEAS-Client-IP: 172.31.3.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Friday, 29 August 2025 01:40:56 Central European Summer Time David Lechner wrote:
-> > +#define ADC_CHANNEL(index, lsb, _type, name) {	\
-> > +	.type = _type, \
-> > +	.indexed = 1, \
-> > +	.channel = index, \
-> > +	.address = lsb, \
-> > +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
-> > +			      BIT(IIO_CHAN_INFO_PROCESSED), \
-> > +	.datasheet_name = name, \
-> 
-> Do you have a link for the datasheet?
-
-No, unfortunately. The only reference I have for the ADC itself is this
-vendor driver:
-https://github.com/acorn-marvell/brillo_pxa_kernel/blob/master/drivers/iio/adc/88pm88x-gpadc.c
-
-> > +	ADC_CHANNEL(VSC_CHAN, 1367, IIO_VOLTAGE, "vsc"),
-> > +	ADC_CHANNEL(VCHG_PWR_CHAN, 1709, IIO_VOLTAGE, "vchg_pwr"),
-> > +	ADC_CHANNEL(VCF_OUT_CHAN, 1367, IIO_VOLTAGE, "vcf_out"),
-> > +	ADC_CHANNEL(TINT_CHAN, 104, IIO_TEMP, "tint"),
-> > +
-> > +	ADC_CHANNEL(GPADC0_CHAN, 342, IIO_VOLTAGE, "gpadc0"),
-> > +	ADC_CHANNEL(GPADC1_CHAN, 342, IIO_VOLTAGE, "gpadc1"),
-> > +	ADC_CHANNEL(GPADC2_CHAN, 342, IIO_VOLTAGE, "gpadc2"),
-> > +
-> > +	ADC_CHANNEL(VBAT_CHAN, 1367, IIO_VOLTAGE, "vbat"),
-> > +	ADC_CHANNEL(GNDDET1_CHAN, 342, IIO_VOLTAGE, "gnddet1"),
-> > +	ADC_CHANNEL(GNDDET2_CHAN, 342, IIO_VOLTAGE, "gnddet2"),
-> > +	ADC_CHANNEL(VBUS_CHAN, 1709, IIO_VOLTAGE, "vbus"),
-> > +	ADC_CHANNEL(GPADC3_CHAN, 342, IIO_VOLTAGE, "gpadc3"),
-> > +	ADC_CHANNEL(MIC_DET_CHAN, 1367, IIO_VOLTAGE, "mic_det"),
-> > +	ADC_CHANNEL(VBAT_SLP_CHAN, 1367, IIO_VOLTAGE, "vbat_slp"),
-> > +
-> > +	ADC_CHANNEL(GPADC0_RES_CHAN, 342, IIO_RESISTANCE, "gpadc0_res"),
-> > +	ADC_CHANNEL(GPADC1_RES_CHAN, 342, IIO_RESISTANCE, "gpadc1_res"),
-> > +	ADC_CHANNEL(GPADC2_RES_CHAN, 342, IIO_RESISTANCE, "gpadc2_res"),
-> > +	ADC_CHANNEL(GPADC3_RES_CHAN, 342, IIO_RESISTANCE, "gpadc3_res"),
-> 
-> Is it safe (or sensible) to have both voltage and resistance channels
-> for the same input at the same time? It seems like if a voltage
-> channel was connected to an active circuit, we would not want to be
-> supplying current to it to take a resistance reading (this doesn't
-> sound safe). Likewise, if a voltage input has a passive load on it,
-> wouldn't the voltage channel always return 0 because no current was
-> supplied to induce a voltate (doesn't seem sensible to have a channel
-> that does notthing useful).
-> 
-> It might make sense to have some firmware (e.g. devicetree) to describe
-> if the input is active or passive on the voltage inputs and set up the
-> channels accordingly.
-> 
-> I'm also wondering if the other channels like vbat and vbus are always
-> wired up to these things internally or if this channel usage is only for
-> a specific system.
-
-Looking at the vendor kernel, I am fairly confident that the channels
-labeled gpadc are indeed general-purpose and connected to arbitrary
-resistances (thermistors and battery detection depending on the board),
-while the rest are fixed-function as their names imply.
-
-The above most likely is safe as my board is still functional, but it
-probably doesn't make sense to keep the voltage channels so I suppose
-I'll drop these in v2.
-
-> > +	int val, ret;
-> > +	u8 buf[2];
-> > +
-> > +	if (chan >= GPADC0_RES_CHAN)
-> > +		/* Resistor voltage drops are read from the corresponding voltage channel
-> > */ +		chan -= GPADC0_RES_CHAN - GPADC0_CHAN;
-> 
-> Does this actually work for GPADC3_RES_CHAN?
-> 
-> GPADC3_RES_CHAN == GPADC0_RES_CHAN + 3 but GPADC3_CHAN != GPADC0_CHAN + 3
-
-Good catch. Upon closer inspection, the order of the channel enum
-doesn't matter much and I'll fix this by simply ordering the enum more
-wisely.
-
-> > +		     long mask)
-> > +{
-> > +	struct device *dev = iio->dev.parent;
-> > +	int raw, ret;
-> > +
-> > +	ret = pm_runtime_resume_and_get(dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (chan->type == IIO_RESISTANCE) {
-> > +		raw = gpadc_get_resistor(iio, chan);
-> > +		if (raw < 0) {
-> > +			ret = raw;
-> > +			goto out;
-> > +		}
-> > +
-> > +		*val = raw;
-> > +		dev_dbg(&iio->dev, "chan: %d, %d Ohm\n", chan->channel, *val);
-> > +		ret = IIO_VAL_INT;
-> > +		goto out;
-> > +	}
-> > +
-> > +	raw = gpadc_get_raw(iio, chan->channel);
-> > +	if (raw < 0) {
-> > +		ret = raw;
-> > +		goto out;
-> > +	}
-> > +
-> > +	switch (mask) {
-> > +	case IIO_CHAN_INFO_RAW:
-> 
-> If there is IIO_CHAN_INFO_RAW, then we also should have IIO_CHAN_INFO_SCALE.
-> 
-> > +		*val = raw;
-> > +		dev_dbg(&iio->dev, "chan: %d, raw: %d\n", chan->channel, *val);
-> > +		ret = IIO_VAL_INT;
-> > +		break;
-> > +	case IIO_CHAN_INFO_PROCESSED: {
-> 
-> Unusual to have both raw and processed. What is the motivation?
-
-I was following what ab8500-gpadc does, no particular motivation.
-Considering the above, to me it makes the most sense to limit it to
-processed.
-
-> > @@ -67,6 +68,35 @@
-> > 
-> >  #define PM886_REG_BUCK4_VOUT		0xcf
-> >  #define PM886_REG_BUCK5_VOUT		0xdd
-> > 
-> > +/* GPADC enable/disable registers */
-> > +#define PM886_REG_GPADC_CONFIG1		0x1
-> > +#define PM886_REG_GPADC_CONFIG2		0x2
-> > +#define PM886_REG_GPADC_CONFIG3		0x3
-> > +#define PM886_REG_GPADC_CONFIG6		0x6
-> 
-> Could just write this as:
-> 
-> #define PM886_REG_GPADC_CONFIG(n)		(n)
-> 
-> > +
-> > +/* GPADC bias current configuration registers */
-> > +#define PM886_REG_GPADC_CONFIG11	0xb
-> > +#define PM886_REG_GPADC_CONFIG12	0xc
-> > +#define PM886_REG_GPADC_CONFIG13	0xd
-> > +#define PM886_REG_GPADC_CONFIG14	0xe
-> > +#define PM886_REG_GPADC_CONFIG20	0x14
-> 
-> which covers these too.
-> 
-> Most of these aren't used anyway.
-> 
-> Also suspicious that there are 5 registers listed here
-> but only 4 channels for resistance.
-
-The last one is used to enable the bias generators, the rest only set
-the bias current for their respective channel.
-
-Regards,
---
-Duje
-
-
-
+DQoNCj4gT24gMjkuMDguMjUgMTE6NTIsIGxpcm9uZ3Fpbmcgd3JvdGU6DQo+ID4gRnJvbTogTGkg
+Um9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUuY29tPg0KPiA+DQo+ID4gSW4gY2xvdWQgZW52aXJv
+bm1lbnRzIHdpdGggbWFzc2l2ZSBodWdlcGFnZSByZXNlcnZhdGlvbnMgKDk1JSsgb2YNCj4gPiBz
+eXN0ZW0gUkFNKSwgc2luZ2xlLWF0dGVtcHQgYWxsb2NhdGlvbiBkdXJpbmcgZWFybHkgYm9vdCBv
+ZnRlbiBmYWlscw0KPiA+IGR1ZSB0byBtZW1vcnkgcHJlc3N1cmUuDQo+ID4NCj4gPiBDb21taXQg
+OTFmMzg2YmYwNzcyICgiaHVnZXRsYjogYmF0Y2ggZnJlZWluZyBvZiB2bWVtbWFwIHBhZ2VzIikN
+Cj4gPiBpbnRlbnNpZmllZCB0aGlzIGJ5IGRlZmVycmluZyBwYWdlIGZyZWVzLCBpbmNyZWFzZSBw
+ZWFrIG1lbW9yeSB1c2FnZSBkdXJpbmcNCj4gYWxsb2NhdGlvbi4NCj4gPg0KPiA+IEludHJvZHVj
+ZSBhIHJldHJ5IG1lY2hhbmlzbSB0aGF0IGxldmVyYWdlcyB2bWVtbWFwIG9wdGltaXphdGlvbg0K
+PiA+IHJlY2xhaW0gKH4xLjYlIG1lbW9yeSkgd2hlbiBhdmFpbGFibGUuIFVwb24gaW5pdGlhbCBh
+bGxvY2F0aW9uDQo+ID4gZmFpbHVyZSwgdGhlIHN5c3RlbSByZXRyaWVzIHVudGlsIHN1Y2Nlc3Nm
+dWwgb3Igbm8gZnVydGhlciBwcm9ncmVzcyBpcw0KPiA+IG1hZGUsIGVuc3VyaW5nIHJlbGlhYmxl
+IGh1Z2VwYWdlIGFsbG9jYXRpb24gd2hpbGUgcHJlc2VydmluZyBiYXRjaGVkDQo+IHZtZW1tYXAg
+ZnJlZWluZyBiZW5lZml0cy4NCj4gPg0KPiA+IFRlc3Rpbmcgb24gYSAyNTZHIG1hY2hpbmUgYWxs
+b2NhdGluZyAyNTJHIG9mIGh1Z2VwYWdlczoNCj4gPiBCZWZvcmU6IDEyODA1Ni8xMjkwMjQgaHVn
+ZXBhZ2VzIGFsbG9jYXRlZA0KPiA+IEFmdGVyOiAgU3VjY2Vzc2Z1bGx5IGFsbG9jYXRlZCBhbGwg
+MTI5MDI0IGh1Z2VwYWdlcw0KPiA+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBEYXZpZCBIaWxkZW5icmFu
+ZCA8ZGF2aWRAcmVkaGF0LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMaSBSb25nUWluZyA8bGly
+b25ncWluZ0BiYWlkdS5jb20+DQo+ID4gLS0tDQo+ID4gRGlmZiB3aXRoIHYyOiBhdXRvIHJldHJ5
+IG1lY2hhbmlzbQ0KPiA+IERpZmYgd2l0aCB2MTogYWRkIGxvZyBpZiB0d28tcGhhc2UgaHVnZXBh
+Z2UgYWxsb2NhdGlvbiBpcyB0cmlnZ2VyZWQNCj4gPiAJCWFkZCB0aGUga25vZCB0byBjb250cm9s
+IHNwbGl0IHJhdGlvDQo+ID4NCj4gPiAgIG1tL2h1Z2V0bGIuYyB8IDI3ICsrKysrKysrKysrKysr
+KysrKysrKysrLS0tLQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDQg
+ZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvbW0vaHVnZXRsYi5jIGIvbW0vaHVn
+ZXRsYi5jIGluZGV4IDc1M2Y5OWIuLjE4ZTU0ZWEgMTAwNjQ0DQo+ID4gLS0tIGEvbW0vaHVnZXRs
+Yi5jDQo+ID4gKysrIGIvbW0vaHVnZXRsYi5jDQo+ID4gQEAgLTM1ODksMTAgKzM1ODksOSBAQCBz
+dGF0aWMgdW5zaWduZWQgbG9uZyBfX2luaXQNCj4gPiBodWdldGxiX3BhZ2VzX2FsbG9jX2Jvb3Qo
+c3RydWN0IGhzdGF0ZSAqaCkNCj4gPg0KPiA+ICAgCXVuc2lnbmVkIGxvbmcgamlmZmllc19zdGFy
+dDsNCj4gPiAgIAl1bnNpZ25lZCBsb25nIGppZmZpZXNfZW5kOw0KPiA+ICsJdW5zaWduZWQgbG9u
+ZyByZW1haW5pbmc7DQo+ID4NCj4gPiAgIAlqb2IudGhyZWFkX2ZuCT0gaHVnZXRsYl9wYWdlc19h
+bGxvY19ib290X25vZGU7DQo+ID4gLQlqb2Iuc3RhcnQJPSAwOw0KPiA+IC0Jam9iLnNpemUJPSBo
+LT5tYXhfaHVnZV9wYWdlczsNCj4gPg0KPiA+ICAgCS8qDQo+ID4gICAJICogam9iLm1heF90aHJl
+YWRzIGlzIDI1JSBvZiB0aGUgYXZhaWxhYmxlIGNwdSB0aHJlYWRzIGJ5IGRlZmF1bHQuDQo+ID4g
+QEAgLTM2MTYsMTAgKzM2MTUsMzAgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgX19pbml0DQo+IGh1
+Z2V0bGJfcGFnZXNfYWxsb2NfYm9vdChzdHJ1Y3QgaHN0YXRlICpoKQ0KPiA+ICAgCX0NCj4gPg0K
+PiA+ICAgCWpvYi5tYXhfdGhyZWFkcwk9IGh1Z2VwYWdlX2FsbG9jYXRpb25fdGhyZWFkczsNCj4g
+PiAtCWpvYi5taW5fY2h1bmsJPSBoLT5tYXhfaHVnZV9wYWdlcyAvDQo+IGh1Z2VwYWdlX2FsbG9j
+YXRpb25fdGhyZWFkczsNCj4gPg0KPiA+ICAgCWppZmZpZXNfc3RhcnQgPSBqaWZmaWVzOw0KPiA+
+IC0JcGFkYXRhX2RvX211bHRpdGhyZWFkZWQoJmpvYik7DQo+ID4gKwlkbyB7DQo+ID4gKwkJcmVt
+YWluaW5nID0gaC0+bWF4X2h1Z2VfcGFnZXMgLSBoLT5ucl9odWdlX3BhZ2VzOw0KPiA+ICsNCj4g
+PiArCQlqb2Iuc3RhcnQgICAgID0gaC0+bnJfaHVnZV9wYWdlczsNCj4gPiArCQlqb2Iuc2l6ZSAg
+ICAgID0gcmVtYWluaW5nOw0KPiA+ICsJCWpvYi5taW5fY2h1bmsgPSByZW1haW5pbmcgLyBodWdl
+cGFnZV9hbGxvY2F0aW9uX3RocmVhZHM7DQo+ID4gKwkJcGFkYXRhX2RvX211bHRpdGhyZWFkZWQo
+JmpvYik7DQo+ID4gKw0KPiA+ICsJCWlmIChoLT5ucl9odWdlX3BhZ2VzID09IGgtPm1heF9odWdl
+X3BhZ2VzKQ0KPiA+ICsJCQlicmVhazsNCg0KSWYgYWxsIHBhZ2VzIGFyZSBhbGxvY2F0ZWQsIGl0
+IHdpbGwgYnJlYWsgb3V0IGZyb20gaGVyZS4gU2luY2UgaW4gbW9zdCBjYXNlcyB0aGUgZmlyc3Qg
+YWxsb2NhdGlvbiBpcyBzdWNjZXNzZnVsLCBJIGhhdmUgbW92ZWQgdGhpcyBjaGVjayB0byB0aGUg
+dmVyeSBiZWdpbm5pbmcuDQoNCj4gPiArDQo+ID4gKwkJLyoNCj4gPiArCQkgKiBSZXRyeSBhbGxv
+Y2F0aW9uIGlmIHZtZW1tYXAgb3B0aW1pemF0aW9uIGlzIGF2YWlsYWJsZSwgdGhlDQo+ID4gKwkJ
+ICogb3B0aW1pemF0aW9uIGZyZWVzIH4xLjYlIG9mIG1lbW9yeSBvZiBodWdlcGFnZXMsIHRoaXMg
+cmVjbGFpbWVkDQo+ID4gKwkJICogbWVtb3J5IGVuYWJsZXMgYWRkaXRpb25hbCBodWdlcGFnZSBh
+bGxvY2F0aW9ucw0KPiANCj4gQXMgSSBzYWlkLCBwbGVhc2UgcmVtb3ZlIGFueSBjYWxjdWxhdGlv
+biBkZXRhaWxzIGFib3V0IHRoZSB2bWVtbWFwLg0KPiBUaGF0J3Mgbm90IHRoZSBwbGFjZSB0byBo
+YXZlIHN1Y2ggY2FsY3VsYXRpb25zIGVhc2lseSBiZWNvbWUgc3RhbGUuDQo+IA0KPiBTb21ldGhp
+bmcgbGlrZSB0aGUgZm9sbG93aW5nOg0KPiANCj4gLyoNCj4gICAqIFJldHJ5IG9ubHkgaWYgdGhl
+IHZtZW1tYXAgb3B0aW1pemF0aW9uIG1pZ2h0IGhhdmUgYmVlbiBhYmxlIHRvIGZyZWUNCj4gICAq
+IHNvbWUgbWVtb3J5IGJhY2sgdG8gdGhlIHN5c3RlbS4NCj4gICAqLw0KPiANCg0KVGhhbmtzLCBJ
+IHdpbGwgZml4IGl0DQoNCj4gPiArCQkgKi8NCj4gPiArCQlpZiAoIWh1Z2V0bGJfdm1lbW1hcF9v
+cHRpbWl6YWJsZShoKSkNCj4gPiArCQkJYnJlYWs7DQo+ID4gKw0KPiA+ICsJLyogQ29udGludWUg
+aWYgcHJvZ3Jlc3Mgd2FzIG1hZGUgaW4gbGFzdCBpdGVyYXRpb24gKi8NCj4gDQo+IENvbW1lbnQg
+d3JvbmdseSBpbmRlbnRlZC4NCj4gDQoNCmNoZWNrcGF0Y2ggZGlkIG5vdCByZXBvcnQgZXJyb3Is
+IEkgd2lsbCBmaXggaXQgDQoNCj4gPiArCX0gd2hpbGUgKHJlbWFpbmluZyAhPSAoaC0+bWF4X2h1
+Z2VfcGFnZXMgLSBoLT5ucl9odWdlX3BhZ2VzKSk7DQo+IA0KPiBXaHkgd291bGQgeW91IHdhbnQg
+dG8gcmV0cnkgaWYgeW91IGFsbG9jYXRlZCBhbGwgcGFnZXMgKElPVyB0aGUgY29tbW9uDQo+IGNh
+c2UpPw0KPiANCg0KU2VlIHRoZSByZXBseSBiZWZvcmUgImlmIChoLT5ucl9odWdlX3BhZ2VzID09
+IGgtPm1heF9odWdlX3BhZ2VzKSINCg0KVGhhbmtzDQoNCg0KPiBFLmcuLA0KPiANCj4gcmVtYWlu
+aW5nID09IDENCj4gaC0+bWF4X2h1Z2VfcGFnZXMgPT0gMQ0KPiBoLT5ucl9odWdlX3BhZ2VzID09
+IDENCj4gDQo+IHdoaWxlICgxICE9IDEgLTEpIC0+IHdoaWxlICgxICE9IDApDQo+IA0KPiANCj4g
+eW91IHNob3VsZCBwcm9iYWJseSBkbw0KPiANCj4gZG8gew0KPiAJLi4uDQo+IA0KPiAJLyogU3Rv
+cCBpZiB0aGVyZSBpcyBubyBwcm9ncmVzcyAqLw0KPiAJaWYgKHJlbWFpbmluZyA9PSBoLT5tYXhf
+aHVnZV9wYWdlcyAtIGgtPm5yX2h1Z2VfcGFnZXMpDQo+IAkJYnJlYWs7DQo+IH0gKGgtPm1heF9o
+dWdlX3BhZ2VzICE9IGgtPm5yX2h1Z2VfcGFnZXMpOw0KPiANCj4gLS0NCj4gQ2hlZXJzDQo+IA0K
+PiBEYXZpZCAvIGRoaWxkZW5iDQoNCg==
 
