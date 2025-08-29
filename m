@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-791903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C01EB3BDA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:27:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C99B3BDA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FEC1CC1D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D783B761E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28950321443;
-	Fri, 29 Aug 2025 14:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C82321F39;
+	Fri, 29 Aug 2025 14:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+B/wrzq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="je5iMdwg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C95321427;
-	Fri, 29 Aug 2025 14:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767393218A4;
+	Fri, 29 Aug 2025 14:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477654; cv=none; b=e5aw5glnyqSZXW//eG0wGM1nO36R/ISKTeFmTSqdBuusB7DjQ+ZG4xMViH9MJ43gXO3JBcDhbrta2LNA7XvCUxoy/r1zsMC2M/fA0yxO4eY+MVjghMCX14oA7VhSF8uNIfuWfMVHjIP5XTuF+mdyiQNr3dQvHa8OHXmZrrDyyHM=
+	t=1756477656; cv=none; b=iwpybkDVYrfUiVVpe2TDP0Xl2yXUQQosE432LjrBfk6u81Lzj4wfrhdd2o3oDBOoutelMc1Dgl9MS/EQffBieGezhpcPcyWj6yY/w/xGocMm9O6ggRfZbgrikKGwSjKw3jxfdSdR1kbsU6Xy1pVKqOp2dKE58xTiGHxzijb3axY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477654; c=relaxed/simple;
-	bh=hju7Q0uxuSGvDaWgdSvbm9C1hLSofXR34ZTyBAn5zHc=;
+	s=arc-20240116; t=1756477656; c=relaxed/simple;
+	bh=4tBUrRyd74FiupUVrJ5fFiV36preehjktcmpPlLe3nM=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=B+Cu/rIT/jQTWfsfkluNACRxT1O/dsEwMk1oDkKKAYXulBIQhcM4CDZh1w+0+g0bTfmsz6O4jsIzqxQIpkjas8vuwdAUmN1DYaJ8C00xvDQosrCG5MaB1KDTasNsYhZGBoWKUByAXtyU/94u9zOOHjwu5N2788KouB5s19ksgh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+B/wrzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F39B4C4CEF0;
-	Fri, 29 Aug 2025 14:27:33 +0000 (UTC)
+	 Message-Id:Subject; b=Q+2kC+uxNsudCsftCNs45ChKfsBV2DttzOXJZ+7H05wmElP3GJ84ZD8Ed0DN6YXWWG2uFj4/t9Ea3QIQ87XgBKlCDopPkd3bLOWZ2ZPFEltdqdKakAV1/SRRNzCHJGpu6CBfDr5WSUQa61wXo2IixeQfBGOpi6rbLDiL/vxFBSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=je5iMdwg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2381C4CEF7;
+	Fri, 29 Aug 2025 14:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756477654;
-	bh=hju7Q0uxuSGvDaWgdSvbm9C1hLSofXR34ZTyBAn5zHc=;
+	s=k20201202; t=1756477656;
+	bh=4tBUrRyd74FiupUVrJ5fFiV36preehjktcmpPlLe3nM=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=c+B/wrzqg00WSFdgQYwmioWH/awpZYdcKINrzUkM/vSlrIMkqlSffg8EnKt+oIOLa
-	 H6JiI5jirYb/y2E9/+iLGYC/8LdhEaV0SJw0drk/w79xnIJ1F52vHY6lnfUOliwBPM
-	 K1fCTWwkwIWkEECKJsGbbagXLefBDhlzAQT8hh34ZXyPmbjQO+OAr1++EB3KXNE/SV
-	 KYjx+MjcFnZKDqgUz/j0XHmGN8YKfv3bUNKsV1q+NSyrPI1lEvCKxxrZVfjipj7MYY
-	 qjeaLNx9XZCjUd5Jw2VKUuQk2zqhFTjX7YxTe8WUsSfXDECNuaoP/Eg9zok9MxrWdc
-	 5E07BZmYt91Wg==
-Date: Fri, 29 Aug 2025 09:27:33 -0500
+	b=je5iMdwgPCFuqQzrzqIOE8loBFILcb4OVyIXumvohf2TIzcw8NcSXFmaI6kOw0m7L
+	 xiXtqGxeAo1lWJaqJqoe+t4Md6L6lzKJ/eRsYHEDHt36sSdMIvgcWGZusdFdvbgQNm
+	 Bf/z7tGigVF0FOJuvmrmCZjG1K5eTy/1O1F3IL7KHtKZcSIv2q1QeJkxDbCye9UiZU
+	 1fCG16wt1Ro651Lchb7xZ05S9X2j1AMXoV3fxk4MS63/T/6ObAiZmRZTvrJsi7HMrX
+	 hQVPvvo23h73Yf9FmpJ5KzHoFirCu4qAJ/mtp9kxLw5Yal0zKWfBNN/0kgIV2jdh3j
+	 +nNOmbFJChPVw==
+Date: Fri, 29 Aug 2025 09:27:34 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,48 +50,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: lee@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andrew@codeconstruct.com.au, linux-aspeed@lists.ozlabs.org, 
- krzk+dt@kernel.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org, 
- linus.walleij@linaro.org, BMC-SW@aspeedtech.com
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-In-Reply-To: <20250829073030.2749482-1-billy_tsai@aspeedtech.com>
-References: <20250829073030.2749482-1-billy_tsai@aspeedtech.com>
-Message-Id: <175647746429.734506.7183662123343858780.robh@kernel.org>
-Subject: Re: [PATCH v1 0/4] Add pinctrl support for AST2700 SoC
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, linux-tegra@vger.kernel.org, 
+ devicetree@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, linux-kernel@vger.kernel.org, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
+References: <20250829122235.119745-1-clamor95@gmail.com>
+Message-Id: <175647746523.734549.14987983644245053548.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
 
 
-On Fri, 29 Aug 2025 15:30:26 +0800, Billy Tsai wrote:
-> Document and add the pinctrl driver for AST2700 SoC.
+On Fri, 29 Aug 2025 15:22:30 +0300, Svyatoslav Ryhel wrote:
+> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> a ring oscillator and translates voltage changes into frequency
+> compensation changes needed to prevent the CPU from failing and is
+> essential for correct CPU frequency scaling.
 > 
-> Billy Tsai (4):
->   dt-bindings: mfd: aspeed,ast2x00-scu: Support ast2700 pinctrl
->   dt-bindings: pinctrl: aspeed: Add support for AST27xx
->   pinctrl: aspeed: Add AST2700 pinmux support
->   arm64: dts: add AST27xx pinctrl configuration nodes
+> ---
+> Changes in v2:
+> - dropped 'drivers:' from commit title
+> - aligned naming to Tegra114
 > 
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    2 +
->  .../pinctrl/aspeed,ast2700-soc0-pinctrl.yaml  |  135 +
->  .../pinctrl/aspeed,ast2700-soc1-pinctrl.yaml  |  452 +++
->  .../boot/dts/aspeed/aspeed-g7-pinctrl.dtsi    | 1359 +++++++++
->  drivers/pinctrl/aspeed/Kconfig                |    8 +
->  drivers/pinctrl/aspeed/Makefile               |    1 +
->  .../pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c   |  503 ++++
->  .../pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c   | 2523 +++++++++++++++++
->  drivers/pinctrl/aspeed/pinctrl-aspeed.c       |   47 +
->  drivers/pinctrl/aspeed/pinctrl-aspeed.h       |   11 +-
->  drivers/pinctrl/aspeed/pinmux-aspeed.h        |   35 +-
->  11 files changed, 5071 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc0-pinctrl.yaml
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/aspeed,ast2700-soc1-pinctrl.yaml
->  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-pinctrl.dtsi
->  create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c
->  create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c
+> Changes in v3:
+> - add DFLL support for Tegra 114 was split into dt header addition,
+>   DFLL reset configuration and CVB tables implementation.
+> - added cleaner commit message to dt header commit
+> - added T210_ prefixes to Tegra210 CVB table macros
+> 
+> Changes in v4:
+> - expanded commit message of car header adding commit
+> 
+> Changes in v5:
+> - renamed tegra114-car.h to nvidia,tegra114-car.h
+> ---
+> 
+> Svyatoslav Ryhel (4):
+>   dt-bindings: reset: add Tegra114 car header
+>   clk: tegra: add DFLL DVCO reset control for Tegra114
+>   clk: tegra: dfll: add CVB tables for Tegra114
+>   ARM: tegra: Add DFLL clock support for Tegra114
+> 
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        |  33 ++++
+>  drivers/clk/tegra/Kconfig                     |   2 +-
+>  drivers/clk/tegra/clk-tegra114.c              |  30 +++-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c    | 158 +++++++++++++++---
+>  drivers/clk/tegra/clk.h                       |   2 -
+>  .../dt-bindings/reset/nvidia,tegra114-car.h   |  13 ++
+>  6 files changed, 204 insertions(+), 34 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/nvidia,tegra114-car.h
 > 
 > --
-> 2.25.1
+> 2.48.1
 > 
 > 
 > 
@@ -113,26 +127,33 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/next-20250828 (exact match)
+ Base: tags/next-20250828 (best guess, 3/5 blobs matched)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/aspeed/' for 20250829073030.2749482-1-billy_tsai@aspeedtech.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250829122235.119745-1-clamor95@gmail.com:
 
-Traceback (most recent call last):
-  File "/home/rob/.local/bin/dt-validate", line 8, in <module>
-    sys.exit(main())
-             ~~~~^^
-  File "/home/rob/proj/dt-schema/dtschema/dtb_validate.py", line 139, in main
-    sg = schema_group(args.preparse)
-  File "/home/rob/proj/dt-schema/dtschema/dtb_validate.py", line 24, in __init__
-    self.validator = dtschema.DTValidator([schema_file])
-                     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "/home/rob/proj/dt-schema/dtschema/validator.py", line 376, in __init__
-    if '$id' in schema_cache:
-       ^^^^^^^^^^^^^^^^^^^^^
-TypeError: argument of type 'NoneType' is not iterable
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
 
 
 
