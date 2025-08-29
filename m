@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-792070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A73B3BFE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FB2B3BFE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ECDD175672
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC0B460345
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779C833EAF9;
-	Fri, 29 Aug 2025 15:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0212B340D92;
+	Fri, 29 Aug 2025 15:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcVGpPnl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFF9W1uG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40B633EAF4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F72B33EB18;
+	Fri, 29 Aug 2025 15:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482555; cv=none; b=IW6eUEAo2kYIsTOheWgqB6NX8tBQdvDNveAcX30lb4KhkkagdSEephTPT4/pZV2PwYUz0D8xH3HHs3qxD9yyjVRpQMR7GHiMNuxCbpXcHBw1zV610+2tP98tQdF7zZwRfCsYyPWKUVrRNr2Flwt+EOSfol6bpJW7jAYX7VEQRY8=
+	t=1756482558; cv=none; b=Hx2aalPfyNDu931gTH6UaXJ2nY++/uZ9ncQ4GRL7XGD3nftGuZ09Sh0SlV7cuSft0U/eJzkakB2YfuU3haB5W/4yGlOF/zHqCIPnXiCVmMOBSUIFqDtYbrK1iCcPLlYXLHOvhPgx5W+hj4gTvR8FWCqPd16/Hz4IMBrv9sq1iT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482555; c=relaxed/simple;
-	bh=H42PRIJFhc68hczE5JFr8BulcuyrR8cWi/byZNSlUrw=;
+	s=arc-20240116; t=1756482558; c=relaxed/simple;
+	bh=fj8C83YhLE6FVgaWV6fkmpAqQbVfAMlK0gEymOT9gl0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ky+MNkhfKI1No9O95PwhHP4dcl09YgjujzPmNMnrPojP8i3YHJJIc+jTCP+FrFDVxm7O30U4Ss5jj3HRTG3ASwT1grMOGc77zgdWsm04Pazv1c3x/z1+A42WW7dGYD1ms9e+Tc1lLq3zz19Onn2VG6ts/yxPEBXWxE7ZX9A9sGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcVGpPnl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D073C4CEF6;
-	Fri, 29 Aug 2025 15:49:12 +0000 (UTC)
+	 MIME-Version; b=dJho/AJxbjbTvMbpF7f5xAO+tQabP7zg38HVdAMTyMRrKFRNZXiu2Sbjjt7dGxJQ2vERpjceD19SzSbPt3SAyHOn/mwx9Cdq+BJmSi8JnYA7dP1qXWPklRSXEoJQei6cpwIEjUmMSrJFJ8f9bVSZj2pnX85Jl7ljryhkIs/3PUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFF9W1uG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBCFC4CEF7;
+	Fri, 29 Aug 2025 15:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482555;
-	bh=H42PRIJFhc68hczE5JFr8BulcuyrR8cWi/byZNSlUrw=;
+	s=k20201202; t=1756482558;
+	bh=fj8C83YhLE6FVgaWV6fkmpAqQbVfAMlK0gEymOT9gl0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AcVGpPnlQT1jwi8qC6n4TM2FJ2My5t5SfEz9687CXaAWzknU5wiIjteY3u8GtlXx2
-	 samFbf8UAxUsyqIh0Q1QOfA1zvJajbFOjTi8VNRQMxB0Za5RVZtSATYa7Z0tU+MWfr
-	 vvKop+2fRrFgEX5mff7dw6QQp7a0eaQZQ6cUU6k+4rEZInstCCOoyd3AZaQqWgryIB
-	 oMn2ZWkfv11old8eEHmnu4gJfUFc9DO7A/GKgshtQRTIRZbYTdiYyJY9en1/1mvRa2
-	 slBNBSCVOw1t+n1g31piiGuhIsjTFxHqD4HWpiyMhP6PUORSTiq/2b8/vD9zbL1v1+
-	 ghf5Klfdxd+Xg==
+	b=bFF9W1uGjPYgj0n35MA8v1QzRUdZ+VVTyx8RusAg7FgrCvSIk6zL8oauUs/qFiW0P
+	 voQjtxTbTk5yq5dtTj98FLtFUgy7U9qhEMGF2Cm2P7IahY06mY10MrVoGIkfMu2bzS
+	 wRyaOyHwaXAo9YTRjgvnPzgZ9vamh+HvnJGxQdf8nD6RAKcZbp7WzVWMgEQ2/utKJa
+	 aFWbSzBN6zRS+Gjx9slQQcSA6EL/hLmkFts81Gq0H30pbIZVbae3uR9gkV7gtwd8sy
+	 osVhH/eOO9DE3SeQHJguu0L39A2HQ3a69dYC7Haedvm5juGOV8zD580yoqYrPo1QDy
+	 QMgKVCGHDcKoA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Tejun Heo <tj@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vlastimil Babka <vbabka@suse.cz>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 19/33] sched/isolation: Remove HK_TYPE_TICK test from cpu_is_isolated()
-Date: Fri, 29 Aug 2025 17:48:00 +0200
-Message-ID: <20250829154814.47015-20-frederic@kernel.org>
+	Waiman Long <longman@redhat.com>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH 20/33] PCI: Remove superfluous HK_TYPE_WQ check
+Date: Fri, 29 Aug 2025 17:48:01 +0200
+Message-ID: <20250829154814.47015-21-frederic@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
 References: <20250829154814.47015-1-frederic@kernel.org>
@@ -71,33 +72,62 @@ isolcpus= or cpuset isolated partitions.
 
 And now HK_TYPE_DOMAIN includes all kinds of domain isolated CPUs.
 
-This means that HK_TYPE_KERNEL_NOISE (of which HK_TYPE_TICK is only an
+This means that HK_TYPE_KERNEL_NOISE (of which HK_TYPE_WQ is only an
 alias) is always a superset of HK_TYPE_DOMAIN.
 
-Therefore if a CPU is not HK_TYPE_KERNEL_NOISE, it can't be
-HK_TYPE_DOMAIN either. Testing the latter is then enough.
+Therefore:
 
-Simplify cpu_is_isolated() accordingly.
+	HK_TYPE_KERNEL_NOISE & HK_TYPE_DOMAIN = HK_TYPE_DOMAIN
+
+Simplify the PCI probe target election accordingly.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- include/linux/sched/isolation.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pci/pci-driver.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-index c02923ed4cbe..8d6d26d3fdf5 100644
---- a/include/linux/sched/isolation.h
-+++ b/include/linux/sched/isolation.h
-@@ -82,8 +82,7 @@ static inline void housekeeping_init(void) { }
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index cf2b83004886..326112ec516e 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -382,23 +382,14 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+ 	    pci_physfn_is_probed(dev)) {
+ 		error = local_pci_probe(&ddi);
+ 	} else {
+-		cpumask_var_t wq_domain_mask;
+ 		struct pci_probe_arg arg = { .ddi = &ddi };
  
- static inline bool cpu_is_isolated(int cpu)
- {
--	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
--	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK);
-+	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN);
- }
+ 		INIT_WORK_ONSTACK(&arg.work, local_pci_probe_callback);
  
- #endif /* _LINUX_SCHED_ISOLATION_H */
+-		if (!zalloc_cpumask_var(&wq_domain_mask, GFP_KERNEL)) {
+-			error = -ENOMEM;
+-			goto out;
+-		}
+-
+ 		rcu_read_lock();
+-		cpumask_and(wq_domain_mask,
+-			    housekeeping_cpumask(HK_TYPE_WQ),
+-			    housekeeping_cpumask(HK_TYPE_DOMAIN));
+-
+ 		cpu = cpumask_any_and(cpumask_of_node(node),
+-				      wq_domain_mask);
++				      housekeeping_cpumask(HK_TYPE_DOMAIN));
++
+ 		if (cpu < nr_cpu_ids) {
+ 			schedule_work_on(cpu, &arg.work);
+ 			rcu_read_unlock();
+@@ -409,10 +400,9 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+ 			error = local_pci_probe(&ddi);
+ 		}
+ 
+-		free_cpumask_var(wq_domain_mask);
+ 		destroy_work_on_stack(&arg.work);
+ 	}
+-out:
++
+ 	dev->is_probed = 0;
+ 	cpu_hotplug_enable();
+ 	return error;
 -- 
 2.51.0
 
