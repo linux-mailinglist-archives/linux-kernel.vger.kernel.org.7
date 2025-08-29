@@ -1,125 +1,217 @@
-Return-Path: <linux-kernel+bounces-792348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0DEB3C2F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:23:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE61B3C2FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97337A25C44
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:23:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8111CC3411
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AF924678C;
-	Fri, 29 Aug 2025 19:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8F1242D63;
+	Fri, 29 Aug 2025 19:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiCflnW3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIVXkZZl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDB9239E9E;
-	Fri, 29 Aug 2025 19:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9A223D7F5;
+	Fri, 29 Aug 2025 19:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756495392; cv=none; b=pBAaIP7rjyAZV9+H50jnGloLighpozw4Oj0MBGh966DLNxqrDanskwO4dirXSb1p/P/leMYEutSTmB9FzzH4QEhCRn5Z9fL0+P9YUyADR+3TVrkz0lf3ptT/Xa+CZFxi3Oc1FeqQvPJ9zJl/33IHZgQiylARBR6OZcFliL20wbk=
+	t=1756495406; cv=none; b=L5u/HFEVFbnVsvM6VZ6uRyUE29ArXsPC2H8fTCt0iburKfXvRLabASfJX8ZVeBYy3ilA4xnCPyeKJBl/KdlqJIfWeqi6C8ZQgEYRlo7wKjnn+kiYx84Oq9N7nOYzf5PhXqzOLNn7Hwju/b4hyPWOBCa7jjyL2YAv/8OMiLo+5FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756495392; c=relaxed/simple;
-	bh=mIhxfi8PIu+hlogvO+xLc5ASjZ3oFz+evVdeTWUt5c0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tHQ8F70xwBScuwdvMxWoYRfnhDiykpbuY14MH4v3VJ84LfHQkEWllx4HLP1TeTvTHUiaQHtY/JlXYZEUC3pBOd1DDRt/plcaAKoX6NpIbKE90KOa+C5YPv3dLuLYehGgE2G1VcG/4HQGhhbLXXxxTmFwpGvGTDW5BroO24se1/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiCflnW3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 577A2C4CEF7;
-	Fri, 29 Aug 2025 19:23:08 +0000 (UTC)
+	s=arc-20240116; t=1756495406; c=relaxed/simple;
+	bh=/qNQv6/YUZl+M24MZCwxNJ7uMi4lLQdGLv/Kb9BtL/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FTS9dnjfI3+tH7Peg3C4i4LZzrZZR3m/Ja3LNQsc6l+uDML1NTAh/eDzol2zpmRldpyfO1F+RC6E450Ic7dnFLPsIJu74np9dt+xDpTWw7bcgvVWHnbpp6fFRfNueG9dcCT1PvEYdUySb8yFi2ghGU/qlUiDkBtIOwTU8t/ptpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIVXkZZl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D229EC4CEF8;
+	Fri, 29 Aug 2025 19:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756495391;
-	bh=mIhxfi8PIu+hlogvO+xLc5ASjZ3oFz+evVdeTWUt5c0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YiCflnW345EnnvmzDb7BWqZX4icGW8gvaYs6tUBIo1p7+oGdXOxByVnw+Zkvs/wZv
-	 vbpWptxBruz1RKvNkxmkWusr2Nmo4lbSEpIQZhknxBwAt9jyLI494fSWwNEvzwBcYe
-	 P9dTMIm2YfDjV6PSL7oz3njMKSeH0MYNaF3rHh33fVskMkVCMYmSU+FPinn17gKNlM
-	 8Sae57XBAXzbqUMBzA6u7M4sSiHVhAFNwoIt9Km4l4fe6dVCd+hhC44/K7xzdVhJe+
-	 EtLfIKGPdqi4phi167rhRsFmpcO+586SCwzwVbsQOnJ6DGwlPlEoM6Dh6CG9q7Z/AL
-	 w2n5Is3cORcaw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with `debug_assert!`
-Date: Fri, 29 Aug 2025 21:22:43 +0200
-Message-ID: <20250829192243.678079-4-ojeda@kernel.org>
-In-Reply-To: <20250829192243.678079-1-ojeda@kernel.org>
-References: <20250829192243.678079-1-ojeda@kernel.org>
+	s=k20201202; t=1756495405;
+	bh=/qNQv6/YUZl+M24MZCwxNJ7uMi4lLQdGLv/Kb9BtL/w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FIVXkZZlYCGpBeWYSFhAJmKblmFPbyT2S6l9Sb5/+ektZK9dlnzVgTKqaobhIStoJ
+	 CSMff85MwABrguWMNNFcrnmnFq6KV762QpSAUbq2NrTLuJ7f98x4eH7XzAwEwmGhur
+	 entWKZGfZ5lUf8LK5IOhajEsAcW6OxUvAiu5bAC6I8m8PyBNS/7UmoivO+V6e+66wB
+	 59y89sq0J0VnqIaE9eolJ/65kFAcrOTqonhaJAG45lWag0eVybACCCfYL2GxWztXBq
+	 Kw6CL2QwjMxZ0w259zW0VQOAcaA7gOemdHAzFx5Y3O6kDXO8Bzgd0mYiPA7cSoXkXM
+	 Ui+wFjT2aYa1A==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-74526ca79beso1886147a34.0;
+        Fri, 29 Aug 2025 12:23:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU13OlblzqPnmITT7qy90MN3oFsWu21VgZw2yvVzwsXvJFHrmQlN6LpJOpln/bx3d6MrJt/tTJZluqN@vger.kernel.org, AJvYcCW2TktaMHoif/s+o/5mv6ma2G17Ifd6AEcFfwUZ361i46phUu7e4jXAYZpJsOxT+jMvWjW7hYdzLA/X1so=@vger.kernel.org, AJvYcCXoqki9Lw6G+PgNdkMeTMyPXD0TyYqXqtxeoS32gzraXDNyW7XKlB9/yrjDGNDx0FLveb+Av40R3sA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4stXVYWfozTQFV7Z4ibykN4T1GZ7KJkd8378Dr3sV7fqoMMJC
+	1Bn7dfRPR8jgo98u0oyfFtj4KAjDgtqT8WctV3IpjSrDENog9JG4CwexjYSwU3LqIqJG7+kR7DW
+	Fj0QyRcZpLCM2B00az0v2UPrqnsgb3NE=
+X-Google-Smtp-Source: AGHT+IGhhO3+/fhQcPFtwDMGb+qBlFIeWpx6fqd/VvDCzukc9EkbPkoGilHJHbmMvPCJs3ZaK5heIeuKkPLnH9j4eR4=
+X-Received: by 2002:a05:6830:40c1:b0:742:f82b:4f35 with SMTP id
+ 46e09a7af769-74500a69d25mr12526021a34.7.1756495405071; Fri, 29 Aug 2025
+ 12:23:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
+ <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
+ <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
+ <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
+ <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
+In-Reply-To: <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 29 Aug 2025 21:23:12 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
+X-Gm-Features: Ac12FXyEF73V3lhOB13ApSuxu_i3ac2GiyhbkQnsLaaKZCKhVppMaOLjErmkg50
+Message-ID: <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
+Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-`warn_on!` support landed recently, and we had a very old comment
-about using it when supported to catch invalid inputs passed to
-`Error::from_errno`.
+On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Fri, Aug 29, 2025 at 12:43:17AM +0000, Thinh Nguyen wrote:
+> > On Wed, Aug 27, 2025, Rafael J. Wysocki wrote:
+> > > On Wed, Aug 27, 2025 at 4:52=E2=80=AFPM Alan Stern <stern@rowland.har=
+vard.edu> wrote:
+> > > >
+> > > > Ryan:
+> > > >
+> > > > You should present your questions to the maintainer of the kernel's
+> > > > Power Management subsystem, Rafael Wysocki (added to the To: list f=
+or
+> > > > this email).
+> > >
+> > > Thanks Alan!
+> > >
+> > >
+> > > > On Wed, Aug 27, 2025 at 10:09:10PM +0800, ryan zhou wrote:
+> > > > > Hi Roy,
+> > > > > Thank you for reviewing my patch.
+> > > > > >
+> > > > > > Wouldn't the parent glue dev already resume before resuming the=
+ child dwc3?
+> > > > > >
+> > > > > No, in the following case, the parent device will not be reviewed
+> > > > > before resuming the child device.
+> > > > > Taking the 'imx8mp-dwc3' driver as an example.
+> > > > > Step 1.usb disconnect trigger: the child device dwc3 enter runtim=
+e
+> > > > > suspend state firstly, followed by
+> > > > > the parent device imx8mp-dwc3 enters runtime suspend
+> > > > > flow:dwc3_runtime_suspend->dwc3_imx8mp_runtime_suspend
+> > > > > Step2.system deep trigger:consistent with the runtime suspend flo=
+w,
+> > > > > child enters pm suspend and followed
+> > > > > by parent
+> > > > > flow: dwc3_pm_suspend->dwc3_imx8mp_pm_suspend
+> > > > > Step3: After dwc3_pm_suspend, and before dwc3_imx8mp_pm_suspend, =
+a
+> > > > > task terminated the system suspend process
+> > > > > . The system will resume from the checkpoint, and resume devices =
+in
+> > > > > the suspended state in the reverse
+> > > > > of pm suspend, but excluding the parent device imx8mp-dwc3 since =
+it
+> > > > > did not execute the suspend process.
+> > > > >
+> > > > > >
+> > > > > >Why would 'runtime PM trying to activate child device xxx.dwc3 b=
+ut parent is not active' happen in the first place?
+> > > > > >
+> > > > > Following the above analysis, dwc3_resume calls
+> > >
+> > > I assume that dwc3_pm_resume() is meant here.
+> > >
+> > > > > pm_runtime_set_active(dev), it checks the
+> > > > > parent.power->runtime_status is not RPM_ACTIVE and outputs the er=
+ror log.
+> > >
+> > > And it does so because enabling runtime PM for the child with
+> > > runtime_status =3D=3D RPM_ACTIVE does not make sense when the parent =
+has
+> > > runtime PM enabled and its status is not RPM_ACTIVE.
+> > >
+> > > It looks like the runtime PM status of the parent is not as expected,
+> >
+> > So is the scenario Ryan brought up unexpected? What are we missing here
+> > and where should the fix be in?
+> >
+> > > but quite frankly I don't quite follow the logic in dwc3_pm_resume().
+> > >
+> > > Why does it disable runtime PM just for the duration of
+> > > dwc3_resume_common()?  If runtime PM is functional before the
+> > > pm_runtime_disable() call in dwc3_pm_resume(), the device may as well
+> > > be resumed by calling pm_runtime_resume() on it without disabling
+> > > runtime PM.  In turn, if runtime PM is not functional at that point,
+> > > it should not be enabled.
+> >
+> > Base on git-blame, I hope this will answer your question:
+> >
+> >     68c26fe58182 ("usb: dwc3: set pm runtime active before resume commo=
+n")
+> >
+> >     For device mode, if PM runtime autosuspend feature enabled, the
+> >     runtime power status of dwc3 may be suspended when run dwc3_resume(=
+),
+> >     and dwc3 gadget would not be configured in dwc3_gadget_run_stop().
+> >     It would cause gadget connected failed if USB cable has been plugge=
+d
+> >     before PM resume. So move forward pm_runtime_set_active() to fix it=
+.
+> >
+> >
+> > In certain platforms, they probably need the phy to be active to perfor=
+m
+> > dwc3_resume_common().
+>
+> It sounds like the real question is how we should deal with an
+> interrupted system suspend.  Suppose parent device A and child device B
+> are both in runtime suspend when a system sleep transition begins.  The
+> PM core invokes the ->suspend callback of B (and let's say the callback
+> doesn't need to do anything because B is already suspended with the
+> appropriate wakeup setting).
+>
+> But then before the PM core invokes the ->suspend callback of A, the
+> system sleep transition is cancelled.  So the PM core goes through the
+> device tree from parents to children, invoking the ->resume callback for
+> all the devices whose ->suspend callback was called earlier.  Thus, A's
+> ->resume is skipped because A's ->suspend wasn't called, but B's
+> ->resume callback _is_ invoked.  This callback fails, because it can't
+> resume B while A is still in runtime suspend.
+>
+> The same problem arises if A isn't a parent of B but there is a PM
+> dependency from B to A.
+>
+> It's been so long since I worked on the system suspend code that I don't
+> remember how we decided to handle this scenario.
 
-However, the kernel policy is that reaching a `WARN_ON` by user
-interactions is a CVE, e.g. [1].
+We actually have not made any specific decision in that respect.  That
+is, in the error path, the core will invoke the resume callbacks for
+devices whose suspend callbacks were invoked and it won't do anything
+beyond that because it has too little information on what would need
+to be done.
 
-Since `from_errno` and other functions that use it such as `to_result`
-will be used everywhere, sooner or later a caller may pass an invalid
-value due to a user interaction.
+Arguably, though, the failure case described above is not different
+from regular resume during which the driver of A decides to retain the
+device in runtime suspend.
 
-Thus, instead, use a debug assertion -- this assumes hitting one of them
-is not going to be considered a CVE (which requires
-`CONFIG_RUST_DEBUG_ASSERTIONS=y`).
+I'm not sure if the core can do anything about it.
 
-We don't want to potentially panic when testing the examples, thus
-convert those to a build-test.
-
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Link: https://lore.kernel.org/all/2024092340-renovate-cornflake-4b5e@gregkh/ [1]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/kernel/error.rs | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 1ebdb798fd5d..7b9892a46505 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -115,18 +115,20 @@ impl Error {
-     /// The following calls are considered a bug:
-     ///
-     /// ```
-+    /// # fn no_run() {
-     /// assert_eq!(Error::from_errno(0), EINVAL);
-     /// assert_eq!(Error::from_errno(-1000000), EINVAL);
-+    /// # }
-     /// ```
-     pub fn from_errno(errno: crate::ffi::c_int) -> Error {
-         if let Some(error) = Self::try_from_errno(errno) {
-             error
-         } else {
--            // TODO: Make it a `WARN_ONCE` once available.
-             crate::pr_warn!(
-                 "attempted to create `Error` with out of range `errno`: {}\n",
-                 errno
-             );
-+            debug_assert!(false);
-             code::EINVAL
-         }
-     }
--- 
-2.51.0
-
+But at the time when the B's resume callback is invoked, runtime PM is
+enabled for A, so the driver of B may as well use runtime_resume() to
+resume the device if it wants to do so.  It may also decide to do
+nothing like in the suspend callback.
 
