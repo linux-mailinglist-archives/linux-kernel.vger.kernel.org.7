@@ -1,190 +1,148 @@
-Return-Path: <linux-kernel+bounces-790930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1F8B3AFE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE8CB3AFE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B253E188DD98
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54B43B92B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83221A8412;
-	Fri, 29 Aug 2025 00:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498701B4247;
+	Fri, 29 Aug 2025 00:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iTsfHydO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvoTlLEm"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3F6235063
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDC214F9FB;
+	Fri, 29 Aug 2025 00:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756427943; cv=none; b=blEpNcVEhKSPcS0BBc16bSy9hqjes8d6Mrq8D0hh/SBZgw6gFZ3FgMkYArZw4r6Lr4pGMX3MqdvWh8a/jnRrG9pGi/BiuiHxniOafXRacspxd7l4wBEgwlPgrLdx7lZGsiYzX6wP96kvIDkuPeRrIF5mWNT7B95ry+2DWyoxZug=
+	t=1756427989; cv=none; b=Qmq9GuQbyTMnqGE/rmhDn/gb8rQIcBm3WMktYcp0fbApbTKtZS61wk2pelnDK1bj42MCuXzry6b5+Nz2/LeVlhZWhE7wJ+gvgOM35pSwp6H5o6PqSkptJqRq6MQeNEqtq9zzJccNeedHY6R1n1jN194IqgzQ/eoiRsciBLlOVoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756427943; c=relaxed/simple;
-	bh=58n95bQC3o+Nb/L33jeFcmWnqEOz/8LpB+ZJ4315jbA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LZGBUyst+PmRI1R9649LeiC0d/xO71mWgLEbUHosyg7NqNY/ubhJbbhMKz+npdmPXlng4Y16Vg2ko7L8v5AvA9X+hnzGLF/Z/akfWMFUhvzMS+QjgJ4FsqgAmYZxI7YvtcDsQTYmNVr6vis/WeOUMFBUTCqowKps1FjVyvO/Pb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iTsfHydO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756427940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/zv3Pf2hNuIQOUArm7ZxnDoNihXiep39POzlD21Z8Ns=;
-	b=iTsfHydObZ1TrKcIrcmuKpxAyI9rsrD9M7j5jcZQkzBbvpoco9oMHP2pcwlFugTUtINW/8
-	5Z/dbXNxDjYv0C/6HCzzMPyqr/++cmeacl4fzgXmxEU+bC1VZ925R+9VeCw0A/eNwWnBka
-	WMUgcNyT2coHDKyk89dS3tCum/oQiPM=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596--SIVQw3yOq2jSeDWW237Vg-1; Thu, 28 Aug 2025 20:38:59 -0400
-X-MC-Unique: -SIVQw3yOq2jSeDWW237Vg-1
-X-Mimecast-MFC-AGG-ID: -SIVQw3yOq2jSeDWW237Vg_1756427938
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70dfbead769so14848236d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:38:59 -0700 (PDT)
+	s=arc-20240116; t=1756427989; c=relaxed/simple;
+	bh=HjEkIMNq6edKPazSpUHC+a4rJ/7MEeRbNqqydoWKOWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSX3KeabGjA25LhpAqwkqgqRIRsJvw9hpu8XUsaS56r7CtJ5+ZmrtABpJtuWuo30zS+f9n6foGdJHMmYPDH9+uRWz97TJBlCjoJznG3A8cAuODl6rPqoHxMGoCmTovHT+XZm3Cw2+ZXqykCh+PdKvxl4mDXa2bye37hcKdpMrn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvoTlLEm; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-327d47a0e3eso582802a91.3;
+        Thu, 28 Aug 2025 17:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756427986; x=1757032786; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HjEkIMNq6edKPazSpUHC+a4rJ/7MEeRbNqqydoWKOWQ=;
+        b=DvoTlLEmNpmDVOj5HigteKLFy3ruTQrVg5Cm4+vDmsrswyVam5jQjd1onqmyhvoMtP
+         lXR5ffkTngZ3YqHU2yAE/bvOCNWyMhR77hDLdPFbY/ib/7oXq2MGd9F8JsY/s6MNWJZ8
+         dZpv4+H0Yxgs0nng5Z64n2TNT19WpT0azU1rLvwjRkkYuGkqGXsyQzAaZ4Zxz1zxujll
+         tl95g8f8Qbu5xzopWViJQavFD+khIPf4usoWv5bz1pmzm8HGfnplyHW1kHwxDNVz4fiT
+         iH5wYGIIYXWL+Fkih4kKHHZXfD8LO2lTulfJKOkiRBMZIyJMkpUS5zyE3y05YDP+BsWm
+         A+/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756427938; x=1757032738;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/zv3Pf2hNuIQOUArm7ZxnDoNihXiep39POzlD21Z8Ns=;
-        b=E85pHZz8s3m8TM3yIQUVooAsqSQO9oEh6j8FlELxl8Jrieqf1WrKjr5QZshM3pSiEe
-         s5mcpyrYzB2rdHtk8CS0GGB0FBAtb+Uy3HNl7Fks+JxrcDYeLAcp/hxBNamWPPxO/5kq
-         86g+GRyBmdvYkpPJaGkjxexH4AhsAmESzw8wbVNieKYFvibEkMcdDLhUI7vFKOUQdyUO
-         2kg2Rj6bftEBBtjA+LRl15vsoEWW1k2F6aDv9YaZADZDWRLZp553IQrfqCkDjU9yNzaK
-         euQpaRx3hoaRXzN2VcrIC6+Icou8R+krxGww5nHs8Z1BONX7dPUocVOZaPBpi1yiBih9
-         l+pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOyU1Ntbv+4Ptw9fqMybVaz6GwlzsqfsydtgWvbwjQ+TDrtX3qSssLFjKAs7OmJ+gwoTNdTUA9C+ZWSo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLfq9uAn3Q2zHX/F9z2mmMV9Z6ga1vlD2bgMWi55CAC6vw1Wfz
-	5Smp4SlNp3yTQRtvYHlXQSEa1BDOPqgwIxAN0XgmiXsh74mj5tKTBFCPunoymhx6eX+RB3jepJ2
-	NZUVXDTx+MNvsoFpGzjEGlZB8t7gIEygyYnmj24f1OXcv8OdRMzfTX3aGyZulm1BGdg==
-X-Gm-Gg: ASbGncvfFwPc8Di0Ft3BiY85E14QATlei4+yqHD1zxCO6upD23lmKSiTpj5NerMaZdI
-	K/n5R/VMZwC7yPwXuDsj66GjoBxjDHsrP4mcd+h9wDRLmJPn/6IU8o+U2yFrc2C3hNAtB0Wj6lL
-	lHESYuP3ftANNrSC/YPzagn5R5l2FZOVKA8+cXOVWewxHPDWgqKSsA3qm1MdFN6VgZcBM8qIiLo
-	43U1hWt7mCwNKZDeuLJnT8prWv9/gdFCNfG8zRDMb4Ia9YG8clZLZuFgFFnuvktDY2HslIl9z1v
-	r/P5uq8M7gKnJz1avhWNfWMO+QM5Cyf7f6fkA9sN9+BLY3CHsev3GxmB8dsIBUHZ5sPq56+c6Bj
-	XknaKuBWjrfipGg2kcsZ8tmFBPVAuIx1mKA==
-X-Received: by 2002:ad4:5d6d:0:b0:70f:5a6d:a24c with SMTP id 6a1803df08f44-70f5a6da382mr3848636d6.3.1756427938569;
-        Thu, 28 Aug 2025 17:38:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGNGUlyT+ctgue+dRAvvl/QvlMdyIOiL7k4jZZ7Wud+MSEXYojVVEBluU8riRrhIojKE6e3Kw==
-X-Received: by 2002:ad4:5d6d:0:b0:70f:5a6d:a24c with SMTP id 6a1803df08f44-70f5a6da382mr3848306d6.3.1756427938041;
-        Thu, 28 Aug 2025 17:38:58 -0700 (PDT)
-Received: from [192.168.1.2] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e6264141asm5588696d6.65.2025.08.28.17.38.54
+        d=1e100.net; s=20230601; t=1756427986; x=1757032786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HjEkIMNq6edKPazSpUHC+a4rJ/7MEeRbNqqydoWKOWQ=;
+        b=mqeNAqQuXU9Qdn6hMhSudbt8qxA86xNVIbaoqOoub7b4dX21yljpgOml3eo6ZEBAIG
+         HyIikhDrDSGoVwX8MFoNDEaASdqbzHob1fVEpi/WX1EiPPa9rkKayOJZLYfqvaQ9NH2x
+         F/FmdZXjVWAralT89AddufOsmFgtbkIn5GMM5LQlJrOfzFIcfeUIMEkafiHd407CR8ZQ
+         aQA2nn+7D1wSBtg3yBCc2m8LOQjTl+znkj5OXFou1hRXXHxNqLWlH33Ydc8U7xy3w0kr
+         s6EAHbVXBwCSdu7hPmqH1FoHIHoJJOhzz+BkfWLuDLT36em7dWUI2dma2GCXQakLyTdw
+         iYKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+9HavAl0YwpCAyQkUGL9KRtT8dxqzDo9SzRAzJzX3EyIPyuJfmip1lvnRvuC1UOc+o0/gNujMQ0=@vger.kernel.org, AJvYcCVTLzWYAlUOpb4toVs3Y39ac3GRVGOP9OzGlPZh+sBgrW0dgNmiSjRkWEvwV7t1nJOp38+cgjAxhLU6RNLU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqjMnDWeuXheeok/mJFU/NlPtNBSmjlBxv5JPfTp3F+0w9YjPT
+	ykqte1wQJxc68oCE+4DMqAdai1BdtBTez3XCTW1N/PqSrP5ZbX7UG6q2e45UyeVp
+X-Gm-Gg: ASbGncsILlntbu9Q2XMhCgkwK+EcnOGVHiMh+zLCg2VYngzg7dtwpYR07+LiHm6v9UO
+	BWxNJJb/8+aAyFCknaFIofjEuoRXsr7o7efRHhN4KKig6Za0/wZQT3SnI/9rP1QfuF2Gdl0cJe1
+	VEo90mQZMj8NpkK1Z3UpkoNdV3kJarBeSv1NuLP33wT+QmS+C+64LUsu0qeZCZbP19tn+CXGv1J
+	Q8+XD4B09pWfxnC0zyI4ZPo1ZmVgjb6PTAHbnMmBAQvq7HLwhoZQCdN/3Un4xoloeGBlBKsRCqB
+	4lyhRhTMAiBFDOzb04CZaSzEqA/YT7lCRizhukgGF3ue7fysdTZ5qZz4yLpj4XyNqFyFRRRrbvV
+	6TvZpecMa+D9M29iAXuE6MNGCsKxH/9ROqo9F
+X-Google-Smtp-Source: AGHT+IF1YudI+s6sw6sE+IWUiy2Mn4oQ7GQtenPTE2oA54T0F42+6rBSBMBC1LrlEzomvfn55tPh7w==
+X-Received: by 2002:a17:90b:4c50:b0:327:ce6d:9873 with SMTP id 98e67ed59e1d1-327ce6d98dbmr3634593a91.6.1756427986323;
+        Thu, 28 Aug 2025 17:39:46 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f592587sm6412248a91.9.2025.08.28.17.39.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 17:38:55 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 28 Aug 2025 20:38:27 -0400
-Subject: [PATCH 8/8] clk: zynqmp: divider: convert from round_rate() to
- determine_rate()
+        Thu, 28 Aug 2025 17:39:45 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 19D34420A933; Fri, 29 Aug 2025 07:39:42 +0700 (WIB)
+Date: Fri, 29 Aug 2025 07:39:42 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: MD Danish Anwar <danishanwar@ti.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Fan Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
+ RPMSG-ETH Driver
+Message-ID: <aLD2zmMy3mzgLSWC@archie.me>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-2-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-clk-round-rate-v2-v1-8-b97ec8ba6cc4@redhat.com>
-References: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
-In-Reply-To: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, 
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
- Michal Simek <michal.simek@amd.com>, Bjorn Andersson <andersson@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Maxime Ripard <mripard@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756427914; l=2556;
- i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=58n95bQC3o+Nb/L33jeFcmWnqEOz/8LpB+ZJ4315jbA=;
- b=uy+XUWiCv9yIjSAyrE0/4I1CLGHob+UIZ+EQxuc1qyVM5xq9Nhgg1+JCuBhoLqxMKDOrEirQl
- MnnF6BAHL2DDr0riIPtjEh4AcWFPyXh0pP1ewj5MPPjAgu3gyCxOVpL
-X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
- pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0rED3SbdtTerq1Fh"
+Content-Disposition: inline
+In-Reply-To: <20250723080322.3047826-2-danishanwar@ti.com>
 
-The round_rate() clk ops is deprecated, so migrate this driver from
-round_rate() to determine_rate() using the Coccinelle semantic patch
-on the cover letter of this series.
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/zynqmp/divider.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+--0rED3SbdtTerq1Fh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index 5a00487ae408be4ffd586704859b232e934c1f6e..c824eeacd8ebd4d670d78f1af2186e61008bdae2 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -118,9 +118,8 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
-  *
-  * Return: 0 on success else error+reason
-  */
--static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
--					  unsigned long rate,
--					  unsigned long *prate)
-+static int zynqmp_clk_divider_determine_rate(struct clk_hw *hw,
-+					     struct clk_rate_request *req)
- {
- 	struct zynqmp_clk_divider *divider = to_zynqmp_clk_divider(hw);
- 	const char *clk_name = clk_hw_get_name(hw);
-@@ -145,17 +144,21 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
- 		if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
- 			bestdiv = 1 << bestdiv;
- 
--		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
-+		req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, bestdiv);
-+
-+		return 0;
- 	}
- 
- 	width = fls(divider->max_div);
- 
--	rate = divider_round_rate(hw, rate, prate, NULL, width, divider->flags);
-+	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-+				       NULL, width, divider->flags);
- 
--	if (divider->is_frac && (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && (rate % *prate))
--		*prate = rate;
-+	if (divider->is_frac && (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) &&
-+	    (req->rate % req->best_parent_rate))
-+		req->best_parent_rate = req->rate;
- 
--	return rate;
-+	return 0;
- }
- 
- /**
-@@ -199,13 +202,13 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops zynqmp_clk_divider_ops = {
- 	.recalc_rate = zynqmp_clk_divider_recalc_rate,
--	.round_rate = zynqmp_clk_divider_round_rate,
-+	.determine_rate = zynqmp_clk_divider_determine_rate,
- 	.set_rate = zynqmp_clk_divider_set_rate,
- };
- 
- static const struct clk_ops zynqmp_clk_divider_ro_ops = {
- 	.recalc_rate = zynqmp_clk_divider_recalc_rate,
--	.round_rate = zynqmp_clk_divider_round_rate,
-+	.determine_rate = zynqmp_clk_divider_determine_rate,
- };
- 
- /**
+On Wed, Jul 23, 2025 at 01:33:18PM +0530, MD Danish Anwar wrote:
+> +References
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +- RPMSG Framework Documentation: https://www.kernel.org/doc/html/latest/=
+rpmsg.html
+> +- Linux Networking Documentation: https://www.kernel.org/doc/html/latest=
+/networking/index.html
 
--- 
-2.50.1
+Instead of using external link to kernel docs, you can also use internal
+cross-references, simply by mentioning the docs path
+(Documentation/staging/rpmsg.rst and Documentation/networking/index.rst in =
+this
+case).
 
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--0rED3SbdtTerq1Fh
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaLD2ygAKCRD2uYlJVVFO
+o/BgAQDSPVFRGptmLhUre16UZlfqM4csP5BAL3DpOqI3M0PBFwD9E23OnP9+Hc+f
+9uGYvqSKZzSpJCye5e9AriAOLF2HfgY=
+=hJ6M
+-----END PGP SIGNATURE-----
+
+--0rED3SbdtTerq1Fh--
 
