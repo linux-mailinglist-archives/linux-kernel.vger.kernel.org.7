@@ -1,98 +1,206 @@
-Return-Path: <linux-kernel+bounces-792572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83BEB3C5C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F1AB3C5DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AE2A08B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2CD1C881D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3F22D876F;
-	Fri, 29 Aug 2025 23:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC16273D92;
+	Fri, 29 Aug 2025 23:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4sVsBcv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QwpIW/gI"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806EE481B1;
-	Fri, 29 Aug 2025 23:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F46A35CEA8
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 23:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756511800; cv=none; b=T37ojdNuDEcB6EZlP7C/QrNmH2BqDT3ag0Rstc6GdG1Cf7gl1SjvubHko9dgYCu+KI//4l0ktZerWYjhEt4PumyFi1Jixwg8y/ej4vDiCLlll6kZov8QPywxniBzEFH83heT9dwCuzJanb9YnnQVcAy4l60ZViqSwd2e9rxx2i4=
+	t=1756511909; cv=none; b=U61AloucqBbiQGeZHOHa9TQxioShskhgwVNuEewYXi/THXowKEuwXXKUdBY3Qi0rMyKjup17hahpEkyiMuR/x1COL/2rjVuO6P2apXfbhSfEZRec/IH0gzPnzaTKTrfTtDG+gqdG/cz3j8q530tT5JAU4Wn/5TmvZXgOu6T+gwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756511800; c=relaxed/simple;
-	bh=ouc/bJmp7GXyTRNlmBqsUP2nU3STV9Zvh8kLahwbmfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HninschpC0R38pf5zBQKanN7r5gBhdstRSjHi6J6AdtV1R96j0kfUgqDg76GMThZF1PAHy6VPkYUOsO/N/1gsyLBCEJoKtT9qSEsjl2MDI3Fpg+4uv/keC0XjxjKpst+HC+Tfzlv1oI54F+LWXtSSTNuHYp5tnb5S0eJ8T+JRWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4sVsBcv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F6BCC4CEF0;
-	Fri, 29 Aug 2025 23:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756511800;
-	bh=ouc/bJmp7GXyTRNlmBqsUP2nU3STV9Zvh8kLahwbmfM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y4sVsBcvMQNw26wmpHHwYytfQCRXoygGXfFOU4hEsvfIXL9HU4QnS4tOelriL4p+3
-	 BGVAZdeG+YtrHnD0XU9uHP6eQQ/NpxBJGQGefa8Eswa93hdHbrC7vpwZQFqKeVzrHt
-	 pJ8z0VJa/MEcGFG0ijaA5Y+P+HaOs9DmAjeKnyFpLqFvMOGJvTmaRqir3nJmRHJIKH
-	 HqErAVYw3m/F2yhdS5ToVL2sJFWAAuFYxXDr6PYQ+V7jH8vOSNTJ13bFf6mAnzfWAS
-	 tUtw4y/x8YGejtQi0fnFJ4fIj/edbqFSmRDLN+5b9ot+3wv8CNbuODw2Rhq3IrSx66
-	 FnE2u1l/6iZ/A==
-Date: Fri, 29 Aug 2025 16:56:38 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Schmidt
- <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
- callback
-Message-ID: <20250829165638.3b50ea2a@kernel.org>
-In-Reply-To: <e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
-	<20250813174408.1146717-6-ivecera@redhat.com>
-	<20250818192943.342ad511@kernel.org>
-	<e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
+	s=arc-20240116; t=1756511909; c=relaxed/simple;
+	bh=8itxN2CvlAYGgXC2jkdop3/WfWUI/Yu8r0UJfeNgHxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0NAiy1qW0VIf87z18h6MNLYdhHQS2Q6E6zDgYFTJSv3uzWcBRPTwacSoLUKRbYAoY8CjoIJg9EZzJu7yfs6+cQ/ygflAC95DefC+wQ1Jzbhv6nKmwa1xyhPcIRKEeegmVVo8yfnj4JkPkmqPNvwsbrp2vz/7lY4xgUFnGftlGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QwpIW/gI; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-248cb0b37dfso25125195ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756511907; x=1757116707; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZkOb/hPcVe8gnDPdefZkpPuz6ZACFjeMAIL1vSEcE4=;
+        b=QwpIW/gIhYlW+ZpPfejRKNhjd/ujxeMTbooCX4wz3WvJjglfFIruZN+Qqr9JE7X9Qe
+         9nwYwpkLyV36JGb2Y/FchHTTEBkpb9/OTNYOVADjImUtwuSnmXVS1nVgAfoo2AAAJD1g
+         CnCnuMb+z7rlnyZ2xd02AVjcceyCAS9CXRLzQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756511907; x=1757116707;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ZkOb/hPcVe8gnDPdefZkpPuz6ZACFjeMAIL1vSEcE4=;
+        b=K/1Uvlc4+cbWvFR7wy/WZo+8Jo4WxVAzvEAemDRxSGiqwR/72HocReiifDcLKXiI6Y
+         6Sx8/wB46x6COiYWnkf/IRecxJAZ3KmLWOHpIniLjQKM8gES2wP6YL1eaPID3TJkm31X
+         nTQ5Tf2NrTJAINTosRK/lI0IcRmX0g0YqgOBxladhi2r1uXTkM6s/0dfCQL62AN2yQcO
+         JX+kgpewYG/z0huJR6kW8xRDqvBRAnKkSjdPLH928IVeQq1IVAA8T2FnUgZpSXdF6O30
+         kpDLVTsOA3oIi6pzPwll5wAY7sisQCP3qW4uBPDpCI2ja5iKmKEMbmkaw9q0VCRGA6dv
+         otsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ySHG2dQ6CiJ7OlogSAl9ijG/8fbw4KwW/6avjv017flb46WdI1KZj84zBAJVk6NNwhRYlfNpnpZAyRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkBwDyNOGBpkZTJ3aTx6dhvBGaPnOH3Am7cBToOqahgqbxvrmP
+	J9rcEcct9AnpRjl6Q28l9I/jOzIeKs230MxM9mxgVHhKYBjtjSLRdmd0LORt8rY7cA==
+X-Gm-Gg: ASbGnctiiJgPJH4BM/dNXNaMEdmyzWJryVcrBlZ9MI/YvWj/5EgwrZzwbMUmgE9R0CK
+	DSJCfwexxZncwMUe8i5EEoEZD0x4UOKaO6u2LTmrY/9BVzNtnP12jIg25sfktnZCWidGbyVHWoa
+	X9WO0dO/+SIo417afgcvo9rVkFkOGnDPDB4fEGunO4N3HRVFedaLym9kUXaExQr4zPebel9/FJ3
+	0Jclj0z5YEQxHb+Jt2y+4L64GZnZg9sF5tR/E7+bc+Gzd2iZJ2j3vpG1kv403ttMIK6djfTfoql
+	Z2Rkp80PgTzL3jiCv39NPyjf1PFiRGLqr3wulSFezeTIRputi7+Vlv2aawrdwp8FjNVHokI/waX
+	xogydGHenW+N9rM6YPs9QlkVaG9/uSqCoOlX/eWHa53axDIEHmE+E7OlEXuP2
+X-Google-Smtp-Source: AGHT+IFvZvVbN+tcqDt9IuyuJa1uB30zy62FBhMsBU2d4G2xup0DO7jJDkNE7M+ZQIjDPW8i5FxZDw==
+X-Received: by 2002:a17:903:2308:b0:249:33da:b3a with SMTP id d9443c01a7336-249448ad928mr5527165ad.14.1756511906811;
+        Fri, 29 Aug 2025 16:58:26 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:1d4b:87a6:eef4:9438])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24906390e6bsm36386045ad.96.2025.08.29.16.58.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 16:58:25 -0700 (PDT)
+Date: Fri, 29 Aug 2025 16:58:24 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: manivannan.sadhasivam@oss.qualcomm.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Niklas Cassel <cassel@kernel.org>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH v6 2/4] PCI: host-common: Add link down handling for Root
+ Ports
+Message-ID: <aLI-oKWVJHFfst-i@google.com>
+References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
+ <20250715-pci-port-reset-v6-2-6f9cce94e7bb@oss.qualcomm.com>
+ <aLC7KIoi-LoH2en4@google.com>
+ <aLFmSFe5iyYDrIjt@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLFmSFe5iyYDrIjt@wunner.de>
 
-On Fri, 29 Aug 2025 16:49:22 +0200 Ivan Vecera wrote:
-> >> +		/* Leave flashing mode */
-> >> +		zl3073x_flash_mode_leave(zldev, extack);
-> >> +	}
-> >> +
-> >> +	/* Restart normal operation */
-> >> +	rc = zl3073x_dev_start(zldev, true);
-> >> +	if (rc)
-> >> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");  
+Hi Lukas,
+
+On Fri, Aug 29, 2025 at 10:35:20AM +0200, Lukas Wunner wrote:
+> On Thu, Aug 28, 2025 at 01:25:12PM -0700, Brian Norris wrote:
+> > On the flip side: it's not clear
+> > PCI_ERS_RESULT_NEED_RESET+pci_channel_io_normal works as documented
+> > either. An endpoint might think it's requesting a slot reset, but
+> > pcie_do_recovery() will ignore that and skip reset_subordinates()
+> > (pci_host_reset_root_port()).
 > > 
-> > And also we can't really cleanly handle the failure case.
+> > All in all, the docs sound like endpoints _should_ have control over
+> > whether we exercise a full port/slot reset for all types of errors. But
+> > in practice, we do not actually give it that control. i.e., your commit
+> > message is correct, and the docs are not.
 > > 
-> > This is why I was speculating about implementing the down/up portion
-> > in the devlink core. Add a flag that the driver requires reload_down
-> > to be called before the flashing operation, and reload_up after.
-> > This way not only core handles some of the error handling, but also
-> > it can mark the device as reload_failed if things go sideways, which
-> > is a nicer way to surface this sort of permanent error state.  
+> > I have half a mind to suggest the appended change, so the behavior
+> > matches (some of) the docs a little better [1].
 > 
-> This makes sense... The question is if this should reuse existing
-> .reload_down and .reload_up callbacks let's say with new devlink action
-> DEVLINK_RELOAD_ACTION_FW_UPDATE or rather introduce new callbacks
-> .flash_update_down/_up() to avoid confusions.
+> A change similar to the one you're proposing is already queued on the
+> pci/aer topic branch for v6.18:
+> 
+> https://git.kernel.org/pci/pci/c/d0a2dee7d458
 
-Whatever makes sense for your driver, for now. I'm assuming both ops
-are the same, otherwise you wouldn't be asking? It should be trivial
-for someone add the extra ops later, and just hook them both up to the
-same functions in existing drivers.
+Wow, nice coincidence. It's a reminder I should work off the maintainer
+/ -next branch, instead of just mainline...
+
+> Here's the corresponding cover letter:
+> 
+> https://lore.kernel.org/r/cover.1755008151.git.lukas@wunner.de
+> 
+> There was a discussion why I didn't take the exact same approach you're
+> proposing, but only a similar one:
+> 
+> https://lore.kernel.org/r/aJ2uE6v46Zib30Jh@wunner.de
+> https://lore.kernel.org/r/aKHWf3L0NCl_CET5@wunner.de
+
+Wow, that's a ton of great background and explanation. Thanks!
+
+> > Specifically, I'm trying to see what's supposed to happen with
+> > PCI_ERS_RESULT_CAN_RECOVER. I see that for pci_channel_io_frozen, almost
+> > all endpoint drivers return PCI_ERS_RESULT_NEED_RESET, but if drivers
+> > actually return PCI_ERS_RESULT_CAN_RECOVER, it's unclear what should
+> > happen.
+> > 
+> > Today, we don't actually respect it; pcie_do_recovery() just calls
+> > reset_subordinates() (pci_host_reset_root_port()) unconditionally. The
+> > only thing that return code affects is whether we call
+> > report_mmio_enabled() vs report_slot_reset() afterward. This seems odd.
+> 
+> In the series queued on pci/aer, I've only allowed drivers to opt in
+> to a reset on Non-Fatal Errors.  I didn't dare also letting them opt
+> out of a reset on Fatal Errors.
+
+Right, I can see where the latter is risky. Frankly, while I have
+endpoint drivers suggesting they should be able to do this, I'm not sure
+that's a great idea. Or at least, I can see how it would potentially
+break other clients, as you explain.
+
+> These changes of behavior are always risky, so it seemed prudent to not
+> introduce too many changes at once.  There was no urgent need to also
+> change behavior for Fatal Errors for the use case at hand (the xe graphics
+> driver).  I went through all drivers with pci_error_handlers to avoid
+> breaking any of them.  It's very tedious work, takes weeks.  It would
+> be necessary to do that again when changing behavior for Fatal Errors.
+> 
+> pcieaer-howto.rst justifies the unconditional reset on Fatal Errors by
+> saying that the link is unreliable and that a reset is thus required.
+> 
+> On the other hand, pci-error-recovery.rst (which is a few months older
+> than pcieaer-howto.rst) says in section "STEP 3: Link Reset":
+> "This is a PCIe specific step and is done whenever a fatal error has been
+> detected"
+> 
+> I'm wondering if the authors of pcieaer-howto.rst took that at face value
+> and thought they'd *have* to reset the link on Fatal Errors.
+> 
+> Looking through the Fatal Errors in PCIe r7.0 sec 6.2.7, I think a reset
+> is justified for some of them, but optional for others.  Which leads me
+> to believe that the AER driver should actually enforce a reset only for
+> certain Fatal Errors, not all of them.  So this seems like something
+> worth revisiting in the future.
+
+Hmm, possibly. I haven't looked so closely at the details on all Fatal
+Errors, but I may have a look eventually.
+
+> > All in all, the docs sound like endpoints _should_ have control over
+> > whether we exercise a full port/slot reset for all types of errors. But
+> > in practice, we do not actually give it that control. i.e., your commit
+> > message is correct, and the docs are not.
+> 
+> Indeed the documentation is no longer in sync with the code.  I've just
+> submitted a series to rectify that and cc'ed you:
+> 
+> https://lore.kernel.org/r/cover.1756451884.git.lukas@wunner.de
+
+Thanks! I'll try to take a pass at reviewing, but it may not be prompt.
+
+Thanks again for all the info and work here.
+
+Brian
 
