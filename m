@@ -1,244 +1,493 @@
-Return-Path: <linux-kernel+bounces-791361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8041B3B5EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903FAB3B5F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743E0A03FDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31B91888E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAAB28C00C;
-	Fri, 29 Aug 2025 08:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mNjUIszA"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA5C2877C1
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4427529BDBB;
+	Fri, 29 Aug 2025 08:24:32 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5B427CCE2;
+	Fri, 29 Aug 2025 08:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756455817; cv=none; b=t8sjOYYKGP4sEfLetVi6q+Vy0u7V46jvj+JgCci256HOVL3wIkuOcBMHCZSBAtT9u7CX6K0rqghQL2Q237KvDC7LkzQI2ekihLWNJfp7b5Ctvg+dt0KGb4bimqtdMkm/vFB6F4+wJJvwCHzJ61Vg6uE619flT+ARhwsIVTK4s+Q=
+	t=1756455871; cv=none; b=Q80aOHkr/u5DcT71D067Y3lduZDl9XBfWUASiN2mLMTjoqWzdH8SmaL97kzIfkwREXQbi+2PKNovr+ZuOJdX1A7vSR6IOP7T39wshBaaHBxnds58K4r4PJx0genKZCbx/yYlu2Pa+Dkf0GifruOSFK+zytfQT/AtHmChXxgAJz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756455817; c=relaxed/simple;
-	bh=xGTes06mtZYMNFJqreSYUHvJMcUDjMtDg/R3rA1PYkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=P5uyQTgQgo3/siywAvAffvs41UNFQFD93bOTGUBA3Mk03s2DszzsuWFCn1+3u2Y/Xk/B3CZtMikwjA8reqgrRSLRNZYGi7n5G+lWPmzqkZEBdclOT1mzj+DmeylVFAc3eUBYkj6Pmk8shSJPdMHo5gIKWOZt2HD/Rml305PGNLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mNjUIszA; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250829082327euoutp019ee7c50db0ff74e9595595ef74d4cd84~gL0BSOWdM0521905219euoutp01b
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:23:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250829082327euoutp019ee7c50db0ff74e9595595ef74d4cd84~gL0BSOWdM0521905219euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756455808;
-	bh=F2k3oNVKmD2z45Od1BI3Dy6IUk7Cua4F43r8isdxP40=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=mNjUIszAzM/LwVSIh4t2BNrJfPFuxL55Wo1Ls+U4QDpyUk1wqwnv4zPlfB3NZKVRb
-	 l7MUXoKebzHgW73GjoaZX+Kt03IApOQlueoD/9O5aqA9EjX6WDVg0gtM8rGMrdfiHg
-	 CCG1n+RnxCAiQDAp+xah2iB9o+8FdqFoTSvr+T7c=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250829082327eucas1p130de0bf6c817e36ae3d766c9f9390b36~gL0A1iHgI1853718537eucas1p1l;
-	Fri, 29 Aug 2025 08:23:27 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250829082324eusmtip12cd4f98e106e087b68e5455f37558f0d~gLz96VA5-0543205432eusmtip1M;
-	Fri, 29 Aug 2025 08:23:24 +0000 (GMT)
-Message-ID: <461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
-Date: Fri, 29 Aug 2025 10:23:24 +0200
+	s=arc-20240116; t=1756455871; c=relaxed/simple;
+	bh=HuRBr4DeKf4h0ZHdI9uVOEumW9yYIUjlHyYdC1c6pqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gQrFG7z/zXyzW8bBdUQFpYEF10qtIDfAmyseGtbqywadBc7CF/+yiCkSh1m1yVQvTek01TsVSvBvX5U27zzw+gB7UQgZ9iZ5hr16h7Fk+jVmTgwmHsuvGkiE0KdHuL1E4B3JGI6hK6lvCokPp2R/ZpkLgpITeEx8MRr0gTpZUMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
+	by app2 (Coremail) with SMTP id TQJkCgBnBpWoY7FooQfFAA--.41052S2;
+	Fri, 29 Aug 2025 16:24:10 +0800 (CST)
+From: zhangsenchuan@eswincomputing.com
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	johan+linaro@kernel.org,
+	quic_schintav@quicinc.com,
+	shradha.t@samsung.com,
+	cassel@kernel.org,
+	thippeswamy.havalige@amd.com,
+	mayank.rana@oss.qualcomm.com,
+	inochiama@gmail.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Subject: [PATCH v2 2/2] PCI: eic7700: Add Eswin eic7700 PCIe host controller driver
+Date: Fri, 29 Aug 2025 16:24:05 +0800
+Message-ID: <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
+References: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
-	dianders@chromium.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250829082327eucas1p130de0bf6c817e36ae3d766c9f9390b36
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-X-EPHeader: CA
-X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
-References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
-	<20250814104753.195255-1-damon.ding@rock-chips.com>
-	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
-	<7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
-	<1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
-	<f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
-	<a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
+X-CM-TRANSID:TQJkCgBnBpWoY7FooQfFAA--.41052S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Kw4kCrWrtF15KryxurWkCrg_yoWktFyfpa
+	1UJayYyF48JrW3Wa13AF95uF4avFnxua4UJ39agan7uay3J34kWr1ftry3tF97Cr4kury3
+	J3WUta4xCF43JwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRNSdgDUUUU
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
 
-On 29.08.2025 10:08, Damon Ding wrote:
-> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
->> On 15.08.2025 04:59, Damon Ding wrote:
->>> On 2025/8/15 5:16, Marek Szyprowski wrote:
->>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
->>>>> On 14.08.2025 12:47, Damon Ding wrote:
->>>>>> PATCH 1 is a small format optimization for struct 
->>>>>> analogid_dp_device.
->>>>>> PATCH 2 is to perform mode setting in 
->>>>>> &drm_bridge_funcs.atomic_enable.
->>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
->>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
->>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix 
->>>>>> side.
->>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
->>>>>> PATCH 13 is to apply the panel_bridge helper.
->>>>>
->>>>> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's 
->>>>> Kconfig,
->>>>> so it causes build break:
->>>>>
->>>>> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
->>>>> `drm_bridge_connector_init'
->>>>> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
->>>>>
->>>>> After adding this dependency, the Exynos DP driver stops working. On
->>>>> Samsung Snow Chromebook I observed following issue:
->>>>>
->>>>> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
->>>>> following panel or bridge (-16)
->>>>> [    4.543428] exynos-drm exynos-drm: failed to bind
->>>>> 145b0000.dp-controller (ops exynos_dp_ops): -16
->>>>> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
->>>>> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
->>>>> exynos-dp failed with error -16
->>>>>
->>>>> I will investigate details later in the evening.
->>>>
->>>> The failure is caused by trying to add plat_data->next_bridge twice
->>>> (from exynos_dp's .attach callback, and from analogix' ->bind 
->>>> callback).
->>>>
->>>>
->>>> Best regards
->>>
->>> I see. The bridge attachment for the next bridge was not well thought
->>> out. It may be better to move panel_bridge addition a little forward
->>> and remove next_bridge attachment on the Analogix side. Then, the
->>> Rockchip side and Exynos side can do their own next_bridge attachment
->>> in &analogix_dp_plat_data.attach() as they want.
->>>
->>> Could you please help test the following modifications(they have been
->>> tested on my RK3588S EVB1 Board) on the Samsung Snow Chromebook? ;-)
->>
->> Assuming that I properly applied the malformed diff, it doesn't solve
->> all the issues. There are no errors reported though, but the display
->> chain doesn't work and no valid mode is reported:
->>
->> # dmesg | grep drm
->> [    3.384992] [drm] Initialized panfrost 1.4.0 for 11800000.gpu on 
->> minor 0
->> [    4.487739] [drm] Exynos DRM: using 14400000.fimd device for DMA
->> mapping operations
->> [    4.494202] exynos-drm exynos-drm: bound 14400000.fimd (ops
->> fimd_component_ops)
->> [    4.502374] exynos-drm exynos-drm: bound 14450000.mixer (ops
->> mixer_component_ops)
->> [    4.511930] exynos-drm exynos-drm: bound 145b0000.dp-controller (ops
->> exynos_dp_ops)
->> [    4.518411] exynos-drm exynos-drm: bound 14530000.hdmi (ops
->> hdmi_component_ops)
->> [    4.529628] [drm] Initialized exynos 1.1.0 for exynos-drm on minor 1
->> [    4.657434] exynos-drm exynos-drm: [drm] Cannot find any crtc or 
->> sizes
->> [    4.925023] exynos-drm exynos-drm: [drm] Cannot find any crtc or 
->> sizes
->>
->> # ./modetest -c -Mexynos
->> Connectors:
->> id      encoder status          name            size (mm)       modes
->>     encoders
->> 69      0       disconnected    LVDS-1          0x0             0 
->>       68
->>    props:
->>          1 EDID:
->>                  flags: immutable blob
->>                  blobs:
->>
->>                  value:
->>          2 DPMS:
->>                  flags: enum
->>                  enums: On=0 Standby=1 Suspend=2 Off=3
->>                  value: 0
->>          5 link-status:
->>                  flags: enum
->>                  enums: Good=0 Bad=1
->>                  value: 0
->>          6 non-desktop:
->>                  flags: immutable range
->>                  values: 0 1
->>                  value: 0
->>          4 TILE:
->>                  flags: immutable blob
->>                  blobs:
->>
->>                  value:
->> 71      0       disconnected    HDMI-A-1        0x0             0 
->>       70
->>    props:
->>          1 EDID:
->>                  flags: immutable blob
->>                  blobs:
->>
->>                  value:
->>          2 DPMS:
->>                  flags: enum
->>                  enums: On=0 Standby=1 Suspend=2 Off=3
->>                  value: 0
->>          5 link-status:
->>                  flags: enum
->>                  enums: Good=0 Bad=1
->>                  value: 0
->>          6 non-desktop:
->>                  flags: immutable range
->>                  values: 0 1
->>                  value: 0
->>          4 TILE:
->>                  flags: immutable blob
->>                  blobs:
->>
->>                  value:
->>
->>
->> I will investigate details later this week.
->>
->
-> Could you please provide the related DTS file for the test? I will 
-> also try to find out the reason for this unexpected issue. ;-)
+From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
 
-Unfortunately I didn't find enough time to debug this further. The above 
-log is from Samsung Snow Chromebook, 
-arch/arm/boot/dts/samsung/exynos5250-snow.dts
+Add driver for the Eswin EIC7700 PCIe host controller.
+The controller is based on the DesignWare PCIe core.
 
+Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
+Signed-off-by: Senchuan Zhang<zhangsenchuan@eswincomputing.com>
+---
+ drivers/pci/controller/dwc/Kconfig        |  12 +
+ drivers/pci/controller/dwc/Makefile       |   1 +
+ drivers/pci/controller/dwc/pcie-eic7700.c | 350 ++++++++++++++++++++++
+ 3 files changed, 363 insertions(+)
+ create mode 100644 drivers/pci/controller/dwc/pcie-eic7700.c
 
- > ...
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index ff6b6d9e18ec..1c4063107a8a 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -492,4 +492,16 @@ config PCIE_VISCONTI_HOST
+ 	  Say Y here if you want PCIe controller support on Toshiba Visconti SoC.
+ 	  This driver supports TMPV7708 SoC.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
++config PCIE_EIC7700
++	tristate "ESWIN PCIe host controller"
++	depends on PCI_MSI
++	depends on ARCH_ESWIN || COMPILE_TEST
++	select PCIE_DW_HOST
++	help
++	  Enables support for the PCIe controller in the Eswin SoC
++	  The PCI controller on Eswin is based on DesignWare hardware
++	  It is a high-speed hardware bus standard used to connect
++	  processors with external devices. Say Y here if you want
++	  PCIe controller support for the ESWIN.
++
+ endmenu
+diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+index 6919d27798d1..0717fe73a2a9 100644
+--- a/drivers/pci/controller/dwc/Makefile
++++ b/drivers/pci/controller/dwc/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+ obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+ obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
+ obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
++obj-$(CONFIG_PCIE_EIC7700) += pcie-eic7700.o
+
+ # The following drivers are for devices that use the generic ACPI
+ # pci_root.c driver but don't support standard ECAM config access.
+diff --git a/drivers/pci/controller/dwc/pcie-eic7700.c b/drivers/pci/controller/dwc/pcie-eic7700.c
+new file mode 100644
+index 000000000000..bf942154d971
+--- /dev/null
++++ b/drivers/pci/controller/dwc/pcie-eic7700.c
+@@ -0,0 +1,350 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ESWIN PCIe root complex driver
++ *
++ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
++ *
++ * Authors: Yu Ning <ningyu@eswincomputing.com>
++ *          Senchuan Zhang <zhangsenchuan@eswincomputing.com>
++ */
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++#include <linux/resource.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/iopoll.h>
++#include <linux/reset.h>
++#include <linux/pm_runtime.h>
++
++#include "pcie-designware.h"
++
++struct eswin_pcie {
++	struct dw_pcie pci;
++	void __iomem *mgmt_base;
++	struct clk_bulk_data *clks;
++	struct reset_control *powerup_rst;
++	struct reset_control *cfg_rst;
++	struct reset_control *perst;
++
++	int num_clks;
++};
++
++#define PCIE_PM_SEL_AUX_CLK BIT(16)
++#define PCIEMGMT_APP_LTSSM_ENABLE BIT(5)
++
++#define PCIEMGMT_CTRL0_OFFSET 0x0
++#define PCIEMGMT_STATUS0_OFFSET 0x100
++
++#define PCIE_TYPE_DEV_VEND_ID 0x0
++#define PCIE_DSP_PF0_MSI_CAP 0x50
++#define PCIE_NEXT_CAP_PTR 0x70
++#define DEVICE_CONTROL_DEVICE_STATUS 0x78
++
++#define PCIE_MSI_MULTIPLE_MSG_32 (0x5 << 17)
++#define PCIE_MSI_MULTIPLE_MSG_MASK (0x7 << 17)
++
++#define PCIEMGMT_LINKUP_STATE_VALIDATE ((0x11 << 2) | 0x3)
++#define PCIEMGMT_LINKUP_STATE_MASK 0xff
++
++static int eswin_pcie_start_link(struct dw_pcie *pci)
++{
++	struct device *dev = pci->dev;
++	struct eswin_pcie *pcie = dev_get_drvdata(dev);
++	u32 val;
++
++	/* Enable LTSSM */
++	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++	val |= PCIEMGMT_APP_LTSSM_ENABLE;
++	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++
++	return 0;
++}
++
++static bool eswin_pcie_link_up(struct dw_pcie *pci)
++{
++	struct device *dev = pci->dev;
++	struct eswin_pcie *pcie = dev_get_drvdata(dev);
++	u32 val;
++
++	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
++
++	return ((val & PCIEMGMT_LINKUP_STATE_MASK) ==
++		     PCIEMGMT_LINKUP_STATE_VALIDATE);
++}
++
++static int eswin_pcie_power_on(struct eswin_pcie *pcie)
++{
++	int ret = 0;
++
++	/* pciet_cfg_rstn */
++	ret = reset_control_deassert(pcie->cfg_rst);
++	if (ret) {
++		dev_err(pcie->pci.dev, "cfg signal is invalid");
++		return ret;
++	}
++
++	/* pciet_powerup_rstn */
++	ret = reset_control_deassert(pcie->powerup_rst);
++	if (ret) {
++		dev_err(pcie->pci.dev, "powerup signal is invalid");
++		goto err_deassert_powerup;
++	}
++
++	return ret;
++
++err_deassert_powerup:
++	reset_control_assert(pcie->cfg_rst);
++
++	return ret;
++}
++
++static void eswin_pcie_power_off(struct eswin_pcie *eswin_pcie)
++{
++	reset_control_assert(eswin_pcie->powerup_rst);
++	reset_control_assert(eswin_pcie->cfg_rst);
++}
++
++static int eswin_pcie_host_init(struct dw_pcie_rp *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	struct eswin_pcie *pcie = dev_get_drvdata(pci->dev);
++	int ret;
++	u32 val;
++	u32 retries;
++
++	/* Fetch clocks */
++	pcie->num_clks = devm_clk_bulk_get_all_enabled(pci->dev, &pcie->clks);
++	if (pcie->num_clks < 0)
++		return dev_err_probe(pci->dev, pcie->num_clks,
++				     "failed to get pcie clocks\n");
++
++	ret = eswin_pcie_power_on(pcie);
++	if (ret)
++		return ret;
++
++	/* set device type : rc */
++	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++	val &= 0xfffffff0;
++	writel_relaxed(val | 0x4, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++
++	ret = reset_control_assert(pcie->perst);
++	if (ret) {
++		dev_err(pci->dev, "perst assert signal is invalid");
++		goto err_perst;
++	}
++	msleep(100);
++	ret = reset_control_deassert(pcie->perst);
++	if (ret) {
++		dev_err(pci->dev, "perst deassert signal is invalid");
++		goto err_perst;
++	}
++
++	/* app_hold_phy_rst */
++	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++	val &= ~(0x40);
++	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
++
++	/*
++	 * It takes at least 20ms to wait for the pcie
++	 * status register to be 0.
++	 */
++	retries = 30;
++	do {
++		val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
++		if (!(val & PCIE_PM_SEL_AUX_CLK))
++			break;
++		usleep_range(1000, 1100);
++		retries--;
++	} while (retries);
++
++	if (!retries) {
++		dev_err(pci->dev, "No clock exist.\n");
++		ret = -ENODEV;
++		goto err_clock;
++	}
++
++	/* config eswin vendor id and eic7700 device id */
++	dw_pcie_writel_dbi(pci, PCIE_TYPE_DEV_VEND_ID, 0x20301fe1);
++
++	/* lane fix config, real driver NOT need, default x4 */
++	val = dw_pcie_readl_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL);
++	val &= 0xffffff80;
++	val |= 0x44;
++	dw_pcie_writel_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL, val);
++
++	val = dw_pcie_readl_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS);
++	val &= ~(0x7 << 5);
++	val |= (0x2 << 5);
++	dw_pcie_writel_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS, val);
++
++	/*  config support 32 msi vectors */
++	val = dw_pcie_readl_dbi(pci, PCIE_DSP_PF0_MSI_CAP);
++	val &= ~PCIE_MSI_MULTIPLE_MSG_MASK;
++	val |= PCIE_MSI_MULTIPLE_MSG_32;
++	dw_pcie_writel_dbi(pci, PCIE_DSP_PF0_MSI_CAP, val);
++
++	/* disable msix cap */
++	val = dw_pcie_readl_dbi(pci, PCIE_NEXT_CAP_PTR);
++	val &= 0xffff00ff;
++	dw_pcie_writel_dbi(pci, PCIE_NEXT_CAP_PTR, val);
++
++	return 0;
++
++err_clock:
++	reset_control_assert(pcie->perst);
++err_perst:
++	eswin_pcie_power_off(pcie);
++	return ret;
++}
++
++static const struct dw_pcie_host_ops eswin_pcie_host_ops = {
++	.init = eswin_pcie_host_init,
++};
++
++static const struct dw_pcie_ops dw_pcie_ops = {
++	.start_link = eswin_pcie_start_link,
++	.link_up = eswin_pcie_link_up,
++};
++
++static int eswin_pcie_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct dw_pcie *pci;
++	struct eswin_pcie *pcie;
++	int ret;
++
++	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
++	if (!pcie)
++		return -ENOMEM;
++
++	pci = &pcie->pci;
++	pci->dev = dev;
++	pci->ops = &dw_pcie_ops;
++	pci->pp.ops = &eswin_pcie_host_ops;
++
++	/* SiFive specific region: mgmt */
++	pcie->mgmt_base = devm_platform_ioremap_resource_byname(pdev, "mgmt");
++	if (IS_ERR(pcie->mgmt_base))
++		return dev_err_probe(dev, PTR_ERR(pcie->mgmt_base),
++				     "failed to map mgmt memory\n");
++
++	/* Fetch reset */
++	pcie->powerup_rst = devm_reset_control_get_optional(&pdev->dev,
++							    "powerup");
++	if (IS_ERR_OR_NULL(pcie->powerup_rst))
++		return dev_err_probe(dev, PTR_ERR(pcie->powerup_rst),
++				     "unable to get powerup reset\n");
++
++	pcie->cfg_rst = devm_reset_control_get_optional(&pdev->dev, "cfg");
++	if (IS_ERR_OR_NULL(pcie->cfg_rst))
++		return dev_err_probe(dev, PTR_ERR(pcie->cfg_rst),
++				     "unable to get cfg reset\n");
++
++	pcie->perst = devm_reset_control_get_optional(&pdev->dev, "pwren");
++	if (IS_ERR_OR_NULL(pcie->perst))
++		return dev_err_probe(dev, PTR_ERR(pcie->perst),
++				     "unable to get perst reset\n");
++
++	platform_set_drvdata(pdev, pcie);
++
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
++		goto err_get_sync;
++	}
++
++	ret = dw_pcie_host_init(&pci->pp);
++	if (ret) {
++		dev_err(dev, "failed to initialize host: %d\n", ret);
++		goto err_host_init;
++	}
++
++	return ret;
++
++err_host_init:
++	pm_runtime_put_sync(dev);
++err_get_sync:
++	pm_runtime_disable(dev);
++	return ret;
++}
++
++static void eswin_pcie_remove(struct platform_device *pdev)
++{
++	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
++
++	dw_pcie_host_deinit(&pcie->pci.pp);
++	pm_runtime_put_sync(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	reset_control_assert(pcie->perst);
++	eswin_pcie_power_off(pcie);
++}
++
++static void eswin_pcie_shutdown(struct platform_device *pdev)
++{
++	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
++
++	/* Bring down link, so bootloader gets clean state in case of reboot */
++	reset_control_assert(pcie->perst);
++}
++
++static int eswin_pcie_suspend(struct device *dev)
++{
++	struct eswin_pcie *pcie = dev_get_drvdata(dev);
++
++	reset_control_assert(pcie->perst);
++	eswin_pcie_power_off(pcie);
++	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
++
++	return 0;
++}
++
++static int eswin_pcie_resume(struct device *dev)
++{
++	int ret;
++	struct eswin_pcie *pcie = dev_get_drvdata(dev);
++
++	ret = eswin_pcie_host_init(&pcie->pci.pp);
++	if (ret < 0) {
++		dev_err(dev, "Failed to init host: %d\n", ret);
++		return ret;
++	}
++
++	dw_pcie_setup_rc(&pcie->pci.pp);
++	eswin_pcie_start_link(&pcie->pci);
++	dw_pcie_wait_for_link(&pcie->pci);
++
++	return 0;
++}
++
++static const struct dev_pm_ops eswin_pcie_pm_ops = {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(eswin_pcie_suspend, eswin_pcie_resume)
++};
++
++static const struct of_device_id eswin_pcie_of_match[] = {
++	{ .compatible = "eswin,eic7700-pcie" },
++	{},
++};
++
++static struct platform_driver eswin_pcie_driver = {
++	.driver = {
++		.name = "eic7700-pcie",
++		.of_match_table = eswin_pcie_of_match,
++		.suppress_bind_attrs = true,
++		.pm = &eswin_pcie_pm_ops,
++	},
++	.probe = eswin_pcie_probe,
++	.remove = eswin_pcie_remove,
++	.shutdown = eswin_pcie_shutdown,
++};
++
++module_platform_driver(eswin_pcie_driver);
++
++MODULE_DEVICE_TABLE(of, eswin_pcie_of_match);
++MODULE_DESCRIPTION("PCIe host controller driver for eic7700 SoCs");
++MODULE_AUTHOR("Yu Ning <ningyu@eswincomputing.com>");
++MODULE_AUTHOR("Senchuan Zhang <zhangsenchuan@eswincomputing.com>");
++MODULE_LICENSE("GPL");
+--
+2.25.1
 
 
