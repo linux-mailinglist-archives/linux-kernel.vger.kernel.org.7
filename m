@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-791018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD241B3B12C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88497B3B12E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DAFB7AB721
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D3CA022F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7785A22157E;
-	Fri, 29 Aug 2025 02:50:10 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E9021E0AF;
+	Fri, 29 Aug 2025 02:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeW6ifDR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8168E202C2B
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 02:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55BE1A58D;
+	Fri, 29 Aug 2025 02:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756435810; cv=none; b=Y3XWfQsJSjHeNM4ThgM367rxBww32u7hqMS4TqhUmxKSRAak6djMv4hs4/lE2NtrYu94qrtqkjtc+6wv/Sr2y61bE6ZXi1F27G/9jDavU9awjixz+DuSCdOS12GqYNmdpWbpDKGx4NlAqP0ZuEI8LKmXGusB9afUe/KSV2YaAIw=
+	t=1756435920; cv=none; b=HbgANsIaWad30fgHV+R2A0bHGrzeQaCKDG7Esm+Hqol0PkduGSkimKwbZlwr49LQi+sNLk9wUKGnVOHjtHjmjo+zJlAQeP5FTPh01TTiFarHU4hste0ZSi5Stb9CHcYjwjdTpJpNmbXq0sKoRVfigL0hOldCtH8pRtD0E0Q8tGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756435810; c=relaxed/simple;
-	bh=GrNy7J8g+FD6LOxpmt8aU4OtT0oe1EF37IAPJuKHHZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQDFIY0K9AQm2t5kd7QY4llg3WeQ8jFbJOUSHPklZE2xgU1IfBIYkYNLxV0V2YctJpocrMiNSTVwGKLpYrPZakAyINudSF5zMBygyNYvBNXLDNjEYRYyKJPwP7cqo5ROmgGXq8q22IYXPvB3jDw/aqEKyF812n635/SSjhWOJo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCjRf1f59zYQvLB
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:50:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B99221A0847
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:50:04 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP1 (Coremail) with SMTP id cCh0CgCHRXtbFbFo9EuPAg--.57492S2;
-	Fri, 29 Aug 2025 10:50:04 +0800 (CST)
-Message-ID: <b9396511-810f-4ff6-aead-ceb36dd734b7@huaweicloud.com>
-Date: Fri, 29 Aug 2025 10:50:03 +0800
+	s=arc-20240116; t=1756435920; c=relaxed/simple;
+	bh=1Jif1ziL73F88a8XuYzpyb1G5ZPVF7MdjBrOhu0rLFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZhD5S3G4l4VwbIQuHbQZ0si8TrHGNhveD8MdzG5RuZF8TRXshXsyyXRDToEwcc1ZfvLn8UHQmUVOXs09GDsTVPSf+H8Zp+ECD82KhnIAbV4YHSoQdg2awsrQp0c1YFqkeLqh8KDglxIWOmaWPtfv7ORw41PY+CGnlRZrEI/0gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeW6ifDR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 893FEC4CEEB;
+	Fri, 29 Aug 2025 02:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756435920;
+	bh=1Jif1ziL73F88a8XuYzpyb1G5ZPVF7MdjBrOhu0rLFk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NeW6ifDR+NO8PTcUuURRFW8uolWO4lAUUtTdPbN/Ae7ReIyZqY6toN1DSnCazhDVB
+	 hEEIjzCJgBHuuiP5Un8xMHSCmk1VD8A3R/o5brXDCkhpNr70OvN4WBSwdsuEOGsWN8
+	 /wa3MW/1c/qWSBopKss+CXgNuH7r5po+uyLin/V0ZlPRiSTuAgBUErYIvzWk3wEq7l
+	 kGD0EB6wCk9CkwmLHZ1cERNtq1UTBz1ZC/bjrxBzqhREsZ13dBejXJUjk765AR/iDz
+	 V1aVJXczCGQIg7QiFOicLQV5YjzgmBdNYDlFhUYAWelqJniti/3unbCN3OLjbpT2zT
+	 3aJgDNPyFTCtA==
+Date: Fri, 29 Aug 2025 10:51:52 +0800
+From: Coly Li <colyli@kernel.org>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcache: fixed the issue of low rate at the tail end of
+ dirty data writeback
+Message-ID: <dwxgw72rv3tehln3yj3f66wg3gl664obbxkvmirh7l5bbw4sgq@62mtjzuxftdi>
+References: <20250813032343.18472-1-zhoujifeng@kylinos.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] x86: Prevent KASAN false positive warnings in
- __show_regs()
-To: Dave Hansen <dave.hansen@intel.com>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov
- <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@redhat.com>
-References: <20250818130715.2904264-1-wutengda@huaweicloud.com>
- <1cd29a46-3c17-42ca-af41-ed0a645b29c3@gmail.com>
- <2956719f-58bf-40ac-9c63-6f9a8092ae1d@huaweicloud.com>
- <3767d017-1b98-4874-a356-51b87d993099@intel.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <3767d017-1b98-4874-a356-51b87d993099@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgCHRXtbFbFo9EuPAg--.57492S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813032343.18472-1-zhoujifeng@kylinos.com.cn>
 
-
-
-On 2025/8/28 22:13, Dave Hansen wrote:
-> On 8/28/25 05:06, Tengda Wu wrote:
->> It seems there's no existing on_current_stack function available.
->> Implementing an on_current_stack function would be somewhat
->> challenging for me. 
+On Wed, Aug 13, 2025 at 11:23:43AM +0800, Zhou Jifeng wrote:
+> When c->gc_stats.in_use > BCH_WRITEBACK_FRAGMENT_THRESHOLD_LOW, since the
+> dirty_buckets will not decrease before the GC is triggered, while the
+> number of dirty sectors waiting for write-back will continuously decrease
+> , the fps = dirty / dirty_buckets * fp_term gradually approaches 0.
+> Eventually, when dirty < dirty_buckets, the writeback rate drops to the
+> lowest level. The larger the cache space is, the higher the dirty value
+> will be when the write-back speed of dirty data drops to 4k/s. This is
+> inconsistent with our expectations.
 > 
-> Is there some reason that object_is_on_stack() won't work?
+> This solution is to set the dirty data write-back speed limit to the
+> maximum value when c->gc_stats.in_use is high and dirty < dirty_buckets,
+> so that only a small amount of dirty data can be quickly written back.
+> 
+> Signed-off-by: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+> ---
+>  drivers/md/bcache/writeback.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+> index 453efbbdc8ee..9fc00fe11201 100644
+> --- a/drivers/md/bcache/writeback.c
+> +++ b/drivers/md/bcache/writeback.c
+> @@ -121,6 +121,13 @@ static void __update_writeback_rate(struct cached_dev *dc)
+>  		}
+>  		fps = div_s64(dirty, dirty_buckets) * fp_term;
+>  		if (fragment > 3 && fps > proportional_scaled) {
+> +			/*
+> +			 * When there is only a small amount of dirty data, complete the
+> +			 * write-back operation as quickly as possible.
+> +			 */
+> +			if (fps == 0)
+> +				fps = INT_MAX;
+> +
 
-Ah, that's what it's called! Yes, object_is_on_stack() should work
-perfectly for that. Thanks for the clarification.
+This will cause int overflow when calculating new_rate.
 
--- Tengda
+I agree with your motivation, and this is a bug which should be fixed.
+Let me think how to fix it in a more clear and understoodable way.
 
+Thanks.
+
+Coly Li
+
+
+>  			/* Only overrite the p when fragment > 3 */
+>  			proportional_scaled = fps;
+>  		}
+> -- 
+> 2.18.1
+> 
+> 
 
