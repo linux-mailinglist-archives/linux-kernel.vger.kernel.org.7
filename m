@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-791335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5FFB3B596
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 939E7B3B597
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA5A7B4BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0287BAE30
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC88286D77;
-	Fri, 29 Aug 2025 08:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1692848AF;
+	Fri, 29 Aug 2025 08:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BW2SmmI2"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N+8UhMNy"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88B262FC7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5E6262FC7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756455119; cv=none; b=ZY5TkRzrVIH8H38NAd6Vugw0na6jKQjZLX16xqPGV6toxvZuaVO333c7fxhtjsDjh8kq4NjTpQM2hHPyOAgEoguliD/TqFTZ/pz33pDfUW0LKxYxKS9TIm+UtlRj/RDD567tumM4fc3g/GIgt5ego8NxmWK6uWhja5qE9nB4Z0g=
+	t=1756455131; cv=none; b=f0uFADTibLgwl5vv3NMTaM4hGqHVNixj+grb1Ef+AW35Omf41oqgcuc5hqCHYuZTQd61EkG5CicpXB3fWVf9bTcDd9PkvdA4O10CZYCf41zJVirVxmT9H8wzVVhN6TwJJcVFj/1f09a+QAb0vuazIvta6ZBSfQaztym9IU9fOlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756455119; c=relaxed/simple;
-	bh=ZUYSxlUF7qKLvXuv6cbQk1iZzvwFSgo/Qu0caO5dBEY=;
+	s=arc-20240116; t=1756455131; c=relaxed/simple;
+	bh=bI0ojabawS9r2Sa8dCy9+WJV9AxPHlvYS1/yKCbf+oc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uPuf38K00JmxJR59g0OglQOoqVURMb4LoBFdfO5ANW5DW5sD+hSJx6zQN2X9+V3IEbg0qw5MEim9SWFq4MNpke2cxB29tz8nu05+K2m3yLwNkdH0WzbvbtnXogdYG7rFTtYctntS8qPE1EjbG+xkAfRdaBfBfqgh0rGB3mYSjFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BW2SmmI2; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=QHSlglw3pGqHgIBsw2N5TfMHlhQ2CPjZ+NImWOhEYXLRq9wOYn5FObNJjCY4+W4qzJCiyLLP8sY4H5QrnAczcoOAKw4IHO46isR5y1XQGDz3HrEQN8ybz5rBuMS4JfPAtJJ/emBCR4Gzg3SrUdkDcOCz51EfC2avSxV81Qo6PZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N+8UhMNy; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1667002b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:11:56 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-771f90a45easo1590013b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756455116; x=1757059916; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1756455126; x=1757059926; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6eabj27DX8zdCQcARk0zTIS/c8ApMN/doeFLRhhkp1M=;
-        b=BW2SmmI2ca64Lu850fdrjKMq27KS5H7u/wMst2dPLgw2Efl5iYjs/gRqUOfGpVHBkU
-         /JRbENO1c9QrxW7NtaQlUu41QxqKRdfXafpeSqWb/BzY9CZSAINqzR2XXwUmVBkmj8nP
-         ntQewJ04euL2XMAxaNhSkBrYikRPdAAs7zP2+NmC5c62VRTQMrL9f5pS7hanj81aC58m
-         LSujjyn6FTjEt6Ef79VlV+mELlsuqeFUI1kEvLv3R5ZsoSkIoSQEnTB4Gp3NMj3I3TmI
-         2ZFOiBnV6xC65NFHLsy8cIvx9FrMc4/v7iXYEY3OCD2zdWp7ZWwniJ7Q5dYoc+zQmgG+
-         f2jA==
+        bh=YqBqN7RGE2xf0B17OAlbbwx5XDTDX0izvi88Auw+30o=;
+        b=N+8UhMNyfvgEINWF7ndU+u8yCJHBSgW2Dm7hY/eJz+UbB4JrBTsx91xX1V7d/h4IIF
+         ZJ4OvRCz0qQcfxBvDgs2VVMMFsV7UNyeF9N7j4WA1XHcgyRNY6L8o+nHkHVzdjoQRQAz
+         KHo1dCF2VO5Z3l+zhSX2Furdus48m8Z7Vem8iFKyj0miV/95ON33ukRJJhSVKYZOjlqW
+         pUHg669Qsa24nzcc8jP6iQjJ/jvixFt8uznX86B/uZuUWvkGgzBs9NXtcSEpBtSDwm2v
+         be4+lMmo+h9FRgCw5YWoiO4zxnXaM0SzTwHaJFqhNJQcC0c6NGlKgkPSzIPVoSayvAXZ
+         K8UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756455116; x=1757059916;
+        d=1e100.net; s=20230601; t=1756455126; x=1757059926;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6eabj27DX8zdCQcARk0zTIS/c8ApMN/doeFLRhhkp1M=;
-        b=jZS4kjWICa2n2cN+GmmIeSC1sBCWxo6cuq5Yxu9xz7r5alFS3dppYcoqLAJHQQ2LQ2
-         hQAY6D929CQiLQGCoErybWXZet6T4+xBKNmE/Kayt8KZMJG4P/i8wVpt9plDoxj/O8h+
-         iGSay9E/g36wlAseDp6OCCR5TRO1pxN5CUiWOBAvZvEDRYs42YY/nOOM8gI5IdZZLbmJ
-         1+c6BvZ2JWaHJUNi1mXv+v2Dicfr3QXKVrIziz76v6/PCcAr0EGXsMyyELUgF6oJLDjz
-         5MpDgCF0d8PEeaCBdJRjaTJtN/fuuM1LmZG0y2cqeoQSZO9SiPg1o8CVfYsU1RUbuiEb
-         aKlg==
-X-Gm-Message-State: AOJu0Ywb5mxe5rf2gMHAzic1YWFEKsOU5Qe3tlw+p3Iuewgc3tvZQi4f
-	jMUMZlrdXKXfM5r3VeW6YsrOcU6KMGSGqAnBnh/W5/kvRy1PHIqmf2xKT2NOgMo+6g==
-X-Gm-Gg: ASbGncupnLPF6sI6CNrZpD8e2X6aKP0yfRvU9afQ0FfeI5rlbNATegnQy0B7B451Lkf
-	jNKbUyE2A02PwKNIxPCvvYjwnOw3g4vIoXoPM4oPOCkLEKcm1KzmoF+5Ny7WeCoFhDy/xTqCAbS
-	jwNfyF7q02czFE5F/qNFzshBx95VTCuojCFtR7GhkU44+S7f3dJ5wetMdwF540i3OhBWMTOh9ZG
-	ByPTmXdEeXDGR/3zaCSiZHkpVjRSEVHBqWDOqN+7wZL0D9MwPXLOugwFjMOuuuDLdI3aV+GYCUm
-	pLAByz0bGuMngwlDUIhtQuVtx5yr7NIWTFzUP0a0DsmQhwjXHjUJKoVVknax0Uks+KUisQ7Lj5K
-	6KTtmHMuWPc7eTmYPcP/el5WuYGCXexmQnxJ2Dl50zADGidcmIF5MvmDeC0Kbta2Wzmwj
-X-Google-Smtp-Source: AGHT+IEk5+0icej1GKS7ldwjM8iNlE0toZfC28/3mzJrnL3tTxhHNSdeCeNEs8V5Xx9L2Q0j2f0SJQ==
-X-Received: by 2002:a05:6a21:32a5:b0:222:ca3f:199 with SMTP id adf61e73a8af0-2438fad2e7fmr18134003637.18.1756455116359;
-        Fri, 29 Aug 2025 01:11:56 -0700 (PDT)
+        bh=YqBqN7RGE2xf0B17OAlbbwx5XDTDX0izvi88Auw+30o=;
+        b=lvf1ZizECaDlblM+MH8efSVHF3CSHd47eOi4/pq/Jleieao44pWeiLpLHp+siri5fR
+         67Nk3vyfsw1g6IpW86g06yIRv6tIvtvrePE/5ge5D4G3ktx5C78a5WFDbXUABFO4lp7z
+         FQvvD7YNq+9VX5QmGWh/kJHYO8Qb0ITLl6oNa4Zvtyktwu1U60hmHDO2c/mic0GKvh4K
+         TtSHufa5xK70JUe1u17ObyEVocTZEAc/fzKsMRxtpewU58x7I/qcE+MOiS0hRtPS6p0I
+         Ao3NAPM95WomstEYC8sidDxU0ckuA/xBWfAjbuwDVKREM9sdk6fMgrKLemakIabIK0G9
+         AdVA==
+X-Gm-Message-State: AOJu0YxNj5Ph204t6WH8v2TVq3z1c6G0UBPgsDiTa8sFgY7X3FpomZOj
+	Qzyt6TddYE+NIqh43hivytJt+fmr6bnyj1ZY6JfFx2ikJ7IMRoc7w/C+kscn7tq3pg==
+X-Gm-Gg: ASbGncskxtGARuav01/BZNSQaU4Szpq+35Yiu2y1ibKgozFAULDi3xnUggqDoiQdOE+
+	yaXeJzSsATMzSYoF0TDWq6TPelo7Fr1GgDjzytYR3dOD4brapfZ4rGXe61w/ShWBnL+MEpHHi13
+	1H3EW9EVWMI41TwXyeskE57zjIEKbQzn/qXAMw0ALyManSpUuWE/mccSYi1BnyU+6rsQQ8jJVB8
+	DSV0s/YwOPSzOWJ3Qi69Q8PKquc9Da8kEcC9iqab0daDYQfCpGmtUyALVMFhD6AVHoKKSxtuzdV
+	W+ywmfK4OOY2Yg3H+oBfgmmNzOgOuHu15hL/jhRytjRrMDSFN1qsq0SuhWqgnu9nx50/S1uQhCJ
+	o1sDrh9qrQjB8zdyIjtxw1TV3EJBcoFSl1c8nwNu9kdOAUvDpyTGAoNH1knFWSvpZNlFcxMD9+R
+	SUtjA=
+X-Google-Smtp-Source: AGHT+IG0VewZhZ9wi59ZJSVEZ4ujuQDfpIkOFxwtMeBsFoAqRomMI7/6sYWU1XjAH/eUKDnfmkLtqQ==
+X-Received: by 2002:a05:6a00:4f85:b0:772:1a0:f772 with SMTP id d2e1a72fcca58-77201a0fdf6mr14375397b3a.28.1756455125931;
+        Fri, 29 Aug 2025 01:12:05 -0700 (PDT)
 Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2da9c6sm1601419b3a.42.2025.08.29.01.11.47
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2da9c6sm1601419b3a.42.2025.08.29.01.11.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 01:11:55 -0700 (PDT)
+        Fri, 29 Aug 2025 01:12:05 -0700 (PDT)
 From: Aaron Lu <ziqianlu@bytedance.com>
 To: Valentin Schneider <vschneid@redhat.com>,
 	Ben Segall <bsegall@google.com>,
@@ -94,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Matteo Martelli <matteo.martelli@codethink.co.uk>,
 	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v4 1/5] sched/fair: Add related data structure for task based throttle
-Date: Fri, 29 Aug 2025 16:11:16 +0800
-Message-Id: <20250829081120.806-2-ziqianlu@bytedance.com>
+Subject: [PATCH v4 2/5] sched/fair: Implement throttle task work and related helpers
+Date: Fri, 29 Aug 2025 16:11:17 +0800
+Message-Id: <20250829081120.806-3-ziqianlu@bytedance.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250829081120.806-1-ziqianlu@bytedance.com>
 References: <20250829081120.806-1-ziqianlu@bytedance.com>
@@ -110,103 +111,111 @@ Content-Transfer-Encoding: 8bit
 
 From: Valentin Schneider <vschneid@redhat.com>
 
-Add related data structures for this new throttle functionality.
+Implement throttle_cfs_rq_work() task work which gets executed on task's
+ret2user path where the task is dequeued and marked as throttled.
 
 Tested-by: Valentin Schneider <vschneid@redhat.com>
 Tested-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
-Tesed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
 ---
- include/linux/sched.h |  5 +++++
- kernel/sched/core.c   |  3 +++
- kernel/sched/fair.c   | 13 +++++++++++++
- kernel/sched/sched.h  |  3 +++
- 4 files changed, 24 insertions(+)
+ kernel/sched/fair.c | 65 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 5b4e1cd52e27a..e0cc1d6df8122 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -880,6 +880,11 @@ struct task_struct {
- 
- #ifdef CONFIG_CGROUP_SCHED
- 	struct task_group		*sched_task_group;
-+#ifdef CONFIG_CFS_BANDWIDTH
-+	struct callback_head		sched_throttle_work;
-+	struct list_head		throttle_node;
-+	bool				throttled;
-+#endif
- #endif
- 
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f7f576ad9b223..3f7925b216911 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4484,6 +4484,9 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	p->se.cfs_rq			= NULL;
-+#ifdef CONFIG_CFS_BANDWIDTH
-+	init_cfs_throttle_work(p);
-+#endif
- #endif
- 
- #ifdef CONFIG_SCHEDSTATS
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c2..8fff40fcbc425 100644
+index 8fff40fcbc425..dab4ed86d0c82 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5748,6 +5748,18 @@ static inline int throttled_lb_pair(struct task_group *tg,
+@@ -5748,8 +5748,51 @@ static inline int throttled_lb_pair(struct task_group *tg,
  	       throttled_hierarchy(dest_cfs_rq);
  }
  
-+static void throttle_cfs_rq_work(struct callback_head *work)
++static inline bool task_is_throttled(struct task_struct *p)
 +{
++	return cfs_bandwidth_used() && p->throttled;
 +}
 +
-+void init_cfs_throttle_work(struct task_struct *p)
-+{
-+	init_task_work(&p->sched_throttle_work, throttle_cfs_rq_work);
-+	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
-+	p->sched_throttle_work.next = &p->sched_throttle_work;
-+	INIT_LIST_HEAD(&p->throttle_node);
-+}
-+
- static int tg_unthrottle_up(struct task_group *tg, void *data)
++static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags);
+ static void throttle_cfs_rq_work(struct callback_head *work)
  {
- 	struct rq *rq = data;
-@@ -6472,6 +6484,7 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	cfs_rq->runtime_enabled = 0;
- 	INIT_LIST_HEAD(&cfs_rq->throttled_list);
- 	INIT_LIST_HEAD(&cfs_rq->throttled_csd_list);
-+	INIT_LIST_HEAD(&cfs_rq->throttled_limbo_list);
++	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
++	struct sched_entity *se;
++	struct cfs_rq *cfs_rq;
++	struct rq *rq;
++
++	WARN_ON_ONCE(p != current);
++	p->sched_throttle_work.next = &p->sched_throttle_work;
++
++	/*
++	 * If task is exiting, then there won't be a return to userspace, so we
++	 * don't have to bother with any of this.
++	 */
++	if ((p->flags & PF_EXITING))
++		return;
++
++	scoped_guard(task_rq_lock, p) {
++		se = &p->se;
++		cfs_rq = cfs_rq_of(se);
++
++		/* Raced, forget */
++		if (p->sched_class != &fair_sched_class)
++			return;
++
++		/*
++		 * If not in limbo, then either replenish has happened or this
++		 * task got migrated out of the throttled cfs_rq, move along.
++		 */
++		if (!cfs_rq->throttle_count)
++			return;
++		rq = scope.rq;
++		update_rq_clock(rq);
++		WARN_ON_ONCE(p->throttled || !list_empty(&p->throttle_node));
++		dequeue_task_fair(rq, p, DEQUEUE_SLEEP | DEQUEUE_SPECIAL);
++		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
++		p->throttled = true;
++		resched_curr(rq);
++	}
  }
  
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d3f33d10c58c9..06cc7722226b4 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -742,6 +742,7 @@ struct cfs_rq {
- 	int			throttle_count;
- 	struct list_head	throttled_list;
- 	struct list_head	throttled_csd_list;
-+	struct list_head        throttled_limbo_list;
- #endif /* CONFIG_CFS_BANDWIDTH */
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- };
-@@ -2661,6 +2662,8 @@ extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+ void init_cfs_throttle_work(struct task_struct *p)
+@@ -5789,6 +5832,26 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
+ 	return 0;
+ }
  
- extern void init_dl_entity(struct sched_dl_entity *dl_se);
- 
-+extern void init_cfs_throttle_work(struct task_struct *p);
++static inline bool task_has_throttle_work(struct task_struct *p)
++{
++	return p->sched_throttle_work.next != &p->sched_throttle_work;
++}
 +
- #define BW_SHIFT		20
- #define BW_UNIT			(1 << BW_SHIFT)
- #define RATIO_SHIFT		8
++static inline void task_throttle_setup_work(struct task_struct *p)
++{
++	if (task_has_throttle_work(p))
++		return;
++
++	/*
++	 * Kthreads and exiting tasks don't return to userspace, so adding the
++	 * work is pointless
++	 */
++	if ((p->flags & (PF_EXITING | PF_KTHREAD)))
++		return;
++
++	task_work_add(p, &p->sched_throttle_work, TWA_RESUME);
++}
++
+ static int tg_throttle_down(struct task_group *tg, void *data)
+ {
+ 	struct rq *rq = data;
+@@ -6652,6 +6715,8 @@ static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq) { return false; }
+ static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
+ static inline void sync_throttle(struct task_group *tg, int cpu) {}
+ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
++static void task_throttle_setup_work(struct task_struct *p) {}
++static bool task_is_throttled(struct task_struct *p) { return false; }
+ 
+ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+ {
 -- 
 2.39.5
 
