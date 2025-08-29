@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-791134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9868B3B25B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:16:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EC0B3B25E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEB71C82E25
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:16:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 590F417380F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804E421D3F4;
-	Fri, 29 Aug 2025 05:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA7C1DFD96;
+	Fri, 29 Aug 2025 05:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPZqy6+Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTvrjMh4"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07B720F08E;
-	Fri, 29 Aug 2025 05:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1C18488
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756444580; cv=none; b=lQOGx70wxZ1N+E/Dis3vYT21WQ4m3il/N5tZDHZKcd4WvKpN1/Mp746CVTKRhZy91HSFcaxw0b/8pE9w1AacG04MXvvInZfIQQA5as+9A3XeKljvh9wD989DaEdUb2HeUGKiU8/6wjJvKHpdms14xJ3zr+PaXce8eMCuRb04Jq8=
+	t=1756444736; cv=none; b=b2LGgf1R5M20YZjST4hsxOqM+8yD5KYyMQS7Z5IbRxaATfsaA96YR6bnihuaf3Mq6Mb17pakL4XmxyJNcW5PuKgZ5XQhnM69FxFkTcUyWk0Gp6MHFNqidn3/IgyAItAXAt5j94/vxGuakaXwFTYHCoVUwYmLV28mf2IynJc33ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756444580; c=relaxed/simple;
-	bh=SGZ/ztM0Jh+alQljhSybFcNPM0P2ohWIF7g13dEMIfs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cFbo19lDU4h1V3ulHiBFMQNWaRWocdOxmWulFVitIaqmnO7V73ct/hVsgEd/gOyjk0qnl/hVVy260PkRqsZSc919oF72q9yVlvLEDQKfO6d5uYC7QP3p6mseiTl5IULSuCmr69fNV9XwdDEawvzsbM3ep+IciCw9VEQP57cQq/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPZqy6+Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4E8EEC4AF09;
-	Fri, 29 Aug 2025 05:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756444580;
-	bh=SGZ/ztM0Jh+alQljhSybFcNPM0P2ohWIF7g13dEMIfs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=TPZqy6+QmXsYc/+CGukthovVe8FlDnC7irWBe17LoP+rAMXz1lrmX3uZvumG++MhT
-	 t2eEx6uEYXJzOPx90D5vhSMkbNHtbec5foMKo719UYeiSgRSfQueOpL9cu1LSK6i0Z
-	 0IdUQcT+CKW4psslIUfAD3e68Rn5skU8032LlKsM05nDQ895obccHSjDAs7kZJUroK
-	 Kc3CABsPRg/+d0bW/XLoicXsdhq+1xZeVw5MikK0HSv20EVPoDgU6mCk/a5plCyZyD
-	 VuvrRcE29kaNnUQas/rsPBQPu6V7vA0OP9JuRc65VAQUAt0zRJBgwaauTNxLYaQwWg
-	 ow1slnfKv6HvQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA63C8303F;
-	Fri, 29 Aug 2025 05:16:20 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 29 Aug 2025 13:16:15 +0800
-Subject: [PATCH v4 3/3] MAINTAINERS: Add an entry for Amlogic spifc driver
+	s=arc-20240116; t=1756444736; c=relaxed/simple;
+	bh=mETEVWysb+5yCm8hyHeF+B/s1k3PP7u8CxaQ8Cg+WGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bzJpM2VWf2wkdKioAC9lk6BW7Y/i2in3K3QEJCzEHZkODCvf3toH5/0Wb9Ot/qTwXviOP7ZTogSQQU2DDDcFyk6AHQQOi6NQhJcVV24vXdwfj5mpgV7a06vhcK2QPBwnCOfm6JvIIplszmG7II+svqy3Rp8aWIn8qgcA6WN55j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTvrjMh4; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e67c95so1791886a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756444734; x=1757049534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hixLdvtLzKwXakjYFiKgvIvr5deLAlnG6kTAvz81yYY=;
+        b=NTvrjMh4yxITwONparcCHRK8VZUJW5YKF29IVBpDy0C+sbO0m2yXE2KJmdsVClAUvX
+         Bgdh9PKWOi8vbnL3WXd/PH/D7HGVBT1aJ+jVCWhaFjP6IYAGWCHBJ0TkDNXhAgohXfDX
+         fVYyHHnsIovZlDDnBTgeAb1RkWqaVoFXLoFfU0nDGggI8rpcVSOPWpmDyjNqiyvgx13B
+         +vXfWPL8yUVJn8y0tBx6F2FfiBnitUJPgxZy9fJ5hqLyHLzWpYpYimQrBe/O/n7bWKeE
+         XUeDpInkwr+uvPjrLJvySYl2UO0rIfPQ1P8XnQd9GVnTpLMp7O8Y97Msbkll9u10LFKJ
+         L76Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756444734; x=1757049534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hixLdvtLzKwXakjYFiKgvIvr5deLAlnG6kTAvz81yYY=;
+        b=RKwRIEg8hj744jaaPADFbPBPVyg3fhcmEPlyRfaf5I8aV26rcyf4hArPx1KugxvYjU
+         otxQWBIMJGyb5IKCnBgcvPSet9mhHNcxTHne+DGoL9sb+EoxSvbVhIGFyBcyvkEpS63M
+         wLtE/FzIccyPYcnmiiZSjJdM/h0FNvALVKwyVWhnyoKoFCzfHWAxE1iMvzfCzehJBJSZ
+         Vg+gYtn5bZV9LAslVLPI3ykC1uHJ+53mgzADLhdmVLFWLVJHcl/KY4M1Hivg4pc8zDP6
+         bjeTwNZGwaAVJB4bsePRocGw+C8WvFt/UD1y1OFSmBsyQgI6CXh2Up32b6ZsY2lfM/TD
+         ka6A==
+X-Gm-Message-State: AOJu0YxldPlbGN59pYd+WXaOyJyc0gTnj66kI0k/63SGFM06vuVWQOvr
+	K7i/dcP1Me8KFQsnLxddMJeeFGce1R63/LlvM9l/9VnlyWgW8Oc7CIOj7C3amTUcUpufSQ==
+X-Gm-Gg: ASbGnctsPbFW/tqd24ZkV0bzgcphN2QfP8iOvrDbZrXJq1m5XdYwQr/ee8wEw0nQNyu
+	k28GO+DuYJ0PdUz3JQpgY5zwkHY9WG8tFnl4adW6vxFynTkCFIREyaSHVuI1Gup24qW7RjpzAMT
+	UtrTI8eQX6J62zLacFzeECdFXOxtbI+5UDQICmkN7JAoXQwRJq+CRXerxFc5i+9Zq1fKi4j1rzY
+	ARHp8aC1iVGEch4FgRH6avjWcOnWA/CKWxG/pKemroBTpnNOlEhGZYE4I0AwLFwwHGiI69hmwCt
+	Iwo6s2na7Bxc1HJkeSvBsWxbO80p4LlUHjc6Gm/gLg0CsVP76ySjJH68wywMlzMo5FsVOU3Z9o+
+	Ligfy5tsvXPkPaN4=
+X-Google-Smtp-Source: AGHT+IGB0ryUVA97YS6kNW5RwDu6h1tAP08IELIEah6N4rh1nPWLvFBJ8QMI7+NH22qxU8gNiiYndw==
+X-Received: by 2002:a17:90b:1c0b:b0:327:a295:320c with SMTP id 98e67ed59e1d1-327a2953816mr7376032a91.3.1756444734344;
+        Thu, 28 Aug 2025 22:18:54 -0700 (PDT)
+Received: from [127.0.0.1] ([2a12:a305:4::3008])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28ad39csm1042474a12.27.2025.08.28.22.18.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 22:18:53 -0700 (PDT)
+Message-ID: <35a05270-8361-484d-818b-00decc4ce202@gmail.com>
+Date: Fri, 29 Aug 2025 13:18:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] panic: use angle-bracket include for panic.h
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Qianqiang Liu <qianqiang.liu@163.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20250829051312.33773-1-wangjinchao600@gmail.com>
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <20250829051312.33773-1-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-spifc-v4-3-1e57fd39f584@amlogic.com>
-References: <20250829-spifc-v4-0-1e57fd39f584@amlogic.com>
-In-Reply-To: <20250829-spifc-v4-0-1e57fd39f584@amlogic.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>, 
- Feng Chen <feng.chen@amlogic.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756444578; l=935;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=waH2I+tfwvOLzp50Qi+Yg091qChCxHO4Mz5PuoGKYLg=;
- b=qPzTb7RTVjnIOz8LAOv7eRTOVyg8cqtn52vtIbh35of0wr0uJPfoPQJeDyBGeSUU48JdG0wls
- PCAGKx2PLDpD0T13JcFXzCK/EWbyhwgvV1HEiNPEZzA9bXQaspVAed6
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-Add Amlogic spi flash controller entry to MAINTAINERS
-to clarify the maintainers.
-
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b1c081f9c567..9f1f337e9b6d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1306,6 +1306,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml
- F:	drivers/rtc/rtc-amlogic-a4.c
- 
-+AMLOGIC SPIFC DRIVER
-+M:	Liang Yang <liang.yang@amlogic.com>
-+M:	Feng Chen <feng.chen@amlogic.com>
-+M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
-+L:	linux-amlogic@lists.infradead.org
-+L:	linux-spi@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/amlogic,a4-spifc.yaml
-+F:	drivers/spi/spi-amlogic-spifc-a4.c
-+
- AMLOGIC SPISG DRIVER
- M:	Sunny Luo <sunny.luo@amlogic.com>
- M:	Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 8/29/25 13:13, Jinchao Wang wrote:
+> Replace quoted includes of panic.h with `#include <linux/panic.h>` for
+> consistency across the kernel.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>   kernel/crash_core.c    | 2 +-
+>   kernel/printk/nbcon.c  | 2 +-
+>   kernel/printk/printk.c | 2 +-
+This patch is based on the mm-nonmm-unstable branch, where the previous
+"panic status function family" series was merged.
 
 -- 
-2.37.1
-
-
+Best regards,
+Jinchao
 
