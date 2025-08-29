@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-791358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DFDB3B5DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:21:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B7CB3B5E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D67986BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044651C85BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0F22877C1;
-	Fri, 29 Aug 2025 08:20:58 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62BF1E8324;
-	Fri, 29 Aug 2025 08:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CA929D292;
+	Fri, 29 Aug 2025 08:21:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3821E8324;
+	Fri, 29 Aug 2025 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756455658; cv=none; b=bFGcj7oj13x6MnJd0vOmriiNuff8ay8ajdbUKQjVSniIh5qGGVqLwZDCeBkL/r7bI8sjg+V4gAs8HU4reeC6OnD5vgYHhKtkvoUHPT0n6FLOx8cq6Zua4JubATxBKeMybuF4h2EiJXoUH3pCYrLOak2yaZSnc8ovSwvl5R/Sllk=
+	t=1756455667; cv=none; b=tlOhcHgIJkZ6tzOJQeNinuhUbmi0QWN0G2fdkx6MyVAZR3RKKzztkKIeh3WtFIqnyh2u4fEvr10DLo6PDKPUb4stugi+QjItSnfats8hwRBA16c4xCdTTZ7QPYcuCK7EF3stEffuU6ibqT94gV508Qh6SEd2Osej1i+GiK9ixw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756455658; c=relaxed/simple;
-	bh=xGsG7p9LCdPXrjEdh5XO/vK4HrJFG0WsCRHaptfIK30=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MXQN8nkE/L/ofksXI+7zIsqtmfHvJ7jE/dReV4A2LaRnBHUj8Ydxx2GBsF2z0lyxxs1OZUtvjNVaSGkRvSJzI07qsZw4MJ4BSp1q84JSBaeOITwsgvX6WtUTZ5ltdofIslKsLV/Y1bpifuUudeMtnx8ZTqqLb4NTI9aTnHZt734=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
-	by app2 (Coremail) with SMTP id TQJkCgAHppTOYrFoZgfFAA--.58076S2;
-	Fri, 29 Aug 2025 16:20:34 +0800 (CST)
-From: zhangsenchuan@eswincomputing.com
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	johan+linaro@kernel.org,
-	quic_schintav@quicinc.com,
-	shradha.t@samsung.com,
-	cassel@kernel.org,
-	thippeswamy.havalige@amd.com,
-	mayank.rana@oss.qualcomm.com,
-	inochiama@gmail.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v2 0/2] Add driver support for Eswin EIC7700 SoC PCIe controller
-Date: Fri, 29 Aug 2025 16:20:21 +0800
-Message-ID: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
-X-Mailer: git-send-email 2.49.0.windows.1
+	s=arc-20240116; t=1756455667; c=relaxed/simple;
+	bh=zYHLkfGYlush9y5rRs4PMn/zClN6Vxh+u4+Ok4/hpHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ph2kbhl5K0+T00VdzBWjlr83yn4h2h2uvgTZgBvi+7PLDIvvoAAh9Caxl/+0XtqGCDbr5haoEnY8pMM7B8kqY74EdJ+nk63TktOK/I3aJyrZHLn+wNkE+ZONPpVLg/GtWnPbmrHfnWLDWSbI1de5AJVtHSlW89HPYk4coDONnzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F29F1BCB;
+	Fri, 29 Aug 2025 01:20:56 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62B73F694;
+	Fri, 29 Aug 2025 01:20:58 -0700 (PDT)
+Message-ID: <e715a048-3d21-4bcf-9fff-f63e6be48d46@arm.com>
+Date: Fri, 29 Aug 2025 09:20:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgAHppTOYrFoZgfFAA--.58076S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFWkAFy7KF1rCrykKF1xZrb_yoW8uFyDpa
-	yDKr1YkF18Jr47XwsxJa10kr43XFsxJFy3Gw1Igw17Xay3uas2q3sagFyYvFy7ArsrXw4Y
-	qF1YqF4rKFy3AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRuHqcUUUUU=
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/33] arm64: kconfig: Add Kconfig entry for MPAM
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-8-james.morse@arm.com>
+ <0c8a6a7c-3d0d-4093-8bc5-3a04f70b00fa@arm.com>
+ <fb8731ac-49ef-4a1a-91f2-daa1531c9ea7@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <fb8731ac-49ef-4a1a-91f2-daa1531c9ea7@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Hi James,
 
-This series depends on the vendor prefix [1] and config option patch [2].
+On 8/28/25 16:58, James Morse wrote:
+> Hi Ben,
+> 
+> On 27/08/2025 09:53, Ben Horgan wrote:
+>> On 8/22/25 16:29, James Morse wrote:
+>>> The bulk of the MPAM driver lives outside the arch code because it
+>>> largely manages MMIO devices that generate interrupts. The driver
+>>> needs a Kconfig symbol to enable it, as MPAM is only found on arm64
+>>> platforms, that is where the Kconfig option makes the most sense.
+>>>
+>>> This Kconfig option will later be used by the arch code to enable
+>>> or disable the MPAM context-switch code, and registering the CPUs
+>>> properties with the MPAM driver.
+> 
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index e9bbfacc35a6..658e47fc0c5a 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -2060,6 +2060,23 @@ config ARM64_TLB_RANGE
+>>>  	  ARMv8.4-TLBI provides TLBI invalidation instruction that apply to a
+>>>  	  range of input addresses.
+>>>  
+>>> +config ARM64_MPAM
+>>> +	bool "Enable support for MPAM"
+>>> +	help
+>>> +	  Memory Partitioning and Monitoring is an optional extension
+>>> +	  that allows the CPUs to mark load and store transactions with
+>>> +	  labels for partition-id and performance-monitoring-group.
+>>> +	  System components, such as the caches, can use the partition-id
+>>> +	  to apply a performance policy. MPAM monitors can use the
+>>> +	  partition-id and performance-monitoring-group to measure the
+>>> +	  cache occupancy or data throughput.
+>>> +
+>>> +	  Use of this extension requires CPU support, support in the
+>>> +	  memory system components (MSC), and a description from firmware
+>>> +	  of where the MSC are in the address space.
+>>> +
+>>> +	  MPAM is exposed to user-space via the resctrl pseudo filesystem.
+>>> +
+>>>  endmenu # "ARMv8.4 architectural features"
+> 
+>> Should this be moved to "ARMv8.2 architectural features" rather than the
+>> 8.4 menu? In the arm reference manual, version L.b, I see FEAT_MPAM
+>> listed in the section A2.2.3.1 Features added to the Armv8.2 extension
+>> in later releases.
+> 
+> Hmmm, I don't think we've done that anywhere else. I'm only aware of one v8.2 platform
+> that had it, and those are not widely available. As it was a headline v8.4 feature I'd
+> prefer to keep it there.
+> 
+> I think its more confusing to put it under v8.2!
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250825&id=ac29e4487aa20a21b7c3facbd1f14f5093835dc9
-[2] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
+Ok, always best to minimise confusion. Keep it in v8.4.
+ >
+> Thanks,
+> 
+> James
 
-Changes in v2:
-- Updates: eswin,eic7700-pcie.yaml
-  - Optimize the naming of "clock-names" and "reset-names".
-  - Add a reference to "$ref: /schemas/pci/pci-host-bridge.yaml#".
-    (The name of the reset attribute in the "snps,dw-pcie-common.yaml"
-    file is different from our reset attribute and "snps,dw-pcie.yaml"
-    file cannot be directly referenced)
-  - Follow DTS coding style to optimize yaml attributes.
-  - Remove status = "disabled" from yaml.
+-- 
+Thanks,
 
-- Updates: pcie-eic7700.c
-  - Remove unnecessary imported header files.
-  - Use dev_err instead of pr_err and remove the WARN_ON function.
-  - The eswin_evb_socket_power_on function is removed and not supported.
-  - The eswin_pcie_remove function is placed after the probe function.
-  - Optimize function alignment.
-  - Manage the clock using the devm_clk_bulk_get_all_enabled function.
-  - Handle the release of resources after the dw_pcie_host_init function
-    call fails.
-  - Remove the dev_dbg function and remove __exit_p.
-  - Add support for the system pm function.
-- Link to V1: https://lore.kernel.org/all/20250516094057.1300-1-zhangsenchuan@eswincomputing.com/
-
-Senchuan Zhang (2):
-  dt-bindings: PCI: eic7700: Add Eswin eic7700 PCIe host controller
-  PCI: eic7700: Add Eswin eic7700 PCIe host controller driver
-
- .../bindings/pci/eswin,eic7700-pcie.yaml      | 142 +++++++
- drivers/pci/controller/dwc/Kconfig            |  12 +
- drivers/pci/controller/dwc/Makefile           |   1 +
- drivers/pci/controller/dwc/pcie-eic7700.c     | 350 ++++++++++++++++++
- 4 files changed, 505 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
- create mode 100644 drivers/pci/controller/dwc/pcie-eic7700.c
-
---
-2.25.1
+Ben
 
 
