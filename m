@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-791137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E3B3B260
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:20:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B96EB3B263
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC38D7B2EBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E01203E02
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE032153E1;
-	Fri, 29 Aug 2025 05:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7082153D8;
+	Fri, 29 Aug 2025 05:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KRushieB"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IhTfS0sI";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LwAnA4HG"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7911F55FA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACFE8488;
+	Fri, 29 Aug 2025 05:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756444814; cv=none; b=owFzHiuLmI32t6AypVmKN0Xt8QBw/4aEvaeFaBRlFHvLjPumsyrq8oAEJoX5nVDNI/JkOifnzRYzTT7sDN80xVex1AiuWek6R+aC1jnOvZ4LPUrrnPTeB8pwsHAzP6wENaXGAEQY26eKS2Qj5S9HijujlT8xka5o3w0gPYwSuvc=
+	t=1756444985; cv=none; b=ShRK3wUNh2tVOHSY/FCQ+Atn4CK40IeeR783HpgTzlPdT6MiLOazRck+uIgAHyFULbgYxPbt/8eAed5xxy+hfRHZboWcF8CGE0PjvddbzT/yc1wF+SfIq/h0fDVYJdBxBBFsiB53vgYZd1w81wklXV8qXNqrwnPI175Tivyx+lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756444814; c=relaxed/simple;
-	bh=1Zqk+4vnIkwWqVkrcUdNeo1ti71o+27E8x4Bps+lroU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ab107dlTGXqnYhJqpPu7qO1zhCxGD4D1MncONIaQDS7nmZ+uqzLRIQPIT3OS7nd0r6hVNYau+IWIkdGyiBAVjClZIMwrI4z4svdLCQZOeYrWcTgbkgOw5u0/c3hMailtskmlbmLyXUlx9ZdZjJmnhZmHk1gtuIOLmA8TMQ72WC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KRushieB; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-771fa65b0e1so931415b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756444812; x=1757049612; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvfbFYwUN2Wv0aTFajklPrgWujcFzYTBTym5k6QlzSg=;
-        b=KRushieBvuQ2YCbTp1mphqQqsbg79KPUVp7r6NeFCAGtZ7JngH+R+Yno+n36tX+Tyu
-         4NIjqboAJOpgmzlV2iD8ge9KDzcNQqK8E4G1weM5vOtAtbPfm4Ckwl4n6o6DsM84X5uc
-         4qOK6JRE7dGcA8R7JxKEqFXtcAWh2MHl4w9R2f2NYkbTMsMYhAN5FChx3P3RTjfkuU3G
-         V3DhIuIKqP+EkwphVK3cHQE1CoNnu3RtoJvOBQ2QaM4XUDd96/9KCaBYQn8Nhvvbvi6R
-         qM3dMrkw5Y9yN/IPgYM+am49SywlxHHCSKcvDHXV7jL8MSxkrJqh+aWTwcs+dGlaa4VO
-         84tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756444812; x=1757049612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JvfbFYwUN2Wv0aTFajklPrgWujcFzYTBTym5k6QlzSg=;
-        b=UpsSBTaUM4OyTR0KdbNprjQLCC+iMj+7eIMiaiBkiTV3jjWsYgX+qe2hkVHPQwLFBL
-         EfgbRgpC8i7HPtgJ8fJsBcfZoa617e1eS+0KIz/tZGhzjA2NR7q3QFBjuIrIznd9O9HR
-         D8GFHSIhv1WYjODqjglPY4UQit4JwkxduOyWOCxy8O42PO9mHep1DMLOIKXNdmjnVSsD
-         pwL9xcgywZh05FQM8LxCrAJJ0wg2Ct7L9/eb9W9x5KiXI+vGYR5V/UV5Y8YSlOT5sOrb
-         HUCANxmamnClsNbDLqq5HrowGDlPP5q3/vCoYeZnARGPTd9riGiCYTrneDVPFfIr/z7u
-         Lexg==
-X-Forwarded-Encrypted: i=1; AJvYcCULRuYlwMQllSzhvRvISsAaoSos/rJjoxqsrVRtsXJT51K2+LWc0CrgkLytKIQZrSDA7kQtdDhREgmyOqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwndtfKXvJuALirdI111wPq7QjgpWPUAQriSsrLXsxejghCEpiC
-	SPdTNglfN5Y10A4jmOu92NCmMzYt15792rqBCb4xUkiV719TtYdslYTDkBwNCzK/4EQ=
-X-Gm-Gg: ASbGnctCSUcMsQsjmtGYBNC5uDSWFUa4QJWngSiDPqh1Ic3TToCBWvREW2y52Y2OT6x
-	CmitGUvAmrKSSjRqfDj34NDyq6VCmdLiHBjAUlPdFpsye8Yw00BUIp8fOWw/WVTow6S5p2bmlDA
-	fnW81rhPLGRuWSvfAUN6N1wFIBXqknGzeRmYXw3XfkMlWQRZ29lXcjF94bbI8TEZZv0lvJXbV1t
-	62j6FD1dJRQ9HESR6p4jLMq3RxFrr5/wP02l4+XzjYfYAofbGgAkmiNXpmFlsBi5MwzJyjt8WY/
-	VtfcuWrKKzSWgAOnVdYSQrRUjUz6bqOuq4kDdiFQdUsYMiZsH82nsXrjaZneugey2mRxN5MCjmc
-	RyotwTZ8hZdycDd5mQeURrpE5nEtADMAROW0=
-X-Google-Smtp-Source: AGHT+IF9rXnIKgqvJMpaMTUtFPVV7KQF3OFqGDqAWPTMUUDPlHpYvFwpf3iklNWoMxNux/mqBvASRw==
-X-Received: by 2002:a05:6a20:7286:b0:243:ae10:2433 with SMTP id adf61e73a8af0-243ae1026c0mr8924481637.40.1756444812495;
-        Thu, 28 Aug 2025 22:20:12 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd308f90dsm1046614a12.40.2025.08.28.22.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 22:20:11 -0700 (PDT)
-Date: Fri, 29 Aug 2025 10:50:09 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Mitchell Levy <levymitchell0@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Benno Lossin <lossin@kernel.org>, Yury Norov <yury.norov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 4/7] rust: cpumask: Add getters for globally defined
- cpumasks
-Message-ID: <20250829052009.glitgqzv22zf7c4a@vireshk-i7>
-References: <20250828-rust-percpu-v3-0-4dd92e1e7904@gmail.com>
- <20250828-rust-percpu-v3-4-4dd92e1e7904@gmail.com>
+	s=arc-20240116; t=1756444985; c=relaxed/simple;
+	bh=FP1KpwwplKZdgCaYZIEW3o8UFzFg9D+V36y12tW5uW8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M7vrVWqIS4jzrnyELKgUc63d53Cyqb1yMh4Iy8C9pJkD9NZjNDTEey2HxwucBEGDDZzx2/9ZXcJv+0TsBdVcvhc09Ga1yU5X584LyQ8g1fVmqRKJzDI9JoVOwM+Ob7iECYEyeaOnmrPoCIXGN9/DS4puZe35cpyCeGu6lD3THdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IhTfS0sI; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LwAnA4HG; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cCmr528zCz9tSk;
+	Fri, 29 Aug 2025 07:23:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756444981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oBuY1bgfTNlKDPqDfF9q1Kr+TPBTQ0Xqwrre5sa8b5Y=;
+	b=IhTfS0sI0XFRJ1NLPq93wtZnkfUBNEPOKpnhiz7evRim/+G+0VwnpoCENJZa39OYOJYo5j
+	cKE7To13VyMZwAoFeo9Bjz8zfqBG453yyW0VpdpJYFwetgRIDjgJ1Vz6LBUxj631WF/PCD
+	cKlGxhqP/JQbybTN5dTETtEL4FiyQ6JH5TzUaHv6l5uxD0sBHVwMNDAQb32bdpl9wgtryb
+	oqxRZb3X1PYAdSp1593V6lCAUeJtdraMFUAXf22xY989odKao8SVtxifoWn7E2hMQugvwU
+	xUGv7UBfDrsEpoZcHBeET/0NLExcIfOig+1cq2oa1YOBvqmQsAfzXJJmE518nw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=LwAnA4HG;
+	spf=pass (outgoing_mbo_mout: domain of alexander.stein@mailbox.org designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=alexander.stein@mailbox.org
+From: Alexander Stein <alexander.stein@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756444979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oBuY1bgfTNlKDPqDfF9q1Kr+TPBTQ0Xqwrre5sa8b5Y=;
+	b=LwAnA4HGAVj6JafDYqYk2JLc+e9UgD8rJMEBsOfRMtb3+BWHzzydY6JqCOLGLY+goyJquW
+	eaycpg1EtQ29hmqrbV9CakIlqZg3ndLzxY1HJpNhvgIGcOL5hEDtOePSUyviDMs9dnB2jp
+	k/skdOwvpP3X5W1Csj1Tb3ehwwZMT7UUUOGZTVIAQns4DnChlKZzQ2YVrReGpUvcBY2qfN
+	F1GoiXrmJieXJnZc3IcQ293EIefUOUEFdNTqA9a3F73U5Pi8VedU4qiL4daJnDutQ4acb/
+	boLq5BuKy9L+stEvXi6vlzEJ5vJ1QarNXMvSFZaqlT+KyPkrfs16ouSZb2BBvQ==
+To: Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Alexander Stein <alexander.stein@mailbox.org>,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] ARM: dts: ti: omap: am335x-baltos: Fix TPS property
+Date: Fri, 29 Aug 2025 07:22:32 +0200
+Message-ID: <20250829052233.26821-1-alexander.stein@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828-rust-percpu-v3-4-4dd92e1e7904@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: e7ut9frqq557tkytxkaoesod6r89wdgk
+X-MBO-RS-ID: 9f21b2ca30b53a96085
+X-Rspamd-Queue-Id: 4cCmr528zCz9tSk
 
-On 28-08-25, 12:00, Mitchell Levy wrote:
-> Add getters for the global cpumasks documented in
-> `include/linux/cpumask.h`, specifically:
-> - cpu_possible_mask
-> - cpu_online_mask
-> - cpu_enabled_mask
-> - cpu_present_mask
-> - cpu_active_mask
-> 
-> Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
-> ---
->  rust/kernel/cpumask.rs | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
+ti,en-ck32k-xtal is a boolean value. So remove the value and keep the
+property by itself. Fixes the dtbs_check warning:
+  ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910):
+    ti,en-ck32k-xtal: 1 is not of type 'boolean'
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+---
+ arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi b/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
+index ae2e8dffbe04..ea47f9960c35 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
++++ b/arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi
+@@ -269,7 +269,7 @@ &tps {
+ 	vcc7-supply = <&vbat>;
+ 	vccio-supply = <&vbat>;
+ 
+-	ti,en-ck32k-xtal = <1>;
++	ti,en-ck32k-xtal;
+ 
+ 	regulators {
+ 		vrtc_reg: regulator@0 {
 -- 
-viresh
+2.51.0
+
 
