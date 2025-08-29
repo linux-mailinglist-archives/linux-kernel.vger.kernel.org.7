@@ -1,391 +1,234 @@
-Return-Path: <linux-kernel+bounces-791024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E377B3B13C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51423B3B13A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8995E00E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:55:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 124C9583E2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96022256F;
-	Fri, 29 Aug 2025 02:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrtvAEFj"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D902206B8;
+	Fri, 29 Aug 2025 02:54:59 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88791A58D
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 02:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6731A83F8;
+	Fri, 29 Aug 2025 02:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756436100; cv=none; b=Hpcs3/lyo/7OBUgsLjtnJVwVpQKpptHglvCGdolrDjzkvmVWN7IkW5s5s3ZHSSJZXnGR1mFHRLLFvKLQo+eUz7RKY3TYPRDyhZIAwwQLWQ2YeFKPutQym1U7Uh8RwgJNI+ltCuE0b++coyZJtLT1HyedEapJI+73k7ph+YerUMI=
+	t=1756436098; cv=none; b=SIfwzJ7iDQQv5GGd7CEIwUGgeqdoihZvQP62LxT35ZxS/D+cfQD136L12nrHsc0vS/nfDyTGz3fzvBw289NeRLFquE3fEE9Jou0qHP3SacUWT8JRDGDYhlOjOqbq6DbvwXQKlYDvkHCFfujjZudE85c0etqMYTFf9p4JFGtiPfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756436100; c=relaxed/simple;
-	bh=DP5VIvbfYSniWUppde8kRTPcG3csIgSOn4kvAk9XjXg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rMJxPnhSLlzVjNjNxWp4fb9wiIPEBaGGQAOVSSiitBL9LJPHhRl20WbG2CyXIKWfvuWpaJUczSGzlGEtu+XyJzyGpC06HQsPrmRCrsT0KzDjciwztNJqqPa09e18oIFiA1fpQlYa0clHabx/VDe0YXq8fWrEyKcHiGZaJWUNQVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrtvAEFj; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb7322da8so290166166b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 19:54:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756436096; x=1757040896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMNW9MhFJRCCjOSMywpHld9A6F/p1aZ8kdLtZT+1mEg=;
-        b=RrtvAEFjHo4nhp0vHMPLGtCIVR4f6gIhc8o/Kh7FnT/RcCqyVJPoE6hEnz4LlzCaEZ
-         xF0wI4axjrmAb6js+aEBLYw0cef3++7FZcwbWbayeCg3+AQa4DMnKoQcaUdQBQDu3gPd
-         Ho96y0il80UQhXCBKiWHtiT6er0wJ8/5B53AoygXt3XWKnLluz41LycO6E1DuHnzCC9r
-         D6YcUwHuNH4UeehFbli4dBO2GakcS6mrYnixTQg+CJPGHmOMRf8ubpVLdAYQPjFiBl9H
-         VP5NKjqB9wko3k3vaPeYOqDlx3SzEEfxz2dkXo9mDUvpPLe0oLMSyTNmjqKPadvEjLl1
-         baTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756436096; x=1757040896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cMNW9MhFJRCCjOSMywpHld9A6F/p1aZ8kdLtZT+1mEg=;
-        b=S+W5J53kDR5kXaq0WwohF3jc5ZTLGJ8gikDz4I7iPX2EVbfR+fyFMAc2uJ+4aJLnNe
-         r3we4xh2D6uxZcfMx/smG7zsnpNjdZ1CY0QJlgPqFLHCvdDDqWZ2Fzk50ZysGx1wwnEl
-         +FrPW4XjP3wtZiFwItGi/bbHKwYQqDKX/9JVBUuki3VrPQZjfH9FjCsUg8xJPP+7C4wF
-         OmBwnDL4Bg/PaJs8S1s/yFMsIL/SrXtn3e1wbbGD7jAP/fVZOX4sfUkD9mDbxRLk72Vi
-         sHI0MOUEgp39YGnkm3vFzlmzx8xWDAY1cG24iqIeOPigTnEa8k9voGT9pV0KHrxreG4S
-         z//g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6+AUROKH9ZeAZc8fqgo+iWtIgWzS7/IZLBFNdb5/l04qHHJs5U9JfpL5Q2d5tPGEmQePjcPXJk+Ol8HQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMI1a5yYuQGfgcjTrTs6DiIckZ2oDy+VgI7FXAAmYazVIXHMb2
-	dDhtAqLbIjScImWGf3trfZjmhLOEnFvxkhKzq+1gY8lUcVglxClB5ci6LQm66QedrsjU+yiUt1F
-	1kZuNnbOAS9W/o5UDVf/91NwTrXkga02m3Zqt
-X-Gm-Gg: ASbGncuIFrM43E0URbLr5sIodn1HYNgsuvfq07ffyG5EQz6RaG/aNZL2Cpc+1DJHiVW
-	ov69b/aq4UIdqouyN9suWH0VLn1UuOGIQ2KJDMS7UAupyrSFojAy8PWOm3dM/QGXiBcGTVOaUmm
-	dHZema8VdPK9oUFCreSjyPSCyTtT+t1IRj6P8e01HcFT3Tp7G1wdfZOQHpilLBH6lNDVlsncNJ4
-	j/GiA==
-X-Google-Smtp-Source: AGHT+IEJoA5Nhwol6i78XrLBcR2p3ogVLwLojqqhCoAnzYfec9qnx6PAeBbzHGVhlb9xyNmYKlPoWieDpGYBV9AykL8=
-X-Received: by 2002:a17:907:1b29:b0:afa:1b3f:37a2 with SMTP id
- a640c23a62f3a-afe295d2b84mr2356136766b.37.1756436095707; Thu, 28 Aug 2025
- 19:54:55 -0700 (PDT)
+	s=arc-20240116; t=1756436098; c=relaxed/simple;
+	bh=M7CNDRmw/Hv42h05MffjEuSIitd+5uuOL7qXAPjIypE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z58wfeteAAJDLMzt6esV0oZc2u9VKoYXjWt4lMNwJjNfi/rKK9fe5UXe74l7UdoqMbvPN+HR5TZCuOjMwz8gKZq1Ob+lB+dke7jXMaVhXRwTe5D0Hl34xth2hLjwG7KX9sKbynFG9FV9yF4bz9PfVla+8X4TQaJCrfgnhcCNAk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCjYB39VfzYQvN2;
+	Fri, 29 Aug 2025 10:54:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F07D11A12EE;
+	Fri, 29 Aug 2025 10:54:52 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIx8FrFoCqycAg--.21597S3;
+	Fri, 29 Aug 2025 10:54:52 +0800 (CST)
+Message-ID: <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+Date: Fri, 29 Aug 2025 10:54:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 29 Aug 2025 12:54:44 +1000
-X-Gm-Features: Ac12FXy563hryqeT1S2ofzT_gvHguEpwfsRo4HRdU96vOspaekUo5nDW5Iz6fB8
-Message-ID: <CAPM=9txr3jRk-+wk5J-raoWgYmeo5QRwBp0uCzLj67omDB13YQ@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.16-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+ Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250828163216.4225-2-k@mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIx8FrFoCqycAg--.21597S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtrW5XF1DGFy8tr4kur13twb_yoW7Zryfpa
+	9rJa9YyrWjv3s8t3WUtFyDW3Wjvw4UKFZIkryfZ34xt3Z0qrW5GFs5WryUKF1DAay3C3W5
+	X3y5Jws7A3W2gFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
+	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x07UG38nUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Linus,
 
-Weekly fixes, feels a bit big. The major piece is msm fixes, then the
-usual amdgpu/xe along with some mediatek and nouveau fixes and a tegra
-revert.
+在 2025/8/29 0:32, Kenta Akagi 写道:
+> This commit ensures that an MD_FAILFAST IO failure does not put
+> the array into a broken state.
+> 
+> When failfast is enabled on rdev in RAID1 or RAID10,
+> the array may be flagged MD_BROKEN in the following cases.
+> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
+> - If an MD_FAILFAST metadata write to the 'last' rdev fails
 
-Dave.
+[...]
 
-drm-fixes-2025-08-29:
-drm fixes for 6.16-rc4
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 408c26398321..8a61fd93b3ff 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>   		    (bio->bi_opf & MD_FAILFAST) &&
+>   		    /* We never try FailFast to WriteMostly devices */
+>   		    !test_bit(WriteMostly, &rdev->flags)) {
+> +			set_bit(FailfastIOFailure, &rdev->flags);
+>   			md_error(r1_bio->mddev, rdev);
+>   		}
+>   
+> @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>    *	- recovery is interrupted.
+>    *	- &mddev->degraded is bumped.
+>    *
+> - * @rdev is marked as &Faulty excluding case when array is failed and
+> - * &mddev->fail_last_dev is off.
+> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+> + * then @mddev and @rdev will not be marked as failed.
+> + *
+> + * @rdev is marked as &Faulty excluding any cases:
+> + *	- when @mddev is failed and &mddev->fail_last_dev is off
+> + *	- when @rdev is last device and &FailfastIOFailure flag is set
+>    */
+>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   {
+> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   
+>   	if (test_bit(In_sync, &rdev->flags) &&
+>   	    (conf->raid_disks - mddev->degraded) == 1) {
+> +		if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+> +			spin_unlock_irqrestore(&conf->device_lock, flags);
+> +			pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
+> +				"last device but ignoring it\n",
+> +				mdname(mddev), rdev->bdev);
+> +			return;
+> +		}
+>   		set_bit(MD_BROKEN, &mddev->flags);
+>   
+>   		if (!mddev->fail_last_dev) {
+> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+>   	if (test_bit(FailFast, &rdev->flags)) {
+>   		/* Don't try recovering from here - just fail it
+>   		 * ... unless it is the last working device of course */
+> +		set_bit(FailfastIOFailure, &rdev->flags);
+>   		md_error(mddev, rdev);
+>   		if (test_bit(Faulty, &rdev->flags))
+>   			/* Don't try to read from here, but make sure
+> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>   		fix_read_error(conf, r1_bio);
+>   		unfreeze_array(conf);
+>   	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+> +		set_bit(FailfastIOFailure, &rdev->flags);
+>   		md_error(mddev, rdev);
+>   	} else {
+>   		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b60c30bfb6c7..530ad6503189 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+>   			dec_rdev = 0;
+>   			if (test_bit(FailFast, &rdev->flags) &&
+>   			    (bio->bi_opf & MD_FAILFAST)) {
+> +				set_bit(FailfastIOFailure, &rdev->flags);
+>   				md_error(rdev->mddev, rdev);
+>   			}
+>   
 
-gpuvm:
-- fix some typos
+Thank you for the patch. There may be an issue with 'test_and_clear'.
 
-xe:
-- Fix user-fence race issue
-- Couple xe_vm fixes
-- Don't trigger rebind on initial dma-buf validation
-- Fix a build issue related to basename() posix vs gnu discrepancy
+If two write IO go to the same rdev, MD_BROKEN may be set as below:
 
-amdgpu:
-- pin buffers while vmapping
-- UserQ fixes
-- Revert CSA fix
-- SR-IOV fix
+IO1					IO2
+set FailfastIOFailure
+					set FailfastIOFailure		
+  md_error
+   raid1_error
+    test_and_clear FailfastIOFailur
+   					 md_error
+					  raid1_error
+					   //FailfastIOFailur is cleared
+					   set MD_BROKEN
 
-nouveau:
-- fix linear modifier
-- remove some dead code
+Maybe we should check whether FailfastIOFailure is already set before
+setting it. It also needs to be considered in metadata writes.
 
-msm:
-- Core/GPU:
-  - fix comment doc warning in gpuvm
-  - fix build with KMS disabled
-  - fix pgtable setup/teardown race
-  - global fault counter fix
-  - various error path fixes
-  - GPU devcoredump snapshot fixes
-  - handle in-place VM_BIND remaps to solve turnip vm update race
-  - skip re-emitting IBs for unusable VMs
-  - Don't use %pK through printk
-  - moved display snapshot init earlier, fixing a crash
-- DPU:
-  - Fixed crash in virtual plane checking code
-  - Fixed mode comparison in virtual plane checking code
-- DSI:
-  - Adjusted width of resulution-related registers
-  - Fixed locking issue on 14nm PLLs
-- UBWC (per Bjorn's ack)
-  - Added UBWC configuration for several missing platforms (fixing
-    regression)
+> @@ -1995,8 +1996,12 @@ static int enough(struct r10conf *conf, int ignore)
+>    *	- recovery is interrupted.
+>    *	- &mddev->degraded is bumped.
+>    *
+> - * @rdev is marked as &Faulty excluding case when array is failed and
+> - * &mddev->fail_last_dev is off.
+> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+> + * then @mddev and @rdev will not be marked as failed.
+> + *
+> + * @rdev is marked as &Faulty excluding any cases:
+> + *	- when @mddev is failed and &mddev->fail_last_dev is off
+> + *	- when @rdev is last device and &FailfastIOFailure flag is set
+>    */
+>   static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>   {
+> @@ -2006,6 +2011,13 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>   	spin_lock_irqsave(&conf->device_lock, flags);
+>   
+>   	if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
+> +		if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+> +			spin_unlock_irqrestore(&conf->device_lock, flags);
+> +			pr_warn_ratelimited("md/raid10:%s: Failfast IO failure on %pg, "
+> +				"last device but ignoring it\n",
+> +				mdname(mddev), rdev->bdev);
+> +			return;
+> + >   		set_bit(MD_BROKEN, &mddev->flags);
+>   
+>   		if (!mddev->fail_last_dev) {
+> @@ -2413,6 +2425,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
+>   				continue;
+>   		} else if (test_bit(FailFast, &rdev->flags)) {
+>   			/* Just give up on this device */
+> +			set_bit(FailfastIOFailure, &rdev->flags);
+>   			md_error(rdev->mddev, rdev);
+>   			continue;
+>   		}
+> @@ -2865,8 +2878,10 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+>   		freeze_array(conf, 1);
+>   		fix_read_error(conf, mddev, r10_bio);
+>   		unfreeze_array(conf);
+> -	} else
+> +	} else {
+> +		set_bit(FailfastIOFailure, &rdev->flags);
+>   		md_error(mddev, rdev);
+> +	}
+>   
+>   	rdev_dec_pending(rdev, mddev);
+>   	r10_bio->state = 0;
 
-mediatek:
-- Add error handling for old state CRTC in atomic_disable
-- Fix DSI host and panel bridge pre-enable order
-- Fix device/node reference count leaks in mtk_drm_get_all_drm_priv
-- mtk_hdmi: Fix inverted parameters in some regmap_update_bits calls
+-- 
+Thanks,
+Nan
 
-tegra:
-- revert dma-buf change
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00=
-:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-08-29
-
-for you to fetch changes up to 42d2abbfa8c40299e047a9b3e5578fdd309dd2ff:
-
-  Merge tag 'mediatek-drm-fixes-20250829' of
-https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
-into drm-fixes (2025-08-29 10:05:10 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.16-rc4
-
-gpuvm:
-- fix some typos
-
-xe:
-- Fix user-fence race issue
-- Couple xe_vm fixes
-- Don't trigger rebind on initial dma-buf validation
-- Fix a build issue related to basename() posix vs gnu discrepancy
-
-amdgpu:
-- pin buffers while vmapping
-- UserQ fixes
-- Revert CSA fix
-- SR-IOV fix
-
-nouveau:
-- fix linear modifier
-- remove some dead code
-
-msm:
-- Core/GPU:
-  - fix comment doc warning in gpuvm
-  - fix build with KMS disabled
-  - fix pgtable setup/teardown race
-  - global fault counter fix
-  - various error path fixes
-  - GPU devcoredump snapshot fixes
-  - handle in-place VM_BIND remaps to solve turnip vm update race
-  - skip re-emitting IBs for unusable VMs
-  - Don't use %pK through printk
-  - moved display snapshot init earlier, fixing a crash
-- DPU:
-  - Fixed crash in virtual plane checking code
-  - Fixed mode comparison in virtual plane checking code
-- DSI:
-  - Adjusted width of resulution-related registers
-  - Fixed locking issue on 14nm PLLs
-- UBWC (per Bjorn's ack)
-  - Added UBWC configuration for several missing platforms (fixing
-    regression)
-
-mediatek:
-- Add error handling for old state CRTC in atomic_disable
-- Fix DSI host and panel bridge pre-enable order
-- Fix device/node reference count leaks in mtk_drm_get_all_drm_priv
-- mtk_hdmi: Fix inverted parameters in some regmap_update_bits calls
-
-tegra:
-- revert dma-buf change
-
-----------------------------------------------------------------
-Alex Deucher (4):
-      drm/amdgpu/gfx11: set MQD as appriopriate for queue types
-      drm/amdgpu/gfx12: set MQD as appriopriate for queue types
-      Revert "drm/amdgpu: fix incorrect vm flags to map bo"
-      drm/amdgpu/userq: fix error handling of invalid doorbell
-
-Alice Ryhl (1):
-      drm/gpuvm: fix various typos in .c and .h gpuvm file
-
-Antonino Maniscalco (1):
-      drm/msm: skip re-emitting IBs for unusable VMs
-
-Ayushi Makhija (1):
-      drm/msm: update the high bitfield of certain DSI registers
-
-Bagas Sanjaya (1):
-      drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected usage in
-literal code block
-
-Carlos Llamas (1):
-      drm/xe: switch to local xbasename() helper
-
-Chenyuan Yang (1):
-      drm/msm/dpu: Add a null ptr check for dpu_encoder_needs_modeset
-
-Colin Ian King (1):
-      drm/msm: Fix dereference of pointer minor before null check
-
-Dave Airlie (5):
-      Merge tag 'drm-xe-fixes-2025-08-27' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'drm-misc-fixes-2025-08-28' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.17-2025-08-28' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-msm-fixes-2025-08-26' of
-https://gitlab.freedesktop.org/drm/msm into drm-fixes
-      Merge tag 'mediatek-drm-fixes-20250829' of
-https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
-into drm-fixes
-
-Dmitry Baryshkov (8):
-      drm/msm/kms: move snapshot init earlier in KMS init
-      drm/msm/dpu: correct dpu_plane_virtual_atomic_check()
-      soc: qcom: ubwc: provide no-UBWC configuration
-      dt-bindings: display/msm: qcom,mdp5: drop lut clock
-      soc: qcom: ubwc: use no-uwbc config for MSM8917
-      soc: qcom: ubwc: add more missing platforms
-      soc: qcom: add configuration for MSM8929
-      soc: qcom: use no-UBWC config for MSM8956/76
-
-James Jones (1):
-      drm/nouveau/disp: Always accept linear modifier
-
-Jason-JH Lin (1):
-      drm/mediatek: Add error handling for old state CRTC in atomic_disable
-
-Jesse.Zhang (1):
-      drm/amdgpu: update firmware version checks for user queue support
-
-Loic Poulain (1):
-      drm/msm/dsi: Fix 14nm DSI PHY PLL Lock issue
-
-Louis-Alexis Eyraud (2):
-      drm/mediatek: dsi: Fix DSI host and panel bridge pre-enable order
-      drm/mediatek: mtk_hdmi: Fix inverted parameters in some
-regmap_update_bits calls
-
-Luca Weiss (1):
-      soc: qcom: ubwc: Add missing UBWC config for SM7225
-
-Ma Ke (1):
-      drm/mediatek: Fix device/node reference count leaks in
-mtk_drm_get_all_drm_priv
-
-Matthew Brost (1):
-      drm/xe: Don't trigger rebind on initial dma-buf validation
-
-Ma=C3=ADra Canal (1):
-      drm/msm: Update global fault counter when faulty process has already =
-ended
-
-Nathan Chancellor (1):
-      drm/msm/dpu: Initialize crtc_state to NULL in
-dpu_plane_virtual_atomic_check()
-
-Rob Clark (15):
-      drm/msm: Fix build with KMS disabled
-      drm/msm: Fix pagetables setup/teardown serialization
-      drm/msm: Fix refcnt underflow in error path
-      drm/msm: Fix submit error path cleanup
-      drm/msm: Defer fd_install in SUBMIT ioctl
-      drm/msm: Defer fd_install in VM_BIND ioctl
-      drm/msm: Add missing "location"s to devcoredump
-      drm/msm: Fix section names and sizes
-      drm/msm: Fix order of selector programming in cluster snapshot
-      drm/msm: Constify snapshot tables
-      drm/msm: Fix a7xx debugbus read
-      drm/msm: Fix debugbus snapshot
-      drm/msm: Fix a7xx TPL1 cluster snapshot
-      drm/msm: Fix a few comments
-      drm/msm: Handle in-place remaps
-
-Sasha Levin (1):
-      drm/msm: Fix objtool warning in submit_lock_objects()
-
-Thomas Hellstr=C3=B6m (2):
-      drm/xe/vm: Don't pin the vm_resv during validation
-      drm/xe/vm: Clear the scratch_pt pointer on error
-
-Thomas Wei=C3=9Fschuh (1):
-      drm/msm: Don't use %pK through printk
-
-Thomas Zimmermann (2):
-      drm/amdgpu: Pin buffers while vmap'ing exported dma-buf objects
-      Revert "drm/tegra: Use dma_buf from GEM object instance"
-
-Timur Tabi (3):
-      drm/nouveau: fix error path in nvkm_gsp_fwsec_v2
-      drm/nouveau: remove unused increment in gm200_flcn_pio_imem_wr
-      drm/nouveau: remove unused memory target test
-
-Yang Wang (1):
-      drm/amd/amdgpu: disable hwmon power1_cap* for gfx 11.0.3 on vf mode
-
-Zbigniew Kempczy=C5=84ski (1):
-      drm/xe/xe_sync: avoid race during ufence signaling
-
- .../devicetree/bindings/display/msm/qcom,mdp5.yaml |  1 -
- drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c            |  4 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c        | 34 ++++++++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c          |  1 +
- drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c             | 14 ++--
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |  8 ++-
- drivers/gpu/drm/amd/pm/amdgpu_pm.c                 | 18 ++---
- drivers/gpu/drm/drm_gpuvm.c                        | 80 +++++++++++-------=
-----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 21 ++++--
- drivers/gpu/drm/mediatek/mtk_dsi.c                 |  6 ++
- drivers/gpu/drm/mediatek/mtk_hdmi.c                |  8 +--
- drivers/gpu/drm/mediatek/mtk_plane.c               |  3 +-
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c        | 47 +++++++++----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h        | 38 +++++-----
- .../gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h  | 19 +++--
- .../gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h  | 10 +--
- .../gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h  | 34 ++++-----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  2 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dspp.c        |  4 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  4 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c          |  4 +-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              | 59 +++++-----------
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |  1 -
- drivers/gpu/drm/msm/msm_debugfs.c                  | 11 +--
- drivers/gpu/drm/msm/msm_gem.c                      | 13 +++-
- drivers/gpu/drm/msm/msm_gem.h                      |  2 +-
- drivers/gpu/drm/msm/msm_gem_submit.c               | 76 ++++++++++--------=
---
- drivers/gpu/drm/msm/msm_gem_vma.c                  | 60 ++++++++++++----
- drivers/gpu/drm/msm/msm_gpu.c                      | 20 ++++--
- drivers/gpu/drm/msm/msm_iommu.c                    | 16 +++--
- drivers/gpu/drm/msm/msm_kms.c                      | 10 +--
- drivers/gpu/drm/msm/msm_mdss.c                     |  2 +-
- drivers/gpu/drm/msm/registers/adreno/a6xx.xml      | 14 +++-
- drivers/gpu/drm/msm/registers/display/dsi.xml      | 28 ++++----
- drivers/gpu/drm/nouveau/dispnv50/wndw.c            |  4 ++
- drivers/gpu/drm/nouveau/nvkm/falcon/gm200.c        | 15 ++--
- drivers/gpu/drm/nouveau/nvkm/subdev/gsp/fwsec.c    |  5 +-
- drivers/gpu/drm/tegra/gem.c                        |  2 +-
- drivers/gpu/drm/xe/xe_bo.c                         |  8 +--
- drivers/gpu/drm/xe/xe_gen_wa_oob.c                 | 10 ++-
- drivers/gpu/drm/xe/xe_sync.c                       |  2 +-
- drivers/gpu/drm/xe/xe_vm.c                         |  8 ++-
- drivers/gpu/drm/xe/xe_vm.h                         | 15 +---
- drivers/soc/qcom/ubwc_config.c                     | 23 ++++++-
- include/drm/drm_gpuvm.h                            | 10 +--
- 46 files changed, 467 insertions(+), 309 deletions(-)
 
