@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-791281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92018B3B492
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:43:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA385B3B494
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CBB202767
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398C11C83609
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0543927B334;
-	Fri, 29 Aug 2025 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D727B33C;
+	Fri, 29 Aug 2025 07:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvfiFxAY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vjx01uYh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EFC2773DA;
-	Fri, 29 Aug 2025 07:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2A22A4D5;
+	Fri, 29 Aug 2025 07:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756453413; cv=none; b=d9DYozuR6do39rRQOJws2B0362iZIayszjgSalo3rpeMGfbjND9Tlv0spscMmoEK7Ggq1JQ7BmVi3z2fW2OBUja312byKD9dDgYX7W7YcFtDBBjYA9EVautfHJYIDMyxU7A5FDJ58eARacO/7cp+SdFKoX0BW1gnItxTNP2OEVA=
+	t=1756453460; cv=none; b=Nox2edtW1S1sM+RBLGdwPEyeOL+aFWmH42aiTtvauXEWn+vjHD+hkEyw10nT+1FlvTVJbuE+E/uvKo/bFElFRzJTkFCv0SqiT+3osxP1z4jD+W2bO6Umv1SDzjOwCaYpqq3Vphg8uz06l/KzX7tEgU26nIf8Ix3KEB3C0OA7QPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756453413; c=relaxed/simple;
-	bh=UK2uW67ec5x+08v6vV2jlWqCPKcZr8vv4roBxG38sHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZY17VA+NP1y7D4ft6vjMxvlKoNBbZkGCoHydIo/CB1Mwd3PPDam3mq7A/zNNO5gJuxlm3xaiQO2p4Ghfz154VpNbkPSv8AFVFwwzGBuAWeKOdTu2gBi1WQ08D5Y1mxNh/9Ef0RQ0jgWvNUGeZBL/AFhwmbR/tl6bw3WvB1NWJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvfiFxAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DD7C4CEF0;
-	Fri, 29 Aug 2025 07:43:32 +0000 (UTC)
+	s=arc-20240116; t=1756453460; c=relaxed/simple;
+	bh=nMvebug/8aKBzyMnj8cDMWfLOrd+I+pKXhPg7EME4vk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixe9r4gXh+vfqpcyrSEeI1ffILq3o57GYxzD7pNu6rRiHPG+KjsluG52YPxv1biY0O8azstvF+kdJJnHxaPmy2P2zQ33+hsyogNPVYBDpEdqDI0jBTFxtNbDTH/pKBlNDkdLcbv7DBCW8jNawBTMZvVZRFisFQHizH1blYI+M84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vjx01uYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD31C4CEF4;
+	Fri, 29 Aug 2025 07:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756453413;
-	bh=UK2uW67ec5x+08v6vV2jlWqCPKcZr8vv4roBxG38sHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NvfiFxAYJ7gJJr1nu2uBXoz8U6xai4fMXhrg3dEmLBMVEOQoB6cW3wn5loGt4Qshd
-	 6bWokTKBP4rPg7MtN9FpXLwasYeTPN47LIhv8Fq6vxwCifTxj1/1SK1RvCUSArLq91
-	 0rxOHkKL4FG7FCqYwz0qbw+WG7zfePy3um0+POPsmbNMG7Yjzg6CyY7l3Fhwxpir8I
-	 fYPX18UOLiIPNwQKkVTHtY2jXaPsBQERnV8PZK3cDjvSwiDSuFGR3GCpCZUWdCZEM4
-	 5dvqQvwnV/Twy+m0AnrwwqGGB2URxnDt3dqBaNxVOyodeuGAv3/JbbsF5tEr32C/ec
-	 EWl0YbIXEoc9w==
-Date: Fri, 29 Aug 2025 09:43:30 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: broonie@kernel.org, tiwai@suse.de, andriy.shevchenko@linux.intel.com, 
-	13916275206@139.com, alsa-devel@alsa-project.org, shenghao-ding@ti.com, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, k-yi@ti.com, henry.lo@ti.com, robinchen@ti.com, jesse-ji@ti.com, 
-	will-wang@ti.com, jim.shil@goertek.com, toastcheng@google.com, 
-	chinkaiting@google.com
-Subject: Re: [PATCH v3 2/2] ASoC: tas2781: Add tas2118, tas2x20, tas5825
- support
-Message-ID: <20250829-turquoise-jackdaw-of-joy-cc91fc@kuoka>
-References: <20250825034039.9713-1-baojun.xu@ti.com>
- <20250825034039.9713-2-baojun.xu@ti.com>
+	s=k20201202; t=1756453459;
+	bh=nMvebug/8aKBzyMnj8cDMWfLOrd+I+pKXhPg7EME4vk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vjx01uYhuY7ysGvUDRQnccZcPl1S2rnoL2GRt9uHIO8R8kBXUw0FyO89wrumtXRc3
+	 HKLiCsdUwk/ySu0HZmC5szGw0LM2IbgEJenbi6sZPYs849o6Uofxz08WaaX7HCFvjd
+	 bcVyOUh7V3l+Q9aGKCgx5HmRT9STMjOQWWpuevJ+/4VwyUjhAemwLYexIbCnukSF53
+	 6R0pDMb5Xa9r3jrqSNxbSDx0pAPeo1NFhpk8bJ4jLbGwW4hpjyArBL2rsKeI4NEzHd
+	 cjDe6e9ZLyOqhbDhZ0I8emtbZM0pIOR5OipJLOzFB/mEYAObMWZB7dCXRiGkTNsUWg
+	 qavyfN+q8lO3A==
+Message-ID: <aeef4f20-03c6-42a7-aac0-e385419a05f3@kernel.org>
+Date: Fri, 29 Aug 2025 09:44:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825034039.9713-2-baojun.xu@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Nick Chan <towinchenmi@gmail.com>
+Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, iommu@lists.linux.dev,
+ linux-nvme@lists.infradead.org
+References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
+ <20250818-t8015-nvme-v2-3-65648cd189e0@gmail.com>
+ <20250820222044.GA1513864-robh@kernel.org>
+ <3147ebf4-054c-4777-811f-86d0ad14caf6@kernel.org>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <3147ebf4-054c-4777-811f-86d0ad14caf6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 11:40:39AM +0800, Baojun Xu wrote:
->  allOf:
->    - $ref: dai-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - ti,tas2020
-> +              - ti,tas2118
-> +              - ti,tas2120
-> +              - ti,tas2320
-> +    then:
-> +      properties:
-> +        reg:
-> +          description:
-> +            I2C address, in multiple-AMP case, all the i2c address
-> +            aggregate as one Audio Device to support multiple audio slots.
+On 27.08.25 15:20, Krzysztof Kozlowski wrote:
+> 
+> What commit fails to explain (folks, please fix that) is that device is
+> incompatible with existing ones. Right?
 
-I don't think you resolved Rob's comment.
+I've already applied this [1] but I can still rebase and change the 
+commit message to "Add apple,t8015-sart for SARTv0 found on the Apple 
+A11 SoC, which uses a different MMIO layout and is thus incompatible 
+with the previously described versions".
 
-> +          maxItems: 4
-> +          items:
-> +            minimum: 0x48
-> +            maximum: 0x4b
 
-Also, fix finally order of patches so docs go before the user (see
-submitting patches in DT dir).
+Sven
 
-Best regards,
-Krzysztof
+
+[1] 
+https://lore.kernel.org/all/175593408419.53541.12520438370584715457.b4-ty@kernel.org/
 
 
