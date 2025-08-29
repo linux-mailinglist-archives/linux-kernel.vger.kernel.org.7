@@ -1,249 +1,517 @@
-Return-Path: <linux-kernel+bounces-792476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727FEB3C465
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:54:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95D1B3C4AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359F117BA50
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:54:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C2A7BA99C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A503274B4B;
-	Fri, 29 Aug 2025 21:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAFE264A90;
+	Fri, 29 Aug 2025 22:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eiHNIUK8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="jzfFJTuD"
+Received: from sonic305-21.consmr.mail.gq1.yahoo.com (sonic305-21.consmr.mail.gq1.yahoo.com [98.137.64.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFC31A314F;
-	Fri, 29 Aug 2025 21:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756504465; cv=fail; b=tPOtAMhcGVZtg4UmM2gc6X65OK0+eT9iW5oykWi4YMpKGvCFmgeCtOpmx1/hugTvJXMzFQs/BfOJxZO2ClOhzvri9BRzAhqMEyznFg0Bf5362bcdUizvGaW/8h5P3zCzAZxAPzSeE4v7CKom6Wvqve4upMfYc+84+GsAgcsMsCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756504465; c=relaxed/simple;
-	bh=zYi8tbhSvCIh4WLiCbA7bhNaLJeUz7xs1Gd/00QEtbk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=o7ZlS3Fow5LG2JhLm5R4XQys4zMVIT0QGeiHKjuwiQlgkqmU86IdBNlW3Eznvn51ENTyOMb4cHFMk+RiHLByElqcuZnLBGAAnCbHuog4oQPiz2rMwOF5IY85StNpV2Qb3zOLxXbKgW5rNUaAmaehsqWabyHaYPYyhn/JfJOy5EA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eiHNIUK8; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756504463; x=1788040463;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=zYi8tbhSvCIh4WLiCbA7bhNaLJeUz7xs1Gd/00QEtbk=;
-  b=eiHNIUK8f55kN/6emc2R6ZMNK/S8zELPT5syTNW0xAFnetUn19EZeFog
-   s2Zj8+25wJTwPYVB3pd7icROncyMEN/G3BUHJoYfVp9r2LAP9X9SiQetY
-   jsnroQnKD5cmnteGpUwarFDPvFNJnVInivZtm+DddQqX3RtI46c/wjvmv
-   GfIqF38EDCTKN9Jg3pks3ExTimPfW3YDsth6nEcADIA95TTe1YZtPHQyJ
-   KTQYVlyIyWubc6i+VkXT/xpC8sDfWLzpXtu7gKjYPOrXGOhYlvW+fQZkk
-   G4SDZ8zJvW2NsL8squfOILF52ZV/8+C1g3F1HdlqMHd0R3mLcg1E4ODqb
-   Q==;
-X-CSE-ConnectionGUID: pozy46cNRGaUDv0WwliZyw==
-X-CSE-MsgGUID: rrbZXe6qSjG3og99c7uSew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69391469"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="69391469"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 14:54:13 -0700
-X-CSE-ConnectionGUID: wwoStF8QQz6uE3xnJzDAlg==
-X-CSE-MsgGUID: AL7TDtE4RnSInXK2ogSXIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="175755717"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 14:54:09 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 29 Aug 2025 14:54:08 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 29 Aug 2025 14:54:08 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.42)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 29 Aug 2025 14:54:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HjWWQrSA/UqakmMiSpMwHHU1dDQdkCYRsGAPwI8rXrFPu7ybHceRhaDjrvgSchccCX5gUq/w2G8+LAQ4fKOwruLoj5Rez1nfZGyiMUl4UILb+dc+JJeILKI+u1oZL/ZfNe05XvSikJaG4kEUCMyW9A4MXLNxJccrWUMqQLW2MmNsyn4WqdwZaT8C/iv5GdjkxvlrUAiFAlzUrJO0y4SoTAvxQh+wFNWNkY4sXgRWQXFwmH7yauyn93ak9n2jzMrRKH1AgXKOcXGH97Oss/GvWJzD3OkbZ8kmRVooTPPfWrmcGQaH367H6MckpFj798vt5/8AYlrpo/aKdlQx5xmrOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zYi8tbhSvCIh4WLiCbA7bhNaLJeUz7xs1Gd/00QEtbk=;
- b=jSFpi3GeU2gCRMLTGFSy6SB9dc0M3gplPIsHWdjodE1sU6XW1DvMkpet39rLtKZdWNE0MoDIFsxMdTv/B6hRlUb2/LqHKejc3CKAQelUIUifW89fgKHU7ntzKWj5O2aQNZL4WjusdVaw84AUm6O8slhFOqXjiPCvtlFm2lDURM1OBKJlW1oLkkjTRlMJBA7ZgMNuQ5e0vkuXxSRsu+qHB1d8H4WkI8Rxow7fhKr4cXNCJtKdTzPzd93UUpv1oOT/2dBwRoLB4Ve+2AEMhtyrRZ2VdECaZFdglipFfEtPMU+oNj87ARpR1xm8JXuibOZPijX2LDw9rEhMRG+Zw4ZvHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by IA4PR11MB9231.namprd11.prod.outlook.com (2603:10b6:208:560::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Fri, 29 Aug
- 2025 21:54:00 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9052.014; Fri, 29 Aug 2025
- 21:54:00 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "seanjc@google.com" <seanjc@google.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "Annapurve, Vishal" <vannapurve@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>, "Weiny, Ira" <ira.weiny@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "michael.roth@amd.com" <michael.roth@amd.com>
-Subject: Re: [RFC PATCH v2 05/18] KVM: TDX: Drop superfluous page pinning in
- S-EPT management
-Thread-Topic: [RFC PATCH v2 05/18] KVM: TDX: Drop superfluous page pinning in
- S-EPT management
-Thread-Index: AQHcGHjL8dqNtw+1DUm4eDEQMXeVS7R6DDCAgAAHQwCAABp0gA==
-Date: Fri, 29 Aug 2025 21:54:00 +0000
-Message-ID: <e3b1daca29f5a50bd1d01df1aa1a0403f36d596b.camel@intel.com>
-References: <20250829000618.351013-1-seanjc@google.com>
-	 <20250829000618.351013-6-seanjc@google.com>
-	 <49c337d247940e8bd3920e5723c2fa710cd0dd83.camel@intel.com>
-	 <aLILRk6252a3-iKJ@google.com>
-In-Reply-To: <aLILRk6252a3-iKJ@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA4PR11MB9231:EE_
-x-ms-office365-filtering-correlation-id: 4ffd4dc7-0dda-445c-304c-08dde7468fd5
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?RUl0V3RwQXhNb0ZRZzIrMnAveTM5eTFUZ3VCWFZXcVo4SGdncFkzc3M5eHRk?=
- =?utf-8?B?Y01XQzY5WkIvdVRvMnhmY0ErZG9uNDN3U1gyUUtzVnNyaGduM2dVNmNLSkhP?=
- =?utf-8?B?aEo1UjVwaWNoa1JTRTlxSVdnK2c4RUt2NXVjV0c2QUZrSnQ5YTM5aTI2YkFB?=
- =?utf-8?B?am5RTEFEUTkyQWIyKzMzUFdYbklWbkxzRXhiNzlEWTNCRHFoNUlLblhkeFVx?=
- =?utf-8?B?VEg3cDdWTnlZa3RzdnpEbHNnK2Nsc0MrTG9YSlZwZWxCQTlXSlFsOHNTVHRU?=
- =?utf-8?B?eHordDFvbTFWc1VnY0tyQjdGU0lvZzcxNE56L3pUd0V6OERLOWZzT2xtMmdw?=
- =?utf-8?B?U0ZGWFA1RjVHVDVCZ001WHMxamtuSkcrTzI1eVFadzFjTlNiaGNONnZjSGFC?=
- =?utf-8?B?UEdTOEd1bmttZ21aVllIY3AxUW02ajF4T0NoR0preFU2ZXQ4K2wyYW9yY1dX?=
- =?utf-8?B?TWZtdWR4cnpjZDhHWHJ3bVdwSnY0ZW5GR2k2QjFxd2pxZ2JVcVlpSk9XTllu?=
- =?utf-8?B?b0t6Y0VoQWtHRGgvZ3FEZFUzb0wzY1JBQkhTcmtweWV4V2tBOXFOSzUvSWN2?=
- =?utf-8?B?Y20rUFQwN1BUVzFza0tRbzBNcDM0NTZqaVk1RUEzWHJlYTdPZkVxeVNQclJv?=
- =?utf-8?B?MmVOMVUzaWNTSHcvWW05dThzc25zL29BYXdkaEljd09EK05RbjhQUzF3MWNT?=
- =?utf-8?B?RC9kYnFMSkdONTBnaW4ydXRDd0dvZVgyMk1KeDJlNXZILzdVOXZSNEYxOXZC?=
- =?utf-8?B?VnhpeWhsN2ZQbXM0RTBJMlpqMTUydXZCZjZ0d3RwVFQ3bmhKNkd3bHpkbFZ1?=
- =?utf-8?B?eFNNV0N2cUU1a1lldldVOVdJWnYyVEw3UCtySzdPTURsVHI0UnRURXgzTExk?=
- =?utf-8?B?V01VSVduTVpCcHBZUFVlbTNJR05UVGNMVitiVFVnblFRUVZMa292M0N4NEtU?=
- =?utf-8?B?aWdBMitqQWdOZHlNaFVZdHlkN1EwWlhpQWVaNUd6U1ZQUnhzOTNyYkE4NGUy?=
- =?utf-8?B?MTNWcWFlU2I0c1p2VFA3RmpNcGVScktlOS9RalcybEVTY2tBRjRla1pvWFMx?=
- =?utf-8?B?RlM4YWFnUkpyelE3UCt1Z2tYZzF0d09KR0o0SmI5VjczbkJjKzQwU1crT2hl?=
- =?utf-8?B?dWJzY2lTcHA4eXBDeVRtV1NGRFJHWElVdnhMVjV6Sk0vWjdLOGNzZ0kxKyt4?=
- =?utf-8?B?aEVVNkYvZFM5Ykx1TXlydm9rZ3F3VXgzMytxNHdiVXBQRFA0c1RyYkZ6SnNN?=
- =?utf-8?B?eGdKN1ZJSUJnR2pZQzVZc3ZsUlJKVnFqVGVxVTU2MVFUWFlEZUcza2U3Z3Vp?=
- =?utf-8?B?dFMzdFRESWgzcUlRR3FlZHF1bEZYaVF4NVlGNWRobWN4U1diRHdPdjgxUTNq?=
- =?utf-8?B?bmoxa0d3aU84T3dBUG1qd0c4MGdKcnNBU0d2Sy9zUGpCd0llQWNQa1BqQWdy?=
- =?utf-8?B?U1BPakNCd0dPckdhV3V2cGIxaExDVDI0NHVvaFBMakI3ZzFzV0hXKzdPMXl6?=
- =?utf-8?B?a2lNVnZTREJPR3VhRXY3Vk4xcFNvM1hTRGJTKzhjalBWWnJRanlMdTFPRFVz?=
- =?utf-8?B?R0x6Q3Fac2RMTGJMK1B2NmF1bkFOUXk5eE4rOU0ySGhwcUN4K282YjZhbDdF?=
- =?utf-8?B?SW9hOGdVRWg5a1F6U2E5NVdtS21NR1FOUHhRZFlFeU9TQzBxM3FMR3k0UXZz?=
- =?utf-8?B?SDdBTm1nYVVpcXBZRkYyaDc1aGo1MlhTR1BhVW9BREI4Zkhsa3Vpck1pWjk3?=
- =?utf-8?B?d2FKeTVqaFM4UDc1RU9XbEZ3TlFQL21mRFZhV2hHeU9QRWZCaS9kTHBzNHpt?=
- =?utf-8?B?VlBIaWFIb3kyOWljbEErN1hsVmZBUlRNQ1c4bUZvNUpWRjc4OFB2UUNva1RD?=
- =?utf-8?B?ZStGZmVwZUQ2MjRRRU8ybUJXNlFWYnUvMFRzc1lEYmVvcjNpbTRxWnJxZHkz?=
- =?utf-8?B?SnB1UGdDNUx3WmxyRVFFaHFjT0Vad01QK3BHNS9tUmtGN0RLV25POU5icFNy?=
- =?utf-8?B?M2FGeXZoaDRnPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aERLdEdyVjMveEQ1UGw4NlQxQ01Fay80b0dxZkNOcWFiakZCZWN0TGtWeURU?=
- =?utf-8?B?TFA3MjVPNy9RUWtrdmxtSkw1akNNTzBGRE1IRTJDWU1ESWJRNTNBeWpYa2hx?=
- =?utf-8?B?a0FSTk5xc25TbnVrQU5VdFg5ejJQY25WS0xYUU1hOXc1VzJGUGlWd0IvTHhq?=
- =?utf-8?B?Ri9ETGV3R25EYmVwY0hIZ3JFeHhyOFBCcmRXQzdTY2dUVmNxV0hCd0xJaFFp?=
- =?utf-8?B?THlIaVR3TCtPTmExTkJpYStEaFBidE1PcEQyTEVMNkpYMnhFSlZtT3hOeWJw?=
- =?utf-8?B?LytLWVNRS1UzY3RQdVZCM1hKWXNxd0M3cC9xUmpqNTU5RGxpamFEUlplamNz?=
- =?utf-8?B?NSs5aHZNU2JoR29IVGxENDNvL3pieHZOWklsS1M4dW9tNlhVVUVtYTBiclhv?=
- =?utf-8?B?Z1lVWTQzZEcxTEVVR0xnaUVkekxiVGdFWTd3ck5zRlhzSXZoVGcxZXg2Ykti?=
- =?utf-8?B?Y3krdFh6TXhITUhQb3F5L3YrdGVoQ2VyN2VKWUJGTVlmV0IwNkJSZzhtcG9i?=
- =?utf-8?B?dUZwUHAvd0t1RE9pVFk0amtJSVgzeXkzWTNwZlQvRTZoNkxnNmZtZHpXTG9q?=
- =?utf-8?B?cWhjOWEwdk53Tk1YTDk0RHU5NVFlcGduYllpVFhNcGxKdmV3dktLck5GQUJX?=
- =?utf-8?B?Smh1dDRkWE1rTlNzVVloQThCVHowNndTTktEd2toTjRUclNFT2R1VVVxL0N1?=
- =?utf-8?B?OHpRL21BUGE4RERpYk9jR0NnMDVWWHhMck1JeDB4ZmxVNnhkWkMyOEdYOERw?=
- =?utf-8?B?N0hyMUpaa1hoV1l2TlpOamc1WVlOaW1pcFVGeGQyMngzbDROSVpIOUkxMDdt?=
- =?utf-8?B?clNoVmRoR2tlZHBmWW5uTTYydS9KMHZHeFNJZE1ReTZTSEVlcEc4SlNCRStz?=
- =?utf-8?B?OEZNTUpYZ3hzQ1drQlFJamoyM2ROaXMvZUM4TGl2YW56S0NseGhGZ2JiWklO?=
- =?utf-8?B?OEJndStmdSt6TnlQM1kvTmd1TG53bVIwb1NBUUhrU1JGQUd6N2k0bno5enNK?=
- =?utf-8?B?dGtzVHRoQUJNanBlakVkUWdMOCttWkFYY0lWUjI5MWJHNCs2cmFqUnh5VHhn?=
- =?utf-8?B?VFI4TllOR0twRGFRWWFuSnZNV0xCakE2QjI2Z0Vtb1o5SjVQS3luSStjVG5m?=
- =?utf-8?B?eXpCZ0RUZFFWdTM5TlpsMDVLcDFxb1p6UmhwaUhUbTlKK1ZJaDZHUWpETnJZ?=
- =?utf-8?B?cEJCOUU3dzBOc0ovclh2TXRFallUL3BiZkgxN0dJNVlKWEYydDZENnR6OXNC?=
- =?utf-8?B?L09ObG9ZVysxOEptZVJlV1FJOUEwNGt3UTV2NnRheHpYS3FKblM4ekpPQ1Ur?=
- =?utf-8?B?VXhFd04xL1hhZCtSR0Y5SmFMQ1RWanhMRU5QWjd5K2ovK1NTTmhLR2xhNyt6?=
- =?utf-8?B?S2k1ZkptZExUNUJWbXJSQ2I4TzU5UStxLzdwbnl4dk1sZGVzZHY3Wm5pR0hJ?=
- =?utf-8?B?MzBnMkRWQUVzRVlzVlo4aUc0RFhFc2czTmhmUURwaTRYUWdXcm5SMXk1NUZT?=
- =?utf-8?B?V3RFbVFNemVHY3BaZ2ZpelY5ZXcvQVE1UGxhTk15S2tEQkZOd2NZRmtUZk51?=
- =?utf-8?B?L2lQNkRtdnBzaEV6dFVUOVBXQ0I1eHgxV3RSUTA5T0QyazNmTzhrUklLR3dS?=
- =?utf-8?B?SkdObzRGZVZXS0hFWDNrQndWSExydlIxTFNxZDcwTDlmc0hDU1h3YlM3OVhY?=
- =?utf-8?B?amVpdVJ4NXlVejBWWXl0VG5aTUovbnV2ajlMdkc5akxhUjV6aTVNL002SDB3?=
- =?utf-8?B?SThDU0VkbG1xVER2WTE4K21Cb05pN0E4T2JEelB3SFFkVXJSdlduY28vbDdy?=
- =?utf-8?B?OFVkMEVHY3hGSThMQmp4ZzJibXB2Y3pCQmx6S01qeDE0TDF2ZzFNS2NCMzlP?=
- =?utf-8?B?Z1NmanZ1TitIMnlOR28wNVdJU2FBMTVFMFVvbU1za1crZ0xxS2E0RU9kaldK?=
- =?utf-8?B?YnRDUENJSDRlMk1pVjYxbTZ6bmU2dWlEVGppQXFadTl4d1NqbjBYZnVmQXZ0?=
- =?utf-8?B?Y2I0M3RaVENURk1mWGhOUjdvUUxPdVR0WmQ1TVA2U2lwTHdPb1VtY3BmdjVs?=
- =?utf-8?B?cVVkNERaREhudXVUemV5V3VwUHBYaFlEU2ZGVXBwZHIzY2MxRWxlOWlYOTEw?=
- =?utf-8?B?cFB5d29XOGJPemtwYWpMNjlyM1BoOHdNVnYvcklOdkh2QkQwMW5tZllzWWVP?=
- =?utf-8?Q?+qJacLDeoalVcH+M2tcQTcQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E0D91547C80DB747A9052FA0AFB1DAFE@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFBA2A1AA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756505775; cv=none; b=dXiSSkFnpfgdfWPXYVVb7M9+9kV6iADMfxdB3YwhMzzaBBtULFUeI5hlalpSxaHB8Kv7W0KykvlBeSAjhCFSO5kYqv2h/oN1S28PCocDZ0UC2+zG4KDxPgmwlymp3cxp1EA0crIQHwnzLpq3KVocDSmuq2OnTPBbLkXMhhFROKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756505775; c=relaxed/simple;
+	bh=pvPNDzuUMVvCW1MkSqUovaIZlBsOc/O+fLlrjiAnS/0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KXxGNmj2G7aguxmHgRRiaPrv3YWOdA6PamxSITrXtskmSHIMsueaeePqzPrfjjv/tj8fYg6LM0uog21Yh2WjkX6acfV2RNLMgJJNwjd7M43L/uCfDNrMJj7oVXQ+Hpgj8RH7RLtBAAkXYVKKhPr5p4GiebpmYrLcKgt2P3eFpQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=jzfFJTuD; arc=none smtp.client-ip=98.137.64.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1756505773; bh=2f6BfIkM46QmDlINovTYFl8rCojhvrz4JFGm7r4wsv4=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=jzfFJTuDHYMjHn7YXDIK4rOWYo8V6UVwLGgDpMTv6XGREAwhrwYxGxGCfX/Hg+61uM7pKMKZO+/Ljbumxck0Z3VKfX0TpGr6ps2PxzePffrs45robOhFT1ZvOuoQ0aq4h3jra4Bqxf8NEygBOI24Qfy+Nr60CAVpWLCF6Eu39xDdL5BykxXTBYTppNb1V8U8QdOT/hqF3pS6iLExLXns/wsqX8qONJmgopOvB3QZIZzkGxUqaFCHkK5/iPTHooiHvs1EQK6sPYvNZI0VX4LkqTOBE/eczA1xwQaUnoBoZkbj5ah/dwHWjwKMuh+vNVgMEuzwTsHoadEdflxfChN2bg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756505773; bh=13keisJh3SsDKzoX32DiZD9tjnkqcXdO+ThROj0YmK1=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=T1qr8AlYwPKaobgNqvymhp7L1Vs4uSSOxbXRM3ToRs3qMR+CywxpgNwDpvZUOY9GAQmaT8Clil+JhgUFUDK36B+qOC6I1iyrsIOr4Abd5Ooo4V/ToAYEMsX3CdKDCIXc6R0G7uS2HS5/8mde/bNFbkfBy1YEo5+9wRSJ84nFqPQO49UIGtrhbql7Zqvbd5IU0xLLOuNIitmizOy9q4e8O+QLi2TjffA0EN4D2CcUr30qHzQ+HFqsoypxCLa3cirVvu6Z4iR/golBmk/l80LLvd9vVSCVO1kNnkCb66yQWTXTsRgS0eBt1hQpk4E+VYrPfRKpYFhdKhzHPTriA5cSLw==
+X-YMail-OSG: Xbsj_rwVM1l2WLwrBh_IOgpkvYKJ9JxAJCnbzmAEjbpoaol8Iscy8VU4MpbZuYG
+ FWCyMn_VK0emN_fxc_U7Nv4_uBuJn.LWKk_ZOu9efO2ISL9ppgAAXWLiLze3U5y_2pFPxtdReTfa
+ YqiLP0Qfvqvl9vfL4B2vAWl7MX1QQK0m0k9hIDjXTTfbQ.iUc2X1D_eT96u8ZykgK379z5EoKlYr
+ 5f27b7K.oF2tf8lehhnLRchwxMpHdLDO6HsoNdC_.h.1cvFGVbfNxRSkSIil0Uslsys6u8PR3VII
+ 2AqHw1iWyjqpmlgYsBdwc4favwMS2kb1zIeQgb0gpCe5dbXEOCguQpzaJJDVPpp5QGe0ndYJC4yd
+ tkcGIQP9q8cmV6.9Q3E9er.arm6LCWELTc9d0QwxouOjSgNpMjI.0CkYyVVsnJ57JAnDOacP5usl
+ .r8tS6YdDzF.uUUyrawB6zrXfjgNaO9zoY53Dr7eM22tybQDHfTw1VRU16_1ktY1P16DNjCYLpYz
+ a6Zw6i_SA3.mmkWfh12lAlpZI_8AmwtvXA2b7xU.k7252g06RCYgul_wl4uJWI.H.fDx.162Amzi
+ P3OKzMmmpJgVK6EZcZfOmqzqfzBb9tX3irZEROh77LksCV2ngyJLVd3BVvQg8A0pNHpZ7j76LzOF
+ P933sgUIx9s2elPCMx9FrqvClbDaNY7GyDg80R6DvzndA3jaW_alyekXRc3VhHOI0DvX1YqrpHDj
+ bhgmpTJc7bVOROyzd4Epr3iTFt2tQJp3TF960PUCfMGXoJf0CiGx7344XZ0zSvBOt_PkcdJSXb.t
+ deg4DLcWD.2FVAq.tQ5mPh9itljxusIQSppNIExUa46RYVnn2rsTGYxYdWqpgMx3N25Y320Jo5Wx
+ 6a4cH72G9Z1nvkim7UVZDj8Gq_lFhw4KPBY_0XZOkZ9AT_9D6Dkes6v2yvdDGg215KXSlZ8bXG2u
+ nxx3ya6BoC_iXWi51_2Kw8B_IpblyslHBqGpUjP15thydGncXoTFqZrdI.o0W87o1AVfSgv4tOk.
+ j0XJQWccWJ7eYNyPRC4rU4GjrvnrOd4W02wQkrHsP7GDhgRhZ8ueQkhYa9UFOxrbuFBAcw6rc4Jt
+ tPcNGY9Zf82sSPV7Ic5rmdbc21xK7BLvrfa3cXmN_QtBAAx8aEEcCqh5QQ2WMX1wkX2DZJKMejjz
+ terkLp5qexoDE_9BPkiV.nWdAtQSwMzsKDPIuT0rMkzoCYNWk0htIGiu4qHFss0lVpdIUk5x2cQH
+ AQ2CQ3EaALrQBcesL3bx2_kr0rD8hG2uGWqCUE3baCm1RFb6alxY9jQ5QPluuxIHBar6XUI4ClfF
+ mSY25f7I2ZV0veqiJT_6J8mSurKK4XMcz14LcipLiSqCbEk9im4PvTgOCVEOrsBX.q0YdR6yVkLR
+ e3uPLrrWg4tMZaTG.tnq6O_zTq20ywdkNsWXV9PQ5rSnMFUKAf9298l7IHgz9pE1gpaoB2lzpQOG
+ xDgzt4WjGRW6svO9DVc5rLC2nXQ8DdCQqi27vQMnGztwi9EOt6Nge5u88b5.D7E_t99Z12lGVUjb
+ d5VnueK9NlzXgLuE94NYM6GO7eph.LH.INrl6v5Kl358cJ883vsXmgORdHrKTYOKhW6eVYXqajDq
+ elGucBv1ZJvW2YIslHfPmp5yyzoSsYjpwCTXEGR1iNu8K50MsIkWSUuBiso1B8XeNQfecVwKWmCV
+ gpdZ021rDMZn5wCdY85aLFv_Uff4D_o6TX_ksVyERE29SlccnY3W8Gju1Erbj6JaNdiWG8ys1k9I
+ QdsluxmLkQX6bzkb1_Do1vervnGLlZ0F92MF1pEXh27XMqoNOFMB7kTkjOm06nyigSOgT..EbV.W
+ rl0XoSxbi0sllXfqFWxFSywsl2hzLLG_LtWU7_ckJUp9RX0locusHzV11_lmxjoUbHdMtO1xCgiH
+ 6xoguJA137wCh0PWgJTkHuK5SlNkkgo2ITW4G6MxH70Bsc7jCClfvGzVoJOlRFVVdyz5nrdEAZ94
+ 5fWKVe0F8VkbD7WSeHOX6GU9MeOHOd03MLku7v2erZyrxKqkDoorajX7LQgvRNhPgWIAMjtrazqV
+ q8MvzdJSifT0DOW5Z.EsbaYMHApBy.mlpFA0rEF41NEv3Xy4Q0CsVpkjuRelTkrgbuWwbHo3fd5g
+ 1wMlunFlPbvt3QRFnIcoFo.UezabZnhsPlDlqQ_gg..axw9AaGxbKRDgjnwJcULlWeLxiwcocYpC
+ Tpc7TgTPTf0POXgl9PKlQgELyTUkXhtaV.tyQ8frAdkJ6oqH0HQQ_0y67
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 49948386-4028-4a6a-84cb-25f9ec076e16
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Fri, 29 Aug 2025 22:16:13 +0000
+Received: by hermes--production-ir2-7d8c9489f-8n4zw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 66d03f964ec0b6a1a22218baa273b900;
+          Fri, 29 Aug 2025 21:55:56 +0000 (UTC)
+Message-ID: <03c1feb8ab27f0ebd9add221fbbedc384deae244.camel@aol.com>
+Subject: Re: [PATCH v3] drm/gud: Replace simple display pipe with DRM atomic
+ helpers
+From: Ruben Wauters <rubenru09@aol.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard	
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	 <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Ingo Molnar	
+ <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jani Nikula	
+ <jani.nikula@intel.com>, Jocelyn Falempe <jfalempe@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Fri, 29 Aug 2025 22:55:54 +0100
+In-Reply-To: <20250818193553.2162-1-rubenru09@aol.com>
+References: <20250818193553.2162-1-rubenru09.ref@aol.com>
+	 <20250818193553.2162-1-rubenru09@aol.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ffd4dc7-0dda-445c-304c-08dde7468fd5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2025 21:54:00.3154
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hbPQa5ueZt5nxuGxJ4WhniTQ0mY7ZA+dgg1U7MEb3o9mUC5RUiKiH11jpR5IPzONduo8P6HVH9P1iY9MxBoSqzY/qsVXra44pNC7kxdzpJQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9231
-X-OriginatorOrg: intel.com
+X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-T24gRnJpLCAyMDI1LTA4LTI5IGF0IDEzOjE5IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiA+IFlhbiwgY2FuIHlvdSBjbGFyaWZ5IHdoYXQgeW91IG1lYW4gYnkgInRoZXJlIGNv
-dWxkIGJlIGEgc21hbGwgd2luZG93Ij8gSSdtDQo+ID4gdGhpbmtpbmcgdGhpcyBpcyBhIGh5cG90
-aGV0aWNhbCB3aW5kb3cgYXJvdW5kIHZtX2RlYWQgcmFjZXM/IE9yIG1vcmUNCj4gPiBjb25jcmV0
-ZT8gSSAqZG9uJ3QqIHdhbnQgdG8gcmUtb3BlbiB0aGUgZGViYXRlIG9uIHdoZXRoZXIgdG8gZ28g
-d2l0aCB0aGlzDQo+ID4gYXBwcm9hY2gsIGJ1dCBJIHRoaW5rIHRoaXMgaXMgYSBnb29kIHRlYWNo
-aW5nIGVkZ2UgY2FzZSB0byBzZXR0bGUgb24gaG93IHdlDQo+ID4gd2FudCB0byB0cmVhdCBzaW1p
-bGFyIGlzc3Vlcy4gU28gSSBqdXN0IHdhbnQgdG8gbWFrZSBzdXJlIHdlIGhhdmUgdGhlDQo+ID4g
-anVzdGlmaWNhdGlvbiByaWdodC4NCj4gDQo+IFRoZSBmaXJzdCBwYXJhZ3JhcGggaXMgYWxsIHRo
-ZSBqdXN0aWZpY2F0aW9uIHdlIG5lZWQuwqAgU2VyaW91c2x5LsKgIEJhZCB0aGluZ3MNCj4gd2ls
-bCBoYXBwZW4gaWYgeW91IGhhdmUgVUFGIGJ1Z3MsIG5ld3MgYXQgMTEhDQoNClRvdGFsbHkuDQoN
-Cj4gDQo+IEknbSBhbGwgZm9yIGRlZmVuc2l2ZSBwcm9ncmFtbWluZywgYnV0IHBpbm5pbmcgcGFn
-ZXMgZ29lcyB0b28gZmFyLCBiZWNhdXNlDQo+IHRoYXQgaXRzZWxmIGNhbiBiZSBkYW5nZXJvdXMs
-IGUuZy4gc2VlIGNvbW1pdCAyYmNiNTJhMzYwMmIgKCJLVk06IFBpbiAoYXMgaW4NCj4gRk9MTF9Q
-SU4pIHBhZ2VzIGR1cmluZyBrdm1fdmNwdV9tYXAoKSIpIGFuZCB0aGUgbWFueSBtZXNzZXMgS1ZN
-IGNyZWF0ZWQgd2l0aA0KPiByZXNwZWN0IHRvIHN0cnVjdCBwYWdlIHJlZmNvdW50cy4NCj4gDQo+
-IEknbSBoYXBweSB0byBpbmNsdWRlIG1vcmUgY29udGV4dCBpbiB0aGUgY2hhbmdlbG9nLCBidXQg
-SSByZWFsbHkgZG9uJ3Qgd2FudA0KPiBhbnlvbmUgdG8gd2FsayBhd2F5IGZyb20gdGhpcyB0aGlu
-a2luZyB0aGF0IHBpbm5pbmcgcGFnZXMgaW4gcmFuZG9tIEtWTSBjb2RlDQo+IGlzIGF0IGFsbCBl
-bmNvdXJhZ2VkLg0KDQpTb3JyeSBmb3IgZ29pbmcgb24gYSB0YW5nZW50LiBEZWZlbnNpdmUgcHJv
-Z3JhbW1pbmcgaW5zaWRlIHRoZSBrZXJuZWwgaXMgYQ0KbGl0dGxlIG1vcmUgc2V0dGxlZC4gQnV0
-IGZvciBkZWZlbnNpdmUgcHJvZ3JhbW1pbmcgYWdhaW5zdCB0aGUgVERYIG1vZHVsZSwgdGhlcmUN
-CmFyZSB2YXJpb3VzIHNjaG9vbHMgb2YgdGhvdWdodCBpbnRlcm5hbGx5LiBDdXJyZW50bHkgd2Ug
-cmVseSBvbiBzb21lDQp1bmRvY3VtZW50ZWQgYmVoYXZpb3Igb2YgdGhlIFREWCBtb2R1bGUgKGFz
-IGluIG5vdCBpbiB0aGUgc3BlYykgZm9yIGNvcnJlY3RuZXNzLg0KQnV0IEkgZG9uJ3QgdGhpbmsg
-d2UgZG8gZm9yIHNlY3VyaXR5Lg0KDQpTcGVha2luZyBmb3IgWWFuIGhlcmUsIEkgdGhpbmsgc2hl
-IHdhcyBhIGxpdHRsZSBtb3JlIHdvcnJpZWQgYWJvdXQgdGhpcyBzY2VuYXJpbw0KdGhlbiBtZSwg
-c28gSSByZWFkIHRoaXMgdmVyYmlhZ2UgYW5kIHRob3VnaHQgdG8gdHJ5IHRvIGNsb3NlIGl0IG91
-dC4NCg==
+On Mon, 2025-08-18 at 20:35 +0100, Ruben Wauters wrote:
+> The simple display pipe is obsolete and the atomic helpers allow for
+> more control over the rendering process. As such, this patch replaces
+> the old simple display pipe system with the newer atomic helpers.
+>=20
+> As the code is mainly the same, merely replaced with the new atomic
+> system, there should be no change in functionality.
+>=20
+> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+
+Hello, I was just checking to see if anyone had a chance to review this
+patch?
+
+Thank you
+
+Ruben Wauters
+
+> ---
+> I noticed as well elsewhere in the driver WARN_ON_ONCE was used
+> instead
+> of drm_WARN_ON_ONCE(). I have fixed it for the ones I've modified,
+> and
+> will fix it for the driver as a whole in another patch.
+>=20
+> v2 changes:
+> - address review comments by reorganising gud_probe()
+>=20
+> v3 changes:
+> - fix formatting and spacing
+> - remove unnecessary includes
+> - convert WARN_ON_ONCE() to drm_WARN_ON_ONCE()
+> - remove dst rect intersect check
+> - remove encoder from gud_device and switch to gconn->encoder
+> ---
+> =C2=A0drivers/gpu/drm/gud/gud_connector.c | 25 +++++------
+> =C2=A0drivers/gpu/drm/gud/gud_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+ 52 ++++++++++++++++++-----
+> =C2=A0drivers/gpu/drm/gud/gud_internal.h=C2=A0 | 13 +++---
+> =C2=A0drivers/gpu/drm/gud/gud_pipe.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 64 +=
+++++++++++++++++++--------
+> --
+> =C2=A04 files changed, 99 insertions(+), 55 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/gud/gud_connector.c
+> b/drivers/gpu/drm/gud/gud_connector.c
+> index 0f07d77c5d52..4a15695fa933 100644
+> --- a/drivers/gpu/drm/gud/gud_connector.c
+> +++ b/drivers/gpu/drm/gud/gud_connector.c
+> @@ -16,7 +16,6 @@
+> =C2=A0#include <drm/drm_modeset_helper_vtables.h>
+> =C2=A0#include <drm/drm_print.h>
+> =C2=A0#include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> =C2=A0#include <drm/gud.h>
+> =C2=A0
+> =C2=A0#include "gud_internal.h"
+> @@ -607,13 +606,16 @@ int gud_connector_fill_properties(struct
+> drm_connector_state *connector_state,
+> =C2=A0	return gconn->num_properties;
+> =C2=A0}
+> =C2=A0
+> +static const struct drm_encoder_funcs
+> gud_drm_simple_encoder_funcs_cleanup =3D {
+> +	.destroy =3D drm_encoder_cleanup,
+> +};
+> +
+> =C2=A0static int gud_connector_create(struct gud_device *gdrm, unsigned
+> int index,
+> =C2=A0				struct gud_connector_descriptor_req
+> *desc)
+> =C2=A0{
+> =C2=A0	struct drm_device *drm =3D &gdrm->drm;
+> =C2=A0	struct gud_connector *gconn;
+> =C2=A0	struct drm_connector *connector;
+> -	struct drm_encoder *encoder;
+> =C2=A0	int ret, connector_type;
+> =C2=A0	u32 flags;
+> =C2=A0
+> @@ -681,20 +683,13 @@ static int gud_connector_create(struct
+> gud_device *gdrm, unsigned int index,
+> =C2=A0		return ret;
+> =C2=A0	}
+> =C2=A0
+> -	/* The first connector is attached to the existing simple
+> pipe encoder */
+> -	if (!connector->index) {
+> -		encoder =3D &gdrm->pipe.encoder;
+> -	} else {
+> -		encoder =3D &gconn->encoder;
+> -
+> -		ret =3D drm_simple_encoder_init(drm, encoder,
+> DRM_MODE_ENCODER_NONE);
+> -		if (ret)
+> -			return ret;
+> -
+> -		encoder->possible_crtcs =3D 1;
+> -	}
+> +	gconn->encoder.possible_crtcs =3D drm_crtc_mask(&gdrm->crtc);
+> +	ret =3D drm_encoder_init(drm, &gconn->encoder,
+> &gud_drm_simple_encoder_funcs_cleanup,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRM_MODE_ENCODER_NONE, NULL);
+> +	if (ret)
+> +		return ret;
+> =C2=A0
+> -	return drm_connector_attach_encoder(connector, encoder);
+> +	return drm_connector_attach_encoder(connector, &gconn-
+> >encoder);
+> =C2=A0}
+> =C2=A0
+> =C2=A0int gud_get_connectors(struct gud_device *gdrm)
+> diff --git a/drivers/gpu/drm/gud/gud_drv.c
+> b/drivers/gpu/drm/gud/gud_drv.c
+> index 5385a2126e45..5f57f841e603 100644
+> --- a/drivers/gpu/drm/gud/gud_drv.c
+> +++ b/drivers/gpu/drm/gud/gud_drv.c
+> @@ -16,6 +16,7 @@
+> =C2=A0#include <drm/clients/drm_client_setup.h>
+> =C2=A0#include <drm/drm_atomic_helper.h>
+> =C2=A0#include <drm/drm_blend.h>
+> +#include <drm/drm_crtc_helper.h>
+> =C2=A0#include <drm/drm_damage_helper.h>
+> =C2=A0#include <drm/drm_debugfs.h>
+> =C2=A0#include <drm/drm_drv.h>
+> @@ -27,7 +28,6 @@
+> =C2=A0#include <drm/drm_managed.h>
+> =C2=A0#include <drm/drm_print.h>
+> =C2=A0#include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> =C2=A0#include <drm/gud.h>
+> =C2=A0
+> =C2=A0#include "gud_internal.h"
+> @@ -289,7 +289,7 @@ static int gud_get_properties(struct gud_device
+> *gdrm)
+> =C2=A0			 * but mask out any additions on future
+> devices.
+> =C2=A0			 */
+> =C2=A0			val &=3D GUD_ROTATION_MASK;
+> -			ret =3D
+> drm_plane_create_rotation_property(&gdrm->pipe.plane,
+> +			ret =3D
+> drm_plane_create_rotation_property(&gdrm->plane,
+> =C2=A0							=09
+> DRM_MODE_ROTATE_0, val);
+> =C2=A0			break;
+> =C2=A0		default:
+> @@ -338,10 +338,30 @@ static int gud_stats_debugfs(struct seq_file
+> *m, void *data)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -static const struct drm_simple_display_pipe_funcs gud_pipe_funcs =3D {
+> -	.check=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D gud_pipe_check,
+> -	.update	=C2=A0=C2=A0=C2=A0 =3D gud_pipe_update,
+> -	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS
+> +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs =3D {
+> +	.atomic_check =3D drm_crtc_helper_atomic_check
+> +};
+> +
+> +static const struct drm_crtc_funcs gud_crtc_funcs =3D {
+> +	.reset =3D drm_atomic_helper_crtc_reset,
+> +	.destroy =3D drm_crtc_cleanup,
+> +	.set_config =3D drm_atomic_helper_set_config,
+> +	.page_flip =3D drm_atomic_helper_page_flip,
+> +	.atomic_duplicate_state =3D
+> drm_atomic_helper_crtc_duplicate_state,
+> +	.atomic_destroy_state =3D
+> drm_atomic_helper_crtc_destroy_state,
+> +};
+> +
+> +static const struct drm_plane_helper_funcs gud_plane_helper_funcs =3D
+> {
+> +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> +	.atomic_check =3D gud_plane_atomic_check,
+> +	.atomic_update =3D gud_plane_atomic_update,
+> +};
+> +
+> +static const struct drm_plane_funcs gud_plane_funcs =3D {
+> +	.update_plane =3D drm_atomic_helper_update_plane,
+> +	.disable_plane =3D drm_atomic_helper_disable_plane,
+> +	.destroy =3D drm_plane_cleanup,
+> +	DRM_GEM_SHADOW_PLANE_FUNCS,
+> =C2=A0};
+> =C2=A0
+> =C2=A0static const struct drm_mode_config_funcs gud_mode_config_funcs =3D=
+ {
+> @@ -350,7 +370,7 @@ static const struct drm_mode_config_funcs
+> gud_mode_config_funcs =3D {
+> =C2=A0	.atomic_commit =3D drm_atomic_helper_commit,
+> =C2=A0};
+> =C2=A0
+> -static const u64 gud_pipe_modifiers[] =3D {
+> +static const u64 gud_plane_modifiers[] =3D {
+> =C2=A0	DRM_FORMAT_MOD_LINEAR,
+> =C2=A0	DRM_FORMAT_MOD_INVALID
+> =C2=A0};
+> @@ -567,12 +587,17 @@ static int gud_probe(struct usb_interface
+> *intf, const struct usb_device_id *id)
+> =C2=A0			return -ENOMEM;
+> =C2=A0	}
+> =C2=A0
+> -	ret =3D drm_simple_display_pipe_init(drm, &gdrm->pipe,
+> &gud_pipe_funcs,
+> -					=C2=A0=C2=A0 formats, num_formats,
+> -					=C2=A0=C2=A0 gud_pipe_modifiers,
+> NULL);
+> +	ret =3D drm_universal_plane_init(drm, &gdrm->plane, 0,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &gud_plane_funcs,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 formats, num_formats,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gud_plane_modifiers,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DRM_PLANE_TYPE_PRIMARY,
+> NULL);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> +	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+> +	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+> +
+> =C2=A0	devm_kfree(dev, formats);
+> =C2=A0	devm_kfree(dev, formats_dev);
+> =C2=A0
+> @@ -582,7 +607,12 @@ static int gud_probe(struct usb_interface *intf,
+> const struct usb_device_id *id)
+> =C2=A0		return ret;
+> =C2=A0	}
+> =C2=A0
+> -	drm_plane_enable_fb_damage_clips(&gdrm->pipe.plane);
+> +	ret =3D drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm-
+> >plane, NULL,
+> +					&gud_crtc_funcs, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
+> =C2=A0
+> =C2=A0	ret =3D gud_get_connectors(gdrm);
+> =C2=A0	if (ret) {
+> diff --git a/drivers/gpu/drm/gud/gud_internal.h
+> b/drivers/gpu/drm/gud/gud_internal.h
+> index d6fb25388722..d27c31648341 100644
+> --- a/drivers/gpu/drm/gud/gud_internal.h
+> +++ b/drivers/gpu/drm/gud/gud_internal.h
+> @@ -11,11 +11,11 @@
+> =C2=A0#include <uapi/drm/drm_fourcc.h>
+> =C2=A0
+> =C2=A0#include <drm/drm_modes.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> =C2=A0
+> =C2=A0struct gud_device {
+> =C2=A0	struct drm_device drm;
+> -	struct drm_simple_display_pipe pipe;
+> +	struct drm_plane plane;
+> +	struct drm_crtc crtc;
+> =C2=A0	struct work_struct work;
+> =C2=A0	u32 flags;
+> =C2=A0	const struct drm_format_info *xrgb8888_emulation_format;
+> @@ -62,11 +62,10 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8
+> request, u8 val);
+> =C2=A0
+> =C2=A0void gud_clear_damage(struct gud_device *gdrm);
+> =C2=A0void gud_flush_work(struct work_struct *work);
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		=C2=A0=C2=A0 struct drm_plane_state *new_plane_state,
+> -		=C2=A0=C2=A0 struct drm_crtc_state *new_crtc_state);
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_plane_state *old_state);
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			=C2=A0=C2=A0 struct drm_atomic_state *state);
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_atomic_state *atomic_state);
+> =C2=A0int gud_connector_fill_properties(struct drm_connector_state
+> *connector_state,
+> =C2=A0				=C2=A0 struct gud_property_req
+> *properties);
+> =C2=A0int gud_get_connectors(struct gud_device *gdrm);
+> diff --git a/drivers/gpu/drm/gud/gud_pipe.c
+> b/drivers/gpu/drm/gud/gud_pipe.c
+> index 8d548d08f127..54d9aa9998e5 100644
+> --- a/drivers/gpu/drm/gud/gud_pipe.c
+> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+> @@ -20,7 +20,6 @@
+> =C2=A0#include <drm/drm_gem_framebuffer_helper.h>
+> =C2=A0#include <drm/drm_print.h>
+> =C2=A0#include <drm/drm_rect.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> =C2=A0#include <drm/gud.h>
+> =C2=A0
+> =C2=A0#include "gud_internal.h"
+> @@ -451,14 +450,15 @@ static void gud_fb_handle_damage(struct
+> gud_device *gdrm, struct drm_framebuffer
+> =C2=A0	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach,
+> damage);
+> =C2=A0}
+> =C2=A0
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		=C2=A0=C2=A0 struct drm_plane_state *new_plane_state,
+> -		=C2=A0=C2=A0 struct drm_crtc_state *new_crtc_state)
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			=C2=A0=C2=A0 struct drm_atomic_state *state)
+> =C2=A0{
+> -	struct gud_device *gdrm =3D to_gud_device(pipe->crtc.dev);
+> -	struct drm_plane_state *old_plane_state =3D pipe->plane.state;
+> -	const struct drm_display_mode *mode =3D &new_crtc_state->mode;
+> -	struct drm_atomic_state *state =3D new_plane_state->state;
+> +	struct gud_device *gdrm =3D to_gud_device(plane->dev);
+> +	struct drm_plane_state *old_plane_state =3D
+> drm_atomic_get_old_plane_state(state, plane);
+> +	struct drm_plane_state *new_plane_state =3D
+> drm_atomic_get_new_plane_state(state, plane);
+> +	struct drm_crtc *crtc =3D new_plane_state->crtc;
+> +	struct drm_crtc_state *crtc_state;
+> +	const struct drm_display_mode *mode;
+> =C2=A0	struct drm_framebuffer *old_fb =3D old_plane_state->fb;
+> =C2=A0	struct drm_connector_state *connector_state =3D NULL;
+> =C2=A0	struct drm_framebuffer *fb =3D new_plane_state->fb;
+> @@ -469,20 +469,37 @@ int gud_pipe_check(struct
+> drm_simple_display_pipe *pipe,
+> =C2=A0	int idx, ret;
+> =C2=A0	size_t len;
+> =C2=A0
+> -	if (WARN_ON_ONCE(!fb))
+> +	if (drm_WARN_ON_ONCE(plane->dev, !fb))
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> +	if (drm_WARN_ON_ONCE(plane->dev, !crtc))
+> +		return -EINVAL;
+> +
+> +	crtc_state =3D drm_atomic_get_new_crtc_state(state, crtc);
+> +
+> +	mode =3D &crtc_state->mode;
+> +
+> +	ret =3D drm_atomic_helper_check_plane_state(new_plane_state,
+> crtc_state,
+> +						=C2=A0
+> DRM_PLANE_NO_SCALING,
+> +						=C2=A0
+> DRM_PLANE_NO_SCALING,
+> +						=C2=A0 false, false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!new_plane_state->visible)
+> +		return 0;
+> +
+> =C2=A0	if (old_plane_state->rotation !=3D new_plane_state->rotation)
+> -		new_crtc_state->mode_changed =3D true;
+> +		crtc_state->mode_changed =3D true;
+> =C2=A0
+> =C2=A0	if (old_fb && old_fb->format !=3D format)
+> -		new_crtc_state->mode_changed =3D true;
+> +		crtc_state->mode_changed =3D true;
+> =C2=A0
+> -	if (!new_crtc_state->mode_changed && !new_crtc_state-
+> >connectors_changed)
+> +	if (!crtc_state->mode_changed && !crtc_state-
+> >connectors_changed)
+> =C2=A0		return 0;
+> =C2=A0
+> =C2=A0	/* Only one connector is supported */
+> -	if (hweight32(new_crtc_state->connector_mask) !=3D 1)
+> +	if (hweight32(crtc_state->connector_mask) !=3D 1)
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> =C2=A0	if (format->format =3D=3D DRM_FORMAT_XRGB8888 && gdrm-
+> >xrgb8888_emulation_format)
+> @@ -500,7 +517,7 @@ int gud_pipe_check(struct drm_simple_display_pipe
+> *pipe,
+> =C2=A0	if (!connector_state) {
+> =C2=A0		struct drm_connector_list_iter conn_iter;
+> =C2=A0
+> -		drm_connector_list_iter_begin(pipe->crtc.dev,
+> &conn_iter);
+> +		drm_connector_list_iter_begin(plane->dev,
+> &conn_iter);
+> =C2=A0		drm_for_each_connector_iter(connector, &conn_iter) {
+> =C2=A0			if (connector->state->crtc) {
+> =C2=A0				connector_state =3D connector->state;
+> @@ -567,16 +584,18 @@ int gud_pipe_check(struct
+> drm_simple_display_pipe *pipe,
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_plane_state *old_state)
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_atomic_state *atomic_state)
+> =C2=A0{
+> -	struct drm_device *drm =3D pipe->crtc.dev;
+> +	struct drm_device *drm =3D plane->dev;
+> =C2=A0	struct gud_device *gdrm =3D to_gud_device(drm);
+> -	struct drm_plane_state *state =3D pipe->plane.state;
+> -	struct drm_shadow_plane_state *shadow_plane_state =3D
+> to_drm_shadow_plane_state(state);
+> -	struct drm_framebuffer *fb =3D state->fb;
+> -	struct drm_crtc *crtc =3D &pipe->crtc;
+> +	struct drm_plane_state *old_state =3D
+> drm_atomic_get_old_plane_state(atomic_state, plane);
+> +	struct drm_plane_state *new_state =3D
+> drm_atomic_get_new_plane_state(atomic_state, plane);
+> +	struct drm_shadow_plane_state *shadow_plane_state =3D
+> to_drm_shadow_plane_state(new_state);
+> +	struct drm_framebuffer *fb =3D new_state->fb;
+> +	struct drm_crtc *crtc =3D new_state->crtc;
+> =C2=A0	struct drm_rect damage;
+> +	struct drm_atomic_helper_damage_iter iter;
+> =C2=A0	int ret, idx;
+> =C2=A0
+> =C2=A0	if (crtc->state->mode_changed || !crtc->state->enable) {
+> @@ -611,7 +630,8 @@ void gud_pipe_update(struct
+> drm_simple_display_pipe *pipe,
+> =C2=A0	if (ret)
+> =C2=A0		goto ctrl_disable;
+> =C2=A0
+> -	if (drm_atomic_helper_damage_merged(old_state, state,
+> &damage))
+> +	drm_atomic_helper_damage_iter_init(&iter, old_state,
+> new_state);
+> +	drm_atomic_for_each_plane_damage(&iter, &damage)
+> =C2=A0		gud_fb_handle_damage(gdrm, fb, &shadow_plane_state-
+> >data[0], &damage);
+> =C2=A0
+> =C2=A0	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
 
