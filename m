@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-791597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C026DB3B8F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6DAFB3B8FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7276B582744
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:35:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E21A7C00BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6150D30C356;
-	Fri, 29 Aug 2025 10:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073973093C8;
+	Fri, 29 Aug 2025 10:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixVKxpab"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv9/nEKw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A418C309DC0;
-	Fri, 29 Aug 2025 10:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F7265CA7;
+	Fri, 29 Aug 2025 10:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463524; cv=none; b=Y0HbVGyWmoYdvMxc1MjOBspsr+Pdi229hQg62pJifdgGNCw8KqW1qp63P+1D3zjEF2jIirLqlU86x3Y6G/vt4gFnsQFpD6Xwd4+87Q1SU1DjtGcR6OT2Bg9OZhVJk4P11+kdnYQ17ySS4yU0zb7QZTY7vdjOqFqdu/Mw8WAFZyY=
+	t=1756463755; cv=none; b=ijufumvuOP+kxd/9t0lI+IzI0N4ZIHgxnz4M3F5RKjoVSbvLeqbHU7mPxkDPTW9aAwyc9N5acRjk6SZQA5TmMlUzAiPD+6U5ndnZgA+ZmKhohXF5j73DNrU1xmD788HFwWecrZnJ9G6bwiQHBCSXKl1pSZbIwqFsQ6we0RHlrzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463524; c=relaxed/simple;
-	bh=2HK9dPmt76X1vz8N9bbGM/cJkdjkqxzLRbvbl5x9FL0=;
+	s=arc-20240116; t=1756463755; c=relaxed/simple;
+	bh=WNtxN+vSd6AgAJVmdxK4WPJLQNBldWjNEf0ks7X0Kuc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Voa+zHoXifIv48Ucred2FcWZW9AomNTFF4AheuZCOvgakskgO1K9RirBriCqyhC48zbT0yJX3rvdC9evM0W35QWU+9dHydAukWmA8NGmHWElusk5Mz2ZOMLCTwnOs7CUH7pk1pFo0czq++tTADqyg8WU4wtojszb0nvuNJe0Yy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixVKxpab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3CDC4CEF0;
-	Fri, 29 Aug 2025 10:32:01 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UZ+5o+mn9M2jWT6m7N19riq6EyqllzViVyFGXL6aCbBS8l2GK0MnOmMARImCdDinZX/vN0Yki5EqYT2lpJbPRELVv+aNLL3YfLrMm27npoMwjsqT/mL+KToMWzxW/TKTfP0EMeacFN1lJRrXBdUlSPJ3a+EouIp0FtDtv4VBgkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv9/nEKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD4DC4CEF0;
+	Fri, 29 Aug 2025 10:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756463524;
-	bh=2HK9dPmt76X1vz8N9bbGM/cJkdjkqxzLRbvbl5x9FL0=;
+	s=k20201202; t=1756463754;
+	bh=WNtxN+vSd6AgAJVmdxK4WPJLQNBldWjNEf0ks7X0Kuc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ixVKxpabcgrsV6WKSrcgxtO5Gt/zaeoMEsPiQWObwKMflQkQSI4c2iQmDcRupMRhg
-	 oY1RmbqWyjKzcm1BDfwP0Nvu+Vbai4VVObSxW4gxl5W1qkOp52tlSUK5OtjKA1CfO/
-	 CNjV3GF9wFO6alL5q8n1f/Iuu0ZyjdiGVq5eZMvWQEO654J5LEcArzyYMGDfzkSlk6
-	 vr3YWKd0u6gWf1TgINMSU7ZbXoXkbwMktFDjCtqcrnV1vPDKm6q3tvVVkBPd0zMvD1
-	 WpNmeZ0wASbxKoEWzD25QwlbLBvjARBjhQLTLKwXQeggc1KucXWvEYXmxoSKU/Vh/c
-	 RVp0W8RIxN4dw==
-Message-ID: <75b2db61-84ad-47a4-b809-da7e63e8dec8@kernel.org>
-Date: Fri, 29 Aug 2025 12:31:59 +0200
+	b=Hv9/nEKw5jRPkK8FdmgRC04pppaWOyAUGc6FHrQNvL6qmEFeUfJc6/iuya8/v1VfU
+	 RTjEcQkqof9jdvOUx2rkwpcJJzZGn7fPsIH1CNEbutmLQZOZ+UTa9Xf62KHEGRQtYk
+	 WgIUajqUbPoYCMj0GB8L4p37dku1HwpScfN3jbV/l3clAxsZ9HyvvuPmwXEwfZkBA1
+	 0RDOM/nxscg2O78i860iwdRjPWOl6MVW8HIaIZ5tLpPB+QSY/aO8Fl9Wl+LDwWK72W
+	 MHA38NaxT2UgF+RBAhMVJ8pdd1N/n0GsJV0/AA238DVSp2H/fURKPvn7Q7+jr+qw4t
+	 78JxP19lhFOXQ==
+Message-ID: <4879398b-a24c-4ec6-8bb0-90d2c1db2dc8@kernel.org>
+Date: Fri, 29 Aug 2025 12:35:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250829-tlv493d-sensor-v6_16-rc5-v5-0-746e73bc6c11@gmail.com>
- <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
- <20250829-fluorescent-delicate-pogona-c96b5f@kuoka>
- <CAFmh=S3jKfGMek=ZPUrfgh9fXZaaq6zNBOmCyEpoe0qGpfbt5w@mail.gmail.com>
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTog5Zue5aSNOiDlm57lpI06IOWbnuWkjTogW1BBVENI?=
+ =?UTF-8?Q?_1/3=5D_pinctrl=3A_cix=3A_Add_pin-controller_support_for_sky1?=
+To: Gary Yang <gary.yang@cixtech.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
+References: <20250827024222.588082-1-gary.yang@cixtech.com>
+ <20250827024222.588082-2-gary.yang@cixtech.com>
+ <d5c85ba7-77ec-47f4-8ba1-39199e96da11@kernel.org>
+ <PUZPR06MB5887BFF27AAD64ACA625126BEF3BA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+ <5d8aa064-6dcf-40ce-9e73-feaebca06965@kernel.org>
+ <PUZPR06MB5887436E03C17498E80E43C7EF3BA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+ <f54d43ca-87cc-40bb-a56b-e49ee6a0a441@kernel.org>
+ <PUZPR06MB58879645FFBD2B7D2B7E9BE4EF3AA@PUZPR06MB5887.apcprd06.prod.outlook.com>
+ <3e0fb880-ef2a-482d-b008-9afcb46f9fec@kernel.org>
+ <PUZPR06MB588786D49A7C1964E4A39851EF3AA@PUZPR06MB5887.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,37 +114,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAFmh=S3jKfGMek=ZPUrfgh9fXZaaq6zNBOmCyEpoe0qGpfbt5w@mail.gmail.com>
+In-Reply-To: <PUZPR06MB588786D49A7C1964E4A39851EF3AA@PUZPR06MB5887.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2025 12:07, Dixit Parmar wrote:
->>> +INFINEON TLV493D Driver
->>> +M:   Dixit Parmar <dixitparmar19@gmail.com>
->>> +L:   linux-iio@vger.kernel.org
->>> +S:   Maintained
->>> +W:   https://www.infineon.com/part/TLV493D-A1B6
->>> +F:   Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
+On 29/08/2025 12:18, Gary Yang wrote:
+>>>
+>>> So you see the twice, once per one pin-controller. BTW as you suggested
+>> before, we will print the value of ret in the error message.
+>>>
+>>> If I miss any information, please kindly remind me. Thanks
 >>
->> There is no such file here. Apply this *patch* and check by yourself.
-> That file is being added as a separate patch(Patch 2/2) of this same
-> patch series. It's already reviewed by you only(based on the name).
+>> You still ignored my second comment.
 
-No. Read my comment again:
+^^^ That was second time here I reminded about ENOMEM comment.
 
-"Apply this *patch* and check by yourself."
-
-It does not matter if you add the file later. The file does not exist
-now, here.
-
-> https://lore.kernel.org/linux-iio/20250829-tlv493d-sensor-v6_16-rc5-v5-2-746e73bc6c11@gmail.com
 >>
->> Your patchset is still incorrectly organized. See submitting patches in
->> DT dir.
-> By "incorrectly organized" do you mean order of the patches in the
-> patchset or anything else?
+> 
+> First you wrote " You are printing same error twice ", please pay attention to the "same error" strings, it makes me confuse, I misunderstand your thinking 
+> until you took the example above. So the discussion is needed, not waste our time.
+> 
+> Second the return value of sky1_pinctrl_probe_dt() is not only ENOMEM, it can also return ENODEV and EINVAL. Although I don't think this is a bug, take our
 
-I pointed to the docs, is anything unclear in there?
+The problem is that you ignored the ENOMEM comment and it clearly should
+direct you to the problem and solution ("If I cannot have error on
+ENOMEM, I will move my error msgs to the called function").
 
 Best regards,
 Krzysztof
