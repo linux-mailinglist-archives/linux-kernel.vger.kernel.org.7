@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-792456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32D2B3C426
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:13:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53024B3C42A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926A47BD843
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:11:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23F9A4E03BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6030B34572E;
-	Fri, 29 Aug 2025 21:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqXMinr0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2016230BDF;
-	Fri, 29 Aug 2025 21:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DB734AAE0;
+	Fri, 29 Aug 2025 21:13:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1462287515;
+	Fri, 29 Aug 2025 21:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756502006; cv=none; b=ZH6zdQLg75W8YQr0IqKolqpbq4+dCmxP1YSLyZnsex8AnUpb4tZu/d15joYh6oh81eH8UOujSNiK+EEupegG+k5w88rv2+s4ESLCcHvKlzzJejpBN9fKaAyyjNsBW2fasrTZuUcbCXnUENSROj60QLLmkZC4yVS2/mm9Ky4DiX4=
+	t=1756502024; cv=none; b=B3HZRbKa0zy/VtK0mEbpE8qmYw60Bz45syGkXY381mMiMdT683LHDItgB3EcmlYUxTdIk2h1jQocuvJtRADTaoafwJuQhsWFh+T6GO1Gpt3xhnyNbvYt1v9vFTAD/2zHEzRGLW7iTqJGkGAiK2jBtfT0bd2amNa853mpw7hKrVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756502006; c=relaxed/simple;
-	bh=JZ0CWieAD+hPk8tcHz5WX7FBAOxPPfeaj0F6aTNx4zg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TSP7BN5LNhEvnKjwJpnTJVg0zgOYhpe8oe9tyLYqFDgFSrBHmQFfbPGpVfpni4YYygRAkh5depUgWcnv92eA77UVAmgfrd5KZg/H2n1dEQ9UTGJcl5yXrnOZExukgZJlTiCheNPX3mxT9+4xxS5iVuQY1I3QRTz8atatM14L7D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqXMinr0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADEDC4CEF0;
-	Fri, 29 Aug 2025 21:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756502006;
-	bh=JZ0CWieAD+hPk8tcHz5WX7FBAOxPPfeaj0F6aTNx4zg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aqXMinr0mzFFf3X/Qxc61FXYoalDlBqS+T9E1Unr43Jv3nAytC2tYjUPS8H7H6aVJ
-	 GOOcOMlX0CXlYaFGiD27NXRr6HQ+SPdQtw0AWMhcAsTraMdIqeXvwt7wyAbxCUvIN0
-	 Yfl4/n2cRQ25OMuhUDPlqNL5ICChxRmnh6CY5k70wMMb6ZrK42UyVCUsEJjV2NnoEo
-	 YNJ9OFyNjVmn0mEL4PF5QprtjxR9P2jDbL/y0UA/oQ65w6ScBRIiajsb0shF1ITVaO
-	 SjJ1Ix36+X83Zpk5cDCNdUhLYB4cGUQf30kfNc0U2n9TO3FefHDBroMbaItRVUnR3V
-	 zrlPT9+9a6G9g==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: aspeed: Drop "sdhci" compatibles
-Date: Fri, 29 Aug 2025 16:13:17 -0500
-Message-ID: <20250829211318.1335862-1-robh@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756502024; c=relaxed/simple;
+	bh=Tc4drYHBoMjuZpIcjYkn+NMHMZlzv10UeHR79b/H3qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GScvUdQullKUSVxZyMdMGqmT1uQ9jdyVMaMK/NU9M8mEcAcywABN3X0HtzxI1+Vvc8lJllIA5VSbreqFtOxwvdd3iZRWyIREM2LuGPBcBKGe6pPZcUBFusX6zMRTfbOGflxPvw51QhwK3lY+Xjf83mvFESlRX0KE/4xeIeAvVh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87DE51BA8;
+	Fri, 29 Aug 2025 14:13:33 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBAF63F738;
+	Fri, 29 Aug 2025 14:13:39 -0700 (PDT)
+Date: Fri, 29 Aug 2025 22:13:29 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: quirk: fix write to string constant
+Message-ID: <aLIX-XAYE--byaue@pluto>
+References: <20250829132152.28218-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829132152.28218-1-johan@kernel.org>
 
-The "sdhci" compatible is not documented nor very useful on its own given
-the various features and quirks of SDHCI implementations.
+On Fri, Aug 29, 2025 at 03:21:52PM +0200, Johan Hovold wrote:
+> The quirk version range is typically a string constant and must not be
+> modified (e.g. as it may be stored in read-only memory):
+> 
+> 	Unable to handle kernel write to read-only memory at virtual
+> 	address ffffc036d998a947
+> 
+> Fix the range parsing so that it operates on a copy of the version range
+> string, and mark all the quirk strings as const to reduce the risk of
+> introducing similar future issues.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-index acdb6ae74b27..61983feb2a4e 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-@@ -662,7 +662,7 @@ sdc: sdc@1e740000 {
- 				status = "disabled";
- 
- 				sdhci0: sdhci@1e740100 {
--					compatible = "aspeed,ast2600-sdhci", "sdhci";
-+					compatible = "aspeed,ast2600-sdhci";
- 					reg = <0x100 0x100>;
- 					interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 					sdhci,auto-cmd12;
-@@ -671,7 +671,7 @@ sdhci0: sdhci@1e740100 {
- 				};
- 
- 				sdhci1: sdhci@1e740200 {
--					compatible = "aspeed,ast2600-sdhci", "sdhci";
-+					compatible = "aspeed,ast2600-sdhci";
- 					reg = <0x200 0x100>;
- 					interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
- 					sdhci,auto-cmd12;
--- 
-2.50.1
+indeed when implementing this I was a bit doubtful about the in-place
+overwrite approach that I used during the ranges parsing...but since
+each quirk was indeed initialized once and its range parsed once, it
+seemed fair to use the string itself as a sort of scratch area while
+parsing it into integers and avoid the local copy...just I haven't
+considered the possibility that such strings could be stored in a RO
+segment...and I got no error on my setup....
 
+Anyway, good catch, it is certainly better to operate on a copy.
+
+LGTM.
+
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+
+Thanks,
+Cristian
 
