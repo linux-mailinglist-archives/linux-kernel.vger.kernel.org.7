@@ -1,139 +1,157 @@
-Return-Path: <linux-kernel+bounces-791166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD5DB3B2C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:59:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600C4B3B2CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CEE987CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:59:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751DC3A7BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6131D8A10;
-	Fri, 29 Aug 2025 05:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66714224B09;
+	Fri, 29 Aug 2025 05:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="flugKghJ"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p514Sl+B"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A5A1A5B8D
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1569220F38
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447174; cv=none; b=ppkGdPYYZ6chmWuEyK2JUJklHFzzGyj9QkyKjuyG0KqkvNz2aBKOYB5mRi2HJCYvdGLld5ECPVpZgu9zqeljpROpsjVkCqO/ruo4rb5TJVKhQfQOtvvficJZcYwsBQLmWLuHbePHG+A/Z3Lbr5TZ5sjQ7Go88NpcvErfELx+uyA=
+	t=1756447190; cv=none; b=mXQq7PNIv/mN/M5sNuwAZXNGJhLeIbqVDLCe4tapDvdsw9JAu+HhPOTzaOdWLRTupO1IkY8SdQ32XbDVSDeQDigOMAEEpqmhiujSuQyvafnpifXbOsid5xuzc9x8IrvrTu19KQX7i8KFIuenZhPzOulHTbLe3+oFwSLkHTJLE/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447174; c=relaxed/simple;
-	bh=HQHfXVXKCqm565Dn42Z59+LNgV1U4UlkiCvPgaZSeQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KpZfsTMiS8dg63HWb58pembKBk+HsFxyU418EoPDK0D/7YWf3sF3wdJEFV4b7zuu3YiAnfMNVs7Xin6JlBekNkVe6aQeJnRBorlXQxeUBGw87enXUjyocxnKoNn6nd4QG60AOosvXtbItZuyVLyttD235oz5rrGcAgscL9i3Ew4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=flugKghJ; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336630769a6so16429061fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:59:33 -0700 (PDT)
+	s=arc-20240116; t=1756447190; c=relaxed/simple;
+	bh=3Us6gLaZK2VccDGA6IMnqvs0nFzgbS6I49Q/8l1+6ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjJj/y72cyuez4dkU/yWpJr3vnrGPyrdHROaN5mIRiGHUQDWV70qnvjusJRf73KRmxrtUsp9qQjQ7TvXdjetX6U8CAr6i4WCltu86ID7v2+nP7Q42YDO4fhFhDAKqyeQIWpFT7NaaeiDbmS/vt2u76IG8Mfu8s8mEPvQqheD5zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p514Sl+B; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7722f8cf9adso210268b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756447171; x=1757051971; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P9b89mWcH1WRoi8NB6LCKkiGizr7phQg5j8xmHQXvrc=;
-        b=flugKghJYfGrHrmWu5n6xDWoYY4uL0G/5bmZOOtwiqKdHk+Kb6vfw428PSR60W91Z1
-         xXFqqG3HScK+ibXsuKTmfjGCNPu/a7edeGERKa4Dz3QGIv5u5Nj1muqxW/uBO8zmA7JS
-         vaxBY5uetsyvTpmIbeDIx5g/z/r2DkOlXf4m5kSLSYGiR+Uv3W6x6+tUy4+25SjwTVz3
-         iQGNrVgnTTnoi2x2PJSG6HPasEKrYM6AVTQTTGiQU+Pv4xjTjPOfXLK+8LGGDDLp5+E4
-         U+TICFsJ0fO7AsDtgRNRmpGrHbRMy7Rw0rzPyjT+/MMUjYLtW54pUO2bujM827yvqrAM
-         qxJw==
+        d=linaro.org; s=google; t=1756447188; x=1757051988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
+        b=p514Sl+BuFb2jJ5R5DjvdPuZbJD/3N094aXwj3h0r/jhqjJ8E7yP+k817tMndGWuRR
+         FJyrpnjrOC1v44RKZW8+hYv/s/oQyyrlN51j6gPDRgosyonW7nobHk+dEVSc4NB36Yw4
+         PuqLoIM2bQWrSvT363c+fY0yOV3vZSKbC+7dp3aQmV8szSfmyrtVMuT0C6uReUSabLLQ
+         QNCTGNg39LLVhpXBLI27D+yN4JWIztFIMPiYxMxgFB1nTSvmERBka41rfpTaGJms0EBS
+         6QVx0xOpRrajJT7Gzpak3rJcIdO5m+Vx4yWFoMbU026CqovfiV44HAzTUMYSrkn9uYWg
+         J/Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756447171; x=1757051971;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P9b89mWcH1WRoi8NB6LCKkiGizr7phQg5j8xmHQXvrc=;
-        b=P9d0NkYvNMl9kgb9BVJUeDpgJ5wqOift2GTT9W96cJa7C5/yjlsTgXkoFbjlc21Aq3
-         SamHIrYDy+HfQtZW/TQIKCABzrFkdQ0P4oYYhwNcvdwtlo0uUVTsn4h4o5V73PLw09lb
-         FeI/ysn4JKqKuqTXsRBRmxc/a8h6Kjxdm3iMvWhNxSvCTpwoEfm7pQNRhGn1mqxPDwcW
-         rtOOLCnlH7wBQ+o/i+9fqUhFc3pgT0U2mX39nVx6icibda+WKWwqeawDz9KhWunTsAiD
-         gB/PfFvJk+NgXQUhwEXNYYYAjiXVOA3vOPLOmJQQDY1xjG6EY6ORfqCUR8gSSlvRtKqM
-         +Q+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAxwRcF9VWq8oQnpMXOH0EGUY38COsdctJa0mLdKWfpCy5vrCgFwbTELhg0MC16CymAW9CQcadvHkw7aY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD8iqcU09pfSc4TMXNhs23QRtBDtnR0LWYSFi7WscY/ubB1Dt/
-	OfTzmpkS+yFh9DJlHXK9x4DMSDVGrQr/+EY4vZHthLdVDw38MrLhZNKWylwpCXewpJ+29Gwwjsl
-	4tsg46VpLJpRSEe0IXKW9L8yCbpr2v5rA/6OkByGR
-X-Gm-Gg: ASbGnct90nqxy6QmOIbpjK+Rt5VzXS8Adh84T3Fdc8gVpV/to0wTm6OQh2020oXtuo6
-	noQfPCx931LrhQl7BnGHD68pi3NVgVcfj8Zf1RUDPXXbTTox4PG+WWXP4zoZgnYamoTe8dVce8b
-	jyS5Hrgt2PSuLQ62NaC52dSGv/ZT9Xx6bXiTyBnmYgxIRafnFUnYcWqNCnKpAzPNN7EFSbjc4+p
-	/u2E8vZEiLdd8+pv3j6D9CGO6X+vfHpbLX/fFYHsslUlODq9zK8mYC8mw==
-X-Google-Smtp-Source: AGHT+IGpsSHWaCkR84qNI3V45LpCTM6KTwnsCQMP483IEziQLGCDzdNJpFNTpDClHjL7Rp31C5D88TK18RjtyhkTPDc=
-X-Received: by 2002:a05:651c:1118:10b0:333:7e5b:15c0 with SMTP id
- 38308e7fff4ca-33650ea0b23mr53475191fa.13.1756447171269; Thu, 28 Aug 2025
- 22:59:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756447188; x=1757051988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
+        b=QzPlMnD4TEwH75N4k5Izb1V1e/WAOTT0krVO9nsls0lUKfR2jgMd6c/L8G013MYFAd
+         2U7/h0cHuNjw+toFu5tWXiO/uTxTYQ2TEIxUs+9moQQzrPcK+rTs9AHq//VPm7VdWKIw
+         VzN+2OOTX/dAHDEYRfCHX7QReA6aU+EyKRAdybWD+wF6+RXymaZqsF3QT3sm7f0f4i1Y
+         VeCXoK6vZNoGl16iniBnjQxcQnvdjxOoE78GLUkFHkJlAtJXyDj1CgqgC66MZ3TRVjM3
+         L/e9laW6TWy0TltbTqzpOeeaRw4MSAgp0XUnhvmGnIZyn89ksWr9ia7MPThH+e+V0ZkI
+         EbKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm8tD84vw/u8SUKxbH82wqrRaRS5s4ZpQ/CqmAyRl86YZQcsvHXzMzdYxn8/aWtMlsmciE4lUCgbEHvHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1qmcl0mLhGjr4SQd0G8yzTzNPI7yT5/JMcYnCWfZZgNlx47OK
+	rxFnhku2Ypd3mrFTd/9fk6SBL2IJ/okqMg6zpFe8V+UsKPX8R5IpOFdwL8fhPD/OkC4=
+X-Gm-Gg: ASbGncvRGYQXRZhFQV2jI5n92NX0PIjxzdzue5roAqqCpggIwhuJKcimqbVQI++UYUB
+	pkZF4Z/XwFNnByq5UEN0tWPxFtFO77aWs5sgSdWppwlPGrqdYSga2TLmsGcSo4AxDUqd/Taos7p
+	zwR/3VYY6B/gW4MlO8muuJA3kkrTREu79JwWQw6Gp7iZJofeN0Yx9xAiOwEUxjgL9Ut9tgIeNvx
+	FIDsQxLzww5qA74LLLgBc+UlD3EuZK5sOjdDvz9vpkW944WFbUg3VPtfri1STofwMlp8jcW6SWM
+	j0cUTcjTdUpJlq2yLNEk6ScgDGAG+7Qgb+lVl4uBxyXUJfNt+52qPoZGx9WheqSg/zAqVcLnqw1
+	kkzyRgEw2OmkbfaOPDL3WWgIGo/dPOfGL/sI=
+X-Google-Smtp-Source: AGHT+IFsar3WOaSA9RKNM7TPFf9gG0iXTxdUF2CW8raU1SyelgEQswrlDbapLb2rA7PUFkb3M17NCQ==
+X-Received: by 2002:a05:6a00:10d5:b0:772:2850:783d with SMTP id d2e1a72fcca58-772285079c4mr3285667b3a.22.1756447188084;
+        Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b14c1sm1263485b3a.31.2025.08.28.22.59.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 22:59:47 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:29:44 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/18] cpufreq: brcmstb-avs-cpufreq: Use
+ __free(put_cpufreq_policy) for policy reference
+Message-ID: <20250829055944.ragfnh62q2cuew3e@vireshk-i7>
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-5-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aKYEpf7xp3NnkBWm@x1> <CACT4Y+YX-ROx0cW4pkDnqbdfbigVycwPLwO12RNbbtX9-Qp73A@mail.gmail.com>
- <aKv_FjtkPIR86inu@google.com>
-In-Reply-To: <aKv_FjtkPIR86inu@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 29 Aug 2025 07:59:19 +0200
-X-Gm-Features: Ac12FXzOVh7BPaHMQclLjPZcl1R6uL53TzQPya8c8MkZgMLcA8AbQsulHRMdbNg
-Message-ID: <CACT4Y+ZxqgqAGoSgUaVKk6_=h1dO7iV8qrVHDOrmbBS3VW8-=g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Revert "perf hist: Fix bogus profiles when filters
- are enabled"
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827023202.10310-5-zhangzihuan@kylinos.cn>
 
-On Mon, 25 Aug 2025 at 08:13, Namhyung Kim <namhyung@kernel.org> wrote:
->
-> Hello,
->
-> On Wed, Aug 20, 2025 at 06:14:08PM -0700, Dmitry Vyukov wrote:
-> > On Wed, 20 Aug 2025 at 10:23, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > >
-> > > This reverts commit 8b4799e4f0f40a4ec737bf870aa38d06288bf0fb.
-> > >
-> > > Not combining entries in 'perf top', so we're getting multiple lines for
-> > > the same symbol, with the same address.
-> > >
-> > > To test it, simply run 'perf top', then do /acpi to see just symbols
-> > > starting with acpi_ and notice that there are various lines with the
-> > > same symbol, press V to see the address and its the same.
-> >
-> > With this revert, does it show 1 entry but with a wrong percent?
-> > I am not sure why there are 2 entries for the same symbol, but if we
-> > merge them, we can sum of percents. Is it the right thing to do?
->
-> I don't think it'd have a wrong percent.  The hists maintain stats for
-> filtered entries separately.
+On 27-08-25, 10:31, Zihuan Zhang wrote:
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/cpufreq/brcmstb-avs-cpufreq.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-I still don't fully follow.
+Applied. Thanks.
 
-If we merge a filtered entry into non-filtered entry (with the
-revert), now we attribute what was filtered out to the non-filtered
-entry, and the non-filtered entry has wrong overhead, no?
-
-If we merge the other way around: non-filtered entry into filtered
-entry, then we won't show it at all.
-
-> Based on the position of filtered entries in the RB tree, I think it
-> might not merge correct samples together and create multiple entries
-> with the same info.
-
-The second thing I don't understand: without this revert we don't
-merge filtered and non-filtered entries, top shows duplicate entries,
-does it mean it shows filtered out entries? This also looks wrong...
-
-> Filtering by unused sort keys would be undefined.  We probably want to
-> warn users instead.
-
-Do you mean that the filtered=1 is set incorrectly in this case?
-Do you mean that with this revert 2 bugs just compensate each other by
-luck: we wrongly set filtered=1, and then wrongly merge them together,
-so it all works out in the end?
+-- 
+viresh
 
