@@ -1,130 +1,263 @@
-Return-Path: <linux-kernel+bounces-791613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA9DB3B931
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BC8B3B93C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6329B1B2591F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604D7680FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B4030FC11;
-	Fri, 29 Aug 2025 10:50:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CFA30F813;
-	Fri, 29 Aug 2025 10:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A07330F95F;
+	Fri, 29 Aug 2025 10:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQwVDWIH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D19274B2E;
+	Fri, 29 Aug 2025 10:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464627; cv=none; b=HHU2sSI/FqkOs3yHge3j+Q4CfOqb/5+TOj4Rob1wXJExs3g4eQMhMqBwx1T98+PojCExoqtUtIGNQG9uaPT7vLML8aq991Tit5+SeyBJaUFFhsA45NTN6oZm0BJh8XPH1vHwhyHCA/L4gyRR9MaK1wMuLC2KW96dopcou7o8F14=
+	t=1756464678; cv=none; b=D9dU1LNJghbdBsTyFdtiAostprUkxWN7uc2QF8zVz0xCbzHBM/t3vF/UmLoXpKO1YooTk7wWU3gt+wxXlOByv/R8NygHVw4qKpFB48svMynSc2chlOxVvKjly0meD5usRwCQepXZTIeX4do3bviREd+oAg/6xP+W7h37Ze0PAKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464627; c=relaxed/simple;
-	bh=DQ8ssogXZkvnCVE3uT5BWAUe/YqLqrQMJHQmW/wRDs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqOpQobBvrcyPEfQ+lIhXLUuM888DoeIdwSVvrGtImz6Y/XEn+glh7CcQYgMnT1CRxkRYkTZe2wN2W1deEz/HsNjbeMpMvWaEze+13mk+yljjykfvO4q4L78+9RXPhQIHAAnJv6mKBpLd4MgQmLribGwfiJN0T0gI9tFHpHQ/ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49FC91BCB;
-	Fri, 29 Aug 2025 03:50:17 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B42AF3F694;
-	Fri, 29 Aug 2025 03:50:23 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:50:20 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/6] firmware: arm_scmi: imx: Support discovering
- buildinfo of MISC protocol
-Message-ID: <20250829-woodoo-acoustic-lynx-7ffaba@sudeepholla>
-References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
- <20250827-sm-misc-api-v1-v3-2-82c982c1815a@nxp.com>
+	s=arc-20240116; t=1756464678; c=relaxed/simple;
+	bh=+QsysON+6yRXfht3SSQ9NdAWxzxbXXdbaMGso6HoALs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dYBDpXMmCUhpw40FHlsiTXTX9txETVmxQmNZ9tKN3ReYOYuHxxW/GMNKRcgYTEXM7mX2pY8qGAVMZqUHjncy392kwTFVT1Me4s7tHwDh7QsnBsGLPZ/vXUpltYLFcZ3tU4fip8LTlEFwJuc6CcsUaWjYBAae1Sn+TiwMJkB/vNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQwVDWIH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806D2C4CEF0;
+	Fri, 29 Aug 2025 10:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756464677;
+	bh=+QsysON+6yRXfht3SSQ9NdAWxzxbXXdbaMGso6HoALs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LQwVDWIH+/Qu6JVgq6u/kmBGTQ0szc2u6O1Y980dbmif03eUdGf9Ffa+hQYghUTym
+	 9Lz+S0+sroN2vzaMxk4zIiev2rCF7ZbPHbJ5fS+V2sTdX2Cvl5+yN2GByDhGPzlWqM
+	 gqfnX/gpIRPHi0LFF4WE/qzaDYW5U6LBzk2pf36nhHC6QEVALjV2AeV2hVKvEDUaAY
+	 p2K7Ls6F16mtaJ1lhY4+SSi4gTu6P4Llo3blGpDTR8r3zwkV0vFn6qFIpuOZmmkn1r
+	 qa5LsZGWqXtDT0HdY5O54iKmYQbRWHPVt8B/k0a6HflOcsSdn/b7lyg47/Qd/LHzAI
+	 F5FXz8bmRP8RA==
+Message-ID: <3a2475f8-6373-4dd1-b605-b58c74a97fee@kernel.org>
+Date: Fri, 29 Aug 2025 12:51:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-sm-misc-api-v1-v3-2-82c982c1815a@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] dt-bindings: soc: fsl: qe: Add support of IRQ in
+ QE GPIO
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Rob Herring <robh@kernel.org>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1756104334.git.christophe.leroy@csgroup.eu>
+ <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
+ <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
+ <f21e27da-de26-4835-9660-b39e99695281@csgroup.eu>
+ <0f716362-07f4-4c79-bb0a-e71d2630a797@kernel.org>
+ <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
+ <c314b7c6-f5b7-4f3e-8d67-e3c92ff8ff37@kernel.org>
+ <bf5444e4-8f3f-4a56-be67-29857726b119@csgroup.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <bf5444e4-8f3f-4a56-be67-29857726b119@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 12:59:14PM +0800, Peng Fan wrote:
-> MISC protocol supports discovering the System Manager(SM) build
-> information including build commit, build time and etc. Retrieve the
-> information from SM.
+On 29/08/2025 11:41, Christophe Leroy wrote:
+>>>
+>>> That's more or less the same here with my series, patch 1 implements an
+>>> interrupt controller (documented in patch 6) and then the GPIO
+>>> controllers consume the interrupts, for instance in gpiolib functions
+>>> gpio_sysfs_request_irq() [drivers/gpio/gpiolib-sysfs.c] or
+>>> edge_detector_setup() or debounce_setup() [drivers/gpio/gpiolib-cdev.c]
+>>>
+>>> External drivers also use interrupts indirectly. For example driver
+>>> sound/soc/soc-jack.c, it doesn't have any direct reference to an
+>>> interrupt. The driver is given an array of GPIOs and then installs an
+>>> IRQ in function snd_soc_jack_add_gpios() by doing
+>>>
+>>> 	request_any_context_irq(gpiod_to_irq(gpios[i].desc),
+>>> 					      gpio_handler,
+>>> 					      IRQF_SHARED |
+>>> 					      IRQF_TRIGGER_RISING |
+>>> 					      IRQF_TRIGGER_FALLING,
+>>> 					      gpios[i].name,
+>>> 					      &gpios[i]);
+>>
+>>
+>> External drivers do not matter then. Your GPIO controller receives
+>> specific interrupts (that's the interrupt property) and knows exactly
+>> how each GPIO maps to it.
+>>
 > 
-> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> Do you mean then that the GPIO driver should already know which line has 
+
+The SoC knows, that's fixed information, so shall GPIO driver know as well.
+
+> an interrupt and which one doesn't ?
 > 
-> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> index a8915d3b4df518719d56bfff38922625ad9b70f6..464afeae8267d8c1eca4c4d5e008eca6d741c6ff 100644
-> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> @@ -25,6 +25,7 @@
->  enum scmi_imx_misc_protocol_cmd {
->  	SCMI_IMX_MISC_CTRL_SET	= 0x3,
->  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
-> +	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
->  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
->  };
->  
-> @@ -65,6 +66,15 @@ struct scmi_imx_misc_ctrl_get_out {
->  	__le32 val[];
->  };
->  
-> +struct scmi_imx_misc_buildinfo_out {
-> +	__le32 buildnum;
-> +	__le32 buildcommit;
-> +#define MISC_MAX_BUILDDATE	16
-> +	u8 builddate[MISC_MAX_BUILDDATE];
-> +#define MISC_MAX_BUILDTIME	16
-> +	u8 buildtime[MISC_MAX_BUILDTIME];
-> +};
-> +
->  static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
->  					struct scmi_imx_misc_info *mi)
->  {
-> @@ -272,6 +282,33 @@ static int scmi_imx_misc_ctrl_set(const struct scmi_protocol_handle *ph,
->  	return ret;
->  }
->  
-> +static int scmi_imx_misc_discover_build_info(const struct scmi_protocol_handle *ph)
-> +{
-> +	char date[MISC_MAX_BUILDDATE], time[MISC_MAX_BUILDTIME];
-> +	struct scmi_imx_misc_buildinfo_out *out;
-> +	struct scmi_xfer *t;
-> +	int ret;
-> +
-> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_DISCOVER_BUILDINFO, 0,
-> +				      sizeof(*out), &t);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ph->xops->do_xfer(ph, t);
-> +	if (!ret) {
-> +		out = t->rx.buf;
-> +		strscpy(date, out->builddate, MISC_MAX_BUILDDATE);
-> +		strscpy(time, out->buildtime, MISC_MAX_BUILDTIME);
-> +		dev_info(ph->dev, "SM Version\t= Build %u, Commit %08x %s %s\n",
-> +			le32_to_cpu(out->buildnum), le32_to_cpu(out->buildcommit),
-> +			date, time);
+> The interrupts are fixed per soc, but today the GPIO driver is generic 
+> and used on different SOCs that don't have interrupts on the same lines. 
 
-And fix the alignment above, just noticed after hitting enter.
+How you write drivers is one thing, but that's never a reason alone to
+add properties to the DT.
 
--- 
-Regards,
-Sudeep
+> And even on the given SOCs, not all ports have interrupts on the same 
+
+That's pretty standard between all GPIO/pinctrl drivers. I would
+generalize that's pretty standard for all SoCs - they have differences
+within devices, some pins do that, some do different things.
+
+> lines. Should all possibilities be hard-coded inside the driver for each 
+> possible compatible ? The property 'fsl,qe-gpio-irq-mask' is there to 
+
+There are many ways how to do it in the driver, that feels like one of
+them, so yes, it should.
+
+> avoid that and keep the GPIO driver as generic as possible with a single 
+
+Sorry, that approach, which leads to moving such stuff to DT, was many
+times on mailing list rejected. You use the same argument as that "one
+clock, one device node" TI approach. It got it way to kernel long time
+ago but since then was pretty discouraged (rejected for new SoCs). It
+re-appeared again few months ago in a form of "I have two registers, so
+I have two device nodes in DT", so it seems poor code keeps re-appearing.
+
+> compatible 'fsl,mpc8323-qe-pario-bank' that is found in the DTS of 8323 
+> but also in DTS of 8360, in DTS of 8569, etc... :
+> 
+> arch/powerpc/boot/dts/fsl/mpc8569mds.dts: 
+>              "fsl,mpc8323-qe-pario-bank";
+> arch/powerpc/boot/dts/fsl/mpc8569mds.dts: 
+>              "fsl,mpc8323-qe-pario-bank";
+> arch/powerpc/boot/dts/kmeter1.dts: 
+>      "fsl,mpc8323-qe-pario-bank";
+> arch/powerpc/boot/dts/mpc832x_rdb.dts: 
+> compatible = "fsl,mpc8323-qe-pario-bank";
+> arch/powerpc/boot/dts/mpc836x_rdk.dts: 
+> "fsl,mpc8323-qe-pario-bank";
+> arch/powerpc/boot/dts/mpc836x_rdk.dts: 
+> "fsl,mpc8323-qe-pario-bank";
+> 
+> Do you mean we should define one compatible for each of the ports of 
+> each soc, and encode the mask of interrupts that define which line of 
+> the port has interrupts in the data field ?
+
+I don't know that good your hardware to tell.
+
+> 
+> Something like:
+> 
+> static const struct of_device_id qe_gpio_match[] = {
+> 	{
+> 		.compatible = "fsl,mpc8323-qe-pario-bank-a",
+> 		.data = (void *)0x00a00028,
+
+There is no DTS in your patchset, so I cannot help really. I just don't
+have time to imagine such DTS and try to figure out how it can be
+written. Posting complete picture usually helps.
+
+I don't follow what is the bank.
+
+You have a device, yes?
+It has some grouped GPIOs (banks?) and some within group/bank can handle
+interrupts?
+Are these fixed per SoC? Yes. Well, that's standard and every other
+vendor has the same. They solve it in the drivers differently, though.
+
+> 	},
+> 	{
+> 		.compatible = "fsl,mpc8323-qe-pario-bank-b",
+> 		.data = (void *)0x01400050,
+> 	},
+> 	{
+> 		.compatible = "fsl,mpc8323-qe-pario-bank-c",
+> 		.data = (void *)0x00000084,
+> 	},
+> 	{
+> 		.compatible = "fsl,mpc8323-qe-pario-bank-d",
+> 		.data = (void *)0,
+> 	},
+> 	{
+> 		.compatible = "fsl,mpc8360-qe-pario-bank-a",
+> 		.data = (void *)0xXXXXXXXX,
+> 	},
+> 	{
+> 		.compatible = "fsl,mpc8360-qe-pario-bank-b",
+> 		.data = (void *)0xXXXXXXXX,
+> 	},
+> ....
+> 	{},
+> };
+> MODULE_DEVICE_TABLE(of, qe_gpio_match);
+> 
+> That would be feasible but would mean updating the driver each time a 
+> new SOC is added.
+
+BTW, like every other platform.
+
+> 
+> Do you mean it should be done that way ?
+> 
+> Isn't the purpose of the device tree to keep drivers as generic as 
+> possible ?
+
+Not at all, sorry. The purpose of DT is not to keep drivers generic.
+
+
+Best regards,
+Krzysztof
 
