@@ -1,242 +1,121 @@
-Return-Path: <linux-kernel+bounces-791409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08984B3B67A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:54:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAA8B3B6A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782A8163B70
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E47E3BA1E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16142874F6;
-	Fri, 29 Aug 2025 08:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qCglAOtK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DB32E542C;
+	Fri, 29 Aug 2025 09:04:52 +0000 (UTC)
+Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861CA481B1;
-	Fri, 29 Aug 2025 08:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B9C2E2F0B;
+	Fri, 29 Aug 2025 09:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756457670; cv=none; b=Ppi30R7bSBGkdxXwLC3ADBv5Kf00SY8guftzxK/QmaO21WuOD9st17CtXhU1njJW5v9+YhK97vn1FetMzy58SOCE6qWn/zHu1AW6g5XNacP1FK0//0tjaKp//+bzz4IaEu2jC6qrWFHzJIWCGLN69iiTABzu+HRRzzbG+CWH0As=
+	t=1756458291; cv=none; b=t4A1uF6ojTrnZl5BhIRVdQE07dgDnagj3oZRjUGNfX84qrlqwEZSpx4NVpZbHsg6lRTwRHonh3QBjfaIjvlMWdPWZgMVt81FtEpmEPtU1bMBcE5BZc5njyJSZyXaEgwCZVM2mmwHEMusMJV6sfDR8Yw7peWuQMPppf4i5VdfkQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756457670; c=relaxed/simple;
-	bh=YtXYMhGRj6mgTSdwOKrNorn2nkGSl7tvOK3tjQAB2ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kckLR1c/SUNtQTEiyvMLshtq1Yg7i3ItDaDQRIlve9AsCfNPyeQYVlFZAcAZbY6NGzCY9pOorpXdpY7ab82Oz1DZ6x8U/CAM3jeFgqATSi2J/HSaIqk3Yaz+vfDtxY5gbFS2+VocpMhnJQbYtVQcl+QH/IkJChjCxbGvmjFbq1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qCglAOtK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SMS08Z012568;
-	Fri, 29 Aug 2025 08:53:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=sPQBY5
-	yNOohOJ6m5DBtfCburmYLLfk3XwogGCr/a+ks=; b=qCglAOtKrrxH2rCkI3URXx
-	y/ZVIaiawQq+pqLKCUauEExGEZwz/Id+InjRjo3V0Qwf5RmpZ7XV+UAuNvazCDlQ
-	qGmU3FVSdmLoU2R/CA9EKELC2qHfNuLg7AXWYMaKlflo4MMSZkt4ZQkOQztwgQW7
-	vP2RWY4fgQpXLILaqXG2vxJQnt2pvoQ4xdr0OabSHSy/WefAHJab12tbbCvC7W9X
-	kfQ3/wU0iYmyeyDnJoYwLLCM9vf9gVrK6+LGYKh095sPCaMqAk+a9FHp+jxg9HOB
-	2h7m8JoA0CDLNwOsaUHDwQbKhtHNST94U7wJqBM6GtD+YzHKJsFhDoIii5ZEWfaw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5hqeby5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 08:53:22 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57T8mjW6024091;
-	Fri, 29 Aug 2025 08:53:21 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5hqeby3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 08:53:21 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57T5hRIu020874;
-	Fri, 29 Aug 2025 08:53:20 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qrc113ve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 08:53:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57T8rGMY32702992
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 08:53:16 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 630D320043;
-	Fri, 29 Aug 2025 08:53:16 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9EB1120040;
-	Fri, 29 Aug 2025 08:53:07 +0000 (GMT)
-Received: from [9.124.216.217] (unknown [9.124.216.217])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 29 Aug 2025 08:53:07 +0000 (GMT)
-Message-ID: <5ec9ca8a-9ba9-4600-a7a2-f7bd790fca83@linux.ibm.com>
-Date: Fri, 29 Aug 2025 14:23:06 +0530
+	s=arc-20240116; t=1756458291; c=relaxed/simple;
+	bh=7n8YIYNPVi0kbDbA88EAPm6/YdHyBwlHBbXg4fdgg7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GVRdCSifHiixy7uoY85Bs/4VCpFCxnade6ezLJ2AN/ztY+SbqiRiEvlEWxDMZscsjbw/8AjOfs/QMgPNxfCoTAeIQc8nFtdkVH4lotTqseu5krWdPNRigpw5zH8lGfyOt1RM5P34ppn9JoO5bhigUFrGrHDOpEhfPeuJNUmHEWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6F560541275;
+	Fri, 29 Aug 2025 10:57:29 +0200 (CEST)
+From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
+To: bridge@lists.linux.dev
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Xiao Liang <shaw.leon@gmail.com>
+Subject: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
+Date: Fri, 29 Aug 2025 10:53:41 +0200
+Message-ID: <20250829085724.24230-1-linus.luessing@c0d3.blue>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level
- hack for tl->cpumask()
-To: Valentin Schneider <vschneid@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, thomas.weissschuh@linutronix.de,
-        Li Chen <chenl311@chinatelecom.cn>, Bibo Mao <maobibo@loongson.cn>,
-        Mete Durlu <meted@linux.ibm.com>,
-        Tobias Huschle <huschle@linux.ibm.com>,
-        Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-        Guo Weikang <guoweikang.kernel@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-        Swapnil Sapkal <swapnil.sapkal@amd.com>,
-        "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andrea Righi <arighi@nvidia.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
- <20250826101328.GV4067720@noisy.programming.kicks-ass.net>
- <xhsmh7bymlg2f.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <xhsmh7bymlg2f.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX4XFJU1iP5NE9
- /rHRt7UYUsEwF53m13pGclMJdE/1hNda+PR2zeJpAEsrM4rvvTbkkFZQuc8pqAkVS2IzC2PwUdm
- DveE11TF2k4ulExUJWDjML1teUaVQ/93rdq3ncChc+uoeGAnW3OqPWwkZ4STnYhUdlRmUcKxB8I
- qkr13I8T3zwx/tmMelC/48lQGoT8aJ0mYjfVOs4TtsiDu11afWZ9lLhYBolu/B1dK47QjpkPSIB
- A1aTi3s8duQLT+QMXBswuVOw6hyS7r0oB5LUhXkzQJG24hxQE49Q42RR4r8+ykKkB57sTOIBWAH
- EKdqRbtQY5AoVertvRXQRN/N/Su+csIG7xEcxMPOioJdfRJHTJ4Y/WPO3olLpJPbwXH5VK/Xdqj
- wA+R82gl
-X-Proofpoint-ORIG-GUID: bMTrm6esSNj7OsbWk_XDneHXs6q24Z22
-X-Proofpoint-GUID: TC8LCyPfvAZUgqE8OjDu9bhFAKHRoQFx
-X-Authority-Analysis: v=2.4 cv=Ndbm13D4 c=1 sm=1 tr=0 ts=68b16a82 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
- a=20KFwNOVAAAA:8 a=14KqwYnPXR21iNsEu3oA:9 a=QEXdDO2ut3YA:10
- a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 clxscore=1015 phishscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230021
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-
-
-On 8/29/25 1:23 PM, Valentin Schneider wrote:
-> On 26/08/25 12:13, Peter Zijlstra wrote:
->> Subject: sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
->> From: Peter Zijlstra <peterz@infradead.org>
->> Date: Mon, 25 Aug 2025 12:02:44 +0000
->>
->> Leon [1] and Vinicius [2] noted a topology_span_sane() warning during
->> their testing starting from v6.16-rc1. Debug that followed pointed to
->> the tl->mask() for the NODE domain being incorrectly resolved to that of
->> the highest NUMA domain.
->>
->> tl->mask() for NODE is set to the sd_numa_mask() which depends on the
->> global "sched_domains_curr_level" hack. "sched_domains_curr_level" is
->> set to the "tl->numa_level" during tl traversal in build_sched_domains()
->> calling sd_init() but was not reset before topology_span_sane().
->>
->> Since "tl->numa_level" still reflected the old value from
->> build_sched_domains(), topology_span_sane() for the NODE domain trips
->> when the span of the last NUMA domain overlaps.
->>
->> Instead of replicating the "sched_domains_curr_level" hack, get rid of
->> it entirely and instead, pass the entire "sched_domain_topology_level"
->> object to tl->cpumask() function to prevent such mishap in the future.
->>
->> sd_numa_mask() now directly references "tl->numa_level" instead of
->> relying on the global "sched_domains_curr_level" hack to index into
->> sched_domains_numa_masks[].
->>
-> 
-> Eh, of course I see this *after* looking at the v6 patch.
-> 
-> I tested this again for good measure, but given I only test this under
-> x86 and the changes with v6 are in s390/ppc, I didn't expect to see much
-> change :-)
-> 
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-> Tested-by: Valentin Schneider <vschneid@redhat.com>
-> 
-
-I was looking at: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
-
-Current code doesn't allow one to enable/disable SCHED_MC on ppc since it is set always in kconfig.
-Used the below patch:
-
-I think since the config is there, it would be good to provide a option to disable. no?
+This patchset introduces new state variables to combine and reduce the
+number of checks we would otherwise perform on every multicast packet
+in fast/data path.
+  
+The second reason for introducing these new, internal multicast active
+variables is to later propagate a safety mechanism which was introduced
+in b00589af3b04 ("bridge: disable snooping if there is no querier") to
+switchdev/DSA, too. That is to notify switchdev/DSA if multicast
+snooping can safely be applied without potential packet loss.
+    
+Regards, Linus
 
 ---
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index fc0d1c19f5a1..da5b2f8d3686 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -170,9 +170,8 @@ config PPC
-  	select ARCH_STACKWALK
-  	select ARCH_SUPPORTS_ATOMIC_RMW
-  	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
--	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
-  	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
--	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
-+	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
-  	select ARCH_USE_BUILTIN_BSWAP
-  	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
-  	select ARCH_USE_MEMTEST
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 68edb66c2964..458ec5bd859e 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1706,10 +1706,12 @@ static void __init build_sched_topology(void)
-  			SDTL_INIT(tl_cache_mask, powerpc_shared_cache_flags, CACHE);
-  	}
-  
-+#ifdef CONFIG_SCHED_MC
-  	if (has_coregroup_support()) {
-  		powerpc_topology[i++] =
-  			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
-  	}
-+#endif
-  
-  	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
-  
+# Changelog
+
+Changelog to / follow-up of: [PATCH net-next 0/5] net: bridge: propagate safe mcast snooping to switchdev + DSA
+-> https://lkml.org/lkml/2025/5/22/1413
+
+* removed the switchdev/DSA changes for now
+* splitting "[PATCH net-next 1/5] net: bridge: mcast: explicitly track active state"
+  into:
+  * net: bridge: mcast: track active state, IGMP/MLD querier appearance
+  * net: bridge: mcast: track active state, foreign IGMP/MLD querier disappearance
+  * net: bridge: mcast: track active state, IPv6 address availability
+  * net: bridge: mcast: track active state, own MLD querier disappearance
+  * net: bridge: mcast: use combined active state in fast/data path
+  * net: bridge: mcast: track active state, bridge up/down
+
+* rebased to current net-next/main:
+  * from_timer() -> timer_container_of()
+
+* net: bridge: mcast: export ip{4,6}_active state to netlink:
+  * changing NLA_U8 to NLA_REJECT to make it read-only
+
+* moved br_multicast_update_active() call from br_ip{4,6}_multicast_query_expired()
+  (own querier timer callback) to br_ip{4,6}_multicast_querier_expired()
+  (other querier timer callback)
+  * even though both should have worked as br_multicast_querier_expired()
+    would call br_multicast_start_querier()->...->br_multicast_query_expired(),
+    even if the own querier is disabled, but let's use the more direct way
+
+* simplified br_multicast_update_active():
+  * no return value for now, don't track if the active state has changed,
+    these aren't necessary (yet)
+  * removed __br_multicast_update_active() variant as was used to force
+    an inactive state in __br_multicast_stop(), instead using an
+    netif_running(brmctx->br->dev) check in br_multicast_update_active()
+  * replaced br_ip{4,6}_multicast_check_active() with simpler
+    br_ip{4,6}_multicast_update_active() and
+    br_ip{4,6}_multicast_querier_exists()
+  * fixing build errors with CONFIG_IPV6 unset
+* simplified br_multicast_toggle_enabled()
+  * no return value for now
+  * fixes "old used uninitialized" issue
+
+* removed const from __br_multicast_querier_exists()'s "bool is_ipv6"
+* replaced "struct ethhdr *eth" in br_multicast_{snooping,querier}_active()
+  with direct ethernet protocol integer attributes
+* added a few comments in br_multicast_update_active() calling functions
 
 
