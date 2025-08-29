@@ -1,187 +1,178 @@
-Return-Path: <linux-kernel+bounces-791901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C58B3BD97
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:27:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E15B3BD9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421E91CC1A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:27:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DECD7BA617
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9D2320CA8;
-	Fri, 29 Aug 2025 14:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E1532142A;
+	Fri, 29 Aug 2025 14:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KYlmnr3S"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010038.outbound.protection.outlook.com [52.101.84.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzWVE9Rs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55E829E110;
-	Fri, 29 Aug 2025 14:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477645; cv=fail; b=HQHopk+ixRGLps2aavgOZqOxS7Egwl+iRD6UIrrvCQ6MfMu06GAi0gUaF9OKl69X/Wa4JJbxnpUMN19Qhcpyjjkqg0iKbW5mBSUZN7+yOYyxfy4zbizgxZknigQ/MneOA4IVN0MQ/KHhCXPMQd+0wTlscBUNy3VdOInLb+R8IOs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477645; c=relaxed/simple;
-	bh=7PzrHolFb8P3zBI5e9SU/f+tyxaXvUcWhendIsYIIRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZtL6/v6f6qCqxb5orRkHvW/CTevx60MJKy0TgNpT8gPTXpUAimo8FkL7nsYYYXUqQUSuxfRNJYfGzW26Dh1NKzr/LKt1gG8JRTHFi0E8WpvpAxz+aidJLB1g/it4SkHVuEzd7Dhl8+g302olYAnIxJaJnQzTRdmkXLNFxGhMeSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KYlmnr3S; arc=fail smtp.client-ip=52.101.84.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bgu1Ksfxux4RTLFrqrptdfR7+8BO8bGdTx24xlb8oJrfY7xoTTxgweN4/WqhI2hH9gOtdqB/BS3wvKoQ9lnIKbotpHGmeVP+T+iSyB2QvPMGILl9Xx+L/a36rUq8DQfsqJxP5dkqkgrXReJr0+zfOKB01LbMpGStgMCPxLOTCwPyrnR8XkBKf29TLMB8hlF+CrsRkQKxLxD4qndb/Z9rvZeP4UEJ42Hnn46p1wmiwH84X+H2uBVfbv+ICprb4tWyQMyelt0FHhbzASOmr3YMuDSkrRcOIGTHQtz+2ed7lZz2WbISS+b0/Tpk+7GyN4C3yoyjbEx3/OYQPWR5sMOMjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7PzrHolFb8P3zBI5e9SU/f+tyxaXvUcWhendIsYIIRA=;
- b=yDZDsJXpu+dQKGaw6bKhmaekJ9GF9/LU86xxug7BkRhp1+0XznguGUJpxrxuvMSlLUrnOtVYi+R8QGbbOGvjxrcFKINP2IpuArfDaIqj9e2ynetjj3fFG4tRAG0Yq76r9xJZeQ/Qeejenof7V7debM9zMeouKYUInr2Bbyg1q/W634bk+jjonynei0ZpH67jbcUnk4izOE6SDfOdy8xWSV0UtlZ5UltcR12GIePr9Oj9QMiZr5K3MCB3kJdLBnTUePyvYHEEUV2MZ+tdZKKf1LE5kNHMRVe7crB7eUQb14oaYpO8VBFKSWoxYSc+5glUQ/cmr1kpFbQ69Ycs7j9ZAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7PzrHolFb8P3zBI5e9SU/f+tyxaXvUcWhendIsYIIRA=;
- b=KYlmnr3SYKyvnqhvUYKGxutKU3AY5btdQN0RNEHtZZyTa/BUIhJv4QaQ6UHRp5fQNkyZmkwAKFHm4EYFAqmtAyKBVIiSyUeyFT0f7q5AH8BGAsMGoxHFTV+u14zobUSh02bmHeNun0ZeFF5HKO650baKipm9Ia+q2KzF5shFgwfQl8RH0ZRBvTBUB7iL7NPiU1JNLNaPJCfzpV4o31iUGaDEY1Ve80TM/oVOicT1GEHw7d4BOKnRaCwNQXPTNzpnjg6EZwZ5UP0OWi0VBJ52QMruEzok7Z7xyC3nWdR0xfa1etKoGP0ArmGUQSQBAXx1xxjKBe4EqMIuMkmNqbxAiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by AS8PR04MB9093.eurprd04.prod.outlook.com (2603:10a6:20b:444::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.11; Fri, 29 Aug
- 2025 14:27:20 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%5]) with mapi id 15.20.9052.014; Fri, 29 Aug 2025
- 14:27:20 +0000
-Date: Fri, 29 Aug 2025 10:27:09 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: James Clark <james.clark@linaro.org>,
-	Clark Wang <xiaoning.wang@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Larisa Grigore <larisa.grigore@oss.nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] spi: spi-fsl-lpspi: Fix transmissions when using
- CONT
-Message-ID: <aLG4vXsolXkpUUEs@lizhi-Precision-Tower-5810>
-References: <20250828-james-nxp-lpspi-v2-0-6262b9aa9be4@linaro.org>
- <20250828-james-nxp-lpspi-v2-1-6262b9aa9be4@linaro.org>
- <aLGRJxK5Lr44P5hG@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLGRJxK5Lr44P5hG@finisterre.sirena.org.uk>
-X-ClientProxiedBy: PH5P220CA0002.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:34a::17) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E37320398;
+	Fri, 29 Aug 2025 14:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756477653; cv=none; b=UTTctJxGhOke+7E36Sof7bbIFlUIf8trjRjWwzwox8/wUvIAqryEcjbbWIK3Y6Z3PpwKegjNLxcdyWF1bGdXLVCwafUlCljhgRWg4ecITS5+JX4gDANoBOVz4elyZf5iK55zi7vYAR9PitT6OceWisp1uyoSipyHUrJUxDBm0AE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756477653; c=relaxed/simple;
+	bh=jdMGIFYvqok3uA+n6cH3bsInCw2c3K7K0ooHXrgGJ1U=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=IDQHuNPM4RyncQi87WvvtVCq/ZxAnj1r125Kx01k3+P/MnGsWLvIWayTZczCR+NhAEamaw59+9rC9Q34gdM4HdOqnqjH86jBdZWxtQr/f6MPqdk8khCh+LdX6lGJU/9nPYg+W0cVYZCYnEtmhDY3BQjNnbC/DwcnN4xJSy96iLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzWVE9Rs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F62C4CEF0;
+	Fri, 29 Aug 2025 14:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756477653;
+	bh=jdMGIFYvqok3uA+n6cH3bsInCw2c3K7K0ooHXrgGJ1U=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=YzWVE9RsQzaSpE4jk9MGB//vhdQsZu5JE+4l04yvIfF/YwQ/7xcbG16/JeuoH3I0c
+	 LbC8J40v0qexfI6zvFacHuR+/376z8qx0QFB5uVN/ZKRQJ6iEqLpoNkogB2r14KEpl
+	 L+vogIZb+fugNejwwe/tAECuNdZWTCGsqNuquK0h9oDCEezZpAdNxPt3DMEmLhAYpL
+	 6EZXh+GDvrgLLY5/4ogAgTJpzQjQxQG5YuYhpuw9rGl9C/uoC2RQnJf0bNTsUlxbIu
+	 K8F1tM2eLUQ/DNkzq0z4uctGJn1ACv+m6kkyhAV4bx2xldO9XsnyDkSVsBSjYVqyH5
+	 VGeqkEYN7nr2g==
+Date: Fri, 29 Aug 2025 09:27:31 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB9093:EE_
-X-MS-Office365-Filtering-Correlation-Id: d92fa87b-4020-4c40-b572-08dde70828ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|19092799006|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sHlmR7ZVRIml+SZ7Q5b2SeSXhvjq6Dygmj8YnZ5i2VIqlzyk7Cw9SZT8TYbv?=
- =?us-ascii?Q?Hrhp7cnM+aIqZhTeGKYB3ohcKWsbZKrCpGAOYXtPA0fZGHYoHv61eiqU/aDx?=
- =?us-ascii?Q?TzFsN/EIy/Z52qCTt8Yi5CbhPY8Joogkk5sohkpC39VyNfWoLK1m84Zl5ngA?=
- =?us-ascii?Q?3sx3RqaZIbarHL/Y5q+r1hQwTarlz3xWgYbZAD3vkEgYmwllSA2dppixsEKq?=
- =?us-ascii?Q?Ji7hZhV/YmORw+GgJfOjhFDAp4m8hMxz0Y+3lix0sC1srfWndmBdUUKm3rng?=
- =?us-ascii?Q?Hhu2lHP23ew+hsr7bJ2I3XFCGMqPm6/+aZXihIj/QTm+Wf/cePFMD+qUXj8q?=
- =?us-ascii?Q?SIA0W5LDsRSg9CgNqg2ULzkAXjMYXU3gUBc5HBbC//mgzVdZCOWvZJjLNL7G?=
- =?us-ascii?Q?tMC4xRDw98MCxBoK+erJisIBDu8DHayZGq7CkeNgYxupgJ7Ul7P4yqcii41E?=
- =?us-ascii?Q?A4C1k7BDDjvvbfIH41z2Kw4PRoOh5iLRT28e/BzofbkCAh31vlEbrWTX+rBI?=
- =?us-ascii?Q?hI+y/+NBiem0sSvZrgMnG80KQCH8nkLvjyldWkKHnqONiHZ5DsQd0pxH8ra+?=
- =?us-ascii?Q?G9JDLm3yZKMNoRcrM9Z/6y9kVz1noxcxGJa0xMn6/EQRf3NUx9nInaqz0MYN?=
- =?us-ascii?Q?0C4O53bwuTecD5ESS2prJxV5zslEyU+fK+lCAWdV3/GARqVivBH3iMrifxWP?=
- =?us-ascii?Q?GYJ1b7fIRE6iZM4i56ZB4KWxkxC7xeuy59BhswUzSAYC+qPDaACHkHCHaVQr?=
- =?us-ascii?Q?bdWF8REURh/oql6Bz/rAoUZsnEHu5CE5NSQgZScAIocWS9G9XNC8hkNdy6jp?=
- =?us-ascii?Q?oYjh9XU/KTMMcfhI8YO5OVFHjaevJ6fLzhhcCzUuFdhRwQSkjA8FKE+2/08W?=
- =?us-ascii?Q?cuWkmGuCnEKFDIq82ONPtKD5XgAmEIvOCNTaVWcn/icIyHjy4CEUJ3NKLmua?=
- =?us-ascii?Q?63zXbwJf6vpEHnsCpkhd1sHsuddl+SZ04QpBzvfvFNSjxjN+RvLEc/Bnqv3g?=
- =?us-ascii?Q?JMZXj12Ng5fhgT5x4viDirU2DVxSV0vAi+P7vyMQ1+S0WovuKd5nE5VviXuj?=
- =?us-ascii?Q?rtbtUr/WW8/2LvukyohDkyp7oOuYO0X12sCbdMp1vJ3t5PrDvbfAhw/+5ODl?=
- =?us-ascii?Q?q6De/Hj0PzrmcqyuHwNl/zYiwBn1QiUTe00dtCiTJLnJJ5zuo9RJD0h+EW9O?=
- =?us-ascii?Q?+hjxhnc3UDhWKr+f5bbEUYjqXg2DD0YWogTs7swvbx9jAoe1HsAb5IrHcj/M?=
- =?us-ascii?Q?/RsR750B7P1EQJncCXxQ9N/zGfIg42ztWEIa/DK5zzGUFAhMOw5r2dBKdIcH?=
- =?us-ascii?Q?KtlpOogsYgEEIikgOwzUMhgVg/nTJYPfRCrpUer1KKvxF6EFfKX8Xl2zClwW?=
- =?us-ascii?Q?EkGZ0E4XKPDmTy5dGIFl+/3wXBPDEzbWTVXgfbuI22WTJK5ti+13ktQ46X8h?=
- =?us-ascii?Q?5hmEapTN3CqthcPb4hMwKvmPD9FBc+dCejfMBKubi1X9o59uL5h+zw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(19092799006)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ClgfytwJ7FORjaHlxo6xW4xh94k34WNadY4UUdNkuUIj82eazWQ71uUcJKXx?=
- =?us-ascii?Q?EMutdIUAejsgNCyL9xY5kBrAdSagNRLuqdRmDTsjnK/8+1uK8cEnrLc48OON?=
- =?us-ascii?Q?b9zqDCQu4TSIvFnTytt1eknZCXfETpGYiy4xHY6j/nycvbOOmtuImkqCm5sa?=
- =?us-ascii?Q?ASUTXoYBYaFrzBfwNQaY3ikVNQ5H64Ku5Vbh9ZS5bo0707h94bNh5pktEv3v?=
- =?us-ascii?Q?dWJcnRv61Vf3N2oll3CeHJcMTYG04ezIYGapXJKA0qSfCFHC+ovjqPF6xDNi?=
- =?us-ascii?Q?auoW+Nglz9vpMGAXVVZ+TZ7dktw0LdPuGJtiOs3Veh+BLGR9aprECaRnH1PB?=
- =?us-ascii?Q?/RPYgearEu0kgZ6sy2DlxRBNkFu0ZyNpjx4uGb5E6zAJ1XV1OK4CpnOUMQID?=
- =?us-ascii?Q?Hg2xiess6e0PMD7kE1BUJie1RRbWOSEUM58B/eQwSht8h9iaO7wAkRUvtUll?=
- =?us-ascii?Q?PTgniqw0ybAEpI1gUiIbAFthYcJWGB73QT7eXnjIw/TJt/LVwXfzCcsuXvOE?=
- =?us-ascii?Q?BJPeJNtwf45ySQAY2pqUEb+P931AMZlB6Kuel9K8L+nRHQwTH7LrTvmq54rz?=
- =?us-ascii?Q?5qorZWS8t7mC4MWyM48ORY8t9yGCP0YHVJTj3FF+n16JpidrqGV6MRS3FrvH?=
- =?us-ascii?Q?2vW/totZMWu+niaEyTQj/mPtxFY6IP2t1cSwSujpqYvnwV01iiKiZywUKj6Q?=
- =?us-ascii?Q?2EbVb1IyKVnd6nRJEIEVZVxcJy53w+clBe5yPqGy0gboJ0WC1wVqSDGVcUEy?=
- =?us-ascii?Q?aT7x1z9ARxov5wpRDaD9zS1E1OI/IcH77nBNNLkXG1i7vt/cmgQvZwSD3Exi?=
- =?us-ascii?Q?tzKuqo7F6j5MR0Pz/BkXocmh+hR7HQ/Ytcylt794aGm686O2YuzgT95PdalN?=
- =?us-ascii?Q?Swh+dozjjSz731ASEEIyf2764bwQWgzCyD3Q8updIUtNmmjzI2WgL/Ak5Ad8?=
- =?us-ascii?Q?RKYYIbZHWGgHx5iMpy9MKtMhab01oF9vobicSonOKCG6Uks7oZKdGfWsLZ+x?=
- =?us-ascii?Q?8Kc5XDS/msNCtexToUXDmImJebh0jOQdnbXolFK6EzttVDGnnD/9HLwPDV29?=
- =?us-ascii?Q?uXOkMdYM+1SdWMUuA6YiJ0yA0noNpboawNq1jg/cXiOWlekIA1GSn9kLiTpj?=
- =?us-ascii?Q?HKCNjx23Y4GyerChMT9Bcb/DSWxkSdKI3CgahpKOchFipjJNiaaeebDal6JQ?=
- =?us-ascii?Q?awJqRqfJSIr0VfUkEUHfwJHqp8O36hblzsUfhPbtuSKq/JJUxPVRHGGF7kgw?=
- =?us-ascii?Q?OexEY4JLj6OY9k5wINTzygxCesB+92icSl3A6srj/xwNmXUvMzV+vlvekA6m?=
- =?us-ascii?Q?CQ9Jvn1aNtmqnC+rB9Dsk9eb5DawiVI3PO5B9bf/5OBuGxi0c0T4FNAAEKox?=
- =?us-ascii?Q?MZVZtvOqLFb+Lkq4zbeNZTiUVmo9sJ/EscJgMRoeVSzanFNZhER4WE1WvScQ?=
- =?us-ascii?Q?6zcwUIPSlUjGrba0i2Q5vKoyKDGGc4Xth3ylMdM5mpGYVNrf1YGLZKmHsXUA?=
- =?us-ascii?Q?OWHuKmnTOdSIDTOEy2In9pfNe92iyXIyZvFNTqIHZ4fjeN4q/lJswChoS4Ig?=
- =?us-ascii?Q?YcA731FnCnbc1kECoeTQ53gZyHtFrv5j0H65lYh9?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d92fa87b-4020-4c40-b572-08dde70828ff
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 14:27:19.9019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n2g4aL6KevM35/dwPPH8/mgw05n/f1cLl+3hGv5Jf/YT3XvmWEEEdBJ1pu9b49De1DUpN+svRiY42BofkB4ZsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9093
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@vger.kernel.org, 
+ Dmitry Osipenko <digetx@gmail.com>, devicetree@vger.kernel.org, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+In-Reply-To: <20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com>
+References: <20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com>
+Message-Id: <175647746367.734475.9455841505261457639.robh@kernel.org>
+Subject: Re: [PATCH RFC 0/7] Support Tegra210 actmon for dynamic EMC
+ scaling
 
-On Fri, Aug 29, 2025 at 01:38:15PM +0200, Mark Brown wrote:
-> On Thu, Aug 28, 2025 at 11:14:40AM +0100, James Clark wrote:
-> > From: Larisa Grigore <larisa.grigore@nxp.com>
-> >
-> > Commit 6a130448498c ("spi: lpspi: Fix wrong transmission when don't use
-> > CONT") breaks transmissions when CONT is used. The TDIE interrupt should
-> > not be disabled in all cases. If CONT is used and the TX transfer is not
-> > yet completed yet, but the interrupt handler is called because there are
-> > characters to be received, TDIE is replaced with FCIE. When the transfer
-> > is finally completed, SR_TDF is set but the interrupt handler isn't
-> > called again.
->
-> Frank, you've reviewed the whole series except for this patch - is there
-> some issue with it?
 
-I need read spec and code to understand code logic. It should be correct.
+On Thu, 28 Aug 2025 23:01:26 -0500, Aaron Kling wrote:
+> This series adds interconnect support to tegra210 MC and EMC, then
+> enables actmon. This enables dynamic emc scaling.
+> 
+> This series is marked RFC for two reasons:
+> 
+> 1) Calculating rate from bandwidth usage results in double the expected
+>    rate. I thought this might be due to the ram being 64-bit, but the
+>    related CFG5 register reports 32-bit on both p2371-2180 and
+>    p3450-0000. I'm using the calculation used for Tegra124 and haven't
+>    seen seen anything obviously different between the ram handling on
+>    these archs to cause a different result. I have considered that the
+>    number of channels might affect the reporting, and factoring in that
+>    variable does result in the correct rate, but I don't want to assume
+>    that's correct without confirmation.
+> 
+> 2) I am seeing intermittent instability when transitioning to rates of
+>    204 MHz or below on p2371-2180. I have noted that if the first
+>    transition to such a state works, then it continues to work for the
+>    rest of that boot cycle. But the kernel will often panic the first
+>    time it tries to downclock. I suspect this is a pre-existing issue
+>    only brought to light now because nothing would ever lower the clock
+>    rate previously.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Aaron Kling (7):
+>       dt-bindings: memory: tegra210: Add memory client IDs
+>       dt-bindings: devfreq: tegra30-actmon: Add Tegra124 fallback for Tegra210
+>       soc: tegra: fuse: speedo-tegra210: Add soc speedo 2
+>       memory: tegra210: Support interconnect framework
+>       arm64: tegra: tegra210: Add actmon
+>       arm64: tegra: Add interconnect properties to Tegra210 device-tree
+>       arm64: tegra: Add OPP tables on Tegra210
+> 
+>  .../bindings/devfreq/nvidia,tegra30-actmon.yaml    |  13 +-
+>  .../boot/dts/nvidia/tegra210-peripherals-opp.dtsi  | 135 ++++++++++
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  43 ++++
+>  drivers/memory/tegra/Kconfig                       |   1 +
+>  drivers/memory/tegra/tegra210-emc-core.c           | 276 ++++++++++++++++++++-
+>  drivers/memory/tegra/tegra210-emc.h                |  25 ++
+>  drivers/memory/tegra/tegra210.c                    |  81 ++++++
+>  drivers/soc/tegra/fuse/speedo-tegra210.c           |   1 +
+>  include/dt-bindings/memory/tegra210-mc.h           |  58 +++++
+>  9 files changed, 626 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250822-t210-actmon-34904ce7ed0c
+> prerequisite-change-id: 20250812-tegra210-speedo-470691e8b8cc:v1
+> prerequisite-patch-id: 81859c81abbe79aed1cfbc95b4f5bcdc5637d6bd
+> prerequisite-patch-id: 98bda8855bcc57c59b2231b7808d4478301afe68
+> prerequisite-patch-id: 6e0b69d42ea542dc9f58b410abd5974644f75dc4
+> prerequisite-patch-id: 9e3b9b2fdb8d9c2264dfa7641d1aec84fb7aedd9
+> prerequisite-patch-id: ef4bcc4ddba7898b188fb3fc6e414a2662183f91
+> 
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+> 
+> 
+> 
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+ Deps: looking for dependencies matching 5 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/5] dt-bindings: clock: tegra124-dfll: Add property to limit frequency
+ Deps: Applying prerequisite patch: [PATCH 2/5] soc: tegra: fuse: speedo-tegra210: Update speedo ids
+ Deps: Applying prerequisite patch: [PATCH 3/5] soc: tegra: fuse: speedo-tegra210: Add sku 0x8F
+ Deps: Applying prerequisite patch: [PATCH 4/5] clk: tegra: dfll: Support limiting max clock per device
+ Deps: Applying prerequisite patch: [PATCH 5/5] arm64: tegra: Limit max cpu frequency on P3450
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250828-t210-actmon-v1-0-aeb19ec1f244@gmail.com:
+
+arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-0000.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-smaug.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2894-0050-a08.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+arch/arm64/boot/dts/nvidia/tegra210-p2571.dtb: external-memory-controller@7001b000 (nvidia,tegra210-emc): '#cooling-cells', '#interconnect-cells', 'operating-points-v2' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-emc.yaml#
+
+
+
 
 
 
