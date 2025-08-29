@@ -1,219 +1,149 @@
-Return-Path: <linux-kernel+bounces-792284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF434B3C24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F828B3C24B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2734631AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFCCB463CD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48E932A3C7;
-	Fri, 29 Aug 2025 18:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB123376BD;
+	Fri, 29 Aug 2025 18:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dadxvsEd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FwcoItfW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10B275B18
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CE0625;
+	Fri, 29 Aug 2025 18:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756491269; cv=none; b=j49ag3ELfVjplNVL7rhBkyMkV9ldzXZ3GeGLgA6BCmQOs3eebctw3v5/o05O/rrKUX1J3hYfl3Cj6xQcmolws1VMW/NFSMSsyHzo06pDTx2WBS89gMQuhiUfSJNkP66/Y1Njr9ftfsqfV3QG9JFo+lUc1NKbZB/nWQX1pDJTFmg=
+	t=1756491350; cv=none; b=Mmz3BmvdxtQA2291p4696GvvPprgLJneHxgZezyfVWwagSA44FXlJ8w5tP18Bxeyim6vN0b2sqv1hiTE8vOZ/5198Pj+JnviBS0YWypbBLq8fyaUrEZs4dPooCM3myfVfgmfFlGUV+MkL0Npxk4OG5NuyNXceKfaS2TRlGwAQDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756491269; c=relaxed/simple;
-	bh=yRJt+TegNK6W+502znezjR7f/M/raLPdTP7KKYAHCIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhzbE/Wohf0yhO/JL8UxF6YUKXXPAHOFOMvCblgTJNiJ3iPhRIPGG2vohgO7l5y7VrrDy7ZuESUzqv639/om5t+HKBfPSXsMyCMYc/age5oDCTmEGcTxwzwcO6BvaVcgxbjZAbeJcURG7gE0KmiG87Le4ojw44orms2MYnaIxP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dadxvsEd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8977C4CEFE
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756491268;
-	bh=yRJt+TegNK6W+502znezjR7f/M/raLPdTP7KKYAHCIk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dadxvsEdsUz03D4KiiBUc6rnx4w9CKtysKQ2Eg9I2yOwV2Lcyincoq9j7MNXm1TkO
-	 Zc3GbMvM5v8gf3EWbLMzooNOltkGZxXWhRG5oKXrjdCTiO+uqvwJvm9T71MC7LSu7w
-	 eVYSi01LnVrJphozAp7EF6+LOQoNSpruXRtbdg9w07IuFW2PaPgPdC1wSKxmTKCXr5
-	 ZN211+cuxW5DyUHCOyh8IpxP8detqr/QJ7FedvATGKPfAE25V0X/SNZHaDC0yfQ9m3
-	 Wz/vRB3u50epHjtJ0ea+00Lh19KZWWEW2XwWB75ei9hYbR12dQu/ypiTmjnZUo25E6
-	 Sg04yo+wZ0CAQ==
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b72f7f606so3435e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:14:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVjP+WlniqmsOvjbESm2GGZTSO+60RmAbuWzq2hVd6XfN1io4vcmvU0WJPzOic9bMW84ATxh5gvWAgETY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPZ+LanpTdAGyB9KnoMXyp8/k6kcMe0MSxP53Ah+5coBHqPVNP
-	G/yfV355/abzsYhsV7kkVBHTxYVVUDa3eNmvRgYAh9RTfP/dtV2BLqln6rZ3fxTaZvmSLzG8iGT
-	a5STngu93w86gnJgxpEwa7OY7nzDB1DDwsvwbHMZu
-X-Google-Smtp-Source: AGHT+IGMRQV1XZsQIwrNNqTDZtdRqBuWEXIqyZMGeqwYHLrc/h6k2Q/Qn1Z0+Fezw7s/S13TR4rhAli8suotYoqiEqU=
-X-Received: by 2002:a05:600c:8906:b0:45a:2861:3625 with SMTP id
- 5b1f17b1804b1-45b84b4a04fmr43005e9.4.1756491267267; Fri, 29 Aug 2025 11:14:27
- -0700 (PDT)
+	s=arc-20240116; t=1756491350; c=relaxed/simple;
+	bh=1Jf8b9GL3uqx2IKuSIUNbhQaMTb4+dyoDcBhSljsSPk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RUCY+6s5vJcY2lIJjThCTc+1x6RqeKLaOCNfVm37PTwdyUR9PbEalciBex6FxxZ/loKV2UHmaw2ro7j/zzUnkYMSYE3XoljFz1k2y+xZIM+UPiwoOZvec+3tRxYu6pg2Egm1ISZ0sLqK4I0QF+/RctImCAgU+LF2Qq6oeS+9f3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FwcoItfW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756491343;
+	bh=1Jf8b9GL3uqx2IKuSIUNbhQaMTb4+dyoDcBhSljsSPk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=FwcoItfWwici07H2uY2FEPLrw4Ppa67OAmNcytiLllA/lWrOJj+lHzblvZtbdx5f3
+	 DuTBgqKgTg+ELodI70QUk3wTgi7Ma2MhIMtKVHPtbjV8sF6eR7P6P5DjBCCZmZVeo3
+	 fqFXRjxCVxjFDDeXCA3ZuFR0hA53Rjm+s28dPuywFgI7sFWwf7kb+KNZVHm4FAXGH5
+	 Y5obQ7yGMmW523oAMj1dT5FrVtTMinTPU87dozGMCMU6rWCXvb/pXdyf33Y4ukE+fJ
+	 1P4A2llzlPTJyeuvY/imJkjTA21EFMvqWHMIVt4cUuMcy2QqL5oh8sdTEnKif109IN
+	 7qU2ccEyrfeMw==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C021B17E01F5;
+	Fri, 29 Aug 2025 20:15:41 +0200 (CEST)
+Message-ID: <88fc40c386f2609584df72cf4951972b07f20e72.camel@collabora.com>
+Subject: Re: [PATCH v3 3/4] media: chips-media: wave5: Add WARN_ON to check
+ if dec_output_info is NULL
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, bob.beckett@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 29 Aug 2025 14:15:40 -0400
+In-Reply-To: <20250623002153.51-4-jackson.lee@chipsnmedia.com>
+References: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
+	 <20250623002153.51-4-jackson.lee@chipsnmedia.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-1KJsHPFrOmo8O4PcAsju"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACePvbXnaWZh61aH=BHoGDqbKvBSE52Me+PpE-WMXcGpRy0FFw@mail.gmail.com>
- <20250828163913.57957-1-sj@kernel.org>
-In-Reply-To: <20250828163913.57957-1-sj@kernel.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 29 Aug 2025 11:14:15 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNFEc6GpjzrTAF59jU7Z9OiGujqHm3086aUhG+Y141iyw@mail.gmail.com>
-X-Gm-Features: Ac12FXwUslqnoCOE6vybxi7aGMsQj_ykVBv57KBSkgX6Y5hLisalD99VAYpNJHY
-Message-ID: <CAF8kJuNFEc6GpjzrTAF59jU7Z9OiGujqHm3086aUhG+Y141iyw@mail.gmail.com>
-Subject: Re: [PATCH v5] mm/zswap: store <PAGE_SIZE compression failed page as-is
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Takero Funaki <flintglass@gmail.com>, David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <baohua@kernel.org>, Kairui Song <kasong@tencent.com>
+
+
+--=-1KJsHPFrOmo8O4PcAsju
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Chris Li <chrisl@kernel.org>
+Le lundi 23 juin 2025 =C3=A0 09:21 +0900, Jackson.lee a =C3=A9crit=C2=A0:
+> From: Jackson Lee <jackson.lee@chipsnmedia.com>
+>=20
+> The dec_output_info could be a null pointer, so WARN_ON around it
+> was added.
 
-Chris
+I think to warrant a WARN_ON, its should be that the info should NOT be nul=
+l.
+WARN_ON should be used for driver programming issues. If this is what you m=
+ean,
+I would reword:
 
-On Thu, Aug 28, 2025 at 9:39=E2=80=AFAM SeongJae Park <sj@kernel.org> wrote=
-:
->
-> On Wed, 27 Aug 2025 14:16:37 -0700 Chris Li <chrisl@kernel.org> wrote:
->
-> > On Wed, Aug 27, 2025 at 10:45=E2=80=AFAM SeongJae Park <sj@kernel.org> =
-wrote:
-> [...]
-> > Anyway, I just opened the editor to check again. Yes, if we goto the
-> > read_done, the if condition using dlen can introduce a new incoming
-> > edge that has len uninitialized value to be used. Yes, need to
-> > initialize dlen =3D PAGE_SIZE or you initialize it at the memcpy of
-> > page.
->
-> Thank you for confirming.
->
-> >
-> > > I will post the fixup by tomorrow morning (Pacific time) unless I
-> > > hear other opinions or find my mistakes on the above plan by tonight.
-> >
-> > You are too humble, that is the normal reviewing process. You can take
-> > your time.
->
-> No worry, I just wanted to give you an expectation of the time line :)
->
-> Andrew, could you please pick the below attached cleanup patch as a fixup=
- of
-> the original patch?  Please feel free to let me know if you prefer postin=
-g a
-> new version of the patch instead or any other approach.
->
->
-> Thanks,
-> SJ
->
-> [...]
->
-> =3D=3D=3D=3D Attachment 0 (0001-mm-zswap-cleanup-incompressible-pages-han=
-dling-code.patch) =3D=3D=3D=3D
-> From 867c3789fa80ac163427f1d7804bf2c8667684ca Mon Sep 17 00:00:00 2001
-> From: SeongJae Park <sj@kernel.org>
-> Date: Wed, 27 Aug 2025 13:18:38 -0700
-> Subject: [PATCH] mm/zswap: cleanup incompressible pages handling code
->
-> Following Chris Li's suggestions[1], make the code easier to read and
-> manage.
->
-> [1] https://lore.kernel.org/CACePvbWGPApYr7G29FzbmWzRw-BJE39WH7kUHSaHs+Ln=
-w8=3D-qQ@mail.gmail.com
->
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> Acked-by: Chris Li <chrisl@kernel.org>
+
+   The dec_output_info should not be a null pointer, WARN_ON around it to
+   indicates a driver issue.
+
+
+cheers,
+Nicolas
+
+>=20
+> Signed-off-by: Jackson Lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
 > ---
->  mm/zswap.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index f865a930dc88..e5e1f5687f5e 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -952,6 +952,7 @@ static bool zswap_compress(struct page *page, struct =
-zswap_entry *entry,
->         struct zpool *zpool;
->         gfp_t gfp;
->         u8 *dst;
-> +       bool mapped =3D false;
->
->         acomp_ctx =3D acomp_ctx_get_cpu_lock(pool);
->         dst =3D acomp_ctx->buffer;
-> @@ -983,9 +984,8 @@ static bool zswap_compress(struct page *page, struct =
-zswap_entry *entry,
->          * only adds metadata overhead.  swap_writeout() will put the pag=
-e back
->          * to the active LRU list in the case.
->          */
-> -       if (comp_ret || !dlen)
-> +       if (comp_ret || !dlen || dlen >=3D PAGE_SIZE) {
->                 dlen =3D PAGE_SIZE;
-> -       if (dlen >=3D PAGE_SIZE) {
->                 if (!mem_cgroup_zswap_writeback_enabled(
->                                         folio_memcg(page_folio(page)))) {
->                         comp_ret =3D comp_ret ? comp_ret : -EINVAL;
-> @@ -994,6 +994,7 @@ static bool zswap_compress(struct page *page, struct =
-zswap_entry *entry,
->                 comp_ret =3D 0;
->                 dlen =3D PAGE_SIZE;
->                 dst =3D kmap_local_page(page);
-> +               mapped =3D true;
->         }
->
->         zpool =3D pool->zpool;
-> @@ -1007,7 +1008,7 @@ static bool zswap_compress(struct page *page, struc=
-t zswap_entry *entry,
->         entry->length =3D dlen;
->
->  unlock:
-> -       if (dst !=3D acomp_ctx->buffer)
-> +       if (mapped)
->                 kunmap_local(dst);
->         if (comp_ret =3D=3D -ENOSPC || alloc_ret =3D=3D -ENOSPC)
->                 zswap_reject_compress_poor++;
-> @@ -1025,7 +1026,7 @@ static bool zswap_decompress(struct zswap_entry *en=
-try, struct folio *folio)
->         struct zpool *zpool =3D entry->pool->zpool;
->         struct scatterlist input, output;
->         struct crypto_acomp_ctx *acomp_ctx;
-> -       int decomp_ret, dlen;
-> +       int decomp_ret =3D 0, dlen =3D PAGE_SIZE;
->         u8 *src, *obj;
->
->         acomp_ctx =3D acomp_ctx_get_cpu_lock(entry->pool);
-> @@ -1034,9 +1035,7 @@ static bool zswap_decompress(struct zswap_entry *en=
-try, struct folio *folio)
->         /* zswap entries of length PAGE_SIZE are not compressed. */
->         if (entry->length =3D=3D PAGE_SIZE) {
->                 memcpy_to_folio(folio, 0, obj, entry->length);
-> -               zpool_obj_read_end(zpool, entry->handle, obj);
-> -               acomp_ctx_put_unlock(acomp_ctx);
-> -               return true;
-> +               goto read_done;
->         }
->
->         /*
-> @@ -1059,6 +1058,7 @@ static bool zswap_decompress(struct zswap_entry *en=
-try, struct folio *folio)
->         decomp_ret =3D crypto_wait_req(crypto_acomp_decompress(acomp_ctx-=
->req), &acomp_ctx->wait);
->         dlen =3D acomp_ctx->req->dlen;
->
-> +read_done:
->         zpool_obj_read_end(zpool, entry->handle, obj);
->         acomp_ctx_put_unlock(acomp_ctx);
->
-> --
-> 2.39.5
->
->
+> =C2=A0drivers/media/platform/chips-media/wave5/wave5-vpuapi.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c b/dr=
+ivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> index e94d6ebc9f81..5b10f9f49b9f 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> @@ -485,7 +485,7 @@ int wave5_vpu_dec_get_output_info(struct vpu_instance=
+ *inst, struct dec_output_i
+> =C2=A0	struct vpu_device *vpu_dev =3D inst->dev;
+> =C2=A0	struct dec_output_info *disp_info;
+> =C2=A0
+> -	if (!info)
+> +	if (WARN_ON(!info))
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> =C2=A0	p_dec_info =3D &inst->codec_info->dec_info;
+
+--=-1KJsHPFrOmo8O4PcAsju
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLHuTQAKCRDZQZRRKWBy
+9GzpAP4tgapGO4VZ2WT7cG88+GXpDaxwLGNmCEgoDyFDCHAKvQD/YHTcTotIX2tX
+HTbdx0bR1LxxjotFYNpXcgShSpaGEgU=
+=vn4C
+-----END PGP SIGNATURE-----
+
+--=-1KJsHPFrOmo8O4PcAsju--
 
