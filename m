@@ -1,149 +1,168 @@
-Return-Path: <linux-kernel+bounces-792133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68583B3C090
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:23:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A78CB3C072
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247AAA63F6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EFC51C80470
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DE3335BA5;
-	Fri, 29 Aug 2025 16:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15085322DAA;
+	Fri, 29 Aug 2025 16:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="T7oyloWL"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="SJByZQBy"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889FB32A3D1
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80DEACD
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484558; cv=none; b=QzK8hs+bkj0ignHntK25gzjbEGfETximr0+Ot0/1pzVDC6ZjiYd8TEtjhHc1Ml95T8VfgNEGr1NsZsn8MSNmnTj7/aOKcLOiPL46RN/SSYgtwKE3IHpP8cFXE9sdZ5A90NefVh3hfp+X5yqIzbseIIgM2BTb/41jWwETZSysmQc=
+	t=1756484252; cv=none; b=U5SYhRBWyauh6qmqMRqXGiCsRfNFs98OiSpUYwV0zdZqOh1VyN5R3EQj+/PN0LJbw2HZpK/0YqhSDilC72wTiBAaM2AWaXYDhmJQMW08usumdPwyw89pULt2uGkyMwULlpFhTYVWMLZelz+FMTszDY6B9yGnll5tbRnQ2jnbAns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484558; c=relaxed/simple;
-	bh=8TDmGbYj0UyXVqHo1ZkM6vIV2MsOIIoNJgd3bubtTaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DN9bVj37x0cVQbybWq/Uk3SHj3YzZOgCfCRpQhFP8yym3x6PjEU67qbriWoBgriVV86FmMDFU6LRxvJ70qsOIE0kgzTW6A+z5+jzNYaWOuSBJn8HpFv4mtpdSVkOnsOlEZJx8Bq/ZALLFvs2muBiQUU4UCl/NLoa14EkE51Pr/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=T7oyloWL; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b77f59bd8so11576685e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1756484554; x=1757089354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vO3fZfxsRC3wtDo2pgMFNvnPCWzRCeuSrbJiTbqH9x8=;
-        b=T7oyloWLgl5WRMn72ha/BuiW+wHgeTQWoy9FRLHE5/Jd6wRYh4I5wIEV/qfg7lLnm8
-         dX2LFftgroiy2+9WYsExzaG0BUO5qvPmGNIbskCJjt7vyyl3esYKcwZNqHDT2mk8YDSX
-         2UkpbyuRSuzKrfCXdsV8R9qcFY7ErviLTQw3b30GtVmdCJ1LGuLfgKj863hhcbjmZu5C
-         9UHJG7lSVU5oPmBcb9/7eAG2y6ZBbM1NHAf/J3k4eJNmEtD7yT1l9NpB9Q8UGcDDJxFG
-         Wb9COQBjfhD83xee5aStPesBkQ1gqdhItehQ8vv/BSqc4tmpIb2pVeKwwzOUhflvLL++
-         Twlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756484554; x=1757089354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vO3fZfxsRC3wtDo2pgMFNvnPCWzRCeuSrbJiTbqH9x8=;
-        b=WACoK1492F78WG8IRLztVMLAerk48jcIvHMYRjo2QclAvfg0v+mWVTqGOjg4Kk2XfT
-         UUiHj86pGI57F2+Y0o6jCi/SNI7kYzKExplI+t+yWiHTBX7M5H/IO+4nE1NVRsSDe8AY
-         LTmMhNNK80/VDFWgX1ISazau5pXEyym1rvDAlgQloYX3cvkIs1UyWYaglV6s8eoS+pwm
-         TKTAWJq0+UTqNs1ZssaZAh+Tiu7wywKpPChtEGV281Symc5xPo/+wn1aMYoyy62/cJZJ
-         SZQMw8OjuxqVnPwKTeAkWogZDiLUBTkJBinJPrM8Y+2DIE4YLv+HymSi7hOfDO3QdNps
-         oyhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrQtBtXUPF4uWUmahS5g+Lo50NA30W3ag0klh6clpc+lhBK3hMrhOlvNHsy/LkbK3GMXk3VNqU3E/Vo0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1hCfxIDoPUMvhPGkZ7GlSMFT9t5Cmby1aX+UiRzhajfFYbHwE
-	7KMu8YmrJ+SyU+ZCKptD8gwfeTlubyVrXweB9mVo0nAj1hHLYVxx6fR70uoLUbqSAFVZC8xO84V
-	QrVGll6k=
-X-Gm-Gg: ASbGnctSn6JIXL5WqLcpqk7Ce3xP9F7MAF9RlUQlKdq2XDiD4MBUkqRYH7CZb86q5Uh
-	MLIRkSAsBctRbqnmvz3uzvbKDJO5d40wNFALI8lbPiwcIPFnfPvpoBUI0nxmAfA256gjlaCAyOt
-	IX8yubiGYGyF4iC0lkC7/nCD66/gWO8T2slnEqngQ3VF2dBqKZ9bluzLSNawth1u86w7lbPGjYO
-	p2GU2hnjj0XMCfc1OwenwkHn/3RKYJgfnIe0U2TpPhPW2roxD7rBj19RK4EacVhP6GwSTIn7aSg
-	JDkjKo215cQMd81QHo+zvv+W2cvnL0L4WQchhAXM5rNfFf4C6uFUMRZTay4b14ZNTvTYJwgUS3T
-	RR/g=
-X-Google-Smtp-Source: AGHT+IFvxH2wrrQOL8qFClFcMXg7O03uzVqmqAkC2KXtyit1y23oMAaMh5LuPNjzPv7yownc2pnyxA==
-X-Received: by 2002:a05:600c:8b0a:b0:45b:733b:1feb with SMTP id 5b1f17b1804b1-45b733b214dmr88676045e9.10.1756484553840;
-        Fri, 29 Aug 2025 09:22:33 -0700 (PDT)
-Received: from localhost ([2620:10d:c092:600::1:954])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7d9548edsm30431075e9.5.2025.08.29.09.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 09:22:32 -0700 (PDT)
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yosry Ahmed <yosryahmed@google.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] mm: zpdesc: minor naming and comment corrections
-Date: Fri, 29 Aug 2025 17:15:28 +0100
-Message-ID: <20250829162212.208258-4-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250829162212.208258-1-hannes@cmpxchg.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
+	s=arc-20240116; t=1756484252; c=relaxed/simple;
+	bh=KLt4H1dAsH4m3W8wq5f1JTt1awfasu+AhMOuE6RzBOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aXmFblvBpZLBzYu1zKJiWP+cqWo6MyuOQr58eTOqUjtYWaFJauPJweZcYLoVVzsG5r8tyvvU7593e7mCais+EhPVWMiK2p8mZloTSY2PwjYY+Oq7vXsdDU+ZvBOLUf29pOHznHnuy7UKc92CadhQbMvbbJEye6fUyAob0jmiV2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=SJByZQBy; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
+	by cmsmtp with ESMTPS
+	id s0gKus0SW17jAs1n2ugY6R; Fri, 29 Aug 2025 16:17:24 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id s1n0uNEhHrnsYs1n1uDXQ2; Fri, 29 Aug 2025 16:17:23 +0000
+X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=68b1d293
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=TsAxZPKnxnV8R9QPSkIA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jd58pSIsv1e0sCZpmSVms3HbnYFises5DmnzMNo/SI0=; b=SJByZQByYNRohejkbnYICwqHak
+	TIIvcUIMXBt+mCHl5aDfJpFVL2rFm94Zbg4XvBhPkyDWY9G9Rhy3WX89aFk1Tb5aYDVNMrSb3+T9c
+	1COE02dHTnZfIYvPFOpPH6h9ICud9ZDpbhtKwvE9dQEyrhD7V0RrR5+eMg9P97Dh9yhs7mEfDWrQs
+	U/4EHXQI0qeYBMVFeVfKgcwHzh1doY3aFrkNs1trvHtUlmgtB6yA+ZeEEXfh3lclzlGq1tC5yWBkt
+	KSw/AIdTghFQhFKZDbDiM5BBFbtqmTRLnRIGKI+8GvSBYOGjxgz4M4rD6guhHirdVGQ1ZghakoL7p
+	v5DdgLcw==;
+Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:49788 helo=[10.28.229.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1us1mz-00000004L3i-0KqT;
+	Fri, 29 Aug 2025 11:17:21 -0500
+Message-ID: <dc494864-22c9-42a6-ba3b-f64ae753ae53@embeddedor.com>
+Date: Fri, 29 Aug 2025 18:17:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] hyperv: Avoid a hundred
+ -Wflex-array-member-not-at-end warnings
+To: Michael Kelley <mhklinux@outlook.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+References: <aLGSlaa6Llqz7jkJ@kspp>
+ <SN6PR02MB4157D4C3A66E0563A9071DF1D43AA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <SN6PR02MB4157D4C3A66E0563A9071DF1D43AA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 93.117.216.243
+X-Source-L: No
+X-Exim-ID: 1us1mz-00000004L3i-0KqT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.28.229.44]) [93.117.216.243]:49788
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJhwT1kxP/UHYQNa961YY36H/D9Urx1c3NC6aRulD6ywy7KxnbN/gwE1jFl1u4rjpMikwZrSQp19I11qzuBpGOW00NoW1MAU+jXFKmacUbiYUwjvN2Ej
+ Q26N64aUDhXUiACi55yPepmtvkkwroKrpjZ6z9ys9lDekMLtlRTDIgo9dGGkbiu1Tgo832Z734DWukqgdy0j9keFtsYOrO/cSdYtau6z07UxovdD4DNkomkA
 
-zpdesc is the page descriptor used by the zsmalloc backend allocator,
-which in turn is used by zswap and zram. The zpool layer is gone.
 
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/zpdesc.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/mm/zpdesc.h b/mm/zpdesc.h
-index 25bf5ea0beb8..b8258dc78548 100644
---- a/mm/zpdesc.h
-+++ b/mm/zpdesc.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--/* zpdesc.h: zswap.zpool memory descriptor
-+/* zpdesc.h: zsmalloc pool memory descriptor
-  *
-  * Written by Alex Shi <alexs@kernel.org>
-  *	      Hyeonggon Yoo <42.hyeyoo@gmail.com>
-@@ -11,14 +11,14 @@
- #include <linux/pagemap.h>
- 
- /*
-- * struct zpdesc -	Memory descriptor for zpool memory.
-+ * struct zpdesc -	Memory descriptor for zsmalloc pool memory.
-  * @flags:		Page flags, mostly unused by zsmalloc.
-  * @lru:		Indirectly used by page migration.
-  * @movable_ops:	Used by page migration.
-- * @next:		Next zpdesc in a zspage in zsmalloc zpool.
-- * @handle:		For huge zspage in zsmalloc zpool.
-+ * @next:		Next zpdesc in a zspage in zsmalloc pool.
-+ * @handle:		For huge zspage in zsmalloc pool.
-  * @zspage:		Points to the zspage this zpdesc is a part of.
-- * @first_obj_offset:	First object offset in zsmalloc zpool.
-+ * @first_obj_offset:	First object offset in zsmalloc pool.
-  * @_refcount:		The number of references to this zpdesc.
-  *
-  * This struct overlays struct page for now. Do not modify without a good
-@@ -79,8 +79,8 @@ static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
-  * zpdesc_folio - The folio allocated for a zpdesc
-  * @zp: The zpdesc.
-  *
-- * Zpdescs are descriptors for zpool memory. The zpool memory itself is
-- * allocated as folios that contain the zpool objects, and zpdesc uses specific
-+ * Zpdescs are descriptors for zsmalloc memory. The memory itself is allocated
-+ * as folios that contain the zsmalloc objects, and zpdesc uses specific
-  * fields in the first struct page of the folio - those fields are now accessed
-  * by struct zpdesc.
-  *
--- 
-2.51.0
+On 8/29/25 18:07, Michael Kelley wrote:
+> From: Gustavo A. R. Silva <gustavoars@kernel.org> Sent: Friday, August 29, 2025 4:44 AM
+>>
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> Use the new TRAILING_OVERLAP() helper to fix 159 of the following type
+>> of warnings:
+>>
+>>      159 ./include/linux/hyperv.h:711:38: warning: structure containing a flexible array
+>> member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>
+>> This helper creates a union between a flexible-array member (FAM)
+>> and a set of members that would otherwise follow it. This overlays
+>> the trailing members onto the FAM while preserving the original
+>> memory layout.
+>>
+>> Also, move `struct vmbus_close_msg close_msg;` at the end of
+>> `struct vmbus_channel`, as `struct vmbus_channel_msginfo,` ends
+>> in a flexible array member.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> --
+>> Changes in v2:
+>>   - Fix subject line.
+>>
+>> v1:
+>>   - Link: https://lore.kernel.org/linux-hardening/aLGSDpi4xDjUUYVm@kspp/
+>>
+>>   include/linux/hyperv.h | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+>> index a59c5c3e95fb..efdd570669fa 100644
+>> --- a/include/linux/hyperv.h
+>> +++ b/include/linux/hyperv.h
+>> @@ -708,8 +708,9 @@ struct vmbus_channel_msginfo {
+>>   };
+>>
+>>   struct vmbus_close_msg {
+>> -	struct vmbus_channel_msginfo info;
+> 
+> It turns out that this field of struct vmbus_close_msg is never used.
+> It dates back to 2011, so maybe somewhere along the way it stopped
+> being used, but struct vmbus_close_msg was left unchanged.
+> 
+> So a better solution to the "flex-array-member-not-at-end" issue is
+> to eliminate this structure entirely, and use struct
+> vmbus_channel_close_channel directly in the one place where
+> struct vmbus_close_msg is currently used. I've done a quick test of
+> this change and I don't see any problems.
+> 
+> I'll submit a separate patch with my proposed change, and this
+> patch can be dropped. Does that work?
+Yes, please. Go for it. :)
 
+Thanks!
+-Gustavo
 
