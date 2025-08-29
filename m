@@ -1,39 +1,87 @@
-Return-Path: <linux-kernel+bounces-791381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF87CB3B629
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:43:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB02FB3B62A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4761895D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DDCD1759AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD08429ACFC;
-	Fri, 29 Aug 2025 08:42:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBCC22FE11;
-	Fri, 29 Aug 2025 08:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341FA28BAAC;
+	Fri, 29 Aug 2025 08:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AncyNS5Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39427B333
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756456973; cv=none; b=MIyeFrCO4TdYEGbONJHiNSq8mOK4PBUaMRlzEcZycMDEwCs4eC1FjrGOBqFIZw8Iacw08rggXBdzfXgBRJe1BgDvug8KE+pL4fwh0G5bixctlaTYKTe6F2LOfMJcdVrTjFdoxSDkWNfUoPE32KSu2SHoLPk4NJ3q1wEvGkyBZJE=
+	t=1756456985; cv=none; b=rdQac2hPNXorQoMCx+MLAH7P5vgOVLPykabO1IdwpuN7FlI8SUZzbi+k5qFU0TlH87g2u+LsC/yLWh4QfrdyvSDU/2Wogu6YfsGB0JjQOJn1GJxHIrxirIRxKaPK8Zye4t5hd6YtrVbIi+btKwVbclF7oZPGQu6VRmhr762CSuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756456973; c=relaxed/simple;
-	bh=mfrRanxbSr8aQIEQmSfcmyOyh0JQwiZqJUwQuFnkT8E=;
+	s=arc-20240116; t=1756456985; c=relaxed/simple;
+	bh=1vNOPUF8kDYmLjDxaTa3VYlbeDpgKJGq1IK29De5gD8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZyQyS3uCMSagiCMuohznZtH7pBhCAsVIkMZEYNxmi6dh0yrqe0G9ZJyHKkH7KdDhbFUJb6eMqnPP+awhfpJ8A6PgqFyNaRgPZS0khab8AY+YowIfgzwBFC4IcySJDEAFo+vdLWpfFwMZ6PIpY1xEc61zRfdW/ZvKnSHqaxhOCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E31E1BCB;
-	Fri, 29 Aug 2025 01:42:42 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 378363F694;
-	Fri, 29 Aug 2025 01:42:45 -0700 (PDT)
-Message-ID: <c183c51a-b094-44d7-8865-d2495478ff7b@arm.com>
-Date: Fri, 29 Aug 2025 09:42:43 +0100
+	 In-Reply-To:Content-Type; b=Y93zhpc3a6ISe843t02pL/OF9qfKV4T6N7PQECFv48kLzV372LamXxNvzw76wWKcrAkNqDRdjqw0pVbMV9YH8YJ629yfKGXzQZ05VAnMVyW/4KB4LixZwfKGXU9bZDWr1GS0afKfkaPiUOeti0IlQuPXOR0Z3vBb5SYFQrd1rIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AncyNS5Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756456981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UbeBHr+taTbsP5JGIPmUvS94n2HMJooGubjx7rvWayk=;
+	b=AncyNS5ZNwYAfPB9aNeIlGNJv1xRCpGTIB72EzFiJk+npyjq/e97cFOfKWx4IyrAvbvc1d
+	KKRGrUj+ieyrHGhTrGGDUkqk93zb8J1ipoKrp57HCUG/IikczRXtH2dXhw4lFa3assw0r8
+	eObpgHLNBOQx7FTJM2GfMz8ZcMDSrJo=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-360-XRruW97TNZakcbf8K8nHNg-1; Fri, 29 Aug 2025 04:42:49 -0400
+X-MC-Unique: XRruW97TNZakcbf8K8nHNg-1
+X-Mimecast-MFC-AGG-ID: XRruW97TNZakcbf8K8nHNg_1756456968
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b7a0d1a71so11625185e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:42:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756456968; x=1757061768;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UbeBHr+taTbsP5JGIPmUvS94n2HMJooGubjx7rvWayk=;
+        b=fuyktAr3JNa7LTVX0O6z1L5u+LqTEgMoAGqdq4CKgOPL1eZNZi7+I+bI/GbuFH33Tg
+         HvVBkkCo2MVoepUYiH1ku8/Y7vC1zxaRGvzxDBOn4d0aSerKjCaz02oY+7B96fgJHezm
+         O2HafC1NFTFZFR0MZjJ2QMlRDnYv6JOxHTIiXggoCA9wd0IfA0kuC2fxAvRGuErVEhoK
+         xI1yAqXoponKBes5SLca/N8Lv1P/GOH9ON14r62w79qrxfKu3+Wu/R/A7ALbCCHI6Hg9
+         uGjEt+3WbNsDGwyURtS0utn2zV36viKEx3u/r+kfCuJy3i327i5ThCvvWiZZBKyi+S9H
+         R8LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPmIGzqkU9e/RJGebT62VYoiGt5a5/efKhftMivZax4F7JNZ0pQOqH+6M+pfOgBISFPe8/U1J9cZdUjYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQb5P9t1nAwhAW/kXR2wfgiXuNUCN1qrNY/v3aljWA9Z7ak0f3
+	+x3nR7/x36OIu+WldunOPBro5U7Nb07pRyzU+p98N1i2q44VK54ftdIJ7aI+GEgCaaKAIqiIEhM
+	Khm3Q95nQcyVioYgxz3s5wf8OUlqbhzOCf+GIAZMV+2FRIX4Yf7dF0kjolMlDdIIqFA==
+X-Gm-Gg: ASbGnctbLJZHXloqwJtdGyVFtYNCVvcX9MZfy/CNOF87WuJ0j3HPKqupxxByXbcD+yk
+	zAMi9gQ5t6r2vvWsFf4wiexIXvubJ46WPN4os5EbbTMnvY9tqeyALsK2rNvbRZttZlIqceH1JgT
+	l5lvNtb1cI3zOT41wvoN4SzZ8rQSk+I7qG9VBBc4OCsrCO4q/x1pODR+ZJuMk5jlhCc8Lizt4xk
+	4RMo1P3/KTfQKW8hO0XQHMhLtRQ/ngkZql13IaLJ326aoyesWdb0Lzbi6JyYLtMStFutKWF+T2h
+	PWf8X2HvBVe7E9B5kayPzytnH6xER0zgNIgYZCEDburQ9WB4xTjv6EdPBGZ3P1kMWWmBRpFGgX8
+	SmktZBnvOXC5yQs6pMoKSA5SFgDO9jr6mC0VWJODsfBn+NKgDFFUDgnKpkF8xZ8yG
+X-Received: by 2002:a05:600c:4a22:b0:45b:7580:6f29 with SMTP id 5b1f17b1804b1-45b75807bd4mr38150595e9.4.1756456968261;
+        Fri, 29 Aug 2025 01:42:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLquX+Mi/AkVH2BhQ59mZtnAzUWapPkSncAvoK+DN68l+a/Jv8BNYFZPh6/XKoEruQOA/2lw==
+X-Received: by 2002:a05:600c:4a22:b0:45b:7580:6f29 with SMTP id 5b1f17b1804b1-45b75807bd4mr38150355e9.4.1756456967824;
+        Fri, 29 Aug 2025 01:42:47 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66bbcf19sm70603965e9.4.2025.08.29.01.42.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 01:42:47 -0700 (PDT)
+Message-ID: <f5cb68a7-19eb-40aa-95f7-51fd004a3f8e@redhat.com>
+Date: Fri, 29 Aug 2025 10:42:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,342 +89,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/33] arm_mpam: Add MPAM MSC register layout definitions
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-14-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
+To: Lokesh Gidra <lokeshgidra@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ Barry Song <21cnbao@gmail.com>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+ Peter Xu <peterx@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>, android-mm <android-mm@google.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>,
+ Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>
+References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
+ <dc92aef8-757f-4432-923e-70d92d13fb37@redhat.com>
+ <a0350dd8-748b-41d5-899e-1505bd2b2e80@lucifer.local>
+ <CA+EESO73TRAcMWeo_aXkLM+0rT5nt1cxyvf+Ye3Xp9kqxL5=6Q@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250822153048.2287-14-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CA+EESO73TRAcMWeo_aXkLM+0rT5nt1cxyvf+Ye3Xp9kqxL5=6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi James,
-
-On 8/22/25 16:29, James Morse wrote:
-> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
-> (MSCs) with an identity/configuration page.
+>>
+>> I do wonder if we can identify this case and handle things differently.
+>>
+>> Perhaps even saying 'try and get the rmap lock, but if there's "too much"
+>> contention, grab the folio lock.
 > 
-> Add the definitions for these registers as offset within the page(s).
+> Can you please elaborate what you mean? Where do you mean we can
+> possibly do something like this?
 > 
-> Link: https://developer.arm.com/documentation/ihi0099/latest/
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since RFC:
->  * Renamed MSMON_CFG_MBWU_CTL_TYPE_CSU as MSMON_CFG_CSU_CTL_TYPE_CSU
->  * Whitepsace churn.
->  * Cite a more recent document.
->  * Removed some stale feature, fixed some names etc.
-> ---
->  drivers/resctrl/mpam_internal.h | 266 ++++++++++++++++++++++++++++++++
->  1 file changed, 266 insertions(+)
-> 
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index d49bb884b433..6e0982a1a9ac 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -150,4 +150,270 @@ extern struct list_head mpam_classes;
->  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->  				   cpumask_t *affinity);
->  
-> +/*
-> + * MPAM MSCs have the following register layout. See:
-> + * Arm Memory System Resource Partitioning and Monitoring (MPAM) System
-> + * Component Specification.
-> + * https://developer.arm.com/documentation/ihi0099/latest/
-> + */
-> +#define MPAM_ARCHITECTURE_V1    0x10
-> +
-> +/* Memory mapped control pages: */
-> +/* ID Register offsets in the memory mapped page */
-> +#define MPAMF_IDR		0x0000  /* features id register */
-> +#define MPAMF_MSMON_IDR		0x0080  /* performance monitoring features */
-> +#define MPAMF_IMPL_IDR		0x0028  /* imp-def partitioning */
-> +#define MPAMF_CPOR_IDR		0x0030  /* cache-portion partitioning */
-> +#define MPAMF_CCAP_IDR		0x0038  /* cache-capacity partitioning */
-> +#define MPAMF_MBW_IDR		0x0040  /* mem-bw partitioning */
-> +#define MPAMF_PRI_IDR		0x0048  /* priority partitioning */
-> +#define MPAMF_CSUMON_IDR	0x0088  /* cache-usage monitor */
-> +#define MPAMF_MBWUMON_IDR	0x0090  /* mem-bw usage monitor */
-> +#define MPAMF_PARTID_NRW_IDR	0x0050  /* partid-narrowing */
-> +#define MPAMF_IIDR		0x0018  /* implementer id register */
-> +#define MPAMF_AIDR		0x0020  /* architectural id register */
-> +
-> +/* Configuration and Status Register offsets in the memory mapped page */
-> +#define MPAMCFG_PART_SEL	0x0100  /* partid to configure: */
-> +#define MPAMCFG_CPBM		0x1000  /* cache-portion config */
-> +#define MPAMCFG_CMAX		0x0108  /* cache-capacity config */
-> +#define MPAMCFG_CMIN		0x0110  /* cache-capacity config */
-> +#define MPAMCFG_MBW_MIN		0x0200  /* min mem-bw config */
-> +#define MPAMCFG_MBW_MAX		0x0208  /* max mem-bw config */
-> +#define MPAMCFG_MBW_WINWD	0x0220  /* mem-bw accounting window config */
-> +#define MPAMCFG_MBW_PBM		0x2000  /* mem-bw portion bitmap config */
-> +#define MPAMCFG_PRI		0x0400  /* priority partitioning config */
-> +#define MPAMCFG_MBW_PROP	0x0500  /* mem-bw stride config */
-> +#define MPAMCFG_INTPARTID	0x0600  /* partid-narrowing config */
-> +
-> +#define MSMON_CFG_MON_SEL	0x0800  /* monitor selector */
-> +#define MSMON_CFG_CSU_FLT	0x0810  /* cache-usage monitor filter */
-> +#define MSMON_CFG_CSU_CTL	0x0818  /* cache-usage monitor config */
-> +#define MSMON_CFG_MBWU_FLT	0x0820  /* mem-bw monitor filter */
-> +#define MSMON_CFG_MBWU_CTL	0x0828  /* mem-bw monitor config */
-> +#define MSMON_CSU		0x0840  /* current cache-usage */
-> +#define MSMON_CSU_CAPTURE	0x0848  /* last cache-usage value captured */
-> +#define MSMON_MBWU		0x0860  /* current mem-bw usage value */
-> +#define MSMON_MBWU_CAPTURE	0x0868  /* last mem-bw value captured */
-> +#define MSMON_MBWU_L		0x0880  /* current long mem-bw usage value */
-> +#define MSMON_MBWU_CAPTURE_L	0x0890  /* last long mem-bw value captured */
-> +#define MSMON_CAPT_EVNT		0x0808  /* signal a capture event */
-> +#define MPAMF_ESR		0x00F8  /* error status register */
-> +#define MPAMF_ECR		0x00F0  /* error control register */
-> +
-> +/* MPAMF_IDR - MPAM features ID register */
-> +#define MPAMF_IDR_PARTID_MAX		GENMASK(15, 0)
-> +#define MPAMF_IDR_PMG_MAX		GENMASK(23, 16)
-> +#define MPAMF_IDR_HAS_CCAP_PART		BIT(24)
-> +#define MPAMF_IDR_HAS_CPOR_PART		BIT(25)
-> +#define MPAMF_IDR_HAS_MBW_PART		BIT(26)
-> +#define MPAMF_IDR_HAS_PRI_PART		BIT(27)
-> +#define MPAMF_IDR_EXT			BIT(28)
-> +#define MPAMF_IDR_HAS_IMPL_IDR		BIT(29)
-> +#define MPAMF_IDR_HAS_MSMON		BIT(30)
-> +#define MPAMF_IDR_HAS_PARTID_NRW	BIT(31)
-> +#define MPAMF_IDR_HAS_RIS		BIT(32)
-> +#define MPAMF_IDR_HAS_EXTD_ESR		BIT(38)
-> +#define MPAMF_IDR_HAS_ESR		BIT(39)
-> +#define MPAMF_IDR_RIS_MAX		GENMASK(59, 56)
-> +
-> +/* MPAMF_MSMON_IDR - MPAM performance monitoring ID register */
-> +#define MPAMF_MSMON_IDR_MSMON_CSU		BIT(16)
-> +#define MPAMF_MSMON_IDR_MSMON_MBWU		BIT(17)
-> +#define MPAMF_MSMON_IDR_HAS_LOCAL_CAPT_EVNT	BIT(31)
-> +
-> +/* MPAMF_CPOR_IDR - MPAM features cache portion partitioning ID register */
-> +#define MPAMF_CPOR_IDR_CPBM_WD			GENMASK(15, 0)
-> +
-> +/* MPAMF_CCAP_IDR - MPAM features cache capacity partitioning ID register */
-> +#define MPAMF_CCAP_IDR_CMAX_WD			GENMASK(5, 0)
-> +#define MPAMF_CCAP_IDR_CASSOC_WD		GENMASK(12, 8)
-> +#define MPAMF_CCAP_IDR_HAS_CASSOC		BIT(28)
-> +#define MPAMF_CCAP_IDR_HAS_CMIN			BIT(29)
-> +#define MPAMF_CCAP_IDR_NO_CMAX			BIT(30)
-> +#define MPAMF_CCAP_IDR_HAS_CMAX_SOFTLIM		BIT(31)
-> +
-> +/* MPAMF_MBW_IDR - MPAM features memory bandwidth partitioning ID register */
-> +#define MPAMF_MBW_IDR_BWA_WD		GENMASK(5, 0)
-> +#define MPAMF_MBW_IDR_HAS_MIN		BIT(10)
-> +#define MPAMF_MBW_IDR_HAS_MAX		BIT(11)
-> +#define MPAMF_MBW_IDR_HAS_PBM		BIT(12)
-> +#define MPAMF_MBW_IDR_HAS_PROP		BIT(13)
-> +#define MPAMF_MBW_IDR_WINDWR		BIT(14)
-> +#define MPAMF_MBW_IDR_BWPBM_WD		GENMASK(28, 16)
-> +
-> +/* MPAMF_PRI_IDR - MPAM features priority partitioning ID register */
-> +#define MPAMF_PRI_IDR_HAS_INTPRI	BIT(0)
-> +#define MPAMF_PRI_IDR_INTPRI_0_IS_LOW	BIT(1)
-> +#define MPAMF_PRI_IDR_INTPRI_WD		GENMASK(9, 4)
-> +#define MPAMF_PRI_IDR_HAS_DSPRI		BIT(16)
-> +#define MPAMF_PRI_IDR_DSPRI_0_IS_LOW	BIT(17)
-> +#define MPAMF_PRI_IDR_DSPRI_WD		GENMASK(25, 20)
-> +
-> +/* MPAMF_CSUMON_IDR - MPAM cache storage usage monitor ID register */
-> +#define MPAMF_CSUMON_IDR_NUM_MON	GENMASK(15, 0)
-> +#define MPAMF_CSUMON_IDR_HAS_OFLOW_CAPT	BIT(24)
-> +#define MPAMF_CSUMON_IDR_HAS_CEVNT_OFLW	BIT(25)
-> +#define MPAMF_CSUMON_IDR_HAS_OFSR	BIT(26)
-> +#define MPAMF_CSUMON_IDR_HAS_OFLOW_LNKG	BIT(27)
-> +#define MPAMF_CSUMON_IDR_HAS_XCL	BIT(29)
-> +#define MPAMF_CSUMON_IDR_CSU_RO		BIT(30)
-> +#define MPAMF_CSUMON_IDR_HAS_CAPTURE	BIT(31)
-> +
-> +/* MPAMF_MBWUMON_IDR - MPAM memory bandwidth usage monitor ID register */
-> +#define MPAMF_MBWUMON_IDR_NUM_MON	GENMASK(15, 0)
-> +#define MPAMF_MBWUMON_IDR_HAS_RWBW	BIT(28)
-> +#define MPAMF_MBWUMON_IDR_LWD		BIT(29)
-> +#define MPAMF_MBWUMON_IDR_HAS_LONG	BIT(30)
-> +#define MPAMF_MBWUMON_IDR_HAS_CAPTURE	BIT(31)
-> +
-> +/* MPAMF_PARTID_NRW_IDR - MPAM PARTID narrowing ID register */
-> +#define MPAMF_PARTID_NRW_IDR_INTPARTID_MAX      GENMASK(15, 0)
+> UFFD move only works on PageAnonExclusive folios. So, would it help
+> (in terms of avoiding contention) if we were to change the condition:
 
-nit: spaces used instead of tabs
-> +
-> +/* MPAMF_IIDR - MPAM implementation ID register */
-> +#define MPAMF_IIDR_PRODUCTID	GENMASK(31, 20)
-> +#define MPAMF_IIDR_PRODUCTID_SHIFT	20
-> +#define MPAMF_IIDR_VARIANT	GENMASK(19, 16)
-> +#define MPAMF_IIDR_VARIANT_SHIFT	16
-> +#define MPAMF_IIDR_REVISON	GENMASK(15, 12)
-> +#define MPAMF_IIDR_REVISON_SHIFT	12
-> +#define MPAMF_IIDR_IMPLEMENTER	GENMASK(11, 0)
-> +#define MPAMF_IIDR_IMPLEMENTER_SHIFT	0
-> +
-> +/* MPAMF_AIDR - MPAM architecture ID register */
-> +#define MPAMF_AIDR_ARCH_MAJOR_REV	GENMASK(7, 4)
-> +#define MPAMF_AIDR_ARCH_MINOR_REV	GENMASK(3, 0)
-> +
-> +/* MPAMCFG_PART_SEL - MPAM partition configuration selection register */
-> +#define MPAMCFG_PART_SEL_PARTID_SEL	GENMASK(15, 0)
-> +#define MPAMCFG_PART_SEL_INTERNAL	BIT(16)
-> +#define MPAMCFG_PART_SEL_RIS		GENMASK(27, 24)
-> +
-> +/* MPAMCFG_CMAX - MPAM cache capacity configuration register */
-> +#define MPAMCFG_CMAX_SOFTLIM		BIT(31)
-> +#define MPAMCFG_CMAX_CMAX		GENMASK(15, 0)
-> +
-> +/* MPAMCFG_CMIN - MPAM cache capacity configuration register */
-> +#define MPAMCFG_CMIN_CMIN		GENMASK(15, 0)
-> +
-> +/*
-> + * MPAMCFG_MBW_MIN - MPAM memory minimum bandwidth partitioning configuration
-> + *                   register
-> + */
-> +#define MPAMCFG_MBW_MIN_MIN		GENMASK(15, 0)
-> +
-> +/*
-> + * MPAMCFG_MBW_MAX - MPAM memory maximum bandwidth partitioning configuration
-> + *                   register
-> + */
-> +#define MPAMCFG_MBW_MAX_MAX		GENMASK(15, 0)
-> +#define MPAMCFG_MBW_MAX_HARDLIM		BIT(31)
-> +
-> +/*
-> + * MPAMCFG_MBW_WINWD - MPAM memory bandwidth partitioning window width
-> + *                     register
-> + */
-> +#define MPAMCFG_MBW_WINWD_US_FRAC	GENMASK(7, 0)
-> +#define MPAMCFG_MBW_WINWD_US_INT	GENMASK(23, 8)
-> +
-> +/* MPAMCFG_PRI - MPAM priority partitioning configuration register */
-> +#define MPAMCFG_PRI_INTPRI		GENMASK(15, 0)
-> +#define MPAMCFG_PRI_DSPRI		GENMASK(31, 16)
-> +
-> +/*
-> + * MPAMCFG_MBW_PROP - Memory bandwidth proportional stride partitioning
-> + *                    configuration register
-> + */
-> +#define MPAMCFG_MBW_PROP_STRIDEM1	GENMASK(15, 0)
-> +#define MPAMCFG_MBW_PROP_EN		BIT(31)
-> +
-> +/*
-> + * MPAMCFG_INTPARTID - MPAM internal partition narrowing configuration register
-> + */
-> +#define MPAMCFG_INTPARTID_INTPARTID	GENMASK(15, 0)
-> +#define MPAMCFG_INTPARTID_INTERNAL	BIT(16)
-> +
-> +/* MSMON_CFG_MON_SEL - Memory system performance monitor selection register */
-> +#define MSMON_CFG_MON_SEL_MON_SEL	GENMASK(15, 0)
-> +#define MSMON_CFG_MON_SEL_RIS		GENMASK(27, 24)
-> +
-> +/* MPAMF_ESR - MPAM Error Status Register */
-> +#define MPAMF_ESR_PARTID_MON	GENMASK(15, 0)
-> +#define MPAMF_ESR_PMG		GENMASK(23, 16)
-> +#define MPAMF_ESR_ERRCODE	GENMASK(27, 24)
-> +#define MPAMF_ESR_OVRWR		BIT(31)
-> +#define MPAMF_ESR_RIS		GENMASK(35, 32)
-> +
-> +/* MPAMF_ECR - MPAM Error Control Register */
-> +#define MPAMF_ECR_INTEN		BIT(0)
-> +
-> +/* Error conditions in accessing memory mapped registers */
-> +#define MPAM_ERRCODE_NONE			0
-> +#define MPAM_ERRCODE_PARTID_SEL_RANGE		1
-> +#define MPAM_ERRCODE_REQ_PARTID_RANGE		2
-> +#define MPAM_ERRCODE_MSMONCFG_ID_RANGE		3
-> +#define MPAM_ERRCODE_REQ_PMG_RANGE		4
-> +#define MPAM_ERRCODE_MONITOR_RANGE		5
-> +#define MPAM_ERRCODE_INTPARTID_RANGE		6
-> +#define MPAM_ERRCODE_UNEXPECTED_INTERNAL	7
-> +
-> +/*
-> + * MSMON_CFG_CSU_FLT - Memory system performance monitor configure cache storage
-> + *                    usage monitor filter register
-> + */
-> +#define MSMON_CFG_CSU_FLT_PARTID	GENMASK(15, 0)
-> +#define MSMON_CFG_CSU_FLT_PMG		GENMASK(23, 16)
-> +
-> +/*
-> + * MSMON_CFG_CSU_CTL - Memory system performance monitor configure cache storage
-> + *                    usage monitor control register
-> + * MSMON_CFG_MBWU_CTL - Memory system performance monitor configure memory
-> + *                     bandwidth usage monitor control register
-> + */
-> +#define MSMON_CFG_x_CTL_TYPE			GENMASK(7, 0)
-> +#define MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L	BIT(15)
-> +#define MSMON_CFG_x_CTL_MATCH_PARTID		BIT(16)
-> +#define MSMON_CFG_x_CTL_MATCH_PMG		BIT(17)
-> +#define MSMON_CFG_x_CTL_SCLEN			BIT(19)
-> +#define MSMON_CFG_x_CTL_SUBTYPE			GENMASK(22, 20)
-> +#define MSMON_CFG_x_CTL_OFLOW_FRZ		BIT(24)
-> +#define MSMON_CFG_x_CTL_OFLOW_INTR		BIT(25)
-> +#define MSMON_CFG_x_CTL_OFLOW_STATUS		BIT(26)
-> +#define MSMON_CFG_x_CTL_CAPT_RESET		BIT(27)
-> +#define MSMON_CFG_x_CTL_CAPT_EVNT		GENMASK(30, 28)
-> +#define MSMON_CFG_x_CTL_EN			BIT(31)
-> +
-> +#define MSMON_CFG_MBWU_CTL_TYPE_MBWU			0x42
-> +#define MSMON_CFG_CSU_CTL_TYPE_CSU			0
-> +
-> +/*
-> + * MSMON_CFG_MBWU_FLT - Memory system performance monitor configure memory
-> + *                     bandwidth usage monitor filter register
-> + */
-> +#define MSMON_CFG_MBWU_FLT_PARTID		GENMASK(15, 0)
-> +#define MSMON_CFG_MBWU_FLT_PMG			GENMASK(23, 16)
-> +#define MSMON_CFG_MBWU_FLT_RWBW			GENMASK(31, 30)
-> +
-> +/*
-> + * MSMON_CSU - Memory system performance monitor cache storage usage monitor
-> + *            register
-> + * MSMON_CSU_CAPTURE -  Memory system performance monitor cache storage usage
-> + *                     capture register
-> + * MSMON_MBWU  - Memory system performance monitor memory bandwidth usage
-> + *               monitor register
-> + * MSMON_MBWU_CAPTURE - Memory system performance monitor memory bandwidth usage
-> + *                     capture register
-> + */
-> +#define MSMON___VALUE		GENMASK(30, 0)
-> +#define MSMON___NRDY		BIT(31)
-> +#define MSMON___NRDY_L		BIT(63)
-> +#define MSMON___L_VALUE		GENMASK(43, 0)
-> +#define MSMON___LWD_VALUE	GENMASK(62, 0)
-> +
-> +/*
-> + * MSMON_CAPT_EVNT - Memory system performance monitoring capture event
-> + *                  generation register
-> + */
-> +#define MSMON_CAPT_EVNT_NOW	BIT(0)
-> +
->  #endif /* MPAM_INTERNAL_H */
+I think we shouldn't be using PAE here. Once could consider using 
+folio_maybe_mapped_shared(), and assume contention on the folio lock if 
+it is maybe mapped shared.
 
-The names and values match the specification.
+But the real question is with whom we would be contending for the folio 
+lock.
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+Is it really other processes mapping that folio? I'm not so sure.
 
-Thanks,
+-- 
+Cheers
 
-Ben
+David / dhildenb
 
 
