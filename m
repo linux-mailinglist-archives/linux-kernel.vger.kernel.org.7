@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-791167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600C4B3B2CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:00:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F48EB3B2D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751DC3A7BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:00:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8215B7B7CD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66714224B09;
-	Fri, 29 Aug 2025 05:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A5B1FF1D1;
+	Fri, 29 Aug 2025 06:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p514Sl+B"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRHBBg7U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1569220F38
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC978BEC;
+	Fri, 29 Aug 2025 06:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447190; cv=none; b=mXQq7PNIv/mN/M5sNuwAZXNGJhLeIbqVDLCe4tapDvdsw9JAu+HhPOTzaOdWLRTupO1IkY8SdQ32XbDVSDeQDigOMAEEpqmhiujSuQyvafnpifXbOsid5xuzc9x8IrvrTu19KQX7i8KFIuenZhPzOulHTbLe3+oFwSLkHTJLE/U=
+	t=1756447339; cv=none; b=ZHy5ANXRTESJUymW2PUu6KPW2md+Siq0cqDBvCN+nF1xiDTzuL+pCpPfJVDw+vyEYBeFfhdad8fTmlbZAY70hY9LkEgIVAJLmeGQRESjnrjsfZwGvJjmmWZ5B0cZnUk1/rB4VBmDtWDiPxYFYWo+vawdnyGezLVzNbe6FKOemsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447190; c=relaxed/simple;
-	bh=3Us6gLaZK2VccDGA6IMnqvs0nFzgbS6I49Q/8l1+6ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjJj/y72cyuez4dkU/yWpJr3vnrGPyrdHROaN5mIRiGHUQDWV70qnvjusJRf73KRmxrtUsp9qQjQ7TvXdjetX6U8CAr6i4WCltu86ID7v2+nP7Q42YDO4fhFhDAKqyeQIWpFT7NaaeiDbmS/vt2u76IG8Mfu8s8mEPvQqheD5zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p514Sl+B; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7722f8cf9adso210268b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756447188; x=1757051988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
-        b=p514Sl+BuFb2jJ5R5DjvdPuZbJD/3N094aXwj3h0r/jhqjJ8E7yP+k817tMndGWuRR
-         FJyrpnjrOC1v44RKZW8+hYv/s/oQyyrlN51j6gPDRgosyonW7nobHk+dEVSc4NB36Yw4
-         PuqLoIM2bQWrSvT363c+fY0yOV3vZSKbC+7dp3aQmV8szSfmyrtVMuT0C6uReUSabLLQ
-         QNCTGNg39LLVhpXBLI27D+yN4JWIztFIMPiYxMxgFB1nTSvmERBka41rfpTaGJms0EBS
-         6QVx0xOpRrajJT7Gzpak3rJcIdO5m+Vx4yWFoMbU026CqovfiV44HAzTUMYSrkn9uYWg
-         J/Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756447188; x=1757051988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Csp0y2UiuYBIoSGq3QglK9zewj1/hbg1F372AFvl94U=;
-        b=QzPlMnD4TEwH75N4k5Izb1V1e/WAOTT0krVO9nsls0lUKfR2jgMd6c/L8G013MYFAd
-         2U7/h0cHuNjw+toFu5tWXiO/uTxTYQ2TEIxUs+9moQQzrPcK+rTs9AHq//VPm7VdWKIw
-         VzN+2OOTX/dAHDEYRfCHX7QReA6aU+EyKRAdybWD+wF6+RXymaZqsF3QT3sm7f0f4i1Y
-         VeCXoK6vZNoGl16iniBnjQxcQnvdjxOoE78GLUkFHkJlAtJXyDj1CgqgC66MZ3TRVjM3
-         L/e9laW6TWy0TltbTqzpOeeaRw4MSAgp0XUnhvmGnIZyn89ksWr9ia7MPThH+e+V0ZkI
-         EbKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm8tD84vw/u8SUKxbH82wqrRaRS5s4ZpQ/CqmAyRl86YZQcsvHXzMzdYxn8/aWtMlsmciE4lUCgbEHvHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1qmcl0mLhGjr4SQd0G8yzTzNPI7yT5/JMcYnCWfZZgNlx47OK
-	rxFnhku2Ypd3mrFTd/9fk6SBL2IJ/okqMg6zpFe8V+UsKPX8R5IpOFdwL8fhPD/OkC4=
-X-Gm-Gg: ASbGncvRGYQXRZhFQV2jI5n92NX0PIjxzdzue5roAqqCpggIwhuJKcimqbVQI++UYUB
-	pkZF4Z/XwFNnByq5UEN0tWPxFtFO77aWs5sgSdWppwlPGrqdYSga2TLmsGcSo4AxDUqd/Taos7p
-	zwR/3VYY6B/gW4MlO8muuJA3kkrTREu79JwWQw6Gp7iZJofeN0Yx9xAiOwEUxjgL9Ut9tgIeNvx
-	FIDsQxLzww5qA74LLLgBc+UlD3EuZK5sOjdDvz9vpkW944WFbUg3VPtfri1STofwMlp8jcW6SWM
-	j0cUTcjTdUpJlq2yLNEk6ScgDGAG+7Qgb+lVl4uBxyXUJfNt+52qPoZGx9WheqSg/zAqVcLnqw1
-	kkzyRgEw2OmkbfaOPDL3WWgIGo/dPOfGL/sI=
-X-Google-Smtp-Source: AGHT+IFsar3WOaSA9RKNM7TPFf9gG0iXTxdUF2CW8raU1SyelgEQswrlDbapLb2rA7PUFkb3M17NCQ==
-X-Received: by 2002:a05:6a00:10d5:b0:772:2850:783d with SMTP id d2e1a72fcca58-772285079c4mr3285667b3a.22.1756447188084;
-        Thu, 28 Aug 2025 22:59:48 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b14c1sm1263485b3a.31.2025.08.28.22.59.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 22:59:47 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:29:44 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
-	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/18] cpufreq: brcmstb-avs-cpufreq: Use
- __free(put_cpufreq_policy) for policy reference
-Message-ID: <20250829055944.ragfnh62q2cuew3e@vireshk-i7>
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827023202.10310-5-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756447339; c=relaxed/simple;
+	bh=CHDqkqR9nbgZKIPxjlF/BFOGfYkYhOwRU6kB1fm7RgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUiIBmNT0xWmWJPTiE02PrXWwynwjXZsjMXfaHIH/OZc4fL3/Js46Kp6Qx058CDo7VdUlrX+8A38Qwqy+IVdWA9ZC6PaCFGE8VW7o1sXk2oZsMAA/bMpx5aY+/G2ZyDcmNPE8rTePGfuyUzggObx50EX/rQZfY3ODYSWwKp37C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRHBBg7U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A7FC4CEF0;
+	Fri, 29 Aug 2025 06:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756447337;
+	bh=CHDqkqR9nbgZKIPxjlF/BFOGfYkYhOwRU6kB1fm7RgI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hRHBBg7UQYDXKjmmMKaBw+xg2MayiKXfEpbiD8pJktAhaDewOHpw3wQ6U+HYKTnQT
+	 QnGyObtyYNP8WokwWtiEWLpHcreBZmPcKbNWBtmwGbdG1JOQhfUSwHWWvTltlHsRug
+	 QQDRPps772goqfuW9+qaFDffdrYwM4SE7WWrwJLhSwJra85zlxxNIAZrJcraDGeXUC
+	 dvkITYtGDmYfyrl/JOXwck4aO6Yy1VubZRW0p2YmbUlm2mvXgqZPqt9v34K4q58Sk5
+	 qXBHe4c2lXooNW00q7R+JDmdAe41iHyDvV5Z0XcakOboLPU/M2shx08MqFtpV0KSPd
+	 8jzuh8rnp3Aug==
+Message-ID: <9208c440-f9e3-4289-9c33-81bb35383d53@kernel.org>
+Date: Fri, 29 Aug 2025 08:02:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827023202.10310-5-zhangzihuan@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4 1/3] dt-bindings: net: wireless: ath9k: add led bindings
+To: Rosen Penev <rosenp@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ linux-mips@vger.kernel.org, linux-wireless@vger.kernel.org,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+References: <20250827005658.3464-1-rosenp@gmail.com>
+ <20250827005658.3464-2-rosenp@gmail.com>
+ <175638709817.1370637.10754263567298002001.robh@kernel.org>
+ <CAKxU2N-Zfme=84rqxQ=uJro1YMeFGorveT-uRhx6_HpJmB-fxA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAKxU2N-Zfme=84rqxQ=uJro1YMeFGorveT-uRhx6_HpJmB-fxA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 27-08-25, 10:31, Zihuan Zhang wrote:
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/cpufreq/brcmstb-avs-cpufreq.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+On 29/08/2025 03:47, Rosen Penev wrote:
+>> dtschema/dtc warnings/errors:
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:92.15-25: Warning (reg_format): /example-2/ahb/wifi@180c0000/led:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (unit_address_vs_reg): /example-2/ahb/wifi@180c0000/led: node has a reg or ranges property, but no unit name
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #address-cells value
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #size-cells value
+>> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+>>
+>> doc reference errors (make refcheckdocs):
+>>
+>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250827005658.3464-2-rosenp@gmail.com
+> FFS. These reviews were garbage. The next series will effectively be
 
-Applied. Thanks.
+What? My and Conor reviews were garbage?
 
--- 
-viresh
+It is your patches which never got tested, code was completely messed up
+(see v2 mixing two different things).
+
+I am not going to review your patches.
+
+Best regards,
+Krzysztof
 
