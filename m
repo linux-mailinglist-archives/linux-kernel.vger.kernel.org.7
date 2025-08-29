@@ -1,232 +1,280 @@
-Return-Path: <linux-kernel+bounces-790989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B7AB3B0B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:59:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAD1B3B0BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4825D17A6E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4C51C865D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5AD20010A;
-	Fri, 29 Aug 2025 01:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FC620DD72;
+	Fri, 29 Aug 2025 02:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gI8tb38s"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KVZffB7L";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VHbO7AfX"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50221ACED7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756432751; cv=none; b=dYlfgL2ZkeqLjhlmLCBX4+nZQ259Rk9sdl0IyNccdS/T5WPCCc5P8ai5ocuesPJGMOYhfwknbJwwfCM+EKbbO/TO3SPSB5aoxVDLqedYRBJVw/aGnJf+uxQG93pac588OhHlviqnF0k35b+TrGT3ce/f2Jn9y19GBJrgeJ+OEoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756432751; c=relaxed/simple;
-	bh=BWbaLEcGDeKdNiUdOyMQ2XLa1HoB2jwQq+T/OTd6ZJY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cBD5iniwQTh0GYduyVjv9iVvFznCE1y30L+p+0WU+/I5OtXSSD5DRHEjkprugBxLZbP+TTaoCsYyhDX/DL3PIOB+qF9Vr2RbLs6ZlPe8fv0SeBVI4j+qHA+uSZiOPfwVQM4Ygw/DYIFA2Sw+YFtJLEg0JpQwp3ORSC5mVLvbCIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gI8tb38s; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e931c71a1baso2407692276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:59:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672E30CD84;
+	Fri, 29 Aug 2025 02:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756433219; cv=fail; b=eueI4I2o3UnamfDSf3NliTFo9SgvfPgmUdoORFnwJI9jVvj1tBK0251BEkG7mJ5r3QaPthGWxQ+M/UceRxaQ9Lggo9xlSr32tM01LvmuAZORPyEiQ1wPkm79V/RxyK9GaTbmulbDAcLxPNNhQu/CIoN+Fu/u6EgbGD84O3S9CTk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756433219; c=relaxed/simple;
+	bh=PafMzAxv9ud9HYzVV34noJ3bBVMeoieu20hZ8EDRNKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oAcSopXNimP7yc5s0LCcjzFBcM4Xcn+UM7HPLACsBkyTwtTn/J1/UFldb0JEdCxzv16HY5WkMoHm56lM3Bf/vbFtSz8wB5iEPUhbwRpE+L6njKjM65b+VfopyBf6p6tKM6dFAf0Ov0l2ykFCl7Iezy0KAKpmWR2S6WwbY1cPerU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KVZffB7L; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VHbO7AfX; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T1frxM008401;
+	Fri, 29 Aug 2025 02:06:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=Xx6QB1bvfPch70kzCW
+	vCjct0FRmDIksZuJnqZVyzvUU=; b=KVZffB7L6HWtzndVEavaONKoLRQu4Aymea
+	ygzSovuJ50CpFNSW5Oxs8QoSA9+AbBWzyS6bwXfrGkIMUcFbdwEDg7WXyMaV3NUm
+	oUAN73mTNFgk/YRExxjeerJgdPJZgq2Pd3MtLo+GHErEXl4Pn5HvmrPnG+BarE0e
+	NI5GR8VwxevJ4JGSbPe+IBIBxSvDjb0obdTcRDwxBo7UBsTonzgvWCF8EL2GjDLb
+	YwSw4XcIPtCM/lZrC8ALLn+sO2iffFcG2JwDxN7lGvlq2rEnM0eC5vTIswYG641V
+	ivrjQMhRby9k+d7soqDawc+MPBxxoU7147TarZokxc1eNCp+JzzA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q4jaspbe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Aug 2025 02:06:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57SNo7pd005309;
+	Fri, 29 Aug 2025 02:06:34 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02on2081.outbound.protection.outlook.com [40.107.212.81])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48qj8cus1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Aug 2025 02:06:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nkcnfN6s4o9nYckXyBrLQqLz6SrOj9GLwAZpLQzbljURMW4kR7gRO/6liKGkfKhYAAlKYb39FVF3TPlUWkL5rWh0yHP09ccSZNJ5At2A8jwhQdn3QmDFRmiL/UxPW8JVbDGkHYOE0FMqYXt4cdHvG6ozZ5o7VU7z6plCItLtP5TCuTXci3cK52ztoxUb+1xxNFehieEvIITL4amFtCTpNLONitCmjDGTcVeXanCB2pTByEBJrGi1uZ/9xw8DmmEG7C+c+hlP/qb2L9oWQTU2Va18Zf46RR0SuNjBmD+4fcn4ttsFMRvmxzHe35jgrxh2I5URg90bXZLe7xRrWIr6Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xx6QB1bvfPch70kzCWvCjct0FRmDIksZuJnqZVyzvUU=;
+ b=oLrzjsV3mA0MFIiKm2U2FPEyskyQCqfOhINSQrZe8frdMnnJGuGLz/EPVxx1Qpy2rz/Lh3a8CMrh4IOMAmm6VqKqB2S5ax9H5JbQH4FOeg7K66joSsBXDRMLoQ+Ys3rTH073upLaorTyIsyWDPR4kP24I4lH9TrUeVG336yEhGPBsWBEfncIHlzriaEFNPJBdrBkluIm7Hcu6QJ1JIpssQB1Vyas5kBrsX+KobnEmw+0Agg8GFZHCGs8Mda7pQgX4XcE5VtSLGLS/Oh/LOuZQ5U5yqrE4ISazxQHFWUgnRyPUuOeSEXoAAxqcwhQl1Fl9KPKYIQYu22YkKZtnJu1CA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756432749; x=1757037549; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2COW9GRehLN1Rw71nV3+qwPFU4I39/TuLY9LVp8AUA=;
-        b=gI8tb38s85vCRNRFFqujpkFCTLGxMBV8tC+WFYKpvsh0TXueGHmiu6ysFhhR8zTxip
-         r8TRcK5AVNGBANiUzMhkkMu1XeSWGsJJbcw317OYuIdaTbHss9aerz4yWDKEuliFtssB
-         1d8ccadQTFHCKEisLKf6T2F5e5pA2PCz1wYLvmcWCVRYbaZAZG7zWNLbXy3y/RDvbNSB
-         NuOrDXZ6LXSOlklz0xHxg6+F0UCYKTCBxSg2b+Ku3AgjKtjwyNFiGgw5NLgQiMYqli56
-         nJ4bFlFl08HCsZI0U/ZvbCh2JnwMZ1m5iySl2QMjWsQObqRtu/t3j/5xjFprIfyN8YyW
-         uB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756432749; x=1757037549;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2COW9GRehLN1Rw71nV3+qwPFU4I39/TuLY9LVp8AUA=;
-        b=fughFHIWzszKtPQW+eVooB2lSwJ2E+ycjgAvPH7RPJGUPY4XBgcgV6wAkl8PLIL1P/
-         fOOjxW+y2z8RvJq1YzffYF7afe4pgCh+GE5ELqYBVcvAqyID0mLVZ8hkTrqO8M0DuCLZ
-         2x3G7UmWC4MlmdJYmqQ3pzJZ3rsnrijHNCG5GYeQ70c0qw8r4pQLtuJwyOtbhx3Gs0GN
-         DS5ZuQlu1AvcBJi4DaKy8p9Sl4EUp5DJk2sKXiXqplWsGupVcWYfzt0I5+gUz/ZOKFRS
-         lwD8AxEqPPzu1kvdeRNK7DBhbQ3cnk0iug4kArUoJZ2LAREDMjFsrxuABn/BsTAaN4wh
-         pfeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbxUd3gkzAnXzfs8573moEI6IxB2P/7KNBBkCWVS4TNUe1ivGiHLmVW1A4AF4A2pHSihC50l28FMlQwWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcqqnRMwCscJ4/KUmX+cFl75PO/eu7rPOyn+3t0GdBJGwe+sGW
-	vltjVPpFqIL86K/cy+QqL053HM5ZrwhLBAX4/etdFbrZv6Kw6jgQk+DIX500xuUQ8w==
-X-Gm-Gg: ASbGncu7fjLJhrikb6hiAxPrh5ZZHTROdP0NgsGX3H0ocqoFGzbGmHvAH5nrssYGGh+
-	UcGog4a1g1kUQDAp+dOoziSnEJvV1wMxNZ4RteTpvDZbsij84FSRkOQ/xDmX4tLRSg+m5eQyZYn
-	MmkHHLTK7muUpd0nyVKahjTSQZ7pwWjBGL/Qp+cm1yej2vixjqRPMW/kWbIg+ltgXyKxK2UQ4hZ
-	Un15TGkkyoZeS0jq/4O9fYgzUMakQ7yIXAL9CiZlakR7Z0IeawAbsdk9RivDUzO38g2L2wuudD2
-	GPovbzCMrs35LWkoJuRVxGiylmnToJQLNmREubGob2yPyYXgTQamcznMvNczyYvq0ib97Z1R69C
-	QSDlW4tbLR0KxjSKeYRbZdgsmPC4oj8+Z6JWIsaGNPREdUQg4Nt+pB7tuY9lubGpGfDpZSy34Tm
-	CFx3qcSWT8ooa58/K5q7NtED82
-X-Google-Smtp-Source: AGHT+IHcBYe66tZLxB/j8oJQs3219sGFGexK9vlvbc+FVE0SpTBxpt+xDgszhd512yEOk9EVq+DAjw==
-X-Received: by 2002:a05:6902:124d:b0:e96:c456:46a5 with SMTP id 3f1490d57ef6-e96c4564938mr16531885276.26.1756432748319;
-        Thu, 28 Aug 2025 18:59:08 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9847dd8814sm341339276.34.2025.08.28.18.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 18:59:07 -0700 (PDT)
-Date: Thu, 28 Aug 2025 18:58:57 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: David Hildenbrand <david@redhat.com>
-cc: Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-    John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-    Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
-    Ge Yang <yangge1116@126.com>
-Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
- attempting migration
-In-Reply-To: <56819052-d3f5-4209-824d-5cfbf49ff6e9@redhat.com>
-Message-ID: <d8e8c6d9-2b58-a1e8-d3cb-3f578f3f5889@google.com>
-References: <20250815101858.24352-1-will@kernel.org> <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com> <aKMrOHYbTtDhOP6O@willie-the-truck> <aKM5S4oQYmRIbT3j@willie-the-truck> <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com> <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
- <a0d1d889-c711-494b-a85a-33cbde4688ba@redhat.com> <3194a67b-194c-151d-a961-08c0d0f24d9b@google.com> <56819052-d3f5-4209-824d-5cfbf49ff6e9@redhat.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xx6QB1bvfPch70kzCWvCjct0FRmDIksZuJnqZVyzvUU=;
+ b=VHbO7AfXtGlSONzKG71r+PKkVCmbX++IENVRdb1KRnThmnv4TvO5ZzUpl6hL0WK467Xkzq7PfdWLuNKXqd7UAK4h9JC0x0GY1UhnptO77cjtMiGebHDDRD5yns28nViwbSAVg/1yA6X3JR/jzhizRu8g2JSeYVPIVeikWNegBjo=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by CH3PR10MB6713.namprd10.prod.outlook.com (2603:10b6:610:143::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Fri, 29 Aug
+ 2025 02:06:28 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
+ 02:06:27 +0000
+Date: Fri, 29 Aug 2025 11:06:17 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, cl@gentwo.org,
+        rientjes@google.com, roman.gushchin@linux.dev, glittao@gmail.com,
+        jserv@ccns.ncku.edu.tw, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, chuang@cs.nycu.edu.tw,
+        cfmc.cs13@nycu.edu.tw, jhcheng.cs13@nycu.edu.tw, c.yuanhaur@wustl.edu
+Subject: Re: [PATCH 1/2] mm/slub: Fix cmp_loc_by_count() to return 0 when
+ counts are equal
+Message-ID: <aLELGQDzpjmQ4ppP@hyeyoo>
+References: <20250825013419.240278-1-visitorckw@gmail.com>
+ <20250825013419.240278-2-visitorckw@gmail.com>
+ <eb2fa38c-d963-4466-8702-e7017557e718@suse.cz>
+ <aKyjaTUneWQgwsV5@visitorckw-System-Product-Name>
+ <aK1n_t-V1AlN86JR@hyeyoo>
+ <aLCOVoshch9phL5M@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLCOVoshch9phL5M@visitorckw-System-Product-Name>
+X-ClientProxiedBy: SEWP216CA0153.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2be::12) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CH3PR10MB6713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b4c214f-fb3d-4a59-fb56-08dde6a0a9ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/ME4a5PEwsWkw1MeNQrKS64cl2FV/L3EE5VJFMvHPJO5toKyEPZg5klImve1?=
+ =?us-ascii?Q?+z5cAretvUATt7Nmg+o3lfnGQ3l3dVXOV8RaU1f6QX7lAmKRE4v/dH8Y2yGd?=
+ =?us-ascii?Q?STk7I2WBhHB8FekdvPzHprI51wBOIYkqjtNwgQFoFS/PYwV8EZI7rWg+tO56?=
+ =?us-ascii?Q?6RalPJEHIJkSasrA4bj+zCxr6FjY/8bpa4E0n8/9Zg8TMioKuHJ+q5aKSlQq?=
+ =?us-ascii?Q?WWjenOHnmH8WVIVmY0Iz0ALwZH5WbTtlTZah4DRowmaqpMf4AGIvZ78/qn7K?=
+ =?us-ascii?Q?yMJ0UHnazMhxZ0bf1QtGH7rP7rEifhKW/DZnZF+FdQi8+Dcz78g5kU2xy+ct?=
+ =?us-ascii?Q?5LLcoiROQ/OfOdreYAiGNuQxTFz15Nzp92/G5Yk5U7KguYSccLg5owgXXaq6?=
+ =?us-ascii?Q?rbnfatWyj1O8KBBQO11hp+HgS2wPBkMNDgZsBOiHjXTqd5Ckp8ZI7NFmT3Ol?=
+ =?us-ascii?Q?hrvfR4vmf7siQ3PxlwKYotiu5hAHl8Hh+IWmqp2DAolsu7dGxGy/yKi/6B8S?=
+ =?us-ascii?Q?BEyinOTfY3LmkGO9umkpwt0TQUhJFgg2RvUZhpE4rbepkugWUUtg1C5RWGdX?=
+ =?us-ascii?Q?gOvTbDnyiaUpLnR13saoJc7l1jzWEZlvjDMXa7dO7HGhVEfLUWHwmK66FJcF?=
+ =?us-ascii?Q?S1Fhv63Y9B+qOPV7/GVZjXjPcFiioHlz2twLzkSFJw/jZW0nwgr9PiS9cjI6?=
+ =?us-ascii?Q?Kb5KYGDRRvABq9HNb9ljAymXQc9TZPc5sNHcMu5KA8s83kdh8iYia7eOYmK+?=
+ =?us-ascii?Q?PhjdPSKduVSAHt7q0F9wcQY2HYLRAYAPLN7jGTfY4/M33IMOf2IQZyyq8ccp?=
+ =?us-ascii?Q?w9PNO0+RH9cRXjhBzrNVhVkFXrtRwUqCbugK+xJvsAGIZ847HaGxgIi3fHth?=
+ =?us-ascii?Q?0v6G8jrEsY1wSzqfayw8Qq1ecTenf0a/scAkoCmi+Dks/X8TMup+mHLeC/7K?=
+ =?us-ascii?Q?O9RvyAtvWkl3aVfiUK17yktVuVeq259zfA9L2N9MkSV3A+zHeS4VTEarBVIZ?=
+ =?us-ascii?Q?gZXn1KH++kcxA7HJ90Q3KgNcDGymmloiah4dgY+lN8St5pSTqEuLS4yO3bjG?=
+ =?us-ascii?Q?Th/hP+MMUfM0tXJUqoTu3wSZNnpzqzRBzhpBCd+HPIu2qp1C7YIRw1Pzh3Jp?=
+ =?us-ascii?Q?NMXDY1oyaDijrwV6PMf9GN6zpHxg90u52pmp+E5EsOkvQvmbXIpxlhJIROdp?=
+ =?us-ascii?Q?6gUwG31XnHkbMk1072t1wg2IOzQZeI8TcSWWfAIt+Hdj6rD+aBSirajUvmt4?=
+ =?us-ascii?Q?e+Cf8OwqgEuR6BsB8uNME51kJ7S+E4uMs7K8eDWrvYrkXhHAFMbnZ1VTSIf6?=
+ =?us-ascii?Q?ZyIRJce3Y5hKScARqKpaWChvDG5VNWlQD4FU6RWAuBcvKKYm6ZsNgGtCDSVa?=
+ =?us-ascii?Q?fdTT7sRs4rd0jVBfcz9+AJ9SBp4EhnIHYNDEhL+/3FZZD6rVIcVK5//Hw4Ku?=
+ =?us-ascii?Q?a1tKGm3J1D0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6Chgv91HqpLB3AsWxFPKS6s+2etpitj2Wrf200CaatuWN/e7kVglS+HRJG1f?=
+ =?us-ascii?Q?2/W2cwXlAYO9OhQngIulg+PsYU2yfHvcjLmSazAsiB+uJxcITF8PYAnUnbEw?=
+ =?us-ascii?Q?mu6is0N8FZQprRIUfW9CHtPx1A44HaGG9/4CBveSIDgXM8JkdRB0UPgQiPZL?=
+ =?us-ascii?Q?R/gOPijhZzkZnEvTGBtsTzwCPr8Zqgc4UnST+mvWBu8VEbU5sKTTNvkRoUq+?=
+ =?us-ascii?Q?N3QGKOQpG0dKRhh7TNMpobT+ezizJOS6qF+cLevsE5j/5LKTVd6yb5IlPJSs?=
+ =?us-ascii?Q?4RfP3anuC5HilqZKLibCQlNEnqHhf1VlMHikDLP6AU8b8+x59QY74EnpnSqq?=
+ =?us-ascii?Q?C5jmbSA2UqBi3R4ngQShCMJZYclZxnsh6dfUnaBsQH7fsNW73tbPx1xKPw+Y?=
+ =?us-ascii?Q?f6jBNw1Lzd20eTvx9wOeTAi6s4HepEhc1l3ZekNM1CfZS8jFjMHpwzJokH9H?=
+ =?us-ascii?Q?BC2Vab2GbOtLq6jL7P2ROq5Hsw8gRESPuvGJdKY1zBcT8gf1ow7gcGkJ308Y?=
+ =?us-ascii?Q?nt24muAJmqQzL/Bj/s1Bf2Q3i0yZLQbE9dNUzFPXOGuOI2dFLfe6BqXB6lE4?=
+ =?us-ascii?Q?EQZW2j+YlRqaAJGTV2t0GHUbCq33153rIcQUuvitx+M/S2vrq2Q+Ij6gH/PI?=
+ =?us-ascii?Q?BPw5YCNtTkmHkD2uV5vI1PnIXXZJHvlm2oKEu56DU8ynnXAuGSRuzqUoHbfW?=
+ =?us-ascii?Q?ujJ1c9vpU59mtk/t5kGAXiYCL17bRhNJazzsVS/IpcJuP++kDtWiBEK1Xb5h?=
+ =?us-ascii?Q?PgZ8ueV0B6I1XslWOt+WNMQWar+sECvrTsMGWch3Npq81V4Axsq6C+9Luwmy?=
+ =?us-ascii?Q?VVMpHVYLW1kZSr+KY9brW4pj30ddGFXiUpTdycfJ9IT9dWnitGT9QiIdgb2s?=
+ =?us-ascii?Q?1oJr9dWyv1iQ59zChF5pLhLrWd4rHl0HuWBm4OYSYdQoXDuce2+dx9SiT4+Z?=
+ =?us-ascii?Q?bd2BVMLm/EjvGswBMSeQfzS0XBPEdBrZftBl/FBLtXftqxnVgT5mQRmIzNwc?=
+ =?us-ascii?Q?Ikx24dRTVzihbvvyx3fZk2jhHsOD/rqiiHllvnBing1U0AmopFiCX1eVxyuw?=
+ =?us-ascii?Q?LY4QOsWkCuXModWz+3RuIkn0yXXal0YjHc8HgbgKrrbDjtSiH9Y++XsdBCVA?=
+ =?us-ascii?Q?KuPOHc9MCAGuuRZgzS6aa8XdtbjjCH+iT3UwvygIdk/v4Ls/LKR2GKV4jqck?=
+ =?us-ascii?Q?j6SrNMzgSU4bKAMA5ofApQwvnbywGQhpRXrsuoACovAvmjseqQ7RKane173e?=
+ =?us-ascii?Q?1SxqUMQb422aT3yCxShxf1KXUrvv69PMP/VOmadEUpHjuoebHFjuypO0O+mu?=
+ =?us-ascii?Q?9yqKyBwULOKGZvs1UBc7FqrVG04Na13lGRgA8h6tH0zdkambJSWc8+YbPyBJ?=
+ =?us-ascii?Q?ls5U2QnBijRJQiqSrE90kMswrx4wKDRg+bwJmChLe2FD58PDA7jZCFteSM0o?=
+ =?us-ascii?Q?ZQemgHTsLNTTKxcXPs/1yndjTO5eUgWKezi5Y0KriV5GcZIYwbq+uZuGi7k7?=
+ =?us-ascii?Q?sXX204Ro2z7XXXekWfQZ36diK9bxAGyh+yeYt+A6A4VX4gzZRYnUW1UWhcnd?=
+ =?us-ascii?Q?8fqvc2sp1hy7t0o0uKde1FFtnG5qZM7fqkWTl5N7?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	rPwrvJ20wFBOmKw0At5CS4OPDu5Pr/w1mgtSjnxhnj9LxDtWlfA4nV/RfZ04IF1DWmo2kEW4iXs7alN3cadIVzfL6upv4s+7TwEgTgg5UIzFJT4p9dto9h43p0cO+b6bZdH479MRHX6pzjQqqNT1FcSPpUPOaJZcguNd2S4pFKq7mIn5pVGs0sVaaWWz5OGJrCV5VKLlbcTr0axVRuuoZjK0uP96aLhYn2RXhq0e4sKr1JiEceQNTqJnjdB21cqVK0I69b3/M1+VIKe8oRG/KQqZHNvYO6dkm0ivWfdrrHH9bH5aNK52eLp3knYlbFMn0a6WfyHHHePcrP/wSTIaxc3cXHvD4MIi0VVGgot3w/O4p2heNItnexlt4sH0aXcnGf7tqOTrmr24oXgq0vqJyK9vICzkV11UQwYFKnFyUMaoxNM6PFApop8ENXqihvliC4hWqNacjsWKvJ5U/zze7/3TghThzMuRTwETY/VxufrOrV1/B2crONMBPstAgJnGhVHABERZS91lWeU+vNLnCQKtFTspvfZuJX0Z3epGaNfWxFLa9GVJ+tOLc5ZGcGEg8x3QzpcGgbPwbCOpC7nB+B515JRUuPMEMqyU+UldwLg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4c214f-fb3d-4a59-fb56-08dde6a0a9ce
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 02:06:27.6936
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xzqyc/Q4oQ03MexMN09SAr24tLLaa4oCKIHLZfRJi+v+yg+a+ow+swR0i7jq+exdIkb3y/pflR3dxyhlmi5Z/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6713
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508290016
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxOCBTYWx0ZWRfX1iqUALlyR4yE
+ /ZV3KzTFeNxiqY1kVOKxVmTr303uUQ/bIK8Epvu2wEjjCiWZbq1iisCvM9CJyYcxAvv4bHnKUt3
+ tFAOOLS9YqeFKuNpuW44diSOSgNWJLOqCEaaqP01X2AK8fRfgKoAepzeN2eVk+DCjkSARmy4E5g
+ WefMv8AkKOWVSOYBaWAgQ+o0dbqREVYOUFjiA3xbsSTIcYqU1RaTQdprrxe+j155XvvmIB7vA8Z
+ MX0CrbYLp2PbYzUvwpebwn0Ldf294++bqy3lHIVpuc48ezVPMeCQRWOAB4IMpezTsQysoXCaQs2
+ skiklytVHYoP9QqjcOhTXRkPGGj6hRXf47tEtDCE3MW29wwRoYkE0sjKe+9MMmU1hTwNkBHMgri
+ Ifq+IGxgIuhNi7yRtaVZrJjIlJqU9Q==
+X-Proofpoint-GUID: 2cLPU0pwPXTYLK2pUbw8z-YHeUVtIfDa
+X-Authority-Analysis: v=2.4 cv=IZWHWXqa c=1 sm=1 tr=0 ts=68b10b2b b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+ a=CuuHCt6lwlVgYl5tIdUA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12068
+X-Proofpoint-ORIG-GUID: 2cLPU0pwPXTYLK2pUbw8z-YHeUVtIfDa
 
-On Thu, 28 Aug 2025, David Hildenbrand wrote:
-> On 28.08.25 18:12, Hugh Dickins wrote:
-> > On Thu, 28 Aug 2025, David Hildenbrand wrote:
-> >> On 28.08.25 10:47, Hugh Dickins wrote:
-> > ...
-> >>> It took several days in search of the least bad compromise, but
-> >>> in the end I concluded the opposite of what we'd intended above.
-> >>>
-> >>> There is a fundamental incompatibility between my 5.18 2fbb0c10d1e8
-> >>> ("mm/munlock: mlock_page() munlock_page() batch by pagevec")
-> >>> and Ge Yang's 6.11 33dfe9204f29
-> >>> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
-> >>>
-> >>> It turns out that the mm/swap.c folio batches (apart from lru_add)
-> >>> are all for best-effort, doesn't matter if it's missed, operations;
-> >>> whereas mlock and munlock are more serious.  Probably mlock could
-> >>> be (not very satisfactorily) converted, but then munlock?  Because
-> >>> of failed folio_test_clear_lru()s, it would be far too likely to
-> >>> err on either side, munlocking too soon or too late.
-> >>>
-> >>> I've concluded that one or the other has to go.  If we're having
-> >>> a beauty contest, there's no doubt that 33dfe9204f29 is much nicer
-> >>> than 2fbb0c10d1e8 (which is itself far from perfect).  But functionally,
-> >>> I'm afraid that removing the mlock/munlock batching will show up as a
-> >>> perceptible regression in realistic workloadsg; and on consideration,
-> >>> I've found no real justification for the LRU flag clearing change.
-> >>
-> >> Just to understand what you are saying: are you saying that we will go back
-> >> to
-> >> having a folio being part of multiple LRU caches?
+On Fri, Aug 29, 2025 at 01:13:58AM +0800, Kuan-Wei Chiu wrote:
+> On Tue, Aug 26, 2025 at 04:53:34PM +0900, Harry Yoo wrote:
+> > On Tue, Aug 26, 2025 at 01:54:49AM +0800, Kuan-Wei Chiu wrote:
+> > > Hi Vlastimil,
+> > > 
+> > > On Mon, Aug 25, 2025 at 07:28:17PM +0200, Vlastimil Babka wrote:
+> > > > On 8/25/25 03:34, Kuan-Wei Chiu wrote:
+> > > > > The comparison function cmp_loc_by_count() used for sorting stack trace
+> > > > > locations in debugfs currently returns -1 if a->count > b->count and 1
+> > > > > otherwise. This breaks the antisymmetry property required by sort(),
+> > > > > because when two counts are equal, both cmp(a, b) and cmp(b, a) return
+> > > > > 1.
+> > > > 
+> > > > Good catch.
+> > > > 
+> > > > > This can lead to undefined or incorrect ordering results. Fix it by
+> > > > 
+> > > > Wonder if it can really affect anything in practice other than swapping
+> > > > needlessly some records with an equal count?
+> > > > 
+> > > It could result in some elements being incorrectly ordered, similar to
+> > > what happened before in ACPI causing issues with s2idle [1][2]. But in
+> > > this case, the worst impact is just the display order not matching the
+> > > count, so it's not too critical.
 > > 
-> > Yes.  Well, if you count the mlock/munlock batches in as "LRU caches",
-> > then that has been so all along.
-> 
-> Yes ...
-> 
+> > Could you give an example where the previous cmp_loc_by_count() code
+> > produces an incorrectly sorted array?
 > > 
-> >> :/ If so, I really rally
-> >> hope that we can find another way and not go back to that old handling.
-> > 
-> > For what reason?  It sounded like a nice "invariant" to keep in mind,
-> > but it's a limitation, and  what purpose was it actually serving?
+> Sorry for the late reply.
+
+No problem ;)
+
+> I tried generating random arrays to find a concrete example where the
+> old cmp_loc_by_count() causes a wrong ordering, but I couldn't
+> reproduce one. So I would like to withdraw my earlier claim that it
+> definitely leads to incorrect results, since I cannot demonstrate a
+> failing case.
+
+Yeah I couldn't either. Maybe mathematical proof would work, but I
+didn't try.
+
+> That said, I still believe the patch should be merged, because sort()
+> only guarantees correct behavior if the comparison function satisfies
+> antisymmetry and transitivity. When those are violated, correctness
+> depends on implementation details, and future changes (e.g., switching
+> to a different sorting algorithm) could potentially break the ordering.
+
+Agreed. No doubt the series is worth merging, just wanted to clarify
+that bit.
+
+Thanks!
+
+-- 
+Cheers,
+Harry / Hyeonggon
+
+> Regards,
+> Kuan-Wei
 > 
-> I liked the semantics that if !lru, there could be at most one reference from
-> the LRU caches.
-> 
-> That is, if there are two references, you don't even have to bother with
-> flushing anything.
-
-If that assumption is being put into practice anywhere (not that I know of),
-then it's currently wrong and needs currecting.
-
-It would be nice and simple if it worked, but I couldn't get it to work
-with mlock/munlock batching, so it seemed better to give up on the
-pretence.
-
-And one of the points of using a pagevec used to be precisely that a
-page could exist on more than one at a time (unlike threading via lru).
-
-> 
-> > 
-> > If it's the "spare room in struct page to keep the address of that one
-> > batch entry ... efficiently extract ..." that I was dreaming of: that
-> > has to be a future thing, when perhaps memdescs will allow an extensible
-> > structure to be attached, and extending it for an mlocked folio (to hold
-> > the mlock_count instead of squeezing it into lru.prev) would not need
-> > mlock/munlock batching at all (I guess: far from uppermost in my mind!),
-> > and including a field for "efficiently extract" from LRU batch would be
-> > nice.
-> > 
-> > But, memdescs or not, there will always be pressure to keep the common
-> > struct as small as possible, so I don't know if we would actually go
-> > that way.
-> > 
-> > But I suspect that was not your reason at all: please illuminate.
-> 
-> You are very right :)
-
-OK, thanks, I'll stop reading further now :)
-
-> 
-> Regarding the issue at hand:
-> 
-> There were discussions at LSF/MM about also putting (some) large folios onto
-> the LRU caches.
-> 
-> In that context, GUP could take multiple references on the same folio, and a
-> simple folio_expected_ref_count() + 1 would no longer do the trick.
-> 
-> I thought about this today, and likely it could be handled by scanning the
-> page array for same folios etc. A bit nasty when wanting to cover all corner
-> cases (folio pages must not be consecutive in the passed array ) ...
-
-I haven't thought about that problem at all (except when working around
-a similar issue in mm/mempolicy.c's folio queueing), but can sympathize.
-
-It had irritated me to notice how the flush-immediately code for 512-page
-folios now extends to 2-page folios: you've enlightened me why that remains
-so, I hadn't thought of the implications.  Perhaps even more reason to
-allow for multiple references on the pagevecs/batches?
-
-> 
-> Apart from that issue, I liked the idea of a "single entry in the cache" for
-> other reasons: it gives clear semantics. We cannot end up in a scenario where
-> someone performs OPX and later someone OPY on a folio, but the way the lru
-> caches are flushed we might end up processing OPX after OPY -- this should be
-> able to happen in case of local or remote flushes IIRC.
-
-It's been that way for many years, that's how they are.
-
-> 
-> Anyhow, I quickly scanned your code. The folio_expected_ref_count() should
-> solve the issue for now. It's quite unfortunate that any raised reference will
-> make us now flush all remote LRU caches.
-
-There will be more false positives (drains which drain nothing relevant)
-by relying on ref_count rather than test_lru, yes.  But certainly there
-were already false positives by relying on test_lru.  And I expect the
-preparatory local lru_add_drain() to cut out a lot of true positives.
-
-> 
-> Maybe we just want to limit it to !folio_test_large(), because flushing there
-> really doesn't give us any chance in succeeding right now? Not sure if it
-> makes any difference in practice, though, we'll likely be flushing remote LRU
-> caches now more frequently either way.
-
-Ah, good idea. with or without my changes.  Maybe material for a separate
-patch.  I wonder if we would do better to add a folio_is_batchable() and
-use that consistently in all of the places which are refusing to batch
-when folio_test_large() - I wonder if a !folio_test_large() here will
-get missed if there's a change there.
-
-Thanks,
-Hugh
+> > > [1]: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df@gmail.com
+> > > [2]: https://lore.kernel.org/lkml/20240701205639.117194-1-visitorckw@gmail.com
+> > > 
+> > > > > explicitly returning 0 when the counts are equal, ensuring that the
+> > > > > comparison function follows the expected mathematical properties.
+> > > > 
+> > > > Agreed with the cmp_int() suggestion for a v2.
+> > > > 
+> > > I'll make that change in v2.
 
