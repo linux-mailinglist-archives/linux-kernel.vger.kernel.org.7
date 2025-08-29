@@ -1,239 +1,414 @@
-Return-Path: <linux-kernel+bounces-792137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284C8B3C09E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:25:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09949B3C0A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813B658535D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1681BA14BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC0D32A3D1;
-	Fri, 29 Aug 2025 16:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE39326D54;
+	Fri, 29 Aug 2025 16:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vx1+Nkfe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9UBvjO+"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B8322DDF
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D11F8F48;
+	Fri, 29 Aug 2025 16:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484680; cv=none; b=FixXXQtKZgI4nqkGl6KZ2lWsjDds5ImDWjAMRyBVaT1Dz/Lac9vnQ9woI1p8jq1KvxVxE4VULUIdaamj84TrOuYFv0ZyJVuDfdyqt0AM1DEQbebYEVkF0sQiyyfRDvd35HdaTyVvcyRpVvLMUk/YOYgHerpBRqOQAZy3oN4tbHE=
+	t=1756484783; cv=none; b=PU2vcT9xigo/uAfGoP0XTF9N5mQqTg9tpTdT+TmgqiOJ2rqVhdy55I9l4SRsWjMTg6m9baf2cMUDcFbmPVqQQLN5iix3qsGFThXfCxlhLB2noGDcK8q8+LhQDTfUNfggrhNnasNAdVAGdn6Cu96eJa02otS87lrGvAwiHETAHHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484680; c=relaxed/simple;
-	bh=3B97zBH4p9jRcLgMlEAc2P4fRn926Py9yl1OWBr7GvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6b37/hHenQyUAzdlS2qU8iif9tfUlnuIeNfviONdOtzJeMleSwSSvGohYH/m5khuNnyrjtvdOknbOlfRQX9QP9w39JXHMVk301lWXquk4+QTUHBTiCPms0XcPzUqQ6tQ9G5xZhDy+dMlltgnIDoxb2wQi7b/Aoie1xQ7v+mFtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vx1+Nkfe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TFaWDC011710
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XCIfjiGc29TyHYiTm4KLiwCktBOr1c2fqrZ/oTTcfZo=; b=Vx1+NkfegDhBk6Bf
-	fz9QkSj4uQXedF2HcUipcq/YN/IeXx+DvrakGMN4PA8SIbyDMeF/EFY8+SGlJhCM
-	hWQuULnOEPwdLEE9OI3kN3J9ENLVFPsOSQGeArClQUEq5AT2HDzNZZXN7cXGDlL2
-	XEMstV+DzQaqKeu5+yvsyikbFjzUAsBHRJXkxz/H0qyhjmQUeNxQ4OMXTUVTOAFb
-	hw2ZCWfBXFpoFE987qMsXv8Y4aL1WzcICnFpLL76rNO4YL2wqNF+jM2zBcUZCD1y
-	MoKNK2FFxccJCt1R8PkBP7U6X615kh7h6V8HaaawsANhi73UCyGASKypSnlclA95
-	rWCH/Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48rtpf6nn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:37 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b0faa8d615so84620631cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:24:37 -0700 (PDT)
+	s=arc-20240116; t=1756484783; c=relaxed/simple;
+	bh=/mDnpOl/9+isTDDosHQhhnNoZz0Y1LASsQtQyRJIOVU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FtfZEQ3+PQzzaKVgFf16ltDbsac6/dKRtUjOjyjSf4cMa0XN50HaBdaIsJh8eyTgl6Fg3KWUPgw3yUXSaYRbANB7R4tOHoRSE50v2Q7W+JTQuDY8HNIuR6c1CE1ELkDN8XJemIRPDJWclkmZE81WloaoyMRHrJbmH4BP18ePH9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9UBvjO+; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b30f73caa3so6196291cf.0;
+        Fri, 29 Aug 2025 09:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756484780; x=1757089580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/14Zwbw37B0f5hLQ/tEtyWs9vy4aNBGfPd9hhrfG/9A=;
+        b=Z9UBvjO+bm+Ecsp1AM0QbfHxwZLOuBmdRZIBgzJOM1ZEAKdrX0vPxX2tOUcco50mDr
+         w6264XnPpj/xmxTUK0JvopZCYaI3et4HsrAL96haAupA7i9pLMftDnJkJZP9jhrTuTlG
+         Bn/ccusmxufvhkXfcJ/Toaj3nrGCCtbOB1E46ZQIsWrADFe0/IBp92mTwp2RdyA1xsOZ
+         6aKlyy3b1ImoTIh6xJnCGaOaCX2J9XmCsoE3urx71nHPyirjVoozLKgToGJYLgKSl+7k
+         Jjb3jL9DfxBN1uvcsjpnmpo6sYW3cqhyfpUrSldZtCg38nnZ/Gq9lbH4k1LTJt3FdN0O
+         NbyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756484677; x=1757089477;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XCIfjiGc29TyHYiTm4KLiwCktBOr1c2fqrZ/oTTcfZo=;
-        b=jtilJ9yv4ePM70Y0OrO0si+NkIs87AMiOqWI0MkM/iWU2Mua/DMsbJCPcG5LWMXFVt
-         uWu4tFQAouw9kRMxWAbcVS77tXo4+LOVd2ksZisjgLxmzhQdWlOWwnsN/JO/JleGEk7A
-         iKX9bgD1wClo03HTFPlXd+KcV7acwS6vPGbdH2zoufRzW4ce1Grz9MSQO6TPmRDBfxiq
-         wHw0DDS4JgnFJAWP6ggi8DjWYYDVsCeUGM/LVkoao8oSlsS5PGCHuHL4r51n+jjLVKz2
-         E80QOamUa9c9tiAB9SkqrfiQcOAw2qzaNsbjFT1yMKJ5acyp3Xom/WW0drL4xFCsngyY
-         i6xg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsEW8OrJjDFrIeaHzZUZqt5XOYbvQKFjdc8b4WRlmCia/VV/SzptbJeAFLBg5LXK/us+imGhCyMB20D9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkuX7nbpfzuToa4mRyW7X8insU6JTbb8baYhCkvvrwd+qyU6lG
-	QSm2xJzfkbvaZbXF4tttYPkqBxLsWnzfrxOJ2z/uKotK0eDAYqr5qpLH6x/uRwDTtfnZWNez5CB
-	2Lj7h/MijGoJst17Fuh9Xix/sXM6KcRnqCc0ZK5HXsN3QLrzI2NlqzUlqGfxj85NKr0A=
-X-Gm-Gg: ASbGncslPVaPytM3g64TeEiYMl+6wsQQq1bANXc5gRvpCCzupovXZeHaxyzfTVwNeNl
-	eDIOV1ryndVSbhdIf4VQMAMTM4+AebL6yPDBeNm4URzg7f8kq4mXTCHlR/MKZTVVS40lsthdeEW
-	9smB8DTfy/OZAi7sHRk17y7xTXef/h8CLnsxyKe83vw76H6eeGx+c6yojtsUZAJQTpbojOwNzgh
-	qt5vnF69UrcOU8J3VguXIx7j1x24hTNzFFptYinClkIj7SXsDkwsHsHqOgZc626C0d3QwsklyZd
-	Qy6M09PdLuj7hiogTIr94c4WlN4aZ+yrkXDq5GYr7iDTb+1d/hRZs2DF44CQgeFeBtTbg3KZ3jM
-	MJ/5VJH+WBiXGv3d64vodfJEGTunGicsfg2169Y6XXgDgYCtQlX60
-X-Received: by 2002:a05:622a:2c1:b0:4af:bfd:82bf with SMTP id d75a77b69052e-4b2e76f6c2fmr159959981cf.17.1756484676376;
-        Fri, 29 Aug 2025 09:24:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3avH1Zre9WfCU8qCI5LcLOBiCx7PfjvDuQh+HklBIJkQz+ZtJjjyCJREb1zAER0kzRP6i/A==
-X-Received: by 2002:a05:622a:2c1:b0:4af:bfd:82bf with SMTP id d75a77b69052e-4b2e76f6c2fmr159959551cf.17.1756484675754;
-        Fri, 29 Aug 2025 09:24:35 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f678450dfsm713370e87.72.2025.08.29.09.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 09:24:34 -0700 (PDT)
-Date: Fri, 29 Aug 2025 19:24:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Monish Chunara <quic_mchunara@quicinc.com>
-Cc: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
-        Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
-        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Vishal Kumar Pal <quic_vispal@quicinc.com>
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
- subsystem support
-Message-ID: <ozkebjk6gfgnootoyqklu5tqj7a7lgrm34xbag7yhdwn5xfpcj@zpwr6leefs3l>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
- <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
- <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
- <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
- <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
+        d=1e100.net; s=20230601; t=1756484780; x=1757089580;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/14Zwbw37B0f5hLQ/tEtyWs9vy4aNBGfPd9hhrfG/9A=;
+        b=ImpUVBn8zIzffVwVtrZ6JGPGUaG+t/wR95oidfIw8jSBE0pvRqSZSkEBS4p52jiht2
+         WPCold7NYXRp/YfynV3uqmuUhExe4BT8WMVgNsh7qeP7h3nZD3e++HNeATn+B5tNT8h0
+         lmFwIW9EWpcbXxFzItkjIjHOpEfwwozvd9XgYVQHqD2w/RNuhitXLrhq+nvTWSy7s+Uz
+         oPIY4dDkcBukT8Ma50xhcXg4T/nT9adbgeOvR+GJkVLkZX87fN2fdcSWz52OCFUJnRai
+         o/wN4ztJ5berofOgDM02agsvVxnCOlavudfnlnLTsDSKyEZZ94zoqIW0NL05LTIovJ2O
+         8qfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjKauDMizvdDUQXt9y2LY9FOqzqveeBEpF34Bzm5hbw9UMzL681AgtIQKZMWHRgNq9kd8MYT2z0xjI2HGV@vger.kernel.org, AJvYcCXLyCH0RzzD+vOuAPqekFZHjN+Gamk7M+mX0orIN25DU79KO/4jaWy1wT01hQbqbi87mw+aVnFNwoXEWQ==@vger.kernel.org, AJvYcCXk853DK5IcoWNDnpl/GA2Ktfbz6ldpEeMoojshykArw1u7vDJAO8Y1ET10+Zp52mWPVqhCLB+OA3+A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5wX/fFd2+QqG/tTlAX4a0WZcN/HmUVIGNez7NB4pTBaU67CTP
+	fYuZE8TphdL8hfOOdGstlHqicqG46oy9obbofC7hPG5QZMQKedh7mCcw
+X-Gm-Gg: ASbGncu0H0fnDPvI8qPvYbgs4TfaIMSoZSherTpjSvQEeOw/bNjyfn4sStX/kafAK3c
+	sE44zBrmVVPKuR2K2rs+xgWmkgZsTHI5yIkc9K/q3Duz97Ku8svdY8dr3MmPa42JHoVwfh+6k+V
+	9iPY5Y4ELgM/BEHCVXpluNa/Jo7hM0gHnmeZ3KjQK8gG43Zgyt7wWykQ0PKRCR+Rb9gfECPs27k
+	jcOV6gBIxePW81DN9tXBLcch0+JfQheDkLiTz2bnOhfc+xJYEWsLdjRp1mix2UkxzkygRwCLlm/
+	C6tPE4yj0XdI9d6NzW6doFZMCZJJ8ek0wfkOsi3HxsfLfm4w4XyjlDsHLfeIJu6v83oO/WEU3U8
+	lhPRlMcPYAhhJbORmpSxvvX8fRW7wKJXT1iVZKM40lvfWk3kCPGml2kmUpYDW8Q9YvhIJAzgvzi
+	4K5XMQs/vN30h63a9i
+X-Google-Smtp-Source: AGHT+IFh9wwoiuIfBUtcmBE/MpgX0wFBvsa3BftJZ0n2FPns/DGyzm8H2RX6nDg9CtbWInaln5/RdA==
+X-Received: by 2002:a05:622a:5c99:b0:4b0:da5c:e250 with SMTP id d75a77b69052e-4b2aab1ce03mr365938191cf.59.1756484779764;
+        Fri, 29 Aug 2025 09:26:19 -0700 (PDT)
+Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e647b187dsm18496356d6.73.2025.08.29.09.26.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 09:26:19 -0700 (PDT)
+Date: Fri, 29 Aug 2025 12:26:17 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Rob Herring <robh@kernel.org>
+CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_2/6=5D_dt-bindings=3A_auxdisp?=
+ =?US-ASCII?Q?lay=3A_add_Titan_Micro_Electronics_TM16xx?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250829152613.GA795028-robh@kernel.org>
+References: <20250825033237.60143-1-jefflessard3@gmail.com> <20250825033237.60143-3-jefflessard3@gmail.com> <20250825182521.GA4157069-robh@kernel.org> <44C925EA-73CF-46C3-86C4-BD8ECD33AE00@gmail.com> <20250829152613.GA795028-robh@kernel.org>
+Message-ID: <DDA3E474-F020-454C-ACCC-E340424BA9C0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
-X-Proofpoint-GUID: LUDC4F8AL8grfUW8AzRt6dtGUmncWGyC
-X-Proofpoint-ORIG-GUID: LUDC4F8AL8grfUW8AzRt6dtGUmncWGyC
-X-Authority-Analysis: v=2.4 cv=Hd8UTjE8 c=1 sm=1 tr=0 ts=68b1d445 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=YDAz1v9_iDTVm1Y559YA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=kacYvNCVWA4VmyqE58fU:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0MiBTYWx0ZWRfX6MdAtFLTZygk
- V7O5kXZsaloohcmcfZsRmDVtxYnqy2YbjoKGWkOKiiUSr8dvH4UjeYWa+tQlymD/aQCXcl4OYrq
- fbtZN4rRhx8ikpaHq2FCMQ+kOsbGaXWZN1V4d0flFT9rphoEoeMMC/LgmbE1KcAoXt/Mce9FjHU
- IUOKX0uf5L/smXHsK2bv1TD5wx2wLuENdmT4ucgAJJcVfB+bWj24na5OOB1FYi3Q4V9TwZr5DUt
- V4WQJVohJgAF+tuoiiHIT7LFhOxCjXi6OCSjEKkufueXp5Rfut4lkxOCI9luVH6VCIzSDih+ONf
- YecXa4pJ5SNaVZJbo636fhbF4f/xppIanHqIt7eikbSybiocWy6qv5C+GdWVbpfuTmgI0WagKFr
- edy1m9lT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508250142
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 07:50:57PM +0530, Monish Chunara wrote:
-> On Thu, Aug 28, 2025 at 04:30:00PM +0300, Dmitry Baryshkov wrote:
-> > On Thu, Aug 28, 2025 at 06:38:03PM +0530, Sushrut Shree Trivedi wrote:
-> > > 
-> > > On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
-> > > > On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
-> > > > > Enhance the Qualcomm Lemans EVK board file to support essential
-> > > > > peripherals and improve overall hardware capabilities, as
-> > > > > outlined below:
-> > > > >    - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
-> > > > >      controllers to facilitate DMA and peripheral communication.
-> > > > >    - Add support for PCIe-0/1, including required regulators and PHYs,
-> > > > >      to enable high-speed external device connectivity.
-> > > > >    - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
-> > > > >      GPIO lines for extended I/O functionality.
-> > > > >    - Enable the USB0 controller in device mode to support USB peripheral
-> > > > >      operations.
-> > > > >    - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
-> > > > >      Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
-> > > > >      firmware.
-> > > > >    - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
-> > > > >      and other consumers.
-> > > > >    - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
-> > > > >      Ethernet MAC address via nvmem for network configuration.
-> > > > >      It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
-> > > > >    - Add support for the Iris video decoder, including the required
-> > > > >      firmware, to enable video decoding capabilities.
-> > > > >    - Enable SD-card slot on SDHC.
-> > > > > 
-> > > > > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > > > > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > > > > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-> > > > > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-> > > > > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> > > > > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> > > > > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> > > > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> > > > > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> > > > > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> > > > > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > > > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > > > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > > > > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > > > > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
-> > > > > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
-> > > > > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > > > > ---
-> > > > >   arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
-> > > > >   1 file changed, 387 insertions(+)
-> > > > > 
-> > > > 
-> > > > > @@ -356,6 +720,29 @@ &ufs_mem_phy {
-> > > > >   	status = "okay";
-> > > > >   };
-> > > > > +&usb_0 {
-> > > > > +	status = "okay";
-> > > > > +};
-> > > > > +
-> > > > > +&usb_0_dwc3 {
-> > > > > +	dr_mode = "peripheral";
-> > > > Is it actually peripheral-only?
-> > > 
-> > > Hi Dmitry,
-> > > 
-> > > HW supports OTG mode also, but for enabling OTG we need below mentioned
-> > > driver changes in dwc3-qcom.c :
-> > 
-> > Is it the USB-C port? If so, then you should likely be using some form
-> > of the Type-C port manager (in software or in hardware). These platforms
-> > usually use pmic-glink in order to handle USB-C.
-> > 
-> > Or is it micro-USB-OTG port?
-> > 
-> 
-> Yes, it is a USB Type-C port for usb0 and we are using a 3rd party Type-C port
-> controller for the same. Will be enabling relevant dts node as part of OTG
-> enablement once driver changes are in place.
+Le 29 ao=C3=BBt 2025 11 h 26 min 13 s HAE, Rob Herring <robh@kernel=2Eorg> =
+a =C3=A9crit=C2=A0:
+>On Mon, Aug 25, 2025 at 09:33:58PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
+e:
+>> Le 25 ao=C3=BBt 2025 14 h 26 min 57 s HAE, Rob Herring <robh@kernel=2Eo=
+rg> a =C3=A9crit=C2=A0:
+>> >On Sun, Aug 24, 2025 at 11:32:28PM -0400, Jean-Fran=C3=A7ois Lessard w=
+rote:
+>> >> Add documentation for TM16xx-compatible 7-segment LED display contro=
+llers
+>> >> with keyscan=2E
+>> >>=20
+>> >> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
+>> >> ---
+>> >>=20
+>> >> Notes:
+>> >>     The 'segments' property is intentionally not vendor-prefixed as =
+it
+>> >>     defines a generic hardware description concept applicable to any
+>> >>     7-segment display controller=2E The property describes the funda=
+mental
+>> >>     grid/segment coordinate mapping that is controller-agnostic and =
+could
+>> >>     be reused by other LED matrix display bindings=2E Similar to how=
+ 'gpios'
+>> >>     describes GPIO connections generically, 'segments' describes seg=
+ment
+>> >>     connections in a standardized way using uint32-matrix format=2E
+>> >>=20
+>> >>  =2E=2E=2E/bindings/auxdisplay/titanmec,tm16xx=2Eyaml  | 477 +++++++=
++++++++++++
+>> >>  MAINTAINERS                                   |   5 +
+>> >>  2 files changed, 482 insertions(+)
+>> >>  create mode 100644 Documentation/devicetree/bindings/auxdisplay/tit=
+anmec,tm16xx=2Eyaml
+>> >>=20
+>> >> diff --git a/Documentation/devicetree/bindings/auxdisplay/titanmec,t=
+m16xx=2Eyaml b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=
+=2Eyaml
+>> >> new file mode 100644
+>> >> index 000000000=2E=2Ec94556d95
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=
+=2Eyaml
+>> >> @@ -0,0 +1,477 @@
+>> >> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
+>> >> +%YAML 1=2E2
+>> >> +---
+>> >> +$id: http://devicetree=2Eorg/schemas/auxdisplay/titanmec,tm16xx=2Ey=
+aml#
+>> >> +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
+>> >> +
+>> >> +title: Auxiliary displays based on TM16xx and compatible LED contro=
+llers
+>> >> +
+>> >> +maintainers:
+>> >> +  - Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
+>> >> +
+>> >> +description: |
+>> >> +  LED matrix controllers used in auxiliary display devices that dri=
+ve individual
+>> >> +  LED icons and 7-segment digit groups through a grid/segment addre=
+ssing scheme=2E
+>> >> +  Controllers manage a matrix of LEDs organized as grids (columns/b=
+anks in
+>> >> +  vendor datasheets) and segments (rows/bit positions in vendor dat=
+asheets)=2E
+>> >> +  Maximum grid and segment indices are controller-specific=2E
+>>=20
+>> In reference to max-brightness, I'll replace with:
+>>=20
+>> Maximum brightness and grid/segment indices are controller-specific=2E =
+Controller-specific maximum are validated in the driver=2E
+>>=20
+>> >> +
+>> >> +  The controller is agnostic of the display layout=2E Board-specifi=
+c LED wiring is
+>> >> +  described through child nodes that specify grid/segment coordinat=
+es for
+>> >> +  individual icons and segment mapping for 7-segment digits=2E
+>> >> +
+>> >> +  The bindings use separate 'leds' and 'digits' containers to accom=
+modate
+>> >> +  different addressing schemes:
+>> >> +  - LEDs use 2-cell addressing (grid, segment) for matrix coordinat=
+es
+>> >> +  - Digits use 1-cell addressing with explicit segment mapping
+>> >> +
+>> >> +  The controller node exposes a logical LED-like control for the ag=
+gregate
+>> >> +  display brightness=2E Child nodes describe individual icons and 7=
+-seg digits=2E
+>> >> +  The top-level control supports only label and brightness-related =
+properties
+>> >> +  and does not support other common LED properties such as color or=
+ function=2E
+>> >> +  Child LED nodes use the standard LED binding=2E
+>> >> +
+>> >> +  Optional keypad scanning is supported when both 'linux,keymap' an=
+d
+>> >> +  'poll-interval' properties are specified=2E
+>> >> +
+>> >> +properties:
+>> >> +  compatible:
+>> >> +    oneOf:
+>> >> +      - items:
+>> >> +          - enum:
+>> >> +              - fdhisi,fd628
+>> >> +              - princeton,pt6964
+>> >> +              - wxicore,aip1628
+>> >> +          - const: titanmec,tm1628
+>> >> +      - items:
+>> >> +          - enum:
+>> >> +              - wxicore,aip1618
+>> >> +          - const: titanmec,tm1618
+>> >> +      - items:
+>> >> +          - enum:
+>> >> +              - fdhisi,fd650
+>> >> +              - wxicore,aip650
+>> >> +          - const: titanmec,tm1650
+>> >> +      - enum:
+>> >> +          - fdhisi,fd620
+>> >> +          - fdhisi,fd655
+>> >> +          - fdhisi,fd6551
+>> >> +          - titanmec,tm1618
+>> >> +          - titanmec,tm1620
+>> >> +          - titanmec,tm1628
+>> >> +          - titanmec,tm1638
+>> >> +          - titanmec,tm1650
+>> >> +          - winrise,hbs658
+>> >> +
+>> >> +  reg:
+>> >> +    maxItems: 1
+>> >> +
+>> >> +  label:
+>> >> +    description:
+>> >> +      The label for the top-level LED=2E If omitted, the label is t=
+aken from the
+>> >> +      node name (excluding the unit address)=2E It has to uniquely =
+identify a
+>> >> +      device, i=2Ee=2E no other LED class device can be assigned th=
+e same label=2E
+>> >> +    $ref: /schemas/leds/common=2Eyaml#/properties/label
+>> >> +
+>> >> +  max-brightness:
+>> >> +    description:
+>> >> +      Normally the maximum brightness is determined by the hardware=
+ and this
+>> >> +      property is not required=2E This property is used to put a so=
+ftware limit
+>> >> +      on the brightness apart from what the driver says, as it coul=
+d happen
+>> >> +      that a LED can be made so bright that it gets damaged or caus=
+es damage
+>> >> +      due to restrictions in a specific system, such as mounting co=
+nditions=2E
+>> >> +    $ref: /schemas/leds/common=2Eyaml#/properties/max-brightness
+>> >
+>> >These 2 $ref's should be at the node level=2E The clue is you=20
+>> >copied-n-pasted the whole description=2E
+>> >
+>>=20
+>> I'll add:
+>>=20
+>> allOf:
+>>   - $ref: /schemas/leds/common=2Eyaml#
+>>=20
+>> at the node level and constrain inapplicable LED properties (color, fun=
+ction)
+>> using properties: false since this auxdisplay device integrates with LE=
+D
+>> subsystem for brightness control=2E
+>>=20
+>> >What you need here is some constraints=2E What's the max value?
+>> >
+>>=20
+>> Maximum brightness varies by controller:
+>> - TM1618/TM1628/TM1638 support levels 0-8
+>> - TM1650 supports levels 0-8
+>> - TM1620 supports levels 0-3
+>> I'll set the schema maximum to 8:
+>>=20
+>> max-brightness:
+>>   maximum: 8  # Maximum across all TM16xx controllers
+>>=20
+>> with the top-level description note that actual limits are controller-d=
+ependent
+>> and are enforced by the driver=2E
+>>=20
+>> >> +
+>> >> +  default-brightness:
+>> >> +    description:
+>> >> +      Brightness to be set if LED's default state is on=2E Used onl=
+y during
+>> >> +      initialization=2E If the option is not set then max brightnes=
+s is used=2E
+>> >> +    $ref: /schemas/types=2Eyaml#/definitions/uint32
+>> >
+>> >This needs to first go into leds/common=2Eyaml=2E
+>> >
+>>=20
+>> Given its specific relevance to this auxdisplay use case rather than ge=
+neral LED
+>> behavior, I am not sure it's worth adding default-brightness to LEDs/co=
+mmon=2Eyaml
+>> If broader LED subsystem adoption is wanted, I am willing to submit a s=
+eparate
+>> patch to this series to add it=2E
+>>=20
+>> Otherwise, existing precedent in backlight/common=2Eyaml and leds/leds-=
+pwm=2Eyaml
+>> would advocate for defining it locally=2E
+>
+>The type for a property should really only be set in 1 place=2E Otherwise=
+,=20
+>it is easy to define different types for the same property (which we=20
+>have and have to deal with some)=2E=20
+>
+>Given we now have 2 cases for LEDs, it should at least be in=20
+>leds/common=2Eyaml=2E Should there be 1 definition for both backlight and=
+=20
+>LEDs, yes=2E But I can live with 2 definitions in common bindings for now=
+=2E
+>
 
-Which controller are you using? In the existing designs USB-C works
-without extra patches for the DWC3 controller.
+Understood=2E I'll add default-brightness definition to leds/common=2Eyaml=
+=2E
 
-> 
-> > > 
-> > > a) dwc3 core callback registration by dwc3 glue driver; this change is under
-> > >     review in upstream.
-> > > b) vbus supply enablement for host mode; this change is yet to be submitted
-> > >     to upstream.
-> > > 
-> > > Post the above mentioned driver changes, we are planning to enable OTG on
-> > > usb0.
+>> >> +
+>> >> +  digits:
+>> >> +    type: object
+>> >> +    description: Container for 7-segment digit group definitions
+>> >> +    additionalProperties: false
+>> >> +
+>> >> +    properties:
+>> >> +      "#address-cells":
+>> >> +        const: 1
+>> >> +      "#size-cells":
+>> >> +        const: 0
+>> >> +
+>> >> +    patternProperties:
+>> >> +      "^digit@[0-9]+$":
+>> >> +        type: object
+>> >> +        unevaluatedProperties: false
+>> >> +
+>> >> +        properties:
+>> >> +          reg:
+>> >> +            description: Digit position identifier
+>> >
+>> >Position is right to left (0 on right)? Please clarify=2E
+>> >=20
+>>=20
+>> I'll clarify: digit positions are numbered sequentially left-to-right,=
+=20
+>> with reg=3D0 representing the leftmost digit position as displayed to t=
+he user=2E
+>>=20
+>> >> +            maxItems: 1
+>> >> +
+>> >> +          segments:
+>> >> +            $ref: /schemas/types=2Eyaml#/definitions/uint32-matrix
+>> >> +            description: |
+>> >> +              Array of grid/segment coordinate pairs for each 7-seg=
+ment position=2E
+>> >> +              Each entry is <grid segment> mapping to standard 7-se=
+gment positions
+>> >> +              in order: a, b, c, d, e, f, g
+>> >> +
+>> >> +              Standard 7-segment layout:
+>> >> +                 aaa
+>> >> +                f   b
+>> >> +                f   b
+>> >> +                 ggg
+>> >> +                e   c
+>> >> +                e   c
+>> >> +                 ddd
+>> >> +            items:
+>> >> +              items:
+>> >> +                - description: Grid index
+>> >> +                - description: Segment index
+>> >
+>> >Can't you do an array instead and make the array index be the grid or=
+=20
+>> >segment index?
+>> >
+>>=20
+>> Original design was array-based:
+>> - titanmec,digits: array of grid indices
+>> - titanmec,segment-mapping: array of segment indices for a,b,c,d,e,f,g
+>> - titanmec,transposed: boolean for matrix-transposed cases
+>>=20
+>> The current explicit coordinate approach was adopted based on v2 feedba=
+ck and
+>> handles both standard and transposed wiring patterns effectively, where
+>> manufacturers swap grid/segment relationships:
+>> - Standard: digit segments use same grid, different segments =20
+>> - Transposed: digit segments use same segment, different grids
+>> It also future-proofs potential irregular wiring patterns where individ=
+ual
+>> digits might have different grid/segment relationships=2E
+>>=20
+>> Unless you have strong objections, I prefer to keep this approach to av=
+oid
+>> further churn, as it's proven to handle all the real-world board layout=
+s
+>> encountered=2E
+>
+>2 arrays would not be an improvement=2E So leave it as you have it=2E
+>
 
--- 
-With best wishes
-Dmitry
+Acknowledged=2E I'll keep segments as uint32-matrix=2E=20
+
+Thank you,
+Jean-Fran=C3=A7ois Lessard
+
 
