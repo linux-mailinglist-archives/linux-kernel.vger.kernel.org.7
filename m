@@ -1,72 +1,47 @@
-Return-Path: <linux-kernel+bounces-791176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE368B3B2F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F046B3B2F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3782F4684C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9D33A7E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FB7221F0A;
-	Fri, 29 Aug 2025 06:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2782253AB;
+	Fri, 29 Aug 2025 06:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="L84ZwrlF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="BnAmXJvT"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osBQeOrg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D4E8BEC;
-	Fri, 29 Aug 2025 06:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC041B0413;
+	Fri, 29 Aug 2025 06:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447610; cv=none; b=kesALwtCPKOVzyh2nRa6jUvJ079YW2B+wcRgoGRtCWPhT734GwqHFBDbR7J4fL/beqF8CDczpyPgdFKq+4AVKFaa5uHRxtsXLNGn3Nec79lFfQLIg5Z5o1x2L7TyW+cos+MvMy6rA3Za8eqHXJR0WPavqolg3xxLBgN4q4RCLSY=
+	t=1756447591; cv=none; b=SkfpmseCIOL1ApoaZcE+mX1K2SUgMiFiu+AJpJlNdtST8vSklPyFdFKrO/RMvlbOrI6hKqaDygs45+zCfNO/qLaA/7+9swV3fHxsaIV6FqFhhxC1GUilfXq2dU2Pc2CDIAwzKEiW0cQa5hXU/cO2crGSUZ5GlT82dMGNgSmu+d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447610; c=relaxed/simple;
-	bh=TapCIJzSpA5xsrH/nOaLl1kb+dAxgoIgKv6bTlhCBH0=;
+	s=arc-20240116; t=1756447591; c=relaxed/simple;
+	bh=IpF23KV7LHfoSOAeBXs3NCoxLCzvqrR7cEFGz8kHY/c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSbxi5imuDzynTp1whOp6GD2VE8ImtjIMWq8r8o2hD0hBYBg9BRcnTuYPWjabN5zDKyFQ31uTj7tyG2W0iQpDKxc/XtUuF6Xq0Ssi7W6UbQJ3u9HvzyYEwZ+xNKVaE374HXwvnMpxy3EQCZe6gnUO+mVKm4mAYFtWg1CDN5wHJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=L84ZwrlF; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=BnAmXJvT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756447608; x=1787983608;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yhSoS2gcwCfK6pxd7ltatSsRlXZ3B4ZnEmWhPcw3nIA=;
-  b=L84ZwrlFqnqSUTctfOtqHxla4LVmjYcSVsfbO5e9utn73wLR2fsTX1qV
-   NYbg5CXOgk3B9Bw36ZsW5aR1YhBUCvu4XonXxHqjoC2+SQJyL7ZkGPe3S
-   9ZhNGSNoTqE7CRS2HdRTypj67bdAT2mV3AyvWxHUOXzO6eoc9crtKEmhY
-   XSCzaCkpUViqFtGxqrpEp+nyams9hJD/cUe5UVJGmDSIFTVdGWGTVfajD
-   X2BtAiqJ6iNTELghvZS5EZTSEGqKawI0hBDJPbcYK80abiXeVkUeKYgBw
-   ePz6TA5pwFUkoACXzH/uHyT4f4xdzerOC6JVmsh9kGSleVIjYy9dAmhMA
-   g==;
-X-CSE-ConnectionGUID: Vx6WPkHrTJSNijI9O2t94w==
-X-CSE-MsgGUID: sWq7ec2xRmqgqmY0djflPg==
-X-IronPort-AV: E=Sophos;i="6.18,221,1751234400"; 
-   d="scan'208";a="45969065"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 29 Aug 2025 08:06:44 +0200
-X-CheckPoint: {68B14373-29-299FBAB0-EF52EDE7}
-X-MAIL-CPID: 9E8933FFEF0FDFBC4AA31CA6DAD71FDA_5
-X-Control-Analysis: str=0001.0A002121.68B14308.005F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D34CC169B29;
-	Fri, 29 Aug 2025 08:06:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756447599;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=yhSoS2gcwCfK6pxd7ltatSsRlXZ3B4ZnEmWhPcw3nIA=;
-	b=BnAmXJvT6pIpazDfP4tZLf4m0fzPhp0SQXYsg1a3Pl2D8tdLNl1AMcHdJtUiXpGzgha7Ih
-	in1Cc5Y3Yy2h1rhRffhLOTn9mIsAxuqcUTaSD3fxLXfN6bQivBzNWILv8ANGvXHaYwx2Lx
-	BkeRS48++WZ7DqDHKUJJDWZcadWauIJudHWhhOYkFNbULhnChu/DHVXKclXbrLSo41AHXi
-	+eLeLA4EOWEf4o/37km2aKDJWG46f5FFzwQmLFfdFbb+4I1NuekKxDJGWuERlj4NTy5ETb
-	5cSfHD47omfor0Vx1BRsrbS4G4LpnP9Miq67c1wv1EOm5u4eCnQT2AalSw9Rpg==
-Message-ID: <47a8152b-85cf-44d9-b94e-29e3f462d507@ew.tq-group.com>
-Date: Fri, 29 Aug 2025 08:05:29 +0200
+	 In-Reply-To:Content-Type; b=JP/Sxenv33QTlz1OgpsCt9vuvwTCdDB9x96Cip5Y8UtgzKnE6/NgdSUFUN0Ikq+9UfcBLr1C2JAWwweX8UF9h9BXVVRG4J8vyd+eEnWrKVtZJar6eecTEs3XPQhXnSRhxhz93qE4qn7RgoyzObl1AS5rYrn9oK9iyrG7pzcR3Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osBQeOrg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0848EC4CEF0;
+	Fri, 29 Aug 2025 06:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756447591;
+	bh=IpF23KV7LHfoSOAeBXs3NCoxLCzvqrR7cEFGz8kHY/c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=osBQeOrgoTP1hMzyO858/L7YxgGpk1yCnBx3EQa9O+hH4qeA+1hNWSKtAQPmC/DTR
+	 BwznMLCGFCHL9r5AmK+Eed4mS8ejlAnoIz/Gqcy1hegQE0L44z+ag0EYnkD1iBH3ez
+	 hQT54RqGqisdCC7k3cpKFgndVpYHmixZYXwjvWgn5C6SYpMaN8LUVvxQcXn5uRuIfB
+	 TbNM9ipAIT+vRMdU9/p7l0+uhQqhdfH+/V9oxNT21dPRxtUgfJB1j2/5SHeDmJYCnq
+	 78S2BACdrb6JKJQQPJHAGF5NKYRVu1qE/BYmIFVjxwlofPRXw/GXuCJaVMw/ZNxK76
+	 tqUdifZ9iox3w==
+Message-ID: <fcd25026-97f0-472a-a274-af342b1dce9c@kernel.org>
+Date: Fri, 29 Aug 2025 08:06:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,81 +49,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: add TQMa91xxLA SOM
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux@ew.tq-group.com
-References: <20250828094745.3733533-1-alexander.stein@ew.tq-group.com>
- <20250828094745.3733533-2-alexander.stein@ew.tq-group.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: pinctrl: qcom: Add SDM660 LPI pinctrl
+To: setotau@yandex.ru, Bjorn Andersson <andersson@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht,
+ Richard Acayan <mailingradian@gmail.com>
+References: <20250828-sdm660-lpass-lpi-v4-0-af4afdd52965@yandex.ru>
+ <20250828-sdm660-lpass-lpi-v4-2-af4afdd52965@yandex.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Max Merchel <max.merchel@ew.tq-group.com>
-In-Reply-To: <20250828094745.3733533-2-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250828-sdm660-lpass-lpi-v4-2-af4afdd52965@yandex.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Alexander,
-
-Am 28.08.25 um 11:47 schrieb Alexander Stein:
-> TQMa91xxLA is a SOM variant in the TQ-Systems GmbH TQMa91xx series using
-> NXP i.MX91 CPU on an LGA type board.
-> MBa91xxCA is a starterkit base board for TQMa91xxLA on an adapter board.
+On 28/08/2025 21:23, Nickolay Goppen via B4 Relay wrote:
+> From: Nickolay Goppen <setotau@yandex.ru>
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
-
-
-Your commit is for TQMa91xxCA and TQMa91xxLA.
-However, the commit message only specifies TQMa91xxLA.
-The TQMa91xxCA is missing from the commit subject and message.
-
-
->   Documentation/devicetree/bindings/arm/fsl.yaml | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
+> Add bindings for pin controller in SDM660 Low Power Audio SubSystem
+> LPASS).
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index ebafa6ecbcb64..0843c5e9275be 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -1433,6 +1433,24 @@ properties:
->                 - fsl,imxrt1170-evk         # i.MXRT1170 EVK Board
->             - const: fsl,imxrt1170
->   
-> +      - description:
-> +          TQMa91xxLA and TQMa91xxCA are two series of feature compatible SOM
-> +          using NXP i.MX91 SOC in 11x11 mm package.
-> +          TQMa91xxLA is designed to be soldered on different carrier boards.
-> +          TQMa91xxCA is a compatible variant using board to board connectors.
-> +          All SOM and CPU variants use the same device tree hence only one
-> +          compatible is needed. Bootloader disables all features not present
-> +          in the assembled SOC.
-> +          MBa91xxCA mainboard can be used as starterkit for the SOM
-> +          soldered on an adapter board or for the connector variant
-> +          MBa91xxLA mainboard is a single board computer using the solderable
-> +          SOM variant
-> +        items:
-> +          - enum:
-> +              - tq,imx91-tqma9131-mba91xxca # TQ-Systems GmbH i.MX91 TQMa91xxCA/LA SOM on MBa91xxCA
-> +          - const: tq,imx91-tqma9131        # TQ-Systems GmbH i.MX91 TQMa91xxCA/LA SOM
-> +          - const: fsl,imx91
+> Co-developed-by: Richard Acayan <mailingradian@gmail.com>
+> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+> Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
+
+Completely reversed/messed chain.
+
+...
+
 > +
->         - description:
->             TQMa93xxLA and TQMa93xxCA are two series of feature compatible SOM
->             using NXP i.MX93 SOC in 11x11 mm package.
+> +properties:
+> +  compatible:
+> +    const: qcom,sdm660-lpass-lpi-pinctrl
+> +
+> +  reg:
+> +    items:
+> +      - description: LPASS LPI TLMM Control and Status registers
+
+
+Clocks missing, maybe some other properties as well.
+
+
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-sdm660-lpass-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-sdm660-lpass-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-sdm660-lpass-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,lpass-lpi-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|[1-2][0-9]|3[0-1])$"
+> +
+> +      function:
+> +        enum: [ gpio, comp_rx, dmic12, dmic34, mclk0, pdm_2_gpios,
+> +                pdm_clk, pdm_rx, pdm_sync ]
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +
+> +allOf:
+> +  - $ref: qcom,lpass-lpi-common.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    lpi_tlmm: pinctrl@15070000 {
+> +        compatible = "qcom,sdm660-lpass-lpi-pinctrl";
+> +        reg = <0x15070000 0x20000>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&lpi_tlmm 0 0 32>;
+
+That's quite incomplete example. Missing at least one pinmux node. See
+other files.
+
+> +    };
+> 
+
 
 Best regards,
-Max
-
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+Krzysztof
 
