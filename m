@@ -1,173 +1,226 @@
-Return-Path: <linux-kernel+bounces-791889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B82BB3BD5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 967EBB3BD65
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEBA75679EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3419017EAD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B8F31E119;
-	Fri, 29 Aug 2025 14:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760323203B6;
+	Fri, 29 Aug 2025 14:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ymp+EyqE"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GCFacuxv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8F31E108
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0CF3081A3;
+	Fri, 29 Aug 2025 14:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477158; cv=none; b=Xto4TJzCxGf/00/ySTQz18xkjlcwdH7M1aPbdcJR00zHLT+oVJvevh95TnGjDHZiIU5LMqXpHjqGdqfBYKRexEfvxCFRwXqk9mbJnQFPLneuoOae4go0lNfNRZKZVH6FZGVfR+xYpGavbDHX3r94aaSxbnidIdmhFUbyze3S/OU=
+	t=1756477284; cv=none; b=XG/IMqTlOj73W+XGpWOemYd9jiSGDCInB9GrV+yKcMu8DzmpcK5qs11uL1V0g+9QJGuUEsZiBJWYtI4yzos+EgZmst73L4sGtmY4byISSN3rJuTsgX2BFS4WSnXP9UmfI7VMiYfoBHyoEtHgWiKFjpMAbl0C2sVyqR4dF4BNtWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477158; c=relaxed/simple;
-	bh=1Pf4kWGF8Nl6Fz5LD6iSs09KK9VBlttvZCY110akIYY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Af26sPnTXObUJ5A/AopJ1JDZabPsQb3teFU2q653s4T6UZJGOBgTOldsl7DOI7VlP0rKDATt2Qum6sYW1fxlZV8ZtZiYXgnI4XBEItE5dsbaAmspYL0SktvUvE0+JkXVrcqmxfZli54tpv9p8yK6gZXZ4cB+j4fgiGnMmVfhOdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ymp+EyqE; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-327706e0642so3628149a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756477156; x=1757081956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j21crHF1Yk5JFqIlz5UrZbt7K7r61xcnF+akUnmAGnM=;
-        b=ymp+EyqEmHqIcF7YhOUpYc2IfY207nJEUMzRRyLarixg7mWwWJDQW/2rD2fMkIkIhO
-         6dlw8KUhHCW2kMBYeXeJgTnyA7wn2ioE3XdLy9i1dGhpy+13N1N7+JdZtfkyV+VcDR1u
-         2ooZOiRUtK2lmyQW/CH4+w6mINng1mQS/sR09bPBFTx4dVTxP69k+cyKYOpoqxtw53l0
-         n2Skomv0mfDY24bTA6xI1Vwpnm2G9uvWtymQni/oUbQiu887+xoJJ6Ln+PuUqHoYNqMX
-         lZB6yEGWuvb4KxXPqWeycnojnWSe4ydPltB+askrntsH/QQ2t8VKuHVOksyZTpbf25Ne
-         6Hqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756477156; x=1757081956;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=j21crHF1Yk5JFqIlz5UrZbt7K7r61xcnF+akUnmAGnM=;
-        b=tGXHagT9so7xUEOeSxIjn7IWcWAmZBHEkB5bNbcClkHRhayGGfMSLrjwXPWyjmnGxQ
-         8lQQutZM9Bhba8yFnKZgPQYhvYj9KuFAPU8Uz7UNR47d9Pfc8iThgqfDR38q4MwU+8xI
-         I514jz5QcAqShyyZ08NYVJluhuvTt0SXvxCyzRekwgSLjYuB60Gkjr/954fwUC+LCDJh
-         GciFajfQaHYPALbFtP5HfJC1og3El0cbO9MOBhHoeTRcXwJ7RVgnd+SE9k1uiHWIXsiM
-         NK1XkSfFpd0ePjm4Jhmb7Pq6dTHiUErim4g6iREWNeC0C7qroUdWtxRd6Mf3oPvhfTMm
-         99lA==
-X-Forwarded-Encrypted: i=1; AJvYcCXorI1KGapP6COgBHmURQob+H/j6oYBWoh7Jr06/nDkOf8nPgo4I9oXqvc0VfGUY064JXXXwVsyBO+ELtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY9+FlxjuZdIfudp0XVFwSIIDGteEIVfQTtFxmXSabhD222l5l
-	XqQOi+yToy8UMoYLQAT7C48kTfHUgajB3tlZPXxToBu6lCuEc7RcwuFXFN0hl97BvGJLpp3Rduh
-	cjcAajQ==
-X-Google-Smtp-Source: AGHT+IHQCGK1n8ucMTSWAAVaO3wbmZ1keEusOyRlTN9padDWnDkB4uZOVUdZ5WjrRzkzASPAQVQOPvuz1VQ=
-X-Received: from pjbqx12.prod.google.com ([2002:a17:90b:3e4c:b0:31f:6a10:6ea6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4fd0:b0:325:c92:4a89
- with SMTP id 98e67ed59e1d1-32515e3cad8mr32112898a91.5.1756477155808; Fri, 29
- Aug 2025 07:19:15 -0700 (PDT)
-Date: Fri, 29 Aug 2025 07:19:13 -0700
-In-Reply-To: <fcf19563-df65-4936-bd08-46f1a95359af@linux.intel.com>
+	s=arc-20240116; t=1756477284; c=relaxed/simple;
+	bh=tfAIjuJ5J2TwoW92KENZ24wEQ98X+ahdvOFhl/H4IX8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyEXWPkZB0E41VLJOrdvd9jvfbXv27G9rIwSnoMs6uzAbWlNzOiz0sQ36ffixXJsYf4SAS02sNnIucTS+PzG8+u0aa/w+ZQua3l031UCd+07jlDAZTCK6J+WlbNS3QIU5FoSmmf+XAwmw45ojfgRzdGQBYTjhRROYMRTR9YXDQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GCFacuxv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85IOl025398;
+	Fri, 29 Aug 2025 14:21:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LaNpyKg4mbZQAhwLrnf66qbojUSjGBrnRIBLryRVAX4=; b=GCFacuxvCltGprVb
+	K2naW8UWDLxp3POgYtcqqi0CeKfsv07DcTfVY+JRZtoC0XIJj0uO4xyu1ZSI9nVM
+	sM6IZVaJdjBmsrCi4DCkGBia9bm64EnPXQXS8/acbVRWL2wXvtEf3fJZt+fJ6uv8
+	/pjpc8Vm+ebJuVa3oFCWLeJ8/KpzeHefYCry3aI0PlMIrYVeR2KkncSg2doLWN3u
+	y5zLQ5dBe+iwpBBmuDpesHT0OYIusdwR/k3WgqlzzFc4x4jDwjmdi3ZwzRu0zv7q
+	NFLc5khzXlWb4EciM4So8pqsboVNla/jmaVHs6IP9yAbj7zT1AP1RbCW9IM29T6P
+	LuU+WA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48u4xyhe2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 14:21:17 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57TELGJF027275
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 14:21:16 GMT
+Received: from hu-mchunara-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Fri, 29 Aug 2025 07:21:10 -0700
+Date: Fri, 29 Aug 2025 19:50:57 +0530
+From: Monish Chunara <quic_mchunara@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+        Wasim Nazir
+	<wasim.nazir@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>, <kernel@oss.qualcomm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Krishna Kurapati
+	<krishna.kurapati@oss.qualcomm.com>,
+        Mohd Ayaan Anwar
+	<quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Vishal Kumar Pal <quic_vispal@quicinc.com>
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+Message-ID: <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+ <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
+ <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829000618.351013-1-seanjc@google.com> <20250829000618.351013-16-seanjc@google.com>
- <fcf19563-df65-4936-bd08-46f1a95359af@linux.intel.com>
-Message-ID: <aLG24VoWbrB5e-K4@google.com>
-Subject: Re: [RFC PATCH v2 15/18] KVM: TDX: Combine KVM_BUG_ON +
- pr_tdx_error() into TDX_BUG_ON()
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI5MDAzMyBTYWx0ZWRfX+lnamCJJrvYC
+ 2FoswfxuiWgfR2gKoFC6Z5PPemV6puf9GVnkjUpBTDUjt76SmhyfQqN/fF9M932LTLO2d6t4cgq
+ frqG1PZs5OZwS5vsdg+LUwpbeby10SYdfAAcX52ZzTq0I2eSGaUObZ3MFKLm8QkejljZxEAycLW
+ hY4wf48K1PupSfD8FG3NN2dieDPshES4S+CyBQWrnzPXrxEDcHqaaG2EJkTnB8MF3VKhpA8pL40
+ foGvM5KBZpTPcJNI43PSkJ4YRkCuDQ6fUYEFNaGrmucUZyGZZJjkN1+DfLMWZWw5rDi6cPsSHEE
+ QxCMZ/2kOFGrZLVdt5PrJO2lTBHsRHV/jrbquWcLC06nk1AxVYJ05M6h2Zj8khOXITlgmKTRljS
+ k+145nKA
+X-Proofpoint-ORIG-GUID: WZ4Xl5DvitPPdiIUqWaNktWpEgVWIVrE
+X-Authority-Analysis: v=2.4 cv=PYL/hjhd c=1 sm=1 tr=0 ts=68b1b75d cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=LQCaeKDmsfC3n-DSO_kA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: WZ4Xl5DvitPPdiIUqWaNktWpEgVWIVrE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 suspectscore=0
+ adultscore=0 malwarescore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508290033
 
-On Fri, Aug 29, 2025, Binbin Wu wrote:
-> On 8/29/2025 8:06 AM, Sean Christopherson wrote:
-> > Add TDX_BUG_ON() macros (with varying numbers of arguments) to deduplic=
-ate
-> > the myriad flows that do KVM_BUG_ON()/WARN_ON_ONCE() followed by a call=
- to
-> > pr_tdx_error().  In addition to reducing boilerplate copy+paste code, t=
-his
-> > also helps ensure that KVM provides consistent handling of SEAMCALL err=
-ors.
-> >=20
-> > Opportunistically convert a handful of bare WARN_ON_ONCE() paths to the
-> > equivalent of KVM_BUG_ON(), i.e. have them terminate the VM.  If a SEAM=
-CALL
-> > error is fatal enough to WARN on, it's fatal enough to terminate the TD=
-.
-> >=20
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/vmx/tdx.c | 114 +++++++++++++++++-----------------------=
--
-> >   1 file changed, 47 insertions(+), 67 deletions(-)
-> >=20
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index aa6d88629dae..df9b4496cd01 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -24,20 +24,32 @@
-> >   #undef pr_fmt
-> >   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > -#define pr_tdx_error(__fn, __err)	\
-> > -	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx\n", #__fn, __err)
-> > +#define __TDX_BUG_ON(__err, __f, __kvm, __fmt, __args...)			\
-> > +({										\
-> > +	struct kvm *_kvm =3D (__kvm);						\
-> > +	bool __ret =3D !!(__err);							\
-> > +										\
-> > +	if (WARN_ON_ONCE(__ret && (!_kvm || !_kvm->vm_bugged))) {		\
-> > +		if (_kvm)							\
-> > +			kvm_vm_bugged(_kvm);					\
-> > +		pr_err_ratelimited("SEAMCALL " __f " failed: 0x%llx" __fmt "\n",\
-> > +				   __err,  __args);				\
-> > +	}									\
-> > +	unlikely(__ret);							\
-> > +})
-> > -#define __pr_tdx_error_N(__fn_str, __err, __fmt, ...)		\
-> > -	pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx, " __fmt,  _=
-_err,  __VA_ARGS__)
-> > +#define TDX_BUG_ON(__err, __fn, __kvm)				\
-> > +	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
-> > -#define pr_tdx_error_1(__fn, __err, __rcx)		\
-> > -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx\n", __rcx)
-> > +#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
-> > +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
-> > -#define pr_tdx_error_2(__fn, __err, __rcx, __rdx)	\
-> > -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __r=
-dx)
-> > +#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
-> > +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, =
-__rdx)
-> > +
-> > +#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
-> > +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%ll=
-x", __rcx, __rdx, __r8)
-> > -#define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8)	\
-> > -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n",=
- __rcx, __rdx, __r8)
->=20
-> I thought you would use the format Rick proposed in
-> https://lore.kernel.org/all/9e55a0e767317d20fc45575c4ed6dafa863e1ca0.came=
-l@intel.com/
-> =C2=A0 =C2=A0 #define TDX_BUG_ON_2(__err, __fn, arg1, arg2, __kvm)=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 \
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 __TDX_BUG_ON(__err, #__fn, __kvm, ", " #arg1 =
-" 0x%llx, " #arg2 "
-> =C2=A0 =C2=A0 0x%llx", arg1, arg2)
->=20
-> =C2=A0 =C2=A0 so you get: entry: 0x00 level:0xF00
->=20
-> No?
+On Thu, Aug 28, 2025 at 04:30:00PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Aug 28, 2025 at 06:38:03PM +0530, Sushrut Shree Trivedi wrote:
+> > 
+> > On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
+> > > On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+> > > > Enhance the Qualcomm Lemans EVK board file to support essential
+> > > > peripherals and improve overall hardware capabilities, as
+> > > > outlined below:
+> > > >    - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+> > > >      controllers to facilitate DMA and peripheral communication.
+> > > >    - Add support for PCIe-0/1, including required regulators and PHYs,
+> > > >      to enable high-speed external device connectivity.
+> > > >    - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+> > > >      GPIO lines for extended I/O functionality.
+> > > >    - Enable the USB0 controller in device mode to support USB peripheral
+> > > >      operations.
+> > > >    - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+> > > >      Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+> > > >      firmware.
+> > > >    - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+> > > >      and other consumers.
+> > > >    - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+> > > >      Ethernet MAC address via nvmem for network configuration.
+> > > >      It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+> > > >    - Add support for the Iris video decoder, including the required
+> > > >      firmware, to enable video decoding capabilities.
+> > > >    - Enable SD-card slot on SDHC.
+> > > > 
+> > > > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> > > > ---
+> > > >   arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
+> > > >   1 file changed, 387 insertions(+)
+> > > > 
+> > > 
+> > > > @@ -356,6 +720,29 @@ &ufs_mem_phy {
+> > > >   	status = "okay";
+> > > >   };
+> > > > +&usb_0 {
+> > > > +	status = "okay";
+> > > > +};
+> > > > +
+> > > > +&usb_0_dwc3 {
+> > > > +	dr_mode = "peripheral";
+> > > Is it actually peripheral-only?
+> > 
+> > Hi Dmitry,
+> > 
+> > HW supports OTG mode also, but for enabling OTG we need below mentioned
+> > driver changes in dwc3-qcom.c :
+> 
+> Is it the USB-C port? If so, then you should likely be using some form
+> of the Type-C port manager (in software or in hardware). These platforms
+> usually use pmic-glink in order to handle USB-C.
+> 
+> Or is it micro-USB-OTG port?
+> 
 
-Ya, see the next patch :-)
+Yes, it is a USB Type-C port for usb0 and we are using a 3rd party Type-C port
+controller for the same. Will be enabling relevant dts node as part of OTG
+enablement once driver changes are in place.
+
+> > 
+> > a) dwc3 core callback registration by dwc3 glue driver; this change is under
+> >     review in upstream.
+> > b) vbus supply enablement for host mode; this change is yet to be submitted
+> >     to upstream.
+> > 
+> > Post the above mentioned driver changes, we are planning to enable OTG on
+> > usb0.
+> > 
+> > - Sushrut
+> > 
+> > > > +};
+> > > > +
+> 
+> -- 
+> With best wishes
+> Dmitry
+
+Regards,
+Monish
 
