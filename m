@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-791108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B99B3B210
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:15:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78E6B3B211
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6004B560DF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BBDE982C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3190262FC5;
-	Fri, 29 Aug 2025 04:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C82D235063;
+	Fri, 29 Aug 2025 04:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gaMHmoaw"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EociVruX"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F0025D546
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10F2609D4
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756440725; cv=none; b=NFQR/uJ5dEESkYJvaeXQjCeg4qkGGS2t5hjRFJ9tUnNyQNv/B2bjB7kE1s8jgHku9CLkXEmLCpHeKq+rHmWXnzgucePddghMC6xd+M1XngwwZBXRfqjDZuKFW7Xc7SmcciCfMAyhuejUFUM/FhZaWmBc0Y+Zo9dLRZ/MLIr/nvw=
+	t=1756440726; cv=none; b=lscSyibf6pM+HJdGkOxNsSTGtfMfjqJDFmaPfMwtPioCBL604E24TvblnN6PDvf61RSTaLyagUmWM4FnC2SJeTdB8lbj4HeRxnzJ67VaODKh+gZGGX9VwHc+I9yvqAuf8oX52VnJvevaPRfqshyiwHK2NMuvm7Jut3rPySJXC14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756440725; c=relaxed/simple;
-	bh=vf9NxO2PinCQQsEd0DvFHj+1PNzNsbqkEiru0ThpODE=;
+	s=arc-20240116; t=1756440726; c=relaxed/simple;
+	bh=Zmg5fiaGvVB2oAbAa8cyTmxLXHJNaqMAFuVzYAZ7E7A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=Q6FmBgPZUnCNtTnTht9/oz1Fk7gJhfNETOombEOtk8dOR2J8RnJkZrvUfYVELlQ4qaKAa+v5TqlSqTQo13zua6X1tsRxrtKZ8FMCXvX1MGlAVz/beFJ/EWo07DomufEAkL0/f5Jt9wCxWiKpIA38kwZEQNla0YTNM/Z3HfMzJdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gaMHmoaw; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=Lni5O2mGKctvcFbRj+ZnqAghenABr+ZIKdqLEovAuVNX9rhqy+AuEzrMz9VuTd6YGqn+DNPIhyqMs3rW0BG0Y+C5azoypyV1/qQDTE+4a9wgsgZZZBBgS+AbrnZkJwIt6M9lvrldN/KSTxcEU2tSvk0P3vIPvdeHTEgcfpskpNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EociVruX; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-244570600a1so19540545ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:12:03 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325e31cecd6so1548201a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756440723; x=1757045523; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756440724; x=1757045524; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+0Vli+NKdcmDTDJurkTANCCd4S+V5izlUAV4FqwwqbY=;
-        b=gaMHmoawO3bUmbcLMxWJ2nPJQhVn2mYDChy81wU/iMUTduIwCopmz7LOH0Vp2eQrYT
-         RDoUsA+89LwP2nkSE4ohkeNzL1M32U68M666GR0ypBMENK9S1GXZloqwsTT0ZRuqOUzk
-         k6Mdk64F6i3OmjzGnQjcgsP+OlMMTHaO9ooHl3bUu7qmwytN/aSYC54rzADXI+D7liyt
-         xtzUIQ/PQvjNF3d0sIrTX3TpjNORFL4Wrr0Xy/XyODYQeOM+t4QvQK5OPNlDe3QEsJMx
-         NS02aMC5wDoZMZPNrU2P7zjqX2Rv1/Zfjn58FAFzIGzdouWT1u3e8QXRTtO2dQUCpf74
-         VCQg==
+        bh=E0n569qf5LRDqKDozKnwC4zMI79CFARCiF4XIPmnDZ4=;
+        b=EociVruXVFnXOvBjvCVjzjYXMJKLj2cqF9s0SoxAX2PhMnHaipt6SFGjv8nUz6dB9s
+         26vjOLVSkLOp2H8VeILY6YQLGEeBVxDVhblKVssjmlSkB+q8eeD8ZYP2/9KFuUs4uB14
+         PvPfYJ0ua+IrmuQd55ABuS2HP2CBIQJMb+DJaFAJE9pB4lWGYaejwY6dtQn8bQkbJ3ds
+         FCzl5aSgPakgVM4kJ1u+WR7VSc/b3+33t1fjmtAjTKdixJat60fYmm1QKt5vJ6HJo05A
+         glxluFSg0kEVMY/XjsFzVRkO5PcHPBJ0qehVTbcFpldrxcJdQ1dSnk7FYrh7xFY5F3cS
+         S2CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756440723; x=1757045523;
+        d=1e100.net; s=20230601; t=1756440724; x=1757045524;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0Vli+NKdcmDTDJurkTANCCd4S+V5izlUAV4FqwwqbY=;
-        b=PLbzan9JUmsNgdMCckp95bPLITy4EysEKoRJ1GvpxrNgbqWBHnjMU4G+R+QTD14D18
-         7wDfR3uE+CvCy6pkyW4FU9+0bDV/hLO+FFvhqbq+u74gjahQQaaogqnCYCFE1QNG13XW
-         nG9u3JS2bg5teSICz14lshkM+W7W8Z8sH1aX3OO+RgFuUjkdTkNwcLOGyBjpspSqSUjC
-         jQB/KyXnIMQL0GGANaytu7/si1ViOr6AwLl9Mao8g8nxztLUrQn/AgHBx+KYVtW5RHXd
-         +mRIGM279pyEJjfhzcSzfhMsuUJB8d4ozLI3TrO0olwROx2uqXXY0k6JMcXvtQ0QmnMu
-         oIOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWU6HGT+DpOjy5WJc7HmttOVqypD0uH+emTIk6m/WIn4clK7Y+NLieBeaqpgj78odvnXr/6oQYnAUigMOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG2W3GdHzU5l+tAqYVe0gzwZxCeEMqKntx+fl2zHUHEsrbOXeb
-	kc/v5631cB0A8/X/O3HRsX9iPIHO4CxahYXn/9ZOk5hO9MEq+kdwqwlarbFXCbRCNAe9QnPumPI
-	wIi9MoFjxNQ==
-X-Google-Smtp-Source: AGHT+IFQnygiIn/u5drWuyF3c1r5WwGV2aObUmoqamTVxlg1PZliHyd7vXIq2fN1QjU+TK4SnglJL2B5AGcX
-X-Received: from pjcc15.prod.google.com ([2002:a17:90b:574f:b0:325:8e70:8d5e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5cc:b0:246:d5b3:6310
- with SMTP id d9443c01a7336-2487539f6b8mr132335905ad.23.1756440722758; Thu, 28
- Aug 2025 21:12:02 -0700 (PDT)
-Date: Thu, 28 Aug 2025 21:10:59 -0700
+        bh=E0n569qf5LRDqKDozKnwC4zMI79CFARCiF4XIPmnDZ4=;
+        b=ve4RBxxolcoYjBB9+E4kI6fSlTHoxliWZydEaon98/79NnUOAf4iCjNmwt6dn+YZRj
+         b2a3RAsdqAowoFy/9/tf6+l+wwIUyzLL98tVLj7xBeWeuEB8qSyCjvPFIfeVihnWoAD/
+         cSmmf9PMFZUAO3yRdLcK12hehDbvxOjBzIsfsiu/Nf3aS6zczFx2QEIJcxT4iCsihGft
+         4zUuMOsANLGHva2wy7Lf4vZYJ6l/mvejqTcokprbGFInNc2bwMBOMkAwv7TRcJYipR0A
+         m3VJiKaM6EZzyq/KFbPBFLm7fqndaAlsbWtKLPH9QcK9OnfIHBiDhsmJVXeY7irvyv0+
+         qrvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIp4C/BY4I18lCrOJ7Sv5I3ltAtibWjaWflGEethfj3pUKRsrSbq1ArM+0+es5HFpIvWZboQudoIGUCig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmI0b9MWM8C+kV/dZ+sykz+rek6h1bqMqzJ/3vFYy/SsL8g3dj
+	x/8mX9bK0tqO+wzL4NO3E4ko/k58SbFGd1y3pPnriFAQZiGifvDXxgJMev6Ws3IEFsBnizhJNzH
+	+qEcLkv24VA==
+X-Google-Smtp-Source: AGHT+IE1G+MehOwF6KjzzHtb+fdHuNYJEKdpccHtKGcwif7meAE6X7UTGKKmVU+J2s7OKnVu9NUbR8+gbf3Z
+X-Received: from pjkk12.prod.google.com ([2002:a17:90b:57ec:b0:327:4fa6:eaa1])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:58ce:b0:323:7e80:8819
+ with SMTP id 98e67ed59e1d1-32518b825b3mr29015147a91.36.1756440724439; Thu, 28
+ Aug 2025 21:12:04 -0700 (PDT)
+Date: Thu, 28 Aug 2025 21:11:00 -0700
 In-Reply-To: <20250829041104.4186320-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250829041104.4186320-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250829041104.4186320-19-irogers@google.com>
-Subject: [PATCH v5 18/22] perf jevents: Add dir breakdown metrics for Intel
+Message-ID: <20250829041104.4186320-20-irogers@google.com>
+Subject: [PATCH v5 19/22] perf jevents: Add C-State metrics from the PCU PMU
+ for Intel
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,69 +92,61 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Breakdown directory hit, misses and requests. The implementation uses
-the M2M and CHA PMUs present in server models broadwellde, broadwellx
-cascadelakex, emeraldrapids, icelakex, sapphirerapids and skylakex.
+Use occupancy events fixed in:
+https://lore.kernel.org/lkml/20240226201517.3540187-1-irogers@google.com/
+
+Metrics are at the socket level referring to cores, not hyperthreads.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/intel_metrics.py | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ tools/perf/pmu-events/intel_metrics.py | 27 ++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index 782bc7f8926b..808e006addda 100755
+index 808e006addda..d822352139f2 100755
 --- a/tools/perf/pmu-events/intel_metrics.py
 +++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -800,6 +800,41 @@ def IntelLdSt() -> Optional[MetricGroup]:
+@@ -800,6 +800,32 @@ def IntelLdSt() -> Optional[MetricGroup]:
    ], description = "Breakdown of load/store instructions")
  
  
-+def UncoreDir() -> Optional[MetricGroup]:
++def UncoreCState() -> Optional[MetricGroup]:
 +  try:
-+    m2m_upd = Event("UNC_M2M_DIRECTORY_UPDATE.ANY")
-+    m2m_hits = Event("UNC_M2M_DIRECTORY_HIT.DIRTY_I")
-+    # Turn the umask into a ANY rather than DIRTY_I filter.
-+    m2m_hits.name += "/umask=0xFF,name=UNC_M2M_DIRECTORY_HIT.ANY/"
-+    m2m_miss = Event("UNC_M2M_DIRECTORY_MISS.DIRTY_I")
-+    # Turn the umask into a ANY rather than DIRTY_I filter.
-+    m2m_miss.name += "/umask=0xFF,name=UNC_M2M_DIRECTORY_MISS.ANY/"
-+    cha_upd = Event("UNC_CHA_DIR_UPDATE.HA")
-+    # Turn the umask into a ANY rather than HA filter.
-+    cha_upd.name += "/umask=3,name=UNC_CHA_DIR_UPDATE.ANY/"
++    pcu_ticks = Event("UNC_P_CLOCKTICKS")
++    c0 = Event("UNC_P_POWER_STATE_OCCUPANCY.CORES_C0")
++    c3 = Event("UNC_P_POWER_STATE_OCCUPANCY.CORES_C3")
++    c6 = Event("UNC_P_POWER_STATE_OCCUPANCY.CORES_C6")
 +  except:
 +    return None
 +
-+  m2m_total = m2m_hits + m2m_miss
-+  upd = m2m_upd + cha_upd # in cache lines
-+  upd_r = upd / interval_sec
-+  look_r = m2m_total / interval_sec
++  num_cores = Literal("#num_cores") / Literal("#num_packages")
 +
-+  scale = 64 / 1_000_000 # Cache lines to MB
-+  return MetricGroup("lpm_dir", [
-+      Metric("lpm_dir_lookup_rate", "",
-+             d_ratio(m2m_total, interval_sec), "requests/s"),
-+      Metric("lpm_dir_lookup_hits", "",
-+             d_ratio(m2m_hits, m2m_total), "100%"),
-+      Metric("lpm_dir_lookup_misses", "",
-+             d_ratio(m2m_miss, m2m_total), "100%"),
-+      Metric("lpm_dir_update_requests", "",
-+             d_ratio(m2m_upd + cha_upd, interval_sec), "requests/s"),
-+      Metric("lpm_dir_update_bw", "",
-+             d_ratio(m2m_upd + cha_upd, interval_sec), f"{scale}MB/s"),
++  max_cycles   = pcu_ticks * num_cores;
++  total_cycles = c0 + c3 + c6
++
++  # remove fused-off cores which show up in C6/C7.
++  c6 = Select(max(c6 - (total_cycles - max_cycles), 0),
++              total_cycles > max_cycles,
++              c6)
++
++  return MetricGroup("lpm_cstate", [
++      Metric("lpm_cstate_c0", "C-State cores in C0/C1", d_ratio(c0, pcu_ticks), "cores"),
++      Metric("lpm_cstate_c3", "C-State cores in C3", d_ratio(c3, pcu_ticks), "cores"),
++      Metric("lpm_cstate_c6", "C-State cores in C6/C7", d_ratio(c6, pcu_ticks), "cores"),
 +  ])
 +
 +
- def UncoreMem() -> Optional[MetricGroup]:
+ def UncoreDir() -> Optional[MetricGroup]:
    try:
-     loc_rds = Event("UNC_CHA_REQUESTS.READS_LOCAL", "UNC_H_REQUESTS.READS_LOCAL")
-@@ -923,6 +958,7 @@ def main() -> None:
+     m2m_upd = Event("UNC_M2M_DIRECTORY_UPDATE.ANY")
+@@ -958,6 +984,7 @@ def main() -> None:
        IntelMlp(),
        IntelPorts(),
        IntelSwpf(),
-+      UncoreDir(),
++      UncoreCState(),
+       UncoreDir(),
        UncoreMem(),
        UncoreMemBw(),
-   ])
 -- 
 2.51.0.318.gd7df087d1a-goog
 
