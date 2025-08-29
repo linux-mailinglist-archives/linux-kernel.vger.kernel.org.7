@@ -1,233 +1,195 @@
-Return-Path: <linux-kernel+bounces-791658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7125FB3B9C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B0BB3B9C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 936811C821D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D6EA00454
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E384B3128AD;
-	Fri, 29 Aug 2025 11:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8976314A62;
+	Fri, 29 Aug 2025 11:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YTCsIlm4"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXKjOj7A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130DD274FFE;
-	Fri, 29 Aug 2025 11:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D3C274FFE;
+	Fri, 29 Aug 2025 11:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465954; cv=none; b=PcLMAkIcm7hqLYYyqgIVo9JIdwc5EfnCzs75wxCAi5dUIqQI11d4/RjGJBauFHuoKwnQ3OqstZSMuprR1xxxP3sGZrtOyXxFivWAgCFaBnzrrOXmPEepdxkRzlL0HvnFht+ibACXJTWI1G1ryrHguO/duDyZjowz/s/GILMkmco=
+	t=1756465960; cv=none; b=P0agqy/WlNIxQeJg3kBGDHl38krHNb2LYpbv9Z4vtw2VQgf4BceYF5g8cVAYhy6srng9OJwYovwvXhrfaf9uTDA93XCHtTzyJsVTc5pEcs4wl+xxX0bCVKeNYJFIm42W6prb5JcolJSjtLLybyPpoKKkP2pYwu2wLkQq/VTMObM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465954; c=relaxed/simple;
-	bh=Y8bwiSti3JBlICHO7tCphEEi7NihO8VDLk6Cnf4odOo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VDbgVAG0EczCt9Jwn3AU1SEZIdxPPFzu5O0VKo9Y3SkIL6KaKyp1OpKuwrONTwj8b8gnMLumf4KOjRFBhtS5lrO/tbvkNFTSkyD5CxDN6hi791G/O+QHUvDgr7rPsrGi59JXZ/OOeZfl8sUto0M9D79FSQ3NFp41kqaxEk13VvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YTCsIlm4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.102] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4EA6A47A8;
-	Fri, 29 Aug 2025 13:11:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756465877;
-	bh=Y8bwiSti3JBlICHO7tCphEEi7NihO8VDLk6Cnf4odOo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=YTCsIlm4i6OdVRm51zb9JB4LWxnnZ7CWsA63cB84sGkLItABkMojhJyAd+buqI0Qd
-	 JNZM6uXpol5rfc+Wzedks3iPfKI+GNfvxY8v+TizGGuVXTWa+bM5go0itElmuP68b6
-	 Yxrh5+TL3dJ8C6MzPnREd18CzDCqJXzeVG4rYM/k=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Fri, 29 Aug 2025 13:12:14 +0200
-Subject: [PATCH v2] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
+	s=arc-20240116; t=1756465960; c=relaxed/simple;
+	bh=Qlwzayq/Pf0Medk24NErKYNLUDYes+Gcgm2LBjkXTgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8XmgDSf4fxPhm+/kNbD1bM+4Chsq3flZNxV2CJHjOAj2Tb2JlHQGgmjhRUVbQZPWJdyO0jxTZYyaRbYiUVQgNTGcDrbuERWNj9XmdY/qjlY23uGfzYYsiTa0eR/wBx0xy+67BGcIhPIW4v9cKbmfZ00FX2PmjWhq86C/TgQ7+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXKjOj7A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92AA0C4CEF0;
+	Fri, 29 Aug 2025 11:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756465959;
+	bh=Qlwzayq/Pf0Medk24NErKYNLUDYes+Gcgm2LBjkXTgk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=tXKjOj7AG876DMc52h/44P4naRLGEWgfjFATVKZTrYKtuvR98EqkPj9hVHuttvdpu
+	 W/H8boSrZ5l8MMl5pZzlbnC8k1x+St3TM17LDMXbcQwB91UYD9fFG5E0GhVdfqaChY
+	 bYf++Fo2NGJusO5BUUCgEZ8821b4yPAGkcJAAF30aE8X60wwg5pUBK6DA1j8r0BVu7
+	 1h/JaY5nT8CEu5T3q5W2o3Frw2sQ2M6507hyd++IR/sIU0aWESlPA2uo/+J+1zjn/C
+	 HooUW/AXwtIOqf424wiaXR57fFBTPXN5gVsTaJVAF9CfXnk0RPzRMkSkp68yAriyEp
+	 QDEjGe94zDWQw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4234DCE0B2A; Fri, 29 Aug 2025 04:12:39 -0700 (PDT)
+Date: Fri, 29 Aug 2025 04:12:39 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: menglong.dong@linux.dev
+Cc: Steven Rostedt <rostedt@goodmis.org>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+Message-ID: <89796a20-5fe8-4ec9-a192-6b8c58f8388a@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
+ <20250828222357.55fab4c2@batman.local.home>
+ <2396899.ElGaqSPkdT@7940hx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIAA2LsWgC/3WNOw7CMBAFrxJtjVHWELCocg+Uwp812YIYecGCR
- Lk7Jj3ljPTmLSCUmQQuzQKZCgunqYLeNeBHO91IcagMutVda/RJ5bnoUfn8UsIziTqcMcbOGtM
- ahLp6ZIr83orXofLI8kz5sx0U/Nn/rYIKVXAh+u7onEXsOZCVNLlkc9j7dIdhXdcv2bpN7bUAA
- AA=
-X-Change-ID: 20250826-rzv2h-cru-sizes-371ff5a88081
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans Verkuil <hverkuil@kernel.org>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
- Biju Das <biju.das.jz@bp.renesas.com>, 
- Daniel Scally <dan.scally+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5186;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=2pfngHJTdRDGvooxwqJtLF2HmUa7560zFiB0NgwNxto=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBosYsVi4PpM16VCITepZl3ETzN6/gFf2cdRGR8M
- m5niG/Yt0qJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaLGLFQAKCRByNAaPFqFW
- PE3pD/9IE5Yow/poP0YKTw94NKmxpK1NFAltSlG6JY8Y91Uk3oD8b+Mu7c23kxJG8fAjpqx4siS
- 4RLu+u3jjZZ3vMWN68b3upmDzLf/nSSuanHJtbhgVHF7Jm8o3tYVCyov3J2BS6pnCx9c5oDODCh
- tGmrSIIoIOPlJNwACH7IuBZsYfyHDGePnfRYQb9vMJqYUw2TAK93XrGzvlGUBLzkE94r8H1I5rW
- CR2J27vYOSG2JoqNIzdXW9LogjVpAaHNOc/K9fB8KHrq8jhh3R+kIEqMIBQWuzmFnBCDZ+nXH4E
- vCJ+FfNbsaMiyM11etup1GiU6S7WsnuXwsuVFzGpwfkE7e45RXj93Zy2Z8qMeTjnpxcWYgNW3Qm
- k3qTtAOr2UKi+b9Dv/YHIl1qmplo4ZxQ5pOzokEN2hjRPXm6aR8UTJDCfSmIPXMTsVneP1C2+Oi
- PED2dsVa9P4/SYJ8hoQzs6hZmGt7Jk5w0TBte5hmgIZSpw8AcrEXeWJtTKjQuf80AIMz2MunHVc
- fscGRNzsdM0c4MLemLDJ2sTSZ2hCunAsG5o52ZyChLzREmoB2p5QUiiG1HdIedqjiPwTQqngNDR
- dEKNf30+DdPonYedGf+dws2KFVW+gtuXEYm3aaykBgj9nixcNVb7w2TYP9ReVUNLhQN6bAo65k1
- mVa+bb7ZLG0He3g==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2396899.ElGaqSPkdT@7940hx>
 
-From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+On Fri, Aug 29, 2025 at 10:49:46AM +0800, menglong.dong@linux.dev wrote:
+> On 2025/8/29 10:23 Steven Rostedt <rostedt@goodmis.org> write:
+> > On Fri, 29 Aug 2025 10:14:36 +0800
+> > Menglong Dong <dongml2@chinatelecom.cn> wrote:
+> > 
+> > > rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
+> > > is used in rhltable_lookup(), which causes suspicious RCU usage warning:
+> > > 
+> > >   WARNING: suspicious RCU usage
+> > >   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
+> > >   -----------------------------
+> > >   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+> > >   ......
+> > >   stack backtrace:
+> > >   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
+> > >   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
+> > >   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+> > >   Call Trace:
+> > >    <TASK>
+> > >    dump_stack_lvl+0x7c/0x90
+> > >    lockdep_rcu_suspicious+0x14f/0x1c0
+> > >    __rhashtable_lookup+0x1e0/0x260
+> > >    ? __pfx_kernel_clone+0x10/0x10
+> > >    fprobe_entry+0x9a/0x450
+> > >    ? __lock_acquire+0x6b0/0xca0
+> > >    ? find_held_lock+0x2b/0x80
+> > >    ? __pfx_fprobe_entry+0x10/0x10
+> > >    ? __pfx_kernel_clone+0x10/0x10
+> > >    ? lock_acquire+0x14c/0x2d0
+> > >    ? __might_fault+0x74/0xc0
+> > >    function_graph_enter_regs+0x2a0/0x550
+> > >    ? __do_sys_clone+0xb5/0x100
+> > >    ? __pfx_function_graph_enter_regs+0x10/0x10
+> > >    ? _copy_to_user+0x58/0x70
+> > >    ? __pfx_kernel_clone+0x10/0x10
+> > >    ? __x64_sys_rt_sigprocmask+0x114/0x180
+> > >    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
+> > >    ? __pfx_kernel_clone+0x10/0x10
+> > >    ftrace_graph_func+0x87/0xb0
+> > > 
+> > > Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
+> > > can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
+> > > However, it's not a common usage :/
+> > 
+> > So this is needed even though it's called under preempt_disable().
+> 
+> It is needed when the lock debug configs are enabled.
+> 
+> > 
+> > Paul, do we need to add an rcu_read_lock() because the code in rht
+> > (rhashtable) requires RCU read lock?
+> > 
+> > I thought that rcu_read_lock() and preempt_disable() have been merged?
+> 
+> Maybe we can do some adjustment do rcu_read_lock_held_common()
+> like this:
+> 
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index c912b594ba98..280fa4d2fc79 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -114,6 +114,10 @@ static bool rcu_read_lock_held_common(bool *ret)
+>                 *ret = false;
+>                 return true;
+>         }
+> +       if (!preemptible()) {
+> +               *ret = true;
+> +               return true;
+> +       }
+>         return false;
+>  }
+>  
+> @@ -123,7 +127,7 @@ int rcu_read_lock_sched_held(void)
+>  
+>         if (rcu_read_lock_held_common(&ret))
+>                 return ret;
+> -       return lock_is_held(&rcu_sched_lock_map) || !preemptible();
+> +       return lock_is_held(&rcu_sched_lock_map);
+>  }
+>  EXPORT_SYMBOL(rcu_read_lock_sched_held);
+>  #endif
+> 
+> I think it's a bad idea, as !preemptiable() has different semantic
+> with rcu_read_lock() :(
 
-The CRU version on the RZ/V2H SoC supports larger input sizes
-(4096x4096) compared to the version on the RZ/G2L (2800x4095).
+Especially given the definition of preemptible() within kernels built
+with CONFIG_PREEMPT_COUNT=n...
 
-Store the per-SoC min/max sizes in the device match info and use them
-in place of the hardcoded ones.
+							Thanx, Paul
 
-While at it, use the min sizes reported by the info structure to replace
-the RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT macros.
-
-Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
----
-Changes in v2:
-- Use the size values in the rzg2l_csi2_info instea of going through
-  macros
-- Use min_width/min_height to initialize the format and drop
-  RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT
-- Add Tommaso's tag
-- Link to v1: https://lore.kernel.org/r/20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com
----
- .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 41 ++++++++++++++--------
- 1 file changed, 26 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-index 1520211e74185fea3bca85f36239254f6b4651db..183598d6cf0b255f779b4398e027d626ad1f3c1b 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-@@ -96,13 +96,6 @@
- 
- #define VSRSTS_RETRIES			20
- 
--#define RZG2L_CSI2_MIN_WIDTH		320
--#define RZG2L_CSI2_MIN_HEIGHT		240
--#define RZG2L_CSI2_MAX_WIDTH		2800
--#define RZG2L_CSI2_MAX_HEIGHT		4095
--
--#define RZG2L_CSI2_DEFAULT_WIDTH	RZG2L_CSI2_MIN_WIDTH
--#define RZG2L_CSI2_DEFAULT_HEIGHT	RZG2L_CSI2_MIN_HEIGHT
- #define RZG2L_CSI2_DEFAULT_FMT		MEDIA_BUS_FMT_UYVY8_1X16
- 
- enum rzg2l_csi2_pads {
-@@ -137,6 +130,10 @@ struct rzg2l_csi2_info {
- 	int (*dphy_enable)(struct rzg2l_csi2 *csi2);
- 	int (*dphy_disable)(struct rzg2l_csi2 *csi2);
- 	bool has_system_clk;
-+	unsigned int min_width;
-+	unsigned int min_height;
-+	unsigned int max_width;
-+	unsigned int max_height;
- };
- 
- struct rzg2l_csi2_timings {
-@@ -418,6 +415,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info = {
- 	.dphy_enable = rzg2l_csi2_dphy_enable,
- 	.dphy_disable = rzg2l_csi2_dphy_disable,
- 	.has_system_clk = true,
-+	.min_width = 320,
-+	.min_height = 240,
-+	.max_width = 2800,
-+	.max_height = 4095,
- };
- 
- static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
-@@ -542,6 +543,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info = {
- 	.dphy_enable = rzv2h_csi2_dphy_enable,
- 	.dphy_disable = rzv2h_csi2_dphy_disable,
- 	.has_system_clk = false,
-+	.min_width = 320,
-+	.min_height = 240,
-+	.max_width = 4096,
-+	.max_height = 4096,
- };
- 
- static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
-@@ -631,6 +636,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_state *state,
- 				 struct v4l2_subdev_format *fmt)
- {
-+	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
- 	struct v4l2_mbus_framefmt *src_format;
- 	struct v4l2_mbus_framefmt *sink_format;
- 
-@@ -653,9 +659,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
- 	sink_format->ycbcr_enc = fmt->format.ycbcr_enc;
- 	sink_format->quantization = fmt->format.quantization;
- 	sink_format->width = clamp_t(u32, fmt->format.width,
--				     RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX_WIDTH);
-+				     csi2->info->min_width,
-+				     csi2->info->max_width);
- 	sink_format->height = clamp_t(u32, fmt->format.height,
--				      RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_MAX_HEIGHT);
-+				     csi2->info->min_height,
-+				     csi2->info->max_height);
- 	fmt->format = *sink_format;
- 
- 	/* propagate format to source pad */
-@@ -668,9 +676,10 @@ static int rzg2l_csi2_init_state(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_state *sd_state)
- {
- 	struct v4l2_subdev_format fmt = { .pad = RZG2L_CSI2_SINK, };
-+	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
- 
--	fmt.format.width = RZG2L_CSI2_DEFAULT_WIDTH;
--	fmt.format.height = RZG2L_CSI2_DEFAULT_HEIGHT;
-+	fmt.format.width = csi2->info->min_width;
-+	fmt.format.height = csi2->info->min_height;
- 	fmt.format.field = V4L2_FIELD_NONE;
- 	fmt.format.code = RZG2L_CSI2_DEFAULT_FMT;
- 	fmt.format.colorspace = V4L2_COLORSPACE_SRGB;
-@@ -697,16 +706,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
- 				      struct v4l2_subdev_state *sd_state,
- 				      struct v4l2_subdev_frame_size_enum *fse)
- {
-+	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-+
- 	if (fse->index != 0)
- 		return -EINVAL;
- 
- 	if (!rzg2l_csi2_code_to_fmt(fse->code))
- 		return -EINVAL;
- 
--	fse->min_width = RZG2L_CSI2_MIN_WIDTH;
--	fse->min_height = RZG2L_CSI2_MIN_HEIGHT;
--	fse->max_width = RZG2L_CSI2_MAX_WIDTH;
--	fse->max_height = RZG2L_CSI2_MAX_HEIGHT;
-+	fse->min_width = csi2->info->min_width;
-+	fse->min_height = csi2->info->min_height;
-+	fse->max_width = csi2->info->max_width;
-+	fse->max_height = csi2->info->max_height;
- 
- 	return 0;
- }
-
----
-base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
-
-Best regards,
--- 
-Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
+> Thanks!
+> Menglong Dong
+> 
+> > 
+> > -- Steve
+> > 
+> > 
+> > > 
+> > > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
+> > > Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
+> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > ---
+> > >  kernel/trace/fprobe.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > > index fb127fa95f21..fece0f849c1c 100644
+> > > --- a/kernel/trace/fprobe.c
+> > > +++ b/kernel/trace/fprobe.c
+> > > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > >  	if (WARN_ON_ONCE(!fregs))
+> > >  		return 0;
+> > >  
+> > > +	rcu_read_lock();
+> > >  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> > > +	rcu_read_unlock();
+> > >  	reserved_words = 0;
+> > >  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> > >  		if (node->addr != func)
+> > 
+> > 
+> > 
+> 
+> 
+> 
+> 
 
