@@ -1,164 +1,103 @@
-Return-Path: <linux-kernel+bounces-791854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A604B3BCD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:51:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1959B3BCE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAF8A454EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64647170E60
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A99131CA72;
-	Fri, 29 Aug 2025 13:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1342E2EA170;
+	Fri, 29 Aug 2025 13:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rVjNC926";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTHyyD98"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1pJ2Mfy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391431B102;
-	Fri, 29 Aug 2025 13:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0182E3360
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756475485; cv=none; b=KUr50bhq1M9WkCTGWjIWGgbZ+wYPg72WA9JZgaE7GPyjVzfXkbop2ALkrXesx8LVWhxPQMev3cQg428Uj+VMTno2riibE2ZjBzFMB6AfgV2ctSnfg6iFknYQcJq7P0PlTC843Tastvhp7fu9uxAq4+RzZ+k/zLLy5QjLoCdEZ4E=
+	t=1756475629; cv=none; b=fsZ6Kqob8cIRc4tGeuPH55nfkLXzhJlDh8KI0xToR+v1f1wwmLuGLruwgviB2ekw+vR9XTJYZyJzU+Ez9DhloR6ajyWf4yWYFarUVYoG5+p3OGScqbMclS33A7w44BhAn0iTKiBtGzFTPB2/lqNDWaRPW8w8+4iv7g4xjbNTNhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756475485; c=relaxed/simple;
-	bh=z5HAKW/WuaBA6HoTNUzZGhB3Vxa+tJpINSGsbezPb9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UrRE0Q+ptE1tI7wCKXEeCgDGu/XjHoGWoleV1xGgy1wSDn8zZA0VOAXRyh2lFyB/qVvQSqQ2WFaRWqe9ASlficuhFsalOL5ltSX5lBE1VYgjS54o7r/p98Ub46KmQkFoXJBRB7vCp+5Bi8mLae51mE8t3oB9FeScwMKu27EipiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rVjNC926; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTHyyD98; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 29 Aug 2025 15:51:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756475477;
+	s=arc-20240116; t=1756475629; c=relaxed/simple;
+	bh=kAMW7dNnaq0OCstKrPcJqnF8T5RqOsJGJg2eHdFJdfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sgfWCgnyWjpSIUZHJMkOrMyDLQRFd0VcF1wdEJMXE3MXsuhce21ANryjSb09e2Q/9SNpIaeVKOav78GKBRCAU349e54yeR4YeUU0h78volm6zxgvAFo84v16wWqSezmcfYhdzdOxQRK1fLfdLFVN6fBRa3H/mPaHczlhBMghzGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1pJ2Mfy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756475627;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p3JOuK5ti/UvYKbKMwftT9sqSXkwop/LzA32FuAwASU=;
-	b=rVjNC926FEoqThOc8Y0M3Eey1nMIiNt/ebO1CfDst8Ko/27xL4Jk9MjjFbDSmrtLvWnZuY
-	Jg5+Y7LNRuIwmg0TExbeQOydzkFcKR0mW0gEkNk5ugThLk+zI0NSVgjDmpHWc/u9Az6m17
-	+/J3iClw1Id97UWtC/R4z3CieSJEJheIPOEyYM6kpVsP4p/N7sfrzZey1JG1aUiaTo96IR
-	l4vBCGmIN1PtFTXc8IDbKA5fRxxV1cNS3cVKhIDSapnK3Pe1sbxDSww8QA2XboJaw1YNBQ
-	4o/RWCXxymqVvJ3VqYfns4az2gBZ7dToHAGwYyksLd1jhddszvO2IsI8vkrKWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756475477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3JOuK5ti/UvYKbKMwftT9sqSXkwop/LzA32FuAwASU=;
-	b=dTHyyD98i1LsbVoxOK+4zfCHwcWUXkN6R2GkPnTbozttUC9Iv69/ehkCJM2foCnIEDz0ov
-	HMHgxowEr9aiIcAw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Andreas Larsson <andreas@gaisler.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-Message-ID: <20250829154636-bed204b6-1014-427d-9615-ee79b24b57f9@linutronix.de>
-References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
- <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
- <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
- <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
- <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
- <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
- <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
- <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
+	bh=kAMW7dNnaq0OCstKrPcJqnF8T5RqOsJGJg2eHdFJdfc=;
+	b=G1pJ2MfymrLMfdoeQruowk61aWmC8HHhJoxFIiUtLVeEcVGCID1TOz4f69CtmBEK9m1YOE
+	lakGYd+qPOtudySc5tSm6sSo/UIq147smy2i9pFdSag7RestWG9qcqrr577M6Ou+yYcn5M
+	5dLeU51tEw5+xhRzHAv0TCIFKgDCbgo=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-SDrnZQQwN5OhSr2DhRgxxA-1; Fri, 29 Aug 2025 09:53:44 -0400
+X-MC-Unique: SDrnZQQwN5OhSr2DhRgxxA-1
+X-Mimecast-MFC-AGG-ID: SDrnZQQwN5OhSr2DhRgxxA_1756475623
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-336b13923d4so7098741fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:53:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756475623; x=1757080423;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kAMW7dNnaq0OCstKrPcJqnF8T5RqOsJGJg2eHdFJdfc=;
+        b=QJow9hBMj8RvQBuJUTlAOR8+tGB+GjWrQ1+Zs0DPJANwc9rZRIn76M0LLlOLFGhj+v
+         veIwlzBROik9fP93ys7H7ubfAGsYXVfQsaSlQ34ML/q8dHKECvr+bUn1DzWHlJTBNIPY
+         nn9M2FYDJ9Bc3u6rhZmF1hhQQFa8yWq4HqW3XHfKgt9woE3P0yyPEXC0MGtiyfXOyK2q
+         3KMrStSZycKGWGc9BDasPMKlfnh9JddvMDhNJvZ0iwNKABhyB/geNvpKJRm3vMva/gOF
+         pCVhai7gdixkhicMjbWt/HDt0trRijjcwPpCe1nQcwaAzOOYRlPRFh9hXVLrLLaYrFZA
+         5BSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMfqfypvCPBn4YkRfGbw+NVA62iN/RvQ64ELBeUER0v+GpD6ToRWx7V0eDbyanSlLaxDi6nzSb7KXTVSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDAQMOhR3nwkjPbNf8mqMBrqZmJSY/crSax0ahILg1jk8u7DvC
+	6qmevWiKJ6ye8pKwzaj1RaKE8KKmxHe4mlfsUB6Ca26fNDDaNbUuctDfYnojzKQky9a0hHJosKY
+	rfBwf31dzJRVrb1m7dSOvl0pZE+0EEJVUUq8/E+37cpHs8PzVUF6WqBRHuJXHGvQLPlRW55fO17
+	msCd8AmFDYjDi3oe3gPYjuE4g+u3QhyTr1oi0zR3gc
+X-Gm-Gg: ASbGnctI5SnE6fu8hiUVPzZeK4vGhu2HCvkj0zYoWuki35UlCPfxdlzQGhgIPDNL/AO
+	3neQfY0fb2AFuLSXwfWKG6QMkCKqOLjmPi2v4MxI78/R3jjlQ9Wy1C6T900qytH35y3UHGpKoXj
+	SgGOLIsTYak+o7nqjrQJDMVvxZAcRLFpzrf2YYgEJM1p8RnyLkgUV0iXY=
+X-Received: by 2002:a05:651c:1a0c:b0:336:a38e:486b with SMTP id 38308e7fff4ca-336a38e4e6fmr19340091fa.37.1756475623155;
+        Fri, 29 Aug 2025 06:53:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFG3EFw17S3IWQD0fjsoX++MGPxq6vbq+IqfmVOosc8Y2GEhrGtIUTfmeh6bjQcMk5h81vgu0ji4w9Vo0JiGeI=
+X-Received: by 2002:a05:651c:1a0c:b0:336:a38e:486b with SMTP id
+ 38308e7fff4ca-336a38e4e6fmr19339981fa.37.1756475622757; Fri, 29 Aug 2025
+ 06:53:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
+References: <20250829110749.500571-1-226562783+SigAttilio@users.noreply.github.com>
+In-Reply-To: <20250829110749.500571-1-226562783+SigAttilio@users.noreply.github.com>
+From: Alexander Aring <aahringo@redhat.com>
+Date: Fri, 29 Aug 2025 09:53:30 -0400
+X-Gm-Features: Ac12FXxJEwvfKiYu3k-PtLRK81E2-L6NLWxERX13IrmH1QdrSFSv6JEQyIa8v4M
+Message-ID: <CAK-6q+js0y9Pnubg0ev3_GXs8Fa4KYU=nNP5r=FBatuEAUhJkw@mail.gmail.com>
+Subject: Re: [PATCH] fix(dlm): handle unlock/cancel during deferred lock messages
+To: Alessio Attilio <alessio.attilio.dev@gmail.com>
+Cc: David Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Alessio Attilio <226562783+SigAttilio@users.noreply.github.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 29, 2025 at 03:41:22PM +0200, Andreas Larsson wrote:
-> On 2025-08-29 12:37, Thomas Weißschuh wrote:
-> > On Fri, Aug 29, 2025 at 12:02:39PM +0200, Andreas Larsson wrote:
-> >> On 2025-08-28 17:38, Andreas Larsson wrote:
-> >>> and with all of them applied I got: 
-> >>>
-> >>> ----------------%<----------------
-> >>> [    1.849344] Run /init as init process
-> >>> [    1.851309] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-> >>> [    1.851339] CPU: 4 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc1+ #3 VOLUNTARY
-> >>> [    1.851363] Call Trace:
-> >>> [    1.851374] [<0000000000436524>] dump_stack+0x8/0x18
-> >>> [    1.851400] [<00000000004291f4>] vpanic+0xdc/0x320
-> >>> [    1.851420] [<000000000042945c>] panic+0x24/0x30
-> >>> [    1.851437] [<00000000004844a4>] do_exit+0xac4/0xae0
-> >>> [    1.851458] [<0000000000484684>] do_group_exit+0x24/0xa0
-> >>> [    1.851476] [<0000000000494c60>] get_signal+0x900/0x940
-> >>> [    1.851495] [<000000000043ecb8>] do_notify_resume+0xf8/0x600
-> >>> [    1.851514] [<0000000000404b48>] __handle_signal+0xc/0x30
-> >>> [    1.852291] Press Stop-A (L1-A) from sun keyboard or send break
-> >>> [    1.852291] twice on console to return to the boot prom
-> >>> [    1.852310] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
-> >>> ----------------%<----------------
-> >>>
-> >>> but given that I don't have the kernel anymore I'm starting to
-> >>> question myself if that run was really with the same base
-> >>> commit. I'll do a rebuild and see.
-> >>
-> >> I found out that my previous kernel installation for the kernel with the first 8
-> >> patches was a broken mess. Sorry about the confusion. With that sorted out and a
-> >> rebuilt kernel with all patches, the failure above is the one I get for both 8
-> >> and 13 patches, and it is repeatable.
-> > 
-> > This splat means that init got killed by SIGSEGV, so that makes some sense in
-> > the context of the code being touched. Then let's focus on patch 8 for now.
-> > 
-> > In the meantime I installed a full Debian, but the bug is still not
-> > reproducible in QEMU.
-> > 
-> > * Did you use the SMP or UP kernel config from Debian?
-> 
-> I based my config on the SMP config that was in use on the system.
-> Produces an tremendous amount of modules unfortunately, so I'll have
-> to cut down in the config. Right now the turnaround time for testing
-> a new kernel with this setup for this system is quite bad.
+Hi,
 
-Ack. I am aware :-(
+What is this patch supposed to do?
 
-> > * Can the fixed up kernel now run on QEMU?
-> 
-> No, there is something else going on with my QEMU setup, unrelated to
-> these patches.
+Your subject states something as a fix for unlock/cancel operation.
+What is the problem you encountered there?
 
-Ack. FWIW for me it works (for sun4u) with my distro's QEMU 10.0.3.
+- Alex
 
-> > * Which toolchain are you using?
-> 
-> A toolchain built in Buildroot with GCC 13.2.0. Old kernel headers, but
-> I only use it to build kernels. Do you think the kernel headers of the
-> toolchain would play a role for vDSO?
-
-No, the headers from the toolchain are not used. It could have been that you are
-using a wildly different compiler. But I am also using GCC 13.2.0, although from
-the kernel.org crosstools.
-
-> > * This is a 64-bit userland?
-> 
-> Yes.
-
-Ack.
-
-> > What difference does the following change make:
-
-(...)
-
-> I will check.
-
-Thanks!
 
