@@ -1,106 +1,190 @@
-Return-Path: <linux-kernel+bounces-792388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E327B3C333
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6399B3C33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837F75A199C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050C73B59A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53172367BA;
-	Fri, 29 Aug 2025 19:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A07C244675;
+	Fri, 29 Aug 2025 19:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3YB22hFK"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzRu9aCt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B52417F2
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA852417F2;
+	Fri, 29 Aug 2025 19:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496208; cv=none; b=ZhFEt9bg20jmFiVO39pe1kfptD4UlqX8+t5eBPjfen+FpoSeevVvjm/0FMsqPchEKXJNuq/Cw+fUFRUswNBNaj7iV9uutAdZeyc16a0EFXLoMuRRBGvWYfvGFz5M6n7vfVof+xLA5d6CJZ3rLMqa83CvqKaZTjUM90DudxNPYkc=
+	t=1756496270; cv=none; b=aH3eSWJk/20yfhxlkQHVqtEkxtndNivf5xeuqeCHvdl/aEJFNkbCY7kH8pH14CspTvcw2CkzlUiWmVZ+90nchbN2JEXthL0ma5+9dEYT+LspTdERqOPmdyFvkF3hiTLC0VB3KCCCny4z0/0BCHzzYrpLYhoJ2z98Y13AC/D3q/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496208; c=relaxed/simple;
-	bh=j9/zs3DzwPfXvdpJMbMm17iNjJOHTALKsWVQf588f/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UJmIjZdHcyQkiyQzzCfQ1EeKime7wDyZKLJly3HakvMgl/jdj+2NuHq3rbw3ZyCcmoeTvfirkUmhcml962sgZ76l4bsmMoZtK3Ujez8rGWDDw2KtP152BJaDP2rq5ej9/adn/LulOkSL+V6Hx0KQex3D8GcMD1Q2/ScRdtUowYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3YB22hFK; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-74381df387fso905535a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756496205; x=1757101005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=l5wFPgG8+kGlbWw0vVHwkPA8651tLivp0zt7xRaHtk8=;
-        b=3YB22hFK6t/tWAsBKlKwIe+y4BqHv9b7EEKyPgQ10U2aXjcFWuSL3I1yW8D6Hw0AW+
-         krM3S853kjMEqZVJpOki2Tu9gQIpM04wBzvzlulmLmOnE9i6Hw4B9R9YGU+z1NJGh0Hm
-         tMXrn6++BztBP+yPkmhwaF6NMQvNBu+iiQn12IDQEQYSdxNRq7kClOOp95Clvh63pxn/
-         O92G+SPrSuVMmgAe0BXGuECloqoeD61rEAf8+uhMDateSrvnCFYeCmSRLqN/Rv5e+fjp
-         5WHTABzYyAjls8twh+teG7hVJxDaTVZesukl78/MVQHpehJw6gA1HbA2IpjYkk+v8lhc
-         Py8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756496205; x=1757101005;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l5wFPgG8+kGlbWw0vVHwkPA8651tLivp0zt7xRaHtk8=;
-        b=LEeo+nfdQ86Rt12ivdH/J6nggFhJHCa4fCYWWEYR9FRmXAAbwCXTQvdRmYu9U5rgmV
-         PFHhPY8/PNi9QNDFjaWZdNJfomtL47T+pKKt3IPl0jDlHiuBTDfcy1ltXI/AKwXorg+p
-         NYicMn8yYZ/QCgyuXpE5ryF+jw71WvalNx5Z8Gy3St1Je7rH39mCWqQ7R3Ykifj5ZLfr
-         1VLkKTQI72VaMHKna3cIf5o9RozpZw2o2n/NsK1/15xn1tJ8EBJOIRYeHlrwqvqngR51
-         pATIxSLYCsOoBFuuFSpJD7CBGrvE5QIghUQ2ikaLhbqpUXdcGKiCy3ar8cQw2v1wLUMB
-         u0qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaUii64OoFoPcDEf6gCXChACGIY/pAajBjQA2TwRauX8BFFQnEnGiQwtq7gogfLsRyL2a7sw2Y5UbkK+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIGbXO2tJg5YmvnX25qyK8lfpAvU6Dh/GetCRxC5OK/31zli4x
-	MdInSiSJblzEpcPajzta3+lEWMoBtiMU7J68XWLnOL1/vJr7qr6ZiB8tX8IHiiz0KKk=
-X-Gm-Gg: ASbGnctZOiNVW7S8uwHODxcU4BSETQZ9SeSB82LDmCLjahiaweemnjDwQsHiAWKtGmG
-	+ANYO8j1+JzcOWlXYl0TeVLufi+/SEJ6j2xzZyxeyLAxfxfNcXKhn0T1PcAm0Kln62In/QWwk5y
-	gQRIj4bqEs6mPzAgUXOruf1RvjzShimmbJE6reCEoA9VCgSHl5z/cDbcRKsKce5QvpKijuYnvax
-	fj5fXeJF7ps3dSrA917ieKtS26sYvHBuDqgAHgiKTKo5I4JDCql8lkbeDPwQ+nRZzojMl9FmuqL
-	uEnxruqGUC+FstlyybQDIh2F/yIx/Cmj8rUgKrM+8ZXfVLu28qWt8NMsPRw9pXU65Up12qAxo5q
-	uhUHz+Vl5Rgws9VSQ+nMt+o0uU8ZIMMv9Le86nxLg/xxsScCFuv2ppbG5fF5c9Ien/gfOz8//Xr
-	eePtPvqBLPTg==
-X-Google-Smtp-Source: AGHT+IGbpxjEich0l11Kif6Yw3AW0cxQTiekdjGQDOk7KPD7cDY7n0i8k2PCtI5oXon+AaezHGCtMg==
-X-Received: by 2002:a05:6808:2187:b0:437:d7b0:878c with SMTP id 5614622812f47-437d7b08d5dmr5070233b6e.20.1756496204928;
-        Fri, 29 Aug 2025 12:36:44 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afe69465sm1589729fac.28.2025.08.29.12.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 12:36:44 -0700 (PDT)
-Message-ID: <c4336dfa-e185-429c-8e96-99a3ea99322f@baylibre.com>
-Date: Fri, 29 Aug 2025 14:36:43 -0500
+	s=arc-20240116; t=1756496270; c=relaxed/simple;
+	bh=i20Sz1T7m8zUz/Av2KIJ4kNJkooG1BmO238nmGbVDV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hJUxepkG+EpNa305r8T1Jr3p+hi1fJx7T+uL081IZ77GvBARylAIOCvkcSQLPRkSNU5NMzcR3HVlH3qJFbSLFPhAdq3PMkeIlPOPnU+UqelgTYtgEQZqIrjcwNh8iFuV9ULqSdQg6iua98p0TcE+vy584TTczvTDsSMXbHIFdKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzRu9aCt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C77D9C4CEF1;
+	Fri, 29 Aug 2025 19:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756496269;
+	bh=i20Sz1T7m8zUz/Av2KIJ4kNJkooG1BmO238nmGbVDV0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lzRu9aCt11e1mGeUItKjCu4jPlv5ycErl5Yxlo11Zlu7UnVdpv0G+BILkjSpfYasg
+	 M2DnvZF4EYUwuXMtWEVbJIQcQolkRubCAhhx346tLs1zLEcfuCgZP2sxgulhPhPviO
+	 LMBZHZmXyNs0rDPGOMnQkd7CLHlnhzc0KIKeEQz5l1z1cYYADQmqb8vx+IBzNOAKr1
+	 Un5LWGxEnrEsbaPQjVARSnMH1uZcF0/FTiDIak/bP+wuaNkc4MTKp1GffhZFMEGfzl
+	 Oww4a3LP05vaexJPumHNexiGnqY2DCF4Bx+RUBzuIW9xMmx8FnovR1HwzqsE9lcqjF
+	 YI9d12v9kPPTQ==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7454a992f7dso1581013a34.3;
+        Fri, 29 Aug 2025 12:37:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJqVY3VsHa/hZs/1DrotGb3RM9NDZqpQlYo9Sd7vok2wGfD2RlvpGnoaztiXheHiHzhCzgYcP5AYBlFeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxI0sI6TR9VGyQvgwzKXa+LHRM7UJaoM+yT+nAefiAsHPjrgzl
+	IIZOysq3KzpicGsuwJEgboPGc9PgH7ERyqgr1RCpfJiW9XWl0XNknwSDw8LwpmcAa7jt3pwiRpB
+	269nkwfzNCkkL2RuQ6fFjcDkXfhfE+/w=
+X-Google-Smtp-Source: AGHT+IFm6Mu2WJ3hz5epv6PCQ9V0hqYFrlCod+fDORZtkCza47try1kmAdneoMpzt4KEtCqbIGwgZxOKfnWY6jc4ys8=
+X-Received: by 2002:a05:6830:6994:b0:744:f113:fef8 with SMTP id
+ 46e09a7af769-74500b95c22mr14413217a34.35.1756496269112; Fri, 29 Aug 2025
+ 12:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/6] iio: add IIO_ALTCURRENT channel type
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
- <20250829115227.47712-2-antoniu.miclaus@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250829115227.47712-2-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5939372.DvuYhMxLoT@rafael.j.wysocki>
+In-Reply-To: <5939372.DvuYhMxLoT@rafael.j.wysocki>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 29 Aug 2025 21:37:37 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gniATfcckSwfJBmLf9O345Ersw-TUMVFWTSWxTN5K+0A@mail.gmail.com>
+X-Gm-Features: Ac12FXykCuo6Gn7nzj5lYOQKbp9wSTKor5RmWoXoEPf2lGx_F_QbcDlanOhf7vw
+Message-ID: <CAJZ5v0gniATfcckSwfJBmLf9O345Ersw-TUMVFWTSWxTN5K+0A@mail.gmail.com>
+Subject: Re: [PATCH v1] cpuidle: governors: teo: Special-case nohz_full CPUs
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Christian Loehle <christian.loehle@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/29/25 6:41 AM, Antoniu Miclaus wrote:
-> Add support for IIO_ALTCURRENT channel type to distinguish AC current
-> measurements from DC current measurements. This follows the same pattern
-> as IIO_VOLTAGE and IIO_ALTVOLTAGE.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+On Thu, Aug 28, 2025 at 10:16=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> This change follows an analogous modification of the menu governor [1].
+>
+> Namely, when the governor runs on a nohz_full CPU and there are no user
+> space timers in the workload on that CPU, it ends up selecting idle
+> states with target residency values above TICK_NSEC, or the deepest
+> enabled idle state in the absence of any of those, all the time due to
+> a tick_nohz_tick_stopped() check designed for running on CPUs where the
+> tick is not permanently disabled.  In that case, the fact that the tick
+> has been stopped means that the CPU was expected to be idle sufficiently
+> long previously, so it is not unreasonable to expect it to be idle
+> sufficiently long again, but this inference does not apply to nohz_full
+> CPUs.
+>
+> In some cases, latency in the workload grows undesirably as a result of
+> selecting overly deep idle states, and the workload may also consume
+> more energy than necessary if the CPU does not spend enough time in the
+> selected deep idle state.
+>
+> Address this by amending the tick_nohz_tick_stopped() check in question
+> with a tick_nohz_full_cpu() one to avoid effectively ignoring all
+> shallow idle states on nohz_full CPUs.  While doing so introduces a risk
+> of getting stuck in a shallow idle state for a long time, that only
+> affects energy efficiently, but the current behavior potentially hurts
+> both energy efficiency and performance that is arguably the priority for
+> nohz_full CPUs.
+
+This change is likely to break the use case in which CPU isolation is
+used for power management reasons, to prevent CPUs from running any
+code and so to save energy.
+
+In that case, going into the deepest state every time on nohz_full
+CPUs is a feature, so it can't be changed unconditionally.
+
+For this reason, I'm not going to apply this patch and I'm going to
+drop the menu governor one below.
+
+The only way to allow everyone to do what they want/need I can see
+would be to add a control knob for adjusting the behavior of cpuidle
+governors regarding the handling of nohz_full CPUs.
+
+> While at it, add a comment explaining the logic in teo_state_ok().
+>
+> Link: https://lore.kernel.org/linux-pm/2244365.irdbgypaU6@rafael.j.wysock=
+i/ [1]
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-
+>  drivers/cpuidle/governors/teo.c |   18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> --- a/drivers/cpuidle/governors/teo.c
+> +++ b/drivers/cpuidle/governors/teo.c
+> @@ -227,9 +227,17 @@
+>         cpu_data->total +=3D PULSE;
+>  }
+>
+> -static bool teo_state_ok(int i, struct cpuidle_driver *drv)
+> +static bool teo_state_ok(int i, struct cpuidle_driver *drv, struct cpuid=
+le_device *dev)
+>  {
+> -       return !tick_nohz_tick_stopped() ||
+> +       /*
+> +        * If the scheduler tick has been stopped already, avoid selectin=
+g idle
+> +        * states with target residency below the tick period length unde=
+r the
+> +        * assumption that the CPU is likely to be idle sufficiently long=
+ for
+> +        * the tick to be stopped again (or the tick would not have been
+> +        * stopped previously in the first place).  However, do not do th=
+at on
+> +        * nohz_full CPUs where the above assumption does not hold.
+> +        */
+> +       return !tick_nohz_tick_stopped() || tick_nohz_full_cpu(dev->cpu) =
+||
+>                 drv->states[i].target_residency_ns >=3D TICK_NSEC;
+>  }
+>
+> @@ -379,7 +387,7 @@
+>                                  * shallow or disabled, in which case tak=
+e the
+>                                  * first enabled state that is deep enoug=
+h.
+>                                  */
+> -                               if (teo_state_ok(i, drv) &&
+> +                               if (teo_state_ok(i, drv, dev) &&
+>                                     !dev->states_usage[i].disable) {
+>                                         idx =3D i;
+>                                         break;
+> @@ -391,7 +399,7 @@
+>                         if (dev->states_usage[i].disable)
+>                                 continue;
+>
+> -                       if (teo_state_ok(i, drv)) {
+> +                       if (teo_state_ok(i, drv, dev)) {
+>                                 /*
+>                                  * The current state is deep enough, but =
+still
+>                                  * there may be a better one.
+> @@ -460,7 +468,7 @@
+>          */
+>         if (drv->states[idx].target_residency_ns > duration_ns) {
+>                 i =3D teo_find_shallower_state(drv, dev, idx, duration_ns=
+, false);
+> -               if (teo_state_ok(i, drv))
+> +               if (teo_state_ok(i, drv, dev))
+>                         idx =3D i;
+>         }
+>
+>
+>
+>
+>
 
