@@ -1,155 +1,209 @@
-Return-Path: <linux-kernel+bounces-791453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B8DB3B6F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:19:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C814CB3B70E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CBCB1C2843E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3C916A55B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D51F3043A0;
-	Fri, 29 Aug 2025 09:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5CD304BB5;
+	Fri, 29 Aug 2025 09:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFBtV8z0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k7jNmAJB"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5A42F0680;
-	Fri, 29 Aug 2025 09:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B1B2E36EC;
+	Fri, 29 Aug 2025 09:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459116; cv=none; b=Dc7JIqxr4AOr4x1dv3V8HBMOG56D76RgUUx51M6PTCgtveXyRxIYMDO5q/QRRmdDj8hPh2w3z+m+Pzkn7OSGs5VKfQ1y2FO/B9H4uuA0Xmpx3sIH4pc6VYDIm910xzbEehA24Xf9bM9aPU8KnMJGwsjkIkod+fvE1mt+vtygcYg=
+	t=1756459263; cv=none; b=rjcVx+Op+DZNInKHC2tmHEHhIP+dommUexLO4grt8UNXJT8BejuQKBwDFeCtnjL7m8ebGGWWO9PUPuDKaiY45OaIN2rWyjmPrCyOF0zTOALa3v4k/FggmqlWJc8X9/nK4XXU9TA74VB+kxSa8M/4gjp2O/j3+N3IY6aw2skW1kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459116; c=relaxed/simple;
-	bh=NBlAl/fkZniarUxoV8DY/7IVwSEbyoIoJhWl8W7043o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpA5aCQ18vKBPBTRckFalcWlB8I7Lp66oseF9WKgc4T1Vs+MYs2faSy8pJJaQ+qrs8KdaKS7eSP+i/QwwfgavuVitrCIgF8WoCMZlLsORg+FON9bVrO7kNcYINvMaWMckhe6W+JH/cZDwR9b1/GzxkAYTtOlYgzM0J58GJADQBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFBtV8z0; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756459115; x=1787995115;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NBlAl/fkZniarUxoV8DY/7IVwSEbyoIoJhWl8W7043o=;
-  b=cFBtV8z0O+qjR+OprRl3c29hcYq8gn0dYeVRw+4rSKnnS8oFETPRAWA0
-   M+/gn8fUrfxcSovd2XltKdBDX2oL1mMG9BybkgW4I3BVLI0Cpzo7ADzFY
-   /SleNcaQGTRv3YdJhLodREDa+RepLwQOOlPSjo7zGg04k9tmuXjIvLHZj
-   fEedFRv+p5ohuG9Kp4wA/VxumStq4A4VMPsw66uClnCLox1NLy5w6Q0mW
-   0PFe788h1g1/ztMtYaUTle9sQqeGTK28JLQ8eHaRQcQDqIu+9a6HpVcJt
-   1vBvhpjn4zTu/WrvMEXvQJp+zCwOFe0sPsxWU8Q8qkw4/v/9JO9aPkxFV
-   w==;
-X-CSE-ConnectionGUID: eYfcQHd5SFGa2+I2XsEVxQ==
-X-CSE-MsgGUID: jPECHWV7R5i9ZnbpjLgLkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58684631"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58684631"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:18:34 -0700
-X-CSE-ConnectionGUID: 5WNrupYfRqyf4qHQhFjQGg==
-X-CSE-MsgGUID: KVYl1vhwQPG5QC7t1wwYzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="175623668"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 29 Aug 2025 02:18:30 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1urvF5-000Ual-2t;
-	Fri, 29 Aug 2025 09:18:06 +0000
-Date: Fri, 29 Aug 2025 17:17:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH net-next v25 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-Message-ID: <202508291628.CPVGma07-lkp@intel.com>
-References: <20250827044810.152775-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1756459263; c=relaxed/simple;
+	bh=bbhdKh1r1EnPchJMRAZm27A3o+cqajSQJpAToKjB2gw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bc0j+B5ycwsyQsLUShDm9Z3ceMRBgONJx99kJ6Qx4BAgOOrPmn/H8us4tezS7T1Eu57WCrzAIF90/grlf9zBx+04qgwdjU8Ix1AoCbRXYKfr0uWjMXRf/lLx2/uSjjYUiVwiIcQoLsG/6sURq7M1vRWfOq8GSyZodzBAuQoSc8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k7jNmAJB; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756459253;
+	bh=bbhdKh1r1EnPchJMRAZm27A3o+cqajSQJpAToKjB2gw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k7jNmAJBn6mV870W0svbNED8c3nmXJZMhGO5ulHEFcClCi7NBvTb+IaZhRTD2acVl
+	 y7hAGV/SsEh9+C0cFZP6zNQSm5VlP9kOaBJW0ogyXBiDfRG46vSCxo8g7QyjoaJSdN
+	 FlzZE5dhh7U9n0U0zmZnL848rwGoSXly7DIDP60Y3GUnwWNJMA5dzV53gpmxB3ecFk
+	 3j63ECfQGJONmbgKhWAYukbFK1liIhij2DQC+6WBRLHvHTMHvdJpm2E2HEtTa2DAV0
+	 hUE4lv9FI5YBwGKpaMgHIRLP7Wd6qT4Oh/wD3dxOCFasdNAIjuOOOakXvt8o/Pwey/
+	 dkmF/AFL6Z7Xw==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:f5b1:db54:a11a:c333])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C3BA317E10F3;
+	Fri, 29 Aug 2025 11:20:52 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com,
+	wenst@chromium.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
+	kernel@collabora.com,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH v5 00/27] Add support for MT8196 clock controllers
+Date: Fri, 29 Aug 2025 11:18:46 +0200
+Message-Id: <20250829091913.131528-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827044810.152775-2-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This patch series introduces support for the clock controllers on the
+MediaTek MT8196 platform, following up on an earlier submission[1].
 
-kernel test robot noticed the following build errors:
+MT8196 uses a hardware voting mechanism to control some of the clock muxes
+and gates, along with a fence register responsible for tracking PLL and mux
+gate readiness. The series introduces support for these voting and fence
+mechanisms, and includes drivers for all clock controllers on the platform.
 
-[auto build test ERROR on net-next/main]
+[1] https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Implement-MCTP-over-PCC-Transport/20250827-124953
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250827044810.152775-2-admiyo%40os.amperecomputing.com
-patch subject: [PATCH net-next v25 1/1] mctp pcc: Implement MCTP over PCC Transport
-config: i386-randconfig-015-20250829 (https://download.01.org/0day-ci/archive/20250829/202508291628.CPVGma07-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250829/202508291628.CPVGma07-lkp@intel.com/reproduce)
+Changes in v5:
+- Used double negation in clk-mux/pll to return strict true/false values
+- Dropped fenc_mask from clk-pll.c / clk-pll.h
+- Moved MTK_WAIT_FENC_DONE_US definition to clk-mux.c
+- Switched to dev_err_probe() / dev_err_ptr_probe() where applicable
+- Added blank lines for separation when including binding headers
+- Added struct mtk_gate * pointer in struct mtk_clk_gate, removed
+  duplication in mtk_clk_register_gate()
+- Dropped CLK_OPS_PARENT_ENABLE from gate macros when defining gates
+  with different parents
+- Used default COMMON_CLK_MT8196 for config COMMON_CLK_MT8196_MDPSYS in
+  Kconfig
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508291628.CPVGma07-lkp@intel.com/
+- Added vlp_clk26m definition in vlpckgen
+- Renamed top_divs -> vlp_divs in vlpckgen
+- Moved clk-mtk.h inclusion in clk-mux.c to the commit “clk: mediatek:
+  clk-mux: Add ops for mux gates with HW voter and FENC”
+- Renamed adsppll_ck -> adsppll in topckgen
+- Fixed checkpatch warning in clk-mt8196-mdpsys.c (line too long)
 
-All errors (new ones prefixed by >>):
+- Dropped R-b tags on patches 6 (refactoring), 13 (vlp_clk26m defined,
+  reparented audio clocks), 14, 15, 16, 19, 22 (dropped
+  CLK_OPS_PARENT_ENABLE, changing the behavior of the
+  affected clocks).
 
-   ld: drivers/net/mctp/mctp-pcc.o: in function `mctp_pcc_tx':
->> drivers/net/mctp/mctp-pcc.c:153: undefined reference to `mbox_send_message'
+Link to v4: https://lore.kernel.org/all/20250805135447.149231-1-laura.nao@collabora.com/
 
+Laura Nao (27):
+  clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable control
+  clk: mediatek: clk-pll: Add ops for PLLs using set/clr regs and FENC
+  clk: mediatek: clk-mux: Add ops for mux gates with set/clr/upd and
+    FENC
+  clk: mediatek: clk-mtk: Introduce mtk_clk_get_hwv_regmap()
+  clk: mediatek: clk-mux: Add ops for mux gates with HW voter and FENC
+  clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use
+    mtk_gate struct
+  clk: mediatek: clk-gate: Add ops for gates with HW voter
+  clk: mediatek: clk-mtk: Add MUX_DIV_GATE macro
+  dt-bindings: clock: mediatek: Describe MT8196 clock controllers
+  clk: mediatek: Add MT8196 apmixedsys clock support
+  clk: mediatek: Add MT8196 topckgen clock support
+  clk: mediatek: Add MT8196 topckgen2 clock support
+  clk: mediatek: Add MT8196 vlpckgen clock support
+  clk: mediatek: Add MT8196 peripheral clock support
+  clk: mediatek: Add MT8196 ufssys clock support
+  clk: mediatek: Add MT8196 pextpsys clock support
+  clk: mediatek: Add MT8196 I2C clock support
+  clk: mediatek: Add MT8196 mcu clock support
+  clk: mediatek: Add MT8196 mdpsys clock support
+  clk: mediatek: Add MT8196 mfg clock support
+  clk: mediatek: Add MT8196 disp0 clock support
+  clk: mediatek: Add MT8196 disp1 clock support
+  clk: mediatek: Add MT8196 disp-ao clock support
+  clk: mediatek: Add MT8196 ovl0 clock support
+  clk: mediatek: Add MT8196 ovl1 clock support
+  clk: mediatek: Add MT8196 vdecsys clock support
+  clk: mediatek: Add MT8196 vencsys clock support
 
-vim +153 drivers/net/mctp/mctp-pcc.c
-
-   130	
-   131	static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-   132	{
-   133		struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
-   134		struct pcc_header *pcc_header;
-   135		int len = skb->len;
-   136		int rc;
-   137	
-   138		rc = skb_cow_head(skb, sizeof(*pcc_header));
-   139		if (rc) {
-   140			dev_dstats_tx_dropped(ndev);
-   141			kfree_skb(skb);
-   142			return NETDEV_TX_OK;
-   143		}
-   144	
-   145		pcc_header = skb_push(skb, sizeof(*pcc_header));
-   146		pcc_header->signature = PCC_SIGNATURE | mpnd->outbox.index;
-   147		pcc_header->flags = PCC_CMD_COMPLETION_NOTIFY;
-   148		memcpy(&pcc_header->command, MCTP_SIGNATURE, MCTP_SIGNATURE_LENGTH);
-   149		pcc_header->length = len + MCTP_SIGNATURE_LENGTH;
-   150	
-   151		skb_queue_head(&mpnd->outbox.packets, skb);
-   152	
- > 153		rc = mbox_send_message(mpnd->outbox.chan->mchan, skb->data);
-   154	
-   155		if (rc < 0) {
-   156			skb_unlink(skb, &mpnd->outbox.packets);
-   157			return NETDEV_TX_BUSY;
-   158		}
-   159	
-   160		dev_dstats_tx_add(ndev, len);
-   161		return NETDEV_TX_OK;
-   162	}
-   163	
+ .../bindings/clock/mediatek,mt8196-clock.yaml | 112 ++
+ .../clock/mediatek,mt8196-sys-clock.yaml      | 107 ++
+ drivers/clk/mediatek/Kconfig                  |  71 ++
+ drivers/clk/mediatek/Makefile                 |  13 +
+ drivers/clk/mediatek/clk-gate.c               | 119 ++-
+ drivers/clk/mediatek/clk-gate.h               |   3 +
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c  | 204 ++++
+ drivers/clk/mediatek/clk-mt8196-disp0.c       | 170 +++
+ drivers/clk/mediatek/clk-mt8196-disp1.c       | 170 +++
+ .../clk/mediatek/clk-mt8196-imp_iic_wrap.c    | 118 +++
+ drivers/clk/mediatek/clk-mt8196-mcu.c         | 167 +++
+ drivers/clk/mediatek/clk-mt8196-mdpsys.c      | 186 ++++
+ drivers/clk/mediatek/clk-mt8196-mfg.c         | 150 +++
+ drivers/clk/mediatek/clk-mt8196-ovl0.c        | 154 +++
+ drivers/clk/mediatek/clk-mt8196-ovl1.c        | 154 +++
+ drivers/clk/mediatek/clk-mt8196-peri_ao.c     | 142 +++
+ drivers/clk/mediatek/clk-mt8196-pextp.c       | 131 +++
+ drivers/clk/mediatek/clk-mt8196-topckgen.c    | 985 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8196-topckgen2.c   | 568 ++++++++++
+ drivers/clk/mediatek/clk-mt8196-ufs_ao.c      | 108 ++
+ drivers/clk/mediatek/clk-mt8196-vdec.c        | 253 +++++
+ drivers/clk/mediatek/clk-mt8196-vdisp_ao.c    |  80 ++
+ drivers/clk/mediatek/clk-mt8196-venc.c        | 236 +++++
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c    | 729 +++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |  16 +
+ drivers/clk/mediatek/clk-mtk.h                |  22 +
+ drivers/clk/mediatek/clk-mux.c                | 122 ++-
+ drivers/clk/mediatek/clk-mux.h                |  87 ++
+ drivers/clk/mediatek/clk-pll.c                |  45 +-
+ drivers/clk/mediatek/clk-pll.h                |   8 +
+ .../dt-bindings/clock/mediatek,mt8196-clock.h | 803 ++++++++++++++
+ .../reset/mediatek,mt8196-resets.h            |  26 +
+ 32 files changed, 6224 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-disp1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mcu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mdpsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ovl1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-peri_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-pextp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-topckgen2.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vdisp_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt8196-clock.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt8196-resets.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
