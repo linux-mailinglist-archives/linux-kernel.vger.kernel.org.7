@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-792558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC82B3C589
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F24BB3C58B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8819556590D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:18:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 863951C80405
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DEC2FF650;
-	Fri, 29 Aug 2025 23:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971A2FF650;
+	Fri, 29 Aug 2025 23:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y5EFAiXo"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NAa8XrSu"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC0F256C88
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 23:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA2256C88
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 23:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756509497; cv=none; b=lBF6QRenytNm6ZWQrzmVa9Y5K/FPfpMhmg210FJVQ356E1IZ8QjE8B8f9ZOSIz2s39CoCiZQI6K9VrwXjmBgu7W+9iTYxtlrfcmXRTagv8n4Q5D4YlmJmX5uP/h3iqfdOEX0Lc+URTzeBwju+i0w24c9jrsvBSF7boYcc+0HcsA=
+	t=1756509641; cv=none; b=njx/myluzjEwFPvZo8cTTzKmMeFFHEUoIPQz2nYs1mu0npi1ZPu3mJdgVUv8mPUl7qC2eAe2aL3MFqYLK4hA7wuGyHmBPJXdJszTogG7TMvVTMY/r/hbxaytTtRRSPHFL+3aTdNmihBZtFGHfFQ6qcQ84Ue5CIjJshmyQQrerfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756509497; c=relaxed/simple;
-	bh=b4k5SA3vfZ4J6ItroEh7lhLBwWJ/AtyHtaEDaKZpIOs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SMnk6tTAzFnXfgxzmNS3bvNNHAcf7iVItKAcY7h7j+cufTn1wfGUSv9SWhAPhT6U18aq3Wf4IJ/jn5J6Cy+n8rPNSy6pfBsKfoEYoItJzE2LddpxbycxzcjZKyIkuoZzaEE5l/tMo2bSo9Q/oUcYDb02RGnIQ0X3hD3zL3Z9Z84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y5EFAiXo; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24868b07b5bso45228775ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756509496; x=1757114296; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l883seK4EjiK4aVDUcNtlslE/Fg5nekU6zN+DlU8lKo=;
-        b=Y5EFAiXo4TGuQPLq9tC6/sH9HkA+n2cQw25cS3Sy8zF5ZBEUay6hhea/vDEC2F7uYZ
-         A080fOt4XROw2Pb6XueUAnjN8vx4ZgalDfmb3CvshmdYcRZNgjdNDE3NNreArhxlzVSk
-         XWReXLwzAc2di9Ju5y6kIzqIDZ1mgjE3DD21kLeqO7SXLxTo16SOfKxZAo0RklgVR0zw
-         bdJQ4HVZ8IQSgFQ7Du4h7QjP28t0GDOGR8kUw+VlWB12dZlWasBCImpFGNpEN4c47zmy
-         4HtnpMW9iFGXmo4Jno7itHW2fDRejC5SJx/owyY8dC4NwlaaxhyKSFPs31IFhBsVIDiJ
-         /BGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756509496; x=1757114296;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l883seK4EjiK4aVDUcNtlslE/Fg5nekU6zN+DlU8lKo=;
-        b=fw6fUocyolTTSQaZl6Ka3Twb5Ok9MFGrJJhgGZ2Xbfe+L1ycfQkCooVv7MupZKXkbN
-         B4FGVZHN1h0139ZulRv8fFz6BEc9NvBN7elFBrikCh/lO/Hdyj9+F/lp7GZBdravLyJi
-         HRQk1uiY5FI3kGAzJGhdCXR2AtPDZa/5G5zxubWpLWEFZAaqYUa62rryIoRmvkPX1Ze/
-         TmXs5DoGD739i7vVadP92we1XV2wgf4Wb0W/LYo29B48mpH0+7qJmefKg25eqDI+/gS1
-         LlY+9HSQwlge6FuedNZgexP8MogyPSk1r7ywYx5JdDIEeDPE6KgZrAqVL5aqAfYrsEXg
-         ca1A==
-X-Forwarded-Encrypted: i=1; AJvYcCV4R9JHQE0n+J1l54DBisZ3uh8iCdPD/JBbWIgmNYsY/H3EIFcvtls82R0ITARnts1ScWLlapuJkjowFXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx40n1Eh04331hN0nbSJCK2nZ/nGm6kEBtl2Rd9ul/4euRNXY8k
-	kJpf13MUShs4JxYhFgeFmyz+qLN8XFtEh0Pgvi3wkKyfvnqPk61MhP0CbHYyHmWpl1cXDx0EwHX
-	VZCsclg==
-X-Google-Smtp-Source: AGHT+IF1OM0nQRYfPLCN66NMT04qXg7cQ+GJ78a8jXk9PjEi0ezBYTBW7zLm8IduaCQc03SdW3jw7oMOKJo=
-X-Received: from plbmm3.prod.google.com ([2002:a17:903:a03:b0:248:847a:f298])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:32c3:b0:249:c76:76db
- with SMTP id d9443c01a7336-24944a64ae0mr4589795ad.21.1756509495776; Fri, 29
- Aug 2025 16:18:15 -0700 (PDT)
-Date: Fri, 29 Aug 2025 16:18:14 -0700
-In-Reply-To: <b47e08bb6105a94bc88ee91aa7bdd055893eeda6.camel@intel.com>
+	s=arc-20240116; t=1756509641; c=relaxed/simple;
+	bh=sVHh0fDJEEcbI6I0CB6sLa1P9jRyNfdXhp8W0dVa1+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=licjzP61DoyKRYqEowFth0uzNlIftXNSfBfZ2qgLqxchxAByJlKTEXHDAJZgSV4YK5B57+rOL/XDjKgHYnRs/TZpBpP1K3EsTJtZxlsEIA61AnUBI0TALEszRYvq11nNpYLQN72u/h73l9PL23vfIDJB12N/L43d5pK7OEDXsu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NAa8XrSu; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 29 Aug 2025 16:20:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756509635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kh81RZzZpiPIXslFRnG6rVGhlxEMq1kmBomjyvChOoo=;
+	b=NAa8XrSuTmfZlqPQgBBj09AOVxU4pwSzGo4oJBiUrceLy/eecA5iyB/uL5oOGh5Mi0bu9o
+	l1Q6G36QIR7zYO1/yS3pnuoJzUYypvb1V++f1KGRD1N6UxquIiIZg+zyobwqxX+U43MApM
+	kfGzGtcp47eueHFXJZd+M2oCJyEpaSI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: mhocko@suse.com, rientjes@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, surenb@google.com, 
+	liulu.liu@honor.com, feng.han@honor.com, tianxiaobin@honor.com, fengbaopeng@honor.com
+Subject: Re: [PATCH v6 1/2] mm/oom_kill: Do not delay oom reaper when the
+ victim is frozen
+Message-ID: <krmliemwgxygxkc3rkix5ah6ubzzulpktejdbu5uhpldwtjts2@3sqqkl5i36tv>
+References: <20250829065550.29571-1-zhongjinji@honor.com>
+ <20250829065550.29571-2-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829000618.351013-1-seanjc@google.com> <20250829000618.351013-13-seanjc@google.com>
- <aLFiPq1smdzN3Ary@yzhao56-desk.sh.intel.com> <8445ac8c96706ba1f079f4012584ef7631c60c8b.camel@intel.com>
- <aLIJd7xpNfJvdMeT@google.com> <c8352e1a76910199554bce03a541930914ff157d.camel@intel.com>
- <b47e08bb6105a94bc88ee91aa7bdd055893eeda6.camel@intel.com>
-Message-ID: <aLI1NntrAXP0CxPz@google.com>
-Subject: Re: [RFC PATCH v2 12/18] KVM: TDX: Bug the VM if extended the initial
- measurement fails
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Kai Huang <kai.huang@intel.com>, "ackerleytng@google.com" <ackerleytng@google.com>, 
-	Vishal Annapurve <vannapurve@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829065550.29571-2-zhongjinji@honor.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 29, 2025, Rick P Edgecombe wrote:
-> On Fri, 2025-08-29 at 15:39 -0700, Rick Edgecombe wrote:
-> > Ok, the direction seem clear. The patch has an issue, need to debug.
+On Fri, Aug 29, 2025 at 02:55:49PM +0800, zhongjinji wrote:
+> The oom reaper is a mechanism to guarantee a forward process during OOM
+> situation when the oom victim cannot terminate on its own (e.g. being
+> blocked in uninterruptible state or frozen by cgroup freezer). In order
+> to give the victim some time to terminate properly the oom reaper is
+> delayed in its invocation. This is particularly beneficial when the oom
+> victim is holding robust futex resources as the anonymous memory tear
+> down can break those. [1]
 > 
-> Just this:
+> On the other hand deliberately frozen tasks by the freezer cgroup will
+> not wake up until they are thawed in the userspace and delay is
+> effectively pointless. Therefore opt out from the delay for cgroup
+> frozen oom victims.
 > 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index c595d9cb6dcd..e99d07611393 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -2809,7 +2809,7 @@ static int tdx_td_finalize(struct kvm *kvm, struct
-> kvm_tdx_cmd *cmd)
+> Reference:
+> [1] https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u
+> 
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> ---
+>  mm/oom_kill.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 25923cfec9c6..a5e9074896a1 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -700,7 +700,14 @@ static void queue_oom_reaper(struct task_struct *tsk)
 >  
->  static int tdx_get_cmd(void __user *argp, struct kvm_tdx_cmd *cmd)
->  {
-> -       if (copy_from_user(cmd, argp, sizeof(cmd)))
-> +       if (copy_from_user(cmd, argp, sizeof(*cmd)))
+>  	get_task_struct(tsk);
+>  	timer_setup(&tsk->oom_reaper_timer, wake_oom_reaper, 0);
+> -	tsk->oom_reaper_timer.expires = jiffies + OOM_REAPER_DELAY;
+> +	tsk->oom_reaper_timer.expires = jiffies;
+> +
+> +	/*
+> +	 * If the task is frozen by the cgroup freezer, the delay is unnecessary
+> +	 * because it cannot exit until thawed. Skip the delay for frozen victims.
+> +	 */
+> +	if (!frozen(tsk))
 
-LOL, it's always some mundane detail!
+Can you please change the above condition with the following to handle
+v2 as well?
 
->                 return -EFAULT;
+	if (!frozen(tsk) && !(READ_ONCE(tsk->frozen)))
+
+> +		tsk->oom_reaper_timer.expires += OOM_REAPER_DELAY;
+>  	add_timer(&tsk->oom_reaper_timer);
+>  }
 >  
->         if (cmd->hw_error)
+> -- 
+> 2.17.1
 > 
 
