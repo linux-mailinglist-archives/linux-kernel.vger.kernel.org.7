@@ -1,94 +1,97 @@
-Return-Path: <linux-kernel+bounces-791526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2127DB3B802
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A8EB3B806
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03AE01C212CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6247987FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CD33081B9;
-	Fri, 29 Aug 2025 10:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MegpgKDB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DA3081A3;
-	Fri, 29 Aug 2025 10:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04DC306D2B;
+	Fri, 29 Aug 2025 10:02:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C4B2356B9;
+	Fri, 29 Aug 2025 10:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756461686; cv=none; b=T3kmtxTuNg4uUG/I21eG+FhyTts6sGs0hWPIhcDaYavzeBhfveUQ9ZkJs65o6bwFW/bIEbR98I17C/mp9wWOhuovnIauYmCFys6X3yg0+oj55508rmYvHl8NtGKVLnCFVZDzZbvjTUPFJ8CVlB/BRrsrn6HMadk9U8qMZgNHhDU=
+	t=1756461738; cv=none; b=R0aBR6/fbAx42QGCXexZDuBGFHvQKOZnaK1vZsOZJ2DRvenJyGOP8RfeiVXjnubkX1WfdHRcvukCPRByAlpGtpuLH974AkSCL1mMtzrFHjCZR/H9AOA1BEusI74iqBpTIZk/RfbXHp7vD+Gmx4r31AU8HZ9bS82gBHmbuvXfr8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756461686; c=relaxed/simple;
-	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fPX+uzrlqqqeFf/u7vXMR/R89tEBIW/d9YfXqhYzUlvQV6/Piu72xZ0Uf6ucPN8LEA5DoG5kWjgxq1B/FlpY9GAQz18tI470J2kZARsE/baML9UG4aC5oJhpNomkq3Q6J9EBuKH1y4FRII101o5KrhSZii2TrJUM2u0YaCwR1p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MegpgKDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E04C4CEF0;
-	Fri, 29 Aug 2025 10:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756461685;
-	bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MegpgKDBL6rvhcZYq1rVot1SopMcYG4xeBVWoAFOWPYTtAYIoB5Z78bPJBzQv/X1k
-	 BJs+xv++sPeVKCdxxhdVMVcHfBAaHCfKnfiFeQKeecfas4mQpvXie0337o0mUuOz0R
-	 P+31cezhZ8piF0AXt2/u/J51Sa2tITAsFCoOD8/ar7BL+4UWtMBjaoapZDXBJdCE7C
-	 bQzK1dckl7yEf2B5XEoow3SNAypJY3MiXwwu2dMs944K34eT7Eor1B4CbAeC21pDbG
-	 y/xfprJvO9EKye9SlPld4IhSTK/h3HqfxRCbICtzcqN3lzBkjz1//joduyAAaNIb/U
-	 h1Lr6gfhFoJ2Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	gnoack@google.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	mic@digikod.net
-Subject: Re: [PATCH] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
-Date: Fri, 29 Aug 2025 12:01:20 +0200
-Message-ID: <20250829-passierbar-losen-cd47a4b68c3d@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250829091510.597858-1-zhao.xichao@vivo.com>
-References: <20250829091510.597858-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1756461738; c=relaxed/simple;
+	bh=DrQaeHhNiQJS79bx/Swtonuixek3OXzAvPbA8YKO6gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HGahWHWTU9fwaBvVhTfHM8mQCpBV0rMQ/6BU510AeaGBdKlzOnnIk9sNmkLZfRn/U9BQx5gGZm1g2vmlVoLeVKTWTd9QzE9FXvuX2lCHcPgExNAnN1gH/Q3qEooTky0uaqaKwGcdLgF7ugZk2bETxdJrIwnsdEorr8Xu9RmtIKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10BF51758;
+	Fri, 29 Aug 2025 03:02:07 -0700 (PDT)
+Received: from [10.57.2.173] (unknown [10.57.2.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ACCDD3F694;
+	Fri, 29 Aug 2025 03:02:13 -0700 (PDT)
+Message-ID: <82cf913c-f050-4325-ac5b-7efd0634d8ff@arm.com>
+Date: Fri, 29 Aug 2025 11:02:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1077; i=brauner@kernel.org; h=from:subject:message-id; bh=92fN0UR0hrt8PjaauCManqwbTnRkMOX7oJ/IaHyEcJc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsrCq8feC67/xd6Yc7QzrsijYd/8syadc9mfirXNHcf gXOcy5f7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIEmVGhlmR0zJPBix0qJnb 8nOFkaBSx517n5h+LNdr3BB6xzf1VDUjw7K1y9XvZah9tuL6kmHLXcfBoWWWHRzFOFfjq0JiUmQ hMwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/14] dmaengine: dma350: Check vchan_next_desc() return
+ value
+To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250823154009.25992-1-jszhang@kernel.org>
+ <20250823154009.25992-4-jszhang@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250823154009.25992-4-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Aug 2025 17:15:10 +0800, Xichao Zhao wrote:
-> When dealing with structures containing flexible arrays, struct_size()
-> provides additional compile-time checks compared to offsetof(). This
-> enhances code robustness and reduces the risk of potential errors.
+On 2025-08-23 4:39 pm, Jisheng Zhang wrote:
+> vchan_next_desc() may return NULL, check its return value.
+
+IIRC it's important that dch->desc gets set to NULL in that case, 
+otherwise things can go wonky after a completion interrupt - i.e. the 
+current code *is* using the return value both ways, just the sneaky 
+thing is that it does actually depend on "vd" being the first member of 
+d350_desc to do it concisely, sorry I didn't document that.
+
+Thanks,
+Robin.
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>   drivers/dma/arm-dma350.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> 
+> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
+> index 24cbadc5f076..96350d15ed85 100644
+> --- a/drivers/dma/arm-dma350.c
+> +++ b/drivers/dma/arm-dma350.c
+> @@ -399,11 +399,14 @@ static enum dma_status d350_tx_status(struct dma_chan *chan, dma_cookie_t cookie
+>   static void d350_start_next(struct d350_chan *dch)
+>   {
+>   	u32 hdr, *reg;
+> +	struct virt_dma_desc *vd;
+>   
+> -	dch->desc = to_d350_desc(vchan_next_desc(&dch->vc));
+> -	if (!dch->desc)
+> +	vd = vchan_next_desc(&dch->vc);
+> +	if (!vd)
+>   		return;
+>   
+> +	dch->desc = to_d350_desc(vd);
+> +
+>   	list_del(&dch->desc->vd.node);
+>   	dch->status = DMA_IN_PROGRESS;
+>   	dch->cookie = dch->desc->vd.tx.cookie;
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: Replace offsetof() with struct_size() in ioctl_file_dedupe_range()
-      https://git.kernel.org/vfs/vfs/c/38d1227fa71d
 
