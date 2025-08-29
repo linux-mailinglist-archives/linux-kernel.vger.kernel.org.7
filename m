@@ -1,145 +1,127 @@
-Return-Path: <linux-kernel+bounces-791722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AABB3BAD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADFCB3BAD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B8D18974B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB033A782E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009EF314A6A;
-	Fri, 29 Aug 2025 12:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D39D314A60;
+	Fri, 29 Aug 2025 12:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inDrOC9M"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNR/0UFc"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1A229B1F;
-	Fri, 29 Aug 2025 12:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973FF229B1F;
+	Fri, 29 Aug 2025 12:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756469171; cv=none; b=W3Hko63I5Fw+c6Y0flbCU8fdB0wsByS+9KO4YTwwopq4LVSCK3fH48E011NMro3b01e7UDQMO/AkOqbVA616d5IfQOAvLDthRLctlHFrh5VKEcvVwTc3hhsmoxgxh91efgHYMKAGP4kmbvMIPxYgdql3NCd3JaKcWcyU0o/YX9k=
+	t=1756469340; cv=none; b=jHurU5W4fZD+BEPPGe5VqCkV9synfpY9Ap+qgW05qxarJKkQYquU2kyTqDANOLYPKIROZAOvW4WX9pSCpEK+QE/gbGoChrUxVEhzNoPkMyNNNlMwjkl5hIJoMNG0seLok2TgIXIA4wyArfvL2uxi0t5pAeLKBspA5P9ZPDxnwK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756469171; c=relaxed/simple;
-	bh=EWFoZW6E8p6KfMm7z5oMEsBNGeK90oTRtTy3fxksL6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gWsUxMmiQ5vmdMJb3CJ1Ea99tU5S72l/xuFG7uYP9XkU8nIEma+5lkSaVHakwO0zJv+C3xhAX/75Ig0svfPEU+wjVP+qcFxQc1UBQ48JQjwLNpgboEZKFhJtrpZMl7HOG2asAaPVaTWNx56fGP47XjOnRe2OtnDKydMNWwn9y6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inDrOC9M; arc=none smtp.client-ip=209.85.161.46
+	s=arc-20240116; t=1756469340; c=relaxed/simple;
+	bh=X7Qp7FxOg1y6PkSZpFUYEzQiBPHiZ8aKkiR6aS9pUNo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pa605L83S3QGohHmeGyoi2R7Y3MU3W8k/q8AuswbaRU88RGxw/VJoXJ3mxAGctmOBSAez7V+a6aM+6ESq7oQ8KqMbmhB3w5GdsSd/dYEsH1WsCMg3PO9WXUlRt2mEgUI6IC7uNiSUuKcZFqQ5lXYD+tu4cXAHlEwM8jZRvyoedY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNR/0UFc; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61e110cbcd0so441569eaf.3;
-        Fri, 29 Aug 2025 05:06:09 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77201f3d389so2159182b3a.2;
+        Fri, 29 Aug 2025 05:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756469169; x=1757073969; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJBJd9BeeL7u8gdmx6QfCBeyfgHtE3/KhoYQ1c0xrPs=;
-        b=inDrOC9MSPmUmdBUIz0tb5BjhVwCyb1J+wb2ErAmaYo8RgTQHgSucBufPI5YZS1aid
-         grGzrbqAc6dilvraExBf75FbhJpgQYEd9yFBbAbqVOb7hNOw9anKbjkZ7JMRbiKDhGJg
-         3K5B0R9aF494Yc86pw6RAUGbTYunMKilxQ+mv68IpgC+iLLu6PaBBv0Si3+tCmXRKXfE
-         sBdXJTKRh2Jpxw15UgVmDOdfdNl4GG5CCedAMxV/8RZjAYY4alkv+IJGENv+PoJM4wQj
-         k+4O4/shZNXyKhCa8ts9wi7+LVVoRAKLD+EPCNUEXt7J3wyiuj0fi5Xq6+qOwKaRtd7y
-         prOA==
+        d=gmail.com; s=20230601; t=1756469338; x=1757074138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssij9SY5ZHsEeenXlxMWFiz5iGlvdpqLAMZCmsyuD7w=;
+        b=VNR/0UFcDZYzbRiyXM3sHNrOGTafDZToeRbrRbFHTw3GwSTxxpssmUO/88nU6uNOYI
+         tPckSWtXH2/Ia7u5pqKL1vUcDlnYjERR4wgwLYr4yb8WOp2G9VXO+O8sffcb/C9a8zKY
+         F6DGpzdmvn1czihzcmU0YdMiKzb+Qf2/f8FbYGYKuBBs1oScPYq6EPii0w1rOh+BhXcT
+         DHEmXvA59KxNT44mgbsv4ylrVEMAPokmymF5ry4o1Yu88YuppqQV6LAmjX8/t2jVYjSB
+         yd81JcpNw5ElxGo95kU2jQjRD1PJHIYyegeAwAh6LqTTD4RPPLiAURp7+111GjJVyfyK
+         X37g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756469169; x=1757073969;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756469338; x=1757074138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jJBJd9BeeL7u8gdmx6QfCBeyfgHtE3/KhoYQ1c0xrPs=;
-        b=QrVJRLils16488YJ17ZS/hlqQYEI99QNOvAIzCg+0jYMJzIKLBenStpYHeXsgF1n1R
-         97pfE4ktvIxNs9+v2WhThSlgIetf3hyrIG1kx24CUR4afP+fv8i838lEkI6i/HHJK9k9
-         wr89HZ02i7mAtR3k6W7pWguG/hF1q3vMPmNDlsw3HdEtjpWgwbB9SWLCCxxK63c+6cHm
-         rhcRmfNLY+5H7uHaVYtROvcHzXZUat/9aOJXVE3VK5+mqEpVHBRujIkWIsb64hMm0yGW
-         lBka+pOVWN84vXhq/1mXB/1NF9Ly0yMq8VMnjv+zol3mf4KI1leQAO3nn78Y6WP8CIg4
-         utjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUl2WTv5QIpT3AVmmLDcCgw684wo8BRB1W8DMnAfqo5wjQb7c75ciy2YVfxO22tyuraSQjagLgiWptX@vger.kernel.org, AJvYcCVKsgvhvOPUylzt8CZTApDBNr4pOmeTZQhoT1+9YM4MlSa0GPAMgFcmLFzUuF/0JURIoM1Jadl9Vb4A@vger.kernel.org, AJvYcCXItMCsP6L7vjVHrtQ1WqV5/bdoIhGHiRmRFtzS4BQ3vyQ4ySlAVklAzwc+loeLtGF4p05wZHkF17lEcadu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcWWdbqzGZLiFsKhPE6cpFY5oZTRIlTTOF+UIKK3FdmBblIPGJ
-	SVFFwMUIm52iANSs7JRoZuqVFOqKmBWgUmeFfEu+nhLwxUpRfbAOs03PM30s6zSKf+Bk3zcZgJJ
-	LiOlWDhA64EVB3DRP5fTYkVyBWMo3onRWonY9ujo=
-X-Gm-Gg: ASbGncuOmzCuKQKeFVuGzqFILm+HNQ28eJl2fO6N4vfGAvK0xJnGVcp/TKBqcoz/m0d
-	Px9ANN4dSLwCXivqUGcb3xiuviiqdY19ec67ufsUs6lxvgAs6Qx3ff2NhBQCETKrHHpJNaWTZhA
-	1/IKM4AZR5XC1gJsbqVeo0MDJxGeCoK69kORGy4gq4DX+Vg/eZQNPE2HP/BprFkFvxHwPz/2m7R
-	aycZtoXCbRA
-X-Google-Smtp-Source: AGHT+IF2HoqqI9/KEFYMh9FRd/mcJEHTeMiIcKR4PGQPiLR0u2XUdG4ltyTHRyUbl0ycOxp4wqRZ/+1OyfCeHSSVW1g=
-X-Received: by 2002:a05:6820:498c:b0:61d:cc82:251c with SMTP id
- 006d021491bc7-61dcc822b75mr11081329eaf.3.1756469168693; Fri, 29 Aug 2025
- 05:06:08 -0700 (PDT)
+        bh=ssij9SY5ZHsEeenXlxMWFiz5iGlvdpqLAMZCmsyuD7w=;
+        b=NZDpwlo/ig2yjXuz2ao7UpoN5E4c0DqbkqcnPuQqq6dpXCV2THK0cfLpOGP0aacnKR
+         I8s+zLf5QJy9IfH/xfGb5jqMZdsQapuzKv1QAQ6ExLlYR7iFwB2W9v5mptX48PP3w2iD
+         bO7CsOqDVflEai8SM6JcoO0CmNK/81i9jX+lP1VsLgBlonSzTVZsyaRT3Map+a/Z+wa5
+         jxapFmeuLKCfjhdFLIeXz1rfWnI6IhDDMY7iq4Te8FHNIrcIgVBy25uN7gH/4PNB7kXG
+         Jt3wHmCH+u8mmJXOAxaq5Pzil14QT0rBHo18fBFdbI5FTCt05B54+KqITJPHpJnLgC/B
+         iUnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtjj6tZ+ytmd5zZ41pHl7/Hsy1QCBDqcf8Gyisu5PIRc5u8x1vYsISvwAIlro7kU75a5rzv5wSzoD4W9Y=@vger.kernel.org, AJvYcCWligREsaBNNqxyMNtwhBnOYKrETEpaBCY+d91Vdz+EiWpmy0zeweJJFsfzTFTQ53hTOgIaxtAR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzonywD02hmOZZB/s/CFM3kvfoo6uY/vqGd3VEQ9yWntV8/AsSl
+	amxLF1SmUo/xKOJdE+crtLVlFp+9i4vWsUplT8Vz1z3zs42F/mI3cowo
+X-Gm-Gg: ASbGncvSDhWfjX2Lzwa+p36Y/UmClZv50pgTqhS0ZAsVd9syZaPC1zMqbW4nGwPh2Hl
+	zFwqTsO0a+ZJr3zlmu6ohdHrKf3au7iUxrAZPjTOHJ/BsDYQgmsO2FqGKg9KQeRePHBLFDm466r
+	cA4a5upTMdXI8PZZglJWciFH6GyiZoQvKuNSLJj3bN2VYxUzpO9sfejS3U2pFY4gehKSOveaMfv
+	FhW0+WxGjnkB48bg8Dc3GZhZ6qbvwFZaKCd2ZyGpdPJ33uS3XpX1kiSsNOOGj0tMIBkjFqM3cfF
+	XBpGOLJvf4E1dvpDXgiylNUmiBiIkjrbs1TFzbzjeLsDbIm4wVSV+TTH1UsDaV7cX4xYnGg6USr
+	sEFbpCOPbQVZAiFzbztZbhEP5bSCsoIWBgUw5JLTftmoPp9FMKOldHEUoINym4TKyTfbTf+iy5e
+	zo7O8D0uIX8/eR3l60Nfl4LhbOfc9SwmYrNJbnpTpV06TNxzKDjfgWZxwP
+X-Google-Smtp-Source: AGHT+IHbYa9s53mJukTIQKYLvNji7ERSt0sQ7BQvGh8tc2UnWpHzLZYJA4mp+CXJze8S58TN6eDCnQ==
+X-Received: by 2002:a05:6a21:8906:b0:243:be7c:2d63 with SMTP id adf61e73a8af0-243be7c35f8mr4973218637.42.1756469337730;
+        Fri, 29 Aug 2025 05:08:57 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.34])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b4cd28aecd0sm2056031a12.30.2025.08.29.05.08.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 05:08:57 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] coresight: trbe: Fix incorrect error check for devm_kzalloc
+Date: Fri, 29 Aug 2025 20:08:47 +0800
+Message-Id: <20250829120847.2016087-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-tlv493d-sensor-v6_16-rc5-v5-0-746e73bc6c11@gmail.com>
- <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
- <20250829-fluorescent-delicate-pogona-c96b5f@kuoka> <CAFmh=S3jKfGMek=ZPUrfgh9fXZaaq6zNBOmCyEpoe0qGpfbt5w@mail.gmail.com>
- <75b2db61-84ad-47a4-b809-da7e63e8dec8@kernel.org>
-In-Reply-To: <75b2db61-84ad-47a4-b809-da7e63e8dec8@kernel.org>
-From: Dixit Parmar <dixitparmar19@gmail.com>
-Date: Fri, 29 Aug 2025 17:35:54 +0530
-X-Gm-Features: Ac12FXxxb4_C6aV4ChQfpC8QcdG71lHp9PLjlBAhQjiEDnitmqw_fpJEjafEY_k
-Message-ID: <CAFmh=S1K5Okfs30m-d-etXhpPTgQ=pb9+Xnr0DWZ5AXkqFKQ5g@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> >>> +INFINEON TLV493D Driver
-> >>> +M:   Dixit Parmar <dixitparmar19@gmail.com>
-> >>> +L:   linux-iio@vger.kernel.org
-> >>> +S:   Maintained
-> >>> +W:   https://www.infineon.com/part/TLV493D-A1B6
-> >>> +F:   Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
-> >>
-> >> There is no such file here. Apply this *patch* and check by yourself.
-> > That file is being added as a separate patch(Patch 2/2) of this same
-> > patch series. It's already reviewed by you only(based on the name).
->
-> No. Read my comment again:
-I am not sure If I understood what you exactly mean. Below is what I
-understood, please correct me if I am wrong.
->
-> "Apply this *patch* and check by yourself."
->
-> It does not matter if you add the file later. The file does not exist
-> now, here.
+Fix incorrect use of IS_ERR() to check devm_kzalloc() return value.
+devm_kzalloc() returns NULL on failure, not an error pointer.
 
-I have applied the patch on the latest mainline kernel codebase, it
-gets applied successfully.
-But yes, as you pointed out the
-Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
-file does not exist by applying JUST THIS patch. That is because that
-file is introduced by a separate patch under the same
-patch series mentioned below.
-If this is not what you mean, I'd request to clarify to help me
-understand your concern.
+This issue was introduced by commit 4277f035d227
+("coresight: trbe: Add a representative coresight_platform_data for TRBE")
+which replaced the original function but didn't update the error check.
 
-> > https://lore.kernel.org/linux-iio/20250829-tlv493d-sensor-v6_16-rc5-v5-2-746e73bc6c11@gmail.com
-> >>
-> >> Your patchset is still incorrectly organized. See submitting patches in
-> >> DT dir.
-> > By "incorrectly organized" do you mean order of the patches in the
-> > patchset or anything else?
->
-> I pointed to the docs, is anything unclear in there?
-I did referred the docs you
-pointed(Documentation/devicetree/bindings/submitting-patches.rst), as
-per that only one point which is
-being missed here that is #5 _The Documentation/ portion of the patch
-should come in the series before the code implementing the binding._
-That is applicable to dt-bindings patch of this patch series as the
-dt-bindings patch is a seperate patch.
-Apart from that, is there anything you think this patch is missing,
-kindly guide me.
+Fixes: 4277f035d227 ("coresight: trbe: Add a representative coresight_platform_data for TRBE")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/hwtracing/coresight/coresight-trbe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for review,
-Dixit
+diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
+index 8267dd1a2130..caf873adfc3a 100644
+--- a/drivers/hwtracing/coresight/coresight-trbe.c
++++ b/drivers/hwtracing/coresight/coresight-trbe.c
+@@ -1279,7 +1279,7 @@ static void arm_trbe_register_coresight_cpu(struct trbe_drvdata *drvdata, int cp
+ 	 * into the device for that purpose.
+ 	 */
+ 	desc.pdata = devm_kzalloc(dev, sizeof(*desc.pdata), GFP_KERNEL);
+-	if (IS_ERR(desc.pdata))
++	if (!desc.pdata)
+ 		goto cpu_clear;
+ 
+ 	desc.type = CORESIGHT_DEV_TYPE_SINK;
+-- 
+2.35.1
+
 
