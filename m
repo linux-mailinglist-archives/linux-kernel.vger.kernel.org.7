@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-791195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC17AB3B343
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F05B3B340
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77830685A36
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A3F5E4F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C6523D2BF;
-	Fri, 29 Aug 2025 06:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C6E23ABAF;
+	Fri, 29 Aug 2025 06:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SHjMXgt1"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EuY6Lb29"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC21FF7B3;
-	Fri, 29 Aug 2025 06:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6811FF7B3;
+	Fri, 29 Aug 2025 06:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756448422; cv=none; b=tfeAIIdH0prpSi0vdd8zPEopZzD2X3rql0XD/iOdnpUKtq0yVEme341+OX9BjJ5ife9XMQUTQhFDEkSZRKiQeLpXmB0X5cqCm6gr2Ssqh6dFIptqiP2ZtIR0xMK8EuTPHYZXHKQT5vJXbrqiaBoxLiWt+sXEh/CKoNGgBcKH81Y=
+	t=1756448414; cv=none; b=mzFMkRrF5QHSLumb8xAR9oB914impTtduOD1TU1xp0XfCiVqY6qmQ9M5ZpJxw+TxozkuPDGjZXXMkHiCmaiAvpW8fmaIZdMD6zeZt5Tpy448I80nKs9vKQy1U0HTQ5MH52eK1QSvi7oi+2F2pNhd5XAPYDhJz40envrcHdw3vIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756448422; c=relaxed/simple;
-	bh=v/unp1wJZ4wt+gtb9URTeY7e1rqk+cPr8/4lwrZYSPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DS1gNwfyyGL3hD+Z+cGPCL5dJ93axwpBLQVE64TNwn1miBPfDDGo8Ohgw9zMcbDOgj/w4elS06UQEDMmyK550LBkQX3wpPv9ttILjEUTr/ii6EcHoN8lcA+8a4KOdf7RHankCovn7HrrKYN50ZYe+8ehXed7Q/9u5YdA3oXQSBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SHjMXgt1; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 14C8B1038C106;
-	Fri, 29 Aug 2025 08:20:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1756448410; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=O4EneYV/MWd5kppnSN7M1ImvbKtg1wmaX2ZgzX2GRiQ=;
-	b=SHjMXgt1q6JM1uubm5z6LxjBMQiuamt6gO0jwlRmq24/i7CrOwufA2z31jniNe2FzN5fRi
-	Zcc+gsmFWrWb69fTQ3lMV32ZKnjLxmKsLTPGlWR6439kIFS+5OAwKnj5XGejwFf3QYJi0S
-	PVC6jB8XNUqGjtpEQKqUwlmHxjQfHsEM2B2iSWLbUh2c/ILy73CddT8WlrJbhvBXTVfzZd
-	vuC+TQIjwUJRTnrIsL+bwnZMU8d7X5d8qrbuaADsEELIQemiTekzfllBd0mX400K40CBAO
-	gaUrhBXpgO1hKBZuOOkDbVir7InOCUe1pHPonP5faa/l61qRFbk2/Ha3gtLAig==
-Date: Fri, 29 Aug 2025 08:20:00 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.1 000/482] 6.1.149-rc1 review
-Message-ID: <aLFGkFLgDL3Z9AU7@duo.ucw.cz>
-References: <20250826110930.769259449@linuxfoundation.org>
+	s=arc-20240116; t=1756448414; c=relaxed/simple;
+	bh=vlNKkb1WrX314l7NI4WiDwPMbvh6QYy2ovez8YrbOFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EKllzB0ZAE3bGmqbGy929o8Ou+eBdLjERY1qX7M1WVCya2IBQXXazTtn2oHUJ5DzTOqd6V0UlzSrQqIwFxTRwOPhCVXsr+gdm9SvJXefzzj37LbmdOxp0cOyfyI2ReFXlhCyPrB/s9XkqUYYpufOMOx9VppmVLEmrNHwjKitC5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EuY6Lb29; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756448412; x=1787984412;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vlNKkb1WrX314l7NI4WiDwPMbvh6QYy2ovez8YrbOFM=;
+  b=EuY6Lb29Po+kVQUw0vwID1uXmNGOccaou7viFKrHpFyXvKtBIZt5/j/M
+   lYHqRVig4OaH3U+mCTtzDTomvkWtFQjrdionFvau/IYaNPW3zabndnjAm
+   47+bXUlgDWC5TJ6GNauw0o1Kp5jFRcJeBwORoZt1YrLsTZ9k+hY1A0A2i
+   LBKh1cofxXGF4kV5MnjaMp73T3p2tooUaQ51QEbuAJcEHRIgDrOfbw7+4
+   3id1LaXL4cqabP6Nz6kfnZ8uT8jDTqCuWYVw2ySHOv2VQ3ISZ9KFbj2h5
+   aVFSWixextZpTPBfI9UFb73tT3XozgiXzF0GzBbT2baRagHVmu8TEST/i
+   g==;
+X-CSE-ConnectionGUID: dfdlHPLRQ3uMBDY8V814aQ==
+X-CSE-MsgGUID: b22UB2hpRYyov8RkXh3cdg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="70100494"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="70100494"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:20:11 -0700
+X-CSE-ConnectionGUID: z2iEO37NSxqTGOqrsQkT5Q==
+X-CSE-MsgGUID: PKx+GO9cSlWoILj6NBzspA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="169874675"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:20:08 -0700
+Message-ID: <bf223bec-98f4-420f-a7fb-1056ea8725b4@linux.intel.com>
+Date: Fri, 29 Aug 2025 14:20:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uwNqM38krSEe0hUZ"
-Content-Disposition: inline
-In-Reply-To: <20250826110930.769259449@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 01/18] KVM: TDX: Drop PROVE_MMU=y sanity check on
+ to-be-populated mappings
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>,
+ Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+ <20250829000618.351013-2-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250829000618.351013-2-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---uwNqM38krSEe0hUZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 8/29/2025 8:06 AM, Sean Christopherson wrote:
+> Drop TDX's sanity check that an S-EPT mapping isn't zapped between creating
+                                  ^
+                                 should be M-EPT?
 
-> This is the start of the stable review cycle for the 6.1.149 release.
-> There are 482 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> said mapping and doing TDH.MEM.PAGE.ADD, as the check is simultaneously
+> superfluous and incomplete.  Per commit 2608f1057601 ("KVM: x86/tdp_mmu:
+> Add a helper function to walk down the TDP MMU"), the justification for
+> introducing kvm_tdp_mmu_gpa_is_mapped() was to check that the target gfn
+> was pre-populated, with a link that points to this snippet:
+>
+>   : > One small question:
+>   : >
+>   : > What if the memory region passed to KVM_TDX_INIT_MEM_REGION hasn't been pre-
+>   : > populated?  If we want to make KVM_TDX_INIT_MEM_REGION work with these regions,
+>   : > then we still need to do the real map.  Or we can make KVM_TDX_INIT_MEM_REGION
+>   : > return error when it finds the region hasn't been pre-populated?
+>   :
+>   : Return an error.  I don't love the idea of bleeding so many TDX details into
+>   : userspace, but I'm pretty sure that ship sailed a long, long time ago.
+>
+> But that justification makes little sense for the final code, as simply
+> doing TDH.MEM.PAGE.ADD without a paranoid sanity check will return an error
+> if the S-EPT mapping is invalid (as evidenced by the code being guarded
+> with CONFIG_KVM_PROVE_MMU=y).
 
-CIP testing did not find any problems here:
+I think this also needs to be updated.
+As Yan mentioned in https://lore.kernel.org/lkml/aK6+TQ0r1j5j2PCx@yzhao56-desk.sh.intel.com/
+TDH.MEM.PAGE.ADD would succeed without error, but error is still can be detected
+via the value of nr_premapped in the end.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+>
+> The sanity check is also incomplete in the sense that mmu_lock is dropped
+> between the check and TDH.MEM.PAGE.ADD, i.e. will only detect KVM bugs that
+> zap SPTEs in a very specific window.
+>
+> Removing the sanity check will allow removing kvm_tdp_mmu_gpa_is_mapped(),
+> which has no business being exposed to vendor code.
+>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 14 --------------
+>   1 file changed, 14 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 6784aaaced87..71da245d160f 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -3175,20 +3175,6 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+>   	if (ret < 0)
+>   		goto out;
+>   
+> -	/*
+> -	 * The private mem cannot be zapped after kvm_tdp_map_page()
+> -	 * because all paths are covered by slots_lock and the
+> -	 * filemap invalidate lock.  Check that they are indeed enough.
+> -	 */
+> -	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
+> -		scoped_guard(read_lock, &kvm->mmu_lock) {
+> -			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
+> -				ret = -EIO;
+> -				goto out;
+> -			}
+> -		}
+> -	}
+> -
+>   	ret = 0;
+>   	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
+>   			       src_page, &entry, &level_state);
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---uwNqM38krSEe0hUZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaLFGkAAKCRAw5/Bqldv6
-8ujxAJ9qV01dDwiSlTE/esbsJ10RA/t2VQCeIG5Yx/KEtRgaQv5y8KHiw1opWeE=
-=CX2c
------END PGP SIGNATURE-----
-
---uwNqM38krSEe0hUZ--
 
