@@ -1,269 +1,154 @@
-Return-Path: <linux-kernel+bounces-792234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776FBB3C1B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2312B3C1BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A12A616DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55554A61877
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D038341AB0;
-	Fri, 29 Aug 2025 17:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED1B341AC6;
+	Fri, 29 Aug 2025 17:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bhfMjb6n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kC4+UYJz"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1AF341AAC
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA08101DE;
+	Fri, 29 Aug 2025 17:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756488456; cv=none; b=d6rX068rUveNronaWVvF4uZ0fX0Ibv1flu6uGgwCFm3XEUHhW57v5h+rnLWsALP9c14xvBg9TefPX+uMig6dGdeKMEaZ49AdHWYBGAIPlBE4sIns/9yM0FCb65Rsmkf4YJmu9ounywcpVb99p3ihe/jckcU4U+Z3mle4dwgea0g=
+	t=1756488577; cv=none; b=Rk4DpPILwadYIRO9E1LbBfyMWwLG8/Ur3UXnfe1/FxxCE/XGDEms9unUPlVfTbGDuXTgJYCGhqfzCjpMn9b1q0Lx8SCaebC6eBAWC3GkkzPnUXOelw3HCHxuS+sAVQHRBtD6uXnymX5jFrIFwXyUklpOuWeVZ8hQUATj+MzCDFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756488456; c=relaxed/simple;
-	bh=0oPo0z9udsRw3FBDzdXm4YI4rjAsiGVGsBsgpZKUYxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F7oF3Pru2/bCTTwy98pXJq28LF6ymwuntOtujI6/yzz9zDPLj5IcC/ZiebPnwwGgxwMqUXT9HwpVD/q5JuN1JTf0lfHQDJ8t7JfEaLc5rJUXJqF61xrjo72fWAQWKf5tADYv1CfXgH9F82oUl3QVTdulQ9fLayQrdQoO65QHn20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bhfMjb6n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756488453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7kpwuDFksK4MkfxysqJDIcI5j4cOj4EGr1wTOPuLSnc=;
-	b=bhfMjb6not9MAhROnCd+IziqZ11YSoaT9MqNvwfwa2u9aFvUPaUccp2NaM0GK7LyH8s2E+
-	BhPMqpQG1hP0GDh9gmSHI/o1+bbFVO5lYPKbnCSees/guZkKsEsKyvijSMg5pcQg6mAzl4
-	eHHKcaX2eeLYP9dXontJFEdcjoYZWwA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-402-XKeSi6jaMN6uGctGBpVDRw-1; Fri,
- 29 Aug 2025 13:27:30 -0400
-X-MC-Unique: XKeSi6jaMN6uGctGBpVDRw-1
-X-Mimecast-MFC-AGG-ID: XKeSi6jaMN6uGctGBpVDRw_1756488449
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29A4D195E906;
-	Fri, 29 Aug 2025 17:27:29 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BF4D19560B4;
-	Fri, 29 Aug 2025 17:27:28 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for 6.17-rc4
-Date: Fri, 29 Aug 2025 13:27:26 -0400
-Message-ID: <20250829172727.169887-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1756488577; c=relaxed/simple;
+	bh=sEnuUj7Sr3bpuLOAgNEHB9VqYw21ZHzMro9c5/zGMe0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uO9PWfKVpotEsG7OlT4YD3MsihGwpWugiecwBc6nCFgRKElXPlmmju2kyt2/gz3n+BKMommcUct9eYgPyejPfdXPR7jm6T1FsGhm+ZE7o762V0S5LxxdubgfjlLH6O1mKiuOP/85Eq1hEuY0LRmiKeSw/frs8qOJDDQ8qoRCdwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kC4+UYJz; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b7c56a987so7349715e9.1;
+        Fri, 29 Aug 2025 10:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756488574; x=1757093374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Utt8v41OqdwcXNTs60r1yAh67/DGb5v/X1J5aTwQAjM=;
+        b=kC4+UYJz66bYB3wUQ1XFC2lykfuoXSdExhNUIQIDVmDfPrgXaI9c6MzkBDFn2Oy2l2
+         5zz+Gt6UuVjelDGOlIwT62d+N8OXJwTvk/5DRNM/bwRR9jfT4VY0sbyF9xbL7N42aeAK
+         rYFvK9hC1xB3w70ddZ75s6xmezcYwIUtQiM+MYuiH7pPcf+Y/HxqfFax8f/NPAiQ5fp6
+         OCZs7LNWP1KX8QfaKi3fOgIbDhlOiHKvbcqjPyXVcgRR4CrvcDVR+262lWRUR/3Xu/Ks
+         JqBrp4MGrsVXC3F7+vKc8zK46IWNcmDJWdBz+yDf/xlUA6IpyTmEmVJbAoc68DwJpf8o
+         WCHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756488574; x=1757093374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Utt8v41OqdwcXNTs60r1yAh67/DGb5v/X1J5aTwQAjM=;
+        b=dnvgQibvPGjrSYuNOw6/eszaA92zBO2pclxmPFOqz5xEbZWxK6/dffsOEusPN8Hfil
+         7qcCF75tknV+gxkhMQYTnzglCdD6hAm4jfl46ES9l9gcMA3/3iwexZJVE9eek+Z1i73C
+         B7qj56fMPiZVFR/P6wf2KvBrjksnUYlWijSkJwCrmOmcdVJFQtK81HtRvXu9cI5TThp4
+         cyKh17UoZZa2a6riY4cWQxi4BK97Q3wMWO2JYxNRq2NtdhVo3a9xDg6fd23fYgzKM1Xa
+         uo/2Xww+9eiWOsUWLGupcIAnGlCIn17Hhk6hCR42oyAf/+vtsPE2q7hmW/BDYSWInJeu
+         GKmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYZTLgxbJOgldNdS6qgGPIFQ5A+gyj7qug5tHu88Ag6dHaU4rnrQ+Gyr5w9cLjqxFY+6Y71QBpvAEi1mro@vger.kernel.org, AJvYcCXhErfnqLtzX4wV5FPbkOmaGDwnP6CSRbJZ8j6xERO+AA0+nJUEnx74edcziKNUmIUsckU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznTXn+hgK6+4D/12jOFp/y7kYkSJ/2M3SJ20ndqGz2Jy2eq7Li
+	y0qW6u7neojsmvLPML5gGj9mErIUkyelxuVPGrHd0BAtVUa+cw+xFpkDyHsxCAI3cLi59gakeDL
+	u/E6Q7kcoWEclpHig5Tzg2sdSF4lddmw=
+X-Gm-Gg: ASbGncvzSAegcYCInHo+LrnriUyaQdszxeFyh+q85Ph7ns1Isz+mzpMbYjsx6RVEQlE
+	/DFcGFW+C1IuzGx8juGwO90Vpgbpb8Z4xLSFtaUuZAko+aUuEdb5akn0ZQ4ti/eAaJQdG8sJlO2
+	NdwZZHt49SNguFyhoUeRI/Gwt5c+knHk+voTS4BmJlwrOIFIgfoZBWNJMQXJyX7cFjvwo850Fb4
+	Ggc7JrOjdUqh4zpOhZe4jVzHfaHgAKcMQ==
+X-Google-Smtp-Source: AGHT+IFNeYFEufRu7GlQAG34ccBuuU6fVaBDYaah0lvyX3Fra4LvLOgCbZ8MwIHdQ+fWQnnlw/Aihzp1M95/a2jbQPQ=
+X-Received: by 2002:a05:600c:46cf:b0:456:43c:dcdc with SMTP id
+ 5b1f17b1804b1-45b517dd96dmr238318245e9.33.1756488573448; Fri, 29 Aug 2025
+ 10:29:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250826212229.143230-1-contact@arnaud-lcm.com> <20250826212352.143299-1-contact@arnaud-lcm.com>
+In-Reply-To: <20250826212352.143299-1-contact@arnaud-lcm.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 29 Aug 2025 10:29:20 -0700
+X-Gm-Features: Ac12FXxLyJEHbYO01cWHleEDLGMX8X5FnZGa6gNqD0GXFVdNlDxekK2ZmgESRjM
+Message-ID: <CAADnVQ+6bV3h3i-A1LHbEk=nY_PMx69BiogWjf5GtGaLxWSQVg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
+To: Arnaud Lecomte <contact@arnaud-lcm.com>
+Cc: Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Tue, Aug 26, 2025 at 2:24=E2=80=AFPM Arnaud Lecomte <contact@arnaud-lcm.=
+com> wrote:
+>
+> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid(=
+)
+> when copying stack trace data. The issue occurs when the perf trace
+>  contains more stack entries than the stack map bucket can hold,
+>  leading to an out-of-bounds write in the bucket's data array.
+>
+> Changes in v2:
+>  - Fixed max_depth names across get stack id
+>
+> Changes in v4:
+>  - Removed unnecessary empty line in __bpf_get_stackid
+>
+> Link to v4: https://lore.kernel.org/all/20250813205506.168069-1-contact@a=
+rnaud-lcm.com/
+>
+> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dc9b724fbb41cf2538b7b
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+> ---
+>  kernel/bpf/stackmap.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 796cc105eacb..ef8269ab8d6f 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -247,7 +247,7 @@ get_callchain_entry_for_task(struct task_struct *task=
+, u32 max_depth)
+>  }
+>
+>  static long __bpf_get_stackid(struct bpf_map *map,
+> -                             struct perf_callchain_entry *trace, u64 fla=
+gs)
+> +                             struct perf_callchain_entry *trace, u64 fla=
+gs, u32 max_depth)
+>  {
+>         struct bpf_stack_map *smap =3D container_of(map, struct bpf_stack=
+_map, map);
+>         struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+> @@ -263,6 +263,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>
+>         trace_nr =3D trace->nr - skip;
+>         trace_len =3D trace_nr * sizeof(u64);
+> +       trace_nr =3D min(trace_nr, max_depth - skip);
+> +
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+The patch might have fixed this particular syzbot repro
+with OOB in stackmap-with-buildid case,
+but above two line looks wrong.
+trace_len is computed before being capped by max_depth.
+So non-buildid case below is using
+memcpy(new_bucket->data, ips, trace_len);
 
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 42a0305ab114975dbad3fe9efea06976dd62d381:
-
-  Merge tag 'kvmarm-fixes-6.17-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2025-08-29 12:57:31 -0400)
-
-It's a whole bunch of stuff that has accumulated since the merge
-window.  Mostly due to ARM changes involving sysreg context switching,
-it's quite on the larger side; there is a lot of unrelated fixed, but
-here is an excerpt of the commit message from the biggest issue:
-
-    Volodymyr reports (again!) that under some circumstances (E2H==0,
-    walking S1 PTs), PAR_EL1 doesn't report the value of the latest
-    walk in the CPU register, but that instead the value is written to
-    the backing store.
-    
-    Further investigation indicates that the root cause of this is
-    that a group of registers (PAR_EL1, TPIDR*_EL{0,1}, the *32_EL2 dregs)
-    should always be considered as "on CPU", as they are not remapped
-    between EL1 and EL2.
-    
-    We fail to treat them accordingly, and end-up considering that
-    the register (PAR_EL1 in this example) should be written to memory
-    instead of in the register.
-
-Also, probably I won't be sending another until rc6 or rc7 unless
-there's something egregious.  But with KVM Forum happening next week,
-I expect that things will stay relatively calm.
-
-Thanks,
-
-Paolo
-
-----------------------------------------------------------------
-ARM:
-
-- Correctly handle 'invariant' system registers for protected VMs
-
-- Improved handling of VNCR data aborts, including external aborts
-
-- Fixes for handling of FEAT_RAS for NV guests, providing a sane
-  fault context during SEA injection and preventing the use of
-  RASv1p1 fault injection hardware
-
-- Ensure that page table destruction when a VM is destroyed gives an
-  opportunity to reschedule
-
-- Large fix to KVM's infrastructure for managing guest context loaded
-  on the CPU, addressing issues where the output of AT emulation
-  doesn't get reflected to the guest
-
-- Fix AT S12 emulation to actually perform stage-2 translation when
-  necessary
-
-- Avoid attempting vLPI irqbypass when GICv4 has been explicitly
-  disabled for a VM
-
-- Minor KVM + selftest fixes
-
-RISC-V:
-
-- Fix pte settings within kvm_riscv_gstage_ioremap()
-
-- Fix comments in kvm_riscv_check_vcpu_requests()
-
-- Fix stack overrun when setting vlenb via ONE_REG
-
-x86:
-
-- Use array_index_nospec() to sanitize the target vCPU ID when handling PV
-  IPIs and yields as the ID is guest-controlled.
-
-- Drop a superfluous cpumask_empty() check when reclaiming SEV memory, as
-  the common case, by far, is that at least one CPU will have entered the
-  VM, and wbnoinvd_on_cpus_mask() will naturally handle the rare case where
-  the set of have_run_cpus is empty.
-
-Selftests (not KVM):
-
-- Rename the is_signed_type() macro in kselftest_harness.h to is_signed_var()
-  to fix a collision with linux/overflow.h.  The collision generates compiler
-  warnings due to the two macros having different meaning.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      kvm: arm64: use BUG() instead of BUG_ON(1)
-
-Fangyu Yu (1):
-      RISC-V: KVM: Fix pte settings within kvm_riscv_gstage_ioremap()
-
-Fuad Tabba (3):
-      KVM: arm64: Handle AIDR_EL1 and REVIDR_EL1 in host for protected VMs
-      KVM: arm64: Sync protected guest VBAR_EL1 on injecting an undef exception
-      arm64: vgic-v2: Fix guest endianness check in hVHE mode
-
-Marc Zyngier (14):
-      KVM: arm64: nv: Properly check ESR_EL2.VNCR on taking a VNCR_EL2 related fault
-      KVM: arm64: selftest: Add standalone test checking for KVM's own UUID
-      KVM: arm64: Correctly populate FAR_EL2 on nested SEA injection
-      arm64: Add capability denoting FEAT_RASv1p1
-      KVM: arm64: Handle RASv1p1 registers
-      KVM: arm64: Ignore HCR_EL2.FIEN set by L1 guest's EL2
-      KVM: arm64: Make ID_AA64PFR0_EL1.RAS writable
-      KVM: arm64: Make ID_AA64PFR1_EL1.RAS_frac writable
-      KVM: arm64: Get rid of ARM64_FEATURE_MASK()
-      KVM: arm64: Check for SYSREGS_ON_CPU before accessing the 32bit state
-      KVM: arm64: Simplify sysreg access on exception delivery
-      KVM: arm64: Fix vcpu_{read,write}_sys_reg() accessors
-      KVM: arm64: Remove __vcpu_{read,write}_sys_reg_{from,to}_cpu()
-      KVM: arm64: nv: Fix ATS12 handling of single-stage translation
-
-Mark Brown (1):
-      KVM: arm64: selftests: Sync ID_AA64MMFR3_EL1 in set_id_regs
-
-Oliver Upton (1):
-      KVM: arm64: nv: Handle SEAs due to VNCR redirection
-
-Paolo Bonzini (3):
-      Merge tag 'kvm-x86-fixes-6.17-rc7' of https://github.com/kvm-x86/linux into HEAD
-      Merge tag 'kvm-riscv-fixes-6.17-1' of https://github.com/kvm-riscv/linux into HEAD
-      Merge tag 'kvmarm-fixes-6.17-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-
-Quan Zhou (1):
-      RISC-V: KVM: Correct kvm_riscv_check_vcpu_requests() comment
-
-Radim Krčmář (1):
-      RISC-V: KVM: fix stack overrun when loading vlenb
-
-Raghavendra Rao Ananta (3):
-      KVM: arm64: Don't attempt vLPI mappings when vPE allocation is disabled
-      KVM: arm64: Split kvm_pgtable_stage2_destroy()
-      KVM: arm64: Reschedule as needed when destroying the stage-2 page-tables
-
-Sean Christopherson (1):
-      selftests: harness: Rename is_signed_type() to avoid collision with overflow.h
-
-Thijs Raymakers (1):
-      KVM: x86: use array_index_nospec with indices that come from guest
-
-Yury Norov (1):
-      KVM: SEV: don't check have_run_cpus in sev_writeback_caches()
-
- arch/arm64/include/asm/kvm_host.h                  | 111 +-----
- arch/arm64/include/asm/kvm_mmu.h                   |   1 +
- arch/arm64/include/asm/kvm_pgtable.h               |  30 ++
- arch/arm64/include/asm/kvm_pkvm.h                  |   4 +-
- arch/arm64/include/asm/kvm_ras.h                   |  25 --
- arch/arm64/include/asm/sysreg.h                    |   3 -
- arch/arm64/kernel/cpufeature.c                     |  24 ++
- arch/arm64/kvm/arm.c                               |   8 +-
- arch/arm64/kvm/at.c                                |   6 +-
- arch/arm64/kvm/emulate-nested.c                    |   2 +-
- arch/arm64/kvm/hyp/exception.c                     |  20 +-
- arch/arm64/kvm/hyp/nvhe/list_debug.c               |   2 +-
- arch/arm64/kvm/hyp/nvhe/sys_regs.c                 |   5 +
- arch/arm64/kvm/hyp/pgtable.c                       |  25 +-
- arch/arm64/kvm/hyp/vgic-v2-cpuif-proxy.c           |   2 +-
- arch/arm64/kvm/hyp/vhe/switch.c                    |   5 +-
- arch/arm64/kvm/mmu.c                               |  65 +++-
- arch/arm64/kvm/nested.c                            |   5 +-
- arch/arm64/kvm/pkvm.c                              |  11 +-
- arch/arm64/kvm/sys_regs.c                          | 431 ++++++++++++++-------
- arch/arm64/kvm/vgic/vgic-mmio-v3.c                 |   8 +
- arch/arm64/kvm/vgic/vgic-mmio.c                    |   2 +-
- arch/arm64/kvm/vgic/vgic.h                         |  10 +-
- arch/arm64/tools/cpucaps                           |   1 +
- arch/riscv/kvm/mmu.c                               |   5 +-
- arch/riscv/kvm/vcpu.c                              |   2 +-
- arch/riscv/kvm/vcpu_vector.c                       |   2 +
- arch/x86/kvm/lapic.c                               |   2 +
- arch/x86/kvm/svm/sev.c                             |  10 +-
- arch/x86/kvm/x86.c                                 |   7 +-
- tools/arch/arm64/include/asm/sysreg.h              |   3 -
- tools/testing/selftests/kselftest_harness.h        |   4 +-
- tools/testing/selftests/kvm/Makefile.kvm           |   1 +
- .../testing/selftests/kvm/arm64/aarch32_id_regs.c  |   2 +-
- .../testing/selftests/kvm/arm64/debug-exceptions.c |  12 +-
- tools/testing/selftests/kvm/arm64/kvm-uuid.c       |  70 ++++
- tools/testing/selftests/kvm/arm64/no-vgic-v3.c     |   4 +-
- .../testing/selftests/kvm/arm64/page_fault_test.c  |   6 +-
- tools/testing/selftests/kvm/arm64/set_id_regs.c    |   9 +-
- .../selftests/kvm/arm64/vpmu_counter_access.c      |   2 +-
- tools/testing/selftests/kvm/lib/arm64/processor.c  |   6 +-
- 41 files changed, 585 insertions(+), 368 deletions(-)
- delete mode 100644 arch/arm64/include/asm/kvm_ras.h
- create mode 100644 tools/testing/selftests/kvm/arm64/kvm-uuid.c
-
+so OOB is still there?
 
