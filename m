@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-791001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E99B3B102
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F9BB3B103
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FC36839F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A3568417D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD1218AC1;
-	Fri, 29 Aug 2025 02:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p0qwMLOH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A572A219301;
+	Fri, 29 Aug 2025 02:24:06 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDC21BC5C;
-	Fri, 29 Aug 2025 02:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA211BC5C;
+	Fri, 29 Aug 2025 02:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756434237; cv=none; b=jQUGQhRDOMjeiRfIjvdZv0LyqKNUTw8cwXrNSl7dc1O2oLR7bndSccuY7cOeaLFrzkmJvTnj5k44qQUUCjJe7ppwYRjLjFhh/vmAPswLgoXgbS9H0IVR6V4iWLp3XtUy270Dvy9aZ9MxqwCcRSY1lenRLPLBjgC6ADrRPTXiHRM=
+	t=1756434246; cv=none; b=nFfUeJEv3H50tLxZRzm0umS4WgOB71t5P2zqr73SHT+ZTJIxJPpZuXTMI5+DvnkqzsJgREuDVNNhLF0YoL+oTfcXpIz3v8MR1At8I1SKpcheDUYuj+vpNmbH2DrThWnqseoHN0wqVThRTfAAgnQQMQkKpkSeCE29ZYQ+j5WD0wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756434237; c=relaxed/simple;
-	bh=jw7OBQb3BSABPFoYHfJTXnTPfnWrNySCKlEvH+92O20=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cQ306tK9j5SxQnoixj/b/buf6/ymiylx6qrhijiTaVLifX8qw7ax7ZXWMsshlYewlS3yaPYXfk2iQqQZYDKM4Q9LH4Sfkx8RjJb9NivDhdTVmecxjb22oVc/MKlnwXC1a7WGCrNp2W9CX94I3e4K5v4ZCg8yissdKbJtAqjt83A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p0qwMLOH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756434225;
-	bh=UHRA4gGEGjTWcsmrfjcfYxxL2gmHi/bqcEFXtmpy7Kc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=p0qwMLOHs6YcbWy7GVJu/S40VlvyXA2q+nIZrB7rk1fTIINyYPUW71fiZ8xb9UKfq
-	 UradhSBBhwCIQ66WBkxR7fQkusmpaChy5x25SDUDAiybqRePgOz+EEWoSToxFoIu8j
-	 Sjb6rw/slXBoKYHeXlgg6b8s6W1JfrJgH2iv3p1G1f8YlW6GzZ+bPhyFGtRfKXV5wX
-	 oa8ULY0TH6eypszEv/Qn5WO+dbvadQ+Wi8nHS+wqgsGVYR6IAzUIERPc7yGnoEu5P1
-	 0x49D3VMWsQ7V3oXKKvOgASq3hKwmpvonA9C53tTa7XD6Ykfe2ALPWlgdB9K7UqJqT
-	 kr2BnkagCWgww==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cChsD6Rjzz4wfl;
-	Fri, 29 Aug 2025 12:23:44 +1000 (AEST)
-Date: Fri, 29 Aug 2025 12:23:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
- Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20250829122343.4b31642f@canb.auug.org.au>
+	s=arc-20240116; t=1756434246; c=relaxed/simple;
+	bh=LD/dzZkotatbWC2pE8zf0hWA4c2sI4NHyeAEv9C7cWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AT40xwjQPbdSeKiEvnlkU8yCIDYAfLUz9HIS/Yt3eT/P88nhBK+qtB2oG3MVKisNG3DMX1jPmkw8pDNLw5EAhalj1WYlOIksCiE4lTuFY5a3ZExt/x4YFu/7TKJ0UdVSQQSV4uxsCSRo/finf0OrQmZkbzRbq66NJuxYfMjh6Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 89F1713A104;
+	Fri, 29 Aug 2025 02:24:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 8C5916000B;
+	Fri, 29 Aug 2025 02:23:58 +0000 (UTC)
+Date: Thu, 28 Aug 2025 22:23:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Menglong Dong <dongml2@chinatelecom.cn>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, kernel
+ test robot <oliver.sang@intel.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in
+ fprobe_entry
+Message-ID: <20250828222357.55fab4c2@batman.local.home>
+In-Reply-To: <20250829021436.19982-1-dongml2@chinatelecom.cn>
+References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dbmPQnu+I=eNxOB/okb+t/_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/dbmPQnu+I=eNxOB/okb+t/_
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ima4r3ynrjku7c7wbsowqez1ui5yugaf
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 8C5916000B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/Um7o/xuj05SM+I7zwu49yDvaXP8UURTk=
+X-HE-Tag: 1756434238-941031
+X-HE-Meta: U2FsdGVkX1+FHbgTP4MfqSCwG9uihNP6dP7ItW+sZr3ePzAx9HQ5c+Dgw8J/7OPRXZ3Nu4Y6JNJ/ds01+7jSZBhERC0W9TOk12MTo+zFRJ8vutOg3L7m8dKYaqV5FKtFHp5M4RTxk4RkLzenmiB+lXj5TNija+K6C4ibVSZYmL3tdvltH7s1szI246tiQXD1P2POJrt2pPbwEjR9NbeWHJ5ZFNulVL8PA0RYriESOUMyyL7OafSjKSWN8V8e4H1lpSGZsSA4foxdnIMB+75Lbd31mCqOmQF5NtsbRWG0OE/+5lKu0CCr56wujU2BDVG6iG/111qDS4SBgxfCQFoWu/zvIA2WQ1doiUppHLL4tv9+sjsCr14yLw==
 
-Hi all,
+On Fri, 29 Aug 2025 10:14:36 +0800
+Menglong Dong <dongml2@chinatelecom.cn> wrote:
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
+> is used in rhltable_lookup(), which causes suspicious RCU usage warning:
+> 
+>   WARNING: suspicious RCU usage
+>   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
+>   -----------------------------
+>   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+>   ......
+>   stack backtrace:
+>   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
+>   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
+>   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+>   Call Trace:
+>    <TASK>
+>    dump_stack_lvl+0x7c/0x90
+>    lockdep_rcu_suspicious+0x14f/0x1c0
+>    __rhashtable_lookup+0x1e0/0x260
+>    ? __pfx_kernel_clone+0x10/0x10
+>    fprobe_entry+0x9a/0x450
+>    ? __lock_acquire+0x6b0/0xca0
+>    ? find_held_lock+0x2b/0x80
+>    ? __pfx_fprobe_entry+0x10/0x10
+>    ? __pfx_kernel_clone+0x10/0x10
+>    ? lock_acquire+0x14c/0x2d0
+>    ? __might_fault+0x74/0xc0
+>    function_graph_enter_regs+0x2a0/0x550
+>    ? __do_sys_clone+0xb5/0x100
+>    ? __pfx_function_graph_enter_regs+0x10/0x10
+>    ? _copy_to_user+0x58/0x70
+>    ? __pfx_kernel_clone+0x10/0x10
+>    ? __x64_sys_rt_sigprocmask+0x114/0x180
+>    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
+>    ? __pfx_kernel_clone+0x10/0x10
+>    ftrace_graph_func+0x87/0xb0
+> 
+> Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
+> can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
+> However, it's not a common usage :/
 
-drivers/gpu/drm/tests/drm_exec_test.c: In function 'test_prepare_array':
-drivers/gpu/drm/tests/drm_exec_test.c:171:1: error: the frame size of 2136 =
-bytes is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
-  171 | }
-      | ^
-cc1: all warnings being treated as errors
+So this is needed even though it's called under preempt_disable().
 
-Possibly caused by commit
+Paul, do we need to add an rcu_read_lock() because the code in rht
+(rhashtable) requires RCU read lock?
 
-  e7fa80e2932c ("drm_gem: add mutex to drm_gem_object.gpuva")
+I thought that rcu_read_lock() and preempt_disable() have been merged?
 
-I have used the drm-misc tree from next-20250828 for today.
+-- Steve
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/dbmPQnu+I=eNxOB/okb+t/_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
+> Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+>  kernel/trace/fprobe.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> index fb127fa95f21..fece0f849c1c 100644
+> --- a/kernel/trace/fprobe.c
+> +++ b/kernel/trace/fprobe.c
+> @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  	if (WARN_ON_ONCE(!fregs))
+>  		return 0;
+>  
+> +	rcu_read_lock();
+>  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> +	rcu_read_unlock();
+>  	reserved_words = 0;
+>  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+>  		if (node->addr != func)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmixDy8ACgkQAVBC80lX
-0GzsnQf/aMPMRMWvoXVvkr/0OOseZGxrEsTbLfDhThTKjMWEWKrq3PVFUnVyzWzL
-iqanDcSr+7NHIRP+S1bKH/alnMdSdtYpwYUARwfEJUVvTpWmFkjX8FM3A52r6ahs
-uQhPHzZN6AgnYHv1H6aKg3ZthwAMSt2OO+pRZRVDkbJNZNbDctSloJ+s3oUNAXNC
-7eSO+MP35OaKkz6VklGCoQfRhJXonAZeQoCdECi+U7ybdYk6kgbOP0XXprWCmTot
-/U2bBYKlTli++XtKiTvjnEG9vAJGde7+thjHEDFKYuWUwaaOHDGlevWgaZMOm6f1
-WzSFbbBA1nWC2h9HOiQyssb6GjeYxA==
-=RbTf
------END PGP SIGNATURE-----
-
---Sig_/dbmPQnu+I=eNxOB/okb+t/_--
 
