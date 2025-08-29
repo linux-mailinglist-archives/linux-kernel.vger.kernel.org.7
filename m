@@ -1,147 +1,89 @@
-Return-Path: <linux-kernel+bounces-792036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869A2B3BFB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:45:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF28B3BFB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621D81CC2644
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5654C3A3ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C150C32C333;
-	Fri, 29 Aug 2025 15:42:10 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0DB314B82;
+	Fri, 29 Aug 2025 15:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sr8wIUjJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1995132C30C;
-	Fri, 29 Aug 2025 15:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC88D18871F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482130; cv=none; b=JF3enBLzJZ5euzxX33qEDyhXASBqjjctwVWDwxzqNeB9KPgZdkvZXqY6L5F8mC2OfO0pg0xvtyJ5kDU0ZSvRBJpWCE3dFisXpBXGGY1ZNPB7NRgJKGN/Pp45Lqf+CdsqRKpQK30GpNVDG6pjMbic4rPgmt4l+s9siXgBuYb8zkM=
+	t=1756482190; cv=none; b=uUfPaqDf0As6DCrjXlDF5M4X1iORHHfnj4ozWwDg0PslOdUf4cFyORGMC0jZ20BMbKO0RXjnfZpsUELnDJMID3tONQi628xILQW/0ViHNDdQchLWzXN6f5RUf3xPNUziDTTEsZPJdZ4ZzKBrKCfa2BD1nFv6CL8YxoJiIPFs9XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482130; c=relaxed/simple;
-	bh=eYjsxP4CtdFD112YUmWcX956VSfxQ8Mc5PddTXb+cKc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hbxCeewc6aGLKZPJQ6TWZoE5AxU16rWRr5bosjZHobDY+0G73xr6VbcyB3ZBDygrme51TZauHl0tQ+7mSrBGNrjaqosKv43Dxuhwcc4djGlrZtoZkixZT4yk01YqhL5yXhvb5MfXW6nS1OaCf8hDV65v2i7LhEA0jkqvoyDyXbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD2Wj0pQfz6GFK4;
-	Fri, 29 Aug 2025 23:39:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BD87314033F;
-	Fri, 29 Aug 2025 23:42:05 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
- 2025 17:42:04 +0200
-Date: Fri, 29 Aug 2025 16:42:03 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Lukas Wunner <lukas@wunner.de>
-CC: Terry Bowman <terry.bowman@amd.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <Benjamin.Cheatham@amd.com>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<alucerop@amd.com>, <ira.weiny@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v11 07/23] CXL/PCI: Move CXL DVSEC definitions into
- uapi/linux/pci_regs.h
-Message-ID: <20250829164203.00005381@huawei.com>
-In-Reply-To: <aK8bY0epS6OStdfr@wunner.de>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
-	<20250827013539.903682-8-terry.bowman@amd.com>
-	<aK8bY0epS6OStdfr@wunner.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1756482190; c=relaxed/simple;
+	bh=OL18MnykJgKNptxGVWsFWM5heT58JL3lUDx8FWl25rc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dcjwCKKOv3WeVNGdpOMitJwIBcfrc/2uz0gULPODZNnOLtMOjzqEoNsg6UTMFhWhpTwOEQ33KSLGWau0P2nXSvKvNQAbGDDYElG/2HueDgx9iyvv2C4XCMLle5bmeHnWp1YPbYv4h4df3zr46qw+2V1gO5+zURzWhvKbzYHhnRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sr8wIUjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3765C4CEF0;
+	Fri, 29 Aug 2025 15:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756482190;
+	bh=OL18MnykJgKNptxGVWsFWM5heT58JL3lUDx8FWl25rc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=sr8wIUjJf5pnJ2M2UJIj5RBjHAPHeklz7zEL6AsA73nkxTTVQwJ0yYIj9PWNeRRy0
+	 bEAzoPrUtlkJNZxpSYY+Oy7XaUK4hpmRZNgW1MZDM4EJLgUG8J8mYuvegsHfOwWRwN
+	 +QwiHBU0gi6YIs4lLMcLznjyUZ0eoPQcpNKheUVzHIjy050cagWyxX90rQmHcHWi/I
+	 9qe0mqPQKgXN5V7M3mcKt7AFOBWnKF1leOv1eOfafzS3IQONSkanK+O2DbwsPg5rg4
+	 wowcN+GvtsxXBOl1omY/eK7sMtBZtAJLpEo4CS+iRcDXp8/Ix6Bamk1hZCezz3fmnV
+	 0xJmiHg55LYzg==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v2 0/2] nvmet-fc: fixes for blktests tests
+Date: Fri, 29 Aug 2025 17:42:59 +0200
+Message-Id: <20250829-fix-nvmet-fc-v2-0-26620e2742c7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-B4-Tracking: v=1; b=H4sIAIPKsWgC/3WMQQ6CMBBFr0Jm7RimVNO68h6GRQNTaNRipqTRk
+ N7dyt7l+z/vbZBYAie4NBsI55DCEiuoQwPD7OLEGMbKoFp1ao0i9OGNMT95RT8gOW+NtaSV8VC
+ Vl3D999ytrzyHtC7y2euZfuufUCYk7DptR6e9pjNf7yyRH8dFJuhLKV9VnIFXqQAAAA==
+X-Change-ID: 20250821-fix-nvmet-fc-1af98991428f
+To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
+ Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Wed, 27 Aug 2025 16:51:15 +0200
-Lukas Wunner <lukas@wunner.de> wrote:
+A couple of fixes for bug reports from blktests.
 
-> On Tue, Aug 26, 2025 at 08:35:22PM -0500, Terry Bowman wrote:
-> > The CXL DVSECs are currently defined in cxl/core/cxlpci.h. These are not
-> > accessible to other subsystems.
-> > 
-> > Change DVSEC name formatting to follow the existing PCI format in
-> > pci_regs.h. The current format uses CXL_DVSEC_XYZ. Change to be PCI_DVSEC_CXL_XYZ.  
-> [...]
-> > +++ b/include/uapi/linux/pci_regs.h
-> > @@ -1225,9 +1225,61 @@
-> >  /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
-> >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
-> >  
-> > -/* Compute Express Link (CXL r3.1, sec 8.1.5) */
-> > -#define PCI_DVSEC_CXL_PORT				3
-> > -#define PCI_DVSEC_CXL_PORT_CTL				0x0c
-> > -#define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
-> > +/* Compute Express Link (CXL r3.2, sec 8.1)
-> > + *
-> > + * Note that CXL DVSEC id 3 and 7 to be ignored when the CXL link state
-> > + * is "disconnected" (CXL r3.2, sec 9.12.3). Re-enumerate these
-> > + * registers on downstream link-up events.
-> > + */
-> > +
-> > +#define PCI_DVSEC_HEADER1_LENGTH_MASK  GENMASK(31, 20)
-> > +
-> > +/* CXL 3.2 8.1.3: PCIe DVSEC for CXL Device */
-> > +#define PCI_DVSEC_CXL_DEVICE					0
-> > +#define	  PCI_DVSEC_CXL_CAP_OFFSET	       0xA
-> > +#define	    PCI_DVSEC_CXL_MEM_CAPABLE	       BIT(2)
-> > +#define	    PCI_DVSEC_CXL_HDM_COUNT_MASK       GENMASK(5, 4)
-> > +#define	  PCI_DVSEC_CXL_CTRL_OFFSET	       0xC
-> > +#define	    PCI_DVSEC_CXL_MEM_ENABLE	       BIT(2)
-> > +#define	  PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i)     (0x18 + (i * 0x10))
-> > +#define	  PCI_DVSEC_CXL_RANGE_SIZE_LOW(i)      (0x1C + (i * 0x10))
-> > +#define	    PCI_DVSEC_CXL_MEM_INFO_VALID       BIT(0)
-> > +#define	    PCI_DVSEC_CXL_MEM_ACTIVE	       BIT(1)
-> > +#define	    PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK    GENMASK(31, 28)
-> > +#define	  PCI_DVSEC_CXL_RANGE_BASE_HIGH(i)     (0x20 + (i * 0x10))
-> > +#define	  PCI_DVSEC_CXL_RANGE_BASE_LOW(i)      (0x24 + (i * 0x10))
-> > +#define	    PCI_DVSEC_CXL_MEM_BASE_LOW_MASK    GENMASK(31, 28)  
-> 
-> Is it legal to use BIT() in a uapi header?
-> 
-> We've only allowed use of GENMASK() in uapi headers since 2023 with
-> commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK").
-> 
-> But there is no uapi header in the kernel tree defining BIT().
-> 
-> I note that include/uapi/cxl/features.h has plenty of occurrences of BIT()
-> since commit 9b8e73cdb141 ("cxl: Move cxl feature command structs to user
-> header"), which went into v6.15.
-> 
-> ndctl contains a bitmap.h header defining BIT(), I guess that's why this
-> wasn't perceived as a problem so far:
-> https://github.com/pmem/ndctl/raw/main/util/bitmap.h
-> 
-> However existing user space applications including <linux/pci_regs.h>
-> may not have a BIT() definition and I suspect your change above will
-> break the build of those applications.
+Signed-off-by: Daniel Wagner <wagi@kernel.org>
+---
+Changes in v2:
+- rebased
+- added "nvmet-fc: avoid scheduling association deletion twice"
+- Link to v1: https://patch.msgid.link/20250821-fix-nvmet-fc-v1-1-3349da4f416e@kernel.org
 
-Probably not breaking existing code, as it would have to actually use the
-define to run into problems.  However, it's still a an excellent point
-as adding register definitions that can't be used is not helpful.
+---
+Daniel Wagner (2):
+      nvmet-fc: move lsop put work to nvmet_fc_ls_req_op
+      nvmet-fc: avoid scheduling association deletion twice
 
-Jonathan
- 
-> 
-> Thanks,
-> 
-> Lukas
-> 
+ drivers/nvme/target/fc.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250821-fix-nvmet-fc-1af98991428f
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
 
 
