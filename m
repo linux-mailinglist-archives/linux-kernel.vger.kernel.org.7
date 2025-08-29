@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-791226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAC9B3B3AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705BCB3B3AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEC837ACD31
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96FDC1C84664
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C88260563;
-	Fri, 29 Aug 2025 06:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRXnmf7y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8E4226CF7;
+	Fri, 29 Aug 2025 06:53:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F1313AC1;
-	Fri, 29 Aug 2025 06:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1961B2253A0
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756450337; cv=none; b=FgYZa0P7mK2mGMIRTOECrvMXncKr7pSMnHf677TJwKgacLYirjem3Mo+WYzcBAP1gEeaNjuVtARR4aiDiQySUOqVWgLu9gTwYn0KpfrNGh2BKW8oPei2+tDR83VxV8EHmVbxxdupkxo+/2KmF8YndmaFMvuqe2La/seN4asShiU=
+	t=1756450385; cv=none; b=RxR6DiOXdrLaJTU/0T57w4EEv8OF+NrLOgj0TwtjuGrM7xva32Hwl1Cj8A2T8cD6dXUGqHOFwgIz2HzBsjiEU79VjPq0L8neAG5B4G4Dw/Pm7aYbb+6YRrzV9FhBkcdEyvxX0OHw+jBkvE4rVXqFTVXeEtnhP/rIi+SLqeyQP0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756450337; c=relaxed/simple;
-	bh=68jkQgCx2fazd5y0OMizbVRJG8wEHR4BpUqv1dweba0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UP8GWYKwpjkSoOsWjgueVXWTgFsn4ZL+9Hm0VPRXRGSY7ZHeyLFewtrnUE4jO/xUZqFVl1Hmy/BrODfUzY5xL0t6FDAjB7lmnmBXMMbWOSLTBlFw/hw0gnMQBtNLI84l6tbAu7is3SwIoiGQ5e2yXtuCDTVvplBAGkuKETAQ+S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRXnmf7y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FF0FC4CEF0;
-	Fri, 29 Aug 2025 06:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756450336;
-	bh=68jkQgCx2fazd5y0OMizbVRJG8wEHR4BpUqv1dweba0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lRXnmf7yNzFdwaYBcrB8StoHt60CtdwslFoBZAIEITuOvSoPQ5f+F3lk56/PWhqJL
-	 cIDznaFTCL3QI+NcKfjvswqzV8ZEmU3Ubp09Pp3OXOQ34RmZnE0iKwCtp7M7pAzOEu
-	 cR+0jM5xaiuSnmGe+v4rfnxEiWUnpwmN8pUJvkDg+sm1AJ3HSi2RWpyv+VKZCZ5I2H
-	 JfzwecPBV0zET2fFh41eZK5bFQ8k6fqQ8v33IO7k2wCBlYAMnDDRf7aUhIMQWe3HxB
-	 55DhcQYoR/IKhTXsbw0xHnW3/2i7mYktZh1itDGWzkJwU9+CQuPe7i9bdDf0wWa9j9
-	 J/2Y9oSFKPwfg==
-Date: Fri, 29 Aug 2025 08:52:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <20250829-fluorescent-delicate-pogona-c96b5f@kuoka>
-References: <20250829-tlv493d-sensor-v6_16-rc5-v5-0-746e73bc6c11@gmail.com>
- <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
+	s=arc-20240116; t=1756450385; c=relaxed/simple;
+	bh=515v1XVWw9Gx3Elg9gOugbk3ZtW2xlgnlHrw8troDfc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S522oVJFAyquXbDsX1VUYNEG2KIlzfY4sixfLZ24VmhG5MmezeElSrYLAiv0G+hnDyRJPGH8AwTZkle4zLf9xk2qVcsm3zp9qayKQZHWyTQtQ1htFwP4Rtlm12i7u+tt26kXU6YXa3nYKTcK0enmvZA/CMIkg7n47QHmmKaoe8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3f0d4ad1c3aso24357755ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:53:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756450383; x=1757055183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PbZ2TTyQvIjbFD78j5eXpHav+1/7SVT9tTZrs5+tgvw=;
+        b=VgnZodpUySyAnZGJl/xYZLNQ531T+z5Cm20KGZ1EeJ4uwAX+26ulsepZWP6pGHmLgA
+         f7qf0Bb6pIk423IcYNWxgbzopK+UROXfMpOOL+2yaksnKCClrf1Nc771wVyZOc6g9p8y
+         ybf8IYKes0UukvZaZvev74WW3amE58nmKSxzKDECADOiGBn2LdASq3IhJR4uaXxHZ6nc
+         DyfdwaV61bMkXs2AI4jSThFz9t/nUuQ2OGT+ZFmfAoTpKjuArtBbx4zi/xl/yefay7x6
+         KEhiNK013tZkvg03TWA3bFySLdML7F1Kf9jFGaBBI9D47YrYIA2TR4Oo3aMLO2EqJXTF
+         1dCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTsRFuKBl1/lqscDIRE0IqX3PW5T2z3cdSZG4g3qKvCaLhOOL/0UYYiSComQCTXtcjHkSPGNtpyq/ViSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfGjTLAZ8ymWrwlvdUB6E3A4sSpw6uX89AZs4BYTXZYR/CfXRJ
+	gie2Esm7b4I3GsMSiRQ6OwNHgYk56IZ4KP2PPVI8P+G82t0/MOLDCf0lETy7WvTSkMBV5X5+JAR
+	3LuwUJdK68fcaWRx3uieEjOnNQvsBeVJ6+zwLzGlOm709J58nm/AumbpTUS4=
+X-Google-Smtp-Source: AGHT+IEiNboYxt65F2g9X9DArjfAWKS4IpTbIPiaMRP69qh4h0hmvviSQggi4E76fn4qQgxdzN8fH2M2ELiQCeOhOeJHIHiy0K8Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
+X-Received: by 2002:a05:6e02:148f:b0:3f0:78c3:8fc5 with SMTP id
+ e9e14a558f8ab-3f078c392cdmr120467105ab.5.1756450383255; Thu, 28 Aug 2025
+ 23:53:03 -0700 (PDT)
+Date: Thu, 28 Aug 2025 23:53:03 -0700
+In-Reply-To: <20250829063046.514229-1-yang.chenzhi@vivo.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b14e4f.a00a0220.1337b0.0013.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfsplus_bnode_put
+From: syzbot <syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yang.chenzhi@vivo.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 29, 2025 at 08:23:42AM +0530, Dixit Parmar wrote:
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
-> 
-> The Sensor is configured over I2C, and as part of Sensor measurement
-> data it provides 3-Axis magnetic fields and temperature core measurement.
-> 
-> The driver supports raw value read and buffered input via external trigger
-> to allow streaming values with the same sensing timestamp.
-> 
-> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
-> But for bus configurations interrupt(INT) is not recommended, unless timing
-> constraints between I2C data transfers and interrupt pulses are monitored
-> and aligned.
-> 
-> The Sensor's I2C register map and mode information is described in product
-> User Manual [1].
-> 
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf [1]
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
-> ---
->  MAINTAINERS                        |   8 +
->  drivers/iio/magnetometer/Kconfig   |  13 +
->  drivers/iio/magnetometer/Makefile  |   2 +
->  drivers/iio/magnetometer/tlv493d.c | 533 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 556 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fad6cb025a19..cf0a00f5c4d4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11843,6 +11843,14 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/sound/infineon,peb2466.yaml
->  F:	sound/soc/codecs/peb2466.c
->  
-> +INFINEON TLV493D Driver
-> +M:	Dixit Parmar <dixitparmar19@gmail.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +W:	https://www.infineon.com/part/TLV493D-A1B6
-> +F:	Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
+Hello,
 
-There is no such file here. Apply this *patch* and check by yourself.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Your patchset is still incorrectly organized. See submitting patches in
-DT dir.
+Reported-by: syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com
+Tested-by: syzbot+005d2a9ecd9fbf525f6a@syzkaller.appspotmail.com
 
-Best regards,
-Krzysztof
+Tested on:
 
+commit:         07d9df80 Merge tag 'perf-tools-fixes-for-v6.17-2025-08..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b97ef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=005d2a9ecd9fbf525f6a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13897ef0580000
+
+Note: testing is done by a robot and is best-effort only.
 
