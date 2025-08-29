@@ -1,78 +1,95 @@
-Return-Path: <linux-kernel+bounces-792170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FECB3C103
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:41:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08A8B3C112
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2974F1CC3AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:41:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E75D7BCA44
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB85633CEA9;
-	Fri, 29 Aug 2025 16:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13193314DD;
+	Fri, 29 Aug 2025 16:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBgw6YHL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKd3xnHK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A5B33A027
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542ED32C30C;
+	Fri, 29 Aug 2025 16:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485581; cv=none; b=dVp41Hv4qC/FaVImjgiQ6SFvBhIKYwD6CpbcXM56sUJsAg/d5Wn5qcPphXbSoJwZSb6qHmnMqTBjvS37K0um1LpJ/fMYAmHvy41ocEnd9QtKYWOSnHkiqZXOPJgy85/vYh/357pwSXaBtK6+ztQHfIG6DX/69ntgrIv3hi2U6cE=
+	t=1756485601; cv=none; b=HJ+cT82S4gijMWHRJ1A1k1P07D6NbE49k7Gw/kq9SfzP9KXS3kkSLVL/NLBiSem8xMhI9hGucm30Hg5fc+3GDfLu5KehXAfzjmjZIZV1DICk4qiUi0XLD6CIvVyR9YgGKsldHxw8eIOGzmx3qtFJIDWYXFQ89A7TOXml75vftbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485581; c=relaxed/simple;
-	bh=qs33uoiNPgG99WgkGvElgEWOyNjpxUIr31aVL6aAVXw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=khuODdS28SR+uhL6EWbf1F8BYdsnZcG5C20TeEQC4Ni/FZLJSr3v08DIy0MKC3C8pSXVnAAH1cZu41mxbjZpBV1jDsziD+ZT5iUkG4o9lky+xXMteK+EMb+4Ecu0KYOQx7zOZNgKNYePo/hBJ4myELfb6VsKnsMP50nVkoAxq0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBgw6YHL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEC3C4CEF0;
-	Fri, 29 Aug 2025 16:39:40 +0000 (UTC)
+	s=arc-20240116; t=1756485601; c=relaxed/simple;
+	bh=zvnB3Z6Dj3LY/2TUuCgT841hX93QqREtHKDShkn81yU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Npn+cL3Jj4ZIYYShcTqdcdsO3wGNGRdzCYhT+cK2oG7gHMJxGViDOO0Zv5uXUsvdLwbEa7k2wfaqOGQ982OAoojgQHzVO+sezT0THim8iQqSssXM3ob+Wy7drSy5hwVZESkVAwRuvL1+Exmj+70NRATIAyDkmGVpjmxyE+v/MR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKd3xnHK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F98C4CEF5;
+	Fri, 29 Aug 2025 16:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756485581;
-	bh=qs33uoiNPgG99WgkGvElgEWOyNjpxUIr31aVL6aAVXw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sBgw6YHL/Ai/6KtXdibEEp2J3eWW47ZIsq5TKVTwusJBIrjAmFbEMsUBgHVI/2WdB
-	 Kbxp5MuQ5h58Is0Afty+K0sR1VCxyFc2nP7bdwz+JkW+ZzLzUnhrgl/fvhtn60gQSM
-	 YeNMSWskO/mgJbB/q5ZrCAnbNF5SthO0DpGUsNx50dPLWg8V9wPyqVa8CWeCBZ3+2m
-	 lx2qqOJkv7eNLK4PuP71mLy41cc4bHww+oXQ5OdiQP6q1J+wY0OwBKItzN82iw6mJ5
-	 J1c0lT281CG1hWXvSaxgioAbyvd8aw75HA5Ixkd6YgtlHvg7scZ80VFcSZZjHxcLqX
-	 fZ0XmmrGhco/w==
+	s=k20201202; t=1756485601;
+	bh=zvnB3Z6Dj3LY/2TUuCgT841hX93QqREtHKDShkn81yU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=MKd3xnHKYvT8XbW6rYUQMjx8oJzM4P758YuW8JhXCsvRvYj+6SaSsNlj0Sv/7rt+A
+	 tAnTMRrdEET528XVEVmu3g5iOYF22g4M3gEQ8aGL3dqYausrzQwr5kas2sCVcSx+vl
+	 6cW9bONA5lR/jwZf+UHfIqcnbpuhq1w+H+z2LR1FNz2vyaQg42KYONkrFsfI2KDXjT
+	 4+oNe6EhZ9gVH+qJvsnTxepRi8DjyYGx3xHPaLLz1Z+8fr4I3nc0Qva7tflwTc+QgZ
+	 Kyu+cxIMDaNrG/pQjo5gmVFeBvkgu24uC7xdtjxdORZlt+HY1D8CvYMAvWZlMjyX4u
+	 SwXCHaR0f/xjQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADFB383BF75;
-	Fri, 29 Aug 2025 16:39:48 +0000 (UTC)
-Subject: Re: [GIT PULL] HID fixes for 6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <2qs0qn4n-2n38-44r2-r9s2-53o18o975s05@xreary.bet>
-References: <2qs0qn4n-2n38-44r2-r9s2-53o18o975s05@xreary.bet>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <2qs0qn4n-2n38-44r2-r9s2-53o18o975s05@xreary.bet>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025082901
-X-PR-Tracked-Commit-Id: 1f3214aae9f49faf495f3836216afbc6c5400b2e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 02d6eeedbc36d4b309d5518778071a749ef79c4e
-Message-Id: <175648558745.2275621.8008824078067452606.pr-tracker-bot@kernel.org>
-Date: Fri, 29 Aug 2025 16:39:47 +0000
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340E5383BF75;
+	Fri, 29 Aug 2025 16:40:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: remove duplicate h4_recv_buf() in header
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175648560766.2276001.11700293691359487684.git-patchwork-notify@kernel.org>
+Date: Fri, 29 Aug 2025 16:40:07 +0000
+References: 
+ <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
+In-Reply-To: 
+ <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, marcel@holtmann.org, luiz.dentz@gmail.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ sean.wang@mediatek.com, amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com,
+ linux-bluetooth@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, johan.hedberg@intel.com
 
-The pull request you sent on Fri, 29 Aug 2025 16:25:11 +0200 (CEST):
+Hello:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025082901
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/02d6eeedbc36d4b309d5518778071a749ef79c4e
+On Mon, 25 Aug 2025 21:11:08 -0700 you wrote:
+> The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
+> but not quite identical to the h4_recv_buf() in hci_h4.c.
+> 
+> This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
+> bpa10x: Use separate h4_recv_buf helper"). I wasn't able to find any
+> explanation for duplicating the code in the discussion:
+> 
+> [...]
 
-Thank you!
+Here is the summary with links:
+  - Bluetooth: remove duplicate h4_recv_buf() in header
+    https://git.kernel.org/bluetooth/bluetooth-next/c/0e272fc7e17d
 
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
