@@ -1,140 +1,155 @@
-Return-Path: <linux-kernel+bounces-791002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F9BB3B103
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B527B3B108
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A3568417D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:24:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64101C832F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A572A219301;
-	Fri, 29 Aug 2025 02:24:06 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA211BC5C;
-	Fri, 29 Aug 2025 02:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE161FCF41;
+	Fri, 29 Aug 2025 02:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hjl7ZbxX"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F026FC5;
+	Fri, 29 Aug 2025 02:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756434246; cv=none; b=nFfUeJEv3H50tLxZRzm0umS4WgOB71t5P2zqr73SHT+ZTJIxJPpZuXTMI5+DvnkqzsJgREuDVNNhLF0YoL+oTfcXpIz3v8MR1At8I1SKpcheDUYuj+vpNmbH2DrThWnqseoHN0wqVThRTfAAgnQQMQkKpkSeCE29ZYQ+j5WD0wo=
+	t=1756434801; cv=none; b=jUmaYioCHphzVPAHnBMl/GWGBRDnpSMtwmJdzFBmDZEssEh/fwUS4e0yeVUMYPIsFfasR9VA5WatPoAHMqlAFDc7F+0G5jvVgUeyG0HEoIwOYgdzomZaXuFq6B1UbyMD85C4a1e6jJuM+tpXnEd3O8O0ys0s/i3lNhkajYVlGUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756434246; c=relaxed/simple;
-	bh=LD/dzZkotatbWC2pE8zf0hWA4c2sI4NHyeAEv9C7cWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AT40xwjQPbdSeKiEvnlkU8yCIDYAfLUz9HIS/Yt3eT/P88nhBK+qtB2oG3MVKisNG3DMX1jPmkw8pDNLw5EAhalj1WYlOIksCiE4lTuFY5a3ZExt/x4YFu/7TKJ0UdVSQQSV4uxsCSRo/finf0OrQmZkbzRbq66NJuxYfMjh6Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 89F1713A104;
-	Fri, 29 Aug 2025 02:24:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 8C5916000B;
-	Fri, 29 Aug 2025 02:23:58 +0000 (UTC)
-Date: Thu, 28 Aug 2025 22:23:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Menglong Dong <dongml2@chinatelecom.cn>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, kernel
- test robot <oliver.sang@intel.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in
- fprobe_entry
-Message-ID: <20250828222357.55fab4c2@batman.local.home>
-In-Reply-To: <20250829021436.19982-1-dongml2@chinatelecom.cn>
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756434801; c=relaxed/simple;
+	bh=IFNtVKSU1EQmaKEQKXFGEWGqHGx7GU+Q0foHY5ZdsOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtXPF8GQ1y4HpNwEN+T81CX5b49I9LFdHW22RywNblOCRgVxSSCD579EAZJS30Pq//OPdH/PjAYVf+bjRG+WASw75dcOemClAsjSJKiw+IBq4cYeuQw7JSgHBUwo3lHghBP3giNuWKYv0qDKwqKvxF6G+uCz/TyPfnlSN50bMoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hjl7ZbxX; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/NSh9exXaV3mbXvMj+1kS4uqG4EyWHM1miHRNzuQSLM=;
+	b=hjl7ZbxXK4eydWkCtecrgKvGYg5I86g18ky3ymLIRDCGQEiXg+YpeQk0mtqz3u
+	TcsOAAYx83eG5JvkPjFVOLp5AFw6PBUrL2gzr/x40bkZGxFU6kYtbPjchN3nB0Ac
+	ERsjwcm3G0RyaJqqVB/3imrXd2wNw65O98jPpSFE3UYcI=
+Received: from localhost (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3HznMELFo1sYnEw--.1949S2;
+	Fri, 29 Aug 2025 10:30:37 +0800 (CST)
+Date: Fri, 29 Aug 2025 10:30:35 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	Yury Norov <yury.norov@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Helge Deller <deller@gmx.de>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	Shixiong Ou <oushixiong@kylinos.cn>,
+	Zsolt Kajtar <soci@c64.rulez.org>, Ingo Molnar <mingo@kernel.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Sohil Mehta <sohil.mehta@intel.com>,
+	Feng Tang <feng.tang@linux.alibaba.com>,
+	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>, Tejun Heo <tj@kernel.org>,
+	Luo Gengkun <luogengkun@huaweicloud.com>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, kexec@lists.infradead.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/9] crash_core: use panic_try_start() in crash_kexec()
+Message-ID: <aLEQy-srX89Rndch@debian.debian.local>
+References: <20250825022947.1596226-1-wangjinchao600@gmail.com>
+ <20250825022947.1596226-4-wangjinchao600@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ima4r3ynrjku7c7wbsowqez1ui5yugaf
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8C5916000B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/Um7o/xuj05SM+I7zwu49yDvaXP8UURTk=
-X-HE-Tag: 1756434238-941031
-X-HE-Meta: U2FsdGVkX1+FHbgTP4MfqSCwG9uihNP6dP7ItW+sZr3ePzAx9HQ5c+Dgw8J/7OPRXZ3Nu4Y6JNJ/ds01+7jSZBhERC0W9TOk12MTo+zFRJ8vutOg3L7m8dKYaqV5FKtFHp5M4RTxk4RkLzenmiB+lXj5TNija+K6C4ibVSZYmL3tdvltH7s1szI246tiQXD1P2POJrt2pPbwEjR9NbeWHJ5ZFNulVL8PA0RYriESOUMyyL7OafSjKSWN8V8e4H1lpSGZsSA4foxdnIMB+75Lbd31mCqOmQF5NtsbRWG0OE/+5lKu0CCr56wujU2BDVG6iG/111qDS4SBgxfCQFoWu/zvIA2WQ1doiUppHLL4tv9+sjsCr14yLw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825022947.1596226-4-wangjinchao600@gmail.com>
+X-CM-TRANSID:_____wD3HznMELFo1sYnEw--.1949S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AF47JFy8JFyUCw18tr1rCrg_yoW8AFW7pF
+	1ayay7Kw4kuFn5Kwn7JrsrtF4Fvw48JayxJa4vvF1fAasxJr15Jryv934xtFWjg343Kw1r
+	AF12g3Zag398XFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziuT5PUUUUU=
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYhq3amiwW6b1mwABsv
 
-On Fri, 29 Aug 2025 10:14:36 +0800
-Menglong Dong <dongml2@chinatelecom.cn> wrote:
-
-> rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
-> is used in rhltable_lookup(), which causes suspicious RCU usage warning:
+On Mon, Aug 25, 2025 at 10:29:31AM +0800, Jinchao Wang wrote:
+> crash_kexec() had its own code to exclude parallel execution by setting
+> panic_cpu. This is already handled by panic_try_start(). Switch to
+> panic_try_start() to remove the duplication and keep the logic consistent.
 > 
->   WARNING: suspicious RCU usage
->   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
->   -----------------------------
->   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
->   ......
->   stack backtrace:
->   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
->   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
->   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x7c/0x90
->    lockdep_rcu_suspicious+0x14f/0x1c0
->    __rhashtable_lookup+0x1e0/0x260
->    ? __pfx_kernel_clone+0x10/0x10
->    fprobe_entry+0x9a/0x450
->    ? __lock_acquire+0x6b0/0xca0
->    ? find_held_lock+0x2b/0x80
->    ? __pfx_fprobe_entry+0x10/0x10
->    ? __pfx_kernel_clone+0x10/0x10
->    ? lock_acquire+0x14c/0x2d0
->    ? __might_fault+0x74/0xc0
->    function_graph_enter_regs+0x2a0/0x550
->    ? __do_sys_clone+0xb5/0x100
->    ? __pfx_function_graph_enter_regs+0x10/0x10
->    ? _copy_to_user+0x58/0x70
->    ? __pfx_kernel_clone+0x10/0x10
->    ? __x64_sys_rt_sigprocmask+0x114/0x180
->    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
->    ? __pfx_kernel_clone+0x10/0x10
->    ftrace_graph_func+0x87/0xb0
-> 
-> Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
-> can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
-> However, it's not a common usage :/
-
-So this is needed even though it's called under preempt_disable().
-
-Paul, do we need to add an rcu_read_lock() because the code in rht
-(rhashtable) requires RCU read lock?
-
-I thought that rcu_read_lock() and preempt_disable() have been merged?
-
--- Steve
-
-
-> 
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
-> Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 > ---
->  kernel/trace/fprobe.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  kernel/crash_core.c | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
 > 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index fb127fa95f21..fece0f849c1c 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->  	if (WARN_ON_ONCE(!fregs))
->  		return 0;
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index a4ef79591eb2..bb38bbaf3a26 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -4,6 +4,7 @@
+>   * Copyright (C) 2002-2004 Eric Biederman  <ebiederm@xmission.com>
+>   */
 >  
-> +	rcu_read_lock();
->  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> +	rcu_read_unlock();
->  	reserved_words = 0;
->  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
->  		if (node->addr != func)
+> +#include "linux/panic.h"
+
+Can you change this line of code to #include <linux/panic.h>?
+
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/buildid.h>
+> @@ -143,17 +144,7 @@ STACK_FRAME_NON_STANDARD(__crash_kexec);
+>  
+>  __bpf_kfunc void crash_kexec(struct pt_regs *regs)
+>  {
+> -	int old_cpu, this_cpu;
+> -
+> -	/*
+> -	 * Only one CPU is allowed to execute the crash_kexec() code as with
+> -	 * panic().  Otherwise parallel calls of panic() and crash_kexec()
+> -	 * may stop each other.  To exclude them, we use panic_cpu here too.
+> -	 */
+> -	old_cpu = PANIC_CPU_INVALID;
+> -	this_cpu = raw_smp_processor_id();
+> -
+> -	if (atomic_try_cmpxchg(&panic_cpu, &old_cpu, this_cpu)) {
+> +	if (panic_try_start()) {
+>  		/* This is the 1st CPU which comes here, so go ahead. */
+>  		__crash_kexec(regs);
+>  
+> @@ -161,7 +152,7 @@ __bpf_kfunc void crash_kexec(struct pt_regs *regs)
+>  		 * Reset panic_cpu to allow another panic()/crash_kexec()
+>  		 * call.
+>  		 */
+> -		atomic_set(&panic_cpu, PANIC_CPU_INVALID);
+> +		panic_reset();
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+
+-- 
+Best,
+Qianqiang Liu
 
 
