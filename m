@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-792541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF63B3C55C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B79B3C560
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96C21728CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C196B588046
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420212DCBEE;
-	Fri, 29 Aug 2025 22:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6642F8BF1;
+	Fri, 29 Aug 2025 22:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxHn+asV"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="TPI85Qq6"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91F2DE701
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBC51C5F39;
+	Fri, 29 Aug 2025 22:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756507618; cv=none; b=eSaDOBVFIVfHe7rP+qcrmWuCJsjBgpeA24DGuxkFj3MXhyW2vIGyObrXtQKV0M0NZWfUxkV/eSVE5IEq1SW32tANePxpm8hA3BumMAfVlhTZtvVqJKfhWrMPdeU7TBZwkbhGjWO+84jPTfb17/XPZ7Gt6NbKlZUIYL7NlUrfyCs=
+	t=1756507779; cv=none; b=MBBfrOaMOZcUWRBLUDfhG+81ZfavhsrVVeyeP2rPOwnzWwA5TtstWdryqZfrJf8b0h1A/T4NaFIB+SuEjlz8tPEAJOSrIPSPYR+3Noyo+3U5iNGDcvgji3+mZaUsaTe4fDQXUTF++ybIKm7IzQeQeT2lsHgVal6xyp/CSLClWSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756507618; c=relaxed/simple;
-	bh=7iKeOMQFOEEVd5ETUGweiy0cPrlfaMl1uc16FWLXC+U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Uj1CHCBMlU0oAtR6GSNi797rFg0G/rQkucS6jCf91V5ObaMLLkDUNM/td8XoEznZpjD2h1gpxV+5qQMsfOYeWvcI9u9MwR0LleM0qWnHp7+btNZxCfmDuUWQJZgbKsA7znJG67dwTcNLLyBA4U8lRNtsJRoXKNJBRKcmiYZo9bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxHn+asV; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24868b07b5bso44876315ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756507615; x=1757112415; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=osO9EdDK8ULTUCgyPclw9xxVN7HnxTjhwUYL0zf8SiE=;
-        b=sxHn+asVQ4idbSkIMokYYwHvX5BKlIjEvztTGbGtxWdMJq8Dpm+UN+LyhbvYzDiN3V
-         ztqGH568RSndTnBePn/2H89LBuxwGBBLYVm20Bx0OUJ9Gx5ClnA3J0KHD4p9HOjXWPoR
-         05bO05UHpZ9lPQnHYlUvc2/nC1BcyqSFeYXmC8rCVRLM3fnrA2QUsTOGR8NOg36MZijs
-         U4iGMhwUpBt0h62fy5Dey8vrUM3nicKF2PZ14bzUNliT2i0wY55ri5zYBjUt/ojmDHyH
-         PZbN0MCJqVLVD6lKWSD4xvO/EGZ3nB5VaMbMFEO0cKYZZlpZWO44Vtpqn2stNE+34Xbq
-         tnSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756507615; x=1757112415;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=osO9EdDK8ULTUCgyPclw9xxVN7HnxTjhwUYL0zf8SiE=;
-        b=it1gfABQXEMREczIvlDG+EvsAQnA8k1tx5aCE5VN60bilxJ0j+D/HLEe6fDxcilFUk
-         p/b6jU8+N5lfcWnVahxLPJFe+HlrqLcILmUx7lVPpiFA+aMKp/rQyCQMgRsG5HR1leLq
-         Xl4Jw1L1JIeru6UsBLopdDxnMPdnW/lX6uhHxipMB0wQZGDqZVLkSZfcSdL9vYhFzWdF
-         HWmaS3E2tM7kaED0HpKMBN7/G1h/E6H/thNAIZQG6q0zcIUuMxti7dS0kpBh5behlspU
-         yklNY9YDzZxYkUIRb3rTHrH1ysfYn4aTAVUiLxLIcmBdHERcV4iyCVa6G/blwaTcs5Y1
-         SxtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkm4jqBTILOrb6B6N+0wt93mxai9zXe9wLuWBDd8w4+llbBhzulM/6L1N0y4L8Sn4jFMI3mK22Ji85RPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5KDUvj88AcQzfFEEJH95p5QCSDLev/Yi+7QlnAUhOmC8u4aq9
-	rATUqNIy6y78VDUL014yS1Qde7DDUrvFhEuilsMxx6Lo1zG868vCr05uuzAupNdUNPi33kmIodb
-	ncse5pg==
-X-Google-Smtp-Source: AGHT+IGkt/EAn947SVVMGSrEgo9yvNr3e4MeFQSbN7ad+YrLR9BbTewsN8HKmFTWK3fVBIpRGYfyACOyUfY=
-X-Received: from plbkq13.prod.google.com ([2002:a17:903:284d:b0:246:a8c3:9a07])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1448:b0:248:c5d7:1b94
- with SMTP id d9443c01a7336-24944b695e6mr2556105ad.53.1756507615340; Fri, 29
- Aug 2025 15:46:55 -0700 (PDT)
-Date: Fri, 29 Aug 2025 15:46:53 -0700
-In-Reply-To: <20250829142556.72577-3-aqibaf@amazon.com>
+	s=arc-20240116; t=1756507779; c=relaxed/simple;
+	bh=GX9xsTtGU/uXie2m0TNplBPxk/b3kPC56uYI52oCyHE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Vfd9Oa/tV0KcqkMmJU8Jn0eC9k35/RfZVOEesyfuZGCAAH/Owf2NxNpw+peA6Q4H+MZ3ul3u1w+w6JTGvFOGAz7EX6BSfxpG/1r8zMJ5+E7G7kP7VE/ZjsHu1iPI33C6H2eXNEYp6ZCuFRHFQp8peMqYapfHAxO66vcangz5y8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=TPI85Qq6; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4BA4B40AF9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756507777; bh=Vf9FHeSvOjXjhp6WX9uhmsNSpUGjfQaGUBsXH5N63hI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TPI85Qq6d113kHUaMBvDTOicjYL8yLbG3WUfv+SULh7/u5SORJU8XGITTjkA/5z2P
+	 GLjT+VY2L1XLPBrFeRPagP/iDKYJw8DmAeAcCL3uk/DZAUJR4+Sh/lyvGqgJpUSqUB
+	 XCFlESmxPSrBQPEibJahysCFDOBy2Wn+ynDVAdkmK67JvhXL3D9CnGXOQjKl5x4A3E
+	 IIHI6Mhrk/PzFTvfR2PQWS69wsop3vpWxtFkWBd/imKn4BH/gPLebRpodSofpCJm+6
+	 gETy84aLbVhlm6D/VyKU/nYPlwtYn8YDnwmgXZQgcuQ1Vkq9vnx0VaG2GUls8QvyPf
+	 YlH0caGXps91A==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4BA4B40AF9;
+	Fri, 29 Aug 2025 22:49:37 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: conf.py: drop xindy rule
+In-Reply-To: <83068bc31839e7095f1f408e49658362d467797e.1756123459.git.mchehab+huawei@kernel.org>
+References: <83068bc31839e7095f1f408e49658362d467797e.1756123459.git.mchehab+huawei@kernel.org>
+Date: Fri, 29 Aug 2025 16:49:36 -0600
+Message-ID: <875xe53fr3.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829142556.72577-1-aqibaf@amazon.com> <20250829142556.72577-3-aqibaf@amazon.com>
-Message-ID: <aLIt3bm0uxSh8I1j@google.com>
-Subject: Re: [PATCH 2/9] KVM: selftests: Add __packed attribute fallback
-From: Sean Christopherson <seanjc@google.com>
-To: Aqib Faruqui <aqibaf@amazon.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nh-open-source@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, Aug 29, 2025, Aqib Faruqui wrote:
-> Kernel UAPI headers use __packed but don't provide the definition in
-> userspace builds.
-> 
-> Add a fallback definition matching the kernel's implementation. This
-> follows the same pattern used by BPF and SGX selftests.
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Ugh.  No, this needs to be fixed in a central location, not splattered all over
-random subsystem selftests.  My first choice would be to copy (and keep synchronize)
-all of the include/linux/compiler*.h headers to tools/include/linux/.
-
-If for some reason that's not a viable option, we should yank the __packed and
-similar #defines out of tools/include/linux/compiler-gcc.h and place them in
-tools/include/linux/compiler.h.  AFAICT, none of them are actually GCC-only.
-
-> Signed-off-by: Aqib Faruqui <aqibaf@amazon.com>
+> The rule as-is is wrong, as it was inverted. Besides that, after
+> retest building all repos with suggested LaTeX packages given
+> by sphinx-pre-install, I was unable to reproduce the issues
+> I saw with xindy in the past.
+>
+> So, let's just drop. If anyone reports issues with xindy, we
+> may need to readd, but at the right way, e.g. {options}{pkgname}.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->  tools/testing/selftests/kvm/include/kvm_util.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-> index 23a506d7e..7fae7f5e7 100644
-> --- a/tools/testing/selftests/kvm/include/kvm_util.h
-> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
-> @@ -5,6 +5,10 @@
->  #ifndef SELFTEST_KVM_UTIL_H
->  #define SELFTEST_KVM_UTIL_H
->  
-> +#ifndef __packed
-> +#define __packed __attribute__((__packed__))
-> +#endif
-> +
->  #include "test_util.h"
->  
->  #include <linux/compiler.h>
-> -- 
-> 2.47.3
-> 
+>  Documentation/conf.py | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/Documentation/conf.py b/Documentation/conf.py
+> index 8fcecdb927b1..574896cca198 100644
+> --- a/Documentation/conf.py
+> +++ b/Documentation/conf.py
+> @@ -458,8 +458,6 @@ latex_elements = {
+>      "papersize": "a4paper",
+>      "passoptionstopackages": dedent(r"""
+>          \PassOptionsToPackage{svgnames}{xcolor}
+> -        % Avoid encoding troubles when creating indexes
+> -        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
+>      """),
+>      # The font size ('10pt', '11pt' or '12pt').
+>      "pointsize": "11pt",
+
+Applied, thanks.
+
+jon
 
