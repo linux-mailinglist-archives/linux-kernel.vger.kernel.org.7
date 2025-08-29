@@ -1,152 +1,220 @@
-Return-Path: <linux-kernel+bounces-792332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EDDB3C2CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B33B3C2D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0033189C5E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07278467905
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB042309B9;
-	Fri, 29 Aug 2025 19:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC2A237A4F;
+	Fri, 29 Aug 2025 19:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3LN6r2r"
-Received: from mail-vk1-f196.google.com (mail-vk1-f196.google.com [209.85.221.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvYzxJmg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660291DFE26;
-	Fri, 29 Aug 2025 19:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2112309B9;
+	Fri, 29 Aug 2025 19:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756494281; cv=none; b=YYhcppq7UWTBEsIl4HFw7yMktk5I+Bq6nXtVzQVPCG1O3pSMIk+k6+Y2a+w6B37/Mp9mAj8EJAegUlojrvrseERnvSF7GmxgXD3Pu4+DoWcVbsvqXcv7SGAH3YZHwH0fuNQAcii5cIhc/UHZ/dIJAc/WFsAY71Yqg/n2BvBp/R0=
+	t=1756494449; cv=none; b=pf72O/GO85TtQ6KTcVopSpbZNLvc8HgYczywbIRjuDSkmlQK7UFbt4UBvmI0VLUgLERDshZt+KHwv6dhwYJNFAfnP+7XNSwBRubaMB2u1A/+4eAONnS6AiLjK/ulx/Jlej0dNTTwCd4Fb0RZSsSK869MGsYQPQPrpZGTeKugtnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756494281; c=relaxed/simple;
-	bh=JhCHGrska4THm4pq3pOoh1c76MB5ThoIsa90tvzUeRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k8gsM+ZYwYQaRwaIiP77pzio1jFXwTiPvBkOTLAhv7uUOTkMBMxNeJ5cKrLbsZuMdnr17LBW8GMZds/rxjrlaYr1CqkBsscKcWc2oexZPbVoI/tpNcuAqAJN9T+jBtQX4Qua4im+GsXiXt7A7Kvxt/oyeeEgNQg2PUPBptntjQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3LN6r2r; arc=none smtp.client-ip=209.85.221.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f196.google.com with SMTP id 71dfb90a1353d-53b1736eae2so1695644e0c.1;
-        Fri, 29 Aug 2025 12:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756494279; x=1757099079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+nDa008+XeBq2KuIW65QNSIBYM69OB4YXETiL9qtzE=;
-        b=H3LN6r2rwResO9RZfdSfOSo70MneDVwgQhEgAeWj4DjjfdCix4DYG4rOZMUiD/l1O7
-         ahxZ6E+6Ho27v3HQJkAQVQVLlsMOZaCEcukQIvXH4AAPYSKPzKtiKBuToCb5v9GWk7Ui
-         U1yje6pM6JvktB1UaXpxkfh3hiOiebNYYtI799U+yLYcLJXGXQslAloVEV0YAtkq/Rbh
-         fTdYs/5959iN/pV1yTJy7kvWVVOfLOCGPCpzg7vfdYda+k5RH/TwxfYxNwqSb6L/o741
-         WhzSlWTtaXGGoYWkClj6k9sMri5seJDgApd5MAvHQQMrczHUUVvpn3ikfRGkfSstxWSj
-         4iWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756494279; x=1757099079;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v+nDa008+XeBq2KuIW65QNSIBYM69OB4YXETiL9qtzE=;
-        b=aAYTuWx3BvXTwo7crKPhrDElhg3lJ3sN6jfq6qz7DtvzcGNiDxRFz89bOY1QGbEzRl
-         pD6DFuMQkL7+HCgioEdefqK/igF4EEIKHXDWS7syjbxW05K8+3MWrbuBTaC07o5hohs5
-         Guhvm/RaejpkoPkCNr2RTeDdCs4xwbVz/MIq1EUXye0F9mX7S1I6PYLfsdfFiaYGt7py
-         ie4rP5vps9RmqOeysrv/zEhSizF3kwyhoQpax78pSIG1BG+ApgEcDsjO/N2edyJ/FvdS
-         /wbnTvH9v8SwEiruVDwNi3ZyBnJOaJrQCgXpf4VhdMCBO8YFRNK/HXW2P2BNQXKG05qf
-         vxGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVi87CcfP6hLV10zs2kCrYmuD5+xi9nbbmMp95htCYGIklfxuL/FbZeVLkEPK+agj/su2Az4DF3cWA=@vger.kernel.org, AJvYcCXMPSs3yor/hUMEjnc7k/3khF8ES3+IsnRCVu3DpuAyzSpIJYr71DQgISVKAF9zVcaz/I6zW6hLfseNVMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2PAuq+TB9xZBeBjhoxeij5XPzYuTg/h4j1JF1XyJiF1xyYPn
-	F5pIhDzpWnoh3MRG9TgRwRrh0MglW0dAib7TeRuzoUIkSMu/uPSIpIwf5Hzacc4lCrk3gw==
-X-Gm-Gg: ASbGncsXG253s9vyly8JlgOhFO5a5nTHRYxz5g3ZkpEEmIvgz/9ptCku5ES/mwTnwNZ
-	7n6rRWjQqI5FSI+XeUwx0rRWyzBwATmLK7OgJTXc8ut21IMskegnHYmguV97LkSY7HbRumsAXYz
-	ptJQSqzC+n4x9bh7M7foqnJGenlLP1UoMU9l7LfcpTGyU2vHGTD3XW2djZmuh8ydPcNvpcyqIem
-	JgRpE5pt4QuHG2/hMzNxH/COPUD1LiHpsEWRpws1ZE7JmHBBbDojCSsqCTbEgvjdlDhHzWABWQC
-	lM18eRnBEtoS0hvAHuv6EGTYncz7FOS8fr0peG4D1ZX/oBNePQ1MCJx+q7O1Mj3yfKN6MDlN/Yf
-	Z8LjD5J3/rBBc/AWpvpOPO9caV5e/xPyQCKgJieNSaC2QKi9D9ZqT0s+t0jwnw3BCUSbgXAU4D/
-	vy84yX0Fszgg==
-X-Google-Smtp-Source: AGHT+IGx8KBShFXMBBwWnArmqIgotYFVK9bycczBOS0HpEYvdfeGf4tGJznXwzgYiwau5/7+6KHcSg==
-X-Received: by 2002:a05:6122:552:b0:543:2dfa:2f30 with SMTP id 71dfb90a1353d-5432dfa5fe6mr5791933e0c.5.1756494279162;
-        Fri, 29 Aug 2025 12:04:39 -0700 (PDT)
-Received: from laptop (d-146-168-99-93.fl.cpe.atlanticbb.net. [146.168.99.93])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912fdff1sm1305874e0c.10.2025.08.29.12.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 12:04:38 -0700 (PDT)
-From: Thalia <thaliathenerder@gmail.com>
-To: rafael@kernel.org
-Cc: pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
+	s=arc-20240116; t=1756494449; c=relaxed/simple;
+	bh=KhB9CZF6CwYnj2naomZZKO+E1e7v9OT05X6wGQRcFd0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KFO0zY5xoxi3mkhmrHJKq9xoWalRonqJ67B9QuQpXspcpOR6ePXi/jEtcxd0Ue0RtF9qkjigqf26Ewf8zlrPcFcJ6FiCCv83Ne5iCOBCXLvgEIaanqfNbAhNFWWmp/zgOKWwlwGsQYJR06/h2BNka2snW1gRD50a+4Gy3KyHwcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvYzxJmg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E864DC4CEF0;
+	Fri, 29 Aug 2025 19:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756494449;
+	bh=KhB9CZF6CwYnj2naomZZKO+E1e7v9OT05X6wGQRcFd0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lvYzxJmg+ard/fG5EsTMrf2xI7NBgIW3FlZDL6Njre+TqBc0AoWwn1hq5vnG0tb6u
+	 v93dP4zFqrP9v41KlT41RW3qS54lbsJxSzZljt3DL3QZotf4kErIPvCENSBDT7rCce
+	 C9daVpBYm+Z+CgKZysysOZPqzuspv/rXBrz6xhMh5JDfuPkK4u+FnUy9AQ1U4NShj9
+	 2jtDHE5H45OrVlvHtFYkhwfH24pUkvTc5FjQOb3FjegcOgW522clqKk670Lxmc5Evc
+	 EFXvSSvw7SLaN0qzS/VK49Jt8fDpBKWr+tvhV059esuzkMNqImPdwwPHplfvPMNk3p
+	 /yoRkdlTrXSUA==
+From: Kees Cook <kees@kernel.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	David Hildenbrand <david@redhat.com>,
+	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
 	linux-kernel@vger.kernel.org,
-	Thalia <thaliathenerder@gmail.com>
-Subject: [PATCH] power: Handle kmalloc failure in pm_vt_switch_required()
-Date: Fri, 29 Aug 2025 15:04:31 -0400
-Message-ID: <20250829190431.133717-1-thaliathenerder@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
+Date: Fri, 29 Aug 2025 12:07:25 -0700
+Message-Id: <20250829190721.it.373-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4745; i=kees@kernel.org; h=from:subject:message-id; bh=KhB9CZF6CwYnj2naomZZKO+E1e7v9OT05X6wGQRcFd0=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkbf+X25rEmrrxy7tBxJu6bD0ybft1fnbf1WeeyS8wpD 5jMfcWqOkpZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACYitoORYeHPQzun1WqtEzvy qyioXy5DbZLSbHu/M3/fmv5cuTz/jQXDX+HtxyR2pk2UX1+Td7rdfcH0iIZ3zy2apGMWfbunZrv KmB0A
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-This commit improves the robustness of the pm_vt_switch_required() function
-by adding error handling for kmalloc() failure. The function now returns an
-error code (-ENOMEM) and logs a message to the kernel ring buffer, making
-it easier to debug memory allocation issues.
-(that makes me sound so smart yay)
-(this is my first commit so sorry if i did something wrong)
-Signed-off-by: Thalia <thaliathenerder@gmail.com>
----
- kernel/power/console.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+Seen during KPTI initialization:
 
-diff --git a/kernel/power/console.c b/kernel/power/console.c
-index 19c48aa5355d..0e4b8e0c480a 100644
---- a/kernel/power/console.c
-+++ b/kernel/power/console.c
-@@ -60,13 +60,34 @@ void pm_vt_switch_required(struct device *dev, bool required)
- 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
- 		goto out;
+  CFI failure at create_kpti_ng_temp_pgd+0x124/0xce8 (target: kpti_ng_pgd_alloc+0x0/0x14; expected type: 0xd61b88b6)
+
+The call site is alloc_init_pud() at arch/arm64/mm/mmu.c:
+
+  pud_phys = pgtable_alloc(TABLE_PUD);
+
+alloc_init_pud() has the prototype:
+
+  static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
+                             phys_addr_t phys, pgprot_t prot,
+                             phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+                             int flags)
+
+where the pgtable_alloc() prototype is declared.
+
+The target (kpti_ng_pgd_alloc) is used in arch/arm64/kernel/cpufeature.c:
+
+  create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc), KPTI_NG_TEMP_VA,
+                          PAGE_SIZE, PAGE_KERNEL, kpti_ng_pgd_alloc, 0);
+
+which is an alias for __create_pgd_mapping_locked() with prototype:
+
+  extern __alias(__create_pgd_mapping_locked)
+  void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
+                               unsigned long virt,
+                               phys_addr_t size, pgprot_t prot,
+                               phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+                               int flags);
+
+__create_pgd_mapping_locked() passes the function pointer down:
+
+  __create_pgd_mapping_locked() -> alloc_init_p4d() -> alloc_init_pud()
+
+But the target function (kpti_ng_pgd_alloc) has the wrong signature:
+
+  static phys_addr_t __init kpti_ng_pgd_alloc(int shift);
+
+The "int" should be "enum pgtable_type".
+
+To make "enum pgtable_type" available to cpufeature.c, move
+enum pgtable_type definition from arch/arm64/mm/mmu.c to
+arch/arm64/include/asm/mmu.h.
+
+Adjust kpti_ng_pgd_alloc to use "enum pgtable_type" instead of "int".
+The function behavior remains identical (parameter is unused).
+
+Fixes: c64f46ee1377 ("arm64: mm: use enum to identify pgtable level instead of *_SHIFT")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ v2: Fixed the Fixes line. ;)
+ v1: https://lore.kernel.org/lkml/20250829154913.work.943-kees@kernel.org/
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: Yue Haibing <yuehaibing@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
+---
+ arch/arm64/include/asm/mmu.h   | 7 +++++++
+ arch/arm64/kernel/cpufeature.c | 5 +++--
+ arch/arm64/mm/mmu.c            | 7 -------
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index 6e8aa8e72601..49f1a810df16 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -17,6 +17,13 @@
+ #include <linux/refcount.h>
+ #include <asm/cpufeature.h>
+ 
++enum pgtable_type {
++	TABLE_PTE,
++	TABLE_PMD,
++	TABLE_PUD,
++	TABLE_P4D,
++};
++
+ typedef struct {
+ 	atomic64_t	id;
+ #ifdef CONFIG_COMPAT
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 9ad065f15f1d..e49d142a281f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -84,6 +84,7 @@
+ #include <asm/hwcap.h>
+ #include <asm/insn.h>
+ #include <asm/kvm_host.h>
++#include <asm/mmu.h>
+ #include <asm/mmu_context.h>
+ #include <asm/mte.h>
+ #include <asm/hypervisor.h>
+@@ -1945,11 +1946,11 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
+ extern
+ void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+ 			     phys_addr_t size, pgprot_t prot,
+-			     phys_addr_t (*pgtable_alloc)(int), int flags);
++			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+ 
+ static phys_addr_t __initdata kpti_ng_temp_alloc;
+ 
+-static phys_addr_t __init kpti_ng_pgd_alloc(int shift)
++static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+ {
+ 	kpti_ng_temp_alloc -= PAGE_SIZE;
+ 	return kpti_ng_temp_alloc;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 34e5d78af076..183801520740 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -47,13 +47,6 @@
+ #define NO_CONT_MAPPINGS	BIT(1)
+ #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
+ 
+-enum pgtable_type {
+-	TABLE_PTE,
+-	TABLE_PMD,
+-	TABLE_PUD,
+-	TABLE_P4D,
+-};
 -
--	entry->required = required;
--	entry->dev = dev;
--
--	list_add(&entry->head, &pm_vt_switch_list);
-+int pm_vt_switch_required(struct device *dev, bool required)
-+{
-+    struct pm_vt_switch *entry, *tmp;
-+    int ret = 0;
-+
-+    mutex_lock(&vt_switch_mutex);
-+    list_for_each_entry(tmp, &pm_vt_switch_list, head) {
-+        if (tmp->dev == dev) {
-+            /* already registered, update requirement */
-+            tmp->required = required;
-+            goto out;
-+        }
-+    }
-+
-+    entry = kmalloc(sizeof(*entry), GFP_KERNEL);
-+    if (!entry) {
-+        pr_err("Failed to allocate memory for vt_switch entry\n");
-+        ret = -ENOMEM;
-+        goto out;
-+    }
-+
-+    entry->required = required;
-+    entry->dev = dev;
-+
-+    list_add(&entry->head, &pm_vt_switch_list);
- out:
--	mutex_unlock(&vt_switch_mutex);
-+    mutex_unlock(&vt_switch_mutex);
-+    return ret;
- }
- EXPORT_SYMBOL(pm_vt_switch_required);
+ u64 kimage_voffset __ro_after_init;
+ EXPORT_SYMBOL(kimage_voffset);
  
 -- 
-2.51.0
+2.34.1
 
 
