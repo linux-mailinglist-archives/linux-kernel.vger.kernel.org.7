@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-792118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76288B3C05D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9A2B3C063
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2A61C81829
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451DA1C82AF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FCB321F23;
-	Fri, 29 Aug 2025 16:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52D31DD96;
+	Fri, 29 Aug 2025 16:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyZYBY9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TiLt8z/J"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D942B9A8;
-	Fri, 29 Aug 2025 16:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756483885; cv=none; b=h6BI0YEO4V5kmre2BCxfTZ4tZJj+LzWgFzpvi8b8cNT8BkRTBEOLVEb55nUHZRxg3Wi3d0ksqmlHx1K7TSNbASX9//Ea2pplsxaYLD/Hw7AzPEILpakvzvVzoGXj/kEs4YpRb+xVEE82b4by4T7XMJ/D1LmknboUWdLC1emwPQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756483885; c=relaxed/simple;
-	bh=sqJTNjc9tqL3D56vJ9a8C8Qu0i2VXToHvsttDUp6REg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMvRV1pkuhpLdvNYP2QfHbXq6QEPNgxkH4ndkguDkSeARw2zDClJOX/Z2KQccsX+wg+KivsUTzzbaebjZ/QtTzCrU20UQG7lr84Auxedbr/BBRWAQiIgttwf6Z/YZiWozzB5xXqPmr+5taX+zhJ0AeBV9nckcDJtzx+XHsaHnCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyZYBY9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 553CCC4CEF0;
-	Fri, 29 Aug 2025 16:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756483883;
-	bh=sqJTNjc9tqL3D56vJ9a8C8Qu0i2VXToHvsttDUp6REg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WyZYBY9dWSyaRvLdEkrWAcnQnR655At0UbTNlwKw15O8ake1aLvcMYcv7FK6w5mEQ
-	 +iWVzxpMWFB8LRAwtARMeCVF5OmtzzeS4VTdwrOH8fDeZ2xw/KofblztMT2C30lV+j
-	 /fNWEXPrMFH8igk6kL/8PpjQf9dC0UrYDGF60ePYgVxzDXe82Zjtry+ZuruG5UXWKR
-	 /Nkizg3iDv54WJWXH0vTpmCna0scULQmI4wXtgX3TSdjK+7NWfFpmKxcWI/Ldg6c5n
-	 lhMNIcIUtSSsAVzsvMk6Sl46KbX1DrlodZCuT9TurbWPzGOxppumEHu81l1WWeTeXJ
-	 IHu3U552FvEsg==
-Date: Fri, 29 Aug 2025 09:10:18 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Honza Fikar <j.fikar@gmail.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 09/12] lib/crypto: blake2s: Always enable arch-optimized
- BLAKE2s code
-Message-ID: <20250829161018.GB91803@sol>
-References: <20250827151131.27733-1-ebiggers@kernel.org>
- <20250827151131.27733-10-ebiggers@kernel.org>
- <CAEH5pPY98CaSm+EXiuOzo6EuWzGu7rEQjGa3eojk18HP29Rs7w@mail.gmail.com>
- <20250829152912.GA91803@sol>
- <CAMj1kXGf+0b=6kPAzzxgesaOYSJtzoL1oQyNqT2VrUkWFzwJzA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35173043B7;
+	Fri, 29 Aug 2025 16:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756483928; cv=pass; b=jRJKWdasuVBMjf+ei9qe+lQQiG4PJ0heFK1Uf1LdojJwTvwHDdw9YzN0YKFsh/7lf6gvl/8P7EyNhV9hRaETIqjbW9J2JrWvL5PbBbjO2KbMLlJXRbgxty3bPTTeNjUTcqBFCBKynqjdaZfUQfNrQgU7stk6gHVPLd88xb33Zck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756483928; c=relaxed/simple;
+	bh=sNZzeBv7GmmAKJ+KJKP+vXL/ceDc5cVah5m6u5INbt0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=l2DWqBX0jdx9k0hqidbDlifdJrg+JX1DQrl5hVumdCeRY0wsK9mMM9iw7B6NNU2wBUa+Ml3FVsapdOrXdbwBWjjukSgqsXURTert9dkB1WYX8WKaxrrborp3yYGE1iehWo5Ksl8vHnt6Fjz/B4btrsxKnQT4uASmlk5iNu6x9Qs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TiLt8z/J; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756483913; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lJQ1bBNnbt7CJ00Qvccdp6zMxQmHrocNAGyyA8i6q/29mELnGoiJCf6YZjW4imOtIf+zUEsxvU8QQr9eIajgyMWxUYbZFPg+Z3tJmfiFEDNmXg0tX7eVwNvjt9095D69x9/LAq4Im48w/kz3Ts/6Cwz+rVIfiLVFxHHw0IpKfnI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756483913; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XZngc+3mvJ49Q5Ax2kQP9dlPZisbvVLik+5WLuCV0y8=; 
+	b=SW5d0DbNMRIun8qkfqyz3BobSQTb3ZfEBZdqZVNNtIBYDc/+2QrWECXCN7jk3md4zHz20FnLHpC3Jl4TqlpGyWMPSbZEDT2V8HjYXdi3Nm1H0Pwofg7CYY/cBR0LOD0O/iau7EYmlorvjuPXYbWLsuh6gw8TkYeDdekNwFlW7kg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756483913;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=XZngc+3mvJ49Q5Ax2kQP9dlPZisbvVLik+5WLuCV0y8=;
+	b=TiLt8z/JfeB5N2MfzNDd4uYlfXo9pezYiw7J8lME8up6WYQE2ewoPLyaUHR9MYj6
+	q/q5bDUR9D9p8Q8QsK7LTnlacJlzZYR47MtJ4ZyvFOa6mKSJ4Kh8LAlm6nGjQoSdPCK
+	Wjpb94nhZt95flvrKMLxq/O+R17rOyb6B/XkU6uM=
+Received: by mx.zohomail.com with SMTPS id 1756483911261511.1260565301486;
+	Fri, 29 Aug 2025 09:11:51 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXGf+0b=6kPAzzxgesaOYSJtzoL1oQyNqT2VrUkWFzwJzA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aLHKvjBZYJk2Ci34@sidongui-MacBookPro.local>
+Date: Fri, 29 Aug 2025 13:11:35 -0300
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B0A69ADA-8186-4BCF-9C8C-F49F1D49D603@collabora.com>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-4-sidong.yang@furiosa.ai>
+ <713667D6-8001-408D-819D-E9326FC3AFD5@collabora.com>
+ <aLHKvjBZYJk2Ci34@sidongui-MacBookPro.local>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Fri, Aug 29, 2025 at 06:05:42PM +0200, Ard Biesheuvel wrote:
-> On Fri, 29 Aug 2025 at 17:30, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Fri, Aug 29, 2025 at 03:08:56PM +0200, Honza Fikar wrote:
-> > > On Fri, Aug 29, 2025 at 2:54 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > > Currently, BLAKE2s support is always enabled ('obj-y'), since random.c
-> > > > uses it.  Therefore, the arch-optimized BLAKE2s code, which exists for
-> > > > ARM and x86_64, should be always enabled too.
-> > >
-> > > Maybe a stupid question: what about ARM64? The current NEON
-> > > implementation in kernel arch/arm/crypto/blake2s-core.S seems to be just
-> > > for ARM.
-> > >
-> 
-> That code is scalar not NEON, and is carefully tuned to make use of
-> the ARM barrel shifter, which does not exist on arm64.
-> 
-> > > While the upstream BLAKE2s with NEON is both for ARM and Aarch64 (ARM64):
-> > >
-> > > https://github.com/BLAKE2/BLAKE2/blob/master/neon
-> >
-> > There's no ARM64 optimized BLAKE2s code in the Linux kernel yet.  If
-> > it's useful, someone would need to contribute it.
-> >
-> 
-> NEON is cumbersome in the kernel so this only makes sense if it is
-> substantially more performant, and I'm skeptical that this is the
-> case, as you pointed out yourself in
-> 
-> commit 5172d322d34c30fb926b29aeb5a064e1fd8a5e13
-> Author: Eric Biggers <ebiggers@google.com>
-> Date:   Wed Dec 23 00:09:59 2020 -0800
-> 
->     crypto: arm/blake2s - add ARM scalar optimized BLAKE2s
-> 
->     Add an ARM scalar optimized implementation of BLAKE2s.
-> 
->     NEON isn't very useful for BLAKE2s because the BLAKE2s block size
->     is too small for NEON to help.  Each NEON instruction would depend
->     on the previous one, resulting in poor performance.
-> 
-> Even if NEON code might be slightly faster on some cores, the fact
-> that it is sensitive to micro-architectural details makes it less
-> attractive.
+[=E2=80=A6]
 
-Yes, agreed: there isn't much opportunity for an ARM64 optimized BLAKE2s
-implementation to be faster than the generic C code.
+>>=20
+>>> +    #[inline]
+>>> +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_sqe) =
+-> &'a IoUringSqe {
+>>=20
+>> Private or pub(crate) at best.
+>=20
+> Okay. pub(crate)
 
-- Eric
+Try to make things private and reach for pub(crate) here only when =
+it=E2=80=99s actually needed.
+
+=E2=80=94 Daniel
+
+
 
