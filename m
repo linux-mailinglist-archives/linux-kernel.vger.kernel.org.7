@@ -1,63 +1,47 @@
-Return-Path: <linux-kernel+bounces-791596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3142B3B8F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C026DB3B8F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A096582547
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7276B582744
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59C330ACFA;
-	Fri, 29 Aug 2025 10:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6150D30C356;
+	Fri, 29 Aug 2025 10:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVI39CEJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixVKxpab"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352FA3093D2
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A418C309DC0;
+	Fri, 29 Aug 2025 10:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463499; cv=none; b=RJ0BumsyRHZq3VrBOrDKD7gbV1t9lsrbmWxmlWrnmz+ZVlM96+ZP2XajLCS5I2JVxKKH0JRbgMoNI/OvSUSkK7ZbyODj/9tQtu23P+CyimpqBJZtGurgjTG3loKvQXeC90gFlV97X1GUuzjH1mpAnLj/JoVMcuMZKOiIa7QveYI=
+	t=1756463524; cv=none; b=Y0HbVGyWmoYdvMxc1MjOBspsr+Pdi229hQg62pJifdgGNCw8KqW1qp63P+1D3zjEF2jIirLqlU86x3Y6G/vt4gFnsQFpD6Xwd4+87Q1SU1DjtGcR6OT2Bg9OZhVJk4P11+kdnYQ17ySS4yU0zb7QZTY7vdjOqFqdu/Mw8WAFZyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463499; c=relaxed/simple;
-	bh=rqjKaGnzMwGex2cVb1RmKu1TRj31agUAhMc+ewACMxs=;
+	s=arc-20240116; t=1756463524; c=relaxed/simple;
+	bh=2HK9dPmt76X1vz8N9bbGM/cJkdjkqxzLRbvbl5x9FL0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqN8BeIyC7Q5JnxSHCJFTJJlGOLYvLpIZLK15y+U3xbOMNH/iCwIq0ZVZiVfxty+g7rBh8v7qlARJrcIXe46ELcMT+pyzk6AxP5mV0uF+lWLwaYuLIYYMz9XwBUQQaPH2mkMkngVDtvEOhoIdVnYe78eE1S2k3eLFR+7gFRQuJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVI39CEJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756463496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kOn3KXAKXg6FOxpANWl4YcPVu6tqit8Beeg42jZjH/4=;
-	b=eVI39CEJnljbNm2ZDpd2G4Cw8HdQmv4+PXGfK4dUyxBT7NybPnuQa3+dF6drG5oZPXEi/R
-	umz3OjFJbiVpUdS5aTi3FYXyfHz7B1iMfw+qzz7D2hnMfo0VDFcDCk0MhZzyTdy/2SLhEH
-	8UnrFSdI/PvPsvae/gPKrWW4u692Q2o=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-sjlrL8IPMr-Xv3qOA09STA-1; Fri,
- 29 Aug 2025 06:31:32 -0400
-X-MC-Unique: sjlrL8IPMr-Xv3qOA09STA-1
-X-Mimecast-MFC-AGG-ID: sjlrL8IPMr-Xv3qOA09STA_1756463491
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1BFA7180035B;
-	Fri, 29 Aug 2025 10:31:21 +0000 (UTC)
-Received: from [10.45.224.190] (unknown [10.45.224.190])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D2A021800952;
-	Fri, 29 Aug 2025 10:31:13 +0000 (UTC)
-Message-ID: <9294ad59-ac08-4666-9936-23b4e1d40c82@redhat.com>
-Date: Fri, 29 Aug 2025 12:31:11 +0200
+	 In-Reply-To:Content-Type; b=Voa+zHoXifIv48Ucred2FcWZW9AomNTFF4AheuZCOvgakskgO1K9RirBriCqyhC48zbT0yJX3rvdC9evM0W35QWU+9dHydAukWmA8NGmHWElusk5Mz2ZOMLCTwnOs7CUH7pk1pFo0czq++tTADqyg8WU4wtojszb0nvuNJe0Yy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixVKxpab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B3CDC4CEF0;
+	Fri, 29 Aug 2025 10:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756463524;
+	bh=2HK9dPmt76X1vz8N9bbGM/cJkdjkqxzLRbvbl5x9FL0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ixVKxpabcgrsV6WKSrcgxtO5Gt/zaeoMEsPiQWObwKMflQkQSI4c2iQmDcRupMRhg
+	 oY1RmbqWyjKzcm1BDfwP0Nvu+Vbai4VVObSxW4gxl5W1qkOp52tlSUK5OtjKA1CfO/
+	 CNjV3GF9wFO6alL5q8n1f/Iuu0ZyjdiGVq5eZMvWQEO654J5LEcArzyYMGDfzkSlk6
+	 vr3YWKd0u6gWf1TgINMSU7ZbXoXkbwMktFDjCtqcrnV1vPDKm6q3tvVVkBPd0zMvD1
+	 WpNmeZ0wASbxKoEWzD25QwlbLBvjARBjhQLTLKwXQeggc1KucXWvEYXmxoSKU/Vh/c
+	 RVp0W8RIxN4dw==
+Message-ID: <75b2db61-84ad-47a4-b809-da7e63e8dec8@kernel.org>
+Date: Fri, 29 Aug 2025 12:31:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,149 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/5] dpll: zl3073x: Add firmware loading
- functionality
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
- netdev@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
- Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <202508200929.zEY4ejFt-lkp@intel.com>
+Subject: Re: [PATCH v5 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250829-tlv493d-sensor-v6_16-rc5-v5-0-746e73bc6c11@gmail.com>
+ <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
+ <20250829-fluorescent-delicate-pogona-c96b5f@kuoka>
+ <CAFmh=S3jKfGMek=ZPUrfgh9fXZaaq6zNBOmCyEpoe0qGpfbt5w@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <202508200929.zEY4ejFt-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAFmh=S3jKfGMek=ZPUrfgh9fXZaaq6zNBOmCyEpoe0qGpfbt5w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On 29/08/2025 12:07, Dixit Parmar wrote:
+>>> +INFINEON TLV493D Driver
+>>> +M:   Dixit Parmar <dixitparmar19@gmail.com>
+>>> +L:   linux-iio@vger.kernel.org
+>>> +S:   Maintained
+>>> +W:   https://www.infineon.com/part/TLV493D-A1B6
+>>> +F:   Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
+>>
+>> There is no such file here. Apply this *patch* and check by yourself.
+> That file is being added as a separate patch(Patch 2/2) of this same
+> patch series. It's already reviewed by you only(based on the name).
 
+No. Read my comment again:
 
-On 20. 08. 25 8:40 dop., Dan Carpenter wrote:
-> Hi Ivan,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Vecera/dpll-zl3073x-Add-functions-to-access-hardware-registers/20250814-014831
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/20250813174408.1146717-4-ivecera%40redhat.com
-> patch subject: [PATCH net-next v3 3/5] dpll: zl3073x: Add firmware loading functionality
-> config: xtensa-randconfig-r073-20250819 (https://download.01.org/0day-ci/archive/20250820/202508200929.zEY4ejFt-lkp@intel.com/config)
-> compiler: xtensa-linux-gcc (GCC) 9.5.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202508200929.zEY4ejFt-lkp@intel.com/
-> 
-> smatch warnings:
-> drivers/dpll/zl3073x/fw.c:239 zl3073x_fw_component_load() warn: potential user controlled sizeof overflow 'count * 4' '0-u32max * 4'
-> 
-> vim +239 drivers/dpll/zl3073x/fw.c
-> 
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  202  static ssize_t
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  203  zl3073x_fw_component_load(struct zl3073x_dev *zldev,
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  204  			  struct zl3073x_fw_component **pcomp,
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  205  			  const char **psrc, size_t *psize,
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  206  			  struct netlink_ext_ack *extack)
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  207  {
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  208  	const struct zl3073x_fw_component_info *info;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  209  	struct zl3073x_fw_component *comp = NULL;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  210  	struct device *dev = zldev->dev;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  211  	enum zl3073x_fw_component_id id;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  212  	char buf[32], name[16];
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  213  	u32 count, size, *dest;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  214  	int pos, rc;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  215
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  216  	/* Fetch image name and size from input */
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  217  	strscpy(buf, *psrc, min(sizeof(buf), *psize));
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  218  	rc = sscanf(buf, "%15s %u %n", name, &count, &pos);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  219  	if (!rc) {
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  220  		/* No more data */
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  221  		return 0;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  222  	} else if (rc == 1) {
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  223  		ZL3073X_FW_ERR_MSG(zldev, extack, "invalid component size");
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  224  		return -EINVAL;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  225  	}
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  226  	*psrc += pos;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  227  	*psize -= pos;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  228
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  229  	dev_dbg(dev, "Firmware component '%s' found\n", name);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  230
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  231  	id = zl3073x_fw_component_id_get(name);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  232  	if (id == ZL_FW_COMPONENT_INVALID) {
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  233  		ZL3073X_FW_ERR_MSG(zldev, extack, "unknown component type '%s'",
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  234  				   name);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  235  		return -EINVAL;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  236  	}
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  237
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  238  	info = &component_info[id];
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13 @239  	size = count * sizeof(u32); /* get size in bytes */
-> 
-> This is an integer overflow.  Imagine count is 0x80000001.  That means
-> size is 4.
+"Apply this *patch* and check by yourself."
 
-Will fix this in the next version.
+It does not matter if you add the file later. The file does not exist
+now, here.
 
-Thanks,
-Ivan
+> https://lore.kernel.org/linux-iio/20250829-tlv493d-sensor-v6_16-rc5-v5-2-746e73bc6c11@gmail.com
+>>
+>> Your patchset is still incorrectly organized. See submitting patches in
+>> DT dir.
+> By "incorrectly organized" do you mean order of the patches in the
+> patchset or anything else?
 
-> 
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  240
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  241  	/* Check image size validity */
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  242  	if (size > component_info[id].max_size) {
-> 
-> size is valid.
-> 
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  243  		ZL3073X_FW_ERR_MSG(zldev, extack,
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  244  				   "[%s] component is too big (%u bytes)\n",
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  245  				   info->name, size);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  246  		return -EINVAL;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  247  	}
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  248
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  249  	dev_dbg(dev, "Indicated component image size: %u bytes\n", size);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  250
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  251  	/* Alloc component */
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  252  	comp = zl3073x_fw_component_alloc(size);
-> 
-> The allocation succeeds.
-> 
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  253  	if (!comp) {
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  254  		ZL3073X_FW_ERR_MSG(zldev, extack, "failed to alloc memory");
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  255  		return -ENOMEM;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  256  	}
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  257  	comp->id = id;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  258
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  259  	/* Load component data from firmware source */
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  260  	for (dest = comp->data; count; count--, dest++) {
-> 
-> But count is invalid so so we will loop 134 million times.
-> 
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  261  		strscpy(buf, *psrc, min(sizeof(buf), *psize));
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  262  		rc = sscanf(buf, "%x %n", dest, &pos);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  263  		if (!rc)
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  264  			goto err_data;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  265
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  266  		*psrc += pos;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  267  		*psize -= pos;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  268  	}
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  269
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  270  	*pcomp = comp;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  271
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  272  	return 1;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  273
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  274  err_data:
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  275  	ZL3073X_FW_ERR_MSG(zldev, extack, "[%s] invalid or missing data",
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  276  			   info->name);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  277
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  278  	zl3073x_fw_component_free(comp);
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  279
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  280  	return -ENODATA;
-> cd5cfd9ddd76800 Ivan Vecera 2025-08-13  281  }
-> 
+I pointed to the docs, is anything unclear in there?
 
+Best regards,
+Krzysztof
 
