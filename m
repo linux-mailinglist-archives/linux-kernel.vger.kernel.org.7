@@ -1,245 +1,116 @@
-Return-Path: <linux-kernel+bounces-792258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6802B3C1EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D21BB3C1F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8854167018
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C2A3B937D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F34720E029;
-	Fri, 29 Aug 2025 17:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049BA342C99;
+	Fri, 29 Aug 2025 17:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0gF4l6g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3eW1WNOH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y9t6UvRh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE77132039E;
-	Fri, 29 Aug 2025 17:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E641EF091;
+	Fri, 29 Aug 2025 17:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489087; cv=none; b=p8IxSx5GWMfbW/92VIoE8jQwx25JAqUrW/5sD2PXm3l4yHSEJKRJDOxdqtvowMJjlH9Ckt30GBR8oGOD4Gms4j0XfEzIobBJU2kcAfe6IHSYRc63B+H6dWD3/SsdAEQFbVCv88S2b3rq3Uq9XOQOH4SROxyxoG1vQ5p9QuUk2Uw=
+	t=1756489173; cv=none; b=IzL6ktYqRUzIyB2DeXJgoOvOwNi/sKVEB5+plJmCI/hgip2AQh+DnajEUNaNQ1DCVFMdUuNl03kv8ueEnOmaqhWOuEWw/AjcrPI/XKMxgvqmit9JufNBiDkXUsCB8t71G9bUfwwCEYQykQUCMxD5smuyd3xy1gWMxaPT6eMb168=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489087; c=relaxed/simple;
-	bh=L5QOuOSEv9g6+gvzQ1RcLIv6NONgTjAIFzcmQ/bnMBc=;
+	s=arc-20240116; t=1756489173; c=relaxed/simple;
+	bh=M1TqX1G0Z62RwrPHVPO1tgrYo3MJGa630SlsMDc3zPU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3dfxeDKFA9VVcF8f/k5ckcepMlwQFgyt36U7J4sRdxUtsW0TCjw3U1Ud7OEbVkkVLcvaw0+HkudAwScdoVRhqZmMi/79uvBjQGbnF6zML5K9GIo2zKTGfQF44tJvH6FT5KH2N9HRD2Mjw9X9rhS1fMxdsHZ/Ffv+6DZKcYgfJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0gF4l6g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2BDEC4CEF0;
-	Fri, 29 Aug 2025 17:38:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756489086;
-	bh=L5QOuOSEv9g6+gvzQ1RcLIv6NONgTjAIFzcmQ/bnMBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u0gF4l6gWaRtgs50hiD/Br1pg2DZkaAezQPMRZt7QljBwcaz/LHif/lqQ8mpwCYQ9
-	 lCBPixgxsGKryPAjEw1gD/np4t14UBI/CHUksYruTIRlCnUKJkJeqyCYSqFm2DYWK6
-	 Jk1VB+hDKkfqZ7o2P+qrYFfZPDneWSbbC2Kj8NJL+5gY8tXiTVwRKqgl+fuZOTHKz7
-	 wIPPg0l39rHbWEyQ0WOdDpQVY1MMWN7V9qe+rdn4U6Fo4Vl4ga7/wWtSX+3Nqo+uVw
-	 cQD5JWT3xhzcYhMdfPhXGINJTE8j9AlN70CFS5VKJAg0YGuUfbnz5w94Yf9PyJLCKC
-	 ayyFqqUmMTxRw==
-Date: Fri, 29 Aug 2025 12:38:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: Pet Weng <pet.weng@ite.com.tw>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Hermes Wu <hermes.Wu@ite.com.tw>,
-	Kenneth Hung <kenneth.Hung@ite.com.tw>,
-	Pin-yen Lin <treapking@google.com>
-Subject: Re: [PATCH v2 1/3] dt-binding: display: Add ITE IT61620 MIPI DSI to
- HDMI bridge
-Message-ID: <20250829173805.GA1030887-robh@kernel.org>
-References: <20250828-it61620-0714-v2-0-586f5934d5f8@ite.com.tw>
- <20250828-it61620-0714-v2-1-586f5934d5f8@ite.com.tw>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoiP57WNTxyQN6CZTACdNLfOZgG2/agqzGrYWG1cieWm+hc65vsMzSW0DXEnQ7FkTeR9IWs1ruQyCzv/8ROnlxOu4I3W+sso/RJIQfs+7E6zx70DyolQU5JbIQc2qX4QlTv78frOYlHpauFbIivBr/Mt2D8BxWBSM7z/f6oFZEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3eW1WNOH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y9t6UvRh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 29 Aug 2025 19:39:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756489170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+kPKNqLzCJ+OEI+Dk15NETRdqt/FKwRzKWAqyjW2wmY=;
+	b=3eW1WNOH34UsEhV9zEhSPuhnGwWgRbNcGCfI4IwCaID3fpeClPDfrIrPHKhe+v7STfAEpd
+	UBADKZ5O4OAmgMml3QE0+fRBbdjDhMjRKbWWmR7l5e3zBxvJRm8fb8jdekfK0Sah1SxqZO
+	Mx7vEpApevQHZYaIoHEEIgM9s99pDfcH3x37AYlwHWWYdtsg7V0Aexy86lfQPJkBoCwjCy
+	EVqncZqQNvukeCRneO7GX57XcaLUjT0qo4XgY1UiNAkWwZilLVcQP4Xm4kAKVGHw7rMKKP
+	8k5aMXD2WoYE10zQDAsFYURzOvzimSKUg/ZCIsS4EpLBUejXsOgwnv/5kym6hg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756489170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+kPKNqLzCJ+OEI+Dk15NETRdqt/FKwRzKWAqyjW2wmY=;
+	b=Y9t6UvRhB5iitC8QuypEp8t5Kia5sD6N2kH67SlmuBkiLqaMx/hf937zL30nV6ku7nyQzC
+	C7ORdCQxcQ8ewXDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Carlos O'Donell <carlos@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
+	Alejandro Colomar <alx@kernel.org>,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
+Message-ID: <20250829173928.K82VGvOw@linutronix.de>
+References: <20250829160200.756194-1-bigeasy@linutronix.de>
+ <20250829160200.756194-4-bigeasy@linutronix.de>
+ <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828-it61620-0714-v2-1-586f5934d5f8@ite.com.tw>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
 
-On Thu, Aug 28, 2025 at 12:01:18PM +0800, Pet Weng wrote:
-> This chip receives MIPI DSI input and outputs HDMI, and is commonly
-> connected to SoCs via I2C and DSI.
-> 
-> Signed-off-by: Pet Weng <pet.weng@ite.com.tw>
-> ---
->  .../bindings/display/bridge/ite,it61620.yaml       | 143 +++++++++++++++++++++
->  1 file changed, 143 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..dd8a54a1e0aa9bbbd9d02e68398bb5df65b821a8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it61620.yaml
-> @@ -0,0 +1,143 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/ite,it61620.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ITE IT61620 MIPI DSI to HDMI Bridge
-> +
-> +maintainers:
-> +  - Pet Weng <pet.weng@ite.com.tw>
-> +
-> +description: |
-> +  The ITE IT61620 is a high-performance, low-power HDMI bridge that converts
-> +  MIPI DSI input to HDMI 1.4b TMDS output. It supports up to 4 lanes of MIPI
-> +  D-PHY 2.0 input at 2.5Gbps per lane (10Gbps total), compatible with DSI-2 v2.0.
+On 2025-08-29 12:43:26 [-0400], Carlos O'Donell wrote:
+> > index 69df4036ada7f..027e91b826bf1 100644
+> > --- a/man/man2/futex.2
+> > +++ b/man/man2/futex.2
+> > @@ -6,10 +6,10 @@
+> >   .\"
+> >   .\" FIXME Still to integrate are some points from Torvald Riegel's ma=
+il of
+> >   .\" 2015-01-23:
+> > -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=3D7=
+977
+> > +.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triege=
+l.csb
+>=20
+> Wrong link?
+>=20
+> Should be this link:
+> https://lore.kernel.org/lkml/1422037145.27573.0.camel@triegel.csb/
+>=20
+> Where the discussion is about the unresolved constraint to guarantee FIFO=
+ order.
 
-Wrap lines at 80 char.
+I thought it is the longer email, the second that day, where he made
+three points. Didn't read it (yet)=E2=80=A6
 
-> +
-> +  The HDMI transmitter side supports up to 4Kx2K@30Hz resolutions, and is
-> +  compliant with HDMI 1.4b and HDCP 1.4.
-> +
-> +  For audio, the IT61620 supports up to 8-channel LPCM via I2S (multi-line or
-> +  TDM mode), with optional S/PDIF or DSD (for SACD). It supports audio
-> +  sampling rates up to 192kHz.
-> +
-> +allOf:
-> +  - $ref: /schemas/sound/dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: ite,it61620
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: interrupt specifier of INT pin
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: GPIO specifier of RESET pin
-> +
-> +  ivdd-supply:
-> +    description: core voltage
-> +
-> +  ovdd-supply:
-> +    description: I/O voltage
-> +
-> +  ovdd1833-supply:
-> +    description: flexible I/O votage
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +
-> +  pinctrl-0:
-> +    maxItems: 1
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: Input port for MIPI DSI
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/media/video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes: true
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Output port for HDMI output
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - reset-gpios
-> +  - ivdd-supply
-> +  - ovdd-supply
-> +  - ovdd1833-supply
-> +  - ports
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        ite61620@58 {
+Now FIFO ordering you say. Is it glibc's side or kernel side? The kernel
+sorts the futex waiters according their (task's) priority. It is not
+FIFO unless the tasks are of equal priority.
+So a futex requeue will take the task with the highest priority from
+uaddr1 and move it to uaddr2.
 
-bridge@58
-
-> +                compatible = "ite,it61620";
-> +                reg = <0x58>;
-> +                #sound-dai-cells = <0>;
-> +                interrupt-parent = <&pio>;
-> +                interrupts = <128 IRQ_TYPE_LEVEL_LOW>;
-> +                pinctrl-names = "default";
-> +                pinctrl-0 = <&it61620_pins>;
-> +                reset-gpios = <&pio 127 GPIO_ACTIVE_LOW>;
-> +                ivdd-supply = <&pp1000_hdmi_x>;
-> +                ovdd-supply = <&pp3300_vio28_x>;
-> +                ovdd1833-supply = <&pp1800_vcamio_x>;
-> +
-> +                ports {
-> +                        #address-cells = <1>;
-> +                        #size-cells = <0>;
-> +
-> +                        port@0 {
-> +                                reg = <0>;
-> +                                it61620_dsi_in: endpoint {
-> +                                        data-lanes = <0 1 2 3>;
-> +                                        remote-endpoint = <&dsi_out>;
-> +                                };
-> +                        };
-> +
-> +                        port@1 {
-> +                                reg = <1>;
-> +                                it61620_hdmi_out: endpoint {
-> +                                        remote-endpoint = <&hdmi_connector_in>;
-> +                                };
-> +                        };
-> +                };
-> +        };
-> +    };
-> 
-> -- 
-> 2.34.1
-> 
+Sebastian
 
