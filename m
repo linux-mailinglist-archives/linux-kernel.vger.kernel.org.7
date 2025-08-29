@@ -1,193 +1,156 @@
-Return-Path: <linux-kernel+bounces-791509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299F7B3B7A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E095AB3B7A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697A33B222E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189501C8024E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250F5304BB5;
-	Fri, 29 Aug 2025 09:48:21 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C74D304BA6;
+	Fri, 29 Aug 2025 09:47:59 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEB833985
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3379E33985;
+	Fri, 29 Aug 2025 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460900; cv=none; b=GJIJQD1t9TK88HlHeTK9BA4CzbBZMNdsHbRLKIzZPyDnDRKky0sroWWVRCk2Z2ZUexrVoD9v6egQgNk2rM7G7kc32jGeQLdbNloKGb7um3cwJDJmnxS2s8xH6230FaUlMYfXaS2PfAi7+bkekgJ1elRWSPzxMJMO6aKGOEi6S6w=
+	t=1756460879; cv=none; b=ChSD7ktySnDRbmn6ld7pqbdOKX6h4m/G4zmSyhkDFy1M+80C+YKcNGuTw7/EydzqvvLdtAEsTSux67FKwVIc7B47GtnlhiROsxJtbIyAOA3IZ0hnS4z4GqoCmos96YYjQVStsbD47Co+Aq7tiJam78Ccbyj5mkuahjISZXvVh40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460900; c=relaxed/simple;
-	bh=Wr3MtQQ0eSoLp1yMUlPh8bE0C8iqfoELjTmBz+OJLcA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GOgxaMWnJvjg172vndkU+1UbLNWxmKex4FLUEkuvbl1P9B0/Sy2gIdfy26QqrBdumUgroceVRDufYjJ8qbAHZfC1kk73T9SEr6kFxnbuX4/uTqsiMIgHWiU+ORaNJklakag7GMz9RwNKEBBcMK7jH29tpYJ1R47+ffXTf4HyedU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cCtk74S0JzKHN7S
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:48:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 563241A0879
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:48:15 +0800 (CST)
-Received: from huawei.com (unknown [10.67.174.45])
-	by APP4 (Coremail) with SMTP id gCh0CgDHXotXd7FoJJe9Ag--.3597S2;
-	Fri, 29 Aug 2025 17:48:13 +0800 (CST)
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: x86@kernel.org,
-	jpoimboe@kernel.org,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Tengda Wu <wutengda@huaweicloud.com>
-Subject: [PATCH -next v2] x86: Prevent KASAN false positive warnings in __show_regs
-Date: Fri, 29 Aug 2025 09:47:44 +0000
-Message-Id: <20250829094744.3133324-1-wutengda@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756460879; c=relaxed/simple;
+	bh=Uam47n9XP2yNSU+KEkGNi082Ub+UjYkvl37Onz7YMGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W8Y54Yj3Oc7co2VBFzuZd1Frf/pqtPim2/GfPKuPtBTr46aMcDC3Evht3Oa2rIUougATWt8pZYKigJsADCIW1R136EUmLJS82HtB16fsbFjSEm4dcIL8/exhr6YQEa1Lfc3TD5FeVJcm258q4G5iMvXtPZub8rEvzbyd97z02sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-54494c3f7e3so93524e0c.3;
+        Fri, 29 Aug 2025 02:47:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756460876; x=1757065676;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SjwK9jXSJ6vy5qbcZE6vx6xB7K4aY3jNf25jf3fHvcU=;
+        b=nsJxo684igLQkv5DrQsu13X3rn6GfzCCXBIadNcZIcawPKLiHxSzDOyuVI85FvbxqE
+         +lUHCYs0p3bxo521EHh1ZxHHq4uf2D3r6gCAElQ0/0I3SQewRhBAyXn8yQqrSVHBfaeX
+         hOVFN7cG1LwkSuayb4ZT2kHSbHbNkNaS6Oq325GCvmVdJIjSpKsVSyjCURkRq6ETgCIJ
+         vheblAT3fSpFSO1JYxPsWTGte/+cNgcc31XpphGdv9c6U8NtqS5kQppUWBS7hEcjCdWX
+         s6tgcF11r3OUbqO3naANmv6B5LVAIedrBjgfF/F+UaMga8KxF2nCvcHpecmUKaBjH3P7
+         GMOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqAPKSuOszS4lp+sf9ovfmiuBaiu0wSh0yIafVsf9vjsmMx1hHb+8EaVUBPo3z5MlXPIg/toA8M7GVxsPa@vger.kernel.org, AJvYcCX1tdKExWHSDtHR/yu2Il+k8B4s/G8yL5fnR53Zx7Al2/mDEbI5f05pyr06oLVznoMz8+wqo9fqigY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy18+xjA7F0gpqu9IVLtGi3q/VeUnx00yUCbRPG3BAtH1psXyh0
+	dQwicYy2TeoFfq5lgoxQ0l+gDZJmAbgHS9I+55VfUC1zwuQYWFb0abu9siy2EIc5
+X-Gm-Gg: ASbGnctJEiy0D6VWdrYylh6vCY+Uw3Xmc3DMBXcKkJf1fT4vYnvKbU2vPG02kjsNy1Z
+	ibiDcquXxWN89/Cce/P6Ya/AKpFZ3QSx3BFYRl1rfUTsNIJ4eO0TJXxS8Ikcekz8gvIs7ErEgp9
+	TEkACl+12+Y3OedDtbnWfAdNsE+2svIfU+6LChcqWoFz1uxTdaltZ0nPQ8xeJM6XuQO/YtREEkp
+	bfh/dtaALlfdkLHUw9nxNTlTGC/uNPNZvyzseEcMsIL68dhLQXnowZZ8/uvNhFZjXLls640nTLO
+	TgS6fX0papcuFvQfgxfbCDPMqU+a2nyxlrdzEA6ZRiqdSgtCsAowmTMZ3vU03p3L5jzgqoaQ2qP
+	zXws4Eli8v89KI/ma/hpUqs+ISlpwBLJFNieUnb3qXKwFlGJJ31pcOMmf0l71TLxACLuDQ0Y=
+X-Google-Smtp-Source: AGHT+IG8jIKDsVWnAuswpo/MqWNPhyyrZCHuqJY72pBh0mx+lvb5wymxARAFOAJ0RFD3rfp1xyu3Uw==
+X-Received: by 2002:a05:6122:25e7:b0:541:366:d15a with SMTP id 71dfb90a1353d-5410366d42emr4515194e0c.2.1756460875666;
+        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544914c0e8esm637779e0c.28.2025.08.29.02.47.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-52069272157so295727137.3;
+        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnkWB7FZ03ZIMOo6vOb5aqqknwPHM6/f3BxOAMelzGmhkm6+kvNseKgjXCrLnvKRgHKr2U/R50HoU=@vger.kernel.org, AJvYcCV+wcayYkck0zLXs1tkIkt5mdsTqRg/0B0pIWtZgYN56JR+VxYwco46S8GO9qmr0rZD5bp3Hcm2qkwr6x+o@vger.kernel.org
+X-Received: by 2002:a05:6102:5045:b0:4e9:9659:3a5f with SMTP id
+ ada2fe7eead31-51d0d3295fcmr9051801137.10.1756460875111; Fri, 29 Aug 2025
+ 02:47:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHXotXd7FoJJe9Ag--.3597S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF13Wry3Kw45ZF4xXF17trb_yoWruF1xpF
-	s3tasYqF4Yy34FqF42yF48X3s8XF4qqryv9rs3Gr15JFn8Xr18Ja1rCF1jvFyfCry7Ca45
-	Ja1qqw1qk34fCa7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+References: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
+In-Reply-To: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Aug 2025 11:47:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWNNu+gwHdhfaShLyXHqxD=esp4CXpWiHJCqrCGho0z3g@mail.gmail.com>
+X-Gm-Features: Ac12FXw4ySjEeOeCH0mF3GQ3nupnIdCJpFWX1FkdY409glgjEvUK-Xh-p3wrdqg
+Message-ID: <CAMuHMdWNNu+gwHdhfaShLyXHqxD=esp4CXpWiHJCqrCGho0z3g@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: proximity: isl29501: fix buffered read on
+ big-endian systems
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-When task A walks task B's stack without suspending it, the continuous
-changes in task B's stack (and corresponding KASAN shadow tags) may cause
-task A to hit KASAN redzones when accessing obsolete `regs->` contents,
-resulting in false positive reports. [1][2]
+Hi David,
 
-The specific issue occurs as follows:
+On Tue, 22 Jul 2025 at 22:55, David Lechner <dlechner@baylibre.com> wrote:
+> Fix passing a u32 value as a u16 buffer scan item. This works on little-
+> endian systems, but not on big-endian systems.
+>
+> A new local variable is introduced for getting the register value and
+> the array is changed to a struct to make the data layout more explicit
+> rather than just changing the type and having to recalculate the proper
+> length needed for the timestamp.
+>
+> Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Task A (walk other task's stack)            Task B (running)
-1. echo t > /proc/sysrq-trigger
+Thanks for your patch, which is now commit de18e978d0cda23e ("iio:
+proximity: isl29501: fix buffered read on big-endian systems")
+in v6.17-rc3.
 
-show_trace_log_lvl
-  regs = unwind_get_entry_regs()
-  show_regs_if_on_stack(regs)
-                                            2. The stack data pointed by
-                                               `regs` keeps changing, and
-                                               so are the tags in its
-                                               KASAN shadow region.
-    __show_regs(regs)
-      regs->ax, regs->bx, ...
-        3. hit KASAN redzones, OOB
+> --- a/drivers/iio/proximity/isl29501.c
+> +++ b/drivers/iio/proximity/isl29501.c
+> @@ -938,12 +938,18 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
+>         struct iio_dev *indio_dev = pf->indio_dev;
+>         struct isl29501_private *isl29501 = iio_priv(indio_dev);
+>         const unsigned long *active_mask = indio_dev->active_scan_mask;
+> -       u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
+> -
+> -       if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
+> -               isl29501_register_read(isl29501, REG_DISTANCE, buffer);
+> +       u32 value;
+> +       struct {
+> +               u16 data;
+> +               aligned_s64 ts;
+> +       } scan = { };
 
-Fix this by detecting asynchronous stack unwinding scenarios through
-checking whether the `regs` are located in the current task's stack
-during unwinding, and disabling KASAN checks when this scenario occurs.
+This still looks rather obfuse to me: you rely on the implicit
+presence of a 6-byte hole between data and ts, and on the implicit
+64-bit alignment of data.
 
-[1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
-[2] KASAN out-of-bounds:
-[332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
-[332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
-[332706.552562]
-[332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
-[332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
-[332706.552906] Call Trace:
-[332706.552998]  <TASK>
-[332706.553089]  dump_stack_lvl+0x32/0x50
-[332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
-[332706.553303]  print_report+0xbe/0x280
-[332706.553409]  ? __virt_addr_valid+0xed/0x160
-[332706.553512]  ? __show_regs+0x4b/0x340
-[332706.553612]  kasan_report+0xa8/0xe0
-[332706.553716]  ? __show_regs+0x4b/0x340
-[332706.553816]  ? asm_exc_page_fault+0x22/0x30
-[332706.553919]  __show_regs+0x4b/0x340
-[332706.554021]  ? asm_exc_page_fault+0x22/0x30
-[332706.554123]  show_trace_log_lvl+0x274/0x3b0
-[332706.554229]  ? load_elf_binary+0xf6e/0x1610
-[332706.554330]  ? rep_stos_alternative+0x40/0x80
-[332706.554439]  sched_show_task+0x211/0x290
-[332706.554544]  ? __pfx_sched_show_task+0x10/0x10
-[332706.554648]  ? _find_next_bit+0x6/0xc0
-[332706.554749]  ? _find_next_bit+0x37/0xc0
-[332706.554852]  show_state_filter+0x72/0x130
-[332706.554956]  sysrq_handle_showstate+0x7/0x10
-[332706.555062]  __handle_sysrq+0x146/0x2d0
-[332706.555165]  write_sysrq_trigger+0x2f/0x50
-[332706.555270]  proc_reg_write+0xdd/0x140
-[332706.555372]  vfs_write+0x1ff/0x5f0
-[332706.555474]  ? __pfx_vfs_write+0x10/0x10
-[332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
-[332706.555682]  ? __fget_light+0x99/0xf0
-[332706.555785]  ksys_write+0xb8/0x150
-[332706.555887]  ? __pfx_ksys_write+0x10/0x10
-[332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
-[332706.556094]  do_syscall_64+0x55/0x100
-[332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
+What about making this explicit?
 
-Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
-Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
----
-v2: Use kasan_disable_current() instead of __no_sanitize_address.
-v1: https://lore.kernel.org/all/20250818130715.2904264-1-wutengda@huaweicloud.com/
+    struct {
+            u16 data;
+            u16 unused[3];
+            s64 ts;
+    } __aligned(8) scan = { };
 
- arch/x86/kernel/dumpstack.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> +
+> +       if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask)) {
+> +               isl29501_register_read(isl29501, REG_DISTANCE, &value);
+> +               scan.data = value;
+> +       }
+>
+> -       iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
+> +       iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
+>         iio_trigger_notify_done(indio_dev->trig);
+>
+>         return IRQ_HANDLED;
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 71ee20102a8a..5413534de490 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -152,6 +152,18 @@ void show_iret_regs(struct pt_regs *regs, const char *log_lvl)
- static void show_regs_if_on_stack(struct stack_info *info, struct pt_regs *regs,
- 				  bool partial, const char *log_lvl)
- {
-+	bool kasan_disabled = false;
-+
-+	/*
-+	 * When 'regs' resides in another task's stack space, KASAN should be
-+	 * disabled to prevent false positives during 'regs->' operation, as
-+	 * the 'regs' contents may change concurrently with task execution.
-+	 */
-+	if (!object_is_on_stack(regs)) {
-+		kasan_disable_current();
-+		kasan_disabled = true;
-+	}
-+
- 	/*
- 	 * These on_stack() checks aren't strictly necessary: the unwind code
- 	 * has already validated the 'regs' pointer.  The checks are done for
-@@ -173,6 +185,9 @@ static void show_regs_if_on_stack(struct stack_info *info, struct pt_regs *regs,
- 		 */
- 		show_iret_regs(regs, log_lvl);
- 	}
-+
-+	if (kasan_disabled)
-+		kasan_enable_current();
- }
- 
- /*
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
