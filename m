@@ -1,102 +1,152 @@
-Return-Path: <linux-kernel+bounces-792508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE386B3C4ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2717EB3C51F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3626F3B1FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA6117F9B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBCC29B78F;
-	Fri, 29 Aug 2025 22:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313E32C11F6;
+	Fri, 29 Aug 2025 22:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Yrlg3tWg"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BcwZ0xXj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6271D61BB;
-	Fri, 29 Aug 2025 22:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF862A1AA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756506907; cv=none; b=Ns67yRwBhSAw6zhL++mwdg8moA6DE5Ixmxq2qWDW21a5sp4pH/NBBJ5Uvbw1tX+hlej4C/N2gMTtzcOujeHDADyObvuH4FaRTRmaN7n6l7BeWPXQCMHLZq4Qcvi8cv2QZm7vXwI1zWfy46t4pOUXVypDk+Dj877DfngOCIpoHSE=
+	t=1756507295; cv=none; b=CAoC2AiNqtkBivwkyuOAIj3gqXaGb4SaiwwNa9x4H2j/0LJ0l1VdKoQ92WVrBgSwQAAPodGM8gfXlJVx/NmLe0qfZZyWucBVl7+3G45yi/LWZZYxbCtNzMVQGvwY3sL46PklWJ+KUV5d+HWBS6OgG+1AzH/Isv4LHz6U6s/2D/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756506907; c=relaxed/simple;
-	bh=psyHVBHH52umKGRyqGiz9/R/Wx8nDG3Lb6AieVV9h70=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PSrbC0G73onUoRVY+He4zmZZQcTG7lHhyY9nIGbNRBATnREpklnJhlAOKxtbXqShRzH2vjCB1Fnjv0m5O1tkT/IagopE4tFFgb2Mb0Xok4Gau0MsxIJbFYGB7uV2fNBJNd6YjMhoQ1ws02qitnjeJAiJPpFytpIqjosXdJuIWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Yrlg3tWg; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D761140AF5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1756506905; bh=j9pdz4fvOvXD/nnfTD03LeIxAJWY+Bl75kULpm1YGrw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Yrlg3tWgGl+KR0gvLKPpwxh/ccK70xseariZ3utKekozcfBwJyhS3rBOMTxJP23ir
-	 EMxROTR6jAetE6gtkCsaYhqyrB/fzoj5GgUxE8XtdLRMjz/Flaw5kO1GwyGR80pmkL
-	 p6yVSUxyBTwDqV9qFOPZPEoAotmDso1RsFWlLiTx5js7McFuKWHfW+kds4t+5bQR2b
-	 p0og0yI6Zy73JQ0sbsgW5+XVacq3x6R+tpmfpo5o7uR+Mt33qSImbGkV7VM+M0grkd
-	 BH561WzYV19gFCpjoidA/Elib3ZaveH0HOyUV2hJ3CVoTe8Y4Zx6bLMfqbDl+FZBLv
-	 dU5mFv0bZeLZA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	s=arc-20240116; t=1756507295; c=relaxed/simple;
+	bh=6jmjllIyqomnIpWnvWAsI1K5fkbt90GrHSwhn6JmYCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OHp2d7Fv8iOBptI5OXpklZysf4xRekHw3Y4pAubbxq92mb8nhd3dfsyHE3ZzwtCfcukS7Tcbz6ekD/4w6iimdxu2vXJKDKhqcdoLMAZo3RmKz+hib2cxc2I8WaiOoe3oFriFb5CcRJXWOp45ZPTBQChKMQKMmpm/ei+h/40HMJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BcwZ0xXj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756507293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tgn5qYQScec3mupnI3D3axlii7zkUPK1g6wgPdQSWcY=;
+	b=BcwZ0xXj3F36zN2jukK1elvUFhEp9ramDB2JNHsLpvwbYcNhnV4g9+o8Qlyov2+rd3qAsC
+	h76LfJryDmKSKqeuZyRagX34+EW+9I6wtbGIx2733mNtiz58lMhcl47RQg5d7zOI7wFGaT
+	ZREorT6nddA4M4SrkEhKp0q6PFHnO7I=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-18-3dw07UJoO_-yDWLVlt_gtw-1; Fri,
+ 29 Aug 2025 18:41:29 -0400
+X-MC-Unique: 3dw07UJoO_-yDWLVlt_gtw-1
+X-Mimecast-MFC-AGG-ID: 3dw07UJoO_-yDWLVlt_gtw_1756507287
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D761140AF5;
-	Fri, 29 Aug 2025 22:35:04 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Moktar SELLAMI <smokthar925@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org, Dave Jiang
- <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Gregory Price
- <gourry@gourry.net>, Moktar SELLAMI <smokthar925@gmail.com>, Alok Tiwari
- <alok.a.tiwari@oracle.com>,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] Documentation/driver-api: Fix typo error in cxl
-In-Reply-To: <20250819084116.13108-1-smokthar925@gmail.com>
-References: <20250819084116.13108-1-smokthar925@gmail.com>
-Date: Fri, 29 Aug 2025 16:35:04 -0600
-Message-ID: <87iki53gfb.fsf@trenco.lwn.net>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40A2319560B2;
+	Fri, 29 Aug 2025 22:41:27 +0000 (UTC)
+Received: from chopper.redhat.com (unknown [10.22.80.78])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 559311800447;
+	Fri, 29 Aug 2025 22:41:23 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v3 00/14] Rust abstractions for shmem-backed GEM objects
+Date: Fri, 29 Aug 2025 18:35:15 -0400
+Message-ID: <20250829224116.477990-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Moktar SELLAMI <smokthar925@gmail.com> writes:
+This is the next version of the shmem backed GEM objects series
+originally from Asahi, previously posted by Daniel Almeida. Along with
+bindings for shmem backed GEM objects.
 
-> Fixed Typo in the driver-api/cxl/devices/devices.rst
->
-> functionalty -> functionality
->
-> Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
-> ---
->  Documentation/driver-api/cxl/devices/device-types.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
-> index 923f5d89bc04..7f69dfa4509b 100644
-> --- a/Documentation/driver-api/cxl/devices/device-types.rst
-> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
-> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
->  Typically used for initialization, configuration, and I/O access for anything
->  other than memory (CXL.mem) or cache (CXL.cache) operations.
->  
-> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
-> +The Linux CXL driver exposes access to .io functionality via the various sysfs
->  interfaces and /dev/cxl/ devices (which exposes direct access to device
->  mailboxes).
+This applies on top of Danilo and Abdiel's sgtable patches:
 
-This one was fixed a while back, so this patch is not needed.  It is
-always a good idea to check linux-next when considering changes of this
-type.
+https://lkml.org/lkml/2025/8/28/1018
 
-Thanks,
+Asahi Lina (2):
+  rust: helpers: Add bindings/wrappers for dma_resv_lock
+  rust: drm: gem: shmem: Add DRM shmem helper abstraction
 
-jon
+Lyude Paul (12):
+  rust: drm: gem: Simplify use of generics
+  rust: drm: gem: Add DriverFile type alias
+  rust: drm: gem: Drop Object::SIZE
+  rust: drm: gem: Support driver-private GEM object types
+  rust: drm: gem: Add raw_dma_resv() function
+  drm/gem/shmem: Extract drm_gem_shmem_init() from
+    drm_gem_shmem_create()
+  drm/gem/shmem: Extract drm_gem_shmem_release() from
+    drm_gem_shmem_free()
+  rust: gem: Introduce DriverObject::Args
+  rust: drm: gem: Introduce SGTableRef
+  rust: Add dma_buf stub bindings
+  rust: drm: gem: Add export() callback
+  rust: drm: gem: Add BaseObject::prime_export()
+
+ drivers/gpu/drm/drm_gem_shmem_helper.c |  98 +++++--
+ drivers/gpu/drm/nova/driver.rs         |   8 +-
+ drivers/gpu/drm/nova/gem.rs            |  15 +-
+ include/drm/drm_gem_shmem_helper.h     |   2 +
+ rust/bindings/bindings_helper.h        |   3 +
+ rust/helpers/dma-resv.c                |  13 +
+ rust/helpers/drm.c                     |  48 +++-
+ rust/helpers/helpers.c                 |   1 +
+ rust/kernel/dma_buf.rs                 |  39 +++
+ rust/kernel/drm/device.rs              |  17 +-
+ rust/kernel/drm/driver.rs              |   5 +-
+ rust/kernel/drm/gem/mod.rs             | 274 +++++++++++++++----
+ rust/kernel/drm/gem/shmem.rs           | 365 +++++++++++++++++++++++++
+ rust/kernel/lib.rs                     |   1 +
+ 14 files changed, 783 insertions(+), 106 deletions(-)
+ create mode 100644 rust/helpers/dma-resv.c
+ create mode 100644 rust/kernel/dma_buf.rs
+ create mode 100644 rust/kernel/drm/gem/shmem.rs
+
+
+base-commit: 09f90256e8902793f594517ef440698585eb3595
+prerequisite-patch-id: 0e1b1f9a665317ff569a37df6ff49cd1880b04f8
+prerequisite-patch-id: 178b864e6d1b88ee299dcc05d1a7a4c89ec7ed51
+prerequisite-patch-id: 7f72c4bfd0e5f50b6d2f8ce96751782894a3ba81
+prerequisite-patch-id: 62fa6de7d3ae99dc54c092087bd716e6749545fd
+prerequisite-patch-id: 3d14d56ca93b0831837aa26b802100a250adeac6
+prerequisite-patch-id: 7a12f4b0e7588874ce589b41b70671dc261b9468
+prerequisite-patch-id: c44763ec35c4e4431e769df088b98424cbddf7df
+prerequisite-patch-id: a9e008c179b1c2fbe76654a191e5018880383d49
+prerequisite-patch-id: 1e9ce500ce25188c575be608cd39e15a59836f83
+prerequisite-patch-id: 39ca3a210a6c365434924c07a0c98a074eb73b97
+prerequisite-patch-id: a747e05834cdb8b8f727e1f7c8b110c636cadab8
+prerequisite-patch-id: 24833689bdecd3fc7a604e13bfe203ccd2fca6f0
+-- 
+2.50.0
+
 
