@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-791760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FC4B3BB93
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502CAB3BB96
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF11635DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772761C87C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E711A3142;
-	Fri, 29 Aug 2025 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D391D61BB;
+	Fri, 29 Aug 2025 12:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thinkerfit-com.20230601.gappssmtp.com header.i=@thinkerfit-com.20230601.gappssmtp.com header.b="J9iEb4c1"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mT0Qxt13"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D956D33F3
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD3BEEDE
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756471568; cv=none; b=AOC6mLxg8BcSBpJOj2Jz7v1Wr3zcGdfUrPau25klL3pr9pS2RGvb1O1Xs0OqzAbFG1fwY/98K7CqSgzkynaSPOa9RTexQgEA7gn0vx4RvdavdSckRUpUyEzBXIf0FzY/C0vUkAoAvomkaePdB52D+n7ADsOKpjhBLgvXTY0ddrE=
+	t=1756471709; cv=none; b=hoal1PE1M7kYhdJrTNRhkpJFaIaEC4x7Z8oak06N7Ns36oKo83+JFKmtV1KlZoVG7gi1cY66Cn3jMw2/EFJNPi4ghv6oHoZbOG+Wp1uqj7l9uxvq9G2C29CFntPj1pgJibrVGVbPcnONbI9QXrDDbI1MBUl+8HqFZ/yl0viKGP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756471568; c=relaxed/simple;
-	bh=DCmPo0Xp3wYWMUC/2gCJtOPgUTlTD7t+ZyelMNSIwiY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=qnk8En+O/FIxCb4FxShdUc6SEIzuB+//6lmahKAFn0cHC/9X5CdPXpRPWpYuhdmYQ/HokgNt4EJ0j5lCpbbCkmIzyYkObxp49uBWJYAUZ5bvIVUfbCvV04CGOgX9naX6ket8BkHF3hk9kMnzgF87llT5L3pJoitIlwfCrd27Lh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=thinkerfit.com; spf=fail smtp.mailfrom=thinkerfit.com; dkim=pass (2048-bit key) header.d=thinkerfit-com.20230601.gappssmtp.com header.i=@thinkerfit-com.20230601.gappssmtp.com header.b=J9iEb4c1; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=thinkerfit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=thinkerfit.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71ff2b20039so18396217b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:46:04 -0700 (PDT)
+	s=arc-20240116; t=1756471709; c=relaxed/simple;
+	bh=s0Y1Z5NRmIswO1bXuLmTtrvgrV4SkjVpWswCBrXNYuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QMKnMOu/R/TrMIkazRi3nRDVQzoB72VZDctQRW2S1ZKAhJKbyY93CGMKCCiN8i1xxywMEf1dU04wgidNa69RZ/wB0QhS//fPYeoKWTimO6aFCJugIaxaFkSVm4MIGNCu3CG0oVIrN+P3wUqhbNkdZDuYa9o9ilraqM+Mb4qbmBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mT0Qxt13; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b83ae1734so679325e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:48:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thinkerfit-com.20230601.gappssmtp.com; s=20230601; t=1756471564; x=1757076364; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DCmPo0Xp3wYWMUC/2gCJtOPgUTlTD7t+ZyelMNSIwiY=;
-        b=J9iEb4c1mYfhwYPRsecgcC6lmToHz6bEAlTOgM3vouvqYvGEvoyCgbMER2SdLoXmYQ
-         mz+8yJfn0HmHTf9DsbLjivY/GSppXU2psYqjFdxP1omdPuqSf15bQt86UQ2UV22ZfWxw
-         HMq6AdUZ9Y74A8QWTTkbdr7GMM3W0k6cY2rQn6kMdJiZbCZc89baKIRln1lRT7FbekZJ
-         9hfl9/zHqFFNlYMFeEdfPwGYojG9aTXQX6u23+9RGZEHJbj0SCbkE22ssE4ePxcFKNXJ
-         3AZOLKLy7jW8M2f7ejHkm15X5hH8cBpSgZecp+3zBbZspsH16eGQ89nSVr5Wv+YyV0ao
-         z4ug==
+        d=linaro.org; s=google; t=1756471706; x=1757076506; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1TiY7ysjOZKRPS0v/GfCN7RvRXXI4uCIgolqPESgxk=;
+        b=mT0Qxt13CfTHbqi/4KcL3oGnvLvJFHPnFiqtzAueflzKko/BozHXlp1ZkYvdRGCqhR
+         qwuwgLgo0DDjgy3X33jKvDhekv6LnAJjbwgqYxwkDCeJdo3JzKkJSLQsNxi981T5Xlgk
+         xlfme0zuxdHzr54ojBcLXD4qlL0fkA1ALINuJWqY2q2BeEaAe6uZtqAV3Whyhywx95/T
+         6NoGirhRpA/k9cFwyjYh2hYHv7CznihRzdNK7O59JSSRpuZvuHa+FQUUcFFr/4C5COSr
+         gm9xd23r020aLKyXodwbtaZihGGeJznkZ4GT69UpvrimmpK+kkGhXzRYQVQbJAOq4bKb
+         0xQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756471564; x=1757076364;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DCmPo0Xp3wYWMUC/2gCJtOPgUTlTD7t+ZyelMNSIwiY=;
-        b=gWnnovRg4n4PrjeBMcjWYLzv8OwT0sUttRzM7TbdlIW8i7Nm8na+poe4C+MNCMRSSB
-         ZEJwc6yrqTCN5xNDrmfA3Ozw/IzqVKLI0oB5m+eXkMe0dRdspEF9wXJ3pVydA2tDCLIN
-         lmNCp2X5fobiUrp0lRwS2TbvUacE6efTN1bc4W1Af3/CIt7De8ZEyH1dpd/50ApWm5rb
-         K0HT/L7GbNcNUK3NHwhqe+HQrRMro7Wrom6LJGZwq2Popc9C82ONVYbG18s7eXPt80Xy
-         Lam6VtltGP+vZoiqaMAYHUc/unTP+evfR5kL3b7Aq7NAdoSeu+OonvqXzYWviCaoLnYa
-         jGJQ==
-X-Gm-Message-State: AOJu0Yyj5CBcpVj0BtWZeOUGz1fTiVgdzpSKYQ1oNFn0xgSISy+BpwKP
-	XBUorAA3MUettDw1Rlp2FRWQW2gPbS0ino07BHvBE+o3uafQOND94gGVvO9rA/AqehSMQ306nbz
-	Pcx1IrzlHg7PJfP5ngN+m+h8uQ7o1ASsnlKEViv/qK/vEw9HCX4v9
-X-Gm-Gg: ASbGncvsP4UC00qp2I0eeW0O0HzzxosYTs7OVWWeCIQZ9v3j8tKYSP2cTe/AHG5kbF7
-	wJGxxdq2BnTrYkIDJ9+3jMlW4ku880rEOstwGYgnN5dIuXfPnwHwUEOpR0PVzbGofT/MnE2s7Ju
-	eBqEmh+eV5vZ0xzSn/pz1eVrfWTkdBYfognJTCvpOr/2QvVJKsFWawUB/B/SbyI3dZ4Bkb9tpBT
-	agdQucCifaJOjtK2VN1Rw==
-X-Google-Smtp-Source: AGHT+IE8ll6/1UFF4sKOJE90gQ6pV2k63GK5EC7rNPjevTRKLxBAv5PhyRq38/UIVX+QcdlRHvDpa3Q1teW4dutvlT8=
-X-Received: by 2002:a05:690c:5:b0:71f:b871:da40 with SMTP id
- 00721157ae682-71fdc2dd09bmr318935467b3.18.1756471563485; Fri, 29 Aug 2025
- 05:46:03 -0700 (PDT)
-Received: from 116403764881 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 29 Aug 2025 05:46:02 -0700
-Received: from 116403764881 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 29 Aug 2025 05:46:02 -0700
+        d=1e100.net; s=20230601; t=1756471706; x=1757076506;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1TiY7ysjOZKRPS0v/GfCN7RvRXXI4uCIgolqPESgxk=;
+        b=L7OOSsIeLcKngEMmSfzFNz/V3QCytG4KNqbScCagEZ/h7dUvCLO9I8WbXCDaAJPCcS
+         Y9SHraFFb/7yPr9yByTeuQXdQFFYCV9C43553rdv5xkaBDUuOLLrATxcy3OFmL2oVPxN
+         wTvVIJs/xaPTQ7oCgzQipPrbgBMXNxQCU5Huhi4/sXaTvGxannBMV4Fz1Mm1yggi27yX
+         vYxNjKZyYCQlcLt8+moMDMY3Lg7SqkdbJmEtIGkAXpr8QlUD8c8ScCVqMxoWxxxcyR/y
+         TbRhzTv5I3SOeB2ZkpaXWTpKAt9qJVDQqc3nXkmvu9gziawwSqJ0nU/917rdhFgsdS5G
+         AoKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOHV0cnvrKS58Et44+x2fCyVaKA3Dfie4+/EtyLlAyIlDehiXtZQ5S6Y5kzZoHZruAJqzvdckhyB+9pGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpZ3/kAmCmqOs5fUAybYDXaQjTFbyGbR08OKKjEb7jiFZJMlBO
+	x/874prt9nr5T6dvsww8OhvHdibNnvOlUJ0KtlZR0z+hLOha/3cRoV2JKZx6Ee0jemY=
+X-Gm-Gg: ASbGncsxHOJl5Ytgpd/bzlTZ2GQc++7keBbeTol6inJcXKqC8b+m9hUnirNbPP4LSC4
+	yLNHM9ZrcskL55q+eWxnYLsc0WAGf3hVEJXrqX8UcCMxZdZRranY2k/CVknoN+xx050qVBdUHvW
+	7k19zxPEwCEad437vKwxD6W8NwKIE2f//YF2vd6vbX913s14WaRkOiBBGnRTTrYU6Dbe/UF3NBi
+	MTP6dtpLCeJIJpyDVv6zeazCLcI4g+ZY4nuqfWCu/sLIeHJQ/l0fnsjwyQ/q31n88lHSQsj8laD
+	k6tWMZeJaYl6LUl/rO/65a//5cBnXN19AmJ0wPN8ae82oHOXBxcNDWaQr/dseSZoYQbMmYMj72U
+	g/VE0BkVsxz5Q7UYZ2AJVBv5Q2G+czxCff9sF6Q==
+X-Google-Smtp-Source: AGHT+IG5ZyAiHuK1O/1CVyBhFH7yFbM7hahLKw5Q/RCW2h1UrGvO45lEpWadjzIhQtCVo+X7CY44ZQ==
+X-Received: by 2002:a05:600c:2ad3:b0:45b:79fd:cb45 with SMTP id 5b1f17b1804b1-45b79fdcc32mr37397295e9.29.1756471706168;
+        Fri, 29 Aug 2025 05:48:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f4aa8a0sm118810715e9.12.2025.08.29.05.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 05:48:25 -0700 (PDT)
+Date: Fri, 29 Aug 2025 15:48:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Marc Bornand <dev.mbornand@systemb.ch>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Felix Fietkau <nbd@nbd.name>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"John W. Linville" <linville@tuxdriver.com>,
+	libertas-dev@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	Roopni Devanathan <quic_rdevanat@quicinc.com>,
+	Solomon Peachy <pizza@shaftnet.org>
+Subject: [PATCH 0/3] wifi: cap a few SSID lengths
+Message-ID: <cover.1756456951.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Jonathan Warner <jonathan@thinkerfit.com>
-Date: Fri, 29 Aug 2025 05:46:02 -0700
-X-Gm-Features: Ac12FXzdx1WyaXxIxIEScDtoq_xbX5jncZcsP-CDfVT0mVX4Nt77pp3BVngXT2g
-Message-ID: <CA+ULVCk6QAXQBUQiAqUrwKyEhNh3Uaq=-J8EjL0GaFR0Q+R7yg@mail.gmail.com>
-Subject: Eager to hear your thoughts on this!
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hey there!
+These patches are based on static analysis and review.  The other places
+which get the ssid from ieee80211_bss_get_ie() do bounds checking to
+ensure that the ssid length isn't more than IEEE80211_MAX_SSID_LEN (32).
 
-It's easy to get caught up in habits that harm our physical and mental
-well-being without even realizing it. Taking a break and reflecting on
-your actions can help you chart a better course for the future.
+Dan Carpenter (3):
+  wifi: cw1200: cap SSID length in cw1200_do_join()
+  wifi: libertas: cap SSID len in lbs_associate()
+  wifi: cfg80211: sme: capp SSID length in __cfg80211_connect_result()
 
-By checking in with yourself, you can create a roadmap for ditching
-unhealthy habits and focusing on ones that benefit you.
+ drivers/net/wireless/marvell/libertas/cfg.c | 9 ++++++---
+ drivers/net/wireless/st/cw1200/sta.c        | 2 +-
+ net/wireless/sme.c                          | 5 ++++-
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-Would you be interested in an article on this topic for your readers?
-I can provide tips on developing a health-improvement plan that can
-help break bad habits and live healthier, happier lives. Let me know
-if you'd like to publish this piece on your website.
+-- 
+2.47.2
 
-Thanks for your time!
-Jonathan Warner
-
-
-Thinkerfit.com - Make learning engaging for everyone!
-
-P.S. By the way, if you don=E2=80=99t like the suggested topic, do reach ou=
-t
-to me with a topic that=E2=80=99s a better fit for your website. If you don=
-=E2=80=99t
-want to hear from me again, please let me know.
 
