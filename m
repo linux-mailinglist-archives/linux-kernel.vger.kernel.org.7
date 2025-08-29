@@ -1,231 +1,178 @@
-Return-Path: <linux-kernel+bounces-792386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3145B3C332
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:39:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2ACB3C318
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8AC466C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:39:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 937E27AD680
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78AD353367;
-	Fri, 29 Aug 2025 19:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A34F25484B;
+	Fri, 29 Aug 2025 19:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j0ujSXwl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NmUET5/X"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F26434AAFA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81798239E6C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496056; cv=none; b=HBg6XfyxeVNXLYWPG38q64FiW3/76wHywqKoQBnNWbznifu07RzcIkuvUhPRDJAJYO/kiayRr2gMqBqtiOE+/IU0MslyOWbtml4D6xmJFG68TEN3dYj9w98AKqKd2eF3YNF6S7vd1nr1ADDr7te4GWz1Ws6opasOYx2DCl3PNok=
+	t=1756496039; cv=none; b=X3i4Pa8LIxBvaCn4tB7YjJU4blgiiElQo+LebxcsWjOhfsZ5/JuhI/j/Zq7TC7bnRYo8cUjVkcMgOr9bMJQmM3Tlq/Np1aLQpueVzKenIDTo+N/WWQSvKPFWejuj+VOgMh5vnOu6HgTgmT45UJcC3J8Kz/q6nIr0KMMsxO7H6fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496056; c=relaxed/simple;
-	bh=zH8x13Si8Yt26D26LIpJslO/XLlS8cnq4VGztV5gLSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=scGUbF3wEtYGPayKTe6y8Bq3jUcRmh4DI0WZa5BtEKEqsI+E+2PmcEn5+/MdlMIUoHW+PcbLn3Ze4FBl0mluRRA82g2eaKa0kY7bGixCmp8HTD7KwS92rRTrOwvN7ZZBrhrq7SILFd/ruWmDsrpUiI0547K3TsS9MdwXtrIJxHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j0ujSXwl; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756496054; x=1788032054;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zH8x13Si8Yt26D26LIpJslO/XLlS8cnq4VGztV5gLSc=;
-  b=j0ujSXwlLRlLDTwa6QByhh4ohD7kkTfPf+diQj3fTmJyYPv8zlb7+5sV
-   lV11i5mWKUK50d/hQgpQnuSj3zyh3zZFqJ2PoTL/1hHTrzxjrH6xNd9qr
-   qfo2emQSPId2w5iaOGcz/pN8vpm6oFEzKpCBbbXDCA56apZaEQAVcoJ6W
-   DwVe/X6M6/FInGOHCfh+KkKzLGmGuqk8TmtG9LvYMgELR1gRlVuNcPhhd
-   E5b97IVV2aMWgjhAPKjzW3M4x9RmWQWFyBnToP+48uGDtQLCLU/SKelYp
-   Y+ZH9GJIz88Lmp7FZr0oEMXcHxLOkV0YbjJ47SNXH5qLXzLKlmobvibLC
-   g==;
-X-CSE-ConnectionGUID: dKTMYly/Ts+NX1O6JswYtg==
-X-CSE-MsgGUID: afECRssMTCCeubOyaXCFmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625385"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62625385"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:57 -0700
-X-CSE-ConnectionGUID: WmdEO+lgT4q+PvsXcrdEEg==
-X-CSE-MsgGUID: LIYzV1jVSam4d5NJlA7OZg==
-X-ExtLoop1: 1
-Received: from ldmartin-desk2.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.202])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:57 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v9 31/31] x86,fs/resctrl: Update Documentation for package events
-Date: Fri, 29 Aug 2025 12:33:43 -0700
-Message-ID: <20250829193346.31565-32-tony.luck@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250829193346.31565-1-tony.luck@intel.com>
-References: <20250829193346.31565-1-tony.luck@intel.com>
+	s=arc-20240116; t=1756496039; c=relaxed/simple;
+	bh=OArcrcPJKctf7kyzhyu5N9o4Z5m1mtDS835/OiICaDA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CNS+Pfe5KZu0OtD7BFztwV0qFSyu3WjMPm1kyUIlqTCMl8400KsYqc4o+Z3WOQnPB4+9Q+zMUoIiglok9Lh1FSIHFRe8scvuPBztFu3HuJbCxR5aixzkp8Ru6zCvOTVlUAJkZyFeTLmjife7fikysiHrIFD/gvy4DZGDjP/fjxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NmUET5/X; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3d0b6008a8bso486438f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756496035; x=1757100835; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=10aYLv6x+nousnJCn+LNWW0LkPPpH+PRdELXD4FgtcI=;
+        b=NmUET5/X3U8sj2gncXKyFCnU5CVXnxTD2YGhtvVi8DHQg6+yBIW+pbrP9bCZaDtY9T
+         CnRAMaYFNBKYoa1T6b+uRj+omG/LIAvoPUMk1NU3eni5IiBhv0ZbvJCKeLCi5+QQwf1F
+         PCF8ayZgHuxI4dE7FRFuNLDvNy6OV2n4mYejFLNVg+p4Cdzj/chxFTxcZ4BPWSVN/Jck
+         V1hMFJeTQcHGflCsvCfxLv07pjCWX9p0qZU9MnmFiJ0Ove++lVsi6WW1qf6aGsK9uit/
+         zfeqHBfG5PzYsvEefpsBCsCDj/YoZ8omUh0ArMSz0SLlNp2SB97cKo6B1EraCdW5regL
+         F0oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756496035; x=1757100835;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=10aYLv6x+nousnJCn+LNWW0LkPPpH+PRdELXD4FgtcI=;
+        b=bkPDtEufAdLKa6vPBaozwGSR8+mT4yPfOQsZv2Q90uWoJjuQNB5MMBKNNeuu/Xfuks
+         GshKhHZhIOEaFiVB1fVpHA8xhJFRMtNOa+NmS1d3s1f8496E51EjF0XIUmG02BjP8AAy
+         x2u7cjZMgTqxL9Z2PM9wy2NxJNqXqb3/GPn/3XwoJ0QAt7zgrYYKWu/5YQbfGFss1An7
+         PY/oD7WubokbL1IQlxX9dYRZgVv9NVvor37nRR+HL+LHN+G8nbmaj1LcuxakB6EIAzAU
+         6FtQfuhBG8JAk2n6kun+Jpp7Ot+AveZfxDINVtTB9PQ2IZRLcd1w7RHWUtOcIZZW+URS
+         I/Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXf2f/Zd+Qp05orYMU3DaCzMagtdfb+y4V258FuErw3dw4/Z+9hCAotRoGcZ0CWvVeGgQkX31OsU0Y2Kdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFOQaiH9S0Qov+QuhddkuQeLAY7bygDqMwJaf04KKh39gUS8lz
+	Q4oNoM7wjNTLPOFJgtiTmMDqnGbKYNWhnhgkX0SZLYeo40kSZ7AP00Xt4tpgLqM1STA=
+X-Gm-Gg: ASbGncv2bdtAQ+Z6u3ReT4JHcuW0Zlza7vbZ9yyCiB+IbSV/rnAI50PDC5iExxYDyXZ
+	sxvkFBpI+En16pUxO7rH1viMd8lla4N8huEVJWmjQops3Btc1LOsxZa8zXLBBfTL553K4kVpmMo
+	tMrEgRb2rCJCnQqRGC1ygBsbJO7DoSziXs12FpAiwEfzNrxijVn6ujILAXTJb3jJsSiO5eEHWJz
+	Cykkbj5HCAxMLFrp+IhqyF6TYxFcRGOPsdcPpHVegSeAiGsB9uJ+Kw48sqBXbKV/1U5ihN63BbH
+	rK5hFJTljot6cdD0Hv1+AbD/o8/COxJ40gX9mvvU4RMZB016KF/qDivV4+7oy/wzInjZ6ctyBZN
+	caD2RhKHX3g==
+X-Google-Smtp-Source: AGHT+IGd9CKACvtLyrQHHdrX6nttBshhd3uTSHt7m/xqpIEz2JTGn2U407DsxW/ZcIqykVDLTwW6Yg==
+X-Received: by 2002:a05:6000:250e:b0:3b7:8268:8335 with SMTP id ffacd0b85a97d-3c5dcc0dd86mr22855026f8f.42.1756496034796;
+        Fri, 29 Aug 2025 12:33:54 -0700 (PDT)
+Received: from localhost ([177.94.120.255])
+        by smtp.gmail.com with UTF8SMTPSA id 3f1490d57ef6-e9847da0a06sm981166276.18.2025.08.29.12.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 12:33:54 -0700 (PDT)
+From: =?utf-8?B?UmljYXJkbyBCLiBNYXJsacOocmU=?= <rbm@suse.com>
+Date: Fri, 29 Aug 2025 16:33:49 -0300
+Subject: [PATCH] selftests/bpf: Fix count write in
+ testapp_xdp_metadata_copy()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250829-selftests-bpf-xsk_regression_fix-v1-1-5f5acdb9fe6b@suse.com>
+X-B4-Tracking: v=1; b=H4sIAJwAsmgC/x2N2wqDMBBEf0X2uQEberO/UkpIdKKhJcpuKAHx3
+ 7v6sswZmLMrCThB6NmsxPglSXNWOJ8a6iefR5g0KJNt7bV92M4IvrFAipiwRFPl4xgjQ/ahi6m
+ a2/0y2M5CryfVLAytjxevt3LwAhPY537axbsloxYXZz4CbdsfmUQplpYAAAA=
+X-Change-ID: 20250829-selftests-bpf-xsk_regression_fix-674d292e4d2a
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ Tushar Vyavahare <tushar.vyavahare@intel.com>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Ricardo_B=2E_Marli=C3=A8re?= <rbm@suse.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2049; i=rbm@suse.com;
+ h=from:subject:message-id; bh=OArcrcPJKctf7kyzhyu5N9o4Z5m1mtDS835/OiICaDA=;
+ b=owEBiQJ2/ZANAwAIAckLinxjhlimAcsmYgBosgCeMkw0JmQH1sVx8Ie24sG2wxN+m6s3zrnNT
+ QJL2G/SuGiJAk8EAAEIADkWIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCaLIAnhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQyQuKfGOGWKbbOg//aeQgH/RaZl6hnKGr9Y4sJQ8C7y5Ef9L
+ pKIgXrcSFWHne+BBmxu20oK8ZUuAD25iR5lKX3D/11k5ybUB4SlP0+QLrSfdHIOv0chE+ughqDs
+ gw3jWuyAeA9v8soWdvIyH626+aeT1rE401v1cfeO6C6Hs+CRHYoevxGB6vDeQ2BAWC2hGJ7ZT7A
+ 7PoiE5qzR7WeKuECK5A+lSTk0dpt2Pa+tOwAmed4Vs/spWNEhVk/qV3o2cRzZ7p/5i9T7JHQCBT
+ 89EzHrHG9UlfryoKgUh5e0PZqSblqEdtMg1dK0+hX2HgDUGkt3Z0TkcA8/kwwBjEQC0zGiOuI8h
+ Rdf7qbl7f1h+K/xChY0/T6ovJArR+UCT3RVlglJwvBkiNze5emFqIvSHZNpL/kknbCnNAir/lVe
+ y2VA17wsd8OgDpQDLtkLNVYxXr4FBA8EDHSDOp/rKHJnUyLOLUOEEp2U7oyGLSltha9L2T1qKyY
+ jQ0QShWjWnRfcWTz/1XFLaHiWUOVnAWZ2g8N3WP6VfUenbAq42bS4CGtzTOj3xJpULNOhBWISjU
+ gd4B+yycWRArtnKg9wcdiDCaIhW+aU5+PAQyX3kdZnSLdfzrmaq+PV0p2esjLFZpqFjxV44Fn/B
+ Wb9CB7BGcbz0m96feLJdcU6jjQVeWByWzq1G7Jm9M8vJ7zg1q4zE=
+X-Developer-Key: i=rbm@suse.com; a=openpgp;
+ fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-Update resctrl filesystem documentation with the details about the
-resctrl files that support telemetry events.
+Commit 4b302092553c ("selftests/xsk: Add tail adjustment tests and support
+check") added a new global to xsk_xdp_progs.c, but left out the access in
+the testapp_xdp_metadata_copy() function. Since bpf_map_update_elem() will
+write to the whole bss section, it gets truncated. Fix by writing to
+skel_rx->bss->count directly.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
+Fixes: 4b302092553c ("selftests/xsk: Add tail adjustment tests and support check")
+Signed-off-by: Ricardo B. Marlière <rbm@suse.com>
 ---
- Documentation/filesystems/resctrl.rst | 99 +++++++++++++++++++++++----
- 1 file changed, 86 insertions(+), 13 deletions(-)
+ tools/testing/selftests/bpf/xskxceiver.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index c7949dd44f2f..7ee2832a3aa6 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -167,13 +167,12 @@ with respect to allocation:
- 			bandwidth percentages are directly applied to
- 			the threads running on the core
+diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
+index a29de0713f19f05ef49a52e3824bb58a30565e87..352adc8df2d1cd777c823c5a89f1720ee043f342 100644
+--- a/tools/testing/selftests/bpf/xskxceiver.c
++++ b/tools/testing/selftests/bpf/xskxceiver.c
+@@ -2276,25 +2276,13 @@ static int testapp_xdp_metadata_copy(struct test_spec *test)
+ {
+ 	struct xsk_xdp_progs *skel_rx = test->ifobj_rx->xdp_progs;
+ 	struct xsk_xdp_progs *skel_tx = test->ifobj_tx->xdp_progs;
+-	struct bpf_map *data_map;
+-	int count = 0;
+-	int key = 0;
  
--If RDT monitoring is available there will be an "L3_MON" directory
-+If L3 monitoring is available there will be an "L3_MON" directory
- with the following files:
+ 	test_spec_set_xdp_prog(test, skel_rx->progs.xsk_xdp_populate_metadata,
+ 			       skel_tx->progs.xsk_xdp_populate_metadata,
+ 			       skel_rx->maps.xsk, skel_tx->maps.xsk);
+ 	test->ifobj_rx->use_metadata = true;
  
- "num_rmids":
--		The number of RMIDs available. This is the
--		upper bound for how many "CTRL_MON" + "MON"
--		groups can be created.
-+		The number of RMIDs supported by hardware for
-+		L3 monitoring events.
+-	data_map = bpf_object__find_map_by_name(skel_rx->obj, "xsk_xdp_.bss");
+-	if (!data_map || !bpf_map__is_internal(data_map)) {
+-		ksft_print_msg("Error: could not find bss section of XDP program\n");
+-		return TEST_FAILURE;
+-	}
+-
+-	if (bpf_map_update_elem(bpf_map__fd(data_map), &key, &count, BPF_ANY)) {
+-		ksft_print_msg("Error: could not update count element\n");
+-		return TEST_FAILURE;
+-	}
++	skel_rx->bss->count = 0;
  
- "mon_features":
- 		Lists the monitoring events if
-@@ -261,6 +260,19 @@ with the following files:
- 		bytes) at which a previously used LLC_occupancy
- 		counter can be considered for re-use.
- 
-+If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
-+with the following files:
-+
-+"num_rmids":
-+		The number of RMIDs supported by hardware for
-+		telemetry monitoring events.
-+
-+"mon_features":
-+		Lists the telemetry monitoring events that are enabled on this system.
-+
-+The upper bound for how many "CTRL_MON" + "MON" can be created
-+is the smaller of the "num_rmids" values.
-+
- Finally, in the top level of the "info" directory there is a file
- named "last_cmd_status". This is reset with every "command" issued
- via the file system (making new directories or writing to any of the
-@@ -366,15 +378,38 @@ When control is enabled all CTRL_MON groups will also contain:
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
--	This contains a set of files organized by L3 domain and by
--	RDT event. E.g. on a system with two L3 domains there will
--	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
--	directories have one file per event (e.g. "llc_occupancy",
--	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
--	files provide a read out of the current value of the event for
--	all tasks in the group. In CTRL_MON groups these files provide
--	the sum for all tasks in the CTRL_MON group and all tasks in
--	MON groups. Please see example section for more details on usage.
-+	This contains a set of directories, one for each instance
-+	of an L3 cache, another for each processor package. The L3 cache
-+	directories are named "mon_L3_00", "mon_L3_01" etc. The
-+	package directories "mon_PERF_PKG_00", "mon_PERF_PKG_01" etc.
-+
-+	Within each directory there is one file per event. For
-+	example the L3 directories may contain "llc_occupancy", "mbm_total_bytes",
-+	and "mbm_local_bytes". The PERF_PKG directories may contain "core_energy",
-+	"activity", etc.
-+
-+	"core energy" reports a floating point number for the energy (in Joules)
-+	consumed by cores (registers, arithmetic units, TLB and L1/L2 caches)
-+	during execution of instructions summed across all logical CPUs on a
-+	package for the current RMID.
-+
-+	"activity" also reports a floating point value (in Farads).
-+	This provides an estimate of work done independent of the
-+	frequency that the CPUs used for execution.
-+
-+	Note that these two counters only measure energy/activity
-+	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
-+	caches, etc.). They do not include L3 cache, memory, I/O
-+	devices etc.
-+
-+	All other events report decimal integer values.
-+
-+	In a MON group these files provide a read out of the current
-+	value of the event for all tasks in the group. In CTRL_MON groups
-+	these files provide the sum for all tasks in the CTRL_MON group
-+	and all tasks in MON groups. Please see example section for more
-+	details on usage.
-+
- 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
- 	directories for each node (located within the "mon_L3_XX" directory
- 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-@@ -1300,6 +1335,44 @@ Example with C::
-     resctrl_release_lock(fd);
-   }
- 
-+Debugfs
-+=======
-+In addition to the use of debugfs for tracing of pseudo-locking
-+performance, architecture code may create debugfs directories
-+associated with monitoring features for a specific resource.
-+
-+The full pathname for these is in the form:
-+
-+    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
-+
-+The presence, names, and format of these files will vary
-+between architectures even if the same resource is present.
-+
-+PERF_PKG_MON/x86_64
-+-------------------
-+Three files are present per telemetry aggregator instance
-+that show when and how often the hardware has failed to
-+collect and accumulate data from the CPUs. The prefix of
-+each file name describes the type ("energy" or "perf") which
-+processor package it belongs to, and the instance number of
-+the aggregator. For example: "energy_pkg1_agg2".
-+
-+The suffix describes which data is reported in the file and
-+is one of:
-+
-+data_loss_count:
-+	This counts the number of times that this aggregator
-+	failed to accumulate a counter value supplied by a CPU.
-+
-+data_loss_timestamp:
-+	This is a "timestamp" from a free running 25MHz uncore
-+	timer indicating when the most recent data loss occurred.
-+
-+last_update_timestamp:
-+	Another 25MHz timestamp indicating when the
-+	most recent counter update was successfully applied.
-+
-+
- Examples for RDT Monitoring along with allocation usage
- =======================================================
- Reading monitored data
+ 	return testapp_validate_traffic(test);
+ }
+
+---
+base-commit: 5b6d6fe1ca7b712c74f78426bb23c465fd34b322
+change-id: 20250829-selftests-bpf-xsk_regression_fix-674d292e4d2a
+
+Best regards,
 -- 
-2.50.1
+Ricardo B. Marlière <rbm@suse.com>
 
 
