@@ -1,93 +1,196 @@
-Return-Path: <linux-kernel+bounces-791637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F2BB3B98B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3FCB3B98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7A33BC83A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC119175782
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926B03101D4;
-	Fri, 29 Aug 2025 10:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384403101D5;
+	Fri, 29 Aug 2025 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bmlWzEjv"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sOxvIw4E"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144DD3093BB
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3493101C1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465096; cv=none; b=bGXNi6tcGwGc4R3kuqsIOg/0ygdYfC/szitZ5NqkUX04NnEQt8jDrO5pVOMavHRUF8Tx1cviIIlA63wZ4LHm6PAinuE5eruME6dwqD1Yiy+3Q2smryuVhA19GGcePclvIJ32miT2DW3tau8f9+z+UtQIwdX0Izi6VVRC0L2U96Y=
+	t=1756465102; cv=none; b=M4AAnspfHdh/AtrMdMtYGurtuh+Qp/aE40L30y4AXUdfOxP8uamrOhGQsYIB1EOipK/So5uJY14GguON18htgKOhXU7kgYBJm0j/IoE0y4G26eKuB79X9k/SE6g2mHLwrbddW44luZG/EdU8KOo7Il3h7+hJ19xN+06Rn8xzVLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465096; c=relaxed/simple;
-	bh=q/08LL+SXzR6//jDK7WpI8nzQaBvjLSRUy0vX6WfhxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GthBRrbhMJO4PTetvCqfVwPl8yosSZ+Y0i+KuPwJt38jfnEqS4EP/KxKvwbZ6VrbsWtGWwO3+mDm6GYMPoCdzepsnVhIDV3XhgpWEXFgjdey+komn9TbpY2i0jHNO47YhPIgNIkSu4lUdDDMSC8eQHk+z1g5E2ya+6dPwyU9JCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bmlWzEjv; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:content-transfer-encoding
-	:in-reply-to; s=k1; bh=JvYspSjJqIX13ORpeSK/3a180T+CNY8WXnLqQrGrl
-	NI=; b=bmlWzEjvdgk7JZx4qCDrT6KNbhqYchZLcyd/jIISoPHqgIo4UfnakMSQv
-	+9vM7+7726uXmSg13Ji+Cb6l//0FoABIY80IUxjmcmHHBJOSGAGN4wupWQu0/DF4
-	6mVvR6G0+jxz680FggV2yFj7fJ2aK1qFPcjHFzBwHfTzWYLnpd9YJwOfrMR/kj3e
-	ukexWVHzePOPeJuzcQ7Ba10SyT4Uaq/2Pseaq7aS9DYNclr3q5WtakvySIbN4FUC
-	YyTJy2N7qdijDaq6IxNIwtYXVazT2t51omfIJZJzx3B40Uct4slKCzEaCW/qayu4
-	fLiTYvWm1xuiTM9+Fh9sJ5zl0IyIQ==
-Received: (qmail 1426363 invoked from network); 29 Aug 2025 12:58:06 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Aug 2025 12:58:06 +0200
-X-UD-Smtp-Session: l3s3148p1@OgmJ5X49Jq0gAwDPXwOZADQgI+b4m0Li
-Date: Fri, 29 Aug 2025 12:58:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Ayush Singh <ayush@beagleboard.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree-spec@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 1/1] schemas: i2c: Introduce I2C bus extensions
-Message-ID: <aLGHvqY6N5oI54eT@shikoro>
-References: <20250618082313.549140-1-herve.codina@bootlin.com>
- <20250618082313.549140-2-herve.codina@bootlin.com>
- <CAL_JsqJ=jmXVwjtNCjRpUKj02dnJEz4GHMX2wMRaWw=M+sZQ0w@mail.gmail.com>
- <20250808180746.6fa6a6f9@booty>
- <CAL_JsqLxsfpaaCvV3AcniMYxAYVir7ddL4umCNY3u-ggVTiZcg@mail.gmail.com>
- <aK2-we94b-x2fgW_@shikoro>
- <20250829125238.4117947f@bootlin.com>
+	s=arc-20240116; t=1756465102; c=relaxed/simple;
+	bh=Uf410WYNzsisiR/petPGajENLdSiO3ACl2azDr3sx3I=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=JUsu3BIoaMnsOiC3sCqq0ZmJMQIP2w+yOrxstJZFoeAJ2jMDc3gA8daa/LmZALg81bxKURe6MxQpxAkcZfpthdg4DDC3KWUnHoVn0eo2Lm6UKO6+8Fs5O/NBZWMwnvBZH9+k7a06yQ9fwg8y2Py7UtATtdvqlxxMOIhz4PlbXYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sOxvIw4E; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250829105818epoutp04dcaf0e29055823f68979d5787793f42d~gN7Ntx5VH2688826888epoutp04O
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:58:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250829105818epoutp04dcaf0e29055823f68979d5787793f42d~gN7Ntx5VH2688826888epoutp04O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756465098;
+	bh=KbXZsLg/Ue7PwUbZF2XDqNQLk+AaXNqWgxb8Ug1xzoo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=sOxvIw4E6HlG5GO3fkt2pOd0U2sj7ZduR/swuv+PGLsza8lD4PLKZFcM3jXMpRMsU
+	 hwEDhjzAHVzNg+A+iaJg5ni2AmAl4slysJNNh4GnNmpkP6NhYtVVtSHzmn9FYwG6pl
+	 MIkbdB8Sqg1jLXlQRUflYrePkaQoDgfual6XuVJQ=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250829105817epcas5p494efd395966d195b9bc5c726c9377107~gN7MZgVqD1496314963epcas5p4g;
+	Fri, 29 Aug 2025 10:58:17 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cCwGw0Vhsz2SSKg; Fri, 29 Aug
+	2025 10:58:16 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250829105815epcas5p47f74045e2c06d71f16fac7b8ddcb9efe~gN7K8KPhO1496314963epcas5p4X;
+	Fri, 29 Aug 2025 10:58:15 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250829105812epsmtip21b0817b549a0c83092589c33ae363fc6~gN7H6iEol0293702937epsmtip2h;
+	Fri, 29 Aug 2025 10:58:12 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
+	<pritam.sutar@samsung.com>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
+	<johan@kernel.org>, <m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
+Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Date: Fri, 29 Aug 2025 16:28:10 +0530
+Message-ID: <263801dc18d3$d1e20950$75a61bf0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250829125238.4117947f@bootlin.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DtJbmBNA=
+Content-Language: en-us
+X-CMS-MailID: 20250829105815epcas5p47f74045e2c06d71f16fac7b8ddcb9efe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+	<20250822093845.1179395-6-pritam.sutar@samsung.com>
+	<20250824-rough-fresh-orangutan-eecb2f@kuoka>
+	<007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+	<83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
+	<000401dc18cd$ec02a1b0$c407e510$@samsung.com>
+	<e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
 
-Hi Hervé,
+Hi Krzysztof
 
-> the only solution I see is to parse the full DT in order to find extension
-> nodes when we need to register adapter children (adapter probe() step).
-> 
-> A matching extension node will be a node where:
->  1) compatible = "i2c-bus-extension"
->  2) "i2c-parent" phandle points to the expected adapter.
-
-Would that be so bad? It will not be done often, or?
-
-All the best,
-
-   Wolfram
-
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Friday, August 29, 2025 4:07 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
+oot.org;
+> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
+> johan=40kernel.org; m.szyprowski=40samsung.com;
+> s.nawrocki=40samsung.com; linux-phy=40lists.infradead.org;
+> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org;
+> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo ssphy
+>=20
+> On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
+> > Hi Krzysztof
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 26 August 2025 02:05 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> > .
+> > .
+> > =5Bsnip=5D
+> > .
+> > .
+> >>>> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-p=
+hy:
+> >>>> add
+> >>>> ExynosAutov920 combo ssphy
+> >>>>
+> >>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote=
+:
+> >>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> >>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+> >>>>> =22phy=22 and =22ref=22. The required supplies for USB3.1 are named=
+ as
+> >>>>> vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+> >>>>
+> >>>> Please do not describe the schema, but hardware. This sentence does
+> >>>> not help me in my question further.
+> >>>
+> >>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2
+> >>> phys are
+> >> totally different).
+> >>> One PHY only supports usb2.0 and data rates whereas another one does
+> >>> usb3.1 ssp+ and usb3.1 ssp
+> >>>
+> >>> This patch only explains about usb30 (since these are two different
+> >>> phys) phy
+> >> and omitted inclusion of usb20 reference (added separate patch for
+> >> this patch no 3).
+> >>>
+> >>> Hope this is clear.
+> >>
+> >> No. That sentence still explains what schema is doing.
+> >>
+> >
+> > Ok, let me simplify the commit message further something like below.
+> > Anyways, the coverletter contains more details about it.
+> >
+> > =22dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo
+> > ssphy
+> >
+> >   Add schema for combo ssphy found on this SoC.
+> > =22
+> >
+> > Please confirm if this looks fine?
+> > If so, will reflect the similar commit messages in patch 1 and 3.
+>=20
+> Please read my first comment again. I do not see how does this satisfy
+> hardware explanation.
+>=20
+Just went through the conversation above,=20
+until what extent hardware description need to be explain in the commit?
+Do we have any guideline for the same?
+Could you please help with an example from previous any commit or some othe=
+r patches?=20
+I understand that mentioning, =E2=80=9Ctwo=20clocks,=20two=20supplies=20etc=
+=22=20are=20part=20of=20schema,=20=0D=0Aone=20may=20or=20may=20not=20captur=
+e=20that=20in=20the=20commit.=20=0D=0AHowever=20mentioning,=20=E2=80=9Cthis=
+=20hardware=20(SoC)=20contain=20a=20combo=20PHY=20which=20supports=20usb3.1=
+=20and=20usb3.0=22=20is=20not=20ok?=20=0D=0A=0D=0A>=20Best=20regards,=0D=0A=
+>=20Krzysztof=0D=0A=0D=0A
 
