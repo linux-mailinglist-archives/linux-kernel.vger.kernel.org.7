@@ -1,196 +1,179 @@
-Return-Path: <linux-kernel+bounces-791228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25035B3B3B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 321AFB3B3B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57AB13B7348
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FB0A01B70
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA86F2609DC;
-	Fri, 29 Aug 2025 06:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbqaHz2U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B9261B75;
+	Fri, 29 Aug 2025 06:56:07 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F8818E377;
-	Fri, 29 Aug 2025 06:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44D725FA0E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756450507; cv=none; b=TsZKSwOBZlilft2RNce1OKkvwct1EC54VcECgQpG5LoSqXeYkPwSjpH2IgBEzNoPgqozFIhfWbZuYoCTkDz+YXvpKx474GRGnzYj4YVZH+gzpKt++SxjPKqn2hL+8fUIpqqKKm1Gxhg48yh8PYYgBM7KEtBIUuUP3gYkRivEIIE=
+	t=1756450567; cv=none; b=AAesKGOSV8mvikmAGQGr/NIgEY/mxD88guVIUlD3CVGRZwPt0tIuYQOMoupnUydjs9EXX6bJM48AGzsnJkwbqXgJpwAbWdGTwc3403Zw89wCgh1hNgOoVzoNynu2a+dXosnPTS4adIjNu1q1sMd//PzOT+Qs5MTPqM18zq/2lZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756450507; c=relaxed/simple;
-	bh=v2HohlsHYo6pA7siTNEB6M/dNYVSNr2mWFTtHtWEkXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hfkuq4l7xIYQcf4vNifimPEjbVHMLHuEBqPdPU8QMtX928P4uQDHAiXCzs17iTUHliRI6cgMa15ELZ55cYzCRSSW4X90/L1y+a84LepxYUJZcodxA23pISGASW4gd3AMXMt17UvNCaV1T4ykmwbrnBfSTHhf9+Ij1S8OnuA89HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbqaHz2U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43280C4CEF0;
-	Fri, 29 Aug 2025 06:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756450506;
-	bh=v2HohlsHYo6pA7siTNEB6M/dNYVSNr2mWFTtHtWEkXY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mbqaHz2UQ/hJml+dSth4Qfs+j2RATzeSsy3V8Qb7EzvweX0l/Wh/14m7hMACiQ/cA
-	 bV89hs8pbMl7EX0bDgsAeyOYur9Ycy9obKqTRhihvv8QZrnudI0r3REVrAae8kLW8I
-	 5G+hlldlluVt21h8o17AT8lxHAGIKEgfIVZApp+MBg4GKk+hcd72B0BUscFtWgBJdW
-	 PUkvRD2p5wOxMsFtPp2Gsh8icfT9Y+8UFys1eXsCya4Cey0P5d2aTRwuODTDMdRPK0
-	 T//MWO4Wr847e1oEX5WbL0QoEMj2o6vvS0sNNt/Pnp77TVHIVdUHNMpVNqx888buIc
-	 WjEIKgM1U0yaw==
-Message-ID: <e705ec14-cba6-4e86-88c9-c418c15e5c7c@kernel.org>
-Date: Fri, 29 Aug 2025 08:54:57 +0200
+	s=arc-20240116; t=1756450567; c=relaxed/simple;
+	bh=H+/h9lfQ+FH6La1N6uX7OFtg3RJaGWFPxhs44OcZ1aU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A90o5hUR7dCatcA6F26r9g+V0hk6wh1yuI9wO7DgECqeaBgh9xhko17v9Y6zhq+/V84T2iearPvvas95az/2YIY09m4XEWsdOWz5KruH0XskMgGjWEfiPRlmpKlOg4lFFR5HTzb6bFYwTg9/3sFu/UROtnhIGfcOCcvGdtDHgCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cCptx4dPpzYlK91;
+	Fri, 29 Aug 2025 14:55:37 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 29 Aug
+ 2025 14:55:55 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 29 Aug
+ 2025 14:55:54 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <rientjes@google.com>, <shakeel.butt@linux.dev>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+	<liam.howlett@oracle.com>, <lorenzo.stoakes@oracle.com>, <surenb@google.com>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, <tianxiaobin@honor.com>,
+	<fengbaopeng@honor.com>, <zhongjinji@honor.com>
+Subject: [PATCH v6 0/2] Do not delay OOM reaper when the victim is frozen
+Date: Fri, 29 Aug 2025 14:55:48 +0800
+Message-ID: <20250829065550.29571-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/19] dt-bindings: clock: tegra20: Add IDs for CSI PAD
- clocks
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>, Svyatoslav <clamor95@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20250819121631.84280-1-clamor95@gmail.com>
- <2451218.NG923GbCHz@senjougahara>
- <268A6593-1FAC-4A4D-925A-801FB6FEE9F6@gmail.com>
- <3173051.CbtlEUcBR6@senjougahara>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <3173051.CbtlEUcBR6@senjougahara>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a018.hihonor.com
+ (10.68.17.250)
 
-On 27/08/2025 12:27, Mikko Perttunen wrote:
-> On Wednesday, August 27, 2025 1:28 PM Svyatoslav wrote:
->> 27 серпня 2025 р. 07:19:39 GMT+03:00, Mikko Perttunen 
-> <mperttunen@nvidia.com> пише:
->>> On Tuesday, August 19, 2025 9:16 PM Svyatoslav Ryhel wrote:
->>>> Tegra30 has CSI PAD clock enable bits embedded into PLLD/PLLD2 registers.
->>>> Add ids for these clocks.
->>>>
->>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>>> ---
->>>>
->>>>  include/dt-bindings/clock/tegra30-car.h | 4 +++-
->>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/include/dt-bindings/clock/tegra30-car.h
->>>> b/include/dt-bindings/clock/tegra30-car.h index
->>>> f193663e6f28..14b83e90a0fc
->>>> 100644
->>>> --- a/include/dt-bindings/clock/tegra30-car.h
->>>> +++ b/include/dt-bindings/clock/tegra30-car.h
->>>> @@ -271,6 +271,8 @@
->>>>
->>>>  #define TEGRA30_CLK_AUDIO3_MUX 306
->>>>  #define TEGRA30_CLK_AUDIO4_MUX 307
->>>>  #define TEGRA30_CLK_SPDIF_MUX 308
->>>>
->>>> -#define TEGRA30_CLK_CLK_MAX 309
->>>> +#define TEGRA30_CLK_CSIA_PAD 309
->>>> +#define TEGRA30_CLK_CSIB_PAD 310
->>>> +#define TEGRA30_CLK_CLK_MAX 311
->>>>
->>>>  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
->>>
->>> The commit message refers to tegra20, but contents are tegra30.
->>
->> My, bad, it should be tegra30
->>
->>> Regarding the CLK_MAX define, I agree that it would be better to get rid of
->>> it. Perhaps you can check if it would be reasonable to calculate it
->>> dynamically in the driver, but a define and sanity check in the driver
->>> would work too, I think.
->>
->> It is not unreasonable, but moving this elsewhere may cause issues with
->> adding new clocks. Addind new clocks would require updating not only header
+An overview of the relationship between patch 1 and patch 2:
+With patch 1 applied, the OOM reaper is no longer delayed when the victim
+process is frozen. If the victim process is thawed in time, the OOM reaper
+and the exit_mmap() thread may run concurrently, which can lead to
+significant spinlock contention. Patch 2 mitigates this issue by traversing
+the maple tree in reverse order, reducing the likelihood of such lock
+contention.
 
-No, there are no such issues.
+The attached test data was collected on Android. It shows that when the OOM
+reaper and exit_mmap are executed at the same time, pte spinlock contention
+becomes more intense. This results in increased running time for both
+processes, which in turn means higher system load. It also shows that
+reverse-order traversal of the VMA maple tree by the OOM reaper can
+significantly reduce pte spinlock contention.
 
->> but also a place where max clocks are moved to and ai am not sure how can I
->> dinamically calculate amount of clocks in the driver without updating both
->> header and driver with each new clock added. Maybe you can propose a
->> method?
-> 
-> Looking at the code, it's probably better to just move the CLK_MAX define into 
+The test data indicate that it can significantly reduce spinlock contention
+and decrease the load (measured by process running time) of both oom_reaper
+and exit_mmap by 30%.
 
-Just like every other driver.
+The perf data applying patch 1 but not patch 2:
+|--99.74%-- oom_reaper
+|  |--76.67%-- unmap_page_range
+|  |  |--33.70%-- __pte_offset_map_lock
+|  |  |  |--98.46%-- _raw_spin_lock
+|  |  |--27.61%-- free_swap_and_cache_nr
+|  |  |--16.40%-- folio_remove_rmap_ptes
+|  |  |--12.25%-- tlb_flush_mmu
+|  |--12.61%-- tlb_finish_mmu
 
-> the source code. We can leave a comment here as reminder to update the define 
-> in the code if any new clocks are added. This happens so rarely that I don't 
-> think it should be a problem.
-No, don't leave comments here. There is no single risk of breakage,
-there is no issue to fix with that comment.
+The perf data applying patch 1 and patch 2:
+|--98.84%-- oom_reaper
+|  |--53.45%-- unmap_page_range
+|  |  |--24.29%-- [hit in function]
+|  |  |--48.06%-- folio_remove_rmap_ptes
+|  |  |--17.99%-- tlb_flush_mmu
+|  |  |--1.72%-- __pte_offset_map_lock
+|  |  
+|  |--30.43%-- tlb_finish_mmu
 
-If you add clock to the driver WITHOUT binding, nothing, absolutely
-nothing bad will happen. You will just not have a way to use that clock
-in DTS.
+This is test data regarding the process running time.
 
-Best regards,
-Krzysztof
+With oom reaper (reverse traverse):
+  Thread            TID     State     Wall duration (ms)
+  RxComputationT   13708    Running   60.69
+  oom_reaper        81      Running   46.49
+  Total (ms): 107.18
+
+With oom reaper:
+  Thread            TID     State     Wall duration (ms)
+  vdp:vidtask:m    14040    Running   81.85
+  oom_reaper        81      Running   69.32
+  Total (ms): 151.17
+
+Without oom reaper:
+  Thread            TID     State     Wall duration (ms)
+  tp-background     12424   Running   106.02
+  Total (ms): 106.02
+
+Note: RxComputationT, vdp:vidtask:m, and tp-background are threads of the
+same process, and they are the last threads to exit.
+
+---
+v5 -> v6:
+- Use mas_for_each_rev() for VMA traversal [6]
+- Simplify the judgment of whether to delay in queue_oom_reaper() [7]
+- Refine changelog to better capture the essence of the changes [8]
+- Use READ_ONCE(tsk->frozen) instead of checking mm and additional
+  checks inside for_each_process(), as it is sufficient [9]
+- Add report tags because fengbaopeng and tianxiaobin reported the
+  high load issue of the reaper
+
+v4 -> v5:
+- Detect frozen state directly, avoid special futex handling. [3]
+- Use mas_find_rev() for VMA traversal to avoid skipping entries. [4]
+- Only check should_delay_oom_reap() in queue_oom_reaper(). [5]
+
+v3 -> v4:
+- Renamed functions and parameters for clarity. [2]
+- Added should_delay_oom_reap() for OOM reap decisions.
+- Traverse maple tree in reverse for improved behavior.
+
+v2 -> v3:
+- Fixed Subject prefix error.
+
+v1 -> v2:
+- Check robust_list for all threads, not just one. [1]
+
+Reference:
+[1] https://lore.kernel.org/linux-mm/u3mepw3oxj7cywezna4v72y2hvyc7bafkmsbirsbfuf34zpa7c@b23sc3rvp2gp/
+[2] https://lore.kernel.org/linux-mm/87cy99g3k6.ffs@tglx/
+[3] https://lore.kernel.org/linux-mm/aKRWtjRhE_HgFlp2@tiehlicka/
+[4] https://lore.kernel.org/linux-mm/26larxehoe3a627s4fxsqghriwctays4opm4hhme3uk7ybjc5r@pmwh4s4yv7lm/
+[5] https://lore.kernel.org/linux-mm/d5013a33-c08a-44c5-a67f-9dc8fd73c969@lucifer.local/
+[6] https://lore.kernel.org/linux-mm/nwh7gegmvoisbxlsfwslobpbqku376uxdj2z32owkbftvozt3x@4dfet73fh2yy/
+[7] https://lore.kernel.org/linux-mm/af4edeaf-d3c9-46a9-a300-dbaf5936e7d6@lucifer.local/
+[8] https://lore.kernel.org/linux-mm/aK71W1ITmC_4I_RY@tiehlicka/
+[9] https://lore.kernel.org/linux-mm/jzzdeczuyraup2zrspl6b74muf3bly2a3acejfftcldfmz4ekk@s5mcbeim34my/
+
+The earlier post:
+v5: https://lore.kernel.org/linux-mm/20250825133855.30229-1-zhongjinji@honor.com/
+v4: https://lore.kernel.org/linux-mm/20250814135555.17493-1-zhongjinji@honor.com/
+v3: https://lore.kernel.org/linux-mm/20250804030341.18619-1-zhongjinji@honor.com/
+v2: https://lore.kernel.org/linux-mm/20250801153649.23244-1-zhongjinji@honor.com/
+v1: https://lore.kernel.org/linux-mm/20250731102904.8615-1-zhongjinji@honor.com/
+
+zhongjinji (2):
+  mm/oom_kill: Do not delay oom reaper when the victim is frozen
+  mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse
+    order
+
+ mm/oom_kill.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
 
