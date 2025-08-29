@@ -1,143 +1,217 @@
-Return-Path: <linux-kernel+bounces-791746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE85B3BB4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:30:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A086B3BB4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 194887A4F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44B23B3858
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076A314B96;
-	Fri, 29 Aug 2025 12:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619343176F1;
+	Fri, 29 Aug 2025 12:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBPX8C15"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FHwwqrED"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800291FCFEF;
-	Fri, 29 Aug 2025 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4501D5CD1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470599; cv=none; b=dFZQJUGnFsLDbl2vGuu9ShCWATJ/23RN88QvkrnnriRyKO5hBhyjujx30099mqXshoCkhdC7vQlj+v4YR+zdPR81oiSPDT5RdjX9FXI5ynHO78HI17VElqUjyMnX27l9ycMwL/wyNEHsry6XSmr4GS/NLq5i2WtHTDJXP1T/kcU=
+	t=1756470666; cv=none; b=oS4zCer/7e7NoC8GEWm3B9AVlNvylnD7VSoFqdbLGYCxEke22c3JO/wMaTHI1WhXONnuqWoE7c5GTd0ESaspJaM2rXxTPjBNvvL0uk/Q0Qbq0YONObJ3JE/DOhMCFGyFEYZk+3SCTx3EST1+4AIjd/Ga1RU/0UymQKmJA+QWEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470599; c=relaxed/simple;
-	bh=7WkwrUEY+6BIbqKIw4+GT3HhxIaHHpAXuksiM1pzQNg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=qNCFQAdwFJINAP/XBAr3anwKtkMK0uxqOZsrcf7zeZxHCebJXcTbf1Cgn3yuHuVAHpvAp8QXuU9w2mAV/KQYfK9kXl4Px/9fAStVTEzIIgfiHkGyFTUnTHUZdeh9NeL3GwhdGCOyCI2BLiuS+Q0TMq7ZRWxKndoNFKZZu4JvYNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBPX8C15; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2487104b9c6so18365195ad.0;
-        Fri, 29 Aug 2025 05:29:58 -0700 (PDT)
+	s=arc-20240116; t=1756470666; c=relaxed/simple;
+	bh=25uf4fkOamMNN4uugQBgreJjxSM5eaf4CNpCxpbDWbw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VAdBASNTwlr+H5sjJVG5dLyTWnUBhTSCymyw8csgZNr2WCdFLnYjANZr7iTJbPj2hNpHHq62kXO1gwNZzPRN2kTpztNrhDwzzgBi92xkRrKDit9r04mrZyLMpyoB59qvLftv0Nnl4kq02L5FYeMkXh6aYQ3T/I3nj52CtrzM9XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FHwwqrED; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c6ae25978bso1535438f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756470598; x=1757075398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rM3RyXh88VhqP0EnkxZqWAvRFKr6uyDjCBhLREGSJw=;
-        b=eBPX8C15V+uKIuGoa88jQXluMlKV15cj/bv6fO0hRSFO+0zEEjr+nL5rwEyexS1dIa
-         cddugoMMuLoOMQJhjwnMAInN6xj3qPXhrmhtFkYusvpDsIgy6uphrYsed9ykN7A1wvzT
-         OmaWt2AUwYfa0GDTBPNVCuX12k8wO7bS/VAJXllx7ocTWF/x4bNDtpuC3smHGJ8xaDhK
-         U5gTa+YS5TTXlOJD5FV6Je6Fv4rQaiAmX6Gt6dwMqoOPRbeOE0nQndUJKUT9S66t0j9Q
-         AK8XcAiqi86mSRYMI+Bfdydu3l/+gPvujGzgt3Q5X/0vDntiwzasPkUGBxmzH8OKJap9
-         fxqA==
+        d=suse.com; s=google; t=1756470661; x=1757075461; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1o/3gMxAm5o35l6v5Gc5IAwzAWytWujUwa1eDW1WgFM=;
+        b=FHwwqrEDRP3xL3indTteZjhF3vj7O3WwPp09rGMplHFk+4y/WD22ejK2C63yCLzgtx
+         7eTmaKQoz2DUAxkLjPgE4rmPiURO5o6TcV0fM14ef6gJVmfKDcQ9etxk5Wi9sIofYNvS
+         CT79nwEmj1IDPwF5YvaNSEm6F6MaU0AQfo+okn6Qd1cWq5M1WYibVitLbgwNDPCRHZiC
+         FZAR9AkC6HKl/Dwa2U6v8hq0s5Wt/Tgg0bNdOyfCOp26SPiVeEGG1RcI0SQUT9YqlVhu
+         n2R67Tmv9mxIaKqlNoe9hS+EhBefVX25WUtbC4hIlZv8GEZJa267pcdrhu3IuTlcpdoT
+         hX/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470598; x=1757075398;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rM3RyXh88VhqP0EnkxZqWAvRFKr6uyDjCBhLREGSJw=;
-        b=qzL7hQ0aEoX/KqbS6rzZGDJFVS7LWQN/zVA6W1CO2pwbuMekav/69iwQN3qeXCOMe9
-         NADYISM3NhvmMCq33/0EqTtB9hQRo3FVgXHJ2IXK0zpEWp6QJl0qQBEf1x0+QUce0SaC
-         pQnP8R9KFU2b1q79+mdKzusO5YdiRb2IEjoca/itf5LdudUdQBphTaqDxlEurbG3uER5
-         q0VbtmCi11fue1I/UNPr8cx6LrKxeelqCnOT0u3GMv2LALzBK6YS81/TWH2kIhGZoBSZ
-         B10w5mzwQhjVRd1ebwZJ9HHC4PGTU8NG8IdkZg2Tu5+Op6l13m0Bnm3eloUVk13AI8r5
-         +fyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgmDJUSDptO6utfWX4zqPhTC/XYutUoSh/FTO69y2i08s+SU5fLDRu1NJDpIhco3qD40z91hWP0QzYKxU=@vger.kernel.org, AJvYcCUoZrxfMp92Yg7fBOkWDtV74RpZgMnh/hlh5p0hW44Q90TTKj9yPogJWVKieXwUA/h34BgQdQp52uwyiBqtjPxB@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd9DHyFdjhYN6yGdiYD2k6cRFq4ehYH92W9TBODZLiazbWIHH5
-	TKP8wrNpuWPbMIRG1zytS0OL0cwgFg4XEjfGc2JsMzr6qEtZtZ4BtDPs
-X-Gm-Gg: ASbGncvySwvkCFiVAOk2c+GWIAF9aJSeDMVg8efAXV38IqTKSBf/22mwl0KE+CBBP+D
-	mPHgFRHe0S31iwXAhBFtNnVu/GEApmbRMw7lw0EgVj5TW5YU90ak+7WexYFd6V2U3e51kh4a5/7
-	nV/jjUc37mhgmsZlrVu9PuKJUjA3ckJaejY2sIrwlZRLMjLiuWVeWrrCygtG3t3iIYdDRGHjYuc
-	3Tcxtjb8qKTt1MgdElK5UIJCPHLAWFSZlG/XXNyXNFCECqsqCp8mKhmQhzfuhXyQTN7p8Iq6Nh0
-	Qu1nXpMFTQ/WzFnHe49sIqZflWm29NcYJHgdJG6D0cJSMIpqH3e0HnRR0pJ3tY653D3x4dEP6Gz
-	HrcCc4dHbVVrp4UzUfex9meBcMakbLhqxqmoiT5PZfDfszgR1kV4S91lULYBtYPrmYxK+M61gtA
-	LmbSwc4BBr17jb0vo0uswTHvPJr+CcgtaTTwDwIFZS60Rr4EU5L1ARva4/oUGhw2yIrKk=
-X-Google-Smtp-Source: AGHT+IGnIECyfQJM/jiO8OpiO9eZlCpUV84jR+OlF7wJ5ML+j1n2T6SX8JRXDDJVlSHap6E3W4C4uA==
-X-Received: by 2002:a17:903:38cf:b0:248:aa0d:bb25 with SMTP id d9443c01a7336-248aa0dc43amr128843915ad.14.1756470597715;
-        Fri, 29 Aug 2025 05:29:57 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.37])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24906596416sm23699315ad.118.2025.08.29.05.29.54
+        d=1e100.net; s=20230601; t=1756470661; x=1757075461;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1o/3gMxAm5o35l6v5Gc5IAwzAWytWujUwa1eDW1WgFM=;
+        b=rMVbexFz2Sd669Py/ps2VFOLAe+b8SFaQ7vPRhe4+vzDA9XoQkwTdBhxY3nSmMIyyx
+         kc1wM+i9Uw1EwTBdnV4gcRP162Y989aVCMqXEAb66iRyFNesehfQqB3MDZVUbFkipSRj
+         0ZfaUhf8vIII1zOfUfvSzHYy8IvNzT0i7VaU1kjly6Phy7RvcBL8PdpUiFXbk5yGBKTY
+         61Wa52x5topSEzvXQ/aXNi9jUzWT1smt9q3B8kVWqvUho48BIQQne5eyoFD7YSUttobJ
+         8EJN1TgHQ+rB3TjFX4m5VxF/XUcJ1ST18mtk9NvfZYmxLYHhaQeF0Ub+Uk+FuAQj/m3y
+         BswA==
+X-Gm-Message-State: AOJu0YzNaXx9OI5nHVTr6rzH9iEKoiAVnKHq8sEEfPJgTbAPf9Frdqc1
+	RAGnJtl2+u/5KstMKf48dQ4zMk6PrDORf+HQna56jt+8YxQBwbfxr8BHIrkXSexPDxM=
+X-Gm-Gg: ASbGncuNLI3ICr5+REU0oyzZHTmMW4XR/8fdebS9iCDRKZ7l4epjs2IMV8XymmikxHJ
+	Dt9vtrz/p+fHAEnBA6vGjNbe8QmX0SD+7N88HO9xgsrTLvqu4Dx6GQiqxJ6cjuweqVWhNh0163P
+	roKwU2HMFqZKLuhqOniV1zYspu8FLv0FjrSqki+8LAQsz6cF2GnNS5r2ht2yD4QxlzvIskjK6O2
+	gOs5i64Skk7IiHMUZQ8o5X4y+G6IU+p+veBxYTfwoDYu1V8ny3ii1o9YmeJiYDWDzvB7iSwEySk
+	iCVmxOGiY5ZzXkDDiDsgekwkeWdb4Iw4yW9/AL8IHbCQl2T0snAYjJb/EEPJ0bQJVxjzKOMIypJ
+	HEcFn/up9OzbdjjYRDixvScjFkdmgfXdQnuLxzbnkyEr647V/bNI/baOzBI0dUK0=
+X-Google-Smtp-Source: AGHT+IF1/SJYjT58He8bHjfw7ibzdvYwp7DX82L8WKmCQRhFsnfKZkH5HKTVr6XyxMauvD0lvZwr+w==
+X-Received: by 2002:a05:6000:381:b0:3b7:8abc:eba2 with SMTP id ffacd0b85a97d-3c5db1e3d38mr22950525f8f.20.1756470661210;
+        Fri, 29 Aug 2025 05:31:01 -0700 (PDT)
+Received: from [192.168.3.33] (210.37.160.45.gramnet.com.br. [45.160.37.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2717sm3337197f8f.15.2025.08.29.05.30.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 05:29:57 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Miaoqian Lin <linmq006@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/move_mount_set_group: fix inconsistent return type in move_mount_set_group_supported()
-Date: Fri, 29 Aug 2025 20:29:47 +0800
-Message-Id: <20250829122949.2020530-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Fri, 29 Aug 2025 05:31:00 -0700 (PDT)
+Message-ID: <2905070f5e055dcf80089b011666e067f9f77758.camel@suse.com>
+Subject: Re: [PATCH v2 2/3] printk: nbcon: Introduce KDB helpers
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: John Ogness <john.ogness@linutronix.de>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt	 <rostedt@goodmis.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
+ Daniel Thompson <danielt@kernel.org>, Douglas Anderson	
+ <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Date: Fri, 29 Aug 2025 09:30:55 -0300
+In-Reply-To: <84jz2qkve0.fsf@jogness.linutronix.de>
+References: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
+	 <20250811-nbcon-kgdboc-v2-2-c7c72bcdeaf6@suse.com>
+	 <84jz2qkve0.fsf@jogness.linutronix.de>
+Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
+ keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
+ Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
+ gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
+ GO8seNG8sYiP6JfRjl7Hyqca6YsE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The function is declared to return bool
-but returns -1 on multiple error paths, which is inconsistent and
-misleading. Fix this by returning false on all error paths.
+On Tue, 2025-08-26 at 16:36 +0206, John Ogness wrote:
+> On 2025-08-11, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> > These helpers will be used when calling console->write_atomic on
+> > KDB code in the next patch. It's basically the same implementaion
+> > as nbcon_device_try_acquire, but using NBCON_PORIO_EMERGENCY when
+> > acquiring the context.
+> >=20
+> > For release, differently from nbcon_device_release, we don't need
+> > to
+> > flush the console, since all CPUs are stopped when KDB is active.
+> >=20
+> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > ---
+> > =C2=A0include/linux/console.h |=C2=A0 6 ++++++
+> > =C2=A0kernel/printk/nbcon.c=C2=A0=C2=A0 | 26 ++++++++++++++++++++++++++
+> > =C2=A02 files changed, 32 insertions(+)
+> >=20
+> > diff --git a/include/linux/console.h b/include/linux/console.h
+> > index
+> > 67af483574727c00eea1d5a1eacc994755c92607..b34c5a0b86303e2fb4583fa46
+> > 7d8be43761cf756 100644
+> > --- a/include/linux/console.h
+> > +++ b/include/linux/console.h
+> > @@ -605,6 +605,9 @@ extern bool nbcon_can_proceed(struct
+> > nbcon_write_context *wctxt);
+> > =C2=A0extern bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt)=
+;
+> > =C2=A0extern bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt);
+> > =C2=A0extern void nbcon_reacquire_nobuf(struct nbcon_write_context
+> > *wctxt);
+> > +extern bool nbcon_kdb_try_acquire(struct console *con,
+> > +				=C2=A0 struct nbcon_write_context
+> > *wctxt);
+> > +extern void nbcon_kdb_release(struct nbcon_write_context *wctxt);
+> > =C2=A0
+> > =C2=A0/*
+> > =C2=A0 * Check if the given console is currently capable and allowed to
+> > print
+> > @@ -654,6 +657,9 @@ static inline bool nbcon_can_proceed(struct
+> > nbcon_write_context *wctxt) { return
+> > =C2=A0static inline bool nbcon_enter_unsafe(struct nbcon_write_context
+> > *wctxt) { return false; }
+> > =C2=A0static inline bool nbcon_exit_unsafe(struct nbcon_write_context
+> > *wctxt) { return false; }
+> > =C2=A0static inline void nbcon_reacquire_nobuf(struct
+> > nbcon_write_context *wctxt) { }
+> > +static inline bool nbcon_kdb_try_acquire(struct console *con,
+> > +					 struct
+> > nbcon_write_context *wctxt) { return false; }
+> > +static inline void nbcon_kdb_release(struct console *con) { }
+> > =C2=A0static inline bool console_is_usable(struct console *con, short
+> > flags,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 bool use_atomic) { return
+> > false; }
+> > =C2=A0#endif
+> > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> > index
+> > 646801813415f0abe40cabf2f28ca9e30664f028..79d8c7437806119ad9787ddc4
+> > 8382dc2c86c23c3 100644
+> > --- a/kernel/printk/nbcon.c
+> > +++ b/kernel/printk/nbcon.c
+> > @@ -1855,3 +1855,29 @@ void nbcon_device_release(struct console
+> > *con)
+> > =C2=A0	console_srcu_read_unlock(cookie);
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL_GPL(nbcon_device_release);
+> > +
+> > +bool nbcon_kdb_try_acquire(struct console *con,
+> > +			=C2=A0=C2=A0 struct nbcon_write_context *wctxt)
+> > +{
+> > +	struct nbcon_context *ctxt =3D &ACCESS_PRIVATE(wctxt, ctxt);
+> > +
+> > +	memset(ctxt, 0, sizeof(*ctxt));
+> > +	ctxt->console =3D con;
+> > +	ctxt->prio=C2=A0=C2=A0=C2=A0 =3D NBCON_PRIO_EMERGENCY;
+> > +
+> > +	if (!nbcon_context_try_acquire(ctxt, false))
+> > +		return false;
+> > +
+> > +	if (!nbcon_context_enter_unsafe(ctxt))
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+> > +{
+> > +	struct nbcon_context *ctxt =3D &ACCESS_PRIVATE(wctxt, ctxt);
+> > +
+> > +	nbcon_context_exit_unsafe(ctxt);
+> > +	nbcon_context_release(ctxt);
+>=20
+> If nbcon_context_exit_unsafe() fails, the current task is no longer
+> the
+> owner and thus a release is not needed. I would prefer:
+>=20
+> 	if (nbcon_context_exit_unsafe(ctxt))
+> 		nbcon_context_release(ctxt);
+>=20
+> or
+>=20
+> 	if (!nbcon_context_exit_unsafe(ctxt))
+> 		return;
+>=20
+> 	nbcon_context_release(ctxt);
+>=20
+> You can find this same pattern in nbcon_device_release().
 
-Fixes: 8374f43123a5 ("tests: add move_mount(MOVE_MOUNT_SET_GROUP) selftest")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- .../move_mount_set_group_test.c                    | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Thanks for spotting this issue. Fixed localy.
 
-diff --git a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
-index bcf51d785a37..3f2c94acb29a 100644
---- a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
-+++ b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
-@@ -197,26 +197,26 @@ static bool move_mount_set_group_supported(void)
- 
- 	if (mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
- 		  "size=100000,mode=700"))
--		return -1;
-+		return false;
- 
- 	if (mount(NULL, "/tmp", NULL, MS_PRIVATE, 0))
--		return -1;
-+		return false;
- 
- 	if (mkdir(SET_GROUP_FROM, 0777))
--		return -1;
-+		return false;
- 
- 	if (mkdir(SET_GROUP_TO, 0777))
--		return -1;
-+		return false;
- 
- 	if (mount("testing", SET_GROUP_FROM, "tmpfs", MS_NOATIME | MS_NODEV,
- 		  "size=100000,mode=700"))
--		return -1;
-+		return false;
- 
- 	if (mount(SET_GROUP_FROM, SET_GROUP_TO, NULL, MS_BIND, NULL))
--		return -1;
-+		return false;
- 
- 	if (mount(NULL, SET_GROUP_FROM, NULL, MS_SHARED, 0))
--		return -1;
-+		return false;
- 
- 	ret = syscall(__NR_move_mount, AT_FDCWD, SET_GROUP_FROM,
- 		      AT_FDCWD, SET_GROUP_TO, MOVE_MOUNT_SET_GROUP);
--- 
-2.35.1
-
+>=20
+> John
 
