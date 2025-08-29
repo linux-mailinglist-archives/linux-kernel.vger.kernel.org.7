@@ -1,247 +1,261 @@
-Return-Path: <linux-kernel+bounces-792479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E23DB3C48D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:01:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67F5B3C492
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CAFA63756
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7051797ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCB82741B0;
-	Fri, 29 Aug 2025 22:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97963275111;
+	Fri, 29 Aug 2025 22:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1v40Er5o"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w6Mlitym"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D841FB676
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF4BB676
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756504875; cv=none; b=gn4QznWKtj2M/bF95ehni5pRzY7NgA/lPTkLtdORPD59+8DpEYUPH5lIDUqKy/U3/jDLxKs7LQpsb/PjbHIA9k3W9xAHHL8pb4hnuOpafFXj+RhNTZvjBIdkZsu7zdwlO5INaYfJHP0i0s/Jeav0i/qxKU0K9trDolg/KJ76MPM=
+	t=1756504920; cv=none; b=ocZ9ux0Sn286mEp6OMNfhfzfJAizqywlEcaUmOnAzqam/m4NBcGRsmadF+EVDTpJ544OFdea5BxkSLLHxMtZG6wU8g+TeIXYwm55iN+FvS5W019Tf58nGE1nsWBFUoPZSg4v6uNe5yCkvXP4HUhZ4kIN1umn5QDzIvIVHcinlLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756504875; c=relaxed/simple;
-	bh=iPLXyx8i4nwGLxcbS6HSFMUvEQLFAk5T7HM3teO+mVE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HSU9te42X/qahOWkoi4OiYlyh/C3Xc7wEDqL6tttbMJd73dXAERq4bfAELF7qtWPV8be0D1rYnqJ7HV4flmntTE89TMRZd0+ufDbkYuUpYEuNoXpuJ5hdjm6GS202h8jZ8u/wqy53g8WqcLrpVb9B/3EHgCpejkl+OL8mO0Zd2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1v40Er5o; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24927876fadso10010805ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:01:13 -0700 (PDT)
+	s=arc-20240116; t=1756504920; c=relaxed/simple;
+	bh=zl6vBGVXeQU+dLiKGHbINuGEJlV6Isf3zVGqeouSOs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cPv98XqgZnAA8PRsHP0uqM0ZERVOUv6nNsUEka66XKrVe/lR1tqiFc/Y1Eoa1/puvd2doozx8jwSc/bYGZsuPuEIXq1QWQ6OX/9knDtfiw33EaU1FCzVUYHLJbQj01ec64Xt0nPv5IbJ1Gq+9TVCTcWyINLO7XNwXk4ldSjG9RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w6Mlitym; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cce8c3afaso2175963fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:01:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756504873; x=1757109673; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9GHPlaBYRJg/LqiNX41fKkZYjFrM0pCCrDklkQEttc=;
-        b=1v40Er5oEG/hqfMDsTZcIeKsvwDVynhRnulvyCtGn02XxNt1lvk0NUd7LPC9Ls4Ebw
-         JzNXJgW+dnK5eToeQVNxz213GwpGOBGIbsss80D9gplogM21ibks6XNV0ZsvaoiDDF86
-         kUnnQwBo+d55JYQ1sqOZS1LuqAEI/UhUbJFoqPkazH4cDLeFOymuEoyA5WzZh1LVax8s
-         ukNJan26R0KOGm5GQd64IC2RDGDDdwi1BDTuvE9gvD5t+7Qsktj2QuEc+SDMNzNW0kRK
-         1TpI7xt1//QOMq0u14vTWbJ92jO5NGm/bS1C2BrBRQfPLqP4HNmlFNzA8urb0nCPuQEu
-         /uVg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756504916; x=1757109716; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=19qA9IJiXINaqD9EgIAK4yhHbK41U19o5AGAxAC1+DQ=;
+        b=w6MlitymBOEMAXEUvPj230NXK2+Aa2j15op3i2MO2DLO0kFpzp9cw1wcH81M1gZohJ
+         zLsMUN3ra9K/YKrmSgjsFqO/rzN63pKzWMXwEbI0w1AcaMakltLDp0ZDfSplCiovnqbF
+         SSEEcChglthyskEZYiiz8taSrK5kCVADBeR/iS0JEBDkaIeSNIObAUAdv5vJvS6oniNp
+         qWm67SQe4P4w+y+CwrFgPAioquy1c/RSssfA+zFNoq959rLhRtKYU/yNm2E8yc9c1zTn
+         YtZOnYzSPVClKdH0Pntz9NEWxxjeFNWo9cnj5B7XZ/u7+F2D4zCIMuVykh7gAuJ+UJuU
+         I6GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756504873; x=1757109673;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9GHPlaBYRJg/LqiNX41fKkZYjFrM0pCCrDklkQEttc=;
-        b=GR8NsRqFOeF3ZPwp31k6ovX6EAtuonhW7hDDnLl+rpwqYfZN8mkdScOZc9IB+VBnbU
-         F9x5XsiVg8eswSiw55OFGFG8gaRkX14NBmb5ODDkhneMdyCReouqMngZaOCmzAOYMq+E
-         0oQSif/JEDoI8iiQOqMIZNlhkihEK22MIvPfqG32qNKjFFo1NFJEsTi0UoQI3KKxEGGw
-         f4Pcb3fXrfupkkPENI4Xr20qVCqOCUVu7uA3g9SRf1hvE2niVtpNVUNSZ3qM4ZypPMOZ
-         B2GZ7xzk8Ll3TpUGWcbFlJ6lfVEN1ZvLhBIst662uPdfLnoFSdd7iAhOyPVExk8wzuy/
-         RQeA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6PDwosqrlXIA6WYknelSUm0e5syqm5dTW1aof7POK3AuCzJKaBPKY85BqJYXz6WhhCfdv38OGZDEcsaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyK4ZCMkcegLMQwXM4qsjy6gDKmID5NE2+wLyLMZa3jSFQ/OI5
-	IzETqGwS9AWCUCnrq6Ql8cNPeW8xkoeHQYCHfZ7l1rVK2NvsdqrDCK4UNg/v7d/e5dTuRvBiI0N
-	EYs91kg==
-X-Google-Smtp-Source: AGHT+IHC/YWdD94OPNKo9tuuWQlCwmFoPFP/TYWYJkA+7SN2xuVrPZqRZEOTX3LfK2IVYyi2Duk9ySUVzlk=
-X-Received: from plps15.prod.google.com ([2002:a17:902:988f:b0:248:96be:d4d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e790:b0:248:79d4:93ba
- with SMTP id d9443c01a7336-24944b2a01amr1760195ad.39.1756504873169; Fri, 29
- Aug 2025 15:01:13 -0700 (PDT)
-Date: Fri, 29 Aug 2025 15:01:11 -0700
-In-Reply-To: <aLD3yS6LQR7b55CR@intel.com>
+        d=1e100.net; s=20230601; t=1756504916; x=1757109716;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=19qA9IJiXINaqD9EgIAK4yhHbK41U19o5AGAxAC1+DQ=;
+        b=MrJzAzI23tT6xZ2zL9+dVkaFnN235nXans52GFPxcBKckScA3NJHS9WBeFGWrHlrIN
+         jaoBzZ4w7MnVqxKrC0jDqA+60nuzL6tBNF6IOMkHxrGiMbC19eLp2uukCukOpILS9Xs8
+         ekeudCyA6iNdxdpLIw8wd37vbVgB3wpZ6RSucInFa4ZV3lD1tvxnjo/2/TZL04GAXGg4
+         tml1L1RgkhwXKlHpP74/aMz8BnmOsaJTSfEzMnJcTpcNP5g6Qp+SI3be2hkpuhOrzcyh
+         nj8cInQSN0AmTv30JOD4nM+RTUTgJ5SPPybOaF6zK4rhLaWHcEqOdTUE5biq5MJ/VCFN
+         Br/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+T0LA+d58pLkwVdQvPRISVuyvwAUVRwAziwQyiSOaq1f8bGi3tQ05+c4xphjbSMXy5YmEls9TrSmm2t8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEs6lTl776J95OfY3JNJe90n61qATkASx95fWkSiBOD2RNINIm
+	O8Lcj3ceRyU5374XxPFLTpb8so/kzP0UaruKinYOT697BoKv/Zs7s370mjOE+ubp4w0=
+X-Gm-Gg: ASbGncvmwumTuvxeZRT90PyD9ATzwMhWC2K2koZt0RcgnpRUAqNSuZg0w3UOQyLIKjj
+	gHNFjELdiWZlHczytKBgoCqgWzuKxYETbPkD5/uFVDQDoFY7W+AhWHuMGPp0KBJPn9cqCZok97J
+	p0SD/YOvfYPUR5/gIGJJXXG9QwxSdjo7z/vmR0w9yMSc5x8GI4vD6GbmaDexlGqodjDUBIJ59Cu
+	Q2PkZ4yhYoSlsbyRcFRGJ2WgkTG1AKcQf+GT2NRUCxS6ynAQ2+RdklGlPJj0Z+qV+1ppP6FcqHr
+	XCz3kO0eGzs8pT/BXs2rcIsT2YcPqiEbXusiakl7Lt4oUz93pCQSr37cMX3D22FRVQBd91kTfGM
+	RU4TinkzhD8bZvAF6a7W7nZ44R1DWZXSWNl241wsg7eJ+5hqUo0QNuklfy220mX5aj/McgC9Qkt
+	AXz/dFuB+v1Q==
+X-Google-Smtp-Source: AGHT+IERWcMFksvA1SjoYrWgF8bLN146tgMZEG+xX0MMIQYjzycbPjINqdpX4BOPaOfHn23qYd2Ubw==
+X-Received: by 2002:a05:6870:8996:b0:319:5c90:4829 with SMTP id 586e51a60fabf-3196346319cmr69215fac.43.1756504915921;
+        Fri, 29 Aug 2025 15:01:55 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afe11ca1sm1702399fac.18.2025.08.29.15.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 15:01:55 -0700 (PDT)
+Message-ID: <f83e3204-6033-4de4-b112-e474dbd8861c@baylibre.com>
+Date: Fri, 29 Aug 2025 17:01:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821133132.72322-1-chao.gao@intel.com> <20250821133132.72322-2-chao.gao@intel.com>
- <402d79e7-f229-4caa-8150-6061e363da4f@intel.com> <aLD3yS6LQR7b55CR@intel.com>
-Message-ID: <aLIjJ9I1Swf35HPT@google.com>
-Subject: Re: [PATCH v13 01/21] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
-	mingo@redhat.com, minipli@grsecurity.net, mlevitsk@redhat.com, 
-	pbonzini@redhat.com, rick.p.edgecombe@intel.com, tglx@linutronix.de, 
-	weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/6] docs: iio: add documentation for ade9000 driver
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+ <20250829115227.47712-6-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250829115227.47712-6-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025, Chao Gao wrote:
-> On Thu, Aug 28, 2025 at 08:58:07PM +0800, Xiaoyao Li wrote:
-> >On 8/21/2025 9:30 PM, Chao Gao wrote:
-> >> From: Yang Weijiang <weijiang.yang@intel.com>
-> >> 
-> >> Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access HW MSR or
-> >> KVM synthetic MSR through it.
-> >> 
-> >> In CET KVM series [1], KVM "steals" an MSR from PV MSR space and access
-> >> it via KVM_{G,S}ET_MSRs uAPIs, but the approach pollutes PV MSR space
-> >> and hides the difference of synthetic MSRs and normal HW defined MSRs.
-> >> 
-> >> Now carve out a separate room in KVM-customized MSR address space for
-> >> synthetic MSRs. The synthetic MSRs are not exposed to userspace via
-> >> KVM_GET_MSR_INDEX_LIST, instead userspace complies with KVM's setup and
-> >> composes the uAPI params. KVM synthetic MSR indices start from 0 and
-> >> increase linearly. Userspace caller should tag MSR type correctly in
-> >> order to access intended HW or synthetic MSR.
-> >
-> >The old feedback[*]
+On 8/29/25 6:41 AM, Antoniu Miclaus wrote:
+> Add documentation for ade9000 driver which describes the driver
+> device files and shows how the user may use the ABI for various
+> scenarios (configuration, measurement, etc.).
 
-Good sleuthing!  I completely forgot about that...
+This is quite helpful to get the high-level picture of how this
+is supposed to work.
 
-> was to introduce support for SYNTHETIC registers instead of limiting it to MSR.
 > 
-> GUEST_SSP is a real register but not an MSR, 
-
-Eh, yes and no.  The vCPU's current SSP is a real register, but there's no
-interface to access it.  The "synthetic" part here the interface that KVM is
-defining.  Though I can see where that gets confusing since "synthetic" in KVM
-usually means a completely made up register/MSR.
-
-> so it's ok to treat it as a synthetic MSR. But, it's probably
-> inappropriate/inaccurate to call it a synthetic register.
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v6:
+>  - add RMS channel documentation with scale and calibbias
+>  - add separate scale docs for each power type
+>  - improve calibration section explanation
+>  - focus events on RMS voltage instead of instantaneous
+>  - add filter_type attributes documentation
+>  - update examples to use RMS voltage events
+>  - complete device file attribute tables
+>  Documentation/iio/ade9000.rst | 292 ++++++++++++++++++++++++++++++++++
+>  Documentation/iio/index.rst   |   1 +
+>  2 files changed, 293 insertions(+)
+>  create mode 100644 Documentation/iio/ade9000.rst
 > 
-> I think we need a clear definition for "synthetic register" to determine what
-> should be included in this category. "synthetic MSR" is clear - it refers to
-> something that isn't an MSR in hardware but is handled by KVM as an MSR.
+> diff --git a/Documentation/iio/ade9000.rst b/Documentation/iio/ade9000.rst
+> new file mode 100644
+> index 000000000000..869ba154653e
+> --- /dev/null
+> +++ b/Documentation/iio/ade9000.rst
+> @@ -0,0 +1,292 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============
+> +ADE9000 driver
+> +===============
+> +
+> +This driver supports Analog Device's ADE9000 energy measurement IC on SPI bus.
+> +
+> +1. Supported devices
+> +====================
+> +
+> +* `ADE9000 <https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf>`_
+> +
+> +The ADE9000 is a highly accurate, fully integrated, multiphase energy and power
+> +quality monitoring device. Superior analog performance and a digital signal
+> +processing (DSP) core enable accurate energy monitoring over a wide dynamic
+> +range. An integrated high end reference ensures low drift over temperature
+> +with a combined drift of less than ±25 ppm/°C maximum for the entire channel
+> +including a programmable gain amplifier (PGA) and an analog-to-digital
+> +converter (ADC).
+> +
+> +2. Device attributes
+> +====================
+> +
+> +Power and energy measurements are provided for voltage, current, active power,
+> +reactive power, apparent power, and power factor across three phases.
+> +
+> +Each IIO device has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
+> +where X is the IIO index of the device. Under these folders reside a set of
+> +device files, depending on the characteristics and features of the hardware
+> +device in question. These files are consistently generalized and documented in
+> +the IIO ABI documentation.
+> +
+> +The following tables show the ADE9000 related device files, found in the
+> +specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
+> +
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| Current measurement related device files          | Description                                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_current[0-2]_raw                               | Raw current measurement for phases A, B, C.              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_current[0-2]_scale                             | Scale for current channels.                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_current[0-2]_calibscale                        | Calibration gain for current channels (AIGAIN reg).      |
 
-Ah, but I specifically want to avoid bleeding those details into userspace.
-I.e. I don't want userspace to know that internally, KVM handles GUEST_SSP via
-the MSR infrastructure, so that if for whatever reason we want to do something
-different (very unlikely), then we don't create a contradiction.
+We should probably clarify that this is the instantaneous current.
 
-> That said, I'm still fine with renaming all "synthetic MSR" to "synthetic
-> register" in this series. :)
-> 
-> Sean, which do you prefer with fresh eyes?
-> 
-> If we make this change, I suppose KVM_x86_REG_TYPE_SIZE() should be dropped, as
-> we can't guarantee that the size will remain constant for the "synthetic
-> register" type, since it could be extended to include registers with different
-> sizes in the future.
+Also missing a row divider here?
 
-Ooh, good catch.  We can keep it, we just need to be more conservative and only
-define a valid size for GUEST_SSP.
+> +| in_altcurrent[0-2]_rms_raw                        | RMS current measurement for phases A, B, C.              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altcurrent[0-2]_rms_scale                      | Scale for RMS current channels.                          |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altcurrent[0-2]_rms_calibbias                  | RMS offset correction for current channels (IRMSOS reg). |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| Voltage measurement related device files          | Description                                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_voltage[0-2]_raw                               | Raw voltage measurement for phases A, B, C.              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_voltage[0-2]_scale                             | Scale for voltage channels.                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_voltage[0-2]_calibscale                        | Calibration gain for voltage channels (AVGAIN reg).      |
 
-To avoid confusion with "synthetic", what if we go with a more literal type of
-"KVM"?  That's vague enough that it gives KVM a lot of flexibility, but specific
-enough that it'll be intuitive for readers, hopefully.
+row divider?
 
----
- arch/x86/include/uapi/asm/kvm.h | 21 +++++++++++++--------
- arch/x86/kvm/x86.c              | 18 +++++++-----------
- 2 files changed, 20 insertions(+), 19 deletions(-)
+> +| in_voltage[0-2]_frequency                         | Measured line frequency for phases A, B, C.              |
 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 478d9b63a9db..eeefc03120fc 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -412,28 +412,33 @@ struct kvm_xcrs {
- };
- 
- #define KVM_X86_REG_TYPE_MSR		2
--#define KVM_X86_REG_TYPE_SYNTHETIC_MSR	3
-+#define KVM_X86_REG_TYPE_KVM		3
- 
--#define KVM_X86_REG_TYPE_SIZE(type)						\
-+#define KVM_X86_KVM_REG_SIZE(reg)						\
-+({										\
-+	reg == KVM_REG_GUEST_SSP ? KVM_REG_SIZE_U64 : 0;			\
-+})
-+
-+#define KVM_X86_REG_TYPE_SIZE(type, reg)					\
- ({										\
- 	__u64 type_size = (__u64)type << 32;					\
- 										\
- 	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
--		     type == KVM_X86_REG_TYPE_SYNTHETIC_MSR ? KVM_REG_SIZE_U64 :\
-+		     type == KVM_X86_REG_TYPE_KVM ? KVM_X86_KVM_REG_SIZE(reg) :	\
- 		     0;								\
- 	type_size;								\
- })
- 
- #define KVM_X86_REG_ENCODE(type, index)				\
--	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type) | index)
-+	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type, index) | index)
- 
- #define KVM_X86_REG_MSR(index)					\
- 	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_MSR, index)
--#define KVM_X86_REG_SYNTHETIC_MSR(index)			\
--	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_SYNTHETIC_MSR, index)
-+#define KVM_X86_REG_KVM(index)			\
-+	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_KVM, index)
- 
--/* KVM synthetic MSR index staring from 0 */
--#define KVM_SYNTHETIC_GUEST_SSP 0
-+/* KVM-defined registers staring from 0 */
-+#define KVM_REG_GUEST_SSP 0
- 
- #define KVM_SYNC_X86_REGS      (1UL << 0)
- #define KVM_SYNC_X86_SREGS     (1UL << 1)
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 9930678f5a3b..e0d7298aea94 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6057,10 +6057,10 @@ struct kvm_x86_reg_id {
- 	__u8  x86;
- };
- 
--static int kvm_translate_synthetic_msr(struct kvm_x86_reg_id *reg)
-+static int kvm_translate_kvm_reg(struct kvm_x86_reg_id *reg)
- {
- 	switch (reg->index) {
--	case KVM_SYNTHETIC_GUEST_SSP:
-+	case KVM_REG_GUEST_SSP:
- 		reg->type = KVM_X86_REG_TYPE_MSR;
- 		reg->index = MSR_KVM_INTERNAL_GUEST_SSP;
- 		break;
-@@ -6204,15 +6204,8 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 		if (id->rsvd || id->rsvd4)
- 			break;
- 
--		if (id->type != KVM_X86_REG_TYPE_MSR &&
--		    id->type != KVM_X86_REG_TYPE_SYNTHETIC_MSR)
--			break;
--
--		if ((reg.id & KVM_REG_SIZE_MASK) != KVM_REG_SIZE_U64)
--			break;
--
--		if (id->type == KVM_X86_REG_TYPE_SYNTHETIC_MSR) {
--			r = kvm_translate_synthetic_msr(id);
-+		if (id->type == KVM_X86_REG_TYPE_KVM) {
-+			r = kvm_translate_kvm_reg(id);
- 			if (r)
- 				break;
- 		}
-@@ -6221,6 +6214,9 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 		if (id->type != KVM_X86_REG_TYPE_MSR)
- 			break;
- 
-+		if ((reg.id & KVM_REG_SIZE_MASK) != KVM_REG_SIZE_U64)
-+			break;
-+
- 		value = u64_to_user_ptr(reg.addr);
- 		if (ioctl == KVM_GET_ONE_REG)
- 			r = kvm_get_one_msr(vcpu, id->index, value);
+And these are instantaneous voltage.
 
-base-commit: eb92644efe58ecb8d00a83ef1788871404116001
---
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_raw                        | RMS voltage measurement for phases A, B, C.              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_scale                      | Scale for RMS voltage channels.                          |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_calibbias                  | RMS offset correction for voltage channels (VRMSOS reg). |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| Power measurement related device files            | Description                                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_active_raw                          | Active power measurement for phases A, B, C.             |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_active_scale                        | Scale for active power channels.                         |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_active_calibbias                    | Calibration offset for active power (xWATTOS regs).      |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_active_calibscale                   | Calibration gain for active power (APGAIN reg).          |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_reactive_raw                        | Reactive power measurement for phases A, B, C.           |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_reactive_scale                      | Scale for reactive power channels.                       |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_reactive_calibbias                  | Calibration offset for reactive power (xVAROS regs).     |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_apparent_raw                        | Apparent power measurement for phases A, B, C.           |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_apparent_scale                      | Scale for apparent power channels.                       |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_power[0-2]_powerfactor                         | Power factor for phases A, B, C.                         |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| Energy measurement related device files           | Description                                              |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_energy[0-2]_active_raw                         | Active energy measurement for phases A, B, C.            |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_energy[0-2]_reactive_raw                       | Reactive energy measurement for phases A, B, C.          |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_energy[0-2]_apparent_raw                       | Apparent energy measurement for phases A, B, C.          |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +
+> ++------------------------------+------------------------------------------------------------------+
+> +| Shared device attributes     | Description                                                      |
+> ++------------------------------+------------------------------------------------------------------+
+> +| name                         | Name of the IIO device.                                          |
+> ++------------------------------+------------------------------------------------------------------+
+> +| frequency                    | System line frequency configuration (50Hz/60Hz).                 |
+
+Probably should call this one `mains_frequency`.
+
+> ++------------------------------+------------------------------------------------------------------+
+> +| scale                        | Shared PGA gain setting (1x, 2x, 4x) affecting all channels.     |
+
+scale is already listed above. Does this mean that there are 2 scale
+values that have to be applied to convert raw to processed?
+
+> ++------------------------------+------------------------------------------------------------------+
+> +| filter_type                  | Waveform buffer filter type (sinc4, sinc4+lp).                   |
+> ++------------------------------+------------------------------------------------------------------+
+> +| filter_type_available        | Available filter types for waveform buffer.                      |
+> ++------------------------------+------------------------------------------------------------------+
+> +
 
