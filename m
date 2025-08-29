@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-791678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9E1B3BA0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15666B3BA3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D683ADB12
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369F71C86AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAE52F3636;
-	Fri, 29 Aug 2025 11:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC6E313544;
+	Fri, 29 Aug 2025 11:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="d2+N1yYe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="mkL2p+/b"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FC82D3725;
-	Fri, 29 Aug 2025 11:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4E2D0C8D;
+	Fri, 29 Aug 2025 11:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756467585; cv=none; b=ZxbonbrL/od/TPbF3/B5B0vDXGhgLbupnqrQZND2aGrNJITOOWRaFyxdUq5x1qwSi9/q+M67r8QkNaRWwixFEp34iyqYbFbZhOVCr8W1GJHF7gOcBneGYIke5WQHU4BHIruiADgHcrrtusXQFYlX4OpNbA3dI3/czL6W6m+vlZk=
+	t=1756468383; cv=none; b=WpKvDktq1BetNxa/GksWEK/pDYSm3YvWwVJbTJWnZWD+M6NN+It9/6rsxcY54Gcjw2Yvm8BB7EmWcEQlDOvBCyadu1Riujbrca8F15nm/AaSEdjZV6LwXpYFbX84SV858fJrfNa7IkGt5Xmz2wrQjHES60AY8zv4//hGyyv3jsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756467585; c=relaxed/simple;
-	bh=CbhwLF5irTqC+PrHibkgukN+rKM+TtRpocqODCiBcfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PG1Idjo5oQV5czHUoI2hmhd+TdnAa5p2ZwbH4nI5WbhUZXmKgSSa0vbuvzs996UqOVPd9LKRBSok944jT6GYXqZxghaoarYjXc0o+ZhJjTlgKLf0EWsp/r2cciDRjE/GcOBDcxgMLT85xEZ6MAPUYCTtlbF1NgCEjqgmDYQG5Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=d2+N1yYe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95282C4CEF0;
-	Fri, 29 Aug 2025 11:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756467585;
-	bh=CbhwLF5irTqC+PrHibkgukN+rKM+TtRpocqODCiBcfo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d2+N1yYeS6xDBCuqwAgIEuGw7pSxUDt/97g6xZ/v8lfsxvIci330FF0qE47qfQmWu
-	 KHcFhR2z1Y4y2pA9as/MuCdO1S3Ni3Q5q7Cm7ADY649lwgbUd81pZR2+0en3YIy6vC
-	 5PH0fYdhzDdlzrN2c+joveTXk+5g9PpWBC84ghXs=
-Date: Fri, 29 Aug 2025 13:39:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] device property: Add scoped fwnode child node iterators
-Message-ID: <2025082919-nebulizer-suitable-6b2c@gregkh>
-References: <20250829021802.16241-1-jefflessard3@gmail.com>
- <2025082953-splendor-unsold-e4f2@gregkh>
- <AA99AF86-CD2A-4BBE-92BC-3D9005E7BA3B@gmail.com>
+	s=arc-20240116; t=1756468383; c=relaxed/simple;
+	bh=NiS6maFenS6lHlot8Hk0gbDW8+p9lvTxXzzWtvQAkXk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=biLALwJHkrHOofMlIaKuWbw454Zm60tRHvGlOitRZbgZD4uodF0R2dwnLsCL5qPiLh6K/FQMvokg39KGWpMgt/WqI3//gmnxWazEFhAu/EX/SUARPNp1wJqjTBWdhusjoPeiL8iATf7eRjyBGqJoBQuFxFkSSiTm32Y172mWoIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=mkL2p+/b; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85G0X016082;
+	Fri, 29 Aug 2025 07:52:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=JvZydoAGNgbmVzvlDdRVBEFMMT3
+	3WURXIU3ZbMpqHEY=; b=mkL2p+/b8toqEcN3LL56qyCb7IEXnLhRORjsPdKLXT8
+	O8T1tgMYPNCsokFJirwYP4EDcdZ3qCwfyBcKFja5erNCOBBVFkQrQsAA7zntLDEL
+	NbtK5qi2BDeG/Dy/43FccDgGMZ/tHQFnMX+j3QQWhbLQwLZOiMZ3avdz62QMbxc1
+	zgMMgY/Io2vsGrIXjyCqfrqCSn2N22649NMMlM7wLNQ2KgCwLHdP7bB7QGgQhvZX
+	Yic1nLl8pohAX5X4/x5NyuT109FPKk++wkdyeRD++zRcI1JtiMv//3dcI4QYF9mS
+	iAE2I6kENSDvsyCc8hXLT7trrWEizkQsiINyIk9rrIQ==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48sqat7f93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 07:52:48 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57TBqlwn036251
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 29 Aug 2025 07:52:47 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 29 Aug
+ 2025 07:52:46 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 29 Aug 2025 07:52:46 -0400
+Received: from Ubuntu.ad.analog.com (AMICLAUS-L01.ad.analog.com [10.48.65.226])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57TBqdAR017911;
+	Fri, 29 Aug 2025 07:52:41 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH v6 0/6] iio: adc: add support for ADE9000 Energy Monitoring IC
+Date: Fri, 29 Aug 2025 11:41:34 +0000
+Message-ID: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AA99AF86-CD2A-4BBE-92BC-3D9005E7BA3B@gmail.com>
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDAwMCBTYWx0ZWRfX0wiFqFRoJ7eR
+ /8StdjXmofSxQ7pZmk5EwONvHJj6Vp3mw53tzOvJebfoiCOvhN6TpLjDb326oy51sM7M/HzUxgF
+ TNLNW5La0hRocnfZWspHfRISLHokTafAQI4TmaKD8WpikgmjPDVrw85D7EyS0jS3b1CuX8BASEM
+ 51sC7NxEgZTE1unPgnZCI0bAR7uQSLEwhp74D9YliY1dusfPic0zMPiSv3XMU+i2dTH1IurH26G
+ UG+/5ACJv5Vot9IfO26hs4TgipESPXhhSmWEzKCPdGaRKeqb85R8aG2+m2aZAoGf+Mhb82XtaHM
+ sQQYs2fEaO0HDcRRgqbBsPQXlMSHKZRofQwy2i/6Pt844elRKClljG3ghJq8r2t9MagCGCvzQZQ
+ 6EcorEsQ
+X-Authority-Analysis: v=2.4 cv=Z4bsHGRA c=1 sm=1 tr=0 ts=68b19490 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=2OwXVqhp2XgA:10 a=MilyVcYQlkyFfA35S9cA:9
+X-Proofpoint-ORIG-GUID: 4gdatVQHFvd_vxTlMwjdue2kAHRYFnEa
+X-Proofpoint-GUID: 4gdatVQHFvd_vxTlMwjdue2kAHRYFnEa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508270000
 
-On Fri, Aug 29, 2025 at 07:34:17AM -0400, Jean-François Lessard wrote:
-> Le 29 août 2025 00 h 23 min 22 s HAE, Greg Kroah-Hartman <gregkh@linuxfoundation.org> a écrit :
-> >On Thu, Aug 28, 2025 at 10:17:59PM -0400, Jean-François Lessard wrote:
-> >> Add scoped versions of fwnode child node iterators that automatically
-> >> handle reference counting cleanup using the __free() attribute:
-> >> 
-> >> - fwnode_for_each_child_node_scoped()
-> >> - fwnode_for_each_named_child_node_scoped()
-> >> - fwnode_for_each_available_child_node_scoped()
-> >> 
-> >> These macros follow the same pattern as existing scoped iterators in the
-> >> kernel, ensuring fwnode references are automatically released when the
-> >> iterator variable goes out of scope. This prevents resource leaks and
-> >> eliminates the need for manual cleanup in error paths.
-> >> 
-> >> The implementation mirrors the non-scoped variants but uses
-> >> __free(fwnode_handle) for automatic resource management, providing a safer
-> >> and more convenient interface for drivers iterating over firmware node
-> >> children.
-> >> 
-> >> Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
-> >> ---
-> >> 
-> >> Notes:
-> >>     checkpatch reports false positives that are intentionally ignored:
-> >>     COMPLEX_MACRO, MACRO_ARG_REUSE, MACRO_ARG_PRECEDENCE
-> >>     This is a standard iterator pattern following kernel conventions.
-> >> 
-> >>  include/linux/property.h | 14 ++++++++++++++
-> >>  1 file changed, 14 insertions(+)
-> >> 
-> >> diff --git a/include/linux/property.h b/include/linux/property.h
-> >> index 82f0cb3ab..279c244db 100644
-> >> --- a/include/linux/property.h
-> >> +++ b/include/linux/property.h
-> >> @@ -176,6 +176,20 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
-> >>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
-> >>  	     child = fwnode_get_next_available_child_node(fwnode, child))
-> >>  
-> >> +#define fwnode_for_each_child_node_scoped(fwnode, child)		\
-> >> +	for (struct fwnode_handle *child __free(fwnode_handle) =	\
-> >> +		fwnode_get_next_child_node(fwnode, NULL);		\
-> >> +	     child; child = fwnode_get_next_child_node(fwnode, child))
-> >> +
-> >> +#define fwnode_for_each_named_child_node_scoped(fwnode, child, name)	\
-> >> +	fwnode_for_each_child_node_scoped(fwnode, child)		\
-> >> +		for_each_if(fwnode_name_eq(child, name))
-> >> +
-> >> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	\
-> >> +	for (struct fwnode_handle *child __free(fwnode_handle) =	\
-> >> +		fwnode_get_next_available_child_node(fwnode, NULL);	\
-> >> +	     child; child = fwnode_get_next_available_child_node(fwnode, child))
-> >> +
-> >>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
-> >>  						 struct fwnode_handle *child);
-> >>  
-> >
-> >We need a real user of this before we can add them, so please do that as
-> >part of a patch series.
-> >
-> 
-> I understand the "no dead code" policy, but I found existing manual
-> implementations of this exact pattern in the current kernel.
-> 
-> For example, drivers/i2c/i2c-core-slave.c already does:
-> 
-> 		struct fwnode_handle *child __free(fwnode_handle) = NULL;
-> ...
-> 		fwnode_for_each_child_node(fwnode, child) {
-> ...
-> 		}
-> 
-> This suggests developers are already wanting this functionality but
-> implementing it manually.
+This patch series adds support for the Analog Devices ADE9000, a highly
+accurate, fully integrated, multiphase energy and power quality monitoring
+device. The ADE9000 is capable of measuring energy consumption and power
+quality parameters in industrial and commercial applications.
 
-Great, then add it here and fix up drivers/i2c/i2c-core-slave.c to use
-it!
+The series includes:
 
-thanks,
+1. New IIO modifiers for power and energy measurement devices, including
+   support for active/reactive/apparent power, RMS masurements.
 
-greg k-h
+2. Device tree bindings for the ADE9000, supporting waveform buffer
+   configuration, phase configuration, and trigger settings.
+
+3. Complete driver implementation supporting:
+   - Multi-phase energy measurement (3-phase support)
+   - Power quality monitoring (voltage swell/dip detection)
+   - Waveform buffer capture with configurable triggering
+   - Energy accumulation with configurable time windows
+   - IIO buffer interface for continuous data streaming
+   - Event-based notifications for power quality events
+
+The driver provides a comprehensive interface for energy monitoring
+applications through the IIO framework, enabling userspace applications
+to monitor power consumption, quality, and waveform data.
+
+The driver will be extended in the future to support multiple parts such as
+ade9039.
+
+Antoniu Miclaus (6):
+  iio: add IIO_ALTCURRENT channel type
+  iio: add power and energy measurement modifiers
+  dt-bindings: iio: adc: add ade9000
+  iio: adc: add ade9000 support
+  docs: iio: add documentation for ade9000 driver
+  Documentation: ABI: iio: add sinc4+lp
+
+ Documentation/ABI/testing/sysfs-bus-iio       |   30 +
+ .../bindings/iio/adc/adi,ade9000.yaml         |   99 +
+ Documentation/iio/ade9000.rst                 |  292 +++
+ Documentation/iio/index.rst                   |    1 +
+ drivers/iio/adc/Kconfig                       |   19 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/ade9000.c                     | 1845 +++++++++++++++++
+ drivers/iio/industrialio-core.c               |    6 +
+ include/linux/iio/types.h                     |    1 +
+ include/uapi/linux/iio/types.h                |    5 +
+ tools/iio/iio_event_monitor.c                 |    2 +
+ 11 files changed, 2301 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+ create mode 100644 Documentation/iio/ade9000.rst
+ create mode 100644 drivers/iio/adc/ade9000.c
+
+-- 
+2.43.0
+
 
