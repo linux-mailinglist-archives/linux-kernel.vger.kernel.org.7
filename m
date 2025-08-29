@@ -1,528 +1,157 @@
-Return-Path: <linux-kernel+bounces-792255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444AFB3C1E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45096B3C1E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2763C1CC5114
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F5AA6646E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4210635A2BF;
-	Fri, 29 Aug 2025 17:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620DD32039E;
+	Fri, 29 Aug 2025 17:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iI13Q4oS"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EYFPPjAv"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F084E35A29C;
-	Fri, 29 Aug 2025 17:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756488833; cv=fail; b=bHaQmzrU6hw01iN6+8elPYShIESJ3u2sfMld+A8EzvFcIRw2PAHexKCo6nr6uhA4Q+JTocNkFz9grvlWaPsrZLBfVSps0rL6LtnWkLuH85Egrk2Ge74DW/KCwbllT/1c+UWrNuSIrAipUIqMNVnPAuvgjyVb5N53EFRHu7u9uT0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756488833; c=relaxed/simple;
-	bh=+GDEcr7UmqC46iHafuWMHGSSzIjmdgCFBwXQ9MetGpo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DqZzas8erRERJw0RO06jZXIvrJ/PWyX+ZA2oUJlT9fill3Z5U15V+JKhZElG6/talG/Et7knqzVPGNVIKDYvF/s+5ZJFFYuLkK7gu5DGoCAUKElgEiesRxMieifDc2OmHhUaPLtRIYDUa9QlOJUq25sMa584iF7W6QvzHvqzsoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iI13Q4oS; arc=fail smtp.client-ip=40.107.93.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yfupw2Jlcm5DpJqaq6C2qr+BbGt45QzdbheJQdFec4JtXvIOr19iRl06Hod72pjNsVeWNTcZ6EN8sHps12WBKFhT2EeWNBVLAYA7ekxMsAcU/JRTAf/DWtUVuVB3snwUWLiVJtacgndqC7KoTf5k94IF21+Evpyvfx8T68+SqdI8+cHNjN7MKX9NJ72NuFOWcuzvd8dmnT3nBg3h56XECC7qNSHtJhHuKUp65E+2b+0Zmk40/J6vOQ5L9y/eQLIq4yzHhzR2Rc3aZLDXvCVv/uFCQsz5XSrhnpcK91P4cfd23JMW5W140vp9mDWhd+8zhV6nBRB9fJuIDV+HXPAwPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HEFFhT6Hxx7Cc5LJLMQchHtszeKz53e2TSuaTIh/VNg=;
- b=K5BT8Mn8sTNeQz5mqEkTyYPRiusBxS6I4hxK4Ixiu8Mu1Wj3koScPvToFcVHej3Sem0en2PnXPj5/48rqS1zW7bLCOJ6g0ExYN2itDGnmbAwmgb/FLOC7Id4jN6/LCGiYKPBf9zt8cG3uF1LsaD5v/u/l3F7EQNuS9Jhy6C5mkHBzBnjKRon7cCC91dbuEyDZ0s7/v9JFLT+pCLzdDepYRj3kBwIWo0zJpkGjmjteb5a8qHK3poZbezCwMoeLUSPKFV/Zw9Jm8P35Pan0JhT8d01vEn2DP8LPP6UzmGyUbOz71WkP896NCiWYxbWHG/cYxIL1yRW5XLk7o7F4Y/GIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HEFFhT6Hxx7Cc5LJLMQchHtszeKz53e2TSuaTIh/VNg=;
- b=iI13Q4oSjSM+0RuEc7s8ONnjXApOItVBTKKz6fmnNspcIlgbn/xzXSSQbRYbfYiZ6CkgA+NFzW8I6QUAhrT0bvTNAN9NmRml+Aj9oLXbn6IYlc0XsV7TAr1z6QKigVkgHDnfG+pSjV42dqQ7XGKCRCBm/N+nHJy55DJKFAyHjI4O82DxtYE832+wnNG0brGgoQHaioJ8I046OmNldF8/qbHzJ8UYy0VGcDQOIjIWCephTlUCd4UP9V7fHAM3mbcDLNWkmFJMWsWn4b0edmBD3l3tQMGzl3i1aNGN3tLNHoy08lSLLoxKzDl6WsrIgxvZBEsPumniTAhzxpJKl0lTFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CH2PR12MB4069.namprd12.prod.outlook.com (2603:10b6:610:ac::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Fri, 29 Aug
- 2025 17:33:40 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9052.017; Fri, 29 Aug 2025
- 17:33:40 +0000
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH 17/17] gpu: nova-core: Add get_gsp_info() command
-Date: Fri, 29 Aug 2025 13:32:54 -0400
-Message-Id: <20250829173254.2068763-18-joelagnelf@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250829173254.2068763-1-joelagnelf@nvidia.com>
-References: <20250829173254.2068763-1-joelagnelf@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR22CA0018.namprd22.prod.outlook.com
- (2603:10b6:208:238::23) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DC1343D70
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756488841; cv=none; b=EDLL2c59MJY1wF0tibuQi0c7hK8ZperzsaevdNglchjUxZtM35ftaJghEZPw+umyAOWkwPCovwX4TyifeunOlBnmf5B89DrHfTiQGLA9sL0xmCaQfA3lLfT9+PUwndQMbHuLcj/69NHlWxSShQsVa7sP9uzoCNQ1N4av8qKgbGQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756488841; c=relaxed/simple;
+	bh=0Iwk8kojSYVfnDLAmzrwi9KHqF0f7PplXnNwNjdrHA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OYmpEPvOKhO7EjXVbsBp5PHZvC47+dsnrOj8S8E0uVviBvzo44s1dk3iSVIt34clqXKWAqSCIt0ScK2dBxSU9Mpppg9H8DYnqITIe+r2Ebk+napYjHN7Eq24S56SXfx6Nz3SNe+ERWIuT7RQAW4/gixbPVPCl6E0rMTJFk37HSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EYFPPjAv; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61ce4c32a36so3312849a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1756488838; x=1757093638; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/JzHs6USaZca2JuAKnnFeoU743SczkPKj5+4UqlxGdQ=;
+        b=EYFPPjAv8HPt6SOLB83d88n2ATVYt6h1hA+eZ/4c0lKj/90V8GPjl3gyrkUbAt0g6J
+         H5QYjTSEbSW5kePswh+TJqZw2DpWHEpr5Qdq/QizV+QeWYVj3d46ilBLXnvAVrLnk/aw
+         8NEPsAbx3MQ+OkyTvteWHw3h17IlzfczD+Krk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756488838; x=1757093638;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/JzHs6USaZca2JuAKnnFeoU743SczkPKj5+4UqlxGdQ=;
+        b=d21mPZxj2W6WgsrtwMeJBKcjH2NaUgGgk8rBHj6KtkCrov4KZ32hIPrQA5Rp4i6iUR
+         t9P7D0tHrONCe4d73naYQDIkyZHcMOdiCrLIiAi7TF4zE3Zp+rsjVRxAjGcJCZH+tZuH
+         /X5HVE3v26mVblLT3WPZyj+ymtLlPqDvwWydb5UYNEZidIskgjxebfReem0KcvM8Un8m
+         w1dRy/Y9JZYX+nT3LUB2K3jn/Qv1/FyHZKy+YkoPDyWWsyTOc+ZIacWXD12M8q1cfGpn
+         5E7RBJDr+sL+73SLUlmgSmOdw7oHrxGGGXnUIyFEuIb7ZUzVyKmZVAMdPXfSBGjCnoBg
+         AtSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUb+Ak/eMYL8uRrCGcF0+aQRQE9BH1Ma+GxQYl4Io0nX+e4fCc3r8yuLIgqhU1f5WtmBKhRGHfKSyAooMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwylBWWZbrjwFvRuH9VhQmnunRP4AqzJxTion3/bzposwMEISBC
+	JRYgHrPaRvnPUXYoLiad2s575c3Eh0HUmlRy40Ps3tdIX2ou1jSsTzYm96bNIX2x6s480Pgee+A
+	H2DQhJC/8TQ==
+X-Gm-Gg: ASbGncsHE9hjWKcayRbXG0QYIc8baMEma4X/pCB1/yGtiUFyXLfAjOrX8MvyXNl83Hz
+	vD6GLuL/s+v5TCb6ITj1B8Fz6hnkfxDk25bCNOyhu14Syqf3sdMD08WXfd45Y7vU8mpkZDxiRAN
+	0+fscm+OYDM5hZIFVh1bGLjWxMmTqMLz3QOPKzKKWgmaby+7Z4hOr1TPWVWo2eeELF3CLyrDu75
+	+pHDXcZfr/OC7ABeR7mYTJJat0WvE5TTYf5LXA2spTbGspOFiJdXxh82J4i6ckxjQgobmoYrA2S
+	Fkw2EiHSEjs5HNY4Gld/B4sL4tCpntCxJ2SjpKfhXxSe0t4aT7sRo7fNXdDVxhs7lAVyEVQKU6a
+	U9Tuez3TbaSLuwoWgpB5Pgnp9+KpEjCEd0E1CksXIWd/lsv+4WthNqLZwaYRQXN++t5abFaygDn
+	vhcpzK91Y=
+X-Google-Smtp-Source: AGHT+IFfrgcfhe/CVFNOi1TWq9WazO77sN1Wi2q3lynLWEjtAThYGa5mPKZC4Rs6moUsy2Z52+A35Q==
+X-Received: by 2002:a05:6402:358a:b0:61c:6ca1:1a89 with SMTP id 4fb4d7f45d1cf-61c6ca1245emr14635212a12.5.1756488837711;
+        Fri, 29 Aug 2025 10:33:57 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7dfesm2092945a12.7.2025.08.29.10.33.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 10:33:56 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae31caso442699066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:33:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSKhPTudAndBe/93RUFNf4FIuMlikvMnTQXl270hZ+CGAwmTDw7YJ0oQhxVFCCsK1tCh+BhVj5zcsOO94=@vger.kernel.org
+X-Received: by 2002:a17:907:7286:b0:afe:d24f:fd70 with SMTP id
+ a640c23a62f3a-afed2500115mr854960366b.43.1756488835450; Fri, 29 Aug 2025
+ 10:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH2PR12MB4069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 670ef624-515f-4dc5-c1de-08dde722316b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2Q8MmWGaTHwDmLspjDy5dPH5ZL9eycCWj31yi6pDdPK+JDSKcYuThv5NlS1g?=
- =?us-ascii?Q?4rJ5Xthu9fxu2NyNhVoCCVE0rkdwKLBBLAo1EWiGwiBkcJRH+VilGBYrW1/k?=
- =?us-ascii?Q?iGi48EGT+YjF5kCh+xstyaX2gXXBsQr7FmChoYoXd7oymyVvWBYXuMX7a+5U?=
- =?us-ascii?Q?tqWupmZ85sy6z3RRl9fqc51PZD6q7sz0VKHcV58Ypw1E8rzv4wY29xC3vofs?=
- =?us-ascii?Q?YlyrcNJLfAJ4Lgc500y416kP0Ap8yS7/ZY17uLUxLwsz5S7juZLFrphqobkX?=
- =?us-ascii?Q?ggoabWoOM9mi2AbIRvioCtTFyH3pgtIlF3n7f93o/+s9mtoDS3LhirbdjvQc?=
- =?us-ascii?Q?EtjGEpdX/bsgJvXB73SOdpRkLX0fAqUXyZBl45vivqcxBxhlHFItOUmIkROA?=
- =?us-ascii?Q?5uR+E2SvM74DDXRHNhSjZvTNzi1KzPqdNZC4gRyKbF6LeukkeN+Owst8MK/h?=
- =?us-ascii?Q?PShmMVc62bjNwMdrqisAOIIQyneye2NQTV8eC7frCdYiohySRMJhnEbsmu0R?=
- =?us-ascii?Q?BiAjjc0F2+qjDE/FONmx0e2wj+9jWZVO6VpAvZdHjKQgBEczDUpRBGRHpajW?=
- =?us-ascii?Q?NXmWCiaEQyOuL+xvf0AumPkBr+vTNjv0ANujBgIJnWSsfs1XIrl/U2ur0Ewp?=
- =?us-ascii?Q?NzDPTrJoceAPqb/L1zYdrxOFiZr5B0XD0ISBk70C7p3GkCcvHG47qGFRGjuk?=
- =?us-ascii?Q?joNPLy6Xn03EWiQF8zP/U4sRbpEGXOH8BnayDIXNdWMhkvhXq6pQ+vUSI1Y4?=
- =?us-ascii?Q?nW9EbYb5Np0SWxYXVC8g9e7tlyt+2UFd1jh/f456/CsbcDMxvLyUVBx/6adb?=
- =?us-ascii?Q?yhQVaxr7B/6SgZcE46rMq3iBswtIn5/jFu6UzlbsgI3HCMfNKDWHv8+r6zao?=
- =?us-ascii?Q?3P1KEr+/8WZORW6w+qBR5j4ft6NnHKKZ0lUy0vmRmh+PdgTwmJnb+nuhp+EY?=
- =?us-ascii?Q?Uy1ZmBwhT+NDOateIFBihiEUD/Av1d+Fjf3IuOOE3LQFHltA3xypEg5GnKn1?=
- =?us-ascii?Q?Y0lZHeAcNGYi73/rrPA/YfNrxL/MQ3L6CgNRjFD4cqyoLe/ZQLFKsAie5QJY?=
- =?us-ascii?Q?XDLXwdMEw01mrMjFgn8oxuBibvFx/g4ZtBUD7Ki3qlaffSE6v9857WpWGCvp?=
- =?us-ascii?Q?G+w03iplCCsbtttpDir7uMt2zaxhfBTUp0HYX2F/rx3PabZhvFeKD8WomN9U?=
- =?us-ascii?Q?b4ST32rpkPoL40mFvIV7Thu4F5Vh5Ri8x6puKbtP9jvbTDnJZFi/LIpFZQnY?=
- =?us-ascii?Q?f14+/lkVjhXBr1Iyf1+Nv1x5VOtnaiUy1A/qc8piy07fAEJfNVY18IW9Akjk?=
- =?us-ascii?Q?7l3SHUEd169ZOAkRFR/BEXTlr+ETVJ3pvuneP8VcX7YH+1Kcs8E/LE9SamNj?=
- =?us-ascii?Q?ktZDIDYuo70UEDTDWFz91kaeBFMugaZbgtEg2rwr95CuaKtM4b+AH532o0gE?=
- =?us-ascii?Q?mm/tnYeIzyk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xvhUaJYRHWpBYFVgncVZF2qZ7LwPwsovxDgQOzJg84rSxAHdqcArmCCN/k22?=
- =?us-ascii?Q?eswE+eeJejN0c24Gt+eaGVuLrgxTih3lqM4gYNyOeTR0iA2cNJ8MWdOmIB5Y?=
- =?us-ascii?Q?fadTzgZVW7O+P8By95u4/JRmphc7uL7TWxXg+0dx12V317rrFYA0qf4pQY70?=
- =?us-ascii?Q?a/C39KxXiQ1BlqDTuWv2NJbM/hUdjW2yS+3dH44fRocMQqs0/E9uDAjxRUvB?=
- =?us-ascii?Q?0kk2BS20Uz1qMfqNQkRp5WBpd25xqJfjr8W69oBp54dGqpHvhFa4GjDgsnOl?=
- =?us-ascii?Q?7ODqjqjRJSsaBCt70vOqcHscsv8iCZwTMqU3MqivOt0zzRVwDNvdlX83q2vf?=
- =?us-ascii?Q?siH/TGeX58KB/XnRJMUWhQvdo4Xm+XhcbiGBg+lwoOd88pT39wjkrX4jHZd9?=
- =?us-ascii?Q?0zYmCrdlBtnQssxwGHqsqwD6wAwXNPGR2KKzN3Roiv+KERx5MMtUWV3FFCpV?=
- =?us-ascii?Q?xhH77y3sJbysl8e+2f4A3pRsOUn6TiAFkE90+W6jjyUqs9vke26ifaer7Bc/?=
- =?us-ascii?Q?mkdz4PJIMy5PrkKvaEKzVtu2MhCLBf8J+2czwbtqqGrMiHZLVJR5Wm2sPsuK?=
- =?us-ascii?Q?qe0DkdwYVuNznsx3FWrZR5vJlhngUtluvCkMlMjq859dIcizpJ5azyh7zQd2?=
- =?us-ascii?Q?DvMCk4uzxlMtQ1toIts71E8fESvc43ZEfpPoP8bvv36miGclImpfdhheHCzy?=
- =?us-ascii?Q?FW+T1TqrUyUk787DJi68OhiN066KuWI1UYvSXe0U/mY6CPC9yz5Ao5/q44aG?=
- =?us-ascii?Q?oFLFxuuM4/WNhuuacjKHTPhVFGIMEzDddtWdOxrPG5+IiVZHsNyg3r4921E0?=
- =?us-ascii?Q?IluXWLeI/uDVt229M0cjdIQypehSlSs2mcgwgkgRcHFnLMORf6VM2B8seqFa?=
- =?us-ascii?Q?uZLNl747uoWNYI3tdP3F9YLDyQujo3kTWa4TF9qiWlNEGkZSG9tLbWeVypuA?=
- =?us-ascii?Q?1gTsv0QnLxSamRExoYaexCSBiS9bfPtoKZ6OzD9qoDYwf0/L7L+wbarob+jj?=
- =?us-ascii?Q?jbSaXy9rbA2dejwL+ipP96wy/lR0Jfe9YwTUVMOAoTJcuLgX40m3OWTyblGI?=
- =?us-ascii?Q?53sc4RL+b4Uvg9wIGGINeMzOVigwTMLJh+z1aXkw5v856TaIjdJ54LCxdmhU?=
- =?us-ascii?Q?7ONREyJzQ6wMM9yqS2/Y5x+KKr6pcBW+bIhLRmy60n4wge+hP8yXO9bFV8FZ?=
- =?us-ascii?Q?olaxRYuVOFhoSO/0GMpbeG38K8tkRwB9HeLO1ZcRjKFlaxfkqmN34CLlBOWX?=
- =?us-ascii?Q?ndAJLN43n/5iZZJ+J8joXFDrcLpMMAKUZsjrpEz9klK8ef+FtZZoQtKjAp8h?=
- =?us-ascii?Q?D2ogMdkvY+/KKppKkDilKe7q3j8QmIV4w6eRdM8ZcJzgq+gfgVyqgmADpKtE?=
- =?us-ascii?Q?o6Dy7W0ilB2ye7kPeplZEEPfthiFN/0/zixij2EfvM7L/ZGTpuSNNXods+Eq?=
- =?us-ascii?Q?7UGGuEGUqH+EpCRbGDvWtFv38rmaNkcP4RBpUbJARtocU/wvKdPIW4wOufGX?=
- =?us-ascii?Q?0g2PPKbLRElaPedmexxJIbWFKuMouQPcGAJmmjTcRv38++/HSjnsf5g11VQG?=
- =?us-ascii?Q?N7e7AHR+/FqjbfhzaCLiO+OHGe+7sN50Cjt/6zVc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 670ef624-515f-4dc5-c1de-08dde722316b
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 17:33:40.2423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lg8hd6mALXzVLRkNw3puiYjNfJxcxT+TsExflRKb3X9OusL895D0tvaRaEcLulIHKq2IzLHxyDezHuomnikRqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4069
+References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org>
+ <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+ <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+ <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+ <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+ <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+ <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+ <20250829121900.0e79673c@gandalf.local.home> <CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
+ <20250829124922.6826cfe6@gandalf.local.home> <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+ <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+In-Reply-To: <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 29 Aug 2025 10:33:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy9v9IJY2LXrpDvJU9dj4Mt87wFmaIDhMj9zyTfDwA5B4n7cidgQycVydY
+Message-ID: <CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Steven Rostedt <rostedt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, 
+	Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Alistair Popple <apopple@nvidia.com>
+On Fri, 29 Aug 2025 at 10:18, Arnaldo Carvalho de Melo
+<arnaldo.melo@gmail.com> wrote:
+>
+> As long as we don't lose those mmap events due to memory pressure/lost
+> events and we have timestamps to order it all before lookups, yeah
+> should work.
 
-Introduce the get_gsp_info() command. This is a basic command which is
-sent to the GSP to get some information about the GPU. In particular
-it gets the model number of the GPU which is printed to the kernel log.
-This proves that the GSP is fully initialised and that the command queue
-is functional.
+The main reason to lose mmap events that I can see is that you start
+tracing in the middle of running something (for example, tracing
+systemd or some other "started at boot" thing).
 
-It also serves to demonstrate how interactions and data from the GSP
-will be handled. GSP specific data structures will not be used outside
-of the GSP command parsing layer. Instead data will be converted to
-Nova specific structures (in this case the GspStaticConfigInfo struct)
-for consumption by the rest of the driver. This ensures the rest of the
-driver is isolated from any changes that may occur to GSP interaction.
+Then you'd not have any record of an actual mmap at all because it
+happened before you started tracing, even if there is no memory
+pressure or other thing going on.
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
----
- drivers/gpu/nova-core/gpu.rs                  |   8 +-
- drivers/gpu/nova-core/gsp/commands.rs         |  49 ++++++
- drivers/gpu/nova-core/nvfw.rs                 |   2 +
- .../gpu/nova-core/nvfw/r570_144_bindings.rs   | 163 ++++++++++++++++++
- drivers/gpu/nova-core/util.rs                 |  15 ++
- 5 files changed, 236 insertions(+), 1 deletion(-)
+That is not necessarily a show-stopper: you could have some fairly
+simple count for "how many times have I seen this hash", and add a
+"mmap reminder" event (which would just be the exact same thing as the
+regular mmap event).
 
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index 023bafc85f58..7aeecdb0dd28 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -10,7 +10,7 @@
- use crate::firmware::{Firmware, FIRMWARE_VERSION};
- use crate::gfw;
- use crate::gsp;
--use crate::gsp::commands::gsp_init_done;
-+use crate::gsp::commands::{get_gsp_info, gsp_init_done};
- use crate::regs;
- use crate::util;
- use crate::vbios::Vbios;
-@@ -377,6 +377,12 @@ pub(crate) fn new(
-         )?;
- 
-         gsp_init_done(&mut libos.cmdq, Delta::from_secs(10))?;
-+        let info = get_gsp_info(&mut libos.cmdq, bar)?;
-+        dev_info!(
-+            pdev.as_ref(),
-+            "GPU name: {}\n",
-+            util::str_from_null_terminated(&info.gpu_name)
-+        );
- 
-         Ok(pin_init!(Self {
-             spec,
-diff --git a/drivers/gpu/nova-core/gsp/commands.rs b/drivers/gpu/nova-core/gsp/commands.rs
-index 9f858aedf853..3491f8edef0a 100644
---- a/drivers/gpu/nova-core/gsp/commands.rs
-+++ b/drivers/gpu/nova-core/gsp/commands.rs
-@@ -19,6 +19,8 @@
-     NV_VGPU_MSG_EVENT_GSP_INIT_DONE,
-     NV_VGPU_MSG_FUNCTION_SET_REGISTRY,
-     NV_VGPU_MSG_FUNCTION_GSP_SET_SYSTEM_INFO,
-+    NV_VGPU_MSG_FUNCTION_GET_GSP_STATIC_INFO,
-+    GspStaticConfigInfo_t,
-     GspSystemInfo,
-     PACKED_REGISTRY_TABLE,
-     PACKED_REGISTRY_ENTRY,
-@@ -34,6 +36,12 @@ unsafe impl AsBytes for GspSystemInfo {}
- //         that is not a problem because they are not used outside the kernel.
- unsafe impl FromBytes for GspSystemInfo {}
- 
-+unsafe impl FromBytes for GspStaticConfigInfo_t {}
-+
-+pub(crate) struct GspStaticConfigInfo {
-+    pub gpu_name: [u8; 40],
-+}
-+
- struct GspInitDone {}
- impl GspMessageFromGsp for GspInitDone {
-     const FUNCTION: u32 = NV_VGPU_MSG_EVENT_GSP_INIT_DONE;
-@@ -62,6 +70,47 @@ pub(crate) fn gsp_init_done(cmdq: &mut GspCmdq, timeout: Delta) -> Result {
-     }
- }
- 
-+impl GspMessageFromGsp for GspStaticConfigInfo_t {
-+    const FUNCTION: u32 = NV_VGPU_MSG_FUNCTION_GET_GSP_STATIC_INFO;
-+}
-+
-+impl GspCommandToGsp for GspStaticConfigInfo_t {
-+    const FUNCTION: u32 = NV_VGPU_MSG_FUNCTION_GET_GSP_STATIC_INFO;
-+}
-+
-+pub(crate) fn get_gsp_info(cmdq: &mut GspCmdq, bar: &Bar0) -> Result<GspStaticConfigInfo> {
-+    let mut msg = cmdq.alloc_gsp_queue_command(size_of::<GspStaticConfigInfo_t>())?;
-+    msg.try_as::<GspStaticConfigInfo_t>();
-+    msg.send_to_gsp(bar)?;
-+    cmdq.wait_for_msg_from_gsp(Delta::from_secs(5))?;
-+    let msg = cmdq.receive_msg_from_gsp()?;
-+    let info = msg.try_as::<GspStaticConfigInfo_t>().map(|(x, _)| x)?;
-+
-+    let gpu_name_str = info
-+        .gpuNameString
-+        .get(
-+            0..=info
-+                .gpuNameString
-+                .iter()
-+                .position(|&b| b == 0)
-+                .unwrap_or(info.gpuNameString.len() - 1),
-+        )
-+        .and_then(|bytes| CStr::from_bytes_with_nul(bytes).ok())
-+        .and_then(|cstr| cstr.to_str().ok())
-+        .unwrap_or("invalid utf8");
-+
-+    let mut gpu_name = [0u8; 40];
-+    let bytes = gpu_name_str.as_bytes();
-+    let copy_len = core::cmp::min(bytes.len(), gpu_name.len());
-+    gpu_name[..copy_len].copy_from_slice(&bytes[..copy_len]);
-+    gpu_name[copy_len] = b'\0';
-+
-+    let config_info = GspStaticConfigInfo { gpu_name };
-+
-+    msg.ack()?;
-+    Ok(config_info)
-+}
-+
- const GSP_REGISTRY_NUM_ENTRIES: usize = 2;
- struct RegistryEntry {
-     key: &'static str,
-diff --git a/drivers/gpu/nova-core/nvfw.rs b/drivers/gpu/nova-core/nvfw.rs
-index 39e5f3d5b432..d51a697e6c27 100644
---- a/drivers/gpu/nova-core/nvfw.rs
-+++ b/drivers/gpu/nova-core/nvfw.rs
-@@ -43,6 +43,8 @@ pub(crate) struct LibosParams {
- 
- pub(crate) use r570_144::{
-     rpc_run_cpu_sequencer_v17_00,
-+    GspStaticConfigInfo_t,
-+
-     // Core GSP structures
-     GspSystemInfo,
- 
-diff --git a/drivers/gpu/nova-core/nvfw/r570_144_bindings.rs b/drivers/gpu/nova-core/nvfw/r570_144_bindings.rs
-index 607d99ac2221..4aaa381749ae 100644
---- a/drivers/gpu/nova-core/nvfw/r570_144_bindings.rs
-+++ b/drivers/gpu/nova-core/nvfw/r570_144_bindings.rs
-@@ -320,6 +320,77 @@ fn fmt(&self, fmt: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
- pub type _bindgen_ty_3 = ffi::c_uint;
- #[repr(C)]
- #[derive(Debug, Default, Copy, Clone)]
-+pub struct NV0080_CTRL_GPU_GET_SRIOV_CAPS_PARAMS {
-+    pub totalVFs: u32_,
-+    pub firstVfOffset: u32_,
-+    pub vfFeatureMask: u32_,
-+    pub FirstVFBar0Address: u64_,
-+    pub FirstVFBar1Address: u64_,
-+    pub FirstVFBar2Address: u64_,
-+    pub bar0Size: u64_,
-+    pub bar1Size: u64_,
-+    pub bar2Size: u64_,
-+    pub b64bitBar0: u8_,
-+    pub b64bitBar1: u8_,
-+    pub b64bitBar2: u8_,
-+    pub bSriovEnabled: u8_,
-+    pub bSriovHeavyEnabled: u8_,
-+    pub bEmulateVFBar0TlbInvalidationRegister: u8_,
-+    pub bClientRmAllocatedCtxBuffer: u8_,
-+    pub bNonPowerOf2ChannelCountSupported: u8_,
-+    pub bVfResizableBAR1Supported: u8_,
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
-+pub struct NV2080_CTRL_BIOS_GET_SKU_INFO_PARAMS {
-+    pub BoardID: u32_,
-+    pub chipSKU: [ffi::c_char; 9usize],
-+    pub chipSKUMod: [ffi::c_char; 5usize],
-+    pub skuConfigVersion: u32_,
-+    pub project: [ffi::c_char; 5usize],
-+    pub projectSKU: [ffi::c_char; 5usize],
-+    pub CDP: [ffi::c_char; 6usize],
-+    pub projectSKUMod: [ffi::c_char; 2usize],
-+    pub businessCycle: u32_,
-+}
-+pub type NV2080_CTRL_CMD_FB_GET_FB_REGION_SURFACE_MEM_TYPE_FLAG = [u8_; 17usize];
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
-+pub struct NV2080_CTRL_CMD_FB_GET_FB_REGION_FB_REGION_INFO {
-+    pub base: u64_,
-+    pub limit: u64_,
-+    pub reserved: u64_,
-+    pub performance: u32_,
-+    pub supportCompressed: u8_,
-+    pub supportISO: u8_,
-+    pub bProtected: u8_,
-+    pub blackList: NV2080_CTRL_CMD_FB_GET_FB_REGION_SURFACE_MEM_TYPE_FLAG,
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
-+pub struct NV2080_CTRL_CMD_FB_GET_FB_REGION_INFO_PARAMS {
-+    pub numFBRegions: u32_,
-+    pub fbRegion: [NV2080_CTRL_CMD_FB_GET_FB_REGION_FB_REGION_INFO; 16usize],
-+}
-+#[repr(C)]
-+#[derive(Debug, Copy, Clone)]
-+pub struct NV2080_CTRL_GPU_GET_GID_INFO_PARAMS {
-+    pub index: u32_,
-+    pub flags: u32_,
-+    pub length: u32_,
-+    pub data: [u8_; 256usize],
-+}
-+impl Default for NV2080_CTRL_GPU_GET_GID_INFO_PARAMS {
-+    fn default() -> Self {
-+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-+        unsafe {
-+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-+            s.assume_init()
-+        }
-+    }
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
- pub struct DOD_METHOD_DATA {
-     pub status: u32_,
-     pub acpiIdListLen: u32_,
-@@ -367,6 +438,19 @@ pub struct ACPI_METHOD_DATA {
- }
- #[repr(C)]
- #[derive(Debug, Default, Copy, Clone)]
-+pub struct VIRTUAL_DISPLAY_GET_MAX_RESOLUTION_PARAMS {
-+    pub headIndex: u32_,
-+    pub maxHResolution: u32_,
-+    pub maxVResolution: u32_,
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
-+pub struct VIRTUAL_DISPLAY_GET_NUM_HEADS_PARAMS {
-+    pub numHeads: u32_,
-+    pub maxNumHeads: u32_,
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
- pub struct BUSINFO {
-     pub deviceID: u16_,
-     pub vendorID: u16_,
-@@ -395,6 +479,85 @@ pub struct GSP_PCIE_CONFIG_REG {
- }
- #[repr(C)]
- #[derive(Debug, Default, Copy, Clone)]
-+pub struct EcidManufacturingInfo {
-+    pub ecidLow: u32_,
-+    pub ecidHigh: u32_,
-+    pub ecidExtended: u32_,
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
-+pub struct FW_WPR_LAYOUT_OFFSET {
-+    pub nonWprHeapOffset: u64_,
-+    pub frtsOffset: u64_,
-+}
-+#[repr(C)]
-+#[derive(Debug, Copy, Clone)]
-+pub struct GspStaticConfigInfo_t {
-+    pub grCapsBits: [u8_; 23usize],
-+    pub gidInfo: NV2080_CTRL_GPU_GET_GID_INFO_PARAMS,
-+    pub SKUInfo: NV2080_CTRL_BIOS_GET_SKU_INFO_PARAMS,
-+    pub fbRegionInfoParams: NV2080_CTRL_CMD_FB_GET_FB_REGION_INFO_PARAMS,
-+    pub sriovCaps: NV0080_CTRL_GPU_GET_SRIOV_CAPS_PARAMS,
-+    pub sriovMaxGfid: u32_,
-+    pub engineCaps: [u32_; 3usize],
-+    pub poisonFuseEnabled: u8_,
-+    pub fb_length: u64_,
-+    pub fbio_mask: u64_,
-+    pub fb_bus_width: u32_,
-+    pub fb_ram_type: u32_,
-+    pub fbp_mask: u64_,
-+    pub l2_cache_size: u32_,
-+    pub gpuNameString: [u8_; 64usize],
-+    pub gpuShortNameString: [u8_; 64usize],
-+    pub gpuNameString_Unicode: [u16_; 64usize],
-+    pub bGpuInternalSku: u8_,
-+    pub bIsQuadroGeneric: u8_,
-+    pub bIsQuadroAd: u8_,
-+    pub bIsNvidiaNvs: u8_,
-+    pub bIsVgx: u8_,
-+    pub bGeforceSmb: u8_,
-+    pub bIsTitan: u8_,
-+    pub bIsTesla: u8_,
-+    pub bIsMobile: u8_,
-+    pub bIsGc6Rtd3Allowed: u8_,
-+    pub bIsGc8Rtd3Allowed: u8_,
-+    pub bIsGcOffRtd3Allowed: u8_,
-+    pub bIsGcoffLegacyAllowed: u8_,
-+    pub bIsMigSupported: u8_,
-+    pub RTD3GC6TotalBoardPower: u16_,
-+    pub RTD3GC6PerstDelay: u16_,
-+    pub bar1PdeBase: u64_,
-+    pub bar2PdeBase: u64_,
-+    pub bVbiosValid: u8_,
-+    pub vbiosSubVendor: u32_,
-+    pub vbiosSubDevice: u32_,
-+    pub bPageRetirementSupported: u8_,
-+    pub bSplitVasBetweenServerClientRm: u8_,
-+    pub bClRootportNeedsNosnoopWAR: u8_,
-+    pub displaylessMaxHeads: VIRTUAL_DISPLAY_GET_NUM_HEADS_PARAMS,
-+    pub displaylessMaxResolution: VIRTUAL_DISPLAY_GET_MAX_RESOLUTION_PARAMS,
-+    pub displaylessMaxPixels: u64_,
-+    pub hInternalClient: u32_,
-+    pub hInternalDevice: u32_,
-+    pub hInternalSubdevice: u32_,
-+    pub bSelfHostedMode: u8_,
-+    pub bAtsSupported: u8_,
-+    pub bIsGpuUefi: u8_,
-+    pub bIsEfiInit: u8_,
-+    pub ecidInfo: [EcidManufacturingInfo; 2usize],
-+    pub fwWprLayoutOffset: FW_WPR_LAYOUT_OFFSET,
-+}
-+impl Default for GspStaticConfigInfo_t {
-+    fn default() -> Self {
-+        let mut s = ::core::mem::MaybeUninit::<Self>::uninit();
-+        unsafe {
-+            ::core::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-+            s.assume_init()
-+        }
-+    }
-+}
-+#[repr(C)]
-+#[derive(Debug, Default, Copy, Clone)]
- pub struct GspSystemInfo {
-     pub gpuPhysAddr: u64_,
-     pub gpuPhysFbAddr: u64_,
-diff --git a/drivers/gpu/nova-core/util.rs b/drivers/gpu/nova-core/util.rs
-index 76cedf3710d7..1709a5d50e54 100644
---- a/drivers/gpu/nova-core/util.rs
-+++ b/drivers/gpu/nova-core/util.rs
-@@ -45,3 +45,18 @@ pub(crate) fn wait_on<R, F: Fn() -> Option<R>>(timeout: Delta, cond: F) -> Resul
-         }
-     }
- }
-+
-+/// Converts a null-terminated byte array to a string slice.
-+///
-+/// Returns "invalid" if the bytes are not valid UTF-8 or not null-terminated.
-+pub(crate) fn str_from_null_terminated(bytes: &[u8]) -> &str {
-+    use kernel::str::CStr;
-+
-+    // Find the first null byte, then create a slice that includes it
-+    bytes
-+        .iter()
-+        .position(|&b| b == 0)
-+        .and_then(|null_pos| CStr::from_bytes_with_nul(&bytes[..=null_pos]).ok())
-+        .and_then(|cstr| cstr.to_str().ok())
-+        .unwrap_or("invalid")
-+}
--- 
-2.34.1
+You do it for the first time you see it, and every N times afterwards
+(maybe by simply using a counter array that is indexed by the low bits
+of the hash, and incrementing it for every hash you see, and if it was
+zero modulo N you do that "mmap reminder" thing).
 
+Yes, at that point you'd need to do that whole "generate path and
+build ID", but if 'N' is a large enough number, it's pretty rare.
+Maybe using a 16-bit counter would be sufficient (ie N would naturally
+be 65536 when it becomes zero again).
+
+That might be a good thing regardless just to have some guaranteed
+limit of how far back in the trace you need to go to find the mmap
+information for some hash. If you have long traces, maybe you don't
+want to walk back billions of events.
+
+But I wouldn't suggest doing that as a *first* implementation. I'm
+just saying that it could be added if people find that it's a problem.
+
+            Linus
 
