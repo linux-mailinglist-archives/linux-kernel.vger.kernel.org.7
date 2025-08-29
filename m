@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-791607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A22EB3B914
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F662B3B918
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10111678EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0144564655
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F0309DC1;
-	Fri, 29 Aug 2025 10:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="kNYXc3+m"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789381DF256;
-	Fri, 29 Aug 2025 10:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832FD3093D2;
+	Fri, 29 Aug 2025 10:42:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A681F1DF256;
+	Fri, 29 Aug 2025 10:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464075; cv=none; b=fuXhY1ywoojzytQv67T6CWAGnRUI/tft42Pyn9ucmXC6bbKqfbOKT8wltUZzv5aoGxhp/0CPiaTLC46wVE45Y7T/vqr8v87x+hZPJImIeDzXYRQHMmaBYeOrznrLkQaP6UIjCtLdQ/AkN34ZUTBwZ5GigECjElJb5BOZ0yQ3FIE=
+	t=1756464140; cv=none; b=u3+aR8gZwU2TzJ9H5LdW39gftJAet+2ucZPESSOb/jqMUDae7d7y8Qjf/DjrX6JPU1izCTQV+V1chWVgNqDB4qyIgU4+5T4e1uPNQ7omnck28b5Kn5am6PEIrVIyD/MpVDSAinzcRK4FedeA+Loa3EKVWujJ7fm6iITBh8aEQ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464075; c=relaxed/simple;
-	bh=1hTOOzENGEYnDX5Oy4cUO6xHdtNNQ4p7iMjf5PpV0VI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cnbLWsLDiewYr8m54XExIw9ZCFfmlCVld8Dwc2IToBUDG/T+VNbK9XHGPoH69bAAFNJPuqNLxN+W3FNcctz9S/DAPdOXacQvbVkUkxtHF3wj1t8uBBS+39juWhiCbbu7XT/Jf1Ylf5Bsnou1SzymBhdqiFNLEKil95hfe8LWWPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=kNYXc3+m; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=PkjYlohcCmkWw+P2Wv+vzu/gEZtdSyAoIIMdkSw9rlU=; t=1756464071;
-	x=1757068871; b=kNYXc3+moy8gAzy+cGyYX9O1KsSqD2yBGvU2owPatR8SkqGf+6YBBxuaYuD/v
-	+PmrnRTmcjsalcAZJtQEQ8BAAN+sX/pz6aKEc2sWQJEWQtivKiIF9+Jztppwah2DgG0b7hMZBfQlr
-	f5mDdosCN9tTCSxKds3qzN7CduWZaBoORbP3K55jvWu3XiHd8eL8q4pOqPGe7IshICoqI8nW5jLJw
-	mmt4g+DAL01chYMyd8avgW6O7uB/blRbXkW8eCYC9gbcSzPfXnAqtVirUVAm40YxkI0OPYvmsRDpE
-	PLh5ds4l3Xhp0eIhytTfmWyTfkVAfuMvP4pmo6XjZdL2zLrdiQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1urwXV-00000000afS-0jvZ; Fri, 29 Aug 2025 12:41:01 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1urwXU-00000000ovK-3ljL; Fri, 29 Aug 2025 12:41:01 +0200
-Message-ID: <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-  Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
- <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,  Nagarathnam
- Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock
- <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,  Stephen Boyd
- <sboyd@kernel.org>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Date: Fri, 29 Aug 2025 12:40:59 +0200
-In-Reply-To: <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
-References: 
-	<20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
-	 <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
-	 <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
-	 <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
-	 <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
-	 <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
-	 <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756464140; c=relaxed/simple;
+	bh=aFdcT1yGvukedW5XAGEkcoVpZvRVh3oYvF7vpSbvAOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jiy7hgiNkykhlji6SVCpOfFhy8cOipSc8e2y+22XPjXGSvDdW/DKNGczK1p0ztmZBg2KuLaWpHXB1+b0Xf2xBEs1wSh3MMhtZ1/j0J5F5xR3aK4Ge0bI1KtZGdreJePcx0VDMJDFo23US2sKBmiDl4xhK5OeP6vHRj8nYgLNwjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAC301758;
+	Fri, 29 Aug 2025 03:42:09 -0700 (PDT)
+Received: from [10.57.2.173] (unknown [10.57.2.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F63F3F694;
+	Fri, 29 Aug 2025 03:42:16 -0700 (PDT)
+Message-ID: <57528c01-2a1c-4d70-b70c-ed4b64bd93fc@arm.com>
+Date: Fri, 29 Aug 2025 11:42:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/14] dmaengine: dma350: Check dma_cookie_status() ret
+ code and txstate
+To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250823154009.25992-1-jszhang@kernel.org>
+ <20250823154009.25992-5-jszhang@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250823154009.25992-5-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On 2025-08-23 4:39 pm, Jisheng Zhang wrote:
+> If dma_cookie_status() returns DMA_COMPLETE, we can return immediately.
+> 
+>  From another side, the txstate is an optional parameter used to get a
+> struct with auxilary transfer status information. When not provided
+> the call to device_tx_status() should return the status of the dma
+> cookie. Return the status of dma cookie when the txstate optional
+> parameter is not provided.
 
-On Fri, 2025-08-29 at 12:37 +0200, Thomas Wei=C3=9Fschuh wrote:
-> In the meantime I installed a full Debian, but the bug is still not
-> reproducible in QEMU.
+Again, the current code was definitely intentional - I think this was 
+down to the hardware error case, where for reasons I now can't remember 
+I still had to nominally complete the aborted descriptor from the IRQ 
+handler to avoid causing some worse problem, and hence we don't return 
+early without cross-checking dch->status here, because returning 
+DMA_COMPLETE when the descriptor hasn't done its job makes dmatest unhappy.
 
-Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
-Andreas was testing on sun4v (on Niagara 4). There might be differences.
+I did spend a *lot* of time exercising all the error cases, and trying 
+to get a sensible result across all of the different reporting APIs was 
+fiddly to say the least - there's a huge lack of consistency between 
+drivers in this regard, and this was just my attempt to be the 
+least-worst one :)
 
-Adrian
+Thanks,
+Robin.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>   drivers/dma/arm-dma350.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
+> index 96350d15ed85..17af9bb2a18f 100644
+> --- a/drivers/dma/arm-dma350.c
+> +++ b/drivers/dma/arm-dma350.c
+> @@ -377,6 +377,8 @@ static enum dma_status d350_tx_status(struct dma_chan *chan, dma_cookie_t cookie
+>   	u32 residue = 0;
+>   
+>   	status = dma_cookie_status(chan, cookie, state);
+> +	if (status == DMA_COMPLETE || !state)
+> +		return status;
+>   
+>   	spin_lock_irqsave(&dch->vc.lock, flags);
+>   	if (cookie == dch->cookie) {
+
 
