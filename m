@@ -1,499 +1,295 @@
-Return-Path: <linux-kernel+bounces-792494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEC9B3C4C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:24:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB96CB3C4CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AEFC58591A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2681B22A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8F62848A0;
-	Fri, 29 Aug 2025 22:24:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC3B25D533;
-	Fri, 29 Aug 2025 22:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756506286; cv=none; b=Ly1LGoMcTBRGvT+ASu9JobqfK/HVulU5ZPIY4PCw5zrfvshm8a7jkuJSZegpWWHtok69AruAima7g+ep82L9tElljj9g+FV/UATdjrO1TjUuZg7EHGi+xg8sUi/ZxHRLvDLAIJGuCSE412Sggz3Yj8Pv1I4XWpgFEoU/vm+C66c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756506286; c=relaxed/simple;
-	bh=CtqWO64lbYhAqyGMv/Ckajn9YwXPnH5ZErWLqeamKgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PM1dXDgTrOiyrRFJX19jKHNmL31VUSUe7oObcj0+oHbZcL5ILE4Vk1EHkiFVEUXPQah7pr+Yzxc4Sa8F6Ws/PlIw5rOLaQvYd6DfZGdPbQyhUEPJq40J/0Is7MRIfcW8LujZLVCZoMp0T/fMz68VixgbaMXrOFI1ILvOsgTN1jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53A191BA8;
-	Fri, 29 Aug 2025 15:24:33 -0700 (PDT)
-Received: from [10.57.3.75] (unknown [10.57.3.75])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC4E43F63F;
-	Fri, 29 Aug 2025 15:24:39 -0700 (PDT)
-Message-ID: <b2987edf-8e49-4b9f-93a5-45cbe08b975b@arm.com>
-Date: Fri, 29 Aug 2025 23:24:37 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E668527EFEB;
+	Fri, 29 Aug 2025 22:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="foPVQYTb"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2108.outbound.protection.outlook.com [40.107.243.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66932221F0A
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756506485; cv=fail; b=sjszOt1nJyJnasTm8D46xaajl5fRexWR6P4JZv8qTlhbNK0H18YCTeMHk7u82r8KuB37Up1tK6y+SvedensbKGIoiFbtboIDB0FN8rhpM8QbqJEkjCj42lFjd9GgdgAg2xacbpjBpyZ+P+o3vDGvOlXHy38Zh/JuUHnRk6krx9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756506485; c=relaxed/simple;
+	bh=pYee6HbShL0jcFcI1Do0bQhk5+PD8uw+Yt9uxtfms3E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NPpAqKu13D7jz8Yio7UE8B8cgA+DC9WfbFMoHc/D0k2yKxmB0h2MZcwSHGRR6XHZma3xDhvjwNF/3mff4EpG9PXioQYru7pWW6yy8wArVkpSGxLF9+vw+dde4u59B7wIpnoZh6ldVqT7EaF6wjyzjUp0aqm6q71jiIopH7YdC3M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=foPVQYTb; arc=fail smtp.client-ip=40.107.243.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DkuCczetYldykBUbmGXjCLAoxLyTdFwzjycSzAFwDP8IU++r1tzjTk7SVcaxIlhpVEAvLCcxpI47ACEmuer0ciKZwcxFVdlgEBVmqfeAA0AqU/3ljnOKF2pFC/u9WZqsthWfqu/cHaYB29FV/EKschdPCIKGQDFOITxlnn68YXr4201xb2viialrrH16dyV525Ov74AhF+SAWo2deVRJizWHmsaGxXBy1DOZjY7kS9fwT+Rrx/wHfpQ3BUZnTtHyy7JwNQniqMyuHyGyCcQZwnWeSxnAw0cQ/0W1KWDQAEjclKHwHsj2vMGfavaZKZoCEYQvqpIRK7UP9PRL9vfQsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DdDrmx8SjcdU27mxbbtR2h7FHJ6+kPdcuj86KqWHIII=;
+ b=iXjYBD6H0EQ03Ml7Ar90r6o8HMeM9hWM2NcpdjFDKVOmuum2TRnPoG7O+6IKzeaI8DXgwwoV/2zCylNX5Z2/3UXLvLtiZBxhwEyNE8PPaHq7LUKjKCXyYkD4wXXKT1vtTrCyhC1VpypgWciSFIxylCJMBLNkSkYptC7HrPc032wWZo0ubLovuGtgO3XwJRYvESnzA7l1gDvsO/vM6kKNqPL4z+TNEtdS/lODkjTxmdwL2Kgtm4yoYGGx401t37u46Vs1cOpRskVLMdD6HZYaeIreRFTNOPnKffRK79AFTBVP9w5MgG8arMPp6a2OC1wqifVL/003U/b8H73h6Xt4gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DdDrmx8SjcdU27mxbbtR2h7FHJ6+kPdcuj86KqWHIII=;
+ b=foPVQYTbPFeHyoqHyHqNUIluAqtfGm2PrIK6DGUvKr2uFKI3qG5nAWesj0B5ooPjyRarrMd1jZBam/ylH17wyD7VNzTbQSdiutVY9ZZUNAaqr51yoa4KRPG5htKqrR8bHQ+bswrRZAs37PDozGlCeurz/aM+4bhbxmC4K397XRg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ PH7PR01MB7630.prod.exchangelabs.com (2603:10b6:510:1d2::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.21; Fri, 29 Aug 2025 22:27:54 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.9073.021; Fri, 29 Aug 2025
+ 22:27:53 +0000
+Message-ID: <9d666caf-a799-4229-86b5-3a22a60fa79f@os.amperecomputing.com>
+Date: Fri, 29 Aug 2025 15:27:31 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 6/6] arm64: mm: Optimize linear_map_split_to_ptes()
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Dev Jain <dev.jain@arm.com>,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250829115250.2395585-1-ryan.roberts@arm.com>
+ <20250829115250.2395585-7-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <20250829115250.2395585-7-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0352.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::27) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/14] dmaengine: dma350: Support ARM DMA-250
-To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250823154009.25992-1-jszhang@kernel.org>
- <20250823154009.25992-15-jszhang@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250823154009.25992-15-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|PH7PR01MB7630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7936316b-f366-493a-c8fe-08dde74b40ff
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WElRMVY1Q3NGKzh3dk9NWSsvbUU1NWt6MURGV0VtTTViWk50eGZOSitLbWRY?=
+ =?utf-8?B?dWR4bEsySzFsNXBHbmhsbEZyUVFMdVlrb3ZwaXg1b2RINHdKNGRsQ01iZlh6?=
+ =?utf-8?B?SEZFMHJmb1dyc3h2R0R1ZEhTa2gzZHNIZ2NLNzF2YW16eTJMWkp6WldMaWE0?=
+ =?utf-8?B?T0Q2S1R2a0xhRW9NWTM0N2xsZDA1ODhmZHhnc2I4N1RaTkNZcko0dFN5eGdQ?=
+ =?utf-8?B?UkIzbksvNThhUHhNNWtBSy84L3dvbjA0bDk0MkxMVW5qdFdmWEJaZE0yVDFi?=
+ =?utf-8?B?SDNpR0J3WmhhZmtlbThyUXNZM3ljeWROQytKQjNXZm1HYWRPWlRxU3kzSTlZ?=
+ =?utf-8?B?RFYxMHZqWFphU3VPNThoVGJlQ2ZoZHlOQUJKTzFLR3FXaml2MmlYSHRkbVlx?=
+ =?utf-8?B?S3NUSGdyQ01yaUFFMkVNWWNBQlRjZG55ZzRuaWJVMmpvV2xTNUM3ajNuc2Nh?=
+ =?utf-8?B?bjlqQlc3eHVEMjdRMDF2SC96aEV1RnpiTUpXQ1U2Nk0vQ1BGRmJObHZGVW8z?=
+ =?utf-8?B?NkhXZDBiWnlYcGxFMGtSVDhHN1ZCNGkwWVg3WkhCeEQ5eGpFSmhIVVV0bU16?=
+ =?utf-8?B?NGdncU1OZzhqL0JnN1JsdndMWUlxZGdPUmJDb1AzWFR0dERCdG1vVEpHTHRv?=
+ =?utf-8?B?cVo2TEFjQlU5NE1WVG91cnlFTXFGYjlOVTY3MFhFM3VxUjRNWHVRWGRwSnVr?=
+ =?utf-8?B?NHpNUTYyRlF5MmtWWTUvNFNKbUN1dUZHV1ZuUEFvQkxPTVUzTTlhaGxVNVhK?=
+ =?utf-8?B?WTk0bXFzaXk3d0k5d1F4emdja3BuTWlYRWM4bVBvd0V3ZVFzbHk1TS93WUVL?=
+ =?utf-8?B?UngxQVJvZ1pOK1JSKzhacCs2K1dveVJDblR0YUJ0azdick9sMiswczZwM0JM?=
+ =?utf-8?B?ajFoVSt2VHRlS3UzTzNUNkZjQjNJWXl5cUYvcDVkaEJxdEw5eURCMjM2K0tm?=
+ =?utf-8?B?cDJJYUNIVHJiNkVkeGFJSUpzb01QT29FbzlOUGVqZmZZWXRYNUJnV3RKUVl0?=
+ =?utf-8?B?OEpJcUtSVVZ6WElzeHY0bUZGQVU0TjRmbWhNWko3TWYyQnpXN3A4c2UvOVMx?=
+ =?utf-8?B?NTR3K2xmeCtYNUMyTE8yZTlzT2IzLzlJank4WDg3NnlIM3NIWCtpOTcvd2ll?=
+ =?utf-8?B?UmU1cUZxVVhHOEQySFQ1MUx3UzkydUlic0E3VkgwMkRheGMyQnR1dTZjb2RC?=
+ =?utf-8?B?RXdYSUI2RHlyOHJBMnV3NGJ5dWE4NWdiYnRFb2YrV3NQRzFKTG1sdmo4K21D?=
+ =?utf-8?B?QkJZcDlOdU9wUXNBWmdMN20rR2Q2WVZkY2RLZjRtOWR2Z1BNaGFJekxzNk5P?=
+ =?utf-8?B?LzZmUnJQQkJDaGdRa0NrUVo2TXBGRTc0bzdtZlR5S3VrTVpHaFpIQjFIYTVl?=
+ =?utf-8?B?akVjeVpqUllERGRaRkRJRmdrbUlQemt6VnNWSStWUmIrRUlHRlhDVjV3eDIx?=
+ =?utf-8?B?cCtBeGZtaXo5b3p0WlhvT1lOL24rVEI4cUEydVYyU3dlWG5mb2gzMkp6eFVp?=
+ =?utf-8?B?eFUydnRPQVNGQmp4dGVkUlRpY3I5MlpQM0JJVHdrWmFYMS9VRGVCNHpvMFQ0?=
+ =?utf-8?B?NVFCRFhDV0JJaTZBbCtKSGpocTZuQU9CMEJzOUsxMVF3ZHpIK3Zja1dSbnlY?=
+ =?utf-8?B?Z1A3WlJkVnE1b0ZKU09uMXBDU3VGWWxkanI3YmxnZWVXSHUzdUZ2OG9kVmJz?=
+ =?utf-8?B?QTdXY0hneWhtV0laVjJGTkxabjYvMS8xdThqRnhwTlFycDFwWEFiRzZDaXFh?=
+ =?utf-8?B?ZDVQNFl4QUtZYTczUlM5Y0NQU1J4eTJqSE5TOVVNT2VYT0U2ZTZvTzBpREhs?=
+ =?utf-8?B?YlFxSWpIbWErcm9MTzJaK0hkVnloc0puL1UzaFJndEVUTWoyeDlLdEtRejBU?=
+ =?utf-8?B?OXFRQ0wrbE5wYnBRWUxGanQ5ZnVOZG01QnhSS1Y3cmVHSGVubzA3ODR5VEZ5?=
+ =?utf-8?B?cEkva0I2TkdKT0orSGdtaG5GaTJqTlVSUUt0MTFjTXlrcXQwTHh2dVhRMkJ1?=
+ =?utf-8?B?SVp1SE9HZjlRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dExFa25IbHZETmkvakx0K0RrUUpteVBING0vTnFiNm5RZnNOd2hYZmFWbkZK?=
+ =?utf-8?B?ZDRaKzh4ek1sclI2bXhUOG1tOXM3THBNRDIwclRQY1UzNnRqSldyU0dzSlN5?=
+ =?utf-8?B?TkZTOUt4VVAvYVBUY1o1NTdXaDV3N0RXenhYWkJ3Skg3MDNmSXFSNm1XaFB3?=
+ =?utf-8?B?ZUFpTnJ4TEdWWG55RnBuVzA3a3ltc0ZKL3Q4c3pYL0N5aElNYzV2UXdnR3NZ?=
+ =?utf-8?B?TlFtN3RGS01qYmVDc0ZNeU5RNzVZei91UEdldkJXRUhyU0lFb0ZxQ1BjbFo0?=
+ =?utf-8?B?bnMwRXNTcWptaW5hSHY2VHZpTlVtaWQ5S3BvQ0hYOW12b2hRdWdPc0dCd0h0?=
+ =?utf-8?B?ZWljOUFDZEhzcW5BU0JhcHJiTFZPczlvWXZxVlpEWXJtd2JHbHBTOUNDalBF?=
+ =?utf-8?B?OGZBNFA0a2IzMHNnTzUvRnVBbDZmYWEyem1IOTV3TWtKZnlVNVVPUGFPV1Fq?=
+ =?utf-8?B?RnBPQlJtSllybWNsMEpBZnFxNktYQkgrRjhSNUVRbTRvZEdITjcxVEhSWlRV?=
+ =?utf-8?B?UERlUTNWdk5sakYwUGpZMGNSUWp2d1pQeHlzNVlHOU1HdFFxVjE3a0k4cEhE?=
+ =?utf-8?B?by9ZS1JJU2NKRHpXRkxjZGhQOHU4ZTFyVTllSmtTTVhDWU9WM3hTcklta2V1?=
+ =?utf-8?B?dmVxUi82VXlxZmUrZWZOQWpjUkt2YlFreXhEeWJZSWtLR2MxYjcwM0V1Tkt5?=
+ =?utf-8?B?dWxSQ1V5ZysrNTVZUlkyQ1M2TEJvMDl1TUtyUGZGRGJJT1d4MGNKRlBlSTM3?=
+ =?utf-8?B?MkllaFdhcWhvSkxiWTFFRS96SWNVN1VWVUViRjl6V1hmNWpwUVBRM0UrOUVv?=
+ =?utf-8?B?YXpRSVVQZ21DZGVmL0NneVBUOXBHZDhaYUIzUDQ2R01SZ2ZtMWh0QnRwTVp6?=
+ =?utf-8?B?SmJ5ZmhBSE9nemZka0RtZ09mUjhmZnFpeXRxSDd5cjZTMTIzaWpHT1lVS0h1?=
+ =?utf-8?B?SUtmbThjQjRpOWU2Z1FOWkE5bVlzWVJVMk5zNkVvSmZ5eTBTaHlSRnZsbk1K?=
+ =?utf-8?B?NEUzcmxVWm53dzd1bUZEZTJWOTFsYmt5Ti94VXhvOHRYMDN1V01wSVhjZGNs?=
+ =?utf-8?B?RDhRUXNTWXQwRFZZak5NSXR2N2VjQXRoUkF1T2YzMlJZZ2Y0Tnp3UitBZEIz?=
+ =?utf-8?B?QzBxZS9FNlhwcDByM2FEL1JUWDh4SW0yUUhzak1Ud2o0dXNiNGlBU1lHRjRV?=
+ =?utf-8?B?T3dwcGZGbU5YUW9SaXJDYjhrN2NKclFNVFZSdEdtVTJNOEMxUFhTTFkxczFE?=
+ =?utf-8?B?NGZ5UGFxbFlwZ1dodEUvZ1ZVeWZMeVM3VksvZ3RzNGJaajRoRkFtN2ZkMzg1?=
+ =?utf-8?B?UFVOVWx6MURQMVNQbmZlVEhlemtBTWNwNVFoTEZPd2tSR0tTUkxsRU45Z1Bp?=
+ =?utf-8?B?ZG5WZithb2t0T2tIeDlUMzlldjRzM3BzL09OS2FiNjBDK2RWVXhKZy9qSmg3?=
+ =?utf-8?B?WXY5R3ZWWk5tYmhkcFU3TTFWYTRoLy9GeXJ3WitDSXRtTEhNaXBSdE1KbUtV?=
+ =?utf-8?B?QmpVUHhPWkxaZnV3S281d0p0RG9SNk9XempUNHNFb3pKM00xWmpXV3QzcThM?=
+ =?utf-8?B?NzIwVzJmWG9JNzg2WWZoSkR2N29OKytIT1BJTE90MlNBbEUweTNWOEFoTUw0?=
+ =?utf-8?B?cHdkS3h3UXdKYU9CZFl0NDc5cVJtdFcvdElRQzVyK2NVam5reDA1SDVXYzhm?=
+ =?utf-8?B?cDEwWWVseFFaVERXVzlUNUh1ems4aDNxVnpQOTRUZkNXY0gyV3hyTXFJNmF2?=
+ =?utf-8?B?WDhoT2pYeG55UXRKeFNHclhIeG9tVGRGYjF1eWZUY2lRUktrU1FERlF2ckxv?=
+ =?utf-8?B?ZXVjSXJob2tmYUJ4WlhiMXVDTXZaSmlZNzJTVkMxdlJqdkd3NmE4ZGpQK25k?=
+ =?utf-8?B?RUFDblBXUXB0M1h4eldqdFFLaDdYcE5HdktEaFkyanFxa2xxdUsrd2VNclB2?=
+ =?utf-8?B?ZGkzV2FZYTZyNlN4TVF1V0duYmJmcnAyL1RJY0MwLzhqZFpvSjY0UStvbTZF?=
+ =?utf-8?B?SnpKVlFxc3ovRXd4YVplT0VLUkNIenc3OE44bW50VHZIbW9FT3pzYnc3Tzc5?=
+ =?utf-8?B?N2lpcVFhYW1HRW1wQU5tNkpqNVBjdkFRTXNWSlpTbDdIRkI4MWJyOFp3Wjhw?=
+ =?utf-8?B?MGd3aFRPRnJUQ3VBelBoVk83anIwM0FTczZQaUF4YjVLaFpuMHBXaHJQdjM3?=
+ =?utf-8?Q?ALFVgnBegsmksx2UlgKqtxw=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7936316b-f366-493a-c8fe-08dde74b40ff
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 22:27:53.2032
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ak8DRXxKUtQz6+0aJiyTRWSLwYfKP4ZDh/5YV7uygyec6bxHIAU+TQZCCF5fyt3Cvclktxfl0eutosWBhNu3L9oAIHZxtKyGXykXsKmuZns=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7630
 
-On 2025-08-23 4:40 pm, Jisheng Zhang wrote:
-> Compared with ARM DMA-350, DMA-250 is a simplified version. They share
-> many common parts, but they do have difference. Add DMA-250 support
-> by handling their difference by using different device_prep_slave_sg,
-> device_prep_dma_cyclic and device_prep_dma_memcpy. DMA-250 doesn't
-> support device_prep_dma_memset.
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->   drivers/dma/arm-dma350.c | 444 +++++++++++++++++++++++++++++++++++++--
->   1 file changed, 424 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
-> index 5abb965c6687..0ee807424b7e 100644
-> --- a/drivers/dma/arm-dma350.c
-> +++ b/drivers/dma/arm-dma350.c
-> @@ -1,7 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0
->   // Copyright (C) 2024-2025 Arm Limited
->   // Copyright (C) 2025 Synaptics Incorporated
-> -// Arm DMA-350 driver
-> +// Arm DMA-350/DMA-250 driver
 
-Yeah, that's going to get old fast... By all means update the Kconfig 
-help text if you think it's helpful to end users, but I don't think 
-anyone expects comments like this to be exhaustive, so honestly I'd save 
-the churn.
->   #include <linux/bitfield.h>
->   #include <linux/dmaengine.h>
-> @@ -16,6 +16,10 @@
->   #include "dmaengine.h"
->   #include "virt-dma.h"
->   
-> +#define DMANSECCTRL		0x0200
-> +
-> +#define NSEC_CNTXBASE		0x10
-> +
->   #define DMAINFO			0x0f00
->   
->   #define DMA_BUILDCFG0		0xb0
-> @@ -26,12 +30,16 @@
->   #define DMA_BUILDCFG1		0xb4
->   #define DMA_CFG_NUM_TRIGGER_IN	GENMASK(8, 0)
->   
-> +#define DMA_BUILDCFG2		0xb8
-> +#define DMA_CFG_HAS_TZ		BIT(8)I don't think we need to care about that. Yes, the TRM describes the 
-total context memory size required from the PoV of the hardware itself, 
-but even if SEC_CNTXBASE does exist, Non-Secure Linux can't set it, so 
-clearly Linux can't need to provide memory for it.
 
-> +
->   #define IIDR			0xc8
->   #define IIDR_PRODUCTID		GENMASK(31, 20)
->   #define IIDR_VARIANT		GENMASK(19, 16)
->   #define IIDR_REVISION		GENMASK(15, 12)
->   #define IIDR_IMPLEMENTER	GENMASK(11, 0)
->   
-> +#define PRODUCTID_DMA250	0x250
->   #define PRODUCTID_DMA350	0x3a0
->   #define IMPLEMENTER_ARM		0x43b
->   
-> @@ -140,6 +148,7 @@
->   #define CH_CFG_HAS_TRIGSEL	BIT(7)
->   #define CH_CFG_HAS_TRIGIN	BIT(5)
->   #define CH_CFG_HAS_WRAP		BIT(1)
-> +#define CH_CFG_HAS_XSIZEHI	BIT(0)
->   
->   
->   #define LINK_REGCLEAR		BIT(0)
-> @@ -218,6 +227,7 @@ struct d350_chan {
->   	bool cyclic;
->   	bool has_trig;
->   	bool has_wrap;
-> +	bool has_xsizehi;
->   	bool coherent;
->   };
->   
-> @@ -225,6 +235,10 @@ struct d350 {
->   	struct dma_device dma;
->   	int nchan;
->   	int nreq;
-> +	bool is_d250;
+On 8/29/25 4:52 AM, Ryan Roberts wrote:
+> When splitting kernel leaf mappings, either via
+> split_kernel_leaf_mapping_locked() or linear_map_split_to_ptes(),
+> previously a leaf mapping was always split to the next size down. e.g.
+> pud -> contpmd -> pmd -> contpte -> pte. But for
+> linear_map_split_to_ptes() we can avoid the contpmd and contpte states
+> because we know we want to split all the way down to ptes.
+>
+> This avoids visiting all the ptes in a table if it was created by
+> splitting a pmd, which is noticible on systems with a lot of memory.
 
-That won't scale, but it also shouldn't be needed anyway - other than 
-the context memory which is easily handled within the scope of the probe 
-routine that already has the IIDR to hand, everything else ought to be 
-based on the relevant feature flags.
-
-> +	dma_addr_t cntx_mem_paddr;
-> +	void *cntx_mem;
-> +	u32 cntx_mem_size;
->   	struct d350_chan channels[] __counted_by(nchan);
->   };
->   
-> @@ -238,6 +252,11 @@ static inline struct d350_desc *to_d350_desc(struct virt_dma_desc *vd)
->   	return container_of(vd, struct d350_desc, vd);
->   }
->   
-> +static inline struct d350 *to_d350(struct dma_device *dd)
-> +{
-> +	return container_of(dd, struct d350, dma);
-> +}
-> +
->   static void d350_desc_free(struct virt_dma_desc *vd)
->   {
->   	struct d350_chan *dch = to_d350_chan(vd->tx.chan);
-> @@ -585,6 +604,337 @@ static int d350_slave_config(struct dma_chan *chan, struct dma_slave_config *con
->   	return 0;
->   }
->   
-> +static struct dma_async_tx_descriptor *d250_prep_memcpy(struct dma_chan *chan,
-> +		dma_addr_t dest, dma_addr_t src, size_t len, unsigned long flags)
-
-Case in point: We don't need a mess of separate copy-pasted functions, 
-we just need to evolve the existing ones to split the respective 
-operations into either 32-bit or 16-bit chunks depending on has_xsizehi 
-- even on DMA-350, >32-bit sizes aren't properly supported since I never 
-got as far as command linking, but there's no reason they shouldn't be.
-
-> +{
-> +	struct d350_chan *dch = to_d350_chan(chan);
-> +	struct d350_desc *desc;
-> +	u32 *cmd, *la_cmd, tsz;
-> +	int sglen, i;
-> +	struct d350_sg *sg;
-> +	size_t xfer_len, step_max;
-> +	dma_addr_t phys;
-> +
-> +	tsz = __ffs(len | dest | src | (1 << dch->tsz));
-> +	step_max = ((1UL << 16) - 1) << tsz;
-> +	sglen = DIV_ROUND_UP(len, step_max);
-> +
-> +	desc = kzalloc(struct_size(desc, sg, sglen), GFP_NOWAIT);
-> +	if (!desc)
-> +		return NULL;
-> +
-> +	desc->sglen = sglen;
-> +	sglen = 0;
-> +	while (len) {
-> +		sg = &desc->sg[sglen];
-> +		xfer_len = (len > step_max) ? step_max : len;
-
-If only we had a min() function...
-
-> +		sg->tsz = __ffs(xfer_len | dest | src | (1 << dch->tsz));
-
-Um, what? By this point we've already decided to split based on the 
-initial tsz, what purpose does recalculating it serve?
-
-> +		sg->xsize = lower_16_bits(xfer_len >> sg->tsz);
-> +
-> +		sg->command = dma_pool_zalloc(dch->cmd_pool, GFP_NOWAIT, &phys);
-> +		if (unlikely(!sg->command))
-> +			goto err_cmd_alloc;
-> +		sg->phys = phys;
-> +
-> +		cmd = sg->command;
-> +		if (!sglen) {
-> +			cmd[0] = LINK_CTRL | LINK_SRCADDR | LINK_DESADDR |
-> +				 LINK_XSIZE | LINK_SRCTRANSCFG |
-> +				 LINK_DESTRANSCFG | LINK_XADDRINC | LINK_LINKADDR;
-> +
-> +			cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, sg->tsz) |
-> +				 FIELD_PREP(CH_CTRL_XTYPE, CH_CTRL_XTYPE_CONTINUE);
-> +
-> +			cmd[2] = lower_32_bits(src);
-> +			cmd[3] = lower_32_bits(dest);
-> +			cmd[4] = FIELD_PREP(CH_XY_SRC, sg->xsize) |
-> +				 FIELD_PREP(CH_XY_DES, sg->xsize);
-> +			cmd[5] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
-> +			cmd[6] = dch->coherent ? TRANSCFG_WB : TRANSCFG_NC;
-> +			cmd[7] = FIELD_PREP(CH_XY_SRC, 1) | FIELD_PREP(CH_XY_DES, 1);
-> +			la_cmd = &cmd[8];
-> +		} else {
-> +			*la_cmd = phys | CH_LINKADDR_EN;
-> +			if (len <= step_max) {
-> +				cmd[0] = LINK_CTRL | LINK_XSIZE | LINK_LINKADDR;
-> +				cmd[1] = FIELD_PREP(CH_CTRL_TRANSIZE, sg->tsz) |
-> +					 FIELD_PREP(CH_CTRL_XTYPE, CH_CTRL_XTYPE_CONTINUE);
-> +				cmd[2] = FIELD_PREP(CH_XY_SRC, sg->xsize) |
-> +					 FIELD_PREP(CH_XY_DES, sg->xsize);
-> +				la_cmd = &cmd[3];
-> +			} else {
-> +				cmd[0] = LINK_XSIZE | LINK_LINKADDR;
-> +				cmd[1] = FIELD_PREP(CH_XY_SRC, sg->xsize) |
-> +					 FIELD_PREP(CH_XY_DES, sg->xsize);
-> +				la_cmd = &cmd[2];
-> +			}
-
-Ok, we really need to figure out a better abstraction for command 
-construction, the hard-coded array indices were a bad enough idea to 
-start with, but this is almost impossible to make sense of.
-
-> +		}
-> +
-> +		len -= xfer_len;
-> +		src += xfer_len;
-> +		dest += xfer_len;
-> +		sglen++;
-> +	}
-> +
-> +	/* the last cmdlink */
-> +	*la_cmd = 0;
-> +	desc->sg[sglen - 1].command[1] |= FIELD_PREP(CH_CTRL_DONETYPE, CH_CTRL_DONETYPE_CMD);
-
-As for that, I don't even...
-
-Furthermore, all these loops and conditionals are crazy anyway, and 
-thoroughly failing to do justice to the hardware actually being pretty 
-cool, namely that *commands can loop themselves*! Any single buffer/sg 
-segment should take at most two commands - one dividing as much of the 
-length as possible between XSIZE{HI} and CMDRESTARTCOUNT using 
-REGRELOADTYPE=1, and/or one to transfer whatever non-multiple tail 
-portion remains.
-
-Honestly I'm sad the project for which I originally started this driver 
-got canned, as this is the part I was really looking forward to having 
-some fun with...
-
-[...]
->   static int d350_pause(struct dma_chan *chan)
->   {
->   	struct d350_chan *dch = to_d350_chan(chan);
-> @@ -620,20 +970,31 @@ static u32 d350_get_residue(struct d350_chan *dch)
->   	u32 res, xsize, xsizehi, linkaddr, linkaddrhi, hi_new;
->   	int i, sgcur, retries = 3; /* 1st time unlucky, 2nd improbable, 3rd just broken */
->   	struct d350_desc *desc = dch->desc;
-> +	struct d350 *dmac = to_d350(dch->vc.chan.device);
->   
-> -	hi_new = readl_relaxed(dch->base + CH_XSIZEHI);
-> -	do {
-> -		xsizehi = hi_new;
-> -		xsize = readl_relaxed(dch->base + CH_XSIZE);
-> +	if (dch->has_xsizehi) {
->   		hi_new = readl_relaxed(dch->base + CH_XSIZEHI);
-> -	} while (xsizehi != hi_new && --retries);
-> +		do {
-> +			xsizehi = hi_new;
-> +			xsize = readl_relaxed(dch->base + CH_XSIZE);
-> +			hi_new = readl_relaxed(dch->base + CH_XSIZEHI);
-> +		} while (xsizehi != hi_new && --retries);
-> +	} else {
-> +		xsize = readl_relaxed(dch->base + CH_XSIZE);
-> +		xsizehi = 0;
-> +	}
-This is unnecessary - if the CH_XSIZEHI location isn't the actual 
-register then it's RAZ/WI, which means the existing logic can take full 
-advantage of it reading as zero and still work just the same.
-
-> -	hi_new = readl_relaxed(dch->base + CH_LINKADDRHI);
-> -	do {
-> -		linkaddrhi = hi_new;
-> -		linkaddr = readl_relaxed(dch->base + CH_LINKADDR);
-> +	if (!dmac->is_d250) {
-
-And similarly here. The only thing we should perhaps do specially for 
-LINKADDRHI is omit it from command generation when ADDR_WIDTH <= 32 in 
-general. I admit I was lazy there, since it's currently harmless for 
-d350_start_next() to write the register location unconditionally, but 
-I'm not sure how a 32-bit DMA-350 would handle it in an actual command 
-link header.
-
->   		hi_new = readl_relaxed(dch->base + CH_LINKADDRHI);
-> -	} while (linkaddrhi != hi_new && --retries);
-> +		do {
-> +			linkaddrhi = hi_new;
-> +			linkaddr = readl_relaxed(dch->base + CH_LINKADDR);
-> +			hi_new = readl_relaxed(dch->base + CH_LINKADDRHI);
-> +		} while (linkaddrhi != hi_new && --retries);
-> +	} else {
-> +		linkaddr = readl_relaxed(dch->base + CH_LINKADDR);
-> +		linkaddrhi = 0;
-> +	}
->   
->   	for (i = 0; i < desc->sglen; i++) {
->   		if (desc->sg[i].phys == (((u64)linkaddrhi << 32) | (linkaddr & ~CH_LINKADDR_EN)))
-> @@ -876,6 +1237,14 @@ static void d350_free_chan_resources(struct dma_chan *chan)
->   	dch->cmd_pool = NULL;
->   }
->   
-> +static void d250_cntx_mem_release(void *ptr)
-> +{
-> +	struct d350 *dmac = ptr;
-> +	struct device *dev = dmac->dma.dev;
-> +
-> +	dma_free_coherent(dev, dmac->cntx_mem_size, dmac->cntx_mem, dmac->cntx_mem_paddr);
-> +}
-> +
->   static int d350_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
-> @@ -893,8 +1262,9 @@ static int d350_probe(struct platform_device *pdev)
->   	r = FIELD_GET(IIDR_VARIANT, reg);
->   	p = FIELD_GET(IIDR_REVISION, reg);
->   	if (FIELD_GET(IIDR_IMPLEMENTER, reg) != IMPLEMENTER_ARM ||
-> -	    FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA350)
-> -		return dev_err_probe(dev, -ENODEV, "Not a DMA-350!");
-> +	    ((FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA350) &&
-> +	    FIELD_GET(IIDR_PRODUCTID, reg) != PRODUCTID_DMA250))
-> +		return dev_err_probe(dev, -ENODEV, "Not a DMA-350/DMA-250!");
->   
->   	reg = readl_relaxed(base + DMAINFO + DMA_BUILDCFG0);
->   	nchan = FIELD_GET(DMA_CFG_NUM_CHANNELS, reg) + 1;
-> @@ -917,13 +1287,38 @@ static int d350_probe(struct platform_device *pdev)
->   		return ret;
->   	}
->   
-> +	if (device_is_compatible(dev, "arm,dma-250")) {
-If only we had a completely reliable product ID from the hardware itself...
-
-> +		u32 cfg2;
-> +		int secext_present;
-> +
-> +		dmac->is_d250 = true;
-> +
-> +		cfg2 = readl_relaxed(base + DMAINFO + DMA_BUILDCFG2);
-> +		secext_present = (cfg2 & DMA_CFG_HAS_TZ) ? 1 : 0;
-> +		dmac->cntx_mem_size = nchan * 64 * (1 + secext_present);
-
-As before I think that's wrong.
-
-> +		dmac->cntx_mem = dma_alloc_coherent(dev, dmac->cntx_mem_size,
-> +						    &dmac->cntx_mem_paddr,
-> +						    GFP_KERNEL);
-
-This is too early, it needs to wait until after we've set the DMA mask. 
-Also since this is purely private memory for the device, it may as well 
-use DMA_ATTR_NO_KERNEL_MAPPING.
-
-> +		if (!dmac->cntx_mem)
-> +			return dev_err_probe(dev, -ENOMEM, "Failed to alloc context memory\n");
-Just return -ENOMEM - dev_err_probe() adds nothing.
-
-> +		ret = devm_add_action_or_reset(dev, d250_cntx_mem_release, dmac);
-> +		if (ret) {
-> +			dma_free_coherent(dev, dmac->cntx_mem_size,
-> +					  dmac->cntx_mem, dmac->cntx_mem_paddr);
-
-a) Understand that the mildly non-obvious "or reset" means it already 
-calls the cleanup action on error, so this would be a double-free.
-
-b) Don't reinvent dmam_alloc_*() in the first place though.
-
-> +			return ret;
-> +		}
-> +		writel_relaxed(dmac->cntx_mem_paddr, base + DMANSECCTRL + NSEC_CNTXBASE);
-
-Perhaps we should check that this hasn't already been set up first? I 
-mean, we can't necessarily even be sure teh context memory interface can 
-access the same address space as the DMA transfer interface at all; the 
-design intent is at least partly to allow connecting a dedicated SRAM 
-directly, see figure 1 here: 
-https://developer.arm.com/documentation/108001/0000/DMAC-interfaces/AHB5-manager-interfaces/Separate-AHB5-ports-for-data-and-virtual-channel-context?lang=en
-
-However I'm not sure how feasible that is to detect from software - the 
-base register alone clearly isn't foolproof since 0 could be a valid 
-address (especially in a private SRAM). At worst I suppose we might end 
-up needing a DMA-250-specific DT property to say whether it does or 
-doesn't need context memory from the OS...
-
-> +	}
-> +
->   	dma_set_mask_and_coherent(dev, DMA_BIT_MASK(aw));
->   	coherent = device_get_dma_attr(dev) == DEV_DMA_COHERENT;
->   
->   	reg = readl_relaxed(base + DMAINFO + DMA_BUILDCFG1);
->   	dmac->nreq = FIELD_GET(DMA_CFG_NUM_TRIGGER_IN, reg);
->   
-> -	dev_dbg(dev, "DMA-350 r%dp%d with %d channels, %d requests\n", r, p, dmac->nchan, dmac->nreq);
-> +	dev_info(dev, "%s r%dp%d with %d channels, %d requests\n",
-> +		 dmac->is_d250 ? "DMA-250" : "DMA-350", r, p, dmac->nchan, dmac->nreq);
-
-As Krzysztof said, this is a debug message and it's staying a debug 
-message. And just replace "DMA-350" with "ProductID 0x%x" - it's only 
-meant as a sanity-check that we're looking at the hardware we expect to 
-be looking at.
->   	for (int i = min(dw, 16); i > 0; i /= 2) {
->   		dmac->dma.src_addr_widths |= BIT(i);
-> @@ -935,7 +1330,10 @@ static int d350_probe(struct platform_device *pdev)
->   	dmac->dma.device_alloc_chan_resources = d350_alloc_chan_resources;
->   	dmac->dma.device_free_chan_resources = d350_free_chan_resources;
->   	dma_cap_set(DMA_MEMCPY, dmac->dma.cap_mask);
-> -	dmac->dma.device_prep_dma_memcpy = d350_prep_memcpy;
-> +	if (dmac->is_d250)
-> +		dmac->dma.device_prep_dma_memcpy = d250_prep_memcpy;
-> +	else
-> +		dmac->dma.device_prep_dma_memcpy = d350_prep_memcpy;
->   	dmac->dma.device_pause = d350_pause;
->   	dmac->dma.device_resume = d350_resume;
->   	dmac->dma.device_terminate_all = d350_terminate_all;
-> @@ -971,8 +1369,8 @@ static int d350_probe(struct platform_device *pdev)
->   			return dch->irq;
->   
->   		dch->has_wrap = FIELD_GET(CH_CFG_HAS_WRAP, reg);
-> -		dch->has_trig = FIELD_GET(CH_CFG_HAS_TRIGIN, reg) &
-> -				FIELD_GET(CH_CFG_HAS_TRIGSEL, reg);
-
-Not only is this in the wrong patch, it's the wrong change to make 
-anyway. If you're only adding support for fixed triggers, you need to 
-explicitly *exclude* selectable triggers from that, because they work 
-differently.
+Similar to patch #4, this patch should be squashed into patch #5 IMHO.
 
 Thanks,
-Robin.
+Yang
 
-> +		dch->has_xsizehi = FIELD_GET(CH_CFG_HAS_XSIZEHI, reg);
-> +		dch->has_trig = FIELD_GET(CH_CFG_HAS_TRIGIN, reg);
+>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>   arch/arm64/mm/mmu.c | 26 ++++++++++++++++++--------
+>   1 file changed, 18 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 6bd0b065bd97..8e45cd08bf3a 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -550,7 +550,7 @@ static void split_contpte(pte_t *ptep)
+>   		__set_pte(ptep, pte_mknoncont(__ptep_get(ptep)));
+>   }
 >   
->   		/* Fill is a special case of Wrap */
->   		memset &= dch->has_wrap;
-> @@ -994,8 +1392,13 @@ static int d350_probe(struct platform_device *pdev)
->   		dma_cap_set(DMA_SLAVE, dmac->dma.cap_mask);
->   		dma_cap_set(DMA_CYCLIC, dmac->dma.cap_mask);
->   		dmac->dma.device_config = d350_slave_config;
-> -		dmac->dma.device_prep_slave_sg = d350_prep_slave_sg;
-> -		dmac->dma.device_prep_dma_cyclic = d350_prep_cyclic;
-> +		if (dmac->is_d250) {
-> +			dmac->dma.device_prep_slave_sg = d250_prep_slave_sg;
-> +			dmac->dma.device_prep_dma_cyclic = d250_prep_cyclic;
-> +		} else {
-> +			dmac->dma.device_prep_slave_sg = d350_prep_slave_sg;
-> +			dmac->dma.device_prep_dma_cyclic = d350_prep_cyclic;
-> +		}
+> -static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp)
+> +static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp, bool to_cont)
+>   {
+>   	pmdval_t tableprot = PMD_TYPE_TABLE | PMD_TABLE_UXN | PMD_TABLE_AF;
+>   	unsigned long pfn = pmd_pfn(pmd);
+> @@ -568,7 +568,9 @@ static int split_pmd(pmd_t *pmdp, pmd_t pmd, gfp_t gfp)
+>   		tableprot |= PMD_TABLE_PXN;
+>   
+>   	prot = __pgprot((pgprot_val(prot) & ~PTE_TYPE_MASK) | PTE_TYPE_PAGE);
+> -	prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+> +	prot = __pgprot(pgprot_val(prot) & ~PTE_CONT);
+> +	if (to_cont)
+> +		prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>   
+>   	for (i = 0; i < PTRS_PER_PTE; i++, ptep++, pfn++)
+>   		__set_pte(ptep, pfn_pte(pfn, prot));
+> @@ -592,7 +594,7 @@ static void split_contpmd(pmd_t *pmdp)
+>   		set_pmd(pmdp, pmd_mknoncont(pmdp_get(pmdp)));
+>   }
+>   
+> -static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp)
+> +static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp, bool to_cont)
+>   {
+>   	pudval_t tableprot = PUD_TYPE_TABLE | PUD_TABLE_UXN | PUD_TABLE_AF;
+>   	unsigned int step = PMD_SIZE >> PAGE_SHIFT;
+> @@ -611,7 +613,9 @@ static int split_pud(pud_t *pudp, pud_t pud, gfp_t gfp)
+>   		tableprot |= PUD_TABLE_PXN;
+>   
+>   	prot = __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
+> -	prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+> +	prot = __pgprot(pgprot_val(prot) & ~PTE_CONT);
+> +	if (to_cont)
+> +		prot = __pgprot(pgprot_val(prot) | PTE_CONT);
+>   
+>   	for (i = 0; i < PTRS_PER_PMD; i++, pmdp++, pfn += step)
+>   		set_pmd(pmdp, pfn_pmd(pfn, prot));
+> @@ -669,7 +673,7 @@ static int split_kernel_leaf_mapping_locked(unsigned long addr)
+>   	if (!pud_present(pud))
+>   		goto out;
+>   	if (pud_leaf(pud)) {
+> -		ret = split_pud(pudp, pud, GFP_PGTABLE_KERNEL);
+> +		ret = split_pud(pudp, pud, GFP_PGTABLE_KERNEL, true);
+>   		if (ret)
+>   			goto out;
+>   	}
+> @@ -694,7 +698,7 @@ static int split_kernel_leaf_mapping_locked(unsigned long addr)
+>   		 */
+>   		if (ALIGN_DOWN(addr, PMD_SIZE) == addr)
+>   			goto out;
+> -		ret = split_pmd(pmdp, pmd, GFP_PGTABLE_KERNEL);
+> +		ret = split_pmd(pmdp, pmd, GFP_PGTABLE_KERNEL, true);
+>   		if (ret)
+>   			goto out;
+>   	}
+> @@ -771,7 +775,7 @@ static int __init split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
+>   	int ret = 0;
+>   
+>   	if (pud_leaf(pud))
+> -		ret = split_pud(pudp, pud, GFP_ATOMIC);
+> +		ret = split_pud(pudp, pud, GFP_ATOMIC, false);
+>   
+>   	return ret;
+>   }
+> @@ -786,7 +790,13 @@ static int __init split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>   	if (pmd_leaf(pmd)) {
+>   		if (pmd_cont(pmd))
+>   			split_contpmd(pmdp);
+> -		ret = split_pmd(pmdp, pmd, GFP_ATOMIC);
+> +		ret = split_pmd(pmdp, pmd, GFP_ATOMIC, false);
+> +
+> +		/*
+> +		 * We have split the pmd directly to ptes so there is no need to
+> +		 * visit each pte to check if they are contpte.
+> +		 */
+> +		walk->action = ACTION_CONTINUE;
 >   	}
 >   
->   	if (memset) {
-> @@ -1019,6 +1422,7 @@ static void d350_remove(struct platform_device *pdev)
->   
->   static const struct of_device_id d350_of_match[] __maybe_unused = {
->   	{ .compatible = "arm,dma-350" },
-> +	{ .compatible = "arm,dma-250" },
->   	{}
->   };
->   MODULE_DEVICE_TABLE(of, d350_of_match);
-> @@ -1035,5 +1439,5 @@ module_platform_driver(d350_driver);
->   
->   MODULE_AUTHOR("Robin Murphy <robin.murphy@arm.com>");
->   MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-> -MODULE_DESCRIPTION("Arm DMA-350 driver");
-> +MODULE_DESCRIPTION("Arm DMA-350/DMA-250 driver");
->   MODULE_LICENSE("GPL v2");
+>   	return ret;
+
 
