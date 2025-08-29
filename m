@@ -1,198 +1,220 @@
-Return-Path: <linux-kernel+bounces-792119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685D1B3C05F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A13B3C067
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A2F1C828A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:12:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC90584EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5BE322DAA;
-	Fri, 29 Aug 2025 16:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3469322C87;
+	Fri, 29 Aug 2025 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ucw/A11k"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiD2cadK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6331DD96
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A89F2B9A8;
+	Fri, 29 Aug 2025 16:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756483904; cv=none; b=LaZeHqQJYAw7TKfufqshn7iQZhGlPDYB/Goc4eNT6K2vTYDfTqSl2BWAQ+Bvzl3jResN6hPPZfDrCnoOHRn4+1TvLhqMHoHmvRAkMDYr1TMMkeXmcuD36oS9AWe9FzsjFp4Y+KI7h7YX0vbX3cyINEAnIX5A3ACY+3NxXYJAcKU=
+	t=1756484060; cv=none; b=pa45Sg8LzYAKRLOp7C+/q9kz08C42BiSHb0N9yW82EWn5Khk1vv4f+jCr/HIr3XMbe42Op/CEpittgXiK+oc538P3OmRoR/L4fG7wJTXZQ7Q/Cu97Ss3zxV6c4zx9sbaEJwSf+fSQynIfdaYQkaTlz2vOPilPTgg8YPbpzGAhh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756483904; c=relaxed/simple;
-	bh=tTY7r03wgO+Jv1B5lRquX6wrCUgO7uUzlezmCJKhxgs=;
+	s=arc-20240116; t=1756484060; c=relaxed/simple;
+	bh=9/2QQ3RiREaiSyUiO5ececD/jqVoWkLkjCUAA6bmPFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8gHxogFoARFWjIgMYCUZXL/ZaDrAdiS+Py2vGwzSi26r0Af+fO2pMShNFf7lm7vAEca7x/HIywR7G5OpAn3bG5XiGey54jB+0+7UyeT/44zHS6ARU7rq/DNMx/2uYN8j1Et1yh6FSP46hg2MXeKU24pqdT8x3aziQK9xzMc/dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ucw/A11k; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-771fa8e4190so1623430b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756483902; x=1757088702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GdG4ZBE60MQo9skvlcwc2CKeFpgl13LiTrzShDv9gcU=;
-        b=ucw/A11ksrS5Bo670qiQMnOJnukH+sukEvnAuamReEq9kWPwd6UKcH77wl9Z91jyKd
-         JU5174fT5Bo7eTce5vbraIhHg7PLPT0BTO8oo1PQMQ7KOlmdu1DFYdAZsuNRKSsz0a1k
-         C1CO2XwULkgtW6t0wBuKOkBcW32O7RjqrTwKXfzchK1+wS5VMkP8v9mpZjvH8KT1ks+F
-         kjKvqjolYib0VOVa+KbfwFUkNt1Y+UrOrVTprxftvWBzGT7F7vVNSvLo8FCkjSicGPmm
-         fm9o/9SC1F7hYLnQm3ZUllRr3j46kv4uQDoyzR093AOj8rJVh6EN3qwhuSH/a1cBIPrY
-         dy8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756483902; x=1757088702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GdG4ZBE60MQo9skvlcwc2CKeFpgl13LiTrzShDv9gcU=;
-        b=qu8mrVkF5IG1fvPfyJUu2QMNkoYe7JnQIcA/+lPsl6IFFCyxM/lxEZ92KriXp5caor
-         GYzWk2i6uC+m7W/IRIiay1BsrNoUYmKlSntt1NVRHRZlFT5224HPxAo6xK3vHtirO8UX
-         SxIkBVKtfdOWhhLcZe7FEDFGv1mkot6d0liVjpVJctEnyuK4T4s0jeKYWPWFhI4PhiZl
-         JeBGxSoKRWCRga2kDrQY8fSwKGPWwdU0sMvMdsvCIBpsE35e3P8L73GfsUYSUBao8XNl
-         39HwNeOOt1/L9P5yHU0TtkGkQoCoZMY6hYRiE6Qri5FHn3Sueed9esxhvpwk1bj+tyiI
-         s9bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVfzLT0+LICCFV9NoJoNyHsVL1BDe6HYIgFaiH2V+5fD5BIIFE/s4O7bjQ6hOAxI4PN1aj9YQ0AfI8kFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypOaV8G1/Oto8AM3XVo6dNQ8ZK1qgIqzaNfCUGzEnRgDh+kG+F
-	JfdbWKxUrWOIRe8sdZUSXCr8+u6fBVzjS0g3C8Fk+VySKeTZWV6d05EiTa1GrBSmSo8=
-X-Gm-Gg: ASbGncs+ykK6DA9tck2F9H0orG+Cp2dexYtt8bryNIpCGlXImrKQ2rQq61B7ZFGSlxm
-	9IhKJBAkDl+TquQBxTj7EvjSyOpa8VSaf3tUqI2dIoXN+Gqg8JojuyCcLeFSoKkXErIgwe4J/RF
-	dYPonfa9Y8bIuhL4kFyKnYPe/5FoDkFvc4H+iLcnuCqhfxcgbhBOBUbpqmHBL3sJqmq41q/fkKN
-	3tU9Ckmn7Ya8AIy1rEM/cGYmexJTxqvcMNiknrBW/K33q8vhef8PksehIF3ZqTzoR+pnrUCDEFR
-	aX+oT5ln1Bj28M85OovIo/XlcnzfKMPOUWVxI0F+gVO4vV7OSXq4CLmThN+ygxkp6DdsxofvPFJ
-	aUPzKk2RkIsg1yg9RUOEfnljFHgHKY97vDRDTooKoLQNm7FAyj6FOaXYsOB4eiFhZ/p/inbBW0G
-	kV6SOJBhPlkcOcVTDRK5b/A4CGnLDuMHbNdJ0=
-X-Google-Smtp-Source: AGHT+IG0BijOfS1syDO9r7bmXPHtEUUgTx65TwjuioQwopzbTILdFIw8bOkcRYbE5nIUD3sncpBFew==
-X-Received: by 2002:a05:6a00:a28:b0:772:2e00:831f with SMTP id d2e1a72fcca58-7722e00b9b5mr4167788b3a.4.1756483902507;
-        Fri, 29 Aug 2025 09:11:42 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:c8f8:92f5:116b:3068])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26ae02sm2755442b3a.21.2025.08.29.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 09:11:42 -0700 (PDT)
-Date: Fri, 29 Aug 2025 10:11:39 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Beleswar Padhi <b-padhi@ti.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v5] remoteproc: k3: Correctly release some resources
- allocated in k3_rproc_request_mbox()
-Message-ID: <aLHROzqMNZ6GdII4@p14s>
-References: <df853ede72e9972c464415990b196289680e6acb.1756065142.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfG1gkYasoDWDmCW1sMkApEUhkanpbEi9RrUFREEjVdb5KEEzJPQX7jDGUGWr6is4zDa9tiDWhgj5UO8IPtlx/uZFB0WBy8TuxqRNEbxSym4xy9i26q5LPpA7GG1w/FD/AJ2YZkVkHDJvgWRhturckCqLyzy5NK0L5rs2QBODcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiD2cadK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E018EC4CEF0;
+	Fri, 29 Aug 2025 16:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756484058;
+	bh=9/2QQ3RiREaiSyUiO5ececD/jqVoWkLkjCUAA6bmPFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZiD2cadK21kq8/1+HU/s47ctfSPLku5kGvKTU7+gDfo/gUItwd4dziv5/tFHyDjA3
+	 dACICfHN5ycuJ0zCVyJEGvOUCEHo//mnsfRwQ0n8QYvaRL+jNuTCE0uxiPycoOxfKJ
+	 Rc2x7zplfineGU0ObrNOZgLV2N4Sh3IaCMgloqtMAMIQrcMYD0+vOso4yZir1v0vsn
+	 aIPXp3BW/jRTHj7UtQZMK2uucxb/dAmf7R2VDOHrWTFipB+9j+an/6BSfP8W67y0y6
+	 DvOdYSsic046Ef3N9iAMNudz19ePRAzBC5VHmfwZrqilD+dK33LmRJ99TJKxjMskcQ
+	 dOzixjq9Ekf4w==
+Date: Fri, 29 Aug 2025 21:44:08 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
+ a platform specific way
+Message-ID: <lakgphb7ym3cybwmpdqyipzi4tlkwbfijzhd4r6hvhho3pc7iu@6ludgw6wqkjh>
+References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
+ <aHoh1XfhR8EB_5yY@ryzen>
+ <aHokdhpJUhSZ5FSp@ryzen>
+ <tujurux64if24z7w7h6wjxhrnh4owkgiv33u2fftp7zr5ucv2m@2ijo5ok5jhfk>
+ <aJ743hJw-T9y3waX@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <df853ede72e9972c464415990b196289680e6acb.1756065142.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJ743hJw-T9y3waX@ryzen>
 
-On Sun, Aug 24, 2025 at 09:52:37PM +0200, Christophe JAILLET wrote:
-> If an error occurs after a successful k3_rproc_request_mbox() call,
-> mbox_free_channel() should be called to avoid a leak.
+On Fri, Aug 15, 2025 at 11:07:42AM GMT, Niklas Cassel wrote:
+> Hello Mani,
 > 
-> Such a call is missing in the error handling path of k3_dsp_rproc_probe().
-> It is also missing both in the error handling path of k3_m4_rproc_probe()
-> and in the (in-existent) corresponding remove function.
+> Sorry for the delayed reply.
+> I just came back from vacation.
 > 
-> Switch to managed resources to avoid these leaks and simplify the code.
-> Remove the now unneeded mbox_free_channel().
+> On Thu, Jul 24, 2025 at 11:00:05AM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Jul 18, 2025 at 12:39:50PM GMT, Niklas Cassel wrote:
+> > > On Fri, Jul 18, 2025 at 12:28:44PM +0200, Niklas Cassel wrote:
+> > > > On Tue, Jul 15, 2025 at 07:51:03PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > 2) Testing link down reset:
+> > > > 
+> > > > selftests before link down reset:
+> > > > # FAILED: 14 / 16 tests passed.
+> > > > 
+> > > > ## On EP side:
+> > > > # echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
+> > > >   sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
+> > > > 
+> > > > 
+> > > > [  111.137162] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
+> > > > [  111.137881] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
+> > > > [  111.138432] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
+> > > > [  111.139067] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+> > > > [  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
+> > > > [  111.255407] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
+> > > > [  111.256019] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
+> > > > [  111.383401] pcieport 0000:00:00.0: Root Port has been reset
+> > > > [  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
+> > > > [  111.384582] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
+> > > > [  111.385218] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
+> > > > [  111.385771] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
+> > > > [  111.390866] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+> > > > [  111.391650] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+> > > > 
+> > > > Basically all tests timeout
+> > > > # FAILED: 1 / 16 tests passed.
+> > > > 
+> > > > Which is the same as before this patch series.
+> > > 
+> > > The above was with CONFIG_PCIEAER=y
+> > > 
+> > 
+> > This is kind of expected since the pci_endpoint_test driver doesn't have the AER
+> > err_handlers defined.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-> Tested-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
+> I see.
+> Would be nice if we could add them then, so that we can verify that this
+> series is working as intended.
+> 
+> 
+> > 
+> > > Wilfred suggested that I tried without this config set.
+> > > 
+> > > However, doing so, I got the exact same result:
+> > > # FAILED: 1 / 16 tests passed.
+> > > 
+> > 
+> > Interesting. Could you please share the dmesg log like above.
+> 
+> It is looking exactly like the dmesg above
+> 
+> [   86.820059] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
+> [   86.820791] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
+> [   86.821344] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
+> [   86.821978] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
+> [   87.040551] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
+> [   87.041138] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
+> [   87.168378] pcieport 0000:00:00.0: Root Port has been reset
+> [   87.168882] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
+> [   87.169519] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
+> [   87.272463] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
+> [   87.277552] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+> [   87.278314] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+> 
+> except that we don't get the:
+> > [  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
+> > [  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
+> 
 
-Appied.
+Ok, thanks for the logs. I guess what is happening here is that we are not
+saving/restoring the config space of the devices under the Root Port if linkdown
+is happens. TBH, we cannot do that from the PCI core since once linkdown
+happens, we cannot access any devices underneath the Root Port. But if
+err_handlers are available for drivers for all devices, they could do something
+smart like below:
 
-Thanks,
-Mathieu
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index c4e5e2c977be..9aabf1fe902e 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -989,6 +989,8 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 
+        pci_set_drvdata(pdev, test);
+ 
++       pci_save_state(pdev);
++
+        id = ida_alloc(&pci_endpoint_test_ida, GFP_KERNEL);
+        if (id < 0) {
+                ret = id;
+@@ -1140,12 +1142,31 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ };
+ MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+ 
++static pci_ers_result_t pci_endpoint_test_error_detected(struct pci_dev *pdev,
++                                              pci_channel_state_t state)
++{
++       return PCI_ERS_RESULT_NEED_RESET;
++}
++
++static pci_ers_result_t pci_endpoint_test_slot_reset(struct pci_dev *pdev)
++{
++       pci_restore_state(pdev);
++
++       return PCI_ERS_RESULT_RECOVERED;
++}
++
++static const struct pci_error_handlers pci_endpoint_test_err_handler = {
++       .error_detected = pci_endpoint_test_error_detected,
++       .slot_reset = pci_endpoint_test_slot_reset,
++};
++
+ static struct pci_driver pci_endpoint_test_driver = {
+        .name           = DRV_MODULE_NAME,
+        .id_table       = pci_endpoint_test_tbl,
+        .probe          = pci_endpoint_test_probe,
+        .remove         = pci_endpoint_test_remove,
+        .sriov_configure = pci_sriov_configure_simple,
++       .err_handler    = &pci_endpoint_test_err_handler,
+ };
+ module_pci_driver(pci_endpoint_test_driver);
 
-> Compile tested only.
-> 
-> Changes in v5:
->   - Update subject line   [Beleswar Prasad Padhi]
->   - Add R-b and T-b tags
->   - Rebase with latest -next (especially, because of commit f9a4c582e508
->     ("remoteproc: k3: Remove remote processor mailbox ping))
-> 
-> v4: https://lore.kernel.org/all/f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr/
-> 
-> Previous versions:
->    https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
-> ---
->  drivers/remoteproc/ti_k3_common.c         | 12 ++++++++++++
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
->  3 files changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> index 8266e11914af..56b71652e449 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -155,11 +155,19 @@ int k3_rproc_release(struct k3_rproc *kproc)
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_release);
->  
-> +static void k3_rproc_free_channel(void *data)
-> +{
-> +	struct k3_rproc *kproc = data;
-> +
-> +	mbox_free_channel(kproc->mbox);
-> +}
-> +
->  int k3_rproc_request_mbox(struct rproc *rproc)
->  {
->  	struct k3_rproc *kproc = rproc->priv;
->  	struct mbox_client *client = &kproc->client;
->  	struct device *dev = kproc->dev;
-> +	int ret;
->  
->  	client->dev = dev;
->  	client->tx_done = NULL;
-> @@ -172,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->  				     "mbox_request_channel failed\n");
->  
-> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
-> +	if (ret)
-> +		return ret;
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index 7a72933bd403..d6ceea6dc920 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
->  		if (ret)
->  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
->  	}
-> -
-> -	mbox_free_channel(kproc->mbox);
->  }
->  
->  static const struct k3_rproc_mem_data c66_mems[] = {
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index ca5ff280d2dc..04f23295ffc1 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->  				return;
->  			}
->  		}
-> -
-> -		mbox_free_channel(kproc->mbox);
->  	}
->  }
->  
-> -- 
-> 2.51.0
-> 
+This essentially saves the good known config space during probe and restores it
+during the slot_reset callback. Ofc, the state would've been overwritten if
+suspend/resume happens in-between, but the point I'm making is that unless all
+device drivers restore their known config space, devices cannot be resumed
+properly post linkdown recovery.
+
+I can add a patch based on the above diff in next revision if that helps. Right
+now, I do not have access to my endpoint test setup. So can't test anything.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
