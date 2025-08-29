@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-792061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C072B3BFD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D4B3BFE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44CEA179E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346213ACE83
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CAD335BBE;
-	Fri, 29 Aug 2025 15:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC5B3375AA;
+	Fri, 29 Aug 2025 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lj7ikhfS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rjmbh3Ol"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E891335BAF;
-	Fri, 29 Aug 2025 15:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDC53277A7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482529; cv=none; b=XgtyK0G8g03zCADaNMhLv6kLgIXUPuCWtYxEc3ockIcxgKX6GURF4RjdowSrLTYuBFBvSzxZGr9laB+Nl4LQF45uG/nf3pghygpwiitCszXa3r8Uc5OsB0WKws+Y3V2cCFjsRrJ2UyvUH2lYcxF2oJB6o4USjGr4AMaijPwbVa0=
+	t=1756482532; cv=none; b=n4l8cwICahxKAL2L6uN12J+h16J183JqVBjfuOsq6mdsUgFCIhLtRJlmN9J3uxNuqLa/TjWCcs6NVD9CSnMU8yzb+H253vrnCbkpOs+Twph7DOkwLfh2g77AGcDXTayS+rQ3mK++NXIGT8fpi4L9gYHNvfwmHmatg/OlAGt2caw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482529; c=relaxed/simple;
-	bh=N7iuauUh7P5zsvAS2I3TSB3cjF4+WxMa7Hofz2VW+Gs=;
+	s=arc-20240116; t=1756482532; c=relaxed/simple;
+	bh=069wMqK9bF6D74YIJY8nZAw2J7YjllAfy3UAu+j/YUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r8P7FyrL+4vlLYUG08BRQYZaUVwYIOSrEs5BRlM6nMVY4x9M1c8kXfn0I3eQ6hOXUQ6pdOMADC/QJgj0ZFSQccO7XW/Ior8O4WIVt7BRoXMgn6yIuFkn6H5pF+zqzRY/Qcev5UorlSIm+HM0uU25nEZi1d1Z2kF4INJga8kTK3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lj7ikhfS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C60BAC4CEF0;
-	Fri, 29 Aug 2025 15:48:46 +0000 (UTC)
+	 MIME-Version; b=DYZCuJPc0JbF9raQzeWkbyFGT5CPv0wQ3L7wsXKXOSR82Nt3Ka8s2C02Y8dq9Qirtn6olpnzFt98vW7UDvsCUZTAc6XIUh16KSVWIl85dRACiup7/8s/j9WRD67PuRgJRO3108PXGvlP2vbd+rGe6zBT9LWjK6drW17BOdlJ9pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rjmbh3Ol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59EAC4CEF0;
+	Fri, 29 Aug 2025 15:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482529;
-	bh=N7iuauUh7P5zsvAS2I3TSB3cjF4+WxMa7Hofz2VW+Gs=;
+	s=k20201202; t=1756482531;
+	bh=069wMqK9bF6D74YIJY8nZAw2J7YjllAfy3UAu+j/YUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lj7ikhfSVP3EdMyviJUXZclCiQF+8nfJ/fekhphSH8XBK4gzNwmLLHl5eZ8c8sIn5
-	 WRCMUoM5chRM73MZR3GKYx/elVgVRCPsPRdhyoUf3U4VF7PaCW6PGfq8kLk/AKyzA4
-	 92tzab9lPVkIWEtb37ChtS1mTCGTLBoTnGQt5GpOS3j1MgYIgxWI5rZHX8geQX/nbW
-	 rOqHmg+JAPbbKBcg6oSCU8VVr5ITtvuQA+Kle/2ne/csvIeyB2elA9PEBK1Iu3C9BE
-	 3FfOH38eyqPl37vnPRLzrNlYUxiFjHz0E0t+CUIiWxuKB1n0ZoXc1QdjQLD2tvLknZ
-	 qvJzhFMVDTBTQ==
+	b=Rjmbh3OlGvhaN0dbZ5yNeJrUoVWLD/BjCk7ULf1qSy3haIqWabdL8HqM4GG1mFsRx
+	 jgzgaB5upUO/2BF4fmUF0Lzx00uVPiWqDTb7I62rqAaUFKlypIeXs8gXmGhu3XgnsL
+	 PZuRkBC4xg0+VssfKSaBa6K/pTdflh7yGllFEfB/AvR++fP0oz2H/E2kcCPPS3ZF/4
+	 SlqIvBX3iapid3lzmeBU0aKhXqD+N/a8lOK9PNjUg92/KFjzdNkq0BLQkI/aNi/xBP
+	 0dPZZR5sn0+sESUqseEoAMZto60pDaHnTGdJI48djTiSgWEaZ0IHuIxaSn8j4WWqu0
+	 Gz8P9EKsOQGJA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Tejun Heo <tj@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Waiman Long <longman@redhat.com>,
-	linux-block@vger.kernel.org
-Subject: [PATCH 10/33] block: Protect against concurrent isolated cpuset change
-Date: Fri, 29 Aug 2025 17:47:51 +0200
-Message-ID: <20250829154814.47015-11-frederic@kernel.org>
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH 11/33] cpu: Provide lockdep check for CPU hotplug lock write-held
+Date: Fri, 29 Aug 2025 17:47:52 +0200
+Message-ID: <20250829154814.47015-12-frederic@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
 References: <20250829154814.47015-1-frederic@kernel.org>
@@ -66,42 +63,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The block subsystem prevents running the workqueue to isolated CPUs,
-including those defined by cpuset isolated partitions. Since
-HK_TYPE_DOMAIN will soon contain both and be subject to runtime
-modifications, synchronize against housekeeping using the relevant lock.
+cpuset modifies partitions, including isolated, while holding the cpu
+hotplug lock read-held.
 
-For full support of cpuset changes, the block subsystem may need to
-propagate changes to isolated cpumask through the workqueue in the
-future.
+This means that write-holding the CPU hotplug lock is safe to
+synchronize against housekeeping cpumask changes.
+
+Provide a lockdep check to validate that.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- block/blk-mq.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/linux/cpuhplock.h    | 1 +
+ include/linux/percpu-rwsem.h | 1 +
+ kernel/cpu.c                 | 5 +++++
+ 3 files changed, 7 insertions(+)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index ba3a4b77f578..f2d1f2531fca 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -4241,12 +4241,16 @@ static void blk_mq_map_swqueue(struct request_queue *q)
+diff --git a/include/linux/cpuhplock.h b/include/linux/cpuhplock.h
+index f7aa20f62b87..286b3ab92e15 100644
+--- a/include/linux/cpuhplock.h
++++ b/include/linux/cpuhplock.h
+@@ -13,6 +13,7 @@
+ struct device;
  
- 		/*
- 		 * Rule out isolated CPUs from hctx->cpumask to avoid
--		 * running block kworker on isolated CPUs
-+		 * running block kworker on isolated CPUs.
-+		 * FIXME: cpuset should propagate further changes to isolated CPUs
-+		 * here.
- 		 */
-+		rcu_read_lock();
- 		for_each_cpu(cpu, hctx->cpumask) {
- 			if (cpu_is_isolated(cpu))
- 				cpumask_clear_cpu(cpu, hctx->cpumask);
- 		}
-+		rcu_read_unlock();
+ extern int lockdep_is_cpus_held(void);
++extern int lockdep_is_cpus_write_held(void);
  
- 		/*
- 		 * Initialize batch roundrobin counts
+ #ifdef CONFIG_HOTPLUG_CPU
+ void cpus_write_lock(void);
+diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+index 288f5235649a..c8cb010d655e 100644
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -161,6 +161,7 @@ extern void percpu_free_rwsem(struct percpu_rw_semaphore *);
+ 	__percpu_init_rwsem(sem, #sem, &rwsem_key);		\
+ })
+ 
++#define percpu_rwsem_is_write_held(sem)	lockdep_is_held_type(sem, 0)
+ #define percpu_rwsem_is_held(sem)	lockdep_is_held(sem)
+ #define percpu_rwsem_assert_held(sem)	lockdep_assert_held(sem)
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 453a806af2ee..3b0443f7c486 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -534,6 +534,11 @@ int lockdep_is_cpus_held(void)
+ {
+ 	return percpu_rwsem_is_held(&cpu_hotplug_lock);
+ }
++
++int lockdep_is_cpus_write_held(void)
++{
++	return percpu_rwsem_is_write_held(&cpu_hotplug_lock);
++}
+ #endif
+ 
+ static void lockdep_acquire_cpus_lock(void)
 -- 
 2.51.0
 
