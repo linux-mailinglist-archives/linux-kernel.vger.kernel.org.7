@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-791745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD95B3BB48
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:27:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE85B3BB4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBDDBA2089D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 194887A4F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4786D315781;
-	Fri, 29 Aug 2025 12:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076A314B96;
+	Fri, 29 Aug 2025 12:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDrLtLqO"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBPX8C15"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA7265CC0;
-	Fri, 29 Aug 2025 12:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800291FCFEF;
+	Fri, 29 Aug 2025 12:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470443; cv=none; b=MEAeTCSJQH7dQXe45j2jbR7xRQCndtNQp1+GQuXJ1QKqbPRmoJW/7+IltG5qsKLCx+HqyR9+3lKTNineDly2UkSDAMHlDNSqxVjCMXB/UbXbRjYztj5Ad+++f0HV6jngN4LWM2OsF/8V5/H7pquhFCs7IAuzmeZwDDx8MZU/uJM=
+	t=1756470599; cv=none; b=dFZQJUGnFsLDbl2vGuu9ShCWATJ/23RN88QvkrnnriRyKO5hBhyjujx30099mqXshoCkhdC7vQlj+v4YR+zdPR81oiSPDT5RdjX9FXI5ynHO78HI17VElqUjyMnX27l9ycMwL/wyNEHsry6XSmr4GS/NLq5i2WtHTDJXP1T/kcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470443; c=relaxed/simple;
-	bh=t26n87bPfXJxCwL8n21wzenmKbDiAigzoY9uFs/+gQU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=swBvjAawTN2b8/VCzpFL2oIGDQeeU8faox8G+FYPRajvTYkm2G8g4fqzboi6o1L1DEu0D8qbOI1rCSm1HtMJlFlinRKxe4nsyMipJgQ/gptVPuuWePqIGHY1KR3Fw+ZfoHktDiriUEj4LJFMSP8b2wHqCP390Kqv31PI33jwda4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDrLtLqO; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1756470599; c=relaxed/simple;
+	bh=7WkwrUEY+6BIbqKIw4+GT3HhxIaHHpAXuksiM1pzQNg=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=qNCFQAdwFJINAP/XBAr3anwKtkMK0uxqOZsrcf7zeZxHCebJXcTbf1Cgn3yuHuVAHpvAp8QXuU9w2mAV/KQYfK9kXl4Px/9fAStVTEzIIgfiHkGyFTUnTHUZdeh9NeL3GwhdGCOyCI2BLiuS+Q0TMq7ZRWxKndoNFKZZu4JvYNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBPX8C15; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f6aef1a7dso373341e87.0;
-        Fri, 29 Aug 2025 05:27:21 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2487104b9c6so18365195ad.0;
+        Fri, 29 Aug 2025 05:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756470440; x=1757075240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LwLMCV8O9aymzpnaaoax1GEUnLQN1D5YWoYnYPJ5/EM=;
-        b=EDrLtLqO8I91blRy27bWqiTf9/LTHJBWYwkz5eWYVK3ANEPhbWXp7XkUujCOOBYytN
-         1SlZ6p4owxEHIMuSxX3sotSJ+NHUuwb9p4UgzqsxjAimqMMEWT3oisinIy9lc+EMk8/Q
-         UvjAPi7uONQUW/sYoSm/KbaaXWefg8N9pFAyjQE/y3fcpbsV7qyN+Cu3v18tKQ+zWuLw
-         aECNWLTfP0TohNBQs1xdkIOm6jUl4238eOChb1XOYxeHg0MWpE6AUn7B7Ies4MprL4hN
-         mZWdiEi7zyLgbtNSziJhRPshfGTxw0xqRtp+hw+W/+E2QOlD6qBfYDlivUVR7KwWSLn+
-         aSQQ==
+        d=gmail.com; s=20230601; t=1756470598; x=1757075398; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rM3RyXh88VhqP0EnkxZqWAvRFKr6uyDjCBhLREGSJw=;
+        b=eBPX8C15V+uKIuGoa88jQXluMlKV15cj/bv6fO0hRSFO+0zEEjr+nL5rwEyexS1dIa
+         cddugoMMuLoOMQJhjwnMAInN6xj3qPXhrmhtFkYusvpDsIgy6uphrYsed9ykN7A1wvzT
+         OmaWt2AUwYfa0GDTBPNVCuX12k8wO7bS/VAJXllx7ocTWF/x4bNDtpuC3smHGJ8xaDhK
+         U5gTa+YS5TTXlOJD5FV6Je6Fv4rQaiAmX6Gt6dwMqoOPRbeOE0nQndUJKUT9S66t0j9Q
+         AK8XcAiqi86mSRYMI+Bfdydu3l/+gPvujGzgt3Q5X/0vDntiwzasPkUGBxmzH8OKJap9
+         fxqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470440; x=1757075240;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwLMCV8O9aymzpnaaoax1GEUnLQN1D5YWoYnYPJ5/EM=;
-        b=LTqLZ0bJVDE4ieo/9aTK/0K60Hmiu7UnJGmQuMw9ZsQt0OBe6ajekRTP6qj5S8gdD8
-         FK3HmFWzewqadHdGdSgqHYPN/Hw11SzntOxvwMEfRJsMje9XF6kSQZX2QyqMJ7kcHTvU
-         TQXVvNksukELU/q5YXxxeuavnoxY9iSakPjdLJGcOfKl0Dv0qHWg802z+dbASK48o2X8
-         DPTIxXLsay5Z+2zYKuJ/hWmCND0czcFoVrTgf1D7eZYaMS8FcbuFE/YohPY1Jnd2So9u
-         vjlOyoEyaX630YhYu+gHqozvjjsAEZB8TY2ojQHXDASDGE92FeD8K8MYo73KGqfPoCSt
-         6+1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYjIZm6AEUntYNNAm0OHrsb3bh7i2YITDBY4BB9Z1xnt/xm/aGOVFToM6ntOOzE75kXOOcyjyeFoA=@vger.kernel.org, AJvYcCXofVp50o8Iecsodm1vJ9BTwnwBHDhXUSQ9n8cg6xvEKOFEh5HGcswmji+R0nz5mDxqR0P2RD0tzvncmK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu+q/ypkyvEENlgfg/KZFOUBhAcTe6nRfotywbMrPxHNUxZOrL
-	0lx2+X8uHGSTUbKFFL3WxWtB0rGuZxiP0Xc/OE+zdRBTMxrtqqXIGY6h
-X-Gm-Gg: ASbGncvbxXwJRYpMiOBQrcKE1yXyQ6RFOEKp+cbTmBeny5TAtF+ff8ewU3lJci6qDWL
-	UntksDQLvcEd3KBO5LlpWU7DaJctBEe5euvrXfPrhf5Pktr/vx9Bft5vgwNj7SlAosGyi7iRgl6
-	/okyn9Br1PdSf8zCRKlE0h96eiLxqSvmq2J/TnbQZN8obMOXJ4nnDIyLd5GgKN8k5VdeNyO8ls+
-	8agkoid13g3W7W2d/MTWe62o8SDlE7fowlTcJWM4NRqNflJGjZ3xxfjHv0vWUG76z2Ce8of2vZf
-	lMxoRVpAcoInXHB+ZcePTQbnK23kjEmpFiXMxJkH/L24jcyNkpMmC6m+sFA2geS7y2EeFqFtrHM
-	i6PX5TJtd1cUAYcJ6gxdFhsiL1EVLTpVUGfI=
-X-Google-Smtp-Source: AGHT+IH4dZIyWHoHC9QisUO1CFwwY5FUKJh415nCwq/HQRY0c5lvTWT4cFBcMXnuOuVU07YOLZZ3Pg==
-X-Received: by 2002:a05:6512:b1c:b0:55f:6186:c161 with SMTP id 2adb3069b0e04-55f6186cc25mr1674979e87.49.1756470440135;
-        Fri, 29 Aug 2025 05:27:20 -0700 (PDT)
-Received: from [172.16.183.204] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6771b242sm597357e87.51.2025.08.29.05.27.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 05:27:19 -0700 (PDT)
-Message-ID: <6f56b7b6-8b21-4353-bbca-acf7f9b42ceb@gmail.com>
-Date: Fri, 29 Aug 2025 15:27:18 +0300
+        d=1e100.net; s=20230601; t=1756470598; x=1757075398;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rM3RyXh88VhqP0EnkxZqWAvRFKr6uyDjCBhLREGSJw=;
+        b=qzL7hQ0aEoX/KqbS6rzZGDJFVS7LWQN/zVA6W1CO2pwbuMekav/69iwQN3qeXCOMe9
+         NADYISM3NhvmMCq33/0EqTtB9hQRo3FVgXHJ2IXK0zpEWp6QJl0qQBEf1x0+QUce0SaC
+         pQnP8R9KFU2b1q79+mdKzusO5YdiRb2IEjoca/itf5LdudUdQBphTaqDxlEurbG3uER5
+         q0VbtmCi11fue1I/UNPr8cx6LrKxeelqCnOT0u3GMv2LALzBK6YS81/TWH2kIhGZoBSZ
+         B10w5mzwQhjVRd1ebwZJ9HHC4PGTU8NG8IdkZg2Tu5+Op6l13m0Bnm3eloUVk13AI8r5
+         +fyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgmDJUSDptO6utfWX4zqPhTC/XYutUoSh/FTO69y2i08s+SU5fLDRu1NJDpIhco3qD40z91hWP0QzYKxU=@vger.kernel.org, AJvYcCUoZrxfMp92Yg7fBOkWDtV74RpZgMnh/hlh5p0hW44Q90TTKj9yPogJWVKieXwUA/h34BgQdQp52uwyiBqtjPxB@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd9DHyFdjhYN6yGdiYD2k6cRFq4ehYH92W9TBODZLiazbWIHH5
+	TKP8wrNpuWPbMIRG1zytS0OL0cwgFg4XEjfGc2JsMzr6qEtZtZ4BtDPs
+X-Gm-Gg: ASbGncvySwvkCFiVAOk2c+GWIAF9aJSeDMVg8efAXV38IqTKSBf/22mwl0KE+CBBP+D
+	mPHgFRHe0S31iwXAhBFtNnVu/GEApmbRMw7lw0EgVj5TW5YU90ak+7WexYFd6V2U3e51kh4a5/7
+	nV/jjUc37mhgmsZlrVu9PuKJUjA3ckJaejY2sIrwlZRLMjLiuWVeWrrCygtG3t3iIYdDRGHjYuc
+	3Tcxtjb8qKTt1MgdElK5UIJCPHLAWFSZlG/XXNyXNFCECqsqCp8mKhmQhzfuhXyQTN7p8Iq6Nh0
+	Qu1nXpMFTQ/WzFnHe49sIqZflWm29NcYJHgdJG6D0cJSMIpqH3e0HnRR0pJ3tY653D3x4dEP6Gz
+	HrcCc4dHbVVrp4UzUfex9meBcMakbLhqxqmoiT5PZfDfszgR1kV4S91lULYBtYPrmYxK+M61gtA
+	LmbSwc4BBr17jb0vo0uswTHvPJr+CcgtaTTwDwIFZS60Rr4EU5L1ARva4/oUGhw2yIrKk=
+X-Google-Smtp-Source: AGHT+IGnIECyfQJM/jiO8OpiO9eZlCpUV84jR+OlF7wJ5ML+j1n2T6SX8JRXDDJVlSHap6E3W4C4uA==
+X-Received: by 2002:a17:903:38cf:b0:248:aa0d:bb25 with SMTP id d9443c01a7336-248aa0dc43amr128843915ad.14.1756470597715;
+        Fri, 29 Aug 2025 05:29:57 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.37])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24906596416sm23699315ad.118.2025.08.29.05.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 05:29:57 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Miaoqian Lin <linmq006@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/move_mount_set_group: fix inconsistent return type in move_mount_set_group_supported()
+Date: Fri, 29 Aug 2025 20:29:47 +0800
+Message-Id: <20250829122949.2020530-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] power: supply: Add bd718(15/28/78) charger driver
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
- Andreas Kemnade <andreas@kemnade.info>
-Cc: Lee Jones <lee@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <20250821-bd71828-charger-v3-0-cc74ac4e0fb9@kemnade.info>
- <20250821-bd71828-charger-v3-2-cc74ac4e0fb9@kemnade.info>
- <CACRpkdbZN3LB=iVwL0YLEoUOiPMSePdOF_NEGWuCncDAjWY4XA@mail.gmail.com>
- <6341e004-880c-4a81-811d-a8b367aab39d@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <6341e004-880c-4a81-811d-a8b367aab39d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/08/2025 09:35, Matti Vaittinen wrote:
+The function is declared to return bool
+but returns -1 on multiple error paths, which is inconsistent and
+misleading. Fix this by returning false on all error paths.
 
->> Some of these look like they should immediately shut down the
->> system, I suppose the battery charger does this autonomously
->> but it should probably also trigger an emergency shutdown
->> of Linux, right?
-> 
-> Yes. The shutdown for charging, or, in some cases for all power outputs, 
-> is automatically handled by the PMIC hardware. (Well, I am not sure 
-> about the 'over-current' IRQ, will see if I can find out more about it).
+Fixes: 8374f43123a5 ("tests: add move_mount(MOVE_MOUNT_SET_GROUP) selftest")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ .../move_mount_set_group_test.c                    | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Just to conclude this - I got a confirmation from the ROHM hardware 
-engineers that exceeding the set limit and causing the over-current and 
-the coulomb counter monitoring interrupts do not change the hardware 
-charging state. [CC_MON and OCUR events in the data sheet, if someone 
-has that ;) ].
+diff --git a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+index bcf51d785a37..3f2c94acb29a 100644
+--- a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
++++ b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+@@ -197,26 +197,26 @@ static bool move_mount_set_group_supported(void)
+ 
+ 	if (mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
+ 		  "size=100000,mode=700"))
+-		return -1;
++		return false;
+ 
+ 	if (mount(NULL, "/tmp", NULL, MS_PRIVATE, 0))
+-		return -1;
++		return false;
+ 
+ 	if (mkdir(SET_GROUP_FROM, 0777))
+-		return -1;
++		return false;
+ 
+ 	if (mkdir(SET_GROUP_TO, 0777))
+-		return -1;
++		return false;
+ 
+ 	if (mount("testing", SET_GROUP_FROM, "tmpfs", MS_NOATIME | MS_NODEV,
+ 		  "size=100000,mode=700"))
+-		return -1;
++		return false;
+ 
+ 	if (mount(SET_GROUP_FROM, SET_GROUP_TO, NULL, MS_BIND, NULL))
+-		return -1;
++		return false;
+ 
+ 	if (mount(NULL, SET_GROUP_FROM, NULL, MS_SHARED, 0))
+-		return -1;
++		return false;
+ 
+ 	ret = syscall(__NR_move_mount, AT_FDCWD, SET_GROUP_FROM,
+ 		      AT_FDCWD, SET_GROUP_TO, MOVE_MOUNT_SET_GROUP);
+-- 
+2.35.1
 
-The CC_MON1 will however cause a change in the charging LED state. Eg, 
-exceeding this limit will turn off the AMBLED and turn on the GRNLED - 
-when the LEDs are controlled by the HW state machine. (I have some very 
-faint memory that the LEDs could also be forced ON by software). I 
-suppose the reason for this is that the CC_MON1 was designed to be used 
-as a "coulomb counter near full capacity" alarm.
-
-Yours,
-	-- Matti
 
