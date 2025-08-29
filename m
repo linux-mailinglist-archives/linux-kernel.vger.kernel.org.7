@@ -1,280 +1,279 @@
-Return-Path: <linux-kernel+bounces-790990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAD1B3B0BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4E8B3B11F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4C51C865D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B014582E94
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FC620DD72;
-	Fri, 29 Aug 2025 02:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EFD220686;
+	Fri, 29 Aug 2025 02:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KVZffB7L";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VHbO7AfX"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnhfmUlZ"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672E30CD84;
-	Fri, 29 Aug 2025 02:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756433219; cv=fail; b=eueI4I2o3UnamfDSf3NliTFo9SgvfPgmUdoORFnwJI9jVvj1tBK0251BEkG7mJ5r3QaPthGWxQ+M/UceRxaQ9Lggo9xlSr32tM01LvmuAZORPyEiQ1wPkm79V/RxyK9GaTbmulbDAcLxPNNhQu/CIoN+Fu/u6EgbGD84O3S9CTk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756433219; c=relaxed/simple;
-	bh=PafMzAxv9ud9HYzVV34noJ3bBVMeoieu20hZ8EDRNKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oAcSopXNimP7yc5s0LCcjzFBcM4Xcn+UM7HPLACsBkyTwtTn/J1/UFldb0JEdCxzv16HY5WkMoHm56lM3Bf/vbFtSz8wB5iEPUhbwRpE+L6njKjM65b+VfopyBf6p6tKM6dFAf0Ov0l2ykFCl7Iezy0KAKpmWR2S6WwbY1cPerU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KVZffB7L; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VHbO7AfX; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T1frxM008401;
-	Fri, 29 Aug 2025 02:06:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Xx6QB1bvfPch70kzCW
-	vCjct0FRmDIksZuJnqZVyzvUU=; b=KVZffB7L6HWtzndVEavaONKoLRQu4Aymea
-	ygzSovuJ50CpFNSW5Oxs8QoSA9+AbBWzyS6bwXfrGkIMUcFbdwEDg7WXyMaV3NUm
-	oUAN73mTNFgk/YRExxjeerJgdPJZgq2Pd3MtLo+GHErEXl4Pn5HvmrPnG+BarE0e
-	NI5GR8VwxevJ4JGSbPe+IBIBxSvDjb0obdTcRDwxBo7UBsTonzgvWCF8EL2GjDLb
-	YwSw4XcIPtCM/lZrC8ALLn+sO2iffFcG2JwDxN7lGvlq2rEnM0eC5vTIswYG641V
-	ivrjQMhRby9k+d7soqDawc+MPBxxoU7147TarZokxc1eNCp+JzzA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q4jaspbe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 02:06:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57SNo7pd005309;
-	Fri, 29 Aug 2025 02:06:34 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02on2081.outbound.protection.outlook.com [40.107.212.81])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48qj8cus1a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 02:06:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nkcnfN6s4o9nYckXyBrLQqLz6SrOj9GLwAZpLQzbljURMW4kR7gRO/6liKGkfKhYAAlKYb39FVF3TPlUWkL5rWh0yHP09ccSZNJ5At2A8jwhQdn3QmDFRmiL/UxPW8JVbDGkHYOE0FMqYXt4cdHvG6ozZ5o7VU7z6plCItLtP5TCuTXci3cK52ztoxUb+1xxNFehieEvIITL4amFtCTpNLONitCmjDGTcVeXanCB2pTByEBJrGi1uZ/9xw8DmmEG7C+c+hlP/qb2L9oWQTU2Va18Zf46RR0SuNjBmD+4fcn4ttsFMRvmxzHe35jgrxh2I5URg90bXZLe7xRrWIr6Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xx6QB1bvfPch70kzCWvCjct0FRmDIksZuJnqZVyzvUU=;
- b=oLrzjsV3mA0MFIiKm2U2FPEyskyQCqfOhINSQrZe8frdMnnJGuGLz/EPVxx1Qpy2rz/Lh3a8CMrh4IOMAmm6VqKqB2S5ax9H5JbQH4FOeg7K66joSsBXDRMLoQ+Ys3rTH073upLaorTyIsyWDPR4kP24I4lH9TrUeVG336yEhGPBsWBEfncIHlzriaEFNPJBdrBkluIm7Hcu6QJ1JIpssQB1Vyas5kBrsX+KobnEmw+0Agg8GFZHCGs8Mda7pQgX4XcE5VtSLGLS/Oh/LOuZQ5U5yqrE4ISazxQHFWUgnRyPUuOeSEXoAAxqcwhQl1Fl9KPKYIQYu22YkKZtnJu1CA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBE71A58D;
+	Fri, 29 Aug 2025 02:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756435674; cv=none; b=FgIVXmVLwcdNYuREeHj1EKGlutksHPVuUbqT4nN0r5Z5FutVOX9tYfyOcrskKK4kHm8p/LFNw1qpHGmANLJfBYVaWM9YfWDY4fM6x1fcsaiULfM4zrMKQ/5N3rq5JAcUfHM3WqCNv7o1LZHQsOiAw0pjtx54jW7HhjW83Xodc7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756435674; c=relaxed/simple;
+	bh=0NaqKPi0nbkduXdLlQqcuDuAki5cwbyz75CUvTa8yvs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=s/+FGJu1cBsx+JR7E0TqQQHwHfybqfDAF6eyzo9BaLfIcK7WfbJ8VWF9npyMirOb82HuvVsBWxpspN8cMgqyzBc/MPM5j7uq2pcoJtw7J16MYGSi5FzRqusa4aytO6Erri/IVPhWNGioZ1oMtOWDMXXzAAoY1H4z4X0Pvri2kvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnhfmUlZ; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b4cf40cd0d1so231788a12.0;
+        Thu, 28 Aug 2025 19:47:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xx6QB1bvfPch70kzCWvCjct0FRmDIksZuJnqZVyzvUU=;
- b=VHbO7AfXtGlSONzKG71r+PKkVCmbX++IENVRdb1KRnThmnv4TvO5ZzUpl6hL0WK467Xkzq7PfdWLuNKXqd7UAK4h9JC0x0GY1UhnptO77cjtMiGebHDDRD5yns28nViwbSAVg/1yA6X3JR/jzhizRu8g2JSeYVPIVeikWNegBjo=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by CH3PR10MB6713.namprd10.prod.outlook.com (2603:10b6:610:143::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Fri, 29 Aug
- 2025 02:06:28 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
- 02:06:27 +0000
-Date: Fri, 29 Aug 2025 11:06:17 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, cl@gentwo.org,
-        rientjes@google.com, roman.gushchin@linux.dev, glittao@gmail.com,
-        jserv@ccns.ncku.edu.tw, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, chuang@cs.nycu.edu.tw,
-        cfmc.cs13@nycu.edu.tw, jhcheng.cs13@nycu.edu.tw, c.yuanhaur@wustl.edu
-Subject: Re: [PATCH 1/2] mm/slub: Fix cmp_loc_by_count() to return 0 when
- counts are equal
-Message-ID: <aLELGQDzpjmQ4ppP@hyeyoo>
-References: <20250825013419.240278-1-visitorckw@gmail.com>
- <20250825013419.240278-2-visitorckw@gmail.com>
- <eb2fa38c-d963-4466-8702-e7017557e718@suse.cz>
- <aKyjaTUneWQgwsV5@visitorckw-System-Product-Name>
- <aK1n_t-V1AlN86JR@hyeyoo>
- <aLCOVoshch9phL5M@visitorckw-System-Product-Name>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLCOVoshch9phL5M@visitorckw-System-Product-Name>
-X-ClientProxiedBy: SEWP216CA0153.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2be::12) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+        d=gmail.com; s=20230601; t=1756435672; x=1757040472; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JZ9wmr99Yf2OiqbFk7ybwlinPpULK3DDjyydQHoTCNU=;
+        b=hnhfmUlZuLoS10Do1TG7UAuYIUV4Moh0Yv6Q4/hCivr6M0dD2bATPrJ0CYve4xPrzI
+         OcfC1HdhAt3Oy5AaCMYOcogPKQZhqIxS12uBURuN4yxZcTKwdGfeiuTOmA/B6uSjyRkE
+         xDmZevZg4la3133dIqc04DE6taak62G1kyUiLEby0ZZNPw8pP0vIfq89y5d4UBVf81so
+         PYyN2IazaDL2v2SZGKrFsYs+6dop5JrK+NeDap+XmCk/sQv7cvT/EBsg7/VwaECbD4Nx
+         02XZGhT0OTqCvEOkTw9aVUlefPOvh523+xPPq5ODXfK6komRKDfMp2oGZp2Uj0zkmGt/
+         2v5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756435672; x=1757040472;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZ9wmr99Yf2OiqbFk7ybwlinPpULK3DDjyydQHoTCNU=;
+        b=f7GDeHrX04lcwpEWZv3PWkiI7NQ/4ha6G9ih4aJZo6GxABrnUYpCbzm7cKCbceMXER
+         3Lohbuk/6bmgZCE9Jn7z5PWc7EVD3VJPdMwYsJXFTfLlKPEtVWBP5A0FydgIdQg109Jp
+         1WREW6oKYXehz1vsPBpLRw92RaeZd868v3iz12BlvXaBEJ+/3O95YXeF4JDa2xwuKqcw
+         qWp6ybCvkOJECtYZHxJPXwi+twbOtULPgIpynJzdo4kQJMpDa2IzEhko2nWlUwMMOPW+
+         ktqIjO/beUr4ITuVAijdKM9Hjo+q8+ciQ6NGob8QMLrd/22AdqNG5Li8R4ppaTr2sMlm
+         JQWg==
+X-Forwarded-Encrypted: i=1; AJvYcCULNBoQ4T1/N11+Hq+6ZoREkQ8UMY1vEec0voSMvPUhXAWEN0MY+A5mo+wNMVCn+T9f+awT1JtBsej8Iv3PcA==@vger.kernel.org, AJvYcCUoa5az0NRa6AEqdqxRK/YlmZlzbDNz1Lu3gYtGTTJjJFZL7UNEewFYJ2XWiv1vfFnGkFaTDWw6awvoWA==@vger.kernel.org, AJvYcCVg8P2pyO//1kI1b2ChfoaFYuoK3GtGcwcVAmLwDqkzJ1vkCJFj31Kr4lR6aRVAGt5hfHiQzhRlfOb+@vger.kernel.org, AJvYcCW4xBpiAaHg0wmMgDszCzuJW8NTUthU2sK9vwThXHz0PjxAPvMeHjhZJ3w8S/2rIE71yq4bUTKewSfASwbT@vger.kernel.org, AJvYcCX/1rPcuNa9C1NfAkMrWIxu4sh8zjKyHKz0uZOmGiaFrAg5KX32b9x3v+PxPG7YdYGxtaLXHtmMZAV4cQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeNwf/OdCVL28zjeCSmyyiCK+4SDZ+TWQMPTj3jYo5BbrAl3sv
+	IG3mTRoVSIqFJ4fxGFVd11ExnHlrYv7OZGhsvwC/6QaJJV/0ALwnVLln
+X-Gm-Gg: ASbGncsnEyEDsGr3bzQIJ80/u+giUSQ+6WN3EK8JPYtaRs/4/+8q5xPTTHhrnwPV6Kk
+	kh4/KZk1UIVHHKpUifblIkblACEY/BDJw4xUzZEbQWpxwkmodeGNKtvOCAWDWm7uZycr+UE1kDf
+	E6sTG7niQn7AJXKtCgvfRSFvD59lMIkazFr/kYp+jPFrtihvis2J1ztB0CJbfZvB9qndAawrtDs
+	etD4ivxWtK1U7BabnLhbI8MeS1OqwQx2hoGC+BZXOJVzEdCZSaIkr8rT5ARm0iD9+W5b2Lt1jKy
+	2cFgB0TnNoxr/r+gKHTGIuODuvDFXgVQNRQr8ChBWwPlSDrzeTqV7VQXYGsiCXv1vsF0ZaoDmHp
+	AWDZnB8ZPPd7IxfwVaE5nnt6U3Q==
+X-Google-Smtp-Source: AGHT+IEVbsRZ4L7P12wxeChIuvyRzeF7VdizyYTaB4AKMbmobBgFbKFhASHYn55ebbptuM5XyJhT7Q==
+X-Received: by 2002:a17:903:198e:b0:242:e29e:d6a6 with SMTP id d9443c01a7336-2462ef66f01mr341960885ad.40.1756435672223;
+        Thu, 28 Aug 2025 19:47:52 -0700 (PDT)
+Received: from dw-tp ([171.76.86.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906598808sm8925935ad.116.2025.08.28.19.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 19:47:51 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Keith Busch <kbusch@kernel.org>, Jan Kara <jack@suse.cz>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>, Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+In-Reply-To: <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+Date: Fri, 29 Aug 2025 07:41:21 +0530
+Message-ID: <87bjnyg9me.fsf@gmail.com>
+References: <20250819164922.640964-1-kbusch@meta.com> <87a53ra3mb.fsf@gmail.com> <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq> <aKx485EMthHfBWef@kbusch-mbp> <87cy8ir835.fsf@gmail.com> <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CH3PR10MB6713:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b4c214f-fb3d-4a59-fb56-08dde6a0a9ce
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/ME4a5PEwsWkw1MeNQrKS64cl2FV/L3EE5VJFMvHPJO5toKyEPZg5klImve1?=
- =?us-ascii?Q?+z5cAretvUATt7Nmg+o3lfnGQ3l3dVXOV8RaU1f6QX7lAmKRE4v/dH8Y2yGd?=
- =?us-ascii?Q?STk7I2WBhHB8FekdvPzHprI51wBOIYkqjtNwgQFoFS/PYwV8EZI7rWg+tO56?=
- =?us-ascii?Q?6RalPJEHIJkSasrA4bj+zCxr6FjY/8bpa4E0n8/9Zg8TMioKuHJ+q5aKSlQq?=
- =?us-ascii?Q?WWjenOHnmH8WVIVmY0Iz0ALwZH5WbTtlTZah4DRowmaqpMf4AGIvZ78/qn7K?=
- =?us-ascii?Q?yMJ0UHnazMhxZ0bf1QtGH7rP7rEifhKW/DZnZF+FdQi8+Dcz78g5kU2xy+ct?=
- =?us-ascii?Q?5LLcoiROQ/OfOdreYAiGNuQxTFz15Nzp92/G5Yk5U7KguYSccLg5owgXXaq6?=
- =?us-ascii?Q?rbnfatWyj1O8KBBQO11hp+HgS2wPBkMNDgZsBOiHjXTqd5Ckp8ZI7NFmT3Ol?=
- =?us-ascii?Q?hrvfR4vmf7siQ3PxlwKYotiu5hAHl8Hh+IWmqp2DAolsu7dGxGy/yKi/6B8S?=
- =?us-ascii?Q?BEyinOTfY3LmkGO9umkpwt0TQUhJFgg2RvUZhpE4rbepkugWUUtg1C5RWGdX?=
- =?us-ascii?Q?gOvTbDnyiaUpLnR13saoJc7l1jzWEZlvjDMXa7dO7HGhVEfLUWHwmK66FJcF?=
- =?us-ascii?Q?S1Fhv63Y9B+qOPV7/GVZjXjPcFiioHlz2twLzkSFJw/jZW0nwgr9PiS9cjI6?=
- =?us-ascii?Q?Kb5KYGDRRvABq9HNb9ljAymXQc9TZPc5sNHcMu5KA8s83kdh8iYia7eOYmK+?=
- =?us-ascii?Q?PhjdPSKduVSAHt7q0F9wcQY2HYLRAYAPLN7jGTfY4/M33IMOf2IQZyyq8ccp?=
- =?us-ascii?Q?w9PNO0+RH9cRXjhBzrNVhVkFXrtRwUqCbugK+xJvsAGIZ847HaGxgIi3fHth?=
- =?us-ascii?Q?0v6G8jrEsY1wSzqfayw8Qq1ecTenf0a/scAkoCmi+Dks/X8TMup+mHLeC/7K?=
- =?us-ascii?Q?O9RvyAtvWkl3aVfiUK17yktVuVeq259zfA9L2N9MkSV3A+zHeS4VTEarBVIZ?=
- =?us-ascii?Q?gZXn1KH++kcxA7HJ90Q3KgNcDGymmloiah4dgY+lN8St5pSTqEuLS4yO3bjG?=
- =?us-ascii?Q?Th/hP+MMUfM0tXJUqoTu3wSZNnpzqzRBzhpBCd+HPIu2qp1C7YIRw1Pzh3Jp?=
- =?us-ascii?Q?NMXDY1oyaDijrwV6PMf9GN6zpHxg90u52pmp+E5EsOkvQvmbXIpxlhJIROdp?=
- =?us-ascii?Q?6gUwG31XnHkbMk1072t1wg2IOzQZeI8TcSWWfAIt+Hdj6rD+aBSirajUvmt4?=
- =?us-ascii?Q?e+Cf8OwqgEuR6BsB8uNME51kJ7S+E4uMs7K8eDWrvYrkXhHAFMbnZ1VTSIf6?=
- =?us-ascii?Q?ZyIRJce3Y5hKScARqKpaWChvDG5VNWlQD4FU6RWAuBcvKKYm6ZsNgGtCDSVa?=
- =?us-ascii?Q?fdTT7sRs4rd0jVBfcz9+AJ9SBp4EhnIHYNDEhL+/3FZZD6rVIcVK5//Hw4Ku?=
- =?us-ascii?Q?a1tKGm3J1D0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6Chgv91HqpLB3AsWxFPKS6s+2etpitj2Wrf200CaatuWN/e7kVglS+HRJG1f?=
- =?us-ascii?Q?2/W2cwXlAYO9OhQngIulg+PsYU2yfHvcjLmSazAsiB+uJxcITF8PYAnUnbEw?=
- =?us-ascii?Q?mu6is0N8FZQprRIUfW9CHtPx1A44HaGG9/4CBveSIDgXM8JkdRB0UPgQiPZL?=
- =?us-ascii?Q?R/gOPijhZzkZnEvTGBtsTzwCPr8Zqgc4UnST+mvWBu8VEbU5sKTTNvkRoUq+?=
- =?us-ascii?Q?N3QGKOQpG0dKRhh7TNMpobT+ezizJOS6qF+cLevsE5j/5LKTVd6yb5IlPJSs?=
- =?us-ascii?Q?4RfP3anuC5HilqZKLibCQlNEnqHhf1VlMHikDLP6AU8b8+x59QY74EnpnSqq?=
- =?us-ascii?Q?C5jmbSA2UqBi3R4ngQShCMJZYclZxnsh6dfUnaBsQH7fsNW73tbPx1xKPw+Y?=
- =?us-ascii?Q?f6jBNw1Lzd20eTvx9wOeTAi6s4HepEhc1l3ZekNM1CfZS8jFjMHpwzJokH9H?=
- =?us-ascii?Q?BC2Vab2GbOtLq6jL7P2ROq5Hsw8gRESPuvGJdKY1zBcT8gf1ow7gcGkJ308Y?=
- =?us-ascii?Q?nt24muAJmqQzL/Bj/s1Bf2Q3i0yZLQbE9dNUzFPXOGuOI2dFLfe6BqXB6lE4?=
- =?us-ascii?Q?EQZW2j+YlRqaAJGTV2t0GHUbCq33153rIcQUuvitx+M/S2vrq2Q+Ij6gH/PI?=
- =?us-ascii?Q?BPw5YCNtTkmHkD2uV5vI1PnIXXZJHvlm2oKEu56DU8ynnXAuGSRuzqUoHbfW?=
- =?us-ascii?Q?ujJ1c9vpU59mtk/t5kGAXiYCL17bRhNJazzsVS/IpcJuP++kDtWiBEK1Xb5h?=
- =?us-ascii?Q?PgZ8ueV0B6I1XslWOt+WNMQWar+sECvrTsMGWch3Npq81V4Axsq6C+9Luwmy?=
- =?us-ascii?Q?VVMpHVYLW1kZSr+KY9brW4pj30ddGFXiUpTdycfJ9IT9dWnitGT9QiIdgb2s?=
- =?us-ascii?Q?1oJr9dWyv1iQ59zChF5pLhLrWd4rHl0HuWBm4OYSYdQoXDuce2+dx9SiT4+Z?=
- =?us-ascii?Q?bd2BVMLm/EjvGswBMSeQfzS0XBPEdBrZftBl/FBLtXftqxnVgT5mQRmIzNwc?=
- =?us-ascii?Q?Ikx24dRTVzihbvvyx3fZk2jhHsOD/rqiiHllvnBing1U0AmopFiCX1eVxyuw?=
- =?us-ascii?Q?LY4QOsWkCuXModWz+3RuIkn0yXXal0YjHc8HgbgKrrbDjtSiH9Y++XsdBCVA?=
- =?us-ascii?Q?KuPOHc9MCAGuuRZgzS6aa8XdtbjjCH+iT3UwvygIdk/v4Ls/LKR2GKV4jqck?=
- =?us-ascii?Q?j6SrNMzgSU4bKAMA5ofApQwvnbywGQhpRXrsuoACovAvmjseqQ7RKane173e?=
- =?us-ascii?Q?1SxqUMQb422aT3yCxShxf1KXUrvv69PMP/VOmadEUpHjuoebHFjuypO0O+mu?=
- =?us-ascii?Q?9yqKyBwULOKGZvs1UBc7FqrVG04Na13lGRgA8h6tH0zdkambJSWc8+YbPyBJ?=
- =?us-ascii?Q?ls5U2QnBijRJQiqSrE90kMswrx4wKDRg+bwJmChLe2FD58PDA7jZCFteSM0o?=
- =?us-ascii?Q?ZQemgHTsLNTTKxcXPs/1yndjTO5eUgWKezi5Y0KriV5GcZIYwbq+uZuGi7k7?=
- =?us-ascii?Q?sXX204Ro2z7XXXekWfQZ36diK9bxAGyh+yeYt+A6A4VX4gzZRYnUW1UWhcnd?=
- =?us-ascii?Q?8fqvc2sp1hy7t0o0uKde1FFtnG5qZM7fqkWTl5N7?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rPwrvJ20wFBOmKw0At5CS4OPDu5Pr/w1mgtSjnxhnj9LxDtWlfA4nV/RfZ04IF1DWmo2kEW4iXs7alN3cadIVzfL6upv4s+7TwEgTgg5UIzFJT4p9dto9h43p0cO+b6bZdH479MRHX6pzjQqqNT1FcSPpUPOaJZcguNd2S4pFKq7mIn5pVGs0sVaaWWz5OGJrCV5VKLlbcTr0axVRuuoZjK0uP96aLhYn2RXhq0e4sKr1JiEceQNTqJnjdB21cqVK0I69b3/M1+VIKe8oRG/KQqZHNvYO6dkm0ivWfdrrHH9bH5aNK52eLp3knYlbFMn0a6WfyHHHePcrP/wSTIaxc3cXHvD4MIi0VVGgot3w/O4p2heNItnexlt4sH0aXcnGf7tqOTrmr24oXgq0vqJyK9vICzkV11UQwYFKnFyUMaoxNM6PFApop8ENXqihvliC4hWqNacjsWKvJ5U/zze7/3TghThzMuRTwETY/VxufrOrV1/B2crONMBPstAgJnGhVHABERZS91lWeU+vNLnCQKtFTspvfZuJX0Z3epGaNfWxFLa9GVJ+tOLc5ZGcGEg8x3QzpcGgbPwbCOpC7nB+B515JRUuPMEMqyU+UldwLg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4c214f-fb3d-4a59-fb56-08dde6a0a9ce
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 02:06:27.6936
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Xzqyc/Q4oQ03MexMN09SAr24tLLaa4oCKIHLZfRJi+v+yg+a+ow+swR0i7jq+exdIkb3y/pflR3dxyhlmi5Z/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6713
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
- phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508290016
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxOCBTYWx0ZWRfX1iqUALlyR4yE
- /ZV3KzTFeNxiqY1kVOKxVmTr303uUQ/bIK8Epvu2wEjjCiWZbq1iisCvM9CJyYcxAvv4bHnKUt3
- tFAOOLS9YqeFKuNpuW44diSOSgNWJLOqCEaaqP01X2AK8fRfgKoAepzeN2eVk+DCjkSARmy4E5g
- WefMv8AkKOWVSOYBaWAgQ+o0dbqREVYOUFjiA3xbsSTIcYqU1RaTQdprrxe+j155XvvmIB7vA8Z
- MX0CrbYLp2PbYzUvwpebwn0Ldf294++bqy3lHIVpuc48ezVPMeCQRWOAB4IMpezTsQysoXCaQs2
- skiklytVHYoP9QqjcOhTXRkPGGj6hRXf47tEtDCE3MW29wwRoYkE0sjKe+9MMmU1hTwNkBHMgri
- Ifq+IGxgIuhNi7yRtaVZrJjIlJqU9Q==
-X-Proofpoint-GUID: 2cLPU0pwPXTYLK2pUbw8z-YHeUVtIfDa
-X-Authority-Analysis: v=2.4 cv=IZWHWXqa c=1 sm=1 tr=0 ts=68b10b2b b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=CuuHCt6lwlVgYl5tIdUA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12068
-X-Proofpoint-ORIG-GUID: 2cLPU0pwPXTYLK2pUbw8z-YHeUVtIfDa
 
-On Fri, Aug 29, 2025 at 01:13:58AM +0800, Kuan-Wei Chiu wrote:
-> On Tue, Aug 26, 2025 at 04:53:34PM +0900, Harry Yoo wrote:
-> > On Tue, Aug 26, 2025 at 01:54:49AM +0800, Kuan-Wei Chiu wrote:
-> > > Hi Vlastimil,
-> > > 
-> > > On Mon, Aug 25, 2025 at 07:28:17PM +0200, Vlastimil Babka wrote:
-> > > > On 8/25/25 03:34, Kuan-Wei Chiu wrote:
-> > > > > The comparison function cmp_loc_by_count() used for sorting stack trace
-> > > > > locations in debugfs currently returns -1 if a->count > b->count and 1
-> > > > > otherwise. This breaks the antisymmetry property required by sort(),
-> > > > > because when two counts are equal, both cmp(a, b) and cmp(b, a) return
-> > > > > 1.
-> > > > 
-> > > > Good catch.
-> > > > 
-> > > > > This can lead to undefined or incorrect ordering results. Fix it by
-> > > > 
-> > > > Wonder if it can really affect anything in practice other than swapping
-> > > > needlessly some records with an equal count?
-> > > > 
-> > > It could result in some elements being incorrectly ordered, similar to
-> > > what happened before in ACPI causing issues with s2idle [1][2]. But in
-> > > this case, the worst impact is just the display order not matching the
-> > > count, so it's not too critical.
-> > 
-> > Could you give an example where the previous cmp_loc_by_count() code
-> > produces an incorrectly sorted array?
-> > 
-> Sorry for the late reply.
+Jan Kara <jack@suse.cz> writes:
 
-No problem ;)
+> On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
+>> Keith Busch <kbusch@kernel.org> writes:
+>> 
+>> > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
+>> >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
+>> >> > Keith Busch <kbusch@meta.com> writes:
+>> >> > >
+>> >> > >   - EXT4 falls back to buffered io for writes but not for reads.
+>> >> > 
+>> >> > ++linux-ext4 to get any historical context behind why the difference of
+>> >> > behaviour in reads v/s writes for EXT4 DIO. 
+>> >> 
+>> >> Hum, how did you test? Because in the basic testing I did (with vanilla
+>> >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
+>> >> falling back to buffered IO only if the underlying file itself does not
+>> >> support any kind of direct IO.
+>> >
+>> > Simple test case (dio-offset-test.c) below.
+>> >
+>> > I also ran this on vanilla kernel and got these results:
+>> >
+>> >   # mkfs.ext4 /dev/vda
+>> >   # mount /dev/vda /mnt/ext4/
+>> >   # make dio-offset-test
+>> >   # ./dio-offset-test /mnt/ext4/foobar
+>> >   write: Success
+>> >   read: Invalid argument
+>> >
+>> > I tracked the "write: Success" down to ext4's handling for the "special"
+>> > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
+>> >
+>> 
+>> Right. Ext4 has fallback only for dio writes but not for DIO reads... 
+>> 
+>> buffered
+>> static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>> {
+>> 	/* must be a directio to fall back to buffered */
+>> 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+>> 		    (IOMAP_WRITE | IOMAP_DIRECT))
+>> 		return false;
+>> 
+>>     ...
+>> }
+>> 
+>> So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
+>>     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
+>> 
+>> 
+>> 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>> 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>> 		return -EINVAL;
+>> 
+>> EXT4 then fallsback to buffered-io only for writes, but not for reads. 
+>
+> Right. And the fallback for writes was actually inadvertedly "added" by
+> commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
+> changed the error handling logic. Previously if iomap_dio_bio_iter()
+> returned EINVAL, it got propagated to userspace regardless of what
+> ->iomap_end() returned. After this commit if ->iomap_end() returns error
+> (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
+> the error returned by iomap_dio_bio_iter().
+>
+> Now both the old and new behavior make some sense so I won't argue that the
+> new iomap_iter() behavior is wrong. But I think we should change ext4 back
+> to the old behavior of failing unaligned dio writes instead of them falling
+> back to buffered IO. I think something like the attached patch should do
+> the trick - it makes unaligned dio writes fail again while writes to holes
+> of indirect-block mapped files still correctly fall back to buffered IO.
+> Once fstests run completes, I'll do a proper submission...
+>
 
-> I tried generating random arrays to find a concrete example where the
-> old cmp_loc_by_count() causes a wrong ordering, but I couldn't
-> reproduce one. So I would like to withdraw my earlier claim that it
-> definitely leads to incorrect results, since I cannot demonstrate a
-> failing case.
+Aah, right. So it wasn't EXT4 which had this behaviour of falling back
+to buffered I/O for unaligned writes. Earlier EXT4 was assuming an error
+code will be detected by iomap and will be passed to it as "written" in
+ext4_iomap_end() for such unaligned writes. But I guess that logic
+silently got changed with that commit. Thanks for analyzing that. 
+I missed looking underneath iomap behaviour change :). 
 
-Yeah I couldn't either. Maybe mathematical proof would work, but I
-didn't try.
 
-> That said, I still believe the patch should be merged, because sort()
-> only guarantees correct behavior if the comparison function satisfies
-> antisymmetry and transitivity. When those are violated, correctness
-> depends on implementation details, and future changes (e.g., switching
-> to a different sorting algorithm) could potentially break the ordering.
+>
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Wed, 27 Aug 2025 14:55:19 +0200
+> Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
+>
+> Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> changed the error handling logic in iomap_iter(). Previously any error
+> from iomap_dio_bio_iter() got propagated to userspace, after this commit
+> if ->iomap_end returns error, it gets propagated to userspace instead of
+> an error from iomap_dio_bio_iter(). This results in unaligned writes to
+> ext4 to silently fallback to buffered IO instead of erroring out.
+>
+> Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
+> unnecessary these days. It is enough to return ENOTBLK from
+> ext4_iomap_begin() when we don't support DIO write for that particular
+> file offset (due to hole).
 
-Agreed. No doubt the series is worth merging, just wanted to clarify
-that bit.
+Right. This mainly only happens if we have holes in non-extent (indirect
+blocks) case.
 
-Thanks!
+Also, as I see ext4 always just fallsback to buffered-io for no or
+partial writes (unless iomap returned any error code). So, I was just
+wondering if that could ever happen for DIO atomic write case. It's good
+that we have a WARN_ON_ONCE() check in there to catch it. But I was
+wondering if this needs an explicit handling in ext4_dio_write_iter() to
+not fallback to buffered-writes for atomic DIO requests?
 
--- 
-Cheers,
-Harry / Hyeonggon
+-ritesh
 
-> Regards,
-> Kuan-Wei
-> 
-> > > [1]: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df@gmail.com
-> > > [2]: https://lore.kernel.org/lkml/20240701205639.117194-1-visitorckw@gmail.com
-> > > 
-> > > > > explicitly returning 0 when the counts are equal, ensuring that the
-> > > > > comparison function follows the expected mathematical properties.
-> > > > 
-> > > > Agreed with the cmp_int() suggestion for a v2.
-> > > > 
-> > > I'll make that change in v2.
+
+
+>
+> Fixes: bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/ext4/file.c  |  2 --
+>  fs/ext4/inode.c | 35 -----------------------------------
+>  2 files changed, 37 deletions(-)
+>
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 93240e35ee36..cf39f57d21e9 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -579,8 +579,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> -		ret = 0;
+>  	if (extend) {
+>  		/*
+>  		 * We always perform extending DIO write synchronously so by
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..c3b23c90fd11 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3872,47 +3872,12 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+>  
+> -static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> -{
+> -	/* must be a directio to fall back to buffered */
+> -	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> -		    (IOMAP_WRITE | IOMAP_DIRECT))
+> -		return false;
+> -
+> -	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> -		return false;
+> -
+> -	/* can only try again if we wrote nothing */
+> -	return written == 0;
+> -}
+> -
+> -static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> -			  ssize_t written, unsigned flags, struct iomap *iomap)
+> -{
+> -	/*
+> -	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code for
+> -	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> -	 * complete the remainder of the I/O.
+> -	 * For non-atomic writes, any blocks that may have been
+> -	 * allocated in preparation for the direct I/O will be reused during
+> -	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+> -	 */
+> -	if (ext4_want_directio_fallback(flags, written))
+> -		return -ENOTBLK;
+> -
+> -	return 0;
+> -}
+> -
+>  const struct iomap_ops ext4_iomap_ops = {
+>  	.iomap_begin		= ext4_iomap_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  const struct iomap_ops ext4_iomap_overwrite_ops = {
+>  	.iomap_begin		= ext4_iomap_overwrite_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+> -- 
+> 2.43.0
 
