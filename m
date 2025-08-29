@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-791643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAA6B3B99A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:04:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D01B3B99F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCD66869C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D75136028E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4492D12E4;
-	Fri, 29 Aug 2025 11:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3843C3126CC;
+	Fri, 29 Aug 2025 11:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Fo8KVRxS"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ig5G8nXV"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1563101D7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F9B53A7;
+	Fri, 29 Aug 2025 11:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465441; cv=none; b=NdEqiPNQ1GvmtHmWLmX9H7BZFbjvHy9a4VkiyUvo4tEX2p88VvePeEnFoRzYW2izlRJv32H0/OKRpyjjrmirIa4hFlJAlyNDXuJ2jW4O9vUqNx9AFNzggsFJoAM83BVUD5I/OhRlXaJ1EqfabbNihcxkcSrRI2Dj1ROx1sc1gR0=
+	t=1756465459; cv=none; b=RxdpbJ6gAE0LmJkQuedZGUqaJUAMtHHtxkQxr4Ps+WULx5f39v/ZBcwxpywjuUOKuO749+4X3cMKxg98A0Ustfz63hULXIfQZYYDu832rwWjbmsi8l3fSeyMrIQktDKv6Ofn/4v1/ewbD4w3X873hAYXb3wcg+RtYC+BgynWUiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465441; c=relaxed/simple;
-	bh=YuYDNgvmByukeEjHw0NdzkrN0QNksChG2e5fXtNTVOM=;
+	s=arc-20240116; t=1756465459; c=relaxed/simple;
+	bh=hU+tU2VplCkY1jCg7NY/C6SasU1xb9pS0yR/WEPfMWQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFn5DkGkFL3NIcfImasCGr8QVmUYM7Qo/OPhCI/nE3FxS/iRqgL3vP+umlmNy+RC3LCOuP59xdCh3BNUCUKgSkn/f0SheVcIX/6c8ikonZsdjKmex6F+LUYkgmJND+NS4vlOhBFngoIrDCAaB+NpW9EWO3C1NmIk+7/I5mAhk+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Fo8KVRxS; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-244580523a0so20412395ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:03:58 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=f6OcFe55fXncAp2EqQ0ueEGb5C7WC69wzJobWXr7Ud9FJP36P6cH26do50Uhe9W9omgjikbLUwqzQqQjR/5HV7tX9l9bNVR0r+Edzt1VLiKD72kqrEW7G2TnswygKQXOwJXsI8EgqK/IEfTblog3Y/K5dLXS11NmLWpIEsAY+P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ig5G8nXV; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-61cb9e039d9so3719764a12.1;
+        Fri, 29 Aug 2025 04:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756465438; x=1757070238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1756465455; x=1757070255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IIaSrq6Dx+kKyeLRsgFivteR1euTnImW9J7nYHhbSJY=;
-        b=Fo8KVRxScIwX+4IqOcKVSQHK1GhgE8u2mNSZg4G9BHU7ACOZqWvF8NBWtYa15l4mW5
-         GH17rSSfyQ4f5ng1MU8iTh8sFBPWNC5errVy18VTnFoL7V283SRbuHEizeSji9nXXu5N
-         mF45k8F4KgGYl5AaBugVTZv0C+/X9WkUCy8NR1aiDEGDAUZr8iEo5++XWT7dQoBKOGtq
-         fjVKeKI9Z0SV3NmtU6bsDC0yal2pv3n71guX7emGh11zbIJCHM6RkPcIpBzQ226OHCiy
-         lDs/SDCxlDviy3P892hOlrolmZg7J/lCmDWdZDEDgD//CEIJsOwlMqLyUDdvB4saV2Jh
-         imfg==
+        bh=hU+tU2VplCkY1jCg7NY/C6SasU1xb9pS0yR/WEPfMWQ=;
+        b=Ig5G8nXVGTPgWjozvbwsVlI57o+KWPHPHNnAHNs8/2XmksRSj1LePGkuIFlh/fdaJH
+         wYRwJZHM5Y4gXHm2lpFA13p2lQ5lzIhon0kF+kYiYzzISnK8vpGTEhFpJzmCit+7hX0u
+         oYZxnwQ7h/+VXRlS6V22+qLH6Kqw79f08sI5ysApFW7vuJaaF0fEa+W8wYKD89lpCvfG
+         QyGEyhBRiIhEOx78ZFkDzTJbPIjj7QbnLzA5OgE5fPzaKVOXPJ58NY75HfAnyXk10VD1
+         z9ajbtQUz5BLuREr3BioGAL6yb1+xCHF1RD9+e2OStiblkZLVwx9DO5vivGaj0NsjA86
+         /9kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756465438; x=1757070238;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1756465455; x=1757070255;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIaSrq6Dx+kKyeLRsgFivteR1euTnImW9J7nYHhbSJY=;
-        b=LMrFClDAPKrnUDme+WBkZzfsz79NGx73PQnSpUGCwaPuphYkDdz7zph96ydbUcgBRA
-         NRYsIZ9dUVCm1kMGF4iHnJGaAZa3B+Y7I2gjgadRdBLFD692uFKT3tloNgdwOvyjZwG9
-         jyQXbZsnfI/IiJRBYkDRJjsTKJpWMJ6sTcT0sw9u9EmkAHFbNYKEeqOcyDk+uQ8Q6b+P
-         mNyshdi9voCX1WSc0lSKar9sPz1KMAkqwmVzThHYJ0ocj/IlLzK33dbUZn31Pq3ngkKs
-         Vz8dGwL8JK5ABDCaGvTjRpbme/FTh8gW6Xx6Z1mAD1fNNpuYJB5Q8rMO0Ej+lvRcsgAS
-         1iHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW+fiEhJ0qI8/z6gQdNKN9DieNHkAV0kNVvR0i/JBO0trEBoV+5oIesPuNn9PaM0GZmHrGlBq3WOMCvEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz83BEfvuBP/XiuTKyqv/1rPs+PsIJQpf/Tts2mYd15+UmOXdwx
-	s83hGB8HgxQehEDZ09ihWjvAiyCWTfK03ZEs2Jqz9rb3YiP3K3dqcl1WH06fH5BpCxk=
-X-Gm-Gg: ASbGncvkOBw2uXpNylBz1LSCNpK3poWX22jg5peGJTtqozXisoXDb8X2cQVudkmqo4S
-	ePfUtAtyTkMA9LBOmpZq4UYzIo4mAXBWeL7tJNskv2W5b8/6pi4eeHmYx/Uop8opbW2ovzzZV8b
-	dCT+TvVJrIRGRQ3AuFlWEt3uyIjGhEeBs9BA4VNBxoFXyg1+FzLlxy6NtCKYVb3ydTOelocAfPk
-	gxv7B1OEnl9DdOHOzGIEMsGvmNAJjp0ozKj/bKzkBfBd0Kl3DZvl3vfihOwF/DcuV1wTWyZAAKK
-	6ccf+GS3KCdViUpti9Rl8AYn2V0IUz88BhWE9sE2ncJsyMbkwUP8bxpesXcufgfyOLeDBayu9mB
-	5Y9DrZquaDUeOWNPOC8VI
-X-Google-Smtp-Source: AGHT+IEzZ/p9as3nrF9ljeFhdkvVqD0Z2ro3p43Bl/n630t9nzydCZuiImxupdC2b+91pZmC3AWS0g==
-X-Received: by 2002:a17:903:38cf:b0:248:aa0d:bb25 with SMTP id d9443c01a7336-248aa0dc43amr125044695ad.14.1756465437860;
-        Fri, 29 Aug 2025 04:03:57 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f5925adsm7949756a91.10.2025.08.29.04.03.56
+        bh=hU+tU2VplCkY1jCg7NY/C6SasU1xb9pS0yR/WEPfMWQ=;
+        b=Wn60cxO3MWN/Dj9wQwbFrOG7IAyNbUCZ2lKhJqkk7Ew9y4KXxUCz4e9W4FLZV+/5UJ
+         lUSVAjubGcL/T+BUm88SyS7P+gPU0WjN0/NnDjDsMXtoEuGE8IjppKeQP8ctESIsMIwb
+         VtZ4/R9QdEgWbmJnQ4/OAfL4Kaw+eEeXJL4AygZ5+L1d3whOxEmDthSYf1t6c6Hu+aM+
+         4pakKWoIHxNuV7Oj0phQUmXnhyKKnmRT/4wdPMOlHdXwndo/vydteZW2oVKuDQr8Dik6
+         oEXaDhQe81FNkiDSVEIk4zDG2CzHgYo92hCoaU6k4P/E2/cvJqILrrEcWmE0NfC77Apc
+         cdAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnxtxiPv4VhtXaylyWYkzrD7Uq1DjhlxssWhmI8nPwBRbE1UYA3PGqH6gz2//tJW4vrV6XZUqsy5iztKOM@vger.kernel.org, AJvYcCVcey+R4eoPlyncMRVjBmYOa8NjSS9OYZW6zgMPCLeEU1Y/lyu75JzzmaJiYe6EmwDo43M4u1CNPobH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy53sN0fCJPof/v0hsSjbbREBYa1h6jzLuXZXRku/SByEFPCWRi
+	Bzc3YytdQ+q5vlMIBdqa7XUMXvreN1NVfncbkcwKGPqNKDOHHyf1Q/TvnlSymQ==
+X-Gm-Gg: ASbGncv4MQvnsatpTnKCD+ysaBj+8qmbKXDhiGnBcndGB5nJdKCe5WNQGAznVU1kznp
+	brOqcS4Zy/WbE2AcknLSeh6PHwcMjAisq2ApdKT1TUyQQ30Bbe4/Uudq4d9CsWOVD63ly5PSQEr
+	UWq+es2yzMZlIKMXvih/YemFssI7GMhChOKKEp7RMwp8/3AlULxk25zFOy7BRBerbg2MJeaDe/z
+	f2OMApcUJ2oFwFFBAR/tJhu8bHxKU5ubIU8Fj6PplmJ0rkfavMnutrpx73MpcYNy+SbpVuP/5DH
+	1louf79bWzZFrfQMj7/DcsrVP7thBxuC28MfBE5m+x2hpA1MTn8Fau4mJE/cTIrEIpbyYYpls7Y
+	Moky9lCQ26QFU6VNLpJSRfDedIhE/smoF4i+SLDGHURCAOODeWhMYT0vqf1dMzrHbiNQGuHIZzQ
+	==
+X-Google-Smtp-Source: AGHT+IEpjEEgJGol2tfKPNp2RrC4QuVEgEoma55i3wFC08IDA/HB59gsPcVPdBdqybmcvNhiYLRoEg==
+X-Received: by 2002:a05:6402:24c1:b0:61a:9385:c790 with SMTP id 4fb4d7f45d1cf-61c1b6f9d26mr19627870a12.35.1756465454626;
+        Fri, 29 Aug 2025 04:04:14 -0700 (PDT)
+Received: from [10.82.207.1] (212-5-158-123.ip.btc-net.bg. [212.5.158.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5572afsm1525721a12.50.2025.08.29.04.04.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 04:03:57 -0700 (PDT)
-Message-ID: <6c85f96a-f012-48e9-a2fa-f1c7650d8533@kernel.dk>
-Date: Fri, 29 Aug 2025 05:03:55 -0600
+        Fri, 29 Aug 2025 04:04:14 -0700 (PDT)
+Message-ID: <7e14b195-f383-45ee-a6b1-6e71fc8fea86@gmail.com>
+Date: Fri, 29 Aug 2025 14:04:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +82,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Add RWF_NOSIGNAL flag for pwritev2
-To: Lauri Vasama <git@vasama.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Simon Horman <horms@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250827133901.1820771-1-git@vasama.org>
+Subject: Re: [PATCH v3 0/4] arm64: dts: exynos2200: introduce serial busses,
+ except spi
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250827133901.1820771-1-git@vasama.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
+ <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
+ <51240b84-b063-4b99-b755-cc958192fef2@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <51240b84-b063-4b99-b755-cc958192fef2@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/27/25 7:39 AM, Lauri Vasama wrote:
-> For a user mode library to avoid generating SIGPIPE signals (e.g.
-> because this behaviour is not portable across operating systems) is
-> cumbersome. It is generally bad form to change the process-wide signal
-> mask in a library, so a local solution is needed instead.
-> 
-> For I/O performed directly using system calls (synchronous or readiness
-> based asynchronous) this currently involves applying a thread-specific
-> signal mask before the operation and reverting it afterwards. This can be
-> avoided when it is known that the file descriptor refers to neither a
-> pipe nor a socket, but a conservative implementation must always apply
-> the mask. This incurs the cost of two additional system calls. In the
-> case of sockets, the existing MSG_NOSIGNAL flag can be used with send.
-> 
-> For asynchronous I/O performed using io_uring, currently the only option
-> (apart from MSG_NOSIGNAL for sockets), is to mask SIGPIPE entirely in the
-> call to io_uring_enter. Thankfully io_uring_enter takes a signal mask, so
-> only a single syscall is needed. However, copying the signal mask on
-> every call incurs a non-zero performance penalty. Furthermore, this mask
-> applies to all completions, meaning that if the non-signaling behaviour
-> is desired only for some subset of operations, the desired signals must
-> be raised manually from user-mode depending on the completed operation.
-> 
-> Add RWF_NOSIGNAL flag for pwritev2. This flag prevents the SIGPIPE signal
-> from being raised when writing on disconnected pipes or sockets. The flag
-> is handled directly by the pipe filesystem and converted to the existing
-> MSG_NOSIGNAL flag for sockets.
+On 8/29/25 13:55, Krzysztof Kozlowski wrote:
+> On 29/08/2025 12:40, Ivaylo Ivanov wrote:
+>> On 8/15/25 10:04, Ivaylo Ivanov wrote:
+>>> Hey, folks!
+>>>
+>>> This patchset adds serial busses, implemented in usi, for exynos2200.
+>>> It's missing spi, due to me having troubles with reads when testing.
+>>> Serial_0/1 have not been included in the patchset, as it seems like
+>>> they're encapsulated in usi blocks, but are the only implemented
+>>> protocol and/or do not have a dedicated register for setting other
+>>> protocols in a sysreg. That'd at least require patches in the usi
+>>> driver and bindings to add support for.
+>>>
+>>> About the naming convention for usi nodes, I've chosen to keep the
+>>> downstream one instead of relabelling all to avoid confusion when
+>>> cross-referencing the vendor DT and to keep consistency with clock
+>>> names. They're labelled the same in the bootloader too.
+>> BUMP - when is this going to get merged? I had a few other things
+> OSSE25...
 
-LGTM, only curiosity is why this hasn't been added before.
+Ah right, my bad.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+>
+> You can help out by reviewing other patches on the mailing lists in
+> order to relieve the burden of maintainers and move your patches higher
+> up the list.
 
--- 
-Jens Axboe
+Yeah, sure. I never really did reviews before because I felt like mine wouldn't
+hold much weight. But sure, I certainly can (and will). Thanks for your work :D
+
+>
+>
+>> I wanted to upstream before merge cycle.
+> You should have posted them already. b4 handles dependencies, this
+> maintainer can read cover letters.
+
+Yeah. I do things via send-email still, so rebasing is a bit of a pain when I need to
+change stuff in previous patches. And I don't do new branches per patchset,
+my hardware isn't.. the best.
+
+Best regards,
+Ivaylo
+
+>
+> I plan to clear my todo queue this weekend and close my merge window
+> within two weeks due to travel.
+>
+> Best regards,
+> Krzysztof
+
 
