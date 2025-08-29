@@ -1,148 +1,137 @@
-Return-Path: <linux-kernel+bounces-791894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC5DB3BD77
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:25:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D3BB3BD89
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9E93B5305
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86C41CC1A26
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9286132039E;
-	Fri, 29 Aug 2025 14:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198C23203A3;
+	Fri, 29 Aug 2025 14:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSRHW+7H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mnW7oRCJ"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFC9265CC0
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A040B32039B;
+	Fri, 29 Aug 2025 14:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477516; cv=none; b=B3tEIZCY+2M/ijQG4DJIV70dtVYXLWTtanbZRC+nZSME0W9F3OxKmrBHdAXKas3hFjjgRcyyzIn1zqDYAdm3JxNYnLKUsRP0oTF7UzPlKCRugxty0cQ37XbOpmwBHCCu5GAaBPsCi7ATEDMV6pE6KXX8akVj37Ws6ShWoa48QQY=
+	t=1756477567; cv=none; b=XVjVT4YdnyKcoosJJSEOp6MI18wQCGfIQOhE4Ep0jLLLSiXSYwaq6ybVaSC4QHpHBLpmhJeBEgXpWaK38Jd6/4+a61dGgfAZYpuyx0MDxXroeJIy8VpBqkHjq0T+udvjGvA55fm68fQuCk1FuQkYq5wVmasPyKUjK8C7JYsmlzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477516; c=relaxed/simple;
-	bh=BqY4M2o9Y9cXb4ci9/pTd3V/rMgYzjSmYJsvQAtp+co=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=XKbKeLfjQgf6rsu+bwfpV3MnVzB/9LQgw4M5sFJXieF2YsLtavVypaE85aqBuS8rAuMpGZ2/PYml9K0UvzJCP5Y0gnGXRpSgbOGHYQ4dBOujUuhmIY4m6AmigsUCcKOw9K5U5V9Sb3IQqpXJHLoWUtDcyhHEq/32cL403e6up/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSRHW+7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F6EC4CEF0;
-	Fri, 29 Aug 2025 14:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756477514;
-	bh=BqY4M2o9Y9cXb4ci9/pTd3V/rMgYzjSmYJsvQAtp+co=;
-	h=Date:From:To:cc:Subject:From;
-	b=dSRHW+7HuzCJtSljHD6iTQhCGL0tJVIiOMAFzXPRK2bJEGHnRM5FReXJdinDbpZtT
-	 PmhrJTtdF0FqaTQVrP6A2QHKCTy7/6mxZOlgqMgkKMoPPRdqsHNpClTH8kUswl+JA9
-	 3GDm2Ntvd8PGYpqFJ/DURlheKPUWaclWz/OxGuGUUiji76s0QjiVUO8L69a6AY5mHn
-	 sfFEuB8GiefH51WYYNlVb4Hnq97aQmNUr+uh4UAT3aQ784+K95sZH8xq/PxPQOBObx
-	 1YOOO9bWlRpvrWg5HPYBFaqhr5S8X2d8FxjU/MDbQRotklukMHHW2TFy5bwJ1Fsz1Z
-	 Bm2WIIHCAtdPA==
-Date: Fri, 29 Aug 2025 16:25:11 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-Subject: [GIT PULL] HID fixes for 6.17
-Message-ID: <2qs0qn4n-2n38-44r2-r9s2-53o18o975s05@xreary.bet>
+	s=arc-20240116; t=1756477567; c=relaxed/simple;
+	bh=ytJh8ZCy8tEaP76386T3hFJ2OXwDtsERk0uOeSU53jM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hAKBNM6e5jKq4NdkJgsJcn/vTyC/KAjjAli9aga0n0eVQjF4e+5LNGYijmO7Kw3izN5jH2Vgbn6NzJtx4gXnaSVDctwZkLuzj8anpBpEm+6B/DQ6Tqhaza69yJovWG5ZZ9+K3LzRjrY0HxxrtI8IadcKRvZcxHwCvtqA9QCacCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mnW7oRCJ; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57TEPeK62231821;
+	Fri, 29 Aug 2025 09:25:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756477540;
+	bh=gbrsqx4gDML3+k24eHm3pe6l6WAxFCQb8s7HbzOlaxk=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=mnW7oRCJ4ahfphYVqeap1E7m+qt+4GpsOSMK2pL9/GnuqLUhIM8tM+SMeQjelwySO
+	 rHUmTxKFn5ELJHHt6pAItRGxECrMDg68G/TQPcGDTqar+bhz6g1hPK9fUmz7fXZak5
+	 j2be4mmkBnlK3piuSHUsFrqWoMTnyjDm3GqZ1DiU=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57TEPeBE3704761
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 09:25:40 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 09:25:40 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 09:25:40 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57TEPaJ12196116;
+	Fri, 29 Aug 2025 09:25:37 -0500
+Message-ID: <bea3ce38-b78a-4ed2-a128-3f6643308adb@ti.com>
+Date: Fri, 29 Aug 2025 19:55:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm: dts: Use DMTimer as Clocksource instead of
+ counter_32k
+To: Anurag Dutta <a-dutta@ti.com>, <aaro.koskinen@iki.fi>,
+        <andreas@kemnade.info>, <khilman@baylibre.com>, <rogerq@kernel.org>,
+        <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <vigneshr@ti.com>, <u-kumar1@ti.com>
+References: <20250829092947.855974-1-a-dutta@ti.com>
+ <20250829092947.855974-3-a-dutta@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250829092947.855974-3-a-dutta@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Linus,
 
-please pull from
+On 8/29/2025 2:59 PM, Anurag Dutta wrote:
+> From: Sinthu Raja <sinthu.raja@ti.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-li=
-nus-2025082901
+Please check subject of patch
 
-to receive HID fixes for 6.17, namely:
 
-=3D=3D=3D=3D=3D
-- fixes for memory corruption in intel-thc-hid, hid-multitouch,=20
-  hid-mcp2221 and hid-asus (Aaron Ma, Qasim Ijaz, Arnaud=20
-  Lecomte)
-- power management/resume fix for intel-ish-hid (Zhang Lixu)
-- driver reinitialization fix for intel-thc-hid (Even Xu)
-- ensure that battery level status is reported as soon as possible,
-  which is required at least for some Android use-cases (Jos=E9 Exp=F3sito)
-- quite a few new device ID additions and device-specific quirks
-=3D=3D=3D=3D=3D
+> Clock drift of approximately 500 ppm is observed with 'counter_32k'
+> as clocksource. Clock drift is seen because 'counter_32k' is running
+> with 32786Hz frequency instead it should run with 32768Hz. Use DMTimer as
+> clocksource, which is running at 32768Hz to fix the clock drift issue.
+>
+> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+> Signed-off-by: Anurag Dutta <a-dutta@ti.com>
+> ---
+>   arch/arm/boot/dts/ti/omap/am57xx-beagle-x15.dts | 9 +++++++++
+>   arch/arm/boot/dts/ti/omap/dra7-l4.dtsi          | 2 +-
+>   2 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/ti/omap/am57xx-beagle-x15.dts b/arch/arm/boot/dts/ti/omap/am57xx-beagle-x15.dts
+> index 0a8b16505ed9..83009883277e 100644
+> --- a/arch/arm/boot/dts/ti/omap/am57xx-beagle-x15.dts
+> +++ b/arch/arm/boot/dts/ti/omap/am57xx-beagle-x15.dts
+> @@ -36,3 +36,12 @@ &mmc2 {
+>   &phy1 {
+>   	max-speed = <100>;
+>   };
+> +
+> +&timer12_target {
+> +	ti,no-reset-on-init;
+> +	ti,no-idle;
+> +};
+> +
+> +&counter32k {
+> +	status = "disabled";
+> +};
+> diff --git a/arch/arm/boot/dts/ti/omap/dra7-l4.dtsi b/arch/arm/boot/dts/ti/omap/dra7-l4.dtsi
+> index ba7fdaae9c6e..a6ac4fd43b54 100644
+> --- a/arch/arm/boot/dts/ti/omap/dra7-l4.dtsi
+> +++ b/arch/arm/boot/dts/ti/omap/dra7-l4.dtsi
+> @@ -4439,7 +4439,7 @@ segment@20000 {					/* 0x4ae20000 */
+>   			 <0x0000c000 0x0002c000 0x001000>,	/* ap 29 */
+>   			 <0x0000f000 0x0002f000 0x001000>;	/* ap 32 */
+>   
+> -		target-module@0 {			/* 0x4ae20000, ap 19 08.0 */
+> +		timer12_target: target-module@0 {			/* 0x4ae20000, ap 19 08.0 */
 
-Thanks.
 
-----------------------------------------------------------------
-Aaron Ma (2):
-      HID: intel-thc-hid: intel-quicki2c: Fix ACPI dsd ICRS/ISUB length
-      HID: intel-thc-hid: intel-thc: Fix incorrect pointer arithmetic in I2=
-C regs save
+you can reduce tab between { and comments
 
-Antheas Kapenekakis (1):
-      HID: quirks: add support for Legion Go dual dinput modes
 
-Arnaud Lecomte (1):
-      hid: fix I2C read buffer overflow in raw_event() for mcp2221
-
-Colin Ian King (1):
-      HID: Kconfig: Fix spelling mistake "enthropy" -> "entropy"
-
-Even Xu (1):
-      HID: intel-thc-hid: Intel-quicki2c: Enhance driver re-install flow
-
-Jos=E9 Exp=F3sito (2):
-      HID: input: rename hidinput_set_battery_charge_status()
-      HID: input: report battery status changes immediately
-
-Martin Hilgendorf (1):
-      HID: elecom: add support for ELECOM M-DT2DRBK
-
-Matt Coffin (1):
-      HID: logitech: Add ids for G PRO 2 LIGHTSPEED
-
-Minjong Kim (1):
-      HID: hid-ntrig: fix unable to handle page fault in ntrig_report_versi=
-on()
-
-Ping Cheng (1):
-      HID: wacom: Add a new Art Pen 2
-
-Qasim Ijaz (2):
-      HID: multitouch: fix slab out-of-bounds access in mt_report_fixup()
-      HID: asus: fix UAF via HID_CLAIMED_INPUT validation
-
-Zhang Lixu (1):
-      HID: intel-ish-hid: Increase ISHTP resume ack timeout to 300ms
-
- drivers/hid/Kconfig                                |  2 +-
- drivers/hid/hid-asus.c                             |  8 +++-
- drivers/hid/hid-elecom.c                           |  2 +
- drivers/hid/hid-ids.h                              |  4 ++
- drivers/hid/hid-input-test.c                       | 10 ++---
- drivers/hid/hid-input.c                            | 51 ++++++++++--------=
-----
- drivers/hid/hid-logitech-dj.c                      |  4 ++
- drivers/hid/hid-logitech-hidpp.c                   |  2 +
- drivers/hid/hid-mcp2221.c                          |  4 ++
- drivers/hid/hid-multitouch.c                       |  8 ++++
- drivers/hid/hid-ntrig.c                            |  3 ++
- drivers/hid/hid-quirks.c                           |  3 ++
- drivers/hid/intel-ish-hid/ipc/pci-ish.c            |  3 --
- drivers/hid/intel-ish-hid/ishtp-hid-client.c       |  3 ++
- drivers/hid/intel-ish-hid/ishtp/bus.c              |  3 --
- drivers/hid/intel-ish-hid/ishtp/ishtp-dev.h        |  3 ++
- .../intel-thc-hid/intel-quicki2c/pci-quicki2c.c    |  1 +
- .../intel-thc-hid/intel-quicki2c/quicki2c-dev.h    |  2 +
- .../hid/intel-thc-hid/intel-thc/intel-thc-dev.c    |  4 +-
- drivers/hid/wacom_wac.c                            |  1 +
- 20 files changed, 79 insertions(+), 42 deletions(-)
-
---=20
-Jiri Kosina
-SUSE Labs
-
+>   			compatible = "ti,sysc-omap4-timer", "ti,sysc";
+>   			reg = <0x0 0x4>,
+>   			      <0x10 0x4>;
 
