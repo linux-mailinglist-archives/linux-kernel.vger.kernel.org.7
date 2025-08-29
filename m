@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-791005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D5DB3B10B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EABDB3B10C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C165E12C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9B75E13CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D7021CA03;
-	Fri, 29 Aug 2025 02:37:24 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAAE6FC5;
-	Fri, 29 Aug 2025 02:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2E6219A67;
+	Fri, 29 Aug 2025 02:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZJeP1ySK"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716DB42056;
+	Fri, 29 Aug 2025 02:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756435044; cv=none; b=jkqudftboiNcqWvJeBrfShtIwfIaMk35Nwyw+6gFEhMKgN/816CS7fM9RX0/Bath+325/GFosKjCr+QuSd+RjMpK0QL3Z5Vy/MOvo/XLHCEV42TbvAKUBv9KBzZ7ZeKlIOd+CVNMFJXPclJ0iQ7G+T3rsrK8CZs0V7bRvaVzRgo=
+	t=1756435099; cv=none; b=VUcuji72YS1ra1tgflcAuJUqWbu2fkilwZHfE+lazQh/f2Alie2Bn9s/aeyAf/akFIFkU4NMMdtWhL/e4CGstJQE8RTbz9pPYGz7Fulv3dcRsP+OX+9UxK57mkcTEjvf1O2Va3zcx/A5kTirAm19NKRJ39nKypSetfUjQRs+kds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756435044; c=relaxed/simple;
-	bh=PJ+tY7pi3xt3j+eLneIBuSVZx0ciuyKBM2ylX7x8b6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhMHYIdtrbJ0TbQnqM/agWrnI5keK08qMMnew5GWf/CqVBVJ2vgqCnLq6Pf2Gw09IXCxbXtkRa1zvOEjDVRUFI8xfG6TZEnyJbsJCxu12YGasbrXCGFx1+ujhcr2JJ0PtFqyHeI4Zw/oRUY2EE2hsGqTD6Sk11JOWEM8ppYCvzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz10t1756435010tf4b84854
-X-QQ-Originating-IP: g/Fgw+DgN7+02PgKaJ5YVFbo4h7+NoaFcU2OyWk3tBk=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 29 Aug 2025 10:36:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7550459696108476182
-Date: Fri, 29 Aug 2025 10:36:48 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v9 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <A5B215AE5EB4FE9D+20250829023648.GB904254@nic-Precision-5820-Tower>
-References: <20250828025547.568563-1-dong100@mucse.com>
- <20250828025547.568563-6-dong100@mucse.com>
- <e0f71a7d-1288-4971-804d-123e3e8a153f@lunn.ch>
+	s=arc-20240116; t=1756435099; c=relaxed/simple;
+	bh=G9Jh42iBHhSm/oDAYHio+jtrARjUwoavfZEQolKGfAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RbXDwinv40uM/5uzEGARnPircQnOtrdQninjzP0yDZVU7a+4SJxV5KFh+yhCuXA6S4+2gya2trpKbBJYGnh2mOG9Q6B1yPOJwfBv0k+YDal3KvzJ6MOXMArK8Y5+U40mgIKo0X70HW3k8krQzB7N3WaFSfkfWYVGnbN8ETDhNi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZJeP1ySK; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=JH
+	5gu/wbTJ157lbspmx3uKDsuxuH/lv85Oq2Ti6Vn8w=; b=ZJeP1ySKqmB3QwqZx9
+	Wz6lI2hsPvE2/GQTg5BG04rvUSBL6d/eoMhcZZPr/jt0CFeOiesSOEg01MfJQHr3
+	DSkjTc+1MGn34KgmCZgJp3rfUJY2PRoQ5S9t0T57yNIbH5PsJFCAQpGh0MqjMEAv
+	2QOhrkc8afTFcpWkXUM2mivPo=
+Received: from czl-ubuntu-pc.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAHFm5vErFoPaFJFA--.713S2;
+	Fri, 29 Aug 2025 10:37:37 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	Yuezhang Mo <yuezhang.mo@sony.com>,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH v2 1/2] mpage: terminate read-ahead on read error
+Date: Fri, 29 Aug 2025 10:36:58 +0800
+Message-ID: <20250829023659.688649-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0f71a7d-1288-4971-804d-123e3e8a153f@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NyPaQtJYQgeoV1Z1Je0uGcuGrVaPxCqf2JhJcaHqlchXvjLgiXUdw83j
-	ZEExgqTFv8aVrCilH53F4PWh37w38aRDYbirdsU/KKbgpENJvjXjooKIk/TBMK7OTt/kG7l
-	IL91vXm8m/3MsWkkz7IoaZuCND+FMcQ0oP2Yi92U5k4dnm2Va4ymo635tkAJugA9gH9GgUq
-	dzv5R0qWi1UGDBCjSWuwhXjAgqjsmd1zfmPRr4u1cKABB/QKk3UKDWZul1FK+JfuQanhArT
-	0E1b4H9x3osyo4w3cSLkXO87oT+Y/WSV50HDxysH5FxXLDDPOJ7dptjWqNw9z/FXlg9HN0u
-	fQfJfMCFPNxNdYbivrQYiubyhT/QU+8BNIZ87j2fD32cK7N/ykYxYbFL9r03wH5ApyY3ng9
-	8RtlkBtTu4efsQs2Ag3bA4Zfi/OVngQaOCJ3cnUhBJA3zNsAmb775hZyem5/PmihoI4741p
-	3lINldyvi0FJjYCmMa+y5lSbQHvWVoRfeupRcEqBw97wvHO0tbK57MxP8DwFHUIFzfqDzjN
-	TNbbkE6IKZKdvACeL0SXoVqQIy3baqEzg0pradGhodSgOYMQUo31e1x0AVaNdNRdKe1EgaJ
-	kxsb3TeuGwTFaNRaMj3hvURyNWU222YagozcXMRw0eP3l3ANyd2jRtOpmfvb8iUfzdutaQ1
-	PVrGop+WtJ8ryzFtw7vgMHTJ3N5C3WeDP9kmYx2k2DYKfR+RIIW5KLCEANffoFHlwGyOC5K
-	SHuRz9ipMvuPpU7ANBYMF88E+Kj2GjNHURz5M7s3e83HWQPATFPFbE/dB24JKa99up1hj/Z
-	TL5y/NCvZvLFGOEOrmuHtPLhqzM9iQArA5muZYwZGf/pgY/AF8MvEoqeU1TQsl/LDj5bUwH
-	DPn2S5RI7GfRBzCMjVaQPsgXuWi+3BHFigP+Xfv+NHdlTTKOnP558L3xHbhY6O++R3bZx2H
-	Sta6eWKIaH5KEgbdCEknDLDD0mER2gN6zEtbkiBGAEEFX1N7UxA/BS4UxKAom0G+R2pQ=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHFm5vErFoPaFJFA--.713S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF4rCFWUWry3tr18Wr4DArb_yoW8uFWrpr
+	W0kryvyrsxJrWfXa97JFZrAr1fC3929a15GFykJ342yrs8WFZIyryftayj9ay2yr18XanY
+	vw10vFW3Z3WDZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbkuxUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiFA24nWixEMErIAAAs-
 
-On Thu, Aug 28, 2025 at 03:20:04PM +0200, Andrew Lunn wrote:
-> > +/**
-> > + * rnpgbe_reset_hw_ops - Do a hardware reset
-> > + * @hw: hw information structure
-> > + *
-> > + * rnpgbe_reset_hw_ops calls fw to do a hardware
-> > + * reset, and cleans some regs to default.
-> > + *
-> > + * Return: 0 on success, negative errno on failure
-> > + **/
-> > +static int rnpgbe_reset_hw_ops(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_dma_info *dma = &hw->dma;
-> > +	int err;
-> > +
-> > +	rnpgbe_dma_wr32(dma, RNPGBE_DMA_AXI_EN, 0);
-> > +	err = mucse_mbx_fw_reset_phy(hw);
-> > +	if (err)
-> > +		return err;
-> > +	return rnpgbe_get_permanent_mac(hw, hw->perm_addr);
-> 
-> Why is a function named rnpgbe_reset_hw_ops() getting the permanent
-> MAC address? Reset should not have anything to do with MAC address.
-> 
-> If the MAC address is not valid, you normally use a random MAC
-> address. But you cannot easily differentiate between the reset failed,
-> the reset got ^C, and the MAC address was not valid.
-> 
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-Ok, I will remove call 'rnpgbe_get_permanent_mac' in function
-'rnpgbe_reset_hw_ops'. And call it in probe.
+For exFAT filesystems with 4MB read_ahead_size, removing the storage device
+during read operations can delay EIO error reporting by several minutes.
+This occurs because the read-ahead implementation in mpage doesn't handle
+errors.
 
-> > +/**
-> > + * rnpgbe_driver_status_hw_ops - Echo driver status to hw
-> > + * @hw: hw information structure
-> > + * @enable: true or false status
-> > + * @mode: status mode
-> > + **/
-> > +static void rnpgbe_driver_status_hw_ops(struct mucse_hw *hw,
-> > +					bool enable,
-> > +					int mode)
-> > +{
-> > +	switch (mode) {
-> > +	case mucse_driver_insmod:
-> > +		mucse_mbx_ifinsmod(hw, enable);
-> 
-> Back to the ^C handling. This could be interrupted before the firmware
-> is told the driver is loaded. That EINTR is thrown away here, so the
-> driver thinks everything is O.K, but the firmware still thinks there
-> is no MAC driver. What happens then?
-> 
+Another reason for the delay is that the filesystem requires metadata to
+issue file read request. When the storage device is removed, the metadata
+buffers are invalidated, causing mpage to repeatedly attempt to fetch
+metadata during each get_block call.
 
-The performance will be very poor since low working frequency,
-that is not we want.
+The original purpose of this patch is terminate read ahead when we fail
+to get metadata, to make the patch more generic, implement it by checking
+folio status, instead of checking the return of get_block().
 
-> And this is the same problem i pointed out before, you ignore EINTR in
-> a void function. Rather than fix one instance, you should of reviewed
-> the whole driver and fixed them all. You cannot expect the Reviewers
-> to do this for you.
+So, if a folio is synchronously unlocked and non-uptodate, should we 
+quit the read ahead?
 
-I see, I will change 'void' to 'int' in order to handle err, and try to check
-other functions.
+I think it depends on whether the error is permanent or temporary, and 
+whether further read ahead might succeed.
+A device being unplugged is one reason for returning such a folio, but 
+we could return it for many other reasons (e.g., metadata errors).
+I think most errors won't be restored in a short time, so we should quit 
+read ahead when they occur.
 
-> 
->     Andrew
-> 
-> ---
-> pw-bot: cr
-> 
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+---
 
-Thanks for your feedback.
+diff from v1:
+No functional changes. Improved code style as suggested
+
+[v1]: https://lore.kernel.org/all/20250812072225.181798-1-chizhiling@163.com/T/#u
+
+Just submit the final version, it doesn't matter to me if it doesn't merge :)
+
+ fs/mpage.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/mpage.c b/fs/mpage.c
+index c5fd821fd30e..e4c11831f234 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -369,6 +369,12 @@ void mpage_readahead(struct readahead_control *rac, get_block_t get_block)
+ 		args.folio = folio;
+ 		args.nr_pages = readahead_count(rac);
+ 		args.bio = do_mpage_readpage(&args);
++		/*
++		 * If read ahead failed synchronously, it may cause by removed
++		 * device, or some filesystem metadata error.
++		 */
++		if (!folio_test_locked(folio) && !folio_test_uptodate(folio))
++			break;
+ 	}
+ 	if (args.bio)
+ 		mpage_bio_submit_read(args.bio);
+-- 
+2.43.0
 
 
