@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-791000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112EBB3B0FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E99B3B102
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D3768162D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:22:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FC36839F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2D620E6F3;
-	Fri, 29 Aug 2025 02:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD1218AC1;
+	Fri, 29 Aug 2025 02:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fsF0Yxts"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p0qwMLOH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3986C1BC5C
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 02:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDC21BC5C;
+	Fri, 29 Aug 2025 02:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756434160; cv=none; b=N+fxaYsHF/STxpx8rFsqMkCzJO46AJqM6nsX7PRFh/i57Zp3f8yxyi/VE0GguinFSK/O5URCCFllg6pojXieZTQbTGsknJ22XaxC4HX5ebrp3EakPRB14bfidqtTaZY2Z/ZsrnTSGdItSOWNjZ9V9m4xCCuddNku+dL6KDp8J2A=
+	t=1756434237; cv=none; b=jQUGQhRDOMjeiRfIjvdZv0LyqKNUTw8cwXrNSl7dc1O2oLR7bndSccuY7cOeaLFrzkmJvTnj5k44qQUUCjJe7ppwYRjLjFhh/vmAPswLgoXgbS9H0IVR6V4iWLp3XtUy270Dvy9aZ9MxqwCcRSY1lenRLPLBjgC6ADrRPTXiHRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756434160; c=relaxed/simple;
-	bh=fgPtE+jqQ9ef1hT9QwYbOfHq6TvPrd86LcsnCgLdFpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IJdjBc4c2FBAj4FhoMydBZH1Bm3j5kaZKa52uNx1+ReQ4NGODEevk0bZ36IKZvYVWrdIR7TdkR9cuPxnu1OJOITGCiy7IcpBaWI3BOHhksXW6kHLyzJ8Rn10VVMSg9lyFSAj5XZUiiFUAcUB/z9CCrCiob9syr2PqFBzzBtxsmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fsF0Yxts; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CPc0x2erwygCRg0z7P4iYqFdizAEWJ5hoHbkhGJxbuU=; b=fsF0Yxts80meJbovwILwNFZJlz
-	m4OUTSkwZzXC5A2n1Eml7zssrQacXzDg1jxiFPoA714mrbktA0pbufYQLSBmdp6Ux8M9vrBM9Q8O0
-	3JqYZ5HAPr6hiaE93jz/iK6By1JiHkZtzlnk2LBXPeSmyhJdGJRPEuok8eV6RNshSm2ty1CMhsrWB
-	ZjGkx7JYQYxeqCMMhbonPyAZ8B00oV4eoCLBmJ0y4djMRFY8SD4t2hcYOZnww2beLkYir5I0WEV02
-	OFDBD88LSgoArMpLUI1xr0oW4Dolnwkr/xh+CNsKrZfmXxy0Zr36woQFD6vo2X7B6sTNNBKSeePbo
-	zCdPYVWw==;
-Received: from [187.57.78.222] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uroki-003SZo-KC; Fri, 29 Aug 2025 04:22:08 +0200
-Message-ID: <c61e7737-bfc7-4de8-962e-652aa3dbfd40@igalia.com>
-Date: Thu, 28 Aug 2025 23:22:03 -0300
+	s=arc-20240116; t=1756434237; c=relaxed/simple;
+	bh=jw7OBQb3BSABPFoYHfJTXnTPfnWrNySCKlEvH+92O20=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cQ306tK9j5SxQnoixj/b/buf6/ymiylx6qrhijiTaVLifX8qw7ax7ZXWMsshlYewlS3yaPYXfk2iQqQZYDKM4Q9LH4Sfkx8RjJb9NivDhdTVmecxjb22oVc/MKlnwXC1a7WGCrNp2W9CX94I3e4K5v4ZCg8yissdKbJtAqjt83A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p0qwMLOH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756434225;
+	bh=UHRA4gGEGjTWcsmrfjcfYxxL2gmHi/bqcEFXtmpy7Kc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=p0qwMLOHs6YcbWy7GVJu/S40VlvyXA2q+nIZrB7rk1fTIINyYPUW71fiZ8xb9UKfq
+	 UradhSBBhwCIQ66WBkxR7fQkusmpaChy5x25SDUDAiybqRePgOz+EEWoSToxFoIu8j
+	 Sjb6rw/slXBoKYHeXlgg6b8s6W1JfrJgH2iv3p1G1f8YlW6GzZ+bPhyFGtRfKXV5wX
+	 oa8ULY0TH6eypszEv/Qn5WO+dbvadQ+Wi8nHS+wqgsGVYR6IAzUIERPc7yGnoEu5P1
+	 0x49D3VMWsQ7V3oXKKvOgASq3hKwmpvonA9C53tTa7XD6Ykfe2ALPWlgdB9K7UqJqT
+	 kr2BnkagCWgww==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cChsD6Rjzz4wfl;
+	Fri, 29 Aug 2025 12:23:44 +1000 (AEST)
+Date: Fri, 29 Aug 2025 12:23:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
+ Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20250829122343.4b31642f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/futex: Fix futex_numa_mpol's memory out of
- range subtest
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Waiman Long <llong@redhat.com>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, Borislav Petkov <bp@alien8.de>,
- kernel-dev@igalia.com, linux-kernel@vger.kernel.org
-References: <20250827154420.1292208-1-andrealmeid@igalia.com>
- <9d4c0d27-0ebd-4c6d-af38-d32ef420fde4@redhat.com>
- <61725722-f933-447c-a041-71b2d28e7f90@igalia.com>
- <20250828182037.qkdKVaTN@linutronix.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250828182037.qkdKVaTN@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/dbmPQnu+I=eNxOB/okb+t/_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Em 28/08/2025 15:20, Sebastian Andrzej Siewior escreveu:
-> On 2025-08-28 15:06:26 [-0300], André Almeida wrote:
->> Thanks for the feedback! I will send a v2 addressing this by next week.
-> 
-> Any objections for getting Waiman's fix in for now and your rework for
-> next merge window?
-> 
+--Sig_/dbmPQnu+I=eNxOB/okb+t/_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No objections merging Waiman fix first, but we are still in -rc3, so 
-maybe there's time for the rework in this cycle?
+Hi all,
+
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/gpu/drm/tests/drm_exec_test.c: In function 'test_prepare_array':
+drivers/gpu/drm/tests/drm_exec_test.c:171:1: error: the frame size of 2136 =
+bytes is larger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+  171 | }
+      | ^
+cc1: all warnings being treated as errors
+
+Possibly caused by commit
+
+  e7fa80e2932c ("drm_gem: add mutex to drm_gem_object.gpuva")
+
+I have used the drm-misc tree from next-20250828 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dbmPQnu+I=eNxOB/okb+t/_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmixDy8ACgkQAVBC80lX
+0GzsnQf/aMPMRMWvoXVvkr/0OOseZGxrEsTbLfDhThTKjMWEWKrq3PVFUnVyzWzL
+iqanDcSr+7NHIRP+S1bKH/alnMdSdtYpwYUARwfEJUVvTpWmFkjX8FM3A52r6ahs
+uQhPHzZN6AgnYHv1H6aKg3ZthwAMSt2OO+pRZRVDkbJNZNbDctSloJ+s3oUNAXNC
+7eSO+MP35OaKkz6VklGCoQfRhJXonAZeQoCdECi+U7ybdYk6kgbOP0XXprWCmTot
+/U2bBYKlTli++XtKiTvjnEG9vAJGde7+thjHEDFKYuWUwaaOHDGlevWgaZMOm6f1
+WzSFbbBA1nWC2h9HOiQyssb6GjeYxA==
+=RbTf
+-----END PGP SIGNATURE-----
+
+--Sig_/dbmPQnu+I=eNxOB/okb+t/_--
 
