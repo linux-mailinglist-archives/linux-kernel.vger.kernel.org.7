@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-792109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75387B3C03D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:06:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4718EB3C03F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A491883ABD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F62188322C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACA0322DCE;
-	Fri, 29 Aug 2025 16:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFX91NGX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A184326D79;
+	Fri, 29 Aug 2025 16:06:10 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBA821C9EA;
-	Fri, 29 Aug 2025 16:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138C73148D0;
+	Fri, 29 Aug 2025 16:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756483563; cv=none; b=lwoNfY3Rls1uY7Ju6M1xJn1An2F+zDRRMhW6o3hWGjvdwh5xgdp8Ny7h9LJX2YFmUex4Rl4+ws0HkOtvRnT4dCeldmnpIdQSKv0qxZLky9yPtqAAqo+Na40C0OkSo6s3aYInbKoSpAgtG1TA4FM+veB7qYZ8XXpkCDfFb5avfoA=
+	t=1756483569; cv=none; b=P8giKVHlScWD0lW8LhkaZf6esnihHZ7mM4jwexpfUtG9FgfOLIdCJRx3yj0mnNFs4jLODuuiq1MKVBB+LCkg+oxoDQZqQDrm9jzOfunzfMxh6kMnM+TW6E9Dz+HV5H79sHwYEaWDRSTyGSwbVAUZfElBaH/3Riq8iKimKaTnUDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756483563; c=relaxed/simple;
-	bh=OPMQ4rYf+/KiOsWsmQ2e492hplZ/+p3Od9JrRPKOmsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mmh8V9zKrMx/ed1ugEB6nzEo0f5SqQmDzDKRPoZSrhbPSO/iz5W2MifmYRZZeizPmgbTQ3Oa4Le8frsQZN0yq+uSLCh7sopfYFuAvdfLHqhsO0/ufooIcukaL4Hdkkpg4G6HH9ZkiH4O+bhjbBg+SdpBebmGbz4siEJtpTD9d34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFX91NGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40351C4CEF0;
-	Fri, 29 Aug 2025 16:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756483562;
-	bh=OPMQ4rYf+/KiOsWsmQ2e492hplZ/+p3Od9JrRPKOmsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kFX91NGXOWHl2l6Lz/2jj0A+JnHgzGvHOq7P85HsCT/xqq7YTGJ+CzPaznqLnlD3t
-	 QYHMmbihh2qwu3aoihrzo89ROJkAuyrfc6OOAzjXjB6/m/V4epaYUaJ3EWnY8HnIid
-	 A3J1IzJljIcrLBkL0WjqzGB57qkwsnNUpJtm+g49/Nif++ksJoF7I50QVOVeOFWv+t
-	 5Pgpj+dxTYzbqiY3b8YP1LyolMQZdhrJAZHk1htvnxwz0LpKG7yj2d1OSVCrbRZax8
-	 UBuXdjkAjaW/ac4c2t8dB4rpFS0ilxxz4IfSjiFLs5uTlt7YDmcv5gC0Fop1+IHrN+
-	 rNg2NL7DoIUxg==
-Date: Fri, 29 Aug 2025 11:06:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Flaviu Nistor <flaviu.nistor@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: tmp102: Add label property
-Message-ID: <20250829160601.GA835423-robh@kernel.org>
-References: <20250825180248.1943607-1-flaviu.nistor@gmail.com>
+	s=arc-20240116; t=1756483569; c=relaxed/simple;
+	bh=Vy4+tTa6FjN5VJ/0BEiyKpvZalzUlx+v4EgsIIdGaAU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=InS2OThsZ5JzrOnxgokEe+nnqoAzqEeAwRnFqupjJlu9y9VA8PsDV+W7l0gv/+AYl4O1TJLo1lzdEg0837+rM73JM1+p2AHWC6kEzYjJQpAa1JgrNUXIv3EhxxetehUV4to7dAzNfSThyogkeZac9GMDx1MfvWoh1Jgj9jbvlwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD35K5yRcz6K9M7;
+	Sat, 30 Aug 2025 00:05:25 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AFBD81402F6;
+	Sat, 30 Aug 2025 00:06:04 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
+ 2025 18:06:03 +0200
+Date: Fri, 29 Aug 2025 17:06:02 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>
+CC: Terry Bowman <terry.bowman@amd.com>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "ming.li@zohomail.com" <ming.li@zohomail.com>,
+	"Smita.KoralahalliChannabasappa@amd.com"
+	<Smita.KoralahalliChannabasappa@amd.com>, "rrichter@amd.com"
+	<rrichter@amd.com>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"PradeepVineshReddy.Kodamati@amd.com" <PradeepVineshReddy.Kodamati@amd.com>,
+	"lukas@wunner.de" <lukas@wunner.de>, "Benjamin.Cheatham@amd.com"
+	<Benjamin.Cheatham@amd.com>, "sathyanarayanan.kuppuswamy@linux.intel.com"
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "alucerop@amd.com" <alucerop@amd.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL
+ Endpoints and CXL Ports
+Message-ID: <20250829170602.000029fd@huawei.com>
+In-Reply-To: <159c6313b9da45d58d83ca9af8dc9a17@huawei.com>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+	<20250827013539.903682-14-terry.bowman@amd.com>
+	<159c6313b9da45d58d83ca9af8dc9a17@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825180248.1943607-1-flaviu.nistor@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Aug 25, 2025 at 09:02:43PM +0300, Flaviu Nistor wrote:
-> Add support for an optional label property similar to other hwmon devices.
-> This allows, in case of boards with multiple TMP102 sensors, to assign
-> distinct names to each instance.
+
+> >Subject: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL Endpoints
+> >and CXL Ports
+> >
+> >CXL currently has separate trace routines for CXL Port errors and CXL Endpoint
+> >errors. This is inconvenient for the user because they must enable
+> >2 sets of trace routines. Make updates to the trace logging such that a single
+> >trace routine logs both CXL Endpoint and CXL Port protocol errors.
+> >
+> >Keep the trace log fields 'memdev' and 'host'. While these are not accurate for
+> >non-Endpoints the fields will remain as-is to prevent breaking userspace RAS
+> >trace consumers.
+> >
+> >Add serial number parameter to the trace logging. This is used for EPs and 0 is
+> >provided for CXL port devices without a serial number.
+> >
+> >Leave the correctable and uncorrectable trace routines' TP_STRUCT__entry()
+> >unchanged with respect to member data types and order.
+> >
+> >Below is output of correctable and uncorrectable protocol error logging.
+> >CXL Root Port and CXL Endpoint examples are included below.
+> >
+> >Root Port:
+> >cxl_aer_correctable_error: memdev=0000:0c:00.0 host=pci0000:0c serial: 0
+> >status='CRC Threshold Hit'
+> >cxl_aer_uncorrectable_error: memdev=0000:0c:00.0 host=pci0000:0c serial: 0
+> >status: 'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity
+> >Error'
+> >
+> >Endpoint:
+> >cxl_aer_correctable_error: memdev=mem3 host=0000:0f:00.0 serial=0
+> >status='CRC Threshold Hit'
+> >cxl_aer_uncorrectable_error: memdev=mem3 host=0000:0f:00.0 serial: 0 status:
+> >'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity Error'
+> >
+> >Signed-off-by: Terry Bowman <terry.bowman@amd.com>  
 > 
-> Signed-off-by: Flaviu Nistor <flaviu.nistor@gmail.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+> Reviewed-by: Shiju Jose <shiju.jose@huawei.com>,
+> apart from one error below.
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> index 4c89448eba0d..1d192100e8b5 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,tmp102.yaml
-> @@ -20,6 +20,10 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  label:
-> +    description: |
-
-Don't need '|'.
-
-With that,
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
-> +      A descriptive name for this channel, like "ambient" or "psu".
-> +
->    "#thermal-sensor-cells":
->      const: 1
->  
-> @@ -45,6 +49,7 @@ examples:
->              reg = <0x48>;
->              interrupt-parent = <&gpio7>;
->              interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-> +            label = "somelabel";
->              vcc-supply = <&supply>;
->              #thermal-sensor-cells = <1>;
->          };
-> -- 
-> 2.43.0
-> 
+Good spot.
+With that fixed up,
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
