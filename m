@@ -1,238 +1,195 @@
-Return-Path: <linux-kernel+bounces-792465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B76B3C448
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:39:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06B3B3C44B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C141F3BD566
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73281A218D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3CA26FDA9;
-	Fri, 29 Aug 2025 21:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CC625D546;
+	Fri, 29 Aug 2025 21:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FHP1Bdm9"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2069.outbound.protection.outlook.com [40.107.96.69])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="R3oq2xmf"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE124207A;
-	Fri, 29 Aug 2025 21:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756503551; cv=fail; b=NXv1Gk6kpVxJX8jn4UgXnsXC68976RbEeeJLmohQlsbjQ+0bqmAMHz/ktxmR/kFVsRRLyB22+EwpBQWRMvuy2NEKGABMwZhZN6CEyn+sbhQ6zvrAKKJErBmeVYWGXu3Xzu09H/sZZ82uKnYFE6HA89uD0HOEN2iPmUuVNsVpRlQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756503551; c=relaxed/simple;
-	bh=evqNDuWeVNeFDKp2xue8xst8vZ+MHKtYrokeoJNx1Og=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=b0P7rTrQQInQylDdY4yhMExHsvp4JAGA4TCoCfoDDEQDuIT4HPLnbShKhIG9O0vUFGZp6MkJNvyM2xIeT2My5ullOO7VT48ThJs3q4QxF/4gkrYuDG5vGWibObRFMIX5t9QNcQqp9hJfVEZn4WmFZQuvR6YfAuDwYeL2DKhu2Dk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FHP1Bdm9; arc=fail smtp.client-ip=40.107.96.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZhHynK7HKoBW6yf7HKqekdjxf3eR0djExygMVPgmZtutC8hVKr9DGejJ17fncHw4GLI859gqrXlC3cSgO6We1cw02LB15lrZcJCaLCXKY0AarVQLaICh8sqBudYon9utboGccM2hC+wM1WGGUWRE1G0cL4SaWc4wMbqkyPsBBhKafwT/jtfmuGGkPS16rZaVLwsXHoKELY52rWkK5QcJWyCiy9VYW4Pj2YHUHNjUoHU/RVCequY0ToItAa6YFqINZiYK1EH88lQu6O50P9uwF2+FgofQox2PpPDcpotvxkCg2iArH16UMzN64KUjG81fUzClj5OS/Tj+03eZcmgUZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8CpceUK/MxzYs81cbHWbYdS+aJYm9Evu7OkeLVv4txU=;
- b=JApZ0MX4f/6krac9qGobcx1BrbK4WMCSeoz3v+PcQHtguMhN+VY8TG5hc9KDbw3HYi9OzMGSdPFPAH/SgurrPmRiVHbSaRyopUYZzT7Pd3dxHOibYRYK70wcaM14kims4BLyCWQ1iyFxFjOHD1hTIQhBZPENPfbw7TWo/AbnMrQzmA2sev6VHLl3lNLxx4D2/SaxdXxI1Kv99nrK0u9qmlpIW8DI9B1zz7UgSnqEPM3pWBYGsWEqptLmsDrYbkpOnGvWJEV9RsUOObtxFOkZLkGr7kvVplecCCnIsot/1EPQjCstdz1q9kRxd16/B/cMCaMomvsOB/2Cr3uDlGJKvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8CpceUK/MxzYs81cbHWbYdS+aJYm9Evu7OkeLVv4txU=;
- b=FHP1Bdm9k+2AKWFoLTn++NMqmQSefudCjGoOytURqgk3hIuHNazBX7PkPPYUJuisqulGZzVmMaY+AAMQ6CNDpNf+m/7djaUBc0WyDy854I6g/l8ifVwj4Da899tGKeY6VyCXN1gHg21xfk0b9jE4zP0f2rHBdHB3kPo6jEMS5oOl3KgU0QK70AUNDpQtbJJkl49iYDIbydtB7wsQ0l6w3QaMszgrbbTkq5GLBqe1/1VwzvLrYvw7VjXLj2jT3zh4IrLFtELbmdPyX9nOZ5MTvZV8U7mLWQFObZsBf0K0k2TZkDsCj5D0n7kQ7eS0HWE0yn29Sv/71eZi4JJvePfH4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by MW3PR12MB4380.namprd12.prod.outlook.com (2603:10b6:303:5a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Fri, 29 Aug
- 2025 21:39:03 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.021; Fri, 29 Aug 2025
- 21:39:03 +0000
-Message-ID: <cd20f283-bd92-47c9-a336-fe9ff46d82ed@nvidia.com>
-Date: Fri, 29 Aug 2025 14:38:59 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/6] rust: pci: use pci::Vendor instead of
- bindings::PCI_VENDOR_ID_*
-To: Danilo Krummrich <dakr@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Elle Rhumsaa <elle@weathered-steel.dev>
-References: <20250826231224.1241349-1-jhubbard@nvidia.com>
- <20250826231224.1241349-6-jhubbard@nvidia.com>
- <DCE3EV79EX7N.DCIT9JWFGXGG@nvidia.com>
- <4b525afa-1031-4f99-a1ab-e89af77616eb@kernel.org>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <4b525afa-1031-4f99-a1ab-e89af77616eb@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0201.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::26) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE14207A;
+	Fri, 29 Aug 2025 21:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756503862; cv=none; b=XlMkrQxbCZ5T/suKXlpJrTx2AGCV3DZ6MwYz7QRXez4fZ2qqsgIUR72PSyX9KxhEFRonc5GrANdWjk++7YMS/FyOymgT96Iru1qQDLg63YO96PT58jQ3zt0xmZuRUij211eQsOiKpxhWtO6352mXoRlZsr5XKIJaqOu1gF/15Vo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756503862; c=relaxed/simple;
+	bh=M4lN6GEZ8kdVY69dEz91YS4WpAGr4RmAX8mo2e3oWTo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Bdv+Qt+5ITiC2pWZkrWBgsoNWGA2YB7N3V78X4piC/NIvQwQ+WtKKu+gZdiNlOT8lSXmM+PzuqLVgdsh7TBF6q3uHhfq77kIug3FRjiuDT4oN4FG/+P3fcQxNKgzAq0bD3Atub+h0QCP07icIjqSpeD7czkBo1O3t4b+1FctOuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=R3oq2xmf; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=t+5MnaWs+gRiDiUTWKD8sEhYpt7ASsjdxpmIIj24f+w=; t=1756503858;
+	x=1757108658; b=R3oq2xmfNT5HfXchwcVSjHFcA2tz7SFdl9aH/4KK3nE/ndI07JFUB7tfbUfnt
+	hX8ZhadhIAnSmuWdZ1PGMJ3Kt3q/CkdX+k6JWr0OsUsv0xZ6SzQ4IPcesbLAXWW6tiOj7uv8zq8ZQ
+	VhDlteL3DTdDGalH7UQ0xKPRNbSgUSftcHJW8AXfh6oCuko7DQ7ZEoCc8OWWYu3w2cm8YlJi4IVPi
+	e/1Li6lovZtHWGWRs1rc/yDhEWNVU7ziYj88PWYFbyGO4lJ/lKfRy+MIbs0xzKy748tNJQyl9lJGW
+	g7epBzwnTAoW4saO5sfePhmvloY2uz8ISQDT/tmkXV4zMwkLHA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1us6tM-00000003huA-0HhZ; Fri, 29 Aug 2025 23:44:16 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1us6tL-000000049mx-3YCy; Fri, 29 Aug 2025 23:44:16 +0200
+Message-ID: <90082c61c8bee761b1a57070e2755bbc8a812cd9.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for Niagara
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	linux-kernel@vger.kernel.org
+Cc: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
+ Anthony Yznaga <anthony.yznaga@oracle.com>
+Date: Fri, 29 Aug 2025 23:44:15 +0200
+In-Reply-To: <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+	 <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|MW3PR12MB4380:EE_
-X-MS-Office365-Filtering-Correlation-Id: 076a4659-5486-4f5a-06af-08dde7447907
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cnIwRXoweGhaUnVBcGpTejhjbzFNd01rblg1WDNzUkMySHdpcFZPdzhwTXlx?=
- =?utf-8?B?alY3YlVmeCtvaG5CL29vNERFME9lbmR4UUxUNDRTRGVodHVZV3pvaXhKZXVl?=
- =?utf-8?B?RHA3eEJ2dm5DbGppZ1djbG1kMkJyY05wcFNaYk1FUXJ1anNBbVVFdkpneDV1?=
- =?utf-8?B?MDlUeEIwcWVobzJyOHg1MlVaaVgyYlN2ODhpcjRpaDlrRUpRTmx0bkFyZFlC?=
- =?utf-8?B?NUZ4c1B2R01kVnpQNVVpaUJ2K3BlZXQyNU9CeUJ4UnhpS0lqOFR4b0wzNEUy?=
- =?utf-8?B?WUVMM0o1YlhPejF6L3E2b1BES3E4QkhGejdDUk9obHFqWC85TU11ell0N0FO?=
- =?utf-8?B?YkMvZjMyZTJUb0hHQWpXaDJYcDd1TnUzTENUNzl2clQ1VnFBOFFQbjRNNlpw?=
- =?utf-8?B?SlVWN1poL0M4a2ZucnkyNkM1dHlMaGFsa01JWFdHQUR6TS9YTmtiQm5KdGUx?=
- =?utf-8?B?UFl1czNrR0Q0NVZuOXBFdlVOMGdBTFdFR29melhwZklGaEp2Y3BKSzBLaEdX?=
- =?utf-8?B?cmJnRVE0N2xuaHQ1S2xMcS9JVVh6NG00ZVZtYUxHZTgwT1RoSTcrNGFiUXlG?=
- =?utf-8?B?M0ZoNUtxeHF2UEJxRm1ZUEhtMXNQeEJJUFQ3b3pqdTB4cjg5VGROWU5CaUpM?=
- =?utf-8?B?TjJxckhmU1l3UzlHRDd5TTZYREpqMEZIQmlDWUdYU2VXbXc5cXBQMWdDakVG?=
- =?utf-8?B?b0l4UnRyYlh1SzdacnFzVFowU21RRm1vbCtVek9FNmxYb1RNRWRFdFc5Q3pO?=
- =?utf-8?B?OG1UY1pCeHA0U0RPeVlaQitsUDhIeU90ZW5pc2pIUTBib3VkUjNZZVBHSjMv?=
- =?utf-8?B?SGxuMGxiNnpyd0V3czBBRElMTVZsblh5T1BpVGx4SjVreXE0bnowMlhOeVlO?=
- =?utf-8?B?SEtPRnNzOHJocExvK2Rxd2JFTnd2UXdKTnBLUkxtR0E4UGhyTkZlMUhJZ0xL?=
- =?utf-8?B?YlUxOTNxc0MxVFZnNjBEK1F5N0pnQmcycE1vZkVoY0QvekhtV3JRcFZ2YW90?=
- =?utf-8?B?b0JTRFZSVXY3MXdzRnBwTytDaklOMDFobk8yOU1vL0pFNlFySmptK3VCODdO?=
- =?utf-8?B?VE4rTzNlQ0ZUOXkxL3oyWlYyd0ptRFo5NDFxWkpPaVltVGx0eVZubzFwempN?=
- =?utf-8?B?d2xyR0lLMzUyVHJTS3BIQmJFMWRRMGVRTTg4ZjUvcU9hMGtsRWF5bzZTQzRP?=
- =?utf-8?B?YjJkbGJkK1dSanpZenFrZEhqb2IrMW1OdXlRVDVxUDhnMVdPbXZybjZaRGU3?=
- =?utf-8?B?OE5TWjZwYXlmandYR2xDVW5NUWxyZERieTZMTUJDOFdQL0xkR2hqNHR0UVAy?=
- =?utf-8?B?c01sZjRSQWF2eWpLUXB6Z3JwWmFkTkh1QmNjR1VOdlVZdmY2VS9tNmYvWnNy?=
- =?utf-8?B?VkI4Ums4cE5mNHIxaldiQ1BSNm1xamRUUnd4aWJnblV1eFI5QUs0TTlrK3Ax?=
- =?utf-8?B?NjRQNEdsNHlzVmIyeVkrZHRITjVFNUQxMFRhOHZiTHZjSFpydlFNbnpPNEpx?=
- =?utf-8?B?VFMrVjJ4UnU1QkFZRXF3STBxdzFKR1VnNElNdmlvbGV1ZktPb0FuQlo1aTZz?=
- =?utf-8?B?bHhPcElDc1luOWp2WWVwZ1ZoL3dmdlMrT1dMVkpzTGs2RjhKM0RITzBRZzhi?=
- =?utf-8?B?bDlIbElRSFNXV0svTThkRGVSYnIweXZnTlFGWCt1YVlzUjRpdUVaUENCSTRC?=
- =?utf-8?B?N2p1ZEkza2xQSzltTWlyd05DSnViNGJWUHhFUUthcTRtbmNwZHRzSldiMWlz?=
- =?utf-8?B?eVpyUk5VN0E3SVJ6VXpJMXg3YzJTMGp0UTVZdkhYcEJQUGZSYVM1SHNjdmFv?=
- =?utf-8?B?b2ljSms2UUpJdVJhNEhXNWFlTzZlK3FiTjNGK0F1eUpGR09uOVloRnRFTWkz?=
- =?utf-8?B?MWFxbjlkaHFJS2p5aVN1ZHJlUUNzSUtudFVSN2E4NnNGM1NKQ2xKSHorUHVr?=
- =?utf-8?Q?iGECed+6BGY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NXVTcUd4Qyt2Yko4dEh6N1dOSXFRVlloZFMzWUY0SkR2TmJPdHFLNWc1Nk5k?=
- =?utf-8?B?SU8wM0lKT2hzU01PdmZwMUVDMFg1T2hVeExsOW9uaGQ2Mnp0eGdGSlFCKzV5?=
- =?utf-8?B?VTJ4MFFFM2xITXVHK2lFV3Z1ZDJXNVlaRjVZWVJUQTF3bnUwdis5dFB6bE11?=
- =?utf-8?B?M1ZWaTR2Vi9QbVovMmNXN2VQTlN3NTUzWWV6cFZFNEhnL3Nob0J0a0txSExl?=
- =?utf-8?B?eDZLU0NVdHFjUDZpYjZMeFBuVStZNDJ0ZVkweGJwOVNGNXh4UHh0SXJuSzlv?=
- =?utf-8?B?M3FzYUlIZEozcDI2em5KYzFQYXVLZldRRTVqblk4Y0lVaUFMK0ZDYmxaZmk1?=
- =?utf-8?B?TnhQVS9MWkxTQ1Jvbkd2cVVWWGw2eVRaMU5NcGlpdDM3TGRKUFMrRmZwTUVV?=
- =?utf-8?B?MFpLU0twa0dNenlqRkZjSXd4eG9qd2hDM3pQTCtaMG1HQ2hKbmpOUjBTQVB4?=
- =?utf-8?B?K0xWNU5zM29SNlI0LzJjQzJyYURMVVlIR3RUMytnRVNaaXZ0Q2Q5dlpGcUVL?=
- =?utf-8?B?aXlETStzMUJpRGRRMGpFZGVpbDlPRWMzcWRUQXJMRitQcm4yTXZTVDIrZ0RJ?=
- =?utf-8?B?cG1uTlJTRmRaZGNsSGRyQ1hsYlo3cytKazBvMzAwT1p2SDhPY3laWkxKaytV?=
- =?utf-8?B?ZFppZjZoTE1QbSs2MHdTQWpTNkxDcUxOQlBKV0hTNlo5Q3NRUEVxTGZhNHZK?=
- =?utf-8?B?Wjk5ajBHMXUyUnRacjJrMklVODNGWnh1a2VSNWthbkRQSGt5WUZVUnM2N1Mw?=
- =?utf-8?B?dXRuaWVOYXN1QnpTTmZaKzcvczdmK1BpOW4vK09aTHlSN0ZrakhNbDlOMGZm?=
- =?utf-8?B?TVFURnlBN0lOUmU2b2JkdGhENDBDM1hOSHJoekk0Z3I4eWdBZ2xxVTNVNnYy?=
- =?utf-8?B?ZnNzYXgxa0lvQUZMam81WWJWOTVVcU5CWDJ4NUd2Z3VpaXczTlZtZlk5RDhm?=
- =?utf-8?B?eWZhbFh2RG1TTkVMejZvVVpBUWVLT1lydjFvTU5yWiszVVM0K0ROdnZJUWta?=
- =?utf-8?B?WFRqb3lFWUp2bTR3WWVrV3dFTEtyK2FtdWxkbVFLbmpzS0xMbUlvdmNQNHFJ?=
- =?utf-8?B?U1JjdmtySmg5YXBOUkR4am9tUU5veDMrZWZ1ckwvdG90SDI1Z0tqbXpaZVJ4?=
- =?utf-8?B?UjRKZkU2bERyZWt0S3RrMS9WYXQ2bVUxUDc5Wkc2UVNaN2hhd211N1cxZGpB?=
- =?utf-8?B?K0NZdDlKQXFhWnJJK2xYbCt0SHhsNHZLTCtZM3JEc0ZyYXJuSDRlWHhOQU91?=
- =?utf-8?B?SkZsejVlTElJZzFpZzkyWk1QRHFkZGhuS2FpaCtRaGRGekk5ejRBcTRWdVQ2?=
- =?utf-8?B?Zlh5MitOWTcvWEJ5aWp5MzBGSnAyRVJrTm9RTFgrQnZIa2xUOTJ0OFR2dHRG?=
- =?utf-8?B?UWlpVUNaM2ErbTV0K3kzbWRhVVZJNFl0MHl5dFd5RENIT2Z2TGtuVnovMU4y?=
- =?utf-8?B?dDRKSlNFSlJnWGZENWhvTFFtbjBScGhjd2w1djNqbG1ScHl5YWNFQzJhWGFq?=
- =?utf-8?B?SHJjbi9JZGJKUE1IL1Q4d2ZnaVJJSGpkNnp0b1pZWk5lZXBtNEhOM0pCSDZa?=
- =?utf-8?B?ZWpBNFo5VzRqbTVTT3ZiRjJhUmlxdkdueDU1c05ORXhHTU83VVVBd0EzVEtJ?=
- =?utf-8?B?MXNvaTNFdy9WNEs0R0pLYmlwZ3cwY1E5dU1LYTFZeER2NHFNR2dDazE0aHp2?=
- =?utf-8?B?ZXFUcWVGV2tqL29yNWppOTJpNGxXNFp6SmxWZHpCM2JzakRwSnNRS1dDVEpU?=
- =?utf-8?B?S3RPWmNiZG5ueFg3ZHVqNGVZS3hpdDAyOGZGLzROWVAxclMwY1RQNFBFaUhi?=
- =?utf-8?B?cE9HVG8yV2hVbjRVZlN1QWhWa1E0Sk82ZXgrbVpHN2lqQkdoWkpCZmpYMSt2?=
- =?utf-8?B?RmYxSjVNM21KNGJsRVhMZDdiUTZrN0xwWlloVjJHVVVicThGd1dzMkpmdjR5?=
- =?utf-8?B?WmhGVGI5SEo3UzFaTmdyeDl0OGZxUkhXZjYzajBPRHZLOFdjMVVxcXgwa21Y?=
- =?utf-8?B?VTZTcjU5NHpSVGlEWElkQXMvR3J5MVpKaG05RElHZVEyeW1UVUVKRnZqSk05?=
- =?utf-8?B?Mmd3N0orSUt1Q0dUMGMreHJ0bUU0bEhqU3NNbTRINGFpQ3IrTW5xMk8zVFg5?=
- =?utf-8?Q?ghzLOMRzetu1mE9VeBZ91mZ2e?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 076a4659-5486-4f5a-06af-08dde7447907
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 21:39:03.2642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /dpfIUi0bKXDaujJDJjFhmKhiJ0kfl/bCIbyyHlO5fWrOXy5SfPtySZ130L6C7irnYohsFgVmi/AgM/0h0zibg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4380
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 8/28/25 6:59 AM, Danilo Krummrich wrote:
-> On 8/28/25 3:25 PM, Alexandre Courbot wrote:
->> On Wed Aug 27, 2025 at 8:12 AM JST, John Hubbard wrote:
->> <snip>
->>> diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
->>> index 4b0ad8d4edc6..fd7a789e3015 100644
->>> --- a/rust/kernel/pci/id.rs
->>> +++ b/rust/kernel/pci/id.rs
->>> @@ -118,15 +118,14 @@ fn try_from(value: u32) -> Result<Self, Self::Error> {
->>>   /// ```
->>>   /// # use kernel::{device::Core, pci::{self, Vendor}, prelude::*};
->>>   /// fn log_device_info(pdev: &pci::Device<Core>) -> Result<()> {
->>> -///     // Compare raw vendor ID with known vendor constant
->>> -///     let vendor_id = pdev.vendor_id();
->>> -///     if vendor_id == Vendor::NVIDIA.as_raw() {
->>> -///         dev_info!(
->>> -///             pdev.as_ref(),
->>> -///             "Found NVIDIA device: 0x{:x}\n",
->>> -///             pdev.device_id()
->>> -///         );
->>> -///     }
->>> +///     // Get the validated PCI vendor ID
->>> +///     let vendor = pdev.vendor_id();
->>> +///     dev_info!(
->>> +///         pdev.as_ref(),
->>> +///         "Device: Vendor={}, Device=0x{:x}\n",
->>> +///         vendor,
->>> +///         pdev.device_id()
->>> +///     );
->>
->> Why not use this new example starting from patch 2, which introduced the
->> previous code that this patch removes?
-> 
-> I think that's because in v2 vendor_id() still returns the raw value. I think it
+Hello,
 
-That is correct.
+On Tue, 2025-08-26 at 18:03 +0200, Michael Karcher wrote:
+> Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accurate =
+exception reporting.")
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> ---
+>  arch/sparc/lib/NGmemcpy.S | 29 ++++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/arch/sparc/lib/NGmemcpy.S b/arch/sparc/lib/NGmemcpy.S
+> index ee51c1230689..bbd3ea0a6482 100644
+> --- a/arch/sparc/lib/NGmemcpy.S
+> +++ b/arch/sparc/lib/NGmemcpy.S
+> @@ -79,8 +79,8 @@
+>  #ifndef EX_RETVAL
+>  #define EX_RETVAL(x)	x
+>  __restore_asi:
+> -	ret
+>  	wr	%g0, ASI_AIUS, %asi
+> +	ret
+>  	 restore
+>  ENTRY(NG_ret_i2_plus_i4_plus_1)
+>  	ba,pt	%xcc, __restore_asi
+> @@ -125,15 +125,16 @@ ENTRY(NG_ret_i2_plus_g1_minus_56)
+>  	ba,pt	%xcc, __restore_asi
+>  	 add	%i2, %g1, %i0
+>  ENDPROC(NG_ret_i2_plus_g1_minus_56)
+> -ENTRY(NG_ret_i2_plus_i4)
+> +ENTRY(NG_ret_i2_plus_i4_plus_16)
+> +        add     %i4, 16, %i4
+>  	ba,pt	%xcc, __restore_asi
+>  	 add	%i2, %i4, %i0
+> -ENDPROC(NG_ret_i2_plus_i4)
+> -ENTRY(NG_ret_i2_plus_i4_minus_8)
+> -	sub	%i4, 8, %i4
+> +ENDPROC(NG_ret_i2_plus_i4_plus_16)
+> +ENTRY(NG_ret_i2_plus_i4_plus_8)
+> +	add	%i4, 8, %i4
+>  	ba,pt	%xcc, __restore_asi
+>  	 add	%i2, %i4, %i0
+> -ENDPROC(NG_ret_i2_plus_i4_minus_8)
+> +ENDPROC(NG_ret_i2_plus_i4_plus_8)
+>  ENTRY(NG_ret_i2_plus_8)
+>  	ba,pt	%xcc, __restore_asi
+>  	 add	%i2, 8, %i0
+> @@ -160,6 +161,12 @@ ENTRY(NG_ret_i2_and_7_plus_i4)
+>  	ba,pt	%xcc, __restore_asi
+>  	 add	%i2, %i4, %i0
+>  ENDPROC(NG_ret_i2_and_7_plus_i4)
+> +ENTRY(NG_ret_i2_and_7_plus_i4_plus_8)
+> +	and	%i2, 7, %i2
+> +	add	%i4, 8, %i4
+> +	ba,pt	%xcc, __restore_asi
+> +	 add	%i2, %i4, %i0
+> +ENDPROC(NG_ret_i2_and_7_plus_i4)
+>  #endif
+> =20
+>  	.align		64
+> @@ -405,13 +412,13 @@ FUNC_NAME:	/* %i0=3Ddst, %i1=3Dsrc, %i2=3Dlen */
+>  	andn		%i2, 0xf, %i4
+>  	and		%i2, 0xf, %i2
+>  1:	subcc		%i4, 0x10, %i4
+> -	EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4)
+> +	EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4_plus_16)
+>  	add		%i1, 0x08, %i1
+> -	EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4)
+> +	EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4_plus_16)
+>  	sub		%i1, 0x08, %i1
+> -	EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4)
+> +	EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4_plus_16)
+>  	add		%i1, 0x8, %i1
+> -	EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_minus_8)
+> +	EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_plus_8)
+>  	bgu,pt		%XCC, 1b
+>  	 add		%i1, 0x8, %i1
+>  73:	andcc		%i2, 0x8, %g0
+> @@ -468,7 +475,7 @@ FUNC_NAME:	/* %i0=3Ddst, %i1=3Dsrc, %i2=3Dlen */
+>  	subcc		%i4, 0x8, %i4
+>  	srlx		%g3, %i3, %i5
+>  	or		%i5, %g2, %i5
+> -	EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4)
+> +	EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4_plus_8)
+>  	add		%o0, 0x8, %o0
+>  	bgu,pt		%icc, 1b
+>  	 sllx		%g3, %g1, %g2
 
-> makes a little more sense if this patch simply introduces the example as an
-> example for vendor_id() itself.
-> 
-> I think struct Vendor does not necessarily need an example by itself.
+Verified on a SPARC T4 with the following hack applied:
 
-I'm not quite sure if you are asking for a change to this patch? The
-example already exercises .vendor_id(), so...?
+diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
+index cf0549134234..886cb8932a0b 100644
+--- a/arch/sparc/kernel/head_64.S
++++ b/arch/sparc/kernel/head_64.S
+@@ -635,7 +635,7 @@ sparc_m7_patch:
+         nop
+=20
+ niagara4_patch:
+-       call    niagara4_patch_copyops
++       call    niagara_patch_copyops
+         nop
+        call    niagara4_patch_bzero
+         nop
 
+Kernel is stable and does not produce any backtraces. Should still be
+tested on a real SPARC T1 if possible though.
 
-thanks,
--- 
-John Hubbard
+Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
