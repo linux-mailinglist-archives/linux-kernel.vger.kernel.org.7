@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-792459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA08B3C434
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:18:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC7B3C436
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8686E3B1462
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16447204DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD0286435;
-	Fri, 29 Aug 2025 21:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTF1qr6g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF6A285CBB;
+	Fri, 29 Aug 2025 21:18:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050131EEA49;
-	Fri, 29 Aug 2025 21:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB5C1EEA49;
+	Fri, 29 Aug 2025 21:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756502284; cv=none; b=ReICshlY3i4xKXd8QLhAdps6AoTDN2OpY3X8v+gj1G8vrSV6YE6FAWVnVqdNBuo/kDnuoijuVWJjrNSV8smmc7lgPJlEQV0eXjTd6K4C7ibWmOhk31cvE0OLVvmxU8SLYzhGVx+ixeArW+Hp1eA1OkczwY4ATiBCMvRI+HlmQ/8=
+	t=1756502324; cv=none; b=sO6RCpiS3FtzSrg8Xg+DpYXF6IKZdUA8hbHtqAm4ai1gsNs9fT3C1F9DR0a5LCLDO5P4i7L6TtBE/bN4K405jqcFbI5Ntqm3HlrG82nbw1yrv7J9sq8it09p6x8xh0m3FsuwAILbk2aVzW6/2uN4RwFexr+uP7T5j6tC5LU8wb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756502284; c=relaxed/simple;
-	bh=V5VOMAjw9pzEl70en0MP+3pcBujDo0p2tlcA6Iwhj08=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KdxfetHFKFz/Ui447a7Xk/yO97URuOZAXNkMM3VOyUZPMQXLzQ4y2SbQv+DeSC0zWWN2Vve4CN9qV5+nUT2yDKbFI4DxHa1Z55X7wARDbx5rKCVeoRKllo6Zy9uI77tBYZGsaq7s+pJyxy09hP39z+4rE8lI+W8hUX0tXlCFmqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cTF1qr6g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8E6C4CEF0;
-	Fri, 29 Aug 2025 21:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756502283;
-	bh=V5VOMAjw9pzEl70en0MP+3pcBujDo0p2tlcA6Iwhj08=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=cTF1qr6gFycOdtViqBehM1mwJmfXzfYP+ZHDqakqlmGuO18OPu7EJxuqBPjbkolvL
-	 qOxyZ4ZX6PBxKF6Y0I4ZTcz4v/tOkzZG4R0ZohsfxpaWtdJOfA8hiUEcZl+I0hvIbP
-	 mEXIVFKiifrZQEXq47mc7+8EuwpjhADw05aGzMbr5TqBL9v5w1YOPzezEmHpEBCLHj
-	 ZVsQdN3oZZbcIBF+e537fOz9HTTWFObWhdCnCU9zrXgEK1vSezg6ArLxCRu3dX5PDS
-	 4JUBXpK3uOMKHxjZ9GHz3s1Us6VsQrWHYGdCjHdjlcRryaOzKIjDXzJ/8o/VcOO3qR
-	 zztYif2H5i5wA==
-Date: Fri, 29 Aug 2025 16:18:01 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhenzhong Duan <zhenzhong.duan@intel.com>
-Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, mahesh@linux.ibm.com,
-	oohall@gmail.com, linuxppc-dev@lists.ozlabs.org,
-	linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
-	james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com, linmiaohe@huawei.com,
-	shiju.jose@huawei.com, adam.c.preble@intel.com, lukas@wunner.de,
-	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
-	linux-cxl@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, erwin.tsaur@intel.com,
-	sathyanarayanan.kuppuswamy@intel.com, dan.j.williams@intel.com,
-	feiting.wanyan@intel.com, yudong.wang@intel.com,
-	chao.p.peng@intel.com, qingshun.wang@linux.intel.com,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Matthew W Carlis <mattc@purestorage.com>
-Subject: Re: [PATCH v5 2/2] PCI/AER: Print UNCOR_STATUS bits that might be
- ANFE
-Message-ID: <20250829211801.GA1025641@bhelgaas>
+	s=arc-20240116; t=1756502324; c=relaxed/simple;
+	bh=RYOu0bMYVMS0CJNjElebnSBdnOQ7QIVuZ+Ry/6lRIn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n/hx6ha5lu8ZFVzwxDkOMODLG0aLbn6HFr5RYfAOxavPH8mjLomMMuBWhQ4CU8ejnVqpyoOarPskUTiaKHZqWYqLyM3pFbNChhPMv3kIJuzjmMMs49iLk4Zxl5srhwgP5gQx/CIcP/eTK7BssbMD7xpRTkG2QGY9ck1wZy7RcQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id F2D42119DC2;
+	Fri, 29 Aug 2025 21:18:38 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id AB7CF2000E;
+	Fri, 29 Aug 2025 21:18:33 +0000 (UTC)
+Date: Fri, 29 Aug 2025 17:18:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
+ <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250829171855.64f2cbfc@gandalf.local.home>
+In-Reply-To: <CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<20250828161718.77cb6e61@batman.local.home>
+	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+	<20250828164819.51e300ec@batman.local.home>
+	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<20250829121900.0e79673c@gandalf.local.home>
+	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
+	<20250829124922.6826cfe6@gandalf.local.home>
+	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
+	<20250829141142.3ffc8111@gandalf.local.home>
+	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620025857.206647-3-zhenzhong.duan@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: AB7CF2000E
+X-Stat-Signature: w3ym7wpa6zzpwnb7t6ru45gcf9o647yf
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/xOwhcpNx8jBJvzSWcQKR6NMQEpBrR9Ws=
+X-HE-Tag: 1756502313-711946
+X-HE-Meta: U2FsdGVkX1+iQ1x6FBp3lwKCTTU9jDI5hstb9vfH4+g/iGcQlxwYXiPatWIIZJMfUouB8xBufqf1/oRk/Dk4ZoiCyHjqCIJIYwjTzASXDmS3W6QWsUf0yP0LY7juuCpQ+qZKViSMyUSfmfRgQKPzM4zjsW1/1MNvrhQX1RrRdQ8tkOZP9vbPvuqGeIY9N2pvySkqeJYttAnlxvRK8lKIuiq33RaxQl8Z20s0tlumroF6y67zmVYpCyefKjMTz1YOSAw/Jc0KxkYeS/Dd+zi+SH5lR9oP9DgmJKdVUFErLw+T6mmNzkwqAmPcwSA0m5JkDYxcodmFE6GK8Fw0Q4C3y0wIxq78A1dLSBW+U4Jih/s2+38HL9/uRtL2c/zrmtIx/WiQIs4R8sPYPH3pkn7V++LPQL8ZzudClF8Ut+5GgzkTSxZME666jJwEi01EqYJ7
 
-[+cc Matt]
+On Fri, 29 Aug 2025 13:54:08 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Thu, Jun 20, 2024 at 10:58:57AM +0800, Zhenzhong Duan wrote:
-> When an Advisory Non-Fatal error(ANFE) triggers, both correctable error(CE)
-> status and ANFE related uncorrectable error(UE) status will be printed:
+> On Fri, 29 Aug 2025 at 11:11, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > The idea is this (pseudo code):
+> >
+> >  user_stack_trace() {
+> >    foreach vma in each stack frame:
+> >        key = hash(vma->vm_file);
+> >        if (!lookup(key)) {
+> >            trace_file_map(key, generate_path(vma), generate_buildid(vma));
+> >            add_into_hash(key);
+> >        }
+> >    }  
 > 
->   AER: Correctable error message received from 0000:b7:02.0
->   PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
->     device [8086:0db0] error status/mask=00002000/00000000
->      [13] NonFatalErr
->     Uncorrectable errors that may cause Advisory Non-Fatal:
->      [12] TLP
+> I see *zero* advantage to this. It's only doing stupid things that
+> cost extra, and only because you don't want to do the smart thing that
+> I've explained extensively that has *NONE* of these overheads.
 > 
-> Tested-by: Yudong Wang <yudong.wang@intel.com>
-> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
-> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/pci/pcie/aer.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> Just do the parsing at parse time. End of story.
+
+What does "parsing at parse time" mean?
+
 > 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 3dcfa0191169..ba3a54092f2c 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -681,6 +681,7 @@ static void __aer_print_error(struct pci_dev *dev,
->  {
->  	const char **strings;
->  	unsigned long status = info->status & ~info->mask;
-> +	unsigned long anfe_status = info->anfe_status;
->  	const char *level, *errmsg;
->  	int i;
->  
-> @@ -701,6 +702,20 @@ static void __aer_print_error(struct pci_dev *dev,
->  				info->first_error == i ? " (First)" : "");
->  	}
->  	pci_dev_aer_stats_incr(dev, info);
-> +
-> +	if (!anfe_status)
-> +		return;
+> Or don't do this at all. Justy forget the whole thing entirely. Throw
+> the patch that started this all away, and just DON'T DO THIS.
 
-__aer_print_error() is used by both native AER handling, where Linux
-fields the AER interrupt and reads the AER status registers directly,
-and APEI GHES firmware-first error handling, where platform firmware
-fields the AER interrupt, reads the AER status registers, and packages
-them up to hand off to Linux via aer_recover_queue().
+Maybe we are talking past each other.
 
-But the previous patch only sets info->anfe_status for the native
-path, so the APEI GHES path doesn't get the benefit of this change.
+When I get a user space stack trace, I get the virtual addresses of each of
+the user space functions. This is saved into an user stack trace event in
+the ring buffer that usually gets mapped right to a file for post
+processing.
 
-I think both paths should log the same ANFE information.
+I still do the:
 
-> +
-> +	strings = aer_uncorrectable_error_string;
-> +	pci_printk(level, dev, "Uncorrectable errors that may cause Advisory Non-Fatal:\n");
-> +
-> +	for_each_set_bit(i, &anfe_status, 32) {
-> +		errmsg = strings[i];
-> +		if (!errmsg)
-> +			errmsg = "Unknown Error Bit";
-> +
-> +		pci_printk(level, dev, "   [%2d] %s\n", i, errmsg);
-> +	}
->  }
->  
->  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
-> -- 
-> 2.34.1
-> 
+ user_stack_trace() {
+   foreach addr each stack frame
+      vma = vma_lookup(mm, addr);
+      callchain[i++] = (addr - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT);
+
+Are you saying that this shouldn't be done either? And to just record the
+the virtual address in the chain and the vma->vm_start and
+vma->vm_pgoff in another event? Where the post processing could do the
+math? This other event could also record the path and build id.
+
+The question is, when do I record this vma event? How do I know it's new?
+
+I can't rely too much on other events (like mmap) and such as those events
+may have occurred before the tracing started. I have to have some way to
+know if the vma has been saved previously, which was why I had the hash
+lookup, and only add vma's on new instances.
+
+My main question is, when do I record the vma data event?
+
+-- Steve
+
 
