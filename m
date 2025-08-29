@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-792507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41526B3C4EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE386B3C4ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2C4171BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3626F3B1FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD99C29B78F;
-	Fri, 29 Aug 2025 22:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBCC29B78F;
+	Fri, 29 Aug 2025 22:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeI1Uyyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Yrlg3tWg"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222B2A1AA;
-	Fri, 29 Aug 2025 22:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6271D61BB;
+	Fri, 29 Aug 2025 22:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756506832; cv=none; b=vCSXcb3tONzlxX8lGWE4RfH9MzadJKSKN8KpuOzRbxRM4xyGxCWkBAMMYD8xWpkpBmMqSRZL9ZhsUysqOaKMArGu8gFK5AhEcZDdOitMjjhT4LB86ZCX9wu29wVzR3XdMR2zdi/4AfwvgMJjzKfFpCks03mrdUmUedM0Sq9Ic/c=
+	t=1756506907; cv=none; b=Ns67yRwBhSAw6zhL++mwdg8moA6DE5Ixmxq2qWDW21a5sp4pH/NBBJ5Uvbw1tX+hlej4C/N2gMTtzcOujeHDADyObvuH4FaRTRmaN7n6l7BeWPXQCMHLZq4Qcvi8cv2QZm7vXwI1zWfy46t4pOUXVypDk+Dj877DfngOCIpoHSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756506832; c=relaxed/simple;
-	bh=gW3UREhITNbhZNhXVhy/1JzS54isi8alO3SClI/0N4U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OR0jCuckKwC+/om4uA/xqjZIFiQDrlbyj1/B/fyWYk66So9zIi3gPnpxjGBQ5q9F9OZ1dggmD+qSIwnQt+CvaqDHdc6a0WjvqigEHzNyxR4RyfnYRyVXdRgGw/7AM0x5fYkwtzbEinlCHb8s/I4LZ2Lu3AylE0Mz2ZRAfKgc6qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeI1Uyyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5459DC4CEF0;
-	Fri, 29 Aug 2025 22:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756506831;
-	bh=gW3UREhITNbhZNhXVhy/1JzS54isi8alO3SClI/0N4U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CeI1UyywLphq6rbxihW3K12s6RgLJ57FMTz4eKtrVBaIOZQlRF5Mw5MGN9VZqsyUF
-	 ws1VVPK2A9Aphpeu08IZ+PBsvH/hZxYQZ/E8LlLJ2UoQZh6ZiWU7Ee+Bxfnwgu4wDN
-	 qm+ussMtaWLdi83SF8aT0+Btb7yjNB9Ygip41cIO0PmgxXzADx6IHAKLQjnLPLfqj2
-	 5eqSmq9NNuwF0+wjF3Nc60azb8fAUFVptz94yF9f9Xn6OeJKPvhEVPRSVPcQIiH9ig
-	 389Jr83bSdXVSFqVbGJ4RM5keAw6x2twpNgOifIA2xME7cb4HiY+r6PWu/R5+ICtHu
-	 LsNzjw1Q4Twaw==
-From: Nathan Chancellor <nathan@kernel.org>
-To: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- llvm@lists.linux.dev, patches@lists.linux.dev, 
- Nicolas Schier <nsc@kernel.org>, linux-kbuild@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
- Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- Will Deacon <will@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- linuxppc-dev@lists.ozlabs.org, Palmer Dabbelt <palmer@dabbelt.com>, 
- Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
- Marco Elver <elver@google.com>, 
- "Peter Zijlstra (Intel)" <peterz@infraded.org>, kasan-dev@googlegroups.com
-In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
-References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
-Subject: Re: [PATCH v2 00/12] Bump minimum supported version of LLVM for
- building the kernel to 15.0.0
-Message-Id: <175650682606.3003527.17329504429724755241.b4-ty@kernel.org>
-Date: Fri, 29 Aug 2025 15:33:46 -0700
+	s=arc-20240116; t=1756506907; c=relaxed/simple;
+	bh=psyHVBHH52umKGRyqGiz9/R/Wx8nDG3Lb6AieVV9h70=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PSrbC0G73onUoRVY+He4zmZZQcTG7lHhyY9nIGbNRBATnREpklnJhlAOKxtbXqShRzH2vjCB1Fnjv0m5O1tkT/IagopE4tFFgb2Mb0Xok4Gau0MsxIJbFYGB7uV2fNBJNd6YjMhoQ1ws02qitnjeJAiJPpFytpIqjosXdJuIWq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Yrlg3tWg; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D761140AF5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756506905; bh=j9pdz4fvOvXD/nnfTD03LeIxAJWY+Bl75kULpm1YGrw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Yrlg3tWgGl+KR0gvLKPpwxh/ccK70xseariZ3utKekozcfBwJyhS3rBOMTxJP23ir
+	 EMxROTR6jAetE6gtkCsaYhqyrB/fzoj5GgUxE8XtdLRMjz/Flaw5kO1GwyGR80pmkL
+	 p6yVSUxyBTwDqV9qFOPZPEoAotmDso1RsFWlLiTx5js7McFuKWHfW+kds4t+5bQR2b
+	 p0og0yI6Zy73JQ0sbsgW5+XVacq3x6R+tpmfpo5o7uR+Mt33qSImbGkV7VM+M0grkd
+	 BH561WzYV19gFCpjoidA/Elib3ZaveH0HOyUV2hJ3CVoTe8Y4Zx6bLMfqbDl+FZBLv
+	 dU5mFv0bZeLZA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D761140AF5;
+	Fri, 29 Aug 2025 22:35:04 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Moktar SELLAMI <smokthar925@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org, Dave Jiang
+ <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Gregory Price
+ <gourry@gourry.net>, Moktar SELLAMI <smokthar925@gmail.com>, Alok Tiwari
+ <alok.a.tiwari@oracle.com>,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] Documentation/driver-api: Fix typo error in cxl
+In-Reply-To: <20250819084116.13108-1-smokthar925@gmail.com>
+References: <20250819084116.13108-1-smokthar925@gmail.com>
+Date: Fri, 29 Aug 2025 16:35:04 -0600
+Message-ID: <87iki53gfb.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain
 
+Moktar SELLAMI <smokthar925@gmail.com> writes:
 
-On Thu, 21 Aug 2025 14:15:37 -0700, Nathan Chancellor wrote:
-> s390 and x86 have required LLVM 15 since
-> 
->   30d17fac6aae ("scripts/min-tool-version.sh: raise minimum clang version to 15.0.0 for s390")
->   7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0")
-> 
-> respectively. This series bumps the rest of the kernel to 15.0.0 to
-> match, which allows for a decent number of clean ups.
-> 
-> [...]
+> Fixed Typo in the driver-api/cxl/devices/devices.rst
+>
+> functionalty -> functionality
+>
+> Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
+> ---
+>  Documentation/driver-api/cxl/devices/device-types.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+> index 923f5d89bc04..7f69dfa4509b 100644
+> --- a/Documentation/driver-api/cxl/devices/device-types.rst
+> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
+> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+>  Typically used for initialization, configuration, and I/O access for anything
+>  other than memory (CXL.mem) or cache (CXL.cache) operations.
+>  
+> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
+> +The Linux CXL driver exposes access to .io functionality via the various sysfs
+>  interfaces and /dev/cxl/ devices (which exposes direct access to device
+>  mailboxes).
 
-Applied, thanks!
+This one was fixed a while back, so this patch is not needed.  It is
+always a good idea to check linux-next when considering changes of this
+type.
 
-[01/12] kbuild: Bump minimum version of LLVM for building the kernel to 15.0.0
-        https://git.kernel.org/kbuild/c/20c0989283564
-[02/12] arch/Kconfig: Drop always true condition from RANDOMIZE_KSTACK_OFFSET
-        https://git.kernel.org/kbuild/c/65aebf6f5880e
-[03/12] ARM: Clean up definition of ARM_HAS_GROUP_RELOCS
-        https://git.kernel.org/kbuild/c/02aba266e391f
-[04/12] arm64: Remove tautological LLVM Kconfig conditions
-        https://git.kernel.org/kbuild/c/23cb0514208da
-[05/12] mips: Unconditionally select ARCH_HAS_CURRENT_STACK_POINTER
-        https://git.kernel.org/kbuild/c/e633c2e78fd1c
-[06/12] powerpc: Drop unnecessary initializations in __copy_inst_from_kernel_nofault()
-        https://git.kernel.org/kbuild/c/488954ca195d0
-[07/12] riscv: Remove version check for LTO_CLANG selects
-        https://git.kernel.org/kbuild/c/6578a1ff6aa49
-[08/12] riscv: Unconditionally use linker relaxation
-        https://git.kernel.org/kbuild/c/7ccbe91796d7b
-[09/12] riscv: Remove ld.lld version checks from many TOOLCHAIN_HAS configs
-        https://git.kernel.org/kbuild/c/87b28d71396bf
-[10/12] lib/Kconfig.debug: Drop CLANG_VERSION check from DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
-        https://git.kernel.org/kbuild/c/a817de20091c3
-[11/12] objtool: Drop noinstr hack for KCSAN_WEAK_MEMORY
-        https://git.kernel.org/kbuild/c/573ad421cc551
-[12/12] KMSAN: Remove tautological checks
-        https://git.kernel.org/kbuild/c/5ff8c11775c74
+Thanks,
 
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+jon
 
