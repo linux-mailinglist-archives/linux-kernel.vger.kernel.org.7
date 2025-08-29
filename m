@@ -1,212 +1,137 @@
-Return-Path: <linux-kernel+bounces-792201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B712B3C160
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF1CB3C163
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F843BA6E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DA43BA5B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85AB33CEAC;
-	Fri, 29 Aug 2025 16:57:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664A03081BE;
-	Fri, 29 Aug 2025 16:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBDE33CEA6;
+	Fri, 29 Aug 2025 16:57:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0589A3081BE;
+	Fri, 29 Aug 2025 16:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756486620; cv=none; b=dyV5sd32wRE8CaRClPuHTH7MEsJ0i0VmGFWKd31fnaaFWzE6Z07yiKX0kspyVCeVBwQ3k1VsPZ6bNEfUkoqJuPzWs+E1IgCjEFU7QRwbceUcbsYqTHEtJVIzsZ2n4OZ8Fe8oevQEAodsmxiPjVwfEcuPFilSU4kRIfp3OhU2R+I=
+	t=1756486664; cv=none; b=peXNPblJorjAUBfLtFVo+xUrCFUwRZ6t9eSgW+cr+9KsE/efo3UPAKipnJBVFeHEFhDgyGkJX/aD1A6YOp3pyPH+H0UOZmSJ3cJxHg76UFwMWS2UgWdb1tE4h3CI3pQK/C+LjM8yKVEfWj3J5fya3x353mh+GzpT1dC2LvcxA6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756486620; c=relaxed/simple;
-	bh=kb2fY1IV7K43cE3ikrAg8qLiIqn49GbYUA49McI1fGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s+67bu1+pA0EuJ1anv7uStET9zvYz5HaeAJBBApiduye7oeUJfKGdLPEAJ16ew76iHenTdQqPJsHj090lagcC1jClZ/xX8u0xICNwBindGfGfSceeokre7yZCTa2DSA9ojxi7Vc6xQ9f9gFUiFU+uvr9VNqmcs46hDcO9zVmcd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2033B12FC;
-	Fri, 29 Aug 2025 09:56:49 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F50B3F738;
-	Fri, 29 Aug 2025 09:56:51 -0700 (PDT)
-Message-ID: <ee847bec-ad08-473e-96b5-407872c2a0f2@arm.com>
-Date: Fri, 29 Aug 2025 17:56:49 +0100
+	s=arc-20240116; t=1756486664; c=relaxed/simple;
+	bh=B31eEimj8OTYKu7/EvM1IRu8gUQcEs3P1Hpgf4B8wMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PldBEs6IzYMeJhQK/07vVRoTQE++FnfyzrD4DduH+RGwGZsOq+av3bj8Ip3/SdR2sqXuk7c16JvQ4NCkleb5IskLLGlizDwIBkeBFuHSFP6nbmYuYxJSe7E2s1Pxixf/TMahv0Z6Eq5dAbwxMdKSBVQju/34P+sVO30hH21KBsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id CBF1DBB93A;
+	Fri, 29 Aug 2025 16:57:38 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 984956000F;
+	Fri, 29 Aug 2025 16:57:33 +0000 (UTC)
+Date: Fri, 29 Aug 2025 12:57:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
+ <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250829125756.2be2a3c3@gandalf.local.home>
+In-Reply-To: <CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<20250828180357.223298134@kernel.org>
+	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
+	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+	<20250828161718.77cb6e61@batman.local.home>
+	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+	<20250828164819.51e300ec@batman.local.home>
+	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com>
+	<20250829123321.63c9f525@gandalf.local.home>
+	<CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 32/33] arm_mpam: Add kunit test for bitmap reset
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-33-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250822153048.2287-33-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 18jykodge4m1t8y9iu4ci1anjgx8bi38
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 984956000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1801hL3r63Hi0MBtC7pDdEvK0YgZ9zEiac=
+X-HE-Tag: 1756486653-638081
+X-HE-Meta: U2FsdGVkX1/sCw8yIWzmnLshxirkyw2IcJV/SeAn8Hga1OXlAU7UEAxvJMnS2DybjyIECYf9cIpKtlQ3hcI9F7+f6ZcoqCukuPup6DhaHzQzd0Z7hImnUfk//XjJHxwPqSsmDiEEo/tKK3eP5g3Fbp1ijDC1hdlnCUfGYtCsrwGV3KLb2WJ7TwwFiUTq0ZpOAGgci+0vkE8Eh12cSxnr6QyO6jpK60Wz4OH1rtPyrU/rWns0xQrsPAJDk5daN0T1j+BRD7jPa0DS8y23njgh3a1EUbTeuebNqQbCtkrrvYfHnKp80NCKOLxMCI7CcyIrYB315qsvBm3ehrMVN25RDcJmQm2GpWKASfKTIGiVjRLAnn6G1SYq9boBtT1nwwikNEfZ5fX9t0x3pRFAef+ssIR0hVeLCK2bQxfeLdVL0Nv6c5OM6IKxOLEQRZ2qVXRG
 
-Hi James,
+On Fri, 29 Aug 2025 09:42:03 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On 8/22/25 16:30, James Morse wrote:
-> The bitmap reset code has been a source of bugs. Add a unit test.
+> On Fri, 29 Aug 2025 at 09:33, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > I just realized that I'm using the rhashtable as an "does this hash exist".  
 > 
-> This currently has to be built in, as the rest of the driver is
-> builtin.
+> The question is still *why*?
+
+The reason is to keep from triggering the event that records the pathname
+for every look up.
+
 > 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  drivers/resctrl/Kconfig             | 13 ++++++
->  drivers/resctrl/mpam_devices.c      |  4 ++
->  drivers/resctrl/test_mpam_devices.c | 68 +++++++++++++++++++++++++++++
->  3 files changed, 85 insertions(+)
->  create mode 100644 drivers/resctrl/test_mpam_devices.c
+> SO JUST USE THE NUMBERS, for chissake! Don't make them mean anything.
+> Don't try to think they mean something.
 > 
-> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
-> index dff7b87280ab..f5e0609975e4 100644
-> --- a/drivers/resctrl/Kconfig
-> +++ b/drivers/resctrl/Kconfig
-> @@ -4,8 +4,21 @@ config ARM64_MPAM_DRIVER
->  	bool "MPAM driver for System IP, e,g. caches and memory controllers"
->  	depends on ARM64_MPAM && EXPERT
->  
-> +menu "ARM64 MPAM driver options"
-> +
->  config ARM64_MPAM_DRIVER_DEBUG
->  	bool "Enable debug messages from the MPAM driver."
->  	depends on ARM64_MPAM_DRIVER
->  	help
->  	  Say yes here to enable debug messages from the MPAM driver.
-> +
-> +config MPAM_KUNIT_TEST
-> +	bool "KUnit tests for MPAM driver " if !KUNIT_ALL_TESTS
-> +	depends on KUNIT=y
-It depends on ARM64_MPAM_DRIVER as well.
+> The *reason* I htink hashing 'struct file *' is better than the
+> alternative is exactly that it *cannot* mean anything. It will get
+> re-used quite actively, even when nobody actually changes any of the
+> files. So you are forced to deal with this correctly, even though you
+> seem to be fighting dealing with it correctly tooth and nail.
+> 
+> And at no point have you explained why you can't just treat it as
+> meaningless numbers. The patch that started this all did exactly that.
+> It just used the *wrong* numbers, and I pointed out why they were
+> wrong, and why you shouldn't use those numbers.
 
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  Enable this option to run tests in the MPAM driver.
-> +
-> +	  If unsure, say N.
-> +
-> +endmenu
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 65c30ebfe001..4cf5aae88c53 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -2903,3 +2903,7 @@ static int __init mpam_msc_driver_init(void)
->  }
->  /* Must occur after arm64_mpam_register_cpus() from arch_initcall() */
->  subsys_initcall(mpam_msc_driver_init);
-> +
-> +#ifdef CONFIG_MPAM_KUNIT_TEST
-> +#include "test_mpam_devices.c"
-> +#endif
-> diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
-> new file mode 100644
-> index 000000000000..8e9d6c88171c
-> --- /dev/null
-> +++ b/drivers/resctrl/test_mpam_devices.c
-> @@ -0,0 +1,68 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2024 Arm Ltd.
-> +/* This file is intended to be included into mpam_devices.c */
-> +
-> +#include <kunit/test.h>
-> +
-> +static void test_mpam_reset_msc_bitmap(struct kunit *test)
-> +{
-> +	char *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
-> +	struct mpam_msc fake_msc;
-> +	u32 *test_result;
-> +
-> +	if (!buf)
-> +		return;
-> +
-> +	fake_msc.mapped_hwpage = buf;
-> +	fake_msc.mapped_hwpage_sz = SZ_16K;
-> +	cpumask_copy(&fake_msc.accessibility, cpu_possible_mask);
-> +
-> +	mutex_init(&fake_msc.part_sel_lock);
-> +	mutex_lock(&fake_msc.part_sel_lock);
-> +
-> +	test_result = (u32 *)(buf + MPAMCFG_CPBM);
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 0);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 1);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 1);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 16);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 32);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 33);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 1);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mutex_unlock(&fake_msc.part_sel_lock);
-> +}
-> +
-> +static struct kunit_case mpam_devices_test_cases[] = {
-> +	KUNIT_CASE(test_mpam_reset_msc_bitmap),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite mpam_devices_test_suite = {
-> +	.name = "mpam_devices_test_suite",
-> +	.test_cases = mpam_devices_test_cases,
-> +};
-> +
-> +kunit_test_suites(&mpam_devices_test_suite);
+I agree. The hash I showed last time was just using the pointers. The hash
+itself is meaningless and is useless by itself. The only thing the hash is
+doing is to be an identifier in the stack trace so that the path name and
+buildid don't need to be generated and saved every time.
 
-Thanks,
+In my other email, I'm thinking of using the pid / vma->vm_start as a key
+to know if the pathname needs to be printed again or not. Although, perhaps
+if a task does a dlopen(), load some text and execute it, then a dlclose()
+and another dlopen() and loads text, that this could break the assumption
+that the vm_start is unique per file.
 
-Ben
+Just to clarify, the goal of this exercise is to avoid the work of creating
+and generating the pathnames and buildids for every lookup / stacktrace.
+
+Now maybe hashing the pathname isn't as expensive as I think it may be. And
+just doing that could be "good enough".
+
+
+-- Steve
 
 
