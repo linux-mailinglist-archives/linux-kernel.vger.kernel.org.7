@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-791776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD28FB3BBD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:01:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58778B3BBD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59ABCA2542B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72857564A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102962236F2;
-	Fri, 29 Aug 2025 13:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKCR9zTS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85022D2497;
+	Fri, 29 Aug 2025 13:01:52 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6701414F9FB;
-	Fri, 29 Aug 2025 13:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F5E450F2;
+	Fri, 29 Aug 2025 13:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472468; cv=none; b=hGuP456lIsqghQismgUXDrLivNvUqAymODQFEvT/L0Z2CAdrXeJyssdmV+fXZU6j63MkBtR89JSR1BZkV8oNuPpznVG8ZM17U92qovVlihh0iEvfsZpjUnngCUklXXvD38decDvclXjvIoDglNUywxo7Jjpt6RU9323LgmAM6p8=
+	t=1756472512; cv=none; b=ljCRfBDuM8Vrj3VLvWJ8CvzGFLDaBa5xQaqAaNqmfaPIcZfI/k3dE4UIhRPf5EWeM8wzGaERRaLHOKu7yKK3FAjTmm13qDS8sqmdfSmZDUftXmgNGlcPm1LuOT325GNrsZGWDmmmLH/6a1+/LqMdojPP0b7G6dzIDd8TOTkVfks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472468; c=relaxed/simple;
-	bh=huEmYKtpngB9RmDN6wRbSbdKSJH3TWBnhI3yoCvi/xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLnvVW6bSsGb8tl5KAPgF8z6s8c+wL+upzshnS1qzjBE806ZED176dnV68v+lTRe/DaxOrpJhRGh79St2hxAPSSB1nh9i9kzByb88zNwYf9xyMSRt6i0r5Go0GVxp96Wkv3d9vrzfqI1+kYS1bYuA2r6igz6EVRjGnHc8xmVKTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKCR9zTS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA3BC4CEF0;
-	Fri, 29 Aug 2025 13:01:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756472467;
-	bh=huEmYKtpngB9RmDN6wRbSbdKSJH3TWBnhI3yoCvi/xU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FKCR9zTS39TL+CT4FGE3zmcte3Lcdogid/aX/TT42gdmxRnMM8Vh03urXpDNmisTH
-	 nPAPmS6HghA0IL5LbeF/npNmFuR08fLNdXbfjfDTf5A9EjP31elTOvviQnIYx+ZiyK
-	 1doh17YzPoR0JmUL8yg7T0Kly3iMpkMS55qBMpeYiWj98NGFGpvqy5yXerJDWDkVgR
-	 v5B4mjPFKeTEg8svXIv1v/iKjwyD9u5IbUWFEDn8Syn8PzRyJHJFnRxBrtp8pXmGmC
-	 aBboCCuNs6ai+OGuoHXK5++fwJpPJtsRR7wvTaYPDuaZCwouCFiIrG/apgP7EKoPuM
-	 nzZabLanOV7RA==
-Received: by pali.im (Postfix)
-	id 6B11085D; Fri, 29 Aug 2025 15:01:04 +0200 (CEST)
-Date: Fri, 29 Aug 2025 15:01:04 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Jeremy Allison <jra@samba.org>, Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Do not use UID and GID from EAs
-Message-ID: <20250829130104.jtjp2jlmd6infvtc@pali>
-References: <20240913200204.10660-1-pali@kernel.org>
- <20240913201041.cwueaflcxhewnvwj@pali>
- <20240917200600.6smfxhrppkyjuyku@pali>
- <ZunlTDxPLn4yryW3@jeremy-rocky-laptop.localdomain>
- <20240917202921.ty32zzmhrg33knpy@pali>
- <ZunnGhOogEQU2Hje@jeremy-rocky-laptop.localdomain>
- <20240917203431.w5dejuwfkmabrewz@pali>
- <CAN05THTVav8HOCk6V+5eg-BTESZDBx2BuQOF1c=Vn2dFv_UNxw@mail.gmail.com>
- <CAH2r5muUioziUN7mRFUAOV3tGPMLnb949j70GKYnRM2LygAWVQ@mail.gmail.com>
- <20250811105258.t3r65wsytkmyguem@pali>
+	s=arc-20240116; t=1756472512; c=relaxed/simple;
+	bh=IL/flYRlhgJLTRSDPJ/kh2JmFf8C4NzSzKWcKVGhemE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Cmg241tJU0LJiIwOokYRKBjCdwfvCR9Rt2FzNX8qUa1M6rZUAQbufCg5VEFfgsQ73aGyH0foFyRTpTGjvV2f13Gm2DxJLUcSAy2KM/KQSrIbhPxbzSbRDqn1K20jrvaAs6qmsaTadSlvNGmVV9smbSbDJl/CDfG5jzsVJcpdydQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uryjb-0000000029K-49es;
+	Fri, 29 Aug 2025 13:01:40 +0000
+Date: Fri, 29 Aug 2025 14:01:36 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH v3 0/6] net: dsa: lantiq_gswip: prepare for supporting
+ MaxLinear GSW1xx
+Message-ID: <cover.1756472076.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811105258.t3r65wsytkmyguem@pali>
-User-Agent: NeoMutt/20180716
 
-On Monday 11 August 2025 12:52:58 Pali Rohár wrote:
-> On Tuesday 17 September 2024 16:19:08 Steve French wrote:
-> > On Tue, Sep 17, 2024 at 3:45 PM ronnie sahlberg
-> > <ronniesahlberg@gmail.com> wrote:
-> > >
-> > > On Wed, 18 Sept 2024 at 06:37, Pali Rohár <pali@kernel.org> wrote:
-> > > >
-> > > > On Tuesday 17 September 2024 13:31:22 Jeremy Allison wrote:
-> > > > > On Tue, Sep 17, 2024 at 10:29:21PM +0200, Pali Rohár wrote:
-> > > > > > On Tuesday 17 September 2024 13:23:40 Jeremy Allison wrote:
-> > > > > > > On Tue, Sep 17, 2024 at 10:06:00PM +0200, Pali Rohár wrote:
-> > > > > > > > And seems that SMB2_OP_QUERY_WSL_EA is useful not only for reparse
-> > > > > > > > points, but also for any regular file or directory as it can contain
-> > > > > > > > UNIX mode and UID/GID ownership.
-> > > > > > >
-> > > > > > > uid/gid should *never* be exposed over the wire for SMB.
-> > > > > > >
-> > > > > > > That way lies madness.
-> > > > > >
-> > > > > > Hello Jeremy, if I understood wsl_to_fattr() function correctly then it
-> > > > > > is already doing it, it fills uid/gid for stat() from data which were
-> > > > > > exposed over the wire for SMB. Could you check that function if it is
-> > > > > > truth?
-> > > > >
-> > > > > I'm sure the Windows implementation is doing it - however, any Linux
-> > > > > server implementations should not do this (IMHO).
-> > > > >
-> > > > > It will break all SID -> uid / gid mapping that servers must
-> > > > > carefully set up.
-> > > > >
-> > > > > On the wire - SIDs must be the only source of identity.
-> > > >
-> > > > Ok. But then I do not understand why Linux client parses and uses uid
-> > > > and gids which are sent over the wire. If you are saying that the SIDs
-> > > > must be the only source of truth then Linux client should rather ignore
-> > > > uid and gid values?
-> > >
-> > > What I think Jeremy is refering to is that mixing uids and sids in the
-> > > protocol itself is
-> > > a protocol design mistake.
-> > > Because this means that some PDUs in the protocol operate on SIDs but
-> > > others operate on
-> > > UID/GIDs and this means there is great risk of mistakes and have the
-> > > sid<->uid mapping return
-> > > different results depending on the actual PDU.
-> > >
-> > > Sometimes the sid<->uid mapping happens in the server, at other times
-> > > the mapping happens in the client
-> > > and it is very difficult to guarantee that the mapping is consistent
-> > > across PDUs in the protocol as well as across different clients.
-> > 
-> > Yes - agreed.
-> > 
-> > SIDs are globally unique and should always be used/sent over the wire
-> > (never send or use the local uid/gid which is not guaranteed to be
-> > unique).  Whether retrieving ownership information via
-> > the SMB ACL or via an SMB3.1.1 POSIX response, the SID is the correct
-> > thing to send/use in the protocol.  For cases where the client is not
-> > domain joined, the UID/GID can be encoded in the SID, for cases that
-> > are domain joined the Linux UIDs/GIDs can be mapped consistently via
-> > the SID.
-> > 
-> > -- 
-> > Thanks,
-> > 
-> > Steve
-> 
-> Hello Steve, based on the above discussion I'm proposing a change which
-> stops parsing UID and GID values stored in EAs on the SMB server for
-> SMB2 and SMB3 dialects. Change is in the attachment.
-> 
-> Steve, Ronnie, Jeremy and Paulo, could you review this change?
+Continue to prepare for supporting the newer standalone MaxLinear GSW1xx
+switch family by extending the existing lantiq_gswip driver to allow it
+to support MII interfaces and MDIO bus of the GSW1xx.
 
-Hello, have you looked at the proposed change in the previous email?
+This series has been preceded by an RFC series which covers everything
+needed to support the MaxLinear GSW1xx family of switches. Andrew Lunn
+had suggested to split it into a couple of smaller series and start
+with the changes which don't yet make actual functional changes or
+support new features.
+
+Everything has been compile and runtime tested on AVM Fritz!Box 7490
+(GSWIP version 2.1, VR9 v1.2)
+
+Link: https://lore.kernel.org/netdev/aKDhFCNwjDDwRKsI@pidgin.makrotopia.org/
+
+v3: explicitly initialize mii_port_reg_offset to 0
+v2: move lantiq_gswip driver to its own folder
+
+Daniel Golle (6):
+  net: dsa: lantiq_gswip: move to dedicated folder
+  net: dsa: lantiq_gswip: support model-specific mac_select_pcs()
+  net: dsa: lantiq_gswip: ignore SerDes modes in phylink_mac_config()
+  net: dsa: lantiq_gswip: support offset of MII registers
+  net: dsa: lantiq_gswip: support standard MDIO node name
+  net: dsa: lantiq_gswip: move MDIO bus registration to .setup()
+
+ MAINTAINERS                                 |  3 +-
+ drivers/net/dsa/Kconfig                     |  8 +--
+ drivers/net/dsa/Makefile                    |  2 +-
+ drivers/net/dsa/lantiq/Kconfig              |  7 +++
+ drivers/net/dsa/lantiq/Makefile             |  1 +
+ drivers/net/dsa/{ => lantiq}/lantiq_gswip.c | 54 ++++++++++++++++-----
+ drivers/net/dsa/{ => lantiq}/lantiq_gswip.h |  4 ++
+ drivers/net/dsa/{ => lantiq}/lantiq_pce.h   |  0
+ 8 files changed, 57 insertions(+), 22 deletions(-)
+ create mode 100644 drivers/net/dsa/lantiq/Kconfig
+ create mode 100644 drivers/net/dsa/lantiq/Makefile
+ rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.c (98%)
+ rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.h (98%)
+ rename drivers/net/dsa/{ => lantiq}/lantiq_pce.h (100%)
+
+-- 
+2.51.0
 
