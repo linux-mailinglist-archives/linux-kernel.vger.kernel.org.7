@@ -1,228 +1,228 @@
-Return-Path: <linux-kernel+bounces-791709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F85B3BA63
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7686B3BA66
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047B47BB353
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9495B1CC1767
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958C8314A63;
-	Fri, 29 Aug 2025 11:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD3D31064E;
+	Fri, 29 Aug 2025 11:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PoDbdZsu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGOUvtEe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB213043CA
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B182FC880
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756468652; cv=none; b=cae/YamT/08sPim5l5i6S9RmxfjwLnLJp/5Jsc+DqzPGSrKq54XunvSDXYS4mr6XcwmlZ9eg7fYuvrjrwT4voQgTsFBJra18By6OOdkmNfYVHbtajKcQo13Frv0+PU0pfGKG1Dh6N/VtFleOHNdYqCr1R2bfXUCeZy4Ozrba3pI=
+	t=1756468664; cv=none; b=XrSPi4LLe0xmMEXhHLYBAgGpAmhdRLrZstkVEnj4I44/9d+b4j6Eojd3Sbkg7eNttvn/gXyGN0WZkGm0rLJ8zwTfMceAl9NUbw2oQ4GbnQtjObpJIw0oHPg8WW3r4E7WjahmNzcRgybe3wEbYRFCR9d3wDfy7lo8ZbuAJzjfCA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756468652; c=relaxed/simple;
-	bh=5Lp4Ng+SdyxZXZ9PSEkbl/hklhBiTxJ5cZJWR1+SKa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKViXWkrmQZ0vpV2JlsP5pMUYKqgoXzavQ5RGd9DRen4gsQrN4Z9tMqyMFb9Sl7IcUetRQmwzU/WgfYa/TG5oQNk9m5oas4Dus3t9+bbru7aOyDpAbfSakns1OqXOwTjdEDZXMaWP3Yqu9vUfG15CgXN0MxEQiqqEEgNSW4G78g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PoDbdZsu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756468650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hoDokfG1MQmzSDgEaptCicCjaaQpWxY2iqh8txE4sWo=;
-	b=PoDbdZsuLw8LnZq1ZtrtYhXr+W5yqW3VAc/aI/SpZhOyPdqHWktPOL7kfku0ezcqID9cwX
-	eEvPXexzStorZYu4aSe3zzIUOehOYnitdUY0bZiJv8Y4hUxqv7B95jjQ2s15op1BHrOpCB
-	jnw6NCK0gq3h2KmTD7RBvKfdaW0/+pg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-sL1Iu92BPDKzU0A5UAI1Hw-1; Fri, 29 Aug 2025 07:57:27 -0400
-X-MC-Unique: sL1Iu92BPDKzU0A5UAI1Hw-1
-X-Mimecast-MFC-AGG-ID: sL1Iu92BPDKzU0A5UAI1Hw_1756468646
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b74ec7cd0so12904095e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:57:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756468646; x=1757073446;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hoDokfG1MQmzSDgEaptCicCjaaQpWxY2iqh8txE4sWo=;
-        b=eMdApeYMoib/j6izDQYdmA64dG287MUkxPICq9kS194XD+nkByZGm2wp42p1pBlFQB
-         gvqaLZe3ACqOie735qj1jwfwG81lx6mHGdKOO7LNLbAZ1ivrnfhU/5RLMfCyGntbfR2L
-         5/QXUcH1H1LRqb7vo3U5/b1IdelKlXz0APMPKE44qsL//Y6tgDsGb3tSb36pUgBVkqhJ
-         fnv3TD51Y9BNO1mBb+LLK9Nj7R/o3J+wGI9Qa69vqJVzk8hQ6kxs5ykzh32ha9wR/fVf
-         hmN1hr8RFGcfOwqOAgHYHMre1Jbf1e5SAqfOUHkXAusDjExtKkMungNgKxQO7NovQjZS
-         tuwg==
-X-Gm-Message-State: AOJu0YyijKvxe3242f+9hdYW9VUCF5jzLYghuj91bXbkQJrO/lOf4xsn
-	DULYbCzgLsoF+2jpjTMaxJiYfcmyKWT/XvibrnC6Onn5fDOHV/KTEFQts6EZW4w9T7GrC1hLHNi
-	PROzOy7jcok8Nxrrmh6jj4FA0lKyjykUlWGgyvdc3rQisHVmzTlBZGNetM9io/6XZHg==
-X-Gm-Gg: ASbGncsTRt1EsA30OItoqJqwAHhN5HukwCAUYgUPtMDngl3slYZqlkJzsAYMOKwa55q
-	bqGpKZoAnIVSwAv/Dz001nRcAIAKPpzDHf1PNdOzfGX7Kc1nfx6FK987Bc0C4zvdAiiU+uXlZDL
-	ZPG7AACg3Wr+Q7Z0juemv2nIDqRVa6WYnTu5FFMXP7DRGy4xot8cqVsHvDKqrBjw9yQ9hTE7MoE
-	B4ZfBxt0iRNuGbultBuZIOtYrN4EQQOJbpvlhq0CjfJSU8YlrbxSnV22b3tdz77dUM4BKB8X4rU
-	tTm3zhJl8SGcx0xQUJmebun6j7gD88UE/f8fm90QGbYWyNbddayQkDaRfQkLUzq9qq8Aal21ntm
-	wF/vUf4Y11MiRLKLiO3UgGPVNlp8jvY51lSU4QAb0scBIy3nkMT6vTYJJf7UZmbA=
-X-Received: by 2002:a05:600c:348d:b0:45b:80ab:3359 with SMTP id 5b1f17b1804b1-45b80ab35acmr15394705e9.0.1756468645768;
-        Fri, 29 Aug 2025 04:57:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG95+220rsAfy23meKWNy4rnKbzYvRZ5zPoY4wdVrGBgRqoKPVywzJTjIuqBTuNai4wkDfQaw==
-X-Received: by 2002:a05:600c:348d:b0:45b:80ab:3359 with SMTP id 5b1f17b1804b1-45b80ab35acmr15394435e9.0.1756468645290;
-        Fri, 29 Aug 2025 04:57:25 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6b99sm116739135e9.4.2025.08.29.04.57.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 04:57:24 -0700 (PDT)
-Message-ID: <eff8badd-0ddd-4a5f-a2ef-0e3ded39687a@redhat.com>
-Date: Fri, 29 Aug 2025 13:57:22 +0200
+	s=arc-20240116; t=1756468664; c=relaxed/simple;
+	bh=UhVB8HJlAyrOnH5f4Og5S4P1NPNiTomGarjtdGQI++o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkOD6pbX77iovZFgXoq/dZW2Bwzip7VvKpyDoGZ67HXA3Y9eb+kqLhDUSMlZdUmdgITUtX5yYWzPJon2KFeeu7bBuhWhVlIimN5hLpsyBIUKjTm8AjSMOq+WN9jgJhPMZ4W78DWmzocL+ke5KFrD//i/IHASERGcLPyDammQ4hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGOUvtEe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ED1C4CEF0;
+	Fri, 29 Aug 2025 11:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756468663;
+	bh=UhVB8HJlAyrOnH5f4Og5S4P1NPNiTomGarjtdGQI++o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mGOUvtEefHOvUnKUpRXwk5yr2EaCZdYu9SojDPbjxrYutCrAUalQPgYHc0LmqF1o+
+	 rgT23w2JIL17hrybawOD03y4xZN7mLfJ3ZzVOJsTi94bDqezMbMvZxQ+MC4JHmdU7k
+	 BQ8ZSi2kddoqPWo/ciEOP0mZ2wd63v3lpynrXGhpEOs++zE2/T6l+K10KEWcMr3Dj0
+	 5jiVhCgPOd5gknfmLKfR1smfBZR5Te/MXZ2s/fsyiulRc4ABP0gyO4ItPNlmV7kZDg
+	 b+jxl4crk4TFcdUz933Ayt9+oNspJEmDWfxl33nqUDM5p+kLpsv3XADBKpeOPDBvlW
+	 CxPaIeJpDmTaA==
+Date: Fri, 29 Aug 2025 12:57:37 +0100
+From: Will Deacon <will@kernel.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Frederick Mayle <fmayle@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, Rik van Riel <riel@surriel.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Ge Yang <yangge1116@126.com>
+Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
+ attempting migration
+Message-ID: <aLGVsXpyUx9-ZRIl@willie-the-truck>
+References: <20250815101858.24352-1-will@kernel.org>
+ <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com>
+ <aKMrOHYbTtDhOP6O@willie-the-truck>
+ <aKM5S4oQYmRIbT3j@willie-the-truck>
+ <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com>
+ <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 11/36] mm: limit folio/compound page sizes in
- problematic kernel configs
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
- "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-12-david@redhat.com>
- <baa1b6cf-2fde-4149-8cdf-4b54e2d7c60d@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <baa1b6cf-2fde-4149-8cdf-4b54e2d7c60d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
 
-On 28.08.25 17:10, Lorenzo Stoakes wrote:
-> On Thu, Aug 28, 2025 at 12:01:15AM +0200, David Hildenbrand wrote:
->> Let's limit the maximum folio size in problematic kernel config where
->> the memmap is allocated per memory section (SPARSEMEM without
->> SPARSEMEM_VMEMMAP) to a single memory section.
->>
->> Currently, only a single architectures supports ARCH_HAS_GIGANTIC_PAGE
->> but not SPARSEMEM_VMEMMAP: sh.
->>
->> Fortunately, the biggest hugetlb size sh supports is 64 MiB
->> (HUGETLB_PAGE_SIZE_64MB) and the section size is at least 64 MiB
->> (SECTION_SIZE_BITS == 26), so their use case is not degraded.
->>
->> As folios and memory sections are naturally aligned to their order-2 size
->> in memory, consequently a single folio can no longer span multiple memory
->> sections on these problematic kernel configs.
->>
->> nth_page() is no longer required when operating within a single compound
->> page / folio.
->>
->> Reviewed-by: Zi Yan <ziy@nvidia.com>
->> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi Hugh,
+
+On Thu, Aug 28, 2025 at 01:47:14AM -0700, Hugh Dickins wrote:
+> On Sun, 24 Aug 2025, Hugh Dickins wrote:
+> > On Mon, 18 Aug 2025, Will Deacon wrote:
+> > > On Mon, Aug 18, 2025 at 02:31:42PM +0100, Will Deacon wrote:
+> > > > On Fri, Aug 15, 2025 at 09:14:48PM -0700, Hugh Dickins wrote:
+> > > > > I think replace the folio_test_mlocked(folio) part of it by
+> > > > > (folio_test_mlocked(folio) && !folio_test_unevictable(folio)).
+> > > > > That should reduce the extra calls to a much more reasonable
+> > > > > number, while still solving your issue.
+> > > > 
+> > > > Alas, I fear that the folio may be unevictable by this point (which
+> > > > seems to coincide with the readahead fault adding it to the LRU above)
+> > > > but I can try it out.
+> > > 
+> > > I gave this a spin but I still see failures with this change.
+> > 
+> > Many thanks, Will, for the precisely relevant traces (in which,
+> > by the way, mapcount=0 really means _mapcount=0 hence mapcount=1).
+> > 
+> > Yes, those do indeed illustrate a case which my suggested
+> > (folio_test_mlocked(folio) && !folio_test_unevictable(folio))
+> > failed to cover.  Very helpful to have an example of that.
+> > 
+> > And many thanks, David, for your reminder of commit 33dfe9204f29
+> > ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+> > 
+> > Yes, I strongly agree with your suggestion that the mlock batch
+> > be brought into line with its change to the ordinary LRU batches,
+> > and agree that doing so will be likely to solve Will's issue
+> > (and similar cases elsewhere, without needing to modify them).
+> > 
+> > Now I just have to cool my head and get back down into those
+> > mlock batches.  I am fearful that making a change there to suit
+> > this case will turn out later to break another case (and I just
+> > won't have time to redevelop as thorough a grasp of the races as
+> > I had back then).  But if we're lucky, applying that "one batch
+> > at a time" rule will actually make it all more comprehensible.
+> > 
+> > (I so wish we had spare room in struct page to keep the address
+> > of that one batch entry, or the CPU to which that one batch
+> > belongs: then, although that wouldn't eliminate all uses of
+> > lru_add_drain_all(), it would allow us to efficiently extract
+> > a target page from its LRU batch without a remote drain.)
+> > 
+> > I have not yet begun to write such a patch, and I'm not yet sure
+> > that it's even feasible: this mail sent to get the polite thank
+> > yous out of my mind, to help clear it for getting down to work.
 > 
-> Realy great comments, like this!
+> It took several days in search of the least bad compromise, but
+> in the end I concluded the opposite of what we'd intended above.
 > 
-> I wonder if we could have this be part of the first patch where you fiddle
-> with MAX_FOLIO_ORDER etc. but not a big deal.
+> There is a fundamental incompatibility between my 5.18 2fbb0c10d1e8
+> ("mm/munlock: mlock_page() munlock_page() batch by pagevec")
+> and Ge Yang's 6.11 33dfe9204f29
+> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
 
-I think it belongs into this patch where we actually impose the 
-restrictions.
+That's actually pretty good news, as I was initially worried that we'd
+have to backport a fix all the way back to 6.1. From the above, the only
+LTS affected is 6.12.y.
 
-[...]
-
->> +/*
->> + * Only pages within a single memory section are guaranteed to be
->> + * contiguous. By limiting folios to a single memory section, all folio
->> + * pages are guaranteed to be contiguous.
->> + */
->> +#define MAX_FOLIO_ORDER		PFN_SECTION_SHIFT
+> It turns out that the mm/swap.c folio batches (apart from lru_add)
+> are all for best-effort, doesn't matter if it's missed, operations;
+> whereas mlock and munlock are more serious.  Probably mlock could
+> be (not very satisfactorily) converted, but then munlock?  Because
+> of failed folio_test_clear_lru()s, it would be far too likely to
+> err on either side, munlocking too soon or too late.
 > 
-> Hmmm, was this implicit before somehow? I mean surely by the fact as you say
-> that physical contiguity would not otherwise be guaranteed :))
+> I've concluded that one or the other has to go.  If we're having
+> a beauty contest, there's no doubt that 33dfe9204f29 is much nicer
+> than 2fbb0c10d1e8 (which is itself far from perfect).  But functionally,
+> I'm afraid that removing the mlock/munlock batching will show up as a
+> perceptible regression in realistic workloadsg; and on consideration,
+> I've found no real justification for the LRU flag clearing change.
+> 
+> Unless I'm mistaken, collect_longterm_unpinnable_folios() should
+> never have been relying on folio_test_lru(), and should simply be
+> checking for expected ref_count instead.
+> 
+> Will, please give the portmanteau patch (combination of four)
+> below a try: reversion of 33dfe9204f29 and a later MGLRU fixup,
+> corrected test in collect...(), preparatory lru_add_drain() there.
+> 
+> I hope you won't be proving me wrong again, and I can move on to
+> writing up those four patches (and adding probably three more that
+> make sense in such a series, but should not affect your testing).
+> 
+> I've tested enough to know that it's not harmful, but am hoping
+> to take advantage of your superior testing, particularly in the
+> GUP pin area.  But if you're uneasy with the combination, and would
+> prefer to check just the minimum, then ignore the reversions and try
+> just the mm/gup.c part of it - that will probably be good enough for
+> you even without the reversions.
 
-Well, my patches until this point made sure that any attempt to use a 
-larger folio would fail in a way that we could spot now if there is any 
-offender.
+Thanks, I'll try to test the whole lot. I was geographically separated
+from my testing device yesterday but I should be able to give it a spin
+later today. I'm _supposed_ to be writing my KVM Forum slides for next
+week, so this offers a perfect opportunity to procrastinate.
 
-That is why before this change, nth_page() was required within a folio.
+> Patch is against 6.17-rc3; but if you'd prefer the patch against 6.12
+> (or an intervening release), I already did the backport so please just
+> ask.
 
-Hope that clarifies it, thanks!
+We've got 6.15 working well at the moment, so I'll backport your diff
+to that.
 
--- 
-Cheers
+One question on the diff below:
 
-David / dhildenb
+> Thanks!
+> 
+>  mm/gup.c    |    5 ++++-
+>  mm/swap.c   |   50 ++++++++++++++++++++++++++------------------------
+>  mm/vmscan.c |    2 +-
+>  3 files changed, 31 insertions(+), 26 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index adffe663594d..9f7c87f504a9 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2291,6 +2291,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+>  	struct folio *folio;
+>  	long i = 0;
+>  
+> +	lru_add_drain();
+> +
+>  	for (folio = pofs_get_folio(pofs, i); folio;
+>  	     folio = pofs_next_folio(folio, pofs, &i)) {
+>  
+> @@ -2307,7 +2309,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+>  			continue;
+>  		}
+>  
+> -		if (!folio_test_lru(folio) && drain_allow) {
+> +		if (drain_allow && folio_ref_count(folio) !=
+> +				   folio_expected_ref_count(folio) + 1) {
+>  			lru_add_drain_all();
 
+How does this synchronise with the folio being added to the mlock batch
+on another CPU?
+
+need_mlock_drain(), which is what I think lru_add_drain_all() ends up
+using to figure out which CPU batches to process, just looks at the
+'nr' field in the batch and I can't see anything in mlock_folio() to
+ensure any ordering between adding the folio to the batch and
+incrementing its refcount.
+
+Then again, my hack to use folio_test_mlocked() would have a similar
+issue because the flag is set (albeit with barrier semantics) before
+adding the folio to the batch, meaning the drain could miss the folio.
+
+I guess there's some higher-level synchronisation making this all work,
+but it would be good to understand that as I can't see that
+collect_longterm_unpinnable_folios() can rely on much other than the pin.
+
+Will
 
