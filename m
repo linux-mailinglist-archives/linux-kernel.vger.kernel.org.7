@@ -1,196 +1,113 @@
-Return-Path: <linux-kernel+bounces-792390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD76B3C33B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:41:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0469EB3C343
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991911882C51
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 716843A616F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402A521D3E8;
-	Fri, 29 Aug 2025 19:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4DF242D6F;
+	Fri, 29 Aug 2025 19:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="a6U/cPfe"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGBXvp3x"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C7315E5D4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D415E5D4;
+	Fri, 29 Aug 2025 19:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496469; cv=none; b=TqMTbiGbs8nEoVAGg2Dq2BSnsIyccCfe/+6r73qDg2JtezgyZNIh7cDD1+qfErFGncHTzaK8kNcja618bpHGhvewkNd1t81nmXs8r3FClleCBCUS8v/oMjV/tBd4iE3Bq2JGzC6gDiUrh7KW5qVi3mTVlOtzgEUS+aY4L4MsXV0=
+	t=1756496619; cv=none; b=ZOU0lSTSNaxOZMqQqmJcmpqOMYPxa4hJvd2WC7DYFVBajF9x9c1LfcMuc3pjGrz2E04okYQtifnlCFpFkQOqKit9A2B79G93OswcAt9HPBdETXWsDuhK09Z6RWI1vLFDNGA6LqEDsfL1ABhHV2sr0cROfmBUVMNqC863n72cUyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496469; c=relaxed/simple;
-	bh=2I77nCgGWyro+lAdnALFXn3HmvGjCvEaC70WNQcn41o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vc7PKGylpQtqhsS8VpYvMMhwjtvHzWoJbNy3uAiqT01etzD1z9NzbZnfpjALqkAYsIjJ56NxAdanyBg5CzbWlmpB2an0xL7WkYAV4sRYui9TGRe9AoSlInVEZfl3j95APMyIfQRDSwuh3RmhsjmIKuMuezcl2MTrJDg2mU4Q9EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=a6U/cPfe; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0A8B540E019E;
-	Fri, 29 Aug 2025 19:41:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id H_fRXRhCsNV9; Fri, 29 Aug 2025 19:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756496458; bh=NZ3r/e9Y9tjrwTvdKgfqZPem1vLEEwZE3p2wXChCOCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a6U/cPfeL0g6q5ldGJ2+VXZkGVR2CfKu2sElVhuSINyoz9ID9lX7EPeHlaXKudGb4
-	 vpKeUA+Wojhq1SQd4wf5LTNaoTvB0cIrJtoF+Df5j21gny9YCxB8XFC9z2nciFU+lv
-	 awzrjlVNFRwUFvRqWHMO78+m2+efM+jRYs2NbAWwKw1IJUme3zMqT46tRS9IWNPKlh
-	 Ke5fg5s55ExyKyy+aKEd52GaP/7x40TSisxL3yGPEFG71xr3MOsj1Eh/FJMRuULYpD
-	 BafO+A1PNQwamVg/80/P75k/mCEEUeTojyrMYi1NfhJ5O7iDoxTwOkBUKLkcZzGwbS
-	 0oYYwCeXbQjifAOcpHQdQshBQVz6dqcf9qocYg/jwnMk13BXlyb+gjgxdxpTEEcILb
-	 NreiGrH7RrFzvCXuzsHIkNyiZHG5g4PlrhQ4eyQxkgIUyPak7PFPR4NKCWkfS+3Dan
-	 3ygJa22S3klIGLjYZWW/7uMpvcezmgU/Mq/iYB4OjKgTcLo5P482LUxeM5NEp1KKmu
-	 dvJnyqe/awODZUdEVZsxA3BHkPTh4CXzTp90QzNpYuuvyqBTZ1JKZ93ABWFnmY4Tfo
-	 a+g7trkJ2X6l1WHEooHJVOqMNIeTeCz3HT1wI5GMkRuSAEd9//QY68SQSeO+Tuim6P
-	 XefDlCMzXdSBB1ToRo9vZuRU=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6DA3740E019C;
-	Fri, 29 Aug 2025 19:40:52 +0000 (UTC)
-Date: Fri, 29 Aug 2025 21:40:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource
- seems too big for the bo
-Message-ID: <20250829194044.GCaLICPKJcGJRYdSfO@fat_crate.local>
-References: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
- <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
+	s=arc-20240116; t=1756496619; c=relaxed/simple;
+	bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rFopohoC0g5eQzEBkG+N8XUBwFs6TXW4UtDKMDyK2mCzGTQZHlG3W450uFBnzBTjMZdJDCrfHZas/tl6fnacwfGtXSumD0db/QPg8cif0b9jom476LxpTZn2b9Mvob5aGQnDEsnn8T9njM2trc1bZQsCoG0F5amzgUU+N6HLC1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGBXvp3x; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24498e93b8fso3072905ad.3;
+        Fri, 29 Aug 2025 12:43:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756496617; x=1757101417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
+        b=HGBXvp3xX8enkoUSj5t4/Ox1eF3x4XSioHwDGt7kR0mPq/ywKOq/GFQv+9GvmSEwk4
+         bdkrqH6H2CDch98R3vVNtHBmMeZtT74rNHGm1NGKdL9ZAR8Oy7gUUZm9Vq2y4eBWNBZF
+         dcYPf3MT7KtJaeZXDStdXlwLmAOGbUNjXhWRdlT1jfZMYd2fSHHxug/8NBTbUaasdbei
+         qacxgy+80b/Q1waIfrmYhK6es09vgW2Iqnd8kaEG0IzA5tMFHssmDAT8Ox8t0OqwsXHq
+         Y/aT3dJMNO9C1VJyzDFiGtdjwEUynHuEsnH2HT8T/FwTZTF4B79dSP4SIQ0EmpNhZbls
+         aD4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756496617; x=1757101417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
+        b=eTHNpW7GUue2MZmU1K4FznNAL7zv7nL/GRpemPDegcBivPCLfrmfR11bFKgFj2XkIy
+         1A+jQbQkHtL/jKzGORpEAmTOXBvOdcNlChjvBH8eIJ9JmykGp98QRv5GSGE6u3Qzk387
+         EOZSbPZFw30rsHkRwDd5++wz9qx/VkVEgwGJ5uARFXixje3MvQNy/x/UfedG3F4mUtSa
+         V19CC5pYVNaVzI5yPIcExVzMyBuY2jEH3Ai7pG1yVZ8UxJoKtQjNbt9Pdr7r0FZtyS9t
+         DfcW1wKB25f+bSRkGyGJRlHsBMaruxHGyt1E1EDSrqQFt/oRafrqfQ7jYPlR2FmE9tbJ
+         ry3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYCbqkK6gW7C592j4lSx7+K1mrpaaGxB6zkUAe6nFgpANCXOffPnAS/qtxMkVAw71Ge9LGYSwgbes3i9k=@vger.kernel.org, AJvYcCW1t/VZqvv5QtaqpnczkwELn5Zd+QR1FxU76YNZRXzigN0+zrp4Gl6LxUeJdyaSNVNzMVvAFVOfQgqwqOMnfcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI22HT0eUkNa+Ybs2398781dc3T60pX+Y4HAvngBBMF6tpE5eT
+	IfG/R238xmMlt/J4McyWssjj0bno6+7yXQNgrovbz0tD0FqPTpkrv+2tr592vJPJV3KyFN+zItW
+	GNLIQCUr9hB2xEKCawSLOTuwHIs/Wcxc=
+X-Gm-Gg: ASbGnctxdlQfMBYrLc4aU521hS8CFEkEQEiENmVXhHJy657yLmAiXkCPf4MVHlXY8sN
+	1wIdNN1OLnz8W4KoVgGOmPbaVkO7t7cyJWdigF4kR6wjSCxEDT1UdFhauUa99tgPB7dej5R1rQd
+	LJMU3PjlYR/OaqmRlFvlxOr2meXbr9lzv/k9+m1qEkEimyj7rCDkYmdMeEHfrjXzQ4lKhBiIhcJ
+	ANXQCEatzeGeoGhTXYHGi2JSG990EJwW8LNI5EaQb2n871ugV25p7hN3XfGLIuzjBs97nkMlqe6
+	jkheQcG0OlQKPIqrLe07N+0VBg==
+X-Google-Smtp-Source: AGHT+IFWZb4xaY7v5s0ylSP5ELEMnxzQujAXKzF//SpCqMfVGSq+8gvW+Xpth3BkeD9kVV8HxQDYlRSXEcjPedhBXTw=
+X-Received: by 2002:a17:903:1c7:b0:240:8717:e393 with SMTP id
+ d9443c01a7336-2490f7591bdmr25798105ad.5.1756496617089; Fri, 29 Aug 2025
+ 12:43:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
+References: <20250829192243.678079-1-ojeda@kernel.org> <20250829192243.678079-4-ojeda@kernel.org>
+In-Reply-To: <20250829192243.678079-4-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 29 Aug 2025 21:43:24 +0200
+X-Gm-Features: Ac12FXxdaqCu4yJ1IdyQ22odRNAFIeLXOSCLMds7lUVCV-3Ct83AvKEf6yXHQx4
+Message-ID: <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with `debug_assert!`
+To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 02:26:50PM -0400, Alex Deucher wrote:
-> Have you updated mesa?  Looks like a userspace change.
+On Fri, Aug 29, 2025 at 9:23=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Thus, instead, use a debug assertion -- this assumes hitting one of them
+> is not going to be considered a CVE (which requires
+> `CONFIG_RUST_DEBUG_ASSERTIONS=3Dy`).
 
-Yeah, I did a long overdue OS upgrade today:
+Greg: RFC on this -- this is the usual conundrum around `WARN`. I
+would like to have an assertion or `WARN`-like entity for developers
+that doesn't imply CVEs when hit by user interactions. More generally,
+to know that such a config option is OK as long as it is labeled
+clearly a debug one like this one (we can document the CVE bit
+explicitly if needed).
 
-$ grep -i mesa /var/log/dpkg.log
+Thanks!
 
-2025-08-29 17:50:32 install mesa-libgallium:amd64 <none> 25.0.7-2
-2025-08-29 17:50:32 status half-installed mesa-libgallium:amd64 25.0.7-2
-2025-08-29 17:50:33 status unpacked mesa-libgallium:amd64 25.0.7-2
-2025-08-29 17:50:33 upgrade libegl-mesa0:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:50:33 status half-configured libegl-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:33 status unpacked libegl-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:33 status half-installed libegl-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:33 status unpacked libegl-mesa0:amd64 25.0.7-2
-2025-08-29 17:50:34 upgrade libgl1-mesa-dri:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:50:34 status half-configured libgl1-mesa-dri:amd64 21.3.8-1
-2025-08-29 17:50:34 status unpacked libgl1-mesa-dri:amd64 21.3.8-1
-2025-08-29 17:50:34 status half-installed libgl1-mesa-dri:amd64 21.3.8-1
-2025-08-29 17:50:34 status unpacked libgl1-mesa-dri:amd64 25.0.7-2
-2025-08-29 17:50:34 upgrade libglx-mesa0:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:50:34 status half-configured libglx-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:34 status unpacked libglx-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:34 status half-installed libglx-mesa0:amd64 21.3.8-1
-2025-08-29 17:50:34 status unpacked libglx-mesa0:amd64 25.0.7-2
-2025-08-29 17:50:45 upgrade libegl1-mesa-dev:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:50:45 status half-configured libegl1-mesa-dev:amd64 21.3.8-1
-2025-08-29 17:50:45 status unpacked libegl1-mesa-dev:amd64 21.3.8-1
-2025-08-29 17:50:45 status half-installed libegl1-mesa-dev:amd64 21.3.8-1
-2025-08-29 17:50:45 status unpacked libegl1-mesa-dev:amd64 25.0.7-2
-2025-08-29 17:51:47 upgrade libglu1-mesa-dev:amd64 9.0.2-1 9.0.2-1.1+b3
-2025-08-29 17:51:47 status half-configured libglu1-mesa-dev:amd64 9.0.2-1
-2025-08-29 17:51:47 status unpacked libglu1-mesa-dev:amd64 9.0.2-1
-2025-08-29 17:51:47 status half-installed libglu1-mesa-dev:amd64 9.0.2-1
-2025-08-29 17:51:47 status unpacked libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 17:51:47 upgrade libglu1-mesa:amd64 9.0.2-1 9.0.2-1.1+b3
-2025-08-29 17:51:47 status half-configured libglu1-mesa:amd64 9.0.2-1
-2025-08-29 17:51:47 status unpacked libglu1-mesa:amd64 9.0.2-1
-2025-08-29 17:51:47 status half-installed libglu1-mesa:amd64 9.0.2-1
-2025-08-29 17:51:47 status unpacked libglu1-mesa:amd64 9.0.2-1.1+b3
-2025-08-29 17:57:11 upgrade mesa-va-drivers:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:57:11 status half-configured mesa-va-drivers:amd64 21.3.8-1
-2025-08-29 17:57:11 status unpacked mesa-va-drivers:amd64 21.3.8-1
-2025-08-29 17:57:11 status half-installed mesa-va-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status unpacked mesa-va-drivers:amd64 25.0.7-2
-2025-08-29 17:57:12 upgrade mesa-vdpau-drivers:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:57:12 status half-configured mesa-vdpau-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status unpacked mesa-vdpau-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status half-installed mesa-vdpau-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status unpacked mesa-vdpau-drivers:amd64 25.0.7-2
-2025-08-29 17:57:12 upgrade mesa-vulkan-drivers:amd64 21.3.8-1 25.0.7-2
-2025-08-29 17:57:12 status half-configured mesa-vulkan-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status unpacked mesa-vulkan-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status half-installed mesa-vulkan-drivers:amd64 21.3.8-1
-2025-08-29 17:57:12 status unpacked mesa-vulkan-drivers:amd64 25.0.7-2
-2025-08-29 18:00:32 configure libglu1-mesa:amd64 9.0.2-1.1+b3 <none>
-2025-08-29 18:00:32 status unpacked libglu1-mesa:amd64 9.0.2-1.1+b3
-2025-08-29 18:00:32 status half-configured libglu1-mesa:amd64 9.0.2-1.1+b3
-2025-08-29 18:00:32 status installed libglu1-mesa:amd64 9.0.2-1.1+b3
-2025-08-29 18:09:41 configure mesa-vulkan-drivers:amd64 25.0.7-2 <none>
-2025-08-29 18:09:41 status unpacked mesa-vulkan-drivers:amd64 25.0.7-2
-2025-08-29 18:09:41 status half-configured mesa-vulkan-drivers:amd64 25.0.7-2
-2025-08-29 18:09:41 status installed mesa-vulkan-drivers:amd64 25.0.7-2
-2025-08-29 18:09:41 configure mesa-vdpau-drivers:amd64 25.0.7-2 <none>
-2025-08-29 18:09:41 status unpacked mesa-vdpau-drivers:amd64 25.0.7-2
-2025-08-29 18:09:41 status half-configured mesa-vdpau-drivers:amd64 25.0.7-2
-2025-08-29 18:09:41 status installed mesa-vdpau-drivers:amd64 25.0.7-2
-2025-08-29 18:11:26 configure mesa-libgallium:amd64 25.0.7-2 <none>
-2025-08-29 18:11:26 status unpacked mesa-libgallium:amd64 25.0.7-2
-2025-08-29 18:11:26 status half-configured mesa-libgallium:amd64 25.0.7-2
-2025-08-29 18:11:26 status installed mesa-libgallium:amd64 25.0.7-2
-2025-08-29 18:11:27 configure libgl1-mesa-dri:amd64 25.0.7-2 <none>
-2025-08-29 18:11:27 status unpacked libgl1-mesa-dri:amd64 25.0.7-2
-2025-08-29 18:11:27 status half-configured libgl1-mesa-dri:amd64 25.0.7-2
-2025-08-29 18:11:27 status installed libgl1-mesa-dri:amd64 25.0.7-2
-2025-08-29 18:11:28 configure libegl-mesa0:amd64 25.0.7-2 <none>
-2025-08-29 18:11:28 status unpacked libegl-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:28 status half-configured libegl-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:28 status installed libegl-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:29 configure mesa-va-drivers:amd64 25.0.7-2 <none>
-2025-08-29 18:11:29 status unpacked mesa-va-drivers:amd64 25.0.7-2
-2025-08-29 18:11:29 status half-configured mesa-va-drivers:amd64 25.0.7-2
-2025-08-29 18:11:29 status installed mesa-va-drivers:amd64 25.0.7-2
-2025-08-29 18:11:29 configure libglx-mesa0:amd64 25.0.7-2 <none>
-2025-08-29 18:11:29 status unpacked libglx-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:29 status half-configured libglx-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:29 status installed libglx-mesa0:amd64 25.0.7-2
-2025-08-29 18:11:31 configure libglu1-mesa-dev:amd64 9.0.2-1.1+b3 <none>
-2025-08-29 18:11:31 status unpacked libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:11:31 status half-configured libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:11:31 status installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:11:32 configure libegl1-mesa-dev:amd64 25.0.7-2 <none>
-2025-08-29 18:11:32 status unpacked libegl1-mesa-dev:amd64 25.0.7-2
-2025-08-29 18:11:32 status half-configured libegl1-mesa-dev:amd64 25.0.7-2
-2025-08-29 18:11:32 status installed libegl1-mesa-dev:amd64 25.0.7-2
-2025-08-29 18:14:28 status installed libglapi-mesa:amd64 21.3.8-1
-2025-08-29 18:14:28 remove libglapi-mesa:amd64 21.3.8-1 <none>
-2025-08-29 18:14:28 status half-configured libglapi-mesa:amd64 21.3.8-1
-2025-08-29 18:14:28 status half-installed libglapi-mesa:amd64 21.3.8-1
-2025-08-29 18:14:28 status config-files libglapi-mesa:amd64 21.3.8-1
-2025-08-29 18:14:28 status not-installed libglapi-mesa:amd64 <none>
-2025-08-29 18:14:28 status installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:14:28 remove libglu1-mesa-dev:amd64 9.0.2-1.1+b3 <none>
-2025-08-29 18:14:28 status half-configured libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:14:28 status half-installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:14:28 status config-files libglu1-mesa-dev:amd64 9.0.2-1.1+b3
-2025-08-29 18:14:28 status not-installed libglu1-mesa-dev:amd64 <none>
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers,
+Miguel
 
