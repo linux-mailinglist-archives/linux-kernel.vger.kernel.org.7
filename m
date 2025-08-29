@@ -1,278 +1,143 @@
-Return-Path: <linux-kernel+bounces-791735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F346B3BB28
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:21:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C352B3BB2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924152029FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:21:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F17FF4E4CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7C4314B67;
-	Fri, 29 Aug 2025 12:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615C1314B97;
+	Fri, 29 Aug 2025 12:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="acLKRBqw"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxH3uX5H"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0308A1FCFEF
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244131FCFEF;
+	Fri, 29 Aug 2025 12:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470104; cv=none; b=jNIhiT0xfR+9Vw1kUrKGZdq8hg6and6XL53Zunalke5snk1nig03RwkpX44hnE7iuKzB5hJQ9PgSBYZQkGMOZge+gI4Ta4aKiuKP3KDShmPVtwTkhcUxkAHgkS2ff11uDEpO8hu5E5WQWRpdXFsl5+FThrA/4wCRSWzOgmMspRY=
+	t=1756470180; cv=none; b=R31O0nkl5f9rpWMMrAfSumVduSbpVj7FfqZ9YN0v4lqdhkEU3O1NAZF+jSMKglfgSg0GrPFRV8kGi5quXUksx2XndeBah9xFQst9/2Y1vADDuI6OuYskhMWXIECpi3j00a4R7Z9KFJfS+FTvGgvrm0Z/iMiGxHmQFptoPL0YoQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470104; c=relaxed/simple;
-	bh=QcNrel/EaV1GtKzz91WehSWO1weENSNqyhEAV6F2RVw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SmwLehfvCJW4hpAHEJEcUetWizu+xqQ6XdFeZdw2xjO36CVGrBwv4PMykDX5NE2dqiaEJoOSPH3UkUDG4yyngS2+5FEzi0qdutE3dSSomwT4xMV/rA5yv5ykDOKY7sroUk4SpnjjGnrJHtjx7XyHery/IeNj/8F054o2dobxmSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=acLKRBqw; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from NEET (p4284234-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [153.201.197.234])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57TCLWNf059909
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 29 Aug 2025 21:21:32 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=Wx1rCVZP3oFaDCKj3lQnD1g+V9mPan0AUC2YN+4/xgA=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250315; t=1756470092; v=1;
-        b=acLKRBqw7Qzz2gE2UXXGGjGeMjtIlXlrCqZ44HogiBFnjP6Bm+MCkQhJSNE3QSSz
-         rqZA7LnRfksEEkpc5LaNriaTJsL0ejTUzjIIgH4uZWKxY7h9ZU39rkfgv2rd3uRx
-         JEP4OsFxnnvkh6yXRzTxSsGpzEqu7SinoLhOvd/zkNgjVlSKw9/h71ZVUgh9Rk/g
-         De8aXLXQQFMdDeqnkByKHEok68skUQTalSjOv6yDLi+Bu1idQd2b02xQFFSgeKf+
-         2EQzModgxhciSQRsVdEdKclKPT2O7xNkkVQ+zHpTf2v9z30PS8kbnZCaVdLkbfD6
-         6LKjTg3RH3JS87wVhDbGbA==
-Message-ID: <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
-Date: Fri, 29 Aug 2025 21:21:33 +0900
+	s=arc-20240116; t=1756470180; c=relaxed/simple;
+	bh=ay1mkIvcJE/e4r+EJO+M8d+Jm7aZ9adWMkwfNZ58b8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bafO1daZG8j58cVECg94PECeOZmk/L9GyAAIaWrN8rot8mUiThN1dq2naA269G6CGPiBVPyGcePqcKlABUdB7bqqrjhpVFfaIXB2YqBa+sQKmuFguXoxFF52OV4HRDdSqv+G8PHeghv2hbXMSsU3m8KVwFObyFAhH+BpHaLqd8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxH3uX5H; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb78fb04cso340250366b.1;
+        Fri, 29 Aug 2025 05:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756470177; x=1757074977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yjCf5U90YZZ0G4CHynnYnJa+eoUbXgmAFBJXFe1CPV0=;
+        b=HxH3uX5Hqk+7S2jLyYb0o1dePQYbmhV53qWI9HpO+uI+qOc4iMP+K6Rng3evFLYv+T
+         A4AKAooSpgL+8ufg0psIBjyqcCme6jT8QkTJ4Yzi3uuHqOdqm/w0BhOjbXkMJQrXexRY
+         QkARRcdThX5THCjDVb9yylsaw3iIuV7Z6D89P6EjyorD1nBUhL6Ow4uApwZHtR5rd3GV
+         iGMLVcvLi/iIQ+Ex3IXRlAS78hdD+SXNdl7drc2u51p4usHL3YOOUMh1ub8+SCPowqV8
+         g32TJRVNXMNClz4r7Kb/DNm6Mx8yaFTxbknC8+/TpNlPM86N0b3SvoVcSRxb4JweaAKX
+         6IyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756470177; x=1757074977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yjCf5U90YZZ0G4CHynnYnJa+eoUbXgmAFBJXFe1CPV0=;
+        b=nM71Y0B3b7j7xJ/WCMJjHHCHd5v55fDgOrtd1tAB8QU+Kr7BlLh08CSVSNNtR5jUtu
+         mXznRasW9hot4G6lIDM7i2TKqFyVrVUY5NPUFJMOfAt9cRWV0LrIvh7zE/EQ9Ljw0B4D
+         qOUEhUPcSeeE+qpmR8W7Bj8Ap25W2YJVw3KoQgLgmMCUinxjKlzzm3KdeGw59Mo921N4
+         jcjCV5nHN7puC5sNo/+aFkB+etsdIcs0gE6vk17/wLm7a0BsDgGeP5I7n3XFQO2BKKij
+         eclkiXe4aNGwm2MPad+zrUJ2lmO6AXsu7bmTKMez8UIEIGtW4aHkJYV5sRxcLfSzD72m
+         xhIg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3lZkpYdX5XqLpuv4LhuGHpCSgZtUBBsAHQ9NYUCs/kmgbDZsmwiZHWP3NU3b+e7B/97kjPttKn2fYwbIJ@vger.kernel.org, AJvYcCWypGFmXO2K0d+iB+Y0sdYXi1ahbYUlqcVbAHObm3ooGQ19ktIxqzA34YSH/wt6W0UFXIdlnjIwHHw=@vger.kernel.org, AJvYcCX3/AbXtEuXu9uuD4v5qOSyYRUCeWMCkp651/M0hHrwNdTqi7f0g8WKysXZl0vvxWVg0s9ZU2b6YpyRsNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwagMEdlcRNxRh4XN1TjaODG4nvIdAi/9vzjTyATE0LiG/Xnu8Z
+	ZMTp2RbNVi0EBmj45oOuxmcL1ISEfph3jEBLlm2FhvUm6ByTFFDQe/mL
+X-Gm-Gg: ASbGncsBc7qVVqPOKIuTMztJnlqwHgjP0NZ8Vg2Ps6840Zir2Nb+ZDW9nWylUwdKewn
+	e3xN3hjIhT7wK630xMB/ekHkjbK9pFXlhF4B8Go4wZJ+gr8FcVDL1qNTUlXRdhK1Sz1a5lcBMqh
+	45EKkgbvrDR7siIIiKXSH5bmSip5iP9c7mQ3Aound7KIullMC83uAArdl9xDGzISbdAUxL6lZTS
+	/iYSNbV7hN8b57J6CEuP/uub05ywbmZaTNt6GMXNm6XUynSvYds1vpJRH340dxOx9mvGVnh9CZ0
+	bjOjsZimqg9cnjOPC3dVBj5PvH947GiclNUSTNUybGEI6A2ODJ/i+QV1dAzs+oIO35Ayd7BdYYd
+	EVdzF0ydHs9oRSiuDRdkqbKqk
+X-Google-Smtp-Source: AGHT+IGqYYxMXNlImQJTgUD4sXHYvG+ESLaCPCwhHiKJEer55gLJWbBlAmZD2vuXTZ0CgJz6USoxgg==
+X-Received: by 2002:a17:907:6095:b0:afe:b311:a255 with SMTP id a640c23a62f3a-afeb311ae54mr1399145766b.48.1756470177143;
+        Fri, 29 Aug 2025 05:22:57 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd7047sm188662166b.51.2025.08.29.05.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 05:22:56 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+Date: Fri, 29 Aug 2025 15:22:30 +0300
+Message-ID: <20250829122235.119745-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kenta Akagi <k@mgml.me>
-Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
- io failure
-To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
-        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
-        Guoqing Jiang <jgq516@gmail.com>
-References: <20250828163216.4225-1-k@mgml.me>
- <20250828163216.4225-2-k@mgml.me>
- <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
-Content-Language: en-US
-From: Kenta Akagi <k@mgml.me>
-In-Reply-To: <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+a ring oscillator and translates voltage changes into frequency
+compensation changes needed to prevent the CPU from failing and is
+essential for correct CPU frequency scaling.
 
+---
+Changes in v2:
+- dropped 'drivers:' from commit title
+- aligned naming to Tegra114
 
-On 2025/08/29 11:54, Li Nan wrote:
-> 
-> 在 2025/8/29 0:32, Kenta Akagi 写道:
->> This commit ensures that an MD_FAILFAST IO failure does not put
->> the array into a broken state.
->>
->> When failfast is enabled on rdev in RAID1 or RAID10,
->> the array may be flagged MD_BROKEN in the following cases.
->> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
->> - If an MD_FAILFAST metadata write to the 'last' rdev fails
-> 
-> [...]
-> 
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 408c26398321..8a61fd93b3ff 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->>               (bio->bi_opf & MD_FAILFAST) &&
->>               /* We never try FailFast to WriteMostly devices */
->>               !test_bit(WriteMostly, &rdev->flags)) {
->> +            set_bit(FailfastIOFailure, &rdev->flags);
->>               md_error(r1_bio->mddev, rdev);
->>           }
->>   @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>    *    - recovery is interrupted.
->>    *    - &mddev->degraded is bumped.
->>    *
->> - * @rdev is marked as &Faulty excluding case when array is failed and
->> - * &mddev->fail_last_dev is off.
->> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
->> + * then @mddev and @rdev will not be marked as failed.
->> + *
->> + * @rdev is marked as &Faulty excluding any cases:
->> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>    */
->>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>   {
->> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>         if (test_bit(In_sync, &rdev->flags) &&
->>           (conf->raid_disks - mddev->degraded) == 1) {
->> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
->> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
->> +                "last device but ignoring it\n",
->> +                mdname(mddev), rdev->bdev);
->> +            return;
->> +        }
->>           set_bit(MD_BROKEN, &mddev->flags);
->>             if (!mddev->fail_last_dev) {
->> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
->>       if (test_bit(FailFast, &rdev->flags)) {
->>           /* Don't try recovering from here - just fail it
->>            * ... unless it is the last working device of course */
->> +        set_bit(FailfastIOFailure, &rdev->flags);
->>           md_error(mddev, rdev);
->>           if (test_bit(Faulty, &rdev->flags))
->>               /* Don't try to read from here, but make sure
->> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->>           fix_read_error(conf, r1_bio);
->>           unfreeze_array(conf);
->>       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
->> +        set_bit(FailfastIOFailure, &rdev->flags);
->>           md_error(mddev, rdev);
->>       } else {
->>           r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index b60c30bfb6c7..530ad6503189 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
->>               dec_rdev = 0;
->>               if (test_bit(FailFast, &rdev->flags) &&
->>                   (bio->bi_opf & MD_FAILFAST)) {
->> +                set_bit(FailfastIOFailure, &rdev->flags);
->>                   md_error(rdev->mddev, rdev);
->>               }
->>   
-> 
-> Thank you for the patch. There may be an issue with 'test_and_clear'.
-> 
-> If two write IO go to the same rdev, MD_BROKEN may be set as below:
+Changes in v3:
+- add DFLL support for Tegra 114 was split into dt header addition,
+  DFLL reset configuration and CVB tables implementation.
+- added cleaner commit message to dt header commit
+- added T210_ prefixes to Tegra210 CVB table macros
 
-> IO1                    IO2
-> set FailfastIOFailure
->                     set FailfastIOFailure       
->  md_error
->   raid1_error
->    test_and_clear FailfastIOFailur
->                        md_error
->                       raid1_error
->                        //FailfastIOFailur is cleared
->                        set MD_BROKEN
-> 
-> Maybe we should check whether FailfastIOFailure is already set before
-> setting it. It also needs to be considered in metadata writes.
-Thank you for reviewing.
+Changes in v4:
+- expanded commit message of car header adding commit
 
-I agree, this seems to be as you described.
-So, should it be implemented as follows?
+Changes in v5:
+- renamed tegra114-car.h to nvidia,tegra114-car.h
+---
 
-bool old=false;
-do{
- spin_lock_irqsave(&conf->device_lock, flags);
- old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
- spin_unlock_irqrestore(&conf->device_lock, flags);
-}while(old);
+Svyatoslav Ryhel (4):
+  dt-bindings: reset: add Tegra114 car header
+  clk: tegra: add DFLL DVCO reset control for Tegra114
+  clk: tegra: dfll: add CVB tables for Tegra114
+  ARM: tegra: Add DFLL clock support for Tegra114
 
-However, since I am concerned about potential deadlocks, 
-so I am considering two alternative approaches:
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        |  33 ++++
+ drivers/clk/tegra/Kconfig                     |   2 +-
+ drivers/clk/tegra/clk-tegra114.c              |  30 +++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c    | 158 +++++++++++++++---
+ drivers/clk/tegra/clk.h                       |   2 -
+ .../dt-bindings/reset/nvidia,tegra114-car.h   |  13 ++
+ 6 files changed, 204 insertions(+), 34 deletions(-)
+ create mode 100644 include/dt-bindings/reset/nvidia,tegra114-car.h
 
-* Add an atomic_t counter to md_rdev to track failfast IO failures.
-
-This may set MD_BROKEN at a slightly incorrect timing, but mixing
-error handling of Failfast and non-Failfast IOs appears to be rare.
-In any case, the final outcome would be the same, i.e. the array
-ends up with MD_BROKEN. Therefore, I think this should not cause
-issues. I think the same applies to test_and_set_bit.
-
-IO1                    IO2                    IO3
-FailfastIOFailure      Normal IOFailure       FailfastIOFailure
-atomic_inc                            
-                                              
- md_error                                     atomic_inc 
-  raid1_error
-   atomic_dec //2to1          
-                       md_error          
-                        raid1_error           md_error
-                         atomic_dec //1to0     raid1_error
-                                                atomic_dec //0
-                                                  set MD_BROKEN
-
-* Alternatively, create a separate error handler,
-  e.g. md_error_failfast(), that clearly does not fail the array.
-
-This approach would require somewhat larger changes and may not
-be very elegant, but it seems to be a reliable way to ensure 
-MD_BROKEN is never set at the wrong timing.
-
-Which of these three approaches would you consider preferable?
-I would appreciate your feedback.
-
-
-For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
-when the array is degraded.
-
-Thanks,
-Akagi
-
->> @@ -1995,8 +1996,12 @@ static int enough(struct r10conf *conf, int ignore)
->>    *    - recovery is interrupted.
->>    *    - &mddev->degraded is bumped.
->>    *
->> - * @rdev is marked as &Faulty excluding case when array is failed and
->> - * &mddev->fail_last_dev is off.
->> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
->> + * then @mddev and @rdev will not be marked as failed.
->> + *
->> + * @rdev is marked as &Faulty excluding any cases:
->> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>    */
->>   static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->>   {
->> @@ -2006,6 +2011,13 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->>       spin_lock_irqsave(&conf->device_lock, flags);
->>         if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
->> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
->> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->> +            pr_warn_ratelimited("md/raid10:%s: Failfast IO failure on %pg, "
->> +                "last device but ignoring it\n",
->> +                mdname(mddev), rdev->bdev);
->> +            return;
->> + >           set_bit(MD_BROKEN, &mddev->flags);
->>             if (!mddev->fail_last_dev) {
->> @@ -2413,6 +2425,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
->>                   continue;
->>           } else if (test_bit(FailFast, &rdev->flags)) {
->>               /* Just give up on this device */
->> +            set_bit(FailfastIOFailure, &rdev->flags);
->>               md_error(rdev->mddev, rdev);
->>               continue;
->>           }
->> @@ -2865,8 +2878,10 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
->>           freeze_array(conf, 1);
->>           fix_read_error(conf, mddev, r10_bio);
->>           unfreeze_array(conf);
->> -    } else
->> +    } else {
->> +        set_bit(FailfastIOFailure, &rdev->flags);
->>           md_error(mddev, rdev);
->> +    }
->>         rdev_dec_pending(rdev, mddev);
->>       r10_bio->state = 0;
-> 
-> -- 
-> Thanks,
-> Nan
-> 
-> 
+-- 
+2.48.1
 
 
