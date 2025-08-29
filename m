@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-791645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2E5B3B9A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E87B3B9A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE33C17E97F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40AA364F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A14313E04;
-	Fri, 29 Aug 2025 11:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VORTWOy2"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8133148BB;
+	Fri, 29 Aug 2025 11:04:41 +0000 (UTC)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FD83128CD
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C43E311944;
+	Fri, 29 Aug 2025 11:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465464; cv=none; b=fMX/MedoqVIbpE3A7ZFcC0HdlIhCiGj5Zh6QE7Htia73eOoJ2P5h/0D5TC1ASCKi+24Whs+6ZxfdrAUDmfjVgx53UttIfmq0tRbGlzJwh7UaILP7ClFjkMljDURDtwRmuBau8pG56rENkkyN0OSc7km7fOzLXFggNVDhHAueaQE=
+	t=1756465481; cv=none; b=q8pQYhldf8j+WERVWUsoldHTbd3qZvdixRBNpNU9I4ukV6n/LGhe8PPYHOydyyxM0l4LxSGRvYp89utXQMSYLUOZKsyAvjpBDpV+5pKz5sBuI1LHVQ+XlbrOtWGfJbTb2/xj9XGfELKBKKSs5c/XWPbyMah/qtwsfR90en2WptM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465464; c=relaxed/simple;
-	bh=7L7tIxp28iHdwGx+yyV8tn2ybILyzU3KKi9eUDFzJnQ=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=pN+glD84pftNbvCMzsJydXb/FvC5E3VBQ9r5XRoTPWNS96yPrMpqCpVEmXwkJX8cUYEuT7X9Pna+mt19ce8dC9jeJY9pUQ3iLS1pQWYL12Km/6BT8GsR4YAQDDZ8SO2gc64ZdGBoq0OUavAi8kCK4Km5jbYyYv5ZI+Bm6qaHVWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VORTWOy2; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250829110420epoutp04dec5631d0b01b518de94ddf0990e62f9~gOAfECF6y0198001980epoutp04r
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:04:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250829110420epoutp04dec5631d0b01b518de94ddf0990e62f9~gOAfECF6y0198001980epoutp04r
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756465460;
-	bh=7L7tIxp28iHdwGx+yyV8tn2ybILyzU3KKi9eUDFzJnQ=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=VORTWOy224KaeLooY5g47tq5zVTcMTcGosppxHtcA4QJEbcxpjdptFnswY29OrEV/
-	 A3CUi2jLxPWhrcmZV0m3Fkd/kEkfjS8uLKPABntkm/Cq/iK5nA3rTayTswacSo1yKI
-	 u4dJEL8qxiyrbgr1J6cXsxU1GzqSFPzrpvJ2Ki7o=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250829110420epcas5p357d652ed6ae1444487ef4e97d369560e~gOAeocNpJ1820418204epcas5p3r;
-	Fri, 29 Aug 2025 11:04:20 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCwPv3vfTz3hhT9; Fri, 29 Aug
-	2025 11:04:19 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250829110418epcas5p183ad72839fc6cce33835ddf0c9bde53b~gOAdcM9D92447624476epcas5p1d;
-	Fri, 29 Aug 2025 11:04:18 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250829110417epsmtip21ab963b0b3d34a58966d8d60e6db17c9~gOAb1AUNn0933009330epsmtip2e;
-	Fri, 29 Aug 2025 11:04:17 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Ivaylo
- Ivanov'" <ivo.ivanov.ivanov1@gmail.com>, "'Rob Herring'" <robh@kernel.org>,
-	"'Krzysztof Kozlowski'" <krzk+dt@kernel.org>, "'Conor Dooley'"
-	<conor+dt@kernel.org>, "'Peter Griffin'" <peter.griffin@linaro.org>,
-	=?UTF-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'Tudor
- Ambarus'" <tudor.ambarus@linaro.org>, <linux-fsd@tesla.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250822121423.228500-8-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH 4/4] arm64: dts: exynos2200: Add default GIC address
- cells
-Date: Fri, 29 Aug 2025 16:34:16 +0530
-Message-ID: <263c01dc18d4$aa870120$ff950360$@samsung.com>
+	s=arc-20240116; t=1756465481; c=relaxed/simple;
+	bh=sSiBNyDXXS7RcuduRZ2UoWnH2RKrGy8/4c9TL9DXg44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lJ/6mbbtsQhMzxaRJLnN6uFKu2XGXQ1kGhuLNGGh0QY+GNl7KLsdpjJeSkEkbvvQNWcD9jUWV50KUHHuVZwHDZfmbHs9yWQyy1yekcWXf/7NShtDzrJEUtdbeB+y5yWZHZJdfBuxP19oNoYPhBkT1kWkvLkMr60YAJPu2SohOVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018e97232so633681241.0;
+        Fri, 29 Aug 2025 04:04:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756465478; x=1757070278;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VhYfBahQ/meOeiWo39IyKitIfgj5nE9X9TMEpjrNtVM=;
+        b=sSUkwLx5rZcXZyI6bi+PbAOPM9ZKyiEtfJPhKnossauejY9DQslPZKJdxlfC0LwKdv
+         IWyUTE4RkAuDrocpPwCGiR5RcroAOPYmQVc7j/X5F49Y8SJkVxcFXnwgaFg78exlRzJ9
+         I7MXL6D+rkcM4LNPbqQTqRO495s+E1qIYKVg7xMRzBSMq1+6mHjdX6PvYSTaCIJ2fbXt
+         aFFxtjhmawSfWDjLnUZVW7WJv5GNTS3NFCw93p0ys7VkTtNQL8uMYLxeNlWCpjehaHUu
+         hdUx/LOjCf+/E1dSmxne+twPgSjFHfZUGntRUctVB/urC3mkL1ErHqwEe1GtXnayterw
+         hsZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUi5cpubYf1CwPIVRsusfxRs9Rbt1NpUxdAkQ7Zi6yMDRlBXsD9fq2oivZf8iUTQOBU9ox0WPHWpZw6i0o=@vger.kernel.org, AJvYcCVQBENCcBncT7UusNWkngijlELMSOgyGTVRT0xi5WLCLx72TOrFPO20h8iDPB9LHagm6/wiGHDVMgCTEIxcfLvk4z0=@vger.kernel.org, AJvYcCXAvbb2EBpcyCp9+3NROnFkvP6BNcbdoI7w75CwBRug3RwWqIJEf4wNkd/iYiurA3pEALveTO4ig2VY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4k5bZoZStGLfmDEM0oLbAA30lhff2GjJu6B8pkIB6ZSeRswyY
+	VgtdQ307perN1Q0IUNfvqYAVpLyVXKIEqNUPmtefJExTL4Ls6eWqsjZCt8OBpZLo
+X-Gm-Gg: ASbGncsfSYQKgh9d1xsrcza6ppq6QQhLWpnE1s0gKfOJSWX0YDBJXJQ9OAZNJ2G31Jd
+	8XynZeqVC5xeiJNvN++GiOW2eP5jPcIJGb3i3MBZawFi+opVWzyw5op6vEwpuK6MAbDqdJqERCv
+	HOv4/9W1NfDNryGFnbL/+ocTv4JfdwqscBfu2sr6TExBHPK3OqAK1fCWzflnzYvfL3OWkwf5Okq
+	8ytQvsCfuDIINk52Gn5qdeiXGIhIkLTsBvuBS84L3Ra3q38r8QdFHeY/M87Ko8MbYeUBUIYiwQI
+	B+5fYCwUbhePGehM9pCVYsFDtz2pXsFf49S7aan+jNeNLhS4x7vT4IhS5CAdiGoVK6AoCPMwztM
+	GVMTgY7a5KNf4dCNky98eOwEnLxO5MVI7d2NO5J9+ZW9TvYDjpVTOsEPaQaOUZsHQqX3Yi+4=
+X-Google-Smtp-Source: AGHT+IHqM1DbbNlG1XUZrlnumvw/iGxU9s3f9lMzwHqoLp688AK+Ws2CW7atvE6grTTal2hog4i9SQ==
+X-Received: by 2002:a05:6102:358e:b0:528:2527:6420 with SMTP id ada2fe7eead31-5282536b215mr2192446137.4.1756465477779;
+        Fri, 29 Aug 2025 04:04:37 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-529aee96099sm830117137.2.2025.08.29.04.04.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 04:04:37 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-89018e97232so633677241.0;
+        Fri, 29 Aug 2025 04:04:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJaqh9iW8qeIscxj4iuCHv+X2b2LzX5HhaSMB9bY2sLxWPXspWw8CrDu4Tv2knGzl5MspZm8W/b7bmm1aC6Ib7TaA=@vger.kernel.org, AJvYcCUPvnp1SjpEfLbNi1TvQcvbEDfI5PfRVZ7BEX6ZJ+oDQ7ehR7VtPqDD93qita2CXKR1lCCtNbuLtbwG@vger.kernel.org, AJvYcCVUDXFJT5FLeLpyhIyvx1NuYeNLkCEC6ofYiS0q6e7/D2piNfQ2eCH1i27nGA4F5Gcd2N4TFUikcAwDE3Q=@vger.kernel.org
+X-Received: by 2002:a05:6102:dd0:b0:525:42d2:790a with SMTP id
+ ada2fe7eead31-52542d282b5mr3681556137.12.1756465476910; Fri, 29 Aug 2025
+ 04:04:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJyWVpz9P/Dzbtkobqw1IWAkgYZWwJZwFW7ARdQs12zMW310A==
-Content-Language: en-us
-X-CMS-MailID: 20250829110418epcas5p183ad72839fc6cce33835ddf0c9bde53b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250822121440epcas5p2d67b57b6b165f1f555bea881145cc9db
-References: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
-	<CGME20250822121440epcas5p2d67b57b6b165f1f555bea881145cc9db@epcas5p2.samsung.com>
-	<20250822121423.228500-8-krzysztof.kozlowski@linaro.org>
+References: <20250730164618.233117-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdWOMpZo0fVASyDV+XTLmh-o0ozqfF4Za_sPiydsh6LOfw@mail.gmail.com> <aLGAaKYucaW1vPCg@shikoro>
+In-Reply-To: <aLGAaKYucaW1vPCg@shikoro>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 29 Aug 2025 13:04:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX9HjP09R2p-PS4KgHKB6UcAQB+zKqN6QYwsboxtJCkPg@mail.gmail.com>
+X-Gm-Features: Ac12FXw1eepLRsTfT94A3x9t1CbrGEZZsnpnLyFxjZUhOEIkqQ-bPQ0_fe6I5_Q
+Message-ID: <CAMuHMdX9HjP09R2p-PS4KgHKB6UcAQB+zKqN6QYwsboxtJCkPg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Enable 64-bit polling mode for R-Car Gen3 and
+ RZ/G2+ family
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Biju <biju.das.au@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof
+Hi Wolfram,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Friday, August 22, 2025 5:44 PM
-> To: Ivaylo Ivanov <ivo.ivanov.ivanov1=40gmail.com>; Rob Herring
-> <robh=40kernel.org>; Krzysztof Kozlowski <krzk+dt=40kernel.org>; Conor
-> Dooley <conor+dt=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>;
-> Peter Griffin <peter.griffin=40linaro.org>; Andr=C3=A9=20Draszik=0D=0A>=
-=20<andre.draszik=40linaro.org>;=20Tudor=20Ambarus=20<tudor.ambarus=40linar=
-o.org>;=0D=0A>=20linux-fsd=40tesla.com;=20linux-arm-kernel=40lists.infradea=
-d.org;=20linux-samsung-=0D=0A>=20soc=40vger.kernel.org;=20devicetree=40vger=
-.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org=0D=0A>=20Cc:=20Krzy=
-sztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=20Subject:=20=
-=5BPATCH=204/4=5D=20arm64:=20dts:=20exynos2200:=20Add=20default=20GIC=20add=
-ress=20cells=0D=0A>=20=0D=0A>=20Add=20missing=20address-cells=200=20to=20GI=
-C=20interrupt=20node.=20=20Value=20'0'=20is=20correct=0D=0A>=20because=20GI=
-C=20interrupt=20controller=20does=20not=20have=20children.=0D=0A>=20=0D=0A>=
-=20Signed-off-by:=20Krzysztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.o=
-rg>=0D=0A>=20---=0D=0AReviewed-by:=20Alim=20Akhtar=20<alim.akhtar=40samsung=
-.com>=0D=0A=0D=0A=0D=0A
+On Fri, 29 Aug 2025 at 12:26, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > I believe some of the SoCs that do not support 64-bit accesses, do
+> > support 32-bit accesses. Do you think it would be worthwhile adding
+> > support for that, too?
+>
+> We have that already? Check the context after the chunk added to
+> tmio_mmc_core.c:
+>
+>         if (host->pdata->flags & TMIO_MMC_32BIT_DATA_PORT) {
+>                 u32 data = 0;
+>                 u32 *buf32 = (u32 *)buf;
+>         ...
+
+OK, thanks, then I misremembered what exactly is supported and what
+is not...
+But this is set only on RZ/A1, so my question should be: are there
+any other SoCs where TMIO_MMC_32BIT_DATA_PORT should be set?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
