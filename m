@@ -1,56 +1,86 @@
-Return-Path: <linux-kernel+bounces-791844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE4AB3BC9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4928BB3BCA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F133F17FE4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1389D466248
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF5931B133;
-	Fri, 29 Aug 2025 13:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4675A31B138;
+	Fri, 29 Aug 2025 13:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="aCoNyRQe"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f98+42k7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F105331B11B;
-	Fri, 29 Aug 2025 13:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4496D31B124
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756474889; cv=none; b=bH7RQA6aRDGOff0hvJ3nhfMddm29xbFhV7uPL+GgI7UWU6vDzAjUp34DenZlXDZL+NYlvYNS9MkrSK6g9UybVR7NDP6hWMsq+knW9lMzUBQuZrbr7OqdCvf1QXMU+eS7b18M4EIOrQv5yORF1DLTZmGg0l0TRUtDBYsRwmjgny8=
+	t=1756474909; cv=none; b=AfbmkSLMwclvWxHcBfq/G1X5+qgt3yOpt61iFzhVpbUR7cLR/gRiQi5KfZTMEXBIm+7OmilQ1kpkgbgu8yVj5C4v01Vkner85D5XoepVgSNPQjkkhjC3mkkom5WJLbkEI4tBcsMh4ucJs/BFzC/q8/z0rfpqp22kpDzbhvtSatY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756474889; c=relaxed/simple;
-	bh=xOH5swkXMG4oVhf3wy0TtaxnLVmSKuiuHKFiiJUgQJ8=;
+	s=arc-20240116; t=1756474909; c=relaxed/simple;
+	bh=TFMPXTSMXOnp4cKbN5frFtGSjPHSL2+uxw+05tDbuDQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsrkgADe8qmVt7YIWZnah7oYdsO1ztXIAq4FfPZn/a5HxL/RM32miHaPAWAban0cYp+9+ixWbT/maI7ABZE4Ihg7aipTb7ejzOIWb8OoZnaBehPD7Lzj7WG4HIYi7wq3mqwYzKtdK4ABPyVeGIbUabU2WorgzkjhTnhLmOJPzXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=aCoNyRQe reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cCzv75F21z1FbZj;
-	Fri, 29 Aug 2025 15:41:23 +0200 (CEST)
-Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cCzv71pH6z1DQqY;
-	Fri, 29 Aug 2025 15:41:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1756474883;
-	bh=fIFEKQbPdTMh3etZAT4QAh46FySYcbDnTI/Lzh3ryaQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=aCoNyRQezF2yHZQXkhEJtvc+VPf9O+ObEy5oPDP3/kmTkshaKYkGlyFRALKRlnBj1
-	 n34rw3S41VVCkY/gmozexvqzxTE8V+mJqQmpNN1HVlL0ED6cvcEfnytdyLoKGGrRJd
-	 NYTIuLqH9rOAw+O/munB7/ziwfIujYRzo0iN+izeSQ6bmVevdgbr/LBzo4865PdLZH
-	 t4O0fUtIQK3GYPftks8fNuzq1BQRhPRk36dKkkx5saSRdU+C587cmtLfrtHhiHFtLT
-	 RBDPBomJQqg3WXxwp0beugbeDeEk33g4ShIdIPriQ81yrzTFLc4kxgm/Fm1LLyssmF
-	 +1Qu3SJzYDhFQ==
-Message-ID: <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
-Date: Fri, 29 Aug 2025 15:41:22 +0200
+	 In-Reply-To:Content-Type; b=ua3CikgeG5sCypcA/5N/zm1ZiwNe5IQziImBI0o7maTDBCUOvm7Ygrk0mYizirJTxtgax/R7R93XRVMb6npZi7YYydWt3d0SII7RsbtQRNCgIWjS9SL3tsyKnCj6ajRvFnry69AM4uR1D4LzP4FKp6ew2N/8izSSjfjU5w5z52U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f98+42k7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756474906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7ZezTDYPV9FY1vYbYIlP1Z79qo+TmLw98Vo74TFiYNA=;
+	b=f98+42k7426a6CzPQitG4DnS9zPuRNCj/2cp6rT985RCqcYo/vnpZO6T/x/SB7t5eP5Tsj
+	HVYVCVdLegLykUVu5kQakqp49TeNtQzmzkc4lUi1lNYjUYkDaoD9LecAW8SFGQAJDDcJ26
+	YgrLct+RrB7vq1xlQoGiX5+chGe/iGY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-PMEAmtPAMb-HaVYtcTnjLw-1; Fri, 29 Aug 2025 09:41:45 -0400
+X-MC-Unique: PMEAmtPAMb-HaVYtcTnjLw-1
+X-Mimecast-MFC-AGG-ID: PMEAmtPAMb-HaVYtcTnjLw_1756474904
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b7bb85e90so12565955e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:41:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756474904; x=1757079704;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ZezTDYPV9FY1vYbYIlP1Z79qo+TmLw98Vo74TFiYNA=;
+        b=EgKpukOnTdqNDhHy53Cq1SBVs4ns2iQ8tngHdQZ9Bk7l9/Fg08dqVCh8uaX5znRIqi
+         U/z3qESUhbUc3kQUdMRs3vt78qVrTn65Vyd7lqOsQVYWmoAW0G7Bq6cf4Nhw7tSsci84
+         N4vbKF2XIApeA5rnh7Bqo5YkanDAKTmYdIm2UyAm3WzVNk0p9olp51Co4hS7Qpb6rx6e
+         DfcIQCySvf4mN5nctlDBvWqpqf1yMkoORlWmlUd5EyIH5HwbrM7Iwd2mdN4z3VVI15y3
+         SBpIh+BhGdbHLNjRa6TVJAznELInkaH6Qtus2w6xSXTRfXVtVYe4/juPvNXlHXxzGutX
+         N/8Q==
+X-Gm-Message-State: AOJu0YxnxE3cac5ZjDI3QoRAoc5Z1eeyzmzvtkzu1XCiCudNzIF+pj/s
+	zhUuhTRlTcOyNuzc9ycz7oPpivlGg/W1olhdilJIJMSDPEbXeCJwRcJ9F9eXcWr48qAYAlqmM9I
+	lICjh40a8zTDr4fDCzrki7vynCZTnlPsA+Yns8Qo8zPduCFg8Y2yx4WmCClcXzB/npA==
+X-Gm-Gg: ASbGnctAfboOy9PKdqZF0zjFexL232Me22/NB57bnPSnqj9UaWYDJNmOry0e39Hjkrt
+	JVBkyo9zLam2C/9z8bQI9S1rnY/m6zxOZHsaiBm+zQdyXvPzY9Kru6qreCZuiGsnmDV6j+vgBlM
+	aeW/TycQw3kxBcZ3EnQFX6x4D1NW2PmV7kaagmYiGKPrUpN7Ir9FsuRhaNT3cnmLnlf8nhN/3Cq
+	v6njcbNI2laspACJ8CQ1/gcyz5EPw5s+xoBQOEt7JJaDLUvhPd6U0X23ru0UgGSQXY8P1MPRs43
+	Q966cYREaR8cQY+VnN01kZoRi+VS0srdkB2PLWDKUcMK6k8rwPQn7PPXhtXt4c+JFmHRhcgADdY
+	So9DltvhyEkIXcu1G+wn0mvEcueIOXJy7DceviLH6EpynGMjpdzFMQo+tdDfWRlRE
+X-Received: by 2002:a05:600c:8b0a:b0:45b:733b:1feb with SMTP id 5b1f17b1804b1-45b733b214dmr83370835e9.10.1756474903645;
+        Fri, 29 Aug 2025 06:41:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWe5EWQVl5iPDqqeubvc9kL/5oN1fdgiPPYoM9Zstyja975cqp15HWRaThC/EH89lpSzwt8Q==
+X-Received: by 2002:a05:600c:8b0a:b0:45b:733b:1feb with SMTP id 5b1f17b1804b1-45b733b214dmr83370155e9.10.1756474903176;
+        Fri, 29 Aug 2025 06:41:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf3458a67esm3469559f8f.62.2025.08.29.06.41.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 06:41:42 -0700 (PDT)
+Message-ID: <632fea32-28aa-4993-9eff-99fc291c64f2@redhat.com>
+Date: Fri, 29 Aug 2025 15:41:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,150 +88,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
- <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
- Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
- Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
- <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
- <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
- <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
- <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
- <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
- <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+Subject: Re: [PATCH v1 18/36] mm/gup: drop nth_page() usage within folio when
+ recording subpages
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-19-david@redhat.com>
+ <c0dadc4f-6415-4818-a319-e3e15ff47a24@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <c0dadc4f-6415-4818-a319-e3e15ff47a24@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-29 12:37, Thomas Weißschuh wrote:
-> On Fri, Aug 29, 2025 at 12:02:39PM +0200, Andreas Larsson wrote:
->> On 2025-08-28 17:38, Andreas Larsson wrote:
->>> and with all of them applied I got: 
->>>
->>> ----------------%<----------------
->>> [    1.849344] Run /init as init process
->>> [    1.851309] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->>> [    1.851339] CPU: 4 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc1+ #3 VOLUNTARY
->>> [    1.851363] Call Trace:
->>> [    1.851374] [<0000000000436524>] dump_stack+0x8/0x18
->>> [    1.851400] [<00000000004291f4>] vpanic+0xdc/0x320
->>> [    1.851420] [<000000000042945c>] panic+0x24/0x30
->>> [    1.851437] [<00000000004844a4>] do_exit+0xac4/0xae0
->>> [    1.851458] [<0000000000484684>] do_group_exit+0x24/0xa0
->>> [    1.851476] [<0000000000494c60>] get_signal+0x900/0x940
->>> [    1.851495] [<000000000043ecb8>] do_notify_resume+0xf8/0x600
->>> [    1.851514] [<0000000000404b48>] __handle_signal+0xc/0x30
->>> [    1.852291] Press Stop-A (L1-A) from sun keyboard or send break
->>> [    1.852291] twice on console to return to the boot prom
->>> [    1.852310] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
->>> ----------------%<----------------
->>>
->>> but given that I don't have the kernel anymore I'm starting to
->>> question myself if that run was really with the same base
->>> commit. I'll do a rebuild and see.
+On 28.08.25 18:37, Lorenzo Stoakes wrote:
+> On Thu, Aug 28, 2025 at 12:01:22AM +0200, David Hildenbrand wrote:
+>> nth_page() is no longer required when iterating over pages within a
+>> single folio, so let's just drop it when recording subpages.
 >>
->> I found out that my previous kernel installation for the kernel with the first 8
->> patches was a broken mess. Sorry about the confusion. With that sorted out and a
->> rebuilt kernel with all patches, the failure above is the one I get for both 8
->> and 13 patches, and it is repeatable.
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
 > 
-> This splat means that init got killed by SIGSEGV, so that makes some sense in
-> the context of the code being touched. Then let's focus on patch 8 for now.
+> This looks correct to me, so notwithtsanding suggestion below, LGTM and:
 > 
-> In the meantime I installed a full Debian, but the bug is still not
-> reproducible in QEMU.
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > 
-> * Did you use the SMP or UP kernel config from Debian?
+>> ---
+>>   mm/gup.c | 7 +++----
+>>   1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index b2a78f0291273..89ca0813791ab 100644
+>> --- a/mm/gup.c
+>> +++ b/mm/gup.c
+>> @@ -488,12 +488,11 @@ static int record_subpages(struct page *page, unsigned long sz,
+>>   			   unsigned long addr, unsigned long end,
+>>   			   struct page **pages)
+>>   {
+>> -	struct page *start_page;
+>>   	int nr;
+>>
+>> -	start_page = nth_page(page, (addr & (sz - 1)) >> PAGE_SHIFT);
+>> +	page += (addr & (sz - 1)) >> PAGE_SHIFT;
+>>   	for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
+>> -		pages[nr] = nth_page(start_page, nr);
+>> +		pages[nr] = page++;
+> 
+> 
+> This is really nice, but I wonder if (while we're here) we can't be even
+> more clear as to what's going on here, e.g.:
+> 
+> static int record_subpages(struct page *page, unsigned long sz,
+> 			   unsigned long addr, unsigned long end,
+> 			   struct page **pages)
+> {
+> 	size_t offset_in_folio = (addr & (sz - 1)) >> PAGE_SHIFT;
+> 	struct page *subpage = page + offset_in_folio;
+> 
+> 	for (; addr != end; addr += PAGE_SIZE)
+> 		*pages++ = subpage++;
+> 
+> 	return nr;
+> }
+> 
+> Or some variant of that with the masking stuff self-documented.
 
-I based my config on the SMP config that was in use on the system.
-Produces an tremendous amount of modules unfortunately, so I'll have
-to cut down in the config. Right now the turnaround time for testing
-a new kernel with this setup for this system is quite bad.
-
-> * Can the fixed up kernel now run on QEMU?
-
-No, there is something else going on with my QEMU setup, unrelated to
-these patches.
+What about the following cleanup on top:
 
 
-> * Which toolchain are you using?
+diff --git a/mm/gup.c b/mm/gup.c
+index 89ca0813791ab..5a72a135ec70b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -484,19 +484,6 @@ static inline void mm_set_has_pinned_flag(struct mm_struct *mm)
+  #ifdef CONFIG_MMU
+  
+  #ifdef CONFIG_HAVE_GUP_FAST
+-static int record_subpages(struct page *page, unsigned long sz,
+-                          unsigned long addr, unsigned long end,
+-                          struct page **pages)
+-{
+-       int nr;
+-
+-       page += (addr & (sz - 1)) >> PAGE_SHIFT;
+-       for (nr = 0; addr != end; nr++, addr += PAGE_SIZE)
+-               pages[nr] = page++;
+-
+-       return nr;
+-}
+-
+  /**
+   * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
+   * @page:  pointer to page to be grabbed
+@@ -2963,8 +2950,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+         if (pmd_special(orig))
+                 return 0;
+  
+-       page = pmd_page(orig);
+-       refs = record_subpages(page, PMD_SIZE, addr, end, pages + *nr);
++       refs = (end - addr) >> PAGE_SHIFT;
++       page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+  
+         folio = try_grab_folio_fast(page, refs, flags);
+         if (!folio)
+@@ -2985,6 +2972,8 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+         }
+  
+         *nr += refs;
++       for (; refs; refs--)
++               *(pages++) = page++;
+         folio_set_referenced(folio);
+         return 1;
+  }
+@@ -3003,8 +2992,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+         if (pud_special(orig))
+                 return 0;
+  
+-       page = pud_page(orig);
+-       refs = record_subpages(page, PUD_SIZE, addr, end, pages + *nr);
++       refs = (end - addr) >> PAGE_SHIFT;
++       page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+  
+         folio = try_grab_folio_fast(page, refs, flags);
+         if (!folio)
+@@ -3026,6 +3015,8 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+         }
+  
+         *nr += refs;
++       for (; refs; refs--)
++               *(pages++) = page++;
+         folio_set_referenced(folio);
+         return 1;
+  }
 
-A toolchain built in Buildroot with GCC 13.2.0. Old kernel headers, but
-I only use it to build kernels. Do you think the kernel headers of the
-toolchain would play a role for vDSO?
+
+The nice thing is that we only record pages in the array if they actually passed our tests.
 
 
-> * This is a 64-bit userland?
+-- 
+Cheers
 
-Yes.
-
-> 
-> What difference does the following change make:
-> 
-> diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
-> index 38a664d69782..efc3fef8f9bc 100644
-> --- a/arch/sparc/vdso/vma.c
-> +++ b/arch/sparc/vdso/vma.c
-> @@ -25,7 +25,7 @@
->  #include <vdso/datapage.h>
->  #include <asm/vdso/vsyscall.h>
->  
-> -unsigned int __read_mostly vdso_enabled = 1;
-> +unsigned int __read_mostly vdso_enabled = 0;
->  
->  #ifdef CONFIG_SPARC64
->  static struct vm_special_mapping vdso_mapping64 = {
-> 
-> 
-> Or this one, independently from the one above:
-> 
-> 
-> diff --git a/arch/sparc/vdso/vdso.lds.S b/arch/sparc/vdso/vdso.lds.S
-> index f3caa29a331c..a4669f7feada 100644
-> --- a/arch/sparc/vdso/vdso.lds.S
-> +++ b/arch/sparc/vdso/vdso.lds.S
-> @@ -16,10 +16,7 @@
->  VERSION {
->         LINUX_2.6 {
->         global:
-> -               clock_gettime;
-> -               __vdso_clock_gettime;
-> -               gettimeofday;
-> -               __vdso_gettimeofday;
-> +               __nothing;
->         local: *;
->         };
->  }
-> 
-> 
-> Or this one, independently from the ones above:
-> 
-> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-> index 02ea19f67164..ae87888fef8a 100644
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -318,6 +318,8 @@ __cvdso_clock_gettime_common(const struct vdso_time_data *vd, clockid_t clock,
->         const struct vdso_clock *vc = vd->clock_data;
->         u32 msk;
->  
-> +       return false;
-> +
->         if (!vdso_clockid_valid(clock))
->                 return false;
-> 
-
-I will check.
-
-Cheers,
-Andreas
+David / dhildenb
 
 
