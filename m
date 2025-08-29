@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-791890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEDAB3BD60
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D00B3BD68
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A21A1891159
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE97DA25F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8699731E108;
-	Fri, 29 Aug 2025 14:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E2931E114;
+	Fri, 29 Aug 2025 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2EcLORq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rmmBG933"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54423081A3;
-	Fri, 29 Aug 2025 14:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA0330CDAD;
+	Fri, 29 Aug 2025 14:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477277; cv=none; b=ctS3loJ51EcVf1VWSe6aUxfBJdRjkw+VpYI/AlDVfW4A/v7cFmx/j+uGabXkbIWlIQmtcSggpKnEhv6KBr1izUChN2NMSkfwge+90kX6kHeWB73kqJ7SBc+W67XHqgH+NY2eHphaBkQRsEk/nngOHJ/5dPX1Y9JqrtigQwziujU=
+	t=1756477344; cv=none; b=GQOGq3DgFbzN4+iu9PW0FZYwOHDJFjR1TZZ3HPK30CdprxjPKMLRvbZjfikoF1RJIuACW8Wc35snyHl7Wtje2rE43esjgzRd2eWlLULiS/cul/MRqd7h+DQmFZgPN8tpcEAdyujBRfTHqExBIW1qDLBEEU/zKQMwmJsK5Uh79FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477277; c=relaxed/simple;
-	bh=R1Y/UYUyEnmFUJZ7z82/SfiZJd5bUAVb/FALqEkL2vI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PL0ZPnhboSg6AQw0T7RO1l25vvtI+TuBsEtk/7DVJupTAXGyxzdCTplMcQDMq7fpN9LOVO0cBagtPVPu7dXCImLDM6FYR5BlEcb5s55axykaER0SCmCJGzxNBjPWZ6wiz/FPgK05f2IFYab7zISeoJvcaAHrX5RqsU0s71cM0Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2EcLORq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C903C4CEF0;
-	Fri, 29 Aug 2025 14:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756477276;
-	bh=R1Y/UYUyEnmFUJZ7z82/SfiZJd5bUAVb/FALqEkL2vI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=A2EcLORqc5FEh7xsRQUh+QU+9yDbeoXE39RiiTAWMgCvqbSqcI6GqntZ/TQoF5/Cf
-	 liRC1ZvW5alxD7684dv23pfudjRkXZ9ixjHuoPuNnfEHxcMC+9Klmv4/Q2ddMFfwRk
-	 rO8xKAHThVtSX/Sb3Cy29FJNjfFhQEI9y7Wqxo8bm2KArzjUKFXefPxCy7x3BHcW4K
-	 VeyAN9JRx434gM+7ncrdY9r2mHuXkF8y7GX/U8sqbOkeScz8CNxdQJjFU1pqSjve7K
-	 L4GuyHwmpZwdfaN7+1TgJtJwa0cQCeCAp4wo9x7NOK6rwepQST+gKtMWMk+Jtd/pcH
-	 JHlic7aDZngnQ==
-Message-ID: <a91b8fba-8d26-441e-9da6-86e302703abc@kernel.org>
-Date: Fri, 29 Aug 2025 16:21:11 +0200
+	s=arc-20240116; t=1756477344; c=relaxed/simple;
+	bh=EX+RLzqUWzx8KTJDgIN1X0xa1vIKyjds0wvW7uxsgD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FtEVAa9gWErRWtVijGj+h6zrTqVQVWgi/AxG+TsZxK0RdKO1YNb6L5Xy0HH8ClAjEXAoGDa8YV+qI3Dxxqs3Fz+KQ/7bgEtmoJp7k3shvLpAjCSqwXr0S2Ux677VbK/dPaz/T3DM8EoXUn/IqHnOiT/6Lgcutf7RrwjFUqTxgG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rmmBG933; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57TEM7Xx1769146;
+	Fri, 29 Aug 2025 09:22:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756477327;
+	bh=iHVvtoDZ3ivvpr0Hfy2a/LGMHCA+J9l4iivxra5wOZE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rmmBG933C7Qjtn6mEkcYzHGUfLNwo+xlBdy1UM8v1HDNjusm77sV2dcM5oWjzJvpz
+	 7onyjsOqnDdX0T6s5sFm7l+zy20WbJrdTjDrbQcUzb4Im6CJAwNVnWbVy9BKNzQtQr
+	 ++VoSlWlsaPYs/ToybgMap1Lpd83YsACj8K6ICMU=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57TEM7br078287
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 09:22:07 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 09:22:06 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 09:22:06 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57TEM3qe2191185;
+	Fri, 29 Aug 2025 09:22:04 -0500
+Message-ID: <8259de18-2b5d-4b54-a8ab-f4c3e956b577@ti.com>
+Date: Fri, 29 Aug 2025 19:52:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +64,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
- transceiver
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: dimitri.fedrau@liebherr.com, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-References: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
- <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
- <bf925270-5410-407c-a4e0-472a427e6ef6@kernel.org>
+Subject: Re: [PATCH 1/2] bus: ti-sysc: Add DRA7 SoC matching
+To: Anurag Dutta <a-dutta@ti.com>, <aaro.koskinen@iki.fi>,
+        <andreas@kemnade.info>, <khilman@baylibre.com>, <rogerq@kernel.org>,
+        <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <vigneshr@ti.com>, <u-kumar1@ti.com>
+References: <20250829092947.855974-1-a-dutta@ti.com>
+ <20250829092947.855974-2-a-dutta@ti.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <bf925270-5410-407c-a4e0-472a427e6ef6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250829092947.855974-2-a-dutta@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 29/08/2025 15:12, Krzysztof Kozlowski wrote:
-> On 29/08/2025 11:19, Dimitri Fedrau via B4 Relay wrote:
->> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->>
->> Adding documentation for NXPs TJA1145 CAN transceiver.
-> 
-> Pity you did not include resolution of discussions about directory and
-> can phy bindings here. You have entire commit msg for that, but instead
-> it is a copy paste of subject.
-> 
->>
->> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->> ---
->>  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
->>  1 file changed, 79 insertions(+)
-> 
->>
-> 
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-And un-reviewed, I missed messed example and this was never tested.
+On 8/29/2025 2:59 PM, Anurag Dutta wrote:
+> From: Sinthu Raja <sinthu.raja@ti.com>
+>
+> Kernel Commit 25de4ce5ed02 ("clocksource/drivers/timer-ti-dm: Handle
+> dra7 timer wrap errata i940") states that "There is a timer wrap issue
+> on dra7 and as a work around, we need to use timer-ti-dm percpu timers
+> instead. So, configure dmtimer3 and 4 as percpu timers by default." In
+> this commit, the author has used ti,no-reset-on-init and ti,no-idle quirks.
+>
+> The sysc_check_active_timer() checks for these quirks and accordingly,
+> returns EBUSY error if the quirks match. Because of this, the timer
+> modules fail to probe as can be observed during bootup :"ti-sysc
+> 4882c000.target-module: probe with driver ti-sysc failed with error -16"
+>
+> Return 'ENXIO' instead of 'EBUSY' for DRA7 SoC, so that the error is set
+> to ENXIO and the module gets probed under "certain conditions".
 
-Sending untested code only makes us grumpy.
+Please define, what are "certain conditions".
 
-Best regards,
-Krzysztof
+With addition of conditions in commit message, for this patch
+
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+
+
+>
+> Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+> Signed-off-by: Anurag Dutta <a-dutta@ti.com>
+> ---
+>   drivers/bus/ti-sysc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+> index 5566ad11399e..90766f804706 100644
+> --- a/drivers/bus/ti-sysc.c
+> +++ b/drivers/bus/ti-sysc.c
+> @@ -3117,7 +3117,8 @@ static int sysc_check_active_timer(struct sysc *ddata)
+>   	 * can be dropped if we stop supporting old beagleboard revisions
+>   	 * A to B4 at some point.
+>   	 */
+> -	if (sysc_soc->soc == SOC_3430 || sysc_soc->soc == SOC_AM35)
+> +	if (sysc_soc->soc == SOC_3430 || sysc_soc->soc == SOC_AM35 ||
+> +					 sysc_soc->soc == SOC_DRA7)
+>   		error = -ENXIO;
+>   	else
+>   		error = -EBUSY;
 
