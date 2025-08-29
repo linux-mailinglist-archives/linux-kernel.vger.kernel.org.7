@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-792175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AD5B3C111
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:43:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F23B3C114
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9472586BD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F5E16EE74
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53B9338F56;
-	Fri, 29 Aug 2025 16:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA2A334387;
+	Fri, 29 Aug 2025 16:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9Os/lNc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKeU1khi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37187334374;
-	Fri, 29 Aug 2025 16:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403F33314CC;
+	Fri, 29 Aug 2025 16:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485670; cv=none; b=D3dm2CBDHedm+PJPJkKjMrkmhXChgLRUvy2sp9BCjPYlNvBHe3dXaPdaIeY1Mj1SgqdiqkedEehu6j3J8RnGzyfZUGApwtoq830HMkBaXqVb01v1Oz+aG4TfoQWyUMG9fs1+XvDLN2yH83w8nmgxeZLbisHKvNdavdsbU3IkNsk=
+	t=1756485702; cv=none; b=GuDLSUdEXGuYCukrrXHONUlF/DeQsqlli7vYzct3jIvi3qKtoofzEGhnD8h3eSnXcdO5IVz2gPsoZh+TXxd//ZSUrDGi4jpAfRMYgTyUcmFlBY4KUqUuLv2ipw8JOhVu6kAwIfHWmw1gF2BgAizl0UYbxRYHVXKvm/JIKuU3lFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485670; c=relaxed/simple;
-	bh=QLBTv41xRWK0HCpldcOBdeOLxGpiyGcqZujmArx47Ms=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=in3uxVYfFgk4QW2j9FUKOhd/Ws4OZyxIEqRkK9NN3p5hq1u/9gnnV2o6cu7iiMGK3IoDpW4nUfWxckVvwIsHYvR7bZZdP2zKrem3qJAFcCUODeE/VS9bG1ubcpO3+iabPCYppUxMTFSAkBOT4LXyETyY3fqWOhtMgNO/CJtVYC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9Os/lNc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F0DC4CEF0;
-	Fri, 29 Aug 2025 16:41:09 +0000 (UTC)
+	s=arc-20240116; t=1756485702; c=relaxed/simple;
+	bh=relsKw9/OPOAajNcLPSs+4xD5qW1qyvZNMyRBzwhicU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bub0//xwla3HheuAHwzlHRMfhYrOCdaKcmwy/EKt9AR66m2zUFkBCWMb9DhpG07eI009t0eewOOyFhObjLfUiPS13Lot+wLo9eZ4twVS8leF3LMOddvnV4f6qW0h+We71uopqyjA/mCIONA48sBUmbURYt5n9/CrGjOz8+vQE58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKeU1khi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D068C4CEF0;
+	Fri, 29 Aug 2025 16:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756485670;
-	bh=QLBTv41xRWK0HCpldcOBdeOLxGpiyGcqZujmArx47Ms=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Q9Os/lNcdCf4Uzum+cE3j5nXRy5ZscRCZhEdoSLsjWAlzWo9hN3BUUwsrbE+HIhde
-	 hzI6DH2mawBbExNEvyx5ZpAvZWPfbOB8ALucuFuUY9/L0nSblX7ZT+T5xOvj3w0iHV
-	 H7Xq0++BaGEoeeZVgR5ndkpLLCvyXBztp7ZXLymUKxS1iMdNGbPYcCsjoeRqg4sPxZ
-	 VOBG2hgFHRQZmrfiDb8ix8VqCU7Tibt/ZgvAYALM0vvMv3vONCRafF+g0DJxGsXl9H
-	 hZsHSmOOoTgSnjpUH3PR1qAqPBde8e+QtD9aDFl5QngDTpVcu1hpHp4txYdTVSL9eG
-	 I2kzTOerW6fjQ==
-Date: Fri, 29 Aug 2025 12:41:07 -0400
-From: Kees Cook <kees@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>, Kevin Brodsky <kevin.brodsky@arm.com>
-CC: Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Yue Haibing <yuehaibing@huawei.com>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Ryan Roberts <ryan.roberts@arm.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Joey Gouly <joey.gouly@arm.com>, Yeoreum Yun <yeoreum.yun@arm.com>,
- James Morse <james.morse@arm.com>,
- Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Dev Jain <dev.jain@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_arm64=3A_mm=3A_Fix_CFI_failure_du?=
- =?US-ASCII?Q?e_to_kpti=5Fng=5Fpgd=5Falloc_function_signature?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <aLHP-TG3a1Im3kpa@J2N7QTR9R3>
-References: <20250829154913.work.943-kees@kernel.org> <aLHP-TG3a1Im3kpa@J2N7QTR9R3>
-Message-ID: <315CE055-A886-4322-9683-AFE7003B1664@kernel.org>
+	s=k20201202; t=1756485702;
+	bh=relsKw9/OPOAajNcLPSs+4xD5qW1qyvZNMyRBzwhicU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QKeU1khitz5yH3DPVFwxT3WGnwCYlMXqeDJ9W7TAKSUM/8fYV+8GqraCIqB+mayuG
+	 GZatgcnFIdC4LOscP06HFLR7IOwl2VoLDBxF7xNEnbF0z+cnFx2gsCJbn8knq/24GA
+	 7dvemSyOq+ZHtINsOIV9HeFIWwgvTCDlVkQ2u9gn5L8BuameAkSKWHwZVEAydevsgL
+	 HEZDJswRaNv1bGQ7AfGSQfWlK34LFKPrAtBY66r2C/yhQDanLhbzELuXZ+Mh01k+IK
+	 JfgqNXwBcP8K0A1RW2Jvl9VmNvQHTtIwHWRnQeb8VFGEr+Yn5aB63zHbgGq7W2DhEP
+	 bUwk+1LSUlcNA==
+Date: Fri, 29 Aug 2025 22:11:35 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntb@lists.linux.dev
+Subject: Re: [PATCH 0/2] pci: endpoint: vntb: add MSI doorbell support
+Message-ID: <6iodjcf36dp3zhpy3tphrn6a43jaenpos7vcroouseevyzmxub@y3orprye3lrw>
+References: <20250815-vntb_msi_doorbell-v1-0-32df6c4bf96c@nxp.com>
+ <aLHW5NWF3PVFo/xn@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLHW5NWF3PVFo/xn@lizhi-Precision-Tower-5810>
 
+On Fri, Aug 29, 2025 at 12:35:48PM GMT, Frank Li wrote:
+> On Fri, Aug 15, 2025 at 06:20:52PM -0400, Frank Li wrote:
+> > Since commit 1c3b002c6bf68 PCI: endpoint: Add RC-to-EP doorbell support
+> > using platform MSI controller, PCI EP can get notification from Host.
+> >
+> > VNTB use this feature to reduce ping latency.
+> >
+> > The first patch impove epf core API to allow set any MMIO address to specfic
+> > bar.
+> >
+> > The second patch add MSI doorbell support.
+> 
+> Manivannan Sadhasivam:
+> 
+> 	Do you have time to review this patch?
+> 
 
+Sorry for the delay. It is still in my review queue. Will get to it this
+weekend.
 
-On August 29, 2025 12:06:17 PM EDT, Mark Rutland <mark=2Erutland@arm=2Ecom=
-> wrote:
->On Fri, Aug 29, 2025 at 08:49:21AM -0700, Kees Cook wrote:
->> Fixes: 47546a1912fc ("arm64: mm: install KPTI nG mappings with MMU enab=
-led")
->
->That doesn't look right; that commit is from June 2022, and we only
->introduced enum pgtable_type in May 2025 in commit:
->
->  c64f46ee13779616 ("arm64: mm: use enum to identify pgtable level instea=
-d of *_SHIFT")
->
->=2E=2E=2E which landed in v6=2E16=2E
->
->AFAICT, that's the commit which broke things=2E
+- Mani
 
-Oops, yes, I didn't look close enough=2E Want a v2 with that fixed up?
+> Frank
+> 
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Frank Li (2):
+> >       PCI: endpoint: Enhance pci_epf_alloc_space() and rename to pci_epf_set_inbound_space()
+> >       PCI: endpoint: pci-epf-vntb: Add MSI doorbell support
+> >
+> >  drivers/pci/endpoint/functions/pci-epf-vntb.c | 153 +++++++++++++++++++++++---
+> >  drivers/pci/endpoint/pci-epf-core.c           |  69 +++++++++---
+> >  include/linux/pci-epc.h                       |   5 -
+> >  include/linux/pci-epf.h                       |  35 +++++-
+> >  4 files changed, 223 insertions(+), 39 deletions(-)
+> > ---
+> > base-commit: c2a282d1fccc53a989da61a5da4f03c9d67ee99a
+> > change-id: 20250812-vntb_msi_doorbell-bf0fbac6d6d7
+> >
+> > Best regards,
+> > --
+> > Frank Li <Frank.Li@nxp.com>
+> >
 
-
---=20
-Kees Cook
+-- 
+மணிவண்ணன் சதாசிவம்
 
