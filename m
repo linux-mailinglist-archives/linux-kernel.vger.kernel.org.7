@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-791070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7367B3B1A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FF3B3B19B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B8367BC4F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B517C1BA69AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BCC22156C;
-	Fri, 29 Aug 2025 03:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VdjIH+qz"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14FD2253A0;
+	Fri, 29 Aug 2025 03:31:53 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDEC221546
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AF6199931;
+	Fri, 29 Aug 2025 03:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756438334; cv=none; b=tBy551vRjBeFWs+0hcwDjMVZxtgaYL8DccnKq8V4ehuwVn4qKl128M9bdZWx9PNHlMDVA6AuhMH9ANJCk2lnW5cX13MyMDVDdinwfBTN63D7VNbGVxD2z5oicfYzbgMkPq5DocAou2jv/sk9pLtwcqUikL2enRhihDwwfP7S7NI=
+	t=1756438313; cv=none; b=AC0Ja+ATC/MGdE+1ByC9Kb0VB+J9vFEZvNsZTccaxHOQzIZy7jaokrBdDDQJXeJTDYy4Q2g4Uj33OqKXjF0kzskgI92dutnxYOC9Np6DXrX1HRJT4OV/gAyIXfQpaZyktFLg8halBCXfwIWOwKxpwdFEUV/tebxIJyLJ2SvRC6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756438334; c=relaxed/simple;
-	bh=UWuqUFoPAbtNw47XnAvBqrdOwtohVNIOBeexM7UAGKw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=AXu9GlBlGe1EPndRX/hZtCjBpoJF+PgSsCVxGvCWZD/nAHY4h3XwN0Y1BfsRaE1L1Rey/Lmh+y3jnOUJyc76+C6A1CWEbeWj2PtZeSGgu0SW+Ii/Ka7aP8o0GtdtFV5HHzdz2axls2iJKVUv+nW4GRBSxoro4aJ5LOidcngG2Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VdjIH+qz; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b471757d82fso1288900a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756438331; x=1757043131; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9QGW1t2fTrlxsy99oh9r+8W3JLxNT7O01vCVlWKIguI=;
-        b=VdjIH+qzsUOn4WEaym3bsio8QUzhrrIF9GbeEp4y02I+hPE1yMStpesMDm4N0HNZrT
-         i7MxL0WVbBFGwwKCNVwSDGgq+f9Gva6kIXumRioEAvdyT5kvCdQ2ujRyujAW3Gj7fB3l
-         sSMlIcVQXfH5sdjhryi6iW/rQGFmAOVXHdCI8Ti21nCAwUBSAWJzBCjXY3k+mJi19j6Q
-         kpIqtCYi5/cpKfPh4kpWnuTu9uD18Svyre0236If4AcIogDz+TWmECFDkQS/y3LZcVRq
-         m8aQtwgNaeMtYSxItC+IVr2MChxvv8DCP1CbhyLrmD2kZCrFPBOCb/jpv1QsMqikk9Qa
-         wvoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756438331; x=1757043131;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QGW1t2fTrlxsy99oh9r+8W3JLxNT7O01vCVlWKIguI=;
-        b=qkrjVNkB4dkQkfPfrcs7tmUno76kU+E6zQ/RjushvomtQH6lvI8F3Ar35U3v2xxaoO
-         6RiiauWrAiFgw080fFtz0T7iT3uZObsSNApt/lmRav9nArtKKmQwMbfaYvUU4DY27yun
-         28Td1V425g35czs3k6kcH1eIEEI22L4NsGGQuYPWVZBA4A5q5t5mb3uZWob8K44Fo86J
-         k7+k0ROOlN2pAhl0uG7E4wJxwSOtF6S0ZI6FHCzyMpX6R1DqSJLjwsfw6tlLDJGIukwf
-         iAdfCYz8geM6OeFuqT1VfZlmzrKglVSgB+jxSEJMXyivjuqHRZ3bnkMTHgSNIlLaC8iD
-         DSCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJOCvI4Nqf0IkU4WpUSp5eajuukXmNGrfLZArXMnzksw3bXeE0EB5ouuPeDX8UtSq2+GHWAOwplUPO8ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXrq89vvPWQOJ/1+GKeREN1xitVLo6M3UcOlDnZmHTqup9Fiq9
-	VHU6jA6LFmVkDZR0xCjcGYymDCU8eur76fIxzy6Y9nX8G25cAvAXjwHHqmlwgqx6ObjRDKbQ6Fn
-	hyTfI/dAztA==
-X-Google-Smtp-Source: AGHT+IFruY13+0TIPjlDfpbi3fSgUGsWRBLlzXlFgq9LQVQaDvQ7884Pr78k5HIex9b+grU3F8xjr/hDvs29
-X-Received: from pjbsb4.prod.google.com ([2002:a17:90b:50c4:b0:325:8ff7:fd4e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d83:b0:327:9345:7097
- with SMTP id 98e67ed59e1d1-32793457259mr9000011a91.10.1756438330967; Thu, 28
- Aug 2025 20:32:10 -0700 (PDT)
-Date: Thu, 28 Aug 2025 20:31:38 -0700
-In-Reply-To: <20250829033138.4166591-1-irogers@google.com>
+	s=arc-20240116; t=1756438313; c=relaxed/simple;
+	bh=UhUig1WQs5r9O91kNC6dcY6jU7tD4ywv9NrFPfCV2SQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hKnuFbVMfYe1vyYweH9SgtaYpFnFU+9Yw52RGdr/qdKm12vos5eaj3XPKxh6s6Q7Ke17ub5Y9n1LGJnJQagXz1gItBIuemwlvGLJIqos7nu+Rbnc1nGnAJu0u/wx1a/XRtu7Qx0D2J5WvkMrkXLFESaT8FS35gS3z4j42vQ38T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cCkJG6kVZz24j3V;
+	Fri, 29 Aug 2025 11:28:46 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id B11AF1A016C;
+	Fri, 29 Aug 2025 11:31:46 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 29 Aug 2025 11:31:45 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: <vadim.fedorenko@linux.dev>
+CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
+	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
+	<gongfan1@huawei.com>, <guoxin09@huawei.com>, <gur.stavi@huawei.com>,
+	<helgaas@kernel.org>, <horms@kernel.org>, <jdamato@fastly.com>,
+	<kuba@kernel.org>, <lee@trager.us>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
+	<meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
+	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <sumang@marvell.com>,
+	<wulike1@huawei.com>, <zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
+Subject: Re: [PATCH net-next v02 01/14] hinic3: HW initialization
+Date: Fri, 29 Aug 2025 11:31:41 +0800
+Message-ID: <20250829033141.1707-1-gongfan1@huawei.com>
+X-Mailer: git-send-email 2.51.0.windows.1
+In-Reply-To: <02dcf1f8-3ba4-4f79-897c-bf5a5007cc70@linux.dev>
+References: <02dcf1f8-3ba4-4f79-897c-bf5a5007cc70@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829033138.4166591-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250829033138.4166591-14-irogers@google.com>
-Subject: [PATCH v5 13/13] perf jevents: Add uop cache hit/miss rates for AMD
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-Add metrics giving ratio of uop cache hits to misses.
+> > +/* Get device attributes from HW. */
+> > +static int get_hwif_attr(struct hinic3_hwdev *hwdev)
+> > +{
+> > +	u32 attr0, attr1, attr2, attr3, attr6;
+> > +	struct hinic3_hwif *hwif;
+> > +
+> > +	hwif = hwdev->hwif;
+> > +	attr0  = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR0_ADDR);
+> > +	attr1  = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR1_ADDR);
+> > +	attr2  = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR2_ADDR);
+> > +	attr3  = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR3_ADDR);
+> > +	attr6  = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
+> > +	init_hwif_attr(&hwif->attr, attr0, attr1, attr2, attr3, attr6);
+>
+> well, get_hwif_attr() name is misleading here, as the function doesn't
+> only read values, it also sets some of them. if there is no other users
+> of init function, it might be better to merge them.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/amd_metrics.py | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks for your comments.
+"get_hwif_attr" is actually misleading. In next version We consider
+changing this to "init_hwif_attr" and the old "init_hwif_attr" will
+be replaced with "set_hwif_attr" for better readability.
 
-diff --git a/tools/perf/pmu-events/amd_metrics.py b/tools/perf/pmu-events/amd_metrics.py
-index 0578ca7fdf92..d51f4c3fe0cb 100755
---- a/tools/perf/pmu-events/amd_metrics.py
-+++ b/tools/perf/pmu-events/amd_metrics.py
-@@ -571,6 +571,23 @@ def AmdSwpf() -> Optional[MetricGroup]:
-                      description="Software prefetch breakdown (CCX L3 = L3 of current thread, Loc CCX = CCX cache on some socket)")
- 
- 
-+def AmdUopCache() -> Optional[MetricGroup]:
-+  try:
-+    op_cache_hit = Event("op_cache_hit_miss.op_cache_hit")
-+    op_cache_miss = Event("op_cache_hit_miss.op_cache_miss")
-+  except:
-+    return None
-+  op_cache_total = op_cache_hit + op_cache_miss
-+  return MetricGroup("lpm_uop_cache", [
-+      Metric("lpm_uop_cache_hit_ratio", "Uop cache full or partial hits rate",
-+             d_ratio(op_cache_hit, op_cache_total),
-+             "100%"),
-+      Metric("lpm_uop_cache_miss_ratio", "Uop cache misses rate",
-+             d_ratio(op_cache_miss, op_cache_total),
-+             "100%"),
-+  ], description="Micro-op (uop) hit and miss rates.")
-+
-+
- def AmdUpc() -> Metric:
-   ops = Event("ex_ret_ops", "ex_ret_cops")
-   upc = d_ratio(ops, smt_cycles)
-@@ -657,6 +674,7 @@ def main() -> None:
-       AmdLdSt(),
-       AmdHwpf(),
-       AmdSwpf(),
-+      AmdUopCache(),
-       AmdUpc(),
-       Idle(),
-       Rapl(),
--- 
-2.51.0.318.gd7df087d1a-goog
+> > +
+> > +    return 0;
+>
+> there is no way the function can return error - what's the reason to
+> have return value?
 
+This is our oversight on error handling and patch splitting. We missed
+the error case for "hinic3_hwif_read_reg" that returns errors when
+PCIE_LINK_DOWN.
 
