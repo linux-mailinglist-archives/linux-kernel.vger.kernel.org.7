@@ -1,159 +1,108 @@
-Return-Path: <linux-kernel+bounces-791971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E641B3BEE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:10:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F277B3BEDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3BE1C82E09
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1E767A6CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3360E322549;
-	Fri, 29 Aug 2025 15:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3165B321F3B;
+	Fri, 29 Aug 2025 15:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="OvGqZzsx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WansO7sm"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="X28/S6Lf"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9104314A79
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE782135CE
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756480222; cv=none; b=K0yriLVvnPeNu2utVf/BU5dchSXy3Q11NCeuk+Lo1KOB4Q9gXGu13rHTUzL/JJGaIMsz3nyL8MYVFDou0PubUhuQpTUJNWN9qef9N4KqcIQSSG/sr+N2FsNBbzZw0/l7oI6pba8QTt8H97TMcd1VCYLqvdOgAmbU8wSP/B2zzfs=
+	t=1756480207; cv=none; b=F14oOefl5twPXptOC8zMDo9bqF1Yqo7J+n8MNoJQeoZR8trMnpPlVVm1b7cN7IOBjIgehMGx8Bs7V136RX4S+Mu8V5ahrCxvpgwp8LtLsleJNJXf/xf/LVdk4+ibRdefrXPKsdsNWl950wYZLy+hLzgVoeQ1cticxH6CrqlaYV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756480222; c=relaxed/simple;
-	bh=qsV/u9Nwr0h7M/C3VeO1oeIS2ynCNx5VPqSz8xyvcZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ezJUMKU6Kyx8ESPRf8GCrkUyp3w8HAj1/He/fypgoictRCS+0HwLZJ+WT5hbAsJR3xgYn+/mTuFITrmzfc43vmM6lzRnkaceca6Vy0WdT+vNpDZuUX+XtRHClMAdjFyAs1OnC9klGiGThiuJ6w8owVg7KvKP+pLxqU/yqTq7f7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=OvGqZzsx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WansO7sm; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9CD171D001E7;
-	Fri, 29 Aug 2025 11:10:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Fri, 29 Aug 2025 11:10:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1756480218; x=1756566618; bh=5O3s3cpJyL9ApAILIp2T0
-	tGI4d5H31t5BPcHpcF2ayA=; b=OvGqZzsx/FzdATbJoy0unXrm8eWlKJfc0OMiG
-	MWVXwBK5LHIDIwz3bfF7R0bvL9wFqFaA/NZsfoVRs7jwC94cdVfNR85Yz0xNznrc
-	owpw+EILrx5OnfhGsxCnxHu0wFjryXOc076zRQv/JTztKO0yI4hrp8xbqH1cqXHk
-	mOOcP+a3BztT2oyZgCw2P8BUgzfqqE6nrK/R2vn8vsouDKOIfINU19qtuiNN379i
-	7Ws5LUKl0YAjndvXcvSy6SCOiMHzRqDW14JVZPnhR0V2uMejhb1LDOqpZtqGMqMG
-	YCQk/dckKvO/MuPyJYsIoma4Bjr1l9NiHqw2KiV8BivuFqF9w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756480218; x=1756566618; bh=5O3s3cpJyL9ApAILIp2T0tGI4d5H31t5BPc
-	HpcF2ayA=; b=WansO7smqDH58YZ0VWJCiw5PO+2UgGn4QVRtzvzn2NB5r4qUS7x
-	sRPhndFcfDK3ZODb8xeRwYF4ikHC3XxgIEWup2eH2vWW1HK6eOhKOnx8gUpOai7C
-	UQkqVIhzMPzZrWB3Vm2VMNicRLOtFbd74wq8+/+capo3YcSWZFiRKOypUKcehZd4
-	vQKPAfo1zEN5y+GdLnKT6OiFIWQ3ytaR6B7ZUa4d9Hz3dGWDa1V/tjLal/JKA3d7
-	7W/KqIDZMU2AXO10sJ1zmyv/rIZQCEEeIQYFtbXXmrhLDr8Yo163Y4y+crbIj8Ts
-	NgfvJsQ6txQMdnksP4xtQA/EkcHHrpoD7kQ==
-X-ME-Sender: <xms:2cKxaAo1SJNO-WANuasZO9muLaUaloYliqhstWgcUU26k0SSpGg-ew>
-    <xme:2cKxaOAHpjTPnlh7wxiMOMOarNdIY2dK3Gyu6l8qKK6xlfvSr1BWmm00SLa_7VcaZ
-    qbfbQBfsqyiOxvtmw>
-X-ME-Received: <xmr:2cKxaKyeEhdwMvf0AmSxBk86cnWmPj45vNt40sLuOa2bmd6sxKXxl1BvWTbwi4tX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeegvddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomheptehlhihsshgrucft
-    ohhsshcuoehhihesrghlhihsshgrrdhisheqnecuggftrfgrthhtvghrnhepueefiedvhe
-    ffveegieejjeevgfejjeduveekffeiveeuvedvtedvhfelieeutdfgnecuffhomhgrihhn
-    pehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehhihesrghlhihsshgrrdhishdpnhgspghrtghpthhtohepiedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepgihurghniihhuhhosehlihhnuhigrdgrlh
-    hisggrsggrrdgtohhmpdhrtghpthhtohepvhhirhhtuhgrlhhiiigrthhiohhnsehlihhs
-    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepvghpvghrvgiimhgrsehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehjrghsohifrghnghesrhgvughhrghtrdgtohhmpdhrtghp
-    thhtohepmhhsthesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:2cKxaD3zT-coK3j3igEonjeljXp6s9kRXB9_fW6k9fHkeMRs-zAC9A>
-    <xmx:2cKxaCzNfgIsP4CEb7mMXbiV-m62ySFXkI2FoHoQNEk7rs5Wm9bvmg>
-    <xmx:2cKxaCG4l5BRGTm6j2HHdOw2FhATmLM4f6mmb_0kUjCBk15tclmqgw>
-    <xmx:2cKxaNZrwI6yRoNAzADiZOCjcDNpuPRTNrzRdAtyxqIRB2xTs-tNgw>
-    <xmx:2sKxaKJVO60jLd2B0zYj9y0sFHnTjPxtpXdoex2wIOtroviN2_3Je6jd>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 29 Aug 2025 11:10:17 -0400 (EDT)
-Received: by mbp.qyliss.net (Postfix, from userid 1000)
-	id 214EE14F3423; Fri, 29 Aug 2025 17:10:06 +0200 (CEST)
-From: Alyssa Ross <hi@alyssa.is>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] virtio_config: clarify output parameters
-Date: Fri, 29 Aug 2025 17:09:44 +0200
-Message-ID: <20250829150944.233505-1-hi@alyssa.is>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756480207; c=relaxed/simple;
+	bh=EGLIvrEeA6aZSH5bbWcCyh35lvNtwwlGEu4excYVUnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJ6+5FlrICW5EsIc7sJJioR6V3O14TXR9PWXXnS4cqjrHuqQut/Gzxi0yG5jVXQCVqsySMXc5+IIoog545qpCdlSImibUe8Kzj6lqVO66/wEiV0EpPakvYYkLu/0LTQPFTKqflTDc0P0cYIkt6d3WAo31PIg/pfHN3iS8ZF+5qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=X28/S6Lf; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7f6f367a1f0so262773285a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1756480204; x=1757085004; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EGLIvrEeA6aZSH5bbWcCyh35lvNtwwlGEu4excYVUnY=;
+        b=X28/S6Lf3SOPtz57BX37eXHkt4NsGL5RCG8+HSd97quKaYhU6faHKmQP9+A23DM+QH
+         mOcQWhNTE2yoXUx7QukBN8VjRl1wbyTszzWyj2cwZ2m8p38Hkr2WSDAfAahztSm2mpF5
+         lfSQ+FePztAc4DrnHbhTB/oyp9CVvqf5PQHybC5Ji7dreTgvjDMjT9RpLtNCK5WTgycl
+         lyuITQKYpMwDTEJLNn7/FLuds9ekqLFiw7PyeTSTLw7+rMRlcRbPW3nRrZSK+fxhWxj5
+         HtrlIeROtfUhdSWjMp0yrxP45CXt7VacZunhk0zLV3T8HMIzHzvxTmmnWLvuH0rJLNGd
+         /a6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756480204; x=1757085004;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EGLIvrEeA6aZSH5bbWcCyh35lvNtwwlGEu4excYVUnY=;
+        b=H+Qnoky0YTqd2pkuKTgTEgZe/0zgt4FLHCL8G1dUKeZrmZ20Bmi5N3+LQRHtO0u8VV
+         Yd2njD5sGwvhjaYq5eHXgXKUXpQrs62A2KQnI7uNCo62FBX1ZRvB7hp7GXBAt66wdr6A
+         oqGcgqgmVm9z2WmZSZhkIVdjXvAEnQBUSZBqMmrOWvmt6woV1okRnGftbL/pLD12wm1G
+         XQkrpKGu3neLsx4N8Gs5K7EjsF3AZx8gqXmCc53sS9ZZNtXi49DVEZ22KPAbYu5D36zs
+         mKOsa6/vO3fsL4eRcv/r6QUpc8AER3BsgPwVsVtPmKGNYh3WBB2TwutPproo9kFJNkvx
+         Eodw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPyV61Wdla/0VAsQi38xk0THIUnHK9R4Gn97cswD3UzooT8hhcR/C1N7X517tUNP7PHT2bpL8c4DCyA8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeCUKsOQ/qEkBn5PbjC3Pl+DosFNOrTm21KghrCFCj4uDyDTpx
+	7vkJ226W0GGffFAQ4AM6QysmlDI2AIEaEjrQQ+1FZQbiUxXfvbaFDB/0HyNri1p0MT2xhz6baNw
+	0cyjHYVBmTILGYLsdYkN07H9KP+7TETrM9hxL1DTf0A==
+X-Gm-Gg: ASbGncuwmp/FurlwY5TP1HlW8JVCQR+1LL/TPX2ZPv8AUNqdJfZpywz9W8sbvEk2TeI
+	1Q+BTjCoFZrGfHTM0vwm41OlvGUMp3kMcdHeoejVD53LVRtedMGnRZ7Gs8bJyfrmJ3lWYX8/ftz
+	ZdOoNQL6TGs4+3eJ/Nq3FiXpR3KXGx/0zZEMGpk+APGTRLbPNpmGnpi5W3k1GPMRWm1MLUl9RXj
+	XAYzQ==
+X-Google-Smtp-Source: AGHT+IGKh7Y20GWjms5CEWqUFYK6Fhl4aSsCjrhVa2muuLuQNwyCT8KtW05eeJgqP4jwNECHf4vjyNzCIEKa9V1tI+Y=
+X-Received: by 2002:a05:620a:269b:b0:7f9:98ca:af1f with SMTP id
+ af79cd13be357-7f998cac79emr862285085a.32.1756480204505; Fri, 29 Aug 2025
+ 08:10:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250825-rk3588-hdmi-cec-v3-0-95324fb22592@collabora.com> <20250825-rk3588-hdmi-cec-v3-3-95324fb22592@collabora.com>
+In-Reply-To: <20250825-rk3588-hdmi-cec-v3-3-95324fb22592@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 29 Aug 2025 17:09:53 +0200
+X-Gm-Features: Ac12FXxjT2DMgVXZUD7stQTdp-evPmAyNIHAST4h_-TfcQ_juOKoIsGqjkI2p6g
+Message-ID: <CAPj87rPhhhhEHrPqAcKNtWwAtCQRANp_=8sQtg3urqf5wcrmsA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] drm/rockchip: dw_hdmi_qp: Improve error handling
+ with dev_err_probe()
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This was ambiguous enough for a broken patch (206cc44588f7 ("virtio:
-reject shm region if length is zero")) to make it into the kernel, so
-make it clearer.
+On Mon, 25 Aug 2025 at 10:57, Cristian Ciocaltea
+<cristian.ciocaltea@collabora.com> wrote:
+> The error handling in dw_hdmi_qp_rockchip_bind() is quite inconsistent,
+> i.e. in some cases the error code is not included in the message, while
+> in some other cases there is no check for -EPROBE_DEFER.
+>
+> Since this is part of the probe path, address the aforementioned issues
+> by switching to dev_err_probe(), which also reduces the code a bit.
 
-Link: https://lore.kernel.org/r/20250816071600-mutt-send-email-mst@kernel.org/
-Signed-off-by: Alyssa Ross <hi@alyssa.is>
----
- include/linux/virtio_config.h | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
-index 8bf156dde554..7427b79d6f3d 100644
---- a/include/linux/virtio_config.h
-+++ b/include/linux/virtio_config.h
-@@ -193,14 +193,15 @@ static inline bool virtio_has_feature(const struct virtio_device *vdev,
- }
- 
- static inline void virtio_get_features(struct virtio_device *vdev,
--				       u64 *features)
-+				       u64 *features_out)
- {
- 	if (vdev->config->get_extended_features) {
--		vdev->config->get_extended_features(vdev, features);
-+		vdev->config->get_extended_features(vdev, features_out);
- 		return;
- 	}
- 
--	virtio_features_from_u64(features, vdev->config->get_features(vdev));
-+	virtio_features_from_u64(features_out,
-+		vdev->config->get_features(vdev));
- }
- 
- /**
-@@ -326,11 +327,11 @@ int virtqueue_set_affinity(struct virtqueue *vq, const struct cpumask *cpu_mask)
- 
- static inline
- bool virtio_get_shm_region(struct virtio_device *vdev,
--			   struct virtio_shm_region *region, u8 id)
-+			   struct virtio_shm_region *region_out, u8 id)
- {
- 	if (!vdev->config->get_shm_region)
- 		return false;
--	return vdev->config->get_shm_region(vdev, region, id);
-+	return vdev->config->get_shm_region(vdev, region_out, id);
- }
- 
- static inline bool virtio_is_little_endian(struct virtio_device *vdev)
-
-base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
--- 
-2.50.1
-
+Reviewed-by: Daniel Stone <daniels@collabora.com>
 
