@@ -1,261 +1,172 @@
-Return-Path: <linux-kernel+bounces-792268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8A1B3C20A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:47:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC67B3C20D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CB4A03C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1845A0903
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CC83451B8;
-	Fri, 29 Aug 2025 17:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995BA2F3636;
+	Fri, 29 Aug 2025 17:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fhs3NxM+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAFZQ45K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC8B3376BF;
-	Fri, 29 Aug 2025 17:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C11A0B0E;
+	Fri, 29 Aug 2025 17:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489600; cv=none; b=muFy2i2d6aD/5gBZNNn5Ja8HYFbwJqIPqHilHVPwYdkWVmEq2ISUOVC8SHzy6GLP8hud3GdimQr8q5DuNfta+GV/5s00bMqa8hy7UtuWmMMie8QAnma3jjVTBWZRJ++QKQXzqMWLrU/kylfvkhQ8VjWEX5/9jwYxgobl+p00CeM=
+	t=1756489802; cv=none; b=rp4gM1kM9Rh0JS7GekeOKTnchXYMntDKPwtojDwYAIag5Rd1jx838f+e2LkOoY/lQ1zdzebXYvfnJOIkQ8qICkqS31hdcSggvwMW9YHXLQO4A2lUgl9/kd/1V1wVVjDcPP9/yqw4nGk1qVkT68ydw+YnkH0Ntcer9D4p6zCk6aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489600; c=relaxed/simple;
-	bh=ni/lQ5yzIye/3iBX3VMg4p5EesBhwErRoN8M///2GNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPioxsPrBY+oXpvqIw8YH3wK2p7BeqpFvVgAS36dpdhs4fbzMCQoy4HzOJ22oeJijOshcFEAhahD1uXfEQrNlPP0LlwHnGmi3+3vkLtTTBXVCUl9A8ouxuquhB3f+cQmF/Yxfrt7LRIfO9HtMI0Jkw6Oeo5LoXNhKpz6hiwcNoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fhs3NxM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1EEC4CEF0;
-	Fri, 29 Aug 2025 17:46:39 +0000 (UTC)
+	s=arc-20240116; t=1756489802; c=relaxed/simple;
+	bh=HO/RW4o9Nu4vySZPP932OA2JN2QhGXtVX+onF0gTyCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kjdNY+qE6hcu6OlFI5RQQU2Nc+GKcV21my2D2QoUZ37TW89/Mld/pWQMHNEBDGFOGLb1jII8Qx8W2qCLOwqQ8vscxF1+S0XiVVMpUhMNxdZAyz42RqE0g5TxZ/ATaeootfR0YdBr20aRgFBZtFEVqewKQhqmnRAOuvgosutXrMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAFZQ45K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA38C4CEF0;
+	Fri, 29 Aug 2025 17:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756489599;
-	bh=ni/lQ5yzIye/3iBX3VMg4p5EesBhwErRoN8M///2GNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fhs3NxM+vQiz2pFhk/hwwJPHnY/ziGeFEK6zrOQeE8/KVlLdkmrY4vRwVdD2oXeJO
-	 Pl2vU/rMM2fUKtHsiqPelilXXkufypzi0ghXGiaPsw7iEBIblRpwx4gLbwaRmzHTHl
-	 9v7h4FzueqvZRni1uGfOD60lEPNzLuxGsoPSFgV4sEEWZYuIJNMmdJegIq/HXE/3h/
-	 g8B3pET1KW5ndBD0EviQlQniCmutNefiQO4zq94AlQK1/aj6KCecQffcbIIFDcJBxc
-	 JiPuEe3OXb8K747sv6k5RpS3Db23wWPcwoDBmytgzhZtTZkcAnvaIzcv3Fqgiv+uCs
-	 pkmS2DV080Glg==
-Date: Fri, 29 Aug 2025 12:46:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
-	kernel@puri.sm, mchehab@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	shradha.t@samsung.com
-Subject: Re: [PATCH v3 1/7] dt-bindings: media: nxp: Add support for FSD SoC
-Message-ID: <20250829174638.GA1054721-robh@kernel.org>
-References: <20250828085911.81266-1-inbaraj.e@samsung.com>
- <CGME20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6@epcas5p1.samsung.com>
- <20250828085911.81266-2-inbaraj.e@samsung.com>
+	s=k20201202; t=1756489800;
+	bh=HO/RW4o9Nu4vySZPP932OA2JN2QhGXtVX+onF0gTyCM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rAFZQ45KrOxVq/z08MDEu8Fi2wFRq3vTPTLCl8CIHzckBY3L+J/uyxHmLdHA5tQLv
+	 k6Ktm2gbbOgMv6+oMrF2CHvD3OiCOQ8TVSdhUxQBsVe+AA5wRG8z9gKTqAKKcUoOSr
+	 ewtdcI0jnveU9pq7+m7eKaae19SoaSdfoc+BQQpSfADXZHB5ire9fS40Qp2pHdi89r
+	 No6FwAxHsTHEVPhKJjrOJ1M0t+8zjMBAvCwPQjnkFOnnszLJCrvWR38Aaeb1rOJcP5
+	 4CjyuJTSVWMLsAKltZthfEPHH+zoScoYUYtQDaorws+nff6756aCQPMs2iqIjwPH2H
+	 Y0jnRhUz4Wa4Q==
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-61e1c0229b3so476017eaf.3;
+        Fri, 29 Aug 2025 10:50:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVc/9SY+YX6zU5VT4vryBCqH6Z87/ggnfC/Y+HlmUXk9U/k6vyJ5SUsCs9NRRu5twhf2ojoVZT9qdTe3uk=@vger.kernel.org, AJvYcCXb6nvlQyv9h13qahIsXiS9aev5nQjpSqxQRjTDU97a4pWtpij2MBUiQPuwXd+0o81xxoLIokkj6SQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuLSc6ppDECpt3cWj1GSZzTU/F0KiSBUackrU5pzJ2DdVCaxTe
+	75WV4R6F3KOYnNCk8gEQYCvHDWnBwGXC2K6WxLQciwP6PkIC96tGM0agI/V6ZNGMyndIcBbzt5/
+	IQqFvq+ojbOyXPH9M9mqzL5ZQITnK8w8=
+X-Google-Smtp-Source: AGHT+IH/4F7Y95yhr9HrfP2y6CmzjnYvNG/JUIFAcP9Ob3lK6l1fgTQA3LRGsf4/wxue1OwoidXj6aV8jDWQoNf/QI4=
+X-Received: by 2002:a05:6820:824:b0:61e:14fe:dae7 with SMTP id
+ 006d021491bc7-61e14fee174mr3278356eaf.1.1756489799828; Fri, 29 Aug 2025
+ 10:49:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828085911.81266-2-inbaraj.e@samsung.com>
+References: <724616a2-6374-4ba3-8ce3-ea9c45e2ae3b@arm.com> <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
+ <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
+ <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com> <39dccf98-41da-4c54-a200-50f367cd0147@arm.com>
+In-Reply-To: <39dccf98-41da-4c54-a200-50f367cd0147@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 29 Aug 2025 19:49:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ii4sdpjfNpbxiLKZrooTKgvvSsSbPMc6j3fjZNckhkvQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxQ6SEzJLNJ7-awPOC2SCeXVGjRGQgCs2L0cKVq4ssD9m6qbbsk0eU_0aY
+Message-ID: <CAJZ5v0ii4sdpjfNpbxiLKZrooTKgvvSsSbPMc6j3fjZNckhkvQ@mail.gmail.com>
+Subject: Re: [PATCH] Revert "intel_idle: Rescan "dead" SMT siblings during, initialization"
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 02:29:05PM +0530, Inbaraj E wrote:
-> The Tesla FSD CSIS link controller is used to configure MIPI CSI-2
-> Rx link operations.
-> 
-> The Tesla FSD SoC include a MIPI CSI-2 Rx IP core named CSIS, which is
-> compatible with the CSIS IP found in NXP i.MX7 and i.MX8 SoCs. Add the
-> compatible string "tesla,fsd-mipi-csi2" to support the MIPI CSI-2 Rx
-> link operation on the Tesla FSD SoC.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
->  .../bindings/media/nxp,imx-mipi-csi2.yaml     | 91 +++++++++++++++----
->  1 file changed, 71 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> index 41ad5b84eaeb..39b9447fd40c 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> @@ -14,7 +14,7 @@ description: |-
->    The NXP i.MX7 and i.MX8 families contain SoCs that include a MIPI CSI-2
->    receiver IP core named CSIS. The IP core originates from Samsung, and may be
->    compatible with some of the Exynos4 and S5P SoCs. i.MX7 SoCs use CSIS version
-> -  3.3, and i.MX8 SoCs use CSIS version 3.6.3.
-> +  3.3, i.MX8 SoCs use CSIS version 3.6.3 and FSD SoC uses CSIS version 4.3.
->  
->    While the CSI-2 receiver is separate from the MIPI D-PHY IP core, the PHY is
->    completely wrapped by the CSIS and doesn't expose a control interface of its
-> @@ -26,6 +26,7 @@ properties:
->        - enum:
->            - fsl,imx7-mipi-csi2
->            - fsl,imx8mm-mipi-csi2
-> +          - tesla,fsd-mipi-csi2
->        - items:
->            - enum:
->                - fsl,imx8mp-mipi-csi2
-> @@ -38,24 +39,21 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    minItems: 3
-> -    items:
-> -      - description: The peripheral clock (a.k.a. APB clock)
-> -      - description: The external clock (optionally used as the pixel clock)
-> -      - description: The MIPI D-PHY clock
-> -      - description: The AXI clock
-> +    minItems: 2
-> +    maxItems: 4
->  
->    clock-names:
-> -    minItems: 3
-> -    items:
-> -      - const: pclk
-> -      - const: wrap
-> -      - const: phy
-> -      - const: axi
-> +    minItems: 2
-> +    maxItems: 4
->  
->    power-domains:
->      maxItems: 1
->  
-> +  tesla,syscon-csis:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Syscon used to hold and release the reset of MIPI D-PHY
+On Thu, Aug 28, 2025 at 11:44=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 8/28/25 20:06, Rafael J. Wysocki wrote:
+> > On Thu, Aug 28, 2025 at 6:13=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> >>
+> >> On Thu, Aug 28, 2025 at 4:44=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
+el.org> wrote:
+> >>>
+> >>> On Thu, Aug 28, 2025 at 4:26=E2=80=AFPM Christian Loehle
+> >>> <christian.loehle@arm.com> wrote:
+> >>>>
+> >>>> This reverts commit a430c11f401589a0f4f57fd398271a5d85142c7a.
+> >>>>
+> >>>> Calling arch_cpu_rescan_dead_smt_siblings() in intel_idle_init with
+> >>>> boot parameter nosmt and maxcpus active hotplugged boot-offline CPUs
+> >>>> in (and leave them online) which weren't supposed to be online.
+> >>>>
+> >>>> With the revert and nosmt and maxcpus=3D12 on a raptor lake:
+> >>>> cpu     online  capacity
+> >>>> cpu0    1       1009
+> >>>> cpu1    0       -
+> >>>> cpu2    1       1009
+> >>>> cpu3    0       -
+> >>>> cpu4    1       1009
+> >>>> cpu5    0       -
+> >>>> cpu6    1       1009
+> >>>> cpu7    0       -
+> >>>> cpu8    1       1024
+> >>>> cpu9    0       -
+> >>>> cpu10   1       1024
+> >>>> cpu11   0       -
+> >>>> cpu12   1       1009
+> >>>> cpu13   0       -
+> >>>> cpu14   1       1009
+> >>>> cpu15   0       -
+> >>>> cpu16   1       623
+> >>>> cpu17   1       623
+> >>>> cpu18   1       623
+> >>>> cpu19   1       623
+> >>>> cpu20   0       -
+> >>>> cpu21   0       -
+> >>>> cpu22   0       -
+> >>>> cpu23   0       -
+> >>>>
+> >>>> Previously:
+> >>>> cpu     online  capacity
+> >>>> cpu0    1       1009
+> >>>> cpu1    0       -
+> >>>> cpu2    1       1009
+> >>>> cpu3    0       -
+> >>>> cpu4    1       1009
+> >>>> cpu5    0       -
+> >>>> cpu6    1       1009
+> >>>> cpu7    0       -
+> >>>> cpu8    1       1024
+> >>>> cpu9    0       -
+> >>>> cpu10   1       1024
+> >>>> cpu11   0       -
+> >>>> cpu12   1       1009
+> >>>> cpu13   0       -
+> >>>> cpu14   1       1009
+> >>>> cpu15   0       -
+> >>>> cpu16   1       623
+> >>>> cpu17   1       623
+> >>>> cpu18   1       623
+> >>>> cpu19   1       623
+> >>>> cpu20   1       623
+> >>>> cpu21   1       623
+> >>>> cpu22   1       623
+> >>>> cpu23   1       623
+> >>>>
+> >>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> >>>> ---
+> >>>> Rafael, I don't immediately see how to fix this properly so I won't
+> >>>> try to, feel free to treat this as a bug report.
+> >>>
+> >>> Sure, thanks for reporting this!
+> >>>
+> >>> Well, I think that cpuhp_smt_enable() is missing a check.  It looks t=
+o
+> >>> me like it should do the topology_is_primary_thread(cpu) check like
+> >>> cpuhp_smt_disable().
+> >>>
+> >>> I'll cut a test patch for this later.
+> >>
+> >> Something like the attached one, perhaps.  I haven't tested it yet,
+> >> but I'll do that later.
+> >
+> > Works here AFAICS, but my test system is not hybrid.
+>
+> Yep, on my end as well, thanks!
+> Tested-by: Christian Loehle <christian.loehle@arm.com>
 
-Reset? Sounds like you should be using the reset binding.
-
-> +
->    phy-supply:
->      description: The MIPI D-PHY digital power supply
->  
-> @@ -93,7 +91,8 @@ properties:
->              properties:
->                data-lanes:
->                  description:
-> -                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data lines.
-> +                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data
-> +                  lines.
-
-Reformatting should be a separate patch.
-
->                  minItems: 1
->                  items:
->                    - const: 1
-> @@ -115,7 +114,6 @@ required:
->    - interrupts
->    - clocks
->    - clock-names
-> -  - power-domains
->    - ports
->  
->  additionalProperties: false
-> @@ -124,20 +122,73 @@ allOf:
->    - if:
->        properties:
->          compatible:
-> -          contains:
-> -            const: fsl,imx7-mipi-csi2
-> +          const: fsl,imx7-mipi-csi2
-
-'contains' was correct. It is more future proof when there is another 
-SoC that is backwards compatible with imx7.
-
->      then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The external clock (optionally used as the pixel
-> +                clock)
-> +            - description: The MIPI D-PHY clock
-> +        clock-names:
-> +          items:
-> +            - const: pclk
-> +            - const: wrap
-> +            - const: phy
-> +        tesla,syscon-csis: false
-> +        fsl,num-channels: false
-
-blank line
-
->        required:
-> +        - power-domains
->          - phy-supply
->          - resets
-> -    else:
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: fsl,imx8mm-mipi-csi2
-> +    then:
->        properties:
->          clocks:
-> -          minItems: 4
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The external clock (optionally used as the pixel
-> +                clock)
-> +            - description: The MIPI D-PHY clock
-> +            - description: The AXI clock
->          clock-names:
-> -          minItems: 4
-> +          items:
-> +            - const: pclk
-> +            - const: wrap
-> +            - const: phy
-> +            - const: axi
-> +        tesla,syscon-csis: false
-> +        fsl,num-channels: false
->          phy-supply: false
->          resets: false
-
-blank line
-
-> +      required:
-> +        - power-domains
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: tesla,fsd-mipi-csi2
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: The peripheral clock (a.k.a. APB clock)
-> +            - description: The DMA clock
-
-Wouldn't this be the same as the "AXI clock"?
-
-> +        clocks-names:
-> +          items:
-> +            - const: pclk
-> +            - const: aclk
-> +        phy-supply: false
-> +        resets: false
-> +        power-domains: false
-
-blank line
-
-> +      required:
-> +        - tesla,syscon-csis
-> +        - fsl,num-channels
->  
->  examples:
->    - |
-> -- 
-> 2.49.0
-> 
+Thanks for testing and let me submit a proper patch.
 
