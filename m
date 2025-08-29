@@ -1,177 +1,141 @@
-Return-Path: <linux-kernel+bounces-792226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FC1B3C1A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B6CB3C1A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219E21C80C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251011C808F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD32340D91;
-	Fri, 29 Aug 2025 17:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18050340DBB;
+	Fri, 29 Aug 2025 17:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvrTh0QK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gEbI0DPY"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C2221D9E;
-	Fri, 29 Aug 2025 17:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0D0335BD6
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756487883; cv=none; b=ei1qhNK4R85yFg8+1qRXsAJjFhtIJa8JzEp7fefvHyaMNwCokiSmWBMupB71w9poOhxXcJnR+Eo7uj9MSjKUFp0jQsrnUd4Vmc7Dkzy0UjQUSaoiH1pSXNQRcSNY6mhIOKeV1GG9TJs6uc+aFVj7tFj8j7+JcaP14jWQe65P210=
+	t=1756487950; cv=none; b=OJ510Diqr3uC57RsK1CC55yEIMAEXhf0in9sF+Kcn23HHMPyVCzfEo5J7Aqj/jSpZ/J2A3SnpCnmGQZN74iKGVa76EzkSPVs8ndIGxCWSCzq0ddoKQ0iJt2UH68CiPySorXGANlusx7pSrB7kBMPC3vZrLiVyE4WhLX5QPs1UvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756487883; c=relaxed/simple;
-	bh=ZN03sxhjmicQosWeGmY4JnLGwOZXXH0G5tX2JHrs4Yo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Mc2tsocf+zUln1RCtlJ2qIZsdZXCAFwaud3Q/uUrvNjyIypz9dLpvvsNOQeMJ9L+ZKqoOLeLcrBkOtHsOqceju7Oc46F6GXEof3z0TbI9bOxsAO8K/+SHElaMfnFvijwrg82p2tPd6smMwsAVkF1rCDKY3ByPJ0xjARkOeETIV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvrTh0QK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7a3b3a9so361399066b.2;
-        Fri, 29 Aug 2025 10:18:01 -0700 (PDT)
+	s=arc-20240116; t=1756487950; c=relaxed/simple;
+	bh=TM3V3RRshJMWcoLLBm8hx/lAB1LvFN80zVkpuzPG9DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtdAbV3ut1tNZJv6EWGy3IUsiceRnvQZggSLzIS4IEDYAJ2y0qq2eGy1XkVV/nyi4dUrN17Smxu6O0nMjCkC8aSUjrbAPUftdeytLt3cvBnwAtI4Sd82JfBvk2/3BKh3GlujRKjHC4THGJV7gtnttbiE4xjyFweW0uQ771T1RXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gEbI0DPY; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cce5cb708so1741635fac.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756487880; x=1757092680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xrzuRNSlyqmubW3zh5/hhg2Gt+wTZOmIedHD4WFNRfs=;
-        b=hvrTh0QKBKwUISs8thiPN+QAtnUf9e0VpQgfLYR46hyYOmnbTGKrOYnDyjW7qJabah
-         03T3KdvQgMa3g9WLBd27uKdSSodp09fu83Erhw9WWV3WZZPg/cjbGACQuFUocJcndNwo
-         yVIRZe/8u2dQRjvhfNoX4C+vA453ky32Hovy2tEUTz+JgtFmVxbDs3aOvP34HcA1lOBK
-         jihDPT1lNttFd9bzu71NI5k+0QXWdWParHd8aHOSOo2LS6V6cAFOw6z1j8gUVhNQGX3K
-         CTFWQsiD+HkS9sTxbltXt+NBP/wCK9xsQJZRBVyBaxU3J2CurIRyzUGmcVZG+IUWIqmO
-         Fi3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756487880; x=1757092680;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756487947; x=1757092747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xrzuRNSlyqmubW3zh5/hhg2Gt+wTZOmIedHD4WFNRfs=;
-        b=MoUg+bd8pwXcpzSrMAoIm8K9E1Dw6GlELppbj0rIAHn9I72j0x1r7uDgmmykZsWoIX
-         DUrDdJVeN7qoWLDd1WxOIiwYq+BcBqdHN21ZWWx1fDd0ruF5AMrIOqNSTpvhbUcgJ0fo
-         uDfl8bcjcgHbsUEH1G9XQRbtKw9vnvfvCn0Vv0eWlDULmNMOvd01JKs9xorrz0VHLIvl
-         w+q2wNfJdIgZWTjzElFCia2jZiNagfE1lebRdeks4Pa4eTMNZ25NpaxVmVaBITWVjkEJ
-         D+3fqH4aIKbcH4wbxU9f21SSmNtCAmpIy9WmX8cZ2NbWSeFPISoXgG7+EFG3kCiPjbXF
-         iT8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZa2twsitgSY9OaMPRq83SkvZUSBsPKha6k+Svto871W5ciGsDFAnafM9yveZrTEIDGYQ0fK+qJOLLXffSwiG+eE6b@vger.kernel.org, AJvYcCVxQArDHXtqx7NpC+QAJe+Kg+RwtKQO8dLZsE7lbxy4rHk26aTfCZXD0iucXsx9Tt3ViA5SOlbNSq8DpGXY@vger.kernel.org, AJvYcCW4DjNboXTbgg4zw723nuSfgP9u2dL6iVbrzRUiHxKcD6BrUkDoy3XRkl/qIeVM5MzbBho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6SBpUprKR1gFLCzVeN7ebBTpsjajyR9fiAGoCcnBu/rNCt8ES
-	UAi0OgGOSjsNTVAh0oymKz/4yKPbOmrybqfIgpb1URBM6bFBwqdk80fy
-X-Gm-Gg: ASbGncuvoccJycuex1wMjohY0WJ6QXxkZ/bTHHy5t3Vgi50iBQBzuYdnlZ5uAEQyA9i
-	JF3NV9UFJjDdM7eVjDXzB+wCt6AvS/KTCgFSvoclhuvXtdVdY7WfU36EEOsCm7s1eEYSWra78gn
-	9mjTJWMXWYuosZ+mbdtPNUIFyOtXIyca9SteZ9jFnq+ewju2QQKIpr+3j0IF9ZE599VkrLfexoH
-	OjpjgRLUF6FRpJyNOaKvC8k/uYlmZ8i92/q6zUXoSewUvFwlRL4BxHLl/KJduND878gA3ImYRcr
-	ORWxT3z8cwtYSz+PjiYTuPT68n9xyVLuhhccn+9ng8TXTfW33ngbZFeDcdKFS8DkijgVUFD/766
-	aEwN2TXb/PNsOxHR4PojtPDMkhggBKoQj66xvOSiH3kE/
-X-Google-Smtp-Source: AGHT+IFolD4Novq7SEQgN2iErN14DtXsvntBpVAJMgWA0Dt3VXGsPTSQaYEnIZc9sb/n3S4QKp1fxw==
-X-Received: by 2002:a17:907:1b1a:b0:af9:c321:7e01 with SMTP id a640c23a62f3a-afe29043210mr2312160166b.41.1756487880211;
-        Fri, 29 Aug 2025 10:18:00 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([31.40.215.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcc2d50dsm232774366b.93.2025.08.29.10.17.58
+        bh=UEP4vbK6aLFhZ+UZYsQsobsaIoV/mTQ+kv24X35w/xY=;
+        b=gEbI0DPYHDC+Z6iMxXPecWF56LwuCVaiZGRGThT3nkCEWP8dZNx/hEXW5JiJESs9Cm
+         dTbMAu3PANwSvK/e6xMPOq5XMcNSWDDA72NsysrAJqZG3U63ggmNae8akLa4kxYxeBQo
+         46GUPEuC4JoWm0VvIiwZrciEXCzhRSQdhvzi+opOEg6N37xl6yQNxSDQ4OtIena2QNDE
+         YnZBUitkC5Mk0f0R358LUWw5HlS/SsPaGeani1jHWVRGz2fkWux3jh5ST8pmStwFB/Yc
+         pNajjnYGyMLKgaXg+0+3Q3SLoaMvsXuDVkUp1hfzKhp7f8ElhxixFsSiZu8Q4nWvkG2J
+         ADVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756487947; x=1757092747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEP4vbK6aLFhZ+UZYsQsobsaIoV/mTQ+kv24X35w/xY=;
+        b=tlA9czkEXmUlnPPuxoWvs0fR3cH1doxPI9JlBCHKxne+w6xwF/CT25Gd9FgpR5h7Gk
+         znoE385Yu8kURQO9TbKrEBRpgiF8kO3cdf9g+nk1TbUHCl1F3E/DsBKtx4+vMIBAaqAJ
+         i1o/mFHLzoZuSM6MlPbbn1f/JnYnBUMToYP0V4LPXlq78L80cyQNIjWxtLXVfwicDh3y
+         EJLkJs3soT+i1NPGEr3Zg/G9ZUdDau6NXQQxqw6IV0zLnev636ndPLo2zq71w8Z/X7qY
+         FRVigVEaR2N43eQcJsH5bUHhkHe9IDNdGc9srFJGSXrmSGVMseDSB6BZ20QulGhhI6at
+         pF9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWl226P334xThShn+dR2QlysyEWy70lL6BsaILjsbCehl4WndPU2xua9QxFjAyvK8deVgPa0VsE4rP3cx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycvePCkz2dWYJzGTqy1ElP3PYV4QIiz1PXK/r8ZQGfZq3SMtGp
+	JrkEdvEhuBWR0qBp08T5tqPugBtr8ecX1O/WYYfCtm0omewVb8YdEmmS7+d2QDR2Vsk=
+X-Gm-Gg: ASbGnct7IoRKKEP/Sk/k+FxVHWv6rDk+V12ELPRKsmcTLbw+lhrLqOIWMqx3X4byxYD
+	NznTjXFR/HutwML246BEIRtspZhWhl/SCt6IsS/+OPNLC8Slm/kKyaeH6MTRqlo4R/C8N8OgY0d
+	GYvLIcOpBLkOyi6YJXZVXemAqcpnTY4iAAI0MSlQz8dOhBG1oCEoPNhI7zd9i/8O0OAus0eDwXi
+	G2hrZzyAsDvUyVp3qgv2NuUug7S6fvo8KSuJ6ONV/KyFtzYdmipugKxX5kd0wGHBaj2jTqQTH1k
+	L35qACInF7EguhNmAtpi6mvxAhf0oY5fs2BmHlYUSDq9/1p2DMjqtgQ0q8RxQ5d6563EZbHbdjV
+	VunzQgt4dl0giyphwnmX8u2Y55uJdfdmJb6fPg51/phWxvGsxFTaeQcPff+njy7yU7udWaEiUTS
+	jl7B2xDGT42w==
+X-Google-Smtp-Source: AGHT+IEDNwg5Ezv4Jrx9SDKm9RyylhoO8ne6U5dbzIqaQlFIzpaEo8k5fSGVlra8caUiERGlR0wePw==
+X-Received: by 2002:a05:6871:5206:b0:315:91a3:2fb7 with SMTP id 586e51a60fabf-31591a34baamr4845495fac.35.1756487947326;
+        Fri, 29 Aug 2025 10:19:07 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afe1937asm1472582fac.21.2025.08.29.10.19.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 10:17:59 -0700 (PDT)
-Date: Fri, 29 Aug 2025 14:17:55 -0300
-From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>
-CC: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
- Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/6=5D_tracing=3A_Show_inode_and_devi?=
- =?US-ASCII?Q?ce_major=3Aminor_in_deferred_user_space_stacktrace?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org> <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com> <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com> <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com> <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com> <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com> <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com> <20250829121900.0e79673c@gandalf.local.home> <CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com> <20250829124922.6826cfe6@gandalf.local.home> <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-Message-ID: <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+        Fri, 29 Aug 2025 10:19:06 -0700 (PDT)
+Message-ID: <a20356ca-05ca-4c99-819b-4b278e799f2a@baylibre.com>
+Date: Fri, 29 Aug 2025 12:19:05 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] iio: adc: ad7124: add external clock support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250828-iio-adc-ad7124-proper-clock-support-v3-0-0b317b4605e5@baylibre.com>
+ <20250828-iio-adc-ad7124-proper-clock-support-v3-3-0b317b4605e5@baylibre.com>
+ <CAHp75VdtQ8vKULomgqPxwX=WZWUde7PC129BEznYqefd-U4DEQ@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CAHp75VdtQ8vKULomgqPxwX=WZWUde7PC129BEznYqefd-U4DEQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On August 29, 2025 1:59:21 PM GMT-03:00, Linus Torvalds <torvalds@linux-fo=
-undation=2Eorg> wrote:
->On Fri, 29 Aug 2025 at 09:49, Steven Rostedt <rostedt@goodmis=2Eorg> wrot=
-e:
+On 8/29/25 10:53 AM, Andy Shevchenko wrote:
+> On Fri, Aug 29, 2025 at 12:55 AM David Lechner <dlechner@baylibre.com> wrote:
 >>
->> What do I use to make the hash?
->
->Literally just '(unsigned long)(vma->vm_file)'=2E
->
->Nothing else=2E
->
->> One thing this is trying to do is not have to look up the path name for
->> every line of a stack trace=2E
->
->That's the *opposite* of what I've been suggesting=2E I've literally
->been talking about just saving off the hash of the file pointer=2E
->
->(And I just suggested that what you actually save off isn't even the
->hash - just the value - and that you can hash it later at a less
->critical point in time)
->
->Don't do *any* work at all at trace collection time=2E All you need is
->to literally access three fields in the 'vma':
->
-> - 'vm_start' and 'vm_pgoff' are needed to calculate the offset in the
->file using the user space address
->
-> - save off the value of 'vm_file' for later hashing
->
->and I really think you're done=2E
->
->Then, for the actual trace, you need two things:
->
-> - you need the mmap trace event that has the 'file' value, and you
->create a mmap event with that value hashed, and at that point you also
->output the pathname and/or things like the build ID
->
-> - for the stack trace events, you output the offset in the file, and
->you hash and output the file value
->
->now, in user space, you have all you need=2E All you do is match the
->hashes=2E They are random numbers, and user space cannot know what they
->are=2E They are just cookies as a mapping ID=2E
->
->And look, now you have the pathname and the build ID - or whatever you
->saved off in that mmap event=2E And at stack trace time, you needed to
->do *nothing*=2E
->
->And mmap is rare enough - and heavy enough - that doing that pathname
->and build ID at *that* point is a non-issue=2E
+>> Add support for an external clock source to the AD7124 ADC driver.
+>>
+>> Previously, the driver only supported using the internal clock and had
+>> bad devicetree bindings that used a fake clock to essentially select
+>> the power mode. This is preserved for backwards compatibility.
+>>
+>> If the clock is not named "mclk", then we know that the devicetree is
+>> using the correct bindings and we can configure the chip to use an
+>> external clock source rather than internal.
+>>
+>> Also drop a redundant comment when configuring the register fields
+>> instead of adding more.
+> 
+> ...
+> 
+>> +                       if (clk_hz > MEGA) {
+> 
+> I read your answer, but maybe I missed something?  Can we use (1 *
+> HZ_PER_MHZ) here?
 
+I suppose we can. But it doesn't add any additional information.
+We already know we are dealing with Hz because of clk_hz and 1
+is implicit. So it is just a matter of style preference. Since I
+read a lot of code, I tend to prefer the minimal approach - it is
+less to read and still has the same meaning.
 
-Or using a preexisting one in the DSO used for the executable mmap=2E
+> 
+>> +                               clk_sel = AD7124_ADC_CONTROL_CLK_SEL_EXT_DIV4;
+>> +                               st->clk_hz = clk_hz / 4;
+>> +                       } else {
+>> +                               clk_sel = AD7124_ADC_CONTROL_CLK_SEL_EXT;
+>> +                               st->clk_hz = clk_hz;
+>> +                       }
+> 
+> 
 
-As long as we don't lose those mmap events due to memory pressure/lost eve=
-nts and we have timestamps to order it all before lookups, yeah should work=
-=2E
-
-- Arnaldo=20
-
->
->See what I'm trying to say?
->
->               Linus
-
-- Arnaldo 
 
