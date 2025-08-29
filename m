@@ -1,251 +1,202 @@
-Return-Path: <linux-kernel+bounces-791836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305F6B3BC86
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:29:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562EDB3BB2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECE03B5CC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F6746860A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00E331AF31;
-	Fri, 29 Aug 2025 13:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D21314B7E;
+	Fri, 29 Aug 2025 12:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKv9Q4ft"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="TvHQVmRY"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012019.outbound.protection.outlook.com [52.101.66.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859DA2ED855
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756474171; cv=none; b=FWeDRDu7apltSwSsNflaihYEfoYsu6+4UWnq0X+ByCBvX0ByVBH12dw6WXLwGwLvdnE3J8IGMuMpIx+Em9doKKiYGcYYz87aDpX51Z95T/A3aSvBSc8ekncWcsBkz+BEitwh3mc4Mknx31FjhiNiGOm35p1IudGtJZ+cst2gGu8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756474171; c=relaxed/simple;
-	bh=knOkve9KJ6aDZa9cI8V8ayiO/Btg8paML35UfEGiBTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bi6tdh2uUK+2FhVNhnBlu4fU1IM/0lOQOiZmjPMUMCY7a+J6jJIPXUspiDplCqwld0orDqyKih05VxOHNOZaearwvpgNu+jvvA+0yIntepB3VWKcqUYQmFLx+gZ19i9r4OxZ9RzSFOrEQWevvqKG8TFhRZO7enyYeYRlipmqynw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKv9Q4ft; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756474168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y5xCVHj/t6FV37rBGnYXOrcnRWfi0Bqvu58jEXvy/kk=;
-	b=AKv9Q4fti/MxQ/3w7FfoZZey/vc2cxaxgdF/UfDncNZZ54IBtXcQBBUHewD2DuMXSgDiDa
-	aRHC/0A99Lqp8fPhAjErsgv5F6ke0qPFBPmpym+TT08SW6j+TBJ23v2hx4R7k09eeEipBg
-	nCbmYaFLc/IZ6aOjmQpjoveM2pLTkUg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-604-bwUiLHz3NvykS1iWwDEgDg-1; Fri,
- 29 Aug 2025 09:29:23 -0400
-X-MC-Unique: bwUiLHz3NvykS1iWwDEgDg-1
-X-Mimecast-MFC-AGG-ID: bwUiLHz3NvykS1iWwDEgDg_1756474161
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CCA11956089;
-	Fri, 29 Aug 2025 13:29:21 +0000 (UTC)
-Received: from [10.45.224.190] (unknown [10.45.224.190])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 02E7C19560B4;
-	Fri, 29 Aug 2025 13:29:16 +0000 (UTC)
-Message-ID: <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
-Date: Fri, 29 Aug 2025 15:29:15 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8EB30C60A;
+	Fri, 29 Aug 2025 12:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756470130; cv=fail; b=DRcDxqsJm0ri0qdVWOVO1xuckcm4dyfRApGdbPBtlYNQprKdorH0/JkJEnE8Ps2XxzL1nXwartcAN8lzoUziyiPBQJdSnF822gnOLVOA8kWVeLgsj9vQH7PkBlL7ihdSdse4ETFZ7vJoLJca7FgwtgnlxURomXRVQwLcssziUiA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756470130; c=relaxed/simple;
+	bh=0gJaM3KEWNjZvTJJL4suKeEv6tx9wyq2jnPhK4vfdyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KXE2ZtSPA5rORWR5nNqvPYuJqQ4qrksEELCXFjstFVgbT56P4KNSZPhGlMrtmhSHtJXFCdjywzsZaQSk/st01AdDoYP00ulnvBGacahBq5q6dqgDGkXCKelgoFHkAD47f4aH7GTCOjLTMIDmJ7F/nQFZ5pQQzjP7lm4RZ2D8lX0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=TvHQVmRY; arc=fail smtp.client-ip=52.101.66.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ovwGGl9dCcCfYKpdwkTRtrSyVsYOP4MDjjjMyhYmdqxzt6C+6EeL0JuC83oudr+GpLh6V6p6mehADAy5pyt3cGKa6iUcKmkD3P8xxM64itmXooU4DnH2bEy0wNacWTM/bBCQ4OPvVaPNGGm67lKZmLfM3niFYFUcuJKdof4wIp3BQbfQQyDSDyT3sM5aqBT5QXl52KIp9xdTmgCxoNSzQFHyxfKBVWh6aLvbypYPP0NakQ2GxFVY/u9Ifawm6WXzomGPZUrhCOmQlbv5shFaWTXb8uEQtQ347plNcGTmdTSlO+SmNw13uoJoyQSltFAshKZWLaNMjXyl6xTHxBk3kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lx+kBNu3qEkV7prHxTjcI9oa/dRZ+TFcfCNE4xjEqho=;
+ b=YQ7/E2CaMYkKuumzcPLyv9L6cAOfeDVW5Sf+Rgz0dlXV8HFBnId1+pcD1Gnon8ggvBSQD1MWJ7nSmdY1H0OmiONOi3K7sF93VDJV+e8U/z6rXKoqIPYNmdU/JFfnKiun7rsZprxnOKFL+zu9rOZsoMr9VKYhi40oblJ6CyKA/pAeGprsVS7PSTBWFoKYRDM9oDXzCaqVVNiuof+27ybmdkZCeM460+uUyHNa10dbuFzjSYztNnYOSusTzfU6jaoX5oZxobOOJs8KuHnp+fTHhVH3uXEzMpAJgq4ErNs1mrLk7c0xFeVQRaHLuasBuqtr7C6JVp8f1usgRXvLP3QVRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lx+kBNu3qEkV7prHxTjcI9oa/dRZ+TFcfCNE4xjEqho=;
+ b=TvHQVmRYfxUflFDYff8NyS/zas27aRQQG/EllMLRrjjhpMeQ+70irlxO3BUdhevT+wtQ4WxOv/7Kw3ukutr1zT69biSnd32dJOvf7jWhiWlHLGxnMzuF1zYBcPVPdQ+9PHOuzXqWKNg+Qr/2/+Visb7isqdSnM7vN/afgT3pbe595N+PcXPvT4lx9Nwst3qDvELIFDDqQbtJ+Zu0wXMbjnOIeJIM4odrLURXoowAdcwfnPPxaBSjmH6gDmCU3CHPkuK8OBFeZZXfDaMB1s03/rfs4drYSOtzDpQ8yIJfVQK+d8UmlzdQG3ZODaSh9FtcYuZIcMxb5yF60eiftrYe7Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA4PR04MB9637.eurprd04.prod.outlook.com (2603:10a6:102:272::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Fri, 29 Aug
+ 2025 12:22:04 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
+ 12:22:04 +0000
+Date: Fri, 29 Aug 2025 21:33:14 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: scmi: migrate round_rate() to determine_rate()
+Message-ID: <20250829133314.GA30579@nxa18884-linux.ap.freescale.net>
+References: <20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com>
+ <20250829100903.GB16625@nxa18884-linux.ap.freescale.net>
+ <20250829-fine-tacky-sturgeon-0ba3c4@sudeepholla>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829-fine-tacky-sturgeon-0ba3c4@sudeepholla>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA0PR01CA0079.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ae::7) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
- reference property
-To: Rob Herring <robh@kernel.org>
-Cc: netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com,
- Andrew Lunn <andrew@lunn.ch>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20250815144736.1438060-1-ivecera@redhat.com>
- <20250820211350.GA1072343-robh@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250820211350.GA1072343-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9637:EE_
+X-MS-Office365-Filtering-Correlation-Id: cabcb72e-4947-4772-29b3-08dde6f6a983
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|19092799006|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Mpq3v/jXfpq6fOgQsD3GqztpMPBZbW42IUNyk3jtyycr/3dprZmFeY3BcBPa?=
+ =?us-ascii?Q?k2szSYAMT3FP54aq1wUuLK01BWQeyvtqYWsYBhCtLh3foSP+fVlJxnptR1Au?=
+ =?us-ascii?Q?uFMMZSuy2y4eBYIEoBe6R5aIBvKGcu9TLcQStIA5+Odao5zKeCYSepHB4W8P?=
+ =?us-ascii?Q?h5rYyUf3ejf/DxqHcTnyfiizGiw3oyp/ibus4K+tDhoQSvGWz3MFesvXYbXY?=
+ =?us-ascii?Q?TziQP1psQDodzkUsNDGTnhrpWKt/TVZIXB/A71INtyRJ8B9XshZUyrq6WmT3?=
+ =?us-ascii?Q?o4Eye+Y+jlsC9Y8m7vBwBHQLoB9osaaNk2UycaXOvHMD5BXajhRSfuj0z9Us?=
+ =?us-ascii?Q?3gysxjP4BNZg34XSKyVviaTjqXT5OeQost6DPSzqMrDuudMBqiO1J/ZYabQi?=
+ =?us-ascii?Q?U75dcggYTmMkaoiqPrLhztKWHjemZDsm1EmSnQy+5A7nzOZ1WdWMDQVlNvgD?=
+ =?us-ascii?Q?yDSbRi0jNkL0jmnWuQdI3n3c0vMFguDguXoyQ8E1pTNI6jJv0fZQRhvCqMmH?=
+ =?us-ascii?Q?byRSNkkhTh9PerlEIXoBaJe7lgD1bOMf0suFcaJ7CgouZT+H6UVM10yJVbhL?=
+ =?us-ascii?Q?PAdGeqB4lZlYXIWY2ZOOPuJe74z7B1Kd+4kSZeNIlda4qmAMc5O85me4B+DW?=
+ =?us-ascii?Q?YzCZ80kRUzOQmQ39gyMXUjfBDm69294XJa8SBuNVBFr4b734W14mH4WVQZcl?=
+ =?us-ascii?Q?EGApCf9sytvxsuLgGrStWyPywhgaPwU6miSYTA04NIDsIoAoOTlZryG1/NcX?=
+ =?us-ascii?Q?91tmucwjwF4cI+RBLGL4vxF/uCaZjABwXT1qJUvH0M7ZocUROyRWd+lN7vTz?=
+ =?us-ascii?Q?A6yHK6wEy+q9pf3jB0m0SgG8j1bIq3+tL3J//ukZAHV3Ltvg3Tssxntjh/BA?=
+ =?us-ascii?Q?aGpYwobtB1ZT+hzRrGpdVPDvGJfkiy4EQ3HVWOQHI7rtVuS/Qm5Us4IPcTaf?=
+ =?us-ascii?Q?3UuLlSyIP1duoSHAivProTivpGleWeDENmqklZVFqyiOBzB+B90EZBMVN6HP?=
+ =?us-ascii?Q?FNYBjkzPDrlXCgb1HhFpX7QdIbE6S6YYxNBIbjCFDHiD9FjzMMILr+FWeqSw?=
+ =?us-ascii?Q?TOf1i6Ojgp279BxXuLCHrrYm+374kenxJRRBm1zu30s9Wb6ZNt3cKV9dY69g?=
+ =?us-ascii?Q?EWkWzlG6EZdN1f25zgWn1ARqiIAAtCc+QhuJEFQzJiPa6e4qdPskilZy6qWs?=
+ =?us-ascii?Q?DUYE3POCaYKdRJEZ9ga3ucm8Mo74fDZKoxq++fVTdX/+wSnSElez2OP007Wf?=
+ =?us-ascii?Q?QUm7qNKFHWJkr3NBgapxKZxJPlZf7ZweT/7kJKfMMYGRJhLpMr+nQUIa2d3G?=
+ =?us-ascii?Q?unm7oZbvFpN76tAJg7vOuew/xrudeG+PRsqFy5SMBsIRA8ykLSznnnr2cBxX?=
+ =?us-ascii?Q?K/uUjXDItGpnGyY7e0bWCm869SHQGDMJRpa5n3cbjK9FTZCs+oIUfgSNhzQk?=
+ =?us-ascii?Q?V8NO2H3b2Xf3kgmMNn9BTOrZ3mwCwT1jPD4qJWp+c4+Uvxx6hjqNAQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MciZzCXg6HmTrR1w8BMVpBwC0OaR4NQWXcFgXG4u+Mlh1Uxjr0IMgTpb++co?=
+ =?us-ascii?Q?LerU1e/OK2j9CE8ucBEZwuX1g4PNB/CxCm+uv6ukS9V7HeRyGso0mzR8kIVY?=
+ =?us-ascii?Q?0KUwgFUT0jG3Ga7HoCC8Hb829/TYldDxBvb4iuh56/2H+G4T96a8GWrHmmxi?=
+ =?us-ascii?Q?hBmatoSiG8VWJXBdDAZbDRtnks44oA81Lj2l0ZmlpjxbWTfRe/gp+qFJlA8B?=
+ =?us-ascii?Q?1omyQctEROSSZag7UJvMpjMlFK4otdoxTs/YUHaW1WwvsItRh3Uf64GIx/At?=
+ =?us-ascii?Q?7utjxJ+f2ooRfVP4cAwu/Z+p1t7QxP5SizFCCRirxJ2/IsKxurthh3djVe2g?=
+ =?us-ascii?Q?sYLVmWzFqFQOwcIWrxXISxnaNasaIFjdXGzyyEl4HEtz3k/mMYrl68btpK7V?=
+ =?us-ascii?Q?ATKU6jKgi+gh3mxnckUxokM9jY3w4IjkIabxl9WTL1SiGMRkTIhWpoYqF/UO?=
+ =?us-ascii?Q?xt1bhfPTx2tgxugElwCTTzx2dWbKLrr3msKSVACWWIAxzgEoSLSPO6ATGCTn?=
+ =?us-ascii?Q?E7tjesw+6eYezdEARX84VRzX7YQeoH/1xMSXmClFDhbXXXL89kq4P8a61Zhv?=
+ =?us-ascii?Q?HoQWQ5i/QaaHyVLMV0BeyIUz5io6cmwThUn1WhJi3KqoAUy+2ao2NkkQ1oTz?=
+ =?us-ascii?Q?pBVkdEtgJ4iwciJsE6M767G6osM7J5GldIROIYYlu5E4GCdAoDZjhsc/mKCg?=
+ =?us-ascii?Q?nNl0A9qxFPupVZOHaZqbv9kHGYXn1/Zgs/9jzeKdEDomAgcX6sUIbgTaDPyp?=
+ =?us-ascii?Q?4BJxNFSwlAVTVMC34BLcmEerskI1YN4Nj6uABOCPs5hYDE5R0HzCAJZMBAzk?=
+ =?us-ascii?Q?IKzstPHFj1k2E+09FUzfw3J7vph2mEfoFeMV+7NslUzoEwqdCJMG5xntb/0a?=
+ =?us-ascii?Q?rlzpqEAvTFmpoV4s1S6rIbaTIlb9AUgYHCSeGqUPdIhX8uVkU2a6Vtez+xxL?=
+ =?us-ascii?Q?nrYkMayssxZLez/IBFET9mSRMM2s3IZh8DiJi0AbrcDtX8O8wdli9h2H+Pe0?=
+ =?us-ascii?Q?vrt+mywDn5AQ98aQ5pZQT93cffDV3UKQ4AyJbTViWuiETmMDOqTVEzVTXUUO?=
+ =?us-ascii?Q?kFUA5BtZ/oim3xF7pBnVQ2Mg9eUmFciVzS/bcdoHT/nNVNGEMiqQJmDpSr7X?=
+ =?us-ascii?Q?McmaaUhW5XNb7gi/FzPrlxtOef4CsOCAcjtBcQl1GZqGlZqEYWwkN1oAAvMr?=
+ =?us-ascii?Q?cLoXy+0iNwZzu6Nvi6gHhcacH4VR9Rpn/v7YdMooWJlq+FFMImibIMbSPQtH?=
+ =?us-ascii?Q?FUEfNIyXPaGNaXlMQaDoq6odkeFfrHTdd+XRyV/oMJ28KJ0rNOSob0FNPD0j?=
+ =?us-ascii?Q?VFm+cILlX2X8kqNBInpOrPpnA7+mBd42EIsejC/L/MqsocyclzWUBAVtRQii?=
+ =?us-ascii?Q?1Zi9Y2+LXTKAbnWPaKlcDbGL+kIox8rSf5V9pZYFY+/n8zbnr2gFtux5JvIv?=
+ =?us-ascii?Q?HCg500RgPmvPX4J1QctlXf8WazEZ/IS7hidm86z9VvfJNfqQCrXitGyLNw29?=
+ =?us-ascii?Q?peOI4GjH78Y1E1vFQMlMpaJf8xZrjsi6+URoIj7o/TNTaNfJ7hsP5guxJbou?=
+ =?us-ascii?Q?9N2CDmnJx62/MUhM7ADV2kiAPSfvUUr8DZsiwoPA?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cabcb72e-4947-4772-29b3-08dde6f6a983
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 12:22:04.0648
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8cl00MX69RYtritC00xcSw59jI4rP/+9haVJb6uUESiqWJooaaHChlfs7JO82Bf4XkIF1E1OtobLMn4yIG8GZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9637
 
-Hi Rob,
+On Fri, Aug 29, 2025 at 10:59:15AM +0100, Sudeep Holla wrote:
+>On Fri, Aug 29, 2025 at 06:09:03PM +0800, Peng Fan wrote:
+>> On Wed, Aug 27, 2025 at 01:12:07PM -0400, Brian Masney wrote:
+>> >This driver implements both the determine_rate() and round_rate() clk
+>> >ops, and the round_rate() clk ops is deprecated. When both are defined,
+>> >clk_core_determine_round_nolock() from the clk core will only use the
+>> >determine_rate() clk ops.
+>> >
+>> >The existing scmi_clk_determine_rate() is a noop implementation that
+>> >lets the firmware round the rate as appropriate. Drop the existing
+>> >determine_rate implementation and convert the existing round_rate()
+>> >implementation over to determine_rate().
+>> >
+>> >scmi_clk_determine_rate() was added recently when the clock parent
+>> >support was added, so it's not expected that this change will regress
+>> >anything.
+>> >
+>> >Signed-off-by: Brian Masney <bmasney@redhat.com>
+>> 
+>> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+>
+>Peng,
+>
+>It would be great if you can test it with parent clock support on i.MX
+>platforms just to be sure this doesn't regress anything.
 
-On 20. 08. 25 11:13 odp., Rob Herring wrote:
-> On Fri, Aug 15, 2025 at 04:47:35PM +0200, Ivan Vecera wrote:
->> In case of SyncE scenario a DPLL channels generates a clean frequency
->> synchronous Ethernet clock (SyncE) and feeds it into the NIC transmit
->> path. The DPLL channel can be locked either to the recovered clock
->> from the NIC's PHY (Loop timing scenario) or to some external signal
->> source (e.g. GNSS) (Externally timed scenario).
->>
->> The example shows both situations. NIC1 recovers the input SyncE signal
->> that is used as an input reference for DPLL channel 1. The channel locks
->> to this signal, filters jitter/wander and provides holdover. On output
->> the channel feeds a stable, phase-aligned clock back into the NIC1.
->> In the 2nd case the DPLL channel 2 locks to a master clock from GNSS and
->> feeds a clean SyncE signal into the NIC2.
->>
->> 		   +-----------+
->> 		+--|   NIC 1   |<-+
->> 		|  +-----------+  |
->> 		|                 |
->> 		| RxCLK     TxCLK |
->> 		|                 |
->> 		|  +-----------+  |
->> 		+->| channel 1 |--+
->> +------+	   |-- DPLL ---|
->> | GNSS |---------->| channel 2 |--+
->> +------+  RefCLK   +-----------+  |
->> 				  |
->> 			    TxCLK |
->> 				  |
->> 		   +-----------+  |
->> 		   |   NIC 2   |<-+
->> 		   +-----------+
->>
->> In the situations above the DPLL channels should be registered into
->> the DPLL sub-system with the same Clock Identity as PHCs present
->> in the NICs (for the example above DPLL channel 1 uses the same
->> Clock ID as NIC1's PHC and the channel 2 as NIC2's PHC).
->>
->> Because a NIC PHC's Clock ID is derived from the NIC's MAC address,
->> add a per-channel property 'ethernet-handle' that specifies a reference
->> to a node representing an Ethernet device that uses this channel
->> to synchronize its hardware clock. Additionally convert existing
->> 'dpll-types' list property to 'dpll-type' per-channel property.
->>
->> Suggested-by: Andrew Lunn <andrew@lunn.ch>
->> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
->> ---
->>   .../devicetree/bindings/dpll/dpll-device.yaml | 40 ++++++++++++++++---
->>   .../bindings/dpll/microchip,zl30731.yaml      | 29 +++++++++++++-
->>   2 files changed, 62 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> index fb8d7a9a3693f..798c5484657cf 100644
->> --- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
->> @@ -27,11 +27,41 @@ properties:
->>     "#size-cells":
->>       const: 0
->>   
->> -  dpll-types:
->> -    description: List of DPLL channel types, one per DPLL instance.
->> -    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->> -    items:
->> -      enum: [pps, eec]
-> 
-> Dropping this is an ABI change. You can't do that unless you are
-> confident there are no users both in existing DTs and OSs.
+Just gave a test on i.MX95-EVK, it boots well and eth0 works, 
+the results in /sys/kernel/debug/clk/clk_summary also looks correct.
 
-Get it, will keep.
+Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95-19x19-EVK
 
->> +  channels:
->> +    type: object
->> +    description: DPLL channels
->> +    unevaluatedProperties: false
->> +
->> +    properties:
->> +      "#address-cells":
->> +        const: 1
->> +      "#size-cells":
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^channel@[0-9a-f]+$":
->> +        type: object
->> +        description: DPLL channel
->> +        unevaluatedProperties: false
->> +
->> +        properties:
->> +          reg:
->> +            description: Hardware index of the DPLL channel
->> +            maxItems: 1
->> +
->> +          dpll-type:
->> +            description: DPLL channel type
->> +            $ref: /schemas/types.yaml#/definitions/string
->> +            enum: [pps, eec]
->> +
->> +          ethernet-handle:
->> +            description:
->> +              Specifies a reference to a node representing an Ethernet device
->> +              that uses this channel to synchronize its hardware clock.
->> +            $ref: /schemas/types.yaml#/definitions/phandle
-> 
-> Seems a bit odd to me that the ethernet controller doesn't have a link
-> to this node instead.
+Regards
+Peng
 
-Do you mean to add a property (e.g. dpll-channel or dpll-device) into
-net/network-class.yaml ? If so, yes, it would be possible, and the way
-I look at it now, it would probably be better. The DPLL driver can
-enumerate all devices across the system that has this specific property
-and check its value.
-
-See the proposal below...
-
-Thanks,
-Ivan
-
----
-  Documentation/devicetree/bindings/dpll/dpll-device.yaml  | 6 ++++++
-  Documentation/devicetree/bindings/net/network-class.yaml | 7 +++++++
-  2 files changed, 13 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml 
-b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-index fb8d7a9a3693f..560351df1bec3 100644
---- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-+++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-@@ -27,6 +27,12 @@ properties:
-    "#size-cells":
-      const: 0
-
-+  "#dpll-cells":
-+    description: |
-+      Number of cells in a dpll specifier. The cell specifies the index
-+      of the channel within the DPLL device.
-+    const: 1
-+
-    dpll-types:
-      description: List of DPLL channel types, one per DPLL instance.
-      $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-diff --git a/Documentation/devicetree/bindings/net/network-class.yaml 
-b/Documentation/devicetree/bindings/net/network-class.yaml
-index 06461fb92eb84..144badb3b7ff1 100644
---- a/Documentation/devicetree/bindings/net/network-class.yaml
-+++ b/Documentation/devicetree/bindings/net/network-class.yaml
-@@ -17,6 +17,13 @@ properties:
-      default: 48
-      const: 48
-
-+  dpll:
-+    description:
-+      Specifies DPLL device phandle and index of the DPLL channel within
-+      this device used by this network device to synchronize its hardware
-+      clock.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-    local-mac-address:
-      description:
-        Specifies MAC address that was assigned to the network device 
-described by
-
+>
+>-- 
+>Regards,
+>Sudeep
 
