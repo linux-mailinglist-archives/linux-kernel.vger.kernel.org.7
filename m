@@ -1,102 +1,164 @@
-Return-Path: <linux-kernel+bounces-791853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24033B3BCD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A604B3BCD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159AB168141
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAF8A454EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93FC31DDB4;
-	Fri, 29 Aug 2025 13:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A99131CA72;
+	Fri, 29 Aug 2025 13:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u21tUjf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rVjNC926";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dTHyyD98"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639C31DD88;
-	Fri, 29 Aug 2025 13:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391431B102;
+	Fri, 29 Aug 2025 13:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756475461; cv=none; b=Ub0PET7YMSE51Ogk7+zuij2r9JKiC58LJ+YcDxDQ5jewUZkJdbUFJqmeyaaQCV+0p9IAUguhuXqa8LSo0vcur+f+UTxrA6/CcZTu6tdzH3eFXsseuSdHemdCFB0jQ50L1k+6pCrpnkPIPiKXdowQSBAsyOeMXMzShd0WAgm0njY=
+	t=1756475485; cv=none; b=KUr50bhq1M9WkCTGWjIWGgbZ+wYPg72WA9JZgaE7GPyjVzfXkbop2ALkrXesx8LVWhxPQMev3cQg428Uj+VMTno2riibE2ZjBzFMB6AfgV2ctSnfg6iFknYQcJq7P0PlTC843Tastvhp7fu9uxAq4+RzZ+k/zLLy5QjLoCdEZ4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756475461; c=relaxed/simple;
-	bh=OBzkyZTISMayaZ8Cyos03TZvoAM7tbY8jXJS1KHHvT4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=X+93kQVmq5CYLZeU0on5JdWPYK0SnEi03BOIE7cb6nSky3k49KB+pC1PBNfYYAoYSuMNWRVmSFL+JVWOBJObWlwAToetY+kyvS7D3N9UWz8+8g5L3Yf+Rn2Z96fM3JCh5w+yCv2yanWbsVmx52ub3hFCkR31GmJwMMgD2glvypM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u21tUjf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80197C4CEF5;
-	Fri, 29 Aug 2025 13:51:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756475460;
-	bh=OBzkyZTISMayaZ8Cyos03TZvoAM7tbY8jXJS1KHHvT4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=u21tUjf1YOV9Av9A5wWtcdnQyUAjgJgLyxbSAepV7rWJhKzFk51vUjB25yNuw7SJd
-	 DnElto4V0p+hll6zA2pfaA6aL1+MAr8u+dPFDc8BZkCDx3gZ79QjmLVZY/56udVqcG
-	 LGZWXcUU/Xq0TYJGUPr5monvH24ChEqHRBQM8qvyWwnw4lCYjr6ZhRLV1e4dz7IFjT
-	 fjADXD2HEdMcrEyrrDiFyrLPdZU1CJNBpKG1vTkLd72DR0xHMUuOEo3vW05CZYKt66
-	 uhaWnBZePm6d9wNCd8iZWhWwBqUvCKHUt3P47l5gkARcxF4c802b/89DWntc+RFHd+
-	 ek6hUBDmJ4hjw==
-Date: Fri, 29 Aug 2025 08:50:59 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1756475485; c=relaxed/simple;
+	bh=z5HAKW/WuaBA6HoTNUzZGhB3Vxa+tJpINSGsbezPb9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UrRE0Q+ptE1tI7wCKXEeCgDGu/XjHoGWoleV1xGgy1wSDn8zZA0VOAXRyh2lFyB/qVvQSqQ2WFaRWqe9ASlficuhFsalOL5ltSX5lBE1VYgjS54o7r/p98Ub46KmQkFoXJBRB7vCp+5Bi8mLae51mE8t3oB9FeScwMKu27EipiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rVjNC926; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dTHyyD98; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 29 Aug 2025 15:51:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756475477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3JOuK5ti/UvYKbKMwftT9sqSXkwop/LzA32FuAwASU=;
+	b=rVjNC926FEoqThOc8Y0M3Eey1nMIiNt/ebO1CfDst8Ko/27xL4Jk9MjjFbDSmrtLvWnZuY
+	Jg5+Y7LNRuIwmg0TExbeQOydzkFcKR0mW0gEkNk5ugThLk+zI0NSVgjDmpHWc/u9Az6m17
+	+/J3iClw1Id97UWtC/R4z3CieSJEJheIPOEyYM6kpVsP4p/N7sfrzZey1JG1aUiaTo96IR
+	l4vBCGmIN1PtFTXc8IDbKA5fRxxV1cNS3cVKhIDSapnK3Pe1sbxDSww8QA2XboJaw1YNBQ
+	4o/RWCXxymqVvJ3VqYfns4az2gBZ7dToHAGwYyksLd1jhddszvO2IsI8vkrKWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756475477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3JOuK5ti/UvYKbKMwftT9sqSXkwop/LzA32FuAwASU=;
+	b=dTHyyD98i1LsbVoxOK+4zfCHwcWUXkN6R2GkPnTbozttUC9Iv69/ehkCJM2foCnIEDz0ov
+	HMHgxowEr9aiIcAw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Andreas Larsson <andreas@gaisler.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock <nick.alcock@oracle.com>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
+ library
+Message-ID: <20250829154636-bed204b6-1014-427d-9615-ee79b24b57f9@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
+ <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
- linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-In-Reply-To: <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
-References: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
- <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
-Message-Id: <175647456257.394630.17282056537152186661.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: add support for NXPs TJA1145
- CAN transceiver
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
 
-
-On Fri, 29 Aug 2025 11:19:58 +0200, Dimitri Fedrau wrote:
-> Adding documentation for NXPs TJA1145 CAN transceiver.
+On Fri, Aug 29, 2025 at 03:41:22PM +0200, Andreas Larsson wrote:
+> On 2025-08-29 12:37, Thomas Weißschuh wrote:
+> > On Fri, Aug 29, 2025 at 12:02:39PM +0200, Andreas Larsson wrote:
+> >> On 2025-08-28 17:38, Andreas Larsson wrote:
+> >>> and with all of them applied I got: 
+> >>>
+> >>> ----------------%<----------------
+> >>> [    1.849344] Run /init as init process
+> >>> [    1.851309] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+> >>> [    1.851339] CPU: 4 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc1+ #3 VOLUNTARY
+> >>> [    1.851363] Call Trace:
+> >>> [    1.851374] [<0000000000436524>] dump_stack+0x8/0x18
+> >>> [    1.851400] [<00000000004291f4>] vpanic+0xdc/0x320
+> >>> [    1.851420] [<000000000042945c>] panic+0x24/0x30
+> >>> [    1.851437] [<00000000004844a4>] do_exit+0xac4/0xae0
+> >>> [    1.851458] [<0000000000484684>] do_group_exit+0x24/0xa0
+> >>> [    1.851476] [<0000000000494c60>] get_signal+0x900/0x940
+> >>> [    1.851495] [<000000000043ecb8>] do_notify_resume+0xf8/0x600
+> >>> [    1.851514] [<0000000000404b48>] __handle_signal+0xc/0x30
+> >>> [    1.852291] Press Stop-A (L1-A) from sun keyboard or send break
+> >>> [    1.852291] twice on console to return to the boot prom
+> >>> [    1.852310] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
+> >>> ----------------%<----------------
+> >>>
+> >>> but given that I don't have the kernel anymore I'm starting to
+> >>> question myself if that run was really with the same base
+> >>> commit. I'll do a rebuild and see.
+> >>
+> >> I found out that my previous kernel installation for the kernel with the first 8
+> >> patches was a broken mess. Sorry about the confusion. With that sorted out and a
+> >> rebuilt kernel with all patches, the failure above is the one I get for both 8
+> >> and 13 patches, and it is repeatable.
+> > 
+> > This splat means that init got killed by SIGSEGV, so that makes some sense in
+> > the context of the code being touched. Then let's focus on patch 8 for now.
+> > 
+> > In the meantime I installed a full Debian, but the bug is still not
+> > reproducible in QEMU.
+> > 
+> > * Did you use the SMP or UP kernel config from Debian?
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
+> I based my config on the SMP config that was in use on the system.
+> Produces an tremendous amount of modules unfortunately, so I'll have
+> to cut down in the config. Right now the turnaround time for testing
+> a new kernel with this setup for this system is quite bad.
+
+Ack. I am aware :-(
+
+> > * Can the fixed up kernel now run on QEMU?
 > 
+> No, there is something else going on with my QEMU setup, unrelated to
+> these patches.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Ack. FWIW for me it works (for sun4u) with my distro's QEMU 10.0.3.
 
-yamllint warnings/errors:
+> > * Which toolchain are you using?
+> 
+> A toolchain built in Buildroot with GCC 13.2.0. Old kernel headers, but
+> I only use it to build kernels. Do you think the kernel headers of the
+> toolchain would play a role for vDSO?
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/phy/nxp,tja1145-can.example.dts:21.21-33.15: Warning (unit_address_vs_reg): /example-0/spi/can-phy: node has a reg or ranges property, but no unit name
-Documentation/devicetree/bindings/phy/nxp,tja1145-can.example.dts:21.21-33.15: Warning (spi_bus_reg): /example-0/spi/can-phy: SPI bus unit address format error, expected "0"
+No, the headers from the toolchain are not used. It could have been that you are
+using a wildly different compiler. But I am also using GCC 13.2.0, although from
+the kernel.org crosstools.
 
-doc reference errors (make refcheckdocs):
+> > * This is a 64-bit userland?
+> 
+> Yes.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250829-tja1145-support-v2-1-60997f328979@liebherr.com
+Ack.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+> > What difference does the following change make:
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+(...)
 
-pip3 install dtschema --upgrade
+> I will check.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks!
 
