@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-792372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9617CB3C322
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:36:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EC5B3C320
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F5CC7BFD46
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1D6E1BA2BDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A662EBB87;
-	Fri, 29 Aug 2025 19:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8997A25CC5E;
+	Fri, 29 Aug 2025 19:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bC/4Q9vn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lgc7IKlR"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A83D259CBC
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD682522B4
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496047; cv=none; b=EnPdGud2lwb93ksTOqx8y/ycQY7Gbj0REZMaMkvQuUSQvHTVHvVLHDPxoSNWuBRmFIA6xv8igwKt1+DravxEGir/MD1RNlAa15Bj9N65jZMysgffCtUnj4n81qEPOvqR23iHCwjDulfetNT2aymcy+Rp7jkU+LMzqOfNC5ylo0A=
+	t=1756496045; cv=none; b=ajkeZBDM3xSqSWS6NIb58rAv3MsfAQGrb1SSXqJDLCt2wJUBLdPyFgCKLLb1dWWvhKakXPQ/eMgZ1PlRGMXK8T7xjCJqalm8ToDmUawsMFwNCA2AHWGKhFZ3z7pVWO2XyqM2V9pDgmm0H0Lt7PQxGgDITfcstcCTpz8moEzLIao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496047; c=relaxed/simple;
-	bh=8Iu0QPtvruTdWjl0MWMNxRM+tyqkNM4NG++5QMDhrPs=;
+	s=arc-20240116; t=1756496045; c=relaxed/simple;
+	bh=wFjdFdpytoM9LAz3ca8ApVJW42pX80e23R/C9rIkZpE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FB46WCfr9nkA2pfoPGOAin/Nbh4EXLTrA84ezANMGQFZ4WBb6KH8VREw2gGrsCmSmE8W75iMUs5EDTz3ItvdxEPcmTqo0YP1OBwzv4DhXNMf9j0GgHqv8NFLlk6LUukERuMtAwTd28gbdJ5/oBc54pnZfdfx9n2yfQioledq1u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bC/4Q9vn; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=UvNJHoHeMnaIJgmCumq0+zSjeSPjQLJkRiVhIUikSJqkfYEMyucCWBVdufLg6+9BBiHAdXiPaShRYIlOqHwTqkXOof8oew1boHtyZ2C/TEossXy8/7yba8vywVQBgTkURUS8Fflvjq0xDsL1JidXcZwDrRRkw5jM09pO2TfqTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lgc7IKlR; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756496045; x=1788032045;
+  t=1756496043; x=1788032043;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8Iu0QPtvruTdWjl0MWMNxRM+tyqkNM4NG++5QMDhrPs=;
-  b=bC/4Q9vnws/Urf0BXwTE0457FaHNnNUFNaECx7ef8UBQ40KYsyhGWB50
-   CSOll3qb9U99zc3IjEfhHXUqdQAUA213iAB8d0uEz6kqxhZwCMOCIfCkA
-   FXjIO4sROvJrFNebz+yCHzPhb1FmRW4SnnIL9brxm6W7+AGPNbNjvTgT2
-   5+jdzVtg8T0DgSdCsff7Lbh5RdED1HVgYlXBXgtHI95tQ6c8EPRTeTrtH
-   uNBXDloe2w+UVADK4kR0vftK9IHEe9X+/XzNYduuOViVjgRafJlzzjIdn
-   qc9tdIcMi/PempLPUwKkF2lRahMvCTCfP+k7X0uasWv515ykUYBVspl0R
-   w==;
-X-CSE-ConnectionGUID: zjLlYlX9Q/OODsFFn59D6Q==
-X-CSE-MsgGUID: dGo69+UUQpC23ka5MANJew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625266"
+  bh=wFjdFdpytoM9LAz3ca8ApVJW42pX80e23R/C9rIkZpE=;
+  b=Lgc7IKlRTETeY+TRr91LxjOn2/S/KyFQUHFHNbWy64wMmAvuI5kKvOMZ
+   P+SlJ/6qadVO6KsNQbZhnoZjRLPKs/Ozu4gWrarVnqSgxnQTHqqXN56rC
+   uRX5X8FwOUjcCcv5wpbly/HGl+lbYGGQkbmi/4JIcZYYN34/263a9Tii+
+   fTD/KjbzDBzylLsKi1bVUYSLkIAI8S4fm21v2mDAtGSKXdwNZWCFmyamx
+   FLwcWHXAd3qxtTFeRrbkim9PBI/VYwmzKR3t5l0ycYwX/avQSo1mR6ZG/
+   Hu3Z8uJRoNomLNSIG6I9yCYZZ4bzWGKl2LmLZa+x6edeDva5TqoxJwBQC
+   A==;
+X-CSE-ConnectionGUID: syvBP/cVQhmMSUyQEa4uGQ==
+X-CSE-MsgGUID: 9xoVUo/cSgume8rvfFTctw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625267"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62625266"
+   d="scan'208";a="62625267"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:55 -0700
-X-CSE-ConnectionGUID: PMcvsBPUQV+motC7+i5v/w==
-X-CSE-MsgGUID: SjW52UWATl+0MYhDUR9vYA==
+X-CSE-ConnectionGUID: kXZKCMZoSpWj9Qi4C35PLA==
+X-CSE-MsgGUID: q0ej7aHqQqaSMxdTg3dvhw==
 X-ExtLoop1: 1
 Received: from ldmartin-desk2.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.202])
   by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:55 -0700
@@ -69,9 +69,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v9 15/31] x86,fs/resctrl: Add an architectural hook called for each mount
-Date: Fri, 29 Aug 2025 12:33:27 -0700
-Message-ID: <20250829193346.31565-16-tony.luck@intel.com>
+Subject: [PATCH v9 16/31] x86,fs/resctrl: Add and initialize rdt_resource for package scope monitor
+Date: Fri, 29 Aug 2025 12:33:28 -0700
+Message-ID: <20250829193346.31565-17-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250829193346.31565-1-tony.luck@intel.com>
 References: <20250829193346.31565-1-tony.luck@intel.com>
@@ -83,83 +83,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enumeration of Intel telemetry events is an asynchronous process involving
-several mutually dependent drivers added as auxiliary devices during
-the device_initcall() phase of Linux boot. The process finishes after
-the probe functions of these drivers completes. But this happens after
-resctrl_arch_late_init() is executed.
+Add a new PERF_PKG resource and introduce package level scope for
+monitoring telemetry events so that CPU hot plug notifiers can build domains
+at the package granularity.
 
-Tracing the enumeration process shows that it does complete a full seven
-seconds before the earliest possible mount of the resctrl file system
-(when included in /etc/fstab for automatic mount by systemd).
-
-Add a hook at the beginning of the mount code that will be used
-to check for telemetry events and initialize if any are found.
-
-Call the hook on every attempted mount. Expectations are that
-most actions (like enumeration) will only need to be performed
-on the first call.
-
-resctrl filesystem calls the hook with no locks held. Architecture code
-is responsible for any required locking.
+Use the physical package ID available via topology_physical_package_id()
+to identify the monitoring domains with package level scope. This enables
+user space to use:
+ /sys/devices/system/cpu/cpuX/topology/physical_package_id
+to identify the monitoring domain a CPU is associated with.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- include/linux/resctrl.h            | 6 ++++++
- arch/x86/kernel/cpu/resctrl/core.c | 9 +++++++++
- fs/resctrl/rdtgroup.c              | 2 ++
- 3 files changed, 17 insertions(+)
+ include/linux/resctrl.h            |  2 ++
+ fs/resctrl/internal.h              |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c | 10 ++++++++++
+ fs/resctrl/rdtgroup.c              |  2 ++
+ 4 files changed, 16 insertions(+)
 
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index fe39bdbcd46f..f29a602d1b71 100644
+index f29a602d1b71..efe4e887c5c9 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -459,6 +459,12 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
- void resctrl_online_cpu(unsigned int cpu);
- void resctrl_offline_cpu(unsigned int cpu);
+@@ -53,6 +53,7 @@ enum resctrl_res_level {
+ 	RDT_RESOURCE_L2,
+ 	RDT_RESOURCE_MBA,
+ 	RDT_RESOURCE_SMBA,
++	RDT_RESOURCE_PERF_PKG,
  
-+/*
-+ * Architecture hook called at beginning of each file system mount attempt.
-+ * No locks are held.
-+ */
-+void resctrl_arch_pre_mount(void);
-+
+ 	/* Must be the last */
+ 	RDT_NUM_RESOURCES,
+@@ -252,6 +253,7 @@ enum resctrl_scope {
+ 	RESCTRL_L2_CACHE = 2,
+ 	RESCTRL_L3_CACHE = 3,
+ 	RESCTRL_L3_NODE,
++	RESCTRL_PACKAGE,
+ };
+ 
  /**
-  * resctrl_arch_rmid_read() - Read the eventid counter corresponding to rmid
-  *			      for this resource and domain.
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 17ab320b17f1..a7eaf22ecdea 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -243,6 +243,8 @@ struct rdtgroup {
+ 
+ #define RFTYPE_DEBUG			BIT(10)
+ 
++#define RFTYPE_RES_PERF_PKG		BIT(11)
++
+ #define RFTYPE_CTRL_INFO		(RFTYPE_INFO | RFTYPE_CTRL)
+ 
+ #define RFTYPE_MON_INFO			(RFTYPE_INFO | RFTYPE_MON)
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 8bc533ae896b..5ff0db08e132 100644
+index 5ff0db08e132..566530c6dbc3 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -718,6 +718,15 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
- 	return 0;
- }
+@@ -100,6 +100,14 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
+ 			.schema_fmt		= RESCTRL_SCHEMA_RANGE,
+ 		},
+ 	},
++	[RDT_RESOURCE_PERF_PKG] =
++	{
++		.r_resctrl = {
++			.name			= "PERF_PKG",
++			.mon_scope		= RESCTRL_PACKAGE,
++			.mon_domains		= mon_domain_init(RDT_RESOURCE_PERF_PKG),
++		},
++	},
+ };
  
-+void resctrl_arch_pre_mount(void)
-+{
-+	static atomic_t only_once = ATOMIC_INIT(0);
-+	int old = 0;
-+
-+	if (!atomic_try_cmpxchg(&only_once, &old, 1))
-+		return;
-+}
-+
- enum {
- 	RDT_FLAG_CMT,
- 	RDT_FLAG_MBM_TOTAL,
+ u32 resctrl_arch_system_num_rmid_idx(void)
+@@ -433,6 +441,8 @@ static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
+ 		return get_cpu_cacheinfo_id(cpu, scope);
+ 	case RESCTRL_L3_NODE:
+ 		return cpu_to_node(cpu);
++	case RESCTRL_PACKAGE:
++		return topology_physical_package_id(cpu);
+ 	default:
+ 		break;
+ 	}
 diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index f98f34e75f35..abefdda245dd 100644
+index abefdda245dd..1832840ad11c 100644
 --- a/fs/resctrl/rdtgroup.c
 +++ b/fs/resctrl/rdtgroup.c
-@@ -2585,6 +2585,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 	struct rdt_resource *r;
- 	int ret;
+@@ -2195,6 +2195,8 @@ static unsigned long fflags_from_resource(struct rdt_resource *r)
+ 	case RDT_RESOURCE_MBA:
+ 	case RDT_RESOURCE_SMBA:
+ 		return RFTYPE_RES_MB;
++	case RDT_RESOURCE_PERF_PKG:
++		return RFTYPE_RES_PERF_PKG;
+ 	}
  
-+	resctrl_arch_pre_mount();
-+
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
- 	/*
+ 	return WARN_ON_ONCE(1);
 -- 
 2.50.1
 
