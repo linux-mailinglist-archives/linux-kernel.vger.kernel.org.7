@@ -1,144 +1,174 @@
-Return-Path: <linux-kernel+bounces-791603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1A4B3B90B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BD5B3B90C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947A5364CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2FD3AFF53
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E82309DB5;
-	Fri, 29 Aug 2025 10:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D705A309DB1;
+	Fri, 29 Aug 2025 10:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hK1Nv4Vz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jqE7bPUU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0ABS8KD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jqE7bPUU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0ABS8KD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1C33093C6
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1123093BB
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463991; cv=none; b=rU2iV139OpdyXChBO/6yK7h/uwyWyc4A4CwjTEasi1/Bx8K891gkVhVH5qwFrYu1ciTAPMOUebGCH721CwxwBmqgwpxqpCDFIE46YhoWV7cNOhffZ8yMplLPMu+UaeiJge8ENM4Dj07GH9yYDCgn7JpHf4Wg04Pa5NqdugRP9+Q=
+	t=1756464004; cv=none; b=oD7bwQD7RorFf/x9bqyTs7egzqcS0jJxD2lr1+vd2BueXX9IA8h74M0zEbeq82aIrkTDD+DjW5WjapTKZR3d8qBtQ+iYtRV5/QNujk+5TsvFchCniAYSp+NQzmAMGF0U5nYfEYTU+Us6kZ9QPGrn2Bj0oRBpHDV9PYRYB8D9ccg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463991; c=relaxed/simple;
-	bh=3lzTmy7xVBD89zOuvWh8RpEaNftCOkjhJm+gpVv0E3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLAj3Yc3oKqSUi/0p55tkHlW42EJaktXbSZloU0U4KWN0Yv62X4jeYl8PQjSNAmi7h4UYuTSpdqpYhFAFKBC6X77n4meeoqbI3+TNr2F1vPOeHGy1yDKKRaPzSVX5mGFSZPZ6r+esIg8cKkg3MvP5Wv807nYN+15WcrHX0FJ5ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hK1Nv4Vz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756463989;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x28gXOyrOBBwbn+7Hidu1o/2yPp/npkyaA2lBQwPLSY=;
-	b=hK1Nv4VzGSTnhS86hSSQXAeIRwA5dwMmq/sT9UrGtwvRteXxQu3CeYvtojK+E0E4l/hOgI
-	+heOz4PLZi1kvUAN68D3pSFuLZijkiFjtMwuAO9pioub/WQaPfk6UR4ZXqCZe5p0O+whjB
-	emysfZzoiYJL12vjYcRa4DG9VJi+bR4=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-w12s1WqAPhO50-XDH3wlIA-1; Fri,
- 29 Aug 2025 06:39:43 -0400
-X-MC-Unique: w12s1WqAPhO50-XDH3wlIA-1
-X-Mimecast-MFC-AGG-ID: w12s1WqAPhO50-XDH3wlIA_1756463982
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	s=arc-20240116; t=1756464004; c=relaxed/simple;
+	bh=M7hsdmB/EI+Zj5IYFz0UaBCDGRYBqgtwedClHbFW7Ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJNbGavrFEeTuaE5O3CWcGwJdSN+AhiNQyUrXvz6gE2lt6wekmWj1LJc69ehm2iHZVYgQYDKdt3OGOZz7Mo6RJp73AgdY0CTiuzZURo2/L0zEcpdlFRhyzNYUqtQMeJK5A7cQWwu43ceBz58c4vvgDgCfDGNUdMArrzbt94EQkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jqE7bPUU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0ABS8KD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jqE7bPUU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0ABS8KD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9D7D19560B6;
-	Fri, 29 Aug 2025 10:39:40 +0000 (UTC)
-Received: from [10.45.224.190] (unknown [10.45.224.190])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F36801800291;
-	Fri, 29 Aug 2025 10:39:31 +0000 (UTC)
-Message-ID: <94247dbc-4be8-4464-ad3e-5b81bba5f70b@redhat.com>
-Date: Fri, 29 Aug 2025 12:39:30 +0200
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AC1DB33CEE;
+	Fri, 29 Aug 2025 10:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756464000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
+	b=jqE7bPUUONC6pasY9Oh5+BcoiNv6e6y+mchCYq24mnz/ARiFPy2ewKxrElMOdAlIZZyrfG
+	goiNE+Ergek07XrUCk8Jio8eKADHLdtbCI7LXAC5sLMA8qI3bhS0OwGZGtZhgdE0QMM/13
+	xSo4O2lQaf8isHw0eUFm1t+0aA4wWPk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756464000;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
+	b=c0ABS8KDNKcITQ1cVOo0a6lcz7oJl8kjaMauXtI5SfpxsIFsn38rl+G46YFFvK2yVQ6BLd
+	WB0UxX+x8yCtY9Ag==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756464000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
+	b=jqE7bPUUONC6pasY9Oh5+BcoiNv6e6y+mchCYq24mnz/ARiFPy2ewKxrElMOdAlIZZyrfG
+	goiNE+Ergek07XrUCk8Jio8eKADHLdtbCI7LXAC5sLMA8qI3bhS0OwGZGtZhgdE0QMM/13
+	xSo4O2lQaf8isHw0eUFm1t+0aA4wWPk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756464000;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
+	b=c0ABS8KDNKcITQ1cVOo0a6lcz7oJl8kjaMauXtI5SfpxsIFsn38rl+G46YFFvK2yVQ6BLd
+	WB0UxX+x8yCtY9Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 907C113A3E;
+	Fri, 29 Aug 2025 10:40:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iXZAI4CDsWj1SQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 10:40:00 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 25C58A099C; Fri, 29 Aug 2025 12:39:56 +0200 (CEST)
+Date: Fri, 29 Aug 2025 12:39:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Replace offsetof() with struct_size()
+Message-ID: <53c374bjebongkfj5kejf7hb3blgdfvp7e4j4pzahcpw6ubdxp@6vwxcf576ll6>
+References: <20250829100328.618903-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/5] dpll: zl3073x: Add firmware loading
- functionality
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
- <20250813174408.1146717-4-ivecera@redhat.com>
- <20250818192203.364c73b1@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250818192203.364c73b1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829100328.618903-1-zhao.xichao@vivo.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,vivo.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-Hi Kuba,
-sorry for the late response... (I was on PTO last 2 weeks).
-
-On 19. 08. 25 4:22 dop., Jakub Kicinski wrote:
-> On Wed, 13 Aug 2025 19:44:06 +0200 Ivan Vecera wrote:
->> +#define ZL3073X_FW_ERR_MSG(_zldev, _extack, _msg, ...)			\
->> +	do {								\
->> +		dev_err((_zldev)->dev, ZL3073X_FW_ERR_PFX _msg "\n",	\
->> +			## __VA_ARGS__);				\
->> +		NL_SET_ERR_MSG_FMT_MOD((_extack),			\
->> +				       ZL3073X_FW_ERR_PFX _msg,		\
->> +				       ## __VA_ARGS__);			\
->> +	} while (0)
+On Fri 29-08-25 18:03:28, Xichao Zhao wrote:
+> When dealing with structures containing flexible arrays, struct_size()
+> provides additional compile-time checks compared to offsetof(). This
+> enhances code robustness and reduces the risk of potential errors.
 > 
-> Please don't duplicate the messages to the logs.
-> If devlink error reporting doesn't work it needs to be fixed
-> in the core.
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-OK, will fix this.
+Looks good. Feel free to add:
 
->> +static ssize_t
->> +zl3073x_fw_component_load(struct zl3073x_dev *zldev,
->> +			  struct zl3073x_fw_component **pcomp,
->> +			  const char **psrc, size_t *psize,
->> +			  struct netlink_ext_ack *extack)
->> +{
->> +	const struct zl3073x_fw_component_info *info;
->> +	struct zl3073x_fw_component *comp = NULL;
->> +	struct device *dev = zldev->dev;
->> +	enum zl3073x_fw_component_id id;
->> +	char buf[32], name[16];
->> +	u32 count, size, *dest;
->> +	int pos, rc;
->> +
->> +	/* Fetch image name and size from input */
->> +	strscpy(buf, *psrc, min(sizeof(buf), *psize));
->> +	rc = sscanf(buf, "%15s %u %n", name, &count, &pos);
->> +	if (!rc) {
->> +		/* No more data */
->> +		return 0;
->> +	} else if (rc == 1) {
->> +		ZL3073X_FW_ERR_MSG(zldev, extack, "invalid component size");
->> +		return -EINVAL;
->> +	}
->> +	*psrc += pos;
->> +	*psize -= pos;
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/namei.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> what if pos > *psize ? I think the parsing needs more care.
-
-This should not happen. strscpy copies min(32, *psize) from the source
-to buf and sscanf parses buf and fills pos by index from the buf.
-The pos cannot be greater than *psize...or did I miss something?
-
-Thanks,
-Ivan
-
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 10f7caff7f0f..70a71b1b8abc 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -178,7 +178,7 @@ getname_flags(const char __user *filename, int flags)
+>  	 * userland.
+>  	 */
+>  	if (unlikely(len == EMBEDDED_NAME_MAX)) {
+> -		const size_t size = offsetof(struct filename, iname[1]);
+> +		const size_t size = struct_size(result, iname, 1);
+>  		kname = (char *)result;
+>  
+>  		/*
+> @@ -253,7 +253,7 @@ struct filename *getname_kernel(const char * filename)
+>  	if (len <= EMBEDDED_NAME_MAX) {
+>  		result->name = (char *)result->iname;
+>  	} else if (len <= PATH_MAX) {
+> -		const size_t size = offsetof(struct filename, iname[1]);
+> +		const size_t size = struct_size(result, iname, 1);
+>  		struct filename *tmp;
+>  
+>  		tmp = kmalloc(size, GFP_KERNEL);
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
