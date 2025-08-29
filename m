@@ -1,405 +1,187 @@
-Return-Path: <linux-kernel+bounces-791556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14047B3B870
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:16:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04985B3B895
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F9856612F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:16:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C4C67BD6B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE2E30F552;
-	Fri, 29 Aug 2025 10:14:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048DD30F937;
+	Fri, 29 Aug 2025 10:14:53 +0000 (UTC)
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020075.outbound.protection.outlook.com [52.101.225.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E7E30DD1A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462481; cv=none; b=MInk/vMHv1ww6KS/6ealjPVvqUcFBh1rl8runxBKqsw5cQwI58tJTNuAuHne/i1K+aQNRQXo5tmyaWiKOyR69hFg4jA8zZgqeiUJgbpkuvECiyJ1lGpZAaLO0bcJg3DT2EIdZQeg/OhcFnajY2J6Hn4/EUITj48b4gk38pi7i5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462481; c=relaxed/simple;
-	bh=VwrUV3xFX9cxROrdxHf4KVyO46+xbUgFWMGwhZE7CtQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IGuF3PQ2kwxsicL0husYPUAJqoEnlB+Brm48CrvEqH5BdQNv1WHKD7U8GIP+65tT2kfcMvwTrVqT2Q6T+p+qVE2CR145tDl2+0MMrMH9LlaV/zisJOumY7jCtQBknpF7MeCuVF8cYVjkPIulJRQKcrFWmMLuenJ/HeLciYsc+NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cCvDz2tydz2VRWP;
-	Fri, 29 Aug 2025 18:11:31 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 09C1C1A0188;
-	Fri, 29 Aug 2025 18:14:32 +0800 (CST)
-Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 29 Aug 2025 18:14:31 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 29 Aug 2025 18:14:31 +0800
-From: Yushan Wang <wangyushan12@huawei.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <robin.murphy@arm.com>, <yangyicong@huawei.com>,
-	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<wangyushan12@huawei.com>, <hejunhao3@h-partners.com>, <linuxarm@huawei.com>,
-	<fanghao11@huawei.com>
-Subject: [PATCH v3 6/9] drivers/perf: hisi: Refactor the event configuration of L3C PMU
-Date: Fri, 29 Aug 2025 18:14:24 +0800
-Message-ID: <20250829101427.2557899-7-wangyushan12@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250829101427.2557899-1-wangyushan12@huawei.com>
-References: <20250829101427.2557899-1-wangyushan12@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109073093A8;
+	Fri, 29 Aug 2025 10:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756462492; cv=fail; b=QI/JevLSMafEh6Okf1hRv3MvhsP2gLyAP9CeUYw6RVzfNyQzNKcW6OA2mzf/7tej5TJyE1L01uEg33lBf6ASn2SXN0V6AcJHSkd3tl7BMaXvQB5xupMMkKGPgXiQrCUnxkMYIG4rG6Rvzy5p5AKxpVC8VkxR/zsOd0MlfEeRteg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756462492; c=relaxed/simple;
+	bh=iu808L3l4AhkkOIa2OlsTrocz49geZ59ysZE7J1NMv0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AFUqQ24NcOj6kxpk4blwgI5I9V9CzjEJmktTMSjQmMGLWw4Eqxww0YlHm5c/e3JWYNrevyl41jJKoYULjyxSub/HSsDMD1otxib3YiVV+CZud0lEjNyKMe6Kr52MGQPMiE6286r+IlEHNBXtIRFri41AMS5TH4YYv8BQV2stO9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eVWWeax+LNUjZTv5KaVlDbgBp6Ey8/7jLNeIuxuAA7z6hlanLjrX7dOraBU3WdliJYSR27ttUhV1wp+KOUkuU6724BRor8HolzFmUHUvJ+CRBh2nJf2/6DkCTMbZ2jWcwEHsdMLlPZfN+LVVaGjgi7Dgncgp92PHf97S8iVoAgWif2rrBfdf71WKfyk5JwnHUOQgYdoutgQBV6bzxvS4pJG5Cn8MS0At0nDQ9u7IRQkP5T7geexckPdpB6J4DJH3V+A9CI5oOnm9h2ptYAe4yeq5TZ760lJCy5B7v2o6inU4a6ht8sS0P44xJdkrZ9971auw5a/Uv6U4uRaFZx9HVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g6Ll8cjgUfdMP5ve7bSzTNYipB0xfy3kyhbRcvSyYKo=;
+ b=OWIPELIkbKwE2ARl4LSG+sr91ZZBKirQ9gx7vi0dmL05uOfWfOZDl//mY1TD42JVnR/ypCKHBAfDZ4UwBlQ3Ie4HC+jYQGZF/nBIsAYE7jcGgVJBvqgxsFmlk1vnJkaYFJ7qyRVBQMTJMYailoA0RWTaMzQF1xW8px7nHkvXwm2FD1yugddSMQ5imz0MZ2Poa2f+crkKck8vWf2UbBy2foP25zxYJhJU/seZKuaGaV7lKMUss0r8eT/xi5p0JSir8sYVt/dIEBo/Dyo3x3vUSYI6/ImJIYeLkoQMjCwZH+bCUsVVfXbHa+xnTuOoaotsAEUjW/4J91UCk2F6ddTgWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
+ by PN2P287MB2121.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Fri, 29 Aug
+ 2025 10:14:45 +0000
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
+ 10:14:44 +0000
+From: Tarang Raval <tarang.raval@siliconsignals.io>
+To: laurent.pinchart@ideasonboard.com
+Cc: Tarang Raval <tarang.raval@siliconsignals.io>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: rkisp1: Fix enum_framesizes accepting invalid pixel formats
+Date: Fri, 29 Aug 2025 15:44:24 +0530
+Message-Id: <20250829101425.95442-1-tarang.raval@siliconsignals.io>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN4P287CA0034.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:26f::9) To PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:199::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn100008.china.huawei.com (7.202.194.111)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3P287MB1829:EE_|PN2P287MB2121:EE_
+X-MS-Office365-Filtering-Correlation-Id: f54f8de3-6eb7-47ef-37db-08dde6e4e056
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Lqk67NXa03KdX79nZxy/ZsZaoOZlEZLc9VkyQvKsulZvaiCa4qHlijU5r+K9?=
+ =?us-ascii?Q?DbEE2huGos7ZFrAICEc4hfn6P9yvPcXpqtuZ60bJPepdw4KKVuehAA7s8NpZ?=
+ =?us-ascii?Q?UyKP44rrEhAVXD2PyyPF83NAmzDESM8JZwPggIJNn1lm+czPZFCEv1iuQndX?=
+ =?us-ascii?Q?gdtLZsl2ILZZNcizUzLuaNYyTY2BzmYVz0oGP+EXfIQb6f5UtfWeraumui7A?=
+ =?us-ascii?Q?16LKAUzlYc0nf231scwJTDkp91Q4tJwYVibUHlSeJpLJgSLRINUL3HmcDQCr?=
+ =?us-ascii?Q?yLB7Vf2IFm3pf8IoDg41x7BOorvZC+nd5IFCwX2WixyIgDy8TOd2KIS+iMDN?=
+ =?us-ascii?Q?5ScxTD4KIcM/mWR7rsbsqoAeD7iRoXnn17gLUAzFh3OPE2rL6LBx3Ixkf2ks?=
+ =?us-ascii?Q?kLsdbu5p6QZoVKCUZ8T1k2KXPiG59CGtfanf+esP6KeqJaZASMv3mWUmj2RM?=
+ =?us-ascii?Q?Wkzn59RY9zDGDdXCQBxSzSViu2c/YQJJ+CVP9CG6j8pCDaqQCaG+AACKr0Gb?=
+ =?us-ascii?Q?TDgKKnm+kc9Ig2mJh9X5rlYOA/X78YobuvbPpyYxckF5t8l8qJTwZafajLpL?=
+ =?us-ascii?Q?rzWirl1iDUrEsxD8SA7Fb3CV9VyaCyegrPVYJdsJAO8C9plNypx6paE3gbBm?=
+ =?us-ascii?Q?4drgNNqx7UW1kbZw611TYa0WNBNtX5/N/A9sncJKsR1WBX+XxBvHlkOQ0ZuX?=
+ =?us-ascii?Q?B7URPtedSksIM0rNiz+lzxLs+EhjTLTyFg6+L4OqYxAUQ/wXsdcLpCI5Bnas?=
+ =?us-ascii?Q?YimMk9UG7Vsn9OFJQkSN2DEKWZyH/eqmKu2DmgmEGiIoIpy/CcGC2OOczuNe?=
+ =?us-ascii?Q?2Ng26YwAODR//Ui7fQ6zrazvTKyz2He19ukCc0Ienmw2gODdOOgMsQXIL8Oc?=
+ =?us-ascii?Q?WQPha92YpiTSoBnAZpwAPizyG2QRc6u2zxMVWZWQ+ZggpzWQaR9HkcSpp2WU?=
+ =?us-ascii?Q?JELEIgJnKt0/1iRtBj9AXJvx53tEVVCxEB3Vlzd6IzKZ+YzbssxZllF6CiNk?=
+ =?us-ascii?Q?L0toebC49HLnFGrCKdsNzfK7Wj1rpOmGlTfsnQtAxkrInIPZBS4yKIScbuWf?=
+ =?us-ascii?Q?tWdhFpT/i7nTzFBG5Fj9FaVxeAAcRzUKIyM5tLe6yyqldyV6cO343V7HmBuf?=
+ =?us-ascii?Q?uRe5A1NVx/MnULafr119ggZeTo8ac45ruKk4YqomcHQHCkgA9YMtMLwazqA9?=
+ =?us-ascii?Q?saCbwupNP5So3UZkYIsO4XNZlSlkqa8cJRW1AV4sYISF9p5XOgIBgcheIAhI?=
+ =?us-ascii?Q?XOGqdQ7d/Z88NZCMRsn6XEb0wPgVkDD4U95OfQNeSiEPNyRoAfZN0iSK4kET?=
+ =?us-ascii?Q?mKST4UZWP6c3P7OPkxvZNNUR/Bo6NB7VJd/ImqoAep0Evnlqj31W53UV7igL?=
+ =?us-ascii?Q?5Ck4Iu33qFwuDrAYteKib7qUqDao4JIs7SL6N11Z4W/5WReMIfGsPZcR609t?=
+ =?us-ascii?Q?4YpMQZqwShdRqZ4AUfto/zCUNZFu3lSIVWFlAkNi1hEYPZ4yhTsyzw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rlw12LPPute6TzWWGQ053ECOxVcTGmq2wQfeL2pXeF3Kz9T4JnW1fGpSSFcr?=
+ =?us-ascii?Q?k8moMTNymo7TwZCcVt7svUYob6L/ojIxm4sYbJCcXq77mN/vGqO9fwqKpcUP?=
+ =?us-ascii?Q?EIGtwIZFKM0JUS43aEBzBFsk72iaAwmz7fm7tzfF+fUB/LJbZsvPQTPs8tU7?=
+ =?us-ascii?Q?4Q0vspWmjxhfIZDABqj4i9CSS0tDFyXd4isKc1539ji+TIK7TvQDRhQXiRfg?=
+ =?us-ascii?Q?AZDlLRh8jxolzA15Xpwsmhnhfy2YuVe/8SfAPcJNQ0PTLdksylMRt19ff7/n?=
+ =?us-ascii?Q?+1Ubk4mdVo4rEYMPz06xSBxNQIXKbWP3GCn6jRQXY8T4Lare/dCXodqVLgg4?=
+ =?us-ascii?Q?EeVsXf2sNUuSVpQDyjOTfjv15fTxP710Sgz6MwvnLWTXeqoQdknYlff7qr1E?=
+ =?us-ascii?Q?8ALHt05JB9CU2oy5UXf4CJWMJ2CzA+rEJ2Dt4ZmYEAlBQVk6uwJzyOKKhSAs?=
+ =?us-ascii?Q?7ahLJLXC09/nQnBMfaZ/4ZUyPKtQ5lYbuWMeQP38AGzGtok/e10j+uAMr7wP?=
+ =?us-ascii?Q?iLJJHWdv6uWBgNPfJGLFf7Jn71i59CbrW3n/ONOmy+LNaGIsnpksJUWW3clk?=
+ =?us-ascii?Q?8Pyjku/MPqfh/MmR86J+Eg/MtaRRGxcLzvooF0i22Gb1fXWI5IonWLcaeKyQ?=
+ =?us-ascii?Q?v3HzhRh7HmSdZKtiP8/NHT9sY1VzwpTBcsc4INNY3+puBGC+pSqfdB0tdDwQ?=
+ =?us-ascii?Q?JEw+u7yPaBL8nYGuNFHMDDq0TCFS/sBPT0QGXBpDw2P/Sp3YuBjnM4OdlS7n?=
+ =?us-ascii?Q?0CUj1VH7nKImirtZoSn1PCk0YJn3e6yQpUwtyGWEVSAiiAadS4k4xlDeAMic?=
+ =?us-ascii?Q?TkZLHj9Z+uxTwugYB34qOdvz/D3nmDImPO5N+cVsxO/TFqP6/NpvRKAQ+AJb?=
+ =?us-ascii?Q?E8xWEBC2s/++D3IdOODSi+7WnXct+Hr+xdKNZ4kjU47i8eVLP1AZZjE/JiQ9?=
+ =?us-ascii?Q?FjnrrhF0KYFe/Tpx1e/MD1D7+9WQmiewcgRiEG5/yxPD4pC/85mFyv/OB3oe?=
+ =?us-ascii?Q?H3SodfgEZPdx1rGLrchQoiRKnnMwxmGNKkEhgFUZyDE5+Z0diDwTvoMAdXFY?=
+ =?us-ascii?Q?reudVQfg8ez3zn9Ldn3zSXb7yUxw66BMahw1j/uF4RQCCVvO/wBG8KY1fz6F?=
+ =?us-ascii?Q?UAPFddc3HRNBRitYFD8N4llWWI2yPIY4/97u1IY0a5wO+AM9eFuWOkiIVDQp?=
+ =?us-ascii?Q?yjwMR2yDWpPnlXtzwWV81bKCb9AongRUBn9nMswejk+o8cJl7IAViSwEhm//?=
+ =?us-ascii?Q?+O1IKlvnFBeSslqDWTbxMG+tXD/dydXPQh2eJFNBwinDecfr9cWJvleVgIuI?=
+ =?us-ascii?Q?iCFJDAYXDc+C5D8IkjpSwJGNgpsTSHDcvn/ARupFXSJ9wEH9k6zQL5FflQe5?=
+ =?us-ascii?Q?Fgr+idiJHXOOg6qA9dycerQTVVnA8VDzDi3zjboGJz4B/Py2JgXufGj3/25i?=
+ =?us-ascii?Q?4na/4rIGThkcOajFGGPuPxychT9w05zD/wq5no9++sNTLpYzzG0hse8erAdO?=
+ =?us-ascii?Q?dCXHOnoejq/7jlz5vUEGkmRdoW7hI4d/HDLv3GuVJUAH3hDssLpG5fj266Yd?=
+ =?us-ascii?Q?bmTjyDOLQ3AXKAvcLRvRnkhV5NQTGOPsFSBVb7BoeQO5RqXA4gOIMV8kAlC0?=
+ =?us-ascii?Q?CQ=3D=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: f54f8de3-6eb7-47ef-37db-08dde6e4e056
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 10:14:44.8499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +9ryCb6KOhJzywsNukLxVhW5P+jN9vQEVmBty/UdOnjXALv7kTeCcwc1zuim7IbJ/pmWbKIf9ouXEOFbVbEQRe2ibTAfi2A1e8B97+D0BGg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB2121
 
-From: Yicong Yang <yangyicong@hisilicon.com>
+Reject unsupported pixel formats in rkisp1_enum_framesizes() to
+fix v4l2-compliance failure.
 
-The event register is configured using hisi_pmu::base directly since
-only one address space is supported for L3C PMU. We need to extend if
-events configuration locates in different address space. In order to
-make preparation for such hardware, extract the event register
-configuration to separate function using hw_perf_event::event_base as
-each event's base address.  Implement a private
-hisi_uncore_ops::get_event_idx() callback for initialize the event_base
-besides get the hardware index.
+v4l2-compliance test failure:
 
-No functional changes intended.
+fail: ../utils/v4l2-compliance/v4l2-test-formats.cpp(403): Accepted framesize for invalid format
+test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: FAIL
 
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+Tested on: Debix i.MX8MP Model A
+Kernel version: v6.17-rc3
+v4l2-compliance: 1.31.0-5387
+
+Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
 ---
- drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c | 129 ++++++++++++-------
- 1 file changed, 84 insertions(+), 45 deletions(-)
+ drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-index 39444f11cbad..7928b9bb3e7e 100644
---- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-@@ -60,51 +60,87 @@ HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_cfg, config1, 15, 11);
- HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_skt, config1, 16, 16);
- HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_core, config2, 15, 0);
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+index 6dcefd144d5a..107937b77153 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-capture.c
+@@ -1383,6 +1383,9 @@ static int rkisp1_enum_framesizes(struct file *file, void *fh,
+ 	};
+ 	struct rkisp1_capture *cap = video_drvdata(file);
  
--static void hisi_l3c_pmu_config_req_tracetag(struct perf_event *event)
-+static int hisi_l3c_pmu_get_event_idx(struct perf_event *event)
- {
- 	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	unsigned long *used_mask = l3c_pmu->pmu_events.used_mask;
-+	u32 num_counters = l3c_pmu->num_counters;
-+	int idx;
++	if (!rkisp1_find_fmt_cfg(cap, fsize->pixel_format))
++		return -EINVAL;
 +
-+	idx = find_first_zero_bit(used_mask, num_counters);
-+	if (idx == num_counters)
-+		return -EAGAIN;
-+
-+	set_bit(idx, used_mask);
-+	event->hw.event_base = (unsigned long)l3c_pmu->base;
-+
-+	return idx;
-+}
-+
-+static u32 hisi_l3c_pmu_event_readl(struct hw_perf_event *hwc, u32 reg)
-+{
-+	return readl((void __iomem *)hwc->event_base + reg);
-+}
-+
-+static void hisi_l3c_pmu_event_writel(struct hw_perf_event *hwc, u32 reg, u32 val)
-+{
-+	writel(val, (void __iomem *)hwc->event_base + reg);
-+}
-+
-+static u64 hisi_l3c_pmu_event_readq(struct hw_perf_event *hwc, u32 reg)
-+{
-+	return readq((void __iomem *)hwc->event_base + reg);
-+}
-+
-+static void hisi_l3c_pmu_event_writeq(struct hw_perf_event *hwc, u32 reg, u64 val)
-+{
-+	writeq(val, (void __iomem *)hwc->event_base + reg);
-+}
-+
-+static void hisi_l3c_pmu_config_req_tracetag(struct perf_event *event)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 tt_req = hisi_get_tt_req(event);
+ 	if (fsize->index != 0)
+ 		return -EINVAL;
  
- 	if (tt_req) {
- 		u32 val;
- 
- 		/* Set request-type for tracetag */
--		val = readl(l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_TRACETAG_CTRL);
- 		val |= tt_req << L3C_TRACETAG_REQ_SHIFT;
- 		val |= L3C_TRACETAG_REQ_EN;
--		writel(val, l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_TRACETAG_CTRL, val);
- 
- 		/* Enable request-tracetag statistics */
--		val = readl(l3c_pmu->base + L3C_PERF_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_PERF_CTRL);
- 		val |= L3C_TRACETAG_EN;
--		writel(val, l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_PERF_CTRL, val);
- 	}
- }
- 
- static void hisi_l3c_pmu_clear_req_tracetag(struct perf_event *event)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 tt_req = hisi_get_tt_req(event);
- 
- 	if (tt_req) {
- 		u32 val;
- 
- 		/* Clear request-type */
--		val = readl(l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_TRACETAG_CTRL);
- 		val &= ~(tt_req << L3C_TRACETAG_REQ_SHIFT);
- 		val &= ~L3C_TRACETAG_REQ_EN;
--		writel(val, l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_TRACETAG_CTRL, val);
- 
- 		/* Disable request-tracetag statistics */
--		val = readl(l3c_pmu->base + L3C_PERF_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_PERF_CTRL);
- 		val &= ~L3C_TRACETAG_EN;
--		writel(val, l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_PERF_CTRL, val);
- 	}
- }
- 
- static void hisi_l3c_pmu_write_ds(struct perf_event *event, u32 ds_cfg)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
- 	u32 reg, reg_idx, shift, val;
- 	int idx = hwc->idx;
-@@ -120,15 +156,15 @@ static void hisi_l3c_pmu_write_ds(struct perf_event *event, u32 ds_cfg)
- 	reg_idx = idx % 4;
- 	shift = 8 * reg_idx;
- 
--	val = readl(l3c_pmu->base + reg);
-+	val = hisi_l3c_pmu_event_readl(hwc, reg);
- 	val &= ~(L3C_DATSRC_MASK << shift);
- 	val |= ds_cfg << shift;
--	writel(val, l3c_pmu->base + reg);
-+	hisi_l3c_pmu_event_writel(hwc, reg, val);
- }
- 
- static void hisi_l3c_pmu_config_ds(struct perf_event *event)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 ds_cfg = hisi_get_datasrc_cfg(event);
- 	u32 ds_skt = hisi_get_datasrc_skt(event);
- 
-@@ -138,15 +174,15 @@ static void hisi_l3c_pmu_config_ds(struct perf_event *event)
- 	if (ds_skt) {
- 		u32 val;
- 
--		val = readl(l3c_pmu->base + L3C_DATSRC_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_DATSRC_CTRL);
- 		val |= L3C_DATSRC_SKT_EN;
--		writel(val, l3c_pmu->base + L3C_DATSRC_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_DATSRC_CTRL, val);
- 	}
- }
- 
- static void hisi_l3c_pmu_clear_ds(struct perf_event *event)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 ds_cfg = hisi_get_datasrc_cfg(event);
- 	u32 ds_skt = hisi_get_datasrc_skt(event);
- 
-@@ -156,51 +192,51 @@ static void hisi_l3c_pmu_clear_ds(struct perf_event *event)
- 	if (ds_skt) {
- 		u32 val;
- 
--		val = readl(l3c_pmu->base + L3C_DATSRC_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_DATSRC_CTRL);
- 		val &= ~L3C_DATSRC_SKT_EN;
--		writel(val, l3c_pmu->base + L3C_DATSRC_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_DATSRC_CTRL, val);
- 	}
- }
- 
- static void hisi_l3c_pmu_config_core_tracetag(struct perf_event *event)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 core = hisi_get_tt_core(event);
- 
- 	if (core) {
- 		u32 val;
- 
- 		/* Config and enable core information */
--		writel(core, l3c_pmu->base + L3C_CORE_CTRL);
--		val = readl(l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_CORE_CTRL, core);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_PERF_CTRL);
- 		val |= L3C_CORE_EN;
--		writel(val, l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_PERF_CTRL, val);
- 
- 		/* Enable core-tracetag statistics */
--		val = readl(l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_TRACETAG_CTRL);
- 		val |= L3C_TRACETAG_CORE_EN;
--		writel(val, l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_TRACETAG_CTRL, val);
- 	}
- }
- 
- static void hisi_l3c_pmu_clear_core_tracetag(struct perf_event *event)
- {
--	struct hisi_pmu *l3c_pmu = to_hisi_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
- 	u32 core = hisi_get_tt_core(event);
- 
- 	if (core) {
- 		u32 val;
- 
- 		/* Clear core information */
--		writel(L3C_COER_NONE, l3c_pmu->base + L3C_CORE_CTRL);
--		val = readl(l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_CORE_CTRL, L3C_COER_NONE);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_PERF_CTRL);
- 		val &= ~L3C_CORE_EN;
--		writel(val, l3c_pmu->base + L3C_PERF_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_PERF_CTRL, val);
- 
- 		/* Disable core-tracetag statistics */
--		val = readl(l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		val = hisi_l3c_pmu_event_readl(hwc, L3C_TRACETAG_CTRL);
- 		val &= ~L3C_TRACETAG_CORE_EN;
--		writel(val, l3c_pmu->base + L3C_TRACETAG_CTRL);
-+		hisi_l3c_pmu_event_writel(hwc, L3C_TRACETAG_CTRL, val);
- 	}
- }
- 
-@@ -239,18 +275,19 @@ static u32 hisi_l3c_pmu_get_counter_offset(int cntr_idx)
- static u64 hisi_l3c_pmu_read_counter(struct hisi_pmu *l3c_pmu,
- 				     struct hw_perf_event *hwc)
- {
--	return readq(l3c_pmu->base + hisi_l3c_pmu_get_counter_offset(hwc->idx));
-+	return hisi_l3c_pmu_event_readq(hwc, hisi_l3c_pmu_get_counter_offset(hwc->idx));
- }
- 
- static void hisi_l3c_pmu_write_counter(struct hisi_pmu *l3c_pmu,
- 				       struct hw_perf_event *hwc, u64 val)
- {
--	writeq(val, l3c_pmu->base + hisi_l3c_pmu_get_counter_offset(hwc->idx));
-+	hisi_l3c_pmu_event_writeq(hwc, hisi_l3c_pmu_get_counter_offset(hwc->idx), val);
- }
- 
- static void hisi_l3c_pmu_write_evtype(struct hisi_pmu *l3c_pmu, int idx,
- 				      u32 type)
- {
-+	struct hw_perf_event *hwc = &l3c_pmu->pmu_events.hw_events[idx]->hw;
- 	u32 reg, reg_idx, shift, val;
- 
- 	/*
-@@ -265,10 +302,10 @@ static void hisi_l3c_pmu_write_evtype(struct hisi_pmu *l3c_pmu, int idx,
- 	shift = 8 * reg_idx;
- 
- 	/* Write event code to L3C_EVENT_TYPEx Register */
--	val = readl(l3c_pmu->base + reg);
-+	val = hisi_l3c_pmu_event_readl(hwc, reg);
- 	val &= ~(L3C_EVTYPE_NONE << shift);
- 	val |= (type << shift);
--	writel(val, l3c_pmu->base + reg);
-+	hisi_l3c_pmu_event_writel(hwc, reg, val);
- }
- 
- static void hisi_l3c_pmu_start_counters(struct hisi_pmu *l3c_pmu)
-@@ -303,9 +340,9 @@ static void hisi_l3c_pmu_enable_counter(struct hisi_pmu *l3c_pmu,
- 	u32 val;
- 
- 	/* Enable counter index in L3C_EVENT_CTRL register */
--	val = readl(l3c_pmu->base + L3C_EVENT_CTRL);
-+	val = hisi_l3c_pmu_event_readl(hwc, L3C_EVENT_CTRL);
- 	val |= (1 << hwc->idx);
--	writel(val, l3c_pmu->base + L3C_EVENT_CTRL);
-+	hisi_l3c_pmu_event_writel(hwc, L3C_EVENT_CTRL, val);
- }
- 
- static void hisi_l3c_pmu_disable_counter(struct hisi_pmu *l3c_pmu,
-@@ -314,9 +351,9 @@ static void hisi_l3c_pmu_disable_counter(struct hisi_pmu *l3c_pmu,
- 	u32 val;
- 
- 	/* Clear counter index in L3C_EVENT_CTRL register */
--	val = readl(l3c_pmu->base + L3C_EVENT_CTRL);
-+	val = hisi_l3c_pmu_event_readl(hwc, L3C_EVENT_CTRL);
- 	val &= ~(1 << hwc->idx);
--	writel(val, l3c_pmu->base + L3C_EVENT_CTRL);
-+	hisi_l3c_pmu_event_writel(hwc, L3C_EVENT_CTRL, val);
- }
- 
- static void hisi_l3c_pmu_enable_counter_int(struct hisi_pmu *l3c_pmu,
-@@ -324,10 +361,10 @@ static void hisi_l3c_pmu_enable_counter_int(struct hisi_pmu *l3c_pmu,
- {
- 	u32 val;
- 
--	val = readl(l3c_pmu->base + L3C_INT_MASK);
-+	val = hisi_l3c_pmu_event_readl(hwc, L3C_INT_MASK);
- 	/* Write 0 to enable interrupt */
- 	val &= ~(1 << hwc->idx);
--	writel(val, l3c_pmu->base + L3C_INT_MASK);
-+	hisi_l3c_pmu_event_writel(hwc, L3C_INT_MASK, val);
- }
- 
- static void hisi_l3c_pmu_disable_counter_int(struct hisi_pmu *l3c_pmu,
-@@ -335,10 +372,10 @@ static void hisi_l3c_pmu_disable_counter_int(struct hisi_pmu *l3c_pmu,
- {
- 	u32 val;
- 
--	val = readl(l3c_pmu->base + L3C_INT_MASK);
-+	val = hisi_l3c_pmu_event_readl(hwc, L3C_INT_MASK);
- 	/* Write 1 to mask interrupt */
- 	val |= (1 << hwc->idx);
--	writel(val, l3c_pmu->base + L3C_INT_MASK);
-+	hisi_l3c_pmu_event_writel(hwc, L3C_INT_MASK, val);
- }
- 
- static u32 hisi_l3c_pmu_get_int_status(struct hisi_pmu *l3c_pmu)
-@@ -348,7 +385,9 @@ static u32 hisi_l3c_pmu_get_int_status(struct hisi_pmu *l3c_pmu)
- 
- static void hisi_l3c_pmu_clear_int_status(struct hisi_pmu *l3c_pmu, int idx)
- {
--	writel(1 << idx, l3c_pmu->base + L3C_INT_CLEAR);
-+	struct hw_perf_event *hwc = &l3c_pmu->pmu_events.hw_events[idx]->hw;
-+
-+	hisi_l3c_pmu_event_writel(hwc, L3C_INT_CLEAR, 1 << idx);
- }
- 
- static int hisi_l3c_pmu_init_data(struct platform_device *pdev,
-@@ -474,7 +513,7 @@ static const struct hisi_pmu_dev_info hisi_l3c_pmu_v2 = {
- 
- static const struct hisi_uncore_ops hisi_uncore_l3c_ops = {
- 	.write_evtype		= hisi_l3c_pmu_write_evtype,
--	.get_event_idx		= hisi_uncore_pmu_get_event_idx,
-+	.get_event_idx		= hisi_l3c_pmu_get_event_idx,
- 	.start_counters		= hisi_l3c_pmu_start_counters,
- 	.stop_counters		= hisi_l3c_pmu_stop_counters,
- 	.enable_counter		= hisi_l3c_pmu_enable_counter,
 -- 
-2.33.0
+2.34.1
 
 
