@@ -1,182 +1,114 @@
-Return-Path: <linux-kernel+bounces-792224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD70B3C19C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:16:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A18B3C1A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 701F17AB557
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:14:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21E11C804E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D973E221D9E;
-	Fri, 29 Aug 2025 17:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE82E3375AE;
+	Fri, 29 Aug 2025 17:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twPkUgMz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EhF7Aplf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A37201033;
-	Fri, 29 Aug 2025 17:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA3201033
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756487786; cv=none; b=MKd48sNbZEjMyIuS9RwP/uTE6oL+OLwaVJlHkjMm4SMISR/qxVBD13CHstGO5rpxJwThS/QCAtYkP414CdwP2zoWjM1eoIEGhDLDw4Bs6Gw5afBKC0PpZddjTWP2Q5hrDGG769rUQgTxXgN51CjQ5JKU3FSnn3CkGRBu3KsY7ik=
+	t=1756487840; cv=none; b=iqXzIDHIzUmeeVhC3lsSyaNQzXm4YAvGC7vje4/B/JBXeIOcjjTPOIKuvjv3DV5LlTjWyV4Oty3Fejd2mLKs9UmUH+v4WC8VzUeaTGF5AQOfo9QBEa2aJ7/sKMg4qEUFp4+ReY3J1Cr3aGcZzSwFtj61+nDyUrbzH1ZVLnYq50g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756487786; c=relaxed/simple;
-	bh=NkhK1p1B1g1OXGW0TTzXh6oyW/wktWgGjhNbONvL0ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtV85PcXD841ZOAkIAUB/FWThzMIOcGCCysRiyvde1nbEDa/rJzdau17xPfZmW3yMmViBnXN4ITe5KEGS28+TGRCoHOJ5/01d0BIvdS6vj4b9baAvGa+60N5LXZ4ZUHnluqjtW1KO3CZqKluZq2reI8Rda4gBplPyzAUbNuCb8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twPkUgMz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A922CC4CEF0;
-	Fri, 29 Aug 2025 17:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756487785;
-	bh=NkhK1p1B1g1OXGW0TTzXh6oyW/wktWgGjhNbONvL0ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=twPkUgMzYYFnifeH0CQK/tHCLW6lk1U1XRUws/fir+jyChH6lqXpyktSXxOv9sxn8
-	 CjYB6J6MZH3EsmaYoFoVW9htpqd19gu+ASZf5z50X5ijZmZRSTAdRhIVlx7RIp8tmN
-	 o1ne/W8BHqaIt0iRW/N2SjxWN4cZWxG551XhcMEovc9Tq5uuSt4ffW1/Q2GJUutbdy
-	 kmY/lSfnboTVWwYEPKKaW6mPhjEfdDcGSjpaqAGAubhdREneQAd7QE089bLIDEsT58
-	 nQoA3lQrla9HclE+k2HS91G3KgnVnsNzB4IE6aMxuQUVKkk/YXJ+t5f9D2GT4iV0wB
-	 zueFmj8PqFRNg==
-Date: Fri, 29 Aug 2025 12:16:24 -0500
-From: Rob Herring <robh@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: Add bindings for SpacemiT K1
-Message-ID: <20250829171624.GA1027608-robh@kernel.org>
-References: <20250828-k1-i2s-v2-0-09e7b40f002c@linux.spacemit.com>
- <20250828-k1-i2s-v2-1-09e7b40f002c@linux.spacemit.com>
+	s=arc-20240116; t=1756487840; c=relaxed/simple;
+	bh=IBtpyMyCDK1szOTv6hKPQ1XBcbyXLs/xB9Wy4H5DtS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R61uQz97oU4CnlOPoNThUf57+SACaCirV+qj42Z9XFETcy3hjzdfXFXY8hez0bZfq1/LxPuqzrDb9NcrK/Vbev/3YqbipLK1gei7kDQrcHAQxXC+UzazMSaTYcdLRw1ElEuCOO1IUVcWdP7aEU8mO69cTQ+U+bbnIXprKX0DWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EhF7Aplf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D775C40E0185;
+	Fri, 29 Aug 2025 17:17:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2uBgxehETMd4; Fri, 29 Aug 2025 17:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756487822; bh=25wZ+JH5mg8MQj9ElsXO9yrBDNK5dg8ZFEJmzubRlhs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EhF7Aplf5WBtuTdSiDZN1t8L3lS6eeS+L/A+prwlKw36GsgrlQ/LLi5tWhBjq93on
+	 ndDQytjQFwUtDikpcmC0XAPhJWMA8qWdpZFsv8BVLtgMjgIKPS9JoSo6s4nbvGBQ6K
+	 2cW8bhWn4HMnS0bVcLMCGwLh+znQquMxJ/bqC6mir/XrHDifbgzUj9bfl1T7xB7enZ
+	 CoMIa8Sfns0HP203IaNszyqXInAHcjtZG1jEMlgTgW1+CuqcANftPLe9ZzmcMWDb8K
+	 MCoJx86VyGdVumAONbofH/nn80s+ZfICiNhXOj0WEx9+vgMKL9C1OFG0Ffhx7zoX7j
+	 ODQyB48qJlK8J4hvASUJNZf8FwM2Xbpu+Ob4wFrq2Li0cO2c58EkBUguoOcrYJi7rs
+	 VEkWtQ0mJtul1KAq93QX7xJLl7/l0KmwRQ5cSy96nrKFCybGhwM23JnseXEU9HwE29
+	 /va+VqaVcSxOg/TvGr9T1vCdwpPkcz7gaR2EdNSZlfCRZc2WO2KHGJx7y53/QhJ2+W
+	 nrodQ1Usd40JFGSLZqwXjzlG60y5oCYxMsYLCAfgDQqH2mG10i2ti62kjyy6J6KRlm
+	 ZZsLbO18WDt71P9hfImObmMnpWQGCBo99chH4npXvfzdZvG6z1Y13f0Lp8octTw9vb
+	 AQNJUbfSfo7SAJZNI8MVKRnA=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4BB6440E0177;
+	Fri, 29 Aug 2025 17:16:56 +0000 (UTC)
+Date: Fri, 29 Aug 2025 19:16:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: amd-gfx@lists.freedesktop.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource seems
+ too big for the bo
+Message-ID: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250828-k1-i2s-v2-1-09e7b40f002c@linux.spacemit.com>
 
-On Thu, Aug 28, 2025 at 11:37:32AM +0800, Troy Mitchell wrote:
-> Add dt-binding for the i2s driver of SpacemiT's K1 SoC.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  .../devicetree/bindings/sound/spacemit,k1-i2s.yaml | 88 ++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..042001c38ed8d434889183831e44289ea9c5aef2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
-> @@ -0,0 +1,88 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/spacemit,k1-i2s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: K1 I2S controller
-> +
-> +description:
-> +  The I2S bus (Inter-IC sound bus) is a serial link for digital
-> +  audio data transfer between devices in the system.
-> +
-> +maintainers:
-> +  - Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-i2s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: clock for I2S sysclk
-> +      - description: clock for I2S bclk
-> +      - description: clock for I2S bus
-> +      - description: clock for I2S controller
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sysclk
-> +      - const: bclk
-> +      - const: bus
-> +      - const: func
-> +
-> +  dmas:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    oneOf:
-> +      - const: rx
-> +      - items:
-> +          - const: tx
-> +          - const: rx
+Heya folks,
 
-If tx is optional, wouldn't this be simpler:
+this flood happens with plain 6.16 on my workstation - haven't done any hw
+changes:
 
-minItems: 1
-items:
-  - const: rx
-  - const: tx
+[   29.094609] evergreen_packet3_check: 115 callbacks suppressed
+[   29.094615] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106737] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106740] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106742] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106745] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106747] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106750] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106752] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106754] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   29.106757] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.579786] evergreen_packet3_check: 29 callbacks suppressed
+[   52.579792] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591825] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591829] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591832] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591835] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591838] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591840] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591843] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591846] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+[   52.591849] radeon 0000:1d:00.0: vbo resource seems too big for the bo
 
+-- 
+Regards/Gruss,
+    Boris.
 
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  port:
-> +    $ref: audio-graph-port.yaml#
-> +    unevaluatedProperties: false
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - dmas
-> +  - dma-names
-> +  - resets
-> +  - "#sound-dai-cells"
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
-> +    i2s@d4026000 {
-> +      compatible = "spacemit,k1-i2s";
-> +      reg = <0xd4026000 0x30>;
-> +      clocks = <&syscon_mpmu CLK_I2S_SYSCLK>,
-> +               <&syscon_mpmu CLK_I2S_BCLK>,
-> +               <&syscon_apbc CLK_SSPA0_BUS>,
-> +               <&syscon_apbc CLK_SSPA0>;
-> +      clock-names = "sysclk", "bclk", "bus", "func";
-> +      dmas = <&pdma0 21>, <&pdma0 22>;
-> +      dma-names = "tx", "rx";
-> +      resets = <&syscon_apbc RESET_SSPA0>;
-> +      #sound-dai-cells = <0>;
-> +    };
-> 
-> -- 
-> 2.50.1
-> 
+https://people.kernel.org/tglx/notes-about-netiquette
 
