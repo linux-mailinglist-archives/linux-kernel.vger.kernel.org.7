@@ -1,163 +1,241 @@
-Return-Path: <linux-kernel+bounces-791719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86149B3BABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50651B3BABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 734DE7BD3C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:02:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0BF15802CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A2F313E35;
-	Fri, 29 Aug 2025 12:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A76B314A8E;
+	Fri, 29 Aug 2025 12:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qlq3eH4H"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bLD1OemG"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BC82C3769;
-	Fri, 29 Aug 2025 12:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9833148C7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756469026; cv=none; b=W7fWlTn27qHXQBUIVQbrjoUtA3vlRirTAP1t6w8fxikQho3OHwVFWOnW9zRJ5zGUayP5qNYtycMP/5rsU62DigONT01VA7c3BjFa80NAJQMNFw9+ymmJL9TkXJMSZq8Q+CcOPyun02N/8EkWaavzSeoZAguiT82P1FQmYe1Q+pU=
+	t=1756469006; cv=none; b=EEaC38apy1C1Xb9spXUzY4fPNh0b3aVYrZWM4CimY89/SLiigjHJ+NMpElQRDohhuh/CuwwcZgMdVLlECsFJqBY4qodfF+iZzveXQwTiXJTazzWCtS4mEJU4I6Dc9VHjWatZasF/+V4GIfLBKgxPlCi7GqKTznYZ3x2A95+2aEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756469026; c=relaxed/simple;
-	bh=115NZsIvYnV2ui7X29W/zJVYkk+Lpf5KB2g0omL/oIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSOK/sUgi6cKbjwlJIaQ+nKdu4VrvT0EOzh6Cb5yZCBmPFeHcfNKF63FGje0lYWuFTJLBcCkxgHobeSklxHbVhHVUmjiev8gPNtXPc5uw8h+g/wS58odN6Ao2z4+cwy10lvgfNqJJcCJzatzuMDON21BSyMbwQ1vmKdIIvBKkB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qlq3eH4H; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DBA5E40E0177;
-	Fri, 29 Aug 2025 12:03:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id l2hP3T9UqLB9; Fri, 29 Aug 2025 12:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756469016; bh=SxB2Y9n5mlykbRbC9Skan0hwwaj5XmCQ9toF0m+gFj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qlq3eH4HyEgfDAmQN5rajn1TTv/4KwpghWNYdm7cNp5Smpmw3Ig+Zr79zglRjBXsk
-	 ftJ4T2cwwKMDxz9RL3byIrnVJz6aIgno9r+7do3nnHxx6lyz/Y34wr2YCR1Pcg6mBz
-	 mxlrUPOuAM+O3XrhxtgWE6MimR0r7Fyjo/1bjxz65ss2Sq33VhxFXZTdEXSRu/kBVF
-	 PwEiS/92dGtu8o24QBy3cq6PZdG3YKdMg99nlqx2o0+x1wUV07hswarFGsmWT6w2Fu
-	 a/GiWKbxFUnB4PhlwRnFGdmyT8mC0mxpGrokWJdYrFDdgOmHkow0WW/sJ5STusRgSx
-	 gVmx1NPQhwMgvy2r8q1HBsS607aPQYS9W9bHgXQ1rJliQ06tWL50o0sY6jJPpGsjDv
-	 lbQapdOqfJm7dp9GgBC8Zgy24nEy+lXbBHQ8Ed7QuLWP86pSqRculdZ+vybyEAp1rl
-	 AT0oqUiatRvURj9mCpVu8pj2JZDFwxXr1Xogc+A7PPfViNU0nAK427Xog0H00asTYy
-	 hqullDyvLMcRFutcTGmQ1n5/Wxh8T2WoTNjhOIHnwZc/kBHB5mbFeO6Sfgm/Iu9QW2
-	 +eru3PM9iUtd0TPd11iSTKVn6ozSfQ/PUBFOlTtoLIdW3D6W9yRC3x3BBdR2jSjST2
-	 32l1d5ej1uiL7JyP4lwPXrow=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3569540E0185;
-	Fri, 29 Aug 2025 12:03:19 +0000 (UTC)
-Date: Fri, 29 Aug 2025 14:03:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, git@amd.com, ptsm@linux.microsoft.com,
-	srivatsa@csail.mit.edu, shubhrajyoti.datta@gmail.com,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>
-Subject: Re: [PATCH v8 2/5] cdx: Export Symbols for MCDI RPC and
- Initialization
-Message-ID: <20250829120312.GKaLGXAGPy4wdtsVac@fat_crate.local>
-References: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
- <20250826052914.2066884-3-shubhrajyoti.datta@amd.com>
+	s=arc-20240116; t=1756469006; c=relaxed/simple;
+	bh=UkovlfHenV4WT3s3KqM90aV65iV1WYZhu5CPcxht3kM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=tuTe6jd3e21Oewb9kw40EgA4wUTEL9ILPeau5qGSCIPV0LEMVSKmbm0CWwdrBQcJOHzhk6LbEda75zUui3Zf67PntY+fLgi1iVW+RKhZRhkRLEnPl1Aslml4Q4WCNJsjiwHH258A5tbXiJEngsDfQ8ecUYtGI4T3KSRa43mSE0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bLD1OemG; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250829120322epoutp0301822659d6223f1a195b196d84c894ca~gO0B7Vm5H2493524935epoutp03h
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:03:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250829120322epoutp0301822659d6223f1a195b196d84c894ca~gO0B7Vm5H2493524935epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756469002;
+	bh=N9szQPe/7ipHEDNbxZo34E063kPc1jQMPVE3QTXxPAw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=bLD1OemGrCXJjy0NGdgGQuVg9OxwfwBqDlUf7A4YCvPM1R5lqkANtyCPp97RIgJ8u
+	 xzpFudJv9M2VdIlrlYqxLOs7fzxcpj2V51r6FPTlXnFWIGj6GnKlGsqkpVjPEoQae+
+	 F1RjH6KJZhW+UdU38I3XU0eJ92EjxbIIyv3gCh8Y=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250829120322epcas5p12448fdc22bfd06ebd17fabf10c3e92e8~gO0BSebHi3201832018epcas5p1i;
+	Fri, 29 Aug 2025 12:03:22 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cCxk11NSyz2SSKX; Fri, 29 Aug
+	2025 12:03:21 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250829120320epcas5p3eb6abcefc16910b3b7b73d5e5b169f43~gOz-yUdR00051000510epcas5p3A;
+	Fri, 29 Aug 2025 12:03:20 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250829120317epsmtip14cec5995bc2dbc0cbf21ccbf1f9a1b72~gOz80JLJO1511815118epsmtip1e;
+	Fri, 29 Aug 2025 12:03:17 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
+	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
+	<johan@kernel.org>, <m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
+Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Date: Fri, 29 Aug 2025 17:33:16 +0530
+Message-ID: <001101dc18dc$e97457e0$bc5d07a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250826052914.2066884-3-shubhrajyoti.datta@amd.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DAP+/dGQCDX8RFrR+kenQ
+Content-Language: en-in
+X-CMS-MailID: 20250829120320epcas5p3eb6abcefc16910b3b7b73d5e5b169f43
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+	<20250822093845.1179395-6-pritam.sutar@samsung.com>
+	<20250824-rough-fresh-orangutan-eecb2f@kuoka>
+	<007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+	<83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
+	<000401dc18cd$ec02a1b0$c407e510$@samsung.com>
+	<e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
+	<263801dc18d3$d1e20950$75a61bf0$@samsung.com>
+	<6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
 
-On Tue, Aug 26, 2025 at 10:59:11AM +0530, Shubhrajyoti Datta wrote:
-> diff --git a/drivers/cdx/controller/mcdi.c b/drivers/cdx/controller/mcdi.c
-> index 90bf9f7c257b..6f52d8dac907 100644
-> --- a/drivers/cdx/controller/mcdi.c
-> +++ b/drivers/cdx/controller/mcdi.c
-> @@ -100,6 +100,19 @@ static unsigned long cdx_mcdi_rpc_timeout(struct cdx_mcdi *cdx, unsigned int cmd
->  		return cdx->mcdi_ops->mcdi_rpc_timeout(cdx, cmd);
->  }
->  
-> +/**
-> + * cdx_mcdi_init - Initialize MCDI (Management Controller Driver Interface) state
-> + * @cdx: NIC through which to issue the command
+Hi Krzysztof,
 
-NIC?
-
-/**
- * struct cdx_mcdi - CDX MCDI Firmware interface, to interact
- *      with CDX controller.
-
-Apparently there's a NIC behind this thing.
-
-> + *
-> + * This function allocates and initializes internal MCDI structures and resources
-
-s/This function allocates/Allocate/
-
-> + * for the CDX device, including the workqueue, locking primitives, and command
-> + * tracking mechanisms. It sets the initial operating mode and prepares the device
-> + * for MCDI operations.
-> + *
-> + * Return:
-> + * * 0        - on success
-> + * * -ENOMEM  - if memory allocation or workqueue creation fails
-> + */
->  int cdx_mcdi_init(struct cdx_mcdi *cdx)
->  {
->  	struct cdx_mcdi_iface *mcdi;
-> @@ -129,6 +142,7 @@ int cdx_mcdi_init(struct cdx_mcdi *cdx)
->  fail:
->  	return rc;
->  }
-> +EXPORT_SYMBOL_GPL(cdx_mcdi_init);
->  
->  void cdx_mcdi_finish(struct cdx_mcdi *cdx)
->  {
-> @@ -554,6 +568,19 @@ static void cdx_mcdi_start_or_queue(struct cdx_mcdi_iface *mcdi,
->  			cdx_mcdi_cmd_start_or_queue(mcdi, cmd);
->  }
->  
-> +/**
-> + * cdx_mcdi_process_cmd - Process an incoming MCDI response
-> + * @cdx: NIC through which to issue the command
-
-ditto. Also tabbing
-
-> + * @outbuf:  Pointer to the response buffer received from the management controller
-> + * @len:     Length of the response buffer in bytes
-> + *
-> + * This function handles a response from the management controller. It locates the
-
-s/This function handles/Handle/
-
-> + * corresponding command using the sequence number embedded in the header,
-> + * completes the command if it is still pending, and initiates any necessary cleanup.
-> + *
-> + * The function assumes that the response buffer is well-formed and at least one
-> + * dword in size.
-> + */
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 29 August 2025 04:56 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Pritam Manohar Sutar'
+> <pritam.sutar=40samsung.com>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; andre.draszik=40linaro.org;
+> peter.griffin=40linaro.org; kauschluss=40disroot.org;
+> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
+> johan=40kernel.org; m.szyprowski=40samsung.com; s.nawrocki=40samsung.com;
+> linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 combo ssphy
+>=20
+> On 29/08/2025 12:58, Alim Akhtar wrote:
+> > Hi Krzysztof
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: Friday, August 29, 2025 4:07 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com=
+;
+> >> andre.draszik=40linaro.org; peter.griffin=40linaro.org;
+> >> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> >> igor.belwon=40mentallysanemainliners.org;
+> >> johan=40kernel.org; m.szyprowski=40samsung.com; s.nawrocki=40samsung.c=
+om;
+> >> linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org;
+> >> linux-kernel=40vger.kernel.org; linux-arm- kernel=40lists.infradead.or=
+g;
+> >> linux-samsung-soc=40vger.kernel.org;
+> >> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com;
+> >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> >> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy=
+:
+> >> add
+> >> ExynosAutov920 combo ssphy
+> >>
+> >> On 29/08/2025 12:15, Pritam Manohar Sutar wrote:
+> >>> Hi Krzysztof
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >>>> Sent: 26 August 2025 02:05 PM
+> >>>> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >>>> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> >>> .
+> >>> .
+> >>> =5Bsnip=5D
+> >>> .
+> >>> .
+> >>>>>> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd=
+-phy:
+> >>>>>> add
+> >>>>>> ExynosAutov920 combo ssphy
+> >>>>>>
+> >>>>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wro=
+te:
+> >>>>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> >>>>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks,
+> >>>>>>> named =22phy=22 and =22ref=22. The required supplies for USB3.1 a=
+re
+> >>>>>>> named as vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+> >>>>>>
+> >>>>>> Please do not describe the schema, but hardware. This sentence
+> >>>>>> does not help me in my question further.
+> >>>>>
+> >>>>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2
+> >>>>> phys are
+> >>>> totally different).
+> >>>>> One PHY only supports usb2.0 and data rates whereas another one
+> >>>>> does
+> >>>>> usb3.1 ssp+ and usb3.1 ssp
+> >>>>>
+> >>>>> This patch only explains about usb30 (since these are two
+> >>>>> different
+> >>>>> phys) phy
+> >>>> and omitted inclusion of usb20 reference (added separate patch for
+> >>>> this patch no 3).
+> >>>>>
+> >>>>> Hope this is clear.
+> >>>>
+> >>>> No. That sentence still explains what schema is doing.
+> >>>>
+> >>>
+> >>> Ok, let me simplify the commit message further something like below.
+> >>> Anyways, the coverletter contains more details about it.
+> >>>
+> >>> =22dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo
+> >>> ssphy
+> >>>
+> >>>   Add schema for combo ssphy found on this SoC.
+> >>> =22
+> >>>
+> >>> Please confirm if this looks fine?
+> >>> If so, will reflect the similar commit messages in patch 1 and 3.
+> >>
+> >> Please read my first comment again. I do not see how does this
+> >> satisfy hardware explanation.
+> >>
+> > Just went through the conversation above, until what extent hardware
+> > description need to be explain in the commit?
+> > Do we have any guideline for the same?
+> > Could you please help with an example from previous any commit or some
+> other patches?
+> > I understand that mentioning, =E2=80=9Ctwo=20clocks,=20two=20supplies=
+=20etc=22=20are=20part=0D=0A>=20>=20of=20schema,=20one=20may=20or=20may=20n=
+ot=20capture=20that=20in=20the=20commit.=0D=0A>=20>=20However=20mentioning,=
+=20=E2=80=9Cthis=20hardware=20(SoC)=20contain=20a=20combo=20PHY=20which=0D=
+=0A>=20supports=20usb3.1=20and=20usb3.0=22=20is=20not=20ok?=0D=0A>=20=0D=0A=
+>=20=0D=0A>=20Maybe=20that's=20just=20language,=20but=20to=20me=20the=20com=
+mit=20msg=20did=20not=20describe=0D=0A>=20hardware=20after=20first=20senten=
+ce,=20but=20said=20what=20schema=20requires=20(some=0D=0A>=20clocks=20and=
+=20supplies).=20Other=20examples:=0D=0A>=2000399bbe02d2bb6fd8d6eb90573ec305=
+616449f4=0D=0A>=20e4c9a7b475e5d0d9b2440ee48f91d1364eabd6cb=0D=0A>=20=0D=0A=
+=0D=0AThank=20you=20for=20the=20pointers,=20will=20refer=20the=20examples=
+=20and=20=0D=0Aupdate=20the=20commit=20messages=20accordingly.=20=0D=0A=0D=
+=0A>=20and=20here=20another=20anti-pattern:=0D=0A>=2023f793850e9ee7390584c0=
+809f085d6c88de7d3f=0D=0A>=20=0D=0A>=20(and=20before=20you=20ask=20why=20abo=
+ve=20carries=20my=20Rb=20tag,=20then=20note=20that=0D=0A>=20Samsung's=20rev=
+enue=20is=20around=20220=20billion=20USD,=20so=20for=20sure=20it=20has=20a=
+=20lot,=0D=0A>=20really=20a=20lot=20of=20resources=20to=20review=20patches=
+=20internally=20and=20improve=20their=0D=0A>=20quality=20before=20posting).=
+=0D=0A>=20=0D=0A>=20Best=20regards,=0D=0A>=20Krzysztof=0D=0A=0D=0AThank=20y=
+ou.=0D=0A=0D=0ARegards,=0D=0APritam=0D=0A=0D=0A
 
