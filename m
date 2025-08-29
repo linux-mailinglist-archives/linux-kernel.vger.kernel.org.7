@@ -1,41 +1,64 @@
-Return-Path: <linux-kernel+bounces-791422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345ADB3B698
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8095DB3B69B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6CE23BE1D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22541896270
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83E72E2EEB;
-	Fri, 29 Aug 2025 09:02:15 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B42E337B;
+	Fri, 29 Aug 2025 09:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KR5SZlw6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13DB2D839B;
-	Fri, 29 Aug 2025 09:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CCD2C17B2;
+	Fri, 29 Aug 2025 09:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756458135; cv=none; b=V5ov402nbIHO+u0bZ+u6pVT1khhSIJwMYuceoLr72NB1McGK50eAawzZ0jLwKRleRe5PsiYFtQxw4rrWglwT2v+QD8Hhtn9HHFTcOJ9Yj0GMJJGXCG1tPA1jphZRK1IJ/RMTSTY2cH6q8T+I0Ugc9cxjLgQbFI8PFNKHn6UhHMY=
+	t=1756458191; cv=none; b=f0Fpy27elABjuX3NB4AAS6pS1S0y0S4ygEUnT8tBYg4DF85D3XcdvEwr5XQRnbXeUGg7BzFTpiD2nBAll+nuoCuLGDfMS/SLuOkEv+1baUR1UiAem5XQGAghmnqq7mveBPH3IcGu2VGdNsGQbxMstewnhzDspt2d6ntTDY54yzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756458135; c=relaxed/simple;
-	bh=/ZyL+SxR5DiWLr7FsGIONgF/n5A0UdK7hB0/DUfVooE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=jlVo1eVWYeCzVOBsy+SQXOFTUPRZyIoxjkjCcKVZ5bC5g057aTwiJIW1e0DPazNx4ZlaYELvoHCmUGgwKQQnKotBNGT81TUmwG2ZmWLpPPjZBzzMYBRyYg4s2y3oulE7RMRA5/jgqpTzYBb+ORTXgGkLQSEIZRhJ0uP0nmp5okQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1uruzZ-000000022SV-1lqI;
-	Fri, 29 Aug 2025 11:01:53 +0200
-Message-ID: <ca0967a9-b97f-4e7e-bbaf-55251a995c79@maciej.szmigiero.name>
-Date: Fri, 29 Aug 2025 11:01:48 +0200
+	s=arc-20240116; t=1756458191; c=relaxed/simple;
+	bh=rfCydt4F768oc/kiHWd8J0zI+4wJzEfpn6BpsGWhauM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0VqCgOHB1neGTylssovOOvFeHcsIsMP2SssKLgfgP2r6OwCmvI2dXnM0eDTjZznUel6kFgmZ+CC89vpTMGJkXGJGHyHMJce8Q5b9FwDdNjGMf2o8yYe/CTKcZfPARgDD7V21YcygI1nZfQdNWvIHdJZczjBqi6IbBEpjIVSlKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KR5SZlw6; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756458190; x=1787994190;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rfCydt4F768oc/kiHWd8J0zI+4wJzEfpn6BpsGWhauM=;
+  b=KR5SZlw62We/34Z8drPF9QQF7Do+zGcf4pKxLhnkyXu/iO0FsNRWZF5m
+   RT/lIR5MaEf18Mvw5pXw215YWj7/rKBknex8WPNyQW6WkGboD3v5TCYkw
+   O9voZ1aKAHDrbLD+QR0FPEGuW8TLTifboDtrIAhtYyqwKd4Z97IuMdxEM
+   kshn/8Hk0NocPPUZcpxDg5dyi873SBsvPRAHR7FyjckaB27b86/4IINv7
+   Qvo5eg+Ue9T2ioW+3GUip/VPHkDOD0wrGkbSr+xKd9m4lfi8yRlSdarDE
+   y4OAoI9B3poM0x8SR7+gmN0OM+Y2+UddggbBbKWu2keNe0hNK4Yqd4AMs
+   Q==;
+X-CSE-ConnectionGUID: FNzv4G42QhyGaNbxG27MXw==
+X-CSE-MsgGUID: fjb2lAV+RISExQNK/kBWLA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="69838867"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="69838867"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:03:09 -0700
+X-CSE-ConnectionGUID: Jl+/wSrKRm+MK7smNjxqiw==
+X-CSE-MsgGUID: MWOBUiYwTlSq1SQ+x9cenA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="201248159"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:03:06 -0700
+Message-ID: <fcf19563-df65-4936-bd08-46f1a95359af@linux.intel.com>
+Date: Fri, 29 Aug 2025 17:03:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,96 +66,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: wwan: iosm: use int type to store negative error
- codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-References: <20250826135021.510767-1-rongqianfeng@vivo.com>
-Content-Language: en-US, pl-PL
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
- Sergey Ryazanov <ryazanov.s.a@gmail.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
- 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
-Disposition-Notification-To: "Maciej S. Szmigiero"
- <mail@maciej.szmigiero.name>
-In-Reply-To: <20250826135021.510767-1-rongqianfeng@vivo.com>
+Subject: Re: [RFC PATCH v2 15/18] KVM: TDX: Combine KVM_BUG_ON +
+ pr_tdx_error() into TDX_BUG_ON()
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>,
+ Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+ <20250829000618.351013-16-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250829000618.351013-16-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: mhej@vps-ovh.mhejs.net
+Content-Transfer-Encoding: 8bit
 
-On 26.08.2025 15:50, Qianfeng Rong wrote:
-> The 'ret' variable in ipc_pcie_resources_request() either stores '-EBUSY'
-> directly or holds returns from pci_request_regions() and ipc_acquire_irq().
-> Storing negative error codes in u32 causes no runtime issues but is
-> stylistically inconsistent and very ugly.  Change 'ret' from u32 to int
-> type - this has no runtime impact.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+
+
+On 8/29/2025 8:06 AM, Sean Christopherson wrote:
+> Add TDX_BUG_ON() macros (with varying numbers of arguments) to deduplicate
+> the myriad flows that do KVM_BUG_ON()/WARN_ON_ONCE() followed by a call to
+> pr_tdx_error().  In addition to reducing boilerplate copy+paste code, this
+> also helps ensure that KVM provides consistent handling of SEAMCALL errors.
+>
+> Opportunistically convert a handful of bare WARN_ON_ONCE() paths to the
+> equivalent of KVM_BUG_ON(), i.e. have them terminate the VM.  If a SEAMCALL
+> error is fatal enough to WARN on, it's fatal enough to terminate the TD.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->   drivers/net/wwan/iosm/iosm_ipc_pcie.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wwan/iosm/iosm_ipc_pcie.c b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-> index a066977af0be..08ff0d6ccfab 100644
-> --- a/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-> +++ b/drivers/net/wwan/iosm/iosm_ipc_pcie.c
-> @@ -69,7 +69,7 @@ static int ipc_pcie_resources_request(struct iosm_pcie *ipc_pcie)
->   {
->   	struct pci_dev *pci = ipc_pcie->pci;
->   	u32 cap = 0;
-> -	u32 ret;
-> +	int ret;
+>   arch/x86/kvm/vmx/tdx.c | 114 +++++++++++++++++------------------------
+>   1 file changed, 47 insertions(+), 67 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index aa6d88629dae..df9b4496cd01 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -24,20 +24,32 @@
+>   #undef pr_fmt
+>   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 >   
->   	/* Reserved PCI I/O and memory resources.
->   	 * Mark all PCI regions associated with PCI device pci as
+> -#define pr_tdx_error(__fn, __err)	\
+> -	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx\n", #__fn, __err)
+> +#define __TDX_BUG_ON(__err, __f, __kvm, __fmt, __args...)			\
+> +({										\
+> +	struct kvm *_kvm = (__kvm);						\
+> +	bool __ret = !!(__err);							\
+> +										\
+> +	if (WARN_ON_ONCE(__ret && (!_kvm || !_kvm->vm_bugged))) {		\
+> +		if (_kvm)							\
+> +			kvm_vm_bugged(_kvm);					\
+> +		pr_err_ratelimited("SEAMCALL " __f " failed: 0x%llx" __fmt "\n",\
+> +				   __err,  __args);				\
+> +	}									\
+> +	unlikely(__ret);							\
+> +})
+>   
+> -#define __pr_tdx_error_N(__fn_str, __err, __fmt, ...)		\
+> -	pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx, " __fmt,  __err,  __VA_ARGS__)
+> +#define TDX_BUG_ON(__err, __fn, __kvm)				\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
+>   
+> -#define pr_tdx_error_1(__fn, __err, __rcx)		\
+> -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx\n", __rcx)
+> +#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
+>   
+> -#define pr_tdx_error_2(__fn, __err, __rcx, __rdx)	\
+> -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __rdx)
+> +#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, __rdx)
+> +
+> +#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
+> +	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx", __rcx, __rdx, __r8)
+>   
+> -#define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8)	\
+> -	__pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n", __rcx, __rdx, __r8)
 
-Reviewed-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+I thought you would use the format Rick proposed in
+https://lore.kernel.org/all/9e55a0e767317d20fc45575c4ed6dafa863e1ca0.camel@intel.com/
+     #define TDX_BUG_ON_2(__err, __fn, arg1, arg2, __kvm)        \
+         __TDX_BUG_ON(__err, #__fn, __kvm, ", " #arg1 " 0x%llx, " #arg2 "
+     0x%llx", arg1, arg2)
 
-Thanks,
-Maciej
+     so you get: entry: 0x00 level:0xF00
 
+No?
+
+[...]
 
