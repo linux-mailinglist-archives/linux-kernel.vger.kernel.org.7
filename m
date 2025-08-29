@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-791089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400A5B3B1F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53CDB3B1F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF783BEADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56CC7178BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7E422422B;
-	Fri, 29 Aug 2025 04:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346FF2253A0;
+	Fri, 29 Aug 2025 04:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMZBIYk7"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZYwbPGm"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6907D27453
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182532222C2
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756440573; cv=none; b=X2HlTfm3DkDY0OGDdY5zxxF+DIg5AfBD4qd2MVGV30QmHYO0DiWTMd24TP54MfhneCqdZqM/Dm7NsH7zI+masPR8gN1Fed+agMkleppq0/gXXniuc7Uy4UpuRLDOQOqqA3COAPDSU8IVGMeqTMt7uN44uFDYX/w6KY81rKsdaRQ=
+	t=1756440691; cv=none; b=A3HUt2SpWB9X8DNNIsgZz0w+WVzjrihY3+HuXbticAUs4hhXlcBd0ySVIG/GoPIXwZkNbTvSEXaHhw6D1HrRvpQ/AxbM+2AiH6gaTxPqa74lF0nCzVC8JdeqnmdZbJ+MQZaGAfEuX5VtIMiAoeYVulr+qqGrju3R98PE1+1IJeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756440573; c=relaxed/simple;
-	bh=VbLWMAa6acx5ejY6TBhR+uSr38oNnrdZTUIbkKIB8Cc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NMUCLzm0pGKtWUCx9bikAa6dyuCbzk/qfutFGin6db5G65YZUIXuYSlxaLpLJzw0UyVNeK+teOT0FyOEODbg894hEv1K/NZNmNkEvq6K1ZizS6jzO4MBwzkJWkWaQXAk0KgnSBkthUw2ZRH/4HX0PNE6RsHBgA/TE/6qMI6wUBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMZBIYk7; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e5f058so1347584a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:09:32 -0700 (PDT)
+	s=arc-20240116; t=1756440691; c=relaxed/simple;
+	bh=4UoujJZnTWWn7eKvPF04ekC/ngpIqDznOj6T67NFaP8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=JHbRXZQosHoR2xpcgy0kKCBmeEVwZDy3vr4iiwG0clo/iIuyAUQXPIYvoeZc+IA5DrWaZQsssCwxAnllUdKXf7UdfSX9CJ+pHbTSuvfJfYTrq2/2VkX6wFxa/TFI8x9flhgX3tzFR0UJCUdL5ksNgIR4gcfXJ/7rG/TmXZLwohc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZYwbPGm; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2487543a4f9so33711995ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756440572; x=1757045372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=juXpC95OIbgk5mWrCIY1LfWzcgsNmpuy8GKzhajuZfs=;
-        b=bMZBIYk7Fa7v39HqapRFM2X7nv2wjvFDcY4wbvgGMWwvXo6NqvChyYPyawRH3OSw2z
-         x/wzHpZaZNhNzr7Dr+klaO+GL2WJTjNcgC1e2Z8HSOF42Emaut1+wTa75cmh0BnwsPr+
-         yH5oMS0IQmpeFgB9eMcb1/aBr616l5w2FZoJ4D2MDyn8niImN9QKSTHY8Ou7918a02q4
-         YbBO49LZOWoml7M95DDNDadUdmZUYwq+0l2ALsJuubIYOBowijkICRGNZMtX/kFwOE8X
-         UGaiZ5UkXN5RweCtZWIomPhmJ45a6hc3ZkjsiNbK7gLW+hWi93ZNFMY0za+W2RQ+xfKA
-         Px3Q==
+        d=google.com; s=20230601; t=1756440689; x=1757045489; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FxsC/naorM5xTru//pbnhAvP7ObEaVPUG5IbOlXzuNw=;
+        b=1ZYwbPGmMKxK5xwhLtaPbBnm85hT905O8XTuAmcfQ347yXQ60/8ucydf0mo+mdlKqX
+         9jLhMyek88U3XhGhgxaWo1prqJzXqAc0RE6YKrUezJsmvfLE1vAvNh3wPnISg4tlixK1
+         DckwP1txzJp+Yqt5PutrlFeYTF5VcW91rLSZzP2yrjnk1mWrlc8w+wgUq/3s6EG+t5A4
+         fnIl5SLF23ZMsRh3+e6c+w51fAhTx5Yb0mJTt4z4ZISO/tYDfxRUENEOConr6lttGbzh
+         7gZhc2l5STWcesxR5LDEW87mPtzzFQDL95Zp/jLlRV/bcfviByq3WBGqyK0ad97OhaNS
+         C4dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756440572; x=1757045372;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=juXpC95OIbgk5mWrCIY1LfWzcgsNmpuy8GKzhajuZfs=;
-        b=JbIcDDgaDf4WwvGH6DmPYiXTeT1T8lCL1uOGZNnflTTsZZaDkQNSmYYSAV5JpRzCMH
-         IOxPeIIWv9DPfKVmMBEdGN3vqxXigjtwo4x4GYCwbKS2tKeGPxV+zhfqEjVcsRuApQ4J
-         k0MdGCveKp4MDwgIpHIrf1+YHYI5cyDr6haOYy6nPGgtx+ATcPD42wQ9PQEUslt+m9FH
-         +RYHx1En22B0sE8lhB7TvRi+7kpvHvFrmB8mm7eYjow31ecyO3OymFj/1q4Ra7OjQFaL
-         lImd2MfgdD+aDBxRq3kxkBP8iiS9iYMvGYiWS5n8i57JfaICKaX2YJZIP7iU4cyETB1B
-         BaVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCB2pxPADVo75KXrCGyc8XEIXF9UlzN2tWaACTDzuVkEN4LwZu2fuMVxuVpOBYkQStR//6q5Xig16ynQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbhF0o8iF7gXKTd9k/9ImRj5R5MLcUapqPMc7JdgYnV7a7si5G
-	gOspCAoponOkTCo3OZ65zUmpMOVntJuGC7zqewL+/U0uw0G27/MMnljE0EaTFqK7
-X-Gm-Gg: ASbGnct+V4LBXJGekeMbYi3AseaCZa/l9R0b+pzxSUmE1GEMIx+A1irJvTkoJoe54RS
-	xTpP9SVQCB9Th1uyKDaTs1L+bwkiVqwmLO1tw/wZvwCK/veGE0Kx6tjs6U0KPqg73hB19Pfmkz/
-	bBrxrCDU61NqNJtifGeTAM/S2oNGxb049ejBQUE28s0es+WSgH1n4cXd4/6dNiht5aDHwSNAFyG
-	PhYRZY5yU9eHb6PFOUaS1qz6TkDGPjfwxyyiWEV1zChDtZ4O/0V08vsdeK4CmKfo1WF8CSnaeC6
-	z0eas5NWc5ps3xwP7vC37vmucY5hGZvz2QGQt2DTUPJRivMbsuOZHaZRBLmiYWoMVtL3jH/ZPP2
-	bVYFEnD6Ms96+qB+UQGNsAVp8lA5joV9dV+WvYwKolppQo11XwHTbhPHRRVp6DjnxzWhJGBR22+
-	694Si+IDd7lg==
-X-Google-Smtp-Source: AGHT+IFzHL+8UdK9pyO62SKNANe8HY66WeLJkmilzlfwe3cWnaNsk52b08SVRY/6E17QYYmZpA/hsw==
-X-Received: by 2002:a17:90a:d403:b0:327:add2:4f31 with SMTP id 98e67ed59e1d1-327add25000mr7600321a91.33.1756440571635;
-        Thu, 28 Aug 2025 21:09:31 -0700 (PDT)
-Received: from yingche.. (111-255-98-191.dynamic-ip.hinet.net. [111.255.98.191])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f5921b5sm6771888a91.7.2025.08.28.21.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 21:09:31 -0700 (PDT)
-From: yingche <zxcv2569763104@gmail.com>
-To: dan.carpenter@linaro.org,
-	gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	yingche <zxcv2569763104@gmail.com>
-Subject: [PATCH v2] staging: rtl8723bs: fix fortify warnings by using struct_group
-Date: Fri, 29 Aug 2025 12:09:06 +0800
-Message-ID: <20250829040906.895221-1-zxcv2569763104@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250828094537.884046-1-zxcv2569763104@gmail.com>
-References: <20250828094537.884046-1-zxcv2569763104@gmail.com>
+        d=1e100.net; s=20230601; t=1756440689; x=1757045489;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FxsC/naorM5xTru//pbnhAvP7ObEaVPUG5IbOlXzuNw=;
+        b=qcVBImFteF0wGyVUeK3KZP9gHFOwGlQAypnR2BXMmmBhxhPWvEc38nGS4/GTn1/e2j
+         TuFaLKtwO4GJGLDStkdJV6ygIWVbbvR9NJxafRsx704+lcQXqJVY8vAJXMiISur6RiBj
+         XS/FH2N3ckFUeFnYUEibmuZtLSTqKJHPKiqRFW2X4dF2bpCynNecZwRcwn3mZCfqFO6E
+         Wty2Dwfh/tj1LuBrrVybtBivu0rdb8EhH81D7qDuxtIPRTiXo5e/7+R/YCW5u1yilvG5
+         grWS62Dv6i3EGNoU8SLgseqjFvrmJJQyoeO2+ns6Nm6kEOBERDFhUnl9F2rr7ma5I2Pi
+         XZVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFrSnysAjai5i75C5VDjE+P7nxfnJ+nxdeKgAYOTO380fcIAHChqv+JUME6GAfzFC3O3J0LCmopsj8qJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6rYC0ULATr2obgXCTDrenZuaSs5s9MWLWN/cV9qsH5c2hRfO0
+	VQLhaGnsepsVhk3LZ19W3qkp8nFHRpGb5hd42gSxGGIOeiR/nd1NpL7GwYg+w93oeTeMA8kcsQ+
+	E5KHIL9/vEw==
+X-Google-Smtp-Source: AGHT+IG6BQBohxB2EHEPxoIjH66taMfJuusQnHmTa/o4sIHYJOYdjf5dTNhCNbuwbzBXfKqkDuUVhQ9hGxSO
+X-Received: from pjbx3.prod.google.com ([2002:a17:90a:3883:b0:327:e021:e61d])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1205:b0:248:79d4:93b5
+ with SMTP id d9443c01a7336-24879d497a4mr133009805ad.33.1756440689329; Thu, 28
+ Aug 2025 21:11:29 -0700 (PDT)
+Date: Thu, 28 Aug 2025 21:10:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250829041104.4186320-1-irogers@google.com>
+Subject: [PATCH v5 00/22] Python generated Intel metrics
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Benjamin Gray <bgray@linux.ibm.com>, Perry Taylor <perry.taylor@intel.com>, 
+	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix fortify_memcpy_chk warnings in rtw_BIP_verify() and
-rtw_mgmt_xmitframe_coalesce() functions by using struct_group
-to access consecutive address fields.
+Generate twenty sets of additional metrics for Intel. Rapl and Idle
+metrics aren't specific to Intel but are placed here for ease and
+convenience. Smi and tsx metrics are added so they can be dropped from
+the per model json files. There are four uncore sets of metrics and
+eleven core metrics. Add a CheckPmu function to metric to simplify
+detecting the presence of hybrid PMUs in events. Metrics with
+experimental events are flagged as experimental in their description.
 
-Changed memcpy calls to use &hdr->addrs instead of hdr->addr1
-when copying 18 bytes (addr1 + addr2 + addr3).
+The patches should be applied on top of:
+https://lore.kernel.org/lkml/20250829033138.4166591-1-irogers@google.com/
 
-This resolves 'detected read beyond size of field' warnings
-by using the proper struct_group mechanism as suggested by
-the compiler.
+v5. Rebase. Fix description for smi metric (Kan). Prefix all metric
+    names with lpm_ (short for Linux Perf Metric) so that python
+    generated metrics are clearly namespaced. Kan requested a
+    namespace in his review:
+    https://lore.kernel.org/lkml/43548903-b7c8-47c4-b1da-0258293ecbd4@linux.intel.com/
 
-Signed-off-by: yingche <zxcv2569763104@gmail.com>
+v4. Experimental metric descriptions. Add mesh bandwidth metric. Rebase.
+    https://lore.kernel.org/lkml/20240926175035.408668-1-irogers@google.com/
 
----
-v2: Use sizeof() instead of magic number 18 (Dan Carpenter)
----
- drivers/staging/rtl8723bs/core/rtw_security.c | 2 +-
- drivers/staging/rtl8723bs/core/rtw_xmit.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+v3. Swap tsx and CheckPMU patches that were in the wrong order. Some
+    minor code cleanup changes. Drop reference to merged fix for
+    umasks/occ_sel in PCU events and for cstate metrics.
+    https://lore.kernel.org/lkml/20240314055919.1979781-1-irogers@google.com/
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index 8367fd15c6b1..3d99d045f4b6 100644
---- a/drivers/staging/rtl8723bs/core/rtw_security.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -1363,7 +1363,7 @@ u32 rtw_BIP_verify(struct adapter *padapter, u8 *precvframe)
- 		ClearPwrMgt(BIP_AAD);
- 		ClearMData(BIP_AAD);
- 		/* conscruct AAD, copy address 1 to address 3 */
--		memcpy(BIP_AAD+2, pwlanhdr->addr1, 18);
-+		memcpy(BIP_AAD + 2, &pwlanhdr->addrs, sizeof(pwlanhdr->addrs));
- 
- 		if (omac1_aes_128(padapter->securitypriv.dot11wBIPKey[padapter->securitypriv.dot11wBIPKeyid].skey
- 			, BIP_AAD, ori_len, mic))
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 8c6841f078b4..21690857fd62 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -1209,7 +1209,7 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, s
- 		ClearPwrMgt(BIP_AAD);
- 		ClearMData(BIP_AAD);
- 		/* conscruct AAD, copy address 1 to address 3 */
--		memcpy(BIP_AAD+2, pwlanhdr->addr1, 18);
-+		memcpy(BIP_AAD + 2, &pwlanhdr->addrs, sizeof(pwlanhdr->addrs));
- 		/* copy management fram body */
- 		memcpy(BIP_AAD+BIP_AAD_SIZE, MGMT_body, frame_body_len);
- 		/* calculate mic */
+v2. Drop the cycles breakdown in favor of having it as a common
+    metric, spelling and other improvements suggested by Kan Liang
+    <kan.liang@linux.intel.com>.
+    https://lore.kernel.org/lkml/20240301185559.2661241-1-irogers@google.com/
+
+v1. https://lore.kernel.org/lkml/20240229001806.4158429-1-irogers@google.com/
+
+Ian Rogers (22):
+  perf jevents: Add RAPL metrics for all Intel models
+  perf jevents: Add idle metric for Intel models
+  perf jevents: Add CheckPmu to see if a PMU is in loaded json events
+  perf jevents: Add smi metric group for Intel models
+  perf jevents: Mark metrics with experimental events as experimental
+  perf jevents: Add tsx metric group for Intel models
+  perf jevents: Add br metric group for branch statistics on Intel
+  perf jevents: Add software prefetch (swpf) metric group for Intel
+  perf jevents: Add ports metric group giving utilization on Intel
+  perf jevents: Add L2 metrics for Intel
+  perf jevents: Add load store breakdown metrics ldst for Intel
+  perf jevents: Add ILP metrics for Intel
+  perf jevents: Add context switch metrics for Intel
+  perf jevents: Add FPU metrics for Intel
+  perf jevents: Add Miss Level Parallelism (MLP) metric for Intel
+  perf jevents: Add mem_bw metric for Intel
+  perf jevents: Add local/remote "mem" breakdown metrics for Intel
+  perf jevents: Add dir breakdown metrics for Intel
+  perf jevents: Add C-State metrics from the PCU PMU for Intel
+  perf jevents: Add local/remote miss latency metrics for Intel
+  perf jevents: Add upi_bw metric for Intel
+  perf jevents: Add mesh bandwidth saturation metric for Intel
+
+ tools/perf/pmu-events/intel_metrics.py | 1065 +++++++++++++++++++++++-
+ tools/perf/pmu-events/metric.py        |   52 ++
+ 2 files changed, 1114 insertions(+), 3 deletions(-)
+
 -- 
-2.43.0
+2.51.0.318.gd7df087d1a-goog
 
 
