@@ -1,272 +1,194 @@
-Return-Path: <linux-kernel+bounces-791444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50697B3B6DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:16:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD950B3B6E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBDBA036C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:16:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87080165CDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB482FE07C;
-	Fri, 29 Aug 2025 09:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67BB30277C;
+	Fri, 29 Aug 2025 09:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVV01k+w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="etBXYBrQ"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636452FE06B;
-	Fri, 29 Aug 2025 09:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FA81684AC;
+	Fri, 29 Aug 2025 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756458970; cv=none; b=kd/ZXf/P98N5hoqESPVU5smSHvo/kB/iehMDdZdiXoDbOA5KIHSTdEWJSAl0n/FsnhuBqR43um35AMeHpTDo2+HmnxXw16EGcj2jJ+0DvKnN9cX6KmR6ZZINV5ichsAbo0wWjujy6WBi2IWMh6h1VZbHHQRUdpr+puWbIG9Pw20=
+	t=1756459051; cv=none; b=PDScSh657ErlbCCwOAgBBow4l/lWRgtceTcumKWNOP87B1floWz6EJhUt2gmouTXcmtrnLNDCzcXRl4+eMLDiULxcC5Tp6MAx7ZMwymFXzxO6J2aEtaO4aLApRucX8KlEhX+oYYANEAnZOfBAAYeqpcRciTH+BYOwZ9zGaYv1/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756458970; c=relaxed/simple;
-	bh=UNbnxLyQqtgjYolstb23lpIvcWuMg/oYLAEbNfpM3sA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bqWJadAbqq7bxWGVs4eLXAuBzPoiixCTsmrOIkIrHnAqyuG65x4BoVHAShoX8DPLgjK6hwMbUSG7YBQ+FAPX/w7yslxZeZ7DpbQnvXFffxwqz0nxyLzVoCzSG5tLgVoysGIc+/SSvASyLNNLRmH3CxaE+7KeAGuuP27h9qWwT14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVV01k+w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE4FC4CEFB;
-	Fri, 29 Aug 2025 09:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756458970;
-	bh=UNbnxLyQqtgjYolstb23lpIvcWuMg/oYLAEbNfpM3sA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UVV01k+wUDjQytZyC317riPX3ZY95mPuYL30zH90vRVC8nIUI9ulSp48R0iT8qqVx
-	 I4p3ByfFNrZ5StjBkULCl8LFWAzf8WoAu60OiBE27d6SnAxc9dD9sPFyLtPHHZUzgy
-	 UuTOcHkDAf8O0YB/0tN+YXEad+sdssI9mDj5I06Btq10Km7255Ar2J/k+oqODFGC8j
-	 jtKa0rZV0LXXRKMX5wzruQlNef8sMMFVHr05qCC9tAuDSM8JYjYmZA7y1HcO+Bw8VT
-	 Po4sgrP07ufDUoNs6wIF3uUGm1c1Mu0Cb1rB13dg6gZvoK7dswTFjhs6Ul5XwkFw6J
-	 BWi7hIRqkfR3Q==
-Message-ID: <c314b7c6-f5b7-4f3e-8d67-e3c92ff8ff37@kernel.org>
-Date: Fri, 29 Aug 2025 11:16:04 +0200
+	s=arc-20240116; t=1756459051; c=relaxed/simple;
+	bh=DRV28zq6r7gz+t0IqDwLTWs9S2tyN7tSFaKdYrlmhP4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BnZprMz7e0NhSfCeS90g7xwtAhd7Ril/0R9vLDPLYv8HmMKb0d9KjCG1zfprxF+nRuLWkE87qW3jdVZBWEdMvJ2yFh7qr7EK8fBD+QiZH8rL/9Xxks7mw7vjsDPcoAti6ksGVOcpex91Lq7F00jskhQcqFSH50URtFoXaMH6BRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=etBXYBrQ; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57T9HD181722762;
+	Fri, 29 Aug 2025 04:17:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756459033;
+	bh=fXHjaQ1LRWYb/mZZ8OqDoN/mAOTqlRVHSAzjLG2Zwcs=;
+	h=From:To:CC:Subject:Date;
+	b=etBXYBrQHZ0jA0GtEdzd5t2SCOuT8veCbPxyhbiIeCr9mdxqDax/m7lM9jmj9Kepy
+	 WxU2dQj4U1Nl48mkOJsfr2hU3LQOL/AUXUHU1jncq1YzF2I5pfTj9Sc76tXHdpkS1D
+	 cJHd4MyRJ1st4MCDexhBJqz38szpv7lY69qUeCw4=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57T9HDcJ3550517
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 04:17:13 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 04:17:13 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 04:17:13 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57T9H8Z81836158;
+	Fri, 29 Aug 2025 04:17:08 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <helgaas@kernel.org>,
+        <kishon@kernel.org>, <vigneshr@ti.com>
+CC: <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v3] PCI: j721e: Fix programming sequence of "strap" settings
+Date: Fri, 29 Aug 2025 14:46:28 +0530
+Message-ID: <20250829091707.2990211-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] dt-bindings: soc: fsl: qe: Add support of IRQ in
- QE GPIO
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Rob Herring <robh@kernel.org>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1756104334.git.christophe.leroy@csgroup.eu>
- <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
- <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
- <f21e27da-de26-4835-9660-b39e99695281@csgroup.eu>
- <0f716362-07f4-4c79-bb0a-e71d2630a797@kernel.org>
- <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1ba37df7-2d4a-4258-8220-58ee7d609264@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 29/08/2025 10:35, Christophe Leroy wrote:
-> 
-> 
-> Le 29/08/2025 à 09:47, Krzysztof Kozlowski a écrit :
->> On 28/08/2025 16:12, Christophe Leroy wrote:
->>>
->>>
->>> Le 28/08/2025 à 15:28, Rob Herring a écrit :
->>>> On Mon, Aug 25, 2025 at 2:20 AM Christophe Leroy
->>>> <christophe.leroy@csgroup.eu> wrote:
->>>>>
->>>>> In the QE, a few GPIOs are IRQ capable. Similarly to
->>>>> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
->>>>> GPIO"), add IRQ support to QE GPIO.
->>>>>
->>>>> Add property 'fsl,qe-gpio-irq-mask' similar to
->>>>> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
->>>>
->>>> Why do you need to know this? The ones that have interrupts will be
->>>> referenced by an 'interrupts' property somewhere.
->>>
->>> I don't follow you. The ones that have interrupts need to be reported by
->>> gc->qe_gpio_to_irq[] so that gpiod_to_irq() return the IRQ number, for
->>> instance to gpio_sysfs_request_irq() so that it can install an irq
->>> handler. I can't see where they would be referenced by an "interrupts"
->>> property.
->>
->> They would be referenced by every consumer of these interrupts. IOW,
->> this property is completely redundant, because DT holds this information
->> already in other place.
-> 
-> But the gpio controller _is_ the consumer of these interrupts, it it 
-> _not_ the provider.
-> 
-> The interrupts are provided by a separate interrupt controller. Let's 
-> take the exemple of powerpc 8xx. Here is the list of interrupts handled 
-> by the CPM interrupt controller on the 8xx:
-> 
-> 1 - GPIO Port C Line 4 interrupt
-> 2 - GPIO Port C Line 5 interrupt
-> 3 - SMC2 Serial controller interrupt
-> 4 - SMC1 Serial controller interrupt
-> 5 - SPI controller interrupt
-> 6 - GPIO Port C Line 6 interrupt
-> 7 - Timer 4 interrupt
-> 8 - SCCd Serial controller interrupt
-> 9 - GPIO Port C Line 7 interrupt
-> 10 - GPIO Port C Line 8 interrupt
-> 11 - GPIO Port C Line 9 interrupt
-> 12 - Timer 3 interrupt
-> 13 - SCCc Serial controller interrupt
-> 14 - GPIO Port C Line 10 interrupt
-> 15 - GPIO Port C Line 11 interrupt
-> 16 - I2C Controller interrupt
-> 17 - RISC timer table interrupt
-> 18 - Timer 2 interrupt
-> 19 - SCCb Serial controller interrupt
-> 20 - IDMA2 interrupt
-> 21 - IDMA1 interrupt
-> 22 - SDMA channel bus error interrupt
-> 23 - GPIO Port C Line 12 interrupt
-> 24 - GPIO Port C Line 13 interrupt
-> 25 - Timer 1 interrupt
-> 26 - GPIO Port C Line 14 interrupt
-> 27 - SCCd Serial controller interrupt
-> 28 - SCCc Serial controller interrupt
-> 29 - SCCb Serial controller interrupt
-> 30 - SCCa Serial controller interrupt
-> 31 - GPIO Port C Line 15 interrupt
+The Cadence PCIe Controller integrated in the TI K3 SoCs supports both
+Root-Complex and Endpoint modes of operation. The Glue Layer allows
+"strapping" the Mode of operation of the Controller, the Link Speed
+and the Link Width. This is enabled by programming the "PCIEn_CTRL"
+register (n corresponds to the PCIe instance) within the CTRL_MMR
+memory-mapped register space. The "reset-values" of the registers are
+also different depending on the mode of operation.
 
-That list is fixed per soc/device, so already implied by compatible.
+Since the PCIe Controller latches onto the "reset-values" immediately
+after being powered on, if the Glue Layer configuration is not done while
+the PCIe Controller is off, it will result in the PCIe Controller latching
+onto the wrong "reset-values". In practice, this will show up as a wrong
+representation of the PCIe Controller's capability structures in the PCIe
+Configuration Space. Some such capabilities which are supported by the PCIe
+Controller in the Root-Complex mode but are incorrectly latched onto as
+being unsupported are:
+- Link Bandwidth Notification
+- Alternate Routing ID (ARI) Forwarding Support
+- Next capability offset within Advanced Error Reporting (AER) capability
 
-> 
-> As you can see in the list, the GPIO line interrupts are nested with 
-> other types of interrupts so GPIO controller and Interrupt controller 
-> are to be keept independant.
-> 
-> That's more or less the same here with my series, patch 1 implements an 
-> interrupt controller (documented in patch 6) and then the GPIO 
-> controllers consume the interrupts, for instance in gpiolib functions 
-> gpio_sysfs_request_irq() [drivers/gpio/gpiolib-sysfs.c] or 
-> edge_detector_setup() or debounce_setup() [drivers/gpio/gpiolib-cdev.c]
-> 
-> External drivers also use interrupts indirectly. For example driver 
-> sound/soc/soc-jack.c, it doesn't have any direct reference to an 
-> interrupt. The driver is given an array of GPIOs and then installs an 
-> IRQ in function snd_soc_jack_add_gpios() by doing
-> 
-> 	request_any_context_irq(gpiod_to_irq(gpios[i].desc),
-> 					      gpio_handler,
-> 					      IRQF_SHARED |
-> 					      IRQF_TRIGGER_RISING |
-> 					      IRQF_TRIGGER_FALLING,
-> 					      gpios[i].name,
-> 					      &gpios[i]);
+Fix this by powering off the PCIe Controller before programming the "strap"
+settings and powering it on after that.
 
+Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
 
-External drivers do not matter then. Your GPIO controller receives
-specific interrupts (that's the interrupt property) and knows exactly
-how each GPIO maps to it.
+Hello,
 
-> 
->>
->>>
->>>>
->>>>> Here is an exemple for port B of mpc8323 which has IRQs for
->>>>
->>>> typo
->>>>
->>>>> GPIOs PB7, PB9, PB25 and PB27.
->>>>>
->>>>>           qe_pio_b: gpio-controller@1418 {
->>>>>                   compatible = "fsl,mpc8323-qe-pario-bank";
->>>>>                   reg = <0x1418 0x18>;
->>>>>                   interrupts = <4 5 6 7>;
->>>>>                   interrupt-parent = <&qepic>;
->>>>>                   gpio-controller;
->>>>>                   #gpio-cells = <2>;
->>>>>                   fsl,qe-gpio-irq-mask = <0x01400050>;
->>>>>           };
->>>>
->>>> You are missing #interrupt-cells and interrupt-controller properties.
->>>
->>> The gpio controller is not an interrupt controller. The GPIO controller
->>> is brought by patch 1/6 and documented in patch 6/6.
->>
->> Then the IRQ mask property is not right here. If you say "this GPIOs
->> have IRQs" it means this is an interrupt controller.
-> 
-> The mask tells to the GPIO controller which GPIO line has an interrupt 
-> (so it can install the edge detector) and which doesn't have an 
-> interrupt. The "interrupts" property gives a flat list of interrupts, 
-> the mask in the above example tells: interrupt 4 is for line 7, 
-> interrupt 5 is for line 9, interrupt 6 is for line 25, interrupt 7 is 
-> for line 27. Other lines don't have interrupts.
-> 
->>
->> If you say this is not an interrupt controller, then you cannot have
->> here interrupts per some GPIOs, obviously.
-> 
-> It has been working that way on powerpc 8xx for 8 years, since commit 
-> 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx GPIO")
-> 
-> I don't understand why you say you cannot have
-> here interrupts per some GPIOs. What am I missing ?
+This patch is based on commit
+07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08-27' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
+of Mainline Linux.
 
-I used conditional. English conditional. If you claim this GPIO
-controller is not an interrupt controller, then obviously it is not an
-interrupt controller and cannot be used as interrupt controller.
+v2 of this patch is at:
+https://lore.kernel.org/r/20250819101336.292013-1-s-vadapalli@ti.com/
+Changes since v2:
+- Based on Bjorn's feedback at:
+  https://lore.kernel.org/r/20250819221748.GA598958@bhelgaas/
+  1) Commit message has been rephrased to summarize the issue and the
+  fix without elaborating too much on the details.
+  2) Description of the issue's symptoms noticeable by a user has been
+  added to the commit message.
+  3) Comment has been wrapped to fit within 80 columns.
+  4) The implementation has been simplified by moving the Controller
+  Power OFF and Power ON sequence into j721e_pcie_ctrl_init() as a
+  result of which the code reordering as well as function parameter
+  changes are no longer required.
+- Based on offline feedback from Vignesh, Runtime PM APIs are used
+  instead of PM DOMAIN APIs to power off and power on the PCIe
+  Controller.
+- Rebased patch on latest Mainline Linux.
 
-If you use "foo" as interrupt controller, then clearly foo is an
-interrupt controller.
+Test Logs on J7200 EVM without the current patch applied show that the
+ARI Forwarding Capability incorrectly shows up as not being supported:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/768bca36025ed630c4e69bcc3d94501a
 
-Best regards,
-Krzysztof
+Test Logs on J7200 EVM with the current patch applied show that the
+ARI Forwarding Capability correctly shows up as being supported:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/fc1752d17140646c8fa57209eccd86ce
+
+As explained in the commit message, this discrepancy is solely due to
+the PCIe Controller latching onto the incorrect reset-values which
+occurs when the strap settings are programmed after the PCIe Controller
+is powered on, at which point, the reset-values don't toggle anymore.
+
+Regards,
+Siddharth.
+
+ drivers/pci/controller/cadence/pci-j721e.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+index 6c93f39d0288..c178b117215a 100644
+--- a/drivers/pci/controller/cadence/pci-j721e.c
++++ b/drivers/pci/controller/cadence/pci-j721e.c
+@@ -284,6 +284,22 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+ 	if (!ret)
+ 		offset = args.args[0];
+ 
++	/*
++	 * The PCIe Controller's registers have different "reset-values"
++	 * depending on the "strap" settings programmed into the PCIEn_CTRL
++	 * register within the CTRL_MMR memory-mapped register space.
++	 * The registers latch onto a "reset-value" based on the "strap"
++	 * settings sampled after the PCIe Controller is powered on.
++	 * To ensure that the "reset-values" are sampled accurately, power
++	 * off the PCIe Controller before programming the "strap" settings
++	 * and power it on after that.
++	 */
++	ret = pm_runtime_put_sync(dev);
++	if (ret < 0) {
++		dev_err(dev, "Failed to power off PCIe Controller\n");
++		return ret;
++	}
++
+ 	ret = j721e_pcie_set_mode(pcie, syscon, offset);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to set pci mode\n");
+@@ -302,6 +318,12 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
+ 		return ret;
+ 	}
+ 
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		dev_err(dev, "Failed to power on PCIe Controller\n");
++		return ret;
++	}
++
+ 	/* Enable ACSPCIE refclk output if the optional property exists */
+ 	syscon = syscon_regmap_lookup_by_phandle_optional(node,
+ 						"ti,syscon-acspcie-proxy-ctrl");
+-- 
+2.43.0
+
 
