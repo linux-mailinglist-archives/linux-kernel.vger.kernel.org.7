@@ -1,151 +1,196 @@
-Return-Path: <linux-kernel+bounces-791185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BBEB3B30F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:13:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5085AB3B318
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556CD460BDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:13:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2367A176C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11042253EE;
-	Fri, 29 Aug 2025 06:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECED2248B8;
+	Fri, 29 Aug 2025 06:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emcXEQNb"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="flKqZX05"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1A98BEC;
-	Fri, 29 Aug 2025 06:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D4521CFFA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756447985; cv=none; b=GT2lnwzzC5D+ArPKglQQ9d7oLkdeNwBlfRl0JySQ8VGF7mfaxX9Pc8o/pSzdrTKqya50FIz61Vt7jsKwvkG6QeLCRjL4MkFF8aLOhsvi/ymGub/MW6fQNQCFb9IAgKtagytrNtd6mjtpXhv6ldcrmbXoG1KRhbuejV0gEJAs8ik=
+	t=1756447999; cv=none; b=OtFq51BpQLfP5Jw2RAA147D1cuy4gcG2cf+iOHSYf2B8bZ5oNZp5b04Z5ea/I9nshek+c7GVGdYSResvyXYnexX5fqL+L3u5ov5gKoh4P3pky2pn0yWaRcEYF7lO/+6Y5Cj6JCOhnvKcYrn2mQERQIlQoUuRhZxTougNWLnx6+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756447985; c=relaxed/simple;
-	bh=l91ux3+Pvhq5FZeurV7FijYDFgWSVXtEaVgdjXVEbi8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mvw9DV/lF6jSB8UVZe9rcKclBId7mOVYZFK7BxXupzCG360v8nG3zO5d7OTdqySxrAKk1dx7s+ha1bfmq5Qt9MfVwULafY0v/46cye7B7efPrBSA8NgcvYFzgglM1r70uOVGuFwppBfV3MRZ2/pEfbnPn938Gr5NQa74XGGqkuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emcXEQNb; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e96ff518c08so1395538276.1;
-        Thu, 28 Aug 2025 23:13:03 -0700 (PDT)
+	s=arc-20240116; t=1756447999; c=relaxed/simple;
+	bh=ME3U1EvqRDpeRv8iU5ieehT4bOumrWu/AM01apJTyWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHXQ8E6xkAKdq4nLvv751YarNxqAvILOQVb+UBUDWn2Mi6Nra3YoQG4nHq4mImtCrP3jZi2xLnh20ABygOQWeMf13JAt4b5rs7iygHCyUsU+PxaQ/Wq8O12lny8/Wxc3fpGgZxAn/hP1nfo7bvTHgXYiL36W/vabalJy75u7Fpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=flKqZX05; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2445806df50so14500925ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756447982; x=1757052782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l91ux3+Pvhq5FZeurV7FijYDFgWSVXtEaVgdjXVEbi8=;
-        b=emcXEQNb/JtYGK2kcrITfMRPnm/o2/qJiDvJBtadV4lmOBWLbS6LF+29cLBHOtlPqU
-         xLui0GAdHIpWpqupCMdmp3PHRH0H5StO0SK3BBZGM6dvfQDn0NE+xh4rrURL+u9Ladw7
-         iJMHVnG4mW8akxWLTgNL9KhcDUQoj6qN4gjtN2ws9TEkduQA6h/hbH2ICt2C2q4j+pLi
-         kGYbA2v8+RU7flY67p+QXrTZ/nai1fAi4DqT7gFq0EQP51sWE86pyRn0tB0jQ+sZBAx6
-         bxyHB9+tpYY6UdBb7ABd7kV2QUbPcIXxmdI2IVOkiYGQ8uGS9zeZKHEEwPHixJyCu/dT
-         GV3Q==
+        d=linaro.org; s=google; t=1756447997; x=1757052797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V3x6b/e3MpUD14LIMocrPRNaCjXydrgPTujas71bYH8=;
+        b=flKqZX05+50sa/v7L26xkuDxUTGPnqFYxY7+DsKe80BonZ0SS7nVFJ10puk86edNWU
+         gJodVrddYyKLwUZ5Dsgr9g0H2+qFZM8RE/3JD419Tnc4l8NEuiFlpX+4rUNEyQbSlFAX
+         eYDUPVB1I/RuqE7P4H1mHWjglPQztCBhc0WqbxPqqDKJn5LwvjdAx487V/70nFnqkEMr
+         KVTgHmo9yGibCoyvQf+tUHIo3HKG3GZHnx225J/zaA1NEl0suhP3j6lBfa6v5p6SfUYz
+         8v/BRORln/QmTnV8JaqwzCCujak8+thiSvHA1fVruNcMxX8KKwDAuA6fSACD0KUWF+1r
+         MvpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756447982; x=1757052782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l91ux3+Pvhq5FZeurV7FijYDFgWSVXtEaVgdjXVEbi8=;
-        b=fTyKOJJRzif+DxRQ5KQEU4u+oEVaqi7CvOX8dfOY1JxnQNYosXiPn/IoFXZeNpFdG/
-         FtDn0LxwlDHNIJe12Vou7RjINr6pM7NMSeVWDrUNdmeJZfKgabDlkU/bLzuIygGcXZiy
-         ttWC7tz/p8UO9MkMXm4eVosNHgaeMctzZI+2GA/KmhNjOPHGCIzdBxqFFpBc7YZphLsj
-         4/hgxAzd0Vvf5cafRHFAEeLmimAnop3xpismZ73Xsvy0X49JaXkLMWl/Bi5ru8Wv4Wqb
-         kVLplYGU7t6R92RLOpg6bUn0TzcGwYd8Yb8GxgurXKvZEvZPEGtOlSWikFBCKXOHaQQH
-         lTKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9iAVcBRbI9bER2r62JRunuk21/RXwCSUGVsuLYoY4rjA5QD+YRtokLjy0a3CI7SVWIApeSOKZgnWjRA==@vger.kernel.org, AJvYcCVGzizzLIdCpscDRyAgU3UycoCY97BiPjMq+ciBgNAy1XEIRGFWSFW35WcS7/QOlQgDfe6IY8zlVWH5OKkXUHI=@vger.kernel.org, AJvYcCVZUXf9TL22SUf8ImqcfMpXT7YxEXJnuJmQ/x1HqOdM/zJ6SOSBdEx5iDgnT7xCeWcbUJcvEpobvrx99Uqi@vger.kernel.org, AJvYcCWNnwsaCsUbg5G9vN9JMn6f6wnjzl3faKEtGLc/FRy9HBJsKKky77KFJ0fllhSPA5P8hitcb4RS/5n3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXnUIcWk3E8CdFZfyZlHZ2lYZbdhtstFcFIecVaVVQZexzCB6b
-	6ZcMb1YzgSHmwtI+ZEGYp7m5EMvZcqTh0/yyXUJxtyz3hPzi2UhJB9rNPjbsVfubqhq32D5uCTL
-	s0FqTavP5tE0SrivVH1KTD/KGMSb0B2A=
-X-Gm-Gg: ASbGncs96v8u32NBadLTvMjNVuhbfzgJ/dpQ0Joi2fqlzXzGGlxFri7K8JKFMLo2EoI
-	kKu9UJiT4iK8QAbXg5nsfCfq2blPKO5AX5jrI8GOnY9IVlZK6xD6PlYoLcPqMKZufCDorMutjlX
-	EIwEZHpoD+6Mu/8UX4uJihzhQZVYPi0OEhFQU6NaDbsDMb99L51f5IwCPWu7PAUetDdTGib05Tg
-	m+j3q9ybC+mMYPv8Bcr7hBiuhkjlOVB5AWZvGfFurYPSQIvjIyaQEpzW3iNyomsuzo7og==
-X-Google-Smtp-Source: AGHT+IHSy/2BbuT5BBnMMeA82aFWaW+gHIBMJGQ0IfV06xy4CtgRumYMAtG4iaoPpvDBRT6Pc0nC8zl6L8hnzFloH+0=
-X-Received: by 2002:a05:690c:892:b0:71f:b871:da32 with SMTP id
- 00721157ae682-71fdc2d938amr354421277b3.12.1756447982321; Thu, 28 Aug 2025
- 23:13:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756447997; x=1757052797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3x6b/e3MpUD14LIMocrPRNaCjXydrgPTujas71bYH8=;
+        b=EevWNHD/kgAAjvlqdxjpYDnCLwQXX8KrZFVOm6uTAe7w+p4OpDjfUyqw2a6uN5Mv6C
+         1No0tUMeNYihDLj3NStDEXkWZnu6wJwBYjBaN2PlqfleIm5FVK8x1I+51S2AzAqhneWF
+         V2CiHaVnxovNCwViCspxsQ/JTvLW2m9tR1FRSvVaPPtwF+yC9pWoB0l4j9ZlR+Gp3+eB
+         SMz+G9W1yOrhp3pyNW1XFT7600hPy5PIHnUvr+WnLr8dj5bS3G1fBik/ALr3i4tfY19Q
+         4ovyZdpv1iZDkdlFVqojm0VJsg2NMCvfH9COD9x6jck8H0u4cqIF3XrFJteOX+HvWWej
+         Q5TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzit4AJgG+m/QgJop1CWBFIPodwzFwHvAqJ8GlaPSAiwY3jS/BMCizdZbID9GgfsHKC5bT3Dv17C+iljY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCe4n/xXTgRyQXcNxyuYQOLygpzuqqNzdH0Gia15QlRsve+HTK
+	6081xHKvPWCsG7Chg3rw7VBERivpWZS8833aG9s1QzvWEWtyhTF3A4eWzgfhCM2Nn0E=
+X-Gm-Gg: ASbGncvC8OKOLIHwQy+pdN0bsuQS/CqZE0MpSsGiluWI5UCxN3J38mjWDGf1VB435Yj
+	xH21z4fAJYczmJmjn5Om3VMlg31APiEsI+PxbwQXrKUu4RomSKmnl0nwZ5kV3OU3FgdOkP9tI1k
+	oboGxvZBhBCFFGPj2rQ+F92x+Cy0EHAlH49fblbVpDvx6ZNzXgHagoqVU+ZYIUKDpFxPQTLyh6q
+	Gt7xraRNNQ1hVud/uw+GtbwQBTTd+q1KUlPPFvKouYVNJqay8y3Ts+9uur6hW5RiXOq7b20Fr8M
+	1myY3XJWRFQ+zKKoyUteJ9kjyBcTrsBLp2A0HRK2RqlGsfUZMoODYdb67qhnnUDuMF+vidhNOnj
+	Y2oh2sVp81A436MuSJwMzLEbzjvgK+NNVOvI=
+X-Google-Smtp-Source: AGHT+IFWh4jzpCyQazo33Du3vwJOQK6BMtgUKuJSYiyNvSKeAM+9t6q52OKXzZUwBWVIjDVwh5LnnA==
+X-Received: by 2002:a17:903:248:b0:248:7018:c739 with SMTP id d9443c01a7336-2487018c906mr177164055ad.28.1756447996693;
+        Thu, 28 Aug 2025 23:13:16 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490658999fsm13362715ad.112.2025.08.28.23.13.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 23:13:16 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:43:13 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/18] cpufreq: s5pv210: Use
+ __free(put_cpufreq_policy) for policy reference
+Message-ID: <20250829061313.bloyct5htjym6b3j@vireshk-i7>
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-11-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827005658.3464-1-rosenp@gmail.com> <20250827005658.3464-2-rosenp@gmail.com>
- <175638709817.1370637.10754263567298002001.robh@kernel.org>
- <CAKxU2N-Zfme=84rqxQ=uJro1YMeFGorveT-uRhx6_HpJmB-fxA@mail.gmail.com> <9208c440-f9e3-4289-9c33-81bb35383d53@kernel.org>
-In-Reply-To: <9208c440-f9e3-4289-9c33-81bb35383d53@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Thu, 28 Aug 2025 23:12:51 -0700
-X-Gm-Features: Ac12FXwKbnby6LF69ay3A5pTgzG023i-hm7L-4gqEAYIyg35KbPDvm5j_vKU5Rs
-Message-ID: <CAKxU2N9o_jJd7mfVQE2yab5xX+-gKa8qB8hLkKJPqZq+YmzE4Q@mail.gmail.com>
-Subject: Re: [PATCHv4 1/3] dt-bindings: net: wireless: ath9k: add led bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
-	devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827023202.10310-11-zhangzihuan@kylinos.cn>
 
-On Thu, Aug 28, 2025 at 11:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 29/08/2025 03:47, Rosen Penev wrote:
-> >> dtschema/dtc warnings/errors:
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:9=
-2.15-25: Warning (reg_format): /example-2/ahb/wifi@180c0000/led:reg: proper=
-ty has invalid length (4 bytes) (#address-cells =3D=3D 2, #size-cells =3D=
-=3D 1)
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:9=
-1.17-94.15: Warning (unit_address_vs_reg): /example-2/ahb/wifi@180c0000/led=
-: node has a reg or ranges property, but no unit name
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (pci_device_reg): Failed prerequisite 'reg_format'
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:9=
-1.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000=
-/led: Relying on default #address-cells value
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:9=
-1.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000=
-/led: Relying on default #size-cells value
-> >> Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: =
-Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_defaul=
-t_addr_size'
-> >>
-> >> doc reference errors (make refcheckdocs):
-> >>
-> >> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202=
-50827005658.3464-2-rosenp@gmail.com
-> > FFS. These reviews were garbage. The next series will effectively be
->
-> What? My and Conor reviews were garbage?
-I was specifically referring to replacing led-sources with reg. The
-latter needs address and size-cells specified which is verbose for no
-good reason.
+On 27-08-25, 10:31, Zihuan Zhang wrote:
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 76c888ed8d16..95f1568e9530 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -555,7 +555,7 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+>  						 unsigned long event, void *ptr)
+>  {
+>  	int ret;
+> -	struct cpufreq_policy *policy;
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>  
+>  	policy = cpufreq_cpu_get(0);
+>  	if (!policy) {
+> @@ -564,7 +564,6 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+>  	}
+>  
+>  	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
+> -	cpufreq_cpu_put(policy);
+>  
+>  	if (ret < 0)
+>  		return NOTIFY_BAD;
 
-Meaning the initial patchset was almost ideal. Just
-of_device_is_available needed to be fixed.
+Merged with minor change:
 
-I'm irritated as this will be up to v5 when it should have been up to v2.
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index 95f1568e9530..4215621deb3f 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -554,10 +554,9 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
+ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+                                                 unsigned long event, void *ptr)
+ {
++       struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(0);
+        int ret;
+-       struct cpufreq_policy *policy __free(put_cpufreq_policy);
 
->
-> It is your patches which never got tested, code was completely messed up
-> (see v2 mixing two different things).
->
-> I am not going to review your patches.
->
-> Best regards,
-> Krzysztof
+-       policy = cpufreq_cpu_get(0);
+        if (!policy) {
+                pr_debug("cpufreq: get no policy for cpu0\n");
+                return NOTIFY_BAD;
+
+-- 
+viresh
 
