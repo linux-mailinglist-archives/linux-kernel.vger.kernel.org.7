@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-791511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FABBB3B7B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D5CB3B7B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F240566310
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9C683ACEA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2A32EBBB7;
-	Fri, 29 Aug 2025 09:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DA9304BCD;
+	Fri, 29 Aug 2025 09:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcIhqyoz"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ND9XEO/W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6B1F55F8;
-	Fri, 29 Aug 2025 09:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE892638AF;
+	Fri, 29 Aug 2025 09:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460987; cv=none; b=eCojfoJ2a7BU7UhSUTEljfxMievVbEKUYo9Rh3MDBbjchqIgcGn8ooKwNwuTMVemWhdN0boBXudUu7gKzY4ePe2PuwKbWELzLjcRk6s2dzCgGfo5CC3t72T5Uf0AhdUTpnIwk6ETeg64GVovkzV1CbZIZQ1I4+aPWWEcZa0IAow=
+	t=1756460999; cv=none; b=EZORH3N6Y9VjFiUWO1tFp+Tw0EwUOruEgT8/Ii21Sd7mhUxQ4ssPPTtxWbKx8zR3//9R0mVGRVtoT+NcYMSMpOzHteB+sNhcHGe9Bu30HRrMdSGhW4LjmQwyVvRRoIrrP61xR0L/u1UyEfGukU8DNMjhHb8Ph/1NGDrGGoqv+K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460987; c=relaxed/simple;
-	bh=lhmgsrMwvf4liprYG7Ei9+IHq5tb6vM1vmnJcwja0zk=;
+	s=arc-20240116; t=1756460999; c=relaxed/simple;
+	bh=vTrZCzGqprJa4CTDYYxT6WV6QVw3cRAJY7/mRObXOP8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0V/UdRTlwtv/otKUjmUcA2JKhYHjTEvTXVWK2K0ug5Hyrdq+vv8TKmnPegfLQ28d6wYLSymNHE7g/lUWpW7mFnj8HsOMqIH/lEXgjW1dHpfh1Gg3u2Iq/ocE0KZCx+KfXqquPDjbubC6GjGjK8yUxKsHMZ9YdFh0n6UH0n5ze0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcIhqyoz; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7a16441so272136766b.2;
-        Fri, 29 Aug 2025 02:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756460984; x=1757065784; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VPJPzyaAcsYZFWXE+rcGpPO401ZzV1EMLAoIATRnKEA=;
-        b=TcIhqyozKhAVVrtexEqMvMaGpeR3I42SsHEoU4Dc0yCmnhWoCmqBNCbtr9GWv1LrmC
-         IqVLZf1kAjF5a4xYwifk7XkQpvj3u7pxUDYkOrJw0JbV4j5nl5XO16bff3wQqpvL6HZ8
-         G/6ki996SVWG3Yeb4psOBtI7YaZR4zmpPr8T2+phDpPolpZqTg9b9GpZH65wC0RO/3lm
-         +24VITfCVD2Z036Gjzc3zG5/IHqeFgAPhvCJGlWccSpJhj0w59RwTTnwaHMMFJcx1Ul4
-         032qZ6QXwmoxV/EiXH6IXUHMD1ah4Z3QhO5jF//YkMhdAcisAYtiN5C1dkw2rBzvS2zk
-         taOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756460984; x=1757065784;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VPJPzyaAcsYZFWXE+rcGpPO401ZzV1EMLAoIATRnKEA=;
-        b=hplEzW4dH74kdJA4YfCZD6YJVvSO0NqoIfK5EEWd/0tNLHxpAaNpYeLnqtKO1g32Ty
-         +mIjnNekDBSeLc82so/KEP6JCNRL/aQkBWUXiWXHWkNRgbrzMMtMYLaOjux3YEn6qpeW
-         +Vq/JBFAzZUIogyAv50gsziudOR6nOrzevbwEhyPDA3pNFfognlPQ75CU2I4qlT9RoUY
-         PymyxBPqV//rZzALk6UrmeWTARL3+uKFV8bxRvIGpDzHdpqUYPLc0KkI/cgr+T5r6ysT
-         86MqqUttQDvkif32Wi2b6AmZ2JQX4CSODTUbFnVs2gdbdBUSxFo+VS3ib+WDOi7cdzz0
-         14qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzT3feplecT7wpey5f+bB/1//iFNqAeFFlocznsVo1aJ1G7gzoyi5tSqnVlfZZBfuxcqojEq3O3GmUnP4=@vger.kernel.org, AJvYcCXhfJbtqwt0+VqthlT1f6r7B5ABciwvoQS0uJCyqf0S3RDJI/8kB16Bmum78QVgsWa8Lm2ntYRPYpAHpyOs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn+dcsdHnDSKt2leanm5U58d8pG5vLUQS8tDXbrv499PIRKVNn
-	xPPBdEYqE8mdkxrp4V7K+SZRDHYAeLex3C23unOVzk06Q8VvnlJGDA86
-X-Gm-Gg: ASbGncuDO6cG4E6jZ2z1z36pXMM98p9m9AATJIN91lwCyVbi346oWkb/Kj1tsiY9Adg
-	1nC3U8jrSubr/233xAfADjB8FfIOcTwuOWBm7pbFYXPzA6DV9CklcrSPvu16qH54SZEWJanNosI
-	pFeK9rVOsN5Yt3BgJ18twqvM9WI/rn04/GF2npUTMtj6vpqJYbnabWJG1RsGJE29tv0r+vYXyzg
-	oHVsoWhOuAUd9mlk/1OWNnB8Jf9hf7Jt7rqNx0fCaBluzRUYRs1WLcYOJW4qkusQDDvcRfdiyMs
-	hfjutNp/QNRefmM6ESEv6YMl1Gv7xcslz6EMDZ2tyijPBg7qgDY3Irc/E5zTF9AIkFadlI+14FC
-	3mHjMrrBshaJL16h8blvqxFo6sUiyeAiHrE4dVVF2C+2pfMWtpZkYJYfBolE9eX89OXLJdgFn6R
-	OmaehstdRlb4H7THU0z00DFfiruonDt2R/sbDsqbKHNJaCEUdDJAYBHvzwCg14D4J/3fQ=
-X-Google-Smtp-Source: AGHT+IEDMhih4Y4IAmtD5j+HuRhLKlot2jYM8x0+gNx9CP/3JwypnSwKt2NXE/pRy82v+m7s4s5Zsw==
-X-Received: by 2002:a17:907:97cb:b0:afd:d9e3:953f with SMTP id a640c23a62f3a-afe296b14edmr2617784666b.63.1756460983696;
-        Fri, 29 Aug 2025 02:49:43 -0700 (PDT)
-Received: from ?IPV6:2a02:908:1b0:afe0:17ac:1440:166f:150c? ([2a02:908:1b0:afe0:17ac:1440:166f:150c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff07de1612sm91296666b.105.2025.08.29.02.49.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 02:49:43 -0700 (PDT)
-Message-ID: <27562003-b129-4dea-818c-2e81176f842b@gmail.com>
-Date: Fri, 29 Aug 2025 11:49:41 +0200
+	 In-Reply-To:Content-Type; b=puYMnhToXVBkCVOEHs8yeeF50KDbAyPMip8LDeLhLq+QBwZMuV1DKhp1CEwRXvArkIbuI9zHxbJbKY2IUkZVNyvISdrE3zIC3DjqDir2FksBzpkp7QxY/y6xm5KfmVCry1RVqRqAyh9wekaR1nc1hoRa9WXxlh4EQnzg/FxOci0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ND9XEO/W; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756460998; x=1787996998;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vTrZCzGqprJa4CTDYYxT6WV6QVw3cRAJY7/mRObXOP8=;
+  b=ND9XEO/WxNGu9xhUNRbgO+cRKp9/PV2wW4z7oQdkM9EvsR663C6l0gGO
+   Tnrp25KqVMF0b9tiHZwt79eD2ObkLFSnwZ5VrW27EQs+V+QV4LhVy6dKJ
+   52V0b7M6iI6usNCbZ6f2604uCCvD+Xip+a5vdqW3fzkHhOAz1RQ1ojXNu
+   UtctExeUbfIrolSuGz3i+1b/yCeA7bs42ZO/8FICN7gtgs5koXkPPARXN
+   Xo2mnINXWsXWmn90+cF5qttSrwo/mYbE2JXBj0Bl7IMgw0mbWzlTn9cv5
+   xK4Ri146005BMHhqv/ylUniG1oDOZX3FMWD3WGec5a8kjxSysryLvoL5O
+   A==;
+X-CSE-ConnectionGUID: wGTOAzENQaCIaDBcMMRwjA==
+X-CSE-MsgGUID: wpIbUhEOTfKonfg4zquP3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58667411"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58667411"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:49:57 -0700
+X-CSE-ConnectionGUID: akA7G3iWTmGzLjPNu+Xh6Q==
+X-CSE-MsgGUID: cUeVsKv5TKqVRHsJNmXV5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="170730842"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:49:53 -0700
+Message-ID: <ac78e6fd-24d4-4d1e-9b98-a0831f369f82@linux.intel.com>
+Date: Fri, 29 Aug 2025 17:49:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,47 +66,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250_of: replace kzalloc with devm_kzalloc
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jirislaby@kernel.org, andriy.shevchenko@linux.intel.com,
- elder@riscstar.com, benjamin.larsson@genexis.eu,
- u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20250827231105.126378-1-osama.abdelkader@gmail.com>
- <2025082817-laborious-provoke-2ac0@gregkh>
+Subject: Re: [RFC PATCH v2 07/18] KVM: TDX: Fold tdx_sept_drop_private_spte()
+ into tdx_sept_remove_private_spte()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+ <20250829000618.351013-8-seanjc@google.com>
 Content-Language: en-US
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-In-Reply-To: <2025082817-laborious-provoke-2ac0@gregkh>
-Content-Type: text/plain; charset=UTF-8
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250829000618.351013-8-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-On 8/28/25 7:51 AM, Greg KH wrote:
-> On Thu, Aug 28, 2025 at 01:11:05AM +0200, Osama Abdelkader wrote:
->> Use devm_kzalloc for automatic memory cleanup.
-> Why?
+
+On 8/29/2025 8:06 AM, Sean Christopherson wrote:
+> Fold tdx_sept_drop_private_spte() into tdx_sept_remove_private_spte() to
+> avoid having to differnatiate between "zap", "drop", and "remove", and to
+> eliminate dead code due to redundant checks, e.g. on an HKID being
+> assigned.
 >
-> I do not see a good reason here as to how this makes anything better
-> overall?  How was it tested?
+> No functional change intended.
 >
-> thanks,
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 90 +++++++++++++++++++-----------------------
+>   1 file changed, 40 insertions(+), 50 deletions(-)
 >
-> greg k-h
-
-Hi Greg,
-
-Thanks for the feedback, the change to devm_kzalloc ensures the allocated
-memory is tied to the device's lifetime. This removed the need for explicit
-kfree() calls in the remove path and avoids potential leaks in probe error 
-paths. It also aligns the driver with others in the 8250 subsystem which 
-already use devm-managed resources.
-
-For testing, I built the kernel and booted it on QEMU riscv with of_serial
-enabled. The driver probed successfully and the serial console worked as
-expected, also tested unbinding/rebinding the driver via sysfs to confirm
-no leaks or errors occur.
-
-Thanks,
-Osama
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 50a9d81dad53..8cb6a2627eb2 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1651,55 +1651,6 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
+>   }
+>   
+> -static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+> -				      enum pg_level level, struct page *page)
+> -{
+> -	int tdx_level = pg_level_to_tdx_sept_level(level);
+> -	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> -	gpa_t gpa = gfn_to_gpa(gfn);
+> -	u64 err, entry, level_state;
+> -
+> -	/* TODO: handle large pages. */
+> -	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
+> -		return -EIO;
+> -
+> -	if (KVM_BUG_ON(!is_hkid_assigned(kvm_tdx), kvm))
+> -		return -EIO;
+> -
+> -	/*
+> -	 * When zapping private page, write lock is held. So no race condition
+> -	 * with other vcpu sept operation.
+> -	 * Race with TDH.VP.ENTER due to (0-step mitigation) and Guest TDCALLs.
+> -	 */
+> -	err = tdh_mem_page_remove(&kvm_tdx->td, gpa, tdx_level, &entry,
+> -				  &level_state);
+> -
+> -	if (unlikely(tdx_operand_busy(err))) {
+> -		/*
+> -		 * The second retry is expected to succeed after kicking off all
+> -		 * other vCPUs and prevent them from invoking TDH.VP.ENTER.
+> -		 */
+> -		tdx_no_vcpus_enter_start(kvm);
+> -		err = tdh_mem_page_remove(&kvm_tdx->td, gpa, tdx_level, &entry,
+> -					  &level_state);
+> -		tdx_no_vcpus_enter_stop(kvm);
+> -	}
+> -
+> -	if (KVM_BUG_ON(err, kvm)) {
+> -		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
+> -		return -EIO;
+> -	}
+> -
+> -	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
+> -
+> -	if (KVM_BUG_ON(err, kvm)) {
+> -		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
+> -		return -EIO;
+> -	}
+> -	tdx_clear_page(page);
+> -	return 0;
+> -}
+> -
+>   static int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
+>   				     enum pg_level level, void *private_spt)
+>   {
+> @@ -1861,7 +1812,11 @@ static int tdx_sept_free_private_spt(struct kvm *kvm, gfn_t gfn,
+>   static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   					enum pg_level level, kvm_pfn_t pfn)
+>   {
+> +	int tdx_level = pg_level_to_tdx_sept_level(level);
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+>   	struct page *page = pfn_to_page(pfn);
+> +	gpa_t gpa = gfn_to_gpa(gfn);
+> +	u64 err, entry, level_state;
+>   	int ret;
+>   
+>   	/*
+> @@ -1872,6 +1827,10 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
+>   		return -EIO;
+>   
+> +	/* TODO: handle large pages. */
+> +	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
+> +		return -EIO;
+> +
+>   	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
+>   	if (ret <= 0)
+>   		return ret;
+> @@ -1882,7 +1841,38 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	 */
+>   	tdx_track(kvm);
+>   
+> -	return tdx_sept_drop_private_spte(kvm, gfn, level, page);
+> +	/*
+> +	 * When zapping private page, write lock is held. So no race condition
+> +	 * with other vcpu sept operation.
+> +	 * Race with TDH.VP.ENTER due to (0-step mitigation) and Guest TDCALLs.
+> +	 */
+> +	err = tdh_mem_page_remove(&kvm_tdx->td, gpa, tdx_level, &entry,
+> +				  &level_state);
+> +
+> +	if (unlikely(tdx_operand_busy(err))) {
+> +		/*
+> +		 * The second retry is expected to succeed after kicking off all
+> +		 * other vCPUs and prevent them from invoking TDH.VP.ENTER.
+> +		 */
+> +		tdx_no_vcpus_enter_start(kvm);
+> +		err = tdh_mem_page_remove(&kvm_tdx->td, gpa, tdx_level, &entry,
+> +					  &level_state);
+> +		tdx_no_vcpus_enter_stop(kvm);
+> +	}
+> +
+> +	if (KVM_BUG_ON(err, kvm)) {
+> +		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
+> +		return -EIO;
+> +	}
+> +
+> +	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
+> +	if (KVM_BUG_ON(err, kvm)) {
+> +		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
+> +		return -EIO;
+> +	}
+> +
+> +	tdx_clear_page(page);
+> +	return 0;
+>   }
+>   
+>   void tdx_deliver_interrupt(struct kvm_lapic *apic, int delivery_mode,
 
 
