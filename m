@@ -1,262 +1,92 @@
-Return-Path: <linux-kernel+bounces-791544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C86B3B863
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B381CB3B858
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76FB91CC066F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054291CC04D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8063081C7;
-	Fri, 29 Aug 2025 10:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A0E3081C8;
+	Fri, 29 Aug 2025 10:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="IDFAPRdf"
-Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="trC8TmGG"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFFD283FD4;
-	Fri, 29 Aug 2025 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.61.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895983093CB
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462432; cv=none; b=nU2wuNW6jq6tYbhttyeFOmIjv5BnSapWSA5wyaYMHH5pK/VA6Ofp1JAUIZw0SvYE8M1+bUz8n11LjkYYrhba0jiSAt8FUXVKvNH7bmm0b5ZErNvFvpcSj2CK0F/18ioXiFPXUCG0ikTR56oUnA9dJwPCd0HrA/SEYn3VnDy/lD8=
+	t=1756462319; cv=none; b=Ac2x2TylogHwVH8biP7e0XuTVF+yJqo1P71YvzMet5KMY3xkKRGRutY93IOAecdHfEgZKnQYw8sv9TTaTCbJJoTP9Fkvsqfh1Dj7hL+UGbIjAdDQO0KJLgyU3mnr0bcO1R2Mb04XcNPeGj9db8YCdCL5Je9p218r4kV/k5sv0TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462432; c=relaxed/simple;
-	bh=jIByS3sNUYW+jq9JhP57I+abVJkupGZshZJq2NOCC7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pfcVzoVNxZYh8r1w/6EEKg5NdA+cFsQMOznhpeF2L5swlhz8e/rag3pjFC+SyPBSOz7AahKSN5N00Uo5x/CZ3HcaDYGgVPL+DSQ9NuTxO2mKjdjdmvgUtE7h+LmVpd9rr97yxGCc30nO6x+yZWGlj5YCeEOnv0wAPcNHs6wt4yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aa.jp.fujitsu.com; spf=pass smtp.mailfrom=aa.jp.fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=IDFAPRdf; arc=none smtp.client-ip=139.138.61.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aa.jp.fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aa.jp.fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1756462429; x=1787998429;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jIByS3sNUYW+jq9JhP57I+abVJkupGZshZJq2NOCC7g=;
-  b=IDFAPRdfegl2U2D6l3ksUTJSrAv+SX9qaVer6PTJHjdOZSU3n6EbA7Fl
-   ma5+NFi+uRgJSEPGQa5JgQZ6OhtX5vRsnibjZZESlhCz/9a2ec2Y/nF1D
-   +uUs0QRI68wzIomXLtTT/ongMc0bVg4zgdlsXOjU3Gmt+fn9s7yAxKu7m
-   qjP20v8Xk3lYs3IxS1DIGWsykKSAGlMtLo0EQoDDh9g/5eUX9a1AiHjtU
-   vu9jf22P3FhfbFpgS6M/2TZ7Yz9S++/hI7+wnALdbRwwURTaB1evofWp5
-   vPv1gFfrDh378fFUCxjuQ+/sVnAwW/ktrrIuRMPYMLU0ZJaEgScil7S+J
-   Q==;
-X-CSE-ConnectionGUID: SFf6wxVaRiGuazZ4ZbLvGw==
-X-CSE-MsgGUID: ilmAqebjRp2qfGnYf4RQVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="198972201"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751209200"; 
-   d="scan'208";a="198972201"
-Received: from unknown (HELO az2nlsmgr2.o.css.fujitsu.com) ([51.138.80.169])
-  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 19:12:36 +0900
-Received: from az2nlsmgm4.fujitsu.com (unknown [10.150.26.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr2.o.css.fujitsu.com (Postfix) with ESMTPS id E5D4E49B;
-	Fri, 29 Aug 2025 10:12:36 +0000 (UTC)
-Received: from az2nlsmom3.fujitsu.com (az2nlsmom3.o.css.fujitsu.com [10.150.26.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm4.fujitsu.com (Postfix) with ESMTPS id A3F331000271;
-	Fri, 29 Aug 2025 10:12:36 +0000 (UTC)
-Received: from sm-arm-grace07.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by az2nlsmom3.fujitsu.com (Postfix) with ESMTP id C355210005B9;
-	Fri, 29 Aug 2025 10:12:31 +0000 (UTC)
-From: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Subject: [PATCH v2] ACPI: AGDI: Add interrupt signaling mode support
-Date: Fri, 29 Aug 2025 19:11:47 +0900
-Message-ID: <20250829101154.2377800-1-fj1078ii@aa.jp.fujitsu.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756462319; c=relaxed/simple;
+	bh=M5mqqu6lY1kpvsliyHMCkk1JVMsBobZ+0BTdJ715Qz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzdm7ElXtdJY1KxLpxAF9AgJBAZ3G6wNBkv092DhGUdL264Gk9DLocJTYhnV7QWMDtlfVTbN788x+dMO5fH9CKfyJfpSyvomJ1rvNR4mlkRMJykHaIro9Xh1ECRCVXNMhct/vW1YxDNTV0VA9cfQQSnLNUu9WA5+TIy4SlETHnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=trC8TmGG; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HLKEYWCOQmMDQNx/pwPo3zfJS6SvTUi5l0tmvLYsX6k=; b=trC8TmGGWkV8XmJ1xRQnsYuKML
+	M0TU/7fG2aZwTUA+lL6h1cxZ8BsaytI/TiRCPNmG8nlnjdvH9iK7hEKQL4AeDagDt7Cod89RU4L5t
+	hLT9oh1r3vaBMAPOEzZ6VDgkp6stVbN9oNlZBfpjqpXOvSDzjQ48Oak+ZbJWg2iaFdV9+JH1QDOmN
+	ZDJGVkRtkBBir9MO/9yT70Nd9I0nm+77chksqmliT9JEuAKmIAQHEUOgPtEFG+bFcDzCg1inajMs9
+	JNzSE547v35E7KyQzppx9BnLh5YOYkGBd2k4pXpvQHiiRi9ZbJprblv8goc7zd/EbL9fkJhM9n1U6
+	l72bP7qg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47766)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1urw5I-000000002dF-4159;
+	Fri, 29 Aug 2025 11:11:53 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1urw5G-000000003yZ-3YcK;
+	Fri, 29 Aug 2025 11:11:51 +0100
+Date: Fri, 29 Aug 2025 11:11:50 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: module: Ensure the override of
+ module_arch_freeing_init()
+Message-ID: <aLF85tovbkn5vjav@shell.armlinux.org.uk>
+References: <20250829090726.834456-1-petr.pavlu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829090726.834456-1-petr.pavlu@suse.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-AGDI has two types of signaling modes: SDEI and interrupt.
-Currently, the AGDI driver only supports SDEI.
-Therefore, add support for interrupt singaling mode
-The interrupt vector is retrieved from the AGDI table, and call panic
-function when an interrupt occurs.
+On Fri, Aug 29, 2025 at 11:06:44AM +0200, Petr Pavlu wrote:
+> The function module_arch_freeing_init() defined in arch/arm/kernel/module.c
+> is supposed to override a weak function of the same name defined in
+> kernel/module/main.c. However, the ARM override is also marked as weak,
+> which means that selecting the correct function unnecessarily depends on
+> the order in which object files with both functions are passed to the
+> linker. Although it happens to be correct at the moment, the proper pattern
+> is to make the ARM override a strong definition.
+> 
+> Fixes: cdcb07e45a91 ("ARM: 8975/1: module: fix handling of unwind init sections")
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
 
----
-I keep normal IRQ code when NMI cannot be used.
-If there is any concern, please let me know.
+LGTM, please ensure it ends up in the patch system (see signature
+below). Thanks.
 
-v1->v2
- - Remove acpica update since there is no need to update define value
-   for this patch.
-
-Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
----
- drivers/acpi/arm64/agdi.c | 98 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 91 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/acpi/arm64/agdi.c b/drivers/acpi/arm64/agdi.c
-index e0df3daa4abf..e887aab6b448 100644
---- a/drivers/acpi/arm64/agdi.c
-+++ b/drivers/acpi/arm64/agdi.c
-@@ -16,7 +16,11 @@
- #include "init.h"
- 
- struct agdi_data {
-+	unsigned char flags;
- 	int sdei_event;
-+	unsigned int gsiv;
-+	bool use_nmi;
-+	int irq;
- };
- 
- static int agdi_sdei_handler(u32 sdei_event, struct pt_regs *regs, void *arg)
-@@ -48,6 +52,55 @@ static int agdi_sdei_probe(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static irqreturn_t agdi_interrupt_handler_nmi(int irq, void *dev_id)
-+{
-+	nmi_panic(NULL, "Arm Generic Diagnostic Dump and Reset NMI Interrupt event issued\n");
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t agdi_interrupt_handler_irq(int irq, void *dev_id)
-+{
-+	panic("Arm Generic Diagnostic Dump and Reset Interrupt event issued\n");
-+	return IRQ_HANDLED;
-+}
-+
-+static int agdi_interrupt_probe(struct platform_device *pdev,
-+				struct agdi_data *adata)
-+{
-+	unsigned long irq_flags;
-+	int ret;
-+	int irq;
-+
-+	irq = acpi_register_gsi(NULL, adata->gsiv, ACPI_EDGE_SENSITIVE, ACPI_ACTIVE_HIGH);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "cannot register GSI#%d (%d)\n", adata->gsiv, irq);
-+		return irq;
-+	}
-+
-+	irq_flags = IRQF_PERCPU | IRQF_NOBALANCING | IRQF_NO_AUTOEN |
-+		    IRQF_NO_THREAD;
-+	/* try NMI first */
-+	ret = request_nmi(irq, &agdi_interrupt_handler_nmi, irq_flags,
-+			  "agdi_interrupt_nmi", NULL);
-+	if (ret) {
-+		ret = request_irq(irq, &agdi_interrupt_handler_irq,
-+				  irq_flags, "agdi_interrupt_irq", NULL);
-+		if (ret) {
-+			dev_err(&pdev->dev, "cannot register IRQ %d\n", ret);
-+			acpi_unregister_gsi(adata->gsiv);
-+			return ret;
-+		}
-+		enable_irq(irq);
-+		adata->irq = irq;
-+	} else {
-+		enable_nmi(irq);
-+		adata->irq = irq;
-+		adata->use_nmi = true;
-+	}
-+
-+	return 0;
-+}
-+
- static int agdi_probe(struct platform_device *pdev)
- {
- 	struct agdi_data *adata = dev_get_platdata(&pdev->dev);
-@@ -55,12 +108,17 @@ static int agdi_probe(struct platform_device *pdev)
- 	if (!adata)
- 		return -EINVAL;
- 
--	return agdi_sdei_probe(pdev, adata);
-+	if (adata->flags & ACPI_AGDI_SIGNALING_MODE)
-+		agdi_interrupt_probe(pdev, adata);
-+	else
-+		agdi_sdei_probe(pdev, adata);
-+
-+	return 0;
- }
- 
--static void agdi_remove(struct platform_device *pdev)
-+static void agdi_sdei_remove(struct platform_device *pdev,
-+			     struct agdi_data *adata)
- {
--	struct agdi_data *adata = dev_get_platdata(&pdev->dev);
- 	int err, i;
- 
- 	err = sdei_event_disable(adata->sdei_event);
-@@ -83,6 +141,30 @@ static void agdi_remove(struct platform_device *pdev)
- 			adata->sdei_event, ERR_PTR(err));
- }
- 
-+static void agdi_interrupt_remove(struct platform_device *pdev,
-+				  struct agdi_data *adata)
-+{
-+	if (adata->irq != -1) {
-+		if (adata->use_nmi)
-+			free_nmi(adata->irq, NULL);
-+		else
-+			free_irq(adata->irq, NULL);
-+
-+		acpi_unregister_gsi(adata->gsiv);
-+	}
-+}
-+
-+static void agdi_remove(struct platform_device *pdev)
-+{
-+	struct agdi_data *adata = dev_get_platdata(&pdev->dev);
-+
-+	if (adata->flags & ACPI_AGDI_SIGNALING_MODE) {
-+		agdi_interrupt_remove(pdev, adata);
-+	} else {
-+		agdi_sdei_remove(pdev, adata);
-+	}
-+}
-+
- static struct platform_driver agdi_driver = {
- 	.driver = {
- 		.name = "agdi",
-@@ -94,7 +176,7 @@ static struct platform_driver agdi_driver = {
- void __init acpi_agdi_init(void)
- {
- 	struct acpi_table_agdi *agdi_table;
--	struct agdi_data pdata;
-+	struct agdi_data pdata = {0};
- 	struct platform_device *pdev;
- 	acpi_status status;
- 
-@@ -104,11 +186,13 @@ void __init acpi_agdi_init(void)
- 		return;
- 
- 	if (agdi_table->flags & ACPI_AGDI_SIGNALING_MODE) {
--		pr_warn("Interrupt signaling is not supported");
--		goto err_put_table;
-+		pdata.gsiv = agdi_table->gsiv;
-+	} else {
-+		pdata.sdei_event = agdi_table->sdei_event;
- 	}
- 
--	pdata.sdei_event = agdi_table->sdei_event;
-+	pdata.irq = -1;
-+	pdata.flags = agdi_table->flags;
- 
- 	pdev = platform_device_register_data(NULL, "agdi", 0, &pdata, sizeof(pdata));
- 	if (IS_ERR(pdev))
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
