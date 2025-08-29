@@ -1,363 +1,310 @@
-Return-Path: <linux-kernel+bounces-792034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FB2B3BFAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D21AB3BFB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EB7189B18B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD72A25431
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605C13277AA;
-	Fri, 29 Aug 2025 15:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519FE32A3F1;
+	Fri, 29 Aug 2025 15:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RZrVyEEe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OWKOg/9P";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rxIIGCPr"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F9F326D54;
-	Fri, 29 Aug 2025 15:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482067; cv=none; b=mGKj123rzQpMmdDIgUqFBZNVpf72gvs178f03f1ykpbPCxPncsbjgq6oTtO46GL3aFv4JAKppX+vX8wQYur6VwCKJSLuKzL3p9rmlLMlV1Lp8GyZyBhzoeKKeiB/StJxDGBraHQ7+b+mA5maXJ1kPelXea1+VlryF7IPijXCi/k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482067; c=relaxed/simple;
-	bh=F3j/ES+bWWGwnGf7MfhpFF6VZGrzyLff2kjZkVV0yjM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nWOI97UljA357NCuTBtK8awAep1FuPYzt9SDUUYEKMhY/nTDGeKWKfBUcEZ1ZCbIWCdwCZbyfizjUon9RE17baPtefSd6OynowXIlSGn6LS1L2Wpr6rQmr52+85Mm4DpPOUeubOhbDmSVVb7jtDfyy2oqcOuIks1Ucs1YyxVb5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RZrVyEEe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756482063;
-	bh=F3j/ES+bWWGwnGf7MfhpFF6VZGrzyLff2kjZkVV0yjM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RZrVyEEeRRmKVRHwY9EWmgEC/Vz6fzgy8AEFHv/MhnoXGq4hLqw8OtIR6IhMwgljL
-	 IF0QsRQDFr5y09V8pjtljITgVVRcy1CbzofFqVlDQqclaPV/laOKrPciFdmTsUH81S
-	 0G0LRxsfqqWZN93+vC+mtWxw48NAenJlBpQZxoyLTga7YrQ/eMpDPF6GymyrSikh7+
-	 hLKVFpRZzZP2ObRh59cfH79vpTy58V3VZ9P2QpZjds2+IwrYdkDEVp48ljBv8Etq5/
-	 XZ4M2rktqxKu1zyOMSN95/IHPkBq2IVm1G5uWNgqjvBmybzS3OG8D6R4DwGabPsmdy
-	 DuHNUtfqHjQrg==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7FBA617E0489;
-	Fri, 29 Aug 2025 17:41:01 +0200 (CEST)
-Message-ID: <f79ab2a0db0eb4aad20ed488de3635f9d8942cdf.camel@collabora.com>
-Subject: Re: [PATCH v3 0/4] Performance improvement of decoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, bob.beckett@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
-	nas.chung@chipsnmedia.com
-Date: Fri, 29 Aug 2025 11:40:59 -0400
-In-Reply-To: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
-References: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-ecMmgB+uH+DWlWnHUeVO"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8506E326D54
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756482121; cv=fail; b=iICYAgRxLI60ilABrsuY/PWvQ9UEwfz7jvwePfSoyFWFLLO9bCLYCVyRnHHhhopd2eMAQ/82PQ3toJSN/0hUdsCrC+c4Eykvk9BKw+jx3RZv0chrzbJfnfNrDe6MDOrc0J9Rf+1/DaUxWnK5CZEx0mQUYpzbK3okqTO+CZtcf+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756482121; c=relaxed/simple;
+	bh=KAmmVIvO5/J+cF2nAocODN74NbrtNP++wzD+qDV6f3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fr/bWTtfBD8UlX35pyr+sF1IOdQelHhB3JFhR5vNrwGe+YLOdkGqQt8UbOCIPYa/dMh6GrRaPuUnxoseYZResBHsutffICXvnE552ejV6fkfCCEAUB2HYlx3qkqY8mn2oEhPLjLGMAnfs3AIRXYwLL3aiGGKkS4Rz7uazuFZKnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OWKOg/9P; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rxIIGCPr; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TEtr9u006809;
+	Fri, 29 Aug 2025 15:41:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=EdpHuHn6Rwf6fHuN+4
+	0uxJ6J74fltI+rH+z8c7vEeDc=; b=OWKOg/9PL211amYp/DYxG0ar7XD1asd1po
+	w5oLU0pbKim/1UpEmxkNccUbYXx3EBuJGsha9Yb6Kzi+TsXXHrqCPls4xOKuuqvT
+	cf9oqJLzHlTIX8eGduSoZzve9g+FTWaNptBiRZ/etC9h7h6onqdJgDOaXx32jBZp
+	xp3rNNNanCxSHbcytzleS2Av31YAcwOrXZHn989TvD3Ph9PwEegyIYImtoKAEImG
+	86C+lH8y0M1xSf/0YOCWWp/PS6WRt5srCIA1AElOuBJ7ypgLwl95I/K/T/IZj5Cp
+	lm9UI9BRzF1JqXktp1ky/8qxqHcVI1zwT6WekOwb1D7EUD79XhHg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q4e2av78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Aug 2025 15:41:38 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57TEBSvp012336;
+	Fri, 29 Aug 2025 15:41:37 GMT
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011032.outbound.protection.outlook.com [40.107.208.32])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q43d91k9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 29 Aug 2025 15:41:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uZ6408WMHaCNIHKBCARU4016QJ8XuhfvhP97AaDnxj8fveVJFZGA6fSGImbxW4j0AWvgv4ud6jkBx3safdEf15/8JqV9hnAhtW1w6TErLRyJmgcizFyaXUdPxGUCSTsqo+Vg0ibValy1+uh1Ak0sFrPWK7CyVgw35vJBHugGkz1OQ8pCkyU2WLAirSdYwj+Ici2c+8De2cmaXRcBB6R7p1QGoCoP71kJrqHj8mtziLf083C48oM0WnICOr+u/Q1mq2CKP0ETgshh/n41DVNKSRoBiggdyhIDz7rFMXnjKcWFvsg9wuTY7iIwVFWBbwvhwqjpcPQwzbeRgGvG1t1k1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EdpHuHn6Rwf6fHuN+40uxJ6J74fltI+rH+z8c7vEeDc=;
+ b=WIHR02VyD8qCAOw4pOpvhT3g15Aj89POxAGZtBJ+3cjdClfz8M/b8Vm6/2ciIi3vZ+8/k+XV20M+JL8slI8IBU4Nu50jb/Qb+NMBDtLzTaJBBUAjVWuToF/Vu6KIWyjHHJ+w7ONj8g0oZhvct/UZXH9U7lczfqZpLAsQmB5SyDJuGDfJV6hfGOLqCYhk5umDkZO4bppUs99jVC+7Dv5w096zzjifb/4skxs6SBJFMNKtc6XZe/OLaw+N0G+Su4st+REOvEFKRIFQWZGOuXlUKAMbh4btVlJ2lqoFuRrnwp+1tGOLl2UDCOEvus03C96nCowibvVZH56PN2+X9LQfzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EdpHuHn6Rwf6fHuN+40uxJ6J74fltI+rH+z8c7vEeDc=;
+ b=rxIIGCPrldx6MRsGwh3rTtvsALO5ay+Z7bJCPiQnRNXwbZ12c5Cy/0HVFpJoKZG/YbOEL0TRqg6Uo2tKMQO7pR4TDLX0tEIHd4x+hw7FAte+EvhrBLQzA+dW3ca5rVu8hrDuyLk7rEVMmVEReUYIWy8kVslWdPPDqx/0yXIRJPA=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by PH7PR10MB7694.namprd10.prod.outlook.com (2603:10b6:510:2e5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Fri, 29 Aug
+ 2025 15:41:32 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
+ 15:41:32 +0000
+Date: Fri, 29 Aug 2025 11:41:28 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] task_stack.h: Clean-up stack_not_used()
+ implementation
+Message-ID: <zllb6trx6rbheykxoj44bztbxzumseiedwwvyemv2y5vch2w6l@igkejk5b7qb3>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250829-fork-cleanups-for-dynstack-v1-0-3bbaadce1f00@linaro.org>
+ <20250829-fork-cleanups-for-dynstack-v1-2-3bbaadce1f00@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829-fork-cleanups-for-dynstack-v1-2-3bbaadce1f00@linaro.org>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: YT4P288CA0044.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d3::26) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|PH7PR10MB7694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 448aad24-2ad8-402f-6597-08dde7128766
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8we8jRaTTML7F64gcmYQCx6EeYr/Apa45TO/e+AwtIimBu1lOAIXRv9NuzCb?=
+ =?us-ascii?Q?Sh+2x/WNk/NcnbcTfUkSUSwsK/H+bMWnfNKlTFjlLXiui94ZmwAdCJz2CuTY?=
+ =?us-ascii?Q?sfUCbyEm4YDGPv3Bz3xU+MP2JQgKMXFL+pUSyUCA7GRqurHAr3EdK3CvzXzr?=
+ =?us-ascii?Q?50AsehzD18Cu4akbuB3AWE8H+YAwX6B6Ish6vwIr14jIkzh9LqQGKw1ZcIo6?=
+ =?us-ascii?Q?BsLy8y4CXgEfPcYWpykq6B3ZxmQO5gA8eQ0tSrg8/vdawUyR7ffVz9p2+JuR?=
+ =?us-ascii?Q?zaOtLPxX9k5qhzS+/EDsTZgPWPzd6+blWyqNSahWby5U3WeaFKKaBx9aK3e0?=
+ =?us-ascii?Q?VZS0KaRpKvbDGIQRo6i7HLn6HYcpl5yW6Sy4thHqFoqE5vW7FYfjPO1NHLtq?=
+ =?us-ascii?Q?+ZiWUFfOpxScaGB6UCgTKN9rdMl0hoyG6iwVL/+7rwAu6xRCMupFpvjv0l5p?=
+ =?us-ascii?Q?/LLmMEKSwg73EUv8McG4LqW1gmd0Ty++yW5QkjZXzUa4q4UYZ8uiRfYTuouY?=
+ =?us-ascii?Q?65wbvGqYQYEjmpd07T8NNMWhQnqVwrdJ/WOcTxVFlaMjTHLD4qQ/rqpndHO3?=
+ =?us-ascii?Q?Zw/g+B9PLIksfsfo9d5Ys9NLTMMSG5Vi1LbECNIZ+QE+KGRQ8kPqZtzE/HiH?=
+ =?us-ascii?Q?J4xgK3TnzYZhklmrf1Xe5Z/1GVfG0hLcBNzH813lpRG3VEEm44WY/UXXxirM?=
+ =?us-ascii?Q?mZVfplZjCfloj09+W7g0xTbysKoqC4rNe+EdStBOzi+NJIos5QCFojvfV1G2?=
+ =?us-ascii?Q?W62UkXZxEFHc+NAR1uA0l0jyhCySI0c20J/bGBylS9S9xoOX9dXc7U56rMUD?=
+ =?us-ascii?Q?F4VblhsesZHir5obnMApxPVo6Yac/0Z7QwPawXPCsprN/oRWY3Iv6DtqBJyP?=
+ =?us-ascii?Q?CyHHmyHUfdfJhh8+RFQ5Qs5/vzP6MPO3HrpGJqaATIf9K5U3zodamCmp/wmK?=
+ =?us-ascii?Q?yMj66U42egLQOYWcz9RSf4m4HNLr/fO1b4Cjph3i1Q5+YRkx9sdcJuYF3/8i?=
+ =?us-ascii?Q?Qgl+VL4883gzLmcBg9nCH1izIBJ2wrByP7GpVTBGHsohJcwNDkHYkiLTwImS?=
+ =?us-ascii?Q?jgvNrtYnAZ2ZWz+GT4h665jYkQb01LnljtJ/nt4Ao3khYmyfC/ABphG8Ajdv?=
+ =?us-ascii?Q?I39V/KwPm+N+9ypcX9kuc9aFDgAOxFT2u0IcHqLjmjwz91Xr0rsG8yzUWz9T?=
+ =?us-ascii?Q?kBu5zj6J2uxkTOmPm/wGRQtcIBlYrc1axwa7NN8B9lQulRKM1I/VL030tgpO?=
+ =?us-ascii?Q?8ku3ZZqTnYioiIPvU7hQsCZS+YPvnd9ueUwU23y6w0+SruHtAM42BFcw+Sw9?=
+ =?us-ascii?Q?qis1lCDbCW1jsMVJiEohCjOyaUubChFAMXByfRrCF+XhUOEqehEp0+jbRwUj?=
+ =?us-ascii?Q?d3tuR2+AJPnhF5dyM97AnPM5MLtmdY5IXabXFIyfVIpxKhJc2r7eqpjhHEPT?=
+ =?us-ascii?Q?iD6uFkUyEig=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?77fw743Zw1RmEFjqIP44fJndGu6SApAJqjw42pgX98p8ZPn5u+OF9KCzWE/N?=
+ =?us-ascii?Q?kCLU/wtpMHd7nzPCV+VevhZ2UfijQF0TV08CTAGzIKwjrjUI+fNZ/Q6nsJd7?=
+ =?us-ascii?Q?7riyCFhfF2Lwu72v6d5LXC91T+ikDxGFAPJjZZoTf3V+Y2ILPqrdmh9hAsL8?=
+ =?us-ascii?Q?ZipcETjA3DnJB+N9mYtHmU2Qjo7Xxp+l0PyLFFfgXN5P/xTKszZg5fH/SId2?=
+ =?us-ascii?Q?6zPKg2W9CBXcasL2l3seHERmdRZWcNIykJAku5VoJJis9yYjI1MoB2em8K/L?=
+ =?us-ascii?Q?DKl9mhsFySAz2uWuDECh6yZQszZoj3E+wtG3lg/WTc0C0OgCEmG967j8r3kM?=
+ =?us-ascii?Q?ATZGD7uMzl+sjH8IJShFtqEL79SOvF1i+kuWe/7WXHFa6u0TwTGd1FEym0U4?=
+ =?us-ascii?Q?1kWax326JNpWwGtmqV5qCzWEfvF8krYkrj4lXb4qkNHB8k6CxmySy4cRxfuB?=
+ =?us-ascii?Q?C8asCsN8dn6GIVFqwqVtXuBqVQQOQ5zBCp/zeQINBV8QtICn12z07mwNFlTb?=
+ =?us-ascii?Q?oTe1oddvL20a5LghckEegZEbBJ4JkhTxqo+NM4DW4F0ImB4NQwCmggJ2v+Xn?=
+ =?us-ascii?Q?+ZszkARFog5d4PFYOx5PFgx0d4FncXAiYpn0C8fa3yHRrZkAUJt+wNmoYEE5?=
+ =?us-ascii?Q?nu7xkVWVyuUKVMidXKDuePaFp4SOohJIUWcjAHLkw5VnCQDP8gv6bzKYlahQ?=
+ =?us-ascii?Q?EcOcivA4TWZskUw98HfIIOLHVGAz1B9V9kQ5X+IG2aH9Wg7yTEbqBdmNntWw?=
+ =?us-ascii?Q?Yd9cUg1L2cJLn6UeuoHk015A7lk+DFy0cpZL6mgPlerZs/Aq2fXfWiot9zpd?=
+ =?us-ascii?Q?z4nHKOnCIARMUcu/+N1PQiwZlZ+XlBU8f8ucbFoOHlf4V9U3dgMCV1QRE02n?=
+ =?us-ascii?Q?QmEDA/W1y8K5jjkbI5b+OH4N75CjvJiJXeNAXzA36Nm1yxm3PvX80ACqjZHg?=
+ =?us-ascii?Q?Nd6vwcJQfDlzz/2Y259nvwGLRdXLAfnZ5GkicmIj4iEp+RN+WZPU6leSp8yA?=
+ =?us-ascii?Q?byg9tpgcZsNL3BGO4LX97btpoMj2fZZ/ay7PZeQbQWe4P30lyA5ucVE5Ep7W?=
+ =?us-ascii?Q?sSETK8/49Qg9B96tIG4/2lISMNajTuyo+JgLyqRRpUlOUcZvFDGWP1doydrb?=
+ =?us-ascii?Q?5cPoyZFyioLbtD3Bzh5y26Qpj22jkru1VM7bmvMS7hMF6HXXUG/sxx58wCiN?=
+ =?us-ascii?Q?UBTnNkMMXvbsbX9fyRzw4snMUBtrteFe9e4x4l+CNXBlyIQ7IDM7GDNbBIBL?=
+ =?us-ascii?Q?89FPj+sZA4GpZJT1IIyd0HU0L75RFUJCFMqaZgBPc9u8rGyIyGEn4Z/XWNKr?=
+ =?us-ascii?Q?GqmoaVKb6Gm4Y3lrnbnpEd4QOptZuz6T/4+NR5rmho+n/wvzcHtbpSEEaxHl?=
+ =?us-ascii?Q?/3o5wygTvqnvaZvzwyMmxG8X0kPUZzECSe4eQnm+gPBAH54CbrBV2DPwLyVY?=
+ =?us-ascii?Q?pHrnb1Sauatm5xVw7IJl3ymenNvzRKfauavZBpsvjXkj9KN09uaVUE4vn+pJ?=
+ =?us-ascii?Q?4bbKxrUuCo6mL/r0P7pADNNSVZyKVZK/t1+oFp6rVmK0sDiw0a+pe1fPdfId?=
+ =?us-ascii?Q?izVJfty/v2bgSx7c4Pl1AeAhfoZWnPRGOolMox7iBSov9VfnG2UYqJlsg5jI?=
+ =?us-ascii?Q?1A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	3zQDQvgngxYMIJ6K1+BJGublnFVmnbgBfv+4YMM22W+XncSg7vJQf62S4fHStwfl8KFALXRfSCjRHHnZ2+JPevd32Fqso0B5dQUi/xkQYCx4HwwnC+DzqF7cK4b62fM6WK2JuT44+2IXE6+HjFRx62scZd+hDnsMXtRbnZzLJsluAwEC6Q187cdOqDSTAzTFwTGjq7Jvzp4hAV5LqfBe//ymiqs2870JncYhFgeikUUhmjvz/5VfR6G47SH0fTk1Tzpw3Nvv1ZyJlE1gkU6LRQ17/q7lMCxeVlY1Ncz6dnH4fKBEpdshmPJqIDDxqVYfzMNjxW6bWTaupQuGzofQh9WTVrkxjkpaeFHn273ZOt0N2zYB0lqm40NEgKH6jvZBaSZGMS7cTqFgPmqvG5dwK2Pavxiv1bdlqvBn5dLysUUJb2IB/u0CgwcIDG+rSBiEsGSLOOGWgUnwGm0OhpamWnJMhqpEHeRteKJutWTIPBcAYEvYT6amJxKsU4uPv+ancpMbLS/DfyO3PjZqj1/izC1VYfMLhRIScjBgRHr8bSPqIxgla1Xkguc47dBh9V16Kk35fTlHN7eLMsAuIDPdnhu9+W+bahJYM0QmEJLEH80=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 448aad24-2ad8-402f-6597-08dde7128766
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 15:41:32.5144
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zHiv6HsL0wQIj0HjteFiYVCpStjoFwlOWiQsklTALu0g8L94JdsKgzE+V5j7/fMmlKOvR7DWkPFibyQngxYjdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7694
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508290134
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxNyBTYWx0ZWRfX06ZGRS7CwI0z
+ x6MmGRgH4cHl/16dZFkp9yNb3QnmwWAIeaDfafypPxO5Aa9LOdmhwPTR2i6wQ1TeiSzk09cpOMM
+ al72EsafmqUhmFtoEukMZKtULDN6fNH0TYEOg0neuyhXSVAS+dTo1g7EgOXPKlXyndRjDn8HAW2
+ bVWCCmcNBWhfYIvIqHqNG2L6/xMcG4QQlEz9hXpPFUWlCkucUNNFoOxDc0f2QgUrevO5g+AVXAJ
+ +4WUHezoL5DXfW9sejpaVHGPEV+YYYbEidyD60/JPevFTGJmIfWHdwjimysnlvki32C8LViyNQa
+ 7nqNpmyugXMffOroXLfVyhI6SeiCAjGS0WpziksAUP0s/gy8k3MwS+xyoWpPKBaRcUBhtkxwzdd
+ zAtRhbaeOrEmbpkloDmq7xfWVgvHUA==
+X-Proofpoint-ORIG-GUID: YXRLB8KcAgCdAr7KVKZyvlyc4uq9J3Dt
+X-Proofpoint-GUID: YXRLB8KcAgCdAr7KVKZyvlyc4uq9J3Dt
+X-Authority-Analysis: v=2.4 cv=IauHWXqa c=1 sm=1 tr=0 ts=68b1ca32 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=7ipKWUHlAAAA:8
+ a=KKAkSRfTAAAA:8 a=yPCof4ZbAAAA:8 a=-qKUV0opkMw2jbiCCzoA:9 a=CjuIK1q_8ugA:10
+ a=gpc5p9EgBqZVLdJeV_V1:22 a=cvBusfyB2V15izCimMoJ:22 cc=ntf awl=host:12069
 
+* Linus Walleij <linus.walleij@linaro.org> [250829 07:44]:
+> From: Pasha Tatashin <pasha.tatashin@soleen.com>
+> 
+> Inside the small stack_not_used() function there are several ifdefs for
+> stack growing-up vs. regular versions. Instead just implement this
+> function two times, one for growing-up and another regular.
+> 
+> Add comments like /* !CONFIG_DEBUG_STACK_USAGE */ to clarify what the
+> ifdefs are doing.
+> 
+> [linus.walleij@linaro.org: Rebased, function moved elsewhere in the kernel]
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Link: https://lore.kernel.org/20240311164638.2015063-13-pasha.tatashin@soleen.com
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
---=-ecMmgB+uH+DWlWnHUeVO
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thanks for this.
 
-Hi Jackson,
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Le lundi 23 juin 2025 =C3=A0 09:21 +0900, Jackson.lee a =C3=A9crit=C2=A0:
-> From: Jackson Lee <jackson.lee@chipsnmedia.com>
->=20
-> v4l2-compliance results:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> v4l2-compliance 1.28.1-5233, 64 bits, 64-bit time_t
->=20
-> Buffer ioctls:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not=
- supported
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not=
- supported
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_REQBUFS/CREATE_BUF=
-S/QUERYBUF: OK
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test CREATE_BUFS maximum buffe=
-rs: OK
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test VIDIOC_EXPBUF: OK
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 test Requests: OK (Not Support=
-ed)
->=20
-> Total for wave5-dec device /dev/video0: 46, Succeeded: 46, Failed: 0, War=
-nings: 2 Total for wave5-enc device /dev/video1: 46, Succeeded: 46, Failed:=
- 0, Warnings: 0
->=20
-> Fluster test results:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> Running test suite JCT-VC-HEVC_V1 with decoder GStreamer-H.265-V4L2-Gst1.=
-0 Using 3 parallel job(s)
-> Ran 133/147 tests successfully=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 40.114 secs
->=20
-> (1 test fails because of not supporting to parse multi frames, 1 test fai=
-ls because of a missing frame and slight corruption,
-> =C2=A02 tests fail because of sizes which are incompatible with the IP, 1=
-1 tests fail because of unsupported 10 bit format)
->=20
->=20
-> Running test suite JVT-AVC_V1 with decoder GStreamer-H.264-V4L2-Gst1.0 Us=
-ing 3 parallel job(s)
-> Ran 78/135 tests successfully=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 43.364 secs
->=20
-> (57 fail because the hardware is unable to decode=C2=A0 MBAFF / FMO / Fie=
-ld / Extended profile streams.)
->=20
-> Running test suite JVT-FR-EXT with decoder GStreamer-H.264-V4L2-Gst1.0 Us=
-ing 3 parallel job(s)
-> Ran 25/69 tests successfully=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in 40.411 secs
-
-
-Ack, same results here and consistent.
-
->=20
-> (44 fail because the hardware does not support field encoded and 422 enco=
-ded stream)
->=20
-> Seek test
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1. gst-play-1.0 seek.264
-> 2. this will use waylandsink since gst-play-1.0 uses playbin.
-> =C2=A0=C2=A0 if you don't want to hook up display,
-> =C2=A0=C2=A0 you can run gst-play-1.0 seek.264 --videosink=3Dfakevideosin=
-k instead 3. Let pipeline run for 2-3 seconds 4. press SPACE key to pause 5=
-. press 0 to reset press SPACE to start again
->=20
-> gst-play-1.0 seek.264 --videosink=3Dfakevideosink Press 'k' to see a list=
- of keyboard shortcuts.
-> Now playing /root/seek.264
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...
-> Redistribute latency...aused
-> 0:00:09.9 / 0:00:09.7
-> Reached end of play list.
->=20
-> Sequence Change test
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> gst-launch-1.0 filesrc location=3D./drc.h264 ! h264parse ! v4l2h264dec ! =
-filesink location=3D./h264_output_420.yuv Setting pipeline to PAUSED ...
-> Pipeline is PREROLLING ...
-> Redistribute latency...
-> Pipeline is PREROLLED ...
-> Setting pipeline to PLAYING ...
-> New clock: GstSystemClock
-> Redistribute latency...
-> Got EOS from element "pipeline0".
-> Execution ended after 0:00:00.113620590
-> Setting pipeline to NULL ...
-> Freeing pipeline ...
-
-I tried and reproduce your results. I've used an ISOMP4 file, nothing big, =
-720p
-10min video. After 30s of seeking back and forth I've got a deadlock, with =
-the
-following kernel log:
-
-vdec 4210000.video-codec: wave5_vpu_firmware_command_queue_error_check: sti=
-ll running: 0x1000
-
-I don't know if its worse then before, but the bug is severe enough to be
-concern. To reproduce easily, I pick a longer video, seek forward close to =
-the
-end, and then seek back (gst-play so smaller steps back) very quickly till =
-it
-reaches position 0, and repeat.
-
-This happened without resolution change happening concurrent to seeks, just=
- a
-flat, single resolution video. Once I do the same test with an agressive DR=
-C in
-place, I hit kernel crash. I will share in private email the DRC H.264 samp=
-le
-I'm using, and how to make it bigger so its manually seekable.
-
-[  678.819859] Unable to handle kernel NULL pointer dereference at virtual =
-address 0000000000000358
-[  678.828746] Mem abort info:
-[  678.832378]   ESR =3D 0x0000000096000004
-[  678.838555]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[  678.845921]   SET =3D 0, FnV =3D 0
-[  678.849882]   EA =3D 0, S1PTW =3D 0
-[  678.854241]   FSC =3D 0x04: level 0 translation fault
-[  678.860098] Data abort info:
-[  678.864410]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-[  678.871000]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-[  678.877384]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-[  678.887785] user pgtable: 4k pages, 48-bit VAs, pgdp=3D0000000882215000
-[  678.901210] [0000000000000358] pgd=3D0000000000000000, p4d=3D00000000000=
-00000
-[  678.908585] Internal error: Oops: 0000000096000004 [#1]  SMP
-[  678.914266] Modules linked in: rfkill qrtr rpmsg_ctrl rpmsg_char phy_cad=
-ence_torrent tps6594_esm tps6594_pfsm tps6594_regulator rtc_tps6594 ti_am33=
-5x_adc kfifo_buf pinctrl_tps6594 gpio_regmap cdns3 cdns_usb_common mux_gpio=
- omap_mailbox ti_k3_r5_remoteproc phy_j721e_wiz phy_can_transceiver wave5 v=
-4l2_mem2mem powervr videobuf2_dma_contig drm_gpuvm videobuf2_memops videobu=
-f2_v4l2 drm_exec at24 drm_shmem_helper tps6594_i2c videodev gpu_sched tps65=
-94_core videobuf2_common k3_j72xx_bandgap ti_k3_dsp_remoteproc mc drm_kms_h=
-elper ti_k3_common sa2ul ti_am335x_tscadc authenc m_can_platform m_can can_=
-dev cdns3_ti rti_wdt fuse drm dm_mod backlight ipv6
-[  678.971012] CPU: 1 UID: 0 PID: 51 Comm: kworker/1:1 Not tainted 6.17.0-r=
-c3-jacinto+ #2 PREEMPT=20
-[  678.979704] Hardware name: Texas Instruments J721S2 EVM (DT)
-[  678.985358] Workqueue: events v4l2_m2m_device_run_work [v4l2_mem2mem]
-[  678.991811] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[  678.998767] pc : v4l2_m2m_try_run+0x74/0x13c [v4l2_mem2mem]
-[  679.004345] lr : v4l2_m2m_try_run+0x60/0x13c [v4l2_mem2mem]
-[  679.009922] sp : ffff800083333d60
-[  679.013232] x29: ffff800083333d60 x28: 0000000000000000 x27: 00000000000=
-00000
-[  679.020358] x26: ffff000b7dfa8468 x25: 0000000000000000 x24: ffff0008000=
-12205
-[  679.027480] x23: ffff0008011aa300 x22: ffff000b7dfa8440 x21: ffff0008053=
-f2220
-[  679.034602] x20: ffff000800012200 x19: ffff0008053f2000 x18: 00000000000=
-00000
-[  679.041724] x17: 0000000000000000 x16: 0000000000000000 x15: 009f729c552=
-fd3f8
-[  679.048846] x14: 00000000000002ae x13: ffff8000811f4790 x12: 00000000000=
-00537
-[  679.055968] x11: 00000000000000c0 x10: 0000000000000ab0 x9 : ffff8000833=
-33c80
-[  679.063090] x8 : ffff0008011aae10 x7 : 0000000000002d02 x6 : 00000000000=
-0ba6b
-[  679.070212] x5 : ffff000827f68b40 x4 : ffff0008011aa300 x3 : ffff00080b2=
-bb480
-[  679.077333] x2 : 0000000000000000 x1 : ffff80007a972538 x0 : 00000000000=
-00000
-[  679.084456] Call trace:
-[  679.086893]  v4l2_m2m_try_run+0x74/0x13c [v4l2_mem2mem] (P)
-[  679.092462]  v4l2_m2m_device_run_work+0x14/0x20 [v4l2_mem2mem]
-[  679.098285]  process_one_work+0x150/0x290
-[  679.102294]  worker_thread+0x2d0/0x3ec
-[  679.106034]  kthread+0x12c/0x210
-[  679.109255]  ret_from_fork+0x10/0x20
-[  679.112825] Code: 39530000 370005c0 f9400260 f9412661 (f941ac00)=20
-[  679.118905] ---[ end trace 0000000000000000 ]---
-
-
->=20
-> Change since v2:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> * For [PATCH v3 4/4] media: chips-media: wave5: Improve performance of de=
-coder
-> =C2=A0- squash v2's #3~#6 to #4 patch of v3
-
-Thanks for this update, I'll check if anything is left appart from stabilit=
-y and
-provide feedback. I'm looking forward you input on the disclosed bug I have=
- hit.
-
-Nicolas
-
->=20
-> Change since v1:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> * For [PATCH v2 2/7] media: chips-media: wave5: Improve performance of de=
-coder
-> =C2=A0- change log to dbg level
->=20
-> Change since v0:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> * For [PATCH v1 2/7] media: chips-media: wave5: Improve performance of de=
-coder
-> =C2=A0- separates the previous patch to a few patches
->=20
-> * For [PATCH v1 3/7] media: chips-media: wave5: Fix not to be closed
-> =C2=A0- separated from the previous patch of performance improvement of
-> =C2=A0=C2=A0 decoder
->=20
-> * For [PATCH v1 4/7] media: chips-media: wave5: Use spinlock whenever sta=
-te is changed
-> =C2=A0- separated from the previous patch of performance improvement of
-> =C2=A0=C2=A0 decoder
->=20
-> * For [PATCH v1 5/7] media: chips-media: wave5: Fix not to free resources=
- normally when
-> =C2=A0=C2=A0=C2=A0 instance was destroyed
-> =C2=A0- separated from the previous patch of performance improvement of
-> =C2=A0=C2=A0 decoder
->=20
-> * For [PATCH v1 7/7] media: chips-media: wave5: Fix SError of kernel pani=
-c when closed
-> =C2=A0- separated from the previous patch of performance improvement of
-> =C2=A0=C2=A0 decoder
->=20
->=20
-> Jackson Lee (4):
-> =C2=A0 media: chips-media: wave5: Fix SError of kernel panic when closed
-> =C2=A0 media: chips-media: wave5: Fix Null reference while testing fluste=
-r
-> =C2=A0 media: chips-media: wave5: Add WARN_ON to check if dec_output_info=
- is
-> =C2=A0=C2=A0=C2=A0 NULL
-> =C2=A0 media: chips-media: wave5: Improve performance of decoder
->=20
-> =C2=A0.../platform/chips-media/wave5/wave5-helper.c |=C2=A0 23 ++-
-> =C2=A0.../platform/chips-media/wave5/wave5-hw.c=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 2 +-
-> =C2=A0.../chips-media/wave5/wave5-vpu-dec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 139 ++++++++++++------
-> =C2=A0.../chips-media/wave5/wave5-vpu-enc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
-> =C2=A0.../platform/chips-media/wave5/wave5-vpu.c=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 71 +++++++--
-> =C2=A0.../platform/chips-media/wave5/wave5-vpuapi.c |=C2=A0 37 ++---
-> =C2=A0.../platform/chips-media/wave5/wave5-vpuapi.h |=C2=A0 11 ++
-> =C2=A0.../chips-media/wave5/wave5-vpuconfig.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A08 files changed, 219 insertions(+), 73 deletions(-)
-
---=-ecMmgB+uH+DWlWnHUeVO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLHKCwAKCRDZQZRRKWBy
-9KwWAP9YFnwnCw+shXgmITJgFF3slg4B6wlTxY7WqJvCL8g3ZwD+OZTgSfrmjUBU
-8yhvhxnL+pNjJl3lf8hdoWlObhR7GgM=
-=xvB6
------END PGP SIGNATURE-----
-
---=-ecMmgB+uH+DWlWnHUeVO--
+> ---
+>  kernel/exit.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 343eb97543d568baeb23142edcc9050a8b8be8bf..9f74e8f1c431b6aa6e391ff71aadf9895a3857ae 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -780,24 +780,29 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+>  }
+>  
+>  #ifdef CONFIG_DEBUG_STACK_USAGE
+> +#ifdef CONFIG_STACK_GROWSUP
+>  unsigned long stack_not_used(struct task_struct *p)
+>  {
+>  	unsigned long *n = end_of_stack(p);
+>  
+>  	do {	/* Skip over canary */
+> -# ifdef CONFIG_STACK_GROWSUP
+>  		n--;
+> -# else
+> -		n++;
+> -# endif
+>  	} while (!*n);
+>  
+> -# ifdef CONFIG_STACK_GROWSUP
+>  	return (unsigned long)end_of_stack(p) - (unsigned long)n;
+> -# else
+> +}
+> +#else /* !CONFIG_STACK_GROWSUP */
+> +unsigned long stack_not_used(struct task_struct *p)
+> +{
+> +	unsigned long *n = end_of_stack(p);
+> +
+> +	do {	/* Skip over canary */
+> +		n++;
+> +	} while (!*n);
+> +
+>  	return (unsigned long)n - (unsigned long)end_of_stack(p);
+> -# endif
+>  }
+> +#endif /* CONFIG_STACK_GROWSUP */
+>  
+>  /* Count the maximum pages reached in kernel stacks */
+>  static inline void kstack_histogram(unsigned long used_stack)
+> @@ -856,9 +861,9 @@ static void check_stack_usage(void)
+>  	}
+>  	spin_unlock(&low_water_lock);
+>  }
+> -#else
+> +#else /* !CONFIG_DEBUG_STACK_USAGE */
+>  static inline void check_stack_usage(void) {}
+> -#endif
+> +#endif /* CONFIG_DEBUG_STACK_USAGE */
+>  
+>  static void synchronize_group_exit(struct task_struct *tsk, long code)
+>  {
+> 
+> -- 
+> 2.50.1
+> 
 
