@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-791788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B0DB3BBF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98661B3BC06
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A3F5873C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417251CC14CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115202F618F;
-	Fri, 29 Aug 2025 13:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691E231AF2E;
+	Fri, 29 Aug 2025 13:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dUPCVKSy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PmKTkB2U";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dUPCVKSy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PmKTkB2U"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X/UoUdFE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1726629D267
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5594D33F3
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472943; cv=none; b=j3iYaK+I0cayTSGA2I7bDApN6ed6Gou9S7uczf47DD0uZ/bp/UwxFkj8LzS5wUzLyy60rqEppu4bdMaTK8MswOP7WyB97z1sBEvNGwwHM4Nez6STRC5eIwaUd4LZKk7m5fSf18yTwMGqRYX8S23okh8zNUy8wrU001RTDLh/bDg=
+	t=1756472995; cv=none; b=YxMjIgQ7cLq5R1uxvVDEeqYZpKQnbtoP5a9OoxxbX3fBL2UqBdYVLAxn0vjQ/DP3RDrH5aq0Zh7c7KBCnoWPQE1yQ9zTrKJCICSYdc/fO4ER2wxF1azmdEn6+7F/Wnu0zJ4X1uqsj/djzEyTHf5r+z5R6TRx+O4K5WslCAg2QG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472943; c=relaxed/simple;
-	bh=CydeifRpFW8OhJcRHUSI9Ddala1PxiiTJR3GOyT+6HM=;
+	s=arc-20240116; t=1756472995; c=relaxed/simple;
+	bh=FHp1+ZSlsyZvFpLyoPCQZLe6PCr3uA+m/9iJFPC2eto=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aDfeNF94qA/xRZZ4TFCVJvTCFojixKWq3IVR4gE+EHo9+1Q4lkbULGabbgvRalLUdNUabfp5PwpfBjfyo9t34hsq5Zhz/gx4AHqyfER3lgsuz3THncb08SSj8nYAQoi1kFy6Y+fo0DdKeZ4+p6+DAWPuc90LBmenii7HotEyAUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dUPCVKSy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PmKTkB2U; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dUPCVKSy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PmKTkB2U; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5A7805C168;
-	Fri, 29 Aug 2025 13:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756472939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=r+NYqLitX2/pifZXtJG/FMnbTXbpWczULpKgGmHGJ4vFRmJ1mQbrmm05VzBdN+DFLbKT2bwEfU3pfvd8KVJpfqasYggCVLDv3A0T18dfRZU3R7j+8mFUvU7dBOYPVIjnNY6+KW98AkIbdySM4A62wmYYnOpVjOPmYMXwvRuR+ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X/UoUdFE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756472992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=791NkJ4GQDv4mRfrc+N3Wc0IZX7qUnzbVa1JWAT9NdA=;
-	b=dUPCVKSyuHl5iCk0KVUt9VwJRBL7S0tcv5JjPuiE1AD+OE1I4nrXiUVngyx2LjJfX0PZEU
-	80RfKupU53P6wWmp9EkrM7vXqJ+qGl9+Rq79pamqLqNHDiWHqzaKFYhutO8LcZmKrjmzpF
-	lcLxdI/r/UUe/+Va4N7WgmvqbuhN4b0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756472939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=791NkJ4GQDv4mRfrc+N3Wc0IZX7qUnzbVa1JWAT9NdA=;
-	b=PmKTkB2UEsLZRa78gTpbp8+liHHmcOmf9Y9ZLHkdCq7hEt4j1cEMZ2+CtVGVRq0H1+iD2y
-	wZVj6TxUj+UBL6BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756472939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=791NkJ4GQDv4mRfrc+N3Wc0IZX7qUnzbVa1JWAT9NdA=;
-	b=dUPCVKSyuHl5iCk0KVUt9VwJRBL7S0tcv5JjPuiE1AD+OE1I4nrXiUVngyx2LjJfX0PZEU
-	80RfKupU53P6wWmp9EkrM7vXqJ+qGl9+Rq79pamqLqNHDiWHqzaKFYhutO8LcZmKrjmzpF
-	lcLxdI/r/UUe/+Va4N7WgmvqbuhN4b0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756472939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=791NkJ4GQDv4mRfrc+N3Wc0IZX7qUnzbVa1JWAT9NdA=;
-	b=PmKTkB2UEsLZRa78gTpbp8+liHHmcOmf9Y9ZLHkdCq7hEt4j1cEMZ2+CtVGVRq0H1+iD2y
-	wZVj6TxUj+UBL6BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32E5B13326;
-	Fri, 29 Aug 2025 13:08:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ozVSC2umsWj7eAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 29 Aug 2025 13:08:59 +0000
-Message-ID: <9dbd300c-240b-477f-ba03-8a17c7c2b84b@suse.cz>
-Date: Fri, 29 Aug 2025 15:08:58 +0200
+	bh=GMW9HLrWQaKZG+KlEEwhYfHDFt7S0jSgL0MHJQucZHQ=;
+	b=X/UoUdFE7/bpil3lEALRjf2by6so9ZC9jRqj+2SdbkaBmhiAqss4lLQNBVDoQAiu5TZZX4
+	fg/+PUHfrMRjqzEISoHSYU1Um1bFEV/FkatTEgBbiIwYl/Rb1N/W6KXqczF7VD5jtQul93
+	LMr2s0PLX2QD8uv7Lxup3sqNggMRGtU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-jBGT9kSfNIKKBWX2XvhAgg-1; Fri, 29 Aug 2025 09:09:49 -0400
+X-MC-Unique: jBGT9kSfNIKKBWX2XvhAgg-1
+X-Mimecast-MFC-AGG-ID: jBGT9kSfNIKKBWX2XvhAgg_1756472989
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3cc3765679fso770095f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:09:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756472988; x=1757077788;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GMW9HLrWQaKZG+KlEEwhYfHDFt7S0jSgL0MHJQucZHQ=;
+        b=H4/9TfNCr97giLk5l+PC7OnyDccSucPUj/K7zkzpEIaIb6gVeqPVgMHNsEgxkRZ18K
+         h8jREJoCURJUonP6J7GLys02CSN6QTtRGbXk6c+0CZpk4PuSarOXW+t8CPAEeoo4Q/UT
+         3EcWI0pLa3XBiSzABoJszCAOrwaupNr65/eRvdw6azDUz8KqTveJlDcvlyJM36acNzP1
+         XBJHg1KhdphfJ574NUzd6a3b38R1CezRjk1XK8A/XKXRjNl4TI1RHSbWGm0GMURVecTo
+         CGSuzbGR1JCrO9A7ruXtuOs2n3CuZGifondAA3OtOpqtZuEKsGVnxf411zDRbyineAxJ
+         7IdA==
+X-Gm-Message-State: AOJu0YzWYruViu9W3pOsQUTuZ+mk5IS9qj/uI3lCXMJ67eAdKZdWDpo8
+	YGXrajkTRHwWvW7e5+hbNy6PGc5+xn3ak6vHkXjKTI/6QjIpV+F5hlKG6DmCsEVoSNXllQQ+yLU
+	aZs43jo8WtPnQlUJ/K8hEV51mzV8oghM7Nn2b0xCiWAiqBw6+bswb5gZBz00mIvggAA==
+X-Gm-Gg: ASbGncvbHngMhbn7NncQT+WQdrjw8m8fvQHcqMt/IZTiPkB0YJHKenoh8JslwYVVDqr
+	ihMLBjJN1unvMkgACPoGdbYWGt98acrFzdGMY1R+dsp9oGFbyqeLpetmxVjsOxHMJpjwdCR2ApJ
+	cbL4Yh7uK62gvgjMlTVqJttaxKigPPer/Up8VeSQwgXbgMlhtcPgr1UAqbn70AfOGn2N41TU/lk
+	+H3ToHVJzVy3LGmUqaYzAbPmQzAHyP5QvlRLR+crhUqNTuA925UHftOG6lKIXRmdXhQcr56WHC5
+	V7vseQSJZqehoc4wUsH0IInLEzA8byUNr1kEsPUKVGZBhWMKe+/EsOqBpx9BI4ldkyCp+FJTssf
+	81ab1A1hBE6yIz/OI7cmM6ScCdLo0E1rj5f4O60b+vsr4Ei6fX3FD0aKKMe9kWvkS
+X-Received: by 2002:a05:6000:4023:b0:3d0:d6e6:5d96 with SMTP id ffacd0b85a97d-3d0d6e6642emr1463737f8f.38.1756472988522;
+        Fri, 29 Aug 2025 06:09:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2EE1FdffCNgqV63lR4bEMYpCijk6Rt1WA7Ibu/9lrj3Iet7fHqrTgMv1xYGinJ39Wr3I/NQ==
+X-Received: by 2002:a05:6000:4023:b0:3d0:d6e6:5d96 with SMTP id ffacd0b85a97d-3d0d6e6642emr1463686f8f.38.1756472987991;
+        Fri, 29 Aug 2025 06:09:47 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d12c90a01bsm906716f8f.31.2025.08.29.06.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 06:09:47 -0700 (PDT)
+Message-ID: <4f6e66a1-1747-402e-8f1a-f6b7783fc2e5@redhat.com>
+Date: Fri, 29 Aug 2025 15:09:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,125 +88,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: slub: avoid wake up kswapd in set_track_prepare
-To: yangshiguang <yangshiguang1011@163.com>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Matthew Wilcox <willy@infradead.org>,
- akpm@linux-foundation.org, cl@gentwo.org, rientjes@google.com,
- roman.gushchin@linux.dev, glittao@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, yangshiguang <yangshiguang@xiaomi.com>,
- stable@vger.kernel.org
-References: <20250825121737.2535732-1-yangshiguang1011@163.com>
- <aKxZp_GgYVzp8Uvt@casper.infradead.org>
- <54d9e5ac-5a51-4901-9b13-4c248aada2d7@suse.cz> <aK6U61xNpJS0qs15@hyeyoo>
- <6e1ab9d8.6595.198ea7d7a78.Coremail.yangshiguang1011@163.com>
- <fc6f7372-efb4-48e3-b217-c8bec0065b97@suse.cz>
- <4d271e7e.6bea.198f596bd15.Coremail.yangshiguang1011@163.com>
+Subject: Re: [PATCH v1 06/36] mm/page_alloc: reject unreasonable
+ folio/compound page sizes in alloc_contig_range_noprof()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
+ SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-7-david@redhat.com>
+ <f195300e-42e2-4eaa-84c8-c37501c3339c@lucifer.local>
+ <547145e0-9b0e-40ca-8201-e94cc5d19356@redhat.com>
+ <34edaa0d-0d5f-4041-9a3d-fb5b2dd584e8@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <4d271e7e.6bea.198f596bd15.Coremail.yangshiguang1011@163.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <34edaa0d-0d5f-4041-9a3d-fb5b2dd584e8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[163.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,infradead.org,linux-foundation.org,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,xiaomi.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
 
-On 8/29/25 13:29, yangshiguang wrote:
-> At 2025-08-27 16:40:21, "Vlastimil Babka" <vbabka@suse.cz> wrote:
 > 
->>> 
+> It seems a bit arbitrary, like we open-code this (at risk of making a mistake)
+> in some places but not others.
+
+[...]
+
+>>
+>> One could argue that maybe one would want a order_to_pages() helper (that
+>> could use BIT() internally), but I am certainly not someone that would
+>> suggest that at this point ...  :)
+> 
+> I mean maybe.
+> 
+> Anyway as I said none of this is massively important, the open-coding here is
+> correct, just seems silly.
+
+Maybe we really want a ORDER_PAGES() and PAGES_ORDER().
+
+But I mean, we also have PHYS_PFN() PFN_PHYS() and see how many "<< 
+PAGE_SIZE" etc we are using all over the place.
+
+> 
+>>
+>>>
+>>>> +
+>>>>    /*
+>>>>     * compound_nr() returns the number of pages in this potentially compound
+>>>>     * page.  compound_nr() can be called on a tail page, and is defined to
+>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>> index baead29b3e67b..426bc404b80cc 100644
+>>>> --- a/mm/page_alloc.c
+>>>> +++ b/mm/page_alloc.c
+>>>> @@ -6833,6 +6833,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
+>>>>    int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+>>>>    			      acr_flags_t alloc_flags, gfp_t gfp_mask)
+> 
+> Funny btw th
+> 
+>>>>    {
+>>>> +	const unsigned int order = ilog2(end - start);
+>>>>    	unsigned long outer_start, outer_end;
+>>>>    	int ret = 0;
 >>>>
->>> 
->>> How about this? 
->>> 
->>>         /* Preemption is disabled in ___slab_alloc() */
->>> -       gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
->>> +       gfp_flags = (gfp_flags & ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL)) |
->>> +                                       __GFP_NOWARN;
+>>>> @@ -6850,6 +6851,9 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+>>>>    					    PB_ISOLATE_MODE_CMA_ALLOC :
+>>>>    					    PB_ISOLATE_MODE_OTHER;
+>>>>
+>>>> +	if (WARN_ON_ONCE((gfp_mask & __GFP_COMP) && order > MAX_FOLIO_ORDER))
+>>>> +		return -EINVAL;
+>>>
+>>> Possibly not worth it for a one off, but be nice to have this as a helper function, like:
+>>>
+>>> static bool is_valid_order(gfp_t gfp_mask, unsigned int order)
+>>> {
+>>> 	return !(gfp_mask & __GFP_COMP) || order <= MAX_FOLIO_ORDER;
+>>> }
+>>>
+>>> Then makes this:
+>>>
+>>> 	if (WARN_ON_ONCE(!is_valid_order(gfp_mask, order)))
+>>> 		return -EINVAL;
+>>>
+>>> Kinda self-documenting!
 >>
->>I'd suggest using gfp_nested_flags() and & ~(__GFP_DIRECT_RECLAIM);
+>> I don't like it -- especially forwarding __GFP_COMP.
 >>
+>> is_valid_folio_order() to wrap the order check? Also not sure.
 > 
-> However, gfp has been processed by gfp_nested_mask() in
-> stack_depot_save_flags().
-
-Aha, didn't notice. Good to know!
-
-> Still need to call here?
-
-No then we can indeed just mask out __GFP_DIRECT_RECLAIM.
-
-Maybe the comment could say something like:
-
-/*
- * Preemption is disabled in ___slab_alloc() so we need to disallow
- * blocking. The flags are further adjusted by gfp_nested_mask() in
- * stack_depot itself.
- */
-> set_track_prepare()
-> ->stack_depot_save_flags()
+> OK, it's not a big deal.
 > 
->>>  >-- 
->>>>Cheers,
->>>>Harry / Hyeonggon
+> Can we have a comment explaining this though? As people might be confused
+> as to why we check this here and not elsewhere.
+
+I can add a comment.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
