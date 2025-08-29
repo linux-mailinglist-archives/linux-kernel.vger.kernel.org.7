@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-791094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E475B3B1FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5571DB3B1FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16EC87C820E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:12:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164E0203432
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5C6239E61;
-	Fri, 29 Aug 2025 04:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC5723B62C;
+	Fri, 29 Aug 2025 04:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdx5xElg"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hq6GpZA0"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A44B224891
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E05239570
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756440698; cv=none; b=PMWTHa60sxDw7PipydM93CxxmRWjsfIY6BJ5zIuQgSvTjC+BanILghGjCh/1/c8+bfRr8+PXGhRq0OTQ5+8PHF0y6KFcdupwhBZ1h+JtKCiMYrjB6vI+KSAGNWaLY6ZtxA3k9u0v5kk4IlO93E1Q56K9Vjf5iNFMFVIIer+mD3U=
+	t=1756440700; cv=none; b=FZEowaPqYX3E3v3AxO+oQBz8Uri/gmSc4uo43F6K9takTdxNb7YdQGq5hkN5411r7pUXxW3BRdzZGOY18DuisxS4/HRUotxCP2Qil2+uMfNeqP957JPbJmSDca5tX7mPqXSggwxq/GfFluzqp7VOdIZRnnq9CQI5tPYMnPs/gGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756440698; c=relaxed/simple;
-	bh=Lj1TxfTdhC1agPvRb6StALeOwsuDc6E3yrG6gjoa+Lo=;
+	s=arc-20240116; t=1756440700; c=relaxed/simple;
+	bh=MCG6CjoNW6uxd3dkTAQbhonZPPggN4P+ZXSpzIAMvPc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=MCQYEUbQfta+YArJb45YZNz7IZUnb/ENlrb9sdrHqRQ+VPwkR1ItlJTCzl9hSSaVA+2HmEYGJO9tWuZAutI1n5tYDKzX6rKlwq97qZbe8+57Ruv1wdyWE9cUTrhtwbHgcrZrup7KckVWYf3RGdHWqKeaehTuDdquHvticzTYFoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gdx5xElg; arc=none smtp.client-ip=209.85.216.73
+	 To:Content-Type; b=E657yQda6eI8WRZAVkshz3+JZJVNbTAxWy+S+dPlG4ODDuV3JqK7Ynd23WqcRxUKJF9L6jX3+wzhB9UzBsQfO5b1A9mnu4rIwo2t7mXZ6mhwsnBQ28BNu4zufuO0HN/w1/m/SI01lxu19Vdx8JVEEE6MHeNxFZVMDAwGtW4rSog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hq6GpZA0; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e72dfbso2448476a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:11:37 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b49de53348aso1071637a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756440697; x=1757045497; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756440699; x=1757045499; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RWyndJocq5wXKzLumVZv4tX78BF9vwSGLU+R4CMfK6M=;
-        b=gdx5xElge24gnDiaCg324ZCB7SGdULBU6t0oxiKPouseuRDwJL9u6L8yPU2PhsOk+A
-         AlcxFhPAjAxvZt4zp2LdWZtblG6GBIolBdupE3O+JknZfkS7QAesslo10+VQ1BIX+Z70
-         csGvYQZ/we/GaGdZ4LWYAizOk8gLLwHbZpEgMVkia1/yAT/Wg7UGuylxMdZpM/CDYuso
-         5Gnx6KZQn42siGxZDYx9szzjoDDfQWKibjXZXEy30Qgr0yIkwc9mmaZUp4tnHy1NCa4j
-         GuEZ6zLvjgidQ/pbz12kpu3Ksh5v5+MpLi6vJVzSJU3+Jxdpg0jqpSssrTp2bfS73no0
-         gXiA==
+        bh=EcVJ+u3sdC6BnMWHfOHUF/wdZM6izAkF1pUn3DY+eV0=;
+        b=Hq6GpZA0HnP8SHNru10Fe0Q496kqLnnjgAd4zHN+XuEwtMgwUYcymMgPOjrIxJ0L7g
+         ureQLEmPFp9eazB/5c0oOEXJTf6M1d8sBMdXKimt+M4fUH/HQtFnd/drj5BTJ1rgYV9l
+         Nus1/6X+v0PnxTrnZi2DGxpwP9fxFihwxZATpOcrofU1Xp5B8W+t6WjeKh1tpZUBRjHM
+         NOkE6J/SNICTG1jLswh26nz2eCjhcCJGJreBzuuXo+O6WygxCvXB1GG9smSa5Cst/5td
+         adY82wPqT7ki5A02i4mzuVuu2Ldh4c4ky1K9sBAi7ymfKWWl5KCkbXXCHobsaAgb1hcg
+         TO/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756440697; x=1757045497;
+        d=1e100.net; s=20230601; t=1756440699; x=1757045499;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RWyndJocq5wXKzLumVZv4tX78BF9vwSGLU+R4CMfK6M=;
-        b=eYpJ80qvlF/A153VmL99A/QA+2rXkDvoLnsmjBXzy1eKOKgNTxaK906f7UdBEfmI8U
-         tX42w7/TtGkNl5SIhDMs7zThEmMDN6gA1keE6RAnFXYIskdPvHDigq8OTJQH/PRYm1+r
-         CqEdvR3sJJRtjn+76OedD0U/XICCa6skTkg4zP/7lyR5kFKBTN0+CAgz9/rRXdZK/m0d
-         SMCn2w8YZBihwWmOq7EVV1JJ2Wils/8rSMxAlOqwbaIq9BHmKlHgKRzK2H87ChaWJV12
-         rskBkxtoxbc/lNZPtYe7m1DplNGQm+0ONxxp4Ra5BBPm3+TMADase728hqMokpvqfVaV
-         4Eqg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6UEPZ5QWvkpscfquGfIW7gAoV1gR0vp2caAApoVGFrKwRsR2DBYqewT8f9zY9YC2xO/0j0xR+U0WXFYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4MEd9oWIuSojwSlab4RuYlM897qV10nVwv97++IoLI+3aA7jp
-	FlqD9AHuBX+bo3K5Q1DvZk0BAnhVrNBzyCaegQ7sowcViCNYVl/J0/AQq1eBL3MR2D4jANn0rAn
-	YUXB6TYGriA==
-X-Google-Smtp-Source: AGHT+IGgxPdxoRBfj1e4QkTolOamcDyFLHq/wP2LRKKmIQn1SERZR2QSFugXp1s2TEzQ7YSySJOjfdPEFpE4
-X-Received: from pjbpl10.prod.google.com ([2002:a17:90b:268a:b0:325:7c49:9cce])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f87:b0:327:e781:3d2e
- with SMTP id 98e67ed59e1d1-327e7813ef0mr1236053a91.33.1756440696865; Thu, 28
- Aug 2025 21:11:36 -0700 (PDT)
-Date: Thu, 28 Aug 2025 21:10:45 -0700
+        bh=EcVJ+u3sdC6BnMWHfOHUF/wdZM6izAkF1pUn3DY+eV0=;
+        b=AqyLeewJcdWmRFyaEB9a4OLDLpdr2qfx9/3qCoEemq8vhurhJnpFj0hn6oJoyzy/BE
+         FKkRvSi+uMgmAgoM0dd+D/CqgqY7yIQA0h5B6OVNho9t3mXOmto2Q2SXRfEPL1ZVapIB
+         M2d9d+Col2eyalFn8x632HqFqEPSUvmhY2RW81bAncjWrHN1blm8PGqhQchtkX03/PhZ
+         3sBc0hTKDGfJYHuBFhBTkGPW6lxZIrjvsMVGUnh+CQ8BFejg8/+i0/tCazA3rgkYBtoe
+         63GOamXbXPMN9d8AM8aTltG7klnAvfjUr5ZpmO7byo/6DIkntVKB+TYA57jYzx/tu4Oq
+         q0Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWDkPVm1qjG8TLwZMhksvflrPyaIH8yfHD+mNweUJsGpA0/lI3RUel4FaksW0CJ3btwS3zsbYyLBl52Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL9Bp/Mz8wPoJ6pFbYm3LUkLhBwuiidoZpBI+MfaSAys+Ws/ZP
+	m6kqVYVuxmq2hadQjRRjgiStUU6ef8cZeZOiQxwd/2JyOCeBDpi2ddtKdVj0Dyb3BxVvv6zAsWw
+	XRiikWOzL3w==
+X-Google-Smtp-Source: AGHT+IFMf2p7oY8yto0U37ftJV8URBCPGTUxXUA8ACJh9GFlq97G4+JtuI0Gz8WySzkyYotspgt5TUkUvgtt
+X-Received: from pjj6.prod.google.com ([2002:a17:90b:5546:b0:31f:6ddd:ef5])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6d93:b0:243:27d2:61cd
+ with SMTP id adf61e73a8af0-2438fad28f4mr14375530637.27.1756440698627; Thu, 28
+ Aug 2025 21:11:38 -0700 (PDT)
+Date: Thu, 28 Aug 2025 21:10:46 -0700
 In-Reply-To: <20250829041104.4186320-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250829041104.4186320-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250829041104.4186320-5-irogers@google.com>
-Subject: [PATCH v5 04/22] perf jevents: Add smi metric group for Intel models
+Message-ID: <20250829041104.4186320-6-irogers@google.com>
+Subject: [PATCH v5 05/22] perf jevents: Mark metrics with experimental events
+ as experimental
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,62 +92,152 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Allow duplicated metric to be dropped from json files.
+When metrics are made with experimental events it is desirable the
+metric description also carries this information in case of metric
+inaccuracies.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+Suggested-by: Perry Taylor <perry.taylor@intel.com>
 ---
- tools/perf/pmu-events/intel_metrics.py | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ tools/perf/pmu-events/metric.py | 44 +++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index 0bb28f4c8316..1e4790717cec 100755
---- a/tools/perf/pmu-events/intel_metrics.py
-+++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -1,8 +1,8 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
-+from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEncodeMetric,
-                     JsonEncodeMetricGroupDescriptions, LoadEvents, Metric,
--                    MetricGroup, Select)
-+                    MetricGroup, MetricRef, Select)
- import argparse
- import json
- import math
-@@ -56,6 +56,25 @@ def Rapl() -> MetricGroup:
-                      description="Running Average Power Limit (RAPL) power consumption estimates")
+diff --git a/tools/perf/pmu-events/metric.py b/tools/perf/pmu-events/metric.py
+index 4f62f252abef..b77485b47666 100644
+--- a/tools/perf/pmu-events/metric.py
++++ b/tools/perf/pmu-events/metric.py
+@@ -10,11 +10,13 @@ from typing import Dict, List, Optional, Set, Tuple, Union
+ 
+ all_pmus = set()
+ all_events = set()
++experimental_events = set()
+ 
+ def LoadEvents(directory: str) -> None:
+   """Populate a global set of all known events for the purpose of validating Event names"""
+   global all_pmus
+   global all_events
++  global experimental_events
+   all_events = {
+       "context\-switches",
+       "cycles",
+@@ -31,6 +33,8 @@ def LoadEvents(directory: str) -> None:
+             all_pmus.add(x["Unit"])
+           if "EventName" in x:
+             all_events.add(x["EventName"])
++            if "Experimental" in x and x["Experimental"] == "1":
++              experimental_events.add(x["EventName"])
+           elif "ArchStdEvent" in x:
+             all_events.add(x["ArchStdEvent"])
+       except json.decoder.JSONDecodeError:
+@@ -60,6 +64,18 @@ def CheckEvent(name: str) -> bool:
+   return name in all_events
  
  
-+def Smi() -> MetricGroup:
-+    pmu = "<cpu_core or cpu_atom>" if CheckPmu("cpu_core") else "cpu"
-+    aperf = Event('msr/aperf/')
-+    cycles = Event('cycles')
-+    smi_num = Event('msr/smi/')
-+    smi_cycles = Select(Select((aperf - cycles) / aperf, smi_num > 0, 0),
-+                        has_event(aperf),
-+                        0)
-+    return MetricGroup('smi', [
-+        Metric('smi_num', 'Number of SMI interrupts.',
-+               Select(smi_num, has_event(smi_num), 0), 'SMI#'),
-+        # Note, the smi_cycles "Event" is really a reference to the metric.
-+        Metric('smi_cycles',
-+               'Percentage of cycles spent in System Management Interrupts. '
-+               f'Requires /sys/bus/event_source/devices/{pmu}/freeze_on_smi to be 1.',
-+               smi_cycles, '100%', threshold=(MetricRef('smi_cycles') > 0.10))
-+    ], description = 'System Management Interrupt metrics')
++def IsExperimentalEvent(name: str) -> bool:
++  global experimental_events
++  if ':' in name:
++    # Remove trailing modifier.
++    name = name[:name.find(':')]
++  elif '/' in name:
++    # Name could begin with a PMU or an event, for now assume it is not experimental.
++    return False
++
++  return name in experimental_events
 +
 +
- def main() -> None:
-   global _args
+ class MetricConstraint(Enum):
+   GROUPED_EVENTS = 0
+   NO_GROUP_EVENTS = 1
+@@ -81,6 +97,10 @@ class Expression:
+     """Returns a simplified version of self."""
+     raise NotImplementedError()
  
-@@ -81,6 +100,7 @@ def main() -> None:
-   all_metrics = MetricGroup("", [
-       Idle(),
-       Rapl(),
-+      Smi(),
-   ])
++  def HasExperimentalEvents(self) -> bool:
++    """Are experimental events used in the expression?"""
++    raise NotImplementedError()
++
+   def Equals(self, other) -> bool:
+     """Returns true when two expressions are the same."""
+     raise NotImplementedError()
+@@ -248,6 +268,9 @@ class Operator(Expression):
  
+     return Operator(self.operator, lhs, rhs)
  
++  def HasExperimentalEvents(self) -> bool:
++    return self.lhs.HasExperimentalEvents() or self.rhs.HasExperimentalEvents()
++
+   def Equals(self, other: Expression) -> bool:
+     if isinstance(other, Operator):
+       return self.operator == other.operator and self.lhs.Equals(
+@@ -296,6 +319,10 @@ class Select(Expression):
+ 
+     return Select(true_val, cond, false_val)
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return (self.cond.HasExperimentalEvents() or self.true_val.HasExperimentalEvents() or
++            self.false_val.HasExperimentalEvents())
++
+   def Equals(self, other: Expression) -> bool:
+     if isinstance(other, Select):
+       return self.cond.Equals(other.cond) and self.false_val.Equals(
+@@ -344,6 +371,9 @@ class Function(Expression):
+ 
+     return Function(self.fn, lhs, rhs)
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return self.lhs.HasExperimentalEvents() or (self.rhs and self.rhs.HasExperimentalEvents())
++
+   def Equals(self, other: Expression) -> bool:
+     if isinstance(other, Function):
+       result = self.fn == other.fn and self.lhs.Equals(other.lhs)
+@@ -383,6 +413,9 @@ class Event(Expression):
+     global all_events
+     raise Exception(f"No event {error} in:\n{all_events}")
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return IsExperimentalEvent(self.name)
++
+   def ToPerfJson(self):
+     result = re.sub('/', '@', self.name)
+     return result
+@@ -415,6 +448,9 @@ class MetricRef(Expression):
+   def Simplify(self) -> Expression:
+     return self
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return False
++
+   def Equals(self, other: Expression) -> bool:
+     return isinstance(other, MetricRef) and self.name == other.name
+ 
+@@ -442,6 +478,9 @@ class Constant(Expression):
+   def Simplify(self) -> Expression:
+     return self
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return False
++
+   def Equals(self, other: Expression) -> bool:
+     return isinstance(other, Constant) and self.value == other.value
+ 
+@@ -464,6 +503,9 @@ class Literal(Expression):
+   def Simplify(self) -> Expression:
+     return self
+ 
++  def HasExperimentalEvents(self) -> bool:
++    return False
++
+   def Equals(self, other: Expression) -> bool:
+     return isinstance(other, Literal) and self.value == other.value
+ 
+@@ -526,6 +568,8 @@ class Metric:
+     self.name = name
+     self.description = description
+     self.expr = expr.Simplify()
++    if self.expr.HasExperimentalEvents():
++      self.description += " (metric should be considered experimental as it contains experimental events)."
+     # Workraound valid_only_metric hiding certain metrics based on unit.
+     scale_unit = scale_unit.replace('/sec', ' per sec')
+     if scale_unit[0].isdigit():
 -- 
 2.51.0.318.gd7df087d1a-goog
 
