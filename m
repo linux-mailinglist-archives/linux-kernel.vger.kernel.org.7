@@ -1,162 +1,153 @@
-Return-Path: <linux-kernel+bounces-790998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFB9B3B0D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:18:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED6BB3B0CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B1C1C26D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B3A5E11CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBD0220F38;
-	Fri, 29 Aug 2025 02:18:11 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99C31E32BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783741991B6;
 	Fri, 29 Aug 2025 02:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtlLd1JH"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DC6189;
+	Fri, 29 Aug 2025 02:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756433891; cv=none; b=qupyXHLlS7hQxvTvFr4gRJ0jqGLWPYKa5imY2NFopP5TEgH8CXHu7nQYdhiXO3U+CuOY9QRsuykIwhFLtet4x+koYstGEKfcs7EbbRHrcb8Fxwkiwl16wXUWrwNg9y/LzCFRjIn/rt1lSDv7BCDu0AFf8lEgHr3uQE/ENlyaecE=
+	t=1756433887; cv=none; b=mej3RUO7Am04ysU/CjG6o0kjk7d6MAI83XUCvWOp2zMCI12GAA/WmnuDgLs7IclxKKHhLflK+nf/23QRwX+ej0+14JxckglHvv4j9WMBRNZG1jh4NmVDoRpa18h/ZnT6yZrOCBrwZy+0FKB4tswuolML6+f216PeohwzNzGx5DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756433891; c=relaxed/simple;
-	bh=zPImQ+S2+bHhXt3/ANQ8J2V6d3n857iAaQD+q/4oskw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JCjLnuXSllFRicaWXpzgJ/7Rz69B17OK02wXnp5IxR1vEd2SlcPFVwY0MLOJumJ7sCBzNvgcc6/E1gj7LSpxP4+TwxOzjSGsEj699KEt5fv0KSJ9gMpIwnL9AkdPp3QJnnZUEclmOUTe1PGxBQZLWIDV7mxyrDc6/dG7aUMZF3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 68A861192D6;
-	Fri, 29 Aug 2025 02:18:02 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id A458F19;
-	Fri, 29 Aug 2025 02:18:00 +0000 (UTC)
+	s=arc-20240116; t=1756433887; c=relaxed/simple;
+	bh=rhOcQf4lmzOvndYWzv+wjmRQPKHdQrN1F/gy4wvnhx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G1CgwDuUs2/5vNluRtj4Nyd1+VFyArCm8mY+ZaQkIu3ymsbNQAAetApO7mwyjcE5+wH19jMyyucf48RO2Ws/e6XVMBV26oQ3X+wTe5bHJhSfxYQ9zRw00Ti0pfUyyh738pzewaK8EaWF4hQ1/lY15XuMghotqp8J9pYrWnN5EaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtlLd1JH; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b2cf656e4fso15313471cf.0;
+        Thu, 28 Aug 2025 19:18:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756433885; x=1757038685; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dmi5nto3yi3lP2KtXIHpoZiHzjJ5dpWYmN7F9HWG7C8=;
+        b=QtlLd1JHiKYYwag0mDOBe8KUXo7quJ4OQq5r+22RA1v6OzAIok31yinguRQ/v0CSRq
+         pSiChw9w/qclJMRjY9lKPKs9VaDZLlsaPx1uIRoRrXhV+nYQ89RasYIBGSrabaotVUlW
+         bpAsdv848XQp425igYTOOptcmACb2lr3RE6Y6HMbB7S0OgrA5TO5wMxSYueLBlLacfqf
+         URR+1J7kGyZvPco7J1SeFP8gqsOJNoS4ZF2YfOUhF/m3cpBSjusnnIAoR1UdRIiE+8Pr
+         5b8LYOiSPCRxXDgHQR1hMpMcfa/qnTzT+HymzDqWsHu7Eu/b0rppoFFl1i+yThLveVuv
+         tMuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756433885; x=1757038685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dmi5nto3yi3lP2KtXIHpoZiHzjJ5dpWYmN7F9HWG7C8=;
+        b=BQenuCwiznVr+oi8VKEd4RkC86NHGLsttO9yDpDrkBxJGCpJvHAh/dmvudVi89D9L8
+         teyNCqqwr6iwNxv4OjG9rfOAXT5613EBJ4q8pcG5pfh/94POg73vAhnINgeHbmsy/V6T
+         D1HS536MsXXcriIoxy96b6UCc7ngSDb+25+tg7AsXs8NU/W1Q5HPCiD+uFgDc3Pt+Xon
+         4ehEJlAIpKiw1fMLdLTmBd5U9yBcZxTrcnKrqSP1q8fN5budZGeBuEj+tVCED0tZb4mj
+         B1CTwY+T5ds8iRK5Xnlc0aQf/5xK2wUpwwF3FCk/Ro9xCdo1AFreAHfchQn2Cdb9Ewp7
+         1PRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeJkDdZfGZ7iRTOHu+/hVpY5J3Scn7C6C5Dp1pcoNZ7LlLgdjjwvZCp6K75yVOYS8+f7VfMlw5vFrsZ7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg57b47mzGmcWfnoOZFMice1xAeGdQsm8d+aRlF1heLHsDXuIg
+	K+Z6loIj9LiBLV9djnWDvgoSStByyHwEt3Q9OD3ar4IFY21P/t+xXq7vUVgmS5Dh
+X-Gm-Gg: ASbGncu3mhO76cbKGLNz0BBZkzBGph02FSngdNq8ZEzPxvCfu5k3z6fQEqjJWz+MNrg
+	X4vuIwJ5mkwWZzl1gX6podk621MxnTUVkaGa7roWbwHPTKJ99E9jJumMOGfYi6jrWIhPmgkTLF6
+	u0Ut0GFLNV6WIOLrQ73uiIjyqtL2rpMXBynwYXYKpirbxEz4htXHjNxGN0I9MVteL7s9WMsIlVa
+	CXqAmFZTndqmkiq3I6gsT/ij2OdMqsP4DblQLALHBG+GVy5ezw+4B/cbfaOLJzHm7ujdajqlY6Y
+	tc4+n42c/NHoA/m5eamM0+qObSkJSFayJme3Ui9jUR9LSO1ZEBGIu22uqTAPZ36Fo5wziArNECt
+	G2LP1k01Szvo2Mw1vPBNmsSYY/BLVugStjn8OjRNYmjHy9NJ4ZajIzY+Dwybbkd/Ch1b5nW3z0K
+	sFVOU=
+X-Google-Smtp-Source: AGHT+IEttyxERBZucuUJv2VBL1kbTEcilFln7lKkGvkx8cRUAmICN4qJFm9OjlYFJWQo7EKy6IJT1A==
+X-Received: by 2002:a05:622a:4816:b0:4b2:919d:f37c with SMTP id d75a77b69052e-4b2e76f6ae6mr177445791cf.38.1756433885187;
+        Thu, 28 Aug 2025 19:18:05 -0700 (PDT)
+Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b53732dsm8573781cf.10.2025.08.28.19.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 19:18:03 -0700 (PDT)
+From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] device property: Add scoped fwnode child node iterators
 Date: Thu, 28 Aug 2025 22:17:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH] cfg80211: Remove unused tracepoints
-Message-ID: <20250828221759.131160ee@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Message-ID: <20250829021802.16241-1-jefflessard3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: dksocuffydty3ausz59s7nha8f7q8jnf
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: A458F19
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+VFm/Vr4/2aUDNPbM/CaHBykL/3/sP+EY=
-X-HE-Tag: 1756433880-90718
-X-HE-Meta: U2FsdGVkX19djLNOA9fsDBdUBzRNk8elZK/ZlmS2qU4kZ+A/uafVQnZHNU/JujwdOswNiCKHl6AjZ5sM86iKUMmsNCkzldmtBe398xRS0SwK8XPQmnK+gXOsKB45OrTEkcoQGSu20P6drrkNw/RKbTl8bi+iUsDWz/rdwKJ0k/54+VN//yAN9eljtmNL2MEWyadJQyM1xq8oXvm5q1xJxo2EBJbH/Qp6V8PCnQeR5nmW4pi3dDZNYDR+AMA0TcUIMaAFLO0tbYR+3lNg3+LqEOVecufWA4/CDpJILdMCX/6bWeWOeao8wFJKhxNglJ6y+yuNV0HJ9UKLqQMGQ/A7WNXN1ke/piT4i+pRLBmFyswtL0R3Ae8VgPxJfr/Zdovi
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Add scoped versions of fwnode child node iterators that automatically
+handle reference counting cleanup using the __free() attribute:
 
-Tracepoints that are defined take up around 5K each, even if they are not
-used. If they are defined and not used, then they waste memory for unused
-code. Soon unused tracepoints will cause warnings.
+- fwnode_for_each_child_node_scoped()
+- fwnode_for_each_named_child_node_scoped()
+- fwnode_for_each_available_child_node_scoped()
 
-Remove the unused tracepoints of the cfg80211 subsystem. They are:
+These macros follow the same pattern as existing scoped iterators in the
+kernel, ensuring fwnode references are automatically released when the
+iterator variable goes out of scope. This prevents resource leaks and
+eliminates the need for manual cleanup in error paths.
 
-cfg80211_chandef_dfs_required
-cfg80211_return_u32
-cfg80211_return_uint
-cfg80211_send_rx_auth
+The implementation mirrors the non-scoped variants but uses
+__free(fwnode_handle) for automatic resource management, providing a safer
+and more convenient interface for drivers iterating over firmware node
+children.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 ---
- net/wireless/trace.h | 56 --------------------------------------------
- 1 file changed, 56 deletions(-)
 
-diff --git a/net/wireless/trace.h b/net/wireless/trace.h
-index 34c584a215e5..9b6074155d59 100644
---- a/net/wireless/trace.h
-+++ b/net/wireless/trace.h
-@@ -3137,23 +3137,6 @@ DEFINE_EVENT(cfg80211_netdev_mac_evt, cfg80211_notify_new_peer_candidate,
- 	TP_ARGS(netdev, macaddr)
- );
+Notes:
+    checkpatch reports false positives that are intentionally ignored:
+    COMPLEX_MACRO, MACRO_ARG_REUSE, MACRO_ARG_PRECEDENCE
+    This is a standard iterator pattern following kernel conventions.
+
+ include/linux/property.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/include/linux/property.h b/include/linux/property.h
+index 82f0cb3ab..279c244db 100644
+--- a/include/linux/property.h
++++ b/include/linux/property.h
+@@ -176,6 +176,20 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+ 	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+ 	     child = fwnode_get_next_available_child_node(fwnode, child))
  
--DECLARE_EVENT_CLASS(netdev_evt_only,
--	TP_PROTO(struct net_device *netdev),
--	TP_ARGS(netdev),
--	TP_STRUCT__entry(
--		NETDEV_ENTRY
--	),
--	TP_fast_assign(
--		NETDEV_ASSIGN;
--	),
--	TP_printk(NETDEV_PR_FMT , NETDEV_PR_ARG)
--);
--
--DEFINE_EVENT(netdev_evt_only, cfg80211_send_rx_auth,
--	TP_PROTO(struct net_device *netdev),
--	TP_ARGS(netdev)
--);
--
- TRACE_EVENT(cfg80211_send_rx_assoc,
- 	TP_PROTO(struct net_device *netdev,
- 		 const struct cfg80211_rx_assoc_resp_data *data),
-@@ -3480,21 +3463,6 @@ TRACE_EVENT(cfg80211_reg_can_beacon,
- 		  __entry->prohibited_flags, __entry->permitting_flags)
- );
++#define fwnode_for_each_child_node_scoped(fwnode, child)		\
++	for (struct fwnode_handle *child __free(fwnode_handle) =	\
++		fwnode_get_next_child_node(fwnode, NULL);		\
++	     child; child = fwnode_get_next_child_node(fwnode, child))
++
++#define fwnode_for_each_named_child_node_scoped(fwnode, child, name)	\
++	fwnode_for_each_child_node_scoped(fwnode, child)		\
++		for_each_if(fwnode_name_eq(child, name))
++
++#define fwnode_for_each_available_child_node_scoped(fwnode, child)	\
++	for (struct fwnode_handle *child __free(fwnode_handle) =	\
++		fwnode_get_next_available_child_node(fwnode, NULL);	\
++	     child; child = fwnode_get_next_available_child_node(fwnode, child))
++
+ struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+ 						 struct fwnode_handle *child);
  
--TRACE_EVENT(cfg80211_chandef_dfs_required,
--	TP_PROTO(struct wiphy *wiphy, struct cfg80211_chan_def *chandef),
--	TP_ARGS(wiphy, chandef),
--	TP_STRUCT__entry(
--		WIPHY_ENTRY
--		CHAN_DEF_ENTRY
--	),
--	TP_fast_assign(
--		WIPHY_ASSIGN;
--		CHAN_DEF_ASSIGN(chandef);
--	),
--	TP_printk(WIPHY_PR_FMT ", " CHAN_DEF_PR_FMT,
--		  WIPHY_PR_ARG, CHAN_DEF_PR_ARG)
--);
--
- TRACE_EVENT(cfg80211_ch_switch_notify,
- 	TP_PROTO(struct net_device *netdev,
- 		 struct cfg80211_chan_def *chandef,
-@@ -3862,30 +3830,6 @@ DEFINE_EVENT(cfg80211_bss_evt, cfg80211_return_bss,
- 	TP_ARGS(pub)
- );
- 
--TRACE_EVENT(cfg80211_return_uint,
--	TP_PROTO(unsigned int ret),
--	TP_ARGS(ret),
--	TP_STRUCT__entry(
--		__field(unsigned int, ret)
--	),
--	TP_fast_assign(
--		__entry->ret = ret;
--	),
--	TP_printk("ret: %d", __entry->ret)
--);
--
--TRACE_EVENT(cfg80211_return_u32,
--	TP_PROTO(u32 ret),
--	TP_ARGS(ret),
--	TP_STRUCT__entry(
--		__field(u32, ret)
--	),
--	TP_fast_assign(
--		__entry->ret = ret;
--	),
--	TP_printk("ret: %u", __entry->ret)
--);
--
- TRACE_EVENT(cfg80211_report_wowlan_wakeup,
- 	TP_PROTO(struct wiphy *wiphy, struct wireless_dev *wdev,
- 		 struct cfg80211_wowlan_wakeup *wakeup),
 -- 
-2.50.1
+2.43.0
 
 
