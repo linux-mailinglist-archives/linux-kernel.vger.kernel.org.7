@@ -1,113 +1,175 @@
-Return-Path: <linux-kernel+bounces-792391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0469EB3C343
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:44:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF11B3C348
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 716843A616F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B69F5A1041
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4DF242D6F;
-	Fri, 29 Aug 2025 19:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7CD23372C;
+	Fri, 29 Aug 2025 19:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGBXvp3x"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="H3O+12gQ"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D415E5D4;
-	Fri, 29 Aug 2025 19:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B872566
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496619; cv=none; b=ZOU0lSTSNaxOZMqQqmJcmpqOMYPxa4hJvd2WC7DYFVBajF9x9c1LfcMuc3pjGrz2E04okYQtifnlCFpFkQOqKit9A2B79G93OswcAt9HPBdETXWsDuhK09Z6RWI1vLFDNGA6LqEDsfL1ABhHV2sr0cROfmBUVMNqC863n72cUyw=
+	t=1756496832; cv=none; b=O3W1Uw5GYAZBPFAxNSXu+T8R47jxIINCc/Kh+XEybOaOPJ73taeTYWoUCGJV5bbZiDyixDgbbRQZ1qeKZFC8XJOiuiYhj9My5QB18JLZM9+jhOs3BIw7di52pZKvxno1xlhU4gtdah2exKoFhI/PLCCr3EDg1DodsRKE1jTUTFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496619; c=relaxed/simple;
-	bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rFopohoC0g5eQzEBkG+N8XUBwFs6TXW4UtDKMDyK2mCzGTQZHlG3W450uFBnzBTjMZdJDCrfHZas/tl6fnacwfGtXSumD0db/QPg8cif0b9jom476LxpTZn2b9Mvob5aGQnDEsnn8T9njM2trc1bZQsCoG0F5amzgUU+N6HLC1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGBXvp3x; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24498e93b8fso3072905ad.3;
-        Fri, 29 Aug 2025 12:43:37 -0700 (PDT)
+	s=arc-20240116; t=1756496832; c=relaxed/simple;
+	bh=01xYwzEgQqARR+trB3+eOkbrnHfqiRT5HTlVuT4VGJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=khnFUBuAfqPuRKQlgvdq+oKLp+2nRp+jFJ01L6kFy4FhbT1VGv1JAr04mpVq0kqZbpDEU9pNDf/ZjNbSYQWC2+rCH8G9KHO0WHJJzBqIY+SPgcjM0a/fOWUZD1ctLkl71J4Ct/WMsGrkS6nfXxz/Ax2yxTiGfjifxz6CIdEptB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=H3O+12gQ; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca79beso1902139a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756496617; x=1757101417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
-        b=HGBXvp3xX8enkoUSj5t4/Ox1eF3x4XSioHwDGt7kR0mPq/ywKOq/GFQv+9GvmSEwk4
-         bdkrqH6H2CDch98R3vVNtHBmMeZtT74rNHGm1NGKdL9ZAR8Oy7gUUZm9Vq2y4eBWNBZF
-         dcYPf3MT7KtJaeZXDStdXlwLmAOGbUNjXhWRdlT1jfZMYd2fSHHxug/8NBTbUaasdbei
-         qacxgy+80b/Q1waIfrmYhK6es09vgW2Iqnd8kaEG0IzA5tMFHssmDAT8Ox8t0OqwsXHq
-         Y/aT3dJMNO9C1VJyzDFiGtdjwEUynHuEsnH2HT8T/FwTZTF4B79dSP4SIQ0EmpNhZbls
-         aD4w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756496828; x=1757101628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JVGUg0SDLAjEzLHUVtikB/WVSwbBEdHlzNQeODDBtr8=;
+        b=H3O+12gQhMEoHO+spTEJmboBEeydxF0GtBvT+vg+4/AqsbIcOdFPk/gpwx9h+fOtwo
+         O+/UDYztpqt1tZUnZ5Db452Ue2g/xhtOXAC6sFOd1BteRdP8f0javz8rX50QtaSZqJ5w
+         rDpkdOO+PXORbNJMLJLSFUg4IXSvYc15kfJbAw1i3RU7jt2MoO1zXO4JxNQUpCXaIFQe
+         aG/DwSBb21ISzOuzZ4vTK6JC/y1w/8fas1AxunVEa+o0wbdTDRPNsyKWxTB0RqaVehPQ
+         rz+rK/479O4f1dQOk9tmrTEwDN0IBjIEHVgax1BAP/OcUXhan9fcwtgDaFPk55vgC7wX
+         ZJjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756496617; x=1757101417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4nRNZ/OwQos6PIKG2HVphry94ftYsfgFC/siNRlqeIw=;
-        b=eTHNpW7GUue2MZmU1K4FznNAL7zv7nL/GRpemPDegcBivPCLfrmfR11bFKgFj2XkIy
-         1A+jQbQkHtL/jKzGORpEAmTOXBvOdcNlChjvBH8eIJ9JmykGp98QRv5GSGE6u3Qzk387
-         EOZSbPZFw30rsHkRwDd5++wz9qx/VkVEgwGJ5uARFXixje3MvQNy/x/UfedG3F4mUtSa
-         V19CC5pYVNaVzI5yPIcExVzMyBuY2jEH3Ai7pG1yVZ8UxJoKtQjNbt9Pdr7r0FZtyS9t
-         DfcW1wKB25f+bSRkGyGJRlHsBMaruxHGyt1E1EDSrqQFt/oRafrqfQ7jYPlR2FmE9tbJ
-         ry3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYCbqkK6gW7C592j4lSx7+K1mrpaaGxB6zkUAe6nFgpANCXOffPnAS/qtxMkVAw71Ge9LGYSwgbes3i9k=@vger.kernel.org, AJvYcCW1t/VZqvv5QtaqpnczkwELn5Zd+QR1FxU76YNZRXzigN0+zrp4Gl6LxUeJdyaSNVNzMVvAFVOfQgqwqOMnfcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI22HT0eUkNa+Ybs2398781dc3T60pX+Y4HAvngBBMF6tpE5eT
-	IfG/R238xmMlt/J4McyWssjj0bno6+7yXQNgrovbz0tD0FqPTpkrv+2tr592vJPJV3KyFN+zItW
-	GNLIQCUr9hB2xEKCawSLOTuwHIs/Wcxc=
-X-Gm-Gg: ASbGnctxdlQfMBYrLc4aU521hS8CFEkEQEiENmVXhHJy657yLmAiXkCPf4MVHlXY8sN
-	1wIdNN1OLnz8W4KoVgGOmPbaVkO7t7cyJWdigF4kR6wjSCxEDT1UdFhauUa99tgPB7dej5R1rQd
-	LJMU3PjlYR/OaqmRlFvlxOr2meXbr9lzv/k9+m1qEkEimyj7rCDkYmdMeEHfrjXzQ4lKhBiIhcJ
-	ANXQCEatzeGeoGhTXYHGi2JSG990EJwW8LNI5EaQb2n871ugV25p7hN3XfGLIuzjBs97nkMlqe6
-	jkheQcG0OlQKPIqrLe07N+0VBg==
-X-Google-Smtp-Source: AGHT+IFWZb4xaY7v5s0ylSP5ELEMnxzQujAXKzF//SpCqMfVGSq+8gvW+Xpth3BkeD9kVV8HxQDYlRSXEcjPedhBXTw=
-X-Received: by 2002:a17:903:1c7:b0:240:8717:e393 with SMTP id
- d9443c01a7336-2490f7591bdmr25798105ad.5.1756496617089; Fri, 29 Aug 2025
- 12:43:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756496828; x=1757101628;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVGUg0SDLAjEzLHUVtikB/WVSwbBEdHlzNQeODDBtr8=;
+        b=RgGSh1JFXWoeWWkKt2OKf1hoEWGjmMkZFIQEHTayzpuA7fEES0xfbsdJUVs0VKtjuX
+         m7Wav0/QOh4r4Oh7DY5YDiwWAXuA0bWCKV4gsTWiiqvnjhJNdlXGtjQQD1/zGj678Ecs
+         I4q0KJbNfTjxpSGmGLeQDDnYr6k9hr1CLkqHgKY6aCdyH+Zq1zgNSRqIKBPsLVyAUnS6
+         W0+3nugLkFLBor0y30O4NGwLQCDUaBbiXc0YInS5P6OOhehX/ziFr/HTKpoNRChvNdiH
+         uVfwdHiatHkqa2wA1w977wfRLe9BqLux3NWskMDpG18ycLCxZKgWPnJP+bELTmT86FQQ
+         pDqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOkndG0jFjOYw0IJa3jz3JP2onhUuvZyGs3Y6zRkgYDsqD447Of/TCTfptJf57x4+KW+ZMQmJfcD8xpko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzkPdfgd7uYGUQ+NpuD/mCl+gRKSoyHCX9XPXN7SY4trePaZnw
+	Wb4icOR9eQwCLvHNxv5DKXw7z2lxvPe76WxdNq+cqub48KRyJadBoS/EOGgKGIgApUKLe2GHWMP
+	57op7
+X-Gm-Gg: ASbGncsnIJHISI+M89uCv+RLRRnopHc4Bk+3XdD7o/cwnOaPbKCJKivXJhk6tcVe4jj
+	NUk2A+eU0cQkBzH8ZizvyGOfuOHBclkwNwcXE+z3vP5YXJYko04fcNQvzZZlNztREptRLPWdfXs
+	sCIYPM4IHWWztRJ0vMvl9mz2AlAcM7jlXywc6eW8jnO/wuxi8X+BKn2ryZ3zY4w6fF67Hs5+pTD
+	u3LU7CkdqJ6B6ohJ5sovGDjy56D7tHHYnA9P3bjCjsZdASmg2nWeFR/rjLizcCaoyCDNWZVoReY
+	si3a9Bg5u5MY4uL7J3jviOJPwMFJKuCIdgsStrdUbHivMCphDQ9vaRckcvnDccHdZ6ZjNKhf1vx
+	c2G6q4Vcj5FPK/TMYFrLB2o7dHJirkQk761Kq0cWp9c+jnNqzKNqKidVSL0tsqgmFLT+rZIvOJp
+	M=
+X-Google-Smtp-Source: AGHT+IHkZbHxDOuHzCi5F+tf8HGqWEtfZdGb6ilH+q4mQdnXgfq0WBgXtPNPqptAdN4u6rI4AG7U/w==
+X-Received: by 2002:a05:6808:a5c7:10b0:437:ae34:16b7 with SMTP id 5614622812f47-437ae341c86mr6947930b6e.31.1756496828382;
+        Fri, 29 Aug 2025 12:47:08 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afc5a74asm1579763fac.11.2025.08.29.12.47.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 12:47:07 -0700 (PDT)
+Message-ID: <1350f948-85d3-410d-9e9c-8d0fe4237a32@baylibre.com>
+Date: Fri, 29 Aug 2025 14:47:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829192243.678079-1-ojeda@kernel.org> <20250829192243.678079-4-ojeda@kernel.org>
-In-Reply-To: <20250829192243.678079-4-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 29 Aug 2025 21:43:24 +0200
-X-Gm-Features: Ac12FXxdaqCu4yJ1IdyQ22odRNAFIeLXOSCLMds7lUVCV-3Ct83AvKEf6yXHQx4
-Message-ID: <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with `debug_assert!`
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/6] iio: add power and energy measurement modifiers
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+ <20250829115227.47712-3-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250829115227.47712-3-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 9:23=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Thus, instead, use a debug assertion -- this assumes hitting one of them
-> is not going to be considered a CVE (which requires
-> `CONFIG_RUST_DEBUG_ASSERTIONS=3Dy`).
+On 8/29/25 6:41 AM, Antoniu Miclaus wrote:
+> Add new IIO modifiers to support power and energy measurement devices:
+> 
+> Power modifiers:
+> - IIO_MOD_ACTIVE: Real power consumed by the load
+> - IIO_MOD_REACTIVE: Power that oscillates between source and load
+> - IIO_MOD_APPARENT: Magnitude of complex power
+> - IIO_MOD_FUND_REACTIVE: Reactive power at fundamental frequency
+> - IIO_MOD_FACTOR: Power factor (ratio of active to apparent power)
+> 
+> Signal quality modifiers:
+> - IIO_MOD_RMS: Root Mean Square value
 
-Greg: RFC on this -- this is the usual conundrum around `WARN`. I
-would like to have an assertion or `WARN`-like entity for developers
-that doesn't imply CVEs when hit by user interactions. More generally,
-to know that such a config option is OK as long as it is labeled
-clearly a debug one like this one (we can document the CVE bit
-explicitly if needed).
+The message doesn't match what got implemented in the patch.
 
-Thanks!
+> 
+> These modifiers enable proper representation of power measurement
+> devices like energy meters and power analyzers.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
-Cheers,
-Miguel
+...
+
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index 8c9098668772..9e372ed38552 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -153,6 +153,10 @@ static const char * const iio_modifier_names[] = {
+>  	[IIO_MOD_PITCH] = "pitch",
+>  	[IIO_MOD_YAW] = "yaw",
+>  	[IIO_MOD_ROLL] = "roll",
+> +	[IIO_MOD_RMS] = "rms",
+> +	[IIO_MOD_ACTIVE] = "active",
+> +	[IIO_MOD_REACTIVE] = "reactive",
+> +	[IIO_MOD_APPARENT] = "apparent",
+>  };
+>  
+>  /* relies on pairs of these shared then separate */
+> @@ -190,6 +194,7 @@ static const char * const iio_chan_info_postfix[] = {
+>  	[IIO_CHAN_INFO_ZEROPOINT] = "zeropoint",
+>  	[IIO_CHAN_INFO_TROUGH] = "trough_raw",
+>  	[IIO_CHAN_INFO_CONVDELAY] = "convdelay",
+> +	[IIO_CHAN_INFO_POWERFACTOR] = "powerfactor",
+>  };
+>  /**
+>   * iio_device_id() - query the unique ID for the device
+> diff --git a/include/linux/iio/types.h b/include/linux/iio/types.h
+> index ad2761efcc83..34eebad12d2c 100644
+> --- a/include/linux/iio/types.h
+> +++ b/include/linux/iio/types.h
+> @@ -70,6 +70,7 @@ enum iio_chan_info_enum {
+>  	IIO_CHAN_INFO_ZEROPOINT,
+>  	IIO_CHAN_INFO_TROUGH,
+>  	IIO_CHAN_INFO_CONVDELAY,
+> +	IIO_CHAN_INFO_POWERFACTOR,
+>  };
+>  
+>  #endif /* _IIO_TYPES_H_ */
+> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> index 3c3cc1497a1e..6d269b844271 100644
+> --- a/include/uapi/linux/iio/types.h
+> +++ b/include/uapi/linux/iio/types.h
+> @@ -109,6 +109,10 @@ enum iio_modifier {
+>  	IIO_MOD_ROLL,
+>  	IIO_MOD_LIGHT_UVA,
+>  	IIO_MOD_LIGHT_UVB,
+> +	IIO_MOD_RMS,
+> +	IIO_MOD_ACTIVE,
+> +	IIO_MOD_REACTIVE,
+> +	IIO_MOD_APPARENT,
+>  };
+>  
+>  enum iio_event_type {
+
+
+Do we need to add these to tools/iio/iio_event_monitor.c as well?
 
