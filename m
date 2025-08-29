@@ -1,323 +1,175 @@
-Return-Path: <linux-kernel+bounces-791454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD49BB3B703
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:20:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A26B3B706
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12AC3B6E22
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70CB1C85F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403003043AD;
-	Fri, 29 Aug 2025 09:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDFRkjSl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6348D29E10B;
-	Fri, 29 Aug 2025 09:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B928F2FF657;
+	Fri, 29 Aug 2025 09:20:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96812F7477
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459209; cv=none; b=b6ZpsnuYLKzYoX/7wBM94itlc+IUnwswxKuIHAwWPAf+XrGeYU60qpXJpvJLgBo0PAtKwDkeNhG/BwaR0uOaSA5n0L4FKCB0hsoWKc+g/FJQDU953+Aofa/rGH933rhw0qcew3hUXZF2N5ijJThjyJRBjeOYcL+sXiDQmXY9Qfw=
+	t=1756459250; cv=none; b=kAvRkddmtLBTc9ZeASNGyJH+cUPvK1fVQh5lyS55qoCHjFy2f86ue77avrss/NpYQJLWh+5Cc8JB6aRT6XCLQD+p7H/wq6Mds41pks1d154D5/9UPadBqXk7xPBLz0WoExQo/6mkVcocOwGoFPd0zg4VGmDszR/XtMOtkjWt7vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459209; c=relaxed/simple;
-	bh=50TguRS/Evm2Or/dlQlWRsV6e2qqkAlX4YelhUCK/e8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N3hqnpuHKWx3J9pI1NTN7qtvI2uPTziZzqaf7/ySmzAcDBDLTILiMVh3ugcP61PFABLzqCWdrdqrWklh9VtOyUsl2MExqNE8oNfATPA9caYBMP1PPrMV4x6UsF4BSEGyFNbyRXALhzmOhz9NefkB4Lp8GkVn0p0zAO+yQYtoRsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDFRkjSl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C8FCC4CEF7;
-	Fri, 29 Aug 2025 09:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756459209;
-	bh=50TguRS/Evm2Or/dlQlWRsV6e2qqkAlX4YelhUCK/e8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=kDFRkjSlFhInJWPB8JNZmhVeMSxa3kh7K9Mchd2tbAWySpY/yEeWNBHT1glhHB2Fo
-	 mSYFVuFSl/74YcX2sGGu2jI9SIeH5EFueJ1c3uD4GbP2Hnic3KQBWtVZSegrrLG3jd
-	 5o+6t8OhkYwvI143CjF1SI+3zXrgj4NWHp9t9q9a+eNh59WSp7YymRsEpHE5evVfqR
-	 SP/RddxNklJXxzZsjiGbesj9A9ZURFo349jcdlx3zqwLlsaTBjkF6Vmbv7wlCHQZrh
-	 eZbTcdBwt14gcsfjlKWkDGtYhwjT4Bfff0tyPLCfq1E4D1t4jB4g9AyxJPm7a0xzYK
-	 ogx5Cr+g9O1LQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16AECA0FFF;
-	Fri, 29 Aug 2025 09:20:08 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Fri, 29 Aug 2025 11:19:59 +0200
-Subject: [PATCH v2 2/2] phy: add basic support for NXPs TJA1145 CAN
- transceiver
+	s=arc-20240116; t=1756459250; c=relaxed/simple;
+	bh=mg1Teb4fAk/j8aBrThlJWz+yWC0/kkcLbmp5w5M5CL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JoINhHsojsbl1alK09tN3RhJOdvj6FraLNGxXoenaiJvqfDXxDmOlJpMvM6xVVP4C/wM97pvaY7u68fPL9IKzjeFnFNiQpKudVOL8MQYLQmvAYNsuKGk7wKUio8PhyraGnWqwPWY/BC3ocOZvaVSqquH8I2dhyICfoQyfoudSJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE1FD1756;
+	Fri, 29 Aug 2025 02:20:38 -0700 (PDT)
+Received: from [10.1.29.20] (unknown [10.1.29.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1F6B3F738;
+	Fri, 29 Aug 2025 02:20:44 -0700 (PDT)
+Message-ID: <2b076729-8a34-444c-8ee0-44a08f5a2731@arm.com>
+Date: Fri, 29 Aug 2025 10:20:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panthor: assign unique names to queues
+To: Chia-I Wu <olvaffe@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250828200532.3534201-1-olvaffe@gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250828200532.3534201-1-olvaffe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-tja1145-support-v2-2-60997f328979@liebherr.com>
-References: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
-In-Reply-To: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756459207; l=7265;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=QbZwerPtcW9uCm9P1dXPNhN6L03SdF6Z/qVX8cgl44k=;
- b=OPXUrHIg4Ns6KcYoRRUz/2NeKchkc5B40uYMKPr0c22Ke0Q2vS8ioicdasqNQGXOqOCFngvYf
- S5rdppcnXXWC/lw4/KfQK5UF/BH8wz2m1eJ/msanOG8lyKzBJACKD6M
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On 28/08/2025 21:05, Chia-I Wu wrote:
+> Userspace relies on the ring field of gpu_scheduler tracepoints to
+> identify a drm_gpu_scheduler.  The value of the ring field is taken from
+> sched->name.
+> 
+> Because we typically have multiple schedulers running in parallel in
+> each process, assign unique names to schedulers such that userspace can
+> distinguish them.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-Add basic driver support for NXPs TJA1145 CAN transceiver which brings the
-PHY up/down by switching to normal/standby mode using SPI commands.
+One nit below, but otherwise:
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/phy/Kconfig           |  10 +++
- drivers/phy/Makefile          |   1 +
- drivers/phy/phy-nxp-tja1145.c | 185 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 196 insertions(+)
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 58c911e1b2d20a0398f02550e938ce62633230d4..c47e2b62fa6279ee610493b028d3c14f6499ca85 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -101,6 +101,16 @@ config PHY_NXP_PTN3222
- 	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
- 	  Speed and High Speed.
- 
-+config PHY_NXP_TJA1145
-+	tristate "NXP TJA1145 CAN transceiver PHY"
-+	select GENERIC_PHY
-+	select REGMAP_SPI
-+	depends on SPI
-+	help
-+	  This option enables support for NXPs TJA1145 CAN transceiver as a PHY.
-+	  This driver provides function for putting the transceiver in various
-+	  functional modes using SPI commands.
-+
- source "drivers/phy/allwinner/Kconfig"
- source "drivers/phy/amlogic/Kconfig"
- source "drivers/phy/broadcom/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index c670a8dac46807863c9ef990beb149082238ad16..16da564c74b0f14befb486366dcd10cd5fc67741 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
- obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
- obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
- obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
-+obj-$(CONFIG_PHY_NXP_TJA1145)		+= phy-nxp-tja1145.o
- obj-y					+= allwinner/	\
- 					   amlogic/	\
- 					   broadcom/	\
-diff --git a/drivers/phy/phy-nxp-tja1145.c b/drivers/phy/phy-nxp-tja1145.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..4d3aa5bfcd88d5755fa37e0d42bfa8293dee2155
---- /dev/null
-+++ b/drivers/phy/phy-nxp-tja1145.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Liebherr-Electronics and Drives GmbH
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/phy/phy.h>
-+#include <linux/spi/spi.h>
-+
-+#define TJA1145_MODE_CTRL		0x01
-+#define TJA1145_MODE_CTRL_MC		GENMASK(2, 0)
-+#define TJA1145_MODE_CRTL_STBY		BIT(2)
-+#define TJA1145_MODE_CRTL_NORMAL	TJA1145_MODE_CTRL_MC
-+
-+#define TJA1145_CAN_CTRL		0x20
-+#define TJA1145_CAN_CTRL_CMC		GENMASK(1, 0)
-+#define TJA1145_CAN_CTRL_ACTIVE		BIT(1)
-+
-+#define TJA1145_IDENT			0x7e
-+#define TJA1145_IDENT_TJA1145T		0x70
-+
-+#define TJA1145_SPI_READ_BIT		BIT(0)
-+#define TJA1145T_MAX_BITRATE		1000000
-+
-+static int tja1145_phy_power_on(struct phy *phy)
-+{
-+	struct regmap *map = phy_get_drvdata(phy);
-+	int ret;
-+
-+	/*
-+	 * Switch operating mode to normal which is the active operating mode.
-+	 * In this mode, the device is fully operational.
-+	 */
-+	ret = regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-+				 TJA1145_MODE_CRTL_NORMAL);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Switch to CAN operating mode active where the PHY can transmit and
-+	 * receive data.
-+	 */
-+	return regmap_update_bits(map, TJA1145_CAN_CTRL, TJA1145_CAN_CTRL_CMC,
-+				  TJA1145_CAN_CTRL_ACTIVE);
-+}
-+
-+static int tja1145_phy_power_off(struct phy *phy)
-+{
-+	struct regmap *map = phy_get_drvdata(phy);
-+
-+	/*
-+	 * Switch to operating mode standby, the PHY is unable to transmit or
-+	 * receive data in standby mode.
-+	 */
-+	return regmap_update_bits(map, TJA1145_MODE_CTRL, TJA1145_MODE_CTRL_MC,
-+				  TJA1145_MODE_CRTL_STBY);
-+}
-+
-+static const struct phy_ops tja1145_phy_ops = {
-+	.power_on = tja1145_phy_power_on,
-+	.power_off = tja1145_phy_power_off,
-+};
-+
-+static const struct regmap_range tja1145_wr_holes_ranges[] = {
-+	regmap_reg_range(0x00, 0x00),
-+	regmap_reg_range(0x02, 0x03),
-+	regmap_reg_range(0x05, 0x05),
-+	regmap_reg_range(0x0b, 0x1f),
-+	regmap_reg_range(0x21, 0x22),
-+	regmap_reg_range(0x24, 0x25),
-+	regmap_reg_range(0x30, 0x4b),
-+	regmap_reg_range(0x4d, 0x60),
-+	regmap_reg_range(0x62, 0x62),
-+	regmap_reg_range(0x65, 0x67),
-+	regmap_reg_range(0x70, 0xff),
-+};
-+
-+static const struct regmap_access_table tja1145_wr_table = {
-+	.no_ranges = tja1145_wr_holes_ranges,
-+	.n_no_ranges = ARRAY_SIZE(tja1145_wr_holes_ranges),
-+};
-+
-+static const struct regmap_range tja1145_rd_holes_ranges[] = {
-+	regmap_reg_range(0x00, 0x00),
-+	regmap_reg_range(0x02, 0x02),
-+	regmap_reg_range(0x05, 0x05),
-+	regmap_reg_range(0x0b, 0x1f),
-+	regmap_reg_range(0x21, 0x21),
-+	regmap_reg_range(0x24, 0x25),
-+	regmap_reg_range(0x30, 0x4a),
-+	regmap_reg_range(0x4d, 0x5f),
-+	regmap_reg_range(0x62, 0x62),
-+	regmap_reg_range(0x65, 0x67),
-+	regmap_reg_range(0x70, 0x7d),
-+	regmap_reg_range(0x7f, 0xff),
-+};
-+
-+static const struct regmap_access_table tja1145_rd_table = {
-+	.no_ranges = tja1145_rd_holes_ranges,
-+	.n_no_ranges = ARRAY_SIZE(tja1145_rd_holes_ranges),
-+};
-+
-+
-+static const struct regmap_config tja1145_regmap_config = {
-+	.reg_bits = 8,
-+	.reg_shift = -1,
-+	.val_bits = 8,
-+	.wr_table = &tja1145_wr_table,
-+	.rd_table = &tja1145_rd_table,
-+	.read_flag_mask = TJA1145_SPI_READ_BIT,
-+	.max_register = TJA1145_IDENT,
-+};
-+
-+static int tja1145_check_ident(struct device *dev, struct regmap *map)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(map, TJA1145_IDENT, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val != TJA1145_IDENT_TJA1145T) {
-+		dev_err(dev, "Expected device id: 0x%02x, got: 0x%02x\n",
-+			TJA1145_IDENT_TJA1145T, val);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tja1145_probe(struct spi_device *spi)
-+{
-+	struct phy_provider *phy_provider;
-+	struct device *dev = &spi->dev;
-+	struct regmap *map;
-+	struct phy *phy;
-+	int ret;
-+
-+	map = devm_regmap_init_spi(spi, &tja1145_regmap_config);
-+	if (IS_ERR(map))
-+		return dev_err_probe(dev, PTR_ERR(map), "failed to init regmap\n");
-+
-+	ret = tja1145_check_ident(dev, map);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to identify device\n");
-+
-+	phy = devm_phy_create(dev, dev->of_node, &tja1145_phy_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy), "failed to create PHY\n");
-+
-+	phy->attrs.max_link_rate = TJA1145T_MAX_BITRATE;
-+	phy_set_drvdata(phy, map);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct spi_device_id tja1145_spi_id[] = {
-+	{ "tja1145" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, tja1145_spi_id);
-+
-+static const struct of_device_id tja1145_of_match[] = {
-+	{ .compatible = "nxp,tja1145-can" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tja1145_of_match);
-+
-+static struct spi_driver tja1145_driver = {
-+	.driver = {
-+		.name = "tja1145",
-+		.of_match_table = tja1145_of_match,
-+	},
-+	.probe = tja1145_probe,
-+	.id_table = tja1145_spi_id,
-+};
-+module_spi_driver(tja1145_driver);
-+
-+MODULE_DESCRIPTION("NXP TJA1145 CAN transceiver PHY driver");
-+MODULE_AUTHOR("Dimitri Fedrau <dimitri.fedrau@liebherr.com>");
-+MODULE_LICENSE("GPL");
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 32 ++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index ba5dc3e443d9c..26616b6cb110d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -360,6 +360,9 @@ struct panthor_queue {
+>  	/** @entity: DRM scheduling entity used for this queue. */
+>  	struct drm_sched_entity entity;
+>  
+> +	/** @name: DRM scheduler name for this queue. */
+> +	char name[32];
+> +
+>  	/**
+>  	 * @remaining_time: Time remaining before the job timeout expires.
+>  	 *
+> @@ -3308,9 +3311,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>  
+>  static struct panthor_queue *
+>  group_create_queue(struct panthor_group *group,
+> -		   const struct drm_panthor_queue_create *args)
+> +		   const struct drm_panthor_queue_create *args, u32 gid,
+> +		   u32 qid)
+>  {
+> -	const struct drm_sched_init_args sched_args = {
+> +	struct drm_sched_init_args sched_args = {
+>  		.ops = &panthor_queue_sched_ops,
+>  		.submit_wq = group->ptdev->scheduler->wq,
+>  		.num_rqs = 1,
+> @@ -3323,7 +3327,7 @@ group_create_queue(struct panthor_group *group,
+>  		.credit_limit = args->ringbuf_size / sizeof(u64),
+>  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+>  		.timeout_wq = group->ptdev->reset.wq,
+> -		.name = "panthor-queue",
+> +		.name = NULL, /* will point to queue->name */
 
--- 
-2.39.5
+NIT: There's no need to explicitly assign NULL here.
 
+Thanks,
+Steve
+
+>  		.dev = group->ptdev->base.dev,
+>  	};
+>  	struct drm_gpu_scheduler *drm_sched;
+> @@ -3398,6 +3402,11 @@ group_create_queue(struct panthor_group *group,
+>  	if (ret)
+>  		goto err_free_queue;
+>  
+> +	/* assign a unique name */
+> +	snprintf(queue->name, sizeof(queue->name), "panthor-queue-%d-%d", gid,
+> +		 qid);
+> +	sched_args.name = queue->name;
+> +
+>  	ret = drm_sched_init(&queue->scheduler, &sched_args);
+>  	if (ret)
+>  		goto err_free_queue;
+> @@ -3540,12 +3549,18 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	memset(group->syncobjs->kmap, 0,
+>  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
+>  
+> +	ret = xa_alloc(&gpool->xa, &gid, group,
+> +		       XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> +	if (ret)
+> +		goto err_put_group;
+> +
+>  	for (i = 0; i < group_args->queues.count; i++) {
+> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
+> +		group->queues[i] =
+> +			group_create_queue(group, &queue_args[i], gid, i);
+>  		if (IS_ERR(group->queues[i])) {
+>  			ret = PTR_ERR(group->queues[i]);
+>  			group->queues[i] = NULL;
+> -			goto err_put_group;
+> +			goto err_erase_gid;
+>  		}
+>  
+>  		group->queue_count++;
+> @@ -3553,10 +3568,6 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
+>  
+> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> -	if (ret)
+> -		goto err_put_group;
+> -
+>  	mutex_lock(&sched->reset.lock);
+>  	if (atomic_read(&sched->reset.in_progress)) {
+>  		panthor_group_stop(group);
+> @@ -3575,6 +3586,9 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	return gid;
+>  
+> +err_erase_gid:
+> +	xa_erase(&gpool->xa, gid);
+> +
+>  err_put_group:
+>  	group_put(group);
+>  	return ret;
 
 
