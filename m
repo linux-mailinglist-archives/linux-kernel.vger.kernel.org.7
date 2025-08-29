@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-791559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADFEB3B878
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:17:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D041BB3B87C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DFB1CC0E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC1217A6BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C240630AD07;
-	Fri, 29 Aug 2025 10:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4665230AAA9;
+	Fri, 29 Aug 2025 10:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a5DMs3Wp"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XB80ctCD"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF0930ACE0
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B666530AD1E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462533; cv=none; b=RG3+M7vIeTBL+p1Nyx8OLNH6H2QkGLK3Q2UvcOsd7ioPpPkSKIsMxXnlKtNRoWSZPk8P06EJIl1JgZ3nJ2WHn9pvie+dHPhntMHw/T+VpEoHC2pKNYRBsp/58Q6XK7hl68sD0MTE5wqXDtAFgUGEOXJ9i6vCURv1DSP+R6ZfqtE=
+	t=1756462537; cv=none; b=saf1ho23xY/zxs/xybFiicTWw8V5qPDUjB+ooxo7hK5K8UuH1I6r6aios4raCxUEmR6QCXn4cxQ6UuZro7B6jt06v7oULn5Npk0WXcvda/9S7bTI54AJD2YVr/R1ecPW3DwwSX7W4rf3jJ1yceUdp91Bey4bExW4il0XtQ+0lSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462533; c=relaxed/simple;
-	bh=O6Mny0d3NcWye/pa17Z21QvQoVkQuVKY8Az2O2Pwlvw=;
+	s=arc-20240116; t=1756462537; c=relaxed/simple;
+	bh=e3gKlIgcNEy2r9Mx1i7bMF3/Ao/g9nApBx5pbLsL/sA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FLix6c+nftjB6Ifnz+kUSE5teGfLqPkeVIxOyZK8KyuN4RGLsNMNOHNns+VApBjFsntX7LN7uOPM4XyZk+wJ3a7A0+WJ1AoQPOHhptKCth/jB4tiYLvImDJkuZktGhdtyE1ExCyDMh+qe0E0U2SBrlMP97l9Yi7jig0NRsSYfWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a5DMs3Wp; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=Zzid8EvfF6L7JGFaKvxIU6rLS+PWfZCTMBNMekgnfTHuysBAUWKl8oJmWxrZZ8JqJkzzX2YeEyuszejI+PGYicFa5FiveT16LuyvLULR3/NelKdko39h3rAv/YkldCg5//49OjtLzqDon1ESnAOMwZc5aHEkwxClpTI1aSyxwGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XB80ctCD; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85jYh009254
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:30 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85MR7008810
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0FPq/lTS4AeYWLkTBpagiaokL1Hd/X/PEFyY1CbPsh0=; b=a5DMs3WpubgufhGF
-	ZBQ16Oj28MjGnNdoI3GOwBDvQg5tytBf8Vh/N7m6a7rLFh9t+WfjLaFzPHXNdnGc
-	J3tZnqkwiVjPdzNFRT4U9NEGIwVp16B6L6y+OKxI1nnSE2cDFXwnWTdiLEWp0TOA
-	/W7UDwure3Fhg2nBCKGDoN1NcqK0x18puzOCSkTFucS6mF74BcBBXTdJTFJV1vvs
-	gpXbN6WfwmAnWhAqbFvZsNH+fJ9KCf3recVEPddVBo44Npx3f5Qlkb4VeOtyewwd
-	ba01Om9khDCgrckOs2euMsnlYhlCVRw1bMCu2pzyoTRL/zlB8fA6tiTujMw/aVLk
-	Qs5s+g==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5up3e04-1
+	spEKHx63+sJKj605M8Bf9cWcS/D+6tO2xX01XfJCvsc=; b=XB80ctCDZ/V39jPL
+	2fIQJVIBWU15W4dToNmy77O87oVfb9XXISvxOWSyXJ85KvKGJjn06SWJe4gh/YHq
+	k/a+dMYKUXPYogkE+H5cxjwCjVJwD4be/o7uW7qfQ5o8+J0wjcPM+aG6QrjwoVCj
+	xPl8aBpKp1Dwk5p9gws22KbwVCo0mRPbJs6u/rvyIRoz1qoacFTnTrPZ297rGeWC
+	y2/GuJrflthzEpuojCVG7Imlcqc1WJirW/rGhJPWRDyh6K55T+NF0iO6zTXmNnWE
+	3CS3A7aej3ChsxHjqoCfSxcMaKwQBc3ZFeibBF1ZLV4XMTH5diRYVE0LXDKslahm
+	eY7n+g==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5up3e08-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:29 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-248d9301475so24945455ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:15:29 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:15:34 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-248f7745075so19518065ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:15:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756462529; x=1757067329;
+        d=1e100.net; s=20230601; t=1756462533; x=1757067333;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0FPq/lTS4AeYWLkTBpagiaokL1Hd/X/PEFyY1CbPsh0=;
-        b=dv7LGKgtZ0y18k8YlzZQTDRFUHWeezBxQ6+ba0pCy2Qx1VzmgxVtLaCLnVdxaMT747
-         b8IXHmOuYv/rnJKdxTyDS4e70G5rZPsqQ1djdwwKYbiLzcZNgOjJUGwhJ5m6vs8c0pyc
-         b1sbNO+dZXXzS7rVTUx2IeADpGgTYAaOWZmlo8FEVpKiJ3g2wjhuxbMJ8iedI/OZGGG4
-         KZ7LHUcacuuB5MXSSZngPsnb0zeSoYBIMKvsKanMP1pBehotnu41iAG4x5Cq1aeaYoXq
-         GE3JUh+PEfetQdZu9pYgxcQtpPP9r1F9XCVAEPgyo5kx3kTd2uv5a1EzdmuSjQrFPYsL
-         p9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvHp16dH1ET5ncjCZXsVA0bWNbOQoictHU5t4VXy/dn/1kNta9F/6D2PEjGL2LRsDuG+j0mU/C0nnvLzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLhjeeOaHf6KQqJiTJgFSn62U1Ycmx/slOledq5q5e863GiUkQ
-	Vu6hUvW7/XJ2RHkbSMAwHPttXRnBJvg3ubX3dVBO2iueKekLiftiXWX9b0BP5JR4SjNEvnYucBW
-	BnswOwSEKTPMLhQqwiTsI2q34dGrzaU8k+jtQuAqFWEyFCk0o8n33b1j2s7a0V9ktvx8=
-X-Gm-Gg: ASbGncssmfoagX59FLqlUq0ADnMqcan6Vw26FKiEDiFyJyXMSkpoiLCwGrs9bcBdW5O
-	KtFqEFWDLc69HUjh7Rs8IOhSLURvVPIHn0Ps/hG48+zqm8RX24HVuMpFG/rUd6SL+Q1wIINz7FW
-	a8NYdsRTbUqNKQ3MtKNRY2u42AU4elrSOZEA1D51okQs8udK4RHn5apWUfzMCpt0VVrSx9zgVgq
-	MBdoO3EZt15KHi8FpjMHsG4qJ79hlB8RLkmx8vYiA9CvijEygx5Am/kzgu1j0ZCtJdqx9LdriXV
-	sM63WH6hqBegSPAQOWrGLCM4j1iqmgGDsN2fMsFPZrOS3cRXlIneWjatip85ltYc
-X-Received: by 2002:a17:903:124c:b0:234:d292:be7a with SMTP id d9443c01a7336-2462ee0b991mr357448815ad.1.1756462528666;
-        Fri, 29 Aug 2025 03:15:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEld9WAS7PefNHcO4cwh1kQXSdou68Xzfiyst5T+t0EqwcyyL4eKB2damNsES8FC82eDU/lYQ==
-X-Received: by 2002:a17:903:124c:b0:234:d292:be7a with SMTP id d9443c01a7336-2462ee0b991mr357448305ad.1.1756462528115;
-        Fri, 29 Aug 2025 03:15:28 -0700 (PDT)
+        bh=spEKHx63+sJKj605M8Bf9cWcS/D+6tO2xX01XfJCvsc=;
+        b=ae3fVB3mnXarFWmtM97Os6fcXUrMIINbg+OTffQDcJ5xHag83OHjaV95AnYRUErA8k
+         QN1iqmPW0sctV7ONWk5NmaN22E9BHHPERUkzWuf1yegDnCAPqgxiOPB0OF4ypyKzI8SD
+         AoPEBlaqAR5Wkt9XGBXaf0O+aYWvc/KoIe210CfPHEKQ5KkIP8d4IvuhRq5nWHTwP6A6
+         YKYPzqAxo+X/VxjKZ0cNjkxHSVEf4WHDiC2tcGns5i5vNS4XuKdgAk4PZCCP8cVp6cL6
+         Gqrh0eJVQQC+fsxZhovBTqiJUGvWCoHGFsOqV+8YS6/WwSCxbn4f1DcNLP6gDiHNErMS
+         qtgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUS9p36oqG0NUej2ta74kzXOMoxhAKyj671YYb5/R/jcwV9gpouWHOwfWEcAKl9v4ezZTrJOxPI0uAyjaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5hiDUleSxeiX0+7nqFo0+g5JF3xOB+MaHDyJl8lD+xFKsY4/L
+	JFA9h91gnrxSIRQ1dxrBesPZ9Bqi/kUzloCeR4yuJJclMHCAxJrErKkf0xvCSZ3pt0IMBNYQT2G
+	qYIO12cTzRtXUPsv4Jk5vZC14HFjNu4h9r8u2XVd+6+3HT1sP4834JdaBxzMmKRnz1o5CdA4GVk
+	0=
+X-Gm-Gg: ASbGncvm4/R+e2PIEKgLQmnHKRe3/E2HA4reU9rty2A2zz0IQViEN30UYZN+8DjoY4l
+	5vtvpO3jOMhkgeYPITyvFdzbFrSnoqjY/ODBKQmVqvZIDH4dOy2IFsrg0VwYv1+hUaiLijpryEn
+	x7WpZkwb9onyA9o4+/fxodYojhN3n7tjgAySPxpAGAnPISl5y1xJtzsWg5NxJorBeJqyDxIyF8O
+	obIqP6Pqa2VuNssDwgpSLCN15rWRWllQX1Kzy/7elO4fi2HZJyEfR2y/WTeOmjQHTTU0jsb6o9t
+	Va6HHJ1rzWhqESOq15vlYSJCAGxwKrAq6oRNmvuNGwAvpH0SNoPpiAbA/q3QcYCV
+X-Received: by 2002:a17:902:c952:b0:245:f7f3:6759 with SMTP id d9443c01a7336-2462ef1571cmr350083295ad.50.1756462532955;
+        Fri, 29 Aug 2025 03:15:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEA8Xh2vbyvcy6mdjaLep3b6m9rvTPrB3vfrqANTg067b9b8/FGFP60iDb4AjB5RBjfuPIKWA==
+X-Received: by 2002:a17:902:c952:b0:245:f7f3:6759 with SMTP id d9443c01a7336-2462ef1571cmr350082855ad.50.1756462532408;
+        Fri, 29 Aug 2025 03:15:32 -0700 (PDT)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065d1b19sm20102775ad.131.2025.08.29.03.15.24
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065d1b19sm20102775ad.131.2025.08.29.03.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 03:15:27 -0700 (PDT)
+        Fri, 29 Aug 2025 03:15:32 -0700 (PDT)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Fri, 29 Aug 2025 15:45:17 +0530
-Subject: [PATCH v2 1/3] clk: qcom: branch: Extend invert logic for branch2
- mem clocks
+Date: Fri, 29 Aug 2025 15:45:18 +0530
+Subject: [PATCH v2 2/3] dt-bindings: clock: qcom: Add SM8750 video clock
+ controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-sm8750-videocc-v2-v2-1-4517a5300e41@oss.qualcomm.com>
+Message-Id: <20250829-sm8750-videocc-v2-v2-2-4517a5300e41@oss.qualcomm.com>
 References: <20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com>
 In-Reply-To: <20250829-sm8750-videocc-v2-v2-0-4517a5300e41@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -105,19 +106,20 @@ Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-GUID: OxRnTIROYpcU3InEmqibdAAzfrLEkY0s
-X-Proofpoint-ORIG-GUID: OxRnTIROYpcU3InEmqibdAAzfrLEkY0s
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68b17dc2 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=TPL9fEiPDwMg0gBHboQA:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfXyJkbb52uMiMD
- d/xtWBbK8ug8pBEIqcGX4jnbHHbCI8RHclAb4r3TEzwGnz6Lg9e12Vh4ovEuQyLG7KMZveMmNFf
- a/PWEbJ4M3jMZJOsycOp1xFoRPvdoemGxhNo6AM5JxrIpmt5yI/MFFXWTzz9e+wrTTwlsesAGJ8
- kvRcePFgdt+A1Z320XktvPhnJ9TsXDgeBgW2+8DJzR5rxSrbf0vf5hXXmddbb019Oz51LcaXYrR
- GltLix7cKlBSkhJwG/rPf1egeatRwicpCRTTkBuUfej8ugRTgf3ePusNrDlje6tidH9Z63G0Pbf
- poBc//YH3XTjapw9nqSGUmBZV3j5CF5w43IiHtK+W82Xa6UuW3pdMlBnYhXzAih6x0rwM+sG/2v
- uzjz9/Hl
+X-Proofpoint-GUID: URL_9Xfck9APajMk5ElejNKkTFkA9Oci
+X-Proofpoint-ORIG-GUID: URL_9Xfck9APajMk5ElejNKkTFkA9Oci
+X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68b17dc6 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=1oqufa9daVNmb7UKLHcA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfXzPf+vEAofnvl
+ jlJzu7bNqZJ4NVo1SqeOEMfFA6j2azuwx8ZEtdLDvuRFvJjz0HlPh3+r7hjlattOODN6Wg77hRG
+ kcLyPS8NJA76VmasZ/fUH463q3dsu00cfyC9Vv1oVM6zG3PcyjJ2rPBzBF+EKcEfmkz9bmmsrxm
+ 4kunVIj4elCbTZBBGs63m2jbVdUY5mTp1oUJBhgqe4dXauVhRP37S5hNEdgF7F/XK1bUfKgzV2C
+ ZHj2eFbAbv6NJMcqHfNfsUd7S2ALoiBYWS9R/zQnCdJ6vr0sCXbnfuAPHAlWfIiyJSFpdcJ3nIK
+ Pq5E6rHK4ZzgDZDtQIrfdeSqigJpKfHQmgMVFkAkhMlHIepUV/2LGk/HGJ9MqVf+ZEOUyIcb9II
+ LzqdP9fj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-29_03,2025-08-28_01,2025-03-28_01
@@ -127,75 +129,99 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
 
-Some clock branches require inverted logic for memory gating, where
-disabling the memory involves setting a bit and enabling it involves
-clearing the same bit. This behavior differs from the standard approach
-memory branch clocks ops where enabling typically sets the bit.
-
-Introducing the mem_enable_invert to allow conditional handling of
-these sequences of the inverted control logic for memory operations
-required on those memory clock branches.
+Add compatible string for SM8750 video clock controller and the bindings
+for SM8750 Qualcomm SoC.
 
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/clk/qcom/clk-branch.c | 14 +++++++++++---
- drivers/clk/qcom/clk-branch.h |  4 ++++
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |  5 ++-
+ include/dt-bindings/clock/qcom,sm8750-videocc.h    | 40 ++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index 0f10090d4ae681babbdbbb1b6c68ffe77af7a784..90da1c94b4736f65c87aec92303d511c4aa9a173 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -142,8 +142,12 @@ static int clk_branch2_mem_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+index fcd2727dae46711650fc8fe71221a06630040026..b31bd833552937fa896f69966cfe5c79d9cfdd21 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Video Clock & Reset Controller on SM8450
  
--	regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
--			   mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
-+	if (mem_br->mem_enable_invert)
-+		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-+				  mem_br->mem_enable_mask, 0);
-+	else
-+		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-+				  mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
+ maintainers:
+-  - Taniya Das <quic_tdas@quicinc.com>
++  - Taniya Das <taniya.das@oss.qualcomm.com>
+   - Jagadeesh Kona <quic_jkona@quicinc.com>
  
- 	ret = regmap_read_poll_timeout(branch.clkr.regmap, mem_br->mem_ack_reg,
- 				       val, val & mem_br->mem_enable_ack_mask, 0, 200);
-@@ -159,7 +163,11 @@ static void clk_branch2_mem_disable(struct clk_hw *hw)
- {
- 	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
+ description: |
+@@ -17,6 +17,7 @@ description: |
+   See also:
+     include/dt-bindings/clock/qcom,sm8450-videocc.h
+     include/dt-bindings/clock/qcom,sm8650-videocc.h
++    include/dt-bindings/clock/qcom,sm8750-videocc.h
  
--	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
-+	if (mem_br->mem_enable_invert)
-+		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
-+			   mem_br->mem_enable_mask, mem_br->mem_enable_mask);
-+	else
-+		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
- 			   mem_br->mem_enable_ack_mask, 0);
+ properties:
+   compatible:
+@@ -25,6 +26,7 @@ properties:
+       - qcom,sm8475-videocc
+       - qcom,sm8550-videocc
+       - qcom,sm8650-videocc
++      - qcom,sm8750-videocc
+       - qcom,x1e80100-videocc
  
- 	return clk_branch2_disable(hw);
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 292756435f53648640717734af198442a315272e..6bc2ba2b5350554005b7f0c84f933580b7582fc7 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -44,6 +44,8 @@ struct clk_branch {
-  * @mem_enable_reg: branch clock memory gating register
-  * @mem_ack_reg: branch clock memory ack register
-  * @mem_enable_ack_mask: branch clock memory enable and ack field in @mem_ack_reg
-+ * @mem_enable_mask: branch clock memory enable mask
-+ * @mem_enable_invert: branch clock memory enable and disable has invert logic
-  * @branch: branch clock gating handle
-  *
-  * Clock which can gate its memories.
-@@ -52,6 +54,8 @@ struct clk_mem_branch {
- 	u32	mem_enable_reg;
- 	u32	mem_ack_reg;
- 	u32	mem_enable_ack_mask;
-+	u32	mem_enable_mask;
-+	bool	mem_enable_invert;
- 	struct clk_branch branch;
- };
- 
+   clocks:
+@@ -61,6 +63,7 @@ allOf:
+             enum:
+               - qcom,sm8450-videocc
+               - qcom,sm8550-videocc
++              - qcom,sm8750-videocc
+     then:
+       required:
+         - required-opps
+diff --git a/include/dt-bindings/clock/qcom,sm8750-videocc.h b/include/dt-bindings/clock/qcom,sm8750-videocc.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..f3bfa2ba51607d0133efcdad9c7729eb7a49b177
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm8750-videocc.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8750_H
++#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8750_H
++
++/* VIDEO_CC clocks */
++#define VIDEO_CC_AHB_CLK					0
++#define VIDEO_CC_AHB_CLK_SRC					1
++#define VIDEO_CC_MVS0_CLK					2
++#define VIDEO_CC_MVS0_CLK_SRC					3
++#define VIDEO_CC_MVS0_DIV_CLK_SRC				4
++#define VIDEO_CC_MVS0_FREERUN_CLK				5
++#define VIDEO_CC_MVS0_SHIFT_CLK					6
++#define VIDEO_CC_MVS0C_CLK					7
++#define VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC				8
++#define VIDEO_CC_MVS0C_FREERUN_CLK				9
++#define VIDEO_CC_MVS0C_SHIFT_CLK				10
++#define VIDEO_CC_PLL0						11
++#define VIDEO_CC_SLEEP_CLK					12
++#define VIDEO_CC_SLEEP_CLK_SRC					13
++#define VIDEO_CC_XO_CLK						14
++#define VIDEO_CC_XO_CLK_SRC					15
++
++/* VIDEO_CC power domains */
++#define VIDEO_CC_MVS0_GDSC					0
++#define VIDEO_CC_MVS0C_GDSC					1
++
++/* VIDEO_CC resets */
++#define VIDEO_CC_INTERFACE_BCR					0
++#define VIDEO_CC_MVS0_BCR					1
++#define VIDEO_CC_MVS0C_CLK_ARES					2
++#define VIDEO_CC_MVS0C_BCR					3
++#define VIDEO_CC_MVS0_FREERUN_CLK_ARES				4
++#define VIDEO_CC_MVS0C_FREERUN_CLK_ARES				5
++#define VIDEO_CC_XO_CLK_ARES					6
++
++#endif
 
 -- 
 2.34.1
