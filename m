@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-791277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F174B3B480
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D395DB3B486
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4F7463062
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2696D1B277B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB5276045;
-	Fri, 29 Aug 2025 07:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39D627A916;
+	Fri, 29 Aug 2025 07:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRcbM9vk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8109422A4D5;
-	Fri, 29 Aug 2025 07:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1E27587E
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756453085; cv=none; b=hdfaBnPnFoVLIzB9kVHDNiHSUB0Lk6mehScMBTBejHwIGalPT+nkpziEnkf6IiTNUm/tGkv7KAcPUfYLYrMRgBc74+1QgoMihOO/DRADGktpmPV94xm2OPu2kZ2nN7o8k8RGvpgrBkwJm2ub5coXy2Ez3w/sfaK3e7nB2gnoYYk=
+	t=1756453218; cv=none; b=sI2tcBO8epl3C4W6OREq9KT8JBGsUQAMvfXAIZhr3KQYznKmMiTC7VMklEpr+bCEOxclc7i+rAwLNExrE5Dl7X6E4YR16+w1NsX46exr2bDTYUMX1vBw/lr4hQg0C4dlpunxq05wjjvm4a7069eJ+obqUHQlBoylv8WJxcASbUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756453085; c=relaxed/simple;
-	bh=Tl11kOoBn9+Z8c4phzkCXnlIR9PQSdgakpVZpWjZPB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txRTni1onmod4xKWrNnOo2/cJvILLJt1E0pPLUpun37vtljwNwpQ+VMPX/Zpbb7BSO/4jNNKeM3oK5gr9ATJmHJLYwRc46+UTH5V3BLbkZP+JkuYwMaOgRX0w+6ithl7e0CVJ/ZqRHWGKrPM91kFeCjO3A8tFpp5RIvxvV6YPak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B299C4CEF0;
-	Fri, 29 Aug 2025 07:38:04 +0000 (UTC)
-Date: Fri, 29 Aug 2025 09:38:02 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Varadarajan Narayanan <quic_varada@quicinc.com>, Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Anusha Rao <quic_anusha@quicinc.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
-	Devi Priya <quic_devipriy@quicinc.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
-	quic_pavir@quicinc.com, quic_suruchia@quicinc.com
-Subject: Re: [PATCH v4 07/10] dt-bindings: clock: qcom: Add NSS clock
- controller for IPQ5424 SoC
-Message-ID: <20250829-quick-green-pigeon-a15507@kuoka>
-References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
- <20250828-qcom_ipq5424_nsscc-v4-7-cb913b205bcb@quicinc.com>
+	s=arc-20240116; t=1756453218; c=relaxed/simple;
+	bh=Z94i9gHZhK9qlGBUPoapzmHdUDOpAXEMUEdUsunkD08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bQUah7vD6aByHyvIRtQTgywfcM4BlfmT+BgOgmOPqTGq6SC2WSqlyPAH3JkOhdTJ2wtLi+YcIpucJSjZHWiVHXo/ZbZEIIqoHNvge/w3AhWecbDfvERvPvz1qeTF0eBqVDnCMJTl7BPxL1JwPw/iV9LXlzy6ueN8kQbL6r4OL9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRcbM9vk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87859C4CEF0;
+	Fri, 29 Aug 2025 07:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756453217;
+	bh=Z94i9gHZhK9qlGBUPoapzmHdUDOpAXEMUEdUsunkD08=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SRcbM9vkSelOwSq6IZP2PMazztxRZDnSUI06RLcqTPbFfwmwKHXmmeFWSHRrIGTGD
+	 1ME9fJNxk4TcpvmyX8AJL6vGE8TzvwgRJoKt3QKn4YJh5/qPk+jWiwxjSf6FhL7X/w
+	 WSKs+i7C2OhJzVNWclwpoU3abXHOM/8lCPKrBADgcElIUTyCGCE4IYzpAM+Uxob7TQ
+	 uOMDkV1NBZq72uDieKHsWCMKEl73SH8uTEAwcJSol9U9sb4cuUV5PcOSpoWKcItyoJ
+	 uWAVHWnEXqIPEvWH+bLjDPXYhJXUh8z5FcuJmss7EhD/PD2xXy3Wf1rT44vlr8NmC/
+	 0lmo796T1dE5g==
+Message-ID: <6f32c400-1f8c-4367-8be9-f7082ea87626@kernel.org>
+Date: Fri, 29 Aug 2025 09:40:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-7-cb913b205bcb@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] gpu: nova-core: Boot GSP to RISC-V active
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, apopple@nvidia.com,
+ a.hindborg@kernel.org, airlied@gmail.com, alex.gaynor@gmail.com,
+ aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ dri-devel@lists.freedesktop.org, gary@garyguo.net, jhubbard@nvidia.com,
+ joelagnelf@nvidia.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ nouveau@lists.freedesktop.org, simona@ffwll.ch, tmgross@umich.edu,
+ ttabi@nvidia.com, tzimmermann@suse.de,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250828083737.22214-1-ojeda@kernel.org>
+ <DCEKTF8CP2GF.ED9G9ECQMBHM@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <DCEKTF8CP2GF.ED9G9ECQMBHM@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 06:32:20PM +0800, Luo Jie wrote:
-> NSS clock controller provides the clocks and resets to the networking
-> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
-> devices.
+On 8/29/25 5:03 AM, Alexandre Courbot wrote:
+> On Thu Aug 28, 2025 at 5:37 PM JST, Miguel Ojeda wrote:
+>> On Wed, 27 Aug 2025 18:19:57 +1000 Alistair Popple <apopple@nvidia.com> wrote:
+>>>
+>>> This series builds on top of Alex's series[1] to continue initialising the GSP
+>>> into a state where it becomes active and it starts communicating with the host.
+>>
+>> No big deal, but in case it helps since probably it was not intentional given
+>> the rest of the people is there: the rust-for-linux Cc is missing.
 > 
-> Add support for the compatible string "qcom,ipq5424-nsscc" based on the
-> existing IPQ9574 NSS clock controller Device Tree binding. Additionally,
-> update the clock names for PPE and NSS for newer SoC additions like
-> IPQ5424 to use generic and reusable identifiers "nss" and "ppe" without
-> the clock rate suffix.
-> 
-> Also add master/slave ids for IPQ5424 networking interfaces, which is
-> used by nss-ipq5424 driver for providing interconnect services using
-> icc-clk framework.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 62 ++++++++++++++++++---
->  include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++++
->  include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 +++++
->  include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 +++++++++++++++
->  4 files changed, 178 insertions(+), 8 deletions(-)
+> This did happen to me once as well - should we add the rust-for-linux
+> list to the Nova MAINTAINERS entry to protect against this?
 
-
-Are you going to change the binding in next version?
-
-Best regards,
-Krzysztof
-
+I'm happy about every potential additional reviewer for Nova, but I'm not sure
+it scales very well for the rust-for-linux if we get more drivers. :)
 
