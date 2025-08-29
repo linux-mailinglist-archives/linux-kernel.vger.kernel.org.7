@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-792539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5BBB3C55A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:47:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF63B3C55C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEBDA6722C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:46:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96C21728CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40792D8776;
-	Fri, 29 Aug 2025 22:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420212DCBEE;
+	Fri, 29 Aug 2025 22:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anS9D1Ex"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxHn+asV"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A122C11F5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91F2DE701
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756507522; cv=none; b=H59LxcUBgeolY/h7V+c2M55JIiA1PS/oQqY+uY+EUhmWf2ncBGi9vvGfdkC9MgyQkjpUdiuw+G9vFMuvUvfGeU8SKcIz5GwiMQUtF0QSIJXXxNjDE0760R25h9jd/9DXNgLwO8O2AjvAYs8iGnuqYMPVCZmZ0JlF/ed1NJNX4WI=
+	t=1756507618; cv=none; b=eSaDOBVFIVfHe7rP+qcrmWuCJsjBgpeA24DGuxkFj3MXhyW2vIGyObrXtQKV0M0NZWfUxkV/eSVE5IEq1SW32tANePxpm8hA3BumMAfVlhTZtvVqJKfhWrMPdeU7TBZwkbhGjWO+84jPTfb17/XPZ7Gt6NbKlZUIYL7NlUrfyCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756507522; c=relaxed/simple;
-	bh=muc8ttMxCb3VH+bbm06wDGwRDA+GrhPM9zHAl1Wx1qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sujbLMJE0HRTAiYPhA1xogJ4p35gtga0UcMadFEgRBQS05IesEbH3Y1dlmFmZBgFIiqP5Ei86yR+fOYqVGLtrgPdMFCGd+j+4JY+S+7i55x+rVSxQ7CLeTrdOKL2ubKAQYMusFQwPPOcxW30mekQcVg7CrFT7LB4OuMxQxCFsos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anS9D1Ex; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-323266cdf64so2244147a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:45:20 -0700 (PDT)
+	s=arc-20240116; t=1756507618; c=relaxed/simple;
+	bh=7iKeOMQFOEEVd5ETUGweiy0cPrlfaMl1uc16FWLXC+U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Uj1CHCBMlU0oAtR6GSNi797rFg0G/rQkucS6jCf91V5ObaMLLkDUNM/td8XoEznZpjD2h1gpxV+5qQMsfOYeWvcI9u9MwR0LleM0qWnHp7+btNZxCfmDuUWQJZgbKsA7znJG67dwTcNLLyBA4U8lRNtsJRoXKNJBRKcmiYZo9bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxHn+asV; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24868b07b5bso44876315ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756507520; x=1757112320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hnmRiKmnO8mRXq2kpOADUt72izimXKC3eq1pY7iLk2I=;
-        b=anS9D1Ex5ljrDP3AkaORJ9dUvff85fLPgf2Es+OwxZJTd7WAwEOuBg+LRSvqVkLxmy
-         vYdmaTOwzv2nCvbLJrIqPBcJ5oBE9GekXTgSVRA1Y5eXwF65QEcXKWHpCCk92tDlJlSx
-         bnmgnjNJutoTpov+hwP/VZgpZNMvfc7vYzRN0TKsLYDeFyxBmgUvEk8U/dKCJQPB6k3/
-         5itNkhKS0Sh2ncEIbsgGyg6KNvO5/x38Zsbrgbq24a+VcUSiINoBLMv09Zc4t6uFmMq2
-         Rqr+lTgQnUlqIWtZ5ahL5GffUVve4Ro7J4ggtuVEq9/2m5NLlSvPbebCgrgTVMxwfJ1f
-         v42A==
+        d=google.com; s=20230601; t=1756507615; x=1757112415; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=osO9EdDK8ULTUCgyPclw9xxVN7HnxTjhwUYL0zf8SiE=;
+        b=sxHn+asVQ4idbSkIMokYYwHvX5BKlIjEvztTGbGtxWdMJq8Dpm+UN+LyhbvYzDiN3V
+         ztqGH568RSndTnBePn/2H89LBuxwGBBLYVm20Bx0OUJ9Gx5ClnA3J0KHD4p9HOjXWPoR
+         05bO05UHpZ9lPQnHYlUvc2/nC1BcyqSFeYXmC8rCVRLM3fnrA2QUsTOGR8NOg36MZijs
+         U4iGMhwUpBt0h62fy5Dey8vrUM3nicKF2PZ14bzUNliT2i0wY55ri5zYBjUt/ojmDHyH
+         PZbN0MCJqVLVD6lKWSD4xvO/EGZ3nB5VaMbMFEO0cKYZZlpZWO44Vtpqn2stNE+34Xbq
+         tnSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756507520; x=1757112320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnmRiKmnO8mRXq2kpOADUt72izimXKC3eq1pY7iLk2I=;
-        b=s6xquJribC2xHkxJEVeSaJWEtg6JxVsot+LZO2qef/1edXeJY0j/M5HTZ+KIalXCx9
-         IKp8QxFwSF4P7/1L2vBrMZ15/97HWdUIqapOJBx+o4Xi78lXozNpTQSXjcK5jbnHJXAI
-         /ZDkfE4GmoTG5GN5g6wBpDnt1fDHDjCmthuZyK2PQ93hiurcjDdhoDHRQE0Fd3eaXcCS
-         9FyY2ZqZ3L4Z60vDq1I5qKV7A90i9r7pjAPexpe3VfyDsUNB2lrek10CssY+un/5suct
-         fA3jK9LL2dxaSYE1T+hLkqeQLSKa2KR5iwFWcsuJS3yUos0OJXyZYxf3Lkhx9NEbRiAg
-         +YGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTJZuPs9mfPCQaOZ8hnsAccEVrGPyqQLlhVY1hmCrvqsIyHTDVnAhRSQMWWgPK+1XRrdthTjomNYkY8X4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNpLnJGA+0h0qvMrIY+eSYHbT28cNwZUGqssjqYDe1mRGCyvN1
-	bJcZ6w1rZiC54vMZr9f0I9dBThRloyBQWiieSpLBTzUDQARObVXmPE6o
-X-Gm-Gg: ASbGncv3S2I2Ad233SNGY8IZ5YafMgIXf0dlShqtfqfUsSdkBq/727ncN7dRKAe0kLF
-	nqQ1FeHF9audx74vVV5lyIbO1mkBVu0eptgmBIIBHzxNR6qGiDBwuvQUgyXh/rikT1IvoaoFhj3
-	ih3yfPyZKQdjdbGmKDLjw+XH+bRze6WY7XYAFLY5U4NfaWjc+KmdsFZsRXw+cO1imUtyj/9KV65
-	dUBfl5g6ZCeKcXb48KIIbaPa2vuBoV//Bnwk143huRLX3+/l2qn4Qg+cKc56C9pB2DQAweUqenl
-	GzJXsKXOR9nnw0e9PYsBOdqoZCkCyz5OBLgp6fPFZDc8P4DxVEqGTpcWtMG+q/0jUYvZ8IdXk6L
-	bukHAsdoyIFrXfq4oH1lXdMeL+8x7fL73F7YF1PcyNcxl1XNKbhIdFSL8KgQJWMIy
-X-Google-Smtp-Source: AGHT+IH/XyNiqyFvV9G2vg1MeM+kl/ZTomOhVw22QI/u4Pt0TfDvevpMigq7Bp7n6YjaCOuhx3U/hg==
-X-Received: by 2002:a17:90b:1848:b0:327:96dd:6293 with SMTP id 98e67ed59e1d1-328156cb806mr430413a91.26.1756507520240;
-        Fri, 29 Aug 2025 15:45:20 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327daeee5dcsm3750565a91.29.2025.08.29.15.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 15:45:19 -0700 (PDT)
-Date: Fri, 29 Aug 2025 15:45:16 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
-	yuanchu@google.com, willy@infradead.org, hughd@google.com,
-	mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com
-Subject: Re: [PATCH 01/12] mm/shmem: add `const` to lots of pointer parameters
-Message-ID: <aLItfFlYHFouVt31@fedora>
-References: <20250829183159.2223948-1-max.kellermann@ionos.com>
- <20250829183159.2223948-2-max.kellermann@ionos.com>
+        d=1e100.net; s=20230601; t=1756507615; x=1757112415;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=osO9EdDK8ULTUCgyPclw9xxVN7HnxTjhwUYL0zf8SiE=;
+        b=it1gfABQXEMREczIvlDG+EvsAQnA8k1tx5aCE5VN60bilxJ0j+D/HLEe6fDxcilFUk
+         p/b6jU8+N5lfcWnVahxLPJFe+HlrqLcILmUx7lVPpiFA+aMKp/rQyCQMgRsG5HR1leLq
+         Xl4Jw1L1JIeru6UsBLopdDxnMPdnW/lX6uhHxipMB0wQZGDqZVLkSZfcSdL9vYhFzWdF
+         HWmaS3E2tM7kaED0HpKMBN7/G1h/E6H/thNAIZQG6q0zcIUuMxti7dS0kpBh5behlspU
+         yklNY9YDzZxYkUIRb3rTHrH1ysfYn4aTAVUiLxLIcmBdHERcV4iyCVa6G/blwaTcs5Y1
+         SxtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkm4jqBTILOrb6B6N+0wt93mxai9zXe9wLuWBDd8w4+llbBhzulM/6L1N0y4L8Sn4jFMI3mK22Ji85RPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5KDUvj88AcQzfFEEJH95p5QCSDLev/Yi+7QlnAUhOmC8u4aq9
+	rATUqNIy6y78VDUL014yS1Qde7DDUrvFhEuilsMxx6Lo1zG868vCr05uuzAupNdUNPi33kmIodb
+	ncse5pg==
+X-Google-Smtp-Source: AGHT+IGkt/EAn947SVVMGSrEgo9yvNr3e4MeFQSbN7ad+YrLR9BbTewsN8HKmFTWK3fVBIpRGYfyACOyUfY=
+X-Received: from plbkq13.prod.google.com ([2002:a17:903:284d:b0:246:a8c3:9a07])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1448:b0:248:c5d7:1b94
+ with SMTP id d9443c01a7336-24944b695e6mr2556105ad.53.1756507615340; Fri, 29
+ Aug 2025 15:46:55 -0700 (PDT)
+Date: Fri, 29 Aug 2025 15:46:53 -0700
+In-Reply-To: <20250829142556.72577-3-aqibaf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829183159.2223948-2-max.kellermann@ionos.com>
+Mime-Version: 1.0
+References: <20250829142556.72577-1-aqibaf@amazon.com> <20250829142556.72577-3-aqibaf@amazon.com>
+Message-ID: <aLIt3bm0uxSh8I1j@google.com>
+Subject: Re: [PATCH 2/9] KVM: selftests: Add __packed attribute fallback
+From: Sean Christopherson <seanjc@google.com>
+To: Aqib Faruqui <aqibaf@amazon.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nh-open-source@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Aug 29, 2025 at 08:31:48PM +0200, Max Kellermann wrote:
-> For improved const-correctness.
+On Fri, Aug 29, 2025, Aqib Faruqui wrote:
+> Kernel UAPI headers use __packed but don't provide the definition in
+> userspace builds.
 > 
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> Add a fallback definition matching the kernel's implementation. This
+> follows the same pattern used by BPF and SGX selftests.
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Ugh.  No, this needs to be fixed in a central location, not splattered all over
+random subsystem selftests.  My first choice would be to copy (and keep synchronize)
+all of the include/linux/compiler*.h headers to tools/include/linux/.
+
+If for some reason that's not a viable option, we should yank the __packed and
+similar #defines out of tools/include/linux/compiler-gcc.h and place them in
+tools/include/linux/compiler.h.  AFAICT, none of them are actually GCC-only.
+
+> Signed-off-by: Aqib Faruqui <aqibaf@amazon.com>
+> ---
+>  tools/testing/selftests/kvm/include/kvm_util.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> index 23a506d7e..7fae7f5e7 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> @@ -5,6 +5,10 @@
+>  #ifndef SELFTEST_KVM_UTIL_H
+>  #define SELFTEST_KVM_UTIL_H
+>  
+> +#ifndef __packed
+> +#define __packed __attribute__((__packed__))
+> +#endif
+> +
+>  #include "test_util.h"
+>  
+>  #include <linux/compiler.h>
+> -- 
+> 2.47.3
+> 
 
