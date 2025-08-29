@@ -1,83 +1,78 @@
-Return-Path: <linux-kernel+bounces-792522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A9EB3C532
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0DEB3C523
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F2ECA65F7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD603188802C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9D22D8372;
-	Fri, 29 Aug 2025 22:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC02D481B;
+	Fri, 29 Aug 2025 22:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ldt5wdMm"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcxshr0E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A832D6630;
-	Fri, 29 Aug 2025 22:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCAB2C3272;
+	Fri, 29 Aug 2025 22:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756507312; cv=none; b=t8/arEGoIbpKedW01CtB0dsF++3Y0unqqLmSR9XnNMPBRXYFb3ErKSz1i3KrR4Xky1kGS2fmu3ii39aP6Z7B+AdYPAuSDBdG6ogwW4ScbIkXNzuVyHHaBKAP9eFfGWH5jKNjDID1gM900sQBhwrc2ifKwLpa53Lrx7isWTj+p0E=
+	t=1756507309; cv=none; b=Bcz9i41KaCPjiDAhnFJ0aWciQ8W9jttNgp7iaaWFBb3b3HjxAddOs+wsd6bAVM0H0466aCm+iFLMjeoXEbIfZa5v+oRLvvimOpBBteWpGOxL9pebs+nmJ+5wFD5+dPKDIjtU266w9B15QWYQfWqqjHhRGIczCD+hWDEQVMfJ2b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756507312; c=relaxed/simple;
-	bh=LrGW602noRH4ycUbq4ifn1lFbE7sC7VkXZRcjJjJqWM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VDRKxsyqAXd4j6X1O+DVVe769q9KUB7HxVd9Syi1hw5jS0IsSJaBffr2VRMlq821RDoGadD5m8KFaraYtIo+aQJmtFRyc9FjI9Qn96qUUX3Ui0XfKh5J7q9U3nypPsgBTQLojfGlEAFSYRpemX97ORPnAKs927rMKzgpC9udKZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ldt5wdMm; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7B25C40AF5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1756507310; bh=LrGW602noRH4ycUbq4ifn1lFbE7sC7VkXZRcjJjJqWM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Ldt5wdMm3bFjCpjp91IqNimd990wa1F3Kvv1o5CdgwQDwHtsKcMU4UpQ2IgoHzAF7
-	 iGErhb4LVIzpP7QUb3qzWNPr4Op7QfTs6LwCXGnLavAvEE9Whwpw6t03EEFMwxYvHU
-	 xb7xfGWvBJ51jlsM6ezD2TsLTXa/SOAEWyue+3QOBBq7HMYsUjv9ttOk1frZ8zPLDz
-	 vvUUIxpDxF2TiFFdGWG9Q0XUFUMXl2nYw3/6b48Gw7lghOOAf9awqpSYMsJ4Jab96t
-	 GXco8XKiht8asLstbc7V8yTC6KqPhlzbyPg+bJU7jVk19UrDUpvGlbO2GbzFREFiuX
-	 Vc+SNs/m3vsvA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 7B25C40AF5;
-	Fri, 29 Aug 2025 22:41:50 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Filesystems Development
- <linux-fsdevel@vger.kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Christian Brauner
- <brauner@kernel.org>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 0/5] Documentation: sharedsubtree: reST massaging
-In-Reply-To: <20250819061254.31220-1-bagasdotme@gmail.com>
-References: <20250819061254.31220-1-bagasdotme@gmail.com>
-Date: Fri, 29 Aug 2025 16:41:49 -0600
-Message-ID: <87ecst3g42.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1756507309; c=relaxed/simple;
+	bh=txD+vWZDNrR/TDaoW5sGV/zEaE3gyzzeNma5uR4oeTw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JAoIRxZGa1r0qUg/nTTuWIblbE4/rkeUMWC9yiYPByvsVbWEisUK9Qlp4+d8xER6HbvxhMvCYffcmOXi25V6H2bOKVKCltKqbadtwkNABzExNTA/k1/VH8U02K82j2BMuATipKTFtlBLs8xjPvjuU9PyZ84Vl0zYqTHCC1e07xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcxshr0E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922A5C4CEF1;
+	Fri, 29 Aug 2025 22:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756507309;
+	bh=txD+vWZDNrR/TDaoW5sGV/zEaE3gyzzeNma5uR4oeTw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=lcxshr0ECtQZ6PFHp/rSazFlm+iz3oHfxIXvIYDufbRtPHe8/0uhlo/Rl+MjtN7pd
+	 NiLdZ6jxnvcivIAkpdFUfAYZZ0pbQukh9Ezv1WpARH4qRCWbQEQ5ApuPu+QttNJQxs
+	 RNO4EdBsZpcOtOWvPIbX+luYXzWYtHmzN6RlvBMJMPeVEhj84WBwXByVogqnfo385v
+	 2hv1XvvkzutGwUEw/oSDeBpt+O0XSpKyeAGsGjEG8PpjEFXM2hAIk9Y3a6Hb3kizNs
+	 qhKakV6lwFIQGNiY3s2z3K/zTdZSDM1rzBdTXGf600QvZ3bB7enMWtqueZflgXaFiZ
+	 ghv/hndKnLxLw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71039383BF75;
+	Fri, 29 Aug 2025 22:41:57 +0000 (UTC)
+Subject: Re: [GIT PULL] KVM changes for 6.17-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250829172727.169887-1-pbonzini@redhat.com>
+References: <20250829172727.169887-1-pbonzini@redhat.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250829172727.169887-1-pbonzini@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+X-PR-Tracked-Commit-Id: 42a0305ab114975dbad3fe9efea06976dd62d381
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 11e7861d680c3757eab18ec0a474ff680e007dc4
+Message-Id: <175650731592.2358151.15194419799133888093.pr-tracker-bot@kernel.org>
+Date: Fri, 29 Aug 2025 22:41:55 +0000
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+The pull request you sent on Fri, 29 Aug 2025 13:27:26 -0400:
 
-> Hi,
->
-> Shared subtree docs is converted with minimal markup changes to reST in commit
-> cf06612c65e5dc ("docs: filesystems: convert sharedsubtree.txt to ReST"). The
-> formatting, however, is still a rather rough and can be improved.
->
-> Let's polish it.
+> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-I have applied the set, thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/11e7861d680c3757eab18ec0a474ff680e007dc4
 
-jon
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
