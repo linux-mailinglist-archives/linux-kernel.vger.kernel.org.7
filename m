@@ -1,171 +1,100 @@
-Return-Path: <linux-kernel+bounces-792328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3666B3C2BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB48B3C2C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949A7A20284
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D71F3AFF3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E02D22B8B6;
-	Fri, 29 Aug 2025 18:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111AE239072;
+	Fri, 29 Aug 2025 19:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="nDWYWXDd"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smvsPoBu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F08219D093
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616962376F2;
+	Fri, 29 Aug 2025 19:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756493832; cv=none; b=BQE3N5+sr6tlWpduizpURmW4GhC1IMaYibwWO/rjG8XkWSB8jQEVH1GvwhpIjBK1OO9eSnTo21Go+pcvC/0nF69ePVYKtOspUBBq5naWqphNqTefVjZufhZK5EhkOKiaRlfs/s1tMl7B5soSLsIFafpRyOGx5KRQ35wHh8tKd9A=
+	t=1756494004; cv=none; b=adxstZ/BAxmTh/LLXF1OvUdJo/A0IB/IwpZw2pBo3IC9tQA2HnJTkgqTeUFBgFIhZ4iMQEUh44tfCj0iiWIRtcne2gnXR5t6N7Ra5A/+FGA9sQh3ODSJxoYkvUfF0P/O8NgwtFVsj8OpefwJG+yEE1YGBwwaqQYT1IzDe/ZPmWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756493832; c=relaxed/simple;
-	bh=FAJXaYxtOcQ6gcRwtrG9GjWiuiiQtc3drDqS9/YbCtc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lJYG8xSs/L6wHE1SREiDCRm/ALuipAfaqE4oXa1qK2BOQVZTX9WptXuQl6W10yQvLlI0+w73TETuyJGRbWYLooAii+PUsz5eWoZ4txpVtw6PK09vluC7Mpc+Qfe96wAyzoSN0/ru2nwGQKNHrWDnph6Aerj2Hyr3C1V1xV83BQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=nDWYWXDd; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b31201d331so10294991cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1756493830; x=1757098630; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PFC2NL6AC+2llQ+r3CsLm00vCsvAfiKwPzcatpgZERg=;
-        b=nDWYWXDdtLnQB07dUReqwuSSsJFZ8z3rDqZM6FjbJz//Sq6l9VhdfZzAut5buVBLfp
-         PUZKUE3hLB5tYah6buZlrV7bTSbt/NxADJCTzR1sQBx+sMYQEGMsxRFVSt05mcEZpQrs
-         dOkVpJw58fMRJHyrUrblqbe+ne505x0/1qu7RbD0NiDQ4ACE2cCUcCJO/TOGY3vEB2TQ
-         +VpIYqbQ+h0EhpkQvrpdsQ67TbNXrA2PeivL9suush6EQDXh+fWxBzz66CIkGJNGLbi6
-         YJmNAAawnJlIctwq9zCmLxQCbYtsy8aYqWCeLA5jBlcWF3u9W+Z3KfxmHZbkB2YF9JLx
-         Do8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756493830; x=1757098630;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PFC2NL6AC+2llQ+r3CsLm00vCsvAfiKwPzcatpgZERg=;
-        b=qbATmiWLqwS2D8PBybrNhToLhJQQYQUw0bdBPp1eWozzPq5bCqhEr2jNuSjfcAqe3C
-         TnmtxNJ+y0WqGk7IIe74JKYk+BVUgrfH3S+aD07FZ4+8C01tY93R6hf1Lib7IDbEvVVf
-         Q5Jj02GnqYH2XyU7Ot3GdDYG4YIQVrifSNZn2ZBi9ryTHde2DBXLTjth8ZwDuHzsgGO7
-         SwZIGFWuykwFWiOrhvdXI7Qo5gz0/413gEJbQxnvCum/f4qwspGDBBtaEwWVGixz2qXq
-         IOPULkUF5/GPwoj9dLSilj9hmwTMl77tuymeK+8E8JuDuEsLCJfpHQQ43vf7Mzats8IB
-         /9Lw==
-X-Gm-Message-State: AOJu0YwI2qEhjQjD0m8kCSJrFNncW3+OsA27Xwb+6AVS6aZWsSKMnu36
-	FHZShCe3iIQsL8lsVvcfC+W50n8SQtJibYdCsayhm6UgYDJIZ3Pard+EagIQqa6Dh/U=
-X-Gm-Gg: ASbGncu7kDh4Hi26kV655ugjR8OmQFZCJ2gTnaxi2x1Duhm+QzSSRETvkkh/pYCWxC4
-	v5LkWQ89aitZ09mbtZ5rl/Cc/Vk0iXeZzvv8GIhqe2FV9XoehIU6p9JPduRKd/p2doWg+ZaO0XB
-	XXC4lUyChI3NJR6JAtAkoCOA884E8lCvfOYlalVa4MStCLjtCscONB52ICqEBNyG6BrFBent2HA
-	up4cml4oION/I6nq01yg+Rq6aTWN01ZnDcwCKGEv5rPShrG6mZxPMQ0m9HVuqM0lrqibI2tli9H
-	y57YsyDgDW2toEbZSEt+PIAo6c1Pp7AW6x4LCTOE1dlWqj/OFb/jCbRALs9cF44iaFTV6Mt8CF9
-	WcCUMYSVF+awlwQARm3ummalzx0z+MgZpJ91hKg==
-X-Google-Smtp-Source: AGHT+IEakG3NbMasM6aByEap0RqPpWldsk82o+ZXf4RsU/WtslwCKO+NvxDoyc6q/jsSGSs3V1VMHw==
-X-Received: by 2002:a05:622a:1392:b0:4b3:8ee:5220 with SMTP id d75a77b69052e-4b31b9bdf58mr2380151cf.29.1756493829825;
-        Fri, 29 Aug 2025 11:57:09 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e624cef74sm20958356d6.46.2025.08.29.11.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 11:57:09 -0700 (PDT)
-Message-ID: <44aa36a8aaa7da22a4552b910ceb966b3a911691.camel@ndufresne.ca>
-Subject: Re: media: mediatek: vcodec: use = { } instead of memset()
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Markus Elfring <Markus.Elfring@web.de>, Qianfeng Rong
-	 <rongqianfeng@vivo.com>, linux-media@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew-CT Chen	
- <andrew-ct.chen@mediatek.com>, Andrzej Pietrasiewicz
- <andrzejtp2010@gmail.com>,  Angelo Gioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Hans Verkuil
- <hverkuil@kernel.org>, Matthias Brugger	 <matthias.bgg@gmail.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Tiffany Lin <tiffany.lin@mediatek.com>, Yunfei
- Dong	 <yunfei.dong@mediatek.com>
-Date: Fri, 29 Aug 2025 14:57:07 -0400
-In-Reply-To: <887bfbac-0e16-491b-ab0b-a0997890ff2d@web.de>
-References: <20250803135514.118892-1-rongqianfeng@vivo.com>
-	 <9f0b868c-47f9-4c98-ac99-86bfbc6a432d@web.de>
-	 <e3903e95-3659-4d68-86ef-0f3d6b2c8d90@vivo.com>
-	 <887bfbac-0e16-491b-ab0b-a0997890ff2d@web.de>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-x2bNKOcY/JOmIuS4+i3d"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756494004; c=relaxed/simple;
+	bh=i6tDdIDs9ubee1gDISiT3rIyWAiXOFRuZFgHy12Cg8I=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=r0obgUBeTdQ0wywwUkbm4kaRtsjloai3cQVPtUCPL/wRsjgm4rE8hcDEymRdVYTw/6vhaAHDK/DiQumW1+8qayQlnU1XEDotpK+IyFIszgY7CSYaoL8lWXTIEod3vF5kd9RNF+LZtIYwNSBCDb+2l85Ozsikk4zJxpzTMgrq7FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smvsPoBu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D269EC4CEF0;
+	Fri, 29 Aug 2025 19:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756494002;
+	bh=i6tDdIDs9ubee1gDISiT3rIyWAiXOFRuZFgHy12Cg8I=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=smvsPoBuKqZpPV6/HD/HgUZB9RU3v4qJcDRynEZjoWLbpGPDhCLtJzfMPF/+TJ0u4
+	 1AlGJwWTcjxeXqBYbaQNSARAU5tIcyqRWHTgXuGmbtY77J8HIvRe2a9EhQq6dTVby4
+	 Td1F7yQqj3bdCU0PkuaAsPpj6NcxJ90vHkV3r86zxKBLNMAmlujXZ1I6QT7kQUxoGe
+	 Pe03FglpEBDpjmQ0uymr9iEY3tRAJfQ3Rjb4ovGh3Kb2B6lo8R5ozA4bhyKfRr3F75
+	 N9T4b8ToVigVNg4PvWC7k830XdYu1UVDS76191ABboCZCcxeQm6NntS88Ia+Nnr1rW
+	 BEaJjr82svFwA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B0307383BF75;
+	Fri, 29 Aug 2025 19:00:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v5 0/2] Fix bpf_strnstr len error
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175649400852.2313311.339778074846590009.git-patchwork-notify@kernel.org>
+Date: Fri, 29 Aug 2025 19:00:08 +0000
+References: <tencent_E72A37AF03A3B18853066E421B5969976208@qq.com>
+In-Reply-To: <tencent_E72A37AF03A3B18853066E421B5969976208@qq.com>
+To: Rong Tao <rtoax@foxmail.com>
+Cc: vmalik@redhat.com, andrii.nakryiko@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, rongtao@cestc.cn, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+
+Hello:
+
+This series was applied to bpf/bpf.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Sat, 30 Aug 2025 00:30:16 +0800 you wrote:
+> From: Rong Tao <rongtao@cestc.cn>
+> 
+> Fix bpf_strnstr() wrong 'len' parameter, bpf_strnstr("open", "open", 4)
+> should return 0 instead of -ENOENT. And fix a more general case when s2
+> is a suffix of the first len characters of s1.
+> 
+> Rong Tao (2):
+>   bpf/helpers: bpf_strnstr: Exact match length
+>   selftests/bpf: Add tests for bpf_strnstr
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v5,1/2] bpf/helpers: bpf_strnstr: Exact match length
+    (no matching commit)
+  - [bpf-next,v5,2/2] selftests/bpf: Add tests for bpf_strnstr
+    https://git.kernel.org/bpf/bpf/c/19139f45999a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---=-x2bNKOcY/JOmIuS4+i3d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 05 ao=C3=BBt 2025 =C3=A0 15:32 +0200, Markus Elfring a =C3=A9crit=
-=C2=A0:
-> > > =E2=80=A6
-> > > > This patch converts =E2=80=A6
-> > > See also once more:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/Documentation/process/submitting-patches.rst?h=3Dv6.16#n94
-> > I don't think your point is a problem here. =E2=80=A6
->=20
-> Will any contributors care more for the usage of imperative mood
-> also according to improved change descriptions?
-
-Markus, its the way you review that does not work. I'm far from perfect, so=
- I
-don't normally give any lesson, but I've seen this this exact interaction t=
-oo
-often. Try suggesting a rephrase instead.
-
-Qianfeng Rong, the suggestion is that:
-
-   This patch converts memset() to =3D { }, thereby:
-  =20
-Can be rephrased:
-
-   Converts memset() to =3D { }, thereby:
-
-Also, some maintainers may prefer if you swap the two paraphs, so you get t=
-o the
-point first, and give context in the remaining. Processing tones of patches=
- is
-improved if you don't have to read the entire message to understand what th=
-e
-patch is doing at high level.
-
-regards,
-Nicolas
-
---=-x2bNKOcY/JOmIuS4+i3d
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLH4BAAKCRDZQZRRKWBy
-9IVHAP9J86Ojzz3i7bMsDJIB6kLBlO2gUdhSv1G3ByosVTrY6AD/VI6IENrCxFJa
-n/fABRYAp3ytH2Ai4BiJS1KJLHLVLAw=
-=ECGR
------END PGP SIGNATURE-----
-
---=-x2bNKOcY/JOmIuS4+i3d--
 
