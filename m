@@ -1,389 +1,223 @@
-Return-Path: <linux-kernel+bounces-792045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE97B3BFBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:47:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7022B3BFC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7809B173728
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D153AAF8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D783322DA6;
-	Fri, 29 Aug 2025 15:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA41832274F;
+	Fri, 29 Aug 2025 15:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fzxGWHMd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jZZI84MJ"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA4F1FDA8E;
-	Fri, 29 Aug 2025 15:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482404; cv=fail; b=LnGf6VgrKaF7ClzzivEaY+8Z0qI3kyiRbOlJLj93rMXD3KvRZHSR8AXfJmzqHhhIWOt4Z1nwkp/JRbaF2E+1vO+DpEf+vfIMxoANsbR+Qd7vfE+nnAQiQdjry11vftttlFRU0EmJP9+b13wAXAb6oY2PJKoLvflWp+pCpLMoB1g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482404; c=relaxed/simple;
-	bh=JuvkCKdzb+Jq4prItLAYFEaJPJ8uWTvFBfEpCiDpf3U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZCGI5oF7JwPWMsmcx/3rN3OI7BZV1wRd3aZ6+CgdAxl+BU5kjkRTMVwBPm/O/CMdV2YjRz/aQAZ1nNwlRXbDn2/vEqLwxm8FUdSgy+6LrxrXNHdRZkiLgzdF8UwjdWn1B9R7L4v7q9W1U1HBjq+R6QQOyzu+AKYgobkjlldDGhI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fzxGWHMd; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756482402; x=1788018402;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=JuvkCKdzb+Jq4prItLAYFEaJPJ8uWTvFBfEpCiDpf3U=;
-  b=fzxGWHMdhY36DWY0RbuapazN2LNunARcsmJ7L2QsbL3cBAGmuRTcjK8n
-   7p7/a9iumjjIc4GgSaPhylaInzDEmXlITlmjC6HEo6wGfRKCMoHjBWW99
-   HAZOrClpGmKAT6PRNixUVzH/9I8UfgZ6GoWRbKd8133hkK2x/39OiM9FG
-   RF8Kt7zYfOk2TtsRDxy9XirG4tbPwLXB0VBRta0KcqIIEGjCb0g/DiFMj
-   MAue/mg0TSNVbn0kRUd07JVSzlIycR5CKoq0LRu1TnXdMO7CjFuNGQs9A
-   wpWa0ha+cM0pHsDEb7yMYeLafskps9RZf1bJL2YTuTBYLrc+jz+ZL843+
-   g==;
-X-CSE-ConnectionGUID: 2gmH03rVRWGCSYuBtnOtgg==
-X-CSE-MsgGUID: ZAsJQijrT1O+zUnzK88Cnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62604962"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62604962"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 08:46:41 -0700
-X-CSE-ConnectionGUID: NWfZ+QhuQtSuuMQAizXdIg==
-X-CSE-MsgGUID: 8bYi2WW8T46jV/DN8V1AKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="171203971"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 08:46:40 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 29 Aug 2025 08:46:39 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 29 Aug 2025 08:46:39 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.79)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 29 Aug 2025 08:46:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hA1LYhs27DRyFpZDDBdpVfektn0MDHgvJTlEdQf1JddPIM7DUakqSBwzN8TcPFShGVFgEDYqCz+4BXLTDei1+s4wPCCu7AJk/j1U5iHRPorl01k2dDHuuesMg9S7aSpdZHtjnfZ2UT/d6smv3HfslVpbZ+ulIqmJKSi3BzeE2x10dfcWeUoY46YYKkjg72Fp7/ufJWT5OcVQppQqLv7CgQ93Gp4LtR9wp3Q+DrePodhJour4Ynfk0KzRALCczKphxswkLQq3G9qNngysEw+f9QS4tYoOdhIXWiPCcOo8MQ95hLJqTQ0o6Q/VUpihHi/GebGiV/t4otoy+kpqAivteA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=anqlYnZKeCTREbuggymfH2BjPIyQ49/DJJkQ7ybOxxA=;
- b=j3MQP03zscoAkMiYWE9rHjWWMq2IRWPJu51RlkEBXXkWVykVURLhtVF/Pkc9R+kKvjkZ6MPh90DbI/e/YsVv68zzuNrDD9d2KmeZeF17A7YBwr2ensQxFVLEKBN0SJ7lH+1NjMLV7ztmp/pNJ7ggtzKdDpmECtEGV04JfVSmT18JorYtPdJmHMg0Pr17vbafujmo7L7Rq2NHCdpPGKu2eKfa24GO5qePqGZ5HoOBeIYHs/ZHqMGrdoxuBwwll3UBtFSiY1xIETiVzSO1P3islSI495jUwKCQpE3H5vsO/705JxHTopdxA6KyFElfKJx8f6IziDkreuRdyueLwdrvIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by DS0PR11MB9479.namprd11.prod.outlook.com (2603:10b6:8:296::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Fri, 29 Aug
- 2025 15:46:33 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.9073.017; Fri, 29 Aug 2025
- 15:46:33 +0000
-Message-ID: <18594f40-f86f-4a28-a97a-22d8d8b614b6@intel.com>
-Date: Fri, 29 Aug 2025 17:46:28 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next] ipv6: sit: Add ipip6_tunnel_dst_find() for
- cleanup
-To: Yue Haibing <yuehaibing@huawei.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250829100946.3570871-1-yuehaibing@huawei.com>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250829100946.3570871-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA0P291CA0014.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1::19) To DS0PR11MB8718.namprd11.prod.outlook.com
- (2603:10b6:8:1b9::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE04188CC9
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756482427; cv=none; b=m0oF+6e0r4It6FKXLmSKR6gL/VSLWVC78K+GxqsHwMa/dc05QMNKFjzv+FWd+bznqiWPHfSz53JorFnr64050Iob/U10yXxkJiLNv5Pl7RTzoGUfh/iU6aCeLhu+9qDsTGAMzoGe6VagMy/DjhTFCW5vsgAwjUZvk0DbOFWEuA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756482427; c=relaxed/simple;
+	bh=BFpTKgCpOwW1cxVyDp8rzUTnvXhBBZMK9CH5gd4emzk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DKdRGhJ4staGpeCv6wNuxEsCR+GxgxPlPjfpxPOnVVng1T3SsPuaj/MM0ad5dRjVtbzrkAjcortZP8QT38FA03105/bAtZ+3dRnAiJrdLiK1/EY0IZhd3Yq0gsRNWSo+EPq3kXotM/AsMExocrJWaCb45Ai6LNIRBeMboAxBJO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jZZI84MJ; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d605a70bdso13921117b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756482425; x=1757087225; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMpbX/2FtFqpgYi77vApNFXCw+W0zMV1YchkzsWEhB8=;
+        b=jZZI84MJobH6zrb8KtU516CwvYVE90sKyMBNSfB5DgEj/tmXSeBmY/mTYm2MHZNudh
+         GeMaumYhlYe9hHNGnetT3B5WIMDKOPlt4xIBmoAC0En2iEmVKqrB3hJZ92a4iTk7erq3
+         VpiFoftOkrf8uB2D6CXZHmkviXTbg56v1l0TW3DlBqynYexqoF/w7B9BbYTpvLf0i4QY
+         GMJ95GfjU1c5t+2w9yAcSnHiUXlDDBz7/rzmLF2ON89bh2QFbQDFzow8o20xgZEaAUKY
+         A3a2o3JhJKUML5meKKMkHt6O60cg/IrJtObjU1VtIkSBQMvkk7ZQIplRq9OCYZNAi9mS
+         s4HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756482425; x=1757087225;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMpbX/2FtFqpgYi77vApNFXCw+W0zMV1YchkzsWEhB8=;
+        b=ca0/+WH1Zkq/n8yyeMnc9IIblLweCHKZOz85MptjyVM4tl18HylKWn1vyNT5umqJCS
+         IEhb3VsaAVxQlUwYGP8f+8WO1uw3VOtfM6TZ6Zfzv3LdpJEjIGmOqUceFmbwwDQbwwW5
+         hUVXOaR69Wq1WfyG5LyzX4L7/q9szW8PDtYF8V1gjpuNQzKLBVdnTShAXuCRUcyByvcz
+         CsCFuiIt+TfCMgPrU608rGqmTEh8Wj9lZChL57nMCqlwSM4EYHY1msvfcY/wDKu9PK3e
+         mBPFZVpDXm4h7ww9Rp6eO2vJOWQUVDbbU4Y7BPfHNkHStDh6y0Rt7vU2/ET5IWDOfQhK
+         FJhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvEEMZ2ZOt62Ta1SSox1Ud9DyKYRLg1GcNY5cpQyXBp2wK4mbvmyedkikPxcZjw3Lf+Bme/mxQTNhM0Ss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK25ZMFyRGtuLQ/enHj2/TOBxZrjNzlHGUQyGUOHzGs+NazjrF
+	VQFg0Ne5t/xgvDrorazKHWi82QE2HkAGjGjaXyEdM5mEBDICqJ+2QRUDiMVPmRuVAQ==
+X-Gm-Gg: ASbGncsp2R34x3SA2BAaMgS9nI8bIaG4/lqYhjIhB4+jwknScj8uK2aO34HtjTRRLCT
+	R5cFIuuMTTqfEixDV2WEQhds0SBPDxA9k69zPP3mrjSW8BR6dygjZTr7YLSQe9UVdpokxNUuk9L
+	wwcrEnhoktebzZgkL1VEvITSIket6PmpKkl14aWl97Q+ZYEJvQomL8VyYU3gFJ5MgUNxwaY0InK
+	2SojJuvraNi4KqRfofgueP/TS2a9ieM1GN4bVQoEI4/SodLWHF95JryUqBFM/1Gqf51hjb5hbRo
+	rRAhRtpEByGKitWzlid+QPBTshPkrRCxtky0YEzQ3jQhzUhwk3PTBLAjw3trOrmA8UAxPlmHPox
+	d3v6HDjt5b49ONcOA2Jv3XciG1ZlRGc/fNxxJOKJ7ATkstO4U9GBOhm2ZXxPL9E5jFCBRIR3uCn
+	fS0Fxi9g3PegkCXHjo5jJuiBD/
+X-Google-Smtp-Source: AGHT+IGYbdSHodDuTFqyNCLyyFCsXP9AkvMjFSwwU9xyZEIsbEfHIyT2HtUbmAyGlDvSOEG31G+Qvg==
+X-Received: by 2002:a05:690c:63c8:b0:71e:6f13:976 with SMTP id 00721157ae682-71fdc2a89f2mr254116157b3.6.1756482424706;
+        Fri, 29 Aug 2025 08:47:04 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-721c63530acsm7713727b3.26.2025.08.29.08.47.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 08:47:03 -0700 (PDT)
+Date: Fri, 29 Aug 2025 08:46:52 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Will Deacon <will@kernel.org>
+cc: Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+    John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
+    Ge Yang <yangge1116@126.com>
+Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
+ attempting migration
+In-Reply-To: <aLGVsXpyUx9-ZRIl@willie-the-truck>
+Message-ID: <7ce169c2-09b7-39e3-d00b-ba1db6dd258c@google.com>
+References: <20250815101858.24352-1-will@kernel.org> <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com> <aKMrOHYbTtDhOP6O@willie-the-truck> <aKM5S4oQYmRIbT3j@willie-the-truck> <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com> <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
+ <aLGVsXpyUx9-ZRIl@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|DS0PR11MB9479:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b444eb9-683e-461d-c77f-08dde7133ac8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dE5yUU1pM3ptN1c5UStCeGVkVUY0dmx3cFliTzFvK0hqSks1WXV3RGRjTmNw?=
- =?utf-8?B?OUlhV1B5bmt4WFVvUTBJN3NSYXJhMTFCUVllMENtbVEwOENURU9CbzZGVzV1?=
- =?utf-8?B?NFVFc1UvVjVmTzdGeDVMNEZNL0ZJOGw2b3hNeVVIWk9iTUE2Nzg2OXdoV0I3?=
- =?utf-8?B?WlRDdHVLdWZOcUp5L1FGRDZNeUFHek9iV0FodmJhOE81RUdPYmZzbG9yU2J2?=
- =?utf-8?B?MHZoK1haOXByWE5XWFdSVmhKWFVHNVRzTzdKNFdIMlpMR3BOajJRUmMzNU1Q?=
- =?utf-8?B?T1p6bTNlT2xRS1JLd3YrNUNhKzN6dU43MGQwZ1c1Q2RqTVZnNmFHRGxJYnZn?=
- =?utf-8?B?YVdTRWtxTkRRSFFFV3o4MzJZZkhBQzVlWDRCTFlvRFJSbjFuWTJibG01ZUhk?=
- =?utf-8?B?UExuSHdUZjNtdDduQlNsajg0bmpTOWE2WnFlanNYUG04Y3pKY1VsTHRyQ0hP?=
- =?utf-8?B?ZkpRaGJMQU1iSktwbi9pZVlPNXRaeVBPRy9uVmNhQnl3Sm5NWFFhOXQxOG9q?=
- =?utf-8?B?N2dvNDBrc0x5Sk5nbElmWnNmRUFXdFp4Y2swUFZldEJpbzJVc0FUSUFkSEgv?=
- =?utf-8?B?TEZncmQzcVlLQk1CWlBUaC9zRzZLNHZXa01DS2tHOU4zdXBvTzlrWi9peVc3?=
- =?utf-8?B?RG5HeEVHTXZwaFNJSi94ejA1V01yTVNjUHE2NkpQMGw4MUpHNU00VmVYY09M?=
- =?utf-8?B?RUtkMk5tVVVuMEJXNk5oQkNqZytocWYrbjJvSFJMeXdELys1VUY3NkpINlVk?=
- =?utf-8?B?TExVblp2bDRjdlFyT1ArbDNVQlpyZm5PT3RsTkV5Zi9yckVEY09VWnc4b0ow?=
- =?utf-8?B?VDZWY1hWUGxvTDdPcitvOFVrdzZWZXVhRXl6blpqbkF5eXYwazQ3a0RlSks1?=
- =?utf-8?B?MW1qcmVNU2RiTHRHM0huVW9EZjY4L1lFU21PSzVSRURQaU5wZXU1ZUx5RG1W?=
- =?utf-8?B?T1VrM1QzMStJdVJDbkJpcUJHVGlwZE1uQW9oMUFaUHppdHBzOUVvYUs5WE1I?=
- =?utf-8?B?SURCSU5YS0F4TkNjb1cyUU1LSkNwTVF5WVhvVWJ3bmtEanNjclFmMmNlZUUv?=
- =?utf-8?B?aVRXY28zSzFhWHBGTHRLVHVweGJWY3IwOC8yZVpoSEVGSDAzOTk0SUZtMHJq?=
- =?utf-8?B?c0wwSDFncTAvMDhBcVI5cG1tdUhSdFVuM1VIb1hlaUo3ME1mL1o5YXZUZDk3?=
- =?utf-8?B?ekdzaEU4eHlCSzBFeUNFdFRGM1E1T3pKNVlOZ3hHYUJrMk1pWEZRcmVIRnAv?=
- =?utf-8?B?UkZJMWlUTWk5ZnRSWEdBRWRja3NEeW4yOVdWSmxwMnZTTFhwa0pTZHhJSDA3?=
- =?utf-8?B?TlVRMHNNVVNvN1c5UnpJRTRMYjFxdDhPZTR3TUs3NUNjQ2h3bEt1Y1h0RlpT?=
- =?utf-8?B?dnoxaUVKMzJGSDRNV0N4eXpxU3B1RE9STFA5YlNYOXg4VkM4Q01OS1lKMW1E?=
- =?utf-8?B?T0ZVcFMvTmFSYnhFU2lBbmwrcnFwK3JHVksxYk9zTGJENlhiUjl2S1hZQ0pS?=
- =?utf-8?B?cHk3KzlrYjhwcGlxak8rVzU4Z1liQUZGeXdCQndnaXdBcU1KdlZKN1Zaa1BO?=
- =?utf-8?B?NnBHdWJKNmRCSXZhUHVwSGhHZUdVMTJWTjBMb2VZc0RvQmdEQ0c0cTN5OG9P?=
- =?utf-8?B?MVYyVDFLTEl0VENQMkE4c3FjdHVDVlQ5cGpZeW9OalR0N1NFbnNSODMzRTQ5?=
- =?utf-8?B?RW1JWDRaaUNjeU0yNmloWkd0cysrUzFIUFFNL3ZMMW9sZElCc0NhVEZsVHlJ?=
- =?utf-8?B?VXpGVUg1VWMzWEZKNzkrWkxUR1FuTElnS0Z6QSt4ZjJyczNCaUh1REZkdVl4?=
- =?utf-8?B?YTlPRVFsTUxwY3Jpa2tTTyt1UHg4RGVmaGg1VGo0clhUQVhZc1ZPV3RkUHVK?=
- =?utf-8?B?NHJ3U3JQb0pOZHhMZlROOFROL3BTTjBERnpsNnlvMEoyU3hWUDNoS1ZGaitB?=
- =?utf-8?Q?IYzNWnMZJdo=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RnMyM2pOUkFIbHlndTBZWVM2MkF0QlJKSGJyTzhHSDlPZGhEY2pLL2pOVHBt?=
- =?utf-8?B?MHBYanZ5bVpEVUNBVEw5NS9zM3UwbUlFOFowNFFudk5uUDU5S29tYXcxcFJm?=
- =?utf-8?B?ZUZmM3Y2TzZMbkpPaWtBUFJEenY0Q3FFTHhyZTNKVUNjbk1ZN3ZrRUtvT2xI?=
- =?utf-8?B?YjRienh6dWhnTmhYZFdyOEhnaTZ0QUJmSEpKMFdXS2VERm54SnUzemdyZVYr?=
- =?utf-8?B?TDRoK05LRjZRNGRIcmRucWsza1RJejhvWG9SdlJEektjcDlEUEkyRzNiNHhu?=
- =?utf-8?B?TlFZYmJHZVlTeU1qdHdYeHd6dVMxZEdqanNFUEc4VTRlbmI3cjZDZnFPN0g0?=
- =?utf-8?B?MkNvdjdTYlBpbmtlY1F5Tm8zRW8wSWpDR0hEQTFkK1B6aTRjVU9JT0hkR0M2?=
- =?utf-8?B?Y3BOc0dydTJ0dW8yWUExNEZvZkRhZGNVQ3o3WGoyczl3UjZraUZtQTh5WnFO?=
- =?utf-8?B?MmljTDdRMXBaN2dldHhoOXRRRnFBNVJ2Z2x3M0FZK1dSaVM0UzdZTGhWOWNz?=
- =?utf-8?B?NTREdEk0ek1oYSszc1NYSzVnQVFtb0NxT3F3L2M1R0d6VnpKRnpWR2tZT2NM?=
- =?utf-8?B?eEF4cHhjSlZ1UFZMMVE5a1laL2Mwd20rUXltWjQyOG9uL0JaT3ExM2hTeFpF?=
- =?utf-8?B?eXZZM3FKT2FhOWlxWkhtNlB3R2hUbzZYK2dxYUxrS2REZzJlUTVLNmtiQk5E?=
- =?utf-8?B?NjlGa2NDTTE1cjY0K1FIYTlVYnJwYXpBVkVRcHQwS0UxUW1FVzd0UDRnS09q?=
- =?utf-8?B?VnNoTE13SE5vY0t4b1d3T1ZxeVpFaDZ0MVJpSERDZXdBbEp2ekQxcFhpU1Vq?=
- =?utf-8?B?bDFRejN2S3VaQmVTNEhIM0V4OVJIMzlHdGUzZS9SUTM5WkxZUC9wV21GU0tq?=
- =?utf-8?B?MElwazRUNldaWFczeEY3WnBYOGZvemZTb0pRR3JVV251N1dMVE91ZTFjcE5X?=
- =?utf-8?B?NmhxdGorS1dmb25XSDBPelg5OVY1SU5JQUlTa1Jpclp5ZXJsNlBSUkhmVWlV?=
- =?utf-8?B?WUxkb2dFMWNoTlQ4c0MwRG9zOGpBYU43Y29lenpETjdQKy9XUGJRQ0grZzcz?=
- =?utf-8?B?SVc0OFV2OGVrT2xMSVdxK2JvWFREY0NxV2pxcFQ3cXRiV0NTaWdHQXZnQlA1?=
- =?utf-8?B?bkM3Wit0blpBTEQxM056SmxOcFlxUUJiN3J1NXYzbXE1K3c1cUIyU3Q4RE1L?=
- =?utf-8?B?aEw4aVQzR3lxeW9HMS9wc0cweEg0Q3R4RjNKcjRYU1dwZjEvMzNxUmdJVlBt?=
- =?utf-8?B?ek9obkQ2QjhDbDdkcHVhb1U4bnVYT0NPTGVEOXNQUXV4YnZwUFlmTHFQdkZG?=
- =?utf-8?B?TDNNdHlmNVBrQ3FGVVJYNlg5cWQwcngrM29WQUJjLzc2b0ExTU5ZcDY2Qmlx?=
- =?utf-8?B?UkM5Z2p3SE4xUlJpalpsVWxBWHY4N3JHRS9iQS8xK0hUc2pmcjYwR3ZCTUsz?=
- =?utf-8?B?dEtSYUR3UnVVYnAzMGJwZ011K2Z1UUViUFpYZHd0cXNBQmM3K0xLM1BvZVdQ?=
- =?utf-8?B?N2x2WGRRNFc0ZUVIWU15MUFXRkdEM0huM21pUWRTVTl0SWNzSUd5NkhyUUdD?=
- =?utf-8?B?M0NjVWhoZ09SdlVtUFBxN1kvWWxnTm9zd1A0ZEJYaHhWT3cveDJ4R0g1QzJt?=
- =?utf-8?B?N2RFdVFreVFwbEpvSUgzZ3l2WWpXY2VHdzZXTEVvekJ4VVI2SDVLNW03WFVO?=
- =?utf-8?B?aFFTd2dVeCtUcmI0OXZ3MEhhRXkzVk1WQTdGelk1UURxSjdhekdxNE0vVWFt?=
- =?utf-8?B?RXRJbGRjZXJWQjJ1SWVOQUUxYUV3UTNBOUxES3I5aXFmZ3p6V1E0Nmg0UFlq?=
- =?utf-8?B?U2FyQWNLU3Y4V0ozUmttcktnaFBBS3liMGpnbWhPOGhSaXk5bDhjajJwOHRS?=
- =?utf-8?B?bjJHcExQMXFTZHhmb0tsWVltNlJER2RTbWpOSzlndHU5YUt2ZUp2b2t4amR6?=
- =?utf-8?B?N3lHeEJENzdkT3ZFYzJMM1FEbnVKU0xSc0ZTUE1YNUtHdkxQOVdqMmRQZVV0?=
- =?utf-8?B?R0RlSEpCUGJyblRqcVlZcFAvUG5OdXV0WHRaUHVLTG0xN0RiRE5yVlR4bGtU?=
- =?utf-8?B?c29DNXJvQXVud2dCMXhTL1dHYlRkeWRQUmh0NkpTRVA3N2NnTUN5N2hLSndW?=
- =?utf-8?B?dnczZXZlbGxmOEt6THNHRHN1T3dEaGkvdHNYMDlzQUFQM3Z3STYyRWFZV0F5?=
- =?utf-8?B?NWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b444eb9-683e-461d-c77f-08dde7133ac8
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 15:46:33.6383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0KhNOhKlR5AZ2ifGLz3+HZ3fQY62Ge357+9L7V1WQFMHuzg1Sb2SbA5dy9fA++WAvICT+yKoA924pYkJx5G1rzjfFc0wr6TVrcE9A1wcGXw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB9479
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
 
-From: Yue Haibing <yuehaibing@huawei.com>
-Date: Fri, 29 Aug 2025 18:09:46 +0800
+On Fri, 29 Aug 2025, Will Deacon wrote:
+> On Thu, Aug 28, 2025 at 01:47:14AM -0700, Hugh Dickins wrote:
+...
+> > 
+> > It took several days in search of the least bad compromise, but
+> > in the end I concluded the opposite of what we'd intended above.
+> > 
+> > There is a fundamental incompatibility between my 5.18 2fbb0c10d1e8
+> > ("mm/munlock: mlock_page() munlock_page() batch by pagevec")
+> > and Ge Yang's 6.11 33dfe9204f29
+> > ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+> 
+> That's actually pretty good news, as I was initially worried that we'd
+> have to backport a fix all the way back to 6.1. From the above, the only
+> LTS affected is 6.12.y.
 
-> Extract the dst lookup logic from ipip6_tunnel_xmit() into new helper
-> ipip6_tunnel_dst_find() to reduce code duplication and enhance readability.
-> No functional change intended.
+I'm not so sure of that. I think the 6.11 change tickled a particular
+sequence that showed up in your testing, but the !folio_test_lru()
+was never an adequate test for whether lru_add_drain_all() might help.
 
-Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+I can't try to estimate the probabilities, you'll have to make your
+own decision, whether it's worth going back to change a release which
+did not (I presume) show problems in real life.
+
+...
+> > Unless I'm mistaken, collect_longterm_unpinnable_folios() should
+> > never have been relying on folio_test_lru(), and should simply be
+> > checking for expected ref_count instead.
+> > 
+> > Will, please give the portmanteau patch (combination of four)
+> > below a try: reversion of 33dfe9204f29 and a later MGLRU fixup,
+> > corrected test in collect...(), preparatory lru_add_drain() there.
+> > 
+> > I hope you won't be proving me wrong again, and I can move on to
+> > writing up those four patches (and adding probably three more that
+> > make sense in such a series, but should not affect your testing).
+> > 
+> > I've tested enough to know that it's not harmful, but am hoping
+> > to take advantage of your superior testing, particularly in the
+> > GUP pin area.  But if you're uneasy with the combination, and would
+> > prefer to check just the minimum, then ignore the reversions and try
+> > just the mm/gup.c part of it - that will probably be good enough for
+> > you even without the reversions.
+> 
+> Thanks, I'll try to test the whole lot. I was geographically separated
+> from my testing device yesterday but I should be able to give it a spin
+> later today. I'm _supposed_ to be writing my KVM Forum slides for next
+> week, so this offers a perfect opportunity to procrastinate.
+
+Well understood :) And you've already reported on the testing, thanks.
 
 > 
-> On a x86_64, with allmodconfig object size is also reduced:
+> > Patch is against 6.17-rc3; but if you'd prefer the patch against 6.12
+> > (or an intervening release), I already did the backport so please just
+> > ask.
 > 
-> ./scripts/bloat-o-meter net/ipv6/sit.o net/ipv6/sit-new.o
-> add/remove: 5/3 grow/shrink: 3/4 up/down: 1841/-2275 (-434)
-> Function                                     old     new   delta
-> ipip6_tunnel_dst_find                          -    1697   +1697
-> __pfx_ipip6_tunnel_dst_find                    -      64     +64
-> __UNIQUE_ID_modinfo2094                        -      43     +43
-> ipip6_tunnel_xmit.isra.cold                   79      88      +9
-> __UNIQUE_ID_modinfo2096                       12      20      +8
-> __UNIQUE_ID___addressable_init_module2092       -       8      +8
-> __UNIQUE_ID___addressable_cleanup_module2093       -       8      +8
-> __func__                                      55      59      +4
-> __UNIQUE_ID_modinfo2097                       20      18      -2
-> __UNIQUE_ID___addressable_init_module2093       8       -      -8
-> __UNIQUE_ID___addressable_cleanup_module2094       8       -      -8
-> __UNIQUE_ID_modinfo2098                       18       -     -18
-> __UNIQUE_ID_modinfo2095                       43      12     -31
-> descriptor                                   112      56     -56
-> ipip6_tunnel_xmit.isra                      9910    7758   -2152
-> Total: Before=72537, After=72103, chg -0.60%
+> We've got 6.15 working well at the moment, so I'll backport your diff
+> to that.
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
-> v2: add newlines before return in ipip6_tunnel_dst_find()
->     add bloat-o-meter info in commit log
-> ---
->  net/ipv6/sit.c | 95 ++++++++++++++++++++++++--------------------------
->  1 file changed, 45 insertions(+), 50 deletions(-)
+> One question on the diff below:
 > 
-> diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-> index 12496ba1b7d4..60bd7f01fa09 100644
-> --- a/net/ipv6/sit.c
-> +++ b/net/ipv6/sit.c
-> @@ -848,6 +848,49 @@ static inline __be32 try_6rd(struct ip_tunnel *tunnel,
->  	return dst;
->  }
->  
-> +static bool ipip6_tunnel_dst_find(struct sk_buff *skb, __be32 *dst,
-> +				  bool is_isatap)
-> +{
-> +	const struct ipv6hdr *iph6 = ipv6_hdr(skb);
-> +	struct neighbour *neigh = NULL;
-> +	const struct in6_addr *addr6;
-> +	bool found = false;
-> +	int addr_type;
-> +
-> +	if (skb_dst(skb))
-> +		neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
-> +
-> +	if (!neigh) {
-> +		net_dbg_ratelimited("nexthop == NULL\n");
-> +		return false;
-> +	}
-> +
-> +	addr6 = (const struct in6_addr *)&neigh->primary_key;
-> +	addr_type = ipv6_addr_type(addr6);
-> +
-> +	if (is_isatap) {
-> +		if ((addr_type & IPV6_ADDR_UNICAST) &&
-> +		    ipv6_addr_is_isatap(addr6)) {
-> +			*dst = addr6->s6_addr32[3];
-> +			found = true;
-> +		}
-> +	} else {
-> +		if (addr_type == IPV6_ADDR_ANY) {
-> +			addr6 = &ipv6_hdr(skb)->daddr;
-> +			addr_type = ipv6_addr_type(addr6);
-> +		}
-> +
-> +		if ((addr_type & IPV6_ADDR_COMPATv4) != 0) {
-> +			*dst = addr6->s6_addr32[3];
-> +			found = true;
-> +		}
-> +	}
-> +
-> +	neigh_release(neigh);
-> +
-> +	return found;
-> +}
-> +
->  /*
->   *	This function assumes it is being called from dev_queue_xmit()
->   *	and that skb is filled properly by that function.
-> @@ -867,8 +910,6 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
->  	__be32 dst = tiph->daddr;
->  	struct flowi4 fl4;
->  	int    mtu;
-> -	const struct in6_addr *addr6;
-> -	int addr_type;
->  	u8 ttl;
->  	u8 protocol = IPPROTO_IPV6;
->  	int t_hlen = tunnel->hlen + sizeof(struct iphdr);
-> @@ -878,28 +919,7 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
->  
->  	/* ISATAP (RFC4214) - must come before 6to4 */
->  	if (dev->priv_flags & IFF_ISATAP) {
-> -		struct neighbour *neigh = NULL;
-> -		bool do_tx_error = false;
-> -
-> -		if (skb_dst(skb))
-> -			neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
-> -
-> -		if (!neigh) {
-> -			net_dbg_ratelimited("nexthop == NULL\n");
-> -			goto tx_error;
-> -		}
-> -
-> -		addr6 = (const struct in6_addr *)&neigh->primary_key;
-> -		addr_type = ipv6_addr_type(addr6);
-> -
-> -		if ((addr_type & IPV6_ADDR_UNICAST) &&
-> -		     ipv6_addr_is_isatap(addr6))
-> -			dst = addr6->s6_addr32[3];
-> -		else
-> -			do_tx_error = true;
-> -
-> -		neigh_release(neigh);
-> -		if (do_tx_error)
-> +		if (!ipip6_tunnel_dst_find(skb, &dst, true))
->  			goto tx_error;
->  	}
+> > Thanks!
+> > 
+> >  mm/gup.c    |    5 ++++-
+> >  mm/swap.c   |   50 ++++++++++++++++++++++++++------------------------
+> >  mm/vmscan.c |    2 +-
+> >  3 files changed, 31 insertions(+), 26 deletions(-)
+> > 
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index adffe663594d..9f7c87f504a9 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -2291,6 +2291,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+> >  	struct folio *folio;
+> >  	long i = 0;
+> >  
+> > +	lru_add_drain();
+> > +
+> >  	for (folio = pofs_get_folio(pofs, i); folio;
+> >  	     folio = pofs_next_folio(folio, pofs, &i)) {
+> >  
+> > @@ -2307,7 +2309,8 @@ static unsigned long collect_longterm_unpinnable_folios(
+> >  			continue;
+> >  		}
+> >  
+> > -		if (!folio_test_lru(folio) && drain_allow) {
+> > +		if (drain_allow && folio_ref_count(folio) !=
+> > +				   folio_expected_ref_count(folio) + 1) {
+> >  			lru_add_drain_all();
+> 
+> How does this synchronise with the folio being added to the mlock batch
+> on another CPU?
+> 
+> need_mlock_drain(), which is what I think lru_add_drain_all() ends up
+> using to figure out which CPU batches to process, just looks at the
+> 'nr' field in the batch and I can't see anything in mlock_folio() to
+> ensure any ordering between adding the folio to the batch and
+> incrementing its refcount.
+> 
+> Then again, my hack to use folio_test_mlocked() would have a similar
+> issue because the flag is set (albeit with barrier semantics) before
+> adding the folio to the batch, meaning the drain could miss the folio.
+> 
+> I guess there's some higher-level synchronisation making this all work,
+> but it would be good to understand that as I can't see that
+> collect_longterm_unpinnable_folios() can rely on much other than the pin.
 
-Ooops, sorry that I didn't notice that before.
-You can flatten the conditions now:
+No such strict synchronization: you've been misled if people have told
+you that this pinning migration stuff is deterministically successful:
+it's best effort - or will others on the Cc disagree?
 
-	if ((dev->priv_flags & IFF_ISATAP) &&
-	    !ipip6_tunnel_dst_find(skb, &dst, true))
-		goto tx_error;
+Just as there's no synchronization between the calculation inside
+folio_expected_ref_count() and the reading of folio's refcount.
 
->  
-> @@ -907,32 +927,7 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
->  		dst = try_6rd(tunnel, &iph6->daddr);
->  
->  	if (!dst) {
-> -		struct neighbour *neigh = NULL;
-> -		bool do_tx_error = false;
-> -
-> -		if (skb_dst(skb))
-> -			neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
-> -
-> -		if (!neigh) {
-> -			net_dbg_ratelimited("nexthop == NULL\n");
-> -			goto tx_error;
-> -		}
-> -
-> -		addr6 = (const struct in6_addr *)&neigh->primary_key;
-> -		addr_type = ipv6_addr_type(addr6);
-> -
-> -		if (addr_type == IPV6_ADDR_ANY) {
-> -			addr6 = &ipv6_hdr(skb)->daddr;
-> -			addr_type = ipv6_addr_type(addr6);
-> -		}
-> -
-> -		if ((addr_type & IPV6_ADDR_COMPATv4) != 0)
-> -			dst = addr6->s6_addr32[3];
-> -		else
-> -			do_tx_error = true;
-> -
-> -		neigh_release(neigh);
-> -		if (do_tx_error)
-> +		if (!ipip6_tunnel_dst_find(skb, &dst, false))
->  			goto tx_error;
->  	}
+It wouldn't make sense for this unpinnable collection to anguish over
+such synchronization, when a moment later the migration is liable to
+fail (on occasion) for other transient reasons.  All ending up reported
+as -ENOMEM apparently? that looks unhelpful.
 
-Same here:
+There is a heavy hammer called lru_cache_disable() in mm/swap.c,
+stopping the batching and doing its own lru_add_drain_all(): that is
+used by CMA and a few others, but not by this pinning (and I do not
+want to argue that it should be).
 
-	if (!dst && !ipip6_tunnel_dst_find(skb, &dst, false))
-		goto tx_error;
-
-Thanks,
-Olek
+Hugh
 
