@@ -1,119 +1,192 @@
-Return-Path: <linux-kernel+bounces-791318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E42E0B3B54C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:03:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C88BB3B553
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981D11C8758D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4705EA04957
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45DB2BEC32;
-	Fri, 29 Aug 2025 07:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51079296BB3;
+	Fri, 29 Aug 2025 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7Oie+gi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Hs+Bnybs"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBAE286D7D;
-	Fri, 29 Aug 2025 07:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F255CDF1
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756454393; cv=none; b=PgwqAONfs2jHo/FVHoipTYBc8wxHRLMN4LD3IKZiMhhPNhlCXgxtxShDfPTSlf8X3W2d0qvZbEYoA+MVtkFavK9BQDf+DCfrGRfGbrHbJGVLe0v4UN2wgrNmEzAaun2F00aaNJ907z/beTQHsVxo47yQbQjjwz838tQVAvZh/6Y=
+	t=1756454430; cv=none; b=uW6ZpB60QdZfiGyYU3MsQsAd+PocjJPSry/TBDd9fNjfBK4dkaWkq3dW+n+1wBItqBPecI8WKtL8Qj9nFOTX3BbejXD4d54uo1erOglnvz/IFqgSRJQYbfcKHmdqOWe00T4smRLCo/jBxAHWoJ9oSmJRQh5l78Obt0B7GFmaDDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756454393; c=relaxed/simple;
-	bh=S4lynDX4uSnk0tcp2B+Ehjj3+5PiFwLfQmzoqZweNMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vdfsf/PtAJ+NXKY1E0BdKV9ZuEVbmLN+qswiuKO9lknsOW+3ZMeBDqAihn77mgvUCxjMS7Oc7fRbeW2/qGdNGnaCuk2srbkDnDLtxSb5U8KZ3jAsW0jog/5dBfDwpgw8GfqEm578ezgVS8Sv8ExrZrUTp9CTSqVi9MvQ6qiXy64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7Oie+gi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DBEC4CEF0;
-	Fri, 29 Aug 2025 07:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756454392;
-	bh=S4lynDX4uSnk0tcp2B+Ehjj3+5PiFwLfQmzoqZweNMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J7Oie+giVqVks7TsedW/oSB3e0FI7Fjq2hjOSKQzgAOKGQGdCx9+UJWbcZpbvrktn
-	 v1yxEoytDTLSk67LmRqUNPf9uCjBw14+n623/xcx7tnvh2AkKe/R4LeVibbwUk/tfy
-	 jPKKGZJGwEMBZsw98KjCksNqIRMxVE3l1A6a6K2wj+VifaugcBppxQ9xpkghgEXO+n
-	 7ZYkZAuVOwFPOvWcQBMW7nFx9h+mhHNs1piHWgAK5RrhA6Fh5mwnL+2IgFkNAWY6qU
-	 UZPTaYr009X/ltsMkULsybgAHNMd6RJg4zO5DZOp0cb59V6iQJMgZB0dOGyRcEZuf1
-	 maCJcfpnIgufg==
-Date: Fri, 29 Aug 2025 09:59:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Umang Chheda <umang.chheda@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Rakesh Kota <rakesh.kota@oss.qualcomm.com>, 
-	Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>, Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
-	Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>, Arun Khannna <quic_arkhanna@quicinc.com>, 
-	Monish Chunara <quic_mchunara@quicinc.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Swati Agarwal <swati.agarwal@oss.qualcomm.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add Monaco EVK initial board
- support
-Message-ID: <20250829-clever-analytic-pudu-96cda0@kuoka>
-References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
- <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
+	s=arc-20240116; t=1756454430; c=relaxed/simple;
+	bh=DODr9LwTYNa97ETlnr7bLIvWbeWbSZ/eK8DYx+sJjEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aZRt/9np9O6fUNZS/UIgT8ZuidsVRnSHuoUEhOOKNkrPAF2DdciooFUJj+JdXm6/8ZLhgx7+3JinFCsyR/OzCx4f8t6KLAry55P6uSQdz5vQdEbSevSqMlM2dBEWP3tBw2GN+S3CRJngf6R011SXl2Z4MU/ROmPROla82DggoWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Hs+Bnybs; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756454426;
+	bh=DODr9LwTYNa97ETlnr7bLIvWbeWbSZ/eK8DYx+sJjEs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Hs+Bnybs8YY/33GO7r58tvbpnG8deSExM2cziCB2ZBapJ44T4/EbU9lACbKm+h639
+	 U3FKsqYegl21Gu3BxXYn2J1k28eBnFgUzuElFvMOoDhCiz+klLXThZ0Yzuv6+8tM8W
+	 nKceC/CK0xpCgANXLZdvFMiA/VS4OX8qHyPMF9SdcZ0vFTzeNWOSkcj0a+AVbj3iah
+	 qsJHWXig656qmmHAXu4tevPb/c6n30PoWMruk4TM+vBuF9nACwfKxiJ71IABdw7J7a
+	 V5UZj4I1KLQVO+OlX00PYBXqOx3FhNQn1ueg2F0/naQm6jQXDB7xfAXz8M6x0gA9pC
+	 Swa4NdFpnj47w==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BE47C17E011A;
+	Fri, 29 Aug 2025 10:00:25 +0200 (CEST)
+Date: Fri, 29 Aug 2025 10:00:21 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: assign unique names to queues
+Message-ID: <20250829100021.361578c5@fedora>
+In-Reply-To: <20250828200532.3534201-1-olvaffe@gmail.com>
+References: <20250828200532.3534201-1-olvaffe@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 11:45:06PM +0530, Umang Chheda wrote:
-> +&i2c1 {
-> +	pinctrl-0 = <&qup_i2c1_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	eeprom0: eeprom@50 {
-> +		compatible = "atmel,24c256";
-> +		reg = <0x50>;
-> +		pagesize = <64>;
-> +
-> +		nvmem-layout {
-> +			compatible = "fixed-layout";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			mac_addr0: mac-addr@0 {
-> +				reg = <0x0 0x6>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c15 {
-> +	pinctrl-0 = <&qup_i2c15_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	expander0: pca953x@38 {
+On Thu, 28 Aug 2025 13:05:32 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-Same problem as in all other recent qcom boards.
+> Userspace relies on the ring field of gpu_scheduler tracepoints to
+> identify a drm_gpu_scheduler.  The value of the ring field is taken from
+> sched->name.
+> 
+> Because we typically have multiple schedulers running in parallel in
+> each process, assign unique names to schedulers such that userspace can
+> distinguish them.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-I heard that some teams in qcom have weekly meetings and discuss what
-did they learn from upstream review.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-Please organize/join such meetings.
+Two minor comments below.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 32 ++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index ba5dc3e443d9c..26616b6cb110d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -360,6 +360,9 @@ struct panthor_queue {
+>  	/** @entity: DRM scheduling entity used for this queue. */
+>  	struct drm_sched_entity entity;
+>  
+> +	/** @name: DRM scheduler name for this queue. */
+> +	char name[32];
+> +
+>  	/**
+>  	 * @remaining_time: Time remaining before the job timeout expires.
+>  	 *
+> @@ -3308,9 +3311,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>  
+>  static struct panthor_queue *
+>  group_create_queue(struct panthor_group *group,
+> -		   const struct drm_panthor_queue_create *args)
+> +		   const struct drm_panthor_queue_create *args, u32 gid,
+> +		   u32 qid)
+>  {
+> -	const struct drm_sched_init_args sched_args = {
+> +	struct drm_sched_init_args sched_args = {
+>  		.ops = &panthor_queue_sched_ops,
+>  		.submit_wq = group->ptdev->scheduler->wq,
+>  		.num_rqs = 1,
+> @@ -3323,7 +3327,7 @@ group_create_queue(struct panthor_group *group,
+>  		.credit_limit = args->ringbuf_size / sizeof(u64),
+>  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+>  		.timeout_wq = group->ptdev->reset.wq,
+> -		.name = "panthor-queue",
+> +		.name = NULL, /* will point to queue->name */
+>  		.dev = group->ptdev->base.dev,
+>  	};
+>  	struct drm_gpu_scheduler *drm_sched;
+> @@ -3398,6 +3402,11 @@ group_create_queue(struct panthor_group *group,
+>  	if (ret)
+>  		goto err_free_queue;
+>  
+> +	/* assign a unique name */
+> +	snprintf(queue->name, sizeof(queue->name), "panthor-queue-%d-%d", gid,
+> +		 qid);
+> +	sched_args.name = queue->name;
 
-Best regards,
-Krzysztof
+Should we plan ahead and have the pid in the name too?
+
+> +
+>  	ret = drm_sched_init(&queue->scheduler, &sched_args);
+>  	if (ret)
+>  		goto err_free_queue;
+> @@ -3540,12 +3549,18 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	memset(group->syncobjs->kmap, 0,
+>  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
+>  
+> +	ret = xa_alloc(&gpool->xa, &gid, group,
+> +		       XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> +	if (ret)
+> +		goto err_put_group;
+> +
+>  	for (i = 0; i < group_args->queues.count; i++) {
+> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
+> +		group->queues[i] =
+> +			group_create_queue(group, &queue_args[i], gid, i);
+
+nit: the limit is 100 chars now, so I think we can have it on a single
+line.
+
+>  		if (IS_ERR(group->queues[i])) {
+>  			ret = PTR_ERR(group->queues[i]);
+>  			group->queues[i] = NULL;
+> -			goto err_put_group;
+> +			goto err_erase_gid;
+>  		}
+>  
+>  		group->queue_count++;
+> @@ -3553,10 +3568,6 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
+>  
+> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> -	if (ret)
+> -		goto err_put_group;
+> -
+>  	mutex_lock(&sched->reset.lock);
+>  	if (atomic_read(&sched->reset.in_progress)) {
+>  		panthor_group_stop(group);
+> @@ -3575,6 +3586,9 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	return gid;
+>  
+> +err_erase_gid:
+> +	xa_erase(&gpool->xa, gid);
+> +
+>  err_put_group:
+>  	group_put(group);
+>  	return ret;
 
 
