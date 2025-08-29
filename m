@@ -1,91 +1,134 @@
-Return-Path: <linux-kernel+bounces-792125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65147B3C07B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:19:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352ECB3C08B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FC6585099
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0547A584CE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19E3326D47;
-	Fri, 29 Aug 2025 16:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94ACA3314AC;
+	Fri, 29 Aug 2025 16:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2dkYqBB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="HXjX7YEC"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA952D321D;
-	Fri, 29 Aug 2025 16:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934D314F125;
+	Fri, 29 Aug 2025 16:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484364; cv=none; b=SqcV1UJCTNRz2BgfsqvxFY1zrNA/cxMb7/P5zznDuciNhTpK4Dkj5CfdgOAVP8ReRPm2n/Ip4OPh68MAygme18K2nSP0F3ygrAUCg/GUkO1IDF6SAu26fODHXeLWofhLy6FuQVxX3lc9c6LaE/FYKbnfqrgFGRTSCXtS0WmG5wc=
+	t=1756484555; cv=none; b=A0aegC7r8V2QfANnJF9kP7EqgqlJWyB/V09eC9hw+XMgD73OqSusiWkdShSTqmTFL9yuSJwUV0KxO0g1QRxaEVps4Upef62fj6vWryua3pIkLuWdtPKozd/mNl5lBW4YWqjQew9qFWPQTNaQvljNuJ1JzhdbYYyPfCucI+Fcz8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484364; c=relaxed/simple;
-	bh=mG06DgRB9nSB41YmoGRe5I5pTt9S8mEWzesAoRYSmno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUhp45/ZDmAvLor+zJW08a29kmEDedZaV1V+3dtt+RymziPfeOGLpoI4hure7DkF0/Q/eDBWSRljahwzYHHP6wvtVEKxx4JnSnzvxJmLCBoPWYcGkMnJdOALG6Q19sXibj57uElOcycYTsa9Hg1ZUJp1xVLdn+nTFBexzTM3y7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2dkYqBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829CFC4CEF0;
-	Fri, 29 Aug 2025 16:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756484363;
-	bh=mG06DgRB9nSB41YmoGRe5I5pTt9S8mEWzesAoRYSmno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k2dkYqBBgpdKvZQ69UQRmmauu5XkxtkM3t/GeoYUbquRoN0fuRemfm4y1wzB9GyEY
-	 uFdZYwd7VcVHIR++d+dp8rdfQ2RhLjzvaBFsEb/kwvA1pHRO85BprD9uk2g8v/pf4p
-	 Jo86m6LTAqE/4w24ediycijdUy1X6o+Z+gQgmDgWM3s7NAPegMGCbjKwQMMMiv1mwq
-	 4I129egsd+BuUHxCQmvD1aQ51aAKi1CYR5q82B2boRkpkqnvlKQPQOT19dZt5a48R6
-	 r4SKK313p31441p83U7wz9eLEsDE4gvEtZGWYeYPmBafhNGIXEYhYO+2RXrHbZqCeM
-	 TKR4oruUaHBlg==
-Date: Fri, 29 Aug 2025 11:19:22 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Odelu Kukatla <quic_okukatla@quicinc.com>,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: interconnect: qcom: make sc7280
- aggre{1,2}-noc clocks optional
-Message-ID: <175648436198.935222.9794956520699193444.robh@kernel.org>
-References: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
+	s=arc-20240116; t=1756484555; c=relaxed/simple;
+	bh=JKCcxAlK8TvFpSk8Bwd4W00kEBYetq9vMdyLZwN3ick=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=o4b7bs/fJrFBnC7yAK9cVSqirsFZziO0W4i0BvTcjiQEbLcOUpMLvd9eCVpgetMwnh/petDx++Coq9xkPpMwwjG52BFF10IDUweeTANgeU8uyhDXU4TOu2DMCdmNIw2lq/f2yuMgUi1tuD2WRZsih/zMi7YwmjSJcfiGBZpnJ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=HXjX7YEC; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=yDgwwhibV5G6rD0wsVW6JGZiOr/aZ4s7RO0qSoDe2CQ=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1756484468; v=1; x=1756916468;
+ b=HXjX7YECBV/VZQYLZ4WUzLI5X7f7X41NlS0kc7Isujoh63tPJasWMBaGhlLFrsIokoqibE2q
+ NiqCOLeI7tpIyV/sCX4UWg02Jo5+JSY+zOQzBCqWG2L6uDUwjNtMSbXkz2R26efmt6GabFVUiVi
+ 1vizWN93Jb7m4yso8ZlWDZBPm46PmQru9/E0fPQNZMZqK7iTfMLXclVcy3A36Lpa8Zuk78x/Dq5
+ ygSOzPxtGpiqOINmQ05xJ3OM3ZG67ya9sobSZ9mcpBOzZ2tPqTaMnIQRB/Lxi5G/fek4c1b1HD8
+ hddumAsHcpjVSIZdMd1r/Ix4PZgCKAOKzI8vHwJBEpDYg==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 8670617b; Fri, 29 Aug 2025 18:21:08 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Subject: [PATCH v3 0/4] Marvell PXA1908 power domains
+Date: Fri, 29 Aug 2025 18:21:03 +0200
+Message-Id: <20250829-pxa1908-genpd-v3-0-2aacaaaca271@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAG/TsWgC/23O0QqCMBTG8VeRXbfY2dRcV71HdKHbUU+QylZDE
+ 9+9KQQhXf4PnB/fzDw6Qs/OycwcBvLUdzHUIWGmLbsGOdnYTAqZiUIoPowlaFHwBrvBcsg0FLb
+ KZC4Miz+Dw5rGzbveYrfkn72bNj7Aev1K+U4KwAWHPBVaCV2bk7zY1x0fFEf0gcxxnN5sFYP8U
+ STsFRkVrMoUFFobZ/1TlmX5APyqmaT4AAAA
+X-Change-ID: 20250803-pxa1908-genpd-15918db5260c
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2164;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=JKCcxAlK8TvFpSk8Bwd4W00kEBYetq9vMdyLZwN3ick=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBkbLxefDhNeZcY4aarJStZZsfvvx2VtyBNoC1p8ZIPpZ
+ Z5UrzmTO0pZGMS4GGTFFFly/zte4/0ssnV79jIDmDmsTCBDGLg4BWAi6QcZGZY68N9/xByordPt
+ cWq1ns/e8+EdvXkvY/wZn0QcnOumsYqR4WXc7YtL/K2eyCTsXPRusVLFB7/Ouv6Mif/Ybzw9+rf
+ 7NDMA
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
+Hello,
 
-On Mon, 25 Aug 2025 15:55:56 -0700, Brian Norris wrote:
-> We've found that some device firmware does not expose all the QoS
-> resources necessary to manage these interconnects, and that the driver
-> code that starts using them crashes. Leave 'clocks' as optional for
-> qcom,sc7280-aggre1-noc and qcom,sc7280-aggre2-noc instead.
-> 
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> 
-> Changes in v2:
->  * new in v2
-> 
->  .../interconnect/qcom,sc7280-rpmh.yaml         | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
+This series implements support for the power domains found in Marvell's
+PXA1908 SoC. The domains control power for the graphics, video and image
+processors along with the DSI PHY.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+Changes in v3:
+- Move driver back to pmdomain subsystem
+- Instantiate using auxiliary bus
+- Small fixes and refactors
+- Rebase on v6.17-rc3
+- Link to v2: https://lore.kernel.org/r/20250821-pxa1908-genpd-v2-0-eba413edd526@dujemihanovic.xyz
+
+Changes in v2:
+- Move driver to clk subsystem (domains are instantiated by clock
+  driver)
+- Drop power controller schema
+- Drop RFC prefix
+- Rebase on v6.17-rc2
+- Link to v1: https://lore.kernel.org/r/20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz
+
+---
+Duje Mihanović (4):
+      dt-bindings: clock: marvell,pxa1908: Add syscon compatible to apmu
+      pmdomain: marvell: Add PXA1908 power domains
+      clk: mmp: pxa1908: Instantiate power driver through auxiliary bus
+      arm64: dts: marvell: pxa1908: Add power domains
+
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml |  30 ++-
+ MAINTAINERS                                        |   4 +
+ .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |   1 +
+ arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |   5 +-
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/mmp/Kconfig                            |  10 +
+ drivers/clk/mmp/Makefile                           |   5 +-
+ drivers/clk/mmp/clk-pxa1908-apmu.c                 |  20 ++
+ drivers/pmdomain/Kconfig                           |   1 +
+ drivers/pmdomain/Makefile                          |   1 +
+ drivers/pmdomain/marvell/Kconfig                   |  18 ++
+ drivers/pmdomain/marvell/Makefile                  |   3 +
+ .../pmdomain/marvell/pxa1908-power-controller.c    | 268 +++++++++++++++++++++
+ include/dt-bindings/power/marvell,pxa1908-power.h  |  17 ++
+ 14 files changed, 376 insertions(+), 8 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250803-pxa1908-genpd-15918db5260c
+
+Best regards,
+-- 
+Duje Mihanović <duje@dujemihanovic.xyz>
 
 
