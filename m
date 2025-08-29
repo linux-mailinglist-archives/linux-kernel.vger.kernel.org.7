@@ -1,221 +1,239 @@
-Return-Path: <linux-kernel+bounces-792136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD49BB3C09B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284C8B3C09E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACAB7ABD2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:23:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813B658535D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5C533438C;
-	Fri, 29 Aug 2025 16:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC0D32A3D1;
+	Fri, 29 Aug 2025 16:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ARTQEDl4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Vx1+Nkfe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE693314B3;
-	Fri, 29 Aug 2025 16:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B8322DDF
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484617; cv=none; b=AkNKA291Fv1OHlfDxPYRVg9WCZH03KSWCFHkxCmbJviHEhEqmEc2cgBrYDRavYYOlSBuvLaNCguSCoGWWzLoSBcmU9MMEDvkG+ylPdBHhCELzFHR4Jm/pKRUNhn56Mq2PYQy8GxhKbNAd47GQHRyXcdqzAQrSzTVV+QmBMRpUw4=
+	t=1756484680; cv=none; b=FixXXQtKZgI4nqkGl6KZ2lWsjDds5ImDWjAMRyBVaT1Dz/Lac9vnQ9woI1p8jq1KvxVxE4VULUIdaamj84TrOuYFv0ZyJVuDfdyqt0AM1DEQbebYEVkF0sQiyyfRDvd35HdaTyVvcyRpVvLMUk/YOYgHerpBRqOQAZy3oN4tbHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484617; c=relaxed/simple;
-	bh=yFN1EQEjRbUyL6L3NwzgEy/E1VDAcLoyMHEC0+8jWsU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rn+NjG9QaRztQYn5dRxVx9FksPqDudp/5NIn9RsTCAtxtt2ySSe78XzqI/sFkUmdDckFjmaOLYA8Uao9gRiiZ36f13Pg9TvbN9CfwcZg86hfEW/m9SdsZHLRht1bpnjUwqfvs++ZqRfFB+Uj9EwXUaqPweDULwMpaxawg5LUPm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ARTQEDl4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756484613;
-	bh=yFN1EQEjRbUyL6L3NwzgEy/E1VDAcLoyMHEC0+8jWsU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ARTQEDl4e6cM5xGS8Pafvs6+Llf0SyXoean8jS5+AcWHRp/1iNxjV8I12YtWSthw5
-	 TK1vGObU9Pwkmmm/NPpkRsqrdi7azBqIaJu6NWCzGipFBP1vHjWZjCVKcfxYYpbwH/
-	 I5+G6h8wAr1oUd9A+r2km7ZzCJD9vh/QplWGB61je9eW2m/SmClL0XvdmoPEFJVQKq
-	 aiun6rkDnnonpm56lLBSyQv3J5CYXoXPYOCjy6Kghenih/8ZQxmLeU1dmXu3+uTA2u
-	 Nq4cJ+BH4ni5uwq9ZKB6gZjInQqTQ6PvyeqGGn1WFYerWADkIRo+hYClHgGnI0+rDP
-	 qfHDjppqdJMaA==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C405917E10F3;
-	Fri, 29 Aug 2025 18:23:31 +0200 (CEST)
-Message-ID: <a216e7e218d874cf64b53f6eba2fc74fc551d2fe.camel@collabora.com>
-Subject: Re: [PATCH v7 4/6] media: verisilicon: AV1: Restore IOMMU context
- before decoding a frame
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Benjamin Gaignard
-	 <benjamin.gaignard@collabora.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- 	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- p.zabel@pengutronix.de, 	mchehab@kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rockchip@lists.infradead.org,
- kernel@collabora.com, 	linux-media@vger.kernel.org
-Date: Fri, 29 Aug 2025 12:23:29 -0400
-In-Reply-To: <20250826124155.GD1899851@ziepe.ca>
-References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
-	 <20250825153450.150071-5-benjamin.gaignard@collabora.com>
-	 <20250825170531.GA1899851@ziepe.ca>
-	 <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
-	 <20250825183122.GB1899851@ziepe.ca>
-	 <441df5ff-8ed4-45ed-8a52-b542c6e7d38c@collabora.com>
-	 <20250826124155.GD1899851@ziepe.ca>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-DNMiMpnxu0upmlGb0Ub2"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756484680; c=relaxed/simple;
+	bh=3B97zBH4p9jRcLgMlEAc2P4fRn926Py9yl1OWBr7GvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6b37/hHenQyUAzdlS2qU8iif9tfUlnuIeNfviONdOtzJeMleSwSSvGohYH/m5khuNnyrjtvdOknbOlfRQX9QP9w39JXHMVk301lWXquk4+QTUHBTiCPms0XcPzUqQ6tQ9G5xZhDy+dMlltgnIDoxb2wQi7b/Aoie1xQ7v+mFtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Vx1+Nkfe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TFaWDC011710
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XCIfjiGc29TyHYiTm4KLiwCktBOr1c2fqrZ/oTTcfZo=; b=Vx1+NkfegDhBk6Bf
+	fz9QkSj4uQXedF2HcUipcq/YN/IeXx+DvrakGMN4PA8SIbyDMeF/EFY8+SGlJhCM
+	hWQuULnOEPwdLEE9OI3kN3J9ENLVFPsOSQGeArClQUEq5AT2HDzNZZXN7cXGDlL2
+	XEMstV+DzQaqKeu5+yvsyikbFjzUAsBHRJXkxz/H0qyhjmQUeNxQ4OMXTUVTOAFb
+	hw2ZCWfBXFpoFE987qMsXv8Y4aL1WzcICnFpLL76rNO4YL2wqNF+jM2zBcUZCD1y
+	MoKNK2FFxccJCt1R8PkBP7U6X615kh7h6V8HaaawsANhi73UCyGASKypSnlclA95
+	rWCH/Q==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48rtpf6nn1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:24:37 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b0faa8d615so84620631cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:24:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756484677; x=1757089477;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCIfjiGc29TyHYiTm4KLiwCktBOr1c2fqrZ/oTTcfZo=;
+        b=jtilJ9yv4ePM70Y0OrO0si+NkIs87AMiOqWI0MkM/iWU2Mua/DMsbJCPcG5LWMXFVt
+         uWu4tFQAouw9kRMxWAbcVS77tXo4+LOVd2ksZisjgLxmzhQdWlOWwnsN/JO/JleGEk7A
+         iKX9bgD1wClo03HTFPlXd+KcV7acwS6vPGbdH2zoufRzW4ce1Grz9MSQO6TPmRDBfxiq
+         wHw0DDS4JgnFJAWP6ggi8DjWYYDVsCeUGM/LVkoao8oSlsS5PGCHuHL4r51n+jjLVKz2
+         E80QOamUa9c9tiAB9SkqrfiQcOAw2qzaNsbjFT1yMKJ5acyp3Xom/WW0drL4xFCsngyY
+         i6xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsEW8OrJjDFrIeaHzZUZqt5XOYbvQKFjdc8b4WRlmCia/VV/SzptbJeAFLBg5LXK/us+imGhCyMB20D9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkuX7nbpfzuToa4mRyW7X8insU6JTbb8baYhCkvvrwd+qyU6lG
+	QSm2xJzfkbvaZbXF4tttYPkqBxLsWnzfrxOJ2z/uKotK0eDAYqr5qpLH6x/uRwDTtfnZWNez5CB
+	2Lj7h/MijGoJst17Fuh9Xix/sXM6KcRnqCc0ZK5HXsN3QLrzI2NlqzUlqGfxj85NKr0A=
+X-Gm-Gg: ASbGncslPVaPytM3g64TeEiYMl+6wsQQq1bANXc5gRvpCCzupovXZeHaxyzfTVwNeNl
+	eDIOV1ryndVSbhdIf4VQMAMTM4+AebL6yPDBeNm4URzg7f8kq4mXTCHlR/MKZTVVS40lsthdeEW
+	9smB8DTfy/OZAi7sHRk17y7xTXef/h8CLnsxyKe83vw76H6eeGx+c6yojtsUZAJQTpbojOwNzgh
+	qt5vnF69UrcOU8J3VguXIx7j1x24hTNzFFptYinClkIj7SXsDkwsHsHqOgZc626C0d3QwsklyZd
+	Qy6M09PdLuj7hiogTIr94c4WlN4aZ+yrkXDq5GYr7iDTb+1d/hRZs2DF44CQgeFeBtTbg3KZ3jM
+	MJ/5VJH+WBiXGv3d64vodfJEGTunGicsfg2169Y6XXgDgYCtQlX60
+X-Received: by 2002:a05:622a:2c1:b0:4af:bfd:82bf with SMTP id d75a77b69052e-4b2e76f6c2fmr159959981cf.17.1756484676376;
+        Fri, 29 Aug 2025 09:24:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3avH1Zre9WfCU8qCI5LcLOBiCx7PfjvDuQh+HklBIJkQz+ZtJjjyCJREb1zAER0kzRP6i/A==
+X-Received: by 2002:a05:622a:2c1:b0:4af:bfd:82bf with SMTP id d75a77b69052e-4b2e76f6c2fmr159959551cf.17.1756484675754;
+        Fri, 29 Aug 2025 09:24:35 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f678450dfsm713370e87.72.2025.08.29.09.24.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 09:24:34 -0700 (PDT)
+Date: Fri, 29 Aug 2025 19:24:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Monish Chunara <quic_mchunara@quicinc.com>
+Cc: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+        Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Vishal Kumar Pal <quic_vispal@quicinc.com>
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+Message-ID: <ozkebjk6gfgnootoyqklu5tqj7a7lgrm34xbag7yhdwn5xfpcj@zpwr6leefs3l>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+ <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
+ <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
+ <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aLG3SbD1JNULED20@hu-mchunara-hyd.qualcomm.com>
+X-Proofpoint-GUID: LUDC4F8AL8grfUW8AzRt6dtGUmncWGyC
+X-Proofpoint-ORIG-GUID: LUDC4F8AL8grfUW8AzRt6dtGUmncWGyC
+X-Authority-Analysis: v=2.4 cv=Hd8UTjE8 c=1 sm=1 tr=0 ts=68b1d445 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=YDAz1v9_iDTVm1Y559YA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0MiBTYWx0ZWRfX6MdAtFLTZygk
+ V7O5kXZsaloohcmcfZsRmDVtxYnqy2YbjoKGWkOKiiUSr8dvH4UjeYWa+tQlymD/aQCXcl4OYrq
+ fbtZN4rRhx8ikpaHq2FCMQ+kOsbGaXWZN1V4d0flFT9rphoEoeMMC/LgmbE1KcAoXt/Mce9FjHU
+ IUOKX0uf5L/smXHsK2bv1TD5wx2wLuENdmT4ucgAJJcVfB+bWj24na5OOB1FYi3Q4V9TwZr5DUt
+ V4WQJVohJgAF+tuoiiHIT7LFhOxCjXi6OCSjEKkufueXp5Rfut4lkxOCI9luVH6VCIzSDih+ONf
+ YecXa4pJ5SNaVZJbo636fhbF4f/xppIanHqIt7eikbSybiocWy6qv5C+GdWVbpfuTmgI0WagKFr
+ edy1m9lT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250142
 
+On Fri, Aug 29, 2025 at 07:50:57PM +0530, Monish Chunara wrote:
+> On Thu, Aug 28, 2025 at 04:30:00PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, Aug 28, 2025 at 06:38:03PM +0530, Sushrut Shree Trivedi wrote:
+> > > 
+> > > On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
+> > > > On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+> > > > > Enhance the Qualcomm Lemans EVK board file to support essential
+> > > > > peripherals and improve overall hardware capabilities, as
+> > > > > outlined below:
+> > > > >    - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+> > > > >      controllers to facilitate DMA and peripheral communication.
+> > > > >    - Add support for PCIe-0/1, including required regulators and PHYs,
+> > > > >      to enable high-speed external device connectivity.
+> > > > >    - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+> > > > >      GPIO lines for extended I/O functionality.
+> > > > >    - Enable the USB0 controller in device mode to support USB peripheral
+> > > > >      operations.
+> > > > >    - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+> > > > >      Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+> > > > >      firmware.
+> > > > >    - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+> > > > >      and other consumers.
+> > > > >    - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+> > > > >      Ethernet MAC address via nvmem for network configuration.
+> > > > >      It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+> > > > >    - Add support for the Iris video decoder, including the required
+> > > > >      firmware, to enable video decoding capabilities.
+> > > > >    - Enable SD-card slot on SDHC.
+> > > > > 
+> > > > > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > > > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > > > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > > > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > > > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > > > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > > > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > > > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > > > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > > > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > > > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > > > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > > > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > > > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > > > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > > > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> > > > > ---
+> > > > >   arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
+> > > > >   1 file changed, 387 insertions(+)
+> > > > > 
+> > > > 
+> > > > > @@ -356,6 +720,29 @@ &ufs_mem_phy {
+> > > > >   	status = "okay";
+> > > > >   };
+> > > > > +&usb_0 {
+> > > > > +	status = "okay";
+> > > > > +};
+> > > > > +
+> > > > > +&usb_0_dwc3 {
+> > > > > +	dr_mode = "peripheral";
+> > > > Is it actually peripheral-only?
+> > > 
+> > > Hi Dmitry,
+> > > 
+> > > HW supports OTG mode also, but for enabling OTG we need below mentioned
+> > > driver changes in dwc3-qcom.c :
+> > 
+> > Is it the USB-C port? If so, then you should likely be using some form
+> > of the Type-C port manager (in software or in hardware). These platforms
+> > usually use pmic-glink in order to handle USB-C.
+> > 
+> > Or is it micro-USB-OTG port?
+> > 
+> 
+> Yes, it is a USB Type-C port for usb0 and we are using a 3rd party Type-C port
+> controller for the same. Will be enabling relevant dts node as part of OTG
+> enablement once driver changes are in place.
 
---=-DNMiMpnxu0upmlGb0Ub2
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Which controller are you using? In the existing designs USB-C works
+without extra patches for the DWC3 controller.
 
-Le mardi 26 ao=C3=BBt 2025 =C3=A0 09:41 -0300, Jason Gunthorpe a =C3=A9crit=
-=C2=A0:
-> On Tue, Aug 26, 2025 at 11:52:37AM +0200, Benjamin Gaignard wrote:
-> >=20
-> > Le 25/08/2025 =C3=A0 20:31, Jason Gunthorpe a =C3=A9crit=C2=A0:
-> > > On Mon, Aug 25, 2025 at 01:50:16PM -0400, Nicolas Dufresne wrote:
-> > >=20
-> > > > Jason, the point is that the iommu and the VPU are not separate dev=
-ices, which
-> > > > comes with side effects. On RKVDec side, the iommu configuration ge=
-t resets
-> > > > whenever a decoding error leads to a VPU "self reset". I can't reme=
-mber who from
-> > > > the iommu subsystem suggested that, but the empty domain method was=
- agreed to be
-> > > IDK, that seems really goofy too me an defiantly needs to be
-> > > extensively documented this is restoring the default with some lore
-> > > link of the original suggestion.
-> > >=20
-> > > > the least invasive way to workaround that issue. I believe Detlev t=
-ried multiple
-> > > > time to add APIs for that before the discussion lead to this path.
-> > > You mean this:
-> > >=20
-> > > https://lore.kernel.org/linux-iommu/20250318152049.14781-1-detlev.cas=
-anova@collabora.com/
-> > >=20
-> > > Which came back with the same remark I would give:
-> > >=20
-> > > =C2=A0 Please have some kind of proper reset notifier mechanism - in =
-fact
-> > > =C2=A0 with runtime PM could you not already invoke a suspend/resume =
-cycle
-> > > =C2=A0 via the device links?
-> >=20
-> > when doing parallel decode suspend/resume are not invoked.
->=20
-> It was a proposal for an error recovery path.
->=20
-> > > Or another reasonable option:
-> > >=20
-> > > =C2=A0=C2=A0 Or at worst just export a public interface for the other=
- driver to
-> > > =C2=A0=C2=A0 invoke rk_iommu_resume() directly.
-> > >=20
-> > > Sigh.
-> >=20
-> > An other solution which is working is to call iommu_flush_iotlb_all()
-> > before decoding each frame.
->=20
-> That was already proposed and shot down, it makes no sense at all use
-> to use flushing to reset the registers because the HW weirdly lost
-> them, and flushing should never happen outside mapping contexts.
->=20
-> If the HW is really resetting the iommu registers after every frame
-> that is really just painfully broken, and makes me wonder if it really
-> should be an iommu subsystem driver at all if it is so tightly coupled
-> to the computing HW. :\
->=20
-> Like we wouldn't try to put a GPU MMU into the iommu subsystem though
-> they do fairly similar things.
+> 
+> > > 
+> > > a) dwc3 core callback registration by dwc3 glue driver; this change is under
+> > >     review in upstream.
+> > > b) vbus supply enablement for host mode; this change is yet to be submitted
+> > >     to upstream.
+> > > 
+> > > Post the above mentioned driver changes, we are planning to enable OTG on
+> > > usb0.
 
-I didn't mention, but this is obviously close to the same IOMMU wrapped ins=
-ide
-etnaviv (same company making it). Note that for media driver, drivers in th=
-e
-iommu subsystem are very convenient, they just work usually (except when th=
-ey
-don't like with codecs). I'm pretty sure rkmmu is also used by Panfrost, so=
- I
-suppose not all GPU IOMMU lives in GPU drivers (I could be wrong). Its one
-instance per block, but the same programming interface. Note that we do hav=
-e an
-in-driver iommu implementation in the RGA2 driver.
-
-If we can agree on solutions for this problem, which seems slightly differe=
-nt on
-RK compared to VSI IOMMU, it will be quite beneficial to not have to overri=
-de
-all the media allocation ops, and re-implement rkmmu, vsimmu in every drive=
-r
-needing this block. The VSI mmu could be used similarly to how the rkmmu is
-used, meaning we'd have to copy its implementation in every driver. If we c=
-ould
-find out more accuratly how this is suppose to work it would be great, I fe=
-el we
-don't really understand what is going on yet. Once that done, we can port r=
-kvdec
-driver with the unified solution.
-
-The empty domain approach was used since there was no solution that came ou=
-t
-over a year, and users these days expect concurrent decoding to work. So ye=
-s,
-its not all pretty, but its the best we found until this type of hardware
-behaviour gets an API for that is commonly agreed.
-
-Main question is shall we block on merging the VSI IOMMU driver for that re=
-ason
-? Its there anything in the IOMMU driver that still needs more work ?
-
-cheers,
-Nicolas
-
-p.s. RK means Rockchip, VSI means Verisilicon, the company behind Vivante G=
-PU
-
---=-DNMiMpnxu0upmlGb0Ub2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLHUAQAKCRDZQZRRKWBy
-9JkWAQCjhKw0H+/fIxtEIGqR/i3mzCXIn2jiB22S5Z1/SsXLjgEAnopTxM8L88l+
-NUbl5VA35McqgA+aGhShXzST98zO8wY=
-=Uy0P
------END PGP SIGNATURE-----
-
---=-DNMiMpnxu0upmlGb0Ub2--
+-- 
+With best wishes
+Dmitry
 
