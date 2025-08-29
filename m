@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-792098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E051FB3C024
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:02:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF7BB3C029
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830F93A2C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE9018857D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C75207A0B;
-	Fri, 29 Aug 2025 16:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB753322DCE;
+	Fri, 29 Aug 2025 16:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N+kKbdxn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vAFrI4+C";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w4kbhreW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCAB3A1DB
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91626305046;
+	Fri, 29 Aug 2025 16:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756483327; cv=none; b=j2MqmOXPFRTKsW7GTMeBrC8c6QyMwmlHlYWD7ocZzC3zkwRumvtrQuTrTeWYG4BLF1bBfpgBmFqc85M3TCKd4EZKxGMDOZSC/E2ONZ9ATfRhRAOE6SA7Loh2p7iY2cON+ANxXVjucc3/3ENt4OoWp8mjE/LFs7EbE2oVMSJCYaE=
+	t=1756483331; cv=none; b=f0/V0G72qVmaf+NaLb6KDNIVDH4bpvRaFGQB1JEtRMPp4ihJkcWWC36BliJ0/QAWW/JAm/cbV4n5iw3lLKC5a/q7pfllk9fE1bRk1qMj1yLJXDuTxEZnJyb29y0KZeYz7kNYoyq/WnNtMuyzelEsfbxVlR5ObWlWpvh/Ea9AOSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756483327; c=relaxed/simple;
-	bh=dN8i6Rz82fJDMdFxh2kv1g7Piun3mSux72sYZBZRKyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=azScFhu/blqSH2iHNUtPnfwJm29F9Ncg8x41mtSpgkvQbNLZBmueh7PFdjHGVGf5bON1tnJD82EDP2c89ozp3Es4pzEzqAJqY02Bldg4X4NWJTU2U2uyxC8hoqpl19IZnpJpv5Rc2RrLphtRlDHu7kCOwfWtxpsJ4QXqK4oxF3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N+kKbdxn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756483325;
+	s=arc-20240116; t=1756483331; c=relaxed/simple;
+	bh=pfIqQd8uHA4ATUntb/FL6J58wv1QXovBwoujqHca46A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cT57nEkTWvm+foNshM+zqhxKCVHsWS4cCHXOdbRFTvYJdY0Dvaox9PBWOZUYb3ch6fVyRYxmxR3bM6m0M+kTaacNPlD9a0dGW+Wp553UD8DvKflew42rn0pNYvycb37nWFQ9pLnOkzBtIlJ7+iTfC3lQ6krPC7RQ4WidwerHYeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vAFrI4+C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w4kbhreW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756483327;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dN8i6Rz82fJDMdFxh2kv1g7Piun3mSux72sYZBZRKyo=;
-	b=N+kKbdxnMCCNzaJLc793+HGDXQgmHf7+OX9odtdDvZ3HNVjPC5PpoUAQH+uf8abyM4TuNx
-	dtjq7SQq5iFu8qTNF7SzubQ04XSsMWNpKwLO6IjQ9Ixj61SD1PUbh8S9xzPcvPhjbzlBzj
-	L/Vc+Ahc5+jcV9I9cTYlJH9IiGlyXz0=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-PHam4YGZM7Cnz32Ps7vCHg-1; Fri, 29 Aug 2025 12:02:03 -0400
-X-MC-Unique: PHam4YGZM7Cnz32Ps7vCHg-1
-X-Mimecast-MFC-AGG-ID: PHam4YGZM7Cnz32Ps7vCHg_1756483322
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-3366eebaf61so8864081fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756483321; x=1757088121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dN8i6Rz82fJDMdFxh2kv1g7Piun3mSux72sYZBZRKyo=;
-        b=vGa054CZWule9scVMQgbxI4MGYrI6RCNQxI/I1bFj2KOZLI2PQciYHUCRjeeRlHV6B
-         n15VrvCms6gwv/TxmhjpOou2oz3Nmk/beiHJ96D0Egbo0psvtiX4jKLIhVOIZN1UOzeT
-         ElLdZ7F7HJSYh3kGsjjJma26bfiN8KW0LEDN9nmZgxE2DWXB9aUb3Sb+7TJM1V9MydTw
-         sdX09LV5VaRkSTGd7AVEp7tbl/qXkf+cfIA6cM/cNhmnT5RDtrI3k8JnLTiQ0C/YkN7e
-         hvfwKGE15vyBFTvjihvN22ikalD0gSB6/HwFzXuepJjFlu8EX7HcmQSSsfBR96UK9AdQ
-         KBhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNGNNbngsHMte0JoZPTG+ztxDG9O52zlzvAdwVa+HLlPzPIKAEWEWeOe5BBFUjVxp/BC0RvWOTp95Wf2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypdNzvy8pv/Akca1Tw/YiKV6Wom9PHGdvrPaOXU08Z1WxVlSok
-	LRIaaPR98SSCctTlqilxlULDNFPon7Q+fe+gZ9oPryO7El9euzsVKWAAFZCiHTRvZINfE96FBQ0
-	Mk9IWZb0+O/QLtqiid3uRw53rpOPRBK9IlCouuxpKWcOMLBEXvwWMwE+uZ1w0GS/k2qW2sGWGXG
-	BScbVNA9uKwPSoxU2UFdWC43m+LpcE5tuny+wlnaNr
-X-Gm-Gg: ASbGncuAiok5QXBCKoQI5Y+Cu/Rh9ogf9CT4ILMaNyuEOs0zRldurz9HFKKg/GgAiRe
-	4zXaN9kwLuuIAqaPU8mNU7SpO7irYx9yd938aDdnWvZ8NWRcvhVIjH/1BMEYSnAIIui3rJ6QzXJ
-	EnwAGVKeG84KXJUQg9qhiXxGiYXzPNg0MujhPlrnpneIG5xEpB9tFc6cc=
-X-Received: by 2002:a2e:b8c3:0:b0:336:8abb:6b31 with SMTP id 38308e7fff4ca-3368abb724cmr38056411fa.37.1756483321563;
-        Fri, 29 Aug 2025 09:02:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwdtjaXP/iAFYrrsuLxUME+VeuCvN+pts+ipwS44SmoVvgLD5S+SyEfH9GpXO1F5UEojfC3BVozRpTE+XK+gI=
-X-Received: by 2002:a2e:b8c3:0:b0:336:8abb:6b31 with SMTP id
- 38308e7fff4ca-3368abb724cmr38056341fa.37.1756483321025; Fri, 29 Aug 2025
- 09:02:01 -0700 (PDT)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=215+8Q3uzBnOfztiyaGDt27X3dq/IcEDuYL/qGm5BgI=;
+	b=vAFrI4+CFurtisXvJqR8DAMdZeDykckaR1K7/YXND5ED0CdfmNDv6Rsku/P2GLRK4IazZF
+	hFSfB4IkCDk6aivj9lHPpTLsfUbXMWR9jVG7R3GlNN4jtnHaJT+nhzj0514PIPI0PirN6b
+	PRAqLsoGDCkPh/y/VR2dddRbgG5gqiL82Jark4X0Hb/JecyZ/BbTctUzv4SO6STQp+hTBE
+	jeDzbXZk2+GWFZyHvZA8Z2s0IgQ1/f91EGlaW9cLxbsEiecR1pIPt3EQmtQddcGKNCH6Ou
+	4LoI+SQdFFktH/s6Tb0BbIc9+f1c2xwFDJ21msixBmUX7/Xh2CgtKsWnNcb5uw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756483327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=215+8Q3uzBnOfztiyaGDt27X3dq/IcEDuYL/qGm5BgI=;
+	b=w4kbhreWZkOMeLON0ie7tShRlBWjS/MR6HTDzdGhNkm78dNcr5FCvaoypihtGEOJfFDq6v
+	f8eig/vrU7tmA/Ag==
+To: linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org
+Cc: Alejandro Colomar <alx@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 0/4] sched.7 and small futex.2 updates
+Date: Fri, 29 Aug 2025 18:01:56 +0200
+Message-ID: <20250829160200.756194-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829110749.500571-1-226562783+SigAttilio@users.noreply.github.com>
- <CAK-6q+js0y9Pnubg0ev3_GXs8Fa4KYU=nNP5r=FBatuEAUhJkw@mail.gmail.com> <CACsb0NhQ8BBzcUtR0awMu6AbP-xwLvkUotDAAg-LbUV_LxwiNA@mail.gmail.com>
-In-Reply-To: <CACsb0NhQ8BBzcUtR0awMu6AbP-xwLvkUotDAAg-LbUV_LxwiNA@mail.gmail.com>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Fri, 29 Aug 2025 12:01:49 -0400
-X-Gm-Features: Ac12FXyDNPnEIkw_zWHS9CIL2QNCOairrzWrDiqSNWN-KcBqAA3hSzD-8--90gI
-Message-ID: <CAK-6q+gQOQsg5uE2-KioKBip5agCV5AjhXbxgwqngvg8ct=vVQ@mail.gmail.com>
-Subject: Re: [PATCH] fix(dlm): handle unlock/cancel during deferred lock messages
-To: Alessio Attilio <alessio.attilio.dev@gmail.com>
-Cc: David Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Alessio Attilio <226562783+SigAttilio@users.noreply.github.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+I went through sched.7 and tried to update the real-time bits.
+I started looking into futex.2 but then got distracted with the condvar
+part and didn't get very far.
 
-On Fri, Aug 29, 2025 at 10:35=E2=80=AFAM Alessio Attilio
-<alessio.attilio.dev@gmail.com> wrote:
->
->
-> Hey there.
->
-> This fix tackles a tricky race condition that can pop up when an unlock o=
-r cancel operation is triggered while a deferred lock message is still bein=
-g processed. What this patch does is make sure these operations are handled=
- safely, even if the lock is still being resolved through dlm_master_lookup=
-.
->
-> The problem I ran into was that, under certain timing scenarios, a lock c=
-ould be canceled or unlocked while the deferred message was still pending.
+Sebastian Andrzej Siewior (4):
+  man/man7/sched.7: Update the real-time section
+  man/man7/sched.7: Update the documentation references
+  man/man2/futex.2: Recycle two gmane URLs
+  man/man2/futex.2: Add a pointer to Linux' memory-barrier
 
-depends on how your lock usage might be pretty normal. What exactly is
-a "deferred lock message" here?
+ man/man2/futex.2 | 12 ++++-----
+ man/man7/sched.7 | 66 +++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 48 insertions(+), 30 deletions(-)
 
-> This could lead to an inconsistent state or even accessing freed structur=
-es.
-
-Do you have any reproducer or more information e.g. stacktrace for
-that with a debug kernel?
-
-- Alex
+--=20
+2.51.0
 
 
