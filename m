@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-791517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19147B3B7C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2644B3B837
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9193A002B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:52:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BDEA04506
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040E2305070;
-	Fri, 29 Aug 2025 09:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kA9PXWyL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA823090C5;
+	Fri, 29 Aug 2025 10:09:22 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B6270EBC;
-	Fri, 29 Aug 2025 09:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27762877DA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756461169; cv=none; b=NwOVNO8ZrjWOzbqgIS4xX8w/MTeYfquPncbycVXoiC1t14NGbUih9M2lZgxpHWWPei9enD5DtlF7vTASDks9oBGhMrCyNfjnWOui21fzI4BGJvPFrNnD5IvWdtkMPJRBl/uxi1RLOBwosHadYe0DKisK1DxNA1Kd3aOgmtK8cqk=
+	t=1756462161; cv=none; b=lpmA+KdT/zHsc2QSxl14Q/6F4suez7biUGIgXrFm8+dqbsZBzk9q2tqbHM5sLeMlD/qdBJMKGx4vXHydCjdm74Eyok7GUDQ3yjkC/eFMBbgLmOSgYwa+mCB2Pll1h33X77xNjjL2UQpqSF2QSEa3kx3rHvvY5cnT6TwM6pETlP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756461169; c=relaxed/simple;
-	bh=T5E7MUA3xyACQTwyysefk6cF5tOE6ceeLrQtL6q37gw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lth2xRPAnPxGOWwpu724iFZ6XXnrKskCoSkPShWlj1sZEUj08nq9dO6VkZidClUjasMeELGXhXH3M4iP2VGnuQOmH4idQUP7hBf6XWgl2Z9ijubajTCy9wf+l2Z4ayO8HZMlVzJQfuCAsW+LR1LmvHFLtncrxXfmhPou2TCe6wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kA9PXWyL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756461168; x=1787997168;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=T5E7MUA3xyACQTwyysefk6cF5tOE6ceeLrQtL6q37gw=;
-  b=kA9PXWyLs5qJG/1E2NYxGK53gWrq6VLT1MMWtpkTf13EGWqgNrd760qJ
-   VL60Sw/BnC8nJE9fD7XZD2vrEGeNYIqmjWQlcu/xhp7OcV50nDkhdq0ZE
-   Y/zjIP/VtZ7oG6urhznNTiFgeyqg5y2RY7PfizMOgru2JOxfl1CI2VgBM
-   B2w3ZCthZ/7XCANDasR4aKkS1+FaSRIlfeylnYKfIlCGO9MWrxQc2rXtD
-   v4/Z/WZAR3cyy/bpl3M9Emttoq6SAJhSl4hnsXK1fMvcoo5ZnRzTPr/Ce
-   V+KR6H9vmLsoPMtaRPG2ioAnnBw3udcb4TIJuosnZzBjyQEgeVeuxklCR
-   w==;
-X-CSE-ConnectionGUID: rT07jn04QO2VkLGOwg97lQ==
-X-CSE-MsgGUID: 0VjzFN5cTkqgEmvskHKIXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="62561240"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="62561240"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:52:47 -0700
-X-CSE-ConnectionGUID: cEimaGQsSfOmw3S0IybNNg==
-X-CSE-MsgGUID: USiDBVVKRbS9jZfizR0wxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="174717959"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:52:44 -0700
-Message-ID: <0f4225bf-92fd-48a2-8015-65da12a135c8@linux.intel.com>
+	s=arc-20240116; t=1756462161; c=relaxed/simple;
+	bh=LULWHCojxv+sHgqE8kViayclEvTMcl++589AVYPm3dc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bcNH+ekUquQqv5RYqYvpZMO/RATgy+3mLKtHVgH1/6uQ9GlJWSgPf+3P+DEFvUmIt3Pvga+eQ2eQdsr6yFw7Fztop3P6j4Vc1o/LSfxMjzDihqnACeX4WqXPMzq+RIFu0Wg+6u1waNkZ/tw0GiN7Htytszcj6/yUCTejZS5gV+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <giorgitchankvetadze1997@gmail.com>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v3] mm/hugetlb: Retry to allocate for early boot hugepage allocation
 Date: Fri, 29 Aug 2025 17:52:41 +0800
+Message-ID: <20250829095241.2651-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 09/18] KVM: TDX: Avoid a double-KVM_BUG_ON() in
- tdx_sept_zap_private_spte()
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
- Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ackerley Tng <ackerleytng@google.com>
-References: <20250829000618.351013-1-seanjc@google.com>
- <20250829000618.351013-10-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250829000618.351013-10-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc11.internal.baidu.com (172.31.51.11) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
+From: Li RongQing <lirongqing@baidu.com>
 
+In cloud environments with massive hugepage reservations (95%+ of system
+RAM), single-attempt allocation during early boot often fails due to
+memory pressure.
 
-On 8/29/2025 8:06 AM, Sean Christopherson wrote:
-> Return -EIO immediately from tdx_sept_zap_private_spte() if the number of
-> to-be-added pages underflows, so that the following "KVM_BUG_ON(err, kvm)"
-> isn't also triggered.  Isolating the check from the "is premap error"
-> if-statement will also allow adding a lockdep assertion that premap errors
-> are encountered if and only if slots_lock is held.
->
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Commit 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages") intensified
+this by deferring page frees, increase peak memory usage during allocation.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Introduce a retry mechanism that leverages vmemmap optimization reclaim
+(~1.6% memory) when available. Upon initial allocation failure, the system
+retries until successful or no further progress is made, ensuring reliable
+hugepage allocation while preserving batched vmemmap freeing benefits.
 
-> ---
->   arch/x86/kvm/vmx/tdx.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 07f9ad1fbfb6..cafd618ca43c 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1724,8 +1724,10 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
->   		err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
->   		tdx_no_vcpus_enter_stop(kvm);
->   	}
-> -	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level) &&
-> -	    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
-> +	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
-> +		if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
-> +			return -EIO;
-> +
->   		atomic64_dec(&kvm_tdx->nr_premapped);
->   		return 0;
->   	}
+Testing on a 256G machine allocating 252G of hugepages:
+Before: 128056/129024 hugepages allocated
+After:  Successfully allocated all 129024 hugepages
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+Diff with v2: auto retry mechanism
+Diff with v1: add log if two-phase hugepage allocation is triggered
+		add the knod to control split ratio
+
+ mm/hugetlb.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 753f99b..18e54ea 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3589,10 +3589,9 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+ 
+ 	unsigned long jiffies_start;
+ 	unsigned long jiffies_end;
++	unsigned long remaining;
+ 
+ 	job.thread_fn	= hugetlb_pages_alloc_boot_node;
+-	job.start	= 0;
+-	job.size	= h->max_huge_pages;
+ 
+ 	/*
+ 	 * job.max_threads is 25% of the available cpu threads by default.
+@@ -3616,10 +3615,30 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+ 	}
+ 
+ 	job.max_threads	= hugepage_allocation_threads;
+-	job.min_chunk	= h->max_huge_pages / hugepage_allocation_threads;
+ 
+ 	jiffies_start = jiffies;
+-	padata_do_multithreaded(&job);
++	do {
++		remaining = h->max_huge_pages - h->nr_huge_pages;
++
++		job.start     = h->nr_huge_pages;
++		job.size      = remaining;
++		job.min_chunk = remaining / hugepage_allocation_threads;
++		padata_do_multithreaded(&job);
++
++		if (h->nr_huge_pages == h->max_huge_pages)
++			break;
++
++		/*
++		 * Retry allocation if vmemmap optimization is available, the
++		 * optimization frees ~1.6% of memory of hugepages, this reclaimed
++		 * memory enables additional hugepage allocations
++		 */
++		if (!hugetlb_vmemmap_optimizable(h))
++			break;
++
++	/* Continue if progress was made in last iteration */
++	} while (remaining != (h->max_huge_pages - h->nr_huge_pages));
++
+ 	jiffies_end = jiffies;
+ 
+ 	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
+-- 
+2.9.4
 
 
