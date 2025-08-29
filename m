@@ -1,140 +1,147 @@
-Return-Path: <linux-kernel+bounces-791887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CA9B3BD57
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0FF7B3BD5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA551CC0754
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C6A1CC0895
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3078431DDAD;
-	Fri, 29 Aug 2025 14:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35971318125;
+	Fri, 29 Aug 2025 14:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wl63MsDQ"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlUdB8T3"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA982135C5
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1586315790;
+	Fri, 29 Aug 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756477127; cv=none; b=MhVJ0vbndEvlKiLNHjBbd81NHssHVziKSFMHdxSEczTY4AicqXgjXpujN6Ee1z5kGORMVz6aPw49aGOs/cl6EEW3pn43B37uIygDxS8jHdxqiTpJ3UBUXKrU90QDDr2eMRDL+gpJ9kllj23n4YjeF4GVa6qwZUNFdy4AP45p2bg=
+	t=1756477155; cv=none; b=h7iKL+O2OT4l9kgBBAketclpIztLv1IH+U91V90uVtQtDzRMwi2i6c81eLJo3UyThfn7wUCiowQshU4eRinMS8sdVPCmQxEOOpP/6pX/yocXMwXhNEYShuxtmwggz0XB0NWkpEIGp8R7IifCw3BWleIEtKBXgWm2zQoXzvpqVPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756477127; c=relaxed/simple;
-	bh=OUaXq0ZwybCaprhYvqFvKJfAAXGKmp7Rs3uofbIAD5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Yw49D8DyiJSsmbJsl+vUR4B/g+TmID40xKkVHP1FJz3G6XIruzxJ1oMA/w5bAhVdH+i3hQ6/vlhKyHUG0rlPooPyUWSh0+d92/KZuaBXBaL7OnmCp8g5k/eRJcukHS6+uhLt2LSAoBrHb1dOmsjaVCi7zCxiON4ist53pTY/WQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wl63MsDQ; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b49de40e845so1593226a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:18:45 -0700 (PDT)
+	s=arc-20240116; t=1756477155; c=relaxed/simple;
+	bh=/bctECxnyur5FzEzpTeYahNv8xjX0UYOKQX4SJa5AmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIiB8Le+axm3kgHu3oRLW+jsCZi6Nznldv9a/EViKd80FE+P0AUCLC2PPF+xvn3MIHcX4VHJ/FiMUVA8IliV9dXeIqZarliI649hbqcot+DrcoFeIacyVS5WCch8cbpU2PKGim636JZEqX4kgzc3hXP86Cm79uwwwf4pQRkGqCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlUdB8T3; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so299352766b.3;
+        Fri, 29 Aug 2025 07:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756477125; x=1757081925; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KjqIIm3z2SVAcCrSVbmMRE9jgzcz/VfUw69KcDhSM7g=;
-        b=Wl63MsDQYKP2/Q/3BQqAKBhWldjuhRELFjufqL4GIlQE6V7Jakz0ZpZxtG3JlbKgoL
-         Xm5IY8CCH4bjiKGqwagUf20lX5sMXbIt+yTFlEs37h193X91yOkajLXiQs/bKsBYCo/Q
-         bwQHVy543L8X6nJmga79JI3stAQKGyuK9yJTMgr9Jbqo4IX6CWqakwKaThsg9qCadFcL
-         u7799GWaIL4CoXL9TYf06osRSYuWnbmBBdAnvw1Q7m8YNwdWQj6ntrqeMdMqOSHTCeC1
-         uq2a40kwWwfSL1m5KMC4jpc92kRpw+QfcxJJQdiKslZQ75w0SQ3SqVkd3JTAbBpUfUEn
-         uzFg==
+        d=gmail.com; s=20230601; t=1756477152; x=1757081952; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FZewhOHS/oYbB8CL96NH+4zbtn4JHTwX/wy8X/OvrF4=;
+        b=IlUdB8T3Sb9xWFlG8eopDY6zzOahDZFh210WU3tcdiZkhKPlNUuu5Z/YOwAftL3vQ8
+         Bt9A9zdN2/R/WI1+L71qbLqKx7Wx2Dz4fmopzan/E6EUUqrQBrXMpNkEc5dGo7tBr6le
+         G5GJVAoOtR5m9PqP3FPVobHof6yI1v8LnES2xnFH0E1bq1+884ZKd/P7vo/f6JYDC+q9
+         7SLmSEkKhjwfXx3JFkWOjGS5kAHbyu4lRYpeRWSsOt0SLCXxnGNfCl39kU3dAmbDWGEr
+         UW57rdr/HEg2LBoEg0dCy/q9tWc8tnb7TzkYcIoF/HXXFkzzklXYpWMrhBPWHzVNnMnk
+         eccg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756477125; x=1757081925;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KjqIIm3z2SVAcCrSVbmMRE9jgzcz/VfUw69KcDhSM7g=;
-        b=J4k3ypc6bMc5ti2ah1Dr1skHLB1opfDZwLhiyKUiYW6Hsf/L7mn2Gxmaj1d3h7NH8t
-         +aVvMgseDbGyyl7fr7zV9oaiKDa02oxJ7HXEGYH16aZrdbUC9SyLppr/huHM7KBYvFu1
-         jQriPwEvjjOA+IpAO2X/zwJEeJ4+BTH/tomdiVUb3gkJA23uAd98Upx7iBeWL0FfNTV6
-         49TMddPpzq6zcHUR3QsKjZNOBo5VgCzGWR6deR1idGS16GYqaNETH499ETINYhd6nW/u
-         petTWhcxMxANeAOj7a0dfsx8f2pUb4IICzR+lsXyyL17NNPBRrlFR6pkHK2fcFFlE5ri
-         teBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWW+TH4D2CRViK1+pjAVdoi8+OPXmxxSIjTsDjd/CSFnRysfToQETFDlo77K7hHyhn7PKe5JHD/oLkiVBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxysb10/r8SAIWOMDiwWfyP+Kn2oDyFfI/7RcRS58RdOHmtziMH
-	x6ft/mMfRe0/yA+PeQUPekXd04XGHRz9rhdx6lc2vsp7xnW5G4DJIA7FM3mXvQopDbiJu9UZztS
-	YxnYfyA==
-X-Google-Smtp-Source: AGHT+IGTX7uYgvOPHD7K4oPjsQ5WMOPGPblRnr11QBc8iEJZSDIjW6wR79PjFDP7p+FTqtE8LPgG7edmkaE=
-X-Received: from pfjc29.prod.google.com ([2002:a05:6a00:9d:b0:771:ebf9:d11c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7d9e:b0:240:1a3a:d7bc
- with SMTP id adf61e73a8af0-24340b8da6fmr37924832637.3.1756477125424; Fri, 29
- Aug 2025 07:18:45 -0700 (PDT)
-Date: Fri, 29 Aug 2025 07:18:43 -0700
-In-Reply-To: <20250829141233.58081-1-aqibaf@amazon.com>
+        d=1e100.net; s=20230601; t=1756477152; x=1757081952;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZewhOHS/oYbB8CL96NH+4zbtn4JHTwX/wy8X/OvrF4=;
+        b=Kazq6ME441WqD+3Lxc5UOi0rabq1mN+PgHYqcXhl/EDxUyb/aNM6F1/xohGZCNGKKb
+         fsPr0vF7II0SiO7X8pgflOJ7lN1Bya3EqLv8NPfyD1pip76T0ldu80D36z27IGRpZySo
+         O1NcWOZ4KYE7vcwVh1hgy+hVgov6FY0vNZZN12it1W+szt0jLBV4Ew/pK7xkzW397dVJ
+         4pcespXcJldDXmYQe8dDZ4KQwDmULFViFWBSWX/oP3FXgPP83EW73WCzAOTlUU6xaBps
+         t/QrHVt5Q564wVIUaF/eOwnkkQly5oizcOvRmXxU31xAKRaUvjNUoP7i6IJ7C8GnILNo
+         UzUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCZq4dbOM5Gcm/G2TWWaob6YjfRHCBOs9Ny5dZC+Zx00U5AhzAHsSwcj4OPZincXsktoEVlttsFoteWtLF@vger.kernel.org, AJvYcCXqRKXVSEJjdT1YqSa7ANQZslgJFjffgwJgzLCFp8uB6lM9M00Ra1Hv4clra1WF4XH8DAvMmDJ2cqShC70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNASK/P3fNAIVqIPP4ROaN2Mk+lpUP8nSxZEUB7Yu0ZbQeJkwo
+	0OKwYHkfOWwsvK0W0uGBJXJIYaHEZmw7Bv1T4GVKGBfGx2Hl5J4Lmw42
+X-Gm-Gg: ASbGncuWc+5morfA+xfH+5zB9WBX+TIIYdYYgXqQhdQpmUUjanjSQb5PFjYrJsD+jJ0
+	l8bfhPcdaSNQkBdZOo/nbrZ7m2Or/+EbiNtF3iKkeOJdGw9TKrPr3mzrijbSGbnMltppog0IZeS
+	zJTAjM6/HQRgrBMNGR1AAEZRt59rp0LTy5DB9/2aoaDkNKdkWa1RRUzCfRQ7cKgsuoCAuAoQBV6
+	P8LZ9sb8PMbPDmrIHSsL0nZv4gP2HaDF8gg24ewq7tG1l40gcMXbVQU0MV8aqIqD0Ugb0YL12GO
+	mdcfxaw6DTWG8UIgdbOcVAOHTKlabgm8xBT9vTkxylCbXMwXoqC17ZnMxkd/lFbO3JZ1NQI8uq0
+	tXfAb8kaowKc3pmlKk/MdVgzJg1r0dNcnRPWeL6UPlBNKSBdqxcanDNEVN4wDimT7pfMlxrgW3a
+	J7APBynPlk2KyoqJxnm6GDNGZS3WHKsMuXA/RgrducDzTS105KszTnJ1gn2VcdtoY7JN0=
+X-Google-Smtp-Source: AGHT+IFUpS6iflpct/0RWQ5RxJwfVBvfVDJIxOyHVtQwHMDp4XvEsdinfMiWdu6rR1nx22P+XeoB1w==
+X-Received: by 2002:a17:907:2d23:b0:afe:b7c3:df29 with SMTP id a640c23a62f3a-afeb7c4a718mr1043120466b.8.1756477151941;
+        Fri, 29 Aug 2025 07:19:11 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1b0:afe0:7f20:afeb:8c24:8d02? ([2a02:908:1b0:afe0:7f20:afeb:8c24:8d02])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefca0e0basm211246166b.39.2025.08.29.07.19.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 07:19:11 -0700 (PDT)
+Message-ID: <2c6a3bc2-abd3-4d57-99e9-1c341c13d554@gmail.com>
+Date: Fri, 29 Aug 2025 16:19:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829141233.58081-1-aqibaf@amazon.com>
-Message-ID: <aLG2qpCCfjESLZFF@google.com>
-Subject: Re: [PATCH 1/1] KVM: selftests: Fix force_emulation_prefix parameter
- type mismatch
-From: Sean Christopherson <seanjc@google.com>
-To: Aqib Faruqui <aqibaf@amazon.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nh-open-source@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_of: replace kzalloc with devm_kzalloc
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: jirislaby@kernel.org, andriy.shevchenko@linux.intel.com,
+ elder@riscstar.com, benjamin.larsson@genexis.eu,
+ u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250827231105.126378-1-osama.abdelkader@gmail.com>
+ <2025082817-laborious-provoke-2ac0@gregkh>
+ <27562003-b129-4dea-818c-2e81176f842b@gmail.com>
+ <2025082908-charbroil-saline-ef5f@gregkh>
+Content-Language: en-US
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+In-Reply-To: <2025082908-charbroil-saline-ef5f@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025, Aqib Faruqui wrote:
-> Fix kvm_is_forced_enabled() to use get_kvm_param_bool() instead of
-> get_kvm_param_integer() when reading the "force_emulation_prefix" kernel
-> module parameter.
-> 
-> The force_emulation_prefix parameter is a boolean that accepts Y/N
-> values, but the function was incorrectly trying to parse it as an
-> integer using strtol().
 
-Nope, it's been an int since commit:
+On 8/29/25 2:44 PM, Greg KH wrote:
+> On Fri, Aug 29, 2025 at 11:49:41AM +0200, Osama Abdelkader wrote:
+>> On 8/28/25 7:51 AM, Greg KH wrote:
+>>> On Thu, Aug 28, 2025 at 01:11:05AM +0200, Osama Abdelkader wrote:
+>>>> Use devm_kzalloc for automatic memory cleanup.
+>>> Why?
+>>>
+>>> I do not see a good reason here as to how this makes anything better
+>>> overall?  How was it tested?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>> Hi Greg,
+>>
+>> Thanks for the feedback, the change to devm_kzalloc ensures the allocated
+>> memory is tied to the device's lifetime. This removed the need for explicit
+>> kfree() calls in the remove path and avoids potential leaks in probe error 
+>> paths.
+> But there are no existing errors, so why change working code?
+>
+>> It also aligns the driver with others in the 8250 subsystem which 
+>> already use devm-managed resources.
+> This code is older than the devm api :)
+>
+>> For testing, I built the kernel and booted it on QEMU riscv with of_serial
+>> enabled. The driver probed successfully and the serial console worked as
+>> expected, also tested unbinding/rebinding the driver via sysfs to confirm
+>> no leaks or errors occur.
+> But did you test the error paths?  That is what you changed here.
+>
+> And changes like this, for old, working, code, is usually not needed
+> unless you are fixing a bug somewhere.
+>
+> thanks,
+>
+> greg k-h
 
-commit d500e1ed3dc873818277e109ccf6407118669236
-Author:     Sean Christopherson <seanjc@google.com>
-AuthorDate: Tue Aug 30 23:15:51 2022 +0000
-Commit:     Paolo Bonzini <pbonzini@redhat.com>
-CommitDate: Mon Sep 26 12:03:04 2022 -0400
+Thanks Greg, totally understandable. I was looking for a simple patch to be honest
+though looked for modernizing some APIs but looks like I chose the wrong driver:D
+If you guide me to a simple bug or a simple contribution here would be much appreciated.
 
-    KVM: x86: Allow clearing RFLAGS.RF on forced emulation to test code #DBs
-    
-    Extend force_emulation_prefix to an 'int' and use bit 1 as a flag to
-    indicate that KVM should clear RFLAGS.RF before emulating, e.g. to allow
-    tests to force emulation of code breakpoints in conjunction with MOV/POP
-    SS blocking, which is impossible without KVM intervention as VMX
-    unconditionally sets RFLAGS.RF on intercepted #UD.
-    
-    Make the behavior controllable so that tests can also test RFLAGS.RF=1
-    (again in conjunction with code #DBs).
-    
-    Note, clearing RFLAGS.RF won't create an infinite #DB loop as the guest's
-    IRET from the #DB handler will return to the instruction and not the
-    prefix, i.e. the restart won't force emulation.
-    
-    Opportunistically convert the permissions to the preferred octal format.
-    
-    Signed-off-by: Sean Christopherson <seanjc@google.com>
-    Link: https://lore.kernel.org/r/20220830231614.3580124-5-seanjc@google.com
-    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Thanks,
+Osama
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 418a069ab0d7..a7ae08e68582 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -173,8 +173,13 @@ bool __read_mostly enable_vmware_backdoor = false;
- module_param(enable_vmware_backdoor, bool, S_IRUGO);
- EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
- 
--static bool __read_mostly force_emulation_prefix = false;
--module_param(force_emulation_prefix, bool, S_IRUGO);
-+/*
-+ * Flags to manipulate forced emulation behavior (any non-zero value will
-+ * enable forced emulation).
-+ */
-+#define KVM_FEP_CLEAR_RFLAGS_RF        BIT(1)
-+static int __read_mostly force_emulation_prefix;
-+module_param(force_emulation_prefix, int, 0444);
 
