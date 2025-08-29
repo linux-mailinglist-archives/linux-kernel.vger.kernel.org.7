@@ -1,134 +1,139 @@
-Return-Path: <linux-kernel+bounces-791986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3089EB3BF23
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:25:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BB6B3BF28
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD81C87D05
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:25:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3961756018F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB3F322C87;
-	Fri, 29 Aug 2025 15:25:07 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F20322DCE;
+	Fri, 29 Aug 2025 15:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTDHxJRd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72F12765D7;
-	Fri, 29 Aug 2025 15:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D6D320CC0;
+	Fri, 29 Aug 2025 15:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756481107; cv=none; b=VhAn8J+iVhuvqfqZQOBKBkOYQB3lanL96YuTAYSuqXcpeIFbuFoYfBWYXsmj5g6LpfyuWvGsUqWvXOQtUGQ9LLmuN97rSuF3KJeGHIUpVgItBWzxKyEHRHSOW+LOPUFru+EljAzcQhj14CCAg5GR3A6YVjLAag+SV2La6tFe/o8=
+	t=1756481186; cv=none; b=TdvzgCvwayp3KPIv4siLcsrZDDsUqBdOtr4i9B1PNKAHto3c8GswyDHWcFddblKlKLCiPAn210BA+Ts+Da6ekKz/7FpTsIAk3d77jx0/NS0CWlfzx9Urbad8w7plG+Mzvk32MYvTm3TGt9w2JrflpcsoOLmLXPujYf55FfIqyU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756481107; c=relaxed/simple;
-	bh=gpHaAoHZraDITaWelBYaFP3UvoJmpw2DrTmywlTnVCc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LIKAEo7h9V6/3DgYa8lHnINtI/4hTwDpCl0a9/fgqcP2hW67CFL1giIdI9T8yx/lG59trgcEh34/mfZarF/niCPUTBeHArm780BnO6ElaZarby5uE4/9F5BACq5Tj6AI9QQqdI7Gwhv6AmqNql1oitBTe6kZ2DB5ERyyx8aSNYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD29z2z6Sz6K8r4;
-	Fri, 29 Aug 2025 23:24:23 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 35C8F140370;
-	Fri, 29 Aug 2025 23:25:02 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
- 2025 17:25:01 +0200
-Date: Fri, 29 Aug 2025 16:24:59 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v11 02/23] CXL/AER: Remove CONFIG_PCIEAER_CXL and
- replace with CONFIG_CXL_RAS
-Message-ID: <20250829162459.00007ca9@huawei.com>
-In-Reply-To: <20250827013539.903682-3-terry.bowman@amd.com>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
-	<20250827013539.903682-3-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1756481186; c=relaxed/simple;
+	bh=6X4sbRQB+FutSUt/G5PnchGHprmc2fud5kgFpMc+qdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JpJhSnYWw4h6jdXyDbt8TuFyJ+h4ph0LoMf9CuWmuvSVvBAcscnRQInZqwFvDKDXGmVFf2XJyzztquIQpQYnf6npWjGElDZv2O7e2qoat/lo/qc0/68QlGLhAMh7deC6tqI84qm0YEEQg/ZR/dT/ldfXTcM4u/d7a6fxDNKUz2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTDHxJRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C7B1C4CEF0;
+	Fri, 29 Aug 2025 15:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756481185;
+	bh=6X4sbRQB+FutSUt/G5PnchGHprmc2fud5kgFpMc+qdA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OTDHxJRdBTbuCPBTBoDfHVuT+Mxg7OYwG8bjswoan+ruOixFEQOihhqIaf8XGyW/8
+	 f+lpedYRW0AD5rcKmO6LUF1rjVmK9e+qfy7QreRIaext4oT6kJQRBYiFBSmHqE0nq1
+	 oM0nPJF4PNbAF22SvQrUz1cSr3J0K68oOAENbpYrAG79tuiu80bJU63vCJFI9byNs2
+	 80h8fyl8zEGUMTuaeiArhhRMOHibhdge+OgVZ5GpaY731YVL9mgIvHcA5TZUZ7wHJC
+	 ZWvBpVEXU0I61vDgStkoRGnXc0FltNhu9nnjlh0F4T7U80XaGJtfsH/ZMdOmuGVV2Y
+	 2hbtTp4PbACPQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Andy Polyakov <appro@cryptogams.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v3 0/3] Consolidate Poly1305 code and add RISC-V optimization
+Date: Fri, 29 Aug 2025 08:25:10 -0700
+Message-ID: <20250829152513.92459-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 26 Aug 2025 20:35:17 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-> CXL RAS compilation is enabled using CONFIG_CXL_RAS while the AER CXL logic
-> uses CONFIG_PCIEAER_CXL. The 2 share the same dependencies and can be
-> combined. The 2 kernel configs are unnecessary and are problematic for the
-> user because of the duplication. Replace occurrences of CONFIG_PCIEAER_CXL
-> to be CONFIG_CXL_RAS.
-> 
-> Update the CONFIG_CXL_RAS Kconfig definition to include dependencies 'PCIEAER
-> && CXL_PCI' taken from the CONFIG_PCIEAER_CXL definition.
-> 
-> Remove the Kconfig CONFIG_PCIEAER_CXL definition.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-v3
 
-Bjorn, do you mind having some code in PCIE land built depending on 
-a config symbol from drivers/cxl?  Alternative to this would be to remove
-the visible symbol (drop text after bool) and select it from
-the CONFIG_CXL_RAS entry. 
+This series simplifies and optimizes the organization of the Poly1305
+code by consolidating it into a single module.  This follows the example
+of SHA-1, SHA-256, SHA-512, CRC32, etc.
 
-> 
-> ---
-> Changes in v10 -> v11:
-> - New patch
-> ---
->  drivers/pci/pcie/Kconfig | 9 ---------
->  drivers/pci/pcie/aer.c   | 2 +-
->  2 files changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-> index 17919b99fa66..207c2deae35f 100644
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -49,15 +49,6 @@ config PCIEAER_INJECT
->  	  gotten from:
->  	     https://github.com/intel/aer-inject.git
->  
-> -config PCIEAER_CXL
-> -	bool "PCI Express CXL RAS support"
-> -	default y
-> -	depends on PCIEAER && CXL_PCI
-> -	help
-> -	  Enables CXL error handling.
-> -
-> -	  If unsure, say Y.
-> -
->  #
->  # PCI Express ECRC
->  #
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 70ac66188367..7fe9f883f5c5 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1086,7 +1086,7 @@ static bool find_source_device(struct pci_dev *parent,
->  	return true;
->  }
->  
-> -#ifdef CONFIG_PCIEAER_CXL
-> +#ifdef CONFIG_CXL_RAS
->  
->  /**
->   * pci_aer_unmask_internal_errors - unmask internal errors
+Since the RISC-V Poly1305 patch has had a moving target, I also rebased
+it on top of this series and included it as patch 3.
+
+Changed in v3:
+- Added mips/poly1305-core.S and riscv/poly1305-core.S to 'targets'.
+  This fixed a bug where the perlasm build step was always running.
+
+Changed in v2:
+- Added missing 'FORCE' to the make rules for mips/poly1305-core.S
+  and riscv/poly1305-core.S.
+
+Eric Biggers (2):
+  lib/crypto: poly1305: Remove unused function
+    poly1305_is_arch_optimized()
+  lib/crypto: poly1305: Consolidate into single module
+
+Zhihang Shao (1):
+  lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
+
+ crypto/Kconfig                                |   2 +
+ include/crypto/internal/poly1305.h            |  16 +-
+ include/crypto/poly1305.h                     |   9 -
+ lib/crypto/Kconfig                            |  53 +-
+ lib/crypto/Makefile                           |  73 +-
+ lib/crypto/arm/Kconfig                        |   5 -
+ lib/crypto/arm/Makefile                       |  18 -
+ lib/crypto/arm/poly1305-armv4.pl              |   3 +-
+ lib/crypto/arm/poly1305-glue.c                |  76 --
+ lib/crypto/arm/poly1305.h                     |  53 ++
+ lib/crypto/arm64/Kconfig                      |   6 -
+ lib/crypto/arm64/Makefile                     |  13 -
+ lib/crypto/arm64/poly1305-armv8.pl            |   3 +
+ lib/crypto/arm64/poly1305-glue.c              |  74 --
+ lib/crypto/arm64/poly1305.h                   |  50 ++
+ lib/crypto/mips/Kconfig                       |   5 -
+ lib/crypto/mips/Makefile                      |  14 -
+ lib/crypto/mips/poly1305-glue.c               |  33 -
+ lib/crypto/mips/poly1305-mips.pl              |   8 +-
+ lib/crypto/mips/poly1305.h                    |  14 +
+ lib/crypto/poly1305-generic.c                 |  25 -
+ lib/crypto/poly1305.c                         |  81 +-
+ lib/crypto/powerpc/Kconfig                    |   8 -
+ lib/crypto/powerpc/Makefile                   |   3 -
+ .../{poly1305-p10-glue.c => poly1305.h}       |  40 +-
+ lib/crypto/riscv/poly1305-riscv.pl            | 847 ++++++++++++++++++
+ lib/crypto/riscv/poly1305.h                   |  14 +
+ lib/crypto/x86/Kconfig                        |   6 -
+ lib/crypto/x86/Makefile                       |  10 -
+ lib/crypto/x86/poly1305-x86_64-cryptogams.pl  |  33 +-
+ .../x86/{poly1305_glue.c => poly1305.h}       |  47 +-
+ 31 files changed, 1176 insertions(+), 466 deletions(-)
+ delete mode 100644 lib/crypto/arm/poly1305-glue.c
+ create mode 100644 lib/crypto/arm/poly1305.h
+ delete mode 100644 lib/crypto/arm64/poly1305-glue.c
+ create mode 100644 lib/crypto/arm64/poly1305.h
+ delete mode 100644 lib/crypto/mips/poly1305-glue.c
+ create mode 100644 lib/crypto/mips/poly1305.h
+ delete mode 100644 lib/crypto/poly1305-generic.c
+ rename lib/crypto/powerpc/{poly1305-p10-glue.c => poly1305.h} (63%)
+ create mode 100644 lib/crypto/riscv/poly1305-riscv.pl
+ create mode 100644 lib/crypto/riscv/poly1305.h
+ rename lib/crypto/x86/{poly1305_glue.c => poly1305.h} (83%)
+
+
+base-commit: 5012bd2dc6ab0c4499923b3b6c6113def9b0c88b
+-- 
+2.50.1
 
 
