@@ -1,160 +1,432 @@
-Return-Path: <linux-kernel+bounces-792282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E638B3C247
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:11:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01073B3C249
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C729BA26DD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C909B17ED22
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1F13431FF;
-	Fri, 29 Aug 2025 18:11:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E3D3375BA;
+	Fri, 29 Aug 2025 18:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="H8S59Jpu"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86CF209F5A;
-	Fri, 29 Aug 2025 18:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAC73451A5;
+	Fri, 29 Aug 2025 18:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756491090; cv=none; b=fxbbe9rRJvBwQaaaXkcOkhgzTaMyr3Vo4CD0F3GT3ykpNtBjpBoCb/axRImFBRKAomxgXZkdxvXYabgvCnyPvC1IfO6ui1ShPHlwUanpisfKKCHsEBE5FQLE/valNi/rOBX28l39FMwYiLFqEUD7rURSiAw9ArIKb4UPtSZQQyc=
+	t=1756491195; cv=none; b=bOW9AKoXZwIQ7vEkekvf7FpxaW1a0qXAXDp4xFy/vJLGnbasIAu41haGHhJPERiuLRBDc76p2gIs5hgRR+fUOMqgDGiHDGkx9J+ej6tOO0sTD+kbJYzznRxTCJjYY0LsSPhBVtxH2vrNRhd1VXCedBN0T/9+5MGnmPf5lBgxcBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756491090; c=relaxed/simple;
-	bh=aTMz6QKRB8sX8tPG29W2hZGoOIxk1SKdVcBnuPoHXgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MONg9NU8BtjDX4WR0jsNAdsg3RyvS2ZUamtFXMkqyU1kfUPuxPO/apoyewgTv1Zx56OGmzTI2Cl4OXvZLVLcrUMGm93an7DExGFIep3hFeNv7zLL5I5yn+jJgCG5GuatUjMGyFZA+leFhYOpwMQaGsFMM+Kxo4yDt8HcqUPKjBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 8842513A96D;
-	Fri, 29 Aug 2025 18:11:24 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 76F576000F;
-	Fri, 29 Aug 2025 18:11:19 +0000 (UTC)
-Date: Fri, 29 Aug 2025 14:11:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829141142.3ffc8111@gandalf.local.home>
-In-Reply-To: <CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org>
-	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
-	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
-	<20250828161718.77cb6e61@batman.local.home>
-	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
-	<20250828164819.51e300ec@batman.local.home>
-	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756491195; c=relaxed/simple;
+	bh=0bG+lj995fJnQVW3V0UapO0Q3pNVf/IGy5pigIWhuJY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AfKr9nDqiyAuDxiA3KN+xrkBFtR6Z9MNmER5pKg9Ek7LL2OVFbdfG7MkGFf8DArQatyFWhUAzzIm1JIBHGXK0TjDsXQfw8WXppOY7J8wXfv0P8fKVQi4Omilt6G7rEbuCUC6gXxQA0wEyvJFFTVDIdRrHMSEBAXB+oJ39RhPmmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=H8S59Jpu; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756491190;
+	bh=0bG+lj995fJnQVW3V0UapO0Q3pNVf/IGy5pigIWhuJY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=H8S59Jpu4XqsbgZJIun8hRN1W1zsH1p6TC7XUI15I8Jj3JSEcCmLkdopm15R5HpGf
+	 4HyWmHYDro67m9PmkmEjIijYdYS4i8aE33t7QV43FeyAHNKzy5akdTikGGLen0bSYW
+	 pyvvCrctxsPT21i5frBJc+/FK0Hmr34IuGVL/wEv/qRrvNSLcAoS8TMarbKXyAfQaX
+	 4HlzoxsdfV8i6UKwmi6KeqGLo113eJ0Sqi6qUdmwqh3F0E5gazTOResCdpkYD5NFZA
+	 TkHrhcs7JOsbYghL8+Mmwc00xFD0uddf9aAbBnXVudkz8oGe7wjVKSl4kdKhHqePpI
+	 LwL1EqOHXtyqw==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B7D9617E04D6;
+	Fri, 29 Aug 2025 20:13:09 +0200 (CEST)
+Message-ID: <0c72bc346840152bcc414c37cfd9b5ca77ce069f.camel@collabora.com>
+Subject: Re: [PATCH v3 2/4] media: chips-media: wave5: Fix Null reference
+ while testing fluster
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, bob.beckett@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 29 Aug 2025 14:13:08 -0400
+In-Reply-To: <20250623002153.51-3-jackson.lee@chipsnmedia.com>
+References: <20250623002153.51-1-jackson.lee@chipsnmedia.com>
+	 <20250623002153.51-3-jackson.lee@chipsnmedia.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-C7ZmmrVWxwn5RKfIhSx8"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+
+
+--=-C7ZmmrVWxwn5RKfIhSx8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le lundi 23 juin 2025 =C3=A0 09:21 +0900, Jackson.lee a =C3=A9crit=C2=A0:
+> From: Jackson Lee <jackson.lee@chipsnmedia.com>
+>=20
+> When multi instances are created/destroyed, many interrupts happens
+> or structures for decoder are removed.
+
+Did you mean "and" instead of "or" ?
+
+> "struct vpu_instance" this structure is shared for all flow in decoder,
+
+* in the decoder
+
+> so if the structure is not protected by lock, Null reference exception
+
+Null dereference
+
+> could happens sometimes.
+> IRQ Handler was spilt to two phases and Lock was added as well.
+>=20
+> Fixes: 9707a6254a8a ("media: chips-media: wave5: Add the v4l2 layer")
+> Signed-off-by: Jackson Lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> ---
+> =C2=A0.../platform/chips-media/wave5/wave5-helper.c | 23 ++++++-
+> =C2=A0.../chips-media/wave5/wave5-vpu-dec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 5 ++
+> =C2=A0.../chips-media/wave5/wave5-vpu-enc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 5 ++
+> =C2=A0.../platform/chips-media/wave5/wave5-vpu.c=C2=A0=C2=A0=C2=A0 | 69 +=
++++++++++++++++---
+> =C2=A0.../platform/chips-media/wave5/wave5-vpuapi.h |=C2=A0 6 ++
+> =C2=A05 files changed, 99 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-helper.c b/dr=
+ivers/media/platform/chips-media/wave5/wave5-helper.c
+> index 2c9d8cbca6e4..02914dc1ca56 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-helper.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-helper.c
+> @@ -49,7 +49,7 @@ void wave5_cleanup_instance(struct vpu_instance *inst)
+> =C2=A0		v4l2_fh_del(&inst->v4l2_fh);
+> =C2=A0		v4l2_fh_exit(&inst->v4l2_fh);
+> =C2=A0	}
+> -	list_del_init(&inst->list);
+> +	kfifo_free(&inst->irq_status);
+> =C2=A0	ida_free(&inst->dev->inst_ida, inst->id);
+> =C2=A0	kfree(inst->codec_info);
+> =C2=A0	kfree(inst);
+> @@ -61,8 +61,29 @@ int wave5_vpu_release_device(struct file *filp,
+> =C2=A0{
+> =C2=A0	struct vpu_instance *inst =3D wave5_to_vpu_inst(filp->private_data=
+);
+> =C2=A0	int ret =3D 0;
+> +	unsigned long flags;
+> =C2=A0
+> =C2=A0	v4l2_m2m_ctx_release(inst->v4l2_fh.m2m_ctx);
+> +	/*
+> +	 * To prevent Null reference exception, the existing irq handler were
+> +	 * separated to two modules.
+> +	 * One is to queue interrupt reason into the irq handler,
+> +	 * the other is irq_thread to call the wave5_vpu_dec_finish_decode
+> +	 * to get decoded frame.
+> +	 * The list of instances should be protected between all flow of the
+> +	 * decoding process, but to protect the list in the irq_handler, spin l=
+ock
+> +	 * should be used, and mutex should be used in the irq_thread because s=
+pin lock
+> +	 * is not able to be used because mutex is already being used
+> +	 * in the wave5_vpu_dec_finish_decode.
+> +	 * So the spin lock and mutex were used to protect the list in the rele=
+ase function.
+> +	 */
+> +	ret =3D mutex_lock_interruptible(&inst->dev->irq_lock);
+> +	if (ret)
+> +		return ret;
+> +	spin_lock_irqsave(&inst->dev->irq_spinlock, flags);
+> +	list_del_init(&inst->list);
+> +	spin_unlock_irqrestore(&inst->dev->irq_spinlock, flags);
+> +	mutex_unlock(&inst->dev->irq_lock);
+> =C2=A0	if (inst->state !=3D VPU_INST_STATE_NONE) {
+> =C2=A0		u32 fail_res;
+> =C2=A0
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c b/d=
+rivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> index 216b024c42d8..2df7668575f4 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> @@ -1811,6 +1811,11 @@ static int wave5_vpu_open_dec(struct file *filp)
+> =C2=A0	inst->xfer_func =3D V4L2_XFER_FUNC_DEFAULT;
+> =C2=A0
+> =C2=A0	init_completion(&inst->irq_done);
+> +	ret =3D kfifo_alloc(&inst->irq_status, 16 * sizeof(int), GFP_KERNEL);
+> +	if (ret) {
+> +		dev_err(inst->dev->dev, "failed to allocate fifo\n");
+> +		goto cleanup_inst;
+> +	}
+> =C2=A0
+> =C2=A0	inst->id =3D ida_alloc(&inst->dev->inst_ida, GFP_KERNEL);
+> =C2=A0	if (inst->id < 0) {
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/d=
+rivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> index cf20f774ed1b..7f1aa392805f 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> @@ -1760,6 +1760,11 @@ static int wave5_vpu_open_enc(struct file *filp)
+> =C2=A0	inst->frame_rate =3D 30;
+> =C2=A0
+> =C2=A0	init_completion(&inst->irq_done);
+> +	ret =3D kfifo_alloc(&inst->irq_status, 16 * sizeof(int), GFP_KERNEL);
+> +	if (ret) {
+> +		dev_err(inst->dev->dev, "failed to allocate fifo\n");
+> +		goto cleanup_inst;
+> +	}
+> =C2=A0
+> =C2=A0	inst->id =3D ida_alloc(&inst->dev->inst_ida, GFP_KERNEL);
+> =C2=A0	if (inst->id < 0) {
+
+Can you prepend a patch that deduplicates this initialization code, put thi=
+s in
+wave5-helper.c, this way you won't have to copy paste this fix. The
+kfifo_alloc/free will also now be in the same C file.<
+
+Question here, I've been wondering if the list is strictly required on real
+hardware ? I often thought this complex machinary was made to support a rea=
+lly
+slow simulated CPU. But all this happened way before me being involved.
+
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu.c b/drive=
+rs/media/platform/chips-media/wave5/wave5-vpu.c
+> index b3c633dd3df1..24a9001966e7 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> @@ -51,8 +51,11 @@ static void wave5_vpu_handle_irq(void *dev_id)
+> =C2=A0	u32 seq_done;
+> =C2=A0	u32 cmd_done;
+> =C2=A0	u32 irq_reason;
+> -	struct vpu_instance *inst;
+> +	u32 irq_subreason;
+> +	struct vpu_instance *inst, *tmp;
+> =C2=A0	struct vpu_device *dev =3D dev_id;
+> +	int val;
+> +	unsigned long flags;
+> =C2=A0
+> =C2=A0	irq_reason =3D wave5_vdi_read_register(dev, W5_VPU_VINT_REASON);
+> =C2=A0	seq_done =3D wave5_vdi_read_register(dev, W5_RET_SEQ_DONE_INSTANCE=
+_INFO);
+> @@ -60,7 +63,8 @@ static void wave5_vpu_handle_irq(void *dev_id)
+> =C2=A0	wave5_vdi_write_register(dev, W5_VPU_VINT_REASON_CLR, irq_reason);
+> =C2=A0	wave5_vdi_write_register(dev, W5_VPU_VINT_CLEAR, 0x1);
+> =C2=A0
+> -	list_for_each_entry(inst, &dev->instances, list) {
+> +	spin_lock_irqsave(&dev->irq_spinlock, flags);
+> +	list_for_each_entry_safe(inst, tmp, &dev->instances, list) {
+> =C2=A0
+> =C2=A0		if (irq_reason & BIT(INT_WAVE5_INIT_SEQ) ||
+> =C2=A0		=C2=A0=C2=A0=C2=A0 irq_reason & BIT(INT_WAVE5_ENC_SET_PARAM)) {
+> @@ -82,14 +86,22 @@ static void wave5_vpu_handle_irq(void *dev_id)
+> =C2=A0		=C2=A0=C2=A0=C2=A0 irq_reason & BIT(INT_WAVE5_ENC_PIC)) {
+> =C2=A0			if (cmd_done & BIT(inst->id)) {
+> =C2=A0				cmd_done &=3D ~BIT(inst->id);
+> -				wave5_vdi_write_register(dev, W5_RET_QUEUE_CMD_DONE_INST,
+> -							 cmd_done);
+> -				inst->ops->finish_process(inst);
+> +				if (dev->irq >=3D 0) {
+> +					irq_subreason =3D
+> +						wave5_vdi_read_register(dev, W5_VPU_VINT_REASON);
+> +					if (!(irq_subreason & BIT(INT_WAVE5_DEC_PIC)))
+> +						wave5_vdi_write_register(dev,
+> +									 W5_RET_QUEUE_CMD_DONE_INST,
+> +									 cmd_done);
+> +				}
+> +				val =3D BIT(INT_WAVE5_DEC_PIC);
+> +				kfifo_in(&inst->irq_status, &val, sizeof(int));
+> =C2=A0			}
+> =C2=A0		}
+> -
+> -		wave5_vpu_clear_interrupt(inst, irq_reason);
+> =C2=A0	}
+> +	spin_unlock_irqrestore(&dev->irq_spinlock, flags);
+> +
+> +	up(&dev->irq_sem);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static irqreturn_t wave5_vpu_irq_thread(int irq, void *dev_id)
+> @@ -121,6 +133,35 @@ static enum hrtimer_restart wave5_vpu_timer_callback=
+(struct hrtimer *timer)
+> =C2=A0	return HRTIMER_RESTART;
+> =C2=A0}
+> =C2=A0
+> +static int irq_thread(void *data)
+
+Have you considered using threaded IRQ instead ? Is that an option ? Otherw=
+ise,
+why not ?
+
+cheers,
+Nicolas
+
+> +{
+> +	struct vpu_device *dev =3D (struct vpu_device *)data;
+> +	struct vpu_instance *inst, *tmp;
+> +	int irq_status, ret;
+> +
+> +	while (!kthread_should_stop()) {
+> +		if (down_interruptible(&dev->irq_sem))
+> +			continue;
+> +
+> +		if (kthread_should_stop())
+> +			break;
+> +
+> +		mutex_lock(&dev->irq_lock);
+> +		list_for_each_entry_safe(inst, tmp, &dev->instances, list) {
+> +			while (kfifo_len(&inst->irq_status)) {
+> +				ret =3D kfifo_out(&inst->irq_status, &irq_status, sizeof(int));
+> +				if (!ret)
+> +					break;
+> +
+> +				inst->ops->finish_process(inst);
+> +			}
+> +		}
+> +		mutex_unlock(&dev->irq_lock);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> =C2=A0static int wave5_vpu_load_firmware(struct device *dev, const char *=
+fw_name,
+> =C2=A0				=C2=A0=C2=A0 u32 *revision)
+> =C2=A0{
+> @@ -224,6 +265,8 @@ static int wave5_vpu_probe(struct platform_device *pd=
+ev)
+> =C2=A0
+> =C2=A0	mutex_init(&dev->dev_lock);
+> =C2=A0	mutex_init(&dev->hw_lock);
+> +	mutex_init(&dev->irq_lock);
+> +	spin_lock_init(&dev->irq_spinlock);
+> =C2=A0	dev_set_drvdata(&pdev->dev, dev);
+> =C2=A0	dev->dev =3D &pdev->dev;
+> =C2=A0
+> @@ -266,6 +309,10 @@ static int wave5_vpu_probe(struct platform_device *p=
+dev)
+> =C2=A0	}
+> =C2=A0	dev->product =3D wave5_vpu_get_product_id(dev);
+> =C2=A0
+> +	sema_init(&dev->irq_sem, 1);
+> +	INIT_LIST_HEAD(&dev->instances);
+> +	dev->irq_thread =3D kthread_run(irq_thread, dev, "irq thread");
+> +
+> =C2=A0	dev->irq =3D platform_get_irq(pdev, 0);
+> =C2=A0	if (dev->irq < 0) {
+> =C2=A0		dev_err(&pdev->dev, "failed to get irq resource, falling back to =
+polling\n");
+> @@ -288,7 +335,6 @@ static int wave5_vpu_probe(struct platform_device *pd=
+ev)
+> =C2=A0		}
+> =C2=A0	}
+> =C2=A0
+> -	INIT_LIST_HEAD(&dev->instances);
+> =C2=A0	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
+> =C2=A0	if (ret) {
+> =C2=A0		dev_err(&pdev->dev, "v4l2_device_register, fail: %d\n", ret);
+> @@ -351,6 +397,12 @@ static void wave5_vpu_remove(struct platform_device =
+*pdev)
+> =C2=A0{
+> =C2=A0	struct vpu_device *dev =3D dev_get_drvdata(&pdev->dev);
+> =C2=A0
+> +	if (dev->irq_thread) {
+> +		kthread_stop(dev->irq_thread);
+> +		up(&dev->irq_sem);
+> +		dev->irq_thread =3D NULL;
+> +	}
+> +
+> =C2=A0	if (dev->irq < 0) {
+> =C2=A0		kthread_destroy_worker(dev->worker);
+> =C2=A0		hrtimer_cancel(&dev->hrtimer);
+> @@ -361,6 +413,7 @@ static void wave5_vpu_remove(struct platform_device *=
+pdev)
+> =C2=A0
+> =C2=A0	mutex_destroy(&dev->dev_lock);
+> =C2=A0	mutex_destroy(&dev->hw_lock);
+> +	mutex_destroy(&dev->irq_lock);
+> =C2=A0	reset_control_assert(dev->resets);
+> =C2=A0	clk_bulk_disable_unprepare(dev->num_clks, dev->clks);
+> =C2=A0	wave5_vpu_enc_unregister_device(dev);
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h b/dr=
+ivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> index 45615c15beca..bc101397204d 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> @@ -8,6 +8,7 @@
+> =C2=A0#ifndef VPUAPI_H_INCLUDED
+> =C2=A0#define VPUAPI_H_INCLUDED
+> =C2=A0
+> +#include <linux/kfifo.h>
+> =C2=A0#include <linux/idr.h>
+> =C2=A0#include <linux/genalloc.h>
+> =C2=A0#include <media/v4l2-device.h>
+> @@ -747,6 +748,7 @@ struct vpu_device {
+> =C2=A0	struct video_device *video_dev_enc;
+> =C2=A0	struct mutex dev_lock; /* lock for the src, dst v4l2 queues */
+> =C2=A0	struct mutex hw_lock; /* lock hw configurations */
+> +	struct mutex irq_lock;
+> =C2=A0	int irq;
+> =C2=A0	enum product_id product;
+> =C2=A0	struct vpu_attr attr;
+> @@ -764,7 +766,10 @@ struct vpu_device {
+> =C2=A0	struct kthread_worker *worker;
+> =C2=A0	int vpu_poll_interval;
+> =C2=A0	int num_clks;
+> +	struct task_struct *irq_thread;
+> +	struct semaphore irq_sem; /* signal to irq_thread when interrupt happen=
+s*/
+> =C2=A0	struct reset_control *resets;
+> +	spinlock_t irq_spinlock; /* protect instances list */
+> =C2=A0};
+> =C2=A0
+> =C2=A0struct vpu_instance;
+> @@ -788,6 +793,7 @@ struct vpu_instance {
+> =C2=A0	enum v4l2_ycbcr_encoding ycbcr_enc;
+> =C2=A0	enum v4l2_quantization quantization;
+> =C2=A0
+> +	struct kfifo irq_status;
+> =C2=A0	enum vpu_instance_state state;
+> =C2=A0	enum vpu_instance_type type;
+> =C2=A0	const struct vpu_instance_ops *ops;
+
+--=-C7ZmmrVWxwn5RKfIhSx8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 76F576000F
-X-Stat-Signature: 7g4cgxahc864hsc8pkq97bkmqmtg4bh9
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19VoDMXkG87cPh4pXXWRE7cb0ZOSUa8IWQ=
-X-HE-Tag: 1756491079-407632
-X-HE-Meta: U2FsdGVkX183qe31Z0942gMaignr2sHg+i2BLFlOyekXIPjeyCIt7jp8b81kngcQMUgvle8KM99ttt01QkLid3YpfHt3Qs8U2Vixniwd7aQHFt6BgE3JVVcAdgbAoEGPr008+Vl7hHHuE0Crwsn5Zf7H1mOHut/052ABwhZBXAbOSczNE7+aVRTKH8Ors48Y4NEq6fpd398417dlcXb9rDw5cYA/qFgUdZ+lAv9Uok1R1Hrosqk1UF73ndYYLZoJlmdjxsbTfXEy+s0HmRP6gGn0F4UolHdcqNsRde/qfzFRYy3/vLGkGPt556WrMs9gZknbesNA/t7oDx/YuPUKh039jkwT4tN7V+3L40IWcR90wAudf+7RCk5hPeHBSbw8Qxo1G4si1Vv5GEPVktpabQ==
 
-On Fri, 29 Aug 2025 10:33:38 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+-----BEGIN PGP SIGNATURE-----
 
-> On Fri, 29 Aug 2025 at 10:18, Arnaldo Carvalho de Melo
-> <arnaldo.melo@gmail.com> wrote:
-> >
-> > As long as we don't lose those mmap events due to memory pressure/lost
-> > events and we have timestamps to order it all before lookups, yeah
-> > should work.  
-> 
-> The main reason to lose mmap events that I can see is that you start
-> tracing in the middle of running something (for example, tracing
-> systemd or some other "started at boot" thing).
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLHttAAKCRDZQZRRKWBy
+9A4PAQDt6/cl2087qPezd7igpAoAUiItm9hOn7wfmXEButF62gD/akQP2jNSBKJY
+5M5cOgXyfi3xMa2Ow0hlSFLscX4TnQQ=
+=DBiz
+-----END PGP SIGNATURE-----
 
-Note, for on-demand tracing, the applications are already running before
-the tracing starts. That is actually the common case. Yes, people do often
-"enabled tracing, run my code, stop tracing", but most of the use cases I
-deal with, it's (we are noticing something in the field, start tracing,
-issue gets hit, stop tracing), where the applications we are monitoring are
-already running when the tracing started. Just tracing the mmap when it
-happens will not be useful for us.
-
-Not to mention, in the future, this will also have to work with JIT. I was
-thinking of using 64 bit hashes in the stack trace, where the top bits are
-reserved for context (is this a file, or something dynamically created).
-
-> 
-> Then you'd not have any record of an actual mmap at all because it
-> happened before you started tracing, even if there is no memory
-> pressure or other thing going on.
-> 
-> That is not necessarily a show-stopper: you could have some fairly
-> simple count for "how many times have I seen this hash", and add a
-> "mmap reminder" event (which would just be the exact same thing as the
-> regular mmap event).
-
-I thought about clearing the file cache periodically, if for any other
-reason, but for dropped events where the mapping is lost.
-
-This is why I'm looking at clearing on "unmap". Yes, we don't care about
-unmap, but as soon as an unmap happens if that value gets used again then
-we know it's a new mapping. That is, dropped the hashes out of the file
-cache when they are no longer around.
-
-The idea is this (pseudo code):
-
- user_stack_trace() {
-   foreach vma in each stack frame:
-       key = hash(vma->vm_file);
-       if (!lookup(key)) {
-           trace_file_map(key, generate_path(vma), generate_buildid(vma));
-           add_into_hash(key);
-       }
-   }
- }
-
-On unmmaping:
-
- key = hash(vma->vm_file);
- remove_from_hash(key);
-
-Now if a new mmap happens where the vma->vm_file is reused, the lookup(key)
-will return false again and the file_map event will get triggered again.
-
-We don't need to look at the mmap() calls, as those new mappings may never
-end up in a user stack trace, and writing them out will just waste space in
-the ring buffer.
-
--- Steve
+--=-C7ZmmrVWxwn5RKfIhSx8--
 
