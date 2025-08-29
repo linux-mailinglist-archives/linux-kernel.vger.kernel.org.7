@@ -1,202 +1,106 @@
-Return-Path: <linux-kernel+bounces-792429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1780FB3C3C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:28:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426C9B3C3CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A43A213CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134BC16F73A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5494F343D74;
-	Fri, 29 Aug 2025 20:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354F33375B2;
+	Fri, 29 Aug 2025 20:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I25FKPhU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="LhiyRWoe"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A150A235345;
-	Fri, 29 Aug 2025 20:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BAD21C194;
+	Fri, 29 Aug 2025 20:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756499303; cv=none; b=KpCgCAwz7ujq04gLUFvenqTrARNAjrHfkODZUm/JaUJ2QwoyDCCEatn2Rjpf21vL5NCAZOBsNCaAOus+KBOx6LSlKxnWZUuiY25aBmwNmd5Ew3+4BoPdNYFi0CvBSgCB0xEBSw5ftvndwTPRkFZoEbp2PkePUJ6PNHQEhlI04Lk=
+	t=1756499476; cv=none; b=FLhMnE5hS9KuwZQ/leaUrZZCqsT/bVpDruTS+RUYcrIZwBlYmc+rmWLTwmRS5DmQLJJFU872QEAsur4JEFgUZmX7t3/J6coUztB5+TVRWdm2yfM0CMYyyk5iFNWWs91We25N8Ru/FmeMf/eO8g72IZJbunC7G88v4q8jnjg/VWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756499303; c=relaxed/simple;
-	bh=g45j9M/8HC4aZSBga0Ho4anG8ckxtQ5/Rp9XwZP3x0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ixMk7YEk/OwJHuKzRxfTOUF1l28xgR59ONlEuWrCffnUncJV2hFKV1Kwr+VL1sTlI6zVbWYlYHG4rgSkSs2Dhg9ZSGzSsvGax81dm4MObXPoxiLmM5KMb9oAHfiP7Tz4YisEwuD3wAhDxvodKEnNMaJho0XaocyU62j2Q0ZlpzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I25FKPhU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA81C4CEF0;
-	Fri, 29 Aug 2025 20:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756499303;
-	bh=g45j9M/8HC4aZSBga0Ho4anG8ckxtQ5/Rp9XwZP3x0s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I25FKPhU4dPgziIxoysO7wWfy4ivSrMg1GfUY9YwFouMXGiH6tl9ztIU4w28L2deQ
-	 NkiDizGsI2zoYBZQ6Hp6m82pG72NfT/zLxQoV5tf+v1HJS/3BmeX8XfgG/YQRHhXID
-	 nzfdiGZmoVoHfOU23n6vLDnjRIdPsE7aul9CuyjIP7BZFJ+ppJKEeKrB1TuNUO8yj4
-	 Ew/KBAVTAbhBP5fZ6a1BGQEezJMmgkRFmFk/Ky2EinD1qZ6TSeQYAk8zB7VdehIop6
-	 WWJ+d4p1KII0Lq00YBYchN9bQH2+BHvchBsxkV23b2hMZ2z6SaW3D0j7deAqCxFX3S
-	 woZ6FG5qX4ihg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] dt-bindings: net: Convert APM XGene MDIO to DT schema
-Date: Fri, 29 Aug 2025 15:28:15 -0500
-Message-ID: <20250829202817.1271907-2-robh@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250829202817.1271907-1-robh@kernel.org>
-References: <20250829202817.1271907-1-robh@kernel.org>
+	s=arc-20240116; t=1756499476; c=relaxed/simple;
+	bh=SJivwaFIMN9pzc/GzyVi63H3VG5P90Cy+u+DLytb+Y0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
+	 References:In-Reply-To; b=YzRWzoyxNUYXvXWrkigTenRubrCvo5uqldwCpa3dALJlLZzqiFMuFPBek9t8C7iKSCDGADLOk/ZK8z6J1IJBWFwiR+d+dD1CVu7b0Sg9QqvZLzuxaaUiQdJR9c5W4zSKtEGLvgR1vixRVzv2v+sG/3K8j1sVZ+ShRlnS2gyqaVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=LhiyRWoe; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1756499411; x=1757799411;
+	bh=DvTREl3RPMtyVXWwp9xdMSUcqBDVOu5mAI1D2OmkO9w=; h=From;
+	b=LhiyRWoeU46kPZAZU1Kp04Be4TjynW7S6Brz4wrTrUCwoI3+xx6A11UkZn4YcQ5tg
+	 eyZP5Kwyh+I1pTAQZFPQm8WRUgXJ+qM6GRxsz/XS5/b8WVF2fnsApJdX+KoC/4x0ug
+	 kd7PWptpePabIyDDkN/SkxS9pJ9YfEV1MALgTGOe3GX/xW/ou/+FSPTkvDoWneAJiD
+	 cagjPl76NbbKcF/z04/35NuYMLsFvkLLLa5abWXkAt5CSSyh4S+QXWtU79LGc+eI9h
+	 B/BU67Hv7dTRsRHOR+hURIY04hTBl3smzAHkGmL8IeJrfFrIFVCuKYjPWFTv4Ds8D+
+	 jCqCrg2wkCwWQ==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57TKU90L021409
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Fri, 29 Aug 2025 22:30:11 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 29 Aug 2025 22:30:09 +0200
+Message-Id: <DCF72OWEVZH0.3BSSAMUXM5I2J@matfyz.cz>
+Cc: "Jonathan Cameron" <jic23@kernel.org>,
+        "David Lechner"
+ <dlechner@baylibre.com>,
+        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        "Andy Shevchenko" <andy@kernel.org>, "Lee Jones" <lee@kernel.org>,
+        "David
+ Wronek" <david@mainlining.org>, <phone-devel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mfd: 88pm886: Add GPADC cell
+To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+From: "Karel Balej" <balejk@matfyz.cz>
+References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
+ <20250829-88pm886-gpadc-v1-2-f60262266fea@dujemihanovic.xyz>
+ <CAHp75VdxGs-tifyD+T+H+TPq9ZY0Oz5zfKsoqf2uuekZCnfizA@mail.gmail.com>
+In-Reply-To: <CAHp75VdxGs-tifyD+T+H+TPq9ZY0Oz5zfKsoqf2uuekZCnfizA@mail.gmail.com>
 
-Convert the APM XGene MDIO bus binding to DT schema format. It's a
-straight-forward conversion.
+Andy Shevchenko, 2025-08-29T18:47:19+03:00:
+> On Fri, Aug 29, 2025 at 1:18=E2=80=AFAM Duje Mihanovi=C4=87 <duje@dujemih=
+anovic.xyz> wrote:
+>>
+>> Add a cell for the PMIC's onboard General Purpose ADC.
+>
+> ...
+>
+>>  static const struct mfd_cell pm886_devs[] =3D {
+>
+>>         MFD_CELL_RES("88pm886-onkey", pm886_onkey_resources),
+>>         MFD_CELL_NAME("88pm886-regulator"),
+>>         MFD_CELL_NAME("88pm886-rtc"),
+>> +       MFD_CELL_NAME("88pm886-gpadc"),
+>
+> List seems ordered, please prevent it.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/net/apm,xgene-mdio-rgmii.yaml    | 54 +++++++++++++++++++
- .../bindings/net/apm-xgene-mdio.txt           | 37 -------------
- MAINTAINERS                                   |  2 +-
- 3 files changed, 55 insertions(+), 38 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/apm,xgene-mdio-rgmii.yaml
- delete mode 100644 Documentation/devicetree/bindings/net/apm-xgene-mdio.txt
+Ah, I never explicitly realized to keep it ordered, seems like I was
+just lucky to implement the components in the right order :-)
 
-diff --git a/Documentation/devicetree/bindings/net/apm,xgene-mdio-rgmii.yaml b/Documentation/devicetree/bindings/net/apm,xgene-mdio-rgmii.yaml
-new file mode 100644
-index 000000000000..470fb5f7f7b5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/apm,xgene-mdio-rgmii.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/apm,xgene-mdio-rgmii.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: APM X-Gene SoC MDIO
-+
-+maintainers:
-+  - Iyappan Subramanian <iyappan@os.amperecomputing.com>
-+  - Keyur Chudgar <keyur@os.amperecomputing.com>
-+  - Quan Nguyen <quan@os.amperecomputing.com>
-+
-+allOf:
-+  - $ref: mdio.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - apm,xgene-mdio-rgmii
-+      - apm,xgene-mdio-xfi
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+examples:
-+  - |
-+    mdio@17020000 {
-+        compatible = "apm,xgene-mdio-rgmii";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        reg = <0x17020000 0xd100>;
-+        clocks = <&menetclk 0>;
-+
-+        phy@3 {
-+            reg = <0x3>;
-+        };
-+        phy@4 {
-+            reg = <0x4>;
-+        };
-+        phy@5 {
-+            reg = <0x5>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/net/apm-xgene-mdio.txt b/Documentation/devicetree/bindings/net/apm-xgene-mdio.txt
-deleted file mode 100644
-index 78722d74cea8..000000000000
---- a/Documentation/devicetree/bindings/net/apm-xgene-mdio.txt
-+++ /dev/null
-@@ -1,37 +0,0 @@
--APM X-Gene SoC MDIO node
--
--MDIO node is defined to describe on-chip MDIO controller.
--
--Required properties:
--	- compatible: Must be "apm,xgene-mdio-rgmii" or "apm,xgene-mdio-xfi"
--	- #address-cells: Must be <1>.
--	- #size-cells: Must be <0>.
--	- reg: Address and length of the register set
--	- clocks: Reference to the clock entry
--
--For the phys on the mdio bus, there must be a node with the following fields:
--	- compatible: PHY identifier.  Please refer ./phy.txt for the format.
--	- reg: The ID number for the phy.
--
--Example:
--
--	mdio: mdio@17020000 {
--		compatible = "apm,xgene-mdio-rgmii";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0x0 0x17020000 0x0 0xd100>;
--		clocks = <&menetclk 0>;
--	};
--
--	/* Board-specific peripheral configurations */
--	&mdio {
--		menetphy: phy@3 {
--			reg = <0x3>;
--		};
--		sgenet0phy: phy@4 {
--			reg = <0x4>;
--		};
--		sgenet1phy: phy@5 {
--			reg = <0x5>;
--		};
--	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 206ff023f5b3..c0b42d03d040 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1893,7 +1893,7 @@ M:	Keyur Chudgar <keyur@os.amperecomputing.com>
- M:	Quan Nguyen <quan@os.amperecomputing.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/apm,xgene-enet.yaml
--F:	Documentation/devicetree/bindings/net/apm-xgene-mdio.txt
-+F:	Documentation/devicetree/bindings/net/apm,xgene-mdio-rgmii.yaml
- F:	drivers/net/ethernet/apm/xgene/
- F:	drivers/net/mdio/mdio-xgene.c
- 
--- 
-2.50.1
+Anyway, yes, please keep it ordered. When you fix that, you may add
 
+Acked-by: Karel Balej <balejk@matfyz.cz> # for the PMIC
+
+Thanks,
+K. B.
 
