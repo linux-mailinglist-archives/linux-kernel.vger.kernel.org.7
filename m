@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-792088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6852EB3C019
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B98B3C012
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB1D1C80B47
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2987B1C23527
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E74732C32D;
-	Fri, 29 Aug 2025 15:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457D73277B4;
+	Fri, 29 Aug 2025 15:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYXNw5U0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bnJl5F14"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEDB32C31A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D2326D7C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482793; cv=none; b=PlP0Cwoqo0j9rsBhF/O9gTUEuqBhh7H+AweTXpyCAV7NT7r2IzTC1PscWxa83SbnJ7SZjCLxwhjT/JjQJ98h3m6J+IeCiPBc5PwreYzAiCB0I5lBO+EDtmAf0pmUOkeQ5UQJuYLeNMSSTuoL6MWfwjGFY+S9wjdpeBSPrJImpKQ=
+	t=1756482757; cv=none; b=m/VvAmfJH6bP79kayI0SuHPWx796L+KVx5/aY6GVhglA5d8X/6qoUhTrbawZ+gY/XEGP1BQTU+lSEquYMFEfT/8PfbCCDrnME9sgcMZ5ydnXscEb3y8YXud6amHSsuzhpKEgExF4TwGCxeidS350c7QaPn0+W2OfTWdSFPZf8zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482793; c=relaxed/simple;
-	bh=UWFY0JLHsJMUfcKlKs0YNjb9PahGef/x2LzTGoVsq6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HGM7vCJGzph2h2NWW3tSsIr64ttOX2CdjoIYzkMNdyQfbbPce1pCAX1b8VfM4KKFUPUdFfV46zgyA9jpr4EHH+RJR6137GQA6BIQhMwcKHkcMFMuJ12dXaCjsgLgDEeVQn+TZMaaRUf5t+CPyI3LbSnDRUe+CM7wsKfDuheZ9gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYXNw5U0; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756482792; x=1788018792;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=UWFY0JLHsJMUfcKlKs0YNjb9PahGef/x2LzTGoVsq6w=;
-  b=JYXNw5U0YMEa6HPSv0OmU1v+XQAVuFD8xXKLGtt7oCa/fFuLxX9gpZDt
-   nwULeG0WQTgj+Z4MIJVnHF/rZ6F9ZrcgNhoCA2aiqMon5+HY7vs4gYCZl
-   osG5x509l0DfKctfNBxJPdQzjTUxC7ZM8CPS8Ou5FFHypwf4gjDZ8VBIP
-   1i+owE7K1hGDisPtuh9Ky+SqZ3hoo7BfhuwTtiCd3UpKCJYU9pC0YCqdU
-   R/D+jpMiz3MWdaGI9IJ03QsOsmZMwhMwvXr5qQN32M230Ycgsl5ZEtVzA
-   v6vRKE/bjocqUeRKTaibBs9PNLgS+PQKKVNWJpiB5aL/vqreIzc0S6fid
-   A==;
-X-CSE-ConnectionGUID: H0qbJQE+T2Cbfuzm+Riyiw==
-X-CSE-MsgGUID: ksqSUEtsRCWDKpG66/AMkQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58696874"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58696874"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 08:53:12 -0700
-X-CSE-ConnectionGUID: ULmxDgHpRlikWVDrs0XvUA==
-X-CSE-MsgGUID: a2FIUYIaTaGkW5Kd3Qh66A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="201324199"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 29 Aug 2025 08:53:09 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1us1PX-000UjI-18;
-	Fri, 29 Aug 2025 15:53:07 +0000
-Date: Fri, 29 Aug 2025 23:52:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb James DeLisle <cjd@cjdns.fr>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- EARLY_PRINTK_8250 when selected by ECONET
-Message-ID: <202508292318.ujIvmwAj-lkp@intel.com>
+	s=arc-20240116; t=1756482757; c=relaxed/simple;
+	bh=5Ym/jwTYuBac6qN/bi6EC8idQbMmFWSlyiT3FprCvsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BnHWqrgctQlYIJGCGNKv8sygyrmrHoC2ozap36ogUMgjxPwtRqZ+L9F+1McrvdQtRxRO1Rtq7B2Et1e11c0Ym9+eBADz0Pq5CbPhgWgqtzL5paL2zKZ/LwHwWKei4f62HtA+JLHFeSmrc7QAmykOLorQgo/mm6tKKeMBpypOjKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bnJl5F14; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74382025891so1712033a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756482755; x=1757087555; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+23BJPCKtGorADDC890VMTVjWSuA//k7zazsu5ZdqXU=;
+        b=bnJl5F14HpVRdVjNzcgeaOWTEPn3joHTxD4OBFMS+NtSkqpX0mNowq2qQ23e+D6PKF
+         xK4BU4OOzUbIYf+sXLQ14p3/9rIvd7E7Nv65CT/yJ3+3MAWbwRyf5cbUJdO1SeCS5wOq
+         y9jcafCdq7kpcOCXVsfFXsNocNcTNMDA6OalA/pC2QfSmvJWCV3jaW27wSqZvi/JmPib
+         0Z7TknDHnkWjLLukCWIhavuLBz4f6HYPk7n+UdLC00wFmgFMiRqQWnGm7I3DZ+8VAkVX
+         1W8hCKWtGGnzPOi7IoEZfZGIStiRIE/oRyHXjjXyN9XCGdNKXKl7ZiXg/dKBdBzd0+L4
+         UpOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756482755; x=1757087555;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+23BJPCKtGorADDC890VMTVjWSuA//k7zazsu5ZdqXU=;
+        b=QbB/I+Ubhr03OS8SH093x8ZPDLedcwACXeMEzGNBX8h7PwQo0AqvvFcwF3Hxkl3m3L
+         MMslb1k3JqfU8U7W7osBF4YP9er7c7s7JANt6WZVILnXObIz6CQypBvlaqdnUl/TVnwn
+         1KDSiRxPfB1ZU+DaV8gYM8KJ9i0rP344+5k0jW7xMjus5OwbCvU76pMOiLFknIBh7nZW
+         l0swml6ZceSu5cmWiR+32MS4qF69fZC5HPxkDiJwW/3W4qUOvkLFQI4OC5aIGM6a7ctO
+         TQWl+L+NBJrIdyVppsLRFQzp9JihucgqcnAeYd8mWM5IOH0vjqK6TaCqnmb3ABCNLixT
+         1szw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnF/oLnFcxQoGTWjHmJYWnQEgYBHch4hjs9Kpb4ezmLg23EweqHewkf2u/i02IV3kxp2rt+/raJ+kyt8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOIc9ol+vjnlwUeO1vqvME/fZC5heh5j39KaxGZOJFJOKOqgmj
+	9age1dHYRFrOKPc7m3A4VbfJDpsFnRqOsGCjmuLSV3xziy8AepvUidBfvSq9k7mnx34=
+X-Gm-Gg: ASbGncuCtBvc1G7R0FZUUqG6jMkIfQckWLyMlikXXvRojohlJHGPuhwPZK7Vw2wjGnm
+	1FrriPxBVWxPm0dDv7ZejcVQkzRl9VWPUFl66uxnwTfQMg+39MUb2I623rJw+F1Z75ZciEQIwF/
+	nxOjYCy9a5HlcSkJqAJoHYRFhwnDE1AyhVOu5HRlvxcPIR4aA4OB55N0VW2Rak79wYqohgTkuRj
+	i+1gHf4CMSbxAbvZmjwvkIpDve8K5yuYtpPQh9VUicufYkenoVNO5zl3QeJlxuar8iVepCnkB3O
+	WWcY6SFdu+SGvs0+MZpD35DxMF9uxT6jYegimom06BDu5k9rPjlaNJibO0mHDbIzOJARhLiU+Q0
+	V7zoyvWhKGVpCwKzZ9mKWpy7RAq6L/b4E9vtJcXYJu5a47hQOby97hLNftQHAiFQGirGpwYIjq0
+	ffLMmnhzJxwE+XCl/aqij+
+X-Google-Smtp-Source: AGHT+IEXWYEKh1DA738p/y0oOalJucxmoKHVU9lI6MvOI7wGYxwoLUOBIB8PEz52I2MRTw1eKDB1JA==
+X-Received: by 2002:a05:6808:81d3:b0:437:aedd:f87 with SMTP id 5614622812f47-437aedd13admr7644840b6e.41.1756482754716;
+        Fri, 29 Aug 2025 08:52:34 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-437f41765fasm21636b6e.8.2025.08.29.08.52.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 08:52:33 -0700 (PDT)
+Message-ID: <960b23ff-827f-4ac6-a951-c61a0fec0c11@baylibre.com>
+Date: Fri, 29 Aug 2025 10:52:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Karel Balej <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>,
+ David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
+ <20250829-88pm886-gpadc-v1-1-f60262266fea@dujemihanovic.xyz>
+ <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com>
+ <2250556.Mh6RI2rZIc@radijator>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <2250556.Mh6RI2rZIc@radijator>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   07d9df80082b8d1f37e05658371b087cb6738770
-commit: 35fb26f94dfa1b291086b84b2421f957214824d1 mips: Add EcoNet MIPS platform support
-date:   3 months ago
-config: mips-kismet-CONFIG_EARLY_PRINTK_8250-CONFIG_ECONET-0-0 (https://download.01.org/0day-ci/archive/20250829/202508292318.ujIvmwAj-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250829/202508292318.ujIvmwAj-lkp@intel.com/reproduce)
+On 8/29/25 10:20 AM, Duje Mihanović wrote:
+> On Friday, 29 August 2025 01:40:56 Central European Summer Time David Lechner wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508292318.ujIvmwAj-lkp@intel.com/
+...
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for EARLY_PRINTK_8250 when selected by ECONET
-   WARNING: unmet direct dependencies detected for EARLY_PRINTK_8250
-     Depends on [n]: EARLY_PRINTK [=n] && USE_GENERIC_EARLY_PRINTK_8250 [=y]
-     Selected by [y]:
-     - ECONET [=y]
-   
-   WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
-     Depends on [n]: TTY [=y] && HAS_IOMEM [=y] && SERIAL_8250 [=n] && OF [=y]
-     Selected by [y]:
-     - ECONET [=y]
+>>> +		*val = raw;
+>>> +		dev_dbg(&iio->dev, "chan: %d, raw: %d\n", chan->channel, *val);
+>>> +		ret = IIO_VAL_INT;
+>>> +		break;
+>>> +	case IIO_CHAN_INFO_PROCESSED: {
+>>
+>> Unusual to have both raw and processed. What is the motivation?
+> 
+> I was following what ab8500-gpadc does, no particular motivation.
+> Considering the above, to me it makes the most sense to limit it to
+> processed.
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In IIO, we generally prefer do the least amount of processing on
+the value from the hardware, so IIO_CHAN_INFO_RAW is mostly used
+and processed is only used in cases where there isn't linear scaling
+or some other unusually thing going on.
+
+So in this driver, processed probably makes sense for the resistance
+channels since we have to do some calculation anyway, but for the
+voltage channels, raw would be preferred.
 
