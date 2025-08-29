@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-792062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D4B3BFE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700DAB3BFD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346213ACE83
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3635650AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC5B3375AA;
-	Fri, 29 Aug 2025 15:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F266F3375D5;
+	Fri, 29 Aug 2025 15:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rjmbh3Ol"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENEga7Da"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDC53277A7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B6A32A3C7;
+	Fri, 29 Aug 2025 15:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482532; cv=none; b=n4l8cwICahxKAL2L6uN12J+h16J183JqVBjfuOsq6mdsUgFCIhLtRJlmN9J3uxNuqLa/TjWCcs6NVD9CSnMU8yzb+H253vrnCbkpOs+Twph7DOkwLfh2g77AGcDXTayS+rQ3mK++NXIGT8fpi4L9gYHNvfwmHmatg/OlAGt2caw=
+	t=1756482534; cv=none; b=PgHKlYfcXNt1c63nFkO5qp6hEs2oDiqyw09MYQiwmoMsrwDIir3sKQXczwtKZfjOwh7ojzelBWKiQ0S9Akm9hkTJ30wD6MxUpNG3W2qXQOh8jypEhWtnTWAxZ/V64D7brwfay0tahGuIGTnYpXtyLWInhLnY62DUtUywvok7ZTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482532; c=relaxed/simple;
-	bh=069wMqK9bF6D74YIJY8nZAw2J7YjllAfy3UAu+j/YUM=;
+	s=arc-20240116; t=1756482534; c=relaxed/simple;
+	bh=LPfGRQUCouLlYMYagUni4E5aLlawCBT0lOrgRGdT9YM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DYZCuJPc0JbF9raQzeWkbyFGT5CPv0wQ3L7wsXKXOSR82Nt3Ka8s2C02Y8dq9Qirtn6olpnzFt98vW7UDvsCUZTAc6XIUh16KSVWIl85dRACiup7/8s/j9WRD67PuRgJRO3108PXGvlP2vbd+rGe6zBT9LWjK6drW17BOdlJ9pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rjmbh3Ol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59EAC4CEF0;
-	Fri, 29 Aug 2025 15:48:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uwDBbhi8FJbe1Lz0+BCORwQRIMh4wgW5V2mKqdP65Kr6x/CkdwqjSGawF7bMDAv64FeKrw8Mhk0ul1lgS/+06QkeNvFRZdWrKbKiR08XBFPrsEIY8s1enc/pld7K5hsEr5XTPRQEGW9c0NPP7Hv0OEbwEYF9QmgJtevpyewy50c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENEga7Da; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3396C4CEF6;
+	Fri, 29 Aug 2025 15:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482531;
-	bh=069wMqK9bF6D74YIJY8nZAw2J7YjllAfy3UAu+j/YUM=;
+	s=k20201202; t=1756482534;
+	bh=LPfGRQUCouLlYMYagUni4E5aLlawCBT0lOrgRGdT9YM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Rjmbh3OlGvhaN0dbZ5yNeJrUoVWLD/BjCk7ULf1qSy3haIqWabdL8HqM4GG1mFsRx
-	 jgzgaB5upUO/2BF4fmUF0Lzx00uVPiWqDTb7I62rqAaUFKlypIeXs8gXmGhu3XgnsL
-	 PZuRkBC4xg0+VssfKSaBa6K/pTdflh7yGllFEfB/AvR++fP0oz2H/E2kcCPPS3ZF/4
-	 SlqIvBX3iapid3lzmeBU0aKhXqD+N/a8lOK9PNjUg92/KFjzdNkq0BLQkI/aNi/xBP
-	 0dPZZR5sn0+sESUqseEoAMZto60pDaHnTGdJI48djTiSgWEaZ0IHuIxaSn8j4WWqu0
-	 Gz8P9EKsOQGJA==
+	b=ENEga7Dam+kNI8dPxGhGkV8vI6v/8iw/viFTgf36zq726dg9TrY/N8US8GvzpfpFE
+	 l5KBzDsoznlioAIEtdNOcA7JpgrNvgYM7FBLPBLpmViRE2xLTtzcbBAOce4GIycC1c
+	 UvWwmQZnnbpfONbkQ32MGghq9QWK+bWWITEf1TOUNxLuuYZFD7+WD4DRCYm2RJt2H2
+	 rMf5iaKEkP/Abfc7UmAZaHt+HASHdqxbrfFM0sZzRB+XoU1VIIKilMkAVDg7ZJ9xzA
+	 81l2ACdYvTlJbyTw3+qrJpOLClcffmd4UoJvAfPTQMp4VupfosmAVh9JWEwSHE6r9z
+	 GVbTFOkLpLpyA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
 	Marco Crivellari <marco.crivellari@suse.com>,
 	Michal Hocko <mhocko@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Tejun Heo <tj@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 11/33] cpu: Provide lockdep check for CPU hotplug lock write-held
-Date: Fri, 29 Aug 2025 17:47:52 +0200
-Message-ID: <20250829154814.47015-12-frederic@kernel.org>
+	Vlastimil Babka <vbabka@suse.cz>,
+	Waiman Long <longman@redhat.com>,
+	cgroups@vger.kernel.org
+Subject: [PATCH 12/33] cpuset: Provide lockdep check for cpuset lock held
+Date: Fri, 29 Aug 2025 17:47:53 +0200
+Message-ID: <20250829154814.47015-13-frederic@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
 References: <20250829154814.47015-1-frederic@kernel.org>
@@ -61,63 +65,54 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-cpuset modifies partitions, including isolated, while holding the cpu
-hotplug lock read-held.
+cpuset modifies partitions, including isolated, while holding the cpuset
+mutex.
 
-This means that write-holding the CPU hotplug lock is safe to
-synchronize against housekeeping cpumask changes.
+This means that holding the cpuset mutex is safe to synchronize against
+housekeeping cpumask changes.
 
 Provide a lockdep check to validate that.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- include/linux/cpuhplock.h    | 1 +
- include/linux/percpu-rwsem.h | 1 +
- kernel/cpu.c                 | 5 +++++
- 3 files changed, 7 insertions(+)
+ include/linux/cpuset.h | 2 ++
+ kernel/cgroup/cpuset.c | 7 +++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/include/linux/cpuhplock.h b/include/linux/cpuhplock.h
-index f7aa20f62b87..286b3ab92e15 100644
---- a/include/linux/cpuhplock.h
-+++ b/include/linux/cpuhplock.h
-@@ -13,6 +13,7 @@
- struct device;
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 2ddb256187b5..051d36fec578 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -18,6 +18,8 @@
+ #include <linux/mmu_context.h>
+ #include <linux/jump_label.h>
  
- extern int lockdep_is_cpus_held(void);
-+extern int lockdep_is_cpus_write_held(void);
- 
- #ifdef CONFIG_HOTPLUG_CPU
- void cpus_write_lock(void);
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index 288f5235649a..c8cb010d655e 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -161,6 +161,7 @@ extern void percpu_free_rwsem(struct percpu_rw_semaphore *);
- 	__percpu_init_rwsem(sem, #sem, &rwsem_key);		\
- })
- 
-+#define percpu_rwsem_is_write_held(sem)	lockdep_is_held_type(sem, 0)
- #define percpu_rwsem_is_held(sem)	lockdep_is_held(sem)
- #define percpu_rwsem_assert_held(sem)	lockdep_assert_held(sem)
- 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 453a806af2ee..3b0443f7c486 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -534,6 +534,11 @@ int lockdep_is_cpus_held(void)
- {
- 	return percpu_rwsem_is_held(&cpu_hotplug_lock);
- }
++extern bool lockdep_is_cpuset_held(void);
 +
-+int lockdep_is_cpus_write_held(void)
-+{
-+	return percpu_rwsem_is_write_held(&cpu_hotplug_lock);
-+}
- #endif
+ #ifdef CONFIG_CPUSETS
  
- static void lockdep_acquire_cpus_lock(void)
+ /*
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index b00d8e3c30ba..2d2fc74bc00c 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -254,6 +254,13 @@ void cpuset_unlock(void)
+ 	mutex_unlock(&cpuset_mutex);
+ }
+ 
++#ifdef CONFIG_LOCKDEP
++bool lockdep_is_cpuset_held(void)
++{
++	return lockdep_is_held(&cpuset_mutex);
++}
++#endif
++
+ static DEFINE_SPINLOCK(callback_lock);
+ 
+ void cpuset_callback_lock_irq(void)
 -- 
 2.51.0
 
