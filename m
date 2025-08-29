@@ -1,190 +1,196 @@
-Return-Path: <linux-kernel+bounces-792389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6399B3C33D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD76B3C33B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050C73B59A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991911882C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A07C244675;
-	Fri, 29 Aug 2025 19:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402A521D3E8;
+	Fri, 29 Aug 2025 19:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzRu9aCt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="a6U/cPfe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA852417F2;
-	Fri, 29 Aug 2025 19:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C7315E5D4
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496270; cv=none; b=aH3eSWJk/20yfhxlkQHVqtEkxtndNivf5xeuqeCHvdl/aEJFNkbCY7kH8pH14CspTvcw2CkzlUiWmVZ+90nchbN2JEXthL0ma5+9dEYT+LspTdERqOPmdyFvkF3hiTLC0VB3KCCCny4z0/0BCHzzYrpLYhoJ2z98Y13AC/D3q/4=
+	t=1756496469; cv=none; b=TqMTbiGbs8nEoVAGg2Dq2BSnsIyccCfe/+6r73qDg2JtezgyZNIh7cDD1+qfErFGncHTzaK8kNcja618bpHGhvewkNd1t81nmXs8r3FClleCBCUS8v/oMjV/tBd4iE3Bq2JGzC6gDiUrh7KW5qVi3mTVlOtzgEUS+aY4L4MsXV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496270; c=relaxed/simple;
-	bh=i20Sz1T7m8zUz/Av2KIJ4kNJkooG1BmO238nmGbVDV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hJUxepkG+EpNa305r8T1Jr3p+hi1fJx7T+uL081IZ77GvBARylAIOCvkcSQLPRkSNU5NMzcR3HVlH3qJFbSLFPhAdq3PMkeIlPOPnU+UqelgTYtgEQZqIrjcwNh8iFuV9ULqSdQg6iua98p0TcE+vy584TTczvTDsSMXbHIFdKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzRu9aCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C77D9C4CEF1;
-	Fri, 29 Aug 2025 19:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756496269;
-	bh=i20Sz1T7m8zUz/Av2KIJ4kNJkooG1BmO238nmGbVDV0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lzRu9aCt11e1mGeUItKjCu4jPlv5ycErl5Yxlo11Zlu7UnVdpv0G+BILkjSpfYasg
-	 M2DnvZF4EYUwuXMtWEVbJIQcQolkRubCAhhx346tLs1zLEcfuCgZP2sxgulhPhPviO
-	 LMBZHZmXyNs0rDPGOMnQkd7CLHlnhzc0KIKeEQz5l1z1cYYADQmqb8vx+IBzNOAKr1
-	 Un5LWGxEnrEsbaPQjVARSnMH1uZcF0/FTiDIak/bP+wuaNkc4MTKp1GffhZFMEGfzl
-	 Oww4a3LP05vaexJPumHNexiGnqY2DCF4Bx+RUBzuIW9xMmx8FnovR1HwzqsE9lcqjF
-	 YI9d12v9kPPTQ==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7454a992f7dso1581013a34.3;
-        Fri, 29 Aug 2025 12:37:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJqVY3VsHa/hZs/1DrotGb3RM9NDZqpQlYo9Sd7vok2wGfD2RlvpGnoaztiXheHiHzhCzgYcP5AYBlFeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxI0sI6TR9VGyQvgwzKXa+LHRM7UJaoM+yT+nAefiAsHPjrgzl
-	IIZOysq3KzpicGsuwJEgboPGc9PgH7ERyqgr1RCpfJiW9XWl0XNknwSDw8LwpmcAa7jt3pwiRpB
-	269nkwfzNCkkL2RuQ6fFjcDkXfhfE+/w=
-X-Google-Smtp-Source: AGHT+IFm6Mu2WJ3hz5epv6PCQ9V0hqYFrlCod+fDORZtkCza47try1kmAdneoMpzt4KEtCqbIGwgZxOKfnWY6jc4ys8=
-X-Received: by 2002:a05:6830:6994:b0:744:f113:fef8 with SMTP id
- 46e09a7af769-74500b95c22mr14413217a34.35.1756496269112; Fri, 29 Aug 2025
- 12:37:49 -0700 (PDT)
+	s=arc-20240116; t=1756496469; c=relaxed/simple;
+	bh=2I77nCgGWyro+lAdnALFXn3HmvGjCvEaC70WNQcn41o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vc7PKGylpQtqhsS8VpYvMMhwjtvHzWoJbNy3uAiqT01etzD1z9NzbZnfpjALqkAYsIjJ56NxAdanyBg5CzbWlmpB2an0xL7WkYAV4sRYui9TGRe9AoSlInVEZfl3j95APMyIfQRDSwuh3RmhsjmIKuMuezcl2MTrJDg2mU4Q9EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=a6U/cPfe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0A8B540E019E;
+	Fri, 29 Aug 2025 19:41:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id H_fRXRhCsNV9; Fri, 29 Aug 2025 19:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756496458; bh=NZ3r/e9Y9tjrwTvdKgfqZPem1vLEEwZE3p2wXChCOCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a6U/cPfeL0g6q5ldGJ2+VXZkGVR2CfKu2sElVhuSINyoz9ID9lX7EPeHlaXKudGb4
+	 vpKeUA+Wojhq1SQd4wf5LTNaoTvB0cIrJtoF+Df5j21gny9YCxB8XFC9z2nciFU+lv
+	 awzrjlVNFRwUFvRqWHMO78+m2+efM+jRYs2NbAWwKw1IJUme3zMqT46tRS9IWNPKlh
+	 Ke5fg5s55ExyKyy+aKEd52GaP/7x40TSisxL3yGPEFG71xr3MOsj1Eh/FJMRuULYpD
+	 BafO+A1PNQwamVg/80/P75k/mCEEUeTojyrMYi1NfhJ5O7iDoxTwOkBUKLkcZzGwbS
+	 0oYYwCeXbQjifAOcpHQdQshBQVz6dqcf9qocYg/jwnMk13BXlyb+gjgxdxpTEEcILb
+	 NreiGrH7RrFzvCXuzsHIkNyiZHG5g4PlrhQ4eyQxkgIUyPak7PFPR4NKCWkfS+3Dan
+	 3ygJa22S3klIGLjYZWW/7uMpvcezmgU/Mq/iYB4OjKgTcLo5P482LUxeM5NEp1KKmu
+	 dvJnyqe/awODZUdEVZsxA3BHkPTh4CXzTp90QzNpYuuvyqBTZ1JKZ93ABWFnmY4Tfo
+	 a+g7trkJ2X6l1WHEooHJVOqMNIeTeCz3HT1wI5GMkRuSAEd9//QY68SQSeO+Tuim6P
+	 XefDlCMzXdSBB1ToRo9vZuRU=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6DA3740E019C;
+	Fri, 29 Aug 2025 19:40:52 +0000 (UTC)
+Date: Fri, 29 Aug 2025 21:40:44 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource
+ seems too big for the bo
+Message-ID: <20250829194044.GCaLICPKJcGJRYdSfO@fat_crate.local>
+References: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
+ <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5939372.DvuYhMxLoT@rafael.j.wysocki>
-In-Reply-To: <5939372.DvuYhMxLoT@rafael.j.wysocki>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 29 Aug 2025 21:37:37 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gniATfcckSwfJBmLf9O345Ersw-TUMVFWTSWxTN5K+0A@mail.gmail.com>
-X-Gm-Features: Ac12FXykCuo6Gn7nzj5lYOQKbp9wSTKor5RmWoXoEPf2lGx_F_QbcDlanOhf7vw
-Message-ID: <CAJZ5v0gniATfcckSwfJBmLf9O345Ersw-TUMVFWTSWxTN5K+0A@mail.gmail.com>
-Subject: Re: [PATCH v1] cpuidle: governors: teo: Special-case nohz_full CPUs
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Christian Loehle <christian.loehle@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
 
-On Thu, Aug 28, 2025 at 10:16=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> This change follows an analogous modification of the menu governor [1].
->
-> Namely, when the governor runs on a nohz_full CPU and there are no user
-> space timers in the workload on that CPU, it ends up selecting idle
-> states with target residency values above TICK_NSEC, or the deepest
-> enabled idle state in the absence of any of those, all the time due to
-> a tick_nohz_tick_stopped() check designed for running on CPUs where the
-> tick is not permanently disabled.  In that case, the fact that the tick
-> has been stopped means that the CPU was expected to be idle sufficiently
-> long previously, so it is not unreasonable to expect it to be idle
-> sufficiently long again, but this inference does not apply to nohz_full
-> CPUs.
->
-> In some cases, latency in the workload grows undesirably as a result of
-> selecting overly deep idle states, and the workload may also consume
-> more energy than necessary if the CPU does not spend enough time in the
-> selected deep idle state.
->
-> Address this by amending the tick_nohz_tick_stopped() check in question
-> with a tick_nohz_full_cpu() one to avoid effectively ignoring all
-> shallow idle states on nohz_full CPUs.  While doing so introduces a risk
-> of getting stuck in a shallow idle state for a long time, that only
-> affects energy efficiently, but the current behavior potentially hurts
-> both energy efficiency and performance that is arguably the priority for
-> nohz_full CPUs.
+On Fri, Aug 29, 2025 at 02:26:50PM -0400, Alex Deucher wrote:
+> Have you updated mesa?  Looks like a userspace change.
 
-This change is likely to break the use case in which CPU isolation is
-used for power management reasons, to prevent CPUs from running any
-code and so to save energy.
+Yeah, I did a long overdue OS upgrade today:
 
-In that case, going into the deepest state every time on nohz_full
-CPUs is a feature, so it can't be changed unconditionally.
+$ grep -i mesa /var/log/dpkg.log
 
-For this reason, I'm not going to apply this patch and I'm going to
-drop the menu governor one below.
+2025-08-29 17:50:32 install mesa-libgallium:amd64 <none> 25.0.7-2
+2025-08-29 17:50:32 status half-installed mesa-libgallium:amd64 25.0.7-2
+2025-08-29 17:50:33 status unpacked mesa-libgallium:amd64 25.0.7-2
+2025-08-29 17:50:33 upgrade libegl-mesa0:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:50:33 status half-configured libegl-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:33 status unpacked libegl-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:33 status half-installed libegl-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:33 status unpacked libegl-mesa0:amd64 25.0.7-2
+2025-08-29 17:50:34 upgrade libgl1-mesa-dri:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:50:34 status half-configured libgl1-mesa-dri:amd64 21.3.8-1
+2025-08-29 17:50:34 status unpacked libgl1-mesa-dri:amd64 21.3.8-1
+2025-08-29 17:50:34 status half-installed libgl1-mesa-dri:amd64 21.3.8-1
+2025-08-29 17:50:34 status unpacked libgl1-mesa-dri:amd64 25.0.7-2
+2025-08-29 17:50:34 upgrade libglx-mesa0:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:50:34 status half-configured libglx-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:34 status unpacked libglx-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:34 status half-installed libglx-mesa0:amd64 21.3.8-1
+2025-08-29 17:50:34 status unpacked libglx-mesa0:amd64 25.0.7-2
+2025-08-29 17:50:45 upgrade libegl1-mesa-dev:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:50:45 status half-configured libegl1-mesa-dev:amd64 21.3.8-1
+2025-08-29 17:50:45 status unpacked libegl1-mesa-dev:amd64 21.3.8-1
+2025-08-29 17:50:45 status half-installed libegl1-mesa-dev:amd64 21.3.8-1
+2025-08-29 17:50:45 status unpacked libegl1-mesa-dev:amd64 25.0.7-2
+2025-08-29 17:51:47 upgrade libglu1-mesa-dev:amd64 9.0.2-1 9.0.2-1.1+b3
+2025-08-29 17:51:47 status half-configured libglu1-mesa-dev:amd64 9.0.2-1
+2025-08-29 17:51:47 status unpacked libglu1-mesa-dev:amd64 9.0.2-1
+2025-08-29 17:51:47 status half-installed libglu1-mesa-dev:amd64 9.0.2-1
+2025-08-29 17:51:47 status unpacked libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 17:51:47 upgrade libglu1-mesa:amd64 9.0.2-1 9.0.2-1.1+b3
+2025-08-29 17:51:47 status half-configured libglu1-mesa:amd64 9.0.2-1
+2025-08-29 17:51:47 status unpacked libglu1-mesa:amd64 9.0.2-1
+2025-08-29 17:51:47 status half-installed libglu1-mesa:amd64 9.0.2-1
+2025-08-29 17:51:47 status unpacked libglu1-mesa:amd64 9.0.2-1.1+b3
+2025-08-29 17:57:11 upgrade mesa-va-drivers:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:57:11 status half-configured mesa-va-drivers:amd64 21.3.8-1
+2025-08-29 17:57:11 status unpacked mesa-va-drivers:amd64 21.3.8-1
+2025-08-29 17:57:11 status half-installed mesa-va-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status unpacked mesa-va-drivers:amd64 25.0.7-2
+2025-08-29 17:57:12 upgrade mesa-vdpau-drivers:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:57:12 status half-configured mesa-vdpau-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status unpacked mesa-vdpau-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status half-installed mesa-vdpau-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status unpacked mesa-vdpau-drivers:amd64 25.0.7-2
+2025-08-29 17:57:12 upgrade mesa-vulkan-drivers:amd64 21.3.8-1 25.0.7-2
+2025-08-29 17:57:12 status half-configured mesa-vulkan-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status unpacked mesa-vulkan-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status half-installed mesa-vulkan-drivers:amd64 21.3.8-1
+2025-08-29 17:57:12 status unpacked mesa-vulkan-drivers:amd64 25.0.7-2
+2025-08-29 18:00:32 configure libglu1-mesa:amd64 9.0.2-1.1+b3 <none>
+2025-08-29 18:00:32 status unpacked libglu1-mesa:amd64 9.0.2-1.1+b3
+2025-08-29 18:00:32 status half-configured libglu1-mesa:amd64 9.0.2-1.1+b3
+2025-08-29 18:00:32 status installed libglu1-mesa:amd64 9.0.2-1.1+b3
+2025-08-29 18:09:41 configure mesa-vulkan-drivers:amd64 25.0.7-2 <none>
+2025-08-29 18:09:41 status unpacked mesa-vulkan-drivers:amd64 25.0.7-2
+2025-08-29 18:09:41 status half-configured mesa-vulkan-drivers:amd64 25.0.7-2
+2025-08-29 18:09:41 status installed mesa-vulkan-drivers:amd64 25.0.7-2
+2025-08-29 18:09:41 configure mesa-vdpau-drivers:amd64 25.0.7-2 <none>
+2025-08-29 18:09:41 status unpacked mesa-vdpau-drivers:amd64 25.0.7-2
+2025-08-29 18:09:41 status half-configured mesa-vdpau-drivers:amd64 25.0.7-2
+2025-08-29 18:09:41 status installed mesa-vdpau-drivers:amd64 25.0.7-2
+2025-08-29 18:11:26 configure mesa-libgallium:amd64 25.0.7-2 <none>
+2025-08-29 18:11:26 status unpacked mesa-libgallium:amd64 25.0.7-2
+2025-08-29 18:11:26 status half-configured mesa-libgallium:amd64 25.0.7-2
+2025-08-29 18:11:26 status installed mesa-libgallium:amd64 25.0.7-2
+2025-08-29 18:11:27 configure libgl1-mesa-dri:amd64 25.0.7-2 <none>
+2025-08-29 18:11:27 status unpacked libgl1-mesa-dri:amd64 25.0.7-2
+2025-08-29 18:11:27 status half-configured libgl1-mesa-dri:amd64 25.0.7-2
+2025-08-29 18:11:27 status installed libgl1-mesa-dri:amd64 25.0.7-2
+2025-08-29 18:11:28 configure libegl-mesa0:amd64 25.0.7-2 <none>
+2025-08-29 18:11:28 status unpacked libegl-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:28 status half-configured libegl-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:28 status installed libegl-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:29 configure mesa-va-drivers:amd64 25.0.7-2 <none>
+2025-08-29 18:11:29 status unpacked mesa-va-drivers:amd64 25.0.7-2
+2025-08-29 18:11:29 status half-configured mesa-va-drivers:amd64 25.0.7-2
+2025-08-29 18:11:29 status installed mesa-va-drivers:amd64 25.0.7-2
+2025-08-29 18:11:29 configure libglx-mesa0:amd64 25.0.7-2 <none>
+2025-08-29 18:11:29 status unpacked libglx-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:29 status half-configured libglx-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:29 status installed libglx-mesa0:amd64 25.0.7-2
+2025-08-29 18:11:31 configure libglu1-mesa-dev:amd64 9.0.2-1.1+b3 <none>
+2025-08-29 18:11:31 status unpacked libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:11:31 status half-configured libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:11:31 status installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:11:32 configure libegl1-mesa-dev:amd64 25.0.7-2 <none>
+2025-08-29 18:11:32 status unpacked libegl1-mesa-dev:amd64 25.0.7-2
+2025-08-29 18:11:32 status half-configured libegl1-mesa-dev:amd64 25.0.7-2
+2025-08-29 18:11:32 status installed libegl1-mesa-dev:amd64 25.0.7-2
+2025-08-29 18:14:28 status installed libglapi-mesa:amd64 21.3.8-1
+2025-08-29 18:14:28 remove libglapi-mesa:amd64 21.3.8-1 <none>
+2025-08-29 18:14:28 status half-configured libglapi-mesa:amd64 21.3.8-1
+2025-08-29 18:14:28 status half-installed libglapi-mesa:amd64 21.3.8-1
+2025-08-29 18:14:28 status config-files libglapi-mesa:amd64 21.3.8-1
+2025-08-29 18:14:28 status not-installed libglapi-mesa:amd64 <none>
+2025-08-29 18:14:28 status installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:14:28 remove libglu1-mesa-dev:amd64 9.0.2-1.1+b3 <none>
+2025-08-29 18:14:28 status half-configured libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:14:28 status half-installed libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:14:28 status config-files libglu1-mesa-dev:amd64 9.0.2-1.1+b3
+2025-08-29 18:14:28 status not-installed libglu1-mesa-dev:amd64 <none>
 
-The only way to allow everyone to do what they want/need I can see
-would be to add a control knob for adjusting the behavior of cpuidle
-governors regarding the handling of nohz_full CPUs.
+-- 
+Regards/Gruss,
+    Boris.
 
-> While at it, add a comment explaining the logic in teo_state_ok().
->
-> Link: https://lore.kernel.org/linux-pm/2244365.irdbgypaU6@rafael.j.wysock=
-i/ [1]
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/teo.c |   18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -227,9 +227,17 @@
->         cpu_data->total +=3D PULSE;
->  }
->
-> -static bool teo_state_ok(int i, struct cpuidle_driver *drv)
-> +static bool teo_state_ok(int i, struct cpuidle_driver *drv, struct cpuid=
-le_device *dev)
->  {
-> -       return !tick_nohz_tick_stopped() ||
-> +       /*
-> +        * If the scheduler tick has been stopped already, avoid selectin=
-g idle
-> +        * states with target residency below the tick period length unde=
-r the
-> +        * assumption that the CPU is likely to be idle sufficiently long=
- for
-> +        * the tick to be stopped again (or the tick would not have been
-> +        * stopped previously in the first place).  However, do not do th=
-at on
-> +        * nohz_full CPUs where the above assumption does not hold.
-> +        */
-> +       return !tick_nohz_tick_stopped() || tick_nohz_full_cpu(dev->cpu) =
-||
->                 drv->states[i].target_residency_ns >=3D TICK_NSEC;
->  }
->
-> @@ -379,7 +387,7 @@
->                                  * shallow or disabled, in which case tak=
-e the
->                                  * first enabled state that is deep enoug=
-h.
->                                  */
-> -                               if (teo_state_ok(i, drv) &&
-> +                               if (teo_state_ok(i, drv, dev) &&
->                                     !dev->states_usage[i].disable) {
->                                         idx =3D i;
->                                         break;
-> @@ -391,7 +399,7 @@
->                         if (dev->states_usage[i].disable)
->                                 continue;
->
-> -                       if (teo_state_ok(i, drv)) {
-> +                       if (teo_state_ok(i, drv, dev)) {
->                                 /*
->                                  * The current state is deep enough, but =
-still
->                                  * there may be a better one.
-> @@ -460,7 +468,7 @@
->          */
->         if (drv->states[idx].target_residency_ns > duration_ns) {
->                 i =3D teo_find_shallower_state(drv, dev, idx, duration_ns=
-, false);
-> -               if (teo_state_ok(i, drv))
-> +               if (teo_state_ok(i, drv, dev))
->                         idx =3D i;
->         }
->
->
->
->
->
+https://people.kernel.org/tglx/notes-about-netiquette
 
