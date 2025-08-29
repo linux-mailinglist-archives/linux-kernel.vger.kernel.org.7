@@ -1,221 +1,99 @@
-Return-Path: <linux-kernel+bounces-791660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C98B3B9CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D39B3B9CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502D21C8226D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD4E17AF51
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6099F313543;
-	Fri, 29 Aug 2025 11:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1D4304BCD;
+	Fri, 29 Aug 2025 11:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+9P8RN9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="mWB/aYC6"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999A61A5BBC;
-	Fri, 29 Aug 2025 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD5B30CDB2;
+	Fri, 29 Aug 2025 11:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756466044; cv=none; b=ZwjWSAKKkBeShDYwiz/RuFJlw2B+vo5PnGnFjm53mEHTdyqfJv/0Otb1aGxWa3ZiKv0GrV3eIO3RKymdfRIMdNSbSiqe//zP/+5gjGc+UUXEZXnKV+Akwc3WRb46fx4HpdTLxjfrUcxCNSUYoNRAYwYBZSP90fUPDYS9r1QHSEU=
+	t=1756466152; cv=none; b=FZ+M42Zc6KCAnoUnIIuwG+g9nfAUcqkg7mjMf91XmopXu+mmjm5oOdJfdI3mLcpGRbr/QqJch1pX9Dn00d/jaCGSjdcS8XgRvsB31Q+ruGmH5pTXMG0Ie4ywcJXVhjzr96egvMTMc5JgHBDMqJSyHFUcd+7AuKYR13QZ297NeZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756466044; c=relaxed/simple;
-	bh=D8QpsTzerQkyc45PTp7MiEiKx9yCbePfnN03lPXuB4M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cVtFplxlDiV1dq8Eu5VdTa10bu8IRt+28TxCP2NW8+Wa3BAIlRAAxfuitLflliYpoQzu8BDwtoJ827GrxsHcBpdlAoL6Fj7r3+o9tNa+iO0ASvcHQanvjbeL1dWj4tCsNdTbRIxTH8auW7KveQHqg4MWr2I8lv+fmE60d6Uqxec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+9P8RN9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C81C4CEF0;
-	Fri, 29 Aug 2025 11:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756466044;
-	bh=D8QpsTzerQkyc45PTp7MiEiKx9yCbePfnN03lPXuB4M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=T+9P8RN9V1zNo2Ob6aqREAjt4PzvVQIlT215MkyPZVB4670kPWVLzkYvS39NkJTVz
-	 A8XxiuGnaSYHY4NQ8wlAEu/gFXBieDK+9xZ6fJsNSjyw9OUiSOcEILVW0x2C9f2CV2
-	 tpYz4LPqzeXSLQOMhxotK50aYb4I6IVnyMolLNWapeEe4jKZAtgGhXyYMQ2AonfVhz
-	 0vb2gWa8tT56h+QnQRZPJOEvpPb687UUpubxhHsQpfMWICzeoUtVk2qL+g/cOrtocc
-	 zUJKy1UIk4Ezayz933+2eSMsu3vx5IFxCckJeJWPJqROmTAeN3gZcZEdnKJ1ltyFfV
-	 kT5v/J2NSujFg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, Breno Leitao
- <leitao@debian.org>, linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 17/18] rust: block: add remote completion to `Request`
-In-Reply-To: <680BB9D0-3720-44EC-A25D-83806F635D8D@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-17-ec65006e2f07@kernel.org>
- <R-quyDdhLT8rgM7vBTBx_6hUbT6VXlKvJ0ueHYeoye0JcLGz6WqNuPJQGEn3yBbnokSWZaUWbsLlh-bVJQeSpQ==@protonmail.internalid>
- <680BB9D0-3720-44EC-A25D-83806F635D8D@collabora.com>
-Date: Fri, 29 Aug 2025 13:12:51 +0200
-Message-ID: <877bymidos.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1756466152; c=relaxed/simple;
+	bh=1cvY5Es+Qsi1sNtchfYDxHniBIpi6YEMiH0Tn6mLyik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rxK5WEDRa/EMD0Z0BkDyHTDcwN9tFaTYnPZO+mhXWzg5HG/exStj7FF5aAXV20QDbk19EC/39YY2HwEUPOpfh+MqlGxagcxgIx5egNNa9JnZ8/y/IXQN9vAae2TQ4IK7PVSr2sDm6qt/NFeOXKd00yhvGzP0ZPIJGMR1msU8bAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=mWB/aYC6; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=PAt0B5y7TqRJZjJ2YTKx99ZLf+zVMXDPISiWwNJeNt4=; b=mWB/aYC6EY13I72doqzZQeJ/TP
+	zLZRgVuSi1HzQjjz12EfRII+ZTpO1hCrw5NxtTnE/aJnaVi3orQX70uHiAUm0KoTn1UHYC6E6eVrf
+	z4wovF3aOWjfdFYiPDyFHr0EUbgdkWC/HsqmnLm2RuqrbzfwEYnSOzBmrLNHBDoP6klvfcx+Df1wE
+	qTyiLt7uoAg9B7S74IZNjb80U+JlKtUTYNDdV255z+iQnGJ5C1A2dXeixrpc5xoPiAjat8YZ1BSkm
+	C2609VX6jEiBDMI/tdWm3qOpTWd2RKxl9kqpuu08xE1aE3O1/+o0g6ygMYGxNzVEBo86Gc0WG8mC0
+	y5ARXX3w==;
+Date: Fri, 29 Aug 2025 13:15:42 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/3] power: supply: Add bd718(15/28/78) charger
+ driver
+Message-ID: <20250829131542.4f46ebf4@akair>
+In-Reply-To: <6341e004-880c-4a81-811d-a8b367aab39d@gmail.com>
+References: <20250821-bd71828-charger-v3-0-cc74ac4e0fb9@kemnade.info>
+	<20250821-bd71828-charger-v3-2-cc74ac4e0fb9@kemnade.info>
+	<CACRpkdbZN3LB=iVwL0YLEoUOiPMSePdOF_NEGWuCncDAjWY4XA@mail.gmail.com>
+	<6341e004-880c-4a81-811d-a8b367aab39d@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+Am Fri, 29 Aug 2025 09:35:00 +0300
+schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
 
-> Hi Andreas,
->
->> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> Allow users of rust block device driver API to schedule completion of
->> requests via `blk_mq_complete_request_remote`.
->>
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->> drivers/block/rnull/rnull.rs       |  9 +++++++++
->> rust/kernel/block/mq.rs            |  6 ++++++
->> rust/kernel/block/mq/operations.rs | 19 +++++++++++++++----
->> rust/kernel/block/mq/request.rs    | 17 +++++++++++++++++
->> 4 files changed, 47 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
->> index 8255236bc550..a19c55717c4f 100644
->> --- a/drivers/block/rnull/rnull.rs
->> +++ b/drivers/block/rnull/rnull.rs
->> @@ -82,4 +82,13 @@ fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, _is_last: bool) -> Res
->>     }
->>
->>     fn commit_rqs(_queue_data: ()) {}
->> +
->> +    fn complete(rq: ARef<mq::Request<Self>>) {
->> +        mq::Request::end_ok(rq)
->> +            .map_err(|_e| kernel::error::code::EIO)
->> +            // We take no refcounts on the request, so we expect to be able to
->> +            // end the request. The request reference must be unique at this
->> +            // point, and so `end_ok` cannot fail.
->> +            .expect("Fatal error - expected to be able to end request");
->> +    }
->> }
->> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
->> index 6e546f4f3d1c..c0ec06b84355 100644
->> --- a/rust/kernel/block/mq.rs
->> +++ b/rust/kernel/block/mq.rs
->> @@ -77,6 +77,12 @@
->> //!     }
->> //!
->> //!     fn commit_rqs(_queue_data: ()) {}
->> +//!
->> +//!     fn complete(rq: ARef<Request<Self>>) {
->> +//!         Request::end_ok(rq)
->> +//!             .map_err(|_e| kernel::error::code::EIO)
->> +//!             .expect("Fatal error - expected to be able to end request");
->> +//!     }
->> //! }
->> //!
->> //! let tagset: Arc<TagSet<MyBlkDevice>> =
->> diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
->> index 6fb256f55acc..0fece577de7c 100644
->> --- a/rust/kernel/block/mq/operations.rs
->> +++ b/rust/kernel/block/mq/operations.rs
->> @@ -42,6 +42,9 @@ fn queue_rq(
->>     /// Called by the kernel to indicate that queued requests should be submitted.
->>     fn commit_rqs(queue_data: ForeignBorrowed<'_, Self::QueueData>);
->>
->> +    /// Called by the kernel when the request is completed.
->> +    fn complete(rq: ARef<Request<Self>>);
->> +
->>     /// Called by the kernel to poll the device for completed requests. Only
->>     /// used for poll queues.
->>     fn poll() -> bool {
->> @@ -143,13 +146,21 @@ impl<T: Operations> OperationsVTable<T> {
->>         T::commit_rqs(queue_data)
->>     }
->>
->> -    /// This function is called by the C kernel. It is not currently
->> -    /// implemented, and there is no way to exercise this code path.
->> +    /// This function is called by the C kernel. A pointer to this function is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->>     ///
->>     /// # Safety
->>     ///
->> -    /// This function may only be called by blk-mq C infrastructure.
->> -    unsafe extern "C" fn complete_callback(_rq: *mut bindings::request) {}
->> +    /// This function may only be called by blk-mq C infrastructure. `rq` must
->> +    /// point to a valid request that has been marked as completed. The pointee
->> +    /// of `rq` must be valid for write for the duration of this function.
->> +    unsafe extern "C" fn complete_callback(rq: *mut bindings::request) {
->> +        // SAFETY: This function can only be dispatched through
->> +        // `Request::complete`. We leaked a refcount then which we pick back up
->> +        // now.
->> +        let aref = unsafe { Request::aref_from_raw(rq) };
->> +        T::complete(aref);
->> +    }
->>
->>     /// This function is called by the C kernel. A pointer to this function is
->>     /// installed in the `blk_mq_ops` vtable for the driver.
->> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
->> index 3848cfe63f77..f7f757f7459f 100644
->> --- a/rust/kernel/block/mq/request.rs
->> +++ b/rust/kernel/block/mq/request.rs
->> @@ -135,6 +135,23 @@ pub fn end_ok(this: ARef<Self>) -> Result<(), ARef<Self>> {
->>         Ok(())
->>     }
->>
->> +    /// Complete the request by scheduling `Operations::complete` for
->> +    /// execution.
->> +    ///
->> +    /// The function may be scheduled locally, via SoftIRQ or remotely via IPMI.
->> +    /// See `blk_mq_complete_request_remote` in [`blk-mq.c`] for details.
->> +    ///
->> +    /// [`blk-mq.c`]: srctree/block/blk-mq.c
->> +    pub fn complete(this: ARef<Self>) {
->> +        let ptr = ARef::into_raw(this).cast::<bindings::request>().as_ptr();
->> +        // SAFETY: By type invariant, `self.0` is a valid `struct request`
->> +        if !unsafe { bindings::blk_mq_complete_request_remote(ptr) } {
->> +            // SAFETY: We released a refcount above that we can reclaim here.
->> +            let this = unsafe { Request::aref_from_raw(ptr) };
->> +            T::complete(this);
->> +        }
->> +    }
->> +
->>     /// Return a pointer to the [`RequestDataWrapper`] stored in the private area
->>     /// of the request structure.
->>     ///
->>
->> --
->> 2.47.2
->>
->>
->
-> I had another look here. While I do trust your reasoning, perhaps we should
-> remove the call to expect()?
->
-> If it is not called ever as you said, great, removing the expect() will not
-> change the code behavior. If it is, be it because of some minor oversight or
-> unexpected condition, we should produce some error output instead of crashing
-> the kernel. Maybe we should use a warn() here instead? Or maybe dev/pr_err as
-> applicable?
+> > to indicate that a measurement of the open circuit voltage
+> > is available in some register, which enables you do do more
+> > precise capacity estimation, right?  
+> 
+> AFAIR, the ROHM fuel-gauge algorithm used OCV tables when battery was 
+> not really open, but 'relaxed', to adjust the coulomb counter based on 
+> the SOC estimated from the OCV. The 'relaxed' condition was met when the 
+> current consumption had been 'small', and battery had not been charged 
+> 'recently'. I have a vague memory the BD71828 had some hardware support 
+> for knowing battery was 'relaxed', the BD71815 and BD71827 might have 
+> used coulomb counter 'history' for this. I can try to remember all this 
+> a bit better if Andreas continues to upstream also the fuel-gauging 
+> logic from the original RFC. But yeah, these interrupts were for over 
+> current.
 
-I think for the example, I would like to keep the `expect`. For
-demonstration purposes.
+78 at least has. But then the question is how often the relaxed state
+really is reached. Current limit is around 3mA per default
+(REX_CURCD_TH). So if your
+power management is suboptimal, you will not reach that state on
+discharing. So, regarding charging, at least when I am on vacation,
+the limit on available energy is also my protection against spending
+too much time with my electronics (esp. on the smartphone). But that
+also means that I will not always charge the device fully. Lowering
+current may also mis-indicated that the battery is full.
+So the scene is set for any mess with fuel gauges, not limited to the
+BD71878.
 
-We could do `warn!` instead for the rnull driver I guess. But the IO
-queue that would hit this code would start to hang pretty fast, since no
-IO would complete. I don't think the kernel can recover from this hang.
-
-
-Best regards,
-Andreas Hindborg
-
-
-
-
-
+Regards,
+Andreas
 
