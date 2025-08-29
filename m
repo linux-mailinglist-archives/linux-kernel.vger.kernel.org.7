@@ -1,163 +1,106 @@
-Return-Path: <linux-kernel+bounces-791193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7385EB3B33F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC17AB3B343
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421B21758AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77830685A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE2823B61A;
-	Fri, 29 Aug 2025 06:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C6523D2BF;
+	Fri, 29 Aug 2025 06:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1F4rJLD"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SHjMXgt1"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0001F09BF;
-	Fri, 29 Aug 2025 06:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC21FF7B3;
+	Fri, 29 Aug 2025 06:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756448375; cv=none; b=fGZqeWGbTHXJM14QHyb0UbujI9WjHFmgWlI7SOnY8rRn2/B1pHvUz8QudjOB1kyFRD/cS2c7r/zp6cwourQzkhPskX0uY78Q73wEEgyco1QC+P6YMAY0UQ41CB13/Y1tZ98K2w3WAU7dfVtUWbEvqrAsVUhtlaDA7gR3tHgJ1ns=
+	t=1756448422; cv=none; b=tfeAIIdH0prpSi0vdd8zPEopZzD2X3rql0XD/iOdnpUKtq0yVEme341+OX9BjJ5ife9XMQUTQhFDEkSZRKiQeLpXmB0X5cqCm6gr2Ssqh6dFIptqiP2ZtIR0xMK8EuTPHYZXHKQT5vJXbrqiaBoxLiWt+sXEh/CKoNGgBcKH81Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756448375; c=relaxed/simple;
-	bh=g9JPHOm4Qzq7NOwWVks/w0CGNhTZ0lSavt8D+9snWT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bBaccb9ZhCo9ynTar0sjvKz9FLSJHt0E5vf7qfNM/cRsyJDWXvhnZge4Xi1W+cZs+Kncwn5fkeK/i0Zhn5eB2PNeD5sLYbIB01O8N/VMLeZ8sYK7b1WrRMN7pmO4YVdVU4zSRn3ohcfE21Tr/nm62Vf5M57+aN9dhd8NYs7yNhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1F4rJLD; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-327ae052173so954780a91.0;
-        Thu, 28 Aug 2025 23:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756448373; x=1757053173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wLXzUPmsk5RxcWHSnTFCy0G8ysakJ2dAKE94Fnosk38=;
-        b=P1F4rJLDzkRe7TqRRy2aadcXpCeetfg8IE7pKihFDFpE6Qca25NxSP9TMnAmzRZwJj
-         RWYaH6R++x8lpFj/bjy371E/rug3uK9X3awLaxeMK846iqst3g+xzjrid8svIjvelXRm
-         C0omdTDrhkQKYaGJbG2ZiKUprp2lQ7yvziKBkc/8uJrDg1npI4jopuWk+ypTr2R05lJY
-         yv2DRs3DvRO1XOjuuWcV2zf/vvX3sElwwXptb35XW38JoFeLp/bbAxAqgDdN2e86hKDG
-         xUNlH8Pgi4BAuOf+ItIRj50eWf44N9KBjZzzTBWWs3ID/ZwX4iqwHKsq0Ge3/qqj4B//
-         ki5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756448373; x=1757053173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wLXzUPmsk5RxcWHSnTFCy0G8ysakJ2dAKE94Fnosk38=;
-        b=fjYbp2BcANPTlysPfh8XIBm2HCu0GUTRzxWOkpuU7VKvDwISOnHA2YyilVsoUtPIK8
-         0FV9gH1ljFBWrfafcHRdfk+9V+DAOoBNXh9EiA/T022aARRvfGb+e935ybHwMVV9AKCb
-         zm0EdfPxZ3wf6FbDccGzz0LcwILmtZ/YExUfAGNpNYKlUPk+2aRqY4Ed4191q4S/Fof9
-         kYSukJO01zphMdW8u/pIx8VFQFfdkCKja7+R3zDKyOdZcZRUehUXZ5157MfL5Z9woYTM
-         d561OfA6g1Vr/oUyeGc8N6LYzi+SC/gvFjmUZ/wlXlCh6+6OwjFtrs5CfPBBbX67xX4h
-         fuNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWC8PJdhauN5s/hI6lJ745btvAoXcQeYDqONH1cx3TO3GYjwEOQGW6nHKJYcDGye3ilQ0A+whHpxWhdOg==@vger.kernel.org, AJvYcCXxI4WfYiTlVzoEl8hMfhGC0lJlOFAkR955qul8in7eLxzQtJ9lRKLo2qJ7A4bhyzc2sMmpnDAudlsFVMCO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlTDHIhNW09Lh2BXJ0zVsf756nbqKcxUfekxtA8doztf2FnVOX
-	H+EFgTqpCfNXLMIeAYuQk1ryrt6EMyAe4jpRXI7nkl4kLV+nm/5RvuzJOQi1zektPzBo79m8UN4
-	WFOXs+Co+Zwe54/piwbfrK/U4hDMbcsQ=
-X-Gm-Gg: ASbGncvNnDq5Xmfg2mbTCufwJJuYe0cNlgHAVVIDDHXypq5Hm2PGpytld6wyXlXDjC0
-	4OwLeNfs4D8O0ZJfRRLZXTzqTwpfr8BO+x+C3Ex2J+rFsIcTaLT3QoIY9Wm/VlmW3iAvbLM9QeZ
-	EtzGRRdGu0dLVAhEmL4r3ihYl+ZEobEouDKwjC7ky48LAFe6LxX9LJWd3zGf58RH4M0CtSwLXqs
-	U7fjqdwzR6JWfMf
-X-Google-Smtp-Source: AGHT+IGf1tNPq40f3BUgdXUWiW+vto3YnZyLXBveOF9fPfkTS+h1IGzYK6jHMT9UWDgzxXpCeUF5HhsydpAWTbE3D1A=
-X-Received: by 2002:a17:90b:5484:b0:327:a625:f43c with SMTP id
- 98e67ed59e1d1-327a625f4f5mr7617442a91.22.1756448372605; Thu, 28 Aug 2025
- 23:19:32 -0700 (PDT)
+	s=arc-20240116; t=1756448422; c=relaxed/simple;
+	bh=v/unp1wJZ4wt+gtb9URTeY7e1rqk+cPr8/4lwrZYSPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DS1gNwfyyGL3hD+Z+cGPCL5dJ93axwpBLQVE64TNwn1miBPfDDGo8Ohgw9zMcbDOgj/w4elS06UQEDMmyK550LBkQX3wpPv9ttILjEUTr/ii6EcHoN8lcA+8a4KOdf7RHankCovn7HrrKYN50ZYe+8ehXed7Q/9u5YdA3oXQSBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SHjMXgt1; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 14C8B1038C106;
+	Fri, 29 Aug 2025 08:20:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1756448410; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=O4EneYV/MWd5kppnSN7M1ImvbKtg1wmaX2ZgzX2GRiQ=;
+	b=SHjMXgt1q6JM1uubm5z6LxjBMQiuamt6gO0jwlRmq24/i7CrOwufA2z31jniNe2FzN5fRi
+	Zcc+gsmFWrWb69fTQ3lMV32ZKnjLxmKsLTPGlWR6439kIFS+5OAwKnj5XGejwFf3QYJi0S
+	PVC6jB8XNUqGjtpEQKqUwlmHxjQfHsEM2B2iSWLbUh2c/ILy73CddT8WlrJbhvBXTVfzZd
+	vuC+TQIjwUJRTnrIsL+bwnZMU8d7X5d8qrbuaADsEELIQemiTekzfllBd0mX400K40CBAO
+	gaUrhBXpgO1hKBZuOOkDbVir7InOCUe1pHPonP5faa/l61qRFbk2/Ha3gtLAig==
+Date: Fri, 29 Aug 2025 08:20:00 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.1 000/482] 6.1.149-rc1 review
+Message-ID: <aLFGkFLgDL3Z9AU7@duo.ucw.cz>
+References: <20250826110930.769259449@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829015444.91369-1-pilgrimtao@gmail.com> <62c9b68f-6adc-41d8-b504-4bce4d721e64@acm.org>
-In-Reply-To: <62c9b68f-6adc-41d8-b504-4bce4d721e64@acm.org>
-From: Tao pilgrim <pilgrimtao@gmail.com>
-Date: Fri, 29 Aug 2025 14:19:21 +0800
-X-Gm-Features: Ac12FXzY3J8vnVEbGE-x6nEfOpsr6cNmiGLmwyrMmhGUbC5B6N7eWbLQJT48ucY
-Message-ID: <CAAWJmAbumBHVo-8neC+b8WqJzzLbWqARpc3vkBsgs9j08wh3kA@mail.gmail.com>
-Subject: Re: [PATCH] block/mq-deadline: Replace DD_PRIO_MAX with DD_PRIO_COUNT
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chengkaitao <chengkaitao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uwNqM38krSEe0hUZ"
+Content-Disposition: inline
+In-Reply-To: <20250826110930.769259449@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--uwNqM38krSEe0hUZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 12:38=E2=80=AFPM Bart Van Assche <bvanassche@acm.or=
-g> wrote:
->
-> On 8/28/25 6:54 PM, chengkaitao wrote:
-> > diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> > index b9b7cdf1d3c9..1a031922c447 100644
-> > --- a/block/mq-deadline.c
-> > +++ b/block/mq-deadline.c
-> > @@ -41,19 +41,16 @@ static const int fifo_batch =3D 16;       /* # of s=
-equential requests treated as o
-> >   enum dd_data_dir {
-> >       DD_READ         =3D READ,
-> >       DD_WRITE        =3D WRITE,
-> > +     DD_DIR_COUNT    =3D 2
-> >   };
-> >
-> > -enum { DD_DIR_COUNT =3D 2 };
-> > -
->
-> This change is not an improvement in my opinion because it makes it
-> less clear what the role of DD_DIR_COUNT is.
+Hi!
 
-DD_DIR_COUNT is used to count the number of members in the
-enum dd_data_dir{}, and should be placed inside the enum dd_data_dir.
-There are many such examples in the kernel, such as:
-KFENCE_COUNTER_COUNT,__MTHP_STAT_COUNT,CHANNELMSG_COUNT,
-ETH_RSS_HASH_FUNCS_COUNT,DEPOT_COUNTER_COUNT....
->
-> >   enum dd_prio {
-> > -     DD_RT_PRIO      =3D 0,
-> > -     DD_BE_PRIO      =3D 1,
-> > -     DD_IDLE_PRIO    =3D 2,
-> > -     DD_PRIO_MAX     =3D 2,
-> > +     DD_RT_PRIO,
-> > +     DD_BE_PRIO,
-> > +     DD_IDLE_PRIO,
->
-> There is code that depends on DD_RT_PRIO < DD_BE_PRIO < DD_IDLE_PRIO so
-> I'd like to keep the explicit enum values.
+> This is the start of the stable review cycle for the 6.1.149 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Wouldn't it be better to simply add a comment for this purpose?
->
-> > +     DD_PRIO_COUNT
-> >   };
-> >
-> > -enum { DD_PRIO_COUNT =3D 3 };
->
-> I see the above change as a step backwards because it makes the role of
-> DD_PRIO_COUNT less clear.
+CIP testing did not find any problems here:
 
-Defining DD_PRIO_COUNT within the enum dd_prio{} clearly indicates
-that DD_PRIO_COUNT serves solely for the enum dd_prio{}. If a new
-member is added to enum dd_prio{} in the future, DD_PRIO_COUNT
-would not need to be modified separately.
->
-> > -     for (prio =3D DD_BE_PRIO; prio <=3D DD_PRIO_MAX; prio++) {
-> > +     for (prio =3D DD_BE_PRIO; prio < DD_PRIO_COUNT; prio++) {
->
-> The current code is easier to read IMHO than the new code.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
 
-I believe programmers are intelligent enough to understand the meanings
-of *_COUNT and *_MAX without needing to define them independently,
-especially in cases like *_COUNT =3D *_MAX + 1, where _MAX seems rather
-redundant.
->
-The above are my personal thoughts. The purpose of this patch is to make
-the code more concise, and not merging it into the mainline won't have any
-significant impact.
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
-Looking forward to your reply.
+Best regards,
+                                                                Pavel
 --=20
-Yours,
-Kaitao Cheng
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--uwNqM38krSEe0hUZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaLFGkAAKCRAw5/Bqldv6
+8ujxAJ9qV01dDwiSlTE/esbsJ10RA/t2VQCeIG5Yx/KEtRgaQv5y8KHiw1opWeE=
+=CX2c
+-----END PGP SIGNATURE-----
+
+--uwNqM38krSEe0hUZ--
 
