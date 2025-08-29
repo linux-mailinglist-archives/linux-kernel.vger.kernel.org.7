@@ -1,253 +1,171 @@
-Return-Path: <linux-kernel+bounces-791868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F38B3BD13
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA36B3BD15
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10853A470A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179E11C8717D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D9431E118;
-	Fri, 29 Aug 2025 14:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C78531E0EA;
+	Fri, 29 Aug 2025 14:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4+yTiGf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpBy2cT9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vs1Ao6hH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qpBy2cT9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vs1Ao6hH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262931E0E6;
-	Fri, 29 Aug 2025 14:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D8D31DDB4
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756476163; cv=none; b=J7tvGpgliy2aVpcDu/lTt4hYWyJOt2TiOFVI9jhLnB91dH+Eafh8s4yJ5YM+PcowTxdwrk3at3G3KgLoGo2ixU0nBsCnNsy9RaYNh4C36GlLKVpL7MOMKg7xhmP08FjAv97arkfx3Lk9u5n5/ISNcBEpNYJ0/URUiBjAyRXVcPo=
+	t=1756476176; cv=none; b=NC+bDG4OXimpUiNMj9oQaEtf7Nv6HDwYJIUGcNgjiMsmgwp5tK2ArLyr1cdHRG4aHmP6KgotlDwlkkQjhlzzK5FL0RXoxT9qsGqHYTNFIBnsHVYTL4gaDqlhZA/w2KmW9WX5dCeFikqvmpUsgA2v8+2S/lWRbiqZibYXwHH82nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756476163; c=relaxed/simple;
-	bh=rYk7kh2K0XNkrKe1b/8Qa6EV2yfNmK1OMJY9R4tVrM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sJza2zRyTTt6aXG3FU5eNNgjanrKHNKBUcTGp3Pz0iRp8gIc8KnBTOz6/shk+/eX0A2ZbxEdb1MSeAItfnLSWvhu3BIn5kt7snNeSaQMyLjL/rIqRBloYRljHHPqxvjFYefgFOkw5CywwU9J9uOKbu/e5v3FE7MM349IhVp6QMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4+yTiGf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4E2C4CEF0;
-	Fri, 29 Aug 2025 14:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756476162;
-	bh=rYk7kh2K0XNkrKe1b/8Qa6EV2yfNmK1OMJY9R4tVrM0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H4+yTiGfnX3YWu36m9+qObMcDf+3Xd84tneLcq5ddTQ01i9fF2TsDhnVpDmHrSNJr
-	 LErQu3xvfxKgeYjxNOJl0ZRf/cgn3G+VF/4S+Cyn1unxOQUtYdPKk8XAATSLF2WGuV
-	 qyEJ+kkaZyBDyb6eoAVjRMIaHtNxzvsdTx+JCEghMUGMcoOmS5/PlzDqqTG1y0qFZX
-	 +PRyJ14/DKqxUdLoGFor5pfxYDWx7jDvrvgf0x9WksZN0UCe0FGn2SPvGZAMrQvv7X
-	 rA6y9oxen5kjMyfYhtA5AIl+/CgmyAAev/+MOCWI//D1zAbZ/BXbOpKjDFCIBFRmhW
-	 /ikGTzPPf2Ctg==
-Message-ID: <19196605-50fb-440f-9666-7502de9ddfd5@kernel.org>
-Date: Fri, 29 Aug 2025 16:02:36 +0200
+	s=arc-20240116; t=1756476176; c=relaxed/simple;
+	bh=O/P3Y6x+fwDSwTIRg7CVfYOSwCRPvQ4Or8YJ56ji69U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmY9w92HUEGyov22FcrNtY7uwXXu2zCcGIeWR7jwzXBzKtYgFjUN1hHmkPtC7rSnIqgS51YPmEhjeGxL02utNpqrpEp08igQZ+UVfrVh9/sbdRpGLcnkIUjLh3kKlcAzdo6VIDh9QZrgy4aTVoh8uZEHNApp1zdRwh+HXCQeM6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpBy2cT9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vs1Ao6hH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qpBy2cT9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vs1Ao6hH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 12F7C33EA5;
+	Fri, 29 Aug 2025 14:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756476173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
+	b=qpBy2cT9WYM04TiwM6xJn7XUHzeZUsuzcwFjxv775SW6i7wl/IfrIuMXLu7pffzEhHz8Mo
+	yIS0S0cWRINr7eq4sxwcRbTS6naS/sfFR48rEkb197DxSfxzIG0BTlEfgje5Ckbppwdmnx
+	Np2qgzXafD4DE43NpeeP+md+31RXEfE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756476173;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
+	b=vs1Ao6hHnS8baKmc7v5u9G/CjU5ZQoMS8n4htU+RerXf/iMihlN+noohyzkHY65T+lg6ko
+	yy3FVRea31gk5oCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756476173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
+	b=qpBy2cT9WYM04TiwM6xJn7XUHzeZUsuzcwFjxv775SW6i7wl/IfrIuMXLu7pffzEhHz8Mo
+	yIS0S0cWRINr7eq4sxwcRbTS6naS/sfFR48rEkb197DxSfxzIG0BTlEfgje5Ckbppwdmnx
+	Np2qgzXafD4DE43NpeeP+md+31RXEfE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756476173;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=25KwhLTVgnlDPGtEA39iYvvgByiLDv4XbDT0g4bQ8dM=;
+	b=vs1Ao6hHnS8baKmc7v5u9G/CjU5ZQoMS8n4htU+RerXf/iMihlN+noohyzkHY65T+lg6ko
+	yy3FVRea31gk5oCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0574113A3E;
+	Fri, 29 Aug 2025 14:02:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g+pPAQ2zsWgADAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 14:02:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4B8F6A099C; Fri, 29 Aug 2025 16:02:52 +0200 (CEST)
+Date: Fri, 29 Aug 2025 16:02:52 +0200
+From: Jan Kara <jack@suse.cz>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <fkq7gvtjqx4jilgu75nbmckmwdndl7d7fzljuycqfzmvumdft2@jiycade6gzgo>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
+ <20250829-diskette-landbrot-aa01bc844435@brauner>
+ <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
+ <20250829-therapieren-datteln-13c31741c856@brauner>
+ <9d492620-1a58-68c0-2b47-c8b16c99b113@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] media: chips-media: wave6: Add Wave6 core driver
-To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org, jackson.lee@chipsnmedia.com,
- lafley.kim@chipsnmedia.com, Ming Qian <ming.qian@oss.nxp.com>
-References: <20250829084649.359-1-nas.chung@chipsnmedia.com>
- <20250829084649.359-6-nas.chung@chipsnmedia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250829084649.359-6-nas.chung@chipsnmedia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d492620-1a58-68c0-2b47-c8b16c99b113@ispras.ru>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On 29/08/2025 10:46, Nas Chung wrote:
-> This adds the core driver for the Chips&Media Wave6 video codec IP.
+Hello!
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
-
+On Fri 29-08-25 14:45:57, Alexander Monakov wrote:
+> On Fri, 29 Aug 2025, Christian Brauner wrote:
 > 
-> The core region provides the encoding and decoding capabilities of
-> the VPU and depends on the control region for firmware and shared
-> resource management.
+> > > > Even if we fix this there's no guarantee that the kernel will give that
+> > > > letting the close() of a writably opened file race against a concurrent
+> > > > exec of the same file will not result in EBUSY in some arcane way
+> > > > currently or in the future.
+> > > 
+> > > Forget Go and execve. Take the two-process scenario from my last email.
+> > > The program waiting on flock shouldn't be able to observe elevated
+> > > refcounts on the file after the lock is released. It matters not only
+> > > for execve, but also for unmounting the underlying filesystem, right?
+> > 
+> > What? No. How?: with details, please.
 > 
+> Apologies if there's a misunderstanding on my side, but put_file_access
+> does file_put_write_access, which in turn does
+> 
+>   mnt_put_write_access(file->f_path.mnt);
+> 
+> and I think elevated refcount on mnt will cause -EBUSY from mnt_hold_writers.
+> Which is then checked in mnt_make_readonly. I expect it affects unmount too,
+> just don't see exactly where.
 
+Umount (may_umount_tree()) looks at mnt->mnt_count which is decremented by
+mntput() completely at the end of __fput(). I tend to agree with Christian
+here: We've never promised that all effects of open fd are cleaned up
+before the flock is released and as Christian explained it will be actually
+pretty hard to implement such behavior. So attempts to wait for fd to close
+by waiting for its flock are racy...
 
-...
-
-> +
-> +static int wave6_vpu_core_probe(struct platform_device *pdev)
-> +{
-> +	struct vpu_core_device *core;
-> +	const struct wave6_vpu_core_resource *res;
-> +	int ret;
-> +	int irq;
-> +
-> +	res = device_get_match_data(&pdev->dev);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "missing resource\n");
-
-This is almost impossible condition. Not worth printing errors.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "dma_set_mask_and_coherent failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	core = devm_kzalloc(&pdev->dev, sizeof(*core), GFP_KERNEL);
-> +	if (!core)
-> +		return -ENOMEM;
-> +
-> +	ret = devm_mutex_init(&pdev->dev, &core->dev_lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_mutex_init(&pdev->dev, &core->hw_lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	init_completion(&core->irq_done);
-> +	dev_set_drvdata(&pdev->dev, core);
-> +	core->dev = &pdev->dev;
-> +	core->res = res;
-> +
-> +	if (pdev->dev.parent->driver && pdev->dev.parent->driver->name &&
-> +	    !strcmp(pdev->dev.parent->driver->name, WAVE6_VPU_PLATFORM_DRIVER_NAME))
-> +		core->vpu = dev_get_drvdata(pdev->dev.parent);
-> +
-> +	core->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(core->reg_base))
-> +		return PTR_ERR(core->reg_base);
-> +
-> +	ret = devm_clk_bulk_get_all(&pdev->dev, &core->clks);
-> +	if (ret < 0) {
-> +		dev_warn(&pdev->dev, "unable to get clocks: %d\n", ret);
-
-You should handle deferred probe instead.
-
-> +		ret = 0;
-> +	}
-> +	core->num_clks = ret;
-> +
-> +	ret = v4l2_device_register(&pdev->dev, &core->v4l2_dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "v4l2_device_register fail: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = wave6_vpu_init_m2m_dev(core);
-> +	if (ret)
-> +		goto err_v4l2_unregister;
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(&pdev->dev, "failed to get irq resource\n");
-
-Syntax is: dev_err_probe
-
-> +		ret = -ENXIO;
-
-Don't override error codes.
-
-> +		goto err_m2m_dev_release;
-> +	}
-> +
-> +	ret = kfifo_alloc(&core->irq_status, 16 * sizeof(int), GFP_KERNEL);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to allocate fifo\n");
-> +		goto err_m2m_dev_release;
-> +	}
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, irq,
-> +					wave6_vpu_core_irq,
-> +					wave6_vpu_core_irq_thread,
-> +					0, "vpu_irq", core);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "fail to register interrupt handler: %d\n", ret);
-> +		goto err_kfifo_free;
-> +	}
-> +
-> +	core->temp_vbuf.size = ALIGN(W6_TEMPBUF_SIZE, 4096);
-> +	ret = wave6_vdi_alloc_dma(core->dev, &core->temp_vbuf);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "alloc temp of size %zu failed\n",
-> +			core->temp_vbuf.size);
-> +		goto err_kfifo_free;
-> +	}
-> +
-> +	core->debugfs = debugfs_lookup(WAVE6_VPU_DEBUGFS_DIR, NULL);
-> +	if (IS_ERR_OR_NULL(core->debugfs))
-> +		core->debugfs = debugfs_create_dir(WAVE6_VPU_DEBUGFS_DIR, NULL);
-> +
-> +	pm_runtime_enable(&pdev->dev);
-> +
-> +	if (core->res->codec_types & WAVE6_IS_DEC) {
-> +		ret = wave6_vpu_dec_register_device(core);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "wave6_vpu_dec_register_device fail: %d\n", ret);
-> +			goto err_temp_vbuf_free;
-> +		}
-> +	}
-> +	if (core->res->codec_types & WAVE6_IS_ENC) {
-> +		ret = wave6_vpu_enc_register_device(core);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "wave6_vpu_enc_register_device fail: %d\n", ret);
-> +			goto err_dec_unreg;
-> +		}
-> +	}
-Best regards,
-Krzysztof
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
