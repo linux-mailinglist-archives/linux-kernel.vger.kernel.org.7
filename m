@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-792180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAC1B3C121
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C8EB3C11C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8111565F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B577C5E7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B56334711;
-	Fri, 29 Aug 2025 16:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09FB326D44;
+	Fri, 29 Aug 2025 16:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7s7Vq4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aW0VhVY0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF2F283FDE;
-	Fri, 29 Aug 2025 16:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BD4288DA
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485989; cv=none; b=Xr3dunf2UOrbeEbZtX67lHOz78zCcGNzJV3KxM+tHevefJug7Z05B+9VN1Q+wX7IUGERqkJYmnp9yTNPoTQbURgPnUpTNZsVaQKqqNr5QxxWnzTvoksh41x/t4fIMBMtFA/iifkbr08f42tljvw5MFhgeISR0x8px7Y1AWv3pWs=
+	t=1756485937; cv=none; b=Cusr5yHKBaYRxnNmke0LZJpbdr5r2tZ/wO8o6gqwhQK4/HR8YH717qPY5snu9AdaZovgoljivODzNwVj1SZAfGSexwx5y0P5ci09tmOJhvEBmsEoaThSW7R4QieKgv+dTfrxetaOoPxJ2BMIMfJhm+otv4HwQVgfJ8meitMDQGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485989; c=relaxed/simple;
-	bh=PVpX8+3IqfXg1/WqFGH/rwOO8yjTxELXA5EvlRBBMZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vFLbAdQmubUMV6TwyCxEZKNfItY/ZB6vWdX+gHasm/8BhtQIgpGknQFRpFkwodfXXahKv0Bv2fryb5qngGpPBq7p7wO9jM/0T6hHOsPCnUi9jaSIiZFERTaEMHwy1IGJn7EfX63hbBsViSH+SGHkUZqHaIiZpFR93PlMpNc04XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7s7Vq4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4098AC4CEF0;
-	Fri, 29 Aug 2025 16:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756485988;
-	bh=PVpX8+3IqfXg1/WqFGH/rwOO8yjTxELXA5EvlRBBMZc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D7s7Vq4sTLna4JGv7jkxQ+Glrr41wNqIFZ69f2jS4N2FgRPGmazU+mT1ZYZzT5MVh
-	 LwQyyPST7pEiUz3aHpak0Lljjs3HeIDhDI8/GT4d0rdFISmukYSF4Di7IQj7wg9ZnC
-	 qGkcxoyXLAwblIEMk/jdBFjlf2lGxe6iU1r69UfzpAXg+noHlUGrshDhdcAoIIz8OZ
-	 5YYNaFWce9bM32WI5JN4tExtDaxX8Qwvgmh4VHwZclzus2lxqjkwvOFZwM1tgG9+0j
-	 u9koKe3Ideu6bNCDCTWB2yqDzvJEpyHbQ7ebrvFOvN2iIq/kJsNNTVoB9fE/PHICzK
-	 gnTUnH8Qg2m+w==
-From: Eric Biggers <ebiggers@kernel.org>
-To: Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>,
-	kasan-dev@googlegroups.com
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] kmsan: Fix out-of-bounds access to shadow memory
-Date: Fri, 29 Aug 2025 09:45:00 -0700
-Message-ID: <20250829164500.324329-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756485937; c=relaxed/simple;
+	bh=DjwNFVlfFpWaaMuuDAlGX96zypGhw+xXQeXQ2Nf29WE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=j8bpL8NJnw+Vmm2Bdy+FzWi3S7UEPE4dj8w7MbbEs4yt/3vLaAcPthfJhngUfmjX6gdWzbSwKTuZXZ07yedDws6nhbOlJP5j7aH3h4WRNxLRvKWVJzXktW39YtGqinN0PhcmtswyYhjtloC5XK2gB+NtfnUtgNhMltafKEAvW0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aW0VhVY0; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756485936; x=1788021936;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DjwNFVlfFpWaaMuuDAlGX96zypGhw+xXQeXQ2Nf29WE=;
+  b=aW0VhVY03iy/qT612ctHvUamQs5eiUOT9woXnK2LjP76k/026I39+39t
+   koyIe/7oFE+9CezhFmZ48uyn9+DtXmt+bqF5qbporZgZNOFd/9zJLaFEp
+   1n7JpnC0jAX7Va1Z+jOIvNfIBjlIeiuoLi3W66oo9Y2jN8BZO59GJRr7S
+   Pk8QTCmdfz45K29/WGtBSsq3tgyxI+dNzw8QfYv0kVHYDOpp/Edpumzgz
+   xZekiSp1+wG+SblEwJVeKDnibJASins8sXwNwUPlrsynBKgN+ueCrvYG/
+   zSHvAbPUrdaD8hwdtkV+qAh/PK+DjmKg/fz36sb/Gc0RUPVxSFZbGS0fy
+   Q==;
+X-CSE-ConnectionGUID: OgEbxcnTT9OqJXlvKtVCSg==
+X-CSE-MsgGUID: Sho2Cbb+RYOcRUehvEWVsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="70147725"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="70147725"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 09:45:35 -0700
+X-CSE-ConnectionGUID: PU89eEOaQzWYloouVnTp0A==
+X-CSE-MsgGUID: pp2xb+WnQfiRQLv4HKnDwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="174593940"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 29 Aug 2025 09:45:34 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1us2EF-000Um3-1F;
+	Fri, 29 Aug 2025 16:45:31 +0000
+Date: Sat, 30 Aug 2025 00:45:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: include/linux/rbtree.h:74:9: sparse: sparse: incompatible types in
+ comparison expression (different address spaces):
+Message-ID: <202508300010.SwYrxEC0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
-kmsan_internal_set_shadow_origin():
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   07d9df80082b8d1f37e05658371b087cb6738770
+commit: 16ecd47cb0cd895c7c2f5dd5db50f6c005c51639 pidfs: lookup pid through rbtree
+date:   9 months ago
+config: x86_64-randconfig-121-20250829 (https://download.01.org/0day-ci/archive/20250830/202508300010.SwYrxEC0-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250830/202508300010.SwYrxEC0-lkp@intel.com/reproduce)
 
-    BUG: unable to handle page fault for address: ffffbc3840291000
-    #PF: supervisor read access in kernel mode
-    #PF: error_code(0x0000) - not-present page
-    PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
-    Oops: 0000 [#1] SMP NOPTI
-    CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc3 #10 PREEMPT(voluntary)
-    Tainted: [N]=TEST
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-    RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
-    [...]
-    Call Trace:
-    <TASK>
-    __msan_memset+0xee/0x1a0
-    sha224_final+0x9e/0x350
-    test_hash_buffer_overruns+0x46f/0x5f0
-    ? kmsan_get_shadow_origin_ptr+0x46/0xa0
-    ? __pfx_test_hash_buffer_overruns+0x10/0x10
-    kunit_try_run_case+0x198/0xa00
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508300010.SwYrxEC0-lkp@intel.com/
 
-This occurs when memset() is called on a buffer that is not 4-byte
-aligned and extends to the end of a guard page, i.e. the next page is
-unmapped.
+sparse warnings: (new ones prefixed by >>)
+   fs/pidfs.c: note: in included file (through include/linux/mm_types.h, include/linux/mmzone.h, include/linux/gfp.h, ...):
+>> include/linux/rbtree.h:74:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   include/linux/rbtree.h:74:9: sparse:    struct rb_node [noderef] __rcu *
+   include/linux/rbtree.h:74:9: sparse:    struct rb_node *
 
-The bug is that the loop at the end of
-kmsan_internal_set_shadow_origin() accesses the wrong shadow memory
-bytes when the address is not 4-byte aligned.  Since each 4 bytes are
-associated with an origin, it rounds the address and size so that it can
-access all the origins that contain the buffer.  However, when it checks
-the corresponding shadow bytes for a particular origin, it incorrectly
-uses the original unrounded shadow address.  This results in reads from
-shadow memory beyond the end of the buffer's shadow memory, which
-crashes when that memory is not mapped.
+vim +74 include/linux/rbtree.h
 
-To fix this, correctly align the shadow address before accessing the 4
-shadow bytes corresponding to each origin.
+^1da177e4c3f41 Linus Torvalds 2005-04-16  67  
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  68  static inline void rb_link_node_rcu(struct rb_node *node, struct rb_node *parent,
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  69  				    struct rb_node **rb_link)
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  70  {
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  71  	node->__rb_parent_color = (unsigned long)parent;
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  72  	node->rb_left = node->rb_right = NULL;
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  73  
+d72da4a4d973d8 Peter Zijlstra 2015-05-27 @74  	rcu_assign_pointer(*rb_link, node);
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  75  }
+d72da4a4d973d8 Peter Zijlstra 2015-05-27  76  
 
-Fixes: 2ef3cec44c60 ("kmsan: do not wipe out origin when doing partial unpoisoning")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- mm/kmsan/core.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+:::::: The code at line 74 was first introduced by commit
+:::::: d72da4a4d973d8a0a0d3c97e7cdebf287fbe3a99 rbtree: Make lockless searches non-fatal
 
-diff --git a/mm/kmsan/core.c b/mm/kmsan/core.c
-index 1ea711786c522..8bca7fece47f0 100644
---- a/mm/kmsan/core.c
-+++ b/mm/kmsan/core.c
-@@ -193,11 +193,12 @@ depot_stack_handle_t kmsan_internal_chain_origin(depot_stack_handle_t id)
- 
- void kmsan_internal_set_shadow_origin(void *addr, size_t size, int b,
- 				      u32 origin, bool checked)
- {
- 	u64 address = (u64)addr;
--	u32 *shadow_start, *origin_start;
-+	void *shadow_start;
-+	u32 *aligned_shadow, *origin_start;
- 	size_t pad = 0;
- 
- 	KMSAN_WARN_ON(!kmsan_metadata_is_contiguous(addr, size));
- 	shadow_start = kmsan_get_metadata(addr, KMSAN_META_SHADOW);
- 	if (!shadow_start) {
-@@ -212,13 +213,16 @@ void kmsan_internal_set_shadow_origin(void *addr, size_t size, int b,
- 		}
- 		return;
- 	}
- 	__memset(shadow_start, b, size);
- 
--	if (!IS_ALIGNED(address, KMSAN_ORIGIN_SIZE)) {
-+	if (IS_ALIGNED(address, KMSAN_ORIGIN_SIZE)) {
-+		aligned_shadow = shadow_start;
-+	} else {
- 		pad = address % KMSAN_ORIGIN_SIZE;
- 		address -= pad;
-+		aligned_shadow = shadow_start - pad;
- 		size += pad;
- 	}
- 	size = ALIGN(size, KMSAN_ORIGIN_SIZE);
- 	origin_start =
- 		(u32 *)kmsan_get_metadata((void *)address, KMSAN_META_ORIGIN);
-@@ -228,11 +232,11 @@ void kmsan_internal_set_shadow_origin(void *addr, size_t size, int b,
- 	 * and unconditionally overwrite the old origin slot.
- 	 * If the new origin is zero, overwrite the old origin slot iff the
- 	 * corresponding shadow slot is zero.
- 	 */
- 	for (int i = 0; i < size / KMSAN_ORIGIN_SIZE; i++) {
--		if (origin || !shadow_start[i])
-+		if (origin || !aligned_shadow[i])
- 			origin_start[i] = origin;
- 	}
- }
- 
- struct page *kmsan_vmalloc_to_page_or_null(void *vaddr)
+:::::: TO: Peter Zijlstra <peterz@infradead.org>
+:::::: CC: Rusty Russell <rusty@rustcorp.com.au>
 
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
