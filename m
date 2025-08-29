@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-791948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56E1B3BE84
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:49:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A5FB3BE93
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D41F1763AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1346D1899A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633F217654;
-	Fri, 29 Aug 2025 14:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFEE321427;
+	Fri, 29 Aug 2025 14:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mc1/r0xB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wkhBkg+A"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7692116E9
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E8531CA77
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756478975; cv=none; b=ADtpGzFUMkKQNxlSL04ERhWn1ath262VbWR+K/RkrfDwD4owBR6BWQBqQa6DdMpxYqc8QL5lXBHOlg3N3BjyawvSlTB1Gq9cPvo1SaYaDbOl7wq8RCdGI0nEo83bPTaFfpyNv4fwwDoEF0vAc1f7q0nxv53T9YR2TFyukL0MhOI=
+	t=1756479209; cv=none; b=LS3ZueO4LNj8iTaMj6YolUaiRf0llhVQ0JJkIMg0p+yKCZT9urPaTEOEKLCS2IOdh87kQ9IDP9cXR6yr9XhdNOyjox5fkqOJmKhhU4B8+O4rd3OHuChApZ8ItN2z2gCcHP+MhzwK5NlDd9SEFpP77j4I5HLu0RXBQAnQrZJFB2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756478975; c=relaxed/simple;
-	bh=WL89je6DiiHJ8zm1KAPw9gHwmNQbwHiX8qux5ytnaN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GkGIjg40eJUBlb7izXXEogSOsOkwSe/GsdNf4ouHx5tedeYHszeNzxmEFI2iwedQ1G3VkgUVduYsjp2uF/G7AYE6hIdcjYvRMSzFy7bgps+I+X3MWlyNci3239+I8+pIavQCSsfiHWVb0k7v8T53FbvkVGJCS9bMak//vrxhwek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mc1/r0xB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756478973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/Pipyb1To1Nv+/AeyJWgr3lnBnGQR9EAX0GXEeG6L4=;
-	b=Mc1/r0xBjOuhEPhQHGPt0eETb7RkFqZyCCIB4z4HAiCjk9BcVzSuaF/NhheEavAXUlhfNf
-	qIooCgLGQyQGbUkK7SOWIM2AMa6S4jjLpI6HxOvO0gJvchih/PELyYwlcGbb2jwqTGTxRV
-	B2tKhos2HFRIAHXcYNFBLRIW7/av0Xw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-104-auVmEHmVPW2ZCpfzvdh58g-1; Fri,
- 29 Aug 2025 10:49:30 -0400
-X-MC-Unique: auVmEHmVPW2ZCpfzvdh58g-1
-X-Mimecast-MFC-AGG-ID: auVmEHmVPW2ZCpfzvdh58g_1756478968
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 435261800446;
-	Fri, 29 Aug 2025 14:49:28 +0000 (UTC)
-Received: from [10.45.224.190] (unknown [10.45.224.190])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A06830001B5;
-	Fri, 29 Aug 2025 14:49:23 +0000 (UTC)
-Message-ID: <e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
-Date: Fri, 29 Aug 2025 16:49:22 +0200
+	s=arc-20240116; t=1756479209; c=relaxed/simple;
+	bh=kBmhdY41MuuGaErU9JOcCvqTMBfBCKMYKyDrfB8dQvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ifl2Np8rSCciBmHe+oz9AOJsC1hA64jEdm02zhhNwFJfOb4pNzs2jxoyBaF56x9a4B4ZZuHJehKrWLfKGFXPlJ2rezwxl39eJI51FXT1c2881TeY6ZlzmZDONENv8B/7/qdBLFaCr8H31qya7yzFhPV3ezr8eeQsq9douuEB5Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wkhBkg+A; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 3D0361A0E42;
+	Fri, 29 Aug 2025 14:53:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 143EE605F1;
+	Fri, 29 Aug 2025 14:53:23 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BC74D1C22D7F6;
+	Fri, 29 Aug 2025 16:53:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756479202; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4ckzePFQYp/N4R7lFdjnp5WArUDphEJKP4hsZQnN0IY=;
+	b=wkhBkg+AG4oSLegWFI1ccpS8UjAid+4QPBuZQb/T7MxcTtIrdaFKiXGWgkVF1APhb365H6
+	r8x704yeFX5la1/WFPXq0PigKF//1A0loE4JlCJaMFaM5D1iApbJrBbnaN82oqlK8jaPfH
+	y4ouRHsCpzjPri/34rNmuRv8fckvKzRko8WlD6u8nvGo0VuhaCf9Yzita0fF5xV01yHEMW
+	GcaQ3Pf64xZwrYB4N+LmMDrOolgbCdXuL/lwWskRhOhw4T1c7O6oLYmlt2VIz+qOnQMy7t
+	SbAHMZhMTbCrStdGsIyZZFK2xb+AZH/wodikL+B/5C474jqRVTdcV1fcKKXNpQ==
+Date: Fri, 29 Aug 2025 16:53:10 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+ <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+ <pabeni@redhat.com>, <richardcochran@gmail.com>,
+ <Parthiban.Veerasooran@microchip.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 2/2] net: phy: micrel: Add PTP support for
+ lan8842
+Message-ID: <20250829165310.2b97569b@kmaincent-XPS-13-7390>
+In-Reply-To: <20250829134836.1024588-3-horatiu.vultur@microchip.com>
+References: <20250829134836.1024588-1-horatiu.vultur@microchip.com>
+	<20250829134836.1024588-3-horatiu.vultur@microchip.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
- callback
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
- <20250813174408.1146717-6-ivecera@redhat.com>
- <20250818192943.342ad511@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250818192943.342ad511@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Jakub,
+On Fri, 29 Aug 2025 15:48:36 +0200
+Horatiu Vultur <horatiu.vultur@microchip.com> wrote:
 
-On 19. 08. 25 4:29 dop., Jakub Kicinski wrote:
-> On Wed, 13 Aug 2025 19:44:08 +0200 Ivan Vecera wrote:
->> +	struct zl3073x_dev *zldev = devlink_priv(devlink);
->> +	struct zl3073x_fw_component *util;
->> +	struct zl3073x_fw *zlfw;
->> +	int rc = 0;
->> +
->> +	/* Load firmware */
-> 
-> Please drop the comments which more or less repeat the name
-> of the function called.
+> It has the same PTP IP block as lan8814, only the number of GPIOs is
+> different, all the other functionality is the same. So reuse the same
+> functions as lan8814 for lan8842.
+> There is a revision of lan8842 called lan8832 which doesn't have the PTP
+> IP block. So make sure in that case the PTP is not initialized.
 
-Will do.
+...
+=20
+> @@ -5817,6 +5831,43 @@ static int lan8842_probe(struct phy_device *phydev)
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> +	/* Revision lan8832 doesn't have support for PTP, therefore don't add
+> +	 * any PTP clocks
+> +	 */
+> +	ret =3D lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
+> +				   LAN8842_SKU_REG);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	priv->rev =3D ret;
+> +	if (priv->rev =3D=3D 0x8832)
+> +		return 0;
 
->> +	zlfw = zl3073x_fw_load(zldev, params->fw->data, params->fw->size,
->> +			       extack);
->> +	if (IS_ERR(zlfw))
->> +		return PTR_ERR(zlfw);
->> +
->> +	util = zlfw->component[ZL_FW_COMPONENT_UTIL];
->> +	if (!util) {
->> +		zl3073x_devlink_flash_notify(zldev,
->> +					     "Utility is missing in firmware",
->> +					     NULL, 0, 0);
->> +		rc = -EOPNOTSUPP;
-> 
-> I'd think -EINVAL would be more appropriate.
-> If you want to be fancy maybe ENOEXEC ?
+Is the lan8832 PHY ID the same as the lan8842? This would be surprising.
+If they have different PHY ID, it will never enter the lan8842 probe functi=
+on as
+it is not added to mdio_device_id.
+Also you should add a define instead of using several time 0x8832.
 
-OK, will use -ENOEXEC.
+...
 
->> +		goto error;
->> +	}
->> +
->> +	/* Stop normal operation during flash */
->> +	zl3073x_dev_stop(zldev);
->> +
->> +	/* Enter flashing mode */
->> +	rc = zl3073x_flash_mode_enter(zldev, util->data, util->size, extack);
->> +	if (!rc) {
->> +		/* Flash the firmware */
->> +		rc = zl3073x_fw_flash(zldev, zlfw, extack);
-> 
-> this error code seems to be completely ignored, no?
+> @@ -5912,6 +5989,26 @@ static irqreturn_t lan8842_handle_interrupt(struct
+> phy_device *phydev) ret =3D IRQ_HANDLED;
+>  	}
+> =20
+> +	/* Phy revision lan8832 doesn't have support for PTP threrefore
 
-Yep, you are right, this should be propagated to the caller.
+nitpick: therefore
 
->> +		/* Leave flashing mode */
->> +		zl3073x_flash_mode_leave(zldev, extack);
->> +	}
->> +
->> +	/* Restart normal operation */
->> +	rc = zl3073x_dev_start(zldev, true);
->> +	if (rc)
->> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
-> 
-> And also we can't really cleanly handle the failure case.
-> 
-> This is why I was speculating about implementing the down/up portion
-> in the devlink core. Add a flag that the driver requires reload_down
-> to be called before the flashing operation, and reload_up after.
-> This way not only core handles some of the error handling, but also
-> it can mark the device as reload_failed if things go sideways, which
-> is a nicer way to surface this sort of permanent error state.
-
-This makes sense... The question is if this should reuse existing
-.reload_down and .reload_up callbacks let's say with new devlink action
-DEVLINK_RELOAD_ACTION_FW_UPDATE or rather introduce new callbacks
-.flash_update_down/_up() to avoid confusions.
-
-Thanks,
-Ivan
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
