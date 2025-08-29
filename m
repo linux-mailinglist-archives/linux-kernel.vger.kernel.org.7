@@ -1,145 +1,221 @@
-Return-Path: <linux-kernel+bounces-792135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9449EB3C098
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:24:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD49BB3C09B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F000188119B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:25:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACAB7ABD2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F4432C306;
-	Fri, 29 Aug 2025 16:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5C533438C;
+	Fri, 29 Aug 2025 16:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="YGS2dCDM"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ARTQEDl4"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190F432C31A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE693314B3;
+	Fri, 29 Aug 2025 16:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484613; cv=none; b=e8LU6fY6mqr60g6J6ciCo02FnTOeCDuJddOLYqbRyNAjWdHqeGh8Vu6K26eKJ4vlRtNBUj9XzKj6FDvvtlpz8czkutAApO37VnGTuNGsgXKYclF5WbGziZ7fbXJkLU1zh6U3DTAPXI4qn2gxC+9v0jM4VJORgVGqVPOyHHTApEs=
+	t=1756484617; cv=none; b=AkNKA291Fv1OHlfDxPYRVg9WCZH03KSWCFHkxCmbJviHEhEqmEc2cgBrYDRavYYOlSBuvLaNCguSCoGWWzLoSBcmU9MMEDvkG+ylPdBHhCELzFHR4Jm/pKRUNhn56Mq2PYQy8GxhKbNAd47GQHRyXcdqzAQrSzTVV+QmBMRpUw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484613; c=relaxed/simple;
-	bh=IEH6aCSgySsvmxeMGyD6vtz2AyYfOBhMUEbE5AuvFws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EKROefP/KZZs6Uu/hzk9CszPjHjHpjb7EzCvl5fuRUdBbF7K9WiVpAF/wWTxE2E4yLzBNdz0XVU89ZCm6wMCL7rqVxWfpUGltq8fWJyaEYaxs7g4QOjJmmgCdt+lXutzNML2iwzFENX6L+ydpvFegIQ98X5uULstIisE8BhV1sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=YGS2dCDM; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f474af957so2638337e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall.org; s=google; t=1756484610; x=1757089410; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HXohgHhMg5Bl8uDBsv9pYaNNFIL5EofYTOVHQXzVcrk=;
-        b=YGS2dCDMS9XUfLKpohJWkXpge77RQbgPfn3CTlT/7iUsiD/V1a1zhHYt6cv89hKdoN
-         /sNDWoIcM7U8FeLscHnb7amSX2NE8n8v9dYUdScpJumYV8rnbGdFrn6Ce3m14lrl24V8
-         zLvkJHH2j/FnvdC6zH6CPnaSfA2TM/ORU6VkWKWtjhA3Mn129AAFxTai3GwOAiUgOHe3
-         ruyF8FblqmNcNxlHlxAvkup3QpkDsfxpwsc5mouSC3fHiw4AqHfxHEURrcNo18NJo6yr
-         eq+9LkTJhyd32bjo1itZjiW/GlF6eZFsD88pothhtEaahI95mZh9YzMO+co7BT5Y7ucr
-         5MUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756484610; x=1757089410;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HXohgHhMg5Bl8uDBsv9pYaNNFIL5EofYTOVHQXzVcrk=;
-        b=nC1PF6Hv6l9/J/5kBHEZEKW1q4Z1G97qWwyEvXdFoSYPvgx7bo3uw7VLWTDOwS9Wpw
-         3FP3in6hSyNLhohN264r3Z4GEfBOb0WPUCDFBuSqCwO4gzHODSgvZqZwVpdZ8YjoWzM8
-         nc6rLg4w3cpjfrt/xn90X85yxvIdiGm+fDPqhGBPy1bDtsx9z61Q9wzGZeRHUmwW+XNZ
-         sr3Mq7b/MIII27aFHIDxbP+frPLHeEFpy+YJYsHRkbMlqd3KjHp5M+20vmeshKU6HTh6
-         fp2vMNHClcVpwQLA3gJy28n9trOZxr2G6kQUwbp28t+MU1VMfNAzuOkmlgHuN1T+Lwx2
-         Qphg==
-X-Forwarded-Encrypted: i=1; AJvYcCVawjRbA1p4mhc61bk3eZGid6vq1/6ub6Axw5p3HcSKRx6w++XcT7plBC8j6L5YuADRdXe1hZzPyqPUZ6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNSZQBbH9SeW66tqlxETpnFvALN8nhkRx5xsyAFm75BufY8u3J
-	dUljPHzjJZM+ud37Z7UTx86OY2Qe/PkMLQLHHBwSeaP1Gpd6fAcLmeD57ivUCDG1Zhg=
-X-Gm-Gg: ASbGncvLUk1N3dGZaca95+USKVVDnmidZDXP9vh2pyO8uBrLVHe4NypOzRGNCJIvAO5
-	zD79hPk8T/GHXbJNRHllHSfk0D96cAqB7/0+0AxYlGM3/UE+H9q8AsUoiQ7BJDjWBdf2Eq/+OI0
-	R+9kqjw5bK9etefHBXpsOwjotguu8hZLVXhfejS3u/ZJPn88OExzoW7QktAW8aqHxfSFR5mYuG7
-	D7YxMGmbrsEkE8/ihffhNavwQWXRvt3ECi6Ob+q3+kBvCIfSfVBOlI1hsZS0gCimf5fcp+qdDu3
-	x/BzAGaU+dJ3P/KsObue8d63r5Xbg2gefBm+DK1qMYNv50XZPEpSYJq9EGL0DgotbUOG4K8LBHi
-	//DHoOBvp5Jxwcp84OQXyV/1draHPmfmQIv7IyT3ONlzo+vlGkyiGqT8iLXeVaEjibtQTvI4KRk
-	WIWw==
-X-Google-Smtp-Source: AGHT+IGkDyVgClqPhi+jy/rUB2ZmKr6ERUVBat7raNEZp8G3QswM+s5vCryFnVhmubSoyKXakx8cmA==
-X-Received: by 2002:a2e:a99c:0:b0:336:bcbf:9e with SMTP id 38308e7fff4ca-336bcbf06ffmr6988971fa.20.1756484609848;
-        Fri, 29 Aug 2025 09:23:29 -0700 (PDT)
-Received: from [100.115.92.205] (176.111.185.210.kyiv.nat.volia.net. [176.111.185.210])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336b468ac23sm5215941fa.23.2025.08.29.09.23.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 09:23:29 -0700 (PDT)
-Message-ID: <bfb11627-64d5-42a0-911e-8be99e222396@blackwall.org>
-Date: Fri, 29 Aug 2025 19:23:24 +0300
+	s=arc-20240116; t=1756484617; c=relaxed/simple;
+	bh=yFN1EQEjRbUyL6L3NwzgEy/E1VDAcLoyMHEC0+8jWsU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rn+NjG9QaRztQYn5dRxVx9FksPqDudp/5NIn9RsTCAtxtt2ySSe78XzqI/sFkUmdDckFjmaOLYA8Uao9gRiiZ36f13Pg9TvbN9CfwcZg86hfEW/m9SdsZHLRht1bpnjUwqfvs++ZqRfFB+Uj9EwXUaqPweDULwMpaxawg5LUPm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ARTQEDl4; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756484613;
+	bh=yFN1EQEjRbUyL6L3NwzgEy/E1VDAcLoyMHEC0+8jWsU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ARTQEDl4e6cM5xGS8Pafvs6+Llf0SyXoean8jS5+AcWHRp/1iNxjV8I12YtWSthw5
+	 TK1vGObU9Pwkmmm/NPpkRsqrdi7azBqIaJu6NWCzGipFBP1vHjWZjCVKcfxYYpbwH/
+	 I5+G6h8wAr1oUd9A+r2km7ZzCJD9vh/QplWGB61je9eW2m/SmClL0XvdmoPEFJVQKq
+	 aiun6rkDnnonpm56lLBSyQv3J5CYXoXPYOCjy6Kghenih/8ZQxmLeU1dmXu3+uTA2u
+	 Nq4cJ+BH4ni5uwq9ZKB6gZjInQqTQ6PvyeqGGn1WFYerWADkIRo+hYClHgGnI0+rDP
+	 qfHDjppqdJMaA==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C405917E10F3;
+	Fri, 29 Aug 2025 18:23:31 +0200 (CEST)
+Message-ID: <a216e7e218d874cf64b53f6eba2fc74fc551d2fe.camel@collabora.com>
+Subject: Re: [PATCH v7 4/6] media: verisilicon: AV1: Restore IOMMU context
+ before decoding a frame
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Benjamin Gaignard
+	 <benjamin.gaignard@collabora.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
+ 	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ p.zabel@pengutronix.de, 	mchehab@kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, 	linux-media@vger.kernel.org
+Date: Fri, 29 Aug 2025 12:23:29 -0400
+In-Reply-To: <20250826124155.GD1899851@ziepe.ca>
+References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
+	 <20250825153450.150071-5-benjamin.gaignard@collabora.com>
+	 <20250825170531.GA1899851@ziepe.ca>
+	 <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
+	 <20250825183122.GB1899851@ziepe.ca>
+	 <441df5ff-8ed4-45ed-8a52-b542c6e7d38c@collabora.com>
+	 <20250826124155.GD1899851@ziepe.ca>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-DNMiMpnxu0upmlGb0Ub2"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
-To: Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?Linus_L=C3=BCssing?=
- <linus.luessing@c0d3.blue>
-Cc: bridge@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ido Schimmel <idosch@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- Kuniyuki Iwashima <kuniyu@google.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Xiao Liang <shaw.leon@gmail.com>
-References: <20250829085724.24230-1-linus.luessing@c0d3.blue>
- <20250829084747.55c6386f@kernel.org>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250829084747.55c6386f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 8/29/25 18:47, Jakub Kicinski wrote:
-> On Fri, 29 Aug 2025 10:53:41 +0200 Linus Lüssing wrote:
->> This patchset introduces new state variables to combine and reduce the
->> number of checks we would otherwise perform on every multicast packet
->> in fast/data path.
->>    
->> The second reason for introducing these new, internal multicast active
->> variables is to later propagate a safety mechanism which was introduced
->> in b00589af3b04 ("bridge: disable snooping if there is no querier") to
->> switchdev/DSA, too. That is to notify switchdev/DSA if multicast
->> snooping can safely be applied without potential packet loss.
-> 
-> Please leave the git-generated diff stat in the cover letter.
-> Please include tree designation in the subject, per:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-> 
-> I'll leave the real review to the experts but this series appears
-> to make kselftests unhappy:
-> 
 
-just fyi my email wasn't working for 2 days and unfortunately I missed this set
-I took a look now on patchwork, I do have comments but it's difficult to reply as
-I don't have the emails and have to do it manually to each, so I'd rather wait
-for v2.
+--=-DNMiMpnxu0upmlGb0Ub2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-a few notes for v2:
-- please use READ/WRTE_ONCE() for variables that are used without locking
-- please make locking symmetric, I saw that br_multicast_open() expects the lock to be already held, while
-   __br_multicast_stop() takes it itself
-- target net-next
-- is the mcast lock really necessary, would atomic ops do for this tracking?
-- can you provide the full view somewhere, how would this tracking be used? I fear
-   there might still be races.
-- please add more details exactly what we save on the fast-path, I know but it'd be nice
-   to have it in the commit message as well, all commits just say "reduce checks, save cycles"
-   but there are no details what we save
+Le mardi 26 ao=C3=BBt 2025 =C3=A0 09:41 -0300, Jason Gunthorpe a =C3=A9crit=
+=C2=A0:
+> On Tue, Aug 26, 2025 at 11:52:37AM +0200, Benjamin Gaignard wrote:
+> >=20
+> > Le 25/08/2025 =C3=A0 20:31, Jason Gunthorpe a =C3=A9crit=C2=A0:
+> > > On Mon, Aug 25, 2025 at 01:50:16PM -0400, Nicolas Dufresne wrote:
+> > >=20
+> > > > Jason, the point is that the iommu and the VPU are not separate dev=
+ices, which
+> > > > comes with side effects. On RKVDec side, the iommu configuration ge=
+t resets
+> > > > whenever a decoding error leads to a VPU "self reset". I can't reme=
+mber who from
+> > > > the iommu subsystem suggested that, but the empty domain method was=
+ agreed to be
+> > > IDK, that seems really goofy too me an defiantly needs to be
+> > > extensively documented this is restoring the default with some lore
+> > > link of the original suggestion.
+> > >=20
+> > > > the least invasive way to workaround that issue. I believe Detlev t=
+ried multiple
+> > > > time to add APIs for that before the discussion lead to this path.
+> > > You mean this:
+> > >=20
+> > > https://lore.kernel.org/linux-iommu/20250318152049.14781-1-detlev.cas=
+anova@collabora.com/
+> > >=20
+> > > Which came back with the same remark I would give:
+> > >=20
+> > > =C2=A0 Please have some kind of proper reset notifier mechanism - in =
+fact
+> > > =C2=A0 with runtime PM could you not already invoke a suspend/resume =
+cycle
+> > > =C2=A0 via the device links?
+> >=20
+> > when doing parallel decode suspend/resume are not invoked.
+>=20
+> It was a proposal for an error recovery path.
+>=20
+> > > Or another reasonable option:
+> > >=20
+> > > =C2=A0=C2=A0 Or at worst just export a public interface for the other=
+ driver to
+> > > =C2=A0=C2=A0 invoke rk_iommu_resume() directly.
+> > >=20
+> > > Sigh.
+> >=20
+> > An other solution which is working is to call iommu_flush_iotlb_all()
+> > before decoding each frame.
+>=20
+> That was already proposed and shot down, it makes no sense at all use
+> to use flushing to reset the registers because the HW weirdly lost
+> them, and flushing should never happen outside mapping contexts.
+>=20
+> If the HW is really resetting the iommu registers after every frame
+> that is really just painfully broken, and makes me wonder if it really
+> should be an iommu subsystem driver at all if it is so tightly coupled
+> to the computing HW. :\
+>=20
+> Like we wouldn't try to put a GPU MMU into the iommu subsystem though
+> they do fairly similar things.
 
-I will try to give more detailed comments in v2.
+I didn't mention, but this is obviously close to the same IOMMU wrapped ins=
+ide
+etnaviv (same company making it). Note that for media driver, drivers in th=
+e
+iommu subsystem are very convenient, they just work usually (except when th=
+ey
+don't like with codecs). I'm pretty sure rkmmu is also used by Panfrost, so=
+ I
+suppose not all GPU IOMMU lives in GPU drivers (I could be wrong). Its one
+instance per block, but the same programming interface. Note that we do hav=
+e an
+in-driver iommu implementation in the RGA2 driver.
 
-Thank you,
-  Nik
+If we can agree on solutions for this problem, which seems slightly differe=
+nt on
+RK compared to VSI IOMMU, it will be quite beneficial to not have to overri=
+de
+all the media allocation ops, and re-implement rkmmu, vsimmu in every drive=
+r
+needing this block. The VSI mmu could be used similarly to how the rkmmu is
+used, meaning we'd have to copy its implementation in every driver. If we c=
+ould
+find out more accuratly how this is suppose to work it would be great, I fe=
+el we
+don't really understand what is going on yet. Once that done, we can port r=
+kvdec
+driver with the unified solution.
 
+The empty domain approach was used since there was no solution that came ou=
+t
+over a year, and users these days expect concurrent decoding to work. So ye=
+s,
+its not all pretty, but its the best we found until this type of hardware
+behaviour gets an API for that is commonly agreed.
+
+Main question is shall we block on merging the VSI IOMMU driver for that re=
+ason
+? Its there anything in the IOMMU driver that still needs more work ?
+
+cheers,
+Nicolas
+
+p.s. RK means Rockchip, VSI means Verisilicon, the company behind Vivante G=
+PU
+
+--=-DNMiMpnxu0upmlGb0Ub2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLHUAQAKCRDZQZRRKWBy
+9JkWAQCjhKw0H+/fIxtEIGqR/i3mzCXIn2jiB22S5Z1/SsXLjgEAnopTxM8L88l+
+NUbl5VA35McqgA+aGhShXzST98zO8wY=
+=Uy0P
+-----END PGP SIGNATURE-----
+
+--=-DNMiMpnxu0upmlGb0Ub2--
 
