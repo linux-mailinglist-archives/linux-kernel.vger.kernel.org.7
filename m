@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-791540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE648B3B853
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:11:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F0FB3B855
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624F0204A4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:11:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E2E47AD650
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DDE3081C9;
-	Fri, 29 Aug 2025 10:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9013081C5;
+	Fri, 29 Aug 2025 10:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DQLGjcyQ"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRSLwtKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752F1283FD4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE79283FD4;
+	Fri, 29 Aug 2025 10:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756462294; cv=none; b=Gy8bVKDi3OEp2uJ8jDf8UJYI07iVWRqsAMB9lIrZ3fyoNu4KKJE+M7AmdTnCub8wKaHNyDXnfLUBnozb0MrVz10PupUsXh/QTgAus+9zGsBVVoEyiYhyTFPde6k1erGCk3Gi5qK5QH4m1NhmCZO+XYGWhQFi3tiwnFcSB9KS2EI=
+	t=1756462305; cv=none; b=sptEQ4QGcSHGp2Q/BV4Gn2Q8MExrRRfzb204D+xPQTjZgfAIlpITkYUKHEPGcEqCF9BEA/iyswMgtgNLYflIXNCONhXTNPkyE89q9wewth/O2pXB7x8KDqxAa0n2/h60v62qY18gNxpQze28Dz30Tkn9mLDMnbzZuauJ6dEp/HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756462294; c=relaxed/simple;
-	bh=Xjnj6nPS6qYYbzWCdNkcP1fjnBYRMWrLTWZgkTJjBnY=;
+	s=arc-20240116; t=1756462305; c=relaxed/simple;
+	bh=FbHnT1pSAarBPsl/XNUda0xi/a2rwYH4RSBoQabCgLk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e1zuyyDRMhbi8dLomP8OBQ+NkFhzcVg8k9/RjElTjydZEHN8Q6ghGOXKGDRXFXrnsNI3GQrb234/rKIysk10inH8qNjCqRkB/PRtf5psfinLSP8phhJ2Cg9XyS/22ih1RxIklTwlxp0By4v2maIKz7+VrC+GxeYuuzVm2L/OVZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DQLGjcyQ; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-336b88c5362so4048841fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756462290; x=1757067090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xjnj6nPS6qYYbzWCdNkcP1fjnBYRMWrLTWZgkTJjBnY=;
-        b=DQLGjcyQB8xVGY7S69JpGxpY6sCHLHcxJV/51sAplv9/X9wmIcg4D01ovqDL77/Fet
-         sO+9ayzFFnuhb5iOT8W+A+N1nB062Rs7lZBiQgXG/GEnJ5VuFTX1GAoYcRaribtIXTrV
-         wk1tCsMNcqEj+vNTDYpDBUT/LXP4BNHKZkPZKgUIT/5fStZWnFtQelIspvGenGvAbU+G
-         f2wknwDktiK6zqlcQkSHnOXAUx5nKxkcCfBjgQrcRaGpqd1zUd2NtVVOIIGRrWoZMKTA
-         0++9nhcRLeW1Cw0SKqRjmY1tXmeVwmDqQOH8EVeSZwBLcPLPnhOMrOBBcpND5aI+p+jb
-         4dpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756462290; x=1757067090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xjnj6nPS6qYYbzWCdNkcP1fjnBYRMWrLTWZgkTJjBnY=;
-        b=XcEvAl3G9xVVAVNiJAc9vQwA/x4newIF/Y1yYLx8i5lEOG94PPNvIa0koDmppu59Hf
-         +WLcdzgIRLvvIhn1odJM0hAuf4WJuJgsca+zYG2k12iB7t1uLZNCMlU62EPaATfAX5tn
-         4pnGIOE1br3WA160ielzOogYYIL+/Ay4IPoM9/YjYVXVAwczV64SszPKACQhtwS96ons
-         bWTS0n/nRFwt0/QUrpGePv/klP+LfxLdJgQOLKiG+OINtlKumwJ7bS03Tap6KjD/Pgw3
-         3dPYlmh8kxG/14v3Unwn7dnFM257AVimF+suryrL5Cq9TB5SoS/5dS5rcSqI6quEqN+E
-         I04Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLLcLhzXqEsngxBJ19G9t5QfZ1iaobmN19CKfYQnsGshSWSEYS7LFtB8xMTdBemDr8IiwA1Z1/0lzuhGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXU1v4vwUp+6WyoEEXLLGRBlTrZeO/UVwLLEiYeNZZapNEYooV
-	b+psk030dFqEeo6ABPgvgU/Z9DDE0g4ag8XqUtWxVoSZJT2ov39B7CopHjRwpAFW++f6F6i/U1L
-	ydE87KOwV2wGo2H+JgXYOiDmtObrOaAsDlHGOOdyekw==
-X-Gm-Gg: ASbGncuU/lEZLWkQvqi4jlC807NWBPtuwPhEIc16z3KoX6npkVzGkL41k1F4wxj8IUA
-	gqSJlurzZE/1Y5l+1ASeCEX3JT/H1JZnkXNDLTagwqW+TMB/3fvy934IriArjVz+4Jc+SI5bbf9
-	vfUVolR7Lmw9J4fYmqwsIsOLBDxwyAmSn1m41D+jTdkre1UbuhC+M037OqFNgrDZZxkRMzSKysM
-	zET6Lc=
-X-Google-Smtp-Source: AGHT+IF2rckuWDB0N8TfxkqBuz+CSPuYoKPwq0L/OKD+eFOshcmaXOwCLTHg9xCg7qGXInQk7y2zM1fsjZxdnfUASAE=
-X-Received: by 2002:a05:651c:1544:b0:336:a8fb:937a with SMTP id
- 38308e7fff4ca-336a8fb9b93mr12812201fa.19.1756462290440; Fri, 29 Aug 2025
- 03:11:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=npEEIjO32hYxtPa6Odp33Yk7q2eMb3yENkV00ijXp2MGfFAlRn1QmZ+WPnN3DYoUOVUBsg5PpfULjfrsMQbcWMZuFdW3zgyyofNM6H/NjtlE8OtdQcmbAobAdL0hgAIOYfqQFEoBIXoRGxPLdrzRuWq4Ur0/W1Gmbuy7Y/Suzkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRSLwtKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D30C4AF0B;
+	Fri, 29 Aug 2025 10:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756462304;
+	bh=FbHnT1pSAarBPsl/XNUda0xi/a2rwYH4RSBoQabCgLk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZRSLwtKGO9ClcpknRoRIahqDP933GHw0YbQD9S2nv8O0g5hlKfM9eWt/Vnbb6aWdF
+	 1JRo45N2T1YuqvcXpI/nQGPBZr8R7DBJOcN4jjoN7e+3uj1MOjGJ2Mn6JlRjcn3i5P
+	 NOeAvqlZIRCJ72qQI1YNXnvqeo9djWyLQPbJXFbn7C+Ho9OdeKK08X+Kj8OpV8C2DC
+	 s6Ckoa59nPAYEqkFqILLfTwzwDIHnmzVKxtsBjJowDalr8YX0tJce0qocORyqyCfH/
+	 8oAZwUzCX4P9LRWgrt2oDp8xXL++s9L3y/9/uOipG/F/83wAopPaxXNbMSJbc91WZq
+	 lBMBoMJmoiKSw==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afeceee8bb1so280012966b.3;
+        Fri, 29 Aug 2025 03:11:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWjH/HHNbzHlTPFTZMgHLKRiRQ+OQL9XYapqABZgeK5R6HJbAvgQT8b0RTiaFQZrIv9jHw=@vger.kernel.org, AJvYcCXolltN+TSQnIZEX4pB4vmkmQdd2xArcSYOdPw51dsZ84lTrm8U96XQL1KdsmfISZd9D1W0+59v/QTmDM2D@vger.kernel.org
+X-Gm-Message-State: AOJu0YywXwPymEkkOd2GroKvoMKIWirepDd54HARKPZTvehMHbifmBFX
+	L2CG5k16Lxw55kUegrI1n88OuTY1iJOp/ogsFZlRRVKUzyWywgXqNd0N6lnvLShyiNwEobG6UU2
+	de6Sz7YTJxUeolYR69a2j4kwJlW3wHts=
+X-Google-Smtp-Source: AGHT+IEuFBM+fnBwAq9cHUwyqSmBhaIa6eT1rK/PNNADm1oua3EpORtiyPFhiVibwBNqttI0n2E16ikqA+FTFiZq/UE=
+X-Received: by 2002:a17:907:3c92:b0:af9:2e2a:64a8 with SMTP id
+ a640c23a62f3a-afe28fefe4fmr2492394266b.25.1756462303488; Fri, 29 Aug 2025
+ 03:11:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2@epcas5p4.samsung.com>
- <20250825114436.46882-1-ravi.patel@samsung.com> <20250825114436.46882-6-ravi.patel@samsung.com>
-In-Reply-To: <20250825114436.46882-6-ravi.patel@samsung.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 29 Aug 2025 12:11:18 +0200
-X-Gm-Features: Ac12FXxjnbVzeqW8L95iuuSr2TZOHM52rnOiOuvqvFvgSGHYE7jxXOy75cPjyPs
-Message-ID: <CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific configuration
-To: Ravi Patel <ravi.patel@samsung.com>
-Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com, 
-	gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
-	smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com, 
-	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
-	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@axis.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev, 
-	Priyadarsini G <priya.ganesh@samsung.com>
+References: <20250815022621.508174-1-maobibo@loongson.cn> <CAAhV-H4Sem=X7KUiO2vQgT_5KX-v4Xv3yB+UUrWHL4tmRnJkGQ@mail.gmail.com>
+In-Reply-To: <CAAhV-H4Sem=X7KUiO2vQgT_5KX-v4Xv3yB+UUrWHL4tmRnJkGQ@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 29 Aug 2025 18:11:31 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H50tbHigNGGt=zFSgDLvWLcPTOvN=s3mjquxfL9nLU5Eg@mail.gmail.com>
+X-Gm-Features: Ac12FXzXsYWIn_ywhKBu7qnpjROgk2UkmU7zUdTYk4zrnqWGrCB-YgibSKIPmZ4
+Message-ID: <CAAhV-H50tbHigNGGt=zFSgDLvWLcPTOvN=s3mjquxfL9nLU5Eg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] LoongArch: KVM: Small enhancements about IPI and LBT
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ravi / SeonGu,
-
-thanks for your patch!
-
-On Mon, Aug 25, 2025 at 2:07=E2=80=AFPM Ravi Patel <ravi.patel@samsung.com>=
- wrote:
-
-> From: SeonGu Kang <ksk4725@coasia.com>
+On Sun, Aug 17, 2025 at 11:45=E2=80=AFAM Huacai Chen <chenhuacai@kernel.org=
+> wrote:
 >
-> Add Axis ARTPEC-8 SoC specific configuration data to enable pinctrl.
+> Patch-1 and Patch-4 are applied for loongarch-fixes.
+The rest are applied for loongarch-kvm.
+
+
+Huacai
+
 >
-> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
-> Signed-off-by: Priyadarsini G <priya.ganesh@samsung.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-
-Please avoid CC to soc@kernel.org on these patches, they end up in the
-patchwork for immediate merging for SoC:
-https://patchwork.kernel.org/project/linux-soc/patch/20250825114436.46882-6=
--ravi.patel@samsung.com/
-
-I think this is not you intention, the pinctrl portions will be merged by
-Krzysztof who sends it to me once that part is finished reviewing.
-
-Yours,
-Linus Walleij
+> Huacai
+>
+> On Fri, Aug 15, 2025 at 10:26=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> w=
+rote:
+> >
+> > Thre are some small enhancement about IPI emulation and LBT enabling in
+> > LoongArch KVM. With IPI, it supports sending command to vCPU itself. An=
+d
+> > with LBT it adds flag checking int function kvm_own_lbt() and make it
+> > robust.
+> >
+> > ---
+> > v2 ... v3:
+> >   1. Fix stack protector issue in send_ipi_data()
+> >
+> > v1 ... v2:
+> >   1. Add sending IPI command to vCPU itself
+> >   2. Avoid duplicated LBT enabling in kvm_own_lbt()
+> > ---
+> > Bibo Mao (4):
+> >   LoongArch: KVM: Fix stack protector issue in send_ipi_data()
+> >   LoongArch: KVM: Access mailbox directly in mail_send()
+> >   LoongArch: KVM: Add implementation with IOCSR_IPI_SET
+> >   LoongArch: KVM: Make function kvm_own_lbt() robust
+> >
+> >  arch/loongarch/kvm/intc/ipi.c | 57 ++++++++++++++++++++++-------------
+> >  arch/loongarch/kvm/vcpu.c     |  8 +++--
+> >  2 files changed, 41 insertions(+), 24 deletions(-)
+> >
+> >
+> > base-commit: dfc0f6373094dd88e1eaf76c44f2ff01b65db851
+> > --
+> > 2.39.3
+> >
 
