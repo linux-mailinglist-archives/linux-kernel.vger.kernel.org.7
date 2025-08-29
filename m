@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-791630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7E8B3B97A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:56:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF4DB3B977
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AEE97C08D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F38B360A6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD66315760;
-	Fri, 29 Aug 2025 10:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53904315794;
+	Fri, 29 Aug 2025 10:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h94eX1K5"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cGSIPRlm"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EB23148CD
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6084F310636
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464881; cv=none; b=syJqDjEufa4CNiBOtbWNrY3xPT8d3UtlcCuVgDQ2hbd3Z4ju9vbnoV+o2LWODJjzh7CmQ1yam0MWZRLiVcwWQ7eKR1/tX5vPnFEXTAr/YoZGeSR8j0MHTM7ICV0kC6I2d+gWM5WbPu6ozbBW1bjQJ9o6ABD59Qr1EGC8WhLrq+s=
+	t=1756464882; cv=none; b=jEwGKdM+MOhWRaxpX0f0MudkC1qQwgA3m06FQhJWaJN8h/12XUVD6fFIOmsdM/6aGiMY30/uUs6+rn3ciG/u8JmBAZdFdYLBeqfSGQyThng4nmDcP+2LBtCXYiX2D8l87ekHUO7XYroAnrly212HjknzCFCg9cSHabgzX60mIcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464881; c=relaxed/simple;
-	bh=so0KS5+HKtS7bLgo8wlIBPBrMrd/uZF6z+PZRF+H0bI=;
+	s=arc-20240116; t=1756464882; c=relaxed/simple;
+	bh=F31B1S8lHw87bvdOmxvFQVJauzkbFRHPz4qUM68sjcY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FrjfBbelFg7ptoI5O4TL5JaCxA2I4RgeLhycDas/Cr2CWeeklmlc8vbfIdmwM2rQvYL1Xi8LrFk4F8ejWT4ODn5nK/YoGcDHrfpaxGtFHuKhs0pI3oqm8F34nyztFKW1geePDLmnYAUJ/2+IpTu4hutc2iOVSgevYB+Uag3oyfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h94eX1K5; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=HG6aRfAc53v4gBYJe4r6zaEAWgRZCeow3KyterneCN1FQ1TBybDC8boqBzNSSDmODIZ3hjsVV6JttZakKkYZmLpxVikGA0xFHeIg7W6Y6q6GLb9f03I9qxujPOfh4VHiveXPplAkiKGQ84yiW+wqtDjBeFdc1zhio0L8UBMpMZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cGSIPRlm; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3cf12498799so446585f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:54:38 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3c85ac51732so792127f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756464877; x=1757069677; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756464878; x=1757069678; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2RLysX4FvFaZxrrpQCtMS5piDnkGHi5CdyrEUjW23Q=;
-        b=h94eX1K5Wxx/ICOyOMU2fJj16skwRe0a9i0pccb0ZMRC/3GLURFA0Aal8HOHLNX2k7
-         H6YJ478Y3YEpC86P9BvjP4C6l+EPWlc5q6gPOVKdGeB8SNZ9MQUVkuMCTwOjEX0RLPop
-         3ilypXLnkPuLWkvGkTnssu99nIiFCY1db86yiqoDE3YdcZGdHV4QzBgbsGU/itBis6sg
-         I4+JwUwXjCS7dOhQRpZOAxwX1u1HSLWCi7QI7msNV6oIckQlVZGjToKUCAOIVNMQkXGf
-         mKNje/UtkF5PvsO3sn2a6PF66VjnLsC9nF8mrlXeC3BzG028wQ03HtSjlwHJaDYWruKP
-         TxHQ==
+        bh=kFTnM3F0cCHrWnaJ2kM4zCxpKLKVf/l5ppuLW/5eUHs=;
+        b=cGSIPRlmktkUNTjZ/Hb8zPD9Z70NI1Y1IeFkMKxT1I/+vQZXpHTvVDep1+6fJwJZ94
+         3hFfZoOyBH0+0aoisQ6CbKxg3aKESEQ7fiKmgoXSCXXizkA7MIJCXp5O7K7m33ib7kzI
+         PMIrIPtA7JzqbSl/hVHUFhq9pHOttltTROaxkBJAK1br+8VoP0JWglFrhXOomkYe4flM
+         8/A6XbemSr7s1MZnVHUT4p0pVrRCxtTHx4ZEg+rEb68w/awtxynslrfoCkFHz0bU1O7k
+         G2MNE87S3lX4zW8PSn0sVvE+YnLl5DunH8iqrFl/gFcCmctkuQt8kWx4uEKah8uzP7u9
+         aC0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756464877; x=1757069677;
+        d=1e100.net; s=20230601; t=1756464879; x=1757069679;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2RLysX4FvFaZxrrpQCtMS5piDnkGHi5CdyrEUjW23Q=;
-        b=ChHa8Pg6VL52jWxLEYKPD7kbMTdKAea7r8eUkXNRYcLwlr7LHTVBcXkY3FnG43Ggsa
-         blT4QcDPeshnN+vrLvKXDlZnWXQ2jm1l4AZLkSBv2weJhrR6I3cwZcHo6q2k8yqznJ9j
-         LU3p90l8CheM4dC2dnBngkeJfCF/v6xvTd1eseURtwCDYo85uhrlyQKnUN8TzYafVh10
-         wM9HMYhbXhCEAcPeoVxJ+l48o6QnAvc5jhZ3muUfO2c+XtZ9LUzpfl5jAqcgYM/+zxk5
-         q8EK0lUgUcUmphLiz0NVhqX4Iy/SMq/fqMliSiNqwmNkqiGWKNO43GOv0i5G/J0unrbl
-         S4ww==
-X-Forwarded-Encrypted: i=1; AJvYcCXrR2mzMvQG3q4WM/xwSyQa+ib4BXzq9rH7rakLR5eU5jgOBiqRC9ukPrFyICrFryxsYYtQ4oM/RUGq1KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwe2V+K6iwXGMgcvOZU+fhtxGOCwllWdySNc69o12fX1HesTEp
-	Wt+gJ1bSPC0Cm2AU8iDstPH4dM45niuEblw0l0zRosRTLCxPvkHZE3pvXSQ/pTK12tAE7ug1stm
-	puDfkNCfz+U+5sRoHzA==
-X-Google-Smtp-Source: AGHT+IGn0Rpy1dY1XrZvELEcqgT8iGR3jz5ujSyOBLj7FBCWbv3AUGiqUNArS0IwRoFyThmIfPNLn57QEPEFlW0=
-X-Received: from wrbm25.prod.google.com ([2002:adf:a3d9:0:b0:3b7:76ea:26cd])
+        bh=kFTnM3F0cCHrWnaJ2kM4zCxpKLKVf/l5ppuLW/5eUHs=;
+        b=mN2+oCmQz0Qo5SLSNg3K7i+C5PZ/tl0sMGef/gF0Y4cvczAFxidXBsw1NmzJmnQLLA
+         oNv7Z75xjG9dzlUgv894J6GfoC+wY/GvB2RHIqcm8ISbWpQvs0eZhTtLYvJ+l4FwnsEY
+         2+9p49FyUHKuOY6MewCGqUxYltIsWthHTQ6QAl5QoZ+I4t0OeBNuVoDsktbTfpz0jwvG
+         p5NYpg7w1RI1vqJYyYNUt8LIv/nexSS3YZDN+W4bTX0gCen9jOyOPmV9sdOUSwcY/4bA
+         Agikw1no26cbS8WgYkaMMmGNb0I7G5LaaeDUVCsYGo3sYizie1AICgVvmTPpH3UOPnVw
+         xefg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGg7fBNnbmqpwGsLeZA2Zz2RNIdoUDu0XtdTtHqxiUn+TqAvdveF6JSuaH1zUVsOXr2kLPmvlxj6wRNB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvPQQrZS2qKPs3269u69htX+gi8LnwGwBuzxSUH4yJkmmWY9kl
+	nVOsEibQvxuvMykovEkABk3NOwq3h/PVv2MW9b2IkTebb6VpQZhSEv2yncF2sTzJylrz7lkx6bI
+	Gw70q7nH3vuKCt+1Xyw==
+X-Google-Smtp-Source: AGHT+IGhXlg73AG74XQ1K/78bczfgGZ6cx/K2NS3Xdv76qWZPKey7zRbs4h7QieTBU1hVrcYOEW0Rwi8beEOsYs=
+X-Received: from wmbfp6.prod.google.com ([2002:a05:600c:6986:b0:45b:803d:733])
  (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5887:0:b0:3b7:88f5:eaae with SMTP id ffacd0b85a97d-3c5dc542ac7mr20449959f8f.39.1756464877398;
- Fri, 29 Aug 2025 03:54:37 -0700 (PDT)
-Date: Fri, 29 Aug 2025 10:54:16 +0000
+ 2002:a05:6000:188d:b0:3ca:c607:ad8a with SMTP id ffacd0b85a97d-3cac607b234mr11307773f8f.57.1756464878576;
+ Fri, 29 Aug 2025 03:54:38 -0700 (PDT)
+Date: Fri, 29 Aug 2025 10:54:17 +0000
 In-Reply-To: <20250829105418.3053274-1-sidnayyar@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250829105418.3053274-1-sidnayyar@google.com>
 X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250829105418.3053274-9-sidnayyar@google.com>
-Subject: [PATCH 08/10] remove references to *_gpl sections in documentation
+Message-ID: <20250829105418.3053274-10-sidnayyar@google.com>
+Subject: [PATCH 09/10] modpost: add symbol import protection flag to kflagstab
 From: Siddharth Nayyar <sidnayyar@google.com>
 To: Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
 	Sami Tolvanen <samitolvanen@google.com>
@@ -84,30 +84,94 @@ Cc: Nicolas Schier <nicolas.schier@linux.dev>, Petr Pavlu <petr.pavlu@suse.com>,
 	Siddharth Nayyar <sidnayyar@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
+When the unused exports whitelist is provided, the symbol protection bit
+is set for symbols not present in the unused exports whitelist.
+
+The flag will be used in the following commit to prevent unsigned
+modules from the using symbols other than those explicitly declared by
+the such modules ahead of time.
+
 Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
 ---
- Documentation/kbuild/modules.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/module_symbol.h |  3 ++-
+ scripts/mod/modpost.c         | 13 +++++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
-index d0703605bfa4..f2022fa2342f 100644
---- a/Documentation/kbuild/modules.rst
-+++ b/Documentation/kbuild/modules.rst
-@@ -426,11 +426,11 @@ Symbols From the Kernel (vmlinux + modules)
- Version Information Formats
- ---------------------------
+diff --git a/include/linux/module_symbol.h b/include/linux/module_symbol.h
+index 574609aced99..96fe3f4d7424 100644
+--- a/include/linux/module_symbol.h
++++ b/include/linux/module_symbol.h
+@@ -3,8 +3,9 @@
+ #define _LINUX_MODULE_SYMBOL_H
  
--	Exported symbols have information stored in __ksymtab or __ksymtab_gpl
--	sections. Symbol names and namespaces are stored in __ksymtab_strings,
-+	Exported symbols have information stored in the __ksymtab section.
-+	Symbol names and namespaces are stored in __ksymtab_strings section,
- 	using a format similar to the string table used for ELF. If
- 	CONFIG_MODVERSIONS is enabled, the CRCs corresponding to exported
--	symbols will be added to the __kcrctab or __kcrctab_gpl.
-+	symbols will be added to the __kcrctab section.
+ /* Kernel symbol flags bitset. */
+-enum ksym_flags {
++enum symbol_flags {
+ 	KSYM_FLAG_GPL_ONLY	= 1 << 0,
++	KSYM_FLAG_PROTECTED	= 1 << 1,
+ };
  
- 	If CONFIG_BASIC_MODVERSIONS is enabled (default with
- 	CONFIG_MODVERSIONS), imported symbols will have their symbol name and
+ /* This ignores the intensely annoying "mapping symbols" found in ELF files. */
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 8936db84779b..8d360bab50d6 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -61,6 +61,9 @@ static bool extra_warn;
+ bool target_is_big_endian;
+ bool host_is_big_endian;
+ 
++/* Are symbols protected against being used by unsigned modules? */
++static bool default_symbol_protected_status;
++
+ /*
+  * Cut off the warnings when there are too many. This typically occurs when
+  * vmlinux is missing. ('make modules' without building vmlinux.)
+@@ -225,6 +228,7 @@ struct symbol {
+ 	bool is_func;
+ 	bool is_gpl_only;	/* exported by EXPORT_SYMBOL_GPL */
+ 	bool used;		/* there exists a user of this symbol */
++	bool protected;		/* this symbol cannot be used by unsigned modules */
+ 	char name[];
+ };
+ 
+@@ -246,7 +250,8 @@ static struct symbol *alloc_symbol(const char *name)
+ 
+ static uint8_t get_symbol_flags(const struct symbol *sym)
+ {
+-	return sym->is_gpl_only ? KSYM_FLAG_GPL_ONLY : 0;
++	return (sym->is_gpl_only ? KSYM_FLAG_GPL_ONLY : 0) |
++		(sym->protected ? KSYM_FLAG_PROTECTED : 0);
+ }
+ 
+ /* For the hash of exported symbols */
+@@ -370,6 +375,7 @@ static struct symbol *sym_add_exported(const char *name, struct module *mod,
+ 	s->namespace = xstrdup(namespace);
+ 	list_add_tail(&s->list, &mod->exported_symbols);
+ 	hash_add_symbol(s);
++	s->protected = default_symbol_protected_status;
+ 
+ 	return s;
+ }
+@@ -1785,8 +1791,10 @@ static void handle_white_list_exports(const char *white_list)
+ 	while ((name = strsep(&p, "\n"))) {
+ 		struct symbol *sym = find_symbol(name);
+ 
+-		if (sym)
++		if (sym) {
+ 			sym->used = true;
++			sym->protected = false;
++		}
+ 	}
+ 
+ 	free(buf);
+@@ -2294,6 +2302,7 @@ int main(int argc, char **argv)
+ 			break;
+ 		case 'u':
+ 			unused_exports_white_list = optarg;
++			default_symbol_protected_status = true;
+ 			break;
+ 		case 'W':
+ 			extra_warn = true;
 -- 
 2.51.0.338.gd7d06c2dae-goog
 
