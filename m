@@ -1,383 +1,238 @@
-Return-Path: <linux-kernel+bounces-792464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2817B3C445
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:35:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B76B3C448
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC3420886D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C141F3BD566
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F2F23507E;
-	Fri, 29 Aug 2025 21:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3CA26FDA9;
+	Fri, 29 Aug 2025 21:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vd8MZezi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FHP1Bdm9"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2069.outbound.protection.outlook.com [40.107.96.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF701DB122
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 21:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756503305; cv=none; b=oZfi4GpM6jlbEZxQW8DVzOcEzXH7Prqs3D2ADTZ2QH+8DtUCgYluz6/TLb8xe9N2s+e/qRUOuUz/0SqGosaVlpeN+me5tv74hKXf3ptspObM68d0ZSpV0SDigjj6hCH2S7XYBm9GwW+FsLGxuC7Rtj/eTZacJcqsbIPuzhH3u9Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756503305; c=relaxed/simple;
-	bh=roFz4ZuLDmirFulDL4AIGpF1rFuSNApW1DEEsnehi8U=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X7gkPUYxouGNknPnAke0h7DMPX5OF8+q5trXuAwt0VtV31y+xmkOkLWLblzgbg2b5oA2yErkYA7iX3Du1+ymSEiKja3S8SpUsvvhMZf5cU8Fm6yUohq6lffS5oAdoNdWbAnaNBizJi067Kos1uzqE26w5by7JwuB+g3HqrLyGPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vd8MZezi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756503299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KTcvGVz+c+BZ22iWgYfaSBZU9PEwbeRjL1TXojS0EB0=;
-	b=Vd8MZezikZCdAv7ejHwm7RRgP4fEMka+Y4JB6Zo0gptOtIsWGtirvOvZEPKIYdWrOV4lcy
-	EaiY3K6EF/b/83zPiJxu5WMShSsgPbC6DUT3smlPCVKFIy8s46u5ehwZWAvEUBHh89cbGm
-	RRgO8YuSxAIGXaMb7nYnA1PpLAOD6Go=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-96-hgq8_6DgNCSrvKirCPEElQ-1; Fri, 29 Aug 2025 17:34:58 -0400
-X-MC-Unique: hgq8_6DgNCSrvKirCPEElQ-1
-X-Mimecast-MFC-AGG-ID: hgq8_6DgNCSrvKirCPEElQ_1756503298
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70dfcc589d8so37837166d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 14:34:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756503298; x=1757108098;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KTcvGVz+c+BZ22iWgYfaSBZU9PEwbeRjL1TXojS0EB0=;
-        b=j4EIOJupQL5yzncawYOELhVjBxsiCB6hGVXE8F938tYd7JjyCCLX2TAzFHNM6XWoJc
-         /KQzbxpkyqp1nS3BZuh+rJCe6mOdP1LWzCrpeqmGOB4FjZoeVC6ricbomggGl1H7PIH3
-         x2y7AbahBdipZ70GLS6e8QHeilRJyG++M3W1tkFzeevka4c2B+Vx9ebnaHDl5nFEsix3
-         xjotWHeibQuHzIvS6oLwA6nj/kd+GwGdxKIV/LG5pU4m60M34HuiaZ5Xu+SzkW3zLIkF
-         kGQ5b+E3aVl4ytzsd/HFm8t/PQLoQFV853z7ARuaMw3uaBO5VC2P/Vnq9fobK0rSi3yq
-         oe4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXf0HpXQjusRW2CEAkoCL5lqjrZA25PRbJ2+fNgp8XHQOx/3+A3ByWeRlShEJI27GgeuEH1yDOcOuWzXjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOQypyxmuLungtirlaPgTuyR3mK8lj5udp9se5JIHf5dbyLwlS
-	BLdJQqw+ySSyyiGyMZ6hRZ9d3PnFPreVCwXJuHDCXp6S5KYNht0r5q78YKX4XXS3b9yHtvwEICo
-	0YCrfawUL9XOItKXNIjFT1W9MXOU+ZHwEM3fUcQ4jAGXHbe4w6FfS0f/h3aqmfrbeCw==
-X-Gm-Gg: ASbGnct2X16L4eDiLTb2NA+chkiRrGueWBTYf1EvWX32LBZ54MYeiuppDzq84A0SrR2
-	DMIUpuHPxi2ly2R+dTonGyothKrIew4cLp/XLET83y6FfMDoTpgXyvgAC8VH1X0voUpvnBEL+RK
-	UWB3cwaMoK8qy6vX5MsEC9SV6vLG6WHtomKwc9J8cT/JtXtWb31NKGFY13VOMYidN3ChtGzLLht
-	7YwWckLDVtY1I2XZcirPy7ezliKUhl6AfIm/6FBmAULVTsUIxs4uFjxLReZ78v8gQjKe+iCLbt1
-	npQ4ydALm1UNZapDWRxrXcOWW8oF0NBoWPeCuoKyVEzwcidsXjFbSeQfp+nWjiABurcl6FEipox
-	aeQevOO3qLg==
-X-Received: by 2002:a05:6214:5182:b0:70d:aa75:cba with SMTP id 6a1803df08f44-70fac8ee421mr1097436d6.47.1756503297585;
-        Fri, 29 Aug 2025 14:34:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFszh84jjd7G3hgs9MHqS33h+UlV/GrcZRSKJ+2YqY3AD4g2EhK9GshwTbNCwH8G6KHPw8vqw==
-X-Received: by 2002:a05:6214:5182:b0:70d:aa75:cba with SMTP id 6a1803df08f44-70fac8ee421mr1097266d6.47.1756503297148;
-        Fri, 29 Aug 2025 14:34:57 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e57ddd6e8sm23578716d6.2.2025.08.29.14.34.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 14:34:56 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <ef2547bb-4463-48a1-a378-2a763e271fed@redhat.com>
-Date: Fri, 29 Aug 2025 17:34:55 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE124207A;
+	Fri, 29 Aug 2025 21:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756503551; cv=fail; b=NXv1Gk6kpVxJX8jn4UgXnsXC68976RbEeeJLmohQlsbjQ+0bqmAMHz/ktxmR/kFVsRRLyB22+EwpBQWRMvuy2NEKGABMwZhZN6CEyn+sbhQ6zvrAKKJErBmeVYWGXu3Xzu09H/sZZ82uKnYFE6HA89uD0HOEN2iPmUuVNsVpRlQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756503551; c=relaxed/simple;
+	bh=evqNDuWeVNeFDKp2xue8xst8vZ+MHKtYrokeoJNx1Og=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b0P7rTrQQInQylDdY4yhMExHsvp4JAGA4TCoCfoDDEQDuIT4HPLnbShKhIG9O0vUFGZp6MkJNvyM2xIeT2My5ullOO7VT48ThJs3q4QxF/4gkrYuDG5vGWibObRFMIX5t9QNcQqp9hJfVEZn4WmFZQuvR6YfAuDwYeL2DKhu2Dk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FHP1Bdm9; arc=fail smtp.client-ip=40.107.96.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZhHynK7HKoBW6yf7HKqekdjxf3eR0djExygMVPgmZtutC8hVKr9DGejJ17fncHw4GLI859gqrXlC3cSgO6We1cw02LB15lrZcJCaLCXKY0AarVQLaICh8sqBudYon9utboGccM2hC+wM1WGGUWRE1G0cL4SaWc4wMbqkyPsBBhKafwT/jtfmuGGkPS16rZaVLwsXHoKELY52rWkK5QcJWyCiy9VYW4Pj2YHUHNjUoHU/RVCequY0ToItAa6YFqINZiYK1EH88lQu6O50P9uwF2+FgofQox2PpPDcpotvxkCg2iArH16UMzN64KUjG81fUzClj5OS/Tj+03eZcmgUZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8CpceUK/MxzYs81cbHWbYdS+aJYm9Evu7OkeLVv4txU=;
+ b=JApZ0MX4f/6krac9qGobcx1BrbK4WMCSeoz3v+PcQHtguMhN+VY8TG5hc9KDbw3HYi9OzMGSdPFPAH/SgurrPmRiVHbSaRyopUYZzT7Pd3dxHOibYRYK70wcaM14kims4BLyCWQ1iyFxFjOHD1hTIQhBZPENPfbw7TWo/AbnMrQzmA2sev6VHLl3lNLxx4D2/SaxdXxI1Kv99nrK0u9qmlpIW8DI9B1zz7UgSnqEPM3pWBYGsWEqptLmsDrYbkpOnGvWJEV9RsUOObtxFOkZLkGr7kvVplecCCnIsot/1EPQjCstdz1q9kRxd16/B/cMCaMomvsOB/2Cr3uDlGJKvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8CpceUK/MxzYs81cbHWbYdS+aJYm9Evu7OkeLVv4txU=;
+ b=FHP1Bdm9k+2AKWFoLTn++NMqmQSefudCjGoOytURqgk3hIuHNazBX7PkPPYUJuisqulGZzVmMaY+AAMQ6CNDpNf+m/7djaUBc0WyDy854I6g/l8ifVwj4Da899tGKeY6VyCXN1gHg21xfk0b9jE4zP0f2rHBdHB3kPo6jEMS5oOl3KgU0QK70AUNDpQtbJJkl49iYDIbydtB7wsQ0l6w3QaMszgrbbTkq5GLBqe1/1VwzvLrYvw7VjXLj2jT3zh4IrLFtELbmdPyX9nOZ5MTvZV8U7mLWQFObZsBf0K0k2TZkDsCj5D0n7kQ7eS0HWE0yn29Sv/71eZi4JJvePfH4Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by MW3PR12MB4380.namprd12.prod.outlook.com (2603:10b6:303:5a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Fri, 29 Aug
+ 2025 21:39:03 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.021; Fri, 29 Aug 2025
+ 21:39:03 +0000
+Message-ID: <cd20f283-bd92-47c9-a336-fe9ff46d82ed@nvidia.com>
+Date: Fri, 29 Aug 2025 14:38:59 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/6] rust: pci: use pci::Vendor instead of
+ bindings::PCI_VENDOR_ID_*
+To: Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Elle Rhumsaa <elle@weathered-steel.dev>
+References: <20250826231224.1241349-1-jhubbard@nvidia.com>
+ <20250826231224.1241349-6-jhubbard@nvidia.com>
+ <DCE3EV79EX7N.DCIT9JWFGXGG@nvidia.com>
+ <4b525afa-1031-4f99-a1ab-e89af77616eb@kernel.org>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <4b525afa-1031-4f99-a1ab-e89af77616eb@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0201.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::26) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/33] sched/isolation: Remove housekeeping static key
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-2-frederic@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250829154814.47015-2-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|MW3PR12MB4380:EE_
+X-MS-Office365-Filtering-Correlation-Id: 076a4659-5486-4f5a-06af-08dde7447907
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cnIwRXoweGhaUnVBcGpTejhjbzFNd01rblg1WDNzUkMySHdpcFZPdzhwTXlx?=
+ =?utf-8?B?alY3YlVmeCtvaG5CL29vNERFME9lbmR4UUxUNDRTRGVodHVZV3pvaXhKZXVl?=
+ =?utf-8?B?RHA3eEJ2dm5DbGppZ1djbG1kMkJyY05wcFNaYk1FUXJ1anNBbVVFdkpneDV1?=
+ =?utf-8?B?MDlUeEIwcWVobzJyOHg1MlVaaVgyYlN2ODhpcjRpaDlrRUpRTmx0bkFyZFlC?=
+ =?utf-8?B?NUZ4c1B2R01kVnpQNVVpaUJ2K3BlZXQyNU9CeUJ4UnhpS0lqOFR4b0wzNEUy?=
+ =?utf-8?B?WUVMM0o1YlhPejF6L3E2b1BES3E4QkhGejdDUk9obHFqWC85TU11ell0N0FO?=
+ =?utf-8?B?YkMvZjMyZTJUb0hHQWpXaDJYcDd1TnUzTENUNzl2clQ1VnFBOFFQbjRNNlpw?=
+ =?utf-8?B?SlVWN1poL0M4a2ZucnkyNkM1dHlMaGFsa01JWFdHQUR6TS9YTmtiQm5KdGUx?=
+ =?utf-8?B?UFl1czNrR0Q0NVZuOXBFdlVOMGdBTFdFR29melhwZklGaEp2Y3BKSzBLaEdX?=
+ =?utf-8?B?cmJnRVE0N2xuaHQ1S2xMcS9JVVh6NG00ZVZtYUxHZTgwT1RoSTcrNGFiUXlG?=
+ =?utf-8?B?M0ZoNUtxeHF2UEJxRm1ZUEhtMXNQeEJJUFQ3b3pqdTB4cjg5VGROWU5CaUpM?=
+ =?utf-8?B?TjJxckhmU1l3UzlHRDd5TTZYREpqMEZIQmlDWUdYU2VXbXc5cXBQMWdDakVG?=
+ =?utf-8?B?b0l4UnRyYlh1SzdacnFzVFowU21RRm1vbCtVek9FNmxYb1RNRWRFdFc5Q3pO?=
+ =?utf-8?B?OG1UY1pCeHA0U0RPeVlaQitsUDhIeU90ZW5pc2pIUTBib3VkUjNZZVBHSjMv?=
+ =?utf-8?B?SGxuMGxiNnpyd0V3czBBRElMTVZsblh5T1BpVGx4SjVreXE0bnowMlhOeVlO?=
+ =?utf-8?B?SEtPRnNzOHJocExvK2Rxd2JFTnd2UXdKTnBLUkxtR0E4UGhyTkZlMUhJZ0xL?=
+ =?utf-8?B?YlUxOTNxc0MxVFZnNjBEK1F5N0pnQmcycE1vZkVoY0QvekhtV3JRcFZ2YW90?=
+ =?utf-8?B?b0JTRFZSVXY3MXdzRnBwTytDaklOMDFobk8yOU1vL0pFNlFySmptK3VCODdO?=
+ =?utf-8?B?VE4rTzNlQ0ZUOXkxL3oyWlYyd0ptRFo5NDFxWkpPaVltVGx0eVZubzFwempN?=
+ =?utf-8?B?d2xyR0lLMzUyVHJTS3BIQmJFMWRRMGVRTTg4ZjUvcU9hMGtsRWF5bzZTQzRP?=
+ =?utf-8?B?YjJkbGJkK1dSanpZenFrZEhqb2IrMW1OdXlRVDVxUDhnMVdPbXZybjZaRGU3?=
+ =?utf-8?B?OE5TWjZwYXlmandYR2xDVW5NUWxyZERieTZMTUJDOFdQL0xkR2hqNHR0UVAy?=
+ =?utf-8?B?c01sZjRSQWF2eWpLUXB6Z3JwWmFkTkh1QmNjR1VOdlVZdmY2VS9tNmYvWnNy?=
+ =?utf-8?B?VkI4Ums4cE5mNHIxaldiQ1BSNm1xamRUUnd4aWJnblV1eFI5QUs0TTlrK3Ax?=
+ =?utf-8?B?NjRQNEdsNHlzVmIyeVkrZHRITjVFNUQxMFRhOHZiTHZjSFpydlFNbnpPNEpx?=
+ =?utf-8?B?VFMrVjJ4UnU1QkFZRXF3STBxdzFKR1VnNElNdmlvbGV1ZktPb0FuQlo1aTZz?=
+ =?utf-8?B?bHhPcElDc1luOWp2WWVwZ1ZoL3dmdlMrT1dMVkpzTGs2RjhKM0RITzBRZzhi?=
+ =?utf-8?B?bDlIbElRSFNXV0svTThkRGVSYnIweXZnTlFGWCt1YVlzUjRpdUVaUENCSTRC?=
+ =?utf-8?B?N2p1ZEkza2xQSzltTWlyd05DSnViNGJWUHhFUUthcTRtbmNwZHRzSldiMWlz?=
+ =?utf-8?B?eVpyUk5VN0E3SVJ6VXpJMXg3YzJTMGp0UTVZdkhYcEJQUGZSYVM1SHNjdmFv?=
+ =?utf-8?B?b2ljSms2UUpJdVJhNEhXNWFlTzZlK3FiTjNGK0F1eUpGR09uOVloRnRFTWkz?=
+ =?utf-8?B?MWFxbjlkaHFJS2p5aVN1ZHJlUUNzSUtudFVSN2E4NnNGM1NKQ2xKSHorUHVr?=
+ =?utf-8?Q?iGECed+6BGY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXVTcUd4Qyt2Yko4dEh6N1dOSXFRVlloZFMzWUY0SkR2TmJPdHFLNWc1Nk5k?=
+ =?utf-8?B?SU8wM0lKT2hzU01PdmZwMUVDMFg1T2hVeExsOW9uaGQ2Mnp0eGdGSlFCKzV5?=
+ =?utf-8?B?VTJ4MFFFM2xITXVHK2lFV3Z1ZDJXNVlaRjVZWVJUQTF3bnUwdis5dFB6bE11?=
+ =?utf-8?B?M1ZWaTR2Vi9QbVovMmNXN2VQTlN3NTUzWWV6cFZFNEhnL3Nob0J0a0txSExl?=
+ =?utf-8?B?eDZLU0NVdHFjUDZpYjZMeFBuVStZNDJ0ZVkweGJwOVNGNXh4UHh0SXJuSzlv?=
+ =?utf-8?B?M3FzYUlIZEozcDI2em5KYzFQYXVLZldRRTVqblk4Y0lVaUFMK0ZDYmxaZmk1?=
+ =?utf-8?B?TnhQVS9MWkxTQ1Jvbkd2cVVWWGw2eVRaMU5NcGlpdDM3TGRKUFMrRmZwTUVV?=
+ =?utf-8?B?MFpLU0twa0dNenlqRkZjSXd4eG9qd2hDM3pQTCtaMG1HQ2hKbmpOUjBTQVB4?=
+ =?utf-8?B?K0xWNU5zM29SNlI0LzJjQzJyYURMVVlIR3RUMytnRVNaaXZ0Q2Q5dlpGcUVL?=
+ =?utf-8?B?aXlETStzMUJpRGRRMGpFZGVpbDlPRWMzcWRUQXJMRitQcm4yTXZTVDIrZ0RJ?=
+ =?utf-8?B?cG1uTlJTRmRaZGNsSGRyQ1hsYlo3cytKazBvMzAwT1p2SDhPY3laWkxKaytV?=
+ =?utf-8?B?ZFppZjZoTE1QbSs2MHdTQWpTNkxDcUxOQlBKV0hTNlo5Q3NRUEVxTGZhNHZK?=
+ =?utf-8?B?Wjk5ajBHMXUyUnRacjJrMklVODNGWnh1a2VSNWthbkRQSGt5WUZVUnM2N1Mw?=
+ =?utf-8?B?dXRuaWVOYXN1QnpTTmZaKzcvczdmK1BpOW4vK09aTHlSN0ZrakhNbDlOMGZm?=
+ =?utf-8?B?TVFURnlBN0lOUmU2b2JkdGhENDBDM1hOSHJoekk0Z3I4eWdBZ2xxVTNVNnYy?=
+ =?utf-8?B?ZnNzYXgxa0lvQUZMam81WWJWOTVVcU5CWDJ4NUd2Z3VpaXczTlZtZlk5RDhm?=
+ =?utf-8?B?eWZhbFh2RG1TTkVMejZvVVpBUWVLT1lydjFvTU5yWiszVVM0K0ROdnZJUWta?=
+ =?utf-8?B?WFRqb3lFWUp2bTR3WWVrV3dFTEtyK2FtdWxkbVFLbmpzS0xMbUlvdmNQNHFJ?=
+ =?utf-8?B?U1JjdmtySmg5YXBOUkR4am9tUU5veDMrZWZ1ckwvdG90SDI1Z0tqbXpaZVJ4?=
+ =?utf-8?B?UjRKZkU2bERyZWt0S3RrMS9WYXQ2bVUxUDc5Wkc2UVNaN2hhd211N1cxZGpB?=
+ =?utf-8?B?K0NZdDlKQXFhWnJJK2xYbCt0SHhsNHZLTCtZM3JEc0ZyYXJuSDRlWHhOQU91?=
+ =?utf-8?B?SkZsejVlTElJZzFpZzkyWk1QRHFkZGhuS2FpaCtRaGRGekk5ejRBcTRWdVQ2?=
+ =?utf-8?B?Zlh5MitOWTcvWEJ5aWp5MzBGSnAyRVJrTm9RTFgrQnZIa2xUOTJ0OFR2dHRG?=
+ =?utf-8?B?UWlpVUNaM2ErbTV0K3kzbWRhVVZJNFl0MHl5dFd5RENIT2Z2TGtuVnovMU4y?=
+ =?utf-8?B?dDRKSlNFSlJnWGZENWhvTFFtbjBScGhjd2w1djNqbG1ScHl5YWNFQzJhWGFq?=
+ =?utf-8?B?SHJjbi9JZGJKUE1IL1Q4d2ZnaVJJSGpkNnp0b1pZWk5lZXBtNEhOM0pCSDZa?=
+ =?utf-8?B?ZWpBNFo5VzRqbTVTT3ZiRjJhUmlxdkdueDU1c05ORXhHTU83VVVBd0EzVEtJ?=
+ =?utf-8?B?MXNvaTNFdy9WNEs0R0pLYmlwZ3cwY1E5dU1LYTFZeER2NHFNR2dDazE0aHp2?=
+ =?utf-8?B?ZXFUcWVGV2tqL29yNWppOTJpNGxXNFp6SmxWZHpCM2JzakRwSnNRS1dDVEpU?=
+ =?utf-8?B?S3RPWmNiZG5ueFg3ZHVqNGVZS3hpdDAyOGZGLzROWVAxclMwY1RQNFBFaUhi?=
+ =?utf-8?B?cE9HVG8yV2hVbjRVZlN1QWhWa1E0Sk82ZXgrbVpHN2lqQkdoWkpCZmpYMSt2?=
+ =?utf-8?B?RmYxSjVNM21KNGJsRVhMZDdiUTZrN0xwWlloVjJHVVVicThGd1dzMkpmdjR5?=
+ =?utf-8?B?WmhGVGI5SEo3UzFaTmdyeDl0OGZxUkhXZjYzajBPRHZLOFdjMVVxcXgwa21Y?=
+ =?utf-8?B?VTZTcjU5NHpSVGlEWElkQXMvR3J5MVpKaG05RElHZVEyeW1UVUVKRnZqSk05?=
+ =?utf-8?B?Mmd3N0orSUt1Q0dUMGMreHJ0bUU0bEhqU3NNbTRINGFpQ3IrTW5xMk8zVFg5?=
+ =?utf-8?Q?ghzLOMRzetu1mE9VeBZ91mZ2e?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 076a4659-5486-4f5a-06af-08dde7447907
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 21:39:03.2642
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /dpfIUi0bKXDaujJDJjFhmKhiJ0kfl/bCIbyyHlO5fWrOXy5SfPtySZ130L6C7irnYohsFgVmi/AgM/0h0zibg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4380
+
+On 8/28/25 6:59 AM, Danilo Krummrich wrote:
+> On 8/28/25 3:25 PM, Alexandre Courbot wrote:
+>> On Wed Aug 27, 2025 at 8:12 AM JST, John Hubbard wrote:
+>> <snip>
+>>> diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
+>>> index 4b0ad8d4edc6..fd7a789e3015 100644
+>>> --- a/rust/kernel/pci/id.rs
+>>> +++ b/rust/kernel/pci/id.rs
+>>> @@ -118,15 +118,14 @@ fn try_from(value: u32) -> Result<Self, Self::Error> {
+>>>   /// ```
+>>>   /// # use kernel::{device::Core, pci::{self, Vendor}, prelude::*};
+>>>   /// fn log_device_info(pdev: &pci::Device<Core>) -> Result<()> {
+>>> -///     // Compare raw vendor ID with known vendor constant
+>>> -///     let vendor_id = pdev.vendor_id();
+>>> -///     if vendor_id == Vendor::NVIDIA.as_raw() {
+>>> -///         dev_info!(
+>>> -///             pdev.as_ref(),
+>>> -///             "Found NVIDIA device: 0x{:x}\n",
+>>> -///             pdev.device_id()
+>>> -///         );
+>>> -///     }
+>>> +///     // Get the validated PCI vendor ID
+>>> +///     let vendor = pdev.vendor_id();
+>>> +///     dev_info!(
+>>> +///         pdev.as_ref(),
+>>> +///         "Device: Vendor={}, Device=0x{:x}\n",
+>>> +///         vendor,
+>>> +///         pdev.device_id()
+>>> +///     );
+>>
+>> Why not use this new example starting from patch 2, which introduced the
+>> previous code that this patch removes?
+> 
+> I think that's because in v2 vendor_id() still returns the raw value. I think it
+
+That is correct.
+
+> makes a little more sense if this patch simply introduces the example as an
+> example for vendor_id() itself.
+> 
+> I think struct Vendor does not necessarily need an example by itself.
+
+I'm not quite sure if you are asking for a change to this patch? The
+example already exercises .vendor_id(), so...?
 
 
-On 8/29/25 11:47 AM, Frederic Weisbecker wrote:
-> The housekeeping static key in its current use is mostly irrelevant.
-> Most of the time, a housekeeping function call had already been issued
-> before the static call got a chance to be evaluated, defeating the
-> initial call optimization purpose.
->
-> housekeeping_cpu() is the sole correct user performing the static call
-> before the actual slow-path function call. But it's seldom used in
-> fast-path.
->
-> Finally the static call prevents from synchronizing correctly against
-> dynamic updates of the housekeeping cpumasks through cpusets.
->
-> Get away with a simple flag test instead.
->
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->   include/linux/sched/isolation.h | 25 +++++----
->   kernel/sched/isolation.c        | 90 ++++++++++++++-------------------
->   2 files changed, 55 insertions(+), 60 deletions(-)
->
-> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> index d8501f4709b5..f98ba0d71c52 100644
-> --- a/include/linux/sched/isolation.h
-> +++ b/include/linux/sched/isolation.h
-> @@ -25,12 +25,22 @@ enum hk_type {
->   };
->   
->   #ifdef CONFIG_CPU_ISOLATION
-> -DECLARE_STATIC_KEY_FALSE(housekeeping_overridden);
-> +extern unsigned long housekeeping_flags;
-> +
->   extern int housekeeping_any_cpu(enum hk_type type);
->   extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
->   extern bool housekeeping_enabled(enum hk_type type);
->   extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
->   extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
-> +
-> +static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-> +{
-> +	if (housekeeping_flags & BIT(type))
-> +		return housekeeping_test_cpu(cpu, type);
-> +	else
-> +		return true;
-> +}
-> +
->   extern void __init housekeeping_init(void);
->   
->   #else
-> @@ -58,17 +68,14 @@ static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
->   	return true;
->   }
->   
-> +static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-> +{
-> +	return true;
-> +}
-> +
->   static inline void housekeeping_init(void) { }
->   #endif /* CONFIG_CPU_ISOLATION */
->   
-> -static inline bool housekeeping_cpu(int cpu, enum hk_type type)
-> -{
-> -#ifdef CONFIG_CPU_ISOLATION
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		return housekeeping_test_cpu(cpu, type);
-> -#endif
-> -	return true;
-> -}
->   
->   static inline bool cpu_is_isolated(int cpu)
->   {
-> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> index a4cf17b1fab0..2a6fc6fc46fb 100644
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -16,19 +16,13 @@ enum hk_flags {
->   	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
->   };
->   
-> -DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
-> -EXPORT_SYMBOL_GPL(housekeeping_overridden);
-> -
-> -struct housekeeping {
-> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
-> -	unsigned long flags;
-> -};
-> -
-> -static struct housekeeping housekeeping;
-> +static cpumask_var_t housekeeping_cpumasks[HK_TYPE_MAX];
-> +unsigned long housekeeping_flags;
-
-Should we add the__read_mostly attribute to housekeeping_flags to 
-prevent possible false cacheline sharing problem?
-
-Other than that, LGTM
-
-Cheers,
-Longman
-
-> +EXPORT_SYMBOL_GPL(housekeeping_flags);
->   
->   bool housekeeping_enabled(enum hk_type type)
->   {
-> -	return !!(housekeeping.flags & BIT(type));
-> +	return !!(housekeeping_flags & BIT(type));
->   }
->   EXPORT_SYMBOL_GPL(housekeeping_enabled);
->   
-> @@ -36,50 +30,46 @@ int housekeeping_any_cpu(enum hk_type type)
->   {
->   	int cpu;
->   
-> -	if (static_branch_unlikely(&housekeeping_overridden)) {
-> -		if (housekeeping.flags & BIT(type)) {
-> -			cpu = sched_numa_find_closest(housekeeping.cpumasks[type], smp_processor_id());
-> -			if (cpu < nr_cpu_ids)
-> -				return cpu;
-> +	if (housekeeping_flags & BIT(type)) {
-> +		cpu = sched_numa_find_closest(housekeeping_cpumasks[type], smp_processor_id());
-> +		if (cpu < nr_cpu_ids)
-> +			return cpu;
->   
-> -			cpu = cpumask_any_and_distribute(housekeeping.cpumasks[type], cpu_online_mask);
-> -			if (likely(cpu < nr_cpu_ids))
-> -				return cpu;
-> -			/*
-> -			 * Unless we have another problem this can only happen
-> -			 * at boot time before start_secondary() brings the 1st
-> -			 * housekeeping CPU up.
-> -			 */
-> -			WARN_ON_ONCE(system_state == SYSTEM_RUNNING ||
-> -				     type != HK_TYPE_TIMER);
-> -		}
-> +		cpu = cpumask_any_and_distribute(housekeeping_cpumasks[type], cpu_online_mask);
-> +		if (likely(cpu < nr_cpu_ids))
-> +			return cpu;
-> +		/*
-> +		 * Unless we have another problem this can only happen
-> +		 * at boot time before start_secondary() brings the 1st
-> +		 * housekeeping CPU up.
-> +		 */
-> +		WARN_ON_ONCE(system_state == SYSTEM_RUNNING ||
-> +			     type != HK_TYPE_TIMER);
->   	}
-> +
->   	return smp_processor_id();
->   }
->   EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
->   
->   const struct cpumask *housekeeping_cpumask(enum hk_type type)
->   {
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		if (housekeeping.flags & BIT(type))
-> -			return housekeeping.cpumasks[type];
-> +	if (housekeeping_flags & BIT(type))
-> +		return housekeeping_cpumasks[type];
->   	return cpu_possible_mask;
->   }
->   EXPORT_SYMBOL_GPL(housekeeping_cpumask);
->   
->   void housekeeping_affine(struct task_struct *t, enum hk_type type)
->   {
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		if (housekeeping.flags & BIT(type))
-> -			set_cpus_allowed_ptr(t, housekeeping.cpumasks[type]);
-> +	if (housekeeping_flags & BIT(type))
-> +		set_cpus_allowed_ptr(t, housekeeping_cpumasks[type]);
->   }
->   EXPORT_SYMBOL_GPL(housekeeping_affine);
->   
->   bool housekeeping_test_cpu(int cpu, enum hk_type type)
->   {
-> -	if (static_branch_unlikely(&housekeeping_overridden))
-> -		if (housekeeping.flags & BIT(type))
-> -			return cpumask_test_cpu(cpu, housekeeping.cpumasks[type]);
-> +	if (housekeeping_flags & BIT(type))
-> +		return cpumask_test_cpu(cpu, housekeeping_cpumasks[type]);
->   	return true;
->   }
->   EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
-> @@ -88,17 +78,15 @@ void __init housekeeping_init(void)
->   {
->   	enum hk_type type;
->   
-> -	if (!housekeeping.flags)
-> +	if (!housekeeping_flags)
->   		return;
->   
-> -	static_branch_enable(&housekeeping_overridden);
-> -
-> -	if (housekeeping.flags & HK_FLAG_KERNEL_NOISE)
-> +	if (housekeeping_flags & HK_FLAG_KERNEL_NOISE)
->   		sched_tick_offload_init();
->   
-> -	for_each_set_bit(type, &housekeeping.flags, HK_TYPE_MAX) {
-> +	for_each_set_bit(type, &housekeeping_flags, HK_TYPE_MAX) {
->   		/* We need at least one CPU to handle housekeeping work */
-> -		WARN_ON_ONCE(cpumask_empty(housekeeping.cpumasks[type]));
-> +		WARN_ON_ONCE(cpumask_empty(housekeeping_cpumasks[type]));
->   	}
->   }
->   
-> @@ -106,8 +94,8 @@ static void __init housekeeping_setup_type(enum hk_type type,
->   					   cpumask_var_t housekeeping_staging)
->   {
->   
-> -	alloc_bootmem_cpumask_var(&housekeeping.cpumasks[type]);
-> -	cpumask_copy(housekeeping.cpumasks[type],
-> +	alloc_bootmem_cpumask_var(&housekeeping_cpumasks[type]);
-> +	cpumask_copy(housekeeping_cpumasks[type],
->   		     housekeeping_staging);
->   }
->   
-> @@ -117,7 +105,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->   	unsigned int first_cpu;
->   	int err = 0;
->   
-> -	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE)) {
-> +	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping_flags & HK_FLAG_KERNEL_NOISE)) {
->   		if (!IS_ENABLED(CONFIG_NO_HZ_FULL)) {
->   			pr_warn("Housekeeping: nohz unsupported."
->   				" Build with CONFIG_NO_HZ_FULL\n");
-> @@ -139,7 +127,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->   	if (first_cpu >= nr_cpu_ids || first_cpu >= setup_max_cpus) {
->   		__cpumask_set_cpu(smp_processor_id(), housekeeping_staging);
->   		__cpumask_clear_cpu(smp_processor_id(), non_housekeeping_mask);
-> -		if (!housekeeping.flags) {
-> +		if (!housekeeping_flags) {
->   			pr_warn("Housekeeping: must include one present CPU, "
->   				"using boot CPU:%d\n", smp_processor_id());
->   		}
-> @@ -148,7 +136,7 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->   	if (cpumask_empty(non_housekeeping_mask))
->   		goto free_housekeeping_staging;
->   
-> -	if (!housekeeping.flags) {
-> +	if (!housekeeping_flags) {
->   		/* First setup call ("nohz_full=" or "isolcpus=") */
->   		enum hk_type type;
->   
-> @@ -157,26 +145,26 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
->   	} else {
->   		/* Second setup call ("nohz_full=" after "isolcpus=" or the reverse) */
->   		enum hk_type type;
-> -		unsigned long iter_flags = flags & housekeeping.flags;
-> +		unsigned long iter_flags = flags & housekeeping_flags;
->   
->   		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX) {
->   			if (!cpumask_equal(housekeeping_staging,
-> -					   housekeeping.cpumasks[type])) {
-> +					   housekeeping_cpumasks[type])) {
->   				pr_warn("Housekeeping: nohz_full= must match isolcpus=\n");
->   				goto free_housekeeping_staging;
->   			}
->   		}
->   
-> -		iter_flags = flags & ~housekeeping.flags;
-> +		iter_flags = flags & ~housekeeping_flags;
->   
->   		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
->   			housekeeping_setup_type(type, housekeeping_staging);
->   	}
->   
-> -	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping.flags & HK_FLAG_KERNEL_NOISE))
-> +	if ((flags & HK_FLAG_KERNEL_NOISE) && !(housekeeping_flags & HK_FLAG_KERNEL_NOISE))
->   		tick_nohz_full_setup(non_housekeeping_mask);
->   
-> -	housekeeping.flags |= flags;
-> +	housekeeping_flags |= flags;
->   	err = 1;
->   
->   free_housekeeping_staging:
+thanks,
+-- 
+John Hubbard
 
 
