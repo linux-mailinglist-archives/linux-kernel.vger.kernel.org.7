@@ -1,342 +1,244 @@
-Return-Path: <linux-kernel+bounces-791049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480C1B3B178
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D0DB3B17D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F67D1B202EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8520D179516
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F1D260592;
-	Fri, 29 Aug 2025 03:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F152236F0;
+	Fri, 29 Aug 2025 03:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HGO7nDtu"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="BnKXmUCJ"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011029.outbound.protection.outlook.com [52.103.67.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA4725DB0A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756436875; cv=none; b=VWRX31YOWMTsZwjXq8ZnhYKAAVCC1V0ubVJc6N3plaEHjJ0r0zJTT5eX5kHpl6VPPPDMajW+Gtrw9Xcy0NQ5cshZ7+5LWPfJcyrx9NgzfLtDcCKvsqwmoopRRkVUFMDXT6jQIBzODIrBPcPE+7RqkLmahl65XmU/kgILhyw/SiE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756436875; c=relaxed/simple;
-	bh=FFx1dYPXVKqYdN8RYVwUXuaau5b/R/0LjxqzhH83O44=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=r8hvMnFvi2Q3flbvTVsNWT+elC3XLLTVvKNmRn3vN+IULXe4WLyGypB929cYTUKrVvNZaFLuS9hO7mSZIffiSQbPNPMxQsNLZRrWcq9974K0n0MFG/HSsfkozcIA/zF/gcU/ccztRINsGVHI2JaG4JnodyWM+1I/sZq/Qhdvji4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HGO7nDtu; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-244570600a1so18939685ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756436873; x=1757041673; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BDIf8MPVJpA1DiHojusqqVZbsBmk5aBglPDni0Vbkyc=;
-        b=HGO7nDtu1MmwPoPPvL7gzonEuH+mWfK+nWqFPjSt/8GzmtNrrsVwszivKQdL8Y9oig
-         ZzH1VpdtR/C9+cuGBQ/C3lF8KIMkLHZglkkl33hkn+YGLokwDxiL6wPsrv377leISM7O
-         FoBXF3VDlyLZOTrUo2SAyXyai+DicVTa82WnPzdh5Vgw9OCxJktoyUSKqfOOJdb3t8YF
-         MicR2JR3pAXrgl/4dBG7FBrxqJ7vJxUt2LKLyObcv++2zyPfRaizqdAM2kqNQ0xnWQSl
-         0NBjiqmgNEcd/qQCGxyQ4xqwtRlRkZb9+dlP9aUoHD1IgxbGnklZqnrPbRNXl1MV98E3
-         rLkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756436873; x=1757041673;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDIf8MPVJpA1DiHojusqqVZbsBmk5aBglPDni0Vbkyc=;
-        b=tsn12iPjbNB0qiEmS9UvWnZCsiuf6V2MHnx0Pf3S6qqCjw3fE/G73hoJVoeC6KcdyI
-         QuuU7pl+VciDvlIL1IE5DuQgnG+eOIRXUWK0aacBzs2aRLBo8Xx6CoBFQuenxFoxWZv8
-         wof+1hdsLZzo9nByPEImb4thvp9bwuQPHmkn79F2oI5lAHLIqsWD6d6UNQV5l9KER7PV
-         76D+1n/PnDIWOIJEECj3Ihw/Y0b3dQaGBuFmkZXpIswBcpO+ONoBwz/kH+00uIfCxGF3
-         Jk/I18tQztGzLeGc+UNMJzIaV/Qz3wrt1KokA/9bRGbTEGsbMIZ4ADWinqBb2kxDXXFJ
-         Jt8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnPU4n97MeCX/OcJqRFEClyAPootF/jdwywQ0HaQnw89FeaKGrndjaw3fe31pFQqIxYZ9+9594t4yPoiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybFTDClouubvLOMk0ot9ZS/iwbZRQ31mPNXJLNCG05vR4vgWlS
-	ctiHtYXIa0ld1PA+ljZWSN6ZpxxUIrwiQ/1oYbgi82k36XmHVeBtmR+pj4r3DXH4Or/xtRZcXRj
-	N2ePG/Ei1Wg==
-X-Google-Smtp-Source: AGHT+IH8FnFgYYKVktzxwkDqQbB6t7WoEXR/RYmo4JCj3a6rKZy7DWGgk3scoWAxW4dRpT5jWFRwWTNsnZ2c
-X-Received: from plpe3.prod.google.com ([2002:a17:903:3c23:b0:246:222a:4ddf])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2285:b0:246:b5a3:134
- with SMTP id d9443c01a7336-248753a2949mr149310595ad.14.1756436873303; Thu, 28
- Aug 2025 20:07:53 -0700 (PDT)
-Date: Thu, 28 Aug 2025 20:07:26 -0700
-In-Reply-To: <20250829030727.4159703-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C750E1C5F39;
+	Fri, 29 Aug 2025 03:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756437034; cv=fail; b=GvFcj2B1BOeF9sMBjNt+1IEVzrSHb+DThGP14jRHOGNA2Mj5M910tDueOun1IghalJdF/FOAngxhHucCUFghlF84T5D05uAmAlZxOQmPGLQ7XpkP7ZvKFQYWnIT2XwlHN1joDxbFSOZyZzPBSCcvzLq/HA0nqlgt2Yp8sdGt8j4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756437034; c=relaxed/simple;
+	bh=y0XQeMOLO0fe2CCdzgcFcNqL9oR44b+T29vPEpXzvTo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eJ1rvpTuT6KnY+tPQxm6p/ouYB34KmR3raGBeDFu60okRXfRlXdsiycdtqk9b0aXK6lfaGS/OICPY6ZHbbVVdxpF17LRrCDFu2gZHmIgxO0f8WjC9WH1574lYOLAcNT+MZgUi5XERL02PfMJmxwrwatZoG+nbQyCTV5rmGhdOHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=BnKXmUCJ; arc=fail smtp.client-ip=52.103.67.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ktJ4Ngbo9qy9/qJCw8VwZPgBfoUKAGXyg44ivpjG0rGtAiS7kG9WKaaEZTJoKbRR+mVfB6TqUVFkYcdYcKoNA+XcQmRm56+tQ7LGbSznx+F5q9wmlLs1il/2pYzdfMAkFsORZXtAzAtSDvM9zUeMotS2oZKHzc1vx4RSEmcTEdfrTnylJ5sTFhHiqe5O3MneOvt7xmjvB9gqO+P5mYL1/8qQSD9YgDFCEiPvUR9dgZiQttBpOiHB5b5oTk6WpL+QzLdSRDdXz85+QcS2tU5wnI5d8P0z0RGPo2o2nO80wBGGOpTlfDRzLUmSEQ4v12jBgo8SWe38vgR6KDI2owXANg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oSwd5dQrobt714wf6Y7ITiSuYm08x+ID+MKnUASfPXw=;
+ b=ii6QZl93ZyjHhKBeEX81Ayek34N3N6P0gPsZt9cWsMXHlM4wO095wTJsIVDcPn3DeHSn/7OpqO5FDfN9gzwpv+QYbMwOQhuRWKdXE2Bo+avbtqNa9H1KX4+7/vOyRZasN6ZcnYQgyxywTWeAciMTlT+AJ29rs1FaIf7d9V/roKNyyI0SHdCdjCaM3BTDZ+7CWgftPPqg+HZG2+CHznubgznh1zfqtzC3rI4MJdcNxMCspZxnrB5IqP2PibDV5xLMoXIL2fNcBEvYJXqO9T4OKKnfMQDWLn2uI3u/vUl8/n5sgwNevMhfIX+XOp05A/BGilszm544QfTVUQgv1N4YFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oSwd5dQrobt714wf6Y7ITiSuYm08x+ID+MKnUASfPXw=;
+ b=BnKXmUCJX74DG2m3c/Pum76QF+npN/SU/j3IBfXjwEc/BA6ta2/juIrGHG+5DmTaabblgaTkD00yCo07HAQUEG6andH1DAHJP77WdzGRwMnbcV1MUATNnZB++KBvrZlIYH5xA0FISCFlMpjFY2DH30eFnqXKneRKLVqdH+OH9Jl/JIs0b4NmZdCz9YD89xmtqP9SYnhkzW1MB4VJacnA3oujj/D4wHqm2S62wKcGxK6pz9/10Avr0/kWIwWmCrdV0C7a2+nAKCBUutFe2K0mShwslh/94kSU6Iqca7JxGsU7F09zgM+V6K3YfJWScsRxPtNRvtzN359Wav5oX+E1ew==
+Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:16f::16) by PN0PR01MB9365.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:110::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.19; Fri, 29 Aug
+ 2025 03:10:21 +0000
+Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5dff:3ee7:86ee:6e4b]) by MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5dff:3ee7:86ee:6e4b%4]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
+ 03:10:21 +0000
+Message-ID:
+ <MAUPR01MB11072DB589F1E6B1E18D329A6FE3AA@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
+Date: Fri, 29 Aug 2025 11:10:15 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] clk: sophgo: sg2042-clkgen: convert from round_rate()
+ to determine_rate()
+To: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Michal Simek <michal.simek@amd.com>,
+ Bjorn Andersson <andersson@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, sophgo@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
+ <20250828-clk-round-rate-v2-v1-5-b97ec8ba6cc4@redhat.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20250828-clk-round-rate-v2-v1-5-b97ec8ba6cc4@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYCP286CA0020.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:263::12) To MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:16f::16)
+X-Microsoft-Original-Message-ID:
+ <10de9834-4584-49df-8d51-1bee1c821e62@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250829030727.4159703-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250829030727.4159703-13-irogers@google.com>
-Subject: [PATCH v5 12/12] perf jevents: Add load event json to verify and
- allow fallbacks
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MAUPR01MB11072:EE_|PN0PR01MB9365:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb8dd617-0e13-4f46-2e61-08dde6a996bc
+X-MS-Exchange-SLBlob-MailProps:
+	dx7TrgQSB6fOgpu0AmRux6KMzGkolm4jvkjiR1GM6lqFmvShxAYPC/J2Cbtn4yW1m7GAwc2nr5pbyDnPGcaHjJ9OgGenotpvdNECqtGm+AQAm5imYaWvgVgwvxBFke1h6S95Zr46+v6S1xBvePBPm3DK4vKHKk0BKqvThb335d/dX8SLOb6M6v2b3yHjGsyjX/qmQ/bz9UyS77gRW3d+ToLUleRZ3L/giy8wodXBffMhrj49NeL/6JDciNA4yM8z79IcxGJLfs+Uk50hEb5ClsEz+3caHz77gQd/Rvy7qRMvMz8aqKXJy/ETmzcA+0xjERpxJ1odmCrl17qL5bhNfbtrvrju6Tc9UFTMOO/0E51So+raK/ZzGg35vUD+eYt/2luWukQq3Se45Erp1fW8BsqSPPNQNgXUI3XYYMZZiblMNArH3c5+3gdrtzzBdTmljGolC34ewQiaS+Kgb9IXDpmo9XCvSNK10b9RJFB98wJVBx4rEKcOxBA5001c8UM+ZIofTaaQm7JmkWUQWKkzAFg7yK07MaTx/vV1ZDyPgXYoAns4iKFs++s5qYVWVyURjxgndvxbxRpCor+rh/suosAIUPKr2GeFGwHEEEoyeH16j/XzjMuMrvUpiEc4PIxbFWUfvdSK9SnzzWR6kjgnDMVCFIpqgDEF9hLFL6F5NL8o3mCRoamRQ0zyE91MJyt+rvMM1d6u4rdv/zse9O5xD30Sv3PpvbGZnJACCzO+wc6t/0BSt5WFGRrbg7Cz+flWs2RD2Bh3ckk=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799012|8060799015|41001999006|461199028|6090799003|5072599009|15080799012|23021999003|3412199025|440099028|40105399003|51005399003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U2RXUGxLMWJLZHhSNXJtQTduY0xsRnY2eGNMeXlaK1R3VDNVQjBtVDZDZE01?=
+ =?utf-8?B?ckgwY2VKenZTZkZrY215MS93YzA4bmdqK2cxZSs1eURkQVlueHN0RmdtMHJL?=
+ =?utf-8?B?SXdqNjBHdkxaNE1YR01jbW1waC9oZzhkU3grSTRhVXR4emdZV25qWWVoYTF3?=
+ =?utf-8?B?VlhrZ0pWTXV3ci9IWEduTWN0SXJqZm5XOCtnMTJRVkNSQ0Z0QWFOb2ZOOEdq?=
+ =?utf-8?B?RUVqNVdUcTVrQ2tsMGxyYjNqUzVhSHF5ZGsweFlYSEtLdmhFV2R5M00zZVhZ?=
+ =?utf-8?B?cW9JK3Nha3V0WThvSUZ0L0EzaU1hL2pRc1hUTW04WXlubkpiUFJyMHQ5UjhD?=
+ =?utf-8?B?V04xTkViTXFlWUdWU2pjWnEwSVE3a2p4T29wZDhDenFVaXk1bXlPQVBUQ1pa?=
+ =?utf-8?B?ck04REVoR1dXRXN0bkJTbkdFL1dHNnEwLzlkZXZDRXYvcmg0WU0raVRrdmlt?=
+ =?utf-8?B?eHE0bDlnQ2hQVlM5d2VWb2cxV21oZ2xKd0t1ZmQxMk50eUZHdHlWcTRyVlY0?=
+ =?utf-8?B?SUx3cUtETmRMY1JtS3FCaktoeFRFemkwZUw0eW1UL2V0Wlc0V2lnQVlUekZu?=
+ =?utf-8?B?bUFKbW04NXRRdEhFL0NDNUh3Q1l3SUpBREswZGFyaFJlUk92cTVhOHF4N0dy?=
+ =?utf-8?B?alNGZU9KU1hPa2ZiZ2dkMXdXZTN6aWMzMVErampjM1F2a1c1UkpHcVU4NDNN?=
+ =?utf-8?B?MW9Cd2RXK3RQQzZnSjc4ZmtVRGJmM1pySU15dzNvNGlNbU00bXFaY0ZsRWM3?=
+ =?utf-8?B?UVdKeFIrY3NVUlo2UENaZmdVM2NqZlF4TE1mWWhaaHRnWnk2YTlZcEdMZkxG?=
+ =?utf-8?B?WjE4WlV0THg3alVMTjJzZm9TaE1zbVdmRWF2U3FUbmkzM3lFajVtVW1PU3h1?=
+ =?utf-8?B?ekRxSmV1RHhSRlpoUVdKaEFQRlBjTE1MSzlnYklsQmNOZkZ1OGNzUHNXSGlR?=
+ =?utf-8?B?TEZ3V1gvanNzUTA5MVVsN0EyL3Y1dG5USmdrbE8rWVY2eGdTaTgraHdoN0Ri?=
+ =?utf-8?B?TER4U0c3VXQ0dFJOSU9HNkZRU0dOV01LVWtMb2tERzk0bFNZa0pIcDVSMWor?=
+ =?utf-8?B?NUpqZnJJQ0xLQzlpZGVaODhEbWVrQ0pvWXFQcDlIbFAzdUs3WGpTK3RxYkJ4?=
+ =?utf-8?B?VWdmUnpqanBpQTJWTmE5QldjbVAyZFdFMEYvS3piVFptaXc2aFhxbWZIMGxW?=
+ =?utf-8?B?RlJXMVFtVkdHTlptNE1CVll6Q1RPOEc4NlRwNkRmbkhpNkdIb1ZxNllqSGsz?=
+ =?utf-8?B?a0JjdHdMTWZuVUZpZmZuK2E3ODNsZ3NIejQ4Z1N6Nk5GMit3KzhLeXp0SytN?=
+ =?utf-8?B?d2daWXVTN2kvUzgrZkxQWlcrMUt1MHBVWFpPSUJKcTNkeGxDTUlCNmxST1hS?=
+ =?utf-8?B?Y2ZEV3lXcWNUcnJVMWNaWW5LZ1dnaVZEOTMrZDI1Rk9OK0pxSUs0SXhSTG9m?=
+ =?utf-8?B?UGp0VzltT2tQWHF6QkJjcTR4c05zMTNRQlNEUE10SkQ0bHlVQitLK0h2ay9y?=
+ =?utf-8?B?OExrSEpwSFdPdjliV1FzZjFYU0RuY0t4Z2pBZEcxZkw0aFhWa2hES3JVdlla?=
+ =?utf-8?B?OTdXQXRqR0J0bFF6ZHFvdlFXL3JYY2dPTE51REtjaHhOclc3V0luUnhjMHJq?=
+ =?utf-8?Q?6Mw10WvZZka3xBD96Iu0jmxMGQ1X220hXfbWhngRJ3CQ=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UHVraHpUME44dHFBY0UxUHlvRURLdS9mRmpBYTluL0JLSGJMOEx5TXliRmJ5?=
+ =?utf-8?B?a29tdHAzSkZLSGlUdTN4MmVxeXFmRU9qeDBxUkdhQWtoa1loR0FzSmttenR0?=
+ =?utf-8?B?VXZKa2wwQ1luKzlicEp5c2kwSEN0OStwMTNQN0xreWZQSnZWZUQrdmJaWFJp?=
+ =?utf-8?B?anBlTEk0MU1jQzlOcTlRMnhSb21HakxNWnNLZ2tNdm4yNWtyNkxjeHRJS3dP?=
+ =?utf-8?B?aGRRbkVvd0VuL2s3OEJuSC9TK2tJN3hLOG1wVDZ3U3k5L0VXblRRQjBBaGUz?=
+ =?utf-8?B?Q01uRlhhREFteVFNTStVQmJ6Qm15MEFjUEsyY1NKT3hGaDdtem5WYU1malJE?=
+ =?utf-8?B?Z1YxVmtWS3VHdFpXRCtzUE1FQjhrcHo1OEUvb3dwbURkVkk3T0JtTDJnQmQr?=
+ =?utf-8?B?RlpUNUlQUG0zM2Nvb2FIOFNxaWZBUlN0T1huOEoxUXN5RVRVTWN0T25pRUo1?=
+ =?utf-8?B?dW9CY2JpaU5RY1dmK3JFVStpaGloUW9oZzNRMjhheFFoc2xTaFVGS3ZrZDNE?=
+ =?utf-8?B?eitkZnlrNTlleFJDbzAwZ2lOdnFxYTdXZkptcGlYSUpIc0dwcnl1enNvQXd3?=
+ =?utf-8?B?bkU5ZGE0MkN3NW1aNTlCZWRMNmpPQUlrYVB5SzFmQkF6dG0zWGk5bi9icHF1?=
+ =?utf-8?B?YkowMTl5Q2NJNklHM29ac1BOOHlZVEJ1blZMaW1kaHhSTk52NkkrZDlzc2RT?=
+ =?utf-8?B?TEtoQUdzenVvVEViRW15VWxTTjZHL0ZUb2dTanhFb1BtcUQ1c29xbUJWRG5k?=
+ =?utf-8?B?SXp2bnlYMlp1N3hXaFJpeFd6TDdRZDE4N3plMnI3UlJGc2tWRUtOTU9ZSUZS?=
+ =?utf-8?B?dTkvQ1hkSVZ6bGZuUFZTYVhqOUpsNnBCVEpSZUs2R29ZeGozT2Y1ZWVrNnA4?=
+ =?utf-8?B?UncwK3JDdy9ybEh5NDI4bXVkS1pTRldvVVhZSlpLWi9UcStKUFZ2bUx0L010?=
+ =?utf-8?B?ZU5XdGNuSzNOWnVWRityZG1CalNMc1FyZmp4UW81ODVuRzRoVmx3dlVLUXhH?=
+ =?utf-8?B?TFJZNlVLS3ZZSTUvVkJzVXZGbFlLTndlaWJMMFpaUnI1Q3NGbUdETXM3aDlR?=
+ =?utf-8?B?QUhzZ0ZoemFtbTlJK2pDdHhFamJTZmkxK2UwWVpSVjVlVlJkUklzTUhCcmhx?=
+ =?utf-8?B?NXdPWThVZWU5a1ZhUktrQlI3VnlFYzNibkZNUHhqOWZ3TFB0Q1hRcjBtSU9C?=
+ =?utf-8?B?Z0Q4ZUEwaUZDZjh5SjFEMFVaV2l3V21tdXcydml0ZEk1N1hTUlZ6YmpwNnpX?=
+ =?utf-8?B?SmRnSmovVGhMQ3dsMU5GbWxCaC93TGk1OXBGazJieEU4aDk5aVp6VE9LcVF6?=
+ =?utf-8?B?WXUrT2F0REtjb3VjZUErQkl0QWgxZGxGaGNIOHZ0Tkx3T0lzeUdqemFRenph?=
+ =?utf-8?B?aGpyRElHa0ZqRHBCWmRHTStMQWFjZFRIWnpyeUt5VVRRdS9XMkNoUU53b0Z5?=
+ =?utf-8?B?d25Pc3dKQ2Rja3l2b0krRW9PWjBFWWlsMnVaTmJHbFdxZUpEUEhUenpIM25w?=
+ =?utf-8?B?cmNKd0c2eGhlaTh3QVMzS0RvK2s5aUtBR05oUXh2NWgzaGdxbkhweHFQMnAv?=
+ =?utf-8?B?MkhJUC9wS2MyZDVRRFRITERsbGFUMGtLa2ptQXh0TEJwaWJZOXUzNU9RN0t3?=
+ =?utf-8?B?OVI2RExJaE5wL3FIOXFveDlCSmxmejA3TWJmN3JwZitJcVVhTStickI0cmJq?=
+ =?utf-8?B?a0Z3RFlTSWw1K3NpLzgvenIyWjNiUjZSTlhwS09kNEJFaTNlYW9WejBrMlVL?=
+ =?utf-8?Q?jSoZU+aqUxs5KYbP3Y=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb8dd617-0e13-4f46-2e61-08dde6a996bc
+X-MS-Exchange-CrossTenant-AuthSource: MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 03:10:21.5156
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB9365
 
-Add a LoadEvents function that loads all event json files in a
-directory. In the Event constructor ensure all events are defined in
-the event json except for legacy events like "cycles". If the initial
-event isn't found then legacy_event1 is used, and if that isn't found
-legacy_event2 is used. This allows a single Event to have multiple
-event names as models will often rename the same event over time. If
-the event doesn't exist an exception is raised.
 
-So that references to metrics can be added, add the MetricRef
-class. This doesn't validate as an event name and so provides an
-escape hatch for metrics to refer to each other.
+On 8/29/2025 8:38 AM, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
+> Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/Build            | 12 ++--
- tools/perf/pmu-events/amd_metrics.py   |  6 +-
- tools/perf/pmu-events/arm64_metrics.py |  6 +-
- tools/perf/pmu-events/intel_metrics.py |  6 +-
- tools/perf/pmu-events/metric.py        | 82 +++++++++++++++++++++++++-
- 5 files changed, 100 insertions(+), 12 deletions(-)
+Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
 
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index 162d5f74cbe8..366cd720659a 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -52,11 +52,11 @@ ZEN_METRICGROUPS = $(foreach x,$(ZENS),$(OUTPUT)$(x)/extra-metricgroups.json)
- 
- $(ZEN_METRICS): pmu-events/amd_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) pmu-events/arch > $@
- 
- $(ZEN_METRICGROUPS): pmu-events/amd_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) pmu-events/arch > $@
- 
- # Generate ARM Json
- ARMS = $(shell ls -d pmu-events/arch/arm64/arm/*)
-@@ -65,11 +65,11 @@ ARM_METRICGROUPS = $(foreach x,$(ARMS),$(OUTPUT)$(x)/extra-metricgroups.json)
- 
- $(ARM_METRICS): pmu-events/arm64_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call vendor_name,$@) $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call vendor_name,$@) $(call model_name,$@) pmu-events/arch > $@
- 
- $(ARM_METRICGROUPS): pmu-events/arm64_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call vendor_name,$@) $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call vendor_name,$@) $(call model_name,$@) pmu-events/arch > $@
- 
- # Generate Intel Json
- INTELS = $(shell ls -d pmu-events/arch/x86/*|grep -v amdzen|grep -v mapfile.csv)
-@@ -78,11 +78,11 @@ INTEL_METRICGROUPS = $(foreach x,$(INTELS),$(OUTPUT)$(x)/extra-metricgroups.json
- 
- $(INTEL_METRICS): pmu-events/intel_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< $(call model_name,$@) pmu-events/arch > $@
- 
- $(INTEL_METRICGROUPS): pmu-events/intel_metrics.py $(GEN_METRIC_DEPS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) arch > $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $< -metricgroups $(call model_name,$@) pmu-events/arch > $@
- 
- GEN_JSON = $(patsubst %,$(OUTPUT)%,$(JSON)) \
-             $(LEGACY_CACHE_JSON) \
-diff --git a/tools/perf/pmu-events/amd_metrics.py b/tools/perf/pmu-events/amd_metrics.py
-index 7ab2ee4fdb17..4f728e7aae4a 100755
---- a/tools/perf/pmu-events/amd_metrics.py
-+++ b/tools/perf/pmu-events/amd_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -27,6 +28,9 @@ def main() -> None:
-   )
-   _args = parser.parse_args()
- 
-+  directory = f"{_args.events_path}/x86/{_args.model}/"
-+  LoadEvents(directory)
-+
-   all_metrics = MetricGroup("",[])
- 
-   if _args.metricgroups:
-diff --git a/tools/perf/pmu-events/arm64_metrics.py b/tools/perf/pmu-events/arm64_metrics.py
-index a9f0e6bc751b..c9aa2d827a82 100755
---- a/tools/perf/pmu-events/arm64_metrics.py
-+++ b/tools/perf/pmu-events/arm64_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -30,6 +31,9 @@ def main() -> None:
- 
-   all_metrics = MetricGroup("",[])
- 
-+  directory = f"{_args.events_path}/arm64/{_args.vendor}/{_args.model}/"
-+  LoadEvents(directory)
-+
-   if _args.metricgroups:
-     print(JsonEncodeMetricGroupDescriptions(all_metrics))
-   else:
-diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-index f004c27640d2..04a19d05c6c1 100755
---- a/tools/perf/pmu-events/intel_metrics.py
-+++ b/tools/perf/pmu-events/intel_metrics.py
-@@ -1,6 +1,7 @@
- #!/usr/bin/env python3
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
--from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, MetricGroup)
-+from metric import (JsonEncodeMetric, JsonEncodeMetricGroupDescriptions, LoadEvents,
-+                    MetricGroup)
- import argparse
- import json
- import os
-@@ -27,6 +28,9 @@ def main() -> None:
-   )
-   _args = parser.parse_args()
- 
-+  directory = f"{_args.events_path}/x86/{_args.model}/"
-+  LoadEvents(directory)
-+
-   all_metrics = MetricGroup("",[])
- 
-   if _args.metricgroups:
-diff --git a/tools/perf/pmu-events/metric.py b/tools/perf/pmu-events/metric.py
-index dd8fd06940e6..36e9cb3acf6a 100644
---- a/tools/perf/pmu-events/metric.py
-+++ b/tools/perf/pmu-events/metric.py
-@@ -3,10 +3,55 @@
- import ast
- import decimal
- import json
-+import os
- import re
- from enum import Enum
- from typing import Dict, List, Optional, Set, Tuple, Union
- 
-+all_events = set()
-+
-+def LoadEvents(directory: str) -> None:
-+  """Populate a global set of all known events for the purpose of validating Event names"""
-+  global all_events
-+  all_events = {
-+      "context\-switches",
-+      "cycles",
-+      "duration_time",
-+      "instructions",
-+      "l2_itlb_misses",
-+  }
-+  for file in os.listdir(os.fsencode(directory)):
-+    filename = os.fsdecode(file)
-+    if filename.endswith(".json"):
-+      try:
-+        for x in json.load(open(f"{directory}/{filename}")):
-+          if "EventName" in x:
-+            all_events.add(x["EventName"])
-+          elif "ArchStdEvent" in x:
-+            all_events.add(x["ArchStdEvent"])
-+      except json.decoder.JSONDecodeError:
-+        # The generated directory may be the same as the input, which
-+        # causes partial json files. Ignore errors.
-+        pass
-+
-+
-+def CheckEvent(name: str) -> bool:
-+  """Check the event name exists in the set of all loaded events"""
-+  global all_events
-+  if len(all_events) == 0:
-+    # No events loaded so assume any event is good.
-+    return True
-+
-+  if ':' in name:
-+    # Remove trailing modifier.
-+    name = name[:name.find(':')]
-+  elif '/' in name:
-+    # Name could begin with a PMU or an event, for now assume it is good.
-+    return True
-+
-+  return name in all_events
-+
-+
- class MetricConstraint(Enum):
-   GROUPED_EVENTS = 0
-   NO_GROUP_EVENTS = 1
-@@ -317,9 +362,18 @@ def _FixEscapes(s: str) -> str:
- class Event(Expression):
-   """An event in an expression."""
- 
--  def __init__(self, name: str, legacy_name: str = ''):
--    self.name = _FixEscapes(name)
--    self.legacy_name = _FixEscapes(legacy_name)
-+  def __init__(self, *args: str):
-+    error = ""
-+    for name in args:
-+      if CheckEvent(name):
-+        self.name = _FixEscapes(name)
-+        return
-+      if error:
-+        error += " or " + name
-+      else:
-+        error = name
-+    global all_events
-+    raise Exception(f"No event {error} in:\n{all_events}")
- 
-   def ToPerfJson(self):
-     result = re.sub('/', '@', self.name)
-@@ -338,6 +392,28 @@ class Event(Expression):
-     return self
- 
- 
-+class MetricRef(Expression):
-+  """A metric reference in an expression."""
-+
-+  def __init__(self, name: str):
-+    self.name = _FixEscapes(name)
-+
-+  def ToPerfJson(self):
-+    return self.name
-+
-+  def ToPython(self):
-+    return f'MetricRef(r"{self.name}")'
-+
-+  def Simplify(self) -> Expression:
-+    return self
-+
-+  def Equals(self, other: Expression) -> bool:
-+    return isinstance(other, MetricRef) and self.name == other.name
-+
-+  def Substitute(self, name: str, expression: Expression) -> Expression:
-+    return self
-+
-+
- class Constant(Expression):
-   """A constant within the expression tree."""
- 
--- 
-2.51.0.318.gd7df087d1a-goog
+Thanks,
 
+Chen
+
+> ---
+>   drivers/clk/sophgo/clk-sg2042-clkgen.c | 17 +++++++++--------
+>   1 file changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/sophgo/clk-sg2042-clkgen.c b/drivers/clk/sophgo/clk-sg2042-clkgen.c
+> index 9e61288d34f3757315702c355f2669577b29676f..683661b71787c9e5428b168502f6fbb30ea9f7da 100644
+> --- a/drivers/clk/sophgo/clk-sg2042-clkgen.c
+> +++ b/drivers/clk/sophgo/clk-sg2042-clkgen.c
+> @@ -176,9 +176,8 @@ static unsigned long sg2042_clk_divider_recalc_rate(struct clk_hw *hw,
+>   	return ret_rate;
+>   }
+>   
+> -static long sg2042_clk_divider_round_rate(struct clk_hw *hw,
+> -					  unsigned long rate,
+> -					  unsigned long *prate)
+> +static int sg2042_clk_divider_determine_rate(struct clk_hw *hw,
+> +					     struct clk_rate_request *req)
+>   {
+>   	struct sg2042_divider_clock *divider = to_sg2042_clk_divider(hw);
+>   	unsigned long ret_rate;
+> @@ -192,15 +191,17 @@ static long sg2042_clk_divider_round_rate(struct clk_hw *hw,
+>   			bestdiv = readl(divider->reg) >> divider->shift;
+>   			bestdiv &= clk_div_mask(divider->width);
+>   		}
+> -		ret_rate = DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+> +		ret_rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, bestdiv);
+>   	} else {
+> -		ret_rate = divider_round_rate(hw, rate, prate, NULL,
+> +		ret_rate = divider_round_rate(hw, req->rate, &req->best_parent_rate, NULL,
+>   					      divider->width, divider->div_flags);
+>   	}
+>   
+>   	pr_debug("--> %s: divider_round_rate: val = %ld\n",
+>   		 clk_hw_get_name(hw), ret_rate);
+> -	return ret_rate;
+> +	req->rate = ret_rate;
+> +
+> +	return 0;
+>   }
+>   
+>   static int sg2042_clk_divider_set_rate(struct clk_hw *hw,
+> @@ -258,13 +259,13 @@ static int sg2042_clk_divider_set_rate(struct clk_hw *hw,
+>   
+>   static const struct clk_ops sg2042_clk_divider_ops = {
+>   	.recalc_rate = sg2042_clk_divider_recalc_rate,
+> -	.round_rate = sg2042_clk_divider_round_rate,
+> +	.determine_rate = sg2042_clk_divider_determine_rate,
+>   	.set_rate = sg2042_clk_divider_set_rate,
+>   };
+>   
+>   static const struct clk_ops sg2042_clk_divider_ro_ops = {
+>   	.recalc_rate = sg2042_clk_divider_recalc_rate,
+> -	.round_rate = sg2042_clk_divider_round_rate,
+> +	.determine_rate = sg2042_clk_divider_determine_rate,
+>   };
+>   
+>   /*
+>
 
