@@ -1,235 +1,158 @@
-Return-Path: <linux-kernel+bounces-790954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB611B3B044
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:09:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7702B3B048
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73517582957
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57E867A344C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936E91E3DCD;
-	Fri, 29 Aug 2025 01:09:44 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2E41DFE26;
+	Fri, 29 Aug 2025 01:09:51 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272BC288A2;
-	Fri, 29 Aug 2025 01:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D70A186284;
+	Fri, 29 Aug 2025 01:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756429784; cv=none; b=nlKME0fI8BMF69DdbmRg5OPNpl+dLKyQjah/2s6Mlhrgzfn1VU8zmacbwrYUtYc79qvWzesV1ENGzEb7aOgiz5xEFtrYR2TPrXuSf9swUTvq4N5O4QOUx3BwiF/RAQvzoHMp+BR0GAil7sOQtlhmVnsiqUFc6WQoFPPJ9f9rLcM=
+	t=1756429791; cv=none; b=Zv2UDe4PYTWh/iWADHhl9j5wmwdMUlO0U1Z/fAYkedr8jrKs/taEeKfelqBvY2qSX5K6dXd3Q/tesKt97WluO+ydoReWblGEa2fA6KHnpl7MmRPBX/Jn4r7/r5imPPxaPwaEScqvMj236aikfMDhKhK0wbUvzTsGCRPgYphXarI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756429784; c=relaxed/simple;
-	bh=m00FXfC5AvlmbqZAyUgp1KXeas5N5BfdbJdDwYWe0jw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TmTVn00/p3YVUhUG3LYV+ecr14xyLN7KwlPfc0XeaWhVW/HfDsByQ5akOR7b2BqTE3t82WN28Use98gvb3Domsh5Hr5VKYTe7fWIonz1thHxhEj/cSIitEyJsLjqScXbK6fHAbXp9AeJ7cslbh9EmY/vv+lEpb61nqIeQGlHMd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d15de1d6847411f0b29709d653e92f7d-20250829
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:8dbc4808-f76e-4028-b1fe-ddd256e8a420,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:9ffa5254c19a668fe3315a601f1f36b0,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d15de1d6847411f0b29709d653e92f7d-20250829
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 299742101; Fri, 29 Aug 2025 09:09:31 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id F0024E008FA3;
-	Fri, 29 Aug 2025 09:09:30 +0800 (CST)
-X-ns-mid: postfix-68B0FDCA-85694742
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 37FF9E008FA2;
-	Fri, 29 Aug 2025 09:09:19 +0800 (CST)
-Message-ID: <6174bcc8-30f5-479b-bac6-f42eb1232b4d@kylinos.cn>
-Date: Fri, 29 Aug 2025 09:09:18 +0800
+	s=arc-20240116; t=1756429791; c=relaxed/simple;
+	bh=OSNJxeb6f8xZ8wTa88MgcauiKVXHafhab4YSBYMMqag=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pM2P23Fgmj9W9WDMZ7IMmhCrtpwzkdNXmJ6nRkuN4Ju4/mBsGDC8T+7ubsPlLcjfzcpXez5VsjRvAlpUHIIOfsBvhQfHvw0mJr2yMbUI4YxwUO8+20fwPPrhsIz2XTk41T50jrDxwBcbBrpYGXbckqpTm+VfAiYA1jwOlECTaP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCgCw0mq0zYQv8K;
+	Fri, 29 Aug 2025 09:09:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9CEE71A1781;
+	Fri, 29 Aug 2025 09:09:46 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY3Z_bBoXC+UAg--.37805S3;
+	Fri, 29 Aug 2025 09:09:46 +0800 (CST)
+Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
+ blk_mq_unregister_hctx
+To: Jens Axboe <axboe@kernel.dk>, Li Nan <linan666@huaweicloud.com>,
+ Ming Lei <ming.lei@redhat.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, jianchao.w.wang@oracle.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250826084854.1030545-1-linan666@huaweicloud.com>
+ <aK5YH4Jbt3ZNngwR@fedora>
+ <3853d5bf-a561-ec2d-e063-5fbe5cf025ca@huaweicloud.com>
+ <aK5g-38izFqjPk9v@fedora>
+ <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
+ <aK69gpTnVv3TZtjg@fedora>
+ <fc587a1a-97fb-584c-c17c-13bb5e3d7a92@huaweicloud.com>
+ <a74495d4-27ea-4996-abd2-9239b941f221@kernel.dk>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <5adb469d-9e4b-e2d9-a77c-a1a4d11a49d5@huaweicloud.com>
+Date: Fri, 29 Aug 2025 09:09:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/18] ACPI: processor: thermal: Use
- __free(put_cpufreq_policy) for policy reference
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
- <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827023202.10310-4-zhangzihuan@kylinos.cn>
- <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a74495d4-27ea-4996-abd2-9239b941f221@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY3Z_bBoXC+UAg--.37805S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFW5KFWfKr1rWrW3KF15Jwb_yoW5Wr4xpF
+	WUGa1kKr4Dtr47Zw12vw4xGFyayr1kGr4Yqr95JryUC3s09r95tr4xtr4UuF97Gr1kCr4I
+	qa1UJFW3ur18ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-=E5=9C=A8 2025/8/28 17:40, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> On Wed, Aug 27, 2025 at 4:33=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylin=
-os.cn> wrote:
->> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
->> annotation for policy references. This reduces the risk of reference
->> counting mistakes and aligns the code with the latest kernel style.
+在 2025/08/29 1:23, Jens Axboe 写道:
+> On 8/28/25 3:28 AM, Li Nan wrote:
 >>
->> No functional change intended.
 >>
->> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
->> ---
->>   drivers/acpi/processor_thermal.c | 12 +++---------
->>   1 file changed, 3 insertions(+), 9 deletions(-)
+>> ? 2025/8/27 16:10, Ming Lei ??:
+>>> On Wed, Aug 27, 2025 at 11:22:06AM +0800, Li Nan wrote:
+>>>>
+>>>>
+>>>> ? 2025/8/27 9:35, Ming Lei ??:
+>>>>> On Wed, Aug 27, 2025 at 09:04:45AM +0800, Yu Kuai wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> ? 2025/08/27 8:58, Ming Lei ??:
+>>>>>>> On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
+>>>>>>>> From: Li Nan <linan122@huawei.com>
+>>>>>>>>
+>>>>>>>> In __blk_mq_update_nr_hw_queues() the return value of
+>>>>>>>> blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
+>>>>>>>
+>>>>>>> Looks we should check its return value and handle the failure in both
+>>>>>>> the call site and blk_mq_sysfs_register_hctxs().
+>>>>>>
+>>>>>>    From __blk_mq_update_nr_hw_queues(), the old hctxs is already
+>>>>>> unregistered, and this function is void, we failed to register new hctxs
+>>>>>> because of memory allocation failure. I really don't know how to handle
+>>>>>> the failure here, do you have any suggestions?
+>>>>>
+>>>>> It is out of memory, I think it is fine to do whatever to leave queue state
+>>>>> intact instead of making it `partial workable`, such as:
+>>>>>
+>>>>> - try update nr_hw_queues to 1
+>>>>>
+>>>>> - if it still fails, delete disk & mark queue as dead if disk is attached
+>>>>>
+>>>>
+>>>> If we ignore these non-critical sysfs creation failures, the disk remains
+>>>> usable with no loss of functionality. Deleting the disk seems to escalate
+>>>> the error?
+>>>
+>>> It is more like a workaround by ignoring the sysfs register failure. And if
+>>> the issue need to be fixed in this way, you have to document it. >
+>>> In case of OOM, it usually means that the system isn't usable any more.
+>>> But it is NOIO allocation and the typical use case is for error recovery in
+>>> nvme pci, so there may not be enough pages for noio allocation only. That is
+>>> the reason for ignoring sysfs register in blk_mq_update_nr_hw_queues()?
+>>>
+>>> But NVMe has been pretty fragile in this area by using non-owner queue
+>>> freeze, and call blk_mq_update_nr_hw_queues() on frozen queue, so it is
+>>> really necessary to take it into account?
 >>
->> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor=
-_thermal.c
->> index 1219adb11ab9..f99ed0812934 100644
->> --- a/drivers/acpi/processor_thermal.c
->> +++ b/drivers/acpi/processor_thermal.c
->> @@ -64,17 +64,13 @@ static int phys_package_first_cpu(int cpu)
+>> I agree with your points about NOIO and NVMe.
 >>
->>   static int cpu_has_cpufreq(unsigned int cpu)
->>   {
->> -       struct cpufreq_policy *policy;
->> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
->>
->>          if (!acpi_processor_cpufreq_init)
->>                  return 0;
->>
->>          policy =3D cpufreq_cpu_get(cpu);
->> -       if (policy) {
->> -               cpufreq_cpu_put(policy);
->> -               return 1;
->> -       }
->> -       return 0;
->> +       return !!policy;
-> If you want to make this change, please also change the return type of
-> the function to bool.
-Thanks for pointing this out.
->>   }
->>
->>   static int cpufreq_get_max_state(unsigned int cpu)
->> @@ -95,7 +91,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
->>
->>   static int cpufreq_set_cur_state(unsigned int cpu, int state)
->>   {
->> -       struct cpufreq_policy *policy;
->> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
-> This isn't correct AFAICS at least formally because the scope of the
-> variable is the whole function, so it won't get out of scope at the
-> point where you want cpufreq_cpu_put() to be called.
->
-> The policy variable should be defined in the block following the "for"
-> loop (and actually all of the local variables except for "i" can be
-> defined there).
+>> I hit this issue in null_blk during fuzz testing with memory-fault
+>> injection. Changing the number of hardware queues under OOM is
+>> extremely rare in real-world usage. So I think adding a workaround and
+>> documenting it is sufficient. What do you think?
+> 
+> Working around it is fine, as it isn't a situation we really need to
+> worry about. But let's please not do it by poking at kobject internals.
+> 
 
+There is already used in someplaces like sysfs_slab_unlink().
 
-Sorry for the mistake =E2=80=94 I did this correctly in other places, but=
- forgot=20
-here.
+Do we prefre add a new hctx->state like BLK_MQ_S_REGISTERED?
 
-> Or better still, please move that block to a separate function
-> containing all of the requisite local variable definitions and call
-> that function for each online CPU.
+Thanks,
+Kuai
 
-
- =C2=A0In fact, I have realized that we cannot always use __free for clea=
-nup=20
-directly.
-
-The issue is that the release only happens at the end of the variable=E2=80=
-=99s=20
-lifetime, while in some cases we want to drop the reference immediately=20
-after use.
-
-To address this, I=E2=80=99m considering introducing a helper macro in=20
-include/linux/cpufreq.h that would make this more explicit and allow=20
-safe cleanup at the right point.
-
-
-Before moving forward, I=E2=80=99d like to hear your opinion on this appr=
-oach:
-
-#define WITH_CPUFREQ_POLICY(cpu) \
-for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D \
-     cpufreq_cpu_get(cpu);;)
-
-
-Then we can use it for all code :
-
-	WITH_CPUFREQ_POLICY(cpu) {
-			if(!policy)
-				return XXX; // error handing
-		=09
-			//code use policy here
-		} // equal origin 'cpufreq_cpu_put' here
-         ;;
-        //left code
-
->>          struct acpi_processor *pr;
->>          unsigned long max_freq;
->>          int i, ret;
->> @@ -127,8 +123,6 @@ static int cpufreq_set_cur_state(unsigned int cpu,=
- int state)
->>                  max_freq =3D (policy->cpuinfo.max_freq *
->>                              (100 - reduction_step(i) * cpufreq_therma=
-l_reduction_pctg)) / 100;
->>
->> -               cpufreq_cpu_put(policy);
->> -
->>                  ret =3D freq_qos_update_request(&pr->thermal_req, max=
-_freq);
->>                  if (ret < 0) {
->>                          pr_warn("Failed to update thermal freq constr=
-aint: CPU%d (%d)\n",
->> --
 
