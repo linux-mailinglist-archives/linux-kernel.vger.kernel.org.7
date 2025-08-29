@@ -1,130 +1,373 @@
-Return-Path: <linux-kernel+bounces-792090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66296B3C00E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:58:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1289B3C013
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2883A5492
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99703AEA3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A21B321445;
-	Fri, 29 Aug 2025 15:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jz96YVGF"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFA9322C72;
-	Fri, 29 Aug 2025 15:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05C6326D49;
+	Fri, 29 Aug 2025 15:55:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A9D258A;
+	Fri, 29 Aug 2025 15:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482826; cv=none; b=ormjvak0vrgz/8o1TzpC+3hJp7Uyy7KZOsZnnxY71CvD7PgkpDc0YwJvwOACD2897XWJxrrTEs/0AUMfJcWciq6zMdHdoOdsBFo1YNpSb5DRwJh6F/dS7OcccaRG+pIS6Ymc4MgxHL1q25JtiB8mMiv6ebBiatRX0S+VmmVqwmA=
+	t=1756482959; cv=none; b=hP0RqNXBSoW3X7x8jWnzq5XTVxE6RD9RS3AZtxV2lgP6IwXIfqwfAft4E4Du9sVyKlZx8xtTDCCVdnfH4sPJGFD3PfqRYpAfPiig/n/z8WaOKFjtX5ovXYzWJQWcZsn+crJLKcDF0M+Xvk+InryCqYIrMuMhvkSLVm8CjWYovJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482826; c=relaxed/simple;
-	bh=L+BUnyhPFgXQc3V7hCxEwlEVhbHqw8k+eGLkf2A0g3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AKmAHpk85/YXKgZ5Mfkh7G4X+OkW5T7UfJqFxzz85r1RH6QIiybyT+7zJtl+F/D0RkrKciQ1+FtwGQVWrQ7O2/rcukR7K9Q3O2SYYaQVxVFXGAjViWDrfZV/q3Bhk4cLnHFEvd0RBxHyS1PpM/iinoqhQ6ntirADMRxQ4Dk2Dpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jz96YVGF; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so318288766b.3;
-        Fri, 29 Aug 2025 08:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756482823; x=1757087623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZHLotxYLpLB+HIJgp+C7C4cykVUndwDRsak3JNVQh1s=;
-        b=Jz96YVGFuqNuzq/cM9CAY/9l5KlF4TZlTXcYy/ZiPAF2jcpKw6R2b/rdPG8YUCb0w6
-         R8ZjVQoKYQhYPgOqe4J6K+i4UTQARYeibZ3+lhZn6av+V0w4KfpbHGlBUWsG51WcrHYl
-         N39y9M7Yzk34MgGYOmzdt8z7OlzX5X1uCsuAJCwPGtsCeuNpkpgQVyXS+6Fd3B8VKHWN
-         KQL0iWh2KqYUHl6na9YwbgN6vFv9gpwqUmC+SygNuNAxetQKvPNImLnxYpQtJlw4cfGY
-         3EaMrIQpiMzRIwPbyn+gsNB2LC6OdC4SkBv18b/Xlqizh+qPuSPrCs4PnAE9dSStWTJT
-         tlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756482823; x=1757087623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZHLotxYLpLB+HIJgp+C7C4cykVUndwDRsak3JNVQh1s=;
-        b=BtfziYSG9XB6rVGCZlpJYSc4kAgEKmUItwt10OBiBeoD4gvrrzR2jM4akMbLmmLFAN
-         6AurYYCOkc1WmBswuMwwKMKbMtktgoy+Ogg/jzcueLk+9mj0B6JYKi5kvETW4Gz8XyuC
-         WAB7w+b/Qo2HSEsZDii2/s4uOQGS4D+infsAg4vj0Rhgj3lcgaylkicqR32rE8O5fFfQ
-         i8+PbkgJmcfXhpa8NgJbqKcV46iLocQTlzqWMigRWjhIXcuK4xs0pNjgKPQlF1t8IzRM
-         QaZ96Z1nVejYfTXzfW8ID9dgBBuahM1mwb3/W0jopU42vxK1yMDa1kpp5rIhIZa8hwra
-         wv6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVXV3rXZCFZ9nQg8s/w5n+JScQ1nMH/EDLMMsLjoXnE1nvJtV9GcghyMeCVBKHhGs4mepvEvWLA0gE@vger.kernel.org, AJvYcCUjgSoH9jnvzl4BD27+PL7Csrf05bl+nyxEFeqPFuKa7shI9FYzIr22veADe5U2JldJDvuPvaNTDQ27HRDw@vger.kernel.org, AJvYcCXsgRfvDvSP+kSlXgsoAd8jgZi/g1Sglli44fLJ2aVVMJ0Jz7WiuFHh6ZKJ30X4D5NQhL95DK2XWFmH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztn77ovJgNrgkbXLUCkiQTkY6bOeJUuWMiJvuEx0PWOg5lXBdV
-	xxXncOWHePJNhOvqJoVyT0nrjzJoGz6BzNq257mylkVX+QeNtQfdBmefps3ps4OE96EqLNaCcjM
-	K8j0wwAgIemeTxBuHk7Z2qhgOrfV9U7pVKutzDuo=
-X-Gm-Gg: ASbGncsjNnldy9+lpHEYgbPxtxvcC5/jRSlwPF39Mr0bdkhItq9TS8J2Fefk1/BUFcA
-	ODLjzhp5gVij2rRD/fZiSKPVy0QRLlhKjJNP4r0/K0Wt32MO3qRcsqL51o2Nq/nC/c5yLbyc4V7
-	fGwl1CsHd9ujP15WhREY836ZqbMnHepD2mhUK0toxioCRBpsX2n6fHgvroRIngQAyG2ZidGXzRg
-	h18h6EMVnsX3cndkA==
-X-Google-Smtp-Source: AGHT+IH5QTLsYG8TGUnZZ2bd5tAwCv10yDcdICWw9dZ/g2XMa2bLjUryKSA9bygz9qTUl4JzuvpEaUDKCtP+UPuQWMY=
-X-Received: by 2002:a17:907:c1f:b0:afe:e0f2:759 with SMTP id
- a640c23a62f3a-afee0f208f8mr703458166b.38.1756482823131; Fri, 29 Aug 2025
- 08:53:43 -0700 (PDT)
+	s=arc-20240116; t=1756482959; c=relaxed/simple;
+	bh=9HdvO8m+LdPKS+qYQ9LnSsUvY1i2+CATWEctljAiKHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=blJg5rdom9+8WrxWdQJdh8w14dt419dx6KtvB9sibhvcthc6CDTZ67zgYW4HtZ2TIiHIGvh/Bx5Tsfrh+wSCqks2uI5nBN5eGrr+kZ4bDjFSmhv22VfuJVFfRiu7zqbrZJ9e8vr0erUhQz4Y8RuNfC8U7PpziZ58jzlbNi2ul4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3387119F0;
+	Fri, 29 Aug 2025 08:55:48 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62F663F694;
+	Fri, 29 Aug 2025 08:55:51 -0700 (PDT)
+Message-ID: <f71d944e-7f9d-489e-a278-2d09900f5d53@arm.com>
+Date: Fri, 29 Aug 2025 16:55:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828-iio-adc-ad7124-proper-clock-support-v3-0-0b317b4605e5@baylibre.com>
- <20250828-iio-adc-ad7124-proper-clock-support-v3-3-0b317b4605e5@baylibre.com>
-In-Reply-To: <20250828-iio-adc-ad7124-proper-clock-support-v3-3-0b317b4605e5@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 29 Aug 2025 18:53:06 +0300
-X-Gm-Features: Ac12FXyCiycxmXsmtTSntH0kziV5Tpp-WcN-mxLsyB6yWNH2RuTa1ep4f0HhUwo
-Message-ID: <CAHp75VdtQ8vKULomgqPxwX=WZWUde7PC129BEznYqefd-U4DEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] iio: adc: ad7124: add external clock support
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 27/33] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-28-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250822153048.2287-28-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 12:55=E2=80=AFAM David Lechner <dlechner@baylibre.c=
-om> wrote:
->
-> Add support for an external clock source to the AD7124 ADC driver.
->
-> Previously, the driver only supported using the internal clock and had
-> bad devicetree bindings that used a fake clock to essentially select
-> the power mode. This is preserved for backwards compatibility.
->
-> If the clock is not named "mclk", then we know that the devicetree is
-> using the correct bindings and we can configure the chip to use an
-> external clock source rather than internal.
->
-> Also drop a redundant comment when configuring the register fields
-> instead of adding more.
+Hi James,
 
-...
+On 8/22/25 16:30, James Morse wrote:
+> Reading a monitor involves configuring what you want to monitor, and
+> reading the value. Components made up of multiple MSC may need values
+> from each MSC. MSCs may take time to configure, returning 'not ready'.
+> The maximum 'not ready' time should have been provided by firmware.
+> 
+> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns
+> not ready, then wait the full timeout value before trying again.
+> 
+> CC: Shanker Donthineni <sdonthineni@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  drivers/resctrl/mpam_devices.c  | 222 ++++++++++++++++++++++++++++++++
+>  drivers/resctrl/mpam_internal.h |  18 +++
+>  2 files changed, 240 insertions(+)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index e7e00c632512..9ce771aaf671 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -973,6 +973,228 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>  	return 0;
+>  }
+>  
+> +struct mon_read {
+> +	struct mpam_msc_ris		*ris;
+> +	struct mon_cfg			*ctx;
+> +	enum mpam_device_features	type;
+> +	u64				*val;
+> +	int				err;
+> +};
+> +
+> +static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+> +				   u32 *flt_val)
+> +{
+> +	struct mon_cfg *ctx = m->ctx;
+> +
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		*ctl_val = MSMON_CFG_CSU_CTL_TYPE_CSU;
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		*ctl_val = MSMON_CFG_MBWU_CTL_TYPE_MBWU;
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * For CSU counters its implementation-defined what happens when not
+> +	 * filtering by partid.
+> +	 */
+> +	*ctl_val |= MSMON_CFG_x_CTL_MATCH_PARTID;
+> +
+> +	*flt_val = FIELD_PREP(MSMON_CFG_MBWU_FLT_PARTID, ctx->partid);
+> +	if (m->ctx->match_pmg) {
+> +		*ctl_val |= MSMON_CFG_x_CTL_MATCH_PMG;
+> +		*flt_val |= FIELD_PREP(MSMON_CFG_MBWU_FLT_PMG, ctx->pmg);
+> +	}
+As we are using MSMON_CFG_MBWU_FLT_{PMG,PARTID} for both CSU and MBWU
+how about changing to MSMON_CFG_x_FLT_{PMG,PARTID}?
+> +
+> +	if (mpam_has_feature(mpam_feat_msmon_mbwu_rwbw, &m->ris->props))
+> +		*flt_val |= FIELD_PREP(MSMON_CFG_MBWU_FLT_RWBW, ctx->opts);
+This needs to be conditional on the type of the monitor being
+configured. There is an XCL bit here for CSU monitors.
+> +}
+> +
+> +static void read_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+> +				    u32 *flt_val)
+> +{
+> +	struct mpam_msc *msc = m->ris->vmsc->msc;
+> +
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		*ctl_val = mpam_read_monsel_reg(msc, CFG_CSU_CTL);
+> +		*flt_val = mpam_read_monsel_reg(msc, CFG_CSU_FLT);
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		*ctl_val = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
+> +		*flt_val = mpam_read_monsel_reg(msc, CFG_MBWU_FLT);
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +/* Remove values set by the hardware to prevent apparant mismatches. */
+> +static void clean_msmon_ctl_val(u32 *cur_ctl)
+> +{
+> +	*cur_ctl &= ~MSMON_CFG_x_CTL_OFLOW_STATUS;
+> +}
+> +
+> +static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
+> +				     u32 flt_val)
+> +{
+> +	struct mpam_msc *msc = m->ris->vmsc->msc;
+> +
+> +	/*
+> +	 * Write the ctl_val with the enable bit cleared, reset the counter,
+> +	 * then enable counter.
+> +	 */
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		mpam_write_monsel_reg(msc, CFG_CSU_FLT, flt_val);
+> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val);
+> +		mpam_write_monsel_reg(msc, CSU, 0);
+> +		mpam_write_monsel_reg(msc, CFG_CSU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_FLT, flt_val);
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val);
+> +		mpam_write_monsel_reg(msc, MBWU, 0);
+> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +}
+> +
+> +/* Call with MSC lock held */
+> +static void __ris_msmon_read(void *arg)
+> +{
+> +	u64 now;
+> +	bool nrdy = false;
+> +	struct mon_read *m = arg;
+> +	struct mon_cfg *ctx = m->ctx;
+> +	struct mpam_msc_ris *ris = m->ris;
+> +	struct mpam_props *rprops = &ris->props;
+> +	struct mpam_msc *msc = m->ris->vmsc->msc;
+> +	u32 mon_sel, ctl_val, flt_val, cur_ctl, cur_flt;
+> +
+> +	if (!mpam_mon_sel_inner_lock(msc)) {
+> +		m->err = -EIO;
+> +		return;
+> +	}
+> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, ctx->mon) |
+> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, ris->ris_idx);
+> +	mpam_write_monsel_reg(msc, CFG_MON_SEL, mon_sel);
+> +
+> +	/*
+> +	 * Read the existing configuration to avoid re-writing the same values.
+> +	 * This saves waiting for 'nrdy' on subsequent reads.
+> +	 */
+> +	read_msmon_ctl_flt_vals(m, &cur_ctl, &cur_flt);
+> +	clean_msmon_ctl_val(&cur_ctl);
+> +	gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+> +	if (cur_flt != flt_val || cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN))
+> +		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
+> +
+> +	switch (m->type) {
+> +	case mpam_feat_msmon_csu:
+> +		now = mpam_read_monsel_reg(msc, CSU);
+> +		if (mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, rprops))
+> +			nrdy = now & MSMON___NRDY;
+> +		break;
+> +	case mpam_feat_msmon_mbwu:
+> +		now = mpam_read_monsel_reg(msc, MBWU);
+> +		if (mpam_has_feature(mpam_feat_msmon_mbwu_hw_nrdy, rprops))
+> +			nrdy = now & MSMON___NRDY;
+> +		break;
+> +	default:
+> +		m->err = -EINVAL;
+> +		break;
+> +	}
+> +	mpam_mon_sel_inner_unlock(msc);
+> +
+> +	if (nrdy) {
+> +		m->err = -EBUSY;
+> +		return;
+> +	}
+> +
+> +	now = FIELD_GET(MSMON___VALUE, now);
+> +	*m->val += now;
+> +}
+> +
+> +static int _msmon_read(struct mpam_component *comp, struct mon_read *arg)
+> +{
+> +	int err, idx;
+> +	struct mpam_msc *msc;
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
+> +		msc = vmsc->msc;
+> +
+> +		mpam_mon_sel_outer_lock(msc);
+> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
+> +			arg->ris = ris;
+> +
+> +			err = smp_call_function_any(&msc->accessibility,
+> +						    __ris_msmon_read, arg,
+> +						    true);
+> +			if (!err && arg->err)
+> +				err = arg->err;
+> +			if (err)
+> +				break;
+> +		}
+> +		mpam_mon_sel_outer_unlock(msc);
+> +		if (err)
+> +			break;
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+> +	return err;
+> +}
+> +
+> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
+> +		    enum mpam_device_features type, u64 *val)
+> +{
+> +	int err;
+> +	struct mon_read arg;
+> +	u64 wait_jiffies = 0;
+> +	struct mpam_props *cprops = &comp->class->props;
+> +
+> +	might_sleep();
+> +
+> +	if (!mpam_is_enabled())
+> +		return -EIO;
+> +
+> +	if (!mpam_has_feature(type, cprops))
+> +		return -EOPNOTSUPP;
+> +
+> +	memset(&arg, 0, sizeof(arg));
+> +	arg.ctx = ctx;
+> +	arg.type = type;
+> +	arg.val = val;
+> +	*val = 0;
+> +
+> +	err = _msmon_read(comp, &arg);
+> +	if (err == -EBUSY && comp->class->nrdy_usec)
+> +		wait_jiffies = usecs_to_jiffies(comp->class->nrdy_usec);
+> +
+> +	while (wait_jiffies)
+> +		wait_jiffies = schedule_timeout_uninterruptible(wait_jiffies);
+> +
+> +	if (err == -EBUSY) {
+> +		memset(&arg, 0, sizeof(arg));
+> +		arg.ctx = ctx;
+> +		arg.type = type;
+> +		arg.val = val;
+> +		*val = 0;
+> +
+> +		err = _msmon_read(comp, &arg);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
+>  {
+>  	u32 num_words, msb;
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 4981de120869..76e406a2b0d1 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -309,6 +309,21 @@ struct mpam_msc_ris {
+>  	struct mpam_garbage	garbage;
+>  };
+>  
+> +/* The values for MSMON_CFG_MBWU_FLT.RWBW */
+> +enum mon_filter_options {
+> +	COUNT_BOTH	= 0,
+> +	COUNT_WRITE	= 1,
+> +	COUNT_READ	= 2,
+> +};
+> +
+> +struct mon_cfg {
+> +	u16                     mon;
+> +	u8                      pmg;
+> +	bool                    match_pmg;
+> +	u32                     partid;
+> +	enum mon_filter_options opts;
+> +};
+> +
+>  static inline int mpam_alloc_csu_mon(struct mpam_class *class)
+>  {
+>  	struct mpam_props *cprops = &class->props;
+> @@ -361,6 +376,9 @@ void mpam_disable(struct work_struct *work);
+>  int mpam_apply_config(struct mpam_component *comp, u16 partid,
+>  		      struct mpam_config *cfg);
+>  
+> +int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
+> +		    enum mpam_device_features, u64 *val);
+> +
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>  				   cpumask_t *affinity);
+>  
 
-> +                       if (clk_hz > MEGA) {
+Thanks,
 
-I read your answer, but maybe I missed something?  Can we use (1 *
-HZ_PER_MHZ) here?
+Ben
 
-> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
-T_DIV4;
-> +                               st->clk_hz =3D clk_hz / 4;
-> +                       } else {
-> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
-T;
-> +                               st->clk_hz =3D clk_hz;
-> +                       }
-
-
---=20
-With Best Regards,
-Andy Shevchenko
 
