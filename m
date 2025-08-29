@@ -1,187 +1,128 @@
-Return-Path: <linux-kernel+bounces-791508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C642B3B7A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FABBB3B7B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BE21C80376
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F240566310
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A0B3054E1;
-	Fri, 29 Aug 2025 09:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2A32EBBB7;
+	Fri, 29 Aug 2025 09:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhvqwzBl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcIhqyoz"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A533985;
-	Fri, 29 Aug 2025 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6B1F55F8;
+	Fri, 29 Aug 2025 09:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460883; cv=none; b=WQDEdeVjS0bLsirFq+iekU0/twka6S5/Wba6kgkb2KaA8FwjfoPMTsGCQAWmiIjLxPPDQkWjLFD4BvQTLwvqoU870eiXAR5zGX1AZKvVYtqgs9dfKREkYorEsk5BOdJx76ajqyUMr3wd65R7/VMNrN6vEOv8tF96DoK6nrCtXwk=
+	t=1756460987; cv=none; b=eCojfoJ2a7BU7UhSUTEljfxMievVbEKUYo9Rh3MDBbjchqIgcGn8ooKwNwuTMVemWhdN0boBXudUu7gKzY4ePe2PuwKbWELzLjcRk6s2dzCgGfo5CC3t72T5Uf0AhdUTpnIwk6ETeg64GVovkzV1CbZIZQ1I4+aPWWEcZa0IAow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460883; c=relaxed/simple;
-	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbzL6Y4ywNOOtP8WdHoYauYdb5CIWGtW6X3GbG6SOi7id1waEXrjrKhmvOkN9hPNNDvXpFDzbC93LSbJQW6KVsuYGk0E5gqjB2EaT6xpfH7WSF6It8xCjmwDae8tT9MjEz91uUsfOeFOEjELAvC5/kchr65eiRGT+q4RJOgnKDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhvqwzBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC19C4CEF6;
-	Fri, 29 Aug 2025 09:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756460882;
-	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhvqwzBlD0vhRISffYFW/jHR6T+9q4xzM0ncFhAeZSgivmCzIWl8eS0asllwkDcp8
-	 nXg7SEzPFXijk0YQ47hMH+8YVQcK0t8VpJFp3/c4vKjxb5hc2dXs2PPEVUdmg35XBi
-	 Dg1PoySLqIlm9yJNb+M5nf/5EYj4RK6aS0hCQNUm8f6z9Ht4usjMbRkAEfylu0AG8d
-	 Ftf4oN5S8QxZyNdsoxUcVB1xF9LLciOznTYbIvRQFoasDVLqrQtHRmMgiXBSmVhVo2
-	 uqNr8/YC1FN2SIrWCqeLd3HVqeYo6/nst0ufX1Bec7iuJQ1OSbg0WNMoC5f+WtgJ/P
-	 3QGeE08GKsu+g==
-Date: Fri, 29 Aug 2025 11:47:58 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <20250829-diskette-landbrot-aa01bc844435@brauner>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
+	s=arc-20240116; t=1756460987; c=relaxed/simple;
+	bh=lhmgsrMwvf4liprYG7Ei9+IHq5tb6vM1vmnJcwja0zk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f0V/UdRTlwtv/otKUjmUcA2JKhYHjTEvTXVWK2K0ug5Hyrdq+vv8TKmnPegfLQ28d6wYLSymNHE7g/lUWpW7mFnj8HsOMqIH/lEXgjW1dHpfh1Gg3u2Iq/ocE0KZCx+KfXqquPDjbubC6GjGjK8yUxKsHMZ9YdFh0n6UH0n5ze0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcIhqyoz; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7a16441so272136766b.2;
+        Fri, 29 Aug 2025 02:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756460984; x=1757065784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VPJPzyaAcsYZFWXE+rcGpPO401ZzV1EMLAoIATRnKEA=;
+        b=TcIhqyozKhAVVrtexEqMvMaGpeR3I42SsHEoU4Dc0yCmnhWoCmqBNCbtr9GWv1LrmC
+         IqVLZf1kAjF5a4xYwifk7XkQpvj3u7pxUDYkOrJw0JbV4j5nl5XO16bff3wQqpvL6HZ8
+         G/6ki996SVWG3Yeb4psOBtI7YaZR4zmpPr8T2+phDpPolpZqTg9b9GpZH65wC0RO/3lm
+         +24VITfCVD2Z036Gjzc3zG5/IHqeFgAPhvCJGlWccSpJhj0w59RwTTnwaHMMFJcx1Ul4
+         032qZ6QXwmoxV/EiXH6IXUHMD1ah4Z3QhO5jF//YkMhdAcisAYtiN5C1dkw2rBzvS2zk
+         taOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756460984; x=1757065784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPJPzyaAcsYZFWXE+rcGpPO401ZzV1EMLAoIATRnKEA=;
+        b=hplEzW4dH74kdJA4YfCZD6YJVvSO0NqoIfK5EEWd/0tNLHxpAaNpYeLnqtKO1g32Ty
+         +mIjnNekDBSeLc82so/KEP6JCNRL/aQkBWUXiWXHWkNRgbrzMMtMYLaOjux3YEn6qpeW
+         +Vq/JBFAzZUIogyAv50gsziudOR6nOrzevbwEhyPDA3pNFfognlPQ75CU2I4qlT9RoUY
+         PymyxBPqV//rZzALk6UrmeWTARL3+uKFV8bxRvIGpDzHdpqUYPLc0KkI/cgr+T5r6ysT
+         86MqqUttQDvkif32Wi2b6AmZ2JQX4CSODTUbFnVs2gdbdBUSxFo+VS3ib+WDOi7cdzz0
+         14qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzT3feplecT7wpey5f+bB/1//iFNqAeFFlocznsVo1aJ1G7gzoyi5tSqnVlfZZBfuxcqojEq3O3GmUnP4=@vger.kernel.org, AJvYcCXhfJbtqwt0+VqthlT1f6r7B5ABciwvoQS0uJCyqf0S3RDJI/8kB16Bmum78QVgsWa8Lm2ntYRPYpAHpyOs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn+dcsdHnDSKt2leanm5U58d8pG5vLUQS8tDXbrv499PIRKVNn
+	xPPBdEYqE8mdkxrp4V7K+SZRDHYAeLex3C23unOVzk06Q8VvnlJGDA86
+X-Gm-Gg: ASbGncuDO6cG4E6jZ2z1z36pXMM98p9m9AATJIN91lwCyVbi346oWkb/Kj1tsiY9Adg
+	1nC3U8jrSubr/233xAfADjB8FfIOcTwuOWBm7pbFYXPzA6DV9CklcrSPvu16qH54SZEWJanNosI
+	pFeK9rVOsN5Yt3BgJ18twqvM9WI/rn04/GF2npUTMtj6vpqJYbnabWJG1RsGJE29tv0r+vYXyzg
+	oHVsoWhOuAUd9mlk/1OWNnB8Jf9hf7Jt7rqNx0fCaBluzRUYRs1WLcYOJW4qkusQDDvcRfdiyMs
+	hfjutNp/QNRefmM6ESEv6YMl1Gv7xcslz6EMDZ2tyijPBg7qgDY3Irc/E5zTF9AIkFadlI+14FC
+	3mHjMrrBshaJL16h8blvqxFo6sUiyeAiHrE4dVVF2C+2pfMWtpZkYJYfBolE9eX89OXLJdgFn6R
+	OmaehstdRlb4H7THU0z00DFfiruonDt2R/sbDsqbKHNJaCEUdDJAYBHvzwCg14D4J/3fQ=
+X-Google-Smtp-Source: AGHT+IEDMhih4Y4IAmtD5j+HuRhLKlot2jYM8x0+gNx9CP/3JwypnSwKt2NXE/pRy82v+m7s4s5Zsw==
+X-Received: by 2002:a17:907:97cb:b0:afd:d9e3:953f with SMTP id a640c23a62f3a-afe296b14edmr2617784666b.63.1756460983696;
+        Fri, 29 Aug 2025 02:49:43 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1b0:afe0:17ac:1440:166f:150c? ([2a02:908:1b0:afe0:17ac:1440:166f:150c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff07de1612sm91296666b.105.2025.08.29.02.49.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 02:49:43 -0700 (PDT)
+Message-ID: <27562003-b129-4dea-818c-2e81176f842b@gmail.com>
+Date: Fri, 29 Aug 2025 11:49:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_of: replace kzalloc with devm_kzalloc
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: jirislaby@kernel.org, andriy.shevchenko@linux.intel.com,
+ elder@riscstar.com, benjamin.larsson@genexis.eu,
+ u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250827231105.126378-1-osama.abdelkader@gmail.com>
+ <2025082817-laborious-provoke-2ac0@gregkh>
+Content-Language: en-US
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+In-Reply-To: <2025082817-laborious-provoke-2ac0@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 10:21:35AM +0300, Alexander Monakov wrote:
-> 
-> On Wed, 27 Aug 2025, Alexander Monakov wrote:
-> 
-> > Dear fs hackers,
-> > 
-> > I suspect there's an unfortunate race window in __fput where file locks are
-> > dropped (locks_remove_file) prior to decreasing writer refcount
-> > (put_file_access). If I'm not mistaken, this window is observable and it
-> > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> > in more detail below.
-> 
-> The race in __fput is a problem irrespective of how the testcase triggers it,
-> right? It's just showing a real-world scenario. But the issue can be
-> demonstrated without a multithreaded fork: imagine one process placing an
-> exclusive lock on a file and writing to it, another process waiting on that
-> lock and immediately execve'ing when the lock is released.
-> 
-> Can put_file_access be moved prior to locks_remove_file in __fput?
 
-Even if we fix this there's no guarantee that the kernel will give that
-letting the close() of a writably opened file race against a concurrent
-exec of the same file will not result in EBUSY in some arcane way
-currently or in the future.
+On 8/28/25 7:51 AM, Greg KH wrote:
+> On Thu, Aug 28, 2025 at 01:11:05AM +0200, Osama Abdelkader wrote:
+>> Use devm_kzalloc for automatic memory cleanup.
+> Why?
+>
+> I do not see a good reason here as to how this makes anything better
+> overall?  How was it tested?
+>
+> thanks,
+>
+> greg k-h
 
-The fundamental problem is the idiotic exe_file_deny_write_access()
-mechanism for execve. This is the crux of the whole go issue. I've tried
-to removethis nonsense (twice?). Everytime because of some odd userspace
-regression we had to revert (And now we're apparently at the stage where
-in another patchset people think that this stuff needs to become a uapi
-O_* flag which will absolutely not happen.).
+Hi Greg,
 
-My point is: currently you need synchronization for this to work cleanly
-in some form.
+Thanks for the feedback, the change to devm_kzalloc ensures the allocated
+memory is tied to the device's lifetime. This removed the need for explicit
+kfree() calls in the remove path and avoids potential leaks in probe error 
+paths. It also aligns the driver with others in the 8250 subsystem which 
+already use devm-managed resources.
 
-But what I would do is the following. So far we've always failed to
-remove the deny on write mechanism because doing it unconditionally
-broke very weird use-cases with very strange justificatons.
+For testing, I built the kernel and booted it on QEMU riscv with of_serial
+enabled. The driver probed successfully and the serial console worked as
+expected, also tested unbinding/rebinding the driver via sysfs to confirm
+no leaks or errors occur.
 
-I think we should turn this on its head and give execveat() a flag
-AT_EXECVE_NODENYWRITE that allows applications to ignore the write
-restrictions.
+Thanks,
+Osama
 
-Applications like go can just start using this flag when exec'ing.
-Applications that need the annoying deny-write mechanism can just
-continue exec'ing as before without AT_EXECVE_NODENYWRITE.
-
-__Completely untested and uncompiled__ draft below:
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 2a1e5e4042a1..59e8fcd3fc19 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -766,7 +766,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-        int err;
-        struct file *file __free(fput) = NULL;
-        struct open_flags open_exec_flags = {
--               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-+               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC | __F_EXEC_NODENYWRITE,
-                .acc_mode = MAY_EXEC,
-                .intent = LOOKUP_OPEN,
-                .lookup_flags = LOOKUP_FOLLOW,
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 5598e4d57422..b0c01cba1560 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1158,10 +1158,10 @@ static int __init fcntl_init(void)
-         * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
-         * is defined as O_NONBLOCK on some platforms and not on others.
-         */
--       BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=
-+       BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-                HWEIGHT32(
-                        (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
--                       __FMODE_EXEC));
-+                       __FMODE_EXEC | __F_EXEC_NODENYWRITE));
-
-        fasync_cache = kmem_cache_create("fasync_cache",
-                                         sizeof(struct fasync_struct), 0,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..123f74cbe7a4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3215,12 +3215,16 @@ static inline int exe_file_deny_write_access(struct file *exe_file)
- {
-        if (unlikely(FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
-                return 0;
-+       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
-+               return 0;
-        return deny_write_access(exe_file);
- }
- static inline void exe_file_allow_write_access(struct file *exe_file)
- {
-        if (unlikely(!exe_file || FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
-                return;
-+       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
-+               return;
-        allow_write_access(exe_file);
- }
-
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 613475285643..f3c8a457bc7d 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -61,6 +61,9 @@
- #ifndef O_CLOEXEC
- #define O_CLOEXEC      02000000        /* set close_on_exec */
- #endif
-+#ifdef __KERNEL__
-+#define __F_EXEC_NODENYWRITE 020000000000 /* bit 31 */
-+#endif
-
- /*
-  * Before Linux 2.6.33 only O_DSYNC semantics were implemented, but using
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index f291ab4f94eb..123fb158dc5b 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -174,6 +174,7 @@
- #define AT_HANDLE_CONNECTABLE  0x002   /* Request a connectable file handle */
-
- /* Flags for execveat2(2). */
-+#define AT_EXECVE_NODENYWRITE  0x001   /* Allow writable file descriptors to the executable file. */
- #define AT_EXECVE_CHECK                0x10000 /* Only perform a check if execution
-                                           would be allowed. */
 
