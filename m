@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-792435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAF1B3C3DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C56B3C3E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78800A603E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800B97A2147
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5B634572D;
-	Fri, 29 Aug 2025 20:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A3034573F;
+	Fri, 29 Aug 2025 20:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="E6nrgv6T"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gNqd7I3V"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A0A230BDF;
-	Fri, 29 Aug 2025 20:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB5D26AA98;
+	Fri, 29 Aug 2025 20:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756499988; cv=none; b=MvRghaLbwm6F8bdVT7sSe6TPMRLuSC0CR3HzFvFF1RLGYIDteBgIh6gIR7AHuqE2vaKNkWdMDZQmdKp46o74YhFY8vaECGZIeAd47NYgY6Hm4KrCvszz2vqbw1AG6NfUqpSkzrXoz5rUim3e/+n5/8ejtCNIm/gFPb42gnd2ubU=
+	t=1756500050; cv=none; b=SpqRuKYkqQRY89W8EmEnu1dynu5t1FYYuA7K7YX8DppmjETG2Mk83hSiU1pQCHmTtIAWJp2S5alFVYTelZmeTe/cFAwQ0UuiMfraSbleGSr4YBObGZx964vxw8rbKVO8ozl5QD/OArkt/IYOK2lhxHL1byQMXrL03Fz4cW1dkS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756499988; c=relaxed/simple;
-	bh=owOHG9Dtik4l2LIvHIKjqkBxu8PNRXBqKXdys1DJXN8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:Subject:To:
-	 References:In-Reply-To; b=Yz/9LoSY6e+iRzxqgClV5UGEj85lfsAt6+cW/OSrvK++OTXMp9Wx+TA2WfEePb5ZcxKkZ/FaIOK02pHNIHDhu1SUZ5+qUuASBsbREyA4AJidaBAZHbMc2KY6xT7DqCpbroN2u9IbcZUsv6XxMC1/1hUaFYDDL8NgDfLdgT8UG7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=E6nrgv6T; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1756499938; x=1757799938;
-	bh=B9Iadrj2XMnTaLp/weUdPBYM3YQOWVmBQ2WC25/x1Xw=; h=From;
-	b=E6nrgv6TX6vRgxC3Fh2GrT6I/FkU1wW3vGscL8OZmmfFuSnDFjkHC10bc2sgYCgDR
-	 g7+4yGswrbYFq1sjV6SqMU8KMk9FWcsQi2MCJjsf8HPpDgIH+bIbBKrb9Mw9odvO/5
-	 FZkj/2D2Mk5A2UuID/Mk6L6WYXnOEbCAEUyFzLJuQg6zjHG6Gb6zfw5Hiey6p7gKum
-	 9lOQIWPpTM6Nqo9ZuHATEuIvgTvJUT3UcjLv2up4Ou2pquHCVztjn8pKMC2i08T030
-	 IoOgQ0l6DvU9Fa0XIdfiWYrbwdbAykgHHCOLfwSLGi38ps7WvvIWnviVAXQH7LdQ0y
-	 iFFrzCAf9m2gg==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57TKcv1i021646
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Fri, 29 Aug 2025 22:38:58 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	s=arc-20240116; t=1756500050; c=relaxed/simple;
+	bh=I8CwlXSBTwgwxu3TxfNEG1tZAhbaXk/EtR4fZjfV3QE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EJGaXiGyEVFQvmvkk53mSOJ89Ht5g2Vxjwt4n+Pp9AzzAqMJzZKmagwaRmTju/60RyAFpjC5G6vsmVU+Ht762hWmtawUur0J2+yUPKRMy6etvaVi+G39Q1BwQGIIjDQ97CY7B65EbkwH7rWjql25tJvbvBKvBkssfBf6T1FrzkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gNqd7I3V; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756500046;
+	bh=I8CwlXSBTwgwxu3TxfNEG1tZAhbaXk/EtR4fZjfV3QE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gNqd7I3V2kK8F+jN/7krj/ToX/1tp49RtLkemehAJGrUsAiUB7U/oncyuzqO9Xc/U
+	 gWl8XhtYQgaLY8mMWD/713WJs8tP0k9XY6as4FarG2BfMtBuQ/JH4VmU4M/ZqmnOkM
+	 mLQ008O+XGWSvfvwO/Sym778TAYz0r/ZnDE1cHjBPYGz7nzvXUjAREyzJWmwXR38Uz
+	 rBWSmmWVOYmPsKqfx7RY99oAOusPV7O6WSDy1+Sf7OG3oxWR70rQBQeVJvCbXqHXS+
+	 g8AJNvulcA6zkxSFgnU+/2L4z+XkHdHrWhEK7meJmmzy/kD4bD0FPw+ErBdu4J9wUJ
+	 wOT7I3tpqbyJg==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AFCA817E011A;
+	Fri, 29 Aug 2025 22:40:45 +0200 (CEST)
+Message-ID: <f1ed610c7f92505182ab6210f9781cc8c24cf672.camel@collabora.com>
+Subject: Re: [PATCH v2 0/4] Minor V4L2 Headers and Codec Doc Cleanups
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Fri, 29 Aug 2025 16:40:43 -0400
+In-Reply-To: <20250824180735.765587-1-paulk@sys-base.io>
+References: <20250824180735.765587-1-paulk@sys-base.io>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-2dqrxcSrrxjdJtGEUXhK"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+
+
+--=-2dqrxcSrrxjdJtGEUXhK
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 29 Aug 2025 22:38:57 +0200
-Message-Id: <DCF79FFP6NJS.J73DD94U1ZNK@matfyz.cz>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: "Jonathan Cameron" <jic23@kernel.org>,
-        "David Lechner"
- <dlechner@baylibre.com>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        "Andy Shevchenko" <andy@kernel.org>, "Lee Jones" <lee@kernel.org>,
-        "David
- Wronek" <david@mainlining.org>, <phone-devel@vger.kernel.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-To: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
-        "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <20250829-88pm886-gpadc-v1-1-f60262266fea@dujemihanovic.xyz>
- <20250829172730.000079b5@huawei.com> <2453108.NG923GbCHz@radijator>
-In-Reply-To: <2453108.NG923GbCHz@radijator>
 
-Duje Mihanovi=C4=87, 2025-08-29T19:40:41+02:00:
-> On Friday, 29 August 2025 18:27:30 Central European Summer Time Jonathan =
-Cameron wrote:
->> On Fri, 29 Aug 2025 00:17:41 +0200
->>=20
->> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz> wrote:
->> > +	iio->name =3D "88pm886-gpadc";
->> > +	iio->dev.parent =3D dev;
->> > +	iio->dev.of_node =3D parent->of_node;
->>=20
->> Done in core code.
->> https://elixir.bootlin.com/linux/v6.16.3/source/drivers/iio/industrialio=
--core.
->> c#L2044 __iio_device_register() so unless you use it before that call
->> shouldn't need this.
->>=20
->> I'm not sure what it is used for though.
->
-> It was to explicitly bind the ADC (specifically, its IO channels) to
-> the PMIC devicetree node. However, since the core does this already,
-> will drop.
+Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> Changes since v1:
+> - Added minor codec control cleanups;
+> - Added documentation about h.264 frame-wide type flags
+>=20
+> Paul Kocialkowski (4):
+> =C2=A0 media: uapi: Move colorimetry controls at the end of the file
+> =C2=A0 media: uapi: Cleanup tab after define in headers
+> =C2=A0 media: uapi: v4l2-controls: Cleanup codec definitions
 
-I believe the PMIC binding should probably be updated with the
-#io-channel-cells property then, isn't that so?
+I've picked the 3 above.
+
+> =C2=A0 Documentation: media: Document
+> =C2=A0=C2=A0=C2=A0 V4L2_H264_DECODE_PARAM_FLAG_PFRAME/BFRAME
+
+So you will only have to update this one.
+
+cheers,
+Nicolas
+
+>=20
+> =C2=A0.../media/v4l/ext-ctrls-codec-stateless.rst=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 8 +-
+> =C2=A0include/uapi/linux/v4l2-controls.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 121 +++++++++---------
+> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 18 +--
+> =C2=A03 files changed, 75 insertions(+), 72 deletions(-)
+
+--=-2dqrxcSrrxjdJtGEUXhK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLIQSwAKCRDZQZRRKWBy
+9AMlAQDQpPKcQtWxjQLN3URtowrCD5QKm7eEuGwcXsis/7zP7wEA/2c71KaaLzpO
+PqhRllgKVWZgntEBFqJWTdGMweltYw0=
+=ag87
+-----END PGP SIGNATURE-----
+
+--=-2dqrxcSrrxjdJtGEUXhK--
 
