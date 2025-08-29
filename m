@@ -1,93 +1,164 @@
-Return-Path: <linux-kernel+bounces-792279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16459B3C239
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:05:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B578B3C23C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA99BA006CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA501CC3941
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D80D341ADC;
-	Fri, 29 Aug 2025 18:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE733431F8;
+	Fri, 29 Aug 2025 18:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h/pjhV6e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pP5t/5fL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C39821019E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1A921019E;
+	Fri, 29 Aug 2025 18:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756490752; cv=none; b=H4NeKKOCtKgUVLrYrhI0xENykEra7vngLNRaoSntpMxkpOHPlwAxJadiZW9zIbFa/GVbXQdBQnQwDNVYz6YntX/AliGeM/kz0ZHteKwT9KgJA9OTGy/z8Q2he0rM39shkLkcCuPAyZYOLQ2LCdfME2T/e8gdl4iBSERxIgzDETg=
+	t=1756490821; cv=none; b=DkCVdF2u7V0s6bZg7RIyF+xvD29Nnu6Tk3HtH0hQlCD1oN4gKQkT3lqIquYIp+1yUMDvAW/jmgFhNBfyQz3OpxTSNLjj8ECUK2NEG2E7Zx4eb+GkIjBLCm8CLefaQH00RFO0v5cjvewkVLUjxXukjaQcHz+JZsNOs/9vdPWQS8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756490752; c=relaxed/simple;
-	bh=u1e2LALm18nas0vKQ6sCc9bRuEFbXQoI3oI+CSc9GUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SA8VBeCJnhlFCVG/a9LUxmFZl+ezFq/1dwh8vibVQG1zKpdomtXkvNRGCZITdOCQZ486mxOFNyg23kajZZJDbeLWIjL5VeFY7S5L3z0Amh6HdEIADoJGNcqoEETBCU/O5xvKB2pG0YqTlYNWAg6/uZmvGO63epBRpJVbMJARjX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h/pjhV6e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756490750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/50SATT95Ds6BvNgK0T9SUh3zNyDh5/nmD6Y6LNzh8=;
-	b=h/pjhV6eUydcyN2ZQEuQrA3St8Azz46Du1NGY2HfKKqoWQeYDu2lvHDgNKIgnYVHhn3EC3
-	+uQQXko/gezz2L5gzQ37eAu8YvsKJBVrKNbr2UbXdTaa/wXUW6rC7z+Sl2Pgr/r2wFxSUF
-	cx/6VFuuQgfkMBb8jSNyXaYD0Uwsp0Q=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-aPTk7qcCP-Gtn3kBaEHZ_Q-1; Fri,
- 29 Aug 2025 14:05:46 -0400
-X-MC-Unique: aPTk7qcCP-Gtn3kBaEHZ_Q-1
-X-Mimecast-MFC-AGG-ID: aPTk7qcCP-Gtn3kBaEHZ_Q_1756490745
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87BDC180035B;
-	Fri, 29 Aug 2025 18:05:45 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.89.196])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 939801800280;
-	Fri, 29 Aug 2025 18:05:44 +0000 (UTC)
-Date: Fri, 29 Aug 2025 13:05:42 -0500
-From: David Teigland <teigland@redhat.com>
-To: Alessio Attilio <alessio.attilio.dev@gmail.com>
-Cc: Alexander Aring <aahringo@redhat.com>, gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fix(dlm): handle unlock/cancel during deferred lock
- messages
-Message-ID: <aLHr5VAuXQZE0bBd@redhat.com>
-References: <20250829110749.500571-1-226562783+SigAttilio@users.noreply.github.com>
+	s=arc-20240116; t=1756490821; c=relaxed/simple;
+	bh=gh4BtveoclPRfsi619KfjHVuQLrHKsEBTiSbhqe0ZIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZSXFG63s4gEexrZQpNoxO02pL7tRwqodHaVnAYMSo+dcrTTVSo23MEbjDTjc3J1e/PkYkGH4lbNjsvydSbrNBqW264kOsKgR4eoei5s5vGEb/1pKO72Emkrnt9GxsAwnjXEnejfc3/ZPtp7ABKutXXG+9q60LHxqW+lFLVANoXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pP5t/5fL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85RKv032471;
+	Fri, 29 Aug 2025 18:06:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0NWcftQ9sByIGoJwYg7DuNerhyMKFe2bgHR2XaZF9JQ=; b=pP5t/5fLxEc5yHRU
+	UxZ46KKd9eunHIk07IzjW+I4grgoQmfeuAlPo1MW5v81x0DHRx07RSJC+YQs2MZ7
+	LUlygqVYMz45/10OMHSVt5Kk7kkRnJDpiE49oVs565tHBEJNNc7879uQCGmSJybV
+	r6s90pMSXVUli5/MwZQOxwDoDcbPaM1i58WakOJvrydiRzPd+B2fU0rDhdC3Kzm7
+	RDTZmdoqthi7mvhmu9twOU7tWbUVzPPPz/1/VHJZK8pVkec1o7JB2WbNPWJuTBIz
+	4C8eTt7sdWL2j9JubiLRxGCkCmnDslIRTnp4mS4HHJY/+JMKOiGAIEsC8vepSU5s
+	9nwoRw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5vc93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 18:06:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57TI6f5v029709
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 18:06:41 GMT
+Received: from [10.50.32.220] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Fri, 29 Aug
+ 2025 11:06:36 -0700
+Message-ID: <e9f86dee-3938-b9ac-4ec9-ee8ed419882a@quicinc.com>
+Date: Fri, 29 Aug 2025 23:36:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829110749.500571-1-226562783+SigAttilio@users.noreply.github.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 24/26] media: iris: Allocate and queue internal buffers
+ for encoder video device
+To: Bryan O'Donoghue <bod@kernel.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>,
+        Hans Verkuil <hverkuil@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+References: <20250825-iris-video-encoder-v4-0-84aa2bc0a46b@quicinc.com>
+ <RkFtovt6YeFZgD2napWwptCOf-5LP3ZqNbmfbDB-Z__cCvrJA5DfFRVU1IxihkEayS3ksQp8AzL1dE9Kd7r_2Q==@protonmail.internalid>
+ <20250825-iris-video-encoder-v4-24-84aa2bc0a46b@quicinc.com>
+ <9210ea3a-970b-4cf3-8ab5-35952a9c5cf6@kernel.org>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <9210ea3a-970b-4cf3-8ab5-35952a9c5cf6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXxf4H8m7e/Nxj
+ /QMNxCdSqqeMtbP6bPYBOeJ4auympyKEDQVUDZVZcDzmfEmbUlyLzLT6lR8Sv8SAF25heJlGkLY
+ JXcM+KcTTmLVdLW6Oux3lc4rwuJsboMzS30o3udbH88eFE3XOCD0Fg/rMISiiu5/wAClXti0sjz
+ kipmWK4ecMMdp4aVTkzDlmBi0Ptd+krMoMy07e2yOq9Xf4Q8zSQbtXvpP2gwTtmpDaJ9P3Voib+
+ tAb6/7CGNAVB173qECKlPQD3jYCOzf83Mhis2JsR1+gb5poze4ZSUv1+n8TMLgmkINCBZhct0sr
+ 4xHt0KHRQexfbEzZX+/GTDT1ZATlKIksrzBTjHqbBpkKc+U6+J5wTldGgAXYNeLs24X6lYOIsyz
+ tYsGdB5b
+X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68b1ec32 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=E2upXWrYFGlahwAtZIwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: dHN2rDbAyuip8OXhmS6p-pAfg6AK7Iih
+X-Proofpoint-ORIG-GUID: dHN2rDbAyuip8OXhmS6p-pAfg6AK7Iih
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 clxscore=1011 malwarescore=0 spamscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
-On Fri, Aug 29, 2025 at 01:07:49PM +0200, Alessio Attilio wrote:
-> ---
->  fs/dlm/lock.c | 8067 ++++++++++++++++++++++++-------------------------
->  1 file changed, 3944 insertions(+), 4123 deletions(-)
 
-Thanks for working on this, lock cancel has always been sketchy, and I'd
-be happy to see that improved.  An 8000 line patch is going to be
-difficult to review, though!  It looks like diff may just be moving a lot
-of lines around, and perhaps splitting this up could avoid some of that?
-Also, I'm not seeing which upstream commit the patch is against.
+
+On 8/29/2025 2:35 PM, Bryan O'Donoghue wrote:
+> On 25/08/2025 08:00, Dikshita Agarwal wrote:
+>> +static inline
+>> +u32 size_enc_single_pipe(u32 rc_type, u32 bitbin_size, u32 num_vpp_pipes,
+>> +             u32 frame_width, u32 frame_height, u32 lcu_size)
+>> +{
+>> +    u32 size_aligned_height = ALIGN((frame_height), lcu_size);
+>> +    u32 size_aligned_width = ALIGN((frame_width), lcu_size);
+>> +    u32 size_single_pipe_eval = 0, sao_bin_buffer_size = 0;
+>> +    u32 padded_bin_sz;
+>> +
+>> +    if ((size_aligned_width * size_aligned_height) > (3840 * 2160))
+>> +        size_single_pipe_eval = (bitbin_size / num_vpp_pipes);
+>> +    else if (num_vpp_pipes > 2)
+>> +        size_single_pipe_eval = bitbin_size / 2;
+>> +    else
+>> +        size_single_pipe_eval = bitbin_size;
+>> +
+>> +    sao_bin_buffer_size = (64 * ((((frame_width) + 32) * ((frame_height)
+>> + 32)) >> 10)) + 384;
+>> +    padded_bin_sz = ALIGN(size_single_pipe_eval, 256);
+>> +    size_single_pipe_eval = sao_bin_buffer_size + padded_bin_sz;
+>> +
+>> +    return ALIGN(size_single_pipe_eval, 256);
+>> +}
+> 
+> Applying your full series, this function is unused and causes a warning in CI.
+> 
+> Assuming tests pass for me, I'll be dropping this function in the PR and
+> you can resubmit it if/when you find a use for it.
+
+you're right, this is unused. Strangely I didn't see any such warnings
+during my runs, but yes, this is good to be dropped.
 
 Thanks,
-Dave
-
-
+Dikshita
+> 
+> ---
+> bod
 
