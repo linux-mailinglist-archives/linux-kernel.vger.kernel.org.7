@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-791965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC4CB3BED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:06:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F35CB3BED9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A3893B3F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:06:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C57294E4EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA5321F3B;
-	Fri, 29 Aug 2025 15:06:34 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301C1321F4C;
+	Fri, 29 Aug 2025 15:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZv4R8T6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7C2135CE;
-	Fri, 29 Aug 2025 15:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6363218C5;
+	Fri, 29 Aug 2025 15:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756479994; cv=none; b=Hh2UoxZcH+Ic0UQYymWFcUdwuop9LtroughvCxxxVhJQ6zYRF6ZtQkzy3HCMd8z9n/kRQPAfKH9VXoCmdPvFXKsF5fEvCnmaswv6o5IczLoXk7K86qM2i3w5My6Bukm1wNTszbhdBfZAG2ChfUwPILvShQcjPK6a1Vlo9MVcOz0=
+	t=1756480017; cv=none; b=H0UzAsbFW0Obs5HPlkOq/LCbr4F46cyEjGL5E5lewUf0aWYNrVWYJf+JHWpAAziovvbwE/+hNZ2PCfR+XtNPzoWSRO1wDe6MPAhSWaF7WElRVDzTMAtFB20hG9PZ0WhCQyITYY3Negu5dAoW/j/XzS5dzOPwXFrZQa9WK5rc1tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756479994; c=relaxed/simple;
-	bh=apVO4erBY67X3gOL47lHlUPruWHS2u9r8oRV22lYIPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SZcnar79ZJLfVYWlaHfYHqtbEcVkAEFVfiH6FJ/HmpiuU5q1vcQfYtUkUpMRua1JQtC0pbUKZFvuujTuJMQhNlVoCrVwkI33epWpMxTAQSpsnbMavqu/BpHMIqt7JKQSrkXfWAASV1JdtZWdFT3ZPI3Faa8Q93mca9rDtXWLVOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 579711DEA3E;
-	Fri, 29 Aug 2025 15:06:22 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id ECCB36001C;
-	Fri, 29 Aug 2025 15:06:16 +0000 (UTC)
-Date: Fri, 29 Aug 2025 11:06:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
- <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829110639.1cfc5dcc@gandalf.local.home>
-In-Reply-To: <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org>
-	<20250828180357.223298134@kernel.org>
-	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
-	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
-	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
-	<20250828161718.77cb6e61@batman.local.home>
-	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
-	<20250828164819.51e300ec@batman.local.home>
-	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756480017; c=relaxed/simple;
+	bh=0d8UuK8zHiUX85nUGp6oB76FtqUuTIyEA+Ua7Pj2hVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiITig7OXUwBrqL8U5PhggOLACQ9rxYJL7IamH0TRBLOvdtSXxyHqpO1fafw0w5SR37vmcwrsz0v03GEJsTqI9AocCFgR1kxv78aovyGc3qhNKFCVTiQzkx6ErLoueOs57jgGsAVlnI7tIfSRtsHK8/1ns4IXEQH0NcE5C2sI0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZv4R8T6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2838C4CEF0;
+	Fri, 29 Aug 2025 15:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756480017;
+	bh=0d8UuK8zHiUX85nUGp6oB76FtqUuTIyEA+Ua7Pj2hVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RZv4R8T63sYSP22IGdTAfZk3RKBxXmcUCOcz1VWJYvkjQsx4JtMIk85tvw1zIfqIr
+	 /M1Ms8Tn55fEUW6lbJfyuz4x5a8CHyPmuUVxhcVF4j+dvapp/GPmwaIinS7zattY8Q
+	 GZsAEKNWkEYAzaHxPWvKLxJQeQ7cGZ2Eh/rPt3kHZtp1NZDYMsDNl1En5wZCisTUdn
+	 8ptwDsWO+SgaXMixbXYLapFuCqzBpjb7xEmR0v63O3u77mzfnzcym/SwGxtDleB7lS
+	 newQXL5VuHN3DTehzzxLRrCsRsBw4/djxdJaV15dxrvKl7GBC9ZjAX1StA42PPAfPC
+	 +TmZnFdPBZkuA==
+Date: Fri, 29 Aug 2025 10:06:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+ subnode support
+Message-ID: <20250829150655.GA782291-robh@kernel.org>
+References: <20250818204420.794554-1-shenwei.wang@nxp.com>
+ <20250818204420.794554-2-shenwei.wang@nxp.com>
+ <20250826200904.GA375876-robh@kernel.org>
+ <PAXPR04MB9185EAFBDF13143860910C3A8938A@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: pe9uoz3cgkztrrbpdod16zao8fx3pcd7
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: ECCB36001C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+w+yQFbZ+QM+XAONzSEjn0kRKCzwUOCC4=
-X-HE-Tag: 1756479976-193067
-X-HE-Meta: U2FsdGVkX1+UuCDfBTIeCsB+M0BOp4BQ7P7j+vJ48thHOd7BLOHXUs5j9udANa2Dy2UZQcxe/ahZ+p5whmf51D64bUEKI0K6KykxuiK/McDkruG7NMpRAxBhM9aadmk2jlcxDViRSrFic5hvwBNxnENXiCFT6T4hGzSAPis60BJhQKMTVGHzbu/7vGP7UxTvt06Xv0l25vXZ1iX+emn3ZKT2UjE3hnRpJYfQ73tGJdOP5Cldsj8yzBkt4JlvEVO8GgKUMZgnIYtr70I/domfK1W+DQmmThtNYuDMTYKe+5EeS6ByJUdiCFzSb0JhVzaUwAvt+L7wLiYa6HaIc8e3hR4laqmGJYl+N8kL4CTP2ka44U+Fi9PgHqK0vBUnY4wO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9185EAFBDF13143860910C3A8938A@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-On Thu, 28 Aug 2025 15:10:52 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Aug 27, 2025 at 02:49:54PM +0000, Shenwei Wang wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Rob Herring <robh@kernel.org>
+> > Sent: Tuesday, August 26, 2025 3:09 PM
+> > To: Shenwei Wang <shenwei.wang@nxp.com>
+> > Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+> > <mathieu.poirier@linaro.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor
+> > Dooley <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha
+> > Hauer <s.hauer@pengutronix.de>; Linus Walleij <linus.walleij@linaro.org>;
+> > Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
+> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+> > <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
+> > devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; dl-linux-imx <linux-
+> > imx@nxp.com>
+> > Subject: [EXT] Re: [PATCH 1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+> > subnode support
+> > > Each subnode within "rpmsg" represents an individual RPMSG channel.
+> > > The name of each subnode corresponds to the channel name as defined by
+> > > the remote processor.
+> > >
+> > > All remote devices associated with a given channel are defined as
+> > > child nodes under the corresponding channel node.
+> > 
+> > How is each channel addressed? Are they really grouped by type first (i2c, gpio,
+> > etc.) then an address within the group? Or is there some flat channel numbering?
+> > If the latter, then the addresses in the DT shoulc match the channel number.
+> > 
+> 
+> Yes, the channels are grouped by type and identified by unique channel names assigned 
+> by the remote processor.
+> 
+> The RPMSG bus dynamically assigns addresses to each channel at runtime. Because these 
+> addresses are not static, they cannot be pre-defined in the dts.
 
-> And because the file pointer doesn't have any long-term meaning, it
-> also means that you also can't make the mistake of thinking the hash
-> has a long lifetime. With an inode pointer hash, you could easily have
-> software bugs that end up not realizing that it's a temporary hash,
-> and that the same inode *will* get two different hashes if the inode
-> has been flushed from memory and then loaded anew due to memory
-> pressure.
+But you did define addresses. How do you know which channel 'gpio@1' 
+corresponds to if RPMSG dynamically assigns addresses?
 
-The hash value can actually last longer than the file pointer. Thus, if we
-use the file pointer for the hash, then we could risk it getting freed and
-then allocated again for different file. Then we get the same hash value
-for two different paths.
-
-What I'm looking at doing is using both the file pointer as well as its
-path to make the hash:
-
-struct jhash_key {
-	void		*file;
-	struct path	path;
-};
-
-u32 trace_file_cache_add(struct vm_area_struct *vma)
-{
-	[..]
-	static u32 initval;
-	u32 hash;
-
-	if (!vma->vm_file)
-		return 0;
-
-	if (!initval)
-		get_random_bytes(&initval, sizeof(initval));
-
-	jkey.file = vma->vm_file;
-	jkey.path = vma->vm_file->f_path;
-
-	hash = jhash(&jkey, sizeof(jkey), initval);
-
-	if (!trace_file_cache_enabled())
-		return hash;
-
-	[ add the hash to the rhashtable and print if unique ]
-
-Hopefully by using both the file pointer and its path to create the hash,
-it will stay unique for some time.
-
--- Steve
+Rob
 
