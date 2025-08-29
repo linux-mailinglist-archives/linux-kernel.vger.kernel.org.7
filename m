@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-792207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD93DB3C174
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18D2B3C172
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E685A14F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C805BA237E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5043341AB8;
-	Fri, 29 Aug 2025 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPXlDAgL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C0733EAFB;
+	Fri, 29 Aug 2025 17:02:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C96C340D81;
-	Fri, 29 Aug 2025 17:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F1F3A1DB;
+	Fri, 29 Aug 2025 17:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756486959; cv=none; b=c9R5LxFqQ5RpeXIK6RTqlC4CtrbXXqUp66elu6pzMXA0V6vvFuMiZFKXXCjYWAQ2fLVhwss22+YBGC0KqBBsNESkor9LT93wz1pYfSbFy02BX+8+O21wD2TC5olGap3GcQidKN2WRmszUwkKUR3+dd6jl22Pry5GjpZHo7TxPWQ=
+	t=1756486952; cv=none; b=B9cPlYtWoX1ntnSDY+mc69yUWT3hvqn14Kjoy/UzkM/nfveYODDL7Dn8tbbP3RilqiAdLHwflGEgRkPYO/jlqwZLMMUdy01181n5zckgGmGoWZokZ6Xj8C6qOoC+WYo8QVPQPTp0BxudrMU9NzW0jHbXVHMuxxbxqGjkh7fs77U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756486959; c=relaxed/simple;
-	bh=1p0kyBj4JcvDgO3H94j/rgLos7EnI+2oZFiwLRJSRr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q0BH1fB85GEIx6ObElY2IZD3cj8g7Qo8gRDdAixlm8T/EPqwcNY1YlKnCVLJvEHOqKFFQ6Dlbwgy5M5IL4PebgsJf/r1Q6tS5hI2Da2hMBVsCXJUHly1+u5vymijZ5b4/sW7zK3aTL3xdoDc9m71bFrkyuGCo81DCOCuZj0+m5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPXlDAgL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC029C4AF09;
-	Fri, 29 Aug 2025 17:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756486957;
-	bh=1p0kyBj4JcvDgO3H94j/rgLos7EnI+2oZFiwLRJSRr4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WPXlDAgLZuKhKXBccXf0fETefa9fHR2Q9K2K48IRQQKZhTQh6tbwUGzFCrazzTY/T
-	 gEDtHXpyPdTbx7ETsuddEvfQYoM/b0cXhEdpyKdL504Uxp30CUyckUXY3hoZzQ5eoJ
-	 4pnNxG5tOuI8ZCgMATrpktXe6n65pHLXSES+6MgLtDvE8iaoWEyIhATp1xQI4C7UjN
-	 oXj7dm8hI4f19YoGk6zq0ngsgEdUn17M95NAC9p3m4jW+1BmXD707iSvP2QxGuxlYM
-	 1f7YqwoYwU6p8/j2gSu6ZZV+w9JefRrxg/a0lngcEMYgjLBOf6H5j/bQ84YjIpzhHF
-	 /l6YI3Ckr0sUg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f69e15914so947138e87.2;
-        Fri, 29 Aug 2025 10:02:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfR5DeZollP2El+1ukeOr+x/uln9twaVGcJY81QS8vT9sziprMSdOe31A8EAWHJk/lq/GSqxQU3i+FVdZn@vger.kernel.org, AJvYcCXbLqi8Mtou6ipINMUudTOVvFNhZgeHJSLyJg2hd+Yt6ORQrp3izNKyMwiH/9RHtonfqHG8WZDYpWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySRUJ8sF6CPn5KLxp/PiWiO4WyGW3viIDlLdGZnDdGEV2Co9+p
-	gzq6b8UHVZQZVd+dvQsgsP/36qqk3r3NL/axQwMlxEeDClpSt+JvhP8nmZ9Dszg1aN2rqYaNla/
-	K+p0tLPo9aBIBlnWJ9wVT2v18n247O9c=
-X-Google-Smtp-Source: AGHT+IFPBLGObZSlikI7+GXVwR38Tqk26TdP63k6ql0p3bI9lgI2164z6vnySTq07b2t6V/PZgzsR2rahOMRt7xpUAo=
-X-Received: by 2002:a05:6512:651b:b0:55f:6a38:f6c8 with SMTP id
- 2adb3069b0e04-55f6a38fac4mr808550e87.4.1756486956142; Fri, 29 Aug 2025
- 10:02:36 -0700 (PDT)
+	s=arc-20240116; t=1756486952; c=relaxed/simple;
+	bh=AsYSDcCvGRYfnSv74ffyi7VKLJBKc9BzzYtyWyzxWZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ghFUGvLkjYipTjfIy+bniZq8JNzkyYspSSKDgOVLcu7TVI1xFvfQ+nHRNLW0GiTLA6/NmaRCbkmgRhC38ybeTZM42qGlpN6S+A0Gd4w1kLPNBUHFRI9IBVjIDPjPI2UlcrHRNzb1AUjqx63OYGStnoUNMEMpPKkP76GlRsmG3/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id AA027160850;
+	Fri, 29 Aug 2025 17:02:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 4D7D02000F;
+	Fri, 29 Aug 2025 17:02:16 +0000 (UTC)
+Date: Fri, 29 Aug 2025 13:02:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
+ <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250829130239.61e25379@gandalf.local.home>
+In-Reply-To: <CAHk-=whbHyKvJ5VSvObfmGSSEukYhv5DZVhR3_-smu_1_b54mg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
+	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+	<20250828161718.77cb6e61@batman.local.home>
+	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+	<20250828164819.51e300ec@batman.local.home>
+	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com>
+	<20250829123321.63c9f525@gandalf.local.home>
+	<CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com>
+	<CAHk-=whbHyKvJ5VSvObfmGSSEukYhv5DZVhR3_-smu_1_b54mg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ed9efeafd80e9827bcc028d20a5bb20653af68e7.1755006858.git.geert+renesas@glider.be>
- <udidf2skqwbhx6mg4tmsxuipqqgh4amwcxvbjdrqs5g5vla6xp@7wiyrojpjok4> <aKLNrRzxCOqXcWMq@r1chard>
-In-Reply-To: <aKLNrRzxCOqXcWMq@r1chard>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 29 Aug 2025 19:02:24 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEc8KwtC5RZcbLCk4HA22iQrbaY77DbtrBDvzRLX7Hm+g@mail.gmail.com>
-X-Gm-Features: Ac12FXzbvkPW0HHwP0LS91vudCicS4bPD2a1MOf-aUfysNtGAFcOHj6P5Iofl00
-Message-ID: <CAMj1kXEc8KwtC5RZcbLCk4HA22iQrbaY77DbtrBDvzRLX7Hm+g@mail.gmail.com>
-Subject: Re: [PATCH] efi: Explain OVMF acronym in OVMF_DEBUG_LOG help text
-To: Richard Lyu <richard.lyu@suse.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Gerd Hoffmann <kraxel@redhat.com>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: uh9qiu3ia5bgsp5icdgagfjbwxsqd5p3
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 4D7D02000F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+9IovbtNRLJxfrsJ/GnO9v0te3ayW3eNU=
+X-HE-Tag: 1756486936-50009
+X-HE-Meta: U2FsdGVkX193s8aJ0xNbZih+i1YHm2l/z6jfuxgEnyr4Oi0TgmoqNXadxdqu8xLxkf17h+71/IXt+hPjuhBJ+CThS+6bMIrNytyahvkvNC93aOAA2xGc7EmlsmFnD0Th4Jmwcb62L4Ys58pDbdxof9fuwqg8nLyseF/xMnqXh5lnQWINicH77/UA7grRANVGboagTU2WjLfRLrT2VYK/3gdZbz6LocqTo1YbY4iLuFK9O60hFWOU3ZcanWG5r72gyU5YujnPmLWy+c17MqarmyS3AEGZiXzQtcKUxfY/kQnRjPjJ/R4gKDvQ854DJ5C4v0ln+iZfczAU+0IdhSgUgN0PLOdtsuuaGlsxTAhhni9al5LEiAbYis3hGnJRJuYK
 
-On Mon, 18 Aug 2025 at 08:52, Richard Lyu <richard.lyu@suse.com> wrote:
->
-> On 2025/08/13 10:03, Gerd Hoffmann wrote:
-> > On Tue, Aug 12, 2025 at 03:54:29PM +0200, Geert Uytterhoeven wrote:
-> > > People not very intimate with EFI may not know the meaning of the OVMF
-> > > acronym.  Write it in full, to help users with making good decisions
-> > > when configuring their kernels.
-> > >
-> > > Fixes: f393a761763c5427 ("efi: add ovmf debug log driver")
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > > +     Recent versions of the Open Virtual Machine Firmware
-> > > +     (edk2-stable202508 + newer) can write their debug log to a memory
-> > > +     buffer.  This driver exposes the log content via sysfs
-> > > +     (/sys/firmware/efi/ovmf_debug_log).
-> >
-> > Acked-by: Gerd Hoffmann <kraxel@redhat.com>
->
-> Reviewed-by: Richard Lyu <richard.lyu@suse.com>
->
+On Fri, 29 Aug 2025 09:50:12 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Thanks, I've queued this up now.
+> On Fri, 29 Aug 2025 at 09:42, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Just use the hash. Don't do anything to it. Don't mess with it.  
+> 
+> In fact, at actual stack trace time, don't even do the hashing. Just
+> save the raw pointer value (but as a *value*, not as a pointer: we
+> absolutely do *not* want people to think that the random value can be
+> used as a 'struct file' *: it needs to be a plain unsigned long, not
+> some kernel pointer).
+> 
+> Then the hashing can happen when you expose those entries to user
+> space (in the "print" stage). At that point you can do that
+> 
+>        hash = siphash_1u64(value, secret);
+> 
+> thing.
+> 
+> That will likely help I$ and D$ too, since you won't be accessing the
+> secret hashing data randomly, but do it only at trace output time
+> (presumably in a fairly tight loop at that point).
+
+Note, the ring buffer can be mapped to user space. So anything written into
+the buffer is already exposed. The "at trace output time" is done by user
+space, not the kernel (except when using "trace" and "trace_pipe" files).
+
+-- Steve
 
