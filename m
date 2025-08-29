@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-792373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65984B3C323
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:36:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3700EB3C324
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D5C1CC39D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9920F46719A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE74F30277C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26D931DDAE;
 	Fri, 29 Aug 2025 19:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4k97td5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGIBGYzM"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870225A33E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B374F25A633
 	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 19:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496048; cv=none; b=eOhjcjj7CzoQc3rD5TnJjK5xOnm1pPivibbo0T9K0nQQT3K3CsOxn/WidMN/pq8h5p+GRkgV/ifSv4gI04bISO8bkVFKDtbAHYUGYLr2mOA/GJCx+yP9oELTEmHwjKF3pSbX9NE5gAKdkgGND9Pgpy9tvgQfTgMbSSKOen9oUNo=
+	t=1756496048; cv=none; b=FPhUMRSP0iDje5WXgzBajnx1tLqXupwsKUXTTVjUs7Kdd0hkxNzn5AijvM3Ds/8SjyxqwL6zkm/6498v40jGXyu1VTAVJTy/U31vPJwf2oysMlJ/Xe1T9Vr/Zlf4kQJWrvqDaeKEzkGYCGjt+ax0dy0DwkxI4CiZsmrvzETEUW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756496048; c=relaxed/simple;
-	bh=nogbcVdvwoh1Z4m4/SGaQfB+uD1Dz8Bq45qHMdwXO+0=;
+	bh=WSLjV+XYvVgf6P2NY0OzI1Tv+yuDGN4Tna/mExaXGOw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dnyXl+7IkcdrSQ+TIBjl5xkD97E7jJW38fg1kIW9EU6spg/TT59HScMEu4Kw2ETiFmkuYDM5QKLgRfMaX5Jlvf9Db3Kzpf2VVgdHnsFqAGwNmDaKmnDoZcBSLMymZ9gnLb+atc392fAkaDsj+GBQ5fE0DfWYMA6QYgc3pg6J7+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4k97td5; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=QwJtp5fBiGUBNYgsxKDXKv8PNmlOqOpdOwtT+4AI9ZZM3iZ0g1XkvY6jAhZRlWcJWgujPu9+ucxOwnrfaCay2FE+RCSaBXZA+3aGI13yrR2w0b67fi+wzsNyGUe3aSVocVXyX93gssftBty1s8SannaJ6ol+MBcUWdkzKilcSs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGIBGYzM; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,23 +35,23 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1756496045; x=1788032045;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nogbcVdvwoh1Z4m4/SGaQfB+uD1Dz8Bq45qHMdwXO+0=;
-  b=l4k97td5wup0WK5IVwrdFX4/gW+gqXDpvDXPhVU5C5Rb+gdvm9R3Gznj
-   ae8X5mnr56SXlzcpbQxLkczPHEp7Tv3ymYhWxXZUI5VTYd21+ohk8JYOn
-   Q5kQ8ha3GqWXTRx+daT6Z0ODZMTDKH9rA6cmHD0P2Pq7EiOZOwcBcteuf
-   wry7d8M7MxUH7TENtBWVHfiL+e2otzLiCjIT/0Dd4bZxz2am14NG0TAtZ
-   gjScSx2TD+5OCKU19fWkr4Klw071P4kpBqQIuy+sUWF3AcEnCKgzeJoG/
-   hk3TyF017CV5UdYaDxqLLNhDLCqztm5sWnHKUzEt6Zql0sdummlVhn3Vx
-   A==;
-X-CSE-ConnectionGUID: 1pRsGclhQK+VOr+ERVawEg==
-X-CSE-MsgGUID: W1o4u73PTDKh9kFX3VGnrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625284"
+  bh=WSLjV+XYvVgf6P2NY0OzI1Tv+yuDGN4Tna/mExaXGOw=;
+  b=jGIBGYzMPwB+UFJwYm39FgSCb1LrzM87tQVK7di3sriaolfXUOEmzVzD
+   8q4tG/1nT3A3P8cSmslu2g/+0ycydauxG+/KgrmYmv4EKs0U2ii/+UiIC
+   GROgo2u2/qDp6VVIeO+So6WuVYf2wVhkg3COHuAD58nhJggMvBJznF7pS
+   edGUlqaDQwr183+OTk++SgY/fuIdHbi5UfMfp0n056I3MpbGrOIt3Getd
+   9AZO5Hvh1ZViDJXGPtDLD4lht87A017ZWjQwrZoAV+eBaLAlW4GaPr5vs
+   eQJ6BIXaHwHLu7Ykfx409OVFLW9F29GYPlaCGWz91mj/4Jsl4WJV2NtSX
+   g==;
+X-CSE-ConnectionGUID: zv5iOsVlRtC7/LDsnKyvaw==
+X-CSE-MsgGUID: BT73ZRYaTD+U46Su/b/K3g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62625289"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62625284"
+   d="scan'208";a="62625289"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
   by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:55 -0700
-X-CSE-ConnectionGUID: 5Lv28wfDSwmv+dSCnp42Zg==
-X-CSE-MsgGUID: eSoQCm2OTSSUb6ug97J/Gw==
+X-CSE-ConnectionGUID: 2D/a+enhTziGxlnekjqJgw==
+X-CSE-MsgGUID: ySMM9iNaQNWTEFG6URMJWg==
 X-ExtLoop1: 1
 Received: from ldmartin-desk2.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.202])
   by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 12:33:55 -0700
@@ -69,9 +69,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v9 18/31] x86,fs/resctrl: Fill in details of events for guid 0x26696143 and 0x26557651
-Date: Fri, 29 Aug 2025 12:33:30 -0700
-Message-ID: <20250829193346.31565-19-tony.luck@intel.com>
+Subject: [PATCH v9 19/31] x86,fs/resctrl: Add architectural event pointer
+Date: Fri, 29 Aug 2025 12:33:31 -0700
+Message-ID: <20250829193346.31565-20-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250829193346.31565-1-tony.luck@intel.com>
 References: <20250829193346.31565-1-tony.luck@intel.com>
@@ -83,192 +83,181 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Intel Clearwater Forest CPU supports two RMID-based pmt feature
-groups documented in the xml/CWF/OOBMSM/RMID-ENERGY/cwf_aggregator.xml
-and xml/CWF/OOBMSM/RMID-PERF/cwf_aggregator.xml files in the Intel PMT
-GIT repository here:
+The resctrl file system layer passes the domain, RMID, and event id to
+resctrl_arch_rmid_read() to fetch an event counter.
 
-Link: https://github.com/intel/Intel-PMT
+Fetching a telemetry event counter requires additional information that
+is private to the architecture, for example, the offset into MMIO space
+from where counter should be read.
 
-The offsets in MMIO space are arranged in groups for each RMID.
+Add mon_evt::arch_priv void pointer. Architecture code can initialize
+this when marking each event enabled.
 
-E.g the "energy" counters for guid 0x26696143 are arranged like this:
+File system code passes this pointer to resctrl_arch_rmid_read().
 
-        MMIO offset:0x0000 Counter for RMID 0 PMT_EVENT_ENERGY
-        MMIO offset:0x0008 Counter for RMID 0 PMT_EVENT_ACTIVITY
-        MMIO offset:0x0010 Counter for RMID 1 PMT_EVENT_ENERGY
-        MMIO offset:0x0018 Counter for RMID 1 PMT_EVENT_ACTIVITY
-        ...
-        MMIO offset:0x23F0 Counter for RMID 575 PMT_EVENT_ENERGY
-        MMIO offset:0x23F8 Counter for RMID 575 PMT_EVENT_ACTIVITY
-
-Define these events in the file system code and add the events
-to the event_group structures.
-
-PMT_EVENT_ENERGY and PMT_EVENT_ACTIVITY are produced in fixed point
-format. File system code must output as floating point values.
-
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl_types.h           | 11 +++++++
- arch/x86/kernel/cpu/resctrl/intel_aet.c | 41 +++++++++++++++++++++++++
- fs/resctrl/monitor.c                    | 35 ++++++++++++---------
- 3 files changed, 72 insertions(+), 15 deletions(-)
+ include/linux/resctrl.h               |  7 +++++--
+ fs/resctrl/internal.h                 |  4 ++++
+ arch/x86/kernel/cpu/resctrl/core.c    |  6 +++---
+ arch/x86/kernel/cpu/resctrl/monitor.c |  2 +-
+ fs/resctrl/monitor.c                  | 14 ++++++++++----
+ 5 files changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
-index d98351663c2c..6838b02d5ca3 100644
---- a/include/linux/resctrl_types.h
-+++ b/include/linux/resctrl_types.h
-@@ -47,6 +47,17 @@ enum resctrl_event_id {
- 	QOS_L3_MBM_TOTAL_EVENT_ID	= 0x02,
- 	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+index efe4e887c5c9..cb50991544b4 100644
+--- a/include/linux/resctrl.h
++++ b/include/linux/resctrl.h
+@@ -382,7 +382,7 @@ u32 resctrl_arch_system_num_rmid_idx(void);
+ int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
  
-+	/* Intel Telemetry Events */
-+	PMT_EVENT_ENERGY,
-+	PMT_EVENT_ACTIVITY,
-+	PMT_EVENT_STALLS_LLC_HIT,
-+	PMT_EVENT_C1_RES,
-+	PMT_EVENT_UNHALTED_CORE_CYCLES,
-+	PMT_EVENT_STALLS_LLC_MISS,
-+	PMT_EVENT_AUTO_C6_RES,
-+	PMT_EVENT_UNHALTED_REF_CYCLES,
-+	PMT_EVENT_UOPS_RETIRED,
-+
- 	/* Must be the last */
- 	QOS_NUM_EVENTS,
- };
-diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-index 45cadbb87dc8..565777841f5c 100644
---- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-+++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-@@ -18,12 +18,30 @@
+ void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu,
+-			      unsigned int binary_bits);
++			      unsigned int binary_bits, void *arch_priv);
  
- #include "internal.h"
+ bool resctrl_is_mon_event_enabled(enum resctrl_event_id eventid);
  
-+/**
-+ * struct pmt_event - Telemetry event.
-+ * @id:		Resctrl event id.
-+ * @idx:	Counter index within each per-RMID block of counters.
-+ * @bin_bits:	Zero for integer valued events, else number bits in fraction
-+ *		part of fixed-point.
-+ */
-+struct pmt_event {
-+	enum resctrl_event_id	id;
-+	unsigned int		idx;
-+	unsigned int		bin_bits;
-+};
-+
-+#define EVT(_id, _idx, _bits) { .id = _id, .idx = _idx, .bin_bits = _bits }
-+
+@@ -477,6 +477,9 @@ void resctrl_arch_pre_mount(void);
+  *			only.
+  * @rmid:		rmid of the counter to read.
+  * @eventid:		eventid to read, e.g. L3 occupancy.
++ * @arch_priv:		Architecture private data for this event.
++ *			The @arch_priv provided by the architecture via
++ *			resctrl_enable_mon_event().
+  * @val:		result of the counter read in bytes.
+  * @arch_mon_ctx:	An architecture specific value from
+  *			resctrl_arch_mon_ctx_alloc(), for MPAM this identifies
+@@ -494,7 +497,7 @@ void resctrl_arch_pre_mount(void);
+  */
+ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_domain_hdr *hdr,
+ 			   u32 closid, u32 rmid, enum resctrl_event_id eventid,
+-			   u64 *val, void *arch_mon_ctx);
++			   void *arch_priv, u64 *val, void *arch_mon_ctx);
+ 
  /**
-  * struct event_group - All information about a group of telemetry events.
-  * @pfg:		Points to the aggregated telemetry space information
-  *			within the INTEL_PMT_TELEMETRY driver that contains data for all
-  *			telemetry regions.
-  * @guid:		Unique number per XML description file.
-+ * @mmio_size:		Number of bytes of MMIO registers for this group.
-+ * @num_events:		Number of events in this group.
-+ * @evts:		Array of event descriptors.
+  * resctrl_arch_rmid_read_context_check()  - warn about invalid contexts
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index a7eaf22ecdea..7c37142df1cc 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -62,6 +62,9 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
+  * @binary_bits:	number of fixed-point binary bits from architecture,
+  *			only valid if @is_floating_point is true
+  * @enabled:		true if the event is enabled
++ * @arch_priv:		Architecture private data for this event.
++ *			The @arch_priv provided by the architecture via
++ *			resctrl_enable_mon_event().
   */
- struct event_group {
- 	/* Data fields for additional structures to manage this group. */
-@@ -31,14 +49,26 @@ struct event_group {
- 
- 	/* Remaining fields initialized from XML file. */
- 	u32				guid;
-+	size_t				mmio_size;
-+	unsigned int			num_events;
-+	struct pmt_event		evts[] __counted_by(num_events);
+ struct mon_evt {
+ 	enum resctrl_event_id	evtid;
+@@ -72,6 +75,7 @@ struct mon_evt {
+ 	bool			is_floating_point;
+ 	unsigned int		binary_bits;
+ 	bool			enabled;
++	void			*arch_priv;
  };
  
-+#define XML_MMIO_SIZE(num_rmids, num_events, num_extra_status) \
-+		      (((num_rmids) * (num_events) + (num_extra_status)) * sizeof(u64))
-+
- /*
-  * Link: https://github.com/intel/Intel-PMT
-  * File: xml/CWF/OOBMSM/RMID-ENERGY/cwf_aggregator.xml
-  */
- static struct event_group energy_0x26696143 = {
- 	.guid		= 0x26696143,
-+	.mmio_size	= XML_MMIO_SIZE(576, 2, 3),
-+	.num_events	= 2,
-+	.evts		= {
-+		EVT(PMT_EVENT_ENERGY, 0, 18),
-+		EVT(PMT_EVENT_ACTIVITY, 1, 18),
-+	}
- };
+ extern struct mon_evt mon_event_all[QOS_NUM_EVENTS];
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 57b34e1dc088..039a00c58514 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -910,15 +910,15 @@ static __init bool get_rdt_mon_resources(void)
+ 	bool ret = false;
  
- /*
-@@ -47,6 +77,17 @@ static struct event_group energy_0x26696143 = {
-  */
- static struct event_group perf_0x26557651 = {
- 	.guid		= 0x26557651,
-+	.mmio_size	= XML_MMIO_SIZE(576, 7, 3),
-+	.num_events	= 7,
-+	.evts		= {
-+		EVT(PMT_EVENT_STALLS_LLC_HIT, 0, 0),
-+		EVT(PMT_EVENT_C1_RES, 1, 0),
-+		EVT(PMT_EVENT_UNHALTED_CORE_CYCLES, 2, 0),
-+		EVT(PMT_EVENT_STALLS_LLC_MISS, 3, 0),
-+		EVT(PMT_EVENT_AUTO_C6_RES, 4, 0),
-+		EVT(PMT_EVENT_UNHALTED_REF_CYCLES, 5, 0),
-+		EVT(PMT_EVENT_UOPS_RETIRED, 6, 0),
-+	}
- };
+ 	if (rdt_cpu_has(X86_FEATURE_CQM_OCCUP_LLC)) {
+-		resctrl_enable_mon_event(QOS_L3_OCCUP_EVENT_ID, false, 0);
++		resctrl_enable_mon_event(QOS_L3_OCCUP_EVENT_ID, false, 0, NULL);
+ 		ret = true;
+ 	}
+ 	if (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL)) {
+-		resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID, false, 0);
++		resctrl_enable_mon_event(QOS_L3_MBM_TOTAL_EVENT_ID, false, 0, NULL);
+ 		ret = true;
+ 	}
+ 	if (rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL)) {
+-		resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID, false, 0);
++		resctrl_enable_mon_event(QOS_L3_MBM_LOCAL_EVENT_ID, false, 0, NULL);
+ 		ret = true;
+ 	}
  
- static struct event_group *known_energy_event_groups[] = {
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index f4a7bd5230c2..249569327e4a 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -219,7 +219,7 @@ static u64 mbm_overflow_count(u64 prev_msr, u64 cur_msr, unsigned int width)
+ 
+ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_domain_hdr *hdr,
+ 			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
+-			   u64 *val, void *ignored)
++			   void *arch_priv, u64 *val, void *ignored)
+ {
+ 	int cpu = cpumask_any(&hdr->cpu_mask);
+ 	struct rdt_hw_l3_mon_domain *hw_dom;
 diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index 8967ab2e494a..5fad7aa6b0dd 100644
+index 5fad7aa6b0dd..33432a7f56da 100644
 --- a/fs/resctrl/monitor.c
 +++ b/fs/resctrl/monitor.c
-@@ -878,27 +878,32 @@ static void dom_data_exit(struct rdt_resource *r)
- 	mutex_unlock(&rdtgroup_mutex);
- }
+@@ -137,9 +137,11 @@ void __check_limbo(struct rdt_l3_mon_domain *d, bool force_free)
+ 	struct rmid_entry *entry;
+ 	u32 idx, cur_idx = 1;
+ 	void *arch_mon_ctx;
++	void *arch_priv;
+ 	bool rmid_dirty;
+ 	u64 val = 0;
  
-+#define MON_EVENT(_eventid, _name, _res, _fp)	\
-+	[_eventid] = {				\
-+	.name			= _name,	\
-+	.evtid			= _eventid,	\
-+	.rid			= _res,		\
-+	.is_floating_point	= _fp,		\
-+}
-+
- /*
-  * All available events. Architecture code marks the ones that
-  * are supported by a system using resctrl_enable_mon_event()
-  * to set .enabled.
-  */
- struct mon_evt mon_event_all[QOS_NUM_EVENTS] = {
--	[QOS_L3_OCCUP_EVENT_ID] = {
--		.name	= "llc_occupancy",
--		.evtid	= QOS_L3_OCCUP_EVENT_ID,
--		.rid	= RDT_RESOURCE_L3,
--	},
--	[QOS_L3_MBM_TOTAL_EVENT_ID] = {
--		.name	= "mbm_total_bytes",
--		.evtid	= QOS_L3_MBM_TOTAL_EVENT_ID,
--		.rid	= RDT_RESOURCE_L3,
--	},
--	[QOS_L3_MBM_LOCAL_EVENT_ID] = {
--		.name	= "mbm_local_bytes",
--		.evtid	= QOS_L3_MBM_LOCAL_EVENT_ID,
--		.rid	= RDT_RESOURCE_L3,
--	},
-+	MON_EVENT(QOS_L3_OCCUP_EVENT_ID,		"llc_occupancy",	RDT_RESOURCE_L3,	false),
-+	MON_EVENT(QOS_L3_MBM_TOTAL_EVENT_ID,		"mbm_total_bytes",	RDT_RESOURCE_L3,	false),
-+	MON_EVENT(QOS_L3_MBM_LOCAL_EVENT_ID,		"mbm_local_bytes",	RDT_RESOURCE_L3,	false),
-+	MON_EVENT(PMT_EVENT_ENERGY,			"core_energy",		RDT_RESOURCE_PERF_PKG,	true),
-+	MON_EVENT(PMT_EVENT_ACTIVITY,			"activity",		RDT_RESOURCE_PERF_PKG,	true),
-+	MON_EVENT(PMT_EVENT_STALLS_LLC_HIT,		"stalls_llc_hit",	RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_C1_RES,			"c1_res",		RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_UNHALTED_CORE_CYCLES,	"unhalted_core_cycles",	RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_STALLS_LLC_MISS,		"stalls_llc_miss",	RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_AUTO_C6_RES,		"c6_res",		RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_UNHALTED_REF_CYCLES,	"unhalted_ref_cycles",	RDT_RESOURCE_PERF_PKG,	false),
-+	MON_EVENT(PMT_EVENT_UOPS_RETIRED,		"uops_retired",		RDT_RESOURCE_PERF_PKG,	false),
++	arch_priv = mon_event_all[QOS_L3_OCCUP_EVENT_ID].arch_priv;
+ 	arch_mon_ctx = resctrl_arch_mon_ctx_alloc(r, QOS_L3_OCCUP_EVENT_ID);
+ 	if (IS_ERR(arch_mon_ctx)) {
+ 		pr_warn_ratelimited("Failed to allocate monitor context: %ld",
+@@ -160,7 +162,7 @@ void __check_limbo(struct rdt_l3_mon_domain *d, bool force_free)
+ 
+ 		entry = __rmid_entry(idx);
+ 		if (resctrl_arch_rmid_read(r, &d->hdr, entry->closid, entry->rmid,
+-					   QOS_L3_OCCUP_EVENT_ID, &val,
++					   QOS_L3_OCCUP_EVENT_ID, arch_priv, &val,
+ 					   arch_mon_ctx)) {
+ 			rmid_dirty = true;
+ 		} else {
+@@ -411,7 +413,8 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+ 	if (rr->hdr) {
+ 		/* Single domain. */
+ 		rr->err = resctrl_arch_rmid_read(rr->r, rr->hdr, closid, rmid,
+-						 rr->evt->evtid, &tval, rr->arch_mon_ctx);
++						 rr->evt->evtid, rr->evt->arch_priv,
++						 &tval, rr->arch_mon_ctx);
+ 		if (rr->err)
+ 			return rr->err;
+ 
+@@ -434,7 +437,8 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+ 		if (d->ci_id != rr->ci_id)
+ 			continue;
+ 		err = resctrl_arch_rmid_read(rr->r, &d->hdr, closid, rmid,
+-					     rr->evt->evtid, &tval, rr->arch_mon_ctx);
++					     rr->evt->evtid, rr->evt->arch_priv,
++					     &tval, rr->arch_mon_ctx);
+ 		if (!err) {
+ 			rr->val += tval;
+ 			ret = 0;
+@@ -906,7 +910,8 @@ struct mon_evt mon_event_all[QOS_NUM_EVENTS] = {
+ 	MON_EVENT(PMT_EVENT_UOPS_RETIRED,		"uops_retired",		RDT_RESOURCE_PERF_PKG,	false),
  };
  
- void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu, unsigned int binary_bits)
+-void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu, unsigned int binary_bits)
++void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu,
++			      unsigned int binary_bits, void *arch_priv)
+ {
+ 	if (WARN_ON_ONCE(eventid < QOS_FIRST_EVENT || eventid >= QOS_NUM_EVENTS ||
+ 			 binary_bits > MAX_BINARY_BITS))
+@@ -922,6 +927,7 @@ void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu, unsig
+ 
+ 	mon_event_all[eventid].any_cpu = any_cpu;
+ 	mon_event_all[eventid].binary_bits = binary_bits;
++	mon_event_all[eventid].arch_priv = arch_priv;
+ 	mon_event_all[eventid].enabled = true;
+ }
+ 
 -- 
 2.50.1
 
