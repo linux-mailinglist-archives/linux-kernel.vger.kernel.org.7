@@ -1,131 +1,70 @@
-Return-Path: <linux-kernel+bounces-792393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8895EB3C34B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:49:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A702B3C36A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 493125A182C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:49:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510C27A2F41
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAA7239E75;
-	Fri, 29 Aug 2025 19:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uIWoXMqy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369B5242D7B;
+	Fri, 29 Aug 2025 19:55:30 +0000 (UTC)
+Received: from c64.rulez.org (c64.rulez.org [79.139.58.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC05C2566;
-	Fri, 29 Aug 2025 19:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5222566;
+	Fri, 29 Aug 2025 19:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.139.58.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756496952; cv=none; b=mmr3og+nkT61H7gt1oUBxAhzVYoFxS827BT4ojYEzV0aLJF/uPfmS/vTuBBN7z8i8KLssgvkx4Gdy8y7zFBUegmeYspbqcnyfKLX5fioj0YyxmLTj4ri6NXxm7xDS/U/Nz0TSETrh78faCtrhTdvz1G1GJC6m+jLO2yEC64cfGo=
+	t=1756497329; cv=none; b=D8nFefSWdQCsLiRUDRfuOIvqNFUjwV8xw97qNgBuKJQdOi2vzWMDrQrBi9OPnvKo/PNo43akKMrG68lTP223JUspHGEDRBSsqGhWH6nvqCQOZ/zsJGdrzZPwRqqHz2N+jAS8NTMx4/anKe02VA9UbH2KR2N/mEmN65eMhLLIbW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756496952; c=relaxed/simple;
-	bh=LLVcrIi/cyWo0LjJCEYkZmzJpxi7u/TFm+fW6emCsds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dgpi13wT21EcuKAQOIKzgNYXvCmunHGkYhNL80XU+uuob5Knq96hE0v1EtCZ9m5LgDrjH77x2d84dAUnvx6CfqadwDIXxns65wQ8viqRV1gtSWaL35Tt8adLQ0ICnmn9sSd4yWBjU99on2TAaUvVbgyMY0TUeLLRJFdoGRTlTso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uIWoXMqy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ro188kEhUKQPnNng/X944mHUrpfeDnYN6haIPs2ALlU=; b=uIWoXMqyXks7k78f4aKMtdvSfw
-	GTKLj6b+kWAY8I5Jv1Wl280VovqT8EMA+ErXadFbpF1j2BG4khowgYRu4/i+5xklVMtzkNEE+I1Rz
-	Raqs37mmA21IdmMRxWlW3FlC2i+RwsH96oUgzz0/X1SwIHjETTUdYKT0g/KcNWtP9Vsc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1us552-006WFX-Ve; Fri, 29 Aug 2025 21:48:12 +0200
-Date: Fri, 29 Aug 2025 21:48:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v9 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <8a76222e-8da7-4499-981f-64660e377e1c@lunn.ch>
-References: <20250828025547.568563-1-dong100@mucse.com>
- <20250828025547.568563-5-dong100@mucse.com>
- <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
- <DB12A33105BC0233+20250829021254.GA904254@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1756497329; c=relaxed/simple;
+	bh=OmuktVN/aEoBARUaD+JbEVwzeH0WNrHXN2lOQdJi6D4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=luSlRBal6tydtAJolgIKlh5Bd3xBKvgcxn1++lUTQO3NEvBHo/4bGTDt0voVhDaOHdHdoqAQJJ31lRTf9k7WDkdvIxngUnSGd/+8Ny0L1mJnnfLByQQNt1hJI6gPuzodiVlUL83H30hLY53fU74xy9QnhlNy9/uDq26bssZeECE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c64.rulez.org; spf=pass smtp.mailfrom=c64.rulez.org; arc=none smtp.client-ip=79.139.58.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c64.rulez.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c64.rulez.org
+Received: by c64.rulez.org (Postfix, from userid 1000)
+	id 1F8CF10336; Fri, 29 Aug 2025 21:55:17 +0200 (CEST)
+From: Zsolt Kajtar <soci@c64.rulez.org>
+To: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: Zsolt Kajtar <soci@c64.rulez.org>
+Subject: [PATCH 0/3] tty/vt: fix various 512 glyph font issues
+Date: Fri, 29 Aug 2025 21:49:05 +0200
+Message-Id: <20250829194908.24852-1-soci@c64.rulez.org>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB12A33105BC0233+20250829021254.GA904254@nic-Precision-5820-Tower>
+Content-Transfer-Encoding: 8bit
 
-> Maybe I should rename it like this?
-> 
-> /**
->  * mucse_mbx_sync_fw_by_get_capability - Try to sync driver and fw
->  * @hw: pointer to the HW structure
->  *
->  * mucse_mbx_sync_fw_by_get_capability tries to sync driver and fw
->  * by get capabitiy mbx cmd. Many retrys will do if it is failed.
->  *
->  * Return: 0 on success, negative errno on failure
->  **/
-> int mucse_mbx_sync_fw_by_get_capability(struct mucse_hw *hw)
-> {
-> 	struct hw_abilities ability = {};
-> 	int try_cnt = 3;
-> 	int err;
-> 	/* It is called once in probe, if failed nothing
-> 	 * (register network) todo. Try more times to get driver
-> 	 * and firmware in sync.
-> 	 */
-> 	do {
-> 		err = mucse_fw_get_capability(hw, &ability);
-> 		if (err)
-> 			continue;
-> 		break;
-> 	} while (try_cnt--);
-> 
-> 	if (!err)
-> 		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
-> 	return err;
-> }
+Recently I've run into an issue where a monochrome fbcon behaved strange
+with a 512 glyph font. That's mostly a fbcon problem but will need
+changes in vt as well. However this series is not about that yet.
 
-Why so much resistance to a NOP or firmware version, something which
-is not that important? Why do you want to combine getting sync and
-getting the capabilities?
+Instead it's about 3 related problems which were found at the same time.
+These are specific to vt only and are a problem with vgacon.
 
-> fw reduce working frequency to save power if no driver is probed to this
-> chip. And fw change frequency to normal after recieve insmod mbx cmd.
+These patches were prepared to apply on tty-next.
 
-So why is this called ifinsmod? Why not power save? If you had called
-this power save, i would not of questioned what this does, it is
-pretty obvious, and other drivers probably have something
-similar. Some drivers probably have something like open/close, which
-do similar things. Again, i would not of asked. By not following what
-other drivers are doing, you just cause problems for everybody.
+Zsolt Kajtar (3):
+  tty/vt: 8th bit location in vc_uniscr routines
+  tty/vt: Prevent 8th bit corruption with soft cursor
+  tty/vt: Fix unreadable kernel messages on vgacon
 
-So please give this a new name. Not just the function, but also the
-name of the firmware op and everything else to do with this. The
-firmware does not care what the driver calls it, all it sees is a
-binary message format, no names.
+ drivers/tty/vt/vt.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-Please also go through your driver and look at all the other names. Do
-they match what other drivers use. If not, you might want to rename
-them, in order to get your code merged with a lot less back and forth
-with reviewers.
+-- 
+2.30.2
 
-	Andrew
 
