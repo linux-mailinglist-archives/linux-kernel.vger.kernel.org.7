@@ -1,158 +1,157 @@
-Return-Path: <linux-kernel+bounces-792311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3F7B3C28E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46836B3C292
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB5B4682ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:38:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBF6585AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E61F343D7E;
-	Fri, 29 Aug 2025 18:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ov5WnNhD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39FE3451CC;
+	Fri, 29 Aug 2025 18:38:38 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCE3375DA;
-	Fri, 29 Aug 2025 18:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D373340D9F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 18:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756492699; cv=none; b=buttVTHJ+kDDvSgu+XgUIhp9EAX1umGqGygaz66t9x40bT9osxrtiTPC62CGB48tsbTo6hr1hikeeo37N/1mw3g0cJNXmLGskcSmdB+HVnPEszZxKy5JtDj6eLfW11+b89BV8vwrlp+DEHj5As06m74hnTyu1Zgj+1up7dxHP6s=
+	t=1756492718; cv=none; b=sZK8wUis9hEe8iJo+Wijf+HIgNXA2nXWxo4BFtCK+Q+K/GIjJ9nDNbXoeMa7jCd+uUuck/igcs/kIJEdSTVOGdON5+nsYt/UYDhP86Ua9acSmv7if2wKtOnCK+LkKguyToQYgSj0acWoMnW4UyJIxa7Q1c9uco6AYv2mXlDVH6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756492699; c=relaxed/simple;
-	bh=G2OtD6gg+bw9ZqOkq99RiwmobzpQGmczBt388tEvqQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JuZrB5v6ysIU9K5ei4eCQuUR6pgA6aULQNRh30YJZ2bGxOaqrg2EsPTXHw04+XIVblAcx5yUR4ZmBMhRS8iQl4acYRMrWM8Fvx+P4ZMp78iDNJcdbk1yZ8UDeb40klNEsUCQA9+a2mmOT0Y48gjh6p9G5CINFOJnGcjt94r9STA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ov5WnNhD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 838E8C4CEF0;
-	Fri, 29 Aug 2025 18:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756492698;
-	bh=G2OtD6gg+bw9ZqOkq99RiwmobzpQGmczBt388tEvqQA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ov5WnNhDYY/E6a4awYJM+K8xgExCClE5Y0Tf2Y11//SUqC2e8H33VSZ3i1uc1POtL
-	 3YeCHPT+LRLLcXNmGQk3C5oHa7zsZ0bofiQBgc3pMXL6VH0tJuaARC3EPbSqo4icNK
-	 2wfmzXZxZK8E2DR8zjmoS3hnPuPIA3PoPtUqF3bYgIyCzxtY0eWIORQko0EVjTH3+9
-	 ZfDkkyLHld0blZUJ+7o4K80ZpSREI4kfSUqIc7jMHAmBsnDS9BGcDpLvn6Kaz95vU6
-	 U4WSMzFdzrnSt8Z0481GORe3zvOMdHZ8W4AuagPsc8gBnpvZu0IxNoyLS2Jq773s7J
-	 3OXrT9D8lO56A==
-Date: Fri, 29 Aug 2025 18:38:16 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-hyperv@vger.kernel.org, rcu@vger.kernel.org,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Mukesh R <mrathor@linux.microsoft.com>, ssengar@linux.microsoft.com,
-	namjain@linux.microsoft.com
-Subject: Re: [PATCH v2 2/7] Drivers: hv: Disentangle VTL return cancellation
- from SIGPENDING
-Message-ID: <aLHzmBFuWy2P5Opq@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250828000156.23389-1-seanjc@google.com>
- <20250828000156.23389-3-seanjc@google.com>
+	s=arc-20240116; t=1756492718; c=relaxed/simple;
+	bh=bxYU3lAwVWUq/j1z6PuiS1V6Z0be7VHuXK6LhWYyDdc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VanFTocf/4/Q4J7VcxvcZ28I1u0FP2vcrBgcs1batBY54HfZkSdgibmTH2BNONEWpnKp6hLLcxE7o1iuGHp5wgI6G7sW9TAK93pHzsV5bUuaN8vgBSzLrj0ugs8zQ+nF9ny1U7+hiaNDTHqm/Rp4Y5babKE1HUn4AJYSb8frxBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-887049d3b77so471867339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:38:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756492715; x=1757097515;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1mUCN86lHyS9ny7AYWou8w/wgX7sPRB/RXHvhpvqEJY=;
+        b=AFPDWo08gwg0aylsLEwB8DfQnBHEAoRWSGQ7Q1n7AfNn1dKchploBu783JwyMVmclG
+         rV3EUmi9LN+lAo4QyIVc4DbEJBUjGjqUkIJHBwIS7pX6mKdTWUPN26uvpa/DA8xLjXZH
+         qgAFOwW4sHgZTO6XqB0DDpw8jSrsE6/T878R1KE1QRPsWbdYnO0NHGeE5H2AnMWlT14l
+         AxA5M0NxzUgFAyr2TcVsqb8zmJbqcuC+lWq5IBWUiRrnp+qkW96vw1hB5OLV+g01kC6M
+         gZ9wpnhrEOKT9C5bFELxdBdPIjwaumgq0QZYXzatRtZxAiFb6OijmHAN3SvzRrFeJqUD
+         2mKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRdedwzUO1WdIjj6LvwRA6E+gMqAOCY7IEUWRYVQ9LWyyiUAwEecctx/5CU3utsxCV9c+rH5a9i38apAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2zyeseK3JyvOAVFr2omBYMaaUzZOL5/+l5WsCfFg2nd08SaaS
+	SZOmJmU8rlEzStUtZ7VXIMi+hBiMLkaksxnpRiE4etgVLTZEqn+UcgkrIwdIcQfzAsjBB/i8KS0
+	jg1gItOq1kLDr2VJD9bm54GHyji4khupWHtJLqyKW1u0kqgapEcsZZqXHkcY=
+X-Google-Smtp-Source: AGHT+IHOSK2Gtuv7lgkQ0yws/v+BrIPsOgECsYL9UsCOrNNwlCdp9OXsrAstAdlk9UdCvhpeeApwQmGiH06Bu4rKqncGySlV7dtj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828000156.23389-3-seanjc@google.com>
+X-Received: by 2002:a05:6e02:450d:b0:3f3:bbda:d037 with SMTP id
+ e9e14a558f8ab-3f3bbdad456mr7014305ab.26.1756492715728; Fri, 29 Aug 2025
+ 11:38:35 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:38:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b1f3ab.a70a0220.f8cc2.00ef.GAE@google.com>
+Subject: [syzbot] [net?] [usb?] WARNING in rtl8150_start_xmit/usb_submit_urb
+From: syzbot <syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 27, 2025 at 05:01:51PM -0700, Sean Christopherson wrote:
-> Check for return to a lower VTL being cancelled separately from handling
-> pending TIF-based work, as there is no need to immediately process pending
-> work; the kernel will immediately exit to userspace (ignoring preemption)
-> and handle the pending work at that time.
-> 
-> Disentangling cancellation from the TIF-based work will allow switching to
-> common virtualization APIs for detecting and processing pending work.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Hello,
 
-Thanks for this patch, Sean.
+syzbot found the following issue on:
 
-My current plan is to drop this driver from my tree (hence it will
-disappear from linux-next soon) because Peter has an objection to the
-ABI it introduces. I just have not gotten around to it yet.
+HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12891634580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=78cae3f37c62ad092caa
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14538262580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16891634580000
 
-I won't apply this patch, the next one and the last one. I have CC'ed
-the owner of that driver to this patch here so that your suggestion can
-be incorporated in future submissions.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/63178c6ef3f8/disk-7fa4d8dc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c5c27b0841e0/vmlinux-7fa4d8dc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9a8832715cca/bzImage-7fa4d8dc.xz
 
-CC Saurabh and Naman.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
 
-Thanks,
-Wei
+------------[ cut here ]------------
+URB ffff888057dae700 submitted while active
+WARNING: drivers/usb/core/urb.c:379 at usb_submit_urb+0xfc1/0x1830 drivers/usb/core/urb.c:379, CPU#1: kworker/1:6/7756
+Modules linked in:
+CPU: 1 UID: 0 PID: 7756 Comm: kworker/1:6 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: mld mld_ifc_work
+RIP: 0010:usb_submit_urb+0xfc1/0x1830 drivers/usb/core/urb.c:379
+Code: 44 89 f2 e8 51 7c f5 f9 e9 13 fc ff ff e8 87 69 89 fa c6 05 e0 ba 97 08 01 90 48 c7 c7 c0 6f 56 8c 48 89 de e8 50 09 4d fa 90 <0f> 0b 90 90 e9 b7 f0 ff ff e8 61 69 89 fa eb 11 e8 5a 69 89 fa bd
+RSP: 0018:ffffc9000b70f010 EFLAGS: 00010246
+RAX: 0218107c34ac3b00 RBX: ffff888057dae700 RCX: ffff888021ab5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1c7a604 R12: dffffc0000000000
+R13: ffff888032a8a002 R14: ffff888057dae708 R15: 0000000000000820
+FS:  0000000000000000(0000) GS:ffff8881258c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6072c44a90 CR3: 000000000e338000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ rtl8150_start_xmit+0x2cb/0x5f0 drivers/net/usb/rtl8150.c:696
+ __netdev_start_xmit include/linux/netdevice.h:5222 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5231 [inline]
+ xmit_one net/core/dev.c:3839 [inline]
+ dev_hard_start_xmit+0x2d7/0x830 net/core/dev.c:3855
+ sch_direct_xmit+0x241/0x4b0 net/sched/sch_generic.c:344
+ __dev_xmit_skb net/core/dev.c:4114 [inline]
+ __dev_queue_xmit+0x1857/0x3b50 net/core/dev.c:4691
+ neigh_output include/net/neighbour.h:547 [inline]
+ ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+ NF_HOOK+0x9e/0x380 include/linux/netfilter.h:318
+ mld_sendpack+0x8d4/0xe60 net/ipv6/mcast.c:1860
+ mld_send_cr net/ipv6/mcast.c:2159 [inline]
+ mld_ifc_work+0x83e/0xd60 net/ipv6/mcast.c:2698
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-> ---
->  drivers/hv/mshv_vtl_main.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hv/mshv_vtl_main.c b/drivers/hv/mshv_vtl_main.c
-> index 12f5e77b7095..aa09a76f0eff 100644
-> --- a/drivers/hv/mshv_vtl_main.c
-> +++ b/drivers/hv/mshv_vtl_main.c
-> @@ -731,19 +731,21 @@ static int mshv_vtl_ioctl_return_to_lower_vtl(void)
->  						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL |
->  						_TIF_NEED_RESCHED_LAZY;
->  		unsigned long ti_work;
-> -		u32 cancel;
->  		unsigned long irq_flags;
->  		struct hv_vp_assist_page *hvp;
->  		int ret;
->  
->  		local_irq_save(irq_flags);
-> +		if (READ_ONCE(mshv_vtl_this_run()->cancel)) {
-> +			local_irq_restore(irq_flags);
-> +			preempt_enable();
-> +			return -EINTR;
-> +		}
-> +
->  		ti_work = READ_ONCE(current_thread_info()->flags);
-> -		cancel = READ_ONCE(mshv_vtl_this_run()->cancel);
-> -		if (unlikely((ti_work & VTL0_WORK) || cancel)) {
-> +		if (unlikely(ti_work & VTL0_WORK)) {
->  			local_irq_restore(irq_flags);
->  			preempt_enable();
-> -			if (cancel)
-> -				ti_work |= _TIF_SIGPENDING;
->  			ret = mshv_do_pre_guest_mode_work(ti_work);
->  			if (ret)
->  				return ret;
-> -- 
-> 2.51.0.268.g9569e192d0-goog
-> 
-> 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
