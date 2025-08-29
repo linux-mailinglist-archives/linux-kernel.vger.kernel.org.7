@@ -1,123 +1,57 @@
-Return-Path: <linux-kernel+bounces-792492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B67B3C4BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:19:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB26B3C4C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBA971889F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9B1A17912F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB32829ACF7;
-	Fri, 29 Aug 2025 22:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940F428507E;
+	Fri, 29 Aug 2025 22:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpneGQ3Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urG17Cu0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E587B26F445;
-	Fri, 29 Aug 2025 22:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC56F278753;
+	Fri, 29 Aug 2025 22:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756505963; cv=none; b=KWfpnpANmvoB8AmYyfgghbwai/yntVP4vpuksvJNMe+gDLl75aSUQzNNTB3jjbBJ0ttUwDW6DBBXM0Us05cAPJUmumQSo94GTaFpdPjKfXxZPzs5czy9YEyi+cQ1aUizz4mDSgrYzqmY/iCcA75dLMJ0e2SZokn72N8bs2zsK6s=
+	t=1756505976; cv=none; b=XR9hy3LLxoeYKIFlxyxG+JqthRJ1j+x128dVDIrSIdXpeV4NB5RvNQaD72O9FN20znBRbJ7RuTfVBrqfmxSP1vBF6sOpfm73/gfq1yhggjiWuEzODjTCtir44+2+MnWiXIwr56OoZB1yIiLMRLbXyKxoefXFE/4XE9xYCCp4N/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756505963; c=relaxed/simple;
-	bh=0bwPfbMyrek5L9hOu7GBREJXWyINw9aI7B0CsO+yy18=;
+	s=arc-20240116; t=1756505976; c=relaxed/simple;
+	bh=A5C4e1z8sW6QvmbwOIiYp+LFhDtXndxxYvLSqp0kA+Y=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gS+j9X+RZCCT8PBD6OtENW+p+FlHGfJmu3fCai1WIit2rIGItApAfXYPs0v17ovLIHNWBYH+9Rih7VQXIdCtX4ygWlzvGAH1zMITezdu7NlFKbJ+dD5DvyWDuIj5tBXXNNry//txCFk4dCRLLIeR4y2SumO8s1yxYABn4hnKoAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpneGQ3Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D549C4CEF0;
-	Fri, 29 Aug 2025 22:19:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uGo8PVf19CP2uuMTFl23IMEUnUghIIjjFNZI5PKURkUlGFA1CZeMx6bfpCSdHddaINz18Pvg+kCIQywIap8IWWD2S37mBSuiuRPB73/UCHuPQgp8pgI/O6AJ9lhwqqHU+peeofBfzEDVglPI7nFk5ZCGOvCcDsYHd45LQu3Z5Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urG17Cu0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDD1C4CEF0;
+	Fri, 29 Aug 2025 22:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756505962;
-	bh=0bwPfbMyrek5L9hOu7GBREJXWyINw9aI7B0CsO+yy18=;
+	s=k20201202; t=1756505975;
+	bh=A5C4e1z8sW6QvmbwOIiYp+LFhDtXndxxYvLSqp0kA+Y=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NpneGQ3QoAZZMVPOqxAMTMsnXEod1MdR9ylvjRjnlUJ/5Mz3jdgYOeIgkfRKPhZ/U
-	 vShN87eLYGT8BEANkp63jXP/WsDTW3PU0xitnIZmnudm3QKOtQPPDMN6lDjVT1DMy6
-	 XFRyCvB6YJQmelc7Wn3BJtfB7gPtsENP28OUr9nZgR3Z3uJVJ4N4zjTqq2R/gAAsif
-	 WTFcvK4iQOHAl7e/mRAw01njvP6SR0PeP/vp9kcpLKktQGVHBqKVQ45BB3W4Cv3bfY
-	 SvtEaHF5gGrpETbJNljug4x3qCKcghxgOt/gZHQtCpaow0R9q2yCiFsgb9Uaue3SoT
-	 1eYuRWMtynFfw==
+	b=urG17Cu0QCZUQbFVDgXT3dCRnuMWmpPlmDvJdI4Abo8SJeu1hqVsGz86qT7t0Dy70
+	 7uTWu4y1t2+5PYpGMEtI4AXStd1kWE03knzBjEZg26s9ZfgGMt1agb9zOD8YpfJ5yB
+	 0pE8WCG3cLfJGk9gkjTNiK4bcW5aB55Sg15GnlBGdHh516u84vJa3CdMWBWnznhuxx
+	 CQgXFE+uyX/Tlb8PTjzc2DaEKW0H7msNowSnc3ffO8AvGTO5uymNa0T58NiLt02wXo
+	 Vw4KEY8fF9+cFGxM/vdVbqw2yIFQObk2Z5ujLwwzHfzUO05aqFV0MEUqPPJKFsXF6m
+	 zjVW2xdI8r9Uw==
 From: Mark Brown <broonie@kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
- Linux Documentation <linux-doc@vger.kernel.org>, 
- Linux DAMON <damon@lists.linux.dev>, 
- Linux Memory Management List <linux-mm@kvack.org>, 
- Linux Power Management <linux-pm@vger.kernel.org>, 
- Linux Block Devices <linux-block@vger.kernel.org>, 
- Linux BPF <bpf@vger.kernel.org>, 
- Linux Kernel Workflows <workflows@vger.kernel.org>, 
- Linux KASAN <kasan-dev@googlegroups.com>, 
- Linux Devicetree <devicetree@vger.kernel.org>, 
- Linux fsverity <fsverity@lists.linux.dev>, 
- Linux MTD <linux-mtd@lists.infradead.org>, 
- Linux DRI Development <dri-devel@lists.freedesktop.org>, 
- Linux Kernel Build System <linux-lbuild@vger.kernel.org>, 
- Linux Networking <netdev@vger.kernel.org>, 
- Linux Sound <linux-sound@vger.kernel.org>, 
- Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, SeongJae Park <sj@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
- Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Perry Yuan <perry.yuan@amd.com>, Jens Axboe <axboe@kernel.dk>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, 
- Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
- Alexander Potapenko <glider@google.com>, 
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
- tytso@mit.edu, Richard Weinberger <richard@nod.at>, 
- Zhihao Cheng <chengzhihao1@huawei.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas.schier@linux.dev>, Ingo Molnar <mingo@redhat.com>, 
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
- Waiman Long <longman@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Shay Agroskin <shayagr@amazon.com>, Arthur Kiyanovski <akiyano@amazon.com>, 
- David Arinzon <darinzon@amazon.com>, Saeed Bishara <saeedb@amazon.com>, 
- Andrew Lunn <andrew@lunn.ch>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Alexandru Ciobotaru <alcioa@amazon.com>, 
- The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Steve French <stfrench@microsoft.com>, 
- Meetakshi Setiya <msetiya@microsoft.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Bart Van Assche <bvanassche@acm.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Masahiro Yamada <masahiroy@kernel.org>
-In-Reply-To: <20250829075524.45635-1-bagasdotme@gmail.com>
-References: <20250829075524.45635-1-bagasdotme@gmail.com>
-Subject: Re: (subset) [PATCH 00/14] Internalize www.kernel.org/doc
- cross-reference
-Message-Id: <175650594072.395832.3911302052314725751.b4-ty@kernel.org>
-Date: Fri, 29 Aug 2025 23:19:00 +0100
+To: linux-spi@vger.kernel.org, Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, stable@vger.kernel.org, 
+ Valentina Fernandez <valentina.fernandezalanis@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <20250825-during-ploy-939bdd068593@spud>
+References: <20250825-during-ploy-939bdd068593@spud>
+Subject: Re: [PATCH v1] spi: microchip-core-qspi: stop checking viability
+ of op->max_freq in supports_op callback
+Message-Id: <175650597222.396097.13617844393392701589.b4-ty@kernel.org>
+Date: Fri, 29 Aug 2025 23:19:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -128,26 +62,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-a9b2a
 
-On Fri, 29 Aug 2025 14:55:10 +0700, Bagas Sanjaya wrote:
-> Cross-references to other docs (so-called internal links) are typically
-> done following Documentation/doc-guide/sphinx.rst: either simply
-> write the target docs (preferred) or use :doc: or :ref: reST directives
-> (for use-cases like having anchor text or cross-referencing sections).
-> In some places, however, links to https://www.kernel.org/doc
-> are used instead (outgoing, external links), owing inconsistency as
-> these requires Internet connection only to see docs that otherwise
-> can be accessed locally (after building with ``make htmldocs``).
+On Mon, 25 Aug 2025 12:53:28 +0100, Conor Dooley wrote:
+> In commit 13529647743d9 ("spi: microchip-core-qspi: Support per spi-mem
+> operation frequency switches") the logic for checking the viability of
+> op->max_freq in mchp_coreqspi_setup_clock() was copied into
+> mchp_coreqspi_supports_op(). Unfortunately, op->max_freq is not valid
+> when this function is called during probe but is instead zero.
+> Accordingly, baud_rate_val is calculated to be INT_MAX due to division
+> by zero, causing probe of the attached memory device to fail.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[12/14] ASoC: doc: Internally link to Writing an ALSA Driver docs
-        commit: f522da9ab56c96db8703b2ea0f09be7cdc3bffeb
+[1/1] spi: microchip-core-qspi: stop checking viability of op->max_freq in supports_op callback
+      commit: 89e7353f522f5cf70cb48c01ce2dcdcb275b8022
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
