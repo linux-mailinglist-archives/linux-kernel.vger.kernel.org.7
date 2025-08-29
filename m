@@ -1,82 +1,88 @@
-Return-Path: <linux-kernel+bounces-791264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9389B3B42C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:21:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ADEB3B42E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8927C38B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64AEF7B94B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47875266B6F;
-	Fri, 29 Aug 2025 07:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="IikUcDRV"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B99269CF0;
+	Fri, 29 Aug 2025 07:21:51 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634C035979;
-	Fri, 29 Aug 2025 07:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6C61EEA49;
+	Fri, 29 Aug 2025 07:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756452105; cv=none; b=k0y+12fWR4M/37Z6A8uTfyAEOYT42hClz4YW+iZ1N4yaVIJvq/dnxz4EnkYcifxvCGrNKhtXF0DWMfxiQKC+qAjJewhjfoRKkQ0zIW3QkyBYqUZnLxXAXJjHYa9+jwwzr26UJKxaENRotmuxDDIhij/c/s1kcxHhjKAsoGsVgPI=
+	t=1756452111; cv=none; b=G/dRxnPqT8boJ/CfYe5WCFMAs4yIXIm2Is2NCUJf/6xsgtqf5VEcrlKy+FF7+4J1Y23Vdx8GA24Yiu5x9bOVMuQk0nNW2SCJ/bBImO+yxDnBN5188kExNlVdGFb2OLeD37Qjkk9UZ3GKLn0O/YzQ5IVnvb3cPI18/BKQ1XIHLbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756452105; c=relaxed/simple;
-	bh=oqVHI2UBMStAajDRIlceskz5ydoQHOLrTzIz/X1hNpQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WZgANhRnI3jb7Oye0qXMMqbBCqfNJpWrhuInbkmzoJ2HQPJW7QGYNQeQUbReBmhNRgUz7JXR+fwYTSMXEfnkodOu6AXxwwa6+RMkzpOxEKkUhEVNcaCLO+i/0MK7Kn9rjL8iRkJvLUUqDC8hrIlyhnPy8ARgF8e5HJEKirzefzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=IikUcDRV; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 0349340643CD;
-	Fri, 29 Aug 2025 07:21:38 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 0349340643CD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1756452098;
-	bh=6Jb3CbdCmBG5Slw/XWnsXEM6FgT6h4sR5vQX2aLIUmc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=IikUcDRVjO9UgCWMlfiIMW3m8firaicgXgugoA8zRl2TP+iCCnOl71z4f6zufe83w
-	 FPVacgZ3saz30ERYg0ZRVfNQtxmi6/86jx0ZL7CSTU46E1nYf9u5lZIqpIRwH0p007
-	 TcFBhcn/btQ8CQ3QFdzRf7c8A2ZWCo1nULGYYuOw=
-Date: Fri, 29 Aug 2025 10:21:35 +0300 (MSK)
-From: Alexander Monakov <amonakov@ispras.ru>
-To: linux-fsdevel@vger.kernel.org
-cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-In-Reply-To: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
-Message-ID: <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+	s=arc-20240116; t=1756452111; c=relaxed/simple;
+	bh=9e6937TvswyiPc6f7lM0pelqK3lmBBm/5nTriRK/bxE=;
+	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
+	 In-Reply-To:Content-Type; b=E1xTBOotMzdWQyhvv37vhBdHQWnKYwNf/sI1PJBBgnJcgFmrnn/j8bK46P2O9MAvoHSoo7aCts/6pfZKxMkMaOaoN/QfGiIOp7D7pb/Feuk/sDR2J0RoOHMQWq6QCmjqSa4vCXq+QYegwuuJ4zVPayyrwMZLubjUvmnjJBo+fOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cCqMz3Jlbz2CgDb;
+	Fri, 29 Aug 2025 15:17:19 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3744C1A016C;
+	Fri, 29 Aug 2025 15:21:46 +0800 (CST)
+Received: from kwepemq100003.china.huawei.com (7.202.195.72) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 29 Aug 2025 15:21:45 +0800
+Received: from [10.67.113.98] (10.67.113.98) by kwepemq100003.china.huawei.com
+ (7.202.195.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 29 Aug
+ 2025 15:21:45 +0800
+Message-ID: <68B15509.4030605@hisilicon.com>
+Date: Fri, 29 Aug 2025 15:21:45 +0800
+From: Wei Xu <xuwei5@hisilicon.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To: "lihuisong (C)" <lihuisong@huawei.com>, Colin Ian King
+	<colin.i.king@gmail.com>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<xuwei5@hisilicon.com>
+Subject: Re: [PATCH] soc: hisilicon: kunpeng_hccs: Fix spelling mistake "decrese"
+ -> "decrease"
+References: <20250808105751.830113-1-colin.i.king@gmail.com> <8634445b-0462-4d86-9bfb-af10569566dc@huawei.com>
+In-Reply-To: <8634445b-0462-4d86-9bfb-af10569566dc@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq100003.china.huawei.com (7.202.195.72)
 
+Hi Colin， 
 
-On Wed, 27 Aug 2025, Alexander Monakov wrote:
-
-> Dear fs hackers,
+On 2025/8/9 9:27, lihuisong (C) wrote:
+> +Wei Hisilicon SoC maintainer
 > 
-> I suspect there's an unfortunate race window in __fput where file locks are
-> dropped (locks_remove_file) prior to decreasing writer refcount
-> (put_file_access). If I'm not mistaken, this window is observable and it
-> breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> in more detail below.
+> 在 2025/8/8 18:57, Colin Ian King 写道:
+>> There is a spelling mistake in a dev_err message. Fix it.
+>>
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>> ---
+> Thanks,
+> Reviewed-by: lihuisong@huawei.com
+> .
+> 
 
-The race in __fput is a problem irrespective of how the testcase triggers it,
-right? It's just showing a real-world scenario. But the issue can be
-demonstrated without a multithreaded fork: imagine one process placing an
-exclusive lock on a file and writing to it, another process waiting on that
-lock and immediately execve'ing when the lock is released.
+Applied to the Hisilicon driver tree.
+Thanks!
 
-Can put_file_access be moved prior to locks_remove_file in __fput?
-
-Alexander
+Best Regards,
+Wei
 
