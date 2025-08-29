@@ -1,363 +1,238 @@
-Return-Path: <linux-kernel+bounces-790901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDFBB3AF08
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE91B3AF1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B0F6836E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496647C6884
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5CF13D512;
-	Fri, 29 Aug 2025 00:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FB814E2E2;
+	Fri, 29 Aug 2025 00:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z7leSx88"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mpqEaJ8r"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BBA74059
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756427052; cv=none; b=a0d3W3wiOnmVa2OY9AvfR4EWPyshEtg8Yhk1WOdwuqcBLiKFBh7e/dPQ8bJHG3EaRs9lCcZqWHibrxMdYfW7OZwvUqX908AX06Ohkx1ajJlxgeepntWp3jCjkcv+e6K4hsZqQgrmtXynIF4BYUbPhYv7j1dwXStG53UGneccVhM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756427052; c=relaxed/simple;
-	bh=l9aJ5vAy0cIDAse2r2+5caJoNFmnG3nzBYGw9ufbcv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXwLyHV0EkqTf9RaymiG8ASecMLe5/A0+lV4FgAaF4cfuNkP9R6u9CrwjEeWnKK/LqoCMjVp8DI++KRlH2dVuY1enmihm9jQlvYp0ujWAc1PzgahWQaHvDaPOR+Sgq5jCYtw2Gx2IuhfJ9/dEuZFLaqoYG2gp/mks+7pWE/7A/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z7leSx88; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-618660b684fso4931a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756427049; x=1757031849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fb0y9vtGTZ+dzUMPugM8yqfICr2GysN5pwXfEC/sNhA=;
-        b=Z7leSx88RX8RzM8I4ACeu1/NydR3KAIP0AFGFmjZH42ZiwfxNCYeYB8gDASPYQvSAF
-         phxyRAom+El4mcWH9jep4VoesDUh771wcfo+UBizRnLmycl87/uQJpTemwITPAlkNeNh
-         b/zfjifyvwrQXBGYnKJeTpt6sLEbqUr6k/qv2DDP2+qoQdwcFiP46MzVLEsqCFY9iOSr
-         DOMLPx0ReCOLkQWsZu2G6rv/JtmzE+q9HDWCkdmWWRf+Gf+yFG/6dqOUMAO5y26uanAQ
-         h/0zhfQqlq1wPzzv6EQrK7VG0C0b+iluo/fOleZ0aM2c9uhsvyobHW5Gt/PS9ht7B4u1
-         xdtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756427049; x=1757031849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fb0y9vtGTZ+dzUMPugM8yqfICr2GysN5pwXfEC/sNhA=;
-        b=pnkFd743aQXiB+DMpmo2xXIoUdEC1LeDIihZsj8RLN0asUTgC3l86PdWbAR5V5ozqC
-         e3ukaMnbM0V/lhGsIqVWu6Bg52d+/VSgv1/tK07NY1mQV3R7aMEzccxoA5C79eXe6SDh
-         Yz3Xjup1aug7tOcu/RTpyWS0RD/0bz+0q2T93KAhkTwLl4QN5yM0p8jfdClpMoNtw5rS
-         Kz3rNoR9smJI7noVSxBgkmfPvjlSb0iD8sPEVMgSEq/nM46TOE5hPqvXicrKHXw3KhNv
-         KF2evP4kirMzcSOE5+y7GjRrxqaHZ1DEifaW+5J4GJNDjADTKI2X65N9uIgHBEtLwnGf
-         OXMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjDDMiN5Ltr23De0BwSDqVI0/CJUI2i6Ryy+iinAGUEbo9xWrkTkPVdgGkRi29ko/51Ub+5OwgBTWXHpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQJkrGVe3Dqbtp0JwmuTxOXYAWStlXMl6seeyeDMpGNT1GTZxd
-	6Sdc4wK5PR9+VKmXEnlJDkdye3tQwEbQ5hIrnmxjqwnkGa7pewSKYeiGXRLiyRQrKBi4HDeSn5u
-	KIkwdvSAfhgxuHMbFcrleOlbjSHaZUTcXn2UjD6Er
-X-Gm-Gg: ASbGncsvA+xh0BcrqwRwHo3aGyfqra5IYfPi0LKgOUSpwlne/hRqWS0tywjwyZiT7/c
-	Cwjqs8HOKLT9fQvA4tUdRa9H8qEOMfpU6nKfDogJ9fL8mfx//UVncyQtBqKTs+4hlO6sVyB2oqd
-	MACiiagLh447Bsmpb17Co2myCsaluFKz2wP81wqSdLCPlfLkrUasIAeJ69LfY26nOPREzWOBNSX
-	virDMoCRIl0qq0ipDDJBejzwJzx+Me8FSX+6h8QNLRy0HA=
-X-Google-Smtp-Source: AGHT+IGHd9I0AQLS1rXEfAJmvOR/gyxXdVZywIfUPo//u1+kPAq9z38CCUP9OBMIAZG26vl3BjzMxE43SXhsiruLtFE=
-X-Received: by 2002:a05:6402:2398:b0:61c:32fb:999b with SMTP id
- 4fb4d7f45d1cf-61c91d000e6mr569462a12.1.1756427048570; Thu, 28 Aug 2025
- 17:24:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F476225D6;
+	Fri, 29 Aug 2025 00:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756427185; cv=fail; b=SzCetOo2W+UXCXlkxGXhTvls4+5rVLc+DFO8CEhrr1ZehIvNAEog01PpF2nMUb9HlHuiDiD8RVW8vZ7igVG3S9na6TXQkeLHkWUL/KzFAikjrz8vS9ItWF3Z51MEmtytrsudWBGlzmzqZEROO43/OdT80IusgIucgtGJyB1uLds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756427185; c=relaxed/simple;
+	bh=DtHmMHa1xxBvlwjnqfVyXbJKsDhtepCd3nq5Xw1r5BE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=m7TrgQOWyPUz34oIj1jg8aIjzfI1DB7fGFlJG8/C86kO7YP2nlATWfuQLgL3WW6enSSVp7XBJlC7mEGmlBr7XbcZJJPrckJCHy9mzItgaXRmVG13KFj+bEHknI+wSdr6361lyLcC9ux2IkPiXm0jGipcHULSN+gg0m2bYJogNNY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mpqEaJ8r; arc=fail smtp.client-ip=40.107.220.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EkYi3cMV37WU7L2oFFRCSvcD+TqbxsYKEfZPAytvxo66YHy8+iwx/uw41JLsrgn4VpQIw6HKtcXW3xDBMlxsa5k+q+j5a1cVnm/Fd+5pIQaeMRjuD4j0H/sI8B6R8rG6oqkmmN5XPusjo+pwN4S55VFUGzN6fDHepq+Hg4iWCwP/V9+Rp4TeucJfxgVTY39mRCqEHvzyOie32k3BWJZn1JWCrJ6X8hN77pUDDTBYfkc7uqQzJZejFhjsoKCojF+XIuif7B9Ea88eE3uAm6tqb9ZlaHxy19SWAp6NYVKGXDNJfKfikSrPnuRS0gK9euznhzbQBbdJ87If67UumWYFUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XCNM/FUYe02eysUjyfqSO5uWeMpMRnRBaRxNqAGgEmE=;
+ b=WEacRTKr/KbSY6ZTI/Z8rHIpHFh4bfmpJ9Lat43eTkvvUnxogkAFBRJqNLuqK7HdWe7vhgrIfZvRWwIGiFuW0q5cY5r0cyG9LEj6Wik8sj9T1xpp1fSfE8oZ9zNk5CCjyspHexN2tvGnSpYZbHbYEh9E8f9Jp7ovJT4FyJAd+zjrbBkop//MOgKW0/iB71zgZo3bWJOtOjW8lq+T7bZKFLQzEqhpy1lPJOqVrOvyfu0bm7CJ4dp2IUUvCdd9OfO5U5oTX7fkCnhTOoUhsuFSK3SN1OKHmnp0RP1Q15Tiqv5p+rnxcgywUDeS8rXZYeJ9Gt9W/e4Eu0qtcbMcw0Y4Sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XCNM/FUYe02eysUjyfqSO5uWeMpMRnRBaRxNqAGgEmE=;
+ b=mpqEaJ8rArEpYTfWAwHxKPArFHWITNRj4KizbUb2Oa3DaVftneb1VFOlflQs8mp88Uwv/tobz/a+eEB0MR5jcG4sulmFqk3kIKeU1cZZUUUqkifV62pNIeNXnfEj3T5jdvLk3Tku+xp3b02ZeIhnkfxl0Egxpz4vbHiqguBtoj+rJRj+WUeCnocLNYzB8ska0921JIwfcqpWkxIu5Lx2u7ow0MKOy6Hj/tmnTLryuDGzTyJLzORtbCq6+dizHx2IAJN5VUkHQWBXrFn3L74e+BzJKtc1V/+mu47eaQ8/VmeAxTFFqPoqymJbBQUojioLMH64ainFqU3FFG6h0CK1Rg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by DS7PR12MB8321.namprd12.prod.outlook.com (2603:10b6:8:ec::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Fri, 29 Aug
+ 2025 00:26:17 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
+ 00:26:17 +0000
+Message-ID: <e2405c51-bdf5-4f18-97ce-8b42eacf1cc4@nvidia.com>
+Date: Thu, 28 Aug 2025 17:26:14 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] gpu: nova-core: firmware: process Booter and patch
+ its signature
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
+ <a9467dd4-6551-4ef2-b231-02d7696e2d8f@nvidia.com>
+ <DCDVN0P2EGAE.1W3K2ZB9D54FY@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DCDVN0P2EGAE.1W3K2ZB9D54FY@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ2PR07CA0014.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::7) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
- <dc92aef8-757f-4432-923e-70d92d13fb37@redhat.com> <a0350dd8-748b-41d5-899e-1505bd2b2e80@lucifer.local>
-In-Reply-To: <a0350dd8-748b-41d5-899e-1505bd2b2e80@lucifer.local>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Thu, 28 Aug 2025 17:23:56 -0700
-X-Gm-Features: Ac12FXxW3K_Bg6VMteJaxri8c5NDc0ZgxIw1US5qRGGnGagV8jf0XXZ2DNebdpc
-Message-ID: <CA+EESO73TRAcMWeo_aXkLM+0rT5nt1cxyvf+Ye3Xp9kqxL5=6Q@mail.gmail.com>
-Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DS7PR12MB8321:EE_
+X-MS-Office365-Filtering-Correlation-Id: 799f39b7-94dd-48df-78ef-08dde692ab2f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SG9FV0VMS3lWbjhWREhaeENzajBVNzdjWkhVcldPZHFUamZRaEczSW16RXJp?=
+ =?utf-8?B?V3JTNFo4NFpuWllzTUg5ekdkYzF4K0E0bmNFUG1uU2oyblhldDkrTmQ3cW5k?=
+ =?utf-8?B?ZHRSN090ZTkwbVZPa0lqTU9vaHFnOE5iVU1NM3pSMkZPc2VXVkdXb1N6Nk1T?=
+ =?utf-8?B?Ly9JWTd1aEY4SG9QRVMxYWMzWkMwWjZOZkxXMytnZVJ4aldNdG14YzlaVERu?=
+ =?utf-8?B?bnRmYzFvWlNCeEFJNkliZ0pWalFhVzFVRUtnSkE3TG95aURoNGV6dG44UlZ1?=
+ =?utf-8?B?clZUT20wMHg3cHE3WXF6YVo2NEl1L0FJZHg2N1J5aW1YYjNDSUZwY2gvL1Rh?=
+ =?utf-8?B?M3dlTjlkcFlSOS9jOHRteXcwaXZNMG02SUNnMFh1Z1BpaWNWMXRHK212L1lL?=
+ =?utf-8?B?Rithd1FKc0JFVVFpNjc5a3lhYnhYKzEzZHVnczN2dGxHa2Y0SHR1d041WFdT?=
+ =?utf-8?B?dTFOV0tVMTZTd1hSaC9ROU5mbFpEWDk0Z2Y2RTJDL01vRlRaNTFRVTdtaXhr?=
+ =?utf-8?B?Y0lJNkJ5dUlyOTdDeFJwSDFneGZ2QWRjRUFOMDB5RXY2ckNpMVhBWGpnTFBN?=
+ =?utf-8?B?NVRKdCswSkpjazN3ZjhYbXM1VDY3RnprRnBwYjVvSm1lUW52azBiNVdLTExn?=
+ =?utf-8?B?eFFjNDZjY01mbTNCcFdYZjkzOUwvUjhVR1Q4SUNsWjhTSitHVG54VE1YajdH?=
+ =?utf-8?B?L0VrTDFZQ3V5TXZzaEJhcDlUbG9IV25KRHRuVlQ1VmlSTmFWZFJoU012WVgz?=
+ =?utf-8?B?QkFGejRObkU4ZkdTejFsdkdPVEI2ZTdQdkxad1I0TVluM3VTcDRoV1RKazJy?=
+ =?utf-8?B?bDdMM3lRM2tzOS82OC9OVmRJR0kxb2lsTzhTUG4xWmNFb0VVQVBwSVFUOG9y?=
+ =?utf-8?B?NThHZmFSWGt2Nm1CaE1HdXZhOSs4QlA5WVRtZzlIQXFVeFJsWktzdEdmUU1o?=
+ =?utf-8?B?S2tFaS9CV2hLZE56b2FJYkdHNGpVY2RhTUtzY2RydWpsS0t3VkoxSU90WHgx?=
+ =?utf-8?B?cE0wcitGSUhVMWp4eFo0eXVWSklrUXZMOFFROVg4YkRudkxDWWh2K2tPWndr?=
+ =?utf-8?B?RDBQL29VbjVRYmdvdzhkeGxOSUdxS2NVUVA3TFFIL2VCZzA0VER1NkM5em56?=
+ =?utf-8?B?YXJVc2IrZzlvQnh6TkMzM05ITDJyNFlVS2piaVFaRDZrWTNjR2EzUjNGNHdW?=
+ =?utf-8?B?bWl0TC9sRTFpcVdQTWV4WFpqOG9PdUVVZ3lERWZWSUVPWlRCS3hWR2wzTCtK?=
+ =?utf-8?B?ZVFEbkVvOUxWTWh6MkYwcEIzMWszUVkzeFFZR1MreUpmb25LZEpPT25vZ3Jk?=
+ =?utf-8?B?RnZ6clVEZ041L2RjRDZJVmJJWm5RQlorNFB3RTc3SGlYcXVVQnp0T2FBTHVx?=
+ =?utf-8?B?UCtVbVdqRkRRV1NrTXRMd1A2ZHVSVk8rZTV5dmtiUmJuY0ttbW5QNDdXVUx5?=
+ =?utf-8?B?bmx0UW5uaXEwb1BCSTFSR2RTb1FnVGpvKzJXZ0Q5ZThaUXRHeTgxV25XWTI5?=
+ =?utf-8?B?UTZvL3NOTG9iSm82elJpMVdrZXM0SU5QdkVCMzRvNis0dVlmRjlIdVpTVE5G?=
+ =?utf-8?B?aFlrQ1Q4S3BxdHFmb2NhZlFOSjY0VHBDVWRNcDlBN1lOdG5pcGlzamV2NWl3?=
+ =?utf-8?B?ajRhb1BCaGt1N2pPOXRHdmQzbWpCbjRicXF1a0Q5Qk9Fblhnb0pLWlVSZWsx?=
+ =?utf-8?B?WDRVN3B0ZzNYc2JITjNKdlFlMXNtY0tDblJDZno5T0t4U0NLY1ViL0kxY0cy?=
+ =?utf-8?B?d2J3ekY1ZTE2RDNHQU9KVmpQK2dQMlRxT05BTFp3RlA2bU9ORzlNN3BmQ1dz?=
+ =?utf-8?B?bGN5T2RBQmc0OTNUSEVpZTI0dUdyRHBGVWVnNHhiTkNKU1o5NmRJbkZGcHBT?=
+ =?utf-8?B?TXdGMTRCbDV2TnNWeUJMbFVBVUJqSUFyZzRQeVdyY3c0TTA5OXIzSXRxeGxp?=
+ =?utf-8?B?M1pWZkE0THJ2MThLcDA5N0thWUxpbVhsZmJmbktTTzBVVWFteVlRVWhPMkZP?=
+ =?utf-8?B?dC9LWFRVTStnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WWt4ck52MjJXVE02dFY4NU1tNytpNW9MaGZlN3RNOUFCblFlOEppeUdSVGVE?=
+ =?utf-8?B?OXAzUUdpQUxyVXlqRGQ5NXYwSWM5dFNTSFp4emxoL0RmaFhYekVIS2pzSzd2?=
+ =?utf-8?B?T1B1ZmlxclJoMFpBaTNQN08zWjhGWmx2YVRyejF6Ky9XR2dlaEpWY25BMC8y?=
+ =?utf-8?B?MHMxNjNVTGJhdTRhdk8veDJCVmVMTFhVeWVEQmFYSmo5TTJ3aXM3ZWNXblBi?=
+ =?utf-8?B?TDNkQ291cVlxZ1c5dk1SNzRKTklwSDRCTXNxRklqRDBrUjRWbkdzNHRNZjl6?=
+ =?utf-8?B?aktOaWxlRkJkMVA0L1k2QWd3OHhxSzRJTHh4Z0RTblIvK3o3WTdYaGh4SU9V?=
+ =?utf-8?B?ZjUreXp2TTBtdjJENHgrVlA3emhxTXBYMmdSME4xRHhpQTM2bVhDOVk5WHo2?=
+ =?utf-8?B?bTRicGpVMklBR25wTlNTekdzSERHZlpVMUYxOWlSWm4rNEpMOEt6VGEvODBX?=
+ =?utf-8?B?Ri90eWk0dGRLamdTSFlBd01yaVVoanZER3d3d0M0cWNKYno5L3hvazdGMFFn?=
+ =?utf-8?B?MjZsQkRRNFBkZHlzT0lhekxKNEwxZlFkMkFRcWtyV214SS9vK0M5aVJ6citU?=
+ =?utf-8?B?ZDdxWGhrLzlyeG8yRnRuN25iNmQ1Y255SHorNDJRTi91TWtGSHN6d0o1T3ln?=
+ =?utf-8?B?RmFEb0Q1a3BJcjVVTE80Q3NSektUbGhiRDlJUytGczdNeGkvbGxIemJtTkxQ?=
+ =?utf-8?B?K2h5ZytkMmNGK2UyVGNKdUhtQTVOQS8zT1BmektCOEVMT0xMZXJxVVVka2lv?=
+ =?utf-8?B?ZU9EZmNrZ3g2TlkvSHBIUzl3Q01kY1JvL3VSNE9oaVJHR2lxRyt4TWNzbE9n?=
+ =?utf-8?B?d3cxVlU0ckV5cEtGdllvdS9RQm5oa2RJQytGSTNhMDVDWTBOY0VOK3lIeFlY?=
+ =?utf-8?B?S08rQTk2Y3o3U3JFYWJ6b1VVSERvelZVbHExb1pzTTIyZDN0V1hyNHQ3MWFj?=
+ =?utf-8?B?ejd3SDJWcWZxSHhvUmQweVF0ZG1sb0QxT01aZDEyNUJRaFNyR1ppYWEwTFNF?=
+ =?utf-8?B?WGwxVjBtMGNtQmI4Y2F4RWk1OEgxWHdDSkJMT09aOUc1UnBkbVZnaWs3MnFo?=
+ =?utf-8?B?djZhUHhueVhHQ0ErM0Rsckk0VE9hK3lDYU1sd2tpdk5HZzdWaXZ5enVpYXRR?=
+ =?utf-8?B?eC93aEJGMjJLL2hNTmNCS2diNGFmSFlRc0lCeFplS0NIcjVZQ1hjZHorVUFt?=
+ =?utf-8?B?WHAyNFAvVmZvajEvN25WUExSck9uNjRTeGd3WTc3cXRkNDhJY3lVTXFUSk85?=
+ =?utf-8?B?Q3p4OGNZMVBDdXFRSExVdzVlcVF6MHU0dS9YT1pvWXN4WjJ0Rk5lOHZ4M0Qy?=
+ =?utf-8?B?RXVGWjgwenVrTGpBWXZBZFdHZmRZSTloMGhhTHdqTUlqQmptZ2xDRUZ3VWNo?=
+ =?utf-8?B?eEpTNk0xMm1aRXo1VXNSMzdFZ2c2WCtCb2I2Q1N4OEF2UUlSUFZEeUdNbW1N?=
+ =?utf-8?B?WkUxK09BbVZmRk9WZGFoNzV6V2JrT2ROcWJiQ0NOMm9Fd3NHejcySVg3d3lJ?=
+ =?utf-8?B?Z1E5Y3BzNStEbjZwa1FaL3dBNUVTWlFHdE1ONHZQMWVyTEh5Q3NQdHV5dFgr?=
+ =?utf-8?B?a3dHZmFiSGN2VlFWM04vYnI2d2RweUNFYjNsN2dadHNva0ViRHd0VXZmVHBw?=
+ =?utf-8?B?bVJuWGRjZzNJSWd0VlRiVkpqcTJWKzE4M25WSHpUZUR6M0JiOWlmTVhXbDRk?=
+ =?utf-8?B?RmF4NUpUemYvdlhVSkNscUZKc1o1bTZpTHpFR2s5VlRjMmJqZXlhZWZpS25l?=
+ =?utf-8?B?S3RUTG9qRjJtZEtXQ1FpKzU5Rjk5WU13b1hHYVIxb2JFQStwN0ZMbVFUUVpU?=
+ =?utf-8?B?cFdZMXVkL2hzcUJpR0xWQlFRbDNYcTBiUGZ3Q1B1SjZRTnd4Q1QxK1MzM3NG?=
+ =?utf-8?B?MncwNlFESldvMlg0VFBRT1lmUTNMY3ZzMjIzdlVyR1JJS1dNMkovUnVJdjJp?=
+ =?utf-8?B?a3d1d1dldXA3Y2tIckwwWUFrMnI3YkpLYitucHJPTnFLbDIxZ09rRFByamda?=
+ =?utf-8?B?M0IrWUZ1TnNnalBhTlFjdEdQNStFbGQxV1pIc08vQ0Z1S2Y5eVRvejh4NDVZ?=
+ =?utf-8?B?TDhVM3pMQk1XbFgyMlpCTlhOdFVQU1hRdkRFZ3B0SngxQ3RVRDd6SnRsTHpR?=
+ =?utf-8?Q?7FPc9SUW0WgcQTqugVZ9XOVF2?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 799f39b7-94dd-48df-78ef-08dde692ab2f
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 00:26:16.9940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /WCHJtkJK7ugo498p9LpSoO63qpy461snCFo4dMm+RnDwWhSKEBwtHU1XgIHEyuk27eAVPfIWu66E51t8PIyFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8321
 
-On Thu, Aug 28, 2025 at 5:04=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Aug 25, 2025 at 05:19:05PM +0200, David Hildenbrand wrote:
-> > On 22.08.25 19:29, Lokesh Gidra wrote:
-> > > Hi all,
-> > >
-> > > Currently, some callers of rmap_walk() conditionally avoid try-lockin=
-g
-> > > non-ksm anon folios. This necessitates serialization through anon_vma
-> > > write-lock elsewhere when folio->mapping and/or folio->index (fields
-> > > involved in rmap_walk()) are to be updated. This hurts scalability du=
-e
-> > > to coarse granularity of the lock. For instance, when multiple thread=
-s
-> > > invoke userfaultfd=E2=80=99s MOVE ioctl simultaneously to move distin=
-ct pages
-> > > from the same src VMA, they all contend for the corresponding
-> > > anon_vma=E2=80=99s lock. Field traces for arm64 android devices revea=
-l over
-> > > 30ms of uninterruptible sleep in the main UI thread, leading to janky
-> > > user interactions.
-> > >
-> > > Among all rmap_walk() callers that don=E2=80=99t lock anon folios,
-> > > folio_referenced() is the most critical (others are
-> > > page_idle_clear_pte_refs(), damon_folio_young(), and
-> > > damon_folio_mkold()). The relevant code in folio_referenced() is:
-> > >
-> > > if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio)))=
- {
-> > >          we_locked =3D folio_trylock(folio);
-> > >          if (!we_locked)
-> > >                  return 1;
-> > > }
-> > >
-> > > It=E2=80=99s unclear why locking anon_vma exclusively (when updating
-> > > folio->mapping, like in uffd MOVE) is beneficial over walking rmap
-> > > with folio locked. It=E2=80=99s in the reclaim path, so should not be=
- a
-> > > critical path that necessitates some special treatment, unless I=E2=
-=80=99m
-> > > missing something.
-> > >
-> > > Therefore, I propose simplifying the locking mechanism by ensuring th=
-e
-> > > folio is locked before calling rmap_walk().
-> >
-> > Essentially, what you mean is roughly:
-> >
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 34333ae3bd80f..0800e73c0796e 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -1005,7 +1005,7 @@ int folio_referenced(struct folio *folio, int is_=
-locked,
-> >         if (!folio_raw_mapping(folio))
-> >                 return 0;
-> > -       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(fo=
-lio))) {
-> > +       if (!is_locked) {
-> >                 we_locked =3D folio_trylock(folio);
-> >                 if (!we_locked)
-> >                         return 1;
-> >
-> >
-> > The downside of that change is that ordinary (!ksm) folios will observe=
- being locked
->
-> Well anon folios, I guess this is what you meant :)
->
-> > when we are actually only trying to asses if they were referenced.
-> >
-> > Does it matter?
->
-> Also another downside is we try lock and abort if we fail, so we've made =
-this
-> conditional on that.
->
-> But surely this is going to impact reclaim performance esp. under heavy m=
-emory
-> pressure? It is at least a trylock.
->
-> It's dangerous waters, and I'd really want some detailed data + analysis =
-to
-> prove the point here, I don't think theorising about it is enough.
->
-> >
-> > I can only speculate that it might have been very relevant before
-> > 6c287605fd56 ("mm: remember exclusively mapped anonymous pages with PG_=
-anon_exclusive").
-> >
-> > Essentially any R/O fault would have resulted in us copying the page, s=
-imply because
-> > there is concurrent folio_referenced() happening.
->
-> Fun.
->
-> Thing is we now have to consider _every case_ where a contention might ca=
-use an
-> issue.
->
-> One thing I _was_ concerned about was:
->
-> - uffd move locks folios
-> - now folio_referenced() 'fails' returning 1
->
-> But case 2 is only in shrink_active_list() which uses this as a boolean..=
-.
->
-> OK so maybe fine for this one.
+On 8/28/25 12:19 AM, Alexandre Courbot wrote:
+> On Wed Aug 27, 2025 at 11:29 AM JST, John Hubbard wrote:
+>> On 8/25/25 9:07 PM, Alexandre Courbot wrote:
+>> ...
+>>> +        let ucode_signed = {
+>>
+>> This ucode_signed variable is misnamed...
+>>
+>>> +            let mut signatures = hs_fw.signatures_iter()?.peekable();
+>>> +
+>>> +            if signatures.peek().is_none() {
+>>> +                // If there are no signatures, then the firmware is unsigned.
+>>> +                ucode.no_patch_signature()
+>>
+>> ...as we can see here. :)
+> 
+> Technically it is of type `FirmwareDmaObject<Signed>` even if we take to
+> last branch. The name is to confirm that we have taken care of the
+> signature step (even if it is unneeded). Not sure what would be a better
+> name for this.
 
-For shrink_active_list() it seems like doesn't matter what
-folio_referenced() returns unless it's an executable file-backed
-folio.
->
-> I really do also hate that any future callers are going to possibly be co=
-nfused
-> about how this function works, but I guess it was already 'weird' for
-> file-backed/KSM.
+So the <Signed> parameter naming is also awkward, because it refers
+to non-signed firmware too, I see. So we need to rename both.
 
-Actually, wouldn't the simplification remove the already existing
-confusion, rather than adding to it? :)
-We can then simply say, rmap_walk() expects folio to be locked.
+Ideas:
 
->
-> So the issue remains really - folio lock contention as a result of this.
->
-> It's one thing to theorise, but you may be forgetting something... and th=
-en
-> we've changed an absolutely core thing to suit a niche UFFD use case.
+a) ucode_maybe_signed, FirmwareDmaObject<MaybeSigned>
 
-I really wish there was a way to avoid this within the UFFD code :( In
-fact, the real pain point is multiple UFFD threads contending for
-write-lock on anon_vma, even when they don't need to serialize among
-themselves.
->
-> I do wonder if we can identify this case and handle things differently.
->
-> Perhaps even saying 'try and get the rmap lock, but if there's "too much"
-> contention, grab the folio lock.
+b) ucode_validated, FirmwareDmaObject<Validated>
 
-Can you please elaborate what you mean? Where do you mean we can
-possibly do something like this?
+...
+>> Could we do something a little more obvious instead? Sort of like this:
+>>
+>> impl BooterFirmware {
+>>     pub(crate) fn dma_object(&self) -> &DmaObject {
+>>         &self.ucode.0
+>>     }
+>> }
+> 
+> `Deref<Target = DmaObject>` is a requirement of `FalconFirmware`. That
+> being said, we could turn that into a `dma_object` method of
+> `FalconFirmware`, which might be a bit clearer about the intent...
 
-UFFD move only works on PageAnonExclusive folios. So, would it help
-(in terms of avoiding contention) if we were to change the condition:
+That does seem clearer to me.
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 568198e9efc2..1638e27347e7 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1006,7 +1006,8 @@ int folio_referenced(struct folio *folio, int is_lock=
-ed,
-        if (!folio_raw_mapping(folio))
-                return 0;
+thanks,
+-- 
+John Hubbard
 
--       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio)=
-)) {
-+       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio)=
- ||
-+                          PageAnonExclusive(&folio->page))) {
-                we_locked =3D folio_trylock(folio);
-                if (!we_locked)
-                        return 1;
-
-Obviously, this is opposite of simplification :)
-
-But as we know that shrink_active_list() uses this as a boolean, so do
-we even need to walk rmap for PageAnonExclusive folios? Can't we
-simply do:
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 568198e9efc2..a26523de321f 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1006,10 +1006,14 @@ int folio_referenced(struct folio *folio, int is_lo=
-cked,
-        if (!folio_raw_mapping(folio))
-                return 0;
-
--       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio)=
-)) {
--               we_locked =3D folio_trylock(folio);
--               if (!we_locked)
-+       if (!is_locked) {
-+               if (!folio_test_anon(folio) || folio_test_ksm(folio)) {
-+                       we_locked =3D folio_trylock(folio);
-+                       if (!we_locked)
-+                               return 1;
-+               } else if (PageAnonExclusive(&folio->page)) {
-                        return 1;
-+               }
-        }
-
-        rmap_walk(folio, &rwc);
-
-I'm not at all an expert on this, so pardon my ignorance if this is wrong.
->
-> >
-> > Before 09854ba94c6a ("mm: do_wp_page() simplification") that wasn't an =
-issue, but
-> > it would have meant that the write fault would be stuck until folio_ref=
-erenced()
-> > would be done, which is also suboptimal.
-> >
-> > So likely, avoiding grabbing the folio lock was beneficial.
-> >
-> >
-> > Today, this would only affect R/O pages after fork (PageAnonExclusive n=
-ot set).
->
-> Hm probably less of a problem that.
->
-> >
-> >
-> > Staring at shrink_active_list()->folio_referenced(), we isolate the fol=
-io first
-> > (grabbing reference+clearing LRU), so do_wp_page()->wp_can_reuse_anon_f=
-olio()
-> > would already refuse to reuse immediately, because it would spot a rais=
-ed reference.
-> > The folio lock does not make a difference anymore.
->
-> folio_check_references() we're good with anyway as folio already locked.
->
-> So obviously shrink_active_list() is the only caller we really care about=
-.
->
-> That at least reduces this case, but we then have to deal with the fact w=
-e're
-> contending this lock elsewhere.
->
-> >
-> >
-> > Is there any other anon-specific (!ksm) folio locking? Nothing exciting=
- comes to mind,
-> > except maybe some folio splitting or khugepaged that maybe would have t=
-o wait.
-> >
-> > But khugepaged would already also fail to isolate these folios, so prob=
-ably it's not that
-> > relevant anymore ...
->
-> This is it... there's a lot of possibilities and we need to tread extreme=
-ly
-> carefully.
->
-> if we could find a way to make uffd deal with this one way or another (or
-> possibly - detecting heavy anon vma lock contention) maybe that'd be
-> better... but then adding more complexity obv.
->
-> >
-> > --
-> > Cheers
-> >
-> > David / dhildenb
-> >
->
-> I mean having said all the above and also in other thread - I am open to =
-being
-> convinced I'm wrong and this is ok.
->
-> Obviously removing the complicated special case for anon would _in genera=
-l_ be
-> nice, it's just very sensitive stuff :)
->
-> Cheers, Lorenzo
 
