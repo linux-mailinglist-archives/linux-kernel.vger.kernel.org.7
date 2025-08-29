@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-792436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C56B3C3E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D745BB3C3E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800B97A2147
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325E8188DE3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A3034573F;
-	Fri, 29 Aug 2025 20:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0E534572B;
+	Fri, 29 Aug 2025 20:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gNqd7I3V"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lqaWeNsQ"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB5D26AA98;
-	Fri, 29 Aug 2025 20:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A01248F62
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756500050; cv=none; b=SpqRuKYkqQRY89W8EmEnu1dynu5t1FYYuA7K7YX8DppmjETG2Mk83hSiU1pQCHmTtIAWJp2S5alFVYTelZmeTe/cFAwQ0UuiMfraSbleGSr4YBObGZx964vxw8rbKVO8ozl5QD/OArkt/IYOK2lhxHL1byQMXrL03Fz4cW1dkS4=
+	t=1756500271; cv=none; b=F6TJ4gxS/L8ewQ6HNaJTswYhdYWywjFxExXFlbM83fpM73duSPIdZ7VDV5JQMNN8kTcQnSq4CSuwZOfaY+KIXIp341ldbdFeQCk3d7Detnz8Xebi9cFvznf0nFGTZ+HA8OHFvbIT5fzi2+uBPjEwAwf2Uekyeh8rQNVearkPqm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756500050; c=relaxed/simple;
-	bh=I8CwlXSBTwgwxu3TxfNEG1tZAhbaXk/EtR4fZjfV3QE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EJGaXiGyEVFQvmvkk53mSOJ89Ht5g2Vxjwt4n+Pp9AzzAqMJzZKmagwaRmTju/60RyAFpjC5G6vsmVU+Ht762hWmtawUur0J2+yUPKRMy6etvaVi+G39Q1BwQGIIjDQ97CY7B65EbkwH7rWjql25tJvbvBKvBkssfBf6T1FrzkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gNqd7I3V; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756500046;
-	bh=I8CwlXSBTwgwxu3TxfNEG1tZAhbaXk/EtR4fZjfV3QE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=gNqd7I3V2kK8F+jN/7krj/ToX/1tp49RtLkemehAJGrUsAiUB7U/oncyuzqO9Xc/U
-	 gWl8XhtYQgaLY8mMWD/713WJs8tP0k9XY6as4FarG2BfMtBuQ/JH4VmU4M/ZqmnOkM
-	 mLQ008O+XGWSvfvwO/Sym778TAYz0r/ZnDE1cHjBPYGz7nzvXUjAREyzJWmwXR38Uz
-	 rBWSmmWVOYmPsKqfx7RY99oAOusPV7O6WSDy1+Sf7OG3oxWR70rQBQeVJvCbXqHXS+
-	 g8AJNvulcA6zkxSFgnU+/2L4z+XkHdHrWhEK7meJmmzy/kD4bD0FPw+ErBdu4J9wUJ
-	 wOT7I3tpqbyJg==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AFCA817E011A;
-	Fri, 29 Aug 2025 22:40:45 +0200 (CEST)
-Message-ID: <f1ed610c7f92505182ab6210f9781cc8c24cf672.camel@collabora.com>
-Subject: Re: [PATCH v2 0/4] Minor V4L2 Headers and Codec Doc Cleanups
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
-	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 29 Aug 2025 16:40:43 -0400
-In-Reply-To: <20250824180735.765587-1-paulk@sys-base.io>
-References: <20250824180735.765587-1-paulk@sys-base.io>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-2dqrxcSrrxjdJtGEUXhK"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756500271; c=relaxed/simple;
+	bh=gEVirROcO7ri25qt0Gj19iTHUCoKldxdnqRiAEyjD4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G0+zWUCFvgy4vAdTtSs22XEA4Cl6uhF8J6hS/zJqGSeSKAbJfqs6Os6UBi+nt4ZCxHi3WTOIjTl3RRiIFTmccod4AISAd+q9l+xeUN6qgCkFv2xK3XWHIw8lMQTGJANmYmwaMW+EmOTqW30iYNQx/Zrec/cubeZf7iqN155OJ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lqaWeNsQ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24936b6f29bso11225ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756500269; x=1757105069; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r2q9phwNdrBTTHrc7DTMMS0l8waI+fDO2xGwQQOv6Ao=;
+        b=lqaWeNsQaVALmFQhWLSLJAid/ksSjQ9YY1SwKRqP16Yo2uvx2QMdqhPW4I/KFjc5RP
+         +nsIf21zmzwfemM6Sle+lAckJ0oOkz96vqFSSpN4QZ7eAh0/izziJKPV9jovIGKnTbot
+         CYqIKTksl8QwyI0pgZZUxRAkMflQfKecuMj4SUtI9faL77tMOZ+0cF4zwv+4vWgRPP58
+         TRL4i0RokMR3INhtZQtmtQ+rCbJ13Z1KvkH4KqbXSaldjcRLYCjPt/nDlTY1Le6mClBy
+         3OflPuI74904aoHAa+4Vg5wA9aOwaBjWhqMQ9Ea9yZKvSs+wlnLLEQ9696Lmc+kkC8ws
+         jxXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756500269; x=1757105069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r2q9phwNdrBTTHrc7DTMMS0l8waI+fDO2xGwQQOv6Ao=;
+        b=ac+8IKZ/Rv5oprOSGo795g3Sy9R8Y7CoywrLTCByfsTj13owZ+lKhjRg5w5f70uAEb
+         JhGmRZt8UrXVQAmn2sb15bxyul+OMbw7qo+ow5jT9xOdn+6ED/KmItepllBvsRWn7Ofn
+         o4eGK6WkE1VRXe/AtjRbfqplkcc/3HUmz6f5CC6ADFnj3nLfwozEY9o3g34ZxfU2uAbO
+         x7Iqn3bfDAU6HsYpuEGVTvi4j1sTNtdXQ0hJYJv/knrTqDYdbpfnSkeBqUKMrRNRKCPh
+         TptQpNNDXzrp3NAiUfv8vfaxsfxNONfVpKif/FOBVYCpO0lYxi+R1XWpQJhEnEniYsdB
+         0zgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ1RsJ9VkpNqLpdIpPM0Ad+GawjRtxDqwxT8+UuQSJkQxBbWPGGZJLgZgSEuZY/n5VdVHmPQ63xwEmw8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmOO2evFTnrWhBDZWEg9G5+fDZjvrEY9+zWnJPgsivUIscEF1+
+	11AlmzsGKljQU+ptmFckHZY3AwZw0lt4EhM2+xvm7M+DhND2rWzfnHiuq2ygNiJwT67lp9k8sVN
+	L4vOjJzwqX3/+6qOWy9EJYLuWNtMB1wnwccjA+Wyn
+X-Gm-Gg: ASbGncuLEb0Qm5PaEFkytVF9O/KpPpRm4i0lMAoZqHSfCdMcwYcknRJD+Hmg2kDkxj8
+	8abylv5dx1Li/dHotP1HYTp9aYxZhuBCQl896LPSMWs1K54bGtxIxW75GHC4VHVHXGt886n4Nwv
+	o+jPqjsz7lR6fdwCmpWz6XdqNe38eWNsAMeKZMnRHm/lLRlbxXe6Gq1cq9teKsJtzBuhsHrQs7F
+	1W0XMJgTN4WQGsdmy+XYnHjEbYQ49XJJKWlShrQ8C18RHt5kZF5+i/MvYL/+eL1PFIpfZhc2KPu
+	zL26aDl7v/U=
+X-Google-Smtp-Source: AGHT+IF7k5lVtyim7FCdwKqIzS5FoMCKjb2sruw0NCU2My2KQyK5XacP05klsD3NAciNeqowwygvolVtflHAMPwPYZI=
+X-Received: by 2002:a17:903:2307:b0:240:5c75:4d29 with SMTP id
+ d9443c01a7336-2493e35ff71mr1048425ad.0.1756500269098; Fri, 29 Aug 2025
+ 13:44:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-2dqrxcSrrxjdJtGEUXhK
+References: <20250829183159.2223948-1-max.kellermann@ionos.com> <20250829183159.2223948-2-max.kellermann@ionos.com>
+In-Reply-To: <20250829183159.2223948-2-max.kellermann@ionos.com>
+From: Yuanchu Xie <yuanchu@google.com>
+Date: Fri, 29 Aug 2025 15:44:12 -0500
+X-Gm-Features: Ac12FXyYeG72ntDgrzYOawZxMxaNyzRltRlGWQdp6qpO4b3XGq1I9z-x_Z4E9jA
+Message-ID: <CAJj2-QHVC0QW_4X95LLAnM=1g6apH==-OXZu65SVeBj0tSUcBg@mail.gmail.com>
+Subject: Re: [PATCH 01/12] mm/shmem: add `const` to lots of pointer parameters
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
+	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
-=A9crit=C2=A0:
-> Changes since v1:
-> - Added minor codec control cleanups;
-> - Added documentation about h.264 frame-wide type flags
->=20
-> Paul Kocialkowski (4):
-> =C2=A0 media: uapi: Move colorimetry controls at the end of the file
-> =C2=A0 media: uapi: Cleanup tab after define in headers
-> =C2=A0 media: uapi: v4l2-controls: Cleanup codec definitions
+On Fri, Aug 29, 2025 at 1:32=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
+> For improved const-correctness.
+>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Reviewed-by: Yuanchu Xie <yuanchu@google.com>
 
-I've picked the 3 above.
+> ...
+>-bool shmem_mapping(struct address_space *mapping)
+>+bool shmem_mapping(const struct address_space *mapping)
+>{
+>       return mapping->a_ops =3D=3D &shmem_aops;
+>}
+>EXPORT_SYMBOL_GPL(shmem_mapping);
+The exported symbol is being changed, but this doesn't seem like it
+would break anything.
 
-> =C2=A0 Documentation: media: Document
-> =C2=A0=C2=A0=C2=A0 V4L2_H264_DECODE_PARAM_FLAG_PFRAME/BFRAME
+Appreciate the work. On a side note, Andrew previously mentioned[1]
+making the actual parameter value const (which is different from
+adding the const qualifier to the pointer). Longer function
+readability would benefit from that, but it's IMO infeasible to do so
+everywhere.
 
-So you will only have to update this one.
-
-cheers,
-Nicolas
-
->=20
-> =C2=A0.../media/v4l/ext-ctrls-codec-stateless.rst=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 8 +-
-> =C2=A0include/uapi/linux/v4l2-controls.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 121 +++++++++---------
-> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 18 +--
-> =C2=A03 files changed, 75 insertions(+), 72 deletions(-)
-
---=-2dqrxcSrrxjdJtGEUXhK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLIQSwAKCRDZQZRRKWBy
-9AMlAQDQpPKcQtWxjQLN3URtowrCD5QKm7eEuGwcXsis/7zP7wEA/2c71KaaLzpO
-PqhRllgKVWZgntEBFqJWTdGMweltYw0=
-=ag87
------END PGP SIGNATURE-----
-
---=-2dqrxcSrrxjdJtGEUXhK--
+[1] https://lore.kernel.org/lkml/20250827144832.87d2f1692fe61325628710f4@li=
+nux-foundation.org/#r
+Yuanchu
 
