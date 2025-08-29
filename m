@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-790925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26B5B3AFD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF68B3AFD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6D43A2005
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941425E440F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988EC20D4FC;
-	Fri, 29 Aug 2025 00:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B7619E7F7;
+	Fri, 29 Aug 2025 00:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MeGgwKpQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OVYP7bXw"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6543920010A
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE16620E314
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 00:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756427929; cv=none; b=uP8vACwUtQCY8fiZylaF+sYdo29fk1U0lp7hFM0M1h6A86dQCamTh74381shIGfmev+RAi+ci8/3WQePEDODF0q3CSef1MaikYUFt/PgPNptK+aRxq9Arg4EXWTD4amnyTUiE6NQn2BkvTdfo4Dt08IdUDtLfQGUXT8kzXx+ApQ=
+	t=1756427932; cv=none; b=TqlJKgOsvPRTddMoHx+JqXFyZzLt1+HY+90M2sE8V2BntQElJopcewwsfBbmN15RuHjqg3CdkXFGVqx5QQeY6/Ut8Oz4efLdfLO5N7XImnp5TM2hTyxya2LR8wwUM/HN/mnfZqfZ5wyuHtV9+85KpnC9q2srMJi7uWfSwdLmuYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756427929; c=relaxed/simple;
-	bh=lRErUXfhlVyOjMePggfg3EacyZAvSvm+w3vZGvHjG+s=;
+	s=arc-20240116; t=1756427932; c=relaxed/simple;
+	bh=77mT8lxlHfMf8DpsPLJTC4LdP2OKAfcaRTXAq7sQvCc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i1sonFrZlKIzJAOLKXfKIIt3KaLt4DwSTWfYL1arjwMZkcTV3bFsHXfjFwwxzrZ2U7QLt2VWxyMSOBCIGwTlMhWxdWGX04nZMssWcZKz7kfHVF+k9HJA4fPeqBh3Ax5IAmbZWenXnMPsY0olKmnWR35Hycv6rCNf+lCCwEjuWl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MeGgwKpQ; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=bvcFBtoXPSuvpFL8TG4ZI1xyccyJ6me3HbcBiyEUxHlwq6S4KcSJPr7R/z2UifDkXZHJNJHCoKev6HORggB73coxnQZ7n8w3ta1ZjrB9jLaBv21+8KxgI75RMx/rg1/IKZnK28jluz4/SdIiK6mrjT4WpwPA1cZm7/P67NButVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OVYP7bXw; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756427927;
+	s=mimecast20190719; t=1756427929;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OQVjNKRtGeYd79k9EsHTPhO8iq2mtofexnH8gr3Lua8=;
-	b=MeGgwKpQP21PZsdWaN6D4jpcm6dfE5nqwlb54zjGvXv4A9udiMP8hgnZVjYdy/fyHV9ScV
-	ixetOv8JQ5HC7jVyFen9wO2Zrwq22Hb49sGRm/MT+uFc8MtehsmMKCkRk0pd7Ld58AnHrM
-	fquESkcqppgE1kmjvZqxrbZ06SmG3mY=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FWlxamEZBABa/bI8LuC0OjVu3fNQXV2BqGZu8lwg93s=;
+	b=OVYP7bXwkTesYtWbR6mM6AlCOuZ/CRBtRDW83E6pUG1shFTuOZlLKGqPRhS33K3QFikCiO
+	tVSOKdPU8t4kSCQmwyZTq5JzdD5cvAIfk/SSGmG78FDwJK2WzTEbvzMANny/vIqoEmftLy
+	ud/IVjbPAaI5XeIZZSVv9bsu+zLOv1Y=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-fbHcLwkoOG2O1m64KUl6lA-1; Thu, 28 Aug 2025 20:38:46 -0400
-X-MC-Unique: fbHcLwkoOG2O1m64KUl6lA-1
-X-Mimecast-MFC-AGG-ID: fbHcLwkoOG2O1m64KUl6lA_1756427925
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70ba7aa13c3so49194466d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:38:45 -0700 (PDT)
+ us-mta-327-zjGYCCxPOquaKd6obUd1aQ-1; Thu, 28 Aug 2025 20:38:48 -0400
+X-MC-Unique: zjGYCCxPOquaKd6obUd1aQ-1
+X-Mimecast-MFC-AGG-ID: zjGYCCxPOquaKd6obUd1aQ_1756427928
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70dd6d25609so40292116d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:38:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756427925; x=1757032725;
+        d=1e100.net; s=20230601; t=1756427928; x=1757032728;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OQVjNKRtGeYd79k9EsHTPhO8iq2mtofexnH8gr3Lua8=;
-        b=bPCmdYkvxSVGXpyojgX/6+gu1XRrEbYiE7rn5SKCyqHPw73JPMVBqtM1mFPClZzEvW
-         kTrIUBAJZB4CMr3Yq86wgbK70eGUiCgu4H6+gnRGxvVwjIGafY0ZP4frN0AEUUEdShSL
-         6lamC0Ff10VKe8Q2+1ujh64rks/l+H5qZCn6y2WtjZS0GfS7/Sw+rtRsgItqPOjvDapS
-         ZeJybJyNf5tvcbt+XPEAfmf3mdXK6bjIYNQ+L5e1ncClPRyY9F/ARcKuePX9pl4OSxo6
-         oysiTXh7z5aRZZNpErQFbVWczNeF5mlmNld1wxsEfCXqW1dk2LntkFE7rFbZZHP2QI0b
-         Pj9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUyHWX09vd+X/JYwKGYj8rRjBu0fZM3fTI73aNQ+tsmyh9eHzg6EpB4JakKWcv1MKdOxP7vGB5vVQjQhOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOOARHHyhDUc5+wuxartZA1CtfxdCsqSxrXSAuJeW+xfaV4It/
-	kcLdj9AaBlP1Jt++KpWdKBd6iKUSB4ihaoaaqgxqHa1WANvS39fbx5Og0N1Uklh8nVTBR2PQcIx
-	B6SfEDdT1jRI1GN/OfkJknFmi0BJvgJjpnbOQWryBA8ODwPPu9Iee1RpteBJEhp8omQ==
-X-Gm-Gg: ASbGncsxn9nbmhGkt6kPLHbVRwT+nSF67sHkOygyGmYJKXtSzWniQbn4VaUlUbhTTwr
-	vrcHgn1bGcvxMnjWQGnvyr5+NxgUhzQ90+TDv2FOOUoX00WkgGmQIK1HsXMmyMdC2eZK/eq8SER
-	tFoRGyLZdjoSTSf/PLDAXGtxAqx2PigLxzbLGORTxAdW/A5kEQHBOQ4nTEGCTkhQPssSTPpeLJo
-	UA7679nhkQJow4Z78o2WGzThxjNE7D0QZymgB8jUuPSxKuFXwor2zA1AHAIfDNbI5ezkIKWizRm
-	FBiJAzJqV/kRwf5MYSMERd9lVf5QHdeUTRruTx0gw47pI+hRmKwd9rEyTiFRv8C0j5+F2OFJYzz
-	IbOa8Rqsmbu1oGbORGZPl60IXqBe7vBGYyw==
-X-Received: by 2002:a05:6214:cae:b0:70e:782e:b23b with SMTP id 6a1803df08f44-70e782f22bamr10926796d6.3.1756427925289;
-        Thu, 28 Aug 2025 17:38:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFR8adeLmPp6i8NPj//2LYlvbZ2JGvJAUD70v2I2NLKTSUE6nmwskQ+vGH0x5SgjqCGSE+qBQ==
-X-Received: by 2002:a05:6214:cae:b0:70e:782e:b23b with SMTP id 6a1803df08f44-70e782f22bamr10926366d6.3.1756427924487;
-        Thu, 28 Aug 2025 17:38:44 -0700 (PDT)
+        bh=FWlxamEZBABa/bI8LuC0OjVu3fNQXV2BqGZu8lwg93s=;
+        b=mhzIJMOfTwyVl74+s4y/FT824C7vTUwCBheawak9jYAYth1rghpaXTKMnaztYsVe7Y
+         vvTE2syGMy+ipDHm+y51YeYkqsKVs6xn84coEtpxrp+VpSm/JdDS2lMpBk9srDEAcCZt
+         fHbCP+2DMIytb+wiDLpdbe+/8AlhNjdUHSnqLtT8e3Y4l9/dxrEKZ0sFdnPjifFSKipa
+         gqk1FVhohvmXq8EqAGbvJpjUW7dBckQFr5t14U6t0npXePoSxOF2nlgBPnHfHu7v8Oqh
+         tQBgPO++qlQV5mR9jIkTJf96xvv3rx5Se4jFnAuWBfU04hMusmVA8tPwDX07N8cZ3ryn
+         7kDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Aj+lGCI7Jus0LREnOQIqIvp9jyZdwkaPG1hvx+OOVdjVN5CZuGWcaUYhuoyM9iXLkBTCz9muyfjFqnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3kZ/j0M5/GzFHPvncNa7URfMyAWgmmBoTqyAWxSU68UIMOGWh
+	Qrq6O4p/Q/wSp2eIqKaxgA9BHmJ8RGOgOCdJqQ8Pq6Zo2Dp95xQ113KPWp8bhPI37SjA42A2ZTR
+	5q6wzrZYRhbEuCcLeOvpQU0RWuSZxrQ4upamXjeeEYfF7XGAfTsNkQew5qbLVuX1skQ==
+X-Gm-Gg: ASbGncu0sMW1phdIZuZ0DRi6AaIlAH4iDTdjOAj6ShVLNV0dxmuEaSayGnRnJcHDuh1
+	rL41s88cRV5w1WPrx+SYfVEnBf0DcgjusW7/sK/GG6TTy6ahKTfYjOjlJM3xm1WXIaGKZakL4k3
+	oBKMnPu8u1z6iZqUttco2JBpl/GXVPv0K2w4k68sKGVoHu3cDnwJp7ks53qBRjsBhTes8E0Y4WL
+	vg9++2BK//Y7FiXOGw6GDX9FPa5MYj6byEhl59oI0xeGNpxkOxT+EBji+V8sZB65ATfbWxP5OD4
+	zeRr1V2/9v76QktjYIYTcekKNi3+rqp9Cz3OzRQSP3K2E1ezxFDf5392utEJiK2hGNwm0I/+iyD
+	Y/UZ1h3lKqKTqiyH/gkdMSChJDrp2iuzYfg==
+X-Received: by 2002:a05:6214:769:b0:70d:fe59:7449 with SMTP id 6a1803df08f44-70dfe597674mr27992236d6.61.1756427927618;
+        Thu, 28 Aug 2025 17:38:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdFHJee0qbyUjnxuiLN/Oq1qdZlcxXPT+mkBSQmGVwNZcP/pQI/tabzwXXU/AzIdm5XAEiew==
+X-Received: by 2002:a05:6214:769:b0:70d:fe59:7449 with SMTP id 6a1803df08f44-70dfe597674mr27992056d6.61.1756427927178;
+        Thu, 28 Aug 2025 17:38:47 -0700 (PDT)
 Received: from [192.168.1.2] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e6264141asm5588696d6.65.2025.08.28.17.38.42
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e6264141asm5588696d6.65.2025.08.28.17.38.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 17:38:43 -0700 (PDT)
+        Thu, 28 Aug 2025 17:38:46 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 28 Aug 2025 20:38:22 -0400
-Subject: [PATCH 3/8] clk: rockchip: half-divider: convert from round_rate()
- to determine_rate()
+Date: Thu, 28 Aug 2025 20:38:23 -0400
+Subject: [PATCH 4/8] clk: rp1: convert from round_rate() to
+ determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-clk-round-rate-v2-v1-3-b97ec8ba6cc4@redhat.com>
+Message-Id: <20250828-clk-round-rate-v2-v1-4-b97ec8ba6cc4@redhat.com>
 References: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
 In-Reply-To: <20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -107,11 +107,11 @@ Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
  Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756427914; l=1835;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756427914; l=5547;
  i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
- bh=lRErUXfhlVyOjMePggfg3EacyZAvSvm+w3vZGvHjG+s=;
- b=77L/EGAGdRYd5Zfk7wMZPiUoUyEJ+wFGI5TKO4e9gl+bXy3dLwkQMeaRO1HRElJrc9TAOKFe/
- f1vZeXk72u/BkLnWKmAly+0tQG9J1VwJ/BPTEXNwrw7PqrQdgLjH3+M
+ bh=77mT8lxlHfMf8DpsPLJTC4LdP2OKAfcaRTXAq7sQvCc=;
+ b=3gMx5iuOgrCwNi+DCXX7JQxOvLwFiVApn+7Bvb0HH6OCc8cBz7oI4PL5ZGPz6XlAL7fZhaSTw
+ 0t/u6mMD55zBBJ4Vh8Qfol7XUf066XGn9A4V2i5zqigVDsEhG7+J6Un
 X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
  pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
@@ -121,46 +121,154 @@ on the cover letter of this series.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/rockchip/clk-half-divider.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/clk/clk-rp1.c | 58 +++++++++++++++++++++++++++++----------------------
+ 1 file changed, 33 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
-index 64f7faad2148f27099d1ace36da45207e2315a1c..fbc018e8afa44c87a5a7b53475fc98b318ce1ec8 100644
---- a/drivers/clk/rockchip/clk-half-divider.c
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -92,17 +92,19 @@ static int clk_half_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	return bestdiv;
+diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
+index e8f264d7f34e42f7186dbba31e5ace95d67b9a7d..fd144755b879862612ea5e22e913dbb44a140033 100644
+--- a/drivers/clk/clk-rp1.c
++++ b/drivers/clk/clk-rp1.c
+@@ -532,13 +532,16 @@ static unsigned long rp1_pll_core_recalc_rate(struct clk_hw *hw,
+ 	return calc_rate;
  }
  
--static long clk_half_divider_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *prate)
-+static int clk_half_divider_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
+-static long rp1_pll_core_round_rate(struct clk_hw *hw, unsigned long rate,
+-				    unsigned long *parent_rate)
++static int rp1_pll_core_determine_rate(struct clk_hw *hw,
++				       struct clk_rate_request *req)
  {
- 	struct clk_divider *divider = to_clk_divider(hw);
- 	int div;
+ 	u32 fbdiv_int, fbdiv_frac;
  
--	div = clk_half_divider_bestdiv(hw, rate, prate,
-+	div = clk_half_divider_bestdiv(hw, req->rate, &req->best_parent_rate,
- 				       divider->width,
- 				       divider->flags);
- 
--	return DIV_ROUND_UP_ULL(((u64)*prate * 2), div * 2 + 3);
-+	req->rate = DIV_ROUND_UP_ULL(((u64)req->best_parent_rate * 2), div * 2 + 3);
+-	return get_pll_core_divider(hw, rate, *parent_rate,
+-				    &fbdiv_int, &fbdiv_frac);
++	req->rate = get_pll_core_divider(hw, req->rate, req->best_parent_rate,
++					 &fbdiv_int,
++					 &fbdiv_frac);
 +
 +	return 0;
  }
  
- static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -141,7 +143,7 @@ static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ static void get_pll_prim_dividers(unsigned long rate, unsigned long parent_rate,
+@@ -616,18 +619,20 @@ static unsigned long rp1_pll_recalc_rate(struct clk_hw *hw,
+ 	return DIV_ROUND_CLOSEST(parent_rate, prim_div1 * prim_div2);
+ }
  
- static const struct clk_ops clk_half_divider_ops = {
- 	.recalc_rate = clk_half_divider_recalc_rate,
--	.round_rate = clk_half_divider_round_rate,
-+	.determine_rate = clk_half_divider_determine_rate,
- 	.set_rate = clk_half_divider_set_rate,
+-static long rp1_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+-			       unsigned long *parent_rate)
++static int rp1_pll_determine_rate(struct clk_hw *hw,
++				  struct clk_rate_request *req)
+ {
+ 	struct clk_hw *clk_audio_hw = &clk_audio->hw;
+ 	u32 div1, div2;
+ 
+-	if (hw == clk_audio_hw && clk_audio->cached_rate == rate)
+-		*parent_rate = clk_audio_core->cached_rate;
++	if (hw == clk_audio_hw && clk_audio->cached_rate == req->rate)
++		req->best_parent_rate = clk_audio_core->cached_rate;
++
++	get_pll_prim_dividers(req->rate, req->best_parent_rate, &div1, &div2);
+ 
+-	get_pll_prim_dividers(rate, *parent_rate, &div1, &div2);
++	req->rate = DIV_ROUND_CLOSEST(req->best_parent_rate, div1 * div2);
+ 
+-	return DIV_ROUND_CLOSEST(*parent_rate, div1 * div2);
++	return 0;
+ }
+ 
+ static int rp1_pll_ph_is_on(struct clk_hw *hw)
+@@ -677,13 +682,15 @@ static unsigned long rp1_pll_ph_recalc_rate(struct clk_hw *hw,
+ 	return parent_rate / data->fixed_divider;
+ }
+ 
+-static long rp1_pll_ph_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *parent_rate)
++static int rp1_pll_ph_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
+ {
+ 	struct rp1_clk_desc *pll_ph = container_of(hw, struct rp1_clk_desc, hw);
+ 	const struct rp1_pll_ph_data *data = pll_ph->data;
+ 
+-	return *parent_rate / data->fixed_divider;
++	req->rate = req->best_parent_rate / data->fixed_divider;
++
++	return 0;
+ }
+ 
+ static int rp1_pll_divider_is_on(struct clk_hw *hw)
+@@ -760,11 +767,12 @@ static unsigned long rp1_pll_divider_recalc_rate(struct clk_hw *hw,
+ 	return clk_divider_ops.recalc_rate(hw, parent_rate);
+ }
+ 
+-static long rp1_pll_divider_round_rate(struct clk_hw *hw,
+-				       unsigned long rate,
+-				       unsigned long *parent_rate)
++static int rp1_pll_divider_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
+ {
+-	return clk_divider_ops.round_rate(hw, rate, parent_rate);
++	req->rate = clk_divider_ops.determine_rate(hw, req);
++
++	return 0;
+ }
+ 
+ static int rp1_clock_is_on(struct clk_hw *hw)
+@@ -1166,10 +1174,10 @@ static unsigned long rp1_varsrc_recalc_rate(struct clk_hw *hw,
+ 	return clock->cached_rate;
+ }
+ 
+-static long rp1_varsrc_round_rate(struct clk_hw *hw, unsigned long rate,
+-				  unsigned long *parent_rate)
++static int rp1_varsrc_determine_rate(struct clk_hw *hw,
++				     struct clk_rate_request *req)
+ {
+-	return rate;
++	return 0;
+ }
+ 
+ static const struct clk_ops rp1_pll_core_ops = {
+@@ -1178,13 +1186,13 @@ static const struct clk_ops rp1_pll_core_ops = {
+ 	.unprepare = rp1_pll_core_off,
+ 	.set_rate = rp1_pll_core_set_rate,
+ 	.recalc_rate = rp1_pll_core_recalc_rate,
+-	.round_rate = rp1_pll_core_round_rate,
++	.determine_rate = rp1_pll_core_determine_rate,
  };
  
+ static const struct clk_ops rp1_pll_ops = {
+ 	.set_rate = rp1_pll_set_rate,
+ 	.recalc_rate = rp1_pll_recalc_rate,
+-	.round_rate = rp1_pll_round_rate,
++	.determine_rate = rp1_pll_determine_rate,
+ };
+ 
+ static const struct clk_ops rp1_pll_ph_ops = {
+@@ -1192,7 +1200,7 @@ static const struct clk_ops rp1_pll_ph_ops = {
+ 	.prepare = rp1_pll_ph_on,
+ 	.unprepare = rp1_pll_ph_off,
+ 	.recalc_rate = rp1_pll_ph_recalc_rate,
+-	.round_rate = rp1_pll_ph_round_rate,
++	.determine_rate = rp1_pll_ph_determine_rate,
+ };
+ 
+ static const struct clk_ops rp1_pll_divider_ops = {
+@@ -1201,7 +1209,7 @@ static const struct clk_ops rp1_pll_divider_ops = {
+ 	.unprepare = rp1_pll_divider_off,
+ 	.set_rate = rp1_pll_divider_set_rate,
+ 	.recalc_rate = rp1_pll_divider_recalc_rate,
+-	.round_rate = rp1_pll_divider_round_rate,
++	.determine_rate = rp1_pll_divider_determine_rate,
+ };
+ 
+ static const struct clk_ops rp1_clk_ops = {
+@@ -1219,7 +1227,7 @@ static const struct clk_ops rp1_clk_ops = {
+ static const struct clk_ops rp1_varsrc_ops = {
+ 	.set_rate = rp1_varsrc_set_rate,
+ 	.recalc_rate = rp1_varsrc_recalc_rate,
+-	.round_rate = rp1_varsrc_round_rate,
++	.determine_rate = rp1_varsrc_determine_rate,
+ };
+ 
+ static struct clk_hw *rp1_register_pll(struct rp1_clockman *clockman,
 
 -- 
 2.50.1
