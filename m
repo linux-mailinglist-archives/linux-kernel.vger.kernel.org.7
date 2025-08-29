@@ -1,117 +1,209 @@
-Return-Path: <linux-kernel+bounces-791515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DEBB3B7BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A88AB3B7C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25DCC363581
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6380C1BA60FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0033930504C;
-	Fri, 29 Aug 2025 09:52:09 +0000 (UTC)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05945304BDB;
+	Fri, 29 Aug 2025 09:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/X6w5hA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8010C270EBC;
-	Fri, 29 Aug 2025 09:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDCC270EBC;
+	Fri, 29 Aug 2025 09:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756461128; cv=none; b=jq36xvDqf0a+h/YKii/aCvdPQums65N9JQAB2sXynghDkMnMUBgZCEy9g6qwtSZl2o4dh5zF76p1YHVH7w10xBnSal+I52Idec2ndirIr5VnWAf1FzKVuTMXZaqjTvC26yHKAPFmryWIN7mq8fpmdhBsZp8Mlr9rV3E6RGs31dU=
+	t=1756461146; cv=none; b=QMdz92R+Dv0C3BTlXO5OTYTpdiNW9ur7gcgdnwOS4iKIyVeBoL4fPib4OELN+URu8abwSIzASw9U5oNQHlq69pqINBwq02vM18V8xiupK3F7QdBBgv8FIo47Amub3mF51Yy2mPBgyRjzBnf31r6fQ25pANffdzSkjXMJDhaSEEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756461128; c=relaxed/simple;
-	bh=1K8txQ8ZiVqdO4sBq/aGOKbBZrl33TWOfV6grCNaZEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V0lVlKIVKcGQOvdbvRj/xRxdWCvwKNWx/TQlqSLr9KcJ9nVVd0jQI6y0MlDWRMQ2L6sB/4yQQ3gJjsztVXk5RseCO3Ic6OKweJoDMzPtjnOEyG4qNtFsxh0cnkSr8+JpZ4jdHHRzKO0y3KsqHX+Iq+UmY6lCWLYW5gKXV/xo6As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-8942ff52c06so416090241.1;
-        Fri, 29 Aug 2025 02:52:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756461125; x=1757065925;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8csdi4uLMwibFZeJduARoOsaeU7M/R3cD1w5z0w12N8=;
-        b=DcqFbjejWJh5ubk4JOiuhx7SNq09Q7ciSZpZePipPuW2QLu11DPV9NKZu+GxdHLlWK
-         BAPA8Mrz9UZt4i4Y3Y1rk+gNExiENXIlcvQ5aNEIH0cfHQzm4pHTVpz2gTGvSTLavdDU
-         xrJ32I9y7RJZIU0B+zp9ieaPffqkLiWfacGbCwloTsYGOxJz7+4jiQ3Ql5lx7hBAI1fJ
-         ce3UAvzZ8akjKFoaWW/Wc/m0bmtBMh18jz7VKHniE92NsuoNh5jDuxsoNe2hTTdA21F6
-         Poy6PXQmoM8HVHNDJGXOHfhTplmGSKwBM5ONTvRu9u/a3UwNRSMbjRt3/mNNzRKT4Bp6
-         RdNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0p7KvMYVS4xECUJ8nTp5FGjMpNURUKYN60ETXT3hhN0MTfDdJcv2LQQT3NmjIR1DGepVJFMxAxIuM@vger.kernel.org, AJvYcCWtM70fjVf+QVj/ZWf/wxAGsXt3trTzs7Fx/1eXCLughqcpOVJtkoLu1PR1RZGWvNPOU6/m1R8+A9mhDyBXQrA2qig=@vger.kernel.org, AJvYcCXsXrRKeg2V10BUDlwNjyEyHLix7XdSeQ28AGFEUitKQV8jbcRRvu5oN7C+orqN6id97tpBhnPCQKik158=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4jNWZeCGVC4uPRp+GFuNhV0crhsO3lF5EiSTRLwEhDpsY+hWI
-	2eVv33qGmOUssNb4aeZKYzMdkGX7TQrcuNycN3ssBF6r63d5GdjF7LxR/LGOWhnX
-X-Gm-Gg: ASbGncvDTQ2I6qVD/qOHqb+SfwvIN4VgelajN207gByhNfZXiPTsJND7+rWN/t/VqjT
-	Fx9CsRX7BggghyUWmDiTfMCCAaCCPLzz85gVA4zyTjIsX/6Fg4pIAogNBTKEKMK/5rmoq+7QTi5
-	olLCb5Lf2BakF6G0TDQkUPMfVj90TB8alUiTI9he+yiDu2bJubrgf8Py14HlGb1BeNid7ADaBL0
-	UGPqhhrJDc4tr986D1s9VnJx3j0j3V4o2NBR4gmvDU//B+zIUtQM3de5mCvb9A1AAvfPITXSAMG
-	02epVTl6bfRtr3JrLV/PWM/SpusgSBK/lo93OVGBEwxcy0T28WhDMFun3qQRAsk5l6TGvikQQJn
-	3mNcOQFbSfRLjnEH6CHIyxnvwoFCTJRpq3j8SPC5nqvuW2f7Y4I9bhf8yt4X7egSICOCc+Ls=
-X-Google-Smtp-Source: AGHT+IGM/wS8FUKBtbbSC79rk5s4v6YeQCRWAlfKbEiwXmMIo6A3RCdgE8489T92RjFJsASn14kvHQ==
-X-Received: by 2002:a05:6102:3e8a:b0:4f6:25fd:7ed3 with SMTP id ada2fe7eead31-51d0ecbfb1cmr8046458137.22.1756461125322;
-        Fri, 29 Aug 2025 02:52:05 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-529b11082cfsm768416137.11.2025.08.29.02.52.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 02:52:05 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8942afd0421so577090241.3;
-        Fri, 29 Aug 2025 02:52:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQVNi2EcKZbbQkmp4qv7ai93n6UgxCSbK+vneUMur0hQFPLI0GVc+Aefp9EWU1fj+3ZN4ePxMMxRwo8x6Ic7ksfnw=@vger.kernel.org, AJvYcCUWoKE5CHrRKx7dx0rvVWePTZdx8eo77JuVvXO9C9oYg8bfp+Ze8ZgnvADK22G7reEdhEHfmKm8ROe3@vger.kernel.org, AJvYcCXYFgcxfYNI+atxKiqg/ukZK8O42fGNBvkMYUzM8C/Srpt0JNiD16shv/QMO0OMwBMpyhfn6ccN2NFxu08=@vger.kernel.org
-X-Received: by 2002:a05:6102:3a08:b0:4f9:d929:8558 with SMTP id
- ada2fe7eead31-51d0d22e48bmr8733822137.10.1756461124772; Fri, 29 Aug 2025
- 02:52:04 -0700 (PDT)
+	s=arc-20240116; t=1756461146; c=relaxed/simple;
+	bh=iQ1V4QRcXi7Ekbaz4B60E53HmEmrlQqpOi0SmLfxvJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oe5/1Ai8Pyv/ZreIteQ9M02S4hCruIgyGfCdMu9+QAPHgGpLL1R5/fEwpYcO2e56AMn8fPhdO5LDqpjwUQcLDQyls/eVIYJC97Bn/Imh4ZDgL2fDLfa5aGl9a16GPVVNMVtBttgrhdel6qVjDGxmumLB8veaGm199kMNccE1nIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/X6w5hA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756461144; x=1787997144;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iQ1V4QRcXi7Ekbaz4B60E53HmEmrlQqpOi0SmLfxvJQ=;
+  b=K/X6w5hAlmgPeo/r3rUYdqeg/MSYsklzI9pHB1jeCFjhrKgI8A+ffS2P
+   b9HqwpF7VJlFjAiLXAKiMLC7FjEX+V+GuCQ+BYLIahcGtnrcRv8sTi4bn
+   goNThIeVfF4gM1po7Mp2T9BpkUDZ0NO3gWOGGpQDCmrp7AtlU6D8Sjw9t
+   Drv4GfH2ZrYhouqxi48Rrku6zrZ4nKpSH9iBp7IvAi0ngLYkJq+/vBAMf
+   2tHLsHf1H3OdEVf68vwykwfT2lXOPw2DS4V5C01dakkL1JIKVitWqg0Wo
+   wOT1y4JJTh93yxKXUPv5O/nhEK0AN1w8FYznuz81e6Q3ZUJbsAZHZRsxU
+   g==;
+X-CSE-ConnectionGUID: ZRGo64aDSfSiJKtTP3olig==
+X-CSE-MsgGUID: OPakIk9kTjepxzhcZ05N9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="62561205"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="62561205"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:52:23 -0700
+X-CSE-ConnectionGUID: o3nLuVTJTOWqp7Z+AnpQwQ==
+X-CSE-MsgGUID: zvcQp0n6TWGV68/usONWPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="174717934"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 02:52:21 -0700
+Message-ID: <9db57c7d-ee8f-49ee-ad09-33006811f047@linux.intel.com>
+Date: Fri, 29 Aug 2025 17:52:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730164618.233117-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250730164618.233117-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 29 Aug 2025 11:51:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWOMpZo0fVASyDV+XTLmh-o0ozqfF4Za_sPiydsh6LOfw@mail.gmail.com>
-X-Gm-Features: Ac12FXxZO5xWNeH2K1TxNca62vOIxne09d893I_T5i4KtirOnuAEWt52E00AC0A
-Message-ID: <CAMuHMdWOMpZo0fVASyDV+XTLmh-o0ozqfF4Za_sPiydsh6LOfw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Enable 64-bit polling mode for R-Car Gen3 and
- RZ/G2+ family
-To: Biju <biju.das.au@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-mmc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 08/18] KVM: x86/mmu: Drop the return code from
+ kvm_x86_ops.remove_external_spte()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+ <20250829000618.351013-9-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250829000618.351013-9-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Biju,
 
-On Wed, 30 Jul 2025 at 18:46, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+
+On 8/29/2025 8:06 AM, Sean Christopherson wrote:
+> Drop the return code from kvm_x86_ops.remove_external_spte(), a.k.a.
+> tdx_sept_remove_private_spte(), as KVM simply does a KVM_BUG_ON() failure,
+> and that KVM_BUG_ON() is redundant since all error paths in TDX also do a
+> KVM_BUG_ON().
 >
-> As per the RZ/{G2L,G3E} HW manual SD_BUF0 can be accessed by 16/32/64
-> bits. Most of the data transfer in SD/SDIO/eMMC mode is more than 8 bytes.
-> During testing it is found that, if the DMA buffer is not aligned to 128
-> bit it fallback to PIO mode. In such cases, 64-bit access is much more
-> efficient than the current 16-bit.
+> Opportunistically pass the spte instead of the pfn, as the API is clearly
+> about removing an spte.
+>
+> Suggested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Thanks for your series!
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-I believe some of the SoCs that do not support 64-bit accesses, do
-support 32-bit accesses. Do you think it would be worthwhile adding
-support for that, too?
+> ---
+>   arch/x86/include/asm/kvm_host.h |  4 ++--
+>   arch/x86/kvm/mmu/tdp_mmu.c      |  8 ++------
+>   arch/x86/kvm/vmx/tdx.c          | 17 ++++++++---------
+>   3 files changed, 12 insertions(+), 17 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 0d3cc0fc27af..d0a8404a6b8f 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1852,8 +1852,8 @@ struct kvm_x86_ops {
+>   				 void *external_spt);
+>   
+>   	/* Update external page table from spte getting removed, and flush TLB. */
+> -	int (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> -				    kvm_pfn_t pfn_for_gfn);
+> +	void (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> +				     u64 spte);
+>   
+>   	bool (*has_wbinvd_exit)(void);
+>   
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 3ea2dd64ce72..78ee085f7cbc 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -362,9 +362,6 @@ static void tdp_mmu_unlink_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
+>   static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
+>   				 int level)
+>   {
+> -	kvm_pfn_t old_pfn = spte_to_pfn(old_spte);
+> -	int ret;
+> -
+>   	/*
+>   	 * External (TDX) SPTEs are limited to PG_LEVEL_4K, and external
+>   	 * PTs are removed in a special order, involving free_external_spt().
+> @@ -377,9 +374,8 @@ static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
+>   
+>   	/* Zapping leaf spte is allowed only when write lock is held. */
+>   	lockdep_assert_held_write(&kvm->mmu_lock);
+> -	/* Because write lock is held, operation should success. */
+> -	ret = kvm_x86_call(remove_external_spte)(kvm, gfn, level, old_pfn);
+> -	KVM_BUG_ON(ret, kvm);
+> +
+> +	kvm_x86_call(remove_external_spte)(kvm, gfn, level, old_spte);
+>   }
+>   
+>   /**
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 8cb6a2627eb2..07f9ad1fbfb6 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1809,12 +1809,12 @@ static int tdx_sept_free_private_spt(struct kvm *kvm, gfn_t gfn,
+>   	return tdx_reclaim_page(virt_to_page(private_spt));
+>   }
+>   
+> -static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+> -					enum pg_level level, kvm_pfn_t pfn)
+> +static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+> +					 enum pg_level level, u64 spte)
+>   {
+> +	struct page *page = pfn_to_page(spte_to_pfn(spte));
+>   	int tdx_level = pg_level_to_tdx_sept_level(level);
+>   	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> -	struct page *page = pfn_to_page(pfn);
+>   	gpa_t gpa = gfn_to_gpa(gfn);
+>   	u64 err, entry, level_state;
+>   	int ret;
+> @@ -1825,15 +1825,15 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	 * there can't be anything populated in the private EPT.
+>   	 */
+>   	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
+> -		return -EIO;
+> +		return;
+>   
+>   	/* TODO: handle large pages. */
+>   	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
+> -		return -EIO;
+> +		return;
+>   
+>   	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
+>   	if (ret <= 0)
+> -		return ret;
+> +		return;
+>   
+>   	/*
+>   	 * TDX requires TLB tracking before dropping private page.  Do
+> @@ -1862,17 +1862,16 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   
+>   	if (KVM_BUG_ON(err, kvm)) {
+>   		pr_tdx_error_2(TDH_MEM_PAGE_REMOVE, err, entry, level_state);
+> -		return -EIO;
+> +		return;
+>   	}
+>   
+>   	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
+>   	if (KVM_BUG_ON(err, kvm)) {
+>   		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
+> -		return -EIO;
+> +		return;
+>   	}
+>   
+>   	tdx_clear_page(page);
+> -	return 0;
+>   }
+>   
+>   void tdx_deliver_interrupt(struct kvm_lapic *apic, int delivery_mode,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
