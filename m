@@ -1,259 +1,102 @@
-Return-Path: <linux-kernel+bounces-791255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4E2B3B406
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 254FCB3B3F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BDF1714CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:13:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25DF05646A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEACE25F78F;
-	Fri, 29 Aug 2025 07:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wre0eaCF"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC195264630;
+	Fri, 29 Aug 2025 07:11:10 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2016E2522A1;
-	Fri, 29 Aug 2025 07:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447AD22F14C;
+	Fri, 29 Aug 2025 07:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756451624; cv=none; b=bgCrs1idBwu1HLecZJuAMl+6hIQtWwZkV8izeKL5DzZw44rgtaS5dOPaS1gh67A7nzvbfpdfA4JKasb8LcjaVbvCGYqS1UBLyVKYqYhaD4wEJSbrqLDkZw3IQmYR2Jda/UehAmjYGY+KEQqes9fsQT/rg7fZLLBL6465Z+Wk4eE=
+	t=1756451470; cv=none; b=nhQP+cUnYuhl6tT5jNIBnPm3U4J63tJAdsVw9Mt/GcppFOkzSmDcmnEH3FEq3iCVe2eJj/PU+vZ/8r/Z0kqWgmeA449/J+ZbjT+2pWpCPCIJ0kIqxGS2DR0n6ax1nRi00HZLsHwlOP1/7yKrNhGqbJ9HUpFtNbTWzt7wvfou7pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756451624; c=relaxed/simple;
-	bh=FhcK0scHrUQ3RL614dPfgdhZHypbITDDP2rh3ct8h8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lHFVZkXkPSHDnW+YIkFm7jp1mPbvTXORTkLVsglDY8Wo2TBKNJHzeuGnkdK8bDFAYSZsnQu4fFdQ6EL0YVjGX57DgcIbZ5L9J6QPZWR01uQVSsbIYh3GdPvtBIZ4gZTlXGUT9uHXmYP9OgSe3QRyTUS40x88szkwty+aQujhFAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wre0eaCF; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T6Z2OX006185;
-	Fri, 29 Aug 2025 09:13:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	FhcK0scHrUQ3RL614dPfgdhZHypbITDDP2rh3ct8h8g=; b=wre0eaCF/stQW3SM
-	IXnc9GdY8oSHGeQCwzMi/BEDywKGeIRsKsYFS/rgG/rPbqe8um//+qKxxYBXnuKk
-	Jb/ZYDepR18DmvI2ufrJUYgPkC331LdN6w0cEK0Z/PoNDAXDuND7K+N4UbxUiVoz
-	HqFrbB66P90/7spdVO+cQcIVRKkhx8ErvQuELXjadb4kPZpX9AYYIPHnnX0g1Ho6
-	RZ4hDg4e/pOEKtCDqpWLi9BKjYJxG8ZoGbGpgf7MOXOd6P4m1tOTXKI66ce8dY1D
-	cMCkR7/jMvNo5GEH9BsnAiiw89POzUqRr2MjELOYGEPgf96W1kUKLpWgmPzD9uz4
-	UGP0Kw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48qrkmw7e1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 09:13:18 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4830E40049;
-	Fri, 29 Aug 2025 09:11:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1AC0A78EEA9;
-	Fri, 29 Aug 2025 09:10:52 +0200 (CEST)
-Received: from [10.252.3.130] (10.252.3.130) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 29 Aug
- 2025 09:10:50 +0200
-Message-ID: <9d3499b0-be86-4152-ab28-37de81d850a4@foss.st.com>
-Date: Fri, 29 Aug 2025 09:10:49 +0200
+	s=arc-20240116; t=1756451470; c=relaxed/simple;
+	bh=RacbaW6HROrZlrLpRE7PsOFx1DubGHgeEsxYtz3nnBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2H1QvfikHmoiu+ClDtNvlY+z5I26e9mY6cuHsL8jviRHfr8ndpR8IayUAlNLrxy1Jf7oQm4pmv35amG2E+luUy4XyCPKy00KIxTxKxXeLW7bBeD4BSnEDK0Egmf+S7+016X/6DHJ5Eymz5O23g4Lu37ejz/v01snUONnCbrApM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2981BC4CEF0;
+	Fri, 29 Aug 2025 07:11:09 +0000 (UTC)
+Date: Fri, 29 Aug 2025 09:11:07 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org, lumag@kernel.org, 
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org, daniel.lezcano@linaro.org, 
+	sboyd@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org, 
+	rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com, 
+	david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com, 
+	kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, cros-qcom-dts-watchers@chromium.org, 
+	quic_kotarake@quicinc.com, neil.armstrong@linaro.org, stephan.gerhold@linaro.org
+Subject: Re: [PATCH V7 0/5] Add support for QCOM SPMI PMIC5 Gen3 ADC
+Message-ID: <20250829-imaginary-dove-of-music-afdb36@kuoka>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/13] Enable display support for STM32MP25
-To: Philippe CORNU <philippe.cornu@foss.st.com>,
-        Yannick Fertre
-	<yannick.fertre@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250822-drm-misc-next-v5-0-9c825e28f733@foss.st.com>
- <4f0d417a-3a57-5ed7-9bbb-758679a9625d@foss.st.com>
-Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <4f0d417a-3a57-5ed7-9bbb-758679a9625d@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_02,2025-08-28_01,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
 
+On Tue, Aug 26, 2025 at 02:06:52PM +0530, Jishnu Prakash wrote:
+> PMIC5 Gen3 has a similar ADC architecture to that on PMIC5 Gen2,
+> with all SW communication to ADC going through PMK8550 which
+> communicates with other PMICs through PBS. The major difference is
+> that the register interface used here is that of an SDAM present on
+> PMK8550, rather than a dedicated ADC peripheral. There may be more than one
+> SDAM used for ADC5 Gen3. Each ADC SDAM has eight channels, each of which may
+> be used for either immediate reads (same functionality as previous PMIC5 and
+> PMIC5 Gen2 ADC peripherals) or recurring measurements (same as PMIC5 and PMIC5
+> Gen2 ADC_TM functionality). In this case, we have VADC and ADC_TM functionality
+> combined into the same driver.
+> 
+> Patch 1 is a cleanup, to move the QCOM ADC dt-bindings files from
+> dt-bindings/iio to dt-bindings/iio/adc folder, as they are
+> specifically for ADC devices. It also fixes all compilation errors
+> with this change in driver and devicetree files and similar errors
+> in documentation for dtbinding check.
+> 
+> Patch 2 splits out the common ADC channel properties used on older
+> VADC devices, which would also be reused on ADC5 Gen3.
+> 
+> Patch 3 adds bindings for ADC5 Gen3 peripheral.
+> 
+> Patch 4 adds the main driver for ADC5 Gen3.
+> 
+> Patch 5 adds the auxiliary thermal driver which supports the ADC_TM
+> functionality of ADC5 Gen3.
+> 
+> Changes since v6:
+> - Updated auxiliary device cleanup handling to fix memory freeing issues
+> - Updated copyright license in newly added files
 
+Eveyrthing is an update.... What did you change in copyright and
+license? And why?
 
-On 8/28/25 17:27, Philippe CORNU wrote:
->
->
-> On 8/22/25 16:34, Raphael Gallais-Pou wrote:
->> This series aims to add and enable sufficient LVDS display support for
->> STM32MP257F-EV1 board.
->>
->> LVDS is the default use case to drive a display panel on STM32MP257F-EV,
->> even though DSI panels will be supported in the near future.
->>
->> The LTDC needs a pixel rate in sync with the bridge currently in use.
->> For that both DSI and LVDS bridges need to declare an internal clock and
->> become clock provider to the mux. The mux then selects the reference
->> clock for the LTDC pixel rate generation.
->>
->> For now this mux is handled internally in the LTDC, while waiting for
->> the STM32 clock framework to merge a 'clk-mux' based on the SYSCFG.
->> This explains the link done in the patch [7/8] between the LVDS,
->> providing the reference clock for the LTDC internals.
->>
->>    +----------+              |\
->>    |  DSI PHY |------------->| \           +------------+
->>    |          |ck_dsi_phy    |  |          |            |
->>    +----------+              |  |--------->|    LTDC    |
->>    +----------+              |  |pixel_clk |            |
->>    | LVDS PHY |------------->|  |          +------------+
->>    |          |clk_pix_lvds  |  |
->>    +----------+              |  |
->>                              |  |
->>     ck_ker_ltdc ------------>| /
->>                              |/|
->>                                └- SYSCFG
->>
->> Clock selection applies as follow:
->> - 0b00: Selects ck_dsi_phy
->> - 0b01: Selects clk_pix_lvds
->> - 0b10: Selects ck_ker_ltdc (for parallel or DSI display).
->> - 0b11: Reserved
->>
->> The reset value of the register controlling the mux is 0b01, meaning
->> that the default clock assigned is the clk_pix_lvds.  This causes two
->> things:
->>
->> - In order to get basic display on the LVDS encoder, like intended,
->> nothing has to be done on this mux within the LTDC driver (which for now
->> explains the unused syscfg phandle on the LTDC node in the device-tree).
->>
->> - 'pixel_clk' is dependent from 'clk_pix_lvds' because of the LTDC clock
->> domains.  They also need to be sync to get a coherent pixel rate though
->> the display clock tree (which explains the LVDS phandle on the LTDC node
->> in the device-tree).
->>
->> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
->> ---
->> Changes in v5:
->> - Documentation:
->>    - LTDC: Clamp correctly min/maxItems value (again)
->> - Add Yannick's trailers where relevant except in patch [01/13] which
->>    has been modified
->> - Link to v4:
->> https://lore.kernel.org/r/20250821-drm-misc-next-v4-0-7060500f8fd3@foss.st.com
->>
->> Changes in v4:
->> - Documentation:
->>    - LTDC: Add "st,stm32mp255-ltdc" compatible.  After internal
->>      discussion, we came to the solution that the LTDC on STM32MP255 SoC
->>      needs its own compatible, since it does have the same amount of
->>      clocks than on STM32MP251 SoC.
->> - Devicetree:
->>    - Add "st,stm32mp255" compatible on corresponding dtsi
->> - Drivers:
->>    - LTDC: Handle "st,stm32mp255" compatible
->> - Remove Rob's r-b from patch [01/13] since it was modified.
->> - Link to v3:
->> https://lore.kernel.org/r/20250819-drm-misc-next-v3-0-04153978ebdb@foss.st.com
->>
->> Changes in v3:
->> - Rebased on latest drm-misc-next
->> - Documentation:
->>    - LTDC: Clamp correctly min/maxItems value
->>    - LVDS: Remove second 'items' keyword
->> - Add Krzysztof's trailer where relevant
->> - Link to v2:
->> https://lore.kernel.org/r/20250812-drm-misc-next-v2-0-132fd84463d7@foss.st.com
->>
->> Changes in v2:
->> - Documentation:
->>    - Add support for new compatible "st,stm32mp255-lvds"
->>    - Change LTDC compatible for SoC compliant one
->>    - Make clearer LTDC clock-names property
->> - Devicetree:
->>    - Change compatible according to the documentation
->>    - Change clock and clock-names order to match documentation (and avoid
->>      warnings)
->> - Drivers:
->>    - Change LTDC compatible
->> - Add Rob's trailer where relevant
->> - Link to v1:
->> https://lore.kernel.org/r/20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com
->>
->> ---
->> Raphael Gallais-Pou (11):
->>        dt-bindings: display: st: add two new compatibles to LTDC device
->>        dt-bindings: display: st,stm32-ltdc: add access-controllers property
->>        dt-bindings: display: st: add new compatible to LVDS device
->>        dt-bindings: display: st,stm32mp25-lvds: add access-controllers property
->>        dt-bindings: display: st,stm32mp25-lvds: add power-domains property
->>        dt-bindings: arm: stm32: add required #clock-cells property
->>        arm64: dts: st: add ltdc support on stm32mp251
->>        arm64: dts: st: add ltdc support on stm32mp255
->>        arm64: dts: st: add lvds support on stm32mp255
->>        arm64: dts: st: add clock-cells to syscfg node on stm32mp251
->>        arm64: dts: st: enable display support on stm32mp257f-ev1 board
->>
->> Yannick Fertre (2):
->>        drm/stm: ltdc: support new hardware version for STM32MP25 SoC
->>        drm/stm: ltdc: handle lvds pixel clock
->>
->>   .../bindings/arm/stm32/st,stm32-syscon.yaml        | 31 ++++++---
->>   .../devicetree/bindings/display/st,stm32-ltdc.yaml | 55 ++++++++++++++-
->>   .../bindings/display/st,stm32mp25-lvds.yaml        | 13 +++-
->>   arch/arm64/boot/dts/st/stm32mp251.dtsi             | 19 ++++++
->>   arch/arm64/boot/dts/st/stm32mp255.dtsi             | 20 +++++-
->>   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         | 79 ++++++++++++++++++++++
->>   drivers/gpu/drm/stm/drv.c                          | 12 +++-
->>   drivers/gpu/drm/stm/ltdc.c                         | 58 +++++++++++++++-
->>   drivers/gpu/drm/stm/ltdc.h                         |  6 ++
->>   9 files changed, 275 insertions(+), 18 deletions(-)
->> ---
->> base-commit: c8cea4371e5eca30cda8660aabb337747dabc51d
->> change-id: 20250617-drm-misc-next-4af406c1c45f
->>
->> Best regards,
->
-> Hi Raphael,
-> Thank you for these great patches.
->
-> If you agree, I think you can merge 01-08 in misc.
+> - Addressed some reviewer comments in documentation and driver patches.
 
-Hi Philippe,
+What changed specifically?
 
-Applied patches [01/13] -> [08/13] on drm-misc-next.
+> - Link to v6: https://lore.kernel.org/all/20250509110959.3384306-1-jishnu.prakash@oss.qualcomm.com/
+> 
 
-Thanks,
 Best regards,
-Raphaël
->
-> Best regards
-> Philippe :-)
+Krzysztof
 
 
