@@ -1,164 +1,164 @@
-Return-Path: <linux-kernel+bounces-792280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B578B3C23C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:07:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5A9B3C241
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 20:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA501CC3941
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAC8A07C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE733431F8;
-	Fri, 29 Aug 2025 18:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE4343207;
+	Fri, 29 Aug 2025 18:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pP5t/5fL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ooi7zA7T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1A921019E;
-	Fri, 29 Aug 2025 18:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A521019E;
+	Fri, 29 Aug 2025 18:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756490821; cv=none; b=DkCVdF2u7V0s6bZg7RIyF+xvD29Nnu6Tk3HtH0hQlCD1oN4gKQkT3lqIquYIp+1yUMDvAW/jmgFhNBfyQz3OpxTSNLjj8ECUK2NEG2E7Zx4eb+GkIjBLCm8CLefaQH00RFO0v5cjvewkVLUjxXukjaQcHz+JZsNOs/9vdPWQS8k=
+	t=1756491020; cv=none; b=PW1RbyFm6pAlb8a+rD/IY1krM6TRHsBDRHPtN9L2g6fvl2XqOhE0K2ajXc66q4BwrBrW0zqqmwqw8GoxhTaqfD6YXbeF1pqAMS1jdN0Ayy4s5tcAo186lp5n6bcVptFkbsg7k0J3XhtZPAHrRYNIJdiVp8ZauRyAbpxvwUXX9YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756490821; c=relaxed/simple;
-	bh=gh4BtveoclPRfsi619KfjHVuQLrHKsEBTiSbhqe0ZIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZSXFG63s4gEexrZQpNoxO02pL7tRwqodHaVnAYMSo+dcrTTVSo23MEbjDTjc3J1e/PkYkGH4lbNjsvydSbrNBqW264kOsKgR4eoei5s5vGEb/1pKO72Emkrnt9GxsAwnjXEnejfc3/ZPtp7ABKutXXG+9q60LHxqW+lFLVANoXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pP5t/5fL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85RKv032471;
-	Fri, 29 Aug 2025 18:06:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0NWcftQ9sByIGoJwYg7DuNerhyMKFe2bgHR2XaZF9JQ=; b=pP5t/5fLxEc5yHRU
-	UxZ46KKd9eunHIk07IzjW+I4grgoQmfeuAlPo1MW5v81x0DHRx07RSJC+YQs2MZ7
-	LUlygqVYMz45/10OMHSVt5Kk7kkRnJDpiE49oVs565tHBEJNNc7879uQCGmSJybV
-	r6s90pMSXVUli5/MwZQOxwDoDcbPaM1i58WakOJvrydiRzPd+B2fU0rDhdC3Kzm7
-	RDTZmdoqthi7mvhmu9twOU7tWbUVzPPPz/1/VHJZK8pVkec1o7JB2WbNPWJuTBIz
-	4C8eTt7sdWL2j9JubiLRxGCkCmnDslIRTnp4mS4HHJY/+JMKOiGAIEsC8vepSU5s
-	9nwoRw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5vc93-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 18:06:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57TI6f5v029709
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 18:06:41 GMT
-Received: from [10.50.32.220] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Fri, 29 Aug
- 2025 11:06:36 -0700
-Message-ID: <e9f86dee-3938-b9ac-4ec9-ee8ed419882a@quicinc.com>
-Date: Fri, 29 Aug 2025 23:36:16 +0530
+	s=arc-20240116; t=1756491020; c=relaxed/simple;
+	bh=SXu3T17dYbp/ukZ8uJydGVdZ6zcCuFcjGzpDGMwa+Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKD1whapY09keBQKdviaQHsUdOtbcq2/nWQqUIfA+MBiClFxxigbachQOj6jlJA9Y7y4TZJ1fO9zlV5VDRkw3rfSFRk9i8jfFppsHaktJMqikvI6HRUqUDcy4VMbFdbyi/BmdApYw/Ho51oJK/GxkkaCav/QL+HCp1DPTuowxVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ooi7zA7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C02C4CEF0;
+	Fri, 29 Aug 2025 18:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756491018;
+	bh=SXu3T17dYbp/ukZ8uJydGVdZ6zcCuFcjGzpDGMwa+Nc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ooi7zA7T9NmpAVf2EhalPYoUyuzdraHp5C4oj/l4tumul2weopj5FJ1utOM+alOHE
+	 kKgusS+zU63i44OmypyAXKPtErTb3bB1GndFYFN2okuf9dT8hCaNdpoFVkJ5p8agh+
+	 KkkEsMX5T3gC8JIm2Ov+5zT8s4L7tpEw7w/6ThgCsQL1Xlg6GXrAAbC6OLHWNTeh0w
+	 FXzd4JTSiV52V1QufIh9KkzXjYT+hvbp3zSg4ylf/XGvXabRt4g7AwLZFCUhy7Zrgf
+	 S8hNoGjWZuOpsjDmYOt//9aCCpoZgyxV/RwMeINevxHuMv5KmXpH/JQL39xFf9C15W
+	 UspQvwHff7f7A==
+Date: Fri, 29 Aug 2025 11:10:07 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jinghao Jia <jinghao7@illinois.edu>,
+	Wentao Zhang <wentaoz5@illinois.edu>,
+	Sasha Levin <sashal@kernel.org>
+Cc: Matt.Kelly2@boeing.com, akpm@linux-foundation.org,
+	andrew.j.oppelt@boeing.com, anton.ivanov@cambridgegreys.com,
+	ardb@kernel.org, arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+	chuck.wolber@boeing.com, dave.hansen@linux.intel.com,
+	dvyukov@google.com, hpa@zytor.com, johannes@sipsolutions.net,
+	jpoimboe@kernel.org, justinstitt@google.com, kees@kernel.org,
+	kent.overstreet@linux.dev, linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org, Wentao Zhang <wentaoz5@illinois.edu>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	llvm@lists.linux.dev, luto@kernel.org, marinov@illinois.edu,
+	masahiroy@kernel.org, maskray@google.com,
+	mathieu.desnoyers@efficios.com, matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org, mingo@redhat.com, morbo@google.com,
+	ndesaulniers@google.com, oberpar@linux.ibm.com, paulmck@kernel.org,
+	peterz@infradead.org, richard@nod.at, rostedt@goodmis.org,
+	samitolvanen@google.com, samuel.sarkisian@boeing.com,
+	steven.h.vanderleest@boeing.com, tglx@linutronix.de,
+	tingxur@illinois.edu, tyxu@illinois.edu, x86@kernel.org
+Subject: Re: [PATCH v2 0/4] Enable measuring the kernel's Source-based Code
+ Coverage and MC/DC with Clang
+Message-ID: <20250829181007.GA468030@ax162>
+References: <20241002045347.GE555609@thelio-3990X>
+ <20241002064252.41999-1-wentaoz5@illinois.edu>
+ <20241003232938.GA1663252@thelio-3990X>
+ <284fe8fa-c094-49b7-8e16-3318676d38e3@illinois.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 24/26] media: iris: Allocate and queue internal buffers
- for encoder video device
-To: Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>,
-        Hans Verkuil <hverkuil@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-References: <20250825-iris-video-encoder-v4-0-84aa2bc0a46b@quicinc.com>
- <RkFtovt6YeFZgD2napWwptCOf-5LP3ZqNbmfbDB-Z__cCvrJA5DfFRVU1IxihkEayS3ksQp8AzL1dE9Kd7r_2Q==@protonmail.internalid>
- <20250825-iris-video-encoder-v4-24-84aa2bc0a46b@quicinc.com>
- <9210ea3a-970b-4cf3-8ab5-35952a9c5cf6@kernel.org>
-Content-Language: en-US
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <9210ea3a-970b-4cf3-8ab5-35952a9c5cf6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXxf4H8m7e/Nxj
- /QMNxCdSqqeMtbP6bPYBOeJ4auympyKEDQVUDZVZcDzmfEmbUlyLzLT6lR8Sv8SAF25heJlGkLY
- JXcM+KcTTmLVdLW6Oux3lc4rwuJsboMzS30o3udbH88eFE3XOCD0Fg/rMISiiu5/wAClXti0sjz
- kipmWK4ecMMdp4aVTkzDlmBi0Ptd+krMoMy07e2yOq9Xf4Q8zSQbtXvpP2gwTtmpDaJ9P3Voib+
- tAb6/7CGNAVB173qECKlPQD3jYCOzf83Mhis2JsR1+gb5poze4ZSUv1+n8TMLgmkINCBZhct0sr
- 4xHt0KHRQexfbEzZX+/GTDT1ZATlKIksrzBTjHqbBpkKc+U6+J5wTldGgAXYNeLs24X6lYOIsyz
- tYsGdB5b
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68b1ec32 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=E2upXWrYFGlahwAtZIwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: dHN2rDbAyuip8OXhmS6p-pAfg6AK7Iih
-X-Proofpoint-ORIG-GUID: dHN2rDbAyuip8OXhmS6p-pAfg6AK7Iih
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1011 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <284fe8fa-c094-49b7-8e16-3318676d38e3@illinois.edu>
 
+Hi Jinghao and Wentao,
 
-
-On 8/29/2025 2:35 PM, Bryan O'Donoghue wrote:
-> On 25/08/2025 08:00, Dikshita Agarwal wrote:
->> +static inline
->> +u32 size_enc_single_pipe(u32 rc_type, u32 bitbin_size, u32 num_vpp_pipes,
->> +             u32 frame_width, u32 frame_height, u32 lcu_size)
->> +{
->> +    u32 size_aligned_height = ALIGN((frame_height), lcu_size);
->> +    u32 size_aligned_width = ALIGN((frame_width), lcu_size);
->> +    u32 size_single_pipe_eval = 0, sao_bin_buffer_size = 0;
->> +    u32 padded_bin_sz;
->> +
->> +    if ((size_aligned_width * size_aligned_height) > (3840 * 2160))
->> +        size_single_pipe_eval = (bitbin_size / num_vpp_pipes);
->> +    else if (num_vpp_pipes > 2)
->> +        size_single_pipe_eval = bitbin_size / 2;
->> +    else
->> +        size_single_pipe_eval = bitbin_size;
->> +
->> +    sao_bin_buffer_size = (64 * ((((frame_width) + 32) * ((frame_height)
->> + 32)) >> 10)) + 384;
->> +    padded_bin_sz = ALIGN(size_single_pipe_eval, 256);
->> +    size_single_pipe_eval = sao_bin_buffer_size + padded_bin_sz;
->> +
->> +    return ALIGN(size_single_pipe_eval, 256);
->> +}
+On Thu, Nov 21, 2024 at 11:05:14PM -0600, Jinghao Jia wrote:
+...
+> On 10/3/24 6:29 PM, Nathan Chancellor wrote:
+> > I seem to have narrowed down it to a few different configurations on top
+> > of x86_64_defconfig but I will include the full bad configuration as an
+> > attachment just in case anything else is relevant.
+...
+> > $ qemu-system-x86_64 \
+> >     -display none \
+> >     -nodefaults \
+> >     -M q35 \
+> >     -d unimp,guest_errors \
+> >     -append 'console=ttyS0 earlycon=uart8250,io,0x3f8' \
+> >     -kernel arch/x86/boot/bzImage
+> >     -initrd rootfs.cpio \
+> >     -cpu host \
+> >     -enable-kvm \
+> >     -m 8G \
+> >     -smp 8 \
+> >     -serial mon:stdio
+> > <hangs with no output>
 > 
-> Applying your full series, this function is unused and causes a warning in CI.
+> This hang is caused by an early boot exception -- gdb shows the execution
+> reaches the halt loop in early_fixup_exception().  Dumping regs->ip associated
+> with this exception points us to the following instruction:
 > 
-> Assuming tests pass for me, I'll be dropping this function in the PR and
-> you can resubmit it if/when you find a use for it.
-
-you're right, this is unused. Strangely I didn't see any such warnings
-during my runs, but yes, this is good to be dropped.
-
-Thanks,
-Dikshita
+> ffffffff89b58074:       48 ff 05 85 7f 4a 76    incq   0x764a7f85(%rip)        # 0 <fixed_percpu_data>
 > 
-> ---
-> bod
+> This is apparently an incorrect access to the per-cpu variable (the cpu offset
+> in %gs is needed) and triggers a null-ptr-deref. Without CONFIG_AMD_MEM_ENCRYPT
+> (one of the bad configs), it turns out the instruction is actually accessing
+> the llvm prof-counter of strscpy():
+> 
+> ffffffff89b85a04:       48 ff 05 6d 94 7d fa    incq   -0x5826b93(%rip)        # ffffffff8435ee78 <__profc__Z13sized_strscpyPcU25pass_dynamic_object_size1PKcU25pass_dynamic_object_size1m>
+> 
+> This symbol is left undefined in the bad vmlinux, which explains why the
+> faulting instruction is accessing address 0.  Tracing through the kernel
+> linking process shows that the symbol is still defined (as a weak symbol) in
+> vmlinux.a and vmlinux.o, but becomes undefined after the first round of linking
+> of the kernel image (.tmp_vmlinux1).
+> 
+> After playing with it a little bit, we found the creation of vmlinux.o to be
+> the problem. Specifically, if we use mold[1] instead of lld to create the
+> object and pass it to the later stages of kernel linking, the symbol will be
+> properly defined as a data symbol (and the kernel can boot).
+> 
+> It seems that the issue does not reproduce with LLVM-20. Nevertheless we have
+> reported[2] this to upstream llvm.
+> 
+> [1]: https://github.com/rui314/mold
+> [2]: https://github.com/llvm/llvm-project/issues/116575
+
+Sasha pinged me on IRC earlier this week about this series and this
+issue, noting that he was unable to reproduce it with a similar
+toolchain version and the instructions above. I was able to confirm that
+at 6.17-rc1 with this patch set applied (after fixing a couple of minor
+conflicts), I no longer see this boot issue but it is still reproducible
+on 6.12.
+
+In attempting to narrow my bisect window to find what patch fixes this
+issue, I noticed that this configuration actually fails to build with
+
+  Absolute reference to symbol '__llvm_prf_cnts' not permitted in .head.text
+
+in 6.15 and 6.14 as a result of Ard's commit faf0ed487415 ("x86/boot:
+Reject absolute references in .head.text"). Bisecting between 6.15 and
+6.16 reveals Ard's commit a3cbbb4717e1 ("x86/boot: Move SEV startup code
+into startup/") resolves the build error and that kernel boots, which
+seems to make sense to me given what code was involved here. It is
+possible that arch/x86/boot/startup will want 'LLVM_COV_PROFILE := n'
+since all other instrumentation is disabled.
+
+I built v6.17-rc1 + this series with a fuller distribution configuration
+and CONFIG_LLVM_COV_PROFILE_ALL=y. That kernel boots fine in QEMU but I
+have done no further evaluation.
+
+Cheers,
+Nathan
 
