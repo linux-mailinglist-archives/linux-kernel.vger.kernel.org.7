@@ -1,220 +1,113 @@
-Return-Path: <linux-kernel+bounces-792121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A13B3C067
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D22B1B3C07E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC90584EE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68238568296
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3469322C87;
-	Fri, 29 Aug 2025 16:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC77322DD0;
+	Fri, 29 Aug 2025 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiD2cadK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="QZA79gKm"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A89F2B9A8;
-	Fri, 29 Aug 2025 16:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E35326D60
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484060; cv=none; b=pa45Sg8LzYAKRLOp7C+/q9kz08C42BiSHb0N9yW82EWn5Khk1vv4f+jCr/HIr3XMbe42Op/CEpittgXiK+oc538P3OmRoR/L4fG7wJTXZQ7Q/Cu97Ss3zxV6c4zx9sbaEJwSf+fSQynIfdaYQkaTlz2vOPilPTgg8YPbpzGAhh0=
+	t=1756484553; cv=none; b=kfwmMk+KJWWTqKBWezXf/UJtQx8sdhtFlczc4fYp8ijgzm+UEb6QcT6vxNEwqQiL3l0YFnsngI5q0WiJkZbd1Iayr/uL3stpm2biJMaS3Y5z39YQBK03WjTdJeDlvdz8LO4hroT5qQmNLKdLlabZS4doXFKscR+jZ14kgmMNGjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484060; c=relaxed/simple;
-	bh=9/2QQ3RiREaiSyUiO5ececD/jqVoWkLkjCUAA6bmPFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JfG1gkYasoDWDmCW1sMkApEUhkanpbEi9RrUFREEjVdb5KEEzJPQX7jDGUGWr6is4zDa9tiDWhgj5UO8IPtlx/uZFB0WBy8TuxqRNEbxSym4xy9i26q5LPpA7GG1w/FD/AJ2YZkVkHDJvgWRhturckCqLyzy5NK0L5rs2QBODcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiD2cadK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E018EC4CEF0;
-	Fri, 29 Aug 2025 16:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756484058;
-	bh=9/2QQ3RiREaiSyUiO5ececD/jqVoWkLkjCUAA6bmPFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZiD2cadK21kq8/1+HU/s47ctfSPLku5kGvKTU7+gDfo/gUItwd4dziv5/tFHyDjA3
-	 dACICfHN5ycuJ0zCVyJEGvOUCEHo//mnsfRwQ0n8QYvaRL+jNuTCE0uxiPycoOxfKJ
-	 Rc2x7zplfineGU0ObrNOZgLV2N4Sh3IaCMgloqtMAMIQrcMYD0+vOso4yZir1v0vsn
-	 aIPXp3BW/jRTHj7UtQZMK2uucxb/dAmf7R2VDOHrWTFipB+9j+an/6BSfP8W67y0y6
-	 DvOdYSsic046Ef3N9iAMNudz19ePRAzBC5VHmfwZrqilD+dK33LmRJ99TJKxjMskcQ
-	 dOzixjq9Ekf4w==
-Date: Fri, 29 Aug 2025 21:44:08 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
- a platform specific way
-Message-ID: <lakgphb7ym3cybwmpdqyipzi4tlkwbfijzhd4r6hvhho3pc7iu@6ludgw6wqkjh>
-References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
- <aHoh1XfhR8EB_5yY@ryzen>
- <aHokdhpJUhSZ5FSp@ryzen>
- <tujurux64if24z7w7h6wjxhrnh4owkgiv33u2fftp7zr5ucv2m@2ijo5ok5jhfk>
- <aJ743hJw-T9y3waX@ryzen>
+	s=arc-20240116; t=1756484553; c=relaxed/simple;
+	bh=PrJ0Kpwt2FKgUlVRISAX5fdIxqANZWL+k1X3dwszi4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTuyVW5iocTxECkOII3fvM/CVB7tLJ5gxpWTSqywwGKr4n8n96wlTDSTxqnO70szgSaIwTLWc5gJUjorlXiQ+hbFhnQvQuoOlzPByZ5xRkL3PP6beK/EAA4VCMc8sARemt01oMEn1xlqYyzTRHIng7p6Us8X5RbyuCW5t1WlCUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=QZA79gKm; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b618b7d33so19944385e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1756484548; x=1757089348; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gq1giWJsUjnprgL3GS+9dVU3raENqscOMd2Do9VTPCY=;
+        b=QZA79gKmP552r9/5oFU2izXlreyhx2b5nhJXTccf1ZfCOG19EjfH+1oR01nblnO8ia
+         4QpOkfZNC3Qz5gxhpYpYzmLAUfFNFejr+rcpZaXjDcacXtKhuMAT2DzJZFrinaVb1Aoe
+         1xHV0yMXOIyIA4CRDPs3Gc74jIoKcvAqjoR/6nHYmsfDdXD8e7HApzyeTaL3n7LOb+oP
+         ZbpMF2Dg1NXZkqhXEXEavJ1FpYij+HNVkO1sVem3PNaleuKTIh6M3fkGMN61UI5ocXxi
+         XfHFU+ZD2fcoejGFWohEX2B+wQOTAa6hLT8oK10j+mLQ3w4AqoAxu/WgL1gqdAs/Ue84
+         sYiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756484548; x=1757089348;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gq1giWJsUjnprgL3GS+9dVU3raENqscOMd2Do9VTPCY=;
+        b=LRD08WUvmw7RlY0M+fzlG2tpCiRqtOjwgdbOMBsNoiqRX0pumeMQ8btel9Yu7BFQox
+         vS1gYxOXI8NBJwSvMzV8SVyMrKbUfzEPySmjKYx98OwMcowt205dl8F3Ip8HTxyPWIk1
+         hkEVmOULsSPYiLqXQ82TCoiO02nOF5+kzkS7ah6QOg/yPFBPOx7PR8LuwzLpxe03Xf61
+         n/w4QRCpMciMf/lZT/Rkzht++le1enttoSy9FfC5JO5cSKsAhuiiZqSTCAsMeFTSQNqX
+         vqL2xGMzTwqBNTFeNZ4vprtI2PEVEgZXNn0uPL3t3T48Vgyz7/nF94bukgW1qX7oVUto
+         iVUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXp2wXHBPNiDoCizv8vtF40iX/8QAaq3oLIhg00GYx45D8sHNVktWAqvn/eyp5RssFwwV5v0EaA/MxM8yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymJUYIClNLXE/amCSiOPThGd8Z+Ta89E7WhMLRTct9ruQ3Hpv2
+	LJxUmUgCe/bHJT9tAQ75NvX2B96R2qvnsk2IjbFbjEib9wu9g+XS3Qjzn56yx2XvRAQ=
+X-Gm-Gg: ASbGncti4Rr2zBs7NRDLeG1RVukFX2w1bJxxdLx7CfvO/ifJCXdK5EwJQCY51AEsiMQ
+	gBCanKyY8fK8eMNn/uupX/CfGnYJLKdK1EKBEP6XQm4NoP8oHZXLZ5uqQ1kmLXyj60dYnWL2XW+
+	FREoF/T8UHJmMLZ/h3N7a9Ui08+KiuZeLVbfisohhgZoQWlIA2eZSdLkVBZS62bB/CQTdqIWtTl
+	AdRyU9/x/EQW8uz3txJlQ8YaayTfrOCVxkk2sVqqTzFbLNfvUdyrVftbUN9YiGLbmKld5bEnINb
+	xLuAMhjgjJvfshwhrbieyXx+VFwDLYDpCxcYL7rLTWEPMjUnG9rnV7msyUbAhP9Gc4MRbumy/d3
+	IrUs=
+X-Google-Smtp-Source: AGHT+IHZWIfqgvYtW19pUMdEmDIw2QMzqT/iN9KHitqW3NbObqaxx+9cBOKOGWjP5SKNXmxENmlFvA==
+X-Received: by 2002:a05:600c:4f03:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-45b5daacd8bmr160920075e9.2.1756484547804;
+        Fri, 29 Aug 2025 09:22:27 -0700 (PDT)
+Received: from localhost ([2620:10d:c092:600::1:954])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6ee66bddsm125489115e9.0.2025.08.29.09.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 09:22:26 -0700 (PDT)
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <zhouchengming@bytedance.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] mm: remove zpool
+Date: Fri, 29 Aug 2025 17:15:25 +0100
+Message-ID: <20250829162212.208258-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aJ743hJw-T9y3waX@ryzen>
 
-On Fri, Aug 15, 2025 at 11:07:42AM GMT, Niklas Cassel wrote:
-> Hello Mani,
-> 
-> Sorry for the delayed reply.
-> I just came back from vacation.
-> 
-> On Thu, Jul 24, 2025 at 11:00:05AM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Jul 18, 2025 at 12:39:50PM GMT, Niklas Cassel wrote:
-> > > On Fri, Jul 18, 2025 at 12:28:44PM +0200, Niklas Cassel wrote:
-> > > > On Tue, Jul 15, 2025 at 07:51:03PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > 2) Testing link down reset:
-> > > > 
-> > > > selftests before link down reset:
-> > > > # FAILED: 14 / 16 tests passed.
-> > > > 
-> > > > ## On EP side:
-> > > > # echo 0 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start && \
-> > > >   sleep 0.1 && echo 1 > /sys/kernel/config/pci_ep/controllers/a40000000.pcie-ep/start
-> > > > 
-> > > > 
-> > > > [  111.137162] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
-> > > > [  111.137881] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
-> > > > [  111.138432] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
-> > > > [  111.139067] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
-> > > > [  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
-> > > > [  111.255407] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
-> > > > [  111.256019] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
-> > > > [  111.383401] pcieport 0000:00:00.0: Root Port has been reset
-> > > > [  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
-> > > > [  111.384582] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
-> > > > [  111.385218] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
-> > > > [  111.385771] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
-> > > > [  111.390866] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> > > > [  111.391650] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-> > > > 
-> > > > Basically all tests timeout
-> > > > # FAILED: 1 / 16 tests passed.
-> > > > 
-> > > > Which is the same as before this patch series.
-> > > 
-> > > The above was with CONFIG_PCIEAER=y
-> > > 
-> > 
-> > This is kind of expected since the pci_endpoint_test driver doesn't have the AER
-> > err_handlers defined.
-> 
-> I see.
-> Would be nice if we could add them then, so that we can verify that this
-> series is working as intended.
-> 
-> 
-> > 
-> > > Wilfred suggested that I tried without this config set.
-> > > 
-> > > However, doing so, I got the exact same result:
-> > > # FAILED: 1 / 16 tests passed.
-> > > 
-> > 
-> > Interesting. Could you please share the dmesg log like above.
-> 
-> It is looking exactly like the dmesg above
-> 
-> [   86.820059] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x4
-> [   86.820791] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x0
-> [   86.821344] rockchip-dw-pcie a40000000.pcie: hot reset or link-down reset
-> [   86.821978] pcieport 0000:00:00.0: Recovering Root Port due to Link Down
-> [   87.040551] rockchip-dw-pcie a40000000.pcie: PCIe Gen.3 x4 link up
-> [   87.041138] rockchip-dw-pcie a40000000.pcie: Root Port reset completed
-> [   87.168378] pcieport 0000:00:00.0: Root Port has been reset
-> [   87.168882] rockchip-dw-pcie a40000000.pcie: PCIE_CLIENT_INTR_STATUS_MISC: 0x3
-> [   87.169519] rockchip-dw-pcie a40000000.pcie: LTSSM_STATUS: 0x230011
-> [   87.272463] rockchip-dw-pcie a40000000.pcie: Received Link up event. Starting enumeration!
-> [   87.277552] pcieport 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> [   87.278314] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-> 
-> except that we don't get the:
-> > [  111.139686] pci-endpoint-test 0000:01:00.0: AER: can't recover (no error_detected callback)
-> > [  111.384060] pcieport 0000:00:00.0: AER: device recovery failed
-> 
+zpool is an indirection layer for zswap to switch between multiple
+allocator backends at runtime. Since 6.15, zsmalloc is the only
+allocator left in-tree, so there is no point in keeping zpool around.
 
-Ok, thanks for the logs. I guess what is happening here is that we are not
-saving/restoring the config space of the devices under the Root Port if linkdown
-is happens. TBH, we cannot do that from the PCI core since once linkdown
-happens, we cannot access any devices underneath the Root Port. But if
-err_handlers are available for drivers for all devices, they could do something
-smart like below:
+Based on mm-everything-2025-08-29-00-23.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index c4e5e2c977be..9aabf1fe902e 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -989,6 +989,8 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 
-        pci_set_drvdata(pdev, test);
- 
-+       pci_save_state(pdev);
-+
-        id = ida_alloc(&pci_endpoint_test_ida, GFP_KERNEL);
-        if (id < 0) {
-                ret = id;
-@@ -1140,12 +1142,31 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
- 
-+static pci_ers_result_t pci_endpoint_test_error_detected(struct pci_dev *pdev,
-+                                              pci_channel_state_t state)
-+{
-+       return PCI_ERS_RESULT_NEED_RESET;
-+}
-+
-+static pci_ers_result_t pci_endpoint_test_slot_reset(struct pci_dev *pdev)
-+{
-+       pci_restore_state(pdev);
-+
-+       return PCI_ERS_RESULT_RECOVERED;
-+}
-+
-+static const struct pci_error_handlers pci_endpoint_test_err_handler = {
-+       .error_detected = pci_endpoint_test_error_detected,
-+       .slot_reset = pci_endpoint_test_slot_reset,
-+};
-+
- static struct pci_driver pci_endpoint_test_driver = {
-        .name           = DRV_MODULE_NAME,
-        .id_table       = pci_endpoint_test_tbl,
-        .probe          = pci_endpoint_test_probe,
-        .remove         = pci_endpoint_test_remove,
-        .sriov_configure = pci_sriov_configure_simple,
-+       .err_handler    = &pci_endpoint_test_err_handler,
- };
- module_pci_driver(pci_endpoint_test_driver);
+ Documentation/admin-guide/mm/zswap.rst             |  33 +--
+ Documentation/core-api/mm-api.rst                  |   1 -
+ Documentation/driver-api/crypto/iaa/iaa-crypto.rst |   2 -
+ MAINTAINERS                                        |   2 -
+ arch/loongarch/configs/loongson3_defconfig         |   1 -
+ include/linux/zpool.h                              |  86 ------
+ mm/Kconfig                                         |  49 +--
+ mm/Makefile                                        |   1 -
+ mm/zpdesc.h                                        |  14 +-
+ mm/zpool.c                                         | 328 ---------------------
+ mm/zsmalloc.c                                      |  79 -----
+ mm/zswap.c                                         | 202 ++++---------
+ tools/testing/selftests/zram/README                |   1 -
+ 13 files changed, 84 insertions(+), 715 deletions(-)
 
-This essentially saves the good known config space during probe and restores it
-during the slot_reset callback. Ofc, the state would've been overwritten if
-suspend/resume happens in-between, but the point I'm making is that unless all
-device drivers restore their known config space, devices cannot be resumed
-properly post linkdown recovery.
-
-I can add a patch based on the above diff in next revision if that helps. Right
-now, I do not have access to my endpoint test setup. So can't test anything.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
