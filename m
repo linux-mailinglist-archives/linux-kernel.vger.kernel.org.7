@@ -1,53 +1,56 @@
-Return-Path: <linux-kernel+bounces-791648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C4AB3B9AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:07:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CBBB3B9AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110D436011F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FA3188AB2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F361309DB5;
-	Fri, 29 Aug 2025 11:07:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C52F28369A;
-	Fri, 29 Aug 2025 11:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C903128C1;
+	Fri, 29 Aug 2025 11:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzQqbAeE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB53E28369A;
+	Fri, 29 Aug 2025 11:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756465651; cv=none; b=pUkM6ETw34y3raitOHQYMS8gc8KOTcKNnlRyFAdC8KDapwU6FzuCuTG1yqt8DmxOn1MAzHDPYOYquFEaAXnbFbdBuoWpGJdbV52rdkZ/KPYEe6g457MoaQnFsGiNHZFdvTEXYY64/Aopch580n7/kKmY6cGR/h6uArBzqRiqr/Q=
+	t=1756465654; cv=none; b=feYjCRCV87pGqLjbHSXn1broc7+pFzxK7cu/NynbQKPy50W/mY7vkuhTTtJNwU1w9QHaTeeFnnaDbcD9lzIG443Wb54A/n6ZrzXstmPR9mYQJqqSFeOKDfloQg4+hY3zdkTs/x/b2TsrJM+ImndCurjOxML5EahkaZMrhdla2HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756465651; c=relaxed/simple;
-	bh=OuMntZNkfyDAAkBIafKM+mTQbYxmCjKGlhwBA/uVqFw=;
+	s=arc-20240116; t=1756465654; c=relaxed/simple;
+	bh=tdiHDNhAuabJGWlbSj7OkMRwE5xqpQHriiYisVKS9UM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wpl9iIf4Elk+QJD/VWT2uRCfBBWwSVmr4ZKBqIFqAmYw7NSQoDP+26ns2N4W+6VRtJgqZSW7wZQkTzYlPXqkLVBVInXb2ibl5xXU2kWvaH7VqTN8PhKfmDPrNYq/kJTAFQPEmqPLwXebI8nvD9MrUYTl82M9WSdYByJZbbDBqhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F3721596;
-	Fri, 29 Aug 2025 04:07:19 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 942D43F738;
-	Fri, 29 Aug 2025 04:07:25 -0700 (PDT)
-Date: Fri, 29 Aug 2025 12:07:22 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 5/6] firmware: arm_scmi: imx: Support getting syslog
- of MISC protocol
-Message-ID: <20250829-realistic-dolphin-of-blizzard-2bb398@sudeepholla>
-References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
- <20250827-sm-misc-api-v1-v3-5-82c982c1815a@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=spfiGLbL7vlz062/Blljyv8quEe94N0XaZWn/i5KUSjP4G3Vr8UJ5/hQF/lJgG+lt0dgxukAebda6GJ/nYzkVucjGt+JxM9L/hM/z9FPfrC6iGyTv/BPSBuZ1dqmS3YOdxxnhdyOws+/TV8qVdlQzZmbZssyap/5OPN8IHXU0u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzQqbAeE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004EBC4CEF4;
+	Fri, 29 Aug 2025 11:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756465654;
+	bh=tdiHDNhAuabJGWlbSj7OkMRwE5xqpQHriiYisVKS9UM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GzQqbAeE4CcR/8lZGwBIYHuqOwfgPiUQ+XOvT4313uPRvHL1adlwBXbxe6FGSSp3d
+	 um75FS6MbON1SsZAjR5Bn+USa9sD9r22rhVW1tHO3zby0qCz34Shc15uOsQ+bYJgqP
+	 dxh/oss/y0lopV/gN/CGiQjAvYe0G1iEvLGRYUl+iLk/T0/CEYxOHhVZZOrtzf9+KT
+	 N54flhMrCzgllaf6ZruJEXfSL6d8/jT27FvNxDvm8zHzEPcIVYRbx0CtXEXyLSJVPM
+	 pLfwOlO3/9V8nczDNjvph+MPyZVbtqhBVpZ8DLrBVWhn5fcbgmGejFauLbNLoIh3FB
+	 2At9wWUDpw6xw==
+Date: Fri, 29 Aug 2025 13:07:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <20250829-therapieren-datteln-13c31741c856@brauner>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
+ <20250829-diskette-landbrot-aa01bc844435@brauner>
+ <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,170 +59,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250827-sm-misc-api-v1-v3-5-82c982c1815a@nxp.com>
+In-Reply-To: <e7110cd2-289a-127e-a8c1-f191e346d38d@ispras.ru>
 
-On Wed, Aug 27, 2025 at 12:59:17PM +0800, Peng Fan wrote:
-> MISC protocol supports getting system log regarding system sleep latency
-> ,wakeup interrupt and etc. Add the API for user to retrieve the
-> information from SM.
+On Fri, Aug 29, 2025 at 01:17:16PM +0300, Alexander Monakov wrote:
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 82 ++++++++++++++++++++++
->  include/linux/scmi_imx_protocol.h                  | 19 +++++
->  2 files changed, 101 insertions(+)
+> On Fri, 29 Aug 2025, Christian Brauner wrote:
 > 
-> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> index f934b4fbc6ec9f1e6b24d1c6c8cd07b45ce548e3..2d3423d83aed857329a9a367d0ec0681a1d77d0b 100644
-> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
-> @@ -27,6 +27,7 @@ enum scmi_imx_misc_protocol_cmd {
->  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
->  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
->  	SCMI_IMX_MISC_CFG_INFO = 0xC,
-> +	SCMI_IMX_MISC_SYSLOG = 0xD,
+> > On Fri, Aug 29, 2025 at 10:21:35AM +0300, Alexander Monakov wrote:
+> > > 
+> > > On Wed, 27 Aug 2025, Alexander Monakov wrote:
+> > > 
+> > > > Dear fs hackers,
+> > > > 
+> > > > I suspect there's an unfortunate race window in __fput where file locks are
+> > > > dropped (locks_remove_file) prior to decreasing writer refcount
+> > > > (put_file_access). If I'm not mistaken, this window is observable and it
+> > > > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
+> > > > in more detail below.
+> > > 
+> > > The race in __fput is a problem irrespective of how the testcase triggers it,
+> > > right? It's just showing a real-world scenario. But the issue can be
+> > > demonstrated without a multithreaded fork: imagine one process placing an
+> > > exclusive lock on a file and writing to it, another process waiting on that
+> > > lock and immediately execve'ing when the lock is released.
+> > > 
+> > > Can put_file_access be moved prior to locks_remove_file in __fput?
+> > 
+> > Even if we fix this there's no guarantee that the kernel will give that
+> > letting the close() of a writably opened file race against a concurrent
+> > exec of the same file will not result in EBUSY in some arcane way
+> > currently or in the future.
+> 
+> Forget Go and execve. Take the two-process scenario from my last email.
+> The program waiting on flock shouldn't be able to observe elevated
+> refcounts on the file after the lock is released. It matters not only
+> for execve, but also for unmounting the underlying filesystem, right?
 
-1. Not ordered
-2. Inconsistent command name with the document.
+What? No. How?: with details, please.
 
->  	SCMI_IMX_MISC_BOARD_INFO = 0xE,
->  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
->  };
-> @@ -89,6 +90,19 @@ struct scmi_imx_misc_cfg_info_out {
->  	u8 cfgname[MISC_MAX_CFGNAME];
->  };
->  
-> +struct scmi_imx_misc_syslog_in {
-> +	__le32 flags;
-> +	__le32 index;
-> +};
-> +
-> +#define REMAINING(x)	le32_get_bits((x), GENMASK(31, 20))
-> +#define RETURNED(x)	le32_get_bits((x), GENMASK(11, 0))
-> +
-> +struct scmi_imx_misc_syslog_out {
-> +	__le32 numlogflags;
-> +	__le32 syslog[];
-> +};
-> +
->  static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
->  					struct scmi_imx_misc_info *mi)
->  {
-> @@ -371,10 +385,78 @@ static int scmi_imx_misc_cfg_info(const struct scmi_protocol_handle *ph)
->  	return ret;
->  }
->  
-> +struct scmi_imx_misc_syslog_ipriv {
-> +	u32 *array;
-> +	u16 *size;
-> +};
-> +
-> +static void iter_misc_syslog_prepare_message(void *message, u32 desc_index,
-> +					     const void *priv)
-> +{
-> +	struct scmi_imx_misc_syslog_in *msg = message;
-> +
-> +	msg->flags = cpu_to_le32(0);
-> +	msg->index = cpu_to_le32(desc_index);
-> +}
-> +
-> +static int iter_misc_syslog_update_state(struct scmi_iterator_state *st,
-> +					 const void *response, void *priv)
-> +{
-> +	const struct scmi_imx_misc_syslog_out *r = response;
-> +	struct scmi_imx_misc_syslog_ipriv *p = priv;
-> +
-> +	st->num_returned = RETURNED(r->numlogflags);
-> +	st->num_remaining = REMAINING(r->numlogflags);
-> +	*(p->size) = st->num_returned + st->num_remaining;
+> And maybe other things too. So why not fix the ordering issue in __fput
+> and if there are other bugs breaking valid uses of flock, fix them too?
 
-I think you can drop () above.
+For locks_remove_file() to be movable after put_file_access() we'd have
+to prove that no filesystem implementing f_op->lock() doesn't rely on
+f_op->release() to not have run. It is fundamentally backwards to have
+run f_ops after f_op->release() ran.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +iter_misc_syslog_process_response(const struct scmi_protocol_handle *ph,
-> +				  const void *response,
-> +				  struct scmi_iterator_state *st, void *priv)
-> +{
-> +	const struct scmi_imx_misc_syslog_out *r = response;
-> +	struct scmi_imx_misc_syslog_ipriv *p = priv;
-> +
-> +	p->array[st->desc_index + st->loop_idx] =
-> +		le32_to_cpu(r->syslog[st->loop_idx]);
-> +
-> +	return 0;
-> +}
-> +
-> +static int scmi_imx_misc_syslog(const struct scmi_protocol_handle *ph, u16 *size,
-> +				void *array)
-> +{
-> +	struct scmi_iterator_ops ops = {
-> +		.prepare_message = iter_misc_syslog_prepare_message,
-> +		.update_state = iter_misc_syslog_update_state,
-> +		.process_response = iter_misc_syslog_process_response,
-> +	};
-> +	struct scmi_imx_misc_syslog_ipriv ipriv = {
-> +		.array = array,
-> +		.size = size,
-> +	};
-> +	void *iter;
-> +
-> +	if (!array || !size || !*size)
-> +		return -EINVAL;
-> +
-> +	iter = ph->hops->iter_response_init(ph, &ops, *size, SCMI_IMX_MISC_SYSLOG,
-> +					    sizeof(struct scmi_imx_misc_syslog_in),
-> +					    &ipriv);
-> +	if (IS_ERR(iter))
-> +		return PTR_ERR(iter);
-> +
+Random quick look into 9pfs:
 
-Handle NOT_SUPPORTED if not mandatory, may need update to the document to
-add NOT_SUPPORTED as return value. Currently it's only success in which
-case you don't need any error handling at all 😉.
+static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+{
+	struct p9_flock flock;
+	struct p9_fid *fid;
+	uint8_t status = P9_LOCK_ERROR;
+	int res = 0;
+	struct v9fs_session_info *v9ses;
 
-> +	return ph->hops->iter_response_run(iter);
-> +}
-> +
->  static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
->  	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
->  	.misc_ctrl_get = scmi_imx_misc_ctrl_get,
->  	.misc_ctrl_req_notify = scmi_imx_misc_ctrl_notify,
-> +	.misc_syslog = scmi_imx_misc_syslog,
->  };
->  
->  static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
-> diff --git a/include/linux/scmi_imx_protocol.h b/include/linux/scmi_imx_protocol.h
-> index 27bd372cbfb142b6acb0b1cf4b82f061529d0d45..6e18920aac56de67d388e985e3305745d3798c3e 100644
-> --- a/include/linux/scmi_imx_protocol.h
-> +++ b/include/linux/scmi_imx_protocol.h
-> @@ -52,6 +52,23 @@ struct scmi_imx_misc_ctrl_notify_report {
->  	unsigned int		flags;
->  };
->  
-> +struct scmi_imx_misc_sys_sleep_rec {
-> +	u32 sleepentryusec;
-> +	u32 sleepexitusec;
-> +	u32 sleepcnt;
-> +	u32 wakesource;
-> +	u32 mixpwrstat;
-> +	u32 mempwrstat;
-> +	u32 pllpwrstat;
-> +	u32 syssleepmode;
-> +	u32 syssleepflags;
-> +};
-> +
-> +struct scmi_imx_misc_syslog {
-> +	struct scmi_imx_misc_sys_sleep_rec syssleeprecord;
-> +	uint32_t deverrlog;
+	fid = filp->private_data;
+	BUG_ON(fid == NULL);
 
-s/uint32_t/u32/ for consistency ? Just look above 3-4 line e.g.
+This relies on filp->private_data to be valid which it wouldn't be
+anymore after f_op->release().
 
--- 
-Regards,
-Sudeep
+Moving put_file_access() before f_op->release() is also wrong and would
+require to prove that no filesystem depends on file access not having
+changed before f_op->release() has run. So no, not a trivial thing to
+move around.
+
+And you are explicitly advertising this as a fix to the go execve
+problem; both in the bugtracker and here. And it's simply not a good
+solution. The problem remains exec's deny-write mechanism. But hooking
+into file locks to serialize exec against writable openers isn't a good
+solution. It surely is creative though.
+
+We can give userspace a simple way to sidestep this problem though as I
+tried to show.
 
