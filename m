@@ -1,45 +1,94 @@
-Return-Path: <linux-kernel+bounces-791498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04155B3B790
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB34FB3B78F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC89B3BB460
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6EF3B5BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C3C3043CA;
-	Fri, 29 Aug 2025 09:33:13 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4DF2E427C;
+	Fri, 29 Aug 2025 09:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kKOt/Hzn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v4KjrK6S";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kKOt/Hzn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v4KjrK6S"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A3B2F3600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492B026FA58
 	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459992; cv=none; b=oFKPyX+OZg8MJaOieT8w/rsDfwkxD1qSdBSlOzI9eUjtyuxqSCiQ8SLMdJaEL29hFwq0b3dNqjqCsJcP4EV8yN9qnja4fpPnvphbeBYgvM5ncH7ShVZqFag1vYPGUYj53YwVAvENool0fzajVurnPTF5wRDrxEZjTE3wJwCmvyc=
+	t=1756459990; cv=none; b=PandWtAwV/VvNcE0nDhpFM1UD8YGaezc8h3JjUJZtpmvN8dvDkUJAHN3ooyXG3+ROS3sCaWdrp07MDmQ00L4Tywzm+OK6HA+/L1jaK3xErSVzinz59Z/VebCQLmy8XoNHn6xESKT6yNQRo3G7y0PTQO4t76ta9ZkIlQ29Mgq3Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459992; c=relaxed/simple;
-	bh=h/ZmDmhtToanLQILvP6T8a7P0EF4qUhOJF9lIAzqtLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H4AGAiPABuPRrBgzPeqqdn9I1zwhvxyoXuTzHokgE3ZELYTEXVCHRwmdOAmC3ApaeeeX2F2j4DCs/hsaCG0ko2P8dchDFAR9pTn7MnM9LnhWogyNbTJwEcI7XSvmGixdeUwopKTnkA0Auji40UeCfVKupiWEwlvUwRe747yY3+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cCtHL0Hp5zPnT8;
-	Fri, 29 Aug 2025 17:28:30 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5B18014011A;
-	Fri, 29 Aug 2025 17:33:06 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 29 Aug 2025 17:33:05 +0800
-Message-ID: <97ff43e3-874c-4b39-87b4-1bc30ebc27eb@huawei.com>
-Date: Fri, 29 Aug 2025 17:33:04 +0800
+	s=arc-20240116; t=1756459990; c=relaxed/simple;
+	bh=iB/XAoAsldgu5aE+N4GbJWvN3MbIo3h9guewXxZigLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lbu9ppFf7PZGPN3pZVYLRTl67KYsqzdih/zAnDJRo9slpbsXcsjzjI4HFYdrcFL6xz4YmKtQChgHu5JTmAdoMREucqTbqehPJWugrpBoX3M3uN+Y1aRBm+hF9E/xaSh6fhmDDLyZvYgDqdt0j17icpzWIt+jyOR+HNldx/XSCjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kKOt/Hzn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v4KjrK6S; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kKOt/Hzn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v4KjrK6S; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A3E9220D0;
+	Fri, 29 Aug 2025 09:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756459987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oa+DMVwAY2xMfVjXIc/WRlc7wZwmUNXh+b1Og+c6PcY=;
+	b=kKOt/HznvXU+fx1+n3ueqMzZyf44ajnO090mrX7wsHl88g2qBJ3vICx4JX+jj1WSoeST8m
+	yJ6x19iJbKXdxSJAOBcGa0U1NDHUZn0+dgn6/P8azYigmspJNPGdur5ODdQXLKn7Vsxv54
+	U7iK6ug/JQH62EF7GtI8ePYi/wqTEA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756459987;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oa+DMVwAY2xMfVjXIc/WRlc7wZwmUNXh+b1Og+c6PcY=;
+	b=v4KjrK6Sjv1xKLmnYg7ne6zfpj7paQ/L8/JZf72gJ5DLZkAXrzIqZlgi3ZqWk22MsqzG/w
+	r+waTjWYJPBQ6tBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756459987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oa+DMVwAY2xMfVjXIc/WRlc7wZwmUNXh+b1Og+c6PcY=;
+	b=kKOt/HznvXU+fx1+n3ueqMzZyf44ajnO090mrX7wsHl88g2qBJ3vICx4JX+jj1WSoeST8m
+	yJ6x19iJbKXdxSJAOBcGa0U1NDHUZn0+dgn6/P8azYigmspJNPGdur5ODdQXLKn7Vsxv54
+	U7iK6ug/JQH62EF7GtI8ePYi/wqTEA0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756459987;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oa+DMVwAY2xMfVjXIc/WRlc7wZwmUNXh+b1Og+c6PcY=;
+	b=v4KjrK6Sjv1xKLmnYg7ne6zfpj7paQ/L8/JZf72gJ5DLZkAXrzIqZlgi3ZqWk22MsqzG/w
+	r+waTjWYJPBQ6tBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42FB213326;
+	Fri, 29 Aug 2025 09:33:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +pIOENNzsWgCNgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 29 Aug 2025 09:33:07 +0000
+Message-ID: <226704e2-e268-483f-8322-0820030ae4f3@suse.cz>
+Date: Fri, 29 Aug 2025 11:33:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,157 +96,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pps: fix warning in pps_register_cdev when register
- device fail
-To: Calvin Owens <calvin@wbinvd.org>
-CC: <giometti@enneenne.com>, <mschmidt@redhat.com>,
-	<gregkh@linuxfoundation.org>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20250827065010.3208525-1-wangliang74@huawei.com>
- <aK8lIakmj_5eoPZN@mozart.vkv.me> <aLBYh7Fkrgg1IReX@mozart.vkv.me>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aLBYh7Fkrgg1IReX@mozart.vkv.me>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Subject: Re: [PATCH v1] mm: memory-tiering: Fix PGPROMOTE_CANDIDATE counting
+Content-Language: en-US
+To: Shiyang Ruan <ruansy.fnst@fujitsu.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, lkp@intel.com,
+ ying.huang@linux.alibaba.com, y-goto@fujitsu.com, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
+ vschneid@redhat.com, Ben Segall <bsegall@google.com>,
+ Li Zhijian <lizhijian@fujitsu.com>
+References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
+ <23765f70-e869-4ef6-8ddd-24c0b1548fb2@suse.cz>
+ <10659223-9bbe-468e-b458-ccd421590b7a@fujitsu.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <10659223-9bbe-468e-b458-ccd421590b7a@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
+On 8/29/25 11:18, Shiyang Ruan wrote:
+>> 
+>> So the S-o-b from Li doesn't match anything now.
+>> You can either reinstate that "From: Li ..." or add a "Co-developed-by: Li
+>> ..." right above the "S-o-b: Li ..." - that's for you two to decide who is
+>> the main author.
+> 
+> Thanks for pointing out.  I wasn't aware of this.
+> 
+> I'd like to add a Co-developed-by tag:
+> 
+> Co-developed-by: Li Zhijian
+> 
+> Then, should I resend a new version with is tag added?  Or you will do that for me?
 
-在 2025/8/28 21:24, Calvin Owens 写道:
-> On Wednesday 08/27 at 08:32 -0700, Calvin Owens wrote:
->> On Wednesday 08/27 at 14:50 +0800, Wang Liang wrote:
->>> Similar to previous commit 2a934fdb01db ("media: v4l2-dev: fix error
->>> handling in __video_register_device()"), the release hook should be set
->>> before device_register(). Otherwise, when device_register() return error
->>> and put_device() try to callback the release function, the below warning
->>> may happen.
->>>
->>>    ------------[ cut here ]------------
->>>    WARNING: CPU: 1 PID: 4760 at drivers/base/core.c:2567 device_release+0x1bd/0x240 drivers/base/core.c:2567
->>>    Modules linked in:
->>>    CPU: 1 UID: 0 PID: 4760 Comm: syz.4.914 Not tainted 6.17.0-rc3+ #1 NONE
->>>    RIP: 0010:device_release+0x1bd/0x240 drivers/base/core.c:2567
->>>    Call Trace:
->>>     <TASK>
->>>     kobject_cleanup+0x136/0x410 lib/kobject.c:689
->>>     kobject_release lib/kobject.c:720 [inline]
->>>     kref_put include/linux/kref.h:65 [inline]
->>>     kobject_put+0xe9/0x130 lib/kobject.c:737
->>>     put_device+0x24/0x30 drivers/base/core.c:3797
->>>     pps_register_cdev+0x2da/0x370 drivers/pps/pps.c:402
->>>     pps_register_source+0x2f6/0x480 drivers/pps/kapi.c:108
->>>     pps_tty_open+0x190/0x310 drivers/pps/clients/pps-ldisc.c:57
->>>     tty_ldisc_open+0xa7/0x120 drivers/tty/tty_ldisc.c:432
->>>     tty_set_ldisc+0x333/0x780 drivers/tty/tty_ldisc.c:563
->>>     tiocsetd drivers/tty/tty_io.c:2429 [inline]
->>>     tty_ioctl+0x5d1/0x1700 drivers/tty/tty_io.c:2728
->>>     vfs_ioctl fs/ioctl.c:51 [inline]
->>>     __do_sys_ioctl fs/ioctl.c:598 [inline]
->>>     __se_sys_ioctl fs/ioctl.c:584 [inline]
->>>     __x64_sys_ioctl+0x194/0x210 fs/ioctl.c:584
->>>     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>     do_syscall_64+0x5f/0x2a0 arch/x86/entry/syscall_64.c:94
->>>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>     </TASK>
->>>
->>> Before commit c79a39dc8d06 ("pps: Fix a use-after-free"),
->>> pps_register_cdev() call device_create() to create pps->dev, which will
->>> init dev->release to device_create_release(). Now the comment is outdated,
->>> just remove it.
->> Hi Wang,
->>
->> I'm curious why pps_register_cdev() is failing, is there possibly a
->> second issue to investigate there? Or was it fault injection?
->>
->> Otherwise, makes perfect sense to me. I'm new to this code, so grain of
->> salt, but since I exposed it:
->>
->> Reviewed-by: Calvin Owens <calvin@wbinvd.org>
-> I apologize Wang, I missed something when I looked at this yesterday:
->
-> I think your patch introduces a double-free, because the pps object is
-> already freed by pps_register_source() when pps_register_cdev() returns
-> an error. Because put_device() was a nop with the missing release_fn, it
-> wasn't actually doing anything. That's very confusing, and my fault.
-
-
-You are right! Thanks for the reminder. I reproduce the double-free issue:
-
-==================================================================
-BUG: KASAN: double-free in pps_register_source+0x2c1/0x3a0
-Free of addr ffff8881078fd800 by task insmod/323
-Call Trace:
-  <TASK>
-  dump_stack_lvl+0x55/0x70
-  print_report+0xcb/0x610
-  kasan_report_invalid_free+0x94/0xc0
-  check_slab_allocation+0x105/0x130
-  kfree+0xba/0x360
-  pps_register_source+0x2c1/0x3a0
-
-It is triggered by kzalloc fail in device_private_init().
-
-> Your patch is clearly an improvement. But I think you additionally need
-> to remove the 'kfree_pps' error logic at the bottom of
-> pps_register_source() to avoid a double free in the failure case:
-
-
-Thanks for your suggestions, it is helpful!
-
-I will send a v2 patch later. Thanks!
-
-------
-Best regards
-Wang Liang
-
->
-> diff --git a/drivers/pps/kapi.c b/drivers/pps/kapi.c
-> index 92d1b62ea239..4d0ba35590a3 100644
-> --- a/drivers/pps/kapi.c
-> +++ b/drivers/pps/kapi.c
-> @@ -116,9 +116,6 @@ struct pps_device *pps_register_source(struct pps_source_info *info,
->   
->   	return pps;
->   
-> -kfree_pps:
-> -	kfree(pps);
-> -
->   pps_register_source_exit:
->   	pr_err("%s: unable to register source\n", info->name);
->   
->
-> The only reason I put that kfree() there is because I noticed the memory
-> was being leaked in the failure case. Doh. Your patch makes this right.
->
->> Thanks,
->> Calvin
->>
->>> Fixes: c79a39dc8d06 ("pps: Fix a use-after-free")
->>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->>> ---
->>>   drivers/pps/pps.c | 4 +---
->>>   1 file changed, 1 insertion(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
->>> index 9463232af8d2..0d2d57250575 100644
->>> --- a/drivers/pps/pps.c
->>> +++ b/drivers/pps/pps.c
->>> @@ -383,13 +383,11 @@ int pps_register_cdev(struct pps_device *pps)
->>>   	pps->dev.devt = MKDEV(pps_major, pps->id);
->>>   	dev_set_drvdata(&pps->dev, pps);
->>>   	dev_set_name(&pps->dev, "pps%d", pps->id);
->>> +	pps->dev.release = pps_device_destruct;
->>>   	err = device_register(&pps->dev);
->>>   	if (err)
->>>   		goto free_idr;
->>>   
->>> -	/* Override the release function with our own */
->>> -	pps->dev.release = pps_device_destruct;
->>> -
->>>   	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
->>>   		 pps->id);
->>>   
->>> -- 
->>> 2.33.0
->>>
+Yeah it would be best if you sent it to make things clear. Andrew can then
+replace or update it in mm-unstable. Thanks.
 
