@@ -1,118 +1,79 @@
-Return-Path: <linux-kernel+bounces-791310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32684B3B530
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8537B3B533
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4B6A03865
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB89A04114
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40022BCF45;
-	Fri, 29 Aug 2025 07:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7312BE658;
+	Fri, 29 Aug 2025 07:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5k+zUHB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+nIA2N/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D9B29BD97;
-	Fri, 29 Aug 2025 07:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5612857D8;
+	Fri, 29 Aug 2025 07:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756454237; cv=none; b=DVw9kmgnjo3fkBIKnBz/D2ehyTU7m2tikLXV7c2vsEyNnvC5AdHTjxX70UHkIgWS4XPEfm691wBGbDZ+6DdD8PpAkHUnn6kLivvn9Tp9SikxRHQr7YuDK/pbxOurffQFw32qiD0GzumjL9CvEEgFPqd9M850pILmVi873OkT5go=
+	t=1756454261; cv=none; b=OeQ5Wg8r4TZHepBvuZfouncmKyOocuxJ/8OEzygqaPR1zhd1cMlTEw3zM3J92DaxQRjprN6ZhaoTXQfhr2tYMM2lC/8aiRC7cRlSp8NWRxtN4IM3SH9W5gTuJi9qVOaG/NgIxt0huoiRNw4DaBsMmTvp9j2l3V2J/8skpTIXBpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756454237; c=relaxed/simple;
-	bh=MkzmS5fzDy6nMNEI2R0lYWY4fh1AFCRX/InvS81aY/A=;
+	s=arc-20240116; t=1756454261; c=relaxed/simple;
+	bh=hjAvPm+ZU7dp8h6Mn6j2eICJjTMzwA2jL6EXtiQs2xU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V+Y0N5+Rz7+SkPDyGL70hzNyHbnyLFLtDV1Agno5QC/WcGPHg29ZlWwIDiYjDYTJJQ31Md+NYZTKv2oXUPFmKy7MHssgRoXPGvVgf85NTEEHV3d09A15Cgbi9Sx5b+yco+ZTK+xPD88z2G7jh8F+W3R2fwO5beXAMMdGLgKRcpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q5k+zUHB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E957C4CEF0;
-	Fri, 29 Aug 2025 07:57:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCNWOPMGPkSqcjZB6t+ILwYE+u7zvHtyVRNxt+MqGsqvx4aQBcovA8+wXuvcZWU7/PR+xm0bZqxTWc+5AqD3xvLVcv711cbB7kO2nGZosYK52vK+cXKwUPyoq8vse5shFzx7iPykeekEV5mEtJhnseunHV8hA1CkNkv7npLWE7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+nIA2N/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1703C4CEF0;
+	Fri, 29 Aug 2025 07:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756454236;
-	bh=MkzmS5fzDy6nMNEI2R0lYWY4fh1AFCRX/InvS81aY/A=;
+	s=k20201202; t=1756454261;
+	bh=hjAvPm+ZU7dp8h6Mn6j2eICJjTMzwA2jL6EXtiQs2xU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q5k+zUHBtzIK4EotrgLiBEfZHgHeJK+jJ/kj1vHiowR1OSRr2Anvt1F12D1TLCS9x
-	 zngFdVCJYPcH4thYLQskxL8v6L8zPKtF3AWmMzmZuaKJfnul4aMFbXPtJS7F6UloIf
-	 BmkaoQOR4lGslEvs+jRPSDPlShJJnj8N7ksPngaAWob5jQQ49qmC512ifyOaBK/jt5
-	 w4ZUj1QYl/4E7wNj1ItlU+jSCo3O7yF+AJtt9H4wp8yR0ucacg+j4jltTpj8lD2kC4
-	 Equuyzsi+DmdjlaVFHc2ZcGoJRFsps33624yIfPgBrhc7qEqbJGlMr8KXPi/TCx6UR
-	 GD62qhjSG40zw==
-Date: Fri, 29 Aug 2025 10:57:09 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Michal Clapinski <mclapinski@google.com>, jane.chu@oracle.com,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM
- devices
-Message-ID: <aLFdVX4eXrDnDD25@kernel.org>
-References: <20250826080430.1952982-1-rppt@kernel.org>
- <20250826080430.1952982-2-rppt@kernel.org>
- <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch>
+	b=k+nIA2N/2+fB+gj07BzaILpg5Z/O4SUMgo3HX5p8zTnIhea/VyxUtdjVvi58WyZRK
+	 cWVz26Yy4M8eZ21/dEb2KH2TlEzxgLdkudmpIuuYlieCZz1hEgjo8BanBChF2xRaqh
+	 rEEy8KCKCLvOSUldZLssk/UldoCMW7kwWQSyRQU43M9uinT693CFwo1VdxXobW+ZlN
+	 JdmAuaI8O+Xv9CVkZ4pdzJWkSw8c/7fw5h+pjM791xs4YgSmFLKnE8A30c7E9ftATy
+	 M7m4jf/NQQOHgsPugFEckzBO1oCvWsXPI1v/FvRe1vwCv9bnlBu9R5jrhZHPDADr2B
+	 cjO0kipN1deyw==
+Date: Fri, 29 Aug 2025 09:57:38 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Umang Chheda <umang.chheda@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: qcom: Add Monaco EVK support
+Message-ID: <20250829-invaluable-giraffe-of-hail-5272b7@kuoka>
+References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
+ <20250826181506.3698370-2-umang.chheda@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch>
+In-Reply-To: <20250826181506.3698370-2-umang.chheda@oss.qualcomm.com>
 
-Hi Ira,
-
-On Thu, Aug 28, 2025 at 07:47:31PM -0500, Ira Weiny wrote:
-> + Michal
+On Tue, Aug 26, 2025 at 11:45:05PM +0530, Umang Chheda wrote:
+> Introduce new bindings for the Monaco Evaluation Kit (EVK),
+> an IoT board based on the QCS8300 SoC.
 > 
-> Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > There are use cases, for example virtual machine hosts, that create
-> > "persistent" memory regions using memmap= option on x86 or dummy
-> > pmem-region device tree nodes on DT based systems.
-> > 
-> > Both these options are inflexible because they create static regions and
-> > the layout of the "persistent" memory cannot be adjusted without reboot
-> > and sometimes they even require firmware update.
-> > 
-> > Add a ramdax driver that allows creation of DIMM devices on top of
-> > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
-> 
-> While I recognize this driver and the e820 driver are mutually
-> exclusive[1][2].  I do wonder if the use cases are the same?
+> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-They are mutually exclusive in the sense that they cannot be loaded
-together so I had this in Kconfig in RFC posting
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-config RAMDAX
-	tristate "Support persistent memory interfaces on RAM carveouts"
-	depends on OF || (X86 && X86_PMEM_LEGACY=n)
+Best regards,
+Krzysztof
 
-(somehow my rebase lost Makefile and Kconfig changes :( )
-
-As Pasha said in the other thread [1] the use-cases are different. My goal
-is to achieve flexibility in managing carved out "PMEM" regions and
-Michal's patches aim to optimize boot time by autoconfiguring multiple PMEM
-regions in the kernel without upcalls to ndctl.
- 
-> From a high level I don't like the idea of adding kernel parameters.  So
-> if this could solve Michal's problem I'm inclined to go this direction.
-
-I think it could help with optimizing the reboot times. On the first boot
-the PMEM is partitioned using ndctl and then the partitioning remains there
-so that on subsequent reboots kernel recreates dax devices without upcalls
-to userspace.
-
-[1] https://lore.kernel.org/all/CA+CK2bAPJR00j3eFZtF7WgvgXuqmmOtqjc8xO70bGyQUSKTKGg@mail.gmail.com/
-
--- 
-Sincerely yours,
-Mike.
 
