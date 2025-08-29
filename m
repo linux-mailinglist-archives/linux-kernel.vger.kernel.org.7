@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-791629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48417B3B976
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7D9B3B973
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6A31C85282
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFB0684326
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A455314B93;
-	Fri, 29 Aug 2025 10:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0635314B6A;
+	Fri, 29 Aug 2025 10:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1HL9SLyC"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YeOPd/bn"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA58D313524
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E423112A9
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464881; cv=none; b=qfmu7VWPV4eCdHm6nOSkpcJy1Qm2YxFqRecsBI575LQ4zdXMYDAT+2uvKFoIfOCBaTA6q46N6zar06/vjXoWKo3B2PUn7KS1Uxeu9/x4T7Ewg8EST8d432OuZU0aVfonMvRr6eGP3k0uoSMMjZ7nolEUkEOdDNa6FWAWhVcK1vM=
+	t=1756464880; cv=none; b=qabLQ4SaDd3KKpvFeM5c87p0/q3iT9e7Cxg28Jf+0Zldk+DpSpVK7Gu5rmZ0sYxn4hAXoM/7ghEzE94KiHQ9nMOJj6Gdp2WOgKzpsd9weS3Qi91iFDcsDrdmeLNIipSxl69dCB59MNjdu5dc4nQTpz1Bs5TmqQp8+cdSXUnV0SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464881; c=relaxed/simple;
-	bh=yF9Nwmba/jevaBt9hbUSzr8VO0GmzyMKV6WaC+bYVkE=;
+	s=arc-20240116; t=1756464880; c=relaxed/simple;
+	bh=imJbMT1QRWT0N70p1sPsm04UPKbsXzV1SUOttMAC/bw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QLu/P+Ri2kzrcaTaCuPO06jnf4tRjOrzxa1ezXZI3i29yHVmHoS8ShImyviUXU29eWknyNI7KmUDiEe8jAC2p/ye6fMKD/IF4MP7NBDAzAjI0pgoF/HCr6+lShWeoqVTCm8xS1SrMnE/hGvpJgr5C4p30Zhfa9BHigLKLPzFFLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1HL9SLyC; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=EDtFPUTzeeNk4vqPctBhTIoyJidB6ZDVaLjuBJBP2wkWpJ9IBdh2/7et2agTVE378XC7Wv8ORgFurlIU4ZkqGCuUTNFpYsjzapZe0QG3y3y6j2arGCO1S4dB265QYnSQ/31AjF2rG6p4TGONqsCkQV3d5xmveP9as8Ju4LPfMkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YeOPd/bn; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3cef6debe96so587186f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:54:36 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3cef6debe96so587198f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 03:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756464875; x=1757069675; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756464876; x=1757069676; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tl5xVMQDO9rOC+YVNnG9Us77dRWtm4Hbzqq49mGE7X4=;
-        b=1HL9SLyCWtP72z5Frih2DAXSDv2wkd6m/xBbjdqovr6f6NfpVtl2xqyE6rRatrG1Bd
-         wiStsWJ3B6Bd47iz2uAG/W59jWupTtjCRwznH3inMY27Gq9mlAOHVb70vEuppvhkuH6E
-         gK9+4H9/iwOjBzd9HwBzB8+7EkeGBKl0Cj4BkjsaeB1mztPa0ABMAxs28TqF+DXqYb/N
-         z07eHi2BG7ffHGahF7MGkskNPlLlUrGdsaR4yjUkDvkeWR7stT9zrK0vSVC+TW/TnbQN
-         psrQCvQJlxl935z0oidoXB8InHVwOCuixlUU5+YZBrgUuUO4X17Usa2BfShPASXTduQD
-         LFXg==
+        bh=gRmzACq1z8KPxODlF7nAhbs9Rjd/H78CaV52MZqNfYI=;
+        b=YeOPd/bnNG3aYhywq63bredqrXVjP+5A/WcoxKBikFfc8Ac/efHccCGdRPueDSpW4Z
+         i/TWNhOeX0BKD/7X11X/IE1UZgQTSEH0/i75vRL2/m2NIKNFeWEoj3KHa/okPjxqkekU
+         UKTIkIlN3WUZigGrhzu5byrMC3hqsDoUHahb+Gbo/WiitzNWqYFMG+XLqZ0eJhImro0u
+         kc+iAovY+A/gE6sZROJ9gGnV71pC7Ek8W8l3ELYGUdztByeziJtkfBQhHzkjQmifShnT
+         DUC2ulBHxd58TGHpDi6f/AXwG152tNnlTOfhSQ1+Ii8LwKXHoqqxrAUQx3X9pKpzLCU3
+         CGBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756464875; x=1757069675;
+        d=1e100.net; s=20230601; t=1756464876; x=1757069676;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tl5xVMQDO9rOC+YVNnG9Us77dRWtm4Hbzqq49mGE7X4=;
-        b=iuGB5/VK+fzE2v7r5lWytuX394JlDszyfVnV8iE7mEthKRn0Lates7E7BMJe0brhyl
-         L5E2fwS+bzCAoO+CpJDLKxCidcGYQcTmL/RaxDzeQr5vdhOSfQnHM9odGferODZWdn9V
-         jskwnd6Zm98wqzkHEHI4MRORqsYABx7+SoRE7VKi5DXO7bvxkky/NPwvfs/USSy1ym92
-         pfe/l3Hk/Z7TP+6IgMcgjX9ku6xDzhU7oJYWVgKCekUE2edPKk6TezVUUOr5Av9ZR7vu
-         icdzinuL+OHdfSJSngp9L7VE95srgBlYZQleZ5urdEK3pgZD62LLRj5V9uK8BBFqAPZB
-         D3lg==
-X-Forwarded-Encrypted: i=1; AJvYcCV68xrP+jXL5i0yyaQHEs9nZR+hFHuu89kjsqoSN+b62mdENY8Ddn+lZtBsgyaWtpWdg9BGK5gusE+pQ44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMAqhAlmq78dEnFUIIlu5KEZBWWdNdIikSqa8axS53J2567exf
-	SR4iHIQF6PjwmPdlj6nL1MBPrXrnFu+dVLnGvIHqU2vhcVwEXehslfiiLUL8bbyHeNBQx5WRScu
-	MjOgPjVbX2yDReqv9Ug==
-X-Google-Smtp-Source: AGHT+IHBrOSPoi0y2RsxzWW1F4le7Bf1Bk/4RMIS0LXXWN2TETItYHW5HWXVVsxZ+L4PXPSHZLojUsL4tRay638=
-X-Received: from wmpz22.prod.google.com ([2002:a05:600c:a16:b0:45b:520a:6656])
+        bh=gRmzACq1z8KPxODlF7nAhbs9Rjd/H78CaV52MZqNfYI=;
+        b=eZGTIY3+m8pgZH9P+pFkfkJRBvrugUPkGpT5qgc/JuOsDiXmkt+V5RlaY3y+mBVORD
+         LVGW0JWuwd/vl3c5Y/cMUeDuwztKrN1WyGYVjgDEQksexwrz/DheNnY19CEkTYtT/xok
+         KTdgwGlqDb91UP8VVr7Yh6Io3+yxzHyS0UukwvfTVd/taxIADH6qyKx2m8jz/3JR6Y6C
+         mn86MpKBVh9ajBVQfUKtEPYpcbs8qjMXYFdYumIkmI3A/+8Xpyas359VBsrGTWOCCgNP
+         4PXwHed+5DSo0mx8N6GG6RvMJK+vFQbf0WHbjJbVdFDClH61WHmTvf8K3Pz8oYCmnwFw
+         nWWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/+PS/K4nc6BkRT9LdVrLSyrE3vHeJKp7LPm3sJkyGQ4P6XMhg2j1FctQ6ggHqGOKnEg7oBadFqfACMSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziTC3DHnPl4CTg0cfjm1T6J8FNIhNO/StsdWNhUsUJiAJ3Goc8
+	YmZBJuQPcKNCCxQ03nrH/M+S5xD5jBsnlZTlGNQiKTyd+/juwQTaJzlfL8FxibrEKDC8S9VbLsv
+	qoqlwGF9M4StcKNsf4w==
+X-Google-Smtp-Source: AGHT+IE/FPwm3swQP/F9rqEn9qUM4c1z0MoJ8Gfln+SOie1DHcd6K8k4m5uj+Rt2dtpNsRpFAo5lHoh24WYIjy4=
+X-Received: from wrbfu1.prod.google.com ([2002:a05:6000:25e1:b0:3ce:f7b7:be8d])
  (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2582:b0:3cf:a44b:26fd with SMTP id ffacd0b85a97d-3cfa44b2b45mr1213005f8f.8.1756464875293;
- Fri, 29 Aug 2025 03:54:35 -0700 (PDT)
-Date: Fri, 29 Aug 2025 10:54:14 +0000
+ 2002:a05:6000:2087:b0:3c7:84b4:e76 with SMTP id ffacd0b85a97d-3c784b41ab7mr17512777f8f.25.1756464876207;
+ Fri, 29 Aug 2025 03:54:36 -0700 (PDT)
+Date: Fri, 29 Aug 2025 10:54:15 +0000
 In-Reply-To: <20250829105418.3053274-1-sidnayyar@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250829105418.3053274-1-sidnayyar@google.com>
 X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250829105418.3053274-7-sidnayyar@google.com>
-Subject: [PATCH 06/10] module loader: remove references of *_gpl sections
+Message-ID: <20250829105418.3053274-8-sidnayyar@google.com>
+Subject: [PATCH 07/10] linker: remove *_gpl sections from vmlinux and modules
 From: Siddharth Nayyar <sidnayyar@google.com>
 To: Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
 	Sami Tolvanen <samitolvanen@google.com>
@@ -84,112 +84,70 @@ Cc: Nicolas Schier <nicolas.schier@linux.dev>, Petr Pavlu <petr.pavlu@suse.com>,
 	Siddharth Nayyar <sidnayyar@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The *_gpl section are not being used populated by modpost anymore. Hence
-the module loader doesn't need to find and process these sections in
+These sections are not used anymore and can be removed from vmlinux and
 modules.
 
 Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
 ---
- include/linux/module.h   |  3 ---
- kernel/module/internal.h |  3 ---
- kernel/module/main.c     | 40 ++++++++++++----------------------------
- 3 files changed, 12 insertions(+), 34 deletions(-)
+ include/asm-generic/vmlinux.lds.h | 18 ++----------------
+ scripts/module.lds.S              |  2 --
+ 2 files changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 9ba6ce433ac3..1a9c41318e22 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -431,9 +431,6 @@ struct module {
- 	unsigned int num_kp;
- 
- 	/* GPL-only exported symbols. */
--	unsigned int num_gpl_syms;
--	const struct kernel_symbol *gpl_syms;
--	const u32 *gpl_crcs;
- 	bool using_gplonly_symbols;
- 
- #ifdef CONFIG_MODULE_SIG
-diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-index 69b84510e097..061161cc79d9 100644
---- a/kernel/module/internal.h
-+++ b/kernel/module/internal.h
-@@ -53,10 +53,7 @@ extern const size_t modinfo_attrs_count;
- /* Provided by the linker */
- extern const struct kernel_symbol __start___ksymtab[];
- extern const struct kernel_symbol __stop___ksymtab[];
--extern const struct kernel_symbol __start___ksymtab_gpl[];
--extern const struct kernel_symbol __stop___ksymtab_gpl[];
- extern const u32 __start___kcrctab[];
--extern const u32 __start___kcrctab_gpl[];
- extern const u8 __start___kflagstab[];
- 
- #define KMOD_PATH_LEN 256
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 400d59a7f44b..4437c2a451ea 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1464,29 +1464,18 @@ EXPORT_SYMBOL_GPL(__symbol_get);
-  */
- static int verify_exported_symbols(struct module *mod)
- {
--	unsigned int i;
- 	const struct kernel_symbol *s;
--	struct {
--		const struct kernel_symbol *sym;
--		unsigned int num;
--	} arr[] = {
--		{ mod->syms, mod->num_syms },
--		{ mod->gpl_syms, mod->num_gpl_syms },
--	};
--
--	for (i = 0; i < ARRAY_SIZE(arr); i++) {
--		for (s = arr[i].sym; s < arr[i].sym + arr[i].num; s++) {
--			struct find_symbol_arg fsa = {
--				.name	= kernel_symbol_name(s),
--				.gplok	= true,
--			};
--			if (find_symbol(&fsa)) {
--				pr_err("%s: exports duplicate symbol %s"
--				       " (owned by %s)\n",
--				       mod->name, kernel_symbol_name(s),
--				       module_name(fsa.owner));
--				return -ENOEXEC;
--			}
-+	for (s = mod->syms; s < mod->syms + mod->num_syms; s++) {
-+		struct find_symbol_arg fsa = {
-+			.name	= kernel_symbol_name(s),
-+			.gplok	= true,
-+		};
-+		if (find_symbol(&fsa)) {
-+			pr_err("%s: exports duplicate symbol %s"
-+				" (owned by %s)\n",
-+				mod->name, kernel_symbol_name(s),
-+				module_name(fsa.owner));
-+			return -ENOEXEC;
- 		}
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 310e2de56211..6490b93d23b1 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -490,34 +490,20 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 									\
+ 	PRINTK_INDEX							\
+ 									\
+-	/* Kernel symbol table: Normal symbols */			\
++	/* Kernel symbol table */					\
+ 	__ksymtab         : AT(ADDR(__ksymtab) - LOAD_OFFSET) {		\
+ 		__start___ksymtab = .;					\
+ 		KEEP(*(SORT(___ksymtab+*)))				\
+ 		__stop___ksymtab = .;					\
+ 	}								\
+ 									\
+-	/* Kernel symbol table: GPL-only symbols */			\
+-	__ksymtab_gpl     : AT(ADDR(__ksymtab_gpl) - LOAD_OFFSET) {	\
+-		__start___ksymtab_gpl = .;				\
+-		KEEP(*(SORT(___ksymtab_gpl+*)))				\
+-		__stop___ksymtab_gpl = .;				\
+-	}								\
+-									\
+-	/* Kernel symbol table: Normal symbols */			\
++	/* Kernel symbol CRC table */					\
+ 	__kcrctab         : AT(ADDR(__kcrctab) - LOAD_OFFSET) {		\
+ 		__start___kcrctab = .;					\
+ 		KEEP(*(SORT(___kcrctab+*)))				\
+ 		__stop___kcrctab = .;					\
+ 	}								\
+ 									\
+-	/* Kernel symbol table: GPL-only symbols */			\
+-	__kcrctab_gpl     : AT(ADDR(__kcrctab_gpl) - LOAD_OFFSET) {	\
+-		__start___kcrctab_gpl = .;				\
+-		KEEP(*(SORT(___kcrctab_gpl+*)))				\
+-		__stop___kcrctab_gpl = .;				\
+-	}								\
+-									\
+ 	/* Kernel symbol flags table */					\
+ 	__kflagstab       : AT(ADDR(__kflagstab) - LOAD_OFFSET) {	\
+ 		__start___kflagstab = .;				\
+diff --git a/scripts/module.lds.S b/scripts/module.lds.S
+index 9a8a3b6d1569..1841a43d8771 100644
+--- a/scripts/module.lds.S
++++ b/scripts/module.lds.S
+@@ -20,9 +20,7 @@ SECTIONS {
  	}
- 	return 0;
-@@ -2601,10 +2590,6 @@ static int find_module_sections(struct module *mod, struct load_info *info)
- 	mod->syms = section_objs(info, "__ksymtab",
- 				 sizeof(*mod->syms), &mod->num_syms);
- 	mod->crcs = section_addr(info, "__kcrctab");
--	mod->gpl_syms = section_objs(info, "__ksymtab_gpl",
--				     sizeof(*mod->gpl_syms),
--				     &mod->num_gpl_syms);
--	mod->gpl_crcs = section_addr(info, "__kcrctab_gpl");
- 	mod->flagstab = section_addr(info, "__kflagstab");
  
- #ifdef CONFIG_CONSTRUCTORS
-@@ -2812,8 +2797,7 @@ static int move_module(struct module *mod, struct load_info *info)
- static int check_export_symbol_versions(struct module *mod)
- {
- #ifdef CONFIG_MODVERSIONS
--	if ((mod->num_syms && !mod->crcs) ||
--	    (mod->num_gpl_syms && !mod->gpl_crcs)) {
-+	if (mod->num_syms && !mod->crcs) {
- 		return try_to_force_load(mod,
- 					 "no versions for exported symbols");
- 	}
+ 	__ksymtab		0 : ALIGN(8) { *(SORT(___ksymtab+*)) }
+-	__ksymtab_gpl		0 : ALIGN(8) { *(SORT(___ksymtab_gpl+*)) }
+ 	__kcrctab		0 : ALIGN(4) { *(SORT(___kcrctab+*)) }
+-	__kcrctab_gpl		0 : ALIGN(4) { *(SORT(___kcrctab_gpl+*)) }
+ 	__kflagstab		0 : ALIGN(1) { *(SORT(___kflagstab+*)) }
+ 
+ 	.ctors			0 : ALIGN(8) { *(SORT(.ctors.*)) *(.ctors) }
 -- 
 2.51.0.338.gd7d06c2dae-goog
 
