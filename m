@@ -1,147 +1,106 @@
-Return-Path: <linux-kernel+bounces-792482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B670CB3C496
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:02:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD3DB3C498
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FEBA63511
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF415A486A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197227780D;
-	Fri, 29 Aug 2025 22:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA922882A7;
+	Fri, 29 Aug 2025 22:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cb8sf3yJ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CsvoMefr"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A87263F5E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F97427B343
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756504954; cv=none; b=XOzahJcke4NxXW7qVLbc8b6JdfVXJcAW2Ox3lBh4oqluhFgSs9yJQ4zqLfhOlVYlqsO7E8zsASrhueL/JbCWeguBTPlF5pzlKKQ3e8gaJ4grsdoD9U347Um2tWttE9ignE5VYuh6CYDG9U3NbQqDAEeAYlYoICRtJ1VNL4vbuB4=
+	t=1756504957; cv=none; b=bhnzhWCV++Ak2RmWTPv6PtZ8DX8koOE1JfXHi3fpaqeMHr7sBTDaB6HsERViae/DkKsXsz0nAInPlEK/6dj+fB6J+JH5qEjjPJdIpFgVEHsv4eF52ZmjcvxExSy/4B4lq9YWWg7E8jMO0mKHuHEc5S+6rulttPfkzxyBU26wDso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756504954; c=relaxed/simple;
-	bh=haUmgxIRXQDjwi4lb/BQlAFlSrzJql+P3a2fXt52+GQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rXxTAPfJEdoU3GgjYme+AKTFZUKbRMUOTGQv8jJTMDYJiruWPjPLEIxU6lCobowA/T+0kSA61NR99DMbPuVFufRcJw7CZG3xIvqeuuQNCdqtSeLS7TmjqEKEhsrGYdl76IlxKtHldB3G9Tlf/xjzENFRLW2A2ziD/BEr/QMVDyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cb8sf3yJ; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1756504957; c=relaxed/simple;
+	bh=teUtsxIZpBnaqng2C1jlrv5zNtwbyX2kDo+oVQ2VG30=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=H4c9eCk0oiV4ep37jA7HQUCLYZzgvb8Hugj3yHTR9aI1n2eydEPzlp+sEQftsWFxDdrClnYoQRHWhoe9rOODYEBR4F7uP8/QU+grm/FRW/riRV2iHQKcD27ePwFLYM//q/Ohr2LL5a+bKxG3/ASGYBTJzo203uHPFvqnwxX2XtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CsvoMefr; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f6b77c91fso862e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:02:32 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7720cb56ee3so4223319b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756504951; x=1757109751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/V5dKEndD7dSG0TB2Mn/htAOInJHnhi3k/ux0ccykDY=;
-        b=Cb8sf3yJusihzKILyWNda1FiaafE9fPHpK6sbdO2YdNQ6hoDJuQ/IZeh/MWugX1L41
-         OAgshKDiYQIaHlCIbXD22pPNjvo9KhH6BGw6PKJbBg9IbFg8LRe9bCfwCydqhA4R+gb3
-         5+QlZt040bpsh95kVrfFe9BNjhd0rIH0RMnMcyG0pPv5qalcBzWkP3LOxoTJr3ZIcu4n
-         y4VmG4hwsWgH8I1lQFxcUkDU/cN36kl92nPTVwvGtqlp3jw4alDbXCOiaf/4qVTEZ1mN
-         KPp6a5KIolac/XZ+8YnaEtE+eGcyUKgYawxAl6zo+d09s5E8n+YLx1RwQpnZPy3ULVGg
-         hzCw==
+        d=google.com; s=20230601; t=1756504955; x=1757109755; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXEWhIvVHrzcTGbP6wwieYYs4x0k51AW/FLHROxpRAQ=;
+        b=CsvoMefraAeeYE/DJ52ieIYI5J3UxP3CAXXOFZ4Z+BeO5KkFIE2Br0aj0bVFnykVnb
+         vEUJSC4UtQUbfTG67WjN7VJkHj5vxK6S4xGQ4/AuBle5hp53nwFERnZyXKeNFNsNjsHa
+         L30PiNDNRgLSFhITxGjc168+uSCpg7qyIKD+pre3lJb9z5Vu8TaGjXc10t5B7fCcBSrV
+         oII0qh2WQemjMNC2/1qlYDajP6XnIPw31OE668Phl/ByY6tYswqbpDq/LYS6DzdYP/+J
+         rB5sOSocylknDd64+kiqGKLsj1c+eAc5zPLfcYMEBw75RJghAGM9LiiOXb8SPCp05vaU
+         GPcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756504951; x=1757109751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/V5dKEndD7dSG0TB2Mn/htAOInJHnhi3k/ux0ccykDY=;
-        b=R6Jb8m6Cmc3CdlZInCl808tb3DjW2oCKb3zXo+SKU0XctHbbeFvAFfQsry/834qjYm
-         NfmroFOFxi8iN2zd5QHspvA0+eYMrZTtYYVr0uUnTt26xa92pEybwS5Jz4D7tF57O79K
-         faWgCyt9hPfRm6c0MjKCo5XAb4e5YuXL/FXYn4CVLcTtvr/nsVyhej+F8yziN2rm3c9L
-         xrHqSVkXhLjIs7i4N4AfMn8Rv5pMDyrL9lV19Y0bVgJyUxKL/gZ1NaLo6ZXZUyoKlTnY
-         toAB+k7fOY8a1bVhW1gPuO6xWzBY3YNICPd5jS4L7FNE46vq8JasaVNeSSE7Q4ivhb88
-         Ls6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV1mQXkXqcTwkT/0caqCNSu3yGXAfeGBjCGXZ0GCmJzim6G0raobLSmo2vj9YJWijtQSwA6okadr+KYggI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdGp8c7KeUzcu8Ew86j3/oXoLnARu5PZBALfLlNcpw+tvuquqk
-	b3inrwn4gqwh9cBE9uc1uRQbie0vn56qcAqhBL/O3/BGtIJh2eDyQSLuMfpe30zxMObQn732dtx
-	RrgobS4XYcdRGfoQ90zqDzNOcR+KjGJ+KbUowRzBF
-X-Gm-Gg: ASbGncuaWR3Dmo/JO026jBYqPcKOD7SW08cdnKyUmFZLx20RuhB/KVc9+lPWteX1BHo
-	7oELRdoxI+vuQZmpSlDwFKTubDJ8s0cBIaP6cKF1+dbyNjlC2ErzFheUmARvEYiowdB4hAcqQFW
-	Fjh//qmV3AiZIH9wIMHxNgFdMc1AJD5E60HDCUOA4yo8mlpJ36aV2nhQpGe80idPf8b489TMTkh
-	FZnRTwvnRCy1BV/89UBgtbkZSQZtdWNpWDJI9JsDN2Y6iQ3dzyckjk=
-X-Google-Smtp-Source: AGHT+IF/ezfpPN7uV7BetJDi6PD9ZdpyWvFHa8vLCm0qZeVN0l3vdYIaO47E0Iq0vbn+xNeruHLoZWVSPw3W8tR1xnU=
-X-Received: by 2002:a05:6512:6519:b0:542:6b39:1d57 with SMTP id
- 2adb3069b0e04-55f6f5045d1mr74605e87.3.1756504950814; Fri, 29 Aug 2025
- 15:02:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756504955; x=1757109755;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXEWhIvVHrzcTGbP6wwieYYs4x0k51AW/FLHROxpRAQ=;
+        b=RZLAZF3BLSDRFYavvPc13Egp5kz17ImV8b4lPHqi+te1qIoGwkYLSdl8UHAyaGni1h
+         2B9NKl7yUsUgZhkBRU9IOgPTGlL8AdeLs0Llkjm9LBeHTz1pS9h2IevZ4rU1wP2png6C
+         dFL9TA7Su5eO+SdDFEkv1vVutyI7xshVni1cOmpFFYmH++Pq5wOYr/itEsvbYwSNqnk5
+         vXA1p8eNAJd8bvr3vB1K+EVdLnuI6GcB9lbNGzvnKJWnAMupJuViTg8cyoMcuwDh1Qfe
+         iVQd6qsDl4UefuYdF604o0c4VRp+Tq1iM/Mb6u7tv8Zt4ftQwn3+M7v16o3SN4RvMO6h
+         qbtw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1HubfLuQAdG59PqYpW91yHoBVLJGlv5OfViuNxqFqY7Jrw0J4h6Lbvj8ROWQYw9OwBF9SzkW18LZX/Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7MDWu65hBcII9P5eiiKI/gwb8+jcpAg7ke3m9gF93+GQs4eHt
+	NErbiIXlWnA0O9qe/n0CP0ouS1JGeKAzgXq/JlOgSVHUNdxq2DoKHp8gOaNfEHTICdTEOFrbJZf
+	QZ1Ui4w==
+X-Google-Smtp-Source: AGHT+IGE42jmllapP3icYQ+LWJU82IQuzrhCrOAG2NNkbzVcYj65Gf5ke1Rd0y2p3N64dxuaZyPvxJEyHzM=
+X-Received: from pfuu10.prod.google.com ([2002:a05:6a00:6f8a:b0:748:e22c:600c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7f94:b0:243:78a:82b2
+ with SMTP id adf61e73a8af0-243d6f8774fmr192515637.58.1756504955599; Fri, 29
+ Aug 2025 15:02:35 -0700 (PDT)
+Date: Fri, 29 Aug 2025 15:02:34 -0700
+In-Reply-To: <e3b1daca29f5a50bd1d01df1aa1a0403f36d596b.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250829220003.3310242-1-almasrymina@google.com>
-In-Reply-To: <20250829220003.3310242-1-almasrymina@google.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 29 Aug 2025 15:02:18 -0700
-X-Gm-Features: Ac12FXzqqc-si0CcOfJD45EHTkfXF7rFHi9T629g2PLxIwPue9SA_DPIQ3MXvZI
-Message-ID: <CAHS8izMnwZkQ7pDpSyf2tviQrniWPv8nat6ucaZHsfqm6Er=gA@mail.gmail.com>
-Subject: Re: [PATCH net-next v1] net: devmem: NULL check netdev_nl_get_dma_dev
- return value
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Joe Damato <jdamato@fastly.com>, Stanislav Fomichev <sdf@fomichev.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250829000618.351013-1-seanjc@google.com> <20250829000618.351013-6-seanjc@google.com>
+ <49c337d247940e8bd3920e5723c2fa710cd0dd83.camel@intel.com>
+ <aLILRk6252a3-iKJ@google.com> <e3b1daca29f5a50bd1d01df1aa1a0403f36d596b.camel@intel.com>
+Message-ID: <aLIjelexDYa5dtkn@google.com>
+Subject: Re: [RFC PATCH v2 05/18] KVM: TDX: Drop superfluous page pinning in
+ S-EPT management
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Kai Huang <kai.huang@intel.com>, "ackerleytng@google.com" <ackerleytng@google.com>, 
+	Vishal Annapurve <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "michael.roth@amd.com" <michael.roth@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Missed ccing Dragos. Adding manually.
+On Fri, Aug 29, 2025, Rick P Edgecombe wrote:
+> On Fri, 2025-08-29 at 13:19 -0700, Sean Christopherson wrote:
+> > I'm happy to include more context in the changelog, but I really don't want
+> > anyone to walk away from this thinking that pinning pages in random KVM code
+> > is at all encouraged.
+> 
+> Sorry for going on a tangent. Defensive programming inside the kernel is a
+> little more settled. But for defensive programming against the TDX module, there
+> are various schools of thought internally. Currently we rely on some
+> undocumented behavior of the TDX module (as in not in the spec) for correctness.
 
-On Fri, Aug 29, 2025 at 3:00=E2=80=AFPM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
-> netdev_nl_get_dma_dev can return NULL. This happens in the unlikely
-> scenario that netdev->dev.parent is NULL, or all the calls to the
-> ndo_queue_get_dma_dev return NULL from the driver.
->
-> Current code doesn't NULL check the return value, so it may be passed to
-> net_devmem_bind_dmabuf, which AFAICT will eventually hit
-> WARN_ON(!dmabuf || !dev) in dma_buf_dynamic_attach and do a kernel
-> splat. Avoid this scenario by using IS_ERR_OR_NULL in place of IS_ERR.
->
-> Found by code inspection.
->
-> Note that this was a problem even before the fixes patch, since we
-> passed netdev->dev.parent to net_devmem_bind_dmabuf before NULL checking
-> it anyway :( But that code got removed in the fixes patch (and retained
-> the bug).
->
-> Fixes: b8aab4bb9585 ("net: devmem: allow binding on rx queues with same D=
-MA devices")
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
->
-> ---
->  net/core/netdev-genl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-> index 470fabbeacd9..779bcdb5653d 100644
-> --- a/net/core/netdev-genl.c
-> +++ b/net/core/netdev-genl.c
-> @@ -1098,7 +1098,7 @@ int netdev_nl_bind_tx_doit(struct sk_buff *skb, str=
-uct genl_info *info)
->         dma_dev =3D netdev_queue_get_dma_dev(netdev, 0);
->         binding =3D net_devmem_bind_dmabuf(netdev, dma_dev, DMA_TO_DEVICE=
-,
->                                          dmabuf_fd, priv, info->extack);
-> -       if (IS_ERR(binding)) {
-> +       if (IS_ERR_OR_NULL(binding)) {
->                 err =3D PTR_ERR(binding);
->                 goto err_unlock_netdev;
->         }
->
-> base-commit: 4f54dff818d7b5b1d84becd5d90bc46e6233c0d7
-> --
-> 2.51.0.318.gd7df087d1a-goog
->
+Examples?
 
-
---=20
-Thanks,
-Mina
+> But I don't think we do for security.
+> 
+> Speaking for Yan here, I think she was a little more worried about this scenario
+> then me, so I read this verbiage and thought to try to close it out.
 
