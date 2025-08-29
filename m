@@ -1,227 +1,115 @@
-Return-Path: <linux-kernel+bounces-791196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2566B3B347
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:21:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D88B3B349
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB296859A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B94A1C826DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C23223AE62;
-	Fri, 29 Aug 2025 06:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5037023AE62;
+	Fri, 29 Aug 2025 06:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGlrlaZy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ABbewqVE"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD8E30CD9F;
-	Fri, 29 Aug 2025 06:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38521221557;
+	Fri, 29 Aug 2025 06:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756448490; cv=none; b=ScEoj55X8jTfrLD41n6yIsfJ8CRgOtzaqfopq3AA9ZZiycAgQPltGtvwspWur+AKw7+XwHVzEXYZyuzFMeJaWi98dn/1HzhWcCnaRS+DTAjKBQ/jkZY/GDvpvk7efdIhp2SkZwbCHP31b3BL4HF5DB6LesgktNSkRcpwCYaoJFs=
+	t=1756448540; cv=none; b=SLXh4lTVK7sdN0bpA6gDoCUDTA7ZTKImMR0Tnd5C2YHmRjN0Vy5z0nN2MXeeH6svwRUveQouEl7IaR9JFp5pN2MXHm2N7B/+qDQ0b5oUBL+1oTGhzo33gW3i+zE3uIuh9N7zAHh45gJuBsJWyWrNb1V4DbB1OwfdB6akSQlW5do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756448490; c=relaxed/simple;
-	bh=xFsvfzrgNoRpMr9Z15ppUi0wkOKIZR9k1HX8ANNHk1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOLkeJuL4cAlqn0Kg2O/IImzFMk81mGqLfh3utVqEanP6fZKu2SElIUIcnGNCFL5lOWQn7OcWsPOzY274/OISFfGe8qCK8RwAa9K+Yw/eFqbhDaXDaWTYgBrq/QiE+DlAHMvDr7YF3WzZ4fw5ruPWzXztl3omSbzoZ1T1QkXUcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGlrlaZy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09DBC4CEF0;
-	Fri, 29 Aug 2025 06:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756448490;
-	bh=xFsvfzrgNoRpMr9Z15ppUi0wkOKIZR9k1HX8ANNHk1g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FGlrlaZyBp0AcQze/fXNotB6j8FspsiYVJnEM4FviOuWNewI3t+6AIwR5LMbt6mTQ
-	 Ira1Cj2302QBzQZjWuJuTzjYBVUnJs7vRV874SNIzhuau8HoFt78kLdVjpl4tjFdsk
-	 sje7Ospx+n0DDHgceS1dUAsAUTSLO6sR9CQwbNlgt+s9MwIFkChdKwN8vbIM37qJCA
-	 2m637kqPEtpU9zeHgkXvk8WXapstQmouN/1mJkA5SPvA2Z4Uuo4RBw+1i7RK8kYTEl
-	 QSD6ljYKvf21RtcLf6F9gTikmEPOJ9dVCOISHOw460G4oWCiQdCC1pnu+swHOsSckR
-	 MFmz/svkC2+wQ==
-Message-ID: <3e0fb880-ef2a-482d-b008-9afcb46f9fec@kernel.org>
-Date: Fri, 29 Aug 2025 08:21:25 +0200
+	s=arc-20240116; t=1756448540; c=relaxed/simple;
+	bh=4gCFEIfkrKrA1+mEzotv5zc6YOWP+rTyFVajfyvuIi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sd27zaRiBQnDGFZk70HHNPxb+REm40KLsbdUy9Xa4dvrTZZfVyhvhWqBra696Zn9bLbYSlPKm/rMl2V5R7iimiO1Vepg2KdFcpN2pnsQhjsFlwz7NcYUD6NGEyhdJcQPI642BNEtuuOuhkrWnk3LIF+0jZjlT93GFa3VfX+6n9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ABbewqVE; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE3DC1038C106;
+	Fri, 29 Aug 2025 08:22:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1756448536; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=+4kbNWU3I7s5Rt2E7e4PezX57PUPBa3x3YJEDebywiY=;
+	b=ABbewqVE3twDU0JiaIK/fdpx9rDf2VkSKxp54WrITS0NtPctVUXz843ijtaBhOuSDat8YX
+	9dtVSsDIJ0sWVTBPYalS2JLPk3WVgVWLkzCzXaKC/Vqa/vsJsauOAZ6Kc5oX+KC1eZyWAg
+	ZEr2a87/6cxixpeB0NlKNN2Ejd4k7ENoiHpOahfkK7a8drznC5YISTAioFk43VuZmEXQuu
+	7gz1lywzqG2F9mxFpfbDEXRYU1cCj5WrmvxC5p7ipNn7jSQN3cDPBhC9il0DSYPjBloS42
+	vX2OMzaea9o5A+Bn1lVXsIOczIPRHoT4Raen7+m7lvn+CYbP8O3LzHwlb+/aUw==
+Date: Fri, 29 Aug 2025 08:22:10 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.16 000/457] 6.16.4-rc1 review
+Message-ID: <aLFHEtRqvj4vzfpz@duo.ucw.cz>
+References: <20250826110937.289866482@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTog5Zue5aSNOiDlm57lpI06IFtQQVRDSCAxLzNdIHBp?=
- =?UTF-8?Q?nctrl=3A_cix=3A_Add_pin-controller_support_for_sky1?=
-To: Gary Yang <gary.yang@cixtech.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
-References: <20250827024222.588082-1-gary.yang@cixtech.com>
- <20250827024222.588082-2-gary.yang@cixtech.com>
- <d5c85ba7-77ec-47f4-8ba1-39199e96da11@kernel.org>
- <PUZPR06MB5887BFF27AAD64ACA625126BEF3BA@PUZPR06MB5887.apcprd06.prod.outlook.com>
- <5d8aa064-6dcf-40ce-9e73-feaebca06965@kernel.org>
- <PUZPR06MB5887436E03C17498E80E43C7EF3BA@PUZPR06MB5887.apcprd06.prod.outlook.com>
- <f54d43ca-87cc-40bb-a56b-e49ee6a0a441@kernel.org>
- <PUZPR06MB58879645FFBD2B7D2B7E9BE4EF3AA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <PUZPR06MB58879645FFBD2B7D2B7E9BE4EF3AA@PUZPR06MB5887.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ITu0OCEWvQWhf7Nb"
+Content-Disposition: inline
+In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 29/08/2025 06:33, Gary Yang wrote:
-> Hi Krzysztof,
->>
->> On 28/08/2025 10:32, Gary Yang wrote:
->>> Hi Krzysztof,
->>>
->>>>
->>>> On 28/08/2025 08:44, Gary Yang wrote:
->>>>>>
->>>>>>> +     if (ret) {
->>>>>>> +             dev_err(&pdev->dev, "fail to probe dt
->>>>>>> + properties\n");
->>>>>>
->>>>>> You are printing same error twice. Drop this and just handle error
->>>>>> printing in sky1_pinctrl_probe_dt().
->>>>>> Especially that you now print errors on ENOMEM.
->>>>>>
->>>>>
->>>>> Sorry, this print message is only once, not twice, please give more
->>>>> information
->>>>
->>>> Trigger the error and check how many error messages you see. I see two.
->>>> You should know your code better than me...
->>>>
->>>
->>> There are two pin-controller on sky1. They share the same driver. The probe
->> is called twice.
->>>
->>> So we see the print message twice.
->>
->>
->> No, you don't really understand how this works. Test your code and its error
->> paths and you will see FOR ONE BIND more than one error message.
->> Plus my second comment which you completely ignored.
->>
->> I am sorry, but this is basic C.
->>
-> 
-> In order to trigger a error, we add a sentence in sky1_pinctrl_probe_dt() as follow:
-> 
-> static int sky1_pinctrl_probe_dt(struct platform_device *pdev,
->                                  struct sky1_pinctrl *spctl)
-> {
-> 
-> +         return -ENODEV;
->           .......
-> }
-> 
-> dmesg shows as following:
-> 
-> [    0.812780] /soc@0/pinctrl@4170000: Fixed dependency cycle(s) with /soc@0/pinctrl@4170000/hog-pins
-> [    0.821920] sky1-pinctrl 4170000.pinctrl: fail to probe dt properties
-> [    0.828503] /soc@0/pinctrl@16007000: Fixed dependency cycle(s) with /soc@0/pinctrl@16007000/hog-s5-pins
-> [    0.838058] sky1-pinctrl 16007000.pinctrl: fail to probe dt properties
-> 
-> I don't see the error message twice per one. There are two pin-controller. One is /soc@0/pinctrl@4170000. Other is /soc@0/pinctrl@16007000.
 
-And the next error case from sky1_pinctrl_probe_dt? ... and then the
-next one? And another one?
+--ITu0OCEWvQWhf7Nb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Really, either you didn't read your own code or you just push the same
-poor code, regardless of review, because you want it to get merged?
+Hi!
 
-This will lead you nowhere.
+> This is the start of the stable review cycle for the 6.16.4 release.
+> There are 457 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-You have:
+CIP testing did not find any problems here:
 
-+static int sky1_pinctrl_probe_dt(struct platform_device *pdev,
-+				struct sky1_pinctrl *spctl)
-...
-+		if (!function)
-+			return -ENOMEM;
-...
-+	if (ret) {
-+		dev_err(&pdev->dev, "fail to probe dt properties\n");
-+		return ret;
-+	}
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.16.y
 
-That's a clear NAK.
+6.6, 6.15, 5.15 pass our testing, too:
 
-Then you have:
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.15.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.15.y
 
-+		if (nfuncs == 0) {
-+			dev_err(&pdev->dev, "no functions defined\n");
-+			return -EINVAL;
-...
-+	if (ret) {
-+		dev_err(&pdev->dev, "fail to probe dt properties\n");
-+		return ret;
-+	}
-
-that's useless duplicated message. TWICE.
-
-You could easily spot it yourself instead of keep bugging the reviewer
-for such trivial stuff.
-
-NAK, please remember to never waste reviewers time.
-
-> 
-> So you see the twice, once per one pin-controller. BTW as you suggested before, we will print the value of ret in the error message.
-> 
-> If I miss any information, please kindly remind me. Thanks
-
-You still ignored my second comment.
-
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
 Best regards,
-Krzysztof
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--ITu0OCEWvQWhf7Nb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaLFHEgAKCRAw5/Bqldv6
+8onRAKCLxziG4eJ1UUFqYtKsD8eDvAIPHACeKqlrw6gWzUx3GKLmP07b0aGGoIs=
+=Xb9s
+-----END PGP SIGNATURE-----
+
+--ITu0OCEWvQWhf7Nb--
 
