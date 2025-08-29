@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-791769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916C6B3BBC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B4FB3BBC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B6CA586E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E502B1CC0711
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96EA31B13E;
-	Fri, 29 Aug 2025 12:52:35 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135731A062;
+	Fri, 29 Aug 2025 12:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b="yiDV/oPh"
+Received: from rmx-b.mailgw.jp (smx-b.mailgw.jp [210.171.6.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099A031A567
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 12:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8609730DEA6;
+	Fri, 29 Aug 2025 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.6.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756471955; cv=none; b=UdTlJsAmSWE0LDUvA2sSdfZBGCIjwx6dC9xvRCNBFKPRbGptwxhNnn672PUPmjkmY2kJiooUFNngpxkaZEypl3mKN6qFtOsh6yQmPpwuvuqvZY9dBhSJBdOm8CKwg2PL42ufFbskZEpplO0Rq1oAQPcZ/kHm3wmJqXlauC7aATk=
+	t=1756472037; cv=none; b=SzyuaMZq19OK9WcHssHpo5o0BhWn6WICzOmn+Ncp/Wp9+Pt9rdG+L1mBNgwqJgIYaUmLz3hads67sCzUkGp43tE8mUKM8ruihi0WBJFXux0T/aRt1JCMr2jrKAxqCBnJVznwpSLfCOLtJCaF3RMORx65x4HSJcBipsXMYvghrZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756471955; c=relaxed/simple;
-	bh=ChLDMYd8I6RvXfv4qQe6LeFgz/k1Ll9oE0U+zZLcdeI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=W/Q1RccUj8WGZ1+VI0vJNZrrxBa5afsp95Y6kTuL/qN/77fa9PPMA4W+17uSta3tT4skdJlr1XaCReKfpdRl//kdbns0hs7Dhw5V0R8YGlJTQAmr8FCA6uhQJeKWzvuom92xHLoN7PPJiGCMxOFp6p479pIRTK7vVjmtyX6OW5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ecc8a40bd1so43894585ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:52:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756471952; x=1757076752;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KfU/0K8pQvwEdT3I5rhhTpdmGSF2QbNrRcAEp+fUBHg=;
-        b=w781dHkgiSdr7tJity6GcDvGrlGB1H5eOPQmo7hbsYLCAXlObDEW3WbGj39DSSUQcg
-         bUYiG7Fb/xVVSBawHIouLhy+sE8xDvAkjTsMkb+GiDLh70wrekFHWN6EC8MOoQK9E5DG
-         lHVUh2uCaUZXTURujDd4KC6abLs56psHiyOdnggTV4CC4jnvyeb29EJ5YSKSP3g8EjZc
-         TEV/dwOSCYGKiJAK+Tscaaz1yfji95+Da9MLfmUP1Nslt08/lQTzzUXZN+upYbldX/bI
-         T5OdQv4fxfThJQoBI3qlQhi1bZGgJzDzRQWgZnxPoZB/rRuvSjTU3GpvsJxsrlwFucs9
-         jWKQ==
-X-Gm-Message-State: AOJu0YwHOBAZ/ndfPU6FQXcgc0fkhhOPQheM8ctJO2hIAdjrVrVg+Nsz
-	ApY41D1p/ooWr6Frfmq6KWThBchGDIKrAvCeLlidW+4EjEiooh+gBr0zIKH0tfIF4dHRfYKMamQ
-	1Sd8z44PPnZeAsEnXT4i9Vz+dLpkL8kO3bhDDTlaR77oRvtKrtucDrsVTPgI=
-X-Google-Smtp-Source: AGHT+IHkgF68Yby/4sZauw7uKfE0TzTS7E/PYU6VSI1aPexQjoNIDrFVvHKyWba1dxFU7n2HGV7bmmlJQ+V3v51a/VSmwCavkjGx
+	s=arc-20240116; t=1756472037; c=relaxed/simple;
+	bh=6qgtIlhSKeL38DV5YELUJOtzhcntW357Kh0m7EBNIxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cQBcAS0MqbzT+1dV7ilNLVY6Vh87jfKYhwthaWCusa1G9OlNk5XYgJ4JxKM3y9nhD0mrBZD0p9vO6B6uovThQliKy1oVDmD9VwF1lq7WUzCgcCYgm+gZqExoO32rPXVH29b0eRvUagjUIGN4A8enqVlpR5jZd9LBiE2+jNdMIZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp; spf=pass smtp.mailfrom=bcc.bai.ne.jp; dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b=yiDV/oPh; arc=none smtp.client-ip=210.171.6.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bcc.bai.ne.jp
+Received: from bccml.bai.ne.jp (bccml-a.bai.ne.jp [210.171.3.161])
+	by rmx-b.mailgw.jp  with ESMTP id 57TCrNJG016915-57TCrNJH016915;
+	Fri, 29 Aug 2025 21:53:23 +0900
+Received: from [192.168.11.5] (bai859bcd79.bai.ne.jp [133.155.205.121])
+	by bccml.bai.ne.jp (Postfix) with ESMTPA id 79A4881773;
+	Fri, 29 Aug 2025 21:53:23 +0900 (JST)
+Message-ID: <023eb3ad-0826-42e4-8172-08a26db31676@bcc.bai.ne.jp>
+Date: Fri, 29 Aug 2025 21:53:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cb:b0:3eb:2b11:441d with SMTP id
- e9e14a558f8ab-3eb2b1146bdmr343136795ab.15.1756471952202; Fri, 29 Aug 2025
- 05:52:32 -0700 (PDT)
-Date: Fri, 29 Aug 2025 05:52:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b1a290.a00a0220.1337b0.001a.GAE@google.com>
-Subject: [syzbot] Monthly netfs report (Aug 2025)
-From: syzbot <syzbot+listd0d99a8934bd992abc4c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Enables sound output from the
+ audio jack on OrangePI5 Plus
+To: Maud Spierings <maud_spierings@hotmail.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-sound@vger.kernel.org, robh@kernel.org
+References: <20250826134456.9636-2-opi5plus@bcc.bai.ne.jp>
+ <AM7P189MB1009A67370CA029038DF2A69E33BA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+ <0b061e42-0a01-4839-871c-a5d760dbddeb@bcc.bai.ne.jp>
+ <AM7P189MB1009CB3632FAAEEE43D9CED5E33AA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Hide Hako <opi5plus@bcc.bai.ne.jp>
+In-Reply-To: <AM7P189MB1009CB3632FAAEEE43D9CED5E33AA@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-FE-Last-Public-Client-IP: 210.171.3.161
+X-FE-Policy-ID: 3:1:2:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=bcc.bai.ne.jp; s=20240516; c=relaxed/relaxed;
+ h=message-id:date:mime-version:subject:to:cc:references:from:content-type;
+ bh=sw/Y+heIE2Vkbrbo96JH8p+ZhrdF9Vqpg0lLY9c5cd8=;
+ b=yiDV/oPhM+N3eRfoDyIkF25NIdhLR9RhlFvqCT3kLrNvWAbL9xKedo7hm653n1r8+M8UjIJZvXja
+	vW1PIfBcYUWTfnfWPGY1/FPmmfARC3ZBmnbBgbnzKrDOQVlddS+PLdcf9JaPJr9LR/xqip8iRFeP
+	7L5cvn07bUTACgBxcvrjnMBiUmeKcP05mfkGnCiBYuPFsk2ub3HUMGdrz+W8fEFgpQzm6r8DPR5R
+	n1TJlyJLsgDjwwOCZ5nEcqT4UO3d4UffsUZ17edLfizS0DOAHwM4pBsr0mDfy3bal56tt2b7kKWW
+	/dp5m1736qCWzgEMXnYAPkspnj+UTc0vsdyXcg==
 
-Hello netfs maintainers/developers,
+Hello Maud
 
-This is a 31-day syzbot report for the netfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/netfs
+On 2025/08/29 21:09, Maud Spierings wrote:
+> On 8/29/25 13:59, Hide Hako wrote:
+>> Hello Maud,
+>>
+>> On 2025/08/28 17:47, Maud Spierings wrote:
+>>> I recommend rebasing on the latest next since my fix [1] was applied.
+>>> I also recommend testing it with that patch, for me that fixed the 
+>>> headphone detection and enabled audio playback. The microphone is 
+>>> not working yet though.
+>>>
+>>> Link: https://lore.kernel.org/all/20250823-orangepi5-v1-1- 
+>>> ae77dd0e06d7@hotmail.com/ [1]
+>>>
+>> Today, i build linux-next.
+>> But sound not come out from headphone.
+>
+> Is that with your patch applied ontop or unchanged linux-next? The 
+> audio was very quiet for me, even at 100%.
+With pin-switch patch.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 5 have already been fixed.
+Analog, hdmi0 and hdmi1 do not exist in /proc/asound/.
+Hide
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 70      Yes   INFO: task hung in netfs_retry_writes
-                  https://syzkaller.appspot.com/bug?extid=666a9cb4c41986207cdf
-<2> 13      Yes   INFO: task hung in anon_pipe_write
-                  https://syzkaller.appspot.com/bug?extid=ef2c1c404cbcbcc66453
-<3> 10      Yes   INFO: task hung in pipe_write (6)
-                  https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
