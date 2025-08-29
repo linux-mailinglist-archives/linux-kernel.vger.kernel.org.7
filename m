@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-791621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD55FB3B950
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8185FB3B943
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB377C4DE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DCB3BE671
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57C3101D4;
-	Fri, 29 Aug 2025 10:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E343101B1;
+	Fri, 29 Aug 2025 10:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="I9PG/Tts"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="upOucZnx"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B513093D2;
-	Fri, 29 Aug 2025 10:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB463101A7;
+	Fri, 29 Aug 2025 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464854; cv=none; b=MawZo9S7FnftC+1A0T112scmxDv6uA+6I+tgzxuL9ZzNCfcr+1JwZishSvW4mP05Nk1LHYT9yb/Uj2lfVqg/9t3X/NguIl4nS9NwOaPaaYfsB77rySoBBAImKYjXidvHoyf5iAochdhJN9/PgHAKNM36wWqR6/92O/MtgXGt8gc=
+	t=1756464786; cv=none; b=RvPrLYZkAKcjlnFRpG4/S4nMKWk8BNlOo7yVXn0RkYcnMF/urVIzYX796ooa1ec+A6tEorrtkUfy7MPxDyf5jxz5T38r/N10lcHcXQuqOD5wjEV0CVcE738es7xwebJSMK5wKk2fPXNTi/q4mKTtU7i/d29CcpCU8eoAKpU/RYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464854; c=relaxed/simple;
-	bh=H7e5O8hFLj7cfALyJeFiJ/ilsTsRPlbygRn4FoQsbAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dNitK9SUrOhOOkNGqzPEyjJGh3OAwBQufaiaHdyuBvVnG+o3wFx1WyiQ6IanPvYGOcSaPye9MBnmeOjOu+oO7xb6kXmvm5PPaIgbq3xiScFwhVB30pDen/9tVEhOlrdQxVVZ86BbPMqBXDX9bc7GWoz1FF55+q6ZYSF26xg0Uwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=I9PG/Tts; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TAmX4E017538;
-	Fri, 29 Aug 2025 12:53:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4xaeXPbiHj1WXGO3LyY/YVYaZRplgC67AGgIQ0JaCzQ=; b=I9PG/Tts+8+sWE0v
-	iB/btJghfuyYmvscjR0cyoH4rHTCxk3tjAXGOQmMIqZCIHS9vQkpuo0jjDoO/W6h
-	REgP/7WCuTQT3ACMTJzhKXt91r0VOP7Bt7dbQljGhUR0IVxGAU13DL4VGKx9mpnY
-	cwQI1tRdhGuOddgHKvR4/WluY3ueD6PExzDb2G50G/D3rK8VORpDh74IMAzVKT3Q
-	1dmuf2mEwKN7qHtn8M4GYwz9NO75zx0EvPpWBUaK99s6m1l+MS6PBS6bt5g4AEv0
-	NTfAyBYvbmTAAwmOjlKz3OiN8AtGn2OUoT+lxxdMJAiWuNHbsVq8r/rLBOahuP2T
-	wcQukw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48q5v0h561-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 29 Aug 2025 12:53:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6D07E40045;
-	Fri, 29 Aug 2025 12:52:38 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CFFBA78F630;
-	Fri, 29 Aug 2025 12:51:45 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Fri, 29 Aug
- 2025 12:51:45 +0200
-Message-ID: <57196414-5ab5-41b7-b2e3-ff6831589811@foss.st.com>
-Date: Fri, 29 Aug 2025 12:51:40 +0200
+	s=arc-20240116; t=1756464786; c=relaxed/simple;
+	bh=mfy+YuX2F4NtAR8pwTND/xpdBP0nizDaFodXwa419jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X3dKy4m2TRYn/F+Z2p0lEhPMQVFW3PpzN/b8ykuU2VVjlgEs9VFi6hwUMti/SZoPPeuV2Vbi4JhLu7ekVKyYTIk/yw3CxvI6nGrGPHmQ6THolSL4+i6aigSj8tNzQekwSPVhBt+BT1qiP/2OuQCktHlAZGpOEi4z3nWfEwHWf4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=upOucZnx; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 23A9E4E40C39;
+	Fri, 29 Aug 2025 10:53:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D33FE606B9;
+	Fri, 29 Aug 2025 10:53:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9F6DE1C22CEB8;
+	Fri, 29 Aug 2025 12:52:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756464780; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=/yZivrEaPavxvETAY4MYad6XxcQTsMFNQbbqh28IxHM=;
+	b=upOucZnx2+ZWY2gIAJ/ExxOo9ufNMXfABewxDIa/FGZ8ExyjBdYg0C5syIxWldcQA3BYY4
+	3Cg6E1AeybYmEsN81IxEIubyubR7LRc3MJnOWArICFGWFM2k3xqXasxlLmDEVvC7YfWeLY
+	4Pr6qDUJ1ToPRV5zRoqq5nLpk73MT8OZZs5wQubXGfEbrIvSMb/vVaWUfCbziytHYYiftd
+	9UwXdNf+B2G9p3tNw5eqk7oeXc35IJqwL+M5ok4q/Bl22Ui9l2HE9DAe/FyQcccjnnHMkd
+	6KosUHcckb940gRxdTBhDa/3MBbhbrs8f6GX6go329p8VtZEFq8fCuQdCso0zg==
+Date: Fri, 29 Aug 2025 12:52:38 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Rob Herring <robh@kernel.org>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Ayush Singh <ayush@beagleboard.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree-spec@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 1/1] schemas: i2c: Introduce I2C bus extensions
+Message-ID: <20250829125238.4117947f@bootlin.com>
+In-Reply-To: <aK2-we94b-x2fgW_@shikoro>
+References: <20250618082313.549140-1-herve.codina@bootlin.com>
+	<20250618082313.549140-2-herve.codina@bootlin.com>
+	<CAL_JsqJ=jmXVwjtNCjRpUKj02dnJEz4GHMX2wMRaWw=M+sZQ0w@mail.gmail.com>
+	<20250808180746.6fa6a6f9@booty>
+	<CAL_JsqLxsfpaaCvV3AcniMYxAYVir7ddL4umCNY3u-ggVTiZcg@mail.gmail.com>
+	<aK2-we94b-x2fgW_@shikoro>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] drivers: net: stmmac: handle start time
- set in the past for flexible PPS
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Alexandre
- Torgue" <alexandre.torgue@foss.st.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20250827-relative_flex_pps-v3-0-673e77978ba2@foss.st.com>
- <20250827-relative_flex_pps-v3-1-673e77978ba2@foss.st.com>
- <20250827193105.47aaa17b@kernel.org>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20250827193105.47aaa17b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_03,2025-08-28_01,2025-03-28_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Wolfram,
 
+On Tue, 26 Aug 2025 16:03:45 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-On 8/28/25 04:31, Jakub Kicinski wrote:
-> On Wed, 27 Aug 2025 13:04:58 +0200 Gatien Chevallier wrote:
->> +		curr_time = ns_to_timespec64(ns);
->> +		if (target_ns < ns + PTP_SAFE_TIME_OFFSET_NS) {
->> +			cfg->start = timespec64_add_safe(cfg->start, curr_time);
+> Hi,
 > 
-> Is there a strong reason to use timespec64_add_safe()?
-> It's not exported to modules:
-> ERROR: modpost: "timespec64_add_safe" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!
+> > > A different option is to only have the "i2c-parent" phandle in the
+> > > extension node and nothing else in DT (no bidirectional link, no
+> > > compatible string), without any full-tree searches.
+> > >
+> > > On the implementation side, the connector driver when probing would
+> > > register the extension nodes at the I2C core, which would maintain a
+> > > list of extension nodes. This is important when the connector probes
+> > > first. Then when any adapter probes the core would iterate over the
+> > > list to check whether the newly-probed adapter is pointed to by one of
+> > > the registered bus extensions, and then start populating the devices on
+> > > the matching bus extension(s).
+> > >
+> > > A lot of care would have to be put in the disconnection path and while
+> > > removing any bus extension from the global list, which could race with
+> > > the I2C core using the list itself. The drive core wouldn't do it for
+> > > us for free.  
+> > 
+> > I'll defer to Wolfram on I2C core implementation...  
+> 
+> One input already before we dive into the unconference. I don't want to
+> maintain the above solution, i.e. handling lists with sublte race issues
+> which could be (and should be IMO) handled by the driver core anyhow.
 
-Hello Jakub,
+Wolfram, could it be ok if this list is not global but related to the
+adapter the extension belongs to?
 
-you're absolutely right. I don't know how I did not encounter the build
-error while performing some tests, that I'm getting now as well.
+If the list is really a nogo, registering extensions cannot be done and
+so with:
+ 1) "i2c-parent" phandle and the compatible string "i2c-bus-extension" in
+    the extension node.
+ 2) No registering extensions capabilities available
 
-The handling of overflows is already done in that function. Either
-I can make a patch to export the symbol or handle the computation in the
-driver. What do you think is best?
+the only solution I see is to parse the full DT in order to find extension
+nodes when we need to register adapter children (adapter probe() step).
 
-Cheers,
-Gatien
+A matching extension node will be a node where:
+ 1) compatible = "i2c-bus-extension"
+ 2) "i2c-parent" phandle points to the expected adapter.
 
+Wolfram, is it a solution you can accept?
+
+Best regards,
+Hervé
 
