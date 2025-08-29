@@ -1,177 +1,194 @@
-Return-Path: <linux-kernel+bounces-790983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DE5B3B0A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:55:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BAAB3B0AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF8D581405
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E90E1C86712
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31F31FBEB1;
-	Fri, 29 Aug 2025 01:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E8C1FAC4E;
+	Fri, 29 Aug 2025 01:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/VM7y+R"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qp5+QKze"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F4D1DFF7;
-	Fri, 29 Aug 2025 01:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343351DFF7;
+	Fri, 29 Aug 2025 01:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756432495; cv=none; b=JkVq/TIDGwGdyzY8kgaxQ4cyrEBfqsaiwnolFGX70WfI5yp1WDrQ7yHzcAVkRYH+YBkxOkYxrnYE+MwGBKV/f53dcsUy2PL2LAXLwyE9v0Vuxs1+FJ4AJwnnbA0kf2E+lCuLnwDCgijGXT+CAC9Rcfbb1gp8S4TtXgW8B2zvjDY=
+	t=1756432559; cv=none; b=glkYkF3QlN7OhnJj0NnP+wXtB2S1PTbUAkc0jb+D5vkIDdzs8oaB/cnbPwLl5th8blJetaCTnl5rJ2y6j/ivjZ/EVpzTCkY2bqnp81tCEUo9/KOkYIvkXhDzGSj36HNVB0d/ccIpGzk6lcTFFVEktOdfzXqlwElMST6T30/TY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756432495; c=relaxed/simple;
-	bh=YclyQ4i+1A+XSiGnQYtVvgpux14BRsuB2iVV3iNQaIA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fu+qEaOHU7j719zz7gvuvn+WzDnh/zuGKuHYHXUuZPZ6b7Yqh/gsu6VVcU1up4l9EBrZ8x3PcrHlE8f3yKDDJZnC7qp2dgsupYlIJDZ+T7+7fIPpOaeG7mCDZVbgOqNf0EO84xcsgDMsZm44+UUscELWq0lwbs/VxOLakkYha4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/VM7y+R; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-771eecebb09so2183553b3a.3;
-        Thu, 28 Aug 2025 18:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756432493; x=1757037293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SFdYFdqoRoLnPkCUEAB/IXpng8DVVDKCbntTxIYp4z4=;
-        b=k/VM7y+RA9Xee1mBt2bbXma+PZ3g6hqMd63NP7E5MPloqLQvuh76mkVQbJoqrDMApW
-         zfa2QkxAJ3b+B+FJaYEV4/EvM34kYAM4HGVJwPB9A/2iHgCZQfIQluZJFEnAWPWt6IgD
-         soePiuSRhb53x/O1Joh/qNS25ykYlu8cab2LGeHQohZEuLUtwhMHMVM20JyJHQtEYGKe
-         s7kbVtgT6DuMwZthQuLjHzaCpdpXHjGw7q51o7OxfhddmhIKEhCCp1aYJLXxobip53qp
-         TK6MqpJBFDwbSU/ynuUANghinA4Sq39cW7BgVhXZKrAuY81Q4oW1/AMZyRUU4vvusT2g
-         cGgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756432493; x=1757037293;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SFdYFdqoRoLnPkCUEAB/IXpng8DVVDKCbntTxIYp4z4=;
-        b=vFWoNct6P0sNPOSzWbqByFo8yRExd206E+SMkbR6nOhx/5z/Q+3PC+6auxH/QYwiTy
-         rHGs3fBTp8Y9HqADh4vQqQflUZPCAKbaZrSvOQuGI3vGFXfrmHx1/THTNVuAKFBGP4Tt
-         X9XAMKngutZtWAE9KHERR4HzeiV31GMwMq4HG3rCm8wvM4iLWpSQNmmSc7i/XN0wVluN
-         6z+jx2SibbNzmDWU2YVh+f8MGxJPr5nSznudJPMfskGcu8Yl8IJTG8TM88EJr0IymT99
-         PqB0w8FXMU97eZo+AiIOx61WS8EQeXqKGaovZgRoP0qhRuzGZbHwe7aiJUKieHGDiIGf
-         OnNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR8vIoFvG6zAKmLBTFO5R0ZdTMQDQWJbPkuziApzplIGDBN10Myl5nMtmHt0aeAwszybvHDK1H6E4N7DY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws5YqQNlAZRmBBaNp0ScEKZaOj3+s04VWCCTS/cjtiAxYLNF0r
-	6auYlBD2Kk4BndTUcUpyQyaQkmEcP3894ycQPahRb8IhRjegmhjeEus5TdUBZI27UXw=
-X-Gm-Gg: ASbGnctB6TlQkM2w6VLmp7ih2bsfCdb99x9dDRY/KntTcGA5rQTP0nURPmWE2gusgEu
-	2NhNS1EUJVhROlCoAEaZzOC8scSIy9V+r5a7ldV81ObEKPS5xGmxlIqZNYtrzLJ4dA0az0XARg/
-	T4/bHBTzK4/xaNfQplK/bMd6uEuNj0z5e7KC8FDc0wM3fCqY0ca65sKXO0G192QjZMAT3gV7kRl
-	ejCN+bjmrBmXKv0zVDp8uIuFUiEszgQdLYAMaj5z1fD00GiMkGqZ4Oj9gfZ6YWf40yKInVlGN4E
-	Jjxz1HcZVXQqnjAvhy+IdsHraQhvzFxgtpz52GA2vYKwwPdvGu1vr74QCMNGu460B9vmrJdSjJx
-	xVvN9CJglCc2NzxrJzFUuuQc9ss8tX17NnjnkuAsOzhBXHrCT0yDE1jSOmhw=
-X-Google-Smtp-Source: AGHT+IFudtmSL+bTtLqgWp+E6DIbs+k4HVO2HQfJkkCawfaRHc1emhDfWa4M7rnQ4QwX8jiee+PUQA==
-X-Received: by 2002:a05:6a00:4f96:b0:771:447:9346 with SMTP id d2e1a72fcca58-77104479531mr25952225b3a.6.1756432492981;
-        Thu, 28 Aug 2025 18:54:52 -0700 (PDT)
-Received: from localhost.localdomain ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772300a3e84sm24300b3a.40.2025.08.28.18.54.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 28 Aug 2025 18:54:52 -0700 (PDT)
-From: chengkaitao <pilgrimtao@gmail.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chengkaitao <chengkaitao@kylinos.cn>
-Subject: [PATCH] block/mq-deadline: Replace DD_PRIO_MAX with DD_PRIO_COUNT
-Date: Fri, 29 Aug 2025 09:54:44 +0800
-Message-Id: <20250829015444.91369-1-pilgrimtao@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1756432559; c=relaxed/simple;
+	bh=3lsN2vYrm0K0VPxgIEq3nbg372iNirHaFaobU8Zn3f4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AKiLSCNNz9uXHkndBTBC1X5kf71wR4kWmDui8+Yv7TfAuiS+cFgYxb4wKqtQTo/EVH7HtiAcGbKOMO1NC+GVz7u5EZtD/M8MG7iB6ohfeLyIYZoVUs0YSuAL1UgLzAooVkVvCFQEK6M1+wNbWBfafzSS3u0dK9B58JtPtV6D2z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qp5+QKze; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756432546; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=lJhaXXSDqG4GAemXi4WtUd9dZ0qacHvLnl2G4eecVXc=;
+	b=qp5+QKzei9RANO0q2YxZZEd9LzYOIxWITBkfUAN166JrRnwx6UC2mpG1IpxyrYHuuaEuobLWzCDi+wKVhtaiFvuX+zdDQYZPs1+9bF8Em4oSvCY13jPoVxkH86H8rdIKluAAL7v6eperbGLzjS3NOOLN2ddZDHe1EHI6RxtQiig=
+Received: from 30.74.144.113(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wmpa1nb_1756432541 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 29 Aug 2025 09:55:42 +0800
+Message-ID: <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
+Date: Fri, 29 Aug 2025 09:55:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: Dev Jain <dev.jain@arm.com>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com>
+ <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
+ <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+ <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
+ <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
+ <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
+ <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
+ <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: chengkaitao <chengkaitao@kylinos.cn>
 
-Remove redundant DD_PRIO_MAX and enum types, Move DD_PRIO_COUNT
-into enum dd_prio{}, and similarly for DD_DIR_COUNT.
 
-Signed-off-by: chengkaitao <chengkaitao@kylinos.cn>
----
- block/mq-deadline.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+On 2025/8/28 18:48, Dev Jain wrote:
+> 
+> On 28/08/25 3:16 pm, Baolin Wang wrote:
+>> (Sorry for chiming in late)
+>>
+>> On 2025/8/22 22:10, David Hildenbrand wrote:
+>>>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1), 
+>>>>> but not sure
+>>>>> if we have to add that for now.
+>>>>
+>>>> Yeah not so sure about this, this is a 'just have to know' too, and 
+>>>> yes you
+>>>> might add it to the docs, but people are going to be mightily 
+>>>> confused, esp if
+>>>> it's a calculated value.
+>>>>
+>>>> I don't see any other way around having a separate tunable if we 
+>>>> don't just have
+>>>> something VERY simple like on/off.
+>>>
+>>> Yeah, not advocating that we add support for other values than 0/511, 
+>>> really.
+>>>
+>>>>
+>>>> Also the mentioned issue sounds like something that needs to be 
+>>>> fixed elsewhere
+>>>> honestly in the algorithm used to figure out mTHP ranges (I may be 
+>>>> wrong - and
+>>>> happy to stand corrected if this is somehow inherent, but reallly 
+>>>> feels that
+>>>> way).
+>>>
+>>> I think the creep is unavoidable for certain values.
+>>>
+>>> If you have the first two pages of a PMD area populated, and you 
+>>> allow for at least half of the #PTEs to be non/zero, you'd collapse 
+>>> first a
+>>> order-2 folio, then and order-3 ... until you reached PMD order.
+>>>
+>>> So for now we really should just support 0 / 511 to say "don't 
+>>> collapse if there are holes" vs. "always collapse if there is at 
+>>> least one pte used".
+>>
+>> If we only allow setting 0 or 511, as Nico mentioned before, "At 511, 
+>> no mTHP collapses would ever occur anyway, unless you have 2MB 
+>> disabled and other mTHP sizes enabled. Technically, at 511, only the 
+>> highest enabled order would ever be collapsed."
+> I didn't understand this statement. At 511, mTHP collapses will occur if 
+> khugepaged cannot get a PMD folio. Our goal is to collapse to the 
+> highest order folio.
 
-diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-index b9b7cdf1d3c9..1a031922c447 100644
---- a/block/mq-deadline.c
-+++ b/block/mq-deadline.c
-@@ -41,19 +41,16 @@ static const int fifo_batch = 16;       /* # of sequential requests treated as o
- enum dd_data_dir {
- 	DD_READ		= READ,
- 	DD_WRITE	= WRITE,
-+	DD_DIR_COUNT	= 2
- };
- 
--enum { DD_DIR_COUNT = 2 };
--
- enum dd_prio {
--	DD_RT_PRIO	= 0,
--	DD_BE_PRIO	= 1,
--	DD_IDLE_PRIO	= 2,
--	DD_PRIO_MAX	= 2,
-+	DD_RT_PRIO,
-+	DD_BE_PRIO,
-+	DD_IDLE_PRIO,
-+	DD_PRIO_COUNT
- };
- 
--enum { DD_PRIO_COUNT = 3 };
--
- /*
-  * I/O statistics per I/O priority. It is fine if these counters overflow.
-  * What matters is that these counters are at least as wide as
-@@ -441,7 +438,7 @@ static struct request *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
- 	if (prio_cnt < 2)
- 		return NULL;
- 
--	for (prio = DD_BE_PRIO; prio <= DD_PRIO_MAX; prio++) {
-+	for (prio = DD_BE_PRIO; prio < DD_PRIO_COUNT; prio++) {
- 		rq = __dd_dispatch_request(dd, &dd->per_prio[prio],
- 					   now - dd->prio_aging_expire);
- 		if (rq)
-@@ -475,7 +472,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
- 	 * Next, dispatch requests in priority order. Ignore lower priority
- 	 * requests if any higher priority requests are pending.
- 	 */
--	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
-+	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
- 		rq = __dd_dispatch_request(dd, &dd->per_prio[prio], now);
- 		if (rq || dd_queued(dd, prio))
- 			break;
-@@ -530,7 +527,7 @@ static void dd_exit_sched(struct elevator_queue *e)
- 	struct deadline_data *dd = e->elevator_data;
- 	enum dd_prio prio;
- 
--	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
-+	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
- 		struct dd_per_prio *per_prio = &dd->per_prio[prio];
- 		const struct io_stats_per_prio *stats = &per_prio->stats;
- 		uint32_t queued;
-@@ -565,7 +562,7 @@ static int dd_init_sched(struct request_queue *q, struct elevator_queue *eq)
- 
- 	eq->elevator_data = dd;
- 
--	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
-+	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
- 		struct dd_per_prio *per_prio = &dd->per_prio[prio];
- 
- 		INIT_LIST_HEAD(&per_prio->dispatch);
-@@ -748,7 +745,7 @@ static bool dd_has_work(struct blk_mq_hw_ctx *hctx)
- 	struct deadline_data *dd = hctx->queue->elevator->elevator_data;
- 	enum dd_prio prio;
- 
--	for (prio = 0; prio <= DD_PRIO_MAX; prio++)
-+	for (prio = 0; prio < DD_PRIO_COUNT; prio++)
- 		if (dd_has_work_for_prio(&dd->per_prio[prio]))
- 			return true;
- 
--- 
-2.39.5 (Apple Git-154)
+Yes, I’m not saying that it’s incorrect behavior when set to 511. What I 
+mean is, as in the example I gave below, users may only want to allow a 
+large order collapse when the number of present PTEs reaches half of the 
+large folio, in order to avoid RSS bloat.
+
+So we might also need to consider whether 255 is a reasonable 
+configuration for mTHP collapse.
+
+>> In other words, for the scenario you described, although there are 
+>> only 2 PTEs present in a PMD, it would still get collapsed into a PMD- 
+>> sized THP. In reality, what we probably need is just an order-2 mTHP 
+>> collapse.
+>>
+>> If 'khugepaged_max_ptes_none' is set to 255, I think this would 
+>> achieve the desired result: when there are only 2 PTEs present in a 
+>> PMD, an order-2 mTHP collapse would be successed, but it wouldn’t 
+>> creep up to an order-3 mTHP collapse. That’s because:
+>> When attempting an order-3 mTHP collapse, 'threshold_bits' = 1, while 
+>> 'bits_set' = 1 (means only 1 chunk is present), so 'bits_set > 
+>> threshold_bits' is false, then an order-3 mTHP collapse wouldn’t be 
+>> attempted. No?
+>>
+>> So I have some concerns that if we only allow setting 0 or 511, it may 
+>> not meet the goal we have for mTHP collapsing.
+>>
+>>>>> Because, as raised in the past, I'm afraid nobody on this earth has 
+>>>>> a clue how
+>>>>> to set this parameter to values different to 0 (don't waste memory 
+>>>>> with khugepaged)
+>>>>> and 511 (page fault behavior).
+>>>>
+>>>> Yup
+>>>>
+>>>>>
+>>>>>
+>>>>> If any other value is set, essentially
+>>>>>     pr_warn("Unsupported 'max_ptes_none' value for mTHP collapse");
+>>>>>
+>>>>> for now and just disable it.
+>>>>
+>>>> Hmm but under what circumstances? I would just say unsupported value 
+>>>> not mention
+>>>> mTHP or people who don't use mTHP might find that confusing.
+>>>
+>>> Well, we can check whether any mTHP size is enabled while the value 
+>>> is set to something unexpected. We can then even print the 
+>>> problematic sizes if we have to.
+>>>
+>>> We could also just just say that if the value is set to something 
+>>> else than 511 (which is the default), it will be treated as being "0" 
+>>> when collapsing mthp, instead of doing any scaling.
+>>>
+>>
 
 
