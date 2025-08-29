@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-791617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8185FB3B943
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 982BAB3B93E
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DCB3BE671
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:53:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C683B661B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E343101B1;
-	Fri, 29 Aug 2025 10:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D2930FC1E;
+	Fri, 29 Aug 2025 10:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="upOucZnx"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iDgFte3x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tjyZkTfd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB463101A7;
-	Fri, 29 Aug 2025 10:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9764E30FC00;
+	Fri, 29 Aug 2025 10:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464786; cv=none; b=RvPrLYZkAKcjlnFRpG4/S4nMKWk8BNlOo7yVXn0RkYcnMF/urVIzYX796ooa1ec+A6tEorrtkUfy7MPxDyf5jxz5T38r/N10lcHcXQuqOD5wjEV0CVcE738es7xwebJSMK5wKk2fPXNTi/q4mKTtU7i/d29CcpCU8eoAKpU/RYg=
+	t=1756464771; cv=none; b=X7uSgk8rprkkkid5W8AO/+CcrYOtOVzFFeYGk4CRxLOusU2tPSEcJz7WF7rdUSjNIZjk2guJ3pwJk+nhYXwejKqzDF4euBS7e3G+Khhx6/7a9QwQ6MI+RutMoz4GMFssb6yfFf+aBAnH6GR+OyOWqiYMjGLhH8ljZ4G+qiv9mRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464786; c=relaxed/simple;
-	bh=mfy+YuX2F4NtAR8pwTND/xpdBP0nizDaFodXwa419jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3dKy4m2TRYn/F+Z2p0lEhPMQVFW3PpzN/b8ykuU2VVjlgEs9VFi6hwUMti/SZoPPeuV2Vbi4JhLu7ekVKyYTIk/yw3CxvI6nGrGPHmQ6THolSL4+i6aigSj8tNzQekwSPVhBt+BT1qiP/2OuQCktHlAZGpOEi4z3nWfEwHWf4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=upOucZnx; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 23A9E4E40C39;
-	Fri, 29 Aug 2025 10:53:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D33FE606B9;
-	Fri, 29 Aug 2025 10:53:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9F6DE1C22CEB8;
-	Fri, 29 Aug 2025 12:52:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756464780; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=/yZivrEaPavxvETAY4MYad6XxcQTsMFNQbbqh28IxHM=;
-	b=upOucZnx2+ZWY2gIAJ/ExxOo9ufNMXfABewxDIa/FGZ8ExyjBdYg0C5syIxWldcQA3BYY4
-	3Cg6E1AeybYmEsN81IxEIubyubR7LRc3MJnOWArICFGWFM2k3xqXasxlLmDEVvC7YfWeLY
-	4Pr6qDUJ1ToPRV5zRoqq5nLpk73MT8OZZs5wQubXGfEbrIvSMb/vVaWUfCbziytHYYiftd
-	9UwXdNf+B2G9p3tNw5eqk7oeXc35IJqwL+M5ok4q/Bl22Ui9l2HE9DAe/FyQcccjnnHMkd
-	6KosUHcckb940gRxdTBhDa/3MBbhbrs8f6GX6go329p8VtZEFq8fCuQdCso0zg==
-Date: Fri, 29 Aug 2025 12:52:38 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Rob Herring <robh@kernel.org>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Ayush Singh <ayush@beagleboard.org>, Andi
- Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree-spec@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 1/1] schemas: i2c: Introduce I2C bus extensions
-Message-ID: <20250829125238.4117947f@bootlin.com>
-In-Reply-To: <aK2-we94b-x2fgW_@shikoro>
-References: <20250618082313.549140-1-herve.codina@bootlin.com>
-	<20250618082313.549140-2-herve.codina@bootlin.com>
-	<CAL_JsqJ=jmXVwjtNCjRpUKj02dnJEz4GHMX2wMRaWw=M+sZQ0w@mail.gmail.com>
-	<20250808180746.6fa6a6f9@booty>
-	<CAL_JsqLxsfpaaCvV3AcniMYxAYVir7ddL4umCNY3u-ggVTiZcg@mail.gmail.com>
-	<aK2-we94b-x2fgW_@shikoro>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756464771; c=relaxed/simple;
+	bh=AG1U5uZDjwxxo89I1nJNqY4zzgoxn6rOGGM85LkZafw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DR5yLjQfrW7tDWSdL7fhfwE6cTy4aU5uOQRMAAmpYr1B9pMpGNvNmfQOAPPePTatKlNo7EM8b1xyZ0zhdz6fRThsU+8AUIcraB6pCqWq5WFzztyq79SVFlRHQ7b2XwlV1f7sAqhQXF/UIbRMhemtCvNUGekGyfW0JleoAeoyeUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iDgFte3x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tjyZkTfd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 29 Aug 2025 12:52:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756464767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qteIrrZy/Hd5PTkCLfVwMbS81evxs/mvu7xmf+DTkII=;
+	b=iDgFte3xeL3v3s7mKgsMIwDz8G70PvZgPwjMlfNW2q72bKpr02zIzP9VYaJ9szgoAx/+Wn
+	u6OmDFBogxwxOdwXpCM65eQAKp1PPjnoDSv6up/o17Lamun1cc/datGkoMsdDeGnZXPc7q
+	/1qimv9/sT/qaJOBDoCh+Oc9RGQvVud/XmzQWDHGCJDTT9so52iTgYQvvXL7cROwwIwAx5
+	3+gP1LRaVqqyRWjzAdAL6F+0Ac/lVS/4nTulGv2PccEVd6Ov8eG1Bb2b8HSrhBMVgeIwqU
+	P3LdfozU6Qh6YFKoIPQqkeFloGWjqcNAQTHz6c/jotOAzy/i8dMdpcOx42dUGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756464767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qteIrrZy/Hd5PTkCLfVwMbS81evxs/mvu7xmf+DTkII=;
+	b=tjyZkTfdLB5cdfijs+sd0FC7oRA75mECeN4v41oUjuTdoN3O+IwLnT/tt0xXB/atkO38tP
+	GrLdrlvTsGt+NnAQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	"David S. Miller" <davem@davemloft.net>, Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
+	Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
+ library
+Message-ID: <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
+ <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
 
-Hi Wolfram,
-
-On Tue, 26 Aug 2025 16:03:45 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-
-> Hi,
+On Fri, Aug 29, 2025 at 12:40:59PM +0200, John Paul Adrian Glaubitz wrote:
+> On Fri, 2025-08-29 at 12:37 +0200, Thomas Weiﬂschuh wrote:
+> > In the meantime I installed a full Debian, but the bug is still not
+> > reproducible in QEMU.
 > 
-> > > A different option is to only have the "i2c-parent" phandle in the
-> > > extension node and nothing else in DT (no bidirectional link, no
-> > > compatible string), without any full-tree searches.
-> > >
-> > > On the implementation side, the connector driver when probing would
-> > > register the extension nodes at the I2C core, which would maintain a
-> > > list of extension nodes. This is important when the connector probes
-> > > first. Then when any adapter probes the core would iterate over the
-> > > list to check whether the newly-probed adapter is pointed to by one of
-> > > the registered bus extensions, and then start populating the devices on
-> > > the matching bus extension(s).
-> > >
-> > > A lot of care would have to be put in the disconnection path and while
-> > > removing any bus extension from the global list, which could race with
-> > > the I2C core using the list itself. The drive core wouldn't do it for
-> > > us for free.  
-> > 
-> > I'll defer to Wolfram on I2C core implementation...  
-> 
-> One input already before we dive into the unconference. I don't want to
-> maintain the above solution, i.e. handling lists with sublte race issues
-> which could be (and should be IMO) handled by the driver core anyhow.
+> Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
+> Andreas was testing on sun4v (on Niagara 4). There might be differences.
 
-Wolfram, could it be ok if this list is not global but related to the
-adapter the extension belongs to?
-
-If the list is really a nogo, registering extensions cannot be done and
-so with:
- 1) "i2c-parent" phandle and the compatible string "i2c-bus-extension" in
-    the extension node.
- 2) No registering extensions capabilities available
-
-the only solution I see is to parse the full DT in order to find extension
-nodes when we need to register adapter children (adapter probe() step).
-
-A matching extension node will be a node where:
- 1) compatible = "i2c-bus-extension"
- 2) "i2c-parent" phandle points to the expected adapter.
-
-Wolfram, is it a solution you can accept?
-
-Best regards,
-Herv√©
+I am aware. Unfortuntely I don't have anything else available.
+If anybody could test this on real sun4u that would be great.
+Or teach me how to use sun4v QEMU without it crashing on me.
+In the past you offered access to a physical machine.
+Does this offer still stand? Does it also run into the bug?
 
