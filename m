@@ -1,187 +1,84 @@
-Return-Path: <linux-kernel+bounces-792189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FF2B3C142
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:53:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C0BB3C138
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E59CE7BF801
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B6F583F47
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A950D340D88;
-	Fri, 29 Aug 2025 16:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0116533EAED;
+	Fri, 29 Aug 2025 16:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m072KRW0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2d3bcUX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD33B33EB12;
-	Fri, 29 Aug 2025 16:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E50D33CEA8;
+	Fri, 29 Aug 2025 16:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756486377; cv=none; b=DxmVEHd9QpawsOCTNHrMqPvh4kW/Yme7PgHgtxOeyP7K2n+V5feFbWVfVgMR+Y3wpI7OFFZrjb8pCkGKLKTdilXpQtSVLUywK4ieWm+e1Sf+BAWMf8pFYPTHQvZPybBPlWVbpQo0ReFv0lCAbSEOiGEyZ/eJzepNN9MuvxU0HuQ=
+	t=1756486364; cv=none; b=o0BBHE04i1FQFB+SnNtg49YV5yODIYvrj1L90iLpVaeqgOPVrvem88hx+OFK3haOhT/mn5c3etn8JwIvuNzu3WWkbTDEleoBd9ln6xRAVjpkKS/RWGuny0//4KqE7Ho8nLP6/yFvQFy9xbLv0FAPiP9og/21M8bIDg3ocaUmv7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756486377; c=relaxed/simple;
-	bh=uu7yRW77iR6GInnTDZ4J2LNBPTUTsArmEa3vOBJ6JYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mA5aNhiAjxCNQUMA2xaMcezrFIWS62T3QKjqt4/DmWEoJZwzMcufgx+Rcxsi/o8Yy/npKBP1NX5SD1vqBhg1yyB2vD7Eclg6b70wIqSesRnv9u2Gydmc68u2Wl3KkVnpVNKkjFMe8y6sH7z5qcUuLoQn823wsaI0Jk2M94iZRhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m072KRW0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6593BC4CEF6;
-	Fri, 29 Aug 2025 16:52:56 +0000 (UTC)
+	s=arc-20240116; t=1756486364; c=relaxed/simple;
+	bh=6iWGrg8lIE6nrEWZVFb+ILIqRczqtE/L08CgEe7QCUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOJeuSZDCA107Q0Rvh3rfggZaNzoSOqeibUPOXdjATJeb9V2oKD39r9iYlW63vLALSohvoM3F7J73NU6eEnNuvDs4gnQGAQMyZEfzgOLsz49/7gzZdErL9c601iH9ti02IRnLLJg/1s010mGfwvS2ya25yEdeQH4iD1rP3nW1Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2d3bcUX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AB4C4CEF0;
+	Fri, 29 Aug 2025 16:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756486376;
-	bh=uu7yRW77iR6GInnTDZ4J2LNBPTUTsArmEa3vOBJ6JYA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m072KRW0Yk8Csvuo1LOg1WBWq+QqwkvnSTHp6JQ+srzirfg6h/MgDmIQ7QFdxmNzy
-	 CuprLUPgATNC83tE0DiMAg79XXte39M+QiR2D0VtMaUjk5iqnUWLM7cFRgzzU8TdhU
-	 gU1gFJ/QgHjK58W/LN3kuRtJtZqx00xiTUzu+dNtD+J/YQNy/iAJJ3e8eyGF5tiGCP
-	 +FLCZG9oho1S76HRxYOJA0wreELsWNZAgg4CYqJKwqhkLCkSETbVQvMGQfmk6wtorB
-	 wZ0fl8gfe1LSvOUQtPICYoiRmE5sg1xRBH/yctDLnIvqnqV6r+vDwOCKpULqfPDh1t
-	 VMEk+pFttowvQ==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61e23ec2538so502040eaf.2;
-        Fri, 29 Aug 2025 09:52:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlUC4xjjIW2epkzn1myB/gtU+6aLHj2T8kkef3REwX89IPidBRVKxe0EfBj1pkvX3eicpdZY5P6CcVsu4=@vger.kernel.org, AJvYcCUv7uHE6wEjI+ZYE/oOZ11wjSZi9g139yeh6m6SSbiDuF9ckZ1DMB0paEDlfFw3iASGq/milDy6Emg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJrvWwU5d0+1/LijHgkEk55naD/o7l7E4r/0+Uc4D2xu18T6Cm
-	x9Xhv/7yrcvPMCnkHD5eKaPTRYeSjT2jhDh2REZS/nzTt3Fvr1wqn3xdutBf0H6R+O9JVDteK1w
-	Y0MujMB37cF3GhNzT1nep6ZC5fLLVP2c=
-X-Google-Smtp-Source: AGHT+IHC2d66AIGmzUObGmval9MMPo7XP1zYjZkTfQ5f+3RwrbVvozRQOfyyeS23AcO3/h5HK2w16//mTSddYrc6HZ8=
-X-Received: by 2002:a05:6820:1606:b0:61e:1d70:766e with SMTP id
- 006d021491bc7-61e1d707bf4mr2720834eaf.6.1756486375729; Fri, 29 Aug 2025
- 09:52:55 -0700 (PDT)
+	s=k20201202; t=1756486363;
+	bh=6iWGrg8lIE6nrEWZVFb+ILIqRczqtE/L08CgEe7QCUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l2d3bcUX/2RhJdXetaddzTQO02hP9VwrPcQso0CRpQvKQdP9+CyAtzqP1k/HSEGLR
+	 UtumUOS8iUDpHtALhCG2luwbWk6D+3MYxWyOD29qGF++reAJNvWSIkMWAs8EPx9g0d
+	 pgdIw+9t5kmi96kckiRZGIgk3wgisX8SW9a9LDZqGgtmbmZeEXs4wr57qehb/2zzSh
+	 Iuqme5uiaaTcxcWtO3kNsYwtyEaQKmzpAwWDAo29O6NcDsiTY72byM9R9jlAc1wKLK
+	 gNjMJOZikYCLvyaFaoM4ZuuUhkha4nyUA5TEbZDpTkrp8WmIvOgj6MrRaY0JOjz6YM
+	 Q13vby9mAELkA==
+Date: Fri, 29 Aug 2025 11:52:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>, devicetree@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/1] media: dt-bindings: ovti,ov2680: Use
+ unevaluatedProperties for endpoint
+Message-ID: <175648636241.1003708.4368545914280443801.robh@kernel.org>
+References: <20250827194919.82725-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829084440.579727-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250829084440.579727-1-rongqianfeng@vivo.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 29 Aug 2025 18:52:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jZ+4Ze2t8pw1MPUqzFYFr7g7h6Y-f=gwsmUgbvSThYGg@mail.gmail.com>
-X-Gm-Features: Ac12FXwIE4z-CuWp-rfigtBSHNKbXG9geMp1m-DzNGIswGhdjpojQUCJ3fqOFHw
-Message-ID: <CAJZ5v0jZ+4Ze2t8pw1MPUqzFYFr7g7h6Y-f=gwsmUgbvSThYGg@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Use int type to store negative error codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827194919.82725-1-Frank.Li@nxp.com>
 
-On Fri, Aug 29, 2025 at 10:44=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.c=
-om> wrote:
->
-> Change the 'ret' variable from unsigned int to int to store negative erro=
-r
-> codes directly or returned by other functions.
 
-You need to say upfront that this is about speedstep_get_freqs() specifical=
-ly.
-
-> Change the return type of
-> the speedstep_get_freqs() function from unsigned int to int as well.
->
-> Storing the negative error codes in unsigned type, doesn't cause an issue
-> at runtime but it's ugly as pants.
-
-Which isn't really a technical term.
-
-> Additionally, assigning negative error codes to unsigned type may trigger=
- a GCC warning
-> when the -Wsign-conversion flag is enabled.
-
-Is the latter a motivation for this change?
-
-> No effect on runtime.
->
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+On Wed, 27 Aug 2025 15:49:18 -0400, Frank Li wrote:
+> The endpoint ref to /schemas/media/video-interfaces.yaml#, so replace
+> additionalProperties with unevaluatedProperties to allow use common
+> properties.
+> 
+> Fix below CHECK_DTBS warnings:
+>   arch/arm/boot/dts/nxp/imx/imx7s-warp.dtb: camera@36 (ovti,ov2680): port:endpoint: 'clock-lanes', 'data-lanes' do not match any of the regexes: '^pinctrl-[0-9]+$'
+> 	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov2680.yaml
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  drivers/cpufreq/cpufreq.c       |  2 +-
->  drivers/cpufreq/powernow-k7.c   |  2 +-
->  drivers/cpufreq/speedstep-lib.c | 12 ++++++------
->  drivers/cpufreq/speedstep-lib.h | 10 +++++-----
->  4 files changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index a615c98d80ca..f47096683abb 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -914,7 +914,7 @@ static ssize_t store_scaling_setspeed(struct cpufreq_=
-policy *policy,
->                                         const char *buf, size_t count)
->  {
->         unsigned int freq =3D 0;
-> -       unsigned int ret;
-> +       int ret;
->
->         if (!policy->governor || !policy->governor->store_setspeed)
->                 return -EINVAL;
-> diff --git a/drivers/cpufreq/powernow-k7.c b/drivers/cpufreq/powernow-k7.=
-c
-> index 31039330a3ba..88616cd14353 100644
-> --- a/drivers/cpufreq/powernow-k7.c
-> +++ b/drivers/cpufreq/powernow-k7.c
-> @@ -451,7 +451,7 @@ static int powernow_decode_bios(int maxfid, int start=
-vid)
->         unsigned int i, j;
->         unsigned char *p;
->         unsigned int etuple;
-> -       unsigned int ret;
-> +       int ret;
->
->         etuple =3D cpuid_eax(0x80000001);
->
-> diff --git a/drivers/cpufreq/speedstep-lib.c b/drivers/cpufreq/speedstep-=
-lib.c
-> index 0b66df4ed513..f8b42e981635 100644
-> --- a/drivers/cpufreq/speedstep-lib.c
-> +++ b/drivers/cpufreq/speedstep-lib.c
-> @@ -378,16 +378,16 @@ EXPORT_SYMBOL_GPL(speedstep_detect_processor);
->   *                     DETECT SPEEDSTEP SPEEDS                       *
->   *********************************************************************/
->
-> -unsigned int speedstep_get_freqs(enum speedstep_processor processor,
-> -                                 unsigned int *low_speed,
-> -                                 unsigned int *high_speed,
-> -                                 unsigned int *transition_latency,
-> -                                 void (*set_state) (unsigned int state))
-> +int speedstep_get_freqs(enum speedstep_processor processor,
-> +                       unsigned int *low_speed,
-> +                       unsigned int *high_speed,
-> +                       unsigned int *transition_latency,
-> +                       void (*set_state)(unsigned int state))
->  {
->         unsigned int prev_speed;
-> -       unsigned int ret =3D 0;
->         unsigned long flags;
->         ktime_t tv1, tv2;
-> +       int ret =3D 0;
->
->         if ((!processor) || (!low_speed) || (!high_speed) || (!set_state)=
-)
->                 return -EINVAL;
-> diff --git a/drivers/cpufreq/speedstep-lib.h b/drivers/cpufreq/speedstep-=
-lib.h
-> index dc762ea786be..48329647d4c4 100644
-> --- a/drivers/cpufreq/speedstep-lib.h
-> +++ b/drivers/cpufreq/speedstep-lib.h
-> @@ -41,8 +41,8 @@ extern unsigned int speedstep_get_frequency(enum speeds=
-tep_processor processor);
->   * SPEEDSTEP_LOW; the second argument is zero so that no
->   * cpufreq_notify_transition calls are initiated.
->   */
-> -extern unsigned int speedstep_get_freqs(enum speedstep_processor process=
-or,
-> -       unsigned int *low_speed,
-> -       unsigned int *high_speed,
-> -       unsigned int *transition_latency,
-> -       void (*set_state) (unsigned int state));
-> +extern int speedstep_get_freqs(enum speedstep_processor processor,
-> +                              unsigned int *low_speed,
-> +                              unsigned int *high_speed,
-> +                              unsigned int *transition_latency,
-> +                              void (*set_state)(unsigned int state));
-> --
+>  Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
