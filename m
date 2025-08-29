@@ -1,181 +1,119 @@
-Return-Path: <linux-kernel+bounces-792553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F70DB3C581
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D1FB3C583
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BFA25A448F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24AF65A44A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 23:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF56A35AAB4;
-	Fri, 29 Aug 2025 23:09:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C9B35AAA7;
+	Fri, 29 Aug 2025 23:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxDyBhFl"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9343B35A2B3;
-	Fri, 29 Aug 2025 23:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014BF22173D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 23:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756508970; cv=none; b=P3xGQE/6Ela9PWDJT9W9mtka9GAAoVxBPNRTBypWB/m3+x1GGLBVIBS+SZZGtb6QUddKoKP05ZIJ0W/r/1zgO58VKqm8K9hM3lNKH/Oj+srWD1swTqTmVIZjlXVyRoy0Iv2/ypioYoFYxOPORYEt+RGk7Mx6dKbjU2SGA/79Etw=
+	t=1756509023; cv=none; b=QzrbaoAKBRNguSqBJHUcJ6HAPV49+NfHQORSFT2jv9gypwlQSrsAATY/iCFP5dX5RdKSqKsJzKrwV/uZIb54Ld1eQdy9Qz3cY2WY3gU+Ty0DQLPzkc/pc9Rs1WF++2zxJLHG8JFKYFlLwH8ClrT5dVfUrp7YkBmwjG6tgwT3M5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756508970; c=relaxed/simple;
-	bh=3JyHbvRnaaHIi/b1C2NzRUSgFamGapR3ArvHz4sLaHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KnysLuXD/PsMhhS5MsIswnVu3rDTxmADYt700PuaFS0G+Qzd9UqC8n4x4GiqBGW1qOpI5aaB63nmZG56BaWdo1Ux/h+cw9WGdAVM3zDaujDDK1Mxr0xGOZ98ecGbh7TeqpEWpMswp4FMgj6KgBsy4BwgsE1iCiC3CPCPN8sIJKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 71BA985A5A;
-	Fri, 29 Aug 2025 23:09:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 49DA93C;
-	Fri, 29 Aug 2025 23:09:13 +0000 (UTC)
-Date: Fri, 29 Aug 2025 19:09:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829190935.7e014820@gandalf.local.home>
-In-Reply-To: <CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org>
-	<20250828164819.51e300ec@batman.local.home>
-	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-	<20250829141142.3ffc8111@gandalf.local.home>
-	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
-	<20250829171855.64f2cbfc@gandalf.local.home>
-	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756509023; c=relaxed/simple;
+	bh=qb6UxXdmUJOFC/RWOVjIGSSJyLwWLgQwYqFiSXaqDiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ws70ad9iLpfMuoQ+FtuQ9AxK+3pe+ApwAaJSYei5xSsP4dCZe3DUtja1kPzFJ0tMnJqbQ8UCcCUJNbE0syeJ+S6hP0zA0ra7jD/mEPa3QuP4Y5AaB0M/72NYQ5vdgkRuH7+6VCiFcvXQOWGHuBaJdJMj9K7V8Pd9oVLsGJapJkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxDyBhFl; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4c72e4f1b6so1230144a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756509021; x=1757113821; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MLGuuVLvC0FYe6vAnZmrTVaRCP6gublbfzak+XpRncI=;
+        b=VxDyBhFl1Vr1yktBGxFzSjelab/jrOJfHw97P7g963wsnxogoAnUspyJTOHG1PEkLA
+         t9qk4cFFOuMA+nohiPnaByGJvSZ69c+18Zj6WBlYfWuo6IxAo+0gM7UDvozI4Vp5DAmh
+         7ONZ4S7BkdWVp/UWoLM0DUmTIWPpIOeVTI/Xov3h0OTodovUQKEqpk5hIPG5Wgef1Y1M
+         sxIRWspHmh3GR1/gI3M8mUKqdY0mznQQ/BIQXutT9g+9TDRoHK3ZvSZCS9URWkjnLX8T
+         HCNq1rFf1kBtD1HaIGwldK2f0Qnfhf8M5gWWI3ehgsB39qR630eOeMcyTVJnNBmHifVE
+         BXyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756509021; x=1757113821;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MLGuuVLvC0FYe6vAnZmrTVaRCP6gublbfzak+XpRncI=;
+        b=do9IRxOrR3uS6OsN6vTrHXA1IqCSrSQs59pD+rQfzSr/Agjf3nlcFdc1yoz8v3d9f0
+         RrljWquM469xtZ8MGnYUrxv5ZPoruZgCT4DKncwMox6oYEwLy/DksBujts8KA5W0Xa0v
+         rO+i/rmmLSWp+zzN4Iyc11AVISrS57uYBWsF0EOAeb4n29Bqtj/mvD4Iv67GpsYsu9ux
+         lvh1BDbmqBGMarkoAxE6xvj/sUC04167DgjMOWlPqVDMWEh3XrJtd4lKSLNJmN7x6J37
+         Mp1LRB4ObEJ5K0flyDRYLeyf3B27pllUEdodlPtu8pr6ASeO+jnfxUFx6/RNzE+dDuIM
+         ueEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOC4nEVlSilKI3y9byv12rTlzumGYBd2ZujKGNe+ZO7C+MlO+0XLeNPzmwfNiPX/70YWx98k93ZZMVb80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW9eeaFa9Msua9Qjlf51Lv8pzPJwH0Kk8HwPXKKT08mBJl8Vyd
+	Jzd8ERAkXveO4meIUbKVSpj1x/VlCl5E1DdfD7hK0ZwXl8azN9cVWdyY
+X-Gm-Gg: ASbGncsS5/3HjYeTg4OEmICzWB1pnqLAGsFBg5Pdha6rgq3VNM9VwyezTkf/MDBNvdr
+	nYva8V0aTr89Pqb41RybEGrklbMCEanrvGl+Xy5jRKKZ02NqiVssmIfxs+EonItCdArPDMgYUyp
+	3CoehXK12aGJ7BBJHQPkvZwcw8NkX90GkDgctymVl15W/E00NMGKlsOOYhE035pD43Ih43F9lrQ
+	uTCjVGgZIVkgPsxPEY9P96OFXG1z6EInTH7VTwUlaFGY2iKDqKq7Eej9SkdwkEqCbDQqewAWuf+
+	P0oJATbfsiwxoniu5dKQP4mBUBFs6MxDeCw4SXt4nySqO7gyOEMESpa/vkdT+j1rczDilbaapOq
+	umA0cyM/o53/pDavCNC5TlUhuNfUvg+8t9+SnRRHZ9twkUfRsox5s+w==
+X-Google-Smtp-Source: AGHT+IHQ7aGyKXT9USKBNqZpOtpxttgC5amNcPf5s75dLoJAaPCgE8cRDcRM97Ojq2iQCa0/7J2Tlg==
+X-Received: by 2002:a17:902:ce89:b0:246:80ef:8808 with SMTP id d9443c01a7336-2493ee07085mr12422855ad.3.1756509021264;
+        Fri, 29 Aug 2025 16:10:21 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065b73f1sm34684345ad.133.2025.08.29.16.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 16:10:20 -0700 (PDT)
+Date: Fri, 29 Aug 2025 16:10:17 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
+	yuanchu@google.com, willy@infradead.org, hughd@google.com,
+	mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com
+Subject: Re: [PATCH 06/12] mm/util: add `const` to several pointer parameters
+Message-ID: <aLIzWR5IQr7D3wBa@fedora>
+References: <20250829183159.2223948-1-max.kellermann@ionos.com>
+ <20250829183159.2223948-7-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 49DA93C
-X-Stat-Signature: d91bwhi77buw9f5ee1t6gu5rys1gt79y
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18qW41vAqv+HdNuucWLcvLSUcUm7Wgw5IM=
-X-HE-Tag: 1756508953-116910
-X-HE-Meta: U2FsdGVkX1990IGdbs27+Hu1eiR1l1guVyVGIfePesD6zFXIv/6j7ycmy4oB8/l8hMQ3n6t0HtQgs8Ufm2P2/eKrL0VS5riLWTqjy3QcmU5OYN58W54RPhK5WOsnScXxn09N2oN81YTv1rzAtUxzD7Z3+QHcAGe1PjePU7aWwG7bO0MwZJFcciS2KwNkgdnO174dKUophsuHhv65hEJH2EeMqK2XWDYVKMj/neiJBdP8bal15dNWD3G12/XEUpO8tW9RmUmslgxtCmEfD2kPOcDCHxoug3/zsi/sslE9kZpqSNlicqmz9LCTICwNe9gKqu7aPQ6CaYTDn1a8z+uPHSaxRYE/P7NNGxY5zS+2bvZq+ryE3K4KhtrZeS4vQrfOiB/pjJE2oQ/Hqd1pYftS+JgARvNB6exHGXHgju7nZcwb5ItYjdWawxqNzT4hHAT2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829183159.2223948-7-max.kellermann@ionos.com>
 
-On Fri, 29 Aug 2025 15:40:07 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri, Aug 29, 2025 at 08:31:53PM +0200, Max Kellermann wrote:
+> For improved const-correctness.
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -549,7 +549,7 @@ static inline void filemap_nr_thps_dec(struct address_space *mapping)
+>  #endif
+>  }
+>  
+> -struct address_space *folio_mapping(struct folio *);
+> +struct address_space *folio_mapping(const struct folio *);
 
-> On Fri, 29 Aug 2025 at 14:18, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > >
-> > > Just do the parsing at parse time. End of story.  
-> >
-> > What does "parsing at parse time" mean?  
-> 
-> In user space. When parsing the trace events.
-> 
-> Not in kernel space, when generating the events.
-> 
-> Arnaldo already said it was workable.
+Can we make this (const struct folio *folio) like below. Its more
+readable imo.
 
-Perf does do things differently, as I believe it processes the events as it
-reads from the kernel (Arnaldo correct me if I'm wrong).
+With or without that change, feel free to add:
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
-For the tracefs code, the raw data gets saved directly into a file, and the
-processing happens after the fact. If a tool is recording, it still needs a
-way to know what those hash values mean, after the tracing is complete.
-
-Same for when the user cats the "trace" file. If the vma's have already
-been freed, when this happens, how do we map these hashes from the vma? Do
-we need to have trace events in the unmap to trigger them? If tracing is
-not recording anymore, those events will be dropped too. Also, we only want
-to record the vmas that are in the stack traces. Not just any vma.
-
-> 
-> > When I get a user space stack trace, I get the virtual addresses of each of
-> > the user space functions. This is saved into an user stack trace event in
-> > the ring buffer that usually gets mapped right to a file for post
-> > processing.
-> >
-> > I still do the:
-> >
-> >  user_stack_trace() {
-> >    foreach addr each stack frame
-> >       vma = vma_lookup(mm, addr);
-> >       callchain[i++] = (addr - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT);
-> >
-> > Are you saying that this shouldn't be done either?  
-> 
-> I'm saying that's ALL that should be done. And then that *ONE* single thing:
-> 
->      callchain_filehash[i++] = hash(vma->vm_file);
-> 
-> BUT NOTHING ELSE.
-> 
-> None of that trace_file_map() garbage.
-> 
-> None of that add_into_hash() garbage.
-> 
-> NOTHING like that. You don't look at the hash. You don't "register"
-> it. You don't touch it in any way. You literally just use it as a
-> value, and user space will figure it out later. At event parsing time.
-
-I guess this is where I'm stuck. How does user space know what those hash
-values mean? Where does it get the information from?
-
-> 
-> At most, you could have some trivial optimization to avoid hashing the
-> same pointer twice, ie have some single-entry cache of "it's still the
-> same file pointer, I'll just use the same hash I calculated last
-> time".
-> 
-> And I mean *single*-level, because siphash is fast enough that doing
-> anything *more* than that is going to be slower than just
-> re-calculating the hash.
-> 
-> In fact, you should probably do that optimization at the whole
-> vma_lookup() level, and try to not look up the same vma multiple times
-> when a common situation is probably that you'll have multiple stack
-> frames all with entries pointing to the same executable (or library)
-> mapping. Because "vma_lookup()" is likely about as expensive as the
-> hashing is.
-
-Yeah, we could add an optimization to store vma's in the callchain walk to
-see if the next call chain belongs to a previous one. Could even just cache
-the previous vma, as it's not as common to have one library calling into
-another and back again.
-
-That is, this would likely be useful:
-
-  vma = NULL;
-  foreach addr in callchain
-    if (!vma || addr not in range of vma)
-      vma = vma_lookup(addr);
-
--- Steve
+> +struct address_space *folio_mapping(const struct folio *folio)
+>  {
+>  	struct address_space *mapping;
+>  
 
