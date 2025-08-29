@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-792506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375F7B3C4E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41526B3C4EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA9172B93
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2C4171BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A5529D291;
-	Fri, 29 Aug 2025 22:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD99C29B78F;
+	Fri, 29 Aug 2025 22:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBNs5hfY"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeI1Uyyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C3E2773D3
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0222B2A1AA;
+	Fri, 29 Aug 2025 22:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756506799; cv=none; b=g/9mhIeJ+yP9060H3RcaS136j+zok9R3QZ1jde/MVVf7fbwA7j88xRgQRSFD6x6gSHagzs/3us/RLxADtiWbd/gT8jU31OSMbmNULIN6NOUCRjYvXnxe3viIGZRhVSDtYh9D74gZAuDJ+FxkNKZ49wF/ytzeQ4X31jvCXJgsVXw=
+	t=1756506832; cv=none; b=vCSXcb3tONzlxX8lGWE4RfH9MzadJKSKN8KpuOzRbxRM4xyGxCWkBAMMYD8xWpkpBmMqSRZL9ZhsUysqOaKMArGu8gFK5AhEcZDdOitMjjhT4LB86ZCX9wu29wVzR3XdMR2zdi/4AfwvgMJjzKfFpCks03mrdUmUedM0Sq9Ic/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756506799; c=relaxed/simple;
-	bh=0wxY1cewY1ZvhfXpTsBk4/4b0JZP8Tsxj1w3A5Y71M4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bhr1TxfrImU1Cqr2Rwpy0TTe62ISGzCX1d1wsQInPgzlhmjTVwoIHWYX5TgF3WsYoONJcOVBqTOM9pYdNIxW5Occ55MPU40If2z5cRnWzoSwTx8i0If+2GwXua5wzZh1salSUsdaXFYuNw2h/lFzk9nKmDJFzhb8UYUj2QFQCj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBNs5hfY; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so1137286e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756506795; x=1757111595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wxY1cewY1ZvhfXpTsBk4/4b0JZP8Tsxj1w3A5Y71M4=;
-        b=mBNs5hfYK7pq+Kxceuu7QUq19RuooOofxBlQzeNFRYnDSccW5GOSZ0z0F0d0tcrBeD
-         cLyaZdnVb3IBWK0dDSpKffWDKvbZ7MDKCllsx+/rRX+n8+qmeV1KW+lJ+9kEzL68UUBR
-         BOXL6fqf3q2Pz68tGDvI2fRG0bSO0k/TeBPk2yp7IAo+PJlbeQrv+y0YSNtlWB2U0a8G
-         hBKRvY4E2l4b8ruSGNFBogxRZLMpukNp+MR++UBDIOmlCto0Bhvr8M1j9Luy65iaLkOc
-         jZstn58d/HaayudmBxnrxzm4vCjV0CnNZTvZ4tV/sa0cHp+pe843Xo0NzhGD7DVMRfp+
-         5RJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756506795; x=1757111595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0wxY1cewY1ZvhfXpTsBk4/4b0JZP8Tsxj1w3A5Y71M4=;
-        b=fiCOQHX8C04Rf7JdxXtxqG1aQT/hWFtdoxRnwYNLNmOZ7+iGx3ad5o7O7YgNqrjBJm
-         VSlTaQ8HFPUsYfjOyqx06t4khDbuRFyn8yEPeLUz9cxHAElXIczMLxfmLcDJLFWYTsPY
-         IY3xEG91vRJTHO0pFFQ8J5tW+PgUqVPvRcD2+KxVSawOxpvNTkoiFZ0bbhcwzCq/U0Ff
-         EgDhHZH1tpNcG8NevMcJw5ObojopIRzCvFlTM3//CGmJlBX8SuEYgy6eR5rzWtxlsCNb
-         XQ6wWGP2ETY9sn8A6uPZlQt68JIrM4lDzEulsYq7KJGxrstWEN3aNkem00JFjpYiSpyj
-         q6sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/H5/rhu0usd1W1cz+PYjMgSyMGQs3bHtqUGzLiKLoAUS/G0JYAXKaawpKeDtnWGS4oOPPnC+ut1OhzcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUc7YBO6BowA2KllIpFSDpuXpwfbACIYEWuub4HTahCbIrntxo
-	U8NiZfMiWQTGh3ZLfS1EWHhNqlLKSOhmrdHioDPVqLxIIUctv7hlD4yEy2zUQQK7WHXtW/NeKXJ
-	znO7REe5OdJ0UTRaeMh0rmykbqzdIow8J7PgDY3V+MQ==
-X-Gm-Gg: ASbGncszyPpU+rNr1RBkeeihf8AeFaHOnSwBkfYmgifL4FWEninqd6b6CWEG6L6Mu1u
-	JHsXPgVX6IwfuYYT2JVOkjx01Gq6JUCm4i8lCMxVvNJiG4xuQxDInc/QYBDgrxjBQrMEaOdmJNf
-	h1TlGb9dqcMpN6tVkoMueJo84Vbu1YX+x3FPieOFm74krZimm7cdY4QeLOjmbmGQMZTohHDW9et
-	be1FRJRfCOxb2QjOQ==
-X-Google-Smtp-Source: AGHT+IENJM3W17UfBxfWGD1X5J/SIfSe06hqmxkOMnpEu6fQZ9gf/LIwxzd5H/mcgzry4Ih0SpbYIZZoLdjS+5OjaVc=
-X-Received: by 2002:ac2:4e0a:0:b0:55b:8aa7:4c1e with SMTP id
- 2adb3069b0e04-55f709889famr48796e87.53.1756506795467; Fri, 29 Aug 2025
- 15:33:15 -0700 (PDT)
+	s=arc-20240116; t=1756506832; c=relaxed/simple;
+	bh=gW3UREhITNbhZNhXVhy/1JzS54isi8alO3SClI/0N4U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OR0jCuckKwC+/om4uA/xqjZIFiQDrlbyj1/B/fyWYk66So9zIi3gPnpxjGBQ5q9F9OZ1dggmD+qSIwnQt+CvaqDHdc6a0WjvqigEHzNyxR4RyfnYRyVXdRgGw/7AM0x5fYkwtzbEinlCHb8s/I4LZ2Lu3AylE0Mz2ZRAfKgc6qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeI1Uyyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5459DC4CEF0;
+	Fri, 29 Aug 2025 22:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756506831;
+	bh=gW3UREhITNbhZNhXVhy/1JzS54isi8alO3SClI/0N4U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CeI1UyywLphq6rbxihW3K12s6RgLJ57FMTz4eKtrVBaIOZQlRF5Mw5MGN9VZqsyUF
+	 ws1VVPK2A9Aphpeu08IZ+PBsvH/hZxYQZ/E8LlLJ2UoQZh6ZiWU7Ee+Bxfnwgu4wDN
+	 qm+ussMtaWLdi83SF8aT0+Btb7yjNB9Ygip41cIO0PmgxXzADx6IHAKLQjnLPLfqj2
+	 5eqSmq9NNuwF0+wjF3Nc60azb8fAUFVptz94yF9f9Xn6OeJKPvhEVPRSVPcQIiH9ig
+	 389Jr83bSdXVSFqVbGJ4RM5keAw6x2twpNgOifIA2xME7cb4HiY+r6PWu/R5+ICtHu
+	 LsNzjw1Q4Twaw==
+From: Nathan Chancellor <nathan@kernel.org>
+To: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kees Cook <kees@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ llvm@lists.linux.dev, patches@lists.linux.dev, 
+ Nicolas Schier <nsc@kernel.org>, linux-kbuild@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
+ Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ Will Deacon <will@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ linuxppc-dev@lists.ozlabs.org, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
+ Marco Elver <elver@google.com>, 
+ "Peter Zijlstra (Intel)" <peterz@infraded.org>, kasan-dev@googlegroups.com
+In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
+References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
+Subject: Re: [PATCH v2 00/12] Bump minimum supported version of LLVM for
+ building the kernel to 15.0.0
+Message-Id: <175650682606.3003527.17329504429724755241.b4-ty@kernel.org>
+Date: Fri, 29 Aug 2025 15:33:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812203348.733749-1-robh@kernel.org>
-In-Reply-To: <20250812203348.733749-1-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 30 Aug 2025 00:33:04 +0200
-X-Gm-Features: Ac12FXzWrFcRGoOx38Qv15P8o1KozyPxEQDiElCEqh5pWjzn0dOAl2Zk_kHqKx0
-Message-ID: <CACRpkdb4TFRReKSNadeJKy29XC1qGGOO=H0G8WLZjB9D9FjTbQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Convert brcm,iproc-gpio to DT schema
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev
 
-On Tue, Aug 12, 2025 at 10:33=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org=
-> wrote:
 
-> Convert the Broadcom iProc/Cygnus GPIO/Pinconf binding to DT schema
-> format.
->
-> The child node structure is based on the example as there's not any
-> actual .dts files with child nodes.
->
-> The binding wasn't clear that "reg" can be 1 or 2 entries. The number of
-> "reg" entries doesn't appear to be based on compatible, so no per
-> compatible constraints for it
->
-> The "brcm,iproc-stingray-gpio" could possibly be dropped. There are no
-> .dts files using it, but the driver uses it.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Thu, 21 Aug 2025 14:15:37 -0700, Nathan Chancellor wrote:
+> s390 and x86 have required LLVM 15 since
+> 
+>   30d17fac6aae ("scripts/min-tool-version.sh: raise minimum clang version to 15.0.0 for s390")
+>   7861640aac52 ("x86/build: Raise the minimum LLVM version to 15.0.0")
+> 
+> respectively. This series bumps the rest of the kernel to 15.0.0 to
+> match, which allows for a decent number of clean ups.
+> 
+> [...]
 
-Patch applied.
+Applied, thanks!
 
-Yours,
-Linus Walleij
+[01/12] kbuild: Bump minimum version of LLVM for building the kernel to 15.0.0
+        https://git.kernel.org/kbuild/c/20c0989283564
+[02/12] arch/Kconfig: Drop always true condition from RANDOMIZE_KSTACK_OFFSET
+        https://git.kernel.org/kbuild/c/65aebf6f5880e
+[03/12] ARM: Clean up definition of ARM_HAS_GROUP_RELOCS
+        https://git.kernel.org/kbuild/c/02aba266e391f
+[04/12] arm64: Remove tautological LLVM Kconfig conditions
+        https://git.kernel.org/kbuild/c/23cb0514208da
+[05/12] mips: Unconditionally select ARCH_HAS_CURRENT_STACK_POINTER
+        https://git.kernel.org/kbuild/c/e633c2e78fd1c
+[06/12] powerpc: Drop unnecessary initializations in __copy_inst_from_kernel_nofault()
+        https://git.kernel.org/kbuild/c/488954ca195d0
+[07/12] riscv: Remove version check for LTO_CLANG selects
+        https://git.kernel.org/kbuild/c/6578a1ff6aa49
+[08/12] riscv: Unconditionally use linker relaxation
+        https://git.kernel.org/kbuild/c/7ccbe91796d7b
+[09/12] riscv: Remove ld.lld version checks from many TOOLCHAIN_HAS configs
+        https://git.kernel.org/kbuild/c/87b28d71396bf
+[10/12] lib/Kconfig.debug: Drop CLANG_VERSION check from DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+        https://git.kernel.org/kbuild/c/a817de20091c3
+[11/12] objtool: Drop noinstr hack for KCSAN_WEAK_MEMORY
+        https://git.kernel.org/kbuild/c/573ad421cc551
+[12/12] KMSAN: Remove tautological checks
+        https://git.kernel.org/kbuild/c/5ff8c11775c74
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
