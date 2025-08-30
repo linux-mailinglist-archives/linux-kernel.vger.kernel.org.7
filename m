@@ -1,71 +1,145 @@
-Return-Path: <linux-kernel+bounces-793010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21BAB3CB7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:45:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE8EB3CB7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34D917B0197
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:44:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3114162B03
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B7A259C9C;
-	Sat, 30 Aug 2025 14:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B80253F13;
+	Sat, 30 Aug 2025 14:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RCGi5lHX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3eYLKvq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAC21A3167;
-	Sat, 30 Aug 2025 14:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A21124678A;
+	Sat, 30 Aug 2025 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756565150; cv=none; b=LUP0P0iHIEVIEqTAcPPGSI9BxI95ekw0s7nLn9UICKwd+i4NJMdMbujMUF9DD7l+cc/B5lO/ZvS/77JZmCv+mLSSDifWaMSVIV3yynOKpDrMZAH4A8QplwG3mnh39nY0jpjgFXFM1iPCDv6IIStwsQgsemyakUckFQBdDTth9GU=
+	t=1756565168; cv=none; b=t+nC2WPfPssVuY7b5z1O68uSYE+bOdnJ/0UnI/C+ED7pUdTRZ1oAQ3juaIImlg1vDNPg+3uyyqZz1F0okZwrWBd8Y4EhUJ4VmumQWKuF8W6tQcjNpCEKRDRtle+izL73L3X+S27Ng3VeYpq7S8C2EzXL0yDNmeGak0lMjAzpNwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756565150; c=relaxed/simple;
-	bh=77N9eaiUbR2saKPLxZiZ+DnnhTTOPxfI8shg60z7wcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1BmFmocf3dciuwig1lOCdvbj/khJO3MOH60shO5FRBxPZNhO+RG8l80ZmFkHiKC0YHB0gv+nrXTJFnD3jCjtAPF+iI9eSgOqwyTrygWDEM+2B17dB8BNQqiBiW6oI/zpk0j9WoYoL4zxW3hmKTUa5eZeo7d6Sdojl6o+Iaf6wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RCGi5lHX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=f6xpMT0Jc9ifhcsoo3+k+bCiHGLgspG/a+V5Xz3cEDc=; b=RCGi5lHXfUtxZIQ6lj+yUZKVoU
-	wDPpTNNEs14lbkbpuI8XBpOJd20CUQq+HgaqlZJo1Rw5Y5IKpYZ5I2dtUue/6PF6Hylpxg4/gneh3
-	y7kaCmnNVKbzcjJIulEuOmlfTHyQxVpw0VntoMvUOX+FKZODLAlZEPL8q6BN8E4FWCyc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1usMpb-006aJV-KL; Sat, 30 Aug 2025 16:45:27 +0200
-Date: Sat, 30 Aug 2025 16:45:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Conley Lee <conleylee@foxmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, wens@csie.org, mripard@kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: ethernet: sun4i-emac: enable dma rx in sun4i
-Message-ID: <195b5dcc-a81e-4f62-854f-5446daaf312f@lunn.ch>
-References: <tencent_C4014DA405A96C2E1E7FEFCC050BA56D5B08@qq.com>
+	s=arc-20240116; t=1756565168; c=relaxed/simple;
+	bh=q56rFoYPw+uzDNUWok+0CsPw8mUdDiBASbtSklGHAdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e/q442dNBEBm3OLXI8IXdu9mGBBHq02501xYUk8KXBMOnii2snmy7h4ECboIzsVu4Bn0KaKqYb4W/UAv2Tb/kh1ksQ+5bnJPGYR4nu5ZYCPiXtiaN/4DFRcBh6Eiio009Lt/ZctAIN976pebLnTJiIgDFUuGkhb4BPvYPOS3tuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3eYLKvq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88113C4CEEB;
+	Sat, 30 Aug 2025 14:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756565168;
+	bh=q56rFoYPw+uzDNUWok+0CsPw8mUdDiBASbtSklGHAdw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p3eYLKvqiRzY2zJ8PkaBU9LgrUhcPCgRsOGvSa78jgCoiDUz/TZqKj9pFUw64+Z9k
+	 +V76ZCYzoE9I3t7gqrm6HGcfx6Yz9Tcb7Bv2PYEUzkYwU9nV967OI2Chdwof3sk3Z+
+	 sJYW22lMHO/r5QuOVWBvvVsBshplhCsg/1hSjS64mdISktcTh66jg9laKCikmdHfF3
+	 S6+GNjz4BGCVcAzkbP2BzYUJ6hyOhVVGMljrZX6mnm9ZsySOKdVyd/pz1VdQqaTRza
+	 w5wmUGWmoi/NUM1IAur4v3WmMaZEVCaYFVx3tUigjxStaSq1n7kLu8tmZt9Zxeo0Pi
+	 KLzRxT3KXMQYw==
+Date: Sat, 30 Aug 2025 15:45:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 1/5] iio: imu: inv_icm42600: Simplify pm_runtime
+ setup
+Message-ID: <20250830154559.427969c6@jic23-huawei>
+In-Reply-To: <6utm3ywkymr3hretvru7xkdv7p7p3wtmd62blfyapmgagr3pzc@42oiakgdxmqp>
+References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com>
+	<20250808-icm42pmreg-v2-1-a480279e7721@geanix.com>
+	<CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com>
+	<20250809190609.4fef9df7@jic23-huawei>
+	<CAHp75Vc5CxOj77cw85hmioFTG6YJCe3ZJWwJsJW+QL79K8GpWw@mail.gmail.com>
+	<yegzkmvizfcxwohvkxtfguylamvlpy3hsabkxydjwhyiy3fonn@mqjqdpkpo375>
+	<6utm3ywkymr3hretvru7xkdv7p7p3wtmd62blfyapmgagr3pzc@42oiakgdxmqp>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_C4014DA405A96C2E1E7FEFCC050BA56D5B08@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 03:50:00PM +0800, Conley Lee wrote:
-> The current sun4i-emac driver supports receiving data packets using DMA,
-> but this feature is not enabled in the device tree (dts) configuration.
-> This patch enables the DMA receive option in the dts file.
+On Mon, 25 Aug 2025 15:14:15 +0000
+Sean Nyekjaer <sean@geanix.com> wrote:
 
-Nitpick: It is actually a dtsi file...
+> On Mon, Aug 11, 2025 at 02:21:26PM +0100, Sean Nyekjaer wrote:
+> > On Sat, Aug 09, 2025 at 10:27:52PM +0100, Andy Shevchenko wrote: =20
+> > > On Sat, Aug 9, 2025 at 8:06=E2=80=AFPM Jonathan Cameron <jic23@kernel=
+.org> wrote: =20
+> > > > On Fri, 8 Aug 2025 23:37:51 +0200
+> > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote: =20
+> > > > > On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix=
+.com> wrote: =20
+> > >=20
+> > > ...
+> > >  =20
+> > > > > > +       struct device *dev =3D regmap_get_device(st->map);
+> > > > > >
+> > > > > > +       if (!pm_runtime_status_suspended(dev))
+> > > > > > +               regulator_disable(st->vddio_supply); =20
+> > > > >
+> > > > > I would rather use positive conditional as it seems to me more sc=
+alable =20
+> > > >
+> > > > To potentially save time when Sean looks at this.  I don't follow. =
+Do you mean
+> > > > something like
+> > > >         if (pm_runtime_status_suspended(dev))
+> > > >                 return;
+> > > >
+> > > >         regulator_disable(st->vddio_supply);
+> > > >
+> > > > ? =20
+> > >=20
+> > > Yes.
+> > >  =20
+> > > > If so I'm not seeing why we'd want this to scale as it's a single u=
+se
+> > > > devm_set_action_or_reset() callback doing just one thing. =20
+> > >=20
+> > > While I agree in _this_ case, in general the check and return
+> > > immediately is more scalable for reading purposes, e.g., indentation
+> > > will be one level less. Also it won't require additional churn in
+> > > adding {, i.e. changing conditional line just for that.
+> > >  =20
+> >=20
+> > I like the return early if pm_runtime_status_suspended() is true.
+> >=20
+> > Andy, when doing reviews please keep the function name, as it's much
+> > easier to add the changes.
+> >=20
+> > Jonathan, do we think checking pm_runtime_status_suspended() is a viable
+> > option? Should we ask on the linux-pm list?
 
-	 Andrew
+Perhaps +CC linux-pm and Rafael on one of the patches and see if any replie=
+s.
+> >=20
+> > If it's ok; I will patch:
+> > drivers/iio/adc/ti-ads1100.c
+> > drivers/iio/pressure/bmp280-core.c
+> > drivers/iio/pressure/icp10100.c =20
+>=20
+> Hi Jonathan,
+>=20
+> Did you see my question here?
+
+Indeed not. Wise to poke!
+
+> Just ignore this if you are vacationing...
+>=20
+> /Sean
+>=20
+>=20
+
 
