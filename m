@@ -1,104 +1,137 @@
-Return-Path: <linux-kernel+bounces-793140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88204B3CF2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB4EB3CF2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3DA294E1FC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925071B24E88
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5791F2DF3DA;
-	Sat, 30 Aug 2025 19:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9992DF3CF;
+	Sat, 30 Aug 2025 19:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sKyQ16DW"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfxPb3hF"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532F2DF3D9
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFCB2DECC5
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756583493; cv=none; b=sb078WazgTRNmHScLAIvvcGxW498sRDJvqUPDnecgonTGAEpbtQpnt0dBZ/ZPRiTo0t7Hl2icD3yIESoXYjy4ElAQg4sN4r/mGtrJKYl3N3/AwcHZSLFe5QaXp/eZbMkBwaXAqCMEG3DDxjmGxSJCs/bIRAoMf5hpw2sLgqyabU=
+	t=1756583527; cv=none; b=jtm4Lv6QVlZsEEpgtBDGo8VAK0puf/FZwAtY259ExXnuncDvtCCOnhaFmFyeXpV1tKEHAOBKN6AvqKsc3MpYn4TLQX609ar6ZHjfaaILYbqr9plKOJ6KOs6xQdhnhe9+8Ua+ivMOmy0YBIATBCMCwFk2a28nx3Bh1kSyMjwGPEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756583493; c=relaxed/simple;
-	bh=zv5YaPzqC3Q4Eg1Pl/dZPS9JfeNag02J+mjC/0Xdx+8=;
+	s=arc-20240116; t=1756583527; c=relaxed/simple;
+	bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uqyDPx8YppH5BjF/bGyo4o7g3wDKqVbBlTBgntv3obHvZpl6+kljFdKfneQa+NUOEs8Z7xJYPYZq/GzHDNvzL/tJzUz2TPINA2iCq8AgcghnQlxNYePlPOoOxhlNPjPrxVbHXHvLRApfRzwRvn+860rtgo4DOpt/xyMCV2LDTJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sKyQ16DW; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f720ffe34so567330e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:51:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=ChdAMU+COQtxNtmq7oPo5Bo1LdNaMdolgLehzdnfl5jZgYeaW10nLcRYqPbvcN1fX0VngfiCJUjVq9BZx7YNVdog0ql53BURhqEhxmcdh54vHAfXZD6kL6sZ83IFibax6GmAOgeTHwdE79M61p/V1sAvZ9InGhUdSQ+MzI1fzlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfxPb3hF; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afefc7be9d4so300998866b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756583490; x=1757188290; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756583524; x=1757188324; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zv5YaPzqC3Q4Eg1Pl/dZPS9JfeNag02J+mjC/0Xdx+8=;
-        b=sKyQ16DWB/y/48kZvGMZW2Gj44Z7EnX9PqvUA+oImf0AXAcZbv5zbQQVDDFkdM4FAU
-         rXWVisKElwY6yv6rRe23FDgxfKn0NkvA+BZOQg15LdT4H0XsxpNg2+kIFBu/TVkXAJ1P
-         1+YlHWUGDxSdyzGZUQuXWRIdDxKiDD7BQW8zla6CUvG62/pr2YhPLI/EMtVDgZOQ85BJ
-         idIIClCdh1Q7cbO4MtADc1h3DCghNpqnvY6Pz6mCI5DkF/82de15vcD/WUfvWQ84nwvS
-         ytM8KzLxwIfv1qBF+dfH0BLn/4iRNsd22Z8cJLGWErrP62RmYxBSOA5LPFGr+ATWoTEk
-         wrKA==
+        bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
+        b=NfxPb3hFhQOUYlgYuzpRvMRN/TpnzwRE67fpmLupb3+CY2+lbttKSJKEdnvu1eoVVZ
+         cUUfcXPmcK60l1F+dcwNPViUaOPqX3P+mlGw+UrkRUlnBLjJcFf+ad/H/kuP5mVwrVLr
+         nR5Zqf3fFcCvT5ekvhjEMs18sNczxApetsSd1Cf01duIMqC1mdE+hfj67XACWUhM1ToI
+         dIFbHOdo8U7lkARgqwmFQ+w3H7WvymBusU0uML84jMsGwu3OTVELkwwJim48yYf8E4Jl
+         w9FtVYSruO2GAD9zCzyuKguiVHMgKISy6fPVJaLTgt64UBUMmmTDMF0kBPdkqKpdk36V
+         H2aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756583490; x=1757188290;
+        d=1e100.net; s=20230601; t=1756583524; x=1757188324;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zv5YaPzqC3Q4Eg1Pl/dZPS9JfeNag02J+mjC/0Xdx+8=;
-        b=eNA9HvUjFnSH8aLFaoDAwuUiN7pbHpOUYHtHyzLzcfgvmqR/jZyv2oqFI1j6DcUS7t
-         dNM607Su009zTwpTAAOmdHq9hRoF3vlFD+SuuUOTuiVgqxHWVrucYeCEtp4zEI8z4K2K
-         UUnIPiHffIqNtDaq8EbwZOVF6pXNefSbx06VM7yww4JlX7NKRG0SZEb6CtEhzEeCjBpI
-         sY6Ja7JcNBZGpjJTFE8S79D/Lp7xrzJtpNzQF6Js1fc6vG38UoSiTJmpvGeu2UWQAvlQ
-         tELxv3zn4s4vIQVTi8ha1mN5ZoLGDwQldzBQnlb9IAL3dr+wnUxmMBVUep4M+aZ3X7G6
-         expg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI+mKJd94BWk29EkKy4/10Yf/obTStq2sfNAMdEvNAOtpCSbClSUCGjo0q+GyXRjZ9BJimHcgNgxiASmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNSyB3HfNEF6jcp2pFe7LZ1KavCB6Gyr0vqUqbZVtuJ7/aA37G
-	25oA5v3CnFpbEvTjuy49doaUUzqK1p7fKsc5YX7GXZuku7LoqcK4ppRuB8wyTrBHL1xC9hBGSIv
-	5e3E+dYrT9orQYN8TJQgmnH10B96LYKOjSwnEJWFu7Q==
-X-Gm-Gg: ASbGncvUW0ym70y9rnPjJi2yws3jAJWu2Uo/+n77bMPktH6I72ZF047zAJgXyq4v5b9
-	yc8+BlhHl5+cgj/Hye/L8nNeS2B7SxyA3N6zxLmT8J6mhjM3p6MsY73wR/Tvk3F7BrU+6vVpJ9u
-	aK33XDfn3KyaZ0QJdwSIpKxbuJ/+7rkT7+TcKfmTNl2yO0h81J4w5FJEf49QD6eRCdsrMlbOort
-	36mRYa/+2SOvbzyIB2W8YdzjVWTBtbluNITvWth9A3WXmdXog==
-X-Google-Smtp-Source: AGHT+IHQUwwu34vgeZphW9VRaLBgPvPzIFcJJeErIWV2xc9g4g/MPBPhfaGbLPPRq/dIAxP0j9S4AWNKXDRSvv6YX2g=
-X-Received: by 2002:a05:6512:6812:b0:55f:563e:f16f with SMTP id
- 2adb3069b0e04-55f709b52a5mr577475e87.21.1756583490203; Sat, 30 Aug 2025
- 12:51:30 -0700 (PDT)
+        bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
+        b=sd/Tz5CJPNDY7YrOR9UyqAiMuDb8s7qRpinNsKIfWxt62wXpPPPkmFKyaZ5T54PAoP
+         CP6qdPP8hkx96h6WJ3OOZbiIu1uOeV8b5bL2R9r6hg1Si0iCa+nD6kcRqpl8uh7sEPDP
+         DoMP5VqE+SIsUYj/Sr0JRNjSEbq2GtAHvuF4/9YaPcRKz0oiJ6T0sj2Qzml8gEy+pBJq
+         +3LPDYYUe89JTd4E47IRCmhn6K65pxbXtGz/ElIYL8A5y0ywcP4vLfFozaSyNV+4hW8J
+         aZye2iH8wETFdJK5KR6vEsp7f2jjvavmX1Zo6mzm5uchFqhIikuHUqbLDBfYVO+VxNaV
+         WsSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBbp4tgCBoFHNNT3r4MwaUg4GbHlnL9jYKkw+VJN8RVDWPNx0ejdc1ATUGA6W/nGVzEbSYCfSFUzTwEGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVv5Fw5PiiilFPOm0rF5cChyD5R/H7SG9M1A7q1iziqQFFnCc3
+	/x5zC0jZUWfZ6iyvPTHM/o+3QYPc1wrp/xPTpAKr5kDXaFXMSST4b7+VP5wb7s2a69c6OpTqynY
+	xkwQXso9Lbg8QYMgw6vYSnNzuwCyGcws=
+X-Gm-Gg: ASbGncuI5TEQshiFqZDU6KRtla/gbnLJmp7Op/y6qrHrbj8K7K8beDz+p6Td9qZ0pHi
+	9ARURb3GoCVExu5CRgu2hZexGJKhNuCBWWe67UJgDLIeaQCy0OX+9/RktJB5ZEG47EHRPUerTyW
+	EEmMzhJID+odvrxqn+WUP6Qwgn/n5tQz6eAIH4Y7HW1uxWS6RXFnaqcDpfmeYqiRucbAliHy8j6
+	1wU/00=
+X-Google-Smtp-Source: AGHT+IHhX877Si5MHtMoKjzCPWSgDLkW4Nw8V64NkARu3mF4o1P47e3J3q86OU9aj77XdDWmr0dEwLTN59b/QLi7/Gw=
+X-Received: by 2002:a17:907:a45:b0:afe:e1e3:36a2 with SMTP id
+ a640c23a62f3a-b01d9719062mr323503266b.31.1756583523624; Sat, 30 Aug 2025
+ 12:52:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827175842.3697418-1-lkml@antheas.dev>
-In-Reply-To: <20250827175842.3697418-1-lkml@antheas.dev>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sat, 30 Aug 2025 21:51:19 +0200
-X-Gm-Features: Ac12FXy0Nl4CmsqKiiwHV9VDpEUWs4Srsi2V0nq4DWPNXB6KMNEBW8bxC3QMlqg
-Message-ID: <CAMRc=MdQY4mmfAPA2SorkjCdjpx7DSwF5rRUvnRPb9G1o5aaLw@mail.gmail.com>
-Subject: Re: [PATCH v1] gpiolib: acpi: Ignore touchpad wakeup on GPD G1619-05
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Antheas Kapenekakis <lkml@antheas.dev>
+References: <20250829010324.15595-1-jefflessard3@gmail.com>
+ <CAHp75VdF=_LQbHJozUGExCmDd4UW4oJ0-deT=aEdnQjCOotsVA@mail.gmail.com>
+ <67046EE4-FBE6-41FA-AB03-B0E01FA1C274@gmail.com> <CAHp75Vc3DHUJwA+S4PGfoZxGtdqVq3GTF6_BEnJFo+=sFMmfDA@mail.gmail.com>
+ <587AE3BE-CD1F-4160-AA21-12B875E4EE81@gmail.com> <CAHp75VeetsQ0NgVEnhic3wdUs-w0q7nQoGX4rO3aNdq8feypRg@mail.gmail.com>
+ <E12E0A91-8B9A-4326-96DD-10078BEA81F1@gmail.com>
+In-Reply-To: <E12E0A91-8B9A-4326-96DD-10078BEA81F1@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 22:51:27 +0300
+X-Gm-Features: Ac12FXyajH_8jg1RX4Lx6vnCVvT3y7aq_m2HQfI3YRqAHEiOMWhyol4e56lgN-Q
+Message-ID: <CAHp75VcHftKVQT4_X7Fc=NERzE0=U_UPvc00=P6UnBCvY6mh0w@mail.gmail.com>
+Subject: Re: [RFC PATCH] auxdisplay: line-display: support attribute
+ attachment to existing device
+To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 27, 2025 at 8:00=E2=80=AFPM Antheas Kapenekakis <lkml@antheas.d=
-ev> wrote:
->
-> Same issue as G1619-04 in commit 805c74eac8cb ("gpiolib: acpi: Ignore
-> touchpad wakeup on GPD G1619-04"), Strix Point lineup uses 05.
->
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
+On Sat, Aug 30, 2025 at 7:57=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+<jefflessard3@gmail.com> wrote:
+> Le 30 ao=C3=BBt 2025 12 h 18 min 27 s HAE, Andy Shevchenko <andy.shevchen=
+ko@gmail.com> a =C3=A9crit :
+> >On Sat, Aug 30, 2025 at 6:21=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+> ><jefflessard3@gmail.com> wrote:
+> >> Le 30 ao=C3=BBt 2025 10 h 39 min 20 s HAE, Andy Shevchenko <andy.shevc=
+henko@gmail.com> a =C3=A9crit :
+> >> >On Sat, Aug 30, 2025 at 4:55=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
+> >> ><jefflessard3@gmail.com> wrote:
+> >> >> Le 30 ao=C3=BBt 2025 05 h 15 min 23 s HAE, Andy Shevchenko <andy.sh=
+evchenko@gmail.com> a =C3=A9crit :
+> >> >> >On Fri, Aug 29, 2025 at 4:03=E2=80=AFAM Jean-Fran=C3=A7ois Lessard
+> >> >> ><jefflessard3@gmail.com> wrote:
 
-Andy, should I take it directly through the GPIO tree?
+...
 
-Bart
+> >This can be made in a series, so the order will suggest the
+> >dependencies immediately.
+>
+> Agreed. Series would then be:
+> 1. attachment list + to_linedisp()
+
+Let's see how it will go, but I suspect that to_linedisp() still can
+be separated.
+
+> 2. attach to existing device capability
+> 3. num_digits attribute + ABI docs
+>
+> I guess this should be an independent patch series than the tm16xx patch =
+series.
+> Isn't it an issue to submit code without a real user? I mean, tm16xx woul=
+d be
+> the first attach/detach consumer.
+
+Make a cross-reference to each other in the respective cover letters.
+(IIRC, it's possible as `git format-patch` gives a message ID, but I
+might be mistaken, and in such a case just make one reference without
+a URL to lore archive)
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
