@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-793066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141F8B3CDA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFA1B3CDA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCA02017B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154E71B28317
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6822D24A6;
-	Sat, 30 Aug 2025 17:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD92D3724;
+	Sat, 30 Aug 2025 17:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qkw891aE"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUzq/5X9"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803CC168BD
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BC02765E8
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756573282; cv=none; b=JXQbpfWOQLNVuko+3WPwNlQDrOnHRtSo6p6H2Ev+HDGFPLdUExrezeKwp5j1/FfvsDQNjMDFBjHBbdxBmWsnLElF7Y7L+3Ev8+n4uJD/b4V80TFw6qP5XUQA27ussRNywt7VDhUpkdCJeJA0T99YHN2BjTV+C6pb7teCF9zXwhg=
+	t=1756573282; cv=none; b=GBF+kmJRztfeyJ2harbPycCZmxWpNmM/4Bj3c/88f5qok6pzD4zx9zgMCgAnNHt3mLSPJTUmHn8ATbukQ476lG4IDKTUcywIU8eKyouqjfa8o9lVvWBTYqr0bjZjmI5NkVeWPMi1sK6aU5mBEo+gKKWBuCBJKSW9ND3FZL0Kkvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756573282; c=relaxed/simple;
-	bh=RPUJbg100xa0IEvnoF3u1mdVLmvj7pTfHeSRkyLDqeE=;
+	bh=QqWeYHPVLq//RwXvGMYa4TqqaGs9IG7D/NPVlveQnRw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u7rJGI4zo4YhSh4ZZt7r6lZNQ1rR5R1TJ9DXdrUcdY0SPRP5Fn+4hOsW2pjCzGExgGe0ODFHyU5upGx0lNSP0kY1oiWqVc+rTOfL/m7sJpbVGnUjqHPrUIBvhxSpfzb/fUl9etnlOKz9Elu0UR0/ATjS/YTwvMt+pU+nJIbs0qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qkw891aE; arc=none smtp.client-ip=209.85.218.47
+	 In-Reply-To:To:Cc; b=cUB0PazQTiav8eYU4+10XBrM/1tdtkKCHqEqCK36EkD73xxryD+xM+rurbElu6hNCaz8C1vnBZBlHA+8g9NaY/yPlhCTZj8DgF5kQ2pKTNZgNbn6BluPHck6d2lbpxnL/AVdfzCbIyxRbYa4Ge0XTN75Iw81btKHMq4sRCyxeRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUzq/5X9; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afe7f9fdb96so41301066b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:01:19 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cd63fa0c5so470376a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756573278; x=1757178078; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756573279; x=1757178079; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RdB5MqNC+p3bmf/ntWx5h3e+QQrokyQ+em8wO8bj1sc=;
-        b=Qkw891aEUEZdoBQiqvMPCPc7lWTnfMqpIFI1KYxLzvRDWLJwVJ7sPHL+86IPyNk4lK
-         iSxhk6SRsUe5HEtZ3dW3dmGp2B6Q0ouKJtdKtqvhn2zvgc/t+49M5i2l+pM2BtIvaoew
-         RInTEqvYd11YgeHf3dgEb4huPTqSFMudmceaNutoEVcv7FFK1MMpsHMxEn0+sPAbctWk
-         ppovUgoXnZVvjcoDdsQxEl6vFbI0p7984QowvvLdIL53uRxtrzA8xyLLl77ZUuNrT0H1
-         hRMCexZOjkn4PY/a5tArVtkRwVsu2SDmCcJQVx2aWVUd5jLWqa8ItwGTtKjmjTdTES2c
-         N6KQ==
+        bh=us4cNYtwID9TjD04hpr8jvahpWc5vnsHqsFH+7B5S9o=;
+        b=iUzq/5X9hNih7iqFPuvguQ7PFD4kSeI5uFGlsl2iNAQIUJodJfZI4N2cHpQi6VG9Jb
+         XR7LqETcJxY9wAQJXh7tYEkTSbqjaDutnMiIkv7obGlcDX2/8xb85TiI114ogCm6UiCp
+         JIQO9XbW5BLXHiMFlGY/vsBWhL14Iow2IR3NO54JB8wrLMVYSRfSGicS+cqv3fv27g5J
+         xte+yj64uz30XRpvXE9G0oe9bYyfNNYxBKeZPk82YlMasBIeoQjfgT++xVdSGFjfM8po
+         lQb0TXG1jlPt076XP2kaX/kHB8vba5HZ/LuaGdyYXLSGx0u7/1o5otvTIYm0iByWYTtG
+         k+5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756573278; x=1757178078;
+        d=1e100.net; s=20230601; t=1756573279; x=1757178079;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RdB5MqNC+p3bmf/ntWx5h3e+QQrokyQ+em8wO8bj1sc=;
-        b=aPCstdWSwADhgYFe0dO4/McRBYpidzdUSshnFnx8MJDB08gIXwefxDY8yTOxnxIJvt
-         Mxo0J4dUGIBVA/itdoHy2G8AtrxtNuWJ5uzV2kiAYFoRnqTIOpJUHfcT7nClYoSwnrVV
-         tWQ6WV6TUYQzXcwMnOPsMMY9dJvq989teXhz4tQBgCC5i21tuCldIeyK7j0AGi4gFElW
-         aR2xxlG6StprPt0TluoK5TaQbcXF7D9+6nDSFvl5OMnaYrJIR+RdPwi5C/QY0x9NVopX
-         /WbyBm42FGwx5BrDetM6PVo0h4R/MMUvOGBcNihnk+tGffG+zMV58XMViwm4vUk4PxRe
-         YU0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXyPVdb0zvGuWEYbhZusEM6pMpHo0ZM9HPyn3GurpMTfCxd0acb7qvpUZaw+jQbAEVZwLHe8s6DnSvGppw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5FeZOArxtz/fXXofPmiX4XDvyKDPiJHqM6W/ec/UEXWxD/khX
-	NzVrc6/YN+n8ze06No3i+Y8w1OoWBzXUxXWgYsZh4K/pcdsSKFB5KUy32HSHGYtKFbc=
-X-Gm-Gg: ASbGncuPHuX/aF+ML4cC6di+tm0UVMl7pOWaofo+8tLJLYThdX0WkLu3Wn3VELB6r7t
-	nWP5byIfaI8XFBxftEHwdSC7p0xpMgyVkSydf1lpfsnFcAhQkoMU3E4Z5GWj+XvTf1mF//7n7ff
-	LbIf7OtAMNjad3wQKSRbiikBVaEOMC9i4ETd5WAILw92B2CEnSJoMzxlMsirT41nP2LRGGYNd63
-	fc90VRJNe6N6dgisC+btKvPKRS6KoAKyM5bRELQkRc3BiIpepqFMps4ucRAIzrIooHPxHgb+rxe
-	6wYzV2TbxNcsK9tjQD/ioEI9NUFWpuTbUG8HKkgc+bjW7qKbUkg0W1xk2CK2Wh1RNe2pEJnydzb
-	n9bDGA0nF+OX2pBtHxSNUYKt+rLatsZxIoCYFB/RUl3TMNaTDAQ==
-X-Google-Smtp-Source: AGHT+IHe++mZhWzLj+V2kR1/YfRvNVOIAhKLNUILUb6vPmc6HP8S/l0mFC1K58GUtxiQDbdzEfLucA==
-X-Received: by 2002:a17:906:9f85:b0:afe:ae6c:4141 with SMTP id a640c23a62f3a-aff0ee05414mr274464566b.2.1756573277761;
-        Sat, 30 Aug 2025 10:01:17 -0700 (PDT)
+        bh=us4cNYtwID9TjD04hpr8jvahpWc5vnsHqsFH+7B5S9o=;
+        b=aJzHsEwWyughHOZ5JqeXJ10rARJV1mAYnwGSNcbulYC8FVGsQycnfbBM3afwbGvXXy
+         FamFjA9nuq+4Oc9DvKN9r7GaldcW21wh+zg7ex/ib3i7ER0TaK0G4oZUihA5vhq3j5wd
+         A6gf9nNKn9tNurSrcLp0cJYBr5gzf0QdkGUT+FI8fJ9tqsddaqWogGIdVLmgB2F/s3DB
+         waU/ktUVjMMwywvSFmBWwGQMzmcVHDgqopjvopJO61B8TEyafkaItmqXMm00ZnVbVKio
+         39ljSDZ4dFDytbuYwnw5gufNMDtBGZ8/ApAHQHbkflGes1tn5Gw3kd7Nb4eqvLsvSVgO
+         Udhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZVbJZMVlD1YOmHdnspQoIMRHC7AdE2AvreiMS6d/p1WS5TlKlsc1sdhZtz4+QNKLSNW74uaTr0BBnDQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQUaaP66jgXj5Jgr32I/9S/w8objnVTMhCp/TWPsdTVitq6Swl
+	uxLVTb170MSFxioD45sY7yKk4qhtYuhkJosry/naIvZi941hBrV19K4EmH6kiOnMxAvqKm0Lh9I
+	XvefR
+X-Gm-Gg: ASbGncsN+DeBzAsIg3b+lctVBF5+th04MpDjpWtGqDVM2oh5n17Aj0UauixPXZM7nWR
+	eXVMu4CYTviPHQwZVAFGXAmwaTEXNzgsEnrogikZO7JPoRJHjYUUz+KKYqkCiHO1tX4S29cYTX/
+	j5YR30Xp/eEQVZmWRHLT1/gqjg5oDt+GcDpIw9iPuXpXy5G1NzNBpXcIBE/uRs8i1K25SG02No6
+	JRYrIFzn043RSQBZrwlNvhTy3lVCRTAk3Q3nk6We0RHMKmo6xt0PI2JJuTB1FNuQ6hRoypa8hby
+	dPPj2icA8tu1D5zqYPPvDhcpzk15ql8HzOPY96Eomg8H9M9oH1RoIde8fqjxMV6H6UJGq0Xi1bM
+	7klm9rS/BIM8PGe0p0Fwd6oyYkN/k0cq5jT0CN0SGlxUJ0w17VA==
+X-Google-Smtp-Source: AGHT+IEa1VI1o8sCudVEZfhZ3gaC0zyMofPPT2ZBfSOCrdhwJHioZOMNxGzq3r24F58nX/VQxYQy5w==
+X-Received: by 2002:a17:907:7e99:b0:afe:af91:2e54 with SMTP id a640c23a62f3a-aff0f15c2c2mr290241666b.9.1756573279207;
+        Sat, 30 Aug 2025 10:01:19 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff12a6b404sm309038766b.88.2025.08.30.10.01.16
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff12a6b404sm309038766b.88.2025.08.30.10.01.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 10:01:17 -0700 (PDT)
+        Sat, 30 Aug 2025 10:01:18 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 30 Aug 2025 19:01:09 +0200
-Subject: [PATCH 1/4] mtd: rawnand: s3c2410: Drop S3C2410 support
+Date: Sat, 30 Aug 2025 19:01:10 +0200
+Subject: [PATCH 2/4] dt-bindings: mtd samsung-s3c2410: Drop S3C2410 support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250830-s3c-cleanup-nand-v1-1-05b99ef990fe@linaro.org>
+Message-Id: <20250830-s3c-cleanup-nand-v1-2-05b99ef990fe@linaro.org>
 References: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
 In-Reply-To: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
 To: Miquel Raynal <miquel.raynal@bootlin.com>, 
@@ -96,103 +97,95 @@ Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2620;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2133;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=RPUJbg100xa0IEvnoF3u1mdVLmvj7pTfHeSRkyLDqeE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosy5XzOuvSuRgZYrPBWhcA/8cx0Ta1ZMMtq3VA
- U97dWTDNgGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLMuVwAKCRDBN2bmhouD
- 15CkD/9SA+hmrUU/1U3lo3ofl7xEfszMtOVsHre48VzovCwtJVbvY66wq2HilKGrcKVaCJzaThw
- /0pxt9R8+UI8qBpXmErjOiZoOSArSvZwnPrY2IQiynNufwCqsoBkvKOEuIaOtPTOJnsxkJKCk4H
- x9fLs6FX74gWPS9K38wmcebzL+rWDEy+oVtVB+L78jnjI64mH4xo2bv8HKnBQa9ZfCL1LdLNMbR
- d8VElMJoGEsZkOOZxR/stuuVdZD3dXombq/YjrCw2nRpJtyLap6CcTg5TmpVKGL35wdcmXI/OZI
- MjekuYui0ID1Ft43KT0xlyAQUK/IoESXLBVRuIUChjCFuyEuP7RY1u50r+ETJDQb7y8xTWHBE/D
- ZKRpBXP5BP8IiclImSst1JMUfKoM8+gzYSgQd/mOxY+iiUHv9Gb5j/hzNrkI4XBakbHWlHXd+C+
- ndvykMkA5Ymrasd+5bVN6fSUaY0gMUeu8vf+X1Zo4XP4fdMl6MlC6XXSAMvmwO39AxEt8zKVgZm
- dDoFqaKhVT0CHbg2mQfgG8Wr9wGRZ3Rwo5r+mqebEQ0E7kQ3Y9i4h3c18MrGoGn2HVRYpD/mYee
- C1izWKtMDfyU0Yhn1qP+CovK8XgHtSzrkczRxDC/VAivNBM4SJcrnRlUJt0qeZTRqoRew7wjkQu
- 3z+KzqjjHeF0x4w==
+ bh=QqWeYHPVLq//RwXvGMYa4TqqaGs9IG7D/NPVlveQnRw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosy5Yy3SpNOt0HGF2AczXJ3AfabDf8t8/xXbJl
+ wARVHKMzUqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLMuWAAKCRDBN2bmhouD
+ 179DD/9+2t3OdNYd4i3brhoOrz4Kyz/N483Dm/aOqEzp3IwdOT6Jo+xN65Iw6AYjfqprAWKoy8Q
+ 4Wb0iynxRE7k+s0vA4+B+Oz7PB88lqEIrVPQyv8qRuRrUXV2tMUMB3Lyl93ky8xPOVoI36Dg8W8
+ ATsAenaLvUrsH6Dt6xn1Ivx0Au5J3cnA420wk5GAK/Wtapt1rj+o0WjKL/15V9nIehpsY9qO5Hr
+ ZG9w8rv/vZuNdlqrvv9JKvpqWniEcdj88JcjyzuxFkKSlTPrSUU/M4lLJpc0BY2nTJWpaXHh1XI
+ GVxWW12/Mqeru3op0jgKXZW1ffB/36DS5koHwuQOkIx8vQ8FA7jc5e76pL8R7vFU2f29iqtyDsc
+ 2BmKuq/m391sk3V/C6GCUeP1LaFgiaFLsi5hJZ3ml49u4lnyXcBH5c+ZhjjlTJ6KNiD1XBStNcI
+ exXQrh9LaigQgHWkI6kFbAwoU8tuDjcUzZAWrlSbV3JP/wGvDk5O4n4pTTNmrQxrQv3/hauBQ13
+ PLdI7t355zMZna0djeTokra2SWNBuqEMRAx4fO8vYHNEogO9yyXMQ43u/Ax1nwFOqFPEnydUV8Z
+ RDhoecH3Oc+LKFPgdCbAJZV8a3O7P1lFx8hFBUdvgwKAzhoyzdFv0SU4VdhyConflzyjHdFozOy
+ hSPZD7UNMnmIdPw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Samsung S3C24xx family of SoCs was removed from the Linux kernel in the
 commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
-2023.  There are no in-kernel users of its compatibles and platform IDs.
+2023.  There are no in-kernel users of its compatibles.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/mtd/nand/raw/s3c2410.c | 38 --------------------------------------
- 1 file changed, 38 deletions(-)
+ .../devicetree/bindings/mtd/samsung-s3c2410.txt    | 56 ----------------------
+ 1 file changed, 56 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
-index 229f2e87d56eeacf5fda0ad29df59655b328658e..33130d75c5bab709a3e5cfd6e95b273cf62e4d46 100644
---- a/drivers/mtd/nand/raw/s3c2410.c
-+++ b/drivers/mtd/nand/raw/s3c2410.c
-@@ -169,18 +169,6 @@ struct s3c24XX_nand_devtype_data {
- 	enum s3c_cpu_type type;
- };
- 
--static const struct s3c24XX_nand_devtype_data s3c2410_nand_devtype_data = {
--	.type = TYPE_S3C2410,
--};
+diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+deleted file mode 100644
+index 6354553506602d452acd02dbac48c854b8b59cbe..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
++++ /dev/null
+@@ -1,56 +0,0 @@
+-* Samsung S3C2410 and compatible NAND flash controller
 -
--static const struct s3c24XX_nand_devtype_data s3c2412_nand_devtype_data = {
--	.type = TYPE_S3C2412,
--};
+-Required properties:
+-- compatible : The possible values are:
+-	"samsung,s3c2410-nand"
+-	"samsung,s3c2412-nand"
+-	"samsung,s3c2440-nand"
+-- reg : register's location and length.
+-- #address-cells, #size-cells : see nand-controller.yaml
+-- clocks : phandle to the nand controller clock
+-- clock-names : must contain "nand"
 -
--static const struct s3c24XX_nand_devtype_data s3c2440_nand_devtype_data = {
--	.type = TYPE_S3C2440,
--};
+-Optional child nodes:
+-Child nodes representing the available nand chips.
 -
- /* conversion functions */
- 
- static struct s3c2410_nand_mtd *s3c2410_nand_mtd_toours(struct mtd_info *mtd)
-@@ -944,22 +932,6 @@ static const struct nand_controller_ops s3c24xx_nand_controller_ops = {
- 	.setup_interface = s3c2410_nand_setup_interface,
- };
- 
--static const struct of_device_id s3c24xx_nand_dt_ids[] = {
--	{
--		.compatible = "samsung,s3c2410-nand",
--		.data = &s3c2410_nand_devtype_data,
--	}, {
--		/* also compatible with s3c6400 */
--		.compatible = "samsung,s3c2412-nand",
--		.data = &s3c2412_nand_devtype_data,
--	}, {
--		.compatible = "samsung,s3c2440-nand",
--		.data = &s3c2440_nand_devtype_data,
--	},
--	{ /* sentinel */ }
--};
--MODULE_DEVICE_TABLE(of, s3c24xx_nand_dt_ids);
+-Optional child properties:
+-- nand-ecc-mode : see nand-controller.yaml
+-- nand-on-flash-bbt : see nand-controller.yaml
 -
- static int s3c24xx_nand_probe_dt(struct platform_device *pdev)
- {
- 	const struct s3c24XX_nand_devtype_data *devtype_data;
-@@ -1194,15 +1166,6 @@ static int s3c24xx_nand_resume(struct platform_device *dev)
- 
- static const struct platform_device_id s3c24xx_driver_ids[] = {
- 	{
--		.name		= "s3c2410-nand",
--		.driver_data	= TYPE_S3C2410,
--	}, {
--		.name		= "s3c2440-nand",
--		.driver_data	= TYPE_S3C2440,
--	}, {
--		.name		= "s3c2412-nand",
--		.driver_data	= TYPE_S3C2412,
--	}, {
- 		.name		= "s3c6400-nand",
- 		.driver_data	= TYPE_S3C2412, /* compatible with 2412 */
- 	},
-@@ -1219,7 +1182,6 @@ static struct platform_driver s3c24xx_nand_driver = {
- 	.id_table	= s3c24xx_driver_ids,
- 	.driver		= {
- 		.name	= "s3c24xx-nand",
--		.of_match_table = s3c24xx_nand_dt_ids,
- 	},
- };
- 
+-Each child device node may optionally contain a 'partitions' sub-node,
+-which further contains sub-nodes describing the flash partition mapping.
+-See mtd.yaml for more detail.
+-
+-Example:
+-
+-nand-controller@4e000000 {
+-	compatible = "samsung,s3c2440-nand";
+-	reg = <0x4e000000 0x40>;
+-
+-	#address-cells = <1>;
+-        #size-cells = <0>;
+-
+-	clocks = <&clocks HCLK_NAND>;
+-	clock-names = "nand";
+-
+-	nand {
+-		nand-ecc-mode = "soft";
+-		nand-on-flash-bbt;
+-
+-		partitions {
+-			compatible = "fixed-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "u-boot";
+-				reg = <0 0x040000>;
+-			};
+-
+-			partition@40000 {
+-				label = "kernel";
+-				reg = <0x040000 0x500000>;
+-			};
+-		};
+-	};
+-};
 
 -- 
 2.48.1
