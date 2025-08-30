@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-792907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7646B3CA49
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:40:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C8B3CA4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FF181BA502B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7157B7109
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D3F27932E;
-	Sat, 30 Aug 2025 10:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD742777FC;
+	Sat, 30 Aug 2025 10:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U+pYRvpK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93545214210;
-	Sat, 30 Aug 2025 10:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943C423D2B2;
+	Sat, 30 Aug 2025 10:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756550425; cv=none; b=NXT+QENYGLtCOuL5F04hYI0n3Qa/Y7b3EQ+HgxgVOqFsQ+heydWEhPGmcF8wTYVs/5d8n/3K3Xf5Av+mWT0/mroEnCC3K9tf+eFQIn6QV20WZhwGAdWxPLc3X98B9of2dXqCQHDWhMVqxpeH56ti+qliff/zcqobxOE6hM/9m9A=
+	t=1756551193; cv=none; b=NUdJMpXUQPlGfzTUHjaJ6LeNX12DcfOZVrkZv/QaUpFtbDruMAPaNVWZvyTTeJppRw8QBT3oTVHq282JG/baEm+a4+OwAtyadC9s4fqssfx5svO4+mB5rOik38v3BrQMUmSBk8stRzmGbq6Bj9aZ5S4Ci++TYPmYqDQR8Jj9g2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756550425; c=relaxed/simple;
-	bh=/62749aihceIgpYQkDEHeQ8sd32ZhVe24/vUiF0utGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=teb3Zdc+GDHrb8cbkPWORf0cpgzMP+YP7sQ8Bm+4OGTz+SJCVCShg075aBii2Bzqk+5nDWCUeUFN8+bNGgGoGTDr5mNQK46Us4Hfld0HEXx0bZsbcakYunuUKdqCSgQkrDKsjiCEfwidTRr9MLw8attXcfoeNax+L3UzkOHKmis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFFBC4CEEB;
-	Sat, 30 Aug 2025 10:40:20 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Kevin Brodsky <kevin.brodsky@arm.com>,
-	Kees Cook <kees@kernel.org>
-Cc: Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Yue Haibing <yuehaibing@huawei.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	David Hildenbrand <david@redhat.com>,
-	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
-Date: Sat, 30 Aug 2025 11:39:33 +0100
-Message-ID: <175655035973.1114907.7025015988406384082.b4-ty@arm.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250829190721.it.373-kees@kernel.org>
-References: <20250829190721.it.373-kees@kernel.org>
+	s=arc-20240116; t=1756551193; c=relaxed/simple;
+	bh=6tj5SitoC1vZtWTu4pzefYAXr8XTw577Ykpl6aPWOvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4+3D663PD2hyruElKGWj7OfhSruCQeEIWmDM2sWDd1aUOt5UtjTs5/pCL+YTzNUuRB6ABRe4h9LyRAdP1vQGgK2vqhDXTDasqjmefFyy4n2je/dSA+WkyyRYnZngNxDx7toEvW7U6QlZrj0pVburXabNeQomh67udSE98raNcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U+pYRvpK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9357AC4CEEB;
+	Sat, 30 Aug 2025 10:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756551193;
+	bh=6tj5SitoC1vZtWTu4pzefYAXr8XTw577Ykpl6aPWOvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U+pYRvpKzsTu6o15jK2fsAJPwuEkT3sUmuwBc4S/FVggsu82i+pBPakOb7DkEOXRY
+	 2gLVu+5txMrQxmLfMgcQ7Dm4xSrkgEKNmvVHDO4eP1sgQ7gkzvPFcWpEiDUfVqiDig
+	 IImTuYJvrOaLCEzL+wTNIJU34mJQCMz+cTkM1h0E=
+Date: Sat, 30 Aug 2025 12:53:09 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Max Schulze <max.schulze@online.de>,
+	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	David Hollis <dhollis@davehollis.com>,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	David Brownell <david-b@pacbell.net>, linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: usb: asix_devices: Check return value of
+ usbnet_get_endpoints
+Message-ID: <2025083031-lavender-rebel-ee20@gregkh>
+References: <20250830103743.2118777-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830103743.2118777-1-linmq006@gmail.com>
 
-On Fri, 29 Aug 2025 12:07:25 -0700, Kees Cook wrote:
-> Seen during KPTI initialization:
+On Sat, Aug 30, 2025 at 06:37:41PM +0800, Miaoqian Lin wrote:
+> The code did not check the return value of usbnet_get_endpoints.
+> Add checks and return the error if it fails to transfer the error.
 > 
->   CFI failure at create_kpti_ng_temp_pgd+0x124/0xce8 (target: kpti_ng_pgd_alloc+0x0/0x14; expected type: 0xd61b88b6)
+> Fixes: 933a27d39e0e ("USB: asix - Add AX88178 support and many other changes")
+> Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
+>  drivers/net/usb/asix_devices.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> The call site is alloc_init_pud() at arch/arm64/mm/mmu.c:
-> 
->   pud_phys = pgtable_alloc(TABLE_PUD);
-> 
-> [...]
+> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+> index 9b0318fb50b5..92a5d6956cb3 100644
+> --- a/drivers/net/usb/asix_devices.c
+> +++ b/drivers/net/usb/asix_devices.c
+> @@ -230,7 +230,9 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
+>  	int i;
+>  	unsigned long gpio_bits = dev->driver_info->data;
+>  
+> -	usbnet_get_endpoints(dev,intf);
+> +	ret = usbnet_get_endpoints(dev, intf);
+> +	if (ret)
+> +		goto out;
+>  
+>  	/* Toggle the GPIOs in a manufacturer/model specific way */
+>  	for (i = 2; i >= 0; i--) {
+> @@ -832,7 +834,9 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+>  
+>  	dev->driver_priv = priv;
+>  
+> -	usbnet_get_endpoints(dev, intf);
+> +	ret = usbnet_get_endpoints(dev, intf);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Maybe the boot loader passed the MAC address via device tree */
+>  	if (!eth_platform_get_mac_address(&dev->udev->dev, buf)) {
+> @@ -1256,7 +1260,9 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
+>  	int ret;
+>  	u8 buf[ETH_ALEN] = {0};
+>  
+> -	usbnet_get_endpoints(dev,intf);
+> +	ret = usbnet_get_endpoints(dev, intf);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Get the MAC address */
+>  	ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf, 0);
+> @@ -1609,4 +1615,3 @@ MODULE_AUTHOR("David Hollis");
+>  MODULE_VERSION(DRIVER_VERSION);
+>  MODULE_DESCRIPTION("ASIX AX8817X based USB 2.0 Ethernet Devices");
+>  MODULE_LICENSE("GPL");
+> -
 
-Applied to arm64 (for-next/fixes), thanks!
+Why did you remove this blank line?
 
-[1/1] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
-      https://git.kernel.org/arm64/c/ceca927c86e6
+Also, how was this tested?
 
-I added the acks from v1 directly as there's no change.
+And you forgot to add a cc: stable?
 
--- 
-Catalin
+thanks,
 
+greg k-h
 
