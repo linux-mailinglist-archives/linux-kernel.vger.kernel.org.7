@@ -1,199 +1,104 @@
-Return-Path: <linux-kernel+bounces-793015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB7EB3CB89
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D501B3CB98
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2C71BA5CCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873BE7C4D1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B73274FDF;
-	Sat, 30 Aug 2025 14:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E11246BB4;
+	Sat, 30 Aug 2025 15:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVeSlLXh"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAOIyAOT"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AEF38FA3;
-	Sat, 30 Aug 2025 14:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5526FC5;
+	Sat, 30 Aug 2025 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756565668; cv=none; b=CwVmeW4F84c7LUdCbpaJiT7YBky8X3XvyxrZKgVeknSvsGFv5Spl7LVXkWh7fIpv5a1w7nFXN4uel29tXFrVDMw9zz26rrsgDAmOq+p6aciwzHL0dfyoUwNCtxCnYX40DMLEY9o/P0UHA4d3vj+FCPb04UBrkzM64kfj7SGJbYs=
+	t=1756566053; cv=none; b=aM4/6MumEYa8J3t6QBliCjB6L9GyiakyttGpUYu247gLZ1vHoKfFleuuQIdQliZg9nPn2XmNsA1uXNN96Aws13BLvuPJT2jUqWKWQlNNcaB1sX4E312YuJ51me5peq/4KmJXiglqPHaOL5QEYAwGbCquFGdZXuYBkwXYYst/dzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756565668; c=relaxed/simple;
-	bh=Ktw75mdgog7lpWnXaRBkLz8rtk89mnPwavSmf7wrlDQ=;
+	s=arc-20240116; t=1756566053; c=relaxed/simple;
+	bh=LLOL+fmqYILSTDi8SlcB393oKMhsEt8d7adREn/sdDI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nBdXoPdvuUiAWQgFkdWmanxynyovRZplodULY7GGna/X1RFb/J5wfMTVzg51Th9MXaP5ZB34C6LowsPG5+tjDQLepIZu0amIC9Y8MzCBsTXyKlxd4yW8MxrsRY7pRw+UjQooEIWf1e17PZQnD4fUfPTAHa4KoSYy2d56XD7I8+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVeSlLXh; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=fKscpUZkmRrBHJu4OZ2kxqnt5lZRWnsCEBm1iP6gCm8LgbEdxyMQuKSZ8zy/aZ5QK2R6sczLAjBGGKN6BHfaAcW24MfQKa1sDk2WNjD747bDEZgQYZkl1+mrinK7htqcmMutfvHI3H9u7g0TP1UPUR5bF7a7bpZ+SFt/aLypnT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAOIyAOT; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb732eee6so512973366b.0;
-        Sat, 30 Aug 2025 07:54:26 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d5fb5e34cso28902337b3.0;
+        Sat, 30 Aug 2025 08:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756565665; x=1757170465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756566051; x=1757170851; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3tOIHNc7+Xm606U1xeGw8vLOtsuxUzz6dPPPykxIfKY=;
-        b=nVeSlLXhsUq23EY7LXh4/yD37y11+bZg+8pMsyB7TO4abU0jm4wIyNXhHaKfmcQpKJ
-         yQ3DRc+LT7/nNN58ZKcviKJEWqAdSuQ/n3Bver8MemCsU+SvwFOY81kfMlndW43Mh9Jk
-         DpfMQpOESsmLrCEogp6VkGVdXeCBM+7Hxh5aVR14rQ+px6adWrE7IjDLyfH8HGNwNJRF
-         bFl7a7NYjSrmayRzxhesYriQNBrGK71xUTw6ib00UtyKehChcuyFqhirLVPHXJ8HEWOG
-         nMO7L2MRnPGGt5XpY2+mmrVfxtzpM9LnIlqWN21scGeIiTlIx6rrQbOCG6sgB/Itue4X
-         kOnA==
+        bh=LLOL+fmqYILSTDi8SlcB393oKMhsEt8d7adREn/sdDI=;
+        b=fAOIyAOT/ODl7rMqDMTVqlYcZlTvjeIBGNOCpDddtLvmescjgg0Lz4x1M5j4UsYkK/
+         l8R/gwAURVYcsNK5QLNJR2pPMlByb+6vMVaRzisPcoP+kxj+GJTOTeUv4+0TRDDLktjv
+         SokW4jbOR2PzsWYCDvPWMEy49Urp/wpSfvoic7r46KIHHmj7EYk3ZnxG6yZzQzpyCSub
+         76d3gSsfDW0bl0BZ6UjwNDrOXIj9ni0qrDtUsFf2t8v/7gHLgZV5i/s+hovqePfzHI25
+         IS7iYF8Ib9W9FLuRW2Q/f0mmSp57qD0ezQyCU8bdV19oyC5+pDEomH88cqFySfDw89sL
+         yGBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756565665; x=1757170465;
+        d=1e100.net; s=20230601; t=1756566051; x=1757170851;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3tOIHNc7+Xm606U1xeGw8vLOtsuxUzz6dPPPykxIfKY=;
-        b=r85cSMC+mjjNbA0/bwYIvNVIe8dwS1/3pDTXfjSp11JiFvOKXrQhC5TzzTnB8Z3LHN
-         KFvfcmqNNtznfisvTGs/xniKid3+UZEIiMmMdVxF8Ap9eKNfcj25PW2niPf4M3daufsG
-         RuOhM4VYgP4I46dp++Gll+QBcmYu2sfX13yhcMTqfBSpX/i5Psm6FIH1NtINJ1oyo+BO
-         +gbUXfEPs0RyWJ//uQ+lr8D9I/Z+j9sSPCtgLZPUv5jZTcQSDsx6YbICK6TczdavbeYq
-         gaxZkt+hhv/FxtDGnkzk5zur/x6ZUQgGLM49PW3pD1tBmYRwFJQZAhI8R+05/PJ16TQs
-         zhpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNaiKqjypWu4zjsnbrLeX+M38hRx0pl+wdRF9LL5wNIfH4vQaJKhvK/ua5wZcBKHQnHzCvgKXMAmE=@vger.kernel.org, AJvYcCX47gPEMUpbTwKGPVFu1Uwjvzf+zokz/116xIXmp2/7s30+5AYe1hHqRFpaeY7qKLCXPoGpva/9r8R802cz@vger.kernel.org, AJvYcCXofBCchL8I+SU9l5+bK4bg+lQ79YuMhsAgxWM/Rk8waw5N9J0NLvwrG9e+nflFdK/j/Qt3Qx1I1k8hZwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl6DzVV0dLZEWnQ6+36q169bFhQx0ozLF68+Il0lx973zv8/V8
-	CQdKOl9XXAMSpPmyvPXb+P1E0gxhS3GDrTqG2S0dlXGJs/K5cwKCnad8mIeCH2Vv9KbHPftzYqp
-	IKfIFq/CDoIidHlDRY8/cnRKqWGDkhxXnG4VRiDs=
-X-Gm-Gg: ASbGncu5Eq3byIfIccYvd6Iz+oMuFUdfRKD1gWOQ2P9b0v6mA/GehXq1o1oF9a61NXe
-	tAqKII2Lnu+x1eXUYXoQ0QB/Q0VuIjByqVlfu03OEDP+p6AA+rq74q4GXx/NORB7sUWgAEyTJ5R
-	Jrq8YkC56y2nqiRYy/tSoqybYIiei+0SStuLh+gI9WPagf6XDOFqNQShFQioZhynRvinQ1mGZgk
-	8cKKbM+BOhf33KWKw==
-X-Google-Smtp-Source: AGHT+IFwdZqt/Wq4ulKY8e9OOu9ijK7SNwFHKSVFr/qfBWbsTAKx2Uccs6636FED6mSy0b8oU5RE3PY94nW+R3mcIwM=
-X-Received: by 2002:a17:907:7ea9:b0:afe:d499:a450 with SMTP id
- a640c23a62f3a-b01d97a9337mr186067666b.64.1756565664633; Sat, 30 Aug 2025
- 07:54:24 -0700 (PDT)
+        bh=LLOL+fmqYILSTDi8SlcB393oKMhsEt8d7adREn/sdDI=;
+        b=rLRI3JtuZI+8tXuUf5nXiwIxGWiJY4oC7ixWLtLGZApfgqo02nSZlIghwj9/MzLEdf
+         CeNjhmGFqrcLxDm5yWXSx0HDWbhwdHoAjzaCbs42Y0t0uhlh33zyjhu8BMJraJMI2qOT
+         7pU4Avo0lGI3yQgV9Q1dNlM7WipqKye5WpAfvu0ENy7ENjlDJqe81qLpreUS2ZDZ+2su
+         snmkAKNf/2s+EdDvHXgvcAgozri2xKcqrHmM0Oh/n4LyYIHj+bHvNGR0rdbn4U/XzYJO
+         hkY296jEZ1V+35UQjB9J3EN6ylj/43rXRZks+jArWYNrRWRbUDvOcuqSbsCmJ3EavXAj
+         NGMg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9S2LU3swVTJrVwqKWnvUAHG42g+gUBEmxq2ewpt77yAKtRPcX/vwUHLxfWalgsxIouNsyvqUjJ21a+gE=@vger.kernel.org, AJvYcCW7IDpbz1F00NI4rfnC/6IkDTHmwQa2wjin2qSdkNtD1vHX3jrUUo7pU6w5a0/CDA7LYSXuKJIdX9G1@vger.kernel.org, AJvYcCXNgwyYecu/T5lfPYvIpq7r7BKZHDjSEIejNiHHy4GAYFZsAuuoDh8fu6jD5o8Dj7heu1E0YcNr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3EzBVchGWir4hg+WOpilpuxpZGY1L/HwnGU8IMPRwSTHs4sDt
+	groCkK5/z+BH8TM4heQEMQWLTmswrFaX/IrgR5SYw+izZF3uBrglBmabfnCb/4Nu5DI3evWCyVm
+	5893sR1Y4u68LtlLBxMScrRHZ6sat288=
+X-Gm-Gg: ASbGncvXM7qyJsPi31ixYS0MZHXHVlL20TK2VcE3+60I/eLu3HtYrtl3c5rcdx9SbV7
+	PVLNDgPJZUpt2IKYDk+dx55zP+xRGsg2ckDEy/ngq+tRLD3lF+H+gBlt2YDlOli6wgBfXy7SBDf
+	5VB3btNmrGAIBqDwH2vkW3l4vZdwspE0vinFy90lOZOXSPPEypgxR1DaGXbCj6e16l03drpSDGG
+	8R+kuPKfpByHNCdUYLgGovE12dsyJheT5O0Aj4wB2/cFvfEwA==
+X-Google-Smtp-Source: AGHT+IEpTdKx2MIT3wfdeGtJA02sP3Yiqi3boF/Eskh3P7YNRWbfrpypYz2ieGu/eMn19MFikTWiGxxf502MuJzU6go=
+X-Received: by 2002:a05:690c:7501:b0:71e:787c:6c2b with SMTP id
+ 00721157ae682-72273b993eemr29405607b3.5.1756566050964; Sat, 30 Aug 2025
+ 08:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com> <CAHp75Ve=xJ6vTUydaTw9GuYr22ZXp3HFA5N0tP7NET=CvZJB8Q@mail.gmail.com>
- <10724132.nUPlyArG6x@radijator>
-In-Reply-To: <10724132.nUPlyArG6x@radijator>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 17:53:48 +0300
-X-Gm-Features: Ac12FXwlJbathzveEvHfetbyQcoF50ElWHuLqqmT5EQRnY-IHwHv2Sz57IOjxds
-Message-ID: <CAHp75VcU-AbfRfMZUanV8eHb5oatQPhGS-ntyWuDFtUgKc-OLA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>, 
-	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
+References: <CAPB3MF5apjd502qpepf8YnFhJuQoFy414u8p=K1yKxr3_FJsOg@mail.gmail.com>
+ <CALW65jY4MBCwt=XdzObMQBzN5FgtWjd=XrMBGDHQi9uuknK-og@mail.gmail.com>
+ <CAPB3MF7L-O_LW+Gxw8fgNif9zUq0r1WZFK_v2CzB0302RHXNLw@mail.gmail.com> <CAPB3MF5x5rSsYCKutpo1f=1DaQbz30QM6ny7fnB9hMGmwfkdbA@mail.gmail.com>
+In-Reply-To: <CAPB3MF5x5rSsYCKutpo1f=1DaQbz30QM6ny7fnB9hMGmwfkdbA@mail.gmail.com>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Sat, 30 Aug 2025 23:00:39 +0800
+X-Gm-Features: Ac12FXz49vEIB_gJW0C0l2VKHccKvEGGDo49gsMkVjVRPjlcDT1BpLF7uUTJauE
+Message-ID: <CALW65jafGk-qGtsMQJNYUC0pKE=6xLxvsZtEW_FSXdmGOsftBw@mail.gmail.com>
+Subject: Re: [Regression Bug] Re: [PATCH net v3 2/2] ppp: fix race conditions
+ in ppp_fill_forward_path
+To: cam enih <nanericwang@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	linux-ppp@vger.kernel.org, nbd@nbd.name, netdev@vger.kernel.org, 
+	pabeni@redhat.com, pablo@netfilter.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 4:04=E2=80=AFPM Duje Mihanovi=C4=87 <duje@dujemihan=
-ovic.xyz> wrote:
-> On Saturday, 30 August 2025 06:37:27 Central European Summer Time Andy Sh=
-evchenko wrote:
-> > On Fri, Aug 29, 2025 at 2:41=E2=80=AFAM David Lechner <dlechner@baylibr=
-e.com> wrote:
-> > > On 8/28/25 5:17 PM, Duje Mihanovi=C4=87 wrote:
-
-...
-
-> > > +     if (adcnum < 0 || adcnum > 3)
-> > > +             return -EINVAL;
-> >
-> > in_range()
+On Sat, Aug 30, 2025 at 10:39=E2=80=AFPM cam enih <nanericwang@gmail.com> w=
+rote:
 >
-> Not sure how relevant that check is anymore; in my current local
-> version this can definitely only be called for one of the GPADCx
-> channels. Should I drop it then?
+> Here comes more details, and it might not be your commit that causes
+> the panic. sorry but I don't know where to go from here.
 
-Good point. Yes, we don't want a dead code in the kernel (or always
-true / false conditionals).
-
-...
-
-> > > > +     for (int i =3D 0; i < 16; i++) {
-> >
-> > Why signed? What is the magic value here?
->
-> No magic to my understanding, it's that the bias generator can output
-> 16 different current levels.
-
-The define it
-
-#define ..._MAX_OUTPUT_CURRENT_LEVELS  16
-
-...
-
-> > > > +             ret =3D regmap_update_bits(*map, reg, 0xf, i);
-> >
-> > GENMASK() or even better to have a definitive constant.
->
-> While at it, could
->
-> > > +              *amp =3D 1 + i * 5;
->
-> use a macro too?
-
-This is something I haven't checked, dunno.
-
-...
-
-> > > > +     raw =3D gpadc_get_raw(iio, chan->channel);
-> > > > +     if (raw < 0) {
-> > > > +             ret =3D raw;
-> > > > +             goto out;
-> > > > +     }
-> >
-> > Instead just assign to ret and if okay, reassign to raw.
->
-> I've refactored that function greatly since and now have:
->
-> *val =3D gpadc_get_raw(iio, chan->channel);
-> if (*val < 0)
->         return *val;
->
-> Is assigning to *val immediately alright?
-
-Only if it's not going to change anymore in this function.
-
-...
-
-> > > > +config 88PM886_GPADC
-> > > > +     tristate "Marvell 88PM886 GPADC driver"
-> > > > +     depends on MFD_88PM886_PMIC
-> > > > +     default y
-> >
-> > Really? Why tristate then?
-> > I would expect default MFD_88PM886_PMIC instead,
-> >
-> > > > +     help
-> > > > +       Say Y here to enable support for the GPADC (General Purpose=
- ADC)
-> > > > +       found on the Marvell 88PM886 PMIC. The GPADC measures vario=
-us
-> > > > +       internal voltages and temperatures, including (but not limi=
-ted to)
-> > > > +       system, battery and USB.
-> >
-> > Please, add a line about the module name if one chooses 'm'. Or see
-> > above =E2=80=94 drop the "tristate" and explain why this driver may not=
- be a
-> > module in the commit message.
->
-> 'default MFD_88PM886_PMIC' would make it y as that one is a bool. How
-> about 'default m if MFD_88PM886_PMIC' or, since this already depends on
-> _PMIC, 'default m'?
-
-I didn't get it. Why? defaulting to MFD is okay, otherwise one needs
-to explain 'y' (and even explicit 'm' choice) for the _leaf_ driver.
-
---=20
-With Best Regards,
-Andy Shevchenko
+You should try the vanilla kernel and see if the panic persists.
+If not, you should close the issue and direct your complaint to the
+fork's maintainers.
 
