@@ -1,169 +1,248 @@
-Return-Path: <linux-kernel+bounces-793061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BA2B3CD79
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9041B3CD83
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531B47AA776
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A9A188E6CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE392D063B;
-	Sat, 30 Aug 2025 16:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04881274668;
+	Sat, 30 Aug 2025 16:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W+5l9BOJ"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCKZgFG2"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062E8274669
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 16:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6523C253359
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 16:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756572567; cv=none; b=Nw1KDKBZbZDcm4zu5GM8WEjVuu53Q5ibiHEZC1UBAMx1Jz7G9iVa9nFW8ey9Uw8DHlXSBEXfDpQWo3It+DEj6LNuR1pRiIIdzMcJ/GI5WYioRQ/X/321ZuSd2W9R1M5gQ1RcwaBGtJtr0QcXUoRBQYZ7sE33st+hsMXUcDFcyC4=
+	t=1756572800; cv=none; b=Lflrd3rdP/uWwxRWhRd3RNEhKj5eLEIPrkbcNebA/C548bJ8JizrI6QBEDCyCQLuwIZBpBRP1ObFXAXiWuPQ+0xG2wRnFJz8RnAvGB6i+nK4vbc8YitExGSq378hqd5mLQTqR9/ur7XJJTZlF1KtmrUETgEF7xD9wyoZS5oPnMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756572567; c=relaxed/simple;
-	bh=pqWpXbFcE609uQqR01kW7hm82CkHD8Rd6qNu7+Mm3Nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzrFemJLG2aTXXtgxV7BQRHvu7rwVfeDKGtNUOLF36TgNHebkcrPiSYJ3oYgJn62rwRqwQevvbbJzusmO7SVY0tZEhe1Zv1i58rLdvOxHTTAOLZK07eSupJkh+Opf4duOaGoldp/k0CgvoLMFbsebLZLDiMsd+UKy7+PsTZXuVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W+5l9BOJ; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cceb749d7so1344824fac.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:49:24 -0700 (PDT)
+	s=arc-20240116; t=1756572800; c=relaxed/simple;
+	bh=CO75rKEHoy3I6kI2xHDWTdpDWSK0G5GGjBMCl01HQKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mPV/qevOboP2PjwcgweZXhXjRxgSgUVNwbeY1ysB9ZH96/bQ9JhVjvEXqUrIjMclgja0HAgsPENZo+4+ekPKihGulM3xYmaLSrrL7qUTWk49TSrWNzk4KfphUjjuE/hQMbcVlkdkFiOPu+/xgzdyaQt/M9GEStg/mAa2ZicveQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCKZgFG2; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b6f501cso3462565a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:53:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756572564; x=1757177364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kBuLfFgHrxPEkeUpMGG9r71kM7QEpK8DGwxPWbzpVPw=;
-        b=W+5l9BOJLWKRqqTmUOR4rNzlvBovp7zGu6PRQUUi5FV/Dba2FYyWw9R/xZcTmVf1rL
-         uKmxAKZvJySjz8MQxE1ZamSMSFQoQBEwSRKoBg2iYt1lt4ne3UrqTSOYIQMMFb45sAgV
-         KMsZ9sfDbGCjEcM+dVJCm3+CV2UttIZIkXZYnnNgT/3sUAzZnek4U6NsqDNU0hVKSMBm
-         fubS5lfufmh9tsYkDbGL7CipxmFHvr/QfD9OHxsrSq4G7bZZ6778UkUXPYd9wcvSRf7D
-         8uq8da0L4vv2rZWZxe3AQGjrK6ZsW75X5ne5XpX/kVom97wfIwkG+e3rIRVMCGcxUNw4
-         LrKA==
+        d=gmail.com; s=20230601; t=1756572796; x=1757177596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/3ep0bCmQiqVsV1i5AG/4ePqsJvhv+CF0yAihCPBkTA=;
+        b=dCKZgFG26uDmw02JV05RtEOtaaKsteSxF2FwWjxFnF/m1pTEjQyHtJahWJI3eDOa2e
+         qIdL0hzdLj8aXLU4TlBQt7gxfrslCcfc8ISLyGz13eSUW+II6f0WisACa8XxdKmbzoli
+         v/BQ2JuQu0GZ9BJCSIU8XBfcUGse+Qlz+76lNvXoOCKZkgVAwee8K5wsTfm7lDVpSXKr
+         M+TdN6tmoPgwbfGDWXe2PIuj2tBNHI/sjIx7EMstOG7u/zDGEs8y1xtJ77MnONDHYbVa
+         prVMdrSyyySb6VYvh+5vGsSJy+/UnhkEekISK/6sTLCZDU4zBzEGgIvkhGt4bSgsk72B
+         OSpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756572564; x=1757177364;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kBuLfFgHrxPEkeUpMGG9r71kM7QEpK8DGwxPWbzpVPw=;
-        b=L8xVE8XCC/L3hYCp3xRmGRA/B0GVG/7N4ilpnXag9F2AIGl+gyIr0EdJI4Ih7Gu4Dl
-         cHhphZjmJXxYzJZY5nBtyVna8x/9M67qvQk6I0fLCRcDa3xUZ/eIUiQaOxr75s4KJtag
-         moKTvx4MN83cYY/gNLAyJpmwjPqyggiXBfbBbOMHsdgW6vYCDA+LuJBSFuafO3Er73b3
-         IWsfJqJRFKjqkyoprL1j3oTYgf6cCP7l6oQX+WW5/4B9mrNL+IIV5xGHpkbTyS9OCEFa
-         A5kQQbDmndOXsXvjcuy7GgJkBU8PDPTr48TUM2szjEYBJw+puRysWN4DSKWKp50f6o4O
-         /4Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYJabUUj3AR6M2aVoJ+ilNn9e4lrsisv/jhU2AbFG7r9cnTwusjfujsw+7SO4j9G6qc9nNb7KQcPcwTCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6pyHhpsGruBbcaxQ88IBR6QAFjWKVdSFTaicZY8rluyyluW5Y
-	JqgYuZzE370JKzX3p833MTmPDzw0ZoEqEwO7FScn7at+p01KHXt2yjBRfHiXpgmn4ZM=
-X-Gm-Gg: ASbGncskkQDl8Kj4HGXJ52t2iLxrad1TmHJe3nmaX2zTFnagyydojwYdmTZIxSmG0WC
-	vtsRbqMrjrcHukE84YSgn8ZkvBN/8Nhl5Ali5KBSEjPz57q/Svxemgah/o4tUtJhL+EALsv/3nM
-	M3cwllltWJpbQskCbt3AzdK1rjXV/shRT4Njh+LY2SWvOOknCn4722q8Qa1mMTsjbhhjp51hBst
-	Zg/w/QfkS+RrGjdVg5A69upTDwOrYsB4Ysperq+wBT9cSMUDjYAlxatqFsUFkJed1Tawh9AY4Gu
-	3CZqSVPuCvZmwgKYZYcCWpU0c+2YNSh15VkpiV6Wf1GYt5vbEr6iSXL2V1aooROxI9wU6U6NWmr
-	CfUvx8GsRP959a7Y0799wGyPhs4N6YUieB/m2bFYTLjZeoccTXByTscbbtC65o8idboPUys45dz
-	Q=
-X-Google-Smtp-Source: AGHT+IFu2ryWAbQjLQmOFSwzl839yLjB1FcTVR4u+JiQkg49Vg88/OQH6BXsgfWPJMxa0TmaCtPuBw==
-X-Received: by 2002:a05:6820:1acb:b0:61e:2be3:97b4 with SMTP id 006d021491bc7-61e335b8e70mr1078229eaf.2.1756572563897;
-        Sat, 30 Aug 2025 09:49:23 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d? ([2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61e357137d6sm160026eaf.4.2025.08.30.09.49.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 09:49:23 -0700 (PDT)
-Message-ID: <34c23490-470d-45b1-a8a6-e9e1ee82f5c8@baylibre.com>
-Date: Sat, 30 Aug 2025 11:49:21 -0500
+        d=1e100.net; s=20230601; t=1756572796; x=1757177596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/3ep0bCmQiqVsV1i5AG/4ePqsJvhv+CF0yAihCPBkTA=;
+        b=lrhaPtx6cdaZedvx9ZMOSFClqTKGRIl5i6tk3zncTLHEPBytiNHRDo6btoOPOmGxy7
+         HnUYjRSuGlEb7x2Bw7NdWvxVstCOwGyNjP5JnBy+FdxNvfXXdUAKmkK4f8MkHHNNUQXC
+         6B2iks3IvY77TzDOnlwpLv7SpnwRa/IV+VrsOH/pEj4pU+cbx73TM5WGKf05wQB/DoMT
+         b3ZonowA5VOTj6y7BtY5i+94FtxfNgk9woH2mUKdKGria1nV7O4HxKmEZP200p0x6Eg6
+         psrQBL85+pSGa1+qn501xIvZHYVvA7M+tuqtUKeBCdM3u7DgfHo9nMIyjkecoU9sJQKG
+         GaLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm45T1XlG+a4dxblB9Nrap8Ct/BimKLrRywCKAktPi/eDq7lS1qUpv8la8mh1AwpkacmfxGF9T+wuc/K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywYWzrlssFz9OmL0VD8H+EykHeW9fkrdJqOrPr1d5NDs6JRZJN
+	AUSKPzVKk2UlthECG0cIdOW3919/NGEPSKAfG4TwOJcnMxcCFXyQ4rGCa4D3Czvap2IVGV0WmJw
+	T7aIc3XTy11epBLL+7YHoIvVET5NW2i4=
+X-Gm-Gg: ASbGncsj/nMWrf8W/A0IfjB+v7hdv16e2oWOf6BdV7whth0X/rNeYebGcmjuYCsuo7+
+	TdKwLaw5hCYR8a/I/2YNSucLEkj57ngr4hLzx25MQxVyH7mRS9W+ojzyocrvlWP9shcEMrORiwQ
+	YNxrJjsmvzOXluwVkpvV+Rw5LrF8oLga3wdqnjWpAPfoXe5HNVpziiYRGgfkzMWoGQDqZdoNsjN
+	LlX1KIEm5/GEUxvQQ==
+X-Google-Smtp-Source: AGHT+IFdDEGaMeg7X7RmM8uQJ1o0p1N6UcwN57NiYKrqIrh1Zx4Y8B5e/LiSK1SPCLcJ9Iisv3/279yBCICL0dkSc/0=
+X-Received: by 2002:a05:6402:504b:b0:61c:5264:902c with SMTP id
+ 4fb4d7f45d1cf-61d26c53e03mr2342187a12.23.1756572796291; Sat, 30 Aug 2025
+ 09:53:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/15] Documentation: iio: ad4030: Add double PWM SPI
- offload doc
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
- eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
- Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
- ahaslam@baylibre.com, marcelo.schmitt1@gmail.com
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
- <4425996699ceca9fa909bdad86b41abe8b25aad4.1756511030.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <4425996699ceca9fa909bdad86b41abe8b25aad4.1756511030.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-7-ryncsn@gmail.com>
+ <CACePvbVVz5G9mC=Od3Uhw9Dkkgz-_jMg9R5EzNxUwx0adKKPQw@mail.gmail.com>
+In-Reply-To: <CACePvbVVz5G9mC=Od3Uhw9Dkkgz-_jMg9R5EzNxUwx0adKKPQw@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Sun, 31 Aug 2025 00:52:39 +0800
+X-Gm-Features: Ac12FXwIsQ5-CWCgMfQJCfaWrkz57jn-Epp2yA2_GbyTb-IBX7npj9twC9L3zqo
+Message-ID: <CAMgjq7BjsuooaHr=6cYTzGsj1nm+xG7jzCVdEsFgxyBHwq4GXw@mail.gmail.com>
+Subject: Re: [PATCH 6/9] mm, swap: use the swap table for the swap cache and
+ switch API
+To: Chris Li <chrisl@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/29/25 7:41 PM, Marcelo Schmitt wrote:
-> Document double PWM setup SPI offload wiring schema.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
->  Documentation/iio/ad4030.rst | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/iio/ad4030.rst b/Documentation/iio/ad4030.rst
-> index b57424b650a8..dc3ac253ef66 100644
-> --- a/Documentation/iio/ad4030.rst
-> +++ b/Documentation/iio/ad4030.rst
-> @@ -92,6 +92,35 @@ Interleaved mode
->  In this mode, both channels conversion results are bit interleaved one SDO line.
->  As such the wiring is the same as `One lane mode`_.
->  
-> +SPI offload wiring
-> +^^^^^^^^^^^^^^^^^^
-> +
-> +.. code-block::
-> +
-> +    +-------------+         +-------------+
-> +    |         CNV |<-----+--| GPIO        |
-> +    |             |      +--| PWM1        |
+On Sat, Aug 30, 2025 at 11:43=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
+:
+>
+> On Fri, Aug 22, 2025 at 12:21=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
+rote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Introduce basic swap table infrastructures, which are now just a
+> > fixed-sized flat array inside each swap cluster, with access wrappers.
+> >
+> > Each cluster contains a swap table of 512 entries. Each table entry is
+> > an opaque atomic long. It could be in 3 types: a shadow type (XA_VALUE)=
+,
+> > a folio type (pointer), or NULL.
+> >
+> > In this first step, it only supports storing a folio or shadow, and it
+> > is a drop-in replacement for the current swap cache. Convert all swap
+> > cache users to use the new sets of APIs. Chris Li has been suggesting
+> > using a new infrastructure for swap cache for better performance, and
+> > that idea combined well with the swap table as the new backing
+> > structure. Now the lock contention range is reduced to 2M clusters,
+> > which is much smaller than the 64M address_space. And we can also drop
+> > the multiple address_space design.
+> >
+> > All the internal works are done with swap_cache_get_* helpers. Swap
+> > cache lookup is still lock-less like before, and the helper's contexts
+> > are same with original swap cache helpers. They still require a pin
+> > on the swap device to prevent the backing data from being freed.
+> >
+> > Swap cache updates are now protected by the swap cluster lock
+> > instead of the Xarray lock. This is mostly handled internally, but new
+> > __swap_cache_* helpers require the caller to lock the cluster. So, a
+> > few new cluster access and locking helpers are also introduced.
+> >
+> > A fully cluster-based unified swap table can be implemented on top
+> > of this to take care of all count tracking and synchronization work,
+> > with dynamic allocation. It should reduce the memory usage while
+> > making the performance even better.
+> >
+> > Co-developed-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >  /*
+> > - * This must be called only on folios that have
+> > - * been verified to be in the swap cache and locked.
+> > - * It will never put the folio into the free list,
+> > - * the caller has a reference on the folio.
+> > + * Replace an old folio in the swap cache with a new one. The caller m=
+ust
+> > + * hold the cluster lock and set the new folio's entry and flags.
+> >   */
+> > -void delete_from_swap_cache(struct folio *folio)
+> > +void __swap_cache_replace_folio(struct swap_cluster_info *ci, swp_entr=
+y_t entry,
+> > +                               struct folio *old, struct folio *new)
+> > +{
+> > +       unsigned int ci_off =3D swp_cluster_offset(entry);
+> > +       unsigned long nr_pages =3D folio_nr_pages(new);
+> > +       unsigned int ci_end =3D ci_off + nr_pages;
+> > +
+> > +       VM_WARN_ON_ONCE(entry.val !=3D new->swap.val);
+> > +       VM_WARN_ON_ONCE(!folio_test_locked(old) || !folio_test_locked(n=
+ew));
+> > +       VM_WARN_ON_ONCE(!folio_test_swapcache(old) || !folio_test_swapc=
+ache(new));
+> > +       do {
+> > +               WARN_ON_ONCE(swp_tb_to_folio(__swap_table_get(ci, ci_of=
+f)) !=3D old);
+> > +               __swap_table_set_folio(ci, ci_off, new);
+>
+> I recall in my original experiment swap cache replacement patch I used
+> atomic compare exchange somewhere. It has been a while. Is there a
+> reason to not use atomic cmpexchg() or that is in the later part of
+> the series?
 
-Would be more logical to swap the PWM numbers since CNV
-is triggered first.
+For now all swap table modifications are protected by ci lock, extra
+atomic / cmpxchg is not needed.
 
-> +    |             |         |             |
-> +    |             |      +--| PWM0        |
-> +    |             |      |  +-------------+
-> +    |             |      +->| TRIGGER     |
-> +    |          CS |<--------| CS          |
-> +    |             |         |             |
-> +    |     ADC     |         |     SPI     |
-> +    |             |         |             |
-> +    |         SDI |<--------| SDO         |
-> +    |         SDO |-------->| SDI         |
-> +    |        SCLK |<--------| SCLK        |
-> +    +-------------+         +-------------+
-> +
-> +In this mode, both the ``cnv-gpios`` and a ``pwms`` properties are required.
-> +The ``pwms`` property specifies the PWM that is connected to the ADC CNV pin.
-> +The SPI offload will have a ``trigger-sources`` property to indicate the SPI
-> +offload (PWM) trigger source. The IIO device driver synchronizes the PWMs to do
+We might be able to make use of cmpxchg in later phases. e.g. when
+locking a folio is enough to ensure the final consistency of swap
+count, cmpxchg can be used as a fast path to increase the swap count.
 
-suggest to add something like:
+We can't do that now as the swap count is still managed by swap_map,
+not swap table. And swap allocation / dup does not have a clear
+definition about how they interact with folios, and range operations
+all need the ci lock...  We might be able to figure out a stable way
+to handle range operations too once we sort out how folios interact
+with SWAP in a later phase, I tried that in the previous long series
+and this part seems doable.
 
-with an offset between the rising edge of PWM0 and PWM1 to delay the SPI
-transfer until some time after the conversion. This requires a specialized
-PWM controller that can provide such an offset.
+I'm not sure if that will benefit a lot, or will it make it more
+complex for the high order swap table to be implemented. The cluster
+lock is already very fine grained. We can do some experiments in the
+future to verify it.
 
-> +ADC transfer zone 2 data capture.
+But the good thing is in either case, this is on the right path :)
 
-What is "zone 2"?
+> > +       } while (++ci_off < ci_end);
+> > +
+> > +       /*
+> > +        * If the old folio is partially replaced (e.g., splitting a la=
+rge
+> > +        * folio, the old folio is shrunk in place, and new split sub f=
+olios
+> > +        * are added to cache), ensure the new folio doesn't overlap it=
+.
+> > +        */
+> > +       if (IS_ENABLED(CONFIG_DEBUG_VM) &&
+> > +           folio_order(old) !=3D folio_order(new)) {
+> > +               ci_off =3D swp_cluster_offset(old->swap);
+> > +               ci_end =3D ci_off + folio_nr_pages(old);
+> > +               while (ci_off++ < ci_end)
+> > +                       WARN_ON_ONCE(swp_tb_to_folio(__swap_table_get(c=
+i, ci_off)) !=3D old);
+>
+> Will this cause the swap cache to replace less than full folio range
+> of the swap entry in range?
+> The swap cache set folio should atomically set the full range of swap
+> entries. If there is some one race to set some partial range. I
+> suspect it should fail and undo the particle set. I recall there are
+> some bugs on xarray accidentally fixed by one of your patches related
+> to that kind of atomic behavior.
+>
+> I want to make sure a similar bug does not happen here.
+>
+> It is worthwhile to double check if the atomic folio set behavior.
 
-> +
-> +.. seealso:: `SPI offload support`_
+Right, some callers that hold the ci lock by themselves (migration /
+huge_mm split) have to ensure they do the folio replacement in a
+correct way by themselves.
 
-There is no section that this links to. Add the section or delete this.
+This is the same story for Xarray. These callers just used to hold the
+xa lock and manipulate the xarray directly: e.g. split generates new
+folios, new sub folios have to be added to swap cache in the right
+place to override the old folio. The behavior is the same before /
+after this commit, I just added a sanity check here to ensure nothing
+went wrong, only to make it more reliable by adding checks in the
+debug build.
 
-> +
->  SPI Clock mode
->  --------------
->  
+I checked the logic here multiple times and tested it on multiple
+kernel versions that have slightly different code for huge_mm split,
+all went well.
 
+>
+> Looks good to me otherwise. Just waiting for confirmation of the swap
+> cache atomic set behavior.
+>
+> Chris
 
