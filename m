@@ -1,154 +1,127 @@
-Return-Path: <linux-kernel+bounces-792703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC045B3C7D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:11:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B67B3C7CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26397C3382
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67B41C25486
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EB4278E47;
-	Sat, 30 Aug 2025 04:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="BW+6GoB+"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57BD277C9B;
+	Sat, 30 Aug 2025 04:11:10 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CA42773FF;
-	Sat, 30 Aug 2025 04:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756527085; cv=pass; b=fYF7qwHTTgewIqvhK+vn0qZKolwPZ15ALPxgUqtDOG2R14+YK69/BO2c5aqZbdW3fQdlPE00TblVntQoIW029UY8H7GoVnzraHuM4PTgewTotD8X2u+bgMYW0Eo7ks1nfyjlu5IqPt4xwGboTQT9bUXvzgM1d/8LGFpbvDn6onI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756527085; c=relaxed/simple;
-	bh=aMdVvHTKC5Q68BwZ1XJyYdMyozzseL304zpwN8fODaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AXYVZS2UkHb8edn1w3wni11rb8prli/wzPMcYFWCoIEqvucBygnkc0J3VUUyPBTPM+olUL56q99mZoJ9enAttIhqQrMOQB1qpSBgt0rF7CIbUQWSfvv9At7qig/W0LY7SzunmSWZjhWEp8YOrUXMrpno5D8FfL2OLcHIKTtoYUg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=BW+6GoB+; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1756527047; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hXI6WbDiwQx3g+PFpykfE2RSDzbQvQ1kpok554K/GVdGbe7Wbl/BhnxWL2nUmlWr5Fy5rvMPCHLZHuWVdtYXbAwyQ6XTmbMMRsqHKY3GzsCP/ealdsp3uxNwk5BKzY/EOhMPSWUDuTjA8gdg6sS5sJMf+w1ckE2XygHJWNB6rEA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756527047; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AIqdQ1o+KDcxRP37mYqQKPe1hyWo6vnaOhhysa3wo9Q=; 
-	b=U0lQ3juh+SwB9/IGQohoYnHAnQH1mO8AdLDqsUjOVO4Pe2spvGe5jZ7FdPS9NQX3NaZa02ML1sT6dFdje5y7CSA0wivmHRTyfKgXmo27LZ6njKPP+snimlyJN5bubrJhA0YO9aBK33S8dj4BUdD/7wfCU20shKt+k6AI7fyFhA0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756527047;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=AIqdQ1o+KDcxRP37mYqQKPe1hyWo6vnaOhhysa3wo9Q=;
-	b=BW+6GoB+aRU9F98NtYy49EdqBxt2BZmNnnA+S4AqUpDx2wpxsMlDp2dqlNKNlM8F
-	1FAe8AHl0Mqln2AqA/zsMEpPPfRaxp6my9Nv24tEc1zUXy3Imgp+1XGPThTtpCpoxan
-	NWSD9phUwS4+raKjWAKVNtghlMIac+XYKgyzBXSs=
-Received: by mx.zohomail.com with SMTPS id 1756527044122466.79767147184646;
-	Fri, 29 Aug 2025 21:10:44 -0700 (PDT)
-Message-ID: <e147e288-de38-4f2c-8068-53c5e37b2310@yukuai.org.cn>
-Date: Sat, 30 Aug 2025 12:10:29 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A78128395;
+	Sat, 30 Aug 2025 04:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756527070; cv=none; b=bmuMWtBRJVAtWp6RxcdJG0z/vpGguR9iYTdpszvmqhA8B6YV66y1rqz1qOj5YHeC1wQl+L2uKVKyPIYF7K4NWgRiX0ppvlPCQRSzmQXGu5644vBSq1TR+V6CTeTumvE/jcrlwTVaImpJjisdJpOxFjQuYMKB0jQRAEOAFWufKC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756527070; c=relaxed/simple;
+	bh=J4d0MFDjBjezhD52aa98781cRNE9lgE58Y/45hrGuW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YRinPkOyQnZYRg00PdHMx+aQz8nopDz93ZHqO0G4V3BVXtOYq5MVfI00akrmP3DZqyu936viwvgzf82OJIgeCPLuFtDU9sfvvgivQiwxZY4KK4ISz9uvGrspwoM4uDJq4CaixPiOYnwfu+Rq0LfUntc5KN88V26ZdluBOqT2AoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cDMBS1wCKz14Mfm;
+	Sat, 30 Aug 2025 12:10:56 +0800 (CST)
+Received: from kwepemo100006.china.huawei.com (unknown [7.202.195.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A2A3180485;
+	Sat, 30 Aug 2025 12:11:04 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemo100006.china.huawei.com
+ (7.202.195.47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
+ 2025 12:11:03 +0800
+Message-ID: <4639ba1d-110b-9000-f2a9-7bb1cacf8d63@hisilicon.com>
+Date: Sat, 30 Aug 2025 12:11:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 02/10] md/raid0: convert raid0_handle_discard() to
- use bio_submit_split_bioset()
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- neil@brown.name, akpm@linux-foundation.org, hch@infradead.org,
- colyli@kernel.org, hare@suse.de, tieren@fnnas.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
- <20250828065733.556341-3-yukuai1@huaweicloud.com>
- <858e0210-1bbb-466b-98c3-d1a3c834519d@kernel.org>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <858e0210-1bbb-466b-98c3-d1a3c834519d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v5 2/3] cpufreq: Add a new function to get cpufreq policy
+ without checking if the CPU is online
+To: Lifeng Zheng <zhenglifeng1@huawei.com>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+	<beata.michalska@arm.com>, <sudeep.holla@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
+	<yangyicong@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
+	<zhangpengjie2@huawei.com>, <linhongye@h-partners.com>
+References: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
+ <20250819072931.1647431-3-zhenglifeng1@huawei.com>
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <20250819072931.1647431-3-zhenglifeng1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemo100006.china.huawei.com (7.202.195.47)
 
-Hi,
 
-在 2025/8/30 8:41, Damien Le Moal 写道:
-> On 8/28/25 15:57, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> On the one hand unify bio split code, prepare to fix disordered split
->> IO; On the other hand fix missing blkcg_bio_issue_init() and
->> trace_block_split() for split IO.
-> Hmmm... Shouldn't that be a prep patch with a fixes tag for backport ?
-> Because that "fix" here is not done directly but is the result of calling
-> bio_submit_split_bioset().
 
-I can add a fix tag as blkcg_bio_issue_init() and trace_block_split() is missed,
-however, if we consider stable backport, should we fix this directly from caller
-first? As this is better for backport. Later this patch can be just considered
-cleanup.
+On 19/08/2025 15:29, Lifeng Zheng wrote:
+> cpufreq_cpu_get_raw() gets cpufreq policy only if the CPU is in
+> policy->cpus mask, which means the CPU is already online. But in some
+> cases, the policy is needed before the CPU is added to cpus mask. Add a
+> function to get the policy in these cases.
+> 
+LGTM.
 
->> Noted commit 319ff40a5427 ("md/raid0: Fix performance regression for large
->> sequential writes") already fix disordered split IO by converting bio to
->> underlying disks before submit_bio_noacct(), with the respect
->> md_submit_bio() already split by sectors, and raid0_make_request() will
->> split at most once for unaligned IO. This is a bit hacky and we'll convert
->> this to solution in general later.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/raid0.c | 19 +++++++------------
->>   1 file changed, 7 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
->> index f1d8811a542a..4dcc5133d679 100644
->> --- a/drivers/md/raid0.c
->> +++ b/drivers/md/raid0.c
->> @@ -463,21 +463,16 @@ static void raid0_handle_discard(struct mddev *mddev, struct bio *bio)
->>   	zone = find_zone(conf, &start);
->>   
->>   	if (bio_end_sector(bio) > zone->zone_end) {
->> -		struct bio *split = bio_split(bio,
->> -			zone->zone_end - bio->bi_iter.bi_sector, GFP_NOIO,
->> -			&mddev->bio_set);
->> -
->> -		if (IS_ERR(split)) {
->> -			bio->bi_status = errno_to_blk_status(PTR_ERR(split));
->> -			bio_endio(bio);
->> +		bio = bio_submit_split_bioset(bio,
->> +				zone->zone_end - bio->bi_iter.bi_sector,
-> Can this ever be negative (of course not I think)? But if
-> bio_submit_split_bioset() is changed to have an unsigned int sectors count,
-> maybe add a sanity check before calling bio_submit_split_bioset() ?
-
-Yes, this can never be negative.
-
-Thanks,
-Kuai
-
->
->> +				&mddev->bio_set);
->> +		if (!bio)
->>   			return;
->> -		}
->> -		bio_chain(split, bio);
->> -		submit_bio_noacct(bio);
->> -		bio = split;
->> +
->>   		end = zone->zone_end;
->> -	} else
->> +	} else {
->>   		end = bio_end_sector(bio);
->> +	}
->>   
->>   	orig_end = end;
->>   	if (zone != conf->strip_zone)
->
+Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 6 ++++++
+>  include/linux/cpufreq.h   | 5 +++++
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index fc7eace8b65b..78ca68ea754d 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -198,6 +198,12 @@ struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu)
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_cpu_get_raw);
+>  
+> +struct cpufreq_policy *cpufreq_cpu_policy(unsigned int cpu)
+> +{
+> +	return per_cpu(cpufreq_cpu_data, cpu);
+> +}
+> +EXPORT_SYMBOL_GPL(cpufreq_cpu_policy);
+> +
+>  unsigned int cpufreq_generic_get(unsigned int cpu)
+>  {
+>  	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index 95f3807c8c55..26b3c3310d5b 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -205,6 +205,7 @@ struct cpufreq_freqs {
+>  
+>  #ifdef CONFIG_CPU_FREQ
+>  struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu);
+> +struct cpufreq_policy *cpufreq_cpu_policy(unsigned int cpu);
+>  struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu);
+>  void cpufreq_cpu_put(struct cpufreq_policy *policy);
+>  #else
+> @@ -212,6 +213,10 @@ static inline struct cpufreq_policy *cpufreq_cpu_get_raw(unsigned int cpu)
+>  {
+>  	return NULL;
+>  }
+> +static inline struct cpufreq_policy *cpufreq_cpu_policy(unsigned int cpu)
+> +{
+> +	return NULL;
+> +}
+>  static inline struct cpufreq_policy *cpufreq_cpu_get(unsigned int cpu)
+>  {
+>  	return NULL;
 
