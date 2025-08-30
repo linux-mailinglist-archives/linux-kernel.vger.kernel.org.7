@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-792722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EC3B3C816
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:03:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0212B3C818
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DABD16BB13
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4061F7B3D8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B7327816B;
-	Sat, 30 Aug 2025 05:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7eAq1r9"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0576527A45C;
+	Sat, 30 Aug 2025 05:11:50 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1AB2367A0;
-	Sat, 30 Aug 2025 05:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6EA27280B;
+	Sat, 30 Aug 2025 05:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756530199; cv=none; b=gR+J8rHU+7WsFz25vx2E3QRqU248Z03A5WwxN6/iclBLGQ8fiRssJ4K+0uFMy24HHzAz88ghOCVv2sYptQ8q3c5mpHy0w4QJh73hl8VLSznW2vIEQ718BRf3F11Om+VbrpFYh3/u6hTEw8Q09/tPUGjWdJOlZdglf3dVRBGlGYs=
+	t=1756530709; cv=none; b=ivVfz8PylqP+5gRoGj046KNZW1naWsW5JNtyMC1sg47bhp9XkEjVCNjYJ9qfMnIl947lWYtI1fVhdmIcIlsFUGh93pxyvma5fsPF2YRllSlhP86AKTUCpn0WrvXKMCL4dFqZeSAzZfqhz9orkRAAoqEW9dg9qEHCtlaLeaowNbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756530199; c=relaxed/simple;
-	bh=wYUl4DeNulG2nYtPa7cq5JFPrL6inxtZESaOl5w2q0w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLT5WlK6Sy0f3lsrLqFs7ViVZ3RCmGfNx7Jg3nUXxVNm41rSG8EjHnBPNYxEWOXG6018AwO8c0LVlFg0Xup/feUUW/w7zSIOFVMoRYCbL59cVvqHg8g16eGnREJ2+osw1RSlvbebJu754fTjYo7gAnZCwNXd0MZp+a8e7V9HIl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7eAq1r9; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7a7bad8so383261566b.3;
-        Fri, 29 Aug 2025 22:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756530195; x=1757134995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y83Q+Ok40+eVrTvGcNS2tSYv/8VFYqrlbD0JuKTjJ0M=;
-        b=G7eAq1r9feOztUYFRmZBHehlurwKIDO5lAcGCZdlK2SSbqot+iWWJ2905y+M7mkfwd
-         LXNoiAUGJ5aTiA7qPgOtk/2+DcrfiM2ulNQQMQxF0r/2OXo03sQE7jD+Waa41sF+A082
-         AeUAaN5JUvaCPC5tHj3We1Yo9OA4SU3kVS0StM42pT0wIVM2Op2VFojoa9n8CS+ew+YH
-         8bQXw1igH/0xOGIvnDD7lcwsZr4Q6OmSb0YDD29UV+xnxxWffg3dC5w5CgnHJhc7mIng
-         VCIrKx1Jocpt6rmgO1/3pjIjxWL/1CC0Ngnlg9nZkCbQHx7EZR6gbiWKOB2zo0tPQhbz
-         8v4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756530195; x=1757134995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y83Q+Ok40+eVrTvGcNS2tSYv/8VFYqrlbD0JuKTjJ0M=;
-        b=bHlgR4Cm76uTnypngTWfc0cruuFQR+Q/0bMNGI95uch9Q2rl2mb8NZdcK4Tz/w0TT4
-         ydjz1zuZ+TpzlLZ+4WCr8er4xNMo2hOxkHrp91jETEKEgZxV9ElsyhLav5bZEQgKk/Uh
-         BJTIasfRjetTuX/HkclwMhD6CNEe7seijrjubq9teN4/7B2uXXaw+WSiAMywMXVEhj+I
-         8r50pBnVVy1yWsa9UvA7RV0/2IG2lI+nD3nhJsq1iQCp9YCKAQSnskVM7P2b0DMLByG0
-         6q+GFBydoo9Pw5NtGIF9HD+hi0BphLX3JuFOSb4MAknwy/phdj5BNvOnpgmkNdOkcg7P
-         3p7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVHxwE19RRBlUizqnEdMvG/vNCgOvXUmk1bkqX5Xfz/eqm4zFlNl+SufsNmUzgc970AnAtftbRrcwk4gZay@vger.kernel.org, AJvYcCVbzHMOcpvqH6T+6MItlLORZjWP909IEYJlWe+Se6kCp71NOtDROofvgfbjOr/2I9+UtiZ6h+7De6DC@vger.kernel.org, AJvYcCX5JsEcqKz5WB9mybzuQq2GvoZaK8DMgM4SjHTw9R00whfVAVqhF7JoyZSUCHX8GrPkqqdmMmgRRo6H@vger.kernel.org, AJvYcCXcKeikVc0hT8Z8kgMdClTVelAcG9uQhx9ccZwnXVbRw5RwCT0VNbcwgyaumuhsZEdhcH/qrz41e8ZN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrBNsFvTQUe4ECYPzKzKwgv4dDlIRYA1V5ebmoCoKevoGmYqpS
-	mza9UctKeYA3K8Ue1y+ZdSNhwd3Ziaz5x9x10IcDr7PuMr92+u/0q03GaS2+a4SuxDfZlWwPLpD
-	EEN159Gk4HFiyKn15TFT31P76Xajv6wA=
-X-Gm-Gg: ASbGncsFEjbiO47/aGD3VMPPvFrgJYDqKE2b14V2ySCsNTlyH7jhumLGFnC5GmdXbXG
-	9LW1NCt/++782y5BccciEZCmKB3q15jmbY6s/gniKEXipJ63h2GQdNw6SRKs1JZnxaFixEthY+E
-	5SMqrPrNKNZCq8OQ6awiJNNmZDAmJOFr9PE6WXWGNi03RNNugZ292AH77PIZvTtzLA5NuouDAEw
-	gghyTS76HSEeQbNJQ==
-X-Google-Smtp-Source: AGHT+IEbkBkrbeSypy4h9/1ADvznSwJLckuiapfmo9r6+CM2U9raJzZxBYhhviTWMbiVVRUnx2QJqF0QdhkSXsG8LIg=
-X-Received: by 2002:a17:907:9815:b0:ae3:f16a:c165 with SMTP id
- a640c23a62f3a-b01d9732e2dmr93973066b.31.1756530195102; Fri, 29 Aug 2025
- 22:03:15 -0700 (PDT)
+	s=arc-20240116; t=1756530709; c=relaxed/simple;
+	bh=FA+LaNAtSrDw22JkgVZ/MEEYs9lp2qPOgwnL7mosRHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kOFRislzesuTGhZlRAioa3P8hN3rx/mUx+FOucUdHw4Q4XONZt31cTQSqAb0EtvQuf8L3eU4f0ceQIJIrQR0mfyF9J81p7VUWmHwvLbFd6EseL13mTR/8ntoE5dQg2W7o8seTdXQSH+BXV0KNst9nC5mZnHJVtew+YP6wcUgfkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7fb.dynamic.kabel-deutschland.de [95.90.247.251])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AED366004C2C9;
+	Sat, 30 Aug 2025 07:11:10 +0200 (CEST)
+Message-ID: <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
+Date: Sat, 30 Aug 2025 07:11:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1756511030.git.marcelo.schmitt@analog.com> <2410525339f56466fa566dda367678ec92f9fb98.1756511030.git.marcelo.schmitt@analog.com>
-In-Reply-To: <2410525339f56466fa566dda367678ec92f9fb98.1756511030.git.marcelo.schmitt@analog.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 08:02:38 +0300
-X-Gm-Features: Ac12FXwhf8j_-7iVGqgS_dqVdNdK4mGLZgMp7J2XF982AOSeHo-SK8Lw1m2kmq0
-Message-ID: <CAHp75VcvVqdgCXKuKLvpegx6bN4af=7xYO=Nh8T37_gMjG1Y6Q@mail.gmail.com>
-Subject: Re: [PATCH 06/15] spi: spi-offload-trigger-pwm: Use duty offset
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-spi@vger.kernel.org, Axel Haslam <ahaslam@baylibre.com>, jic23@kernel.org, 
-	Michael.Hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com, 
-	dlechner@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org, 
-	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com, 
-	marcelo.schmitt1@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: btmtksdio: Fix build after header cleanup
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+ oe-kbuild-all@lists.linux.dev, Marcel Holtmann <marcel@holtmann.org>,
+ Sean Wang <sean.wang@mediatek.com>, linux-mediatek@lists.infradead.org
+References: <202508300413.OnIedvRh-lkp@intel.com>
+ <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 30, 2025 at 3:42=E2=80=AFAM Marcelo Schmitt
-<marcelo.schmitt@analog.com> wrote:
->
-> Pass the duty offset to the waveform pwm.
-
-...
-
->         wf.period_length_ns =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic->=
-frequency_hz);
->         /* REVISIT: 50% duty-cycle for now - may add config parameter lat=
-er */
->         wf.duty_length_ns =3D wf.period_length_ns / 2;
-> -
-
-Stray - line
-
-> +       wf.duty_offset_ns =3D periodic->offset_ns;
->         ret =3D pwm_round_waveform_might_sleep(st->pwm, &wf);
->         if (ret < 0)
->                 return ret;
->
->         periodic->frequency_hz =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, wf.peri=
-od_length_ns);
-> -
-
-Ditto.
-
-> +       periodic->offset_ns =3D wf.duty_offset_ns;
->         return 0;
->  }
->
-> @@ -77,6 +77,7 @@ static int spi_offload_trigger_pwm_enable(struct spi_of=
-fload_trigger *trigger,
->         wf.period_length_ns =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic->=
-frequency_hz);
->         /* REVISIT: 50% duty-cycle for now - may add config parameter lat=
-er */
->         wf.duty_length_ns =3D wf.period_length_ns / 2;
-> +       wf.duty_offset_ns =3D periodic->offset_ns;
-
->
-
-Especially as it seems that the pattern is to have a blank line before
-last return statements.
-
->         return pwm_set_waveform_might_sleep(st->pwm, &wf, false);
->  }
+Dear Calvin,
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+Thank you for your patch, and addressing the regression right away.
+
+Am 30.08.25 um 02:50 schrieb Calvin Owens:
+> Syzbot found a randconfig which fails after my recent patch:
+> 
+>      drivers/bluetooth/btmtksdio.c:442:33: error: array type has incomplete element type ‘struct h4_recv_pkt’
+>        442 | static const struct h4_recv_pkt mtk_recv_pkts[] = {
+>            |                                 ^~~~~~~~~~~~~
+>      drivers/bluetooth/btmtksdio.c:443:11: error: ‘H4_RECV_ACL’ undeclared here (not in a function)
+>        443 |         { H4_RECV_ACL,      .recv = btmtksdio_recv_acl },
+>            |           ^~~~~~~~~~~
+>      drivers/bluetooth/btmtksdio.c:444:11: error: ‘H4_RECV_SCO’ undeclared here (not in a function)
+>        444 |         { H4_RECV_SCO,      .recv = hci_recv_frame },
+>            |           ^~~~~~~~~~~
+>      drivers/bluetooth/btmtksdio.c:445:11: error: ‘H4_RECV_EVENT’ undeclared here (not in a function)
+>        445 |         { H4_RECV_EVENT,    .recv = btmtksdio_recv_event },
+> 
+> ...because we can have BT_MTKSDIO=y with BT_HCIUART_H4=n, and the
+> definitions used here are gated on BT_HCIUART_H4 in hci_uart.h.
+
+The drivers below seem to be affected:
+
+     drivers/bluetooth/bpa10x.c:     { H4_RECV_EVENT,   .recv = 
+hci_recv_frame },
+     drivers/bluetooth/btmtksdio.c:  { H4_RECV_EVENT,    .recv = 
+btmtksdio_recv_event },
+     drivers/bluetooth/btmtkuart.c:  { H4_RECV_EVENT,    .recv = 
+btmtkuart_recv_event },
+     drivers/bluetooth/btnxpuart.c:  { H4_RECV_EVENT,        .recv = 
+hci_recv_frame },
+
+> I think the simplest way to fix this is to remove the gate on the
+> definitions in hci_uart.h. Since the constants are macros, there's no
+> runtime cost to doing so, and nothing seems to rely on their absence in
+> the BT_HCIUART_H4=n case.
+
+Looking at the implementation, it looks like they only work with the H4 
+protocol? So maybe, that should be denoted in the Kconfig files?
+
+> I let randconfig builds run for awhile in drivers/bluetooth/ and didn't
+> hit anything else, so hopefully this was the only fallout.
+> 
+> Fixes: 74bcec450eea ("Bluetooth: remove duplicate h4_recv_buf() in header")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508300413.OnIedvRh-lkp@intel.com/
+> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> ---
+>   drivers/bluetooth/hci_uart.h | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+> index 5ea5dd80e297..fd0624988aba 100644
+> --- a/drivers/bluetooth/hci_uart.h
+> +++ b/drivers/bluetooth/hci_uart.h
+> @@ -121,7 +121,6 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable);
+>   void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
+>   			 unsigned int oper_speed);
+>   
+> -#ifdef CONFIG_BT_HCIUART_H4
+>   int h4_init(void);
+>   int h4_deinit(void);
+>   
+> @@ -165,7 +164,6 @@ struct h4_recv_pkt {
+>   struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
+>   			    const unsigned char *buffer, int count,
+>   			    const struct h4_recv_pkt *pkts, int pkts_count);
+> -#endif
+>   
+>   #ifdef CONFIG_BT_HCIUART_BCSP
+>   int bcsp_init(void);
+
+It’s a valid fix.
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
