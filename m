@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-792750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82927B3C87D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77225B3C87E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D441C24E16
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D7B1C22C06
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC40238C29;
-	Sat, 30 Aug 2025 06:25:40 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E872417E0;
+	Sat, 30 Aug 2025 06:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eyjjbucl"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58D92869E;
-	Sat, 30 Aug 2025 06:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34A2869E
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 06:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756535139; cv=none; b=lCRSKi+Dnut2EdgNDjs/XimCbnmTXl0BcCIM0N5sjlvBHZG3tlxcltQoWrDBkfEEwAiilTPCtTHJGzmcqzu6ZQ2FuhDkhXDpttYZb5rRS5vIlae+MPhDizgSpI/bTdaGKyclvR6Nbmtej0PzxPbOKHz1VoZcRjo4GNGI0Pxwe4g=
+	t=1756535183; cv=none; b=SafUYU98vOszpuw8m7Sboy3pv4Q1OVqVoCuHg4fYX4eVB8TrjlCttNRsYkldi/nFM8f1dYui2o0G+NblWEm8Gw7gSRfA+PleHpfIY9rzMAdiPW5zO3XTQIvXe0Wr4/48DB0Lqt4I1K+v2YhcE9VM267FCGIwmhhHxxl1RBCq938=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756535139; c=relaxed/simple;
-	bh=0QzAJ7CbvMlIPWm24wLuXvgMoA0rDopHRYVH3zy9GKI=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=T7BzNtaSbZxIJjoRDKpQwxihW9bRmJukRXLOyLmJExBilcc/oTJxch4DbFiUF9yOOyukwHlBBoI5Fa3VWwGmp8eDpV2c2+d4kpWbvHs0APt+8adZQvzXXCbV2EFa9kxnl1XZZuoziiBqMWbMpzH/WuGOYWb+8pXin6s8DqCuqVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cDQ9V5hx3z5B13X;
-	Sat, 30 Aug 2025 14:25:18 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 57U6PHPJ084792;
-	Sat, 30 Aug 2025 14:25:17 +0800 (+08)
-	(envelope-from wang.yaxin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sat, 30 Aug 2025 14:25:19 +0800 (CST)
-Date: Sat, 30 Aug 2025 14:25:19 +0800 (CST)
-X-Zmail-TransId: 2af968b2994fde7-637a8
-X-Mailer: Zmail v1.0
-Message-ID: <20250830142519085d4aXePTT_pSZ3UTxxNC8X@zte.com.cn>
-In-Reply-To: <20250828092655.GA30360@didi-ThinkCentre-M930t-N000>
-References: 20250828092655.GA30360@didi-ThinkCentre-M930t-N000
+	s=arc-20240116; t=1756535183; c=relaxed/simple;
+	bh=mgXyUB6vLmyGEIM/HvW/8ZTwZD3HAIcm1Xp9HqVBKsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=umJj3Ccz1NXIZGsFiErZ/u/9FdLmm5sCZ0fr/ngvBe0iN3xUPr+pOBoaaqkJt+fPKc0xAhqC/G1/+DCKHqISpkN19vZpXvAELWTPyXdldsqRqwTN/XbeLKihyiesuwu0PsGYdOb3Tzezu5KC18KxPe8JZa81VQdEQwSsPEggpbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eyjjbucl; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb731caaaso427688066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 23:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756535179; x=1757139979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mgXyUB6vLmyGEIM/HvW/8ZTwZD3HAIcm1Xp9HqVBKsQ=;
+        b=eyjjbuclKw+hl+pxWvBXo365o+tdRR15pX+twchEnZHR4/3XtskNd5P1yVisdr7FZV
+         0x4SvTWlvwOQOdYervbVeGtKl/wUO7dQjwSyKbzgpyP63ahEymaB0k2ijnh2ft3pIZHS
+         RFNZfNdAyHG51kp609pzjIeT/i5O7S8xhynv6+2BlMFP1lwaREvMhhyDadQHSP2h+sBs
+         c/p+jiEg+t2Xh8tNqNTsZjPVCJIkrgc54fYE6l3kV11vxSIipChGNsrVIE+J3XFcv0Mt
+         P5ZI9pW5yak2X7m5D9yr/7wkYlreTTmZG8Kaomwz5ISYj3sv4HorQShKQvhGB2GtXrq8
+         s6eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756535179; x=1757139979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mgXyUB6vLmyGEIM/HvW/8ZTwZD3HAIcm1Xp9HqVBKsQ=;
+        b=bXSejyzNLdZJspmLjRL/3+we6lhdqS2ONQ9jrlDVTgdBK1J/z53v7u2MqWwqkknRdl
+         sgvHCh4+KJ0MXR35rnTcHud0HKAk1EeeAjJEivz+YFpZZcproHeeYYxFhbdFmm9zM6bB
+         717Q7CbptKlbTI9zaiDQAQcPEEscjF86ZDDDml8+16PmuMO5AH7R2niBbW0GaAfzP6ft
+         ZrJ9jEU2Ax9vUz17tTJyR4CZpRUwDs0vCdoLLxFcyh3g2dMbf1BXYyjyCUt3WOCKWiuk
+         jOfMiG3+3DCU12Ty4MYjaIlw1dqdTKY73m0jdGO+XhBvWprFDCUfc/j6r4OsAQcCPBj3
+         03fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN3Cyq0gG9WsKLvokicsETozPxmlg0WfzcfVx+J/Jp9P4MjxwyzfQS7wZCNTIgvjcFDfFGtXr/hnbA4Tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBUFvlw0jhriWQEvnNsd00LJcGYW+u4X0nfn8GM7ruLNOfD5o5
+	vHAUt8J9j2aTg+1F33EfIuHgiihE3/e7xv6vBjc0Ibxnr0ipZJNwCb3PE6gcAanQmoErWQu6yVb
+	+H62DU852LIl2zFDhkcVnzDPYxvuyBFxEO5a9aEMrQg==
+X-Gm-Gg: ASbGncs0V+IbUhiz2jRjLF5g91vgLQRExbd0flGOUOiM+bAiyH1i4xukM/Dsc1t9n0e
+	ppQtRoXQV3i9xuCZrHjIkt2OwJUyS2UI5pPBkJ7M6+QlgVYta/jSMYwwendG/dAwh0yk3+6+ggW
+	9l9EHoEMC+JsuCA+Wxbr8m3LXLLuck5DppnIeGjJbwEB6+nJyRndQpeRuNxUT8Hh1KvtNhXn9vx
+	6cagfp6i3dbGFrqgVai2u7ONqXIfMxnApGaHSLzIp7btw==
+X-Google-Smtp-Source: AGHT+IHCvHn9uk7hSHPOZ2nzeLKH9MIFtgrASONd9bINKE+pcP/w+esbaAmtMOpllURppKjJONJErHArmMQvP7OpUoU=
+X-Received: by 2002:a17:907:9411:b0:afe:c1e4:5554 with SMTP id
+ a640c23a62f3a-b01d9730679mr107602366b.38.1756535179041; Fri, 29 Aug 2025
+ 23:26:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <wang.yaxin@zte.com.cn>
-To: <tiozhang@didiglobal.com>
-Cc: <akpm@linux-foundation.org>, <fan.yu9@zte.com.cn>, <corbet@lwn.net>,
-        <bsingharora@gmail.com>, <yang.yang29@zte.com.cn>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>, <jiang.kun2@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <tiozhang@didiglobal.com>, <zyhtheonly@gmail.com>,
-        <zyhtheonly@yeah.net>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2M10gZGVsYXlhY2N5L3NjaGVkOiBhZGQgU09GVElSUSBkZWxheQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57U6PHPJ084792
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Sat, 30 Aug 2025 14:25:18 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68B2994E.000/4cDQ9V5hx3z5B13X
+MIME-Version: 1.0
+References: <20250829183159.2223948-1-max.kellermann@ionos.com>
+ <20250829183159.2223948-6-max.kellermann@ionos.com> <aLIxs1cFhneGU5D9@fedora>
+In-Reply-To: <aLIxs1cFhneGU5D9@fedora>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Sat, 30 Aug 2025 08:26:07 +0200
+X-Gm-Features: Ac12FXytabmAexw3b0aFU-olWuI7_QFOvp6zOtmDGZ1G5mwKvBMIUZZnCVOTVT8
+Message-ID: <CAKPOu+9MBokh6z2o8=GKwTeU61Ce8Pbs7zjTSxo9=d+vKCYZWw@mail.gmail.com>
+Subject: Re: [PATCH 05/12] mm/oom_kill: add `const` to pointer parameter
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
+	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->Intro SOFTIRQ delay, so we can separate softirq as SOFTIRQ delay
->and hardirq as {IRQ - SOFTIRQ} delay.
+On Sat, Aug 30, 2025 at 1:03=E2=80=AFAM Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+> > -extern bool process_shares_mm(struct task_struct *p, struct mm_struct =
+*mm);
+> > +extern bool process_shares_mm(struct task_struct *p, const struct mm_s=
+truct *mm);
 >
->A typical scenario is when tasks delayed by network,
->if they delayed by rx net packets, i.e, net_rx_action(),
->SOFTIRQ delay is almost same as IRQ delay;
->if they delayed by, e.g, bad driver or broken hardware,
->SOFTIRQ delay is almost 0 while IRQ delay remains big.
->
->Examples tool usage could be found in
->Documentation/accounting/delay-accounting.rst
->
->Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
->---
+> Nowadays we're dropping the extern keyword.
 
-a small suggestion: it would be clearer if you could include a changelog
-when sending a new version of the patch next time. For example:
-https://lore.kernel.org/all/20250828171242.59810-1-sj@kernel.org/
+I can do that - is it acceptable to do that in the same patch?
 
-Thanks
-Yaxin
+> Also, Is there any reason you didn't also make the task_struct pointer co=
+nst?
+
+I wasn't sure whether for_each_thread() is const-safe. I think I
+looked at the wrong definition; for_each_thread() looks safe, only
+for_other_threads() is not because it uses next_thread() which takes a
+non-const pointer. I'll amend the patch.
 
