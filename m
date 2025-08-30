@@ -1,153 +1,151 @@
-Return-Path: <linux-kernel+bounces-792628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD13B3C6D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A1EB3C6DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1043F17A01A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9163B2CA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF96E217F35;
-	Sat, 30 Aug 2025 00:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375C3222596;
+	Sat, 30 Aug 2025 00:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWcFVISk"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpYukbS3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF62033A;
-	Sat, 30 Aug 2025 00:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B152033A;
+	Sat, 30 Aug 2025 00:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756515360; cv=none; b=Xa8P8sYd1iBoltvWthEVya67VG6x8awxuy0Du5tIfL+57mpd+Q9WajSMaAju+p+pgXVLEA77uLX03HrnIqAYsb/u2nryVcMvJ5OdZVAJOH42WPCUPColEodrP5ljgKCrMjr20U+nXRcnLuoUCDasuZZzQtKVWunNHaSuRJdnob8=
+	t=1756515496; cv=none; b=ZRXWPlaqjtVGUfP0QCIR1/+jPYxJcAq3NGDb9JMxHdo1GoijQa70/qv0cYwdWD3I+bqJ2H3daAmeeeZOE5/+8YQ1iTN6QS85nE/24oSR9t/RdIcqbcLBLbiiwGGuZ66dXw8P/q51Eu0ZKsNdXt4sB5bGEvmJJuLVkp3v9cOlsVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756515360; c=relaxed/simple;
-	bh=4IIst6fsOMFqOY7ljlrPtObocW7F6+CnLwyE8yKoYOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=syw5O56+ltUtrLmyrQqW3bPbLW0pUTLe4CUC8tqMTLhykembynRzE/YhlsK/dv0KqaM/gUq3qRlQIEB9/P9OdvFh+ZLX/5gSsnhAk7YgyDg1jDXG3T02a2pLnFPC3Z503n0Fx4xYmxRqrWdV58RTdiCBXBVEBHEnjZn8o18mBvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWcFVISk; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61ce4c32a36so3807128a12.3;
-        Fri, 29 Aug 2025 17:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756515356; x=1757120156; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4fmjVDdFrMx9ZSS1uNIb9RY2hqkvjiZO5mAN50cFP8A=;
-        b=fWcFVISkDEqliWypGeoprg8ikamE5nVAjvSneh+DLAykFoZhtvnTyMtoiCH6HbVEU2
-         c+ZQozvtn5N58NEA3o35J0VCRAk/rNUgBQ47zBPSbTw3q8ZtcmSdmEdO+d9oDXehliCc
-         M2nAL2NbDI41d2SNJDTTd13bVYLgPSvk9J3bML9tpIzSZT4EfGprZJS+v25Q/f4MWQ2J
-         SnfN3r3yEiMUhQcRaZ1KIQ6SNInk+r33wtCmllHvHuA0De00xgvmuKBV3CIb9BLb1RgC
-         iwX6Ls/JwjeQ4TNKbwIbH+GQO9wHPHfjc2tpnTYlLp1sNW2WsPotyZTGdeflWHZsWhOu
-         HIkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756515356; x=1757120156;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4fmjVDdFrMx9ZSS1uNIb9RY2hqkvjiZO5mAN50cFP8A=;
-        b=jQRkfbTDZwGsVkGBV49P20Fw/fZiknQp/VJh0tsulW20gqZ90UKUAggWK3EW8bdXZy
-         H8Yb4wVXNOos+zdJCRJSXcscavCB5eItczXgdonX0umvGvpoP/DUi8g5H1ERxZHHOdBs
-         3CtFCuk9SROia4BROHYXSFIvkkj5AlrLbovBKoSVkpzI8w3+T7IhubDu/ZRR7fkoBb01
-         BOTAVvUeSUw77c9YuDEbeiRCdz/7olBajuQVf4KYMYvBDQQOrWGKL1hpkydGCTN912uK
-         NYf1fMTtjd6Yfb330hJsYeoHU5DCjoRTPR46bxjccdvvgWu/cJLtFeANHXu7b0ZNDrOu
-         +P7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCF9Q9f1mP05qAT1qMBG8ZWPQZoXAl0wgcmCS/EF8b2akggi8+W8J6PIP7O+U0SWkl6fbCe/OS3qEb0xE=@vger.kernel.org, AJvYcCWnSsbJ5Qpnq2KYWvBdyFKPtF7JEHen7PzV1ZbCqsfDeHq7q9K1fUHCxTgC2J3qNVtaFr4gVdAFQM8G3QtFvbZN@vger.kernel.org, AJvYcCXe5wtMwB2hGTZ1Ci/+0fKpze6pPO23dnvyP7+OCbH1bpKK9ju48HX2Wzcg6HSm6COLXn8oA6mG5LTDEeEjsJpsNDRspLyC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq4NSJNspWtzUA9tFt2AmiS4lGZ+AQaq8pM30qbd4yRtnIjZAi
-	d4VF96ywfyW8+2x+lJByqnGgw0hBlG2ypBMEjipi+vFHNR9h44yQ+7mu
-X-Gm-Gg: ASbGncu78sXW+rGjcvZEfbct/KiGVpsD6z0eOH+HA/l5AZqdvgCQe1Rrk3lhwpcOGEF
-	BEv1eiSkrODH+xxM7zhvPspnISU2yfInc4AUCOveF72ff614x+Fbilx/vt2cphTshzjbsEsNNaM
-	11vOeDxjQxJPDvT1Sq17Kab9Oe2xAt7i3SP7W/QOPzMwaoh6dUXP3AqypibIpv1syY/g7V6/tF4
-	IyD0oL51MH0XuXvEeAX2XdhDN/DGMNZJHChArHU1cmShPyU2UOXC+hbe4meYO6DmnLdFgTxUYZC
-	NDunxjTq0MM4ZPfSo1c8PDgXc8L0e3EfzaPMOdPUCv3mmd76TepyIdqKtVNTGyR3YXGeI/xhmcW
-	51ZFG8VSnNkwymy5KUnuWOlfsAiQGWmi2oNcP
-X-Google-Smtp-Source: AGHT+IE/li/Ts2UpBwuWVuVSIjcO4SAipUbYlLSRWpymiN4ghQfYMrr6M82K/BEJSs15LPmF9GkV2g==
-X-Received: by 2002:a05:6402:5cb:b0:618:bc4:5777 with SMTP id 4fb4d7f45d1cf-61d2688bff2mr442032a12.9.1756515356279;
-        Fri, 29 Aug 2025 17:55:56 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc214e2csm2654649a12.15.2025.08.29.17.55.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Aug 2025 17:55:55 -0700 (PDT)
-Date: Sat, 30 Aug 2025 00:55:55 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: richard.weiyang@gmail.com, Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org, davem@davemloft.net, david@redhat.com,
-	edumazet@google.com, gnoack@google.com, horms@kernel.org,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com,
-	mhocko@suse.com, mic@digikod.net, ming.lei@redhat.com,
-	pabeni@redhat.com, rppt@kernel.org, shuah@kernel.org,
-	skhan@linuxfoundation.org, surenb@google.com, vbabka@suse.cz
-Subject: Re: [PATCH 2/2] selftests: Replace relative includes with
- non-relative for kselftest.h and kselftest_harness.h
-Message-ID: <20250830005555.ebx6sq2j22mm3plp@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250829014358.qk3zme4qlaojun53@master>
- <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
+	s=arc-20240116; t=1756515496; c=relaxed/simple;
+	bh=SwFkmd3ne4fgMM2GZ+aPrgC53xia/azjZYFKdft10SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XlUmX9selsXYsC6/BMGkSXRezkiF0c2AQVd61uQJ4QvL3uiTBp0ixJVCKGNNMlQMrVz0ZomYAogIUgtCzWXeeiwV/sgZ2mPPJ0R61/TwR0ejjoHpUc0DI9jmQWX4CY8YA8w/7XWUiuLLMwqMfh2eFxbwavFul/7MZDCaT9pckG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpYukbS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581F6C4CEF0;
+	Sat, 30 Aug 2025 00:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756515496;
+	bh=SwFkmd3ne4fgMM2GZ+aPrgC53xia/azjZYFKdft10SE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cpYukbS3FUxbDQHb6vMXvgEHbxI6FcVANQz6/3faguy3SRpuf5lW9hsBwv0qHYtwm
+	 jwq0yqCt5EWNB2yRQqSW0JQ4QQgk2IpCuQdeOp0rUtFU6/1fgsgFqElg5tHYVW7jsI
+	 C15VAXaR7cFN+JbA1RCR1TaSXoYqbkxkm2Bl/QgW25hx3l4jy/4St5Sn2zlunOmtYw
+	 /53UsFHa8+uTfpzKUSSpjd6ZICtAZr8VzvO/HsvAHxY+DXIC/U0Xncc1x+3z9+Z580
+	 SM1Jk1sMAzVBLcB2DUQjnxigvaWuehccv2KcTx7AqIIyKgc387B5KsB3aVUpUldZZy
+	 MKO9QGEeFoU8g==
+Message-ID: <e116c5c4-55ae-4b8c-98ff-664115d70862@kernel.org>
+Date: Sat, 30 Aug 2025 09:58:12 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829105306.6638-1-reddybalavignesh9979@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 08/10] block: skip unnecessary checks for split bio
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, neil@brown.name,
+ akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-9-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250828065733.556341-9-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 04:23:06PM +0530, Bala-Vignesh-Reddy wrote:
->
->>+ifeq ($(KSFT_INCLUDES),)
->>+KSFT_INCLUDES := -I../
->>+endif
->>+
->
->This makes sense, but if we do it for mm/ then we have to
->follow this for all subdirectories in selftests.. that might
->cause problems if subdirectories are nested ones likes filesystems/.
->Duplicating this across all subdir Makefile adds churn and can
->lead to errors.
->
->Another way, is adding `CFLAGS += -I../` as is done in net/Makefile,
->but this also doesn't solve the problem completely as this also
->remain to relative addressing.
->
->But, if preferred we can add this snippet in Makefile to
->resolve the error temporarily.
+On 8/28/25 15:57, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Lots of checks are already done while submitting this bio the first
+> time, and there is no need to check them again when this bio is
+> resubmitted after split.
+> 
+> Hence factor out a helper submit_split_bio_noacct() for resubmitting
+> bio after splitting, only should_fail_bio() and blk_throtl_bio() are
+> keeped.
 
-Well, maybe I find a way.
+s/keeped/kept
 
-Since we already get the top_srcdir in lib.mk, sounds we can add the include
-path directly in lib.mk.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-core.c  | 15 +++++++++++++++
+>  block/blk-merge.c |  2 +-
+>  block/blk.h       |  1 +
+>  3 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 4201504158a1..37836446f365 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -765,6 +765,21 @@ static blk_status_t blk_validate_atomic_write_op_size(struct request_queue *q,
+>  	return BLK_STS_OK;
+>  }
+>  
+> +void submit_split_bio_noacct(struct bio *bio)
+> +{
+> +	might_sleep();
+> +
+> +	if (should_fail_bio(bio)) {
+> +		bio_io_error(bio);
+> +		return;
+> +	}
+> +
+> +	if (blk_throtl_bio(bio))
+> +		return;
+> +
+> +	submit_bio_noacct_nocheck(bio);
+> +}
+> +
+>  /**
+>   * submit_bio_noacct - re-submit a bio to the block device layer for I/O
+>   * @bio:  The bio describing the location in memory and on the device.
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 3d6dc9cc4f61..fa2c3d98b277 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -131,7 +131,7 @@ struct bio *bio_submit_split_bioset(struct bio *bio, int split_sectors,
+>  	bio_chain(split, bio);
+>  	trace_block_split(split, bio->bi_iter.bi_sector);
+>  	WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> -	submit_bio_noacct(bio);
+> +	submit_split_bio_noacct(bio);
 
-Some quick build looks good, not fully tested.
+If this helper is used only here, I would just open-code it here as otherwise it
+is confusing: its name has "split" in it but nothing of its code checks that the
+BIO was actually split.
 
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 530390033929..1d3d0ad037d7 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -199,11 +199,18 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
- # Build with _GNU_SOURCE by default
- CFLAGS += -D_GNU_SOURCE=
- 
-+CFLAGS += -I${top_srcdir}/tools/testing/selftests
-+
- # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
- # make USERCFLAGS=-Werror USERLDFLAGS=-static
- CFLAGS += $(USERCFLAGS)
- LDFLAGS += $(USERLDFLAGS)
+>  
+>  	return split;
+>  }
+> diff --git a/block/blk.h b/block/blk.h
+> index 46f566f9b126..80375374ef55 100644
+> --- a/block/blk.h
+> +++ b/block/blk.h
+> @@ -54,6 +54,7 @@ bool blk_queue_start_drain(struct request_queue *q);
+>  bool __blk_freeze_queue_start(struct request_queue *q,
+>  			      struct task_struct *owner);
+>  int __bio_queue_enter(struct request_queue *q, struct bio *bio);
+> +void submit_split_bio_noacct(struct bio *bio);
+>  void submit_bio_noacct_nocheck(struct bio *bio);
+>  void bio_await_chain(struct bio *bio);
+>  
 
->
->Thanks,
->Bala Vignesh
 
 -- 
-Wei Yang
-Help you, Help me
+Damien Le Moal
+Western Digital Research
 
