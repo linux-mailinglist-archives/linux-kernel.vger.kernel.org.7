@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-792594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F0EB3C64B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB91B3C64F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E71C3B1503
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AACA565B43
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709F156B81;
-	Sat, 30 Aug 2025 00:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0FA43AA4;
+	Sat, 30 Aug 2025 00:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDGbv+GK"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3xeKX/o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CAD191;
-	Sat, 30 Aug 2025 00:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1F1799F;
+	Sat, 30 Aug 2025 00:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756513695; cv=none; b=K95etvpfBKux5SD7K21fkEfH4Jta9MkM4lvbMhumlLSV9ZSqF28ccvDa+3Ba/889bttI0EbDVJa6fheN1CNkYz2loyIRWlGF6XIeqr/+x9Omwc5uNGEABywS5l4aidqI/vgZV5sFBB7JDgJgQ0Yt1g5FfAVL9M9IbeQiveTo89Y=
+	t=1756514056; cv=none; b=k8XnuCPvgkOO/PhfmeR2fWSN3EdWsh7vogttpjL3dQTIa5LmuOylaFMd3dw2OYtXZV+1Inye9lj3B2MIVvZYQBtBDAZAWRXJJs8ROiEsDFnyWvCbS+yJ40KkB0iH/I58LtMLS11RFgi4ozs0hqMjY/pPNzQFd2xlO67PYpslab0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756513695; c=relaxed/simple;
-	bh=ZvK4bYA3r8mTlanGVlu/JYxp/7dderxUPye0iM8shsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qa3dazD3XsdkDacbdNzCz+onUb2Wix+684bY9PWVSrcy+4n99jd+gf3ql31hnJiOyrWq9Z6EfoA6fQrmJsyrOBjteOgh048q3Tg6bMdM3b5k6yLKqY9B7dag9UiFYlJtqssyEseA2WTiB1HUH/oM43QFki9IdnwV1qLZyDaSd3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDGbv+GK; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3cf991e8bb8so780483f8f.2;
-        Fri, 29 Aug 2025 17:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756513692; x=1757118492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VrhIVs/dJPUCsFAm8+oJ7qqPTnO0H735wh0Jw8oqxj8=;
-        b=EDGbv+GKKQsLV0uJWS9E96RLANMVo5nFTCOYefs8WP+Wph6JOBDNqqpWG6s/klSkCt
-         TZZTjoMXuAXUwtczYYYC1OD+UieSiYhazFIw3aPCOpDCmd8/CBfLf5jL3t1bdN0TPhC7
-         XmSIp52ww3COt9gE6+TMwhOPGWA0/hdp1sQJm2VEww2lvuKVW1ZuKSi9F8/TF3Ad2Rqb
-         fdet3pOlY5BsQ1BJ7/cASeNF/opDRDtzqlfvwqxM2tfYwzCIg44bj4JUzEoyWjjjJXIg
-         Ua7D8r7V0p27/4yPtPmfHUAetU0IpIg/mmZ6NdOhpA8SzfK+n4eJLOXaenGH3Y2xMSV+
-         gMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756513692; x=1757118492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VrhIVs/dJPUCsFAm8+oJ7qqPTnO0H735wh0Jw8oqxj8=;
-        b=e3uBGAe8SymAimt/w+mb1GxAk5pH5V/6WDLetQj4zLu1H+egA1oIz3NbgO6JaFbuNn
-         wU2qG7muS4QQzfqoLQlPohfP465WnDG1o6FfrrIa1jHoGsBe+jUcdKrNpsCCfdyZOtVi
-         Fy67vGl5S60M5lT1ySalsgGahpya3LgDoDlDitWZnDjcaYaK2bCjSNUkjjfiR2lELYEa
-         7gKKMjpQNt9stXe+jFNdVYU0NCfuTRQy+jAMGgTt9Ze/FJKiSWw8T4duB9Y+PwRwGZQo
-         FOac7hTEnDqbIwfejjEHvtIVwOjyjfDDPjbK95xWYsvz28/Y51p0NlIwo1d2vepdMQwA
-         bcJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDtedRBA49h88Zp/+FiKlaUvYWXUW5F72jiuEcVvKrCr5fQz4nnzzthMGvhMQ72XFM2l0=@vger.kernel.org, AJvYcCUjyKRSy2xGQGQ8mfKHpMCO0v8TJafKMwDmoOYdqMGMUInS+fRDo+WAUlaHJbZ/3oKcFL6ULU4l/qklmkQA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEBP6kYk//8/wavx/Egq56QHK1xbp2wGY0qHv6OQpzUaEnnKFY
-	uwnEvvV2EWnrDrmr52tkAYG9rEOoIf3rVlajegCu/Kqp+iUJ1tmBo9dWvYddtiougGZIRdhHtMM
-	sHs+YTzx5qCfcemCZN6tNyclt05YpJzo=
-X-Gm-Gg: ASbGnctV21bHEPKr3Tt6CAvFdmyUdI+vDZ7vImMyci+qQQv7AhZaorH5bGRjfNVnDK+
-	6jzU8M1vBUF2RKEHWnSiux3GPAUbroKkBN2VBvlIITAe7bdWhRMDBabkcDcxy9Div7VOEbJf2F4
-	2r52gn3TeWc/29IrQJBy9znpiZxyqBTf9oOXW/zB4N+uiiTN+WcrohVPtohI5i8fVdyWPOjFmeL
-	3aYBxAj3Wl1K+wnfbKwp9493zCUcFflfmp+Agig4Mx7rWY=
-X-Google-Smtp-Source: AGHT+IHLLfxZUg/Gr9rEauyIEDuTh+gBYRyOxVzgA0NvK1AU6IZrp6Wg6fE87yy64L9t+WHZ8+W2dtWCcrNFNJ9w57w=
-X-Received: by 2002:a05:6000:2509:b0:3c8:ed45:497 with SMTP id
- ffacd0b85a97d-3d1dea8cfd0mr216623f8f.47.1756513692178; Fri, 29 Aug 2025
- 17:28:12 -0700 (PDT)
+	s=arc-20240116; t=1756514056; c=relaxed/simple;
+	bh=CGKuUnFLIgZQcIQRjehK7VdSIVKubM4b+zXerCXihrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GzxuoUq4fwIv9r2bRa704nUsxH67bwJmT3dUARQ4XxH4+U+dKTOKI1kwCs76WvDkKRCpItgIjRFTM1neRGo8S8IU7wYAq+JH8OedqJOh6kbT4zTB1lamP3zktFnWPjke4CHnBkxcLi3HTH/VxJndgdq4zViU2RfRzyBanFSLSyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3xeKX/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2D2C4CEF0;
+	Sat, 30 Aug 2025 00:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756514055;
+	bh=CGKuUnFLIgZQcIQRjehK7VdSIVKubM4b+zXerCXihrc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s3xeKX/oBi5t9Q1S6/8eq9nmxlf2jzimRN2vm3MVth0Apswa0mSPSEJpISRqlYJ+O
+	 lx9jmYDvF5wUNPXsGnPRcqW9jGt8Fl6pFhE78KDYoLAILYaJZwJYhAETRIdDy0PSGk
+	 V2Opm5uLwAiwbfXXBsNJlkTMQ5LVmwDJGVTXZ0loEGHbFHscxhQiUrb9rAaVmhsZIq
+	 5etA2tWEQi+Zi3SFD+9r+kIDLx2vmaGH3fEXoGiCLrIIFBw8GyNRcdUTdkdGvzqFRt
+	 5GTkuL+f8kqZEDynRMNsmtjAl4+4dDBG0FKXVBpC9KxkXTgOctUcLVsVouiScCCse2
+	 jOJUy4m4eN3Vw==
+Date: Fri, 29 Aug 2025 17:34:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
+ <przemyslaw.kitszel@intel.com>, "andrew+netdev@lunn.ch"
+ <andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "horms@kernel.org" <horms@kernel.org>,
+ "sdf@fomichev.me" <sdf@fomichev.me>, "almasrymina@google.com"
+ <almasrymina@google.com>, "asml.silence@gmail.com"
+ <asml.silence@gmail.com>, "leitao@debian.org" <leitao@debian.org>,
+ "kuniyu@google.com" <kuniyu@google.com>, "jiri@resnulli.us"
+ <jiri@resnulli.us>, "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>,
+ "Vecera, Ivan" <ivecera@redhat.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
+ <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] net: add net-device TX clock source selection
+ framework
+Message-ID: <20250829173414.329d8426@kernel.org>
+In-Reply-To: <SJ2PR11MB8452311927652BEDDAFDE8659B3AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
+References: <20250828164345.116097-1-arkadiusz.kubalewski@intel.com>
+	<20250828153157.6b0a975f@kernel.org>
+	<SJ2PR11MB8452311927652BEDDAFDE8659B3AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826212229.143230-1-contact@arnaud-lcm.com>
- <20250826212352.143299-1-contact@arnaud-lcm.com> <CAADnVQ+6bV3h3i-A1LHbEk=nY_PMx69BiogWjf5GtGaLxWSQVg@mail.gmail.com>
- <CAPhsuW5P4sOHmMCmVTZw2vfuz7Rny-xkhuPkRBitfoATQkm=eA@mail.gmail.com>
-In-Reply-To: <CAPhsuW5P4sOHmMCmVTZw2vfuz7Rny-xkhuPkRBitfoATQkm=eA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 29 Aug 2025 17:28:01 -0700
-X-Gm-Features: Ac12FXz6kWOcxspa5bslzCZuaIzwRt9668IkCzqmvaW4DsWio--34nodGGwXtHs
-Message-ID: <CAADnVQK=3xigzt-pCat5OF29xT_F7-5rXDOMG+_FLSS0jRoWsQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
-To: Song Liu <song@kernel.org>
-Cc: Arnaud Lecomte <contact@arnaud-lcm.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 11:50=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> On Fri, Aug 29, 2025 at 10:29=E2=80=AFAM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> [...]
-> > >
-> > >  static long __bpf_get_stackid(struct bpf_map *map,
-> > > -                             struct perf_callchain_entry *trace, u64=
- flags)
-> > > +                             struct perf_callchain_entry *trace, u64=
- flags, u32 max_depth)
-> > >  {
-> > >         struct bpf_stack_map *smap =3D container_of(map, struct bpf_s=
-tack_map, map);
-> > >         struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-> > > @@ -263,6 +263,8 @@ static long __bpf_get_stackid(struct bpf_map *map=
-,
-> > >
-> > >         trace_nr =3D trace->nr - skip;
-> > >         trace_len =3D trace_nr * sizeof(u64);
-> > > +       trace_nr =3D min(trace_nr, max_depth - skip);
-> > > +
+On Fri, 29 Aug 2025 07:49:46 +0000 Kubalewski, Arkadiusz wrote:
+> >From: Jakub Kicinski <kuba@kernel.org>
+> >Sent: Friday, August 29, 2025 12:32 AM
 > >
-> > The patch might have fixed this particular syzbot repro
-> > with OOB in stackmap-with-buildid case,
-> > but above two line looks wrong.
-> > trace_len is computed before being capped by max_depth.
-> > So non-buildid case below is using
-> > memcpy(new_bucket->data, ips, trace_len);
+> >On Thu, 28 Aug 2025 18:43:45 +0200 Arkadiusz Kubalewski wrote:  
+> >> Add support for user-space control over network device transmit clock
+> >> sources through a new extended netdevice netlink interface.
+> >> A network device may support multiple TX clock sources (OCXO, SyncE
+> >> reference, external reference clocks) which are critical for
+> >> time-sensitive networking applications and synchronization protocols.  
 > >
-> > so OOB is still there?
->
-> +1 for this observation.
->
-> We are calling __bpf_get_stackid() from two functions: bpf_get_stackid
-> and bpf_get_stackid_pe. The check against max_depth is only needed
-> from bpf_get_stackid_pe, so it is better to just check here.
+> >how does this relate to the dpll pin in rtnetlink then?  
+> 
+> In general it doesn't directly. However we could see indirect relation
+> due to possible DPLL existence in the equation.
+> 
+> The rtnetlink pin was related to feeding the dpll with the signal,
+> here is the other way around, by feeding the phy TX of given interface
+> with user selected clock source signal.
+> 
+> Previously if our E810 EEC products with DPLL, all the ports had their
+> phy TX fed with the clock signal generated by DPLL.
+> For E830 the user is able to select if the signal is provided from: the
+> EEC DPLL(SyncE), provided externally(ext_ref), or OCXO.
+> 
+> I assume your suggestion to extend rtnetlink instead of netdev-netlink?
 
-Good point.
+Yes, for sure, but also I'm a little worried about this new API
+duplicating the DPLL, just being more "shallow".
 
-> I have got the following on top of patch 1/2. This makes more sense to
-> me.
->
-> PS: The following also includes some clean up in __bpf_get_stack.
-> I include those because it also uses stack_map_calculate_max_depth.
->
-> Does this look better?
+What is the "synce" option for example? If I set the Tx clock to SyncE
+something is feeding it from another port, presumably selected by FW or
+some other tooling?
 
-yeah. It's certainly cleaner to avoid adding extra arg to
-__bpf_get_stackid()
+Similar on ext-ref, there has to be a DPLL somewhere in the path,
+in case reference goes away? We assume user knows what "ext-ref" means,
+it's not connected to any info within Linux, DPLL or PTP.
+
+OXCO is just an oscillator on the board without a sync. What kind of
+XO it is likely an unnecessary detail in the context of "what reference
+drives the eth clock".
+
+All of these things may make perfect sense when you look at a
+particular product, but for a generic Linux kernel uAPI it does not
+feel very natural.
 
