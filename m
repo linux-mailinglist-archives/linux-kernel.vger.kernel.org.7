@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-793129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93AEB3CF01
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:24:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA91B3CF04
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B1A1B26752
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA9C7C50FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903612DE6EE;
-	Sat, 30 Aug 2025 19:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E222DE6E1;
+	Sat, 30 Aug 2025 19:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vmPOc3nP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk56bp5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC322A4F8;
-	Sat, 30 Aug 2025 19:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4A201266;
+	Sat, 30 Aug 2025 19:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756581863; cv=none; b=rWNPR7TY60hdkzlRM2zLuxv97aqFGZmz2QsZNl4++8gLWVYyMsQ9LzcdoLq/8hGfSwcI4fDKRwd9LjN9/5D1TAOVCKhgiIZF4Sf2C4ma0mQAIs2ow7gjfaI1gwShoJ0XJ89Kh0yRDWMy5p0784SqR+WO0Q5S2Rdc6ARaaWdz344=
+	t=1756581993; cv=none; b=Nk92WI3ksDGde/TvWZJVNw9LuxaAB6JV+xsWL+I8+/rnXqLLORtPyvoQpzQwxRtkgfrvu8hQ+BTA8a8saek/V8zfIOhueUpLQS7TMHbBnw7GDNaK8E8t2ErF7BiqJQebTGFtLTv8njnQF4t4JnOWpnEJufIeHxHwShRREOLeWKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756581863; c=relaxed/simple;
-	bh=KhCrgPypb7PZD7jnU+GsG7IH2u0c8W5XLWTpzPcJeh0=;
+	s=arc-20240116; t=1756581993; c=relaxed/simple;
+	bh=EFzZ/dRswnSMMyqhrChBf68AnBA7vwYE05vr7IlPs4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMmBL1AEcYEAkfyJAZV61Os1nPEKvmkAuxAFMKwLhN7Zft4S21TgfENFApy8kfhW0fBQMx2r/YJHSg/bFmIr2lp+Qb9M6xv3gdoluHFvfwr6D0To5ZAM3nPJUBGPgaKBa4d33j6wDe9jyxY4gYoGT9lrqTczy8u0RQE5z+QNT+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vmPOc3nP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+jog82d+9IMz6V10XlVgAfkryK/4rWv5Ffo0C6q9pYU=; b=vmPOc3nPB6vZolLrsJTZjeys3g
-	zc+wYUV+mUPAa854+zJf0/MgBEcgCuxI7tWKpBDNTAwRserbOzbVaxEfQV1QhQU1CmYgKK7FF+i4n
-	g716VgJui3rvYMXdR6lPvAWNKoJWCsA3tpkM+S/JZ4m/7XM+Wi9ffB8RGd70brobQYVw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1usRBD-006bEM-L0; Sat, 30 Aug 2025 21:24:03 +0200
-Date: Sat, 30 Aug 2025 21:24:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
- ks8995_probe()
-Message-ID: <9c7b0cc7-2bac-474b-a0ee-d24c7954d815@lunn.ch>
-References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXmlZNAu6ZOUEWXll1DK4uDUuw5o/JJvOl2/yYkAAWjey7F1buLgTvjtm0833igfIhfC1wtxS+aprZ+eL8arULaOXvKlgPBnhwHTsnrn223W8ZGnGTmEqaZiLHTv68ZskFAc+JIJpiXRXO29TQwqYCmHWoR8vUarAsogrk5tdRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk56bp5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95053C4CEEB;
+	Sat, 30 Aug 2025 19:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756581992;
+	bh=EFzZ/dRswnSMMyqhrChBf68AnBA7vwYE05vr7IlPs4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dk56bp5OvrPV6ylIV3PBEDXzYUNWWy7DqgEv4CG7Z6kTGFtQonp+pxf8roItsuzKx
+	 xUtYwrRRH8iRLM3VY0eCwMaWxjtwDAYpnMp7MRuX8ShoCOq3MbnnhTJ7m3y6UuEi70
+	 4MXJbRRrsQIzWYv+WKJvprv/nmU5OubQj0dJ25Cqk8p1vWnLTHU5TlwHXIsdWeAyOo
+	 3dxovkrwfPr7O4ZJigPKlN39JgWV5R+u5UpRli/6SEWr0RPtYiV9XebXgs8A/c/ZVz
+	 r1tYoxpU1eOUSM9BF3W4SviXEj1ZPodWnjNXCiLA5Dep700Oi6IuSvjIdkg0dE6y22
+	 bms8kh3nAQhHQ==
+Date: Sat, 30 Aug 2025 21:25:10 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Brendan Jackman <jackmanb@google.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
+	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] .gitignore: ignore temporary files from 'bear'
+Message-ID: <aLNQFmgS2IcDbPmd@levanger>
+References: <20250827-master-v1-1-19f9f367219c@google.com>
+ <20250829233824.GB1983886@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,21 +60,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250829233824.GB1983886@ax162>
 
-On Sat, Aug 30, 2025 at 07:13:59PM +0200, Christophe JAILLET wrote:
-> If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
-> be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
-> already done in the remove function.
+On Fri, Aug 29, 2025 at 04:38:24PM -0700, Nathan Chancellor wrote:
+> Hi Brendan,
 > 
-> In order to easily do the needed clean-up in the probe, add a new
-> devm_add_action_or_reset() call and simplify the remove function
-> accordingly.
+> On Wed, Aug 27, 2025 at 08:59:43AM +0000, Brendan Jackman wrote:
+> > Bear [0] is a tool for generating compile_commands.json. For Kbuild,
+> > Bear is not useful, since Kbuild already generates the necessary info
+> > and that can be converted to compile_commands.json by
+> > gen_compile_commads.py.
+> > 
+> > However, for code in tools/, it's handy. For example, this command
+> > updates compile_commands.json so that clangd code navigation will also
+> > work for the VMA unit tests:
+> > 
+> > 	bear --append -- make -C tools/testing/vma -j
+> > 
+> > Bear generates some temporary files. These are usually deleted again
+> > but having them show up ephemerally confuses tools that trigger
+> > recompilation on source code changes. Ignore them in Git so that these
+> > tools can tell they aren't source code.
+> > 
+> > [0]: https://github.com/rizsotto/Bear
+> > 
+> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
 > 
-> Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> We can likely take this via the Kbuild tree. I do wonder if this would
+> be better in a tools/.gitignore file since bear is really only of use
+> there but I am not sure it matters much.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+yeah, please consider using tools/.gitignore.  Please have a look at
+this thread about ignoring files from "external" tools:
 
-    Andrew
+https://lore.kernel.org/lkml/CAHk-=wiJHMje8cpiTajqrLrM23wZK0SWetuK1Bd67c0OGM_BzQ@mail.gmail.com/
+
+If using tools/.gitignore is not possible, I think the best way for
+ignoring files that are not natively related to kernel build tools is to 
+update the local ~/.config/git/ignore, as suggested in
+
+https://lore.kernel.org/lkml/CAK7LNAQas0cK7pgi72tYC3yU=ZkQxnr41YYW1mXd-sWiHtG+UA@mail.gmail.com/
+
+compare to:
+
+https://docs.github.com/en/get-started/git-basics/ignoring-files#configuring-ignored-files-for-all-repositories-on-your-computer
+
+Kind regards,
+Nicolas
 
