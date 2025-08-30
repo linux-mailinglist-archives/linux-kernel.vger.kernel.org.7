@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-792844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ED3B3C9A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9507CB3C999
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E751B27B4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560063B70D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11A62586C9;
-	Sat, 30 Aug 2025 09:11:34 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EFC255F3F;
+	Sat, 30 Aug 2025 09:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nirfZ2jD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FF936124;
-	Sat, 30 Aug 2025 09:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0227D155333;
+	Sat, 30 Aug 2025 09:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545094; cv=none; b=jDO4m906tbknFALavwgL+fvo3SXMsDrz6fiv8RXDKHwbyWafKDjyC+wER7EOKkKYYiIdLNCOaNFQe/YRKTw6APHvz6Rz239Rec1Ue4o1s3SsCbP5A2U+UbZ69LUnuRtVfsGmjtIAeswQcwanFDZnfr20v/u7aJCrxo+1EDTRaZA=
+	t=1756544590; cv=none; b=orSQGTkTAvL4ZDwhlpA3X/3pmQrQvcpcIZGGT73KJ71/U0wXu1D7OQYAm/sMD+4n0TT6nOMjH2VBvBwffo62Mgvg4br+ca0ll1YS7JNBKWOwyVbkcaMBfo3kfsOYWazUGWrHWX43piEMmBxZEwFeKLV4xEgToJxg1BGh+RAzDDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545094; c=relaxed/simple;
-	bh=f1b/4amQMKPWaM434ApARpUsCSUkb/F7/lZRqywz9NY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gtyOWo/SISBGAOus5DNkFDsl5VnoYcrPx1kjJB1EdMZ31NSVfsxOCYerA6brg6V5LPpn5NegaBL8A0Kb5iZrlC9tW99lTsmpB44KbraXNt6qLkB393UPRdFMSmQNa/860QLcfjbKTxohCAhSHF7RbqRRoPB876313ZvDXOdeyZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cDTsF1DsTzYQvmD;
-	Sat, 30 Aug 2025 17:11:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A9F021A0A4C;
-	Sat, 30 Aug 2025 17:11:27 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY49wLJo3KYrAw--.7400S4;
-	Sat, 30 Aug 2025 17:11:27 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com
-Subject: [PATCH] md: prevent incoreect update of resync/recovery offset
-Date: Sat, 30 Aug 2025 17:02:42 +0800
-Message-Id: <20250830090242.4067003-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1756544590; c=relaxed/simple;
+	bh=3p0cY1xrh7q/PVQUWBpQTE4+GWE8MdOz49LR5EqfN+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pWeRsQcl6iPgpqAGqYmvXq4UdOoYZNFo7rKOKW9JTizufMSF9dpNWXckwOlB/1dvis6uvg2clNRN2Zou+0es9X69KhmWOgFLlvDyJB/hSxTf3ImEtcqoYc5bGl8EHe4lz4ppnEkC3W/MBTYTVNiPBAg9jltkdKutjKhikyYQCWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nirfZ2jD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21140C4CEEB;
+	Sat, 30 Aug 2025 09:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756544589;
+	bh=3p0cY1xrh7q/PVQUWBpQTE4+GWE8MdOz49LR5EqfN+o=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=nirfZ2jDpHYodDHzl/XWWCSBW4KTJ3MEWwM62rFoNwZ7BcAGpwarFxSVfYRDu48fT
+	 bYtGOaSVZXLNhOF8tSr0bJfyoNHW8DhOCMXW3t1Mka4QPUPtEYa+0Dbg3aNhu17lCd
+	 ZuKC18Pw3xSZeortJG5yyFfH8xADwOEitaZkb94xBrS3wglPxw3XHIhy8p9SUreP2M
+	 vO5OUviOecqZ5T8n/iMFqFwTGZy3vlwh/pTnBBjhgv6Tryvnm2Fx0lHHFgivaEZOAb
+	 eWsBj1qyxkkpW7yQCG/eFVkLnls/EB+ltnzpHjQqmwlgWWJ1Jhdw7m7udWEbI0W3Ld
+	 HvTmT/gUIX8Fg==
+Message-ID: <27809570-d243-42f9-81b3-b6d422021572@kernel.org>
+Date: Sat, 30 Aug 2025 11:03:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY49wLJo3KYrAw--.7400S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr48Gw18Gry3WrWfAryxKrg_yoWDZFg_ua
-	y7ZF97Gr93GF9rWr1aqr4avrW3tF4DXr48Xw1fKw1ayFWktanF93Z0k3Wruwn5K3y7Wr90
-	q340v34a9wsF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbT8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5g4SUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: input: tsc2007: use comma in filename
+To: akemnade@kernel.org, dmitry.torokhov@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, Frank.Li@nxp.com,
+ andreas@kemnade.info, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250830085326.36120-1-akemnade@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250830085326.36120-1-akemnade@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Li Nan <linan122@huawei.com>
+On 30/08/2025 10:53, akemnade@kernel.org wrote:
+> From: Andreas Kemnade <andreas@kemnade.info>
+> 
+> Use comma between vendor-prefix and chip name as it is common.
 
-In md_do_sync(), when md_sync_action returns ACTION_FROZEN, subsequent
-call to md_sync_position() will return MaxSector. This causes
-'curr_resync' (and later 'recovery_offset') to be set to MaxSector too,
-which incorrectly signals that recovery/resync has completed even though
-disk data has not actually been updated.
+...and preferred naming style.
 
-To fix this issue, skip updating any offset values when the sync acion
-is either FROZEN or IDLE.
+Fixes: 45601c66b5dd ("dt-bindings: input: touchscreen: convert tsc2007.txt to yaml format")
+(no need for backports though)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: 7d9f107a4e94 ("md: use new helpers in md_do_sync()")
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index e78f80d39271..6828a569e819 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -9397,6 +9397,9 @@ void md_do_sync(struct md_thread *thread)
- 	}
- 
- 	action = md_sync_action(mddev);
-+	if (action == ACTION_FROZEN || action == ACTION_IDLE)
-+		goto skip;
-+
- 	desc = md_sync_action_name(action);
- 	mddev->last_sync_action = action;
- 
--- 
-2.39.2
-
+Best regards,
+Krzysztof
 
