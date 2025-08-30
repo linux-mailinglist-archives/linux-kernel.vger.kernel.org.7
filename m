@@ -1,182 +1,167 @@
-Return-Path: <linux-kernel+bounces-792984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421B5B3CB2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B2BB3CB33
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00FC3BB70D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B84A03B0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F9024A047;
-	Sat, 30 Aug 2025 13:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFA836124;
+	Sat, 30 Aug 2025 13:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6+Y8Hz8"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JUblsaSL"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B502144D7;
-	Sat, 30 Aug 2025 13:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE648223DD6
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 13:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756560261; cv=none; b=QEmTrUAYmChyp9c213L3GesusYdiEIXhZitwFFP4PmQAnE1gz5cNrjVbq/T5K4pNMUH1zDjkfu15bPpMpwn6/Z1Tg1vFrFACqSFeEuYsbbkylS5vbvxpG/D5p5FKIBwRuBUHxNGR8is1sGn9i5PiYRObz5+PO4k72p6TAbs/BYo=
+	t=1756560374; cv=none; b=Nf0lGX/PL0qwVdMUNBuDivl6ur9Y2B+Qj/qX1Z5h+B1ppEaQlUNnw0teT9R9qHFV63nNlxf28yD061YOXxuKbxi+qsPy5FWHONHaeq9OQq/vCRQn8iHHwY8peUeCdbeG1u2v4nJ+Q1QO2VEgkpK6cAPZtb5fK++gX8GZJwDEGx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756560261; c=relaxed/simple;
-	bh=v1S8PwCYxbPDEaSi9ebrVlh9Cc9cdjf1qti9Yi5A7ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NtLeXnDQkimBQqbllj78qOzVLwi/pwWz8bb+KUdwxs1v9NtrgYm2IHPSRvpDgVTsQYvSVlpLVusHBkS2DSnFn9LWsT5oWfPk2Cdf8BnsEbg73i6KBzhMO6MoXu52JYymp08gb/hv/AVGZG0pneoo0oYHDiDnqEJQvvXhds0tuhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6+Y8Hz8; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so579220e87.2;
-        Sat, 30 Aug 2025 06:24:19 -0700 (PDT)
+	s=arc-20240116; t=1756560374; c=relaxed/simple;
+	bh=Jne1QJWkeU+oLym35AseBFFlEqx8sHlGVdUYoe5lJTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VJDLYWW5R4dWqvMw9PAn2aeaOGV/SqKnaS65fmfXjtLJcs7tSuQOnHwxnIxA5fdoysHltrkmjnvXYj28UnDG1YVDlLsgM7Vbkw7kOlymP7S0hSxyUbcmg4kKgD/A0Gxua9Ed67qMaVdjLvxhMWaoevtmOeImMvkw86AJP77TuNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JUblsaSL; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61cbf01e472so523352a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 06:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756560258; x=1757165058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WRR1X5lDkWRdj6f4lzCozikifP8gzwHC2QO/O204APA=;
-        b=m6+Y8Hz8ZdktXjk0j2lNRznyUfhJszSCOp5oGBwM5ovJjp4HRRyxqFmJDOabZd4QL0
-         79fYHJTVkzMa1apwvb8bvIJm37y7bp/HKFMYGj9GTMOJNOd8ioGYOe3Qb/T2+xngDXTR
-         27B+1Qi9gVXMF/SHXKKejVyuynvwYUPzpDewAY6mcGCLna6lVzqO5NWSo8A4Zaq9OOYu
-         uYPIvKZW92Iy3QV0B8E84xSOKq1jLb4M+CC1I+Z1s7xhXjt0u4xCUfMiKg7cB9rGi2qn
-         y8g23GRFmjEUbogn0OXZe0ijlZryURC3XzlMLiD8sQxb8lvAtD3XXF045uv6rSEIS9cH
-         7abg==
+        d=linaro.org; s=google; t=1756560371; x=1757165171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PLIWEM2t+8glT4/c6dR+SAAi6xj6yMZpKE6lDz4PBBg=;
+        b=JUblsaSLl7gCBZwegCspJXxpMjTbZeM25b7OvO/mZClkMaemMvItarmKu5pNAV61Wd
+         AHj2hDUsbHLaX7vgCIYjM4l39BKuyJtwqAHULHtnFopbuXfK9RdfGUT+8E2S/rn2MnsL
+         GwonRTzGCvvBa2XX06v4iePrEfmeLl0p6PpHupKX618KXKGr3zlfSuqhzMeyedBzs/Gv
+         2PdTGu1zfI8L7LVzH7Mut0Sw5+IjYZs32WL/9zC6d8643EIyawiH6boUN7CCkqiDgats
+         /6y6Ye7dJ6haKfnS4OkopEcF1MfqH7MHrytYF8lsMi2QccxKrZ3BpTwO02jIRZEPIv3j
+         gEyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756560258; x=1757165058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WRR1X5lDkWRdj6f4lzCozikifP8gzwHC2QO/O204APA=;
-        b=GGqx/LoD3i+Dzo4PgJV11Zq53cl6wD2BwKYg9dnPOQbA28PwHcApysfegXri4Onq0g
-         9fUC+T5OdvM8YHe4ZOM27UF4Mcsidko1wdkKXYUdoc3AEvDRAKAmQ7VCmhE1nwhNT/v2
-         Qay8OJAyBTGRAgECLAcFGhgWa83nDRJK63nLK4sn5IyLrz2cp5zZLlgKp5P0SWJNdjSE
-         JSbrRvxMGEBD7pR2CxD+N2812AoSC4/iYAQgCoqhW8EMFuM5XqYYnmAMLAuK7z3NVstF
-         WxJT7HpFhsxabFT+BCJmj1HN4r3xVhqJldYb3heyuNwW34WHeRfTiIJQbRqBi8DUF8XD
-         M0DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPO43rzw8xvYV5a3rI87wHpRvAL5p+HIz5Si5x909dDeXURcBhRyuk2h9M8cd08QinuLnf3h5SYaXIjhgq@vger.kernel.org, AJvYcCWcDfSVQ524wWZaY6Bsnv9FZ/6BY+ZzpCUf0cT1Os9UOehkFpr43GBwQ9sPpsdIhJhxYaseSqPx9vE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHci4Z54yK7eqpWjhg1DHKIs+unv0KPzAWjhX1ZtKnTxH3hpfS
-	LpWY0DDZMI4ybqx12BaGaXAh3ItwzHnY3bdwmJps6ZKOm8IuyoFXV4QIOSMMaw3ZVFVPqe/Pw/a
-	yxMBrBoMVkAJHea8FSLr0ETPNE5tQMcT+EO3p
-X-Gm-Gg: ASbGncuHMw8O5+uXVzfetJAxpfNvY6ln/jK/xbcSWl/kX/Np4J7sQGWr42otubohXQQ
-	uzSd4ORqltqOyrTriLFw+f13fmcJn0bntI4iGh665dX55N1m1v1LhyywFuqHc/EX0QsAEME9EKi
-	SEWZCEvlrFjOz0tTctmDg0OtOk4cIBVoKnO09aqMqq2p1tvvQQ93Ixyxkdavk7buoIeHJpB50gC
-	S59IPqqueFTp5aypmslIEw/vD/d5lJwyWagOeu0M7YYIEEu0JPt
-X-Google-Smtp-Source: AGHT+IHY+dztU/fvgeXUkQuh1oo2N8+Y4J1J9NKU3rw1ZWywfAgvZ/5f6SkE0cQZsiZzIzBuzWhFJOR/y/uQ38RTmKE=
-X-Received: by 2002:a05:651c:50e:b0:336:bc68:d29c with SMTP id
- 38308e7fff4ca-336ca910440mr4561671fa.3.1756560257355; Sat, 30 Aug 2025
- 06:24:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756560371; x=1757165171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PLIWEM2t+8glT4/c6dR+SAAi6xj6yMZpKE6lDz4PBBg=;
+        b=cVJi6HZ16k9Fh3BWLXKcRS3UrmSspLx/hvuToZXwTWCDxB2QLeZeiTlCj3ZK5jeakd
+         +B92zksUGfNoEQfENS8pkUMwu80HhKSrWMnxU2DEr9jM28MsSMBFTAddHhd+GFI8NdVn
+         24IRpIvczB8M/Cq4CPvTL2mxbs7RJmAl5ReTP07mxplSmbVrfwTnftPJ+xXy9IOBI2eo
+         3mlMgw2USk19RatBDmvZTpTvf3REVSLzZA2STQWRkSKT3BRiQz52UGNc973XbZ8McNGO
+         iVLwzPs6BbwqYh40eegz1OebNkMJdlDT00Jl1iDNVwZdL7a8jgb7kI8zPVTe1a11pORJ
+         9tng==
+X-Forwarded-Encrypted: i=1; AJvYcCWpb3uDTljFD0of4h/5qHqYyvvEEyfdsVfUYy0OgSNxkdQsPSYWLA1bydXfhn8wtTyaE5Pg4NCxlH2Wh/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDXzAfx+4ZdPpd2enwEvoJfkrZX9rtGuTE23aBRHYPjboqwbhc
+	jl2XD2vEaOhjoRvQpq3E0Fpgt6rcn4hAJWX8WWXq7wvL04pXdY4JmGV64uYFlU7ni+g=
+X-Gm-Gg: ASbGncv8ERV86p2FX1q7XlWxLAUvyJGwZmXLpVJlS5XJp3jX+1q0kTUHGPfaW5CqIpb
+	74e9BsHfGgDJnhE/vhTarGRPMAuH+vII7/x8W7G+HcmVDgdip8FgEfgh1pvWTJd201PeHVFX2vb
+	/FDpkguebqN9ouhuHXvaQFBhREOpHlMeAGjrArk4y4r+uQAGqq+KG+9aQ0SWzmji+aqxVOb7lv1
+	AZwH3Zv2ymxMzMNrGtZadxgxuJHwpjc26yyOqKcg56NOJasVYs+m06bWjEfDVb95pFuYOBr0fxH
+	bhN/8aeRC5BlugdaN33PmY8AQGeRecm+XWcursIhqQYvtxM2NVE3nSISb5Kk+xG+icXDayqoXmM
+	Fe+Y27F4zlpBjzwbf2BD8PvN4BvAaXfn8jgUPQdxUrbCB
+X-Google-Smtp-Source: AGHT+IGKl3kqYaSwQPUyHhXqMbxZUrLqH93jZVeI0k79WyXt2qIL7Rke4+gSMVRK+QckLh09LkMgFA==
+X-Received: by 2002:a17:907:1c9f:b0:afe:d028:ebf5 with SMTP id a640c23a62f3a-aff0f0207fbmr198830966b.5.1756560371113;
+        Sat, 30 Aug 2025 06:26:11 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff3dd9574fsm225212366b.84.2025.08.30.06.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 06:26:10 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] spi: s3c64xx: Drop S3C2443
+Date: Sat, 30 Aug 2025 15:26:06 +0200
+Message-ID: <20250830132605.311115-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830113502.83102-1-akshayaj.lkd@gmail.com> <CAHp75Vc6J+Qm4hsV=PJn9Oyfn5xr9SZLGMagHm9NdFrkk9Y_5A@mail.gmail.com>
-In-Reply-To: <CAHp75Vc6J+Qm4hsV=PJn9Oyfn5xr9SZLGMagHm9NdFrkk9Y_5A@mail.gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Sat, 30 Aug 2025 18:54:05 +0530
-X-Gm-Features: Ac12FXw9iYlLGUmW6NRlKatRbg2atIdjgh0CQHtEvNtaZw_ZEHvUlOwAQzYs5Ug
-Message-ID: <CAE3SzaSYLFFRL4OuqUbk8J0dWCuxedCyGiX2_tJySG1FC=w95g@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: light: ltr390: Implement runtime PM support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1924; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=Jne1QJWkeU+oLym35AseBFFlEqx8sHlGVdUYoe5lJTQ=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosvvtHBDqzIYGJh932/9vhOHyjdU23V6AcUQ5t
+ Pt97iK+3PKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLL77QAKCRDBN2bmhouD
+ 1582D/4018tDCkEZ7Uj52wpb+bjyEhAWEFbJB2Zz+Inn/BXhJevzJn16OcMptyUw+hmj9v+HF+k
+ 3HYxAi1SfV0+KY9YYMPKYanM7eTMYJfY0jglX0Oc7hD/gPbezMWu5ORVrEF28UtpNhCZA0kS8As
+ 6Cv/tacdw1hOmeyJUcBSLnCLSMLAZZSShlwUVTlp/UFQ7gkPHhRj1iXlLsKd/f/NvC220Adp/y4
+ l2dHKNrK3ubpbHGZ3LAOoutKYB15d9kK3Ow4asxeyAtDDNsXNaPwz9w3wWEsDLLqfpXTb8TTvvg
+ aDDhwIeulfzSXK8DayTW1am8pEFoAxxNfXJINPirEEIGF9NbwXZ/i+u94VW9OYDD/F6ESVNFqFP
+ +T6KIZODOcLdcM9LVzYoppJFoicskYF9Xa6q1Qnm/OwqhfoanlOuqYjntasTeRrTk6p7iIQVrk8
+ 0msVDtGW4O63pzGHRTBhcU/XtSqWrFTIx+uXvDd8hqW1rfanqOuKAv+vQg1AOPtnFvdPv7jv6xa
+ nlqRsDvT1ZivvAkI8BS+2UQpE0vJhLKm9LVqbYPtiipaT8Q45l4TYqVa9IVxQiIBzdIznwDBqMf
+ NUbn9OydpQOG1fqRlc2+p8J9Ssu5rjZ6HQog9Oswfx/hsl/EYuwH35264vSh27TaPhvjM2uIGYj XmFdZA71pqkM9Sg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Thanks for the speedy review Andy. Follow-up inline.
+Samsung S3C24xx family of SoCs was removed the Linux kernel in the
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+2023.  There are no in-kernel users of remaining S3C24xx compatibles or
+platform data ID.
 
-On Sat, Aug 30, 2025 at 6:04=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Sat, Aug 30, 2025 at 2:35=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail=
-.com> wrote:
-> > @@ -27,6 +27,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/regmap.h>
-> > +#include <linux/pm_runtime.h>
->
-> You missed my comment.
-Yeah, this got missed. Will address this.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
->
-> > +static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> > +                               const struct iio_chan_spec *chan,
-> > +                               enum iio_event_type type,
-> > +                               enum iio_event_direction dir,
-> > +                               bool state)
-> > +{
-> > +       int ret;
-> > +       struct ltr390_data *data =3D iio_priv(indio_dev);
-> > +       struct device *dev =3D &data->client->dev;
-> > +
-> > +       guard(mutex)(&data->lock);
-> > +
-> > +       if (state && !data->irq_enabled) {
-> > +               ret =3D pm_runtime_resume_and_get(dev);
-> > +               if (ret < 0) {
-> > +                       dev_err(dev, "runtime PM failed to resume: %d\n=
-", ret);
-> > +                       return ret;
-> > +               }
-> > +               data->irq_enabled =3D true;
-> > +       }
-> > +
-> > +       ret =3D __ltr390_write_event_config(indio_dev, chan, type, dir,=
- state);
-> > +
-> > +       if (!state && data->irq_enabled) {
-> > +               data->irq_enabled =3D false;
-> > +               pm_runtime_put_autosuspend(dev);
-> > +       }
-> > +
-> > +       return ret;
-> > +}
->
-> This looks like overcomplicated and duplicate checks. Just make two
-> functions with and without IRQ enabling handling.
->
-LTR390 only supports 1 event/interrupt which is toggled in this callback ba=
-sed
-on value provided to sysfs entry. There cannot be a version of this without=
- IRQ
-handling. It is supposed to do IRQ handling only.
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 3a00f9e480c5..aab36c779c06 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1506,16 +1506,6 @@ static const struct dev_pm_ops s3c64xx_spi_pm = {
+ 			   s3c64xx_spi_runtime_resume, NULL)
+ };
+ 
+-static const struct s3c64xx_spi_port_config s3c2443_spi_port_config = {
+-	/* fifo_lvl_mask is deprecated. Use {rx, tx}_fifomask instead. */
+-	.fifo_lvl_mask	= { 0x7f },
+-	/* rx_lvl_offset is deprecated. Use {rx, tx}_fifomask instead. */
+-	.rx_lvl_offset	= 13,
+-	.tx_st_done	= 21,
+-	.clk_div	= 2,
+-	.high_speed	= true,
+-};
+-
+ static const struct s3c64xx_spi_port_config s3c6410_spi_port_config = {
+ 	/* fifo_lvl_mask is deprecated. Use {rx, tx}_fifomask instead. */
+ 	.fifo_lvl_mask	= { 0x7f, 0x7F },
+@@ -1627,9 +1617,6 @@ static const struct s3c64xx_spi_port_config gs101_spi_port_config = {
+ 
+ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	{
+-		.name		= "s3c2443-spi",
+-		.driver_data	= (kernel_ulong_t)&s3c2443_spi_port_config,
+-	}, {
+ 		.name		= "s3c6410-spi",
+ 		.driver_data	= (kernel_ulong_t)&s3c6410_spi_port_config,
+ 	},
+@@ -1641,9 +1628,6 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
+ 	{ .compatible = "google,gs101-spi",
+ 			.data = &gs101_spi_port_config,
+ 	},
+-	{ .compatible = "samsung,s3c2443-spi",
+-			.data = &s3c2443_spi_port_config,
+-	},
+ 	{ .compatible = "samsung,s3c6410-spi",
+ 			.data = &s3c6410_spi_port_config,
+ 	},
+-- 
+2.48.1
 
-Pseudo code of the said function will be something as follows:
-ltr390_write_event_config() {
-if (interrupt needs to be enabled && previously it was disabled)
-     pm_runtime_resume_and_get()
-do_actual_reg_writes()
-if (interrupt needs to be disabled && previously it was enabled)
-    pm_runtime_put_autosuspend().
-}
-
-With the current function , we achieve the following objectives:
-1. idempotency in refcount change. Meaning if IRQ is already enabled and
-if someone enables it again, it will not increase the refcount, same goes f=
-or
-double disable case. This has been tested as well.
-2. Only if the new and previous config is different, then only the refcount=
- will
-change.
-3. Adheres to previous comments received regarding checking return value
-of _get and ignoring that of _put.
-
-I genuinely don't see any duplicate checks here. In addition, I feel the ab=
-ove
-function is fine from a simplification point of view and cannot be bifurcat=
-ed
-further.
-
-Although, if you could clarify what you mean by further bifurcation, I migh=
-t be
-able to connect with your thoughts.
-
-Thanks,
-Akshay
 
