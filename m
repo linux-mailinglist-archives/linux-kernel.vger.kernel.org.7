@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-792868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AD0B3C9E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A431B3C9DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBF2568338
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748661C22043
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDD623BCF3;
-	Sat, 30 Aug 2025 09:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FA242D7B;
+	Sat, 30 Aug 2025 09:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="doModtXf"
+	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="Cehl5yr5"
 Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CEF223DDD;
-	Sat, 30 Aug 2025 09:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98345214813;
+	Sat, 30 Aug 2025 09:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756547286; cv=none; b=PWGF18Rv7TmPWO0gxzr8XdmS3ckhwrdlVZIzki5rlEWQXDr+isQYrEDuhsReVzfsTWcQ2NT2xVUxgAGHj7inhpzSB1ypwHDQl4J31qxXScYdsU0Nprje7ZDcCaDPs8O8ebfKZsufty0n+CQjq/iiGJi28+SMolHHZaQzjztsLY0=
+	t=1756547274; cv=none; b=XWvaArIRLSkfKqbc9SwdsKkllu8o0JzC3L7WDpybeRLoHeKKb6JM3OkQiW4XICiUpPgeCI6Vl3rLiotmXyeCQjdwsSdUWO4lKmYdxGyNZ14gyvHXUzPQdnkCl7xwEuFh02YVapXMjy2QsxvHRFOCfqHxiuc7T7ExaVGRpubz2dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756547286; c=relaxed/simple;
-	bh=jI3auve+DEWR7hkLcdH3s5pH4u3YLGCvc5svsK3Njww=;
+	s=arc-20240116; t=1756547274; c=relaxed/simple;
+	bh=o/UMy3Tt1tq/6z4hkxm21x6XQuWNYC1qG02R3gzUFAw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JNM1ItUP1dBrFF+wI0JTNm05DjLkRfcDv0xJYsvj0jwZrCDWO9Z+THhwryGq344JTyK1axtTIygBOx6sHyxljD3VihNaTRcOcN2wO93fZeBqiPaftoUHXwj7GSlmCXy98d23+quolhuJYVe5ifL5OeZ6IXKb1xB1JfBym5Dttss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=doModtXf; arc=none smtp.client-ip=173.249.15.149
+	 MIME-Version; b=khd0RZSCgp3VVfKjWHF03/4uK0Qzaei9ZGTQl5owzikg2yxINylwLmPC2JT3DQ7pml3W7w/I+JQVTshHDnkRl3Uep63+64qDZDaMgUOigJQLbTl7rIuXT14tD1mWr5giP3M1KGtZYSDAsTRbdvHYesh1UQ8wsTlZmQej/OgzB/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=Cehl5yr5; arc=none smtp.client-ip=173.249.15.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
 dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
 	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
-	bh=N9quo2pacaFqL3HTBVMc0so4ux95fg7kRQiQIeD0F7Q=;
-	b=doModtXflPcGVUrkz+Wn67IfsMdQa7l9db58IHhfI2m1UbqJ0Ty5/iAXyo19kIuq3bdwn0QAiaZO3FEEAws0GIlEIEDiLWEYSPiT/REJUCMwWkjSvpaMgjn27TVgML+vWgDSldTKBeu3Z+Dl9dreRCvQDijDPaiOjfGkdMhx7e0=
+	bh=qXVKCltj1fq6EwK3VjDJ0tB61eSP6doosd0jsyQ0Cyg=;
+	b=Cehl5yr5wjaMhSTZfUzj5O/1uVIhqMOGxMK6zNVNxaKzKLyT1v1OxogyNpqiKFXIefBoKRERtTA3th6OxJJ2EV4NoAU5Ek/KzjeU72vmGzZVHOG7zORReqoVSlqM5O9OakT6av660xxd/HtwPVlmHUBHLDZMeELfImkUrApbmEQ=
 Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
 	by mail.netcube.li with ESMTPA
-	; Sat, 30 Aug 2025 11:47:45 +0200
+	; Sat, 30 Aug 2025 11:47:49 +0200
 From: Lukas Schmid <lukas.schmid@netcube.li>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -55,9 +55,9 @@ Cc: Lukas Schmid <lukas.schmid@netcube.li>,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: [PATCH v7 3/5] ARM: dts: sunxi: add support for NetCube Systems Nagami SoM
-Date: Sat, 30 Aug 2025 11:46:55 +0200
-Message-Id: <20250830094700.1715658-4-lukas.schmid@netcube.li>
+Subject: [PATCH v7 4/5] ARM: dts: sunxi: add support for NetCube Systems Nagami Basic Carrier
+Date: Sat, 30 Aug 2025 11:46:56 +0200
+Message-Id: <20250830094700.1715658-5-lukas.schmid@netcube.li>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250830094700.1715658-1-lukas.schmid@netcube.li>
 References: <20250830094700.1715658-1-lukas.schmid@netcube.li>
@@ -69,281 +69,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-NetCube Systems Nagami SoM is a module based around the Allwinner T113s
-SoC. It includes the following features and interfaces:
-
-- 128MB DDR3 included in SoC
-- 10/100 Mbps Ethernet using LAN8720A phy
-- One USB-OTG interface
-- One USB-Host interface
-- One I2S interface with in and output support
-- Two CAN interfaces
-- ESP32 over SDIO
-- One SPI interface
-- I2C EEPROM for MAC address
-- One QWIIC I2C Interface with dedicated interrupt pin shared with EEPROM
-- One external I2C interface
-- SD interface for external SD-Card
+The NetCube Systems Nagami Basic Carrier is a Carrier for the Nagami SoM
+It provides an ethernet port for the phy on the SoM and some USB-Ports.
+All other interfaces and gpios are available on pinheader, except for the
+SD-Interface which is available on a micro-sd slot.
 
 Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
 ---
- .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 249 ++++++++++++++++++
- 1 file changed, 249 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
+ arch/arm/boot/dts/allwinner/Makefile          |  2 +
+ ...n8i-t113s-netcube-nagami-basic-carrier.dts | 67 +++++++++++++++++++
+ 2 files changed, 69 insertions(+)
+ create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
 
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
+diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
+index d799ad153b37..af287bb3231c 100644
+--- a/arch/arm/boot/dts/allwinner/Makefile
++++ b/arch/arm/boot/dts/allwinner/Makefile
+@@ -199,6 +199,7 @@ DTC_FLAGS_sun8i-h3-nanopi-r1 := -@
+ DTC_FLAGS_sun8i-h3-orangepi-pc := -@
+ DTC_FLAGS_sun8i-h3-bananapi-m2-plus-v1.2 := -@
+ DTC_FLAGS_sun8i-h3-orangepi-pc-plus := -@
++DTC_FLAGS_sun8i-t113s-netcube-nagami-basic-carrier := -@
+ DTC_FLAGS_sun8i-v3s-netcube-kumquat := -@
+ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-a23-evb.dtb \
+@@ -257,6 +258,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-s3-lichee-zero-plus.dtb \
+ 	sun8i-s3-pinecube.dtb \
+ 	sun8i-t113s-mangopi-mq-r-t113.dtb \
++	sun8i-t113s-netcube-nagami-basic-carrier.dtb \
+ 	sun8i-t3-cqa3t-bv3.dtb \
+ 	sun8i-v3-sl631-imx179.dtb \
+ 	sun8i-v3s-anbernic-rg-nano.dtb \
+diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
 new file mode 100644
-index 000000000000..013ab280a208
+index 000000000000..5ee9a211a5cc
 --- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
-@@ -0,0 +1,249 @@
++++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
+@@ -0,0 +1,67 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
 + * Copyright (C) 2025 Lukas Schmid <lukas.schmid@netcube.li>
 + */
 +
 +/dts-v1/;
-+#include "sun8i-t113s.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++#include "sun8i-t113s-netcube-nagami.dtsi"
 +
 +/ {
-+	model = "NetCube Systems Nagami SoM";
-+	compatible = "netcube,nagami", "allwinner,sun8i-t113s";
-+
-+	aliases {
-+		serial1 = &uart1; // ESP32 Bootloader UART
-+		serial3 = &uart3; // Console UART on Card Edge
-+		ethernet0 = &emac;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial3:115200n8";
-+	};
-+
-+	/* module wide 3.3V supply directly from the card edge */
-+	reg_vcc3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	/* SY8008 DC/DC regulator on the board, also supplying VDD-SYS */
-+	reg_vcc_core: regulator-core {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-core";
-+		regulator-min-microvolt = <880000>;
-+		regulator-max-microvolt = <880000>;
-+		vin-supply = <&reg_vcc3v3>;
-+	};
-+
-+	/* Reset of ESP32 */
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&pio 6 9 GPIO_ACTIVE_LOW>; /* PG9 */
-+		post-power-on-delay-ms = <1500>;
-+		power-off-delay-us = <200>;
-+	};
++	model = "NetCube Systems Nagami Basic Carrier Board";
++	compatible = "netcube,nagami-basic-carrier", "netcube,nagami",
++				 "allwinner,sun8i-t113s";
 +};
 +
-+&cpu0 {
-+	cpu-supply = <&reg_vcc_core>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&reg_vcc_core>;
-+};
-+
-+&dcxo {
-+	clock-frequency = <24000000>;
-+};
-+
-+&emac {
-+	nvmem-cells = <&eth0_macaddress>;
-+	nvmem-cell-names = "mac-address";
-+	phy-handle = <&lan8720a>;
-+	phy-mode = "rmii";
-+	pinctrl-0 = <&rmii_pe_pins>;
-+	pinctrl-names = "default";
++&can0 {
 +	status = "okay";
 +};
 +
-+/* Default I2C Interface on Card-Edge */
++&can1 {
++	status = "okay";
++};
++
++&ehci0 {
++	status = "okay";
++};
++
++&ehci1 {
++	status = "okay";
++};
++
 +&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+	status = "disabled";
-+};
-+
-+/* Exposed as the QWIIC connector and used by the internal EEPROM */
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
 +	status = "okay";
-+
-+	eeprom0: eeprom@50 {
-+		compatible = "atmel,24c02";		/* actually it's a 24AA02E48 */
-+		reg = <0x50>;
-+		pagesize = <16>;
-+		read-only;
-+		vcc-supply = <&reg_vcc3v3>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		eth0_macaddress: macaddress@fa {
-+			reg = <0xfa 0x06>;
-+		};
-+	};
 +};
 +
-+/* Default I2S Interface on Card-Edge */
 +&i2s1 {
-+	pinctrl-0 = <&i2s1_pins>, <&i2s1_din_pins>, <&i2s1_dout_pins>;
-+	pinctrl-names = "default";
-+	status = "disabled";
++	status = "okay";
 +};
 +
-+/* Phy is on SoM. MDI signals pre-magentics are on the card edge */
-+&mdio {
-+	lan8720a: ethernet-phy@0 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0>;
-+	};
-+};
-+
-+/* Default SD Interface on Card-Edge */
 +&mmc0 {
-+	pinctrl-0 = <&mmc0_pins>;
-+	pinctrl-names = "default";
-+	status = "disabled";
-+};
-+
-+/* Connected to the on-board ESP32 */
-+&mmc1 {
-+	pinctrl-0 = <&mmc1_pins>;
-+	pinctrl-names = "default";
 +	vmmc-supply = <&reg_vcc3v3>;
++	broken-cd;
++	disable-wp;
 +	bus-width = <4>;
-+	non-removable;
-+	mmc-pwrseq = <&wifi_pwrseq>;
 +	status = "okay";
 +};
 +
-+/* Connected to the on-board eMMC */
-+&mmc2 {
-+	pinctrl-0 = <&mmc2_pins>;
-+	pinctrl-names = "default";
-+	vmmc-supply = <&reg_vcc3v3>;
-+	vqmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	non-removable;
++&ohci0 {
 +	status = "okay";
 +};
 +
-+&pio {
-+	vcc-pb-supply = <&reg_vcc3v3>;
-+	vcc-pc-supply = <&reg_vcc3v3>;
-+	vcc-pd-supply = <&reg_vcc3v3>;
-+	vcc-pe-supply = <&reg_vcc3v3>;
-+	vcc-pf-supply = <&reg_vcc3v3>;
-+	vcc-pg-supply = <&reg_vcc3v3>;
-+
-+	gpio-line-names = "", "", "", "", // PA
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "CAN0_TX", "CAN0_RX", // PB
-+					  "CAN1_TX", "CAN1_RX", "UART3_TX", "UART3_RX",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "eMMC_CLK", "eMMC_CMD", // PC
-+					  "eMMC_D2", "eMMC_D1", "eMMC_D0", "eMMC_D3",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PD
-+					  "", "", "", "",
-+					  "", "USB_SEC_EN", "SPI1_CS", "SPI1_CLK",
-+					  "SPI1_MOSI", "SPI1_MISO", "SPI1_HOLD", "SPI1_WP",
-+					  "PD16", "", "", "",
-+					  "I2C2_SCL", "I2C2_SDA", "PD22", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ETH_CRSDV", "ETH_RXD0", "ETH_RXD1", "ETH_TXCK", // PE
-+					  "ETH_TXD0", "ETH_TXD1", "ETH_TXEN", "",
-+					  "ETH_MDC", "ETH_MDIO", "QWIIC_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "SD_D1", "SD_D0", "SD_CLK", "SD_CLK", // PF
-+					  "SD_D3", "SD_D2", "PF6", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ESP_CLK", "ESP_CMD", "ESP_D0", "ESP_D1", // PG
-+					  "ESP_D2", "ESP_D3", "UART1_TXD", "UART1_RXD",
-+					  "ESP_nBOOT", "ESP_nRST", "I2C3_SCL", "I2C3_SDA",
-+					  "I2S1_WS", "I2S1_CLK", "I2S1_DIN0", "I2S1_DOUT0",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "";
-+
-+	usb0-enable-hog {
-+		gpio-hog;
-+		gpios = <3 9 GPIO_ACTIVE_HIGH>;
-+		line-name = "USB_SEC_EN";
-+		output-high;
-+	};
++&ohci1 {
++	status = "okay";
 +};
 +
-+/* Remove the unused CK pin from the pinctl as it is unconnected */
-+&rmii_pe_pins {
-+	pins = "PE0", "PE1", "PE2", "PE3", "PE4",
-+		   "PE5", "PE6", "PE8", "PE9";
-+};
-+
-+/* Default SPI Interface on Card-Edge */
 +&spi1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	pinctrl-0 = <&spi1_pins>, <&spi1_hold_pin>, <&spi1_wp_pin>;
-+	pinctrl-names = "default";
-+	cs-gpios = <0>;
-+	status = "disabled";
-+};
-+
-+/* Connected to the Bootloader/Console of the ESP32 */
-+&uart1 {
-+	pinctrl-0 = <&uart1_pg6_pins>;
-+	pinctrl-names = "default";
 +	status = "okay";
 +};
 +
-+/* Console/Debug UART on Card-Edge */
-+&uart3 {
-+	pinctrl-0 = <&uart3_pb_pins>;
-+	pinctrl-names = "default";
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usbphy {
++	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
 +	status = "okay";
 +};
 -- 
