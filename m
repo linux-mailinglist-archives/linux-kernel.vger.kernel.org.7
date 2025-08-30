@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-793083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B979AB3CDF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:14:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA8FB3CE11
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877F21671B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782D21B26F18
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E42C3266;
-	Sat, 30 Aug 2025 17:14:06 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970D92C3266;
+	Sat, 30 Aug 2025 17:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oDY/fJIp"
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F74B21D596;
-	Sat, 30 Aug 2025 17:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F0030CD85;
+	Sat, 30 Aug 2025 17:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756574046; cv=none; b=eUevmMFk0HTJ4ZsUWw0145b0MPJtycg/NbbGqEuIzcr5GbWEvjnbJ7hvhNJudIZ44fsHJtGvFasvAICk1NMTOiV8Cgj0oegEQ7WpUJ68SPKFF0/kU2TuClTTl5HfBer2jCpM6PcUfRPKu6qvTjAvUj7lvcLiJx1ZqNZnb9ppTr8=
+	t=1756574589; cv=none; b=PdF65bxVPTFAOj0iQ8QClOFg6JkstWFAHzpTnlEPcStKphCSVWle03de/mhuKXFk5qBjDhFfNc1KhvCQtodCpGYmSuylFYpdczD3an8R+oha0NXlSWFb5UVBTNqw62BAU1BuZrmPddl3PLOag5wnFe5A2xPJqMEXi9PX/S74BJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756574046; c=relaxed/simple;
-	bh=BFV2qBykmA4dQmwoWq0L3nklRNp3WIWQ5UhnVa+lq/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WcTIRy/h9nCavAkFtRqbdReGnU32CNVioVRnXEQ7/Of8txpYPCOP5H24I0p/WOLdmuJYjK6P3U9bj18yTR/wz/zWwk6iTR5zk4wZSNeiki0gEw+a5/RSI4vGbd8yNrLocKn2YQ+odoXvzt5yNuxaoKwFfeYtWsAmFD9cO+S0fWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a0d:e487:419e:c142:105:2b06:c3cd:a390] (unknown [IPv6:2a0d:e487:419e:c142:105:2b06:c3cd:a390])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 887504014C;
-	Sat, 30 Aug 2025 17:13:52 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a0d:e487:419e:c142:105:2b06:c3cd:a390) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a0d:e487:419e:c142:105:2b06:c3cd:a390]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <c2d982c2-9593-4ac7-91d6-635b94f52d4e@arnaud-lcm.com>
-Date: Sat, 30 Aug 2025 19:13:50 +0200
+	s=arc-20240116; t=1756574589; c=relaxed/simple;
+	bh=GDEf6P2LWJYMs+ydV4s3fgoSHiHRStGgW5xBJ9BGZ7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h/ZyUH7B3cm9a76nxi3Fekqg9Y3y4L7bdQHsc7AZed2kJzrCeAetBskZ1gZ8PzN49a6RePTeoHUl6mWvjlgPFzDVt9JGEbxj9VsZAycKsHschkbSe7YKiKNHVfJYNiNCmbwaIesP1yIii/J6DfLTL/VK5wR4wXbh2EbO9m1mk+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oDY/fJIp; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id sP9RuuBTkbhcosP9Ru4q4A; Sat, 30 Aug 2025 19:14:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1756574048;
+	bh=7b05OJImVDGdpWr2qdSSpne58sS8juqAprc2DtZui0A=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=oDY/fJIpH3H1fsFHgYEOCEcbhd9w9SXmZbYvUmwERSxAqL0b9AucBKeVrOdkobTmU
+	 MneZF9jVctqBYJig2w6ks8z2aFmyaeM3wgwM+XDlQWrmEeM+eLHpWi2/u0Np7/kmJn
+	 +TGBhuf73RtGuVhCj228GmYEWHtB5CBQVVoGemScz2y5NhUrhsIAHRyUs9/p36tAAn
+	 NPrN2U94bsyYnALZyqusyGY0aiMGSZTgtmuWEuqW4fVWNTx7ir6WIw37L0I095aBSE
+	 EjqezbITzby1Z7b4HjGXhKO5tbN2ch0f33k/DbtPDFEkLCDem7G11bS1SIDKErze3N
+	 1FYplBiaLsQHA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 30 Aug 2025 19:14:08 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net] net: dsa: ks8995: Fix some error handling path in ks8995_probe()
+Date: Sat, 30 Aug 2025 19:13:59 +0200
+Message-ID: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v5 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Song Liu <song@kernel.org>
-Cc: Yonghong Song <yonghong.song@linux.dev>,
- Martin KaFai Lau <martin.lau@linux.dev>, Andrii Nakryiko
- <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- bpf <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
- KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <20250826212229.143230-1-contact@arnaud-lcm.com>
- <20250826212352.143299-1-contact@arnaud-lcm.com>
- <CAADnVQ+6bV3h3i-A1LHbEk=nY_PMx69BiogWjf5GtGaLxWSQVg@mail.gmail.com>
- <CAPhsuW5P4sOHmMCmVTZw2vfuz7Rny-xkhuPkRBitfoATQkm=eA@mail.gmail.com>
- <CAADnVQK=3xigzt-pCat5OF29xT_F7-5rXDOMG+_FLSS0jRoWsQ@mail.gmail.com>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: 
- <CAADnVQK=3xigzt-pCat5OF29xT_F7-5rXDOMG+_FLSS0jRoWsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175657403517.22626.17757478870134396004@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
 
+If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
+be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
+already done in the remove function.
 
-On 30/08/2025 02:28, Alexei Starovoitov wrote:
-> On Fri, Aug 29, 2025 at 11:50 AM Song Liu <song@kernel.org> wrote:
->> On Fri, Aug 29, 2025 at 10:29 AM Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->> [...]
->>>>   static long __bpf_get_stackid(struct bpf_map *map,
->>>> -                             struct perf_callchain_entry *trace, u64 flags)
->>>> +                             struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
->>>>   {
->>>>          struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
->>>>          struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
->>>> @@ -263,6 +263,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>>>
->>>>          trace_nr = trace->nr - skip;
->>>>          trace_len = trace_nr * sizeof(u64);
->>>> +       trace_nr = min(trace_nr, max_depth - skip);
->>>> +
->>> The patch might have fixed this particular syzbot repro
->>> with OOB in stackmap-with-buildid case,
->>> but above two line looks wrong.
->>> trace_len is computed before being capped by max_depth.
->>> So non-buildid case below is using
->>> memcpy(new_bucket->data, ips, trace_len);
->>>
->>> so OOB is still there?
->> +1 for this observation.
->>
->> We are calling __bpf_get_stackid() from two functions: bpf_get_stackid
->> and bpf_get_stackid_pe. The check against max_depth is only needed
->> from bpf_get_stackid_pe, so it is better to just check here.
-> Good point.
-Nice catch, thanks !
->
->> I have got the following on top of patch 1/2. This makes more sense to
->> me.
->>
->> PS: The following also includes some clean up in __bpf_get_stack.
->> I include those because it also uses stack_map_calculate_max_depth.
->>
->> Does this look better?
-> yeah. It's certainly cleaner to avoid adding extra arg to
-> __bpf_get_stackid()
->
-Are Song patches going to be applied then ?  Or should I raise a new 
-revision
-  of the patch with Song's modifications with a Co-developped tag ?
-Thanks for your guidance in advance,
-Arnaud
+In order to easily do the needed clean-up in the probe, add a new
+devm_add_action_or_reset() call and simplify the remove function
+accordingly.
+
+Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/net/dsa/ks8995.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/dsa/ks8995.c b/drivers/net/dsa/ks8995.c
+index 5c4c83e00477..debb2cd7ab61 100644
+--- a/drivers/net/dsa/ks8995.c
++++ b/drivers/net/dsa/ks8995.c
+@@ -742,6 +742,14 @@ static const struct dsa_switch_ops ks8995_ds_ops = {
+ 	.phylink_get_caps = ks8995_phylink_get_caps,
+ };
+ 
++static void devm_reset_assert(void *data)
++{
++	struct ks8995_switch *ks = data;
++
++	/* assert reset */
++	gpiod_set_value_cansleep(ks->reset_gpio, 1);
++}
++
+ /* ------------------------------------------------------------------------ */
+ static int ks8995_probe(struct spi_device *spi)
+ {
+@@ -784,6 +792,11 @@ static int ks8995_probe(struct spi_device *spi)
+ 		 */
+ 		gpiod_set_value_cansleep(ks->reset_gpio, 0);
+ 		udelay(100);
++
++		err = devm_add_action_or_reset(&spi->dev,
++					       devm_reset_assert, ks);
++		if (err)
++			return err;
+ 	}
+ 
+ 	spi_set_drvdata(spi, ks);
+@@ -834,8 +847,6 @@ static void ks8995_remove(struct spi_device *spi)
+ 	struct ks8995_switch *ks = spi_get_drvdata(spi);
+ 
+ 	dsa_unregister_switch(ks->ds);
+-	/* assert reset */
+-	gpiod_set_value_cansleep(ks->reset_gpio, 1);
+ }
+ 
+ /* ------------------------------------------------------------------------ */
+-- 
+2.51.0
 
 
