@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-793123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BB0B3CEE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A548B3CEE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15350560426
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D43B5E629C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0A92D8381;
-	Sat, 30 Aug 2025 19:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210872DC35B;
+	Sat, 30 Aug 2025 19:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="OzSy2vZw"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/pPmuIJ"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7592DCF43;
-	Sat, 30 Aug 2025 19:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51F4C2FB;
+	Sat, 30 Aug 2025 19:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756580601; cv=none; b=clMcUWCsaKGxi+ht0HuXih+eV/G9MMSdxMALPVuRAMLtjjSPP9IlJJCEbGeJkUV5cXAwPwaqVwbd9qcqWubG+FqOjDyCuOlTEKRtXqs/B1Es6iIOm4/+rcSZblgAz+uTHmeUQ0aIvpiTOVg88dmazW4fDE0CIzv68CsJE60p2a0=
+	t=1756580596; cv=none; b=rMDeCFJTnOlPTg49IYq1m0Fx/mBuAGzs4i9CwjMLGEYcLnw/5XtlK2zdGNtMjUeSWIJZtERO5HWj169/9TYgcFbEf5DqsZkFQ3rhc6DXcKz+sVX57emC3WXp+NiAeOiKwGHWyKj63V4jrLezUvIe2OIQuvZmssyiaMlGHcfW2QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756580601; c=relaxed/simple;
-	bh=VIWxAub9v9Nc15TVtanbA94IbdHFmist+z2EzFE2cR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsQaV2jY1OYIwPjeCeBW2UFgENLtJ0Fr6a1XKPnDsMMkS2cStKCJre3F47FGx2y8k//ym3zzqYCRZJFHb00xMdHbW/sEaBhyGYyYUXIoSfoSBxL9IvFHC8npslNa1oU4+UTxlikcoQFbWYKTXJIp7AuGMRyXMmswV/ti970gleY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=OzSy2vZw; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2zEd97eD2ST6z8QE5V+sbWWx834UK4nRASIGlcRaKT4=; b=OzSy2vZwcRjSz3EGgWN0bKaGEX
-	iEFlOxiyyqSCr9dXuigwYYK6xHuBmRZ/2kEV0aT2l3hiutPjbcs3iPxgMplsb353tascvVME9BbYD
-	21d/OA0gyGKQhzAucWVP5mFXLtjf31KMmpQ4sCcH84jxe3lK70aOsqkTcO2AVumVDXsu6xq2xu/Dk
-	8YaJcFjXNGwE4qahpWBFL/tpk9JB5tN/oTZOctWW5YruufJmdADvMERFvxU7zFWRJRZuJcuKEemez
-	0wmJZzqENEZEXaFyT/VCyzMpVsAl1ViM5qUBvOA+qBP7lrko20+IPExyS494Z4K2C2y2uK3DAC7wV
-	C6HdrysA==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <carnil@debian.org>)
-	id 1usQqs-00H2TD-9s; Sat, 30 Aug 2025 19:03:02 +0000
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 2D2FDBE2EE7; Sat, 30 Aug 2025 21:03:01 +0200 (CEST)
-Date: Sat, 30 Aug 2025 21:03:01 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Aaron Conole <aconole@redhat.com>, 1108860@bugs.debian.org,
-	Charles Bordet <rough.rock3059@datachamp.fr>
-Cc: Guillaume Nault <gnault@redhat.com>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Charles Bordet <rough.rock3059@datachamp.fr>,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: Bug#1108860: [regression] Wireguard fragmentation fails with
- VXLAN since 8930424777e4 ("tunnels: Accept PACKET_HOST
- skb_tunnel_check_pmtu().") causing network timeouts
-Message-ID: <aLNK5WOmkgzNrh8P@eldamar.lan>
-References: <aHVhQLPJIhq-SYPM@eldamar.lan>
- <aHYiwvElalXstQVa@debian>
- <e585ae4c.AMcAAHLjGYQAAAAAAAAABAFNqZcAAYCsWIwAAAAAAA3mswBoanLG@mailjet.com>
- <f7tjz485mpk.fsf@redhat.com>
+	s=arc-20240116; t=1756580596; c=relaxed/simple;
+	bh=YTNFschPfH/jDG5tOrUG+B9YN7ZX8G68kfbBR+8ijUo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=oYMnE/rHB/94H5LcYT6Wb0PCvNgc5GP1lcEA50GnwNVVawcddbQDLt4n6mDIyospKGlds+/EJ3q5aCoGIZ7hR53/ZsJZEINjuR1QFYblorFiq07XoXVi6C0Oxql3+Vn01g/8q60jp5LSh2TXlnW0+f5qJ8djn6K1LZ96N4A92YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/pPmuIJ; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso18462555e9.1;
+        Sat, 30 Aug 2025 12:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756580592; x=1757185392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K5NU/Gvwk+CqRadGeXJpHmePNxgFh/tdJ2PWInOkOFo=;
+        b=l/pPmuIJvYNFZzder8+OZ6aEsQd4adEl8VUq3yMp+4ZYhu5W6XPVjLWY3ZpEV9bT17
+         Q0f07BKLP9/cE91mU6h4zs7iw+pLSxeeWatN3uj+AaxAav82qXoJWOUTGvhG6X2uTjwv
+         I6keCl8zq+MQ5w9n3gCpOaKBzwRnvxDG5zQ61pplMtyRuKoAGZvVhYqyvEBUIOrha3DL
+         2zr9qkGFnrChTRYUHteJK/1UaBZ58l7w4SQl1vXKy2ro1MrGZGJNM+mCHeE9PIjP/PqL
+         4rnRxKdv5zbKmPw/8sa9kGH8b52SxJaWLghp2AINuH3V4aI/HiiFRQrLT7yljE7vaIbA
+         WCCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756580592; x=1757185392;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K5NU/Gvwk+CqRadGeXJpHmePNxgFh/tdJ2PWInOkOFo=;
+        b=oLW6FE66+Ww27sEs5yfxAljxzGM8gI/vkCXTIV9OY8Bi+afcmndXzm5P7G/s2cI9C/
+         9rLPvtQ1vxQ7RDJF8CduxYDFhiDFipWCGF6/Ggh9ahG+5mF6cN8M5FCdhlIkv77mEV2I
+         kzJPjK1Uh6kCXB8Zc6iJjQoTviW04EFbHsFZwgY+4CMC+6qh3CVtkrisVB3KA7Dsw/s6
+         wVqFRhWK6HRMI/h66D4efsKkyyHegkxZkYDYepQIk/zIVSYSzCkZWt2Qc4HThgegpJzW
+         5HPm9OcJKnhe3TAFElpIR3qC/RXoCCBU8Y9hM5BzQc6Cy914XRC3a+lWOr7eMsRDOWFP
+         vosw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbClG1GoNRqPAUGZIOzOnCczGnR1S2/Brv+9+h6qsOjtdn7P0sefep+fnvKcW7C8q0iQi3HhnFyzBiXVrv@vger.kernel.org, AJvYcCW6ZZ9/ASVPSybKYb0qFgDk5VKwcv52GVQ8klPJRaRRQj+NxW2ij+F1x6QONdlpICZdcUM=@vger.kernel.org, AJvYcCXjUj5B0MqFiFbMUBzUrPy/AwBlEabF35bQkNhRYGZRtS2WUlTlmgkvlJk8dvZrkjUoEyQgPLBSWAnqpgsQykswy5un@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOspWiWfE+kAIdz4YLQ9UOhHo1HWBL56XDzEKNqmqEXfKioXRJ
+	8RwkxAVVgVPOcesU/M8SzZ3ZPq2EGdopSMEl3aTgpyZ6a0epH8B05P9f
+X-Gm-Gg: ASbGncs3mCrKQ+wkJmtVxXE+IqzU/V+v9u/x5bwH+D0olfuG5bKifqmJtMHPmWmnGDe
+	oyeqOCUK6R9h+vEV12gxTSIuFiJnDwz3ShkA2JmoeGuH7n7zw9RmRWYrkJeZH2UY/AQcDaA/YSw
+	8vegYzFqwocElxIBpl9530a/mYFBEk3hgFFmp2XeRCR8qJZwa1cuRYNaFqJBsBzSBvhhcyG/Z6y
+	9oQ+RXFHS7N+MHHow1WnyN1o1IZaKg4op7lWQ5F/eT2cxz2gMshmtPZXNl7mBtpaoVOOfnSuqf0
+	cNhcVF8n5nmujk/BUMFUti/BhDkxQlJG0cb2cN4xufBBLt2pvoQ0vyux24Jcxa+48C4HT9NKFPX
+	XT6pcBtYJ8C112dEbGYN1HYlbrWDXW8oRtV7/fQ==
+X-Google-Smtp-Source: AGHT+IFtHqK6ujFCTl/T3SxQDwHxkgkPlI1kLgKhwvnpMSp2W3wc5REag99t5jc2Pvi2rJIxfuXgNg==
+X-Received: by 2002:a05:600c:1f08:b0:45b:765a:a8ff with SMTP id 5b1f17b1804b1-45b855333e7mr21495905e9.11.1756580591492;
+        Sat, 30 Aug 2025 12:03:11 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([176.223.172.156])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9431sm8190341f8f.44.2025.08.30.12.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Aug 2025 12:03:10 -0700 (PDT)
+Date: Sat, 30 Aug 2025 16:03:04 -0300
+From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+CC: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/6=5D_tracing=3A_Show_inode_and_devi?=
+ =?US-ASCII?Q?ce_major=3Aminor_in_deferred_user_space_stacktrace?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250830143114.395ed246@batman.local.home>
+References: <20250828180300.591225320@kernel.org> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com> <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com> <20250829121900.0e79673c@gandalf.local.home> <CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com> <20250829124922.6826cfe6@gandalf.local.home> <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com> <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com> <CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com> <20250829141142.3ffc8111@gandalf.local.home> <CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com> <20250829171855.64f2cbfc@gandalf.local.home> <CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com> <20250829190935.7e014820@gandalf.local.home> <CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com> <20250830143114.395ed246@batman.local.home>
+Message-ID: <F8B2968D-43DC-4D89-ADD4-A92455050570@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7tjz485mpk.fsf@redhat.com>
-X-Debian-User: carnil
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
 
-On Wed, Jul 16, 2025 at 08:44:55AM -0400, Aaron Conole wrote:
-> Guillaume Nault <gnault@redhat.com> writes:
-> 
-> > On Mon, Jul 14, 2025 at 09:57:52PM +0200, Salvatore Bonaccorso wrote:
-> >> Hi,
-> >> 
-> >> Charles Bordet reported the following issue (full context in
-> >> https://bugs.debian.org/1108860)
-> >> 
-> >> > Dear Maintainer,
-> >> > 
-> >> > What led up to the situation?
-> >> > We run a production environment using Debian 12 VMs, with a network
-> >> > topology involving VXLAN tunnels encapsulated inside Wireguard
-> >> > interfaces. This setup has worked reliably for over a year, with MTU set
-> >> > to 1500 on all interfaces except the Wireguard interface (set to 1420).
-> >> > Wireguard kernel fragmentation allowed this configuration to function
-> >> > without issues, even though the effective path MTU is lower than 1500.
-> >> > 
-> >> > What exactly did you do (or not do) that was effective (or ineffective)?
-> >> > We performed a routine system upgrade, updating all packages include the
-> >> > kernel. After the upgrade, we observed severe network issues (timeouts,
-> >> > very slow HTTP/HTTPS, and apt update failures) on all VMs behind the
-> >> > router. SSH and small-packet traffic continued to work.
-> >> > 
-> >> > To diagnose, we:
-> >> > 
-> >> > * Restored a backup (with the previous kernel): the problem disappeared.
-> >> > * Repeated the upgrade, confirming the issue reappeared.
-> >> > * Systematically tested each kernel version from 6.1.124-1 up to
-> >> > 6.1.140-1. The problem first appears with kernel 6.1.135-1; all earlier
-> >> > versions work as expected.
-> >> > * Kernel version from the backports (6.12.32-1) did not resolve the
-> >> > problem.
-> >> > 
-> >> > What was the outcome of this action?
-> >> > 
-> >> > * With kernel 6.1.135-1 or later, network timeouts occur for
-> >> > large-packet protocols (HTTP, apt, etc.), while SSH and small-packet
-> >> > protocols work.
-> >> > * With kernel 6.1.133-1 or earlier, everything works as expected.
-> >> > 
-> >> > What outcome did you expect instead?
-> >> > We expected the network to function as before, with Wireguard handling
-> >> > fragmentation transparently and no application-level timeouts,
-> >> > regardless of the kernel version.
-> >> 
-> >> While triaging the issue we found that the commit 8930424777e4
-> >> ("tunnels: Accept PACKET_HOST in skb_tunnel_check_pmtu()." introduces
-> >> the issue and Charles confirmed that the issue was present as well in
-> >> 6.12.35 and 6.15.4 (other version up could potentially still be
-> >> affected, but we wanted to check it is not a 6.1.y specific
-> >> regression).
-> >> 
-> >> Reverthing the commit fixes Charles' issue.
-> >> 
-> >> Does that ring a bell?
-> >
-> > It doesn't ring a bell. Do you have more details on the setup that has
-> > the problem? Or, ideally, a self-contained reproducer?
-> 
-> +1 - I tested this patch with an OVS setup using vxlan and geneve
-> tunnels.  A reproducer or more details would help.
 
-Charles, any news here, did you found a way to provide a
-self-contained reproducer for your issue?
+On August 30, 2025 3:31:14 PM GMT-03:00, Steven Rostedt <rostedt@goodmis=
+=2Eorg> wrote:
+>On Fri, 29 Aug 2025 17:45:39 -0700
+>Linus Torvalds <torvalds@linux-foundation=2Eorg> wrote:
+>
+>> But what it does *NOT* need is munmap() events=2E
+>>=20
+>> What it does *NOT* need is translating each hash value for each entry
+>> by the kernel, when whoever treads the file can just remember and
+>> re-create it in user space=2E
+>
+>If we are going to rely on mmap, then we might as well get rid of the
+>vma_lookup() altogether=2E The mmap event will have the mapping of the
+>file to the actual virtual address=2E
+>
+>If we add a tracepoint at mmap that records the path and the address as
+>well as the permissions of the mapping, then the tracer could then
+>trace only those addresses that are executable=2E
+>
 
-Does the issue still reproeduce for you on the most current version of
-each of the affected dstable series?
+PERF_RECORD_MMAP2 (MMAP had just the filename);
 
-Regards,
-Salvatore
+<https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/torvalds/linux=2Egit/=
+tree/include/uapi/linux/perf_event=2Eh#n1057>
+
+>To handle missed events, on start of tracing, trigger the mmap event
+>for every currently running tasks for their executable sections, and
+>that will allow the tracer to see where the files are mapped=2E
+
+Perf does synthesize the needed mmap events by traversing procfs, if neede=
+d=2E
+
+Jiri at some point toyed with BPF iterators to do as you suggest: from the=
+ kernel iterate task structs and generate the PERF_RECORD_MMAP2 for preexis=
+ting processes=2E
+
+>After that, the stack traces can go back to just showing the virtual
+>addresses of the user space stack without doing anything else=2E Let the
+>trace map the tasks memory to all the mmaps that happened and translate
+>it that way=2E
+>
+>The downside is that there may be a lot of information to record=2E
+
+It is, but for system wide cases, etc=2E Want to see it all? There's a cos=
+t=2E=2E=2E
+
+- Arnaldo=20
+
+But
+>the tracer could choose which task maps to trace via filters and if it's
+>tracing all tasks, it just needs to make sure its buffer is big enough=2E
+>
+>-- Steve
+
+- Arnaldo 
 
