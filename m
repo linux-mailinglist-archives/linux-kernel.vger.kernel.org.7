@@ -1,326 +1,182 @@
-Return-Path: <linux-kernel+bounces-792998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0FBB3CB57
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA86B3CB58
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517B11899B66
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1327ABCA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F24223337;
-	Sat, 30 Aug 2025 13:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB74255E53;
+	Sat, 30 Aug 2025 13:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAHJFzkG"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="fhJBks5D"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013021.outbound.protection.outlook.com [40.107.44.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F9017A309
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 13:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756562158; cv=none; b=iTjKZ0I4P2MgPtRjvJHNN0Jx0YSjxQg9Vp2phprwKSWITTWO81XZuo/kVyTN+eoh9sYkyd6v/B1MH3gs0Ck46TcIAirJ7hKf48W3ojfIHWKbwa7UyABYD9MjL1pR1C5Fl1NS93qECnSWCztuEhIZ5QdEC+gF1t9dwIRGRnzBQ3s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756562158; c=relaxed/simple;
-	bh=UljGajWu4DMZXPLgF2CeskJ2s+Qs+mbr0l08dbnI+qs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=SpXpmdgNv0zCU6lrWo7VbIIX+xk2anNwBZUlEk/MhmafuzgV1lr0lHWsmR7Llj9h2w9u8MqT0ieEwEQy0ocHmVgGVAF5P7wJW/NjQos5ChQUxjR7UZhmF6BFGn4qQHGhAdeKRI8HTCxegTR34MNXNnhCWzAmi9WWdHC1WVXRNvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YAHJFzkG; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e8704cdc76so304580085a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 06:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756562156; x=1757166956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rwFw00fP5hKsO5aLSWTxg80jBbSUw1HBbxbIBLPdq+w=;
-        b=YAHJFzkGEqDRR/4lXIjMSDNBpu/ePgLC+vgDKYBZilH+8mTXEm8rSPXoGV+8Jn8iA7
-         3A5IBvIMKOvVbBqED+IjDw3BhJMmq15l+p+tex2BXr98uTZjNFN8kpZMz2l7Q3iI8cVM
-         ffw6ZHRMH84E+45zTg7/qL9jolkRiXDzfDgGOeWbONlJcJjNefB6eLWhfcSG1JjBmEDN
-         Y/F4Xk1qwDBiS9jVi6UnGDu5QDIRyU19MWJ+eFDq1eVLnCZ7pxxHkkFZYJ0Q35WrOCzm
-         IlY8iPHoyCNeq9H02Ltl2riwZn4Y6YE8MMzopR6kZ9gFG9+Kx6XP4zT52wNux5U/ce6Q
-         89OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756562156; x=1757166956;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rwFw00fP5hKsO5aLSWTxg80jBbSUw1HBbxbIBLPdq+w=;
-        b=aD3SQGOTb78a7067TVWNlcv9u9Up5lDELQsBREjAc7DO5+I3ZoeEL12bu0MRrU910l
-         0R5GyeQBUtJYLZJK7+KrtAucYG2XbdPZlX1QvvVm3+18b3qy3hBIWhAkNkmqQRl9Y/nI
-         tHJCn9y0vYfyd3bTiey2/7AIqqlDuyHuuHIZo2ZRoi/Vc5MCURPLUfOUS643gQJqgBIA
-         JW+/lb+e1MpF9kuwyevdSSr4dyFsp1upq46ub5N+ZHKEu2QipyBAwkHu4e0yqKSd0k6Q
-         9dNTQD7lLf5IomSv7GLfYMgFH47wWWmnhqHNFkeooZmNxRPMM7G8ERel2lgKMSjKd9EE
-         r6ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXY1FPGPoU3ROSdv4ZlxpzCpyWRAo8tNPoZ/kuSO4b6yFED3Hc/1P+HZNmfIYoE6ll07R2a74zQFWKSRKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjdtVU5SJxM0XukKrk1wxvGytEPRjs2Im7Mdo/ION3pSDYQL3K
-	cq0tJAHxbqKuEZYqTglGd56+dbs1bIvTBuycAZmLqnPvCA9cNY85oKeU
-X-Gm-Gg: ASbGncvEMj/Rk+Wf3ZxsPaoU3BlKEQedKv+mrD/NoRGHvOCPj6n5dGNrEvNcny64k3T
-	GyBiAq5SZPIGXbXr4MdwBqj4YAC+H0B8nLgiWlRE4zL7cHoG8Q9z50f6se/JLng9NCW4gwiXP+m
-	oCWs/Bq73j1li35OGSGVp7WWjYuH/3EpnE5Rkv4FnBbSDJArLF11iKOnAOGx5MnJaJy0uNQcVho
-	Ju+Ta/S6DjR6i8TPD6iFE/fIFq9aJkravt1lTcCM1w12tSqkz0dm4zJIkjVw4zm2Xv9VpbR0W4i
-	bQIZeWKnGepNKMdgwKRqMQCbY12vcMgCgxDcX52Z0fyyNaHIG30GGe6CUZg5ab1eNIiK38sq9a7
-	2R5//2tawqTkjr3qtCAdRXw2csTcc/awM8F7aGSDf++scp479Q2TJwrifh6/LIQ1vZgjMV9Nyms
-	BxURTONBOjqpJiDLb8
-X-Google-Smtp-Source: AGHT+IFHe3F8qBtgpqyIBOVJAb2wAE+VHgQKK55k+ksJZPNN3aisYWqD7QpfjxrEgl4iwh71mzA6dg==
-X-Received: by 2002:a05:620a:468d:b0:7e8:507e:3b2d with SMTP id af79cd13be357-7ff2b0d9e3dmr187167885a.53.1756562155421;
-        Sat, 30 Aug 2025 06:55:55 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b6f5172sm32483681cf.51.2025.08.30.06.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 06:55:54 -0700 (PDT)
-Date: Sat, 30 Aug 2025 09:55:54 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH=5D_auxdisplay=3A_line-display=3A_su?=
- =?US-ASCII?Q?pport_attribute_attachment_to_existing_device?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <CAHp75VdF=_LQbHJozUGExCmDd4UW4oJ0-deT=aEdnQjCOotsVA@mail.gmail.com>
-References: <20250829010324.15595-1-jefflessard3@gmail.com> <CAHp75VdF=_LQbHJozUGExCmDd4UW4oJ0-deT=aEdnQjCOotsVA@mail.gmail.com>
-Message-ID: <67046EE4-FBE6-41FA-AB03-B0E01FA1C274@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981A1E49F;
+	Sat, 30 Aug 2025 13:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756562330; cv=fail; b=F7cvawYFh9jKLziD9+yf0ArSUTcwRKmNimIGXPus08nIm5dHOMZ9iz7HKaU5ULS0maeMRzfMAFZxmnaqTTVpmEJs2JJasR/2LF6UHiRphkMr74ebRDgSkGRpf8CpEev39CpgW4mYh5pN/bRytuI4iMHK0S4GzTyUCoaf5n0ntiI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756562330; c=relaxed/simple;
+	bh=v01pOLJ58DNmG12PwMpXbjkHJjmDyW7l65u7j3J8BAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KW1mTyxhnT2zU4wapn+6AMEYcXlg4ZyLhE+kLk33q3wRBcrvIErlUeqkNTFA3btw11SwMNlH2N35sosFBbV7Vka65DEnxQ2xEwxjTpdn9frJ7H9oUjLTVPpQE+y2dniPXU5e870PgIBstu2U2RMZlxWACdwNCAZNpk9Zo30rY64=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=fhJBks5D; arc=fail smtp.client-ip=40.107.44.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S/7TS8vZJkWn3VDLhSFBGL2gl7vf+Jt5sYl/LFRKSccIQCPh/1PJMpOL2i+XAdwNTDjYVnS81COso4WZw50qm47H9su3+wZI7Fji2w6PM/vBOCtVqQg0sih8LIvTfIyqH/SH1ABhlhpBfg2+52U2Yke5XuFdwfsdzjxWa/2dX5cJ8BIL9hF0EMYjAD1p2qCHJXPJSNF+3RRgszU+8K5yW7kFTba7cZcvmA8Bi21lBgQDaI2C49I7twDHaO+t3dwHF4Hm82zaYJ0SfteGt+3ODXJyw/MJjfyMTYuiFRAHG7X0+xZdmoc8qpFAekjr1BBvn4G2VQ3YPSCwgRBwKK7PcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E7NmUV6jHCCAeqfJmSjq/13rY18JdhwZbGr76vCKBhY=;
+ b=j4rAbZwx2hYVkj9cM9ZlnsW+7o5NdjLhJA853VQm/iXP+4SItpy722swqbA0lBvL8+YVqrcqOZkGUOeXrY8RlEG7H2Uy/Lv/Z2DnU3zudni18LgyT3k/Xfo+xcHm9x4X8P/DfOcGU2I/3F3rYaI+5Jp729EBgX60Eg7l84BDD9fou0GTz0KN3FLXHmmtIsELHIeeoPl2t458TTOaW+rOpM9ThP05SiTmx7SC65w12+syLWuXGL5IrJWcLbMp/+qMvjehdmw+fnd+4d0zRhwn9QDsYPVEUVg7aCXCZaLbLKIiAFXVSURuZxgnvRKlvuqmoFs08pLyuN9HjrQkgz7u0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E7NmUV6jHCCAeqfJmSjq/13rY18JdhwZbGr76vCKBhY=;
+ b=fhJBks5D1/m9f/LiIIJ7rj9CzsH4I9vCTEuoLjGO1JQ6naO6iV9KkrJI7pB/HeBpgCBspUk1QVDxBvecXDLrAAnePmf9di+kUW8IddZegdRSOcHsh3+FgVilQ4alzvQX4zBgnual22l9Qkg91u6FVwT7UMr9uUW0IC+NGpwroqTwMk+HXTu3Y7KvCQZ5v17JpcI61I2wdFH7FBBkJ23qkKPbstlPyec8elAPUJzatYSUp9dqg9khsL4oi0j08v17/4JslF/Gp7Do39iqw7x0mbtf9+x+DL5opFqbG86JbARpgT3CEiaY4z3evAkXYMHJbog4W3rKk0CmbYRglBinMw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEYPR06MB5694.apcprd06.prod.outlook.com (2603:1096:101:bd::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.20; Sat, 30 Aug 2025 13:58:43 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.021; Sat, 30 Aug 2025
+ 13:58:43 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] bcachefs: Use int type to store negative error codes
+Date: Sat, 30 Aug 2025 21:58:33 +0800
+Message-Id: <20250830135833.112327-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGXP274CA0004.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::16)
+ To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB5694:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23299b37-47dc-47d0-8292-08dde7cd548a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n7mJ+rIyfJuyCxiQxqXtvBntH1AYdx92111h+wueX5hMI72p9MQvC8naiNg+?=
+ =?us-ascii?Q?yV2t95UBaiDiJ8Sk+japBH+IFz51pLIQMhefVKzUEXk0EcqBce1LZk1lH1y2?=
+ =?us-ascii?Q?snLrQk1CGDspMc75qFCjWUdtDyQJ20tK0e4eV4OhNPbnZT4Rm/otEYneM0F1?=
+ =?us-ascii?Q?F5LM0T2FEJdXYXPdN43IS2M/cX1q/ZSMx00JfRXZ9N9TlJN/xSZFroVxzfE3?=
+ =?us-ascii?Q?rOyIz5BKalQKvNqvUpH3dcrWQb4rtPn9ILUnbbrG0KO6ZCU3VqjYuDeFod4X?=
+ =?us-ascii?Q?SsrQcBLpam4oCLymWAA/p4ofy2vRip5148Xi3p5mDH2qrTRBcubbgMzFCSqm?=
+ =?us-ascii?Q?ZaTErgJ6pkpTuw+bC62G1ePG5AlzYjFUqVBFlvxzvFisyS1CK9V6+ahVfRhZ?=
+ =?us-ascii?Q?XYDAlmyPVeYIO7OVTvFtfe6OrrrC8znOdh+lpVkiyTqwQCiYUIjDCpDPP0wB?=
+ =?us-ascii?Q?A2fGRVao20sjxJxQhZxI5wupu795funIz91LmwO31J4otRbcu33gP4HZlP2i?=
+ =?us-ascii?Q?ltVEWaIJXLV+jHnojH1mGG46s5OBXtB8GonT55pm9zBlVx4SPHn9JxOMJQcX?=
+ =?us-ascii?Q?RCMGJdjstUO94eq50BvpbRbp6W5tjwbEdSuTyoZe6JRjKjX/A5H12owlJ6Xd?=
+ =?us-ascii?Q?XMW8J1dnR5OGz4V2NUOYEl5eu+o3CY6YQGEm0aCrHCXc5zCjb/WeAh8TWFYX?=
+ =?us-ascii?Q?BJw14zcmNB/imJKVSFYJBUMv7ZBAGN0DaAxtwwSd0wGlHi8P0ewO90TEh2us?=
+ =?us-ascii?Q?I9CyQ1Cu72n8FN9/Ccg1Nz4YXTd6Q+HEuZIC3T9dH01pe/XbeD5AQL4CueQn?=
+ =?us-ascii?Q?OTmZNByl0Zmh22TtuBXaPO2/XzDn28rXO4dxBMqZK5qIvf6LkUPPDBwP9gy6?=
+ =?us-ascii?Q?e2paw8WRmmRNC7QDz9Xe0BmrGYnpji6YdcxzUoI4rrmc9BaGD45ZL/RRFbYj?=
+ =?us-ascii?Q?ntaJiJkwsjbphLVgcKjcQX6xCcka/idhWkncKQTqskmz+othh5DD/BLUpUFp?=
+ =?us-ascii?Q?H1KqqYy876ZEVr+er7Hh2jT3wcCRluxwDBGJsUKPJRSv986POLLVb5McvnQH?=
+ =?us-ascii?Q?WAwobgTm7c1ylDRJMhO+1AVbdmJiX+3B5pBbqSw9VsrfwYBzu5tr7uJw9LcQ?=
+ =?us-ascii?Q?wtpqlpYInSHwAstU2MJmS0gXcNjMrdR8NqsfB/OhaHaKESOS3WUDe5m83+1a?=
+ =?us-ascii?Q?1QwJPEArqLbXUcCuVNGlnVLgEQe4Zd5RZvT0sduAHYC9+0q3Mi9qO1OeheAv?=
+ =?us-ascii?Q?Dy+CWaZWxfkb61Lc07PJon+wzY36akepJDLel306ld8tT7pxabapeNpxeafA?=
+ =?us-ascii?Q?uaxvVc908DY63znyU+WP1lqJiafkgET5vhWU3FnYs09jCVDePoq2xFafVjjA?=
+ =?us-ascii?Q?WoB/pfdYv5UTokZkYaU4JXZna6+IYrbmSz4wh70qLOOrbZMfY72U265SModq?=
+ =?us-ascii?Q?NxAeabUkbzYBVOqsOJqECgebwzLiMKu7FrI4tfQxsiHumxx7GcLKyg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VkK0gCYOuq2M8Oh3OoMkxumz33nRWT0CksoukPsBoX8THd7hVQO4FsMy+mHd?=
+ =?us-ascii?Q?xy0AliLM7QlncyEohiTfts2cQVsDoC14TPlxh6U+p3dKDfcNYe/k7RiMUZyr?=
+ =?us-ascii?Q?WNYgmL4McSwRJTWsiYfLEOJRgYLxjZakJ/7XtakMventX180A43nBnb6HlZ7?=
+ =?us-ascii?Q?fbNHMp5HGjAY33qR6UfMBqi1Ad9Wd1u0wMCo+9CWQZYCOvT8aoK3hF/Ww0Qb?=
+ =?us-ascii?Q?n+dJSLzwp/9CS8DteCm1ISbENYXDbseMS2cC97pcooruNzpFE6TuD+jMB7o/?=
+ =?us-ascii?Q?vfpmJvdyBukkMqbg5gIoxe1gUNfLuIHnWRAG4WOcuYs67xvWRLWpbYwV++NN?=
+ =?us-ascii?Q?3Ls/4jcr6+XA+waUvNFZZ4n0Rzi0+RXMP321yETyijf4z3mYEgZfHimFEe9u?=
+ =?us-ascii?Q?SGV8BRFyKDixpFgKD/zBor3R5+mf+JAeQrIPme8upLQyNJwIl7FcOIHyNcM9?=
+ =?us-ascii?Q?GPKwFgF9q4utCCc62kw9ggkAJuCWLsWWKeRidoGOr4tO24oa2RpwlKIhyYtV?=
+ =?us-ascii?Q?0MjHYteOu/kMp69tsCLroBsYUK7NCQSSbmejzID4nvA2KdPOuVPvSautaYuN?=
+ =?us-ascii?Q?mG40TKG9eldntHq7pMx+evV4rTpD+vVirn7hCC+iGmuvWXRIMpHNpy+7ovL2?=
+ =?us-ascii?Q?DX7jqx522hTrf/mPsJonaInwlue8rnb8Uc22SOdQbMPoTsAN5v/D5hFGfM7j?=
+ =?us-ascii?Q?sOobYLS5vbQblgJs5qd6Rp8ndpElgGyiZCAANmgPvzTaNxE7mA/m01H5QCCv?=
+ =?us-ascii?Q?sRieduG4kwzlv0N/ifb8InTLs8yGeN40It8geXGU7IbVXymPOuT8JS/X1xvd?=
+ =?us-ascii?Q?3ufkDAklGExAPTaKOiz6XqxaJy+m9pDmZyKDreWLIfBrI3zIG4xk2sACMqfX?=
+ =?us-ascii?Q?1/rzyqngyRIckInCohaFXLzIPabmMdFVXBgGIXuilO/MOorMWd3Vw8EbJoeE?=
+ =?us-ascii?Q?00DDUx4fPFfJmx6F6pE9SBEQWxWhrjX9+kkPsRZQYgyErUiXZocVPQXkBBNQ?=
+ =?us-ascii?Q?/yd/n4fOoSDujXCKKQqHkfFD0vjFaaT8c3NZCU+7etrRB0qyrW1nk/yS0+X4?=
+ =?us-ascii?Q?kJmb1w4HNDITjIZivkSB9coJ+Xe5XS6hb5p56aQeAVymgei3r1hUrbBI9ZTd?=
+ =?us-ascii?Q?NmACfISDHn5PhbFmrg8RKx6lFV6ejcIVXYR/9ys/E9Rrj1JUaFSdcOfDEozP?=
+ =?us-ascii?Q?XM/2YdpFDHFLVYAcbfL6ahskC46QE93/ZrzofpAKnXPXn08KNoiUFkpG5PQJ?=
+ =?us-ascii?Q?7wtr63RvvX/EBTY+T6WGcbV7rnxSgegYxKEXp9Zlr1zBG9go0aKzaAI68449?=
+ =?us-ascii?Q?+PKnRXjNmevwJGGX3z7HIqqhoIbU6MpAzwItMzLuboOSm8TNgAxjY0V9zIjX?=
+ =?us-ascii?Q?QRek8sN4VzHs/VPeLIKowV8Ebnh0CdwzdYpTYTdDHGOtIONJrV3S7qGG1+JH?=
+ =?us-ascii?Q?iEpfUejfQqrAChbTGiDUE62vHg5XxvFHzc9J9oT9XGwvB7CT0lANFUSKZ5rv?=
+ =?us-ascii?Q?DXMBAjRY7lxMGExfWMhnLXZFTRZrzOCidJx7y3+dWmKPh8hN2/zJH/lBE8Bj?=
+ =?us-ascii?Q?ao/6/fjJL6/5JyCZJ6pnEe8Qma4Qwh1yQiD8tXXk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23299b37-47dc-47d0-8292-08dde7cd548a
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2025 13:58:43.3665
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oxgzMKfckLAv5kdYRQNdJGvQ9A6hpYhoEqYAypnmlSgt/PMokoC9AzZjA61UgzCw/UMc2W2WfEMlAf6qCnTGqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5694
 
-Le 30 ao=C3=BBt 2025 05 h 15 min 23 s HAE, Andy Shevchenko <andy=2Eshevchen=
-ko@gmail=2Ecom> a =C3=A9crit=C2=A0:
->On Fri, Aug 29, 2025 at 4:03=E2=80=AFAM Jean-Fran=C3=A7ois Lessard
-><jefflessard3@gmail=2Ecom> wrote:
->>
->> Modernize the line-display core library:
->> - Add the ability to attach line-display's sysfs attribute group direct=
-ly
->>   to an existing parent device (not only via a child device) using
->>   device_add_groups(), allowing coherent integration with subsystems li=
-ke
->>   the LED class=2E
->> - Implement a global linedisp_attachment mapping for unified and race-f=
-ree
->>   attribute access, context lookup, and cleanup, shared between
->>   traditional register/unregister and new attach/detach paths=2E
->> - Modify sysfs attribute accessors to retrieve context using a consiste=
-nt
->>   to_linedisp() mechanism=2E
->> - Add a new num_chars read-only attribute reporting the number of displ=
-ay
->>   digits to allow static non-scrolling message from userspace=2E
->> - Ensures thread safety and proper list removal for all attachments
->>   operations=2E
->
->Thanks for working on this, can you split it into 5 patches?
+Change the 'ret' variable in __bch2_dev_attach_bdev() from unsigned to
+int, as it needs to store either negative error codes or zero.
 
-My pleasure! Thanks for your feedback=2E
+Storing the negative error codes in unsigned type, doesn't cause an issue
+at runtime but can be confusing. Additionally, assigning negative error
+codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+flag is enabled.
 
-5 patches? I can't see how these changes could be split into 5 patches=2E
-Maybe the commit message is too verbose and needs to be shortened=2E
+No effect on runtime.
 
-If needed to be split into multiple patches, it could be:
-1=2E Add attach/detach capability
-2=2E Add num_chars sysfs attribute + ABI doc
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ fs/bcachefs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I am also thinking to add a 3rd one to pad the message when length is smal=
-ler
-than num_chars=2E Current behavior is to wrap around which seems weird to =
-me=2E
-E=2Eg=2E for 4 chars:
-
-Current behavior:
-cat "123" > message
-results in "1231" being displayed
-
-Padded behavior:
-cat "123" > message
-would result in "123<blank>" being displayed
-
-Any thoughts on that?
-
->More comments below=2E
->
->> Backwards compatibility with existing users is maintained, while enabli=
-ng
->> uniform n-segment sysfs API and richer information for integrated drive=
-rs=2E
->
->=2E=2E=2E
->
->> -#include <linux/container_of=2Eh>
->> +#include <linux/list=2Eh>
->
->Keep it ordered=2E
->
-
-Acknowledged=2E My oversight=2E
-
->=2E=2E=2E
->
->> +static const struct device_type linedisp_type;
->
->Why? I don't see the use of this in the nearest below blocks of code=2E
->Can you move it closer to the first user so we can see the point?
->
-
-This shouldn't have been submitted=2E This was part of a previous approach
-I experimented with=2E Will remove=2E
-
->=2E=2E=2E
->
->> +       scoped_guard(spinlock, &linedisp_attachments_lock) {
->> +               list_add(&attachment->list, &linedisp_attachments);
->> +       }
->
->{} are not needed (same rule as with for-loop of if condition with one li=
-ner)=2E
->
->> +       return 0;
->
->But in this case you can simply use guard()()=2E
->
-
-Understood, I'll simply use guard()()=2E
-=20
->=2E=2E=2E
->
->> +static struct linedisp *delete_attachment(struct device *dev, bool own=
-s_device)
->> +{
->> +       struct linedisp_attachment *attachment, *tmp;
->> +       struct linedisp *linedisp =3D NULL;
->> +
->> +       scoped_guard(spinlock, &linedisp_attachments_lock) {
->
->Use guard()() and drop NULL assignment=2E
->
-
-I'll use guard()()=2E
-
-NULL assignment was to prevent invalid pointer in case the device is not f=
-ound
-in the list=2E But you are maybe suggesting to drop declaration of linedis=
-p and
-then directly return the linedisp within the loop and to return NULL after=
- the
-loop?
-
->> +               list_for_each_entry_safe(attachment, tmp, &linedisp_att=
-achments, list) {
->> +                       if (attachment->device =3D=3D dev &&
->> +                           attachment->owns_device =3D=3D owns_device)=
+diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
+index 793c16fa8b09..ec20ab0ad84e 100644
+--- a/fs/bcachefs/super.c
++++ b/fs/bcachefs/super.c
+@@ -1769,7 +1769,7 @@ static int bch2_dev_alloc(struct bch_fs *c, unsigned dev_idx)
+ static int __bch2_dev_attach_bdev(struct bch_dev *ca, struct bch_sb_handle *sb,
+ 				  struct printbuf *err)
  {
->> +                               linedisp =3D attachment->linedisp;
->> +                               list_del(&attachment->list);
->> +                               kfree(attachment);
->> +                               break;
->> +                       }
->> +               }
->> +       }
->> +
->> +       return linedisp;
->> +}
->
->=2E=2E=2E
->
->> +static struct linedisp *to_linedisp(struct device *dev)
->
->As per above=2E
->
-
-Same=2E
-
->=2E=2E=2E
->
->>  static struct attribute *linedisp_attrs[] =3D {
->>         &dev_attr_message=2Eattr,
->>         &dev_attr_scroll_step_ms=2Eattr,
->> +       &dev_attr_num_chars=2Eattr,
->
->This needs a Documentation update for a new ABI=2E
->
-
-Agreed=2E I think it's also worth documenting the other ABIs along the way=
- since
-they are not documented yet=2E Then, what Contact should be documented?
-Is there an auxdisplay mailing list?
-
->>         &dev_attr_map_seg7=2Eattr,
->>         &dev_attr_map_seg14=2Eattr,
->>         NULL
->> };
->
->=2E=2E=2E
->
->> +int linedisp_attach(struct linedisp *linedisp, struct device *dev,
->> +                   unsigned int num_chars, const struct linedisp_ops *=
-ops)
->> +{
->> +       int err;
->> +
->> +       memset(linedisp, 0, sizeof(*linedisp));
->> +       linedisp->ops =3D ops;
->> +       linedisp->num_chars =3D num_chars;
->> +       linedisp->scroll_rate =3D DEFAULT_SCROLL_RATE;
->
->> +       err =3D -ENOMEM;
->> +       linedisp->buf =3D kzalloc(linedisp->num_chars, GFP_KERNEL);
->> +       if (!linedisp->buf)
->> +               return err;
->
->You can simply return -ENOMEM without initial assignment=2E
->
-
-Agreed, will return -ENOMEM=2E
-
->> +       /* initialise a character mapping, if required */
->> +       err =3D linedisp_init_map(linedisp);
->> +       if (err)
->> +               goto out_free_buf;
->
->The __free() can be used instead, but for uniform handling it's
->probably not needed here=2E
->
-
-I think uniform handling is preferable here=2E Will keep as is=2E
-
->> +       /* initialise a timer for scrolling the message */
->> +       timer_setup(&linedisp->timer, linedisp_scroll, 0);
->> +
->> +       err =3D create_attachment(dev, linedisp, false);
->> +       if (err)
->> +               goto out_del_timer;
->> +
->> +       /* add attribute groups to target device */
->> +       err =3D device_add_groups(dev, linedisp_groups);
->> +       if (err)
->> +               goto out_del_attach;
->> +
->> +       /* display a default message */
->> +       err =3D linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
->> +       if (err)
->> +               goto out_rem_groups;
->> +
->> +       return 0;
->> +
->> +out_rem_groups:
->> +       device_remove_groups(dev, linedisp_groups);
->> +out_del_attach:
->> +       delete_attachment(dev, false);
->> +out_del_timer:
->> +       timer_delete_sync(&linedisp->timer);
->> +out_free_buf:
->> +       kfree(linedisp->buf);
->> +       return err;
->> +}
->
+-	unsigned ret;
++	int ret;
+ 
+ 	if (bch2_dev_is_online(ca)) {
+ 		prt_printf(err, "already have device online in slot %u\n",
+-- 
+2.34.1
 
 
