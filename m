@@ -1,121 +1,255 @@
-Return-Path: <linux-kernel+bounces-793125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AF9B3CEE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:07:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A9FB3CEEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560D41B2216D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:07:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51F327AE0BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3572DC344;
-	Sat, 30 Aug 2025 19:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C722DCF53;
+	Sat, 30 Aug 2025 19:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aSSaVEyh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUUnSt3u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C45C2FB;
-	Sat, 30 Aug 2025 19:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E83257AF3;
+	Sat, 30 Aug 2025 19:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756580847; cv=none; b=Obx7QYgs51lzIF9ap6022bUivx6Y3ibPDq4xDAq72l76LsFR0HXKZ3Bl1AFIWKvaeTnM+KWKeJSrW04M3bekeM+yHSXFq/aNOPvKWnhsunofPCGsSNCepHthuBvSfXcaMYGfHmlvk70hjqxMyTUQ0ZOgCO6NL+bODFRXo7rBINw=
+	t=1756581084; cv=none; b=VzToEuvoNHFnmZiKpmszOgPOCPlYa9t3w4q1bmzro3SuDyZFwTLM3OTq0MXIROyTl+678CLSZC6NHIadzJcG8sHlwfLpyClAk40DvWSc/gc4lMyLvXpoTl88477QknoIHJHDoPs5K5Fju6v2UAgQI0J8L45fy9U3UsW2P+XPHss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756580847; c=relaxed/simple;
-	bh=QYzueCTVYdbX1zon/h03kw3Kg4oJHnza55f2turo7rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igc7MZy/Calb0Z87b3RoahLs27tBjT754Ei3Zj1HtYY6s4OY89KSEmA9IJaA8kjHVhEeDfB7dyLl5Qvw2CERIJEXosgZiBLedwqk9AmWVaJOhX6pKWTTOJm0bA8M82QifMwfZi9m5UyL4UmBYvqzIbcL+L9Env3MZF1Qf7oCHSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aSSaVEyh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8TFzyfVafwm7YUGOiNBnfwDYZHKGsNjEqahwV+6kUqM=; b=aSSaVEyh7oFxUSCCIohr5jjF6/
-	ZQur9dJ5bm6zFxbgGcMH9iqEo8mjd9J16zYsgSHAkIshdND61u9Egh66DTulw/UAaOsqaKQgQLNn+
-	sibeiQOVHEAYvSW5fWl97F2+azlKTM8rPzqkStxMSATp3Xjz7SeERa7GtWlz0cB8+joIlAjZ0qyD1
-	jHdlmqagA4d8mmldU2TWyW34CWTgb+1Yyn51xFZVkWSJ2OgP5XYa9Kl03AcaDGZ0F+Lw8+a7vqqyn
-	44ysYXqFYASt733WVK5YXgwxes2Sk2hpopL26NkPNULQ23IjlL3yBpSSdWwN2LydUr+Mir3nmYVAK
-	pdkoSDNQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1usQv0-0000000G8IQ-37i7;
-	Sat, 30 Aug 2025 19:07:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 41E013002C5; Sat, 30 Aug 2025 21:07:18 +0200 (CEST)
-Date: Sat, 30 Aug 2025 21:07:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrei Vagin <avagin@google.com>
-Subject: Re: [PATCH v2] docs: scheduler: completion: Document
- complete_on_current_cpu()
-Message-ID: <20250830190718.GS3289052@noisy.programming.kicks-ass.net>
-References: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
- <87a53h3fzn.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1756581084; c=relaxed/simple;
+	bh=MyE3pqyLVbld26pEgWknWcMBrihOQjvuBuX/OtdkRaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UU7qMaatcSprVJfUB1Dc06RIA/9GXiW+qyV8DoGUqbcIzHdjOKxKIUFqFk6hHm9GGqZy5zUqXLyl0PzG/rcZLXPZb5cegBrUlYYMCZU9a/cPjk7PUIoHS1OfePG4CO7vEwOEtMwkgsgbg3uCCTmy0kLqKsm9n7s1B3eaVf9SLD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUUnSt3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BA5EC4CEEB;
+	Sat, 30 Aug 2025 19:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756581083;
+	bh=MyE3pqyLVbld26pEgWknWcMBrihOQjvuBuX/OtdkRaM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PUUnSt3uX2DbVP9xUtZmCggMgFNvOfdVmEcI7oQ7hGXOhmniJmpvXEdQCiqns4II1
+	 3dJ7wpRau2RaNIi8hnOuZ+9FB2T8Zc7paD9WOlvk694i47LsHFJciG1fMFqnMDmDdt
+	 sJVK1mXRBswX3pTMUegN5Rl2gB2/uOvxlgI1j15u/2oD4lsVbMHXTxjmE5CjnxhDCI
+	 lWQCM1QtCcEFxw1GVMeYacOxZi6khHJIxAk+RC/LRiwK5l+RdnZA6/SKx9ujhYNcFE
+	 8Io5DK2jW6Va7m6/Cdq52JQbiSO5Ft2/zQ44c3aQHgcv0tuSUgTpJD8l4DiYl+SFJW
+	 b4c33TvdOkRHg==
+Date: Sat, 30 Aug 2025 20:11:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <Michael.Hennerich@analog.com>,
+ <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
+ <andy@kernel.org>, <corbet@lwn.net>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <broonie@kernel.org>,
+ <Jonathan.Cameron@huawei.com>, <andriy.shevchenko@linux.intel.com>,
+ <ahaslam@baylibre.com>, <sergiu.cuciurean@analog.com>,
+ <tgamblin@baylibre.com>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
+Message-ID: <20250830201110.0f768545@jic23-huawei>
+In-Reply-To: <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
+	<0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a53h3fzn.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 04:44:28PM -0600, Jonathan Corbet wrote:
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> writes:
+On Fri, 29 Aug 2025 21:42:50 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+
+> AD4030 and similar ADCs can capture data at sample rates up to 2 mega
+> samples per second (MSPS). Not all SPI controllers are able to achieve
+> such high throughputs and even when the controller is fast enough to run
+> transfers at the required speed, it may be costly to the CPU to handle
+> transfer data at such high sample rates.  Add SPI offload support for
+> AD4030 and similar ADCs so to enable ADC data capture at maximum sample
+> rates.
 > 
-> > Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the
-> > current cpu") introduced this new function to the completion API that
-> > has not been documented yet.
-> 
-> For a change like this, it is a really good idea to copy the author of
-> the original patch and others who were involved in it; I have added them
-> now.
+> Cc: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Cc: Nuno Sa <nuno.sa@analog.com>
+> Cc: Trevor Gamblin <tgamblin@baylibre.com>
+> Cc: Axel Haslam <ahaslam@baylibre.com>
+> Cc: David Lechner <dlechner@baylibre.com>
+> Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Co-developed-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
+> Co-developed-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Co-developed-by: Axel Haslam <ahaslam@baylibre.com>
+> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Most of the code in this patch is based on work from Sergiu Cuciurean, Nuno Sa,
+> Axel Haslam, and Trevor Gamblin, hence the many co-developed-by tags. I also
+> draw inspiration from other drivers supporting SPI offload, many of them written
+> by David Lechner.
 
-This really is a rather specialized thing -- not sure it makes sense to
-have in the document.
+A few things inline. 
 
-> > Document complete_on_current_cpu() explaining what it does and when its
-> > usage is justified.
-> >
-> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> >
-> > ---
-> > Changes in v2:
-> > - Rebase onto v6.17-rc1
-> > - Fix patch formatting (drop --- before the Signed-off-by tag).
-> > - Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_doc-v1-1-262dc859b38a@gmail.com
-> > ---
-> >  Documentation/scheduler/completion.rst | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/scheduler/completion.rst b/Documentation/scheduler/completion.rst
-> > index adf0c0a56d02..db9c131f0b62 100644
-> > --- a/Documentation/scheduler/completion.rst
-> > +++ b/Documentation/scheduler/completion.rst
-> > @@ -272,6 +272,10 @@ Signaling completion from IRQ context is fine as it will appropriately
-> >  lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never
-> >  sleep.
-> >  
-> > +Use complete_on_current_cpu() to wake up the task on the current CPU.
-> > +It makes use of the WF_CURRENT_CPU flag to move the task to be woken up
-> > +to the current CPU, achieving faster context switches. To use this variant,
-> > +the context switch speed must be relevant and the optimization justified.
-> >  
-> >  try_wait_for_completion()/completion_done():
-> >  --------------------------------------------
-> >
-> > ---
-> > base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> > change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
-> >
-> > Best regards,
-> > --  
-> > Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> +
+> +static int ad4030_set_sampling_freq(struct iio_dev *indio_dev, unsigned int freq)
+> +{
+> +	struct ad4030_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (PTR_ERR_OR_ZERO(st->offload))
+> +		return -EINVAL;
+> +
+> +	if (!freq || freq > st->chip->max_sample_rate_hz)
+> +		return -EINVAL;
+> +
+> +	ret = __ad4030_set_sampling_freq(st, freq);
+> +	iio_device_release_direct(indio_dev);
+Where is the claim?
+> +
+> +	return ret;
+> +}
+
+
+>  
+>  static int ad4030_update_scan_mode(struct iio_dev *indio_dev,
+> @@ -903,6 +1038,67 @@ static const struct iio_buffer_setup_ops ad4030_buffer_setup_ops = {
+>  	.validate_scan_mask = ad4030_validate_scan_mask,
+>  };
+>  
+> +static int ad4030_offload_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad4030_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = regmap_write(st->regmap, AD4030_REG_EXIT_CFG_MODE, BIT(0));
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->offload_msg.offload = st->offload;
+> +	ret = spi_optimize_message(st->spi, &st->offload_msg);
+> +	if (ret < 0)
+> +		goto out_reset_mode;
+> +
+> +	ret = pwm_set_waveform_might_sleep(st->conv_trigger, &st->conv_wf, false);
+> +	if (ret)
+> +		goto out_unoptimize;
+> +
+> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
+> +					 &st->offload_trigger_config);
+> +	if (ret)
+> +		goto out_pwm_disable;
+Blank line here.
+
+> +	return 0;
+Blank line here.
+
+> +out_pwm_disable:
+> +	pwm_disable(st->conv_trigger);
+> +out_unoptimize:
+> +	spi_unoptimize_message(&st->offload_msg);
+> +out_reset_mode:
+> +	/* reenter register configuration mode */
+> +	ret = ad4030_enter_config_mode(st);
+> +	if (ret)
+> +		dev_warn(&st->spi->dev,
+> +			 "couldn't reenter register configuration mode\n");
+> +	return ret;
+> +}
+
+> +
+> +static void ad4030_prepare_offload_msg(struct ad4030_state *st)
+> +{
+> +	u8 data_width = st->chip->precision_bits;
+> +	u8 offload_bpw;
+> +
+> +	if (st->lane_mode == AD4030_LANE_MD_INTERLEAVED)
+> +		/*
+> +		 * This means all channels on 1 lane.
+> +		 */
+
+Single line comment looks like enough here.
+
+> +		offload_bpw = data_width * st->chip->num_voltage_inputs;
+> +	else
+> +		offload_bpw  = data_width;
+> +
+> +	st->offload_xfer.speed_hz = AD4030_SPI_MAX_REG_XFER_SPEED;
+> +	st->offload_xfer.bits_per_word = offload_bpw;
+> +	st->offload_xfer.len = roundup_pow_of_two(BITS_TO_BYTES(offload_bpw));
+> +	st->offload_xfer.offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
+> +	spi_message_init_with_transfers(&st->offload_msg, &st->offload_xfer, 1);
+> +}
+
+
+> @@ -1103,6 +1393,20 @@ static const struct iio_scan_type ad4030_24_scan_types[] = {
+>  		.shift = 2,
+>  		.endianness = IIO_BE,
+>  	},
+> +	[AD4030_OFFLOAD_SCAN_TYPE_NORMAL] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 24,
+> +		.shift = 0,
+> +		.endianness = IIO_CPU,
+> +	},
+> +	[AD4030_OFFLOAD_SCAN_TYPE_AVG] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 30,
+> +		.shift = 2,
+> +		.endianness = IIO_CPU,
+> +	},
+>  };
+>  
+>  static const struct iio_scan_type ad4030_16_scan_types[] = {
+> @@ -1119,7 +1423,21 @@ static const struct iio_scan_type ad4030_16_scan_types[] = {
+>  		.realbits = 30,
+>  		.shift = 2,
+>  		.endianness = IIO_BE,
+> -	}
+> +	},
+> +	[AD4030_OFFLOAD_SCAN_TYPE_NORMAL] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 16,
+> +		.shift = 0,
+> +		.endianness = IIO_CPU,
+> +	},
+> +	[AD4030_OFFLOAD_SCAN_TYPE_AVG] = {
+> +		.sign = 's',
+> +		.storagebits = 32,
+> +		.realbits = 30,
+> +		.shift = 2,
+> +		.endianness = IIO_CPU,
+> +	},
+>  };
+>  
+>  static const struct ad4030_chip_info ad4030_24_chip_info = {
+> @@ -1130,10 +1448,15 @@ static const struct ad4030_chip_info ad4030_24_chip_info = {
+>  		AD4030_CHAN_CMO(1, 0),
+>  		IIO_CHAN_SOFT_TIMESTAMP(2),
+>  	},
+> +	.offload_channels = {
+> +		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_24_scan_types),
+
+This array still has the non offload cases.  Do they make sense?
+
+> +		AD4030_CHAN_CMO(1, 0),
+> +	},
+>  	.grade = AD4030_REG_CHIP_GRADE_AD4030_24_GRADE,
+>  	.precision_bits = 24,
+>  	.num_voltage_inputs = 1,
+>  	.tcyc_ns = AD4030_TCYC_ADJUSTED_NS,
+> +	.max_sample_rate_hz = 2 * MEGA,
+>  };
 
