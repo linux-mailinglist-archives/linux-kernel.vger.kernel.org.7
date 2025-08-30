@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-792611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5DCB3C69F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:44:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1D4B3C6AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE6E7AFD64
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:43:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A4F84E42B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E571D8DE1;
-	Sat, 30 Aug 2025 00:44:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D4435962;
+	Sat, 30 Aug 2025 00:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="F0BzY5zG"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9F21CCEE0;
-	Sat, 30 Aug 2025 00:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20852C859;
+	Sat, 30 Aug 2025 00:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514686; cv=none; b=mxHUh5Xl7udFK3Mlbj9+Cn1AYAp0JOqBD70yEHDKLNkpHJ/8bI4wXCHcLW+72JQRAFclI2DhvhedRgYO21eJo1W6kqAt8/k2Ng1sDDvZ3sxFI0OA7dS6Fb6Yl0FN7ByApz0k8mTP5otKcy/cvxjwqLXeyJXoCzrrXRRgX4YGY1U=
+	t=1756514734; cv=none; b=ZQr7wGnUejl8FQLMohAzFHj3vWbCyj9khY+ZSJCw+5sTk/CxaHjpnXo3HoCHrs7NsE1jRQwnXXhO595y2+GnZn4SRPD9zf46bNAbIBQ0lcPsdUWS2N40Tl85zdFeh+cPQgx9YEp2/tnXsfnSLNgTQACuCHW55+d0Li93HUi8FqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514686; c=relaxed/simple;
-	bh=lpddepxRjNM+Jah/wSuL8Sm09Ygknht0LVd4mig4g00=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D936rZcGRsThjFm8UPAmLy+yjKfCKIXns9yT+F50+39/33F8irzCy9X9vUpknnUgsLRjQLDstV8nju9l7LZTbyJF5+EB34BSHpeFqrk42YBusgGr6xLQbf2ZGbYMIlQHf9pPu3JISFWhnr7ebGA7y3OOHWWYVzXeP24XldLblRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 5C23D119E52;
-	Sat, 30 Aug 2025 00:44:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 37BE92002E;
-	Sat, 30 Aug 2025 00:44:36 +0000 (UTC)
-Date: Fri, 29 Aug 2025 20:44:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829204459.6ea62c31@gandalf.local.home>
-In-Reply-To: <20250829190935.7e014820@gandalf.local.home>
-References: <20250828180300.591225320@kernel.org>
-	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-	<20250829141142.3ffc8111@gandalf.local.home>
-	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
-	<20250829171855.64f2cbfc@gandalf.local.home>
-	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-	<20250829190935.7e014820@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756514734; c=relaxed/simple;
+	bh=6MkpniJzSYxBEm2AnxlatOq2NEkK1vgWKN/7t41SCwA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OmJY5goYidR+HAIssWLm+g2UK9UMEYbj1LhIGcVHPi4FecfES3sHJfoAICEBcga72DTcMIM4xl+BzEiw0dUT5emT7Gdb3WaIUALWtdcul1h6/1sVgpZS2pc4m2tPBjtQDWbeWJeYJcjnoXXu1y8DFfB4wVHHy9fHsXW5A78yQfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=F0BzY5zG; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57U0DHRQ021582;
+	Fri, 29 Aug 2025 20:45:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=oiHUP
+	l+fb6diF3fo7NkabY3vBL6coMyZByWE8YGufj0=; b=F0BzY5zGCjP6c6GBteYCZ
+	0r54c3K/h3oU0A4gZQFyg79w/N7zeSkbq7+tVUrVhqY8qaxjoNeQIZTn04Sr+YsV
+	rKJ+W84dZ2H7cQvehCihqqFH1/bNV1VHczhygWzdBXvHaiZWJAuTQSFsXhVqZfXV
+	PQHclnxT/GntGlSY+p23NZL00oJyXQ7hxjY2BFL1UZHMQBuaOYZH9a/RX4J3Gg4t
+	x4uKHtmzomwicDjFF3bbAZE6HYDCTU06cIzqWfXAOifQmtsSPA+ShfsxgpCCbr+g
+	Twoje61MTnjeW9Dtxol6142gfqfdmRcRixEEO5/Yq5h84huQ+0nRW9MTooBgmuS9
+	A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagch6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:45:28 -0400 (EDT)
+Received: from m0167089.ppops.net (m0167089.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57U0jRhs009638;
+	Fri, 29 Aug 2025 20:45:27 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagch6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:45:27 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57U0jQGk018959
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 29 Aug 2025 20:45:26 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 29 Aug
+ 2025 20:45:26 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 29 Aug 2025 20:45:26 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57U0j9au005052;
+	Fri, 29 Aug 2025 20:45:12 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>
+CC: <jic23@kernel.org>, <Michael.Hennerich@analog.com>, <nuno.sa@analog.com>,
+        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
+        <corbet@lwn.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <broonie@kernel.org>,
+        <Jonathan.Cameron@huawei.com>, <andriy.shevchenko@linux.intel.com>,
+        <ahaslam@baylibre.com>, <sergiu.cuciurean@analog.com>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH 13/15] iio: adc: ad4030: Enable dual data rate
+Date: Fri, 29 Aug 2025 21:45:09 -0300
+Message-ID: <47b2cf01555c31126bc2133526317c7829cb59ab.1756511030.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1756511030.git.marcelo.schmitt@analog.com>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 37BE92002E
-X-Stat-Signature: cc5jdic8b9uokx7zbzn5hunotaxqir71
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19pl6C6Kqnejk8tIUdrvZf4zNQEFz+Ax6w=
-X-HE-Tag: 1756514676-477073
-X-HE-Meta: U2FsdGVkX18PN91WHs6dIsuh4/qRVy2Jy4rubtURT4o6fCFBr/KthGOlbftdPYGY9SqWoP5If/oQP92D/X9khPPlkPyLJr/8YLUmeKu2/wr83Rwms6cO3eagEfCtNS8uLL609Zl1nT6lZTclhIxJCTtgdQpawXkNbow0/2MHZC83UeeTZ9j0GJhMxIO+C6WEKobAh7+U1nsUzCinUCeH1jz7VyUPLJ2vHhCH4GQPs3FvogZQXliqKejYUAUqsnZpgV9Jy+vv5B+jmQ5ynA1dqRWrSqps393ly1L7wsQvOMy51X97hARmEBudxmLnN+FePPw91D1e1gKj7R4bN6mp+M13Noi8DvrX42YrVqPS0tYZ2EuUMnuGjEGM4+2cdKCB6JJUV13UPJiG6e+kup4xDm7ICGBBRb0I
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDA3NSBTYWx0ZWRfX1/vWJNhqEG7Q
+ vFS8uAu+vr78+OaFqxZaxOjT9l74oWmjwz3DDTeV8E3nrM3pDBxr2vQuoHE2Zeq/0bktqsEsfrF
+ gjaj5cZKO7msQEXdrfx1D5GUz1jDZMbVQJ/2/FgFAgq/UL1eOhN212PNFhUajeB0At5tcSlAgQA
+ AKlqi5GVoNFQdwGLAxSKHjj1GyuZZISp+kJPNufGELXQj+oTzCdcjSHP6zwcIzSEFTYdA6w6ALo
+ n9JHy93R2hhDlVtimS0SirGlHnr94opi03Qqb9iu6ogsY7/CUTxh+n8ff7+XND9CCpWAGysjP6K
+ Dvp7qlFyEC3oWXDQBR3sH5KaugUI3LNdwkx+Z7oFWIjRBaQl++OFSk3sCW3Hjgp0GBFndSoA0Gt
+ MV18Wyqo
+X-Proofpoint-ORIG-GUID: EnVLUJs7FU8Ck_Xn4EnB-vna-sChTrif
+X-Proofpoint-GUID: UpKjy0qQra72shPHPtH9nj56Ce_Zq6ds
+X-Authority-Analysis: v=2.4 cv=AoXu3P9P c=1 sm=1 tr=0 ts=68b249a8 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=T0tPgOHDDdUk5YL2XZwA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_07,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250075
 
-On Fri, 29 Aug 2025 19:09:35 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Set AD4030 series device to do two data bit transitions per clock cycle per
+active lane when specified by firmware. The dual data rate (DDR) feature is
+available only for host clock mode and echo clock mode.
 
-> Yeah, we could add an optimization to store vma's in the callchain walk to
-> see if the next call chain belongs to a previous one. Could even just cache
-> the previous vma, as it's not as common to have one library calling into
-> another and back again.
+Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ drivers/iio/adc/ad4030.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Although, it does happen with libc. :-p
+diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+index a5931056936a..37ba00097efe 100644
+--- a/drivers/iio/adc/ad4030.c
++++ b/drivers/iio/adc/ad4030.c
+@@ -74,6 +74,7 @@
+ 	(AD4030_REG_GAIN_X0_MSB + (AD4030_REG_GAIN_BYTES_NB * (ch)))
+ #define AD4030_REG_MODES			0x20
+ #define     AD4030_REG_MODES_MASK_OUT_DATA_MODE	GENMASK(2, 0)
++#define     AD4030_REG_MODES_MASK_DDR_MODE	BIT(3)
+ #define     AD4030_REG_MODES_MASK_CLOCK_MODE	GENMASK(5, 4)
+ #define     AD4030_REG_MODES_MASK_LANE_MODE	GENMASK(7, 6)
+ #define AD4030_REG_OSCILATOR			0x21
+@@ -175,6 +176,7 @@ struct ad4030_state {
+ 	enum ad4030_out_mode mode;
+ 	enum ad4030_lane_mode lane_mode;
+ 	enum ad4030_clock_mode clock_mode;
++	bool ddr;
+ 	/* offload sampling spi message */
+ 	struct spi_transfer offload_xfer;
+ 	struct spi_message offload_msg;
+@@ -1218,6 +1220,9 @@ static void ad4030_prepare_offload_msg(struct ad4030_state *st)
+ 	else
+ 		offload_bpw  = data_width / (1 << st->lane_mode);
+ 
++	if (st->ddr)
++		offload_bpw  /= 2;
++
+ 	st->offload_xfer.speed_hz = AD4030_SPI_MAX_REG_XFER_SPEED;
+ 	st->offload_xfer.bits_per_word = offload_bpw;
+ 	st->offload_xfer.len = roundup_pow_of_two(BITS_TO_BYTES(offload_bpw));
+@@ -1271,6 +1276,12 @@ static int ad4030_config(struct ad4030_state *st)
+ 	reg_modes |= FIELD_PREP(AD4030_REG_MODES_MASK_CLOCK_MODE,
+ 				ret >= 0 ? ret : AD4030_SPI_CLOCK_MODE);
+ 
++	/* DDR is only valid for echo clock and host clock modes */
++	if (ret == AD4030_ECHO_CLOCK_MODE || ret == AD4030_CLOCK_HOST_MODE) {
++		st->ddr = device_property_read_bool(dev, "adi,dual-data-rate");
++		reg_modes |= FIELD_PREP(AD4030_REG_MODES_MASK_DDR_MODE, st->ddr);
++	}
++
+ 	ret = regmap_write(st->regmap, AD4030_REG_MODES, reg_modes);
+ 	if (ret)
+ 		return ret;
+-- 
+2.39.2
 
-cookie=300000004
- =>  <000000000008f687> : 0x666220af
- =>  <0000000000014560> : 0x88512fee
- =>  <000000000001f94a> : 0x88512fee
- =>  <000000000001fc9e> : 0x88512fee
- =>  <000000000001fcfa> : 0x88512fee
- =>  <000000000000ebae> : 0x88512fee
- =>  <0000000000029ca8> : 0x666220af
-
-The 0x666220af is libc, where the first item is (according to objdump):
-
-000000000008f570 <__libc_alloca_cutoff@@GLIBC_PRIVATE>:
-
-And the last one (top of the stack) is:
-
-0000000000029c20 <__libc_init_first@@GLIBC_2.2.5>:
-
-Of course libc starts the application, and then the application will likely
-call back into libc. We could optimize for this case with:
-
-  first_vma = NULL;
-  vma = NULL;
-  foreach addr in callchain
-    if (!first_vma)
-      vma = first_vma = vma_alloc()
-    else if (addr in range of first_vma)
-      vma = first_vma
-    else (addr not in range of vma)
-      vma = vma_lookup(addr);
-
--- Steve
 
