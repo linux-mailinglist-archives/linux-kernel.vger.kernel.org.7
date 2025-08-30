@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-793109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD57BB3CEB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C126B3CEB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3821894434
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501BA189748B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921692D0C7B;
-	Sat, 30 Aug 2025 18:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E832D9ECB;
+	Sat, 30 Aug 2025 18:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuzVxLaP"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWn8JVLM"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA1325B30E
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63C242D7B;
+	Sat, 30 Aug 2025 18:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756579038; cv=none; b=nKMgPNJC9tTdAdKI1+pXbIDkuYYIGSOm+rEdGcWH1YNpvxESgUFdh/h9iyUYkS5Bck4ZroMbIjyLJY5chl+/5a32eCG0/gluNlcORRS3wu/yn7o1Y5HbFeMkE59a7Bwvs/FVSsyPdw695lvgvnHIxPXtwbHSgsj1uFyLcyOEuB0=
+	t=1756579394; cv=none; b=fEaMzI6uMYeSq7L1ZldgToKG/wTS7Z7SXk4olbjq2hZPmYmTJat9qHSy14XC7FIhc3L9nrYErmZjxix36GuOQfbdhMhKrCI2RdWw/9WfJVkooSQcLhGMXG1NuGLaROYr0404opF1p8uPhGo9Geqdt6GcP0F5PAhfp/wjz72qiAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756579038; c=relaxed/simple;
-	bh=67YPFASRAofFiaPQ4Q4cTTB5rA7J4glJA1NA06Fz9KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LLvigArqfYupYNdxj17csm0qaXAbdaba0Icqg6FgQqJ1K7OOcHT0Htz5AGpVEEXF0+JFIPAaMfnl4AfcWLErft/thWq+L5Ku7m0MVV6Qj7nswQz4h123cxouySe29hHmQstULyb5J2/NzhsdrkL9rsYqZ8aFGyqBAYR2e84XO00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuzVxLaP; arc=none smtp.client-ip=209.85.160.180
+	s=arc-20240116; t=1756579394; c=relaxed/simple;
+	bh=NuigVOEZ/cYqOt8OMOvaJK9qIh6+nyF9VkvmUAda2Ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uJlMR+Cjyg8tRBBY0T6pqtV4Tj5M4Vfpt2j5HhTmDcFJdGuKrj01rXngWbhK9aySt6mVGp4r+NTFcCAipviRPjYCeF9+f4vKBqiHRiN2e88LRUUXKON36tkqGSz8ncKraedCOJtknjMbmryEMM6NyuEbgBJgU6lbYL2tQpRHhP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWn8JVLM; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b30d09dab5so26068461cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:37:16 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-249406d5878so6331845ad.0;
+        Sat, 30 Aug 2025 11:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756579035; x=1757183835; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=izmLCqreZNUIbi6uLE1hWRhil45KgxjUnPX1YnPsqCI=;
-        b=JuzVxLaP3XTjb3/L605jfyWSK3IuRXXzlW/YIT5amo+reYRbTP+JA7QCYrLONED7b3
-         kpC+w1GWUohle0FlRSl5DDNvdliCUnZRiJqpxA7Yq/QS7OYgqbMgrJUu7vLB1vyT6L8v
-         1YjpV1rRbcwOiBjUEVPMZ0fsUju46wi7/gKqJJ7o1/+dLahYLG1eMoWOVp1D92u45zPz
-         UuU14W2vcEeNZLE2AD74oME6Zbqxbbfxke+r4aj0u/I69FgmMe5HoE7CAo/cUsTBAbry
-         FGr+51izS76CUJBVj2kBaF4q7f/sQGnjs3WMUUu2dcFFfJqsfx8BZoKWwOmr94LBIfBC
-         rFow==
+        d=gmail.com; s=20230601; t=1756579392; x=1757184192; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lYREeVlOdDs9rQ2KO1/3o8IfJt1R8n4X9aqIPV4hwak=;
+        b=EWn8JVLMGqrFOod/+O6+xTnaulm/HsK3MSRN6BCZJhc5BgCu5fbi8CVNKUCDZoQFam
+         DJLRYNus6I8elq+03ToW3RgG1zqyr3Ol361T0vxG15uUzoj9OKMWmjQRCJlNPPA2APAz
+         f3gO7yVB5xZ2/P71M5veSQ/25u3onCqO60oUxvLTrrjAWYy85yl5IBR3sHFagIfMQybl
+         /LWKVS63AOnh/yjM5SloSHH5p4ltzLm6LA9NruK3qqjNYHtgMj31GfSYHdUvLW+kDx8y
+         d1pwC0QcF6jjQeBqMuSyj96pInR/P+PdDiLMCBaXtepUG/YBv9ypSbkvQCXydDltVGn7
+         xvQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756579035; x=1757183835;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756579392; x=1757184192;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=izmLCqreZNUIbi6uLE1hWRhil45KgxjUnPX1YnPsqCI=;
-        b=b/vsfj8/UbWdAallj9AghyXZmJx0gJvg0NIW53X4bRO9nn72n2fVDOFFg2cX+Q5zWz
-         c3pWZha2Ivi1btdYXYrM9/1gX3wmG6Ne+oODPY8JD1R+PCmwWBAf7ZVaFIHy3COQHJpG
-         kA22UbzD18hfa/wyiIrnI3ZSnAUNHbIWntImZxe5hXdeVAwxGyToovgX7FKJMHx3fLbK
-         TKap0DUfYD4ELgIYIPz7UwwpDi7SU+mx/UdzlX1ssYVxH+xXXBgyRM6vSpSIhe9befGd
-         CCJAMdtkm3M8Je/eXdwP22Y+N6k67G0TeXgQio47PrZoGnJ2643FF8oOCm9BcbVCJN4X
-         WBMQ==
-X-Gm-Message-State: AOJu0YxggTs8A4KQBrC5InCRC09B5crlwyAg2RsVBl/aILGPXMLYxASv
-	MfrVdbxpGaDcNOJAQ8SJNc1TER9hejXUnQc/uYgFHK2x3BiFeBucN8Hx
-X-Gm-Gg: ASbGnctSROwOZxsQkX2pjNW3abaGWigEtA8nXuL4b4G1ilAADBlcHN9WQHazzuduGO4
-	w4JqF3eyFDZTpJE51ntlusocI3/4yWm3s26rGbqrMpA0MEmz9QLL6cxXOnhfZEQxzrTfVb9CjTS
-	1miEw4wGHb61sUMjR4oD6rCrGB95FRqd5fIrF4b2qFJ5/iWHHhSuhmViLS0yk550cu6ELelDbFC
-	MuW7FQhWlQy44dta8XHOrT0sNG+/TQQWl8t833btu65Ewr2p9WmWUZDd13ztXhF5NNrasrkDsn1
-	F+cxWBeI2rlhTa3v1fFa//ayLRcq++iPgsFL/B4POS8Kvrhdjar9XIADWGnP8ab8FyesI8hzeFR
-	W5ndnCor+JttIgGPKfe1IMKY=
-X-Google-Smtp-Source: AGHT+IHp+e1pL5PXmf5ztP0sp0Hq2OcymwgDZO4e1y8rfi8gVd++wRn3iO6l++VJ2o4Fd+iPXSxNtQ==
-X-Received: by 2002:a05:622a:1a86:b0:4b1:2755:d884 with SMTP id d75a77b69052e-4b31d8445cdmr31357391cf.14.1756579035158;
-        Sat, 30 Aug 2025 11:37:15 -0700 (PDT)
-Received: from ideapad ([96.67.4.241])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b67bdfdsm35507661cf.32.2025.08.30.11.37.14
+        bh=lYREeVlOdDs9rQ2KO1/3o8IfJt1R8n4X9aqIPV4hwak=;
+        b=n52R3vyEhZTcBBH1i7bRqXgbpQOFvP5nhuuMK6+ppTH/Q5NwixoGXft7WpLu0wb7GS
+         1xXIGRZlzq70/Cjau86tW3K4p0ielFoONw/yw9PdcTYPezF9+gnXjBZSdW5xC7j5UdgV
+         +drxTxJPWjJOOGh6dVq9PLSsPG184BuTIHdOlV9LwnSqNrw/Z7wvFu1YV83C4Tc/C0hr
+         ncsoNLGfTimITCT49WqVUpeNkjscqSAnhN9xd4MK4vpIMOz+yuv2WcTGe/UJqX57irrD
+         oG7JC+JCfgMXtotnEoO4SffFuK/+fHdRTdq9hVce3YjODMzIsaV8OIGrx7V++8uTDq7V
+         r7+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUazn+WAlrpDg78uHQehgT4ehcnibQBBF1n4l8OnC7w/90Jj6EEo0yVA9/UrQZUQO0R+lcJ+uEBmTHFfBO0@vger.kernel.org, AJvYcCXKUbEVc9wJPNwh0w+RmKI1ZtR1ZiwPc9Es2UnkEoWFvtbbveRjjIzJ7jJvrAh2B4mCHcI0PDPsvOpJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYmyXs0O/I6sagPAyyhYyHxoPxxIw0jmT6V4kWusUmWT8MkEZf
+	WBw7eQ7W0QPTfsTYgmMWpTMe72ClDzwx4uzza+mtCUqOgec/zeJWjTuvozyz03+/
+X-Gm-Gg: ASbGnct6fm0shvi0UCizJPvY70FxDDEw8B67nIebbwhxG36RJbslidvidoeFwjWhrPm
+	p3YttNHSTMp8JawF/HGE4jXtlBvlaF42BaT5MJ7dGxirN+4r3Oo0zEuDOVeMbF+t/iKfu3tKOgq
+	JzDrI18mn7OTi5VA6TBaqQI91/t0itz7LZ1ezAjZ9ikiZDxt0Dg1MxpbxifPnALiO+xlmErZkWO
+	nOPncSOGrOEDMDDuinBkdStXgtfiWNfLirlYsw4saXlJeU7ooCPjSBGGghp6v6LDusXejz/p+dC
+	WiA26+fNWacqHrQFCpOtrCibUuVuFXXLnTZnBojeiDHJk4zZANMfiJ+ghAdy0srQ1ED4y3vWxZK
+	c6btH5FKx4C8xOdv9lIK59NUmhKbHVyslTrVwYr6MgN/ibRWSteu+51JSBAk=
+X-Google-Smtp-Source: AGHT+IHT4nSra45cYGgNoSfIe6PhXzKr9iGUKs+Jrx6ss6kBH7JdX9bqMR4ggGI0HK1hOye7ql4ZGw==
+X-Received: by 2002:a17:902:f642:b0:240:11ba:3842 with SMTP id d9443c01a7336-24944a9a70emr37334285ad.35.1756579391915;
+        Sat, 30 Aug 2025 11:43:11 -0700 (PDT)
+Received: from [192.168.1.19] ([122.177.240.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490658999fsm56821665ad.112.2025.08.30.11.43.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 11:37:14 -0700 (PDT)
-Date: Sat, 30 Aug 2025 14:37:12 -0400
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-Message-ID: <5e4ppwjfwtg7ruzkgyyke6vwosiro3vj6wm4hic3sjwh5bu7la@fghymhrnubbo>
+        Sat, 30 Aug 2025 11:43:11 -0700 (PDT)
+From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+Subject: [PATCH 0/5] iio: imu: New driver for InvenSense ICM-20948 9-Axis
+ sensor
+Date: Sun, 31 Aug 2025 00:12:44 +0530
+Message-Id: <20250831-icm20948-v1-0-1fe560a38de4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="6z6oetkv6q6vaxvc"
-Content-Disposition: inline
-In-Reply-To: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACRGs2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNT3czkXCMDSxMLXQPztORkE2OjRBNTCyWg8oKi1LTMCrBR0bG1tQB
+ 0jghIWgAAAA==
+X-Change-ID: 20250825-icm20948-07fcc432a458
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, shuah@kernel.org, 
+ linux-kernel-mentees@lists.linux.dev, 
+ Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756579380; l=1612;
+ i=bharadwaj.raju777@gmail.com; s=20250830; h=from:subject:message-id;
+ bh=NuigVOEZ/cYqOt8OMOvaJK9qIh6+nyF9VkvmUAda2Ew=;
+ b=ysbnyq7dGiZI9VE+RUh68FNyPZxL3DBVSpDPI+ewUk7bIYyc71WGdZJvCMF8IN0D4BnO3JYZB
+ W+FvLF+g6KVA1fu9NhT2nSTOD5kR+pDGR1Xv+Vijq3UPLM03O2nwnU7
+X-Developer-Key: i=bharadwaj.raju777@gmail.com; a=ed25519;
+ pk=s+pP76EgUCC/7pyu4E6Q5AizWQ1T6hUf1jUWrQRl040=
 
+This series adds a driver for the InvenSense ICM-20948 9-axis IMU.
 
---6z6oetkv6q6vaxvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The IMU includes a gyrometer, accelerometer, magnetometer, and a
+temperature sensor.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+For now, this series only adds support for the gyrometer and temperature
+sensor, and doesn't yet support the FIFO features.
 
-	Ivan Pravdin
+Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+---
+Bharadwaj Raju (5):
+      dt-bindings: iio: imu: Add ICM-20948
+      iio: imu: add inv_icm20948
+      iio: imu: icm20948: add support for gyroscope
+      MAINTAINERS: add entry for inv_icm20948 driver
+      iio: imu: icm20948: add runtime power management support
 
---6z6oetkv6q6vaxvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="diff.txt"
+ .../bindings/iio/imu/invensense,icm20948.yaml      |  36 +++
+ MAINTAINERS                                        |   7 +
+ drivers/iio/imu/Kconfig                            |   1 +
+ drivers/iio/imu/Makefile                           |   1 +
+ drivers/iio/imu/inv_icm20948/Kconfig               |  17 +
+ drivers/iio/imu/inv_icm20948/Makefile              |  10 +
+ drivers/iio/imu/inv_icm20948/inv_icm20948.h        |  92 ++++++
+ drivers/iio/imu/inv_icm20948/inv_icm20948_core.c   | 128 ++++++++
+ drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c   | 355 +++++++++++++++++++++
+ drivers/iio/imu/inv_icm20948/inv_icm20948_i2c.c    |  48 +++
+ drivers/iio/imu/inv_icm20948/inv_icm20948_power.c  |  73 +++++
+ drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c   | 115 +++++++
+ 12 files changed, 883 insertions(+)
+---
+base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
+change-id: 20250825-icm20948-07fcc432a458
 
-diff --git a/drivers/bluetooth/hci_bcsp.c b/drivers/bluetooth/hci_bcsp.c
-index 664d82d1e613..591abe6d63dd 100644
---- a/drivers/bluetooth/hci_bcsp.c
-+++ b/drivers/bluetooth/hci_bcsp.c
-@@ -582,6 +582,9 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
- 	struct bcsp_struct *bcsp = hu->priv;
- 	const unsigned char *ptr;
- 
-+	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
-+		return -EUNATCH;
-+
- 	BT_DBG("hu %p count %d rx_state %d rx_count %ld",
- 	       hu, count, bcsp->rx_state, bcsp->rx_count);
- 
+Best regards,
+-- 
+Bharadwaj Raju <bharadwaj.raju777@gmail.com>
 
---6z6oetkv6q6vaxvc--
 
