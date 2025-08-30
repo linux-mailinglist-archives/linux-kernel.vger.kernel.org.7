@@ -1,543 +1,84 @@
-Return-Path: <linux-kernel+bounces-793128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3591B3CEF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E93AEB3CF01
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F741B23F7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:17:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B1A1B26752
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D210C2DCF41;
-	Sat, 30 Aug 2025 19:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903612DE6EE;
+	Sat, 30 Aug 2025 19:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HU0Rp16M"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vmPOc3nP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBED25A352
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC322A4F8;
+	Sat, 30 Aug 2025 19:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756581450; cv=none; b=QASXdYH3ee/8bnosEoivuZI02/fh2eGcgaeZK0ZDjBMjUWGIqPgZ8jX/tcBwimF7UV85p8dbd2xHSI8f+Cri7yZqV3D6oR0SHo93SkYeDbrltVKTy4lslaXvNzaqRhxv/iHdde09mI2EJ6ryWcDIcyjc/CAeRKA2PwPTKanOsSY=
+	t=1756581863; cv=none; b=rWNPR7TY60hdkzlRM2zLuxv97aqFGZmz2QsZNl4++8gLWVYyMsQ9LzcdoLq/8hGfSwcI4fDKRwd9LjN9/5D1TAOVCKhgiIZF4Sf2C4ma0mQAIs2ow7gjfaI1gwShoJ0XJ89Kh0yRDWMy5p0784SqR+WO0Q5S2Rdc6ARaaWdz344=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756581450; c=relaxed/simple;
-	bh=WdVF2BAL9RHtgGJ8oH6ri2G6ozpp7byX6Zutkplyh5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcuvEBHKY1xtSl6m4sbp1Z8mjl+3+aA1sPmfFk0ZAEaOV+wLrQFElduY/xTn3Ex7vLS38xK8bmGcU46PNR8znB4pYwBdqueHm7fKLi5lm6evBlotpErYDISemRIMv7VdZPcYPdVV5V2h5iRu0IALJhPZmT603zHsg4bWvN/wS20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HU0Rp16M; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7456b27fac1so604618a34.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756581447; x=1757186247; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nqGSGUwLUq1KdTzX1+8uUT3YWh+WYtzDjLeR09YION0=;
-        b=HU0Rp16M0sOPq89dy9YjicCRV5eAWWNCrlfCjcJroWy5xbyLvivYe/fTMRb4t9vvRy
-         6wZPcZFWE95RP3Fzq9IHHLi+lu2k+udMU1JaTlVr+sfiuGFEkxGX0BDROZwfOyIya/4q
-         bW//OuXWJGJQS6mulVwlc4WpI1wWCLvq8W1S3akBJATuN3z/bUqrvMrdzTqrVOENxZmH
-         P3NeCw5JmKXIkJeN8QoDWBXkpP3c+7iQS7J08Mvj2O+/TQ26HYM28Sxa6DbNCADtVST6
-         pZHB0ZDmP8jM68E4giUJ7v8ADdctmjGGIgLk9d8pn0fvTfiGXITLWIooAcnMGHZ0P7cU
-         lNNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756581447; x=1757186247;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nqGSGUwLUq1KdTzX1+8uUT3YWh+WYtzDjLeR09YION0=;
-        b=L0gEhJXkeo6uZtXhIpsiC2OSNvYQhaTsxs3RnPYRBytbAOWvK8rPJ2lbujK5Slodex
-         koTNj3oIldEqZQTWLi7oeF8mIoJtwRZ/HwTs54W2yxjvF9W4Zf2xiXO3hXMrMmD6+H0Z
-         zJ0xosEJdpB3s/XPFuQBAPXf0ftTwsIZtVk6t22cxPSr4QyTmyj6OSgelsPfgQuMIAV5
-         yo3JJ3AVW5ZJ6gtE2ZJc9J/nAhH6dU3vbwfTE8wLImpsdkMW37QKktuKskYSsEbHSOEc
-         fn+JrSYCsJCK5uqEa0Ak0RwPcHZvIazO7mDLKldrcU//7tk1SF/zQQvtW9pXk9mkUyWV
-         buNA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+r9b0aJdr++/zlG9vd1Hwo5wLVHQrKoTij2nN8vhHaF2xZvR9e9S+VRoGf3A9fYtmLBtnZJTPLw6+LZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz93QkAk5yk1rRc7MNg3/MOu1Qbn62IlwLaQxEI34lyX5uQ6hys
-	hBVMI2mFcDzn2toEgj4LjOJCT5T6uEaneWc11HuVrfXiAafAwP7mx6Mfcag4V8GTHgA=
-X-Gm-Gg: ASbGncuN2pQ0BAWZxkOY03yK9FpfVOBhSmefhNuv5uY6GlHwEAppfXDWiVTEy40PNF6
-	pJSSFLcX1PBLVG4e9cx+4F3MEtJchLBsgY4CjI0cWA7X+AaPDAchR1oPSc9qaF/E9Jx9698rFfm
-	d8kH3BHX/xhxwT4dw+oPN0d+XoobxdPTzxP7O562oBwbNgvtow0sfaXQ8qrQcxTH44bXe/ItjJA
-	DbBnAf+rnRXsz6ogg/H7RDcvdQhnngYFvIRnDyJcbBlrDCFT88pb3RvZRzdz3lLyShLO1UwZdIS
-	E+RUNLODcJLDR9+ThKXjX1UIPM9RSXl6ltCtC0J1gHdu/oXziQN4u51pjh76vPS5aaXPSD9ZZtz
-	luB/uagLt2pIfBv4FImYILHKDtGPM4GDoJqe4XPW2LXp/Kc17UFyi+V+V0hpRDxjcqzEnYVWOil
-	irwVhl0PRE/g==
-X-Google-Smtp-Source: AGHT+IHIlNcGEM1D5+J0O6wJj6KCZd05RjnLhvwN2uXB1r6JWS0bniIEtPjY99c5/cSdvWwXX6E5sg==
-X-Received: by 2002:a05:6830:dcc:b0:745:54e4:6da5 with SMTP id 46e09a7af769-74569c6972emr1783634a34.0.1756581446605;
-        Sat, 30 Aug 2025 12:17:26 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d? ([2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7457438873dsm57361a34.24.2025.08.30.12.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 12:17:26 -0700 (PDT)
-Message-ID: <121b632b-1cac-41dc-a33e-f17b8e32523b@baylibre.com>
-Date: Sat, 30 Aug 2025 14:17:25 -0500
+	s=arc-20240116; t=1756581863; c=relaxed/simple;
+	bh=KhCrgPypb7PZD7jnU+GsG7IH2u0c8W5XLWTpzPcJeh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMmBL1AEcYEAkfyJAZV61Os1nPEKvmkAuxAFMKwLhN7Zft4S21TgfENFApy8kfhW0fBQMx2r/YJHSg/bFmIr2lp+Qb9M6xv3gdoluHFvfwr6D0To5ZAM3nPJUBGPgaKBa4d33j6wDe9jyxY4gYoGT9lrqTczy8u0RQE5z+QNT+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vmPOc3nP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+jog82d+9IMz6V10XlVgAfkryK/4rWv5Ffo0C6q9pYU=; b=vmPOc3nPB6vZolLrsJTZjeys3g
+	zc+wYUV+mUPAa854+zJf0/MgBEcgCuxI7tWKpBDNTAwRserbOzbVaxEfQV1QhQU1CmYgKK7FF+i4n
+	g716VgJui3rvYMXdR6lPvAWNKoJWCsA3tpkM+S/JZ4m/7XM+Wi9ffB8RGd70brobQYVw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1usRBD-006bEM-L0; Sat, 30 Aug 2025 21:24:03 +0200
+Date: Sat, 30 Aug 2025 21:24:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
+ ks8995_probe()
+Message-ID: <9c7b0cc7-2bac-474b-a0ee-d24c7954d815@lunn.ch>
+References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/15] iio: adc: ad4030: Add support for ADAQ4216 and
- ADAQ4224
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
- eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
- Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
- ahaslam@baylibre.com, marcelo.schmitt1@gmail.com
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
- <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
 
-On 8/29/25 7:45 PM, Marcelo Schmitt wrote:
-> ADAQ4216 and ADAQ4224 are similar to AD4030, but feature a PGA circuitry
-> that scales the analog input signal prior to it reaching the ADC. The PGA
-> is controlled through a pair of pins (A0 and A1) whose state define the
-> gain that is applied to the input signal.
+On Sat, Aug 30, 2025 at 07:13:59PM +0200, Christophe JAILLET wrote:
+> If an error occurs after calling gpiod_set_value_cansleep(..., 0), it must
+> be undone by a corresponding gpiod_set_value_cansleep(..., 1) call as
+> already done in the remove function.
 > 
-> Add support for ADAQ4216 and ADAQ4224. Provide a list of PGA options
-> through the IIO device channel scale available interface and enable control
-> of the PGA through the channel scale interface.
+> In order to easily do the needed clean-up in the probe, add a new
+> devm_add_action_or_reset() call and simplify the remove function
+> accordingly.
 > 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
->  drivers/iio/adc/ad4030.c | 239 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 235 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-> index 37ba00097efe..32157b3a0420 100644
-> --- a/drivers/iio/adc/ad4030.c
-> +++ b/drivers/iio/adc/ad4030.c
-> @@ -21,6 +21,7 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  #include <linux/log2.h>
-> +#include <linux/minmax.h>
->  #include <linux/pwm.h>
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
-> @@ -42,6 +43,8 @@
->  #define     AD4030_REG_CHIP_GRADE_AD4630_24_GRADE	0x00
->  #define     AD4030_REG_CHIP_GRADE_AD4632_16_GRADE	0x05
->  #define     AD4030_REG_CHIP_GRADE_AD4632_24_GRADE	0x02
-> +#define     AD4030_REG_CHIP_GRADE_ADAQ4216_GRADE	0x1E
-> +#define     AD4030_REG_CHIP_GRADE_ADAQ4224_GRADE	0x1C
->  #define     AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE	GENMASK(7, 3)
->  #define AD4030_REG_SCRATCH_PAD			0x0A
->  #define AD4030_REG_SPI_REVISION			0x0B
-> @@ -121,6 +124,10 @@
->  /* Datasheet says 9.8ns, so use the closest integer value */
->  #define AD4030_TQUIET_CNV_DELAY_NS	10
->  
-> +/* HARDWARE_GAIN */
-> +#define ADAQ4616_PGA_PINS		2
-> +#define ADAQ4616_GAIN_MAX_NANO		6666666667
-> +
->  enum ad4030_out_mode {
->  	AD4030_OUT_DATA_MD_DIFF,
->  	AD4030_OUT_DATA_MD_16_DIFF_8_COM,
-> @@ -149,6 +156,20 @@ enum {
->  	AD4030_OFFLOAD_SCAN_TYPE_AVG,
->  };
->  
-> +/*
-> + * Gains computed as fractions of 1000 so they can be expressed by integers.
-> + */
-> +static const int ad4030_hw_gains[] = {
-> +	333, 556, 2222, 6667,
-> +};
-> +
-> +static const int ad4030_hw_gains_frac[4][2] = {
-> +	{ 1, 3 },  /* 1/3 gain */
-> +	{ 5, 9 },  /* 5/9 gain */
-> +	{ 20, 9 }, /* 20/9 gain */
-> +	{ 20, 3 }, /* 20/3 gain */
-> +};
-> +
->  struct ad4030_chip_info {
->  	const char *name;
->  	const unsigned long *available_masks;
-> @@ -160,6 +181,7 @@ struct ad4030_chip_info {
->  	int num_voltage_inputs;
->  	unsigned int tcyc_ns;
->  	unsigned int max_sample_rate_hz;
-> +	unsigned int num_pga_pins;
+> Fixes: cd6f288cbaab ("net: phy: spi_ks8995: add support for resetting switch using GPIO")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This is only usesd for boolean checks, so perhaps:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-	bool has_pga;
-
->  };
->  
->  struct ad4030_state {
-> @@ -183,6 +205,10 @@ struct ad4030_state {
->  	struct spi_offload *offload;
->  	struct spi_offload_trigger *offload_trigger;
->  	struct spi_offload_trigger_config offload_trigger_config;
-> +	struct gpio_descs *pga_gpios;
-> +	int pga_index;
-> +	unsigned int scale_avail[ARRAY_SIZE(ad4030_hw_gains)][2];
-> +	size_t scale_avail_size;
->  
->  	/*
->  	 * DMA (thus cache coherency maintenance) requires the transfer buffers
-> @@ -239,7 +265,7 @@ struct ad4030_state {
->   * - voltage0-voltage1
->   * - voltage2-voltage3
->   */
-> -#define __AD4030_CHAN_DIFF(_idx, _scan_type, _offload) {		\
-> +#define __AD4030_CHAN_DIFF(_idx, _scan_type, _offload, _pga) {		\
->  	.info_mask_shared_by_all =					\
->  		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
->  	.info_mask_shared_by_all_available =				\
-> @@ -250,6 +276,7 @@ struct ad4030_state {
->  		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
->  		BIT(IIO_CHAN_INFO_RAW),					\
->  	.info_mask_separate_available = BIT(IIO_CHAN_INFO_CALIBBIAS) |	\
-> +		(_pga ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
->  		BIT(IIO_CHAN_INFO_CALIBSCALE),				\
->  	.type = IIO_VOLTAGE,						\
->  	.indexed = 1,							\
-> @@ -264,10 +291,16 @@ struct ad4030_state {
->  }
->  
->  #define AD4030_CHAN_DIFF(_idx, _scan_type)				\
-> -	__AD4030_CHAN_DIFF(_idx, _scan_type, 0)
-> +	__AD4030_CHAN_DIFF(_idx, _scan_type, 0, 0)
->  
->  #define AD4030_OFFLOAD_CHAN_DIFF(_idx, _scan_type)			\
-> -	__AD4030_CHAN_DIFF(_idx, _scan_type, 1)
-> +	__AD4030_CHAN_DIFF(_idx, _scan_type, 1, 0)
-> +
-> +#define ADAQ4216_CHAN_DIFF(_idx, _scan_type)				\
-> +	__AD4030_CHAN_DIFF(_idx, _scan_type, 0, 1)
-> +
-> +#define ADAQ4216_OFFLOAD_CHAN_DIFF(_idx, _scan_type)			\
-> +	__AD4030_CHAN_DIFF(_idx, _scan_type, 1, 1)
->  
->  static const int ad4030_rx_bus_width[] = {
->  	1, 2, 4, 8,
-> @@ -429,6 +462,74 @@ static const struct regmap_config ad4030_regmap_config = {
->  	.max_register = AD4030_REG_DIG_ERR,
->  };
->  
-> +static void ad4030_fill_scale_avail(struct ad4030_state *st)
-> +{
-> +	unsigned int mag_bits, tmp0, tmp1, i;
-> +	u64 range;
-> +
-> +	/*
-> +	 * The maximum precision of differential channels is retrieved from the
-> +	 * chip properties. The output code of differential channels is in two's
-> +	 * complement format (i.e. signed), so the MSB is the sign bit and only
-> +	 * (precision_bits - 1) bits express voltage magnitude.
-> +	 */
-> +	mag_bits = st->chip->precision_bits - 1;
-
-Seems odd that function below checks for if (scan_type->sign == 's') but this
-doesn't.
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ad4030_hw_gains); i++) {
-> +		range = mult_frac(st->vref_uv, ad4030_hw_gains_frac[i][1],
-> +				  ad4030_hw_gains_frac[i][0]);
-> +		/*
-> +		 * If range were in mV, we would multiply it by NANO below.
-> +		 * Though, range is in µV so multiply it by MICRO only so the
-> +		 * result after right shift and division scales output codes to
-> +		 * millivolts.
-> +		 */
-> +		tmp0 = div_u64_rem(((u64)range * MICRO) >> mag_bits, NANO, &tmp1);
-> +		st->scale_avail[i][0] = tmp0; /* Integer part */
-> +		st->scale_avail[i][1] = tmp1; /* Fractional part */
-
-Could just give the variables meaningful names and avoid the comments.
-
-> +	}
-> +}
-> +
-> +static int ad4030_set_pga_gain(struct ad4030_state *st)
-> +{
-> +	DECLARE_BITMAP(bitmap, ADAQ4616_PGA_PINS) = { };
-> +
-> +	bitmap_write(bitmap, st->pga_index, 0, 2);
-
-Use ADAQ4616_PGA_PINS here instead of 2?
-
-> +
-> +	return gpiod_multi_set_value_cansleep(st->pga_gpios, bitmap);
-> +}
-> +
-> +static int ad4030_set_pga(struct iio_dev *indio_dev,
-> +			  struct iio_chan_spec const *chan, int gain_int,
-> +			  int gain_fract)
-> +{
-> +	struct ad4030_state *st = iio_priv(indio_dev);
-> +	const struct iio_scan_type *scan_type;
-> +	unsigned int mag_bits;
-> +	u64 gain_nano, tmp;
-> +
-> +	if (!st->pga_gpios)
-> +		return -EINVAL;
-> +
-> +	scan_type = iio_get_current_scan_type(indio_dev, chan);
-
-Need to check for error.
-
-> +	if (scan_type->sign == 's')
-> +		mag_bits = st->chip->precision_bits - 1;
-> +	else
-> +		mag_bits = st->chip->precision_bits;
-> +
-> +	gain_nano = gain_int * NANO + gain_fract;
-> +
-> +	if (!in_range(gain_nano, 0, ADAQ4616_GAIN_MAX_NANO))
-> +		return -EINVAL;
-> +
-> +	tmp = DIV_ROUND_CLOSEST_ULL(gain_nano << mag_bits, NANO);
-> +	gain_nano = DIV_ROUND_CLOSEST_ULL(st->vref_uv, tmp);
-> +	st->pga_index = find_closest(gain_nano, ad4030_hw_gains,
-> +				     ARRAY_SIZE(ad4030_hw_gains));
-> +
-> +	return ad4030_set_pga_gain(st);
-> +}
-> +
->  static int ad4030_get_chan_scale(struct iio_dev *indio_dev,
->  				 struct iio_chan_spec const *chan,
->  				 int *val,
-> @@ -455,7 +556,14 @@ static int ad4030_get_chan_scale(struct iio_dev *indio_dev,
->  	*val2 = scan_type->realbits == 30 ? st->chip->precision_bits
->  					  : scan_type->realbits;
->  
-> -	return IIO_VAL_FRACTIONAL_LOG2;
-> +	/* The LSB of the 8-bit common-mode data is always vref/256. */
-> +	if (scan_type->realbits == 8 || !st->chip->num_pga_pins)
-
-`if` statement should be earlier so that we don't set *val, *val2
-twice.
-
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +
-> +	*val = st->scale_avail[st->pga_index][0];
-> +	*val2 = st->scale_avail[st->pga_index][1];
-> +
-> +	return IIO_VAL_INT_PLUS_NANO;
->  }
->  
->  static int ad4030_get_chan_calibscale(struct iio_dev *indio_dev,
-> @@ -654,6 +762,19 @@ static int ad4030_set_chan_calibbias(struct iio_dev *indio_dev,
->  				 st->tx_data, AD4030_REG_OFFSET_BYTES_NB);
->  }
->  
-> +static int ad4030_write_raw_get_fmt(struct iio_dev *indio_dev,
-> +				    struct iio_chan_spec const *chan, long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return IIO_VAL_INT_PLUS_NANO;
-> +	default:
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +	}
-> +
-> +	return -EINVAL;
-
-Unreachable code.
-
-> +}
-> +
->  static int ad4030_set_avg_frame_len(struct iio_dev *dev, int avg_val)
->  {
->  	struct ad4030_state *st = iio_priv(dev);
-> @@ -891,6 +1012,15 @@ static int ad4030_read_avail(struct iio_dev *indio_dev,
->  		*length = ARRAY_SIZE(ad4030_average_modes);
->  		return IIO_AVAIL_LIST;
->  
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (!st->pga_gpios)
-
-		if (st->scale_avail_size == 1)
-
-would make more sense here.
-
-> +			*vals = (int *)st->scale_avail[st->pga_index];
-> +		else
-> +			*vals = (int *)st->scale_avail;
-> +		*length = st->scale_avail_size * 2; /* print int and nano part */
-> +		*type = IIO_VAL_INT_PLUS_NANO;
-> +		return IIO_AVAIL_LIST;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -966,6 +1096,9 @@ static int ad4030_write_raw_dispatch(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_SAMP_FREQ:
->  		return ad4030_set_sampling_freq(indio_dev, val);
->  
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return ad4030_set_pga(indio_dev, chan, val, val2);
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1037,6 +1170,7 @@ static const struct iio_info ad4030_iio_info = {
->  	.read_avail = ad4030_read_avail,
->  	.read_raw = ad4030_read_raw,
->  	.write_raw = ad4030_write_raw,
-> +	.write_raw_get_fmt = &ad4030_write_raw_get_fmt,
->  	.debugfs_reg_access = ad4030_reg_access,
->  	.read_label = ad4030_read_label,
->  	.get_current_scan_type = ad4030_get_current_scan_type,
-> @@ -1318,6 +1452,51 @@ static int ad4030_spi_offload_setup(struct iio_dev *indio_dev,
->  							   IIO_BUFFER_DIRECTION_IN);
->  }
->  
-> +static int ad4030_setup_pga(struct device *dev, struct iio_dev *indio_dev,
-> +			    struct ad4030_state *st)
-> +{
-> +	unsigned int i;
-> +	int pga_value;
-> +	int ret;
-> +
-> +	ret = device_property_read_u32(dev, "adi,pga-value", &pga_value);
-> +	if (ret && ret != -EINVAL)
-> +		return dev_err_probe(dev, ret, "Failed to get PGA value.\n");
-> +
-> +	if (ret == -EINVAL) {
-> +		/* Setup GPIOs for PGA control */
-> +		st->pga_gpios = devm_gpiod_get_array(dev, "pga", GPIOD_OUT_LOW);
-> +		if (IS_ERR(st->pga_gpios))
-> +			return dev_err_probe(dev, PTR_ERR(st->pga_gpios),
-> +					     "Failed to get PGA gpios.\n");
-> +
-> +		if (st->pga_gpios->ndescs != 2)
-
-s/2/ADAQ4616_PGA_PINS/?
-
-> +			return dev_err_probe(dev, -EINVAL,
-> +					     "Expected 2 GPIOs for PGA control.\n");
-> +
-> +		st->scale_avail_size = ARRAY_SIZE(ad4030_hw_gains);
-> +		st->pga_index = 0;
-> +		return ad4030_set_pga_gain(st);
-
-We already intialized the array to GPIO_OUT_LOW, so isn't calling
-ad4030_set_pga_gain() here with index of 0 redundant?
-
-> +	}
-> +
-> +	/* Set ADC driver to handle pin-strapped PGA pins setup */
-> +	for (i = 0; i < ARRAY_SIZE(ad4030_hw_gains); i++) {
-> +		if (pga_value != ad4030_hw_gains[i])
-> +			continue;
-> +
-> +		st->pga_index = i;
-> +		break;
-> +	}
-> +	if (i == ARRAY_SIZE(ad4030_hw_gains))
-> +		return dev_err_probe(dev, -EINVAL, "Invalid PGA value: %d.\n",
-> +				     pga_value);
-> +
-> +	st->scale_avail_size = 1;
-> +	st->pga_gpios = NULL;
-
-This seems reduandant.
-
-> +
-> +	return 0;
-> +}
-> +
->  static int ad4030_probe(struct spi_device *spi)
->  {
->  	struct device *dev = &spi->dev;
-> @@ -1360,6 +1539,14 @@ static int ad4030_probe(struct spi_device *spi)
->  	if (ret)
->  		return ret;
->  
-> +	if (st->chip->num_pga_pins > 0) {
-> +		ret = ad4030_setup_pga(dev, indio_dev, st);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ad4030_fill_scale_avail(st);
-> +	}
-> +
->  	ret = ad4030_config(st);
->  	if (ret)
->  		return ret;
-> @@ -1611,12 +1798,54 @@ static const struct ad4030_chip_info ad4632_24_chip_info = {
->  	.max_sample_rate_hz = 500 * KILO,
->  };
->  
-> +static const struct ad4030_chip_info adaq4216_chip_info = {
-> +	.name = "adaq4216",
-> +	.available_masks = ad4030_channel_masks,
-> +	.channels = {
-> +		ADAQ4216_CHAN_DIFF(0, ad4030_16_scan_types),
-> +		AD4030_CHAN_CMO(1, 0),
-> +		IIO_CHAN_SOFT_TIMESTAMP(2),
-> +	},
-> +	.offload_channels = {
-> +		ADAQ4216_OFFLOAD_CHAN_DIFF(0, ad4030_16_scan_types),
-> +		AD4030_CHAN_CMO(1, 0),
-> +	},
-> +	.grade = AD4030_REG_CHIP_GRADE_ADAQ4216_GRADE,
-> +	.precision_bits = 16,
-> +	.num_voltage_inputs = 1,
-> +	.tcyc_ns = AD4030_TCYC_ADJUSTED_NS,
-> +	.max_sample_rate_hz = 2 * MEGA,
-> +	.num_pga_pins = ADAQ4616_PGA_PINS,
-> +};
-> +
-> +static const struct ad4030_chip_info adaq4224_chip_info = {
-> +	.name = "adaq4224",
-> +	.available_masks = ad4030_channel_masks,
-> +	.channels = {
-> +		ADAQ4216_CHAN_DIFF(0, ad4030_24_scan_types),
-> +		AD4030_CHAN_CMO(1, 0),
-> +		IIO_CHAN_SOFT_TIMESTAMP(2),
-> +	},
-> +	.offload_channels = {
-> +		ADAQ4216_OFFLOAD_CHAN_DIFF(0, ad4030_24_scan_types),
-> +		AD4030_CHAN_CMO(1, 0),
-> +	},
-> +	.grade = AD4030_REG_CHIP_GRADE_ADAQ4224_GRADE,
-> +	.precision_bits = 24,
-> +	.num_voltage_inputs = 1,
-> +	.tcyc_ns = AD4030_TCYC_ADJUSTED_NS,
-> +	.max_sample_rate_hz = 2 * MEGA,
-> +	.num_pga_pins = ADAQ4616_PGA_PINS,
-> +};
-> +
->  static const struct spi_device_id ad4030_id_table[] = {
->  	{ "ad4030-24", (kernel_ulong_t)&ad4030_24_chip_info },
->  	{ "ad4630-16", (kernel_ulong_t)&ad4630_16_chip_info },
->  	{ "ad4630-24", (kernel_ulong_t)&ad4630_24_chip_info },
->  	{ "ad4632-16", (kernel_ulong_t)&ad4632_16_chip_info },
->  	{ "ad4632-24", (kernel_ulong_t)&ad4632_24_chip_info },
-> +	{ "adaq4216", (kernel_ulong_t)&adaq4216_chip_info },
-> +	{ "adaq4224", (kernel_ulong_t)&adaq4224_chip_info },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(spi, ad4030_id_table);
-> @@ -1627,6 +1856,8 @@ static const struct of_device_id ad4030_of_match[] = {
->  	{ .compatible = "adi,ad4630-24", .data = &ad4630_24_chip_info },
->  	{ .compatible = "adi,ad4632-16", .data = &ad4632_16_chip_info },
->  	{ .compatible = "adi,ad4632-24", .data = &ad4632_24_chip_info },
-> +	{ .compatible = "adi,adaq4216", .data = &adaq4216_chip_info },
-> +	{ .compatible = "adi,adaq4224", .data = &adaq4224_chip_info },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, ad4030_of_match);
-
+    Andrew
 
