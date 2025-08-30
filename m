@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-792752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBFCB3C87F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:28:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083D1B3C889
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C3857BB311
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0AD5E5F11
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43E525485A;
-	Sat, 30 Aug 2025 06:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vH6sxtRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB620485B;
+	Sat, 30 Aug 2025 06:30:02 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6A922F764;
-	Sat, 30 Aug 2025 06:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0CC22F764;
+	Sat, 30 Aug 2025 06:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756535287; cv=none; b=d/xgBjyJa0c9GIb7EbwU6MWeK9lnepuSzVKIxHDnITufWS0dQIe+xOeaePe7WaZd0wOq27up+a4LeAmsNz/2P2oXSuzJu15G1AEFS2RuztdQHEaB6N14hZ+h+8EvvrK8d5fRxgeD8PKSKURreVjHMe8lPw4j5z3x8NOztH5Zh3g=
+	t=1756535402; cv=none; b=RQp9c2mVD/abpG5HE1IJQtBNwaCat5qxu3qI+9EwYQH4024kUelfpDiVbRo2W03dwFs6v/Fz0ABMehXVSxRmLjN8cq5bTVrA2/2hrzPqXNqnaLptV/ZUP06zmDQLXWqPaGFh7Y4T17uHg7fBprTGnOBJThNJml071GUWp8oVy5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756535287; c=relaxed/simple;
-	bh=R47y7v6HJG2x1zkCAn8gdJy9W57/R9Xx76r/aYCkEW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tdl97U5KX6dqLHPN/C0CFB3KJhOaR46F89qXaufccDpxCeoQcgRezpgXEvilASZQN6PNF0Hl4vi50JN+R0w7A+YftSCOaD5m5Sh7VFuLiXZ8CuM+UT/I1OLxsV30TlWEgzOAu2uTl2OTO1SZMka+yhVPpw0vvb+VH1g9omgCmhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vH6sxtRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02060C4CEEB;
-	Sat, 30 Aug 2025 06:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756535286;
-	bh=R47y7v6HJG2x1zkCAn8gdJy9W57/R9Xx76r/aYCkEW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vH6sxtRGYtqef+qr98zpP/4/NeITXxMO1LFyFx8qvixWdiiyI0sJTLeD9WT6wvge6
-	 CcIVHrRjnkI5se419PdYODv5nOXDgKu3XSQw5j6vUnsM9FGHM7N35AjK8TsEJ0HacU
-	 yqpmMzwrBU5MYSG9exDaW4XX/JHsPOBBLzwfEUtM=
-Date: Sat, 30 Aug 2025 08:28:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with
- `debug_assert!`
-Message-ID: <2025083032-barmaid-rising-a977@gregkh>
-References: <20250829192243.678079-1-ojeda@kernel.org>
- <20250829192243.678079-4-ojeda@kernel.org>
- <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
+	s=arc-20240116; t=1756535402; c=relaxed/simple;
+	bh=YZNhfwZ/t2MyKL3D0dFAq2T1Wp3ECR7VYFeNoeR4fCI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=fkW7UBlPr53GYi1ye8RiyU4rha8lz7yRb/ecF+O3FZfhA9J7jChZrLsh3OXV1NXGgn8e9s0Ttqd/6uXC2V4g0ZByEWAJUgBBc8Pr5qrZxYk5rEdGKatzdciEH7d3Ib5VoVVJNxECz0UOXVZAAm9UK781nhHTQ2I2DPrn/QdHRpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cDQGh3z6nz8Xs6w;
+	Sat, 30 Aug 2025 14:29:48 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 57U6Th5Y086473;
+	Sat, 30 Aug 2025 14:29:43 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 30 Aug 2025 14:29:44 +0800 (CST)
+Date: Sat, 30 Aug 2025 14:29:44 +0800 (CST)
+X-Zmail-TransId: 2afa68b29a5841a-66dd7
+X-Mailer: Zmail v1.0
+Message-ID: <20250830142944929e1M6lffs_PwvPfl7J-R1g@zte.com.cn>
+In-Reply-To: <20250828092655.GA30360@didi-ThinkCentre-M930t-N000>
+References: 20250828092655.GA30360@didi-ThinkCentre-M930t-N000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com>
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <tiozhang@didiglobal.com>
+Cc: <akpm@linux-foundation.org>, <fan.yu9@zte.com.cn>, <corbet@lwn.net>,
+        <bsingharora@gmail.com>, <yang.yang29@zte.com.cn>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <jiang.kun2@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <tiozhang@didiglobal.com>, <zyhtheonly@gmail.com>,
+        <zyhtheonly@yeah.net>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2M10gZGVsYXlhY2N5L3NjaGVkOiBhZGQgU09GVElSUSBkZWxheQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57U6Th5Y086473
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 30 Aug 2025 14:29:48 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68B29A5C.000/4cDQGh3z6nz8Xs6w
 
-On Fri, Aug 29, 2025 at 09:43:24PM +0200, Miguel Ojeda wrote:
-> On Fri, Aug 29, 2025 at 9:23 PM Miguel Ojeda <ojeda@kernel.org> wrote:
-> >
-> > Thus, instead, use a debug assertion -- this assumes hitting one of them
-> > is not going to be considered a CVE (which requires
-> > `CONFIG_RUST_DEBUG_ASSERTIONS=y`).
-> 
-> Greg: RFC on this -- this is the usual conundrum around `WARN`. I
-> would like to have an assertion or `WARN`-like entity for developers
-> that doesn't imply CVEs when hit by user interactions. More generally,
-> to know that such a config option is OK as long as it is labeled
-> clearly a debug one like this one (we can document the CVE bit
-> explicitly if needed).
+>Intro SOFTIRQ delay, so we can separate softirq as SOFTIRQ delay
+>and hardirq as {IRQ - SOFTIRQ} delay.
+>
+>A typical scenario is when tasks delayed by network,
+>if they delayed by rx net packets, i.e, net_rx_action(),
+>SOFTIRQ delay is almost same as IRQ delay;
+>if they delayed by, e.g, bad driver or broken hardware,
+>SOFTIRQ delay is almost 0 while IRQ delay remains big.
+>
+>Examples tool usage could be found in
+>Documentation/accounting/delay-accounting.rst
+>
+>Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
 
-I do not understand, if there is ANY way that a user can trigger a
-WARN() call, then that is considered a "vulnerability" as far as CVE is
-concerned and so I need to issue one when it is fixed.  This is entirely
-because the panic-on-warn option could have also been enabled.
+Reviewed-by: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-If you wish to state that CONFIG_RUST_DEBUG_ASSERTIONS=y should NEVER be
-used in ANY shipping Linux system, then yes, we can carve out an
-exception for this (we do that if lockdep is enabled as that should
-never be in a running system, only a development one).  But I thought
-that some groups wanted to have that option enabled in their running
-systems to provide additional security overall?
-
-And yes, the fact that enabling an option for safety can actually cause
-a CVE to be issued is not lost on me as being very odd :)
-
-thanks,
-
-greg k-h
+Thanks
+Yaxin
 
