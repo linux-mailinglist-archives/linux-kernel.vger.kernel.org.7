@@ -1,188 +1,165 @@
-Return-Path: <linux-kernel+bounces-792944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F2CB3CABE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:19:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E21B3CAC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C9A564E42
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A7B1BA6A89
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1423E278158;
-	Sat, 30 Aug 2025 12:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3453127A135;
+	Sat, 30 Aug 2025 12:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nSvjfq9B"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ40vDFN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C4323F431;
-	Sat, 30 Aug 2025 12:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756556353; cv=fail; b=CWck1eyFOiP4/s+XKI8tQAgZTcfY1/2YF+QJa71jSekYqpeM1u0nNs0Sl2SFKH1fpDtw2VwhPXRPNElSXQO+QsuwvrJmMUduvm9KjP17pFqJQAOUWmXWsKTN+EX3iaDhJ9thHoS3w8dkY/QAwCWeiULm2OsNPACUumjnlabqOtY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756556353; c=relaxed/simple;
-	bh=rTbSkOMe22vFov01iq/vsPoAdEEQrPL3U2Ef/LhqADE=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=QQCL9T3DxkLFaz5PZUO8zI0Cfxa2/m95iEVtPkB34iPZ7TPNHFXjOVFHQhOfdXM9153t1574JIT5ph+AYtXVIXfOLPDsd1VZILfwU0PGXKppKvcU52LdUmUMp7q0fX5U7MmPdPjcFfNAJIW7Rwy/fEdeXMJcCHiseFj0EYFLYAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nSvjfq9B; arc=fail smtp.client-ip=40.107.244.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kEf0AqEFNpFSXCmWGXM0/EHpk+HfJi194LswkCL9EWllpiDX4p5yhgQbxBFyUUzvwFr5U9RyUqqD4RaWQggW3L67Rc4l0pE+us02wIEV58IFiEC2e/dDtxlwd5n7sFnQEhdXeEF0QpZ+6utEaxl0cLzDQzqIbpwIVVHaO7WVgoYqf4CksG5tgduCnmTHQ0/i5k3yxEwzU4JLlnojulZYLYBAK3IfyeNPEgB1QqexChKnLXBaKYt6hGbHFcMvwSfPIvJckDHuCJ6iaHK7yLkhaTDo/L1NT5xRMRAjYrdGuoFV3NBYYjmbKhcPVG2PWqCoYkmKHC1yqTl5NWuvyHBy+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rTbSkOMe22vFov01iq/vsPoAdEEQrPL3U2Ef/LhqADE=;
- b=mcuG4AH6xx5m2k8tUV3wpf0hWbbRdAAFoWZTA85boAU4/I6rguaA0blF+WmFQk/lEJiZF16wg8AD0C5Dp+60PKgUWwVVJsTdzhY+CiSXAxJhGhRC2i1m1ueF0V0Mo6XIlKR1rusV7gK5Uu7UvKTBkiEz27B4X2WEcusZBgDRngpb7xhnS3AEV0RDyw4vhQgKfdfK61nvpu/BBn1mGb9et2BqmYABheC8WuWIFO/cd2PVjVldae7gTw8zjTv8dqH90PUljJPrcmaJVGzLCyeDwhlFXVcV9tlfZG3k6DC12KwNplOLjViaBwC7/JaGwKRJvi4nsp7jamRGanPRbjplZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rTbSkOMe22vFov01iq/vsPoAdEEQrPL3U2Ef/LhqADE=;
- b=nSvjfq9BduIllyXCLMaDWJ11J0/qfmtPyqXDdH6B7YnSOmyNRRZv3nXiYOmq0UHJjd8tw73t/DbWIOyGjVkI3ehyMt7GCAY3OEPELNgxOBTNHdRHIK5JLGU7L9LmWHZTTEjBU2wb4d2Xs3cgZLg2/XWz0lowqOSAmybb8P12ENcqn82xpHBDoZNYA6htrI4mJxFOaTzdtFDAQkTMEw3WEsqUViwE9X0QrCKIH7Uh/KCIvzOHaFL6vtzdiwkf7E2ZzedIiPkuWdOZK8OnGsDDoT6HAGP79ud4cT/6iv/Mpw7J/lUq9eWuZm/WVjpn0Gm2rhI+wetZJ4IIOyRAQrrjqg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DM6PR12MB4235.namprd12.prod.outlook.com (2603:10b6:5:220::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Sat, 30 Aug
- 2025 12:19:06 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.019; Sat, 30 Aug 2025
- 12:19:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 30 Aug 2025 21:18:58 +0900
-Message-Id: <DCFR95ZSYLCU.1PNOVU76VMYOS@nvidia.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH 2/3] rust: error: improve `to_result` documentation
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250829192243.678079-1-ojeda@kernel.org>
- <20250829192243.678079-3-ojeda@kernel.org>
-In-Reply-To: <20250829192243.678079-3-ojeda@kernel.org>
-X-ClientProxiedBy: TYCP301CA0079.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7b::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E92342065;
+	Sat, 30 Aug 2025 12:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756556591; cv=none; b=k85vx1ryDG+8uBcN/+5qoUeebmMdjEPl/g/saHXk+Ke6MsA/NbS3SYTG1aVKiQA2/EfHekC6v6Eviztn9rwc2gul0+O7gw7+QkgThAaZAxoYQ78fTWeVPjS1LYSFLp1DqyvG3eSJ3uNVCZiFt6A0VdH4g9sBQNBl9IeMTrUvYYw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756556591; c=relaxed/simple;
+	bh=SoN9dBf3Izbt4t232toRwWwIivJ8TeDGto62fx0RuLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PqTFy5vkd0wDiG5dtGC0r3K2EFUG1xe/PFP/c6d1Ds6FssJquU/hNUKUG4141HfnBaku+rjK9CVTluI25hXcEVHamvlcBb9B2c/AuIQf0AAjD2wacut27aQJsdFaa0T3R3RQbSDGBrqTkbc8yfh8DQO84mTXeFtffoWhh8J6h4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ40vDFN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08627C4CEEB;
+	Sat, 30 Aug 2025 12:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756556591;
+	bh=SoN9dBf3Izbt4t232toRwWwIivJ8TeDGto62fx0RuLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TQ40vDFN1gWwhiwIP2RtrDA6BQt/gApzzCxqyt9ewJlEmwxIWYfN1K4M3rMJb6Ti2
+	 fA3QzOVtdFqNz4MuzR/2pn5r06IUpEsH5jrcDGgFQHUHjCIz4CzUqPhhUgPJ/M/hC4
+	 gfjQMFCIMiK5NNWPvvwQZvtble0EVoMcgEaiBrwvTopsPdhmrI3ZtkxhPgEREaDbH4
+	 Au026SjvsurYZJ5OR58KveR3f0PHKdS2nSzoM5htgdeEgL2dlPTVgI5O20q0sHhbWZ
+	 oGjcibj9l94gTbdd6MJnYsVsoqnO6RS9t2kAC5Uzih0h8iXsy3DjzGSnJb6ildZ6Sh
+	 r2+65xD0W5HCA==
+Date: Sat, 30 Aug 2025 20:23:01 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
+	gregkh <gregkh@linuxfoundation.org>,
+	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	rafael <rafael@kernel.org>,
+	torvalds <torvalds@linux-foundation.org>,
+	viro <viro@zeniv.linux.org.uk>,
+	=?utf-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
+	Christian Brauner <brauner@kernel.org>,
+	systemd-devel <systemd-devel@lists.freedesktop.org>,
+	Lennart Poettering <mzxreary@0pointer.de>
+Subject: Re: [PATCH] initrd: support erofs as initrd
+Message-ID: <aLLtJcHt0NcaZeDm@debian>
+Mail-Followup-To: Askar Safin <safinaskar@zohomail.com>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
+	gregkh <gregkh@linuxfoundation.org>,
+	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	rafael <rafael@kernel.org>,
+	torvalds <torvalds@linux-foundation.org>,
+	viro <viro@zeniv.linux.org.uk>,
+	=?utf-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
+	Christian Brauner <brauner@kernel.org>,
+	systemd-devel <systemd-devel@lists.freedesktop.org>,
+	Lennart Poettering <mzxreary@0pointer.de>
+References: <20250826075910.GA22903@lst.de>
+ <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+ <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
+ <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
+ <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
+ <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
+ <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
+ <18d15255-2a6f-4fe8-bbf7-c4e5cc51692c@linux.alibaba.com>
+ <79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com>
+ <198facfefe8.11982931078232.326054837204882979@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM6PR12MB4235:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56bc868d-a134-451c-7e3b-08dde7bf6787
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzhscDJXL2taeEptaytoUUdPZGVJcnpEQ3pDNEI3Zm5FR0JLdGdQMzlZamRF?=
- =?utf-8?B?bWVWU2Jud3RQeDFwa3k5dEVtczViaGsxTUVWUGFaSSsxZHhVeGlDbEs5ZHlw?=
- =?utf-8?B?cFJuWTl1NC90NS9wRFQ2aFc2bWFwVG5rZStIaVpTN2Urclk2VnJLVmZ4cWg4?=
- =?utf-8?B?ZzYra2twYy9oNVpUYUhBOGRiOWdBVjVUYk83aTdhWmljOXhSbnpkaVU5cGM0?=
- =?utf-8?B?L1BBOHg0eXJjcnpNY3ZoOFhSeHpFa1MyL1BrNjdUV3g2Tit2ZElQS2ZnQnlL?=
- =?utf-8?B?Q1JqeGNGQWlMMXdMNWxPWVQyL2ZsdGhMZ0x5bTFHR2tyK2dRSlNMaVdydnA4?=
- =?utf-8?B?aHpyTkF2V21MRFZpUzBsY3B0R3BJcFlsZkRPeTNLYjhPa1FndmcxNDdrSlR4?=
- =?utf-8?B?Y2NGREFDUWFaUXlGeWhuWm90VUZ2QmlPTGxrdEhaZHl2L0xIZXBFSDgrMXcw?=
- =?utf-8?B?S3NZdUNuNEwwL20zbC8xRU5USXhIVUY4bDRVV2l3OCtnUVh2bllJMmlnVWxm?=
- =?utf-8?B?WmwyL2gyUnM3eFkrekZBOXYxUmdFWDVJZFhaSytGRXVneG5jM3MzLzdWTVRD?=
- =?utf-8?B?QVZCREhlUk81b2s4THZadlpRc3VzaWhGU3dMNzJOVTNKL2pVdTJvWGl6U2RJ?=
- =?utf-8?B?ZnZrMjdMTGtEL25vd2cwclZUY1JTSEFuTndRVjJrTG5MazBySGthdVRhQkxS?=
- =?utf-8?B?VC9mMjBnVWFQdWQyZ29MUHVsbzh3dG1JZlgyZFVIMUFqa2diMkQ0UE93c2lj?=
- =?utf-8?B?TlhKaEo5MTIwV01MSDZPQnR5ZUpXUVpGbXRaaHpLMUFFaVphOExwOG9ZWjFj?=
- =?utf-8?B?YUlLV3pMTDdCZnFYTHJ1cEZYRCthSUs5ak9RRldaanJLQ0xxMDJPQUprVzdZ?=
- =?utf-8?B?dE9EQUl0WklNVTdTRGNFNnJpUVA0VXoxb2hSdk85dUNST3FQQjZ4dnNQRTBs?=
- =?utf-8?B?RnFKVDJqUjRYSE5peEg2VzV6cEpUb25LaDY5dmQ3OGF3cFVwcU5wTXE1TUY3?=
- =?utf-8?B?bllmUks3dW5aRUcxR01LWHQrQ05OaWl1NkhVRGtVUTNxb0ZjbkV1T2VURnZu?=
- =?utf-8?B?UisxVWVnamttMW0zSjJHaDM0ZE9vM2ZzMXpmb0pkQWg5bllGV05zSkdxNUNX?=
- =?utf-8?B?K2ZDM0QrS0NHUVNsS0hVNjRtOHdvS3MxVnBlOXpzN2tUQWRjVlMvb1VDdWVY?=
- =?utf-8?B?ekU2bWxlNzN0SFhJeXFPLzI5MnRDVkY1K2EzZk1lODR0eDcxaFBOc2NZOVJm?=
- =?utf-8?B?OSt3Z2N6Z1RoRnlTbktlSlZmNUE2Z1JDakp5dStqZ0l1aGE5LzBxcEJVL0do?=
- =?utf-8?B?Qkk3UG0vVkFTMjk3dzlDYnkxdVRsUitFc2IwSG00TjY1Q3FwQmxvREt4eWZo?=
- =?utf-8?B?bWpOdW5taG1TNkxET2V5RXdSeDlKei9rRXZwbW1iYW5KTDljeG1ndk1wSXlH?=
- =?utf-8?B?YmVYQ2c0ZzNyQVhlRHFjb3JzRGp4ZFN0R3ZzK3NmUmE2ZDZCRXZYenN0ME1S?=
- =?utf-8?B?S2ZUSFVVcWhOMCt4Mi9CUFA5NkR3a002UDhqZFZuOTNpYlRUcnRUaFNMaDhK?=
- =?utf-8?B?czl3aEY5UEZSZndaeUdYa2pVWnRuUVdhMnhpc25HSmdEVVhQY0xiaTVhczdo?=
- =?utf-8?B?MFU0V1ZFdXlaVmw5VlFsbmtLNHpQYkkzNUM3bHhRQXFDb2ptT3BiWlQycmo1?=
- =?utf-8?B?QnltSGFYMzZzU3VGZGhBTDNVd1pJSVlPaitUTXVBUlozSlRldEdhQ0tKMVFH?=
- =?utf-8?B?Mm82TjM1NU0rOTFMMmFEY2VyYjMrVURkTVF1WnpMcXRaRjkyeXlCcjNXaEV3?=
- =?utf-8?B?bWREUU02Nko0WnlDWUNVTVN3UC9hek5rVUpNQ3hMemFrMitQRVAvN0dYQ0tp?=
- =?utf-8?B?eUpwRXZUL2g1THhhZTBpdklnTlFMTkthV1ZpS01CZUgwWEswMjF0a0pMbExy?=
- =?utf-8?Q?omQQ2mH8ZMg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUdPTXJVVXh3bVhZbStyZkZYTDJhR2liRm1XNWxKNkR5M2t3cTlPakozZUds?=
- =?utf-8?B?NFl6UERrRHR6RmpYK0toWkRTMWh0alFVekNmMk1qRm00Z3pCV25SR3FrWGNw?=
- =?utf-8?B?VmZmSm5RVWRYcExxR0w2ZWtZUXpmVUt0YXdyN1czdFgzN2FKNjNtQ2dhNFF0?=
- =?utf-8?B?U2J2WjZiMWNZNzhsck1WMk80em9XNkQreFlTbWNvbTh1WEVMRzh1TUN5ZktN?=
- =?utf-8?B?OHl5TUcrbFZ1R2t5SXVoRjJIU3pnRzR1WEUvdTh2bFhnandSajRQalc0UlhJ?=
- =?utf-8?B?MlVzWmNwdWRoemt5aHV6eEhHaGp2MGNtbkxMQTZOUXZveGJhaFZpTW9qKzdz?=
- =?utf-8?B?MFVvNzF5eHlWUjdBc0Z5UjhLVEplZTNsSHY4U2JKTjQzRURLQWYydEhKZi9m?=
- =?utf-8?B?bnY0aXh0Z0ZqS1YydU9mUnBLTU9BQ2Y2WFcrVGZCSzdEQmd3c3JUZlNKMGhs?=
- =?utf-8?B?KzZxVlY1VUlWQUJQdUxubHhFYzFkdGtGSTE5SzFJbE53Qk1HRFZhRW1yZFhx?=
- =?utf-8?B?NTdhNTlKeElFMThhVzNtMjNseWFtVGttdTFGRTZtL1FYUGZMcm5lamN4OHlP?=
- =?utf-8?B?UWpGek80WGZqdHpJWndtNDBlTEVvdithM2E2TkwzZVJnODI5eUN3V1ZEelB3?=
- =?utf-8?B?c1UvNmpxRzJNRUJ3TEVRRzVpM2Y3WStzMjVkVjhFcVgzYkxaOE9JZWFMVERC?=
- =?utf-8?B?WWJMZmZiMWNNaEtBNUUzUWxkano0ZWJwS3pFb2xvQnlhMFRBb1pXZmRjRWov?=
- =?utf-8?B?Q3h6bmsrcHBPSFN5WjMvWE1PWmE5VDNjdlkrRnVGOEM2OGU0Z3k1MHlXdzVO?=
- =?utf-8?B?RWxaRURkY05Dd0J1L0RvVEFPQXRNa1lqcGwvYXpyTUY5VVhxRnVhNEtKYTRC?=
- =?utf-8?B?NkNzVUV2bS90dVNLTU1MY010SGhiY3RQTmZpS29FUURQSTZaek1qdDJVbWcx?=
- =?utf-8?B?SVJmZEd5c0ZyQmNiV0w2SzlBSHlZTENTUHc0M0wyeWxvcXFDbndoTU02d0tX?=
- =?utf-8?B?RTZXV1IwVWtrYS9KK0JXUUtrMG5mdmlDVi8xdTNveGNEckdyNG8wWGlGVDYv?=
- =?utf-8?B?ZUl0eEx6cmlPdnJ6QjB4RHk3VTlyWDF6V3hlRHRkbktFZ2cwV3k1Tk5Gendq?=
- =?utf-8?B?R0g4U0RrMHFnVk5qWldBVFB0V0oySW1YamE4eUYvVGRkSDQ2bkQzYlU0U1A2?=
- =?utf-8?B?Q1I1Unp5cWtTaTM2RWFvdWdIWjlGMXc5VlNJSEUvUnFVNndGRm5LalJOK2xP?=
- =?utf-8?B?RHYybzRta0dVNG0xc2pqR0trQzdMaWRjTHJwd0JxanowemhLcGk2c2dMUFVH?=
- =?utf-8?B?YUwxSXI5ZXZsS0w3bnEyL2hORTZNRGdRTE9yNzdjWGFRTnM1OXZ4eEdWMXl2?=
- =?utf-8?B?VHZNVjBtWHZWMnc4SVNXVW5UM0IyVkFTQW8xQmVyU2lqSGpzV3k5ZGJTeUcz?=
- =?utf-8?B?MVBWZHZZblhrSUl3c1pFblM0SWs3MzIxbi90eVh5d2dtaU1QdmFCRkNqcGxy?=
- =?utf-8?B?enViOXNmRzRDNVFEeStVN1lXQlEwL3J6Uk9hMHcrdjBiWnJ4bU1Hczl4dVFW?=
- =?utf-8?B?aUtyb2lhRmhlTXY4d25CWStnckw2dkJsTStzSitnMC9zQzFPWHFtL1Iva2F0?=
- =?utf-8?B?ZUtnelRoNWxCMzRGdjlUSEo1ZjRMS2d3bzlIQXBpMDhlcjFYRG9MTVNMSU5r?=
- =?utf-8?B?QlpFWE54Z0J1S2FKY1N5bXhoOVR4QWpnaWxxTTNtaS9EeDRhYnNEaGl1Sllo?=
- =?utf-8?B?Ri9QTys1aWt3cDRNcFNRcm1UekZMbS9EMm1VQkJpOFh4OWhhc2VhcnV6clVJ?=
- =?utf-8?B?TW42U3B6TE95ck5HVy9JMy9SWG5TaFhPN1I0NGV3TElEcVM3Vzh6RXZSMXJO?=
- =?utf-8?B?bEp0Q3A1YmtVM29RYklUa0NOV1crT3FWMUtLY1dKTjB0MVdnaDB1eFpMK0FC?=
- =?utf-8?B?N1BINDNVem05TktqaXc3Nm9ZSDBJUFR5NVdKMjBNa0JOVnVmbXdjK0ZXNEVl?=
- =?utf-8?B?cDVWaTJ4djViLzROZ1YyRnhYNjcyQVI5Wmx0R2tjN0FxMENBVGEyQWd0UXRi?=
- =?utf-8?B?QUhhVGU1djNVMXBDWFpCREswclRpZXBWQVR6aUplU29UbUpGazBMU1BiVjU3?=
- =?utf-8?B?Ry9YYXM3Y3RMTzdOcEVXRjAzQmdGdElETUNteDIwV0pXRVMxUWIwVkxIT3ow?=
- =?utf-8?Q?FenXzfaL8F/JTUhHPW5e0t0I49FMPcZslicSiJ4zlTSq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56bc868d-a134-451c-7e3b-08dde7bf6787
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2025 12:19:05.8959
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mKwir0t2bE2V1uDwDVsD32PnzQTlpfjE8EciJWEDdClEi6Tml5gR8mE1CwEyQDqXYCElwaFZBcb+k3gqtASprA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4235
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <198facfefe8.11982931078232.326054837204882979@zohomail.com>
 
-On Sat Aug 30, 2025 at 4:22 AM JST, Miguel Ojeda wrote:
-> Core functions like `to_result` should have good documentation.
->
-> Thus improve it, including adding an example of how to perform early
-> returns with it.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Sat, Aug 30, 2025 at 03:49:48PM +0400, Askar Safin wrote:
+>  ---- On Thu, 28 Aug 2025 21:14:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
+>  > Which part of the running system check the cpio signature.
+> 
+> You mean who checks cpio signature at boot?
+> Ideally, bootloader should do this.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+The kernel shouldn't trust the bootloader even the bootloader
+checked before, it should re-check itself to re-ensure that.
+
+Ideally, the running system should have a way to check itself
+is in a safe environment and the data provided by the bootloader
+is genuine, otherwise some dedicated malicious bootloader could
+have a way to do some bad behavior.
+
+> 
+> For example, as well as I understand, UKI's EFI stub checks
+> initramfs signature. (See
+> https://github.com/systemd/systemd/blob/main/docs/ROOTFS_DISCOVERY.md
+> ).
+> 
+> It seems that this document (ROOTFS_DISCOVERY) covers
+> zillions of use cases, so I hope you will find something for you.
+
+I've said I have no time to look into this.
+
+> 
+> I also added to CC Poettering and systemd, hopefully they have some
+> ideas.
+> 
+
+...
+
+> 
+>  > Personally I just don't understand why cpio stands out considering it
+>  > even the format itself doesn't support xattrs and more.
+> 
+> As I said above, initramfs should not be feature-rich.
+> 
+> (But xattrs can be added to it, if needed.)
+
+The point is:
+
+AFAIK, There is no formal standard for POSIX cpio to implement xattrs,
+IOWs, it will be some non-standard cpio just for kernel initramfs
+cases, and the new added xattr code has no other usage: just for
+temporary booting use case.
+
+Take a look at `init/initramfs.c`, the entire file is just for
+unpacking an unaligned/in-random-accessable cpio even it cannot be
+called as `cpiofs`.
+
+There are many real filesystems with enough features in the kernel
+can help on the same use cases and data doesn't need to be moved
+from unaligned cpio to tmpfs. It just sounds like a net win to me.
+
+As for your initramfs size assumption, I don't want to comment on
+this, because I'm not distribution guy, I don't know but since
+users already claimed they use compressed initrd and they don't want
+to unpack them all in one shot, it sounds to me that it may not be
+so small.
+
+Thanks,
+Gao Xiang
+
+> 
+> -- 
+> Askar Safin
+> https://types.pl/@safinaskar
+> 
 
