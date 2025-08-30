@@ -1,97 +1,187 @@
-Return-Path: <linux-kernel+bounces-792815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB93B3C951
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E36AB3C954
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD01A22312
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFC8A254CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BA1239E6C;
-	Sat, 30 Aug 2025 08:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4246F24635E;
+	Sat, 30 Aug 2025 08:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ZHfD8bBt"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AsuclDkn"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794D822DFB8;
-	Sat, 30 Aug 2025 08:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070991DBB13;
+	Sat, 30 Aug 2025 08:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756542966; cv=none; b=inpagyuseZUxYBZh9Q/NRLgfdaP/HZuCwgwU+c5E+OQkCk82wOblkCLzSszvht4Epb/DLspKFeeRjLPIntwB+7GbvFdRJfVbp+jzzpk80hDTzQtRJC0VloCTTCWkRtBVATSUxGwhxJUvXrAIic5ZWglR+0g0D/BMLsHogijNZkY=
+	t=1756543271; cv=none; b=I2wkcc2NQtXj1Cze4b9SlgfxT9bDgQZbJt7PqoeFxOsu1zmYu38IMtDod7r4bqePkixVB5m2m06qLrKs6b2Cq58udaz4iPzjp71a1YRNH1XwCoAznOtEKpfbzSv7a1aRgQb7qCWD6srfEEWcvCU7Xnhq/syLlgVLGyb9WgSMppQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756542966; c=relaxed/simple;
-	bh=8CEPE5SZ81umhkmrXioGPbAjSUW1mPfziUAF+t4NFTo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Fwxf4CLgqK7DM8GYFMAAmQWPpoankQBX1Fd3q8KF7G1cxslHSs9ysDHBx3m4Ah3HCb9XhWkWEjpiqs34w4sWEIxzIEbaa92AIWzcmekeo7n+9LC+VMi9c/zMzmlIDKhl5hAiq5u1pcgGR60UQ4e8ekPAdOQueFS/J9XAhpAZzG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ZHfD8bBt; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=UuZowZvYIfVFLIrdPbzq1seTVyiyk/J01AmgZPL60EI=; t=1756542961;
-	x=1757147761; b=ZHfD8bBt9bDxj/9F8bKV8e1Xoq2fSvPCpHXo+IBAlbxFJ589+uBc/qNn6IFO0
-	YksCpIxV59rE0XgKbGBTLdql+PyKdrKeXO8L118XOfJPo8XkYNLVljJ5ykJhvm8M19fIpHJnPk+Bl
-	NxvKVzwco7oD5jKipAbMG1G4izfhXiMMzfLYRoJ4HMKSWJAxoBmdNBpEwwvlgrADZdM1uUo2NxRV6
-	pDCODWBR2+DrFvvXWa/DnoIA5xnNixNtpd5PFWGN6e6lvLq9M/xIESJOcCve21reDLjAFMYTm03Bc
-	XHA9JMIPRgV7SMGhd+Qh88PkCWruVeYe43Nf9lEb7gz2b2I+/g==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <mkarcher@zedat.fu-berlin.de>)
-          id 1usH43-00000001SkH-0P3x; Sat, 30 Aug 2025 10:35:59 +0200
-Received: from tmo-125-174.customers.d1-online.com ([80.187.125.174] helo=ehlo.thunderbird.net)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_128_GCM_SHA256
-          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
-          id 1usH42-00000000QbH-3ReF; Sat, 30 Aug 2025 10:35:59 +0200
-Date: Sat, 30 Aug 2025 10:35:57 +0200
-From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-kernel@vger.kernel.org
-CC: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/4=5D_sparc=3A_fix_accurate_exception_re?=
- =?US-ASCII?Q?porting_in_copy=5F=7Bfrom=5Fto=7D=5Fuser_for_UltraSPARC_III?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de> <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de> <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
-Message-ID: <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
+	s=arc-20240116; t=1756543271; c=relaxed/simple;
+	bh=jkUVdbpOU+SkveJ4KHnqt1C/hB2g9VfaofOPCWLWzE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sSnDg/uGMz+qFmV2Y32cgJCi3m5tqFb3DOglaadQHinNzPhwMs0KKE5yeqkPLZ0Wp8u6LZRc/JEN6YSm2gBSgTpO9RXhijhm3OynIqAhvEiapqW5uhKPzRZqrB+JwJ2K4UPsGCvZL/XYglJNtn7K7V+wp/f051M8vQN/0u1MX9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AsuclDkn; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e870689dedso175802085a.3;
+        Sat, 30 Aug 2025 01:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756543269; x=1757148069; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jkUVdbpOU+SkveJ4KHnqt1C/hB2g9VfaofOPCWLWzE0=;
+        b=AsuclDknLinQbBhIoHA+boRWizjaEkd4XaX+ZZA7pQqvWIG0FCw1UciG1p9f2t86RP
+         W3EgPVOvCwheq0BHSyJExWdgm7k2DHxlSnAC4BNAWhhmTOCZQSdkDCa8IGkzhAd9H3Ro
+         PBP6acK8kUZkt3KG6xuFx/P+2CAkteUVd7KION/cuDRivQmjBumV+thpMcAUFdzta12a
+         0qKiw9VOIBI/YK01JNThHVbYtRU39PFJMGxLt4P/Zunb2qEz2V2toVICKGeitGZbP2RB
+         ZASbI24KTKkPiGLqtV4T0TgIGz17m7BGZZdFmZjzymG07N5oGpEiDA567ljjB3XcRSCe
+         UyyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756543269; x=1757148069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jkUVdbpOU+SkveJ4KHnqt1C/hB2g9VfaofOPCWLWzE0=;
+        b=rR3Hnp1fbNhgvlhcW5vihJ9CQiFawvBfTSs3ePo90K7RNwm5r4gHzhlaq13uQ67V/1
+         74y89YFhMnratUK4HAfA1W19FqImtjWqCk6MYutKWAEEAv9YAW0xGl7XNAEjKdUtZQCp
+         5qKltmSXIilhuHW21el2AnUjw3TPELp7dAmxO3BsKzPLA6nPaGOQ7JtbJ1Fg7tL4WNIX
+         q2hKq1t7Qh/fP+h0BTgeqeVk2r3ehGFlp9mhpL57F/cIMEWJhUeTP+tIz2Yh4/Jio299
+         u1uuhC/PsRepiEC5GY1ErDY+XVl7lt97q4l7JXwc3O/WpQwOnI2j3mme6oJw3jQN8MSl
+         O8ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUql9DaTo0LXccyTKKPeY/mZpt3zi4pKKHAQVRjRtYYBLVXXNPDp1epsCZmkzZjtGIMaiwVRyRDSphR3CU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJaK9+lH75XcjCfHgeWanICD7R3JLHLarauV/7e6QjCz48AiYc
+	JCJl3ckijKUTYdib7zDbW4rJ+7rabk9hSl7xTfcqbji+AeSlQeu+2aqP7Il8j4Ak/kA20ktLG/H
+	6ICwoW1i/m+M12OZFILFxEjlP7/wwjE6hzzkW
+X-Gm-Gg: ASbGncuKCSdMnMoadT+yk/willCtQA7AgwBkrPmXumoRrdu9Gz9k8yrY5Q7GlKNjYZR
+	W2Xu0sxlRQr2YwhLcZj8XY9xFIJuyLZhWTjovc/KiD0WP8ltokdlP+EL85dYR92QkwMbvl/QhiU
+	pK032E81GsizT3kAjb+1SaIwPFdXnxAOKS3qXdbLzNsIZQQJn5QPsIs+MKH+bCD7VDjb1obsZvM
+	gVOVMdLqI7En3soHtrl41uo3zHR
+X-Google-Smtp-Source: AGHT+IHiBcp+DLTL1DFIy/5DJtQgKHM1E9fLaKA4e6Epk8HBp8ZNiEmwjJXBcfdTsOI2gw7V8C886efkoeZ+tKvM1YY=
+X-Received: by 2002:a05:620a:4256:b0:7f6:74fc:2a94 with SMTP id
+ af79cd13be357-7ff27094456mr136276085a.2.1756543268719; Sat, 30 Aug 2025
+ 01:41:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
+ <20250801043642.8103-23-kanchana.p.sridhar@intel.com> <CAGsJ_4xRij-Vz_-dmL44YLvaQrYLKKnw7O_Skedrxj_YxuaT5Q@mail.gmail.com>
+ <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4xMuLPy3+mAxzOj6SfnFZaDf+B=WkmbrCNqv8gvK080Fw@mail.gmail.com>
+ <PH7PR11MB8121B86E65349F5CF854CA57C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4zt9zQFh1mz6gpQOCWBOjz1osN9jTd62uKGf865vRwuLA@mail.gmail.com>
+ <PH7PR11MB8121C1B5965584AA8E59C0B7C938A@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4zjPxSjrSomm3E3gOuW+AqiTKwUHJ34q9m9aJb3y3vEKw@mail.gmail.com>
+ <PH7PR11MB81211DD54822167C6BA238D5C93BA@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4xy3mksbwj61qnNrSpcFgkanEK0tCzJcjQgVF-oAyXe8A@mail.gmail.com>
+ <PH7PR11MB81216DFB4CA6F22E0ED76026C93AA@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4zMHtYG3rS61PyGfJYd8KwGEw=Gy=g5s5wT_vrEL9fhbA@mail.gmail.com> <SA3PR11MB81201972CB6D308FB4659E7DC93AA@SA3PR11MB8120.namprd11.prod.outlook.com>
+In-Reply-To: <SA3PR11MB81201972CB6D308FB4659E7DC93AA@SA3PR11MB8120.namprd11.prod.outlook.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 30 Aug 2025 16:40:57 +0800
+X-Gm-Features: Ac12FXxQQzVz3ZwE12kpQKBS_WIg20ZLii0Hl9TF9Df55yGu3hbeQmQN-gJ_jbQ
+Message-ID: <CAGsJ_4x38iz1XmRp_j3jX-8fY8o_3RNXLx78wc3s_4-o+N0URQ@mail.gmail.com>
+Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
+ the compressor supports batching.
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
-X-ZEDAT-Hint: PO
 
-
->I think there should be a little more text about the nature of the failur=
-e=2E Maybe:
-
-I will add something like that in v2 of the series=2E
-Do you think it is useful to add the message ID
-b14f55642207e63e907965e209f6323a0df6dcee=2Ecamel@physik=2Efu-berlin=2Ede
-as well, or an abbreviated backtrace from that message?
-I suppose, that is the BUG_ON you are referring to=2E
-
->Otherwise, the fix looks good=2E
+> > >
+> > > I am not sure I understand this rationale, but I do want to reiterate
+> > > that the patch-set implements a simple set of rules/design choices
+> > > to provide a batching framework for software and hardware compressors=
+,
+> > > that has shown good performance improvements with both, while
+> > > unifying zswap_store()/zswap_compress() code paths for both.
+> >
+> > I=E2=80=99m really curious: if ZSWAP_MAX_BATCH_SIZE =3D 8 and
+> > compr_batch_size =3D 4, why wouldn=E2=80=99t batch_size =3D 8 and
+> > compr_batch_size =3D 4 perform better than batch_size =3D 4 and
+> > compr_batch_size =3D 4?
+> >
+> > In short, I=E2=80=99d like the case of compr_batch_size =3D=3D 1 to be =
+treated the same
+> > as compr_batch_size =3D=3D 2, 4, etc., since you can still see performa=
+nce
+> > improvements when ZSWAP_MAX_BATCH_SIZE =3D 8 and compr_batch_size =3D=
+=3D
+> > 1,
+> > as batching occurs even outside compression.
+> >
+> > Therefore, I would expect batch_size =3D=3D 8 and compr_batch_size =3D=
+=3D 2 to
+> > perform better than when both are 2.
+> >
+> > The only thing preventing this from happening is that compr_batch_size
+> > might be 5, 6, or 7, which are not powers of two?
 >
->Reviewed-by: Anthony Yznaga <anthony=2Eyznaga@oracle=2Ecom>
-Thanks=2E
+> It would be interesting to see if a generalization of pool->compr_batch_s=
+ize
+> being a factor "N" (where N > 1) of ZSWAP_MAX_BATCH_SIZE yields better
+> performance than the current set of rules. However, we would still need t=
+o
+> handle the case where it is not, as you mention, which might still necess=
+itate
+> the use of a distinct pool->batch_size to avoid re-calculating this dynam=
+ically,
+> when this information doesn't change after pool creation.
+>
+> The current implementation gives preference to the algorithm to determine
+> not just the batch compression step-size, but also the working-set size f=
+or
+> other zswap processing for the batch, i.e., bulk allocation of entries,
+> zpool writes, etc. The algorithm's batch-size is what zswap uses for the =
+latter
+> (the zswap_store_pages() in my patch-set). This has been shown to work
+> well.
+>
+> To change this design to be driven instead by ZSWAP_MAX_BATCH_SIZE
+> always (while handling non-factor pool->compr_batch_size) requires more
+> data gathering. I am inclined to keep the existing implementation and
+> we can continue to improve upon this if its Ok with you.
 
-Kind regards,
-  Michael Karcher
+Right, I have no objection at this stage. I=E2=80=99m just curious=E2=80=94=
+since some hardware
+now supports HW compression with only one queue, and in the future may
+increase to two or four queues but not many overall=E2=80=94whether batch_s=
+ize =3D=3D
+compr_batch_size is always the best rule.
 
+BTW, is HW compression always better than software? For example, when
+kswapd, proactive reclamation, and direct reclamation all run simultaneousl=
+y,
+the CPU-based approach can leverage multiple CPUs to perform compression
+in parallel. But if the hardware only provides a limited number of queues,
+software might actually perform better. An extreme case is when multiple
+threads are running MADV_PAGEOUT at the same time.
+
+I=E2=80=99m not opposing your current patchset, just sharing some side thou=
+ghts :-)
+
+Thanks
+Barry
 
