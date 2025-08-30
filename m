@@ -1,203 +1,149 @@
-Return-Path: <linux-kernel+bounces-792684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3482EB3C790
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:13:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4151B3C796
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD2E1C278D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:13:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56AA47B46A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E792701BB;
-	Sat, 30 Aug 2025 03:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAEB274650;
+	Sat, 30 Aug 2025 03:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUr46Npf"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvEbtI1y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08099199237;
-	Sat, 30 Aug 2025 03:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FDA6F06B;
+	Sat, 30 Aug 2025 03:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756523600; cv=none; b=NjD291s2gYNum0JMZxKbspc01VR3HgNbfN7UTDKlpQat8MzMcmDKke2oD2ZtMRdJ4FpRktCamTHhEpo/rJhhCHaMRLIOW8JqHrXGav09iYrl3grXetEXhw8BDX+ja6NY6jRDO2k5rCo/G8o0IZnCfOfawYvWnGAJUjHsTE/HNBc=
+	t=1756524121; cv=none; b=QZLArUEivmJTxhAdE0JB3J2Kv1IZ6tG6d6PuXQ4h7FVGf9550Zyl9DU0T/rNJN7+E4kh6ok1PX/Jd+Fc15W8AV4PXx4LL6KWxk9Cc3dX2gFQAAszV1ZP4hM44jU3onPCkFkYpRaYQiKyQrtrFSNsVswgHHTGQ2KDLZJDIsCC7uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756523600; c=relaxed/simple;
-	bh=6iLpX2zx/SdMyxcO4oSHXHuePW/AlYt5vAWN8Rtcrlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pie3LojB0/onYVM+Of5FFt1H5KeUb9XVsyoQJeBQaP6LRjT9ZnD3J9pv70feOv/29RNVwBJ5J0dBEEBnzH7MpdkRl49rScjz4iGgt9mfnBiLfbv5WndcnX9worL4oqkC/v5cxQGinvzv3hd6vYhqGE++AdiAA41/ZgvVlZgPQJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUr46Npf; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336c79c89daso2808881fa.2;
-        Fri, 29 Aug 2025 20:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756523597; x=1757128397; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fUGFJItPhj1RGIBa1yatafV6AgO9tzvsjBgp4edEIeE=;
-        b=OUr46NpfTDZNz8oiqDk4KPcaPmi4R1D7uIan4tpPQUfnBJ9xTJL9oQRlCI+euI8KO4
-         YxybrWVvg7FUK0BNe6sY9SmH1eoF+CEccZJ1lW4c2Iu4+mm2K/OgQSG5ZD3LVvhsdZMO
-         cUhh6n+Tk/UjAiogxP7owihGLvJ8Ec+vl9Z+AApq3xcBsWXESIDmZ2I8B+/sJwNz0AZw
-         x0HVY8+Z8z6xKbOtFPoZf8P/TK0f7Upn8496by1ud90tRROWVGVtTuH2fL7av0zvYGW6
-         AkCxrTKzJ3Hi6s0DPw1fS8b/BrNW5DGAI2IvVTZ423HlSnm1hvVRi1NdK5mGSMffybwr
-         9N7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756523597; x=1757128397;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fUGFJItPhj1RGIBa1yatafV6AgO9tzvsjBgp4edEIeE=;
-        b=GFxjjP89nu2CT51p1Lp1O9jUMomjwmb5KLmUFgzjOlsJBHTSL+S7TZtB6xYsZbePog
-         4y57G4qhXxnJ3TeDMON3Sch56RcsUShR3kTtQeq5r36mTR0HlO8IdndCJXdm4rgv/WDE
-         VJMwohDb2ktzP13EKCPa+nZD0AxIECL2nvBW3fpRif0R5nsTXJgH5aRwoimTi+P1AvIF
-         2ZAs8wfrrucs2zDZzAsqYvhd+lheCuOZQpGd9agGoBUkAEsn3qyORcjrNf4Mfi7V1qqC
-         cO+jfxa0uPLvAhF8MziY3LACM9zqgnRYB65f59vPa6fBBJuFu2KvGIXxctEZupomnLmD
-         7E/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQacwYTdDJqfjFvUhAQ/VjbFAdB/l8QU+YLIUb6mDS3LebfiUTW7x1aTE67kznR+7lZSOjv4+cM4=@vger.kernel.org, AJvYcCXpabPLgxHHfvgCC/jE2ceiTUFQQuEdMO6pqmoWury+LgexpU9YNk/7HW6zedfgixQw94HVJG8V4BFF0V3K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5qLR8jr33Zq0W79bGn2VNTrcUv087PFIIn/mbOnxkP+qK/Gtw
-	kspbyBTQ373JRPgljv/90/ZoX58o+g9VPHKmhMdm75UJBDy87A69yQG/UH/X+J5r/AY9JqZ2Zq5
-	DXM6xJ5xVDp71sDk3jHYPs2P12/8LpN+Q0w==
-X-Gm-Gg: ASbGncsVjV3UFeld+3rKp81jyWOvUJ5Mdhkln3h1lLfV/BLr0SzzyiS48GcvBu4SZx1
-	v3e8C9/P429hy4stO43tQuiMom79WBBCLUqJEn2ERcyczkNdewCm3IH3mrx3zsagmvlZR/tJt9R
-	lQ8HNzsyP7ZYHPZrnEZsYrg+51NtmzZ/QLkTQGY+qWEtBWxQ5Thf+oZb7fg4o8yH3dz38s+RiZx
-	k92YRIR1Hs2COylxB2hBEWEVaXELvwes4f9VuPHhA==
-X-Google-Smtp-Source: AGHT+IGzJVJ7DvjTUW7GxiLzjzwSF5DlaaOoDTuqzylwAB4BopW/FyT228Lqnh3tj4dNJu4W+h7nBFa9zaVQtFxrWnc=
-X-Received: by 2002:a05:651c:410a:b0:336:8abb:6b31 with SMTP id
- 38308e7fff4ca-336cb0e06d7mr886231fa.37.1756523596941; Fri, 29 Aug 2025
- 20:13:16 -0700 (PDT)
+	s=arc-20240116; t=1756524121; c=relaxed/simple;
+	bh=uJCWLg8Xr/0C+/8ZRu6677VYEHkkf5iwokGEhBnGEiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smHQng6mmcFfIxZ5qaUfM6+vco3yO9Yv0co0VOs58tz1kmgHusV7cQ9nGHswQQmoAu7lmqQO21nPuMEto0H/P786fc2xM8Lx49EDtqQ3PKQ7asFmKLgCCIUfMRMuFUrAqgecrz6larrheLaDi7IjoegP1DkRmnY4Oarnwno7ljY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvEbtI1y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA81C4CEF0;
+	Sat, 30 Aug 2025 03:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756524120;
+	bh=uJCWLg8Xr/0C+/8ZRu6677VYEHkkf5iwokGEhBnGEiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bvEbtI1ytCwUwam3rCM76cmTxjzFL004GOrQNw0nOxG3e7xUMl0Y2Xb3LISngBCrs
+	 quhz/Siq8fyNOa/n5vOlMC3BsLo51jbgRMXLqI0YqhKBgre2UOyFzcPdhbS/qcovLu
+	 ULPkFdUuWHYFvAJIaN6F9kSnNRSlb/E5rTnwOFLO6av/oInj11Jdu3KrdRK8pUeE+S
+	 nYN2IvDhE6/pkaf4KBQWwLTMkFerx+2QWl9GeGBy5ltBDg0k+zps5rAIy01sNB+eSM
+	 QuL2KyC9IMQc5gj/0iUdovvDdJ6or4DypUQ9GwZvEkJg7FLl4I+CtMDzx5A7Q6lQF9
+	 hD8I6wodAF2yg==
+Date: Sat, 30 Aug 2025 08:51:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: 'Krzysztof Kozlowski' <krzk@kernel.org>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, 
+	jingoohan1@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
+	vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com, 
+	jh80.chung@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 07/12] dt-bindings: PCI: Add support for Tesla FSD SoC
+Message-ID: <3eykohfvqgkbvwirzx63bx65d5uv774gib65bcyjlpphrssfjp@74bqakxvnkmh>
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+ <CGME20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097@epcas5p4.samsung.com>
+ <20250811154638.95732-8-shradha.t@samsung.com>
+ <9e065582-9349-4f39-88b5-048d333ab8d7@kernel.org>
+ <000901dc101c$917bf160$b473d420$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827191919.1361787-1-akshayaj.lkd@gmail.com>
- <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
- <CAE3SzaTJTi3bHnqNbAfQ3W2jHcmhQHqa2ZtKE7=2BnP+onJv-w@mail.gmail.com>
- <CAHp75VeSMApm0TPU1=myhJiXQjWVpebbWEPGcRJQhfSaffdYmw@mail.gmail.com>
- <CAE3SzaR=uPtE20ZkWVXYwBrUZ=b46h1Ub=TbWArHW6XbD8qXfQ@mail.gmail.com> <CAHp75Vf5--WGoeb9qu0QoYz0PmnexUvLyChJFcwYAW3u=_nOwg@mail.gmail.com>
-In-Reply-To: <CAHp75Vf5--WGoeb9qu0QoYz0PmnexUvLyChJFcwYAW3u=_nOwg@mail.gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Sat, 30 Aug 2025 08:43:05 +0530
-X-Gm-Features: Ac12FXwPmu2YHPlJ5mPqZ_9LxYWXNUsQbqYe8hk5Yxdq4xq2XnlA755HeXKlTTY
-Message-ID: <CAE3SzaSvF-JLtUamnib+psG3pONJ9gPxFK+KJ0UtXtb_PfV6_g@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: light: ltr390: Implement runtime PM support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000901dc101c$917bf160$b473d420$@samsung.com>
 
-On Sat, Aug 30, 2025 at 12:19=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Fri, Aug 29, 2025 at 9:03=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail=
-.com> wrote:
-> > On Fri, Aug 29, 2025 at 9:16=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Thu, Aug 28, 2025 at 9:47=E2=80=AFPM Akshay Jindal <akshayaj.lkd@g=
-mail.com> wrote:
-> > > > On Thu, Aug 28, 2025 at 7:17=E2=80=AFAM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > On Wed, Aug 27, 2025 at 10:19=E2=80=AFPM Akshay Jindal <akshayaj.=
-lkd@gmail.com> wrote:
->
-> ...
->
-> > > > > > +static int ltr390_read_raw(struct iio_dev *iio_device,
-> > > > > > +                          struct iio_chan_spec const *chan, in=
-t *val,
-> > > > > > +                          int *val2, long mask)
-> > > > > > +{
-> > > > > > +       int ret, retval;
-> > > > > > +       struct ltr390_data *data =3D iio_priv(iio_device);
-> > > > > > +       struct device *dev =3D &data->client->dev;
-> > > > > > +
-> > > > > > +       ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > +       if (ret < 0)
-> > > > > > +               dev_err(dev, "runtime PM failed to resume: %d\n=
-", ret);
-> > > > >
-> > > > > If it fails, there is no point to read the value, it will be garb=
-age
-> > > > > or even can make the bus stuck.
-> > > > >
-> > > > My rationale behind this approach is that earlier ltr390_read_raw()
-> > > > had all the functionality
-> > > > of the .read_raw callback so the return value whether success or
-> > > > failure was of the core functionality.
-> > > > But now, since the core functionality has been relocated into
-> > > > __ltr390_read_raw(), I felt the return value
-> > > > ltr390_read_raw should be the return value of __ltr390_read_raw().
-> > >
-> > > "Main" returned value. But this is not the point. The Q is, how do yo=
-u
-> > > expect to get not garbage from, e.g., powered off device, please?
-> >
-> > I got your point.
->
-> I don't think so.
->
-> > My Rationale:
-> > ------------------
-> > From a functionality point of view, if before runtime PM usage, the
-> > core retval was being
-> > returned (success/failure), then now with runtime PM also, it should
-> > be the same core retval
-> > which should be returned, but I think that is not correct thinking.
->
-> From the pure SW concept that's correct, but the important detail is
-> we are communicating to the device via the special bus like i=C2=B2c.
->
-> > Updated Approach:
-> > -------------------------
-> > Since we are introducing new functionality of runtime PM in the
-> > callbacks, the return
-> > value should reflect ANY failure in the callback, be it failure of
-> > core functionality
+On Mon, Aug 18, 2025 at 02:16:16PM GMT, Shradha Todi wrote:
+> > > +
+> > > +  phys:
+> > > +    maxItems: 1
+> > > +
+> > > +  samsung,syscon-pcie:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +    description: phandle for system control registers, used to
+> > > +                 control signals at system level
+> > 
+> > What is "system level"? and what are these "signals" being controlled?
+> > 
+> 
+> I will add a more detailed description for why the syscon is being used
+> 
+> > 
+> > > +title: Tesla FSD SoC series PCIe Host Controller
+> > > +
+> > > +maintainers:
+> > > +  - Shradha Todi <shradha.t@samsung.com>
+> > > +
+> > > +description:
+> > > +  Tesla FSD SoCs PCIe host controller inherits all the common
+> > > +  properties defined in samsung,exynos-pcie.yaml
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/pci/samsung,exynos-pcie.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: tesla,fsd-pcie
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 4
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: aux
+> > > +      - const: dbi
+> > > +      - const: mstr
+> > > +      - const: slv
+> > > +
+> > > +  num-lanes:
+> > > +    maximum: 4
+> > > +
+> > > +  samsung,syscon-pcie:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +    description: phandle for system control registers, used to
+> > > +                 control signals at system level
+> > > +
+> > > +required:
+> > > +  - samsung,syscon-pcie
+> > 
+> > clocks are required, compatible as well.
+> > 
+> 
+> Since this was inheriting the common exynos yaml file and that had these properties
+> under required, I did not mention again. Will take care in next version.
+> 
 
-> > ret =3D pm_runtime_resume_and_get();
-> > if (ret < 0)
-> >      return ret; //main functionality will not be called.
-> > retval =3D __ltr390_read_raw();
-> > // not checking retval because irrespective of retval we need refcount
-> > decrement and suspension.
->
-> > ret =3D pm_runtime_put_autosuspend();-
-> > if (ret < 0)
-> >      return ret;
->
-> So, returning an error here, how would it help? For example, if this
-> returns -EAGAIN and user space tries again, we will have always on
-> device. The same, btw, will happen if we do not check for the error
-> code here. That said, I don't know why we should care about returning
-> value from _put_autosuspend. I have just checked randomly chosen 20+
-> drivers in the v6.16 and only 2 check for error:
-> - one for the pure message printing (say the same as not checking)
-> - one for real, BUT it is done in the specific PM related method that
-> does change the power state and callers know about this.
-> And it seems that all of them (20+ drivers) check for the _resume
-> errors. I really need a good explanation of your discoveries why in
-> the normal case we need to check for the error code on _put part of
-> runtime PM. I might learn something new.
+dma-coherent needs to be a required property as well since this binding is
+supporting only one controller, that seem to have cache coherent DMA.
 
-Thanks for the detailed explanation Andy.
-I do not have any technical reason to return value from _put function.
-My thought was, since we are doing for _get, we should do it for _put.
-I agree with your observations. That being said, I will update the code
-as follows:
+> > Missing supplies, both as properties and required. PCI devices do not
+> > work without power.
+> > 
+> 
+> According to the HW design of FSD SoC, the control to manage PCIe power is given to
+> a separate CPU where custom firmware runs. Therefore, the Linux side does not control
+> the PCIe power supplies directly and are hence not included in the device tree.
 
-ltr390_read_raw()
-{
-   ret =3D pm_runtime_resume_and_get()
-   if (ret < 0)
-      return ret;
-   ret =3D __ltr390_read_raw();
-   pm_runtime_put_autosuspend();
-   return ret;
-}
+What do you mean by 'PCIe power'? Supply to the PCIe controller/bus or the
+devices connected to the bus?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
