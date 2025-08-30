@@ -1,249 +1,139 @@
-Return-Path: <linux-kernel+bounces-792860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABBCB3C9D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:35:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7779EB3C9D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41297C60E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD91580B81
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529C0261B78;
-	Sat, 30 Aug 2025 09:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11371F3BAE;
+	Sat, 30 Aug 2025 09:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="AXCY3s3D"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012013.outbound.protection.outlook.com [40.107.75.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZbpN7TQ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775641EB9EB;
-	Sat, 30 Aug 2025 09:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756546514; cv=fail; b=gIxKssEEMP66tWT5s7CI6bmm0tRViBWWDpn+PjJAw+Q9/X63e+F6P5R0zP1s/uKFW6kxBFHYro0tU755gaKlLuLwoue00rIOWK4EljK9PnTWziI8pJXOAo7Bep+RyjgEoJLet5L4aQPasTNocb9OGdKNGZu+GYTQ+ZDRcUVmWOM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756546514; c=relaxed/simple;
-	bh=L8/3ZzAZ71jGHWbMcrfOHjyiloL/JEQDWlBLpTrjFVY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=b9FH2OifIbq50AKaooABuZW+DE9P4AM5m44GDTfvtOjWsUgABs420gJ37G5fFzwrvp4fS/poOywq1wqv7lm0BpEbzLJwslA47IKtbXdE07xb4JYq7sV40NsCny/FWxy0n1J5LLwxdnWgg41oAqwGxMXSSVXLGSHE/GJusAMtI5g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=AXCY3s3D; arc=fail smtp.client-ip=40.107.75.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fe2QDksnqps5yLiUa49yWo80mrV9yT6eniDnq+hG1BDbXOVd1F/zX+hkaH0eAQ9HYsuzcQCdgqPnpZ1xywOB6Omj5D0uqfmM4TvfMPn9deNU+K045EZM6ZHL9F0hnVJorJCAVbb5EFF+FXWBLFaKJzDlV0M9/8qgf4bgw8ZpLTPnK8evrND92qdpEgbjJfA+od8PXRvMUgaBatiB9dOlj3HrbifGAwnqVgdlQ5lfy5BEzaacjFFCYHrFE6W+y5FdJr2Ln7mc217QRBhYzrggOiwn0ztEZI7WUBwAtbMByKMIWF9xaWStohb2/NzuPrprODOEChzhzACvL8Ow5TsmCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nRA4pwEBPQBMXs3+DNIpMHsJajXO+pShKR94muzeW2w=;
- b=zNppV/8pdSJ/AxLggpk1JRKX9oy/ntpOM9wqrvgXIGWbi1vi6hbH/zEYvuJA6U7JM6o788otlIgI9sYzRom5tQbOe3+8BueRliQVcL1PY6RI0Uu22F8raFXJIJe3OusU+AAgVEn6xS0FsQz01EfHXy1NLQm0/ejs0rG9DvAA/OSyxZ3tIrFPIMaTTgh1mPGptjbs+fKWPpEjCYyQBs1geEnrv/OQoZs9PsLjXEibE56AVhInPNhseEJ0ODv/NovdzCTr5nXwAZDOlOSC0H2b7wmc6Bd7W4L3WBUARHUfvp5UcToEyZQTnoL/ZZZsynoiBaWHNPcUXFafPH2g68N2oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nRA4pwEBPQBMXs3+DNIpMHsJajXO+pShKR94muzeW2w=;
- b=AXCY3s3DxckjsS/S7m75C5G+FE93ncSgIE3ZRBoLD99UVlhVAXv79qmwBIlBb6r2CEwF/6i/dR/SbXcDrqPHeOFYyYh5332aAbTzTkLan6gwnfhWzMf7RZ9zwO3QRM0yssTpM63fqYrOCbBOyDgHTqyTVcNEAGfWl4m/Qya+d+xocyfLL3BzQyolvXU4/eD9BuvJ0MI7s6pTzFBd+1yGLWSKQ1bG+Q5eHGDXLM6Cc9zjSzxAnYK6PvVXT3edwYxeeX9PodRh0CDPUiSzdj/O7i1qsyjHg+9n/nVVSLWH+l0FqhP7VyiIdOEsIGXL4+4wh6BmlhjnG3gx1xAWaF1b+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- KL1PR06MB6235.apcprd06.prod.outlook.com (2603:1096:820:d9::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.21; Sat, 30 Aug 2025 09:35:08 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.021; Sat, 30 Aug 2025
- 09:35:08 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BFC1EB9EB
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756546766; cv=none; b=V89AWxEsLDJuKAzoPXQ3mMnr4O/3GtDRPAwZv4CIqF4Nc3EBR1mn4gAhT6qjQn0mPyWN/jW+dSxOGO0vW0nGs2aQ1y729Fh8O6DjxMfVJcwnRP5Zu3ilAF6KTf4eoo6Xd5eHVlIRrUP7F2wWhpN6GwzZZtsPw588bw79taLHbwc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756546766; c=relaxed/simple;
+	bh=7dtwlT+QH5+HXAaXOGsHqcyqtmA7cdi+ZckhOJDo/Gk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ot1K2gwQjpz99oO/LxXAaHqakcSZieq6oEMn2/YbOwvxr+hwleYTxwjJPHsnVXF0uzaqTidJgfMkrvmEcMOauwFOR72KlvoGQHfPiRstFuidLW6mlMlYW5AlVGJDjFwiyIOXgpYK3T2F9KFvIjptYal6UjbuzEZve2KnTvbLJ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XZbpN7TQ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61cbe94a190so484067a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756546763; x=1757151563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DHTxjBxzogPKxJ4cOK4Z/whU+0rHPxz/zI82eTcXtc=;
+        b=XZbpN7TQn88Dx5+yzqebKfh5hbXGtOiO2vjabFYkBN+Q4z8ky9x4wZs6GiRS/XxbMU
+         hcFqM50WQmKHs6uV/1Hy59GMVSCBI1y3fq92Y2A3g6Xik2m4b5ZauGxB5yRbHSDvRbp5
+         BlERPcZKPbl/kUz40rC9Jmay1tUxDHhbhmzgzVNOEZwHdIxM4/hOh288UjWcz9uEjM89
+         tVTykPpdUNWiTZAZrUGEKHxWraohEHZlNJ8at89aur0xVsor0hrmPKmjTAspaMT40XXz
+         bTHRVhGkRqzKEWaNHMaIrDXBLtaGvQDJ6DMbs9glGJoPVm3SG/ICsqmOBtoHqq47wOY2
+         lQ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756546763; x=1757151563;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DHTxjBxzogPKxJ4cOK4Z/whU+0rHPxz/zI82eTcXtc=;
+        b=QqskapHPL11n8BBUaMU4P5W6TgG3bJQMM6GlwcVJJ1pTWQK4qX7ZxyIM1VC9QUy4yg
+         Z9pViSldTy2vTG6HhCwiWv3cl640aZst5uLK8UAx2Gg7KhtCR7GtmzFJS9Buk1VQ6l+r
+         eC6rma3CNzBD9niVvd7kAemsuNzKHFPeQjJAb3o1/TkSEnTqtzG68d+o6LhyTLgqtnQP
+         JGlWKNJHwoB+YDvmPedLxeo5flENsWKFNVjHo4cZMkLt1ge0MsBMQMftnd7GDhwoDkgm
+         syiVUgM6LkNxtWSfm3XcM62e0qBKBIehIasDWgF8BC5rx8khZ55c5RFS4JbDz4YuDD57
+         SCVg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/RMlrgJTHGWvqlFPDkHgrGozoYYo/BgmX1DZVz4Fqp1ubnsS+DYALDo8nS7X8fkIdpaqsz8WfYz2f4S8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9P8+G9VLfoPUvdq60hWENwqAfSfvwmc72+QrW0snyX2E6oJpz
+	HFneill+mHIo6OYt3SwVyDG7x+ul5XNme+YdNkHFhn4aitrk3ZtfsTUE94qRXJz9LQg=
+X-Gm-Gg: ASbGncuB9deVzDdiyd9qTgs+/YSl2BsDa/on7wziCHCtSM1G9XE5eFd9FkPo8wanntT
+	9tT/bVNM4xzPAXlY929dmcRUTa9ipApweG0t3NeWauSKk6igzRaCt/c4XeE7wKYDPacLjaBBQ6g
+	Wgecx1wtvVJPGAMyElqeUrgDthXcD867mhpL5EZG4BSSrXrBECZZbngBToOFv/CtKjTRRzVlVk/
+	ZwVhovpSPWhkFwL3wC642dhsaCyEr7Hp0LoAHPtw7u+QPMTm3Hk9cTliGB6MOkrNDeplzAjmqhI
+	k3YYWbJ9Orcl5NdWmMbMDa2DRpr1/3d71G/42dDv/iTcRdKZRCUwfZrjsLd1D8rPkydaSw0mzco
+	JR2pb5mjpalRz9eillfSwqDSHpf0mPWSfAZYzau4dl/Y3dOONKZUCAec=
+X-Google-Smtp-Source: AGHT+IEju/3F/3C9ok/98yVSIdOJnhW7fq35+ZOG8H80oN0vPxCkUSsQjBebNcRcRfWBfMhOZptwVA==
+X-Received: by 2002:a05:6402:13d1:b0:61c:d24d:e2fa with SMTP id 4fb4d7f45d1cf-61cfe7eb745mr2895448a12.2.1756546762810;
+        Sat, 30 Aug 2025 02:39:22 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc579ba9sm3180786a12.52.2025.08.30.02.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 02:39:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH v2] cpufreq: Use int type to store negative error codes
-Date: Sat, 30 Aug 2025 17:34:57 +0800
-Message-Id: <20250830093458.642881-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0184.apcprd04.prod.outlook.com
- (2603:1096:4:14::22) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2] arm64: dts: exynos2200: Add default GIC address cells
+Date: Sat, 30 Aug 2025 11:39:19 +0200
+Message-ID: <20250830093918.24619-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KL1PR06MB6235:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a912dcd-e868-441f-73da-08dde7a88211
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?J43OLrMtG0x4FGnn0el3NZhD+3eM9eCywItfxTp/HKxpRolPWiNR9A9BaeWB?=
- =?us-ascii?Q?Ja7OoOs6IXWuPMqc1kKVPsypF3UTI9t858GMW5UtZzZeFStDUfi5J3F/884L?=
- =?us-ascii?Q?fGM5Iaj1kQJ0xPIy73W06LNdhcOPgluma8rWw3s3278/SWODfW1MqfJXDoa9?=
- =?us-ascii?Q?HLHl5LVdqclb6shEbeulwNzwK7sd7cX9vQkSiH/WC+UbSdPjM/dJu8zy32Kf?=
- =?us-ascii?Q?lGXuKfwny2aZ/bCpGxMEgbcUad3liynPsm6M6RsHBqh+YD5ZiJv3Xc0vBZB6?=
- =?us-ascii?Q?XLesAzgU4dPvsnJFjBk0+rv0+lD943aGDa+DkijY5j2MoDGvoPUV8YFtQMgp?=
- =?us-ascii?Q?7nfYl49/lBT/lO6pYEEiNEXO0EKIjCgYeUsGi1FM0dNnfYI+VM23Vk/j7VI+?=
- =?us-ascii?Q?dt9RFTkSZvOcICUQo6wX1OVsnZN9HVytF8c4Wa1SajYbru4UHJ3nxMH9VZKl?=
- =?us-ascii?Q?yyrnws8S0LaW/VqFelLh4eBS3kAu9gRdvIcY6ej1HkdWmJZ8Q8dKcXZYnmZ+?=
- =?us-ascii?Q?58YMGcUuqOJUlq7rLNI3IVZvGYKp9puTOi3sHKCyq1rdEHbMDR9MCZcqitks?=
- =?us-ascii?Q?PUH9idOGebhPWQ1GZrA73zuXaZeTImaAODVhc+mufiDyfBsPuFeHn+2DkbOd?=
- =?us-ascii?Q?2SQJyzC7tZs7SiCdMzn8iX7vYpY557o2m4+4B11U65Ghcc0eWuaNb19PW9h8?=
- =?us-ascii?Q?Xz6bv142EHLJDkNfgDwC8xiV/YDCdNxWe5H6bfn4LxLNWhMQCsRAdnzW6IY+?=
- =?us-ascii?Q?bmUQgxQ/QMW6ypMW+9SYFJxIMoDVXDzKHCToDL87Eksjnsb2md41eiTXf5XB?=
- =?us-ascii?Q?oce9JA95gJSF+gYrtwZEkeZV6Ww3Qb/1nc5xN8HDA3EE8309/Xp3ko68JJug?=
- =?us-ascii?Q?b3O9wUon7JrHRemfOlRWzyGrSiXsEsWBahnEPDrPUginuqgiVoiWYtFDFhGB?=
- =?us-ascii?Q?nyjgqfmViQfaew/aCJeLXT/HD2FWn/Ogefg9qzYcZ+jOcQj+tTKRZ0Ik2j8u?=
- =?us-ascii?Q?GPwLBET5p3WQhxrZi8wuAWoX84yUhV6gyU/UQ5S6dhQi98z4HsGL4uQQVPMv?=
- =?us-ascii?Q?VdSJDgfBDYvone665GjkfD6hS/GzRu/ws3vfKgVl5P7Wg+0bPOd8NFoX0fd9?=
- =?us-ascii?Q?kTV3VFNOzLZUylBTvR/YiemMBDWCNc7blUeINg49fKl4ypfSLL6nV+XaHmHI?=
- =?us-ascii?Q?Dypj0Z4jg3Y+KaqiWdHEwsqAukzzzpsP/ABJ0CmUoFZ2g1H5wWMqjK0eXmrS?=
- =?us-ascii?Q?zJTzjCLgD04psQH7BhPNGBFUX9HfN0wKHcLQM4i/VXTb05PVshmRLgEi7Yq8?=
- =?us-ascii?Q?ZAOgtKAhj9jYaTbzabKRsK3zmGsbcdyWtzeJ3zu7ZVB75WOTotCdXh3HGAxE?=
- =?us-ascii?Q?vDZSAaSst/DN3VwP/hWNRD9VFOZdxZz0Ss2Ahk8YyTyPtbfhV/F6ix1L5bn/?=
- =?us-ascii?Q?cd8Qcm15MIi14+CFPdmzY/IhgyV3FCSrpCPoZck431QUYQH43CN+Qg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ztcvOVhzGaNo2WrEToReqiXNoW1Aq1DQx4Z2C0HwE2tpSQPXgyL71K38B//D?=
- =?us-ascii?Q?tdCn+ePwU0bosK8PnwNA6aFb5Mqzw/XjjTLjBUjmyq9rX7fBQgBh4it91y4S?=
- =?us-ascii?Q?FVoRXmJaL17JrA1+Eby3iV1Df51lRNXhM0HtLp8zjUn0QQ7oPLBZ6sVFZSrT?=
- =?us-ascii?Q?JFVRXMxEapV1Icr+mhMYjsRC4YlChPPdXBUbBf4MT8Gr66O2c0AGWVIqeULl?=
- =?us-ascii?Q?D6a85cdOiwOeAdGc1GUDsusM4MaU8LCdEcpjSrnwDRRnWBkNC4hcLgL44a3C?=
- =?us-ascii?Q?qbLzF/+VaHr9FtO7hysI6yMGl0Xk8IUS92jaK+so9O73PczuP/wKZtrPFEdQ?=
- =?us-ascii?Q?uN0wf9ngFNj+YNmaRqT5HIf3c4j2WDTbo+CU3v1yFqhJMjEh/FP6DANXoKiu?=
- =?us-ascii?Q?NMGeS++8ReuimewdLxm0Ba5JhRGIe7TdrXTGTbbVSTgcKD93SguLG9L3d/og?=
- =?us-ascii?Q?FUk6j9fsDSWZc+oglaiXuy17mx/jmoHSKCYJ2hCQfCg0Q0ify6QUMQ8GwhvU?=
- =?us-ascii?Q?NOfXHrilnwj9WYtoke168R04TtOcbCSkZpHSDOHXdOWAzPnCdfcoAfbVsLAC?=
- =?us-ascii?Q?6QKtZAsNKmJAl8mSQS1ts3D8sRfW2Ui6/Whm5ExPjENZFZai4brx1yGBmMch?=
- =?us-ascii?Q?3wSpxQ8oI16PbR0RM0NFkNyOa8pvftuaAMbS3sQX4m+8EmMzUnaoQApE/bns?=
- =?us-ascii?Q?g9I3KuiM+d9p+nJv4t+YLplHEGQvki/kLrbImmgERJsLVJUKFT4f7V3S1hOo?=
- =?us-ascii?Q?4U9SaENSpLRkVd/r0Yrx/mTpTuHXLOkeE+CDcsTy5I3LdR7LJ2tZLfPtjuWy?=
- =?us-ascii?Q?j4bR2WBWV4H1KxCq0BNE9b+tSaM0ni+a4ic0QFmUpAwuyNbnR+RfKBqrMkHA?=
- =?us-ascii?Q?0DDJlY1F5G/6E8QIXawPfkGPpBTXQhWQhkR0RU4WE1ZAbN1w/gfPTIJozdtT?=
- =?us-ascii?Q?26CpjrrdX2T6pVAf1yrwa6eIR7ysufVbyh2qXlPHuWBbmaLHzBjMyWgR9SCg?=
- =?us-ascii?Q?5TMKq89Yo8NzyGY+vVxIbcP5HiEAJzpNkNV62j9zwP6AOHdX2Klz8T0YYX39?=
- =?us-ascii?Q?j+T/oaBQYSS0ZJfneZXE5GXKGpNFTcF9Lxjas3TsvJNU0y3ebAYqhbKBYpDH?=
- =?us-ascii?Q?BIz5tgxmkJ/RR+nA+Hi3CD92ye1pqynf72mgmBUfRKyP4iQYi9YtB026E1wk?=
- =?us-ascii?Q?uoO2MsiIg3pLqriRgh1spLQq5xA+89m1p4yCUydrvv+fPsq6azJG6sBMn+T+?=
- =?us-ascii?Q?PYmM7geaAdJ6DZaVwVgd0NbFD40rRnZlui1M1GgmI7uvLfL4TZ8mF2/kO+Sg?=
- =?us-ascii?Q?MpwTUIteQJQOC/Pis8ONqF988URPsy9EBfXHlE6JTNsAUm0zYiTu/AoxkjEf?=
- =?us-ascii?Q?xMdQ2b90NhJ52275mnAsIzrWF4JBsJqosKwMeV6ZU0sJj4/Qu3LeuVcw/94P?=
- =?us-ascii?Q?tRlwgFp1z304c2ssZR6d2ZICVmS/FIBuvOpW3rWld124HV5ia58gdW0Twg5X?=
- =?us-ascii?Q?TOJKz7/r3TJlFoCnyAJTaBLbWokBHqbCdVmtduP9Kg2zY+VWxy4ofBJpR47U?=
- =?us-ascii?Q?2MCqNhFlkdMXIHFLag6VXiOT7HBA+ubSXHEZ5GQ6?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a912dcd-e868-441f-73da-08dde7a88211
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2025 09:35:08.0841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZO8Wv5uXTUCXVayKHth83Plv7XYYdL1sRXteTVKT7ACj+3vGj+yiAR0KH/SJxTURzvaGj6xpgxKbna/y+hIFpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6235
+X-Developer-Signature: v=1; a=openpgp-sha256; l=940; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=7dtwlT+QH5+HXAaXOGsHqcyqtmA7cdi+ZckhOJDo/Gk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBossbGCgZcWgvcE82Z7nXJI8DCsyLZU6WLNZixz
+ QaqMvXQfA6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLGxgAKCRDBN2bmhouD
+ 1+HWD/9dRaipZDON12eF3QCIU9kraOUTkBjWtHXkkfuLvQp2LMYnArQG+mlhmB9h4iZMPaRqh2p
+ dyv05+2sPUhy3H6g1pKKB5rn8yNY0+axRMRSWRzDy/71I3oVMAbIGdp9eYDwe2H/PBnlBxZPTMk
+ iPDv1wLEqi69HkMylnFaA7svIjyvILHGm0tz8C5B+/Jnn+rY0Tv3wu7TqfFgxHgau78zxASgdOi
+ rYLPjg9epLEWT0RAEVx4l7xt0NIMtRQIH79x6Pk1Mot39imkhXtHyd80E5nbYrjEG6ECj8QUHky
+ u3ZrUO4fY6a0fFxMtQVXmjWQDdenCEcKDHQvhPSrJqnvu6GhBA6vlQ5WrfNuKrrljUBTixlK23y
+ zVxHBsco6jxzNYu6bpYt1IK/bRX2oCxVPBRMwEDBAXCoDaxTYVPDu/d2woKDzSTe/QPj99UXo65
+ K44zjJ8rohdKZexwAG3NrOWPTQJevcVPBuzVYTzbSfvgf+YlkbieaNCwtLOA4REk36by0G2o07c
+ PfPmn/9vB64tQhLbWNLrUeugwT9XseK6kIcn8mFtvWoNanlds5ky+1jkkZvoytyzJNRpezHvUZh
+ pHFwT+Cc8IkBs8WKKJEVvcHJSbcJ86dT9goOi2/I/yZvq3G551FaEkXCSKgr901cThMd3nIvhJw MxXamzrF7Dj+g+Q==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Change the return type of the speedstep_get_freqs() function from unsigned
-int to int because it may returns negative error codes.  For the same
-reason, change the 'ret' variables in store_scaling_setspeed() and
-powernow_decode_bios() to int type as well.
+Add missing address-cells 0 to GIC interrupt node.  Value '0' is correct
+because GIC interrupt controller does not have children.
 
-Storing the negative error codes in unsigned type, doesn't cause an issue
-at runtime but can be confusing. Additionally, assigning negative error
-codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
-flag is enabled.
-
-No effect on runtime.
-
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-v2: Modified commit message.
----
- drivers/cpufreq/cpufreq.c       |  2 +-
- drivers/cpufreq/powernow-k7.c   |  2 +-
- drivers/cpufreq/speedstep-lib.c | 12 ++++++------
- drivers/cpufreq/speedstep-lib.h | 10 +++++-----
- 4 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index a615c98d80ca..f47096683abb 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -914,7 +914,7 @@ static ssize_t store_scaling_setspeed(struct cpufreq_policy *policy,
- 					const char *buf, size_t count)
- {
- 	unsigned int freq = 0;
--	unsigned int ret;
-+	int ret;
+Changes in v2:
+1. Rebase
+2. Rb
+---
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+index 933ab7818ab2..6487ccb58ae7 100644
+--- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+@@ -274,6 +274,7 @@ gic: interrupt-controller@10200000 {
+ 			reg = <0x10200000 0x10000>,     /* GICD */
+ 			      <0x10240000 0x200000>;    /* GICR * 8 */
  
- 	if (!policy->governor || !policy->governor->store_setspeed)
- 		return -EINVAL;
-diff --git a/drivers/cpufreq/powernow-k7.c b/drivers/cpufreq/powernow-k7.c
-index 31039330a3ba..88616cd14353 100644
---- a/drivers/cpufreq/powernow-k7.c
-+++ b/drivers/cpufreq/powernow-k7.c
-@@ -451,7 +451,7 @@ static int powernow_decode_bios(int maxfid, int startvid)
- 	unsigned int i, j;
- 	unsigned char *p;
- 	unsigned int etuple;
--	unsigned int ret;
-+	int ret;
- 
- 	etuple = cpuid_eax(0x80000001);
- 
-diff --git a/drivers/cpufreq/speedstep-lib.c b/drivers/cpufreq/speedstep-lib.c
-index 0b66df4ed513..f8b42e981635 100644
---- a/drivers/cpufreq/speedstep-lib.c
-+++ b/drivers/cpufreq/speedstep-lib.c
-@@ -378,16 +378,16 @@ EXPORT_SYMBOL_GPL(speedstep_detect_processor);
-  *                     DETECT SPEEDSTEP SPEEDS                       *
-  *********************************************************************/
- 
--unsigned int speedstep_get_freqs(enum speedstep_processor processor,
--				  unsigned int *low_speed,
--				  unsigned int *high_speed,
--				  unsigned int *transition_latency,
--				  void (*set_state) (unsigned int state))
-+int speedstep_get_freqs(enum speedstep_processor processor,
-+			unsigned int *low_speed,
-+			unsigned int *high_speed,
-+			unsigned int *transition_latency,
-+			void (*set_state)(unsigned int state))
- {
- 	unsigned int prev_speed;
--	unsigned int ret = 0;
- 	unsigned long flags;
- 	ktime_t tv1, tv2;
-+	int ret = 0;
- 
- 	if ((!processor) || (!low_speed) || (!high_speed) || (!set_state))
- 		return -EINVAL;
-diff --git a/drivers/cpufreq/speedstep-lib.h b/drivers/cpufreq/speedstep-lib.h
-index dc762ea786be..48329647d4c4 100644
---- a/drivers/cpufreq/speedstep-lib.h
-+++ b/drivers/cpufreq/speedstep-lib.h
-@@ -41,8 +41,8 @@ extern unsigned int speedstep_get_frequency(enum speedstep_processor processor);
-  * SPEEDSTEP_LOW; the second argument is zero so that no
-  * cpufreq_notify_transition calls are initiated.
-  */
--extern unsigned int speedstep_get_freqs(enum speedstep_processor processor,
--	unsigned int *low_speed,
--	unsigned int *high_speed,
--	unsigned int *transition_latency,
--	void (*set_state) (unsigned int state));
-+extern int speedstep_get_freqs(enum speedstep_processor processor,
-+			       unsigned int *low_speed,
-+			       unsigned int *high_speed,
-+			       unsigned int *transition_latency,
-+			       void (*set_state)(unsigned int state));
++			#address-cells = <0>;
+ 			#interrupt-cells = <4>;
+ 			interrupt-controller;
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
 -- 
-2.34.1
+2.48.1
 
 
