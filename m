@@ -1,84 +1,100 @@
-Return-Path: <linux-kernel+bounces-792749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B939AB3C87A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82927B3C87D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 097181BA7D32
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D441C24E16
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CC5227B8E;
-	Sat, 30 Aug 2025 06:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O4s9gljo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC40238C29;
+	Sat, 30 Aug 2025 06:25:40 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB711E47A5;
-	Sat, 30 Aug 2025 06:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58D92869E;
+	Sat, 30 Aug 2025 06:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756534949; cv=none; b=GO9RJP2R/H54db7VVjoB3OdV8rjmTyhMSsNmMOt3KCmheEEWtJTmgdLbcSZxHHU3wahnuvdN1jA3lVBw7x/HNHXnRTUOob1dujYlhiF9Mt3Wc146gDUJ5hd+Wluyub8t78+CIKCqqqNKCTXkNgseOLhhDG6ZvgatC2n/7RD8oVg=
+	t=1756535139; cv=none; b=lCRSKi+Dnut2EdgNDjs/XimCbnmTXl0BcCIM0N5sjlvBHZG3tlxcltQoWrDBkfEEwAiilTPCtTHJGzmcqzu6ZQ2FuhDkhXDpttYZb5rRS5vIlae+MPhDizgSpI/bTdaGKyclvR6Nbmtej0PzxPbOKHz1VoZcRjo4GNGI0Pxwe4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756534949; c=relaxed/simple;
-	bh=mabqiHyZkrNxJJlgR88JTFnhROF9Xw7ZYNAKxgXinHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDzTzmAEmWA80LVln34zRa4pnzEW03NfU2yhTFlIwky1eoKgejR1I6nn6FJVdMU74aO9eIj03y+K4qrfFS9pGX0a2lVWbAMDBl67TYlqtY/PkoMPXs/Zt8H5RoF0r9oA9TV3M7gXCCwUrmMyx9WEAb+zxOIDDrFhB1r98cc+/KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O4s9gljo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82AE8C4CEEB;
-	Sat, 30 Aug 2025 06:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756534949;
-	bh=mabqiHyZkrNxJJlgR88JTFnhROF9Xw7ZYNAKxgXinHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O4s9gljo/JGYAbaf+4abg4B5sjFa182g58nm4EO+hGtF4tPvimGM+QZ7wakrKzuA6
-	 kNSxWEVq97pqqQEJdfWhxs3/KKNDzYAMmPcUMCkuk8oYvV2Kn6gfMUfRwEdcpdIMCK
-	 xIm4dNbaIWxKh8pbkPbVg2tXWygWSC5YjJk35sbY=
-Date: Sat, 30 Aug 2025 08:22:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] rust: device: fix unresolved link to drm::Device
-Message-ID: <2025083018-playful-villain-f5a9@gregkh>
-References: <20250829195745.31174-1-dakr@kernel.org>
+	s=arc-20240116; t=1756535139; c=relaxed/simple;
+	bh=0QzAJ7CbvMlIPWm24wLuXvgMoA0rDopHRYVH3zy9GKI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=T7BzNtaSbZxIJjoRDKpQwxihW9bRmJukRXLOyLmJExBilcc/oTJxch4DbFiUF9yOOyukwHlBBoI5Fa3VWwGmp8eDpV2c2+d4kpWbvHs0APt+8adZQvzXXCbV2EFa9kxnl1XZZuoziiBqMWbMpzH/WuGOYWb+8pXin6s8DqCuqVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cDQ9V5hx3z5B13X;
+	Sat, 30 Aug 2025 14:25:18 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 57U6PHPJ084792;
+	Sat, 30 Aug 2025 14:25:17 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 30 Aug 2025 14:25:19 +0800 (CST)
+Date: Sat, 30 Aug 2025 14:25:19 +0800 (CST)
+X-Zmail-TransId: 2af968b2994fde7-637a8
+X-Mailer: Zmail v1.0
+Message-ID: <20250830142519085d4aXePTT_pSZ3UTxxNC8X@zte.com.cn>
+In-Reply-To: <20250828092655.GA30360@didi-ThinkCentre-M930t-N000>
+References: 20250828092655.GA30360@didi-ThinkCentre-M930t-N000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829195745.31174-1-dakr@kernel.org>
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <tiozhang@didiglobal.com>
+Cc: <akpm@linux-foundation.org>, <fan.yu9@zte.com.cn>, <corbet@lwn.net>,
+        <bsingharora@gmail.com>, <yang.yang29@zte.com.cn>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <jiang.kun2@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <tiozhang@didiglobal.com>, <zyhtheonly@gmail.com>,
+        <zyhtheonly@yeah.net>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2M10gZGVsYXlhY2N5L3NjaGVkOiBhZGQgU09GVElSUSBkZWxheQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57U6PHPJ084792
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 30 Aug 2025 14:25:18 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68B2994E.000/4cDQ9V5hx3z5B13X
 
-On Fri, Aug 29, 2025 at 09:57:42PM +0200, Danilo Krummrich wrote:
-> drm::Device is only available when CONFIG_DRM=y, which we have to
-> consider for intra-doc links, otherwise the rustdoc make target produces
-> the following warning.
-> 
-> >> warning: unresolved link to `kernel::drm::Device`
->    --> rust/kernel/device.rs:154:22
->    |
->    154 | /// [`drm::Device`]: kernel::drm::Device
->    |                      ^^^^^^^^^^^^^^^^^^^ no item named `drm` in module `kernel`
->    |
->    = note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
-> 
-> Fix this by making the intra-doc link conditional on CONFIG_DRM being enabled.
-> 
-> Fixes: d6e26c1ae4a6 ("device: rust: expand documentation for Device")
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508261644.9LclwUgt-lkp@intel.com/
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/device.rs | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>Intro SOFTIRQ delay, so we can separate softirq as SOFTIRQ delay
+>and hardirq as {IRQ - SOFTIRQ} delay.
+>
+>A typical scenario is when tasks delayed by network,
+>if they delayed by rx net packets, i.e, net_rx_action(),
+>SOFTIRQ delay is almost same as IRQ delay;
+>if they delayed by, e.g, bad driver or broken hardware,
+>SOFTIRQ delay is almost 0 while IRQ delay remains big.
+>
+>Examples tool usage could be found in
+>Documentation/accounting/delay-accounting.rst
+>
+>Signed-off-by: Tio Zhang <tiozhang@didiglobal.com>
+>---
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+a small suggestion: it would be clearer if you could include a changelog
+when sending a new version of the patch next time. For example:
+https://lore.kernel.org/all/20250828171242.59810-1-sj@kernel.org/
+
+Thanks
+Yaxin
 
