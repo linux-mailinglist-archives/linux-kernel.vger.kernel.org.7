@@ -1,164 +1,162 @@
-Return-Path: <linux-kernel+bounces-793041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A67B3CCEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF76AB3CCFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230A0A02CA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22EBC189D48D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66CC2D0C67;
-	Sat, 30 Aug 2025 16:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2152D23B5;
+	Sat, 30 Aug 2025 16:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiOSgv5W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWlrbwxK"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B47082D;
-	Sat, 30 Aug 2025 16:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC74D25783F;
+	Sat, 30 Aug 2025 16:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756571074; cv=none; b=QVpVkwslAn9NDaxeoeHlC1pTO+GV1ckhjbE18uuii9tNUvA9ZYdQONPOdC4tTDe2jLUSS4tMx0xUq4n/8b1BQadYZHhR6WhlW8vF8RskM7sUG4s8jVasNett36hR6Joq0XGS1AAugoy2egrZl5bs2KtVxUqFRHtQ04hnIw0acXc=
+	t=1756571323; cv=none; b=LkuHLgozjkAzVFygKg8DicERcOjP2PRrnZ3qdPnfItveIiznhAgHTkVJccwi1oN37ISyGnEciWvyh7sAiPIioG3q0akX7bLju0Wp+0WGNJxjVwnLDWkM0acy7Jjv0UDUD8WAnyvc4ixG2ZNg1Hjz18E9haNBFSm7ByC6V/Uq8to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756571074; c=relaxed/simple;
-	bh=Nya/TZ4X12n/fB0RU73CjBTHO4OoIX+2tqn1y7X8YME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSSGv7zGQ6LlQldooBak+yt4u1NGME0N13dw6Cvb5v5MKCONLaPR5GDJXWVu4FYyPiHfwh8OlBzSNmCYPA0hGhzjxNH9rtJ28M9f7qmXYf4n3+GCYrtwTXCaqgSt5H3sQJUzU5uV32Clyq93/gZQD7ANFBaoOq3hHjrrPy52j1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiOSgv5W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9EEC4CEEB;
-	Sat, 30 Aug 2025 16:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756571073;
-	bh=Nya/TZ4X12n/fB0RU73CjBTHO4OoIX+2tqn1y7X8YME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oiOSgv5WZHUhHBHe11JOt2oy1i1TmC/3kx0r0SgP/PbVcmpmpiCQcSpSksRVcGWQv
-	 mluS4fLKPtkqSrttxRrmlOGeC/KhK9tRtuktJVf2fLd3zC3xYgX/8dBi2vVyuCAcK/
-	 bbInSfxuoNqNX774+LcUkQ0K9G+zuru4+9saqS6ajFJiQLxzWHb88gEMVMVT2eE9B5
-	 zDrvhFFVUg5rhMB/kk5N8ZYVo78B/NaVIw4RYgc3vuIkm4deSazQfh6wvmJfpQu0k/
-	 44amRKyKVVCEQYzDx5MYN4QViANr11OuSEugN9D9PVoEZAUNWvITcUDZNy5+ZJ4xAN
-	 vCj4qcVTloEjw==
-Date: Sat, 30 Aug 2025 09:24:31 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: tytso@mit.edu, jaegeuk@kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fscrypt: optimize fscrypt_base64url_encode() with block
- processing
-Message-ID: <20250830162431.GA1431@quark>
-References: <20250830132832.7911-1-409411716@gms.tku.edu.tw>
+	s=arc-20240116; t=1756571323; c=relaxed/simple;
+	bh=DTu6htZoqYuzhaeQFD9mKEvbhzis4l6Wheni3yeZONY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uDR33ta9rgCt3BoNZvF9VTzm9q7KZlO3UAOI/nynZpF5h2IPLHn4G/fxJRXm+jMnMMPKWznm3QskESfZKolXPifPtozsM/6Ju59cOJHlXfMd7HBNKXVDDoJqIk0t6M4YBQDaT6QYrGU2Gxe98jfAg7wzjqO1BJcpcJwNFAQa6dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWlrbwxK; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70a9f5dfa62so26740496d6.3;
+        Sat, 30 Aug 2025 09:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756571321; x=1757176121; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t5qRg8dL7CV+FgonqN1II497OJX54kF6SQzjUzNxw88=;
+        b=RWlrbwxKc6Pf/Moi4jiXSV6IneKV1aSKoVTsaF3AIZohxOSa/UC6Gc+6ac9h67QQ0B
+         Bo2NXW1KdvOhstkAhYOMjVSMOojThnesJ+Ox1BbdfY2rd482k2x/Xg6L0Wy28q4cQJ5X
+         U15PFRoBuVzlgOf/Cs0c130Ze2blIUxT0hdXELmAhieij0zZWbLwT+r/hrZmT5LmUsnw
+         u22/YLo3d81q3XPbBwom8VYfZCgLocBrjgQDjMSuHKyIPQ9M+Hi3bf4K95QOBPyS0uEW
+         i0oxsT3+qcilUlLtNnVZABDdXvqe9ia1iS3a64RiBb3e9vf3LOAPhNO2+DJYoYDexbFp
+         IVSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756571321; x=1757176121;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t5qRg8dL7CV+FgonqN1II497OJX54kF6SQzjUzNxw88=;
+        b=Ch1oR+2qxVV7DrjfP1zzbRuiQZFRq9Lj3R0vW6xovNEwgvgEo1etGZrntX4zksWp4o
+         72m7GoIvf/bmXHYcz/YADi6ycdm2YZ8Z9xzFOejnvL59W/egX5EtUQ3wlXCcrUsml+7t
+         +AUUvhd45iNz1MCZ0MsiuDGXj1q6p0nlljaURoqcaAskIA2Vzs9bJAzB3WQNxN49vhzV
+         dATuYMP8kE0L5rDBn2RRDDj+qdflfRHrlJ73Jqy3H1DiyDEDOj5tqUEliwrT2k8R4375
+         ul8ctqVTjuU94VB2vY+/MLDHazNX+KK6Wyst8el5YMtM/PfrnV6aayxGPISmFKo6cF7w
+         Thzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYXtwJk9CClZH2bUerE652DYpS/cjNb8mGoO5UOnMC38SsdOXbrmxktzZrG//GasiaiNGAgODd1cnSEkKi@vger.kernel.org, AJvYcCUvvKG/4HRvsQbyrhLv67AQt7BAzy6XWTmCYJRgVWD2mcHBn14YcUkn9lngmghCU+N0DkA3i+cypsOA@vger.kernel.org, AJvYcCVE6V0e61kxNuIdEpa1Z/qSnUcNIx6e0N2lyQ6QqR8sZ8Dp0+3y+wH8rT+xl9T0okJHDp/VyWDf98sY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJmVFQvQY5/FLMmUsGovii7F7LyesTQ/3mnsNdmu3Z5Ucradi3
+	T+8L3+0QBLSLuy5VZFreGz5FEFLi4ynVFbIqY5zsmNslGQp8khi8Btkf
+X-Gm-Gg: ASbGncur83Bn4xgmtFXMNgy52UodPLEz2IOcFFl2rCxIDlFZgv4VlSJ8skeXDDZy0u4
+	yj/mdC8Ck2IHM2biTZ7w8pvAYNWncaMI0YdF+KP1yUt6G/wkdKvs0UvxZmnQ1MbA1tOOqdosywF
+	sLFdjN7zRnrG2w9w+nxrLMiHPxSFMNlttpEXxRUzRRixorp/nDbXXOK0OsnathAUwbUVdirEXRf
+	lESxsQQtSF6kSDvcfc5Jds0H78V5Y2yw36TBLr7wBwfJn7FvWXQyyuQESdk1+z5l152pvfGDmgs
+	ReSI8LVYe18/aE5waey7Ob8jIX3fcrUSkuYxCsMIdCDfMPVljgmxK6I4mJQD1CmfS7IsSCLKoFO
+	zLqxQC0jg26BQaCBJFngD+K2NYTvZ
+X-Google-Smtp-Source: AGHT+IEDsnzVzmDqICYsDSEbi2aaTM/6NHF5Tn3lwCq02oQLmPIh4l49hBu0D6JUcNECJ8GrIWvnTg==
+X-Received: by 2002:a05:6214:f09:b0:70d:9291:bdd8 with SMTP id 6a1803df08f44-70fac7c7ed1mr28987296d6.30.1756571320599;
+        Sat, 30 Aug 2025 09:28:40 -0700 (PDT)
+Received: from [127.0.0.1] ([74.249.85.195])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb28b5a26sm8110786d6.64.2025.08.30.09.28.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 09:28:40 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v5 0/5] clk: samsung: exynos990: CMU_TOP fixes (mux regs,
+ widths, factors)
+Date: Sat, 30 Aug 2025 16:28:37 +0000
+Message-Id: <20250830-fix-cmu-top-v5-0-7c62f608309e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830132832.7911-1-409411716@gms.tku.edu.tw>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALUms2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC2MD3bTMCt3k3FLdkvwCXQNLQ/PERAsTC3PDJCWgjoKiVKA02LTo2Np
+ aAIZGO1pdAAAA
+X-Change-ID: 20250830-fix-cmu-top-0917aa84871b
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756571319; l=1607;
+ i=wachiturroxd150@gmail.com; s=20250830; h=from:subject:message-id;
+ bh=DTu6htZoqYuzhaeQFD9mKEvbhzis4l6Wheni3yeZONY=;
+ b=TLrfWOSA0lvmaSNnT+NdMXez4B1AptncW54LbNAkWa5w+d2JzK+N+1IQ+yAVMSNO25fxPCFEy
+ UBnQgmyzbFwA4LaOd57KjANj/h0Y/WEc/z/cFH4T5EBqdNC4JeVz7MX
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=rxHEBGA1eos5vQkPC9SlkEPD6sil9F03N6bc8qmUFrQ=
 
-On Sat, Aug 30, 2025 at 09:28:32PM +0800, Guan-Chun Wu wrote:
-> Previously, fscrypt_base64url_encode() processed input one byte at a
-> time, using a bitstream, accumulating bits and emitting characters when
-> 6 bits were available. This was correct but added extra computation.
-> 
-> This patch processes input in 3-byte blocks, mapping directly to 4 output
-> characters. Any remaining 1 or 2 bytes are handled according to Base64 URL
-> rules. This reduces computation and improves performance.
-> 
-> Performance test (5 runs) for fscrypt_base64url_encode():
-> 
-> 64B input:
-> -------------------------------------------------------
-> | Old method | 131 | 108 | 114 | 122 | 123 | avg ~120 ns |
-> -------------------------------------------------------
-> | New method |  84 |  81 |  84 |  82 |  84 | avg ~83 ns  |
-> -------------------------------------------------------
-> 
-> 1KB input:
-> --------------------------------------------------------
-> | Old method | 1152 | 1121 | 1142 | 1147 | 1148 | avg ~1142 ns |
-> --------------------------------------------------------
-> | New method |  767 |  752 |  765 |  771 |  776 | avg ~766 ns  |
-> --------------------------------------------------------
-> 
-> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Hi,
 
-Thanks!
+Two small fixes for Exynos990 CMU_TOP:
 
-> Tested on Linux 6.8.0-64-generic x86_64
-> with Intel Core i7-10700 @ 2.90GHz
-> 
-> Test is executed in the form of kernel module.
-> 
-> Test script:
+Correct PLL mux register selection (use PLL_CON0), add DPU_BUS and
+CMUREF mux/div, and update clock IDs.
+Fix mux/div bit widths and replace a few bogus divs with fixed-factor
+clocks (HSI1/2 PCIe, USBDP debug); also fix OTP rate.
 
-Is there any chance you'd be interested in creating an fscrypt KUnit
-test (in a separate patch) which tests fscrypt_base64url_encode() and
-fscrypt_base64url_decode()?
+Changes in v2:
 
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index 010f9c0a4c2f..adaa16905498 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -204,20 +204,31 @@ static const char base64url_table[65] =
->  static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
->  {
->  	u32 ac = 0;
-> -	int bits = 0;
-> -	int i;
-> +	int i = 0;
->  	char *cp = dst;
->  
-> -	for (i = 0; i < srclen; i++) {
-> -		ac = (ac << 8) | src[i];
-> -		bits += 8;
-> -		do {
-> -			bits -= 6;
-> -			*cp++ = base64url_table[(ac >> bits) & 0x3f];
-> -		} while (bits >= 6);
-> +	while (i + 2 < srclen) {
-> +		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
-> +		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-> +		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-> +		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-> +		*cp++ = base64url_table[ac & 0x3f];
-> +		i += 3;
-> +	}
+- In the first commit the divratio of
+  PLL_SHARED0_DIV3 should not be changed.
 
-To make it a bit easier to understand, how about updating src and srclen
-as we go along?
+Changes in v3:
 
-	while (srclen >= 3) {
-		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8) | (u32)src[2];
-		*cp++ = base64url_table[ac >> 18];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-		*cp++ = base64url_table[ac & 0x3f];
-		src += 3;
-		srclen -= 3;
-	}
+- There is no ABI massive break, the new ID clocks are
+  in the last define CMU_TOP block.
 
-	switch (srclen) {
-	case 2:
-		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8);
-		*cp++ = base64url_table[ac >> 18];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-		break;
-	case 1:
-		ac = ((u32)src[0] << 16);
-		*cp++ = base64url_table[ac >> 18];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		break;
-	}
+Changes in v4:
 
-'srclen >= 3' is much more readable than 'i + 2 < srclen', IMO.
+- Fix compilation for define CLK_DOUT_CMU_CMUREF to
+  CLK_DOUT_CMU_CLK_CMUREF
 
-Also, instead of '(ac >> 18) & 0x3f', we can just use 'ac >> 18', since
-'ac' is a 24-bit value.
+Changes in v5:
 
-- Eric
+-  Rewrite commits and remove cosmetic/non-operational changes
+   and unrelated rebases.
+   CLKS_NR_TOP will be moved to the patch that adds the new clocks.
+
+Please review.
+
+Denzeel Oliva
+
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+Denzeel Oliva (5):
+      clk: samsung: exynos990: Use PLL_CON0 for PLL parent muxes
+      clk: samsung: exynos990: Fix CMU_TOP mux/div bit widths
+      clk: samsung: exynos990: Replace bogus divs with fixed-factor clocks
+      dt-bindings: clock: exynos990: Extend clocks IDs
+      clk: samsung: exynos990: Add DPU_BUS and CMUREF mux/div and update CLKS_NR_TOP
+
+ drivers/clk/samsung/clk-exynos990.c           | 80 ++++++++++++++++++++-------
+ include/dt-bindings/clock/samsung,exynos990.h |  4 ++
+ 2 files changed, 63 insertions(+), 21 deletions(-)
+---
+base-commit: 39f90c1967215375f7d87b81d14b0f3ed6b40c29
+change-id: 20250830-fix-cmu-top-0917aa84871b
+
+Best regards,
+-- 
+Denzeel Oliva <wachiturroxd150@gmail.com>
+
 
