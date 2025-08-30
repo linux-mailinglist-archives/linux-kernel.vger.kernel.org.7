@@ -1,134 +1,284 @@
-Return-Path: <linux-kernel+bounces-793106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC2DB3CEA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86670B3CEA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37E1561B88
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D915E13D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA972D838E;
-	Sat, 30 Aug 2025 18:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6312D8DC8;
+	Sat, 30 Aug 2025 18:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiVOjf9j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdeJ8QY6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D218DB26;
-	Sat, 30 Aug 2025 18:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF397211290;
+	Sat, 30 Aug 2025 18:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756577874; cv=none; b=WQc8U+IfL+CWgcpd3JsvS76oJvBcHi0s/oX58dOadlI9CKC5WCkazzWOQcZrAWYfZy6IJhbvoTy/OVzAKX4cWTUBkZI9hZUrpl/B0DY4BBx0tAnkP4R5PmfjO/KqkBDCD/Wc3fmCXTW7ASFH+dtykZNjyzcm9NJzpV8iwDBZoA0=
+	t=1756578347; cv=none; b=s9541bmGQZFdSz91C4LkGFXXguZ3H9IxRODWOFTMOBtAvjTfkd/ZkEdbRw9MEVyBUrRwreEIyONwXM361MYky/1AdjlsNZRZLJsbUk164zn/nmR1RPFXsB24dUWY4Rdtv826f+zH9Uf3/IcFsEHuOC2y8MZo9yXSymYUFk13tdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756577874; c=relaxed/simple;
-	bh=AaXzJegL0LXpBu/wgNxuQEKB9cIewaGfi4OXtiQRdAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gvqXsQJYVFhhZNlloO62vIQFm9ZUQ2oJGdnYbqEXUBK7wacrCOx44LBvdxhKA5N+/eFHSLCjZ9LoecYRoqwY4pnHz3A5xMaZsWSwBYblqI6VRe2Bft4ATZs+2SLNGGEJuhop8AnOmo/iQ6NgMAC8wXFzMNVUlaNU5uo01ttjavc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiVOjf9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7416C4CEEB;
-	Sat, 30 Aug 2025 18:17:50 +0000 (UTC)
+	s=arc-20240116; t=1756578347; c=relaxed/simple;
+	bh=LP44N4DBA8yrEvcCLYAsAJr7yJlfuw9Yux44iwujOqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rhcR+r0YvGnrmicP6pYTB9Qf86MAhBs788vemRbMwR3sVTdpZlbeE3Ndhn73wl3Y5RegqayZ0JVQ4d6W7AUGJ+DaDdIoR6cGNUbPYej3ucFspUy6vdpDqj4CH5KsN9fcjaf3r3gitw92q2XeKpE6RS7K5z+zUYBN4UthUKvppWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdeJ8QY6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B577CC4CEEB;
+	Sat, 30 Aug 2025 18:25:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756577874;
-	bh=AaXzJegL0LXpBu/wgNxuQEKB9cIewaGfi4OXtiQRdAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MiVOjf9jOkGjHJZOn6cWeFjeGb4NmxamBHRvpC+vQZMjcf9cpohVByIZNvS2Iax/p
-	 FbXBosHi++OUrfdP5FDrXXKVrDh242WhB6R30jG+fg5V17Y29t6p0f7Tn85q0sEjye
-	 ziFFoxGWRvld4gBDfAXJzsCbIGS6fEy005WhyX8wFzgzN69F1sWoP48paqhYHoLVNY
-	 517v4PlIRFMhqdtvKJ76t7BmMay8AWn0FxcpIBBJnq0Sx1s7giQgyfgS5SXg2xWYNE
-	 HHwcIjTZ8W0AU4uXXb/b2XUgVTIPkf+UX6pcjtuGVfGEemTFhBc6Hx97/qJozukK+g
-	 yV8HsWhpcC3rQ==
-Date: Sat, 30 Aug 2025 19:17:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Asuna Yang <spriteovo@gmail.com>
-Cc: Jason Montleon <jmontleo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: RISC-V: Re-enable GCC+Rust builds
-Message-ID: <20250830-cheesy-prone-ee5fae406c22@spud>
-References: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
+	s=k20201202; t=1756578347;
+	bh=LP44N4DBA8yrEvcCLYAsAJr7yJlfuw9Yux44iwujOqY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XdeJ8QY6LcDqrntB5LkNjUfQXhlfqw7ICDv8AF6IfDA+QoC7XjiVGnYMSQxu7Cbn6
+	 gR3mmG0Pxf2z4GceItB+tO6DJ0FvgSCLxbLYpIL7ihmG/OdRRp6gfiPfuSiBM9ab0l
+	 OL4WDvPDazTqs5oI96Q0VC4Bf/TtmjeMo5NfLDH3ohNAVIAbibBacxCDPQGJMwbWjx
+	 ZNHPBfQr5+J8x+ZpPMgVY/fhRdfBia+aCBN+BCdi3Ky3augXYP/9MIf6Oo0YEhRs7N
+	 Mg62kf87ODA3tnoX/Jwj4b+I8mRteBic3n6CKWKacWpWkWV9sziwfFwR1h2SWJBZpV
+	 0fSRKxlmehQpw==
+Date: Sat, 30 Aug 2025 19:25:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iio: light: ltr390: Implement runtime PM support
+Message-ID: <20250830192538.3b508c5c@jic23-huawei>
+In-Reply-To: <20250830113502.83102-1-akshayaj.lkd@gmail.com>
+References: <20250830113502.83102-1-akshayaj.lkd@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PLgD4sybnROtocgd"
-Content-Disposition: inline
-In-Reply-To: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
-
-
---PLgD4sybnROtocgd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 01:00:56PM +0800, Asuna Yang wrote:
-> I noticed that GCC+Rust builds for RISC-V were disabled about a year ago,=
- as
-> discussed in
-> https://lore.kernel.org/all/20240917000848.720765-1-jmontleo@redhat.com/
+On Sat, 30 Aug 2025 17:05:00 +0530
+Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+
+> Implement runtime power management for the LTR390 sensor. The device
+> autosuspends after 1s of idle time, reducing current consumption from
+> 100 =C2=B5A in active mode to 1 =C2=B5A in standby mode as per the datash=
+eet.
 >=20
-> I'm a bit lost here. What are the main obstacles to re-enabling GCC builds
-> now?
+> Ensure that interrupts continue to be delivered with runtime PM.
+> Since the LTR390 cannot be used as a wakeup source during runtime
+> suspend, therefore increment the runtime PM refcount when enabling
+> events and decrement it when disabling events or powering down.
+> This prevents event loss while still allowing power savings when IRQs
+> are unused.
 >=20
-> Conor said:
-> > Okay. Short term then is deny gcc + rust, longer term is allow it with =
-the
-> same caveats as the aforementioned mixed stuff.
-> "the same caveats" means detecting what specifically?
+> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
 
-There's "code" in the riscv Kconfig/Makefile that makes sure that the
-assembler has the same understanding of what extensions are enabled as
-the compiler. This is done by detecting which version of the tools are
-in use, and adjusting march etc as a result. See
-TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI for an example. When I wrote the
-comment you're citing, there was no "off the shelf" way to figure out
-the version of libclang in use to ensure that it has the same
-understanding of -march as the version of gcc being used on the c side
-does. For clang build, it's not a concern since it's almost certainly
-the exact same as the compiler building the c side.
+Sorry it took me a while to reply to the last email on the v1 thread.
+Busy week.
 
-> We have a RISC-V PWM driver being written in Rust. Currently, GCC being
-> disabled for building the kernel with Rust for RISC-V is the primary bloc=
-ker
-> for including these drivers in RISC-V distros. Therefore, I'd like to push
-> forward and contribute to the re-enabling of GCC builds. Is there a more
-> detailed direction on what I can do here?
+I may have this all wrong though if the runtime pm disable you have
+here (bit (1) of MAIN Control) restricts which other registers we can
+access. Perhaps I'm missing where that is stated in the datasheet,
+or maybe it's an omission and you have seen it to be the case
+from experimentation?
 
-Add the version of libclang as a Kconfig symbol, so that the kernel's
-build system can ensure that both sides are built using the same
-configuration. Off the top of my head, using a pre-17 libclang with a
-new gcc would require having zicsr in -march for the c side and it
-removed for rust. It's been a while (1 year+) since I fiddled with this
-though, so my recollection there could well be inaccurate.
+If that isn't required a lot of the runtime pm calls in here go away.
 
-Cheers,
-Conor.
+Also, we should just read the config register to find out if the
+even is enabled not bother having a separate cache of that one bit.
 
---PLgD4sybnROtocgd
-Content-Type: application/pgp-signature; name="signature.asc"
+Jonathan
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLNASAAKCRB4tDGHoIJi
-0vXYAQDgtR0RaOgK/BuuCweWdpp1h5+8Uf3iwmbxuqXRT+YFsgEAu3diokJiUzBm
-ruXnlci8jwoUePp9tM9YndTyCztULQk=
-=UFnw
------END PGP SIGNATURE-----
+> ---
+>=20
+> Changes since v2:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Andy's feedback:
+> -> Check return value of pm_runtime_resume_and_get().
+> -> Do not check return value of pm_runtime_put_autosuspend(). =20
+>=20
+> 2. Set data->irq_enabled =3D true after checking return value of pm_runti=
+me_resume_and_get() only.
+>=20
+> Changes since v1:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 1. Andy's feedback:
+> -> Refactor iio_info callbacks.
+> -> Preserve the order of header file includes.
+> -> Avoid redundant usage of pm_runtime_mark_last_busy.
+> -> Dissolve the ltr390_set_power_state(data, [true|false]) function.
+> -> Avoid macro usage which is internal to header file.
+> -> Update changelog with reason of not using wakeup as a source =20
+> capability.
+>=20
+> 2. David's feedback:
+> -> Update Changelog with stats of power savings mentioned in datasheet.
+> -> Dissolve ltr390_set_power_state() function. =20
+>=20
+> 3. Jonathan's feedback:
+> -> Adopt the approach of increment refcount when event enable and =20
+> vice-versa.
 
---PLgD4sybnROtocgd--
+> +static int __ltr390_write_event_value(struct iio_dev *indio_dev,
+>  				const struct iio_chan_spec *chan,
+>  				enum iio_event_type type,
+>  				enum iio_event_direction dir,
+> @@ -571,22 +639,55 @@ static int ltr390_write_event_value(struct iio_dev =
+*indio_dev,
+>  	}
+>  }
+> =20
+> +static int ltr390_write_event_value(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				enum iio_event_info info,
+> +				int val, int val2)
+> +{
+> +	int ret;
+> +	struct ltr390_data *data =3D iio_priv(indio_dev);
+> +	struct device *dev =3D &data->client->dev;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret =3D __ltr390_write_event_value(indio_dev, chan, type, dir,
+> +					info, val, val2);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	return ret;
+> +}
+> +
+>  static int ltr390_read_event_config(struct iio_dev *indio_dev,
+>  				const struct iio_chan_spec *chan,
+>  				enum iio_event_type type,
+>  				enum iio_event_direction dir)
+>  {
+>  	struct ltr390_data *data =3D iio_priv(indio_dev);
+> +	struct device *dev =3D &data->client->dev;
+>  	int ret, status;
+> =20
+> +	ret =3D pm_runtime_resume_and_get(dev);
+I may be misreading the datasheet but I'd kind of expect to be
+able to read this register in the (slightly) powered down state.
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	ret =3D regmap_read(data->regmap, LTR390_INT_CFG, &status);
+> +
+> +	pm_runtime_put_autosuspend(dev);
+> +
+>  	if (ret < 0)
+>  		return ret;
+> -
+>  	return FIELD_GET(LTR390_LS_INT_EN, status);
+>  }
+> =20
+> -static int ltr390_write_event_config(struct iio_dev *indio_dev,
+> +static int __ltr390_write_event_config(struct iio_dev *indio_dev,
+>  				const struct iio_chan_spec *chan,
+>  				enum iio_event_type type,
+>  				enum iio_event_direction dir,
+> @@ -598,7 +699,6 @@ static int ltr390_write_event_config(struct iio_dev *=
+indio_dev,
+>  	if (!state)
+>  		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_E=
+N);
+> =20
+> -	guard(mutex)(&data->lock);
+>  	ret =3D regmap_set_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -623,18 +723,60 @@ static int ltr390_write_event_config(struct iio_dev=
+ *indio_dev,
+>  	}
+>  }
+> =20
+> +static int ltr390_write_event_config(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				bool state)
+> +{
+> +	int ret;
+> +	struct ltr390_data *data =3D iio_priv(indio_dev);
+> +	struct device *dev =3D &data->client->dev;
+> +
+> +	guard(mutex)(&data->lock);
+> +
+As per v1 (late) reply. I'd expect to find query the register to find
+out if what we are potentially setting here is already on or not and
+exit early if we aren't changing that state.
+
+Then we don't need the data->irq_enabled, we can just use runtime pm refere=
+nce
+counting to ensure the right things happen.
+
+> +	if (state && !data->irq_enabled) {
+> +		ret =3D pm_runtime_resume_and_get(dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+> +			return ret;
+> +		}
+> +		data->irq_enabled =3D true;
+> +	}
+> +
+> +	ret =3D __ltr390_write_event_config(indio_dev, chan, type, dir, state);
+> +
+> +	if (!state && data->irq_enabled) {
+> +		data->irq_enabled =3D false;
+> +		pm_runtime_put_autosuspend(dev);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
+>  						unsigned int reg, unsigned int writeval,
+>  						unsigned int *readval)
+>  {
+>  	struct ltr390_data *data =3D iio_priv(indio_dev);
+> +	struct device *dev =3D &data->client->dev;
+> +	int ret;
+> =20
+> -	guard(mutex)(&data->lock);
+> +	ret =3D pm_runtime_resume_and_get(dev);
+
+So this makes me wonder.  I'd been assuming our disable was only turning the
+sensor off, not register access?  Seeing as it's controlled by a register
+we can clearly access at least some.
+
+If that's the case why do we need to runtime resume for debug register
+read/write?  We shouldn't care if the sensors are reading or not. In fact
+if we do turn the power on we changed the state we are debugging which is
+probably not a good plan.
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+> +		return ret;
+> +	}
+> =20
+> +	guard(mutex)(&data->lock);
+>  	if (readval)
+> -		return regmap_read(data->regmap, reg, readval);
+> +		ret =3D regmap_read(data->regmap, reg, readval);
+> +	else
+> +		ret =3D regmap_write(data->regmap, reg, writeval);
+> =20
+> -	return regmap_write(data->regmap, reg, writeval);
+> +	pm_runtime_put_autosuspend(dev);
+> +
+> +	return ret;
+>  }
 
