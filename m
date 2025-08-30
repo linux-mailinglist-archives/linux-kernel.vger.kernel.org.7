@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-792596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B47B3C651
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:36:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5045B3C655
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 410D44E064B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D97D7B6C77
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D6354764;
-	Sat, 30 Aug 2025 00:36:15 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0911C4A10;
+	Sat, 30 Aug 2025 00:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSxG71Tt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725BA1388;
-	Sat, 30 Aug 2025 00:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8285C13C8E8;
+	Sat, 30 Aug 2025 00:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514174; cv=none; b=c0EjD/A32APWeXwK7yyiYgSoPdobKK3eLZ4JA5bz+X6HR3CR52qTyWXavZnP7UKTcIImI7dYvJoO/QIfn1jJyVn8LDhYSyIh3AxShJx10XZFmAB7yOSqBUneXM11itPrMzY4ork/+BxlzIn+Nja5bhPV4OCRFdODN3fcInaUTIg=
+	t=1756514258; cv=none; b=O8i9JPKqoBOeowrL2g18wfSVhXeNQ2u2nxPrT+IOmRtLZPgZ5rD6ZJOOhmBDt+yRTKhqmG4xepQmADn6XGMh2dTm3fqiYsw+qYSaSs0bnEXImf+AvDeSz8HHFkH9ZL6Z+iIsbLRQ9wu7S2yWJh90uwlKHKU0pWlzOBBUlxwAuuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514174; c=relaxed/simple;
-	bh=qsMti+LWhYucHDA3xzzk7LXoXUO9jYvItet2jyL2qNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZqY7bCD47aexzr4KwRVPptmzR6//nSZndagbsv2Ri+FA75izKgfnRiNixANZOt3pkuofTucKmJ748pSDcfArGHEoV845bE4wEq8muOwGp/L7DHJ3uemnNxftNWAbmpb4RGkCq4m3v0lFu5DD9ktmDGtc+nVh8hJW5RVemP2N/jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 6A1E21606F0;
-	Sat, 30 Aug 2025 00:36:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 0A5D56000B;
-	Sat, 30 Aug 2025 00:36:03 +0000 (UTC)
-Date: Fri, 29 Aug 2025 20:36:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829203627.3bbb9c24@gandalf.local.home>
-In-Reply-To: <20250829194246.744c760b@gandalf.local.home>
-References: <20250828180300.591225320@kernel.org>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-	<20250829141142.3ffc8111@gandalf.local.home>
-	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
-	<20250829171855.64f2cbfc@gandalf.local.home>
-	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-	<20250829190935.7e014820@gandalf.local.home>
-	<20250829194246.744c760b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756514258; c=relaxed/simple;
+	bh=HMCOQtzivHiTO3zCuyHVTmWCo/Ogwr//9Ur73b26dG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RV2+Cep5aL1nzRGZWUcNMRmElwwpuhPq1iZUAJxI21JcHcDxzL4qoc/kyJfkvBGpFhOZ8ClNAfnAp7ML6JuZI3z15iqgt4+KTc54jYEc+WcRAKTBRbmGIZqCzWtAE7Ng9g/Z0ufdTUyZVRVhA1OlxCoFBRQ93Nz4LAP27GGsFB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSxG71Tt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49349C4CEF0;
+	Sat, 30 Aug 2025 00:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756514258;
+	bh=HMCOQtzivHiTO3zCuyHVTmWCo/Ogwr//9Ur73b26dG4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BSxG71Tt2X926rt5kXac1VAcECWix/2D8gUhC4pS5CUSSsUzl+L5s+McIBGjpQfOa
+	 W4ESX9v7oYunpR1DPDGxBntRdBgu6vhSlswWkfnzNb0yyyx3Od70qAsSlsu9GYRKvN
+	 MAQ2kEdR9N8V1xiYVx2OZ/4ktThVjGSeBPeTyOvkkxeZNvIpIJF0AyXYlsGXqYDqbj
+	 dbZ2vEdklIZ+j1hjuH37kTwon4wTBrEt+JBiwOuTR+sAusnOOFjY3A/BhsSGFDQFQT
+	 vnseaMW1MpuVXOYh/OABeA/39iuV/owaoOT0Wi/WH1D0OG7FVlgLRjYXYqp5PwUG6A
+	 MOXNjNcTgbLlA==
+Message-ID: <7f3c9c65-2386-4198-ae38-5b9444319ec2@kernel.org>
+Date: Sat, 30 Aug 2025 09:37:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 01/10] block: factor out a helper
+ bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, neil@brown.name,
+ akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-2-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250828065733.556341-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: qeeg9p3gxtqwn1yhdotjp5fxoqtn4meg
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 0A5D56000B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+xcImp8TxVi+CCl2dnC6hREgbekVcnl3c=
-X-HE-Tag: 1756514163-476374
-X-HE-Meta: U2FsdGVkX19n43wdPBIbkHhrdzMH6DataEPRK47xCyyx1UXXit2BgIP9Tq1W3JoMSrSuGFn1io2mRJDoO18d47VGNrFj3omXyhXloMxMIfcc/q9/QiwewOeQ1aXjc4T2l9U/kIpfL7LFyxVHQBV1LWDeVdTZUGESVVd8rKbliev4HcwhwSDRdIo9oif2LQaZ8R49/uH+9G5EGc94vRPBKjMhy3yrZWExB32gT6jqcNqKoHVVz4TKFrnBAGtqUWDF8VlQpQCGVbVJfru2N3s5ii+gLV2v8oxdl+oHdJylWEaBxrU/JriyRwUswYUpGqWLnKV9nb1mjSkCv0DBBW/M42f3Jevw78+w84AfHcdCCoaqLMnkvETo/0F1MgzcHhJAtAwkhQvGo5HC823tnUsnMfjuXSxF5ACI
 
-On Fri, 29 Aug 2025 19:42:46 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
->    vma = NULL;
->    hash = 0;
->    foreach addr in callchain
->      if (!vma || addr not in range of vma) {
->        vma = vma_lookup(addr);
->        hash = get_hash(vma);
->      }
->      callchain[i] = addr - offset;
->      hash[i] = hash;
+On 8/28/25 15:57, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
+> No functional changes are intended, some drivers like mdraid will split
+> bio by internal processing, prepare to unify bio split codes.
 > 
-> I had that get_hash(vma) have something like:
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+
+Looks good to me. A few nits below.
+
+> ---
+>  block/blk-merge.c      | 63 ++++++++++++++++++++++++++++--------------
+>  include/linux/blkdev.h |  2 ++
+>  2 files changed, 44 insertions(+), 21 deletions(-)
 > 
-> 
->   u32 get_hash(vma) {
->      unsigned long ptr = (unsigned long)vma->vm_file;
->      u32 hash;
-> 
->      /* Remove alignment */
->      ptr >>= 3;
->      hash = siphash_1u32((u32)ptr, &key);
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 70d704615be5..3d6dc9cc4f61 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -104,34 +104,55 @@ static unsigned int bio_allowed_max_sectors(const struct queue_limits *lim)
+>  	return round_down(UINT_MAX, lim->logical_block_size) >> SECTOR_SHIFT;
+>  }
+>  
+> +/**
+> + * bio_submit_split_bioset - Submit a bio, splitting it at a designated sector
+> + * @bio:		the original bio to be submitted and split
+> + * @split_sectors:	the sector count at which to split
+> + * @bs:			the bio set used for allocating the new split bio
+> + *
+> + * The original bio is modified to contain the remaining sectors and submitted.
+> + * The caller is responsible for submitting the returned bio.
+> + *
+> + * If succeed, the newly allocated bio representing the initial part will be
+> + * returned, on failure NULL will be returned and original bio will fail.
+> + */
+> +struct bio *bio_submit_split_bioset(struct bio *bio, int split_sectors,
+> +				    struct bio_set *bs)
 
-Oh, this hash isn't that great, as it did appear to have collisions. But I
-saw in vsprintf() it has something like:
+While at it, it would be nice to have split_sectors be unsigned. That would
+avoid the check in bio_submit_split().
 
-#ifdef CONFIG_64BIT
-	return (u32)(unsigned long)siphash_1u64((u64)ptr, &key);
-#else
-	return (u32)siphash_1u32((u32)ptr, &key);
-#endif
+> +{
+> +	struct bio *split = bio_split(bio, split_sectors, GFP_NOIO, bs);
+> +
+> +	if (IS_ERR(split)) {
+> +		bio->bi_status = errno_to_blk_status(PTR_ERR(split));
+> +		bio_endio(bio);
+> +		return NULL;
+> +	}
+> +
+> +	blkcg_bio_issue_init(split);
+> +	bio_chain(split, bio);
+> +	trace_block_split(split, bio->bi_iter.bi_sector);
+> +	WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> +	submit_bio_noacct(bio);
+> +
+> +	return split;
+> +}
+> +EXPORT_SYMBOL_GPL(bio_submit_split_bioset);
+> +
+>  static struct bio *bio_submit_split(struct bio *bio, int split_sectors)
+>  {
+> -	if (unlikely(split_sectors < 0))
+> -		goto error;
+> +	if (unlikely(split_sectors < 0)) {
+> +		bio->bi_status = errno_to_blk_status(split_sectors);
+> +		bio_endio(bio);
+> +		return NULL;
+> +	}
 
-Which for the 64 bit version, it uses all the bits to calculate the hash,
-and the resulting bottom 32 is rather a good spread.
+See above.
 
-> 
->      if (lookup_hash(hash))
->         return hash; // already saved
-> 
->      // The above is the most common case and is quick.
->      // Especially compared to vma_lookup() and the hash algorithm
-> 
->      /* Slow but only happens when a new vma is discovered */
->      trigger_event_that_maps_hash_to_file_data(hash, vma);
-> 
->      /* Doesn't happen again for this hash value */
->      save_hash(hash);
+>  
+>  	if (split_sectors) {
+> -		struct bio *split;
+> -
+> -		split = bio_split(bio, split_sectors, GFP_NOIO,
+> -				&bio->bi_bdev->bd_disk->bio_split);
+> -		if (IS_ERR(split)) {
+> -			split_sectors = PTR_ERR(split);
+> -			goto error;
+> -		}
+> -		split->bi_opf |= REQ_NOMERGE;
+> -		blkcg_bio_issue_init(split);
+> -		bio_chain(split, bio);
+> -		trace_block_split(split, bio->bi_iter.bi_sector);
+> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> -		submit_bio_noacct(bio);
+> -		return split;
+> +		bio = bio_submit_split_bioset(bio, split_sectors,
+> +					 &bio->bi_bdev->bd_disk->bio_split);
+> +		if (bio)
+> +			bio->bi_opf |= REQ_NOMERGE;
 
-So this basically creates the output of:
+I think that setting REQ_NOMERGE should be done in bio_submit_split_bioset().
 
-       trace-cmd-1034    [003] .....   142.197674: <user stack unwind>
-cookie=300000004
- =>  <000000000008f687> : 0x666220af
- =>  <0000000000014560> : 0x88512fee
- =>  <000000000001f94a> : 0x88512fee
- =>  <000000000001fc9e> : 0x88512fee
- =>  <000000000001fcfa> : 0x88512fee
- =>  <000000000000ebae> : 0x88512fee
- =>  <0000000000029ca8> : 0x666220af
-       trace-cmd-1034    [003] ...1.   142.198063: file_cache: hash=0x666220af path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
-       trace-cmd-1034    [003] ...1.   142.198093: file_cache: hash=0x88512fee path=/usr/local/bin/trace-cmd build_id={0x3f399e26,0xf9eb2d4d,0x475fa369,0xf5bb7eeb,0x6244ae85}
+>  	}
+>  
+>  	return bio;
+> -error:
+> -	bio->bi_status = errno_to_blk_status(split_sectors);
+> -	bio_endio(bio);
+> -	return NULL;
+>  }
+>  
+>  struct bio *bio_split_discard(struct bio *bio, const struct queue_limits *lim,
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index fe1797bbec42..be4b3adf3989 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -999,6 +999,8 @@ extern int blk_register_queue(struct gendisk *disk);
+>  extern void blk_unregister_queue(struct gendisk *disk);
+>  void submit_bio_noacct(struct bio *bio);
+>  struct bio *bio_split_to_limits(struct bio *bio);
+> +struct bio *bio_submit_split_bioset(struct bio *bio, int split_sectors,
+> +				    struct bio_set *bs);
+>  
+>  extern int blk_lld_busy(struct request_queue *q);
+>  extern int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags);
 
 
-Where the first instances of the vma with the values of 0x666220af and
-0x88512fee get printed, but from then on, they are not. That is, from then
-on, the lookup will return true, and no processing will take place.
-
-And periodically, I could clear the hash cache, so that all vmas get
-printed again. But this would be rate limited to not cause performance
-issues.
-
-
--- Steve
+-- 
+Damien Le Moal
+Western Digital Research
 
