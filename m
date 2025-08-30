@@ -1,259 +1,115 @@
-Return-Path: <linux-kernel+bounces-792821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D534B3C964
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:48:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0188AB3C976
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 641797B6B50
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E0597B9211
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A8248F73;
-	Sat, 30 Aug 2025 08:48:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A192B253939;
+	Sat, 30 Aug 2025 08:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="GuMcrSCS"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A49246327;
-	Sat, 30 Aug 2025 08:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39415BAF0;
+	Sat, 30 Aug 2025 08:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756543694; cv=none; b=IznvN6S+ZbPoMsoMxRG2jgCdpjhOsgYbqExDMDa8wDxEy9fOfAHKte9666VJbYv2nAYev65xuLzQJKbnLwybrpbpZ00WttyiRG8drOyINvRiQcA6NwWIoVFSTnG79FHWNCJbkOouQsOtfhZ+xymj2L/JASKOIYiYX31kzLdWi/o=
+	t=1756543922; cv=none; b=HM6Orj4ke3D60a+EbFudE0smErQr7lrxuB/yRJH0l7Ia6eduuHoqvB3TAqyDYWqj+MzL9iYxw1eqcCEcjyHZCaT3aMsl5H6cm5vc2ZZUN7VjjVxAoSJ2DE9YIAYw8NIsKhxzjToxJOKkAJaQtYi4o1MeT+GsDy4G7HP6/O7spRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756543694; c=relaxed/simple;
-	bh=0cWTLS5d6LtcizWqsitHpkz/3p6TUk5geNcCbh2s/XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=trTPHHATCGqiAkxoXPWo3BGnZ8Ei7lfx/RvdGF/G6dq2wz438aSKvVwvVWN8GeRSV/U4cFEIPbpiE28ncV0nshx1GMcJR1A4UveM7cYmp9hUEctjg5ErqqxhIDBEswl9aH5jQQRI5rkrFl1QPfFAVjavUB5nep8JN+iCD7lcSOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cDTLL50GvzYQtpd;
-	Sat, 30 Aug 2025 16:48:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 374671A0E99;
-	Sat, 30 Aug 2025 16:48:09 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY7HurJoltApAw--.6908S3;
-	Sat, 30 Aug 2025 16:48:09 +0800 (CST)
-Message-ID: <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
-Date: Sat, 30 Aug 2025 16:48:07 +0800
+	s=arc-20240116; t=1756543922; c=relaxed/simple;
+	bh=LdU1RMECgRUSivnWM7MCoW1DKEMHMJgOPQkH0K6OPpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PROcAue8buIucJ+NZsUK6REyOHTWyQB6IyjFc2s9pr0LrNaDA9cTuTzeZUMdaxmF5gM+p56l5szK3cfKfliIKlOqJK5YS1VayVBSvu2ULgBnO81TTAibF95FYpmQ6qvjcrQm6PFXanlnzqbsWwNTTKY8dwZqfcUosaJInEHfEnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=GuMcrSCS; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=XvJAs0oWctTv+IZjXYqOb/DT/digU3gWo9ZFZvSPVF4=; b=GuMcrSCSc2h6K85gbh7d/Dq9GZ
+	qdyNHDeRuMDOrQKt7Bo9CsxZu4fhi8uxonjr50DYybHV+WdJ7DHOoy71QzTrH5fU3B4gS3MrLLeJZ
+	1yb0tB9r6ZBYeK/9cTotchZKYSs9UNaevFwWoiFaYrA1kDvZB73V07IEjWM7icXmel06ejOyu5tRM
+	WEVmUV2x3M+JWaNqJjuInd5prsC/KbA4Dm0FGrf3ZmC4vszTKkk+/5RVJ8rZbwzjF/v6sclO9TSJ8
+	zA89ssT/UNPKwDgfBFykggaqbG5N2LfCnIeOoYXu2AZxIIqU3jrjVfeakPWp8OpxRJWoq6dq/+xUB
+	J8hgQp0Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1usH32-0017AV-0k;
+	Sat, 30 Aug 2025 16:50:53 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 30 Aug 2025 16:50:52 +0800
+Date: Sat, 30 Aug 2025 16:50:52 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Alexander Potapenko <glider@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
+	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
+	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
+	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Marco Elver <elver@google.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v1 32/36] crypto: remove nth_page() usage within SG entry
+Message-ID: <aLK7bP285OO83efR@gondor.apana.org.au>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-33-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
- io failure
-To: Kenta Akagi <k@mgml.me>, Li Nan <linan666@huaweicloud.com>,
- Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
- Mariusz Tkaczyk <mtkaczyk@kernel.org>, Guoqing Jiang <jgq516@gmail.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250828163216.4225-1-k@mgml.me>
- <20250828163216.4225-2-k@mgml.me>
- <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
- <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY7HurJoltApAw--.6908S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jr18Wr4fXw4xZFWkWr1rZwb_yoW3XF47pF
-	4kJFWDJry5Zr1kJw1UJryUXFyUtr1UG3WUJr18Ja4xJw45XryjgF1UWryjgr1DJw48Aw1U
-	Jr15JwsrZF1UJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
-	xwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUY3kuUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827220141.262669-33-david@redhat.com>
 
+On Thu, Aug 28, 2025 at 12:01:36AM +0200, David Hildenbrand wrote:
+> It's no longer required to use nth_page() when iterating pages within a
+> single SG entry, so let's drop the nth_page() usage.
+> 
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  crypto/ahash.c               | 4 ++--
+>  crypto/scompress.c           | 8 ++++----
+>  include/crypto/scatterwalk.h | 4 ++--
+>  3 files changed, 8 insertions(+), 8 deletions(-)
 
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-在 2025/8/29 20:21, Kenta Akagi 写道:
-> 
-> 
-> On 2025/08/29 11:54, Li Nan wrote:
->>
->> 在 2025/8/29 0:32, Kenta Akagi 写道:
->>> This commit ensures that an MD_FAILFAST IO failure does not put
->>> the array into a broken state.
->>>
->>> When failfast is enabled on rdev in RAID1 or RAID10,
->>> the array may be flagged MD_BROKEN in the following cases.
->>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
->>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
->>
->> [...]
->>
->>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->>> index 408c26398321..8a61fd93b3ff 100644
->>> --- a/drivers/md/raid1.c
->>> +++ b/drivers/md/raid1.c
->>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->>>                (bio->bi_opf & MD_FAILFAST) &&
->>>                /* We never try FailFast to WriteMostly devices */
->>>                !test_bit(WriteMostly, &rdev->flags)) {
->>> +            set_bit(FailfastIOFailure, &rdev->flags);
->>>                md_error(r1_bio->mddev, rdev);
->>>            }
->>>    @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>>     *    - recovery is interrupted.
->>>     *    - &mddev->degraded is bumped.
->>>     *
->>> - * @rdev is marked as &Faulty excluding case when array is failed and
->>> - * &mddev->fail_last_dev is off.
->>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
->>> + * then @mddev and @rdev will not be marked as failed.
->>> + *
->>> + * @rdev is marked as &Faulty excluding any cases:
->>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>>     */
->>>    static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>    {
->>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>          if (test_bit(In_sync, &rdev->flags) &&
->>>            (conf->raid_disks - mddev->degraded) == 1) {
->>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
->>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
->>> +                "last device but ignoring it\n",
->>> +                mdname(mddev), rdev->bdev);
->>> +            return;
->>> +        }
->>>            set_bit(MD_BROKEN, &mddev->flags);
->>>              if (!mddev->fail_last_dev) {
->>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
->>>        if (test_bit(FailFast, &rdev->flags)) {
->>>            /* Don't try recovering from here - just fail it
->>>             * ... unless it is the last working device of course */
->>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>            md_error(mddev, rdev);
->>>            if (test_bit(Faulty, &rdev->flags))
->>>                /* Don't try to read from here, but make sure
->>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->>>            fix_read_error(conf, r1_bio);
->>>            unfreeze_array(conf);
->>>        } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
->>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>            md_error(mddev, rdev);
->>>        } else {
->>>            r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->>> index b60c30bfb6c7..530ad6503189 100644
->>> --- a/drivers/md/raid10.c
->>> +++ b/drivers/md/raid10.c
->>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
->>>                dec_rdev = 0;
->>>                if (test_bit(FailFast, &rdev->flags) &&
->>>                    (bio->bi_opf & MD_FAILFAST)) {
->>> +                set_bit(FailfastIOFailure, &rdev->flags);
->>>                    md_error(rdev->mddev, rdev);
->>>                }
->>>    
->>
->> Thank you for the patch. There may be an issue with 'test_and_clear'.
->>
->> If two write IO go to the same rdev, MD_BROKEN may be set as below:
-> 
->> IO1                    IO2
->> set FailfastIOFailure
->>                      set FailfastIOFailure
->>   md_error
->>    raid1_error
->>     test_and_clear FailfastIOFailur
->>                         md_error
->>                        raid1_error
->>                         //FailfastIOFailur is cleared
->>                         set MD_BROKEN
->>
->> Maybe we should check whether FailfastIOFailure is already set before
->> setting it. It also needs to be considered in metadata writes.
-> Thank you for reviewing.
-> 
-> I agree, this seems to be as you described.
-> So, should it be implemented as follows?
-> 
-> bool old=false;
-> do{
->   spin_lock_irqsave(&conf->device_lock, flags);
->   old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
->   spin_unlock_irqrestore(&conf->device_lock, flags);
-> }while(old);
-> 
-> However, since I am concerned about potential deadlocks,
-> so I am considering two alternative approaches:
-> 
-> * Add an atomic_t counter to md_rdev to track failfast IO failures.
-> 
-> This may set MD_BROKEN at a slightly incorrect timing, but mixing
-> error handling of Failfast and non-Failfast IOs appears to be rare.
-> In any case, the final outcome would be the same, i.e. the array
-> ends up with MD_BROKEN. Therefore, I think this should not cause
-> issues. I think the same applies to test_and_set_bit.
-> 
-> IO1                    IO2                    IO3
-> FailfastIOFailure      Normal IOFailure       FailfastIOFailure
-> atomic_inc
->                                                
->   md_error                                     atomic_inc
->    raid1_error
->     atomic_dec //2to1
->                         md_error
->                          raid1_error           md_error
->                           atomic_dec //1to0     raid1_error
->                                                  atomic_dec //0
->                                                    set MD_BROKEN
-> 
-> * Alternatively, create a separate error handler,
->    e.g. md_error_failfast(), that clearly does not fail the array.
-> 
-> This approach would require somewhat larger changes and may not
-> be very elegant, but it seems to be a reliable way to ensure
-> MD_BROKEN is never set at the wrong timing.
-> 
-> Which of these three approaches would you consider preferable?
-> I would appreciate your feedback.
-> 
-> 
-> For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
-> when the array is degraded.
-> 
-> Thanks,
-> Akagi
-> 
-
-I took a closer look at the FailFast code and found a few issues, using
-RAID1 as an example:
-
-For normal read/write IO, FailFast is only triggered when there is another
-disk is available, as seen in read_balance() and raid1_write_request().
-In raid1_error(), MD_BROKEN is set only when no other disks are available.
-
-So, the FailFast for normal read/write is not triggered in the scenario you
-described in cover-letter.
-
-Normal writes may call md_error() in narrow_write_error. Normal reads do
-not execute md_error() on the last disk.
-
-Perhaps you should get more information to confirm how MD_BROKEN is set in
-normal read/write IO.
-
--- 
 Thanks,
-Nan
-
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
