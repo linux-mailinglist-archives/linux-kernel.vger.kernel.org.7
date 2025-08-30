@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-792633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBAAB3C6E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:11:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523A7B3C6EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8337B1DDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5770A24934
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470D022FE0D;
-	Sat, 30 Aug 2025 01:11:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8043E22FDEC;
+	Sat, 30 Aug 2025 01:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ih+3OATp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5119C54E;
-	Sat, 30 Aug 2025 01:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC4A79CD
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 01:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756516287; cv=none; b=kRy1B6Gv+v6B1d7Q14cnGLt/jSuBpd3gFyhprrv+uEPenDtNmzL13Pfwfp+9Y9btwW6rS/dVMHAfwNa/vboQSApg9CtVZgNWrK820LGTpiTsoii2mcnHoFLadheAKSIXHxI/IwSF5E+x0H0MGzgse4keJ0Uj/A1XvbjGbNhJojk=
+	t=1756516320; cv=none; b=JueX9W8dRSY9J6rKAVQc2A45vGrih1bO6GTMtiaD/ii5OXNfEm4EOWF67qndpFkz7i2ggaeDDua/JVkT/jrrFoSVesfEhVJZkweiPXYyPSVhB/u8R4neEz+EiEBoQcea4SjHZ5V8SVMH0j7u34m3nZycxrX261e2Wnre8GRvX5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756516287; c=relaxed/simple;
-	bh=vFjj3L6wA+nXkGTYuPC4TRsAiyRJ5Ctl9GIHKUeV4HE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gqb5GdEw7gj/CxBKZv2filONNd37YlRJNlQE2KPNYOImLyBvgXInQ+9CNe6je8AR/eZo0jEzJsUQL5xGDN+0W1kkWONZgARS7Eyj6Sl+NyjJapodLI9e8H9RxRRCnOq6Ei7Oo65NQ+H9SSwglrwk/WhJQ7WyTE1JOAYKtqAOkcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cDHCG0WchzKHMw4;
-	Sat, 30 Aug 2025 09:11:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C92671A0CE6;
-	Sat, 30 Aug 2025 09:11:21 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYo64T7JoMSoGAw--.64461S2;
-	Sat, 30 Aug 2025 09:11:21 +0800 (CST)
-Message-ID: <4e662ffa-acc6-448c-bfc7-7b3d16b40341@huaweicloud.com>
-Date: Sat, 30 Aug 2025 09:11:20 +0800
+	s=arc-20240116; t=1756516320; c=relaxed/simple;
+	bh=tycl4yGmvMLiJ12nt0D6Iv196uuT9CH0W3/80EDmza8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ofl1b+K3vXiqHBQn7lFtuQHQHDMMQDA4n/4TW/X5Xvb3oHDJdlh/+/VLMPssi7wI6TsmTnYosKiE0znqntCodDkPZzCulhmCsq3Y2H97AlyZkisWugSAvNajpkAHUKKWFXS0EnCcTvadCwpDqFHxXi2h0hA4c1uRY1ny9OOnVsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ih+3OATp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85877C4CEF0;
+	Sat, 30 Aug 2025 01:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756516320;
+	bh=tycl4yGmvMLiJ12nt0D6Iv196uuT9CH0W3/80EDmza8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ih+3OATp7z1kjkOLPNQ8RA8UjGhW3fAwlMok0LsgbTACMo0pqG/ila36CZYnoVj/y
+	 cu2Mmr2IG1ej0s0TLZ8qRwMAGkeKUSVRmNiqSgQEZoy+BIEsPlWqDYBlxiDN9e97Fz
+	 E/cFvtq4nVGWQ57InuVkjlKEkGV5QB0hHS4NSSQDjlOCBGFBoWtS69X+YNN9KjuoS9
+	 tvdDP0SfRzn2e2JUM9Ngz0TS5iQV70GDZ1dlzOnoEcvPYPGKGzxux660ab29TaBDcO
+	 Zch4H2VoAzDy7b2lxKfKR4WYM73DlEcU8ZI+BbYyE0APmu8eOEufGoKW8oVmTOl1fV
+	 3UH6KKn+TdofQ==
+Message-ID: <d0357cd2-5435-4d99-af31-cc56fc05ce9a@kernel.org>
+Date: Sat, 30 Aug 2025 09:11:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,118 +49,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 01/11] cpuset: move the root cpuset write check
- earlier
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250828125631.1978176-1-chenridong@huaweicloud.com>
- <20250828125631.1978176-2-chenridong@huaweicloud.com>
- <e02b9c35-c51e-45c0-a2ca-3d1f0492af23@redhat.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: allocate HOT_DATA for IPU writes
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250827215222.1615844-1-jaegeuk@kernel.org>
+ <bfbd5db4-c103-4a08-8568-1d27c8eba676@kernel.org>
+ <aLB0XeQh_tm2tXIA@google.com>
+ <c7a0afdc-3f33-4de7-b36d-b0d5f55216e2@kernel.org>
+ <aLIR7BaaAizkdzgl@google.com>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <e02b9c35-c51e-45c0-a2ca-3d1f0492af23@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYo64T7JoMSoGAw--.64461S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr48AF1xAF1DGw4xKFyxAFb_yoW5Cw4xpF
-	ykC345KrW5WF18Cw1DJ3yUX345tw18t3WDJr1Yqa4rAF42yF1jvF1UX3s0gFyUCr4rGr1U
-	JFsIgrW2vF9rArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aLIR7BaaAizkdzgl@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/8/30 3:21, Waiman Long wrote:
-> On 8/28/25 8:56 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
+On 8/30/2025 4:47 AM, Jaegeuk Kim wrote:
+> On 08/29, Chao Yu wrote:
+>> On 8/28/2025 11:23 PM, Jaegeuk Kim wrote:
+>>> On 08/28, Chao Yu wrote:
+>>>> On 8/28/25 05:52, Jaegeuk Kim via Linux-f2fs-devel wrote:
+>>>>> Let's split IPU writes in hot data area to improve the GC efficiency.
+>>>>
+>>>> I didn't get it, IPU may be not friendly for migrating data along w/ write in
+>>>> hot area?
+>>>
+>>> This deals with IPU in the LFS mode.
 >>
->> The 'cpus' or 'mems' lists of the top_cpuset cannot be modified.
->> This check can be moved before acquiring any locks as a common code
->> block to improve efficiency and maintainability.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 22 +++++++++-------------
->>   1 file changed, 9 insertions(+), 13 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index a78ccd11ce9b..7e6a40e361ea 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -337,6 +337,11 @@ static inline bool cpuset_v2(void)
->>           cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
->>   }
->>   +static inline bool cpuset_is_root(struct cpuset *cs)
->> +{
->> +    return (cs == &top_cpuset);
->> +}
->> +
->>   /*
->>    * Cgroup v2 behavior is used on the "cpus" and "mems" control files when
->>    * on default hierarchy or when the cpuset_v2_mode flag is set by mounting
->> @@ -2334,10 +2339,6 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->>       bool force = false;
->>       int old_prs = cs->partition_root_state;
->>   -    /* top_cpuset.cpus_allowed tracks cpu_active_mask; it's read-only */
->> -    if (cs == &top_cpuset)
->> -        return -EACCES;
->> -
->>       /*
->>        * An empty cpus_allowed is ok only if the cpuset has no tasks.
->>        * Since cpulist_parse() fails on an empty mask, we special case
->> @@ -2783,15 +2784,6 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
->>   {
->>       int retval;
->>   -    /*
->> -     * top_cpuset.mems_allowed tracks node_stats[N_MEMORY];
->> -     * it's read-only
->> -     */
->> -    if (cs == &top_cpuset) {
->> -        retval = -EACCES;
->> -        goto done;
->> -    }
->> -
->>       /*
->>        * An empty mems_allowed is ok iff there are no tasks in the cpuset.
->>        * Since nodelist_parse() fails on an empty mask, we special case
->> @@ -3257,6 +3249,10 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
->>       struct cpuset *trialcs;
->>       int retval = -ENODEV;
->>   +    /* root is read-only */
->> +    if (cpuset_is_root(cs))
->> +        return -EACCES;
->> +
->>       buf = strstrip(buf);
->>       cpuset_full_lock();
->>       if (!is_cpuset_online(cs))
+>> Okay, so, we missed to add f2fs_lfs_mode() condition, right?
 > 
-> The (cs == &top_cpuset) check is pretty straight forward. So if the cpuset_is_root() helper is only
-> used once, I don't think we need a new helper here.
+> Why do we need that?
+
+As you mentioned above, this deals w/ IPU in the LFS mode. Am I missing
+something?
+
+Thanks,
+
 > 
-> Cheers,
-> Longman
-
-Thanks you Longman,
-
-There are several places where cs == &top_cpuset could be replaced with the helper function
-cpuset_is_root. However, since this series focuses on refactoring the CPU settings, I did not make
-those replacements. Would it be acceptable to submit a separate patch that introduces this helper?
-
--- 
-Best regards,
-Ridong
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>    fs/f2fs/segment.c | 3 ++-
+>>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index e0f6589c6a1c..bb79dad55ac9 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -3688,7 +3688,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+>>>>>    		if (file_is_hot(inode) ||
+>>>>>    				is_inode_flag_set(inode, FI_HOT_DATA) ||
+>>>>> -				f2fs_is_cow_file(inode))
+>>>>> +				f2fs_is_cow_file(inode) ||
+>>>>> +				is_inode_flag_set(inode, FI_NEED_IPU))
+>>>>>    			return CURSEG_HOT_DATA;
+>>>>>    		return f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
+>>>>>    						inode->i_write_hint);
 
 
