@@ -1,221 +1,198 @@
-Return-Path: <linux-kernel+bounces-792940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11EBB3CAB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41907B3CAB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BB767BAD20
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:00:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B507A9214
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD69274FC2;
-	Sat, 30 Aug 2025 12:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF699279DDD;
+	Sat, 30 Aug 2025 12:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X80tUGE8"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XpQZjXeM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CBD36124;
-	Sat, 30 Aug 2025 12:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB79326461F;
+	Sat, 30 Aug 2025 12:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756555301; cv=none; b=hWGIiMgVesjxrVrAzYhrbZPART7fKGuBsUuELZnnY14L6JxYTvYSlt90wtP35XbiUN14GPUn5JU8DffBAtwgW6MpBAZYgrkz/xoGxem2qvZ2GPdqbucvVVSFskQcOEy4xXqkCmXcmRCwkWiS6vlJPDzbjBKjWJKPnjYLQjlq3dI=
+	t=1756555762; cv=none; b=hQbu0/QadR8u7Yw0w0eOSH/eYD7LuhjeaVHIacg037xa/fE8yNZVT3afVLzEj+SkhTP2preL/3XVeF8eEjx8DxgxPTl8HpYvCwdlu1nC781Jtm629YyHajmbbXRhRobO8yg0kb0QbYSpBhLkxU7WCmqNJ7pq5ifPk4AFQGxavds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756555301; c=relaxed/simple;
-	bh=gb9UkeNto1/BNEHgq6njWuFQrrt4ne0giWpt9+P91Lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hVt2xyuWPUI0wWeHXTlbIGUwVh13MCdB42n9cNXgvbmF7Z0xgtxUjpqTojAf3HiXZT4r+TS0u6wKreXIpFvRjgJT/Has+M1fgVzWyA0HwTxYipmhPxOkvl59SaICqF5zEJVHDb7cytp4TQe2zFBTI8q6Iyxk3Q4Gdg+X458vb1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X80tUGE8; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so410367966b.3;
-        Sat, 30 Aug 2025 05:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756555298; x=1757160098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNM9jmJJXyJUITGuqHjYXb/UUEkokqSq0ogj6yONehM=;
-        b=X80tUGE8ml1WOU4u1LMJlvAzw3W+7nQZj/2pJEbguIYMTPb9u6HvYbEhRu0b68458Z
-         U9T5l0ul5fbJ5kZEtdpVRXJWXAJqxeSYz2TfEQiQdTlXGAg04J8BdQsr9MpUMYCONygw
-         Ht0xNa63MbivFwaKySV2MSxRXXZyMjglQr0arLnLTcpJ425kmomsernNrwLLmEI9M040
-         oiNmig6y/n/Mzg1NagurShdDCxaOmlqrXrYgLmjIMzlf5pQrTLA0EfoRQMnM0FZVeSep
-         Odx2z6CvkxDtzUE3K+2tvDYh/hqbv3YOp8jKI6zzYT8dg8XvUufEKyIjqrfS9xQ2mKG0
-         S/TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756555298; x=1757160098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qNM9jmJJXyJUITGuqHjYXb/UUEkokqSq0ogj6yONehM=;
-        b=UVDn6oSLuEau6/BuRNnyhepRIbYSI6LqmH0zvs8o1cH2ldtTWVZ6TsBlzLnt6Pg56a
-         I8Y0n9SZ4t8gZJnr+keGy0juiTBp599EkA8FpNys9pPT7Nj5dYPjTUFaYOGkdaa2kfoP
-         Z7s0fdFEHX4ullUAfUelvycBlw4wadHZ/02T8OM+ZUVX7HbuRTcr1+NQZlzmyyJUUcAt
-         Exg6rtMvRjTRvMpVsQzcl4u3gqA6IeNJVzB6dWjFoOsZtSeLhUMywZxLLD9tu6f039tE
-         wARkQtGD/SGWrLsMpuZvH9P5icEqrvOSdVrRMSepb/uKkYAJ2mo0vsgUXK8A5j0a5Bnn
-         mPDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRVD244kXLjmrRAMUw5MlKGPfFGuCnt7TUMjXv37f8qn2nCs/LdN/ot0jpVrZ74nI8r0dXfOPwC4lnh90=@vger.kernel.org, AJvYcCWyXtu4Mqs9PdGFPFFJbzs9PcHB39zoaLqTL+82USZL7+qlU0/lu08qf9l+nCoQbqFkgzlsRytI8n8risQ3@vger.kernel.org, AJvYcCXurWlLQuhHorPHLMyVHulEU1rt2mtT5RXidObWravVQNGd56Yyg7l/0Z7XUu7Q8XvVIifV8WSISWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTRzxg7iBcLxaP1xViddTQWoHfpyA8iw9UBkQV/DZCBvYxGLBZ
-	AqpzG10xYBxzLpV/eWQyESPc0MWK94rDb+KVY6TxpMhapUqJtTB4Q+DbNmYqgAQPylg=
-X-Gm-Gg: ASbGncuJXhMs1BXk3wnXjUlC/HaxzDRNc3XkrZGNCmjSPZhMYuEKWjX8/IoXxdr7e8L
-	fgYy+U5MFt4Qv6VAgXJitWWRhvNUizClr14ag+Q09FaF+7ANxVrSXiLyI8oYnoSZhVVF4IqqRNp
-	RaT/DZ9v6qX/cn8xsHOOg1IZr2UUrVVRsHTasIcCUvAKN8ALMIRwWL9FA92tZK/n/numHNzKkQn
-	fYlzVwj80WB2dwVawIOJgf+YIlMCATilG9o+UyBHblXlVxUArl+wM+cak9cCBaZRsADE1EwJO1Q
-	OfFJn7wanfN4Jo7rMlCt/O1bax0TVyAbB8AQ3MIQzYp0V7lTq7/zif+hPIuYIg0sd+AU3bemp21
-	W8TREToh23Be1RjEGlbEu4pT9kYgefmkrqliiFnnuYvA=
-X-Google-Smtp-Source: AGHT+IEjUNCKwMFmcTC1mCtp+g1NvGYMh8RhRZKd2zGNdC2UZrlX+wiBj0p0U84WvOuYu+ql8obEqw==
-X-Received: by 2002:a17:907:1c85:b0:afe:bd37:5d5f with SMTP id a640c23a62f3a-b01d8a26e70mr146645466b.7.1756555297729;
-        Sat, 30 Aug 2025 05:01:37 -0700 (PDT)
-Received: from puma.museclub.art ([2a00:6020:b3ea:9c00:26e7:b56a:5a2d:1d72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff0d9b1b53sm299445966b.96.2025.08.30.05.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 05:01:37 -0700 (PDT)
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: Michael Tandy <git@mjt.me.uk>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] (asus-ec-sensors) add Pro WS WRX90E-SAGE SE
-Date: Sat, 30 Aug 2025 14:00:59 +0200
-Message-ID: <20250830120121.738223-1-eugene.shalygin@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756555762; c=relaxed/simple;
+	bh=1+xq6OH5070SzEoSMljxDD2Dtf3DYllZFYJcUxswmQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pM6+skPsRf0+P7N3r+lPYB8SV/rwDUH3PJ20BjUlvHP9FoRUcun2koN2mSuPR8C7nVstCyf8rUiexroCrD8cMjUGeZRPjeIdsIDEU+xbaqgie43MImBZ/rAk5cYnijMk/sRvQxQAsirwhXoWy0Y+6XnVQkoGTFwgR2QsPM3vgjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XpQZjXeM; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756555759; x=1788091759;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1+xq6OH5070SzEoSMljxDD2Dtf3DYllZFYJcUxswmQo=;
+  b=XpQZjXeMlGd/eRixVem5MjRl1MwW1mArgTCc9LxvcWrfEDtIpfT5Fe88
+   ySgHHYEA/Kwi/FSEcRuh3fXeVfD8FVgLA5pa1aMNV3YA5TTg9Fk4V9zcx
+   4h0jTeqIpiHGFn9lcyULMMAcLSjCj/adXvEYMjHiRk7SRkQ++3GEBnFHQ
+   cugRKpN78rmEEeyMluJnnbWrZbwlkNfLL3nl5vy+gvfVs/ipFbGge5AVk
+   U7Inwe94l2+fu+siC623WUkSMrev8jbftbnm0f+fbFPm/C9Fi+s38KcEi
+   pTh0bAFVRHAGgz1YHx2EKj+PGZBLWXc0DzWK39gQijdCz5Ma9knNfoOM1
+   A==;
+X-CSE-ConnectionGUID: neV2N1BhTA+5fB6fZ7/XGg==
+X-CSE-MsgGUID: GAipdPOhShyqFHdFMfxKfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81415163"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81415163"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2025 05:09:19 -0700
+X-CSE-ConnectionGUID: CDsjC0QASdmYqG2IE1GfVA==
+X-CSE-MsgGUID: 0TCqgrzkQ76l4KQQn0hFRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="174931769"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 30 Aug 2025 05:09:14 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1usKOB-000VLL-1G;
+	Sat, 30 Aug 2025 12:09:04 +0000
+Date: Sat, 30 Aug 2025 20:08:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
+	Michael.Hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
+	corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, broonie@kernel.org,
+	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
+	ahaslam@baylibre.com, sergiu.cuciurean@analog.com,
+	tgamblin@baylibre.com, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
+Message-ID: <202508301919.3TZbcu20-lkp@intel.com>
+References: <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
 
-From: Michael Tandy <git@mjt.me.uk>
+Hi Marcelo,
 
-Add support for Pro WS WRX90E-SAGE SE
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Michael Tandy <git@mjt.me.uk>
-Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 42 +++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+[auto build test ERROR on 91812d3843409c235f336f32f1c37ddc790f1e03]
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index bedddb6bf9e1..12c6b5b266bb 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -9,6 +9,7 @@ Supported boards:
-  * PRIME X570-PRO
-  * PRIME X670E-PRO WIFI
-  * Pro WS X570-ACE
-+ * Pro WS WRX90E-SAGE SE
-  * ProArt X570-CREATOR WIFI
-  * ProArt X670E-CREATOR WIFI
-  * ProArt X870E-CREATOR WIFI
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 83047c3263d3..09a751b44ee2 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -117,10 +117,18 @@ enum ec_sensors {
- 	ec_sensor_fan_cpu_opt,
- 	/* VRM heat sink fan [RPM] */
- 	ec_sensor_fan_vrm_hs,
-+	/* VRM east heat sink fan [RPM] */
-+	ec_sensor_fan_vrme_hs,
-+	/* VRM west heat sink fan [RPM] */
-+	ec_sensor_fan_vrmw_hs,
- 	/* Chipset fan [RPM] */
- 	ec_sensor_fan_chipset,
- 	/* Water flow sensor reading [RPM] */
- 	ec_sensor_fan_water_flow,
-+	/* USB4 fan [RPM] */
-+	ec_sensor_fan_usb4,
-+	/* M.2 fan [RPM] */
-+	ec_sensor_fan_m2,
- 	/* CPU current [A] */
- 	ec_sensor_curr_cpu,
- 	/* "Water_In" temperature sensor reading [℃] */
-@@ -150,8 +158,12 @@ enum ec_sensors {
- #define SENSOR_IN_CPU_CORE BIT(ec_sensor_in_cpu_core)
- #define SENSOR_FAN_CPU_OPT BIT(ec_sensor_fan_cpu_opt)
- #define SENSOR_FAN_VRM_HS BIT(ec_sensor_fan_vrm_hs)
-+#define SENSOR_FAN_VRME_HS BIT(ec_sensor_fan_vrme_hs)
-+#define SENSOR_FAN_VRMW_HS BIT(ec_sensor_fan_vrmw_hs)
- #define SENSOR_FAN_CHIPSET BIT(ec_sensor_fan_chipset)
- #define SENSOR_FAN_WATER_FLOW BIT(ec_sensor_fan_water_flow)
-+#define SENSOR_FAN_USB4 BIT(ec_sensor_fan_usb4)
-+#define SENSOR_FAN_M2 BIT(ec_sensor_fan_m2)
- #define SENSOR_CURR_CPU BIT(ec_sensor_curr_cpu)
- #define SENSOR_TEMP_WATER_IN BIT(ec_sensor_temp_water_in)
- #define SENSOR_TEMP_WATER_OUT BIT(ec_sensor_temp_water_out)
-@@ -168,6 +180,7 @@ enum board_family {
- 	family_amd_500_series,
- 	family_amd_600_series,
- 	family_amd_800_series,
-+	family_amd_wrx_90,
- 	family_intel_300_series,
- 	family_intel_400_series,
- 	family_intel_600_series,
-@@ -278,6 +291,21 @@ static const struct ec_sensor_info sensors_family_amd_800[] = {
- 		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
- };
- 
-+static const struct ec_sensor_info sensors_family_amd_wrx_90[] = {
-+	[ec_sensor_temp_cpu_package] =
-+		EC_SENSOR("CPU Package", hwmon_temp, 1, 0x00, 0x31),
-+	[ec_sensor_fan_cpu_opt] =
-+		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
-+	[ec_sensor_fan_vrmw_hs] =
-+		EC_SENSOR("VRMW HS", hwmon_fan, 2, 0x00, 0xb4),
-+	[ec_sensor_fan_usb4] = EC_SENSOR("USB4", hwmon_fan, 2, 0x00, 0xb6),
-+	[ec_sensor_fan_vrme_hs] =
-+		EC_SENSOR("VRME HS", hwmon_fan, 2, 0x00, 0xbc),
-+	[ec_sensor_fan_m2] = EC_SENSOR("M.2", hwmon_fan, 2, 0x00, 0xbe),
-+	[ec_sensor_temp_t_sensor] =
-+		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x01, 0x04),
-+};
-+
- static const struct ec_sensor_info sensors_family_intel_300[] = {
- 	[ec_sensor_temp_chipset] =
- 		EC_SENSOR("Chipset", hwmon_temp, 1, 0x00, 0x3a),
-@@ -421,6 +449,15 @@ static const struct ec_board_info board_info_pro_art_b550_creator = {
- 	.family = family_amd_500_series,
- };
- 
-+static const struct ec_board_info board_info_pro_ws_wrx90e_sage_se = {
-+	/* Board also has a nct6798 with 7 more fans and temperatures */
-+	.sensors = SENSOR_TEMP_CPU_PACKAGE | SENSOR_TEMP_T_SENSOR |
-+		SENSOR_FAN_CPU_OPT | SENSOR_FAN_USB4 | SENSOR_FAN_M2 |
-+		SENSOR_FAN_VRME_HS | SENSOR_FAN_VRMW_HS,
-+	.mutex_path = ASUS_HW_ACCESS_MUTEX_RMTW_ASMX,
-+	.family = family_amd_wrx_90,
-+};
-+
- static const struct ec_board_info board_info_pro_ws_x570_ace = {
- 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_VRM |
- 		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CHIPSET |
-@@ -650,6 +687,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_pro_art_x870E_creator_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ProArt B550-CREATOR",
- 					&board_info_pro_art_b550_creator),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("Pro WS WRX90E-SAGE SE",
-+					&board_info_pro_ws_wrx90e_sage_se),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("Pro WS X570-ACE",
- 					&board_info_pro_ws_x570_ace),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG CROSSHAIR VIII DARK HERO",
-@@ -1173,6 +1212,9 @@ static int asus_ec_probe(struct platform_device *pdev)
- 	case family_amd_800_series:
- 		ec_data->sensors_info = sensors_family_amd_800;
- 		break;
-+	case family_amd_wrx_90:
-+		ec_data->sensors_info = sensors_family_amd_wrx_90;
-+		break;
- 	case family_intel_300_series:
- 		ec_data->sensors_info = sensors_family_intel_300;
- 		break;
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/iio-adc-ad4030-Fix-_scale-for-when-oversampling-is-enabled/20250830-084901
+base:   91812d3843409c235f336f32f1c37ddc790f1e03
+patch link:    https://lore.kernel.org/r/0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt%40analog.com
+patch subject: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
+config: x86_64-buildonly-randconfig-005-20250830 (https://download.01.org/0day-ci/archive/20250830/202508301919.3TZbcu20-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250830/202508301919.3TZbcu20-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508301919.3TZbcu20-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/adc/ad4030.c: In function '__ad4030_set_sampling_freq':
+>> drivers/iio/adc/ad4030.c:518:23: error: implicit declaration of function 'pwm_round_waveform_might_sleep' [-Werror=implicit-function-declaration]
+     518 |                 ret = pwm_round_waveform_might_sleep(st->conv_trigger, &conv_wf);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/adc/ad4030.c: In function 'ad4030_offload_buffer_postenable':
+>> drivers/iio/adc/ad4030.c:1055:15: error: implicit declaration of function 'pwm_set_waveform_might_sleep' [-Werror=implicit-function-declaration]
+    1055 |         ret = pwm_set_waveform_might_sleep(st->conv_trigger, &st->conv_wf, false);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/pwm_round_waveform_might_sleep +518 drivers/iio/adc/ad4030.c
+
+   496	
+   497	static int __ad4030_set_sampling_freq(struct ad4030_state *st, unsigned int freq)
+   498	{
+   499		struct spi_offload_trigger_config *config = &st->offload_trigger_config;
+   500		struct pwm_waveform conv_wf = { };
+   501		u64 offload_period_ns;
+   502		u64 offload_offset_ns;
+   503		u32 mode;
+   504		int ret;
+   505		u64 target = AD4030_TCNVH_NS;
+   506	
+   507		conv_wf.period_length_ns = DIV_ROUND_CLOSEST(NSEC_PER_SEC, freq);
+   508		/*
+   509		 * The datasheet lists a minimum time of 9.8 ns, but no maximum. If the
+   510		 * rounded PWM's value is less than 10, increase the target value by 10
+   511		 * and attempt to round the waveform again, until the value is at least
+   512		 * 10 ns. Use a separate variable to represent the target in case the
+   513		 * rounding is severe enough to keep putting the first few results under
+   514		 * the minimum 10ns condition checked by the while loop.
+   515		 */
+   516		do {
+   517			conv_wf.duty_length_ns = target;
+ > 518			ret = pwm_round_waveform_might_sleep(st->conv_trigger, &conv_wf);
+   519			if (ret)
+   520				return ret;
+   521			target += 10;
+   522		} while (conv_wf.duty_length_ns < 10);
+   523	
+   524		offload_period_ns = conv_wf.period_length_ns;
+   525	
+   526		ret = regmap_read(st->regmap, AD4030_REG_MODES, &mode);
+   527		if (ret)
+   528			return ret;
+   529		if (FIELD_GET(AD4030_REG_MODES_MASK_OUT_DATA_MODE, mode) == AD4030_OUT_DATA_MD_30_AVERAGED_DIFF) {
+   530			u32 avg;
+   531	
+   532			ret = regmap_read(st->regmap, AD4030_REG_AVG, &avg);
+   533			if (ret)
+   534				return ret;
+   535	
+   536			offload_period_ns <<= FIELD_GET(AD4030_REG_AVG_MASK_AVG_VAL, avg);
+   537		}
+   538	
+   539		config->periodic.frequency_hz =  DIV_ROUND_UP_ULL(NSEC_PER_SEC,
+   540								  offload_period_ns);
+   541	
+   542		/*
+   543		 * The hardware does the capture on zone 2 (when spi trigger PWM
+   544		 * is used). This means that the spi trigger signal should happen at
+   545		 * tsync + tquiet_con_delay being tsync the conversion signal period
+   546		 * and tquiet_con_delay 9.8ns. Hence set the PWM phase accordingly.
+   547		 *
+   548		 * The PWM waveform API only supports nanosecond resolution right now,
+   549		 * so round this setting to the closest available value.
+   550		 */
+   551		offload_offset_ns = AD4030_TQUIET_CNV_DELAY_NS;
+   552		do {
+   553			config->periodic.offset_ns = offload_offset_ns;
+   554			ret = spi_offload_trigger_validate(st->offload_trigger, config);
+   555			if (ret)
+   556				return ret;
+   557			offload_offset_ns += 10;
+   558	
+   559		} while (config->periodic.offset_ns < AD4030_TQUIET_CNV_DELAY_NS);
+   560	
+   561		st->conv_wf = conv_wf;
+   562	
+   563		return 0;
+   564	}
+   565	
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
