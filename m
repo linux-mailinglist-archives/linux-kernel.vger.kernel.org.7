@@ -1,46 +1,65 @@
-Return-Path: <linux-kernel+bounces-792906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A67EB3CA48
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7646B3CA49
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F341A7A4E99
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FF181BA502B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8866927932E;
-	Sat, 30 Aug 2025 10:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D3F27932E;
+	Sat, 30 Aug 2025 10:40:25 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274D0207A0B;
-	Sat, 30 Aug 2025 10:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93545214210;
+	Sat, 30 Aug 2025 10:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756550372; cv=none; b=jTgdEd0O1LakRThUZR+fRDk3FRaTBWlHjGOR/X9aj4jIIMvDBg80vnPuVHob1cBQrzEjlMnRnwjpcAPp49e985YtQ9eq5roEYEqmLI8pP8Ic7VSIqxRFHD9QGSB+T14aFinBsixsVE0py4c5ZMKxQ4X2vDuZNGOQECKEJ6Exhuc=
+	t=1756550425; cv=none; b=NXT+QENYGLtCOuL5F04hYI0n3Qa/Y7b3EQ+HgxgVOqFsQ+heydWEhPGmcF8wTYVs/5d8n/3K3Xf5Av+mWT0/mroEnCC3K9tf+eFQIn6QV20WZhwGAdWxPLc3X98B9of2dXqCQHDWhMVqxpeH56ti+qliff/zcqobxOE6hM/9m9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756550372; c=relaxed/simple;
-	bh=G+WYl5zEZwCixATCLRwwqYylkCcLG2iKRsfwbDufMys=;
+	s=arc-20240116; t=1756550425; c=relaxed/simple;
+	bh=/62749aihceIgpYQkDEHeQ8sd32ZhVe24/vUiF0utGE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OTwKpAAbZobf2HcSqKHv733bAYdjlmwuBCO9l82liU84oBf8+U+bBpHtcLNEs1FA3xcyviEpjXVm9vzXrioJtgJXOP2Fk7WRl5X42e1Nh54B4JKz+fbzYXyV6oGH1rT57W3UEGirWDd5VxCLhEm9QPJJZPA1ld7vewItWzSJE4w=
+	 MIME-Version:Content-Type; b=teb3Zdc+GDHrb8cbkPWORf0cpgzMP+YP7sQ8Bm+4OGTz+SJCVCShg075aBii2Bzqk+5nDWCUeUFN8+bNGgGoGTDr5mNQK46Us4Hfld0HEXx0bZsbcakYunuUKdqCSgQkrDKsjiCEfwidTRr9MLw8attXcfoeNax+L3UzkOHKmis=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61259C4CEEB;
-	Sat, 30 Aug 2025 10:39:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFFBC4CEEB;
+	Sat, 30 Aug 2025 10:40:20 +0000 (UTC)
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Will Deacon <will@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/arm64: Don't open code SVE_PT_SIZE() in fp-ptrace
-Date: Sat, 30 Aug 2025 11:39:19 +0100
-Message-ID: <175655035973.1114907.5360306706910307227.b4-ty@arm.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>,
+	Kees Cook <kees@kernel.org>
+Cc: Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Yue Haibing <yuehaibing@huawei.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	David Hildenbrand <david@redhat.com>,
+	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
+Date: Sat, 30 Aug 2025 11:39:33 +0100
+Message-ID: <175655035973.1114907.7025015988406384082.b4-ty@arm.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250812-arm64-fp-trace-macro-v1-1-317cfff986a5@kernel.org>
-References: <20250812-arm64-fp-trace-macro-v1-1-317cfff986a5@kernel.org>
+In-Reply-To: <20250829190721.it.373-kees@kernel.org>
+References: <20250829190721.it.373-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,20 +69,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Aug 2025 15:49:27 +0100, Mark Brown wrote:
-> In fp-trace when allocating a buffer to write SVE register data we open
-> code the addition of the header size to the VL depeendent register data
-> size, which lead to an underallocation bug when we cut'n'pasted the code
-> for FPSIMD format writes. Use the SVE_PT_SIZE() macro that the kernel
-> UAPI provides for this.
+On Fri, 29 Aug 2025 12:07:25 -0700, Kees Cook wrote:
+> Seen during KPTI initialization:
 > 
+>   CFI failure at create_kpti_ng_temp_pgd+0x124/0xce8 (target: kpti_ng_pgd_alloc+0x0/0x14; expected type: 0xd61b88b6)
+> 
+> The call site is alloc_init_pud() at arch/arm64/mm/mmu.c:
+> 
+>   pud_phys = pgtable_alloc(TABLE_PUD);
 > 
 > [...]
 
 Applied to arm64 (for-next/fixes), thanks!
 
-[1/1] kselftest/arm64: Don't open code SVE_PT_SIZE() in fp-ptrace
-      https://git.kernel.org/arm64/c/d82aa5d3501b
+[1/1] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
+      https://git.kernel.org/arm64/c/ceca927c86e6
+
+I added the acks from v1 directly as there's no change.
 
 -- 
 Catalin
