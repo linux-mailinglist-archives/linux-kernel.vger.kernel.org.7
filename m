@@ -1,211 +1,203 @@
-Return-Path: <linux-kernel+bounces-792683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B59B3C78E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3482EB3C790
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293301C278A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD2E1C278D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE10E26F476;
-	Sat, 30 Aug 2025 03:10:55 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E792701BB;
+	Sat, 30 Aug 2025 03:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUr46Npf"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187FB215075;
-	Sat, 30 Aug 2025 03:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08099199237;
+	Sat, 30 Aug 2025 03:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756523455; cv=none; b=LOf/j+ID9ICJVLxRaO1h8CzV5NxbaidDx7xTh+W3beMkQ9alJrVD/AOe8rNmt3mG+3OfM93h0sAfIrtp6NlW2jL1cwctAqWkBh0WQgwhR3VW4kC4hZee52eiyZSVI9KgKJGFzGuIScOGcsYpa3hFgZbOKnX8Xm8gyHQ/25625xg=
+	t=1756523600; cv=none; b=NjD291s2gYNum0JMZxKbspc01VR3HgNbfN7UTDKlpQat8MzMcmDKke2oD2ZtMRdJ4FpRktCamTHhEpo/rJhhCHaMRLIOW8JqHrXGav09iYrl3grXetEXhw8BDX+ja6NY6jRDO2k5rCo/G8o0IZnCfOfawYvWnGAJUjHsTE/HNBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756523455; c=relaxed/simple;
-	bh=d50Y3+pjzHc8XYM9XV2VuyXsJJdhUBbcyeV8YF0u1SM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=R6Gw2lfhZbPs7kEyPqgBh6ZT5+mJ+pqfbwxKBXjS+iLOmCNaT8WFWJKKXLnBoWwfomRNPLeyFNnLUTImSm6J9erkIhX6oVVwk8CJyRSHEjyzIvjPlW7HbTLzyT2VKN4/FuRypprS2RKm1I76a8/utyiBzZuUnNYjJaFydyN/qkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cDKrn30S9z14Mdq;
-	Sat, 30 Aug 2025 11:10:33 +0800 (CST)
-Received: from kwepemo100013.china.huawei.com (unknown [7.202.195.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8AA25180491;
-	Sat, 30 Aug 2025 11:10:41 +0800 (CST)
-Received: from [10.67.120.83] (10.67.120.83) by kwepemo100013.china.huawei.com
- (7.202.195.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
- 2025 11:10:40 +0800
-Message-ID: <142957c5-64c2-47cd-846f-6ff0654aa3b7@h-partners.com>
-Date: Sat, 30 Aug 2025 11:10:40 +0800
+	s=arc-20240116; t=1756523600; c=relaxed/simple;
+	bh=6iLpX2zx/SdMyxcO4oSHXHuePW/AlYt5vAWN8Rtcrlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pie3LojB0/onYVM+Of5FFt1H5KeUb9XVsyoQJeBQaP6LRjT9ZnD3J9pv70feOv/29RNVwBJ5J0dBEEBnzH7MpdkRl49rScjz4iGgt9mfnBiLfbv5WndcnX9worL4oqkC/v5cxQGinvzv3hd6vYhqGE++AdiAA41/ZgvVlZgPQJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUr46Npf; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-336c79c89daso2808881fa.2;
+        Fri, 29 Aug 2025 20:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756523597; x=1757128397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUGFJItPhj1RGIBa1yatafV6AgO9tzvsjBgp4edEIeE=;
+        b=OUr46NpfTDZNz8oiqDk4KPcaPmi4R1D7uIan4tpPQUfnBJ9xTJL9oQRlCI+euI8KO4
+         YxybrWVvg7FUK0BNe6sY9SmH1eoF+CEccZJ1lW4c2Iu4+mm2K/OgQSG5ZD3LVvhsdZMO
+         cUhh6n+Tk/UjAiogxP7owihGLvJ8Ec+vl9Z+AApq3xcBsWXESIDmZ2I8B+/sJwNz0AZw
+         x0HVY8+Z8z6xKbOtFPoZf8P/TK0f7Upn8496by1ud90tRROWVGVtTuH2fL7av0zvYGW6
+         AkCxrTKzJ3Hi6s0DPw1fS8b/BrNW5DGAI2IvVTZ423HlSnm1hvVRi1NdK5mGSMffybwr
+         9N7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756523597; x=1757128397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fUGFJItPhj1RGIBa1yatafV6AgO9tzvsjBgp4edEIeE=;
+        b=GFxjjP89nu2CT51p1Lp1O9jUMomjwmb5KLmUFgzjOlsJBHTSL+S7TZtB6xYsZbePog
+         4y57G4qhXxnJ3TeDMON3Sch56RcsUShR3kTtQeq5r36mTR0HlO8IdndCJXdm4rgv/WDE
+         VJMwohDb2ktzP13EKCPa+nZD0AxIECL2nvBW3fpRif0R5nsTXJgH5aRwoimTi+P1AvIF
+         2ZAs8wfrrucs2zDZzAsqYvhd+lheCuOZQpGd9agGoBUkAEsn3qyORcjrNf4Mfi7V1qqC
+         cO+jfxa0uPLvAhF8MziY3LACM9zqgnRYB65f59vPa6fBBJuFu2KvGIXxctEZupomnLmD
+         7E/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTQacwYTdDJqfjFvUhAQ/VjbFAdB/l8QU+YLIUb6mDS3LebfiUTW7x1aTE67kznR+7lZSOjv4+cM4=@vger.kernel.org, AJvYcCXpabPLgxHHfvgCC/jE2ceiTUFQQuEdMO6pqmoWury+LgexpU9YNk/7HW6zedfgixQw94HVJG8V4BFF0V3K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5qLR8jr33Zq0W79bGn2VNTrcUv087PFIIn/mbOnxkP+qK/Gtw
+	kspbyBTQ373JRPgljv/90/ZoX58o+g9VPHKmhMdm75UJBDy87A69yQG/UH/X+J5r/AY9JqZ2Zq5
+	DXM6xJ5xVDp71sDk3jHYPs2P12/8LpN+Q0w==
+X-Gm-Gg: ASbGncsVjV3UFeld+3rKp81jyWOvUJ5Mdhkln3h1lLfV/BLr0SzzyiS48GcvBu4SZx1
+	v3e8C9/P429hy4stO43tQuiMom79WBBCLUqJEn2ERcyczkNdewCm3IH3mrx3zsagmvlZR/tJt9R
+	lQ8HNzsyP7ZYHPZrnEZsYrg+51NtmzZ/QLkTQGY+qWEtBWxQ5Thf+oZb7fg4o8yH3dz38s+RiZx
+	k92YRIR1Hs2COylxB2hBEWEVaXELvwes4f9VuPHhA==
+X-Google-Smtp-Source: AGHT+IGzJVJ7DvjTUW7GxiLzjzwSF5DlaaOoDTuqzylwAB4BopW/FyT228Lqnh3tj4dNJu4W+h7nBFa9zaVQtFxrWnc=
+X-Received: by 2002:a05:651c:410a:b0:336:8abb:6b31 with SMTP id
+ 38308e7fff4ca-336cb0e06d7mr886231fa.37.1756523596941; Fri, 29 Aug 2025
+ 20:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] sysfs: duplicate resource file creation during PCIe rescan
-From: moubingquan <moubingquan@h-partners.com>
-To: <bhelgaas@google.com>
-CC: <ilpo.jarvinen@linux.intel.com>, <lukas@wunner.de>, linux-arm
-	<linux-arm-kernel@lists.infradead.org>, linux-kernl
-	<linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>,
-	fanghao <fanghao11@huawei.com>, gaozhihao <gaozhihao6@h-partners.com>,
-	lujunhua <lujunhua7@h-partners.com>, shenyang <shenyang39@huawei.com>,
-	wushanping <wushanping@huawei.com>, zengtao <prime.zeng@hisilicon.com>,
-	<jonathan.cameron@huawei.com>
-References: <b51519d6-ce45-4b6d-8135-c70169bd110e@h-partners.com>
- <9e3047e5-a6a2-4a56-967b-4dddbd3d1b43@h-partners.com>
-Content-Language: en-US
-In-Reply-To: <9e3047e5-a6a2-4a56-967b-4dddbd3d1b43@h-partners.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemo100013.china.huawei.com (7.202.195.244)
+References: <20250827191919.1361787-1-akshayaj.lkd@gmail.com>
+ <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
+ <CAE3SzaTJTi3bHnqNbAfQ3W2jHcmhQHqa2ZtKE7=2BnP+onJv-w@mail.gmail.com>
+ <CAHp75VeSMApm0TPU1=myhJiXQjWVpebbWEPGcRJQhfSaffdYmw@mail.gmail.com>
+ <CAE3SzaR=uPtE20ZkWVXYwBrUZ=b46h1Ub=TbWArHW6XbD8qXfQ@mail.gmail.com> <CAHp75Vf5--WGoeb9qu0QoYz0PmnexUvLyChJFcwYAW3u=_nOwg@mail.gmail.com>
+In-Reply-To: <CAHp75Vf5--WGoeb9qu0QoYz0PmnexUvLyChJFcwYAW3u=_nOwg@mail.gmail.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Sat, 30 Aug 2025 08:43:05 +0530
+X-Gm-Features: Ac12FXwPmu2YHPlJ5mPqZ_9LxYWXNUsQbqYe8hk5Yxdq4xq2XnlA755HeXKlTTY
+Message-ID: <CAE3SzaSvF-JLtUamnib+psG3pONJ9gPxFK+KJ0UtXtb_PfV6_g@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: light: ltr390: Implement runtime PM support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Friendly ping ...
+On Sat, Aug 30, 2025 at 12:19=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Aug 29, 2025 at 9:03=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail=
+.com> wrote:
+> > On Fri, Aug 29, 2025 at 9:16=E2=80=AFPM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Thu, Aug 28, 2025 at 9:47=E2=80=AFPM Akshay Jindal <akshayaj.lkd@g=
+mail.com> wrote:
+> > > > On Thu, Aug 28, 2025 at 7:17=E2=80=AFAM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Wed, Aug 27, 2025 at 10:19=E2=80=AFPM Akshay Jindal <akshayaj.=
+lkd@gmail.com> wrote:
+>
+> ...
+>
+> > > > > > +static int ltr390_read_raw(struct iio_dev *iio_device,
+> > > > > > +                          struct iio_chan_spec const *chan, in=
+t *val,
+> > > > > > +                          int *val2, long mask)
+> > > > > > +{
+> > > > > > +       int ret, retval;
+> > > > > > +       struct ltr390_data *data =3D iio_priv(iio_device);
+> > > > > > +       struct device *dev =3D &data->client->dev;
+> > > > > > +
+> > > > > > +       ret =3D pm_runtime_resume_and_get(dev);
+> > > > > > +       if (ret < 0)
+> > > > > > +               dev_err(dev, "runtime PM failed to resume: %d\n=
+", ret);
+> > > > >
+> > > > > If it fails, there is no point to read the value, it will be garb=
+age
+> > > > > or even can make the bus stuck.
+> > > > >
+> > > > My rationale behind this approach is that earlier ltr390_read_raw()
+> > > > had all the functionality
+> > > > of the .read_raw callback so the return value whether success or
+> > > > failure was of the core functionality.
+> > > > But now, since the core functionality has been relocated into
+> > > > __ltr390_read_raw(), I felt the return value
+> > > > ltr390_read_raw should be the return value of __ltr390_read_raw().
+> > >
+> > > "Main" returned value. But this is not the point. The Q is, how do yo=
+u
+> > > expect to get not garbage from, e.g., powered off device, please?
+> >
+> > I got your point.
+>
+> I don't think so.
+>
+> > My Rationale:
+> > ------------------
+> > From a functionality point of view, if before runtime PM usage, the
+> > core retval was being
+> > returned (success/failure), then now with runtime PM also, it should
+> > be the same core retval
+> > which should be returned, but I think that is not correct thinking.
+>
+> From the pure SW concept that's correct, but the important detail is
+> we are communicating to the device via the special bus like i=C2=B2c.
+>
+> > Updated Approach:
+> > -------------------------
+> > Since we are introducing new functionality of runtime PM in the
+> > callbacks, the return
+> > value should reflect ANY failure in the callback, be it failure of
+> > core functionality
 
-On 8/11/2025 10:12 AM, moubingquan wrote:
-> Hello everyone, does anyone have any ideas on how to approach this problem。
-> 
-> On 7/29/2025 9:13 AM, moubingquan wrote:
->> Hi all,
->>
->> When uninstalling the driver on the ARM64 platform and invoking `sriov_disable()`,
->> another thread simultaneously performed `echo 1 > /sys/bus/pci/rescan`,
->> which resulted in a call trace error (`sysfs: cannot create duplicate filename`) when subsequently loading the driver.
->>
->> Under certain multi-threaded scenarios (e.g. VF teardown + PCI rescan triggered in parallel),
->> The following sequence may result in files appearing in sysfs that should not exist:
->>
->> 1. sriov_disable() uninstalls VFs and removes the corresponding VF files in sysfs.
->> 2.At the same time, when rescan_store() rescan the entire PCI device tree,
->> there is a possibility that VF files that should have been deleted are added back,
->> resulting in VF files in sysfs that should have been removed but were not.
->>
->> Tested on:
->> - Kernel version: Linux version 6.15.0-rc4+ (phisik3@10-50-163-153-ARM-openEuler22-3)
->> - Platform: ARM64 (Huawei Kunpeng920)
->> - Repro steps:
->> 1.Thread A unloads the driver and VF (requires calling sriov_disable()).
->> 2.Thread B calls `echo 1 > /sys/bus/pci/rescan `
->>
->> The system will report a call trace as follows:
->>
->> sysfs: cannot create duplicate filename '/devices/pci0000:3c/0000:3c:01.0/0000:3e:00.2/resource2'
->> CPU: 138 UID: 0 PID: 11067 Comm: sh Kdump: loaded Tainted: G      D W  O        6.15.0-rc4+ #1 PREEMPT
->> Tainted: [D]=DIE, [W]=WARN, [O]=OOT_MODULE
->> Call trace:
->>   show_stack+0x20/0x38 (C)
->>   dump_stack_lvl+0x80/0xf8
->>   dump_stack+0x18/0x28
->>   sysfs_warn_dup+0x6c/0x90
->>   sysfs_add_bin_file_mode_ns+0x12c/0x178
->>   sysfs_create_bin_file+0x7c/0xb8
->>   pci_create_attr+0x104/0x1b0
->>   pci_create_resource_files.part.0+0x50/0xd0
->>   pci_create_sysfs_dev_files+0x30/0x50
->>   pci_bus_add_device+0x40/0x120
->>   pci_bus_add_devices+0x40/0x98
->>   pci_bus_add_devices+0x6c/0x98
->>   pci_rescan_bus+0x38/0x58
->>   rescan_store+0x80/0xb0
->>   bus_attr_store+0x2c/0x48
->>   sysfs_kf_write+0x84/0xa8
->>   kernfs_fop_write_iter+0x120/0x1b8
->>   vfs_write+0x338/0x3f8
->>   ksys_write+0x70/0x110
->>   __arm64_sys_write+0x24/0x38
->>   invoke_syscall+0x50/0x120
->>   el0_svc_common.constprop.0+0xc8/0xf0
->>   do_el0_svc+0x24/0x38
->>   el0_svc+0x34/0xf0
->>   el0t_64_sync_handler+0xc8/0xd0
->>   el0t_64_sync+0x1ac/0x1b0
->>
->> The general analysis and corresponding code are as follows:
->>
->> drivers/pci/iov.c
->>
->> 736 static void sriov_disable(struct pci_dev *dev)
->> 737 {
->> 738         struct pci_sriov *iov = dev->sriov;
->> 739
->> 740         if (!iov->num_VFs)
->> 741                 return;
->> 742
->> 743         sriov_del_vfs(dev);
->> 744         iov->ctrl &= ~(PCI_SRIOV_CTRL_VFE | PCI_SRIOV_CTRL_MSE);
->> 745         pci_cfg_access_lock(dev);
->> 746         pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, iov->ctrl);
->> 747         ssleep(1);
->> 748         pci_cfg_access_unlock(dev);
->> 749
->> 750         pcibios_sriov_disable(dev);
->> 751
->> 752         if (iov->link != dev->devfn)
->> 753                 sysfs_remove_link(&dev->dev.kobj, "dep_link");
->> 754
->> 755         iov->num_VFs = 0;
->> 756         pci_iov_set_numvfs(dev, 0);
->> 757 }
->>
->> sriov_disable() will unload the VF and remove its files from sysfs.
->>
->> drivers/pci/pci-sysfs.c
->>
->>   435 static ssize_t rescan_store(const struct bus_type *bus, const char *buf, size_t count)
->>   436 {
->>   437         unsigned long val;
->>   438         struct pci_bus *b = NULL;
->>   439
->>   440         if (kstrtoul(buf, 0, &val) < 0)
->>   441                 return -EINVAL;
->>   442
->>   443         if (val) {
->>   444                 pci_lock_rescan_remove();
->>   445                 while ((b = pci_find_next_bus(b)) != NULL)
->>   446                         pci_rescan_bus(b);
->>   447                 pci_unlock_rescan_remove();
->>   448         }
->>   449         return count;
->>   450 }
->>   451 static BUS_ATTR_WO(rescan);
->>
->> The `rescan_store()` function will scan the entire PCI bus, including the relevant sysfs files for the aforementioned VFs.
->>
->> Initially, it seemed that directly adding the pci_lock_rescan_remove() lock to sriov_disable() could solve the problem.
->> However, it was later discovered that this might lead to a deadlock issue (because the remove_store() function would call sriov_disable(), causing a deadlock).
->>
->> drivers/pci/pci-sysfs.c
->>
->>   487 static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
->>   488                             const char *buf, size_t count)
->>   489 {
->>   490         unsigned long val;
->>   491
->>   492         if (kstrtoul(buf, 0, &val) < 0)
->>   493                 return -EINVAL;
->>   494
->>   495         if (val && device_remove_file_self(dev, attr))
->>   496
->>          //Subsequently, sriov_disable() will be invoked.
->>                  pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
->>   497         return count;
->>   498 }
->>   499 static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
->>   500                                   remove_store);
->>
->> The function `pci_stop_and_remove_bus_device_locked()` acquires the `pci_lock_rescan_remove()` lock and subsequently calls `sriov_disable()`.
->> If the lock is added within `sriov_disable()`, it could lead to a deadlock.
->>
->> Should we add a new lock to address this issue, or are there any other ideas? I would like to consult and discuss this with everyone.
->>
->> Thanks,
->> Bingquan Mou <moubingquan@h-partners.com>
-> 
+> > ret =3D pm_runtime_resume_and_get();
+> > if (ret < 0)
+> >      return ret; //main functionality will not be called.
+> > retval =3D __ltr390_read_raw();
+> > // not checking retval because irrespective of retval we need refcount
+> > decrement and suspension.
+>
+> > ret =3D pm_runtime_put_autosuspend();-
+> > if (ret < 0)
+> >      return ret;
+>
+> So, returning an error here, how would it help? For example, if this
+> returns -EAGAIN and user space tries again, we will have always on
+> device. The same, btw, will happen if we do not check for the error
+> code here. That said, I don't know why we should care about returning
+> value from _put_autosuspend. I have just checked randomly chosen 20+
+> drivers in the v6.16 and only 2 check for error:
+> - one for the pure message printing (say the same as not checking)
+> - one for real, BUT it is done in the specific PM related method that
+> does change the power state and callers know about this.
+> And it seems that all of them (20+ drivers) check for the _resume
+> errors. I really need a good explanation of your discoveries why in
+> the normal case we need to check for the error code on _put part of
+> runtime PM. I might learn something new.
 
+Thanks for the detailed explanation Andy.
+I do not have any technical reason to return value from _put function.
+My thought was, since we are doing for _get, we should do it for _put.
+I agree with your observations. That being said, I will update the code
+as follows:
+
+ltr390_read_raw()
+{
+   ret =3D pm_runtime_resume_and_get()
+   if (ret < 0)
+      return ret;
+   ret =3D __ltr390_read_raw();
+   pm_runtime_put_autosuspend();
+   return ret;
+}
 
