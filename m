@@ -1,128 +1,102 @@
-Return-Path: <linux-kernel+bounces-793033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A099B3CC73
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC9B3CC7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3351BA2F3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67608563BE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC7926B098;
-	Sat, 30 Aug 2025 15:57:28 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D3D285052;
+	Sat, 30 Aug 2025 15:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="LcBJ+zK+";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="LcBJ+zK+"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D7D27E1AC;
-	Sat, 30 Aug 2025 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677B26980B;
+	Sat, 30 Aug 2025 15:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756569448; cv=none; b=u3qtH70XCbzANZRKpr/aYHSPWxogDFmeU2bOGyDwaT0uwL3dHSt4sUpa5KJRn6hM0xl4U2AADVD/4yuwkp8SpwvG4g7+4a4SrSvg3T0BcmY12Y311cJEzkuUnmwNSFY/vBgtATCSS0bhiNWhS14Q1Fa5J2Q+hJiGikD4/76L0S0=
+	t=1756569493; cv=none; b=pjmQJxLo+DQbIxdTg6audwyRJPdjS0rH6t7f7wcGWrhGOysNqObXsBppKwxA7jzyLsk0r78VrM3b3bSaleBmUmtPgg3hCIEoDuDpWD3V2GBCa0TF9CEHBG3lr2E8+te/eUeD2qqTtGjCcwT3MmcRLhDc8Gq0WEn61wDWq5r8VKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756569448; c=relaxed/simple;
-	bh=wESNMmETSujCZDADuk72y+hfY7Tabce4sDTR2e+7eYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPilXwLUgBZsQ6RVa/HW1bRw56O01w6mHn/r4YTI1EmAOvHFGjscUdkTKzzchBYKGsfxbWpp907XD+kvvjYxqz7OdCOD2N97SbsNr+p0kl81/RZFigIc2LMuJrOkHsu6MKhW3VpmuQNV1d/Q7lwLhb6R9UmXIuuHqk6wyEWI6jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1usNxA-000000007rf-2P6a;
-	Sat, 30 Aug 2025 15:57:20 +0000
-Date: Sat, 30 Aug 2025 16:57:17 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mason Chang <mason-cw.chang@mediatek.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Chad Monroe <chad.monroe@adtran.com>
-Subject: [PATCH linux-stable 6.12 3/3] thermal/drivers/mediatek/lvts_thermal:
- Add mt7988 lvts commands
-Message-ID: <253c49132453481a74fa3ef59f0b85a51bc9d4c6.1756568900.git.daniel@makrotopia.org>
-References: <cover.1756568900.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1756569493; c=relaxed/simple;
+	bh=2NYra8bevS3woikAQuBf3T0J2BxLCqPEXnPzpCmkJ84=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uBIzis+sP8lU0qbEkySjHnwmIdRWwjSeIRZmVmm6q6sAVo4H9Ve/wVGxyBgH3Fmh+guPOOUoQooNl5s7eayflJ3QHnou8naRQdlyXuEmUR8dps+Ax6fwvc3V9eJPz8Fw6jNvvXt/Q3pSYS78+t+whCRF+ka+6sHirOalAU3P+Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=LcBJ+zK+; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=LcBJ+zK+; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1756569488; bh=2NYra8bevS3woikAQuBf3T0J2BxLCqPEXnPzpCmkJ84=;
+	h=From:To:Subject:Date:From;
+	b=LcBJ+zK+1Xgkae7qRTSxGsugwr61QxR9A0cBw39itcEC+wx/crrKUjV4ASMUjSo/C
+	 iXZpD5RzbMMFpufVQ5cbnBDgZKMSLxVeIE0SLC6jbvwkQrvqKdHX3LvI5NqLdtj7qs
+	 yqeRJaGGoLBhDCl4Vqf1Gqg+hSTNcyyWpyXfZfvh9B1c27/cgRv/YWyo+4/v7Nd+rk
+	 gyqLwuDaY9mFdElTxlZCAFfwhwVWJKlaNE9/HXrca8HAq0jJB8E8FJb59MMisck8IA
+	 zuGwSjgAl4mEiOBtgWQ/yexo7NBgrwQwoaf53GsiolD8RM9AhdwaES1vvkBYsl7kQu
+	 dE2LdSOdSQxlA==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id B9175FB05;
+	Sat, 30 Aug 2025 17:58:08 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cvm6FoYYZI8z; Sat, 30 Aug 2025 17:58:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1756569488; bh=2NYra8bevS3woikAQuBf3T0J2BxLCqPEXnPzpCmkJ84=;
+	h=From:To:Subject:Date:From;
+	b=LcBJ+zK+1Xgkae7qRTSxGsugwr61QxR9A0cBw39itcEC+wx/crrKUjV4ASMUjSo/C
+	 iXZpD5RzbMMFpufVQ5cbnBDgZKMSLxVeIE0SLC6jbvwkQrvqKdHX3LvI5NqLdtj7qs
+	 yqeRJaGGoLBhDCl4Vqf1Gqg+hSTNcyyWpyXfZfvh9B1c27/cgRv/YWyo+4/v7Nd+rk
+	 gyqLwuDaY9mFdElTxlZCAFfwhwVWJKlaNE9/HXrca8HAq0jJB8E8FJb59MMisck8IA
+	 zuGwSjgAl4mEiOBtgWQ/yexo7NBgrwQwoaf53GsiolD8RM9AhdwaES1vvkBYsl7kQu
+	 dE2LdSOdSQxlA==
+From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org
+Subject: [PATCH] arch: arm64: dts: qcom: sdm845-shift-axolotl: set chassis type
+Date: Sat, 30 Aug 2025 17:57:29 +0200
+Message-ID: <3e04efc06a795a32b0080b2f23a138e139057b02.1756569434.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1756568900.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Mason Chang <mason-cw.chang@mediatek.com>
+It's a handset.
 
-[ Upstream commit 685a755089f95b7e205c0202567d9a647f9de096 ]
-
-These commands are necessary to avoid severely abnormal and inaccurate
-temperature readings that are caused by using the default commands.
-
-Fixes: 585e92e6a79f ("thermal/drivers/mediatek/lvts_thermal: Add mt7988 support")
-Signed-off-by: Mason Chang <mason-cw.chang@mediatek.com>
-Link: https://lore.kernel.org/r/20250526102659.30225-4-mason-cw.chang@mediatek.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- drivers/thermal/mediatek/lvts_thermal.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 239476152bab..017191b9f864 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -1421,6 +1421,8 @@ static int lvts_resume(struct device *dev)
- }
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+index 2cf7b5e1243ca..2b04adcb53ee0 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+@@ -17,6 +17,7 @@
+ / {
+ 	model = "SHIFT SHIFT6mq";
+ 	compatible = "shift,axolotl", "qcom,sdm845";
++	chassis-type = "handset";
+ 	qcom,msm-id = <321 0x20001>;
+ 	qcom,board-id = <11 0>;
  
- static const u32 default_conn_cmds[] = { 0xC103FFFF, 0xC502FF55 };
-+static const u32 mt7988_conn_cmds[] = { 0xC103FFFF, 0xC502FC55 };
-+
- /*
-  * Write device mask: 0xC1030000
-  */
-@@ -1431,6 +1433,12 @@ static const u32 default_init_cmds[] = {
- 	0xC10300FC, 0xC103009D, 0xC10300F1, 0xC10300E1
- };
- 
-+static const u32 mt7988_init_cmds[] = {
-+	0xC1030300, 0xC1030420, 0xC1030500, 0xC10307A6, 0xC1030CFC,
-+	0xC1030A8C, 0xC103098D, 0xC10308F1, 0xC1030B04, 0xC1030E01,
-+	0xC10306B8
-+};
-+
- /*
-  * The MT8186 calibration data is stored as packed 3-byte little-endian
-  * values using a weird layout that makes sense only when viewed as a 32-bit
-@@ -1725,11 +1733,11 @@ static const struct lvts_ctrl_data mt8195_lvts_ap_data_ctrl[] = {
- 
- static const struct lvts_data mt7988_lvts_ap_data = {
- 	.lvts_ctrl	= mt7988_lvts_ap_data_ctrl,
--	.conn_cmd	= default_conn_cmds,
--	.init_cmd	= default_init_cmds,
-+	.conn_cmd	= mt7988_conn_cmds,
-+	.init_cmd	= mt7988_init_cmds,
- 	.num_lvts_ctrl	= ARRAY_SIZE(mt7988_lvts_ap_data_ctrl),
--	.num_conn_cmd	= ARRAY_SIZE(default_conn_cmds),
--	.num_init_cmd	= ARRAY_SIZE(default_init_cmds),
-+	.num_conn_cmd	= ARRAY_SIZE(mt7988_conn_cmds),
-+	.num_init_cmd	= ARRAY_SIZE(mt7988_init_cmds),
- 	.temp_factor	= LVTS_COEFF_A_MT7988,
- 	.temp_offset	= LVTS_COEFF_B_MT7988,
- 	.gt_calib_bit_offset = 24,
 -- 
 2.51.0
+
 
