@@ -1,181 +1,157 @@
-Return-Path: <linux-kernel+bounces-793013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E24B3CB83
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA745B3CB81
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D2B7BA091
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70AAA3A4EB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3159A23BF91;
-	Sat, 30 Aug 2025 14:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E0C2550AD;
+	Sat, 30 Aug 2025 14:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isSRiKuW"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTeigE4g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B953730CDBF;
-	Sat, 30 Aug 2025 14:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6BF19D07A;
+	Sat, 30 Aug 2025 14:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756565220; cv=none; b=QAMZ3R8w8bdNwWTlwi0RAvlKxIlGfz32XhWjU5bW6hopEST6gF5bEvAyHaFnoQkc2d48BYHonGpQ1i9wHCHtR4zbGvZlvblwto7/7He56IiTTAOy8NUGPJBTDrQCJCA7uFNusrUq7TMhEVgD9Wwz0qLrW+JboNuM721QoH/VSb8=
+	t=1756565200; cv=none; b=OEn2AqXrCtxxPtRAB776UkDoIU4ju29wZc3WVoqcMI/xNUwaaHUD9RqGv+HvPWJp5NCTNKsv7OVfM4bWEk7R70xeEMyzpm+GJRtVbkQz3EOshq9Dy7eqlCb1XudU+QwNGSQHuEgmsRJpnA3HQy3sSdQ+Qc3bO06zMWQ6G/ydWKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756565220; c=relaxed/simple;
-	bh=m5MR+0ehlkpJ8CSZrbsaAhKPvHchaOdleoZk4uRFz80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWMUwxhVO4/59cpTZbKXDAZs+/AlMltNooHvzqQbsnziuo68e8A//4ko3/7klOVgbUGGVp+snlcD7jGvcCW0u4qYhDOkpRkxuYZ27vYdXMuDxo6uAEZhhO25G9HcmvNEgZQwxRxWpjxeIW1zG3kU5NHLi4Foj5q/dvkCAoNLf1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isSRiKuW; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afec56519c4so393846966b.0;
-        Sat, 30 Aug 2025 07:46:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756565217; x=1757170017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eyYnrq0TjY+dlsbIKTtb2T4o84UWHSZ1FKhi72vax0U=;
-        b=isSRiKuWsY1+MTGOMmfK75mUf4ZQC4sJ9R3QicqKiJGe7+PciVhc7sxnpJCwfQ6wQO
-         lzQpxrE7ongLA/4tOpm2DmLqHUhz3XeDxxsVoCIe3tfOQ7tOfZRVZhPrbTa+jbqnerWm
-         vzeKZhC5h0CEdBiTljSfjKBOeE/kYWEkjsxEW97/IwFCMoSfS2M+AptJ1nDCturdENLe
-         Y6DHMq5r3Hg61voCLKP27p6RxzS3uGYvy/m0FK7+IqGR+HwKhoDzF3kAV3L2lpDvWT2K
-         E25QnLfm+P9g2yamm+LA+4zaVCbT8JF7sEMIZg2j+OfJ9SwlrF2xMOfhrBy2BBsPAxJU
-         7x1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756565217; x=1757170017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eyYnrq0TjY+dlsbIKTtb2T4o84UWHSZ1FKhi72vax0U=;
-        b=eDlCwQ1QWCswKpLt39yNi1cPdZGQBU1wVohGhELYYkZ6JoPkyaUHxeQiCguVfMbmZO
-         9W9UbonNlwGgcpOCbP6z6oDbKqcbqpt7apabCquuIwU2n87r5H92ANPg8saHqIQAFvNR
-         /2RQrHDfB8NWvsuZW4uHEr/fEEhKk3qXAoHqK4ZblkdU/93gySva7dFsYKnoYHipso49
-         e+kzYOEQjuq1+YG5JAVwf5rVqGRdAQ1G3fHPFX8lOyoxjv8xRJ8F845CWmmRdacQeRJd
-         0sdyEtbvkIb7oUAtzWIQ7ZGiilWiup4YWRQkzoRjAMAYL9ETsNNRytuU/ALTt9YkVo3z
-         JMeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVog9Bv4ANKsZKeM+9RlzlIjrGOtC9aQk7b5ngcf08t6N8ILoO+0Y9stFv9ICnUs3T+ad7VqSfnbGE=@vger.kernel.org, AJvYcCX244UqJLshkvCNoby9T05RbJ6oFQH7D9fIzHVnx7IuTbN911FOgwMgi9SK0SmY/Mz/zYVGUUYtgzmCpBi6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyGwC5KARl1KwuOWbHeMBymOiHePGZSKmwEisG8ZTnubd2d2Qj
-	3WcYOZwmtaIyMWi9j6Nxt3Q6I0wDvt361SikwOt3GaUadMbn4IP1Dm5O/qfFpqsElEmRHyThZU8
-	/2ETtWqzSPeT15xoDcm/oaWc3vDTqN9Y=
-X-Gm-Gg: ASbGncv6ov3BYhxCBDu332C0v1q5DYAKWw4NHRkT9yTkOTCITjGSPngfbkCHxffB2xy
-	X+B8wnIHX6GdE/hkF8yghMm/rSKQc2LQjas/D4U/U4jB2RMqmZ6fSA6Mt1gUETZawRdD+Tz/RgY
-	olbEj1NmiBMJ1p1A2PZmWJ6evmgvjd9LD98YGow4E4wpia/Kcu0pZMK1aqiB4ONKLxEhPEZx4P8
-	7O6oYBFtZFjCn1UYurXh75jb6Tb
-X-Google-Smtp-Source: AGHT+IH0oSUx4M8oyPrzCFbP39zh0zK0NK+/0+HvWjEyGZvzGyXy0nmmHqhlR01+koIaDPy0K/Djetp0dkZHJb9fgqo=
-X-Received: by 2002:a17:907:7f0a:b0:af9:68d5:118d with SMTP id
- a640c23a62f3a-b01d97b5ab2mr211924366b.58.1756565216881; Sat, 30 Aug 2025
- 07:46:56 -0700 (PDT)
+	s=arc-20240116; t=1756565200; c=relaxed/simple;
+	bh=2WcIhwSMie7S1HSZ7ETv9VnQ4DQgCWjEy2j48E0PTzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5X3RsQTBHeDR46D+9be/LarHKxGZzwEuadWX0Kjg+XXysgyNSEOuLbCXX7ECC374bYZpUUbyYscOJtMuxHeoPxzVbC2cg71EpNPl3NUjbwIKf2bD7UyG2xPDsIUsiP3cwtqnXEHRMuLakb1z1LNTDMfietk/fg7wgTzk6u7zgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTeigE4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1806DC4CEEB;
+	Sat, 30 Aug 2025 14:46:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756565200;
+	bh=2WcIhwSMie7S1HSZ7ETv9VnQ4DQgCWjEy2j48E0PTzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aTeigE4g/aCNOBjWj8Mod1jHAsP64MW5b9jcA1DdW/Ca/TiM3VjUC+SXvOdvLjP2y
+	 hv0zijmIP2RxHDlexEKILNyY9OL/YsHQ5rjcmWLKnRrnxgtb1ZFBtaoP/aZxcFil41
+	 Oxq/wW7ppP6oPDpaRFRMpCadEOLKTtlh/OwQwUc9Xfu9p4dUqdv/4bK1X6V0QCls7V
+	 d8Wv9OjCTW6bQ7xLZl1kV8onE/i6dNSUHxxtO3XZYSd6wWXdmnV5zbjoPd6M/IPD6q
+	 bq7LcndFF6oeqenM12WBSaTZ5bHXN3Ok+mcxNKg0QMR39IAZLGKi+lGLAcVArMnKJ7
+	 PPUbVcKelMKYw==
+Date: Sat, 30 Aug 2025 20:16:33 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntb@lists.linux.dev
+Subject: Re: [PATCH 1/2] PCI: endpoint: Enhance pci_epf_alloc_space() and
+ rename to pci_epf_set_inbound_space()
+Message-ID: <udt2t2c43nw5de5q5vu2etknbnhrr3m5mqjk72nuyiurk46kbp@e47e5kvk2m22>
+References: <20250815-vntb_msi_doorbell-v1-0-32df6c4bf96c@nxp.com>
+ <20250815-vntb_msi_doorbell-v1-1-32df6c4bf96c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830113502.83102-1-akshayaj.lkd@gmail.com>
- <CAHp75Vc6J+Qm4hsV=PJn9Oyfn5xr9SZLGMagHm9NdFrkk9Y_5A@mail.gmail.com> <CAE3SzaSYLFFRL4OuqUbk8J0dWCuxedCyGiX2_tJySG1FC=w95g@mail.gmail.com>
-In-Reply-To: <CAE3SzaSYLFFRL4OuqUbk8J0dWCuxedCyGiX2_tJySG1FC=w95g@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 17:46:20 +0300
-X-Gm-Features: Ac12FXwfGpdPlAJmtttbZS5Qns4op2q3Gd4VeFD05A-vUvv33MG2f3q3gfZGXWM
-Message-ID: <CAHp75Vcitq5+fJJMKFGC9Qsqe8yAuoxK99YohR8N9218iR_Ocw@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: light: ltr390: Implement runtime PM support
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250815-vntb_msi_doorbell-v1-1-32df6c4bf96c@nxp.com>
 
-On Sat, Aug 30, 2025 at 4:24=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail.c=
-om> wrote:
-> On Sat, Aug 30, 2025 at 6:04=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Sat, Aug 30, 2025 at 2:35=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gma=
-il.com> wrote:
+On Fri, Aug 15, 2025 at 06:20:53PM GMT, Frank Li wrote:
+> Enhance pci_epf_alloc_space() to handle setting any physical address as
+> inbound memory space, such as an MSI message base address. The function
+> already accounts for different alignment requirements for different BARs,
+> so reuse this logic and rename the function to pci_epf_set_inbound_space().
+> 
 
-...
+I don't think combining both APIs is a good idea. One allocates space for
+inbound memory/populates epf_bar and another reuses existing memory/populates
+epf_bar. Combining both, logically makes little sense and another makes the code
+messy.
 
-> > > +static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> > > +                               const struct iio_chan_spec *chan,
-> > > +                               enum iio_event_type type,
-> > > +                               enum iio_event_direction dir,
-> > > +                               bool state)
-> > > +{
-> > > +       int ret;
-> > > +       struct ltr390_data *data =3D iio_priv(indio_dev);
-> > > +       struct device *dev =3D &data->client->dev;
-> > > +
-> > > +       guard(mutex)(&data->lock);
-> > > +
-> > > +       if (state && !data->irq_enabled) {
-> > > +               ret =3D pm_runtime_resume_and_get(dev);
-> > > +               if (ret < 0) {
-> > > +                       dev_err(dev, "runtime PM failed to resume: %d=
-\n", ret);
-> > > +                       return ret;
-> > > +               }
-> > > +               data->irq_enabled =3D true;
-> > > +       }
-> > > +
-> > > +       ret =3D __ltr390_write_event_config(indio_dev, chan, type, di=
-r, state);
-> > > +
-> > > +       if (!state && data->irq_enabled) {
-> > > +               data->irq_enabled =3D false;
-> > > +               pm_runtime_put_autosuspend(dev);
-> > > +       }
-> > > +
-> > > +       return ret;
-> > > +}
-> >
-> > This looks like overcomplicated and duplicate checks. Just make two
-> > functions with and without IRQ enabling handling.
-> >
-> LTR390 only supports 1 event/interrupt which is toggled in this callback =
-based
-> on value provided to sysfs entry. There cannot be a version of this witho=
-ut IRQ
-> handling. It is supposed to do IRQ handling only.
->
-> Pseudo code of the said function will be something as follows:
-> ltr390_write_event_config() {
-> if (interrupt needs to be enabled && previously it was disabled)
->      pm_runtime_resume_and_get()
-> do_actual_reg_writes()
-> if (interrupt needs to be disabled && previously it was enabled)
->     pm_runtime_put_autosuspend().
-> }
+If you want to reuse the alignment checks and epf_bar setting from
+pci_epf_alloc_space(), then create a separate helper(s) out of it and call from
+both APIs.
 
-I see now, yeah, this is unfortunate.
-Just rename the leading __ to the _unlocked() suffix. It's easier to read.
+> Make pci_epf_alloc_space() inline and call pci_epf_set_inbound_space() with
+> from_space set to true to maintain compatibility.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> ---
+>  drivers/pci/endpoint/pci-epf-core.c | 69 ++++++++++++++++++++++++++++++-------
+>  include/linux/pci-epc.h             |  5 ---
+>  include/linux/pci-epf.h             | 35 ++++++++++++++++---
+>  3 files changed, 87 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+> index d54e18872aefc07c655c94c104a347328ff7a432..5b802b1ea3e28a32e38f4ab6a649cb97a2f29b95 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -249,20 +249,26 @@ void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar,
+>  EXPORT_SYMBOL_GPL(pci_epf_free_space);
+>  
+>  /**
+> - * pci_epf_alloc_space() - allocate memory for the PCI EPF register space
+> + * pci_epf_set_inbound_space() - set memory for the PCI EPF inbound address space
+>   * @epf: the EPF device to whom allocate the memory
+>   * @size: the size of the memory that has to be allocated
+>   * @bar: the BAR number corresponding to the allocated register space
+>   * @epc_features: the features provided by the EPC specific to this EPF
+>   * @type: Identifies if the allocation is for primary EPC or secondary EPC
+> + * @from_memory: allocate from system memory
+> + * @inbound_addr: Any physical address space such as MSI message address that
+> + *                work as inbound address space. from_memory need be false.
+>   *
+>   * Invoke to allocate memory for the PCI EPF register space.
+>   * Flag PCI_BASE_ADDRESS_MEM_TYPE_64 will automatically get set if the BAR
+>   * can only be a 64-bit BAR, or if the requested size is larger than 2 GB.
+>   */
+> -void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+> -			  const struct pci_epc_features *epc_features,
+> -			  enum pci_epc_interface_type type)
+> +int pci_epf_set_inbound_space(struct pci_epf *epf, size_t size,
+> +			      enum pci_barno bar,
+> +			      const struct pci_epc_features *epc_features,
+> +			      enum pci_epc_interface_type type,
+> +			      bool from_memory,
+> +			      dma_addr_t inbound_addr)
+>  {
+>  	u64 bar_fixed_size = epc_features->bar[bar].fixed_size;
+>  	size_t aligned_size, align = epc_features->align;
+> @@ -270,7 +276,32 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
+>  	dma_addr_t phys_addr;
+>  	struct pci_epc *epc;
+>  	struct device *dev;
+> -	void *space;
+> +	void *space = NULL;
+> +	dma_addr_t up;
+> +
+> +	up = inbound_addr + size - 1;
+> +
+> +	/*
+> +	 *  Bits:            15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+> +	 *  Inbound_addr:    U  U  U  U  U  U  0 X X X X X X X X X
+> +	 *  Up:              U  U  U  U  U  U  1 X X X X X X X X X
+> +	 *
+> +	 *  U means address bits have not change in Range [Inbound_Addr, Up]
+> +	 *  X means bit 0 or 1.
+> +	 *
+> +	 *  Inbound_addr^Up  0  0  0  0  0  0  1 X X X X X X X X X
+> +	 *  Find first bit 1 pos from MSB, 2 ^ pos windows will cover
+> +	 *  [Inbound_Addr, Up] range.
 
-> With the current function , we achieve the following objectives:
-> 1. idempotency in refcount change. Meaning if IRQ is already enabled and
-> if someone enables it again, it will not increase the refcount, same goes=
- for
-> double disable case. This has been tested as well.
-> 2. Only if the new and previous config is different, then only the refcou=
-nt will
-> change.
-> 3. Adheres to previous comments received regarding checking return value
-> of _get and ignoring that of _put.
->
-> I genuinely don't see any duplicate checks here. In addition, I feel the =
-above
-> function is fine from a simplification point of view and cannot be bifurc=
-ated
-> further.
+On what basis this size calculation is used?
 
-You are right I missed the asymmetric conditionals.
+- Mani
 
-> Although, if you could clarify what you mean by further bifurcation, I mi=
-ght be
-> able to connect with your thoughts.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+மணிவண்ணன் சதாசிவம்
 
