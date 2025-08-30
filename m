@@ -1,236 +1,155 @@
-Return-Path: <linux-kernel+bounces-792869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CCCB3C9E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:48:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9873B3C9E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F10F5687FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:48:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BE294E2469
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726422686A0;
-	Sat, 30 Aug 2025 09:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7D264FB5;
+	Sat, 30 Aug 2025 09:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b="VUVKjkx6"
-Received: from mail.netcube.li (mail.netcube.li [173.249.15.149])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J/W8q4Rr"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0DA1DE8AE;
-	Sat, 30 Aug 2025 09:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.15.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AA0230BDF
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756547297; cv=none; b=k72xbpH0h1mWaud/t2ORMoA51gH4Ktdp43SaBNrX2aa/JYaE+r46sYn3FxD8ojrK4mcgefjEbppm5NYwCTcOJ9sJe1qTDadGZh5ajFy+UvsgUde64F3b6OiGTwKhmCYAymQqPseq/8HRdT2zq2b+tFU8cS/fJhOJlrdVmMeOZGY=
+	t=1756547316; cv=none; b=Xmas2d++iPV3wvesjN3mQ+GOUDZlRaVd+WwIgA5ZS3pf87dfAf+q5vk+0D9dualllCyVXkGw0vlq8tuAML7NbRlEqRz3cS3tYL1EIEC7W2beMfcIzD3UbJHu9qU9r72v+3vLJut/RWMNara7pum61KGVtwFxhIk88JP/kOYDxGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756547297; c=relaxed/simple;
-	bh=s3x925jgw5KeuMhfQGgV1IGdbT+9uZeElH50ZzPLZFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VS09TvFhDMmR6AAdvW0vl092oRVV2W53qOM5OhIO7Zx6Xj3H8EGQL0qw1qoDEXIHjWh2Q+sRvt0ZvwA0ZM630UyhItQ+TV2afpQz+fW3brE0RKn0Im8FkKlRkrZ+iFq6GG+ssoqw180MBwGuW/CB3NC/IfowM0vgUgQMTPne4A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li; spf=pass smtp.mailfrom=netcube.li; dkim=pass (1024-bit key) header.d=netcube.li header.i=@netcube.li header.b=VUVKjkx6; arc=none smtp.client-ip=173.249.15.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=netcube.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netcube.li
-dkim-signature: v=1; a=rsa-sha256; d=netcube.li; s=s1;
-	c=relaxed/relaxed; q=dns/txt; h=From:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Transfer-Encoding:In-Reply-To:References;
-	bh=jRy/S1m33Q74m2vLNvRcZ66fmz2K2y/9/fVpVzz+O0E=;
-	b=VUVKjkx6tUN9+aogRN/pEJXnLaoKPzjfsWvZRVjEHQwF3hV+TutmJEmRH9veaXsUoaoZ6UXPpFLRgyFGnghF/aEKCpGYKEsBANPGaKNOnILHoJKBxVVeMeWqFOnkkz96WWjmrpbXemS/TMLB6vL3ogITb4z74cJHEfgKfgfV6pI=
-Received: from lukas-hpz440workstation.lan.sk100508.local (cm70-231.liwest.at [212.241.70.231])
-	by mail.netcube.li with ESMTPA
-	; Sat, 30 Aug 2025 11:47:54 +0200
-From: Lukas Schmid <lukas.schmid@netcube.li>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Lukas Schmid <lukas.schmid@netcube.li>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v7 5/5] ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
-Date: Sat, 30 Aug 2025 11:46:57 +0200
-Message-Id: <20250830094700.1715658-6-lukas.schmid@netcube.li>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250830094700.1715658-1-lukas.schmid@netcube.li>
-References: <20250830094700.1715658-1-lukas.schmid@netcube.li>
+	s=arc-20240116; t=1756547316; c=relaxed/simple;
+	bh=k8rdPyp5NnXLNmLAM5692d7carYniAWw+sO8SLajSu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qLcbxoWZvG+QEV32GLIm1cX6xuNEoyFrs7vIfkIfcynSsfGckRxwCip3GuHQH5QMFmX8u0as56y/hMRr6VGU2TJOueXBF4jzUeABpyFdFy35Y5whZQLdX8YbOD9GvOpCpzHCl/ZVc7TkOoMjErzBoJzI4yjnPfRYsbkeEitOzrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J/W8q4Rr; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70dc6d81b87so3648076d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756547314; x=1757152114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O53sSv19BO8/CcZChzTjPzbh29PlzUTaZHAX/6sSM9k=;
+        b=J/W8q4Rr5C8UkZpWwr0ZFGNhVXyp6LGrYIg2z1c0BWRLZH/NYCQWilPUFS3NtLxVmR
+         d3XM51SlGycN65Uubmu0ICOUjuoNf7drkMHc+8JqFrqv6s5QvhNc0DobbB+ziJZG7pI8
+         Erwg3NoHN+TnfxN/hxJfnr0AmnK2xXCBv8VeuxtvB/9fYp/oKwkD+w39/PM7gN4r876/
+         f4IWQYqdkkl8gev4bM6KHaHtJ9iXNzkt6mWZ/72zM56zJSJAipjCv7zdzFQx+uYq13wh
+         8Xm+dbE2MNIehYJMuRa10DAQbgrj5ry+OO5Q2Qmu74oeI0WIz59bLnZZgpbC7Uy3pAue
+         hjfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756547314; x=1757152114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O53sSv19BO8/CcZChzTjPzbh29PlzUTaZHAX/6sSM9k=;
+        b=J48LlIQDg5zjo+qwteyZp2UWZSrveaVfIGONDwb6o3yrVmTBLMW5nhsHBs6oqabZyv
+         j7kUbsJe5uPpAMfGOnoUaspSOcAdsRYurqaRVjFpaNhmOdYokQQ2uVBVX08gafEfal3a
+         OuqCOZopLa1vPmpH52S9saLElnAbnZQ47A/pbVvbig4li2iLjgGUaDyfpFMFA8Q2SU6O
+         uY3wmXMHEBFvBTskmG7j4iNT6HTISE39WGz7tSpH9/V7qJwtDnQOoEWt+HNdeMDyACR2
+         ZwZzuRp8TzecmQDf2hTAaEINQBqMfqvbrCMoR+iYaxiZULZddjHmtyPQA87leEqJAE8B
+         LZEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrQ3W+iK+ICfOQqlUONnVpaIUx1d8LV3CrLZn1fem4cfroA7z8FZPIPhCVRtuyRRoknxs2MBKAw6wTbqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLc1rghbVwOR0/mWvX7sVvmJu/g5eYDX9Lt2QcYI7caU4FXOIT
+	F8jW/+NBwzel+imOGulO59QrR+SGut9/UXejtJmJ1J9hSC6rwcoHzenLgzQXUb9izvbvcUZHCw8
+	nivWmKdpHKH0+xtdIBYJGZ38UuKT3rz8R2IRSLGMEqQ==
+X-Gm-Gg: ASbGnctlb615gmaCgSXw/gNpLcS8Iih/U/7IhoK47q35DujkpCQkMkxMnZGUmty56tj
+	lEjJrdDwjvpheLBXi3BoyVs1t0Z+J3h0CAhIVJ+3yIQOU1CJ07b2EDeOmjbnkBDGxBaiPoHrY3H
+	TqNIEPfFf3XFOfZYk71dKNP2kwc/aaKq91ya8fzThSryiAnKhM4OxaR2fbaxS82zlvyLq3pkseF
+	KHN+Ng8sugyRYb0
+X-Google-Smtp-Source: AGHT+IGE0Py88CGitXRrUiODaco5VRpXPPZYcuL5qgF4c2qTNFu2t6a/n3uB1c8tKAquQX4FMnnHmvhUsQyxAUhJNQs=
+X-Received: by 2002:a05:6214:d8f:b0:70d:ee9b:9cf3 with SMTP id
+ 6a1803df08f44-70fa1b8793emr30990516d6.0.1756547313850; Sat, 30 Aug 2025
+ 02:48:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250829131346.3697633-1-anders.roxell@linaro.org> <20250829232132.GA1983886@ax162>
+In-Reply-To: <20250829232132.GA1983886@ax162>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Sat, 30 Aug 2025 11:48:22 +0200
+X-Gm-Features: Ac12FXyHu3hHuGLZl4KhxlWVoLXmzpAgyCiaFhzljq-f-0aBvo2YQhrSZWoV0xY
+Message-ID: <CADYN=9JgDeXByZy7PhUyaY091775G0Md+QvoFMb7AZa9vcKQqw@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: peter.ujfalusi@gmail.com, vkoul@kernel.org, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, dan.carpenter@linaro.org, 
+	arnd@arndb.de, benjamin.copeland@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The NetCube Systems Nagami Keypad Carrier uses the Nagami SoM and contains
-a TCA8418 connected to a 4x4 matrix keypad. The I2C2 interface is connected
-to said TCA8418 and also a header for an PN532 NFC-Module. It also provides
-a pin-header for a bi-color status led. Ethernet with PoE support is
-available on a screwterminal after magnetics.
+On Sat, 30 Aug 2025 at 01:21, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> Hi Anders,
+>
+> On Fri, Aug 29, 2025 at 03:13:46PM +0200, Anders Roxell wrote:
+> > Fix a critical memory allocation bug in edma_setup_from_hw() where
+> > queue_priority_map was allocated with insufficient memory. The code
+> > declared queue_priority_map as s8 (*)[2] (pointer to array of 2 s8), bu=
+t
+> > allocated memory using sizeof(s8) instead of sizeof(s8[2]).
+> >
+> > This caused out-of-bounds memory writes when accessing:
+> >   queue_priority_map[i][0] =3D i;
+> >   queue_priority_map[i][1] =3D i;
+> >
+> > The bug manifested as kernel crashes with "Oops - undefined instruction=
+"
+> > on ARM platforms (BeagleBoard-X15) during EDMA driver probe, as the
+> > memory corruption triggered kernel hardening features on Clang.
+> >
+> > Change the allocation from:
+> >   devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8), GFP_KERNEL)
+> > to this:
+> >   devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8[2]), GFP_KERNEL)
+> >
+> > This ensures proper allocation of (ecc->num_tc + 1) * 2 bytes to match
+> > the expected 2D array structure.
+> >
+> > Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under =
+drivers/dma/")
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  drivers/dma/ti/edma.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+> > index 3ed406f08c44..8f9b65e4bc87 100644
+> > --- a/drivers/dma/ti/edma.c
+> > +++ b/drivers/dma/ti/edma.c
+> > @@ -2064,7 +2064,7 @@ static int edma_setup_from_hw(struct device *dev,=
+ struct edma_soc_info *pdata,
+> >        * priority. So Q0 is the highest priority queue and the last que=
+ue has
+> >        * the lowest priority.
+> >        */
+> > -     queue_priority_map =3D devm_kcalloc(dev, ecc->num_tc + 1, sizeof(=
+s8),
+> > +     queue_priority_map =3D devm_kcalloc(dev, ecc->num_tc + 1, sizeof(=
+s8[2]),
+>
+> Would
+>
+>   sizeof(*queue_priority_map)
+>
+> work instead? That tends to be preferred within the kernel so that the
+> type information is not open coded twice and it helps avoid bugs exactly
+> like this one. See other uses of devm_kcalloc() and "14) Allocating
+> memory" in Documentation/process/coding-style.rst.
 
-Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
----
- arch/arm/boot/dts/allwinner/Makefile          |   1 +
- ...8i-t113s-netcube-nagami-keypad-carrier.dts | 129 ++++++++++++++++++
- 2 files changed, 130 insertions(+)
- create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
+Thank you Nathan for the review, that makes sense. I=E2=80=99ll send a v2 s=
+hortly.
 
-diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
-index af287bb3231c..a2137bbe2230 100644
---- a/arch/arm/boot/dts/allwinner/Makefile
-+++ b/arch/arm/boot/dts/allwinner/Makefile
-@@ -259,6 +259,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-s3-pinecube.dtb \
- 	sun8i-t113s-mangopi-mq-r-t113.dtb \
- 	sun8i-t113s-netcube-nagami-basic-carrier.dtb \
-+	sun8i-t113s-netcube-nagami-keypad-carrier.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3-sl631-imx179.dtb \
- 	sun8i-v3s-anbernic-rg-nano.dtb \
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-new file mode 100644
-index 000000000000..048a6245684a
---- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
-@@ -0,0 +1,129 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 Lukas Schmid <lukas.schmid@netcube.li>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-t113s-netcube-nagami.dtsi"
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "NetCube Systems Nagami Keypad Carrier Board";
-+	compatible = "netcube,nagami-keypad-carrier", "netcube,nagami",
-+				 "allwinner,sun8i-t113s";
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led_status_red: led-status-red {
-+			gpios = <&pio 3 16 GPIO_ACTIVE_HIGH>;  /* PD16 */
-+			color = <LED_COLOR_ID_RED>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+
-+		led_status_green: led-status-green {
-+			gpios = <&pio 3 22 GPIO_ACTIVE_HIGH>;  /* PD22 */
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_STATUS;
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+
-+	tca8418: keypad@34 {
-+		compatible = "ti,tca8418";
-+		reg = <0x34>;
-+		interrupts-extended = <&pio 5 6 IRQ_TYPE_EDGE_FALLING>;  /* PF6 */
-+		linux,keymap = <MATRIX_KEY(0x03, 0x00, KEY_NUMERIC_A)
-+						MATRIX_KEY(0x03, 0x01, KEY_NUMERIC_1)
-+						MATRIX_KEY(0x03, 0x02, KEY_NUMERIC_2)
-+						MATRIX_KEY(0x03, 0x03, KEY_NUMERIC_3)
-+						MATRIX_KEY(0x02, 0x00, KEY_NUMERIC_B)
-+						MATRIX_KEY(0x02, 0x01, KEY_NUMERIC_4)
-+						MATRIX_KEY(0x02, 0x02, KEY_NUMERIC_5)
-+						MATRIX_KEY(0x02, 0x03, KEY_NUMERIC_6)
-+						MATRIX_KEY(0x01, 0x00, KEY_NUMERIC_C)
-+						MATRIX_KEY(0x01, 0x01, KEY_NUMERIC_7)
-+						MATRIX_KEY(0x01, 0x02, KEY_NUMERIC_8)
-+						MATRIX_KEY(0x01, 0x03, KEY_NUMERIC_9)
-+						MATRIX_KEY(0x00, 0x00, KEY_NUMERIC_D)
-+						MATRIX_KEY(0x00, 0x01, KEY_CLEAR)
-+						MATRIX_KEY(0x00, 0x02, KEY_NUMERIC_0)
-+						MATRIX_KEY(0x00, 0x03, KEY_OK)
-+		>;
-+		keypad,num-rows = <4>;
-+		keypad,num-columns = <4>;
-+	};
-+};
-+
-+&pio {
-+	gpio-line-names = "", "", "", "", // PA
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PB
-+					  "", "", "UART3_TX", "UART3_RX",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "eMMC_CLK", "eMMC_CMD", // PC
-+					  "eMMC_D2", "eMMC_D1", "eMMC_D0", "eMMC_D3",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PD
-+					  "", "", "", "",
-+					  "", "USB_SEC_EN", "", "",
-+					  "", "", "", "",
-+					  "LED_STATUS_RED", "", "", "",
-+					  "I2C2_SCL", "I2C2_SDA", "LED_STATUS_GREEN", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ETH_CRSDV", "ETH_RXD0", "ETH_RXD1", "ETH_TXCK", // PE
-+					  "ETH_TXD0", "ETH_TXD1", "ETH_TXEN", "",
-+					  "ETH_MDC", "ETH_MDIO", "QWIIC_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "", // PF
-+					  "", "", "KEY_nINT", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "ESP_CLK", "ESP_CMD", "ESP_D0", "ESP_D1", // PG
-+					  "ESP_D2", "ESP_D3", "UART1_TXD", "UART1_RXD",
-+					  "ESP_nBOOT", "ESP_nRST", "I2C3_SCL", "I2C3_SDA",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "",
-+					  "", "", "", "";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	status = "okay";
-+};
--- 
-2.39.5
-
-
+Cheers,
+Anders
 
