@@ -1,174 +1,105 @@
-Return-Path: <linux-kernel+bounces-793179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55338B3CFD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC676B3CFDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BC517A6C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836F17C2824
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCC52D23B7;
-	Sat, 30 Aug 2025 22:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26A2259CA3;
+	Sat, 30 Aug 2025 22:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFr3+C+7"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UVPtAGIb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C71258EDF;
-	Sat, 30 Aug 2025 22:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA071863E
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 22:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756592491; cv=none; b=cQZv1cu1O928v2t/Il6/+gHzcL7j2QSTQMqBR+43XUmyvA+6tUlYl9PPSb5e7T3Kq66j++TRi5fR+zvgdW0L4J1BLk0udZHrmO+CO7Z9l3gBVOuIriV9iwK0tgOxdBiYMzAzffbUV1LerhBqt/V8R6OepIgaKfAkPckH+w2hNuA=
+	t=1756592771; cv=none; b=ihJDHNaLqkqaf2ldZMHxa3B5BdpTXJjhRzaz0brb32rT2Mvvv3vG97ITWJmPWUE/6dN5SYe11udq81btV7kfL05MlAvb8TZ0to3NYRUeQ37MMplKhY//5xB8HUjnpLx+uuITIqC/8trAdMkgJgvrhFBo5Cp+nlskLfeX6QK5l+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756592491; c=relaxed/simple;
-	bh=4VKfVT3I8DaBzxZttRBkoDhbOeWOmCZY/Gu7cAz8rKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iG+ljA6FS0KPMHIYHFO9pk7pEsC9NxLryCm9Wk1CAMnvA9atwAqRbo7E5ZPe/6eBnRgJbj6UPsgOuPRGF4otziTD/WT1LuHYZEwjhDORJBXLKMKBniTSIjmf9bDKLTcGiUbqP/fg0j3/WelKREjm7MeCN+GU/P8fSCNddfejR9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFr3+C+7; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7322da8so604480366b.0;
-        Sat, 30 Aug 2025 15:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756592488; x=1757197288; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D6MFTTmmrKhHwzeBfzYKhPuh9THrsl4NpWB/GL/MmNA=;
-        b=bFr3+C+7C1r9JgPoYxCSR1e0R1LztIOofQ7UhFqwXVIx9wRz+C1SIhP40fhI9j0n5j
-         weQCUma0pQeB7JVrxGGoFEGw5FhK2FdpdFjP+LOp9+Na4vqHtDcoXMWQ4qrHVBQQ6qkr
-         QOk+N1R9b1sx8cwJq+M03/6cr6Tc6LkGNmSj0kKUTYJxV2UP67KOhZph+Bl1+GiZn5Tm
-         e3hWzrNCZofd3dxvgrRYdiKqGLS/RqE8FQ7wClUA1CGCmve6jDiqsS9u63epKdY0qHJ7
-         q0+meF/bC/ziIZ00AGKY7h0AdK7LcvwghC1xCyUFjEjKQj0tKEMfm/RQ5OVSVnwKfoDM
-         h5hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756592488; x=1757197288;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D6MFTTmmrKhHwzeBfzYKhPuh9THrsl4NpWB/GL/MmNA=;
-        b=YBVk7exZ0XxyEWqZLMt++Dj9wBSw1AZ0rtBKmnW+Sb4GsTF1Y7/x4Rik4mnUjZOGvH
-         1HSlOT97Srof2rlzms8wlC4diIF72+QFYxm6oaLPCFiYWibb35oRJVi9hkyg2NnLttb9
-         /GyKTTP0YYgXMymb/xowuDiounhg0IcwPk/dX6/YX1zDG00Xjl8g7t8ahoblziTFdsQe
-         KX9GNmdk0+SPx8BXKdILHS76yPO1kbkr7JpHUlau7CHDuDVTf2DxDeXARwC7rODRMzkZ
-         l5Fq7A12ui12n4ZUkNcf7L/2JjuRz/kaOEXQTsJY9Ka43STGclrtcaiBD8goINikVsbU
-         8gMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG1rMCwKH8URgYe72CI08TM0N5buN9YpQw9Z/wQcNinFs3PzwYAKnoQ32E59RcEXPx/09DirTIPC1/@vger.kernel.org, AJvYcCXJwEImhGXYn3xN13G17AlAmhiPGWnCiqyur1mLJFNfSSKry+NEkifbt2XXlTQKAF2YJtSt4AXBq5ZEyA2akQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt6iYCWBt4Jx2rsh6dGvhwvFTFMuLXQk7EyJq8kVAzXqp9o935
-	HjQ+y2m5sz2pRgoWH4wjnKYNVnkJ6yWFo9bzuwda+F/qMa5h6mq0zUDg
-X-Gm-Gg: ASbGnct3oR3iyYZZATYbcdTMUr8AEXvL3Z2Svd9H6hdoLhpgri/RUVa5wPrQaJ4NzHR
-	+pPUdSrvQY7aIaGAegnFGiWoW6R8Go9KkprEHv8ISMJTEytrRTdjV4GsULujDHH1uxAAgt17QhK
-	Tr6er0I6OkbHv5/1+E8KG3OBHCXWaigvyi/vEbDsYeViVO3pDHq0PZfre1j7BMR/PFK74k0ZCQ1
-	ejoX9ohQRdCmgmXycRKSJ0gFBvparDu3nC0XdQejljN0T1jbHaTV8/ue+jQP/V0tZ3yqai0WQWE
-	R4rM+G+LMAhRPjP7GFk3gUWBYEpYNeAYCuMB/NSItt4XXnH4WoLXTRC7MqrgEHQfFADvsW+yfOj
-	emFc+BZgAn8vghSUu8v8D
-X-Google-Smtp-Source: AGHT+IGfFSgtxcpKYmv/w5r01kKycrsLuR0sQc/bc+raRF/3d8gHN6rZNoIXJCIuwAjgcENoBeFOcA==
-X-Received: by 2002:a17:907:7e86:b0:afe:ad18:8662 with SMTP id a640c23a62f3a-b01d8c74c8emr314742466b.23.1756592488174;
-        Sat, 30 Aug 2025 15:21:28 -0700 (PDT)
-Received: from [127.0.1.1] ([46.53.240.27])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b016e56a4e2sm241201366b.26.2025.08.30.15.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 15:21:27 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Sun, 31 Aug 2025 01:21:22 +0300
-Subject: [PATCH 2/2] arch: arm64: sdm845: starqltechn: fix max77705
- interrupts
+	s=arc-20240116; t=1756592771; c=relaxed/simple;
+	bh=+cznMWbhze59dSzIb94h1PXt0j0iLOaF8f2CY8dhMII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYjX8V5hSJcEMBvxybsx6M7ete3Yz+MJksuJgTgJgawwClpvHMKT/CKGtKRFft/rR9OTu0dLSG+0uFkyd5vFig6M2D/NlaVP680VB1feXd4PBwpD+1nbuoZdmJyD/fE+hKxRFOFsQ/tZLsECx8jFQkXtbalwFmCDDTzLoR0n64I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UVPtAGIb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1856840E016C;
+	Sat, 30 Aug 2025 22:26:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FcyThMKzddel; Sat, 30 Aug 2025 22:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756592759; bh=3hH1zbeaU5RbFICZqDb/Vt1u8p8wn0WrHQ01ReL6kbw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UVPtAGIbPsGEXry2u7hcoucuhTadp7r+Y0Scv83vij2/JaD7FrzbniWuqYt1ywVoo
+	 fqn4O/9Yf2Ekw5FCMXjHfjcthYCVz7WZU3nBRslVcyaOSCyhIZLuebZKvLxX3aAD+l
+	 wuAPP19PDs9SSZVyuXypVYjyDdE92fbB0AxMkcryWSzb/O/JaYAp7wGizirI+dLv4k
+	 r+9ITsiwctw3HJ7rQs82Zn7Kihf5YPt/vB4eycUAx/tkiX3DztXSMQFarrzWp+YzAm
+	 7UBw0oVATWn1iIQ7aP/e5PaNsyYaAVgbMM+6fpSws/gfp8YChBNR0I2aPpH9WI/S0j
+	 TRsa/NuqepqkhKo7ajo6gw6igfLl5rCrKqgHPZ6SZIywf/GyFxZ/s2tYtcz8s6n2tf
+	 umgvcKeJQ5olx0a8OF2IJLDBnUZHxPZt6xlDV/eViv+xAiT3PHWU6+/vm3UTaNMsIT
+	 31JQrV445qftiZSDkoh3CuMRXDb62vsN6y40h3eQHB/LzetoTCJgxHPFW2dTn315Sg
+	 z5k/OGlib1j5Yrx2GehnY9umqqLKhZw7qatHUWc48o7+oVBmeiT3S4f1QhbGLQolhw
+	 9jDz+lWLPK+i4JnkqtrduTqOtQ5zCyjwXzBZVaTSn1fy5SKBRktdwCzOE+Ez9IwWsq
+	 deT3Xh1FXeVkFbWgeMejCElM=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 230C840E0140;
+	Sat, 30 Aug 2025 22:25:51 +0000 (UTC)
+Date: Sun, 31 Aug 2025 00:25:45 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] futex: Initialize mm_struct::futex_ref on mm_init()
+Message-ID: <20250830222545.GAaLN6aeQzWHYc20BF@fat_crate.local>
+References: <20250830213806.sEKuuGSm@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250831-starqltechn-correct_max77705_nodes-v1-2-5f2af9d13dad@gmail.com>
-References: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
-In-Reply-To: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756592484; l=2119;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=4VKfVT3I8DaBzxZttRBkoDhbOeWOmCZY/Gu7cAz8rKk=;
- b=HMSKrqlVMCEizKgHWhGYlbxEhQwb+7Lq58vFREjceJ133p+uhw4VCCTpGpqJpQoyZlVjPCPi4
- NAcuUkQwEJBDLYfS+c8sHmBg0XSL05NdrOgC/SNlr/4FavRS4X/VatW
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250830213806.sEKuuGSm@linutronix.de>
 
-Since max77705 has a register, which indicates interrupt source, it acts
-as an interrupt controller.
+On Sat, Aug 30, 2025 at 11:38:06PM +0200, Sebastian Andrzej Siewior wrote:
+> mm_struct::futex_ref needs to be set to NULL during mm_init() to ensure
+> that it is not copied during fork(). Reusing the previous pointer can
+> lead to use-after-free which can trigger
+> 
+> | WARNING: kernel/futex/core.c:1604 at futex_ref_rcu+0xe1/0xf0, CPU#2: swapper/2/0
+> 
+> Initialize mm_struct::futex_ref on mm_init().
+> 
+> Fixes: 1b708b38414d3 ("futex: Move futex_hash_free() back to __mmput()")
 
-Use max77705 as an interrupt controller for charger and fuelgauge
-subdevices.
+So this one is queued in locking/urgent and I guess I can fold this new one into
+it so that that commit is whole and fixed.
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
- arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-index 03b63b987a18..7ccab6ba7d21 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-@@ -10,6 +10,7 @@
- #include <dt-bindings/input/linux-event-codes.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/mfd/max77705.h>
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include <dt-bindings/sound/qcom,q6afe.h>
- #include <dt-bindings/sound/qcom,q6asm.h>
-@@ -584,14 +585,16 @@ &uart9 {
- &i2c14 {
- 	status = "okay";
- 
--	pmic@66 {
-+	max77705: pmic@66 {
- 		compatible = "maxim,max77705";
- 		reg = <0x66>;
- 		interrupt-parent = <&pm8998_gpios>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-controller;
- 		pinctrl-0 = <&pmic_int_default>;
- 		pinctrl-names = "default";
- 		#address-cells = <1>;
-+		#interrupt-cells = <2>;
- 		#size-cells = <0>;
- 
- 		leds {
-@@ -631,8 +634,8 @@ max77705_charger: charger@69 {
- 		reg = <0x69>;
- 		compatible = "maxim,max77705-charger";
- 		monitored-battery = <&battery>;
--		interrupt-parent = <&pm8998_gpios>;
--		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&max77705>;
-+		interrupts = <MAX77705_IRQ_CHG IRQ_TYPE_LEVEL_LOW>;
- 
- 	};
- 
-@@ -641,8 +644,8 @@ fuel-gauge@36 {
- 		compatible = "maxim,max77705-battery";
- 		power-supplies = <&max77705_charger>;
- 		maxim,rsns-microohm = <5000>;
--		interrupt-parent = <&pm8998_gpios>;
--		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&max77705>;
-+		interrupts = <MAX77705_IRQ_FG IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
- 
+And then leave it in that branch for one more week for some more testing...
 
 -- 
-2.39.5
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
