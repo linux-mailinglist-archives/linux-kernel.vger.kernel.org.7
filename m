@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-792782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BCBB3C8DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:42:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F8DB3C8DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDD75E8259
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BB058334D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E4D27AC34;
-	Sat, 30 Aug 2025 07:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03B427F759;
+	Sat, 30 Aug 2025 07:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt61LiXM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V/OZoirX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Zt61LiXM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V/OZoirX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X76d7ux0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF2F23AE87
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 07:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8C5277CB8;
+	Sat, 30 Aug 2025 07:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756539729; cv=none; b=i/2kdmJpD93U2bGfrDYT+lcmXpsELbHLh/K9MOA147zLRzrF2UwY6ZJaB24bL+LH6AmXKH1lJjonsMheCQpRaJaeoTh/wQbYRWLnZ2ZUWrOBSBjVZHgqSfj6ISXDkD7YJ58912yUQgwfOwF3l3R5cEtm6jcv2aa23Qyia/4TbGg=
+	t=1756539800; cv=none; b=lVEPony13CUoUMBsfSeCTllPVZQ2vYp6Qm2fZ59FbhgVfdL5vhr1ZHnNghuRLNazCxxISQIzRl2TH7Ur6Rro4G9ryNEIlmI0228+dn4dzcu0jGuOk9EOybi3OwqI4siJlsW++MqdNDwxi/51bor1i5o84IPomSX6vb3fTj3QMos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756539729; c=relaxed/simple;
-	bh=h3XcFgrNF8Sgup5YIQEI/aLE9bPnfguKvj4TjQMUQac=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myUAp6ztGvfqfGIWu3h6sb+0ehDuhfkUIoh8azpRsWHUqDdr+7sudzKELiy8R1YflkFXKX+8FPF05+1J6jpatUSStnS9SstRhVJ1aP18LjaSNwSzSo8FKcunJy142d4Ybca3tpyc45K6U9sRIaP+Kx9kRvLLtD/ypJ8q5KUrwWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt61LiXM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V/OZoirX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Zt61LiXM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V/OZoirX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8CA18336BE;
-	Sat, 30 Aug 2025 07:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756539725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oPJMcdjKXkKG89xb2emN+RVyypynR6wa9yGi5gvh1Fc=;
-	b=Zt61LiXMPjqbd743gCjs8wn2xudd2/dl+D+MzlNAY+bsHIRYaGOhb/cEF6diQudpLooZ4N
-	iRkZZLk5SJGRFtcuYIxanahqR9Zdqv2PNMhLU+yYXthfud3yGxtR0+bsA8EdLxwbK4MmrQ
-	5Stbm4h4K9oQU86vkpxnYiGocyByIlg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756539725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oPJMcdjKXkKG89xb2emN+RVyypynR6wa9yGi5gvh1Fc=;
-	b=V/OZoirXzHPCISSwrbIwlQGloB3A4w0JPWOnKzX4JI7oYcE0b5hu7Jp+8wX3swlejyEFqZ
-	VaAjCbI66jE1Q0Bg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756539725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oPJMcdjKXkKG89xb2emN+RVyypynR6wa9yGi5gvh1Fc=;
-	b=Zt61LiXMPjqbd743gCjs8wn2xudd2/dl+D+MzlNAY+bsHIRYaGOhb/cEF6diQudpLooZ4N
-	iRkZZLk5SJGRFtcuYIxanahqR9Zdqv2PNMhLU+yYXthfud3yGxtR0+bsA8EdLxwbK4MmrQ
-	5Stbm4h4K9oQU86vkpxnYiGocyByIlg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756539725;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oPJMcdjKXkKG89xb2emN+RVyypynR6wa9yGi5gvh1Fc=;
-	b=V/OZoirXzHPCISSwrbIwlQGloB3A4w0JPWOnKzX4JI7oYcE0b5hu7Jp+8wX3swlejyEFqZ
-	VaAjCbI66jE1Q0Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 444A4139B1;
-	Sat, 30 Aug 2025 07:42:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wQgTD02rsmg4HQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 30 Aug 2025 07:42:05 +0000
-Date: Sat, 30 Aug 2025 09:42:04 +0200
-Message-ID: <87tt1pfe7n.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Gergo Koteles <soyer@irl.hu>
-Cc: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] ALSA: hda: tas2781: fix tas2563 EFI data endianness
-In-Reply-To: <20250829160450.66623-1-soyer@irl.hu>
-References: <20250829160450.66623-1-soyer@irl.hu>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756539800; c=relaxed/simple;
+	bh=/GUcf1mnnRLd1XbhLCrasAZm5Jsw+M7OVdREvx4qwgs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YuC8PCuuTqJb3Kjd9+FWXzEFzV2jm3D7j9jWwkwchsPcjdFrD6ipXoDyTRRii2t848A9AGZSZ2IXoffAelpeWKhKh0DY4HvAgis0Z+ATAW9Kqtj168/PtsQLNwxq53lcqTAJDmMiYiXwg+uXDexo0D8TuZQ4ZSCwc5IJ9P4gU4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X76d7ux0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7a16441so418741566b.2;
+        Sat, 30 Aug 2025 00:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756539797; x=1757144597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gURzqUmGeKrmX4dhppb9QlLLCg/dh2IS2zWou5cVXvQ=;
+        b=X76d7ux06nU954FVrBm62GSW5P031d12wnSYX8xyceBKM9JhmvHjlMwhw9iECXlfxN
+         cBPmzbdkhJj2gz4f3LLwlnQhKX1ugDmNnyqPNTgefUc2jzK3eMpEqOJABR44Pj4CIxXW
+         7d3YDCJgMYM6Qjg0DuLR3uyMomO75iCmPywlPoqvBwXHiCE9PupoxH3QuMu8Bxnq6Z+C
+         TYslIjOzXLnY4bHUK2O+oNfE7TPNTcuxuB7QmVa/b1ne59267n6llHHSU0BReI/UD9C2
+         KpNj2ZZCzKExIHD7rDVrkuZhd6z1dpb7mPAt7qA9zyMF4oy81JTr5CjiIamveVdJGmnR
+         UQ6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756539797; x=1757144597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gURzqUmGeKrmX4dhppb9QlLLCg/dh2IS2zWou5cVXvQ=;
+        b=CH/P8UhaMiVGhQvrqCp3/6EknGVWvFKmk2WnYz8dPgv0VgdCMt9K24ykx8NXPYoxIb
+         C/Ezue2qCpnMk6kJMV1eCKHaMt1D7q4JJ7AzoNrWwxFIyj2OqjOM7ZKgh2Nc7L10DzEA
+         8fnNIHFLFtGGXz8Op96uvAJKvDXgH5ScBnFLCrWzQ3c+aYTVnCtVG98jZPWVfL6ZBREC
+         pFLDX9RpVOfqEYvVKfXp8Fdc5yJ1uUAGaMj3b9//C48xecCM2/M3RsjjW3yTfoNdU69e
+         Kcqjc4AMJMBu3t87tGHqVOf1t0i+iTqfFomJm/XIkfgQ8OVLulpm2m5LrBOBx9p8HTGg
+         +tBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDcbDtNjOA7vu5AeJlqR1ttbGzet+kDKYvmDUCQ1o2FJXeFGaxqqZByy27ZglRmU2vHZ00yuQSUid3@vger.kernel.org, AJvYcCV4PPQ3ESM5cxV3LTkrB1400raNOtdE6kafge6mDE8Ncp9WDF8kBYhv8CSLMLQaVxLT/o+uuw+tAcwz@vger.kernel.org, AJvYcCWccT+WdpBBLEdoILCkRsKmEw/bz5nCdfaN5uu1uR2SpAw4ZCskA533YkgZMKMhXoGgMpcuTV1yLYnu@vger.kernel.org, AJvYcCXq2GHh4httP7OK4xlIJpLYuHcmFDk723m77zwq6gd0ihq4LZmp7B54mceg8z9BwOe9IfG7T/LUPWCbI/kC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiG+9PWvFE2eK6bkITjvroYWp69COEu+/nRWsIWx1FWpF4KjDr
+	IfY6CrBQ97J2xEiOrTTup8F9VOlNZEWVEqHOWiu3k6bgziJneZc2kjeKtYV/bqPdkO0MSSY0Zy1
+	6S5S4cmukP5u224bFGL4cqrQ+vi3jWF4=
+X-Gm-Gg: ASbGnctMi1mTW5FdY9vvzCJcdaGBgYWDt1uP4toiVpgHm/vR9doQyqf/98HzmkvgIEc
+	5AccdhrUOHMPt3I+JFWwjhdFx7VioU7XWAKvTIunKgMdCKDj1TI47+clPHsaYviSGIr3uVtih++
+	9Cr1j0XU8lxo8axPOWsW9Qw/RFJJSfnOpO4qkJFRUuzdz8QHYXOMvvCCPOlGWj4+rugbOBIuf8L
+	nREVhWeR3Hf2+9z2A==
+X-Google-Smtp-Source: AGHT+IEY2oLBKT6+HGAYixezZFibnn/igblSvV5V+/2cx5/ECPFYwYJW3hDUtnlycz99C1cnWWFo/bl1TA1+WzOwDLA=
+X-Received: by 2002:a17:907:1c87:b0:aff:40f:491f with SMTP id
+ a640c23a62f3a-b01f20ccc95mr122341566b.64.1756539796809; Sat, 30 Aug 2025
+ 00:43:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+References: <cover.1756511030.git.marcelo.schmitt@analog.com> <344c3797fe8e5aa9177ef8c0633d1eedd32563fa.1756511030.git.marcelo.schmitt@analog.com>
+In-Reply-To: <344c3797fe8e5aa9177ef8c0633d1eedd32563fa.1756511030.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 10:42:40 +0300
+X-Gm-Features: Ac12FXysrcFjcTtPyekcpdB2bENednecYuAPaeyAdDUgvgGErGBxwhYuAYYiOrw
+Message-ID: <CAHp75VeTqm+aAt47rSRznpZe5=wd_X24ZtvjXJNj=b3HGu5Sxw@mail.gmail.com>
+Subject: Re: [PATCH 11/15] iio: adc: ad4030: Add clock mode option parse and setup
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, jic23@kernel.org, Michael.Hennerich@analog.com, 
+	nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com, 
+	andy@kernel.org, corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, broonie@kernel.org, Jonathan.Cameron@huawei.com, 
+	andriy.shevchenko@linux.intel.com, ahaslam@baylibre.com, 
+	sergiu.cuciurean@analog.com, marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 29 Aug 2025 18:04:49 +0200,
-Gergo Koteles wrote:
-> 
-> Before conversion to unify the calibration data management, the
-> tas2563_apply_calib() function performed the big endian conversion and
-> wrote the calibration data to the device. The writing is now done by the
-> common tasdev_load_calibrated_data() function, but without conversion.
-> 
-> Put the values into the calibration data buffer with the expected
-> endianness.
-> 
-> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+On Sat, Aug 30, 2025 at 3:44=E2=80=AFAM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> AD4030 series of ADCs support three different options for the clock that
+> frames data output. Since each clock option implies a different hardware
+> setup, the clock mode to use is specified in firmware. Read the designate=
+d
+> clock option from firmware and configure the device to work accordingly.
 
-Applied both patches now.
+...
 
+> +       ret =3D device_property_match_property_string(dev, "adi,clock-mod=
+e",
+> +                                                   ad4030_clock_mode_str=
+,
+> +                                                   ARRAY_SIZE(ad4030_clo=
+ck_mode_str));
+> +       /* Default to SPI clock mode. */
+> +       reg_modes |=3D FIELD_PREP(AD4030_REG_MODES_MASK_CLOCK_MODE,
+> +                               ret >=3D 0 ? ret : AD4030_SPI_CLOCK_MODE)=
+;
 
-thanks,
+FIELD_MODIFY() ?
 
-Takashi
+Also, I would rather put it as proper if
+
+if (ret >=3D 0)
+  FIELD_MODIFY(...)
+else
+  FIELD_MODIFY(...)
+
+> +
+
+I would not add this blank line as these are coupled.
+
+>         ret =3D regmap_write(st->regmap, AD4030_REG_MODES, reg_modes);
+>         if (ret)
+>                 return ret;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
