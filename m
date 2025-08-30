@@ -1,137 +1,129 @@
-Return-Path: <linux-kernel+bounces-793141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB4EB3CF2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:52:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE293B3CF2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925071B24E88
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E521B243C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9992DF3CF;
-	Sat, 30 Aug 2025 19:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46672DF6EA;
+	Sat, 30 Aug 2025 19:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfxPb3hF"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bNtKBn2P"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFCB2DECC5
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92891207A09
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756583527; cv=none; b=jtm4Lv6QVlZsEEpgtBDGo8VAK0puf/FZwAtY259ExXnuncDvtCCOnhaFmFyeXpV1tKEHAOBKN6AvqKsc3MpYn4TLQX609ar6ZHjfaaILYbqr9plKOJ6KOs6xQdhnhe9+8Ua+ivMOmy0YBIATBCMCwFk2a28nx3Bh1kSyMjwGPEk=
+	t=1756583665; cv=none; b=cC/7RR3s5zxqFUfZtwWkuyf/UF9ymWdq2v7lUxxKp7niGQbcJZ1zYU+mGTFAloDUahyowQ8wsbF2w9lS8G1ZxREDbnoKhGrLDItXCrUMxYehrvKyFrNquDb38WhavvrG2KKTS5y6b+z1XxjriWrKpfHCzDSKcuwNFc8d29ZCuvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756583527; c=relaxed/simple;
-	bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ChdAMU+COQtxNtmq7oPo5Bo1LdNaMdolgLehzdnfl5jZgYeaW10nLcRYqPbvcN1fX0VngfiCJUjVq9BZx7YNVdog0ql53BURhqEhxmcdh54vHAfXZD6kL6sZ83IFibax6GmAOgeTHwdE79M61p/V1sAvZ9InGhUdSQ+MzI1fzlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfxPb3hF; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afefc7be9d4so300998866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:52:05 -0700 (PDT)
+	s=arc-20240116; t=1756583665; c=relaxed/simple;
+	bh=VcMB6i9mLkUmp4G6fTpg7CesKanMOCwBBXFfIoLjtrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F453YIT6ZsYYa31TojlX60mdaw3fr91bz4+fQ+QEiVNzzJCeJYVDLQszYgTwzdeXa3N+46oR0eIG9FdAym+s2sY031QfdixpD4mNvFQ4XeUdRjCAXsvZjSoJrvFGJCPMiNsrBOozuxHrE2td9VykBhfk3fmfRUukyWAVunJkVTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bNtKBn2P; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso246143f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:54:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756583524; x=1757188324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
-        b=NfxPb3hFhQOUYlgYuzpRvMRN/TpnzwRE67fpmLupb3+CY2+lbttKSJKEdnvu1eoVVZ
-         cUUfcXPmcK60l1F+dcwNPViUaOPqX3P+mlGw+UrkRUlnBLjJcFf+ad/H/kuP5mVwrVLr
-         nR5Zqf3fFcCvT5ekvhjEMs18sNczxApetsSd1Cf01duIMqC1mdE+hfj67XACWUhM1ToI
-         dIFbHOdo8U7lkARgqwmFQ+w3H7WvymBusU0uML84jMsGwu3OTVELkwwJim48yYf8E4Jl
-         w9FtVYSruO2GAD9zCzyuKguiVHMgKISy6fPVJaLTgt64UBUMmmTDMF0kBPdkqKpdk36V
-         H2aQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756583661; x=1757188461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWCJ+1za7yqATipqpoHH2837nCEX0b9cfMM3RbSb7qI=;
+        b=bNtKBn2PmGS2A08cqTfCLHvhDobUCX6JzRXpxClB8cbI93zrvW5mO9Y6TqPbkJ8KoR
+         celyidiXgS0Q5Z7rQMVyZlknkpOoRkbntGVz05+KoHxT/4cI/Dq3QvnOA87GOyL7Ppbe
+         IiuYQUakjcpsIhSsJNo/M1ioaVKHzCklWpMcFqVYwFL1yj1FTrD4mZhBQbHrm9G0mPLo
+         pvymA3QOFuDQy0kV94eASY5Iyo6AtRrxK/YahtmJcyur9griw0olX/LDkWuov21H4Jqp
+         RsTNfpUg3wq6Ax71hz6+xSDRpRLDDWPGpQl8W9azNxXmbW0UUHW0BAfSjzGBiVQJ5rAB
+         phQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756583524; x=1757188324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MlWlFHjonE2eNpDRsMMQXFp+YzaIPvcuor7vkXgWH2M=;
-        b=sd/Tz5CJPNDY7YrOR9UyqAiMuDb8s7qRpinNsKIfWxt62wXpPPPkmFKyaZ5T54PAoP
-         CP6qdPP8hkx96h6WJ3OOZbiIu1uOeV8b5bL2R9r6hg1Si0iCa+nD6kcRqpl8uh7sEPDP
-         DoMP5VqE+SIsUYj/Sr0JRNjSEbq2GtAHvuF4/9YaPcRKz0oiJ6T0sj2Qzml8gEy+pBJq
-         +3LPDYYUe89JTd4E47IRCmhn6K65pxbXtGz/ElIYL8A5y0ywcP4vLfFozaSyNV+4hW8J
-         aZye2iH8wETFdJK5KR6vEsp7f2jjvavmX1Zo6mzm5uchFqhIikuHUqbLDBfYVO+VxNaV
-         WsSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBbp4tgCBoFHNNT3r4MwaUg4GbHlnL9jYKkw+VJN8RVDWPNx0ejdc1ATUGA6W/nGVzEbSYCfSFUzTwEGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVv5Fw5PiiilFPOm0rF5cChyD5R/H7SG9M1A7q1iziqQFFnCc3
-	/x5zC0jZUWfZ6iyvPTHM/o+3QYPc1wrp/xPTpAKr5kDXaFXMSST4b7+VP5wb7s2a69c6OpTqynY
-	xkwQXso9Lbg8QYMgw6vYSnNzuwCyGcws=
-X-Gm-Gg: ASbGncuI5TEQshiFqZDU6KRtla/gbnLJmp7Op/y6qrHrbj8K7K8beDz+p6Td9qZ0pHi
-	9ARURb3GoCVExu5CRgu2hZexGJKhNuCBWWe67UJgDLIeaQCy0OX+9/RktJB5ZEG47EHRPUerTyW
-	EEmMzhJID+odvrxqn+WUP6Qwgn/n5tQz6eAIH4Y7HW1uxWS6RXFnaqcDpfmeYqiRucbAliHy8j6
-	1wU/00=
-X-Google-Smtp-Source: AGHT+IHhX877Si5MHtMoKjzCPWSgDLkW4Nw8V64NkARu3mF4o1P47e3J3q86OU9aj77XdDWmr0dEwLTN59b/QLi7/Gw=
-X-Received: by 2002:a17:907:a45:b0:afe:e1e3:36a2 with SMTP id
- a640c23a62f3a-b01d9719062mr323503266b.31.1756583523624; Sat, 30 Aug 2025
- 12:52:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756583661; x=1757188461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WWCJ+1za7yqATipqpoHH2837nCEX0b9cfMM3RbSb7qI=;
+        b=ntFZpGFWX7fv0av2hK0OYDkBpYRl8UzXJZm3/MmXQBhlOVmbo1Jy3GxgUW+8YBdmFD
+         Im5Lb6nD5aVDVVrf87Qu2TYS5PdC13xVTGzjdoJ4E1QgGAIk1P1XBrS6Mz8olB0o5lmm
+         OGHg0EXaOgJfcAS4p+JqvqtEHYO7b6ld/8fEOy5UdIluuYBj+wukM+aWxeQv1jrYjQsS
+         QHxGfgHoUdKvA1/JRs0AaifPXR8zeHV0jdTpnJNSYoRhBa13tUWtM5nem6P4jtXQzwfr
+         p0CHJoTvamY9trogoyH6SUs/gv6F3kKXQ5X0+3imRXlRLYM+oAmqvBYjScFZFyWKVTVQ
+         +xMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3ad7rs1T+tMCYLjm/SAzi6vRLawgUDHu4MQfQy9BTcZFgCNZyyvg4eOX9U7FZg9xsMZORT1Bx4U90cZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/kv4R9/tnNtdV2MySKEGQrMkyhTRapMr44K7wjMd8AwsDkKJa
+	YAKlc+QwGWRPPY1ssOrVlla2FHYJEarzkM8/LPXGYxmwmeCNBk2m+RV1kbWLYhU+puwTtf38yzo
+	2GHhJ
+X-Gm-Gg: ASbGncsvFaqrS2weiPt4E+5prHX2UcKB0dmGRCrhGlLv/N18VDPhVAvK5Qn9VG0RkJs
+	yHQbFNst2fbNjo+th8qlHogRfpBMWZTnuELZHpKSlnbHy3cwiHGmABuL/rhZmqN8gqMbhnBaJn9
+	XjsJNS5GO/htO2Y+a2jbylWjLy8E/Gzip+hQ2JS6Kx/lEtWNtni0r0rBsZdQ7nNEukseMu8X3fv
+	/fLuF0UGeq67ANApPr5cu22Q8ny0oQ9ndBMyJdgo47t5tmCY3qvRiPG7xeqD/Jw3WkKYsbxm8VD
+	+WZi2NpYSg48cuJSIoHokO7AArpNjeTwY3PsIRd836Zt4NkFjE0C4m5zYRfOlFobepy8PZ0mJsH
+	9RLRG9608J5Pc7U5uEwKm17Xc
+X-Google-Smtp-Source: AGHT+IF/Ozf3VwEqoSzRGTCZ2bOJ0FXinNTHiBmEMhey6+4fvCJAgqEnaUl1gG/65IwAcEHSH6K+Yg==
+X-Received: by 2002:a05:6000:21c2:b0:3d3:494b:4e5d with SMTP id ffacd0b85a97d-3d3494b514cmr504381f8f.0.1756583660998;
+        Sat, 30 Aug 2025 12:54:20 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7402:75f4:2258:3fae])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc496sm8456113f8f.1.2025.08.30.12.54.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 12:54:20 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.17-rc4
+Date: Sat, 30 Aug 2025 21:54:17 +0200
+Message-ID: <20250830195417.8262-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829010324.15595-1-jefflessard3@gmail.com>
- <CAHp75VdF=_LQbHJozUGExCmDd4UW4oJ0-deT=aEdnQjCOotsVA@mail.gmail.com>
- <67046EE4-FBE6-41FA-AB03-B0E01FA1C274@gmail.com> <CAHp75Vc3DHUJwA+S4PGfoZxGtdqVq3GTF6_BEnJFo+=sFMmfDA@mail.gmail.com>
- <587AE3BE-CD1F-4160-AA21-12B875E4EE81@gmail.com> <CAHp75VeetsQ0NgVEnhic3wdUs-w0q7nQoGX4rO3aNdq8feypRg@mail.gmail.com>
- <E12E0A91-8B9A-4326-96DD-10078BEA81F1@gmail.com>
-In-Reply-To: <E12E0A91-8B9A-4326-96DD-10078BEA81F1@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 22:51:27 +0300
-X-Gm-Features: Ac12FXyajH_8jg1RX4Lx6vnCVvT3y7aq_m2HQfI3YRqAHEiOMWhyol4e56lgN-Q
-Message-ID: <CAHp75VcHftKVQT4_X7Fc=NERzE0=U_UPvc00=P6UnBCvY6mh0w@mail.gmail.com>
-Subject: Re: [RFC PATCH] auxdisplay: line-display: support attribute
- attachment to existing device
-To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 30, 2025 at 7:57=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
-<jefflessard3@gmail.com> wrote:
-> Le 30 ao=C3=BBt 2025 12 h 18 min 27 s HAE, Andy Shevchenko <andy.shevchen=
-ko@gmail.com> a =C3=A9crit :
-> >On Sat, Aug 30, 2025 at 6:21=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
-> ><jefflessard3@gmail.com> wrote:
-> >> Le 30 ao=C3=BBt 2025 10 h 39 min 20 s HAE, Andy Shevchenko <andy.shevc=
-henko@gmail.com> a =C3=A9crit :
-> >> >On Sat, Aug 30, 2025 at 4:55=E2=80=AFPM Jean-Fran=C3=A7ois Lessard
-> >> ><jefflessard3@gmail.com> wrote:
-> >> >> Le 30 ao=C3=BBt 2025 05 h 15 min 23 s HAE, Andy Shevchenko <andy.sh=
-evchenko@gmail.com> a =C3=A9crit :
-> >> >> >On Fri, Aug 29, 2025 at 4:03=E2=80=AFAM Jean-Fran=C3=A7ois Lessard
-> >> >> ><jefflessard3@gmail.com> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
+Linus,
 
-> >This can be made in a series, so the order will suggest the
-> >dependencies immediately.
->
-> Agreed. Series would then be:
-> 1. attachment list + to_linedisp()
+Please pull the following set of GPIO fixes for the next RC.
 
-Let's see how it will go, but I suspect that to_linedisp() still can
-be separated.
+Thanks,
+Bartosz
 
-> 2. attach to existing device capability
-> 3. num_digits attribute + ABI docs
->
-> I guess this should be an independent patch series than the tm16xx patch =
-series.
-> Isn't it an issue to submit code without a real user? I mean, tm16xx woul=
-d be
-> the first attach/detach consumer.
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
 
-Make a cross-reference to each other in the respective cover letters.
-(IIRC, it's possible as `git format-patch` gives a message ID, but I
-might be mistaken, and in such a case just make one reference without
-a URL to lore archive)
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
 
---=20
-With Best Regards,
-Andy Shevchenko
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.17-rc4
+
+for you to fetch changes up to 6fe31c8b53003134e5573cfb89aea85f96a43afd:
+
+  MAINTAINERS: Change Altera-PIO driver maintainer (2025-08-26 12:17:39 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.17-rc4
+
+- fix an off-by-one bug in interrupt handling in gpio-timberdale
+- update MAINTAINERS
+
+----------------------------------------------------------------
+Adrian Ng Ho Yin (1):
+      MAINTAINERS: Change Altera-PIO driver maintainer
+
+Junjie Cao (1):
+      gpio: timberdale: fix off-by-one in IRQ type boundary check
+
+ MAINTAINERS                    | 2 +-
+ drivers/gpio/gpio-timberdale.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
