@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-792851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23940B3C9BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BF1B3C9BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81AD178164
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA9E177D16
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AF625C6FF;
-	Sat, 30 Aug 2025 09:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C7825D209;
+	Sat, 30 Aug 2025 09:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPwM9+0s"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S5RNrbR/"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73CA2580E2;
-	Sat, 30 Aug 2025 09:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87FD25A33E
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545546; cv=none; b=dZT/GKg3wKGBVSqHuiBsZC2r7Gc0Bx4E2xKiCxaIO0CScMxB7GvPg7hABKzWNjW+PVX9j35mpzHgLJ2P5LlAzoeDpPvJooWkHTjG2jOn6FP81mFZl+EskO8QZqWCM5gQ3864LzMIvfcFtfRgPuQmF/GK8Rr+xb9YwiK69zO9jPQ=
+	t=1756545599; cv=none; b=eEl/0QMEzJf1cQRRGloz9u8+rtj0fbWhxE6NFO+P6uPQXc9UX7aRMvlySDViB3a00xDdjGh+f/1I4yFmyb2myVEVd7vMstQmQ/9+aug3vxJBiwlZ3tkfYfEjLt/9xzotRa750rUYaZBV8BCCm+T+AQxmu4EmvRMIivDAbn7dNLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545546; c=relaxed/simple;
-	bh=wjQj2NN723j/SAiLZdQVT4vv0CxVrRicn94T4FBYcMY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FeejSKSJ5DvRJS3Kq22MvZW7SnFNr03efEWmIMgdRyp6O0nDn8RGO7v7DBeo3uz6k0mOmKNYFb3t6kfluJF9AH/0XGfGw09MzrASMmB3KB1o6Rq8u3czxSMrpY+dsGdjuephmF7LkMlpMr+daO81MEPtEU1IWE+RtvOW5UG3SKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPwM9+0s; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24879ed7c17so21652165ad.1;
-        Sat, 30 Aug 2025 02:19:04 -0700 (PDT)
+	s=arc-20240116; t=1756545599; c=relaxed/simple;
+	bh=va4dxn6FAG/rkvLkOTSt+fhm2FMOlsveamQ4+F7Pdck=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=sjVvuoB5pwz6U1x4BD28TPMAOnrasZiVFXfsMSxICtYviJGLtlRfOOrvuqhrOEOrXkjSmCDLY5oRlV5UTGOs1tUZlZgG0LSvjiBJffTAKziKzRxd9XeaEnVjeN5/GiR3l9+sAYIEOxY+1fAaue4cGgc7zey2psiJTmqCO6K79nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S5RNrbR/; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3cef2c300afso296293f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756545544; x=1757150344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=swuwTOihjSF334nInAXr6n8SBY2/7NVKEbQuAYBhpKU=;
-        b=aPwM9+0soMkycw9lSE0c4wf6dAoMucyerGYp5Bt/yxWPd1oCtdYWGQrTZzYLkZUIne
-         6JZzADY57lkMBVU1Oft/HFEEyQ1JSUMThiV90ZknK+F+MzlW2x7JFs7Tr/Shw5ryg+Fb
-         SAEku2VVsu4xWKUqGg1Ivpkx8vhVSnhLk3xxeJ40aqMDNVKlCYOGVu5H6lmih2ovmd1S
-         MNDW5kyZKS3/wz3DxUWVl8NuBL5lwk8d/zm1UxlUpgN7W5Bk0XY6lmlA25EV+YAOn87n
-         va6pmvXbxk9ejysLsQ2iCfVERRZn2nN9daTBityJbWSNc5qiY1V++vY3VhdI8tfwmh5n
-         6SFg==
+        d=linaro.org; s=google; t=1756545596; x=1757150396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GwyiQhik7suc6gbVzjEP6jIHrXVEYERHfJGEwviQmSk=;
+        b=S5RNrbR/CfjqlOJgyGUQ67MZepqHnH2xk46SBgU4gjvfMslf5v9XiwhTH7wVqzui7Z
+         58HMYAuORzJeTYHDJjRPXDZ/AYmuw2kAJwds7+H4nAgGIwS8ibBx9TTR2H4GCBBOYCkF
+         0R1McOE8MGIfVGz44G8YYc24EVELSZYNLOrRQ6eITXRVrnEnD/agjO+vjbKuFC5m5ILg
+         txQ/7z4KRuyjbaO/HEsLM/G4vHHQiAJDAUvoMezihmg5O0IikJ50sOGE1seh81j/Kys6
+         PCXDeijkoY1pZaxUGu4PL2IzywXWhjke8hjqDcXdzSdJzuTHbEI3JKCXGtfjGeE37HPm
+         Mx1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756545544; x=1757150344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=swuwTOihjSF334nInAXr6n8SBY2/7NVKEbQuAYBhpKU=;
-        b=YwRiZjP7r626YW4hfx96GFURXUlN8s+cILUmO7SoOQbyqu7w25SgwUiqI9fGhXGCqb
-         QMLC26t3opZbDDoLrflgJkmwJjNnCN+QcXsSHez6RsmmFvQceUHQStFzxdptT5wBtYdp
-         ORxP6f78BLqjqZlxoo5CXlDwx95lE+ZUXdfJRp9Fncz5w0xUaolp5g0xQ8bNfdWMfFk6
-         pEeCkVrQfyDYelyEY8AmnVeVpvHmuNQPaBV4BqXfnSJ5ANi9BP9Qbk88ZDgFcRwGt6nE
-         9sAQnBHbErC6ydpJ3vmKWWfMX+sIQY8yx5ogAL2VG4Njg+khZfil5cfPaNVuTvjzIZij
-         bGxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgG+owAC9Q+yvrwCVSn6nq6pAjqhOTPkeS0umh24WDmGz9bUUpYWuQsJA03cVQwloaq220MI77PYJz0YI=@vger.kernel.org, AJvYcCWi3YD1jds+hqVyf+g8BRolH0d5yYQVROx+eqBPaoW7vS6R8x11b7PD4BfslM8Ky/aVfQV9Mcth@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBwJVGfYoX6fX/n88u7TyueLp42Zud/jGGl/mfp6xsKTRtFMyf
-	A+H8ScL0AVIQgJYKIeEt2bmReZIxqlaoATI1+r3xuVI7onVbMl1Hc713
-X-Gm-Gg: ASbGncuO2sM+/8Azmfk8NeQ8m75wItnHJSFniKuwIpxNZsB0ELqpHQPOEhvsIYQdZ7m
-	NEB5rPfdTX4O63w53LxX7Ivfy6U9HhzwZtBgpXfClRnPy/LJnf9KwUWSh2bCSYcylJnQkYjtyVE
-	wi0ZqYiGR29wbReVFzz3WKLmTN6d1Jj7xmyGcHVc/MfmOLK3K8Psej7Wy0RmVJiNvEaWOgJJ7j+
-	zrhhIfRl/6gCdT1LvdhgnYNwIyBhmIHazwy9ZRuKpcOTF7OGZ1//nPKQEbaRg2z6eTGscrlGSHB
-	y+jggf/Vhp3WhMGaC6s57qF6TgcicIEbWCvo1nJMPk2lXeco78nRq8shtAsYDUFAIBgowsnZidG
-	NMGZeSaW33WNH2J36ZxPYIdyNfqK3eLUeTvFHd2RxrjPTonnXM8kJnIuNrye7UvqJ/U7MG2DjWm
-	HXNK4Pmyd9pXVchmYD9UKe+3EQsFgIWU/7Ix2edwuaP3rCOOZx7knxJF8=
-X-Google-Smtp-Source: AGHT+IHVFhMFKNWmGcs+78QWdioehssK2kGmk59gfKYn3K0XRhTFqEdm6P/MAWoZT+AMqqLbj+C10Q==
-X-Received: by 2002:a17:902:f612:b0:249:2360:6af2 with SMTP id d9443c01a7336-249448db16bmr19943185ad.16.1756545544271;
-        Sat, 30 Aug 2025 02:19:04 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.164])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24903726d20sm46606905ad.36.2025.08.30.02.18.59
+        d=1e100.net; s=20230601; t=1756545596; x=1757150396;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GwyiQhik7suc6gbVzjEP6jIHrXVEYERHfJGEwviQmSk=;
+        b=vog9rmO6qoTdK8/H7IX4gAClW4OwCUGg27HlT+sgIOV71Xsfh16CY0Ei31T0Er12Ru
+         TZQ3KljE9jU4MI/w5nIMj9+eNma3VLKnudMNvHb0VUabO4US9AkuKTb779fNUipGqNQ7
+         XlUpEQb3NwJBRI1ULLrBVdZJmyQ1QNNL6PqCY4QAzIZv5CSg/j3DMj1oRjeEXK79+4HO
+         PWfEP2orQXqkIbQRgBrJyXjY4UPBz5FiCE29KC0uFXt5UcIh88DXolcjnXVp+hxhB0o+
+         +tV+H4FcVsFecLx9uYzpyOeI18ugmuxoDPF8De19Q+EJMyotQO7EZcOOrOZ6Zwt3Eo+Y
+         zQeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLqWiuGieI5Eqdd+jwRkVcElnbDSCQuRaQ657YIgLXYnRQVpVPTbwAFeRVzWrpKNV70EaqyAIS57/wk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1FRmVDpbPp31xk+TwNWGA6jof3TMUXmOcMD+xwdQHi7QbBTWK
+	kae8Swe499KhDgFwWVWUiuC1DLNDx7zXtmFrbnn8+SjjKs+C3FtsoWP71ivGSQwBgII=
+X-Gm-Gg: ASbGncs8olkZiA1b0yyr6J8LkZp1LIIVuga61eqtqD67CTL5lidIHwmVrcFe64vjWvL
+	y0qtkWwXsCrXAgqpIrWGMPiyTHlQf+pasr+xXBBN0ePgI0a1DbXz6vZ/SaoadbWtAvic/MtsyGi
+	ZfAtSmmZP8gNH5XxIVbMuMKmbTj3/E33a4anEz0jvGQFUPIPjiaIV6BSjUKWeNq8JZXW/tDBGMQ
+	h/OTaCXPWLs6HLRS4N1aX3h4TKA7bIhTYZVG7LBNwGjiCd//ExEuogo9IbpAzJT6UJYpFyj2A89
+	uW7vy49HcAsijN8QkEmbgBmAV0k8U/fRdaEUGBGQYQrI1QwEC6S2UxN7EY+R//naCU4wXC8YWCH
+	0ubdFs1AcwwihfrT7ZkJ4izw46NtJV86+KdE8Iu6DqdgW9hf45A==
+X-Google-Smtp-Source: AGHT+IEqjNRxfqqCNOguFU7c3K/j2n3eHHM7h5HhcZ/u9DnUpSaUb/8k8UWDRGTaDD9Zj2mt2IJwjw==
+X-Received: by 2002:a05:6000:4310:b0:3ca:4e3:6e82 with SMTP id ffacd0b85a97d-3d0fcaaaef7mr1613229f8f.11.1756545595916;
+        Sat, 30 Aug 2025 02:19:55 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8525a94bsm21186815e9.15.2025.08.30.02.19.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 02:19:03 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] net: mvpp2: Fix refcount leak in mvpp2_use_acpi_compat_mode
-Date: Sat, 30 Aug 2025 17:18:54 +0800
-Message-Id: <20250830091854.2111062-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Sat, 30 Aug 2025 02:19:55 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH v3 0/4] arm64: dts: exynos2200: introduce serial
+ busses, except spi
+Message-Id: <175654559458.10738.12093256253809127560.b4-ty@linaro.org>
+Date: Sat, 30 Aug 2025 11:19:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The function calls fwnode_get_named_child_node()
-to check for a "fixed-link" child.
-It did not release the reference if present, causing a refcount leak.
 
-Fixes: dfce1bab8fdc ("net: mvpp2: enable using phylink with ACPI")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+On Fri, 15 Aug 2025 10:04:56 +0300, Ivaylo Ivanov wrote:
+> Hey, folks!
+> 
+> This patchset adds serial busses, implemented in usi, for exynos2200.
+> It's missing spi, due to me having troubles with reads when testing.
+> Serial_0/1 have not been included in the patchset, as it seems like
+> they're encapsulated in usi blocks, but are the only implemented
+> protocol and/or do not have a dedicated register for setting other
+> protocols in a sysreg. That'd at least require patches in the usi
+> driver and bindings to add support for.
+> 
+> [...]
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 8ebb985d2573..1faed2ec3f4f 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -6801,12 +6801,22 @@ static void mvpp2_acpi_start(struct mvpp2_port *port)
-  */
- static bool mvpp2_use_acpi_compat_mode(struct fwnode_handle *port_fwnode)
- {
-+	struct fwnode_handle *fixed_link;
-+
- 	if (!is_acpi_node(port_fwnode))
- 		return false;
- 
--	return (!fwnode_property_present(port_fwnode, "phy-handle") &&
--		!fwnode_property_present(port_fwnode, "managed") &&
--		!fwnode_get_named_child_node(port_fwnode, "fixed-link"));
-+	if (fwnode_property_present(port_fwnode, "phy-handle") ||
-+	    fwnode_property_present(port_fwnode, "managed"))
-+		return false;
-+
-+	fixed_link = fwnode_get_named_child_node(port_fwnode, "fixed-link");
-+	if (fixed_link) {
-+		fwnode_handle_put(fixed_link);
-+		return false;
-+	}
-+
-+	return true;
- }
- 
- /* Ports initialization */
+Applied, thanks!
+
+[1/4] arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
+      https://git.kernel.org/krzk/linux/c/1219992e16689f4937a333c98d90cf80ba91860a
+[2/4] arm64: dts: exynos2200: use 32-bit address space for /soc
+      https://git.kernel.org/krzk/linux/c/ad8ea30db80f825215d071370989b8ac45298a1a
+[3/4] arm64: dts: exynos2200: increase the size of all syscons
+      https://git.kernel.org/krzk/linux/c/0dff00633bbc8566fed6483daddddfa0dfdcf83a
+[4/4] arm64: dts: exynos2200: define all usi nodes
+      https://git.kernel.org/krzk/linux/c/1bc8f09ce98ca8a56f2059c9a8fe26cc351318f0
+
+Best regards,
 -- 
-2.35.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
