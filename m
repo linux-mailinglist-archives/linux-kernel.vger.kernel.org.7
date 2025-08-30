@@ -1,284 +1,122 @@
-Return-Path: <linux-kernel+bounces-793107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86670B3CEA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:25:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4691B3CEAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D915E13D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2211B261F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6312D8DC8;
-	Sat, 30 Aug 2025 18:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdeJ8QY6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECD32D8781;
+	Sat, 30 Aug 2025 18:31:33 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF397211290;
-	Sat, 30 Aug 2025 18:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80701E3DF8;
+	Sat, 30 Aug 2025 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756578347; cv=none; b=s9541bmGQZFdSz91C4LkGFXXguZ3H9IxRODWOFTMOBtAvjTfkd/ZkEdbRw9MEVyBUrRwreEIyONwXM361MYky/1AdjlsNZRZLJsbUk164zn/nmR1RPFXsB24dUWY4Rdtv826f+zH9Uf3/IcFsEHuOC2y8MZo9yXSymYUFk13tdY=
+	t=1756578693; cv=none; b=nylP80Ya1NdDnz6poTY6LMwffSL2Y3aYwAVApbgTZIWK9dFUcIN1UyOIhdhdvJdf1lK4UmuH6vkrvixHS1ezkJ0AEtM7XTuWFnN9ETbhG08AROtdlNgeGOnu62SAfSV59zad5LsRZQn7Nxnms3eCPPbCQ9C6rWV2Rj5ujtr/iJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756578347; c=relaxed/simple;
-	bh=LP44N4DBA8yrEvcCLYAsAJr7yJlfuw9Yux44iwujOqY=;
+	s=arc-20240116; t=1756578693; c=relaxed/simple;
+	bh=h9s6lq5iWu0Uxgc5pGQipjyw7vKquKkQMSJ+qcO28b8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rhcR+r0YvGnrmicP6pYTB9Qf86MAhBs788vemRbMwR3sVTdpZlbeE3Ndhn73wl3Y5RegqayZ0JVQ4d6W7AUGJ+DaDdIoR6cGNUbPYej3ucFspUy6vdpDqj4CH5KsN9fcjaf3r3gitw92q2XeKpE6RS7K5z+zUYBN4UthUKvppWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdeJ8QY6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B577CC4CEEB;
-	Sat, 30 Aug 2025 18:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756578347;
-	bh=LP44N4DBA8yrEvcCLYAsAJr7yJlfuw9Yux44iwujOqY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XdeJ8QY6LcDqrntB5LkNjUfQXhlfqw7ICDv8AF6IfDA+QoC7XjiVGnYMSQxu7Cbn6
-	 gR3mmG0Pxf2z4GceItB+tO6DJ0FvgSCLxbLYpIL7ihmG/OdRRp6gfiPfuSiBM9ab0l
-	 OL4WDvPDazTqs5oI96Q0VC4Bf/TtmjeMo5NfLDH3ohNAVIAbibBacxCDPQGJMwbWjx
-	 ZNHPBfQr5+J8x+ZpPMgVY/fhRdfBia+aCBN+BCdi3Ky3augXYP/9MIf6Oo0YEhRs7N
-	 Mg62kf87ODA3tnoX/Jwj4b+I8mRteBic3n6CKWKacWpWkWV9sziwfFwR1h2SWJBZpV
-	 0fSRKxlmehQpw==
-Date: Sat, 30 Aug 2025 19:25:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: light: ltr390: Implement runtime PM support
-Message-ID: <20250830192538.3b508c5c@jic23-huawei>
-In-Reply-To: <20250830113502.83102-1-akshayaj.lkd@gmail.com>
-References: <20250830113502.83102-1-akshayaj.lkd@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=gwM8ijtNLVZna2SvA38VPx6hl65GbRdTfCD7hknSdb6Z/yfhtRjPWioO5bjmZT4RXZcd55n7XYVtKy8qdmQ1Js2xef+30ndc/XGWkCvrBsJlplTjWw3OBqnxRwUv+8asaDS/58VFm33mVZVutlUPOFJl8DekfBPjS/42fBk7pAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id DF1DA5792F;
+	Sat, 30 Aug 2025 18:31:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 2630A6000C;
+	Sat, 30 Aug 2025 18:31:16 +0000 (UTC)
+Date: Sat, 30 Aug 2025 14:31:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
+ <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250830143114.395ed246@batman.local.home>
+In-Reply-To: <CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<20250829121900.0e79673c@gandalf.local.home>
+	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
+	<20250829124922.6826cfe6@gandalf.local.home>
+	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
+	<20250829141142.3ffc8111@gandalf.local.home>
+	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
+	<20250829171855.64f2cbfc@gandalf.local.home>
+	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
+	<20250829190935.7e014820@gandalf.local.home>
+	<CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: dkx6cr1863tdyr5dwpt5ckwrppidbxnn
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 2630A6000C
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19WYX6tr/gPCLPBNV9cVUMslGrPAuQfGGI=
+X-HE-Tag: 1756578676-55030
+X-HE-Meta: U2FsdGVkX19XhVDsGgxPqnETmIKyPhWYVZOiIMrpYo75HbTYXBUckcEq91+PibmjNrdUChgztxVBITq5gIDJiZsVzxyHOW1c7Ao38pMYqbOe1gEd6w1TxA44k5zT/CBlImW+GYdOaF54NiWP8v4wLnyB0hInm1XncgCpNCSC9jiNoZ8bbM4qdbGme1iOEMuAb90vDxpAx/T5BI3RNrBLrcmwqccBSJ4Knm/S7fRoS6PEnrfTj7sZmgLgkT211zZpvd2z8MLvcd2gguBeQsYB3uj38ntcaO+Zkc3+GF35KgBDlBZjQigyb4V7nJF1nXCTz2SS+HUWNLN7JDKMv7MlR/pMB/hSHcX7kq17uiEvTyT4XIw+flvkXltxUreC0sQe
 
-On Sat, 30 Aug 2025 17:05:00 +0530
-Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+On Fri, 29 Aug 2025 17:45:39 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> Implement runtime power management for the LTR390 sensor. The device
-> autosuspends after 1s of idle time, reducing current consumption from
-> 100 =C2=B5A in active mode to 1 =C2=B5A in standby mode as per the datash=
-eet.
->=20
-> Ensure that interrupts continue to be delivered with runtime PM.
-> Since the LTR390 cannot be used as a wakeup source during runtime
-> suspend, therefore increment the runtime PM refcount when enabling
-> events and decrement it when disabling events or powering down.
-> This prevents event loss while still allowing power savings when IRQs
-> are unused.
->=20
-> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
+> But what it does *NOT* need is munmap() events.
+> 
+> What it does *NOT* need is translating each hash value for each entry
+> by the kernel, when whoever treads the file can just remember and
+> re-create it in user space.
 
-Sorry it took me a while to reply to the last email on the v1 thread.
-Busy week.
+If we are going to rely on mmap, then we might as well get rid of the
+vma_lookup() altogether. The mmap event will have the mapping of the
+file to the actual virtual address.
 
-I may have this all wrong though if the runtime pm disable you have
-here (bit (1) of MAIN Control) restricts which other registers we can
-access. Perhaps I'm missing where that is stated in the datasheet,
-or maybe it's an omission and you have seen it to be the case
-from experimentation?
+If we add a tracepoint at mmap that records the path and the address as
+well as the permissions of the mapping, then the tracer could then
+trace only those addresses that are executable.
 
-If that isn't required a lot of the runtime pm calls in here go away.
+To handle missed events, on start of tracing, trigger the mmap event
+for every currently running tasks for their executable sections, and
+that will allow the tracer to see where the files are mapped.
 
-Also, we should just read the config register to find out if the
-even is enabled not bother having a separate cache of that one bit.
+After that, the stack traces can go back to just showing the virtual
+addresses of the user space stack without doing anything else. Let the
+trace map the tasks memory to all the mmaps that happened and translate
+it that way.
 
-Jonathan
+The downside is that there may be a lot of information to record. But
+the tracer could choose which task maps to trace via filters and if it's
+tracing all tasks, it just needs to make sure its buffer is big enough.
 
-
-> ---
->=20
-> Changes since v2:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1. Andy's feedback:
-> -> Check return value of pm_runtime_resume_and_get().
-> -> Do not check return value of pm_runtime_put_autosuspend(). =20
->=20
-> 2. Set data->irq_enabled =3D true after checking return value of pm_runti=
-me_resume_and_get() only.
->=20
-> Changes since v1:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1. Andy's feedback:
-> -> Refactor iio_info callbacks.
-> -> Preserve the order of header file includes.
-> -> Avoid redundant usage of pm_runtime_mark_last_busy.
-> -> Dissolve the ltr390_set_power_state(data, [true|false]) function.
-> -> Avoid macro usage which is internal to header file.
-> -> Update changelog with reason of not using wakeup as a source =20
-> capability.
->=20
-> 2. David's feedback:
-> -> Update Changelog with stats of power savings mentioned in datasheet.
-> -> Dissolve ltr390_set_power_state() function. =20
->=20
-> 3. Jonathan's feedback:
-> -> Adopt the approach of increment refcount when event enable and =20
-> vice-versa.
-
-> +static int __ltr390_write_event_value(struct iio_dev *indio_dev,
->  				const struct iio_chan_spec *chan,
->  				enum iio_event_type type,
->  				enum iio_event_direction dir,
-> @@ -571,22 +639,55 @@ static int ltr390_write_event_value(struct iio_dev =
-*indio_dev,
->  	}
->  }
-> =20
-> +static int ltr390_write_event_value(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				enum iio_event_info info,
-> +				int val, int val2)
-> +{
-> +	int ret;
-> +	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +
-> +	ret =3D pm_runtime_resume_and_get(dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret =3D __ltr390_write_event_value(indio_dev, chan, type, dir,
-> +					info, val, val2);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	return ret;
-> +}
-> +
->  static int ltr390_read_event_config(struct iio_dev *indio_dev,
->  				const struct iio_chan_spec *chan,
->  				enum iio_event_type type,
->  				enum iio_event_direction dir)
->  {
->  	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
->  	int ret, status;
-> =20
-> +	ret =3D pm_runtime_resume_and_get(dev);
-I may be misreading the datasheet but I'd kind of expect to be
-able to read this register in the (slightly) powered down state.
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	ret =3D regmap_read(data->regmap, LTR390_INT_CFG, &status);
-> +
-> +	pm_runtime_put_autosuspend(dev);
-> +
->  	if (ret < 0)
->  		return ret;
-> -
->  	return FIELD_GET(LTR390_LS_INT_EN, status);
->  }
-> =20
-> -static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +static int __ltr390_write_event_config(struct iio_dev *indio_dev,
->  				const struct iio_chan_spec *chan,
->  				enum iio_event_type type,
->  				enum iio_event_direction dir,
-> @@ -598,7 +699,6 @@ static int ltr390_write_event_config(struct iio_dev *=
-indio_dev,
->  	if (!state)
->  		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_E=
-N);
-> =20
-> -	guard(mutex)(&data->lock);
->  	ret =3D regmap_set_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
->  	if (ret < 0)
->  		return ret;
-> @@ -623,18 +723,60 @@ static int ltr390_write_event_config(struct iio_dev=
- *indio_dev,
->  	}
->  }
-> =20
-> +static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				bool state)
-> +{
-> +	int ret;
-> +	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-As per v1 (late) reply. I'd expect to find query the register to find
-out if what we are potentially setting here is already on or not and
-exit early if we aren't changing that state.
-
-Then we don't need the data->irq_enabled, we can just use runtime pm refere=
-nce
-counting to ensure the right things happen.
-
-> +	if (state && !data->irq_enabled) {
-> +		ret =3D pm_runtime_resume_and_get(dev);
-> +		if (ret < 0) {
-> +			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +			return ret;
-> +		}
-> +		data->irq_enabled =3D true;
-> +	}
-> +
-> +	ret =3D __ltr390_write_event_config(indio_dev, chan, type, dir, state);
-> +
-> +	if (!state && data->irq_enabled) {
-> +		data->irq_enabled =3D false;
-> +		pm_runtime_put_autosuspend(dev);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
->  						unsigned int reg, unsigned int writeval,
->  						unsigned int *readval)
->  {
->  	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +	struct device *dev =3D &data->client->dev;
-> +	int ret;
-> =20
-> -	guard(mutex)(&data->lock);
-> +	ret =3D pm_runtime_resume_and_get(dev);
-
-So this makes me wonder.  I'd been assuming our disable was only turning the
-sensor off, not register access?  Seeing as it's controlled by a register
-we can clearly access at least some.
-
-If that's the case why do we need to runtime resume for debug register
-read/write?  We shouldn't care if the sensors are reading or not. In fact
-if we do turn the power on we changed the state we are debugging which is
-probably not a good plan.
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +		return ret;
-> +	}
-> =20
-> +	guard(mutex)(&data->lock);
->  	if (readval)
-> -		return regmap_read(data->regmap, reg, readval);
-> +		ret =3D regmap_read(data->regmap, reg, readval);
-> +	else
-> +		ret =3D regmap_write(data->regmap, reg, writeval);
-> =20
-> -	return regmap_write(data->regmap, reg, writeval);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	return ret;
->  }
+-- Steve
 
