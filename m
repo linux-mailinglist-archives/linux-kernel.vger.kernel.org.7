@@ -1,120 +1,112 @@
-Return-Path: <linux-kernel+bounces-792720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8694B3C80C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:01:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C016EB3C811
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7841C810E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C907BB12D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E9C25742F;
-	Sat, 30 Aug 2025 05:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2190B2737F6;
+	Sat, 30 Aug 2025 05:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKw2+t1l"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtKUo8AZ"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4657821930B;
-	Sat, 30 Aug 2025 05:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F125A53363;
+	Sat, 30 Aug 2025 05:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756530066; cv=none; b=LB/9M3lYa4yWUsocqUwR8a7+pnZgylGBGWNED1Iq7yapl8cQqx2BkAci6bySozd9v2mAXjXaDFXUED8EHkUofGTiscScwJcNG7kt5exrYmqjfRF+emkJdjbzBx7sma0uwTMOpmViOKbO6OJps/cIe4kC6UI3nbiBSAemX7OPxys=
+	t=1756530108; cv=none; b=jkIq+tMbcly+SUS6ECMqVjaXGHYMk8mmzOCelt69Bs5zmM+Y+Qlff9pLtrTxz465loKT2mFWZx+9unjoiBWdGLDpsAnkzfVlb1TKZRdNuwrhA2NkNkULtJCu2/+RB4g8iQ91Cf8orJewn/9ERDCTWhGwzBLaSXUNM86d0Zg2JAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756530066; c=relaxed/simple;
-	bh=jCSIwnw7Mtdqfy9iiPYuutB28MNMakSjx+eOQYX9Xp8=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:Content-Type; b=YaMoZ7qaw6mMLBmtxRD8lcWuW41W1ulX1QaexYPhzbKvQWtwZMu+b7uniGccDU0H3XHTsMoxxXF+mz11rgR2ThXLuYZdNyH9SR7qblrX2E7BE9nxGese+7c5VLFVd8fsQTBnVF/nbOSseFWYOe5JHRFgG6PROEwCLRlJGoWbFMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKw2+t1l; arc=none smtp.client-ip=209.85.219.181
+	s=arc-20240116; t=1756530108; c=relaxed/simple;
+	bh=m7rzmq9sEmoMah2KJmVzyrVYnCy2Yky9apKj0D9xSSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e9Wi1/34i5Zhz5A26mauW3wrDnIXdMzm++ZUuBuSg/mH3an3Q5dEyUYWWovb1IwWSN+RSSFNMVvMsPu7hl/Pn98cV1S8jzMp5hd/kbysFuGCNqwbQI5SIvCVWn4KqMyQiZcwYZ/MxPsCm3vW5ZGyi/jUGogTrCMeZTx+yyMMINk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtKUo8AZ; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e96f401c478so2480943276.3;
-        Fri, 29 Aug 2025 22:01:04 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ace3baso471158866b.3;
+        Fri, 29 Aug 2025 22:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756530064; x=1757134864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:content-language:user-agent
-         :mime-version:date:message-id:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756530105; x=1757134905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ySHz07CCI/3xmGOniCbCder4okJxP/0F9QnnzMAcm8o=;
-        b=HKw2+t1l8FS1qA9C8axI3GYOc0SkjeOAS7TsAr1IkQd4TLRFXXQ5aay+GH4eJMeUKx
-         hTMztHiopZ8HBHMXyqjX6i7R1Ct0e1ru/w+qO3Ej79wSXXwPVMLdBOlnWYZMbjCjNBYV
-         R0P/oc9/2OmVqXtEjzCQmKu5OBvBe0CZvQMHuuLbyksaZ0ddyvQ3J81PxBUs+odRxh3M
-         dJqJXhW32INiL4DsILzxBGraC4z2VzMWyD6s0iXIuiTlY+OcvpQNYgeAA4IB5vi0ybXT
-         1YC1W3gkS765bn7d/N8iiHqxdSa6WwsmeCrdeSgr+V33NkQb81oPk68ux/OJ8LoID9iT
-         9MNw==
+        bh=m7rzmq9sEmoMah2KJmVzyrVYnCy2Yky9apKj0D9xSSY=;
+        b=QtKUo8AZ7Nin4Jqr9VkXt5l46Xy7QWBuRk6hzE2LTh4oA0BLGFr5WH0jzLYQNVy8Je
+         bJ7Lh6oHcYMIOcKDDUJ/Y3rEDW1oUHakKunrY1lihH7QVHCunjJgsKIR8gVZO+nwxYfU
+         fk9p7byX1ONtir4cC+bjFl9EaowPtbLk7EFEh3iPCQnMXS2vB5kJECy2oC2HWDB5PHrM
+         /167XIBSu65EUk5YLA1Me7/RSZcsXJf0P/lfmpcurNiOw1LXxMii335a5LERjZ3yly8B
+         T/ntfXd+ZA5KIn97rbPHE3XAi/Ka5CDj/SxpOJjYmkyNxHth4oif5utv40TBOC5o75iq
+         F65Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756530064; x=1757134864;
-        h=content-transfer-encoding:cc:to:subject:content-language:user-agent
-         :mime-version:date:message-id:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756530105; x=1757134905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ySHz07CCI/3xmGOniCbCder4okJxP/0F9QnnzMAcm8o=;
-        b=kjbuwKczDlEI1Qz7pMBQv80dLDItb7Rt8L6dPRPA5S6h6ZADfktl6+Cyl/RxRl+v7b
-         d3c2IAFI5McIMFJv3hDlE5WJylvzNnBrI42ds3IVfuMWHDr524DW/JTWCnAdVcnZODH+
-         bI0W8avFL+VXvv6jntKutJXeOEgVyfRZParEAQI4m03Qs+KDN/04t5Wk7xYZXy+i1YbS
-         VfO1ZARA921eGPNgtJDxgrpo662XzJDk/ZMsYiSuBjBewoMZKM1qT40wnR6Npkcm9s3U
-         XdLg++YrH4GM4Nf7DNsr6Y3QvjkXXRWXqw5qdreB9ei/BvadlDCJopMt+Cr54NywSz33
-         Kb6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUn/uUP4iFs4Ev63Ya956sMCFrTpNfo6NVHh7ueoJp6m/XBTWpl4IGqTZs3MQ7m32L/V6LaMheng6XP6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnTJxKzNdZdc6pH9zYpcBGyoZWgewlBXdC+Q5/MC9405GKqAZq
-	fTLwIlbHhA/QOjC9M46oS4014YwfpmOq52yz3LVznRHjahnSVdfBmCEu
-X-Gm-Gg: ASbGncueeErEkEB+8h0Y9kAWn/6Me2N8PRqljtzUPSeDeQTxh3l92rKufYT9jRpTrZ/
-	tgJZNZwzvmtWRak7jGvMRGoBMMl2+EJTJNALSLgpdgfbbDCpK3LHgc2/yJ/r6Jo0f3Bhg4s/HQX
-	Mem320H9Q7R9GRKcR28fTPIu5v+lhCTI9VqzyOzvWdQWQi+t5twLQQvvT95T8JykyO951YQXmxi
-	RsCbmKG+Ihywjox4QtFBupDEZIaykEp9srgqNax/j8fK4UvywID3NdKay5UUpKbMDKmUPsClDXP
-	MuAbi/B16UbmGIqbPho8SGoah54D1ZIzvERcq66zyTgyw53DjIvD+2hWMHwZvO8BzDUVEwBEwzw
-	BrZyGjtBfH3ofbnEGPs0TLJ5ic2elsWKt7RjGQ0KDIcaBz8+rJnCh
-X-Google-Smtp-Source: AGHT+IFTNCicmUzh9ebhvvZRtbgT7yLvuWDKeZxk+wFYkuzGpT8P77jekfRYhnpiqL+NMc4r/32rgw==
-X-Received: by 2002:a05:690c:6004:b0:71f:db79:994d with SMTP id 00721157ae682-722763d887dmr11241957b3.19.1756530063292;
-        Fri, 29 Aug 2025 22:01:03 -0700 (PDT)
-Received: from [192.168.1.209] (74.211.99.176.16clouds.com. [74.211.99.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-721c634bb52sm11989857b3.19.2025.08.29.22.00.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 22:01:02 -0700 (PDT)
-From: Asuna Yang <spriteovo@gmail.com>
-X-Google-Original-From: Asuna Yang <SpriteOvO@gmail.com>
-Message-ID: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
-Date: Sat, 30 Aug 2025 13:00:56 +0800
+        bh=m7rzmq9sEmoMah2KJmVzyrVYnCy2Yky9apKj0D9xSSY=;
+        b=VJDeT6nT64UVqGz3GL2GlEMcq8vczL41soR8+qpO9G67obfxEc/FZwleuPM+94vutZ
+         KSkkgPGBEOh7XdWupqWaK4nuHOW/dq0kEGfOKFffVRDtJpwcMb0KxniKaenO6L8UB40d
+         iuTqOMrx3FtjI23Np7S4sKR3ukX5YPJn3KYWMPtX/58GEHst7H31LK+QGsMr1zGpOL+g
+         YzgBtixrKxDkupvMqMpOBEhPNJRKO5J/qwrQGuOY1nZooFsJ5scyN+uyaEpCU7EfTBf4
+         uHkblI9QNqAUpIutd41HSPavuZkAcJ0mrBPa27Zc0KXrDVP5oTENWIAVg+u02CPM9dTj
+         2omQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGqXF+OAoXlMFNwp34DGsPv0Iniz0ThUVkB5/i7M3eVezSCkMpLqMHV9omqOvsUr+g/0uDRTzh+em6@vger.kernel.org, AJvYcCVciibyFYJuNudtwQx/Se+MmH2zApXmbK/CTvLekaHtq5BRYQCLh9ZRbhSN/IYrVuS+GPpgZ1BiSQLw@vger.kernel.org, AJvYcCXIliOfR5RfoPcyhU91MGLei2zzxwUZGarvkhq0Ipa1w2s3q3cXs5/k/Ju56a30OlgEMbERz+zDmh5ZRNDU@vger.kernel.org, AJvYcCXmCZ7eHtlqQ8/mVttQeskf8Kf4MSPCg3p5oDomaTlEeeO6SFcNyrkMjjtiPc1/4OvOEtZmhFQ/ibYc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLMBL+eNEMNDs4SzFddd6uLi3gKJvjjudByWNSB4PpGqQvJ+x7
+	mscixlZ0TetartV+uCkgbV7oWknkJXQy3MWloFR0G8noqucImOZcAkOueUoB4LoEDigfkcDAL4v
+	ioYZx71/FHC6IZVPKWkGvsdpEH1UAR0jwvpfx2fg=
+X-Gm-Gg: ASbGncsgZDtVvehYA92f2xS38mSNIK28vt/hCcjAOTdAcdqc8nezSc1YQs8/wT6EIUQ
+	/0xkqj1LBdCWhqtWDqHymeCl0gH/35zHdf1NZARdpU4QfX4keMSS+W/OD3HtHBvtIw8mgFVIf4X
+	nEswYznDdqvIyFC+0uOvDgbLph/0RBC08sz7hHYqk+rfWCBrd3R+TPZunwk79Xb0Lm2MFfnt2/I
+	eJ84MI=
+X-Google-Smtp-Source: AGHT+IF/4bsd7XA4cuCul7mV2POK8XBLGeJyd9xgivMCEiDcpjuFSq86vuJMUlCzxUuFbjbzLPuj9Ny1UXBvgq4M+iQ=
+X-Received: by 2002:a17:907:7e84:b0:ae0:a483:7b29 with SMTP id
+ a640c23a62f3a-b01d9793c87mr84777766b.49.1756530105177; Fri, 29 Aug 2025
+ 22:01:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-Subject: RISC-V: Re-enable GCC+Rust builds
-To: Conor Dooley <conor@kernel.org>, Jason Montleon <jmontleo@redhat.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Asuna Yang <SpriteOvO@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1756511030.git.marcelo.schmitt@analog.com> <28920aaf9de9438b0c8897b990914fa7724c2e1a.1756511030.git.marcelo.schmitt@analog.com>
+In-Reply-To: <28920aaf9de9438b0c8897b990914fa7724c2e1a.1756511030.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 08:01:07 +0300
+X-Gm-Features: Ac12FXwnYkzrYOzjwCVXW2bh_cW1_s53x7XT6OnnOrlhvDEtV6QknmGU-5wyrNM
+Message-ID: <CAHp75Vccgd=VX4EfyMJvGgTytdxDNP5ZEA1dVGidP4RtGQcsow@mail.gmail.com>
+Subject: Re: [PATCH 05/15] spi: offload: types: add offset parameter
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, Axel Haslam <ahaslam@baylibre.com>, jic23@kernel.org, 
+	Michael.Hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com, 
+	dlechner@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org, 
+	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I noticed that GCC+Rust builds for RISC-V were disabled about a year 
-ago, as discussed in
-https://lore.kernel.org/all/20240917000848.720765-1-jmontleo@redhat.com/
+On Sat, Aug 30, 2025 at 3:42=E2=80=AFAM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> From: Axel Haslam <ahaslam@baylibre.com>
+>
+> Add an offset parameter that can be passed in the periodic trigger.
+> This is useful for example when adc drivers implement a separate periodic
 
-I'm a bit lost here. What are the main obstacles to re-enabling GCC 
-builds now?
+ADC
 
-Conor said:
- > Okay. Short term then is deny gcc + rust, longer term is allow it 
-with the same caveats as the aforementioned mixed stuff.
-"the same caveats" means detecting what specifically?
+> signal to trigger conversion and need offload to read the result with
+> some delay.
 
-We have a RISC-V PWM driver being written in Rust. Currently, GCC being 
-disabled for building the kernel with Rust for RISC-V is the primary 
-blocker for including these drivers in RISC-V distros. Therefore, I'd 
-like to push forward and contribute to the re-enabling of GCC builds. Is 
-there a more detailed direction on what I can do here?
-
-Thanks.
+--=20
+With Best Regards,
+Andy Shevchenko
 
