@@ -1,97 +1,410 @@
-Return-Path: <linux-kernel+bounces-792579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2777B3C60E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:15:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66B2B3C611
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98E4203708
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F8EA27182
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87D135962;
-	Sat, 30 Aug 2025 00:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF9E3595D;
+	Sat, 30 Aug 2025 00:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZcIlotZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ar+b33xL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034674A01;
-	Sat, 30 Aug 2025 00:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28554A01;
+	Sat, 30 Aug 2025 00:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756512950; cv=none; b=h/tP7I/cCJCtgRGNYiDIA8Y9AmNEezPVtkoQROKwewk0NTL7HNoZ5dJthSTzqLg87radfi8Gk1uETKBBWZlnn2drK3bYZiPppIA09n9v8/IyBS1jPXSiBcPduKTa7eTWVubrFKEtk0DgqpDtZKU8/YAMDKG0spnDxHJcJ0MySLA=
+	t=1756513049; cv=none; b=EUA15BZSVl7YfA7fkDOIJ9Wa24Vt2NcJKDGdtnbfIB7bZrHE4ednBAY2a0/+BlCR/UEGgzMmZ6bWAU+uYaOQ6667OEmmQAYtMSwUMbFfyDYjv9RuJt7wVttvRaC+R9I0EwN9Kt2QiqY92DCj6qZa8ZBKcgmpti9XqON8vh5m430=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756512950; c=relaxed/simple;
-	bh=HNjsx0i8x73tfae/eOHpgGMql3FZ9c4OcgiZIKPT95A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XL0vpzg/jVv6JCW44sE0/OQScF93hYczemnjq2DMRD/5dOSvtjvoxyktj6uJGPHxHAmtRPHMDQ/PePxzwg83GBCFZXElCVy1cfD6sulNTn1rRsh14FIrHuasXlTuSQiM/GFGXGftuwJAMosm5WjG2qPvGFLxUTsMTyTt9DWDk80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZcIlotZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69F4C4CEF0;
-	Sat, 30 Aug 2025 00:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756512949;
-	bh=HNjsx0i8x73tfae/eOHpgGMql3FZ9c4OcgiZIKPT95A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iZcIlotZnZmYfFdJ1Oc7Aza4lrGYWrNZzw/6UYGujc8KDIerJaO5eBS6aelA9SVTs
-	 F1Qd0OE53bMMH8UD7Zo+6xBzYE51rblRUFPngwx7Tx2ttc6T0E6BxmAlywblHOGk5P
-	 DFp3ugjyLE3dB6YoEs1jItpKh9Dkop1IZW3FzveZ15VAag0BKj5hsrogEjPZHHH6xF
-	 reqOMqsi76TkbVCuJ7JiBbZQhYUDls+OE7hDTaVfoL9FhUC5q6N8P7/Vzd3LZCF/AZ
-	 +kNp/ihIF/4CyQ2y2AfRmC18FgtNmpJ6NOePp9MR9ZIfDcrbqflq5ol6hB9696od81
-	 4fG97Zov1H3zw==
-Date: Fri, 29 Aug 2025 17:15:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>, Richard Cochran
- <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 1/2] drivers: net: stmmac: handle start time
- set in the past for flexible PPS
-Message-ID: <20250829171548.68d7addd@kernel.org>
-In-Reply-To: <57196414-5ab5-41b7-b2e3-ff6831589811@foss.st.com>
-References: <20250827-relative_flex_pps-v3-0-673e77978ba2@foss.st.com>
-	<20250827-relative_flex_pps-v3-1-673e77978ba2@foss.st.com>
-	<20250827193105.47aaa17b@kernel.org>
-	<57196414-5ab5-41b7-b2e3-ff6831589811@foss.st.com>
+	s=arc-20240116; t=1756513049; c=relaxed/simple;
+	bh=7+XIWx8GPk+ely0gvld70sdQiq4ArEbDJmpyXpbiUJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qBIE03wEQJjq8/7K27YlBBItXPf8HQ8CfCUhIT2kCPhKqH9KmLmSVjYlN8JW1PEf62lJsDAi7Ntf6FGuWjaRYmFgnsVcCJx4p46GOzRtgNRD82oc5QC4pPXDDPy9R3KUg1qhvCDMrq6Cvemlbp0kX/coaDdDUPCeQDbyjmggBG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ar+b33xL; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756513048; x=1788049048;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7+XIWx8GPk+ely0gvld70sdQiq4ArEbDJmpyXpbiUJw=;
+  b=Ar+b33xL3DWCEWVkIW/noRbo5/5svGMGT56fMT++GWxGKYm6QtNpufde
+   ULRQq3E4zUJX0lNPAh8pcp+sdoidmpy7TgZ6fykfDCKU0KCVmbf+86F7f
+   5RH+o8g1FRLm5M15i3b7Vss76zMAQBOcYJfu+MGGOJfGA5k5O1ZhIi+ma
+   EVglbowDaDGz+9fXkDGtkGFEDrlOW+zEepx+EtmuP+cTgtkbYYiMpbVBu
+   a2U7rWhl+QzdXk4CEv86jGAjEAxINBO6w6szYEH371fOPtjpNMSHxcMTo
+   ILpybjMVmErAdKQSCgbYLVADvwwLiG2hiCm/yjiurI9q1joNa428xIMNU
+   w==;
+X-CSE-ConnectionGUID: 1BpzqoGuQ1yQGA9D22Audw==
+X-CSE-MsgGUID: kPwv5DjiTGaN4XtKkMbn+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69907533"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="69907533"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 17:17:28 -0700
+X-CSE-ConnectionGUID: 99TnGo17TEe7ZGUlg52iWA==
+X-CSE-MsgGUID: 2erQC3sVSKa2Pe50vlMYXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="207648615"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.59]) ([10.247.118.59])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 17:17:18 -0700
+Message-ID: <b61a163d-5d5f-437d-95de-b0b57769a6ce@intel.com>
+Date: Fri, 29 Aug 2025 17:17:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 19/23] CXL/PCI: Introduce CXL Port protocol error
+ handlers
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-20-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250827013539.903682-20-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 29 Aug 2025 12:51:40 +0200 Gatien CHEVALLIER wrote:
-> On 8/28/25 04:31, Jakub Kicinski wrote:
-> > On Wed, 27 Aug 2025 13:04:58 +0200 Gatien Chevallier wrote:  
-> >> +		curr_time = ns_to_timespec64(ns);
-> >> +		if (target_ns < ns + PTP_SAFE_TIME_OFFSET_NS) {
-> >> +			cfg->start = timespec64_add_safe(cfg->start, curr_time);  
-> > 
-> > Is there a strong reason to use timespec64_add_safe()?
-> > It's not exported to modules:
-> > ERROR: modpost: "timespec64_add_safe" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!  
-> 
-> Hello Jakub,
-> 
-> you're absolutely right. I don't know how I did not encounter the build
-> error while performing some tests, that I'm getting now as well.
-> 
-> The handling of overflows is already done in that function. Either
-> I can make a patch to export the symbol or handle the computation in the
-> driver. What do you think is best?
 
-The odds of me being right about time related code are only slightly
-better than 50/50, and I don't know what "flexible PPS" is :)
-But in principle, if the reason you need to check for overflow is valid
--- add the export. The time maintainers will tell us if they don't
-want it.
+
+On 8/26/25 6:35 PM, Terry Bowman wrote:
+> Introduce CXL error handlers for CXL Port devices.
+> 
+> Add functions cxl_port_cor_error_detected() and cxl_port_error_detected().
+> These will serve as the handlers for all CXL Port devices. Introduce
+> cxl_get_ras_base() to provide the RAS base address needed by the handlers.
+> 
+> Update cxl_handle_proto_error() to call the CXL Port or CXL Endpoint
+> handler depending on which CXL device reports the error.
+> 
+> Implement cxl_get_ras_base() to return the cached RAS register address of a
+> CXL Root Port, CXL Downstream Port, or CXL Upstream Port.
+> 
+> Introduce get_pci_cxl_host_dev() to return the host responsible for
+> releasing the RAS mapped resources. CXL endpoints do not use a host to
+> manage its resources, allow for NULL in the case of an EP. Use reference
+> count increment on the host to prevent resource release. Make the caller
+> responsible for the reference decrement.
+> 
+> Update the AER driver's is_cxl_error() PCI type check because CXL Port
+> devices are now supported.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> ---
+> Changes in v10->v11:
+> - None
+> ---
+>  drivers/cxl/core/core.h    |   9 ++
+>  drivers/cxl/core/port.c    |   4 +-
+>  drivers/cxl/core/ras.c     | 176 +++++++++++++++++++++++++++++++++++--
+>  drivers/pci/pcie/cxl_aer.c |   5 +-
+>  4 files changed, 186 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 6e3e7f2e0e2d..7e66fbb07b8a 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -155,6 +155,8 @@ pci_ers_result_t pci_error_detected(struct pci_dev *pdev,
+>  void pci_cor_error_detected(struct pci_dev *pdev);
+>  void cxl_cor_error_detected(struct device *dev);
+>  pci_ers_result_t cxl_error_detected(struct device *dev);
+> +void cxl_port_cor_error_detected(struct device *dev);
+> +pci_ers_result_t cxl_port_error_detected(struct device *dev);
+>  #else
+>  static inline int cxl_ras_init(void)
+>  {
+> @@ -179,9 +181,16 @@ static inline pci_ers_result_t cxl_error_detected(struct device *dev)
+>  {
+>  	return PCI_ERS_RESULT_NONE;
+>  }
+> +static inline void cxl_port_cor_error_detected(struct device *dev) { }
+> +static inline pci_ers_result_t cxl_port_error_detected(struct device *dev)
+> +{
+> +	return PCI_ERS_RESULT_NONE;
+> +}
+>  #endif // CONFIG_CXL_RAS
+>  
+>  int cxl_gpf_port_setup(struct cxl_dport *dport);
+> +struct cxl_port *find_cxl_port(struct device *dport_dev,
+> +			       struct cxl_dport **dport);
+>  
+>  #ifdef CONFIG_CXL_FEATURES
+>  struct cxl_feat_entry *
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 29197376b18e..758fb73374c1 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -1335,8 +1335,8 @@ static struct cxl_port *__find_cxl_port(struct cxl_find_port_ctx *ctx)
+>  	return NULL;
+>  }
+>  
+> -static struct cxl_port *find_cxl_port(struct device *dport_dev,
+> -				      struct cxl_dport **dport)
+> +struct cxl_port *find_cxl_port(struct device *dport_dev,
+> +			       struct cxl_dport **dport)
+>  {
+>  	struct cxl_find_port_ctx ctx = {
+>  		.dport_dev = dport_dev,
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index a2e95c49f965..536ca9c815ce 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -251,6 +251,154 @@ static void cxl_dport_map_ras(struct cxl_dport *dport)
+>  		dev_dbg(dev, "Failed to map RAS capability.\n");
+>  }
+>  
+> +static int match_uport(struct device *dev, const void *data)
+> +{
+> +	const struct device *uport_dev = data;
+> +	struct cxl_port *port;
+> +
+> +	if (!is_cxl_port(dev))
+> +		return 0;
+> +
+> +	port = to_cxl_port(dev);
+> +
+> +	return port->uport_dev == uport_dev;
+> +}
+
+Just heads up, there's a find_cxl_port_by_uport() coming with the deferred dport init series that you can use instead. Just FYI.
+
+> +
+> +static void __iomem *cxl_get_ras_base(struct device *dev)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +	switch (pci_pcie_type(pdev)) {
+> +	case PCI_EXP_TYPE_ROOT_PORT:
+> +	case PCI_EXP_TYPE_DOWNSTREAM:
+> +	{
+> +		struct cxl_dport *dport = NULL;
+> +		struct cxl_port *port __free(put_cxl_port) = find_cxl_port(&pdev->dev, &dport);
+> +
+> +		if (!dport || !dport->dport_dev) {
+> +			pci_err(pdev, "Failed to find the CXL device");
+> +			return NULL;
+> +		}
+> +
+> +		if (!dport)
+> +			return NULL;
+> +
+> +		return dport->regs.ras;
+> +	}
+> +	case PCI_EXP_TYPE_UPSTREAM:
+> +	{
+> +		struct cxl_port *port;
+> +		struct device *port_dev __free(put_device) =
+> +			bus_find_device(&cxl_bus_type, NULL,
+> +					&pdev->dev, match_uport);
+> +
+> +		if (!port_dev || !is_cxl_port(port_dev)) {
+> +			pci_err(pdev, "Failed to find the CXL device");
+> +			return NULL;
+> +		}
+> +
+> +		port = to_cxl_port(port_dev);
+> +		if (!port)
+> +			return NULL;
+> +
+> +		return port->uport_regs.ras;
+> +	}
+> +	}
+> +
+> +	dev_warn_once(dev, "Error: Unsupported device type (%X)", pci_pcie_type(pdev));
+> +	return NULL;
+> +}
+> +
+> +static struct device *pci_to_cxl_dev(struct pci_dev *pdev)
+> +{
+> +	switch (pci_pcie_type(pdev)) {
+> +	case PCI_EXP_TYPE_ROOT_PORT:
+> +	case PCI_EXP_TYPE_DOWNSTREAM:
+> +	{
+> +		struct cxl_dport *dport = NULL;
+> +		struct cxl_port *port __free(put_cxl_port) =
+> +			find_cxl_port(&pdev->dev, &dport);
+> +
+> +		if (!dport) {
+I think you can just check 'port' here right? and then you don't need to set dport to NULL.
+
+> +			pci_err(pdev, "Failed to find the CXL device");
+> +			return NULL;
+> +		}
+> +
+> +		return dport->dport_dev;
+> +	}
+> +	case PCI_EXP_TYPE_UPSTREAM:
+> +	{
+> +		struct cxl_port *port;
+> +		struct device *port_dev __free(put_device) =
+> +			bus_find_device(&cxl_bus_type, NULL,
+> +					&pdev->dev, match_uport);
+> +
+> +		if (!port_dev || !is_cxl_port(port_dev)) {
+> +			pci_err(pdev, "Failed to find the CXL device");
+> +			return NULL;
+> +		}
+> +
+> +		port = to_cxl_port(port_dev);
+> +		if (!port)
+> +			return NULL;
+> +
+> +		return port->uport_dev;
+> +	}
+> +	case PCI_EXP_TYPE_ENDPOINT:
+> +	{
+> +		struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
+
+With this function called through cxl_proto_err_work_fn() and not the AER handling stack, I have concerns of if a driver is bound to the endpoint, and if the pci driver bound to the endpoint is cxl_pci for cxlds to be valid.
+
+> +
+> +		return cxlds->dev;
+> +	}
+> +	}
+> +
+> +	pci_warn_once(pdev, "Error: Unsupported device type (%X)", pci_pcie_type(pdev));
+> +	return NULL;
+> +}
+> +
+> +
+> +/*
+> + * Return 'struct device *' responsible for freeing pdev's CXL resources.
+> + * Caller is responsible for reference count decrementing the return
+> + * 'struct device *'.
+> + *
+> + * dev: Find the host of this dev
+> + */
+> +static struct device *get_cxl_host_dev(struct device *dev)
+> +{> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +	switch (pci_pcie_type(pdev)) {
+> +	case PCI_EXP_TYPE_ROOT_PORT:
+> +	case PCI_EXP_TYPE_DOWNSTREAM:
+> +	{
+> +		struct cxl_dport *dport = NULL;
+
+No need to set to NULL. dport not used.
+
+DJ
+
+> +		struct cxl_port *port = find_cxl_port(&pdev->dev, &dport);
+> +
+> +		if (!port)
+> +			return NULL;
+> +
+> +		return &port->dev;
+> +	}> +	case PCI_EXP_TYPE_UPSTREAM:
+> +	{
+> +		struct device *port_dev = bus_find_device(&cxl_bus_type, NULL,
+> +							  &pdev->dev, match_uport);
+> +
+> +		if (!port_dev || !is_cxl_port(port_dev))
+> +			return NULL;
+> +
+> +		return port_dev;
+> +	}
+> +	/* Endpoint resources are managed by endpoint itself */
+> +	case PCI_EXP_TYPE_ENDPOINT:
+> +		return NULL;
+> +	}
+> +
+> +	dev_warn_once(dev, "Error: Unsupported device type (%X)", pci_pcie_type(pdev));
+> +	return NULL;
+> +}
+> +
+>  /**
+>   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
+>   * @dport: the cxl_dport that needs to be initialized
+> @@ -399,6 +547,22 @@ static pci_ers_result_t cxl_handle_ras(struct device *dev, u64 serial, void __io
+>  	return PCI_ERS_RESULT_PANIC;
+>  }
+>  
+> +void cxl_port_cor_error_detected(struct device *dev)
+> +{
+> +	void __iomem *ras_base = cxl_get_ras_base(dev);
+> +
+> +	cxl_handle_cor_ras(dev, 0, ras_base);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_port_cor_error_detected, "CXL");
+> +
+> +pci_ers_result_t cxl_port_error_detected(struct device *dev)
+> +{
+> +	void __iomem *ras_base = cxl_get_ras_base(dev);
+> +
+> +	return cxl_handle_ras(dev, 0, ras_base);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_port_error_detected, "CXL");
+> +
+>  void cxl_cor_error_detected(struct device *dev)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(dev);
+> @@ -469,9 +633,8 @@ EXPORT_SYMBOL_NS_GPL(pci_error_detected, "CXL");
+>  static void cxl_handle_proto_error(struct cxl_proto_err_work_data *err_info)
+>  {
+>  	struct pci_dev *pdev = err_info->pdev;
+> -	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
+> -	struct cxl_memdev *cxlmd = cxlds->cxlmd;
+> -	struct device *host_dev __free(put_device) = get_device(&cxlmd->dev);
+> +	struct device *dev = pci_to_cxl_dev(pdev);
+> +	struct device *host_dev __free(put_device) = get_cxl_host_dev(&pdev->dev);
+>  
+>  	if (err_info->severity == AER_CORRECTABLE) {
+>  		int aer = pdev->aer_cap;
+> @@ -481,11 +644,14 @@ static void cxl_handle_proto_error(struct cxl_proto_err_work_data *err_info)
+>  						       aer + PCI_ERR_COR_STATUS,
+>  						       0, PCI_ERR_COR_INTERNAL);
+>  
+> -		cxl_cor_error_detected(&cxlmd->dev);
+> +		if (pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT)
+> +			cxl_error_detected(&pdev->dev);
+> +		else
+> +			cxl_port_cor_error_detected(dev);
+>  
+>  		pcie_clear_device_status(pdev);
+>  	} else {
+> -		cxl_do_recovery(&cxlmd->dev);
+> +		cxl_do_recovery(dev);
+>  	}
+>  }
+>  
+> diff --git a/drivers/pci/pcie/cxl_aer.c b/drivers/pci/pcie/cxl_aer.c
+> index 74e6d2d04ab6..6eeff0b78b47 100644
+> --- a/drivers/pci/pcie/cxl_aer.c
+> +++ b/drivers/pci/pcie/cxl_aer.c
+> @@ -68,7 +68,10 @@ bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info)
+>  	if (!info || !info->is_cxl)
+>  		return false;
+>  
+> -	if (pci_pcie_type(pdev) != PCI_EXP_TYPE_ENDPOINT)
+> +	if ((pci_pcie_type(pdev) != PCI_EXP_TYPE_ENDPOINT) &&
+> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_ROOT_PORT) &&
+> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_UPSTREAM) &&
+> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_DOWNSTREAM))
+>  		return false;
+>  
+>  	return is_internal_error(info);
+
 
