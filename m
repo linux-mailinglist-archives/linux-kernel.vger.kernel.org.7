@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-792627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650A4B3C6D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:55:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771CDB3C6D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D761724F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF213B4D49
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4412921D3DF;
-	Sat, 30 Aug 2025 00:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6132221FCD;
+	Sat, 30 Aug 2025 00:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGlaXiux"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a668jG9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72EC217F35
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9F22033A;
+	Sat, 30 Aug 2025 00:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756515338; cv=none; b=PAPd187D72O3Hhh3t2jnIQ1P4Mkz3/oayfRXbqW9RbhFSzDd64YGGPJCHvNnuyWMyaojoJ3A6RTB9KdN1GJbPJiKjiNUctBmYlwurNxvtbxBrOHt8unNnKfqSahEJnupsYb4SF9dj5RlELTzIb8JaK0cuj9kU4u7QjjXjLXTm5A=
+	t=1756515318; cv=none; b=lUmZ7JawRnGRM4vqPY52t4oI5PTlFUheN+gbqj+xnepoFPrkYxW/SSa0oku4F/0DoT6fRbQHSZ+y0C52uR8lLI+txKO1OwVoX4qNAbsMuCZaUkiEnJ6VoXA7auTqUq2xo6rPedmROVnlRpGuexg2OYkfy44CdAgIZ/IHKpxgE70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756515338; c=relaxed/simple;
-	bh=3cXPLvc0eRnag8MvjjaPsBwTWB6C31b46T8IqAhUCpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=da9vFl57dpw47TbStpI29NhPSAhjfPSdop2t1dB39xpGu8m/DIEt05qqSUUmwc31qt0h4240FD+Dm446WGrep4/fWh4IkXNfCOtO3GmrKj0G/Rh4uUE9IehIoUHHO2/ql0P25bEqqQE4ueH9RHiBgCdtWFexLDiuLULJavoREbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WGlaXiux; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756515336; x=1788051336;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=3cXPLvc0eRnag8MvjjaPsBwTWB6C31b46T8IqAhUCpk=;
-  b=WGlaXiuxRjownSrj1653Go1Kgn04FSG3BgxelLItlrf/CsjUVnZ7BzLq
-   dn9gu0v7eOwfd79DjretkqNjU4W2d8oFdxmqjU9joroMQoWuS0V+Ad4zJ
-   S725r9w0uWNWgsd4KMD8xtfi8hxNt8hTuRNO7p3jRs8z2oqOADgtKpP6a
-   9eMGPfgTUGUMrvE61KDPltRizLSrGDUBWp8wyCqJL02oxWlFO7t5z8D+9
-   qUZvGGrlWD5OywpZ+WFhD8kheyKA0N9F8UyaicqM0r7JY7n7UQ1eltneJ
-   qHzHxxVfW8gnvnI8Y52rUuPYG4DopLfYxbIOQtQB5vfKw2PyA6aTSBZ7s
-   A==;
-X-CSE-ConnectionGUID: E7b9l8Z9TpG/X2a5kTpe6A==
-X-CSE-MsgGUID: Ct7BY5MuTzKaflNNHF5rIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="58515442"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58515442"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 17:55:36 -0700
-X-CSE-ConnectionGUID: VnTE/QKiTPqHqm1mreM+9A==
-X-CSE-MsgGUID: Se3CU3L7S/uAgHT3UWLRSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="201442141"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 29 Aug 2025 17:55:34 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1us9sJ-000V5n-1Z;
-	Sat, 30 Aug 2025 00:55:26 +0000
-Date: Sat, 30 Aug 2025 08:54:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- LEDS_EXPRESSWIRE when selected by BACKLIGHT_KTD2801
-Message-ID: <202508300808.CQS9RqHF-lkp@intel.com>
+	s=arc-20240116; t=1756515318; c=relaxed/simple;
+	bh=5Pxk7Q/Mh5IJS4y5ckkMXdtE7YuwQmCUpK8wYNzWC2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eM0Wvh+O7DirNXJH+TxxigE4D5+PfrqIBy/oFZBnfnbOgY0FpJQtDC5B9zqrLg3ort86Y8JgeReSihM+Seo4eb1t0ebgRYNuriyuVtMeDlJcw2FqpChinfwZon8mZExjfFF/dtjM14Vkf+ehC+oCSmcqWwtM+vpLWbIE+6CQwtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a668jG9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE01C4CEF0;
+	Sat, 30 Aug 2025 00:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756515317;
+	bh=5Pxk7Q/Mh5IJS4y5ckkMXdtE7YuwQmCUpK8wYNzWC2M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a668jG9nEv6whAoeeYAy5npAbc6I3gwwfuWqcKladQOf3flBraBBs+4I8sPtDc9OJ
+	 bbBIXUnRa5q4bf3ydn8qa+ZrZR7k32/HXEZAM5pfx4wvJQqrdZAyXUmIdK59xg2TPN
+	 nnee7AHMFQnlQjb5z7krMHFXFq9vO7D3L+G8OM0zl6HgeryapywCtaAIOC85QCnCTj
+	 h5Wi9njmNkvXTIS4jAJdm5URR08X1JQgw5/P4FwyV1uXpjjqX2EK/EMm4zCRsH3nRO
+	 9fWkULvh+2nfFkmdGDAC56zQij8LJP7mydB/KJsp+pD4FKZ4ZLbpShUgF4FlLOpD2/
+	 UFRS+uF8W0HFg==
+Message-ID: <6f7adfe7-a3ad-4439-91ed-bb65936368c9@kernel.org>
+Date: Sat, 30 Aug 2025 09:55:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 07/10] blk-crypto: convert to use
+ bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, neil@brown.name,
+ akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-8-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250828065733.556341-8-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   11e7861d680c3757eab18ec0a474ff680e007dc4
-commit: a5554f1b5bc3be5d01f41b7550aa5b05b7c88c09 backlight: Add Kinetic KTD2801 Backlight support
-date:   1 year, 6 months ago
-config: x86_64-kismet-CONFIG_LEDS_EXPRESSWIRE-CONFIG_BACKLIGHT_KTD2801-0-0 (https://download.01.org/0day-ci/archive/20250830/202508300808.CQS9RqHF-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250830/202508300808.CQS9RqHF-lkp@intel.com/reproduce)
+On 8/28/25 15:57, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> On the one hand unify bio split code, prepare to fix disordered split
+> IO; On the other hand fix missing blkcg_bio_issue_init() and
+> trace_block_split() for split IO.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508300808.CQS9RqHF-lkp@intel.com/
+Again same comment about the missing blkcg_bio_issue_init() call.
+Other than that, this looks OK to me.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for LEDS_EXPRESSWIRE when selected by BACKLIGHT_KTD2801
-   WARNING: unmet direct dependencies detected for LEDS_EXPRESSWIRE
-     Depends on [n]: NEW_LEDS [=n] && GPIOLIB [=n]
-     Selected by [y]:
-     - BACKLIGHT_KTD2801 [=y] && HAS_IOMEM [=y] && BACKLIGHT_CLASS_DEVICE [=y]
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Damien Le Moal
+Western Digital Research
 
