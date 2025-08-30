@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-792791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C348B3C906
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699DDB3C909
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC9B7A61C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9711B27C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8A9286890;
-	Sat, 30 Aug 2025 08:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWCttz1i"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DF9285CA3;
+	Sat, 30 Aug 2025 08:09:08 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA02F21B185;
-	Sat, 30 Aug 2025 08:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154D5BAF0;
+	Sat, 30 Aug 2025 08:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756541117; cv=none; b=beMi2nv1wxvcZ/XkMcgbSqa1YM7ExmFzUlpbBPh4cB8dIRDk+ICDW2jMQUueJBXOjwH0F5B8W7kwXpROJCqpXINA38FySSt5zYkhWUAth7pjNV5kQtX7rRo3nPMSvt3t5+h+24A41n7f19SxCklDgGSicObV2UihcPCGPqE7iUQ=
+	t=1756541347; cv=none; b=p2SXVrLySeV0JibfU310fojjB/IZoLg9LHxDDos7P6SBn7rrmFU8sDNVOMnYUs2Fvz7AwfgmZO6yt68JDR7UpNWms6to5NC6Q+FOCOHFO2hWQeXARysQDhNzzltA/BztuY/81nYUOGIBmWWDyDBWd7w8lCAmboVsu6LW5//b14U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756541117; c=relaxed/simple;
-	bh=E+3FytFWpN13QNaZlIP9PT23YkoDdof1b13hg+sNa10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXg9bYg2G4O+N7Si7/3SCG4M2xFcY0/qDX/Goahhb0fG9vvJkl+bFoqYZ7AkGnG3QxWiYxj6LyavefyNbZ96W+x+WOv/+dMXHmoVVIAhR/arJSZ5kUw6jqB4yV9nljm85LRb9yWt6sFiyrvcWgC1U3amD2ovTl8HwzboZixd79I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWCttz1i; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afeceee8bb1so421738966b.3;
-        Sat, 30 Aug 2025 01:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756541114; x=1757145914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+3FytFWpN13QNaZlIP9PT23YkoDdof1b13hg+sNa10=;
-        b=OWCttz1idIoD0VnsSHFGIawRXJFYgGlr1IsFW5L65nEQ2+rYy0cZ31g5jNyBrLABOo
-         5hbz+t8YtsXhYYiuNy1ZlRlFXMqfzEBx6XgAPA8pjWkUM72j2g6BVF+160+JVuC6vhmN
-         fpnRCewYZujadFszMCKLa382P8UIVOIOsUKAJeqTpW4f9gMw54tEIpem1kc/DIzQnMyv
-         CWGdfilRifCnzpNS3iJiATZtxTJsYoJBuaptC328zBxTQ3EZBQqEQUDGZeeSyXh8Oz3d
-         bf7ONrj/gb2xfcoekvf2DiOUO/bX13LtqJL5TW55DUsnZ2brvp1pYbverT/kaj/cGKdt
-         m5PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756541114; x=1757145914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E+3FytFWpN13QNaZlIP9PT23YkoDdof1b13hg+sNa10=;
-        b=VcAhQPrfOLv8LXg3m0EZQWxedyNB0S0CjLiZQqK1Mz+ACiNYyaVURxvW6Yzc2auDaD
-         FCsVC89+3519zmw5uEb8jhfKipgWld2FfxisQz+7mdu3Ee95vitwBiZxaYPTKHIZdGdD
-         UEDK+9alQifsAdxc+tPMcE2hxmceJFWqWDokhSykzwxLm7SmaIA0w9Xm2LTwd24hr1tE
-         9uBGjD5i+gVWl2klDIcVATWXpBMp9MKNbAVxKKd7dzEtc66elTG0VvhKsLBpxyL6icpx
-         BP02yivy/uiksDHEocZ2OhwxAI95F9kPhALBtK9ZNC3bb3jxVTczSf9XpGjlEJo87NtB
-         Pjbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+wP2t9w4C9MDx8bCjeG9XxWAAo/8b6AVfUxeOXlkK7ppQO+kDDwEycAW5SolbktEhVEoRG2UysjC0fUbB@vger.kernel.org, AJvYcCUXI+sPMYtg485TDQanhuYWVwMyKVr8MF4t+LSN4ED5s2EcAjaqC5OaHGHQTTQ8WMRRuFjWk82tuCoboykf+wyk@vger.kernel.org, AJvYcCUmmXCsQ+TSou4R/2bwtDRhDPGoD6wZ+FG3ntD3IZYu1PcvIa17n2vUR/tY4tptv5gfvElGvB2Jlqwilw==@vger.kernel.org, AJvYcCVjZO+WVMqoeuVyXw4GRTqCB/3rauHwTuW0mr10JhvyC7ViLrxRfq0k+FTgNAxRhkTx2rN8cakc53wcFA==@vger.kernel.org, AJvYcCWCoy0HamBYezqdodix7IQo5nOBMmfkbfGTznwitFUoJIKnkZ5gWZGa0dVW0I6+lIFIKbcFsbzG1ed2JExD1J6+A00=@vger.kernel.org, AJvYcCXi1qMLwiJ9uzcUURLMIvHXQndaUtuQe+Euwr0uzQLKyHGoDpj4kMDq/n7Jyk6xFxIYE2Uh5ARnw/RIEA==@vger.kernel.org, AJvYcCXvaxj+NXAiZMudh1Od+pz4mgmWAdl28dX6/IoZucd7DoFqzy8JAzHjHEg5lHBHXu/H+kNe7946F2M2/lMY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3A7v62H8aMswOsoCZQXYkweYah+OfSh/udtmcXJvQWHAkk0GY
-	ZeafaQKNicV1nil93d8BmEEgAQYixGYwNV7rYiiA1tUUPzdFK5bJTLM1gmXd61Z1rYYDFnC2Fl5
-	RI9g79Ny5xfM4jjmSUETESjUvdVk4UgU=
-X-Gm-Gg: ASbGncubCSj6ETjgY1Zef7OBfHA0X2Mg3K8kCNROOFhuySp7lY2p9LHAzsc+VvsedaN
-	IA/Z/m/nlFHyFSZfwDoeBLO8UQYDkVUxvSAgPHlWIFQkn5YhfXcCnR+SjKk39O/p75A1UrLvoau
-	Z3XBA93wLiWDbh005j47p6l85RR3bBsIXbypWOJ4pyA0qE4KqmOIGhovj3MHZx5CsKk0K+Inpv/
-	caekSU=
-X-Google-Smtp-Source: AGHT+IGzflFMFHhQCk11BPmcxfewbn8R9ACv8Yo0SSn9TtnTW1JgawjqxVwsmdBQr0ZCbodUJMXZIPy39a0Dt37TD0k=
-X-Received: by 2002:a17:907:7244:b0:af9:6e2b:f30c with SMTP id
- a640c23a62f3a-b01d972f530mr112838566b.34.1756541113922; Sat, 30 Aug 2025
- 01:05:13 -0700 (PDT)
+	s=arc-20240116; t=1756541347; c=relaxed/simple;
+	bh=ls65F/Hknrwv3SVQwAnPoHC5dLqTgZUBtyTQdcAyacs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SUb7vrE1LafAEttyc90pdsx4txDXJyU81BVH3f40J5R7wt294mYzfNPB0CLq4UWlAMYnO1R9io4mlIwLAS8WCttswwNHVddQCg2gOcYe8sPBIFlnVaMvG1b2posv4HVyliLVusCuwmo+ygS37sRVEgy4zhepcmm91HOoGbyCs5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cDSPf2ZjMz24hsn;
+	Sat, 30 Aug 2025 16:05:58 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id A7711140155;
+	Sat, 30 Aug 2025 16:08:59 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 30 Aug 2025 16:08:58 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+	<gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
+	<mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
+ Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v03 00/14] net: hinic3: Add a driver for Huawei 3rd gen NIC - sw and hw initialization
+Date: Sat, 30 Aug 2025 16:08:39 +0800
+Message-ID: <cover.1756524443.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org> <20250828-pinctrl-gpio-pinfuncs-v6-4-c9abb6bdb689@linaro.org>
-In-Reply-To: <20250828-pinctrl-gpio-pinfuncs-v6-4-c9abb6bdb689@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 11:04:37 +0300
-X-Gm-Features: Ac12FXzW7SA_uUOkcPEFLfZfGLYsYzzZVOKlWfYhU6akvDLYnA0W6YgK2rZDIDs
-Message-ID: <CAHp75Vci1uAcA9ahofn95hxufa+Yi1Fjt4w74HSObQq-Rz5zMQ@mail.gmail.com>
-Subject: Re: [PATCH v6 04/15] pinctrl: mediatek: mt7988: use PINCTRL_PIN_FUNCTION()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Chen-Yu Tsai <wenst@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-On Thu, Aug 28, 2025 at 7:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> We have a dedicated initializer macro for defining pin functions for
-> mediatek drivers so use it here.
+This is [3/3] part of hinic3 Ethernet driver initial submission.
+With this patch hinic3 becomes a functional Ethernet driver.
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+The driver parts contained in this patch:
+Memory allocation and initialization of the driver structures.
+Management interfaces initialization.
+HW capabilities probing, initialization and setup using management
+interfaces.
+Net device open/stop implementation and data queues initialization.
+Register VID:DID in PCI id_table.
+Fix netif_queue_set_napi usage.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Changes:
+
+PATCH 03 V01: https://lore.kernel.org/netdev/cover.1756195078.git.zhuyikai1@h-partners.com
+* Remove extra memset 0 after kzalloc (Vadim Fedorenko)
+* Remove another init function in hinic3_init_hwdev/hwif/nic_io (Vadim Fedorenko)
+* Create a new separate patch of fixing code style (Vadim Fedorenko)
+* Use bitmap_free instead of kfree (ALOK TIWARI)
+* Add prefix "hinic3" to non-static functions and parse_* functions (Vadim Fedorenko)
+* Init func_tbl_cfg to {} (Vadim Fedorenko)
+* Move endinass-improvements to a separate patch (Vadim Fedorenko)
+* Use kmalloc_array before overwrite rss_hkey on the very next line (Vadim Fedorenko)
+* Remove extra key copy about hinic3_rss_set_hash_key (Vadim Fedorenko)
+* Use netdev_rss_key_fill instead of static rss hash key for safety (Eric Dumazet)
+
+PATCH 03 V02: https://lore.kernel.org/netdev/cover.1756378721.git.zhuyikai1@h-partners.com
+* Modify get_hwif_attr function for improving readability (Vadim Fedorenko)
+* Add HINIC3_PCIE_LINK_DOWN errorcode to init_hwif_attr error handling (Vadim Fedorenko)
+
+PATCH 03 V03:
+
+Fan Gong (14):
+  hinic3: HW initialization
+  hinic3: HW management interfaces
+  hinic3: HW common function initialization
+  hinic3: HW capability initialization
+  hinic3: Command Queue flush interfaces
+  hinic3: Nic_io initialization
+  hinic3: Queue pair endianness improvements
+  hinic3: Queue pair resource initialization
+  hinic3: Queue pair context initialization
+  hinic3: Tx & Rx configuration
+  hinic3: Add Rss function
+  hinic3: Add port management
+  hinic3: Fix missing napi->dev in netif_queue_set_napi
+  hinic3: Fix code style (Missing a blank line before return)
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   2 +
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    | 195 ++++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |   4 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   | 364 ++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  21 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 121 +++
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c | 547 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 269 ++++++
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   |   2 +-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |   9 +-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |   9 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |   2 +
+ .../huawei/hinic3/hinic3_mgmt_interface.h     | 119 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 432 ++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 152 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  20 +
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   5 +
+ .../ethernet/huawei/hinic3/hinic3_nic_io.c    | 874 +++++++++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_io.h    |  39 +-
+ .../huawei/hinic3/hinic3_pci_id_tbl.h         |   9 +
+ .../net/ethernet/huawei/hinic3/hinic3_rss.c   | 352 +++++++
+ .../net/ethernet/huawei/hinic3/hinic3_rss.h   |  14 +
+ .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 232 ++++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  38 +-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 184 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  30 +-
+ 28 files changed, 3996 insertions(+), 86 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_pci_id_tbl.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.h
+
+
+base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
+-- 
+2.43.0
+
 
