@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-792718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A31B3C800
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:59:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103E5B3C80B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723C83BC7DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD70F5677F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B319327D77B;
-	Sat, 30 Aug 2025 04:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15D12737F6;
+	Sat, 30 Aug 2025 05:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuXsOfuk"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZXnCGVz"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4BB46447
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1B11C1F05;
+	Sat, 30 Aug 2025 05:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756529974; cv=none; b=Mu2PnyJJqouERpZd+VUf6R0INJoJKZHU32jJBz6KtdppRXyjQm43sG2Vw8Wgu/bOH/F9PIfnAXqGu4TaF7tDWzfSc1CY76VbyYkOrT1jUwa+SNSd1XZ1SPj21uo1qqn0d1HaSkoknnhLoFz6DcW6bWW9uIOM4+AvpScfieTOJdg=
+	t=1756530056; cv=none; b=Vv2RpvznYP5BXi5g+Vbx8xAQARI+cQN+c1/WpvXxge0Qhc2bJrT3mz5sVMXnvYmjgqSbkmD0fpEGLMOvDtLVo4iVnIqbyKGTW/HByHBhYPZNmcbZUbCxijeQ8lnpH7i75kBk5W9FwMuIxxjZtBYfMfgghOH96vL5iJUr2sK6OBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756529974; c=relaxed/simple;
-	bh=7QGll4Vou9HVMFQX7+oMS9QdkntTQkhDXdgNhD4IQQI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Itqi3fn1VG4Eh4AD/NJph1Qvkkw1fChaeUcTZQz8KBSw+E2v3kkfA8Riw4rrCHq5pk6Wqjeyu5xuGeo1EH5EpWP4iDtjjCltZQPLMQH2b+USOMjy3iXV3AOE9K3DETCI8C+0E6IZblzkb1Qwpaoe8He4SO0o7F/CrksNhm5+3eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuXsOfuk; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1756530056; c=relaxed/simple;
+	bh=sUWCFQiozcXf8RFq48scZRqotCkwmrulquliXottWRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4KxYyOZqH1sxeQTBfjyQvv/QrVZy1ILDErWhalZ31kz+Enu76Gdj8XXkOed2l/99dqoQjdJJrfX9QneUZAWwM7/ANgYUqzkutPKDXdVrp8Yp6s6skFf1+E5q9qD7Y2tywW1cd9Xhwj8ySWk+83j69TSsn/cTOgaPWyV5k1I6y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZXnCGVz; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77201f3d389so3003870b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 21:59:32 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afede1b3d05so480799666b.2;
+        Fri, 29 Aug 2025 22:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756529972; x=1757134772; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ECUtRIXM/m3p0uCZ6iejxUu4ieJmp6wy4rmOCxQvy0I=;
-        b=CuXsOfukHZkSO7YoHQl3TUS5TKl6QAxGJErZZW+Fi36F4nDOBFBkAKGYRaUAScthRO
-         YM5O2wvik7aXptT3yZByxo7/O0qqYWFwpdrl9FpY7ucDsHwqaeCL6KQbFTB/focGiql6
-         rXuDP2fyet9BL1Yh5xJe1ryRSF5rB89bk+s0BhfGPEBgCATqXOLTqq5hu3sCJvb0sAvN
-         9o4xWvaCuFtcBI7hxjfHQR1p3XXy6C6Qn1L+d5ApiVgZ5Hov8WoN6G5m2+McofIpUDv2
-         jKD74n/UdbOBbh+H8mEE/fTygCznZ0TmdNJ3DJUuzH31ejVZmZi2Ne/83Nyk7l/U1R1y
-         qucA==
+        d=gmail.com; s=20230601; t=1756530052; x=1757134852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sUWCFQiozcXf8RFq48scZRqotCkwmrulquliXottWRM=;
+        b=OZXnCGVzWmR5x5wfKPX9u/EjpUcSdTSlI6kw2lrywUiuLMtUswJPVWwYLV/EFkVWdY
+         ru73xLpJkalGrriSJ4AIhSK8uK7maib8x0ENupEd8d10knnCvY9NzBJWwkOZhXumuGZH
+         C8ilUXGJp9peSsW83hX0i36JG8uSkyjN75USgHvQnrRTgJV2+DonNf8cd54XLPIB+1lQ
+         RxQM/7Qs84F10Ya9QDDwcj5dzppN9s4UfZB144/thSsrNgMErlsgL6cnyz0eAX6bMk7L
+         4HHkpMVkWY0xf+nctv0Isv5jtT6t7F4WwXp0LPNZ1r8LaxM8J1d/co7h3Wie5H5da4ng
+         C1Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756529972; x=1757134772;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECUtRIXM/m3p0uCZ6iejxUu4ieJmp6wy4rmOCxQvy0I=;
-        b=t9Yi78MJ28pVsZKtUEXIj1ebomUoqFlzFEC+rl3ZVoGoryg28tK/3scj+dk1XFb64u
-         ciOWbdl9IjiIAOTEgqRO30iKnGa6o4XTqgqt2f0p7VIpjAbwdWY21XkFkEKDJ8AQe92h
-         qmkjHhMx7CljPAfSxK5YAGHbrSgW0fIR4bRtYGtPT7D1p22aB0VI9wgsmF5MZKYH1QNQ
-         VG9wAlA9bHZ9cSYr2xDF+N99GJH2hdwhDMrcLDcA9ffIlbqqX8zrLzifsLnUVMgpv1DL
-         eNulwHyIRSZ1PO7NAHXPpGhI5KUKFkfSIpABoRSEV1haXKPoEHwmuvQBVs5J6qVOEdoY
-         01qw==
-X-Forwarded-Encrypted: i=1; AJvYcCX31i8PLCLJR000Bnap+0WuGxcrkHT30Bhd5JxIz5F+Rrq3txIvwbbjHIxzqS247YcftU03/YykrFJTmeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3/tZdWPQw/s7XZExWo9k3ZR0BLDDDpayYFcckUQDQ7g3mL+Ak
-	N15Us7js3PKuxv8HEve1Oj6GKFrXveAo/KLVIh1H/gZNLGogrbF7yvff
-X-Gm-Gg: ASbGnct3rJgzAxrG+Q4wg1+Dg74bY0JRpH5kkjxEH/qv47KKb46LBbA7yuFaoB066n1
-	tHdr66MsKmwVTjITDBNMlJpLNzY5GiTvY/UKvAMwPmL1gBW+fixQ15LsPLCH9JqvcCO02MLn3J9
-	l6kzwb3lGdDuPt7BvUL4SWf0X8Fg2EggDGOac+nn23XwVeV3aldfUKgoZNVkoHwqzQBdS4rN9KN
-	z+NHjiICv5v+FVvnaynyfjNQUWvy+B1UBCNBMvO+KGGOl2vnjmSWG7bDMprppXDo+RUgZ+vhbsh
-	2SD5Thr4wXGc2WG7a55+RN9At0Evc65DoExE6y7wEc7kWlKkwrL86ERxsBG/LDMvxHsMLd8Syah
-	ouDEnrjzy0/m1Ytg=
-X-Google-Smtp-Source: AGHT+IFocOUBHixe2wv+gU96RrWRxGPvxKCNnqco4rS/r7Pe4pX8vYeeFZ0tFygY5WYh3POLg7pdfg==
-X-Received: by 2002:a05:6a20:728b:b0:243:bfc4:463c with SMTP id adf61e73a8af0-243d6e5b012mr1543524637.25.1756529971878;
-        Fri, 29 Aug 2025 21:59:31 -0700 (PDT)
-Received: from dw-tp ([171.76.86.139])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4de04a9ea7sm1557942a12.16.2025.08.29.21.59.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 21:59:31 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Donet Tom <donettom@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC 8/8] powerpc/book3s64/slb: Add slb faults to vmstat
-In-Reply-To: <20250830144542.6ba0e774@canb.auug.org.au>
-Date: Sat, 30 Aug 2025 10:26:45 +0530
-Message-ID: <87y0r1jtki.fsf@gmail.com>
-References: <cover.1756522067.git.ritesh.list@gmail.com> <e05ac86618d8a52feccf5bac99da44b11871382c.1756522067.git.ritesh.list@gmail.com> <20250830144542.6ba0e774@canb.auug.org.au>
+        d=1e100.net; s=20230601; t=1756530052; x=1757134852;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sUWCFQiozcXf8RFq48scZRqotCkwmrulquliXottWRM=;
+        b=bzuCug5UJdAkfuFXIWvc0jbd3vd2TsmL8Cv+959Jy8RRmrTmO82kpm0JJabRWbB0Lx
+         eKMtZZ7+aqpOwZ0eVeXI6sFJJX2itb+iLWtutqAEGYTXL5V9OALVR7C3zdpHKJZd59g4
+         Mwm4fgc8oKTuVA261/FyjonD94W6uqDMNRIogy5WYJOOXB1Mv9GEXSa+P/UEHCctayau
+         PYXb1N3SLqWtQ/BUBm7xKGRGNqFBxZNCsVB6R3Rf8qYg35nq1NoMLB0syFVSpJfDcLaw
+         7hYkkTx1WjPVT8EiUdsUIZDG0Nic2U/DOGLN/83h3Y30lQL26+ZS6IVUG/8FrR4tKk1l
+         VjVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+LFmWcnsdRPJazrH4WK1p+WjqjXs2l62VcghScyqw7hHHzVjBMGuGp9GG2lrCMyfk6s1V9+RzcNy8yf8@vger.kernel.org, AJvYcCVZuz7sZi/oPT5MXxye/SQ5E58XbqnJcMiHDTd8LYVgRSbefbYozH2Kscbi/xqYRHC0Ag2D00KzWWfj@vger.kernel.org, AJvYcCXIBD4/kNypaAZRvk6WkBNg+ALoi42viYlX2wnb8xskKS5roO1KoPDkXKnLXrGE98fmysoRzy7m7pAd@vger.kernel.org, AJvYcCXfwjUvsur85kmTsKgP2AIstyKH4ibz7Z4UK2KZPnba4EiUJuyV06BefnozvzIY87kTmRX7HM7SmSxE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/EvDVkRWuiKWH0GwpMRlnlDFdngu2QzxgwTyJUf/g/MK7dw94
+	Ju7rwSU9uK1PAm4wCLOTS/9al+Pkx+AE7TeEnexX/uqyDrTFhxbcqjrsmF7fsBoA3Ml/X5Zt2a0
+	qy7fa9+hlMRGtz/e/k/Gt3x8qLcxkeaSkFvtMx6c=
+X-Gm-Gg: ASbGncvC3pRTm48b7XVMIa7O3Dp8syrc8itLBc0vGl26CpnA6Kp/u9Rm/KpPerxZJX1
+	awibUqqtH8AtZUGlHwwBewix7i8DU/G8aIZIVO++rQ0ayzWtZ4eVPyzZV8sOXrs7Uv/cEyMwQzw
+	c8llT0+OWTayZF3E1Q6eIBSiviNT386VS4eS8i5VdBudk2cVOGQa9+2sZxba//42uNnagiiGXSv
+	KwrsBY=
+X-Google-Smtp-Source: AGHT+IEjDHP1unXxSQbNQm1sw4+9qAhjYAtuNlGfL1MCTN0zUKm27Bv7C4qDJsHhC00wyklQz0F5kXgoDhH7BebhRkw=
+X-Received: by 2002:a17:907:749:b0:afe:8761:e77a with SMTP id
+ a640c23a62f3a-b01d8a7311cmr89257966b.19.1756530051865; Fri, 29 Aug 2025
+ 22:00:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1756511030.git.marcelo.schmitt@analog.com> <f9d40e8deb3d17a41b4fd6ecc1b8ac92275f0078.1756511030.git.marcelo.schmitt@analog.com>
+In-Reply-To: <f9d40e8deb3d17a41b4fd6ecc1b8ac92275f0078.1756511030.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 08:00:15 +0300
+X-Gm-Features: Ac12FXy_P7anbjpt8vW1zV6UGse9GLLWxC5jXgoPInY0GO9P8lb1L2avEZxEEIE
+Message-ID: <CAHp75VdhtF1NgygHCRaW-+A83Qz-O8bMEfeMoF9ke-Hno+e4tQ@mail.gmail.com>
+Subject: Re: [PATCH 01/15] iio: adc: ad4030: Fix _scale for when oversampling
+ is enabled
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, jic23@kernel.org, Michael.Hennerich@analog.com, 
+	nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com, 
+	andy@kernel.org, corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, broonie@kernel.org, Jonathan.Cameron@huawei.com, 
+	andriy.shevchenko@linux.intel.com, ahaslam@baylibre.com, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-
-> Hi Ritesh,
+On Sat, Aug 30, 2025 at 3:40=E2=80=AFAM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
 >
-> On Sat, 30 Aug 2025 09:21:47 +0530 "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> wrote:
->>
->> diff --git a/mm/vmstat.c b/mm/vmstat.c
->> index 71cd1ceba191..8cd17a5fc72b 100644
->> --- a/mm/vmstat.c
->> +++ b/mm/vmstat.c
->> @@ -1464,6 +1464,11 @@ const char * const vmstat_text[] = {
->>  	[I(DIRECT_MAP_LEVEL2_COLLAPSE)]		= "direct_map_level2_collapses",
->>  	[I(DIRECT_MAP_LEVEL3_COLLAPSE)]		= "direct_map_level3_collapses",
->>  #endif
->> +#ifdef CONFIG_PPC_BOOK3S_64
->> +	"slb_kernel_faults",
->> +	"slb_user_faults",
->> +#endif
->> +
->>  #ifdef CONFIG_PER_VMA_LOCK_STATS
->>  	[I(VMA_LOCK_SUCCESS)]			= "vma_lock_success",
->>  	[I(VMA_LOCK_ABORT)]			= "vma_lock_abort",
+> Previously, the AD4030 driver was using the number of scan realbits for t=
+he
+> voltage channel to derive the scale to millivolts. Though, when sample
+> averaging is enabled (oversampling_ratio > 1), the number of scan realbit=
+s
+> for the channel is set to 30 and doesn't match the amount of conversion
+> precision bits. Due to that, the calculated channel scale did not correct=
+ly
+> scale raw sample data to millivolt units in those cases. Use chip specifi=
+c
+> precision bits to derive the correct channel _scale on every and all
+> channel configuration.
 >
-> Should you be using explicit indexes and the I() macro?
+> Fixes: dc78e71d7c15 ("iio: adc: ad4030: remove some duplicate code")
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> This was probalby buggy since
+> commit 949abd1ca5a4 ("iio: adc: ad4030: add averaging support")
+> but I decided to set the fixes tag with dc78e71d7c15 because this patch w=
+ill
+> not apply cleanly over 949abd1ca5a4.
 
-Aah yes, I guess the branch where I developed the patches was not
-upstream tip and when I rebased and tested, I missed to see the I()
-macro change in mm/vmstat. 
+FWIW, you may add a few Fixes tags: The original one, and the one(s)
+which changed
+ drastically the code. In any case for the small conflicts we don't
+care, just put the correct Fixes and if needed to backport, one
+provides an updated patch specifically for backporting.
 
-Thanks Stephen for pointing it out. I will fix that in the next revision.
 
--ritesh
-
->
-> -- 
-> Cheers,
-> Stephen Rothwell
+--=20
+With Best Regards,
+Andy Shevchenko
 
