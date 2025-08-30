@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-793024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE1CB3CC1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B83AB3CC92
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9553B96A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:40:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705A83B6D3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4060F257851;
-	Sat, 30 Aug 2025 15:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813A32C21FA;
+	Sat, 30 Aug 2025 16:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="gu2KRnOe";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="fYjsBjj+"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KizHdrY+"
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F32F20B1F5;
-	Sat, 30 Aug 2025 15:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5664226F2BE
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 16:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756568423; cv=none; b=uQu1ZszSKtqdZhPZxi5eQheYzha49ydRb+Uh9rx3DQL1hokwOxQT4zlZNOoyDjko2HD5lNHsiqcd/V/RqDALjUjFX9/cOkgK4L3wVEIbdJ8GyYEgpbEmKiVHlJqnfcm0MLAD89HxtEJbYb1iPQDAh3t2oX0Mg/hDjXiMEf5zX8c=
+	t=1756569760; cv=none; b=WRNAa2Zg/5Avsm4zEZbnMW61Ql1fby4NXhdBM67/MeJ/yGfxBr/HGPkI4R0hnVkSAqAXgaiMKMNf2xWwd6PFUAuGNdDFVwwT28KULlYOFftctDYCkKrv9GrJRxN4zGHMXKPuT5f8CBsOHG1MkOhQJPUKLnFjOArAjZ4SVXBZMzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756568423; c=relaxed/simple;
-	bh=iFu8Q2if9Qqq+73Po+C+y3AM8ycDyWQMWtUM/L9qSe8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZM2dXDPwLStnWaBhtfLzbfq2DiP4BUSlqwAzhUChiN4V0YeQXdCnpFh4AAPab1XM4S6kKYGEsUm+B5BApTVxWS4uRnKw7tsvKrJiR43Q9EM8GIBR3mMOre0oDMWTvKphwAB1/zHrxUIRE5bSXigBxu+nrBxNUt9/WEj9BGP7oLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=gu2KRnOe; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=fYjsBjj+; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1756567845; bh=iFu8Q2if9Qqq+73Po+C+y3AM8ycDyWQMWtUM/L9qSe8=;
-	h=From:To:Subject:Date:From;
-	b=gu2KRnOea5xiROynE1gcOSEuaNpGOvvpIdaC1zXhMf4Fu+jE9qhnjasKVYwduLpMq
-	 xerDILh+09LLUnOq4Gr3ZXOEOKs4LJA34GuGPpiHeboGQ73y1RcTP76U3Aag5v3BZ8
-	 CphIslukYgdmUqR2c1+DdpWpVng/hrrd+6xPchoaGBhrExGb1yMdmV1NLxXpksr5rL
-	 Iz/C6FK2VXnUzOrcOS20dXXT4pAWqN86CyEomBe9F+BmGQwGaz6ROLprCZff1tjoSn
-	 JS5wDw6E03Noy65sOimh/lHL1PlE9HO9BRd6LXXRepQB3decMb8WMZCIvMyULbztBI
-	 35nZtykdiZiTw==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 146FFFB05;
-	Sat, 30 Aug 2025 17:30:45 +0200 (CEST)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 2JDz5b2oaxtr; Sat, 30 Aug 2025 17:30:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1756567843; bh=iFu8Q2if9Qqq+73Po+C+y3AM8ycDyWQMWtUM/L9qSe8=;
-	h=From:To:Subject:Date:From;
-	b=fYjsBjj+VZqKvHRzOGf3u/HT+2Zp0NogvO3sevb3T8r3b7gPTJpbjBkQnBftBwWAP
-	 Mjg/1cAWPuEtZvj9mN9k7q+LxesRRXG63yEkX5QiIx4Hdh8VdSe3YTITeJ48muiw/9
-	 k0Lf5ZUI9tC1dHy2Zbf3T/DQFP38gcsRycM/7a3tUrgW54Bb3M8lolrDL0eqEy0vsI
-	 DFsS0lgCrrE+41xRRXUWkN8qC4MtZxHdbm4jkHBkr0RuFKcEWuufmhRMVopCFpWDXO
-	 /kkyK3uW5EwiK5LuTkDBKP6ClTSQKKi1f6LBXk9Q+Rcw0zXTSVafBsNoDqb35Ms34c
-	 7ufhT7RA1B31g==
-From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Casey Connolly <casey.connolly@linaro.org>,
-	phone-devel@vger.kernel.org
-Subject: [PATCH] drm/panel: visionox-rm69299: Fix clock frequency for SHIFT6mq
-Date: Sat, 30 Aug 2025 17:29:25 +0200
-Message-ID: <e975da213c1f8030db50d66ec1c9597f59f25e35.1756567474.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756569760; c=relaxed/simple;
+	bh=h6Kv4MLU5D0qa95VwZu+T1SQxDTE4mAm8HdMidMKxbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X42kXkzI9x2O9Hj0WBaCraq5oLiXLpq1lzKbwKufdJzmKuUF0yb+usqANaC+ySMejrloKt93XVaJ/jp+r8BmJUrZK/rY+akh7+9hu1M+GhNcvJYB3B5X9lUT6p6SChOlmsnf1DqDORjk1crtP5ztgJ2wOgeGJkgeS7Ku8trKkZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KizHdrY+; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=lf5YxXe3wERb30ft13xY8rG2yVlyo1de6EHDnd4WiOY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KizHdrY+WjgAsI3YgRj6USglmevMEsRZTUvaAuKofBMfTKlb05TSDVetCSTohAwznpOeGoF2mMoEgj3spXdMxWk4o7FmuJKTNZjg/Aq/ucrgIX3ivEXzHHB1vMVCISU6P0VKYEPGYU6x7Pz7tr/Ggjr1rAV3CkPQMbks/vjoIEyxAIM2VzovvV/DzBboRb9efnigLJo5iQIOjEOYcb9k1gobgTYwR9RNiFIbz4s+CbTqfchOaNOdsQOzLMY5895a1ubHssiqcLSeZV4wOm47S1d+cT/lr41phDdeQrSde4MYc0l9M1sWy2cBnq1rwyorZnZd6oEAB3zUV4hb1PW7+A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=JnOpu/MAwgnu+aPctz8YtlYkmn6RxWUcl7WlyLFu5bL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=CnGVlRw33NhlH4UNknSDwiWgyU3sewU+oG6gTHT/Drdsha8gtlcc9rf7prA9oajT82okKfY3CKTGf8PWGVfNkU9PirNg5hjmxBdffqX7pdz85b7R35RJDVQla+SD5vjmuNxLDoFmowoI1+hSzY0n3/o7rKoa2kyEToa018mCpzkXyD+WrilhScZMi2i2se9/yBf62lJylEb5QK5zuKDbLTORDd8pPJIYSKA1ZHqrfvTgjGlUpFL4HAwDIHSK3ltL4qZJy3Dw5NeXcqojeh4iQbkW2csmmbbBegpKIvRTsovyzyqtMG1u+MG3H7JX5HIGagH1yog/MRpDyi2MutdhKQ==
+X-YMail-OSG: CLALg4YVM1n2PDGmmwJ1egWq0cMLWTqw9To9a1DADbl6jVr_0FUovqe8BPJ9xjU
+ mpAjFWUFUr.qWS9m.5DXvRiJ4Bt0UpkEzvaYhlYVaC5KmYcsRsPpM0gqBVM3nDi8FJHZSYcv8Oe7
+ 40aqrEJKI95we8u_552s4hssFjwsBCaoUIsycYWB461iO8VNHuYiZufA3Ee.fhPjqxi2W2FT4Qoo
+ jPtjZkjKFGCLA4i62QRXIiv9i849sISXsbGpUYOweg4P7OJ42ql9wfSPhf4IunL8cMosoOzizViO
+ Uhs8KqlwlaBSMArhtna_DzG4H7uUUho_yxzSl5Rf916dr2Gh8XvkTO2ApuQ3xWkuKZM93iXqyWdt
+ GZ6FE1gzCvPiRl8Ro27P6SpHtC1XnwE.wzrIIjjSs8FO1vLrFGwCrhPphfJEP_f.qUg9K7CM.lPj
+ ntOf2mOtlHqXASLJs8ND0Fo8ZRCZuwBIfRkgJaZabWyLCAVytlhVbgpWQiaxsvrDqk54PbBd1.Jv
+ iYKLsmkXrcloXwyJZGbRf2JLCpLv2B5PiSQ594xv_s5wt1ofrbFz1onhgMRrYEO6BdN5d_87hkt_
+ UT9vfW4sexJKVs.RE.UnZgOgBovbpvqKQ5S15RPuOtSNPeIYrpxKu4yIFiAhHMjgXogSAobitpOh
+ Yek7qKUcV2Ew7ZwS0H17EyVkpOl4z_GaT0IGg3bNCzhmKc5J80WOXNyKN9gY0ZgyogZAupymnwhK
+ sKErXtVpDMNDM1LOfPheiOEaqZvH.hF0MWS8Ms46R_VLrP68l.p9UeLv8ufyo9Ygyr425jRP_nhR
+ FAthHv80HMHRbyjLAqUgxILHyOx5TSUxT441OjxleOpjom1fMHocyEpoqhArjPe1WqQQW7NhWVcL
+ 7sCqC6MsmPxLPvinQTo.q0KY543BnnA2D2vH.qCZiV_TY7jMSCyzY7b0KjumHH.SYePi0XNnQpGg
+ O4pg_0hdbah2VY3EnbsKwiCuOKK4sxypoOc2TQWvePOrSTIEzxzl1ki.suMwbhDaYlSzv6hGsk1Q
+ e6lqZp.L15KYZ6VjqGwK5gCT1u797lXo87UcM8rCKkyOBEBEga.yROrpgyVQmXtsAY2UrCMdExMR
+ QFitELxDslhuH6j6i2Vi0qm1Xn46h3SA5UaNIoktjMDDydKrUFTxAvQjod8tqV_WPa5HSWYZdH6m
+ 9x5.cTvUagPT4iKcfSfKVxE9EXEQuUjFgPdFyX_f1L6mJ79Mb.8OjvyOGO39gqoYC0GM9uMZp8AP
+ Ky5YZJiEzY1.pp8sklX.IOOm68zHT8OZaF1A04OkdWfQDBzOECARSEtJvSolvb3fJEcGvina12.P
+ IpetMzlaU_8IMlHfo2aEsl_O1Ln.JIVkztMRSO6wFmg.I17axsxlkJKqWCb48_jXGKyNw.AN4jwl
+ ZxWiDAUHOd9EqPDWQKMF9Ysm_gO3uiprlXHVUGjva3A6_Xbqns7gGpNdkvnTXTaDJlDKlEIyp1Ez
+ OUamDSI7g2JWtB5NUJKr2WSONTA.VVmWw3kEml9Jrd_w7meu1YU1AA5mdWS3AdYYbqfEcT3ik1ta
+ PFDdiIPqr.3YTu8RSeMy1g1oiYYkXJHFyp8_azHKUPMKt2sBvlVNsqe4M9yiCESkeLexbysBJn.R
+ EK8I2FgB6UmmzyvEC63mDGVCgvxrijeFw_VC5Z1C2.8avbpLE2M1H8UaK1MQ5RhTjSk4sVfy81U1
+ mmJQssAsO84F0sZZRN1Ttk4CuD9bBJ3DcKKpkL6pdVG5KwNO0QEXHYff.YgtNNRYb4S1Ynkm1QGs
+ GfM5jZqlpZKrFbCHbHGfZeCZkaFl5BvbWXawHEU_YUkkSqyPF8GeGcmeSNSjv0FK2CbAoifN5wBp
+ XNObpY.g.08dlRsxZlBwSJU_PZHnS4Iim_k4RsqEMpq.v3t4maC6UHyLYJ.bdQd87CylXmdPZw5x
+ fY7p6lTKoAO89e8xPp0euOw9Z.NCdD8QtHJnt8AlmBMBYlBvh4BT2kF.Q6OlPdtd7JAZVC0BcgDP
+ 0hTacYZFk0I0Gy_YfhveWKa_9iHrRkOM9np9WCVPGeBtNidZKkptxY9D2qRs7og2zT1QRZwfsThH
+ Hw15BidbIr2PlZqHR2SYnEf4VHYJ0lpmyJuIaf10Y7usPGlYj.FhBYyy7Xm4ORqZz8SOS6YIyh4O
+ THSR6uOVird7FHjTwBh556olIpQ3yL2wa6A4KmApu4Mbdo7yGFfsB3WtqC7yhIJMXP7oVH.Sn6X9
+ kbM7Kr31y74qsAHmxzk_nB9r.R3UHlKZULo6J.B0-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2afd97eb-3d4c-41bf-b716-43836558ef00
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sat, 30 Aug 2025 16:02:38 +0000
+Received: by hermes--production-gq1-7bfc77444d-7l9vb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 261e6242d60e90c99a8fd30b59c0cef4;
+          Sat, 30 Aug 2025 15:42:21 +0000 (UTC)
+Message-ID: <43a0ff8e-f814-4305-a0f7-04c820b8f39c@schaufler-ca.com>
+Date: Sat, 30 Aug 2025 08:42:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/4] Audit: Create audit_stamp structure
+To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250816172859.6437-2-casey@schaufler-ca.com>
+ <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Make the clock frequency match what the sdm845 downstream kernel
-uses. Otherwise we're seeing timeouts like
+On 8/30/2025 7:14 AM, Paul Moore wrote:
+> On Aug 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Replace the timestamp and serial number pair used in audit records
+>> with a structure containing the two elements.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  kernel/audit.c   | 17 +++++++++--------
+>>  kernel/audit.h   | 13 +++++++++----
+>>  kernel/auditsc.c | 22 +++++++++-------------
+>>  3 files changed, 27 insertions(+), 25 deletions(-)
+> Merged into audit/dev, thanks.
 
-```
-msm_dsi ae94000.dsi: [drm:dsi_cmds2buf_tx] *ERROR* wait for video done timed out
-dsi_cmds2buf_tx: cmd dma tx failed, type=0x5, data0=0x28, len=4, ret=-110
-panel-visionox-rm69299 ae94000.dsi.0: sending DCS SET_DISPLAY_OFF failed: -110
-```
+Thank you.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-index 909c280eab1fb..e65697ce6f51c 100644
---- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-+++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-@@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
- };
- 
- static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
--	.clock = 158695,
-+	.clock = 149360,
- 	.hdisplay = 1080,
- 	.hsync_start = 1080 + 26,
- 	.hsync_end = 1080 + 26 + 2,
--- 
-2.51.0
-
+>
+> --
+> paul-moore.com
+>
 
