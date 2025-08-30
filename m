@@ -1,204 +1,153 @@
-Return-Path: <linux-kernel+bounces-793118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B8B3CED2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85965B3CED7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E5917B17CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD851B26287
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC862D9EE2;
-	Sat, 30 Aug 2025 18:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438671DC9B1;
+	Sat, 30 Aug 2025 18:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q+A+ZUAn"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="fp9xgnDj"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7FD2D5410
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A8145A05;
+	Sat, 30 Aug 2025 18:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756579520; cv=none; b=SRfhAXqZWOF0WuqTuhVopYMqxhK10VQCAsqVAUkBS7huWFlnsS1AonhzEBRZ9pG3dejzIGabF0s1TDcFj3Zfa6ouMAyg9L+7Fem2LsoV1daHeAXMzc9GS14vSSulXxGDIx7LF6NXnnM5hTXHe3wlQtLC4iW0jwdl0QGaNPJDNNA=
+	t=1756579548; cv=none; b=Y19dc2p8AVn5lGySL7vHZJh4FCDhincjt24AHiIeyv34IXSBBONWsQe48aVoI+uU+kdnXtpv7IV44JRX7ex6x7IIFcWZ0G1qGcMpEeB81EjkXgP3FPtfCgzg4dMhtK0Q4weUDzEmuoKY68ClGeI7FrCGTdvPm0ttul2cy8Ys4Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756579520; c=relaxed/simple;
-	bh=A6/ow0zfZVWRQiTl9Wxuq88PZFNMRCn7+IJy+ae1z5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NuFOUjfxESTMxTVhk4i7DeKFbatByfgJIJwUBvOmpxoeIQ+hkBBOKPQrRf+N7mqW57hSwxvRqNQPJ6TJ/mPtEHNqLb4AgBCyvVmR2jl8Ssy70nHqMGtNJxI4JSggsVZ90Ab616PIK/qCtip7yCskx/1QWWp0z7A/JSzxC6yInFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q+A+ZUAn; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-3197b1299c2so15797fac.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:45:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756579516; x=1757184316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CPiezsjLUnzBqGwDjKVX6a94n9N1zDOYr4AgH99/0TU=;
-        b=q+A+ZUAnPa3pIOgcgoNUaVcb6gueKaPfPJaZRh/PdLJ9Kq91g54ZZhXivvUYVVDqYj
-         +lrFA7UuPKZsdLwDBfMSaPSSMLZ+3WUhQ+1OxW94rYBNugHdDypN5i4O3+wFIe6UoiI+
-         BT1+06ct/n6zz/uNfjlr5Dv8foYHn8D7FDa1BBVFDDEaqm5vAn3mpZQQXoWtYeagX+Ox
-         FwUe3IJNq2Ftc0gMw9mEs8zyx22YSaDGWfPuetowzOfXeWaU+6Fqhj80b1D+ZhcbkB6k
-         2X4Jq7yBmghfUmBkyccZi7Kab5qtuQY6mvaxM5dp4fI5zDHuh2NVsEpzpvbx5aQD/MW9
-         K40A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756579516; x=1757184316;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPiezsjLUnzBqGwDjKVX6a94n9N1zDOYr4AgH99/0TU=;
-        b=BVK8rmyxQr7N5szwRpYh3cHh3UZXKX6Tl2vH4nz6n0igSUpMAZj0jGH+C0XEGEEcxT
-         2ZxGm4gm+gsh9xXehOjTllrYWkTMoYvnPPn9bfSfM4h7hEP89ChPd9eFBmZaSuJ0EDld
-         YA6c713ZXZzYhtnKdgCmGP7lE+iRvgeaTobLzFvmnJ7rYV07YlxBibQomV70mO4TK3Y9
-         YwC+QFdgrXwAae7d2w9QfhgL4E2fQbUamk+cmEZFfxYudJht2te1BrzueLMqU+QLz6Rk
-         48/OjCQqzxCMb0Ng1Ze5RlIrS/DgZTfbRSMuiN/TLnR25FWO/h4JlCKAxzF2YSvyCwwe
-         qOEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0VI5GroufHvcBiLWWc97LQCrijBu50vqM7puCt9rBM0auk+bfUsKLc6c6z4KV0oXzSQsoV7v/EYRg+TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhOlzjqHj1x9OIZvW1H4FLAuLPXAMpQX7jVvXIU6AQ545dV6Uo
-	8XoGmapQ1lMl+IJLvrouM3wucBQFjUSoM+oM2BnlnFcZWRnIrKt2t6+PODSAVqOJOUU=
-X-Gm-Gg: ASbGncvu5PYDaPD7stkYr00IeefTvDYObD+Xqkxi0YcCjJWk7wtERWcrFsP6gzRPQpI
-	BpHxfQ1E4Bu5TbZWVJNhkrNYmyhHCkBmqoHvPzN2P3a+l/jxr7gEz6Xwr46FpggsRWUtbbRUDjF
-	ySuBmRC/TB/n8ZtdIUDfb/ibD54IlJmk/hnHUWwoQE+lz7qfVlxWyw+H4bMA2+IGm9s7GitC2i9
-	dvQcoe/gZg93RI3lb2tf1tmHyz9RNIVPHenx1ZbKNjeHgS3TThSsSeI4cCCIIJG3bEQzKwtFZwo
-	gSoAF76IbCymWUlyd3M+hdotcjLv4PsbnkHaozLZKw/uA93o9E4DR2r3BReRPuZ3afn4rU82kZQ
-	4HR8JPZF2golitb9bqqEzVkexwKIWlPHnizZSO47Vgy808wJ7ws3yOGO226Zmxuvm2coWwiCf96
-	o=
-X-Google-Smtp-Source: AGHT+IGv9C+6T4KddzZvtjmPR5YaSWFbXjOWucy8kEyzoY7r1q/BobV4qLWBoksIlhBWe9W/PezVCA==
-X-Received: by 2002:a05:6808:1809:b0:437:df8f:699b with SMTP id 5614622812f47-437f7ce0b66mr1214908b6e.14.1756579516610;
-        Sat, 30 Aug 2025 11:45:16 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d? ([2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437fff0819dsm20451b6e.14.2025.08.30.11.45.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 11:45:16 -0700 (PDT)
-Message-ID: <bf2a2ef0-0ae0-4a57-a3be-e0062190da42@baylibre.com>
-Date: Sat, 30 Aug 2025 13:45:15 -0500
+	s=arc-20240116; t=1756579548; c=relaxed/simple;
+	bh=MPDhb7Li7CvPxwSyGZOt/9WkLyTsL5w5wJ2qPvZWxJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DV4NWRSoY6/LGia32hBZLbcn8otAX/6hh8b+AxrtOJ19PiGnjOo5heEKeVteJ5uNsCrjwlvPnbYtdaoEA7gvkEr03QXaFcZSXQOzVNIWCwP8lVSZlahBpQNe+bjusBnLPntRtjScrmQBqglxZzQV9BIc00ELZQudxVqmlJzDHtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=fp9xgnDj; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=56eixtQM6IBrEm/5Jwsst/ouQ2m/s5sQIb2TIKo+iAg=; b=fp9xgnDj2TWtvFuECWHixYHZR3
+	2gft0+POSW1l9LkOv4Cq5kRn2FVCBU6kFr871g2Ee4Pr0aJiT2kBFEA6MS94OnstnO7pH8EBLSo7J
+	nO/M2OvoPr5XKgpDcR22/RJRBHfPhQUQDVvNjp2zwjQHum0CAptdjd4lQ1XbBUmDEWqkKeDLFp/hm
+	hn3HP1B3BrWpBoCAY8X987K5jbYNthsyXpa1BwJpEEsvlLABqtp1++ryvUXi+HXUjCFAvFK5Y6QmY
+	m1rWo2ySWJaTpi5I15KGr/xNHAOKrFnor48JMsh9YGosQIPew3qr6fQc1+AHp72yv8Nxpx+OIr1fB
+	xtiWcCYA==;
+Received: from [88.128.88.73] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1usQZz-0005MT-66; Sat, 30 Aug 2025 20:45:35 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+ Chukun Pan <amadeus@jmu.edu.cn>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] arm64: dts: rockchip: Add ROCK 2A/2F,
+ Sige1 and NanoPi Zero2
+Date: Sat, 30 Aug 2025 20:45:34 +0200
+Message-ID: <7632976.8F6SAcFxjW@phil>
+In-Reply-To: <6cf1cf2d-50cb-413d-93c6-79ecd6b0788e@kwiboo.se>
+References:
+ <20250717103720.2853031-1-jonas@kwiboo.se>
+ <6cf1cf2d-50cb-413d-93c6-79ecd6b0788e@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/15] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216 and
- ADAQ4224
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
- eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
- Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
- ahaslam@baylibre.com, marcelo.schmitt1@gmail.com
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
- <31584fd69731bf75967a0fa75302bd7402f6705f.1756511030.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <31584fd69731bf75967a0fa75302bd7402f6705f.1756511030.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 8/29/25 7:45 PM, Marcelo Schmitt wrote:
-> ADAQ4216 and ADAQ4224 are similar to AD4030 except ADAQ devices have a PGA
-> (programmable gain amplifier) that scales the input signal prior to it
-> reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
-> and A1) that set one of four possible signal gain.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> The PGA doc was inspired on ad7191 dt-binding and uses the same properies (but
-> with different values) to describe the hardware.
-> 
->  .../bindings/iio/adc/adi,ad4030.yaml          | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> index 9adb60629631..36fd2aa51922 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> @@ -19,6 +19,8 @@ description: |
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4030-24-4032-24.pdf
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4630-24_ad4632-24.pdf
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4630-16-4632-16.pdf
-> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4216.pdf
-> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4224.pdf
->  
->  $ref: /schemas/spi/spi-peripheral-props.yaml#
->  
-> @@ -31,6 +33,8 @@ properties:
->        - adi,ad4630-24
->        - adi,ad4632-16
->        - adi,ad4632-24
-> +      - adi,adaq4216
-> +      - adi,adaq4224
->  
->    reg:
->      maxItems: 1
-> @@ -64,6 +68,27 @@ properties:
->        The Reset Input (/RST). Used for asynchronous device reset.
->      maxItems: 1
->  
-> +  pga-gpios:
-> +    description:
-> +      A0 and A1 pins for gain selection. For devices that have PGA configuration
-> +      input pins, pga-gpios should be defined if adi,gain-milli is absent.
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  adi,pga-value:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Should be present if PGA control inputs are pin-strapped. The values
-> +      specify the gain per mille. For example, 333 means the input signal is
-> +      scaled by a 0.333 factor (i.e. attenuated to one third of it's original
-> +      magnitude). Possible values:
-> +      Gain 333 (A1=0, A0=0)
-> +      Gain 556 (A1=0, A0=1)
-> +      Gain 2222 (A1=1, A0=0)
-> +      Gain 6667 (A1=1, A0=1)
-> +      If defined, pga-gpios must be absent.
-> +    enum: [333, 556, 2222, 6667]
-> +
+Hi Jonas,
 
-It looks like these chips have some different power supplies
-as well. E.g. V_DDH, VDD_FDA, VSS_FDA, VLDO. And there is only
-REFIN, no REF.
+Am Dienstag, 26. August 2025, 10:31:07 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Jonas Karlman:
+> Hi Heiko,
+>=20
+> On 7/17/2025 12:37 PM, Jonas Karlman wrote:
+> > This series adds dt-bindings and initial device tree for the following
+> > Rockchip RK3528A boards:
+> > - Radxa ROCK 2A/2F
+> > - ArmSoM Sige1
+> > - FriendlyElec NanoPi Zero2
+> >=20
+> > The bt/wifi_reg_on pins are described in the device tree using
+> > rfkill-gpio nodes.
+> >=20
+> > Changes in v4:
+> > - Remove disable-wp prop from sdio0
+> > - Collect r-b and t-b tags
+> >=20
+> > Changes in v3:
+> > - Rename led nodes to led-0/led-1
+> > - Remove pinctrl* props from sdio0
+> > - Collect a-b tags
+> >=20
+> > Changes in v2:
+> > - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
+> > - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
+> > - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
+> > - Add bluetooth and wifi nodes on Sige1
+> > - Collect t-b tag for NanoPi Zero2
+> >=20
+> > These boards can be booted from emmc or sd-card using the U-Boot 2025.07
+> > generic-rk3528 target or work-in-progress patches for these boards [1].
+> >=20
+> > For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
+> > Fix UART DMA support for RK3528" [2] is required.
+> >=20
+> > [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/=
+rk3528
+> > [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
+> >=20
+> > Jonas Karlman (6):
+> >   dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
+> >   arm64: dts: rockchip: Add Radxa ROCK 2A/2F
+> >   dt-bindings: arm: rockchip: Add ArmSoM Sige1
+> >   arm64: dts: rockchip: Add ArmSoM Sige1
+> >   dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
+> >   arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
+> >=20
+> >  .../devicetree/bindings/arm/rockchip.yaml     |  17 +
+> >  arch/arm64/boot/dts/rockchip/Makefile         |   4 +
+> >  .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 464 ++++++++++++++++++
+> >  .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
+> >  .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
+> >  .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 ++++
+> >  .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
+> >  7 files changed, 1210 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+>=20
+> Any thoughts on this series? Rebased patches for a possible re-send v5
+> contained no changes compared to this v4.
+>=20
+> I would like to send a v2 on the follow up "rockchip: Add USB 2.0
+> support for RK3528" [3] series and was unsure about the state of this
+> series before sending that.
+>=20
+> [3] https://lore.kernel.org/r/20250723122323.2344916-1-jonas@kwiboo.se
 
->    pwms:
->      description: PWM signal connected to the CNV pin.
->      maxItems: 1
-> @@ -120,6 +145,20 @@ allOf:
->      then:
->        properties:
->          adi,dual-data-rate: false
-> +  # ADAQ devices require a gain property to indicate how hardware PGA is set
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,adaq4216
-> +              - adi,adaq4224
+it was pretty far down in my inbox, so I hadn't gotten to it yet,
+picked up now and the patches indeed look good as they are.
 
-Could use pattern instead:
+Thanks for the ping though.
+Heiko
 
-		pattern: ^adi,adaq
 
-> +    then:
-> +      oneOf:
-> +        - required:
-> +            - adi,pga-value
-> +        - required:
-> +            - pga-gpios
-
-  	else:
-	  adi,pga-value: false
-	  pga-gpios: false
-
->  
->  unevaluatedProperties: false
->  
 
 
