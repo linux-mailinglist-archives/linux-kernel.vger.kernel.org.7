@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-793108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4691B3CEAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD57BB3CEB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2211B261F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3821894434
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECD32D8781;
-	Sat, 30 Aug 2025 18:31:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921692D0C7B;
+	Sat, 30 Aug 2025 18:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuzVxLaP"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80701E3DF8;
-	Sat, 30 Aug 2025 18:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA1325B30E
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756578693; cv=none; b=nylP80Ya1NdDnz6poTY6LMwffSL2Y3aYwAVApbgTZIWK9dFUcIN1UyOIhdhdvJdf1lK4UmuH6vkrvixHS1ezkJ0AEtM7XTuWFnN9ETbhG08AROtdlNgeGOnu62SAfSV59zad5LsRZQn7Nxnms3eCPPbCQ9C6rWV2Rj5ujtr/iJg=
+	t=1756579038; cv=none; b=nKMgPNJC9tTdAdKI1+pXbIDkuYYIGSOm+rEdGcWH1YNpvxESgUFdh/h9iyUYkS5Bck4ZroMbIjyLJY5chl+/5a32eCG0/gluNlcORRS3wu/yn7o1Y5HbFeMkE59a7Bwvs/FVSsyPdw695lvgvnHIxPXtwbHSgsj1uFyLcyOEuB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756578693; c=relaxed/simple;
-	bh=h9s6lq5iWu0Uxgc5pGQipjyw7vKquKkQMSJ+qcO28b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gwM8ijtNLVZna2SvA38VPx6hl65GbRdTfCD7hknSdb6Z/yfhtRjPWioO5bjmZT4RXZcd55n7XYVtKy8qdmQ1Js2xef+30ndc/XGWkCvrBsJlplTjWw3OBqnxRwUv+8asaDS/58VFm33mVZVutlUPOFJl8DekfBPjS/42fBk7pAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id DF1DA5792F;
-	Sat, 30 Aug 2025 18:31:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 2630A6000C;
-	Sat, 30 Aug 2025 18:31:16 +0000 (UTC)
-Date: Sat, 30 Aug 2025 14:31:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250830143114.395ed246@batman.local.home>
-In-Reply-To: <CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-	<20250829141142.3ffc8111@gandalf.local.home>
-	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
-	<20250829171855.64f2cbfc@gandalf.local.home>
-	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-	<20250829190935.7e014820@gandalf.local.home>
-	<CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756579038; c=relaxed/simple;
+	bh=67YPFASRAofFiaPQ4Q4cTTB5rA7J4glJA1NA06Fz9KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LLvigArqfYupYNdxj17csm0qaXAbdaba0Icqg6FgQqJ1K7OOcHT0Htz5AGpVEEXF0+JFIPAaMfnl4AfcWLErft/thWq+L5Ku7m0MVV6Qj7nswQz4h123cxouySe29hHmQstULyb5J2/NzhsdrkL9rsYqZ8aFGyqBAYR2e84XO00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuzVxLaP; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b30d09dab5so26068461cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756579035; x=1757183835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=izmLCqreZNUIbi6uLE1hWRhil45KgxjUnPX1YnPsqCI=;
+        b=JuzVxLaP3XTjb3/L605jfyWSK3IuRXXzlW/YIT5amo+reYRbTP+JA7QCYrLONED7b3
+         kpC+w1GWUohle0FlRSl5DDNvdliCUnZRiJqpxA7Yq/QS7OYgqbMgrJUu7vLB1vyT6L8v
+         1YjpV1rRbcwOiBjUEVPMZ0fsUju46wi7/gKqJJ7o1/+dLahYLG1eMoWOVp1D92u45zPz
+         UuU14W2vcEeNZLE2AD74oME6Zbqxbbfxke+r4aj0u/I69FgmMe5HoE7CAo/cUsTBAbry
+         FGr+51izS76CUJBVj2kBaF4q7f/sQGnjs3WMUUu2dcFFfJqsfx8BZoKWwOmr94LBIfBC
+         rFow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756579035; x=1757183835;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=izmLCqreZNUIbi6uLE1hWRhil45KgxjUnPX1YnPsqCI=;
+        b=b/vsfj8/UbWdAallj9AghyXZmJx0gJvg0NIW53X4bRO9nn72n2fVDOFFg2cX+Q5zWz
+         c3pWZha2Ivi1btdYXYrM9/1gX3wmG6Ne+oODPY8JD1R+PCmwWBAf7ZVaFIHy3COQHJpG
+         kA22UbzD18hfa/wyiIrnI3ZSnAUNHbIWntImZxe5hXdeVAwxGyToovgX7FKJMHx3fLbK
+         TKap0DUfYD4ELgIYIPz7UwwpDi7SU+mx/UdzlX1ssYVxH+xXXBgyRM6vSpSIhe9befGd
+         CCJAMdtkm3M8Je/eXdwP22Y+N6k67G0TeXgQio47PrZoGnJ2643FF8oOCm9BcbVCJN4X
+         WBMQ==
+X-Gm-Message-State: AOJu0YxggTs8A4KQBrC5InCRC09B5crlwyAg2RsVBl/aILGPXMLYxASv
+	MfrVdbxpGaDcNOJAQ8SJNc1TER9hejXUnQc/uYgFHK2x3BiFeBucN8Hx
+X-Gm-Gg: ASbGnctSROwOZxsQkX2pjNW3abaGWigEtA8nXuL4b4G1ilAADBlcHN9WQHazzuduGO4
+	w4JqF3eyFDZTpJE51ntlusocI3/4yWm3s26rGbqrMpA0MEmz9QLL6cxXOnhfZEQxzrTfVb9CjTS
+	1miEw4wGHb61sUMjR4oD6rCrGB95FRqd5fIrF4b2qFJ5/iWHHhSuhmViLS0yk550cu6ELelDbFC
+	MuW7FQhWlQy44dta8XHOrT0sNG+/TQQWl8t833btu65Ewr2p9WmWUZDd13ztXhF5NNrasrkDsn1
+	F+cxWBeI2rlhTa3v1fFa//ayLRcq++iPgsFL/B4POS8Kvrhdjar9XIADWGnP8ab8FyesI8hzeFR
+	W5ndnCor+JttIgGPKfe1IMKY=
+X-Google-Smtp-Source: AGHT+IHp+e1pL5PXmf5ztP0sp0Hq2OcymwgDZO4e1y8rfi8gVd++wRn3iO6l++VJ2o4Fd+iPXSxNtQ==
+X-Received: by 2002:a05:622a:1a86:b0:4b1:2755:d884 with SMTP id d75a77b69052e-4b31d8445cdmr31357391cf.14.1756579035158;
+        Sat, 30 Aug 2025 11:37:15 -0700 (PDT)
+Received: from ideapad ([96.67.4.241])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b67bdfdsm35507661cf.32.2025.08.30.11.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 11:37:14 -0700 (PDT)
+Date: Sat, 30 Aug 2025 14:37:12 -0400
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
+Message-ID: <5e4ppwjfwtg7ruzkgyyke6vwosiro3vj6wm4hic3sjwh5bu7la@fghymhrnubbo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: dkx6cr1863tdyr5dwpt5ckwrppidbxnn
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 2630A6000C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19WYX6tr/gPCLPBNV9cVUMslGrPAuQfGGI=
-X-HE-Tag: 1756578676-55030
-X-HE-Meta: U2FsdGVkX19XhVDsGgxPqnETmIKyPhWYVZOiIMrpYo75HbTYXBUckcEq91+PibmjNrdUChgztxVBITq5gIDJiZsVzxyHOW1c7Ao38pMYqbOe1gEd6w1TxA44k5zT/CBlImW+GYdOaF54NiWP8v4wLnyB0hInm1XncgCpNCSC9jiNoZ8bbM4qdbGme1iOEMuAb90vDxpAx/T5BI3RNrBLrcmwqccBSJ4Knm/S7fRoS6PEnrfTj7sZmgLgkT211zZpvd2z8MLvcd2gguBeQsYB3uj38ntcaO+Zkc3+GF35KgBDlBZjQigyb4V7nJF1nXCTz2SS+HUWNLN7JDKMv7MlR/pMB/hSHcX7kq17uiEvTyT4XIw+flvkXltxUreC0sQe
+Content-Type: multipart/mixed; boundary="6z6oetkv6q6vaxvc"
+Content-Disposition: inline
+In-Reply-To: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
 
-On Fri, 29 Aug 2025 17:45:39 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> But what it does *NOT* need is munmap() events.
-> 
-> What it does *NOT* need is translating each hash value for each entry
-> by the kernel, when whoever treads the file can just remember and
-> re-create it in user space.
+--6z6oetkv6q6vaxvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If we are going to rely on mmap, then we might as well get rid of the
-vma_lookup() altogether. The mmap event will have the mapping of the
-file to the actual virtual address.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
 
-If we add a tracepoint at mmap that records the path and the address as
-well as the permissions of the mapping, then the tracer could then
-trace only those addresses that are executable.
+	Ivan Pravdin
 
-To handle missed events, on start of tracing, trigger the mmap event
-for every currently running tasks for their executable sections, and
-that will allow the tracer to see where the files are mapped.
+--6z6oetkv6q6vaxvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="diff.txt"
 
-After that, the stack traces can go back to just showing the virtual
-addresses of the user space stack without doing anything else. Let the
-trace map the tasks memory to all the mmaps that happened and translate
-it that way.
+diff --git a/drivers/bluetooth/hci_bcsp.c b/drivers/bluetooth/hci_bcsp.c
+index 664d82d1e613..591abe6d63dd 100644
+--- a/drivers/bluetooth/hci_bcsp.c
++++ b/drivers/bluetooth/hci_bcsp.c
+@@ -582,6 +582,9 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
+ 	struct bcsp_struct *bcsp = hu->priv;
+ 	const unsigned char *ptr;
+ 
++	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
++		return -EUNATCH;
++
+ 	BT_DBG("hu %p count %d rx_state %d rx_count %ld",
+ 	       hu, count, bcsp->rx_state, bcsp->rx_count);
+ 
 
-The downside is that there may be a lot of information to record. But
-the tracer could choose which task maps to trace via filters and if it's
-tracing all tasks, it just needs to make sure its buffer is big enough.
-
--- Steve
+--6z6oetkv6q6vaxvc--
 
