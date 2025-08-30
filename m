@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-792716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C43B3C7F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A61B3C7FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E33A236AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75077A20FEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C37276056;
-	Sat, 30 Aug 2025 04:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802CD27CCF0;
+	Sat, 30 Aug 2025 04:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nI9sURvm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4buTszi"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171A2C2FB
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB1C21B199;
+	Sat, 30 Aug 2025 04:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756529156; cv=none; b=lxj2A6nVD1G8B9QuZA56uVXtOTtNoJ5gmOGOD9SiLD6Fb2IhaaON/WR6Gfjog58uUZjI1GV3BisOzc5pNHULnE0h4PTVSPdze8hZVtlDHiboi/b/KgzB4Uo2D/J+QSHN++H3t81jB0VwetFUbbivP9vGZcvMevAvAMr/LARfIE0=
+	t=1756529702; cv=none; b=PuXCoigRkiPTaV5GsaGnJp3KEG0CSYqJMVOWDccG4xSruzO2hRAPUOsh+VWkTk3njUtrx5KmFHzn48asTI0lBpkLQiFZeBAhsQ3OSrCCg4NqZj6XY2wtzm1roHbhcEay3T9UDcbBcUFNXfotyjklDi1hPZOUsfxRVAQaw78/2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756529156; c=relaxed/simple;
-	bh=pF2UH9SNriXCdAW3lHet4jellXKzdy6sg2X5z/NP6pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ty3cDWwkOGzIQy6F7uhRNNvWRB3bsMloEyK1s0owYYjaYVY1ReZWyFDfPKglvM/ScRRBcEyEgLi+7TxAG9z3wkWnlBBqFrx2z8BXtTE10U/5dmQ+qLJxJXrcxOxZacTKTXl7k/iwmSaTVb8sL1cruM545VfxVTpRhcObUKWhlAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nI9sURvm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756529144;
-	bh=pt3u/3dhlv3xp9vGi7l7QuBrLsn5dvfeg+GgVr0aTXI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nI9sURvmPiBdyeT59pgCA4MQNUS93LYOQ/HVFYC26qyeyL2UX4B4GL3V6PNc5t86x
-	 NgxLgK3fLChvRbEQwxirv4wuomxruaelO8l8UwumVA42VQGf4QsqqfeAuJn5wC37UO
-	 z8SlawpKnMogSGqKMJZEWnc/Ikv/+1BOnFRgWcjgsSTqIJrEzSX2H6JdLcT8GYeTdE
-	 DTs0D1dN848t2+HCYr/BTAkGcr38hDt/lnb73sKkOvpPu7FK1EO0FibhUBqFwjD920
-	 gRCxBihmv8xz5Vxh2y5cqK1Kg3UD9HuaaLOjGjGTNqImA9ozmfnJZVnw8cLwNUF9WM
-	 G6T16XnUTFzDw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cDMyc0RkSz4wbY;
-	Sat, 30 Aug 2025 14:45:43 +1000 (AEST)
-Date: Sat, 30 Aug 2025 14:45:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Donet Tom <donettom@linux.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [RFC 8/8] powerpc/book3s64/slb: Add slb faults to vmstat
-Message-ID: <20250830144542.6ba0e774@canb.auug.org.au>
-In-Reply-To: <e05ac86618d8a52feccf5bac99da44b11871382c.1756522067.git.ritesh.list@gmail.com>
-References: <cover.1756522067.git.ritesh.list@gmail.com>
-	<e05ac86618d8a52feccf5bac99da44b11871382c.1756522067.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1756529702; c=relaxed/simple;
+	bh=PblzP8bpvQ+dLTi4ROYQbeGB9S4128ks9eaC/YIJxJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wa8325teicEabi0LMpcaKDM4LCuVUATAEJ+8pxCn7PUb1vu8zPSTXiGeCmTrtGjanV3MiwMu3ugkpLefdWWIBV1O2a1RnE2vslWa88UzbRbPpj4FMfQcq7P+BP13ZIbz/dux9WfzjO5K8768tiZEhap/f66lWI54udtfwX2glc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4buTszi; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb72d51dcso405695666b.0;
+        Fri, 29 Aug 2025 21:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756529699; x=1757134499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+yI5stLOIjwsXcdEiYs3bjB2p7CosaRO1p+h70Op2g=;
+        b=I4buTszimWuv8rveKFArOLd/pcB5kqhuC2grgX0w/rvqNeKjapR6kW4qp2WIMCqSCc
+         oBHuaEbrN/YEZylCs/tgtCcRWffwv+iLVdoZ2i7EH2MVr5ZXFPhRF2WITho8QuB4lVhW
+         eytcMjAYNwFBJBGQSrq0VaO6KTWP0xxvfeDww/9WWb+jhkzhzRMk+qLJmFgZKEolp0+y
+         GUIMOO0kADWFvimISnfqKtWmDipA/Eam04675XCZ398Lv0GAL/mbHJn1HWVuGnZh4dHF
+         NOwuB8h723Gvho1ifQgPSE9sFusvv6PnZTkPmx5nto4WhZN2aiGG1uH6Y42txGG3LzkM
+         R8dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756529699; x=1757134499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+yI5stLOIjwsXcdEiYs3bjB2p7CosaRO1p+h70Op2g=;
+        b=X9+3KxpZgnhZPUKp51rMBNVzlPkBbcugYup1aPrF16RAFtHRWVG7UovDUonOS0PvnL
+         9LFJHhUleRSTBW12YI+Uuzdexv9OhrilJ7s/AaA12atuNwx2BupN1MXClDtmkj8VVi4H
+         wXabOYHcGbgYayRxrfyYftyEAFtA7iOjXS9ByvrtCy+rxObd3Ba+oYxScwkk8FwPE7MZ
+         K0kKvTaW3+KGft93x/rbPO7F7y7n5OCMXrxXY60+FD5B+H6YjC31/uwRrc2Ed+8GcLIX
+         e4jPx+Am+NnXH9rO9POArMh21uSCCeW6RJ5ZRqzZFCqWGz1MCkEkFZnZIO8RIM0P131M
+         ADcw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1TzOVSGQFIEzTssjJBq/xb/N4EIOO92OqkDICHj7qYcqxzjiiL/3F+Lgp1dEsnYtSEOyzYQXRLKl7@vger.kernel.org, AJvYcCWfIGS9qykbuCfBEHxAUdFrY4wcXtD/jnvlAswcdgATSuu/GI+lg5ZKk9yAK87rfd5C2MmTNVwAgfLRPEpO@vger.kernel.org, AJvYcCXFfMm1HvsMICX8brhs6YBDNkj9redkRf1hHR/Oq4xmklNXUsVnH6/wGn0CQoFmwk9PxtEl8yX6wfPu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNO9n4AZx22YFqq6rVwhNybIyVBp1VY8rWb8bBcsrwjWYTNfRC
+	JZDfeaPi+IGEo9JaGP1OIOQ7SPdGGX3wt0Krkb63ZcnMztE96N69D17L44WNNkznB/Xz6J5pNTI
+	2lB8hz2W0knaz3vlvAaG0NBgEQmz2xQESvdl+HCwYUA==
+X-Gm-Gg: ASbGncsY0q/UMSjcTwMfhlP+EJh3GtjUyvY5T3V9o3738XYeTtsL5rwDc7MfWgv9oSK
+	F2KkYQjGnTZAu/qg6bQfpW9QzfrP4RLPLGIVg9BX/k6Ej/U3Tfwha5sUKY9dbfZXSMOB5T0e1pu
+	sHl512E2Gk6JpS/AYfi0q2kCTXG/ymjA/6rNfewlCDJ+HJ8EoeBMHt+z9Qv6ntJ7DAV+safcLPb
+	ef4S1Nd8aExk/+wuQ==
+X-Google-Smtp-Source: AGHT+IFj0e6R7gW2dq3SzRGVuI1tLR8avZykV/RaQ/6DCp+U4IEsYzRITqaeMNPY0l+hpisRYcj9AGWI2otRn873in0=
+X-Received: by 2002:a17:907:940a:b0:afe:f8cb:f8bc with SMTP id
+ a640c23a62f3a-b01d9732721mr80627866b.35.1756529699312; Fri, 29 Aug 2025
+ 21:54:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//+ny8ES+6FQIgltakmfkGeI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_//+ny8ES+6FQIgltakmfkGeI
-Content-Type: text/plain; charset=US-ASCII
+References: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+ <CAHp75VcGG_h+wpo7hHL=ERYqbrvvAaufwPAYBsEbRn3dB8-dfA@mail.gmail.com> <aLH7XNuaZ2CkQVWo@JSANTO12-L01.ad.analog.com>
+In-Reply-To: <aLH7XNuaZ2CkQVWo@JSANTO12-L01.ad.analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 07:54:22 +0300
+X-Gm-Features: Ac12FXw4AD2S_KJ5yR8SUzJlz6H_1uxrxXZpHKycQS1wQzd31-mvrNC149lZJY0
+Message-ID: <CAHp75VeP=G1Pa6=Q1gok5+mA7grDWrgAEM_m8FqjAwme==jt-A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1 ADC Family
+To: CAHp75VcGG_h+wpo7hHL=ERYqbrvvAaufwPAYBsEbRn3dB8-dfA@mail.gmail.com
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	Michael.Hennerich@analog.com, lars@metafoo.de, jic23@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ritesh,
+On Fri, Aug 29, 2025 at 10:11=E2=80=AFPM Jonathan Santos <jonath4nns@gmail.=
+com> wrote:
+> On 08/24, Andy Shevchenko wrote:
+> > On Sun, Aug 24, 2025 at 7:10=E2=80=AFAM Jonathan Santos
 
-On Sat, 30 Aug 2025 09:21:47 +0530 "Ritesh Harjani (IBM)" <ritesh.list@gmai=
-l.com> wrote:
+...
+
+> > > +       unsigned long denominator, numerator;
+> >
+> > struct u32_fract fract;
 >
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 71cd1ceba191..8cd17a5fc72b 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1464,6 +1464,11 @@ const char * const vmstat_text[] =3D {
->  	[I(DIRECT_MAP_LEVEL2_COLLAPSE)]		=3D "direct_map_level2_collapses",
->  	[I(DIRECT_MAP_LEVEL3_COLLAPSE)]		=3D "direct_map_level3_collapses",
->  #endif
-> +#ifdef CONFIG_PPC_BOOK3S_64
-> +	"slb_kernel_faults",
-> +	"slb_user_faults",
-> +#endif
-> +
->  #ifdef CONFIG_PER_VMA_LOCK_STATS
->  	[I(VMA_LOCK_SUCCESS)]			=3D "vma_lock_success",
->  	[I(VMA_LOCK_ABORT)]			=3D "vma_lock_abort",
+> Problem is that rational_best_approximation requires a unsigned long. I
+> could do:
+>
+> rational_best_approximation(fract.numerator, fract.denominator,
+>                                             INT_MAX, INT_MAX,
+>                                             (unsigned long *)&fract.numer=
+ator,
+>                                             (unsigned long *)&fract.denom=
+inator);
 
-Should you be using explicit indexes and the I() macro?
+No, this is not good. And it will overflow. See below for a better alternat=
+ive.
+
+> But I don't know if this is the best practice.
+
+The best practice is to add a patch to extend that to cover unsigned
+long and long
+https://elixir.bootlin.com/linux/v6.17-rc3/source/include/linux/math.h#L122
+It's just a couple of lines which I review and acknowledge
+immediately. (Just make them a precursor patch)
+
+BUT, looking at the code, I don't see that people use the same
+variables for input and output (otherwise it's also considered not the
+best practice, for example, in the cases when input can be made a
+const).
+
+That said, the patching math.h is optional, either way, make sure your
+input and output are different variables.
+
+> One way around this would be to represent the gains in fractions instead =
+of 1000x, example:
+> then we could drop the rational approximation.
+
+I like the use of rational best approximation. I think it gives a
+really nice algo for simplifying fractions.
+
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_//+ny8ES+6FQIgltakmfkGeI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiygfYACgkQAVBC80lX
-0Gw49Af/UHUgpgla969YKk5hog5zPrUt/pqZeUpeCBxUuq7MPlxJcsYXGimAWpRt
-0t3emvmvxMn44bEq8pWIIMC/I0zQs5ot02U2idYBNrms/QOyZUPtMOqh8GoqC12R
-ZaLygol/LLHTQNnSPKQvTby9VIi+x65d89xiAaaP011YM3Ely6npbON2M/GSAp2e
-QxGPXnTyweD8LuTfg5WO42gfR0tZT4kmiYXenIKitwq+etMK2a1aRW363/qDl8JB
-hDdJ5MsslmTyrgEIWGZf+oU7KQaW3tDpyVi2G47z3jC4yvoFAM3Zb5aRvaT5Z5/P
-ruWRI29KJGH69tamurCkQo92a+Bo8w==
-=fKMP
------END PGP SIGNATURE-----
-
---Sig_//+ny8ES+6FQIgltakmfkGeI--
+With Best Regards,
+Andy Shevchenko
 
