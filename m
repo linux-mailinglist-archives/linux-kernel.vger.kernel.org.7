@@ -1,170 +1,203 @@
-Return-Path: <linux-kernel+bounces-792858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F230B3C9CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:31:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3617B3C9A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C580417192B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:31:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA86563A2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7230E259CA3;
-	Sat, 30 Aug 2025 09:30:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F84C257852;
+	Sat, 30 Aug 2025 09:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhbiGsvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D7C3398A;
-	Sat, 30 Aug 2025 09:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD66253F2A;
+	Sat, 30 Aug 2025 09:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756546258; cv=none; b=CrgdpfBVecnQC+Isq2fUK5Nqa0p3w29p+mH36RjWbh8eWAV79s2ML7jm+Um4MJwt/8s4IZ6Vf3a46pcnpQA7GVdYNCAbvRS9QWRRCW+RQSrqQ2wL78/fZWNyk9nl/N77djdRjYeld2fjQmGcnHywyRurvVqBf1WkM941IIj+ewQ=
+	t=1756544814; cv=none; b=q4x1Lw5QQ0WlKcgDduM0KCzuwNloRPwoDhdAZPJTNnoohF8m71PwB5NR8thQMkJZfoqNLyruq242u9W9YpmcvH5GOj+tl04An+0Ku+4NAotXUPlyEvZAj9H1CWn92JhmUgc3YHLPHiJAJ/WijnCUNSSDxGC5cU7GsAGvYYOIpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756546258; c=relaxed/simple;
-	bh=oBmBgTmJRM5r9JK7Et4cih9k1JqxbuL+gjrwIqzmkAY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mjQiRcPfctk+0rac96mcoQsVayt79nIS8A9NVuTIwqGH6/ZAnCn7dE8GCCMhGFe+8HRdbIxfzt736CcndQn+h9qSAP430TAJozHB+OgH0g6iujqWa5Uvoz01P8+LlOOZQ9OVwoE3OVwsL4rYlmPyx6+CQVxmlzelWOduRyX7Oso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cDTwV0k3MzYQvsr;
-	Sat, 30 Aug 2025 17:14:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9752C1A115E;
-	Sat, 30 Aug 2025 17:14:16 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAncIznwLJood4rAw--.54255S4;
-	Sat, 30 Aug 2025 17:14:16 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com
-Subject: [PATCH] md: ensure consistent action state in md_do_sync
-Date: Sat, 30 Aug 2025 17:05:32 +0800
-Message-Id: <20250830090532.4071221-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1756544814; c=relaxed/simple;
+	bh=mpWZMBrKYpqukOiHgjuGvad1OfHPQQN9cvi3zmQkyuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NLHBUuxIpZrmm6Fr55ISXZBdkvikOnDmOBzN0TNDtzzLDLDRloOUfIJQXRnNR8Q+5l+YWYNGHI1H/GJ0XxcKe9TihCzsrNEiMz9B9+nEr0RdIEEVMCDSBg7TKpnWk92qbcEKtLpjmMCJtHRRSyVBu50baNd9G+5v45Fp3RCzaPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhbiGsvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4459C4CEEB;
+	Sat, 30 Aug 2025 09:06:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756544814;
+	bh=mpWZMBrKYpqukOiHgjuGvad1OfHPQQN9cvi3zmQkyuE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BhbiGsvCYk30HFN3baBWG0Rf/dD78i+pnexb6GfhtIrmb4NODMXRyfvGtgILT03ND
+	 uM0rqUvS6yqPPGlHZTGqGn40aCKDrOy5UI2EGRsmlncrz5mO4FailR656uEeavzDn2
+	 pUUu7t8AR08/uUczyjrU+fQeyx3m99XCrDs0Sg9P5qtFETLahqJxxMHgKHn/Sy41B+
+	 zvnY8v8XW7xTQCZh1nGG84XSVX0pvB73V3YnHgtOrDonAzwqLG9vMH7qYchfotiueC
+	 0G5WJRzGE54tnS4qcyvjKiDwbQIz02EPR39gf6rLj6DkqvGebJ3/RDBM9L3lRk3cQC
+	 G6Kp48/oo5x7w==
+Message-ID: <f6acdd01-8847-4282-b375-f8e564be81d2@kernel.org>
+Date: Sat, 30 Aug 2025 11:06:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: thermal: samsung: Add tmu-name and
+ sensor-index-ranges properties
+To: Shin Son <shin.son@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250825064929.188101-1-shin.son@samsung.com>
+ <CGME20250825064933epcas2p33e2b4566b5911fef8d7127900fc10002@epcas2p3.samsung.com>
+ <20250825064929.188101-2-shin.son@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250825064929.188101-2-shin.son@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncIznwLJood4rAw--.54255S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFyxKr1UWF48Kr1UWr1rWFg_yoWrXrW5pa
-	yfCFnxKr4UAFW3tFW7ta4DJayFvr40yFWqyFW3Wa97Awn3Ka1fGFy5W3W7JayDAa4vyr4a
-	q34rGr43ZF47uaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbp6wtUUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-From: Li Nan <linan122@huawei.com>
+On 25/08/2025 08:49, Shin Son wrote:
+> The exynosautov920 TMU requires per-sensor interrupt enablement
+> for its critical trip points.
+> Add two new DT properties to the Samsung thermal bindings
+> to support this requirement:
+> 
+> - **tmu-name**: an explicit identifier for each TMU,
+> 		used to skip specific sensors
+> (e.g., sensor 5 is temporarily disabled on the TMU_SUB1 block).
+> 
+> - **sensor-index-ranges**: defines valid sensor index ranges
+> 			   for the driver’s bitmap in private data,
+> 			   enabling per-sensor interrupt setup and data access.
+> 
+> Signed-off-by: Shin Son <shin.son@samsung.com>
+> ---
+>  .../thermal/samsung,exynos-thermal.yaml       | 23 ++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> index 29a08b0729ee..420fb7a944e3 100644
+> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> @@ -8,6 +8,7 @@ title: Samsung Exynos SoC Thermal Management Unit (TMU)
+>  
+>  maintainers:
+>    - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Shin Son <shin.son@samsung.com>
 
-The 'mddev->recovery' flags can change during md_do_sync(), leading to
-inconsistencies. For example, starting with MD_RECOVERY_RECOVER and
-ending with MD_RECOVERY_SYNC can cause incorrect offset updates.
+This needs also explanation in commit msg.
 
-To avoid this, use the 'action' determined at the beginning of the
-function instead of repeatedly checking 'mddev->recovery'.
+>  
+>  description: |
+>    For multi-instance tmu each instance should have an alias correctly numbered
+> @@ -27,6 +28,7 @@ properties:
+>        - samsung,exynos5420-tmu-ext-triminfo
+>        - samsung,exynos5433-tmu
+>        - samsung,exynos7-tmu
+> +      - samsung,exynosautov920-tmu
+>  
+>    clocks:
+>      minItems: 1
+> @@ -62,11 +64,29 @@ properties:
+>      minItems: 1
+>  
+>    '#thermal-sensor-cells':
+> -    const: 0
+> +    enum:
+> +      - 0
+> +      - 1
+>  
+>    vtmu-supply:
+>      description: The regulator node supplying voltage to TMU.
+>  
+> +  tmu-name:
 
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+Generic property? Where is it defined.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 6828a569e819..67cda9b64c87 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -9516,7 +9516,7 @@ void md_do_sync(struct md_thread *thread)
- 
- 		skipped = 0;
- 
--		if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-+		if (action != ACTION_RESHAPE &&
- 		    ((mddev->curr_resync > mddev->curr_resync_completed &&
- 		      (mddev->curr_resync - mddev->curr_resync_completed)
- 		      > (max_sectors >> 4)) ||
-@@ -9529,8 +9529,7 @@ void md_do_sync(struct md_thread *thread)
- 			wait_event(mddev->recovery_wait,
- 				   atomic_read(&mddev->recovery_active) == 0);
- 			mddev->curr_resync_completed = j;
--			if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
--			    j > mddev->resync_offset)
-+			if (action == ACTION_RESYNC && j > mddev->resync_offset)
- 				mddev->resync_offset = j;
- 			update_time = jiffies;
- 			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
-@@ -9646,7 +9645,7 @@ void md_do_sync(struct md_thread *thread)
- 	blk_finish_plug(&plug);
- 	wait_event(mddev->recovery_wait, !atomic_read(&mddev->recovery_active));
- 
--	if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-+	if (action != ACTION_RESHAPE &&
- 	    !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
- 	    mddev->curr_resync >= MD_RESYNC_ACTIVE) {
- 		mddev->curr_resync_completed = mddev->curr_resync;
-@@ -9654,9 +9653,8 @@ void md_do_sync(struct md_thread *thread)
- 	}
- 	mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
- 
--	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
--	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
--		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
-+	if (action != ACTION_CHECK && mddev->curr_resync > MD_RESYNC_ACTIVE) {
-+		if (action == ACTION_RESYNC) {
- 			if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
- 				if (mddev->curr_resync >= mddev->resync_offset) {
- 					pr_debug("md: checkpointing %s of %s.\n",
-@@ -9674,8 +9672,7 @@ void md_do_sync(struct md_thread *thread)
- 		} else {
- 			if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
- 				mddev->curr_resync = MaxSector;
--			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
--			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
-+			if (action == ACTION_RECOVER) {
- 				rcu_read_lock();
- 				rdev_for_each_rcu(rdev, mddev)
- 					if (mddev->delta_disks >= 0 &&
-@@ -9692,7 +9689,7 @@ void md_do_sync(struct md_thread *thread)
- 	set_mask_bits(&mddev->sb_flags, 0,
- 		      BIT(MD_SB_CHANGE_PENDING) | BIT(MD_SB_CHANGE_DEVS));
- 
--	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-+	if (action == ACTION_RESHAPE &&
- 			!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
- 			mddev->delta_disks > 0 &&
- 			mddev->pers->finish_reshape &&
-@@ -9709,10 +9706,10 @@ void md_do_sync(struct md_thread *thread)
- 	spin_lock(&mddev->lock);
- 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
- 		/* We completed so min/max setting can be forgotten if used. */
--		if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
-+		if (action == ACTION_REPAIR)
- 			mddev->resync_min = 0;
- 		mddev->resync_max = MaxSector;
--	} else if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
-+	} else if (action == ACTION_REPAIR)
- 		mddev->resync_min = mddev->curr_resync_completed;
- 	set_bit(MD_RECOVERY_DONE, &mddev->recovery);
- 	mddev->curr_resync = MD_RESYNC_NONE;
--- 
-2.39.2
+> +    description: The TMU hardware name.
 
+Anyway, you do not get instance IDs. I talked about this at OSSE25.
+
+
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    minItems: 1
+> +    maxItems: 1
+> +
+> +  sensor-index-ranges:
+
+Where is the property defined? You keep adding generic properties.
+
+> +    description: |
+> +      Valid Sensor index ranges for the TMU hardware.
+
+I don't understand what is this for.
+
+> +
+> +      Note:: On the ExynosautoV920 variant, the fifth sensor in the TMU SUB1 is disabled,
+> +      so the driver skips it when matching by tmu-name.
+
+That's not name, so why are you referring to tmu-name? And driver has
+nothing to do here. Describe hardware.
+
+None of this is really correct. :/
+
+
+Best regards,
+Krzysztof
 
