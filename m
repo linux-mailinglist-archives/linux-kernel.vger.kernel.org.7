@@ -1,255 +1,162 @@
-Return-Path: <linux-kernel+bounces-793126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A9FB3CEEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:11:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B37B3CEF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51F327AE0BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA4B16B2F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C722DCF53;
-	Sat, 30 Aug 2025 19:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373D42D9EC7;
+	Sat, 30 Aug 2025 19:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUUnSt3u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue34I0Mh"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E83257AF3;
-	Sat, 30 Aug 2025 19:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BD5257AF3;
+	Sat, 30 Aug 2025 19:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756581084; cv=none; b=VzToEuvoNHFnmZiKpmszOgPOCPlYa9t3w4q1bmzro3SuDyZFwTLM3OTq0MXIROyTl+678CLSZC6NHIadzJcG8sHlwfLpyClAk40DvWSc/gc4lMyLvXpoTl88477QknoIHJHDoPs5K5Fju6v2UAgQI0J8L45fy9U3UsW2P+XPHss=
+	t=1756581104; cv=none; b=qQWBPqekGZQ/M4ZB+xsdog1p1FmsyDMsqPaOMzZv7jVp2NmOU3raBL5/vpjGzIFiT2VkSrN7P9bAEuwdTG2B9ik9MYMRWN2xD1Z1x+WJE7QRC6x/9HQaRmNBhZkY5isyBJdspiFE/vqZkxeeVtiWLjeDMQDyD4D8g6ejsPdW5ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756581084; c=relaxed/simple;
-	bh=MyE3pqyLVbld26pEgWknWcMBrihOQjvuBuX/OtdkRaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UU7qMaatcSprVJfUB1Dc06RIA/9GXiW+qyV8DoGUqbcIzHdjOKxKIUFqFk6hHm9GGqZy5zUqXLyl0PzG/rcZLXPZb5cegBrUlYYMCZU9a/cPjk7PUIoHS1OfePG4CO7vEwOEtMwkgsgbg3uCCTmy0kLqKsm9n7s1B3eaVf9SLD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUUnSt3u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BA5EC4CEEB;
-	Sat, 30 Aug 2025 19:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756581083;
-	bh=MyE3pqyLVbld26pEgWknWcMBrihOQjvuBuX/OtdkRaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PUUnSt3uX2DbVP9xUtZmCggMgFNvOfdVmEcI7oQ7hGXOhmniJmpvXEdQCiqns4II1
-	 3dJ7wpRau2RaNIi8hnOuZ+9FB2T8Zc7paD9WOlvk694i47LsHFJciG1fMFqnMDmDdt
-	 sJVK1mXRBswX3pTMUegN5Rl2gB2/uOvxlgI1j15u/2oD4lsVbMHXTxjmE5CjnxhDCI
-	 lWQCM1QtCcEFxw1GVMeYacOxZi6khHJIxAk+RC/LRiwK5l+RdnZA6/SKx9ujhYNcFE
-	 8Io5DK2jW6Va7m6/Cdq52JQbiSO5Ft2/zQ44c3aQHgcv0tuSUgTpJD8l4DiYl+SFJW
-	 b4c33TvdOkRHg==
-Date: Sat, 30 Aug 2025 20:11:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <Michael.Hennerich@analog.com>,
- <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
- <andy@kernel.org>, <corbet@lwn.net>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <broonie@kernel.org>,
- <Jonathan.Cameron@huawei.com>, <andriy.shevchenko@linux.intel.com>,
- <ahaslam@baylibre.com>, <sergiu.cuciurean@analog.com>,
- <tgamblin@baylibre.com>, <marcelo.schmitt1@gmail.com>
-Subject: Re: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
-Message-ID: <20250830201110.0f768545@jic23-huawei>
-In-Reply-To: <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
-	<0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756581104; c=relaxed/simple;
+	bh=50gJbBwtixydMvDBUecf/dpBUon5/5931vcLJn4NeMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=reoe6407QQeq8p4F/uKenosJEdIZ+dbNSme1sBA/nzUbF7gUEnjSRHC1tFbuFnUxoqIhQFvi/Qn2WXsVyGapSmnET5aWYDFEbl1HvceK4q775rGiksw+C7LyLvnUW39ecBy28gzg6p9rlqE4f+FpKGM7lvhiEDfLcYseRIxcyK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ue34I0Mh; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cbfa1d820so6031898a12.3;
+        Sat, 30 Aug 2025 12:11:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756581101; x=1757185901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TE7opTv+bXEDaK/8HEHI+O6QGRpRy4oLfrvJAj6i/zQ=;
+        b=Ue34I0MhiVNYm/G3kGZWxCjOIsyY7beANFraJam6pd0euluY4yFFYc699v2xf/6gCJ
+         1+iAX914vODo0522jNGb58+I+Ajemda7iDf06m5T6OufeggdQkxD64d+6H3hshxkPFTp
+         mCPCYfHtXPjuR5zNgvoQqBWTyvnGnxx93wVIC+oiG61/WeEeAs40iwGPj0pj2EeGAoOu
+         17ZF6300JHOaW0WrIf3mGZ97gNzitIy/tok7tSow1OPy/CUzH+m8NIt0YiTlgQIHtWCT
+         LQLVauSt354nGRYpZRYWugzaOLb86TwFHMmHq/tQFGfSg1PBgsbEQjFrNEHjvIr5lOrx
+         VacA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756581101; x=1757185901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TE7opTv+bXEDaK/8HEHI+O6QGRpRy4oLfrvJAj6i/zQ=;
+        b=TeXb6tNjy/P3GA2SA7X/hMkCsRW7z8d82xUvhN1ZaCXyED7k0aMg4czCR5kqNyvlgv
+         GKnetk8/2cY3zXJhHxmNVhFXQjYskwhuPpVo2s0krZb3hNg8maiv5eqtm1z5yU5JJ1YQ
+         4jab2P1I15qjUPAnpDJDZFlkdjQTY84zZCZe2dcIEwwAm7oLODfE72T3VNgoKAawsjkC
+         k0gGIYtlxRnLpSTT+HQT1lOKRkez50ApjfoSc+Sy7xBUCYWlgR7b4zPMI1acYG/hLNSN
+         LZMXDVlrqQD8OhnPBUZISIRsrQ2n/vHsGou2cGAgh5sU5X9nc8GXwUlSZgFswb+2Yfrd
+         10Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVEtCMNo6asxR6aVzdQgw+KazIcYSM714dpRGyFmANSBq+slAQvWFZmkeKvFmTyGWpKSQbwABtF2M9+fQ==@vger.kernel.org, AJvYcCVslEbPdM+yBwgIF1YQYYihf1mAo7YubgojXpDtVzgo+r+8Qc6Wdrvsy/Bs682jLesedeC9zhE5FA6BQFR9tigu@vger.kernel.org, AJvYcCWnFFT/EobY/pkk2am5cyb3s9i5hK99EszVEchieb3BpRUdHzscdfiTWrulGzYoWUWoWFVS+Yxhk9GVueW6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6JUmkbDLUumV5W6Za89XCP+ckWZLWnYAxcRz/OXzXpWRWHD6C
+	faYBOEfRz2DgZiPawBBt/sfEdXuVuYi8SM5sOvqODzjD3UeiVcgXL7QdLq9x8b1HuNHOznizE3p
+	/bS+8uNXQDTrUFN0x1AvsRg674rwIIfrDpko5
+X-Gm-Gg: ASbGncuaE7jRsfgMPlWi8Ajpzl0CetCDkwIPNTbt5xSKfkUaSKUzgU6Gypmn/mKXsZy
+	alYIQFad+uDRR1tcQlRu2VT639a+po3xcNixs1jJNc/aZZNXL1SESv8VWIh8wrxUE7UpLqi8LaW
+	Ghf2M8Pe4ikGdH1XFuDV26WMr+M/uI7WjYbic137fv9OnPF6RScKYLQi+S29SrxNiCVs6i78oDL
+	dOJd2nz
+X-Google-Smtp-Source: AGHT+IHK1D4MTIB3dfb/YWiZqAszHiAgJM47+GNAOx4rWFgMAoZY4wzDnS0uJ1baHeRW1Wc5U0wTJM8fpc7DdUw4Myc=
+X-Received: by 2002:a05:6402:388d:b0:617:4b56:5bb1 with SMTP id
+ 4fb4d7f45d1cf-61d269a717amr2353973a12.11.1756581100911; Sat, 30 Aug 2025
+ 12:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250817231753.633899-1-thorsten.blum@linux.dev>
+In-Reply-To: <20250817231753.633899-1-thorsten.blum@linux.dev>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Sat, 30 Aug 2025 21:11:29 +0200
+X-Gm-Features: Ac12FXws0ffiID41jCEYPRV3uWnLZ6Kfr3vkeMthfBN828jI2KAat5HjI_uSoHQ
+Message-ID: <CA+=Fv5QdP-qGjUXQZ4ig1RX=0zx5c11gdrvwT9gqXNqTTqSZvA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] alpha: Replace strcpy() with strscpy() in setup_arch()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	linux-hardening@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 29 Aug 2025 21:42:50 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+Hi,
 
-> AD4030 and similar ADCs can capture data at sample rates up to 2 mega
-> samples per second (MSPS). Not all SPI controllers are able to achieve
-> such high throughputs and even when the controller is fast enough to run
-> transfers at the required speed, it may be costly to the CPU to handle
-> transfer data at such high sample rates.  Add SPI offload support for
-> AD4030 and similar ADCs so to enable ADC data capture at maximum sample
-> rates.
-> 
-> Cc: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> Cc: Nuno Sa <nuno.sa@analog.com>
-> Cc: Trevor Gamblin <tgamblin@baylibre.com>
-> Cc: Axel Haslam <ahaslam@baylibre.com>
-> Cc: David Lechner <dlechner@baylibre.com>
-> Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> Co-developed-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
-> Co-developed-by: Trevor Gamblin <tgamblin@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> Co-developed-by: Axel Haslam <ahaslam@baylibre.com>
-> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+It can be a bit controversial to replace the platform specific string
+manipulation functions with a generic interface. On Alpha, there is nothing
+(at least to my knowledge) that indicates that strcpy is broken or used in
+an unsafe way and hence this patch doesn't really fix anything.
+In my opinion, I think this should be a NAK.
+
+Linus wrote some relevant stuff on this topic
+
+Link:
+https://github.com/torvalds/linux/commit/30c44659f4a3e7e1f9f47e895591b4b40b=
+f62671
+
+like for example:
+
+"Use this in places where it makes sense, but don't do trivial patches
+to fix things that aren't actually known to be broken."
+
+
+Regards
+
+Magnus Lindholm
+
+On Mon, Aug 18, 2025 at 1:23=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
+>
+> strcpy() is deprecated; use strscpy() instead.
+>
+> Since the destination buffer 'command_line' has a fixed length,
+> strscpy() automatically determines its size using sizeof() when the size
+> argument is omitted. This makes the explicit size argument for the
+> existing strscpy() call unnecessary - remove it.
+>
+> No functional changes intended.
+>
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 > ---
-> Most of the code in this patch is based on work from Sergiu Cuciurean, Nuno Sa,
-> Axel Haslam, and Trevor Gamblin, hence the many co-developed-by tags. I also
-> draw inspiration from other drivers supporting SPI offload, many of them written
-> by David Lechner.
-
-A few things inline. 
-
-> +
-> +static int ad4030_set_sampling_freq(struct iio_dev *indio_dev, unsigned int freq)
-> +{
-> +	struct ad4030_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (PTR_ERR_OR_ZERO(st->offload))
-> +		return -EINVAL;
-> +
-> +	if (!freq || freq > st->chip->max_sample_rate_hz)
-> +		return -EINVAL;
-> +
-> +	ret = __ad4030_set_sampling_freq(st, freq);
-> +	iio_device_release_direct(indio_dev);
-Where is the claim?
-> +
-> +	return ret;
-> +}
-
-
->  
->  static int ad4030_update_scan_mode(struct iio_dev *indio_dev,
-> @@ -903,6 +1038,67 @@ static const struct iio_buffer_setup_ops ad4030_buffer_setup_ops = {
->  	.validate_scan_mask = ad4030_validate_scan_mask,
->  };
->  
-> +static int ad4030_offload_buffer_postenable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad4030_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = regmap_write(st->regmap, AD4030_REG_EXIT_CFG_MODE, BIT(0));
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->offload_msg.offload = st->offload;
-> +	ret = spi_optimize_message(st->spi, &st->offload_msg);
-> +	if (ret < 0)
-> +		goto out_reset_mode;
-> +
-> +	ret = pwm_set_waveform_might_sleep(st->conv_trigger, &st->conv_wf, false);
-> +	if (ret)
-> +		goto out_unoptimize;
-> +
-> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
-> +					 &st->offload_trigger_config);
-> +	if (ret)
-> +		goto out_pwm_disable;
-Blank line here.
-
-> +	return 0;
-Blank line here.
-
-> +out_pwm_disable:
-> +	pwm_disable(st->conv_trigger);
-> +out_unoptimize:
-> +	spi_unoptimize_message(&st->offload_msg);
-> +out_reset_mode:
-> +	/* reenter register configuration mode */
-> +	ret = ad4030_enter_config_mode(st);
-> +	if (ret)
-> +		dev_warn(&st->spi->dev,
-> +			 "couldn't reenter register configuration mode\n");
-> +	return ret;
-> +}
-
-> +
-> +static void ad4030_prepare_offload_msg(struct ad4030_state *st)
-> +{
-> +	u8 data_width = st->chip->precision_bits;
-> +	u8 offload_bpw;
-> +
-> +	if (st->lane_mode == AD4030_LANE_MD_INTERLEAVED)
-> +		/*
-> +		 * This means all channels on 1 lane.
-> +		 */
-
-Single line comment looks like enough here.
-
-> +		offload_bpw = data_width * st->chip->num_voltage_inputs;
-> +	else
-> +		offload_bpw  = data_width;
-> +
-> +	st->offload_xfer.speed_hz = AD4030_SPI_MAX_REG_XFER_SPEED;
-> +	st->offload_xfer.bits_per_word = offload_bpw;
-> +	st->offload_xfer.len = roundup_pow_of_two(BITS_TO_BYTES(offload_bpw));
-> +	st->offload_xfer.offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-> +	spi_message_init_with_transfers(&st->offload_msg, &st->offload_xfer, 1);
-> +}
-
-
-> @@ -1103,6 +1393,20 @@ static const struct iio_scan_type ad4030_24_scan_types[] = {
->  		.shift = 2,
->  		.endianness = IIO_BE,
->  	},
-> +	[AD4030_OFFLOAD_SCAN_TYPE_NORMAL] = {
-> +		.sign = 's',
-> +		.storagebits = 32,
-> +		.realbits = 24,
-> +		.shift = 0,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD4030_OFFLOAD_SCAN_TYPE_AVG] = {
-> +		.sign = 's',
-> +		.storagebits = 32,
-> +		.realbits = 30,
-> +		.shift = 2,
-> +		.endianness = IIO_CPU,
-> +	},
->  };
->  
->  static const struct iio_scan_type ad4030_16_scan_types[] = {
-> @@ -1119,7 +1423,21 @@ static const struct iio_scan_type ad4030_16_scan_types[] = {
->  		.realbits = 30,
->  		.shift = 2,
->  		.endianness = IIO_BE,
-> -	}
-> +	},
-> +	[AD4030_OFFLOAD_SCAN_TYPE_NORMAL] = {
-> +		.sign = 's',
-> +		.storagebits = 32,
-> +		.realbits = 16,
-> +		.shift = 0,
-> +		.endianness = IIO_CPU,
-> +	},
-> +	[AD4030_OFFLOAD_SCAN_TYPE_AVG] = {
-> +		.sign = 's',
-> +		.storagebits = 32,
-> +		.realbits = 30,
-> +		.shift = 2,
-> +		.endianness = IIO_CPU,
-> +	},
->  };
->  
->  static const struct ad4030_chip_info ad4030_24_chip_info = {
-> @@ -1130,10 +1448,15 @@ static const struct ad4030_chip_info ad4030_24_chip_info = {
->  		AD4030_CHAN_CMO(1, 0),
->  		IIO_CHAN_SOFT_TIMESTAMP(2),
->  	},
-> +	.offload_channels = {
-> +		AD4030_OFFLOAD_CHAN_DIFF(0, ad4030_24_scan_types),
-
-This array still has the non offload cases.  Do they make sense?
-
-> +		AD4030_CHAN_CMO(1, 0),
-> +	},
->  	.grade = AD4030_REG_CHIP_GRADE_AD4030_24_GRADE,
->  	.precision_bits = 24,
->  	.num_voltage_inputs = 1,
->  	.tcyc_ns = AD4030_TCYC_ADJUSTED_NS,
-> +	.max_sample_rate_hz = 2 * MEGA,
->  };
+>  arch/alpha/kernel/setup.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+> index bebdffafaee8..8b51e6ca83d6 100644
+> --- a/arch/alpha/kernel/setup.c
+> +++ b/arch/alpha/kernel/setup.c
+> @@ -468,8 +468,8 @@ setup_arch(char **cmdline_p)
+>         /*
+>          * Locate the command line.
+>          */
+> -       strscpy(command_line, COMMAND_LINE, sizeof(command_line));
+> -       strcpy(boot_command_line, command_line);
+> +       strscpy(command_line, COMMAND_LINE);
+> +       strscpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
+>         *cmdline_p =3D command_line;
+>
+>         /*
+> @@ -511,7 +511,7 @@ setup_arch(char **cmdline_p)
+>         }
+>
+>         /* Replace the command line, now that we've killed it with strsep=
+.  */
+> -       strcpy(command_line, boot_command_line);
+> +       strscpy(command_line, boot_command_line);
+>
+>         /* If we want SRM console printk echoing early, do it now. */
+>         if (alpha_using_srm && srmcons_output) {
+> --
+> 2.50.1
+>
+>
 
