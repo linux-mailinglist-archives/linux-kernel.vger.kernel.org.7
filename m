@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-792616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624D5B3C6B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7444B3C6B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F401CC1CF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265805A4D06
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C1421D00A;
-	Sat, 30 Aug 2025 00:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A32D21B9F6;
+	Sat, 30 Aug 2025 00:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Txf1Ex5O"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="CHrV7b82"
+Received: from mail3-166.sinamail.sina.com.cn (mail3-166.sinamail.sina.com.cn [202.108.3.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5B421B9F6
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D66F20B80B
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514762; cv=none; b=aUH2gRbbsyQSljU58dlo17Q4gspjoHIzYZtMAi94TySQicxQ+W4wn8/Xgxtlnnigqg1r7o8xyUFBLZ83gsHsSZC244yCB7GWxMh31DeDtGYGv9XTVCQgwRyjgF6XNiXYEW0Esw6rOBy3dRSAaHv2zXS9Nl0DcINZHsxIHOJIZ0w=
+	t=1756514773; cv=none; b=OdKdNK6Zo5Vh94H5Fppwk72TBD+ePfJYJYXRajVlAq2d6QqCPHS1hctiSk37XwN84haLNtawrYcJ25iQDXBrnZXACUZaqP2JXRIWiaj44o0IZkdCcvCQIbIk/QDIraMTCdGswNSik0Mu8ww59paHcicFET45ofUVWQ2Zp+QRuIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514762; c=relaxed/simple;
-	bh=8mek4otXRSBa5jdsIR7RcX9metPdhjWZ8Su46YZiXvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a84zBpMZ46Z9KHBcnNUzd0ps3cc0KT9dN2X3+xALEYfvtZ7q6nCz4F+0RyII60xEqzTUMp3oaA5w7bHHhfkl1kpXwr/TpNhtZsOjNmen4jyIvqU71FDQryN2UEkSW306Nj2vFcHVid8ssObY3zg7M3naXtLPLS1Vp70f0soxSoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Txf1Ex5O; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb72d51dcso391686966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1756514758; x=1757119558; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh/LOKtbCFYx6ow3+8rmdtjbSkdbgBd5ekJbYw0X8HI=;
-        b=Txf1Ex5OqOMoI8bwEDH3Xp9BhWB0VOpxPjuSa58WubqkA4ACuIt9A2z5IKbIJ2wp/B
-         ts7H/8PvjyA8k0XBfk7XR8y93mVh/q2KySvSdwvZ6AwWpq/wb9gfA2Eh5of3jXBevsql
-         gNUbiY3iE2kmS7hAKpKA8qWzgGhCZMKWxM6Uk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756514758; x=1757119558;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jh/LOKtbCFYx6ow3+8rmdtjbSkdbgBd5ekJbYw0X8HI=;
-        b=OgUs/FpiJsQuzE2eAzTcbN1cQmtUEhVInXGuCPO/tVhCvuJyt3xRl6b3uY0w9e6uVl
-         t0/zixxtBqr+lZ9x0wJO1IIR3oNbo+KEKqgeBLWDh8vnMInr8Ok9BpelvokCPafZ5er7
-         gsSxgbL5GzTU4q7GHnCyZSo4poKrzxgQPKuMM3I3EaKwQkUNFtErWtRP76nSxLNBBMvX
-         yXCP37J6ngflyh88QVn19RyIBuJDWvgmJzdYJY8S0i8KxvIaVTUxq22/LER3eIqixVL/
-         jou/OhPiZ3nsC67+6O2H/T+TJrbS5NToC2ueP4PPnQNW9jlgDp62+R3GoNNP09r77f1f
-         IKWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO9+FWxr5QYHETQ7aZnlrbXiQ4LXF0gqsWrbnMAdUQTm0vQHAXuV3o0NsKkWClBiKFIXqM1tnNMahjAP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Wh0w0/6F6OGRZ86Q9UNFzSBeMCEjvCelBzAlhLUH/yBtr4gG
-	JtOiuDz7QNqo0f+YEKr71g9gQ2xYTBEXkMKwDhUYT39+uFp+O/Mui7k8EiOBuQojW7XO+qBZjqY
-	zyIdeijlr8w==
-X-Gm-Gg: ASbGnct3/4BnrDQzH3GvvXMFHsQkAoTN9ZiyP3o+/s3XdJmA07t2nWmDFJ/hko2D1KK
-	3O4xcoaODG2XAa/thxOef77gejf3XtyJVXQYzjGqHvX4yyJly8Lm05D/4I1yAHSWibd/OyiTGjN
-	FwomOQVkAHz+3375NdDZeYBNyG96ytJbZeb0BvdSo85oa0Muz2cVxbPCp5IgkL1HurrmuZCp2Dy
-	saf5dGhd4mqACaWZADjzfxhroiAzPaVDLoq8tYFYzllhZpnJi+zsOI088yDi0nEZpvENgWoKdSf
-	t9iMoLUF2lELTp8aMg5dhOyGZ9QTO58MAR7jkfyxYfYVgj3LZf4i+OTyjNS519xpjTKD4e5oEEt
-	u8ZjHvOHq2pj8Gjb3KtAqC/JNzkwD1M6ubToKmkCCmb/Q3O2yLE9pmmFXXbjlc0e4YDXrQWwl
-X-Google-Smtp-Source: AGHT+IFsJwVjhOiUmUwnS7TyPP9KrTYmEMoLJEuXbbUUbnBw/QXjUBioeqYOBHztfrBZGNq3B9EfrA==
-X-Received: by 2002:a17:907:9301:b0:afe:b878:a164 with SMTP id a640c23a62f3a-b01d9772bd0mr45375366b.50.1756514758371;
-        Fri, 29 Aug 2025 17:45:58 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aff9918dbd2sm95837166b.103.2025.08.29.17.45.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 17:45:56 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-affc2eb83c5so80910066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:45:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUW44yhjxEeRF1LP2y3yIeIeBU6rmDM+8jG410I8sP8BWx6aCVkXf3Wx7G5UVHTBpcV+e1NZ8Y6PCEF9T4=@vger.kernel.org
-X-Received: by 2002:a17:907:7289:b0:ade:c108:c5bf with SMTP id
- a640c23a62f3a-b01d976d963mr49768666b.43.1756514756264; Fri, 29 Aug 2025
- 17:45:56 -0700 (PDT)
+	s=arc-20240116; t=1756514773; c=relaxed/simple;
+	bh=O2YgX+JruXR6onRfFHNHOFxmMwYdN3MBokIGWnyLdec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gsZT4zmuKTJQ/snhY/fh3lMUg3ftnW3vF/lAfLM9vgNXc6eo4Fj9/VILdk33OARvhcB/PzXpfis8Z5XUYjt+MN1JyoQhOi5Hy5LEahmul7cOetMyC8tXoTqG82LxmYh4NamHGLjutAKve+BKvW7u5XQQqmKSIg7S8bKggmJYKRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=CHrV7b82; arc=none smtp.client-ip=202.108.3.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756514768;
+	bh=O51t9uXRZDWfHOs4T+32Q8b9n8HEvnl1dQIluZTl7qY=;
+	h=From:Subject:Date:Message-ID;
+	b=CHrV7b82bIOwfZee2j6LxUiQjJ8Je4ec5ANr5gf45EG8OUrG/SZREMnHXv2k/y+gQ
+	 OHG31PX41OKh6K5l7YZXZGQLLIweVqOydlyHbDjQ4m+2yGXzD7I9osd1lioQLttDP0
+	 G05I3p66faKbJI8cNYPIidgn2VkF4i2ax4/kcQKU=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68B249C5000006E5; Sat, 30 Aug 2025 08:45:59 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3237406816158
+X-SMAIL-UIID: D69BC2B74D4A42CDBC68A0855DD2F677-20250830-084559-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
+Date: Sat, 30 Aug 2025 08:45:48 +0800
+Message-ID: <20250830004549.6070-1-hdanton@sina.com>
+In-Reply-To: <68b1f3ab.a70a0220.f8cc2.00f0.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828180300.591225320@kernel.org> <20250828164819.51e300ec@batman.local.home>
- <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
- <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
- <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
- <20250829121900.0e79673c@gandalf.local.home> <CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
- <20250829124922.6826cfe6@gandalf.local.home> <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
- <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com> <CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
- <20250829141142.3ffc8111@gandalf.local.home> <CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
- <20250829171855.64f2cbfc@gandalf.local.home> <CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
- <20250829190935.7e014820@gandalf.local.home>
-In-Reply-To: <20250829190935.7e014820@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 29 Aug 2025 17:45:39 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzHUWBAlxqQk5ohlyV44LW67utXZUBljhzh_p3civTAmgJnlakeCHnJEkU
-Message-ID: <CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt <rostedt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, 
-	Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 29 Aug 2025 at 16:09, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> Perf does do things differently, as I believe it processes the events as it
-> reads from the kernel (Arnaldo correct me if I'm wrong).
->
-> For the tracefs code, the raw data gets saved directly into a file, and the
-> processing happens after the fact. If a tool is recording, it still needs a
-> way to know what those hash values mean, after the tracing is complete.
+> Date: Fri, 29 Aug 2025 11:38:35 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17333fbc580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=10b4363fb0f46527f3f3
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160e9262580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ed0242580000
 
-But the data IS ALL THERE.
+#syz test
 
-Really. That's the point.
-
-It's there in the same file, it just needs those mmap events that
-whoever pasrses it - whether it be perf, or somebody reading some
-tracefs code - sees the mmap data, sees the cookies (hash values) that
-implies, and then matches those cookies with the subsequent trace
-entry cookies.
-
-But what it does *NOT* need is munmap() events.
-
-What it does *NOT* need is translating each hash value for each entry
-by the kernel, when whoever treads the file can just remember and
-re-create it in user space.
-
-I'm done arguing. You're not listening, so I'll just let you know that
-I'm not pulling garbage. I've had enough garbage in tracefs, I'm still
-smarting from having to fix up the horrendous VFS interfaces, I'm not
-going to pull anything that messes up this too.
-
-        Linus
+--- x/kernel/time/hrtimer.c
++++ y/kernel/time/hrtimer.c
+@@ -1718,7 +1718,7 @@ EXPORT_SYMBOL_GPL(hrtimer_active);
+ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
+ 			  struct hrtimer_clock_base *base,
+ 			  struct hrtimer *timer, ktime_t *now,
+-			  unsigned long flags) __must_hold(&cpu_base->lock)
++			  unsigned long flags, bool soft) __must_hold(&cpu_base->lock)
+ {
+ 	enum hrtimer_restart (*fn)(struct hrtimer *);
+ 	bool expires_in_hardirq;
+@@ -1755,6 +1755,8 @@ static void __run_hrtimer(struct hrtimer
+ 	 * is dropped.
+ 	 */
+ 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
++	if (soft)
++		hrtimer_cpu_base_unlock_expiry(cpu_base);
+ 	trace_hrtimer_expire_entry(timer, now);
+ 	expires_in_hardirq = lockdep_hrtimer_enter(timer);
+ 
+@@ -1762,6 +1764,8 @@ static void __run_hrtimer(struct hrtimer
+ 
+ 	lockdep_hrtimer_exit(expires_in_hardirq);
+ 	trace_hrtimer_expire_exit(timer);
++	if (soft)
++		hrtimer_cpu_base_lock_expiry(cpu_base);
+ 	raw_spin_lock_irq(&cpu_base->lock);
+ 
+ 	/*
+@@ -1822,7 +1826,8 @@ static void __hrtimer_run_queues(struct
+ 			if (basenow < hrtimer_get_softexpires_tv64(timer))
+ 				break;
+ 
+-			__run_hrtimer(cpu_base, base, timer, &basenow, flags);
++			__run_hrtimer(cpu_base, base, timer, &basenow, flags,
++					active_mask == HRTIMER_ACTIVE_SOFT);
+ 			if (active_mask == HRTIMER_ACTIVE_SOFT)
+ 				hrtimer_sync_wait_running(cpu_base, flags);
+ 		}
+--
 
