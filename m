@@ -1,422 +1,387 @@
-Return-Path: <linux-kernel+bounces-792778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63176B3C8CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:35:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A3EB3C8CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 870653B14BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581BF5659E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342E242D9E;
-	Sat, 30 Aug 2025 07:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DE127A93A;
+	Sat, 30 Aug 2025 07:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrxLOM0e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPjrcQXQ"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCE316F0FE;
-	Sat, 30 Aug 2025 07:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D4213C3F6;
+	Sat, 30 Aug 2025 07:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756539291; cv=none; b=BIwmKsICQel0nAnnKmlqa+3Fvf3xQfbZV8/FYzbl5hsx2zjKGMTLs7g32Mr7Z4gjnFBGPOJFMgXfq2cMwx/E3Z9Zym07yFxTklEXZG0aYUafYWF3uwoNHxgWSDRKrWDJGedreXdaSBqzihtvJUWEcrjAZdRSBJiCCq7zc2YkZl0=
+	t=1756539411; cv=none; b=rg79uVct1IXRtdyGfvLPks1L1uADhkdXUdQLiX6AWdpaE83LMhcmzzLYbn6Q/NS6qTfqGzEg57WO4spQgd/IarDKhh2hPlmAWUKu/em20et46vWGitUGfLWKUJbrxLFLbS13ygtXfYwEvq/ZuHL0C1XVDhWFLZrkFngAvUBHDZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756539291; c=relaxed/simple;
-	bh=XQinxe+32uWr6L7opPVVU/qk5TPK+QCCBj+QR/vJEFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4zLakK44D9SSqXgnAPP4klYSYQJkkjAPddn+20/UCzVOChF+27Dnlf9h3jQcrzcLlHU87opiXBADzUJEvffjthl8sDnoEUuhvY4Xhl2Pft9kHqTgkAJJ1VW/dcCfVa0d2PZrVIrR9n0Y15fN2pnYymLyQxRvGcZiuvZPb3Sotw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrxLOM0e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDC9C4CEEB;
-	Sat, 30 Aug 2025 07:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756539291;
-	bh=XQinxe+32uWr6L7opPVVU/qk5TPK+QCCBj+QR/vJEFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FrxLOM0eAR8QjY9ql9D9QVNyS7eZaYkMinVTOy4rtVuvbimxqje9MDdu7Q4fQq0L9
-	 vYKKNgovUtwIehtnRg1Qde5w5UKp5QWrcqi1TxKTVB9f7zCYw4j1Gb0iwfUlRJPxvn
-	 qio55gOeO0Yd0PuvwfAvKFyEysNTw+JzV4kyzRues+Ag0Q14HJxhHx4eo3E/xD8nzj
-	 LybgWUxm4gyI+g2UyT8uFja0V8ELMMb06cD9HuXmJ96F8dOCoRReSz6yLbIM855+Cm
-	 kHFHKz3fb43OFfAPe5C0FnL+IrCYxV+8yL8B1wkeCqYH+5qDqWaYd9qd9hxfXjJK6p
-	 3QCiTgyscqO0A==
-Date: Sat, 30 Aug 2025 00:34:49 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zecheng Li <zecheng@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] perf dwarf-aux: support DW_OP_piece expressions
-Message-ID: <aLKpmcHtdyaqzunq@google.com>
-References: <20250825195833.226839-1-zecheng@google.com>
+	s=arc-20240116; t=1756539411; c=relaxed/simple;
+	bh=nwELxDxzSAOFGITdilBF/c44lqaQcxw4uOGtKRdodjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EcH13LTuaaBZIiTB50ShzQezuoMtnulZnZKsAM8uVsSXJ+g9tw8VJDVBXu18XdFoZG95KMOF/HuS2yWO76b2/u1mfSNTeHj8d5u08symSJJRYme8IVBO4/oKGsSyxqcabr8q5oRQDIFF6cKEo0ARpk8f+bLbxUm5kvXcbj8vsnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPjrcQXQ; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aff0775410eso179419966b.0;
+        Sat, 30 Aug 2025 00:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756539408; x=1757144208; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SzmH4C1XJrne9YPtVNZi7FEYp3+WvxSqJ1AyOKPaNaM=;
+        b=IPjrcQXQHH25hhH23ZZonEdYKH70q8JxT0jWxIDx3m+5HYf/lnqg/+Qd79G46RX9sG
+         RKEv/kF8cTD6rx1p9oFUDw7Qm/0jFvSh2C5nhn4BhxWrh7MTOgXzGr5ETybG7/gI5Qkx
+         hF4cftrYq+4O30DdZV5QIdVvO+u9J6d0wdYGyoqrranGSZA0TOE4py+PDxL/UF92iOeu
+         OPmlXs2RMc32vpYZSqrJq+44ulTdGI136qYHKJ+bxyEshdo8nzFarMeqi838azuno8bc
+         wLIx4JYreaCg53LDkoUz/4GZ3vCzuJKrBRYrj8uPcqaU724adMNsJyTDOyFfKghrcpO9
+         G0Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756539408; x=1757144208;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SzmH4C1XJrne9YPtVNZi7FEYp3+WvxSqJ1AyOKPaNaM=;
+        b=oVRx6fb4YPSBYZfIjCwP699SHVDAiL1FXRkCvd7IFJz3/9W5x/Pcdrtk/yzHPCNzeT
+         8IbuViWAb5lS5PKVHaxIgvS1IhFC5cutduP59KGbouMt75VJKgHOgWN4oUv/g/SSZciz
+         2Zfm+O4XFoFDiWVFDz2qomYcYkIb9sT7qugJGgOe4IuKFhvqifUJjJvKjcdt6eZWMRHB
+         raznUEcQIDDjCu36Jdt+FAmUO9+Efyd06J22uoNbgJdbOWshm9irjftaBPqCnzLbqpE/
+         QFQ0Zy3kkQyVyXauPzNWf1iPm5rTE+6rri6jCgGCiTirdVrJ3ixkR76xUH7zYYDeP0Lm
+         TeAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOq1byOeafRjxSjct0cjbgC2yJHSvmEzGH4YzLaFbBnm3ROmP66IduzX8YgRY71gb/g922Y6EQAE7c@vger.kernel.org, AJvYcCUR8epXiAjDHc5alPDIcz5I4IHYtM7YP367VQPzPx3yFOpU4HDVsaw6HOdSDzMU7F8g+IoCbjm3Im/elw2Y@vger.kernel.org, AJvYcCV2J+F5U/gKeL4d7WII+6253yZXxjy5EEk3v3QjM+r2R3+GUUn1TpZAeN4VfMArhXkXqk1h2wqLxjDZ@vger.kernel.org, AJvYcCVFUwfFJG47HmdrZi4XgXDOkJXp5WXwmNcsjbhzDV/p2JuRCw3F8f/rkUVf/prs4sxfnWkleknPFe3u@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcUzEZ6ljBC7SiTytS3pXiAyKeqLUse1p+J7yXhKO9PFWNh8O8
+	pDutd+4uaDLybONFw4Xl7CYichjC/DawMpUO8UCNLgEMc1DQdxrC0b0kX6nsqInlx69Pqmumx3s
+	mxTNFzgJbkMut7O+lNjjwiw/Xbrmm5QE=
+X-Gm-Gg: ASbGnctE/VjkdnyNAJgdUt2mqzRqaOP5KZL6BIy9hrbkH3JPQNdAmIB9xran7dl1JGc
+	KG6hErm+A+NH6rBCDhr/gBWhPraBVwiA1kDpjB+4C3WQVW7ghNOILiV8eheD25iF6SgNvyGtglQ
+	lGFcOdrGevlpQrcWToM9xBun99A0+yVCMVTvJ4of6rrObz0BmweZcnKgw/fGN70wQgom2s8GWCO
+	b0YJso=
+X-Google-Smtp-Source: AGHT+IEOLPbp3qTZPtnFbQYyqJuzU7fRvjG8R4IVWcinxMBpTD+d0esX9RsjNuxUUL8rlpEr38nh8cs/LJ6G1NnKqaA=
+X-Received: by 2002:a17:907:970f:b0:ae3:5185:5416 with SMTP id
+ a640c23a62f3a-b01d8c74a17mr136545566b.13.1756539407942; Sat, 30 Aug 2025
+ 00:36:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825195833.226839-1-zecheng@google.com>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com> <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
+In-Reply-To: <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 10:36:11 +0300
+X-Gm-Features: Ac12FXwg_QF3-9Cykf3CcyTZFU9PAwBoEab4GDUA14oUf05enERpJO1q4eCtTXQ
+Message-ID: <CAHp75Vfu-C3Hd0ZXTj4rxEgRe_O84cfo6jiRCPFxZJnYrvROWQ@mail.gmail.com>
+Subject: Re: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, jic23@kernel.org, Michael.Hennerich@analog.com, 
+	nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com, 
+	andy@kernel.org, corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, broonie@kernel.org, Jonathan.Cameron@huawei.com, 
+	andriy.shevchenko@linux.intel.com, ahaslam@baylibre.com, 
+	sergiu.cuciurean@analog.com, tgamblin@baylibre.com, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 07:58:33PM +0000, Zecheng Li wrote:
-> Support variables split across multiple registers or stack locations by
-> handling DW_OP_piece in DWARF expressions. This enables correct matching
-> of such variables by iterating over all pieces in the expression.
+On Sat, Aug 30, 2025 at 3:43=E2=80=AFAM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> AD4030 and similar ADCs can capture data at sample rates up to 2 mega
+> samples per second (MSPS). Not all SPI controllers are able to achieve
+> such high throughputs and even when the controller is fast enough to run
+> transfers at the required speed, it may be costly to the CPU to handle
+> transfer data at such high sample rates.  Add SPI offload support for
+> AD4030 and similar ADCs so to enable ADC data capture at maximum sample
 
-Can you show me a real world example of these variables?
+Either add a comma after ADCs or drop 'so' word.
 
-Thanks,
-Namhyung
+> rates.
 
-> 
-> There are two cases for matching memory access on the target register:
-> 
-> 1. Accessing a struct member:
->    - The type is the original variable's type.
->    - The offset is the sum of the piece's offset and the operand's
->      offset.
-> 
-> 2. Dereferencing a member:
->    - The type is the member of the original variable (the member must be
->      a pointer).
->    - The size must match the piece size.
->    - The access offset is the operand's offset.
-> 
-> This change improves support for piece-wise variable locations in DWARF
-> expressions.
-> 
-> Signed-off-by: Zecheng Li <zecheng@google.com>
-> ---
->  tools/perf/util/dwarf-aux.c | 244 +++++++++++++++++++++++++++---------
->  1 file changed, 187 insertions(+), 57 deletions(-)
-> 
-> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-> index 013862ea8924..f42fc6f6e9df 100644
-> --- a/tools/perf/util/dwarf-aux.c
-> +++ b/tools/perf/util/dwarf-aux.c
-> @@ -1390,21 +1390,44 @@ struct find_var_data {
->  #define DWARF_OP_DIRECT_REGS  32
->  
->  static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
-> -			     s64 addr_offset, s64 addr_type, bool is_pointer)
-> +					s64 addr_offset, s64 addr_type, s64 piece_offset,
-> +					s64 piece_size, bool is_pointer)
->  {
-> -	Dwarf_Word size;
-> +	Dwarf_Word size = 0;
->  	s64 offset = addr_offset - addr_type;
->  
-> -	if (offset < 0)
-> +	if (piece_size > 0 && !is_pointer) {
-> +		offset += piece_offset;
-> +		size = piece_offset + piece_size;
-> +	}
+> Cc: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Cc: Nuno Sa <nuno.sa@analog.com>
+> Cc: Trevor Gamblin <tgamblin@baylibre.com>
+> Cc: Axel Haslam <ahaslam@baylibre.com>
+> Cc: David Lechner <dlechner@baylibre.com>
+
+First of all, please keep Cc:s just after the '---' line, which will
+have the same effect for email and make the commit message less noisy.
+Second, don't put Cc for the people that you already have other tags
+for.
+Here I found at least 3 people that are repeated in the given specific
+tags below. By default the tools (git send-email) converts all tags to
+the Cc automatically.
+
+> Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Co-developed-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Nuno Sa <nuno.sa@analog.com>
+> Co-developed-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> Co-developed-by: Axel Haslam <ahaslam@baylibre.com>
+> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+
+...
+
+> -enum {
+> +enum ad4030_lane_mode {
+
+Sounds like a candidate for a separate change, but I haven't checked
+how big this part is, so perhaps it's fine just to do it here.
+
+...
+
+>  static const int ad4030_average_modes[] =3D {
+>         1, 2, 4, 8, 16, 32, 64, 128,
+>         256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
+>         65536,
+
+Side note, this looks like the list of bits, and can be optimised to use BI=
+T().
+
+>  };
+
+...
+
+> +       /*
+> +        * The hardware does the capture on zone 2 (when spi trigger PWM
+> +        * is used). This means that the spi trigger signal should happen=
+ at
+> +        * tsync + tquiet_con_delay being tsync the conversion signal per=
+iod
+> +        * and tquiet_con_delay 9.8ns. Hence set the PWM phase accordingl=
+y.
+> +        *
+> +        * The PWM waveform API only supports nanosecond resolution right=
+ now,
+> +        * so round this setting to the closest available value.
+> +        */
+> +       offload_offset_ns =3D AD4030_TQUIET_CNV_DELAY_NS;
+> +       do {
+> +               config->periodic.offset_ns =3D offload_offset_ns;
+> +               ret =3D spi_offload_trigger_validate(st->offload_trigger,=
+ config);
+> +               if (ret)
+> +                       return ret;
+> +               offload_offset_ns +=3D 10;
+
 > +
-> +	if (piece_size == 0 || offset < 0)
->  		return false;
->  
->  	if (__die_get_real_type(die_mem, &data->type) == NULL)
->  		return false;
->  
-> -	if (is_pointer && dwarf_tag(&data->type) == DW_TAG_pointer_type) {
-> -		/* Get the target type of the pointer */
-> -		if (__die_get_real_type(&data->type, &data->type) == NULL)
-> -			return false;
-> +	if (is_pointer) {
-> +		if (piece_size < 0 && dwarf_tag(&data->type) == DW_TAG_pointer_type) {
-> +			/* Get the target type of the pointer */
-> +			if (__die_get_real_type(&data->type, &data->type) == NULL)
-> +				return false;
-> +		}
-> +
-> +		if (piece_size > 0) {
-> +			Dwarf_Die member_die;
-> +
-> +			if (die_get_member_type(&data->type, piece_offset, &member_die) == NULL)
-> +				return false;
-> +
-> +			if (dwarf_aggregate_size(&member_die, &size) < 0)
-> +				return false;
-> +
-> +			if (size == (u64)piece_size &&
-> +			    dwarf_tag(&data->type) == DW_TAG_pointer_type)
-> +				if (__die_get_real_type(&member_die, &data->type) == NULL)
-> +					return false;
-> +		}
->  	}
->  
->  	if (offset == 0) {
-> @@ -1413,7 +1436,7 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
->  		return true;
->  	}
->  
-> -	if (dwarf_aggregate_size(&data->type, &size) < 0)
-> +	if (size == 0 && dwarf_aggregate_size(&data->type, &size) < 0)
->  		return false;
->  
->  	if ((u64)offset >= size)
-> @@ -1452,6 +1475,67 @@ static bool is_breg_access_indirect(Dwarf_Op *ops, size_t nops)
->  	return false;
->  }
->  
-> +struct op_piece_iter {
-> +	/* Pointer to the beginning of the op array */
-> +	Dwarf_Op *ops;
-> +	size_t nops;
-> +	/* The index where the next search will begin */
-> +	size_t current_idx;
-> +	size_t next_offset;
-> +
-> +	/* Pointer to the start of the current piece's ops */
-> +	Dwarf_Op *piece_ops;
-> +	/* The number of ops in the current piece */
-> +	size_t num_piece_ops;
-> +	size_t piece_offset;
-> +};
-> +
-> +static void op_piece_iter_init(struct op_piece_iter *it, Dwarf_Op *ops, size_t nops)
+
+Unneeded blank line.
+
+> +       } while (config->periodic.offset_ns < AD4030_TQUIET_CNV_DELAY_NS)=
+;
+
+...
+
+> +static int ad4030_set_sampling_freq(struct iio_dev *indio_dev, unsigned =
+int freq)
 > +{
-> +	it->ops = ops;
-> +	it->nops = nops;
-> +	it->current_idx = 0;
-> +	it->next_offset = 0;
-> +	it->piece_ops = NULL;
-> +	it->num_piece_ops = 0;
-> +	it->piece_offset = 0;
-> +}
+> +       struct ad4030_state *st =3D iio_priv(indio_dev);
+> +       int ret;
 > +
-> +/* Finds the next non-empty piece segment. */
-> +static bool op_piece_iter_next(struct op_piece_iter *it)
+> +       if (PTR_ERR_OR_ZERO(st->offload))
+> +               return -EINVAL;
+
+Why shadow the actual error code?
+
+> +       if (!freq || freq > st->chip->max_sample_rate_hz)
+> +               return -EINVAL;
+
+in_range() ?
+
+> +       ret =3D __ad4030_set_sampling_freq(st, freq);
+> +       iio_device_release_direct(indio_dev);
+> +
+> +       return ret;
+> +}
+
+...
+
+> +       case IIO_CHAN_INFO_SAMP_FREQ:
+> +               if (PTR_ERR_OR_ZERO(st->offload))
+> +                       return -EINVAL;
+
+Shadowing an actual error code needs a good justification.
+
+> +               ad4030_get_sampling_freq(st, val);
+> +               return IIO_VAL_INT;
+
+
+...
+
+> +       st->offload_msg.offload =3D st->offload;
+> +       ret =3D spi_optimize_message(st->spi, &st->offload_msg);
+> +       if (ret < 0)
+
+Why ' < 0'? Is it capable of returning positive values? If so, what
+are their meanings?
+
+> +               goto out_reset_mode;
+
+...
+
+> +       /*
+> +        * Preemptively disable the PWM, since we only want to enable it =
+with
+> +        * the buffer
+
+Missing period.
+
+> +        */
+
+...
+
+> +static void ad4030_prepare_offload_msg(struct ad4030_state *st)
 > +{
-> +	/* Loop until a non-empty piece is found */
-> +	while (it->current_idx < it->nops) {
-> +		size_t start;
-> +		size_t end;
+> +       u8 data_width =3D st->chip->precision_bits;
+> +       u8 offload_bpw;
 > +
-> +		start = it->current_idx;
-> +		end = start;
+> +       if (st->lane_mode =3D=3D AD4030_LANE_MD_INTERLEAVED)
+
+> +               /*
+> +                * This means all channels on 1 lane.
+> +                */
+
+This is a one line comment. Why 3 LoCs?
+
+> +               offload_bpw =3D data_width * st->chip->num_voltage_inputs=
+;
+> +       else
+> +               offload_bpw  =3D data_width;
 > +
-> +		while (end < it->nops && it->ops[end].atom != DW_OP_piece)
-> +			end++;
-> +
-> +		/* The number of ops in this segment, including DW_OP_piece */
-> +		it->num_piece_ops = min(end - start + 1, it->nops - start);
-> +		it->piece_ops = &it->ops[start];
-> +		it->piece_offset = it->next_offset;
-> +
-> +		it->current_idx = end;
-> +		if (it->current_idx < it->nops) {
-> +			const Dwarf_Op *piece_op = &it->ops[it->current_idx];
-> +			size_t piece_size = (size_t)piece_op->number;
-> +
-> +			it->next_offset += piece_size;
-> +			it->current_idx++;
-> +		}
-> +
-> +		if (end > start)
-> +			return true;
-> +	}
-> +
-> +	return false;
+> +       st->offload_xfer.speed_hz =3D AD4030_SPI_MAX_REG_XFER_SPEED;
+> +       st->offload_xfer.bits_per_word =3D offload_bpw;
+> +       st->offload_xfer.len =3D roundup_pow_of_two(BITS_TO_BYTES(offload=
+_bpw));
+> +       st->offload_xfer.offload_flags =3D SPI_OFFLOAD_XFER_RX_STREAM;
+> +       spi_message_init_with_transfers(&st->offload_msg, &st->offload_xf=
+er, 1);
 > +}
+
+...
+
+> +       /* Fall back to low speed usage when no SPI offload available. */
+
+is available
+
+And choose one style for one line comments and use it everywhere.
+
+...
+
+> +       if (ret =3D=3D -ENODEV) {
+> +               /*
+> +                * One hardware channel is split in two software channels=
+ when
+> +                * using common byte mode. Add one more channel for the t=
+imestamp.
+> +                */
+> +               indio_dev->num_channels =3D 2 * st->chip->num_voltage_inp=
+uts + 1;
+> +               indio_dev->channels =3D st->chip->channels;
+> +               indio_dev->available_scan_masks =3D st->chip->available_m=
+asks;
 > +
->  /* Only checks direct child DIEs in the given scope. */
->  static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
->  {
-> @@ -1470,48 +1554,65 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
->  		return DIE_FIND_CB_SIBLING;
->  
->  	while ((off = dwarf_getlocations(&attr, off, &base, &start, &end, &ops, &nops)) > 0) {
-> +		struct op_piece_iter piece_iter;
->  		/* Assuming the location list is sorted by address */
->  		if (end <= data->pc)
->  			continue;
->  		if (start > data->pc)
->  			break;
->  
-> -		/* Local variables accessed using frame base register */
-> -		if (data->is_fbreg && ops->atom == DW_OP_fbreg &&
-> -		    check_allowed_ops(ops, nops) &&
-> -		    match_var_offset(die_mem, data, data->offset, ops->number,
-> -				     is_breg_access_indirect(ops, nops)))
-> -			return DIE_FIND_CB_END;
-> +		op_piece_iter_init(&piece_iter, ops, nops);
-> +		while (op_piece_iter_next(&piece_iter)) {
-> +			Dwarf_Op *pops = piece_iter.piece_ops;
-> +			size_t pnops = piece_iter.num_piece_ops;
-> +			size_t piece_offset = piece_iter.piece_offset;
-> +			int piece_size = -1;
-> +			bool is_pointer = true;
-> +			int access_offset = data->offset;
->  
-> -		/* Only match with a simple case */
-> -		if (data->reg < DWARF_OP_DIRECT_REGS) {
-> -			/* pointer variables saved in a register 0 to 31 */
-> -			if (ops->atom == (DW_OP_reg0 + data->reg) &&
-> -			    check_allowed_ops(ops, nops) &&
-> -			    match_var_offset(die_mem, data, data->offset, 0,
-> -					     /*is_pointer=*/true))
-> -				return DIE_FIND_CB_END;
-> +			if (pops[pnops - 1].atom == DW_OP_piece)
-> +				piece_size = (int)pops[pnops - 1].number;
->  
-> -			/* variables accessed by a register + offset */
-> -			if (ops->atom == (DW_OP_breg0 + data->reg) &&
-> -			    check_allowed_ops(ops, nops) &&
-> -			    match_var_offset(die_mem, data, data->offset, ops->number,
-> -					     is_breg_access_indirect(ops, nops)))
-> -				return DIE_FIND_CB_END;
-> -		} else {
-> -			/* pointer variables saved in a register 32 or above */
-> -			if (ops->atom == DW_OP_regx && ops->number == data->reg &&
-> -			    check_allowed_ops(ops, nops) &&
-> -			    match_var_offset(die_mem, data, data->offset, 0,
-> -					     /*is_pointer=*/true))
-> -				return DIE_FIND_CB_END;
-> +			if (!check_allowed_ops(pops, pnops))
-> +				continue;
->  
-> -			/* variables accessed by a register + offset */
-> -			if (ops->atom == DW_OP_bregx && data->reg == ops->number &&
-> -			    check_allowed_ops(ops, nops) &&
-> -			    match_var_offset(die_mem, data, data->offset, ops->number2,
-> -					     is_breg_access_indirect(ops, nops)))
-> +			if ((data->is_fbreg && pops->atom == DW_OP_fbreg) ||
-> +			    (pops->atom == DW_OP_breg0 + data->reg) ||
-> +			    (pops->atom == DW_OP_bregx && data->reg == pops->number))
-> +				is_pointer = is_breg_access_indirect(pops, pnops);
+> +               ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +                                                     iio_pollfunc_store_=
+time,
+> +                                                     ad4030_trigger_hand=
+ler,
+> +                                                     &ad4030_buffer_setu=
+p_ops);
+> +               if (ret)
+> +                       return dev_err_probe(dev, ret,
+> +                                            "Failed to setup triggered b=
+uffer\n");
+
 > +
-> +			/* Local variables accessed using frame base register */
-> +			if (data->is_fbreg && pops->atom == DW_OP_fbreg &&
-> +				match_var_offset(die_mem, data, access_offset,
-> +					pops->number, piece_offset, piece_size, is_pointer))
->  				return DIE_FIND_CB_END;
+
+Stray blank line.
+
+> +       } else {
+> +               /*
+> +                * One hardware channel is split in two software channels=
+ when
+> +                * using common byte mode. Offloaded SPI transfers can't =
+support
+> +                * software timestamp so no additional timestamp channel =
+is added.
+> +                */
+> +               indio_dev->num_channels =3D 2 * st->chip->num_voltage_inp=
+uts;
+> +               indio_dev->channels =3D st->chip->offload_channels;
+> +               indio_dev->available_scan_masks =3D st->chip->available_m=
+asks;
+> +               ret =3D ad4030_spi_offload_setup(indio_dev, st);
+> +               if (ret)
+> +                       return dev_err_probe(dev, ret,
+> +                                            "Failed to setup SPI offload=
+\n");
 > +
-> +			/* Only match with a simple case */
-> +			if (data->reg < DWARF_OP_DIRECT_REGS) {
-> +				/* pointer variables saved in a register 0 to 31 */
-> +				if (pops->atom == (DW_OP_reg0 + data->reg) &&
-> +					match_var_offset(die_mem, data, access_offset,
-> +					    0, piece_offset, piece_size, is_pointer))
-> +					return DIE_FIND_CB_END;
+> +               ret =3D ad4030_pwm_get(st);
+> +               if (ret)
+> +                       return dev_err_probe(&spi->dev, ret,
+> +                                            "Failed to get PWM: %d\n", r=
+et);
 > +
-> +				/* variables accessed by a register + offset */
-> +				if (pops->atom == (DW_OP_breg0 + data->reg) &&
-> +					match_var_offset(die_mem, data, access_offset,
-> +					    pops->number, piece_offset, piece_size, is_pointer))
-> +					return DIE_FIND_CB_END;
-> +			} else {
-> +				/* pointer variables saved in a register 32 or above */
-> +				if (pops->atom == DW_OP_regx && pops->number == data->reg &&
-> +					match_var_offset(die_mem, data, access_offset,
-> +					    0, piece_offset, piece_size, is_pointer))
-> +					return DIE_FIND_CB_END;
-> +
-> +				/* variables accessed by a register + offset */
-> +				if (pops->atom == DW_OP_bregx && data->reg == pops->number &&
-> +					match_var_offset(die_mem, data, access_offset,
-> +					    pops->number2, piece_offset, piece_size, is_pointer))
-> +					return DIE_FIND_CB_END;
-> +			}
->  		}
->  	}
->  	return DIE_FIND_CB_SIBLING;
-> @@ -1572,7 +1673,7 @@ static int __die_find_var_addr_cb(Dwarf_Die *die_mem, void *arg)
->  			continue;
->  
->  		if (check_allowed_ops(ops, nops) &&
-> -		    match_var_offset(die_mem, data, data->addr, ops->number,
-> +		    match_var_offset(die_mem, data, data->addr, ops->number, 0, -1,
->  				     /*is_pointer=*/false))
->  			return DIE_FIND_CB_END;
->  	}
-> @@ -1613,6 +1714,7 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
->  	Dwarf_Op *ops;
->  	size_t nops;
->  	struct die_var_type *vt;
-> +	struct op_piece_iter piece_iter;
->  
->  	if (tag != DW_TAG_variable && tag != DW_TAG_formal_parameter)
->  		return DIE_FIND_CB_SIBLING;
-> @@ -1634,25 +1736,53 @@ static int __die_collect_vars_cb(Dwarf_Die *die_mem, void *arg)
->  	if (__die_get_real_type(die_mem, &type_die) == NULL)
->  		return DIE_FIND_CB_SIBLING;
->  
-> -	vt = malloc(sizeof(*vt));
-> -	if (vt == NULL)
-> -		return DIE_FIND_CB_END;
-> +	op_piece_iter_init(&piece_iter, ops, nops);
-> +	while (op_piece_iter_next(&piece_iter)) {
-> +		Dwarf_Op *pops = piece_iter.ops;
-> +		size_t pnops = piece_iter.num_piece_ops;
-> +		size_t piece_offset = piece_iter.piece_offset;
-> +		size_t offset = offset_from_dwarf_op(pops);
-> +		s64 piece_size = -1;
-> +		/* Usually a register holds the value of the variable */
-> +		bool is_reg_var_addr = false;
-> +
-> +		if (((pops->atom >= DW_OP_breg0 && pops->atom <= DW_OP_breg31) ||
-> +		      pops->atom == DW_OP_bregx || pops->atom == DW_OP_fbreg) &&
-> +		      !is_breg_access_indirect(pops, pnops))
-> +			/* The register holds the address of the variable. */
-> +			is_reg_var_addr = true;
-> +
-> +		if (pops[pnops - 1].atom == DW_OP_piece)
-> +			piece_size = (s64)pops[pnops - 1].number;
-> +
-> +		if (piece_size > 0) {
-> +			if (!is_reg_var_addr) {
-> +				size_t size;
-> +
-> +				if (die_get_member_type(&type_die, piece_offset, &type_die) == NULL)
-> +					continue;
->  
-> -	/* Usually a register holds the value of a variable */
-> -	vt->is_reg_var_addr = false;
-> +				if (dwarf_aggregate_size(&type_die, &size) < 0)
-> +					continue;
->  
-> -	if (((ops->atom >= DW_OP_breg0 && ops->atom <= DW_OP_breg31) ||
-> -	      ops->atom == DW_OP_bregx || ops->atom == DW_OP_fbreg) &&
-> -	      !is_breg_access_indirect(ops, nops))
-> -		/* The register contains an address of the variable. */
-> -		vt->is_reg_var_addr = true;
-> +				if (size != (u64)piece_size)
-> +					continue;
-> +			} else
-> +				offset += piece_offset;
-> +		}
->  
-> -	vt->die_off = dwarf_dieoffset(&type_die);
-> -	vt->addr = start;
-> -	vt->reg = reg_from_dwarf_op(ops);
-> -	vt->offset = offset_from_dwarf_op(ops);
-> -	vt->next = *var_types;
-> -	*var_types = vt;
-> +		vt = malloc(sizeof(*vt));
-> +		if (vt == NULL)
-> +			return DIE_FIND_CB_END;
-> +
-> +		vt->is_reg_var_addr = is_reg_var_addr;
-> +		vt->die_off = dwarf_dieoffset(&type_die);
-> +		vt->addr = start;
-> +		vt->reg = reg_from_dwarf_op(pops);
-> +		vt->offset = offset;
-> +		vt->next = *var_types;
-> +		*var_types = vt;
-> +	}
->  
->  	return DIE_FIND_CB_SIBLING;
->  }
-> -- 
-> 2.51.0.261.g7ce5a0a67e-goog
-> 
+> +               ret =3D __ad4030_set_sampling_freq(st, st->chip->max_samp=
+le_rate_hz);
+> +               ad4030_prepare_offload_msg(st);
+> +       }
+
+...
+
+> -       }
+> +       },
+
+You see, this is the point I always make about leaving trailing commas
+in the non-terminator entries.
+(It's just a good example I can't help comment on this just for others
+to point out again on this)
+
+...
+
+> +       .max_sample_rate_hz =3D 2 * MEGA,
+
+HZ_PER_MHZ
+
+
+...
+
+> +       .max_sample_rate_hz =3D 2 * MEGA,
+
+Ditto.
+
+...
+
+> +       .max_sample_rate_hz =3D 2 * MEGA,
+
+Ditto.
+
+...
+
+> +       .max_sample_rate_hz =3D 500 * KILO,
+
+HZ_PER_KHZ
+
+...
+
+> +       .max_sample_rate_hz =3D 500 * KILO,
+
+Ditto.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
