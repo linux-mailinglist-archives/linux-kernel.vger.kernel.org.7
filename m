@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-793181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED035B3CFE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE15BB3CFE3
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C427189EDC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE56416CC1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BED201266;
-	Sat, 30 Aug 2025 22:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E444D241686;
+	Sat, 30 Aug 2025 22:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i3GnX8W6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PewjnPN+"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117B11863E
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 22:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C005A7262B;
+	Sat, 30 Aug 2025 22:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756592961; cv=none; b=WsAnuHPbgMJNJHdkGQWbELgZzjvwFi3dAzVT7mWrmhiYUMpYH1zvw+96P31v0kpkDL/OZWSxBVcxEtApQBClNNbHcHFGqHkUw+41FkqH/eZpVzAw+f4AcN6Nt49U1JmoDto9hglRYfYPP1aKakdFe7y1QuGaK4rM7e+canc4eUU=
+	t=1756593030; cv=none; b=rq9B/vasUbqfd9nOmv9n8KW93mhbxVdVybs5+2RIk6IRLJ0BrFvvEx0S+SKQ/wjG+kcOjAgQXA44GSNqZ2MVMhH2t1jZBrVSj0eWTmB7e07bnUJaS+G40TarsUCUeFxN1Y1elw/teFjgMZEN6PstggVAuFl0OBnEq7/s5u+n/5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756592961; c=relaxed/simple;
-	bh=yIyAp386I3Prc3FkKEid6JF6HPgnBsg602KONjAF4go=;
+	s=arc-20240116; t=1756593030; c=relaxed/simple;
+	bh=3yckfn5M4o5Q9YV735257akvinMkCAz5WrRXOWh65O0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLenR6gOMONUYAfdDXBzFSJlEm+8njJWSPCCBeyewZQZG3BF9cuggKe01HwXLPjv/AuZTq3VABOgQIkZYlehB6Q/QbEhhADojKtcaOeRuXpFDfHJwb7PqAlOYiSRTV6jmusPMKljTO+nMWGYOV80rf365bE84+/In9vcv4EHXnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i3GnX8W6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57UMRaP1006138
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 22:29:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=GNi6qlMhUO/dlDLKPCpe1Eoh
-	MUP/BhLmz8wF/QSm9/A=; b=i3GnX8W6MzF7/jJqLQfusJdMEK+lmRXnmxPfHHY1
-	JPvU271NEVX0/v6y7ODjamnq+H35oviI2R0naUJNBJpMjQ372GejEdRgYAaVwriD
-	UuP6g6EZHnfjp6jRkib7fwem4DSzBXnuwGFWs8Bx/dKken7qgT+Q47BDBEnHD/fW
-	AOjVS77HhoxWByxt9zCkSoPxghyGfIfk80XXJk/y483CHjFMaGP4kjQ/AcYT6ciI
-	i0qD3LFPO0B/sa8mnRCx5iomQnAJyXkhrVP00urFpwzbtyFGPxJgQ03tWBSnsQAX
-	T1fqATL+5HD27JlCxMLfLyKmM7EZNQWozZhMbvA9sqGkOQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp1e9g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 22:29:18 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70a9f55eb56so59987746d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 15:29:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756592958; x=1757197758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	 Content-Type:Content-Disposition:In-Reply-To; b=NC5zKEIHnTRfcau7MWTEDySJiVDoIKDwQI9RCqa2NjjbWquJmFDIqUrcrN7A6bUpwjNm2uuxA3lrO9SF1NYYQrsC/wUoXYlLuv21Nd0Uiqm3/IRB6slKDL+ape2iLbVcXHaNwCx/bflMXD+HdHwQzqzKL3u6VA145co79L4MfoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PewjnPN+; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61d28950476so1447022a12.0;
+        Sat, 30 Aug 2025 15:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756593027; x=1757197827; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GNi6qlMhUO/dlDLKPCpe1EohMUP/BhLmz8wF/QSm9/A=;
-        b=PUkit3uipqhkLUCHCoB9KIj9yyGH491XAtrtJzL67lPHoDqHaE5JPl3IvlW446a9nb
-         mFtXPzFlfJxJfROGjNfkXoWKdNOs0FGH8+iDZuVTwtVMDqjp0ZGh8EAviperOtNYmcQL
-         cO3gEqHFkksN23hEwTmtHxaGpHw5JyCX6nPn3PNerp28wyrek+TPHZBK9hRzu6lE/RlG
-         oHYHlA8ABkvaRW+mCOsrbpOX6ESgUjhnxBIiiLcTzZxtdY/T3Ej07ewOQWn4mCiq1z3K
-         HqMLsq/CN+JAOfpkSKz6JoCceqbVpql9PVZ7cdlPG1YcRvutvmtwKcxPpMDrZQw9NPkv
-         ASzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0aNsoSuZk1q43dj9JSSkJDrEb607pN4A3MxR7+1a4x+P082SzlcxOWm28aVCrjL7tKsiidzG7u6zHerI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8z5i3lh5CfPXkHYrTv/YtnpVBHhoIyWTm55uLoK466K5cykRA
-	O48yu4ptBIs+ROSoU+mSryJa64jt7yoPfEhlj5tw6jMpVavBeEEtbheXgDIA5IrXCPL9+xKMPZo
-	evzBhhC6ZbiewRDw8NCXKm8eSIwKE3Ao5CYaxalGhGdKENJRsbsGbHB7xoJB1CRQ5SUs=
-X-Gm-Gg: ASbGncsnalH2gHxcB88Na6g2GFdtbyZYfYhkyvt0T+MprPbgf5F0P3zAAhVXXdYpOY4
-	U1szGvirHU3uMD6/wLhdUMPXOX0l3Q1IvkCaIaxg0WJ8Bh11EUbLN+36F+2uhJ6XgBLaqa344ff
-	uOIPEf8qdOLD+prQeeIFoN1bdCLR/nGIWobUvm9i84tv+AyiGBKvs9feEqJRlCt1aPn6YHpey9F
-	1mLg+PyNmhHcQxNnkBr2LiplnIrRZ8WBC+RsaDR94Ywc/Nd8/Z3JmadjLC7zGcqXW9bCCONbRo4
-	R4GG00vcKwFvOR1NkOFqcNtO6XtCSe6oCirnauQ1GC2a/ZvqBpVGgQpKdtJcffTJSseUHvcmef3
-	t72NtI6YU8zsW9X8cSNx1SRYexRlN79Y6BvAnr3xv5qNmpTBEgb1V
-X-Received: by 2002:a05:6214:21cb:b0:70d:c6b9:c256 with SMTP id 6a1803df08f44-70fac94115cmr30677616d6.58.1756592957748;
-        Sat, 30 Aug 2025 15:29:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaqdCzqqQwp+xBjOwKvWSPX4p3qiZ0ZzV9L7+TYukjcGa33kntlWRwDlkYGow/owafc/jjnw==
-X-Received: by 2002:a05:6214:21cb:b0:70d:c6b9:c256 with SMTP id 6a1803df08f44-70fac94115cmr30677306d6.58.1756592956994;
-        Sat, 30 Aug 2025 15:29:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336d0e3f3absm4929391fa.37.2025.08.30.15.29.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 15:29:15 -0700 (PDT)
-Date: Sun, 31 Aug 2025 01:29:13 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-Message-ID: <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
-References: <20250830-drm-limit-infoframes-v3-0-32fcbec4634e@oss.qualcomm.com>
- <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
+        bh=y8MnctxU6ATOf/IhsFdPXoMq8IG2wmGfWPzQafTwHWU=;
+        b=PewjnPN+snk+7MMVQQ5qHksKSxaykn11QkgSEO29ApjKjRLCu39iW7oSMfO80fc0vS
+         GqGMZXPCMtGXWJt2Lxgx9YDHoGHGnjrSYDF2xQvfMI+DIzkfENJx+f9EPODAQ8licoWO
+         4P7RLrXbCv/UC4rJEU0j6IyfdVXSL8spyVzjGE67+zfsVPC9Zsar7RT5jSiLaxGu5EHC
+         DubxOqe06RYi9n+/Gtcthf2mGf44qTmq0fMR7e1HACsNjtO3k09VYNwN18eP5KgrsOdM
+         kehEGwKTAdfKk1nlZOAhVeFrpcIpA6p9VHkB9Bn5M9dzcnCThkts7dgYw7URWofY0781
+         xZeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756593027; x=1757197827;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=y8MnctxU6ATOf/IhsFdPXoMq8IG2wmGfWPzQafTwHWU=;
+        b=SaUsBBOGlRABoAF1reRsJA9t0WCCfUuWxeEymp0rWwIr572Tijhb4rtlbbaei/soeS
+         6XnQ5TNOAIWy5c0dT5qyhgJ1hd9ZmKNnBwGXHi/zRFaZy9ujw5eu99oPX+qOmdj4J6g7
+         wokUF8fJhEIeKo7SXVMPQTcjjZhGYcnArWbV1r5vsOhSph4yfBkQBn71X0Vm7KfHFpxc
+         3hAP+mmbfGZoBJcqsmxv6Xo/w2MXsJl+KuJf5y6Fo7ZHzbX7ws6JJ1w1N/dQ49RJtQca
+         mlFjRNyYyueWSE1mxXwg+1+FtyxGhq6Lo3lC38YSxgjMYIf6pir5nxaIkA4qEV06pJk1
+         SBLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxCzJpuoWV70F1xax0uSTV+BUtOQATR+xHyOtyHh5nOajBREHMmOlDQ0cgiyJWFmZFKy+pz6xdJOoegmOmm5So@vger.kernel.org, AJvYcCWNfLO9zkLHXpCApTPLzuJiu3eVsfXXa8X5dizruSholM/DWg/wdeVR4KRrrGK+4oSbWgm8SirRK6MxAHk=@vger.kernel.org, AJvYcCX/5JsCkYVWGHGgvdA/K7E52AEMLvn4lTn+I0TWzYBus0G5QonMMZV4G945fGVTXBnQBR3yBCwuamOpq5/g9UKmqTvo/1DP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVU5P1p2N7/yqDaG0sTyKBMj+ogtNqeXAoks481Ll5WRpq8icz
+	K+bDqweZGEYL9Fq8GYHCjocmZK5eAMII1wnmD36lQfA5knXSXKW1GBfXhXuIEA==
+X-Gm-Gg: ASbGnctkdakeMuo6jBYIV2zeJhRQALmn0zHVgXScv/BZPV2MDextxwkjWNexeoPUboo
+	dl8Tj/vYVeRYzi0f4PG06JlmnHC2ATYIKXOhd/m3uUNHXFxAZ1UHk7EDamzQ6xAmmqUONMXm0hy
+	7dX1CfcMhLVjTIIwQBjY1YYM/RbxabOx6JYkPg3YwY/oDbhLTo1nJ9dTj3Tdp+r1jaaQJO8EM5O
+	zpPzY3eJTljptZlH2+9W7iTlXJpOMFRHy/1sy/VcGDYVxS1fN23mF5REeQZY3Pymjkhmcc+rhTZ
+	QuIZ856wCx5vw7ngFkLMytP4SvZgjXR/90JSODfZzItgDAw+LzEBTt9jw0o5dfY4W1uj3u7Ywl8
+	NtS5+fTtX78f+ksydSDoeHxPjmEiGip0qyEhF
+X-Google-Smtp-Source: AGHT+IHgIevwvPJgQjugv5dspNkhBDjgRpzWgftt1Ak0uBVHjapJ8gJPgLVgUmwdqoDwaFYpCFFxpQ==
+X-Received: by 2002:a05:6402:4307:b0:615:77cf:782e with SMTP id 4fb4d7f45d1cf-61d26d80521mr2521515a12.25.1756593026831;
+        Sat, 30 Aug 2025 15:30:26 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc214bacsm4314351a12.16.2025.08.30.15.30.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 30 Aug 2025 15:30:25 -0700 (PDT)
+Date: Sat, 30 Aug 2025 22:30:24 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Cc: akpm@linux-foundation.org, richard.weiyang@gmail.com,
+	Liam.Howlett@oracle.com, davem@davemloft.net, david@redhat.com,
+	edumazet@google.com, gnoack@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, mic@digikod.net, ming.lei@redhat.com,
+	pabeni@redhat.com, rppt@kernel.org, shuah@kernel.org,
+	skhan@linuxfoundation.org, surenb@google.com, vbabka@suse.cz
+Subject: Re: [PATCH v2 1/2] selftests: Centralize include path for
+ kselftest.h and kselftest_harness.h
+Message-ID: <20250830223024.sgkgnupykrif2v6f@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
+ <20250830163949.20952-1-reddybalavignesh9979@gmail.com>
+ <20250830163949.20952-2-reddybalavignesh9979@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,69 +99,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
-X-Proofpoint-GUID: hdQ2OjrnBcQD0eo0y9g9G_s9zPkCOkm1
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b37b3e cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=eLVs-IFDZWC_gK9YM6cA:9 a=CjuIK1q_8ugA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-ORIG-GUID: hdQ2OjrnBcQD0eo0y9g9G_s9zPkCOkm1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX3jaFFYo8qKSA
- 4n1LbeIh+XOVAwS1VCazgaKW9deu61gJulCbb6NC0HfJ/eKkdfzktOGsseV96lSKFAS9momp6Oh
- /qNjZAsXDacJaXY4Jtg2ZgRgZdYL+NbQgOBDW+eggyf7mv/Km7+MWGxU2UQKokW68bEdUoWkYHX
- TonKW9cMbfMkVeHM2h9qiY5Awfu/UUQe9h/oU7giCsQegGlp/wgbu2QLGkLH1NsI4TEqnapJJCw
- ZJSfUi/W5Y6HudU+ABcdCv2lWJ1wqQi1cIhwKB3HnqzZV0viR/aPNzOkvO+PVTnieISkxWaGtCD
- 7Az7hYWvqKG+g0IYbtY8ZVcyh/A1l+PbjXV8guS8XY29r2qZko/x+dSB8W3mE1D/BZsrsgoKVtK
- 593gU6f6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-30_09,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+In-Reply-To: <20250830163949.20952-2-reddybalavignesh9979@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wrote:
-> Hi Dmitry,
-> 
-> On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > It's not uncommon for the particular device to support only a subset of
-> > HDMI InfoFrames. It's not a big problem for the kernel, since we adopted
-> > a model of ignoring the unsupported Infoframes, but it's a bigger
-> > problem for the userspace: we end up having files in debugfs which do
-> > mot match what is being sent on the wire.
-> >
-> > Sort that out, making sure that all interfaces are consistent.
-> 
-> Thanks for the series, it's a really good cleanup.
-> 
-> I know that dw-hdmi-qp can support _any_ infoframe, by manually
-> packing it into the two GHDMI banks. So the supported set there is
-> 'all of the currently well-known ones, plus any two others, but only
-> two and not more'. I wonder if that has any effect on the interface
-> you were thinking about for userspace?
+On Sat, Aug 30, 2025 at 10:09:48PM +0530, Bala-Vignesh-Reddy wrote:
+>Add compile flag in lib.mk, to include the selftest/
+>directory while building.
+>
+>Suggested-by: Wei Yang <richard.weiyang@gmail.com>
+>
+>Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 
-I was mostly concerned with the existing debugfs interface (as it is
-also used e.g. for edid-decode, etc).
-
-It seems "everything + 2 spare" is more or less common (ADV7511, MSM
-HDMI also have those. I don't have at hand the proper datasheet for
-LT9611 (non-UXC one), but I think its InfoFrames are also more or less
-generic).  Maybe we should change debugfs integration to register the
-file when the frame is being enabled and removing it when it gets unset.
-
-Then in the long run we can add 'slots' and allocate some of the frames
-to the slots. E.g. ADV7511 would get 'software AVI', 'software SPD',
-'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which can probably be
-salvaged as another generic one)). MSM HDMI would get 'software AVI',
-'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI which I don't
-want to use). Then the framework might be able to prioritize whether to
-use generic slots for important data (as DRM HDR, HDMI) or less important
-(SPD).
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
 -- 
-With best wishes
-Dmitry
+Wei Yang
+Help you, Help me
 
