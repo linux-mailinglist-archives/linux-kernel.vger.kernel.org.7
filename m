@@ -1,98 +1,144 @@
-Return-Path: <linux-kernel+bounces-793071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5562BB3CDC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:05:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC59DB3CDDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB011BA235B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3C456275C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0254B275B12;
-	Sat, 30 Aug 2025 17:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF782D46B1;
+	Sat, 30 Aug 2025 17:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJQ3PhiL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQ2FDKUq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DF7DDC5;
-	Sat, 30 Aug 2025 17:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EEC2D063A;
+	Sat, 30 Aug 2025 17:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756573544; cv=none; b=AJHJlUNb6WCX+cq5Dz0W7F2wVCEd7tJSI+F2dF1OYXc1FYPygnRNGuMkZItUjRHDHLJBdNkuXLtSrUVCdEIYnSqdA/TjIuICV5V2FhckpcLwJuJsEiPWxcFnaPsb4/NnSba0q+nUq57wVpmtRQYqk3QsNwCITHqlEhdOgMv+HFs=
+	t=1756573760; cv=none; b=UNalbwBe16tgQDqpZgL+ssjApCYIv4EHQ4f0ugpTLnahsfBR0MIVY6XUd0LmhNTKgIXGAt3ghRXMams58cZ7U03GIcs3NIYOdIzb9GPpz3jEsVYdzeivj/ojZQu4f+Y01eprZCSFsIN1MDDUAw5kYOKr8eMI8eEgYSPJk0Sm0es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756573544; c=relaxed/simple;
-	bh=eTss+tejWEGg1mKQM7asssNSW2kckzN0fP1SuB3qmso=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oYvfqkUjGyPIcQvQkp+XXkgnomtm4TCiAzfpcaqhlPbzDInZY6tgsXmcOvSmZDLHsWewomi81VMpjtkzTVO6RbQjdYntSLTqIIK3DqxfMQLj5VjyBxeCY6xlIQtHROGy9Owa1tikplDJo62jmLaYbXsKK/m2swwktb1RkbGBYks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJQ3PhiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58547C4CEEB;
-	Sat, 30 Aug 2025 17:05:39 +0000 (UTC)
+	s=arc-20240116; t=1756573760; c=relaxed/simple;
+	bh=Ga5zxO8ZZi+LW2SUjQleCojdx++Hf4rCOMhtGWIYz9Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rC0Xhrkm44llwaZU+3aSzgHodeEX3ftSKqyYLLbMbay1+UlX9ZphFPe40DZzoVJCBGx23an8kkejIsOQAwu2YMLkexQl9O273+AvN57AV1Bs+aYbumZn7XYqPsAzFO6h8yub0AHvX1Mna4jIdxmqDUBbuvOyFTk7BPKoivG/ejk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQ2FDKUq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4497C4AF09;
+	Sat, 30 Aug 2025 17:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756573543;
-	bh=eTss+tejWEGg1mKQM7asssNSW2kckzN0fP1SuB3qmso=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jJQ3PhiLcPaSVCVTsb0Ib2Vr+Y8h5AfTUs+x6AEL49g9SVA7OUrDyNEjUzoWMuXFK
-	 pJnQA5j/WRLX2LbXMNzhBN99+Yiq+t+ITmn5d7BA5fDBLmEc8SMf6CHlJB+pWnk/vc
-	 pANhUN3d+Pu+cTIMBuhg9ZlfO/kTpRyIlJIBmfqp4Ck3zBmJVsa4dUhqghGZvdf8fw
-	 rLugktXKyIdpIySY5Fg8q92o6OowS/2f/x8vp3llwsZ1EVmF+cCHjFc6YU+gYBuxOF
-	 1+0YI1nk48X9yMG3zJhUjpWy8As6pU3hc0otiNrapkS1QUwMxKPa3OCymCrsma9ZWa
-	 IYHnTUY1U8VHg==
-Date: Sat, 30 Aug 2025 18:05:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, lanzano.alex@gmail.com,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] iio: ABI: document accel and roc event
- attributes
-Message-ID: <20250830180534.24a8ad56@jic23-huawei>
-In-Reply-To: <CAHp75Vf13aqDJj2j7MtfLTAT2MW-S3+M7wtEXsG1Wh7EKfxJSQ@mail.gmail.com>
-References: <20250830115858.21477-1-gustavograzs@gmail.com>
-	<20250830115858.21477-3-gustavograzs@gmail.com>
-	<CAHp75Vf13aqDJj2j7MtfLTAT2MW-S3+M7wtEXsG1Wh7EKfxJSQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756573759;
+	bh=Ga5zxO8ZZi+LW2SUjQleCojdx++Hf4rCOMhtGWIYz9Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bQ2FDKUqku3BPMUozZpMqtcXYNpl952VOteqh2Kz7kyy5GaCFNg6Anu3FSIx6GLge
+	 e6jMuRn0bQ9pcJnNkXi18aV+xpp/w0A+0tBPPCJao2mP1M9w2Gjyg/UoAECXoT+tuy
+	 UAnfu7PHDQ3y85TXVjdTHOxw1SfEA0Iih5p9R3sYbAkl3PDBM7ppmqA5ka3AuOap64
+	 kPKEuzoW2XRfhYgmQPRpN1ZyAX56gPs6N0sJDNXNk23I9o3w13JUglKufd7/PQhC2a
+	 ioj0IR11U99jqDCnA3O1tBVYPszz0kHXA3r3nnCxrVs5PAffxn5a421VzhUTx1odVX
+	 /WXp5e6KJslSw==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 0C00C5FCC4; Sun, 31 Aug 2025 01:09:17 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] arm64: allwinner: a523: Enable MCU PRCM and NPU
+Date: Sun, 31 Aug 2025 01:08:53 +0800
+Message-Id: <20250830170901.1996227-1-wens@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, 30 Aug 2025 15:49:50 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+From: Chen-Yu Tsai <wens@csie.org>
 
-> On Sat, Aug 30, 2025 at 2:58=E2=80=AFPM Gustavo Silva <gustavograzs@gmail=
-.com> wrote:
-> >
-> > Add accelerometer and rate of change event-related sysfs attributes
-> > exposed by the bmi270 driver. =20
->=20
-> Seems to me like the absent attributes that are already in the kernel,
-> should be added in the separate patch.
-Agreed that would be ideal.
->=20
-> ...
->=20
-> > +What:          /sys/.../iio:deviceX/events/in_accel_x&y&z_roc_rising_e=
-n =20
->=20
-> Out of curiosity, is it for real? I mean & (ampersand) in the sysfs
-> attribute name? This is quite inconvenient for use in shells.
+Hi folks,
 
-Yup.
+This series adds support for the MCU PRCM and the NPU.
 
-Easy enough to escape...
+The MCU PRCM is a Power, Reset & Clock Management block that has some
+clock and reset controls for the MCU, DSP and some peripherals that the
+MCU could use.
 
-It's really wordy to express boolean relationships without using symbols.
-This has been in the ABI all the way back to the beginning I think.
+The NPU is a Vivante IP block. It is clocked from the NPU PLL from the
+main clock unit, but the bus clock and reset controls lie in the MCU
+PRCM.
 
-Jonathan
+Patch 1 adds the missing NPU module clock to the main clock control
+unit's binding.
 
->=20
+Patch 2 adds the binding for the MCU PRCM clock control unit
+
+Patch 3 fixes clock rate readback for the new dual-divider type added
+with the A523 family.
+
+Patch 4 adds the missing NPU module clock.
+
+Patch 5 adds support for power-of-two dividers to the sunxi-ng clk
+library.
+
+Patch 6 adds a new driver for the A523 MCU PRCM CCU.
+
+Patch 7 adds a device node for the MCU PRCM CCU.
+
+Patch 8 adds a device node for the NPU.
+
+The NPU was only lightly tested: the driver correctly probes and detects
+a model GC9000, revision 9003.
+
+Please have a look. All patches will be merged through the sunxi tree.
+
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (8):
+  dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
+  dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU CCU clock controller
+  clk: sunxi-ng: mp: Fix dual-divider clock rate readback
+  clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
+  clk: sunxi-ng: div: support power-of-two dividers
+  clk: sunxi-ng: add support for the A523/T527 MCU CCU
+  arm64: dts: allwinner: a523: Add MCU PRCM CCU node
+  arm64: dts: allwinner: a523: Add NPU device node
+
+ .../clock/allwinner,sun55i-a523-ccu.yaml      |  35 +-
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  37 ++
+ drivers/clk/sunxi-ng/Kconfig                  |   5 +
+ drivers/clk/sunxi-ng/Makefile                 |   2 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c    | 447 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  21 +-
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |  14 -
+ drivers/clk/sunxi-ng/ccu_div.h                |  18 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |   2 +-
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |   1 +
+ .../dt-bindings/clock/sun55i-a523-mcu-ccu.h   |  54 +++
+ .../dt-bindings/reset/sun55i-a523-mcu-ccu.h   |  30 ++
+ 12 files changed, 646 insertions(+), 20 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c
+ delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-mcu-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-mcu-ccu.h
+
+-- 
+2.39.5
 
 
