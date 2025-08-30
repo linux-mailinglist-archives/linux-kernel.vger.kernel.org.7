@@ -1,145 +1,90 @@
-Return-Path: <linux-kernel+bounces-792818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE557B3C95A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:43:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B106B3C95C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BCFA257DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B1016994A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C84E24729C;
-	Sat, 30 Aug 2025 08:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB2123ABA9;
+	Sat, 30 Aug 2025 08:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgMAdgTZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="o5fgXgsC"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C61C2FB;
-	Sat, 30 Aug 2025 08:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094A41B425C;
+	Sat, 30 Aug 2025 08:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756543396; cv=none; b=gzKcpQzCM6A/AmENuctVk+NfQ9lQ5QMGb5Df0PUK9Qx2z0bWvn8qZSI+k1qMox7sK/sk72gRAE8E4jT8S81YaxhWFJHFBrQEhH8nSCC/b6o83xEY3DczqHxSjZPeJpk41VkzTuze3PF9c4yoG9y6kEPuT2d7kyQkLaZNG5Dz8HA=
+	t=1756543560; cv=none; b=jz6h2BTelfBeI8hLUpNOc8zBUKsVOAb09RWKNe9QM52AIEr+VQx2+U8j7DW++8Fm9oTRGzSANzT9/YP4R/pMAMUmnwa+pMb7DPtkRDzTIWvllJQezWvgkjTwVMiEkdFnl0J0pT4GK+Uh8DEyY2vK1gvQ3gVQvAXnlByejGt04OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756543396; c=relaxed/simple;
-	bh=GozjILnmm+/EkIR1cSDHnM9w+CI6W7hegev/r7+xa8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QwirMi75bXa8X2qLH6BWJXNo3AxAcdLF/wQ9h6VKzXm9Q1JVStbsxGjnX41Nogx5S54DSwwYC/zEh2Dv9A4X/1iiAph8XZTWrYDDxk2jXvDU5237R63kNfL7IIqYgMyaDg+VmKJkQPgJjnnFPIb4sxixaD8ykkUk6jhGQ8EZnsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgMAdgTZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0358CC4CEEB;
-	Sat, 30 Aug 2025 08:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756543395;
-	bh=GozjILnmm+/EkIR1cSDHnM9w+CI6W7hegev/r7+xa8k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QgMAdgTZtPwKWXjhNAyCJMFllYfkBmtwVkF77L4J77rvNPxCM4tHFI9wy1vpTPzJq
-	 KDPAX7ap+/D+zZ5YwdWE3Frd91pug6c9RrPHaU20YB7rxIbFz392xAyprGI581yvVY
-	 D7/X+8WUq1jeJPugrduTgVZ5Z6/dJxy9DMlU6UYM+/MiCnszmjMStUG3N/hLijGFmB
-	 /9qBmvVgsUdXm1RMNILvbUFq3bLBr181//pPZAHCgab7aShY916b+Ws9YNrEtd4jYT
-	 mSGUrIE2RaIOcZfepK4gXi1lrCGGxY77GXWGK52QhrX6B19XA0qbPgkzXiDiRnZKaF
-	 no85w8JDIipJQ==
-Message-ID: <ba227580-add8-4ea8-a973-c39083301e67@kernel.org>
-Date: Sat, 30 Aug 2025 10:43:09 +0200
+	s=arc-20240116; t=1756543560; c=relaxed/simple;
+	bh=N2cR7uUNq1iqC7cFL5GxSvRogB54uoyLUwIVNiXPrns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDNDf9nKPaFCEBvDQWAGokZCb5uZJHoS5tbOmYMcZN8C2iMOepAO0WCr+4Pqb5wr+0fesAFLo1PlD2SDc6kU+ZW/zwooYDEZuNnGjsUJVmAFUk7U9kV3dAkfEr051dMATRogFKU2OcAPXd1i5GCY/eiB0z/PyhUVpNz3C/Nac0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=o5fgXgsC; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=G2fGTB5Or3KKVaA/Jp6W5mmb2En4vRpC16mR271J0ac=; b=o5fgXgsCTbR6uWDwuxiD/pgFdc
+	e8Udj+9akP0cd40XIr9SdbNi+4zKakD2IVzOmxxc3OkrcUVd4qvLFZWkqSf8gLx/TJBV5SaMdFI5b
+	kW7K/DyhF2RKjsawha+5alml4cLgmgwczx0iaVnCU5wF6M0Fknrfej8kRjcrgD36tUwqMuA+ZjbJm
+	z+omJASiKxrtVaGAEvzn3qv52UHwucJZKGAZbC0cQqaBpf5GgfNsUwCU9QplNA5isJSA2tguE5PJv
+	DVlwGER8hxIR6vsh5iUgwOk1rUq3rC4bRXHRWVG770dTPDKOONwaHZOMSTqdWrqrDx4yfGbPUBaK6
+	pUjz0cBg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1usGy4-001780-1G;
+	Sat, 30 Aug 2025 16:45:45 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 30 Aug 2025 16:45:44 +0800
+Date: Sat, 30 Aug 2025 16:45:44 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: smueller@chronox.de, davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] crypto: Mark intermediary memory as clean
+Message-ID: <aLK6OBB3c4nqrlG-@gondor.apana.org.au>
+References: <7740195.jRhZ6ZUK3Y@tauon>
+ <tencent_65C6578989EEED6EE78C8B67E586DE92EB06@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/5] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, James.Bottomley@hansenpartnership.com,
- martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-5-quic_rdwivedi@quicinc.com>
- <eeecc7a3-8ce3-4cfd-8d40-988736fc0c59@kernel.org>
- <34aqaxgkykyhenrjfj3vrarin2c3uebgfaya7rxi7d5p5skhom@ie4gitcw36mr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <34aqaxgkykyhenrjfj3vrarin2c3uebgfaya7rxi7d5p5skhom@ie4gitcw36mr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_65C6578989EEED6EE78C8B67E586DE92EB06@qq.com>
 
-On 29/08/2025 18:18, Manivannan Sadhasivam wrote:
-> On Thu, Aug 21, 2025 at 01:49:36PM GMT, Krzysztof Kozlowski wrote:
->> On 21/08/2025 13:24, Ram Kumar Dwivedi wrote:
->>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->>> on the Qualcomm SM8650 platform by updating the device tree node. This
->>> includes adding new register region for MCQ and specifying the MSI parent
->>> required for MCQ operation.
->>>
->>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 7 ++++++-
->>
->> I don't understand why you combine DTS patch into UFS patchset. This
->> creates impression of dependent work, which would be a trouble for merging.
->>
+On Mon, Aug 18, 2025 at 09:24:17PM +0800, Edward Adam Davis wrote:
+> This is not a leak! The stack memroy is hashed and fed into the
+> entropy pool. We can't recover the original kernel memory from it.
 > 
-> What trouble? Even if the DTS depends on the driver/bindings change, can't it
-> still go through a different tree for the same cycle? It happened previously as
+> Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+> V1 -> V2: mark it as unpoison
+> V2 -> V3: replace to sizeof, minimize the possibilities where inconsistencies can occur
+> 
+>  crypto/jitterentropy-kcapi.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-It all depends on sort of dependency.
-
-> well, unless the rule changed now.
-
-No, the point is that there is absolutely nothing relevant between the
-DTS and drivers here. Combining unrelated patches, completely different
-ones, targeting different subsystems into one patchset was always a
-mistake. This makes only life of maintainers more difficult, for no gain.
-
-
-Best regards,
-Krzysztof
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
