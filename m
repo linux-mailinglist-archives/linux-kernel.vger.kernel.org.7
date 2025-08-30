@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-792686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A235BB3C79A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1998BB3C79D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9871C278D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A201C81C5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8442749EA;
-	Sat, 30 Aug 2025 03:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTAFArBO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3839925B695;
+	Sat, 30 Aug 2025 03:30:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D125485A;
-	Sat, 30 Aug 2025 03:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8BD273D9F
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756524445; cv=none; b=fCq0JlzJYKjLcWK8KqVG50EzB6pi9ZH5cDr1qbJ24OxSR8c4wDUmkAxJ5E2VrxekcdCRsr+Aqj5SDIxxRi3ADy4YaJDf5UCOTnXokslZUohBuhJ/yZzCHy06X6MDb8oMrBog+DOngETuhNn3bP5ORZANORPErChBtQEjAn6r4F4=
+	t=1756524606; cv=none; b=M8kCdKP6w5/VuNsH2hb1QOixm0mNha3bF8QG6EU/kiqslJu0R4PAkk+me5YgJDOFNzPiwSI9e8SQSHMxRtozVbTL7FbImZbIZyxt3S9rKhqa6Qvk8NIAnJ7jnYvtwC6FyFvX0cq55oEnT1M3vKIYlI/FISWwgv8ofxscBRUpj/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756524445; c=relaxed/simple;
-	bh=EeM6wlnVh/LaVPIABlVqVwrJnTHj5btsYvFNRr+o3EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UU9pVUI4r17UfZFpik4flTsGDRuu3Q2uq1WSQXZYYcXrJFszvDKZDPvxsFP8lnrYYBblz1xE+yPoEPTCY3aBbbbnpCFaGlyef+xau/81VO72N4oLOvK9F01PKCwN16M0fNK1IdYXEgXiB8v3gAOeKFZ9+Y8zY7uMNDj+hsc1kIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTAFArBO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8987C4CEF0;
-	Sat, 30 Aug 2025 03:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756524444;
-	bh=EeM6wlnVh/LaVPIABlVqVwrJnTHj5btsYvFNRr+o3EA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dTAFArBON0yO4GRK52P9RF2QBrxzNfdltDdA5zELoqtsVCQ8qiSO6pDUlks2ZZjEK
-	 rzQyh3bjLI19GhDcj3+QqfT6AVed7T5PK/gdu9mq/PfFiUWq3Ji4tclqO5MdcUQqmE
-	 ySIMTi1OyZVye6vts5e9F+Izv2qdvGyLjeAQKECltzDmsMd536rlLLAE2mxnj8I1aN
-	 rYFzo6s9pJJHFJ8LQRCPsXESIvKeyFlVh0jgSu1MIsRS1vGNrMJpGP9sVTIxOTxVRl
-	 B1Au4a4tvUyAIb3QmIDTbmabxrDQvssLhfIsQWbIKIAEJFTyx/LX7Cxc+s6M8LpvM+
-	 O80tey/sz1fZQ==
-Date: Sat, 30 Aug 2025 08:57:14 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, vkoul@kernel.org, kishon@kernel.org, arnd@arndb.de, 
-	m.szyprowski@samsung.com, jh80.chung@samsung.com, pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 07/12] dt-bindings: PCI: Add support for Tesla FSD SoC
-Message-ID: <frnwfzh7j6x27evk6oo64cevpreq5s4tugewebcpropzmxpilf@trv2toljqptl>
-References: <20250811154638.95732-1-shradha.t@samsung.com>
- <CGME20250811154725epcas5p428fa3370a32bc2b664a4fd8260078097@epcas5p4.samsung.com>
- <20250811154638.95732-8-shradha.t@samsung.com>
+	s=arc-20240116; t=1756524606; c=relaxed/simple;
+	bh=Yir2kzmCQQoO8MMQx8m0Fstbb67N+W5wIGLWiwFaFWs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VUtNJWcWttrNRRc6LBe1P1Wi5NUyXF+gNfN+u6BnEZNWofIkwAmp79+BdgVSkIoJSoYpNx5+8P7LrMQpSaqb8mUGhVK9eZ6Wll0jYbQPb3DV4ZBDJHvdPX0f+DLGOLgv+bCOqvPyY4BfXcnNT3bJZxc1dEsHdx0e3I9Bei5VDFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f2cef166ebso28869615ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:30:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756524604; x=1757129404;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggdcS0LlmnLIMZtC/UTrI1EAbYEnUJ4JfdXO7ximJGg=;
+        b=UqJHY3FrEsjZE/S/4HPj1Vu3+vQPKaOsb66rEbpyh65L8iBPN5FUkwK91B6ach4L4u
+         Gch13w6XNYsAW1oSGTX2Nfjo0LJky5ntW19S4GfSrCfwqyvllamVHH1Ly+kp7ubRbW+t
+         CY/F/GhI0MXu3K91B5CoNtLYKxR218PCBYrEwfWUSdBheUk9yPfaDrZRIcvuvek0qGMd
+         8V3mxgOUILrJG5oBbrUJSX8C0KNkBRG2jSvy+squGI0c2s4ArV//AYNbAgAYn3cz4378
+         Y6YgbzVTgxgUBgsWrVsLa4ndAhvbMZKRodZN+3qYE4EMv8L7+HDQt66PHUdMlxwcuKmt
+         Zh0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWzeOB7qBIKRmDatdvOKDaXVqQLvjGSDsSeZ5pEHIFTKeu5F5M/JIANZInxWo2adqik2wWJw5aiw1ZRQ0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+no/jxZVaI/F428acTdQRcNoK2VuOgoNcGjRjeJiH7XVKjUA/
+	49TLlh3/6X1ar60xbQ//XjtVqtJT0bKa7jLDC69i61SYv4cIGYoMRtGIY/LQ/r59r9BI9QvYcpJ
+	xZZLl8k2F5M4En7N96Rgb1ZeaOtmAR88N7k0wip3an8HzcwllQcVSKISZ00g=
+X-Google-Smtp-Source: AGHT+IGs7ROfFulTgfy5I6T2RCK6Pvf+EacFTh6wTB9tieynHYFpAL300to6N6EfJQaebRQkAjknuQ6XIwdRMACxUFRyC9XmAqCa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250811154638.95732-8-shradha.t@samsung.com>
+X-Received: by 2002:a05:6e02:1d8b:b0:3f0:f671:aca0 with SMTP id
+ e9e14a558f8ab-3f3ffda2903mr16337785ab.1.1756524604448; Fri, 29 Aug 2025
+ 20:30:04 -0700 (PDT)
+Date: Fri, 29 Aug 2025 20:30:04 -0700
+In-Reply-To: <20250830005927.6096-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b2703c.050a0220.3db4df.01a2.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in est_timer
+From: syzbot <syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 11, 2025 at 09:16:33PM GMT, Shradha Todi wrote:
-> Add Tesla FSD SoC support for both RC and EP.
+Hello,
 
-Add some info about the PCIe controller here. Like the data rate supported,
-lanes, interrupts, any quirks etc...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  .../bindings/pci/tesla,fsd-pcie-ep.yaml       | 91 +++++++++++++++++++
->  .../bindings/pci/tesla,fsd-pcie.yaml          | 77 ++++++++++++++++
->  2 files changed, 168 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/tesla,fsd-pcie-ep.yaml
->  create mode 100644 Documentation/devicetree/bindings/pci/tesla,fsd-pcie.yaml
-> 
+Reported-by: syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com
+Tested-by: syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com
 
-[...]
+Tested on:
 
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/fsd-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        pcierc1: pcie@16b00000 {
-> +            compatible = "tesla,fsd-pcie";
-> +            reg = <0x0 0x16b00000 0x0 0x2000>,
-> +                  <0x0 0x168c0000 0x0 0x1000>,
-> +                  <0x0 0x18000000 0x0 0x1000>;
-> +            reg-names = "dbi", "elbi", "config";
-> +            ranges =  <0x82000000 0x0 0x18001000 0x0 0x18001000 0x0 0xffefff>;
-> +            clocks = <&clock_fsys1 PCIE_LINK1_IPCLKPORT_AUX_ACLK>,
-> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_DBI_ACLK>,
-> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_MSTR_ACLK>,
-> +                     <&clock_fsys1 PCIE_LINK1_IPCLKPORT_SLV_ACLK>;
-> +            clock-names = "aux", "dbi", "mstr", "slv";
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            dma-coherent;
-> +            device_type = "pci";
-> +            interrupts = <GIC_SPI 117 IRQ_TYPE_EDGE_RISING>;
+commit:         11e7861d Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1414d634580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=72db9ee39db57c3fecc5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1440ca62580000
 
-Only one SPI interrupt? What about INTx? Don't you have any external/internal
-MSI controller?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Note: testing is done by a robot and is best-effort only.
 
