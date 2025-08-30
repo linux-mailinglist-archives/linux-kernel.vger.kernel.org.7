@@ -1,115 +1,209 @@
-Return-Path: <linux-kernel+bounces-793037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B83AB3CC92
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1192B3CC35
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705A83B6D3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0B83A48A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813A32C21FA;
-	Sat, 30 Aug 2025 16:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCDD25F7A5;
+	Sat, 30 Aug 2025 15:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KizHdrY+"
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcVdAa8k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5664226F2BE
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 16:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF40216DEB1;
+	Sat, 30 Aug 2025 15:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756569760; cv=none; b=WRNAa2Zg/5Avsm4zEZbnMW61Ql1fby4NXhdBM67/MeJ/yGfxBr/HGPkI4R0hnVkSAqAXgaiMKMNf2xWwd6PFUAuGNdDFVwwT28KULlYOFftctDYCkKrv9GrJRxN4zGHMXKPuT5f8CBsOHG1MkOhQJPUKLnFjOArAjZ4SVXBZMzU=
+	t=1756568690; cv=none; b=TN7UO7Vv/Ew/yO5J3sbivmmgdWvVaV+QBkwZyBRA4gIdSk6ra1kwyDqHneDiVAf1FuDXwcpKo75vhxrH3yCMhGW8fRf/tOCQSO8+9Ck6GyaJsnvoQfqK4YVhsTYwv0ViLktvCWd6/P0pdgE84m0GWuyOIegdiUMCdrtHCsSWNnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756569760; c=relaxed/simple;
-	bh=h6Kv4MLU5D0qa95VwZu+T1SQxDTE4mAm8HdMidMKxbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X42kXkzI9x2O9Hj0WBaCraq5oLiXLpq1lzKbwKufdJzmKuUF0yb+usqANaC+ySMejrloKt93XVaJ/jp+r8BmJUrZK/rY+akh7+9hu1M+GhNcvJYB3B5X9lUT6p6SChOlmsnf1DqDORjk1crtP5ztgJ2wOgeGJkgeS7Ku8trKkZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KizHdrY+; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=lf5YxXe3wERb30ft13xY8rG2yVlyo1de6EHDnd4WiOY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KizHdrY+WjgAsI3YgRj6USglmevMEsRZTUvaAuKofBMfTKlb05TSDVetCSTohAwznpOeGoF2mMoEgj3spXdMxWk4o7FmuJKTNZjg/Aq/ucrgIX3ivEXzHHB1vMVCISU6P0VKYEPGYU6x7Pz7tr/Ggjr1rAV3CkPQMbks/vjoIEyxAIM2VzovvV/DzBboRb9efnigLJo5iQIOjEOYcb9k1gobgTYwR9RNiFIbz4s+CbTqfchOaNOdsQOzLMY5895a1ubHssiqcLSeZV4wOm47S1d+cT/lr41phDdeQrSde4MYc0l9M1sWy2cBnq1rwyorZnZd6oEAB3zUV4hb1PW7+A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1756569758; bh=JnOpu/MAwgnu+aPctz8YtlYkmn6RxWUcl7WlyLFu5bL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=CnGVlRw33NhlH4UNknSDwiWgyU3sewU+oG6gTHT/Drdsha8gtlcc9rf7prA9oajT82okKfY3CKTGf8PWGVfNkU9PirNg5hjmxBdffqX7pdz85b7R35RJDVQla+SD5vjmuNxLDoFmowoI1+hSzY0n3/o7rKoa2kyEToa018mCpzkXyD+WrilhScZMi2i2se9/yBf62lJylEb5QK5zuKDbLTORDd8pPJIYSKA1ZHqrfvTgjGlUpFL4HAwDIHSK3ltL4qZJy3Dw5NeXcqojeh4iQbkW2csmmbbBegpKIvRTsovyzyqtMG1u+MG3H7JX5HIGagH1yog/MRpDyi2MutdhKQ==
-X-YMail-OSG: CLALg4YVM1n2PDGmmwJ1egWq0cMLWTqw9To9a1DADbl6jVr_0FUovqe8BPJ9xjU
- mpAjFWUFUr.qWS9m.5DXvRiJ4Bt0UpkEzvaYhlYVaC5KmYcsRsPpM0gqBVM3nDi8FJHZSYcv8Oe7
- 40aqrEJKI95we8u_552s4hssFjwsBCaoUIsycYWB461iO8VNHuYiZufA3Ee.fhPjqxi2W2FT4Qoo
- jPtjZkjKFGCLA4i62QRXIiv9i849sISXsbGpUYOweg4P7OJ42ql9wfSPhf4IunL8cMosoOzizViO
- Uhs8KqlwlaBSMArhtna_DzG4H7uUUho_yxzSl5Rf916dr2Gh8XvkTO2ApuQ3xWkuKZM93iXqyWdt
- GZ6FE1gzCvPiRl8Ro27P6SpHtC1XnwE.wzrIIjjSs8FO1vLrFGwCrhPphfJEP_f.qUg9K7CM.lPj
- ntOf2mOtlHqXASLJs8ND0Fo8ZRCZuwBIfRkgJaZabWyLCAVytlhVbgpWQiaxsvrDqk54PbBd1.Jv
- iYKLsmkXrcloXwyJZGbRf2JLCpLv2B5PiSQ594xv_s5wt1ofrbFz1onhgMRrYEO6BdN5d_87hkt_
- UT9vfW4sexJKVs.RE.UnZgOgBovbpvqKQ5S15RPuOtSNPeIYrpxKu4yIFiAhHMjgXogSAobitpOh
- Yek7qKUcV2Ew7ZwS0H17EyVkpOl4z_GaT0IGg3bNCzhmKc5J80WOXNyKN9gY0ZgyogZAupymnwhK
- sKErXtVpDMNDM1LOfPheiOEaqZvH.hF0MWS8Ms46R_VLrP68l.p9UeLv8ufyo9Ygyr425jRP_nhR
- FAthHv80HMHRbyjLAqUgxILHyOx5TSUxT441OjxleOpjom1fMHocyEpoqhArjPe1WqQQW7NhWVcL
- 7sCqC6MsmPxLPvinQTo.q0KY543BnnA2D2vH.qCZiV_TY7jMSCyzY7b0KjumHH.SYePi0XNnQpGg
- O4pg_0hdbah2VY3EnbsKwiCuOKK4sxypoOc2TQWvePOrSTIEzxzl1ki.suMwbhDaYlSzv6hGsk1Q
- e6lqZp.L15KYZ6VjqGwK5gCT1u797lXo87UcM8rCKkyOBEBEga.yROrpgyVQmXtsAY2UrCMdExMR
- QFitELxDslhuH6j6i2Vi0qm1Xn46h3SA5UaNIoktjMDDydKrUFTxAvQjod8tqV_WPa5HSWYZdH6m
- 9x5.cTvUagPT4iKcfSfKVxE9EXEQuUjFgPdFyX_f1L6mJ79Mb.8OjvyOGO39gqoYC0GM9uMZp8AP
- Ky5YZJiEzY1.pp8sklX.IOOm68zHT8OZaF1A04OkdWfQDBzOECARSEtJvSolvb3fJEcGvina12.P
- IpetMzlaU_8IMlHfo2aEsl_O1Ln.JIVkztMRSO6wFmg.I17axsxlkJKqWCb48_jXGKyNw.AN4jwl
- ZxWiDAUHOd9EqPDWQKMF9Ysm_gO3uiprlXHVUGjva3A6_Xbqns7gGpNdkvnTXTaDJlDKlEIyp1Ez
- OUamDSI7g2JWtB5NUJKr2WSONTA.VVmWw3kEml9Jrd_w7meu1YU1AA5mdWS3AdYYbqfEcT3ik1ta
- PFDdiIPqr.3YTu8RSeMy1g1oiYYkXJHFyp8_azHKUPMKt2sBvlVNsqe4M9yiCESkeLexbysBJn.R
- EK8I2FgB6UmmzyvEC63mDGVCgvxrijeFw_VC5Z1C2.8avbpLE2M1H8UaK1MQ5RhTjSk4sVfy81U1
- mmJQssAsO84F0sZZRN1Ttk4CuD9bBJ3DcKKpkL6pdVG5KwNO0QEXHYff.YgtNNRYb4S1Ynkm1QGs
- GfM5jZqlpZKrFbCHbHGfZeCZkaFl5BvbWXawHEU_YUkkSqyPF8GeGcmeSNSjv0FK2CbAoifN5wBp
- XNObpY.g.08dlRsxZlBwSJU_PZHnS4Iim_k4RsqEMpq.v3t4maC6UHyLYJ.bdQd87CylXmdPZw5x
- fY7p6lTKoAO89e8xPp0euOw9Z.NCdD8QtHJnt8AlmBMBYlBvh4BT2kF.Q6OlPdtd7JAZVC0BcgDP
- 0hTacYZFk0I0Gy_YfhveWKa_9iHrRkOM9np9WCVPGeBtNidZKkptxY9D2qRs7og2zT1QRZwfsThH
- Hw15BidbIr2PlZqHR2SYnEf4VHYJ0lpmyJuIaf10Y7usPGlYj.FhBYyy7Xm4ORqZz8SOS6YIyh4O
- THSR6uOVird7FHjTwBh556olIpQ3yL2wa6A4KmApu4Mbdo7yGFfsB3WtqC7yhIJMXP7oVH.Sn6X9
- kbM7Kr31y74qsAHmxzk_nB9r.R3UHlKZULo6J.B0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 2afd97eb-3d4c-41bf-b716-43836558ef00
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sat, 30 Aug 2025 16:02:38 +0000
-Received: by hermes--production-gq1-7bfc77444d-7l9vb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 261e6242d60e90c99a8fd30b59c0cef4;
-          Sat, 30 Aug 2025 15:42:21 +0000 (UTC)
-Message-ID: <43a0ff8e-f814-4305-a0f7-04c820b8f39c@schaufler-ca.com>
-Date: Sat, 30 Aug 2025 08:42:18 -0700
+	s=arc-20240116; t=1756568690; c=relaxed/simple;
+	bh=upWvzEwUjdMOVCbvYz/tRccUO5GEwW+mcBy+qoXGoIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vFjpqIMJUVpXoggmgy+jsjQF/Tf5dvdOkDBTZ4vraMOdE5VoCxXYuaDa31c12YpP1lSEee1exibQ44kjLFjkrKx7729jpnOiS6am/W/34yuWTjyR9BIsMgiAmgIa9mL0aApuE77fEuwwIkqj8ilqmRxmdOdsJgiVCNfG2igOnAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcVdAa8k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5A8C4CEEB;
+	Sat, 30 Aug 2025 15:44:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756568690;
+	bh=upWvzEwUjdMOVCbvYz/tRccUO5GEwW+mcBy+qoXGoIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fcVdAa8kWXt0ZQVP5kq8pfxnbumxysM4FyT9osJ4MCbeB0QC+j7/c9avCQ5TDO0in
+	 3lcx70wmcSHl6J85RHMtHF79CGntyBi9C0guFDN/hGYV/Jv5/lAPTknjUdWCwffq19
+	 J0b6/cGRaLQ2IExJRgk6mpUsrhxCxRax7PKI8n3B6IPUd83snbdg/IC8/v/l6KzXkv
+	 mB2L0GFwGIHhlGyPlSCyo0St72CGWU6AbFa1mxZLOgTqOERrx/94LbGPRLPjT2dKbP
+	 Zc4MPrmGxLz8FuOwvrpirhD2w6OuVwmi6uFUwGZtFOL6V9CpT35XiXRrzQ0wBYhc3p
+	 9GzrBaeweEb5w==
+Date: Sat, 30 Aug 2025 21:14:43 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntb@lists.linux.dev
+Subject: Re: [PATCH 2/2] PCI: endpoint: pci-epf-vntb: Add MSI doorbell support
+Message-ID: <gkgdzbbq2ykim4gfrkw5qnimdyyxcs3efkt3lot3bh7jmi57he@wxsxp3m3eg6k>
+References: <20250815-vntb_msi_doorbell-v1-0-32df6c4bf96c@nxp.com>
+ <20250815-vntb_msi_doorbell-v1-2-32df6c4bf96c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/4] Audit: Create audit_stamp structure
-To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
- linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250816172859.6437-2-casey@schaufler-ca.com>
- <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <e6e9ea4bacac5553810f7963533a71ca@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24362 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250815-vntb_msi_doorbell-v1-2-32df6c4bf96c@nxp.com>
 
-On 8/30/2025 7:14 AM, Paul Moore wrote:
-> On Aug 16, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Replace the timestamp and serial number pair used in audit records
->> with a structure containing the two elements.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  kernel/audit.c   | 17 +++++++++--------
->>  kernel/audit.h   | 13 +++++++++----
->>  kernel/auditsc.c | 22 +++++++++-------------
->>  3 files changed, 27 insertions(+), 25 deletions(-)
-> Merged into audit/dev, thanks.
+On Fri, Aug 15, 2025 at 06:20:54PM GMT, Frank Li wrote:
+> Add MSI doorbell support to reduce latency between PCI host and EP.
+> 
+> Before this change:
+>   ping 169.254.172.137
+>   64 bytes from 169.254.172.137: icmp_seq=1 ttl=64 time=0.575 ms
+>   64 bytes from 169.254.172.137: icmp_seq=2 ttl=64 time=1.80 ms
+>   64 bytes from 169.254.172.137: icmp_seq=3 ttl=64 time=8.19 ms
+>   64 bytes from 169.254.172.137: icmp_seq=4 ttl=64 time=2.00 ms
+> 
+> After this change:
+>   ping 169.254.144.71
+>   64 bytes from 169.254.144.71: icmp_seq=1 ttl=64 time=0.215 ms
+>   64 bytes from 169.254.144.71: icmp_seq=2 ttl=64 time=0.456 ms
+>   64 bytes from 169.254.144.71: icmp_seq=3 ttl=64 time=0.448 ms
+> 
+> Change u64 db to atomic_64 because difference doorbell may happen at the
+> same time.
+> 
 
-Thank you.
+Only the atomicity of db variable is enough?
 
->
-> --
-> paul-moore.com
->
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 153 +++++++++++++++++++++++---
+>  1 file changed, 136 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> index 83e9ab10f9c4fc2b485d5463faa2172500f12999..1c586205835fe9c7c5352e74819bccb4ece84438 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> @@ -36,11 +36,13 @@
+>   * PCIe Root Port                        PCI EP
+>   */
+>  
+> +#include <linux/atomic.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+>  
+> +#include <linux/pci-ep-msi.h>
+>  #include <linux/pci-epc.h>
+>  #include <linux/pci-epf.h>
+>  #include <linux/ntb.h>
+> @@ -126,12 +128,13 @@ struct epf_ntb {
+>  	u32 db_count;
+>  	u32 spad_count;
+>  	u64 mws_size[MAX_MW];
+> -	u64 db;
+> +	atomic64_t db;
+>  	u32 vbus_number;
+>  	u16 vntb_pid;
+>  	u16 vntb_vid;
+>  
+>  	bool linkup;
+> +	bool msi_doorbell;
+>  	u32 spad_size;
+>  
+>  	enum pci_barno epf_ntb_bar[VNTB_BAR_NUM];
+> @@ -258,9 +261,9 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+>  
+>  	ntb = container_of(work, struct epf_ntb, cmd_handler.work);
+>  
+> -	for (i = 1; i < ntb->db_count; i++) {
+> +	for (i = 1; i < ntb->db_count && !ntb->msi_doorbell; i++) {
+>  		if (ntb->epf_db[i]) {
+> -			ntb->db |= 1 << (i - 1);
+> +			atomic64_or(1 << (i - 1), &ntb->db);
+>  			ntb_db_event(&ntb->ntb, i);
+>  			ntb->epf_db[i] = 0;
+>  		}
+> @@ -319,7 +322,24 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+>  
+>  reset_handler:
+>  	queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler,
+> -			   msecs_to_jiffies(5));
+> +			   ntb->msi_doorbell ? msecs_to_jiffies(500) : msecs_to_jiffies(5));
+> +}
+> +
+> +static irqreturn_t epf_ntb_doorbell_handler(int irq, void *data)
+> +{
+> +	struct epf_ntb *ntb = data;
+> +	int i = 0;
+> +
+> +	for (i = 1; i < ntb->db_count; i++)
+> +		if (irq == ntb->epf->db_msg[i].virq) {
+> +			atomic64_or(1 << (i - 1), &ntb->db);
+> +			ntb_db_event(&ntb->ntb, i);
+> +		}
+> +
+> +	if (irq == ntb->epf->db_msg[0].virq)
+> +		queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler, 0);
+> +
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  /**
+> @@ -500,6 +520,90 @@ static int epf_ntb_configure_interrupt(struct epf_ntb *ntb)
+>  	return 0;
+>  }
+>  
+> +static int epf_ntb_db_bar_init_msi_doorbell(struct epf_ntb *ntb,
+> +					    struct pci_epf_bar *db_bar,
+> +					    const struct pci_epc_features *epc_features,
+> +					    enum pci_barno barno)
+> +{
+> +	struct pci_epf *epf = ntb->epf;
+> +	dma_addr_t low, high;
+> +	struct msi_msg *msg;
+> +	size_t sz;
+> +	int ret;
+> +	int i;
+> +
+> +	ret = pci_epf_alloc_doorbell(epf,  ntb->db_count);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < ntb->db_count; i++) {
+> +		ret = request_irq(epf->db_msg[i].virq, epf_ntb_doorbell_handler,
+> +				  0, "vntb_db", ntb);
+> +
+> +		if (ret) {
+> +			dev_err(&epf->dev,
+> +				"Failed to request doorbell IRQ: %d\n",
+> +				epf->db_msg[i].virq);
+> +			goto err_request_irq;
+> +		}
+> +	}
+> +
+> +	msg = &epf->db_msg[0].msg;
+> +
+> +	high = 0;
+> +	low = (u64)msg->address_hi << 32 | msg->address_lo;
+
+Can you remind me when the 'address_{hi/lo}' pairs are set?
+
+Rest looks OK to me.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
