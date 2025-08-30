@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-793143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15634B3CF33
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1085B3CF36
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FA81B23A5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EE91B2252B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E9B2DFA26;
-	Sat, 30 Aug 2025 19:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708482E0417;
+	Sat, 30 Aug 2025 20:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSrOHlqX"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiMwrvUg"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9049620;
-	Sat, 30 Aug 2025 19:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CDF4CB5B;
+	Sat, 30 Aug 2025 20:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756583937; cv=none; b=JXqCnjnYub/vrY5S744J4Cwmq33PBGbKD5MRGjb1hjIKVIUXuWSwftnWFzITkUbHmH+HX6/HmMYLFiXh0eecFDY4Ao+mMDSKA+ky6U3DFzl6ERAGoxVsCvxS70L2OoFoob0ePorFHw/Ouhv0cAQwMf4lrgBEFGdS2VpKt6ucdks=
+	t=1756584239; cv=none; b=M18Nl2ApIfW4HopV3g/U/5T24ZB225aBxtPswnJFXDm6ikqNvgdsXErROqMIXfolOtBZlMvX54AEFP0hsglVwJLzogTyRc1f3BvFxcp5m2w/fGJHDzujmmf8Mcj2j6Sz/YLf+suisO9GWvbRDQFfrWfHW+0osb3cz0izpLnLyUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756583937; c=relaxed/simple;
-	bh=QjHR2JQRajF5vyFwERKX/p+Afxqj+XNaaamdVL/axY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ou46OwNj5OiBnz462GauaB162V4p5J8OlBTqrpSypPJo5pP1CdQySRhZ2Y4+Z+AYWYJtGgCTT5WAT80OXftbhkiQuDPew9DTlm9gguqi3CYUY0irv5OBQX8m/6wflnLwrPAWbEfv+KTorE4hZqAfb3VPyhw7kvTD0ypLm31skUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSrOHlqX; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1756584239; c=relaxed/simple;
+	bh=eJjBGVqjq0Cbd2n3+vzH4ntwM9XJkbxmIAZC7hyK9nY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bm2hFLas0hmhSytEegaOtJtuZjxZHkrfou5q7ETrXI7845Isgdo5utYg5HbhIWCrXqMcHqeEjMutUpeoreF0UIHCQ/GcJ7I137IxCwFh14pbvXOeLznkPaUQSksIreE+aYd6AkShco42qvcgsEfPvsQZRL9WhxtDG3G/MfFnuLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PiMwrvUg; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so7472819a12.1;
-        Sat, 30 Aug 2025 12:58:55 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b30f73ca2cso19028151cf.0;
+        Sat, 30 Aug 2025 13:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756583934; x=1757188734; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QjHR2JQRajF5vyFwERKX/p+Afxqj+XNaaamdVL/axY0=;
-        b=lSrOHlqXbp7PUufmlxpp4S83wLrWf0YQZBHpAg157VBCDRTLumGZ1jg6E2nP5yf1yS
-         G8f+JrFqxA7TZKe2y4K1oThKIMlQ4ZiMnsNLtcFb/7KMXD0+lxMh+GM2fsoaanDSsUWF
-         S8n/0Cs5vKqJXY21h7861zoNO72cveyB5nfZn9tEwesdx2MgNgHIVOqWnY7197lwznun
-         J+lMyfV/0cvVHW8voN3vn2o646r+yWBetKs66OxcQkOvYpO0r1l4QNXVij9DCFwKmlYS
-         DHwxGoUvjv7QJAE0eguWSt6HprJkdgWhtD23gT2xxmcDFJD+yBn8ZZBY5QTz2arElHzu
-         ZW5A==
+        d=gmail.com; s=20230601; t=1756584237; x=1757189037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sasd4a3SBp9Y+s3Eqv/SPLKSMnkbSzEIL4bBWpanmls=;
+        b=PiMwrvUgAYtn0LNda+Yb+o/2VaRDTZh8KKCkEOnPsW2iz4PXLSN6lmy7DIpzo/8RnC
+         7MNHLIhRS5uNa3lyat70umjd/lhkXAdrT+Gj4qGKjsof4IXJ9Y3BqNLwsIYQgwlxCkSO
+         /VGCkg5PK84pK0BBxJvlR2SyqrRJ2j+q5jf4ABkRRvtOEeH2v31mK/oaw8+KizsSY7HW
+         51PBJ5Sk3I2KjAQMibiJL2992V2tUw/tbJ+bB9FvqsFrbm5kL3sk/6U4++n+HeyjAttE
+         Wex7wRvCZ1sDCjpDBDfU8g7RHnqEkOADy0nADJy2t/Y8FufBDrB5ZLYnNuuZ/U/Qg1ku
+         R3+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756583934; x=1757188734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QjHR2JQRajF5vyFwERKX/p+Afxqj+XNaaamdVL/axY0=;
-        b=i9OYPL3LvdXjpoq1u62zvqOeMET2wu0hTIxmZgtU6wNcp5fsU26TR5XrFOP3lXgBIZ
-         H6vTLiy1KDUjiU2dQ/s//ey9hcF8OJZlZWyrgAJzflLsLLlmG5s9hpgGuSI7DgK1bg7I
-         kBt0+Boj/tu3G8kQaOnhcwwyR1wVR6YP20aFsTtiVjRfMnv2jJpx3jNikBEvrsI7DnPZ
-         N1gj6bnhNLasUZyO9n1/6CBiRC5w0BEbNvKYd9fgvf4BPT3+m6aqYmqsXc2+lqFTJGWy
-         rXXyQ1cJiHXT7TC9bRVe2tcE0OYmVajGtxq/FmbDZQDMVkVKlZ2Y6LqBJXmSyNIk4Dm+
-         Yb5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAxrbEADd5G9Umfx7KYxsEP3+BxB/eDiMpwNTSWhsul+bcghz68Fnu+0Ixbq7halhnGYo/2ck+bWM=@vger.kernel.org, AJvYcCUEq4UaxDClAYm+Y+CQfiDZk0w4yqHBk6mUVaSTMtuTdKfzkimT3OdpN+N3gnyjR24+3eHncaqHbqWAK05z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgu8NSw0EPfIbjHOHvbOhNywueS3cvX8dh6r2EL8pZgkBU6i1r
-	2dmgNualMvLIwdO4I03AE4zOnvR27fSyqugyGhe72qDBDhqiKwp50v4kGObS3gN7v6hQziSyMHK
-	2OBOBq7iXPZOMne2SgoJIJYIGhaiR2cs=
-X-Gm-Gg: ASbGnctGGGyh9QPSC+875n24PZnHib+uAaEZS4o3mFzcwKc33MAYxhokKPLWayJSdgw
-	tsxDXS87C8bFpnizgney+LudCeQld5UoePztbDzkHELNxaQnd6DBataIATYDCelfCKCMN/Xjx2G
-	Iu4cdtBGC0AlR44KJFTBMS4zXFxfrD/ZP2Q+s3XFT844h0r9Ut0pYyJXCBnBmukBe5DAWENqxaM
-	vXlXkum5reGy/dnEQ==
-X-Google-Smtp-Source: AGHT+IH17cIhYAXAEnoWRYt/nfaezfYG2EstusuWWP+H0n0JCPR4DIFOD+fiYbJla8N+SZSiKgw6pl0eMEmB15DxK8g=
-X-Received: by 2002:a17:907:970f:b0:ae3:5185:5416 with SMTP id
- a640c23a62f3a-b01d8c74a17mr335341566b.13.1756583933787; Sat, 30 Aug 2025
- 12:58:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756584237; x=1757189037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sasd4a3SBp9Y+s3Eqv/SPLKSMnkbSzEIL4bBWpanmls=;
+        b=llxlGGZ5mikMjwpa3IJfOtvB+71mP8VE8p0mK89MrhBTWpjINCjQNjESo9A34/bycC
+         U/TuLb5NfPiOmzNDad9afUFPqwW34OcUr+uXvpaKQ7oylXbKVEmQODbnE56Tz3H+/PGk
+         cWjy5OWZdRmp5kL6klqbv7Jc/FIgzDq/QQMB/aHrAJIaCC4M+MOke+5ZtsK0Zl2KhfN2
+         /wBXIcqV8yRVJfvPITYl0/wJ769cvTTa9xjDUF+M02paLuAqd/9f1Bc+u0W7d+K2cyhP
+         5mDxGsBB0kQtQobKl5BIZVffYBLPBZZEmfIb25GRNoIq0cuWAS2DDQS1tpRixF48gNaf
+         XxsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhNLISbcL7cAX6EUD+uyPYOSqx6MLQ3HeigCkFNGmgq+lCAz+l/qjexZlCJDzflT7BEQS/6iUAajfuZDT2@vger.kernel.org, AJvYcCVAx5fxtmsVyfkQuFvyBimHE+yJamTFz6U7StA8iVaOs+WbOAVA0xDUu3lun1+vmyLA8C90dw/n69vntJ2Plhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8P1f5AgqBo6S0H5LnP49ppRfYHUtQ7k4+m/C37+TCWfnDYYjM
+	/2edHrsJdvBSxix2o+Uu0tnuUQncdVeoj9Mc4S6jAMHOAeGGUAV6tA+7
+X-Gm-Gg: ASbGncta6E0X3KZj/JVdE1t3LBeK8Zh53QJl7ftrMNbsjCSYW0TPOHh1xSWxfWP5qL6
+	isJcuEe3BIeg99gk6eH2SqE+U3n9fcAH67MGIIJ5shS2HSmd+ifvWYRCUVNowyyvqKPMvprHGzh
+	l5UJdVV6ajFWSPzxrqQ1YeAmVxEtb1pdaJMquectKyGshyFrJqhg2m/Tpt6E1WMaPlY3/e5B/AY
+	y+LBMd90FFTZzzOyIN1D6wt1w0qZlT07cZvFxWTO44wsFkjcWDDa4NzmtMbxcbSH3GPgp91wPiG
+	GRr94dRM0j17HgjqRqaJ+tQ5eS1HFaFmOGRUjAY/TvRkDCMqZiWdf7r68mH+vvzHINgqNlXq5yT
+	x36nOHZEScUsH+tmP8CQ8CcmBDsWO5KGf2Mnn
+X-Google-Smtp-Source: AGHT+IHAOBPvGccG2Yt3x1H2hlqsADA4VIqx5FT2n4SVJvSgKcwCsDFLo279rPL2gyUDstGt/sMADQ==
+X-Received: by 2002:a05:622a:4c7:b0:4b3:552:27a9 with SMTP id d75a77b69052e-4b31dd2186amr29143791cf.58.1756584237197;
+        Sat, 30 Aug 2025 13:03:57 -0700 (PDT)
+Received: from ideapad.. ([96.67.4.241])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b6715desm37123011cf.24.2025.08.30.13.03.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 13:03:56 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com,
+	mmandlik@google.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
+	syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Subject: [PATCH bluetooth-next] Bluetooth: bcsp: receive data only if registered
+Date: Sat, 30 Aug 2025 16:03:40 -0400
+Message-ID: <20250830200339.36429-2-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830115858.21477-1-gustavograzs@gmail.com>
- <20250830115858.21477-3-gustavograzs@gmail.com> <CAHp75Vf13aqDJj2j7MtfLTAT2MW-S3+M7wtEXsG1Wh7EKfxJSQ@mail.gmail.com>
- <20250830180534.24a8ad56@jic23-huawei> <20250830180920.7a65df94@jic23-huawei>
-In-Reply-To: <20250830180920.7a65df94@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 22:58:17 +0300
-X-Gm-Features: Ac12FXyxJo3an5yVLTmM-Qe8fbifyQAg8iLh1yxnlBEtQ2LJ6ZyVRQrhj_9nj9w
-Message-ID: <CAHp75VckFnumUG8GodAwigG10NVd66Tj-2Tkm3kLWQUET0EorQ@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] iio: ABI: document accel and roc event attributes
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Gustavo Silva <gustavograzs@gmail.com>, lanzano.alex@gmail.com, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 30, 2025 at 8:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
-> On Sat, 30 Aug 2025 18:05:34 +0100
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> > On Sat, 30 Aug 2025 15:49:50 +0300
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > On Sat, Aug 30, 2025 at 2:58=E2=80=AFPM Gustavo Silva <gustavograzs@g=
-mail.com> wrote:
-> > > >
-> > > > Add accelerometer and rate of change event-related sysfs attributes
-> > > > exposed by the bmi270 driver.
-> > >
-> > > Seems to me like the absent attributes that are already in the kernel=
-,
-> > > should be added in the separate patch.
-> > Agreed that would be ideal.
->
-> Actually what did you mean by absent attributes?
+Currently, bcsp_recv() can be called even when the BCSP protocol has not
+been registered. This leads to a NULL pointer dereference, as shown in
+the following stack trace:
 
-Absent in the documentation, but present in the code. That's what this
-patch adds mainly, no?
+    KASAN: null-ptr-deref in range [0x0000000000000108-0x000000000000010f]
+    RIP: 0010:bcsp_recv+0x13d/0x1740 drivers/bluetooth/hci_bcsp.c:590
+    Call Trace:
+     <TASK>
+     hci_uart_tty_receive+0x194/0x220 drivers/bluetooth/hci_ldisc.c:627
+     tiocsti+0x23c/0x2c0 drivers/tty/tty_io.c:2290
+     tty_ioctl+0x626/0xde0 drivers/tty/tty_io.c:2706
+     vfs_ioctl fs/ioctl.c:51 [inline]
+     __do_sys_ioctl fs/ioctl.c:907 [inline]
+     __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+     do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+     entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> This is documenting ABI that is part of the general 'scope' of the full
-> IIO ABI but which hasn't turned up before in this particular combination
-> (or possibly we missed updating docs when it did!)
->
-> Whether it is worth separating out any we know are in another driver is
-> an open question, but Gustavo hasn't called out any as being like that.
-> It's possible that these are all surfacing for the first time in this dri=
-ver.
+To prevent this, ensure that the HCI_UART_REGISTERED flag is set before
+processing received data. If the protocol is not registered, return
+-EUNATCH.
 
-Hmm... But if the code handles the attribute which is not documented,
-that needs to be fixed.
+Reported-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
+Tested-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
+---
+ drivers/bluetooth/hci_bcsp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---=20
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/bluetooth/hci_bcsp.c b/drivers/bluetooth/hci_bcsp.c
+index 664d82d1e613..591abe6d63dd 100644
+--- a/drivers/bluetooth/hci_bcsp.c
++++ b/drivers/bluetooth/hci_bcsp.c
+@@ -582,6 +582,9 @@ static int bcsp_recv(struct hci_uart *hu, const void *data, int count)
+ 	struct bcsp_struct *bcsp = hu->priv;
+ 	const unsigned char *ptr;
+ 
++	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
++		return -EUNATCH;
++
+ 	BT_DBG("hu %p count %d rx_state %d rx_count %ld",
+ 	       hu, count, bcsp->rx_state, bcsp->rx_count);
+ 
+-- 
+2.48.1
+
 
