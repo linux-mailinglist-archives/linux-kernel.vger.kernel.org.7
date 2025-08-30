@@ -1,128 +1,222 @@
-Return-Path: <linux-kernel+bounces-793017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE25B3CBA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:05:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D12B3CBBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456FC20604F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861887A5090
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09830257AF3;
-	Sat, 30 Aug 2025 15:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665F225EFBB;
+	Sat, 30 Aug 2025 15:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O56kvdyG"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ox4seuAJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9221E3DD7;
-	Sat, 30 Aug 2025 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C621C9ED;
+	Sat, 30 Aug 2025 15:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756566346; cv=none; b=eFupg8pAf0nqWtlN9UD2FH7w1iFZAknGXEgLfas1IcaX8Nmgdn1ajvoJSB1XygDgwm/luFK6ek3tahwUQfw/0/Vm0l4FMFvmdbNPBDIGb96i4hnp9my0cYhzF3siP1r6firxfyuc5U2rqmCO7+uwpydVrwD/SNSj0UVFOACX/18=
+	t=1756566836; cv=none; b=D7ksFy3UfBsm4WZF9MQ/geFJjayraj2jGczLkl4J1Osc9vUDNwSUUQNo2l11fv6uk/iFVphjUGn/Pu0mL5abSTYdEAL+Y3Scj9KIYstLm0szEmpxXpYI9sQoQI3W1DeWnnDO66D+pHtVxmrNKWm5EJIwkpBnHnabvbwsVYmNslw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756566346; c=relaxed/simple;
-	bh=jCqaKGitFN5uu3KorOhLoWYr/Okh3hv3yEe9Xhsc+vI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mEWKWWMPnPRjZW8LLs65c5FFZ32aMrTsEFvmzCY4LtRGB+YWssluVE1AxddCSlUqBNYfLgL1rdtrSc6xn8oVSHonbwk6Bb921JTqJeDO+nYBmIMr3tg9u2Dw1PdONaXJUghpyd8jQv6JQPdqVeyIiSLyY22dzmmhtPPeSWKIlBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O56kvdyG; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b03fa5c5a89so60059466b.2;
-        Sat, 30 Aug 2025 08:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756566343; x=1757171143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fN6cBknTvIC8v8PTKqGGEUwlLaNHTmySHAziXrgYzew=;
-        b=O56kvdyGliu/TgF0bJfgqerBMGeApJXAQyMAIMG6Y0hQCr8s22BtPYVs1ycVV6n3n1
-         0iWJnPk9DnXpLp/Kh6L5WhHeEdwPVrV7hpG3m1y68/1Qes9tGnW7MM1fnVKLOYYQ0p1h
-         aXvWpW0HDH/szl+qqFG+aiWxhjpTcg0V3guaVJE1nR0kDLv7gFgUVXqSVmuoafSwRoWW
-         ASc2QxGuBwZ0JjoRO6kQSkMobrnwA31a40AHTi8enrT/WR2hcDytJf8Y1pgnU0aBOpyd
-         8fg/IH3yo/0hqWpzXiTr5hqJ76GjpUShRTtSNuQoCHN6WVSKNWKAmT0sNt/EUkJmtOt+
-         ZpxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756566343; x=1757171143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fN6cBknTvIC8v8PTKqGGEUwlLaNHTmySHAziXrgYzew=;
-        b=tU7GO0zcqM3h9cgvKTOYQ0/iH03vAygdUdSMQeP+rmVW7KGMbnt2A04CF/w/HzFIvo
-         72wNQnGNmaCTrz8hj6RWqfQBcC2SIROUizY9H/NLvjZLQ5SdiNeigf8cV6OHr2sxYfBm
-         uWsmv8/jiwOkxYtri7lKKjkbfYVBsSAti4JUGG5ufsNregyW2h3O/poGktaWjrg1sGdw
-         cAaSQweHLPWgZAQ9ZeNuQWhvKL3TyCrCb0vjQVzdEAg2Fuwv1CJMOUP8jmzS2oPzKMhv
-         Q81GjIcllvR9s3iRhmSsVOtimtzC+3YT5zxzgY6zEOUHfrFY9OYQxdxON6eqgK8r0a7B
-         sIXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz3utWWZXJLw0U1PqdulBcV8j33nzHAgVI5yFXwpXyEjyg0+H6oDAqrnBobX/9asC7knD79ib5jtcW2y/v@vger.kernel.org, AJvYcCVR94G9ogOuj0UJV/CNhXMn98eZxFBNIM+FrowSpFDN+FPUn57hnpli/fPpQ8OVgeqbJxN17NaH8oM=@vger.kernel.org, AJvYcCXaXC2u4JZndmMIC61BkWqw7ga1H1SxTozSglP5vwDksKv2TVaRt8uk0qsKzaaz2V9kpjMnF+AoD+0Boxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjW2FrkUV69Gg378i1lv+lQFt7CqCdufaHwJWDegY3X6+XojkC
-	41ddlosm+AMtdhLZqsoEUj7A2aLew3+29vLnsrnguFXs8HKCn+CG+HG99MIu8iHrXXknFJVrecF
-	jMfNx14iEXkq28kM3cXOULBlDyQWSbo8=
-X-Gm-Gg: ASbGncv7kVxFAa9YCIDmHo983x7ZB6qU+30K8I4HDV1KgTTtFQVQ+hBaM8GD7VpR2iL
-	aOUuA/lTTRiSqkap50DwAdrAzTr8U8nL0lIATM/+OcbrgMRlUe+2DG+eChBOpUo91K3v/7jxX4I
-	vxIoGbl4wt3H6w5Zr9CCZv1YGHPK+juK0ruv1cZ4fDz/4sW6r7hhiePAoRg0NxJLT+lJ/xnr9b/
-	4T5eqraoSY7oR8erisGSrfYK3/r
-X-Google-Smtp-Source: AGHT+IGsH1PXGwUgVexc1lMG6rmmQhIjk/W76iU5aKBGV8SYkOMNIATBRu6zIo7zWQVFlSfWhfXIuXrT28YobmIlfgQ=
-X-Received: by 2002:a17:907:3f07:b0:ad8:a935:b905 with SMTP id
- a640c23a62f3a-b01d8c74f3emr218389066b.22.1756566342992; Sat, 30 Aug 2025
- 08:05:42 -0700 (PDT)
+	s=arc-20240116; t=1756566836; c=relaxed/simple;
+	bh=GeVA+T7o7ntpTg+xDppGN4AZE4VBs4ETAWnGCIdbQ8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bPJ8j417CoPk70OVSlzrkV4xuipR4d8xiJk6yF9AEhFwLYb8NQt6kLiBeTdyxPNmH3szw+ISnSRvyhr9HnEt/kCv++mM2yW7wxJNxtW16Nubuq89ItxYIeAIX7Foy6qVZocgyeGfIUhCsYDU/Hf4BYoImzlfh+NfUlwjYb5loz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ox4seuAJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2B4C4CEEB;
+	Sat, 30 Aug 2025 15:13:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756566836;
+	bh=GeVA+T7o7ntpTg+xDppGN4AZE4VBs4ETAWnGCIdbQ8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ox4seuAJ4kJOea08PjWUf2rQDKdDH6Y6LSCx026o7RHkuepgKM12vZxYgapVNr172
+	 HzXtoIE2YhIl83+6AdAqviwgPxuI+sHg1h5L9ttGwdHcQnBbd9QPOdobVoRo7stSGd
+	 JrYxLORc5aI7feU745QB4RYzxl0NGYLwEqFgRIfnsRmqJPQ0RvtIbRbb9M0HMvMvn/
+	 xcrlHk4FbAQ4v7Uw0ir8EJpiwOYO4oWrx7F/7pNe94iewApCLdSJlYgtxBpxJ9m8Kt
+	 S6cJkpp8byAk3mls4OMtKSVrBtYZnFdl8N+yUppAyWpO7FWBmpWCeo2WgZq/LDSOv1
+	 kXi9XHajbSFTQ==
+Message-ID: <c6f2b153-b783-4087-b7e4-30ca207b7572@kernel.org>
+Date: Sat, 30 Aug 2025 17:13:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <CAHp75Ve=xJ6vTUydaTw9GuYr22ZXp3HFA5N0tP7NET=CvZJB8Q@mail.gmail.com>
- <CAHp75Vd+hAucOyjqLj=rY3oLSySiReVupRQdBjwoLQSPAZMNMQ@mail.gmail.com> <22825864.EfDdHjke4D@radijator>
-In-Reply-To: <22825864.EfDdHjke4D@radijator>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 18:05:06 +0300
-X-Gm-Features: Ac12FXzmfa_ynBM8A7qkaTdSJMGTHyWBiaQnD0Amqhps0VbmmPMbityG91FxqAY
-Message-ID: <CAHp75Vfg4E7nUXwQowN0wtNKQR_i6W+E_JT0xwCKSoY+ghGFvA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>, 
-	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 11/12] ACPI: platform: Add macro for acpi platform
+ driver
+To: Slawomir Rosek <srosek@google.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>,
+ Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+ AceLan Kao <acelan.kao@canonical.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Tomasz Nowicki <tnowicki@google.com>, Stanislaw Kardach
+ <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250830053404.763995-1-srosek@google.com>
+ <20250830053404.763995-12-srosek@google.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250830053404.763995-12-srosek@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 30, 2025 at 4:07=E2=80=AFPM Duje Mihanovi=C4=87 <duje@dujemihan=
-ovic.xyz> wrote:
-> On Saturday, 30 August 2025 06:41:58 Central European Summer Time Andy
-> Shevchenko wrote:
-> > On Sat, Aug 30, 2025 at 7:37=E2=80=AFAM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Fri, Aug 29, 2025 at 2:41=E2=80=AFAM David Lechner <dlechner@bayli=
-bre.com>
-> wrote:
-> > > > On 8/28/25 5:17 PM, Duje Mihanovi=C4=87 wrote:
+Hi Slawomir,
+
+On 30-Aug-25 7:34 AM, Slawomir Rosek wrote:
+> Introduce module_acpi_platform_driver() macro to simplify dynamic
+> enumeration of ACPI device objects on the platform bus by loadable
+> modules. Move common code from the intel-hid and intel-vbtn drivers
+> to the ACPI platform core.
+> 
+> Signed-off-by: Slawomir Rosek <srosek@google.com>
+
+Thank you for your interesting patch.
+
+> ---
+>  drivers/acpi/acpi_platform.c      | 27 ++++++++++++++++++++
+>  drivers/platform/x86/intel/hid.c  | 41 +------------------------------
+>  drivers/platform/x86/intel/vbtn.c | 30 +---------------------
+>  include/linux/platform_device.h   | 17 +++++++++++++
+>  4 files changed, 46 insertions(+), 69 deletions(-)
+> 
+> diff --git a/drivers/acpi/acpi_platform.c b/drivers/acpi/acpi_platform.c
+> index 48d15dd785f6..adf32ffa6be6 100644
+> --- a/drivers/acpi/acpi_platform.c
+> +++ b/drivers/acpi/acpi_platform.c
+> @@ -190,6 +190,33 @@ struct platform_device *acpi_create_platform_device(struct acpi_device *adev,
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_create_platform_device);
+>  
+> +static acpi_status
+> +__acpi_platform_driver_register_cb(acpi_handle handle, u32 lvl,
+> +				void *context, void **rv)
+> +{
+> +	const struct acpi_device_id *ids = context;
+> +	struct acpi_device *dev = acpi_fetch_acpi_dev(handle);
+> +
+> +	if (dev && acpi_match_device_ids(dev, ids) == 0)
+> +		if (!IS_ERR_OR_NULL(acpi_create_platform_device(dev, NULL))) {
+> +			dev_info(&dev->dev,
+> +				 "created platform device\n");
+> +		}
+> +
+> +	return AE_OK;
+> +}
+> +
+> +int __acpi_platform_driver_register(struct platform_driver *drv,
+> +				struct module *owner)
+> +{
+> +	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT, ACPI_UINT32_MAX,
+> +			    __acpi_platform_driver_register_cb, NULL,
+> +			    (void *)drv->driver.acpi_match_table, NULL);
+> +
+> +	return __platform_driver_register(drv, owner);
+> +}
+> +EXPORT_SYMBOL_GPL(__acpi_platform_driver_register);
+> +
+>  void __init acpi_platform_init(void)
+>  {
+>  	acpi_reconfig_notifier_register(&acpi_platform_notifier);
+> diff --git a/drivers/platform/x86/intel/hid.c b/drivers/platform/x86/intel/hid.c
+> index f25a427cccda..e2e0fc95e177 100644
+> --- a/drivers/platform/x86/intel/hid.c
+> +++ b/drivers/platform/x86/intel/hid.c
+> @@ -766,43 +766,4 @@ static struct platform_driver intel_hid_pl_driver = {
+>  	.remove = intel_hid_remove,
+>  };
+>  
+> -/*
+> - * Unfortunately, some laptops provide a _HID="INT33D5" device with
+> - * _CID="PNP0C02".  This causes the pnpacpi scan driver to claim the
+> - * ACPI node, so no platform device will be created.  The pnpacpi
+> - * driver rejects this device in subsequent processing, so no physical
+> - * node is created at all.
+> - *
+> - * As a workaround until the ACPI core figures out how to handle
+> - * this corner case, manually ask the ACPI platform device code to
+> - * claim the ACPI node.
+> - */
+
+This comment contains useful info, please preserve the comment changing
+the last paragraph to:
+
+ * As a workaround until the ACPI core figures out how to handle
+ * this corner case, manually ask the ACPI platform device code to
+ * claim the ACPI node by using module_acpi_platform_driver()
+ * instead of the regular module_platform_driver().
+
+> -static acpi_status __init
+> -check_acpi_dev(acpi_handle handle, u32 lvl, void *context, void **rv)
+> -{
+> -	const struct acpi_device_id *ids = context;
+> -	struct acpi_device *dev = acpi_fetch_acpi_dev(handle);
+> -
+> -	if (dev && acpi_match_device_ids(dev, ids) == 0)
+> -		if (!IS_ERR_OR_NULL(acpi_create_platform_device(dev, NULL)))
+> -			dev_info(&dev->dev,
+> -				 "intel-hid: created platform device\n");
+> -
+> -	return AE_OK;
+> -}
+> -
+> -static int __init intel_hid_init(void)
+> -{
+> -	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
+> -			    ACPI_UINT32_MAX, check_acpi_dev, NULL,
+> -			    (void *)intel_hid_ids, NULL);
+> -
+> -	return platform_driver_register(&intel_hid_pl_driver);
+> -}
+> -module_init(intel_hid_init);
+> -
+> -static void __exit intel_hid_exit(void)
+> -{
+> -	platform_driver_unregister(&intel_hid_pl_driver);
+> -}
+> -module_exit(intel_hid_exit);
+> +module_acpi_platform_driver(intel_hid_pl_driver);
+> diff --git a/drivers/platform/x86/intel/vbtn.c b/drivers/platform/x86/intel/vbtn.c
+> index 232cd12e3c9f..42932479de35 100644
+> --- a/drivers/platform/x86/intel/vbtn.c
+> +++ b/drivers/platform/x86/intel/vbtn.c
 
 ...
 
-> > > > > +     ret =3D regmap_bulk_read(*map, regs[chan], buf, 2);
-> >
-> > On top, please drop a double pointer and use map directly. That's
-> > already a pointer, what's the issue with it to begin with?
->
-> struct regmap is only defined in a regmap-internal header, so it has to
-> be a double pointer or a struct containing a regmap pointer. I went
-> with David's advice and created this struct.
+> -static int __init intel_vbtn_init(void)
+> -{
+> -	acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
+> -			    ACPI_UINT32_MAX, check_acpi_dev, NULL,
+> -			    (void *)intel_vbtn_ids, NULL);
 
-I might have missed something... So, the root of this is how we
-allocate memory for the data structure and what we keep in the priv
-member there. Indeed, it keeps the pointer to the field in the
-allocated memory, so if we allocate a memory just to keep one pointer
-it should be doubled (independently on the possibility to access the
-data type we are using to keep in priv).
+Too bad there is no comment here. I wonder if this is necessary
+at all, or if this was just copy & pasted from the intel/hid.c
+driver.
 
---=20
-With Best Regards,
-Andy Shevchenko
+git blame is not really helpful here, the acpi_walk_namespace()
+was added in 332e081225fc2 ("intel-vbtn: new driver for Intel Virtual
+Button").
+
+So it looks like this is just copy paste and maybe a regular
+module_platform_driver() will be sufficient here. But changing
+behavior like that is out of scope for this patch-set, so please
+keep using module_acpi_platform_driver()
+
+Otherwise this looks good to me.
+
+Regards,
+
+Hans
+
+
 
