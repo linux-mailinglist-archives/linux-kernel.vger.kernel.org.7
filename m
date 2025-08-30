@@ -1,240 +1,608 @@
-Return-Path: <linux-kernel+bounces-792977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FB0B3CB18
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41BDB3CB1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5341BA40C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A455E7948
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFF5258EC8;
-	Sat, 30 Aug 2025 13:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBB3224AEF;
+	Sat, 30 Aug 2025 13:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aR8iw5dA"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSkfDpQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D165D221F2F;
-	Sat, 30 Aug 2025 13:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756559669; cv=pass; b=TztvpMPDDyOfltYsEO9KRjbtIgjofNiC49tUbhHn8E9GvkIVwinubA2sZ0WRrZqAnDcsALOPYWCMm4i/qSkWFOVjn+OYFMJOiLaUwUN9nx2ENYWksQ64/j7hIS8GldE3fMWoue/TrBcjqKTU7zkaUiN1z21fHg4tWVMjiP+Q7hY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756559669; c=relaxed/simple;
-	bh=g/6h3MLOSw8E8JP8tDMoxF5DD0aa4WZk2z8vXWSE5Ls=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JWT/PpSeIB3UBqZTDLVBLSJN7iBBxjj3WMk1pd2fojzlEnjqYY/VP7DEEVm5rPU6eGvCEnx/iaK79gdRZf6zq1/rQlGwisdGLuvGVoHfRfHOPLYZyj5bxUt+SHE8Iy51MZeN00LByN/VS90aCTyDIONisL7TOmCSCbYPBK5c/w8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aR8iw5dA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756559643; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GSTOsbarP6cnJ4c7azrFt4csIcZ5vK1ow9O+TuyJGXVQnx4w3iN+YIL8J+oD8v3yT8VbM/8EonsXGa0hm2M59U/xmMpDfswudXZlvNkIlG13V6TEGQyzBFEwK5jmbL03eyxXIAqBC5qxMgfBZeKFuMmcledaUKxkvEYLy29CH+Y=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756559643; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=z0GxsGKSQjORQ1YKSQHGOGk0jyVSUNf6PTaoVMnRtnc=; 
-	b=RJwdIn9Kjd6XHjirpb9U91gZHQAVJIOWRzpd2LoqPRlijfYh45w5fGM2Lb/Q6GXkyylSjYLDfRnN51rMWkOe04GTQezKaXJXpyZf9MHw7X2Mz28AQspsaI9lM7BafBFu68smOc6TdcSE4BlrEhkOGKhyMsKv9XMu98y8tiC9eMU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756559643;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=z0GxsGKSQjORQ1YKSQHGOGk0jyVSUNf6PTaoVMnRtnc=;
-	b=aR8iw5dAX9ylLPQQTCOpQ3cb1R/kT8EqschFp6SQzqTqGKJnpmKOh1Xb5+dFsIFq
-	EoIvGOVLrDtZlDxgAFG9vXDIv/PE4h/jlahLSqBJdfmIR8g/swnMTP8IaXWIlvnFzyG
-	UmdumQUIqpESAesdw7s5dnAM/5LF6VOnDeLQecWM=
-Received: by mx.zohomail.com with SMTPS id 1756559641661303.35423052507974;
-	Sat, 30 Aug 2025 06:14:01 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDB86F2F2;
+	Sat, 30 Aug 2025 13:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756559894; cv=none; b=GWxen+1vvpbPg2V/wTFco3n+JKlCuucl9vLfX8kaRI/Cz/d/e9kKQjHvaWmbubyYwLeYBNMjL5noPb9qbeaPYjGM0F5SypbOHFyJO4GbQC3HW1qADga7F56wBZaC29N3wrSzdeWHREIhDI0FhqK5v14h/G1eZsy75xW9NCb/xNw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756559894; c=relaxed/simple;
+	bh=uDxH95ure9wekdoV70RkXRE5pysKH2g25txxKvRhYVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTidzjt8auT5F96CvhbF25RMkMrIv8jBTDvz06fyJ5MOYDzjgFFL/LvC+ztWXZzxXsGyNJ5ZCAO2O52usyDE1zQo0RwNLvnNX6eotugZAxJRhCJvL56DWpPKzIjbCko/srrCLMBfFhgOae8NtKp/723YILbMbE/LNxH3Dp+S/SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSkfDpQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53343C4CEEB;
+	Sat, 30 Aug 2025 13:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756559891;
+	bh=uDxH95ure9wekdoV70RkXRE5pysKH2g25txxKvRhYVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSkfDpQiKnyxdWtvYQud3mEev8n9IURN2vdf6faDhmFow/yVw1y7NLBSl92LgxePZ
+	 SHaAhYac+R/odWPfEe4Eeb5/vFvXl7zCJ8RpE4q0X6Fo73eTqtMaBw9vtrojwEizAz
+	 7DIO3vOgj39duLR2O4mbrqU8vQtZTHN65dZtu2JCo3p/TeCKWBzgI/6iyVLMfB+F5Y
+	 K0AGHiGVeEK9sf3ZfsrT+kwx9Vo+noSkaTDBRDDhcVH67VeXaGCcfjTrhjH4I54zdl
+	 EUJ45TQW1mqNgXzZWVfCsekQNld2Mxsfg38ueK1vk96sbAJmy1gnqR/ONHman3YSm5
+	 jT1JND7xfElCw==
+Date: Sat, 30 Aug 2025 18:48:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 08/15] PCI: cadence: Add support for High Perf
+ Architecture (HPA) controller
+Message-ID: <lsmes7ty2i2irzozpbwno562zi25lebxrcejd7biltjtsnb36z@6vhtqwrr4cpk>
+References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
+ <20250819115239.4170604-9-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH 2/2] rust: regulator: add devm_regulator_get_enable API
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DCFID32NEFH0.3JB41XV88JZ3F@nvidia.com>
-Date: Sat, 30 Aug 2025 10:13:45 -0300
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DB27F561-30AD-400E-811B-19CEAE511CFA@collabora.com>
-References: <20250829-regulator-remove-dynamic-v1-0-deb59205e8e9@collabora.com>
- <20250829-regulator-remove-dynamic-v1-2-deb59205e8e9@collabora.com>
- <DCFID32NEFH0.3JB41XV88JZ3F@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819115239.4170604-9-hans.zhang@cixtech.com>
 
-Hi Alex,
+On Tue, Aug 19, 2025 at 07:52:32PM GMT, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Add support for Cadence PCIe RP and EP configuration for High
+> Performance Architecture (HPA) controllers.
+> 
 
-> On 30 Aug 2025, at 02:20, Alexandre Courbot <acourbot@nvidia.com> =
-wrote:
->=20
-> On Sat Aug 30, 2025 at 6:11 AM JST, Daniel Almeida wrote:
->> A lot of drivers only care about enabling the regulator for as long =
-as
->> the underlying Device is bound. This can be easily observed due to =
-the
->> extensive use of `devm_regulator_get_enable` and
->> `devm_regulator_get_enable_optional` throughout the kernel.
->>=20
->> Therefore, make this helper available in Rust. Also add an example
->> noting how it should be the default API unless the driver needs more
->> fine-grained control over the regulator.
->>=20
->> Suggested-by: Danilo Krummrich <dakr@kernel.org>
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->> ---
->> rust/helpers/regulator.c | 10 ++++++++++
->> rust/kernel/regulator.rs | 42 =
-+++++++++++++++++++++++++++++++++++++++++-
->> 2 files changed, 51 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/rust/helpers/regulator.c b/rust/helpers/regulator.c
->> index =
-cd8b7ba648ee33dd14326c9242fb6c96ab8e32a7..11bc332443bd064f4b5afd350ffc045b=
-adff9076 100644
->> --- a/rust/helpers/regulator.c
->> +++ b/rust/helpers/regulator.c
->> @@ -40,4 +40,14 @@ int rust_helper_regulator_is_enabled(struct =
-regulator *regulator)
->> return regulator_is_enabled(regulator);
->> }
->>=20
->> +int rust_helper_devm_regulator_get_enable(struct device *dev, const =
-char *id)
->> +{
->> + return devm_regulator_get_enable(dev, id);
->> +}
->> +
->> +int rust_helper_devm_regulator_get_enable_optional(struct device =
-*dev, const char *id)
->> +{
->> + return devm_regulator_get_enable_optional(dev, id);
->> +}
->> +
->> #endif
->> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
->> index =
-60993373f4d911f4f0cbec2510f0c67efa24a51b..73d4c9b56dca9c676793d78e35e5758d=
-18eef3e8 100644
->> --- a/rust/kernel/regulator.rs
->> +++ b/rust/kernel/regulator.rs
->> @@ -18,7 +18,7 @@
->>=20
->> use crate::{
->>     bindings,
->> -    device::Device,
->> +    device::{Bound, Device},
->>     error::{from_err_ptr, to_result, Result},
->>     prelude::*,
->> };
->> @@ -70,6 +70,26 @@ pub struct Error<State: RegulatorState> {
->>     pub regulator: Regulator<State>,
->> }
->>=20
->> +/// Enables a regulator whose lifetime is tied to the lifetime of =
-`dev`.
->> +///
->> +/// This calls `regulator_disable()` and `regulator_put()` =
-automatically on
->> +/// driver detach.
->> +///
->> +/// This API is identical to `devm_regulator_get_enable()`, and =
-should be
->> +/// preferred if the caller only cares about the regulator being on.
->> +pub fn enable(dev: &Device<Bound>, name: &CStr) -> Result {
->=20
-> The name `enable` sounds like it just enables a regulator, which is a =
-bit
-> confusing IMHO. Maybe `get_enable` or `get_enable_for`? Not sure what
-> would be idiomatic here.
+Add more info about the controller.
 
-So I thought about get_enabled, but I thought the "get" nomenclature was
-confusing. For example, "get" acquires a refcount, but for the devm_ =
-version
-the refcount management is transparent. In this sense, I thought that =
-just
-"enable" would convey the idea better, i.e. "enable this and forget =
-about any
-lifetime management at all".
+> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> Co-developed-by: Hans Zhang <hans.zhang@cixtech.com>
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+>  drivers/pci/controller/cadence/Makefile       |  10 +-
+>  .../controller/cadence/pcie-cadence-ep-hpa.c  | 528 ++++++++++++++++
+>  .../cadence/pcie-cadence-host-hpa.c           | 585 ++++++++++++++++++
+>  .../pci/controller/cadence/pcie-cadence-hpa.c | 204 ++++++
 
-If you still think that using the "get" prefix is better, I can change =
-it no
-worries :)
+That's a combined 1200+ loc in a single patch, which is very difficult to
+review. You should've split it into atleast two.
 
->=20
->> +    // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->> +    // string.
->> +    to_result(unsafe { =
-bindings::devm_regulator_get_enable(dev.as_raw(), name.as_ptr()) })
->> +}
->> +
->> +/// Same as [`enable`], but calls =
-`devm_regulator_get_enable_optional` instead.
->=20
-> Maybe explain in one sentence what =
-`devm_regulator_get_enable_optional`
-> as it might not be completely obvious.
+>  drivers/pci/controller/cadence/pcie-cadence.c |  11 +
+>  drivers/pci/controller/cadence/pcie-cadence.h |  74 ++-
+>  6 files changed, 1403 insertions(+), 9 deletions(-)
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-hpa.c
+> 
+> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> index b104562fb86a..de4ddae7aca4 100644
+> --- a/drivers/pci/controller/cadence/Makefile
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -1,6 +1,10 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence-common.o pcie-cadence.o
+> -obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-common.o pcie-cadence-host.o
+> -obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-common.o pcie-cadence-ep.o
+> +pcie-cadence-mod-y := pcie-cadence-hpa.o pcie-cadence-common.o pcie-cadence.o
+> +pcie-cadence-host-mod-y := pcie-cadence-host-common.o pcie-cadence-host.o pcie-cadence-host-hpa.o
+> +pcie-cadence-ep-mod-y := pcie-cadence-ep-common.o pcie-cadence-ep.o pcie-cadence-ep-hpa.o
+> +
+> +obj-$(CONFIG_PCIE_CADENCE) = pcie-cadence-mod.o
+> +obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-mod.o
+> +obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-mod.o
+>  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c b/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+> new file mode 100644
+> index 000000000000..a5366ecec34f
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+> @@ -0,0 +1,528 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe endpoint controller driver.
+> +// Author: Manikandan K Pillai  <mpillai@cadence.com>
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/pci-epc.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/sizes.h>
+> +
+> +#include "pcie-cadence.h"
+> +#include "pcie-cadence-ep-common.h"
+> +
+> +static int cdns_pcie_hpa_ep_map_addr(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				     phys_addr_t addr, u64 pci_addr, size_t size)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 r;
+> +
+> +	r = find_first_zero_bit(&ep->ob_region_map, BITS_PER_LONG);
+> +	if (r >= ep->max_regions - 1) {
+> +		dev_err(&epc->dev, "no free outbound region\n");
+> +		return -EINVAL;
 
-Perhaps adding a link?
+-ENOSPC
 
->=20
->> +pub fn enable_optional(dev: &Device<Bound>, name: &CStr) -> Result {
->> +    // SAFETY: `dev` is a valid and bound device, while `name` is a =
-valid C
->> +    // string.
->> +    to_result(unsafe { =
-bindings::devm_regulator_get_enable_optional(dev.as_raw(), =
-name.as_ptr()) })
->> +}
->> +
->> /// A `struct regulator` abstraction.
->> ///
->> /// # Examples
->> @@ -146,6 +166,26 @@ pub struct Error<State: RegulatorState> {
->> /// }
->> /// ```
->> ///
->> +/// If a driver only cares about the regulator being on for as long =
-it is bound
->> +/// to a device, then it should use [`regulator::get_enabled`] or
->> +/// [`regulator::get_enabled_optional`]. This should be the default =
-use-case
->=20
-> I suppose you mean `enable` and `enable_optional` instead of
-> `get_enabled` and `get_enabled_optional` (although I personally would
-> favor the latter :)).
+> +	}
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +	cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, r, false, addr, pci_addr, size);
+> +
+> +	set_bit(r, &ep->ob_region_map);
+> +	ep->ob_addr[r] = addr;
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_pcie_hpa_ep_unmap_addr(struct pci_epc *epc, u8 fn, u8 vfn,
+> +					phys_addr_t addr)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 r;
+> +
+> +	for (r = 0; r < ep->max_regions - 1; r++)
+> +		if (ep->ob_addr[r] == addr)
+> +			break;
+> +
+> +	if (r == ep->max_regions - 1)
+> +		return;
+> +
+> +	cdns_pcie_hpa_reset_outbound_region(pcie, r);
+> +
+> +	ep->ob_addr[r] = 0;
+> +	clear_bit(r, &ep->ob_region_map);
+> +}
+> +
+> +static void cdns_pcie_hpa_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
+> +					 bool assert)
+> +{
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	unsigned long flags;
+> +	u32 offset;
+> +	u16 status;
+> +	u8 msg_code;
+> +
+> +	intx &= 3;
+> +
+> +	/* Set the outbound region if needed */
+> +	if (unlikely(ep->irq_pci_addr != CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY ||
+> +		     ep->irq_pci_fn != fn)) {
+> +		/* First region was reserved for IRQ writes */
+> +		cdns_pcie_hpa_set_outbound_region_for_normal_msg(pcie, 0, fn, 0, ep->irq_phys_addr);
+> +		ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY;
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +
+> +	if (assert) {
+> +		ep->irq_pending |= BIT(intx);
+> +		msg_code = PCIE_MSG_CODE_ASSERT_INTA + intx;
+> +	} else {
+> +		ep->irq_pending &= ~BIT(intx);
+> +		msg_code = PCIE_MSG_CODE_DEASSERT_INTA + intx;
+> +	}
+> +
+> +	spin_lock_irqsave(&ep->lock, flags);
+> +	status = cdns_pcie_ep_fn_readw(pcie, fn, PCI_STATUS);
+> +	if (((status & PCI_STATUS_INTERRUPT) != 0) ^ (ep->irq_pending != 0)) {
+> +		status ^= PCI_STATUS_INTERRUPT;
+> +		cdns_pcie_ep_fn_writew(pcie, fn, PCI_STATUS, status);
+> +	}
+> +	spin_unlock_irqrestore(&ep->lock, flags);
+> +
+> +	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(PCIE_MSG_TYPE_R_RC) |
+> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
+> +	writel(0, ep->irq_cpu_addr + offset);
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_raise_intx_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					   u8 intx)
+> +{
+> +	u16 cmd;
+> +
+> +	cmd = cdns_pcie_ep_fn_readw(&ep->pcie, fn, PCI_COMMAND);
+> +	if (cmd & PCI_COMMAND_INTX_DISABLE)
+> +		return -EINVAL;
+> +
+> +	cdns_pcie_hpa_ep_assert_intx(ep, fn, intx, true);
+> +
+> +	/* The mdelay() value was taken from dra7xx_pcie_raise_intx_irq() */
+> +	mdelay(1);
 
-Hmm, something happened here. I always make sure to run rustdoc before
-submitting, and it did not error out even though this function does not =
-exist.
+AFAIK, this 1ms delay is not fixed per the PCIe spec. It depends on how the host
+interrupt controller detects the level triggered interrupt. So I don't think
+this 1ms delay will work with all host systems.
 
-In any case, my bad.
+> +	cdns_pcie_hpa_ep_assert_intx(ep, fn, intx, false);
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_raise_msi_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					  u8 interrupt_num)
+> +{
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+> +	u16 flags, mme, data, data_mask;
+> +	u8 msi_count;
+> +	u64 pci_addr, pci_addr_mask = 0xff;
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +
+> +	/* Check whether the MSI feature has been enabled by the PCI host */
+> +	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_FLAGS);
+> +	if (!(flags & PCI_MSI_FLAGS_ENABLE))
+> +		return -EINVAL;
 
-=E2=80=94 Daniel
+-EOPNOTSUPP
 
+> +
+> +	/* Get the number of enabled MSIs */
+> +	mme = FIELD_GET(PCI_MSI_FLAGS_QSIZE, flags);
+> +	msi_count = 1 << mme;
+> +	if (!interrupt_num || interrupt_num > msi_count)
+> +		return -EINVAL;
+> +
+> +	/* Compute the data value to be written */
+> +	data_mask = msi_count - 1;
+> +	data = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_DATA_64);
+> +	data = (data & ~data_mask) | ((interrupt_num - 1) & data_mask);
+> +
+> +	/* Get the PCI address where to write the data into */
+> +	pci_addr = cdns_pcie_ep_fn_readl(pcie, fn, cap + PCI_MSI_ADDRESS_HI);
+> +	pci_addr <<= 32;
+> +	pci_addr |= cdns_pcie_ep_fn_readl(pcie, fn, cap + PCI_MSI_ADDRESS_LO);
+> +	pci_addr &= GENMASK_ULL(63, 2);
+> +
+> +	/* Set the outbound region if needed */
+> +	if (unlikely(ep->irq_pci_addr != (pci_addr & ~pci_addr_mask) ||
+> +		     ep->irq_pci_fn != fn)) {
+> +		/* First region was reserved for IRQ writes */
+> +		cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, 0,
+> +						  false,
+> +						  ep->irq_phys_addr,
+> +						  pci_addr & ~pci_addr_mask,
+> +						  pci_addr_mask + 1);
+> +		ep->irq_pci_addr = (pci_addr & ~pci_addr_mask);
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +	writel(data, ep->irq_cpu_addr + (pci_addr & pci_addr_mask));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_raise_msix_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					   u16 interrupt_num)
+> +{
+> +	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
+> +	u32 tbl_offset, msg_data, reg;
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct pci_epf_msix_tbl *msix_tbl;
+> +	struct cdns_pcie_epf *epf;
+> +	u64 pci_addr_mask = 0xff;
+> +	u64 msg_addr;
+> +	u16 flags;
+> +	u8 bir;
+> +
+> +	epf = &ep->epf[fn];
+> +	if (vfn > 0)
+> +		epf = &epf->epf[vfn - 1];
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +
+> +	/* Check whether the MSI-X feature has been enabled by the PCI host */
+> +	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSIX_FLAGS);
+> +	if (!(flags & PCI_MSIX_FLAGS_ENABLE))
+> +		return -EINVAL;
 
+-EOPNOTSUPP
 
+> +
+> +	reg = cap + PCI_MSIX_TABLE;
+> +	tbl_offset = cdns_pcie_ep_fn_readl(pcie, fn, reg);
+> +	bir = FIELD_GET(PCI_MSIX_TABLE_BIR, tbl_offset);
+> +	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
+> +
+> +	msix_tbl = epf->epf_bar[bir]->addr + tbl_offset;
+> +	msg_addr = msix_tbl[(interrupt_num - 1)].msg_addr;
+> +	msg_data = msix_tbl[(interrupt_num - 1)].msg_data;
+> +
+> +	/* Set the outbound region if needed */
+> +	if (ep->irq_pci_addr != (msg_addr & ~pci_addr_mask) ||
+> +	    ep->irq_pci_fn != fn) {
+> +		/* First region was reserved for IRQ writes */
+> +		cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, 0,
+> +						  false,
+> +						  ep->irq_phys_addr,
+> +						  msg_addr & ~pci_addr_mask,
+> +						  pci_addr_mask + 1);
+> +		ep->irq_pci_addr = (msg_addr & ~pci_addr_mask);
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +	writel(msg_data, ep->irq_cpu_addr + (msg_addr & pci_addr_mask));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_raise_irq(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				      unsigned int type, u16 interrupt_num)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct device *dev = pcie->dev;
+> +
+> +	switch (type) {
+> +	case PCI_IRQ_INTX:
+> +		if (vfn > 0) {
+> +			dev_err(dev, "Cannot raise INTX interrupts for VF\n");
+> +			return -EINVAL;
+
+-EOPNOTSUPP
+
+> +		}
+> +		return cdns_pcie_hpa_ep_raise_intx_irq(ep, fn, vfn, 0);
+> +
+
+No need of newline
+
+> +	case PCI_IRQ_MSI:
+> +		return cdns_pcie_hpa_ep_raise_msi_irq(ep, fn, vfn, interrupt_num);
+> +
+> +	case PCI_IRQ_MSIX:
+> +		return cdns_pcie_hpa_ep_raise_msix_irq(ep, fn, vfn, interrupt_num);
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+
+[...]
+
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c b/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+> new file mode 100644
+> index 000000000000..b2e570f2c047
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+> @@ -0,0 +1,585 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe host controller driver.
+> +// Author: Manikandan K Pillai <mpillai@cadence.com>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list_sort.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_pci.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "pcie-cadence.h"
+> +#include "pcie-cadence-host-common.h"
+> +
+> +static u8 bar_aperture_mask[] = {
+> +	[RP_BAR0] = 0x1F,
+> +	[RP_BAR1] = 0xF,
+
+Use lowercase for hex.
+
+> +};
+> +
+
+[...]
+
+> +static void cdns_pcie_hpa_create_region_for_ecam(struct cdns_pcie_rc *rc)
+> +{
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(rc);
+> +	struct resource *cfg_res = rc->cfg_res;
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	u32 value, root_port_req_id_reg, pcie_bus_number_reg;
+> +	u32 ecam_addr_0, region_size_0, request_id_0;
+> +	int busnr = 0, secbus = 0, subbus = 0;
+> +	struct resource_entry *entry;
+> +	resource_size_t size;
+> +	u32 axi_address_low;
+> +	int nbits;
+> +	u64 sz;
+> +
+> +	entry = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> +	if (entry) {
+> +		busnr = entry->res->start;
+> +		secbus = (busnr < 0xff) ? (busnr + 1) : 0xff;
+> +		subbus = entry->res->end;
+> +	}
+> +	size = resource_size(cfg_res);
+> +	sz = 1ULL << fls64(size - 1);
+> +	nbits = ilog2(sz);
+> +	if (nbits < 8)
+> +		nbits = 8;
+> +
+> +	root_port_req_id_reg = ((busnr & 0xff) << 8);
+> +	pcie_bus_number_reg = ((subbus & 0xff) << 16) | ((secbus & 0xff) << 8) |
+> +			      (busnr & 0xff);
+> +	ecam_addr_0 = cfg_res->start;
+> +	region_size_0 = nbits - 1;
+> +	request_id_0 = ((busnr & 0xff) << 8);
+> +
+> +#define CDNS_PCIE_HPA_TAG_MANAGEMENT (0x0)
+
+Do not use inline definitions. Define them at the start of the file.
+
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_TAG_MANAGEMENT, 0x200000);
+> +
+> +	/* Taking slave err as OKAY */
+> +#define CDNS_PCIE_HPA_SLAVE_RESP (0x100)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE, CDNS_PCIE_HPA_SLAVE_RESP,
+> +			     0x0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_SLAVE_RESP + 0x4, 0x0);
+> +
+> +	/* Program the register "i_root_port_req_id_reg" with RP's BDF */
+> +#define I_ROOT_PORT_REQ_ID_REG (0x141c)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, I_ROOT_PORT_REQ_ID_REG,
+> +			     root_port_req_id_reg);
+> +
+> +	/**
+> +	 * Program the register "i_pcie_bus_numbers" with Primary(RP's bus number),
+> +	 * secondary and subordinate bus numbers
+> +	 */
+> +#define I_PCIE_BUS_NUMBERS (CDNS_PCIE_HPA_RP_BASE + 0x18)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_RP, I_PCIE_BUS_NUMBERS,
+> +			     pcie_bus_number_reg);
+> +
+> +	/* Program the register "lm_hal_sbsa_ctrl[0]" to enable the sbsa */
+> +#define LM_HAL_SBSA_CTRL (0x1170)
+> +	value = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL);
+> +	value |= BIT(0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL, value);
+> +
+> +	/* Program region[0] for ECAM */
+> +	axi_address_low = (ecam_addr_0 & 0xfff00000) | region_size_0;
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(0),
+> +			     axi_address_low);
+> +
+> +	/* rc0-high-axi-address */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(0), 0x0);
+> +	/* Type-1 CFG */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(0), 0x05000000);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0),
+> +			     (request_id_0 << 16));
+> +
+> +	/* All AXI bits pass through PCIe */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(0), 0x1b);
+> +	/* PCIe address-high */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(0), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(0), 0x06000000);
+> +}
+
+[...]
+
+> +int cdns_pcie_hpa_host_link_setup(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct device *dev = rc->pcie.dev;
+> +	int ret;
+> +
+> +	if (rc->quirk_detect_quiet_flag)
+> +		cdns_pcie_hpa_detect_quiet_min_delay_set(&rc->pcie);
+> +
+> +	cdns_pcie_hpa_host_enable_ptm_response(pcie);
+> +
+> +	ret = cdns_pcie_start_link(pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to start link\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = cdns_pcie_hpa_host_start_link(rc);
+> +	if (ret)
+> +		dev_dbg(dev, "PCIe link never came up\n");
+
+You are not supposed to fail the probe if link doesn't come up.
+
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_link_setup);
+> +
+
+[...]
+
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index 1174cf597bb0..f2eb3f09b21a 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -7,6 +7,7 @@
+>  #define _PCIE_CADENCE_H
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/module.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-epf.h>
+>  #include <linux/phy/phy.h>
+> @@ -42,9 +43,9 @@ enum cdns_pcie_reg_bank {
+>  };
+>  
+>  struct cdns_pcie_ops {
+> -	int	(*start_link)(struct cdns_pcie *pcie);
+> -	void	(*stop_link)(struct cdns_pcie *pcie);
+> -	bool	(*link_up)(struct cdns_pcie *pcie);
+> +	int     (*start_link)(struct cdns_pcie *pcie);
+> +	void    (*stop_link)(struct cdns_pcie *pcie);
+> +	bool    (*link_up)(struct cdns_pcie *pcie);
+>  	u64     (*cpu_addr_fixup)(struct cdns_pcie *pcie, u64 cpu_addr);
+>  };
+>  
+> @@ -76,6 +77,7 @@ struct cdns_plat_pcie_of_data {
+>   * struct cdns_pcie - private data for Cadence PCIe controller drivers
+>   * @reg_base: IO mapped register base
+>   * @mem_res: start/end offsets in the physical system memory to map PCI accesses
+> + * @msg_res: Region for send message to map PCI accesses
+>   * @dev: PCIe controller
+>   * @is_rc: tell whether the PCIe controller mode is Root Complex or Endpoint.
+>   * @phy_count: number of supported PHY devices
+> @@ -88,6 +90,7 @@ struct cdns_plat_pcie_of_data {
+>  struct cdns_pcie {
+>  	void __iomem		             *reg_base;
+>  	struct resource		             *mem_res;
+> +	struct resource                      *msg_res;
+>  	struct device		             *dev;
+>  	bool			             is_rc;
+>  	int			             phy_count;
+> @@ -110,6 +113,7 @@ struct cdns_pcie {
+>   *                available
+>   * @quirk_retrain_flag: Retrain link as quirk for PCIe Gen2
+>   * @quirk_detect_quiet_flag: LTSSM Detect Quiet min delay set as quirk
+> + * @ecam_support_flag: Whether the ECAM flag is supported
+>   */
+>  struct cdns_pcie_rc {
+>  	struct cdns_pcie	pcie;
+> @@ -120,6 +124,8 @@ struct cdns_pcie_rc {
+>  	bool			avail_ib_bar[CDNS_PCIE_RP_MAX_IB];
+>  	unsigned int		quirk_retrain_flag:1;
+>  	unsigned int		quirk_detect_quiet_flag:1;
+> +	unsigned int            ecam_support_flag:1;
+
+ecam_supported
+
+> +	unsigned int		no_inbound_flag:1;
+
+no_inbound_map
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
