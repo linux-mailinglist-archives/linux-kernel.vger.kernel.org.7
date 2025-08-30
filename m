@@ -1,241 +1,363 @@
-Return-Path: <linux-kernel+bounces-793132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA80B3CF13
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5FCB3CF18
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2407C6AA5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEAB63A90ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9849B2DEA71;
-	Sat, 30 Aug 2025 19:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F157E2DEA6D;
+	Sat, 30 Aug 2025 19:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="h/6JcrGn"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9kR3ht/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E91255F52
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E44942A8C;
+	Sat, 30 Aug 2025 19:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756582341; cv=none; b=VfZ1mLk9qbzCdJApj5YDq7InYeL/arDJJ4PbMWRUmlimkCmWA3FGozqhj34RdFC0eFtM/bOOWYUUiYhbexFC+LEjEmvp5vONbwGQH30W+UuguXbQhK0TWsYUTYnSY0sA02zPpXoS0UgZQL9oSIR9Bef3yZ1+sB4r6kRMSPJtS8E=
+	t=1756582496; cv=none; b=Un6enJmPTo/iCOnzdgp5hR3r/QQ6BnlAYdMYibCBJCi6IEiRWgdM4xagrYzD3rAZMeyKdEdLMraBYuEpTWsAbM1ctC+KxMD6tm+wehkYXrwjRevZSivacyb7u6A0NGxIioMpS5/VWvljaOspJdRmPghuMsnNnLp5vAXjbGN3z0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756582341; c=relaxed/simple;
-	bh=A7kOwLXfXYTqy6VkkzPnhYvUhmrg8KJbNZ7bE1IEsE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7aFKWwf9lKhJOP58ALP6Toq8TA+UFieCFmvs8NLG56oWDbw9tI4Kn1yBFFIFJNSDoFmpbPDkK5K3Zh3hX2NtU42/caa2CKR1pk4OxySudIVnQf29lZCJL47vPiue6oyqGFirlIYHUOnkKOdEbO8Gp6y/o6oQLDY75A9FogZhzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=h/6JcrGn; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2490369145fso15656025ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1756582339; x=1757187139; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XHChkfQMkbV7SjUtwakYhLoytq+CyhHZTNbhfb0dUvg=;
-        b=h/6JcrGnse1Mp0iw65iCsiiT72hHFcS6W9+o/iHUpXmLtUQXcvikjKZaj1WtYXHHjr
-         ftSQ1D6FkoXEN61T9QdLGlazmgdG0jR8VdXlk7P7NGnfDH2lyOgXWMxRVTi2EMqll6/j
-         //ulEanWKPs0z7fE32y5yFWrmGL2rMyJ9ZBlKBZ9o8iq8wQwMghKwLFE0+6fal3wknu3
-         ezdUvEoODTv2+4BYmdd3x2tt+5mzfR/fouNCHWRlBlqByEsUREtB+Qn/n7A386/ew8vG
-         RpmRBZaH/Czgvc8k+ulZQkEnf8ZIAzgAfYQW4OAmBVAPvdiQ3+9RKClvIjrgLMin+9Ii
-         D6Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756582339; x=1757187139;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XHChkfQMkbV7SjUtwakYhLoytq+CyhHZTNbhfb0dUvg=;
-        b=qFPnTZzEOhjcUndN5e307flOB1aXXocVHMrseRY3GTH2Qv9ddhopKAoW+o38B3GbqO
-         Eic67JC0zAJ9Uc83pG9kvqWsCV4PX20cXyKm97aZIyY6+Mq6qrsvbbEcu0vIiFhS6oF4
-         US/W6H3our6U/m8uHS3hjnCCfW+AhiqZxqaa3ojZEBcxLIHJ8EoMk/cqkbW8pbTVRc6r
-         Ew0+RkCDFnUuLLO9kUDakZqkvSullN8l4pBUWPPaxnuPeHwCuvAuD9Fn9RQ76qbaeyBU
-         fHxE10yXFbifazd2KD3Pz+RyyzS0twe58HwwqhS3dNsBNXUR4Dwxj71abURKqX0Twt+0
-         fxmQ==
-X-Gm-Message-State: AOJu0YxT79xVWk/EgiuEeGRX+1ZXyTjUr/DYKsOYzEoJ9RmlD358UmAU
-	KyakjB/Z0ymVaFyQlS0oBtHj1rJ65gDJ49yiruyQ/mGDjpD45+4nW40Pv0k0QaRFlQA=
-X-Gm-Gg: ASbGncsN9ZDrQW2NoHaWhZ6ddkFp0e5ByPEqmvWhMd46OQnD1d1jzOr94SEFUmzzaew
-	3QxpI2qOjRWT+Zgbhnplk15YZB0UGgYkpZA+QJICzSMOyvanhasRSPv64ai0iUtVPmBXRfhu995
-	XP9WjmVhJRAO6J09JO+SHx6ghSp8vZnLMh6aiTGW4oYI61jigWq52uHfrmOphJCBH/MMiDmMkNr
-	mn4kmns68KMC/2tubPrwZgllj799f9xNORkCUzxHE9BKfLTljBRpQFzLKXEllCv6puNlxnN6ymI
-	XAZwEtDm5uIodCENE/TjqwC/NbSnIC0rbeg8ncvdR+BDAI0QQUcQW4qEFimnvKDxqiGy2vUZGrn
-	gUmFHrZTnTDVVJnRlC31gDbWygRcIz3oOP+Q=
-X-Google-Smtp-Source: AGHT+IH+3miFeIR6tQUL0wfehVSxT31HOSJPjvKC8CX71Xx5VWWJuBvRY0vS/CA50IGWE4dB1x1ywg==
-X-Received: by 2002:a17:902:ebc9:b0:246:b15f:8d9d with SMTP id d9443c01a7336-24944a1ca58mr35922805ad.14.1756582338796;
-        Sat, 30 Aug 2025 12:32:18 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702396sm59584335ad.14.2025.08.30.12.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 12:32:18 -0700 (PDT)
-Date: Sat, 30 Aug 2025 12:32:15 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	oe-kbuild-all@lists.linux.dev,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Sean Wang <sean.wang@mediatek.com>,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] Bluetooth: btmtksdio: Fix build after header cleanup
-Message-ID: <aLNRvzXE4O9dKZoN@mozart.vkv.me>
-References: <202508300413.OnIedvRh-lkp@intel.com>
- <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
- <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
+	s=arc-20240116; t=1756582496; c=relaxed/simple;
+	bh=k2lX4RtwlSIenNxC+6rKn/33k8gMOJEl99vjUv10qjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZOiv/Dox0BgP6MSH0O8s+ANo4Ywn6lTfu7zZq15R1NyUxduqGe3g+wP02ixE72L4e3zfc0GYnhCocbi3AupqPghtBzUHjgL8afpED0yAR2CFs+d/cVPhwNvrGqDiCGE/afaY30Xxjp5JN/vFdivrJgyAYE4jgsqXjJ9ZjrNM820=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9kR3ht/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8789CC4CEEB;
+	Sat, 30 Aug 2025 19:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756582495;
+	bh=k2lX4RtwlSIenNxC+6rKn/33k8gMOJEl99vjUv10qjk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I9kR3ht/Ul4bgtNu2lQju7flghcjGVm1B4xEknRLvqq/eH2OrvHAhgtA6xI87+n4c
+	 jO8AZ0dqgm7HawuSYydR4ORPPvtCFUQ+bkgsm1pjFFwKz1rFxwT9j9uC2H+MWYNcZ/
+	 feDD7LdLFD/k/sINrbeTEWNYpzpdBkYYH+y1XWUa7SAfOHJTdAfD4n/9Ze5z6R0ToQ
+	 Kbeg2VCbULg/kNhZK1PceuZcZGNbdNilzJZqreJ2D81EYb4C7PxyfdiAfCfZEr+Qkz
+	 lVpSWZot7tNgaoYnV5EKlXzB15hyoZId9cNylJoxhF97qElx9OW6FgiLhKCA5+BxLt
+	 IKJK5CL1jTSFA==
+Date: Sat, 30 Aug 2025 20:34:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: <victor.duicu@microchip.com>
+Cc: <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] iio: temperature: add support for MCP998X
+Message-ID: <20250830203446.5c164f74@jic23-huawei>
+In-Reply-To: <20250829143447.18893-3-victor.duicu@microchip.com>
+References: <20250829143447.18893-1-victor.duicu@microchip.com>
+	<20250829143447.18893-3-victor.duicu@microchip.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Saturday 08/30 at 07:11 +0200, Paul Menzel wrote:
-> Dear Calvin,
+On Fri, 29 Aug 2025 17:34:47 +0300
+<victor.duicu@microchip.com> wrote:
+
+> From: Victor Duicu <victor.duicu@microchip.com>
 > 
+> This is the driver for Microchip MCP998X/33 and MCP998XD/33D
+> Multichannel Automotive Temperature Monitor Family.
 > 
-> Thank you for your patch, and addressing the regression right away.
-> 
-> Am 30.08.25 um 02:50 schrieb Calvin Owens:
-> > Syzbot found a randconfig which fails after my recent patch:
-> > 
-> >      drivers/bluetooth/btmtksdio.c:442:33: error: array type has incomplete element type ‘struct h4_recv_pkt’
-> >        442 | static const struct h4_recv_pkt mtk_recv_pkts[] = {
-> >            |                                 ^~~~~~~~~~~~~
-> >      drivers/bluetooth/btmtksdio.c:443:11: error: ‘H4_RECV_ACL’ undeclared here (not in a function)
-> >        443 |         { H4_RECV_ACL,      .recv = btmtksdio_recv_acl },
-> >            |           ^~~~~~~~~~~
-> >      drivers/bluetooth/btmtksdio.c:444:11: error: ‘H4_RECV_SCO’ undeclared here (not in a function)
-> >        444 |         { H4_RECV_SCO,      .recv = hci_recv_frame },
-> >            |           ^~~~~~~~~~~
-> >      drivers/bluetooth/btmtksdio.c:445:11: error: ‘H4_RECV_EVENT’ undeclared here (not in a function)
-> >        445 |         { H4_RECV_EVENT,    .recv = btmtksdio_recv_event },
-> > 
-> > ...because we can have BT_MTKSDIO=y with BT_HCIUART_H4=n, and the
-> > definitions used here are gated on BT_HCIUART_H4 in hci_uart.h.
-> 
-> The drivers below seem to be affected:
-> 
->     drivers/bluetooth/bpa10x.c:     { H4_RECV_EVENT,   .recv =
-> hci_recv_frame },
->     drivers/bluetooth/btmtksdio.c:  { H4_RECV_EVENT,    .recv =
-> btmtksdio_recv_event },
->     drivers/bluetooth/btmtkuart.c:  { H4_RECV_EVENT,    .recv =
-> btmtkuart_recv_event },
->     drivers/bluetooth/btnxpuart.c:  { H4_RECV_EVENT,        .recv =
-> hci_recv_frame },
+> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+Tried to avoid duplication with other reviewers but probably failed!
+
+Jonathan
+
+> diff --git a/drivers/iio/temperature/mcp9982.c b/drivers/iio/temperature/mcp9982.c
+> new file mode 100644
+> index 000000000000..2f0b9c4674fb
+> --- /dev/null
+> +++ b/drivers/iio/temperature/mcp9982.c
+
+> +
+> +static const struct regmap_config mcp9982_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.rd_table = &mcp9982_regmap_rd_table,
+> +	.wr_table = &mcp9982_regmap_wr_table,
+> +	.volatile_reg = mcp9982_is_volatile_reg,
+> +};
+> +
+> +/**
+> + * struct mcp9992_priv - information about chip parameters
+> + * @regmap:			device register map
+> + * @chip			pointer to structure holding chip features
+> + * @lock			synchronize access to driver's state members
+> + * @iio_chan			specifications of channels
+> + * @labels			labels of the channels
+> + * @ideality_value		ideality factor value for each external channel
+> + * @sampl_idx			index representing the current sampling frequency
+> + * @time_limit			time when it is safe to read
+> + * @recd34_enable		state of REC on channels 3 and 4
+
+Spell out REC fully. It's not a well enough known term anyone reading that comment
+might be expected to know what it means.
+
+> + * @recd12_enable		state of REC on channels 1 and 2
+> + * @apdd_enable			state of anti-parallel diode mode
+> + * @run_state			chip is in run state, otherwise is in standby state
+> + * @wait_before_read		whether we need to wait a delay before reading a new value
+> + * @num_channels		number of active physical channels
+> + */
+> +struct mcp9982_priv {
+> +	struct regmap *regmap;
+> +	const struct mcp9982_features *chip;
+> +	/*
+> +	 * Synchronize access to private members, and ensure atomicity of
+> +	 * consecutive regmap operations.
+> +	 */
+> +	struct mutex lock;
+> +	struct iio_chan_spec *iio_chan;
+> +	const char *labels[MCP9982_MAX_NUM_CHANNELS];
+> +	unsigned int ideality_value[4];
+> +	unsigned int sampl_idx;
+> +	unsigned long  time_limit;
+> +	bool recd34_enable;
+> +	bool recd12_enable;
+> +	bool apdd_enable;
+> +	bool run_state;
+> +	bool wait_before_read;
+> +	u8 num_channels;
+> +};
+
+
+> +static int mcp9982_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan, int val,
+> +			     int val2, long mask)
+> +{
+> +	unsigned int i, start, previous_sampl_idx;
+> +	struct mcp9982_priv *priv = iio_priv(indio_dev);
+> +	int ret;
+> +	unsigned long new_time_limit;
+> +
+> +	start = 0;
+> +	guard(mutex)(&priv->lock);
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		previous_sampl_idx = priv->sampl_idx;
+> +		/*
+> +		 * For MCP998XD and MCP9933D sampling frequency can't
+> +		 * be set lower than 1.
+
+wrap at 80 chars, not 70ish.
+
+> +		 */
+> +		if (priv->chip->hw_thermal_shutdown)
+> +			start = 4;
+> +		for (i = start; i < ARRAY_SIZE(mcp9982_conv_rate); i++)
+> +			if (val == mcp9982_conv_rate[i][0] &&
+> +			    val2 == mcp9982_conv_rate[i][1])
+> +				break;
+> +
+> +		if (i == ARRAY_SIZE(mcp9982_conv_rate))
+> +			return -EINVAL;
+> +
+> +		ret = regmap_write(priv->regmap, MCP9982_CONV_ADDR, i);
+> +		if (ret)
+> +			return ret;
+> +
+> +		priv->sampl_idx = i;
+> +
+> +		/*
+> +		 * in Run mode, when changing the frequency, wait a delay based
+In Run mode,
+> +		 * on the previous value to ensure the new value becomes active
+> +		 */
+> +		if (priv->run_state) {
+> +			new_time_limit = jiffies +
+> +					   msecs_to_jiffies(mcp9982_delay_ms[previous_sampl_idx]);
+> +			if (time_after(new_time_limit, priv->time_limit)) {
+> +				priv->time_limit = new_time_limit;
+> +				priv->wait_before_read = true;
+> +			}
+> +			return 0;
+> +		}
+> +
+> +		break;
 >
-> > I think the simplest way to fix this is to remove the gate on the
-> > definitions in hci_uart.h. Since the constants are macros, there's no
-> > runtime cost to doing so, and nothing seems to rely on their absence in
-> > the BT_HCIUART_H4=n case.
-> 
-> Looking at the implementation, it looks like they only work with the H4
-> protocol? So maybe, that should be denoted in the Kconfig files?
 
-Thanks for looking Paul.
+> +static int mcp9982_init(struct mcp9982_priv *priv)
+> +{
+> +	int ret;
+> +	unsigned int i;
+> +	u8 val;
+> +
+> +	/* Chips 82/83 and 82D/83D do not support anti-parallel diode mode */
+> +	if (!priv->chip->allow_apdd)
+> +		priv->apdd_enable = 0;
+> +
+> +	/*
+> +	 * Chips with "D" work in Run state and those without work
+> +	 * in Standby state
+> +	 */
+> +	if (priv->chip->hw_thermal_shutdown)
+> +		priv->run_state = 1;
+> +	else
+> +		priv->run_state = 0;
 
-Yes, my fix will cause a link error with other randconfigs, which my
-'make randconfig drivers/bluetooth/' test loop missed after I made the
-function prototype always defined, whoops.
 
-We do need the dependencies here, as you note. The btmtksdio case syzbot
-found is the odd one out because it only uses the constants, and doesn't
-call h4_recv_buf().
+	runstate = priv->chip->hw_thermal_shutdown;
 
-Hopefully this gets it all:
+> +
+> +	/*
+> +	 * For chips with "D" in the name set the below parameters to default to
+> +	 * ensure that hardware shutdown feature can't be overridden.
+> +	 */
+> +	if (priv->chip->hw_thermal_shutdown) {
+> +		priv->recd12_enable = true;
+> +		priv->recd34_enable = true;
+> +	}
+> +
+> +	/*
+> +	 * Set default values in registers. APDD, RECD12 and RECD34 are active
+> +	 * on 0.
 
------8<-----
-From: Calvin Owens <calvin@wbinvd.org>
-Subject: [PATCH v2] Bluetooth: Fix build after header cleanup
+Probably add a line break between those sentences. I think the first one
+is applying to all these writes, whereas second sentence is just about this one.
 
-Some Kconfig dependencies are needed after my recent cleanup, since
-the core code has its own option.
+> +	 */
+> +	val = FIELD_PREP(MCP9982_CFG_MSKAL, 1) |
+> +	      FIELD_PREP(MCP9982_CFG_RS, !priv->run_state) |
+> +	      FIELD_PREP(MCP9982_CFG_ATTHM, 1) |
+> +	      FIELD_PREP(MCP9982_CFG_RECD12, !priv->recd12_enable) |
+> +	      FIELD_PREP(MCP9982_CFG_RECD34, !priv->recd34_enable) |
+> +	      FIELD_PREP(MCP9982_CFG_RANGE, 1) | FIELD_PREP(MCP9982_CFG_DA_ENA, 0) |
+> +	      FIELD_PREP(MCP9982_CFG_APDD, !priv->apdd_enable);
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_CFG_ADDR, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_CONV_ADDR, 6);
+> +	if (ret)
+> +		return ret;
+> +	priv->sampl_idx = 6;
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_HYS_ADDR, 10);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_CONSEC_ALRT_ADDR, 112);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_RUNNING_AVG_ADDR, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(priv->regmap, MCP9982_HOTTEST_CFG_ADDR, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Set auto-detection beta compensation for channels 1 and 2 */
+> +	for (i = 0; i < 2; i++) {
+> +		ret = regmap_write(priv->regmap, MCP9982_EXT_BETA_CFG_ADDR(i),
+> +				   MCP9982_BETA_AUTODETECT);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	/* Set ideality factor for all external channels */
+> +	for (i = 0; i < ARRAY_SIZE(priv->ideality_value); i++) {
+> +		ret = regmap_write(priv->regmap, MCP9982_EXT_IDEAL_ADDR(i),
+> +				   priv->ideality_value[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	priv->wait_before_read = false;
+> +	priv->time_limit = jiffies;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mcp9982_parse_of_config(struct iio_dev *indio_dev, struct device *dev,
+> +				   int device_nr_channels)
+> +{
+> +	unsigned int reg_nr, iio_idx;
+> +	struct mcp9982_priv *priv = iio_priv(indio_dev);
+> +
+> +	priv->apdd_enable = device_property_read_bool(dev,
+> +						      "microchip,enable-anti-parallel");
+I'd suggestion these are more readable as.
 
-Since btmtksdio does not actually call h4_recv_buf(), move the
-definitions it uses outside the BT_HCIUART_H4 gate in hci_uart.h to
-avoid adding a dependency for btmtksdio.
+	priv->apdd_enable =
+		device_property_read_bool(dev, "microchip,enable-anti-parallel");
 
-The rest I touched (bpa10x, btmtkuart, and btnxpuart) do really call
-h4_recv_buf(), so the dependency is required, add it for them.
+> +
+> +	priv->recd12_enable = device_property_read_bool(dev,
+> +							"microchip,parasitic-res-on-channel1-2");
+> +
+> +	priv->recd34_enable = device_property_read_bool(dev,
+> +							"microchip,parasitic-res-on-channel3-4");
+> +
+> +	priv->num_channels = device_get_child_node_count(dev) + 1;
+> +
+> +	if (priv->num_channels > device_nr_channels)
+> +		return dev_err_probe(dev, -E2BIG,
+> +				     "More channels than the chip supports\n");
+> +
+> +	priv->iio_chan = devm_kcalloc(dev, priv->num_channels,
+> +				      sizeof(*priv->iio_chan), GFP_KERNEL);
 
-Fixes: 74bcec450eea ("Bluetooth: remove duplicate h4_recv_buf() in header")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202508300413.OnIedvRh-lkp@intel.com/
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
----
- drivers/bluetooth/Kconfig    | 6 ++++++
- drivers/bluetooth/hci_uart.h | 8 ++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+Seems channels can't be more than 6(?)  I'd just directly embed a large enough array
+in priv so no allocation here necessary.
 
-diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
-index 4ab32abf0f48..7df69ccb6600 100644
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -312,7 +312,9 @@ config BT_HCIBCM4377
- 
- config BT_HCIBPA10X
- 	tristate "HCI BPA10x USB driver"
-+	depends on BT_HCIUART
- 	depends on USB
-+	select BT_HCIUART_H4
- 	help
- 	  Bluetooth HCI BPA10x USB driver.
- 	  This driver provides support for the Digianswer BPA 100/105 Bluetooth
-@@ -437,8 +439,10 @@ config BT_MTKSDIO
- 
- config BT_MTKUART
- 	tristate "MediaTek HCI UART driver"
-+	depends on BT_HCIUART
- 	depends on SERIAL_DEV_BUS
- 	depends on USB || !BT_HCIBTUSB_MTK
-+	select BT_HCIUART_H4
- 	select BT_MTK
- 	help
- 	  MediaTek Bluetooth HCI UART driver.
-@@ -483,7 +487,9 @@ config BT_VIRTIO
- 
- config BT_NXPUART
- 	tristate "NXP protocol support"
-+	depends on BT_HCIUART
- 	depends on SERIAL_DEV_BUS
-+	select BT_HCIUART_H4
- 	select CRC32
- 	select CRC8
- 	help
-diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-index 5ea5dd80e297..cbbe79b241ce 100644
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -121,10 +121,6 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable);
- void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
- 			 unsigned int oper_speed);
- 
--#ifdef CONFIG_BT_HCIUART_H4
--int h4_init(void);
--int h4_deinit(void);
--
- struct h4_recv_pkt {
- 	u8  type;	/* Packet type */
- 	u8  hlen;	/* Header length */
-@@ -162,6 +158,10 @@ struct h4_recv_pkt {
- 	.lsize = 2, \
- 	.maxlen = HCI_MAX_FRAME_SIZE \
- 
-+#ifdef CONFIG_BT_HCIUART_H4
-+int h4_init(void);
-+int h4_deinit(void);
-+
- struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
- 			    const unsigned char *buffer, int count,
- 			    const struct h4_recv_pkt *pkts, int pkts_count);
--- 
-2.47.2
+> +	if (!priv->iio_chan)
+> +		return -ENOMEM;
+> +
+> +	priv->iio_chan[0] = MCP9982_CHAN(0, 0, MCP9982_INT_VALUE_ADDR(0));
+> +
+> +	priv->labels[0] = "internal diode";
+> +	iio_idx++;
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		fwnode_property_read_u32(child, "reg", &reg_nr);
+> +		if (!reg_nr || reg_nr >= device_nr_channels)
+> +			return dev_err_probe(dev, -EINVAL,
+> +				     "The index of the channels does not match the chip\n");
+> +
+> +		priv->ideality_value[reg_nr - 1] = 18;
+> +		if (fwnode_property_present(child, "microchip,ideality-factor")) {
+> +			fwnode_property_read_u32(child, "microchip,ideality-factor",
+> +						 &priv->ideality_value[reg_nr - 1]);
+> +			if (priv->ideality_value[reg_nr - 1] > 63)
+> +				return dev_err_probe(dev, -EOVERFLOW,
+> +				     "The ideality value is higher than maximum\n");
+> +		}
+> +
+> +		fwnode_property_read_string(child, "label",
+> +					    &priv->labels[reg_nr]);
+> +
+> +		priv->iio_chan[iio_idx++] = MCP9982_CHAN(reg_nr, reg_nr,
+> +							 MCP9982_INT_VALUE_ADDR(reg_nr));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mcp9982_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+...
 
+
+> +	ret = mcp9982_parse_of_config(indio_dev, &client->dev, chip->phys_channels);
+
+parse_fw_config as its not DT specific (which is excellent!)
+Also use dev.
+
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Parameter parsing error\n");
 
