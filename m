@@ -1,293 +1,255 @@
-Return-Path: <linux-kernel+bounces-792990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2742B3CB42
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2534B3CB43
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82380A03F79
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E541BA0E48
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CED2765F5;
-	Sat, 30 Aug 2025 13:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2233A1A9F87;
+	Sat, 30 Aug 2025 13:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxJNgThA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="H5vtm2ee"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0702144D7;
-	Sat, 30 Aug 2025 13:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ADD18EB0
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 13:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756560557; cv=none; b=eaCydDbW1+bqx85iTeHZUahvKVN5QFtkg2Qxpbh8N7XDG89A/uqZyzhUqAd6RuSgd4jDvHtyTleJ9RI1RWepUDpU4xTcv0KOu+okyJRkgFiUUEvhQRj/A8r3yMu50wRhUVfB01vW+P8uj/6hD5gF6luHws4RQS0HHS64a1iHybc=
+	t=1756560637; cv=none; b=aU2xgjRXKaRQfu92dJK6Q7Ljge+lDyeNlJ4c4xo75zS53lUjXY8OsAxb5lPEjPNjccIWrQzC+tnjbS+K0qAiSJIq73eiI5FlgH8MzEKuHFWg7tfp2DVSVyn+gB6CUwukRed5gp7xNPXRN8krKGtoni+kwwtc/r3A5xY9JI6VW/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756560557; c=relaxed/simple;
-	bh=0+63bx8jI+4n91OtGNXbvlLcLUdxsTZkOxwpEnYZwyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8Q+oyUIL23pQLsx294mnRvQf+GHKK+zXpMshicL9QUYfHrXpistqMR0wb8jV+/oIjqKbnkQsfohEYDpOlaI7mzHRWvRz/jUF8nJUZuISmHBmTsX602CFXirWx5m2CQMuaSwKbiSEactiiMCVzjx3p0OoPxUsDAahWBnmmNOKCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxJNgThA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0100C4CEEB;
-	Sat, 30 Aug 2025 13:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756560557;
-	bh=0+63bx8jI+4n91OtGNXbvlLcLUdxsTZkOxwpEnYZwyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxJNgThA7EVc2p8igowIhslgzn1gf+EANLf8LpVOdYBVnoci2UleipeyVLVMY2wuY
-	 GUYm1F/43+sXUvrOok04srqcT+FueagThOYGoNemD/QfROzvzd2PxO2fKMeCBBF9fr
-	 0raM/U4D8WO1K7cYsO5wmFxgc5pextOtEkg2z8WJl0ANaEwKqIHBRg+MvLE1kpxFu1
-	 QdtSY4oAxnvpmFE9EI4nOixgmx214i7cjLZlRUL85Y0Kkrq/PcNPWmLuTgnIbv/Tfq
-	 MbMIfHTQ+clyHbux6jR2t5/R/idiqMGM2F0v4mcY/HfZSebFywM9+CaRXOcVHYFcVZ
-	 AkuOGnTY88C7A==
-Date: Sat, 30 Aug 2025 18:59:08 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: hans.zhang@cixtech.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
-	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 12/15] PCI: sky1: Add PCIe host support for CIX Sky1
-Message-ID: <ssk2aolyodglbfvql66uk3snopnyneocoom2ymqhqc4lywugfo@2hmsuzgrutuw>
-References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
- <20250819115239.4170604-13-hans.zhang@cixtech.com>
+	s=arc-20240116; t=1756560637; c=relaxed/simple;
+	bh=js4jRuGtIjXoxTl7Rm8nWKGpVH9t6HuHYTUgGIeBVw0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=t3ff1uyMxg8s0S0UHjOIFXsnOmIlzViDCsE5uPDPK/XFcjQBF0nNS0MlLq2ZHMsBg1JP1Y5cN254Z7QsuY91XuPR+NY/6aUBzd/csjOZjFZUgMSdJ+jgeT2WxZ0fUavEBrYj+kgCC3uwLkYGwmFPyrZyv+YYi5Xq6z2z+8odDXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=H5vtm2ee; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
+	by cmsmtp with ESMTPS
+	id sGgBuJ6nZSkcfsLf7uTeqw; Sat, 30 Aug 2025 13:30:33 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id sLf6ugAlVQb4IsLf7uI2RQ; Sat, 30 Aug 2025 13:30:33 +0000
+X-Authority-Analysis: v=2.4 cv=GcEXnRXL c=1 sm=1 tr=0 ts=68b2fcf9
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4BrsA8FZ1ibyw0l2C7AaSA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=Tlvygc7yRPAoqQeoTmMA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:Subject
+	:From:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Kb6IMCa6AiTu5VW83JaOqtM5LfmQWxQuu2DNHKdLMIE=; b=H5vtm2eeYlCt6oHwFKgfwKirT9
+	ZIJcZ3IDJYwsot3sZM1r4VFNoAzftaC1s+gvRMGzVthICEOx563pPXNVXRlSOsxccrPrT0QdgRTRJ
+	U7cKkuqfDMgbgkqL4AVDTr7aNmEAfuBzUQ3kSqRLNE0tZd1Q3p12jnpzwo2/7KyVvJvMA8Z5fTxPs
+	w/gkbwkZzFB3VMgDo9i1k7X1qnZXqPy65BCg25GdJrAEAmuAXmsNZ1CWm5MHRlaTWmb3eV930PpQB
+	bG03klq9fPyXcP26xy+PN5iNUS5/OmvhtktkGTXlhzbFMZtAhDtqLgKdHEkz9MyQYEz0alKCeYY1t
+	lO8/deVQ==;
+Received: from [185.194.184.202] (port=4144 helo=[10.233.40.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1usLf5-00000003wxI-241K;
+	Sat, 30 Aug 2025 08:30:32 -0500
+Message-ID: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
+Date: Sat, 30 Aug 2025 15:30:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250819115239.4170604-13-hans.zhang@cixtech.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
+ warnings
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.194.184.202
+X-Source-L: No
+X-Exim-ID: 1usLf5-00000003wxI-241K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.233.40.44]) [185.194.184.202]:4144
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKkFG/Ar4E3EW9tEVKIF+YcP/gwJuDWkA63gZUILFDS/YK/HS32kBGPMMZI6uhBYMfcbvrbPG2Id6P/4PZurTCAJ3LKSAIpDJuMw1Obc3VTBBKpEEnfD
+ P5JFrOx0wrnDSx75rF60zZU6QDhCHXPe8JgS3xQ2mn71p7omQW6XEvQAkvzzrS/uElhEf02gUOtf4j1LLJRIe0ONj5IsesGFIJdErjAmOdRmd1y4PxgGeVxM
 
-On Tue, Aug 19, 2025 at 07:52:36PM GMT, hans.zhang@cixtech.com wrote:
-> From: Hans Zhang <hans.zhang@cixtech.com>
-> 
-> Add driver for the CIX Sky1 SoC PCIe Gen4 16 GT/s controller based
-> on the Cadence PCIe core.
-> 
-> Supports MSI/MSI-x via GICv3, Single Virtual Channel, Single Function.
-> 
-> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
-> ---
-> Changes for v8:
-> - Optimization of CIX SKY1 Root Port driver. (Bjorn and Krzysztof)
-> - Use devm_platform_ioremap_resource_byname.
-> ---
->  drivers/pci/controller/cadence/Kconfig    |  15 ++
->  drivers/pci/controller/cadence/Makefile   |   1 +
->  drivers/pci/controller/cadence/pci-sky1.c | 232 ++++++++++++++++++++++
->  3 files changed, 248 insertions(+)
->  create mode 100644 drivers/pci/controller/cadence/pci-sky1.c
-> 
-> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> index 117677a23d68..26a248cdc78a 100644
-> --- a/drivers/pci/controller/cadence/Kconfig
-> +++ b/drivers/pci/controller/cadence/Kconfig
-> @@ -42,6 +42,21 @@ config PCIE_CADENCE_PLAT_EP
->  	  endpoint mode. This PCIe controller may be embedded into many
->  	  different vendors SoCs.
->  
-> +config PCI_SKY1_HOST
-> +	tristate "CIX SKY1 PCIe controller (host mode)"
-> +	depends on OF
-> +	select PCIE_CADENCE_HOST
-> +	select PCI_ECAM
-> +	help
-> +	  Say Y here if you want to support the CIX SKY1 PCIe platform
-> +	  controller in host mode. CIX SKY1 PCIe controller uses Cadence
-> +	  HPA (High Performance Architecture IP [Second generation of
-> +	  Cadence PCIe IP])
-> +
-> +	  This driver requires Cadence PCIe core infrastructure
-> +	  (PCIE_CADENCE_HOST) and hardware platform adaptation layer
-> +	  to function.
-> +
->  config PCI_J721E
->  	tristate
->  	select PCIE_CADENCE_HOST if PCI_J721E_HOST != n
-> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
-> index de4ddae7aca4..40d7c6e98b4d 100644
-> --- a/drivers/pci/controller/cadence/Makefile
-> +++ b/drivers/pci/controller/cadence/Makefile
-> @@ -8,3 +8,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-mod.o
->  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-mod.o
->  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
->  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
-> +obj-$(CONFIG_PCI_SKY1_HOST) += pci-sky1.o
-> diff --git a/drivers/pci/controller/cadence/pci-sky1.c b/drivers/pci/controller/cadence/pci-sky1.c
-> new file mode 100644
-> index 000000000000..7dd3546275c5
-> --- /dev/null
-> +++ b/drivers/pci/controller/cadence/pci-sky1.c
-> @@ -0,0 +1,232 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PCIe controller driver for CIX's sky1 SoCs
-> + *
+Hi all,
 
-No copyright for CIX tech?
+I'm working on enabling -Wflex-array-member-not-at-end in mainline, and
+I ran into thousands (yes, 14722 to be precise) of these warnings caused
+by an instance of `struct cgroup` in the middle of `struct cgroup_root`.
+See below:
 
-> + * Author: Hans Zhang <hans.zhang@cixtech.com>
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pci.h>
-> +#include <linux/pci-ecam.h>
-> +#include <linux/pci_ids.h>
-> +
-> +#include "pcie-cadence.h"
-> +#include "pcie-cadence-host-common.h"
-> +
-> +#define STRAP_REG(n)			((n) * 0x04)
-> +#define STATUS_REG(n)			((n) * 0x04)
-> +#define  LINK_TRAINING_ENABLE		BIT(0)
-> +#define  LINK_COMPLETE			BIT(0)
+620 struct cgroup_root {
+	...
+633         /*
+634          * The root cgroup. The containing cgroup_root will be destroyed on its
+635          * release. cgrp->ancestors[0] will be used overflowing into the
+636          * following field. cgrp_ancestor_storage must immediately follow.
+637          */
+638         struct cgroup cgrp;
+639
+640         /* must follow cgrp for cgrp->ancestors[0], see above */
+641         struct cgroup *cgrp_ancestor_storage;
+	...
+};
 
-Extra space.
+Based on the comments above, it seems that the original code was expecting
+cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
+memory.
 
-> +
-> +#define SKY1_IP_REG_BANK		0x1000
-> +#define SKY1_IP_CFG_CTRL_REG_BANK	0x4c00
-> +#define SKY1_IP_AXI_MASTER_COMMON	0xf000
-> +#define SKY1_AXI_SLAVE			0x9000
-> +#define SKY1_AXI_MASTER			0xb000
-> +#define SKY1_AXI_HLS_REGISTERS		0xc000
-> +#define SKY1_AXI_RAS_REGISTERS		0xe000
-> +#define SKY1_DTI_REGISTERS		0xd000
-> +
-> +#define IP_REG_I_DBG_STS_0		0x420
-> +
-> +struct sky1_pcie {
-> +	struct cdns_pcie *cdns_pcie;
-> +	struct cdns_pcie_rc *cdns_pcie_rc;
-> +
-> +	struct resource *cfg_res;
-> +	struct resource *msg_res;
-> +	struct pci_config_window *cfg;
-> +	void __iomem *strap_base;
-> +	void __iomem *status_base;
-> +	void __iomem *reg_base;
-> +	void __iomem *cfg_base;
-> +	void __iomem *msg_base;
-> +};
-> +
-> +static int sky1_pcie_resource_get(struct platform_device *pdev,
-> +				  struct sky1_pcie *pcie)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +
-> +	base = devm_platform_ioremap_resource_byname(pdev, "reg");
-> +	if (IS_ERR(base))
-> +		return dev_err_probe(dev, PTR_ERR(base),
-> +				     "unable to find reg registers\n");
+However when I take a look at the pahole output, I see that these two members
+are actually misaligned by 56 bytes. See below:
 
-"unable to find \"reg\" registers". Same for below prints.
+struct cgroup_root {
+	...
 
-> +	pcie->reg_base = base;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
-> +	if (!res)
-> +		return dev_err_probe(dev, ENXIO, "unable to get cfg resource\n");
-> +	pcie->cfg_res = res;
-> +
-> +	base = devm_platform_ioremap_resource_byname(pdev, "rcsu_strap");
-> +	if (IS_ERR(base))
-> +		return dev_err_probe(dev, PTR_ERR(base),
-> +				     "unable to find rcsu strap registers\n");
-> +	pcie->strap_base = base;
-> +
-> +	base = devm_platform_ioremap_resource_byname(pdev, "rcsu_status");
-> +	if (IS_ERR(base))
-> +		return dev_err_probe(dev, PTR_ERR(base),
-> +				     "unable to find rcsu status registers\n");
-> +	pcie->status_base = base;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "msg");
-> +	if (!res)
-> +		return dev_err_probe(dev, ENXIO, "unable to get msg resource\n");
-> +	pcie->msg_res = res;
-> +	pcie->msg_base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pcie->msg_base)) {
-> +		return dev_err_probe(dev, PTR_ERR(pcie->msg_base),
-> +				     "unable to ioremap msg resource\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int sky1_pcie_start_link(struct cdns_pcie *cdns_pcie)
-> +{
-> +	struct sky1_pcie *pcie = dev_get_drvdata(cdns_pcie->dev);
-> +	u32 val;
-> +
-> +	val = readl(pcie->strap_base + STRAP_REG(1));
-> +	val |= LINK_TRAINING_ENABLE;
-> +	writel(val, pcie->strap_base + STRAP_REG(1));
-> +
-> +	return 0;
-> +}
-> +
-> +static void sky1_pcie_stop_link(struct cdns_pcie *cdns_pcie)
-> +{
-> +	struct sky1_pcie *pcie = dev_get_drvdata(cdns_pcie->dev);
-> +	u32 val;
-> +
-> +	val = readl(pcie->strap_base + STRAP_REG(1));
-> +	val &= ~LINK_TRAINING_ENABLE;
-> +	writel(val, pcie->strap_base + STRAP_REG(1));
-> +}
-> +
-> +static bool sky1_pcie_link_up(struct cdns_pcie *cdns_pcie)
-> +{
-> +	u32 val;
-> +
-> +	val = cdns_pcie_hpa_readl(cdns_pcie, REG_BANK_IP_REG,
-> +				  IP_REG_I_DBG_STS_0);
-> +	return val & LINK_COMPLETE;
-> +}
-> +
-> +static const struct cdns_pcie_ops sky1_pcie_ops = {
-> +	.start_link = sky1_pcie_start_link,
-> +	.stop_link = sky1_pcie_stop_link,
-> +	.link_up = sky1_pcie_link_up,
-> +};
-> +
-> +static int sky1_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct cdns_plat_pcie_of_data *reg_off;
-> +	struct device *dev = &pdev->dev;
-> +	struct pci_host_bridge *bridge;
-> +	struct cdns_pcie *cdns_pcie;
-> +	struct resource_entry *bus;
-> +	struct cdns_pcie_rc *rc;
-> +	struct sky1_pcie *pcie;
-> +	int ret;
-> +
-> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return -ENOMEM;
-> +
-> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
-> +	if (!bridge)
-> +		return -ENOMEM;
-> +
-> +	ret = sky1_pcie_resource_get(pdev, pcie);
-> +	if (ret < 0)
-> +		return -ENXIO;
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	struct cgroup              cgrp __attribute__((__aligned__(64))); /*    64  2112 */
 
-return ret;
+	/* XXX last struct has 56 bytes of padding */
 
-- Mani
+	/* --- cacheline 34 boundary (2176 bytes) --- */
+	struct cgroup *            cgrp_ancestor_storage; /*  2176     8 */
 
--- 
-மணிவண்ணன் சதாசிவம்
+	...
+
+	/* size: 6400, cachelines: 100, members: 11 */
+	/* sum members: 6336, holes: 1, sum holes: 16 */
+	/* padding: 48 */
+	/* paddings: 1, sum paddings: 56 */
+	/* forced alignments: 1, forced holes: 1, sum forced holes: 16 */
+} __attribute__((__aligned__(64)));
+
+This is due to the fact that struct cgroup have some tailing padding after
+flexible-array member `ancestors` due to alignment to 64 bytes, see below:
+
+struct cgroup {
+	...
+
+	struct cgroup *            ancestors[];          /*  2056     0 */
+
+	/* size: 2112, cachelines: 33, members: 43 */
+	/* sum members: 2000, holes: 3, sum holes: 56 */
+	/* padding: 56 */
+	/* paddings: 2, sum paddings: 8 */
+	/* forced alignments: 1 */
+} __attribute__((__aligned__(64)));
+
+The offset for `ancestors` is at 2056, but sizeof(struct group) == 2112 due
+to the 56 bytes of tailing padding. This looks buggy. (thinkingface)
+
+So, one solution for this is to use the TRAILING_OVERLAP() helper and
+move these members at the end of `struct cgroup_root`. With this the
+misalignment disappears (together with the 14722 warnings :) ), and now
+both cgrp->ancestors[0] and cgrp_ancestor_storage share the same address
+in memory. See below:
+
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 539c64eeef38..901a46f70a02 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -630,16 +630,6 @@ struct cgroup_root {
+         struct list_head root_list;
+         struct rcu_head rcu;    /* Must be near the top */
+
+-       /*
+-        * The root cgroup. The containing cgroup_root will be destroyed on its
+-        * release. cgrp->ancestors[0] will be used overflowing into the
+-        * following field. cgrp_ancestor_storage must immediately follow.
+-        */
+-       struct cgroup cgrp;
+-
+-       /* must follow cgrp for cgrp->ancestors[0], see above */
+-       struct cgroup *cgrp_ancestor_storage;
+-
+         /* Number of cgroups in the hierarchy, used only for /proc/cgroups */
+         atomic_t nr_cgrps;
+
+@@ -651,6 +641,18 @@ struct cgroup_root {
+
+         /* The name for this hierarchy - may be empty */
+         char name[MAX_CGROUP_ROOT_NAMELEN];
++
++       /*
++        * The root cgroup. The containing cgroup_root will be destroyed on its
++        * release. cgrp->ancestors[0] will be used overflowing into the
++        * following field. cgrp_ancestor_storage must immediately follow.
++        *
++        * Must be last --ends in a flexible-array members.
++        */
++       TRAILING_OVERLAP(struct cgroup, cgrp, ancestors,
++               /* must follow cgrp for cgrp->ancestors[0], see above */
++               struct cgroup *cgrp_ancestor_storage;
++       );
+  };
+
+However, this causes the size of struct cgroup_root to increase from 6400
+bytes to 16384 bytes due to struct cgroup to be aligned to page size 4096
+bytes. See below:
+
+struct cgroup_root {
+	struct kernfs_root *       kf_root;              /*     0     8 */
+	unsigned int               subsys_mask;          /*     8     4 */
+	int                        hierarchy_id;         /*    12     4 */
+	struct list_head           root_list;            /*    16    16 */
+	struct callback_head       rcu __attribute__((__aligned__(8))); /*    32    16 */
+	atomic_t                   nr_cgrps;             /*    48     4 */
+	unsigned int               flags;                /*    52     4 */
+	char                       name[64];             /*    56    64 */
+	/* --- cacheline 1 boundary (64 bytes) was 56 bytes ago --- */
+	char                       release_agent_path[4096]; /*   120  4096 */
+
+	/* XXX 3976 bytes hole, try to pack */
+
+	/* --- cacheline 128 boundary (8192 bytes) --- */
+	union {
+		struct cgroup      cgrp __attribute__((__aligned__(4096))); /*  8192  8192 */
+		struct {
+			unsigned char __offset_to_ancestors[5784]; /*  8192  5784 */
+			/* --- cacheline 218 boundary (13952 bytes) was 24 bytes ago --- */
+			struct cgroup * cgrp_ancestor_storage; /* 13976     8 */
+		};                                       /*  8192  5792 */
+	} __attribute__((__aligned__(4096)));            /*  8192  8192 */
+
+	/* size: 16384, cachelines: 256, members: 10 */
+	/* sum members: 12408, holes: 1, sum holes: 3976 */
+	/* forced alignments: 2, forced holes: 1, sum forced holes: 3976 */
+} __attribute__((__aligned__(4096)));
+
+I've tried with the struct_group_tagged()/container_of() technique:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git/commit/?h=testing/wfamnae-next20250723&id=03da6b0772af1a62778400f26fe57796fe1ebf27
+
+but cgroup_root grows up to 20K in this case.
+
+So, I guess my question here is... what do you think?... (thinkingface)
+
+Thanks!
+-Gustavo
 
