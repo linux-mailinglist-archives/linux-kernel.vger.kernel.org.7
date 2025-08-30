@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-793172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BFEB3CFB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D499B3CFC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A805D1B24DBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0833520658E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C110258EF3;
-	Sat, 30 Aug 2025 22:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B83C25B302;
+	Sat, 30 Aug 2025 22:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUMz72mQ"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vc5no/gx"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D9C1AA7A6;
-	Sat, 30 Aug 2025 22:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381E7231C91
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 22:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756591244; cv=none; b=gsb+ARwfhc2tIjVW7tCb6ZZhY6qhGa9jPcfpWCypGdJR0h86A0KltQDSzpKXI8ajRdul/QE1JKdGuHXXb/hJ/GeJG1cwpLzVHIek6HRMy+nUk7dIb4tJ4umG+U67T81sgnUJjMb2gCPg/hiCFbog4rV89mn1vjkLOxrXFEJxUVM=
+	t=1756592056; cv=none; b=XUayutNc36TzfYhx5XwUbYE/ze7IxBHsZrco5HrGfYkWyxj41fLbhwf64TWl6aGBMBP7GQ/MJ9lxDXoGzb7l0eY3tX8WvjObM/Vca1W1sbYVBshgTIau3bRmULagjncvUBFg/YzjfXUTrQeQ8WJy4OaH/SpQLuvOagjiv45IOSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756591244; c=relaxed/simple;
-	bh=nAB6LEZueakEVzPxQwTu5mscsF9D4yS7uK9HPeecuJk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QshibIA3vqdxyqOpFKcUtswCTPWTnIj5Kg4oowdXi+BiYHyULNyCH7mCnbKHNJ4FCAS97B93Sh00/Z79CY41GWWpcw9YdBJ0dWzMSQNtgDHZEG6Z4vLStc9jRFC9ZHVB3KD4R91v0eCSHFpSg/SBoO58vMZdZYZl4vNHE/dK2Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUMz72mQ; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1756592056; c=relaxed/simple;
+	bh=D2HxL40Dgm4l1q2zEU2i9dHna8lkUx68aBpCEXsJgRE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kSraz4rjtFt8eSVQ5Te+Khmx7CthbiqlOgLtihvz5UUttuH207vseQ83EyCNY4iU8oZqQQTzgEjkqkAULrhwtiBQrt9A/ufLt5SY62/te2+L5EvqT2dngEVIfFnPBIgSPuIkq9WlVTivaEVo1XirTHPMfOiRW4ZZqPkBSQC7ozU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vc5no/gx; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7f8ea864d63so315765885a.0;
-        Sat, 30 Aug 2025 15:00:42 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afeee20b7c0so423631566b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 15:14:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756591242; x=1757196042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0VBdpteMs7U9MIP94cCFTa1pDDiQfM2f/G157H7iQG4=;
-        b=bUMz72mQrM4wJR1aHBQABtCWNXd9ILDMBqLWgqFligcxlq9J02Ej4f9STpQ/WBFhDE
-         dOko4Fsdtk8dlU4As3ClA1qVFldEGQIAPhcUDNp6NIFCDJvRJwU9skwVKPEtbhn/SyQu
-         80M+FTEoi6O8a2hSg5xZJ0yiHZuR8icW7tpOTItkcg88V/HTI94PNntKROsQNjryraTi
-         b5KMo+PzLW6NvAioeeexh3kUwH+nxoNquZjS1pp/49Osl7y1RurF+fmuHyIrEQdfNy51
-         46YUZKbbfjvNZjeFpNiCwEx+2p2caz5dpXjsRpHHtLKa1loFkOUTWSCyXRrum9jiID2H
-         jZfg==
+        d=gmail.com; s=20230601; t=1756592053; x=1757196853; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNGjlJl5Qdfixvejv/BUl73WC2NG2Hs0Tn9jzjM9Chc=;
+        b=Vc5no/gxC5bDp2GpJaVkbRbTUAaI/B4ZcCDBcA+xdHZ87k2zYFQFZ98gDNlqnSInTb
+         OXYoQ9WmV/hFIUcg0eZ0MZAlYqf3rCaz2TjUAP+r2sD5a8m2mtFGMHKU2T9kFR/JnN0y
+         YPaIivU35qYq+fo1sIlIa9fMvtK3UkmOyfl4RP2mz6brubxFGelfvmiaVwJT8TRqkpdV
+         87czRMDUJi49CWzdneoPHuO5ZeIcIElO7fxz//33JqOlAjUlrNus04Ocsw8hX9Y90COr
+         9og0m3I7JoB8b7Awa1pWLJJ62U9QUCkeP4JejMADU5aJkZj+Co+4iWjfKgg+anHX+vQo
+         1Msw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756591242; x=1757196042;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756592053; x=1757196853;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0VBdpteMs7U9MIP94cCFTa1pDDiQfM2f/G157H7iQG4=;
-        b=wNWgITfoKi9fvgX4u23xnbwFAK+2f4j2fy8kgd2FW9rk7bmhKDUXcwy6wpf+RcGydW
-         hD6DPZdJGZUiQvKKEr7vqbJDevmdVK3nfJ857pQrkEgVTG6ybTcbU9vQnFG/BAeRYTOu
-         PBR8hTrcrxqIljbGZP1RX2BMd7Ehmj25FwV59lvgdnzxCunApG7Ekkc29IE3gtjNBZKK
-         sGpnTvLE4KcmXwcISepaTQGVUQya2NAAeHaHQxA7KbwKKdZK5A3IPvCzjMEwZJZUhzC4
-         e15aoIxbV4+O9CPlhItyGbqh1tiw9NBa5EtmLg1/Yt5lt8JX8cduoZqJyV9wz2UVucFp
-         Ywlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSqeNGnzZgnbqg2QDA05Bgi80k7coNVyUzeuyOEdFwphFloTRxfF0wGhY1I9JrspG0ChlgTnw//6V1@vger.kernel.org, AJvYcCXaX90Wo1McrxMqNnjN6qv6q9QSCi4JkfInS9isRFAwLD07XVY27CJUig2wf/Q6yuhDXzSneICixJpQNK3Q@vger.kernel.org, AJvYcCXgMb8mhevWRNjdCo6rPDVIUUfmcrPnmw/SEDy5YBekI1e9pkzPzijlz1BdBIriaVZlxX5gc5g6mY44yA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH281fGBFCE3NMK/h2qRvRr38j1kK4x74xgLjvTCLWauOVXZgQ
-	hY9jxTXBjvjpBXI/EQ46YfIhYRTXUGyhDkJvurTF1CvyoWc7cQA5Oao=
-X-Gm-Gg: ASbGncvlqJVf3U0L7+dQaVSWGXTNDNcx2JMlKoeBRuacoHGApdslZYuVhqpbU2qjZZI
-	xc9xdsH7cpPyE5+fJKkHGulrVYYIh8r0Q6X9tyqREOCiswQ8qG+HoDhqlmMHZbFcELMAkL3vGOA
-	+td/r25l8MofhnUNMCm3CsFIOs9Y9udRVtYNY7iy0alc3EBkCIlCt1gzipwnuReQfxiEzW4ACVi
-	/QWfHCfb6d/4Lj3ZSbFC9i9eCfgtj8Py1wNnRVbA2iNaoOdorba7gezfS4KsuTKtkbXCU5WvLbn
-	+YgAGtBvp7RayUmEqyyE88JGSftaNpEArZGYcNHIKkvLlWUinnfZdNkJfwjGe+10eA3vl53tEzQ
-	9cw5FacFEBwXDaknLf6Vth60RZu9xUTwrhOSpI8wpPEYBtSklND2hYBFy
-X-Google-Smtp-Source: AGHT+IHzGtCaxvJ/JvP2YwIhp9GD92z1hO7NN8MsMB+bENsjEt5g/P1jzGsqxnL/5uw5ru5XZpCceg==
-X-Received: by 2002:a05:620a:199d:b0:7fe:a33d:a205 with SMTP id af79cd13be357-7ff27b1f7femr352026485a.27.1756591241879;
-        Sat, 30 Aug 2025 15:00:41 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:68e:c28d:1818:9595:da56:53b9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc16341f1asm420896085a.65.2025.08.30.15.00.38
+        bh=YNGjlJl5Qdfixvejv/BUl73WC2NG2Hs0Tn9jzjM9Chc=;
+        b=VN92jih51awuda4FbaQ3K64vw/Yol9PFUnZnPvZs+AfhqAOjLJ/+omQNZFyjinslpc
+         eS6ajd7MpLUGpK+6Uey+ijjR8vXUrH+NescWLZ0a5b7Ptnj0SIsVt01Arly9wbPBeZsS
+         h5mCH/w8v6xucTd/5IFpicSFqZT6n9Nb9DRpbcSXuaI19CRpM+WBpx3b9Qi4M3Gq130d
+         G91cpRnx7F0YvD103b+6BmUAk6uY0B5HNBmbVKTtTTDj/k9EMpUU4Bzqw3m27JbXaZTN
+         UmwC5EGKTI7wEEuWJE/UQKu47hEdPb9kOpaQgwR+4gU/5/dtJKakZmLGFUOfMkq39qvx
+         kaoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbrE8km/qw1x94OM0oHzd3w5NPhYD7d7OM5/xyjHIpZpH2AXUEIBgNWk6nKiD5Lo6W6rtMUFLL7ZVhYWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVso0B+4BSV3CkbxbFGIlGEIdFIargDp/jLFFhWmUvBoRphYND
+	W2rNrC+PeasaGaCawEgua9fxb/Sw1Njboukjz9eS0BXL9CK96W9b70MC
+X-Gm-Gg: ASbGncsyW8s+K0gTQLNYXickk9QeD99qS+KHyRay6xES8vz/Fc05macrItv9ibELOum
+	0CcZjboZAJopHbeGt4EjPrfrF5U5t9UYtdp0VnNAjBduxU2stljIyAd0JapNyAQFxppA3YSPc1Z
+	1e6pO4FlGZTz2qGuCrzXRPBuUEwnVegrVWt/NrzLrn5/9IXYh+x3gtLgsbgpCCb3lIkWbRL9tB9
+	MtjM4dCFzAhxlCvMf2y1SNX64OwpLuclNhSNUYgOiq8bWRkEyz0isPgf9MgWA4GyVhDpsrLlCFF
+	Qn45mPgQKtUesDDqsLYiHReMQhV5zfYgZWgOI1C4LwgdLg+KRViYDStvObSVVtxXF51eSZ3zY7W
+	LfrRfGKID92IHeibYRcHF
+X-Google-Smtp-Source: AGHT+IHqi78E3a2KwFegHRRZMDud3ybIwvKBd2z4JvO4tPnf3z6ZAYdUlR5/YcFnKn6YIfR5t0Ouxg==
+X-Received: by 2002:a17:907:948a:b0:afe:93e2:3984 with SMTP id a640c23a62f3a-b01d8a321f3mr267308166b.8.1756592053372;
+        Sat, 30 Aug 2025 15:14:13 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b018fe7c638sm240170966b.6.2025.08.30.15.14.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 15:00:41 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: tony@atomide.com,
-	robh@kernel.org
-Cc: uri.mashiach@compulab.co.il,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH] ARM: dts: omap: am335x-cm-t335: Remove unused mcasp num-serializer property
-Date: Sat, 30 Aug 2025 23:59:57 +0200
-Message-Id: <20250830215957.285694-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Sat, 30 Aug 2025 15:14:13 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Sun, 31 Aug 2025 01:13:55 +0300
+Subject: [PATCH] mfd: max77705: rework interrupts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250831-max77705-fix_interrupt_handling-v1-1-73e078012e51@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKJ3s2gC/x2N0QpAQBAAf0X77OoQd/yKJLnFFkd7SF3+3eZxa
+ pqJEJAJAzRJBMabAu1eIEsTGJfBz6jICUOu81LbIlPb8BhjdKkmenryJzJfx9mL61bys9LW1iN
+ iVReVA6kcjGL+h7Z73w9J8UAbcQAAAA==
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756592052; l=2880;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=D2HxL40Dgm4l1q2zEU2i9dHna8lkUx68aBpCEXsJgRE=;
+ b=BKyduRRKUwTUjM5hjwLv1Rzxrz/d/PoJpL7I67nTbXjspcGuTTO0NWZ9+2eWtJDzEXbIzYtz4
+ 52d/1GtkbIjCL9m2rYdVDpsO1OJELScMXNyz5jehfwrkDZy5HKebfqD
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-The dtbs_check validation for am335x-cm-t335.dtb flags an error
-for an unevaluated 'num-serializer' property in the mcasp0 node.
+Current implementation describes only MFD's own topsys interrupts.
+However, max77705 has a register which indicates interrupt source, i.e.
+it acts as an interrupt controller. There's 4 interrupt sources in
+max77705: topsys, charger, fuelgauge, usb type-c manager.
 
-This property is obsolete; it is not defined in the davinci-mcasp-audio
-schema and is not used by the corresponding (or any) driver.
+Setup max77705 MFD parent as an interrupt controller. Leave topsys
+interrupts unregistered, because currently unused.
 
-Remove this unused property to fix the schema validation warning.
+Fixes: c8d50f029748 ("mfd: Add new driver for MAX77705 PMIC")
 
-Fixes: 48ab364478e77 ("ARM: dts: cm-t335: add audio support")
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 ---
- arch/arm/boot/dts/ti/omap/am335x-cm-t335.dts | 2 --
- 1 file changed, 2 deletions(-)
+Max77705 has a register, which indicates, who is triggering irq. There
+may be 4 irq sources in max77705: charger, fuelgauge, usb type-c
+manager ic, and so-called 'topsys'. Hence, max77705 mfd parent device is
+an interrupt controller. This series implements interrupt controller in
+max77705 mfd.
+---
+ drivers/mfd/max77705.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-cm-t335.dts b/arch/arm/boot/dts/ti/omap/am335x-cm-t335.dts
-index 06767ea164b..ece7f7854f6 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-cm-t335.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-cm-t335.dts
-@@ -483,8 +483,6 @@ &mcasp1 {
+diff --git a/drivers/mfd/max77705.c b/drivers/mfd/max77705.c
+index 6b263bacb8c2..076357cb77a9 100644
+--- a/drivers/mfd/max77705.c
++++ b/drivers/mfd/max77705.c
+@@ -61,6 +61,23 @@ static const struct regmap_config max77705_regmap_config = {
+ 	.max_register = MAX77705_PMIC_REG_USBC_RESET,
+ };
  
- 		op-mode = <0>;          /* MCASP_IIS_MODE */
- 		tdm-slots = <2>;
--		/* 16 serializers */
--		num-serializer = <16>;
- 		serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
- 			0 0 2 1 0 0 0 0 0 0 0 0 0 0 0 0
- 		>;
++static const struct regmap_irq max77705_irqs[] = {
++	{ .mask = MAX77705_SRC_IRQ_CHG, },
++	{ .mask = MAX77705_SRC_IRQ_TOP, },
++	{ .mask = MAX77705_SRC_IRQ_FG, },
++	{ .mask = MAX77705_SRC_IRQ_USBC, },
++};
++
++static const struct regmap_irq_chip max77705_irq_chip = {
++	.name		= "max77705",
++	.status_base	= MAX77705_PMIC_REG_INTSRC,
++	.ack_base	= MAX77705_PMIC_REG_INTSRC,
++	.mask_base	= MAX77705_PMIC_REG_INTSRC_MASK,
++	.num_regs	= 1,
++	.irqs		= max77705_irqs,
++	.num_irqs	= ARRAY_SIZE(max77705_irqs),
++};
++
+ static const struct regmap_irq max77705_topsys_irqs[] = {
+ 	{ .mask = MAX77705_SYSTEM_IRQ_BSTEN_INT, },
+ 	{ .mask = MAX77705_SYSTEM_IRQ_SYSUVLO_INT, },
+@@ -111,18 +128,11 @@ static int max77705_i2c_probe(struct i2c_client *i2c)
+ 	ret = devm_regmap_add_irq_chip(dev, max77705->regmap,
+ 					i2c->irq,
+ 					IRQF_ONESHOT | IRQF_SHARED, 0,
+-					&max77705_topsys_irq_chip,
++					&max77705_irq_chip,
+ 					&irq_data);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to add IRQ chip\n");
+ 
+-	/* Unmask interrupts from all blocks in interrupt source register */
+-	ret = regmap_update_bits(max77705->regmap,
+-				 MAX77705_PMIC_REG_INTSRC_MASK,
+-				 MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX77705_SRC_IRQ_ALL);
+-	if (ret < 0)
+-		return dev_err_probe(dev, ret, "Could not unmask interrupts in INTSRC\n");
+-
+ 	domain = regmap_irq_get_domain(irq_data);
+ 
+ 	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+
+---
+base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+change-id: 20250831-max77705-fix_interrupt_handling-0889cee6936d
+
+Best regards,
 -- 
-2.39.5
+Dzmitry Sankouski <dsankouski@gmail.com>
 
 
