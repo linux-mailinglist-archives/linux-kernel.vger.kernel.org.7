@@ -1,289 +1,293 @@
-Return-Path: <linux-kernel+bounces-792989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC9EB3CB3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2742B3CB42
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9DF1BA537B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82380A03F79
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837C727B330;
-	Sat, 30 Aug 2025 13:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CED2765F5;
+	Sat, 30 Aug 2025 13:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="HvbLUUaD"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxJNgThA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF1227AC2E
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 13:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0702144D7;
+	Sat, 30 Aug 2025 13:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756560519; cv=none; b=lCjQz22k1fDpToGv+3DyksJIHatDaK8OISnh0Qa0YdR7rNOGgXh26CLASvUIYM3+ZBN2AhXcslg9BQx9MaL7X7uEhkbzA8mPbr3V8PZDIO7B+s4AOfK/MwcPojijZGepK3edlhoVWh+dSOCDc2VdpfaZ3FxYh15WkgOK7N6ICtQ=
+	t=1756560557; cv=none; b=eaCydDbW1+bqx85iTeHZUahvKVN5QFtkg2Qxpbh8N7XDG89A/uqZyzhUqAd6RuSgd4jDvHtyTleJ9RI1RWepUDpU4xTcv0KOu+okyJRkgFiUUEvhQRj/A8r3yMu50wRhUVfB01vW+P8uj/6hD5gF6luHws4RQS0HHS64a1iHybc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756560519; c=relaxed/simple;
-	bh=DA7DnF0XN9lY+stgan8XI4Zz9ca12JKXCOrU6GYdA6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t/pbyDK5kmiXB+iaqI/+mXb+ULOr/RYkcVdSYbBGvA5DyIvZpu9xfYpiIt8VaKDUvR1scztuB6Tc042FNgMKaPaVrmm1wMUQjsiKql3q+a2BIaociCq01rtcgDNbH2j3TpV4z4CnjePO4IoTGGbMHSC4/fj1i3KyQqhVvhLUWcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=HvbLUUaD; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2489acda3bbso23230835ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 06:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1756560517; x=1757165317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cH2v1QcRr8JcEsaWWcb0QAb5PdIid9UdMR0UYOpPn/g=;
-        b=HvbLUUaD4KlI8STB5655JCW+TTBgrOPDidgSHLWutaMnaVThZ+pZ16JBY2vcPbQsuA
-         UCTYIy/Ic6rocIF9rM5B9wargXZLOZB+4sjGawClCBKklXtaKGerOnUHkAA4n9EDbduc
-         3IWVK1dBWcFDxMZOXb8LN83ZYfwHf0s/End0PNCFY6eiCJ2DaCaer0jGUVjS1y8FYcj3
-         oRbCFOg61tkmpwWf5/kN+jvWgasbfEKdvHgXZ3JxMQvaKVICncHD9zW29xjH2M1I1g6c
-         dg3OCmwuLSIpDKsqkvVjboyso5a++Pxfli+NDjiJl5/gT1YITGQpv6L+SRLizk4+bg3u
-         Aowg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756560517; x=1757165317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cH2v1QcRr8JcEsaWWcb0QAb5PdIid9UdMR0UYOpPn/g=;
-        b=n6MV6tB4pL2Xno4Gvn9GRUmzlkF26aJKa8dreYe1WZGUa7TZuAWHsWpFAi5M1oVzMg
-         nMyHRVlKJEoJaKJYgiClnlAB2G97ULZvLrugvTwuNxWhJJrgQGK6EC7yh2H3tyX41lSZ
-         3azseDfvJYsayyxR00rMDHTP2xMhEehA63CL9GGRM+gqo8SIiFUuML0OaBWYCoLAgpad
-         EZbHodGglMM82HGcMEaisSfv6Rka8Zt7R949G+iXygRRz828/I1GddQYAAkSm4J/9fuX
-         eFeovEkrYPKITT7s2RivPNt9NFv/u6VnGC3be/47kN025c0oCZKLshCR9fRvoOicyH6g
-         Q1Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXU4osDQzZxKhMskjoTDRjs0zLUVxBl3sqrLEOkHSpJd05R4w074qaST2VE4jap34I9GHLvYxv4XV5EOvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrj0DSnk2AIys/lcqoMrs6BV8rnCdgOKLw+G3cmZuFM/ViiAuX
-	LEXzXVjUzoXUocJsfWe4OFphy1z0DmywTybF5RqC6echS0eGvCcMR8kQ9rkamTNRKNY=
-X-Gm-Gg: ASbGncsNRXQ/UhiN0ke+s+WB0waMYm1WmOROtm6UyaZPsk7gd3y5NrHnd1ehCDQL7x+
-	NKi3nbtKxl4E/o1XyXvhd878fXyN7Mz50iuTKwHoOUo9Cm+mSOGXYwBsFgSfZDFqN3D7FsEV9q+
-	/bgAzwEhmF2i4BVvz606+sqGOAp6KqIPBtZ+TlMcQfh1i58hIGDNYenNOFDOKLxpJzOQdvhnFcy
-	++DvpUcw48gkYQqZVEEDMJs4bmYRkQbS1354dOrYtU8nRi+2DZJThkLBBEabxIZIdSZ3dHoUZkP
-	cEOw/Zj/5drHe8FBdN8DzlX4N6IQE5GJHpO4THDfDuxxmjdN46yuYqYm87XS5OxlgYRk8vHIC3i
-	2IvX+5BB3Us1NVqpGwr0xS1DwrRR/SsT7R7eFHuvuuNUc+SE=
-X-Google-Smtp-Source: AGHT+IGBAlCgkcm3nrwMC3nhI3g6hU3d8goMhXPzQv7o9StgfPRy27tBqmBWSCPuHEJ4cC763SbNpw==
-X-Received: by 2002:a17:903:1d2:b0:248:e3d0:46ec with SMTP id d9443c01a7336-24944ab7f52mr26274385ad.37.1756560517138;
-        Sat, 30 Aug 2025 06:28:37 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:7a16:5a8f:5bc5:6642])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490373eb17sm52512195ad.54.2025.08.30.06.28.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 06:28:36 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: ebiggers@kernel.org,
-	tytso@mit.edu,
-	jaegeuk@kernel.org
-Cc: linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Subject: [PATCH] fscrypt: optimize fscrypt_base64url_encode() with block processing
-Date: Sat, 30 Aug 2025 21:28:32 +0800
-Message-Id: <20250830132832.7911-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756560557; c=relaxed/simple;
+	bh=0+63bx8jI+4n91OtGNXbvlLcLUdxsTZkOxwpEnYZwyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8Q+oyUIL23pQLsx294mnRvQf+GHKK+zXpMshicL9QUYfHrXpistqMR0wb8jV+/oIjqKbnkQsfohEYDpOlaI7mzHRWvRz/jUF8nJUZuISmHBmTsX602CFXirWx5m2CQMuaSwKbiSEactiiMCVzjx3p0OoPxUsDAahWBnmmNOKCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxJNgThA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0100C4CEEB;
+	Sat, 30 Aug 2025 13:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756560557;
+	bh=0+63bx8jI+4n91OtGNXbvlLcLUdxsTZkOxwpEnYZwyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BxJNgThA7EVc2p8igowIhslgzn1gf+EANLf8LpVOdYBVnoci2UleipeyVLVMY2wuY
+	 GUYm1F/43+sXUvrOok04srqcT+FueagThOYGoNemD/QfROzvzd2PxO2fKMeCBBF9fr
+	 0raM/U4D8WO1K7cYsO5wmFxgc5pextOtEkg2z8WJl0ANaEwKqIHBRg+MvLE1kpxFu1
+	 QdtSY4oAxnvpmFE9EI4nOixgmx214i7cjLZlRUL85Y0Kkrq/PcNPWmLuTgnIbv/Tfq
+	 MbMIfHTQ+clyHbux6jR2t5/R/idiqMGM2F0v4mcY/HfZSebFywM9+CaRXOcVHYFcVZ
+	 AkuOGnTY88C7A==
+Date: Sat, 30 Aug 2025 18:59:08 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 12/15] PCI: sky1: Add PCIe host support for CIX Sky1
+Message-ID: <ssk2aolyodglbfvql66uk3snopnyneocoom2ymqhqc4lywugfo@2hmsuzgrutuw>
+References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
+ <20250819115239.4170604-13-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819115239.4170604-13-hans.zhang@cixtech.com>
 
-Previously, fscrypt_base64url_encode() processed input one byte at a
-time, using a bitstream, accumulating bits and emitting characters when
-6 bits were available. This was correct but added extra computation.
+On Tue, Aug 19, 2025 at 07:52:36PM GMT, hans.zhang@cixtech.com wrote:
+> From: Hans Zhang <hans.zhang@cixtech.com>
+> 
+> Add driver for the CIX Sky1 SoC PCIe Gen4 16 GT/s controller based
+> on the Cadence PCIe core.
+> 
+> Supports MSI/MSI-x via GICv3, Single Virtual Channel, Single Function.
+> 
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+> Changes for v8:
+> - Optimization of CIX SKY1 Root Port driver. (Bjorn and Krzysztof)
+> - Use devm_platform_ioremap_resource_byname.
+> ---
+>  drivers/pci/controller/cadence/Kconfig    |  15 ++
+>  drivers/pci/controller/cadence/Makefile   |   1 +
+>  drivers/pci/controller/cadence/pci-sky1.c | 232 ++++++++++++++++++++++
+>  3 files changed, 248 insertions(+)
+>  create mode 100644 drivers/pci/controller/cadence/pci-sky1.c
+> 
+> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
+> index 117677a23d68..26a248cdc78a 100644
+> --- a/drivers/pci/controller/cadence/Kconfig
+> +++ b/drivers/pci/controller/cadence/Kconfig
+> @@ -42,6 +42,21 @@ config PCIE_CADENCE_PLAT_EP
+>  	  endpoint mode. This PCIe controller may be embedded into many
+>  	  different vendors SoCs.
+>  
+> +config PCI_SKY1_HOST
+> +	tristate "CIX SKY1 PCIe controller (host mode)"
+> +	depends on OF
+> +	select PCIE_CADENCE_HOST
+> +	select PCI_ECAM
+> +	help
+> +	  Say Y here if you want to support the CIX SKY1 PCIe platform
+> +	  controller in host mode. CIX SKY1 PCIe controller uses Cadence
+> +	  HPA (High Performance Architecture IP [Second generation of
+> +	  Cadence PCIe IP])
+> +
+> +	  This driver requires Cadence PCIe core infrastructure
+> +	  (PCIE_CADENCE_HOST) and hardware platform adaptation layer
+> +	  to function.
+> +
+>  config PCI_J721E
+>  	tristate
+>  	select PCIE_CADENCE_HOST if PCI_J721E_HOST != n
+> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> index de4ddae7aca4..40d7c6e98b4d 100644
+> --- a/drivers/pci/controller/cadence/Makefile
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -8,3 +8,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-mod.o
+>  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-mod.o
+>  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> +obj-$(CONFIG_PCI_SKY1_HOST) += pci-sky1.o
+> diff --git a/drivers/pci/controller/cadence/pci-sky1.c b/drivers/pci/controller/cadence/pci-sky1.c
+> new file mode 100644
+> index 000000000000..7dd3546275c5
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pci-sky1.c
+> @@ -0,0 +1,232 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCIe controller driver for CIX's sky1 SoCs
+> + *
 
-This patch processes input in 3-byte blocks, mapping directly to 4 output
-characters. Any remaining 1 or 2 bytes are handled according to Base64 URL
-rules. This reduces computation and improves performance.
+No copyright for CIX tech?
 
-Performance test (5 runs) for fscrypt_base64url_encode():
+> + * Author: Hans Zhang <hans.zhang@cixtech.com>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci-ecam.h>
+> +#include <linux/pci_ids.h>
+> +
+> +#include "pcie-cadence.h"
+> +#include "pcie-cadence-host-common.h"
+> +
+> +#define STRAP_REG(n)			((n) * 0x04)
+> +#define STATUS_REG(n)			((n) * 0x04)
+> +#define  LINK_TRAINING_ENABLE		BIT(0)
+> +#define  LINK_COMPLETE			BIT(0)
 
-64B input:
--------------------------------------------------------
-| Old method | 131 | 108 | 114 | 122 | 123 | avg ~120 ns |
--------------------------------------------------------
-| New method |  84 |  81 |  84 |  82 |  84 | avg ~83 ns  |
--------------------------------------------------------
+Extra space.
 
-1KB input:
---------------------------------------------------------
-| Old method | 1152 | 1121 | 1142 | 1147 | 1148 | avg ~1142 ns |
---------------------------------------------------------
-| New method |  767 |  752 |  765 |  771 |  776 | avg ~766 ns  |
---------------------------------------------------------
+> +
+> +#define SKY1_IP_REG_BANK		0x1000
+> +#define SKY1_IP_CFG_CTRL_REG_BANK	0x4c00
+> +#define SKY1_IP_AXI_MASTER_COMMON	0xf000
+> +#define SKY1_AXI_SLAVE			0x9000
+> +#define SKY1_AXI_MASTER			0xb000
+> +#define SKY1_AXI_HLS_REGISTERS		0xc000
+> +#define SKY1_AXI_RAS_REGISTERS		0xe000
+> +#define SKY1_DTI_REGISTERS		0xd000
+> +
+> +#define IP_REG_I_DBG_STS_0		0x420
+> +
+> +struct sky1_pcie {
+> +	struct cdns_pcie *cdns_pcie;
+> +	struct cdns_pcie_rc *cdns_pcie_rc;
+> +
+> +	struct resource *cfg_res;
+> +	struct resource *msg_res;
+> +	struct pci_config_window *cfg;
+> +	void __iomem *strap_base;
+> +	void __iomem *status_base;
+> +	void __iomem *reg_base;
+> +	void __iomem *cfg_base;
+> +	void __iomem *msg_base;
+> +};
+> +
+> +static int sky1_pcie_resource_get(struct platform_device *pdev,
+> +				  struct sky1_pcie *pcie)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +
+> +	base = devm_platform_ioremap_resource_byname(pdev, "reg");
+> +	if (IS_ERR(base))
+> +		return dev_err_probe(dev, PTR_ERR(base),
+> +				     "unable to find reg registers\n");
 
-Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
----
-Tested on Linux 6.8.0-64-generic x86_64
-with Intel Core i7-10700 @ 2.90GHz
+"unable to find \"reg\" registers". Same for below prints.
 
-Test is executed in the form of kernel module.
+> +	pcie->reg_base = base;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +	if (!res)
+> +		return dev_err_probe(dev, ENXIO, "unable to get cfg resource\n");
+> +	pcie->cfg_res = res;
+> +
+> +	base = devm_platform_ioremap_resource_byname(pdev, "rcsu_strap");
+> +	if (IS_ERR(base))
+> +		return dev_err_probe(dev, PTR_ERR(base),
+> +				     "unable to find rcsu strap registers\n");
+> +	pcie->strap_base = base;
+> +
+> +	base = devm_platform_ioremap_resource_byname(pdev, "rcsu_status");
+> +	if (IS_ERR(base))
+> +		return dev_err_probe(dev, PTR_ERR(base),
+> +				     "unable to find rcsu status registers\n");
+> +	pcie->status_base = base;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "msg");
+> +	if (!res)
+> +		return dev_err_probe(dev, ENXIO, "unable to get msg resource\n");
+> +	pcie->msg_res = res;
+> +	pcie->msg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pcie->msg_base)) {
+> +		return dev_err_probe(dev, PTR_ERR(pcie->msg_base),
+> +				     "unable to ioremap msg resource\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int sky1_pcie_start_link(struct cdns_pcie *cdns_pcie)
+> +{
+> +	struct sky1_pcie *pcie = dev_get_drvdata(cdns_pcie->dev);
+> +	u32 val;
+> +
+> +	val = readl(pcie->strap_base + STRAP_REG(1));
+> +	val |= LINK_TRAINING_ENABLE;
+> +	writel(val, pcie->strap_base + STRAP_REG(1));
+> +
+> +	return 0;
+> +}
+> +
+> +static void sky1_pcie_stop_link(struct cdns_pcie *cdns_pcie)
+> +{
+> +	struct sky1_pcie *pcie = dev_get_drvdata(cdns_pcie->dev);
+> +	u32 val;
+> +
+> +	val = readl(pcie->strap_base + STRAP_REG(1));
+> +	val &= ~LINK_TRAINING_ENABLE;
+> +	writel(val, pcie->strap_base + STRAP_REG(1));
+> +}
+> +
+> +static bool sky1_pcie_link_up(struct cdns_pcie *cdns_pcie)
+> +{
+> +	u32 val;
+> +
+> +	val = cdns_pcie_hpa_readl(cdns_pcie, REG_BANK_IP_REG,
+> +				  IP_REG_I_DBG_STS_0);
+> +	return val & LINK_COMPLETE;
+> +}
+> +
+> +static const struct cdns_pcie_ops sky1_pcie_ops = {
+> +	.start_link = sky1_pcie_start_link,
+> +	.stop_link = sky1_pcie_stop_link,
+> +	.link_up = sky1_pcie_link_up,
+> +};
+> +
+> +static int sky1_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct cdns_plat_pcie_of_data *reg_off;
+> +	struct device *dev = &pdev->dev;
+> +	struct pci_host_bridge *bridge;
+> +	struct cdns_pcie *cdns_pcie;
+> +	struct resource_entry *bus;
+> +	struct cdns_pcie_rc *rc;
+> +	struct sky1_pcie *pcie;
+> +	int ret;
+> +
+> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> +	if (!pcie)
+> +		return -ENOMEM;
+> +
+> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
+> +	if (!bridge)
+> +		return -ENOMEM;
+> +
+> +	ret = sky1_pcie_resource_get(pdev, pcie);
+> +	if (ret < 0)
+> +		return -ENXIO;
 
-Test script:
+return ret;
 
-static int encode_v1(const u8 *src, int srclen, char *dst)
-{
-	u32 ac = 0;
-	int bits = 0;
-	int i;
-	char *cp = dst;
+- Mani
 
-	for (i = 0; i < srclen; i++) {
-		ac = (ac << 8) | src[i];
-		bits += 8;
-		do {
-			bits -= 6;
-			*cp++ = base64url_table[(ac >> bits) & 0x3f];
-		} while (bits >= 6);
-	}
-	if (bits)
-		*cp++ = base64url_table[(ac << (6 - bits)) & 0x3f];
-	return cp - dst;
-}
-
-static int encode_v2(const u8 *src, int srclen, char *dst)
-{
-	u32 ac = 0;
-	int i = 0;
-	char *cp = dst;
-
-	while (i + 2 < srclen) {
-		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
-		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-		*cp++ = base64url_table[ac & 0x3f];
-		i += 3;
-	}
-
-	switch (srclen - i) {
-	case 2:
-		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8);
-		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-		break;
-	case 1:
-		ac = ((u32)src[i] << 16);
-		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-		break;
-	}
-	return cp - dst;
-}
-
-static void run_test(const char *label, const u8 *data, int len)
-{
-    char *dst1, *dst2;
-    int n1, n2;
-    u64 start, end;
-
-    dst1 = kmalloc(len * 2, GFP_KERNEL);
-    dst2 = kmalloc(len * 2, GFP_KERNEL);
-
-    if (!dst1 || !dst2) {
-        pr_err("%s: Failed to allocate dst buffers\n", label);
-        goto out;
-    }
-
-    pr_info("[%s] input size = %d bytes\n", label, len);
-
-    start = ktime_get_ns();
-    n1 = encode_v1(data, len, dst1);
-    end = ktime_get_ns();
-    pr_info("[%s] encode_v1 time: %lld ns\n", label, end - start);
-
-    start = ktime_get_ns();
-    n2 = encode_v2(data, len, dst2);
-    end = ktime_get_ns();
-    pr_info("[%s] encode_v2 time: %lld ns\n", label, end - start);
-
-    if (n1 != n2 || memcmp(dst1, dst2, n1) != 0)
-        pr_err("[%s] Mismatch detected between encode_v1 and encode_v2!\n", label);
-    else
-        pr_info("[%s] Outputs are identical.\n", label);
-
-out:
-    kfree(dst1);
-    kfree(dst2);
-}
-
-static int __init base64_perf_init(void)
-{
-    u8 *data1k;
-
-    pr_info("Module init - running multi-size tests\n");
-
-    {
-        static u8 test64[64];
-        get_random_bytes(test64, sizeof(test64));
-        run_test("64B", test64, sizeof(test64));
-    }
-
-    data1k = kmalloc(1024, GFP_KERNEL);
-    if (data1k) {
-        get_random_bytes(data1k, 1024);
-        run_test("1KB", data1k, 1024);
-        kfree(data1k);
-    } else {
-        pr_err("Failed to allocate 1KB test buffer\n");
-    }
-
-    return 0;
-}
----
- fs/crypto/fname.c | 33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 010f9c0a4c2f..adaa16905498 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -204,20 +204,31 @@ static const char base64url_table[65] =
- static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
- {
- 	u32 ac = 0;
--	int bits = 0;
--	int i;
-+	int i = 0;
- 	char *cp = dst;
- 
--	for (i = 0; i < srclen; i++) {
--		ac = (ac << 8) | src[i];
--		bits += 8;
--		do {
--			bits -= 6;
--			*cp++ = base64url_table[(ac >> bits) & 0x3f];
--		} while (bits >= 6);
-+	while (i + 2 < srclen) {
-+		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
-+		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-+		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-+		*cp++ = base64url_table[ac & 0x3f];
-+		i += 3;
-+	}
-+
-+	switch (srclen - i) {
-+	case 2:
-+		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8);
-+		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-+		*cp++ = base64url_table[(ac >> 6) & 0x3f];
-+		break;
-+	case 1:
-+		ac = ((u32)src[i] << 16);
-+		*cp++ = base64url_table[(ac >> 18) & 0x3f];
-+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
-+		break;
- 	}
--	if (bits)
--		*cp++ = base64url_table[(ac << (6 - bits)) & 0x3f];
- 	return cp - dst;
- }
- 
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
