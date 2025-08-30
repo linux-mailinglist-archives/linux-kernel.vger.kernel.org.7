@@ -1,174 +1,142 @@
-Return-Path: <linux-kernel+bounces-792845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDEFB3C9AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:13:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD4B3C9AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC0E31B27B75
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:13:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AB1D4E0ED8
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E70C20B7ED;
-	Sat, 30 Aug 2025 09:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kzhMMj4a"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D147E258ECF;
+	Sat, 30 Aug 2025 09:13:15 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94319EEDE
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392FEEDE;
+	Sat, 30 Aug 2025 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545182; cv=none; b=RzR1Sx7Ev5QUGDhRGWTW92RJBY/fmGBcAbLuO3fAi9mh5A1qQh3GFYmaSxBxseT0ehKXyI6jKqcyb0K57RcDHCAPxLg3186PMU124sM2lh9rWQAvVSBir2lIRWinqsnqCUXeYHvcGFmp6+m0Lp5FQRySmi0eUKXm7voQzj+GEMk=
+	t=1756545195; cv=none; b=pOJFtVzoFJHSxyH2DAVzK9fFhNrUeJ2zFivx+nYIIgKbfgAKw6wRl6u5XuDHhtViqzYlWSVNJvBiFCBqgBtDwsME1JSMd2kE4NA7n4Fsi2dWgEA4l6S8jdzh6J5torC0nnP+oML2k14m5ghP27oGX04j21+UVejJwdw1Fz896go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545182; c=relaxed/simple;
-	bh=6Wil6y6TBpiRHdNBfK4USN7Qdh3fXy0IYCZxMeY/lfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dyu5LQGoshG7VtiSO08rQTZ9t677S6GDF5SGNGgyid9yX4vCEEHJ9i7G1+5G2iC1ixPFk+OmNxl7jlb2pNVusGkM/S5O9U7wv14v8S5LDRpFjIoEHmKk556SdoYuu5aznL2U9npRenRIe0sQJgyI2t+Zo5YVtyBvWETqHRKxv8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kzhMMj4a; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3d323be1617so2892f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756545179; x=1757149979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1iO0low9A/rUTb/P7NWY7lSGziDCGb/49/rJIYgf1Ts=;
-        b=kzhMMj4afWpOHpB8s9mj6DlPw3VF+fVsLW/Kpq+jRVz2FKzFK8tsjBgaBup5H0ChxO
-         eyuvvCCIWULP03r1z6+P2nulHq0wi+3IyYNSf5ToApe6a70CzboH5ykYEIXkkefaLYp8
-         /xSuNjehXfDYLHnjAxDHh/TuRbpXzbyzPNt4vfZ/jDdpJ4c1S0ECq0OcmZWsr9lLc8Mr
-         h2YuorkepPwjMlSuPPvQ+8wZBKDHmdvdbpmFTFgUmC36Yg/7tvyvCrO4Ipi8mEz6kg+z
-         uuva06FkWGfQtRs39gXrWr3M0RMVlSug13NQj58mZOQA87cdo24UFuvZCq/BsEQoeJq3
-         qczw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756545179; x=1757149979;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1iO0low9A/rUTb/P7NWY7lSGziDCGb/49/rJIYgf1Ts=;
-        b=ehJTZ9WvCPq4TqVxduxzFEUEL8pGVatHKJ2VqZ6COb3raGOLH8knJMXghNEB03Eu6m
-         +dP1ULVZgZX0e6OKB4ipztfYzT+q/dGfvm0/eo+mdmPmi06Wl2ohufXY3E6h18AznASt
-         eWvHS3ephnLMlENJwx296jKb8n0JqSkEcyY2pZsYHmLAhYLSJQKMXHRi7MUkT1nYBXiJ
-         AlsmCC2BB2yeatlxPQt7bGssKjv3he4W/qMrLDfL8Wi7rbuWGNB6zsQED3ZdJdEOhxe6
-         P8kMC+8aOnsDROMJOOlwaYguEbMUX5JU6sZ2rt9c4swj4ZyEvw3dBBy/CE0IqDf6lko4
-         AegQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQNAvmRHi6mQt2p1AyyttP9h6l6vo4fT4pupazESu8YTM18IRN0k3lNcrC86X58T8+LqqXlQ7/rDLWiyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqGMthmocHAvj7n4QNEiwB3gcnQFtXqkIxD7Ei0ipBDHpfZxBW
-	LcX1dkjI1gNLqlHJ/h/FNzncpc6eh6GuJc591wGb8JeZBaRfE9rpp0+FpS35FO7/sso=
-X-Gm-Gg: ASbGncvhWxsOc0invaZCw6Dz3f0j6lo9Za4UXf5CIp3EbJWqVLufWVbGGqctFYZyn7x
-	Vx2BlJCZ+DdkjhnumjqykGMI36aYnN9xaz1WnRt7GzueveaJYsu9DUslkdaYHsq0PpQ8r6neqfj
-	MjzbjPRgSjYTzBDv0wBhOH28qu4VoETB8SMx5QT+hoBb6R8VeFDpYEe8em1j2VibKJBPQc8welo
-	0jW+d0XeVqVWqvUSVR5rboQviSY+Ag4Xop4Ok2JC0oURM1ZyST0bX8u7YCLVyQw9ytEYX+/LKLw
-	q00hhT4172J0eNWt6iKK+i64wY6D3+ySTZ75EIEkGaie35TChXA+saCMksYLXxiD1W4jRoOLEw2
-	WnIwD6gi3/yaoRIc5MBo7GVkqPKOkJgrnbaLBbtCUfLc=
-X-Google-Smtp-Source: AGHT+IEpRzOCkC3TylDEJ7aPKDl7V/G2dwA78G2p+DY1DyKCm+s8MomBjoJ4FbBihtm4uUxbL1qZag==
-X-Received: by 2002:a05:600c:190c:b0:459:4441:1c13 with SMTP id 5b1f17b1804b1-45b802e8458mr23471415e9.6.1756545178601;
-        Sat, 30 Aug 2025 02:12:58 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e887fdcsm71516745e9.13.2025.08.30.02.12.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 02:12:57 -0700 (PDT)
-Message-ID: <82e1cebd-2101-4d9c-9de2-c3b54fc3a3fa@linaro.org>
-Date: Sat, 30 Aug 2025 11:12:56 +0200
+	s=arc-20240116; t=1756545195; c=relaxed/simple;
+	bh=0f+HBDJOsdpBtZ0u2LFEqmnMIrAsbkYqSQU7CblwEd8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=njXyvFWiolYBJH0vRFtgod0tOi/n7cYPjybYOk6XuRyHbQMGJtJSgvl9C8zFir4F+tju1VYIywBfciuTVbYqB3YxCDnfTxfweuqsJgoEQ2xipFXoFRoa7WTBMvvx/RE/a7fK+Qxg1wQ19M5XwUdUkWUadvRnhVXNyoQ/zBAtCyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cDTpp6xMYz13N9H;
+	Sat, 30 Aug 2025 17:09:22 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2292B1400E3;
+	Sat, 30 Aug 2025 17:13:09 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 30 Aug 2025 17:13:08 +0800
+Subject: Re: [PATCH v8 3/3] hisi_acc_vfio_pci: adapt to new migration
+ configuration
+To: Alex Williamson <alex.williamson@redhat.com>, Shameer Kolothum
+	<shameerkolothum@gmail.com>
+CC: <jgg@nvidia.com>, <jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
+References: <20250820072435.2854502-1-liulongfang@huawei.com>
+ <20250820072435.2854502-4-liulongfang@huawei.com>
+ <20250821120112.3e9599a4.alex.williamson@redhat.com>
+ <f3617d78-e75e-378b-ad0f-4aa6c8ed61b9@huawei.com>
+ <723cd569-b194-4876-9aea-d0bdd6861810@gmail.com>
+ <20250822081258.27bc71da.alex.williamson@redhat.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <6f383882-b358-b578-faa9-8312289e61ee@huawei.com>
+Date: Sat, 30 Aug 2025 17:13:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: axiado: Add missing UART aliases
-To: Harshit Shah <hshah@axiado.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- "soc@lists.linux.dev" <soc@lists.linux.dev>, "soc@kernel.org"
- <soc@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250828-axiado-ax3000-missing-serial-alias-v3-1-393111f4bd9e@axiado.com>
- <4e51bbdc-744b-4a23-a695-a6c49d82e779@linaro.org>
- <cb78b679-e349-43dc-a6ed-5b63b10d0d7f@axiado.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <cb78b679-e349-43dc-a6ed-5b63b10d0d7f@axiado.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250822081258.27bc71da.alex.williamson@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-On 29/08/2025 20:17, Harshit Shah wrote:
-> On 8/28/2025 10:58 PM, Krzysztof Kozlowski wrote:
->> Please don't do this. It just generates unnecessary traffic. See my
->> instructions you receive on your first submissions.... unless you want
->> to send patches to soc@ (which looks added here) but then this is also
+On 2025/8/22 22:12, Alex Williamson wrote:
+> On Fri, 22 Aug 2025 08:03:39 +0100
+> Shameer Kolothum <shameerkolothum@gmail.com> wrote:
 > 
-> Hi Krzysztof,
+>> On 22/08/2025 03:44, liulongfang wrote:
+>>> On 2025/8/22 2:01, Alex Williamson wrote:  
+>>>> On Wed, 20 Aug 2025 15:24:35 +0800
+>>>> Longfang Liu <liulongfang@huawei.com> wrote:
+>>>>> +enum hw_drv_mode {
+>>>>> +	HW_V3_COMPAT = 0,
+>>>>> +	HW_V4_NEW,
+>>>>> +};  
+>>>>
+>>>> You might consider whether these names are going to make sense in the
+>>>> future if there a V5 and beyond, and why V3 hardware is going to use a
+>>>> "compat" name when that's it's native operating mode.
+>>>>  
+>>>
+>>> If future versions such as V5 or higher emerge, we can still handle them by
+>>> simply updating the version number.
+>>> The use of "compat" naming is intended to ensure that newer hardware versions
+>>> remain compatible with older drivers.
+>>> For simplicity, we could alternatively rename them directly to HW_ACC_V3, HW_ACC_V4,
+>>> HW_ACC_V5, etc.
+>>>   
+>>>> But also, patch 1/ is deciding whether to expose the full BAR based on
+>>>> the hardware version and here we choose whether to use the VF or PF
+>>>> control registers based on the hardware version and whether the new
+>>>> hardware feature is enabled.  Doesn't that leave V4 hardware exposing
+>>>> the full BAR regardless of whether the PF driver has disabled the
+>>>> migration registers within the BAR?  Thanks,
+>>>>  
+>>>
+>>> Regarding V4 hardware: the migration registers within the PF's BAR are
+>>> accessible only by the host driver, just like other registers in the BAR.
+>>> When the VF's live migration configuration registers are enabled, the driver
+>>> can see the full BAR configuration space of the PF.However, at this point,
+>>> the PF's live migration configuration registers become read/write ineffective.
+>>> In other words, on V4 hardware, the VF's configuration domain and the PF's
+>>> configuration domain are mutually exclusive—only one of them is ever read/write
+>>> valid at any given time.  
+>>
+>> Sorry it is still not clear to me. My understanding was on V4 hardware,
+>> the VF's live migration config register will be inactive only when you
+>> set the PF's QM_MIG_REGION_SEL to QM_MIG_REGION_EN.
+>>
+>> So, I think the question is whether you need to check the PF's
+>> QM_MIG_REGION_SEL has set to  QM_MIG_REGION_EN, in patch 1 before
+>> exposing the full VF BAR region or not. If yes, you need to reorganise
+>> the patch 1. Currently patch 1 only checks the hardware version to
+>> decide that.
 > 
-> Yes, the reason I have resent this patch with adding (soc@) as this is 
-> the fix from the previous series.
-> 
-> Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
-> 
-> I missed to add those aliases and it is giving probe failures without 
-> these changes. So I was hoping if this could be merged as the fix
-> 
-> in the upcoming -rcX before the next merge window.
-The goal is correct, but you need to follow standard soc-subsystem
-maintainer process. You need to have your tree in the next, then collect
-the patches and fixes to respective branches, and then send multiple of
-them in pull request or as patches ONLY to soc@.
+> This, and also is there any migration compatibility between V3 hardware
+> and V4 hardware in compat mode?  Changing the BAR size is a fundamental
+> hardware difference that would preclude that unless something like QEMU
+> masks the true BAR size to the guest.  Thanks,
+>
 
-My Beginners maintainer talk from LPC 23 might help you.
+This difference will not affect migration compatibility. For our device migration,
+we only need to ensure that the device can be restored correctly after migration.
+Although the BAR size may differ depending on the device configuration, the data
+required to restore the device and ensure its normal operation remains consistent.
 
-Best regards,
-Krzysztof
+Thanks.
+Longfang.
+
+
+> Alex
+> 
+> 
+> .
+> 
 
