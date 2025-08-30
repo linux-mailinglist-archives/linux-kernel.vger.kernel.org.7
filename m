@@ -1,165 +1,111 @@
-Return-Path: <linux-kernel+bounces-792945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E21B3CAC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:23:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF81B3CAC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A7B1BA6A89
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4290BA056C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3453127A135;
-	Sat, 30 Aug 2025 12:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF22427B4F7;
+	Sat, 30 Aug 2025 12:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ40vDFN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k//+X7Sd"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E92342065;
-	Sat, 30 Aug 2025 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8B527A916;
+	Sat, 30 Aug 2025 12:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756556591; cv=none; b=k85vx1ryDG+8uBcN/+5qoUeebmMdjEPl/g/saHXk+Ke6MsA/NbS3SYTG1aVKiQA2/EfHekC6v6Eviztn9rwc2gul0+O7gw7+QkgThAaZAxoYQ78fTWeVPjS1LYSFLp1DqyvG3eSJ3uNVCZiFt6A0VdH4g9sBQNBl9IeMTrUvYYw=
+	t=1756556893; cv=none; b=pBPqxCzDCd31iyftmqQQ7uOPB1vCcV8fQODaQxkD5ollVBkOF61p5PfKE9JRLm9aunTAhVK5DludDo0X91oyDGJdXjam95zAlaBNBrS/Suci215WYeJrEMHi0lE6b3vKPEIzTQD9Gj+NAmns+EV8G7fHH3u830HZB+HI1CwGVls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756556591; c=relaxed/simple;
-	bh=SoN9dBf3Izbt4t232toRwWwIivJ8TeDGto62fx0RuLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PqTFy5vkd0wDiG5dtGC0r3K2EFUG1xe/PFP/c6d1Ds6FssJquU/hNUKUG4141HfnBaku+rjK9CVTluI25hXcEVHamvlcBb9B2c/AuIQf0AAjD2wacut27aQJsdFaa0T3R3RQbSDGBrqTkbc8yfh8DQO84mTXeFtffoWhh8J6h4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ40vDFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08627C4CEEB;
-	Sat, 30 Aug 2025 12:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756556591;
-	bh=SoN9dBf3Izbt4t232toRwWwIivJ8TeDGto62fx0RuLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQ40vDFN1gWwhiwIP2RtrDA6BQt/gApzzCxqyt9ewJlEmwxIWYfN1K4M3rMJb6Ti2
-	 fA3QzOVtdFqNz4MuzR/2pn5r06IUpEsH5jrcDGgFQHUHjCIz4CzUqPhhUgPJ/M/hC4
-	 gfjQMFCIMiK5NNWPvvwQZvtble0EVoMcgEaiBrwvTopsPdhmrI3ZtkxhPgEREaDbH4
-	 Au026SjvsurYZJ5OR58KveR3f0PHKdS2nSzoM5htgdeEgL2dlPTVgI5O20q0sHhbWZ
-	 oGjcibj9l94gTbdd6MJnYsVsoqnO6RS9t2kAC5Uzih0h8iXsy3DjzGSnJb6ildZ6Sh
-	 r2+65xD0W5HCA==
-Date: Sat, 30 Aug 2025 20:23:01 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
-	gregkh <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	rafael <rafael@kernel.org>,
-	torvalds <torvalds@linux-foundation.org>,
-	viro <viro@zeniv.linux.org.uk>,
-	=?utf-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	Christian Brauner <brauner@kernel.org>,
-	systemd-devel <systemd-devel@lists.freedesktop.org>,
-	Lennart Poettering <mzxreary@0pointer.de>
-Subject: Re: [PATCH] initrd: support erofs as initrd
-Message-ID: <aLLtJcHt0NcaZeDm@debian>
-Mail-Followup-To: Askar Safin <safinaskar@zohomail.com>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
-	gregkh <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	rafael <rafael@kernel.org>,
-	torvalds <torvalds@linux-foundation.org>,
-	viro <viro@zeniv.linux.org.uk>,
-	=?utf-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	Christian Brauner <brauner@kernel.org>,
-	systemd-devel <systemd-devel@lists.freedesktop.org>,
-	Lennart Poettering <mzxreary@0pointer.de>
-References: <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
- <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
- <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
- <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
- <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
- <18d15255-2a6f-4fe8-bbf7-c4e5cc51692c@linux.alibaba.com>
- <79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com>
- <198facfefe8.11982931078232.326054837204882979@zohomail.com>
+	s=arc-20240116; t=1756556893; c=relaxed/simple;
+	bh=K1QUqIQmmrtYo2Q5+MJeWsGVTSkJyPL+YyobkmmGhKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gI5o3AnfI5bUryGzgfH09jfpYRfFQ/pSTdY74B4TtvBzY2Z8DJY/yQH+Y6HvGR4+7gU8LDZdvNum1jATnV6P2b6VC2uhm3zN8RWZtDCes99QmQ5GCAbX+GUY5TAcd9w8CwB1XQiDTINyR+EEbTjFhf4pNpjW/lLGYK6069Xeae0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k//+X7Sd; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb72d5409so512158766b.0;
+        Sat, 30 Aug 2025 05:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756556890; x=1757161690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nvc8o7UNrMIYNJEN9nvLvWQOOGJV+mKtBRbCIep0MbE=;
+        b=k//+X7SdfvfoVCYygWGPr5YoKhOvsZMefmVVuJYFtXW+mmZxHa8ZjkmzhPJCPY+SsO
+         NcSsu5XePIn9OLdG5pTyPnw7XJe4WqgGw/94Bdn2ggnIyZWElrXVdOrNV7QvrqEJJQrN
+         L/Rl+hjSdcN6mhu3OLasyd/PCkfPeiQAlaEKge34n3djQsP+R7qW4243HhjUnkr2eW72
+         pU558emGIYKA3YtqdShodPItVVZthGranJ1IpPwmHTCJM6Bh6Vp0pqOC7khGFIufgUxQ
+         F2RZ/DH+XQfQsXVJghO+9FSXcrKxtqZESSpTluWRqaNscEfi2/p/50LHDA2I967vOBlS
+         RpgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756556890; x=1757161690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nvc8o7UNrMIYNJEN9nvLvWQOOGJV+mKtBRbCIep0MbE=;
+        b=hVq835exd2UPw/myhRX2tYvUmGT689ubrMfn21faVHGe5BXQI/APXR/J4aCbh8KlQh
+         jKGvJdvWxSCL4ggCmGVamv8dRClTStG8rm0uAQ6VktVsI9VqOBhmyDbHTyYs3CTN/A8+
+         BjaHB2C3i1idh3A2Mkc66nU3B1wJlGvUbmIdhXwzahOs6aOdlfjj6j6TI4vOah6nDg12
+         QNS0Kh5EN6howhiM2OVjZ0KEbdfrQkpHhEdgWqzrrk/DxITKXOixrnLJhIkpAEm2qgXl
+         IG5hqHqHnYpUSzb9Sjh/H3FM9KOqLqWVLSjkp9de3wHHfMuXRbzouKjYykBDnbx+g2VQ
+         GA9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3vlRSKbT8lVFoLWvrNnDy4AUXZTJS8mEo06TCALlSmiD5x7ihIfQzmeZH85RPr3ZE4z851+lNvv8R@vger.kernel.org, AJvYcCV3pcaOjanD9C7oWK049Hey2FTsgcF1LPV//fiKwBRSVhzgKdY95n6oHFOdYnX+xtU2FSP5d6nJQtn1g30x/DMKvR8=@vger.kernel.org, AJvYcCWIk5/w2LgQ/8/M+hwQwYnsMC9vfAjc9DNrg5E+lqY90Mn77m+OFgFbsiqcla7PrfubfoWDzCXTleSr@vger.kernel.org, AJvYcCWLbnuF2RUaSglUj07VircZxgQ8i0NCVrHkBEs+fDDo+/ou4+JhIB5oXNUUS6sszy7d2mS4YbEOu661wJ0o@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPqAN84wABt+/NFm+/WVmSzz8uJBNx3yzKN06A98Yi+X5qtKw3
+	RhRCLh686j25n4NQtTKDv/Q4ZpEqBaeCuIfNtSBqoCNsYVmNATdMqjqsbrvTM5LndX3DSnAbqr0
+	zkBEa8FREvOAdt8p58p9eQi+A/9QJy2k=
+X-Gm-Gg: ASbGnct1/1Rw+UzXnCQi/Zec72mh11AsjhuBUOQMj+ObCCtNAAWqUXIVIAmHBeTpa+C
+	nyfgA3J4lgh9/M66IP4N9YR/Jc2i43PDEmJPK6DXXsJN7/IcmtOwJSbrgqAw+zAYfcbJ8FMUzkn
+	ygJR5veoHFh3oyUDDDNZbafv5HdAkhje+FlUCigODgoBr8wS4pq9vi2dPRtuF9ZS63XHhKyN/PI
+	Jy2r58=
+X-Google-Smtp-Source: AGHT+IEr0gAqLRVPp+T6uONOIrQAUIkZ8IPlCVuv/BuIBm4huTRigMtOCfRrrfAh3rWu2s7VHQSCiaBIs2UpJH3Iosw=
+X-Received: by 2002:a17:906:c149:b0:afe:af91:2e44 with SMTP id
+ a640c23a62f3a-b01d8a6ac14mr178645166b.14.1756556889693; Sat, 30 Aug 2025
+ 05:28:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <198facfefe8.11982931078232.326054837204882979@zohomail.com>
+References: <20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org>
+In-Reply-To: <20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 15:27:33 +0300
+X-Gm-Features: Ac12FXzTMEaLZRx4DmdS9a1kWVVbTCHUuOOLisze_-ZWmUB9tOIR-XUWXvJJxDc
+Message-ID: <CAHp75VfTk7Vr6Rccq0DFDm8Qnhb37iPYj4DwH1U2bwDMV4h_Qw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] iio: adc: samsung: Simplify, cleanup and drop S3C2410
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 03:49:48PM +0400, Askar Safin wrote:
->  ---- On Thu, 28 Aug 2025 21:14:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
->  > Which part of the running system check the cpio signature.
-> 
-> You mean who checks cpio signature at boot?
-> Ideally, bootloader should do this.
+On Sat, Aug 30, 2025 at 2:09=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> S3C2410 is gone from kernel, so we can drop its support and remaining
+> related pieces.
 
-The kernel shouldn't trust the bootloader even the bootloader
-checked before, it should re-check itself to re-ensure that.
+>       iio: adc: exynos_adc: Drop S3C2410 support
+>       iio: adc: exynos_adc: Drop touchscreen support
+>       iio: adc: exynos_adc: Drop platform data support
 
-Ideally, the running system should have a way to check itself
-is in a safe environment and the data provided by the bootloader
-is genuine, otherwise some dedicated malicious bootloader could
-have a way to do some bad behavior.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+for patches 1-3.
 
-> 
-> For example, as well as I understand, UKI's EFI stub checks
-> initramfs signature. (See
-> https://github.com/systemd/systemd/blob/main/docs/ROOTFS_DISCOVERY.md
-> ).
-> 
-> It seems that this document (ROOTFS_DISCOVERY) covers
-> zillions of use cases, so I hope you will find something for you.
-
-I've said I have no time to look into this.
-
-> 
-> I also added to CC Poettering and systemd, hopefully they have some
-> ideas.
-> 
-
-...
-
-> 
->  > Personally I just don't understand why cpio stands out considering it
->  > even the format itself doesn't support xattrs and more.
-> 
-> As I said above, initramfs should not be feature-rich.
-> 
-> (But xattrs can be added to it, if needed.)
-
-The point is:
-
-AFAIK, There is no formal standard for POSIX cpio to implement xattrs,
-IOWs, it will be some non-standard cpio just for kernel initramfs
-cases, and the new added xattr code has no other usage: just for
-temporary booting use case.
-
-Take a look at `init/initramfs.c`, the entire file is just for
-unpacking an unaligned/in-random-accessable cpio even it cannot be
-called as `cpiofs`.
-
-There are many real filesystems with enough features in the kernel
-can help on the same use cases and data doesn't need to be moved
-from unaligned cpio to tmpfs. It just sounds like a net win to me.
-
-As for your initramfs size assumption, I don't want to comment on
-this, because I'm not distribution guy, I don't know but since
-users already claimed they use compressed initrd and they don't want
-to unpack them all in one shot, it sounds to me that it may not be
-so small.
-
-Thanks,
-Gao Xiang
-
-> 
-> -- 
-> Askar Safin
-> https://types.pl/@safinaskar
-> 
+--=20
+With Best Regards,
+Andy Shevchenko
 
