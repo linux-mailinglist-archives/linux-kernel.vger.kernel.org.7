@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-792878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596ADB3C9F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:13:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5B4B3C9FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C075E4346
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA975E435D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3563D26D4F8;
-	Sat, 30 Aug 2025 10:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22EB26D4C0;
+	Sat, 30 Aug 2025 10:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="henxafJL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7B46CV+"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA572417C5;
-	Sat, 30 Aug 2025 10:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CD42417C5
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756548831; cv=none; b=ZyXhucKm925WO+uGV40V1fjHnZtTTxcLsjMl4zEHCZ5Yzm+/buGfmQRFpOT/nP2gagVS6WVshkI91K35d+gKECqu0OEkoJpuxpHfGJkHgrbMiK3ioU7c+iDn9XIXkxAD8LHAUARLsxORTr2Cq4ZBHHT1cF9YFJhG/ZRr8SWl1fs=
+	t=1756548864; cv=none; b=jqjyjJdN4jlGbLWP/qyMT5+Uaycz+V7pUabPRpi9g2gDQnA7De6t1MIyRiaBQmfSzdLQMNpLZ0U/KJpC63ygXIdprTyH0NEq62oQMqHbMdJCV28t5AZly4S3s81ceD0Eaw/fG48sNYLGP6VI9Sz35SngEzt4qP9UfGxHndpEylA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756548831; c=relaxed/simple;
-	bh=B1ZFXpO17HYnFuaf9SvN4OnRff+GK1Sv6tFs7KIG8bE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQKxsoEoATT5jysZk6rNzDHkFnG/amW7TwL2wYjpUceMkAO4vDbFSQV8R4wRf/hDkR6p2n6BLgqbdn6DPK9+Z+x64SDF50GDxvgm3dw03UgPyDX2VRrmRpQniSoB5xoCD6EoBHC7H0BY9vjcySyGD4qMwYzmYuSxneVhJVtNST8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=henxafJL; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756548830; x=1788084830;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B1ZFXpO17HYnFuaf9SvN4OnRff+GK1Sv6tFs7KIG8bE=;
-  b=henxafJLHC65wNRQqEOosp7osS0LpvvsVlh+LBt+XtBm6+CMmkNqnpu/
-   lalSBUuDPy+AxCW9y+lxomlyqJwT8OHC7lzCbGHwLKP4k0rrxpTwcgnRV
-   B1OMXroYRhWWD+lknMVC1i5pHfPkzEeO6sBFSWt1/j4kFxlhMvSGBc41t
-   lHuA/DO/dVef/nCmc+roXOUz1G4DJImusLwxEjaeRT0EbRODUAirU2GNM
-   QnTz+dXPtwLVvbE1ewepASWDNLpDIAuleKEWqScHLdVUIvi5Q0m91OQqh
-   WJRwb5G/C0RpN2Zz9OTNJQ+wP/jcVNJkxY0so/5/+AUhp5mboElP0FUlj
-   w==;
-X-CSE-ConnectionGUID: 8mAApW1fQKagBC2+FtHTKg==
-X-CSE-MsgGUID: iWS4NJSzSWSro6iG1HpPaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69923015"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="69923015"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2025 03:13:50 -0700
-X-CSE-ConnectionGUID: ggO2xV+VQqWUfbEiIMcc3w==
-X-CSE-MsgGUID: +MLpiocSR7mpPdx1SzmCKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170961120"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 30 Aug 2025 03:13:45 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usIaJ-000VIZ-2o;
-	Sat, 30 Aug 2025 10:13:32 +0000
-Date: Sat, 30 Aug 2025 18:13:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: victor.duicu@microchip.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, marius.cristea@microchip.com,
-	victor.duicu@microchip.com, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: temperature: add support for MCP998X
-Message-ID: <202508301754.nIIdyNZ3-lkp@intel.com>
-References: <20250829143447.18893-3-victor.duicu@microchip.com>
+	s=arc-20240116; t=1756548864; c=relaxed/simple;
+	bh=pO6DONoaS0lUyRJJDY3ZV79rV05t11cx8Uegm3HkqmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzKC5UrFJUF5MTOhnaw7tV5YsFbNeITvbMbkLKEzw6BcPmpRLkcZr6zrt438oRKVPMMr7YnieKrMKjU/UfSVpwVN6uPrY687ufAHNmgO5f49QRDijGHHaIHQ0KZytTEKMFHZwh4qFwDsfIuV/vhhw6v2qjfssn8LDN3HrCCM+bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7B46CV+; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c98b309804so1801290f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756548861; x=1757153661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y4Cxt9YYRfml0wt2z5MSpLo70bk672E7ota6Kaf5Kl8=;
+        b=H7B46CV+03HDImbK3dpEiANOxw8lYosoSugEl4CG2yUGE3XvU+dykJU5p7fKS4B4h9
+         WHp44RMX1aGN8X5ibUMXA5akt4aiuW4lQEr43kM4WFAsFdqZ0zL9fXU0tnmrHfJGNLJ4
+         AqDfBDJwMj20so9dxF8y1OhKWlv/n+6TJ2CCrqQnJGTlyJ2f3/EEWeEwzHcYoorDbs9W
+         GXSctVYIci7R6MCSVtq115mRRFzcK44KE5kOBOG3yCj71fj9//dyorgpo/8dtmtybLvM
+         6va+karsEcTLExgJZvz7PJJFf5XwQvZsOlXRx1TyMiyjUR8QXimh3D7Px9bbxViPKYp1
+         9iSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756548861; x=1757153661;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y4Cxt9YYRfml0wt2z5MSpLo70bk672E7ota6Kaf5Kl8=;
+        b=S7B952//pWIWGLKMQiB8Npk6xV1Rxs3ScfVz9ItDHuwqIgBOjLgneJ2X2Pbd8tsEOX
+         AdWkG/o0p/BghFAo3611dfawC4nOK4udUbB3SWx2dEzTz6sFPC1kGDB8sJzcLFJfjsX6
+         5iRcsC1OpAf0sZnLRIuUv009etJ8S7akD1njHy3u223ab4xEAemBlP4yrPq7UWilvtlG
+         eC13K8hzRnCy7BBxAMvzEE/zS5ez0GTXFxpIIbgxMdrzktz+/Vd9Kb9B9cYAk5aLT2Ad
+         hHqF//RazDeEywhWcsKAZZDr+M50isE6R3Tj6+88R7RXXUNtjWexftfuKC+267kDcOTQ
+         ewmQ==
+X-Gm-Message-State: AOJu0YwTYwsjt61l5t58dO8KVcL2DXhuw1ximeE2QcvHkohlAUbkFcat
+	gGpvVKjBA/T1uCgzsLiS+PzzOggrZST3zWJ6OixS2uzBauaWH/zAkWZYa0v074nktfMoFQ==
+X-Gm-Gg: ASbGncsI9Q139Ke4R/aCjnbJ4ODiglye1bJlVv44RnDnPpNQNQSKNveiLdf8gY+L8BB
+	OnzDxbjyTcD7ylRAVTBYA7W7N9uquNIKSuSR0VHZIBv4XEnJMZpBYi8iMgAPfYR9mmEgFC9Q2JN
+	sevHS4PvpFdVC/M6JtEAAMo1htyvNQOFlr3H/8xI8AvEDwsX0Vk3vCXvtyvncwMYPTEGe8CnIVp
+	H5Ds9xSLvtuZ0rg3kdVQR1NesCbMyy2FuaVauwTzlzktkZUVJKQUDADV2/2IeTu/9XI7XV2AqJH
+	riHfpzcb6MobEI93uQpga3JpdJ3t0AolcyZWvlbpri8mv/AnuzVdQNX84GAorMwdla3rcGGGmI0
+	bZG9QpZdQr0q6J73BNoL1KucZg6cJsYrJMPEjKxMHNlq6DANbAqLPlGIL74Tl0MQiLwI5P+lxBd
+	fCPoLBjOpc9RzCZA+1mgYmlcDyt63uQ0KSPY61zAMNNOnMfBAuJeOuGWlZ2awdq1eDKm4xyMO7E
+	ajxFKPXkJaCivYZvxc=
+X-Google-Smtp-Source: AGHT+IEuB+qTKZ68oNvpjelOrU62bKL76ax/mQjCMq5CUuR0hkRBu3vLx+fF5cxD3tju/FNQGcUTsA==
+X-Received: by 2002:a05:6000:2506:b0:3cd:5815:68cb with SMTP id ffacd0b85a97d-3d1def66c22mr915099f8f.52.1756548860501;
+        Sat, 30 Aug 2025 03:14:20 -0700 (PDT)
+Received: from local.station (net-93-148-93-71.cust.dsl.teletu.it. [93.148.93.71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2717sm6758790f8f.15.2025.08.30.03.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 03:14:20 -0700 (PDT)
+From: Alessio Attilio <alessio.attilio.dev@gmail.com>
+X-Google-Original-From: Alessio Attilio <226562783+SigAttilio@users.noreply.github.com>
+To: gfs2@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	aahringo@redhat.com,
+	teigland@redhat.com,
+	Alessio Attilio <226562783+SigAttilio@users.noreply.github.com>
+Subject: [PATCH 01/12] refactor: remove the call to  in
+Date: Sat, 30 Aug 2025 12:14:02 +0200
+Message-ID: <20250830101413.602637-1-226562783+SigAttilio@users.noreply.github.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829143447.18893-3-victor.duicu@microchip.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+---
+ fs/dlm/lock.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 788c57f4766bd5802af9918ea350053a91488c60]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/victor-duicu-microchip-com/dt-bindings-iio-temperature-add-support-for-MCP998X/20250829-223952
-base:   788c57f4766bd5802af9918ea350053a91488c60
-patch link:    https://lore.kernel.org/r/20250829143447.18893-3-victor.duicu%40microchip.com
-patch subject: [PATCH v4 2/2] iio: temperature: add support for MCP998X
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250830/202508301754.nIIdyNZ3-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project ac23f7465eedd0dd565ffb201f573e7a69695fa3)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250830/202508301754.nIIdyNZ3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508301754.nIIdyNZ3-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/iio/temperature/mcp9982.c:114 struct member 'allow_apdd' not described in 'mcp9982_features'
-
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 6dd3a524cd35..5af1840f98d8 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -977,7 +977,6 @@ static int find_rsb_nodir(struct dlm_ls *ls, const void *name, int len,
+ 		   request; this should never happen */
+ 		log_error(ls, "find_rsb inactive from_nodeid %d master %d dir %d",
+ 			  from_nodeid, r->res_master_nodeid, dir_nodeid);
+-		dlm_print_rsb(r);
+ 		write_unlock_bh(&ls->ls_rsbtbl_lock);
+ 		error = -ENOTBLK;
+ 		goto out;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
