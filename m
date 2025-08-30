@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-793009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E8FB3CB7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB9AB3CB78
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC953A1005
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E437C3BC072
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE7A25B69F;
-	Sat, 30 Aug 2025 14:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F25259C9C;
+	Sat, 30 Aug 2025 14:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EprN2YXG"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JLtQaqfl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA89274BE1;
-	Sat, 30 Aug 2025 14:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6297D225417;
+	Sat, 30 Aug 2025 14:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756565091; cv=none; b=GMvOqYDNTzl65MaeCaLqdvmagb6T5BeKE9LlUZIlLvok0rKMVvwoMI5/BAHpjWxz0ZMJ1ZNeHrKvewUAqn5r7TUGa+5JTDDDYFgSAKWQ58WhZshuZBifXxKdCkDkysMbWZMFJlDnCZvoXT52kMYxG0pn0XTSwyTr7gLZK90hmao=
+	t=1756565055; cv=none; b=dF2YS0f09r+GGrnABScdRA0wu5SUfJMXsfw4It898negjjWr1usPTS0iFL1PcDZEEKWpqB0pigX9brYJfyXXk144Pm8YlHJGDhfjk93NNDCnfoCzsMDiB1eN8CCOJU885s+Ld4hvQ+l0s1MNZEUnp/OxqcbXf9lXJ1xqJ2g3BIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756565091; c=relaxed/simple;
-	bh=MPgVxSoskDbQAvK6hl4JGGD+hsXca6+MVDJ83Ril1t8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DgWHAvi4GU13gSCN/HOvk5CKGlggFz92R6lnILq/xIzTftbtuyJHhbYlaL+Ztvh+//++BC13Q+3+/7dkwgzuSa0amIslMYikL6fKSju21A5xozWptqpJqEL+f5BkFYjVfEniqybbbg+t9z2cOuPmA3J2+zxEFDaui1gs0SwdlrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EprN2YXG; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso67598f8f.0;
-        Sat, 30 Aug 2025 07:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756565088; x=1757169888; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q6E7g2uOsAn7LyhANHrKJu1DW3W6P8A28ASTexBlNY8=;
-        b=EprN2YXGNURmqPOoZJ3TydpGUEd9hMx3v+TTpqMIeMxOIhXskGkIerem3bsa35WK9r
-         sFj77PmRn+uzBO1MftHTdmBjAMo/dY9TYDmhatb+9zI2IHWVf9O/pTFM4/9CRDfDnKvK
-         XeBbQz9Faatn5DTfM4y2TZsslEOktlehfmJf5CXwnkuYVRngC6duSqXa2XlVWWRaY0it
-         pSNts1dxpIo+doFPKOZqZA1I+lFsUrs/fcsqBht3A0eVFPSsL7UrIjIwGyWE+/AvDfoq
-         El9dmLmkLzUOcClVpoOiwP838O9ewmmCkXkOqiEAjUltv2RTDfrgo+2FwfcVHA5k7067
-         dH2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756565088; x=1757169888;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q6E7g2uOsAn7LyhANHrKJu1DW3W6P8A28ASTexBlNY8=;
-        b=mUW9grQIFjrzYgu15EosLpi17Gi1izZqBkhcSNbK9Lauf+h6Y5zzlwDvUo+iAsZc1Y
-         J3hz3oo5VWGpt5oPyBsxYsZh4XdznpiPtOKLNa2/0p/Hvkn20jtWbsU4m+FyniFEUqAv
-         AHuVRuUWLILgAHu89bmeTTx9KLXtOxNBzaqe+szIbaSXjDiaHiLGS0Q1yOEnaOPPqgUU
-         q+1kCZ9rZn7Qvw3u4m3Gy26jzHeyOvshSbICvzQcguVGMiu8Wd+ZbmvO2MeE2sdw9hHS
-         s2L2lS6AwNZfpsPv1jYZLphHPUttdo5zaXfZRXWwGhylZpCyF0QWRkMq9en4fSFGX1dC
-         IqyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXRePQkN2Ao+x13AkAayUe2PftqCpAox7ckUjrjQovuw5y3D9U+Y/ejGlQseOk7GoZ6DDVM/GeaPj0lfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjZkoO7j6yNTZgw1DxKmmzlLPZNqkdlaqMSqR3hQxNw3Q8rZt8
-	oLbg8H/EJYDicvRlLSRAyaEESEHR9RjVzYOk9GrSz6vfJKCVaGlPBudZ
-X-Gm-Gg: ASbGncvVNldQ2j+gew+SlwX+jMWPPwl4JM18nTX1mLczq+maIppCB3r9/d+Ye3QPHp6
-	odmvwgf8nPf4g/armIanRgOoCn0+ysYJWWr8Ha3h3w92wK4mghZ6qYOGWPnofBNl5hA6pYFFPuS
-	jh73gzlz/JfwkCOyCbEIjDkTc/1F0Hn9Iye2eLaDF+3mDDjNsW7XFBrV6/3eN4or4z4VC6fkW0/
-	YZfBWG/j7c8/DC1pVOMqUPEqnuPb30aZd7BeyjzVc8IJ6fDtrhyUwHKvkCQYHSJr1hLjOsrinad
-	gg0M5Ln6z4TmTcEIfQtwRNJZkSUzok6Lw0ymcwvUGvHhe6TX/86eMbJCoA5BBr2Bkoc0peZVBDF
-	RLqdRIPxVnYTbGPgmLOr8UJcZOeTXL3T08UsQdK/7OEZzn5WgAUSjJ94i303Srr5IrNnJYyoAHp
-	v/wuJlj6Q9GqGk60dmFUHJkNR7gvBJR/5x
-X-Google-Smtp-Source: AGHT+IF81SpwzRjpmXLZ7x0IKdwCH4AH1qZCKRXhWesfo99k6WH8RiLVpyLqgST48/i23C03Kqy2/A==
-X-Received: by 2002:a05:6000:2204:b0:3cd:9794:cbcf with SMTP id ffacd0b85a97d-3d1df53a1aamr1635045f8f.60.1756565087779;
-        Sat, 30 Aug 2025 07:44:47 -0700 (PDT)
-Received: from fedora (2a02-8389-2240-6380-b418-985e-6bb5-99d0.cable.dynamic.v6.surfer.at. [2a02:8389:2240:6380:b418:985e:6bb5:99d0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6db6sm172913175e9.2.2025.08.30.07.44.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 07:44:47 -0700 (PDT)
-From: Dennis Beier <nanovim@gmail.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dennis Beier <nanovim@gmail.com>
-Subject: [PATCH v2] cpufreq/longhaul: handle NULL policy in longhaul_exit
-Date: Sat, 30 Aug 2025 16:43:59 +0200
-Message-ID: <20250830144431.159893-1-nanovim@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756565055; c=relaxed/simple;
+	bh=gRUiNGjcYOtZLtB6gDWU+koXv68eP3p8d3J4vmPEiUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frPw1CBG5bdXFASFoaLcS1wAwcnEIQNRcbtjIe5EqemyQX+6dWAf8MrJCC/gdPfT3ye9KIbbw+RkWcHRCu9hl2i5yfS+/Ltg+l+/9i+l+0LMF1QULsPRWoaJg53KxB59B+hdCKcRSK6gZUhkP87HO3QTa90bE1pKoogUXokRrIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JLtQaqfl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ejELTxLCoQB6YphO8zD3an/XL2N+OQq8r6UF1wGXBDo=; b=JLtQaqflqdxk0EjLmVyZyVsUBf
+	QoktZj5V1jrJTfOFRMSc4Bok2g8e4z4b/ljHsGjblJqbkbUMFWf1Zu4j1Ud2ApHEDz35oWp4UwKFB
+	QD5LHVuHr6D+xP8UuRoq8tLjlw/HQLqW+lHwCHQA3StqcldTLW3fElKtf42A+tMkoGb4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1usMoE-006aHZ-0m; Sat, 30 Aug 2025 16:44:02 +0200
+Date: Sat, 30 Aug 2025 16:44:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] r8169: hardening and stability improvements
+Message-ID: <e461ef27-a6cf-4ed9-adec-e7d949958df9@lunn.ch>
+References: <20250830073039.598-1-moahmmad.hosseinii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830073039.598-1-moahmmad.hosseinii@gmail.com>
 
-longhaul_exit() was calling cpufreq_cpu_get(0) without checking
-for a NULL policy pointer. On some systems, this could lead to a
-NULL dereference and a kernel warning or panic.
+> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+> index 9c601f271c02..66d7dcd8bf7b 100644
+> --- a/drivers/net/ethernet/realtek/r8169_main.c
+> +++ b/drivers/net/ethernet/realtek/r8169_main.c
+> @@ -3981,19 +3981,39 @@ static struct page *rtl8169_alloc_rx_data(struct rtl8169_private *tp,
+>  	int node = dev_to_node(d);
+>  	dma_addr_t mapping;
+>  	struct page *data;
+> +	gfp_t gfp_flags = GFP_KERNEL;
+>  
+> -	data = alloc_pages_node(node, GFP_KERNEL, get_order(R8169_RX_BUF_SIZE));
+> -	if (!data)
+> -		return NULL;
+> +	/* Use atomic allocation in interrupt/atomic context */
+> +	if (in_atomic() || irqs_disabled())
+> +		gfp_flags = GFP_ATOMIC;
 
-This patch adds a check using unlikely() and returns early if the
-policy is NULL.
+/*
+ * Are we running in atomic context?  WARNING: this macro cannot
+ * always detect atomic context; in particular, it cannot know about
+ * held spinlocks in non-preemptible kernels.  Thus it should not be
+ * used in the general case to determine whether sleeping is possible.
+ * Do not use in_atomic() in driver code.
+ */
+#define in_atomic()	(preempt_count() != 0)
 
-Bugzilla: #219962
+You need to explain why you ignored this last line, and why this is
+safe in this context. For a change like this, which breaks the normal
+rules, you want it in a patch of its own, so the explanation can be in
+the commit message and it is then very clear why you are ignoring the
+rules.
 
-Signed-off-by: Dennis Beier <nanovim@gmail.com>
+Looking at the rest of the patch, a lot of the changes are
+questionable. Splitting it up will help you describe why you are
+making each change, why it is needed.
+
+    Andrew
+
 ---
- drivers/cpufreq/longhaul.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
-index ba0e08c8486a..49e76b44468a 100644
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@ -953,6 +953,9 @@ static void __exit longhaul_exit(void)
- 	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
- 	int i;
- 
-+	if (unlikely(!policy))
-+		return;
-+
- 	for (i = 0; i < numscales; i++) {
- 		if (mults[i] == maxmult) {
- 			struct cpufreq_freqs freqs;
--- 
-2.51.0
-
+pw-bot: cr
 
