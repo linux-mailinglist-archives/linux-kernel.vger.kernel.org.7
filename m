@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-792623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720D6B3C6CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:51:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCD2B3C6CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73AE1CC2794
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197587AEF10
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA5721A437;
-	Sat, 30 Aug 2025 00:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28DA1F4C89;
+	Sat, 30 Aug 2025 00:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFazxpOz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMKCzPhq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6021A76DE;
-	Sat, 30 Aug 2025 00:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574BE1A2387;
+	Sat, 30 Aug 2025 00:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756515080; cv=none; b=uKuYQbo7HBxExdqCugl1aGzXi+aJmw3i6MB6RLGgC+y92jMztHFUSK34RK0TSWgT9R2MFTORA2CUS69Y5gpvaxykpUSGnxG4TxV6EzO/96AB0I2QOmVpgciYf+aBCwq1BZ+3wL1rzUfZGbVYJIs6xHuAmC9ouQckmPKMa/H8iyA=
+	t=1756515144; cv=none; b=oqg4CLWGNFbu3DqEs3tUQvo0dkKuQAJspdXmDdj2Mc+dKCsxWFOPSXH6U7Y/YCnOsYaDQm01FwHJdTO+UbvUb0NHF9ObtJ1xryDAHbZ8l3Cfw/6GFA9QsM/Y8gLt3KclFZbDa3EtoB/JI+FKYRzbZLaiZ95RB5meWlRpDDgwkwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756515080; c=relaxed/simple;
-	bh=4zGTkUfv8HDyg3aR2u8NEH0gwiVNSV5E5E6u6XHuMQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j481nufePak/n6kScHCxdxlCtRfNEnHooGAQdLMZRYHRTPt8bljdjHFeFOKO27Kwz663AwMBudZy3iXnXZPo4e6+uqga+Ib4AhBExzzTO7BfgeNiKdobD0SFOsmeOVETAHr+nS1nVP8tH5rU21pwJhidE1McMBFGrMQ4USx37Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFazxpOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8998C4CEF7;
-	Sat, 30 Aug 2025 00:51:17 +0000 (UTC)
+	s=arc-20240116; t=1756515144; c=relaxed/simple;
+	bh=vaE/eEvTq8QuZ7ICruT356FPZUXLmbt9wtJWA7COzzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lzW/Tv8c8bhgdBSnqpQTzpLWj8B6E29B4z6UCZ6aMWxKWfJE+0A0Vb3OMhldhjySZUMLXjQnlr5NDHNsN6dRRRNVeOVoO96HJxQQzaw44uVWi1ZwbLidNa9B8FJ4MEFjDylpjkmNdscyG3HSmwr07eE7GPrH2UkMRQ5y8mj37bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMKCzPhq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92500C4CEF0;
+	Sat, 30 Aug 2025 00:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756515080;
-	bh=4zGTkUfv8HDyg3aR2u8NEH0gwiVNSV5E5E6u6XHuMQI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YFazxpOze9STMhS3/EWqLP71o3hbphUnbSUtv8tKWt8rCrwS1cQi/Gz2a7kn1xF46
-	 hQVEBK7HKVSNBS/J8zGzsxNsvIHVatTYmAAXTtYuAIGHrJMvoqELVJdCAXDGnyRic+
-	 f7ex1v90poyRUFZNPYbekErYfnK0NfrjDCpxST/mndrskOG7wDIBB41l3eqa5Yo6QC
-	 s1ws9+IA0NLBvTchIVzip07F2jTXf2qjOZGRt8g2axbdj40nzl0dXrzcTmGyd60WNG
-	 qxw6+Y8YFXzLLT+GMdTJokwS9cDJWcQuxLcjfp5KWkqG+5j9VVA8I8l19NziTpQPSQ
-	 9+nmAZXwRtmnw==
-Message-ID: <fbfb5410-0418-4ca7-ac31-fb9bc9990aa5@kernel.org>
-Date: Sat, 30 Aug 2025 09:51:16 +0900
+	s=k20201202; t=1756515143;
+	bh=vaE/eEvTq8QuZ7ICruT356FPZUXLmbt9wtJWA7COzzQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oMKCzPhq0lgvBvWYcMRY15IIUN8RFqCCqsB0skhe2X1CAzBhvPnjTwG4F1xtt4dBp
+	 whJFfPHX0nCmatZaKYEJgKgir88i75nhjFbec+8TKmpdfVwfmv05Lw7Sw7ac+JHAl5
+	 GU++HIuNljQlqAlZOPVPftpAH4Pa53a5hcZwqh9sy5dJvuaXFaaLOELYTbinhfQFx4
+	 SKgdxEm3HH0fYpyWqb9XE8OlQjfeXAceUlP0q3E4+pD2e2vkzz1St7HS436WK24Ki6
+	 zGgZa3LHb7aw3yrZNuZT02ZuwX+j9Znelf1wFLMJ3Fn6I1hvXteSq9Fb2oi9vFphg7
+	 OhU+bZDl6+FiA==
+Date: Fri, 29 Aug 2025 17:52:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Stanislav Fomichev
+ <sdf@fomichev.me>
+Subject: Re: [PATCH net-next v1] net: devmem: NULL check
+ netdev_nl_get_dma_dev return value
+Message-ID: <20250829175222.32d500ca@kernel.org>
+In-Reply-To: <20250829220003.3310242-1-almasrymina@google.com>
+References: <20250829220003.3310242-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 06/10] md/md-linear: convert to use
- bio_submit_split_bioset()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
- josef@toxicpanda.com, song@kernel.org, neil@brown.name,
- akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, tieren@fnnas.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
- <20250828065733.556341-7-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250828065733.556341-7-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/28/25 15:57, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Fri, 29 Aug 2025 21:59:38 +0000 Mina Almasry wrote:
+> netdev_nl_get_dma_dev can return NULL. This happens in the unlikely
+> scenario that netdev->dev.parent is NULL, or all the calls to the
+> ndo_queue_get_dma_dev return NULL from the driver.
+
+I probably have Friday brain but I don't see what you mean..
+In net-next net_devmem_bind_dmabuf() gets a dma_dev and returns
+-EOPNOTSUPP PTR if its NULL.
+
+> Current code doesn't NULL check the return value, so it may be passed to
+> net_devmem_bind_dmabuf, which AFAICT will eventually hit
+> WARN_ON(!dmabuf || !dev) in dma_buf_dynamic_attach and do a kernel
+> splat. Avoid this scenario by using IS_ERR_OR_NULL in place of IS_ERR.
 > 
-> On the one hand unify bio split code, prepare to fix disordered split
-> IO; On the other hand fix missing blkcg_bio_issue_init() and
-> trace_block_split() for split IO.
+> Found by code inspection.
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Note that this was a problem even before the fixes patch, since we
+> passed netdev->dev.parent to net_devmem_bind_dmabuf before NULL checking
+> it anyway :( But that code got removed in the fixes patch (and retained
+> the bug).
 
-Same comment about the missing blkcg_bio_issue_init() call.
-Other than that, this looks OK to me.
-
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-
--- 
-Damien Le Moal
-Western Digital Research
+If the bug exists in net please send a fix for net, and ignore net-next.
+Maintainers will cope with the merge.
 
