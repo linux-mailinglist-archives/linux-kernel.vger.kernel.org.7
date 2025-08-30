@@ -1,88 +1,96 @@
-Return-Path: <linux-kernel+bounces-792691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704D1B3C7A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F1EB3C7B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8040C1C83AB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7504F5A2843
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A0D2773D8;
-	Sat, 30 Aug 2025 03:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B31D275AE9;
+	Sat, 30 Aug 2025 03:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9gaZDc7"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LD8yZ6Aq"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DD274FF1
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4026D1F3B8A
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756525678; cv=none; b=mUPT5zhpcwlw2Nl0LPZBq0Pxx2kq350WJErSRjizk1nmxWSrEjd9H6kE8mtosj0UUI64JCFg1O038apWc1lIu/NUFZXMTgdl4AOH6xUfio1zd51nLXkQAbgyhbBuubVr1aIRSfGJpun5qO2lTl4xyew5TLNKVEJIgjlirnVPomU=
+	t=1756526077; cv=none; b=VQlAxkJsBqNfR3dNim9i32OJsnYZOaq8d+ptizEO+p3xYcxHjK5b3JeF+dY/6YUl+8RhVnHWUUkrG2AOQhrvaRCRdTk/FbtaefR9kO0ilABlKu7S8sbkifiCFNCGqYv9shc/hvww7gULmJcKm7xaQErE6LMD6vaguJAeNJ5fEFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756525678; c=relaxed/simple;
-	bh=bZV6OotTHCoW1aMD3LyGnZnF3D17wU0xKOonvcy8kl4=;
+	s=arc-20240116; t=1756526077; c=relaxed/simple;
+	bh=m80PSSFoKL6ff0xviWVNqpPA5jXahAldB8L+an1FMc4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c82kd0K7oz5IJJ3oYx1qYJ5pVCJpe/AENJNJ7bow9YpmIUNDYHn1VOQq9BYxzYj92toz3Hx7oOZs1rl+ozIKDjI1ENE1BA+ZBeNphhFJ/kn1vFhtHXsGtDjEbfB4r7oJXdIPoqazqqzfGAwgi6k/j7C0l9IlruuBBLq5TdZ/9VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9gaZDc7; arc=none smtp.client-ip=209.85.210.181
+	 MIME-Version; b=BjKgUN+I8t62CU7Qd8syd5+cSsNqq+RcAmUneq3e+3KPWjmyw2UN0NMKMfdhwSO7X966SiydXL18uuQQ0ApLISDJaN1gYWGJueVZ+AMc6Iz+Ue52he9GkGqXewyfeaRaK6+a+KqgyT/qvKakWEwGrrBWRg7K+Ths1pyZHIWca5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LD8yZ6Aq; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-771f90a45easo2327757b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:47:56 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32326e67c95so3027643a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756525676; x=1757130476; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756526075; x=1757130875; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4HJzf+cbt3tnVGA5I6S0xUC2mgQggddjkpihkUdYn0w=;
-        b=X9gaZDc7IFAPo+AfmXLfKBh8IQyJfhT3yg63BP4Wz3eiR4eJ3c6WTBxVZ88dHp3ndK
-         4ETkBeNUJzRms/nf0O8vELiamOcapmI1aGXxwLjhRRyUHgwBk86U40hm/xyN4a8eTfeM
-         7Y+C2AymJOG99+p4S1KRVgrIDKgjsxygtgqJdzYBpAycyIvlINZBEWcwiKidg0paEJak
-         A68FmnES2Vt4y0+I622rX4CEP4HbqdxVzACPI45nhzea3p79rxUMB0qkOh+wRQ77p09X
-         X9SA+/PHyQDXWFAKi0BIVjWGCE8wptnT++nyn34BeFz/pRVxQfsDEX+YNH/9gIO78BHI
-         Dq6w==
+        bh=PHFGo9W7eW3FNHqfM+6lf2O3Swyw6p57AIvNgz1gl98=;
+        b=LD8yZ6Aqv9FvR36igECFbzm/5sJgWJ8PtcqbqQYgwsJ+uzNE4XyvPX7DSE2QDSXvd6
+         WxTMh4NrDomtOkNfjP5qVGV8IbQbRdi3aRjEdnxyPSiyRfOP+SNILnJf1JaH+jE4Xhta
+         tXlbF5LxRh3V0qOlJ4Gq7IOmUS0OS85jAEKHIhEWWdyMECcOruZiPJV6AiM1EuwGV32t
+         22H5YInZnNS91mcMHf1DnKazGCjyHh2o7AShdGWsD35ksvqzX8HXC8RpXmIMyGSDR+DU
+         LzTGfOfKpaoQP00YKR0R/KZki2flXBZeD9LumHXjlUlUg/6Yk34PXlo/CEeKqOzz4p8D
+         EOoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756525676; x=1757130476;
+        d=1e100.net; s=20230601; t=1756526075; x=1757130875;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4HJzf+cbt3tnVGA5I6S0xUC2mgQggddjkpihkUdYn0w=;
-        b=bHANx0AJkRwFIAzLUkywW+0L1pE5r+bABKNkyXTHflUSS7VXXSxW/oGECAxjtljJvB
-         HxZLk7QRADU9ieni5GaFQA8wO5oN2CPTtvqdk6Y3wSCXeklr1If6o5BpXwSm9ErAXkTt
-         9SvS715R1RssruP6xESkVFvaVdZvxmedbSU1NqbmiL2H9qrjxoDthZRyrxRJLGyBrRMM
-         TBurw+g01ZuPzCx38TzJGK+3cm8rTqPlUEuJ2sgT8lEQtwq5uu1u6hEdVl0ZER6N4puo
-         x/I4dT2g89Lz7CPFhAlQt494Os84ORQfFsFypViVgDmRuxZsHOQaO5kn7Y9BYDDgfo2Z
-         snjQ==
-X-Gm-Message-State: AOJu0Yz0er2ZbpPytZUB96j4GKPpZBt4OYjFXStRFz3U4NQlN0KWBPsG
-	d11RDuxBHgVctsz+1Dbrd9a/cpZec1wbmcQHJ2oeH4sTIELvrz+MMN/apGzHIw==
-X-Gm-Gg: ASbGncsdpFI2savZqKXTvLx8Kz2EldQaY6GHWzEAaDHHA8Ou/gBLOBwvkuyDO9DuTUX
-	Tmyg6oSYG6oIwnJxqjkZ6oUc8zEOHt84dLpDqnUHIEh3Jnd/lGRNbNmGUofEYAwPB5G1aBxe7p9
-	MNZiZUVfAgtyfIC2og37u3xmcTlsfNpHWyyKT0OiJN9vj/VTVthkFB5nSSr6xDPRtvQYAO+j7PI
-	BAzRJ0lfN0gUT/T4pd9fcxr6En9UzFzi3ARdwgxcggAp6GwociNponM8bQ9kyYNncphKHevSM0b
-	L0ze3a55sENPe/Yf/S/Pj5NxVRlC+AnnEOSow+uhFOOA7gquTdo1x3cfxL/v7Y2SfmDPfJnsOti
-	D9B22XP8cAUlZB8tyN/Bfskz6Ow==
-X-Google-Smtp-Source: AGHT+IHQqkzGpozoO/PUeN4PSh2M47+f064YNS2XPGekapyxTgNu5ZvriybhdEX/8K3++YzhEXgffg==
-X-Received: by 2002:a05:6a00:928b:b0:76b:f2d9:c760 with SMTP id d2e1a72fcca58-7723e21a73cmr1040745b3a.7.1756525676100;
-        Fri, 29 Aug 2025 20:47:56 -0700 (PDT)
+        bh=PHFGo9W7eW3FNHqfM+6lf2O3Swyw6p57AIvNgz1gl98=;
+        b=UiOn6FND/b5erkw8PjjRJa3GfNfhYFuVrDdC3jTVHaBUjluhvqfCHTczbcQodGt4wb
+         5RGmXOahktcoV/PvgfAudgDWNZuM/rtE1ZSt06n6GQJhFcpxd8OOBDMSYP5gA0bFOBvt
+         ZIDu9gvcgnSa4dXp4rHGcJa/+drCWb6HcF+yU5TOZF4bdhaknz62IXXgOblGll2zLzuO
+         Phys2dYywCxznK/w0YEvKmOtXGjKRWUxYSOVL0Naud6fU2trxIoYZQWnKrF5gaadJ0pb
+         1PWv6/DLkOraB7mskoOh7e49juRiasyYKILoZjXip75NIhN90AnBBQrefUPMYVRoL2J2
+         Gi1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWjnWMdhzASs0aWTXAHq2i1knBm0MbOWX+sEq7n79z2rYCSOZHGTEmLlhiSDH64tHWUy0yBPO5W9+/ae0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWJ18eKBnEPaxGCRbAakhucH+Y8OrvjqwQnWQdZ72nyogOd9vg
+	imbJz7zcWxgiSQZYS26uHkSDY47tL3575vd4NwTN51pRSr95paX8q3Sl
+X-Gm-Gg: ASbGnctf2gXou7N91agau404Spa42yo+/Buf5HqjIy8KiIEe5jlF3wUQFfeW9YdbzmJ
+	TVz93DzHgEM3r/LuUVztJefnsnTC2L7f4QtAos/rCbfuZlamvGgOgE/QZTluL4gO4xKax4jbjy3
+	BC4SkMan5yTsvng90ZLaCGRt+TrzT2fvYIGZsJj9s7rL1aAC22FfgVZT3bsaWK7Av01TG7Ncg1w
+	rPUoza/Kypp9VQTjDqUsJPHgdTTHxauFJMtnFL1RJ40lW6jnRh+pgtkG7pvkqQA5w8/bh0r1z/U
+	QqMbo5UdZFu2tllrR1jXtu0bWwgaPPCyoLfm1u/POJUBMSj7v/8WFqOPnajkOrU7sR1akGtnhCu
+	qrbinLiOL6u8emPsZw1nquCIKTg==
+X-Google-Smtp-Source: AGHT+IHGvPGfY1Eh9xgyGS4B/7DmMYIqJ7fgl+mSwic2lFnNCUiCLH7BqElvIv4cVFuD8lOlXnBNQg==
+X-Received: by 2002:a17:90b:4f8c:b0:327:fd72:bd6a with SMTP id 98e67ed59e1d1-328156e2dd2mr1232775a91.29.1756526075521;
+        Fri, 29 Aug 2025 20:54:35 -0700 (PDT)
 Received: from dw-tp ([171.76.86.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4ba1d8sm3895377b3a.51.2025.08.29.20.47.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da90ee17sm4279879a91.24.2025.08.29.20.54.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 20:47:55 -0700 (PDT)
+        Fri, 29 Aug 2025 20:54:34 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH 02/02] scripts/gdb/mm: Add support for powerpc book3s64
-Date: Sat, 30 Aug 2025 09:15:35 +0530
-Message-ID: <9da03d8e78cd895666deb1aec7ec8318833f1b6a.1756521755.git.ritesh.list@gmail.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Donet Tom <donettom@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC 8/8] powerpc/book3s64/slb: Add slb faults to vmstat
+Date: Sat, 30 Aug 2025 09:21:47 +0530
+Message-ID: <e05ac86618d8a52feccf5bac99da44b11871382c.1756522067.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cc4af3fa0fcda2a52cbbab05463e0ad0561fd017.1756521755.git.ritesh.list@gmail.com>
-References: <cc4af3fa0fcda2a52cbbab05463e0ad0561fd017.1756521755.git.ritesh.list@gmail.com>
+In-Reply-To: <cover.1756522067.git.ritesh.list@gmail.com>
+References: <cover.1756522067.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,194 +99,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds page ops support to powerpc book3s64. Following operations are
-now supported:
+There were good optimization written in past which reduces the number of
+slb faults e.g. during context switches [1]. However if one wants to
+measure total number of slb faults then there is no easy way of
+measuring one e.g. number of slb faults during bootup.
 
-lx-pfn_to_kaddr -- PFN to kernel address
-lx-pfn_to_page -- PFN to struct page
-lx-page_address -- struct page to linear mapping address
-lx-page_to_pfn -- struct page to PFN
-lx-page_to_phys -- struct page to physical address
-lx-virt_to_page -- virtual address to struct page
-lx-virt_to_phys -- virtual address to physical address
+This adds slb faults as part of vmstat counter to easily measure total
+number of slb faults for book3s64.
 
-lx-vmallocinfo -- Show vmallocinfo
-lx-slabinfo -- Show slabinfo
+Note: slb fault handling is defined as raw interrupt handler which says:
+ * raw interrupt handlers must not enable or disable interrupts, or
+ * schedule, tracing and instrumentation (ftrace, lockdep, etc) would
+ * not be advisable either, although may be possible in a pinch, the
+ * trace will look odd at least.
 
-e.g. Below showing lx-mmu_info command i.e.
-On Radix:
-(gdb) lx-mmu_info
-MMU: Radix
+Hence adding a vmstat counter looks a plausible and safe option, to at-
+least measure the number of slb kernel & user faults in the system.
 
-On Hash:
-(gdb) lx-mmu_info
-MMU: Hash
+[1]: https://lore.kernel.org/all/20181013131836.26764-4-mpe@ellerman.id.au/
 
-e.g. Below shows that struct page pointers coming from vmemmap area i.e.
-(gdb) p vmemmap
-$5 = (struct page *) 0xc00c000000000000
 
-(gdb) lx-pfn_to_page 0
-pfn_to_page(0x0) = 0xc00c000000000000
-
-(gdb) lx-pfn_to_page 1
-pfn_to_page(0x0) = 0xc00c000000000040
-
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Donet Tom <donettom@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- scripts/gdb/linux/constants.py.in |   4 ++
- scripts/gdb/linux/mm.py           | 114 +++++++++++++++++++++++++++++-
- 2 files changed, 116 insertions(+), 2 deletions(-)
+ arch/powerpc/mm/book3s64/slb.c | 3 +++
+ include/linux/vm_event_item.h  | 4 ++++
+ mm/vmstat.c                    | 5 +++++
+ 3 files changed, 12 insertions(+)
 
-diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-index 154db10fe94a..97a731db6e89 100644
---- a/scripts/gdb/linux/constants.py.in
-+++ b/scripts/gdb/linux/constants.py.in
-@@ -153,6 +153,10 @@ if IS_BUILTIN(CONFIG_ARM64):
-     LX_VALUE(CONFIG_PAGE_SHIFT)
-     LX_VALUE(CONFIG_ARCH_FORCE_MAX_ORDER)
- LX_CONFIG(CONFIG_PPC_BOOK3S_64)
-+if IS_BUILTIN(CONFIG_PPC_BOOK3S_64):
-+    LX_VALUE(CONFIG_PAGE_OFFSET)
-+    LX_VALUE(CONFIG_PAGE_SHIFT)
-+    LX_VALUE(CONFIG_KERNEL_START)
- LX_CONFIG(CONFIG_SPARSEMEM)
- LX_CONFIG(CONFIG_SPARSEMEM_EXTREME)
- LX_CONFIG(CONFIG_SPARSEMEM_VMEMMAP)
-diff --git a/scripts/gdb/linux/mm.py b/scripts/gdb/linux/mm.py
-index 7571aebbe650..9e5b1632f910 100644
---- a/scripts/gdb/linux/mm.py
-+++ b/scripts/gdb/linux/mm.py
-@@ -24,10 +24,17 @@ class page_ops():
-     def __init__(self):
-         if not constants.LX_CONFIG_SPARSEMEM_VMEMMAP:
-             raise gdb.GdbError('Only support CONFIG_SPARSEMEM_VMEMMAP now')
--        if constants.LX_CONFIG_ARM64 and utils.is_target_arch('aarch64'):
-+
-+        if utils.is_target_arch('aarch64'):
-+            if not constants.LX_CONFIG_ARM64:
-+                raise gdb.GdbError('ARM64 page ops require CONFIG_ARM64')
-             self.ops = aarch64_page_ops()
-+        elif utils.is_target_arch('powerpc'):
-+            if not constants.LX_CONFIG_PPC_BOOK3S_64:
-+                raise gdb.GdbError('Only supported for Book3s_64')
-+            self.ops = powerpc64_page_ops()
-         else:
--            raise gdb.GdbError('Only support aarch64 now')
-+            raise gdb.GdbError('Unsupported arch for page ops')
+diff --git a/arch/powerpc/mm/book3s64/slb.c b/arch/powerpc/mm/book3s64/slb.c
+index 297ab0e93c1e..064427af63f7 100644
+--- a/arch/powerpc/mm/book3s64/slb.c
++++ b/arch/powerpc/mm/book3s64/slb.c
+@@ -22,6 +22,7 @@
+ #include <linux/context_tracking.h>
+ #include <linux/mm_types.h>
+ #include <linux/pgtable.h>
++#include <linux/vmstat.h>
 
- class aarch64_page_ops():
-     def __init__(self):
-@@ -287,6 +294,109 @@ class aarch64_page_ops():
-     def folio_address(self, folio):
-         return self.page_address(folio['page'].address)
+ #include <asm/udbg.h>
+ #include <asm/text-patching.h>
+@@ -780,6 +781,7 @@ DEFINE_INTERRUPT_HANDLER_RAW(do_slb_fault)
+ #ifdef CONFIG_DEBUG_VM
+ 		local_paca->in_kernel_slb_handler = 0;
+ #endif
++		count_vm_event(SLB_KERNEL_FAULTS);
+ 		return err;
+ 	} else {
+ 		struct mm_struct *mm = current->mm;
+@@ -792,6 +794,7 @@ DEFINE_INTERRUPT_HANDLER_RAW(do_slb_fault)
+ 		if (!err)
+ 			preload_add(current_thread_info(), ea);
 
++		count_vm_event(SLB_USER_FAULTS);
+ 		return err;
+ 	}
+ }
+diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+index 9e15a088ba38..8aa34d0eee3b 100644
+--- a/include/linux/vm_event_item.h
++++ b/include/linux/vm_event_item.h
+@@ -156,6 +156,10 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+ 		DIRECT_MAP_LEVEL2_COLLAPSE,
+ 		DIRECT_MAP_LEVEL3_COLLAPSE,
+ #endif
++#ifdef CONFIG_PPC_BOOK3S_64
++		SLB_KERNEL_FAULTS,
++		SLB_USER_FAULTS,
++#endif
+ #ifdef CONFIG_PER_VMA_LOCK_STATS
+ 		VMA_LOCK_SUCCESS,
+ 		VMA_LOCK_ABORT,
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 71cd1ceba191..8cd17a5fc72b 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1464,6 +1464,11 @@ const char * const vmstat_text[] = {
+ 	[I(DIRECT_MAP_LEVEL2_COLLAPSE)]		= "direct_map_level2_collapses",
+ 	[I(DIRECT_MAP_LEVEL3_COLLAPSE)]		= "direct_map_level3_collapses",
+ #endif
++#ifdef CONFIG_PPC_BOOK3S_64
++	"slb_kernel_faults",
++	"slb_user_faults",
++#endif
 +
-+class powerpc64_page_ops():
-+    """powerpc64 minimal Virtual Memory operations
-+    """
-+
-+    def __init__(self):
-+        vmemmap_sym = gdb.parse_and_eval('vmemmap')
-+        self.vmemmap = vmemmap_sym.cast(utils.get_page_type().pointer())
-+
-+        self.PAGE_SHIFT = constants.LX_CONFIG_PAGE_SHIFT
-+        self.PAGE_OFFSET = constants.LX_CONFIG_PAGE_OFFSET
-+        self.KERNEL_START = constants.LX_CONFIG_KERNEL_START
-+
-+        # These variables are common for both Hash and Radix so no
-+        # need to explicitely check for MMU mode.
-+        self.KERNEL_VIRT_START = gdb.parse_and_eval("__kernel_virt_start")
-+        self.VMALLOC_START = gdb.parse_and_eval("__vmalloc_start")
-+        self.VMALLOC_END = gdb.parse_and_eval("__vmalloc_end")
-+        self.KERNEL_IO_START = gdb.parse_and_eval("__kernel_io_start")
-+        self.KERNEL_IO_END = gdb.parse_and_eval("__kernel_io_end")
-+        # KERN_MAP_SIZE can be calculated from below trick to avoid
-+        # checking Hash 4k/64k pagesize
-+        self.KERN_MAP_SIZE = self.KERNEL_IO_END - self.KERNEL_IO_START
-+        self.VMEMMAP_START = gdb.parse_and_eval("vmemmap")
-+        self.VMEMMAP_SIZE = self.KERN_MAP_SIZE
-+        self.VMEMMAP_END = self.VMEMMAP_START + self.VMEMMAP_SIZE
-+
-+        if constants.LX_CONFIG_NUMA and constants.LX_CONFIG_NODES_SHIFT:
-+            self.NODE_SHIFT = constants.LX_CONFIG_NODES_SHIFT
-+        else:
-+            self.NODE_SHIFT = 0
-+        self.MAX_NUMNODES = 1 << self.NODE_SHIFT
-+
-+    def PFN_PHYS(self, pfn):
-+        return pfn << self.PAGE_SHIFT
-+
-+    def PHYS_PFN(self, pfn):
-+        return pfn >> self.PAGE_SHIFT
-+
-+    def __va(self, pa):
-+        return pa | self.PAGE_OFFSET
-+
-+    def __pa(self, va):
-+        return va & 0x0fffffffffffffff;
-+
-+    def pfn_to_page(self, pfn):
-+        return (self.vmemmap + int(pfn)).cast(utils.get_page_type().pointer())
-+
-+    def page_to_pfn(self, page):
-+        pagep = page.cast(utils.get_page_type().pointer())
-+        return int(pagep - self.vmemmap)
-+
-+    def page_address(self, page):
-+        pfn = self.page_to_pfn(page)
-+        va = self.PAGE_OFFSET + (pfn << self.PAGE_SHIFT)
-+        return va
-+
-+    def page_to_phys(self, page):
-+        pfn = self.page_to_pfn(page)
-+        return self.PFN_PHYS(pfn)
-+
-+    def phys_to_page(self, pa):
-+        pfn = self.PHYS_PFN(pa)
-+        return self.pfn_to_page(pfn)
-+
-+    def phys_to_virt(self, pa):
-+        return self.__va(pa)
-+
-+    def virt_to_phys(self, va):
-+        return self.__pa(va)
-+
-+    def virt_to_pfn(self, va):
-+        return self.__pa(va) >> self.PAGE_SHIFT
-+
-+    def virt_to_page(self, va):
-+        return self.pfn_to_page(self.virt_to_pfn(va))
-+
-+    def pfn_to_kaddr(self, pfn):
-+        return self.__va(pfn << self.PAGE_SHIFT)
-+
-+    # powerpc does not use tags for KASAN. So simply return addr
-+    def kasan_reset_tag(self, addr):
-+        return addr
-+
-+class LxMmuInfo(gdb.Command):
-+    """MMU Type for PowerPC Book3s64"""
-+
-+    def __init__(self):
-+        super(LxMmuInfo, self).__init__("lx-mmu_info", gdb.COMMAND_USER)
-+
-+    def invoke(self, arg, from_tty):
-+        if not constants.LX_CONFIG_PPC_BOOK3S_64:
-+            raise gdb.GdbError("Only supported for Book3s_64")
-+
-+        lpcr = gdb.parse_and_eval("(unsigned long)$lpcr")
-+        # Host Radix bit should be 1 in LPCR for Radix MMU
-+        if (lpcr & 0x0000000000100000):
-+            gdb.write("MMU: Radix\n")
-+        else:
-+            gdb.write("MMU: Hash\n")
-+
-+LxMmuInfo()
-+
- class LxPFN2Page(gdb.Command):
-     """PFN to struct page"""
-
+ #ifdef CONFIG_PER_VMA_LOCK_STATS
+ 	[I(VMA_LOCK_SUCCESS)]			= "vma_lock_success",
+ 	[I(VMA_LOCK_ABORT)]			= "vma_lock_abort",
 --
 2.50.1
 
