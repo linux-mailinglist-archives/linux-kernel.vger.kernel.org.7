@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-792828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B24B3C981
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A42CB3C984
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A1E84E1CD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB42A60785
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD4025228B;
-	Sat, 30 Aug 2025 08:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E2E36124;
+	Sat, 30 Aug 2025 08:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="evE+u03S"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/8i1RAL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B680238D42;
-	Sat, 30 Aug 2025 08:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548671EF36C;
+	Sat, 30 Aug 2025 08:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756544009; cv=none; b=W6oDKmWZbUIlBiKlVthOywyo5dJFmKUvSQzoErJHyozc7qqRjuQ016LXH4QhjK/3VKMgM5UFFLMaACwMRA8BISUopmIKC+ZW0IMo8l5/E72SwA5QG6AyYH4n3/aRJXCAIYOlNU/GP+gvhsWGvOqEXyVECSyETAFHLSNoTlkENbQ=
+	t=1756544015; cv=none; b=t+OcyO3ZFctuRhqoA00VvnjGa7usaNh1rIp8DTxguwFuR2WPSL11hPuVc5LNUXVScJBfxwQaAD55g/RZlBifhZCBZrny+l0cB13kcs2MejMFZFpnbTzKxJ7RHQNXxE2vvjUDt6/nz3AKyd1TLTiV4lhqDbSPbW6OoE7GSW4Zh5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756544009; c=relaxed/simple;
-	bh=cHFd4LwVyQ3i2Qr99V7e91jSmAE9fUkWLBu3dK+cOh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2v4QXi34kx7B2gSTIUSyGKxmUGQ3UlIVfd1oVx/BQ5z/teM8mwnR7aGIBiDWEuvoh+vIuGe3i0Odu/Vrxs32BmB85o1I9CC/auZ63aHokp7WrOXI6AmCPZR2IjBIW2xGQS8IjW1rVe/bNVwonxpVJHqiVOpOz/H536kkH56umQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=evE+u03S; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=1hBJ+y7BTZuBwDX5FrIGMICXQkoBbJdFjwvnRG08DFY=; b=evE+u03SNhapXMLJOV+jJYrf9o
-	NhUonEMOb9Tt4q+RyyHtE3beePAZaHZfFxRCiYqavJgl870KtSOeTMjyxnKGNmVnOvWJ5JZgCXUU6
-	MLwemXeUNC6ocafDI6dT3+h66GgVi9NBHtMHQfagZ9KvzyJk+DDJJT2IwX5S/LodLaNpPXzjGMIVB
-	TrXYtui8R3E0W7Uty8MLXWF0VsnpjWUMICzgVCAj2PlkGvUANIMS1JIi1jrq5w+FJodiXhz1uBQQ7
-	7MDtEcyO9hEkM4hbPf31aQjZX0K69KXFmyftiPikZvo74fLdM9lPOeNggrlpaWdFkvcL+gQYfwXbn
-	FXVFdw8Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1usH5S-0017Eh-1z;
-	Sat, 30 Aug 2025 16:53:24 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 30 Aug 2025 16:53:22 +0800
-Date: Sat, 30 Aug 2025 16:53:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linuxarm@openeuler.org,
-	liulongfang@huawei.com, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com,
-	yinzhushuai@huawei.com
-Subject: Re: [PATCH v2 0/6] crypto: hisilicon - enhancements and fixes for
- device reset and configuration
-Message-ID: <aLK8AorGGwAE78KL@gondor.apana.org.au>
-References: <20250821013809.4016506-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1756544015; c=relaxed/simple;
+	bh=FyChQ5SGHhr7mu5Ju5mek1d/MHydKeR6/5dYJQzVG0Y=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=W8JCCPGOiM0Z/uK1woCYQZ8kpeI4Kb7D/jdD4VTCqq2cK0yMaodp/ZBXoQdIsWMHpL7fCj7PkL7vScl77EUZEse+pO/10wVDol9gSEjjOCKrssAQKol+fKD0Mlwe5e53hDROmQwy66Ubj1Xzk5Ik5/FMHQAHQXa++lA8hlR3aW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/8i1RAL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4341C4CEEB;
+	Sat, 30 Aug 2025 08:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756544014;
+	bh=FyChQ5SGHhr7mu5Ju5mek1d/MHydKeR6/5dYJQzVG0Y=;
+	h=From:To:Subject:Date:From;
+	b=Q/8i1RALYTYpsw3a5m+OV/80YFaLg/XYn3fhHmQOHMdcUdcoF9M+pIepgyAX1oZrc
+	 LzCTSsLdV/MecopaUGpq98Q4kD92sGF7eJr+zy0MyzeBlg7VBDe1tNasdEnNgA5Ibv
+	 BcE4mNedhzQOdhBJETnbfVWKcVUSFpi2Eyp/Uq2zX229wQNdJZcwnvNEKKi/4EKpBH
+	 iYOMSsoEOy5ar/jWGScFYz0gyS0yxMyRq71VVpnWGFuPTHye5jFR1aUxC4bj+Jx9Z7
+	 2nlIJuEgYswQSZcmltxx7VoA01X2S842+rvlh2u5nRJyeiKPpKA9oCVatgDH+PPTr9
+	 rgzvahr6ba9lw==
+From: akemnade@kernel.org
+To: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Frank.Li@nxp.com,
+	andreas@kemnade.info,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: input: tsc2007: use comma in filename
+Date: Sat, 30 Aug 2025 10:53:26 +0200
+Message-Id: <20250830085326.36120-1-akemnade@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821013809.4016506-1-huangchenghai2@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 09:38:03AM +0800, Chenghai Huang wrote:
-> 1.Cleanup performance mode configuration function, this register
-> which do not require read-back verification.
-> 2.The configuration of each modules need to be restored after
-> device reset.
-> 3.Add a check for the sva status before resetting.
-> 4.Check if the input parameters match the device PF.
-> 5.Register reserved interrupt for virtual function to avoid
-> Warnings with GICv4 and VF passthrough.
-> 6.Repair a hardware register, otherwise the stream mode LZ77
-> algorithm will be affected.
-> 
-> V1: https://lore.kernel.org/all/20250816102834.828655-1-huangchenghai2@huawei.com/
-> Updates:
-> - Move hisi_zip_open_sva_prefetch() to hpre_set_user_domain_and_cache().
-> - Swap the order of patch1 and patch2.
-> 
-> Chenghai Huang (3):
->   crypto: hisilicon/zip - remove unnecessary validation for
->     high-performance mode configurations
->   crypto: hisilicon - re-enable address prefetch after device resuming
->   crypto: hisilicon/zip - enable literal length in stream mode
->     compression
-> 
-> Weili Qian (2):
->   crypto: hisilicon - check the sva module status while enabling or
->     disabling address prefetch
->   crypto: hisilicon/qm - request reserved interrupt for virtual function
-> 
-> Zhushuai Yin (1):
->   crypto: hisilicon/qm - check whether the input function and PF are on
->     the same device
-> 
->  drivers/crypto/hisilicon/hpre/hpre_main.c |  66 +++++++++---
->  drivers/crypto/hisilicon/qm.c             |  45 ++++++--
->  drivers/crypto/hisilicon/sec2/sec_main.c  | 126 +++++++++++++++-------
->  drivers/crypto/hisilicon/zip/zip_main.c   | 112 ++++++++++++++-----
->  4 files changed, 260 insertions(+), 89 deletions(-)
-> 
-> -- 
-> 2.33.0
+From: Andreas Kemnade <andreas@kemnade.info>
 
-All applied.  Thanks.
+Use comma between vendor-prefix and chip name as it is common.
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ .../input/touchscreen/{ti.tsc2007.yaml => ti,tsc2007.yaml}      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/input/touchscreen/{ti.tsc2007.yaml => ti,tsc2007.yaml} (96%)
+
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti.tsc2007.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2007.yaml
+similarity index 96%
+rename from Documentation/devicetree/bindings/input/touchscreen/ti.tsc2007.yaml
+rename to Documentation/devicetree/bindings/input/touchscreen/ti,tsc2007.yaml
+index 8bb4bc7df4fa..a73d110272fa 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/ti.tsc2007.yaml
++++ b/Documentation/devicetree/bindings/input/touchscreen/ti,tsc2007.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/input/touchscreen/ti.tsc2007.yaml#
++$id: http://devicetree.org/schemas/input/touchscreen/ti,tsc2007.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Texas Instruments tsc2007 touchscreen controller
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.39.5
+
 
