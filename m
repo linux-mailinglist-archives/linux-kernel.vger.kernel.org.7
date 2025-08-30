@@ -1,106 +1,147 @@
-Return-Path: <linux-kernel+bounces-792606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44421B3C689
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4DBB3C693
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4551C881B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DE01C88332
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3E81DDC2A;
-	Sat, 30 Aug 2025 00:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16151D514B;
+	Sat, 30 Aug 2025 00:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVhF40ak"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="XRgi4aaL"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6AB26281;
-	Sat, 30 Aug 2025 00:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00B16DC28;
+	Sat, 30 Aug 2025 00:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514585; cv=none; b=ez2B4R9XPF++4bJC7NnzLNdZwZFRRsYNiBJztMePpSfKpb5Zv/PUMYyizDfNwh0k/kjyjTxOWzFnScEd2L0pM2dw7QKB1GV5DAu69gCXD/xdOUhFhzsOgQre+l0+dqqP2A7elePQ4frOKuL2EhJz9Eb3Osk2VK/16YikdaWRp8w=
+	t=1756514615; cv=none; b=PkFUN5zo/9h8iLj1H9QlNDFDLY6PfkXFLnJZYjIS4BSS5DMd1ARwdi3FcO6JP61gKUSBJ04137J32hNjsiCrQHo0pM/nk2CTLExZ8+OtVncBaDYj6H7P5uucMNc1RyS5BkkgCV6zYdOp4m8joCZAE+9EL9k9ywRqSBhFun0F1Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514585; c=relaxed/simple;
-	bh=DD4FzY9kB732yl8oAeAaz9W64KNMbY6VOB2+l+zLDBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BfW2l8I0jDWY6IlrYTbxRLf5da0UcTeMpCVfc9IRyB/2QqWxu1Du2UGGPDdipElKzMCIK3tjm6pzv53SfqU0LqeXJJvCs7TWe5UFvO02nVzUk3EK4OHsHXZY9wTac7OWuEdxJbWH5+z7amq/RcDNA10rBF49ivROpbQLFCfRvAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVhF40ak; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9282EC4CEF0;
-	Sat, 30 Aug 2025 00:43:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756514585;
-	bh=DD4FzY9kB732yl8oAeAaz9W64KNMbY6VOB2+l+zLDBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mVhF40akOX/ftOmlglOqo9DnF92DgSJz/GWKFlUmWIk5GyK30/bAvJi93bDbxUcEY
-	 bLcZ/rKJASvlJl2jtavo7mRnvXgpePv6UfTjwE4V/BoywQwV/5v/EiCggf1X7eSsYD
-	 ESh9FdgvdQe/zv0N3YAkSQwZA7BZSx69lvQ2L2UGK0sujwUkVRKfLkk1E5T3yqBKbD
-	 Lt0K0aWXCvJbqqRsbHlb1rzVL2NQS29CPMdCh0TWMnJ93kvxfH7zCFBL5y70I9Egj6
-	 wIZ6v346jt4c7fI0KCwBq0Az3oL6PXcw8rz+utxAvYhsL9TSdHkrA8dXKYmWjXGo5D
-	 9LMGjSok2cmtA==
-Message-ID: <4d1d0689-d2f6-4034-8549-ac700776112b@kernel.org>
-Date: Sat, 30 Aug 2025 09:43:01 +0900
+	s=arc-20240116; t=1756514615; c=relaxed/simple;
+	bh=GcIDpuah604GX47Dg40jGDUL+iIjWtlKiwlafzBiYt8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QY5ojgO2W0fZnWBTG3kl6EMjUOfPERNldZJyGPFCa6Uox+PKIwgDs7T/Lwwq8KSxNkG86nUL70V78GPRGlpXxUqe/eRatmujQ04Vc9blxzMMTnlSTZyS1Op0bJcm6q+/N10bxX0SzL+2GWozYxBYnxIXXJJKFJUtvY/gHkDQGLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=XRgi4aaL; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57TJR8Vr021598;
+	Fri, 29 Aug 2025 20:43:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=YQIli
+	+DgU4Sx6hpjVbLjL0Ls5BqzmxpUkb4nB4yGUDc=; b=XRgi4aaLskBfPPSAGBWdn
+	oQe2sPQAEdUfnMBu4nZapPV3TZMYN0G2vC/MUpZQITlIGesnBeaA8+LQQhrMhU6T
+	4aMRro53fZP5CWZCzsUHgf5COdYLPFyNJYLvoMZo703b0mBKxHzHknk8Um6QUDqM
+	qNNIsscftE5alIDO+6bSsx0PhPYX3k98YFLx/lUaV2ZKfSGnxigiQtJaCO/M/T8d
+	63ZEv6uQG+T+vXSWnFEkOU1Q0GyDiPFujaA9c/MWHNPN6Zbx8ntmJpkX+N35B68d
+	yvoIvCDprPxL7QK2mFCHMYfC2fmHnLqvBb17Ix9dJfTG+I0/hvm5tlkiCVxlp3i5
+	g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagcgw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:43:29 -0400 (EDT)
+Received: from m0167089.ppops.net (m0167089.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57U0dHn7031062;
+	Fri, 29 Aug 2025 20:43:28 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagcgw5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:43:28 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 57U0hRHT018891
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 29 Aug 2025 20:43:27 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 29 Aug 2025 20:43:27 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 29 Aug 2025 20:43:27 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 29 Aug 2025 20:43:27 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57U0hAlY004981;
+	Fri, 29 Aug 2025 20:43:13 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>
+CC: <jic23@kernel.org>, <Michael.Hennerich@analog.com>, <nuno.sa@analog.com>,
+        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
+        <corbet@lwn.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <broonie@kernel.org>,
+        <Jonathan.Cameron@huawei.com>, <andriy.shevchenko@linux.intel.com>,
+        <ahaslam@baylibre.com>, <marcelo.schmitt1@gmail.com>
+Subject: [PATCH 08/15] dt-bindings: iio: adc: adi,ad4030: Add 4-lane per channel bus width option
+Date: Fri, 29 Aug 2025 21:43:10 -0300
+Message-ID: <8011cd2b2f2fe6fd162bc4b4b75ec64255516a87.1756511030.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1756511030.git.marcelo.schmitt@analog.com>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 03/10] md/raid1: convert to use
- bio_submit_split_bioset()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
- josef@toxicpanda.com, song@kernel.org, neil@brown.name,
- akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, tieren@fnnas.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
- <20250828065733.556341-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250828065733.556341-4-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDA3NSBTYWx0ZWRfXxqhY9BBUQb0M
+ Qo61sUskWsxUYpPy86xKNOj3fmjc31msUCyr42/o2ZSRp2vVD9AgFnpUZQbkfpzJBpp5Js8VpZ/
+ xD89Kz9A4EIXjWkjq9VOqXI5W/1Zcrh0bInW78Njxt4k1yoOOK0CcHZoMnZzF3Wdva05c+qqLq6
+ FDUZsdQTXd/NEatkDtBMEfG1ZaLr/dg/cgwQDGq0GG78dCNNy3J6qKM68/M/gwEflccyhPsjZ6u
+ /r1WwgKzm5DaHFuOkEEa0mGLQeg7tQSnkww6c7dfNC8wCZvN6P6SI9uXz7XK2YzoP9ElXB5SL1i
+ t+MUutP5+A1PbFteuW8lMI4pYZq7IuD8El3oKsgBFQA77QNNrDDFrbVV1uIgULzWE0eO+Ci2+VN
+ FNPr9/bM
+X-Proofpoint-ORIG-GUID: VPSe03N6ByXMQDltH_3iNVdd7zzpcyvD
+X-Proofpoint-GUID: _Vs8m2Vt4ag-jTHQUsmDJqdOkdEACasO
+X-Authority-Analysis: v=2.4 cv=AoXu3P9P c=1 sm=1 tr=0 ts=68b24931 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=2OwXVqhp2XgA:10 a=gAnH3GRIAAAA:8 a=lK7_pbyzKmk9y7L_IogA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_07,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250075
 
-On 8/28/25 15:57, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> On the one hand unify bio split code, prepare to fix disordered split
-> IO; On the other hand fix missing blkcg_bio_issue_init() and
-> trace_block_split() for split IO.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+AD4630 has two input channels and each of them can have it's data output in
+4 dedicated lines, resulting in a total of 8 data lines used by the device.
+Document the option that specifies the case where AD4630 and similar ADCs
+provide data through 8 SPI lines.
 
-Looks OK to me.
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-> diff --git a/drivers/md/raid1.h b/drivers/md/raid1.h
-> index d236ef179cfb..64548057583b 100644
-> --- a/drivers/md/raid1.h
-> +++ b/drivers/md/raid1.h
-> @@ -178,7 +178,9 @@ enum r1bio_state {
->   * any write was successful.  Otherwise we call when
->   * any write-behind write succeeds, otherwise we call
->   * with failure when last write completes (and all failed).
-> - * Record that bi_end_io was called with this flag...
-> + *
-> + * And for bio_split errors, record that bi_end_io was called with
-> + * this flag...
-
-Nit: s/.../.
-
->   */
->  	R1BIO_Returned,
->  /* If a write for this request means we can clear some
-
-
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+index 564b6f67a96e..bee85087a7b2 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+@@ -39,7 +39,7 @@ properties:
+     maximum: 102040816
+ 
+   spi-rx-bus-width:
+-    enum: [1, 2, 4]
++    enum: [1, 2, 4, 8]
+ 
+   vdd-5v-supply: true
+   vdd-1v8-supply: true
 -- 
-Damien Le Moal
-Western Digital Research
+2.39.2
+
 
