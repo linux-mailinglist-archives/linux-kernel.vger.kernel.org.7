@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-792855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692D7B3C9C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735D6B3C9C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01061BA649A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8AD1BA6AC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4B4265CCD;
-	Sat, 30 Aug 2025 09:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0C725D1E9;
+	Sat, 30 Aug 2025 09:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c85Jnuhg"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gIj1QqjN"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928EE2638BA
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103DD10F2
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545604; cv=none; b=P4ZFNekT7SKKXXA8lvoD7i06gHO7UFEWLuk/4Y7LNjMIsW90pdtx1CBd0YqBeS0RcExfH0X9BlzwVAhTVNRtw4bO63tBFzPegEEsaU04ipI7RwjB8YlY2bcjWwPfd1b0TaBFZ+78Uw8VKb2Uw5ENKs/iWTLvxpdAP9ZeyWPWs38=
+	t=1756545938; cv=none; b=anXhEflogSrggUU0QXag7+yv7ytzbq2c2iiB73ZMRUpPHytdDtO8pwaS50p0kGHfnVgfUMYJnTlAe25KPGOTeHOG+XcUQoRULhVlpfBLddx/ggEtN9GNnrDg9rAXZCsr3RfssByAH9hrPUbDLwKnYE3PTUdw+89WT8WV6sKNWrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545604; c=relaxed/simple;
-	bh=vKZxK3WqSG869YK1ejnNRrbE9AJOdCdAIjU5uTihOao=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bK6/6xehEZnACsjTCW+te4di/OGWyFdrlm1klKyOZxEyufBTHTi4Kw+bNI1yaLCFSYE7sa8KsvqUo3kGpybdJUIuKzvkhj33MK49s4fMlKJf83bjOtqdn89GtuUkSP4477bP5mFPuDNqA2bgub4e+7FumetAMumWMixc+DY/hcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c85Jnuhg; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d12c5224abso163845f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756545601; x=1757150401; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=18xNVcTt+Ut2Li1HIkvZ7r0gYk2tthQkOl8QvQYyxWY=;
-        b=c85JnuhgFQUT+JCfsBEPePhJ7BRwIpFnWifWiLtlAEQNVHK1OTjQ28z7e0PNFDEQul
-         ZWsv6tD7u/t2dSbKSBfQNxV/rzQOvWZmE3dn9zJ1BLBVUP3pVPQhnZWykqhMwEPYovmd
-         93D+c5w9rx3vhTsh32MNa/XpTlM0atuMbZOhH2/1St/6DmXI36jOpfUtxMzPGzIHrjqr
-         CySNcsaPyPr0wCtc8RTfWMnh13Bx2PwEVapXdo9l8M6OQWCyMaNvYeET2k/A64gszMnS
-         qknlMJTr35Szsnuv3z7YC5x+DcG+xLJ5jnbkja78wXVNnw1fhtzFMqm85jbfGr+zxEzz
-         TyHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756545601; x=1757150401;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=18xNVcTt+Ut2Li1HIkvZ7r0gYk2tthQkOl8QvQYyxWY=;
-        b=RQehUiPEzbgFOXw3HO3HZL974UXXlHyJOAuF2/plcv/ypEplds0ik3iNf4tcRX4KnH
-         TLCaJBoc/nNvkFHAPtLkTh6OFdcputiit++9trKWf1zAe5fpzkIcAPg1KmA4pwEOrwov
-         E7Do2jaOYF7kA8ZUPkuZbfzl17p14Vu82ESfsclAIyX9amhmxQQ04yCSgw96e21tKRAX
-         dZ95S+e19a6cnX8Md/tt9us+Z/P3vWHLLNdDuVF5c4x/hS6dlS6qhfyP3IQOsAm0XBnu
-         jaT+/4V3QGYkf0Of5Ck/E6ZG/GqYnJJvGdYan6qunkF4NA40YQOx1QUJofE/2SsxVcy9
-         /isw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbS8z7+Oo4qZ4iMuHM/KR+YY+aCjwikjpsu8tOEFEHmKZjbsOu3SczsdxzEECj7bQOQ1LPIeSeDLfqcIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFFXTcGrjBPQUc/vRBIp4o8VNFHKfwYdds1KnU0XzNUJRUYi2v
-	TUqo5Y/xYMPNcrWWQ4QMOeKYtAhiFhZSuGvxda9QwV+ba0MTUmQH1BQkF8uckWPD0Gg=
-X-Gm-Gg: ASbGncuwzxv3nApkAOBJqiWR4cjyfOhYU2FpNhmyLKS3uJpOIHl2U/LFF5xNJLHd1yf
-	gIDocE59IsTNYJmvvppCbzlmkEAgpjaZ5us43vP9e5VX7mgRO6YYGMEJgA/P5p7S4jmo5iEt1aa
-	MQxNxWlS11nm8R8dttrViiOhAj5UTW9diveWBhhkG+N7BBbo+8JP/EuSmyO1W44DO3OiNGzKkTH
-	wP4u3U+4vqU1TmRQqLtYyFzD0kUIjJRj1KOPGktsYb8WxrUld2Bs+Ns8LjRZBy6VV7z7JF/7R1t
-	ZDOI93Mlt2EfqXU+j0ZsxNKltI7LI0OQrpL1ooIvpBzszv74mT6yituQOEfMLfhxImt4+tmRQCc
-	MMnJ2931nqMJlULyCtgkuHh2Ao6FQiwJQolVs9oV3xyKoZXE2cQ==
-X-Google-Smtp-Source: AGHT+IHwLu3eO3G/g09J4U6BQtf6Smm47bmXXP9dfIdI1vYcv6TcxL9zbzWeDgmZ0/d3DtuvTitzvQ==
-X-Received: by 2002:a05:600c:1c9d:b0:45b:75d9:2363 with SMTP id 5b1f17b1804b1-45b8016df84mr21110275e9.1.1756545600887;
-        Sat, 30 Aug 2025 02:20:00 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8525a94bsm21186815e9.15.2025.08.30.02.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 02:20:00 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, linux-fsd@tesla.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250822121423.228500-7-krzysztof.kozlowski@linaro.org>
-References: <20250822121423.228500-5-krzysztof.kozlowski@linaro.org>
- <20250822121423.228500-7-krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH 3/4] arm64: dts: fsd: Add default GIC address
- cells
-Message-Id: <175654559953.10738.12020984387702262826.b4-ty@linaro.org>
-Date: Sat, 30 Aug 2025 11:19:59 +0200
+	s=arc-20240116; t=1756545938; c=relaxed/simple;
+	bh=BF7xX4B2+0QDbBe4ABHvaA6gq/vEXrYmUgMAo1IsbnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E90ePIPlTgXjL1WcjJqP0VMZJ2k3pqcPXrlMJEz0kFFZlrKg5dR25KWFcDSLfw+8yuvl/+D0GckN8IJ2wnI1D6vrfxEESLheBYWVaxw1XiKf9lR6TLaDjJtnR7O71VU1JnYX53jedp4jTUeZ5nTi1DSptzR825r4VPK4kLY0aYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gIj1QqjN; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7D90840E016C;
+	Sat, 30 Aug 2025 09:25:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lqsYyd9qyKmq; Sat, 30 Aug 2025 09:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756545927; bh=jLeZMAZIodGrySmmcoRpSKYryUzqyXGWLc65wZY7qj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gIj1QqjNvb0wh1HD5zR6RPMpiHrhPky1bW3pq0noO10Du/+6TRV7T/U87lbK1hq4B
+	 +Rl7X7wL85+PS0dH/VOJ1tNs6RghM3htre/SMpVrRLk7Sc9ap2HBSiLil//30varD5
+	 WOAoTTzc16GDsO13Slgr36XK4h6/GTWUI7saRn7bUxWedhlTzc4BFunDZKfnemiCt2
+	 4mhkB+QmLpbbOZjWp1PdqSfyi/GFLZK2vFQFOZMN29A1fMxwulk2i8xRLRIquZthqa
+	 E/TP0W4FiN2ZttuaL7O4A97DtO6lsC953+8jYrCCAT+16UVyaZbOkS4uzV3ddez/sz
+	 i3p71gUlTHZAXnz9Fl2ykWvfhtGcizGyJIBKa97kl0uY9eLr8Ry1SEc8qiNwyTtQ61
+	 dd6/LUp6q+6+ZA+h4Rn9Dwm6QG/HG340QVEN7GzYj+FPYqmtciHePQyubtmJF0FoGI
+	 CkuYoBkqT/E82Rh3BPb8bYMiKLIJBiiklLgP8B5zKUMi/r9FQLDPdPcLgrfOQh6Cpg
+	 Om1qSmmFz4vlCfTh9Siknbvjn5PCLVzd5cJsJ08JAUlXsu7kEp8sOaXKAQ5zwXwTyi
+	 gkJCnUyZ8sndwI7HruQSYmfQj9rvwbEjFIiT6LcR7mOlz9ta43iumNeWN6igShCe9D
+	 CsVm2lwkpecEm6+dgfps2Ph0=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 952C340E00DA;
+	Sat, 30 Aug 2025 09:25:22 +0000 (UTC)
+Date: Sat, 30 Aug 2025 11:25:14 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
+	"Chang S. Bae" <chang.seok.bae@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -v1 2/2] x86/microcode: Add microcode loader debugging
+ functionality
+Message-ID: <20250830092514.GAaLLDepwTQpZG5KnR@fat_crate.local>
+References: <20250820135043.19048-1-bp@kernel.org>
+ <20250820135043.19048-3-bp@kernel.org>
+ <2cd370e9-6fd8-4aed-8fe8-c8526a1ab97f@intel.com>
+ <20250829094502.GAaLF2nkL2EtFlDGOB@fat_crate.local>
+ <f0565436-fef6-4999-b878-f4d2d52c22f2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f0565436-fef6-4999-b878-f4d2d52c22f2@intel.com>
 
+On Fri, Aug 29, 2025 at 04:25:13PM -0700, Sohil Mehta wrote:
+> My only concern is someone could easily enable it by mistake. It might
+> lead to unnecessary reports and debug. Maybe we print a scary dmesg log
+> whenever CONFIG_MICROCODE_DBG is enabled? That would be easy to spot in
+> reports, and hopefully it would deter folks from enabling it unnecessarily.
 
-On Fri, 22 Aug 2025 14:14:26 +0200, Krzysztof Kozlowski wrote:
-> Add missing address-cells 0 to GIC interrupt node.  Value '0' is correct
-> because GIC interrupt controller does not have children.
-> 
-> 
+When that happens, we'll add the cmdline switch as an additional precaution
+but I'm not worried - we look .configs on bug reports.
 
-Applied, thanks!
-
-[3/4] arm64: dts: fsd: Add default GIC address cells
-      https://git.kernel.org/krzk/linux/c/a874b387213bd80b1288884aeb427cb7599eb5ea
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
