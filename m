@@ -1,251 +1,325 @@
-Return-Path: <linux-kernel+bounces-792847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F33B3C9AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 164D6B3C9B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C521F7C6DB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09F47C6D78
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C58C2459ED;
-	Sat, 30 Aug 2025 09:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F5725BEE1;
+	Sat, 30 Aug 2025 09:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="je8ZcyER"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il1ejRMO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1304126BF7
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80320B7ED;
+	Sat, 30 Aug 2025 09:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545363; cv=none; b=LuP1zLr/Q2/ZGaR4DB73kfOMlYFqLueWeb1iOayeRVYjBBD0tESBANhG+SheVY+Zk6SxjQPyg9JW5iSYtVfYXNAQeP1N2YVlRiBx8+EjX0MSxBW5GmTPLZvTCfmG0t4E0vHHCoHawnKbOuoUEURF0p0yJMS6D1ZeChgjmNUec7Q=
+	t=1756545403; cv=none; b=gLapjJeQEpjmArIWynzuZeCm2MtWagbePoFkg4+DXkor1Fp6X5qJhPLAKEhNAC4iBCRIWXX4g94Q05L0lI0avX66hwLlVQ8khoc6CXoPaTbltepBkcU2aacKorhNu5kIybazLFg81BZqCaj9p/N+fHE1H8qeB3kGi+/0WRMk71c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545363; c=relaxed/simple;
-	bh=YRi5JrxRQGRuc1OXQ5+MrLyGvG/x2aV3dyn56nfMQcc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rC37fuZJA4tlNJjj7n4/5qzFYcUzviMQVY2WSMIoDU3rZcdUp865op+v9qN+HQaDcFjyLGND6exhhlG1B8c3fQAWraYhbPd+12h6T2X6FeTyYC5ajumc/FqXadDhNuAqY2BapHo9Sn5vLnY/g273xUJLLLX4M449Yje/NF8H8QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=je8ZcyER; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afeceee8bb1so426336766b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756545360; x=1757150160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrj9R3nVkaTCZLJYA7b22S0d1XHcw58mLf7q8CNp5Vc=;
-        b=je8ZcyERdjkvkli58R0ZtFJqY4sRUpZx39gillBDD1Og+0ZbsGtmgmdzzWkkWQvjMR
-         wYCa48cyFR96fp0jb39xklMxDlziaeDGotzA4cTUAioA8Csn8gyuRl+vZfF22nG/q+t6
-         RHxsKk+hg+H7kM3ifs3BodIktvgsvcqgviFZMd/o5P5BFWSHY/lPKfah2NYqMZUBlims
-         L62Ww0oGN/1rnXTsG5wTKg9XS/I0PYCYStL0QyQtEcV/N17QppZTSYd43cBXin2QpfWs
-         cTzOtfsaofsDIVqr5874j3nfpnRwD9UWWHGS7fY5pndQ2Fo2KwCahBdI0DGcsoTh+7lV
-         6iZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756545360; x=1757150160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rrj9R3nVkaTCZLJYA7b22S0d1XHcw58mLf7q8CNp5Vc=;
-        b=htSlG6cy0rjXZfoB6Qih36t5jK3SNqKXzZGovaPmcAX8T0UoGQ6GFbv2TmNHUX1VQa
-         yc6S+eY/9MBOvBIogmwLQeHuamAsqwHQpLfsv1uGijzYjEJBPpafHXQSm/PvxzIcnajr
-         fZiYpOhj3o1z9BOQ+VL8wOh9HDSvl6GIkdZTVF/wTFl2ljkew9VXaZg9+smp15QYblDi
-         haShdPoxhlOv+hDqQo3Z/HGiWfSeRdGDRecqIcrFSrBF3n9Dp68Gjd7AvrgAoxf0vepl
-         XUK2GXnt+Za1MCv+sLw3goqjUerubj2WkRmc77T799WbKrtrPVwVcx+Cq7GMwRPPpnOp
-         ARcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBE8CARREvhZU+DLnZHPOrjYf9Ym+aqXpt5vtDTJR9fZZqO5elnS7lBa8hpWZAQJ+abQuYqq9t22fa8FU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0T1wa4D2osSTqNy37TKoR0dvS72vzJ2fl7mO4zbOXs/9+sGnj
-	oiXusHIQms+6XAmS/WpWwy/zQddbJgmCdHi2ogjl74hQQCFcbnwbX140EVTZgiR1OTmAijhmGO4
-	854YaX7L8PgFy2zmtWEh1OzcejzhUPwo=
-X-Gm-Gg: ASbGnctXcUZnJrOjMZMpKSS0zI0OI36jItuMXOSo9nXeCYCZ0rjEiLpbuJ6inGOr6p9
-	B37vwTbJLjYVQbrs77bhPnY56dSV/BE9mB4wANXcLJFldtdixtOmpCNrbIBEmkjipyplIzQv8/P
-	E3LE/byZbYCdIRrz7r2Yx2aZ3FaEPmcywTL2gy3zAzGLjGlMq2Np5SE3W4lke3AOAGcnzWONt89
-	EBYomY=
-X-Google-Smtp-Source: AGHT+IH9Mnc3Jo4dFBP4EcrvdRwA6ZQe5nYKI7QDpn+yKhW058nEwxO/7jFBqsHG3REkSIbr+V+6R6Nev5+FZGGP4E4=
-X-Received: by 2002:a17:906:eec3:b0:afd:c31c:2488 with SMTP id
- a640c23a62f3a-b01d97307b1mr132813266b.39.1756545359885; Sat, 30 Aug 2025
- 02:15:59 -0700 (PDT)
+	s=arc-20240116; t=1756545403; c=relaxed/simple;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rExWhgfQkijVVyefShYGeBrGdr5gLL5rfJ5KzkdDILCQq1x2thgRm6mW0FOitJ3F9OKkq4gXjaumgOJXdUvVMY532MeR09tQZiOwC7mFRv/+G2ucwXWu3RrlKBTkhSbSUp8ttfYZvLFjst/QLEDYlhpidrUP7eTDWvbeXuF2zKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il1ejRMO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E1FC4CEEB;
+	Sat, 30 Aug 2025 09:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756545402;
+	bh=Hi6ffWKrxrALgFq3VtBQbENk8AuueEtf9y+gH8NC3Xw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Il1ejRMOSMwAJPHZTR6+O7R66MmNB/OUP98v0puVCH7ezc5nmHP4Hkm+dhCfbruGG
+	 iY4Bvw0MniR+ogC3quGWR3PHp6bIwR4N/fPmI+mvSTmzvWg0LOnnx9y/66xWrvZ9L5
+	 OY/iTN4UZqIzrPJ8sjLJXn1bj08zUIJ/kqzBi1+dloZZiyyVzHToRx93UqNqUoJm33
+	 CzVFWev/mBxmkVleSrCBeg/RySzOMSyoFARHBnaxOrQM1pqMQAjQG7nVDh8l9+Sppk
+	 v4/BwCWRi13yJzSJcXIta8RfpYm0VwUhoOOlRDMWgsM5jDY4VOYM3oviekJzjdn297
+	 33KYFPJo9x+gA==
+Message-ID: <96bced8e-7e47-4db9-9674-be1f3138d608@kernel.org>
+Date: Sat, 30 Aug 2025 11:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829010324.15595-1-jefflessard3@gmail.com>
-In-Reply-To: <20250829010324.15595-1-jefflessard3@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 12:15:23 +0300
-X-Gm-Features: Ac12FXwVYX6_QmTb_9V6PmqXP6kE5VSVEOYLzIX_7sRnLLzSVY461Jeb42eGx1s
-Message-ID: <CAHp75VdF=_LQbHJozUGExCmDd4UW4oJ0-deT=aEdnQjCOotsVA@mail.gmail.com>
-Subject: Re: [RFC PATCH] auxdisplay: line-display: support attribute
- attachment to existing device
-To: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] clk: samsung: exynos990: Fix PLL mux regs, add
+ DPU/CMUREF
+To: Denzeel Oliva <wachiturroxd150@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250825-cmu-top-v4-0-71d783680529@gmail.com>
+ <20250825-cmu-top-v4-4-71d783680529@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250825-cmu-top-v4-4-71d783680529@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 4:03=E2=80=AFAM Jean-Fran=C3=A7ois Lessard
-<jefflessard3@gmail.com> wrote:
->
-> Modernize the line-display core library:
-> - Add the ability to attach line-display's sysfs attribute group directly
->   to an existing parent device (not only via a child device) using
->   device_add_groups(), allowing coherent integration with subsystems like
->   the LED class.
-> - Implement a global linedisp_attachment mapping for unified and race-fre=
-e
->   attribute access, context lookup, and cleanup, shared between
->   traditional register/unregister and new attach/detach paths.
-> - Modify sysfs attribute accessors to retrieve context using a consistent
->   to_linedisp() mechanism.
-> - Add a new num_chars read-only attribute reporting the number of display
->   digits to allow static non-scrolling message from userspace.
-> - Ensures thread safety and proper list removal for all attachments
->   operations.
+On 25/08/2025 07:51, Denzeel Oliva wrote:
+> Switch PLL muxes to PLL_CON0 to correct parent selection and
+> clock rates. Add DPU_BUS and CMUREF mux/div and their register
+> hooks and parents.
+> 
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos990.c | 97 ++++++++++++++++++++++++-------------
+>  1 file changed, 63 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index 9fcdad7cc..d1135708c 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -45,6 +45,7 @@
+>  #define PLL_CON3_PLL_SHARED3				0x024c
+>  #define PLL_CON0_PLL_SHARED4				0x0280
+>  #define PLL_CON3_PLL_SHARED4				0x028c
+> +#define CLK_CON_MUX_CLKCMU_DPU_BUS			0x1000
+>  #define CLK_CON_MUX_MUX_CLKCMU_APM_BUS			0x1004
+>  #define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU			0x1008
+>  #define CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS			0x100c
+> @@ -103,6 +104,8 @@
+>  #define CLK_CON_MUX_MUX_CLKCMU_SSP_BUS			0x10e0
+>  #define CLK_CON_MUX_MUX_CLKCMU_TNR_BUS			0x10e4
+>  #define CLK_CON_MUX_MUX_CLKCMU_VRA_BUS			0x10e8
+> +#define CLK_CON_MUX_MUX_CLK_CMU_CMUREF			0x10f0
+> +#define CLK_CON_MUX_MUX_CMU_CMUREF			0x10f4
+>  #define CLK_CON_DIV_CLKCMU_APM_BUS			0x1800
+>  #define CLK_CON_DIV_CLKCMU_AUD_CPU			0x1804
+>  #define CLK_CON_DIV_CLKCMU_BUS0_BUS			0x1808
+> @@ -162,6 +165,7 @@
+>  #define CLK_CON_DIV_CLKCMU_VRA_BUS			0x18e0
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU			0x18e8
+>  #define CLK_CON_DIV_DIV_CLKCMU_DPU_ALT			0x18ec
+> +#define CLK_CON_DIV_DIV_CLK_CMU_CMUREF			0x18f0
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV2			0x18f4
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV3			0x18f8
+>  #define CLK_CON_DIV_PLL_SHARED0_DIV4			0x18fc
+> @@ -239,13 +243,21 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	PLL_LOCKTIME_PLL_SHARED2,
+>  	PLL_LOCKTIME_PLL_SHARED3,
+>  	PLL_LOCKTIME_PLL_SHARED4,
+> +	PLL_CON0_PLL_G3D,
+>  	PLL_CON3_PLL_G3D,
+> +	PLL_CON0_PLL_MMC,
+>  	PLL_CON3_PLL_MMC,
+> +	PLL_CON0_PLL_SHARED0,
+>  	PLL_CON3_PLL_SHARED0,
+> +	PLL_CON0_PLL_SHARED1,
+>  	PLL_CON3_PLL_SHARED1,
+> +	PLL_CON0_PLL_SHARED2,
+>  	PLL_CON3_PLL_SHARED2,
+> +	PLL_CON0_PLL_SHARED3,
+>  	PLL_CON3_PLL_SHARED3,
+> +	PLL_CON0_PLL_SHARED4,
+>  	PLL_CON3_PLL_SHARED4,
+> +	CLK_CON_MUX_CLKCMU_DPU_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
+>  	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
+> @@ -304,6 +316,8 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_MUX_MUX_CLKCMU_SSP_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_TNR_BUS,
+>  	CLK_CON_MUX_MUX_CLKCMU_VRA_BUS,
+> +	CLK_CON_MUX_MUX_CLK_CMU_CMUREF,
+> +	CLK_CON_MUX_MUX_CMU_CMUREF,
+>  	CLK_CON_DIV_CLKCMU_APM_BUS,
+>  	CLK_CON_DIV_CLKCMU_AUD_CPU,
+>  	CLK_CON_DIV_CLKCMU_BUS0_BUS,
+> @@ -363,6 +377,7 @@ static const unsigned long top_clk_regs[] __initconst = {
+>  	CLK_CON_DIV_CLKCMU_VRA_BUS,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU,
+>  	CLK_CON_DIV_DIV_CLKCMU_DPU_ALT,
+> +	CLK_CON_DIV_DIV_CLK_CMU_CMUREF,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV2,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV3,
+>  	CLK_CON_DIV_PLL_SHARED0_DIV4,
+> @@ -458,6 +473,8 @@ PNAME(mout_pll_shared3_p)		= { "oscclk", "fout_shared3_pll" };
+>  PNAME(mout_pll_shared4_p)		= { "oscclk", "fout_shared4_pll" };
+>  PNAME(mout_pll_mmc_p)			= { "oscclk", "fout_mmc_pll" };
+>  PNAME(mout_pll_g3d_p)			= { "oscclk", "fout_g3d_pll" };
+> +PNAME(mout_cmu_dpu_bus_p)		= { "dout_cmu_dpu",
+> +					    "dout_cmu_dpu_alt" };
+>  PNAME(mout_cmu_apm_bus_p)		= { "dout_cmu_shared0_div2",
+>  					    "dout_cmu_shared2_div2" };
+>  PNAME(mout_cmu_aud_cpu_p)		= { "dout_cmu_shared0_div2",
+> @@ -507,7 +524,7 @@ PNAME(mout_cmu_cpucl0_switch_p)		= { "fout_shared4_pll",
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> -PNAME(mout_cmu_cpucl1_switch_p)	= { "fout_shared4_pll",
+> +PNAME(mout_cmu_cpucl1_switch_p)		= { "fout_shared4_pll",
 
-Thanks for working on this, can you split it into 5 patches?
-More comments below.
 
-> Backwards compatibility with existing users is maintained, while enabling
-> uniform n-segment sysfs API and richer information for integrated drivers=
-.
+I don't understand this change.
 
-...
+>  					    "dout_cmu_shared0_div2",
+>  					    "fout_shared2_pll",
+>  					    "dout_cmu_shared0_div4" };
+> @@ -577,7 +594,7 @@ PNAME(mout_cmu_hsi1_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div3",
+>  					    "dout_cmu_shared2_div2",
+>  					    "fout_mmc_pll", "oscclk", "oscclk" };
+> -PNAME(mout_cmu_hsi1_mmc_card_p)	= { "oscclk", "fout_shared2_pll",
+> +PNAME(mout_cmu_hsi1_mmc_card_p)		= { "oscclk", "fout_shared2_pll",
 
-> -#include <linux/container_of.h>
-> +#include <linux/list.h>
+Neither this, looks like you changed nothing here.
 
-Keep it ordered.
+>  					    "fout_mmc_pll",
+>  					    "dout_cmu_shared0_div4" };
+>  PNAME(mout_cmu_hsi1_pcie_p)		= { "oscclk", "fout_shared2_pll" };
+> @@ -672,6 +689,12 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  					    "dout_cmu_shared4_div2",
+>  					    "dout_cmu_shared0_div4",
+>  					    "dout_cmu_shared4_div3" };
+> +PNAME(mout_cmu_cmuref_p)		= { "oscclk",
+> +					    "dout_cmu_clk_cmuref" };
+> +PNAME(mout_cmu_clk_cmuref_p)		= { "dout_cmu_shared0_div4",
+> +					    "dout_cmu_shared1_div4",
+> +					    "dout_cmu_shared2_div2",
+> +					    "oscclk" };
+>  
+>  /*
+>   * Register name to clock name mangling strategy used in this file
+> @@ -689,19 +712,21 @@ PNAME(mout_cmu_vra_bus_p)		= { "dout_cmu_shared0_div3",
+>  
+>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	MUX(CLK_MOUT_PLL_SHARED0, "mout_pll_shared0", mout_pll_shared0_p,
+> -	    PLL_CON3_PLL_SHARED0, 4, 1),
+> +	    PLL_CON0_PLL_SHARED0, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED1, "mout_pll_shared1", mout_pll_shared1_p,
+> -	    PLL_CON3_PLL_SHARED1, 4, 1),
+> +	    PLL_CON0_PLL_SHARED1, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED2, "mout_pll_shared2", mout_pll_shared2_p,
+> -	    PLL_CON3_PLL_SHARED2, 4, 1),
+> +	    PLL_CON0_PLL_SHARED2, 4, 1),
+>  	MUX(CLK_MOUT_PLL_SHARED3, "mout_pll_shared3", mout_pll_shared3_p,
+> -	    PLL_CON3_PLL_SHARED3, 4, 1),
+> +	    PLL_CON0_PLL_SHARED3, 4, 1),
 
-...
+This looks like fix, so shuold be sent separately with Fixes tag.
 
-> +static const struct device_type linedisp_type;
+>  	MUX(CLK_MOUT_PLL_SHARED4, "mout_pll_shared4", mout_pll_shared4_p,
+>  	    PLL_CON0_PLL_SHARED4, 4, 1),
+>  	MUX(CLK_MOUT_PLL_MMC, "mout_pll_mmc", mout_pll_mmc_p,
+>  	    PLL_CON0_PLL_MMC, 4, 1),
+>  	MUX(CLK_MOUT_PLL_G3D, "mout_pll_g3d", mout_pll_g3d_p,
+>  	    PLL_CON0_PLL_G3D, 4, 1),
+> +	MUX(CLK_MOUT_CMU_DPU_BUS, "mout_cmu_dpu_bus",
+> +	    mout_cmu_dpu_bus_p, CLK_CON_MUX_CLKCMU_DPU_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_APM_BUS, "mout_cmu_apm_bus",
+>  	    mout_cmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
+>  	MUX(CLK_MOUT_CMU_AUD_CPU, "mout_cmu_aud_cpu",
+> @@ -830,37 +855,13 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+>  	    mout_cmu_tnr_bus_p, CLK_CON_MUX_MUX_CLKCMU_TNR_BUS, 0, 3),
+>  	MUX(CLK_MOUT_CMU_VRA_BUS, "mout_cmu_vra_bus",
+>  	    mout_cmu_vra_bus_p, CLK_CON_MUX_MUX_CLKCMU_VRA_BUS, 0, 2),
+> +	MUX(CLK_MOUT_CMU_CMUREF, "mout_cmu_cmuref",
+> +	    mout_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
+> +	MUX(CLK_MOUT_CMU_CLK_CMUREF, "mout_cmu_clk_cmuref",
+> +	    mout_cmu_clk_cmuref_p, CLK_CON_MUX_MUX_CLK_CMU_CMUREF, 0, 2),
+>  };
+>  
+>  static const struct samsung_div_clock top_div_clks[] __initconst = {
+> -	/* SHARED0 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV2, "dout_cmu_shared0_div2", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV3, "dout_cmu_shared0_div3", "mout_pll_shared0",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED0_DIV4, "dout_cmu_shared0_div4", "dout_cmu_shared0_div2",
+> -	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
 
-Why? I don't see the use of this in the nearest below blocks of code.
-Can you move it closer to the first user so we can see the point?
+And this is not really explained in the commit msg.
 
-...
+> -
+> -	/* SHARED1 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV2, "dout_cmu_shared1_div2", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV3, "dout_cmu_shared1_div3", "mout_pll_shared1",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED1_DIV4, "dout_cmu_shared1_div4", "dout_cmu_shared1_div2",
+> -	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+> -
+> -	/* SHARED2 region */
+> -	DIV(CLK_DOUT_CMU_SHARED2_DIV2, "dout_cmu_shared2_div2", "mout_pll_shared2",
+> -	    CLK_CON_DIV_PLL_SHARED2_DIV2, 0, 1),
+> -
+> -	/* SHARED4 region*/
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV2, "dout_cmu_shared4_div2", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV2, 0, 1),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV3, "dout_cmu_shared4_div3", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV3, 0, 2),
+> -	DIV(CLK_DOUT_CMU_SHARED4_DIV4, "dout_cmu_shared4_div4", "mout_pll_shared4",
+> -	    CLK_CON_DIV_PLL_SHARED4_DIV4, 0, 1),
+> -
+>  	DIV(CLK_DOUT_CMU_APM_BUS, "dout_cmu_apm_bus", "gout_cmu_apm_bus",
+>  	    CLK_CON_DIV_CLKCMU_APM_BUS, 0, 2),
+>  	DIV(CLK_DOUT_CMU_AUD_CPU, "dout_cmu_aud_cpu", "gout_cmu_aud_cpu",
+> @@ -974,6 +975,34 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
+>  	    CLK_CON_DIV_CLKCMU_VRA_BUS, 0, 4),
+>  	DIV(CLK_DOUT_CMU_DPU, "dout_cmu_dpu", "gout_cmu_dpu",
+>  	    CLK_CON_DIV_DIV_CLKCMU_DPU, 0, 3),
+> +	DIV(CLK_DOUT_CMU_DPU_ALT, "dout_cmu_dpu_alt", "gout_cmu_dpu_bus",
+> +	    CLK_CON_DIV_DIV_CLKCMU_DPU_ALT, 0, 4),
+> +	DIV(CLK_DOUT_CMU_CLK_CMUREF, "dout_cmu_clk_cmuref", "mout_cmu_clk_cmuref",
+> +	    CLK_CON_DIV_DIV_CLK_CMU_CMUREF, 0, 2),
 
-> +       scoped_guard(spinlock, &linedisp_attachments_lock) {
-> +               list_add(&attachment->list, &linedisp_attachments);
-> +       }
 
-{} are not needed (same rule as with for-loop of if condition with one line=
-r).
-
-> +       return 0;
-
-But in this case you can simply use guard()().
-
-...
-
-> +static struct linedisp *delete_attachment(struct device *dev, bool owns_=
-device)
-> +{
-> +       struct linedisp_attachment *attachment, *tmp;
-> +       struct linedisp *linedisp =3D NULL;
-> +
-> +       scoped_guard(spinlock, &linedisp_attachments_lock) {
-
-Use guard()() and drop NULL assignment.
-
-> +               list_for_each_entry_safe(attachment, tmp, &linedisp_attac=
-hments, list) {
-> +                       if (attachment->device =3D=3D dev &&
-> +                           attachment->owns_device =3D=3D owns_device) {
-> +                               linedisp =3D attachment->linedisp;
-> +                               list_del(&attachment->list);
-> +                               kfree(attachment);
-> +                               break;
-> +                       }
-> +               }
-> +       }
-> +
-> +       return linedisp;
-> +}
-
-...
-
-> +static struct linedisp *to_linedisp(struct device *dev)
-
-As per above.
-
-...
-
->  static struct attribute *linedisp_attrs[] =3D {
->         &dev_attr_message.attr,
->         &dev_attr_scroll_step_ms.attr,
-> +       &dev_attr_num_chars.attr,
-
-This needs a Documentation update for a new ABI.
-
->         &dev_attr_map_seg7.attr,
->         &dev_attr_map_seg14.attr,
->         NULL
-> };
-
-...
-
-> +int linedisp_attach(struct linedisp *linedisp, struct device *dev,
-> +                   unsigned int num_chars, const struct linedisp_ops *op=
-s)
-> +{
-> +       int err;
-> +
-> +       memset(linedisp, 0, sizeof(*linedisp));
-> +       linedisp->ops =3D ops;
-> +       linedisp->num_chars =3D num_chars;
-> +       linedisp->scroll_rate =3D DEFAULT_SCROLL_RATE;
-
-> +       err =3D -ENOMEM;
-> +       linedisp->buf =3D kzalloc(linedisp->num_chars, GFP_KERNEL);
-> +       if (!linedisp->buf)
-> +               return err;
-
-You can simply return -ENOMEM without initial assignment.
-
-> +       /* initialise a character mapping, if required */
-> +       err =3D linedisp_init_map(linedisp);
-> +       if (err)
-> +               goto out_free_buf;
-
-The __free() can be used instead, but for uniform handling it's
-probably not needed here.
-
-> +       /* initialise a timer for scrolling the message */
-> +       timer_setup(&linedisp->timer, linedisp_scroll, 0);
-> +
-> +       err =3D create_attachment(dev, linedisp, false);
-> +       if (err)
-> +               goto out_del_timer;
-> +
-> +       /* add attribute groups to target device */
-> +       err =3D device_add_groups(dev, linedisp_groups);
-> +       if (err)
-> +               goto out_del_attach;
-> +
-> +       /* display a default message */
-> +       err =3D linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
-> +       if (err)
-> +               goto out_rem_groups;
-> +
-> +       return 0;
-> +
-> +out_rem_groups:
-> +       device_remove_groups(dev, linedisp_groups);
-> +out_del_attach:
-> +       delete_attachment(dev, false);
-> +out_del_timer:
-> +       timer_delete_sync(&linedisp->timer);
-> +out_free_buf:
-> +       kfree(linedisp->buf);
-> +       return err;
-> +}
-
---=20
-With Best Regards,
-Andy Shevchenko
+Best regards,
+Krzysztof
 
