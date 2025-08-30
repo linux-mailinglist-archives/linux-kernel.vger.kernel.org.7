@@ -1,194 +1,171 @@
-Return-Path: <linux-kernel+bounces-792597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5045B3C655
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CD2B3C65A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D97D7B6C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEAA1C82C40
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0911C4A10;
-	Sat, 30 Aug 2025 00:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF1E1C4A10;
+	Sat, 30 Aug 2025 00:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSxG71Tt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="hN0o17U2"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8285C13C8E8;
-	Sat, 30 Aug 2025 00:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AF16DC28;
+	Sat, 30 Aug 2025 00:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514258; cv=none; b=O8i9JPKqoBOeowrL2g18wfSVhXeNQ2u2nxPrT+IOmRtLZPgZ5rD6ZJOOhmBDt+yRTKhqmG4xepQmADn6XGMh2dTm3fqiYsw+qYSaSs0bnEXImf+AvDeSz8HHFkH9ZL6Z+iIsbLRQ9wu7S2yWJh90uwlKHKU0pWlzOBBUlxwAuuQ=
+	t=1756514403; cv=none; b=uV4bMoUuTi6NL/5mIt0uABV2UVX5m4lE/4jOYYE81dg9D7b/7GAUDsj9R27wFHV33c30MH4dQkiO2kfoTx6FDkVCisJMO8/4NSAsVDu2ZQCh/xhOMapV+5KyOA9IYlkmEKIs7YFMxVzNDcMtpgqsOFuM2Gy9nQJqWuvv9wB1GCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514258; c=relaxed/simple;
-	bh=HMCOQtzivHiTO3zCuyHVTmWCo/Ogwr//9Ur73b26dG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RV2+Cep5aL1nzRGZWUcNMRmElwwpuhPq1iZUAJxI21JcHcDxzL4qoc/kyJfkvBGpFhOZ8ClNAfnAp7ML6JuZI3z15iqgt4+KTc54jYEc+WcRAKTBRbmGIZqCzWtAE7Ng9g/Z0ufdTUyZVRVhA1OlxCoFBRQ93Nz4LAP27GGsFB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSxG71Tt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49349C4CEF0;
-	Sat, 30 Aug 2025 00:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756514258;
-	bh=HMCOQtzivHiTO3zCuyHVTmWCo/Ogwr//9Ur73b26dG4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BSxG71Tt2X926rt5kXac1VAcECWix/2D8gUhC4pS5CUSSsUzl+L5s+McIBGjpQfOa
-	 W4ESX9v7oYunpR1DPDGxBntRdBgu6vhSlswWkfnzNb0yyyx3Od70qAsSlsu9GYRKvN
-	 MAQ2kEdR9N8V1xiYVx2OZ/4ktThVjGSeBPeTyOvkkxeZNvIpIJF0AyXYlsGXqYDqbj
-	 dbZ2vEdklIZ+j1hjuH37kTwon4wTBrEt+JBiwOuTR+sAusnOOFjY3A/BhsSGFDQFQT
-	 vnseaMW1MpuVXOYh/OABeA/39iuV/owaoOT0Wi/WH1D0OG7FVlgLRjYXYqp5PwUG6A
-	 MOXNjNcTgbLlA==
-Message-ID: <7f3c9c65-2386-4198-ae38-5b9444319ec2@kernel.org>
-Date: Sat, 30 Aug 2025 09:37:33 +0900
+	s=arc-20240116; t=1756514403; c=relaxed/simple;
+	bh=Xu4md5W2KAitNczbTbZNIQ5xByjHoGQUNmfu+IxPf/c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mWfF8gTZIYVQ8qwqGZpasLI7G2ajxMp9o+3nT2uc7hjWJyKzYCK3ic1gIxX733d8qFA0LlqAY97lHJGjlsXYpv5sB7/PGZNpayJY1Vcgs+l03gMAB69TTCJCBa3qF+czhqpTS7OgS+aLvz5faOws3QVZrbkRs4QqLrKk39f9yPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=hN0o17U2; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57U0UIKo021614;
+	Fri, 29 Aug 2025 20:39:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=/+THuAkQ461LskLsz1dD9sUbRFB
+	8JwICV5e2YPYn1bc=; b=hN0o17U2yk1N/B2l9Vle+eGET9nOZ0LAUUDTAcNe7it
+	C8ZnRrhn0gVIWrI/Nga12cIX0ZjsQh34RZ3r6tqrW8B7LooYgGh133lkX1Wo4tGL
+	IXLg74LO99gR7h+NtbGei3QgoDPkY4R7r/4SoEQE+Bt+yvfpwdyJJJqno3YmXYC3
+	H41iKuPzKyqK72ODjnodDA+e2vdz5WZrElKd3PsZN3aEGF8AoATaOheEbVDVPyN2
+	tvuisz5tbLBQw4UIPN4nMTHo7Zwjy+Fu3TaS8ENiUaxjMI+ZOEyPVzn3fUMUV3Sl
+	CbEkOpsjS1hnzV76ej2LYbVbi0dd6CD9D4qjCMXwx5Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagcgk8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:39:54 -0400 (EDT)
+Received: from m0167089.ppops.net (m0167089.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57U0drEb031345;
+	Fri, 29 Aug 2025 20:39:53 -0400
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 48rmagcgk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 29 Aug 2025 20:39:53 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 57U0dqTY040824
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 29 Aug 2025 20:39:52 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 29 Aug
+ 2025 20:39:52 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 29 Aug 2025 20:39:52 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57U0dTGl004731;
+	Fri, 29 Aug 2025 20:39:31 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>
+CC: <jic23@kernel.org>, <Michael.Hennerich@analog.com>, <nuno.sa@analog.com>,
+        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
+        <corbet@lwn.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <broonie@kernel.org>,
+        <Jonathan.Cameron@huawei.com>, <andriy.shevchenko@linux.intel.com>,
+        <ahaslam@baylibre.com>, <marcelo.schmitt1@gmail.com>
+Subject: [PATCH 00/15] Add SPI offload support to AD4030
+Date: Fri, 29 Aug 2025 21:39:27 -0300
+Message-ID: <cover.1756511030.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 01/10] block: factor out a helper
- bio_submit_split_bioset()
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
- josef@toxicpanda.com, song@kernel.org, neil@brown.name,
- akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, tieren@fnnas.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
- <20250828065733.556341-2-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250828065733.556341-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDA3NSBTYWx0ZWRfX9GCNyaT/kwpr
+ jswSV5HZNyg9B3vOOhwxn5kC0hUTt151BVP8QGAXlqf5308DBB7/indfWRfmXj2sL0W8a7eEN/f
+ ++5boUMAcnQXYZqZT/I8yTsAi/wMjb7+wXVJyCqaXICL2dy+0FJ0v5h+u6g4XJpy6GVUpfWhbvW
+ blu2DtsGJ0j0fQrjCf4rcxbFrzomEqdtp6lHea8N1BzYv6LIK2HOMPX5jT8WQGZvQwFgT9HlpXY
+ 3W7G5dfciRACr+1dIB7n9KD1uQBiDaHJ9Rl3zLNxGT2PYHG61s9PJmtNALnr5cxURJU1UoNrNnt
+ ERfHXy+/DzGr44WOzrHgYaUp/SQjvnEgiBH3YAJW8p6go26WsOCIbuHXVBqTNgw1P6PrF0KZ8r3
+ pM6BPXr+
+X-Proofpoint-ORIG-GUID: vnhgSk-0bhPY8_9PERRUhgXyUuHi1bA_
+X-Proofpoint-GUID: agHDen-nj-zmZc1wNguW8NxUIoEVFZoS
+X-Authority-Analysis: v=2.4 cv=AoXu3P9P c=1 sm=1 tr=0 ts=68b2485a cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=2OwXVqhp2XgA:10 a=5tJJNpAVUjWtunKr7TIA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_07,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1011
+ adultscore=0 bulkscore=0 phishscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250075
 
-On 8/28/25 15:57, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> No functional changes are intended, some drivers like mdraid will split
-> bio by internal processing, prepare to unify bio split codes.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Hello,
 
-Looks good to me. A few nits below.
+This patch series add support for high sample rate data acquisition with AD4030
+and similar devices. The last couple patches in the series add support for
+ADAQ4216 and ADAQ4224 which are similar to AD4030, but have a PGA in front of
+the ADC input.
 
-> ---
->  block/blk-merge.c      | 63 ++++++++++++++++++++++++++++--------------
->  include/linux/blkdev.h |  2 ++
->  2 files changed, 44 insertions(+), 21 deletions(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 70d704615be5..3d6dc9cc4f61 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -104,34 +104,55 @@ static unsigned int bio_allowed_max_sectors(const struct queue_limits *lim)
->  	return round_down(UINT_MAX, lim->logical_block_size) >> SECTOR_SHIFT;
->  }
->  
-> +/**
-> + * bio_submit_split_bioset - Submit a bio, splitting it at a designated sector
-> + * @bio:		the original bio to be submitted and split
-> + * @split_sectors:	the sector count at which to split
-> + * @bs:			the bio set used for allocating the new split bio
-> + *
-> + * The original bio is modified to contain the remaining sectors and submitted.
-> + * The caller is responsible for submitting the returned bio.
-> + *
-> + * If succeed, the newly allocated bio representing the initial part will be
-> + * returned, on failure NULL will be returned and original bio will fail.
-> + */
-> +struct bio *bio_submit_split_bioset(struct bio *bio, int split_sectors,
-> +				    struct bio_set *bs)
+Most of the code is for SPI offload support is based on work from Sergiu
+Cuciurean, Nuno Sa, Axel Haslam, and Trevor Gamblin. Thus, the SPI offload and
+related patches come with many co-developed-by tags. I also draw inspiration
+from other drivers supporting SPI offload, many of them written by David Lechner.
 
-While at it, it would be nice to have split_sectors be unsigned. That would
-avoid the check in bio_submit_split().
+The patches to the SPI subsystem are from Axel Haslam and I only signed them to
+indicate I'm moving them forward.
 
-> +{
-> +	struct bio *split = bio_split(bio, split_sectors, GFP_NOIO, bs);
-> +
-> +	if (IS_ERR(split)) {
-> +		bio->bi_status = errno_to_blk_status(PTR_ERR(split));
-> +		bio_endio(bio);
-> +		return NULL;
-> +	}
-> +
-> +	blkcg_bio_issue_init(split);
-> +	bio_chain(split, bio);
-> +	trace_block_split(split, bio->bi_iter.bi_sector);
-> +	WARN_ON_ONCE(bio_zone_write_plugging(bio));
-> +	submit_bio_noacct(bio);
-> +
-> +	return split;
-> +}
-> +EXPORT_SYMBOL_GPL(bio_submit_split_bioset);
-> +
->  static struct bio *bio_submit_split(struct bio *bio, int split_sectors)
->  {
-> -	if (unlikely(split_sectors < 0))
-> -		goto error;
-> +	if (unlikely(split_sectors < 0)) {
-> +		bio->bi_status = errno_to_blk_status(split_sectors);
-> +		bio_endio(bio);
-> +		return NULL;
-> +	}
+The patches with updates to device tree are introduced before the patches that
+use each specific change.
 
-See above.
+ADAQ PGA device tree doc and driver handling was inspired on AD7191 dt-binding
+and driver.
 
->  
->  	if (split_sectors) {
-> -		struct bio *split;
-> -
-> -		split = bio_split(bio, split_sectors, GFP_NOIO,
-> -				&bio->bi_bdev->bd_disk->bio_split);
-> -		if (IS_ERR(split)) {
-> -			split_sectors = PTR_ERR(split);
-> -			goto error;
-> -		}
-> -		split->bi_opf |= REQ_NOMERGE;
-> -		blkcg_bio_issue_init(split);
-> -		bio_chain(split, bio);
-> -		trace_block_split(split, bio->bi_iter.bi_sector);
-> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
-> -		submit_bio_noacct(bio);
-> -		return split;
-> +		bio = bio_submit_split_bioset(bio, split_sectors,
-> +					 &bio->bi_bdev->bd_disk->bio_split);
-> +		if (bio)
-> +			bio->bi_opf |= REQ_NOMERGE;
-
-I think that setting REQ_NOMERGE should be done in bio_submit_split_bioset().
-
->  	}
->  
->  	return bio;
-> -error:
-> -	bio->bi_status = errno_to_blk_status(split_sectors);
-> -	bio_endio(bio);
-> -	return NULL;
->  }
->  
->  struct bio *bio_split_discard(struct bio *bio, const struct queue_limits *lim,
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index fe1797bbec42..be4b3adf3989 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -999,6 +999,8 @@ extern int blk_register_queue(struct gendisk *disk);
->  extern void blk_unregister_queue(struct gendisk *disk);
->  void submit_bio_noacct(struct bio *bio);
->  struct bio *bio_split_to_limits(struct bio *bio);
-> +struct bio *bio_submit_split_bioset(struct bio *bio, int split_sectors,
-> +				    struct bio_set *bs);
->  
->  extern int blk_lld_busy(struct request_queue *q);
->  extern int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags);
+The code was tested on a remote setup with ADAQ4216 connected to a ZedBoard
+running Linux kernel 6.17.0-rc1 built from IIO tree testing branch.
 
 
+Axel Haslam (2):
+  spi: offload: types: add offset parameter
+  spi: spi-offload-trigger-pwm: Use duty offset
+
+Marcelo Schmitt (13):
+  iio: adc: ad4030: Fix _scale for when oversampling is enabled
+  dt-bindings: iio: adc: adi,ad4030: Reference spi-peripheral-props
+  Documentation: iio: ad4030: Add double PWM SPI offload doc
+  dt-bindings: iio: adc: adi,ad4030: Add PWM
+  iio: adc: ad4030: Add SPI offload support
+  dt-bindings: iio: adc: adi,ad4030: Add 4-lane per channel bus width
+    option
+  iio: adc: ad4030: Support multiple data lanes per channel
+  dt-bindings: iio: adc: adi,ad4030: Add adi,clock-mode
+  iio: adc: ad4030: Add clock mode option parse and setup
+  dt-bindings: iio: adc: adi,ad4030: Add adi,dual-data-rate
+  iio: adc: ad4030: Enable dual data rate
+  dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216 and ADAQ4224
+  iio: adc: ad4030: Add support for ADAQ4216 and ADAQ4224
+
+ .../bindings/iio/adc/adi,ad4030.yaml          |  86 ++-
+ Documentation/iio/ad4030.rst                  |  29 +
+ drivers/iio/adc/Kconfig                       |   2 +
+ drivers/iio/adc/ad4030.c                      | 704 +++++++++++++++++-
+ drivers/spi/spi-offload-trigger-pwm.c         |   5 +-
+ include/linux/spi/offload/types.h             |   1 +
+ 6 files changed, 792 insertions(+), 35 deletions(-)
+
+
+base-commit: 91812d3843409c235f336f32f1c37ddc790f1e03
 -- 
-Damien Le Moal
-Western Digital Research
+2.39.2
+
 
