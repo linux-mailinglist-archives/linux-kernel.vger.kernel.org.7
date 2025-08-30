@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-792927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52780B3CA8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778AAB3CA91
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A5A1C21877
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:29:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC8567420
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D631E26FD9D;
-	Sat, 30 Aug 2025 11:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A6625FA2C;
+	Sat, 30 Aug 2025 11:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RyNjVKTn"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZV9ZUe65"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731D625FA2C
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE98317A300;
+	Sat, 30 Aug 2025 11:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756553362; cv=none; b=GmQtGJX3z09uhfDQjP7+lwjQDPvtuJMNiKPcN4Mk53Gf3FeX+toOryo0UN5Y6j4+CShBnfx6KxwIv7HqBx0IP+yX3Tu0VndKmXFUDBe77SA9vln3jB6AGEBaddbpQxuPecnEoe2Hhy5Kkd3mXEGDzM93RiehlEHZYpgkw6V7+P0=
+	t=1756553394; cv=none; b=epB9v7a9bmw0pXkagxK8gxnzxLW7TTeO/TpfzC67pNCeqodQsug1sGdyqY1IxflkdaXdVAgN9dkUkmzcA/w78SJunSydFdoPk4v1Q5YS++T9WpQh/eyGCle0OcV3lKSMhk8q4Clo4PT49SNe1OwKcYdQEofygiXLTIRKo5bltY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756553362; c=relaxed/simple;
-	bh=MEIKQClUViPg7Ze3mAk4LZ/4ncPdqmvZTMfe39UVozo=;
+	s=arc-20240116; t=1756553394; c=relaxed/simple;
+	bh=G9X+ffv/pVcjrMDC06/3UHjT65P3tPJoMxHTyYH5hdY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D+zDZ6o5OtWehze53Flkr5zPSDipJOIAQc7BO9r/9F8F5RSRE1pkWtQlUbKHOsBOPMtvMuSO7ESJ4xNBK7lU32RKHuOUPZJ8D5UGbxylspAI+inO+w4uCwbhM41ubTuDrlUigSpuUwv+jJSKobzTrA7cysZpUgendEil4AFgcyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RyNjVKTn; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b83ae1734so6281265e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:29:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=F4jfoMWSy1QA/ro7THKM/djRFEND5uJtwzTaSbzbSGdoQnVgr8SjHCZa7ZG1+32tE8oMhkXwmZTcmtTL6VpmDtrs9EKTPmuiWti1YhwXwRwCLUdW3xXne7DIR055eDWAGkX3im2oanX7+8lRd+k1wkQJkNmMP1uzbyOGJVFvZbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZV9ZUe65; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6f434c96so681858e87.2;
+        Sat, 30 Aug 2025 04:29:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756553359; x=1757158159; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1756553391; x=1757158191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uueiXNXZTNf1xQdqp2NNONyv03FSw+XsD3EN6MNABTs=;
-        b=RyNjVKTnnGL7uMc1i7QELhx7LXQnAa8swQMUZ5vakbxuDcmV7qQ2opUnApGP+KwiwH
-         jUGv50dALnWI8Cz2EwFYTOZjyjkatadOEMYJUDKo3myedezXbWIatgdmkvo7eEJLr7mh
-         CpwbYkMTpqiCQiU74d1KOrSbx1fxRj8iMAEzIASn12G3wApJh3KmQkcDcuYxOYL26Ai7
-         Rx5Vb9gLmxXYeAvcFNYNGfO5eAaHd2e8mVXPXxOwgpeWyW7KFC3atD1nXiH6p9iM26X3
-         kAW9HfatLRe2a/S6yU0DVMOEN3j6MY7MhduCtBSW4WsQ+Gn4ukV8UInp/3CZs0qKGNSe
-         Js+w==
+        bh=v3KSsLeobgU/k77KRTAU66n9zoHgmSXJF/tcqQ0GS4Y=;
+        b=ZV9ZUe65ZgbJuLST7x2cdYGx8GW48ZnZmdZIYR//iy9WfVu0m+NqXbXhQ0Ofv5f1tj
+         cBJmxHj+ULmigyhwvBOgk/Fb4bAuLTwqVBbCXWlHOVHazSYZjgXTaf7VCQuidTL3yYvB
+         p3p+3GgcLm2AznFU8f/nIcyw/2mUToahdcajn8d25R+BEiaA+dXwFIwp3lzhuzbplsaz
+         /CPlXKMY2BxZBbsF0kqBksyyHktSYFfCbZpmNWin9PdAQiEs4C05UwxYyOiFv2Ejka/f
+         8HX1Pb5DaOWDy4R8EgpHpMe+hEEDKqL0UU1fkPzZfDGhlbsrxfYSOwhemig8i9Wo9Kup
+         NHsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756553359; x=1757158159;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1756553391; x=1757158191;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uueiXNXZTNf1xQdqp2NNONyv03FSw+XsD3EN6MNABTs=;
-        b=lrWiJ5KRQS1WyR7Lg2rcKHgxoFx4Uk49rOOmoOmN8XlJE9EFEZHUwqw11S1vF79c5l
-         UtMxI7KF1QLUOL9pfkFgHe1x7zJ0/yOHrrvUP4nKJEk0tB50vkMYonhRkXV+6hoLPbgS
-         6dStaurSagfkNPXkBspTlhmodFsxumfzIfd7ZDfNEwfFHPBqDzoZLBfwDyDVd6irsPR4
-         axbX+sBsJFggMhqFCHjrmfka3Kil44CgOmcNeJd7M24G6yQlFhBncp1LcH0MA5TpPO6d
-         w0fJyX228ceBDzQroDOVvZ9UhVaJR436y/Yy1gjWZn0LrBmh28you++KzzJ36z7ib1jW
-         4weg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAadmmcnenxyEn7n23O5Yxgg95E9xcXowDi+Bb8uv/jA6q0HI7nMNe1jk6LcfYVI2bWUTSuvdiHHRnoLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhc5cJWgiJYQIcsyaGAEfCi8ltbN7jJkANgTHv8AEtC50klsfq
-	+cFB3fiJcJgO4rF3342HmrqrELapyNZ4UUG25+rDkVw4LaS7wxzVRV7Z90ty8q6YQXI=
-X-Gm-Gg: ASbGncumPs5JlbI84ySnqgeH//JRN+DMPtHjhB+aYoZLtejBcOTXKDGTYrd3sbYmaSq
-	wTkiNUCQGolxw+WTb3dD0IkLRs5bC7vxGoNzyrDLoM6olzr56sNf3fDmmO8sP2q65/5sDR8CodN
-	7ODUIMpkQJ0V8+eWOzQrK8Tksny+Ge3GMITsAio0OUfPjJ4k/7TnX/uD1Vfp2lRGonA3LRyOJcv
-	SdwueXVeoX6MmnpdD05xD7llxmNWdYd23jIdPs020MyN8bRAeNCEDuvqBHM36BK6c06jcK3Q87U
-	4IoSypivFNCYT9qmk9hV8gneA+BiX+WoSEc48+HZw/DvyU731EagjnPJOXP8GpPt6bgfp95eOQ8
-	YtrZnBuRIbub3mHdFIr0l7an1lhawrm0=
-X-Google-Smtp-Source: AGHT+IH7PPaiMEqmOZP6nRGeQaHOVjXxgYPNKD9nk3y6xLqZS0hlG/uTqTLFCXog9cpjfTh7D6DADA==
-X-Received: by 2002:a05:600c:a59c:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45b8556a7b7mr7706855e9.12.1756553358753;
-        Sat, 30 Aug 2025 04:29:18 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7d1319sm81613565e9.5.2025.08.30.04.29.17
+        bh=v3KSsLeobgU/k77KRTAU66n9zoHgmSXJF/tcqQ0GS4Y=;
+        b=CndFHscRYWKs0iESXCSuiyisHfTbxZRErKokrU094wrma729gAJXyAEH7ChuCezJEW
+         /n2Z8pL3MgQoXhZJ75FQUg/ZoagO1q1xEHkMj7X/C+Zfd1UyteGDwB96b+cwc9bzOJ3k
+         9ivL4vIWRDkbMmUYI9RQQ2/TpuQ2JY1R+rnjJ+hbBxcdvwQWO8RjXTY5umB7OXg/2LUJ
+         QCr4HGC7OnrAFBv6J5u4QIi8vKnzyCDifxqG9qhHam950EnKmCH9Fo/d+cN/X0WfpMG0
+         dDXsx905xd1GuddcUKvy2u3PJGgSiwMLE3JX13hB7lsgoSCUjamGcJ5uFwq90X2MNzP0
+         7Yqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWtd8CxPamauB180D7pWBw+4aYMJuM8W/M9nE9feyzdmD9Sxt9qESGPc5phD82nR9mjRDIJissOETBPsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaUeuWi8ajcTCWZLvSVmeotcvzq9mNQ+7M78KZvxe9kaScgDTs
+	K8xlavb16jmbDcVdSeisfqPNCXoLPypNYFkiNi4tSkFXXucjL0UYeQSecN3/slG0
+X-Gm-Gg: ASbGncsSPD2vXkE22FAq1UDmZw4OeCYlo4lpIT0r3goxNOCrulywluJ8sguhMJAtKH5
+	MvqLR05UH4f4j+R6ZG2fAPa42AKgiJCUYghFwppB50Mz4e89IxNu3G0tSDmAmOYrtrihKYBucka
+	UrHxTQA78CdKnddpV7XVW1fYQx5Dusmfa/qeLk27kcjax8InP4rFRg4YCsqDhGdZM+c11vz9U77
+	7Pdd5Sty3QBcPjDUpZOU0zYABfEwdHCT3wyg9b1BuTraxDaRo8Eo0Aouh4/vPl6qiG0tlb1Iyed
+	KETUyzOE3mlSNkOGoDj97EwpqIprq0TZNnx+aUdXtVpjr4Jucvdl3f+KXTTtB7nLhd+BCDThgLH
+	955de+k4YVk3UHdsI4tlwkIf2vfoKht2zLNybeHraMRxby2UROZu53G4c7wufOY5H1da/LHDxpA
+	==
+X-Google-Smtp-Source: AGHT+IEfnRHY68hhrQsDl3O8dbYVpHPJyZX+vMoQj9lJwxfd6v4LbPOJ0yR9HileQaNL7+lMLpTMMQ==
+X-Received: by 2002:a05:6512:660e:b0:55f:4400:f2f6 with SMTP id 2adb3069b0e04-55f70924f7bmr387952e87.42.1756553390566;
+        Sat, 30 Aug 2025 04:29:50 -0700 (PDT)
+Received: from [192.168.2.178] (109-252-159-193.dynamic.spd-mgts.ru. [109.252.159.193])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-55f677491f3sm1370847e87.58.2025.08.30.04.29.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 04:29:18 -0700 (PDT)
-Message-ID: <785d826f-232c-482f-a54c-e6baad39f502@tuxon.dev>
-Date: Sat, 30 Aug 2025 14:29:16 +0300
+        Sat, 30 Aug 2025 04:29:50 -0700 (PDT)
+Message-ID: <11ea89d2-e4f1-4c3a-a2c7-f99170781fba@gmail.com>
+Date: Sat, 30 Aug 2025 14:29:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,74 +82,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] clk: renesas: rzg2l: Disable unused clocks after
- resume
-To: Brian Masney <bmasney@redhat.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, geert+renesas@glider.be,
- linux@armlinux.org.uk, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250821080333.27049-1-claudiu.beznea.uj@bp.renesas.com>
- <aKyX4YJswZLuqA6Y@x1> <0d71269f-1c78-4732-8235-5640bf340d00@tuxon.dev>
- <aK2gE0CysSWisFwB@x1>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v2 4/4] Documentation: media: Document
+ V4L2_H264_DECODE_PARAM_FLAG_PFRAME/BFRAME
+To: Paul Kocialkowski <paulk@sys-base.io>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20250824180735.765587-1-paulk@sys-base.io>
+ <20250824180735.765587-5-paulk@sys-base.io>
+ <5065e67544ae9255b2136a6cd73cbb9ffd08e3fb.camel@collabora.com>
+ <aLG19wzWBBECU6Cs@shepard>
 Content-Language: en-US
-In-Reply-To: <aK2gE0CysSWisFwB@x1>
+From: Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <aLG19wzWBBECU6Cs@shepard>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Stephen,
+29.08.2025 17:15, Paul Kocialkowski пишет:
+>>> +      - All submitted slices for the frame are P slices. This is a compability
+>>> +        flag required for decoders that only support decoding such frames, but
+>>> +        should not be required for slice-based decoders.
+>> Seems to match the comment in Tegra driver, and related to a hardware
+>> limitation. Shall we also recommend not to use this unless similar limitation
+>> exists ?
+> I think the flag should only be allowed for frame-based decode mode and indeed
+> it would be good to say that drivers should only check this flag if they have
+> such limitations.
+> 
+> Userspace on the other hand cannot really know if it will be used or not so it
+> should set the flags when applicable.
 
-On 26.08.2025 14:52, Brian Masney wrote:
-> Hi Claudiu,
-> 
-> On Tue, Aug 26, 2025 at 02:01:56PM +0300, claudiu beznea wrote:
->> On 8/25/25 20:05, Brian Masney wrote:
->>> On Thu, Aug 21, 2025 at 11:03:30AM +0300, Claudiu wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> This series disables clocks that remain unused after resume.
->>>> This is necessary when the resume process is done with the help of the
->>>> bootloader, as the bootloader enables various clocks when returning from
->>>> resume.
->>>>
->>>> On the RZ/G3S SoC (where this series was tested), the bootloader enables
->>>> the SDHI clocks (for all SDHI modules, of which 2 are used by Linux and
->>>> 1 is unused) and the clocks for a serial IP (unused by Linux).
->>>>
->>>> Testing was done on the RZ/G3S SMARC Carrier II board.
->>>
->>> Do you think that other boards would also benefit from this change? If
->>> so, what do you think about putting the call to register_pm_notifier()
->>> inside an __init block in clk.c so that this same change doesn't have to
->>> be implemented across various clk drivers?
->>
->> Yes, that was my other approach I was thinking about. I wanted to see how
->> other people consider this version.
->>
->>>
->>> Alternatively, if this is board specific, could this be fixed in the
->>> boot loader so that the clock that's not used by Linus is properly shut
->>> down on resume?
->>
->> As a result of your request I did some more investigations on my side, I can
->> say that, yes, in theory that could be also handled by bootloader.
->>
->> I can drop this and try to do it in bootloader, if any. Please let me know
->> if you still consider this (or the variant that implements it in a generic
->> way) necessary.
-> 
-> Personally I would go the route of fixing this in the bootloader for
-> this particular platform.
-> 
-> If this issue affects other platforms, particularly across multiple
-> SoC vendors, then I think it would be worthwhile to have a discussion
-> about adding this functionality to the clk core.
-> 
+IIRC, Tegra dec driver doesn't support decoding frames consisting of
+multiple slices, it can only decode frames consisting of a single slice.
+Tegra dec can handle multi-slice frames using a "macroblock by
+macroblock" decoding mode with a lot of CPU processing, like classic old
+hw decoders did it, this is not supported by upstream driver.
 
-Could you please let us know if you prefer a mechanism like
-clk_disable_unused() in Linux for resume path?
-
-Thank you,
-Claudiu
 
