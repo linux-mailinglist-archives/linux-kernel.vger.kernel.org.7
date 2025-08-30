@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-792814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DE7B3C94F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB93B3C951
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61301BA0461
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD01A22312
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97D0244665;
-	Sat, 30 Aug 2025 08:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BA1239E6C;
+	Sat, 30 Aug 2025 08:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ2Gq9Q4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="ZHfD8bBt"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECD2223DF1;
-	Sat, 30 Aug 2025 08:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794D822DFB8;
+	Sat, 30 Aug 2025 08:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756542927; cv=none; b=cDRLF+QjNIwDLYAosoxE8fb0neYHRBXWryaCpDCwtEZOSVr/Yb8BqhAD9Jh8OhhFUMn2ZbqVvtqVHBMX/ABBLa5npLM2drgJidkF0aBb3VaawOvQ69rU6e/ZQG+qDOnDZl97uCB9Yq5Lg6SBTvyvaHcZyBko4xJ+yjyHghDpJAI=
+	t=1756542966; cv=none; b=inpagyuseZUxYBZh9Q/NRLgfdaP/HZuCwgwU+c5E+OQkCk82wOblkCLzSszvht4Epb/DLspKFeeRjLPIntwB+7GbvFdRJfVbp+jzzpk80hDTzQtRJC0VloCTTCWkRtBVATSUxGwhxJUvXrAIic5ZWglR+0g0D/BMLsHogijNZkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756542927; c=relaxed/simple;
-	bh=oKvjDljPLSRg2x/aOWCyZgodbMjJIdmSCcxy/Ed/RYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ga5hWbldyPcaJ3NIjcFMff8Xs2SoQLNY/5jVYP6teqaa6IH1u8GW02q90x0Tv5lFnL/CM2ANm4DpzXo/zZVYsSXwPrHkcBr4fDaU/mR0jKi8C2RUTKKoXK7PBzwqKlwNwJeUFUuYLD70XsVxSqnOYm46ioJaSH0DWnhZqz6I+2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ2Gq9Q4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DCBC4CEEB;
-	Sat, 30 Aug 2025 08:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756542926;
-	bh=oKvjDljPLSRg2x/aOWCyZgodbMjJIdmSCcxy/Ed/RYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QJ2Gq9Q41CFdV6Q+M16uVYmCXPBnCX6Mtf7wOUYVVkWOIgfiBBx0jlaPa180Cf10s
-	 WYotg2neDOLYCEklciQmDeMW3qUzX0UkTa6QROBFiA93CP1SFlmZBKYFWkLmubtmF8
-	 6IjAbqmqeDZeZGMSSgPx6Y/SnyNOHjZmt+g7kXUXwVENrl/uCuBffvAtsL/jMM2lEc
-	 0lQ2G1Jorwlhp+I8wSJzRGlMX7OxHmQgPe3ubKgbY3jw3rfN6RBNzm/jw+2U86JKgV
-	 hRdhGKSEIEL5Sdf+8dpRe+3XW9gqx3VoLY6G1z5UzYe5mU1jAx5nzCn+phxkVTEV28
-	 TMP4NOKcmoVjw==
-Date: Sat, 30 Aug 2025 11:35:02 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, dmatlack@google.com, rientjes@google.com,
-	corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com
-Subject: Re: [PATCH v3 09/30] liveupdate: kho: move to kernel/liveupdate
-Message-ID: <aLK3trXYYYIUaV4Q@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-10-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1756542966; c=relaxed/simple;
+	bh=8CEPE5SZ81umhkmrXioGPbAjSUW1mPfziUAF+t4NFTo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Fwxf4CLgqK7DM8GYFMAAmQWPpoankQBX1Fd3q8KF7G1cxslHSs9ysDHBx3m4Ah3HCb9XhWkWEjpiqs34w4sWEIxzIEbaa92AIWzcmekeo7n+9LC+VMi9c/zMzmlIDKhl5hAiq5u1pcgGR60UQ4e8ekPAdOQueFS/J9XAhpAZzG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=ZHfD8bBt; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mkarcher.dialup.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=UuZowZvYIfVFLIrdPbzq1seTVyiyk/J01AmgZPL60EI=; t=1756542961;
+	x=1757147761; b=ZHfD8bBt9bDxj/9F8bKV8e1Xoq2fSvPCpHXo+IBAlbxFJ589+uBc/qNn6IFO0
+	YksCpIxV59rE0XgKbGBTLdql+PyKdrKeXO8L118XOfJPo8XkYNLVljJ5ykJhvm8M19fIpHJnPk+Bl
+	NxvKVzwco7oD5jKipAbMG1G4izfhXiMMzfLYRoJ4HMKSWJAxoBmdNBpEwwvlgrADZdM1uUo2NxRV6
+	pDCODWBR2+DrFvvXWa/DnoIA5xnNixNtpd5PFWGN6e6lvLq9M/xIESJOcCve21reDLjAFMYTm03Bc
+	XHA9JMIPRgV7SMGhd+Qh88PkCWruVeYe43Nf9lEb7gz2b2I+/g==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <mkarcher@zedat.fu-berlin.de>)
+          id 1usH43-00000001SkH-0P3x; Sat, 30 Aug 2025 10:35:59 +0200
+Received: from tmo-125-174.customers.d1-online.com ([80.187.125.174] helo=ehlo.thunderbird.net)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_128_GCM_SHA256
+          (envelope-from <kernel@mkarcher.dialup.fu-berlin.de>)
+          id 1usH42-00000000QbH-3ReF; Sat, 30 Aug 2025 10:35:59 +0200
+Date: Sat, 30 Aug 2025 10:35:57 +0200
+From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, linux-kernel@vger.kernel.org
+CC: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/4=5D_sparc=3A_fix_accurate_exception_re?=
+ =?US-ASCII?Q?porting_in_copy=5F=7Bfrom=5Fto=7D=5Fuser_for_UltraSPARC_III?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de> <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de> <528a5d4b-1e07-4379-afd6-7e58d423e713@oracle.com>
+Message-ID: <C90C7694-C913-499B-8426-8DEC42137066@mkarcher.dialup.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807014442.3829950-10-pasha.tatashin@soleen.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: kernel@mkarcher.dialup.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Thu, Aug 07, 2025 at 01:44:15AM +0000, Pasha Tatashin wrote:
-> Move KHO to kernel/liveupdate/ in preparation of placing all Live Update
-> core kernel related files to the same place.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+>I think there should be a little more text about the nature of the failur=
+e=2E Maybe:
+
+I will add something like that in v2 of the series=2E
+Do you think it is useful to add the message ID
+b14f55642207e63e907965e209f6323a0df6dcee=2Ecamel@physik=2Efu-berlin=2Ede
+as well, or an abbreviated backtrace from that message?
+I suppose, that is the BUG_ON you are referring to=2E
+
+>Otherwise, the fix looks good=2E
 >
-> ---
-> diff --git a/kernel/liveupdate/Makefile b/kernel/liveupdate/Makefile
-> new file mode 100644
-> index 000000000000..72cf7a8e6739
-> --- /dev/null
-> +++ b/kernel/liveupdate/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Makefile for the linux kernel.
+>Reviewed-by: Anthony Yznaga <anthony=2Eyznaga@oracle=2Ecom>
+Thanks=2E
 
-Nit: this line does not provide much, let's drop it
+Kind regards,
+  Michael Karcher
 
-> +
-> +obj-$(CONFIG_KEXEC_HANDOVER)		+= kexec_handover.o
-> +obj-$(CONFIG_KEXEC_HANDOVER_DEBUG)	+= kexec_handover_debug.o
-> diff --git a/kernel/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> similarity index 99%
-> rename from kernel/kexec_handover.c
-> rename to kernel/liveupdate/kexec_handover.c
-> index 07755184f44b..05f5694ea057 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -23,8 +23,8 @@
->   * KHO is tightly coupled with mm init and needs access to some of mm
->   * internal APIs.
->   */
-> -#include "../mm/internal.h"
-> -#include "kexec_internal.h"
-> +#include "../../mm/internal.h"
-> +#include "../kexec_internal.h"
->  #include "kexec_handover_internal.h"
->  
->  #define KHO_FDT_COMPATIBLE "kho-v1"
-> @@ -824,7 +824,7 @@ static int __kho_finalize(void)
->  	err |= fdt_finish_reservemap(root);
->  	err |= fdt_begin_node(root, "");
->  	err |= fdt_property_string(root, "compatible", KHO_FDT_COMPATIBLE);
-> -	/**
-> +	/*
->  	 * Reserve the preserved-memory-map property in the root FDT, so
->  	 * that all property definitions will precede subnodes created by
->  	 * KHO callers.
-> diff --git a/kernel/kexec_handover_debug.c b/kernel/liveupdate/kexec_handover_debug.c
-> similarity index 100%
-> rename from kernel/kexec_handover_debug.c
-> rename to kernel/liveupdate/kexec_handover_debug.c
-> diff --git a/kernel/kexec_handover_internal.h b/kernel/liveupdate/kexec_handover_internal.h
-> similarity index 100%
-> rename from kernel/kexec_handover_internal.h
-> rename to kernel/liveupdate/kexec_handover_internal.h
-> -- 
-> 2.50.1.565.gc32cd1483b-goog
-> 
-
--- 
-Sincerely yours,
-Mike.
 
