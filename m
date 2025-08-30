@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-792903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8775CB3CA3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:36:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED78B3CA42
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3C471B2774C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:36:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 569CE7BB3F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53F1279DB4;
-	Sat, 30 Aug 2025 10:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECE72797A4;
+	Sat, 30 Aug 2025 10:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRIg47MI"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJrcSsuV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9C227815D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBFB1DB34C;
+	Sat, 30 Aug 2025 10:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756550171; cv=none; b=e94d3qOYJWVTEhGMYTPanpY7Ra8uJD09qlVBpgrNgtljqVssPrQAVPGWN3sRe3OSOcz2ltdwphSRjsbj9bjEUl4HQtVSryNWGRbF2lfO6Mss/aLrUooRjTk3IVK7QaX0GT89AEbCbz77wbliVILOR/7oVl4isMeXQel3Gp2u7CM=
+	t=1756550214; cv=none; b=ohwmXA0YkwNdov/C7jMrd02k8k5OcuyAnAfsghxtU7ISqiSSBzh02m0PE4aCV2UkdrsIhjMbb4a5Y48YyconIwcsfhwmSJ7A6YBa7cINiXcyuz45ShaHS9WX6wIfluy1FhfNJRkCLLe1cq0BBBw+Oa032V2vvzDPYGYaxxrUGTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756550171; c=relaxed/simple;
-	bh=OqkXFaVqOLu0Cm9orjJGa0kO4kQoIt5LQSmBFk9V1j8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oIVyBDzN7pYTvunM/Lzp6/JOE0wS3rPS7mfLTdRaJuEr1h6wQffYvee7H7tkAoluKIRFuZYy+YfFab7ooAgLOtyr67bOWTRzOA+PAXxmp09lDxbmJwyT1Gu8PCU88j853CjgP50gNY1oMdFBawFCEi140M+jvG9aoClnKHijUDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BRIg47MI; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afe7f9fdb96so36835266b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756550168; x=1757154968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xy2PldNrENiSaVtPT3x+tCYdtLAjiL+P5W5nR+7AJsQ=;
-        b=BRIg47MITHOwGmcVnouy9G2W1oJcEfqswOh3wzGqc9NQbvKTk3qaYhJ8cCj6xYrktH
-         KriOE1EoJB6OYvfIRzgjjQMBeJD1glLuKBO2ebaLdIiERLlICmmrThOJI2k/R/MsCX+y
-         U/OMMSnqKDGIJdq/Pm9k1GrRwZYWzYDJeOzL2B01E6hkt79X4KTXp076kq7/cqgWbmZC
-         xyxIf5SRaEWDu4lOG6Y0lkZiBAvPxmwu4BbZ5QxfdrH8+sFC27eMLlZ0rfBHsBOZZqfC
-         ZrKcKr83Px36FIBrRK7DeVVqMduEnd+2CPcESGKWjD7fcPDtRrYVQ6oWcjg6koKHHHCw
-         Q1Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756550168; x=1757154968;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xy2PldNrENiSaVtPT3x+tCYdtLAjiL+P5W5nR+7AJsQ=;
-        b=krwst2tFYIQO3X/g408I0IR/KJAa0hfGTnYtPf9FN9D5Xbv4A3R9YcTpf3LU3lpdKm
-         ecL2bpOSla64tOm2/LBIqyLCwisBhZo5Xkq51y4C3RQjBPqJa/b6mjThK6F/E7ira55t
-         Iop30ocGMqvFyBNwfEdjF44GjNBb8HPKUy5r8GluNyAxshlLvqu34aqBP4pWvbHY/s6u
-         TW2cpscdVFqjw1OSgZQKVG+QGknohW/OCV/cKsE1U7mpIrUo5dm+M7eqAN+q7vITyJjA
-         Te08MqKWKK0x+RznNZUPJJqaj4P1OK3ebU0EXbwnCzfP2jjW844oHIDIl+by3QOjbUHA
-         RPAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEqGW+wTluuRKswDB9/6KN0JrnjOpDaUW8TjtLYdy5SguXVU9+AyGBFW8UQBpLdwtv9qOdesJfrklfpXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT9nLkAzKyb4qB5Kk1bbMsEsIj/QXL+ixwm16t6swrOhTQtGG7
-	fW+lnSYYkxqZysisXaRfWeXDEUnxLSnb/4pWIh8QfDBZ+xjPqJ6OO8djPZg2k1H35Ls=
-X-Gm-Gg: ASbGncs8/ovXlJpZD4OS5/35TzQX6/sSlnCa72Ra8ilpJJMXnxbz1JV8t4BRF80X+Gl
-	2oZNtYFbX0KAbZXNIk4irpzt3A69KoZBDiEVmW1hXXjrnaLy2SBtMAToj16/zZIFXVDrhhMMu06
-	ry1jDybuU5hHbBDSnB91ihBBuCijEOBORx9FJnV0R3DCdaC6MjskFVktOWcMg2wlNi8VniBXhak
-	o6dF4ay5MyUwHPPNrjTUHu6GS2cExeMocbbTb7OL2+7DaUwyXGnl0oSf+1cxFQfNbBW3xLV88I+
-	dRVIXoOB60Y1ock3O0EWQDbxbb9l6qHUTD898sVW5bYE5GZBBJ2zq5Fy2zTo9v3roxHA6AoJBSk
-	xlKqJ3zTw4N8WnEE+0ulWDcQlN8eQFXyVTA==
-X-Google-Smtp-Source: AGHT+IHns48R/scKvtWP4TWucE7E7d46yoyfHop4qHeB2gkDdo7J3ardp9aE3MsDoUiXrG5oxykknA==
-X-Received: by 2002:a17:907:94ca:b0:af9:6580:c34f with SMTP id a640c23a62f3a-aff0f132f63mr196770666b.9.1756550167604;
-        Sat, 30 Aug 2025 03:36:07 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm393749166b.69.2025.08.30.03.36.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 03:36:06 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: i2c: samsung,s3c2410-i2c: Drop S3C2410
-Date: Sat, 30 Aug 2025 12:36:03 +0200
-Message-ID: <20250830103601.82046-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250830103601.82046-3-krzysztof.kozlowski@linaro.org>
-References: <20250830103601.82046-3-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1756550214; c=relaxed/simple;
+	bh=wktQoMJ6heZ6PIZpSgy+ATEdVrh1/OExIzwglLTyTlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUwH/HlLin9y18nKGEBJ/6EJoNE8zBpzNjYQZk7enjMzSgVSGxWJf5qzi/r6h8KN1ylTa2w/BJQcwVWcVL24gY+Uo07qQ4BVT0YELGqsd2XDolnKBn3oCiT0ZjcLaFqT26N3+/ouiBKkyw15HXIg/TENz3wIP9r2LowtcTBnx7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJrcSsuV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238F6C4CEEB;
+	Sat, 30 Aug 2025 10:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756550213;
+	bh=wktQoMJ6heZ6PIZpSgy+ATEdVrh1/OExIzwglLTyTlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJrcSsuVVWWqHmwSatnrNsD5N2gOhXorzth/fvjy9EwHg/aVUDFfiiJLep28pkR58
+	 ZCiawjK8Kvl58qMQSE89pUFYYok9QiEzg8CU4ilt9NwimafxfQiK7QSyBEZmrVz+qj
+	 Ojk9BrCaQpYY4RcGJTigvt7WhK+uMbyafg51kAmT/cO8lf2g8VVdXowrrPkONroMog
+	 QFfSUuyodnLd5dflcUduXX2Q57kPgejwxwOtnz+Md8nb5NBHoHsYFj7h63xUOn075r
+	 bAmftLyD4Ds0VIK8dhkf6BpUd5l16qG9OQ+fNuK96YgiZaK8NpwgUSxV8bBRzpExsq
+	 1KP8HdhAi+M3w==
+Date: Sat, 30 Aug 2025 16:06:44 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 06/15] PCI: cadence: Move PCIe RP common functions to
+ a separate file
+Message-ID: <phxvk3wsr75btvhljdgakkoqz7lyza7x7sjut3kswwhutyhb7n@pihtlzszfb46>
+References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
+ <20250819115239.4170604-7-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1225; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=OqkXFaVqOLu0Cm9orjJGa0kO4kQoIt5LQSmBFk9V1j8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBostQS1uyd9N0GDHCqVVSX6oqHmmLX/xx4H0z2u
- /GjYzXDLzSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLUEgAKCRDBN2bmhouD
- 16V/D/sExMdSumruUenHBTZ2LC2Ld6Eo687uWRhy8+EsSXGEw+Dh63Bx4DG07nh1xePobQdweO9
- pv8xLTdgMUOyZPgqm9P9Xeme2Ys6Th0tgbwLHebSTreUKfTNYkfUtP9590Ze/KKhgg41m0XOkUm
- KLZeP0Whkbckym3b3kPdGRneHwICnfX9x1p0Jwkd023pm80H6+ayu0QojNI9fjndMe02bngi+C1
- ugDXAUHrayw5+1X5jxZp5wWCwgIyV2Hm8OpZoI3P2zGKB8UFmoGe0uZ7VeR/BWkk5fx1/vF4HjO
- eOLallZ/wPrlhvb8hd7uAY3gyVQ2Br2vxDmE6CVCOoZbm6jNG+/FCLN5qWZ1TXMbmwUDC5KTQZ1
- aIfINltTdbou4e3SGKTg00OTDTVAMyRpfwgQV95O7xd4s3t8SghtJAbBRu1A1EdFtEnnEgH3U8x
- /5Ozor31W3+P7vYF9lkWSb/j3Y0VcmeDFsT6/MoH2drVnpMLPqiR42HG+ca4GfVZBlNr+eo0AbH
- idjDWTsJf1ZL5+KKsPQgd6LOSCf8GJ0Wi2Wpl9brqQ9Irhmerp7ec0YTyiVdeidrZQjPViUaWN1
- HhAlj7rAacD7aqgr+pxqQPLSdrYm1kwjXXAkqlGL6n86sww9YULj2uQXqUg4QjQKd31jyxuSINx +JucnGYbFIy5ZEQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250819115239.4170604-7-hans.zhang@cixtech.com>
 
-Samsung S3C2410 SoC was removed from the Linux kernel in the
-commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
-2023.  There are no in-kernel users of "samsung,s3c2410-i2c" compatible.
+On Tue, Aug 19, 2025 at 07:52:30PM GMT, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Move the Cadence PCIe controller RP common functions into a separate
+> file. The common library functions are split from legacy PCIe RP controller
+> functions to a separate file.
+> 
+> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> Co-developed-by: Hans Zhang <hans.zhang@cixtech.com>
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+>  drivers/pci/controller/cadence/Makefile       |   2 +-
+>  .../cadence/pcie-cadence-host-common.c        | 179 ++++++++++++++++++
+>  .../cadence/pcie-cadence-host-common.h        |  24 +++
+>  .../controller/cadence/pcie-cadence-host.c    | 156 +--------------
+>  4 files changed, 205 insertions(+), 156 deletions(-)
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-common.c
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-common.h
+> 
+> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> index 80c1c4be7e80..e45f72388bbb 100644
+> --- a/drivers/pci/controller/cadence/Makefile
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence.o
+> -obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+> +obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-common.o pcie-cadence-host.o
+>  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-common.o pcie-cadence-ep.o
+>  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host-common.c b/drivers/pci/controller/cadence/pcie-cadence-host-common.c
+> new file mode 100644
+> index 000000000000..d34f8c7c49f0
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host-common.c
+> @@ -0,0 +1,179 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe host controller driver.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml | 2 --
- 1 file changed, 2 deletions(-)
+This should be changed to 'Cadence PCIe host controller library'. For
+completeness, you should add the 'Author' tag also.
 
-diff --git a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-index 6ba7d793504c..a2ddc6803617 100644
---- a/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/samsung,s3c2410-i2c.yaml
-@@ -13,7 +13,6 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
--          - samsung,s3c2410-i2c
-           - samsung,s3c2440-i2c
-             # For s3c2440-like I2C used inside HDMIPHY block found on several SoCs:
-           - samsung,s3c2440-hdmiphy-i2c
-@@ -93,7 +92,6 @@ allOf:
-         compatible:
-           contains:
-             enum:
--              - samsung,s3c2410-i2c
-               - samsung,s3c2440-i2c
-               - samsung,s3c2440-hdmiphy-i2c
-     then:
+- Mani
+
 -- 
-2.48.1
-
+மணிவண்ணன் சதாசிவம்
 
