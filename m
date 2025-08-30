@@ -1,129 +1,212 @@
-Return-Path: <linux-kernel+bounces-792680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A18DB3C785
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F64CB3C78A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFAFA21295
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0191C80430
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7E726E158;
-	Sat, 30 Aug 2025 02:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B41F26B2D7;
+	Sat, 30 Aug 2025 03:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3UPOYER"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YrKYrwnL"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7D224D6;
-	Sat, 30 Aug 2025 02:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D166F06B
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756522059; cv=none; b=VjwmdF40GDVaSQr2rRUc0Jlq3W2c5/B5xVmp6aXZ5h3jDwxi4B0/cthHYbQPuBjshXdszAM/EWPVUuF6POIoBaVuYzExyADXk8E9clw63Mqce8KAlFu27uECc3IZkaaxhFheABcQi+n/nz7iUrLOY7Fl91mYXr90i92+LZfjwR0=
+	t=1756522951; cv=none; b=VwD8QEkUWzMvxGrbTIXCXQtvPuIk3HGU0rqQWUkZXaGfcm6XcCzDaxObTy1Rwu2lbZYxNQOHzU2Z0bTKKf3Aoz2fHyQNt4HFZQ5QojwdIZSDjIbT00fMI5O+ijaBn0HeCCHn/fUhfw9UsBso1JJ4hrw/Ucxe28xUTRxv4wJauhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756522059; c=relaxed/simple;
-	bh=s0Wzuy5FKe7WprUs0n9XM0ue5dvcfmuCGmfE1nLywiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6OpviLFECprWenTOyikZ7QzLRUkHvrwYvDar4U0gnOaW3mWa+f8403J7TzDZlAWZtQPsuDsfCcOIlSHb8fCfX7+XBmjT88Bp21XEJduZ+J43WyA9hKylqdP+fBqn2lMXIJtmxPTleoOQGR5qZNRb7lSQkYfQaueAaXVkAtPNDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3UPOYER; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-771ed4a8124so2775503b3a.2;
-        Fri, 29 Aug 2025 19:47:37 -0700 (PDT)
+	s=arc-20240116; t=1756522951; c=relaxed/simple;
+	bh=6zr42pHjg3OpSQ/sPk0BGRH60ITzGAG23tjZ44RvbEg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Bm5y03zcHtdB0FSEIJupMOGx1Su5jJwRuUa0spa/vROjg1N5emY9p8veDhLCiHup1stsWgaSUD6fWg7YN1k2ibhCCTXptalLSWLi3YFD46wLKAFJVnas6txOPrZ7ngRMO1JnweegAgxocuSpkyVM1jVrhamGR7uRG/lI9ENpxd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YrKYrwnL; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-771ff6f1020so4548123b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:02:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756522057; x=1757126857; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOKB86akayhJUe68ZwqhBuo1eGGE51BvMN33IB4BODg=;
-        b=G3UPOYERwjdeE+GSTGLDWZUTfQ5gMtbZ3KogJD3Dakk09MkYtqJ/qlhtT3hneTatgu
-         N3uICuEjTrnXno3+71swmqDK3wGd5WiJnLzEYy2G/IoviMWp/NGAAgaqcExDFd4u0QOd
-         FlRoLj48NI6zeqjhXsYANScQorpmkxUm9LpGMiVr9Z3F6zf1HYdD7CHD55AmGFESBb4j
-         dUCrXx29xknqo7b0WTgYRr/QJZ5ZjYhwOU8mVWlh9ERYdy4eoFN4fEVrv6lO0hscCRuX
-         xVVBITTOCvyXeFAwQqdA4fKVS5gDIRnlWbbSPOPH/F40/IAY7meA3t/4/ovbv0uq6tDO
-         zFmQ==
+        d=google.com; s=20230601; t=1756522949; x=1757127749; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=osREpVin4Y/mpmkRw1fC7OWCaK3AWMsIQyO6EJyT6ZI=;
+        b=YrKYrwnLfZSBZSpFjxJo7PJVdDxEDkUOybz/hSpX1YcIE2xUtdf4AeiIgHKF9CuO6l
+         HVYLNxMYL/sP6A9TE8P40kw1M20+tDLUWNX9pdgVgeTrorryABBnSqXZHJspOI2LjKr2
+         VGfJlUy7ng1B2KhgqAyvW4U+mz3rKkgRR/Sri0yZBHU8D0y3wjIHc0Bzq5qwsZhH3/jE
+         w91q0GMwsydLmQm0uUwwoS3c7iBeRNiLyi/8Lydxppojic/12Mc8YmZn5Iz1h97zYvfV
+         GhR/K3ucDf3WPvYi+nM8YLlRwsvgX8QvN+HmDl1Lqeowit23r5rW0ECcglr3y6Cf8VMI
+         aWtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756522057; x=1757126857;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yOKB86akayhJUe68ZwqhBuo1eGGE51BvMN33IB4BODg=;
-        b=GVYTb+Ma5y6b0j27JrY+mDE6b4pd1hCHr0YZDxcywKWi+VdK7zn8uRVh46zgm+HWhA
-         5m/yBdzgMKfWNc53fkAp2LHdUwltEz7DFDBXk6u/wwH6ElBz651QH6WyLWihj+dge6IB
-         4BJJFEeEKHUxUVtUrHBjRWKRz9sjudbf2GwS0ZY7IXB2KgstR2T8l791x44KMK7FuzLu
-         7Jz4iC7Ltu9UGvTJCb8DfdnMgcwAEgqr7OpDuHyZJSsLw+x+XSzm2/xGaGDTqEdPYdoT
-         gekZMEC+cR5UjGrQPj6sOShj22wr6/FI2GCwjxdC4qCYP4tYdZvWvy0Z3UBB77a/8vBH
-         yiaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUad+ZkBE27sv4VPhybvuhJ+vCjo3NSI0mDCA/lKRxwyZD1LlX0pC1F5TwLAOxsYA+9w7GIeLkHNwqG@vger.kernel.org, AJvYcCVw2v4F0W0gQHOegDpGl8o92k4+0kHPuQI9EZaq2RZBIBWyDzXYPTIKygTAZrnjxReNQ/cIdEbduMAO@vger.kernel.org, AJvYcCW2sBRoLwXkrbkyF4rP3V1FiaeE0C9fgVL/5mgDozKqViFcSXnXMOAiW5aQPljZaFvCz10UkUfAnhIk@vger.kernel.org, AJvYcCXjo4s/CI+LXijINWE1aWrAdR8op1F+k41EEG5Nx66NLqdlJ/uiGIC8OlW9PddiNrWQDvnfjkvuD90SMa2U@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsJjX5vB3gUH6s9eSsxgfi5aiPDe1NJBhW4v9FDXZJkbZOLgjA
-	y7pc5xz1mPZ1ijLpZj7QlwP7mCCLZLDKIOph8lI2EA5yFVJ+BQ3PO4Ym
-X-Gm-Gg: ASbGncuJPOT/IU2SW+EpP6f9Qz5+Xw5PDM3k+hA8tWtmXefWo/UXd7cSfj8tkipgyt6
-	oKcS6oIdSAL7+upAtw/Uuhlyn1s9JpM7EL+5g0A2towlNMtjkbdV6zxN0VA0XQQCXHVpNqEbIkD
-	Ab7w3HtG4bz4sY4NGuxXaox/qm5puOTSeRB1EhAzwToGofCeARP93EzSiX4/ipmnj8axP+Qz1Id
-	MPR9r3MTHrvxHVp5d+GguTUW4yd636SJVLd7fqYwA4Jwwe7efiiLFn+uIU3RTPLfTQfCNqCVZyd
-	ePBpZ3kCn94XDB1yhFrXf6R1sLbNSaSnqWNryX8AQbFOoJOfGJc2/dpQiMBJXG+aWlKcNw33SY4
-	4ibxHh+/HDhXFC+6dvTCuiCuk1Xfbvb0dN0sH4prd
-X-Google-Smtp-Source: AGHT+IHbd379rktpp8cSwfbgbcZ5ZxvEeTjg2B8sY9DMs5CBqf4tCV6sqeWS+PtL9GZaOmJuFpuQUA==
-X-Received: by 2002:a05:6a00:1952:b0:772:25f6:caee with SMTP id d2e1a72fcca58-7723e40347amr875575b3a.30.1756522057204;
-        Fri, 29 Aug 2025 19:47:37 -0700 (PDT)
-Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-772306a1870sm2935087b3a.75.2025.08.29.19.47.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 19:47:36 -0700 (PDT)
-Date: Fri, 29 Aug 2025 23:48:01 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, jic23@kernel.org,
-	Michael.Hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, broonie@kernel.org,
-	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
-	ahaslam@baylibre.com
-Subject: Re: [PATCH 00/15] Add SPI offload support to AD4030
-Message-ID: <aLJmYXlfCf5fy9po@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
+        d=1e100.net; s=20230601; t=1756522949; x=1757127749;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=osREpVin4Y/mpmkRw1fC7OWCaK3AWMsIQyO6EJyT6ZI=;
+        b=UTDfFfJCoQ5E6Ev1gTHmB98eZ8mhJBZZaJPNPslC7iCtgtQ2cDhRduWuVIHZPNmt1D
+         Ao3Bh3f5vQbnSuJ1bT3Eg8XE3YjobuttiOUq0MZudad7mP7bpmS5Jh9HnRywXPAJlm5y
+         4vGmoQzHrpVS5j3jgzxthP0aJvDp5E/IkpmZCNiTUzZU56gtkTwKLrlXqWHbKa7ZNBIp
+         5iBkRbN92Kgt01WwgfplQqcbCixwdboaK8yqJjeZaiQucr8MfbJC82ATX2K6gcF2zlaf
+         FttEOoqfEBESv14AKwTjFBba5c3hYjStzkBZOhajamL9SsDgHJLNWv2CaY05MzBzRnUd
+         T9MA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlLsKUjTMOtnFJ3GcPXR2P2F3RQcsyUj5X0Zby4daRDEFqrj67KBqj9TpPgQ550ORDNY0RJtVrUnRvpdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuISpm8XNIkWcrlkGDNglex+LRSmEvHzpcoAb96CDI0zPibmZj
+	Qx4r+hRo1HibVAo5Ktn42P1TfCTUJLfLuLl8fQOgjnTPTcBCqdVPbbcP7WgBoH8uWsP6JkMi+6g
+	Z1pJbKErh7Hi4JQ==
+X-Google-Smtp-Source: AGHT+IGX5cXdB+M3jm6/ruARhMtqvA/JI6+JYqlEuKbtgMUa/fCn/5NVUhdpDm9OSn8XJZG3sXF8vZxeGpuHaA==
+X-Received: from pfll14.prod.google.com ([2002:a05:6a00:158e:b0:772:29b7:66ce])
+ (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:9283:b0:772:270f:58ab with SMTP id d2e1a72fcca58-7723e33853dmr1031378b3a.15.1756522949350;
+ Fri, 29 Aug 2025 20:02:29 -0700 (PDT)
+Date: Sat, 30 Aug 2025 03:02:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1756511030.git.marcelo.schmitt@analog.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250830030226.918555-1-jiaqiyan@google.com>
+Subject: [PATCH v2] ACPI: APEI: EINJ: Allow all types of addresses except MMIO
+From: Jiaqi Yan <jiaqiyan@google.com>
+To: tony.luck@intel.com, rafael@kernel.org
+Cc: dan.j.williams@intel.com, bp@alien8.de, guohanjun@huawei.com, 
+	mchehab@kernel.org, xueshuai@linux.alibaba.com, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jiaqi Yan <jiaqiyan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-...
-> 
-> The patches to the SPI subsystem are from Axel Haslam and I only signed them to
-> indicate I'm moving them forward.
-> 
-Realized I should have based the SPI patches on top of SPI for-next or SPI
-for-6.17 and probably sent them on a separate patch set.
-I'll do so in v2, but will first leave time for v1 review.
-The changes to the SPI subsystem are not extensive and the patches apply cleanly
-on to of SPI for-next, nevertheless.
+EINJ driver today only allows injection request to go through for two
+kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
+IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
+memory corrupted in many interesting areas:
 
-> 
-> Axel Haslam (2):
->   spi: offload: types: add offset parameter
->   spi: spi-offload-trigger-pwm: Use duty offset
-> 
-...
->  .../bindings/iio/adc/adi,ad4030.yaml          |  86 ++-
->  Documentation/iio/ad4030.rst                  |  29 +
->  drivers/iio/adc/Kconfig                       |   2 +
->  drivers/iio/adc/ad4030.c                      | 704 +++++++++++++++++-
->  drivers/spi/spi-offload-trigger-pwm.c         |   5 +-
->  include/linux/spi/offload/types.h             |   1 +
->  6 files changed, 792 insertions(+), 35 deletions(-)
-> 
-> 
-> base-commit: 91812d3843409c235f336f32f1c37ddc790f1e03
-> -- 
-> 2.39.2
-> 
+- Legacy persistent memory
+- Memory claimed to be used by ACPI tables or NV storage
+- Kernel crash memory and others
+
+There is need to test how kernel behaves when something consumes memory
+errors in these memory regions. For example, if certain ACPI table is
+corrupted, does kernel crash gracefully to prevent "silent data
+corruption". For another example, legacy persistent memory, when managed
+by Device DAX, does support recovering from Machine Check Exception
+raised by memory failure, hence worth to be tested.
+
+However, attempt to inject memory error via EINJ to legacy persistent
+memory or ACPI owned memory fails with -EINVAL.
+
+Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
+or firmware to decide what is a legitimate injection target.
+
+In addition to the test done in [1], on a machine having the following
+iomem resources:
+
+    ...
+    01000000-08ffffff : Crash kernel
+    768f0098-768f00a7 : APEI EINJ
+    ...
+  768f4000-77323fff : ACPI Non-volatile Storage
+  77324000-777fefff : ACPI Tables
+  777ff000-777fffff : System RAM
+  77800000-7fffffff : Reserved
+  80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
+  90040000-957fffff : PCI Bus 0000:00
+  ...
+  300000000-3ffffffff : Persistent Memory (legacy)
+  ...
+
+I commented __einj_error_inject during the test and just tested when
+injecting a memory error at each start address shown above:
+- 0x80000000 and 0x90040000 both failed with EINVAL
+- request passed through for all other addresses
+
+Changelog
+
+v1 [1] -> v2:
+- In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
+  door wider and only exclude MMIO per suggestion from Tony [2]
+- Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm")
+
+[1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiyan@google.com
+[2] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
+
+Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+---
+ drivers/acpi/apei/einj-core.c | 50 +++++++++++++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+index 2561b045acc7b..904930409fdb2 100644
+--- a/drivers/acpi/apei/einj-core.c
++++ b/drivers/acpi/apei/einj-core.c
+@@ -656,6 +656,44 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	return rc;
+ }
+ 
++/* Allow almost all types of address except MMIO. */
++static bool is_allowed_range(u64 base_addr, u64 size)
++{
++	int i;
++	/*
++	 * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DESC_NONE.
++	 * However, IORES_DESC_NONE is treated like a wildcard when we check if
++	 * region intersects with known resource. So do an allow list check for
++	 * IORES_DESCs that definitely or most likely not MMIO.
++	 */
++	int non_mmio_desc[] = {
++		IORES_DESC_CRASH_KERNEL,
++		IORES_DESC_ACPI_TABLES,
++		IORES_DESC_ACPI_NV_STORAGE,
++		IORES_DESC_PERSISTENT_MEMORY,
++		IORES_DESC_PERSISTENT_MEMORY_LEGACY,
++		/* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
++		IORES_DESC_RESERVED,
++		IORES_DESC_SOFT_RESERVED,
++		IORES_DESC_CXL,
++	};
++
++	if (region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
++			      == REGION_INTERSECTS)
++		return true;
++
++	for (i = 0; i < ARRAY_SIZE(non_mmio_desc); ++i) {
++		if (region_intersects(base_addr, size, IORESOURCE_MEM, non_mmio_desc[i])
++				      == REGION_INTERSECTS)
++			return true;
++	}
++
++	if (arch_is_platform_page(base_addr))
++		return true;
++
++	return false;
++}
++
+ /* Inject the specified hardware error */
+ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+ 		      u64 param4)
+@@ -707,14 +745,10 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
+ 	base_addr = param1 & param2;
+ 	size = ~param2 + 1;
+ 
+-	if (((param2 & PAGE_MASK) != PAGE_MASK) ||
+-	    ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
+-				!= REGION_INTERSECTS) &&
+-	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_PERSISTENT_MEMORY)
+-				!= REGION_INTERSECTS) &&
+-	     (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DESC_SOFT_RESERVED)
+-				!= REGION_INTERSECTS) &&
+-	     !arch_is_platform_page(base_addr)))
++	if ((param2 & PAGE_MASK) != PAGE_MASK)
++		return -EINVAL;
++
++	if (!is_allowed_range(base_addr, size))
+ 		return -EINVAL;
+ 
+ 	if (is_zero_pfn(base_addr >> PAGE_SHIFT))
+-- 
+2.51.0.318.gd7df087d1a-goog
+
 
