@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-792871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2112B3C9E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB26B3C9EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747901C23D5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CA233AE32C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC9C268C40;
-	Sat, 30 Aug 2025 09:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA40242D7B;
+	Sat, 30 Aug 2025 09:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkGw0htN"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L49tdd/6"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3EA1DE8AE;
-	Sat, 30 Aug 2025 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F344C2264AB
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756547317; cv=none; b=sQKO9rWx1IAdJ+jdZafGDNw5w1iPxqGYGGw8MS8S11ot3IWtdBptjyJXsTTleHvD08wR/xXtiCK12nIP29zftXGOuynGMyfFMpQtzqOLfoZZBItDSDC6dxWhYfl37vsI20rhdVWkEg0CTBWhjv+lYLjBnEpjjykAGB9lhZ6+Ars=
+	t=1756547400; cv=none; b=CO8/gBnsDGhCfVbdcH2vSMm14m40Pe09V/UMCZUsY4ux+n0DhdaKFLOJuB2TZ6Hlq0aZ2tdG9RR+Q/pmu3FCa8wOZyKHUHcAroFhd7SQCfwGJe34pWyZNQvv7PapTNZ+NYsA9mpJ1EVlF4xxMGojwbbHDq6qYyxgBM6hDuk1yfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756547317; c=relaxed/simple;
-	bh=WrBzWUBbNLVi1TVHVDGcJFK1o+XYYsxTimvrazHOL+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G4kqkREVEAOECSJCytIQvj6A4ohd7vWU6AIwSGmIZ+A2Ntzy8+sIZfRG4q5hZuxkTu+gFNO9YbUZCeFE9yk5ENbt9vayG8m3w6MQsoyn+fh2Tk4bR8yiFUOQ3IjSBEhfo9VXpvFEPNSqFZkWWFY5WKtbgnOIr2hlvvIvDKhiumg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkGw0htN; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so1497020e87.1;
-        Sat, 30 Aug 2025 02:48:35 -0700 (PDT)
+	s=arc-20240116; t=1756547400; c=relaxed/simple;
+	bh=MhydSjpAwABmF/rCF0KsztuXi9gwym6dmu8o5mvUOII=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z/ND2vXorOzqlyhUnOM94M7zVAvZuhNovfUIz2yQWdgzGPzon76TO2pi1mqyYXpjfFi0xc2H+Ew3fUhMEk2apgA5XuTlSBGey9kKEZ8QImO48MGglcGc56iQHZA/qMpzZxBVfELtMgmQPtutFPYlh82/4d6KtjBzO1js2C6lIUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L49tdd/6; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f3b4c9fb5so269961e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 02:49:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756547314; x=1757152114; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756547397; x=1757152197; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dp4t+5XjcUN448FoaeZJP4HhV6YJjFsdimtWRYF00KI=;
-        b=TkGw0htNQKtqnQTebydRJ0ZOC5ODXXPdeoSgXSHGzkuZuSBSaaty8Z/5Hj7bFebWZD
-         sMHIDhSXz5WdaiDX/LvBv2/hyDcP9nhJHUdWry2FhkQLMlMNDrzlx7cQNsz13mIqntsK
-         0tmbwkzkySKg7opaq3iIc7Nr8PCe4R7W+qpcjknT4/kv+DoOAlAT9IdpgJkFTK72YPmp
-         x8wDxEVLPxSWsC/TQqpxI+2YsKYrL0gMbJgUXuhWf1X/UzW+pBhqURcA8/3vjhrMpGBO
-         HBw/jnd/TALMcoFhpnoYDTfFWZAHnUNSv8FZsAuRlo5lPcYT64BnJ8qr+I6RImlts9D9
-         Mpkw==
+        bh=jRNROOHHAw2Bc/THJAy9MOJuP831ZvEwTWSfbFMLjGk=;
+        b=L49tdd/6XCRK6SBM5NBertOUCHAhaX+AeNgZzWfPAn14t+pDP8QIz2IMuZTRksxmZK
+         bjD0VC5TTzLz/hVitDT9EIdxz2iL1tlVKpbT2QA17BiKpEEHnMu5dPTeNw8Xh/C0gHwF
+         4c7xKlDHjc/Doo9hXkxs0ncUpbAZ8uuP3PhSV2jH2JCf3m9WJYR2vpKt33O9E2ql8hBs
+         PckSUziW3WrJdjt5f/3zex7/57sDkW/Zja/0IzhGVgscBN+Zub2GE7pYNMDoWQa1BRuO
+         HwqCKdItZrbS9g28GwNPevlvcdRoFDoviKmQ4OvOA55tBMBxoS2qD/lAaDlAFUzWSAut
+         lo8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756547314; x=1757152114;
+        d=1e100.net; s=20230601; t=1756547397; x=1757152197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dp4t+5XjcUN448FoaeZJP4HhV6YJjFsdimtWRYF00KI=;
-        b=nq8Q3D6Dcy5VHRReDjJ0FsCDnQJvNerUfjWA4G5x5Dq3XVaF09DSvmhkVvr2ZeZDDm
-         agbuZekVAuguSJTuUgxXtZqMdRXJJI2JfKpSB4yNf7sJemT4KcG0Um+cpHnTosC3xGSM
-         YtEHyiK/JLXAQ1BrhC6PJnzyK+y8TmDUQ8/ewMlot++VU70ylw039l2ARiJITp9M5CzI
-         8TzvsfBXwsT+cM2B4OI5LLW8C3/sA5wyq2KG+7XihS8tLGKd4XlbUpcpFf5mVdnR5ZPF
-         pKdo/60ku+7INOHgCh+aoEYoQGftYN/Qs3oHLvA+tH3Jt0Ykj/p14XQUrn2rOWsCI1zW
-         euKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuOJxsVatB173fNBP9bVcJQaFyEDlYv2kghfKhPFPgL1i3WmYIHHy7p6eR4cp9aaybG7XmSEmctk4poYU=@vger.kernel.org, AJvYcCXavQ4K/hKWpnkIhopPZQASPVFkd5IJ9RneJi/p+BpUIAMWosC029qg7cGkL8xH2ycjhrjmJ/VP4Q7E@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2EELtuYo55ClWEWDmSuN9BC0CuMtxxqIjAQmJkKn7gyJNnKi3
-	Ddjld+qC1/zf3ugGZPgnEYW0QUZJbt9YwREnJavoXvzCO+frcGo/4lBrLZlBFg==
-X-Gm-Gg: ASbGnctoCQtdvfG94aXuR/3ADryj28VuHtv/Swl7VqyYVtwBtcj7Wx9tjA5OvrZ9u6R
-	1GrrmnPQi5dtaLzx2rfoH0p/DTmXrnUdeMKY/GfT3sDmREXnQRjcTVORD9IK6jr302akUDJsfCv
-	O8Mcnt4iXQ9MTzdKgOTYq0lzcGjuCMOYRKtpdXYV2lEd7/V9jeX63Bachp16I9KMaIRzPBqjPKw
-	T8hczdvJy7BBcQAPzYASTIPYbbiMUhMALTh1reAa29Oj6K5MnjklR1t/AHVoW+9Z9ZUBElJYKdt
-	ix+J/VcHbbIMsLE1NHsetwDqitn+oYYyJvV3kgtCJ48t6FFRkHYGXbxF8KXojQ69SiKGxwKtrxm
-	XWMPFfKJkFZgMTjDrL0uq/IbOqQDS9eWcVs4XzBv4wMzsew==
-X-Google-Smtp-Source: AGHT+IGdB28Kgve/k09nulGg5xE5ZB+QMPE3o6zmbFp9NBmgjzvdnMtt6dfwBVuvpO1a7qA3If8MlQ==
-X-Received: by 2002:a05:6512:6812:b0:55f:4a34:e333 with SMTP id 2adb3069b0e04-55f708ecf28mr337051e87.33.1756547313289;
-        Sat, 30 Aug 2025 02:48:33 -0700 (PDT)
-Received: from foxbook (bhd106.neoplus.adsl.tpnet.pl. [83.28.93.106])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f676dd6e2sm1299335e87.23.2025.08.30.02.48.32
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sat, 30 Aug 2025 02:48:32 -0700 (PDT)
-Date: Sat, 30 Aug 2025 11:48:28 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: David Wang <00107082@163.com>
-Cc: WeitaoWang-oc@zhaoxin.com, mathias.nyman@linux.intel.com,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- surenb@google.com, kent.overstreet@linux.dev
-Subject: Re: [REGRESSION 6.17-rc3] usb/xhci: possible memory leak after
- suspend/resume cycle.
-Message-ID: <20250830114828.3dd8ed56.michal.pecio@gmail.com>
-In-Reply-To: <20250829181354.4450-1-00107082@163.com>
-References: <20250829181354.4450-1-00107082@163.com>
+        bh=jRNROOHHAw2Bc/THJAy9MOJuP831ZvEwTWSfbFMLjGk=;
+        b=tA4cufGFTRXQzl8IcQt7Ilvu30BDEKFuMHwuTTjNC5HnbKEXESeXs5x/MK0fljFr60
+         0hL5KqX1bODkVDrthEoemWJsI+A//ZPswmVtxHIyTU6duhYdLPXpFqeAXtW8ap5R7ndf
+         tog7Oa9eJbTsMf4Ol7z3F2JIx2U1F5PYuRKyNTbn9UZzHihl9Rp7lzazHrY+zpm6vznG
+         m8Bsioq6CzYo53B02eRgQHkMGfMyssw/DsH2hxZjUCkHTCWsNB54ZtTSxr3f2JlKd/IJ
+         NQIEEzEl0ssANxsMZzSncxq4KNZbibLSuwKLI+/o/wpfGyQufRYKPI0CyxIoG5B7Ui0c
+         XMeg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8SxVBDqbkspkr9HBNgI/Kck+fZwBwdLvWlCpuzexb7By7G5jHYs/pxfamIHL9QB5WYnLwqgojT7409gc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGty9RFYondbkDCWcArNs2AecRaxD02eYvyiS9XgTtXjLz024s
+	hCnEFSMIMNxkglgqaQ4AdrnoqBynYyvQDGNsddIuYNJn8OiPtKxKHI1EFaqKlFoErVY=
+X-Gm-Gg: ASbGncvN+8/HpRi5akYTgPeeaS4AUT9vThKxPc9Ef7UmVazIxO2u7spbbeHl8JJBb+v
+	pF1I7CNFGaxAdxWXo/4DO+gGGC3phHEcGmarPd6UQVRZRsy/zv373DcWvmdtBfEeNBZJsXPG9MT
+	440K/XNAolOF1iQ5A1eWe5rUufGSTAPMhBEYOLhmLF44MIByfIMiZyqQZdEmeBLYfN3nLBA6Pso
+	Lg1rY51oacE2vtRb8rmFiyXW39S/GwJBMpFpWsnGyJer/F+Zm6T3yEQzviRVDi7EGhPD4xj1Gvp
+	B7IF+3wPBzBl15bzvpAnDWUam+6p2cVPh+SOeCBVxsE1gXxBq11j5vmDhwG8SrY7Tvgx5qFGpe2
+	Q8ZEqYuqwi3UE6R5bboJLxEHioeaDl42QSCzvgn0TpeZtTinSFlP9xIaGc5LlBlpB7w79
+X-Google-Smtp-Source: AGHT+IG3HJ4okzHDbXzyC+DgyjCqGWEYnjZkIT75Na3msr+BLTTBdvc2Ju4vaDO6zUBBUpv9efwGtg==
+X-Received: by 2002:a05:6512:104e:b0:55f:612b:b350 with SMTP id 2adb3069b0e04-55f6afd91d7mr563621e87.3.1756547396895;
+        Sat, 30 Aug 2025 02:49:56 -0700 (PDT)
+Received: from localhost (c-85-229-7-191.bbcust.telenor.se. [85.229.7.191])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-55f6784fdcbsm1325961e87.98.2025.08.30.02.49.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 02:49:56 -0700 (PDT)
+From: Anders Roxell <anders.roxell@linaro.org>
+To: peter.ujfalusi@gmail.com,
+	vkoul@kernel.org,
+	nathan@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	dan.carpenter@linaro.org,
+	arnd@arndb.de,
+	benjamin.copeland@linaro.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCHv2] dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
+Date: Sat, 30 Aug 2025 11:49:53 +0200
+Message-ID: <20250830094953.3038012-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250829232132.GA1983886@ax162>
+References: <20250829232132.GA1983886@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sat, 30 Aug 2025 02:13:54 +0800, David Wang wrote:
-> Hi,
->
-> I have been watching kernel memory usage for drivers for a while, via /proc/allocinfo.
-> After upgrade to 6.17-rc3, I notice memory usage behavior changes for usb drivers:
-> 
-> Before rc3, after several suspend/resume cycles, usb devices's memory usage is very stable:
-> 
->        40960        5 drivers/usb/host/xhci-mem.c:980 [xhci_hcd] func:xhci_alloc_virt_device 9
->         1024        1 drivers/usb/host/xhci-mem.c:841 [xhci_hcd] func:xhci_alloc_tt_info 2
->          320       10 drivers/usb/host/xhci-mem.c:461 [xhci_hcd] func:xhci_alloc_container_ctx 31
->         1920       15 drivers/usb/host/xhci-mem.c:377 [xhci_hcd] func:xhci_ring_alloc 31
->          112       12 drivers/usb/host/xhci-mem.c:49 [xhci_hcd] func:xhci_segment_alloc 32
->         1792       28 drivers/usb/host/xhci-mem.c:38 [xhci_hcd] func:xhci_segment_alloc 59
-> 
-> But with rc3, the memory usage increase after each suspend/resume cycle: 
-> 
-> #1:
->        49152        6 drivers/usb/host/xhci-mem.c:980 [xhci_hcd] func:xhci_alloc_virt_device 9
->         1024        1 drivers/usb/host/xhci-mem.c:841 [xhci_hcd] func:xhci_alloc_tt_info 2
->          384       12 drivers/usb/host/xhci-mem.c:461 [xhci_hcd] func:xhci_alloc_container_ctx 32
->         2176       17 drivers/usb/host/xhci-mem.c:377 [xhci_hcd] func:xhci_ring_alloc 32
->          128       14 drivers/usb/host/xhci-mem.c:49 [xhci_hcd] func:xhci_segment_alloc 34
->         2048       32 drivers/usb/host/xhci-mem.c:38 [xhci_hcd] func:xhci_segment_alloc 61
-> #2:
->        57344        7 drivers/usb/host/xhci-mem.c:980 [xhci_hcd] func:xhci_alloc_virt_device 13
->         1024        1 drivers/usb/host/xhci-mem.c:841 [xhci_hcd] func:xhci_alloc_tt_info 3
->          448       14 drivers/usb/host/xhci-mem.c:461 [xhci_hcd] func:xhci_alloc_container_ctx 46
->         2432       19 drivers/usb/host/xhci-mem.c:377 [xhci_hcd] func:xhci_ring_alloc 43
->          144       16 drivers/usb/host/xhci-mem.c:49 [xhci_hcd] func:xhci_segment_alloc 44
->         2304       36 drivers/usb/host/xhci-mem.c:38 [xhci_hcd] func:xhci_segment_alloc 82
-> #3:
->        65536        8 drivers/usb/host/xhci-mem.c:980 [xhci_hcd] func:xhci_alloc_virt_device 17
->         1024        1 drivers/usb/host/xhci-mem.c:841 [xhci_hcd] func:xhci_alloc_tt_info 4
->          512       16 drivers/usb/host/xhci-mem.c:461 [xhci_hcd] func:xhci_alloc_container_ctx 60
->         2688       21 drivers/usb/host/xhci-mem.c:377 [xhci_hcd] func:xhci_ring_alloc 54
->          160       18 drivers/usb/host/xhci-mem.c:49 [xhci_hcd] func:xhci_segment_alloc 54
->         2560       40 drivers/usb/host/xhci-mem.c:38 [xhci_hcd] func:xhci_segment_alloc 103
-> 
-> The memory increasing pattern keeps going on for each suspend/resume afterwards, I am not
-> sure whether those memory would be released sometime later.
-> 
-> And in kernel log, two lines of error always showed up after suspend/resume:
-> 
-> 	[  295.613598] xhci_hcd 0000:03:00.0: dma_pool_destroy xHCI ring segments busy
-> 	[  295.613605] xhci_hcd 0000:03:00.0: dma_pool_destroy xHCI input/output contexts busy
+Fix a critical memory allocation bug in edma_setup_from_hw() where
+queue_priority_map was allocated with insufficient memory. The code
+declared queue_priority_map as s8 (*)[2] (pointer to array of 2 s8),
+but allocated memory using sizeof(s8) instead of the correct size.
 
-Hi,
+This caused out-of-bounds memory writes when accessing:
+  queue_priority_map[i][0] = i;
+  queue_priority_map[i][1] = i;
 
-Good work, looks like suspend/resume is a little understested corner
-of this driver.
+The bug manifested as kernel crashes with "Oops - undefined instruction"
+on ARM platforms (BeagleBoard-X15) during EDMA driver probe, as the
+memory corruption triggered kernel hardening features on Clang.
 
-Did you check whether the same leak occurs if you simply disconnect
-a device or if it's truly unique to suspend?
+Change the allocation to use sizeof(*queue_priority_map) which
+automatically gets the correct size for the 2D array structure.
 
-> And bisect narrow down to commit 2eb03376151bb8585caa23ed2673583107bb5193(
-> "usb: xhci: Fix slot_id resource race conflict"):
+Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/dma/ti/edma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I see a trivial bug which everyone (myself included tbh) missed before.
-Does this help?
-
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index f11e13f9cdb4..f294032c2ad7 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -932,7 +932,7 @@ void xhci_free_virt_device(struct xhci_hcd *xhci, struct xhci_virt_device *dev,
-  */
- static void xhci_free_virt_devices_depth_first(struct xhci_hcd *xhci, int slot_id)
- {
--	struct xhci_virt_device *vdev;
-+	struct xhci_virt_device *vdev, *tmp_vdev;
- 	struct list_head *tt_list_head;
- 	struct xhci_tt_bw_info *tt_info, *next;
- 	int i;
-@@ -952,8 +952,8 @@ static void xhci_free_virt_devices_depth_first(struct xhci_hcd *xhci, int slot_i
- 		if (tt_info->slot_id == slot_id) {
- 			/* are any devices using this tt_info? */
- 			for (i = 1; i < HCS_MAX_SLOTS(xhci->hcs_params1); i++) {
--				vdev = xhci->devs[i];
--				if (vdev && (vdev->tt_info == tt_info))
-+				tmp_vdev = xhci->devs[i];
-+				if (tmp_vdev && (tmp_vdev->tt_info == tt_info))
- 					xhci_free_virt_devices_depth_first(
- 						xhci, i);
- 			}
-
+diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+index 3ed406f08c44..552be71db6c4 100644
+--- a/drivers/dma/ti/edma.c
++++ b/drivers/dma/ti/edma.c
+@@ -2064,8 +2064,8 @@ static int edma_setup_from_hw(struct device *dev, struct edma_soc_info *pdata,
+ 	 * priority. So Q0 is the highest priority queue and the last queue has
+ 	 * the lowest priority.
+ 	 */
+-	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8),
+-					  GFP_KERNEL);
++	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1,
++					  sizeof(*queue_priority_map), GFP_KERNEL);
+ 	if (!queue_priority_map)
+ 		return -ENOMEM;
+ 
+-- 
+2.50.1
 
 
