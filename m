@@ -1,122 +1,139 @@
-Return-Path: <linux-kernel+bounces-792928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778AAB3CA91
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3331CB3CA97
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC8567420
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A25B1BA40C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A6625FA2C;
-	Sat, 30 Aug 2025 11:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5366C271457;
+	Sat, 30 Aug 2025 11:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZV9ZUe65"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBCWDiwp"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE98317A300;
-	Sat, 30 Aug 2025 11:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036391E130F
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756553394; cv=none; b=epB9v7a9bmw0pXkagxK8gxnzxLW7TTeO/TpfzC67pNCeqodQsug1sGdyqY1IxflkdaXdVAgN9dkUkmzcA/w78SJunSydFdoPk4v1Q5YS++T9WpQh/eyGCle0OcV3lKSMhk8q4Clo4PT49SNe1OwKcYdQEofygiXLTIRKo5bltY4=
+	t=1756553567; cv=none; b=nR8Oulc5cSykn2Kocg21lU0eft1za9cwXoV3e2wVs6cmn3qaGzd6yBHLQoHioKqCb6Gp8kl0JqbYuVnDRd43lsOQD1Rn8AXUglRLULtiIhNuGCHgYckR/g41MAN1EHoEcaRwskbZIA1Sqat/EGyoPtHGMsNt6RcuLJiaJXUwTjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756553394; c=relaxed/simple;
-	bh=G9X+ffv/pVcjrMDC06/3UHjT65P3tPJoMxHTyYH5hdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F4jfoMWSy1QA/ro7THKM/djRFEND5uJtwzTaSbzbSGdoQnVgr8SjHCZa7ZG1+32tE8oMhkXwmZTcmtTL6VpmDtrs9EKTPmuiWti1YhwXwRwCLUdW3xXne7DIR055eDWAGkX3im2oanX7+8lRd+k1wkQJkNmMP1uzbyOGJVFvZbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZV9ZUe65; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6f434c96so681858e87.2;
-        Sat, 30 Aug 2025 04:29:52 -0700 (PDT)
+	s=arc-20240116; t=1756553567; c=relaxed/simple;
+	bh=Oc2a4NpwxzUJtyJbjfj0lVP/6AEXYLaYIj96LTX3/ZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ltv5GEF9qtifRI1y05HiZORDot4/BB2B1T9NPKX1Va9Cv/v2neQpgQkznFWGW/9wiUDAyusE6YBVfMG9FRPNCltzUge/CnDWSZQQyVuqdCDJRHOkoCBiMmnHCB0QdeYgvAE1CeGGr+5jIegu3a1/Ky1CRbc3dVPmNcV7zQKUBnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBCWDiwp; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ce208c7505so419183f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:32:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756553391; x=1757158191; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v3KSsLeobgU/k77KRTAU66n9zoHgmSXJF/tcqQ0GS4Y=;
-        b=ZV9ZUe65ZgbJuLST7x2cdYGx8GW48ZnZmdZIYR//iy9WfVu0m+NqXbXhQ0Ofv5f1tj
-         cBJmxHj+ULmigyhwvBOgk/Fb4bAuLTwqVBbCXWlHOVHazSYZjgXTaf7VCQuidTL3yYvB
-         p3p+3GgcLm2AznFU8f/nIcyw/2mUToahdcajn8d25R+BEiaA+dXwFIwp3lzhuzbplsaz
-         /CPlXKMY2BxZBbsF0kqBksyyHktSYFfCbZpmNWin9PdAQiEs4C05UwxYyOiFv2Ejka/f
-         8HX1Pb5DaOWDy4R8EgpHpMe+hEEDKqL0UU1fkPzZfDGhlbsrxfYSOwhemig8i9Wo9Kup
-         NHsw==
+        d=linaro.org; s=google; t=1756553564; x=1757158364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=42CgFZpoDZA1WcUF+OxPFlrBffkIpHm2VCK1V3rCRQM=;
+        b=CBCWDiwpa1YkDYUVqJ5KwCWAPVFHiqZlfzh6B+jCoTkiEi70HfmdoGYGa2EOIhi0Gh
+         tHJLwvdCvzBXbl4Eyn+SfVCHXrmpNdSuW21tyyBt7OqnoMfaGHqOltD9KGBHmw0xNTBF
+         tuC+w2COpsKIDAA9EpARBD5dsp01gCbfoxlo/Cf4ph008apj+Mu/4+9oZRdh7kpA8f1P
+         m2Oi2sW8DpL80kuBmvOlrBxhc9HbUJH7Engg7+vTeLHAbUdfkZXjpgt5qwNQ2ecTpxAj
+         QEm2KOnjVeFZ3oK87d1ZsGzkTQ5xZGlNTMhrnTjrgBZmUkYndunJDSmsL5PQAWTXTZly
+         K3WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756553391; x=1757158191;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3KSsLeobgU/k77KRTAU66n9zoHgmSXJF/tcqQ0GS4Y=;
-        b=CndFHscRYWKs0iESXCSuiyisHfTbxZRErKokrU094wrma729gAJXyAEH7ChuCezJEW
-         /n2Z8pL3MgQoXhZJ75FQUg/ZoagO1q1xEHkMj7X/C+Zfd1UyteGDwB96b+cwc9bzOJ3k
-         9ivL4vIWRDkbMmUYI9RQQ2/TpuQ2JY1R+rnjJ+hbBxcdvwQWO8RjXTY5umB7OXg/2LUJ
-         QCr4HGC7OnrAFBv6J5u4QIi8vKnzyCDifxqG9qhHam950EnKmCH9Fo/d+cN/X0WfpMG0
-         dDXsx905xd1GuddcUKvy2u3PJGgSiwMLE3JX13hB7lsgoSCUjamGcJ5uFwq90X2MNzP0
-         7Yqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWtd8CxPamauB180D7pWBw+4aYMJuM8W/M9nE9feyzdmD9Sxt9qESGPc5phD82nR9mjRDIJissOETBPsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaUeuWi8ajcTCWZLvSVmeotcvzq9mNQ+7M78KZvxe9kaScgDTs
-	K8xlavb16jmbDcVdSeisfqPNCXoLPypNYFkiNi4tSkFXXucjL0UYeQSecN3/slG0
-X-Gm-Gg: ASbGncsSPD2vXkE22FAq1UDmZw4OeCYlo4lpIT0r3goxNOCrulywluJ8sguhMJAtKH5
-	MvqLR05UH4f4j+R6ZG2fAPa42AKgiJCUYghFwppB50Mz4e89IxNu3G0tSDmAmOYrtrihKYBucka
-	UrHxTQA78CdKnddpV7XVW1fYQx5Dusmfa/qeLk27kcjax8InP4rFRg4YCsqDhGdZM+c11vz9U77
-	7Pdd5Sty3QBcPjDUpZOU0zYABfEwdHCT3wyg9b1BuTraxDaRo8Eo0Aouh4/vPl6qiG0tlb1Iyed
-	KETUyzOE3mlSNkOGoDj97EwpqIprq0TZNnx+aUdXtVpjr4Jucvdl3f+KXTTtB7nLhd+BCDThgLH
-	955de+k4YVk3UHdsI4tlwkIf2vfoKht2zLNybeHraMRxby2UROZu53G4c7wufOY5H1da/LHDxpA
-	==
-X-Google-Smtp-Source: AGHT+IEfnRHY68hhrQsDl3O8dbYVpHPJyZX+vMoQj9lJwxfd6v4LbPOJ0yR9HileQaNL7+lMLpTMMQ==
-X-Received: by 2002:a05:6512:660e:b0:55f:4400:f2f6 with SMTP id 2adb3069b0e04-55f70924f7bmr387952e87.42.1756553390566;
-        Sat, 30 Aug 2025 04:29:50 -0700 (PDT)
-Received: from [192.168.2.178] (109-252-159-193.dynamic.spd-mgts.ru. [109.252.159.193])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-55f677491f3sm1370847e87.58.2025.08.30.04.29.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 04:29:50 -0700 (PDT)
-Message-ID: <11ea89d2-e4f1-4c3a-a2c7-f99170781fba@gmail.com>
-Date: Sat, 30 Aug 2025 14:29:48 +0300
+        d=1e100.net; s=20230601; t=1756553564; x=1757158364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=42CgFZpoDZA1WcUF+OxPFlrBffkIpHm2VCK1V3rCRQM=;
+        b=fM8EWpH0EgLa3TmfpqqJwVcIxz34JEuNugSel6vIbXQCKg2znBH5vmBveEL7qIr4Me
+         3ePBvTnq8XPtW7uF/ACFcouUaCCNhZWd01nnH37Mcnx0yhwBclSfFJtMKldEv+dXs+IL
+         MvEN3Zv1gU0SlKW4wFwlOTCxbByBmOQ6dHKZlCD81SS/K0unGbYnGlVrGtdZkQm08aIJ
+         mVQ/Pqwqd9g4al3sDo3wfgSe/EUUx3ZYa+bzqdfX2VhwLhf0Eyg/F6abZcYiGoQJmlPJ
+         fUzNeYGGumWRysws92/UlGoxaj0SyZs1o9nysEe/Ypc9wCpaKyK9A1OxyiGdNNRcABP4
+         sApw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZlZsz417vVy0028pK0yAX16+kfGsX9So38FmOeUtNu8vm5EIp4barljxb2tx9BdcIj2ePIb6eJ6nj3hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8EAZmq7M8tNIoDX6m7bHfAxuWjVaTOaMlZH96c4a/Sqk8l7qA
+	tZ7bbKVE/UeaxIG3rEZ+1V0p6ooZSv6bF07924cmi4ohkxZGsec8Cf0v4eYotPwfs+U=
+X-Gm-Gg: ASbGncuCzThuaZNaA6XI+itmahC+RrxDUDFuDBes37OdiiKgjan/HfVx06gfgNrSifK
+	wRbU4tRms8E5aQZqy+0qbvv4D4Fdeim1zyNVU/KTcMLvYXiXdenaIn4ZwsVF0MzAnSZq+K4clP8
+	HKfRJjJ+zBbpF6ozDK9y2FwK+GHqc7/1Loyku/C/UTSA4QJFMyh0VxkJgTHNuFntMIkIbu9jN16
+	gcuBXip0w06xUz1gJOXbilvnbyaeVfqGgjXTwVcHZNj+KQ+/pVculkIzR4xWKeKbZbgVGRUI2XP
+	fPzH9S94begbpLJz1qU3Q56oxeI3BMMi3ZfDDYyuosscngKtTobWufwJPQ+NzTNdT3NuUmZ6kC7
+	waT/hyuznu7B+luwcHMx7/x5dCCd4pe2zkFFms8HsrQA9
+X-Google-Smtp-Source: AGHT+IGWlub2tHYqZLn4Y+mI9xFcceW1rbNdyeQHTnc2M39YWAxzrQnRH8Sc7BJCl5PkCIgpr8GXqw==
+X-Received: by 2002:a05:600c:1c9d:b0:45b:75d9:2363 with SMTP id 5b1f17b1804b1-45b8016df84mr22260915e9.1.1756553564311;
+        Sat, 30 Aug 2025 04:32:44 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm6810544f8f.43.2025.08.30.04.32.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 04:32:43 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: display: samsung: Drop S3C2410
+Date: Sat, 30 Aug 2025 13:32:39 +0200
+Message-ID: <20250830113238.131006-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] Documentation: media: Document
- V4L2_H264_DECODE_PARAM_FLAG_PFRAME/BFRAME
-To: Paul Kocialkowski <paulk@sys-base.io>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250824180735.765587-1-paulk@sys-base.io>
- <20250824180735.765587-5-paulk@sys-base.io>
- <5065e67544ae9255b2136a6cd73cbb9ffd08e3fb.camel@collabora.com>
- <aLG19wzWBBECU6Cs@shepard>
-Content-Language: en-US
-From: Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <aLG19wzWBBECU6Cs@shepard>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=Oc2a4NpwxzUJtyJbjfj0lVP/6AEXYLaYIj96LTX3/ZM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBosuFWMrOH9wMnIOUGeuz6fivJocB17MxIWX72q
+ cv84YMrJ9GJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLhVgAKCRDBN2bmhouD
+ 1xMjD/9yAHNChQiyhDuhCbIe0MWQK1qq9Jmh1fcZ9pRPq7eR79rxzW5FVpZOqYwEDhv9XC077d4
+ nyWP0++jir3pNYebpsKp0huLFx9UQNiibETumy8WYb1jmax6S6nUqF5vgbowBKRK/k9YWKVzHSG
+ IMhMdaVBFCbmFwMaGxKgoYx4iYVBG/D9oyf9pbm2igwHNK/zipAQb2smGD1A2DKstuP4ifgbDFG
+ wSMiyl41rzWOeVldvTCZZNDTvV25zeF0h7oyz0zb6xEQCGGYkSrDbC70zIdUPo5De9L3vZtnvEZ
+ mVc/nPUMBizPV/UG36lE6mt6kRx4JovQ/P8r+9kPfnRqWqs3+t4L968SMa0knB/7j1+6tzY/QL4
+ i3dLQD6zxiQi/Mdraw4eo6b6HDS9mA/a1STsKkEfU+LxVgOTZf333HRRbvyekp16BwLm4Db3mxF
+ 97J1kznBRjsdEg5mhwjDai7lAyGkcLJedM3RQ3z62i3GY5XX0tOu2OBK64MUQP7psD5/2MkUh4k
+ DoAK56/27e210XLhZWR3GUMSpm3O5iTNQkcydpUC2eMCDzupGusx9/QBoo+24by4huyWSoyk3B2
+ cRd5ttVPsjaQR2Odol6ufCDNsoMUKW1jBK/RyvxMRbO425Hy0xpIpedLbjU64PFWzEUm+ysXm3J sB01Kv8ldlM1Qqg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-29.08.2025 17:15, Paul Kocialkowski пишет:
->>> +      - All submitted slices for the frame are P slices. This is a compability
->>> +        flag required for decoders that only support decoding such frames, but
->>> +        should not be required for slice-based decoders.
->> Seems to match the comment in Tegra driver, and related to a hardware
->> limitation. Shall we also recommend not to use this unless similar limitation
->> exists ?
-> I think the flag should only be allowed for frame-based decode mode and indeed
-> it would be good to say that drivers should only check this flag if they have
-> such limitations.
-> 
-> Userspace on the other hand cannot really know if it will be used or not so it
-> should set the flags when applicable.
+Samsung S3C24xx family of SoCs was removed from Linux kernel in the
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+2023.  There are no in-kernel users of remaining S3C24xx compatibles.
 
-IIRC, Tegra dec driver doesn't support decoding frames consisting of
-multiple slices, it can only decode frames consisting of a single slice.
-Tegra dec can handle multi-slice frames using a "macroblock by
-macroblock" decoding mode with a lot of CPU processing, like classic old
-hw decoders did it, this is not supported by upstream driver.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/display/samsung/samsung,fimd.yaml        | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+index 075231716b2f..ff685031bb2c 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,fimd.yaml
+@@ -15,7 +15,6 @@ maintainers:
+ properties:
+   compatible:
+     enum:
+-      - samsung,s3c2443-fimd
+       - samsung,s3c6400-fimd
+       - samsung,s5pv210-fimd
+       - samsung,exynos3250-fimd
+-- 
+2.48.1
 
 
