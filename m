@@ -1,98 +1,179 @@
-Return-Path: <linux-kernel+bounces-792699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1805B3C7C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF55B3C7CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6F75E5DD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D0A5A2927
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7C9277813;
-	Sat, 30 Aug 2025 04:08:34 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3937277CB8;
+	Sat, 30 Aug 2025 04:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d822i5PQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CADB2773D1;
-	Sat, 30 Aug 2025 04:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B298128395;
+	Sat, 30 Aug 2025 04:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756526913; cv=none; b=LlA6Gpk8rY7zoC0L0rrjzZlh5HZDnBJ3HypxJQ+GtiJ8K8QS5ctUf68or/rPAQgi0+OAoEVfpFXaymsf0neookFrz3oGNTfdDkpzeoW/YNmUjpbnzNK9tEZL9luHCWZ980m+1xC03c+rWZQiUi8+Mhb29yE2hOispuSJJX/T2Bo=
+	t=1756527033; cv=none; b=odrubKTgMbtwBhZo7HuTzzGSxvRpjfXUh39/Ns8BxYvw0dFRTjKf8SQWB1AijLhN64hDO4irAguoeYAm7OAbuYl12jiv650xKw8vDuv3SV8YXwxUwuxJUy7emIM4kbo3U0lhhkcJDD8EUN+1S6cs4UJuz6qfMgOQ1/VcPVZx8KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756526913; c=relaxed/simple;
-	bh=xa/ihByyPWPDDyOMjq6GAOGQPFD8WpBXBfKTIhm5NaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TaIUiJxym8mrz9WxQj7RrFc22/698+vITJiif0GtdlO8WO4ncUCq0G3jmdYDiknTi6XPA9vNHklyINQ9+4QFoeHrLR6UE93g4DEA8hjU4TmEPfarg7jrYzupy8iLYKvFY/ZFVj+OJuoCBLqUYIvnmiyqG5WPbplJbJnjzktufD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cDM442X76z1R8gt;
-	Sat, 30 Aug 2025 12:05:24 +0800 (CST)
-Received: from kwepemo100006.china.huawei.com (unknown [7.202.195.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id C9A9418001B;
-	Sat, 30 Aug 2025 12:08:21 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemo100006.china.huawei.com
- (7.202.195.47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
- 2025 12:08:20 +0800
-Message-ID: <c64d1999-9070-0d1d-35a7-9f2c55f39fc8@hisilicon.com>
-Date: Sat, 30 Aug 2025 12:08:20 +0800
+	s=arc-20240116; t=1756527033; c=relaxed/simple;
+	bh=+Bg+RVavGYMPykEG5hhqXkc3Av6gb9iZ45IEltTHUHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jKkYpJvKMqQ85xzG6noP8bqdi1jG8LR7uqi9ELqldYJfQTSm+u/RwH+HvWYRh8hf65TnuHi9SrR/FU8SuMyd3UOBRqiwpLYrEorXN75W1LX5pM8yJ9H5i2nnbXXcwbJQGajHg6CqthdImJQ6kVOAd3r3apd+zGKb7ljj258boog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d822i5PQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF0FC4CEEB;
+	Sat, 30 Aug 2025 04:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756527032;
+	bh=+Bg+RVavGYMPykEG5hhqXkc3Av6gb9iZ45IEltTHUHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d822i5PQL/Uvn3lE2lP6EXOe+aAdp86itNdmpV/DjBhUXFigUGStBOlEmkIVXZaiu
+	 4jqo7FEpZb4107b55pmYgddnw9xP9EkPeKvFcThgDO+ZS3xK6Oyr+Vr/c4zaXG6HZy
+	 fpT9SOIapIKkhqhJ9oKJ/fptZNB2qmSLXRFOjUBfcHy8h0xFQ++D97B3bufKCGXPDi
+	 JWEhUdvAY6ADvJ1aTRU1LyBJvRNqBGkY5eHVYcczZ/okP/PqjZ3q6ceafB7ia7fXA0
+	 V3WLJKjK7tYfpzBz7h/pL5X2rOYheO6Yp91+Ya7h1ygJ/0jUZAO/LfRI99l9qjImGY
+	 DhQRBlJyhQaBg==
+Date: Sat, 30 Aug 2025 09:40:22 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 3/9] PCI: of_property: Restore the arguments of the
+ next level parent
+Message-ID: <zvyro2dl7hqproym4shawsckorhlcfkyucponfvw2qrbc44zb2@3kg2eaab42rj>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
+ <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
+ <d004d9c4-f71b-49e6-9ced-031761f5e338@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v5 1/3] arm64: topology: Set scale freq source only for
- the CPUs that have not been set before
-To: Lifeng Zheng <zhenglifeng1@huawei.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-	<beata.michalska@arm.com>, <sudeep.holla@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
-	<yangyicong@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
-	<zhangpengjie2@huawei.com>, <linhongye@h-partners.com>
-References: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
- <20250819072931.1647431-2-zhenglifeng1@huawei.com>
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <20250819072931.1647431-2-zhenglifeng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemo100006.china.huawei.com (7.202.195.47)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d004d9c4-f71b-49e6-9ced-031761f5e338@tuxon.dev>
 
-
-
-On 19/08/2025 15:29, Lifeng Zheng wrote:
-> The scale freq source of the CPUs in 'amu_fie_cpus' mask are already set to
-> AMU tick before, so in amu_fie_setup(), only the CPUs in the 'cpus' mask
-> should be set.
+On Thu, Aug 21, 2025 at 10:40:40AM GMT, Claudiu Beznea wrote:
+> Hi, Manivannan,
 > 
-LGTM.
-
-Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
-> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-> ---
->  arch/arm64/kernel/topology.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 20.08.2025 20:47, Manivannan Sadhasivam wrote:
+> > On Fri, Jul 04, 2025 at 07:14:03PM GMT, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> of_pci_make_dev_node() creates a device tree node for the PCIe bridge it
+> >> detects. The node name follows the format: pci_type@pci_slot,pci_func. If
+> >> such a node already exists in the current device tree, a new one is not
+> >> created.
+> >>
+> >> When the node is created, its contents are populated with information from
+> >> the parent node. In the case of root complex nodes described in the device
+> >> tree, the created node duplicates the interrupt-map property. However, the
+> >> duplicated interrupt-map property does not correctly point to the next
+> >> interrupt controller.
+> >>
+> >> For example, in the case of the Renesas RZ/G3S SoC, the resulting device
+> >> tree node is as follows (only relevant DT properties are shown):
+> >>
+> >> pcie@11e40000 {
+> >>
+> >>     // ...
+> >>
+> >>     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
+> >>                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
+> >>                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
+> >>                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
+> >>     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
+> >>     interrupt-controller;
+> >>     #interrupt-cells = <0x01>;
+> >>
+> >>     #address-cells = <0x03>;
+> >>     #size-cells = <0x02>;
+> >>
+> >>     phandle = <0x1f>;
+> >>
+> >>     // ...
+> >>
+> >>     pci@0,0 {
+> >>         reg = <0x00 0x00 0x00 0x00 0x00>;
+> >>         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00
+> >>                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x01
+> >>                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x02
+> >>                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x03>;
+> >>         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
+> >>         #interrupt-cells = <0x01>;
+> >>
+> >>         #address-cells = <0x03>;
+> >>         #size-cells = <0x02>;
+> >>
+> >>         // ...
+> >>     };
+> >> };
+> >>
+> >> With this pci@0,0 node, the interrupt-map parsing code behaves as follows:
+> >>
+> >> When a PCIe endpoint is enumerated and it requests to map a legacy
+> >> interrupt, of_irq_parse_raw() is called requesting the interrupt from
+> >> pci@0,0. If INTA is requested, of_irq_parse_raw() first matches:
+> >>
+> >> interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00>
+> >>
+> >> from the pci@0,0 node. It then follows the phandle 0x1f to the interrupt
+> >> parent, looking for a mapping for interrupt ID 0x00
+> >> (0x00 0x11e40000 0x00 0x00). However, the root complex node does not
+> >> provide this mapping in its interrupt-map property, causing the interrupt
+> >> request to fail.
+> >>
+> > 
+> > Are you trying to say that the generated bridge node incorrectly uses Root
+> > Complex node as the interrupt parent?
 > 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 5d07ee85bdae..9317a618bb87 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -373,7 +373,7 @@ static void amu_fie_setup(const struct cpumask *cpus)
->  
->  	cpumask_or(amu_fie_cpus, amu_fie_cpus, cpus);
->  
-> -	topology_set_scale_freq_source(&amu_sfd, amu_fie_cpus);
-> +	topology_set_scale_freq_source(&amu_sfd, cpus);
->  
->  	pr_debug("CPUs[%*pbl]: counters will be used for FIE.",
->  		 cpumask_pr_args(cpus));
+> I'm trying to say that the generated bridge node is wrong because it copies
+> the interrupt-map from the root complex mapping int 0x1 to 0x0 in the
+> bridge node, while it should have map the int 0x1 to something valid for
+> root complex mapping.
+> 
+> E.g. when some device requests INT with id 0x1 from bridge the bridge
+> mapping returns 0x0 then the returned 0x0 is used to find a new mapping on
+> the root complex based on what is provided for in with interrupt-map DT
+> property.
+> 
+
+TBH, I don't know why it generates the 'interrupt-map' property for the bridge
+node first place. It just creates two level lookup and in the absence, the IRQ
+code will traverse up the node to find the interrupt parent anyway.
+
+Maybe the intention was to avoid doing the traversal.
+
+> 
+> > 
+> > I'm getting confused since your example above shows '0x1f' as the interrupt
+> > parent phandle for both Root Complex and bridge nodes. But I don't know to which
+> > node this phandle corresponds to.
+> 
+> Root complex node from this patch description has:
+> 
+> phandle = <0x1f>;
+> 
+
+Oops. I failed to spot it.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
