@@ -1,183 +1,166 @@
-Return-Path: <linux-kernel+bounces-792808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D6FB3C937
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:14:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3338B3C941
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E7458505D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024DD189190A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FC72376FD;
-	Sat, 30 Aug 2025 08:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E3C27A900;
+	Sat, 30 Aug 2025 08:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="Sb01R5bO"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFdO8Tty"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3797F285CA3
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 08:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A115B23D289;
+	Sat, 30 Aug 2025 08:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756541567; cv=none; b=uAbtrG/9c7NTrxNl2qZvaYWVyaaloOXJv4shyA9emFC7MWoDnPohNDq/99SmSOQ+YeshsOkKe9i+cCd7ww7JByd/TL2bZ4QkGj0Pj5GKS7VZamfRmR7qRYSXynVb8fiQoWDHoAIi31ECbS2J5wfd8y+FCMkvJpQYuzIvG/yfREQ=
+	t=1756541998; cv=none; b=pT9az0lN1TOdygsitLHwri2zPpuw6Fz7TavQrZb5jiYOK5bhgUNW2khKryPieV58zUith/c2BEqUrYGYnv94ftV1tz3mYwGf7VyY52pv0Ox066r3ZFbFfzYNXlg0yRz2bDwVEqwxGOTmou8VS3l6kP43JuYEnuNiot7vuaI1ge8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756541567; c=relaxed/simple;
-	bh=V8KY9soX6dixy5+2r3kKZDbK8+IXIt0WM3HTeSX5f20=;
+	s=arc-20240116; t=1756541998; c=relaxed/simple;
+	bh=VJVktYbtJWttedpN2IBIAHp9NC8Jjxgesn2RhZArsks=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VnogEXsICvqt7KVNKubQPY0stacCUaOJTbEXJerDRbEvYfDSULlkDEKkdiLzBKSaKd2j6U9lDpu7urFI4X8zRC5JmkO2R+7E9eH9bqX5Jl7boI38XokpBxc20L6SJQrV2mzjDxH8z9sB8RlQgtC4TaSwtp9HmV1z7FlKAbi7z+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=Sb01R5bO; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b297962b24so30854381cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 01:12:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=nuQ2MluADFZROrkAG/6iPEoeLvOwCKCZ6KgEx5Odx5+BFuYL9SFqkr0sC6iUb4oXdKmIMWTRnsYsOLXFSX1MqxDLbHr9qteEZoQXaPNwfBUc6XNh61gC2PC8JWflfyXuYXqatgkt3muDbhEudDqSMhRcm0oz8nhryTbkUF4JGK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFdO8Tty; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afefc7be9d4so253245166b.1;
+        Sat, 30 Aug 2025 01:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1756541565; x=1757146365; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756541995; x=1757146795; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jfWv4prrdowDTBmUkPtfk9uVwo5ON7JamPmwAZU/yVc=;
-        b=Sb01R5bO7hH/OrqnrZ3kFilPFZzcGvAgMAyi6DQPIz5AetiiwNysEBSrbrgMh/Es1/
-         VnSN74+7ES3DQJKS1frHilfJpt9SRqK4/8eZHTSnSPHCjjEq7xwQMn2LvBnD7YfZRBC2
-         +qYmUaR0FPN9R3PPNX00RaWzkIXc43dq6x2x9TrVC4Z3118H7NWf16UnldDqeNw07W43
-         V3+pknYkRA4WdbXJ0Kx61hRu+k7TYKC4IJUiDBKLrDKJVcSLbmV9yc9rEOp6LmHjDHzi
-         PDp+e8mabuwvaCN4e9g/tKRN1SErB/id+qRiOXT9LcF6boxAytgpOOg+UMe3l4kJGPIA
-         COog==
+        bh=4yz+gNr9wnP1FuUv8NASxp4fC8wPUaxLjhsHiXAOzrk=;
+        b=LFdO8Tty3gUHLAzXcZW1zpY1k+aBFmSZ2AOh6hFX1COXyze8PvW0vuIGCBxGScXflf
+         IVRrnwNVl8VvJa02d8nAyNqf54Q0WjGylCcRfjLxEF7j3ggCXzoF0VuMQDJn9cu4MvhG
+         8jXS2gkUjkVHEYAlHmTtVlJFPsPOBNff2hgAVKMkxYc16HD0VpkcO2sJ/d9ok/hQVNXz
+         bfksyuAB2zHqWrhEDDlnF8efyt2QnyA2Fj0DQSsHMPHKy+cFIk3lob8mNM4qeCMCh8ar
+         z0qhCqtmRRyYg8t5GZKUlD8LFrwfdQqxIFFUVdxWYFynUTcJkRN//dMkGsBVooatm3sO
+         0Yow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756541565; x=1757146365;
+        d=1e100.net; s=20230601; t=1756541995; x=1757146795;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jfWv4prrdowDTBmUkPtfk9uVwo5ON7JamPmwAZU/yVc=;
-        b=e7F5YBlRQemULfjcoC2uBmjoyKm14WNcjRZHPxfhIA0IeBJ2CfpSDajHOdd1tOAXVf
-         35JkMihKYJ6GLJThd07jKqN0OLWV+1TZW5gYTAoGBS5/45pyf/33eikpURhvIVDSXt0f
-         e8xuulJRHEogCQk11aqOaq7C8BCd+ZkIlOksX3VorQKsHKdTm4aYMMhH09BpeQ5+gFGu
-         hZRIIqNr9fqsu0aYhNT7rqHOJpvTn7vQ5w8ouy/YA7N0biKphieMclX2RD+Y258FzdAa
-         1+kz6YIZNEkMGPfCgq1IOo946Xzk7Q/aUm6Nc0X/kEEKj7uzlBSQ2HQOz6Dam7ixATJY
-         AWgQ==
-X-Gm-Message-State: AOJu0YzOSjG+Ns8QNtbl2QEiHTVEiE9CIsMNC5/Kbr7c8OS4jz36QgKz
-	U9CXQn13KW9+IqjH+wTb8uaIo7IRIkPXKbnEbFx2ozIpEcTy0wNldrEyJk7tAt1dCe691AHmfQm
-	xo3NMvQQ4dolBY8VJIO7fXJj63ERL6tu2e0Q5i66RVg==
-X-Gm-Gg: ASbGncsDJfPxBhYSFUd5HXa78E0uqZt1ssN1onWM3trMbJKGU4E6/ySv6dVNqr2yleG
-	l5N/g37LhI1Ub2LzR3Zot4g0xrLw2riRTn8ozZKhv4mxH+Eueb88NaWGmAF2QUhOGkp4ASHMOsk
-	Orsu0MS+9QuJ4WD1rIrmgvC5TAnd1wbeL/m6i9fq/HB2oZttlMBf91Wsl9uyV9Io31NbcMk3Jq5
-	f2/wqqCC0NoQQMK
-X-Google-Smtp-Source: AGHT+IHXCe3+isolSowvj52vPfZFAqc+RvEUdglTXP7OQ69Qhl6T6sywHroI7ZM8kmbDsLRCBAYAnPdmB2rOENhB2BU=
-X-Received: by 2002:ac8:5d49:0:b0:4b2:8ac4:ef72 with SMTP id
- d75a77b69052e-4b31dcd0d89mr14606561cf.65.1756541564953; Sat, 30 Aug 2025
- 01:12:44 -0700 (PDT)
+        bh=4yz+gNr9wnP1FuUv8NASxp4fC8wPUaxLjhsHiXAOzrk=;
+        b=pgM1GkC9BG08N65egOq+9nVePZxyWpoLEToS973kN07u4yaNfmH+JzljNg2kR6F9DS
+         DNm6hC1iZtYxL4CUL5GJ1H4DQ7BIT5bKW+A5MDA7Nc6y3eGctmfIJrS2WaFVAyKqwn2W
+         O0Le3b0SRURIszM0xQzVCmsoJ6EBenPYlQtXvgCGRjRdCGEmK/z5aNFo6+8v6IVXlG0+
+         r0Vg7k5Azw3yhzhR9EJqibSxaapSg+zfQvezzIcR4bZudwzzvUJKx1733FZQgrnDCHNQ
+         i8eyaHaoP4OjlCR1CovMQL3OlWYrpWwAA4uma41/2+S6vYuQvnP681tKPmV36RsAjGpc
+         gmYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBzCvwx4PiucpbyZlSNtM2nc312fIyPqJRCVyThB7plGtVzMugm5ndiVbUheyBxJkvCLGmXE28NZYXVUsYs2Sr@vger.kernel.org, AJvYcCUDdc2RYLLXvqcJb5f1fKz7d4PcY6+LWLIt0QOfSYxFbUf0nsjvfHoTzW7OSYBWMPqoQERzC2OjGhxU+Q==@vger.kernel.org, AJvYcCUXfBNpurnurFL+cuQTU84WtFsrIBWllzErMkFnHNKKPBTmIPhEaplbTBDsI8MfHuuTilrz6uJS+VnUSJLxreJ1v+s=@vger.kernel.org, AJvYcCVp2cJ7gHO02+8ALWKT2gBcGJZ/b+Rk49QYSy/+ttnnGlKX0ZKEIZIvW0KnCSxl255gdAE2v+h7EeuqTw==@vger.kernel.org, AJvYcCWXNyfBau4/FE/XFNILdkU1ENmeFPPZ9mAKR7ukI+xogDdNwz5ErseXDKfyhTNIkpC83/M9PpYB7GtheZ3q@vger.kernel.org, AJvYcCWlYN75wzqyAbUNsZo7BXnqyb754i7cN3VuKBGXYVd4I38gqNcgoQWxdIhmoyt66U6iGmLwv0QFxZoZAg==@vger.kernel.org, AJvYcCXAAHdhi07F/Wd+pUXV5PCFeZPDnSS1wffTW58iJEbE40WEDQrBJOoKmoi6rbINcXdC1CwTleWCo62FsTwh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYaURFSemV6gQcw3YomRw5YPUhpqiAjlulVv8y/5SRzYCWhZ4n
+	pr3L3SoZM/VVHefs9gkms1b4nyysCt8EnDLqv+UbWpQAZ7ROjCwV4ESZpORWuhsJrog12mKmxJq
+	+I0m7Djgy8NDAvWgPwVZJBJAKPJ0bwC4=
+X-Gm-Gg: ASbGnctlAk3pCQUsyot/4598sC5iNXm80xxKYzgCXSlOKLp+SnKRthviTxFldNMuMEm
+	R6ycUjwdqY+yqX+OJcYtMvHrwRX10mLShYVSpFmiZSVd6Z6ilrSwcjsJtB5bF8WdINddcAB+GYn
+	aoMePyGTamHGSq22gSrR8mhMa0RlB6pnV04sxv0YZOkoeO/FyAaBldEH+lXqnBOu7jdnA2+0dUL
+	2EPYKSwPDYze7vcZA==
+X-Google-Smtp-Source: AGHT+IFZ0wex4nlRzxOc5BG8ARrUjGz7n83ilxsIj2vkPtuKrq3/+IPw3T+K7YRUGhLq8JMm7BCY/eJH8jBRTGRUUSA=
+X-Received: by 2002:a17:907:d88:b0:afe:764d:6b24 with SMTP id
+ a640c23a62f3a-b01d8a6a72cmr138313266b.14.1756541994858; Sat, 30 Aug 2025
+ 01:19:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828023422.2404784-1-adrian.larumbe@collabora.com> <20250828023422.2404784-4-adrian.larumbe@collabora.com>
-In-Reply-To: <20250828023422.2404784-4-adrian.larumbe@collabora.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Sat, 30 Aug 2025 10:12:32 +0200
-X-Gm-Features: Ac12FXxaaZz1i24uI1HHJ8SGYKOXczq00VFZTcqupeELMswfWEFcq2TpaHOaYmQ
-Message-ID: <CAPj87rMRkmkG2MJVnh-zMiNXJ-=fW2jzS_mX7WWWQi3hZmHUyg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] drm/panfrost: Introduce JM context for manging job resources
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, 
-	Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org>
+In-Reply-To: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 11:19:18 +0300
+X-Gm-Features: Ac12FXwW6CW7deBsm3Aef2wv7I2Olg4IsebLLUGVz2bUvR7gVeqwu6XUXgRk6VE
+Message-ID: <CAHp75Vd+q5NZ=4YSouU-EdbR4TZf7S8PGqR0B0HJG8DkVKKtAg@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] pinctrl: introduce the concept of a GPIO pin
+ function category
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Adrian,
-
-On Thu, 28 Aug 2025 at 04:35, Adri=C3=A1n Larumbe
-<adrian.larumbe@collabora.com> wrote:
-> -void panfrost_job_close(struct panfrost_file_priv *panfrost_priv)
-> +int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle)
->  {
-> -       struct panfrost_device *pfdev =3D panfrost_priv->pfdev;
-> -       int i;
-> +       struct panfrost_file_priv *priv =3D file->driver_priv;
-> +       struct panfrost_device *pfdev =3D priv->pfdev;
-> +       struct panfrost_jm_ctx *jm_ctx;
+On Thu, Aug 28, 2025 at 7:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> -       for (i =3D 0; i < NUM_JOB_SLOTS; i++)
-> -               drm_sched_entity_destroy(&panfrost_priv->sched_entity[i])=
-;
-> +       jm_ctx =3D xa_erase(&priv->jm_ctxs, handle);
-> +       if (!jm_ctx)
-> +               return -EINVAL;
-> +
-> +       for (u32 i =3D 0; i < ARRAY_SIZE(jm_ctx->slots); i++) {
-> +               if (jm_ctx->slots[i].enabled)
-> +                       drm_sched_entity_destroy(&jm_ctx->slots[i].sched_=
-entity);
-> +       }
+> Problem: when pinctrl core binds pins to a consumer device and the
+> pinmux ops of the underlying driver are marked as strict, the pin in
+> question can no longer be requested as a GPIO using the GPIO descriptor
+> API. It will result in the following error:
 >
->         /* Kill in-flight jobs */
->         spin_lock(&pfdev->js->job_lock);
-> -       for (i =3D 0; i < NUM_JOB_SLOTS; i++) {
-> -               struct drm_sched_entity *entity =3D &panfrost_priv->sched=
-_entity[i];
-> -               int j;
-> +       for (u32 i =3D 0; i < ARRAY_SIZE(jm_ctx->slots); i++) {
-> +               struct drm_sched_entity *entity =3D &jm_ctx->slots[i].sch=
-ed_entity;
-> +
-> +               if (!jm_ctx->slots[i].enabled)
-> +                       continue;
+> [    5.095688] sc8280xp-tlmm f100000.pinctrl: pin GPIO_25 already request=
+ed by regulator-edp-3p3; cannot claim for f100000.pinctrl:570
+> [    5.107822] sc8280xp-tlmm f100000.pinctrl: error -EINVAL: pin-25 (f100=
+000.pinctrl:570)
 >
-> -               for (j =3D ARRAY_SIZE(pfdev->jobs[0]) - 1; j >=3D 0; j--)=
- {
-> +               for (int j =3D ARRAY_SIZE(pfdev->jobs[0]) - 1; j >=3D 0; =
-j--) {
->                         struct panfrost_job *job =3D pfdev->jobs[i][j];
->                         u32 cmd;
+> This typically makes sense except when the pins are muxed to a function
+> that actually says "GPIO". Of course, the function name is just a string
+> so it has no meaning to the pinctrl subsystem.
 >
-> @@ -980,18 +1161,7 @@ void panfrost_job_close(struct panfrost_file_priv *=
-panfrost_priv)
->                 }
->         }
->         spin_unlock(&pfdev->js->job_lock);
-> -}
-> -
-> -int panfrost_job_is_idle(struct panfrost_device *pfdev)
-> -{
-> -       struct panfrost_job_slot *js =3D pfdev->js;
-> -       int i;
-> -
-> -       for (i =3D 0; i < NUM_JOB_SLOTS; i++) {
-> -               /* If there are any jobs in the HW queue, we're not idle =
-*/
-> -               if (atomic_read(&js->queue[i].sched.credit_count))
-> -                       return false;
-> -       }
+> We have many Qualcomm SoCs (and I can imagine it's a common pattern in
+> other platforms as well) where we mux a pin to "gpio" function using the
+> `pinctrl-X` property in order to configure bias or drive-strength and
+> then access it using the gpiod API. This makes it impossible to mark the
+> pin controller module as "strict".
 >
-> -       return true;
-> +       panfrost_jm_ctx_put(jm_ctx);
-> +       return 0;
->  }
+> This series proposes to introduce a concept of a sub-category of
+> pinfunctions: GPIO functions where the above is not true and the pin
+> muxed as a GPIO can still be accessed via the GPIO consumer API even for
+> strict pinmuxers.
+>
+> To that end: we first clean up the drivers that use struct function_desc
+> and make them use the smaller struct pinfunction instead - which is the
+> correct structure for drivers to describe their pin functions with. We
+> also rework pinmux core to not duplicate memory used to store the
+> pinfunctions unless they're allocated dynamically.
+>
+> First: provide the kmemdup_const() helper which only duplicates memory
+> if it's not in the .rodata section. Then rework all pinctrl drivers that
+> instantiate objects of type struct function_desc as they should only be
+> created by pinmux core. Next constify the return value of the accessor
+> used to expose these structures to users and finally convert the
+> pinfunction object within struct function_desc to a pointer and use
+> kmemdup_const() to assign it. With this done proceed to add
+> infrastructure for the GPIO pin function category and use it in Qualcomm
+> drivers. At the very end: make the Qualcomm pinmuxer strict.
 
-It seems odd that both panfrost_jm_ctx_destroy() and
-panfrost_jm_ctx_release() share lifetime responsibilities. I'd expect
-calling panfrost_jm_ctx_destroy() to just release the xarray handle
-and drop the refcount.
+Note mainly for Linus and Bart:
+I agree with the patches 1..11, but starting from 12 needs more
+discussion. That said, I hope Linus can apply the first 11 ones to
+make it easier to continue with the rest.
 
-I can see why calling panfrost_jm_ctx_destroy() is the one to go try
-to cancel the jobs - because the jobs keep a refcount on the context,
-so we need to break that cycle somehow. But having both the
-handle-release and object-release function drop a ref on the sched
-entity seems odd?
-
-It doesn't help much that panfrost_job is used both for actual jobs
-(as the type) and the capability for a device to have multiple
-job-manager contexts (as a function prefix). Would be great to clean
-that up, so you don't have to think about whether e.g.
-panfrost_job_close() is actually operating on a panfrost_job, or
-operating on multiple panfrost_jm_ctx which operate on multiple
-panfrost_job.
-
-Cheers,
-Daniel
+--=20
+With Best Regards,
+Andy Shevchenko
 
