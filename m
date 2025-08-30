@@ -1,224 +1,170 @@
-Return-Path: <linux-kernel+bounces-792840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7C1B3C99C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F230B3C9CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71F9B3AE44E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:06:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C580417192B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0580F255F3F;
-	Sat, 30 Aug 2025 09:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tmsrb/LO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7230E259CA3;
+	Sat, 30 Aug 2025 09:30:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FDA1A9F8E
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 09:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D7C3398A;
+	Sat, 30 Aug 2025 09:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756544798; cv=none; b=GffNPq6qNt9UiogmHn27Ea/mEJeuCinzdsuqMTM/Uyp3MRIT6Wfow0pO9x+QeLlZy5XH/9YfVrgfbg58XGPYpCZR4nCfgGarureiWiJcocDgonAvpDvlSZrBIo+zAb35hguEGv6DmYHl2H5loxTl+KoXayxiGdlN7pUjNSLpsuQ=
+	t=1756546258; cv=none; b=CrgdpfBVecnQC+Isq2fUK5Nqa0p3w29p+mH36RjWbh8eWAV79s2ML7jm+Um4MJwt/8s4IZ6Vf3a46pcnpQA7GVdYNCAbvRS9QWRRCW+RQSrqQ2wL78/fZWNyk9nl/N77djdRjYeld2fjQmGcnHywyRurvVqBf1WkM941IIj+ewQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756544798; c=relaxed/simple;
-	bh=K5S+7PFeburg2Tt8Ao99vAz+5/9vuoN1jzorDT+zmM8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ZtAr4zRAWID6OBMG/mMloemD6TTqm/dn+PchXH2b4Wf9ro1KmPvjZrEK2jB6QpI9kJwdieFTSoxA9CmniTJMj7q8j8NkX6PlY9YzGKfZm5ve6RDID6clq+QVp/ol9qpHSqdqGzz37IRB/2U4ZnPv/AMpeXVFTfqQtCvcfL7vCiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tmsrb/LO; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756544797; x=1788080797;
-  h=date:from:to:cc:subject:message-id;
-  bh=K5S+7PFeburg2Tt8Ao99vAz+5/9vuoN1jzorDT+zmM8=;
-  b=Tmsrb/LOuzzpTUj7YGv6XtZD7t7bx3WnJyBtwNDHWR+4bmSzItHXh3U8
-   rnrfZiWJ0V+4RvhWX1mMi13QHpfZoQD80bc+pQ8CP+za9prCa5tL1OvV1
-   /MBa5bSWOscK0fM+XkgTdi8WPORqtCZY4pBdictvfT5NflJQ8f22BcS2c
-   jSlNWcugvNWHvBr1EYzMifvo8kDq22pHkXRFhSWPMXGdu2JbTVePYnB8q
-   kWn+oyXMwvQ6tpNtYClAF8KOrrNmXOz6DNvZCy1fgyLA8oX9+VbT31R2c
-   tCTSRMVztgzE4xQkXtYfeX+Mlm4L4WEBdm2YU3cS6U8k2KOU/tkXazHoM
-   A==;
-X-CSE-ConnectionGUID: wpn13A2BQrGoeZpgELjVdw==
-X-CSE-MsgGUID: dDsJyTBSQU+GttUD4zhd4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69413121"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="69413121"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2025 02:06:36 -0700
-X-CSE-ConnectionGUID: Ti4jE+b/QRafmIeQuiN4lw==
-X-CSE-MsgGUID: KshuJz2uQr+LChkF13kZVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="207714224"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 30 Aug 2025 02:06:35 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usHXG-000VH7-1J;
-	Sat, 30 Aug 2025 09:06:16 +0000
-Date: Sat, 30 Aug 2025 17:04:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 4f0d2af9e56558e125b321b176b25cd6ad5fdac7
-Message-ID: <202508301721.bBNObsZb-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1756546258; c=relaxed/simple;
+	bh=oBmBgTmJRM5r9JK7Et4cih9k1JqxbuL+gjrwIqzmkAY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mjQiRcPfctk+0rac96mcoQsVayt79nIS8A9NVuTIwqGH6/ZAnCn7dE8GCCMhGFe+8HRdbIxfzt736CcndQn+h9qSAP430TAJozHB+OgH0g6iujqWa5Uvoz01P8+LlOOZQ9OVwoE3OVwsL4rYlmPyx6+CQVxmlzelWOduRyX7Oso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cDTwV0k3MzYQvsr;
+	Sat, 30 Aug 2025 17:14:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9752C1A115E;
+	Sat, 30 Aug 2025 17:14:16 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIznwLJood4rAw--.54255S4;
+	Sat, 30 Aug 2025 17:14:16 +0800 (CST)
+From: linan666@huaweicloud.com
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH] md: ensure consistent action state in md_do_sync
+Date: Sat, 30 Aug 2025 17:05:32 +0800
+Message-Id: <20250830090532.4071221-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIznwLJood4rAw--.54255S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFyxKr1UWF48Kr1UWr1rWFg_yoWrXrW5pa
+	yfCFnxKr4UAFW3tFW7ta4DJayFvr40yFWqyFW3Wa97Awn3Ka1fGFy5W3W7JayDAa4vyr4a
+	q34rGr43ZF47uaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbp6wtUUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 4f0d2af9e56558e125b321b176b25cd6ad5fdac7  Merge branch into tip/master: 'x86/tdx'
+From: Li Nan <linan122@huawei.com>
 
-elapsed time: 1453m
+The 'mddev->recovery' flags can change during md_do_sync(), leading to
+inconsistencies. For example, starting with MD_RECOVERY_RECOVER and
+ending with MD_RECOVERY_SYNC can cause incorrect offset updates.
 
-configs tested: 132
-configs skipped: 3
+To avoid this, use the 'action' determined at the beginning of the
+function instead of repeatedly checking 'mddev->recovery'.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+ drivers/md/md.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250829    gcc-8.5.0
-arc                   randconfig-002-20250829    gcc-10.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                                 defconfig    clang-22
-arm                         orion5x_defconfig    clang-22
-arm                   randconfig-001-20250829    gcc-10.5.0
-arm                   randconfig-002-20250829    clang-22
-arm                   randconfig-003-20250829    clang-22
-arm                   randconfig-004-20250829    clang-22
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250829    clang-22
-arm64                 randconfig-002-20250829    gcc-12.5.0
-arm64                 randconfig-003-20250829    clang-22
-arm64                 randconfig-004-20250829    gcc-9.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250829    gcc-9.5.0
-csky                  randconfig-002-20250829    gcc-10.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20250829    clang-22
-hexagon               randconfig-002-20250829    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250829    gcc-12
-i386        buildonly-randconfig-002-20250829    clang-20
-i386        buildonly-randconfig-003-20250829    clang-20
-i386        buildonly-randconfig-004-20250829    clang-20
-i386        buildonly-randconfig-005-20250829    gcc-12
-i386        buildonly-randconfig-006-20250829    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250829    clang-22
-loongarch             randconfig-002-20250829    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                        m5272c3_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          ath25_defconfig    clang-22
-mips                       bmips_be_defconfig    gcc-15.1.0
-mips                           ip28_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250829    gcc-11.5.0
-nios2                 randconfig-002-20250829    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250829    gcc-14.3.0
-parisc                randconfig-002-20250829    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                      katmai_defconfig    clang-22
-powerpc               randconfig-001-20250829    gcc-13.4.0
-powerpc               randconfig-002-20250829    clang-22
-powerpc               randconfig-003-20250829    gcc-12.5.0
-powerpc                     tqm8548_defconfig    clang-22
-powerpc64             randconfig-001-20250829    clang-22
-powerpc64             randconfig-002-20250829    clang-22
-powerpc64             randconfig-003-20250829    gcc-8.5.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv             nommu_k210_sdcard_defconfig    gcc-15.1.0
-riscv                 randconfig-001-20250830    gcc-8.5.0
-riscv                 randconfig-002-20250830    clang-22
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250830    clang-22
-s390                  randconfig-002-20250830    gcc-8.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250830    gcc-11.5.0
-sh                    randconfig-002-20250830    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250830    gcc-13.4.0
-sparc                 randconfig-002-20250830    gcc-8.5.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250830    gcc-11.5.0
-sparc64               randconfig-002-20250830    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250830    gcc-12
-um                    randconfig-002-20250830    gcc-12
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250829    gcc-11
-x86_64      buildonly-randconfig-002-20250829    gcc-11
-x86_64      buildonly-randconfig-003-20250829    gcc-12
-x86_64      buildonly-randconfig-004-20250829    clang-20
-x86_64      buildonly-randconfig-005-20250829    clang-20
-x86_64      buildonly-randconfig-006-20250829    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250830    gcc-12.5.0
-xtensa                randconfig-002-20250830    gcc-15.1.0
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 6828a569e819..67cda9b64c87 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9516,7 +9516,7 @@ void md_do_sync(struct md_thread *thread)
+ 
+ 		skipped = 0;
+ 
+-		if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
++		if (action != ACTION_RESHAPE &&
+ 		    ((mddev->curr_resync > mddev->curr_resync_completed &&
+ 		      (mddev->curr_resync - mddev->curr_resync_completed)
+ 		      > (max_sectors >> 4)) ||
+@@ -9529,8 +9529,7 @@ void md_do_sync(struct md_thread *thread)
+ 			wait_event(mddev->recovery_wait,
+ 				   atomic_read(&mddev->recovery_active) == 0);
+ 			mddev->curr_resync_completed = j;
+-			if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+-			    j > mddev->resync_offset)
++			if (action == ACTION_RESYNC && j > mddev->resync_offset)
+ 				mddev->resync_offset = j;
+ 			update_time = jiffies;
+ 			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+@@ -9646,7 +9645,7 @@ void md_do_sync(struct md_thread *thread)
+ 	blk_finish_plug(&plug);
+ 	wait_event(mddev->recovery_wait, !atomic_read(&mddev->recovery_active));
+ 
+-	if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
++	if (action != ACTION_RESHAPE &&
+ 	    !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+ 	    mddev->curr_resync >= MD_RESYNC_ACTIVE) {
+ 		mddev->curr_resync_completed = mddev->curr_resync;
+@@ -9654,9 +9653,8 @@ void md_do_sync(struct md_thread *thread)
+ 	}
+ 	mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
+ 
+-	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
+-	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
+-		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
++	if (action != ACTION_CHECK && mddev->curr_resync > MD_RESYNC_ACTIVE) {
++		if (action == ACTION_RESYNC) {
+ 			if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+ 				if (mddev->curr_resync >= mddev->resync_offset) {
+ 					pr_debug("md: checkpointing %s of %s.\n",
+@@ -9674,8 +9672,7 @@ void md_do_sync(struct md_thread *thread)
+ 		} else {
+ 			if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+ 				mddev->curr_resync = MaxSector;
+-			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+-			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
++			if (action == ACTION_RECOVER) {
+ 				rcu_read_lock();
+ 				rdev_for_each_rcu(rdev, mddev)
+ 					if (mddev->delta_disks >= 0 &&
+@@ -9692,7 +9689,7 @@ void md_do_sync(struct md_thread *thread)
+ 	set_mask_bits(&mddev->sb_flags, 0,
+ 		      BIT(MD_SB_CHANGE_PENDING) | BIT(MD_SB_CHANGE_DEVS));
+ 
+-	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
++	if (action == ACTION_RESHAPE &&
+ 			!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+ 			mddev->delta_disks > 0 &&
+ 			mddev->pers->finish_reshape &&
+@@ -9709,10 +9706,10 @@ void md_do_sync(struct md_thread *thread)
+ 	spin_lock(&mddev->lock);
+ 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+ 		/* We completed so min/max setting can be forgotten if used. */
+-		if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
++		if (action == ACTION_REPAIR)
+ 			mddev->resync_min = 0;
+ 		mddev->resync_max = MaxSector;
+-	} else if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
++	} else if (action == ACTION_REPAIR)
+ 		mddev->resync_min = mddev->curr_resync_completed;
+ 	set_bit(MD_RECOVERY_DONE, &mddev->recovery);
+ 	mddev->curr_resync = MD_RESYNC_NONE;
+-- 
+2.39.2
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
