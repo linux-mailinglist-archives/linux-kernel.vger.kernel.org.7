@@ -1,206 +1,89 @@
-Return-Path: <linux-kernel+bounces-792897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4DC5B3CA1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C502B3CA21
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430897C2C25
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413423A84BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D2E274FD7;
-	Sat, 30 Aug 2025 10:20:31 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C602749E2;
+	Sat, 30 Aug 2025 10:22:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA13268688;
-	Sat, 30 Aug 2025 10:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F53215075;
+	Sat, 30 Aug 2025 10:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756549231; cv=none; b=TSa7RQSMX883V4ZL49WVssdA3o9M7y4jXLOyyiQH2ptuSFMEYMo9xzFzMex980ut4K4tr9Y9GB53C3cAlsQUX+rXUhfieptpaJmmL23OhW9gnvZp2oYUjx/BeIXSW+Fus3rEUim9iktO7pTASamqd8ILhu/3XrYutdA5XpUkMDg=
+	t=1756549376; cv=none; b=NhjI17hjRaII/Cfuhfxu+NRxeCJulyZ37d+6mxHQc2L+R81yp4TkL0muGJCHTccqlbBTRDWmdoBe7xvg6ML3Y8+UwtscWBy2jva5vujNJEB+yrtHa+c9x9rI0tethwniQq+3GVLUEuWKLHEx3GD1ulAPZgN6KaqPS1uASu5LMDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756549231; c=relaxed/simple;
-	bh=dLcamLYbnw8zn2V72MApU3Zr8An1KRmITt4VgQgPM/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q2mZZsp9YKm4hx6rk6vUhk8hfQGt38dsyQcpDC1QJiLpz2m0hGlljVHX613rMcNrnUY2wf4lL0/7OuQNuzxaGYtOA+Ing9wBndQfrbZ2SyrPgKh0KbhyiE02WfOTMdJ4sJn1lomnvMU1NNccYD1VjqXiwjUkt0drJPgvwgzvrKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cDWHS3yJBzPqRk;
-	Sat, 30 Aug 2025 18:15:48 +0800 (CST)
-Received: from kwepemo100006.china.huawei.com (unknown [7.202.195.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE853180486;
-	Sat, 30 Aug 2025 18:20:24 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemo100006.china.huawei.com
- (7.202.195.47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
- 2025 18:20:23 +0800
-Message-ID: <4b3c042c-a986-9768-c923-cc19b82ee777@hisilicon.com>
-Date: Sat, 30 Aug 2025 18:20:23 +0800
+	s=arc-20240116; t=1756549376; c=relaxed/simple;
+	bh=HwX32QeFjPWmTiGI3BtXr13beWWLdfFnHIp1PwXx2Z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ed9jged3fkJy0xwUMcfHGwfAutiuEkokF6tzb3mlXvphkfZ7OLpsmJgUsW2r8gzwa/jjwNYmjY/DbRLdflWj1o3Z5iOnsGF2wdrr6ScWsC1X3GCx2hcWSFFbXrMLRWzuP5CVruQ57F5OCHqjsMuD9s9FtYmmiUBAjlIPWtF9yO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05E4C4CEEB;
+	Sat, 30 Aug 2025 10:22:53 +0000 (UTC)
+Date: Sat, 30 Aug 2025 11:22:51 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <aLLQ-43Ll8rF7kon@arm.com>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+ <20250819135008.5f1ba00e@gandalf.local.home>
+ <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+ <20250829082604.1e3fd06e@gandalf.local.home>
+ <20250829083655.3d38d02b@gandalf.local.home>
+ <aLIFRHcsEo2e2GE7@arm.com>
+ <20250829181311.079f33bf@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v5 3/3] arm64: topology: Setup AMU FIE for online CPUs
- only
-To: Lifeng Zheng <zhenglifeng1@huawei.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-	<beata.michalska@arm.com>, <sudeep.holla@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
-	<yangyicong@hisilicon.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
-	<zhangpengjie2@huawei.com>, <linhongye@h-partners.com>
-References: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
- <20250819072931.1647431-4-zhenglifeng1@huawei.com>
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <20250819072931.1647431-4-zhenglifeng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemo100006.china.huawei.com (7.202.195.47)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829181311.079f33bf@gandalf.local.home>
 
-Hi Lifeng,
+On Fri, Aug 29, 2025 at 06:13:11PM -0400, Steven Rostedt wrote:
+> On Fri, 29 Aug 2025 20:53:40 +0100
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+> valid user address.
+> > BTW, arm64 also bails out early in do_page_fault() if in_atomic() but I
+> > suspect that's not the case here.
+> > 
+> > Adding Al Viro since since he wrote a large part of uaccess.h.
+> 
+> So, __copy_from_user_inatomic() is supposed to be called if
+> pagefault_disable() has already been called? If this is the case, can we
+> add more comments to this code? I've been using the inatomic() version this
+> way in preempt disabled locations since 2016.
 
-Some minor suggestions in addition to Beata's comments on the readability
-of those checks.
+This should work as long as in_atomic() returns true as it's checked in
+the arm64 fault code. With PREEMPT_NONE, however, I don't think this
+works. __copy_from_user_inatomic() could be changed to call
+pagefault_disable() if !in_atomic() but you might as well call
+copy_from_user_nofault() in the trace code directly as per Luo's patch.
 
-On 19/08/2025 15:29, Lifeng Zheng wrote:
-> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
-> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
-> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
-> when it shares a cpufreq policy with other CPU(s). After that, when other
-> CPUs are finally online and the support AMU flags of them are set, they'll
-> never have a chance to set up AMU FIE, even though they're eligible.
-> 
-> To solve this problem, the process of setting up AMU FIE needs to be
-> modified as follows:
-> 
-> 1. Set up AMU FIE only for the online CPUs.
-> 
-> 2. Try to set up AMU FIE each time a CPU goes online and do the
-> freq_counters_valid() check. If this check fails, clear scale freq source
-> of all the CPUs related to the same policy, in case they use different
-> source of the freq scale.
-> 
-> At the same time, this change also be applied to cpufreq when calling
-> arch_set_freq_scale.
-> 
-> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
-> ---
->  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
->  drivers/cpufreq/cpufreq.c    |  4 +--
->  2 files changed, 54 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 9317a618bb87..a9d9e9969cea 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
->  	struct cpufreq_policy *policy = data;
->  
->  	if (val == CPUFREQ_CREATE_POLICY)
-> -		amu_fie_setup(policy->related_cpus);
-> +		amu_fie_setup(policy->cpus);
->  
->  	/*
->  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
-> @@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
->  	.notifier_call = init_amu_fie_callback,
->  };
->  
-> +static int cpuhp_topology_online(unsigned int cpu)
-> +{
-> +	struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
-> +
-> +	/*
-> +	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
-> +	 * an AMU FIE one, no need to set it.
-> +	 */
-> +	if (!policy || !cpumask_available(amu_fie_cpus) ||
-> +	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
-> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
-> +		return 0;
-> +
-> +	/*
-> +	 * If the new online CPU cannot pass this check, all the CPUs related to
-> +	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
-> +	 * may use different source of the freq scale.
-> +	 */
-> +	if (WARN_ON(!freq_counters_valid(cpu))) {
-I think a panic warning might be too much for this?
-pr_info/pr_warn, or even pr_debug, should be enough.
-> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
-> +						 policy->related_cpus);
-> +		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
-> +		return 0;
-> +	}
-> +
-> +	cpumask_set_cpu(cpu, amu_fie_cpus);
-> +
-> +	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
-> +
-> +	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
-> +
-> +	return 0;
-> +}
-> +
->  static int __init init_amu_fie(void)
->  {
-> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
-> +	int ret;
-> +
-> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
->  					CPUFREQ_POLICY_NOTIFIER);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-> +					"arm64/topology:online",
-> +					cpuhp_topology_online,
-> +					NULL);
-> +	if (ret < 0) {
-> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
-> +					    CPUFREQ_POLICY_NOTIFIER);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
->  }
->  core_initcall(init_amu_fie);
->  
+> I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
+> If anything, it needs to be better documented.
 
-It's better move the following change into a separate patch before the
-AMU FIE changes.
+Yeah, I had no idea until I looked at the code. I guess it means it can
+be safely used if in_atomic() == true (well, making it up, not sure what
+the intention was).
 
-I don't think they are interdependent, and they can be applied separately.
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 78ca68ea754d..d1890a2af1af 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -417,7 +417,7 @@ void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
->  
->  	cpufreq_notify_post_transition(policy, freqs, transition_failed);
->  
-> -	arch_set_freq_scale(policy->related_cpus,
-> +	arch_set_freq_scale(policy->cpus,
->  			    policy->cur,
->  			    arch_scale_freq_ref(policy->cpu));
->  
-> @@ -2219,7 +2219,7 @@ unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
->  		return 0;
->  
->  	policy->cur = freq;
-> -	arch_set_freq_scale(policy->related_cpus, freq,
-> +	arch_set_freq_scale(policy->cpus, freq,
->  			    arch_scale_freq_ref(policy->cpu));
->  	cpufreq_stats_record_transition(policy, freq);
->  
+-- 
+Catalin
 
