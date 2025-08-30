@@ -1,220 +1,210 @@
-Return-Path: <linux-kernel+bounces-793084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F89AB3CDFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750A3B3CE02
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D31205949
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9221BA1105
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F50233134;
-	Sat, 30 Aug 2025 17:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6089257821;
+	Sat, 30 Aug 2025 17:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9bHNT9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gYU1S8ny"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623AEAD5A
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761C7149C6F
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756574252; cv=none; b=mKvD9d2H+ujSeJCM+XY6+ORgHyGwt5jPWzGQ7Ykg9FaEn9T+mqO5Vv/StdCTXkYc9W9gsAhNnP64v4/IdFJkgFWIQm4fFn7y30hFGh4pDz9hAcdJCEOzOSCPGSg8OcbLIZknLcowjD3UYymm3EI95iXKlfgAWN03Uug4TvDCZno=
+	t=1756574350; cv=none; b=Eeg6+sKLxc7TXGJxm/uD7z2SIy4gwWx5AcXdVKs1Od7sW8b4w/WB78anJjRSx0PQUvNGxG2n2IVZD+++UOop5W54/HSN2I38RyMhVuk9lSDr+0PppPbs8k9TEXLx3ftdIAg0Jd/RH/biGR07+BAjoAXP3Qz3weJC8n4/eKeOC7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756574252; c=relaxed/simple;
-	bh=zYGWS+/CkrUPWyjkFxvoPxHf5pqXrVxA/dhPwOro6RM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iYWigC42w5zzI6N1a14RLlRfEIw4liOBno2Nv7x8wIrwt696K0NIP9gAVpZQdftBNIAWtb7aboeziQA9LbKrIKvjb/t4tciWP1StiS8mNjhpQKlE1Sf10uwMxcFxse7rmFVz5PLsO/DI9nkhWbFpc9AflVVWcYFIe0PEeHFXMG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9bHNT9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DFDC4CEF7
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756574252;
-	bh=zYGWS+/CkrUPWyjkFxvoPxHf5pqXrVxA/dhPwOro6RM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W9bHNT9d1L31wYLYzZKyDzSvpdtEZe2wbduQgjHmFvGQlMW9zlcEH4t38Rbv+JHfJ
-	 zNhwPQD2hyC/0sck6lXxbY69riXR07vWk0yJChbSypXGmERrAY4Y/G3sTnLOPbbG/m
-	 eZ02LP2rK73QBoBfBVilvxvTDnQe/ZZzcpEBSUpQ1+S5bAXZA9omFbbaVLbztTjF6B
-	 hqlNoVeXcdlKG/iMX5bpRKNLinE2Ijt/HRDvlnYLaTd4AQlv42EF6/zfBpIOti+YsQ
-	 NQlPKEaS9uWx8TFIMVdWaiIUu3RYWot6sZi71BnLUcQzclyBLt8RvBjdlbwUP+rfx0
-	 WpgFQsuU8WRjw==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d603a269cso24644407b3.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:17:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVJG2LG4nYOG9NN4BuFuDZ02eoai+x3D3fVqNgyeCgaWLHkmfJPlA+n4oRi+CmD8V2mclZpCYIrE+R1soQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyihhrpzzLCEsdRKac9laRRWuYK50ZVg2EEqsPP+ztYY+Tj0317
-	OtpYCovSmI4nSskWMId+LANR6wqjrZKJ8BjTOof4C9/StlaQLWIAm05AhrRVv8bdNzDrijm2CxA
-	0CvPmq+BafUkej5g2D4lrsZpsA4tnx/LVT4LZkyQpgQ==
-X-Google-Smtp-Source: AGHT+IEdAhZDP+hdNmVRZ+bpKP98LzQNJPQlctmdKbNNJ6Tvh/8OZfNSaP9u+dd1GC3FYlNNBFbdEQO21IDezBANZBw=
-X-Received: by 2002:a05:690c:7105:b0:721:318f:85ba with SMTP id
- 00721157ae682-72276361f59mr24403037b3.17.1756574251353; Sat, 30 Aug 2025
- 10:17:31 -0700 (PDT)
+	s=arc-20240116; t=1756574350; c=relaxed/simple;
+	bh=UBHG+9SPy9usH/CpfwQR9J5CI7EPxyX/aq86W1GSMjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l9gvO5n2O7rei7rSAC6fLSnnqzOE+oh0YDkB0XDvofMPaVGJ21q8sQHD41BV3AZ8Td0VVcRmSwoADd8kXBbuqcsPp87XXDQ/T9krHUlaQIGg4tZQRC4Wk+shOoFkH8PBhpC9DE94zZv1jD0FgsfTGxthXkKC5tinxtSETwPyXJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gYU1S8ny; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cceb749d7so1350003fac.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 10:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756574346; x=1757179146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YeDVxheW4o9XBGPi8jw/Mc+wVOwdFH2KoFx58cVzgZw=;
+        b=gYU1S8nynrNsJhNYvJ104T0sCr/+c8fC5KyGI5mhkTvAW5zcduZVuU4c5F3U8VIeXv
+         21R6on+pbraPDN+IHAesKD/YG62DoVNTzNC/3fbVFsaXz2xRl19D9DlA7tacYsMCAOv2
+         ieKz+fplGr0VrXwrpVXUMurmey0Pi5dxXrPey7+HI9mbWsTF8NTd8xkl2lx24YEchwnH
+         9uTMnYB/d2jT80O8NoX+7mr5qnK6MNQIZX8GfPQzto8IqBOKJafOyhCURyDsePMBGyuG
+         kzzAEn4XPQ4hS83hiZGWVewxUBvWHC9luXLX/l0SqSsJw1ftTVwPYK8oCnO5FM0kxhKe
+         3yJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756574346; x=1757179146;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeDVxheW4o9XBGPi8jw/Mc+wVOwdFH2KoFx58cVzgZw=;
+        b=aKgEgAInRVsyaj4h655Wn5uNgeYC9w/8B8utBkbLqNVVksqnaPzyR+G1r7CcEAioJu
+         mU+I0JhpyLcpOhurf+UrnxRIHIRa6GA2JEuzUVAWrBHBl77u6/Bi6Ue1fALOnsYKjzlD
+         tTz15ehpsCvU2sR18lmtisIfT1j9wTszBfDeL8g9nSQNuE/RhPm3eD0DoN0GOtmjF1xo
+         k6867+NI/rMepzStSxVUCIC5BnyeYihHuM4sFtZEjsUVfhEUL9anQIIdPuBOU9NZleIR
+         94IAmPLNH43qDnpP1HnuZ1C8rg5o4HuGRs4x8jlVsSRpE1FUwZcDTGD4kUfXmgYJPXqj
+         Doqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBREOB+o7w9EveIftEf1bXx4A59hwYfdfDig9kP8TAkGwX0oaw5b20w+2qD3QVEt6S16IB1dOTuMBS8aA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRuV+xzAFO+v7ydysMC+Bp2IX/goLTmsfTbEKKQP4vWcFYG5Y5
+	zEsfKLMvCIf2CdRmcdxbSypn3pQAtPdflz0vUhS7C2qp+AeNIZFKO08CEEq+tAQjoX8=
+X-Gm-Gg: ASbGncsYSGhK/LVi4Xd+PtkK7ZDcMMktmGbV1UJ6C6MXCOyXSgmy2OnPzUPMQc/Rz83
+	TrWqNi8v5WhutZHplnLP/EkXXIEIp3zvlORp4LVuyKAvJ+663Nzx6FLXdcSDtHns/4TZNkhgigM
+	kiwqgqyO65E1e5URYlc37TYJ0boKCV7TE3r3knikflZ2zoapov9WHiUzkgh3pcfTgM+YRvRPKoj
+	Ms3r6Qm2gB1uCEMwqS9snDGJ1S2aABuTztwFCkxCdxYdIRx/7YBVmOmm00L7GlLLjbpTbOwTTXQ
+	ia0XSdNqhNTFcP2dyXOqcK5j7YSp+Sm3vX5TTMeQNgpdJQW5HG7A8AUWxBLObyrC8wEWB5PgmGD
+	zSUtVjDvBKFeLa79FfnKb8LUAlQnYlixe2d++TsMp7LtluX+xZIbrUz66r3ZSW2bXHhMSnovuYg
+	4qdss6SW+swA==
+X-Google-Smtp-Source: AGHT+IFi29hPex54pz8o3psrTBeZJRuO4YVWG2tWpBUn2CBUnvUy3efI4Ysjb7trhSOOAHvvPg1ZIg==
+X-Received: by 2002:a05:6808:152c:b0:437:c839:ef67 with SMTP id 5614622812f47-437f7ca904fmr1009151b6e.3.1756574346490;
+        Sat, 30 Aug 2025 10:19:06 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d? ([2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745742a672csm9076a34.13.2025.08.30.10.19.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Aug 2025 10:19:05 -0700 (PDT)
+Message-ID: <a9b64ad7-41ff-4428-b47a-e3b3e50670a3@baylibre.com>
+Date: Sat, 30 Aug 2025 12:19:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
- <CAF8kJuO0efOE-os=qi=i5jT1YWxspHYc=Ti1KN=uKgyFpWTRbA@mail.gmail.com>
- <CAMgjq7AkUc7hKrEL8cQ7jJTeXYBq7WqM55uQ_SZNNY8vJ7+ODQ@mail.gmail.com>
- <CACePvbWnsrGxUv15R4kMpc10wsBE2Bc-rapGyBYjekrqFJgJbw@mail.gmail.com> <CAMgjq7B-Uvs7CcCdVaFjgzK6DEr47v7ULg6EbzE72OouPRFcSw@mail.gmail.com>
-In-Reply-To: <CAMgjq7B-Uvs7CcCdVaFjgzK6DEr47v7ULg6EbzE72OouPRFcSw@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Sat, 30 Aug 2025 10:17:20 -0700
-X-Gmail-Original-Message-ID: <CACePvbUrxe1ynqKpuaaU3DfEO8UHwiFgOdVv2OWvxs2Eiz6_Wg@mail.gmail.com>
-X-Gm-Features: Ac12FXzKH3DzMhXsO6Feyl6tISayrNok-qAv8F-WPT4_dkWAxnxoVPLD6zGRraw
-Message-ID: <CACePvbUrxe1ynqKpuaaU3DfEO8UHwiFgOdVv2OWvxs2Eiz6_Wg@mail.gmail.com>
-Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
- before use
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/15] iio: adc: ad4030: Support multiple data lanes per
+ channel
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
+ eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
+ Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
+ ahaslam@baylibre.com, sergiu.cuciurean@analog.com, marcelo.schmitt1@gmail.com
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
+ <4e2b2d07a255bb249a1dc40a4470c7e123d4213f.1756511030.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <4e2b2d07a255bb249a1dc40a4470c7e123d4213f.1756511030.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 30, 2025 at 8:16=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
-> > So the missing readahead stats update behavior is the correct and
-> > better behavior. I suggest you spit that out as a separate patch with
-> > appropriate comments about it too. It is also easier to bisect the
-> > commit if that kind of the subtle change which is considered safe
-> > turns out causing a problem. Causing problem not happen very often but
-> > it does happen before.
->
-> Yes, I'm planning to split one patch out for the readahead change.
+On 8/29/25 7:43 PM, Marcelo Schmitt wrote:
+> AD4030 and similar chips can output ADC sample data through 1, 2, or 4
+> lines per channel. The number of SPI lines the device uses to output data
+> is specified in firmware. Parse SPI read bus width setting from firmware
+> and configure the device to use that amount of lines to output data.
+> 
+> Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+>  drivers/iio/adc/ad4030.c | 33 ++++++++++++++++++++++++++++++---
+>  1 file changed, 30 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+> index 68f76432dbfd..e6c1c9be1632 100644
+> --- a/drivers/iio/adc/ad4030.c
+> +++ b/drivers/iio/adc/ad4030.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/trigger_consumer.h>
+>  #include <linux/iio/triggered_buffer.h>
+> +#include <linux/log2.h>
+>  #include <linux/pwm.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> @@ -258,6 +259,10 @@ struct ad4030_state {
+>  #define AD4030_OFFLOAD_CHAN_DIFF(_idx, _scan_type)			\
+>  	__AD4030_CHAN_DIFF(_idx, _scan_type, 1)
+>  
+> +static const int ad4030_rx_bus_width[] = {
+> +	1, 2, 4, 8,
+> +};
+> +
+>  static const int ad4030_average_modes[] = {
+>  	1, 2, 4, 8, 16, 32, 64, 128,
+>  	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
+> @@ -1197,7 +1202,7 @@ static void ad4030_prepare_offload_msg(struct ad4030_state *st)
+>  		 */
+>  		offload_bpw = data_width * st->chip->num_voltage_inputs;
+>  	else
+> -		offload_bpw  = data_width;
+> +		offload_bpw  = data_width / (1 << st->lane_mode);
 
-Ack.
->
-> > > > >  /*
-> > > > > - * Lookup a swap entry in the swap cache. A found folio will be =
-returned
-> > > > > - * unlocked and with its refcount incremented.
-> > > > > + * swap_cache_get_folio - Lookup a swap entry in the swap cache.
-> > > > >   *
-> > > > > - * Caller must lock the swap device or hold a reference to keep =
-it valid.
-> > > > > + * A found folio will be returned unlocked and with its refcount=
- increased.
-> > > > > + *
-> > > > > + * Context: Caller must ensure @entry is valid and pin the swap =
-device, also
-> > > > Is the "pin" the same as  "lock the swap device or hold a reference=
-"?
-> > > > Not sure why you changed that comment to "pin".
-> > >
-> > > Yes it's the same thing. We don't lock the device though, the device
-> > > can be pinned by the refcounf (get_swap_device) or locking anything
-> > > that is referencing the device (locking PTL the a PTE that contains a=
-n
-> > > swap entry pointing to the device, or locking a swap cache folio of a
-> > > swap entry that points to the device). So I juse used the word "pin".
-> > > I added some comments in mm/swap.h in later commits about what the
-> > > "pin" means.
-> >
-> > In that case why not reuse the previous comment keeping "lock the swap
-> > device or hold a reference" instead of "pin"?
->
-> I'm worried that the sentence "lock the swap device" is kind of fuzzy,
-> people may misunderstand that they need to hold si->lock. Actually
-> they only need to hold si->user or lock anything. It's not wrong but
-> kind of overkill.
+To make proper use of 2 or 4 lines for a single channel, we should be
+using the SPI APIs correctly and set rx_nbits in struct spi_transfer
+instead of providing an inaccurate bits per word.
 
-What you just told me is a lot more useful than what was previously there.
-Try to incorporate that into the comments. e.g. instead of "lock the
-swap device", do "lock si->user or any other lock" or something like
-that.
+>  
+>  	st->offload_xfer.speed_hz = AD4030_SPI_MAX_REG_XFER_SPEED;
+>  	st->offload_xfer.bits_per_word = offload_bpw;
+> @@ -1208,6 +1213,10 @@ static void ad4030_prepare_offload_msg(struct ad4030_state *st)
+>  
+>  static int ad4030_config(struct ad4030_state *st)
+>  {
+> +	struct device *dev = &st->spi->dev;
+> +	const char *propname;
+> +	u32 rx_bus_width;
+> +	unsigned int i;
+>  	int ret;
+>  	u8 reg_modes;
+>  
+> @@ -1215,10 +1224,28 @@ static int ad4030_config(struct ad4030_state *st)
+>  	st->offset_avail[1] = 1;
+>  	st->offset_avail[2] = BIT(st->chip->precision_bits - 1) - 1;
+>  
+> -	if (st->chip->num_voltage_inputs > 1)
+> +	/* Optional property specifying the number of lanes to read ADC data */
+> +	propname = "spi-rx-bus-width";
 
-> > > > It seems to me that you want to add the comment for the return valu=
-e check.
-> > > > Is that it?
-> > >
-> > > Right, the caller has to check the folio before use, so I'm trying to
-> > > document this convention.
-> >
-> > Again, I recommend reducing the unnecessary impact to the code, make
-> > it more obvious what you did actually change. I spend quite some time
-> > there trying to figure out what you are trying to accomplish with the
-> > comments.
-> >
-> > > > > + * check the returned folio after locking it (e.g. folio_swap_co=
-ntains).
-> > > > >   */
-> > > > >  struct folio *swap_cache_get_folio(swp_entry_t entry)
-> > > > >  {
-> > > > > @@ -338,7 +340,10 @@ struct folio *__read_swap_cache_async(swp_en=
-try_t entry, gfp_t gfp_mask,
-> > > > >         for (;;) {
-> > > > >                 int err;
-> > > > >
-> > > > > -               /* Check the swap cache in case the folio is alre=
-ady there */
-> > > > > +               /*
-> > > > > +                * Check the swap cache first, if a cached folio =
-is found,
-> > > > > +                * return it unlocked. The caller will lock and c=
-heck it.
-> > > > > +                */
-> > > > >                 folio =3D swap_cache_get_folio(entry);
-> > > > >                 if (folio)
-> > > > >                         goto got_folio;
-> > > > > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > > > > index 4b8ab2cb49ca..12f2580ebe8d 100644
-> > > > > --- a/mm/swapfile.c
-> > > > > +++ b/mm/swapfile.c
-> > > > > @@ -240,12 +240,12 @@ static int __try_to_reclaim_swap(struct swa=
-p_info_struct *si,
-> > > > >          * Offset could point to the middle of a large folio, or =
-folio
-> > > > >          * may no longer point to the expected offset before it's=
- locked.
-> > > > >          */
-> > > > > -       entry =3D folio->swap;
-> > > > > -       if (offset < swp_offset(entry) || offset >=3D swp_offset(=
-entry) + nr_pages) {
-> > > > > +       if (!folio_contains_swap(folio, entry)) {
-> > > > >                 folio_unlock(folio);
-> > > > >                 folio_put(folio);
-> > > > >                 goto again;
-> > > > >         }
-> > > > > +       entry =3D folio->swap;
-> > > >
-> > > > Can you also check this as well? The "goto again" will have entries
-> > > > not assigned compared to previously.
-> > > > Too late for me to think straight now if that will cause a problem.
-> > >
-> > > Oh, thanks for pointing this part out. This patch is correct, it's th=
-e
-> > > original behaviour that is not correct. If the folio is no longer
-> > > valid (the if check here failed), changing the `entry` value before
-> > > could lead to a wrong look in the next attempt with `goto again`. Tha=
-t
-> > > could lead to reclaim of an unrelated folio. It's a trivial issue
-> > > though, only might marginally slow down the performance. Maybe I
-> > > should make a seperate patch to fix this issue first in case anyone
-> > > wants to backport it.
-> >
-> > Thanks for the explanation, please do split this subtle behavior
-> > change out with appropriate commit messages documenting your change,
-> > why it is safe and the better behavior.
-> >
-> > Thanks
->
-> Thanks for the review, I think separating 2 patches (one for
-> __try_to_reclaim_swap and one for readahead) out of this one should be
-> good enough and make everyone happy, overall the code is still the
-> same.
+This property is already handled by the core SPI code and will set
+spi->mode flags SPI_RX_DUAL, SPI_RX_QUAD or SPI_RX_OCTAL. So we don't
+need to read the property again.
 
-It is your call. I am happy to review them the same. It might take me
-more time to reason about it and slightly delay your series merge to
-mm-unstable, that is all.
+> +	rx_bus_width = ad4030_rx_bus_width[0]; /* Default to 1 rx lane. */
+> +	device_property_read_u32(dev, propname, &rx_bus_width);
+> +	/* Check the rx bus width is valid */
+> +	for (i = 0; i < ARRAY_SIZE(ad4030_rx_bus_width); i++)
+> +		if (ad4030_rx_bus_width[i] == rx_bus_width)
+> +			break;
+> +
+> +	if (i >= ARRAY_SIZE(ad4030_rx_bus_width))
+> +		return dev_err_probe(dev, -EINVAL, "Invalid %s: %u\n",
+> +				     propname, rx_bus_width);
+> +
+> +	rx_bus_width = ad4030_rx_bus_width[i];
+> +
+> +	if (rx_bus_width == 8 && st->chip->num_voltage_inputs == 1)
+> +		return dev_err_probe(dev, -EINVAL, "1 channel with 8 lanes?\n");
 
-Chris
+As mentioned in the dt-bindings patch review, we really should consider
+the 2 channel case separate as 2 SPI buses rather than 8 lines on a
+single bus. 
+
+Only using "spi-rx-bus-width" also has the shortcoming that if we specify
+4, we don't know if is it 4 lines on 1 channel or is it 2 lines each on 2
+channels? There is no way to tell from just that information.
+
+> +
+> +	if (rx_bus_width == 1 && st->chip->num_voltage_inputs > 1)
+>  		st->lane_mode = AD4030_LANE_MD_INTERLEAVED;
+>  	else
+> -		st->lane_mode = AD4030_LANE_MD_1_PER_CH;
+> +		st->lane_mode = ilog2(rx_bus_width / st->chip->num_voltage_inputs);
+>  
+>  	reg_modes = FIELD_PREP(AD4030_REG_MODES_MASK_LANE_MODE, st->lane_mode);
+>  
+
 
