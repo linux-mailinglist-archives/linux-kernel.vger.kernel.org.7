@@ -1,179 +1,154 @@
-Return-Path: <linux-kernel+bounces-792701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF55B3C7CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC045B3C7D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D0A5A2927
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26397C3382
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3937277CB8;
-	Sat, 30 Aug 2025 04:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EB4278E47;
+	Sat, 30 Aug 2025 04:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d822i5PQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="BW+6GoB+"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B298128395;
-	Sat, 30 Aug 2025 04:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756527033; cv=none; b=odrubKTgMbtwBhZo7HuTzzGSxvRpjfXUh39/Ns8BxYvw0dFRTjKf8SQWB1AijLhN64hDO4irAguoeYAm7OAbuYl12jiv650xKw8vDuv3SV8YXwxUwuxJUy7emIM4kbo3U0lhhkcJDD8EUN+1S6cs4UJuz6qfMgOQ1/VcPVZx8KQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756527033; c=relaxed/simple;
-	bh=+Bg+RVavGYMPykEG5hhqXkc3Av6gb9iZ45IEltTHUHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKkYpJvKMqQ85xzG6noP8bqdi1jG8LR7uqi9ELqldYJfQTSm+u/RwH+HvWYRh8hf65TnuHi9SrR/FU8SuMyd3UOBRqiwpLYrEorXN75W1LX5pM8yJ9H5i2nnbXXcwbJQGajHg6CqthdImJQ6kVOAd3r3apd+zGKb7ljj258boog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d822i5PQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF0FC4CEEB;
-	Sat, 30 Aug 2025 04:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756527032;
-	bh=+Bg+RVavGYMPykEG5hhqXkc3Av6gb9iZ45IEltTHUHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d822i5PQL/Uvn3lE2lP6EXOe+aAdp86itNdmpV/DjBhUXFigUGStBOlEmkIVXZaiu
-	 4jqo7FEpZb4107b55pmYgddnw9xP9EkPeKvFcThgDO+ZS3xK6Oyr+Vr/c4zaXG6HZy
-	 fpT9SOIapIKkhqhJ9oKJ/fptZNB2qmSLXRFOjUBfcHy8h0xFQ++D97B3bufKCGXPDi
-	 JWEhUdvAY6ADvJ1aTRU1LyBJvRNqBGkY5eHVYcczZ/okP/PqjZ3q6ceafB7ia7fXA0
-	 V3WLJKjK7tYfpzBz7h/pL5X2rOYheO6Yp91+Ya7h1ygJ/0jUZAO/LfRI99l9qjImGY
-	 DhQRBlJyhQaBg==
-Date: Sat, 30 Aug 2025 09:40:22 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 3/9] PCI: of_property: Restore the arguments of the
- next level parent
-Message-ID: <zvyro2dl7hqproym4shawsckorhlcfkyucponfvw2qrbc44zb2@3kg2eaab42rj>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-4-claudiu.beznea.uj@bp.renesas.com>
- <7wmpgldjvznbllotblv6ufybd2qqzb2ole2nhvbx4xiavyqa2b@ezaqwghxmbve>
- <d004d9c4-f71b-49e6-9ced-031761f5e338@tuxon.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CA42773FF;
+	Sat, 30 Aug 2025 04:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756527085; cv=pass; b=fYF7qwHTTgewIqvhK+vn0qZKolwPZ15ALPxgUqtDOG2R14+YK69/BO2c5aqZbdW3fQdlPE00TblVntQoIW029UY8H7GoVnzraHuM4PTgewTotD8X2u+bgMYW0Eo7ks1nfyjlu5IqPt4xwGboTQT9bUXvzgM1d/8LGFpbvDn6onI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756527085; c=relaxed/simple;
+	bh=aMdVvHTKC5Q68BwZ1XJyYdMyozzseL304zpwN8fODaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AXYVZS2UkHb8edn1w3wni11rb8prli/wzPMcYFWCoIEqvucBygnkc0J3VUUyPBTPM+olUL56q99mZoJ9enAttIhqQrMOQB1qpSBgt0rF7CIbUQWSfvv9At7qig/W0LY7SzunmSWZjhWEp8YOrUXMrpno5D8FfL2OLcHIKTtoYUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=BW+6GoB+; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1756527047; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hXI6WbDiwQx3g+PFpykfE2RSDzbQvQ1kpok554K/GVdGbe7Wbl/BhnxWL2nUmlWr5Fy5rvMPCHLZHuWVdtYXbAwyQ6XTmbMMRsqHKY3GzsCP/ealdsp3uxNwk5BKzY/EOhMPSWUDuTjA8gdg6sS5sJMf+w1ckE2XygHJWNB6rEA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756527047; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AIqdQ1o+KDcxRP37mYqQKPe1hyWo6vnaOhhysa3wo9Q=; 
+	b=U0lQ3juh+SwB9/IGQohoYnHAnQH1mO8AdLDqsUjOVO4Pe2spvGe5jZ7FdPS9NQX3NaZa02ML1sT6dFdje5y7CSA0wivmHRTyfKgXmo27LZ6njKPP+snimlyJN5bubrJhA0YO9aBK33S8dj4BUdD/7wfCU20shKt+k6AI7fyFhA0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756527047;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=AIqdQ1o+KDcxRP37mYqQKPe1hyWo6vnaOhhysa3wo9Q=;
+	b=BW+6GoB+aRU9F98NtYy49EdqBxt2BZmNnnA+S4AqUpDx2wpxsMlDp2dqlNKNlM8F
+	1FAe8AHl0Mqln2AqA/zsMEpPPfRaxp6my9Nv24tEc1zUXy3Imgp+1XGPThTtpCpoxan
+	NWSD9phUwS4+raKjWAKVNtghlMIac+XYKgyzBXSs=
+Received: by mx.zohomail.com with SMTPS id 1756527044122466.79767147184646;
+	Fri, 29 Aug 2025 21:10:44 -0700 (PDT)
+Message-ID: <e147e288-de38-4f2c-8068-53c5e37b2310@yukuai.org.cn>
+Date: Sat, 30 Aug 2025 12:10:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 02/10] md/raid0: convert raid0_handle_discard() to
+ use bio_submit_split_bioset()
+To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ neil@brown.name, akpm@linux-foundation.org, hch@infradead.org,
+ colyli@kernel.org, hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-3-yukuai1@huaweicloud.com>
+ <858e0210-1bbb-466b-98c3-d1a3c834519d@kernel.org>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <858e0210-1bbb-466b-98c3-d1a3c834519d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d004d9c4-f71b-49e6-9ced-031761f5e338@tuxon.dev>
+X-ZohoMailClient: External
 
-On Thu, Aug 21, 2025 at 10:40:40AM GMT, Claudiu Beznea wrote:
-> Hi, Manivannan,
-> 
-> On 20.08.2025 20:47, Manivannan Sadhasivam wrote:
-> > On Fri, Jul 04, 2025 at 07:14:03PM GMT, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> of_pci_make_dev_node() creates a device tree node for the PCIe bridge it
-> >> detects. The node name follows the format: pci_type@pci_slot,pci_func. If
-> >> such a node already exists in the current device tree, a new one is not
-> >> created.
-> >>
-> >> When the node is created, its contents are populated with information from
-> >> the parent node. In the case of root complex nodes described in the device
-> >> tree, the created node duplicates the interrupt-map property. However, the
-> >> duplicated interrupt-map property does not correctly point to the next
-> >> interrupt controller.
-> >>
-> >> For example, in the case of the Renesas RZ/G3S SoC, the resulting device
-> >> tree node is as follows (only relevant DT properties are shown):
-> >>
-> >> pcie@11e40000 {
-> >>
-> >>     // ...
-> >>
-> >>     interrupt-map = <0x00 0x00 0x00 0x01 0x1f 0x00 0x00 0x00 0x00
-> >>                      0x00 0x00 0x00 0x02 0x1f 0x00 0x00 0x00 0x01
-> >>                      0x00 0x00 0x00 0x03 0x1f 0x00 0x00 0x00 0x02
-> >>                      0x00 0x00 0x00 0x04 0x1f 0x00 0x00 0x00 0x03>;
-> >>     interrupt-map-mask = <0x00 0x00 0x00 0x07>;
-> >>     interrupt-controller;
-> >>     #interrupt-cells = <0x01>;
-> >>
-> >>     #address-cells = <0x03>;
-> >>     #size-cells = <0x02>;
-> >>
-> >>     phandle = <0x1f>;
-> >>
-> >>     // ...
-> >>
-> >>     pci@0,0 {
-> >>         reg = <0x00 0x00 0x00 0x00 0x00>;
-> >>         interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00
-> >>                          0x10000 0x00 0x00 0x02 0x1f 0x00 0x11e40000 0x00 0x01
-> >>                          0x10000 0x00 0x00 0x03 0x1f 0x00 0x11e40000 0x00 0x02
-> >>                          0x10000 0x00 0x00 0x04 0x1f 0x00 0x11e40000 0x00 0x03>;
-> >>         interrupt-map-mask = <0xffff00 0x00 0x00 0x07>;
-> >>         #interrupt-cells = <0x01>;
-> >>
-> >>         #address-cells = <0x03>;
-> >>         #size-cells = <0x02>;
-> >>
-> >>         // ...
-> >>     };
-> >> };
-> >>
-> >> With this pci@0,0 node, the interrupt-map parsing code behaves as follows:
-> >>
-> >> When a PCIe endpoint is enumerated and it requests to map a legacy
-> >> interrupt, of_irq_parse_raw() is called requesting the interrupt from
-> >> pci@0,0. If INTA is requested, of_irq_parse_raw() first matches:
-> >>
-> >> interrupt-map = <0x10000 0x00 0x00 0x01 0x1f 0x00 0x11e40000 0x00 0x00>
-> >>
-> >> from the pci@0,0 node. It then follows the phandle 0x1f to the interrupt
-> >> parent, looking for a mapping for interrupt ID 0x00
-> >> (0x00 0x11e40000 0x00 0x00). However, the root complex node does not
-> >> provide this mapping in its interrupt-map property, causing the interrupt
-> >> request to fail.
-> >>
-> > 
-> > Are you trying to say that the generated bridge node incorrectly uses Root
-> > Complex node as the interrupt parent?
-> 
-> I'm trying to say that the generated bridge node is wrong because it copies
-> the interrupt-map from the root complex mapping int 0x1 to 0x0 in the
-> bridge node, while it should have map the int 0x1 to something valid for
-> root complex mapping.
-> 
-> E.g. when some device requests INT with id 0x1 from bridge the bridge
-> mapping returns 0x0 then the returned 0x0 is used to find a new mapping on
-> the root complex based on what is provided for in with interrupt-map DT
-> property.
-> 
+Hi,
 
-TBH, I don't know why it generates the 'interrupt-map' property for the bridge
-node first place. It just creates two level lookup and in the absence, the IRQ
-code will traverse up the node to find the interrupt parent anyway.
+在 2025/8/30 8:41, Damien Le Moal 写道:
+> On 8/28/25 15:57, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> On the one hand unify bio split code, prepare to fix disordered split
+>> IO; On the other hand fix missing blkcg_bio_issue_init() and
+>> trace_block_split() for split IO.
+> Hmmm... Shouldn't that be a prep patch with a fixes tag for backport ?
+> Because that "fix" here is not done directly but is the result of calling
+> bio_submit_split_bioset().
 
-Maybe the intention was to avoid doing the traversal.
+I can add a fix tag as blkcg_bio_issue_init() and trace_block_split() is missed,
+however, if we consider stable backport, should we fix this directly from caller
+first? As this is better for backport. Later this patch can be just considered
+cleanup.
 
-> 
-> > 
-> > I'm getting confused since your example above shows '0x1f' as the interrupt
-> > parent phandle for both Root Complex and bridge nodes. But I don't know to which
-> > node this phandle corresponds to.
-> 
-> Root complex node from this patch description has:
-> 
-> phandle = <0x1f>;
-> 
+>> Noted commit 319ff40a5427 ("md/raid0: Fix performance regression for large
+>> sequential writes") already fix disordered split IO by converting bio to
+>> underlying disks before submit_bio_noacct(), with the respect
+>> md_submit_bio() already split by sectors, and raid0_make_request() will
+>> split at most once for unaligned IO. This is a bit hacky and we'll convert
+>> this to solution in general later.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/md/raid0.c | 19 +++++++------------
+>>   1 file changed, 7 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+>> index f1d8811a542a..4dcc5133d679 100644
+>> --- a/drivers/md/raid0.c
+>> +++ b/drivers/md/raid0.c
+>> @@ -463,21 +463,16 @@ static void raid0_handle_discard(struct mddev *mddev, struct bio *bio)
+>>   	zone = find_zone(conf, &start);
+>>   
+>>   	if (bio_end_sector(bio) > zone->zone_end) {
+>> -		struct bio *split = bio_split(bio,
+>> -			zone->zone_end - bio->bi_iter.bi_sector, GFP_NOIO,
+>> -			&mddev->bio_set);
+>> -
+>> -		if (IS_ERR(split)) {
+>> -			bio->bi_status = errno_to_blk_status(PTR_ERR(split));
+>> -			bio_endio(bio);
+>> +		bio = bio_submit_split_bioset(bio,
+>> +				zone->zone_end - bio->bi_iter.bi_sector,
+> Can this ever be negative (of course not I think)? But if
+> bio_submit_split_bioset() is changed to have an unsigned int sectors count,
+> maybe add a sanity check before calling bio_submit_split_bioset() ?
 
-Oops. I failed to spot it.
+Yes, this can never be negative.
 
-- Mani
+Thanks,
+Kuai
 
--- 
-மணிவண்ணன் சதாசிவம்
+>
+>> +				&mddev->bio_set);
+>> +		if (!bio)
+>>   			return;
+>> -		}
+>> -		bio_chain(split, bio);
+>> -		submit_bio_noacct(bio);
+>> -		bio = split;
+>> +
+>>   		end = zone->zone_end;
+>> -	} else
+>> +	} else {
+>>   		end = bio_end_sector(bio);
+>> +	}
+>>   
+>>   	orig_end = end;
+>>   	if (zone != conf->strip_zone)
+>
 
