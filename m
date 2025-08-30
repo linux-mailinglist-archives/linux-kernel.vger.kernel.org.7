@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-792908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C8B3CA4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B703B3CA4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7157B7109
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6B356710C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD742777FC;
-	Sat, 30 Aug 2025 10:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0400F278771;
+	Sat, 30 Aug 2025 10:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U+pYRvpK"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UO0h2o2w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943C423D2B2;
-	Sat, 30 Aug 2025 10:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B494274FCE;
+	Sat, 30 Aug 2025 10:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756551193; cv=none; b=NUdJMpXUQPlGfzTUHjaJ6LeNX12DcfOZVrkZv/QaUpFtbDruMAPaNVWZvyTTeJppRw8QBT3oTVHq282JG/baEm+a4+OwAtyadC9s4fqssfx5svO4+mB5rOik38v3BrQMUmSBk8stRzmGbq6Bj9aZ5S4Ci++TYPmYqDQR8Jj9g2U=
+	t=1756551345; cv=none; b=D0gdqSwkcEdCLnG/qFR3nI7czvSoPxA6uRge691Kzz6Mb17+PtsMSdKjF0ofLuHF5ax6FFZjFMeTNmyfkzbscch1+MGYj80d/Wu9w2sYW5c6M4gU870Irz5bawsOMoVtIFtQ7v5Q1GZ3WjoYU42rPMVQL8Den5/e2VuFENlNbP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756551193; c=relaxed/simple;
-	bh=6tj5SitoC1vZtWTu4pzefYAXr8XTw577Ykpl6aPWOvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4+3D663PD2hyruElKGWj7OfhSruCQeEIWmDM2sWDd1aUOt5UtjTs5/pCL+YTzNUuRB6ABRe4h9LyRAdP1vQGgK2vqhDXTDasqjmefFyy4n2je/dSA+WkyyRYnZngNxDx7toEvW7U6QlZrj0pVburXabNeQomh67udSE98raNcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U+pYRvpK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9357AC4CEEB;
-	Sat, 30 Aug 2025 10:53:12 +0000 (UTC)
+	s=arc-20240116; t=1756551345; c=relaxed/simple;
+	bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FXx+eJhZpKZX82VULeLdW0yq2+poe7AmoR5Yx9e2+bd2FTkIekucYFwV+NSm1CIL1VWmiyUyLLadz/U4E7Pi4RIzhPSAZs/mYMVXP7GjBtKaaBbEYkR8f6T81B4/SPpDkydIzbj+pdOrF30ZgpNXRfwP9l/WRe2Y2s3ZIgBNt7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UO0h2o2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A6FC4CEEB;
+	Sat, 30 Aug 2025 10:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756551193;
-	bh=6tj5SitoC1vZtWTu4pzefYAXr8XTw577Ykpl6aPWOvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+pYRvpKzsTu6o15jK2fsAJPwuEkT3sUmuwBc4S/FVggsu82i+pBPakOb7DkEOXRY
-	 2gLVu+5txMrQxmLfMgcQ7Dm4xSrkgEKNmvVHDO4eP1sgQ7gkzvPFcWpEiDUfVqiDig
-	 IImTuYJvrOaLCEzL+wTNIJU34mJQCMz+cTkM1h0E=
-Date: Sat, 30 Aug 2025 12:53:09 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Max Schulze <max.schulze@online.de>,
-	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
-	David Hollis <dhollis@davehollis.com>,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	David Brownell <david-b@pacbell.net>, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: asix_devices: Check return value of
- usbnet_get_endpoints
-Message-ID: <2025083031-lavender-rebel-ee20@gregkh>
-References: <20250830103743.2118777-1-linmq006@gmail.com>
+	s=korg; t=1756551344;
+	bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UO0h2o2wRX7kdL8iB42EKfZMEzk3R37jTXBerrIdbomtOPUpj8a1bC6ZeY/2PuofI
+	 UqoaqvT+6jq1Odda8jvKnnEiaFva/5VoUU6WkTTplVWc/4AyyGeru/1gaH0Ckz2zPl
+	 fI9Ao0fK9mTBc1Vq53B/PC9/fhdtQv88a0vBqYH4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] fs: remove vfs_ioctl export
+Date: Sat, 30 Aug 2025 12:55:39 +0200
+Message-ID: <2025083038-carving-amuck-a4ae@gregkh>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830103743.2118777-1-linmq006@gmail.com>
+Lines: 48
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1572; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=i5zY8f2VKVpzPlPoYIug3F1ZCRs+538GRcdBf4WSpxg=; b=owGbwMvMwCRo6H6F97bub03G02pJDBmbbqwK8Jm8JeXzIRNFVtfNR20a5q50cdV8+vbi/+Vz3 waEr9lf3RHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQAT+b+QYcFCgWWvDiwMEmBm ZD1qm11otfDSBEGGeea/FfcU+8Smz86eeUhomcuayzNzygA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 30, 2025 at 06:37:41PM +0800, Miaoqian Lin wrote:
-> The code did not check the return value of usbnet_get_endpoints.
-> Add checks and return the error if it fails to transfer the error.
-> 
-> Fixes: 933a27d39e0e ("USB: asix - Add AX88178 support and many other changes")
-> Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->  drivers/net/usb/asix_devices.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-> index 9b0318fb50b5..92a5d6956cb3 100644
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -230,7 +230,9 @@ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
->  	int i;
->  	unsigned long gpio_bits = dev->driver_info->data;
->  
-> -	usbnet_get_endpoints(dev,intf);
-> +	ret = usbnet_get_endpoints(dev, intf);
-> +	if (ret)
-> +		goto out;
->  
->  	/* Toggle the GPIOs in a manufacturer/model specific way */
->  	for (i = 2; i >= 0; i--) {
-> @@ -832,7 +834,9 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
->  
->  	dev->driver_priv = priv;
->  
-> -	usbnet_get_endpoints(dev, intf);
-> +	ret = usbnet_get_endpoints(dev, intf);
-> +	if (ret)
-> +		return ret;
->  
->  	/* Maybe the boot loader passed the MAC address via device tree */
->  	if (!eth_platform_get_mac_address(&dev->udev->dev, buf)) {
-> @@ -1256,7 +1260,9 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
->  	int ret;
->  	u8 buf[ETH_ALEN] = {0};
->  
-> -	usbnet_get_endpoints(dev,intf);
-> +	ret = usbnet_get_endpoints(dev, intf);
-> +	if (ret)
-> +		return ret;
->  
->  	/* Get the MAC address */
->  	ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf, 0);
-> @@ -1609,4 +1615,3 @@ MODULE_AUTHOR("David Hollis");
->  MODULE_VERSION(DRIVER_VERSION);
->  MODULE_DESCRIPTION("ASIX AX8817X based USB 2.0 Ethernet Devices");
->  MODULE_LICENSE("GPL");
-> -
+vfs_ioctl() is no longer called by anything outside of fs/ioctl.c, so
+remove the global symbol and export as it is not needed.
 
-Why did you remove this blank line?
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/ioctl.c         | 3 +--
+ include/linux/fs.h | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-Also, how was this tested?
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 0248cb8db2d3..3ee1aaa46947 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -41,7 +41,7 @@
+  *
+  * Returns 0 on success, -errno on error.
+  */
+-int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++static int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	int error = -ENOTTY;
+ 
+@@ -54,7 +54,6 @@ int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+  out:
+ 	return error;
+ }
+-EXPORT_SYMBOL(vfs_ioctl);
+ 
+ static int ioctl_fibmap(struct file *filp, int __user *p)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..ccf482803525 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2052,8 +2052,6 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group);
+ int vfs_fchmod(struct file *file, umode_t mode);
+ int vfs_utimes(const struct path *path, struct timespec64 *times);
+ 
+-int vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+-
+ #ifdef CONFIG_COMPAT
+ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ 					unsigned long arg);
+-- 
+2.51.0
 
-And you forgot to add a cc: stable?
-
-thanks,
-
-greg k-h
 
