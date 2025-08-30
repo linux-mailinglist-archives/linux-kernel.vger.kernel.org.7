@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-792912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C44B3CA55
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A0DB3CA59
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4316B206574
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A3E206B4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D914F2798FE;
-	Sat, 30 Aug 2025 11:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B5E279DC2;
+	Sat, 30 Aug 2025 11:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5xlCvdK"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R+6edmvS"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE09726D4F8;
-	Sat, 30 Aug 2025 11:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB193279329
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756552087; cv=none; b=Lwbx0shJCe7WAMSjoPWYfu7sArc9WYlZgsKaiHMo8wCpVpawvSuA7jalUpPPpuKQBcFjwV1epnXSIk64nIfh12LZ6AdsUzZMbLBe6fwogU+XpBT3bd/nquLRZovL8ivYAwH2EVsqruCaFklL+yiK7q4lZInCoLaPmMP5o1Pozew=
+	t=1756552190; cv=none; b=oEjXW374AMcap0FcGgJegDTRtE+olYNeOLqhidQT0u/sML0xqec0Zi+ez5FiC5F7P1RoUqC74/JHzmxYPKwAT0evqhWbYJRIiu+dCPWuGc8XKzCzKtv2ECmXtZTPuU2m9yKLRe3m7FXc5PVgWiqPc3/vz3ZkxPhoebVnXXlUUP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756552087; c=relaxed/simple;
-	bh=DC07IAJNLS87gP6QZ4GAcetAKm85JzcJ0eqYsCK5qmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b3JC/aTkeOfboEaoeLMzIEiAGSCY+Z9GPEsy9Ld3MSNiEufDvuibStiDuU41reSAaSXpayOi1kdi6cRmJzEK5fkhul1cNw5I1ImYwbiUIuc80yO1xg1l+et62LN1FPwJ7hYlERwoQMFeGBZViKUDVTLjVVf2vce+Ben0Wa1dLHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5xlCvdK; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-248e01cd834so6761155ad.0;
-        Sat, 30 Aug 2025 04:08:05 -0700 (PDT)
+	s=arc-20240116; t=1756552190; c=relaxed/simple;
+	bh=MPAHQXQUpXiLCTcNCqhvtB/HRnhI8NNTl4O+MlOI1ks=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jl7k2Tl1Vv4nX7FhvST6TUMDr50dl0/MgQA+oEf+LZ415xiB46+0VkkN+gHrZRUz6b3ScexKlsfF0BJ5m5n4s0tq1igp6w3ESHBI+jUYGU5ow4U5teabH3jTPPyPuQamqY3HAmN4Bp+4lPH87iMGdcw6kR8qmHaG5WWnaT9NDM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R+6edmvS; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cd63fa0c5so435175a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756552085; x=1757156885; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DC07IAJNLS87gP6QZ4GAcetAKm85JzcJ0eqYsCK5qmw=;
-        b=c5xlCvdK5NHjpxbsleL4hW0BioJT5dhC4wHUgb5WWSKYbodnN10Z0BLZT1q7UlJyYZ
-         94v36n7pwtzC8p1nBxu3VQgq2bH/EeQAgE5343wCxoOxPA57jCSfi8oBTsQLfLQvcgHm
-         /G13GT8R2yDNABwx+BfaNtYSyPUOiEdqS/uHnHj7Sq78OU0l6RAGgu8I0p1p5hi7X+yi
-         2EEj0XmiObYIoF5/3JLvwkZtM+jKIvo8SfSWeSeqBik26D3k2tChXtNx3rk1Sx0uDh5h
-         3J1wq4Ps9yotFvkl3pLHnmZMAwGFjSivFHrNpFVl5nYa9/oIArLIj4zRQjDphvsQFmnn
-         GKNg==
+        d=linaro.org; s=google; t=1756552187; x=1757156987; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1bivzFpeOn6zdj28AqutzvHysf6y4+jJdipsjR0D+8=;
+        b=R+6edmvSTgpZasaFzAsQ+lD6ZV873Pt854QEgZ40y/MFYMC7Xwbco+yPP7kyWy6oSE
+         5O7Bp2enDhmqbAeKjqlm2hFrPiRSwZm1MVzYs4tm48ziY9op8WLxxlpX0CCU6zT9kg3J
+         3MmK5PsmYUatKBpDez5MXwjqOHGmqxsjNw/xtBsCYatZUXZ2RESef2Ef3xEp+/qdRsQ+
+         KdOhW8ph4HoL9NBkVa5Vo2tK9AAcxeg6IZN6d3ZApGN1DxrQGMF+/Bo9GEX8caAQBg6P
+         PEOq52fcO7QI3vnDTN/ODaF7YNp0pBrSG9Kfqzi75g/U218x+pA7cXcHuJmc5RqQetqZ
+         CDHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756552085; x=1757156885;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DC07IAJNLS87gP6QZ4GAcetAKm85JzcJ0eqYsCK5qmw=;
-        b=tvuF3R9f+IS9dNWPjrSHf+wFHbI894umqhehijhp8MqyQrtNxJwcRnJ1fe7xvm/EWr
-         fZhgViQMOTDEdUKr+LQe2Hf0lmQNhzv8LFv7ZwTxtZzEHKzmvKeB9MtRI2nOBeJsgkGe
-         YvnPqyGzGdwqZjIzNEwrBDbZWk2Z18bp0rme9ZKawkYlBAHZ9teueWuMag38YRqykhSK
-         9gDsvhcBtBYs1dLLVemHApgxWIGDA2VyZUE3dSOjNtZTmB+a+zE9uk0onBZMT/AFHiN7
-         Cmd88cviFC5j8OpdzmBFjBFomOn2TTtpXWu4AEhTvawo7/6/xJz2bROWQIKjJDIFXMy2
-         9HBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWC9mzAhwt01biK61V9MIHYCSbPvDIawRWNZGvwXrqEDjsSJmpowug6eICsDjw4F8Fr+VJl8fSLhyDWrKncn14=@vger.kernel.org, AJvYcCXOpzDr2arSjKuIvVljEVd4F1/9fe/CATna+OKqgZOk+loFf63gecjKdhBFwpMFl47Ztlw5v7xyvfksasU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjogQrCfG0em0WP1ARxwgHLqfZsNF2NHDBcXZp6PwbxMabjVLn
-	AYG+CXE/qf9yi5rk19kePD9b5vfbCnve3siNiM8FiHriW5Cp0ARCI2ghc8UbXL+0sx4y6WvA32H
-	dwRFe6Dx1L8Mz3MbeSFRML63PO/g8Nic=
-X-Gm-Gg: ASbGncupExVg0uLB7E+RwBMbAucD4hPuFNAQ6aE23GBuV0MWkTwJucbtqvsPX/sXS7u
-	y0COw5gsDiAzn3zLyPeFMFUS02BjjBToRaHk8LD4vJeBhojMewgctFg/34JON+ZyU2NhOBzoiUq
-	GhkhfMAFkA/X/osCGZfJoy0F0jzvkntc9tj3ZWTK04SMU2hP9smtL+RynwGWkE6CfqpiFM3lIZ9
-	GIuBkW4NYa9529lwzGYk8IwY2yf9VdSwkO/7izm6wfwpdHgPzsf+reGL2vMXV7J9dBrSR+DkxL/
-	pyiD9lQm5rhUButn/ubh1w/p5EXEMZKk4s0t
-X-Google-Smtp-Source: AGHT+IH5ZNvD4l8TuAzdnDz24AupViHRUbZNq8TFYy6umeiXqfTUMOwh+H66Ull3ujqV3KdwuMCRZvo1OnXw8eI5Pfs=
-X-Received: by 2002:a17:903:1c7:b0:240:8717:e393 with SMTP id
- d9443c01a7336-2490f7591bdmr39162875ad.5.1756552084948; Sat, 30 Aug 2025
- 04:08:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756552187; x=1757156987;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q1bivzFpeOn6zdj28AqutzvHysf6y4+jJdipsjR0D+8=;
+        b=ln+FIaI6kwe+B4Wfhpbyj4KmmrW+EsJrwa0thTjPQA4FeYZzO4AtadID4LpAokrxgM
+         +dYYn3+H9kcELD7N8T5Su4qiEusAiqiR6YszPgkWQ5IAdF5QTn1qiefoRGh85Q6ov2Cb
+         KiiQFMMuoW7U5ODHaDpI5l5ZD0Tlm+Fle8wL2dF7IHXDN+losdqfr4kv7jO5nIpE10bZ
+         bto0XkX5FCU3TjFzoNdc4Xi/Bb9uxj+3oR5MUIbTUDWdPTlNFWd5CHv9OaASTMItovoE
+         ICKJyghcjTDvGqRZJFqIROgaJpdOJg6Mh/PgW/NSqceNIevMG4iyfkTcsoC0vIMH3LRg
+         yIyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU23oTWqgKazUnxLrxmzC9HIHftRgGHhLyEbn+kS3dfs/g71KnvJMNqyS1k9IIyLinGqdYI8Yhq6HmCpcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn/TWP0NauRPxdc92e5WcbNQFQkpu89NlFc7cep+1cr109aOgJ
+	amImABViGoa9GY/D2WptfDQZTYT65DFSuN+7iAlGCNKKloN0yq6Id09jo9AcKvIeS/e7rqD95R4
+	4N46g
+X-Gm-Gg: ASbGncumwsRyDZJ/leTaJiDldAJFHcxYeGtT/QiS4G+Bt3MNqVzVoBZrbjViaLdoz5L
+	ovGXEwQu4W64F3FgrRhhMKSX3ZRrpGVzo7o9CK4asD+ckASAZ3jfRFsl3CBWtKphAEOsN0r81EG
+	zsPVvyPkreEQVC8Vmc6Ai/eei8MxyYseySDwcylPb5sK0C5uM6oXKghgUlsNpDLRwugiwcy4WD1
+	v5kfazHeQN6wK+uQVVGk/ajhKRqpms4gwlCFhUrLfqKcVqy+hsHA8n329kkO9GCl5DZGWPsChp1
+	ZqjAjYnB+NXZutEurvB26vmCHrtN7AZl/wTCmJh4EP5jlzUGGj9rJNkGij+w20/gBqxAMncNJbj
+	MsDgeWdOokgNKj8ms01esqajYd80BPvPNt/i9G28=
+X-Google-Smtp-Source: AGHT+IGpcs58MTRBzy8QSSt3KOW9IS8qh2Op0/WrgMhV43qjpLPuJ3b/P2nf8GBfY6hwmjebLcg+qg==
+X-Received: by 2002:a05:6402:13d0:b0:61b:6c51:4005 with SMTP id 4fb4d7f45d1cf-61d0d5f33e1mr2017383a12.6.1756552187107;
+        Sat, 30 Aug 2025 04:09:47 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc21542asm3285666a12.18.2025.08.30.04.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 04:09:46 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/5] iio: adc: samsung: Simplify, cleanup and drop S3C2410
+Date: Sat, 30 Aug 2025 13:09:37 +0200
+Message-Id: <20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829192243.678079-1-ojeda@kernel.org> <20250829192243.678079-4-ojeda@kernel.org>
- <CANiq72k7_GbFwRxW5vikF_SpiNcNm7Ff0oe6jyYX_voDg92QFA@mail.gmail.com> <2025083032-barmaid-rising-a977@gregkh>
-In-Reply-To: <2025083032-barmaid-rising-a977@gregkh>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 30 Aug 2025 13:07:52 +0200
-X-Gm-Features: Ac12FXxtE1MzAIWtlE3GhZGNxnNcK1rhQ_lrX5csjRmJrEow6fqjYBmIW6jipio
-Message-ID: <CANiq72nAagBBPhyU3XdETMKBuFPbMMRaSTStWPpyLnByYPP=+A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rust: error: replace `WARN_ON_ONCE` comment with `debug_assert!`
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPHbsmgC/x3MMQqAMAxA0atIZgOxUlq9ijiUGDUgVVoUQby7x
+ fEN/z+QJalk6KsHklyadY8FTV0BryEugjoVgyFjybeEuWXkTUI8DwwTo2sCe+qct4agVEeSWe/
+ /OIzv+wEe2WmDYQAAAA==
+X-Change-ID: 20250830-s3c-cleanup-adc-71ac80978520
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=823;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=MPAHQXQUpXiLCTcNCqhvtB/HRnhI8NNTl4O+MlOI1ks=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBostvzlCuQP5FPquq2lhYn0JmEK8niYeKAbQ7wN
+ pTrsnpP9/iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLLb8wAKCRDBN2bmhouD
+ 12FBD/9nHRQw5vlITMhdnscAzkVchRhGAmmUR0TsJVYZWXUEaliQJvfLbtxlpMeVMjuKYp0I3pA
+ bucWOuH6Ru1FmVobvchYI9wYkYN/bJbW/OrqEW0da4IFhoc257hS5IfAxMI8MPFiJ8FS72/Pnqq
+ EFadIC0BdIb7wuTUBCsrjCwVK3qiCEl9x6hHgvr41iX2PXgh++T/iQ+g4ahIohcjpEKxqMEvZpN
+ gPr54LMn0PJQfjpDQB7GleIm79NEzeWsE8Mr2dZ0J83ScSPtGfTkC7lM2iVexgp+rVvImGVnEwE
+ lBPOiFT2/qDlh7Wo0ENT5OoUPG0ExHz8SKPOInwTgtKcQkv2/SwFc8ATWh+cDQApu5gUAp+wkMu
+ ta/FWCmlApsWAqbrikqJ+1s94VlIUvF7YOE0Xhk2fIDSvGEYyVDWTZddzrR40IvAVRFTQAwJaHo
+ uYuyL8iZWiFRE9lQkoeSBLVwHwIw/iWoEkTnxYdl17Q2tXXycUhEEk37c+tyOlySp+WVnvcjbkg
+ 6Y1zuMGNTygyiy+nbBP6cip/YYpNYxyHnsw7G11ysixC0kyoIQo/6Qfitz1RZTZjLE4m0qZ9bTp
+ DiOYn1YxdktqnDSox2RwMIYtrNSpoPuoeBDLBCdEOJw70Mx28pgx92gz05qDEGKsTTBQXajEYx9
+ 5eOIUs/+TCK/y4g==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Sat, Aug 30, 2025 at 8:28=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> If you wish to state that CONFIG_RUST_DEBUG_ASSERTIONS=3Dy should NEVER b=
-e
-> used in ANY shipping Linux system, then yes, we can carve out an
-> exception for this (we do that if lockdep is enabled as that should
-> never be in a running system, only a development one).
+S3C2410 is gone from kernel, so we can drop its support and remaining
+related pieces.
 
-The config option is meant for development purposes ("debug"). We
-don't control all its behavior anyway, because the compiler/stdlib
-will also add many assertions (e.g. for unsafe preconditions). So, for
-instance, it could easily have a non-trivial performance impact.
+Best regards,
+Krzysztof
 
-For the same reason, it will also change behavior depending on the
-compiler version. So, for instance, new assertions in new compiler
-versions could have an impact that is not seen in previous versions.
+---
+Krzysztof Kozlowski (5):
+      iio: adc: exynos_adc: Drop S3C2410 support
+      iio: adc: exynos_adc: Drop touchscreen support
+      iio: adc: exynos_adc: Drop platform data support
+      dt-bindings: iio: adc: samsung,exynos: Drop S3C2410
+      dt-bindings: iio: adc: samsung,exynos: Drop touchscreen support
 
-Thus, for this particular config option, we cannot guarantee much, and
-the help text already states "This can be used to enable extra
-debugging code in development but not in production.".
+ .../bindings/iio/adc/samsung,exynos-adc.yaml       |  23 +-
+ drivers/iio/adc/exynos_adc.c                       | 280 +--------------------
+ 2 files changed, 4 insertions(+), 299 deletions(-)
+---
+base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+change-id: 20250830-s3c-cleanup-adc-71ac80978520
 
-Having said that, I regularly CI-test our main branches with the
-option enabled, and it has worked fine so far.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-So if a user actually run with such kind of asserts in production,
-because they really want to crash on anything and everything, I don't
-see why they couldn't. It may really be that it actually stops an
-important exploit from going on. Of course, it may also be that it
-elevates a trivial bug into a denial of service elsewhere, but that
-risk may be worth it for certain users.
-
-In fact, I would say it is a good thing that certain specialized users
-run with it enabled, because then it means they may find potential
-bugs for others, and that makes everyone safer in practice.
-
-But I don't know what exact constraints the CVE system puts on you, so
-it is hard to assess what the best wording for such an option would
-be.
-
-As an addendum: the fact that the compiler is involved is a bit
-tangential -- we could have our own "debug" asserts (or "extra
-paranoid" asserts) that are independent of the compiler, and we could
-have a separate config option etc. But, of course, in this case with
-the compiler/stdlib involved it means it is harder to
-blanket-recommend for production.
-
-Thanks!
-
-Cheers,
-Miguel
 
