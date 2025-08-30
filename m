@@ -1,286 +1,464 @@
-Return-Path: <linux-kernel+bounces-792765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84537B3C89F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:13:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36823B3C8A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FCC566C12
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD841BA7EC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011C3264624;
-	Sat, 30 Aug 2025 07:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE9D42049;
+	Sat, 30 Aug 2025 07:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCssmDBy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5uIg7iZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259E122422D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 07:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1161400E;
+	Sat, 30 Aug 2025 07:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756538006; cv=none; b=ZIUMKJnaK69lPu/rkDx7fZrsnkbvrjjxdbBhCwU64yZ46cnUSEXB3P9KemOylEH0ZqqEpTuE/DdrI3S2LEE9FR/PQ8ETARsM9QFuuDG8t+1YO/ebMKIfk9zEIV3pOI4v57eRe3Nqmz4R9V3UhV7CecXesF0fubkW5Ns6e3vxBDA=
+	t=1756538015; cv=none; b=DZMbCu/MkOoENGoX9EQR2EE0s4GFeZ9foQpHN4GXaDxsbQdxlMM33Yupu/DFPiI5PXOr0MGQhYBtC0bVQTOn919M/f1juZXhoQnB1bMGnXYidHbLJAnHRGnReFIH0K+xJb+NC9iA+c60hFG+g3ELaOHCznkRmycT7cxVrtD2ldk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756538006; c=relaxed/simple;
-	bh=Rto1SfeQEwgVt2SXLt12f5WUHdKs23dkql68LsRgmQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mc5eTusZ8s5mTCbxzgkYpuas2H6Cb/t/P3lb0M7Hi5AmAfiIVnQUskqjyQudg+rW6RPFkjr7qseMSXNSzidhG6kDtGSdlWbGbvGz0JwziLEm6o+vYq71QDqYEMXw03yV/dulFvK9/2KgZItNbHFE1Mt/PCiO94UVGm12iTXVtP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCssmDBy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F98C4CEF9
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 07:13:25 +0000 (UTC)
+	s=arc-20240116; t=1756538015; c=relaxed/simple;
+	bh=pTw0tMyy59J/b3SybTuf9no95KkTnbFfcsUegOyPDYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfgLCWLLL61Fw8nGtMaGb4tmV+zpsRMZdmWdQz7ccf1Omi8dlOQbgKm9R1DWAhJ7T5WjgGjip9B6km3BunabnlMPOnEIq+Yw7iPQ179V8Rboe6lJE3AKLZFC4SLPtnwBngCa96eD0GfD3DVh+9/zgKY+a/fNwIYDVAmkvAYXC7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5uIg7iZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9319DC4CEEB;
+	Sat, 30 Aug 2025 07:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756538005;
-	bh=Rto1SfeQEwgVt2SXLt12f5WUHdKs23dkql68LsRgmQc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PCssmDByNzziFHYhKRiiCjNGOyrBPXf9exjjb9nOpw7sEM1XxsPYqe2ELIoa/ycdC
-	 uzoQ+3Pqe2l3K8/U0kX99qRVlc8Wwc3jzTBfGjCbYvwP48fTFujep1mdWW4XqJVMoS
-	 L2+rYXCVEm/whDl8+YS2FHo0U+KI/5DYypEQnLgMNqNvTSwtjxzTu2tC0oxYIYuDTn
-	 hFqFKeO+w6dXjU+aqMW8xHTUO65MeoZXQokb1NzkQsyuHTzxMta8AvIA8ZiQZgF7q+
-	 +l9Hdi5tlo1XGj3/4kjKo2w2DfZ/1S/CaO57ffbhf/rBOhL2UFMOVkq4K9dXSbduLr
-	 zGgp7CP5biGPg==
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96ff518c08so2306507276.1
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:13:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVhHsUDrloYRzqWpVAhQGObn7BvMjKQLeoEVzsN99KFGcxt1P7CQbE13Fp79DPUjMuVzYL1C0GJvT6500=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi48IAEGl4I3IIiofg0/bXXoe4L97qlCe8kq101i8W8CSJPFbw
-	ern71PC0SnlgkGVYwPNr10wHbuRxCwilU/raidsSRPgkfumiC/BYB5Bx3fwOGAaTzYXGLg7avNr
-	N6rsR9UEQvoafc38Qyja0rYdfVZNiUKhfEJWNhQWTUw==
-X-Google-Smtp-Source: AGHT+IEG4klphVqOjGx2D2qSDQ8Jl+i3TnCO4eJoe/IuFDAp9yWinCMp/GZHxiz+Cs0fFle255dbNjX8FpV9wu091ss=
-X-Received: by 2002:a05:690c:6d8c:b0:722:6a6c:c010 with SMTP id
- 00721157ae682-7227633350bmr10948847b3.8.1756538004516; Sat, 30 Aug 2025
- 00:13:24 -0700 (PDT)
+	s=k20201202; t=1756538015;
+	bh=pTw0tMyy59J/b3SybTuf9no95KkTnbFfcsUegOyPDYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F5uIg7iZugVADfnZZtDIdAmkEG2NEhexAMDPTgfXeAnazRjsIsDFfbQ5BiW24gE5v
+	 DFR/kB5b1UzwyMMST+BCnTVW9Frfe+XgXPvejmuu62CLVcIPF+hPZHt8h2wVS75Inv
+	 RuY3ETs7Fmc8ENGFIgQuLg6drCLYB746vka/R0WrFUEhiMAq+ewD72OEcKaeLmEpIU
+	 jiY7eFDwOVYgeiSCpb4rXiXzpH/4xYkUJCFKFiT6NmX+CRq5YsrM8a25dlwH4KzOxo
+	 85lqwQTIlUK3hzHLSbbjykV7LjftY5P9Yru2GEmR8nB6UB13Ayh/50dPhLQB9rCOn6
+	 YC4FdsKBj7vUQ==
+Date: Sat, 30 Aug 2025 00:13:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] perf annotate: Track arithmetic instructions on
+ pointers
+Message-ID: <aLKknf6qFxVgN3gJ@google.com>
+References: <20250825195737.225824-1-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330> <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
- <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330> <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
- <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330> <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
- <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330> <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330> <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
-In-Reply-To: <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
-From: Chris Li <chrisl@kernel.org>
-Date: Sat, 30 Aug 2025 00:13:13 -0700
-X-Gmail-Original-Message-ID: <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
-X-Gm-Features: Ac12FXxYEdJMuFqqZYUQ2uhThBTcF8N9Rr1U8aKLwfnioxQ3gBLtkH906rYqcwI
-Message-ID: <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
-	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250825195737.225824-1-zecheng@google.com>
 
-On Fri, Aug 29, 2025 at 9:05=E2=80=AFPM YoungJun Park <youngjun.park@lge.co=
-m> wrote:
->
-> Hi Chris,
->
-> Thanks for the detailed feedback, and sorry for the late reply.
+On Mon, Aug 25, 2025 at 07:57:37PM +0000, Zecheng Li wrote:
+> Track the arithmetic operations on registers with pointer types. We
+> handle only add, sub and lea instructions. The original pointer
+> information needs to be preserved for getting outermost struct types.
+> For example, reg0 points to a struct cfs_rq, when we add 0x10 to reg0,
+> it should preserve the information of struct cfs_rq + 0x10 in the
+> register instead of a pointer type to the child field at 0x10.
+> 
+> Details:
+> 
+> 1.  struct type_state_reg now includes an offset, indicating if the
+>     register points to the start or an internal part of its associated
+>     type. This offset is used in mem to reg and reg to stack mem
+>     transfers, and also applied to the final type offset.
+> 
+> 2.  lea offset(%sp/%fp), reg is now treated as taking the address of a
+>     stack variable. It worked fine in most cases, but an issue with this
+>     approach is the pointer type may not exist.
+> 
+> 3.  lea offset(%base), reg is handled by moving the type from %base and
+>     adding an offset, similar to an add operation followed by a mov reg
+>     to reg.
+> 
+> 4.  Non-stack variables from DWARF with non-zero offsets in their
+>     location expressions are now accepted with register offset tracking.
+> 
+> Limitation: Offset tracking for register moved to the stack is not yet
+> implemented. Currently, moving an register with offset to the stack
+> resolves to the member type, which worked in some of the cases. Strictly
+> it should be a pointer to the immediate child member. Multi-register
+> addressing modes in LEA are not supported.
+> 
+> Signed-off-by: Zecheng Li <zecheng@google.com>
+> ---
+>  tools/perf/arch/x86/annotate/instructions.c | 138 +++++++++++++++++++-
+>  tools/perf/util/annotate-data.c             |  14 +-
+>  tools/perf/util/annotate-data.h             |   6 +
+>  3 files changed, 149 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
+> index c6d403eae744..540b4d0a01af 100644
+> --- a/tools/perf/arch/x86/annotate/instructions.c
+> +++ b/tools/perf/arch/x86/annotate/instructions.c
+> @@ -248,6 +248,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			tsr = &state->regs[state->ret_reg];
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("call [%x] return -> reg%d",
+> @@ -284,6 +285,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			    !strcmp(var_name, "this_cpu_off") &&
+>  			    tsr->kind == TSR_KIND_CONST) {
+>  				tsr->kind = TSR_KIND_PERCPU_BASE;
+> +				tsr->offset = 0;
+>  				tsr->ok = true;
+>  				imm_value = tsr->imm_value;
+>  			}
+> @@ -291,6 +293,15 @@ static void update_insn_state_x86(struct type_state *state,
+>  		else
+>  			return;
+>  
+> +		/* Ignore add to non-pointer types like int */
+> +		if (dwarf_tag(&tsr->type) == DW_TAG_pointer_type &&
+> +		    src->reg1 != DWARF_REG_PC && tsr->kind == TSR_KIND_TYPE && !dst->mem_ref) {
+> +			tsr->offset += imm_value;
+> +			pr_debug_dtp("add [%x] offset %#"PRIx64" to reg%d",
+> +				     insn_offset, imm_value, dst->reg1);
+> +			pr_debug_type_name(&tsr->type, tsr->kind);
+> +		}
+> +
+>  		if (tsr->kind != TSR_KIND_PERCPU_BASE)
+>  			return;
+>  
+> @@ -302,6 +313,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			 */
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_POINTER;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("add [%x] percpu %#"PRIx64" -> reg%d",
+> @@ -311,6 +323,96 @@ static void update_insn_state_x86(struct type_state *state,
+>  		return;
+>  	}
+>  
+> +	if (!strncmp(dl->ins.name, "sub", 3)) {
+> +		u64 imm_value = -1ULL;
+> +
+> +		if (!has_reg_type(state, dst->reg1))
+> +			return;
+> +
+> +		tsr = &state->regs[dst->reg1];
+> +		tsr->copied_from = -1;
+> +
+> +		if (src->imm)
+> +			imm_value = src->offset;
+> +		else if (has_reg_type(state, src->reg1) &&
+> +			 state->regs[src->reg1].kind == TSR_KIND_CONST)
+> +			imm_value = state->regs[src->reg1].imm_value;
+> +
+> +		if (dwarf_tag(&tsr->type) == DW_TAG_pointer_type &&
+> +		    src->reg1 != DWARF_REG_PC && tsr->kind == TSR_KIND_TYPE && !dst->mem_ref) {
+> +			tsr->offset -= imm_value;
+> +			pr_debug_dtp("sub [%x] offset %#"PRIx64" to reg%d",
+> +				     insn_offset, imm_value, dst->reg1);
+> +			pr_debug_type_name(&tsr->type, tsr->kind);
+> +		}
+> +	}
+> +
+> +	if (!strncmp(dl->ins.name, "lea", 3)) {
+> +		int sreg = src->reg1;
+> +		struct type_state_reg src_tsr;
+> +
+> +		if (!has_reg_type(state, sreg) ||
+> +		    !has_reg_type(state, dst->reg1) ||
+> +		    !src->mem_ref)
+> +			return;
+> +
+> +		src_tsr = state->regs[sreg];
+> +		tsr = &state->regs[dst->reg1];
+> +
+> +		tsr->copied_from = -1;
+> +		tsr->ok = false;
+> +
+> +		/* Case 1: Based on stack pointer or frame pointer */
+> +		if (sreg == fbreg || sreg == state->stack_reg) {
+> +			struct type_state_stack *stack;
+> +			int offset = src->offset - fboff;
+> +
+> +			stack = find_stack_state(state, offset);
+> +			if (!stack)
+> +				return;
+> +
+> +			/* Now the register becomes a pointer to the stack variable */
+> +			if (!die_find_pointer_to_type(cu_die, &stack->type, &type_die))
+> +				return;
+> +
+> +			tsr->type = type_die;
+> +			tsr->kind = TSR_KIND_TYPE;
 
-Not a problem at all. I have been pretty busy this week and don't have
-much time for it either.
+I was thinking we can use TSR_KIND_POINTER here.  Probably we need to
+distinguish it from the existing percpu base use case. Maybe you want
+to rename it.  Then you don't need to find a pointer type in the DWARF.
 
-> > I think you touch on a very important question that might trigger a
-> > big design change. Do we want to have a per tier swap.max? It will
-> > specify not only whether this cgroup will enroll into this tier or
-> > not. It also controls how much swap it allows to do in this cgroup.
-> > The swap.max will follow the straight contain relationship. I would
-> > need to think more about the relationship between swap.max and
-> > swap.tiers. Initial intuition is that, we might end up with both per
-> > tier swap.max, which control resource limit, it has subset contain
-> > relationship. At the same time the swap.tiers which control QoS, it
-> > does not follow the subset contained.
-> >
-> > Need more sleep on that.
->
-> When I first ideated on this, I also considered per-device max values,
-> with 0 meaning exclusion, to implement cases like a cgroup using only
-> network swap. At that time the idea was to give each device its own
-> counter, so setting it to 0 would imply exclusion. But this approach
-> would effectively require maintaining per-device page counters similar
-> to the existing swap.max implementation, and the relationship between
-> these per-device counters and the global swap.max would need to be
-> carefully defined. That made the design significantly heavier than the
-> functionality I was aiming for, so I decided to drop it. I read your
-> point more as a QoS extension, and I see it as complementary rather
-> than a counter argument.
+> +			tsr->offset = 0;
 
-Yes, I slept on it for a few days. I reached a similar conclusion.
-I am happy to share my thoughts:
-1) FACT: We don't have any support to move data from swap device to
-another swap device nowadays. It will not happen overnight. Talking
-about those percentage allocation and maintaining those percentages is
-super complicated. I question myself getting ahead of myself on this
-feature.
-2) FACT: I don't know if any real customers want this kind of
-sub-cgroup swap per tier max adjustment. We should write imaginary
-code for imaginary customers and reserve the real coding for the real
-world customers. Most of the customers I know, including our company,
-care most about the top level CGroup swap assignment. There are cases
-that enable/disable per sub CGroup swap device, in the QoS sense not
-the swap max usage sense.
-I think this will be one good question to ask feedback in the LPC MC
-discussion. Does anyone care about per tier max adjustment in the
-cgroup? We should only consider that when we have real customers.
+I think it can refer to a member in a struct.  How about this?
 
-So I would shelf this per tier max adjustment and not spend any more time o=
-n it.
+			tsr->offset = state->offset - offset;
 
-> > First of all, sorry about the pedantic, it should be "swap.tiers" just
-> > to be consistent with the rest of the discussion.
-> > Secondly, I just view names as an alias of the number. 1-3 is hard to
-> > read what you want.
-> > If we allow name as the alias, we can also do:
-> > echo zram-hdd > memory.swap.tieres
-> >
-> > It is exactly the same thing but much more readable.
-> >
-> > >    cg1/cg2: 2-4,6  > memory.swap.tie (ssd,hdd,network device, somedev=
-ice 2, assuming non-subset is allowed)
-> >
-> > echo ssd-network_device,some_device2 > memory.swap.tiers
-> >
-> > See, same thing but much more readable what is your intention.
-> >
-> > BTW, we should disallow space in tier names.
->
-> Ack=E2=80=94those spaces were only in my example; the implementation will=
- reject
-> spaces in tier names.
->
-> I like the interface format you proposed, and I=E2=80=99ll move forward w=
-ith an
-> initial implementation using the name-based tier approach, dropping
-> the numeric format.
-
-I am glad you like it.
-
-> > We do want to think about swap.tiers vs per tier swap.max. One idea
-> > just brainstorming is that we can have an array of
-> > "swap.<tiername>.max".
-> > It is likely we need to have both kinds of interface. Because
-> > "swap.<tiername>.max" specifies the inclusive child limit.
-> > "swap.tiers" specifies this C group swap usage QoS. I might not use
-> > hdd in this cgroup A, but the child cgroup B does. So A's hdd max
-> > can't be zero.
-> >
-> > The other idea is to specify a percentage for each tier of the
-> > swap.max in "swap.tiers.max": zram:30  sdd:70
-> > That means zram max is "swap.max * 30%"   and ssd max is "swap.max *
-> > 70%". The number does not need to add up to 100, but can't be bigger
-> > than 100.
-> > The sum can be bigger than 100.
-> >
-> > Need more sleep on it.
->
-> I don=E2=80=99t have additional ideas beyond what you suggested at now. S=
-ince swap.max
-> is defined in terms of quantity, my intuition is that tier.max should
-> probably also be quantity-based, not percentage. As I mentioned earlier,
-> I had also considered per-device max in the early RFC stage. The design
-> was to introduce per-device counters, but that added substantial overhead
-> and complexity, especially in reconciling them with the global swap.max
-> semantics. For that reason I abandoned the idea, though I agree your
-> suggestion makes sense in the context of QoS extension.
-
-We are in agreement here. We should not touch it until we have a real
-customer ask for it.
-
-> At this point I feel the main directions are aligned, so I=E2=80=99ll pro=
-ceed
-> with an initial patch version. My current summary is:
->
-> 1. Global interface to group swap priority ranges into tiers by name
->    (/sys/kernel/mm/swap/swaptier).
-I suggest "/sys/kernel/mm/swap/tiers" just to make the file name look
-different from the "swap.tiers" in the cgroup interface.
-This former defines all tiers, giving tiers a name and range. The
-latter enroll a subset of the tiers.
- I think the tier bit location does not have to follow the priority
-order. If we allow adding a new tier, the new tier will get the next
-higher bit. But the priority it split can insert into the middle thus
-splitting an existing tier range. We do need to expose the tier bits
-into the user space. Because for madvise()  to set tiers for VMA, it
-will use bitmasks. It needs to know the name of the bitmask mapping,
-I was thinking the mm/swap/tiers read back as one tier a line. show:
-name, bitmask bit, range low, range high
+Thanks,
+Namhyung
 
 
-> 2. Slow path allocation uses bitmask skipping; fast path uses per-cpu
->    tier cluster caches.
-If the fast path fails, it will go through the slow path. So the slow
-patch is actually a catch all.
-> 3. Cgroup interface format modeled after cpuset.
-I am not very familiar with the cpuset part of the interface. Maybe
-you should explain that to the reader without using cpuset cgroup as a
-reference.
-> 4. No inheritance between parent and child cgroup as a perspective of QoS
-In my original proposal of "swap.tiers", if the default is not set on
-this tier, it will look up the parent until the root memcg. There are
-two different tiers bitmask.
-One is the local tier bitmask. The other is the effective bitmask.
-If local tier bitmask sets the default, the effective tier bitmask =3D=3D
-local tier bitmask
-if local tier bitmask does not set default, The effective tier is
-concatenation from parent to this memcg.
-
-For example
-a/swap.tiers: - +ssd # ssd only
-a/b/swap.tiers: ""  # effective "- +ssh", also ssd only.
-a/b/c : + -hdd # effective "- +ssd + -hdd", simplify as "+ -hdd"  The
-'+' overwrite the default, anything before that can be ignored.
-
-That way, if you are not setting anything in "swap.tiers" in the child
-cgroup, that is the default behavior when you create a new cgroup.
-Changing the parent can change all the child cgroup at the same time.
-
-> 5. Runtime modification of tier settings allowed.
-Need to clarify which tier setting? "swap.tiers" or /sys/kernel/mm/swap/tie=
-rs?
-
-> 6. Keep extensibility and broader use cases in mind.
->
-> And some open points for further thought:
->
-> 1. NUMA autobind
->    - Forbid tier if NUMA priorities exist, and vice versa?
->    - Should we create a dedicated NUMA tier?
->    - Other options?
-
-I want to verify and remove the NUMA autobind from swap later. That
-will make things simpler for swap. I think the reason the NUMA swap
-was introduced does not exist any more.
-
-> 2. swap.tier.max
->    - percentage vs quantity, and clear use cases.
->   -  sketch concrete real-world scenarios to clarify usage
-
-Just don't do that. Ignore until there is a real usage case request.
-
-> 3. Possible future extensions to VMA-based tier usage.
-
-Madvise(). That can be introduced earlier. I know a usage case for
-that is the android. Android does not set every app as a cgroup. I
-haven't checked for a while if that is still true.
-
-> 4. Arbitrary ordering
->    - Do we really need it?
->    - If so, maybe provide a separate cgroup interface to reorder tiers.
-
-No for now. Need to answer how to deal with swap entry LRU order
-inversion issue.
-
-Chris
+> +			tsr->ok = true;
+> +
+> +			if (sreg == fbreg) {
+> +				pr_debug_dtp("lea [%x] address of -%#x(stack) -> reg%d",
+> +					     insn_offset, -src->offset, dst->reg1);
+> +			} else {
+> +				pr_debug_dtp("lea [%x] address of %#x(reg%d) -> reg%d",
+> +					     insn_offset, src->offset, sreg, dst->reg1);
+> +			}
+> +
+> +			pr_debug_type_name(&tsr->type, tsr->kind);
+> +		}
+> +		/* Case 2: Based on a register holding a typed pointer */
+> +		else if (src_tsr.ok && src_tsr.kind == TSR_KIND_TYPE) {
+> +
+> +			/* Check if the target type has a member at the new offset */
+> +			if (__die_get_real_type(&state->regs[sreg].type, &type_die) == NULL ||
+> +			    die_get_member_type(&type_die,
+> +					src->offset + src_tsr.offset, &type_die) == NULL)
+> +				return;
+> +
+> +			tsr->type = src_tsr.type;
+> +			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = src->offset + src_tsr.offset;
+> +			tsr->ok = true;
+> +
+> +			pr_debug_dtp("lea [%x] address of %s%#x(reg%d) -> reg%d",
+> +						insn_offset, src->offset < 0 ? "-" : "",
+> +						abs(src->offset), sreg, dst->reg1);
+> +
+> +			pr_debug_type_name(&tsr->type, tsr->kind);
+> +		}
+> +		return;
+> +	}
+> +
+>  	if (strncmp(dl->ins.name, "mov", 3))
+>  		return;
+>  
+> @@ -345,6 +447,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  
+>  			if (var_addr == 40) {
+>  				tsr->kind = TSR_KIND_CANARY;
+> +				tsr->offset = 0;
+>  				tsr->ok = true;
+>  
+>  				pr_debug_dtp("mov [%x] stack canary -> reg%d\n",
+> @@ -361,6 +464,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("mov [%x] this-cpu addr=%#"PRIx64" -> reg%d",
+> @@ -372,6 +476,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  		if (src->imm) {
+>  			tsr->kind = TSR_KIND_CONST;
+>  			tsr->imm_value = src->offset;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("mov [%x] imm=%#x -> reg%d\n",
+> @@ -388,6 +493,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  		tsr->type = state->regs[src->reg1].type;
+>  		tsr->kind = state->regs[src->reg1].kind;
+>  		tsr->imm_value = state->regs[src->reg1].imm_value;
+> +		tsr->offset = 0;
+>  		tsr->ok = true;
+>  
+>  		/* To copy back the variable type later (hopefully) */
+> @@ -421,12 +527,14 @@ static void update_insn_state_x86(struct type_state *state,
+>  			} else if (!stack->compound) {
+>  				tsr->type = stack->type;
+>  				tsr->kind = stack->kind;
+> +				tsr->offset = 0;
+>  				tsr->ok = true;
+>  			} else if (die_get_member_type(&stack->type,
+>  						       offset - stack->offset,
+>  						       &type_die)) {
+>  				tsr->type = type_die;
+>  				tsr->kind = TSR_KIND_TYPE;
+> +				tsr->offset = 0;
+>  				tsr->ok = true;
+>  			} else {
+>  				tsr->ok = false;
+> @@ -446,9 +554,10 @@ static void update_insn_state_x86(struct type_state *state,
+>  		else if (has_reg_type(state, sreg) && state->regs[sreg].ok &&
+>  			 state->regs[sreg].kind == TSR_KIND_TYPE &&
+>  			 die_deref_ptr_type(&state->regs[sreg].type,
+> -					    src->offset, &type_die)) {
+> +					    src->offset + state->regs[sreg].offset, &type_die)) {
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("mov [%x] %#x(reg%d) -> reg%d",
+> @@ -473,6 +582,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("mov [%x] global addr=%"PRIx64" -> reg%d",
+> @@ -504,6 +614,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  			    die_get_member_type(&type_die, offset, &type_die)) {
+>  				tsr->type = type_die;
+>  				tsr->kind = TSR_KIND_TYPE;
+> +				tsr->offset = 0;
+>  				tsr->ok = true;
+>  
+>  				if (src->multi_regs) {
+> @@ -526,6 +637,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  					     src->offset, &type_die)) {
+>  			tsr->type = type_die;
+>  			tsr->kind = TSR_KIND_TYPE;
+> +			tsr->offset = 0;
+>  			tsr->ok = true;
+>  
+>  			pr_debug_dtp("mov [%x] pointer %#x(reg%d) -> reg%d",
+> @@ -548,6 +660,7 @@ static void update_insn_state_x86(struct type_state *state,
+>  							&var_name, &offset) &&
+>  				    !strcmp(var_name, "__per_cpu_offset")) {
+>  					tsr->kind = TSR_KIND_PERCPU_BASE;
+> +					tsr->offset = 0;
+>  					tsr->ok = true;
+>  
+>  					pr_debug_dtp("mov [%x] percpu base reg%d\n",
+> @@ -571,6 +684,19 @@ static void update_insn_state_x86(struct type_state *state,
+>  			int offset = dst->offset - fboff;
+>  
+>  			tsr = &state->regs[src->reg1];
+> +			type_die = tsr->type;
+> +
+> +			/* The register is derived from a pointer to the type */
+> +			if (tsr->offset != 0) {
+> +				/*
+> +				 * deref gets the innermost field, but we actually want direct
+> +				 * child field and take a pointer to it.
+> +				 * However array type like unsigned long[] is already a pointer
+> +				 * and is the most common case for this kind of stack variable.
+> +				 */
+> +				if (die_deref_ptr_type(&tsr->type, tsr->offset, &type_die) == NULL)
+> +					return;
+> +			}
+>  
+>  			stack = find_stack_state(state, offset);
+>  			if (stack) {
+> @@ -583,10 +709,10 @@ static void update_insn_state_x86(struct type_state *state,
+>  				 */
+>  				if (!stack->compound)
+>  					set_stack_state(stack, offset, tsr->kind,
+> -							&tsr->type);
+> +							&type_die);
+>  			} else {
+>  				findnew_stack_state(state, offset, tsr->kind,
+> -						    &tsr->type);
+> +						    &type_die);
+>  			}
+>  
+>  			if (dst->reg1 == fbreg) {
+> @@ -596,7 +722,11 @@ static void update_insn_state_x86(struct type_state *state,
+>  				pr_debug_dtp("mov [%x] reg%d -> %#x(reg%d)",
+>  					     insn_offset, src->reg1, offset, dst->reg1);
+>  			}
+> -			pr_debug_type_name(&tsr->type, tsr->kind);
+> +			if (tsr->offset != 0)
+> +				pr_debug_dtp(" reg%d offset %#x ->",
+> +					src->reg1, tsr->offset);
+> +
+> +			pr_debug_type_name(&type_die, tsr->kind);
+>  		}
+>  		/*
+>  		 * Ignore other transfers since it'd set a value in a struct
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 258157cc43c2..e067e91f2037 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -892,7 +892,7 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+>  					     insn_offset, -offset);
+>  			}
+>  			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
+> -		} else if (has_reg_type(state, var->reg) && var->offset == 0) {
+> +		} else if (has_reg_type(state, var->reg)) {
+>  			struct type_state_reg *reg;
+>  			Dwarf_Die orig_type;
+>  
+> @@ -907,13 +907,17 @@ static void update_var_state(struct type_state *state, struct data_loc_info *dlo
+>  				continue;
+>  
+>  			orig_type = reg->type;
+> -
+> +			/*
+> +			 * var->offset + reg value is the beginning of the struct
+> +			 * reg->offset is the offset the reg points
+> +			 */
+> +			reg->offset = -var->offset;
+>  			reg->type = mem_die;
+>  			reg->kind = TSR_KIND_TYPE;
+>  			reg->ok = true;
+>  
+> -			pr_debug_dtp("var [%"PRIx64"] reg%d",
+> -				     insn_offset, var->reg);
+> +			pr_debug_dtp("var [%"PRIx64"] reg%d offset %x",
+> +				     insn_offset, var->reg, var->offset);
+>  			pr_debug_type_name(&mem_die, TSR_KIND_TYPE);
+>  
+>  			/*
+> @@ -1101,7 +1105,7 @@ static enum type_match_result check_matching_type(struct type_state *state,
+>  		if (__die_get_real_type(&state->regs[reg].type, type_die) == NULL)
+>  			return PERF_TMR_NO_POINTER;
+>  
+> -		dloc->type_offset = dloc->op->offset;
+> +		dloc->type_offset = dloc->op->offset + state->regs[reg].offset;
+>  
+>  		if (dwarf_tag(type_die) == DW_TAG_typedef)
+>  			die_get_real_type(type_die, &sized_type);
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index 541fee1a5f0a..47a4c752b917 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -173,6 +173,12 @@ extern struct annotated_data_stat ann_data_stat;
+>  struct type_state_reg {
+>  	Dwarf_Die type;
+>  	u32 imm_value;
+> +	/*
+> +	 * The offset within the struct that the register points to.
+> +	 * A value of 0 means the register points to the beginning.
+> +	 * type_offset = op->offset + reg->offset
+> +	 */
+> +	s32 offset;
+>  	bool ok;
+>  	bool caller_saved;
+>  	u8 kind;
+> -- 
+> 2.51.0.261.g7ce5a0a67e-goog
+> 
 
