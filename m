@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-792619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A65B3C6BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:47:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B50B3C6C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8786F1633B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B9277BEFDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5627B2236E1;
-	Sat, 30 Aug 2025 00:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A4620C004;
+	Sat, 30 Aug 2025 00:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="QQdIJbX1"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwQYf4vi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43C3136358
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A752AE84;
+	Sat, 30 Aug 2025 00:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514787; cv=none; b=SOq2Q6BHQPuSpQ6wTbtZ7Unwyzg2cnZG7Ju4HO6HWxGiYSEn6QV8tV5bLsCIt+PeWSn5O41HyTTnmdnpWKFDw5ik2YBpsxYsdKa0Sm5Vn//AV6XoC/Q8dkvOm+RQdAmbxuWAGPWqdN60jHkMgw9zyt+2hcRrUrGJWps1oQ2A1f0=
+	t=1756514890; cv=none; b=nnPxDzOYSusyrfQCEdoG9vjfcHx9OkRkfIki3DnwC15XnPjRD+TVI1CFgl813vP5+phANTR9+gyocYUXLzhqYlVu8XbfdvOQZAXIoxCAi+w3sv04KLKpyU/H5pZz/NraVYpV+tp3DH2c121PbX/XVkd/F03AMkA6SDSechVJDsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514787; c=relaxed/simple;
-	bh=BlDlbu38u1XtKOS0wceLCkC5etFPhXGYTr/KipiVV4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKajuPoiOaVgdC7O3k5iTBiKPICuovbm04By/D2vEyPS6KTbiVFiVCnNvei8kPUwZQrctY6Fc++Zl0rFO9rGVWTae6d5fVhqgfxcwfYmDhspOJhAx/mCQFmj4UOorTuBo8Np3y5ZcjLFbYjRJrBcC6dhkucC50mwrK9ZMLKtRlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=QQdIJbX1; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7f7742e718fso252059485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1756514785; x=1757119585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WPLPq7twwaRsnABf4Ucetp6Xy2kklMZkEh1mgaPuZI=;
-        b=QQdIJbX15hbPDKjxHYUBn1RSsGqL6HPNcppWJnLdsKGUPnoH/mkFx/bYGSxk8a4goB
-         BDavTmOpqOX+UUPc34+Lby85IdVaQP81SSmWT6YV2TJwp1m1wWscMC0+pSNgFOPekE4I
-         M1LXOkMPMtpzJvNlOYg5XTb7cyJ2cMdvgtsLG6cbktlbAC3LJdypk7vLbAuFr9rawS/+
-         eV0jOl0hSL/bVe2QYE67643drRLsLKAQFnkWgTEJGnVpu4W8pgqn759w45umm8HrFDaL
-         osUjk1MfMH6Cz6A1GUmHuMY4GGe/sWvO7vYfAWScVWbIA0ls7wFsMuL2c1fHwLoW6dY7
-         u9hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756514785; x=1757119585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5WPLPq7twwaRsnABf4Ucetp6Xy2kklMZkEh1mgaPuZI=;
-        b=U7TJxcxBoObFj/30CssG5wGDlo/U3dVSObpsM/7ZpU1L831g906RWnrdU/nTWeaeOZ
-         BsAfx3ZtRvwsdChRV1+zc5e5JX1CxINpoMsfojS8T4MhCOd/W9gGyUfMWacHhLhVEDUE
-         8ZWr0e+fT8yUzs7Dr/0UadxeBK17neUO313rfs6Ol/gLnLAvW6zVr4VhJKFpGp+k3FQS
-         swEKX3YtyQkxuqyb+4XD9dqfjgjWai/7rc6W0M8HsyLE9SgumE3xDOf4VZ3hHNteA6iT
-         vCHFrdKTKfrURntEoGhwb/bQoPcS5IUcbL1SWz70W+HqPRO1Y9c9sw6jc/hRztVVROIn
-         mHXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJKyh9htd46tnlO7OvlHCiUhTTjR/aXjkWPN0dBX9NPLUdD7WoeB/qo0fI6kQN5Vo6w5Z76skaiOuhkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdNnhqWIAC1Gle4GBARffDln/lPkqQ6/rDH0Lzm70N6hWexH/4
-	xQIPuQbLInX6/G6RR0kqj8PuD5rmA3bLBtP1U5QZrxFj6+7cs3ZfkK6zCS7c5kyErdnOKE34J6k
-	rDhE=
-X-Gm-Gg: ASbGnctHQaU+eUOl9bjuAtUFYK0V7d0KjPQ8env88XHB7huhAZPRdHM7vzw2AuGTvDH
-	NN6GgK6lMlhFexAEqGDq7SlVlzvr9UyPd//RBqLR0c4f2UY0m+BK68xAzSvQQ4/Qx1sftTKZt8N
-	t+rqVjjywPsSyzlBog3Si8u54+l0F0I/LYKvDncQYxgRxBSHHa7PVqsdntRJkaN0IXsWyh3cBNp
-	PPjy0nwFkYI6e94qXnPaYBEndQoESoA1npPv87fFfciOe9cCTsO/1vinFrG+K0GBlnGz2nCK0D1
-	5xE22XqqEHngWB9DVIOpI6QJwW21GbIeaZArXHuSxokmP7B7u4m1pC1TOT+caXGKOR+snYbsDGr
-	XnFB1MLsgEr/xsJw95IN3y68fYDGWCRWgD3E/6A5+
-X-Google-Smtp-Source: AGHT+IHQhb8okk0kP47DsuFPXdYzK0wNLahGp44Tj91jY2E09GnY+68a+tSLHGTv0ixop6Om+PzYNw==
-X-Received: by 2002:a05:620a:7011:b0:7fc:e9e5:5b0f with SMTP id af79cd13be357-7ff26eab060mr70691485a.6.1756514784762;
-        Fri, 29 Aug 2025 17:46:24 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::fd35])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc14849559sm272681985a.41.2025.08.29.17.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 17:46:24 -0700 (PDT)
-Date: Fri, 29 Aug 2025 20:46:21 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-Message-ID: <056bd3b8-7d62-42e5-8b5d-4113a9ef769b@rowland.harvard.edu>
-References: <20250826150826.11096-1-ryanzhou54@gmail.com>
- <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
- <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
- <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
- <20250829004312.5fw5jxj2gpft75nx@synopsys.com>
- <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
- <20250829190731.gx2xrgdz3tor5a2v@synopsys.com>
- <CAJZ5v0gY=w1G-R1EdpJi+Hm5+YmDWY2yJDHgVVVeOvQAkO1ffQ@mail.gmail.com>
- <20250829201306.rchlatbdxqy3xiki@synopsys.com>
+	s=arc-20240116; t=1756514890; c=relaxed/simple;
+	bh=SAHs12AkD+bfcgVL/vhmtYv3cPO6zdFftMLJ/bIJzaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Njl6kyB9hJ8iZmi62yjS58qdmNFIiGoZKpp3uiNrDHUPcKTNYvCOAWN6lKLdy1bCtxxS3mxOAMt8mP3djb1o7V9DuZo9FouibxZpjPuM6BdzooINIoYxAsmvNE27T3j4Ue80oavDDZmoQf2OX5EQJffu0T7LfP0OWOlpXoQ7eXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwQYf4vi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E41C4CEF6;
+	Sat, 30 Aug 2025 00:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756514889;
+	bh=SAHs12AkD+bfcgVL/vhmtYv3cPO6zdFftMLJ/bIJzaw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MwQYf4vi7F1sjZOvcuD5HfZA8pqu5sZtm5kFTBcV4XKXj3ZE/vUQwHAch5jNHiyjn
+	 pK/6TfJqjDG/uvHX6uB1DcUXTsJmjxbqnHHgA6M1s+qn3OiH781YQFS3Y7MIxPfT77
+	 izdXHlAezQKFJ5S8Ygi44lx0fjm8ozCv51dudE53Vpk+3xcDamoci4uR5EhkzSg16Q
+	 jWxdNsjo+MpNCPVjCJ7PjeZ/uiLr9E3Lt3BPwMQRXc8AY3TaxXlrFPcyb0GTs+tPOt
+	 3za3AdmiZFC5gtcLmO96L+fpJqHCjuLR3IPXOMW3gGs1VAXCRrIl0vm6ZDwlvDflBq
+	 T9mHVjdjII/wg==
+Message-ID: <79a8e41e-c228-44e9-8286-1b2d7b3687a4@kernel.org>
+Date: Sat, 30 Aug 2025 09:48:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829201306.rchlatbdxqy3xiki@synopsys.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 04/10] md/raid10: convert read/write to use
+ bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, neil@brown.name,
+ akpm@linux-foundation.org, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-5-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250828065733.556341-5-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 08:13:07PM +0000, Thinh Nguyen wrote:
-> ..shouldn't the PM core know that A was runtime suspended to not skip
-> ->resume? (sorry I'm not an expert in the PM core, genuine question
-> here).
+On 8/28/25 15:57, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> On the one hand unify bio split code, prepare to fix disordered split
+> IO; On the other hand fix missing blkcg_bio_issue_init() and
+> trace_block_split() for split IO.
+> 
+> Noted discard is not handled, because discard is only splited for
 
-This doesn't answer your question directly, but I would like to add some 
-background.
+s/splited/split
 
-There are subsystems/drivers that do want to resume their devices during 
-system resume, even if the devices were in runtime suspend originally.  
-At a minimum, the PM core doesn't want to take this choice away from 
-them.
+> unaligned head and tail, and this can be considered slow path, the
+> disorder here does not matter much.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/raid10.c | 51 +++++++++++++++++++--------------------------
+>  drivers/md/raid10.h |  2 ++
+>  2 files changed, 23 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b60c30bfb6c7..0e7d2a67fca6 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -322,10 +322,12 @@ static void raid_end_bio_io(struct r10bio *r10_bio)
+>  	struct bio *bio = r10_bio->master_bio;
+>  	struct r10conf *conf = r10_bio->mddev->private;
+>  
+> -	if (!test_bit(R10BIO_Uptodate, &r10_bio->state))
+> -		bio->bi_status = BLK_STS_IOERR;
+> +	if (!test_and_set_bit(R10BIO_Returned, &r10_bio->state)) {
+> +		if (!test_bit(R10BIO_Uptodate, &r10_bio->state))
+> +			bio->bi_status = BLK_STS_IOERR;
+> +		bio_endio(bio);
+> +	}
 
-In fact, the USB subsystem was designed to run that way back when 
-support for runtime PM was first added, and it hasn't been changed since 
--- although maybe it should be.  There are explicit mechanisms for 
-telling the PM core that a device should be skipped during system 
-resume; we could use them.
+This change / the R10BIO_Returned flag is not mentioned in the commit message.
+Please explain why it is needed to add for switching to using
+bio_submit_split_bioset(), which in itself should not introduce functional
+changes. Looks like this needs to be split into different patches...
 
-Regardless, I don't recall any discussions of the particular situation 
-in this thread ever taking place.
 
-Alan Stern
+-- 
+Damien Le Moal
+Western Digital Research
 
