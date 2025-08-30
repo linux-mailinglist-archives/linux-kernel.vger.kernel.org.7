@@ -1,181 +1,143 @@
-Return-Path: <linux-kernel+bounces-792696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1BAB3C7BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:05:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED551B3C7C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DD45E5ABF
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63975A1030
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD397274B29;
-	Sat, 30 Aug 2025 04:05:27 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A012773DF;
+	Sat, 30 Aug 2025 04:07:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A9A274669
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47039230BF6
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 04:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756526727; cv=none; b=uIYW1LlH8ys9J8KMP1ENDgwKrCNNmO4RVhITYs6CnNq3Xsp8s1KKLkyfi90C3Oj/sNFEoXwrDjiguMH4SW89cpYFeZ4XB/kPa183s56R3erGDJE1sD9MNPcBJuXOEBOCp5PANh2qb5rHmLl8KWCYKkvnYZz8f3VIBh7FxCowRM8=
+	t=1756526857; cv=none; b=fTA+dxnAILTyxQBiHWiYwGRi/cUmTJrRTbCEO0YcJmW/7xG04Vx0C4h0T9hUh84Yn7cB4uHbr6V1waC7NJ1sRQhCWHx0Wc2SI/MGk6RQmQVcb0NM4Lw5sgznn862jY5MtlriAjG1g4oK+rggOCYqIY5K6Oa7Lmq4U3xP1AF54AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756526727; c=relaxed/simple;
-	bh=aw3+fIVL9jzi4PiHU70Olj4DbGA8xCVqHe/xoTSEL8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqGJEDgXYEfiBkJDN8k9fxLzkPMK+phJxVkhberyWRMRxv6ngNEv/Th6c3oY/YzWs2BloXwN3vva7PxKvioIm/egE15xJmaBOIWpgdnVLH7BCmfdxTcl6U5EGTU+FimgSLLbR3LCP02kg1fk17ly55K3+Gc1rIhoyvK0IPZDlHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 30 Aug 2025 13:05:16 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Sat, 30 Aug 2025 13:05:16 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
-References: <aKROKZ9+z2oGUJ7K@yjaykim-PowerEdge-T330>
- <CAF8kJuPUouN4c6V-CaG7_WQUAvRxBg02WRxsMtL56_YTdTh1Jg@mail.gmail.com>
- <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330>
- <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
- <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
- <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
- <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330>
- <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
- <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+	s=arc-20240116; t=1756526857; c=relaxed/simple;
+	bh=1LYhGoIJ+0VifjvDdy/NG+rcCr8YXjXg9PljDtzY0Mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K2v/pCv+RpCyr9de02ns6YcS/eXqJRHwMzTDvS7sJ6fQMzsDy4C9AIaOM3AgvW9Mj4ZC2vqDYqj3DKJqtBd49Cqq3BvxXddNy7NsUAywyGkYdrDHh+1nZWbvAPl2PxU2tuEGAiWHubguOU8OBleZx8OcPGwgriBHZctPGlKJUHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cDM6W4wgnzKHMpZ
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:07:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 6F7DE1A0B61
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:07:31 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP1 (Coremail) with SMTP id cCh0CgC3dXsCebJox2IFAw--.4026S2;
+	Sat, 30 Aug 2025 12:07:31 +0800 (CST)
+Message-ID: <056f637f-d992-46b6-945c-bd85dde04731@huaweicloud.com>
+Date: Sat, 30 Aug 2025 12:07:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v2] x86: Prevent KASAN false positive warnings in
+ __show_regs
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Alexander Potapenko
+ <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Borislav Petkov <bp@alien8.de>, Dmitry Vyukov <dvyukov@google.com>,
+ Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20250829094744.3133324-1-wutengda@huaweicloud.com>
+ <xlaeuraw7mupek3fp62o7ahp5viusp6uo36jadtuidpwwkmy6a@5pzmlcxtb2ro>
+ <ac1bb376-5b16-4d06-81a2-8d15315beba2@huaweicloud.com>
+ <372iwvlxzynnnzn42wo2kur5enrlzzcqqnx5gx6o6bnfyqqlgx@p7drg4of3sdc>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <372iwvlxzynnnzn42wo2kur5enrlzzcqqnx5gx6o6bnfyqqlgx@p7drg4of3sdc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgC3dXsCebJox2IFAw--.4026S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw17Zr1UKw1kZr15Kw17KFg_yoW8Zw4rpF
+	Z5Kasaya18AF4IvFyqyw48Zr9IyrZ5Xr1kur1fGr4ft3Z0vr1fGrySgF429Fy5Crn7Xa42
+	vF4Dtr9xAws0yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Hi Chris,
 
-Thanks for the detailed feedback, and sorry for the late reply.
 
-> I think you touch on a very important question that might trigger a
-> big design change. Do we want to have a per tier swap.max? It will
-> specify not only whether this cgroup will enroll into this tier or
-> not. It also controls how much swap it allows to do in this cgroup.
-> The swap.max will follow the straight contain relationship. I would
-> need to think more about the relationship between swap.max and
-> swap.tiers. Initial intuition is that, we might end up with both per
-> tier swap.max, which control resource limit, it has subset contain
-> relationship. At the same time the swap.tiers which control QoS, it
-> does not follow the subset contained.
->
-> Need more sleep on that.
+On 2025/8/30 10:18, Josh Poimboeuf wrote:
+> On Sat, Aug 30, 2025 at 09:34:59AM +0800, Tengda Wu wrote:
+>>
+>>
+>> On 2025/8/30 5:01, Josh Poimboeuf wrote:
+>>> On Fri, Aug 29, 2025 at 09:47:44AM +0000, Tengda Wu wrote:
+>>>>  static void show_regs_if_on_stack(struct stack_info *info, struct pt_regs *regs,
+>>>>  				  bool partial, const char *log_lvl)
+>>>>  {
+>>>> +	bool kasan_disabled = false;
+>>>> +
+>>>> +	/*
+>>>> +	 * When 'regs' resides in another task's stack space, KASAN should be
+>>>> +	 * disabled to prevent false positives during 'regs->' operation, as
+>>>> +	 * the 'regs' contents may change concurrently with task execution.
+>>>> +	 */
+>>>> +	if (!object_is_on_stack(regs)) {
+>>>> +		kasan_disable_current();
+>>>> +		kasan_disabled = true;
+>>>> +	}
+>>>
+>>> I don't think this is right.  object_is_on_stack() only checks current's
+>>> *task* stack.  However the regs might be on a different stack used by
+>>> current (e.g., exception stack).  In which case there's no need to
+>>> disable KASAN.
+>>>
+>>> What really determines the KASAN-safety is whether it's the current task
+>>> or not.
+>>>
+>>
+>> I see.
+>>
+>> Since operations walking other tasks' regs-> only occur in show_regs_if_on_stack,
+>> to cover a more accurate range and targets, it seems we have no choice but to add
+>> a task parameter to show_regs_if_on_stack and then perform the check, right?
+> 
+> Reading another task's stack while it's running is problematic in
+> general -- not only for reading saved regs, but for reading any other
+> values on the stack.  So why not just do it in show_trace_log_lvl()?
+> 
 
-When I first ideated on this, I also considered per-device max values,
-with 0 meaning exclusion, to implement cases like a cgroup using only
-network swap. At that time the idea was to give each device its own
-counter, so setting it to 0 would imply exclusion. But this approach
-would effectively require maintaining per-device page counters similar
-to the existing swap.max implementation, and the relationship between
-these per-device counters and the global swap.max would need to be
-carefully defined. That made the design significantly heavier than the
-functionality I was aiming for, so I decided to drop it. I read your
-point more as a QoS extension, and I see it as complementary rather
-than a counter argument.
+Theoretically, that's correct. I was too focused on the regs itself and overlooked
+this fact. Additionally, I just discovered a potentially missed fix: there is also
+code in show_trace_log_lvl that directly accesses regs->:
 
-> First of all, sorry about the pedantic, it should be "swap.tiers" just
-> to be consistent with the rest of the discussion.
-> Secondly, I just view names as an alias of the number. 1-3 is hard to
-> read what you want.
-> If we allow name as the alias, we can also do:
-> echo zram-hdd > memory.swap.tieres
->
-> It is exactly the same thing but much more readable.
->
-> >    cg1/cg2: 2-4,6  > memory.swap.tie (ssd,hdd,network device, somedevice 2, assuming non-subset is allowed)
->
-> echo ssd-network_device,some_device2 > memory.swap.tiers
->
-> See, same thing but much more readable what is your intention.
->
-> BTW, we should disallow space in tier names.
+		if (regs && stack == &regs->ip)
+			goto next;
 
-Ack—those spaces were only in my example; the implementation will reject
-spaces in tier names.
+Simply disabling KASAN within show_regs_if_on_stack is indeed insufficient.
 
-I like the interface format you proposed, and I’ll move forward with an
-initial implementation using the name-based tier approach, dropping
-the numeric format.
+Thank you very much for the reminder. I will send out a v3 to move the KASAN check
+back into show_trace_log_lvl.
 
-> We do want to think about swap.tiers vs per tier swap.max. One idea
-> just brainstorming is that we can have an array of
-> "swap.<tiername>.max".
-> It is likely we need to have both kinds of interface. Because
-> "swap.<tiername>.max" specifies the inclusive child limit.
-> "swap.tiers" specifies this C group swap usage QoS. I might not use
-> hdd in this cgroup A, but the child cgroup B does. So A's hdd max
-> can't be zero.
->
-> The other idea is to specify a percentage for each tier of the
-> swap.max in "swap.tiers.max": zram:30  sdd:70
-> That means zram max is "swap.max * 30%"   and ssd max is "swap.max *
-> 70%". The number does not need to add up to 100, but can't be bigger
-> than 100.
-> The sum can be bigger than 100.
->
-> Need more sleep on it.
+-- Tengda
 
-I don’t have additional ideas beyond what you suggested at now. Since swap.max
-is defined in terms of quantity, my intuition is that tier.max should
-probably also be quantity-based, not percentage. As I mentioned earlier,
-I had also considered per-device max in the early RFC stage. The design
-was to introduce per-device counters, but that added substantial overhead
-and complexity, especially in reconciling them with the global swap.max
-semantics. For that reason I abandoned the idea, though I agree your
-suggestion makes sense in the context of QoS extension.
-
-At this point I feel the main directions are aligned, so I’ll proceed
-with an initial patch version. My current summary is:
-
-1. Global interface to group swap priority ranges into tiers by name
-   (/sys/kernel/mm/swap/swaptier).
-2. Slow path allocation uses bitmask skipping; fast path uses per-cpu
-   tier cluster caches.
-3. Cgroup interface format modeled after cpuset.
-4. No inheritance between parent and child cgroup as a perspective of QoS
-5. Runtime modification of tier settings allowed.
-6. Keep extensibility and broader use cases in mind.
-
-And some open points for further thought:
-
-1. NUMA autobind
-   - Forbid tier if NUMA priorities exist, and vice versa?
-   - Should we create a dedicated NUMA tier?
-   - Other options?
-2. swap.tier.max
-   - percentage vs quantity, and clear use cases.
-  -  sketch concrete real-world scenarios to clarify usage 
-3. Possible future extensions to VMA-based tier usage.
-4. Arbitrary ordering
-   - Do we really need it?
-   - If so, maybe provide a separate cgroup interface to reorder tiers.
-
-Best Regards
-Youngjun Park
 
