@@ -1,90 +1,233 @@
-Return-Path: <linux-kernel+bounces-792657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A55B3C74A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:09:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FE4B3C74E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 836E14E0510
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5773E1C27B18
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBE524678D;
-	Sat, 30 Aug 2025 02:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63172475C8;
+	Sat, 30 Aug 2025 02:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Whx7RI3X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6B75464E;
-	Sat, 30 Aug 2025 02:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="APFiyrNV"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F4219E7F7;
+	Sat, 30 Aug 2025 02:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756519765; cv=none; b=H5aMlN+XOL9HPls3W2Ry24B1sEZ9OlGeqTFbdhBASsNPb1cztO9Hb6xTAyT+EZrgCS+c+JZAD8CJ8/LoXxtRj6YmO+4598t2H2ajSKt3/+mXJ60P2FFxF8X6zYhcN1PVoKR1X30WLAw6ewsmu0hA+Pya14+hNqRUxmIH2vDsxZo=
+	t=1756519831; cv=none; b=a5bdEWuFhL/KT9syeKi0N/fm1iYk2WJUb/M4sIEqx93FOLdIkopxkwNPDloIx6dZnGxOu5FZFnX4X8gTNaBULv71iQt3grVsYpxVrsmIkphCKSxr5Cfv1BdHE4+JYBvYcWNaKrkAzD2Ew5u9QU3GNFXWBUOgJOgWrN/amasgMOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756519765; c=relaxed/simple;
-	bh=7QpLsmRPvLH7QubZDXeiT+GNdUI7LMkOu8jIio2t33o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o+6bIKlVUh/a4NR4lH2cnTkVCliiQ3P72+dcRtvDbQgrzlOOlUVUMcWtEIgj1xln7n3pJ1kJN6xq13O/3fKiFz/Ewud8WnOw0G2C9OGYbWHd7Xcc074Tz3L8THGJdludg4rnU643DrVrF02qTSbQRE4phAGRK7iwwl8xbclfxs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Whx7RI3X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 017FCC4CEF0;
-	Sat, 30 Aug 2025 02:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756519765;
-	bh=7QpLsmRPvLH7QubZDXeiT+GNdUI7LMkOu8jIio2t33o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Whx7RI3X3/kw+lAfHbSoVteua9OmHAJI4znEGNcF0wBeoDUaA/TvWWvX+e0Cw5mqQ
-	 GKRWA7Das1SHv3qCS2YM8ks56QLgqLverrct2svR4ejlcJF4LLSCA4LinmmpX9nCQj
-	 CUjH2S2jeCJ+ySRtjlxwuxSI9N8hULaAlnRXX+lCqWEgqEKuyy8oPRbm6rSxkwoFnV
-	 YU8/9ZGxPURaUcMxvxTkxDcb12YMkXsIfxtcK4YrWPkki7Wf5RxFCA5Pkg7V6E348u
-	 RUm15kSAKJLhWrTPbfhXv0o5KPBzxcwy2xFBxQxR9ktveTWKzuKeNCr/JDNj4GjVEq
-	 IqYhq5Z80regA==
-Date: Fri, 29 Aug 2025 19:09:24 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Shay Drory <shayd@nvidia.com>, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, ozsh@nvidia.com, mbloch@nvidia.com,
- tariqt@nvidia.com, saeedm@nvidia.com
-Subject: Re: [RFC net-next] net: devlink: add port function attr for vport
- =?UTF-8?B?4oaU?= eswitch metadata forwarding
-Message-ID: <20250829190924.5e730888@kernel.org>
-In-Reply-To: <ilh6xgancwvjyeoqmekaemqodbwtr6qfl7npyey5tnw5jb5qt2@oqce6b5jajl2>
-References: <20250828065229.528417-1-shayd@nvidia.com>
-	<ilh6xgancwvjyeoqmekaemqodbwtr6qfl7npyey5tnw5jb5qt2@oqce6b5jajl2>
+	s=arc-20240116; t=1756519831; c=relaxed/simple;
+	bh=rUcqyusnCVrQ/aMmSsl+3CYkqjQKhYkMiBEA9u99GzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZFBZ9bAKZlvJGL9fYXFc2ymDBxS2IvGlsGh39yzHBv98ANImHm+Bv+CHWSulIQhUPV88QeTHsv4hbIt9Q0/F7ckkAt6cZQsagvMxHIU7TZwPj6O2iTilLWy8UWL7J62G8bj5YnJWUTWft9Jig1ZY8kVQ8Ip7S6gKTLIZwZvWO+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=APFiyrNV; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=AS
+	v08vHQn45ozfOFbV1Do6M+K0ucRdNAA7jLQeJT/8U=; b=APFiyrNVb4c7aV6a8k
+	JG6DpZhswdBvQZFZWTblA72C4RtACC2H6auLg3hjhN24bUppzpeZk+prPigeAez+
+	2ev9W769XFd+KsWGLphG1sjIb1HQfYobxKScnwAV+c2vBRBfKyKgqJPt1G01mOCt
+	6xZ0SHel2OFkyKc1C/0EVsk+U=
+Received: from mi-work.mioffice.cn (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3tz1sXbJoSlsQFA--.37283S4;
+	Sat, 30 Aug 2025 10:09:49 +0800 (CST)
+From: yangshiguang1011@163.com
+To: harry.yoo@oracle.com
+Cc: vbabka@suse.cz,
+	akpm@linux-foundation.org,
+	cl@gentwo.org,
+	rientjes@google.com,
+	roman.gushchin@linux.dev,
+	glittao@gmail.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	yangshiguang <yangshiguang@xiaomi.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] mm: slub: avoid wake up kswapd in set_track_prepare
+Date: Sat, 30 Aug 2025 10:09:46 +0800
+Message-ID: <20250830020946.1767573-1-yangshiguang1011@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3tz1sXbJoSlsQFA--.37283S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Jr43XFWkKF1UCFWkWryUWrg_yoW7tF4rpF
+	W7WFy3tF48AF1jvFWUCa1Uur1SvrZ3CrW8CF43Wa4rua4Yvr48WFW7tFyjqFW5Arykua1q
+	k3W09Fn3Ww4jqaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ju0PDUUUUU=
+X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/1tbiSB655WiyUD3O3wAAss
 
-On Thu, 28 Aug 2025 11:03:41 +0200 Jiri Pirko wrote:
-> Thu, Aug 28, 2025 at 08:52:29AM +0200, shayd@nvidia.com wrote:
-> >In some product architectures, the eswitch manager and the exception
-> >handler run as separate user space processes. The eswitch manager uses
-> >the physical uplink device, while the slow path handler uses a virtual
-> >device.
-> >
-> >In this architectures, the eswitch manager application program the HW to
-> >send the exception packets to specific vport, and on top this vport
-> >virtual device, the exception application is running and handling these
-> >packets.
-> >
-> >Currently, when packets are forwarded between the eswitch and a vport,
-> >no per-packet metadata is preserved. As a result, the slow path handler
-> >cannot implement features that require visibility into the packet's
-> >hardware context.  
-> 
-> A vendor-specific slow path. Basically you provide a possibility for
-> user to pass a binary blob to hw along with every TX'ed packet and
-> vice versa. That looks quite odd tbh. I mean, isn't this horribly
-> breaking the socket abstraction? Also, isn't this horribly breaking the
-> forwarding offloading model when HW should just mimic the behaviour of
-> the kernel?
+From: yangshiguang <yangshiguang@xiaomi.com>
 
-I suppose will be told at some point that it's for debug.
+From: yangshiguang <yangshiguang@xiaomi.com>
+
+set_track_prepare() can incur lock recursion.
+The issue is that it is called from hrtimer_start_range_ns
+holding the per_cpu(hrtimer_bases)[n].lock, but when enabled
+CONFIG_DEBUG_OBJECTS_TIMERS, may wake up kswapd in set_track_prepare,
+and try to hold the per_cpu(hrtimer_bases)[n].lock.
+
+Avoid deadlock caused by implicitly waking up kswapd by
+passing in allocation flags. And the slab caller context has
+preemption disabled, so __GFP_KSWAPD_RECLAIM must not appear in gfp_flags.
+
+The oops looks something like:
+
+BUG: spinlock recursion on CPU#3, swapper/3/0
+ lock: 0xffffff8a4bf29c80, .magic: dead4ead, .owner: swapper/3/0, .owner_cpu: 3
+Hardware name: Qualcomm Technologies, Inc. Popsicle based on SM8850 (DT)
+Call trace:
+spin_bug+0x0
+_raw_spin_lock_irqsave+0x80
+hrtimer_try_to_cancel+0x94
+task_contending+0x10c
+enqueue_dl_entity+0x2a4
+dl_server_start+0x74
+enqueue_task_fair+0x568
+enqueue_task+0xac
+do_activate_task+0x14c
+ttwu_do_activate+0xcc
+try_to_wake_up+0x6c8
+default_wake_function+0x20
+autoremove_wake_function+0x1c
+__wake_up+0xac
+wakeup_kswapd+0x19c
+wake_all_kswapds+0x78
+__alloc_pages_slowpath+0x1ac
+__alloc_pages_noprof+0x298
+stack_depot_save_flags+0x6b0
+stack_depot_save+0x14
+set_track_prepare+0x5c
+___slab_alloc+0xccc
+__kmalloc_cache_noprof+0x470
+__set_page_owner+0x2bc
+post_alloc_hook[jt]+0x1b8
+prep_new_page+0x28
+get_page_from_freelist+0x1edc
+__alloc_pages_noprof+0x13c
+alloc_slab_page+0x244
+allocate_slab+0x7c
+___slab_alloc+0x8e8
+kmem_cache_alloc_noprof+0x450
+debug_objects_fill_pool+0x22c
+debug_object_activate+0x40
+enqueue_hrtimer[jt]+0xdc
+hrtimer_start_range_ns+0x5f8
+...
+
+Signed-off-by: yangshiguang <yangshiguang@xiaomi.com>
+Fixes: 5cf909c553e9 ("mm/slub: use stackdepot to save stack trace in objects")
+Cc: stable@vger.kernel.org
+---
+
+v1 -> v2:
+    propagate gfp flags to set_track_prepare()
+v2 -> v3:
+    Remove the gfp restriction in set_track_prepare()
+v3 -> v4:
+    Re-describe the comments in set_track_prepare.
+
+[1]https://lore.kernel.org/all/20250801065121.876793-1-yangshiguang1011@163.com/
+[2]https://lore.kernel.org/all/20250814111641.380629-2-yangshiguang1011@163.com/
+[3]https://lore.kernel.org/all/20250825121737.2535732-1-yangshiguang1011@163.com/
+---
+ mm/slub.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index 30003763d224..b0af51a5321b 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -962,19 +962,25 @@ static struct track *get_track(struct kmem_cache *s, void *object,
+ }
+ 
+ #ifdef CONFIG_STACKDEPOT
+-static noinline depot_stack_handle_t set_track_prepare(void)
++static noinline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
+ {
+ 	depot_stack_handle_t handle;
+ 	unsigned long entries[TRACK_ADDRS_COUNT];
+ 	unsigned int nr_entries;
++	/*
++	 * Preemption is disabled in ___slab_alloc() so we need to disallow
++	 * blocking. The flags are further adjusted by gfp_nested_mask() in
++	 * stack_depot itself.
++	 */
++	gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
+ 
+ 	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 3);
+-	handle = stack_depot_save(entries, nr_entries, GFP_NOWAIT);
++	handle = stack_depot_save(entries, nr_entries, gfp_flags);
+ 
+ 	return handle;
+ }
+ #else
+-static inline depot_stack_handle_t set_track_prepare(void)
++static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
+ {
+ 	return 0;
+ }
+@@ -996,9 +1002,9 @@ static void set_track_update(struct kmem_cache *s, void *object,
+ }
+ 
+ static __always_inline void set_track(struct kmem_cache *s, void *object,
+-				      enum track_item alloc, unsigned long addr)
++				      enum track_item alloc, unsigned long addr, gfp_t gfp_flags)
+ {
+-	depot_stack_handle_t handle = set_track_prepare();
++	depot_stack_handle_t handle = set_track_prepare(gfp_flags);
+ 
+ 	set_track_update(s, object, alloc, addr, handle);
+ }
+@@ -1921,9 +1927,9 @@ static inline bool free_debug_processing(struct kmem_cache *s,
+ static inline void slab_pad_check(struct kmem_cache *s, struct slab *slab) {}
+ static inline int check_object(struct kmem_cache *s, struct slab *slab,
+ 			void *object, u8 val) { return 1; }
+-static inline depot_stack_handle_t set_track_prepare(void) { return 0; }
++static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags) { return 0; }
+ static inline void set_track(struct kmem_cache *s, void *object,
+-			     enum track_item alloc, unsigned long addr) {}
++			     enum track_item alloc, unsigned long addr, gfp_t gfp_flags) {}
+ static inline void add_full(struct kmem_cache *s, struct kmem_cache_node *n,
+ 					struct slab *slab) {}
+ static inline void remove_full(struct kmem_cache *s, struct kmem_cache_node *n,
+@@ -3878,7 +3884,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+ 			 * tracking info and return the object.
+ 			 */
+ 			if (s->flags & SLAB_STORE_USER)
+-				set_track(s, freelist, TRACK_ALLOC, addr);
++				set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
+ 
+ 			return freelist;
+ 		}
+@@ -3910,7 +3916,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+ 			goto new_objects;
+ 
+ 		if (s->flags & SLAB_STORE_USER)
+-			set_track(s, freelist, TRACK_ALLOC, addr);
++			set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
+ 
+ 		return freelist;
+ 	}
+@@ -4422,7 +4428,7 @@ static noinline void free_to_partial_list(
+ 	depot_stack_handle_t handle = 0;
+ 
+ 	if (s->flags & SLAB_STORE_USER)
+-		handle = set_track_prepare();
++		handle = set_track_prepare(__GFP_NOWARN);
+ 
+ 	spin_lock_irqsave(&n->list_lock, flags);
+ 
+-- 
+2.43.0
+
 
