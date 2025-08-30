@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-792637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16586B3C718
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D36CB3C719
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C0AA24467
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39271C250C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 01:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D241227B8E;
-	Sat, 30 Aug 2025 01:25:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D591EB9EB;
+	Sat, 30 Aug 2025 01:27:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00AF3C33;
-	Sat, 30 Aug 2025 01:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAA82745E;
+	Sat, 30 Aug 2025 01:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756517152; cv=none; b=tdApICa6c21c8X1hqbEJ7z8pr+U04k0MeGS73I1nlxn5XMAXbXXSvJI4x4tanuywSIe085yeby3ntxmhs67awc8MsKX8SsftCAYSKhc0Qj5ZsWcu07bexZn/O5vfg3VHpBGECQazzflOHnjdp1s7axfqYAKHHogs/4nR/qIRlGY=
+	t=1756517244; cv=none; b=doNMwZf59BFVfB5BmfwpeX/Eqx8HbdcSXX1Anj45ahTm8Vpw07cNtKj8DQwfU5En2P+fbGFSnQAiaKPhBOzFYf2mePNi4hq0CHv7yyAh/gl2MPZsiovNXloEaoDDK/or4YwvYiB8gD+vTH5xRlV1u4R9iTevR1AFzylVHlQOCRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756517152; c=relaxed/simple;
-	bh=aQfMa7G8xSMpwFrU9h8/JS2wva8i/q2sArpym3zZluI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A7VeXe9GCsNsBO6er9ttEc6UkradYJ+wD5/PPci51htgOimF73XGwchvJeInII0rdeHaaWp/BKDGQSlpj9kOGdhDIinPEVFA4zeO5j0dWGFKBjRfCBYHTRdRev1X/QkY5l4cXEtDTM5oLJwuqxQIEcPRsJBmBRbw9vqqBhykfd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 172A613ACBE;
-	Sat, 30 Aug 2025 01:25:47 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id E042F2000E;
-	Sat, 30 Aug 2025 01:25:41 +0000 (UTC)
-Date: Fri, 29 Aug 2025 21:26:05 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
- <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829212605.445e1479@gandalf.local.home>
-In-Reply-To: <20250829212023.4ab9506f@gandalf.local.home>
-References: <20250828180300.591225320@kernel.org>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-	<20250829121900.0e79673c@gandalf.local.home>
-	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
-	<20250829124922.6826cfe6@gandalf.local.home>
-	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
-	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
-	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
-	<20250829141142.3ffc8111@gandalf.local.home>
-	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
-	<20250829171855.64f2cbfc@gandalf.local.home>
-	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
-	<20250829190935.7e014820@gandalf.local.home>
-	<CAHk-=wgNeu8_=kPnKwFpwMUC=o-uh=KjJWePR9ujk=7F9yNXDQ@mail.gmail.com>
-	<20250829212023.4ab9506f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756517244; c=relaxed/simple;
+	bh=aDo6Fjd/X/YV7eJhAdtW4j6kYtHK2oCfo42qFBC+uBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mDpvpVJe+D77DzQ1j6e6b3sJ3AS6lyoU7R5XAfKyqxb6bIchUQkIXS159b1zx1/dOjsxCWtf2WJz0sjVFzTguqr0LLFDFRL4rXzP5CD81XL/KoCqojqrI68QFAqrL/hzisEVr+XczKJwK9GxJN6cVdyAkw805HKNQyvoaCSS/BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cDHYg2byWzYQtxb;
+	Sat, 30 Aug 2025 09:27:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id D94FB1A0AD8;
+	Sat, 30 Aug 2025 09:27:17 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgB3Nnx0U7Jo8Pn4Ag--.41207S2;
+	Sat, 30 Aug 2025 09:27:17 +0800 (CST)
+Message-ID: <27beb9ee-114f-4071-88e5-cb8889826a53@huaweicloud.com>
+Date: Sat, 30 Aug 2025 09:27:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: E042F2000E
-X-Stat-Signature: p96rn3iquaawkxjothy37xu4s1xjpczj
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+MiEqrAYBwDRHk7XtPOHKUXUWRtT2lBTA=
-X-HE-Tag: 1756517141-622699
-X-HE-Meta: U2FsdGVkX18XdQHVzdi5IJHrLJr+zTe1edsim9VGa7GrXpnPXGndCYwFdLFmXWnDDCkMD6Hu+g2C6VTyhqEJPVL66Oxj08WcZVP/wngTqUz66NLXCZuJ/AxtejyOt3HUXYr2WQeUh23p6pynBSTDsOOkxVGlKSCEBGj/PbddJvtn3zmUeMJ9SrkgUQqlvl++6DLMpVDNAQzS0ywOqeFFYw4mN1/DIs/AfKuDBKFi0DVJMPhmuyfmky3qUzUUBoyX8KvbzBBF2r8NU2sBSun7P2re1IbqDUFcTJrgZzbzSOlzzG9PQUcDrzoePRWAWpSsw+ZJEeBLK11Q6p6MkWHmVgoZq3RqNx2GlLupjuTdPICSB2iu/x6d8W8fhryIqMmx
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 06/11] cpuset: introduce cpus_excl_conflict and
+ mems_excl_conflict helpers
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250828125631.1978176-1-chenridong@huaweicloud.com>
+ <20250828125631.1978176-7-chenridong@huaweicloud.com>
+ <be3275f5-a825-42bd-bf36-3d92387d0b50@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <be3275f5-a825-42bd-bf36-3d92387d0b50@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgB3Nnx0U7Jo8Pn4Ag--.41207S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45CF1DGw1rWr1rtw15XFb_yoW5ZF15pF
+	WrCFW7Ca4Ygr1fCw4akr1kWrZY9w48t3WDJF1kXF1rJrW7GF1jvrn5XwnI9F15Jr48Gw15
+	JF9rXw4S9Fn8JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Fri, 29 Aug 2025 21:20:23 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> > I'm done arguing. You're not listening, so I'll just let you know that  
+
+On 2025/8/30 3:29, Waiman Long wrote:
 > 
-> I am listening. I'm just not understanding you.
+> On 8/28/25 8:56 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> This patch adds cpus_excl_conflict() and mems_excl_conflict() helper
+>> functions to improve code readability and maintainability. The exclusive
+>> conflict checking follows these rules:
+>>
+>> 1. If either cpuset has the 'exclusive' flag set, their user_xcpus must
+>>     not have any overlap.
+>> 2. If both cpusets are non-exclusive, their 'cpuset.cpus.exclusive' values
+>>     must not intersect.
+> Do you mean "both cpusets are exclusive"?
 
-BTW, I'm not arguing with you. I'm really trying hard to figure out what it
-is that you want me to do. I'm looking for that "don't use dentry outside
-of VFS" moment.
+Thank you Longman.
 
-I get we have in the call stack the offsets of the file and a magical hash
-value that represents that vma.
+I meant that neither of the two cpusets has the "exclusive" flag set. Case 1 already handles
+situations where one or both cpusets have the exclusive flag enabled.
 
-What I don't get is what is user space suppose to match that magical hash
-value to?
+>> 3. The 'cpuset.cpus' of one cpuset must not form a subset of another
+>>     cpuset's 'cpuset.cpus.exclusive'.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 62 ++++++++++++++++++++++--------------------
+>>   1 file changed, 32 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 5dd1e9552000..5cfc53fe717c 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -584,6 +584,35 @@ static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
+>>       return true;
+>>   }
+>>   +static inline bool cpus_excl_conflict(struct cpuset *cs1, struct cpuset *cs2)
+>> +{
+>> +    /* One is exclusive, they must be exclusive */
+> The comment is hard to understand. Basically, if one cpuset has exclusive flag set (a v1 feature),
+> they must be exclusive wrt each other.
 
-Do you want me to trace all mmaps and trigger an event for them that show
-the hash value and the path names?
+My apologies for the earlier comment.
 
-If that's the case, what do I do about the major use case of tracing an
-application after it has mapped all it's memory to files?
+To quote your remark:
+  "Basically, if one cpuset has the exclusive flag set (a v1 feature), they must be exclusive with
+wrt to each other."
 
-What about wasted ring buffer space for recording every mmap when the
-majority of them will not be used. It could risk dropping events of the
-mmaps we care about.
+That is exactly what I meant. Although cpuset v2 does not expose a user interface to explicitly set
+the exclusive flag, the flag will still be set internally when a partition is enabled with
+update_partition_exclusive_flag function.
 
-Again, I'm not arguing with you. I'm trying to figure out what you are
-suggesting.
+>> +    if (is_cpu_exclusive(cs1) || is_cpu_exclusive(cs2))
+>> +        return !cpusets_are_exclusive(cs1, cs2);
+>> +
+>> +    /* Exclusive_cpus can not have intersects*/
+> Grammatical mistake, better wording - "exclusive_cpus cannot intersect"
+>> +    if (cpumask_intersects(cs1->exclusive_cpus, cs2->exclusive_cpus))
+>> +        return true;
+>> +
+>> +    /* One cpus_allowed can not be a subset of another's cpuset.effective_cpus */
+> "cpus_allowed of one cpuset cannot be a subset of another cpuset's exclusive_cpus"
 
--- Steve
+Will update with next version.
+
+>> +    if (!cpumask_empty(cs1->cpus_allowed) &&
+>> +        cpumask_subset(cs1->cpus_allowed, cs2->exclusive_cpus))
+>> +        return true;
+>> +
+>> +    if (!cpumask_empty(cs2->cpus_allowed) &&
+>> +        cpumask_subset(cs2->cpus_allowed, cs1->exclusive_cpus))
+>> +        return true;
+>> +
+>> +    return false;
+>> +}
+>> +
+> Cheers,
+> Longman
+
+-- 
+Best regards,
+Ridong
+
 
