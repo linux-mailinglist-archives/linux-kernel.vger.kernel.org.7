@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-793186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B637B3CFF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069F4B3D01E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553DC1B21791
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E4D17E469
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 22:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A257262FFF;
-	Sat, 30 Aug 2025 22:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446CB25C6FF;
+	Sat, 30 Aug 2025 22:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="YzKHh2/+";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="6fkxmVYh"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEFOyiPH"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3350825CC74;
-	Sat, 30 Aug 2025 22:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A55C2594BD;
+	Sat, 30 Aug 2025 22:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756593734; cv=none; b=t81zgUrV+J6ZE7uOhWTNd+tx4dHOouMhw2zCrY/qmnpRNuIAp58SFmESpogD+9UR2kJKiqeYUPbuUKHGZaxJgF4GlMZiQzbrv8NrLrpelyCKRizG2hHDOCOOy/yElZgTsdws138RelA0rL4AMETNYoPAj9tpBACAYXdTPORiTHs=
+	t=1756594326; cv=none; b=Xwt6JzK1f9t9pmYMMegS9YJAOmHb2G9GACDVKy0jwwMVgYL2aBg6oRcrT7WQOTXUnokp1BdKcReB1Qru1XJJF3mpsN5xhMQmpo3aS9zYjbvBq8rFaC+ZLmF9byXEwbStaUMO93uNz367m9XCw+lhbb+tusNhrhOkDPzoEyVbKjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756593734; c=relaxed/simple;
-	bh=G7TSS4tuTL72Ricam6/+6Z2OHzlqs4AUasqDmHt40f0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Gn/MuxajDJf6DeUX6xGP5WtkCWZIW6xo1hy0IERwILPzeqwHoulfb7SVZju5wAf5PU2ZqoslGAV/L+Gm8jeoDtU0i/fraUHcns48NdZs9SOuVtzmlaKuK2Zx87yf+HQtq7V52pAvmLBw8Ry0TB4enx3fSeoALRDJhRTnp7zpO7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=YzKHh2/+; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=6fkxmVYh; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756593594; bh=fjdCxOheBnp1H4xqfM+Evdw
-	4VATnT7h6OsZZjNrCxdA=; b=YzKHh2/+GaROmfX6Dxv/GC8ct4q7TTH4sk95hOSy4jtyCRuHM3
-	x453tFXSZFhQxi8l/Qjikce2YDUTgV1D34eCcrzr77ZTyigQ6DPEtysztzP4ejjI3iZcBVnOzT5
-	MwkB3dhSznGHrmHQTpirnmQQ30Iy433ZAYY4JHuu5y8LCuMvjgA/ORtzVH10nv9wKkiHXjSt5HL
-	Yj9JQuw6qA/CVmWXRLkWr69LXziDYr3wKvmDgabWQHytkvkTZVcy1BDxHZdtsID9TBRprLf8h/7
-	q/Rp4YDyW6WaogihsQsCokht4j7TTLuc/7NoqjbJuY3zYgLJe63TrHG9pRv+Eexw8jg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1756593594; bh=fjdCxOheBnp1H4xqfM+Evdw
-	4VATnT7h6OsZZjNrCxdA=; b=6fkxmVYh4VBWFCEOrH4RQ7XPqRBYO3MSUsD6z4c6kDYeRef/Wq
-	eFt7x6xHAEOc7fJnGZrn2nRl5a6pdSBECSCQ==;
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sun, 31 Aug 2025 00:39:43 +0200
-Subject: [PATCH RESEND v2] rpmsg: qcom_smd: Fix fallback to qcom,ipc parse
+	s=arc-20240116; t=1756594326; c=relaxed/simple;
+	bh=oaJar5oIwqYM3zgwnEEbQ2AyDNuoVXa9JWl+vkJ/R6Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z7fiAp1HdmWSI5HMRqK26Hx5C8Hw7SFe5alfpIaVEV/nqTRIvweqOoZBgaAjP1SAjSSf0DMJsNZ2cdvEDoZlGU1plExOCRy2HCmXb8k8ncyiOYGGriuxbLlL7r1buBy6PtWtrexQISB2ZBUG83t7MiHfroqr88SRvi2zxcvatlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEFOyiPH; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b1099192b0so62123261cf.0;
+        Sat, 30 Aug 2025 15:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756594324; x=1757199124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrZ1qN3DYmU2M5pGPX1QKTcsDyaZXEbX9yPyZzRw9Ug=;
+        b=JEFOyiPHEtRzGZqD38qhBYGxMfWknk/27s3LGyBB4ugr/jyvuDd6NQXTcBtWlWTPrv
+         yBzNBcwIS2AR4pkeMWDoLi2Ex3gyO3tGCYXUYMF0oLCIx5VaXqgS5azgFa5YjnPLym9M
+         3yaveQCvpvrIpnkBjWpWMlq8jQvraJGSePY57knQs/wepL9utnPlUl9uBWwUVe0HMFXQ
+         zzC27JMNMDpJ90ZY3Gc6vAY9joqFarzryFb0F3QbGrnBVRXezyOYelsVySQTL8JhgRYd
+         LyiI8rBRB9V9z8239+Adb23pBzFR1I242MfSMZBVVYDFLjxB+9Yac6EjZvLl0mwUDooT
+         8SNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756594324; x=1757199124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xrZ1qN3DYmU2M5pGPX1QKTcsDyaZXEbX9yPyZzRw9Ug=;
+        b=FDhZ4DGyEAx+R9980bVYu4PL/oiY82GUUKGVyBbJEtHAaMGYy0pPaVK0sx8hGJiIOl
+         gTNa8NOlK7rBhJbPHAy7ubNcowjRPGscrRSCdmaa4AtolRMTc2lpL4b6Ckl9fLt1QwHu
+         1rQJi5zi/jMaVfCuQFvZnVBRSiBlRiCqUXLOJNdmtb/BKDXAOpdkriOXeappp63wB7Dp
+         Kry8zpBxosLKCPnOH86/hEhjzlSZA6pSxDxH4aTZs1Xpz124IKgI4055VYplREHtMZYQ
+         FGHMneSZ9sOwy2V1WO4Era2s0zQ6WpyNpXjHtgknRIlM4hsB9+IaZLw5Cin0OZV1oG7u
+         vNFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYz+NZRGTama6ivaYTZ52VAcVH37b9NeNe2EiUdbMjVXT7RsN5dxmQD6p5fY47EEfm3I36YPj3WWsB@vger.kernel.org, AJvYcCXBASRxpciXUuAVWDsYenEJ6F8gcUWMDtszphB0YwhcBi8Kr0NtwQBEe30QRbBfRY0Yf5oLb+jSetIVLyIP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCvQH7CCHiTio4DPLOX4PLECa0HXFY5Y+GzwG9NbZkIZ/o1mDt
+	c5trdKgzQCqthQ4GvwcyHrJEjLgJzmpMuqt64L8weXxtEim4j+c0Bmw=
+X-Gm-Gg: ASbGncsWaEUfQaqC9AVPkZmEKCk3Dfntz2dmDCQt2xTR8ZAb7d9kYY6rZtYAVJZt0Ns
+	VDHmohOwWqv7po9vNC4uPifk4ICA7gMDNds7vxSuSId8wzL6H3hy4MZdjPsoDHyyv7aoX2Ln9F3
+	C1U5ikR6ujJjQAMZxdwpm1FN3fleFpXTHCVip7D/FxnGaFb4wCtE0bP95NJm8ZSTWvsKe8Ud1hb
+	EJrGup1F7UXhF1vhIjG677RPdY51SyZ/7eLESa3ae/l0f0Zjl4yr6pU0pNKy7N5yHVlRv10sA7J
+	6ebTDyOHdFmoWSLCe+LqWgAGgVbKaxKVDUIp58CYJRiYVng1/K9qHQveuZ4IQ7wP2O61h0P1y1p
+	eTVhhSu0nGuDwj05FQ3T/NH0X+Ix4jbXZLoCpD4rJfoU80i61cJ7uC2vl
+X-Google-Smtp-Source: AGHT+IHj1Y7mSbhB/V78RbLpZrF2ojqkt4iRIfegSDPVQpLKIbvDqEpOolWmEiXgivm+8z/ghRL4WQ==
+X-Received: by 2002:a05:622a:2284:b0:4b1:103b:bb84 with SMTP id d75a77b69052e-4b31db67395mr34440651cf.62.1756594323672;
+        Sat, 30 Aug 2025 15:52:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:68e:c28d:1818:9595:da56:53b9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b67894bsm38752341cf.33.2025.08.30.15.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 15:52:02 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: mcoquelin.stm32@gmail.com,
+	robh@kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH] ARM: dts: stm32: stm32mp151c-plyaqm: Use correct dai-format property
+Date: Sun, 31 Aug 2025 00:51:15 +0200
+Message-Id: <20250830225115.303663-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250831-fix-qcom-smd-v2-1-a1c0a59d6a3b@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756593593; l=1940;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=G7TSS4tuTL72Ricam6/+6Z2OHzlqs4AUasqDmHt40f0=;
- b=OiGHZ4CDlgy7j7sRp92zhWhR6KdYCPGryR/4IGkK7gJ514Jvi+LKWML/5K/Up9WTykxH0bFsp
- QDNTPRnnNG7CbN9B1WpfFkYAY16mTJQyv6AD4WS7som4JnomFkuQY4I
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-mbox_request_channel() returning value was changed in case of error.
-It uses returning value of of_parse_phandle_with_args().
-It is returning with -ENOENT instead of -ENODEV when no mboxes property
-exists.
+The stm32-i2s binding inherits from the standard audio-graph-port
+schema for its 'port' subnode, audio-graph-port requires the use
+of the 'dai-format' property. The stm32mp151c-plyaqm dts file was
+using the non-standard name 'format'.
 
-Fixes: 24fdd5074b20 ("mailbox: use error ret code of of_parse_phandle_with_args()")
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-Tested-by: Stephan Gerhold <stephan.gerhold@linaro.org> # msm8939
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
-mbox_request_channel() returning value was changed in case of error.
-It uses returning value of of_parse_phandle_with_args().
-It is returning with -ENOENT instead of -ENODEV when no mboxes property
-exists.
+Correct the property name to 'dai-format' to fix the dtbs_check
+validation error.
 
-ENODEV was checked before fallback to parse qcom,ipc property.
+Fixes: 9365fa46be358 ("ARM: dts: stm32: Add Plymovent AQM devicetree")
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 ---
-Changes in v2:
-- Drop already applied patch.
-- qcom_smd: rebase
-- Link to v1: https://lore.kernel.org/r/20250421-fix-qcom-smd-v1-0-574d071d3f27@mainlining.org
----
- drivers/rpmsg/qcom_smd.c | 2 +-
+ arch/arm/boot/dts/st/stm32mp151c-plyaqm.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index f0f12e7ad2a61922723c16e45738e93bd432c6c6..42594f5ee4385c0071c91d9a5a05fb8517c82bc0 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1368,7 +1368,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	edge->mbox_client.knows_txdone = true;
- 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
- 	if (IS_ERR(edge->mbox_chan)) {
--		if (PTR_ERR(edge->mbox_chan) != -ENODEV) {
-+		if (PTR_ERR(edge->mbox_chan) != -ENOENT) {
- 			ret = dev_err_probe(dev, PTR_ERR(edge->mbox_chan),
- 					    "failed to acquire IPC mailbox\n");
- 			goto put_node;
-
----
-base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
-change-id: 20250421-fix-qcom-smd-76f7c414a11a
-
-Best regards,
+diff --git a/arch/arm/boot/dts/st/stm32mp151c-plyaqm.dts b/arch/arm/boot/dts/st/stm32mp151c-plyaqm.dts
+index 39a3211c613..55fe916740d 100644
+--- a/arch/arm/boot/dts/st/stm32mp151c-plyaqm.dts
++++ b/arch/arm/boot/dts/st/stm32mp151c-plyaqm.dts
+@@ -239,7 +239,7 @@ &i2s1 {
+ 
+ 	i2s1_port: port {
+ 		i2s1_endpoint: endpoint {
+-			format = "i2s";
++			dai-format = "i2s";
+ 			mclk-fs = <256>;
+ 			remote-endpoint = <&codec_endpoint>;
+ 		};
 -- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+2.39.5
 
 
