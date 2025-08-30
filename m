@@ -1,267 +1,237 @@
-Return-Path: <linux-kernel+bounces-792743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C288B3C85A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:44:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EEAB3C85D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558D2201DF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F89F17E90B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026182264AD;
-	Sat, 30 Aug 2025 05:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C01F9F47;
+	Sat, 30 Aug 2025 05:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWMFUg3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mexV4gm2"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3008153363
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 05:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756532686; cv=none; b=ChcLutiWtBEr4AhU5JDwv5qRPqX2M3sE0i0W7Xb7F/YxC9Rsh1YApCMejRPY2ix2ae1DLdhKqlEILAuNkOiCL7z3csUQ9niBg8hMcqxiQ3Mu1pfmts0RzKSi+RrjcVVptvKVxa04xJYfEtSilr8oGCEMsplsXGZfXtImWj1iRlQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756532686; c=relaxed/simple;
-	bh=JAAgjpGY4LnD9qHCp/eEXth+zGJ3X56KEMZZTsLikNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UCBpScv+SePdVRECecC0W7tKd+jK3eli2PdafXpB111eiY1qxbNem/8XxNuExcFWIl9rRXy46kfIFKF0lZcg35jpE1GXdzYWtOuKfxXN1zClhWNJgPZ+hi+HT+t2L+R2hhg2U/MjHmdANKYJhyQT20c1RPn4/5FL8LWINtbbeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWMFUg3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB0EC4CEFB
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 05:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756532685;
-	bh=JAAgjpGY4LnD9qHCp/eEXth+zGJ3X56KEMZZTsLikNQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UWMFUg3LJOwiLkQtHgLpbR/s0jbiatVR4D+gEOR7haxdgVCpziFB8wP+Ezbggx2Tw
-	 fVEOfO9g3X5TGA8+fxFM0KU/Q4eFjPZvqDcL0szvTRRml9x+eIiaw5XBuLhm9kkNH6
-	 zfbnMGJI+x4uU7xcuEpIKdnxNKiF93xP4cNf/G66QmnaGnpYxF4GrO1Zs9+vKm05jX
-	 +hdepNRAbFWIYjEDqj3aRCJkLTidqpz7pb76d9Mh8NL5x2TXJjIMTSPFoU2GZc8UNI
-	 udcDM3aFuWu8Dd4F0zpxQ/HuOj78LD3yj2T9Vl3ZazSAkZwf2mbv7vw48RmRn9RDqd
-	 nvhXVNcXNl55g==
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96dc26dfa2so2306721276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:44:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwHPoupE+OsI5NyupFVXb1d8TzGAapvizBHxFufrGQkUgwBhs4aNeAefvluxPUaLtHOyeDppSD1kzIBHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbRj3bgKsvSvCZK7Xuaizm52ogb4zPYYVmoGtNjKDrvRFAtudJ
-	GYVUI4YvUmdorGzGnEK1TuYb8AxIhOa1dJFLuLWjbyVQPdbY35VTbRqjO0MHOr2Ap5FDx9i3ilY
-	PMYWSY/GPOpx5PIqYNGxuXm8DWgmQLZCquFnknFohAQ==
-X-Google-Smtp-Source: AGHT+IGBuw0zUEaS/k3FaNLIrAlUM66nz8Ry+tT0hWwVrbIuk4oM2OkbRh/ItCe5ADh3CHqQFbIabVR8pVK5iOSWh2I=
-X-Received: by 2002:a05:690c:7010:b0:722:6a6c:c018 with SMTP id
- 00721157ae682-722764144a2mr13000437b3.22.1756532684812; Fri, 29 Aug 2025
- 22:44:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232DC46447;
+	Sat, 30 Aug 2025 05:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756532826; cv=fail; b=EAcRHfW/Wlnu4RhzTdl85nvRKvl3iHHZ8tB3zS9WXD6KLo3ZPyEgbg6YKhhW5APaeC9jxMWFysZaVlHuxsgaRXnkdAQ0/0DG5fNsqFrFHyU9ZLQNYtlV40attOuSVZXcQZvR7Zu81uXjjqSc/H6+rfBsV4duMqdWD+OszvXOdkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756532826; c=relaxed/simple;
+	bh=q777aAjTFP6Mp1K/7xdIuS9mIav1EkrvU6LnfHPey6g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RQOuSIfiyrEpmWM5r65iNECmzzaId4w/bhbvyR8O+O9Og4fUntj6tMX00Jb/+0is6GYgCFF0rjnuQQbvUQWNk2IhBXzEyHe9GL89dQponoEDemOp/tjB60d3MnAKqRSsInt00KLrzD11baONLjcKKeAKEG2ukgAWZ2Fg9dWDe74=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mexV4gm2; arc=fail smtp.client-ip=40.107.220.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yXrjeUa4x5dnqD2IHLFEYNOpVO7WHyMX5O2loOmxrLhrQ9A2ZvUB1Ir2hk9oGzeNgkEQYe+hHlu7yjhUsidw7Z9fUXZl3m2G/+jAMz3gXreXN1LExwyMf2dGcT/QKL+tNy3n2gynjAFkDpWZbTiEo2L5trmcM3P7rFQdRkmDQQ/+tXtKqjNXq16URJcU8ARISYiic3me3xzd5ZpbBfgjteadMoqbHM6x+mxy+ZjIOaathAw5DeuASbrADuK1YwlCYfc0McGX53VEoGiNiBmgVY2R7aOkrQAJ4v6q3qwBH8Cotpem9wf16JfCOlutC6AWxLRsQkjNP2vXmB+qrQCLiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wIqjUfV00jWhoyEO4VsJSNzYSxKY3QwAuevBrjTtixo=;
+ b=Y4EypfKrI1/kMvjEzBG0M/pb584rTCt/2MjYen5m9tOWnSsXWUJXPb1OVVjBe0Dam/LlIW2iRB01jpOO0yW+32OackLzyKfQF4g+3NpXqTQo/rJSqpXxxVSVu7oEVICZ5XuNtz+M7GQ1lFNMFXrY5Ap6jniwMYNGTS/o7d5ZSqEx7+DV63xqpVskchmnbhF/yekMEblrGARM1qQZvU2m/OnXmIVd7weFoR29y7jt4XTcDYkK8BrpZCN02lEzF5wylbZwiwTmIeDT7Ylffhq7+nIgVnX6SeXTpCrHZvvXxotSxRNLorAEhmTLhlVqyBssqfRLPQTIThm2lwWDj/SorA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wIqjUfV00jWhoyEO4VsJSNzYSxKY3QwAuevBrjTtixo=;
+ b=mexV4gm2B1YVtdVVtbF85cdnRRpLKyX8F0ZofFP4ZzpPhkC53UgPvTLnhe81CDN/1tUjL+oDiYy9b+iMW37VEby948W/DpT4sf/JhKUgKZVLEoVKmUl2hL8N8MOFQRF7hV/yV/TcCF9fcr2VginmnjH9zvpEeQ30LhV4lQMh/OJX53s6q+Glc+3hZEc3u9dJbs29jXs8/wQDNQCeQ+Rm4XYg6qcESqGq9P4wwzLJdtq0VJ/jvcELjc0B0lSI0t7tfd6qT3b6Saj2dFVv8ruU+5uxixfC3maF0UqHfPy21MBCuUUQJq0tlFA9QM+zra+mE//sZ2ZW/cljqy7kO877kw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by DS7PR12MB6360.namprd12.prod.outlook.com (2603:10b6:8:93::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Sat, 30 Aug
+ 2025 05:46:58 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.021; Sat, 30 Aug 2025
+ 05:46:57 +0000
+Message-ID: <33168c6e-0dd9-47f8-865f-061be48d48f2@nvidia.com>
+Date: Fri, 29 Aug 2025 22:46:54 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] gpu: nova-core: compute layout of more framebuffer
+ regions required for GSP
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-8-93566252fe3a@nvidia.com>
+ <e091c6c1-98f8-4876-b2f1-c928da7aa7eb@nvidia.com>
+ <DCFCSPF1PTLT.2A4LKV4TAF0JU@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DCFCSPF1PTLT.2A4LKV4TAF0JU@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR11CA0105.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::46) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com>
-In-Reply-To: <20250822192023.13477-1-ryncsn@gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 29 Aug 2025 22:44:33 -0700
-X-Gmail-Original-Message-ID: <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
-X-Gm-Features: Ac12FXyc2t-Od0jf3RsI5Vjrf0kkIxGnlpzePUlvZXp-qWCwaxbjAyMPCKLD-jo
-Message-ID: <CACePvbWG85YJFpLDoFnz05tX2trUJFTzyuELMGYSYr5ye_hQ6w@mail.gmail.com>
-Subject: Re: [PATCH 0/9] mm, swap: introduce swap table as swap cache (phase I)
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DS7PR12MB6360:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82bd5867-2a02-4547-aefc-08dde788a1e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z3RuQ2dETzRUVHU1enppaE52TGhsd3hoWXFOWkZ0d29XMzMvd0ppWW8xUVda?=
+ =?utf-8?B?RDZ2ZjZPcXFmNWlxSG9lZjZpelpJWkxzajc5aTg0SFIrb3owZS80ZDBuWTJr?=
+ =?utf-8?B?T3RWSmo5N1pZUmlxeEFNdkE5OEhzSFBNNGZNdXR3cUJpcHdPUXZTb2VyQW95?=
+ =?utf-8?B?dm8vSVVnckhXb0xBL0JoOUhqQndiMFlSY1pLTXdqTUE5NHFGSkpCQjdwVE9C?=
+ =?utf-8?B?TmNob2xXSFA4Q0tzaHFoRmJ5RERiZWFHcWZlRFF3Wk53bHFDNkdxN1NIa1NZ?=
+ =?utf-8?B?VERFbWp6T0hvcWRWaUZic2VGMGJzaTNDSGdaOU9xVGVVQmxIWVVaT0RhbDJ4?=
+ =?utf-8?B?aTI4NUtvbnU4SkJXOFVFUHBScE91QWFNMkNUM0dweXNlNVlLeGdHSEtxWUxQ?=
+ =?utf-8?B?MTJlTGxhaTllZElyaEJTZGRHd1VCS2hYUnJwNUlsZFpXb3VURDFDUHhSZkRs?=
+ =?utf-8?B?dGh2YzBiSU1xeGNMVFpZeGNFYU02Mnc0bG5vMkFObjIvck0wUzdzcmpNRkZY?=
+ =?utf-8?B?ZVlhU3R2UDc0WkI5N3piUFMyZlJtS1B3REdIWmJDc1VZZmpiTGk4TmtpWXVw?=
+ =?utf-8?B?eXVuZjF2SkI1RjJzSG92L2JyazhnRWkrZzFoS1pHTHNsOHY1T3Z0VFZnR0lt?=
+ =?utf-8?B?ZDF3L3I4ZDB1NTR0L2tYZlE5ZzFVVWw5VGMyWVFraXorTG1uTDJLTjJOOWVp?=
+ =?utf-8?B?OW9ROE1yeTYybVVoODNjRVV4c2ZoaS9QSkpENEFYcjFicXNPNnNyS2lIUnhE?=
+ =?utf-8?B?NGhEcGJqM1ZFdXgxckNIa3FMYVcwQTB4UnFWMHJzUGlZdTRjSVBNN214MURG?=
+ =?utf-8?B?bk8rV29oTDlrU1h5b2w2cEdhOVA1dTlZVE1OZ1U2Zy9aS0lVRkYwRlhVYnFZ?=
+ =?utf-8?B?c0pvdVpsSXM5YlhUTHJWME9TbVdtczFkRE1FSjNWNWtkN2NsUy9xNmRLOVJJ?=
+ =?utf-8?B?aUdTTEJyU2FtaFdGSEtOSkU1SmpKN1phc3owaWQ3MVFHZVNheHVIL0Z5Vjkw?=
+ =?utf-8?B?SUhRMG5pSzRsNlJvRGoxOFNmeDlnK25HS3FsdFB5dXkxNU5RRWF0VlQ4V21z?=
+ =?utf-8?B?UzZqVURXWUg2Skh3N2hMb1V4V3JOWUFEVzdxUGkweU5GdlkvVklUcTNabHZB?=
+ =?utf-8?B?eis4cjJGLysrNGI2c1FGQ1dSaVdnMjY2bzBLOTRyNmp1Ylo0WGFuVStCTzk1?=
+ =?utf-8?B?OG9hSjZ4M29NekE0V0FPTlU2U29ZMVEvTEVta0VUNU5nK2s5WDgrWkl4bXNT?=
+ =?utf-8?B?TFN0S0tzR1ppVmQ0bloyQ3I1bU1jVWtzMXk1OStwWnlqOEIvV01XQlN5b0Qw?=
+ =?utf-8?B?VHhaL2EvajB2enpWYTV2WmErem1pcEQ4cFdwUGh0VmlxRDVac3JQWnN3MHBh?=
+ =?utf-8?B?MlJFM0lvbit0TDJVUG1GU1p1ekFLRmF2YWdBdjBnMzJlNTY5eWNnSzhwRWhG?=
+ =?utf-8?B?eisrc1U3ZEE5NjhQMHRxSUM4czBERXpvVUhxbnJDckRWSkhUdVd5cVE0NHYr?=
+ =?utf-8?B?STJuOFB2NWtLS0FHTHM2cnlEYUxhaHhZTm5wWHZDRFN1Wnh3Z0NNZ0NzQ040?=
+ =?utf-8?B?bWZTVW44cUUzbk1nOFcvU0lHbGF6c3YwZUhLUWFGc1lNbjJkTFlSZ1c2dExi?=
+ =?utf-8?B?ZW5pT3hEUFhadThwMDlIUk9aYlR2ZllTWW93RUo5L3lDcUQ0QWh4a1ZoSDhG?=
+ =?utf-8?B?TEgrcWRSTnBZSmVFYXR3aFRpenVMa2k4NXAxZURLU3pUVlNJNWFEUUxzQitB?=
+ =?utf-8?B?a2NaTkczZkhtMDU3T0RnUG1LU3dDcnRPS2pzdXFNUUhYZUNoNkkzNjQxQ3Ns?=
+ =?utf-8?B?SUZKTDQ5M0RaSUY3M0diTE8zVnM2ZGZ2NkJOZkRhS1gwS1NqNWJsZjBRRUdp?=
+ =?utf-8?B?VWZJSjJPUWNTSkpXM3loK0RDM2JqWlJtRUpLLzc4VnNpN0IvMjRvOTdqY1Fa?=
+ =?utf-8?B?QWgrM0NhMHhtdnQrR214cm1FdmxGY3p1OFVKU2N4MEdKbjRFajcvMWlUdk1n?=
+ =?utf-8?B?ZXB1a2RxOUhBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?azEzR1JSYUtnZHRGSDNyQVdCR25UOHk2ZEpJYjUxcS9xVUcvenpoV3FpN1Yz?=
+ =?utf-8?B?ZlJ6SStGZCtIa2ZwTXBxSGZVdWJTcm5LS2NEdFpucDRidFNQK0hvZXordWxT?=
+ =?utf-8?B?ZFR3QTJYZVhDcnRCSWZLWGphNU5iTzUwR0dXUEdSS3dNUGhUdEtyTDN4L2N2?=
+ =?utf-8?B?OVNQQzBFME9wTkhsTUVsQkt5WmdLaVp1b3p6ZXk3OEhRekhFZk5ZTFFMQ3oy?=
+ =?utf-8?B?NUVMMUVYbUYyRGkyQ2Y2MGZTM0dmbVNjTEs2cHRIV2FtdDVsdmo1M1pwTzVL?=
+ =?utf-8?B?Q3BWU3c5MkxFYWtzNk9vd0V4ZklkcWhqRkM1cjdrZ0ZMWG9pTFFqQUpPUHdR?=
+ =?utf-8?B?eldTSmR3eE5PdkRYcnQ2MzlicG5DZVZYNUNzeUFFM2RUSkRVc2l5NlZMQ3lz?=
+ =?utf-8?B?VDV2QWtLTGtCa1hBRGdxbEFsb0RLWkpVL295MGRTR0xDYmcyWGlVZU43SlVE?=
+ =?utf-8?B?YU5ZUjUvaTVndzc3YnpsSUcraVA4eW55SDE4QkM2aXFRTDFLOVFLNlFld3Rh?=
+ =?utf-8?B?OFVpTXJhNFhSWVRaTFlGWGhGckhiTG9EbSsrMGF0eHhPR2hVYjhrMVlyL0lw?=
+ =?utf-8?B?dFZHY1RQZG80VUxmeGwzN04zNjN2c1p6V0xBMmw0a3Vkb2VXNjUxSURVMUlk?=
+ =?utf-8?B?MnJ3bklaQ3g2ek5UQ2QvQXdQUEFIU2xyd1Q2RXo4NjZVaWhaQ0dSYTduTGFG?=
+ =?utf-8?B?cFBOTGNsaEwwSFdNVFVLUDlqaGp6QWh5Zmd2SnhBdFNVSTJlZWt6RnorOE5D?=
+ =?utf-8?B?MmtiNDRxS0MwUUJ5Z25qa3poWGoyUi9HUTIyWGpwTWN4dEp6WXZVQVBNZktj?=
+ =?utf-8?B?dmZ6bCtMU2x4cEh3NWwrdUFtMGFKU1JrbTJkVGVodGpjNkt3K01nMEd6WlQ1?=
+ =?utf-8?B?U0xxSHJkdzB6R1A4TmJZQTN6TnY1OWRqamFna1FvU1BoVlBJeHFXSXpGZmZX?=
+ =?utf-8?B?cFBRNTFuaVIxZWRwM2JLcWsrV0FvL3hDa3RTOThid1J0aWZRSlAwc09WdTJr?=
+ =?utf-8?B?RUIveEs5c3pBbDlFTVUrM0VtSWVmSkJVeXFncngwbnc4bmpxcUpXc1NqMnIx?=
+ =?utf-8?B?UXBkYVJDeTI2UzhaNnpOZEdyWFZQRFZEWGovb0t5Tk1tb3pjOTZYbktkZ3lS?=
+ =?utf-8?B?b1JIZ09nbkw4SERPS0FEUTU3dGp4T0NLWTIxb3FWNm53WDc5cThzZkttUGQx?=
+ =?utf-8?B?VDU5NjluVjFOSUhXa3ZQMWRxZ3ZZV1lmZjE3aERUMWdEemlIZGMvZDRzN2hB?=
+ =?utf-8?B?YUNMMjBLWWY0K3JXWXRwTkI1d21VbHMydTN6QURxNnJyTlpGT29jMTIzTm1B?=
+ =?utf-8?B?TkI4ZndFZ0JCblVVaGRTNzd5bFprZ21xS293bVIwbDkzM21ucmFnT0ZINFFw?=
+ =?utf-8?B?RU03bTVlQ3VpckNMd0pTY1BvR2IxOFBZNDNMcTdkRkgrNi81NllLNGlOU0N5?=
+ =?utf-8?B?TTUzMjlBemJiRGJUMkxrcW45bkZxNTdRNW1GZ1BxY3dkUDBpTTdMSlhlSUdI?=
+ =?utf-8?B?ZmJCdGljVEw5bkdIVi90anJaakt1TEZPeGRvOUs1S21uOEpPUWhnOFdhanc1?=
+ =?utf-8?B?aU1VRngvV05HS2dpTVRReklLVFBiSnFXVFNrMnZhUmFHaWI1c3V6UFc5Ymtr?=
+ =?utf-8?B?RTNzbnllZjYxT091aTZ6bnFxdGZUV2dOK0VmZ3Y0RGxYQzJWajdwcjlIQnRi?=
+ =?utf-8?B?cXY0RUc1QlBKeGJ5ZS95SEZBZXBqbTV1RVpCT1FGZGpRa045TlJpc0kwcXBo?=
+ =?utf-8?B?NzRmb3l5UHR5cmE5ZEdUMVNMeld3cXpGb3BEYlQxU1I2RktFcmw0ZTZYMFpJ?=
+ =?utf-8?B?MUhEOFJLbGVkQTV6NXJQcC9kVno2RzRIYWtjQW4zOURuTmVWSGZ6ZlpUNHhM?=
+ =?utf-8?B?am1UUnBUZTAzSzIzQkpnVUZNNTN3Um5OUWhjWjhDdUJHRTlpb2k1NE9HL0VI?=
+ =?utf-8?B?d1l0a0o1QkExTnMrc3RabmpGeXB2dWoxZW4wUFRMaHZvRmdCdGI0aDllRjN5?=
+ =?utf-8?B?dngzR1J0ZWJheXpVdXMyeElaQ0JkMUpMUzZhMUx6WkRzdzJ1ZlJhb3VkbDRm?=
+ =?utf-8?B?MFd5QjJlVEdaRXR4L2hWdzEwSXFSVlJ3cWFpVExoUHdHZzdidUt0SzE2WW40?=
+ =?utf-8?B?OUwyTG1CWWpGUGlhN1RteXFjMStJcmM5MC8yZmdtWDN1REJWNGJGbDdLdTVV?=
+ =?utf-8?Q?iGj7KCuFnR+UBULC4FA98vc=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82bd5867-2a02-4547-aefc-08dde788a1e6
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2025 05:46:57.6307
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I8BT9Tf9DHr9Gu/nCPrwU5D6KRI5RVCZ9PxwoA1IS8RiIljpE8euaT8x68jR1hBW080IAUt9cNrEjSngDaPrtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6360
 
-Hi Kairui,
+On 8/29/25 5:59 PM, Alexandre Courbot wrote:
+> On Sat Aug 30, 2025 at 8:30 AM JST, John Hubbard wrote:
+>> On 8/25/25 9:07 PM, Alexandre Courbot wrote:
+>> ...
+>> We only support one version of the firmware. And in the coming months,
+>> that one version will have a different version number.
+>>
+>> Given those constraints, we should simply remove most (all?) of the "r570_144::"
+>> namespace qualifiers in the code, starting here.
+>>
+>> That way, we get:
+>>
+>> a) A small diff, instead of a huge one, when we update to a new firmware
+>>     version.
+>>
+>> b) Shorter, cleaner symbols everywhere: GSP_FW_HEAP_SIZE_OVERRIDE_LIBOS2_MAX_MB
+>>     instead of r570_144::GSP_FW_HEAP_SIZE_OVERRIDE_LIBOS2_MAX_MB, for example.
+> 
+> `nvfw` is the module that is supposed to abstract the currently
+> supported firmware version - but in order to provide this abstraction,
+> it needs to refer the items in question. :) I don't see how we could
+> avoid these qualifiers short of having a `use r750_144::*` which could
+> result into name collisions.
 
-I give one pass of review on your series already. I Ack a portion of
-it. I expect some clarification or update on the rest.
+My idea here was: "what name collisions?". There shouldn't be any.
+Because again, there is only one firmware version supported at a time.
 
-I especially want to double check the swap cache atomic set a range of
-swap entries to folio.
-I want to make sure this bug does not happen to swap table:
-https://lore.kernel.org/linux-mm/5bee194c-9cd3-47e7-919b-9f352441f855@kerne=
-l.dk/
+> 
+> But maybe we can do a module alias to reduce the diff once the version
+> changes:
+> 
+>      use r570_144 as fwbindings;
+>      ...
+> 
+>      pub(crate) const LIBOS2_PARAMS: LibosParams = LibosParams {
+>          carveout_size: fwbindings::GSP_FW_HEAP_PARAM_OS_SIZE_LIBOS2 as u64,
+> 
+> Is that what you had in mind?
 
-I just double checked, the swap table should be fine in this regard.
-The bug is triggered by memory allocation failure in the middle of
-insert folio. Swap tables already populated the table when the swap
-entry is allocated and handed out to the caller. We don't do memory
-allocation when inserting folio into swap cache, which is a good
-thing. We should not have that bug.
+Not initially, but it would address most of what bothered me here,
+which is having a particular version number all over everywhere.
 
-I also want some extra pair of eyes on those subtle behavior change
-patches, I expect you to split them out in the next version.
-I will need to go through the split out subtle patch one more time as
-well. This pass I only catch the behavior change, haven't got a chance
-to reason those behavior changes patches are indeed fine. If you can
-defer those split out patches, that will save me some time to reason
-them on the next round. Your call.
 
-Oh, I also want to write a design document for the swap table idea. I
-will send it your way to incorporate into your next version of the
-series.
+thanks,
+-- 
+John Hubbard
 
-Thanks for the great work! I am very excited about this.
-
-Chris
-
-On Fri, Aug 22, 2025 at 12:20=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> This is the first phase of the bigger series implementing basic
-> infrastructures for the Swap Table idea proposed at the LSF/MM/BPF
-> topic "Integrate swap cache, swap maps with swap allocator" [1].
->
-> This phase I contains 9 patches, introduces the swap table infrastructure
-> and uses it as the swap cache backend. By doing so, we have up to ~5-20%
-> performance gain in throughput, RPS or build time for benchmark and
-> workload tests. This is based on Chris Li's idea of using cluster size
-> atomic arrays to implement swap cache. It has less contention on the swap
-> cache access. The cluster size is much finer-grained than the 64M address
-> space split, which is removed in this phase I. It also unifies and cleans
-> up the swap code base.
->
-> Each swap cluster will dynamically allocate the swap table, which is an
-> atomic array to cover every swap slot in the cluster. It replaces the swa=
-p
-> cache back by Xarray. In phase I, the static allocated swap_map still
-> co-exists with the swap table. The memory usage is about the same as the
-> original on average. A few exception test cases show about 1% higher in
-> memory usage. In the following phases of the series, swap_map will merge
-> into the swap table without additional memory allocation. It will result
-> in net memory reduction compared to the original swap cache.
->
-> Testing has shown that phase I has a significant performance improvement
-> from 8c/1G ARM machine to 48c96t/128G x86_64 servers in many practical
-> workloads.
->
-> The full picture with a summary can be found at [2]. An older bigger
-> series of 28 patches is posted at [3].
->
-> vm-scability test:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Test with:
-> usemem --init-time -O -y -x -n 31 1G (4G memcg, PMEM as swap)
->                 Before:         After:
-> System time:    220.86s         160.42s      (-27.36%)
-> Throughput:     4775.18 MB/s    6381.43 MB/s (+33.63%)
-> Free latency:   174492 us       132122 us    (+24.28%)
->
-> usemem --init-time -O -y -x -n 32 1536M (16G memory, global pressure,
-> PMEM as swap)
->                 Before:         After:
-> System time:    355.23s         295.28s      (-16.87%)
-> Throughput:     4659.89 MB/s    5765.80 MB/s (+23.73%)
-> Free latency:   500417 us       477098 us     (-4.66%)
->
-> This shows an improvement of more than 20% improvement in most readings.
->
-> Build kernel test:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Building kernel with defconfig on tmpfs with ZSWAP / ZRAM is looking
-> good. The results below show a test matrix using different memory
-> pressure and setups. Tests are done with shmem as filesystem and
-> using the same build config, measuring sys and real time in seconds
-> (user time is almost identical as expected):
->
->  -j<NR> / Mem  | Sys before / after  | Real before / after
-> Using 16G ZRAM with memcg limit:
->      12 / 256M | 6475 / 6232  -3.75% | 814 / 793   -2.58%
->      24 / 384M | 5904 / 5560  -5.82% | 413 / 397   -3.87%
->      48 / 768M | 4762 / 4242  -10.9% | 187 / 179   -4.27%
-> With 64k folio:
->      24 / 512M | 4196 / 4062  -3.19% | 325 / 319   -1.84%
->      48 / 1G   | 3622 / 3544  -2.15% | 148 / 146   -1.37%
-> With ZSWAP with 3G memcg (using higher limit due to kmem account):
->      48 / 3G   |  605 /  571  -5.61% |  81 /  79   -2.47%
->
-> For extremely high pressure global pressure, using ZSWAP with 32G
-> NVMEs in a 48c VM that has 4G memory globally, no memcg limit, system
-> components take up about 1.5G so the pressure is high, using make -j48:
->
-> Before:  sys time: 2061.72s            real time: 135.61s
-> After:   sys time: 1990.96s (-3.43%)   real time: 134.03s (-1.16%)
->
-> All cases are faster, and no regression even under heavy global
-> memory pressure.
->
-> Redis / Valkey bench:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> The test machine is a ARM64 VM with 1.5G memory, redis is set to
-> use 2.5G memory:
->
-> Testing with:
-> redis-benchmark -r 2500000 -n 2500000 -d 1024 -c 12 -P 32 -t get
->
->                 no BGSAVE                with BGSAVE
-> Before:         433015.08 RPS            271421.15 RPS
-> After:          431537.61 RPS (-0.34%)   290441.79 RPS (+7.0%)
->
-> Testing with:
-> redis-benchmark -r 2000000 -n 2000000 -d 1024 -c 12 -P 32 -t get
->                 no BGSAVE                with BGSAVE
-> Before:         446339.45 RPS            274845.19 RPS
-> After:          442697.29 RPS (-0.81%)   293053.59 RPS (+6.6%)
->
-> With BGSAVE enabled, most Redis memory will have a swap count > 1 so
-> swap cache is heavily in use. We can see a >5% performance. No BGSAVE
-> is very slightly slower (<1%) due to the higher memory pressure of the
-> co-existence of swap_map and swap table. This will be optimzed into a
-> net gain and up to 20% gain in BGSAVE case in the following phases.
->
-> Link: https://lore.kernel.org/CAMgjq7BvQ0ZXvyLGp2YP96+i+6COCBBJCYmjXHGBnf=
-isCAb8VA@mail.gmail.com [1]
-> Link: https://github.com/ryncsn/linux/tree/kasong/devel/swap-table [2]
-> Link: https://lore.kernel.org/linux-mm/20250514201729.48420-1-ryncsn@gmai=
-l.com/ [3]
->
-> Kairui Song (9):
->   mm, swap: use unified helper for swap cache look up
->   mm, swap: always lock and check the swap cache folio before use
->   mm, swap: rename and move some swap cluster definition and helpers
->   mm, swap: tidy up swap device and cluster info helpers
->   mm/shmem, swap: remove redundant error handling for replacing folio
->   mm, swap: use the swap table for the swap cache and switch API
->   mm, swap: remove contention workaround for swap cache
->   mm, swap: implement dynamic allocation of swap table
->   mm, swap: use a single page for swap table when the size fits
->
->  MAINTAINERS          |   1 +
->  include/linux/swap.h |  42 ----
->  mm/filemap.c         |   2 +-
->  mm/huge_memory.c     |  16 +-
->  mm/memory-failure.c  |   2 +-
->  mm/memory.c          |  30 +--
->  mm/migrate.c         |  28 +--
->  mm/mincore.c         |   3 +-
->  mm/page_io.c         |  12 +-
->  mm/shmem.c           |  56 ++----
->  mm/swap.h            | 268 +++++++++++++++++++++----
->  mm/swap_state.c      | 404 +++++++++++++++++++-------------------
->  mm/swap_table.h      | 136 +++++++++++++
->  mm/swapfile.c        | 456 ++++++++++++++++++++++++++++---------------
->  mm/userfaultfd.c     |   5 +-
->  mm/vmscan.c          |  20 +-
->  mm/zswap.c           |   9 +-
->  17 files changed, 954 insertions(+), 536 deletions(-)
->  create mode 100644 mm/swap_table.h
->
-> ---
->
-> I was trying some new tools like b4 for branch management, and it seems
-> a draft version was sent out by accident, but seems got rejected. I'm
-> not sure if anyone is seeing duplicated or a malformed email. If so,
-> please accept my apology and use this series for review, discussion
-> or merge.
->
-> --
-> 2.51.0
->
 
