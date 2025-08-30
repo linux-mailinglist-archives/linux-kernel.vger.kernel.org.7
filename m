@@ -1,257 +1,98 @@
-Return-Path: <linux-kernel+bounces-792713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1325FB3C7ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:38:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BDAB3C7F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2FE7C8AC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781A77C8B14
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 04:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1185C27816B;
-	Sat, 30 Aug 2025 04:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AE327A124;
+	Sat, 30 Aug 2025 04:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw5BH9fV"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzzsMi4w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36FD42049;
-	Sat, 30 Aug 2025 04:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B9942049;
+	Sat, 30 Aug 2025 04:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756528688; cv=none; b=Cax6bY8tJZge4hmxRT8jmBw9+l02zobn8JtI0fJGbXBM9pPF/iMgxZJJ2u3ByJbCNfLBqfoN5UvgVHDMLzvpZiOMDykbeRVHah9nsAdIeFEFPI1tdK1zY1VZkJeV3t0nDFXQf4o/SxhxWApqxFuxV2dcAHCeqfzce+VC8YlqPvo=
+	t=1756528728; cv=none; b=i92SrZprwG9CglUZOWbQvNuT07u2Dkrb2HE8s7PwmwA9MXjAOibJjm4TaUcfG3uSgMGWsy6CGNKvO+SoSpmyt8VIu2nJ5H0/knhPUwI0u0z/bYD3YvhPX0PDHvUcHVJIyAeWZ05pjhDcmlo+OdDmw0nlkh32UnO+NhBpVpYkZyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756528688; c=relaxed/simple;
-	bh=Fg1XXRJfbl1l37kH/YMOXuLyqrJ1TGAsZzOqunGv2Ok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WCjTMTrGS1+qgWMX0BnpQ8p31sIUJY2KfUQ/9IYWw74avNZx+AoBTbodxgPGvU+XUWpFlyer8Gk/y9Kh7H8ixVK07nzg9Mgz3BzcipE9X64GWD4Q5og1vp9hdmarNpIOtTODfPReDDJIwPY+fCpZkzsrwfQCg9nagL88L5MzQh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw5BH9fV; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afec56519c8so465281366b.2;
-        Fri, 29 Aug 2025 21:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756528684; x=1757133484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MHncOGfoYp51fcEegAzjH4ijPtOyZmnx03RBNti0bPg=;
-        b=Qw5BH9fVklTYkdgrRjy6jL1aK4+g0SNO9PC8tQu7xN+rC96lcIibXTGeZB+eFclUH3
-         oMa90I5Bt+Y6/1bSEZq9ePaC/g30CJEHWQ1TIxrEQaN3v1O9u+IqDHfCx9UmMCes/zN+
-         37ro0abs6PupHKs76O6/hCYDfcJdLj3UkjJU65Rma4fVUH+n/bgtwDV2k8gan01MBU3O
-         NlbOGBKSyjMwLLxFaIW/sWMMVQhrpzTXCsRYALnZi4k45q51OsLoqbTZ1E+UGJ7pRfcv
-         lh/paWZ+u5+mo4iTkCD7D6tfXuyeo1qiPvwkiqpErpRIpjqElC88DwE0WEekvLtRAccU
-         NmWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756528684; x=1757133484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MHncOGfoYp51fcEegAzjH4ijPtOyZmnx03RBNti0bPg=;
-        b=J6Vp9LLa08W/K5G+FC2uIwMRyAXA08X2/psEnQ+vbTzySxzNG0xSgqlvU+VE+PuV4I
-         tJKp7pd+QCJGp1mLlBrMcEMwt7RqBmxkMEJaKsWBdRhSDyF3Q6D3808KoKwkSpOU2iwg
-         Th7dCdo0o3feBBN5Z5kk09lsawPxrtJzNJTj2Kz62+nYTP4ijq1D1CMXxH3QOJMCIPNv
-         UsKAdymck9F4CGG1IP/Z5j0ZrMeBseZOJnlPuUySvuFMB2dCcdkzHbVLKpdfbJZCCJYL
-         tJQaWn8UZAwN1ypOoDTKbe95eldA5xKBXNsyIkefRnfCh7oubJCtDKur9ESrK/qXy7py
-         7Tkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuWU29KugOWiRC5/SJKDTrP3TjXUVZIhMvjpDtGerz47SWRM3law525KAFsfTcu6T57JxXqR/Tm4T/zCfu@vger.kernel.org, AJvYcCVRyY1SxkJ2zafs1B0KYH9oimoxmgU9U6G6Auzj6q/RozKl8FGPqvPj+2K7jRk0yUNjoRZH8wH+tQAKstQ=@vger.kernel.org, AJvYcCVebE8BHI3CIGkCjjpdNodgziXEC8ZZ0QNo+vn0mFxUEbzO9NeR+AdvWAN26vLKlsZBlCzJOnOQdSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG6Aef6ekZAgabvD/8bjAl8muAOQNdyHeKtmGitLsB9cjbp3Mr
-	OdGW4vFrpOebjKXXpBUDvoxtt/enp0KZssknKluIFIo4Xm3QPuHvMYfHEVvDfbhR6MqK3afw+wx
-	ztkDp2l8vGikphw7RxocvANM3PZIyJHE=
-X-Gm-Gg: ASbGnctSBmp71eLIIR2geCqa0td1TWHWrAfmSqDXht2bMJALFs6mcJAaT95I2IysdrP
-	65p0BeQCt3sk/jXJsFRVEDnRNb+owErYsTv9LOO/vXKoVb0iO69y8FutyauCYsvTd53Gn3WtPcr
-	Rl7DAHusmyfezZ6LSb3hQmEa8rQHSV/8tQhQW8hSPM+3I26+xH5NfDmRDerKoBDiOHH5xGIHcgP
-	kw1tHFuhO0aZX15gA==
-X-Google-Smtp-Source: AGHT+IFIxPV3XHMI1B+KQRgPWec6qgPzuoKMj57cqmdE5/UIcQ42YrOS78E0bhtCdRVRHoo7R+1xrr3RlFcSix1Rwe8=
-X-Received: by 2002:a17:906:9fc6:b0:ad5:d597:561e with SMTP id
- a640c23a62f3a-b01f20c2808mr74433366b.56.1756528683773; Fri, 29 Aug 2025
- 21:38:03 -0700 (PDT)
+	s=arc-20240116; t=1756528728; c=relaxed/simple;
+	bh=c82a1KYluoIERfAlGlVM+UwKKvey1HQBYLHa/x2Xrzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmS+x43ueeAcp+mA64xxWlIT9mpKiR9ICwFHsE3P/e7c5GAyjJ983XGSqzLYjQPuGV8Rmbops6A7lwR4GaCJoWqPNZO5aQn3ifIdltoSoEBoYVNeJCoRqc94YopuVRL9VeOZb+0e5wIK1VfzVrYSvz8dSuNQYCtPy1gmSyBXQIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzzsMi4w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1CEC4CEEB;
+	Sat, 30 Aug 2025 04:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756528727;
+	bh=c82a1KYluoIERfAlGlVM+UwKKvey1HQBYLHa/x2Xrzk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BzzsMi4wwIevXis49EvkuaJq9d3MeH/Qp71v8drUiIWicRrJhHobXkXxfU4xJU6KE
+	 u4TWnb6V1rxSbKptiQ3rdj9Nfpt/l+Eyqif5gTrQs4nS9uVlCywGMAHPHYxs106kVZ
+	 FYslw00ZMqWMEyFWt6VTFkJRVtdaeHwop3CUtamMgoNtWG908j1rm/bTQrm5XDt1fC
+	 cIt1GI+jkBTnFYcLguFyFwc3CdGGaVVO0zYYG/1peg4ME0ndO3Vnf8D6K10DcrRXFV
+	 RrK0vSmt/O9HkCaLFCq7y+b1jwN++Xe4FTBN1IOdWEsyka8Pro4F9YeRLz0lmNhgsJ
+	 Qkf5tSGWLzGPA==
+Message-ID: <67d5b14f-25e3-4180-8917-f950b766d4dc@kernel.org>
+Date: Sat, 30 Aug 2025 13:38:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <20250829-88pm886-gpadc-v1-1-f60262266fea@dujemihanovic.xyz> <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com>
-In-Reply-To: <4f93d53a-3dfa-4b9f-8c09-73703888d263@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 07:37:27 +0300
-X-Gm-Features: Ac12FXxI4Ad7UEZ5m_Rq5R88CJhV7qFlTNI40RdEocvqaV6YPiPKw6vP0NWO2Y0
-Message-ID: <CAHp75Ve=xJ6vTUydaTw9GuYr22ZXp3HFA5N0tP7NET=CvZJB8Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-To: David Lechner <dlechner@baylibre.com>
-Cc: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>, 
-	Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>, 
-	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 02/10] md/raid0: convert raid0_handle_discard() to
+ use bio_submit_split_bioset()
+To: Yu Kuai <hailan@yukuai.org.cn>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ neil@brown.name, akpm@linux-foundation.org, hch@infradead.org,
+ colyli@kernel.org, hare@suse.de, tieren@fnnas.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+ <20250828065733.556341-3-yukuai1@huaweicloud.com>
+ <858e0210-1bbb-466b-98c3-d1a3c834519d@kernel.org>
+ <e147e288-de38-4f2c-8068-53c5e37b2310@yukuai.org.cn>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <e147e288-de38-4f2c-8068-53c5e37b2310@yukuai.org.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 2:41=E2=80=AFAM David Lechner <dlechner@baylibre.co=
-m> wrote:
-> On 8/28/25 5:17 PM, Duje Mihanovi=C4=87 wrote:
+On 8/30/25 13:10, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/8/30 8:41, Damien Le Moal 写道:
+>> On 8/28/25 15:57, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> On the one hand unify bio split code, prepare to fix disordered split
+>>> IO; On the other hand fix missing blkcg_bio_issue_init() and
+>>> trace_block_split() for split IO.
+>> Hmmm... Shouldn't that be a prep patch with a fixes tag for backport ?
+>> Because that "fix" here is not done directly but is the result of calling
+>> bio_submit_split_bioset().
+> 
+> I can add a fix tag as blkcg_bio_issue_init() and trace_block_split() is missed,
+> however, if we consider stable backport, should we fix this directly from caller
+> first? As this is better for backport. Later this patch can be just considered
+> cleanup.
 
-...
+That is what I was suggesting: fix the blkcg issue first withe fixes tag and
+then do the conversion to using bio_submit_split_bioset() in later patch that is
+not to be backported.
 
-> > +#include <linux/device.h>
-
-See below about kernel.h, TL;DR: with device.h check carefully that
-you are really using it and not something from linux/device/* and/or
-linux/dev_printk.h.
-
-> > +#include <linux/i2c.h>
-> > +#include <linux/iio/driver.h>
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/iio/types.h>
-> > +#include <linux/kernel.h>
->
-> We usually try to avoid including kernel.h because it includes too much.
-> There are some recent-ish messages on the iio mailing list discussing
-> include-what-you-use with some tips on how to pick the headers that are
-> actually being used for inclusion.
-
-+100
-
-In new code no driver should use kernel.h. Use proper headers from day 1.
-
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#include <linux/mfd/88pm886.h>
->
-> Odd to have this one not grouped with the rest.
-
-Actually it's fine, as it is almost private to this driver, but for
-the sake of consistency I would also like to see the linux/iio/* be
-grouped.
-
-...
-
-> > +     u8 buf[2];
-
-Can't we use proper type, i.e. __be16 here?
-
-...
-
-> > +     ret =3D regmap_bulk_read(*map, regs[chan], buf, 2);
-
-sizeof()
-
-> > +
-
-Redundant blank line.
-
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     val =3D ((buf[0] & 0xff) << 4) | (buf[1] & 0xf);
-> > +     val &=3D 0xfff;
->
-> This line seems reduandant as mask was already applied in previous line.
-
-With the previous suggestions this will be as simple as
-
-be16_to_cpu() >> 4 no masks needed at all!
-
-...
-
-> > +     if (adcnum < 0 || adcnum > 3)
-> > +             return -EINVAL;
-
-in_range()
-
-...
-
-> > +     for (int i =3D 0; i < 16; i++) {
-
-Why signed? What is the magic value here?
-
-> > +             ret =3D regmap_update_bits(*map, reg, 0xf, i);
-
-GENMASK() or even better to have a definitive constant.
-
-> > +             if (ret)
-> > +                     return ret;
-
-...
-
-> > +     raw =3D gpadc_get_raw(iio, chan->channel);
-> > +     if (raw < 0) {
-> > +             ret =3D raw;
-> > +             goto out;
-> > +     }
-
-Instead just assign to ret and if okay, reassign to raw.
-
-...
-
-> > +     const u8 config[] =3D {0xff, 0xfd, 0x1};
->
-> IIRC, IIO subsystem prefers spaces around the braces.
->
->                         { 0xff, 0xfd, 0x1 };
-
-Also make them fixed width, i.e. 0x01
-
-> Also, could use some macros to explain what these values are.
-
-...
-
-> > +     /* Enable/disable the ADC block */
-> > +     ret =3D regmap_assign_bits(map, PM886_REG_GPADC_CONFIG6, BIT(0), =
-enable);
-> > +     if (ret || !enable)
-> > +             return ret;
-
-It's implicit that when "!enable" we return 0, this should be written
-explicitly because it's a special case.
-
-...
-
-> > +     iio->dev.parent =3D dev;
-
-> > +     iio->dev.of_node =3D parent->of_node;
-
-It's incomplete and IIO already does it for you. IIRC the parent is
-set also, but please double check that.
-
-...
-
-> > +     devm_pm_runtime_enable(dev);
-
-Why use devm if not checking for the returned code?
-
-...
-
-> > +config 88PM886_GPADC
-> > +     tristate "Marvell 88PM886 GPADC driver"
-> > +     depends on MFD_88PM886_PMIC
-> > +     default y
-
-Really? Why tristate then?
-I would expect default MFD_88PM886_PMIC instead,
-
-> > +     help
-> > +       Say Y here to enable support for the GPADC (General Purpose ADC=
-)
-> > +       found on the Marvell 88PM886 PMIC. The GPADC measures various
-> > +       internal voltages and temperatures, including (but not limited =
-to)
-> > +       system, battery and USB.
-
-Please, add a line about the module name if one chooses 'm'. Or see
-above =E2=80=94 drop the "tristate" and explain why this driver may not be =
-a
-module in the commit message.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+Damien Le Moal
+Western Digital Research
 
