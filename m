@@ -1,87 +1,115 @@
-Return-Path: <linux-kernel+bounces-793135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14007B3CF1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:46:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9633DB3CF21
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517183BBE32
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:46:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60F834E04D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D287A258EF0;
-	Sat, 30 Aug 2025 19:46:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E02DF3CF;
+	Sat, 30 Aug 2025 19:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7Z+BbC+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007CB230D14
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7442DECB1;
+	Sat, 30 Aug 2025 19:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756583165; cv=none; b=iPi6rXLZSPAk8gwgr86ft4WDRk+4ESHCRPRHi9UBhGAVasoTGlCQBvbasO+otH3hfj4rw9EepR6lvP31oMR/w/R2P6egksNI0m3R0GaiJvXNfRo0NQRGLxlPbgiKp7dCfTP814sjdtczfRD+/pzmLKAOceFg+687nbF7DPKJ+EY=
+	t=1756583314; cv=none; b=tomA75Cqf4qWaJdiS0Q1bzzdiDw55nNEdXOKDlgXt7zTI4VfWs0EKsiRdpm35Ok18yIgCSpXk3YoekDvHzMM5xfIFkP8Vsd+yoj2q+ODgCAD03BSE+79ldqbGWveyb1Ps1wLNkKeLZ/4ugDImZkUoxrSkecvbG7D0N1nTUBXyE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756583165; c=relaxed/simple;
-	bh=G/NFYg/t2b9u07TWLk+8Ng6KzCACTuhSeDKr+awv8Fk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lt/e+Z+BDyX09t/GkO5PvVlxX0dQQG/zVMTe8B3IdzQD1/PcASIcVv788rqI6blgfOLf2ilFIs1elYl0ciOUyGZgOwlu6n3Fy/nQSuL/gk3aDb7q3mAUjPwIpQ9xLHlxcFfEjzP8FX3tvx9L83fDFLODwxiCWB5J2vTsb/ItVjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f29a0a7643so19318415ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:46:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756583163; x=1757187963;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pr/bxMgdsQlwhIDx5QzIrgS9YnvAP9KAD6st5f1ma7I=;
-        b=kg0ROX4MfhHrJ4GbbWKG16zRBTvDegGNiJpz1Q5QTtPzxUav8yG8hZfaSRMMtdQLSn
-         PoMbZ3Pd1Uznwm+zIMUKDUWSdGPHxTe0gIEz2FX9EllYeOGIMMJWxESIL4weZZhu8+st
-         U50WI0hNxfT138trln8C4IgenEgM4tQWNuDTZSJPEd8UKkLQ1or3G0t65POnTVhH/6Ca
-         vHzvifYqBoHecWS6knRozeyhE0r1pCoUK6CCKicugEwO8kyEsc6bupdsUhYnRu/AMxu5
-         Lt5jb0wTiN5SpcPyj/xLTXjOdi1K0WBv0/oJCOg9nDfZ7w57xUPv5XMeiwezP7cDvnjN
-         8vXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5YsBcH5rMU+d6tebJU0qmd1YNJsX/6zuQlRIYCSiytGLnwlrE7Ict9D+60YYeMHGGGPIlSdwHBlEIkkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4zpGFW0fMuyoOWq8FGKMq4qv5EsblmlKUSRgkPiS2eMi2sLMi
-	zJ9uuKLcnZ7Vy6m+25Y48Zkt3mHpjNbuwadKdj1TVFpCEXOFPsFKo191LzaccQey9RCMqAhIV0d
-	j6vMtwN+PHsJoHwFfNqxWF0RwdsY7JjVoTvDMKcrBY4hA455Gpke5vPsOSv4=
-X-Google-Smtp-Source: AGHT+IHGaTfzO/zyPLqOmvIEPO7xXis3LlXehfK06+eJfhE92mW/MZrp99cxDnhBfZKSjcij9aQD4e4p33ZBKwVBhmkWy4l3OTrU
+	s=arc-20240116; t=1756583314; c=relaxed/simple;
+	bh=nxhkrwDWENSNGtc5OQq3ZamPiocNMcAhP7SnWuBKeMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lNCMmEWY44TxfWxEMDBrNqjFL7B9vrdEcpQqpvrRGVNYC60c7pB2+2nIZzOvbPgsqCWFpDvLckxwOkOjvbw1SgXPJiI1ELp8wd1Dnw9KM2bxK9u1Mb2FyyCn0eQEIkknJ20G2oclwQahtJzA9mDLRxjBU1H/DwIWutrF1wV6xWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7Z+BbC+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C67C4CEEB;
+	Sat, 30 Aug 2025 19:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756583314;
+	bh=nxhkrwDWENSNGtc5OQq3ZamPiocNMcAhP7SnWuBKeMs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h7Z+BbC+OVLkECjKMPowRJAJ1i99aJNefncaPk+TMrRFcFCYD8pB6uqDzlFAOs1L9
+	 +CpXRKZ0+NpYOehvGjICig0N/9FBN+YcqqYQfFH8KgVfRzPE+ruUBzs1dgBm45f5So
+	 GXPPpHlfxtadQMBPnU0aNbnYRRPsKPOmvMmXZOJs4qt1nwIpfUu5IdJ+0KSzdmdJMi
+	 I4sphF+DdMwfyUN1BCfPWf4Ic4w2tjwYFxLZcM/OSCg3qjimLsqEt62PNbRj6IKBTg
+	 9qx+HGW+cD14Xej85hjcbL4DRezMME9mPyzjQqSuq8acTeuf5AsiPVKjwZ9IffD6xq
+	 MVWQM0CR+YIlA==
+Date: Sat, 30 Aug 2025 20:48:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] iio: adc: ad7124: add external clock support
+Message-ID: <20250830204824.2f9d7a48@jic23-huawei>
+In-Reply-To: <CAHp75Vf8fAFin1tJ-yjr22RPuDgBEBnj6JO3GkjDcZsmYoOfYA@mail.gmail.com>
+References: <20250828-iio-adc-ad7124-proper-clock-support-v3-0-0b317b4605e5@baylibre.com>
+	<20250828-iio-adc-ad7124-proper-clock-support-v3-3-0b317b4605e5@baylibre.com>
+	<CAHp75VdtQ8vKULomgqPxwX=WZWUde7PC129BEznYqefd-U4DEQ@mail.gmail.com>
+	<a20356ca-05ca-4c99-819b-4b278e799f2a@baylibre.com>
+	<CAHp75Vf8fAFin1tJ-yjr22RPuDgBEBnj6JO3GkjDcZsmYoOfYA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1488:b0:3ec:2275:244c with SMTP id
- e9e14a558f8ab-3f3fd18b3a2mr59459905ab.0.1756583163032; Sat, 30 Aug 2025
- 12:46:03 -0700 (PDT)
-Date: Sat, 30 Aug 2025 12:46:03 -0700
-In-Reply-To: <5e4ppwjfwtg7ruzkgyyke6vwosiro3vj6wm4hic3sjwh5bu7la@fghymhrnubbo>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b354fb.050a0220.3db4df.01ab.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
-To: ipravdin.official@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, 29 Aug 2025 22:11:12 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Fri, Aug 29, 2025 at 8:19=E2=80=AFPM David Lechner <dlechner@baylibre.=
+com> wrote:
+> > On 8/29/25 10:53 AM, Andy Shevchenko wrote: =20
+> > > On Fri, Aug 29, 2025 at 12:55=E2=80=AFAM David Lechner <dlechner@bayl=
+ibre.com> wrote: =20
+>=20
+> ...
+>=20
+> > >> +                       if (clk_hz > MEGA) { =20
+> > >
+> > > I read your answer, but maybe I missed something?  Can we use (1 *
+> > > HZ_PER_MHZ) here? =20
+> >
+> > I suppose we can. But it doesn't add any additional information.
+> > We already know we are dealing with Hz because of clk_hz and 1
+> > is implicit. So it is just a matter of style preference. Since I
+> > read a lot of code, I tend to prefer the minimal approach - it is
+> > less to read and still has the same meaning. =20
+>=20
+> Physicist in me prefers pedantism in comparison of the units. We don't
+> compare kilometers with kilograms (maybe not the best example, though,
+> if you understand what I mean :-).
+>=20
+As I don't think either of you have particularly strong opinions on this
+(or at least you'll both be flexible) and I want to merge it.
+I tweaked to 1 * HZ_PER_MHZ and applied the series.
 
-Reported-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
-Tested-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Thanks,
 
-Tested on:
+Jonathan
 
-commit:         02925b3b Bluetooth: Fix use-after-free in l2cap_sock_c..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=110b8e34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c6b2ceaf54a94b5e
-dashboard link: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10ab2a62580000
+> > >> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_S=
+EL_EXT_DIV4;
+> > >> +                               st->clk_hz =3D clk_hz / 4;
+> > >> +                       } else {
+> > >> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_S=
+EL_EXT;
+> > >> +                               st->clk_hz =3D clk_hz;
+> > >> +                       } =20
+>=20
+>=20
 
-Note: testing is done by a robot and is best-effort only.
 
