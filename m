@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-793170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D864EB3CF8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 23:38:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90016B3CF92
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 23:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856F55E6A28
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C837560104
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B08225783D;
-	Sat, 30 Aug 2025 21:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B76258ED8;
+	Sat, 30 Aug 2025 21:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JgmI7K6j";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8iAksP9M"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkHdUhN9"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91C02566F7
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 21:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4128730CD85;
+	Sat, 30 Aug 2025 21:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756589897; cv=none; b=ZV1vhzdlUkfaKaIixU0PZfjPhM80RHYkT7MuzGWH2LnHlwdypVuTnHn+e1s1CHkpzkgeBMolrbLhEv2eOzITTEBRZMLUHt/VHSVsaJb9ujR+AAh0CNcFh7tRrM6STipHBNtaQYjoZVasJMxyppNK2rFk2I0ggLhJGLEDuy0RaqE=
+	t=1756590141; cv=none; b=QakKDHVHYevV8PbfMJobiQcV6M2VBDE2Nmk2n2tGhkCf2a11NUaKnlTd8VxKffMmKwaEuh12cnZTTKD7TD0saIJivsG5vewDxMprU+xtwZaoVL6CxuSnCYz1JDwuO6HUpA11unA6jqpanTrprhBLiwqILgKIwU3Oh1Tcp56OKik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756589897; c=relaxed/simple;
-	bh=7kzqK7PmyjxG5yzBZw0mF+Kmt0/f+mV6b8DzkYEAIT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=shhGcze+TURIvNI4bt0pA/j5T4m7MsCRhyRpkPFBmaxrmNf5Kn1KJ5uqzINgjLuI+v82NZsPOWp6d63GNiUlgceKLBEGmL1kFooRc8XwLRhQo0o+1tD+xXsKf724gU/zqhxwcpAbeBH+Y/Ok43iJ3js0Lhj8+9lCLTRer9RA6B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JgmI7K6j; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8iAksP9M; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 30 Aug 2025 23:38:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756589887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=LXkSXqF4PO5z0LWGF0KtrHN7htl9nCB6Mg4k4eq2xEU=;
-	b=JgmI7K6jfg1iJ/0wcMVi+cfec6WY2YeAj4VyPQ7NTd68lP+4Zr7ZzAGsB2nARLjFiUSUO+
-	fgXahUKfAuZUzNzU2oU0tF6+7J0520rwka54O/izJjGtHLchV8t3Tt0p/WMjEEhy/o0DjQ
-	jslUK2y3l7Qpg46Bl1Egncvjen9OIWkglJ5b+T7yVkb41PDGcudzRP49MW/eC+30FcbzcY
-	2pPWGCqShuh7EFXzQcq1GJyZbvV8pHdghRgqPQkQLd5zXq+esrWiJ3iZ3bgiFIdvWiINT0
-	XgxAOoUdDJf6Ct4jZy66AhRQ/QMgTh7BiKZcXSPPpL6KdgsgfqTxtrBTBxFR9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756589887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=LXkSXqF4PO5z0LWGF0KtrHN7htl9nCB6Mg4k4eq2xEU=;
-	b=8iAksP9M9USxIP/DCjRXfaC/SbxPIC/xxPuxDbpeSjBzr8/0h7kvFwmaloVw+2fsmKmOSn
-	OQ5vNDK78WIYhvBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] futex: Initialize mm_struct::futex_ref on mm_init()
-Message-ID: <20250830213806.sEKuuGSm@linutronix.de>
+	s=arc-20240116; t=1756590141; c=relaxed/simple;
+	bh=BJYDBiQ4amhJaGjub/U5j328zDVwJa4YHQ6Slw4ZyaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TLKcVoQWvIcugyk38NUgKFO6xUvFlWSxJIFjdxgd8vq1eUXe7+BWV2pjfhsyI2dfngSXyOpof2ll/x1+45yW+vL4BiGY6f9guifFaEPctxNwyKrrvj9TOoV93rPZ5hnxFUprspLV+g5W2kqGVOmQ6JYTJ5VPrYS9e0k124hjApE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkHdUhN9; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4c3d8bd21eso2053140a12.2;
+        Sat, 30 Aug 2025 14:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756590139; x=1757194939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rY/JPOchmMvWF/419gMe9g7EplINNEPxkeuggdXANUs=;
+        b=CkHdUhN9mhtWlbr7xiJbKFJAIZa6WUpKahOLNl+LGdgmtXNqI6/5QVPVsdtXsdm7J4
+         GF7jl7w+ew425gvsTFfZdxU8Wxu3s0KKBAnmvqHzVL+TReepX7zJQWE9qNIg7sykijVH
+         B+zl4xRLzZbOyOIJd0I2OEHBf1Hj9OwDc/u8+KReWG7hSBfQ03QUw7ilwiU4MtSF6lAf
+         uY4Sif3VaS4hZn5EoMG4v5WPcq3bJWG/YIkLV9d2jcwEht8kzWiROIkL/IFrmTMMZMKa
+         LMqv/UlRfaIp0jf4WgyE3CL/uA9elm5hrmiNV4hYtvec4KneCmrVdpcyQwOwjCigiLVy
+         7xUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756590139; x=1757194939;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rY/JPOchmMvWF/419gMe9g7EplINNEPxkeuggdXANUs=;
+        b=VEtl+nmfwJ1INjBi2iGrpQyGhA4JVdPtOSUAFg38whtkH71BgvuBErkaBZeUa0oy0Z
+         3xKDOIYkYL7AxfiwQibCjVuIvUxRxIwh/C+4tDaH1PJty5e59bDbwyHTtiHOUT7JjSHr
+         gEACHPzO/g2KXLZYcWLAD83dWUCc3gciYorCCF28uWjcdnDA/U7+yN8uByNLebI6X5AK
+         u7smibWYUR07sDufQHcWn/1fVDDE+WBl68IfimQdiR/oFnGb7Bw/bBMcUEHp8kiMgvgz
+         OMkMWQ4ahVrkYA12YThHAfXAOs0KVAg4lU3daJo2TIDUNkHax1piuRxek819E4z++ExT
+         JOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYOouEUKMmNZg42E1F5+dKGn6/ajcy04cyx/CuSJU+irPnipKP5hXdnI67G9f4cluuiEG22olfp/Z21xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxSv9rK+IGX+VnYm2hgX5lqZDOaIQ6eKcwaACEygiQsuQWljDp
+	VlZwZhfjW2LOhYwOdZR1++zjIJxWnFFtEmFxsNLiXHVeYlUzjLSLirKMeWX8/A==
+X-Gm-Gg: ASbGncvCQtMHggkVJ3xgZ2hsbUzhORBJAgxpBV7hnCYw4V37afqUg6Qe0uzjZToCq+B
+	zmMpHkjwdJGwRjhGqdBVLD1vw8X8DBqVv8GuFLjjqstfqt0VVaCcUi3es1Nc1CngRpU3BWdK3Q6
+	X4Hbfv+lnk76LjYVRkyiBJL01vRp35MspWXkn131V4rbShF5OyS2s+wmBbpvl3oDiuuWJz1CzGb
+	fyLiYrc/exOEgCKtLiwgfarBmENn2pq1zdbH5PyyYJIeq8w5dF5K+ijHRVh5J+YlWj/UsQ4Iowm
+	rcAxDtnXqke1wqrMwhr8BQlKNwSlSOi9AfpPIqqkc7zqoXsRFdaKN9sh9A4D+I8dimVKQUo6n4o
+	SSQIJHOKupGgJiiMNYHOpQGtZGN3iFkTGnLi9pR+8HezLvqfaS5Iz6AL3+cDD/t3lhA==
+X-Google-Smtp-Source: AGHT+IHYPQqDFERxJIFwA2J1mhv1++eW9+/JHW6fdC9Qqbwf7Tr3rlueFCxnKmqLcI/MrNfBQSmW/w==
+X-Received: by 2002:a17:902:e751:b0:248:a054:e1c4 with SMTP id d9443c01a7336-249448f8ad8mr39874385ad.23.1756590139262;
+        Sat, 30 Aug 2025 14:42:19 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903758b89sm60807735ad.59.2025.08.30.14.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 14:42:18 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Sunil Goutham <sgoutham@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] net: thunder_bgx: use OF loop instead of fwnode
+Date: Sat, 30 Aug 2025 14:42:17 -0700
+Message-ID: <20250830214217.74801-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-mm_struct::futex_ref needs to be set to NULL during mm_init() to ensure
-that it is not copied during fork(). Reusing the previous pointer can
-lead to use-after-free which can trigger
+The loop ends up converting fwnode to device_node anyway.
 
-| WARNING: kernel/futex/core.c:1604 at futex_ref_rcu+0xe1/0xf0, CPU#2: swapper/2/0
+While at it, handle return value of of_get_mac_address in case of NVMEM.
 
-Initialize mm_struct::futex_ref on mm_init().
+Simplify while loop iteration.
 
-Fixes: 1b708b38414d3 ("futex: Move futex_hash_free() back to __mmput()")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- kernel/futex/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../net/ethernet/cavium/thunder/thunder_bgx.c | 27 ++++++++-----------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index fb63c13aa66fc..125804fbb5cb1 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -1722,6 +1722,7 @@ int futex_mm_init(struct mm_struct *mm)
- 	RCU_INIT_POINTER(mm->futex_phash, NULL);
- 	mm->futex_phash_new = NULL;
- 	/* futex-ref */
-+	mm->futex_ref = NULL;
- 	atomic_long_set(&mm->futex_atomic, 0);
- 	mm->futex_batches = get_state_synchronize_rcu();
- 	return 0;
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index 21495b5dce25..eb5525c1482e 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -1468,27 +1468,23 @@ static int bgx_init_acpi_phy(struct bgx *bgx)
+ 
+ static int bgx_init_of_phy(struct bgx *bgx)
+ {
+-	struct fwnode_handle *fwn;
+-	struct device_node *node = NULL;
++	struct device_node *node = bgx->pdev->dev.of_node;
++	struct device_node *child;
+ 	u8 lmac = 0;
+ 
+-	device_for_each_child_node(&bgx->pdev->dev, fwn) {
++	for_each_child_of_node(node, child) {
+ 		struct phy_device *pd;
+ 		struct device_node *phy_np;
++		int err;
+ 
+-		/* Should always be an OF node.  But if it is not, we
+-		 * cannot handle it, so exit the loop.
+-		 */
+-		node = to_of_node(fwn);
+-		if (!node)
+-			break;
+-
+-		of_get_mac_address(node, bgx->lmac[lmac].mac);
++		err = of_get_mac_address(child, bgx->lmac[lmac].mac);
++		if (err == -EPROBE_DEFER)
++			goto defer;
+ 
+ 		SET_NETDEV_DEV(bgx->lmac[lmac].netdev, &bgx->pdev->dev);
+ 		bgx->lmac[lmac].lmacid = lmac;
+ 
+-		phy_np = of_parse_phandle(node, "phy-handle", 0);
++		phy_np = of_parse_phandle(child, "phy-handle", 0);
+ 		/* If there is no phy or defective firmware presents
+ 		 * this cortina phy, for which there is no driver
+ 		 * support, ignore it.
+@@ -1504,7 +1500,7 @@ static int bgx_init_of_phy(struct bgx *bgx)
+ 
+ 		lmac++;
+ 		if (lmac == bgx->max_lmac) {
+-			of_node_put(node);
++			of_node_put(child);
+ 			break;
+ 		}
+ 	}
+@@ -1514,14 +1510,13 @@ static int bgx_init_of_phy(struct bgx *bgx)
+ 	/* We are bailing out, try not to leak device reference counts
+ 	 * for phy devices we may have already found.
+ 	 */
+-	while (lmac) {
++	while (lmac--) {
+ 		if (bgx->lmac[lmac].phydev) {
+ 			put_device(&bgx->lmac[lmac].phydev->mdio.dev);
+ 			bgx->lmac[lmac].phydev = NULL;
+ 		}
+-		lmac--;
+ 	}
+-	of_node_put(node);
++	of_node_put(child);
+ 	return -EPROBE_DEFER;
+ }
+ 
 -- 
 2.51.0
 
