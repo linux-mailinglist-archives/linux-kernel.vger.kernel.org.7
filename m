@@ -1,162 +1,110 @@
-Return-Path: <linux-kernel+bounces-792776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94141B3C8C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFA3B3C8C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1105E1E14
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC68A189B26A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1270F23AE87;
-	Sat, 30 Aug 2025 07:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4245E242D72;
+	Sat, 30 Aug 2025 07:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gd1e49hr"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="AYfuSV+V"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030E316F0FE;
-	Sat, 30 Aug 2025 07:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478D32AD0D
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 07:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756539232; cv=none; b=SFPYCw3qfASxElEwK5g4IBzEctLLfQ6JNFPEcyPKHLGFsDWEpeRsTmJfhILDH+1uOfxi9q7/MZDFRWRjFr8yYtXKB/eAy+xwPqRyq4cOYQrQIa1hnb6s/LqMpRotZ8ksOlivLNaMh8vsLmc4OhFgYB6t6jhzQ2R+6gooyeb2Sfg=
+	t=1756539280; cv=none; b=BErLlIkjGNGQKQISmOmjcOs6bpVIn3ry9o5TXiXOerOJVOUrFWt9k33CIGd6Whp0IdrWIVKViXnjID0CHQwUL4pmnhiCWdHiSVxNlKVU2U+gPqJp9wSQUU1bhValEO1HvkLOxQouAFpAk3byGxeBm261SttRiv/yIE61an3C5GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756539232; c=relaxed/simple;
-	bh=yx5WKlUCgfoqGHse0A+UTn42ZESS5T8sisrrMPHWOp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWitIzwe1YtAl5UTZCQOK+d+rTCKDSuQsDjZ1FUsTQiwcVY4TjwpvfGs6vBKXcv2ha+rfkhUMsxQLdZAT/3QbEX79f1OA2oF4cPmNH1FJw7HpRspTq6VwWWMazMDP+QUlVtfl8wnHAknhHwGQJUIkFbIxUYY9Kci+bBMrGz2V28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gd1e49hr; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e96dc26dfa2so2340762276.1;
-        Sat, 30 Aug 2025 00:33:50 -0700 (PDT)
+	s=arc-20240116; t=1756539280; c=relaxed/simple;
+	bh=ddimCuuu8iN3xYZdmcMu0ICYLJHfknoay+NbdcrWIto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eExdz61DWn0XMVj/ZXtfSIwA4a5GM0faoFR18Dj5tzV4oeYfrdgp9Q2fuHQJk2mg73iAy2AXAyhMO/MCCpSBDMWbNz9kqh9HgqDno0RLn+c9OVQHfKU1ocTwyIvbYxhR+xjhx/TIZ83345fi+pHgtwTyEePWjS6hXth5p4IxiyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=AYfuSV+V; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109c58e29so45890701cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 00:34:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756539230; x=1757144030; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fZBnJZ74Fu0arWlzftFzjtzGoLDNy7BxofIjGGsbtSk=;
-        b=Gd1e49hrqWj0LkyCKDhWBFZ23QfLkfdWnG/kb2zjaBhlPBydJnfLv9onwMLwJFdviB
-         UGRoBbRsLxosuVyxrfMLHzLJ+3tQGks3CUqpyLR1Sv6Pg/YcnpoQ7mXOTQO9LRWCrUbD
-         UzOWJt1jcp+4B4y9GNsS+/W/JyRf8Lr7LnldpiHJh1ZkJwV08zR8q3ftfLCgpHkpkcwY
-         GIO1iNLS15+vcTq62SxTd32s0b1CTZzOIT1Ow0mUoLNadOWco7rVyDKwd5YkCSw33WBg
-         +odEnGrtJqvPb0Rqfq/ylIQVEmCYFBJ7t3ORxEoTkVphFpZsr8hjZj13rrp5ls0HLbL0
-         /OBA==
+        d=fooishbar.org; s=google; t=1756539278; x=1757144078; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/XKolNdOG4rWtnm/Z1Xm//IS1jzblLqTcVqQ5IMS/rM=;
+        b=AYfuSV+V1/7udVcc68cZuehl7KiGUQpOfk5ZND2KQyaW+oKFYFOa1u6iVPj9tWPfGf
+         FormpVOGlBZDCurCe4hnCOOtnDFI25Ct/85ucZPuqZoHeM7XSdWrWX2A9OWNHAX72sYf
+         gsvdMUZwBY93jRHsIyOmkAcCIRc0HG0jvZ9QE6pTC9xGzV553hJmtTEZVHplWiEPHw90
+         v8tt3BCdoqdQVbWnP0kd+pag/MsP1Y0bJ3D8y/4hpmree2BcwBdVaK29RP9aq59cfwgY
+         4i6FVqY+eaFE7IEXhbLqPpvdwGLUw0lJxUiS6EIDzG1MlEFG9I2HPSqC3+2BA9K29m23
+         8G5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756539230; x=1757144030;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fZBnJZ74Fu0arWlzftFzjtzGoLDNy7BxofIjGGsbtSk=;
-        b=w2M7O5QYsGyjSalVgrlaF5I4DwiRqbXGIN77UrVCpfnyWO++98jvzj2t1x3BF2Uzw4
-         eVGUDQOnjjAMuKQ/0fDrXyCwrZMOZhmRpWnJZS4LbTE+jQ2n1aYgGUTsxJmlNT/llis+
-         9ib29hDwvwHhPdk2pVzz9LV6sHE8/Ip1dToKERczMTIe2+Dwtdrk4T/8seWEY7xK3/Kf
-         YB0edmYYyTRJTEAUlcANWCgu8vdnqJ9EdAJ9WOJt8UILTCtQ9TdaqtwDjOPq0WLQ+Dyd
-         oYayJdOfOjI7phwKy2xKshqPC/gsQgNGldPvUDwYJ1jnLhZeDh/GeHYLg5YMfqUJbdZe
-         3Aig==
-X-Forwarded-Encrypted: i=1; AJvYcCWfnsN1ihsJWbPHM/DfgR9f9ncu9ZXIzQkSd8jjvtyAwFpCp6uAgNDREdjTNxfJo2XmURr5yA+zab4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgYgK5JoYIyO4paRAOvi3KD3Xg5J1IFzpn9NiN5dTjeip6QsJu
-	dxz0tcZX65pe1SbxXcgNdbZ8yW9v45SlqpE9z8VyAHFaHDD2rwsXzIg3MrAc0DSa
-X-Gm-Gg: ASbGncvkxIolNO1rh9IiEbE+x2qs2EqlhUQuCsu8HVAutqBnWhWaKV2tIAuCaqusNT+
-	ULbq5g3+JQffPejEtBsLKlKeZW0NRxsSyFSgixo5Y9UP6s4EvrklcDrMgxKJyqD7F8mtabh/PRD
-	wNJ8tNxim4DGfO7jRvlJ85/U6YgPdP9dF6akGkyOoce4Y/YsbKrOuknI7pnJSYcIv43VWj8l7Yt
-	gx5c83OyZJSS/PcofLQT1EwPyclUq6zKRgkExK1rfqVBxxrm9WE9E0Zn5uFccdVrov/KT8gOpPe
-	tQkabb6+kMZuFh44nGPX+TSQfhUoIe0d+Hnb2gfNDZas3WeMbmGpGGk8buemmj6BoPhHREEnqWH
-	DoBPhqnH8rWpU
-X-Google-Smtp-Source: AGHT+IG16tqDojPL+XeCJmtx1xxJDRJtJG3aJPZ7aW8BzjkhrIBmcu1LO0uFQXtvozcari/BkARnXg==
-X-Received: by 2002:a05:6902:1005:b0:e96:cf40:97f2 with SMTP id 3f1490d57ef6-e98a5876670mr1305889276.50.1756539229870;
-        Sat, 30 Aug 2025 00:33:49 -0700 (PDT)
-Received: from illithid ([2600:1702:7cd0:e980::41])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e98ac57c06dsm80625276.26.2025.08.30.00.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 00:33:48 -0700 (PDT)
-Date: Sat, 30 Aug 2025 02:33:45 -0500
-From: "G. Branden Robinson" <g.branden.robinson@gmail.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-	Alejandro Colomar <alx@kernel.org>,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 4/4] man/man2/futex.2: Add a pointer to Linux'
- memory-barrier
-Message-ID: <20250830073345.3imuyvaluskxdjnc@illithid>
-References: <20250829160200.756194-1-bigeasy@linutronix.de>
- <20250829160200.756194-5-bigeasy@linutronix.de>
+        d=1e100.net; s=20230601; t=1756539278; x=1757144078;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/XKolNdOG4rWtnm/Z1Xm//IS1jzblLqTcVqQ5IMS/rM=;
+        b=Xf5a73ODzxbei+7O+5dJg1n7yQ/wp/QE7414BqFiW3hWsRwhrtN6uS/Am7lw1rRMr2
+         uEDlbTNy0qozDFXFh9nM3pFDEVun2rlgl45u1bArg1Mgpm0DRI7XvkwPlEOrpePFp905
+         L1kZhgXDDhwJJhccWnHLpJ0tvJc2YwmMPd3hAzkmYhZNbW86TKjeSsduUQ41l3j8N5C1
+         6TunitwGpA/uf3kTMj+20chwG0uk811QmWuemzVxnFvWLOysDV86Rp9dyGWgu3vTNdKc
+         //AEDx7Jx3jD7j1gfKf7TSetcGtZ26zTnmu/eMGnBc336pYkSdd+KESEG4ryADax52eh
+         1LTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyPX5IapynbjgKsoQds0JJnh4ZtK/76ugZZ6OingaymS6hUi6JpwzNWMMYEaJY3Pt5d45tCWzUtMQCIJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVbLp3O4oVdfMQIg/TU/5VBSLu/G4IdDtKuVrWTdneNvvpSvvs
+	Yc9WL7qQ4iAIgpgnX3V4pRRnrX0CqIEmX1zh2zNnJRugsp/yOqAe3iC1EMOhRI28xtf0tBTG6RA
+	OjvTMCGEQUWUrlUu0qGNm/jJtFzmS+wVcgMlcXOF/4A==
+X-Gm-Gg: ASbGncthuCV1567K02Uun3H38F1kQMzsU8aTic+PK+oGORfwspZ8ndwbRG3owLNawQA
+	flQnoLgPikMwc4tYW8Dt/T19ZbgyN5ENQJ7hXRmbJ2YwzPLI1yOfRBAnB+N29e5zb5JQrS7ClQX
+	f9FI/9oDnxTQRdSGbIZQ7s/eTBbqs8GRs4REyiH4Ul/2pE0OP6HhlcNE81WtRZx1I8nHtng++5t
+	uhSTA==
+X-Google-Smtp-Source: AGHT+IF+RtT0nHcRaStCokPpIqIxLujpZpjFFgu9P7ssG1Dbp9cdTPQGJvkbcXDD3qNhvrdS/Kj2NXgLvHLELse+VQw=
+X-Received: by 2002:a05:622a:4116:b0:4b2:ec43:3de4 with SMTP id
+ d75a77b69052e-4b31dcb27f5mr15037901cf.75.1756539278311; Sat, 30 Aug 2025
+ 00:34:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4x7pcxn567hblx56"
-Content-Disposition: inline
-In-Reply-To: <20250829160200.756194-5-bigeasy@linutronix.de>
+References: <20250830-drm-limit-infoframes-v3-0-32fcbec4634e@oss.qualcomm.com> <20250830-drm-limit-infoframes-v3-9-32fcbec4634e@oss.qualcomm.com>
+In-Reply-To: <20250830-drm-limit-infoframes-v3-9-32fcbec4634e@oss.qualcomm.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Sat, 30 Aug 2025 09:34:26 +0200
+X-Gm-Features: Ac12FXz1p7iZOdEEQR_vXRtXiF18jyko9t937NCSmf3jeVcnUDmrfFo9HX_W5zM
+Message-ID: <CAPj87rNMr-2ZeZ2Pqb5qG4Z-xtUyOVxbY635pw_PDEjVpd5-OQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/11] drm/connector: verify that HDMI connectors
+ support necessary InfoFrames
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Liu Ying <victor.liu@nxp.com>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+> +       if (!(supported_infoframes & DRM_CONNECTOR_INFOFRAME_VENDOR))
+> +               drm_info(dev, "HDMI conneector with no support for Vendor-Specific InfoFrame\n");
 
---4x7pcxn567hblx56
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 4/4] man/man2/futex.2: Add a pointer to Linux'
- memory-barrier
-MIME-Version: 1.0
-
-Hi Sebastian,
-
-At 2025-08-29T18:02:00+0200, Sebastian Andrzej Siewior wrote:
-> diff --git a/man/man2/futex.2 b/man/man2/futex.2
-> index 027e91b826bf1..fe4a239c3812c 100644
-> --- a/man/man2/futex.2
-> +++ b/man/man2/futex.2
-> @@ -84,16 +84,14 @@ on the same futex word.
->  .\"     would be sufficient? Or perhaps for this manual, "serialized" would
->  .\"     be sufficient, with a footnote regarding "totally ordered" and a
->  .\"     pointer to the memory-barrier documentation?
-> +Please see
-> +.IR https://docs.kernel.org/\:next/\:core-api/\:wrappers/\:memory-barriers.html
-> +for the definition of atomic operations and memory ordering.
->  Thus, the futex word is used to connect the synchronization in user space
->  with the implementation of blocking by the kernel.
->  Analogously to an atomic
-
-(not a gating/blocking suggestion)
-
-As with my previous comment, you might make the new text a hyperlink.
-
-+See the
-+.UR https://docs.kernel.org/\:next/\:core-api/\:wrappers/\:memory-barriers.html
-+Linux kernel's guide to atomic operations and memory ordering
-+.UE .
-
-Regards,
-Branden
-
---4x7pcxn567hblx56
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmiyqVkACgkQ0Z6cfXEm
-bc4zyg//aDLrwhMav405imVo14OkqNFF5c8VBXKgwUQyCFJr4XLLPNA+/OTOlH96
-mlJ3XDA31e3b8aSx2Nsp7GNy9/UBznTi0jshQ9SWsu6Q7GhAI9vvi+WZYI7QTejf
-KUy6ZBlZvwKI0GHelszKmyScnLoDW+/h3b1oaBQbiklqQYUzR43+MfbikSbLp/wj
-KIbh/lLJ5wW1Fop36dWBRrHyuJhqCHeEYi5tAUXSxjdUyVEzzGTNSMmwjvhbkajO
-VRLutVQ+s52Lnd3izxG9a/tg/y7reMyIOJJjwuKkdEeqZSQlBhtCRTf7ykhvcrjE
-OtVB11CTrDtEImyCsySOHxx2rEg8i0s+Mo6fxAq6K4VdDveICVGBpwLj8/AvN5Ks
-dUOcCiZMeP/7gMrY/m6slE8FgQhpBroKsfXDu9NlX4j9LE2TBPB/8saOIFelMx4O
-ElHfN8rDiJ6rT61Zj93dmQ04mUDgvio1FqnnNYZoRavm53WgKiFZV+BFhu/VnSip
-UmNwf3yH31e7OZEYdyj1fxeNm218gwHQU3s5FwO8/waytTqQddVQ4xsuDuYnqxR+
-jwUHNzueSFCWxd4FJANzTArrcYViYdnQxQGXf2neuOVDz3gSWjXVikTKcF5Z2Eh0
-T9Ho/y2fws/tUGiAZHn1AgCuAb9sde/M38KliUhN6zsLW9pUOZU=
-=pPdK
------END PGP SIGNATURE-----
-
---4x7pcxn567hblx56--
+'conneector'
 
