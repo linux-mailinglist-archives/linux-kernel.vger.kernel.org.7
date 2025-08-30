@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-792983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95DAB3CB2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:22:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421B5B3CB2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F2E1BA442F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00FC3BB70D
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829AB26E6F5;
-	Sat, 30 Aug 2025 13:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F9024A047;
+	Sat, 30 Aug 2025 13:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6n4yEMB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6+Y8Hz8"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21BC22156D;
-	Sat, 30 Aug 2025 13:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B502144D7;
+	Sat, 30 Aug 2025 13:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756560110; cv=none; b=k4Ns6vJuupE3wuMdPsTvEuEMgITU5H4aNvwVKHHbdHRSTw6TYVjzO2E0/KyqdBaWmL5g5jT0DQVspTpPkW94NYOFDKLhe6viFUaw/cUWqZm9BxE7DFkg0Lp9SO2ZxDi9WmzRiwcgdcY+0mbBDYBsE7iT5NYWzkzIzLyjS6GaVJo=
+	t=1756560261; cv=none; b=QEmTrUAYmChyp9c213L3GesusYdiEIXhZitwFFP4PmQAnE1gz5cNrjVbq/T5K4pNMUH1zDjkfu15bPpMpwn6/Z1Tg1vFrFACqSFeEuYsbbkylS5vbvxpG/D5p5FKIBwRuBUHxNGR8is1sGn9i5PiYRObz5+PO4k72p6TAbs/BYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756560110; c=relaxed/simple;
-	bh=l4IadiNZcNgKXErU6MWJI42mQuOgj2jAzFFFgUQQexM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lwMJ/y2IcYcFseSFaeg/c4j9PP2eSitud76nfyRRdYnxbhMiXtMwdkPF1aIPQ990FP9d4XAoKxX2oqsZ/TYItKogrm7pI4nexd/9+1skbUjKaI4+p8uV2PDY3Z5V9KJKJAJRDX1rtJNi1T/OXDmzx8OwZEYnhqklxyheA3AmEQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6n4yEMB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE41DC4CEEB;
-	Sat, 30 Aug 2025 13:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756560110;
-	bh=l4IadiNZcNgKXErU6MWJI42mQuOgj2jAzFFFgUQQexM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c6n4yEMB800VvVC0+hYV/RahCO4fFuRBOYRzl5Dt49mCAJr3yEH+1Hy9DR5mKkytD
-	 ramAbQ42UMai34/wj9jgLXTaSYvPH0i/yoGRb1TUD3FUi5BZ2epPJxmFEkea/zXIs7
-	 SMy9pM++5G6iZnwGHR6ojKk9prQ5R5OpQRrIlvY2dmU1LavxJrhzYrhGpPU2aAen6D
-	 k4B8xYenuScWRc8Zmt/FIlrGne+FMexFMxs77W3JjGhJOPNWaeSN8tWDuf3HxCAY//
-	 W6UiARiZq2jsFJ/rr2bM+6RjhNy931Uq3n4bo3C6XtSHVhu5cKCCPBrGVRWehJa4yi
-	 KqoxJ6Uaq2hcA==
-Message-ID: <4eee57c0-a2fb-4fa7-bafe-e3a41c8954bd@kernel.org>
-Date: Sat, 30 Aug 2025 15:21:46 +0200
+	s=arc-20240116; t=1756560261; c=relaxed/simple;
+	bh=v1S8PwCYxbPDEaSi9ebrVlh9Cc9cdjf1qti9Yi5A7ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NtLeXnDQkimBQqbllj78qOzVLwi/pwWz8bb+KUdwxs1v9NtrgYm2IHPSRvpDgVTsQYvSVlpLVusHBkS2DSnFn9LWsT5oWfPk2Cdf8BnsEbg73i6KBzhMO6MoXu52JYymp08gb/hv/AVGZG0pneoo0oYHDiDnqEJQvvXhds0tuhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6+Y8Hz8; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f6f7edf45so579220e87.2;
+        Sat, 30 Aug 2025 06:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756560258; x=1757165058; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WRR1X5lDkWRdj6f4lzCozikifP8gzwHC2QO/O204APA=;
+        b=m6+Y8Hz8ZdktXjk0j2lNRznyUfhJszSCOp5oGBwM5ovJjp4HRRyxqFmJDOabZd4QL0
+         79fYHJTVkzMa1apwvb8bvIJm37y7bp/HKFMYGj9GTMOJNOd8ioGYOe3Qb/T2+xngDXTR
+         27B+1Qi9gVXMF/SHXKKejVyuynvwYUPzpDewAY6mcGCLna6lVzqO5NWSo8A4Zaq9OOYu
+         uYPIvKZW92Iy3QV0B8E84xSOKq1jLb4M+CC1I+Z1s7xhXjt0u4xCUfMiKg7cB9rGi2qn
+         y8g23GRFmjEUbogn0OXZe0ijlZryURC3XzlMLiD8sQxb8lvAtD3XXF045uv6rSEIS9cH
+         7abg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756560258; x=1757165058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WRR1X5lDkWRdj6f4lzCozikifP8gzwHC2QO/O204APA=;
+        b=GGqx/LoD3i+Dzo4PgJV11Zq53cl6wD2BwKYg9dnPOQbA28PwHcApysfegXri4Onq0g
+         9fUC+T5OdvM8YHe4ZOM27UF4Mcsidko1wdkKXYUdoc3AEvDRAKAmQ7VCmhE1nwhNT/v2
+         Qay8OJAyBTGRAgECLAcFGhgWa83nDRJK63nLK4sn5IyLrz2cp5zZLlgKp5P0SWJNdjSE
+         JSbrRvxMGEBD7pR2CxD+N2812AoSC4/iYAQgCoqhW8EMFuM5XqYYnmAMLAuK7z3NVstF
+         WxJT7HpFhsxabFT+BCJmj1HN4r3xVhqJldYb3heyuNwW34WHeRfTiIJQbRqBi8DUF8XD
+         M0DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPO43rzw8xvYV5a3rI87wHpRvAL5p+HIz5Si5x909dDeXURcBhRyuk2h9M8cd08QinuLnf3h5SYaXIjhgq@vger.kernel.org, AJvYcCWcDfSVQ524wWZaY6Bsnv9FZ/6BY+ZzpCUf0cT1Os9UOehkFpr43GBwQ9sPpsdIhJhxYaseSqPx9vE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHci4Z54yK7eqpWjhg1DHKIs+unv0KPzAWjhX1ZtKnTxH3hpfS
+	LpWY0DDZMI4ybqx12BaGaXAh3ItwzHnY3bdwmJps6ZKOm8IuyoFXV4QIOSMMaw3ZVFVPqe/Pw/a
+	yxMBrBoMVkAJHea8FSLr0ETPNE5tQMcT+EO3p
+X-Gm-Gg: ASbGncuHMw8O5+uXVzfetJAxpfNvY6ln/jK/xbcSWl/kX/Np4J7sQGWr42otubohXQQ
+	uzSd4ORqltqOyrTriLFw+f13fmcJn0bntI4iGh665dX55N1m1v1LhyywFuqHc/EX0QsAEME9EKi
+	SEWZCEvlrFjOz0tTctmDg0OtOk4cIBVoKnO09aqMqq2p1tvvQQ93Ixyxkdavk7buoIeHJpB50gC
+	S59IPqqueFTp5aypmslIEw/vD/d5lJwyWagOeu0M7YYIEEu0JPt
+X-Google-Smtp-Source: AGHT+IHY+dztU/fvgeXUkQuh1oo2N8+Y4J1J9NKU3rw1ZWywfAgvZ/5f6SkE0cQZsiZzIzBuzWhFJOR/y/uQ38RTmKE=
+X-Received: by 2002:a05:651c:50e:b0:336:bc68:d29c with SMTP id
+ 38308e7fff4ca-336ca910440mr4561671fa.3.1756560257355; Sat, 30 Aug 2025
+ 06:24:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: Pinefeat cef168 lens control board
-To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>,
- jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250830111500.53169-1-asmirnou@pinefeat.co.uk>
- <20250830111500.53169-2-asmirnou@pinefeat.co.uk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250830111500.53169-2-asmirnou@pinefeat.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250830113502.83102-1-akshayaj.lkd@gmail.com> <CAHp75Vc6J+Qm4hsV=PJn9Oyfn5xr9SZLGMagHm9NdFrkk9Y_5A@mail.gmail.com>
+In-Reply-To: <CAHp75Vc6J+Qm4hsV=PJn9Oyfn5xr9SZLGMagHm9NdFrkk9Y_5A@mail.gmail.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Sat, 30 Aug 2025 18:54:05 +0530
+X-Gm-Features: Ac12FXw9iYlLGUmW6NRlKatRbg2atIdjgh0CQHtEvNtaZw_ZEHvUlOwAQzYs5Ug
+Message-ID: <CAE3SzaSYLFFRL4OuqUbk8J0dWCuxedCyGiX2_tJySG1FC=w95g@mail.gmail.com>
+Subject: Re: [PATCH v3] iio: light: ltr390: Implement runtime PM support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/08/2025 13:14, Aliaksandr Smirnou wrote:
-> Add the Device Tree schema and examples for the Pinefeat cef168 lens
-> control board. This board interfaces Canon EF & EF-S lenses with
-> non-Canon camera bodies, enabling electronic control of focus and
-> aperture via V4L2.
-> 
-> Power supply is derived from fixed supplies via connector or GPIO
-> header. Therefore, the driver does not manage any regulator, so
-> representing any supply in the binding is redundant.
-> 
-> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+Thanks for the speedy review Andy. Follow-up inline.
 
+On Sat, Aug 30, 2025 at 6:04=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Sat, Aug 30, 2025 at 2:35=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail=
+.com> wrote:
+> > @@ -27,6 +27,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/regmap.h>
+> > +#include <linux/pm_runtime.h>
+>
+> You missed my comment.
+Yeah, this got missed. Will address this.
 
-b4 diff '<20250830111500.53169-2-asmirnou@pinefeat.co.uk>'
-Grabbing thread from
-lore.kernel.org/all/20250830111500.53169-2-asmirnou@pinefeat.co.uk/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
----
-Analyzing 9 messages in the thread
-Could not find lower series to compare against.
+>
+> > +static int ltr390_write_event_config(struct iio_dev *indio_dev,
+> > +                               const struct iio_chan_spec *chan,
+> > +                               enum iio_event_type type,
+> > +                               enum iio_event_direction dir,
+> > +                               bool state)
+> > +{
+> > +       int ret;
+> > +       struct ltr390_data *data =3D iio_priv(indio_dev);
+> > +       struct device *dev =3D &data->client->dev;
+> > +
+> > +       guard(mutex)(&data->lock);
+> > +
+> > +       if (state && !data->irq_enabled) {
+> > +               ret =3D pm_runtime_resume_and_get(dev);
+> > +               if (ret < 0) {
+> > +                       dev_err(dev, "runtime PM failed to resume: %d\n=
+", ret);
+> > +                       return ret;
+> > +               }
+> > +               data->irq_enabled =3D true;
+> > +       }
+> > +
+> > +       ret =3D __ltr390_write_event_config(indio_dev, chan, type, dir,=
+ state);
+> > +
+> > +       if (!state && data->irq_enabled) {
+> > +               data->irq_enabled =3D false;
+> > +               pm_runtime_put_autosuspend(dev);
+> > +       }
+> > +
+> > +       return ret;
+> > +}
+>
+> This looks like overcomplicated and duplicate checks. Just make two
+> functions with and without IRQ enabling handling.
+>
+LTR390 only supports 1 event/interrupt which is toggled in this callback ba=
+sed
+on value provided to sysfs entry. There cannot be a version of this without=
+ IRQ
+handling. It is supposed to do IRQ handling only.
 
-You are not making it easier for us.
+Pseudo code of the said function will be something as follows:
+ltr390_write_event_config() {
+if (interrupt needs to be enabled && previously it was disabled)
+     pm_runtime_resume_and_get()
+do_actual_reg_writes()
+if (interrupt needs to be disabled && previously it was enabled)
+    pm_runtime_put_autosuspend().
+}
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+With the current function , we achieve the following objectives:
+1. idempotency in refcount change. Meaning if IRQ is already enabled and
+if someone enables it again, it will not increase the refcount, same goes f=
+or
+double disable case. This has been tested as well.
+2. Only if the new and previous config is different, then only the refcount=
+ will
+change.
+3. Adheres to previous comments received regarding checking return value
+of _get and ignoring that of _put.
 
-Best regards,
-Krzysztof
+I genuinely don't see any duplicate checks here. In addition, I feel the ab=
+ove
+function is fine from a simplification point of view and cannot be bifurcat=
+ed
+further.
+
+Although, if you could clarify what you mean by further bifurcation, I migh=
+t be
+able to connect with your thoughts.
+
+Thanks,
+Akshay
 
