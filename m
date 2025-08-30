@@ -1,69 +1,77 @@
-Return-Path: <linux-kernel+bounces-792595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB91B3C64F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:34:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B47B3C651
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 02:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AACA565B43
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:34:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 410D44E064B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0FA43AA4;
-	Sat, 30 Aug 2025 00:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3xeKX/o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D6354764;
+	Sat, 30 Aug 2025 00:36:15 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A1F1799F;
-	Sat, 30 Aug 2025 00:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725BA1388;
+	Sat, 30 Aug 2025 00:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756514056; cv=none; b=k8XnuCPvgkOO/PhfmeR2fWSN3EdWsh7vogttpjL3dQTIa5LmuOylaFMd3dw2OYtXZV+1Inye9lj3B2MIVvZYQBtBDAZAWRXJJs8ROiEsDFnyWvCbS+yJ40KkB0iH/I58LtMLS11RFgi4ozs0hqMjY/pPNzQFd2xlO67PYpslab0=
+	t=1756514174; cv=none; b=c0EjD/A32APWeXwK7yyiYgSoPdobKK3eLZ4JA5bz+X6HR3CR52qTyWXavZnP7UKTcIImI7dYvJoO/QIfn1jJyVn8LDhYSyIh3AxShJx10XZFmAB7yOSqBUneXM11itPrMzY4ork/+BxlzIn+Nja5bhPV4OCRFdODN3fcInaUTIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756514056; c=relaxed/simple;
-	bh=CGKuUnFLIgZQcIQRjehK7VdSIVKubM4b+zXerCXihrc=;
+	s=arc-20240116; t=1756514174; c=relaxed/simple;
+	bh=qsMti+LWhYucHDA3xzzk7LXoXUO9jYvItet2jyL2qNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GzxuoUq4fwIv9r2bRa704nUsxH67bwJmT3dUARQ4XxH4+U+dKTOKI1kwCs76WvDkKRCpItgIjRFTM1neRGo8S8IU7wYAq+JH8OedqJOh6kbT4zTB1lamP3zktFnWPjke4CHnBkxcLi3HTH/VxJndgdq4zViU2RfRzyBanFSLSyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3xeKX/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2D2C4CEF0;
-	Sat, 30 Aug 2025 00:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756514055;
-	bh=CGKuUnFLIgZQcIQRjehK7VdSIVKubM4b+zXerCXihrc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s3xeKX/oBi5t9Q1S6/8eq9nmxlf2jzimRN2vm3MVth0Apswa0mSPSEJpISRqlYJ+O
-	 lx9jmYDvF5wUNPXsGnPRcqW9jGt8Fl6pFhE78KDYoLAILYaJZwJYhAETRIdDy0PSGk
-	 V2Opm5uLwAiwbfXXBsNJlkTMQ5LVmwDJGVTXZ0loEGHbFHscxhQiUrb9rAaVmhsZIq
-	 5etA2tWEQi+Zi3SFD+9r+kIDLx2vmaGH3fEXoGiCLrIIFBw8GyNRcdUTdkdGvzqFRt
-	 5GTkuL+f8kqZEDynRMNsmtjAl4+4dDBG0FKXVBpC9KxkXTgOctUcLVsVouiScCCse2
-	 jOJUy4m4eN3Vw==
-Date: Fri, 29 Aug 2025 17:34:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
- <przemyslaw.kitszel@intel.com>, "andrew+netdev@lunn.ch"
- <andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "horms@kernel.org" <horms@kernel.org>,
- "sdf@fomichev.me" <sdf@fomichev.me>, "almasrymina@google.com"
- <almasrymina@google.com>, "asml.silence@gmail.com"
- <asml.silence@gmail.com>, "leitao@debian.org" <leitao@debian.org>,
- "kuniyu@google.com" <kuniyu@google.com>, "jiri@resnulli.us"
- <jiri@resnulli.us>, "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>,
- "Vecera, Ivan" <ivecera@redhat.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
- <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] net: add net-device TX clock source selection
- framework
-Message-ID: <20250829173414.329d8426@kernel.org>
-In-Reply-To: <SJ2PR11MB8452311927652BEDDAFDE8659B3AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
-References: <20250828164345.116097-1-arkadiusz.kubalewski@intel.com>
-	<20250828153157.6b0a975f@kernel.org>
-	<SJ2PR11MB8452311927652BEDDAFDE8659B3AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
+	 MIME-Version:Content-Type; b=ZqY7bCD47aexzr4KwRVPptmzR6//nSZndagbsv2Ri+FA75izKgfnRiNixANZOt3pkuofTucKmJ748pSDcfArGHEoV845bE4wEq8muOwGp/L7DHJ3uemnNxftNWAbmpb4RGkCq4m3v0lFu5DD9ktmDGtc+nVh8hJW5RVemP2N/jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 6A1E21606F0;
+	Sat, 30 Aug 2025 00:36:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 0A5D56000B;
+	Sat, 30 Aug 2025 00:36:03 +0000 (UTC)
+Date: Fri, 29 Aug 2025 20:36:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Steven Rostedt
+ <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250829203627.3bbb9c24@gandalf.local.home>
+In-Reply-To: <20250829194246.744c760b@gandalf.local.home>
+References: <20250828180300.591225320@kernel.org>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+	<20250829110639.1cfc5dcc@gandalf.local.home>
+	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
+	<20250829121900.0e79673c@gandalf.local.home>
+	<CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com>
+	<20250829124922.6826cfe6@gandalf.local.home>
+	<CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+	<6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
+	<CAHk-=wjgdKtBAAu10W04VTktRcgEMZu+92sf1PW-TV-cfZO3OQ@mail.gmail.com>
+	<20250829141142.3ffc8111@gandalf.local.home>
+	<CAHk-=wh8QVL4rb_17+6NfxW=AF-HS0WarMmq-nYm42akG0-Gbg@mail.gmail.com>
+	<20250829171855.64f2cbfc@gandalf.local.home>
+	<CAHk-=wj7rL47QetC+e70y7pgyH4v7Q2vcSZatRsCk+Z6urA3hw@mail.gmail.com>
+	<20250829190935.7e014820@gandalf.local.home>
+	<20250829194246.744c760b@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,50 +80,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qeeg9p3gxtqwn1yhdotjp5fxoqtn4meg
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 0A5D56000B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+xcImp8TxVi+CCl2dnC6hREgbekVcnl3c=
+X-HE-Tag: 1756514163-476374
+X-HE-Meta: U2FsdGVkX19n43wdPBIbkHhrdzMH6DataEPRK47xCyyx1UXXit2BgIP9Tq1W3JoMSrSuGFn1io2mRJDoO18d47VGNrFj3omXyhXloMxMIfcc/q9/QiwewOeQ1aXjc4T2l9U/kIpfL7LFyxVHQBV1LWDeVdTZUGESVVd8rKbliev4HcwhwSDRdIo9oif2LQaZ8R49/uH+9G5EGc94vRPBKjMhy3yrZWExB32gT6jqcNqKoHVVz4TKFrnBAGtqUWDF8VlQpQCGVbVJfru2N3s5ii+gLV2v8oxdl+oHdJylWEaBxrU/JriyRwUswYUpGqWLnKV9nb1mjSkCv0DBBW/M42f3Jevw78+w84AfHcdCCoaqLMnkvETo/0F1MgzcHhJAtAwkhQvGo5HC823tnUsnMfjuXSxF5ACI
 
-On Fri, 29 Aug 2025 07:49:46 +0000 Kubalewski, Arkadiusz wrote:
-> >From: Jakub Kicinski <kuba@kernel.org>
-> >Sent: Friday, August 29, 2025 12:32 AM
-> >
-> >On Thu, 28 Aug 2025 18:43:45 +0200 Arkadiusz Kubalewski wrote:  
-> >> Add support for user-space control over network device transmit clock
-> >> sources through a new extended netdevice netlink interface.
-> >> A network device may support multiple TX clock sources (OCXO, SyncE
-> >> reference, external reference clocks) which are critical for
-> >> time-sensitive networking applications and synchronization protocols.  
-> >
-> >how does this relate to the dpll pin in rtnetlink then?  
+On Fri, 29 Aug 2025 19:42:46 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+>    vma = NULL;
+>    hash = 0;
+>    foreach addr in callchain
+>      if (!vma || addr not in range of vma) {
+>        vma = vma_lookup(addr);
+>        hash = get_hash(vma);
+>      }
+>      callchain[i] = addr - offset;
+>      hash[i] = hash;
 > 
-> In general it doesn't directly. However we could see indirect relation
-> due to possible DPLL existence in the equation.
 > 
-> The rtnetlink pin was related to feeding the dpll with the signal,
-> here is the other way around, by feeding the phy TX of given interface
-> with user selected clock source signal.
+> I had that get_hash(vma) have something like:
 > 
-> Previously if our E810 EEC products with DPLL, all the ports had their
-> phy TX fed with the clock signal generated by DPLL.
-> For E830 the user is able to select if the signal is provided from: the
-> EEC DPLL(SyncE), provided externally(ext_ref), or OCXO.
 > 
-> I assume your suggestion to extend rtnetlink instead of netdev-netlink?
+>   u32 get_hash(vma) {
+>      unsigned long ptr = (unsigned long)vma->vm_file;
+>      u32 hash;
+> 
+>      /* Remove alignment */
+>      ptr >>= 3;
+>      hash = siphash_1u32((u32)ptr, &key);
 
-Yes, for sure, but also I'm a little worried about this new API
-duplicating the DPLL, just being more "shallow".
+Oh, this hash isn't that great, as it did appear to have collisions. But I
+saw in vsprintf() it has something like:
 
-What is the "synce" option for example? If I set the Tx clock to SyncE
-something is feeding it from another port, presumably selected by FW or
-some other tooling?
+#ifdef CONFIG_64BIT
+	return (u32)(unsigned long)siphash_1u64((u64)ptr, &key);
+#else
+	return (u32)siphash_1u32((u32)ptr, &key);
+#endif
 
-Similar on ext-ref, there has to be a DPLL somewhere in the path,
-in case reference goes away? We assume user knows what "ext-ref" means,
-it's not connected to any info within Linux, DPLL or PTP.
+Which for the 64 bit version, it uses all the bits to calculate the hash,
+and the resulting bottom 32 is rather a good spread.
 
-OXCO is just an oscillator on the board without a sync. What kind of
-XO it is likely an unnecessary detail in the context of "what reference
-drives the eth clock".
+> 
+>      if (lookup_hash(hash))
+>         return hash; // already saved
+> 
+>      // The above is the most common case and is quick.
+>      // Especially compared to vma_lookup() and the hash algorithm
+> 
+>      /* Slow but only happens when a new vma is discovered */
+>      trigger_event_that_maps_hash_to_file_data(hash, vma);
+> 
+>      /* Doesn't happen again for this hash value */
+>      save_hash(hash);
 
-All of these things may make perfect sense when you look at a
-particular product, but for a generic Linux kernel uAPI it does not
-feel very natural.
+So this basically creates the output of:
+
+       trace-cmd-1034    [003] .....   142.197674: <user stack unwind>
+cookie=300000004
+ =>  <000000000008f687> : 0x666220af
+ =>  <0000000000014560> : 0x88512fee
+ =>  <000000000001f94a> : 0x88512fee
+ =>  <000000000001fc9e> : 0x88512fee
+ =>  <000000000001fcfa> : 0x88512fee
+ =>  <000000000000ebae> : 0x88512fee
+ =>  <0000000000029ca8> : 0x666220af
+       trace-cmd-1034    [003] ...1.   142.198063: file_cache: hash=0x666220af path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1034    [003] ...1.   142.198093: file_cache: hash=0x88512fee path=/usr/local/bin/trace-cmd build_id={0x3f399e26,0xf9eb2d4d,0x475fa369,0xf5bb7eeb,0x6244ae85}
+
+
+Where the first instances of the vma with the values of 0x666220af and
+0x88512fee get printed, but from then on, they are not. That is, from then
+on, the lookup will return true, and no processing will take place.
+
+And periodically, I could clear the hash cache, so that all vmas get
+printed again. But this would be rate limited to not cause performance
+issues.
+
+
+-- Steve
 
