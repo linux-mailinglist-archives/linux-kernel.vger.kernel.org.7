@@ -1,164 +1,186 @@
-Return-Path: <linux-kernel+bounces-792952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AFDB3CAD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:45:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE9FB3CAD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 14:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAAC189B63C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:45:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203B55604E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 12:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757727C866;
-	Sat, 30 Aug 2025 12:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912CE279358;
+	Sat, 30 Aug 2025 12:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwsZyZ8m"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jCm2WXEu"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013001.outbound.protection.outlook.com [52.101.127.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCF5279359;
-	Sat, 30 Aug 2025 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756557917; cv=none; b=jaTH3LixxnthAkyde/0s2YobiCwjZiyRenokKAGbvdj5xkdjkf2J30cHe2CPfVsca1m7aIny41hKZ6HbwxB2cpMTbj6qOGxEEdiTGbpMpjSymFSGR7Qg55VaLwJblAm8I5t/Hbk4Rn//05rstJ6db8bge3Ltj30V3MeeRXZ5y+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756557917; c=relaxed/simple;
-	bh=5n0XllGsyWVL0XiuwmoPv6h1zeZ9O71p2tZRrUE4xUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T39MpXbPnOmQ+JMUY79HYBsvhNZcHJsyMgUYxTACNaUmUwQCZ87XonVdk6FR6qp82pN3tIDI0H1Mq3iqoiqwiYDy+xZ6uKNMzN/gJg8pknrsvKi3MYTnGC+mxsnRIGOH/aJ43eQnIoNR+HbdTQDGDT2yd6KOCTyPw0M2hyZEoOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwsZyZ8m; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aff0365277aso235025666b.1;
-        Sat, 30 Aug 2025 05:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756557913; x=1757162713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S4mHOLTdpQjV64dCdpdvjh2zgbsXrdAk0hsxcagQzCk=;
-        b=SwsZyZ8m+fsugtAVy2s+muvZh/4zRZdpWtZnmuM5vwRyRlCVQNhXaP8JuPGWBy/h01
-         AH/xVaL69ZIOqL5bXwTJNmAUNtG/MVEd8rPwD3CfFD6eVLr1hY8CMlmP/BJXkPufYj5U
-         INlIKnCor+KznvBz7Ok12Rx1rn2c2Yvpj31YyANt1AWgDdlHhM+dzp/WB+jphboRskDC
-         kJOfoJf7T4HOGo/+AjNefa3THP4clXu8i3vaT4FJeAqcqAmzubTR/uzGFoMF/TxrvHaQ
-         TaQcMtsUjYRJ4cNUq6HE76SJyRu9P2q30mmBaT9sY8kb+yJDooLEj29y3kByyPk+j2eS
-         vo5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756557913; x=1757162713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S4mHOLTdpQjV64dCdpdvjh2zgbsXrdAk0hsxcagQzCk=;
-        b=EUMqiLlBeHg8YfWM9HwPa67TDEgNuShqJ+IDNdSp9u4iKIZUU+lKgx5LSuZ9X+pQAH
-         iGucENVPoYETCdYMO/FJDooQff2gbbMFaA1Bu/DPce842hVfNpIhMJXkU0NquWeyMFB2
-         qdCOidEV1DsKmaAEtSACv4uoGjmMc4tM9B6GvMhsiyb2RIFUSJPRiQGIPo8GogaIX0Hk
-         6bLytgOzTP36mjrifwgCjQiLZ8M+oYs/KZC6wVqBs2Nz4hfZwPLTuvYUlgY14TD4RpSp
-         6oL0G5cMC4OxUdLQL5DcQPlL1rkYKASPd7sSKnYUWBD9nIts8WyJF+phVGIdnkxRnjrI
-         bWRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmJ0jMQTG/jV7/7+5eDHicRK2aQcWF6NXkRbq7FW6j5Vd92MKe1xUg4s2PHtYx6ADJQYHWH2MQ7I0=@vger.kernel.org, AJvYcCW8g7z3+Mhm2ueUyOucw20DxgDhCZxh3rv9VOaHyaAfE0N+r8SnqqXsn2wJKrpqrs8/hcfSYK/xaiSnrc4O@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhQ6Gu1Vp8Rh3yddbDeFTkhkiSoSeVG8gvGygbE61BaZG2Ee3/
-	4VT3i/3ioUPP2i+aEIDD6/VRRC+osdnanmAbu1F0pCuQ7b5kygDU2jC/m4yU6v4qPKWNswZapg3
-	mOefTnXNLxY+tgbcn31FBFhRJnPOleW0=
-X-Gm-Gg: ASbGncves7WO602x1C/gX2eW5zifpbIpHqaFHCvVKERDOnaMwmSydv56t0/tU/l7BRq
-	Ae291Ch9ODtU7fomudiR0qqVjNi1MUp40gYIazVkqexAb0verjPKWLF+bcm01aoMycorpuk2s8a
-	xRw3yrWn1O5iWRysq7AN6Q1pgenOhAl8pHeSkDSRk0PFnv+5WWYQ7ldtp0SqyoaKn7h5dUmXnFm
-	vil1EhGzkGTxEvKPg==
-X-Google-Smtp-Source: AGHT+IGsFhgIY8ckvcxhjCmKBpAVfWyQaIzUz1Ej2o2bODIrmlVBuwjq1/e2LgjpB9BvWnNiXU4luaj3RwC0TMstfhA=
-X-Received: by 2002:a17:906:4fca:b0:afe:ac57:f0be with SMTP id
- a640c23a62f3a-b010832f5famr244927066b.31.1756557913265; Sat, 30 Aug 2025
- 05:45:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F69E2356C7;
+	Sat, 30 Aug 2025 12:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756558042; cv=fail; b=m3QpH52foIXTUmTuAVHTCb7H9gGzfZuno7V5tIxtKStysSL7saeravc1xH9E0d1riZYMi+yDC0r8AJaE3AXG+w2/OMOOcIgMisdTAEctZxieQI8VJj+PYxa6F7CQ7LvjzUqglYwyypN4eB8yM3OJZz2fjq5hVgD72SzPbI7uMRA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756558042; c=relaxed/simple;
+	bh=S3l9V/Di5yS01kfwbrB8O/JJYZLhsPHiH7sCj6Dqnw0=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=k0NV1QRWagm3ysKUYkMcDtMqse2JolHAafq+pvDVFc97+3EAutUNaai6LXlA78ylLn3DpjISkmmfXbOsgsigQlonUR/bgWELPt1t9zGOybNY696R2G/mw6gWvmWo1dV9yk6xT2xtIj7CculfwmI+0XQgPfWYt2qjz8CZlMaV1pE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jCm2WXEu; arc=fail smtp.client-ip=52.101.127.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uMwOSnhPeUYG1caLCY6hg6yqHj8jMixBsw5vob6O/BOb68o0gc/wQar/UOM9uHsLP8QjrsQ7z8+PRRG625g1W30HHOxfDPlV7kG2eEEHpaXFo1vCiqtYkHI/mMwAUbSL7vEx56+xRpi39wYSyUSL5Tp4Y0Og1/Ve6Puj7aRcVhJJfn8Qr9pVbzSEnL8QGnac4m4UVJ9W3GLdXBJsLfRDKj/OaRSHdbam46xhmuehuwBVyzOqIkv3JZ3UXS/S7BO63AtsFcL/cubNbDnWXzZDGacIFdf3/ZahRTfU7mZhFjzEOLFGz5PJb+d8rKUNI1FeTeFOCjr0Hc8yzgKlAIij+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F07n9j/P7vHwoojB1r7IHCVCKOMhRLqygGLUHx61Arw=;
+ b=tfriyiqAvG/vPZybpDk1U37+RoKYnDKElZ3NW+Tq/yizf8R3UokoRMlea9RB4XHnuPEbgoRaNMFo2ozb7IqGBhV8c56rVpb4d+yEJgFvOuoTIBYXkIbeQzf5VvN4sF4L1snhZwhksOmvaCvK6ZLh8USZGVyK8kj/m2dzzWHGbAATdxVQTjks8v51moGu7/W5Ep195rqHQmX7L9k1e/ND0AI3B8T6ohzjI92LFMhz/e2qDLnSkFiRRmgQEsPy7GOQ9lenW+zFztXdTv71V13LZdDsdbgGOoCZsvioVI2xBOobs0BBzK0/MRa49OwwonqT41169RK3JNDiy0sNFrBpYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F07n9j/P7vHwoojB1r7IHCVCKOMhRLqygGLUHx61Arw=;
+ b=jCm2WXEu3nhcs/F6gthiPjzjhLMNIcmgPukrC5SShbQa9rOxZ9f5HSR8e/x9yPRpMCJvdsVujHFe1EjaLpt3mrAKy5Rw7uadJKIxPHnwseg4Nu0annYLCPSn3JxcJQ5UYYXU0VZxUWzU11MwedSgYcLPMuzmyLZVnFiJLSwtYWi7SMZn5rH6SpyiksCiBeKymcUGLJkiEetiJn95zKW3oiqWUbMJGmMcSyV/aP2RbuzpflonkN8bPlvkCY6WN03HG7uOziXKBw9QMGkfzp6iK67fOEJBdPhkw4jxI610yg02a2Cw28r07Xvtb7jBNqVFxgSE446Nv99vgHjGoiEShA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYSPR06MB6713.apcprd06.prod.outlook.com (2603:1096:400:479::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.21; Sat, 30 Aug 2025 12:47:15 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.021; Sat, 30 Aug 2025
+ 12:47:15 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fbdev: mb862xxfb: Use int type to store negative error codes
+Date: Sat, 30 Aug 2025 20:47:00 +0800
+Message-Id: <20250830124703.73732-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::14) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830115858.21477-1-gustavograzs@gmail.com> <20250830115858.21477-2-gustavograzs@gmail.com>
-In-Reply-To: <20250830115858.21477-2-gustavograzs@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 30 Aug 2025 15:44:37 +0300
-X-Gm-Features: Ac12FXykwZMzgTh5iaEYIPYpzP5j8F81w4Mfy3EWfPnqbplSS4lzltm54UzkkzQ
-Message-ID: <CAHp75Ve93UPiE=STPLiGzfipWUe0WeQsER5X50sKbkdMWDR4bQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] iio: imu: bmi270: add support for motion events
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: lanzano.alex@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYSPR06MB6713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e8d2c69-b236-4fef-e716-08dde7c358a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IIOf7jqpxUhql9HMVmP7XgMFJJcNzDfFUobUh0JU/hnffOw8u0tMTLLRiVur?=
+ =?us-ascii?Q?Vfuv/D4z44LefYWJQGOb4J15vui63aQc4lMORwXnqubWAvBjmRiVU5OVgePd?=
+ =?us-ascii?Q?duquzTySBQagPgfbeOBhg4YS7SCCnRfQJDT9kaBafUMkG5bCGwRkpFbOZcsP?=
+ =?us-ascii?Q?dDEkrP6/BpTb1IE7DpGJjV3D9PuwLq7KFYaEoQTJS/Qf9D4PXbVq5LRBNYQj?=
+ =?us-ascii?Q?XUUcuXHtfx1TNCiWHucE0qahr0JLnVKH6CXBRg0H6fNISWX8+Wm2W5OmJ0YW?=
+ =?us-ascii?Q?Pl/l5eexaTFXs/u/J3avjj/p16a6vuYqHsa8/jWMKOV98iriKtRXxtV1Auj3?=
+ =?us-ascii?Q?j1mi68xRh+wIPIVgfqJKqeo1Xh7jJ2viiPdNfLDpQd68P+HRdbiXW0sTHWEq?=
+ =?us-ascii?Q?EHtTUub7i0fCRmlGIl79pmtiHyg7uDdIr0bjP7OWi9DlF0UIme4ClNMpcwTP?=
+ =?us-ascii?Q?36u9iM5EkJ05G2nCC/lpVecAy004ZviVF6n5XFlpwb/Hc3P1GCyRlLpkj7iz?=
+ =?us-ascii?Q?LU8JN1v5YWxWG6JTlfNHO1XTGR7VpmPHE8vY98i2ra251C1iu5a2lxdQp1d2?=
+ =?us-ascii?Q?35Bl/bLDuHCz3G1O8fQVn6Fd4ElJEyHUgthTzlOcICIn5wnZ03ZY+MQWcNcU?=
+ =?us-ascii?Q?7hWjGjFdajglg51vQZvMesZmYekYP5XVrUVopnIqyX6U2jGEnLJf/ZP7eMzs?=
+ =?us-ascii?Q?XvnwL6O9VS8n6iCmywFHMoyKtMMLEyZfKwDUlwn7kCuztoQSRTYxzRZy5EVP?=
+ =?us-ascii?Q?vDRwwHKw3Pq5+lAOD3GZwhUUx0l4BDBIJo74K5Gl6/Tlolrz77J2XZ9OorUi?=
+ =?us-ascii?Q?+FI9dcOGRxkLrSMdfzlesYKDKcOpgzPdMyj7tK1wENjhddd3gTUAvrjCPosu?=
+ =?us-ascii?Q?u8cpBaVnB2+oMKzcYciBiBb3MhdG/hpp7XqLVUXgtJs0sDnui+OpemoiCgYz?=
+ =?us-ascii?Q?VCTJyCaK5pT7J3LcvbSsePsEN/ydWmmQSwNx+G8zghFA4OLeg3+bPuUn80ch?=
+ =?us-ascii?Q?hR0/PC8nzb+NDk95kipDBGoT6k3bAYscgz4ZC+69Ey2FmG+J+g0OF23brKa8?=
+ =?us-ascii?Q?7/P32MVT02WCfVTs86ENuicytlZKwbFArwFYewkUQeXJfPJae0gBkM2yclAu?=
+ =?us-ascii?Q?Hc4m4yxMsk71dos3qrWOQ3/GtAHIKGciY59/HzgOVfMAI2SeAO34tDYlM9SG?=
+ =?us-ascii?Q?yKzT/sis6Yy7DKdg40UrIu2b+mlorDvefZfbNxDXqVZ4l0BCRWayIhJSr3k5?=
+ =?us-ascii?Q?TeENFYtYYuSNUO0iUgOC4Ts1RIGRkZWyHiXnI97CsVErYJSLZrooTO7fUJCg?=
+ =?us-ascii?Q?4EZhMLD7yIU5aNrTj6jFi8/WaDJzqBL/Zuftd2q70E3OKNcuLG5dav4+bqlC?=
+ =?us-ascii?Q?9hey9PCYZLIU3TWzXZLdSZX50j/QwEuFTmviuGxxkgbcYTfNfOTHpTlPoV1h?=
+ =?us-ascii?Q?a/sMb2i5sGWbj6bnqLIHBg6JdY1gB1k+pKI/NUmisb57jjVZ0T1ErA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?90KA6FIpEx9nysPtEqD+gTn41tf8bz5ru2AtrEC9y55l7Md1XL2SsYDouw9n?=
+ =?us-ascii?Q?Z5ifFE95AS3gQ8sFjyW4f0dA8XaipNqN93I6TVpxlOAxIjAntW/McBdMu0jj?=
+ =?us-ascii?Q?B3CGJEG7TBH6lpum3U22vYUUcLXSnahpbLDkduepYXdnzS2IBRzfjpnd5dnE?=
+ =?us-ascii?Q?pYL+SzZUA55Jbm232lXmv8Gi5UawY9sq8IGv4zVsunyFloKgjOKTm/6KTcnl?=
+ =?us-ascii?Q?1k+uNClwHRzkiyTRacUqnI8FfSIswmCemPkqBx0biO7rubAZ7un6CSXtdfWl?=
+ =?us-ascii?Q?1AXR3qXc257yYgq5yCVT17RRh5URVV+wUgxUMhVziD8f66kxRwN+gVcq5hg2?=
+ =?us-ascii?Q?a2INQyIn2NILBgIMTr8r4sgIeD+cpYbnlJZX5+con10Og9wWZXEvecN0eqVT?=
+ =?us-ascii?Q?jC7U/S7SC6g8gbGAU23RjPED4u6lr3kDjTpl95QWl21GtmM8xr4GqCZsBREM?=
+ =?us-ascii?Q?e7p99RBmtp2vBmvRFXfWGVWeTfXaJoFQNjJU1jGhh5GYE6HjjD8KmjWjHzVd?=
+ =?us-ascii?Q?5YbxVa0HUI4yRqpwrOXLCQEMFDD6xS0LTO/gu+Y3EvNsE/J68IZghjamFiLU?=
+ =?us-ascii?Q?MqUf6VOirkK4op80aTaruOMpOsPX0g4oPmB/TXlSeHbjok++EMcCATQCs8YH?=
+ =?us-ascii?Q?WxD4ySW052otOAdc9032agh6o76nahhz1n0zvm42UiXS3LshTlFNHbMeglsq?=
+ =?us-ascii?Q?MmVtLeWcHXKXK6yaAzK24C2aT9GC8f6924H1TD0QyPQwdhz+SBjBaqXqB3n6?=
+ =?us-ascii?Q?/yTWPEJtB+XGVNLRlygBg70bQczFzRHMOpKR6IJy9jL9u+72N/X+ixUaGJSr?=
+ =?us-ascii?Q?7NDrSCj0vK6Gzr5DfoIw1Xixa0QtiLwkCa+zaB3y2r4j96C2aCoHTypOLYa4?=
+ =?us-ascii?Q?g/jqmQPVRug+4GNq0nyd9kEEBNtPVFpRd8eTDdIGDBYy1AQ6yTD5rhPaQuL1?=
+ =?us-ascii?Q?1TfcUWxiyojtesELX/UbrDT0mRrudkeJBA0YpZgvpNE43KjB4vUD6rbo0WyW?=
+ =?us-ascii?Q?d08iRuN7WeKcoh4bfEZif9OsMOOxm7CUba5r5HIDiuL3bDjPseqqqCSU1LWA?=
+ =?us-ascii?Q?uu37QM2gsBq7uf+uYR2ID97UBtYUy45Fhs/fC7b28D3fv9p6xli1gpyMHfOb?=
+ =?us-ascii?Q?AjAVdO68dBxUlObUbsvO3GdjZmaccLXDQBnjYv6sS8/6fMefOrOt4vX5SP75?=
+ =?us-ascii?Q?fUQ9lgzGERn/dV4qw3VE2KoqU8AJ19GjKzHTRD9uEiTf0H0AbF9jGXTzsYX+?=
+ =?us-ascii?Q?dR8Is22DiCrCZTUDn89xMzB3WDs0WaVLLU2uM1gWEoFbWqIZ/n5PH21YxqDx?=
+ =?us-ascii?Q?j78mTV2lwb5sr1FvO0T+dnl+/CMyTBFdOQ04f5MAPHjHlpLCY1oUfnOJdqs2?=
+ =?us-ascii?Q?kQUs+dYMCQq47JyMtomxx2b1lzrlLT+fwlB3JLzYr4448QJ36nZB1chiVjUB?=
+ =?us-ascii?Q?GpfwtpGbhAfX6MPXiUs/aKYbxA2anvpl/vmwbl1V2UaIUtfyVvLZCxxLlJcN?=
+ =?us-ascii?Q?HCuAt6evkiky1ssrwb97EcRhefivhnC0BiVD6d5iL1bjH2Lh3jK0NvIdliZN?=
+ =?us-ascii?Q?9mKr8GYAYET4rnUaLUpn2GS3AQ2sJppJtzfIhB+6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e8d2c69-b236-4fef-e716-08dde7c358a6
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2025 12:47:15.0147
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qyDN6r6mbqjXtemvXW0G6rRxzBzUhVvYpEH34bUIr61e5d30yw2oHWIqWKbWYz76tUEMK3N1X2q7mXnJ2nJZTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6713
 
-On Sat, Aug 30, 2025 at 2:58=E2=80=AFPM Gustavo Silva <gustavograzs@gmail.c=
-om> wrote:
->
-> Any-motion event can be enabled on a per-axis basis and triggers a
-> combined event when motion is detected on any axis.
->
-> No-motion event is triggered if the rate of change on all axes falls
-> below a specified threshold for a configurable duration. A fake channel
-> is used to report this event.
->
-> Threshold and duration can be configured from userspace.
+Change the 'ret' variable in of_platform_mb862xx_probe() from unsigned long
+to int, as it needs to store either negative error codes or zero.
 
-...
+Storing the negative error codes in unsigned type, doesn't cause an issue
+at runtime but can be confusing. Additionally, assigning negative error
+codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+flag is enabled.
 
-> +#define BMI270_INT_MICRO_TO_RAW(val, val2, scale) \
-> +       ((val) * (scale) + ((val2) * (scale)) / MEGA)
-> +#define BMI270_RAW_TO_MICRO(raw, scale) \
-> +       ((((raw) % (scale)) * MEGA) / scale)
+No effect on runtime.
 
-In the macro names "MICRO" in the implementation "MEGA", please make
-this consistent.
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ drivers/video/fbdev/mb862xx/mb862xxfbdrv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+index ade88e7bc760..676c6d3ccc12 100644
+--- a/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
++++ b/drivers/video/fbdev/mb862xx/mb862xxfbdrv.c
+@@ -674,7 +674,7 @@ static int of_platform_mb862xx_probe(struct platform_device *ofdev)
+ 	struct fb_info *info;
+ 	struct resource res;
+ 	resource_size_t res_size;
+-	unsigned long ret = -ENODEV;
++	int ret = -ENODEV;
+ 
+ 	if (of_address_to_resource(np, 0, &res)) {
+ 		dev_err(dev, "Invalid address\n");
+-- 
+2.34.1
 
-> +static ssize_t bmi270_show_accel_value_avail(struct device *dev,
-> +                                            struct device_attribute *att=
-r,
-> +                                            char *buf)
-> +{
-> +       struct iio_dev *indio_dev =3D dev_to_iio_dev(dev);
-> +       struct bmi270_data *data =3D iio_priv(indio_dev);
-> +       int ret, scale, uscale;
-> +       unsigned int step, max;
-> +
-> +       ret =3D bmi270_get_scale(data, IIO_ACCEL, &scale, &uscale);
-> +       if (ret)
-> +               return ret;
-> +
-> +       max =3D BMI270_G_MICRO_M_S_2 / uscale;
-> +       step =3D max / BMI270_MOTION_THRES_FULL_SCALE;
-> +
-> +       return sysfs_emit(buf, "[0 %u %u]\n", step, max);
-
-Do we need []? Is it common in IIO? The usual way in SW to have "$min
-$max $step" (see `seq` in shell, range() in Python and so on).
-
-> +}
-> +
-> +static IIO_DEVICE_ATTR(in_accel_value_available, 0444,
-> +                      bmi270_show_accel_value_avail, NULL, 0);
-
-IIO_DEVICE_ATTR_RO()
-
-...
-
-> +               return FIELD_GET(BMI270_INT_MAP_FEAT_STEP_CNT_WTRMRK_MSK,=
- regval) ?
-> +                                                                       1=
- : 0;
-
-Make it one line by replacing ternary with !! (double exclamation mark).
-
-...
-
-> +                       return FIELD_GET(BMI270_INT_MAP_FEAT_NOMOTION_MSK=
-,
-> +                                        regval) ? 1 : 0;
-
-Ditto.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
