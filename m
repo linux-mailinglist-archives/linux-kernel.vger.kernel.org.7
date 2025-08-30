@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-793130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA91B3CF04
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940FCB3CF07
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 21:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA9C7C50FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6727D560D0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E222DE6E1;
-	Sat, 30 Aug 2025 19:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFB62DE6E8;
+	Sat, 30 Aug 2025 19:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk56bp5O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbGC4VJl"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4A201266;
-	Sat, 30 Aug 2025 19:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86722A4F8
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756581993; cv=none; b=Nk92WI3ksDGde/TvWZJVNw9LuxaAB6JV+xsWL+I8+/rnXqLLORtPyvoQpzQwxRtkgfrvu8hQ+BTA8a8saek/V8zfIOhueUpLQS7TMHbBnw7GDNaK8E8t2ErF7BiqJQebTGFtLTv8njnQF4t4JnOWpnEJufIeHxHwShRREOLeWKk=
+	t=1756582109; cv=none; b=JvcYM7AYZ+QSNuqm/r64/ZchY0bFrzpXJYGnD8usuXXtj7pggZ9boTa57v+kIBgMzNMlAw14aYJoxxhO1UJ4811JWIqq72PRax/Krs2p6d037JxwZKekevU6NGiuj/Sb62SVOWj3QPYiard/WSLFhnfBnhM7CMuyBfYjj4Iks98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756581993; c=relaxed/simple;
-	bh=EFzZ/dRswnSMMyqhrChBf68AnBA7vwYE05vr7IlPs4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MXmlZNAu6ZOUEWXll1DK4uDUuw5o/JJvOl2/yYkAAWjey7F1buLgTvjtm0833igfIhfC1wtxS+aprZ+eL8arULaOXvKlgPBnhwHTsnrn223W8ZGnGTmEqaZiLHTv68ZskFAc+JIJpiXRXO29TQwqYCmHWoR8vUarAsogrk5tdRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk56bp5O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95053C4CEEB;
-	Sat, 30 Aug 2025 19:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756581992;
-	bh=EFzZ/dRswnSMMyqhrChBf68AnBA7vwYE05vr7IlPs4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dk56bp5OvrPV6ylIV3PBEDXzYUNWWy7DqgEv4CG7Z6kTGFtQonp+pxf8roItsuzKx
-	 xUtYwrRRH8iRLM3VY0eCwMaWxjtwDAYpnMp7MRuX8ShoCOq3MbnnhTJ7m3y6UuEi70
-	 4MXJbRRrsQIzWYv+WKJvprv/nmU5OubQj0dJ25Cqk8p1vWnLTHU5TlwHXIsdWeAyOo
-	 3dxovkrwfPr7O4ZJigPKlN39JgWV5R+u5UpRli/6SEWr0RPtYiV9XebXgs8A/c/ZVz
-	 r1tYoxpU1eOUSM9BF3W4SviXEj1ZPodWnjNXCiLA5Dep700Oi6IuSvjIdkg0dE6y22
-	 bms8kh3nAQhHQ==
-Date: Sat, 30 Aug 2025 21:25:10 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Brendan Jackman <jackmanb@google.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org,
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] .gitignore: ignore temporary files from 'bear'
-Message-ID: <aLNQFmgS2IcDbPmd@levanger>
-References: <20250827-master-v1-1-19f9f367219c@google.com>
- <20250829233824.GB1983886@ax162>
+	s=arc-20240116; t=1756582109; c=relaxed/simple;
+	bh=oJG/TVa5kFYA2BMVb6xJEfSPkTqtEo73EQX6Xp2xRS4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YxAw3+BbiQPbHE/+mxzuZhd+ihWGgfW8+bUvbFUNuTS8MLWKkOeU6nE12zdyOIeVriluzTBdzRbWZz8q+bvtrg3x+a2u7bO179WTqXUdRPdQ/88jsUv6mqdWFZ/6vughjjj6A97DOyM4Wr+9mTKC0QjeOSmVA7f9G8Bl8X0L4DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbGC4VJl; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70ddbb81734so42333286d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 12:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756582107; x=1757186907; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BcyZ5Cw0uBkTku0BAxgJDrjdWKucoWJcYDqBud/89tA=;
+        b=TbGC4VJlHs+oEVf87qRMnuja/caligV+DoTVmOp1XtEJWBuAjMrpI6B6PNMB5tv3zA
+         HhflhtkZYzLrBuEEoVP7TkNCBrp8eeMxlkEM0SiZEOBNwuzoeO0z+hDX3kWTTkmjpUBq
+         QoNqn7tZqNygWlnfmsEgR7of3rJsmeBGBHLS8JWSD78VxSRcqyUJZMnIPD/taWldmJ53
+         lLlqpgPrJ/v2xaNB+VQ5GMpAKHV5D9Bl+/Dk9I8R6QYuOtnfu9RSQngrmduS4NK6u+H/
+         N25nCjl9qXXhQ0tWT3Yvm2kTrp0V69IDzorNXu/o2w+0CECS38aiJS0/8ulH/ClRHqwz
+         dlOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756582107; x=1757186907;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BcyZ5Cw0uBkTku0BAxgJDrjdWKucoWJcYDqBud/89tA=;
+        b=g7WVnOTvYA+qhjn/XcXO2tzgnu8y5lMqMFr3Isorce918RnXgXLKLf9Hd913W4pBzJ
+         /iC3tgkKIucxNewsCQPiMPsApvuBFLEUbTP2ZSQRbD20zLMLKGMNFE4N8QVxysozjDnK
+         4L1mrpObyGyJldDpES1+DBTT7H1cd7gvAcnSQq10UebClUaxRNrvJUmMxKv+oY/XAiHT
+         JPAcTEaYR9W8r6hOiFAbJNHjUy7oLLPz2D8OUi11i9hy2g8PwBMWPup1wfZQN+bKKhfQ
+         aBHO4G/QTswdIO+1TlLqo24L/m/WgKAzY628PbMmMXgkpZdu4ccE3ZCcpc/S6nt922ZQ
+         O7OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8rD3iKmCN+f7x5LR4+EXDPEC+uXQQQ3nwVU6X7WloOaAmBM/7fxn8YOZXfW4XcF4BaUOiMpUBoHLe3iY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM5y0GoWWCJPEeM4VIeXqbx4zr3P49Bwq2FAwUKGcel0akwc9e
+	OTIBMr9ROJnmmtZnMvMMFFlNZ9MEMyhRuQVzzRgH8FIdfndlwvu/QkE=
+X-Gm-Gg: ASbGnct1nW/S/rzcwy2FGM/Jhj7R9V1JanNldkxq64pH47cAO4V6qrOcbVD0Oc2iMMu
+	WUAFp7CW6dN7yFcf+DSIQOsPSE7qjtDAQvXtQMwpyfOLzr2sMkv5dSwEZouzdkY2aB4UKzaMzb5
+	eTefEA/Q2PcOECaVFUV9/Qigzz4Uk3Ko+XmKyPoNvv2UdNdgXpDoAb1Zodiq1lB/d9Im40Xu1KJ
+	nJ6EBI6SSfIVUfklzL8nePW/H+/mRefR/NCrjBnLxEzs4wB8lVNCtlX0UN4rZzDqCRBfrxCZekb
+	n3xyhTbWE+ZFTtsAbGS0syEJvGp7KRNzpDsJwyEk7cx+sZAyvtoWXeoZnN1YgS143WSRC11ai75
+	bzumoIStRuUyYRY6BLRo224FVse1fDPA8SD2fia6M/pSfuQ==
+X-Google-Smtp-Source: AGHT+IET4GpYNiH2XSNfnZvQw6H7+IwVhdbLOphp0vRWo+P6A+YSOpnvah9xcSkQU/IODYTPxAijrg==
+X-Received: by 2002:a05:6214:2686:b0:70d:ef96:b38c with SMTP id 6a1803df08f44-70fac964655mr35601036d6.67.1756582107180;
+        Sat, 30 Aug 2025 12:28:27 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:68e:c28d:1818:9595:da56:53b9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb26016cfsm10216166d6.17.2025.08.30.12.28.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 12:28:26 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: linux@armlinux.org.uk
+Cc: ebiggers@kernel.org,
+	arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH] ARM: defconfig: pxa: Remove duplicate CONFIG_USB_GPIO_VBUS entry
+Date: Sat, 30 Aug 2025 21:27:45 +0200
+Message-Id: <20250830192745.206491-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829233824.GB1983886@ax162>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 04:38:24PM -0700, Nathan Chancellor wrote:
-> Hi Brendan,
-> 
-> On Wed, Aug 27, 2025 at 08:59:43AM +0000, Brendan Jackman wrote:
-> > Bear [0] is a tool for generating compile_commands.json. For Kbuild,
-> > Bear is not useful, since Kbuild already generates the necessary info
-> > and that can be converted to compile_commands.json by
-> > gen_compile_commads.py.
-> > 
-> > However, for code in tools/, it's handy. For example, this command
-> > updates compile_commands.json so that clangd code navigation will also
-> > work for the VMA unit tests:
-> > 
-> > 	bear --append -- make -C tools/testing/vma -j
-> > 
-> > Bear generates some temporary files. These are usually deleted again
-> > but having them show up ephemerally confuses tools that trigger
-> > recompilation on source code changes. Ignore them in Git so that these
-> > tools can tell they aren't source code.
-> > 
-> > [0]: https://github.com/rizsotto/Bear
-> > 
-> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
-> 
-> We can likely take this via the Kbuild tree. I do wonder if this would
-> be better in a tools/.gitignore file since bear is really only of use
-> there but I am not sure it matters much.
+The pxa_defconfig file defines CONFIG_USB_GPIO_VBUS twice, first as
+built-in ('y') and then as a module ('m'). The kconfig system correctly
+uses the last definition, but the duplication is confusing.
 
-yeah, please consider using tools/.gitignore.  Please have a look at
-this thread about ignoring files from "external" tools:
+Remove the obsolete configuration to resolve the ambiguity and clean
+up the configuration.
 
-https://lore.kernel.org/lkml/CAHk-=wiJHMje8cpiTajqrLrM23wZK0SWetuK1Bd67c0OGM_BzQ@mail.gmail.com/
+Fixes: 2002f3968714 ("ARM: refresh defconfig files")
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+---
+ arch/arm/configs/pxa_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-If using tools/.gitignore is not possible, I think the best way for
-ignoring files that are not natively related to kernel build tools is to 
-update the local ~/.config/git/ignore, as suggested in
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index 1a80602c1..70489f355 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -498,7 +498,6 @@ CONFIG_USB_LEGOTOWER=m
+ CONFIG_USB_LCD=m
+ CONFIG_USB_CYTHERM=m
+ CONFIG_USB_IDMOUSE=m
+-CONFIG_USB_GPIO_VBUS=y
+ CONFIG_USB_GPIO_VBUS=m
+ CONFIG_USB_ISP1301=m
+ CONFIG_USB_GADGET=m
+-- 
+2.39.5
 
-https://lore.kernel.org/lkml/CAK7LNAQas0cK7pgi72tYC3yU=ZkQxnr41YYW1mXd-sWiHtG+UA@mail.gmail.com/
-
-compare to:
-
-https://docs.github.com/en/get-started/git-basics/ignoring-files#configuring-ignored-files-for-all-repositories-on-your-computer
-
-Kind regards,
-Nicolas
 
