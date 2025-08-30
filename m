@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-792850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E1DB3C9BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:18:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23940B3C9BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DB6A25930
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81AD178164
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCEC25C713;
-	Sat, 30 Aug 2025 09:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AF625C6FF;
+	Sat, 30 Aug 2025 09:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwodF7OH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPwM9+0s"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9682A230BCC;
-	Sat, 30 Aug 2025 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73CA2580E2;
+	Sat, 30 Aug 2025 09:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756545500; cv=none; b=CjlSKNHKL4Dj5EQSGriF7TzOU+UWihi2dZ9Vpvi8seGSb7uQ5D509JGptGQ52Qb2vYB0EUpAIiUWwJRYrTr9fE89RXUl88MSanINW8p0dE00zWO5xHZ6s25kwtoRR/aeD70UpO67h4g5N0opGvheDSvn3PwzrVHE1C1RblKFGVo=
+	t=1756545546; cv=none; b=dZT/GKg3wKGBVSqHuiBsZC2r7Gc0Bx4E2xKiCxaIO0CScMxB7GvPg7hABKzWNjW+PVX9j35mpzHgLJ2P5LlAzoeDpPvJooWkHTjG2jOn6FP81mFZl+EskO8QZqWCM5gQ3864LzMIvfcFtfRgPuQmF/GK8Rr+xb9YwiK69zO9jPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756545500; c=relaxed/simple;
-	bh=6Dsuecx+6uYfPydtCR6KibWWC7zXcfy10I2x2UJtlmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q91oavZgNcXsbxfJTO6bZmk7+AjZsHFZsPA6yH+1a5SABhutDMz25+gmjjVMEKLtyQQ5ns9vBZ3yry7hbP3YMK9OMC4sUtfA+ulaLzNFsrrLPYKq1hpB/oOVi3G0pm6VwU+LAGtiRhUPCrmmeYKxfaHqv9FYTQp5EUrg8jJD1Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwodF7OH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A983C4CEF5;
-	Sat, 30 Aug 2025 09:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756545499;
-	bh=6Dsuecx+6uYfPydtCR6KibWWC7zXcfy10I2x2UJtlmA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZwodF7OHxqaoiT+5BKbrvFLSLRCq8UjMwDV3Lv5TQ70hvU7Jkv90uBXoX9YoMchKd
-	 PfErxLnKl01iyukoQKeMor/g86yCp2QYtvbJtfLu3BvDcLo9lRfUmHJ71q9iWrdj3k
-	 sIUZeA+bOhiRVQR+C0aeNmtKem6VGtDLI6OU5TcXDfm7kUeG83G7Gp2c9wXvg2E6Yn
-	 JJ1UaQv4QKHoeLlmfFzSQumG5s71CHAP95iVAou9GnJ60N1J6VRHHigso1JfDUnzw3
-	 iNjkpbil2mB44wrENc//UkOjmOjYZcZa7t2B7tbdj3xoXtUeWNgT/yaBLvQKudMMv0
-	 wnbRIlJRhZNOg==
-Message-ID: <47ddc58b-02d6-42e7-83f8-09bb80d73894@kernel.org>
-Date: Sat, 30 Aug 2025 11:18:14 +0200
+	s=arc-20240116; t=1756545546; c=relaxed/simple;
+	bh=wjQj2NN723j/SAiLZdQVT4vv0CxVrRicn94T4FBYcMY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FeejSKSJ5DvRJS3Kq22MvZW7SnFNr03efEWmIMgdRyp6O0nDn8RGO7v7DBeo3uz6k0mOmKNYFb3t6kfluJF9AH/0XGfGw09MzrASMmB3KB1o6Rq8u3czxSMrpY+dsGdjuephmF7LkMlpMr+daO81MEPtEU1IWE+RtvOW5UG3SKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPwM9+0s; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24879ed7c17so21652165ad.1;
+        Sat, 30 Aug 2025 02:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756545544; x=1757150344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=swuwTOihjSF334nInAXr6n8SBY2/7NVKEbQuAYBhpKU=;
+        b=aPwM9+0soMkycw9lSE0c4wf6dAoMucyerGYp5Bt/yxWPd1oCtdYWGQrTZzYLkZUIne
+         6JZzADY57lkMBVU1Oft/HFEEyQ1JSUMThiV90ZknK+F+MzlW2x7JFs7Tr/Shw5ryg+Fb
+         SAEku2VVsu4xWKUqGg1Ivpkx8vhVSnhLk3xxeJ40aqMDNVKlCYOGVu5H6lmih2ovmd1S
+         MNDW5kyZKS3/wz3DxUWVl8NuBL5lwk8d/zm1UxlUpgN7W5Bk0XY6lmlA25EV+YAOn87n
+         va6pmvXbxk9ejysLsQ2iCfVERRZn2nN9daTBityJbWSNc5qiY1V++vY3VhdI8tfwmh5n
+         6SFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756545544; x=1757150344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=swuwTOihjSF334nInAXr6n8SBY2/7NVKEbQuAYBhpKU=;
+        b=YwRiZjP7r626YW4hfx96GFURXUlN8s+cILUmO7SoOQbyqu7w25SgwUiqI9fGhXGCqb
+         QMLC26t3opZbDDoLrflgJkmwJjNnCN+QcXsSHez6RsmmFvQceUHQStFzxdptT5wBtYdp
+         ORxP6f78BLqjqZlxoo5CXlDwx95lE+ZUXdfJRp9Fncz5w0xUaolp5g0xQ8bNfdWMfFk6
+         pEeCkVrQfyDYelyEY8AmnVeVpvHmuNQPaBV4BqXfnSJ5ANi9BP9Qbk88ZDgFcRwGt6nE
+         9sAQnBHbErC6ydpJ3vmKWWfMX+sIQY8yx5ogAL2VG4Njg+khZfil5cfPaNVuTvjzIZij
+         bGxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgG+owAC9Q+yvrwCVSn6nq6pAjqhOTPkeS0umh24WDmGz9bUUpYWuQsJA03cVQwloaq220MI77PYJz0YI=@vger.kernel.org, AJvYcCWi3YD1jds+hqVyf+g8BRolH0d5yYQVROx+eqBPaoW7vS6R8x11b7PD4BfslM8Ky/aVfQV9Mcth@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBwJVGfYoX6fX/n88u7TyueLp42Zud/jGGl/mfp6xsKTRtFMyf
+	A+H8ScL0AVIQgJYKIeEt2bmReZIxqlaoATI1+r3xuVI7onVbMl1Hc713
+X-Gm-Gg: ASbGncuO2sM+/8Azmfk8NeQ8m75wItnHJSFniKuwIpxNZsB0ELqpHQPOEhvsIYQdZ7m
+	NEB5rPfdTX4O63w53LxX7Ivfy6U9HhzwZtBgpXfClRnPy/LJnf9KwUWSh2bCSYcylJnQkYjtyVE
+	wi0ZqYiGR29wbReVFzz3WKLmTN6d1Jj7xmyGcHVc/MfmOLK3K8Psej7Wy0RmVJiNvEaWOgJJ7j+
+	zrhhIfRl/6gCdT1LvdhgnYNwIyBhmIHazwy9ZRuKpcOTF7OGZ1//nPKQEbaRg2z6eTGscrlGSHB
+	y+jggf/Vhp3WhMGaC6s57qF6TgcicIEbWCvo1nJMPk2lXeco78nRq8shtAsYDUFAIBgowsnZidG
+	NMGZeSaW33WNH2J36ZxPYIdyNfqK3eLUeTvFHd2RxrjPTonnXM8kJnIuNrye7UvqJ/U7MG2DjWm
+	HXNK4Pmyd9pXVchmYD9UKe+3EQsFgIWU/7Ix2edwuaP3rCOOZx7knxJF8=
+X-Google-Smtp-Source: AGHT+IHVFhMFKNWmGcs+78QWdioehssK2kGmk59gfKYn3K0XRhTFqEdm6P/MAWoZT+AMqqLbj+C10Q==
+X-Received: by 2002:a17:902:f612:b0:249:2360:6af2 with SMTP id d9443c01a7336-249448db16bmr19943185ad.16.1756545544271;
+        Sat, 30 Aug 2025 02:19:04 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.164])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24903726d20sm46606905ad.36.2025.08.30.02.18.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 02:19:03 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] net: mvpp2: Fix refcount leak in mvpp2_use_acpi_compat_mode
+Date: Sat, 30 Aug 2025 17:18:54 +0800
+Message-Id: <20250830091854.2111062-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] clk: samsung: exynos990: update CLK_NR_TOP for new
- IDs clocks
-To: Denzeel Oliva <wachiturroxd150@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250825-cmu-top-v4-0-71d783680529@gmail.com>
- <20250825-cmu-top-v4-3-71d783680529@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250825-cmu-top-v4-3-71d783680529@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/08/2025 07:51, Denzeel Oliva wrote:
-> The new clock IDs have been added and put last,
-> it is necessary to change.
-> 
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos990.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-> index 105ba0363..9fcdad7cc 100644
-> --- a/drivers/clk/samsung/clk-exynos990.c
-> +++ b/drivers/clk/samsung/clk-exynos990.c
-> @@ -17,7 +17,7 @@
->  #include "clk-pll.h"
->  
->  /* NOTE: Must be equal to the last clock ID increased by one */
-> -#define CLKS_NR_TOP (CLK_GOUT_CMU_VRA_BUS + 1)
-> +#define CLKS_NR_TOP (CLK_DOUT_CMU_CLK_CMUREF + 1)
+The function calls fwnode_get_named_child_node()
+to check for a "fixed-link" child.
+It did not release the reference if present, causing a refcount leak.
 
-This belongs to the driver patch introducing these new clocks. Such
-change alone makes no sense or commit msg really does not explain issue
-being fixed here.
+Fixes: dfce1bab8fdc ("net: mvpp2: enable using phylink with ACPI")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 8ebb985d2573..1faed2ec3f4f 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -6801,12 +6801,22 @@ static void mvpp2_acpi_start(struct mvpp2_port *port)
+  */
+ static bool mvpp2_use_acpi_compat_mode(struct fwnode_handle *port_fwnode)
+ {
++	struct fwnode_handle *fixed_link;
++
+ 	if (!is_acpi_node(port_fwnode))
+ 		return false;
+ 
+-	return (!fwnode_property_present(port_fwnode, "phy-handle") &&
+-		!fwnode_property_present(port_fwnode, "managed") &&
+-		!fwnode_get_named_child_node(port_fwnode, "fixed-link"));
++	if (fwnode_property_present(port_fwnode, "phy-handle") ||
++	    fwnode_property_present(port_fwnode, "managed"))
++		return false;
++
++	fixed_link = fwnode_get_named_child_node(port_fwnode, "fixed-link");
++	if (fixed_link) {
++		fwnode_handle_put(fixed_link);
++		return false;
++	}
++
++	return true;
+ }
+ 
+ /* Ports initialization */
+-- 
+2.35.1
+
 
