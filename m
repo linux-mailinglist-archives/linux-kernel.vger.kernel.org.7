@@ -1,221 +1,671 @@
-Return-Path: <linux-kernel+bounces-792757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16692B3C88D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD9EB3C893
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3809A1C222B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 06:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D1A189F273
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273BF265CC0;
-	Sat, 30 Aug 2025 06:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7056E27A929;
+	Sat, 30 Aug 2025 07:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="aL4WM5fm"
-Received: from mail3-167.sinamail.sina.com.cn (mail3-167.sinamail.sina.com.cn [202.108.3.167])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXe5Xq28"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0758B1E9B19
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 06:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA8E22ACFA;
+	Sat, 30 Aug 2025 07:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756537016; cv=none; b=aOhF0PcuE17dShDpesTnjwwDGKTMszX+Qc0y9PIg4WxU6TZJM+tHkexgcbo4lajSQw7ntLyHzQS+CYVhpPDRJMAi7C5U+pldSMN5Sl36jPsJvCiM0nHRo+SG5OQUxW8ypHI9EohxfEhwRV6EWjI68inPDf5hQ5eez6jBiojMJh8=
+	t=1756537209; cv=none; b=tvOUXR+hK32d5TrJEuY7Kbt7L6cAVATGa+qniGxxaZS4MqwZGIaZZ45ODnj9TufYtLWIrJRfiBFMtNsI+EtywUwakkoeqKgsBRhieM6AeMXFm6TNkMFMqKWzdzF3hKfSN7A8QxtS2fhEHFB9xAWrAdp3E1q5q8g5wXiy2kEWUpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756537016; c=relaxed/simple;
-	bh=V3cnc9hI/6UiM1oI/NUYRsSil2t+fj8Q5C3+rCvdVhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IhGmQjXOlV38HMVtep0eXQ2zcnKmV6f/i/6MuL+GmXXByigfGq3jZrbjxZuHw9N0m//JHmvHp5aYKT/dGbDeyTgfZ7MMVUGTLExQIxoGT0tRrohfnetuzFIjxQwst14UoHXQMVgND+o26Ft5YOLOsRFFX6VWemO0gehvh7RqikE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=aL4WM5fm; arc=none smtp.client-ip=202.108.3.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756537012;
-	bh=yAmid1wsjz6RTb2i6sBJHnMR9Ftn7n4Ok8kaUgF7zz4=;
-	h=From:Subject:Date:Message-ID;
-	b=aL4WM5fmaVqwKP0fvFXIHRYQ6GDLedSu66vaG6TLwYqHThPa/a8mH0WvEDdP+HOMI
-	 2UykX3IkHy/tKZ3k9AfbOTPzKIfx/6hc9sob4Mboz8kgnCzWT/HGQkinkT1lpjiR/x
-	 jJ60vUefhQHRZ5hpXXtZrsWC4hXGLHcwxtEbBCkw=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68B2A0AF00002511; Sat, 30 Aug 2025 14:56:48 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7084846685059
-X-SMAIL-UIID: A6FAEFE71B924319A6F4B3787D874418-20250830-145648-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
-Date: Sat, 30 Aug 2025 14:56:37 +0800
-Message-ID: <20250830065638.6116-1-hdanton@sina.com>
-In-Reply-To: <68b269e9.a00a0220.1337b0.001f.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756537209; c=relaxed/simple;
+	bh=SPgIy7oUucbrmZ+S1ARRKS/UEnUY/ohEYYI/F3/xYJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exZgx+vA4XJcXntQcdtvqj6cGHDfdkLoXks2LgJRDujL886kGRVhLl60b+oBFkJ8lspOBqExcq4i0RbGOo9Zl7ZvF+V9JKiQjtJZ8WyYxXdcxSBFkTots6/iA39PcwFfJ1KqPxbFHDUTJCm+lrQncpT60cvRVahf/41B9ky2bQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXe5Xq28; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D848C4CEEB;
+	Sat, 30 Aug 2025 07:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756537208;
+	bh=SPgIy7oUucbrmZ+S1ARRKS/UEnUY/ohEYYI/F3/xYJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OXe5Xq288p4UvOphSgKjt/UlKxTp2+trg1t4fVwX34H8F3oNR0gn52A0R/9t+DwG3
+	 FjvW9pDTp5LgOEzZj5TEui8U0W/sz+bNaRwNXH+HSlmlf9gbv04NeR0pavvH3vw9Zk
+	 44Ua9F0zsSjZ1jXZvBa4NDDOE/DjhYUZWe632xLEZrBukWBvZ93Vkht3SXhbC4xxBt
+	 A4VOf5yaSHEpcB+hkqTvhQRd+y6zpdpaODnQsjo0lT9OBlXByHPiuu+HDjs1PRUwC8
+	 nZtA7/8AWJOorNoo3Vifg/EuDRfUUtsnvVXZ/o4/ULtuBwpGExixkkz/8R59wR6xSw
+	 vTxPH9RWLFE1g==
+Date: Sat, 30 Aug 2025 12:29:57 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
 
-> Date: Fri, 29 Aug 2025 20:03:05 -0700
-> Hello,
+On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> possible deadlock in __snd_pcm_lib_xfer
+> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> only as a root complex, with a single-lane (x1) configuration. The
+> controller includes Type 1 configuration registers, as well as IP
+> specific registers (called AXI registers) required for various adjustments.
 > 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> syzkaller #0 Not tainted
-> ------------------------------------------------------
-> syz.0.46/6843 is trying to acquire lock:
-> ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-> ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
+> Hardware manual can be downloaded from the address in the "Link" section.
+> The following steps should be followed to access the manual:
+> 1/ Click the "User Manual" button
+> 2/ Click "Confirm"; this will start downloading an archive
+> 3/ Open the downloaded archive
+> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> 5/ Open the file r01uh1014ej*-rzg3s.pdf
 > 
-Given softirq_ctrl is percpu, this report is false positive.
+> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
 
+[...]
 
-> but task is already holding lock:
-> ffff88814ccb7150 (&group->lock#2){+.+.}-{3:3}, at: __snd_pcm_lib_xfer+0x386/0x1ce0 sound/core/pcm_lib.c:2319
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&group->lock#2){+.+.}-{3:3}:
->        lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
->        rt_spin_lock+0x88/0x2c0 kernel/locking/spinlock_rt.c:56
->        spin_lock include/linux/spinlock_rt.h:44 [inline]
->        _snd_pcm_stream_lock_irqsave+0x7c/0xa0 sound/core/pcm_native.c:171
->        class_pcm_stream_lock_irqsave_constructor include/sound/pcm.h:682 [inline]
->        snd_pcm_period_elapsed+0x1e/0x80 sound/core/pcm_lib.c:1938
->        dummy_hrtimer_callback+0x80/0x180 sound/drivers/dummy.c:386
->        __run_hrtimer kernel/time/hrtimer.c:1763 [inline]
->        __hrtimer_run_queues+0x590/0xda0 kernel/time/hrtimer.c:1829
->        hrtimer_run_softirq+0x1a3/0x2e0 kernel/time/hrtimer.c:1847
->        handle_softirqs+0x22c/0x710 kernel/softirq.c:579
->        __do_softirq kernel/softirq.c:613 [inline]
->        run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
->        smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
->        kthread+0x711/0x8a0 kernel/kthread.c:463
->        ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
->        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> 
-> -> #0 ((softirq_ctrl.lock)){+.+.}-{3:3}:
->        check_prev_add kernel/locking/lockdep.c:3165 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3284 [inline]
->        validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
->        __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
->        reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
->        __lock_release kernel/locking/lockdep.c:5574 [inline]
->        lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
->        __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
->        hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
->        dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
->        snd_pcm_do_stop+0x12a/0x1c0 sound/core/pcm_native.c:1525
->        snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
->        snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
->        __snd_pcm_xrun+0x27f/0x7c0 sound/core/pcm_lib.c:180
->        snd_pcm_update_state+0x342/0x430 sound/core/pcm_lib.c:224
->        snd_pcm_update_hw_ptr0+0x10b2/0x1b00 sound/core/pcm_lib.c:493
->        snd_pcm_update_hw_ptr sound/core/pcm_lib.c:499 [inline]
->        __snd_pcm_lib_xfer+0x510/0x1ce0 sound/core/pcm_lib.c:2326
->        snd_pcm_oss_write3+0x1bc/0x320 sound/core/oss/pcm_oss.c:1241
->        snd_pcm_plug_write_transfer+0x2cb/0x4c0 sound/core/oss/pcm_plugin.c:630
->        snd_pcm_oss_write2 sound/core/oss/pcm_oss.c:1373 [inline]
->        snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1439 [inline]
->        snd_pcm_oss_write+0xba2/0x11a0 sound/core/oss/pcm_oss.c:2795
->        vfs_write+0x287/0xb40 fs/read_write.c:684
->        ksys_write+0x14b/0x260 fs/read_write.c:738
->        do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->        do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> other info that might help us debug this:
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(&group->lock#2);
->                                lock((softirq_ctrl.lock));
->                                lock(&group->lock#2);
->   lock((softirq_ctrl.lock));
-> 
->  *** DEADLOCK ***
-> 
-> 2 locks held by syz.0.46/6843:
->  #0: ffff88814ccb7150 (&group->lock#2){+.+.}-{3:3}, at: __snd_pcm_lib_xfer+0x386/0x1ce0 sound/core/pcm_lib.c:2319
->  #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
->  #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
->  #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1bb/0x2c0 kernel/locking/spinlock_rt.c:57
-> 
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 6843 Comm: syz.0.46 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
->  check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
->  check_prev_add kernel/locking/lockdep.c:3165 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3284 [inline]
->  validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
->  __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
->  reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
->  __lock_release kernel/locking/lockdep.c:5574 [inline]
->  lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
->  __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
->  hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
->  dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
->  snd_pcm_do_stop+0x12a/0x1c0 sound/core/pcm_native.c:1525
->  snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
->  snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
->  __snd_pcm_xrun+0x27f/0x7c0 sound/core/pcm_lib.c:180
->  snd_pcm_update_state+0x342/0x430 sound/core/pcm_lib.c:224
->  snd_pcm_update_hw_ptr0+0x10b2/0x1b00 sound/core/pcm_lib.c:493
->  snd_pcm_update_hw_ptr sound/core/pcm_lib.c:499 [inline]
->  __snd_pcm_lib_xfer+0x510/0x1ce0 sound/core/pcm_lib.c:2326
->  snd_pcm_oss_write3+0x1bc/0x320 sound/core/oss/pcm_oss.c:1241
->  snd_pcm_plug_write_transfer+0x2cb/0x4c0 sound/core/oss/pcm_plugin.c:630
->  snd_pcm_oss_write2 sound/core/oss/pcm_oss.c:1373 [inline]
->  snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1439 [inline]
->  snd_pcm_oss_write+0xba2/0x11a0 sound/core/oss/pcm_oss.c:2795
->  vfs_write+0x287/0xb40 fs/read_write.c:684
->  ksys_write+0x14b/0x260 fs/read_write.c:738
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f9528fcebe9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f952863e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f95291f5fa0 RCX: 00007f9528fcebe9
-> RDX: 000000000000fc36 RSI: 0000200000000500 RDI: 0000000000000003
-> RBP: 00007f9529051e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f95291f6038 R14: 00007f95291f5fa0 R15: 00007ffe192e0268
->  </TASK>
-> 
-> 
-> Tested on:
-> 
-> commit:         11e7861d Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15d8d634580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=10b4363fb0f46527f3f3
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b7fef0580000
-> 
-> 
+> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
+> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
+> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
+> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
+> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
+> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
+> +
+> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
+
+You don't need to do !!ret as the C11 standard guarantees that any scalar type
+stored as bool will have the value of 0 or 1.
+
+> +}
+> +
+
+[...]
+
+> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+> +					     unsigned int devfn,
+> +					     int where)
+> +{
+> +	struct rzg3s_pcie_host *host = bus->sysdata;
+> +
+> +	if (devfn)
+> +		return NULL;
+
+Is it really possible to have devfn as non-zero for a root bus?
+
+> +
+> +	return host->pcie + where;
+> +}
+> +
+
+[...]
+
+> +static int rzg3s_pcie_msi_setup(struct rzg3s_pcie_host *host)
+> +{
+> +	size_t size = RZG3S_PCI_MSI_INT_NR * sizeof(u32);
+> +	struct rzg3s_pcie_msi *msi = &host->msi;
+> +	struct device *dev = host->dev;
+> +	int id, ret;
+> +
+> +	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
+> +	if (!msi->pages)
+> +		return -ENOMEM;
+> +
+> +	msi->dma_addr = dma_map_single(dev, (void *)msi->pages, size * 2,
+> +				       DMA_BIDIRECTIONAL);
+> +	if (dma_mapping_error(dev, msi->dma_addr)) {
+> +		ret = -ENOMEM;
+> +		goto free_pages;
+> +	}
+> +
+> +	/*
+> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.4.5.2 Setting
+> +	 * the MSI Window) the MSI window need to be within any AXI window. Find
+> +	 * an AXI window to setup the MSI window.
+
+Are you really finding the AXI window or just making sure that the MSI window
+falls into one of the AXI window?
+
+And I believe it is OK to have more than one MSI window within an AXI window.
+
+> +	 */
+> +	for (id = 0; id < RZG3S_MAX_WINDOWS; id++) {
+> +		u64 base, basel, baseu;
+> +		u64 mask, maskl, masku;
+> +
+> +		basel = readl(host->axi + RZG3S_PCI_AWBASEL(id));
+> +		/* Skip checking this AXI window if it's not enabled */
+> +		if (!(basel & RZG3S_PCI_AWBASEL_WIN_ENA))
+> +			continue;
+> +
+> +		baseu = readl(host->axi + RZG3S_PCI_AWBASEU(id));
+> +		base = baseu << 32 | basel;
+> +
+> +		maskl = readl(host->axi + RZG3S_PCI_AWMASKL(id));
+> +		masku = readl(host->axi + RZG3S_PCI_AWMASKU(id));
+> +		mask = masku << 32 | maskl;
+> +
+> +		if (msi->dma_addr < base || msi->dma_addr > base + mask)
+> +			continue;
+> +
+> +		break;
+> +	}
+> +
+> +	if (id == RZG3S_MAX_WINDOWS) {
+> +		ret = -EINVAL;
+> +		goto dma_unmap;
+> +	}
+> +
+> +	/* The MSI base address need to be aligned to the MSI size */
+> +	msi->window_base = ALIGN(msi->dma_addr, size);
+> +	if (msi->window_base < msi->dma_addr) {
+> +		ret = -EINVAL;
+> +		goto dma_unmap;
+> +	}
+> +
+> +	rzg3s_pcie_msi_hw_setup(host);
+> +
+> +	return 0;
+> +
+> +dma_unmap:
+> +	dma_unmap_single(dev, msi->dma_addr, size * 2, DMA_BIDIRECTIONAL);
+> +free_pages:
+> +	free_pages(msi->pages, 0);
+> +	return ret;
+> +}
+> +
+
+[...]
+
+> +static int rzg3s_pcie_set_max_link_speed(struct rzg3s_pcie_host *host)
+> +{
+> +	u32 cs2, link_speed, remote_supported_link_speeds, tmp;
+> +	u32 pcie_cap = RZG3S_PCI_CFG_PCIEC;
+> +	u8 ltssm_state_l0 = 0xc;
+> +	u16 lcs;
+> +	int ret;
+> +
+> +	/*
+> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.3 Caution
+> +	 * when Changing the Speed Spontaneously) link speed change can be done
+> +	 * only when the link training and status state machine in the PCIe Core
+> +	 * Link is L0.
+
+"...only when the LTSSM is in L0."
+
+> +	 */
+> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, tmp,
+> +				 FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp) == ltssm_state_l0,
+> +				 PCIE_LINK_WAIT_SLEEP_MS,
+> +				 PCIE_LINK_WAIT_SLEEP_MS *
+> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
+> +	if (ret) {
+> +		dev_dbg(host->dev,
+> +			"Could not set max link speed! LTSSM not in L0, state=%lx\n",
+
+You should drop 'Could not set max link speed' since the caller is printing a
+similar error.
+
+> +			FIELD_GET(RZG3S_PCI_PCSTAT1_LTSSM_STATE, tmp));
+> +		return ret;
+> +	}
+> +
+> +	lcs = readw(host->pcie + pcie_cap + PCI_EXP_LNKSTA);
+> +	cs2 = readl(host->axi + RZG3S_PCI_PCSTAT2);
+> +
+> +	link_speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, lcs);
+> +	remote_supported_link_speeds = FIELD_GET(RZG3S_PCI_PCSTAT2_SDRIRE, cs2);
+> +
+> +	/*
+> +	 * Return if link is @ 5.0 GT/s or the connected device doesn't support
+> +	 * it.
+> +	 */
+> +	if (link_speed == PCI_EXP_LNKSTA_CLS_5_0GB ||
+> +	    !(remote_supported_link_speeds != GENMASK(PCI_EXP_LNKSTA_CLS_5_0GB - 1, 0)))
+> +		return 0;
+> +
+> +	/* Set target Link speed to 5.0 GT/s */
+
+Instead of setting the link speed to 5 GT/s always, you should honor the link
+speed set in DTS by making use of of_pci_get_max_link_speed() API.
+
+> +	rzg3s_pcie_update_bits(host->pcie, pcie_cap + PCI_EXP_LNKCTL2,
+> +			       PCI_EXP_LNKCTL2_TLS,
+> +			       FIELD_PREP(PCI_EXP_LNKCTL2_TLS,
+> +					  PCI_EXP_LNKCTL2_TLS_5_0GT));
+> +
+> +	/* Request link speed change */
+> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PCCTRL2,
+> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ |
+> +			       RZG3S_PCI_PCCTRL2_LS_CHG,
+> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ |
+> +			       FIELD_PREP(RZG3S_PCI_PCCTRL2_LS_CHG,
+> +					  PCI_EXP_LNKCTL2_TLS_5_0GT - 1));
+> +
+> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT2, cs2,
+> +				 (cs2 & RZG3S_PCI_PCSTAT2_LS_CHG_DONE),
+> +				 PCIE_LINK_WAIT_SLEEP_MS,
+> +				 PCIE_LINK_WAIT_SLEEP_MS *
+> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
+> +
+> +	/*
+> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.6.3 Caution
+> +	 * when Changing the Speed Spontaneously) the PCI_PCCTRL2_LS_CHG_REQ
+> +	 * should be de-asserted after checking for PCI_PCSTAT2_LS_CHG_DONE.
+> +	 */
+> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PCCTRL2,
+> +			       RZG3S_PCI_PCCTRL2_LS_CHG_REQ, 0);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
+> +{
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
+> +	struct resource_entry *ft;
+> +	struct resource *bus;
+> +	u8 subordinate_bus;
+> +	u8 secondary_bus;
+> +	u8 primary_bus;
+> +
+> +	ft = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> +	if (!ft)
+> +		return -ENODEV;
+> +
+> +	bus = ft->res;
+> +	primary_bus = bus->start;
+> +	secondary_bus = bus->start + 1;
+> +	subordinate_bus = bus->end;
+> +
+> +	/* Enable access control to the CFGU */
+> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
+> +
+> +	/* Update vendor ID and device ID */
+
+Are you really updating it or setting it? If you are updating it, are the
+default IDs invalid?
+
+> +	writew(host->vendor_id, host->pcie + PCI_VENDOR_ID);
+> +	writew(host->device_id, host->pcie + PCI_DEVICE_ID);
+> +
+> +	/* HW manual recommends to write 0xffffffff on initialization */
+> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00L);
+> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00U);
+> +
+> +	/* Update bus info. */
+> +	writeb(primary_bus, host->pcie + PCI_PRIMARY_BUS);
+> +	writeb(secondary_bus, host->pcie + PCI_SECONDARY_BUS);
+> +	writeb(subordinate_bus, host->pcie + PCI_SUBORDINATE_BUS);
+> +
+> +	/* Disable access control to the CFGU */
+> +	writel(0, host->axi + RZG3S_PCI_PERM);
+> +
+> +	return 0;
+> +}
+> +
+
+[...]
+
+> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* Initialize the PCIe related registers */
+> +	ret = rzg3s_pcie_config_init(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Initialize the interrupts */
+> +	rzg3s_pcie_irq_init(host);
+> +
+> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
+> +					  host->cfg_resets);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for link up */
+> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
+> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS),
+> +				 PCIE_LINK_WAIT_SLEEP_MS,
+> +				 PCIE_LINK_WAIT_SLEEP_MS *
+> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
+> +	if (ret) {
+> +		reset_control_bulk_assert(host->data->num_cfg_resets,
+> +					  host->cfg_resets);
+> +		return ret;
+> +	}
+> +
+> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
+> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
+> +
+> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
+> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
+> +
+> +	if (probe) {
+> +		ret = devm_add_action_or_reset(host->dev,
+> +					       rzg3s_pcie_cfg_resets_action,
+> +					       host);
+
+Oh well, this gets ugly. Now the devm_add_action_or_reset() is sprinkled
+throughout the driver :/
+
+As I said earlier, there are concerns in unloading the driver if it implements
+an irqchip. So if you change the module_platform_driver() to
+builtin_platform_driver() for this driver, these devm_add_action_or_reset()
+calls become unused.
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void rzg3s_pcie_set_inbound_window(struct rzg3s_pcie_host *host,
+> +					  u64 cpu_addr, u64 pci_addr, u64 size,
+> +					  int id)
+> +{
+> +	/* Set CPU window base address */
+> +	writel(upper_32_bits(cpu_addr), host->axi + RZG3S_PCI_ADESTU(id));
+> +	writel(lower_32_bits(cpu_addr), host->axi + RZG3S_PCI_ADESTL(id));
+> +
+> +	/* Set window size */
+> +	writel(upper_32_bits(size), host->axi + RZG3S_PCI_AWMASKU(id));
+> +	writel(lower_32_bits(size), host->axi + RZG3S_PCI_AWMASKL(id));
+> +
+> +	/* Set PCIe window base address and enable the window */
+> +	writel(upper_32_bits(pci_addr), host->axi + RZG3S_PCI_AWBASEU(id));
+> +	writel(lower_32_bits(pci_addr) | RZG3S_PCI_AWBASEL_WIN_ENA,
+> +	       host->axi + RZG3S_PCI_AWBASEL(id));
+> +}
+> +
+> +static int rzg3s_pcie_set_inbound_windows(struct rzg3s_pcie_host *host,
+> +					  struct resource_entry *entry,
+> +					  int *index)
+> +{
+> +	u64 pci_addr = entry->res->start - entry->offset;
+> +	u64 cpu_addr = entry->res->start;
+> +	u64 cpu_end = entry->res->end;
+> +	u64 size_id = 0;
+> +	int id = *index;
+> +	u64 size;
+> +
+> +	while (cpu_addr < cpu_end) {
+> +		if (id >= RZG3S_MAX_WINDOWS)
+> +			return dev_err_probe(host->dev, -EINVAL,
+
+-ENOSPC
+
+> +					     "Failed to set inbound windows!\n");
+
+"Failed to map inbound window for resource (%s), entry->res->name"
+
+> +
+> +		size = resource_size(entry->res) - size_id;
+> +
+> +		/*
+> +		 * According to the RZ/G3S HW manual (Rev.1.10,
+> +		 * section 34.3.1.71 AXI Window Mask (Lower) Registers) the min
+> +		 * size is 4K.
+> +		 */
+> +		size = max(size, SZ_4K);
+> +
+> +		/*
+> +		 * According the RZ/G3S HW manual (Rev.1.10, sections:
+> +		 * - 34.3.1.69 AXI Window Base (Lower) Registers
+> +		 * - 34.3.1.71 AXI Window Mask (Lower) Registers
+> +		 * - 34.3.1.73 AXI Destination (Lower) Registers)
+> +		 * the CPU addr, PCIe addr, size should be 4K aligned and be a
+> +		 * power of 2.
+> +		 */
+> +		size = ALIGN(size, SZ_4K);
+> +
+> +		/*
+> +		 * According to the RZ/G3S HW manual (Rev.1.10, section
+> +		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
+> +		 * 12 LSB bits to be 0xfff. Subtract 1 from size for this.
+> +		 */
+> +		size = roundup_pow_of_two(size) - 1;
+> +
+> +		cpu_addr = ALIGN(cpu_addr, SZ_4K);
+> +		pci_addr = ALIGN(pci_addr, SZ_4K);
+> +
+> +		rzg3s_pcie_set_inbound_window(host, cpu_addr, pci_addr, size,
+> +					      id);
+> +
+> +		pci_addr += size;
+> +		cpu_addr += size;
+> +		size_id = size;
+> +		id++;
+> +	}
+> +	*index = id;
+> +
+> +	return 0;
+> +}
+
+[...]
+
+> +static int rzg3s_pcie_parse_map_ranges(struct rzg3s_pcie_host *host)
+> +{
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
+> +	struct resource_entry *win;
+> +	int i = 0;
+> +
+> +	resource_list_for_each_entry(win, &bridge->windows) {
+> +		struct resource *res = win->res;
+> +
+> +		if (i >= RZG3S_MAX_WINDOWS)
+> +			return dev_err_probe(host->dev, -EINVAL,
+
+-ENOSPC
+
+> +					     "Failed to set outbound windows!\n");
+
+"Failed to map outbound window for resource (%s), res->name"
+
+> +
+> +		if (!res->flags)
+> +			continue;
+> +
+> +		switch (resource_type(res)) {
+> +		case IORESOURCE_IO:
+> +		case IORESOURCE_MEM:
+> +			rzg3s_pcie_set_outbound_window(host, win, i);
+> +			i++;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+[...]
+
+> +static int rzg3s_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct pci_host_bridge *bridge;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *sysc_np __free(device_node) =
+> +		of_parse_phandle(np, "renesas,sysc", 0);
+> +	struct rzg3s_pcie_host *host;
+> +	int ret;
+> +
+> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
+> +	if (!bridge)
+> +		return -ENOMEM;
+> +
+> +	host = pci_host_bridge_priv(bridge);
+> +	host->dev = dev;
+> +	host->data = device_get_match_data(dev);
+> +	platform_set_drvdata(pdev, host);
+> +
+> +	host->axi = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(host->axi))
+> +		return PTR_ERR(host->axi);
+> +	host->pcie = host->axi + RZG3S_PCI_CFG_BASE;
+> +
+> +	ret = of_property_read_u32(np, "vendor-id", &host->vendor_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = of_property_read_u32(np, "device-id", &host->device_id);
+> +	if (ret)
+> +		return ret;
+> +
+> +	host->sysc = syscon_node_to_regmap(sysc_np);
+> +	if (IS_ERR(host->sysc))
+> +		return PTR_ERR(host->sysc);
+> +
+> +	ret = regmap_update_bits(host->sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_sysc_signal_action,
+> +				       host->sysc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rzg3s_pcie_resets_prepare(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		return ret;
+> +
+
+Do you really need to do resume_and_get()? If not, you should do:
+
+	pm_runtime_set_active()
+	pm_runtime_no_callbacks()
+	devm_pm_runtime_enable()
+
+> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_pm_runtime_put, dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	raw_spin_lock_init(&host->hw_lock);
+> +
+> +	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_intx_setup,
+> +				    rzg3s_pcie_msi_enable, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(PCIE_RESET_CONFIG_WAIT_MS);
+> +
+> +	bridge->sysdata = host;
+> +	bridge->ops = &rzg3s_pcie_root_ops;
+> +	bridge->child_ops = &rzg3s_pcie_child_ops;
+> +	ret = pci_host_probe(bridge);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_add_action_or_reset(dev, rzg3s_pcie_host_remove_action,
+> +					host);
+> +}
+> +
+> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> +{
+> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> +	const struct rzg3s_pcie_soc_data *data = host->data;
+> +	struct regmap *sysc = host->sysc;
+> +	int ret;
+> +
+> +	ret = pm_runtime_put_sync(dev);
+> +	if (ret)
+> +		return ret;
+
+Since there are no runtime callbacks present, managing runtime PM in the driver
+makes no sense.
+
+> +
+> +	ret = reset_control_bulk_assert(data->num_power_resets,
+> +					host->power_resets);
+> +	if (ret)
+> +		goto rpm_restore;
+> +
+> +	ret = reset_control_bulk_assert(data->num_cfg_resets,
+> +					host->cfg_resets);
+> +	if (ret)
+> +		goto power_resets_restore;
+> +
+> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
+> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
+> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
+> +	if (ret)
+> +		goto cfg_resets_restore;
+> +
+> +	return 0;
+> +
+> +	/* Restore the previous state if any error happens */
+> +cfg_resets_restore:
+> +	reset_control_bulk_deassert(data->num_cfg_resets,
+> +				    host->cfg_resets);
+> +power_resets_restore:
+> +	reset_control_bulk_deassert(data->num_power_resets,
+> +				    host->power_resets);
+> +rpm_restore:
+> +	pm_runtime_resume_and_get(dev);
+> +	return ret;
+> +}
+> +
+
+[...]
+
+> +static struct platform_driver rzg3s_pcie_driver = {
+> +	.driver = {
+> +		.name = "rzg3s-pcie-host",
+> +		.of_match_table = rzg3s_pcie_of_match,
+> +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe = rzg3s_pcie_probe,
+> +};
+> +module_platform_driver(rzg3s_pcie_driver);
+
+Use builtin_platform_driver() as this driver is not supposed to be removed due
+to concersn with irqchip.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
