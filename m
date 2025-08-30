@@ -1,290 +1,164 @@
-Return-Path: <linux-kernel+bounces-793040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09728B3CCD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:19:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A67B3CCEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAE97C4B14
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:19:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230A0A02CA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBCC2C2368;
-	Sat, 30 Aug 2025 16:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66CC2D0C67;
+	Sat, 30 Aug 2025 16:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdP3c489"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oiOSgv5W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F22B17A316;
-	Sat, 30 Aug 2025 16:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5B47082D;
+	Sat, 30 Aug 2025 16:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756570754; cv=none; b=Q00Q0H+GRGNA/7l6PYjzaKervEpxbqrxuqcQAotHkCkCIiuM7CHIcBae7SSqXoBgUsxNPkpOvz81lIzReavotKcHjf2MSe6Q9cBhwAGZjmP9AmNKzj6xRfaFYdcLHV0xLGpeuiZmJNi7i9rDeqLhegI18GUa+2TY9lDiFWWxKKU=
+	t=1756571074; cv=none; b=QVpVkwslAn9NDaxeoeHlC1pTO+GV1ckhjbE18uuii9tNUvA9ZYdQONPOdC4tTDe2jLUSS4tMx0xUq4n/8b1BQadYZHhR6WhlW8vF8RskM7sUG4s8jVasNett36hR6Joq0XGS1AAugoy2egrZl5bs2KtVxUqFRHtQ04hnIw0acXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756570754; c=relaxed/simple;
-	bh=u0xtd7PoJg0IlvT7dHfA3KGBTUF/8ylII6urJtEs5Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mbvetFRjs9Uv1JQZRgR4s26NASBOlKt3cHhEwvmf2znCykYuYctG1/I/VfIEW7Lrq0wCw9tlrRrMyiLDVRJKaN61zCnuHGA8wV1X2UjIkF/1Zo1Q+/AgU8RJu0jfFEMOWK+SxncM9JJc6miP5fPzjLzHSSLhTkzg4hvbESNhmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdP3c489; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C30C4CEEB;
-	Sat, 30 Aug 2025 16:19:09 +0000 (UTC)
+	s=arc-20240116; t=1756571074; c=relaxed/simple;
+	bh=Nya/TZ4X12n/fB0RU73CjBTHO4OoIX+2tqn1y7X8YME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSSGv7zGQ6LlQldooBak+yt4u1NGME0N13dw6Cvb5v5MKCONLaPR5GDJXWVu4FYyPiHfwh8OlBzSNmCYPA0hGhzjxNH9rtJ28M9f7qmXYf4n3+GCYrtwTXCaqgSt5H3sQJUzU5uV32Clyq93/gZQD7ANFBaoOq3hHjrrPy52j1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oiOSgv5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9EEC4CEEB;
+	Sat, 30 Aug 2025 16:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756570753;
-	bh=u0xtd7PoJg0IlvT7dHfA3KGBTUF/8ylII6urJtEs5Z8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OdP3c4893vimCRqDyhHr8dhvk1maOddjmzmym7VoWoGEEeTj2UuNUW6WbLGsSLiXD
-	 gyULaFKDLz7FuoSctY51yOhh/f46J8U6vAtPlzgJ/u9L6O2j1VBugRquavJbGnJN4B
-	 D2MKLYWWdfaMVlNyhsuSXeqVIXkz2+sSwsZWR7KJFZ/2DU59hGwQSG5x3IwcQfBSlG
-	 FzVS+vBW2VyY/q+xnILVl+Hyi/wISKYSKKVtkO7WjNoayUruNII2TvXNaOTAFbHqlF
-	 4HQS8C1Yf7YeMYV7fQdDvZ/lqMSuPBVqu/oHc9d+704uI3kaI7qNh3CAoBeZE6D/Dk
-	 VNt6coWkU/4jQ==
-Date: Sat, 30 Aug 2025 17:19:05 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <20250830171905.28274239@jic23-huawei>
-In-Reply-To: <20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
-References: <20250829-tlv493d-sensor-v6_16-rc5-v5-0-746e73bc6c11@gmail.com>
-	<20250829-tlv493d-sensor-v6_16-rc5-v5-1-746e73bc6c11@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756571073;
+	bh=Nya/TZ4X12n/fB0RU73CjBTHO4OoIX+2tqn1y7X8YME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oiOSgv5WZHUhHBHe11JOt2oy1i1TmC/3kx0r0SgP/PbVcmpmpiCQcSpSksRVcGWQv
+	 mluS4fLKPtkqSrttxRrmlOGeC/KhK9tRtuktJVf2fLd3zC3xYgX/8dBi2vVyuCAcK/
+	 bbInSfxuoNqNX774+LcUkQ0K9G+zuru4+9saqS6ajFJiQLxzWHb88gEMVMVT2eE9B5
+	 zDrvhFFVUg5rhMB/kk5N8ZYVo78B/NaVIw4RYgc3vuIkm4deSazQfh6wvmJfpQu0k/
+	 44amRKyKVVCEQYzDx5MYN4QViANr11OuSEugN9D9PVoEZAUNWvITcUDZNy5+ZJ4xAN
+	 vCj4qcVTloEjw==
+Date: Sat, 30 Aug 2025 09:24:31 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: tytso@mit.edu, jaegeuk@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: optimize fscrypt_base64url_encode() with block
+ processing
+Message-ID: <20250830162431.GA1431@quark>
+References: <20250830132832.7911-1-409411716@gms.tku.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830132832.7911-1-409411716@gms.tku.edu.tw>
 
-On Fri, 29 Aug 2025 08:23:42 +0530
-Dixit Parmar <dixitparmar19@gmail.com> wrote:
-
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
+On Sat, Aug 30, 2025 at 09:28:32PM +0800, Guan-Chun Wu wrote:
+> Previously, fscrypt_base64url_encode() processed input one byte at a
+> time, using a bitstream, accumulating bits and emitting characters when
+> 6 bits were available. This was correct but added extra computation.
 > 
-> The Sensor is configured over I2C, and as part of Sensor measurement
-> data it provides 3-Axis magnetic fields and temperature core measurement.
+> This patch processes input in 3-byte blocks, mapping directly to 4 output
+> characters. Any remaining 1 or 2 bytes are handled according to Base64 URL
+> rules. This reduces computation and improves performance.
 > 
-> The driver supports raw value read and buffered input via external trigger
-> to allow streaming values with the same sensing timestamp.
+> Performance test (5 runs) for fscrypt_base64url_encode():
 > 
-> While the sensor has an interrupt pin multiplexed with an I2C SCL pin.
-> But for bus configurations interrupt(INT) is not recommended, unless timing
-> constraints between I2C data transfers and interrupt pulses are monitored
-> and aligned.
+> 64B input:
+> -------------------------------------------------------
+> | Old method | 131 | 108 | 114 | 122 | 123 | avg ~120 ns |
+> -------------------------------------------------------
+> | New method |  84 |  81 |  84 |  82 |  84 | avg ~83 ns  |
+> -------------------------------------------------------
 > 
-> The Sensor's I2C register map and mode information is described in product
-> User Manual [1].
+> 1KB input:
+> --------------------------------------------------------
+> | Old method | 1152 | 1121 | 1142 | 1147 | 1148 | avg ~1142 ns |
+> --------------------------------------------------------
+> | New method |  767 |  752 |  765 |  771 |  776 | avg ~766 ns  |
+> --------------------------------------------------------
 > 
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf [1]
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 
-Hi Dixit,
+Thanks!
 
-A few trivial formatting related things inline.  I'd just have tweaked these
-whilst applying but we need to have a v6 for the dt-binding/maintainers stuff
-anyway so please tidy these up as well.
+> Tested on Linux 6.8.0-64-generic x86_64
+> with Intel Core i7-10700 @ 2.90GHz
+> 
+> Test is executed in the form of kernel module.
+> 
+> Test script:
 
-Thanks,
+Is there any chance you'd be interested in creating an fscrypt KUnit
+test (in a separate patch) which tests fscrypt_base64url_encode() and
+fscrypt_base64url_decode()?
 
-Jonathan
-
-
-> diff --git a/drivers/iio/magnetometer/Makefile b/drivers/iio/magnetometer/Makefile
-> index 9297723a97d8..dfe970fcacb8 100644
-> --- a/drivers/iio/magnetometer/Makefile
-> +++ b/drivers/iio/magnetometer/Makefile
-> @@ -23,6 +23,8 @@ st_magn-$(CONFIG_IIO_BUFFER) += st_magn_buffer.o
->  obj-$(CONFIG_IIO_ST_MAGN_I2C_3AXIS) += st_magn_i2c.o
->  obj-$(CONFIG_IIO_ST_MAGN_SPI_3AXIS) += st_magn_spi.o
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 010f9c0a4c2f..adaa16905498 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -204,20 +204,31 @@ static const char base64url_table[65] =
+>  static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
+>  {
+>  	u32 ac = 0;
+> -	int bits = 0;
+> -	int i;
+> +	int i = 0;
+>  	char *cp = dst;
 >  
-> +obj-$(CONFIG_INFINEON_TLV493D)		+= tlv493d.o
-> +
->  obj-$(CONFIG_SENSORS_HMC5843)		+= hmc5843_core.o
->  obj-$(CONFIG_SENSORS_HMC5843_I2C)	+= hmc5843_i2c.o
->  obj-$(CONFIG_SENSORS_HMC5843_SPI)	+= hmc5843_spi.o
-> diff --git a/drivers/iio/magnetometer/tlv493d.c b/drivers/iio/magnetometer/tlv493d.c
-> new file mode 100644
-> index 000000000000..b723eaac1d9e
-> --- /dev/null
-> +++ b/drivers/iio/magnetometer/tlv493d.c
-> @@ -0,0 +1,533 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/**
-
-This isn't kernel doc format. Headers descriptions like this normally aren't
-so /* not /** is appropriate. I haven't checked but I'd expect the kernel-doc
-script to have warned about that if run on this file
-
-> + * Driver for the Infineon TLV493D Low-Power 3D Magnetic Sensor
-> + *
-> + * Copyright (C) 2025 Dixit Parmar <dixitparmar19@gmail.com>
-> + */
-> +/*
-> + * Different mode has different measurement sampling time, this time is
-> + * used in deriving the sleep and timeout while reading the data from
-> + * sensor in polling.
-> + * Power-down mode: No measurement.
-> + * Fast mode: Freq:3.3 KHz. Measurement time:305 usec.
-> + * Low-power mode: Freq:100 Hz. Measurement time:10 msec.
-> + * Ultra low-power mode: Freq:10 Hz. Measurement time:100 msec.
-> + * Master controlled mode: Freq:3.3 Khz. Measurement time:305 usec.
-> + */
-> +static const u32 tlv493d_sample_rate_us[] = {
-> +	[TLV493D_OP_MODE_POWERDOWN] = 0,
-> +	[TLV493D_OP_MODE_FAST] = 305,
-> +	[TLV493D_OP_MODE_LOWPOWER] = 10 * USEC_PER_MSEC,
-> +	[TLV493D_OP_MODE_ULTRA_LOWPOWER] = 100 * USEC_PER_MSEC,
-> +	[TLV493D_OP_MODE_MASTERCONTROLLED] = 305,
-> +};
-> +
-> +static int tlv493d_write_all_regs(struct tlv493d_data *data)
-> +{
-> +	int ret;
-> +	struct device *dev = &data->client->dev;
-> +
-> +	ret = i2c_master_send(data->client, data->wr_regs, ARRAY_SIZE(data->wr_regs));
-> +	if (ret < 0) {
-> +		dev_err(dev, "i2c write registers failed, error: %d\n", ret);
-> +		return ret;
+> -	for (i = 0; i < srclen; i++) {
+> -		ac = (ac << 8) | src[i];
+> -		bits += 8;
+> -		do {
+> -			bits -= 6;
+> -			*cp++ = base64url_table[(ac >> bits) & 0x3f];
+> -		} while (bits >= 6);
+> +	while (i + 2 < srclen) {
+> +		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
+> +		*cp++ = base64url_table[(ac >> 18) & 0x3f];
+> +		*cp++ = base64url_table[(ac >> 12) & 0x3f];
+> +		*cp++ = base64url_table[(ac >> 6) & 0x3f];
+> +		*cp++ = base64url_table[ac & 0x3f];
+> +		i += 3;
 > +	}
-> +
-> +	return 0;
-> +}
 
+To make it a bit easier to understand, how about updating src and srclen
+as we go along?
 
-> +static int tlv493d_get_measurements(struct tlv493d_data *data, s16 *x, s16 *y,
-> +				    s16 *z, s16 *t)
-> +{
-> +	u8 buff[7] = {};
-> +	int err, ret;
-> +	struct device *dev = &data->client->dev;
-> +	u32 sleep_us = tlv493d_sample_rate_us[data->mode];
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * Poll until data is valid,
+	while (srclen >= 3) {
+		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8) | (u32)src[2];
+		*cp++ = base64url_table[ac >> 18];
+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
+		*cp++ = base64url_table[(ac >> 6) & 0x3f];
+		*cp++ = base64url_table[ac & 0x3f];
+		src += 3;
+		srclen -= 3;
+	}
 
-. rather than , given next line is a new sentence.
+	switch (srclen) {
+	case 2:
+		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8);
+		*cp++ = base64url_table[ac >> 18];
+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
+		*cp++ = base64url_table[(ac >> 6) & 0x3f];
+		break;
+	case 1:
+		ac = ((u32)src[0] << 16);
+		*cp++ = base64url_table[ac >> 18];
+		*cp++ = base64url_table[(ac >> 12) & 0x3f];
+		break;
+	}
 
-> +	 * For a valid data TLV493D_TEMP_CHANNEL bit of TLV493D_RD_REG_TEMP
-> +	 * should be set to 0. The sampling time depends on the sensor mode.
-> +	 * Poll 3x the time of the sampling time.
-> +	 */
-> +	ret = read_poll_timeout(i2c_master_recv, err,
-> +			err || !FIELD_GET(TLV493D_TEMP_CHANNEL,
-> +			buff[TLV493D_RD_REG_TEMP]),
+'srclen >= 3' is much more readable than 'i + 2 < srclen', IMO.
 
-If you are going to split the FIELD_GET between parameters you must
-align the second line of parameters after the (  otherwise this is
-unnecessarily hard to read.
+Also, instead of '(ac >> 18) & 0x3f', we can just use 'ac >> 18', since
+'ac' is a 24-bit value.
 
-	ret = read_poll_timeout(i2c_master_recv, err,
-		err || !FIELD_GET(TLV493D_TEMP_CHANNEL,	buff[TLV493D_RD_REG_TEMP]),
-		sleep_us, 3 * sleep_us, false, data->client, buff,
-		ARRAY_SIZE(buff));
-
-Is a better way to format this.  Once we aren't aligning with the opening
-bracket of read_poll_timeout because of the very long line, a single tab of
-indent of the second line is enough.  Don't worry about going a little over 80 chars
-here as it really hurts readability to split that FIELD_PREP() up.
-
-
-> +	if (ret) {
-> +		dev_err(dev, "i2c read poll timeout, error:%d\n", ret);
-> +		goto out_put_autosuspend;
-> +	}
-> +	if (err < 0) {
-> +		dev_err(dev, "i2c read data failed, error:%d\n", err);
-> +		ret = err;
-> +		goto out_put_autosuspend;
-> +	}
-> +
-> +	*x = tlv493d_get_channel_data(buff, TLV493D_AXIS_X);
-> +	*y = tlv493d_get_channel_data(buff, TLV493D_AXIS_Y);
-> +	*z = tlv493d_get_channel_data(buff, TLV493D_AXIS_Z);
-> +	*t = tlv493d_get_channel_data(buff, TLV493D_TEMPERATURE);
-> +
-> +out_put_autosuspend:
-> +	pm_runtime_put_autosuspend(dev);
-> +	return ret;
-> +}
-
-
-> +static int tlv493d_read_raw(struct iio_dev *indio_dev,
-> +			const struct iio_chan_spec *chan, int *val,
-> +			int *val2, long mask)
-> +{
-> +	struct tlv493d_data *data = iio_priv(indio_dev);
-> +	s16 x, y, z, t;
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = tlv493d_get_measurements(data, &x, &y, &z, &t);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* Return raw values for requested channel */
-
-Not return in the C meaning of it, and that comment doesn't
-really add anything, so I'd just drop it.
-
-> +		switch (chan->address) {
-> +		case TLV493D_AXIS_X:
-> +			*val = x;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_AXIS_Y:
-> +			*val = y;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_AXIS_Z:
-> +			*val = z;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_TEMPERATURE:
-> +			*val = t;
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-
-
-> +static int tlv493d_probe(struct i2c_client *client)
-> +{
-
-> +	indio_dev->info = &tlv493d_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->name = client->name;
-> +	indio_dev->channels = tlv493d_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(tlv493d_channels);
-> +	indio_dev->available_scan_masks = tlv493d_scan_masks;
-> +
-> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +				iio_pollfunc_store_time,
-> +				tlv493d_trigger_handler,
-> +				NULL);
-
-If you align later lines of parameters with the start of the 1st
-paramater, e.g. after the ( then this is still under 80 chars.
-
-Given that is generally the preferred style where possible (in IIO
-anyway) please do that here.
-
-Jonathan
+- Eric
 
