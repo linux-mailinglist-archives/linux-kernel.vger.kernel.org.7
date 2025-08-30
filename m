@@ -1,127 +1,149 @@
-Return-Path: <linux-kernel+bounces-793036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7712EB3CC81
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 808A8B3CC9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A0B1BA3063
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 15:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99BB1B251DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 16:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD9C2857C2;
-	Sat, 30 Aug 2025 15:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED772C324F;
+	Sat, 30 Aug 2025 16:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="bysNEgtY"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EjQGjz4h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019AB284B4F
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8961E1DF2
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 16:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756569520; cv=none; b=L9nYHvxqS63YBlu2daoAcl5tiDE0P4bNL3iY+U4rAZU0a34xw9I4yTFbo4KLJOO6RqjjhByUAGmuECPHUUJl+NsyfT+WYxjw4eNSDhhRn7O1ALjKfGeex6RP5TUmw9M1BAVo8kZVRMsZIaB8uzVZGMQ28nUhQ3z+k0e0cYbzW8M=
+	t=1756569951; cv=none; b=MPmymc18DoFkz2tpk+tw8dytzzEOoKGeRFODa3UByf/inPMMpW3vey46R3JcJRxGGDjPqbzbZpkuDroSXmYBJhduS4+PIUnaxGLB6tme8SqdVublDzw7EFOqDc6mfyhhH7l4UaFCa8FSNA45yqKGAKN4AQPPamLcNZusNEsmlgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756569520; c=relaxed/simple;
-	bh=M67VIf2LnguVOfjjJ2dtA/J6bLeW2cV6ngdi3Mm5Clw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ob3dwhO94ig4/fgxqFlkZM/H7MrDDi+kDci4TYefC53aIX6d5z6j/8YDYo2pZXSCECebZXDPu/GkAvtGsUCPWmhW6WpWSYpUUHtuMpxWgOq3EmUOFaQmpoIrMblI0uRQekESSF4J6PB/LIqb+fCjbSX8VjVJrgxjVwMRKdLMEnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=bysNEgtY; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b883aa3c9so1404705e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 08:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1756569517; x=1757174317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ABownbaUg3AHmPNhjojTuZnDvYFZmQNhHDZWniNlbg8=;
-        b=bysNEgtYgSbsHJiiUGZjOwThxbjGYMd/WZkex1mNzeU6ThaRoNPW/vPzm34Acg4NB8
-         7nh7K76OLRwm54ysx6oSNNTZzHTRY9RA0GV4XL6r/yT1Wv3cTurJ+Y3/Zj87Xz5L7Ogp
-         L2a6w5z0QtykLw1H+6QGqp1e9OWS9TZzYefdrY5nxIkq0uE4hpK1QXNuIPlCqvS1SmHW
-         v9uLxe59zcNHrUtwtus8KHPofKfma4yG2cxT2wODpobqcPusgCFUSGXsruCSSwejjlI5
-         OZ9/WldoFvVrpQUJq8r/QlFVmJHOtP+JpOgWYTe8tNRtGKTdj7/Vu5+EP9d5hZVodFPS
-         OGYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756569517; x=1757174317;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ABownbaUg3AHmPNhjojTuZnDvYFZmQNhHDZWniNlbg8=;
-        b=is/lBJ7YU9oX1IuqU0QJmuhKHuUX1yErvTUdZ+Z0qP2dnZMiDht+vrunJ49EIi5LJO
-         UCxlDTQUbA5CkmZ65Weha2TOSUgQYMSYe4kpOwOW4MDHpmYGJSz5IMXSsdqVtfOGVnDK
-         CperNuIRxnIF2ZJfOKg/6GafNXOnUTZ5PWt1UPE3jiEQue2DsIaI5g/BdIuQvbuW9cQB
-         +AkqFrPC+fYOVbXFtk53ErAHw5EJXjPTLD44/V1tqyiyX7VzFjzIMuJ1xxVg0iHniG+c
-         UNL1DWXLOcphS3G52Plpvq/3MIQxfz9BnluiaMQ1gByOHXwThnQuSa4aXxoLLkY/fdPN
-         8eFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZJAplABhza1N/05r/8N/vwpi2cNwMX+lMiuEf9i+D1a27r5eUKqV5pmW4PIW8p/jk5fF5DHJoGnGsqEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsmmmykaixptGYoKYxO1kZgzoen6/P73riC7lzW9Q84kDKW39P
-	cSsN0r26zRnOzb8ucPEDwZg0qeXnhhW02M9nVsh6Dw+QT6DBhz73pKmmyNG2ya/V3uQ=
-X-Gm-Gg: ASbGncuM0X6yIZApNq0WwtYlY+HK6gD0k7gAmCcs4tD/FIU1FfNoWU9lk9GSqiP1kCv
-	rMkuoiHYxFCNiLBNC6uM0TXOp7edIi7t/4FyvA6CQdfRPUF1WXCEJBpCM78Lxn+VBn/X8aR9Abt
-	tlqAmpmeKvMWaDtFJLndFsqRZ9tqFgFL/xANGt2M0WIT+ue2TxzVgnt/2fB2IR76FdJTU0JttAi
-	Qa+4XRAHu+H6LUqrTHyMEaZpbA1Vnu3x/0O4MZksnOUfR5UBajVZd/3M3P8Qc1n9mpSmN5XrCUo
-	BYwIAzcTx4+DmolVrLsf9wlUgWM43hYfa/cXjZRoUk/UFAxlBaX5CGBWHKB5/MkFDiHdBBCXl1O
-	iO7pSSGaJaRuhu2Mv+7HucxZU2jE1+wx5MPamhvcu6Q==
-X-Google-Smtp-Source: AGHT+IEDQidOEd9iz7Lacwhs555bnsIebla8gQ1GfjnC7hwy29HMkMsV1OD2J38Qij71+3dVPlwrBA==
-X-Received: by 2002:a05:600c:1e8b:b0:45b:8324:d2fc with SMTP id 5b1f17b1804b1-45b8549c384mr19560285e9.0.1756569516942;
-        Sat, 30 Aug 2025 08:58:36 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:d876:81b2:f3c4:351b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fba9fbsm7711205f8f.50.2025.08.30.08.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 08:58:36 -0700 (PDT)
-From: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-To: krzk@kernel.org
-Cc: asmirnou@pinefeat.co.uk,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	hverkuil@xs4all.nl,
-	jacopo.mondi@ideasonboard.com,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: Pinefeat cef168 lens control board
-Date: Sat, 30 Aug 2025 16:58:36 +0100
-Message-Id: <20250830155836.10254-1-asmirnou@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <4eee57c0-a2fb-4fa7-bafe-e3a41c8954bd@kernel.org>
-References: <4eee57c0-a2fb-4fa7-bafe-e3a41c8954bd@kernel.org>
+	s=arc-20240116; t=1756569951; c=relaxed/simple;
+	bh=nZInpuDDYcV/s2vcTKuZGi+aQmE/qU6SPFQgzHBBnfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET+nMj7WB0sPoiWV+nCsXk37v5iFKPHR0xQIERZwRKHmjjcTM1kZKiNJ31y89EdBnwlrPBw0OfYcQ/gm0dDrAXOJZ/hjzNQL2UfoRlsgyi4orV+UWUwDlAhDUoFxO3Hp/tJkY+kLbrXhhouHpAkAlzUnIoJMskXtSCm9mGVuPBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EjQGjz4h; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756569950; x=1788105950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nZInpuDDYcV/s2vcTKuZGi+aQmE/qU6SPFQgzHBBnfg=;
+  b=EjQGjz4hNPc7S0iaOyXms/xmXCRIfRkq+VmmbWXpHqb5JWUZ/XkwjNDB
+   ZaKojOJVh1fmtqofViJOyERIczY7nsTZyQzf6INk+maNGi1qM3EGDE4ZK
+   OZ3rSmZuiajJ3u5p/sJhzxsYjmAXxwwVUCEeC+lpjYuRFu10xdkZsI49H
+   TglOpZuPkjcdzgZ/I524K4ICEYR1+hyKbvZombgU3n2MTWEex16jUa8ZA
+   ho1lyzKaM3ZeaCOz6lcV49snGg+6j1NM3K439MxDiPMnNci796Nipm+sj
+   pq0OaZpTvMoNqltijZY535rtFOrOOwGAXZKMhE7vqPqWTU24JLGUb4DOA
+   A==;
+X-CSE-ConnectionGUID: sT5zTVPdSniVlBGJ9JFcoQ==
+X-CSE-MsgGUID: ffAfu957TyKsKqhSBP+XXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="58764856"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="58764856"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2025 09:05:49 -0700
+X-CSE-ConnectionGUID: gKpngiHdQkukULAx74a8uw==
+X-CSE-MsgGUID: tT5xE8p/SCe6K8/5WYxT1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="171003721"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 30 Aug 2025 09:05:45 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1usO4r-000VUl-1r;
+	Sat, 30 Aug 2025 16:05:28 +0000
+Date: Sun, 31 Aug 2025 00:03:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
+	david@redhat.com, axelrasmussen@google.com, yuanchu@google.com,
+	willy@infradead.org, hughd@google.com, mhocko@suse.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: Re: [PATCH 08/12] arch, mm/util: add const to
+ arch_pick_mmap_layout() parameter
+Message-ID: <202508302325.b9umktOw-lkp@intel.com>
+References: <20250829183159.2223948-9-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829183159.2223948-9-max.kellermann@ionos.com>
 
-On Sat, 30 Aug 2025 15:21:46 +0200, Krzysztof Kozlowski wrote:
-> b4 diff '<20250830111500.53169-2-asmirnou@pinefeat.co.uk>'
-> Grabbing thread from
-> lore.kernel.org/all/20250830111500.53169-2-asmirnou@pinefeat.co.uk/t.mbox.gz
-> Checking for older revisions
-> Grabbing search results from lore.kernel.org
-> ---
-> Analyzing 9 messages in the thread
-> Could not find lower series to compare against.
-> 
-> You are not making it easier for us.
+Hi Max,
 
-Sorry, I know how hard the reviewing process can be.
+kernel test robot noticed the following build errors:
 
-To compare the differences, the mbox files can be created manually
-and then a range-diff can be run against the previous series revision.
+[auto build test ERROR on akpm-mm/mm-everything]
 
-b4 am -T '<20250822171041.7340-1-support@pinefeat.co.uk>'
+url:    https://github.com/intel-lab-lkp/linux/commits/Max-Kellermann/mm-shmem-add-const-to-lots-of-pointer-parameters/20250830-023442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250829183159.2223948-9-max.kellermann%40ionos.com
+patch subject: [PATCH 08/12] arch, mm/util: add const to arch_pick_mmap_layout() parameter
+config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20250830/202508302325.b9umktOw-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project ac23f7465eedd0dd565ffb201f573e7a69695fa3)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250830/202508302325.b9umktOw-lkp@intel.com/reproduce)
 
-b4 am -T '<20250830111500.53169-1-asmirnou@pinefeat.co.uk>'
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508302325.b9umktOw-lkp@intel.com/
 
-b4 diff -m \
-  v4_20250822_support_pinefeat_cef168_lens_control_board_driver.mbx \
-  v4_20250830_asmirnou_pinefeat_cef168_lens_control_board_driver.mbx
+All errors (new ones prefixed by >>):
 
-Let me know if you'd prefer that I submit a v5 instead.
+>> arch/s390/mm/mmap.c:187:44: error: passing 'const struct rlimit *' to parameter of type 'struct rlimit *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     187 |                 mm->mmap_base = mmap_base(random_factor, rlim_stack);
+         |                                                          ^~~~~~~~~~
+   arch/s390/mm/mmap.c:50:26: note: passing argument to parameter 'rlim_stack' here
+      50 |                                       struct rlimit *rlim_stack)
+         |                                                      ^
+   1 error generated.
+
+
+vim +187 arch/s390/mm/mmap.c
+
+9b11c7912d00d0 Martin Schwidefsky 2017-04-24  167  
+6252d702c5311c Martin Schwidefsky 2008-02-09  168  /*
+6252d702c5311c Martin Schwidefsky 2008-02-09  169   * This function, called very early during the creation of a new
+6252d702c5311c Martin Schwidefsky 2008-02-09  170   * process VM image, sets up which VM layout function to use:
+6252d702c5311c Martin Schwidefsky 2008-02-09  171   */
+f547a726bf8dd8 Max Kellermann     2025-08-29  172  void arch_pick_mmap_layout(struct mm_struct *mm, const struct rlimit *rlim_stack)
+6252d702c5311c Martin Schwidefsky 2008-02-09  173  {
+8e89a356feb6f1 Kees Cook          2015-04-14  174  	unsigned long random_factor = 0UL;
+8e89a356feb6f1 Kees Cook          2015-04-14  175  
+8e89a356feb6f1 Kees Cook          2015-04-14  176  	if (current->flags & PF_RANDOMIZE)
+2b68f6caeac271 Kees Cook          2015-04-14  177  		random_factor = arch_mmap_rnd();
+8e89a356feb6f1 Kees Cook          2015-04-14  178  
+6252d702c5311c Martin Schwidefsky 2008-02-09  179  	/*
+6252d702c5311c Martin Schwidefsky 2008-02-09  180  	 * Fall back to the standard layout if the personality
+6252d702c5311c Martin Schwidefsky 2008-02-09  181  	 * bit is set, or if the expected stack growth is unlimited:
+6252d702c5311c Martin Schwidefsky 2008-02-09  182  	 */
+8f2af155b51358 Kees Cook          2018-04-10  183  	if (mmap_is_legacy(rlim_stack)) {
+8e89a356feb6f1 Kees Cook          2015-04-14  184  		mm->mmap_base = mmap_base_legacy(random_factor);
+40ae96eabea408 Lorenzo Stoakes    2025-08-12  185  		mm_flags_clear(MMF_TOPDOWN, mm);
+6252d702c5311c Martin Schwidefsky 2008-02-09  186  	} else {
+8f2af155b51358 Kees Cook          2018-04-10 @187  		mm->mmap_base = mmap_base(random_factor, rlim_stack);
+c52d638d6b5da2 Lorenzo Stoakes    2025-08-13  188  		mm_flags_set(MMF_TOPDOWN, mm);
+6252d702c5311c Martin Schwidefsky 2008-02-09  189  	}
+6252d702c5311c Martin Schwidefsky 2008-02-09  190  }
+fd5d210fa66bee Anshuman Khandual  2022-07-11  191  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
