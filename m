@@ -1,159 +1,136 @@
-Return-Path: <linux-kernel+bounces-793101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B92FB3CE7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:02:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2926B3CE87
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05F0D5E6D55
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:02:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A12787A5C3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3CE27876A;
-	Sat, 30 Aug 2025 18:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d4kFHbRn"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F32D8777;
+	Sat, 30 Aug 2025 18:03:35 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D0025487C
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5EB2741CD
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756576952; cv=none; b=QKLYlYHv7ge4wqQY8GWQBOvb8Rt2fSbgmDWGdrOk0ZgxCntmqy+j1eWIlV6vWfgfm2YS98A4EbwcpuNMeopEb5BTn/8Du4uMNMBtCKgFENmLjC0PYRg6Zp22+l7myefvtzLPLxtnJvFbZEd2g8GtwtXCTSjaBSNI4gnQp2fsW4Y=
+	t=1756577015; cv=none; b=dsaGvP+wEOvLPw5HzNchJeVZr5wX+njBli+cu9RQnLt9ytHADx170y5fjv+BTjwRJ4I0VPwDOVr4ywDsBqaYjz2WtzwQQEhZCs5C6jAxYuS6RwgDjxkP2DO1gw7eUbmUvZWuhW14XtMpCdjNd1G5VZvrGP2CjNphVqN5l82apLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756576952; c=relaxed/simple;
-	bh=LL1hd9q8LJpTq1VIPJ6jPwhtJlsQGlDix5UjkykB4Z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGbw4XAtwkiDWXoCRQznUUcJx3S/W3eESftz2L6Vrys5v/Y2ivA0lxyuZMs0MNhH4t8HkOyCGy6SXsz20Jic2npzM4rSfulx9STt3mIhX62Z3UscuTGdL6w9ZMXv3T72tZ7j2IQIRjaJhKVeQwfRZ1eWqJoJB3FiTifrrJ9BSpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d4kFHbRn; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cceb07f45so3219153fac.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:02:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756576950; x=1757181750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PD2EKFpAobF4U0TIuLMjpEcO1H/Nnyn+f8Dfu+DnkNI=;
-        b=d4kFHbRnKQoKXBWL1zWyAwAs9XrZhybRacslpYsfOE/8svlNjSAa8Db/NCLXxiJRfA
-         J2QD4/foHnDmHwjuCSsOjuJdbemw7PsoCS5Uu6HXPTYCRCgcgnVvheVSKQyQpip6/XBP
-         MXz5Fm4B1McmU3Wff8PnTJzziO8LqKydzV6W7lgjTSLztkWWi8KoF8jJh5zTod8q8sIa
-         wdfUEv0LJL8woK7iGwOs86dgFktN/7oUDsaxpR4w8skkPSaKoxIEI7ZTIEdD0ImcJ/2B
-         NNHGtdWgXgCxV140u8AZQooK2BGzWxAuHzVH5fzMh7d38ELATTJP4PjnOCL/xLmLDsBH
-         4Piw==
+	s=arc-20240116; t=1756577015; c=relaxed/simple;
+	bh=hdj9CuNvUL2qLsfWQqzcQGBGGcXsEsqeJOYPfSil7BQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TzC/5cpB6rM1qM9CbylS38HkcIl0B22BTS3OpqKT4hCfbLmxQ3tiP7hCdmiX2T8N8bfLDCQZotC2HapeAJzZpV6LAf+xYVY0Jq+xDiKtLMRerTCCMKfWNYoMseRPsfhyIjw+G/bGonHZs2s+jiER9HtLDnEqzXvFWM0BVzeDRrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ea2bd7b667so83883475ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 11:03:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756576950; x=1757181750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1756577013; x=1757181813;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PD2EKFpAobF4U0TIuLMjpEcO1H/Nnyn+f8Dfu+DnkNI=;
-        b=jdHVQewUTGIYwcRfk2M8gB7C2+ONC63+BDhGGhlU/hvQgd4q4o13iKdZZRuTdwqDBt
-         Uka2Uw5wBIciag19efJ05JGDhFuLWAC/R/DfMsH5Hn7vGQqd5YWrwsbvnI1MvUfuc5Qe
-         FEoXYURKeM0h3OFH/3Fj7+rFopSHVHLs5cYfn9e075KTxCOy1F3NbUlNEfdiMaxiZx1L
-         xhIsWpp7SmP/Pnc3cn6cLu5WtjAQtl/sFKl0ZnRqeWa579JSQudVIhP6OmD2Tn/deHrp
-         wPQgu3344/qMOO8Rg+7IoywIOyRzoLcR97LB+u8N4CUe2W7eGCslr4HJycwIa6A7YJAs
-         UX7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKdQqTEVJQ0QiTLN7aiX6ohBik9dF2+9kw43xZXtUrtjdQFtfoJiFfPXMPTYHHkv3ZHmWqA3kXkWwpnsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqJiM2l2JksvXw7iWg+p7eje4R5F9XtZidVSLPQqNh7On0w7mN
-	q6DtqfpaDltz9HrgUxMpyaAns955ffjylQbiToexm2GIF0421PJFudmZMWTgB9pa1Gw=
-X-Gm-Gg: ASbGnct1A8LLKu0VCRYWxdRPHFqc3Vnv8DDqF6MllJ1Xknl1WqHfHhosclriUI/b8Hc
-	aPrf87l4DHKPa54xXY9xHMSEk89P8aoz6TFF4O4ubG6ik4DMoYQ5vJlON0BLoCwihFwQ7lWkYCM
-	cInF0KCrldCxg3AIfPcjj1ayu/PcuOpoEot7rWLoYg07NT3W+WiqcGO736QlgwhWqgyRbRWDdt1
-	Te2I44yIUJA/OoaZTAk0re/sQpLbc862OEpvOlkRWDEkL46KTNNmHswTLAxtOMVqfF4OARA0fss
-	/1IKOFp+omtC8PjfXP2GWIqpHbc/mRP51vnoE2ig2IvYsoM6tGqZFf9XORxXp/dkExzuTobW1Y6
-	djT6ghfZspfsIc8w9MbGfje6QGukgeGGJb+6ouHnZx7zSqmma5z39UlZSsmbIxmOCb+RU8xPnRB
-	U+VR6Mc7tDlQ==
-X-Google-Smtp-Source: AGHT+IGSJvFvC9dcmKaGf9glwESPFKs7sboRW3GSWHC52Tz6jlzKsP6xrkD7Hc7UHEkT8qvw/3aY5Q==
-X-Received: by 2002:a05:6870:c0d:b0:315:b768:bd23 with SMTP id 586e51a60fabf-319633c79a1mr1298016fac.34.1756576949951;
-        Sat, 30 Aug 2025 11:02:29 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d? ([2600:8803:e7e4:1d00:f7b4:dfbd:5110:c59d])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3196d2a7f3csm392769fac.8.2025.08.30.11.02.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 11:02:29 -0700 (PDT)
-Message-ID: <033e8639-67db-4397-b8c1-d1b7774eb9fe@baylibre.com>
-Date: Sat, 30 Aug 2025 13:02:28 -0500
+        bh=Y0EmFDrtnTB27c9P1CgT1xWyHibY7Jm3IDK1ySTEc4U=;
+        b=CvfJRzsscMsRtyENH1IQitsv+3VNCYhJuym9HQ2x32SfPlgdPQghlAtDXVp+6I+pwh
+         A6Op6CRaoKOd4ttk9QMdHoeOn1zyueSYzsCvbwxCF165PVdMVwwg/IiCDWuZ5Zp7W37e
+         sTL2B4+cxxzLrh4lVqNRfS+yH0aIXITRHIIxeDKIOobosuUc4fbgbKim85kls1u2r8FK
+         JmJsFrsubFKPcJpq5xfcytALW6Gh4O6+1zRxRLB7JYMIPnbHI6MmZs0vRGGWTgnA1zlU
+         3tfoBlvo58VU+vetpVcWvEjMVYS158Sxly+XURUI0uVoN6V5uh5LvEuY3IhEkT3LgF5N
+         3xcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmYn+uR6oI6EyxaCswWV+C4TGvGwFTkTu0JYCnQgT7O3m4yhgnvqiGw8kmWb+O9me9HiiCs2wXuCQFB8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/HzPueReuWtaDh133rAFUYovwotjp4wJ6iCcPfDHnBewLeGDA
+	sZcQ2CJHz2BxNy/1WylMrV7ByISEYw8Zz4Gmo7NR86AaIsPw73egreGNDh/3o8dvhMNS5dU+IsK
+	5kuYhYy7rJKUKCUkG/SQuByokhzM7SnVW8N+SVtJ3J3hT85s7qRmMCATOMvc=
+X-Google-Smtp-Source: AGHT+IG32OKZdP/wR5LsTpXnN7zPnfxInIheNy/NLRAyHRxnx4lf1Ppw0rVZprhjee1dorUQDzs2sKZopzbmRoTgayJB7NX6CAfu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/15] dt-bindings: iio: adc: adi,ad4030: Add
- adi,clock-mode
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
- eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
- Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
- ahaslam@baylibre.com, sergiu.cuciurean@analog.com, marcelo.schmitt1@gmail.com
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
- <1acb071f7140c9d44ed616a9eaea00b0ee423164.1756511030.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <1acb071f7140c9d44ed616a9eaea00b0ee423164.1756511030.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:2189:b0:3f3:42ba:5a9 with SMTP id
+ e9e14a558f8ab-3f4027b88cemr54329045ab.31.1756577012922; Sat, 30 Aug 2025
+ 11:03:32 -0700 (PDT)
+Date: Sat, 30 Aug 2025 11:03:32 -0700
+In-Reply-To: <68a28720.050a0220.e29e5.0080.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b33cf4.a00a0220.1337b0.0025.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] WARNING in xfs_trans_alloc
+From: syzbot <syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com>
+To: cem@kernel.org, hch@infradead.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/29/25 7:43 PM, Marcelo Schmitt wrote:
-> AD4030 and similar designs support three different options for the clock
-> that frames ADC output data. Each option implies a different hardware
-> configuration for reading ADC data. Document AD4030 clock mode options.
-> 
-> Co-developed-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad4030.yaml      | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> index bee85087a7b2..1e4e025b835f 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> @@ -78,6 +78,18 @@ properties:
->    interrupt-names:
->      const: busy
->  
-> +  adi,clock-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: [ spi, echo, host ]
-> +    default: spi
-> +    description:
-> +      Describes how the clock that frames ADC data output is setup.
-> +      spi  - Spi-compatible. Normal SPI operation clocking.
-> +      echo - Echo-clock. Synchronous clock echoing to ease timing requirements
-> +             when using isolation on the digital interface.
-> +      host - Host. The Host clock mode uses an internal oscillator to clock out
-> +             the data bits. In this mode, the spi controller is not driving SCLK.
-> +
->  required:
->    - compatible
->    - reg
+syzbot has found a reproducer for the following issue on:
 
-I think this would make sense as a common property in spi-peripheral-props.yaml
-as this is something that is not specific to just this ADC and also requires
-a supporting SPI controller with the matching wiring.
+HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15474242580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab02e4744b96de7d3499
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10891a62580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a32a62580000
 
-I would also tweak the names and descriptions a bit to describe how it is wired
-rather than how it is used.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f4f2ae1e66f9/mount_3.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=12458e34580000)
 
-  spi-sclk-source:
-    enum: [ controller, echo, peripheral ]
-    default: controller
-    description: |
-      Indicates how the SCLK is wired.
-      controller: The SCLK line is driven by the controller (typical SPI bus).
-      echo: The SCLK line is driven by the controller and the peripheral echos
-        the clock back to an input on the controller on a second line.
-      peripheral: The SCLK line from the controller is not connected to the
-        peripheral and an independent clock output driven by the peripheral is
-        connected to an input on the controller.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ab02e4744b96de7d3499@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 24 at fs/xfs/xfs_trans.c:256 xfs_trans_alloc+0x3e4/0x898 fs/xfs/xfs_trans.c:256
+Modules linked in:
+CPU: 1 UID: 0 PID: 24 Comm: kworker/1:0 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+Workqueue: xfs-inodegc/loop0 xfs_inodegc_worker
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : xfs_trans_alloc+0x3e4/0x898 fs/xfs/xfs_trans.c:256
+lr : xfs_trans_alloc+0x3e4/0x898 fs/xfs/xfs_trans.c:256
+sp : ffff800097ce77e0
+x29: ffff800097ce7860 x28: ffff0000c2490130 x27: 0000000000000000
+x26: ffff0000c2490000 x25: dfff800000000000 x24: 1ffff00012f9cf18
+x23: dfff800000000000 x22: ffff0000c249043c x21: ffff0000c2490440
+x20: ffff0000c2490438 x19: 0000000000000004 x18: 1fffe000337a0688
+x17: ffff800093507000 x16: ffff80008b007230 x15: 0000000000000001
+x14: 1fffe0001e61bbb5 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001e61bbb6 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c1ae8000 x7 : ffff800081e80e40 x6 : 0000000000000000
+x5 : ffff800097ce78e0 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : 0000000000000004 x0 : 0000000000000004
+Call trace:
+ xfs_trans_alloc+0x3e4/0x898 fs/xfs/xfs_trans.c:256 (P)
+ xfs_attr_inactive+0xec/0x2b0 fs/xfs/xfs_attr_inactive.c:343
+ xfs_inactive+0x7ac/0xb74 fs/xfs/xfs_inode.c:1464
+ xfs_inodegc_inactivate fs/xfs/xfs_icache.c:1944 [inline]
+ xfs_inodegc_worker+0x320/0x83c fs/xfs/xfs_icache.c:1990
+ process_one_work+0x7e8/0x155c kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x958/0xed8 kernel/workqueue.c:3400
+ kthread+0x5fc/0x75c kernel/kthread.c:463
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+irq event stamp: 1049032
+hardirqs last  enabled at (1049031): [<ffff80008b028e88>] __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+hardirqs last  enabled at (1049031): [<ffff80008b028e88>] _raw_spin_unlock_irq+0x30/0x80 kernel/locking/spinlock.c:202
+hardirqs last disabled at (1049032): [<ffff80008b001bfc>] el1_brk64+0x1c/0x48 arch/arm64/kernel/entry-common.c:574
+softirqs last  enabled at (1048974): [<ffff8000803d88a0>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (1048974): [<ffff8000803d88a0>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (1048959): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+---[ end trace 0000000000000000 ]---
 
 
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
