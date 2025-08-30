@@ -1,157 +1,105 @@
-Return-Path: <linux-kernel+bounces-792831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17551B3C98A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9A5B3C98C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 10:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD31BA61D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1213B0E00
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 08:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB912522A8;
-	Sat, 30 Aug 2025 08:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQZDp433"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6717F24E4C4;
+	Sat, 30 Aug 2025 08:57:24 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446951DDA18;
-	Sat, 30 Aug 2025 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FC853363;
+	Sat, 30 Aug 2025 08:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756544118; cv=none; b=dCtLFO5QJVUHnZxuTXwexIkS3WXCZwE54lzsTzWfj4ySbzaI4+KSDB+iJ7jjyopAa89MYAxfp8I3otJmdBFEUPQ/wCaWhD4ABp6eLBl9mJhkL/tLyOf24IfYn0jSD2zxLn6aOp9tECnaURMxL8sE/K2OZOUvzCbW8SxIB1TFLzU=
+	t=1756544244; cv=none; b=uw0knDRJ2qDFsCZYF6hp//lrGC1aw3YXN74DN8gDnjsUXbSTd0OR/NIchGuKPtodr8x3ZWsuKHIIri5TVNYnClCRasrU1lnXcuDJh7I9Ypmpoc7GoAND8q2Gg2m1flodRgAORsqvUXRIWyiqyuM5LVP93NZqkW0HTmIDj2nDDpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756544118; c=relaxed/simple;
-	bh=i/mN1sgpxt2Dt6aoQYRdO4ESSsvQ5P9r2eVyi3rcGqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XWCF75w+jENf3lZShL0RxFkpxh7OYEZuoNEU/+9pCHHUv7iehZzKfjR5VUjFMtcu4yYTQHTY0oR6wkfi1D2nFTQ5oKhzyWXXKJIoeDO9DpeqT9VmvFpyWB49tzIAwNakGh5PhFkqq+rx6xHD28UGA9dbPOtf+6MUhg5HHkVz9e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQZDp433; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7704799d798so2381529b3a.3;
-        Sat, 30 Aug 2025 01:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756544115; x=1757148915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/g/9jlkjpAHQDAZ+36D2vqfG5gOdTRj2+Yr8N1lRDG4=;
-        b=cQZDp4330nHzVo9Y8zsIsyVABWViMsxek5eFQDydmWLewigJsEBLhzb88D0+GEpxGv
-         nHXh34BcyJ+e+RKbqLrgtD4p7u4wNA+oFdFxHcEESlsHs1gYmg1iDsvAXRtMd5b4METD
-         YZKg8FmJ2FWfLWEKswN8NmtugUfxFgE+7JvenXNgX8/vrmR1LhRI041tGJltZp1VehLf
-         UdLEnShPCfjS0EluLs7Rgtv89NDrodi7DpVkmQXEYU7ukbzXnMgTzib+VSquss7SE5Xw
-         kMvMeiZXXPsikcBfTkoeEn+F0VVbilxwngbOCqu0up+kNS17kOP2GUpV9s6Z+o7N1bgY
-         AwPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756544115; x=1757148915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/g/9jlkjpAHQDAZ+36D2vqfG5gOdTRj2+Yr8N1lRDG4=;
-        b=wdgdwagNPdDBvTZsCZGeT+lZNLxYy43+Seb7VugnyUEY15P4csG1JuiB/4SmC7g0bS
-         1OoBsk52HPFTtnStssai07gfu5Mj0o+Fc0EbmB8eue0evZjsPc+45Ho7PvF2aWU/6BFl
-         hAaVf2RjsrHnGZr1BvABLE4HsBJNcDweGId26SarXG0tGCJaC09sziaZPXGpB9AdILiK
-         5tlAQNVTHdCZMBZe41sIUYXPmsiUqGsxUw32v66JjNgGwSFKO3iwVtpRd8sqd1ZQcPVx
-         RlaxNQyqq7Jxfix1H1oL20V+RAMP57dWYWyBhRYKYkzjMdSmWKX22I3EWL5i5+KThl0A
-         lEcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMVPFk41kRVbGNqWFInBNPddHtNLPe3E7pouO+w1miJba/Tsu2f6uhiqgy8rSHyQ0UkbTofurvZcLFIno=@vger.kernel.org, AJvYcCVQPRxKzo53AjW2WD94oWoLIhIn/pO3KuIBR4fXLPx+JGFuqjsUJGaFRXLoPwg6DkSI2URWjkIp@vger.kernel.org, AJvYcCWvHv53Io55YEg5mWStrz+kIOFJbEAM0c0KWfk/yvg+i7peW8266EaENt9wOxw3+LGZ6aST5qXa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI44j9tLPlYVK3cLl5b7J7+xIcwsLBN3zFxcceYFLHZcwKtrcU
-	jlmAXUWrIoSPM+EATEpY3X+bHmIkrs2mceqPlppRdCoXESNQlt9BIB4S
-X-Gm-Gg: ASbGnctej1H5bfxwftI9un3F3pdBJ1Bzoth4lrkH4ooHo8UBnO2JJfMxVGKHffI+6W5
-	d5FcwvP923j3DATdcAa9g0k1yECIfcUo9VWxgrH/ghwfCKQNAeGqA3X3r4z2lNpvANz4v0y0EkZ
-	CVDs12mafjxo92jTbFQYlxreTLTKClmqEQaja/h5MjR0ZNMJfQZiucJOvHkAlJt9O3SUfX2TNWj
-	ggfxiguzknbMoWHoHWTPXW6szoEJ6yHjgVZUueUHVUja0SP0p8983P48BOLWyZSNaZO4PkOT6F/
-	TP3vY2Fd7JRQoP4DAEkr+1btKsOVfh58q3i90RBnVDvD8gE3MVkfq0CVn1yJufFoX8mSz53FCB4
-	hOTMBXd4Az6O3vMu61nyBmsTVt5ELMEMjx8vl1eIhDIoY/A194yJ+RvIt/GwGeN19qBZ+H34TBr
-	CxltybnCKIdkMf/u8ftpLoGN8pkq8+vph0S72h/SMOeyPsfNleJM4BVwg=
-X-Google-Smtp-Source: AGHT+IFufVgDFn3jScqiTqDiEv4K379j2VpA4sl2gvYUjCnALZlR4vQ/abr6HCgG/Oy8R9lh6f5tZg==
-X-Received: by 2002:a05:6a00:4b56:b0:772:2c15:230e with SMTP id d2e1a72fcca58-7723e21e99fmr2115295b3a.6.1756544115367;
-        Sat, 30 Aug 2025 01:55:15 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.163])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7723d79fed2sm1426111b3a.9.2025.08.30.01.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 01:55:14 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] net: dsa: mv88e6xxx: Fix fwnode reference leaks in mv88e6xxx_port_setup_leds
-Date: Sat, 30 Aug 2025 16:55:08 +0800
-Message-Id: <20250830085508.2107507-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1756544244; c=relaxed/simple;
+	bh=+PJ718pZkHecDJD/niuj71raER0oNdGPCe4aU8cOYt8=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=HzQ4CA+lmHJI6nJ5rNznu9UmUrjYfhRZDZzevg0hfDa/P6vMeREB+ootrH3VyRn5fJhZgX2x2oeeihCig4l+3XLhTKMKWVJQaZVO7Vov+An/PpluN2KgaP1/umPjLC2mBkdB7FqtTkhy7JEmHFq3QLkEZ7a/ZmRw7nYLYwOd5JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cDTXq10XKz8Xs72;
+	Sat, 30 Aug 2025 16:57:15 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 57U8v9SS059986;
+	Sat, 30 Aug 2025 16:57:09 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 30 Aug 2025 16:57:11 +0800 (CST)
+Date: Sat, 30 Aug 2025 16:57:11 +0800 (CST)
+X-Zmail-TransId: 2afc68b2bce7b0a-fb433
+X-Mailer: Zmail v1.0
+Message-ID: <2025083016571123360dlV3pxVqfCY35MOQnma@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>
+Subject: =?UTF-8?B?wqBbUEFUQ0ggMC80IGxpbnV4IG5leHQgdjNdIERvY3MvemhfQ046IFRyYW5zbGF0ZSBuZXR3b3JraW5nIGRvY3MgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57U8v9SS059986
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Sat, 30 Aug 2025 16:57:15 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68B2BCEB.000/4cDTXq10XKz8Xs72
 
-Fix multiple fwnode reference leaks:
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-1. The function calls fwnode_get_named_child_node() to get the "leds" node,
-   but never calls fwnode_handle_put(leds) to release this reference.
+translate networking docs to Simplified Chinese
 
-2. Within the fwnode_for_each_child_node() loop, the early return
-   paths that don't properly release the "led" fwnode reference.
+v1->v2:
+https://lore.kernel.org/all/20250728153954564ePWG4rm0QdFoq2QGWUGlt@zte.com.cn/
+https://lore.kernel.org/all/CAD-N9QW7=frNYSJDhaUiggSF9p_v33R8BQ0t8vypWUCXO+pyZQ@mail.gmail.com/
+1. resend by plain text.
+2. remove unneccessary empty line in subject.
 
-This fix follows the same pattern as commit d029edefed39
-("net dsa: qca8k: fix usages of device_get_named_child_node()")
+v2->v3:
+1. add reviewer tag
 
-Fixes: 94a2a84f5e9e ("net: dsa: mv88e6xxx: Support LED control")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/net/dsa/mv88e6xxx/leds.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Sun yuxi (2):
+  Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chinese
+  Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chinese
 
-diff --git a/drivers/net/dsa/mv88e6xxx/leds.c b/drivers/net/dsa/mv88e6xxx/leds.c
-index 1c88bfaea46b..dcc765066f9c 100644
---- a/drivers/net/dsa/mv88e6xxx/leds.c
-+++ b/drivers/net/dsa/mv88e6xxx/leds.c
-@@ -779,6 +779,8 @@ int mv88e6xxx_port_setup_leds(struct mv88e6xxx_chip *chip, int port)
- 			continue;
- 		if (led_num > 1) {
- 			dev_err(dev, "invalid LED specified port %d\n", port);
-+			fwnode_handle_put(led);
-+			fwnode_handle_put(leds);
- 			return -EINVAL;
- 		}
- 
-@@ -823,17 +825,23 @@ int mv88e6xxx_port_setup_leds(struct mv88e6xxx_chip *chip, int port)
- 		init_data.devname_mandatory = true;
- 		init_data.devicename = kasprintf(GFP_KERNEL, "%s:0%d:0%d", chip->info->name,
- 						 port, led_num);
--		if (!init_data.devicename)
-+		if (!init_data.devicename) {
-+			fwnode_handle_put(led);
-+			fwnode_handle_put(leds);
- 			return -ENOMEM;
-+		}
- 
- 		ret = devm_led_classdev_register_ext(dev, l, &init_data);
- 		kfree(init_data.devicename);
- 
- 		if (ret) {
- 			dev_err(dev, "Failed to init LED %d for port %d", led_num, port);
-+			fwnode_handle_put(led);
-+			fwnode_handle_put(leds);
- 			return ret;
- 		}
- 	}
- 
-+	fwnode_handle_put(leds);
- 	return 0;
- }
+Wang Yaxin (2):
+  Docs/zh_CN: Translate skbuff.rst to Simplified Chinese
+  Docs/zh_CN: Translate timestamping.rst to Simplified Chinese
+
+ .../zh_CN/networking/generic-hdlc.rst         | 176 +++++
+ .../translations/zh_CN/networking/index.rst   |   8 +-
+ .../zh_CN/networking/mptcp-sysctl.rst         | 139 ++++
+ .../translations/zh_CN/networking/skbuff.rst  |  44 ++
+ .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
+ 5 files changed, 1037 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/translations/zh_CN/networking/generic-hdlc.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/skbuff.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
+
 -- 
-2.35.1
-
+2.25.1
 
