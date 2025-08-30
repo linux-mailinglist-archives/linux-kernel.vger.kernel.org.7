@@ -1,164 +1,229 @@
-Return-Path: <linux-kernel+bounces-792786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBD8B3C8EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD84B3C8FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 09:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF773B5B22
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BFBB16BD40
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4D327F759;
-	Sat, 30 Aug 2025 07:50:12 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A37285045;
+	Sat, 30 Aug 2025 07:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0gJBgbE"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2C62AD0D
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 07:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AF31E5710;
+	Sat, 30 Aug 2025 07:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756540212; cv=none; b=X5WFtXj0OdHrqZCUfzN0MqIRGr25Ld6pTsEeTuzhoIeukED7+iRJi2NjZRgjM0HKbOnKJL1ZdjeutyXCz42aqOqwFW2Ed7lTdErc4exDi3TYeogMOjwlzqQQ120j04JOBFJRfFnxwdsAF+4BBlMiq0qzEVjqNAqmqngXJt+WFzE=
+	t=1756540666; cv=none; b=NJIVWuRl+2wGiVm8uCNlKvnyH/A7pKRFwW9DR6twGFazwmQA3Q91TatnnBqPtpmtvrZMcK1X+KyxQWv+ndtsScP5yj2FEwzv/y9QUt73T3g1/sk4BuytPXWsoVtWpEocHpQCINZ8/z2aSTuAxiv4fdnWm72ed1Y/57rwXUILmI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756540212; c=relaxed/simple;
-	bh=2POVIrVonj5zbVhm0MY7/yaEjv/viU1EMugwH91ozYg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dv+SOtk3teyoQWLotY5/AtwstR89qp0eNv4W8X16nKhk3sVfX8fzHK85+YGORIphaFiUJDf5q4cxjat2DMqKn9rQN2La5PIzTunSilsErganatlvFkxCcl03wlBcgpaDXGcG3MEHG8BOuPDe/4mQs+xWJ24w1aI7u9voBNv2krY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cDRyx2Ymlz13NHV;
-	Sat, 30 Aug 2025 15:46:17 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6F0C91400E3;
-	Sat, 30 Aug 2025 15:50:03 +0800 (CST)
-Received: from huawei.com (10.175.104.170) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
- 2025 15:50:02 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <giometti@enneenne.com>, <gregkh@linuxfoundation.org>,
-	<mschmidt@redhat.com>, <calvin@wbinvd.org>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] pps: fix warning in pps_register_cdev when register device fail
-Date: Sat, 30 Aug 2025 15:50:23 +0800
-Message-ID: <20250830075023.3498174-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1756540666; c=relaxed/simple;
+	bh=+2+Gj1nNHKpL+N9u8qZn9hF2ACrmy8ud9G7KUHU3RQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QiU3jh6L91BDn5VLIbfofygmEJpA3b3XXON6y8BvZUK+TFOwiiXTvf82mhGLQjLkMEGPtWrsLP5PMM0eHRsJ3DL5JluoYmytYt82jrEbxgHhYMWjn1eO4NiFOjYFFxdX6oXuIcntMcorq9shT+jmnUtaxbHyUM7Th/sCQ034I/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0gJBgbE; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aff0775410eso180564466b.0;
+        Sat, 30 Aug 2025 00:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756540663; x=1757145463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xzYpIPBYEfD30svdRD/8XJR3PeRfEwoaHDcvFNvN3Q=;
+        b=X0gJBgbEOMwlVvKqNelyu6lL+R2SjWnRhl/doU3FjZzwAKiFEg0uZw4nqUvV4zT2r2
+         L1wdLZdTF9ooD236N3qmPi+Kvv4JwyYUD1fVWjO2zrEyKKrvnyl1iIEVje8qtNTh0CRt
+         NwBKwrXhFY2R9LH8fdigNlqVJSb18S7Y5rOvYWi8M8GCiBVhSPsmjJ9D5YLrhsdu4zZY
+         m0cXw9NGrNMEsxLDLftDG+2u2HVaIJaT3g94NLqGN8qUnwzpOe6U6CFxnnPz6u5oLp5B
+         yRk55CgIEZlTXOgt9CY3rTqLB3Jbamv3O9pS4px5jhgUyfmxoO/qCtMKQut2uSUtmJnQ
+         YCUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756540663; x=1757145463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xzYpIPBYEfD30svdRD/8XJR3PeRfEwoaHDcvFNvN3Q=;
+        b=GZwC+E7xNIeb2xKLh43SvohY7MwWXFMJyUlVgsFTYWV0tPNwo1y4OIF9sHiK+E7IcJ
+         UvhhADJ3jrcERseogTtKqLo14GDrAQY/77IWZWmTdNMGRrR0iHaM69oseuuhG0gTtMhe
+         kKrKS5cWjZsNYlFW3DnlMiaT1TEuVzR02el/hh6KC9lE0y+kJyctTYt2nOqY84C6gDPB
+         O7fxhP+moCDoISAjXMdvcJAdAbua17ACh8n75M5v0oIDF1zW8UQ9NXOCSZyi7lBBqGX9
+         M8pXyWMkBP+ufXOoYzOvSB5nsL8rZ4ul040q12VjQcHDNQnbYl00UQZS4OoJFv05gRVo
+         ovbg==
+X-Forwarded-Encrypted: i=1; AJvYcCURnHWjaXsaEkHs/hHfTDXfv1pgdfQWNluj5j88rwL0BeFo6k+pDVM93kMXW9n/XJ+l7UPuGLHAruw8XIKP@vger.kernel.org, AJvYcCUfkAzfavoqIjIo3IGzlV9p+KjdAhteYkba5iX5AM++aCwX9Q9elXiWyEGIyrfy8ORiafaP0dMNdEU1@vger.kernel.org, AJvYcCWtBcUbVPJffoPe/WL8fAElWEth2fvqRy+iB2ylp9+rdB/5xnInJsuKS2Pwxh8ri46Jj8I199znAFsP@vger.kernel.org, AJvYcCXZx3J0Nbw3aIulmPADvMmBXsiLcp1FIkHZe6EyQp7jty7wZ5NEPZlkoxbsxjPgzg70IOeJ8tQEi07H@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP2PuxoOIlLh8OD1oltmo2nq8qU2rZvzHSrQu3MSIUfbCAD3x6
+	DZ+3uSZRYoJidMwFmHTadGfHmatcXBxuPnavH4vt0LHor8yjtF9kfu3Z8uFtfk3pDMICXUgVW6r
+	lD8Xv2cofmPU+sLoTjrbcUI82ijw/qzfQutF+g/0=
+X-Gm-Gg: ASbGncu1bCbHwr5Qoo/AZzlVSf5ppn3PuY3Vm+dsB44UfrdHGwasQdtg+DHmetVYjwV
+	AJApRCjRaaQxO8vluSPvx9Uud4Y6JxAkAWuXTEVQVpsb3Y4MhNjWy1Ml8GUka+MIm23t+W53Auo
+	SRKUVV56q/+XhFkJpih8F1dTBrx9werQ0YrErwvcQhCtB5jc8i0XborqG+cov29lFoPIzncq42o
+	UpB/d0=
+X-Google-Smtp-Source: AGHT+IFLFaJZMNtcY4bSeieEVUiOrD9u71emls8SkXMWkt+Cd9A3UVgZvQN5+DgDo/fD1simHs+bT5eet1sbhBXtbNA=
+X-Received: by 2002:a17:907:8694:b0:aff:1586:14c2 with SMTP id
+ a640c23a62f3a-b01d8a58373mr129215966b.4.1756540662463; Sat, 30 Aug 2025
+ 00:57:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+References: <cover.1756511030.git.marcelo.schmitt@analog.com> <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
+In-Reply-To: <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 30 Aug 2025 10:57:06 +0300
+X-Gm-Features: Ac12FXyTcea0WOAjGBKoJRyBZ-wQfLv5c18Ob1a_Rdr7ObF9Kvv_OchzjH_ruYw
+Message-ID: <CAHp75VdeSqwVecJHx+jXn9++zgN+CBH56OGUYX5kBbdc0AFKSA@mail.gmail.com>
+Subject: Re: [PATCH 15/15] iio: adc: ad4030: Add support for ADAQ4216 and ADAQ4224
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, jic23@kernel.org, Michael.Hennerich@analog.com, 
+	nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com, 
+	andy@kernel.org, corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, broonie@kernel.org, Jonathan.Cameron@huawei.com, 
+	andriy.shevchenko@linux.intel.com, ahaslam@baylibre.com, 
+	marcelo.schmitt1@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Similar to previous commit 2a934fdb01db ("media: v4l2-dev: fix error
-handling in __video_register_device()"), the release hook should be set
-before device_register(). Otherwise, when device_register() return error
-and put_device() try to callback the release function, the below warning
-may happen.
+On Sat, Aug 30, 2025 at 3:46=E2=80=AFAM Marcelo Schmitt
+<marcelo.schmitt@analog.com> wrote:
+>
+> ADAQ4216 and ADAQ4224 are similar to AD4030, but feature a PGA circuitry
+> that scales the analog input signal prior to it reaching the ADC. The PGA
+> is controlled through a pair of pins (A0 and A1) whose state define the
+> gain that is applied to the input signal.
+>
+> Add support for ADAQ4216 and ADAQ4224. Provide a list of PGA options
+> through the IIO device channel scale available interface and enable contr=
+ol
+> of the PGA through the channel scale interface.
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 1 PID: 4760 at drivers/base/core.c:2567 device_release+0x1bd/0x240 drivers/base/core.c:2567
-  Modules linked in:
-  CPU: 1 UID: 0 PID: 4760 Comm: syz.4.914 Not tainted 6.17.0-rc3+ #1 NONE
-  RIP: 0010:device_release+0x1bd/0x240 drivers/base/core.c:2567
-  Call Trace:
-   <TASK>
-   kobject_cleanup+0x136/0x410 lib/kobject.c:689
-   kobject_release lib/kobject.c:720 [inline]
-   kref_put include/linux/kref.h:65 [inline]
-   kobject_put+0xe9/0x130 lib/kobject.c:737
-   put_device+0x24/0x30 drivers/base/core.c:3797
-   pps_register_cdev+0x2da/0x370 drivers/pps/pps.c:402
-   pps_register_source+0x2f6/0x480 drivers/pps/kapi.c:108
-   pps_tty_open+0x190/0x310 drivers/pps/clients/pps-ldisc.c:57
-   tty_ldisc_open+0xa7/0x120 drivers/tty/tty_ldisc.c:432
-   tty_set_ldisc+0x333/0x780 drivers/tty/tty_ldisc.c:563
-   tiocsetd drivers/tty/tty_io.c:2429 [inline]
-   tty_ioctl+0x5d1/0x1700 drivers/tty/tty_io.c:2728
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:598 [inline]
-   __se_sys_ioctl fs/ioctl.c:584 [inline]
-   __x64_sys_ioctl+0x194/0x210 fs/ioctl.c:584
-   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-   do_syscall_64+0x5f/0x2a0 arch/x86/entry/syscall_64.c:94
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-   </TASK>
+...
 
-Before commit c79a39dc8d06 ("pps: Fix a use-after-free"),
-pps_register_cdev() call device_create() to create pps->dev, which will
-init dev->release to device_create_release(). Now the comment is outdated,
-just remove it.
+>  /* Datasheet says 9.8ns, so use the closest integer value */
+>  #define AD4030_TQUIET_CNV_DELAY_NS     10
 
-Thanks for the reminder from Calvin Owens, 'kfree_pps' should be removed
-in pps_register_source() to avoid a double free in the failure case.
+You already used that in one of the previous patches, can you move
+there this one and use instead of magic +=3D 10?
 
-Link: https://lore.kernel.org/all/20250827065010.3208525-1-wangliang74@huawei.com/
-Fixes: c79a39dc8d06 ("pps: Fix a use-after-free")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
-v2: remove kfree_pps in pps_register_source().
----
- drivers/pps/kapi.c | 5 +----
- drivers/pps/pps.c  | 5 ++---
- 2 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pps/kapi.c b/drivers/pps/kapi.c
-index 92d1b62ea239..e9389876229e 100644
---- a/drivers/pps/kapi.c
-+++ b/drivers/pps/kapi.c
-@@ -109,16 +109,13 @@ struct pps_device *pps_register_source(struct pps_source_info *info,
- 	if (err < 0) {
- 		pr_err("%s: unable to create char device\n",
- 					info->name);
--		goto kfree_pps;
-+		goto pps_register_source_exit;
- 	}
- 
- 	dev_dbg(&pps->dev, "new PPS source %s\n", info->name);
- 
- 	return pps;
- 
--kfree_pps:
--	kfree(pps);
--
- pps_register_source_exit:
- 	pr_err("%s: unable to register source\n", info->name);
- 
-diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-index 9463232af8d2..c6b8b6478276 100644
---- a/drivers/pps/pps.c
-+++ b/drivers/pps/pps.c
-@@ -374,6 +374,7 @@ int pps_register_cdev(struct pps_device *pps)
- 			       pps->info.name);
- 			err = -EBUSY;
- 		}
-+		kfree(pps);
- 		goto out_unlock;
- 	}
- 	pps->id = err;
-@@ -383,13 +384,11 @@ int pps_register_cdev(struct pps_device *pps)
- 	pps->dev.devt = MKDEV(pps_major, pps->id);
- 	dev_set_drvdata(&pps->dev, pps);
- 	dev_set_name(&pps->dev, "pps%d", pps->id);
-+	pps->dev.release = pps_device_destruct;
- 	err = device_register(&pps->dev);
- 	if (err)
- 		goto free_idr;
- 
--	/* Override the release function with our own */
--	pps->dev.release = pps_device_destruct;
--
- 	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
- 		 pps->id);
- 
--- 
-2.33.0
+> +/* HARDWARE_GAIN */
+> +#define ADAQ4616_PGA_PINS              2
+> +#define ADAQ4616_GAIN_MAX_NANO         6666666667
 
+Can we use calculus instead (people can't count properly after 3 :-)?
+Something like this
+
+(NANO * 2 / 3) // whoever in the above it's 20 and this puzzles me how
+something with _NANO can be so big :-)
+
+...
+
+> +/*
+> + * Gains computed as fractions of 1000 so they can be expressed by integ=
+ers.
+> + */
+> +static const int ad4030_hw_gains[] =3D {
+> +       333, 556, 2222, 6667,
+
+Again, instead of comment (or in addition to) this can be written as
+
+1000 / 3, 5000 / 9, 20000 / 9, 20000 / 3,
+
+Let the compiler do its job.
+
+> +};
+> +
+> +static const int ad4030_hw_gains_frac[4][2] =3D {
+
+Drop 4
+
+> +       { 1, 3 },  /* 1/3 gain */
+> +       { 5, 9 },  /* 5/9 gain */
+> +       { 20, 9 }, /* 20/9 gain */
+> +       { 20, 3 }, /* 20/3 gain */
+> +};
+
+...
+
+> +static int ad4030_write_raw_get_fmt(struct iio_dev *indio_dev,
+> +                                   struct iio_chan_spec const *chan, lon=
+g mask)
+> +{
+> +       switch (mask) {
+> +       case IIO_CHAN_INFO_SCALE:
+> +               return IIO_VAL_INT_PLUS_NANO;
+> +       default:
+> +               return IIO_VAL_INT_PLUS_MICRO;
+> +       }
+
+> +       return -EINVAL;
+
+What's the point of this return?
+
+> +}
+
+...
+
+> +static int ad4030_setup_pga(struct device *dev, struct iio_dev *indio_de=
+v,
+> +                           struct ad4030_state *st)
+> +{
+> +       unsigned int i;
+> +       int pga_value;
+> +       int ret;
+> +
+> +       ret =3D device_property_read_u32(dev, "adi,pga-value", &pga_value=
+);
+> +       if (ret && ret !=3D -EINVAL)
+> +               return dev_err_probe(dev, ret, "Failed to get PGA value.\=
+n"
+> +
+> +       if (ret =3D=3D -EINVAL) {
+
+This can be done differently, i.e. check for EINVAL first and in
+'else' branch check for other ret !=3D 0. This will deduplicate the
+EINVAL check.
+
+> +               /* Setup GPIOs for PGA control */
+> +               st->pga_gpios =3D devm_gpiod_get_array(dev, "pga", GPIOD_=
+OUT_LOW);
+> +               if (IS_ERR(st->pga_gpios))
+> +                       return dev_err_probe(dev, PTR_ERR(st->pga_gpios),
+> +                                            "Failed to get PGA gpios.\n"=
+);
+> +
+> +               if (st->pga_gpios->ndescs !=3D 2)
+> +                       return dev_err_probe(dev, -EINVAL,
+> +                                            "Expected 2 GPIOs for PGA co=
+ntrol.\n");
+> +
+> +               st->scale_avail_size =3D ARRAY_SIZE(ad4030_hw_gains);
+> +               st->pga_index =3D 0;
+> +               return ad4030_set_pga_gain(st);
+> +       }
+
+...
+
+> +       .max_sample_rate_hz =3D 2 * MEGA,
+
+HZ_PER_MHZ
+
+...
+
+> +       .max_sample_rate_hz =3D 2 * MEGA,
+
+Ditto.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
