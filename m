@@ -1,216 +1,211 @@
-Return-Path: <linux-kernel+bounces-792682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA4AB3C78B
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B59B3C78E
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4A35826B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293301C278A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 03:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EAB25A2C3;
-	Sat, 30 Aug 2025 03:03:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE10E26F476;
+	Sat, 30 Aug 2025 03:10:55 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242346F06B
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 03:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187FB215075;
+	Sat, 30 Aug 2025 03:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756522987; cv=none; b=chH4H6CMUzpbqrIJEu3QBSAEBx13QL7hDmW4OIqagaLoN4BkIl4ma8A0M2CTVebiv0/+SyenjBEEAdN80t34KFTDxNV4e+yZC2PsuFnleoNJK/FxWg2gOh/iM5kGwLGF/4Xnk+URe6xFDf4p2kp59vOg6K+pl/m8NHPfVShwRH8=
+	t=1756523455; cv=none; b=LOf/j+ID9ICJVLxRaO1h8CzV5NxbaidDx7xTh+W3beMkQ9alJrVD/AOe8rNmt3mG+3OfM93h0sAfIrtp6NlW2jL1cwctAqWkBh0WQgwhR3VW4kC4hZee52eiyZSVI9KgKJGFzGuIScOGcsYpa3hFgZbOKnX8Xm8gyHQ/25625xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756522987; c=relaxed/simple;
-	bh=+xWXUXb2F584KaDlAB/QkQb/NkoZ+2wwvbauqbihPKQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Yi1pkw0UYL70jraRorrq7DreafZX+wYo3abLo7auXjPnILU/5moxB7pA+axTadiJnSMi3O7zThZeiA2o/PGCUKHok94cMGn3qillRaVsJIYwtddXN8T7ndxGtNSNwVvLcQ1fdb7pneF1YPk37kbtTC5qPbdGrs2XUeg3krgAyTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ed0ba44c8fso32458255ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 20:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756522985; x=1757127785;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHQEpGqFkvxwu8Uv/g7zCnBjm1+Wez0oY4H7G674t98=;
-        b=aa1AYd3vsGZt04EcfE1QrkJIgL9fy9AWy9rEvYPSdq8ZMHHCg8KM35v8/cHWsnW0dk
-         0BB/wdLazXuaKhpl8uvuX/mick8G3xD1oJ22cmrnvKfn6y1N6KODJjDv5e1QTUmdjSYd
-         FGdRaDMGmAgGfQaXWBCx5aW7cE3tS+h+zWHYWg0r71CgX1oSJWDNOd00khGuOfev0ivT
-         a8gtPMDwUPkZ3WRqjyE5Djk1RkM/l02FRm4mWV1HmPblfpVmmIBBCnhzAxU1yb6rf1Zb
-         7B5SDKDjSyaX54Q0srQvaCROJ+AgZlU/0SiY9oQu6CX9rdCF/dTIlaHnc3wh+IeYd8aX
-         m83Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXC9ITR4iCO3hESeOMGnQXC3UcatFCCsBLIWU6RUiU9be+caz1Yb4BaERG1DH5DdsV1kj6614onc8E1ZiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG+tjpUIBB7oPXQtzhEzuKMMaPlxoMG0Xy+WOh////eTpz0Gr/
-	2l0E3Go3x5mI5TGezg9KzwligFeD5S7LcNiircyZrMWW1YondgTioCpSjw4qyBxvWKI+fPfqzxO
-	ibEmIlclqUoqAs1uMaeTyb7sMXjWcv2In2YbjKBiGVIBtmq8x49jcI9jh+Wk=
-X-Google-Smtp-Source: AGHT+IEhRZOQ/7O4PLMbB/vSO+4iXYkbFhvOW6jP0wd6O0PjNTT2nP5rg5UAC03X0DaceIkOKgP9HB726OkFNMsNBBixu3ZGEkLG
+	s=arc-20240116; t=1756523455; c=relaxed/simple;
+	bh=d50Y3+pjzHc8XYM9XV2VuyXsJJdhUBbcyeV8YF0u1SM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=R6Gw2lfhZbPs7kEyPqgBh6ZT5+mJ+pqfbwxKBXjS+iLOmCNaT8WFWJKKXLnBoWwfomRNPLeyFNnLUTImSm6J9erkIhX6oVVwk8CJyRSHEjyzIvjPlW7HbTLzyT2VKN4/FuRypprS2RKm1I76a8/utyiBzZuUnNYjJaFydyN/qkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cDKrn30S9z14Mdq;
+	Sat, 30 Aug 2025 11:10:33 +0800 (CST)
+Received: from kwepemo100013.china.huawei.com (unknown [7.202.195.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8AA25180491;
+	Sat, 30 Aug 2025 11:10:41 +0800 (CST)
+Received: from [10.67.120.83] (10.67.120.83) by kwepemo100013.china.huawei.com
+ (7.202.195.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 30 Aug
+ 2025 11:10:40 +0800
+Message-ID: <142957c5-64c2-47cd-846f-6ff0654aa3b7@h-partners.com>
+Date: Sat, 30 Aug 2025 11:10:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2b:b0:3ec:6e58:beb5 with SMTP id
- e9e14a558f8ab-3f3ffda2ecamr21128805ab.3.1756522985190; Fri, 29 Aug 2025
- 20:03:05 -0700 (PDT)
-Date: Fri, 29 Aug 2025 20:03:05 -0700
-In-Reply-To: <20250830004549.6070-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b269e9.a00a0220.1337b0.001f.GAE@google.com>
-Subject: Re: [syzbot] [sound?] possible deadlock in __snd_pcm_lib_xfer (2)
-From: syzbot <syzbot+10b4363fb0f46527f3f3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] sysfs: duplicate resource file creation during PCIe rescan
+From: moubingquan <moubingquan@h-partners.com>
+To: <bhelgaas@google.com>
+CC: <ilpo.jarvinen@linux.intel.com>, <lukas@wunner.de>, linux-arm
+	<linux-arm-kernel@lists.infradead.org>, linux-kernl
+	<linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>,
+	fanghao <fanghao11@huawei.com>, gaozhihao <gaozhihao6@h-partners.com>,
+	lujunhua <lujunhua7@h-partners.com>, shenyang <shenyang39@huawei.com>,
+	wushanping <wushanping@huawei.com>, zengtao <prime.zeng@hisilicon.com>,
+	<jonathan.cameron@huawei.com>
+References: <b51519d6-ce45-4b6d-8135-c70169bd110e@h-partners.com>
+ <9e3047e5-a6a2-4a56-967b-4dddbd3d1b43@h-partners.com>
+Content-Language: en-US
+In-Reply-To: <9e3047e5-a6a2-4a56-967b-4dddbd3d1b43@h-partners.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemo100013.china.huawei.com (7.202.195.244)
 
-Hello,
+Friendly ping ...
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in __snd_pcm_lib_xfer
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.0.46/6843 is trying to acquire lock:
-ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
-ffff8880b8823d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
-
-but task is already holding lock:
-ffff88814ccb7150 (&group->lock#2){+.+.}-{3:3}, at: __snd_pcm_lib_xfer+0x386/0x1ce0 sound/core/pcm_lib.c:2319
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&group->lock#2){+.+.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       rt_spin_lock+0x88/0x2c0 kernel/locking/spinlock_rt.c:56
-       spin_lock include/linux/spinlock_rt.h:44 [inline]
-       _snd_pcm_stream_lock_irqsave+0x7c/0xa0 sound/core/pcm_native.c:171
-       class_pcm_stream_lock_irqsave_constructor include/sound/pcm.h:682 [inline]
-       snd_pcm_period_elapsed+0x1e/0x80 sound/core/pcm_lib.c:1938
-       dummy_hrtimer_callback+0x80/0x180 sound/drivers/dummy.c:386
-       __run_hrtimer kernel/time/hrtimer.c:1763 [inline]
-       __hrtimer_run_queues+0x590/0xda0 kernel/time/hrtimer.c:1829
-       hrtimer_run_softirq+0x1a3/0x2e0 kernel/time/hrtimer.c:1847
-       handle_softirqs+0x22c/0x710 kernel/softirq.c:579
-       __do_softirq kernel/softirq.c:613 [inline]
-       run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
-       smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
-       kthread+0x711/0x8a0 kernel/kthread.c:463
-       ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #0 ((softirq_ctrl.lock)){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
-       __lock_release kernel/locking/lockdep.c:5574 [inline]
-       lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
-       __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
-       hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
-       dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
-       snd_pcm_do_stop+0x12a/0x1c0 sound/core/pcm_native.c:1525
-       snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
-       snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
-       __snd_pcm_xrun+0x27f/0x7c0 sound/core/pcm_lib.c:180
-       snd_pcm_update_state+0x342/0x430 sound/core/pcm_lib.c:224
-       snd_pcm_update_hw_ptr0+0x10b2/0x1b00 sound/core/pcm_lib.c:493
-       snd_pcm_update_hw_ptr sound/core/pcm_lib.c:499 [inline]
-       __snd_pcm_lib_xfer+0x510/0x1ce0 sound/core/pcm_lib.c:2326
-       snd_pcm_oss_write3+0x1bc/0x320 sound/core/oss/pcm_oss.c:1241
-       snd_pcm_plug_write_transfer+0x2cb/0x4c0 sound/core/oss/pcm_plugin.c:630
-       snd_pcm_oss_write2 sound/core/oss/pcm_oss.c:1373 [inline]
-       snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1439 [inline]
-       snd_pcm_oss_write+0xba2/0x11a0 sound/core/oss/pcm_oss.c:2795
-       vfs_write+0x287/0xb40 fs/read_write.c:684
-       ksys_write+0x14b/0x260 fs/read_write.c:738
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&group->lock#2);
-                               lock((softirq_ctrl.lock));
-                               lock(&group->lock#2);
-  lock((softirq_ctrl.lock));
-
- *** DEADLOCK ***
-
-2 locks held by syz.0.46/6843:
- #0: ffff88814ccb7150 (&group->lock#2){+.+.}-{3:3}, at: __snd_pcm_lib_xfer+0x386/0x1ce0 sound/core/pcm_lib.c:2319
- #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- #1: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1bb/0x2c0 kernel/locking/spinlock_rt.c:57
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6843 Comm: syz.0.46 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
- __lock_release kernel/locking/lockdep.c:5574 [inline]
- lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
- __local_bh_enable_ip+0x10c/0x270 kernel/softirq.c:228
- hrtimer_cancel+0x39/0x60 kernel/time/hrtimer.c:1491
- dummy_hrtimer_stop+0xcf/0x100 sound/drivers/dummy.c:410
- snd_pcm_do_stop+0x12a/0x1c0 sound/core/pcm_native.c:1525
- snd_pcm_action_single sound/core/pcm_native.c:1305 [inline]
- snd_pcm_action+0xe4/0x240 sound/core/pcm_native.c:1388
- __snd_pcm_xrun+0x27f/0x7c0 sound/core/pcm_lib.c:180
- snd_pcm_update_state+0x342/0x430 sound/core/pcm_lib.c:224
- snd_pcm_update_hw_ptr0+0x10b2/0x1b00 sound/core/pcm_lib.c:493
- snd_pcm_update_hw_ptr sound/core/pcm_lib.c:499 [inline]
- __snd_pcm_lib_xfer+0x510/0x1ce0 sound/core/pcm_lib.c:2326
- snd_pcm_oss_write3+0x1bc/0x320 sound/core/oss/pcm_oss.c:1241
- snd_pcm_plug_write_transfer+0x2cb/0x4c0 sound/core/oss/pcm_plugin.c:630
- snd_pcm_oss_write2 sound/core/oss/pcm_oss.c:1373 [inline]
- snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1439 [inline]
- snd_pcm_oss_write+0xba2/0x11a0 sound/core/oss/pcm_oss.c:2795
- vfs_write+0x287/0xb40 fs/read_write.c:684
- ksys_write+0x14b/0x260 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9528fcebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f952863e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f95291f5fa0 RCX: 00007f9528fcebe9
-RDX: 000000000000fc36 RSI: 0000200000000500 RDI: 0000000000000003
-RBP: 00007f9529051e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f95291f6038 R14: 00007f95291f5fa0 R15: 00007ffe192e0268
- </TASK>
-
-
-Tested on:
-
-commit:         11e7861d Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d8d634580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=10b4363fb0f46527f3f3
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b7fef0580000
+On 8/11/2025 10:12 AM, moubingquan wrote:
+> Hello everyone, does anyone have any ideas on how to approach this problem。
+> 
+> On 7/29/2025 9:13 AM, moubingquan wrote:
+>> Hi all,
+>>
+>> When uninstalling the driver on the ARM64 platform and invoking `sriov_disable()`,
+>> another thread simultaneously performed `echo 1 > /sys/bus/pci/rescan`,
+>> which resulted in a call trace error (`sysfs: cannot create duplicate filename`) when subsequently loading the driver.
+>>
+>> Under certain multi-threaded scenarios (e.g. VF teardown + PCI rescan triggered in parallel),
+>> The following sequence may result in files appearing in sysfs that should not exist:
+>>
+>> 1. sriov_disable() uninstalls VFs and removes the corresponding VF files in sysfs.
+>> 2.At the same time, when rescan_store() rescan the entire PCI device tree,
+>> there is a possibility that VF files that should have been deleted are added back,
+>> resulting in VF files in sysfs that should have been removed but were not.
+>>
+>> Tested on:
+>> - Kernel version: Linux version 6.15.0-rc4+ (phisik3@10-50-163-153-ARM-openEuler22-3)
+>> - Platform: ARM64 (Huawei Kunpeng920)
+>> - Repro steps:
+>> 1.Thread A unloads the driver and VF (requires calling sriov_disable()).
+>> 2.Thread B calls `echo 1 > /sys/bus/pci/rescan `
+>>
+>> The system will report a call trace as follows:
+>>
+>> sysfs: cannot create duplicate filename '/devices/pci0000:3c/0000:3c:01.0/0000:3e:00.2/resource2'
+>> CPU: 138 UID: 0 PID: 11067 Comm: sh Kdump: loaded Tainted: G      D W  O        6.15.0-rc4+ #1 PREEMPT
+>> Tainted: [D]=DIE, [W]=WARN, [O]=OOT_MODULE
+>> Call trace:
+>>   show_stack+0x20/0x38 (C)
+>>   dump_stack_lvl+0x80/0xf8
+>>   dump_stack+0x18/0x28
+>>   sysfs_warn_dup+0x6c/0x90
+>>   sysfs_add_bin_file_mode_ns+0x12c/0x178
+>>   sysfs_create_bin_file+0x7c/0xb8
+>>   pci_create_attr+0x104/0x1b0
+>>   pci_create_resource_files.part.0+0x50/0xd0
+>>   pci_create_sysfs_dev_files+0x30/0x50
+>>   pci_bus_add_device+0x40/0x120
+>>   pci_bus_add_devices+0x40/0x98
+>>   pci_bus_add_devices+0x6c/0x98
+>>   pci_rescan_bus+0x38/0x58
+>>   rescan_store+0x80/0xb0
+>>   bus_attr_store+0x2c/0x48
+>>   sysfs_kf_write+0x84/0xa8
+>>   kernfs_fop_write_iter+0x120/0x1b8
+>>   vfs_write+0x338/0x3f8
+>>   ksys_write+0x70/0x110
+>>   __arm64_sys_write+0x24/0x38
+>>   invoke_syscall+0x50/0x120
+>>   el0_svc_common.constprop.0+0xc8/0xf0
+>>   do_el0_svc+0x24/0x38
+>>   el0_svc+0x34/0xf0
+>>   el0t_64_sync_handler+0xc8/0xd0
+>>   el0t_64_sync+0x1ac/0x1b0
+>>
+>> The general analysis and corresponding code are as follows:
+>>
+>> drivers/pci/iov.c
+>>
+>> 736 static void sriov_disable(struct pci_dev *dev)
+>> 737 {
+>> 738         struct pci_sriov *iov = dev->sriov;
+>> 739
+>> 740         if (!iov->num_VFs)
+>> 741                 return;
+>> 742
+>> 743         sriov_del_vfs(dev);
+>> 744         iov->ctrl &= ~(PCI_SRIOV_CTRL_VFE | PCI_SRIOV_CTRL_MSE);
+>> 745         pci_cfg_access_lock(dev);
+>> 746         pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, iov->ctrl);
+>> 747         ssleep(1);
+>> 748         pci_cfg_access_unlock(dev);
+>> 749
+>> 750         pcibios_sriov_disable(dev);
+>> 751
+>> 752         if (iov->link != dev->devfn)
+>> 753                 sysfs_remove_link(&dev->dev.kobj, "dep_link");
+>> 754
+>> 755         iov->num_VFs = 0;
+>> 756         pci_iov_set_numvfs(dev, 0);
+>> 757 }
+>>
+>> sriov_disable() will unload the VF and remove its files from sysfs.
+>>
+>> drivers/pci/pci-sysfs.c
+>>
+>>   435 static ssize_t rescan_store(const struct bus_type *bus, const char *buf, size_t count)
+>>   436 {
+>>   437         unsigned long val;
+>>   438         struct pci_bus *b = NULL;
+>>   439
+>>   440         if (kstrtoul(buf, 0, &val) < 0)
+>>   441                 return -EINVAL;
+>>   442
+>>   443         if (val) {
+>>   444                 pci_lock_rescan_remove();
+>>   445                 while ((b = pci_find_next_bus(b)) != NULL)
+>>   446                         pci_rescan_bus(b);
+>>   447                 pci_unlock_rescan_remove();
+>>   448         }
+>>   449         return count;
+>>   450 }
+>>   451 static BUS_ATTR_WO(rescan);
+>>
+>> The `rescan_store()` function will scan the entire PCI bus, including the relevant sysfs files for the aforementioned VFs.
+>>
+>> Initially, it seemed that directly adding the pci_lock_rescan_remove() lock to sriov_disable() could solve the problem.
+>> However, it was later discovered that this might lead to a deadlock issue (because the remove_store() function would call sriov_disable(), causing a deadlock).
+>>
+>> drivers/pci/pci-sysfs.c
+>>
+>>   487 static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+>>   488                             const char *buf, size_t count)
+>>   489 {
+>>   490         unsigned long val;
+>>   491
+>>   492         if (kstrtoul(buf, 0, &val) < 0)
+>>   493                 return -EINVAL;
+>>   494
+>>   495         if (val && device_remove_file_self(dev, attr))
+>>   496
+>>          //Subsequently, sriov_disable() will be invoked.
+>>                  pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
+>>   497         return count;
+>>   498 }
+>>   499 static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
+>>   500                                   remove_store);
+>>
+>> The function `pci_stop_and_remove_bus_device_locked()` acquires the `pci_lock_rescan_remove()` lock and subsequently calls `sriov_disable()`.
+>> If the lock is added within `sriov_disable()`, it could lead to a deadlock.
+>>
+>> Should we add a new lock to address this issue, or are there any other ideas? I would like to consult and discuss this with everyone.
+>>
+>> Thanks,
+>> Bingquan Mou <moubingquan@h-partners.com>
+> 
 
 
