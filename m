@@ -1,134 +1,185 @@
-Return-Path: <linux-kernel+bounces-792934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11663B3CAA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30EFB3CAA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 13:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C15085E4C4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9231BA2796
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 11:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC72246BD7;
-	Sat, 30 Aug 2025 11:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E7E277804;
+	Sat, 30 Aug 2025 11:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="JAvGPJGg"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNf2Uh1C"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683982CCDB;
-	Sat, 30 Aug 2025 11:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756554637; cv=pass; b=pC0cat7ko+Ap5amhhKG1EieeZ7rgofaclsBWm/JMZuepxuTy0WKXYUS/agQVYBpZ4tXbFBVjB7CvrPTowYTF6C/eWuj5dDg05C0PpT70VSKn40yc2XeCxToczlFFuM7jGIs9exZKeRS0C5HbF/gh5AuWy/tPSbb6WqWrzuIJ88A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756554637; c=relaxed/simple;
-	bh=hkHJTi7BnpyGnfwJf15txlxPT5t9SRGJp6Au/ITVSOo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=RbdAN/Y7WSXaFhgWwIr3OJt+FIduqTGpMXmV9diSrCpz4on4xzZ0XMOI9+YHTDVRPoDSOUFavjPtd0VCv3Hz/vJzQz/8G6BiBVXGNOzqtSWjkOfMbbjfaE498lq+a8tUxrrdXj3d1oBMuX/kPWcnCxEbqHpgR9zc4pKKiZnOpIA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=JAvGPJGg; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756554590; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WfUv/9IYoLUwoCLl31xzGsNNfz3SQ9dPPF6ay3tnxtRaLkYlgrTFxmQsM3Q29JorU45WdsQwGWrjqB+eUP3Ml5Ulv72rsUDAIc1N7CuxCRGfCAAFC9IK44VhIfPlmGquTJNLdnqPK2NZ2S1E5rX0DwvoF+1jBLyqoFoGnttueHY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756554590; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZvkzI4mjzY4TGWd9DS9EgJJGePkSTfHVh26gxLKd+Q8=; 
-	b=Ey8TqD5XBij7QVzk6WaydeTyAWxbPywPp5s1cwcepduklmaR3Uv/vU/7ZcZXI9hIsBZx1AqMa1X+W2eV+dmJtBablV3sId3Yj/pu51CuxiN3/o/CPyH8WkGVtajwLojCtiD35/yHwVZNyL1LpETy2WbVNe4noXkf1CrtpM3eyDE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756554590;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=ZvkzI4mjzY4TGWd9DS9EgJJGePkSTfHVh26gxLKd+Q8=;
-	b=JAvGPJGg6q+Jk9UWATkWyx2nUpdF1rRP+ncFDCmml0fEWkHo4ON63lI4JWvqRZBG
-	xSLsnAr0yY4E4p3vUyh62gaeGsEzrvcH3U0/G/9m7UwmWNVnxg1xwWyMqwPo+yEAVnk
-	kFoGc8w1KBjnleW79jU31oYWrU0I/i11o3cU+PQc=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756554588150332.09403294804895; Sat, 30 Aug 2025 04:49:48 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Sat, 30 Aug 2025 04:49:48 -0700 (PDT)
-Date: Sat, 30 Aug 2025 15:49:48 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Gao Xiang" <hsiangkao@linux.alibaba.com>
-Cc: "Byron Stanoszek" <gandalf@winds.org>, "Christoph Hellwig" <hch@lst.de>,
-	"gregkh" <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"rafael" <rafael@kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"viro" <viro@zeniv.linux.org.uk>,
-	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	"Christian Brauner" <brauner@kernel.org>,
-	"systemd-devel" <systemd-devel@lists.freedesktop.org>,
-	"Lennart Poettering" <mzxreary@0pointer.de>
-Message-ID: <198facfefe8.11982931078232.326054837204882979@zohomail.com>
-In-Reply-To: <79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
- <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
- <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
- <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
- <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
- <18d15255-2a6f-4fe8-bbf7-c4e5cc51692c@linux.alibaba.com> <79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com>
-Subject: Re: [PATCH] initrd: support erofs as initrd
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB14246BD7;
+	Sat, 30 Aug 2025 11:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756554702; cv=none; b=YkXe0GSz1L1D8a681HWoipdEYubiTR1SO2WlydoD2p2B06IZ4JjKIqF1g9DRFCeTvk0cGQHihNpaYCIPLz3AVaMDhyg/7a5gkIF+882mJ45esYmuL79c4QUqE+BWpduBNQPrZDtnZ/IUTBrdiaAkGxJhagQnS8DvBghU2ehkMk8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756554702; c=relaxed/simple;
+	bh=mSi9aPJGkTKO7jwbg8t3WzZNF7twXZW2oTObg0ef+8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CgipS93eWQZlEdMLzZTQ19XfNIZl5bnl9D9tBdTYnzpGybMOMfYEmHirX0G+uDH1pLypzEPkZOcEhfm8xEltdz1pKgwptKbCEcvSBuNRyvfZW24Nby0HrixCT2xfkKmVCDBqcw3oxh426dVFiybNJOl6iF9mnMn8+lKJN92FqL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iNf2Uh1C; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so1781538f8f.3;
+        Sat, 30 Aug 2025 04:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756554699; x=1757159499; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GokYqYG+lmT2oxJ+O2O4SIepQEUsvS6Oqvc1Ps5nstE=;
+        b=iNf2Uh1CuCyoM5Sve84RflR3c8mQpsX1e8UH/Fl3Z90WBuX0fXqP6Vhb0smN9vwWQ8
+         WEbsMZzgdq85JM5iBdxd4dux0LCpRbjTduRB+IBOKVKak4Pw5Sb0sLJfihLDcX8PjFNZ
+         J3ptriFap2KaMIvQBmk6OYlybBpM0HKApIEjq44zHsagIh1JeCJcnlMnEsetjYURRXeH
+         WlvW1sZPkBiqrhk+wMzQBjEQWexE7lxKnKwcXOsY3wNk9qvNCwtPoWPXB8vSddwdx7E7
+         HpebIdItrRtAs9yq8nOXnT4Px1Dkfh/XyDBdnYVmZVq75+2v/RX3IF5k5m/xVEyjZ/G9
+         N+KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756554699; x=1757159499;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GokYqYG+lmT2oxJ+O2O4SIepQEUsvS6Oqvc1Ps5nstE=;
+        b=GTW3y37RnDaFY51o2+R1Iu4O01uK5ySoBO7E4Xps1t8MaL+BO0IPAcEXD/5xjdD3P+
+         pL59MDpu2t2sH/zeaq+lb9F7HASxu67F7190q137vHpZnTNUNyDmqyEChg/n5E2vOCPb
+         fpUD9zI6oiPMfUkpMI4dlamK4CEAQvoTcqFYh734VHcO2uLmza26rw6EVeAzaNBqpSE7
+         p5gzRddDDKNTT3dULMXCZHwDIo51DGDqK/Sx+eiEyfkv3IFCeliR4UE9P8SXnJHrTUTV
+         MKpdbsn0flE4AlcQ194cbm/5++r3k4bUZMpw8LJlSSgpeG3YUtbTHup4NBRTf2NWH2hh
+         1vjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4XO3/+3hBPT4s02/r9iL3qSiVXWZitVgXE4b8jo8UZkNvSSn8o875JvWh/Oxmo7FN4hT0E7bY6sGG@vger.kernel.org, AJvYcCW3HNh20UR7lV2jistm529CrHfPBeqWOGeZ906Ro3XQiCJooKK4zKWhyoS/2XvrfL6CiKDDUCQ57NPW8HZz@vger.kernel.org
+X-Gm-Message-State: AOJu0YymrvK+COdEkYsBWLWZiL0laKDwgaNNXQcW3BPXSTNZhAopPK/2
+	2XWf6mqHm1GxoSgX9O9Cg0c6M836SiMLxqaepNV4xx8SDZA0Wi5WP7PP
+X-Gm-Gg: ASbGncs5vhRGJfKsmTvfKXtFHD+m2LBUBWUhCtcNbcirN2UPaQo1o/JEiSnLca2df4E
+	LaybNh3B1woLO0CkUu6yhyH2tw2xUfCjYGFMPl5Q8PMoKrYCYLU1neg1nfXTDMxFI3T/RIKEo8Q
+	n4niSl8bJs5iSMTiUVK3bbrZNDpXAUOa1+F2r1kqWT00XclOJ0W7wyTfuc3sSoaJFA4JgAhJHWH
+	5XlZP52Xrv0Np8DgvA7mDUv+Jj0o3tg4W7d7JsDKvR+t3SP3SLnHeYH9y9wXfi0zPLkyElq58Tg
+	sK/gAD884aLtyBteRLVhx3R0hsheBR4NLxpf5FGjjYQj+zRGII+gvgE7U1865MbLLlZMIhzqgQq
+	1y4oLx+gUWVs2aeWhKrpqlS9A2E4l1qLIdUSvtw==
+X-Google-Smtp-Source: AGHT+IHyb14KPLvEBP1uzF4N+Mv+SwihHqssUNY/21QMVDEC/beh+sytji1kJH6KwbNaJwZlIJr5gg==
+X-Received: by 2002:a5d:5d10:0:b0:3d0:ebf6:90d2 with SMTP id ffacd0b85a97d-3d1e01d5561mr910309f8f.43.1756554699143;
+        Sat, 30 Aug 2025 04:51:39 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b732671b7sm68161555e9.3.2025.08.30.04.51.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 04:51:38 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH 1/2] arm64: dts: rockchip: add GPU powerdomain, opps, and cooling to rk3328
+Date: Sat, 30 Aug 2025 11:51:34 +0000
+Message-Id: <20250830115135.3549305-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227b1680bc8dfa7516761e11a58000037d22aa2c4bf6443f88b89fca418cb69e901b393ecac839940:zu0801122713c6f3fa07929c198cea8c54000001b7ef109b69da37ee11b3219213d70ab659eef1baeefa4b35:rf0801122bd8de29ae7d823f39305d05110000e13d9f3e9222b5807b8cff5406983aac6e47ac535363058d329ca9ce4c:ZohoMail
+Content-Transfer-Encoding: 8bit
 
- ---- On Thu, 28 Aug 2025 21:14:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
- > Which part of the running system check the cpio signature.
+From: Alex Bee <knaerzche@gmail.com>
 
-You mean who checks cpio signature at boot?
-Ideally, bootloader should do this.
+Add GPU powerdomain, opp-table, and cooling map nodes for the Mali
+GPU on the RK3328 SoC. Opp-table frequencies are sourced from the
+Rockchip Linux v4.4 vendor kernel while voltages have been derived
+from practical use and support work: keeping voltage above 1075mV
+and disabling the 500MHz opp-point avoids instability and crashes.
 
-For example, as well as I understand, UKI's EFI stub checks
-initramfs signature. (See
-https://github.com/systemd/systemd/blob/main/docs/ROOTFS_DISCOVERY.md
-).
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+These changes have been in-use with Armbian and LibreELEC for many
+years without issue. Investigations into crashing (esp. with rkvdec
+running) have led to voltage tweaks and dropping 500MHz. Changes
+cannot be justified in technical detail, but are field proven over
+a large number of users, boards, and cheap power supplies.
 
-It seems that this document (ROOTFS_DISCOVERY) covers
-zillions of use cases, so I hope you will find something for you.
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 39 +++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-I also added to CC Poettering and systemd, hopefully they have some
-ideas.
-
- > Why users need to extract the whole cpio to tmpfs just for some data
- > part in the erofs? even some data is never used?
-
-Initramfs should be small. Time for extracting should not matter.
-If initramfs is too big, and time becomes issue, you are doing it
-wrong.
-
-Point of initramfs is to be transition stage and then get to real root.
-Initramfs should not be feature-rich and should not be big.
-
- > Personally I just don't understand why cpio stands out considering it
- > even the format itself doesn't support xattrs and more.
-
-As I said above, initramfs should not be feature-rich.
-
-(But xattrs can be added to it, if needed.)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index 7d992c3c01ce..b99c78ecc4a9 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -331,6 +331,11 @@ power: power-controller {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 
++			power-domain@RK3328_PD_GPU {
++				reg = <RK3328_PD_GPU>;
++				clocks = <&cru ACLK_GPU>;
++				#power-domain-cells = <0>;
++			};
+ 			power-domain@RK3328_PD_HEVC {
+ 				reg = <RK3328_PD_HEVC>;
+ 				clocks = <&cru SCLK_VENC_CORE>;
+@@ -570,9 +575,13 @@ map0 {
+ 							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 					contribution = <4096>;
+ 				};
++				map1 {
++					trip = <&target>;
++					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++					contribution = <4096>;
++				};
+ 			};
+ 		};
+-
+ 	};
+ 
+ 	tsadc: tsadc@ff250000 {
+@@ -651,7 +660,35 @@ gpu: gpu@ff300000 {
+ 				  "ppmmu1";
+ 		clocks = <&cru ACLK_GPU>, <&cru ACLK_GPU>;
+ 		clock-names = "bus", "core";
++		operating-points-v2 = <&gpu_opp_table>;
++		power-domains = <&power RK3328_PD_GPU>;
+ 		resets = <&cru SRST_GPU_A>;
++		#cooling-cells = <2>;
++	};
++
++	gpu_opp_table: gpu-opp-table {
++		compatible = "operating-points-v2";
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <1075000>;
++		};
++
++		opp-500000000 {
++			/* causes stability issues */
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <1150000>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	h265e_mmu: iommu@ff330200 {
 -- 
-Askar Safin
-https://types.pl/@safinaskar
+2.34.1
 
 
