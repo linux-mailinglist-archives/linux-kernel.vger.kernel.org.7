@@ -1,143 +1,183 @@
-Return-Path: <linux-kernel+bounces-792723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0212B3C818
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:11:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF66B3C81C
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 07:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4061F7B3D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA87E7ADEB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 05:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0576527A45C;
-	Sat, 30 Aug 2025 05:11:50 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE616A395;
+	Sat, 30 Aug 2025 05:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L8egTAxP"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6EA27280B;
-	Sat, 30 Aug 2025 05:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FA92CCDB
+	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 05:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756530709; cv=none; b=ivVfz8PylqP+5gRoGj046KNZW1naWsW5JNtyMC1sg47bhp9XkEjVCNjYJ9qfMnIl947lWYtI1fVhdmIcIlsFUGh93pxyvma5fsPF2YRllSlhP86AKTUCpn0WrvXKMCL4dFqZeSAzZfqhz9orkRAAoqEW9dg9qEHCtlaLeaowNbg=
+	t=1756531171; cv=none; b=qxOVqpixOF7BNMf0no7rrk0ViMLsh2tSoWq83aOSJN9m0YqVQbvW4QnQ5aHCZfZp7Sd+vLCdDbE44zxkkfj9IMAJIMIbm9e+vXkP619Cq1biugzE7SYrBMeF08MPGtx0tsbecc6u+QwM7lSwntjZRs5Xj0POtJ7d0aBqKJYQG3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756530709; c=relaxed/simple;
-	bh=FA+LaNAtSrDw22JkgVZ/MEEYs9lp2qPOgwnL7mosRHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOFRislzesuTGhZlRAioa3P8hN3rx/mUx+FOucUdHw4Q4XONZt31cTQSqAb0EtvQuf8L3eU4f0ceQIJIrQR0mfyF9J81p7VUWmHwvLbFd6EseL13mTR/8ntoE5dQg2W7o8seTdXQSH+BXV0KNst9nC5mZnHJVtew+YP6wcUgfkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af7fb.dynamic.kabel-deutschland.de [95.90.247.251])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AED366004C2C9;
-	Sat, 30 Aug 2025 07:11:10 +0200 (CEST)
-Message-ID: <84fd4012-966b-4983-b015-ffce06509b5e@molgen.mpg.de>
-Date: Sat, 30 Aug 2025 07:11:10 +0200
+	s=arc-20240116; t=1756531171; c=relaxed/simple;
+	bh=fE+9JJqLH4AQ9yTHjvttQQsxKEwxCv6Db6kes/Tc860=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lJ4BmRLfPE16rG90eMWwo7EB/jVa4VLJqSg4Ei/ikKNVwYUu+XXA+Q8/AR4VP6GIdq2N5h6mbfvaZra08Chn0Y37C8iFbCsBSvo3cpMKoGFOG7g96XyjC/Y2XQws0aG4iyv7+yy8ydyr/msWnWtVfGH6lOskj5Ji7ENMH6OYxiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L8egTAxP; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-248e07d2a0eso94985ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 22:19:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756531169; x=1757135969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ppN7OhUjuwHgBU0fuTlsVS0risiTxfXqL+QgvTWau90=;
+        b=L8egTAxPr0WIy5pNuc5gQUltr/T9ORnc5hnVMhBXpZFNQ0qhwQQA5daPw+FlOV48F9
+         0sBQLQGDuweO3lfPQL2YWzN1taO8CENYldjfmwM7zlLSETevk0ifYgPgznhbTxQbCymN
+         9H5zxyZO+fRGYmKcJtUPF7kPe4OOTTrOdgzaIxRfiiHv5YT4rbl0uFpiaK/vFcUauQNl
+         D1oJgwhFpCDC29ArB3+m601FesF2qo4oJl5rCOkuBmlMAFxAsJYqP+MgguBEG0gRGp3V
+         iii1v7UsYPm1GfrlY5qkKsBBzn9eaUq8vVeOHsq9xHwr8jczBicdyZfLfVuRTEOwYDRF
+         NmQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756531169; x=1757135969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ppN7OhUjuwHgBU0fuTlsVS0risiTxfXqL+QgvTWau90=;
+        b=oOBircpEDap+R8ubCQWnwl3U2aGhgYueDPrjIep8et+LeLXeH50G5vi4knNDBeABK/
+         eE6HIu10l2VnAxTvU2UxesmnkQmtPlYm6qBIl8D1qYO8MaB/hQ8zAF9Vtg6ZCew82l76
+         4rFWCFMeDFBF2yw3QYV3j5doFSTg94MgcBGiTOZcHrt18/dGm2uXITNs8+tn/BGrT+Jy
+         y63jP73wYPa27FxKopeBjiJEPYvGyKjw/PPR8THC5UMiTW2CJoHUbhFRccseXH1G7GwP
+         O3dcic3alvdOMBW3f4BPTR5beugmICpEwwzpOSbCz3KTDvkepH/e8vacBNoYPitE1ylm
+         fh4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKF8e3+Z+ltG6+2qWt8y/eghuIRdtWeKILKRejr5TuKkRcV8ggL6hHg8xvetKAnlZ6TilIjSGghHiojnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5jO24uQK0ZLgAB/vYxK2BruHSFG2Ntk8k/cb6rCT5pg9I46xY
+	bs4KLHA9BP4xFNjh3EP8ZCL3dc4Tlw36I1wzLQmBk2RkFX5E7LmOxxFJGL3/92xJLKaUDXHbp3b
+	AdiGjmFQ/+yuUZJBqWd85rFGCr1mHZjsxrbKeB/G4
+X-Gm-Gg: ASbGncvC6PVfnuRc6Rf19KPgk6+di7dRLprzNmwSOyiqZhLzVeeg7YgWyNF82AXjH4E
+	EjCFAmvXCVlrU53A5I3FC1900RyxyjJbMK/LfWiJtovdOnBIQdIEU07vpfdycTtzzu9uEH1tSjz
+	WcSlUKj8+7iiYau+XZTPDCmklikZRoXV+DMcekYwi2l20m5+OQopR24sxbz9NbmD4S2YemZqBta
+	+3pzwFVlySGd0I=
+X-Google-Smtp-Source: AGHT+IGxJC9u3UnyTAxH/e5Fi0JDjKy84Qim0fFYobeDU62gk8OfykmppY/rr47My6krEuZYmNTSezladEhD1cMLYmA=
+X-Received: by 2002:a17:902:dac6:b0:240:640a:c564 with SMTP id
+ d9443c01a7336-2493e7c6cb6mr2055445ad.3.1756531168997; Fri, 29 Aug 2025
+ 22:19:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btmtksdio: Fix build after header cleanup
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
- oe-kbuild-all@lists.linux.dev, Marcel Holtmann <marcel@holtmann.org>,
- Sean Wang <sean.wang@mediatek.com>, linux-mediatek@lists.infradead.org
-References: <202508300413.OnIedvRh-lkp@intel.com>
- <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <b78a4255d17adbb74140aa23f89cb7653af96c75.1756513671.git.calvin@wbinvd.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250603203701.520541-1-blakejones@google.com> <174915723301.3244853.343931856692302765.git-patchwork-notify@kernel.org>
+In-Reply-To: <174915723301.3244853.343931856692302765.git-patchwork-notify@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 29 Aug 2025 22:19:17 -0700
+X-Gm-Features: Ac12FXwkB-c6nRSHHpBV2DQ1VDfQ04aGKYqJraiFmYlTg8c4hP6BoccqgTTCdoM
+Message-ID: <CAP-5=fWJQcmUOP7MuCA2ihKnDAHUCOBLkQFEkQES-1ZZTrgf8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] libbpf: add support for printing BTF character
+ arrays as strings
+To: Blake Jones <blakejones@google.com>, namhyung@kernel.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, 
+	shuah@kernel.org, ihor.solodrai@linux.dev, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, Howard Chu <howardchu95@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Calvin,
+On Thu, Jun 5, 2025 at 2:00=E2=80=AFPM <patchwork-bot+netdevbpf@kernel.org>=
+ wrote:
+>
+> Hello:
+>
+> This series was applied to bpf/bpf-next.git (master)
+> by Andrii Nakryiko <andrii@kernel.org>:
+>
+> On Tue,  3 Jun 2025 13:37:00 -0700 you wrote:
+> > The BTF dumper code currently displays arrays of characters as just tha=
+t -
+> > arrays, with each character formatted individually. Sometimes this is w=
+hat
+> > makes sense, but it's nice to be able to treat that array as a string.
+> >
+> > This change adds a special case to the btf_dump functionality to allow
+> > 0-terminated arrays of single-byte integer values to be printed as
+> > character strings. Characters for which isprint() returns false are
+> > printed as hex-escaped values. This is enabled when the new ".emit_stri=
+ngs"
+> > is set to 1 in the btf_dump_type_data_opts structure.
+> >
+> > [...]
+>
+> Here is the summary with links:
+>   - [v3,1/2] libbpf: add support for printing BTF character arrays as str=
+ings
+>     https://git.kernel.org/bpf/bpf-next/c/87c9c79a02b4
+>   - [v3,2/2] Tests for the ".emit_strings" functionality in the BTF dumpe=
+r.
+>     https://git.kernel.org/bpf/bpf-next/c/a570f386f3d1
+>
+> You are awesome, thank you!
+
+I believe this patch is responsible for segvs occurring in v6.17 in
+various perf tests when the perf tests run in parallel. There's lots
+of BPF things happening in parallel in the test but the failures are
+happening in a shell and I did get to attach a debugger. I've not seen
+this problem earlier as the patches weren't in the perf-tools-next
+tree. Through bisection I was able to blame the patch and I came up
+with this minimal fix:
+```
+diff --git a/tools/lib/bpf/btf.h b/tools/lib/bpf/btf.h
+index ccfd905f03df..71e198b30c5f 100644
+--- a/tools/lib/bpf/btf.h
++++ b/tools/lib/bpf/btf.h
+@@ -326,10 +326,10 @@ struct btf_dump_type_data_opts {
+       bool compact;           /* no newlines/indentation */
+       bool skip_names;        /* skip member/type names */
+       bool emit_zeroes;       /* show 0-valued fields */
+-       bool emit_strings;      /* print char arrays as strings */
++       //bool emit_strings;    /* print char arrays as strings */
+       size_t :0;
+};
+-#define btf_dump_type_data_opts__last_field emit_strings
++#define btf_dump_type_data_opts__last_field emit_zeroes
+
+LIBBPF_API int
+btf_dump__dump_type_data(struct btf_dump *d, __u32 id,
+diff --git a/tools/lib/bpf/btf_dump.c b/tools/lib/bpf/btf_dump.c
+index f09f25eccf3c..c7b5a376642f 100644
+--- a/tools/lib/bpf/btf_dump.c
++++ b/tools/lib/bpf/btf_dump.c
+@@ -2599,7 +2599,7 @@ int btf_dump__dump_type_data(struct btf_dump *d, __u3=
+2 id,
+       d->typed_dump->compact =3D OPTS_GET(opts, compact, false);
+       d->typed_dump->skip_names =3D OPTS_GET(opts, skip_names, false);
+       d->typed_dump->emit_zeroes =3D OPTS_GET(opts, emit_zeroes, false);
+-       d->typed_dump->emit_strings =3D OPTS_GET(opts, emit_strings, false)=
+;
++       d->typed_dump->emit_strings =3D true; // OPTS_GET(opts,
+emit_strings, false);
+
+       ret =3D btf_dump_dump_type_data(d, NULL, t, id, data, 0, 0);
 
 
-Thank you for your patch, and addressing the regression right away.
+```
+So I think the problem relates to modifying struct
+btf_dump_type_data_opts. Given I'm statically linking libbpf into perf
+I'm not sure on the exact route of the segv, no doubt this report will
+be enough for someone else to figure it out.
 
-Am 30.08.25 um 02:50 schrieb Calvin Owens:
-> Syzbot found a randconfig which fails after my recent patch:
-> 
->      drivers/bluetooth/btmtksdio.c:442:33: error: array type has incomplete element type ‘struct h4_recv_pkt’
->        442 | static const struct h4_recv_pkt mtk_recv_pkts[] = {
->            |                                 ^~~~~~~~~~~~~
->      drivers/bluetooth/btmtksdio.c:443:11: error: ‘H4_RECV_ACL’ undeclared here (not in a function)
->        443 |         { H4_RECV_ACL,      .recv = btmtksdio_recv_acl },
->            |           ^~~~~~~~~~~
->      drivers/bluetooth/btmtksdio.c:444:11: error: ‘H4_RECV_SCO’ undeclared here (not in a function)
->        444 |         { H4_RECV_SCO,      .recv = hci_recv_frame },
->            |           ^~~~~~~~~~~
->      drivers/bluetooth/btmtksdio.c:445:11: error: ‘H4_RECV_EVENT’ undeclared here (not in a function)
->        445 |         { H4_RECV_EVENT,    .recv = btmtksdio_recv_event },
-> 
-> ...because we can have BT_MTKSDIO=y with BT_HCIUART_H4=n, and the
-> definitions used here are gated on BT_HCIUART_H4 in hci_uart.h.
+Given this is a regression what should the fix be?
 
-The drivers below seem to be affected:
-
-     drivers/bluetooth/bpa10x.c:     { H4_RECV_EVENT,   .recv = 
-hci_recv_frame },
-     drivers/bluetooth/btmtksdio.c:  { H4_RECV_EVENT,    .recv = 
-btmtksdio_recv_event },
-     drivers/bluetooth/btmtkuart.c:  { H4_RECV_EVENT,    .recv = 
-btmtkuart_recv_event },
-     drivers/bluetooth/btnxpuart.c:  { H4_RECV_EVENT,        .recv = 
-hci_recv_frame },
-
-> I think the simplest way to fix this is to remove the gate on the
-> definitions in hci_uart.h. Since the constants are macros, there's no
-> runtime cost to doing so, and nothing seems to rely on their absence in
-> the BT_HCIUART_H4=n case.
-
-Looking at the implementation, it looks like they only work with the H4 
-protocol? So maybe, that should be denoted in the Kconfig files?
-
-> I let randconfig builds run for awhile in drivers/bluetooth/ and didn't
-> hit anything else, so hopefully this was the only fallout.
-> 
-> Fixes: 74bcec450eea ("Bluetooth: remove duplicate h4_recv_buf() in header")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508300413.OnIedvRh-lkp@intel.com/
-> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> ---
->   drivers/bluetooth/hci_uart.h | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-> index 5ea5dd80e297..fd0624988aba 100644
-> --- a/drivers/bluetooth/hci_uart.h
-> +++ b/drivers/bluetooth/hci_uart.h
-> @@ -121,7 +121,6 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable);
->   void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
->   			 unsigned int oper_speed);
->   
-> -#ifdef CONFIG_BT_HCIUART_H4
->   int h4_init(void);
->   int h4_deinit(void);
->   
-> @@ -165,7 +164,6 @@ struct h4_recv_pkt {
->   struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
->   			    const unsigned char *buffer, int count,
->   			    const struct h4_recv_pkt *pkts, int pkts_count);
-> -#endif
->   
->   #ifdef CONFIG_BT_HCIUART_BCSP
->   int bcsp_init(void);
-
-It’s a valid fix.
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+Thanks,
+Ian
 
