@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-793076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC59DB3CDDE
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570CAB3CDDD
 	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 19:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3C456275C
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:09:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 225DC4E20EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 17:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF782D46B1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8D2D3EF6;
 	Sat, 30 Aug 2025 17:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQ2FDKUq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4ferjS0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EEC2D063A;
-	Sat, 30 Aug 2025 17:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241B32D027E;
+	Sat, 30 Aug 2025 17:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756573760; cv=none; b=UNalbwBe16tgQDqpZgL+ssjApCYIv4EHQ4f0ugpTLnahsfBR0MIVY6XUd0LmhNTKgIXGAt3ghRXMams58cZ7U03GIcs3NIYOdIzb9GPpz3jEsVYdzeivj/ojZQu4f+Y01eprZCSFsIN1MDDUAw5kYOKr8eMI8eEgYSPJk0Sm0es=
+	t=1756573760; cv=none; b=KWpQnNctJ8wNzHdnLhn+Ta2E/jlNCJD5HRXotIb8r742dkRk7xV0mH9TBS6buTzYo8gZovhwUacOAcAZkD+rK22DsAFibRhHcoyxN3/JbxFENTaHFv+4S2D1BxoNs0MgBazPq+hQ0eQgPSSkjh90L2lYwfOLLjOkFTFQicfxP2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756573760; c=relaxed/simple;
-	bh=Ga5zxO8ZZi+LW2SUjQleCojdx++Hf4rCOMhtGWIYz9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rC0Xhrkm44llwaZU+3aSzgHodeEX3ftSKqyYLLbMbay1+UlX9ZphFPe40DZzoVJCBGx23an8kkejIsOQAwu2YMLkexQl9O273+AvN57AV1Bs+aYbumZn7XYqPsAzFO6h8yub0AHvX1Mna4jIdxmqDUBbuvOyFTk7BPKoivG/ejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQ2FDKUq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4497C4AF09;
+	bh=u+4gHkt5DXNrjLXkvTpfwwb6DKaKcxGOlqkLQ/0Gubc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lghQ5Va4iSZuREctEt8HgBuyVq3GGlnkI9aNfLCC+ivwvBkc/b+wxB28SqcttLVK/4cxwa2sv/yJsSIzW1u/Yu769KzobIksMs/q3QCQ7e30S8tCZibYnFKFm8SbZwdPV01ece2NybgOUBTtDy1rJse+vHpATs0eggYkpafRb2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4ferjS0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0378C4CEEB;
 	Sat, 30 Aug 2025 17:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756573759;
-	bh=Ga5zxO8ZZi+LW2SUjQleCojdx++Hf4rCOMhtGWIYz9Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bQ2FDKUqku3BPMUozZpMqtcXYNpl952VOteqh2Kz7kyy5GaCFNg6Anu3FSIx6GLge
-	 e6jMuRn0bQ9pcJnNkXi18aV+xpp/w0A+0tBPPCJao2mP1M9w2Gjyg/UoAECXoT+tuy
-	 UAnfu7PHDQ3y85TXVjdTHOxw1SfEA0Iih5p9R3sYbAkl3PDBM7ppmqA5ka3AuOap64
-	 kPKEuzoW2XRfhYgmQPRpN1ZyAX56gPs6N0sJDNXNk23I9o3w13JUglKufd7/PQhC2a
-	 ioj0IR11U99jqDCnA3O1tBVYPszz0kHXA3r3nnCxrVs5PAffxn5a421VzhUTx1odVX
-	 /WXp5e6KJslSw==
+	bh=u+4gHkt5DXNrjLXkvTpfwwb6DKaKcxGOlqkLQ/0Gubc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=I4ferjS0lWDaRDEPSigpfpZXcn1ecAQ4cv3cFgwhBBCG2vX1kOc45QAnqBpUwdVq9
+	 c3v44Y514Aw0hG7KECWZeN6eT4E2F65t7NZ+0tnWQkbD/ZDqHM7HibVSUasgoadxa/
+	 uxHudqTidIvqbjllVV4lP0TOZRN8YZHXkDSUnRxNBCZ+TX5xilo9HoBYy76ii41tCu
+	 KbP5/fRr1EDXUInEbNNKJBUTbPPgfAu7ENnVUUFNfLKAFwPVHUxW/Pg5lPwlkOqZAE
+	 vrNi0me373DjR7oHTJUqmLTEgRr7GT/uMoikO86PZ0bYpnWKqMD4vfp0UYFgmobLMw
+	 fnUkdpeZUMxaw==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 0C00C5FCC4; Sun, 31 Aug 2025 01:09:17 +0800 (CST)
+	id 2686B5FA73; Sun, 31 Aug 2025 01:09:17 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -55,10 +56,12 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/8] arm64: allwinner: a523: Enable MCU PRCM and NPU
-Date: Sun, 31 Aug 2025 01:08:53 +0800
-Message-Id: <20250830170901.1996227-1-wens@kernel.org>
+Subject: [PATCH 1/8] dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
+Date: Sun, 31 Aug 2025 01:08:54 +0800
+Message-Id: <20250830170901.1996227-2-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250830170901.1996227-1-wens@kernel.org>
+References: <20250830170901.1996227-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,75 +72,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-Hi folks,
+The main clock controller on the A523/T527 has the NPU's module clock.
+It was missing from the original submission, likely because that was
+based on the A523 user manual; the A523 is marketed without the NPU.
 
-This series adds support for the MCU PRCM and the NPU.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ include/dt-bindings/clock/sun55i-a523-ccu.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-The MCU PRCM is a Power, Reset & Clock Management block that has some
-clock and reset controls for the MCU, DSP and some peripherals that the
-MCU could use.
-
-The NPU is a Vivante IP block. It is clocked from the NPU PLL from the
-main clock unit, but the bus clock and reset controls lie in the MCU
-PRCM.
-
-Patch 1 adds the missing NPU module clock to the main clock control
-unit's binding.
-
-Patch 2 adds the binding for the MCU PRCM clock control unit
-
-Patch 3 fixes clock rate readback for the new dual-divider type added
-with the A523 family.
-
-Patch 4 adds the missing NPU module clock.
-
-Patch 5 adds support for power-of-two dividers to the sunxi-ng clk
-library.
-
-Patch 6 adds a new driver for the A523 MCU PRCM CCU.
-
-Patch 7 adds a device node for the MCU PRCM CCU.
-
-Patch 8 adds a device node for the NPU.
-
-The NPU was only lightly tested: the driver correctly probes and detects
-a model GC9000, revision 9003.
-
-Please have a look. All patches will be merged through the sunxi tree.
-
-
-Thanks
-ChenYu
-
-
-Chen-Yu Tsai (8):
-  dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
-  dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU CCU clock controller
-  clk: sunxi-ng: mp: Fix dual-divider clock rate readback
-  clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
-  clk: sunxi-ng: div: support power-of-two dividers
-  clk: sunxi-ng: add support for the A523/T527 MCU CCU
-  arm64: dts: allwinner: a523: Add MCU PRCM CCU node
-  arm64: dts: allwinner: a523: Add NPU device node
-
- .../clock/allwinner,sun55i-a523-ccu.yaml      |  35 +-
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  37 ++
- drivers/clk/sunxi-ng/Kconfig                  |   5 +
- drivers/clk/sunxi-ng/Makefile                 |   2 +
- drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c    | 447 ++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  21 +-
- drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |  14 -
- drivers/clk/sunxi-ng/ccu_div.h                |  18 +
- drivers/clk/sunxi-ng/ccu_mp.c                 |   2 +-
- include/dt-bindings/clock/sun55i-a523-ccu.h   |   1 +
- .../dt-bindings/clock/sun55i-a523-mcu-ccu.h   |  54 +++
- .../dt-bindings/reset/sun55i-a523-mcu-ccu.h   |  30 ++
- 12 files changed, 646 insertions(+), 20 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c
- delete mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
- create mode 100644 include/dt-bindings/clock/sun55i-a523-mcu-ccu.h
- create mode 100644 include/dt-bindings/reset/sun55i-a523-mcu-ccu.h
-
+diff --git a/include/dt-bindings/clock/sun55i-a523-ccu.h b/include/dt-bindings/clock/sun55i-a523-ccu.h
+index c8259ac5ada7..54808fcfd556 100644
+--- a/include/dt-bindings/clock/sun55i-a523-ccu.h
++++ b/include/dt-bindings/clock/sun55i-a523-ccu.h
+@@ -185,5 +185,6 @@
+ #define CLK_FANOUT0		176
+ #define CLK_FANOUT1		177
+ #define CLK_FANOUT2		178
++#define CLK_NPU			179
+ 
+ #endif /* _DT_BINDINGS_CLK_SUN55I_A523_CCU_H_ */
 -- 
 2.39.5
 
