@@ -1,292 +1,134 @@
-Return-Path: <linux-kernel+bounces-793105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7EBB3CE97
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC2DB3CEA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 20:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A8247AC64F
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37E1561B88
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 18:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121852D8798;
-	Sat, 30 Aug 2025 18:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA972D838E;
+	Sat, 30 Aug 2025 18:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="h8RwEX9V"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiVOjf9j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EC120B1F5
-	for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D218DB26;
+	Sat, 30 Aug 2025 18:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756577451; cv=none; b=BbVWPEGUwr+JIl0Wf9qxSMwStgEtPAEcsSjeiM3AQoQ1twZ2u88bP8oItmXPhzPEqUY7pv75GVn6jShA9RkMCjq/6jS1aD/xW7BSV7h0HU606LwpLCOp/jFRFYFFqM77ubVRcJCJEQc643XgOO+uor1w9mFTUjg61Z0FpBFrwac=
+	t=1756577874; cv=none; b=WQc8U+IfL+CWgcpd3JsvS76oJvBcHi0s/oX58dOadlI9CKC5WCkazzWOQcZrAWYfZy6IJhbvoTy/OVzAKX4cWTUBkZI9hZUrpl/B0DY4BBx0tAnkP4R5PmfjO/KqkBDCD/Wc3fmCXTW7ASFH+dtykZNjyzcm9NJzpV8iwDBZoA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756577451; c=relaxed/simple;
-	bh=GVIPNrQD4vs9jayLesFT/CivZe+HUks9mAopUJTRO1s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NQS4+XrLImzmTJD0JzXpVjonRd1q4A+tb059xdblH7zccoHzxu3fgaPQVv5mWvlMZdXijCZPwaJqpXpx605xpQXk4If2vND2Kaw7AKTYBLr4g2Pb4wn4O3mLwRHk+td7A038Mqjbskn3SABMvupLKe6F3k6ZWfBC953AK5jcmso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=h8RwEX9V; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from NEET (p4224056-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [118.15.57.56])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57UIAe1Q072448
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 31 Aug 2025 03:10:41 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=AEgDn3tnx67TZsTjPIBBJXhC3OkvNC/YDZWZnX4cMwM=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250315; t=1756577441; v=1;
-        b=h8RwEX9Vk2LzHENs4aikhcHEvr3/UEyeLCJ2cb6seMt0RbeSDg+yd/hMOcfBjNk2
-         VjX+fUCQtvR/6BLjrCY0FfCEBDGGSTgQfmz1NxDO/b6BA5nxgLPXmfhH8rpOYHXE
-         XH3XA7LNlrZanZDvZgGPpz0imJva7k5sx6hwcDc5TujxgY3u2oe2qjSTXGfWzhQV
-         vEHGbPYhz/OMagwReWjAE/FKP1T9CWR2Z6UHorkuLTiIsWEn++X7Rpr1ZmDdF+0t
-         G/BZEZQOZFR4XX0i3j7G5vgjNzXzDgQmM0l0KL7X9nSwAr4JAAxdsZg12RiIela+
-         Lg/PDgKfHGRJo2ABkXImYw==
-Message-ID: <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
-Date: Sun, 31 Aug 2025 03:10:40 +0900
+	s=arc-20240116; t=1756577874; c=relaxed/simple;
+	bh=AaXzJegL0LXpBu/wgNxuQEKB9cIewaGfi4OXtiQRdAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gvqXsQJYVFhhZNlloO62vIQFm9ZUQ2oJGdnYbqEXUBK7wacrCOx44LBvdxhKA5N+/eFHSLCjZ9LoecYRoqwY4pnHz3A5xMaZsWSwBYblqI6VRe2Bft4ATZs+2SLNGGEJuhop8AnOmo/iQ6NgMAC8wXFzMNVUlaNU5uo01ttjavc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiVOjf9j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7416C4CEEB;
+	Sat, 30 Aug 2025 18:17:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756577874;
+	bh=AaXzJegL0LXpBu/wgNxuQEKB9cIewaGfi4OXtiQRdAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MiVOjf9jOkGjHJZOn6cWeFjeGb4NmxamBHRvpC+vQZMjcf9cpohVByIZNvS2Iax/p
+	 FbXBosHi++OUrfdP5FDrXXKVrDh242WhB6R30jG+fg5V17Y29t6p0f7Tn85q0sEjye
+	 ziFFoxGWRvld4gBDfAXJzsCbIGS6fEy005WhyX8wFzgzN69F1sWoP48paqhYHoLVNY
+	 517v4PlIRFMhqdtvKJ76t7BmMay8AWn0FxcpIBBJnq0Sx1s7giQgyfgS5SXg2xWYNE
+	 HHwcIjTZ8W0AU4uXXb/b2XUgVTIPkf+UX6pcjtuGVfGEemTFhBc6Hx97/qJozukK+g
+	 yV8HsWhpcC3rQ==
+Date: Sat, 30 Aug 2025 19:17:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Asuna Yang <spriteovo@gmail.com>
+Cc: Jason Montleon <jmontleo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: RISC-V: Re-enable GCC+Rust builds
+Message-ID: <20250830-cheesy-prone-ee5fae406c22@spud>
+References: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kenta Akagi <k@mgml.me>
-Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
- io failure
-To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
-        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
-        Guoqing Jiang <jgq516@gmail.com>
-References: <20250828163216.4225-1-k@mgml.me>
- <20250828163216.4225-2-k@mgml.me>
- <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
- <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
- <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
-Content-Language: en-US
-From: Kenta Akagi <k@mgml.me>
-In-Reply-To: <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PLgD4sybnROtocgd"
+Content-Disposition: inline
+In-Reply-To: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
 
 
+--PLgD4sybnROtocgd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/08/30 17:48, Li Nan wrote:
-> 
-> 
-> 在 2025/8/29 20:21, Kenta Akagi 写道:
->>
->>
->> On 2025/08/29 11:54, Li Nan wrote:
->>>
->>> 在 2025/8/29 0:32, Kenta Akagi 写道:
->>>> This commit ensures that an MD_FAILFAST IO failure does not put
->>>> the array into a broken state.
->>>>
->>>> When failfast is enabled on rdev in RAID1 or RAID10,
->>>> the array may be flagged MD_BROKEN in the following cases.
->>>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
->>>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
->>>
->>> [...]
->>>
->>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->>>> index 408c26398321..8a61fd93b3ff 100644
->>>> --- a/drivers/md/raid1.c
->>>> +++ b/drivers/md/raid1.c
->>>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->>>>                (bio->bi_opf & MD_FAILFAST) &&
->>>>                /* We never try FailFast to WriteMostly devices */
->>>>                !test_bit(WriteMostly, &rdev->flags)) {
->>>> +            set_bit(FailfastIOFailure, &rdev->flags);
->>>>                md_error(r1_bio->mddev, rdev);
->>>>            }
->>>>    @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>>>     *    - recovery is interrupted.
->>>>     *    - &mddev->degraded is bumped.
->>>>     *
->>>> - * @rdev is marked as &Faulty excluding case when array is failed and
->>>> - * &mddev->fail_last_dev is off.
->>>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
->>>> + * then @mddev and @rdev will not be marked as failed.
->>>> + *
->>>> + * @rdev is marked as &Faulty excluding any cases:
->>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>>>     */
->>>>    static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>    {
->>>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>          if (test_bit(In_sync, &rdev->flags) &&
->>>>            (conf->raid_disks - mddev->degraded) == 1) {
->>>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
->>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->>>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
->>>> +                "last device but ignoring it\n",
->>>> +                mdname(mddev), rdev->bdev);
->>>> +            return;
->>>> +        }
->>>>            set_bit(MD_BROKEN, &mddev->flags);
->>>>              if (!mddev->fail_last_dev) {
->>>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
->>>>        if (test_bit(FailFast, &rdev->flags)) {
->>>>            /* Don't try recovering from here - just fail it
->>>>             * ... unless it is the last working device of course */
->>>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>>            md_error(mddev, rdev);
->>>>            if (test_bit(Faulty, &rdev->flags))
->>>>                /* Don't try to read from here, but make sure
->>>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->>>>            fix_read_error(conf, r1_bio);
->>>>            unfreeze_array(conf);
->>>>        } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
->>>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>>            md_error(mddev, rdev);
->>>>        } else {
->>>>            r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->>>> index b60c30bfb6c7..530ad6503189 100644
->>>> --- a/drivers/md/raid10.c
->>>> +++ b/drivers/md/raid10.c
->>>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
->>>>                dec_rdev = 0;
->>>>                if (test_bit(FailFast, &rdev->flags) &&
->>>>                    (bio->bi_opf & MD_FAILFAST)) {
->>>> +                set_bit(FailfastIOFailure, &rdev->flags);
->>>>                    md_error(rdev->mddev, rdev);
->>>>                }
->>>>    
->>>
->>> Thank you for the patch. There may be an issue with 'test_and_clear'.
->>>
->>> If two write IO go to the same rdev, MD_BROKEN may be set as below:
->>
->>> IO1                    IO2
->>> set FailfastIOFailure
->>>                      set FailfastIOFailure
->>>   md_error
->>>    raid1_error
->>>     test_and_clear FailfastIOFailur
->>>                         md_error
->>>                        raid1_error
->>>                         //FailfastIOFailur is cleared
->>>                         set MD_BROKEN
->>>
->>> Maybe we should check whether FailfastIOFailure is already set before
->>> setting it. It also needs to be considered in metadata writes.
->> Thank you for reviewing.
->>
->> I agree, this seems to be as you described.
->> So, should it be implemented as follows?
->>
->> bool old=false;
->> do{
->>   spin_lock_irqsave(&conf->device_lock, flags);
->>   old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
->>   spin_unlock_irqrestore(&conf->device_lock, flags);
->> }while(old);
->>
->> However, since I am concerned about potential deadlocks,
->> so I am considering two alternative approaches:
->>
->> * Add an atomic_t counter to md_rdev to track failfast IO failures.
->>
->> This may set MD_BROKEN at a slightly incorrect timing, but mixing
->> error handling of Failfast and non-Failfast IOs appears to be rare.
->> In any case, the final outcome would be the same, i.e. the array
->> ends up with MD_BROKEN. Therefore, I think this should not cause
->> issues. I think the same applies to test_and_set_bit.
->>
->> IO1                    IO2                    IO3
->> FailfastIOFailure      Normal IOFailure       FailfastIOFailure
->> atomic_inc
->>                                                  md_error                                     atomic_inc
->>    raid1_error
->>     atomic_dec //2to1
->>                         md_error
->>                          raid1_error           md_error
->>                           atomic_dec //1to0     raid1_error
->>                                                  atomic_dec //0
->>                                                    set MD_BROKEN
->>
->> * Alternatively, create a separate error handler,
->>    e.g. md_error_failfast(), that clearly does not fail the array.
->>
->> This approach would require somewhat larger changes and may not
->> be very elegant, but it seems to be a reliable way to ensure
->> MD_BROKEN is never set at the wrong timing.
->>
->> Which of these three approaches would you consider preferable?
->> I would appreciate your feedback.
->>
->>
->> For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
->> when the array is degraded.
->>
->> Thanks,
->> Akagi
->>
-> 
-> I took a closer look at the FailFast code and found a few issues, using
-> RAID1 as an example:
-> 
-> For normal read/write IO, FailFast is only triggered when there is another
-> disk is available, as seen in read_balance() and raid1_write_request().
-> In raid1_error(), MD_BROKEN is set only when no other disks are available.
+On Sat, Aug 30, 2025 at 01:00:56PM +0800, Asuna Yang wrote:
+> I noticed that GCC+Rust builds for RISC-V were disabled about a year ago,=
+ as
+> discussed in
+> https://lore.kernel.org/all/20240917000848.720765-1-jmontleo@redhat.com/
+>=20
+> I'm a bit lost here. What are the main obstacles to re-enabling GCC builds
+> now?
+>=20
+> Conor said:
+> > Okay. Short term then is deny gcc + rust, longer term is allow it with =
+the
+> same caveats as the aforementioned mixed stuff.
+> "the same caveats" means detecting what specifically?
 
-Hi,
-Agree, I think so too.
+There's "code" in the riscv Kconfig/Makefile that makes sure that the
+assembler has the same understanding of what extensions are enabled as
+the compiler. This is done by detecting which version of the tools are
+in use, and adjusting march etc as a result. See
+TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI for an example. When I wrote the
+comment you're citing, there was no "off the shelf" way to figure out
+the version of libclang in use to ensure that it has the same
+understanding of -march as the version of gcc being used on the c side
+does. For clang build, it's not a concern since it's almost certainly
+the exact same as the compiler building the c side.
 
-> So, the FailFast for normal read/write is not triggered in the scenario you
-> described in cover-letter.
+> We have a RISC-V PWM driver being written in Rust. Currently, GCC being
+> disabled for building the kernel with Rust for RISC-V is the primary bloc=
+ker
+> for including these drivers in RISC-V distros. Therefore, I'd like to push
+> forward and contribute to the re-enabling of GCC builds. Is there a more
+> detailed direction on what I can do here?
 
-This corresponds to the case described in the commit message of PATCH v3 1/3.
-"Normally, MD_FAILFAST IOs are not issued to the 'last' rdev, so this is
-an edge case; however, it can occur if rdevs in a non-degraded
-array share the same path and that path is lost, or if a metadata
-write is triggered in a degraded array and fails due to failfast."
+Add the version of libclang as a Kconfig symbol, so that the kernel's
+build system can ensure that both sides are built using the same
+configuration. Off the top of my head, using a pre-17 libclang with a
+new gcc would require having zicsr in -march for the c side and it
+removed for rust. It's been a while (1 year+) since I fiddled with this
+though, so my recollection there could well be inaccurate.
 
-To describe it in more detail, the flow is as follows:
+Cheers,
+Conor.
 
-Prerequisites:
+--PLgD4sybnROtocgd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Both rdevs are in-sync
-- Both rdevs have in-flight MD_FAILFAST bios
-- Both rdevs depend on the same lower-level path
-  (e.g., nvme-tcp over a single Ethernet interface)
+-----BEGIN PGP SIGNATURE-----
 
-Sequence:
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLNASAAKCRB4tDGHoIJi
+0vXYAQDgtR0RaOgK/BuuCweWdpp1h5+8Uf3iwmbxuqXRT+YFsgEAu3diokJiUzBm
+ruXnlci8jwoUePp9tM9YndTyCztULQk=
+=UFnw
+-----END PGP SIGNATURE-----
 
-- A bios with REQ_FAILFAST_DEV fails (e.g., due to a temporary network outage),
-  in the case of nvme-tcp:
-   - The Ethernet connection is lost on the node where md is running over 5 seconds
-   - Then the connection is restored. Idk the details of nvme-tcp implementation, 
-     but it seems that failfast IOs finish only after the connection is back.
-- All failfast bios fail, raid1_end_write_request is called.
-- md_error() marks one rdev Faulty; the other rdev becomes the 'last' rdev.
-- md_error() on the last rdev sets MD_BROKEN on the array - fail_last_dev=1 is unlikely.
-- The write is retried via handle_write_finished -> narrow_write_error, usually succeeding.
-- MD_BROKEN remains set, leaving the array in a state where no further writes can occur.
-
-> Normal writes may call md_error() in narrow_write_error. Normal reads do
-> not execute md_error() on the last disk.
-> 
-> Perhaps you should get more information to confirm how MD_BROKEN is set in
-> normal read/write IO.
-
-Should I add the above sequence of events to the cover letter, or commit message?
-
-Thanks,
-Akagi
-
-> -- 
-> Thanks,
-> Nan
-> 
-> 
-
+--PLgD4sybnROtocgd--
 
