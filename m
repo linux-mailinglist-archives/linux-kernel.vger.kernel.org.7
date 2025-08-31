@@ -1,227 +1,107 @@
-Return-Path: <linux-kernel+bounces-793486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693C4B3D42E
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:38:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DECFB3D433
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26979173A13
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:38:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5C567A8B55
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9490E26F298;
-	Sun, 31 Aug 2025 15:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630AE26F2B0;
+	Sun, 31 Aug 2025 15:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4YqOtBU"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gwaIVq4d"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEC926D4C1;
-	Sun, 31 Aug 2025 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9941126F2A6;
+	Sun, 31 Aug 2025 15:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756654675; cv=none; b=SJf/KWWeqw3YxTSvmvVgv6aJhUd2IteJBceZFpD+Sa6tLdvqQcw8pH+lMjLyFVjl+cjvSvbbfTs8T/25SPTcTmpFliPRYOww65AS6MtLnh7eXFjVX4MNgdMKReTbf8xDVcHQ4qC+FZ1ZULVCmi8GjlIbIhVNr93TKpjrKieeeZg=
+	t=1756654824; cv=none; b=Mw3Tan/ccip4kJhkCSQjLte9sLlBSE0ZkmusfmrB7qQdPgksqZOTY/vDraJPBxniF2wj9twvBDmSNUREWkS508NR1o9Du8O/XJWILYhF96TavP74Nxzkewcg/R1wCv8xVNhg7T1b+XUukZoCuxZOOj13sjn6XqR27S94jIy673s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756654675; c=relaxed/simple;
-	bh=GWYrJHPDh7pVNYHyuvB0gKyzXu4ERH+DBshpNI7vJmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hdBltnPu0eydJK/IYT+oZ7vaMh0P6nql8Y0LWEdzKUSLXSuwjE+/PK3AsQ+xd4Rzt6IsdEzIVkxWZDA2c7OIcfFW+mHONl8HHgKnMNLRSXpzpQacBFqaDRyJxML5tdxjhtLrZa3mNWKDCVp7fYK2Io29JwWZTM4lWU65tA3QdIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4YqOtBU; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-248e3ef1641so22886035ad.3;
-        Sun, 31 Aug 2025 08:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756654674; x=1757259474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OFDEYQJ8obf6Fs8A+TsKrId3W5WmbK7rR7VQyl/qxPk=;
-        b=b4YqOtBU/5pXoHqy5868Ay0KYPma8jjaUbfpHApFMaidiVTW3d2ZVEV5UpkvICqdyh
-         I9S4Re2g3nbx+zRyTZGukjm/G3y2qs4b16bwK7RjZ9L6rnXLuhT9LKhpSDM+7MdrPLI9
-         ba6UGbWEFhVUO3t4h2nBTz3G4QRPAI7xv01GJgWLWhVv/mj+4nacg5Qb/bcykK2M/WE5
-         JmRrHYp+Ct4XgE4hq5pfXrkwPBB8ZQOqlapbvuqqM9GW6w7dt9e5/yvm964oo9BgNQ3s
-         ft90hkHre+irLgyTQGtFyrOaWY+meAoQV65e/DFGaJ+yJil51KRTV+5QX26UYQAcQ1Xe
-         m3xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756654674; x=1757259474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OFDEYQJ8obf6Fs8A+TsKrId3W5WmbK7rR7VQyl/qxPk=;
-        b=spCGVlK/6cBuX8khEXQsU7rrmpT8h4eoAC+693asvQKL5qaoiePpQSynV7bqIUdkTg
-         fceUiBxIVjJ+cyghiLgWQ+YKU1xIWr5fEgaD6Jbfv54soJ7sejGqJrY3OJnNn0gGeJSV
-         oqNNBk/nqdF0Cy+e4VFWEdu4bkybXOF+nCNKPFXB70cvBCGxMzduQQ05AfQQNIpKqztv
-         NQTARoz3xZaCnJxCorHwwhF9lvwHnEVoNLmwnEjXsrXT4NmldeweQWdV//vJwX6DArW3
-         TZT+gezfXlnxfz3XoWAlUgvAIB9Ty49LAr5z2F/3+DLEFzFrQF1yue0qNpM76fOI44On
-         xL0Q==
-X-Gm-Message-State: AOJu0YzLfTMfOQ8n/zjqI3cCxzX6ZA/GmXbEamfzAJO2qpmPel9gVdmQ
-	sbC25xG7XBwbGgu0EJxg1aQQbKhendMKlT8UQA2J0WrvN7gKqk7Rf4AUZJLaJg==
-X-Gm-Gg: ASbGnct80MZWt992nIamtG88MJyJjdmqixbmRyjngtqZbr5YxJr+LF8VnkQM7h3CxZu
-	vl4KlIGfXIetDpASA46rMJuNXVzaY/65H9e5VL0iipwguhYYQ4fHjtMtZ4MoaYZ3RSbr1a9uxa8
-	ONNZFuIaA//cLMFgKBPmJlWvDxYxej2+0eHZxMERGKYf2XY7EcQpglUCxiDvHxYj1aY3yOyBqD+
-	WV0oeCbhMR9CezUBjagdZm0sLfbUVvaL93eYgipjwookpdvFg/NFGexhV4SEztniMkvBfDZx99M
-	QYBRcrHIP03HzYHXz5xxeiVy3LfOAd4uei4PQC8oZiwUehLmjs/m4HqlzaWt+Ah4fvsv87NHuTD
-	Idelt7eddlskH7wp+vGouN1rO1FMlRHBJ7K/r71yC
-X-Google-Smtp-Source: AGHT+IGpbBF5o4IXojUbE0bOixBdQ9gLAAiA5oWG1d3jT5tqYR85dQTBK6f/cjTSAmGcDu4G8TE8LA==
-X-Received: by 2002:a17:903:38c7:b0:249:2d84:f416 with SMTP id d9443c01a7336-24944b766eamr65600685ad.58.1756654673646;
-        Sun, 31 Aug 2025 08:37:53 -0700 (PDT)
-Received: from localhost ([77.111.118.146])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24a92f897d8sm38927595ad.24.2025.08.31.08.37.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 08:37:53 -0700 (PDT)
-From: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
-Subject: [PATCH] staging: iio: adc: ad7816: add mutex to serialize SPI/GPIO operations
-Date: Sun, 31 Aug 2025 19:07:41 +0330
-Message-ID: <20250831153741.8820-1-moahmmad.hosseinii@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756654824; c=relaxed/simple;
+	bh=4qYM50M1ruW12qVdEyVZT7wDFMW61qFZfd8Vcd3+Gl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8cFhCK6XZwjfRC+MZv1IxqN2JPpTPHbQQJ3oF50JmFsK1NY9VfYT1tk0dK9VpGj3TrZurFTDkSEXL9RUHaQjb46SQJ7D5WCCtLzzalRH/7lMELqnOsqPS9cqbf0A0LasWdLZGvWGrfRnUOi4qfgpdU+oLtd8vF+T5MMztAvtpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gwaIVq4d; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EAD3940E0192;
+	Sun, 31 Aug 2025 15:40:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bzt1d1lsJFp1; Sun, 31 Aug 2025 15:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756654814; bh=UevTnzICdteIzOhn6dJqcmMyhQOKhAKvJOp7WGbG2U4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwaIVq4dv6B7A01+RclqqyndJe0kXjEldcveKKQe9JTqcLjjPN3+xLox+zK75ThUI
+	 C+qXuq8eHSghaezPramxtQe2MhrM/4LFQN6k/VGq2rFOy8Q1M9CrtOoJ13L5/uE5QZ
+	 zvAgskkXK7vW4gOcSH9wDiM+CkUN3ts76rnulUHy8BP3TujgALc5RSJLUY4QWlUhIq
+	 E94hEtN85FohOyQDMmgox9HXMgvODpagd2Jvi1z6EambcDZ4WNF5uVFQW54+vu6WqO
+	 9LC77l9Rfo9ed/6zTVrdWGExvzCuGESOfvr/wD5zlkcwQAs0MlMjU1ZAKwgET6JK2b
+	 PEvD9mEFFEWsjkBK0QghH5sXxhyIg5DBzHM/kYOAFKXnCm/SYqoQ0X8BTZBDr47DUC
+	 qCIU5IrBC3xyenLoS9ELA7SbWdGlIJImXZdUfrYXPuWldtENzpga8WFCK3zAmwmz+o
+	 GhVFSvpJkyfmJC9NHW7ku70wLDV7QiRr4qZwNuhHzhrVu4XgVYmpfJSK6pDawDCsGS
+	 aSI8Z/bK9Sd4YHf89b12tUWbcKkgvqPBh/PymVaHm/q+6FwFVq862jeck/rbpQWpTH
+	 idZWYMSGlPHkoMNS/4hsynyGOhLSnLOo8nkFsWKAOj6N9RWfI3u6vgt4BiKwDrE2t1
+	 QgjLZb5EvEgdFs6e2ZE9c3sI=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7C2A840E0174;
+	Sun, 31 Aug 2025 15:40:01 +0000 (UTC)
+Date: Sun, 31 Aug 2025 17:39:41 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: seanjc@google.com, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	torvalds@linux-foundation.org, x86@kernel.org, tglx@linutronix.de
+Subject: Re: (Re)boot hangs and refcount errors on next-20250829
+Message-ID: <20250831153941.GCaLRsvf1V_ST2GPAd@fat_crate.local>
+References: <20250831141426.2786-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250831141426.2786-1-spasswolf@web.de>
 
-From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+On Sun, Aug 31, 2025 at 04:14:24PM +0200, Bert Karwatzki wrote:
+> I think I hit the the same error (and some more ...) when booting next-20250829
+> on my amd64 laptop (no VMs and no kexec were used here):
+> 
+> When I try booting next-20250829 on my debian stable(trixie) amd64 system the boot
+> process hangs every few attempts (without any log messages recorded). When the
+> boot process succeeds the following error message appears in dmesg:
+> 
+> [    8.337248] [     T44] ------------[ cut here ]------------
+> [    8.337250] [     T44] WARNING: kernel/futex/core.c:1604 at futex_ref_rcu+0xe8/0x100, CPU#6: rcuc/6/44
 
-The ad7816 driver was accessing SPI and GPIO lines without
-synchronization, which could lead to race conditions when accessed
-concurrently from multiple contexts. This might result in corrupted
-readings or inconsistent GPIO states.
+I believe that got fixed, pls try:
 
-Introduce an io_lock mutex in the driver structure to serialize:
-- SPI transactions in ad7816_spi_read() and ad7816_spi_write()
-- GPIO pin toggling sequences
-- Updates to device state via sysfs store functions (mode, channel, oti)
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=locking/urgent
 
-The mutex ensures proper mutual exclusion and prevents race
-conditions under concurrent access.
+which got updated to contain the fix for the warning above.
 
-Signed-off-by: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
----
- drivers/staging/iio/adc/ad7816.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
-index 4774df778de9..06567d048a6d 100644
---- a/drivers/staging/iio/adc/ad7816.c
-+++ b/drivers/staging/iio/adc/ad7816.c
-@@ -50,6 +50,7 @@ struct ad7816_chip_info {
- 	u8  oti_data[AD7816_CS_MAX + 1];
- 	u8  channel_id;	/* 0 always be temperature */
- 	u8  mode;
-+	struct mutex io_lock;	/* Protects SPI transactions and GPIO toggling */
- };
- 
- enum ad7816_type {
-@@ -67,13 +68,13 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
- 	int ret;
- 	__be16 buf;
- 
-+	mutex_lock(&chip->io_lock);
-+
- 	gpiod_set_value(chip->rdwr_pin, 1);
- 	gpiod_set_value(chip->rdwr_pin, 0);
- 	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
--	if (ret < 0) {
--		dev_err(&spi_dev->dev, "SPI channel setting error\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto unlock;
- 	gpiod_set_value(chip->rdwr_pin, 1);
- 
- 	if (chip->mode == AD7816_PD) { /* operating mode 2 */
-@@ -92,13 +93,13 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
- 	gpiod_set_value(chip->rdwr_pin, 0);
- 	gpiod_set_value(chip->rdwr_pin, 1);
- 	ret = spi_read(spi_dev, &buf, sizeof(*data));
--	if (ret < 0) {
--		dev_err(&spi_dev->dev, "SPI data read error\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		goto unlock;
- 
- 	*data = be16_to_cpu(buf);
- 
-+unlock:
-+	mutex_unlock(&chip->io_lock);
- 	return ret;
- }
- 
-@@ -107,12 +108,13 @@ static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
- 	struct spi_device *spi_dev = chip->spi_dev;
- 	int ret;
- 
-+	mutex_lock(&chip->io_lock);
-+
- 	gpiod_set_value(chip->rdwr_pin, 1);
- 	gpiod_set_value(chip->rdwr_pin, 0);
- 	ret = spi_write(spi_dev, &data, sizeof(data));
--	if (ret < 0)
--		dev_err(&spi_dev->dev, "SPI oti data write error\n");
- 
-+	mutex_unlock(&chip->io_lock);
- 	return ret;
- }
- 
-@@ -136,6 +138,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
- 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
- 	struct ad7816_chip_info *chip = iio_priv(indio_dev);
- 
-+	mutex_lock(&chip->io_lock);
- 	if (strcmp(buf, "full") == 0) {
- 		gpiod_set_value(chip->rdwr_pin, 1);
- 		chip->mode = AD7816_FULL;
-@@ -143,6 +146,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
- 		gpiod_set_value(chip->rdwr_pin, 0);
- 		chip->mode = AD7816_PD;
- 	}
-+	mutex_unlock(&chip->io_lock);
- 
- 	return len;
- }
-@@ -200,7 +204,9 @@ static ssize_t ad7816_store_channel(struct device *dev,
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&chip->io_lock);
- 	chip->channel_id = data;
-+	mutex_unlock(&chip->io_lock);
- 
- 	return len;
- }
-@@ -322,7 +328,9 @@ static inline ssize_t ad7816_set_oti(struct device *dev,
- 	if (ret)
- 		return -EIO;
- 
-+	mutex_lock(&chip->io_lock);
- 	chip->oti_data[chip->channel_id] = data;
-+	mutex_unlock(&chip->io_lock);
- 
- 	return len;
- }
-@@ -363,6 +371,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
- 	dev_set_drvdata(&spi_dev->dev, indio_dev);
- 
- 	chip->spi_dev = spi_dev;
-+	mutex_init(&chip->io_lock);
- 	for (i = 0; i <= AD7816_CS_MAX; i++)
- 		chip->oti_data[i] = 203;
- 
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
