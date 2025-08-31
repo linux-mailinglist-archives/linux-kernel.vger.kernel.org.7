@@ -1,183 +1,220 @@
-Return-Path: <linux-kernel+bounces-793317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074C4B3D1D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:05:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DA0B3D1FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44B167A593E
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA48C7A21EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D93E23ABA9;
-	Sun, 31 Aug 2025 10:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B122505AF;
+	Sun, 31 Aug 2025 10:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ni1a+nfF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882DC1990D9
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YacJJrAo"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C073595D;
+	Sun, 31 Aug 2025 10:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756634707; cv=none; b=bm9mV5tmrQw2KgX6ywB2oFthuoEbDBAWHyG5ZApDXpL4Xi8H+HF928Rdg4J/ccHatIIar/NNBOCCO6xcoyiv3HlMZnkC1iFi9Nr5AqYG5kjgXksPntAng4P2Dq3nCLQz7y/DZQ7Ha/dp6Tcp8pltizde2YGsc/7ygs7Bvni7t3U=
+	t=1756634950; cv=none; b=DD8IPEgBQxHxi88NV2rfUlI4j0NqB+hxyey0/KD7DYvd3a4szrt7NbLO9E1tpI32kLVwcd/uKlA+f6TBXbjBlB2Aa1g8eWuvkNRRUyL5Q29TWYl8Lhu6GG+XN5WSsspXkoFLXIPZ3GhbUNGCKEZ/J9eeq0Qwj/g60Van3lHz+Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756634707; c=relaxed/simple;
-	bh=qgZOJ23E7GKrRrkmvhIvbpHwFEbyncXhUWLXTsvOz7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAHNk328EtL3kQwYFVSAkeTB7pmYGdpKiXD0LVOy7Dcxp3xB/PFPNw51rboNhD0Uu+b38jW8enFxAYK4Ih+mvuLY0Vs5vhEHGZbnHbh3oftbCHF6BYkUXFcR4nu3l96ddRROr9d0l8calh8Edpiv67lOvQmVm6s8JyXWVamOeC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ni1a+nfF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V7U21T015923
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:05:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WtmVK7p/SotPayBLtQrG1bWg
-	qezjRJbwZ0ptisq/x4g=; b=ni1a+nfFBepFZIUGTSVLat6LgmRUrjZdFjbzB7fL
-	TCcZLbzXWz/J8sSwjtc4VqCUG2/yHcV9oYX5Xz6gZ21Ouw1BXyzfWMMpbtHhlaZz
-	mojI06occsqeRs5L2TQDU/xlDDbuCZcZcS5YLFu0V6TGvNFmM6UooS291/2pi51X
-	f2Xiak/bHNEV8OPO8bYUl4AiYB+zNmxj76aBWhkiduz38qvQWysgeBco/Sff0aFE
-	J8pg0ylTrC9DccUS3nDzZPWSGzk72/CBropCQdd0jzhS2TRrVUMGR7b4mocRgHbJ
-	dfPrfcPnn8IdH57tBMQAbAs/RRDD3IOb6IBVcsdliTMsgA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp22qk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:05:05 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b2ecb8e64bso43499341cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:05:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756634704; x=1757239504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WtmVK7p/SotPayBLtQrG1bWgqezjRJbwZ0ptisq/x4g=;
-        b=wBqIxxuO36yRuJuOpSJ2CzuG07dfXBXw4nVGHI10XsHWQfMFN48frdjs1+3gThB+Hu
-         2dLUqB6FpAi227JWYKaSgWTJwzEP9jOByIAqkNfYOJZ4KuoNmFxoh+fu6A0PMoBOXj0X
-         laTQ0ji9gl/NAFW5DbXEaIPKyEDrZ/DatPwtJjrxbb8zSz3SAT1bto1Ihwcu5tbILnVk
-         JuiDgG/tF2ntK5zzIQB/Er7w5IDYboyFIqTyK9SEKFRUDZceeen3UC7ZSIyMyT7fANqT
-         kPQBw6JvAbO2rh9uO3kVqv+AMAWDkMLMksEyXGagMzq3fpsLbwoqxRHExoJVpeHNV74C
-         8tyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWL3hnOp0HQ45vYN59UZym5mVTCFTr7B64p34H0gsS77FTAZH5zoG4RnSpAuXPAnaXn/SycAF1wWekKGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC5PYQOaJ4KdD04WAtOu5vhd85AdfkyJ2C57CGll6j/z2PKhUE
-	7pLr599+zXO8XXWNbIh3QHS0WkIVMxnYaObTt7y2u+nCV7ASvIwZ1fb0d0iGKx0gAwGIwwT+73m
-	vV4ZzVPrtcokUDvrPRpYsunuGG8oLzToMv9RwYwn+xIE147FDH5xzZRHKJoxCtyW8LPf6ndL1BB
-	JEsAdi
-X-Gm-Gg: ASbGnct9JfsRhzv1v9IVAes9JtnNcBDRA1VgesV066LgnLa/SFjoyLZBm1XlAOXCdqC
-	X7NsrcHR8O9DFpt1FmgVBEuGHKvMVa50PxDw4weRr2hXkU6XcQ2mWiz9m1WcJhV822POuHurSCf
-	KNoBCzrSqLUsmsQoIZI48MIe9Ajw77Y4P000jMf47PE/t8PHaGretwI6m13WDJCA8/v4pgddVR4
-	xcsyYMWzZ2+1Lr3+kySZRw2JIQgE9dQ+r4ctr3dAnJmEuTpLoXyDy2C3vFfDIn77W0cPCkIvNXd
-	3oyhMMY9LPPuGvtzQ0KK6ptxDopFq3+m4Y7kv228J8MLgPQLzrVgPiZU4iGTkezC+XEJ+o0RhV+
-	xKaDDu6camUyN7ekFdjwmwi48Ozt8ZOLbEHgw8Q91Sv5MEc8L8RU1
-X-Received: by 2002:a05:622a:259a:b0:4b2:ed82:29d5 with SMTP id d75a77b69052e-4b31d8526bcmr50235291cf.33.1756634704038;
-        Sun, 31 Aug 2025 03:05:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHb2lKo0iJNscirT3bEFWvA/JJp5w1yC0Ywe+zyzyU6LqWGRFeZc7bNUVhMX/eTELojDizGSg==
-X-Received: by 2002:a05:622a:259a:b0:4b2:ed82:29d5 with SMTP id d75a77b69052e-4b31d8526bcmr50234921cf.33.1756634703397;
-        Sun, 31 Aug 2025 03:05:03 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6770d9a8sm2101064e87.40.2025.08.31.03.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 03:05:02 -0700 (PDT)
-Date: Sun, 31 Aug 2025 13:05:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: add mfd/max77705 definitions
-Message-ID: <4atqwegfaq5ivrd6oypsfev3xpgfjhqw3hooxh4mit3fl23rtq@a5vbqtts46vv>
-References: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
- <20250831-starqltechn-correct_max77705_nodes-v1-1-5f2af9d13dad@gmail.com>
+	s=arc-20240116; t=1756634950; c=relaxed/simple;
+	bh=s6BufQ2PzEmyzcCo/e23hOkM8M39ehtZlsnksGH7A8Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ue0M9uoxmhwE3YuhPzx7BflXOx5VACrz1Bwg4Rfxa5GIiYIBjlcFfO9/mquofz1lG3aF1JAc1sAv9eWERLD7lEfeMANhzNlSLSqVl5zzQtlfUEmJKX9iHUqafIlxAcJrNOrwGUttSkOLR6lQMRMLEHVtIrJqP8e0Sn2PG1F5+hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YacJJrAo; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=4p
+	W6aNGncwjkw+VVYdOymSEh2vYav2mKCXkFAQDDoo4=; b=YacJJrAoKqt6uplWFb
+	/GjX3eg8SruawW5wkl5vqBOOtGMeQIexqeFdNelvZRDaSpkXofwvcSd11nolWnXX
+	TvFnwKXzPP556/u76rLkrpcqFIRGanF7NBpPvwl9kkYpFc/fztdw9CYrYUaHXtpC
+	926RAg5NSwBhrxKm1CEoFShvA=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wBH7U4YH7RoR1JrFA--.61212S2;
+	Sun, 31 Aug 2025 18:08:25 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xin Zhao <jackzxcui1989@163.com>
+Subject: [PATCH net-next v10 0/2] net: af_packet: optimize retire operation
+Date: Sun, 31 Aug 2025 18:08:20 +0800
+Message-Id: <20250831100822.1238795-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831-starqltechn-correct_max77705_nodes-v1-1-5f2af9d13dad@gmail.com>
-X-Proofpoint-GUID: YzvetcZinnmUnbeTBZKqnTG_KOI6WJy2
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b41e51 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=pNwjqshDI-g99FjbY1cA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: YzvetcZinnmUnbeTBZKqnTG_KOI6WJy2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX7rVMDwTgpFXf
- mzBItxqML9Xm7Jpvn1cH1fo/FoKwtRYge2wE3GJR7+V3J2U4mQ/4+kn1kpdMHzLMjdbOimiSj5Y
- +m+R/NgeAYSgKEaNmjvCI2kYzqJwoBFf0bso8GiJDAK9UJIgFU/qLmF3EklM3FoKYBca2c7AxU0
- pnkvtMUW7l5SlQ1jUWG/N5iECR6W32+Vg4Q0HPHx9YjtFPZo9XOTothCuFw6e2g09uhJpIOFjwF
- tVZUUN9mVWdrNqDAwqeCmd36dVKcCDaBTvyfPBjD1tVC0ExJgXj4l1TpL4Q3ozJIWGUPNWTwc71
- NAOUjjKqaQu0BQVa27iY9uY+kkEDm4+4aF0uuh8vbNj9B1GsVgwhPiTjEPva182DHiYBSTgoJyh
- jzersPNR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-31_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBH7U4YH7RoR1JrFA--.61212S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKw43ZFy3Kr1UXw4DGF4DJwb_yoW3Kr43pa
+	yUu34xGw1DZ342gw4xZan7ZF15Zw43Jr1UGrs3J34Fyan8CFy8AFW293ySqFZ7tFZ5Kwn7
+	Zr18XF13A3Z8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pig18dUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxC6Cmi0EKHMlQAAs3
 
-On Sun, Aug 31, 2025 at 01:21:21AM +0300, Dzmitry Sankouski wrote:
-> Add a dt-bindings include file for max77705 devicetree definition, define
-> available irq numbers.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  MAINTAINERS                        |  1 +
->  include/dt-bindings/mfd/max77705.h | 16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 020d7aa13188..82f500cf3c02 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15166,6 +15166,7 @@ F:	drivers/clk/clk-max77686.c
->  F:	drivers/extcon/extcon-max14577.c
->  F:	drivers/extcon/extcon-max77693.c
->  F:	drivers/rtc/rtc-max77686.c
-> +F:	include/dt-bindings/mfd/max77705.h
->  F:	include/linux/mfd/max14577*.h
->  F:	include/linux/mfd/max77686*.h
->  F:	include/linux/mfd/max77693*.h
-> diff --git a/include/dt-bindings/mfd/max77705.h b/include/dt-bindings/mfd/max77705.h
-> new file mode 100644
-> index 000000000000..34fcf1642e2d
-> --- /dev/null
-> +++ b/include/dt-bindings/mfd/max77705.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * DTS binding definitions used for the MAX77705 PMIC.
-> + *
-> + * Copyright (C) 2025 Dzmitry Sankouski <dsankouski@gmail.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_MFD_MAX77705_H
-> +#define _DT_BINDINGS_MFD_MAX77705_H
-> +
-> +#define MAX77705_IRQ_CHG	0
-> +#define MAX77705_IRQ_TOP	1
-> +#define MAX77705_IRQ_FG		2
-> +#define MAX77705_IRQ_USBC	3
+In a system with high real-time requirements, the timeout mechanism of
+ordinary timers with jiffies granularity is insufficient to meet the
+demands for real-time performance. Meanwhile, the optimization of CPU
+usage with af_packet is quite significant. Use hrtimer instead of timer
+to help compensate for the shortcomings in real-time performance.
+In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
+enough, with fluctuations reaching over 8ms (on a system with HZ=250).
+This is unacceptable in some high real-time systems that require timely
+processing of network packets. By replacing it with hrtimer, if a timeout
+of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
+3 ms.
 
-There is usually no need to define IRQs as bindings.
+---
+Changes in v10:
+- kactive_blk_num (K) is incremented on block close. last_kactive_blk_num (L)
+  is set to match K on block open and each timer. So the only time that they
+  differ is if a block is closed in tpacket_rcv and no new block could be
+  opened. So the origin check L==K in timer callback only skip the case 'no
+  new block to open'. If we remove L==K check, it will make prb_curr_blk_in_use
+  check earlier, which will not cause any side effect
+  as suggested by Willem de Bruijn.
+- Submit a precursor patch that removes last_kactive_blk_num
+  as suggested by Willem de Bruijn.
 
-> +
-> +#endif
-> 
-> -- 
-> 2.39.5
-> 
+Changes in v9:
+- Remove the function prb_setup_retire_blk_timer and move hrtimer setup and start
+  logic into function init_prb_bdqc
+  as suggested by Willem de Bruijn.
+- Always update last_kactive_blk_num before hrtimer callback return as the origin
+  logic does, as suggested by Willem de Bruijn.
+  In tpacket_rcv, it may call prb_close_block but do not call prb_open_block in
+  prb_dispatch_next_block, leading to inconsistency between last_kactive_blk_num
+  and kactive_blk_num. In hrtimer callback, we should update last_kactive_blk_num
+  in this case.
+- Remove 'refresh_timer:' label which is not needed while I change goto logic to
+  if-else implementation.
+- Link to v9: https://lore.kernel.org/netdev/20250828155127.3076551-1-jackzxcui1989@163.com/
+
+Changes in v8:
+- Delete delete_blk_timer field, as suggested by Willem de Bruijn,
+  hrtimer_cancel will check and wait until the timer callback return and ensure
+  enter enter callback again;
+- Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
+  Currently timer callback just restarts itself unconditionally, so delete the
+ 'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
+  directly and always return HRTIMER_RESTART. The only special case is when
+  prb_open_block is called from tpacket_rcv. That would set the timeout further
+  into the future than the already queued timer. An earlier timeout is not
+  problematic. No need to add complexity to avoid that.
+- Link to v8: https://lore.kernel.org/all/20250827150131.2193485-1-jackzxcui1989@163.com/
+
+Changes in v7:
+- Only update the hrtimer expire time within the hrtimer callback.
+  When the callback return, without sk_buff_head lock protection, __run_hrtimer will
+  enqueue the timer if return HRTIMER_RESTART. Setting the hrtimer expires while
+  enqueuing a timer may cause chaos in the hrtimer red-black tree.
+  The setting expire time is monotonic, so if we do not update the expire time to the
+  retire_blk_timer when it is not in callback, it will not cause problem if we skip
+  the timeout event and update it when find out that expire_ktime is bigger than the
+  expire time of retire_blk_timer.
+- Use hrtimer_set_expires instead of hrtimer_forward_now.
+  The end time for retiring each block is not fixed because when network packets are
+  received quickly, blocks are retired rapidly, and the new block retire time needs
+  to be recalculated. However, hrtimer_forward_now increments the previous timeout
+  by an interval, which is not correct.
+- The expire time is monotonic, so if we do not update the expire time to the
+  retire_blk_timer when it is not in callback, it will not cause problem if we skip
+  the timeout event and update it when find out that expire_ktime is bigger than the
+  expire time of retire_blk_timer.
+- Adding the 'bool callback' parameter back is intended to more accurately determine
+  whether we are inside the hrtimer callback when executing
+  _prb_refresh_rx_retire_blk_timer. This ensures that we only update the hrtimer's
+  timeout value within the hrtimer callback.
+- Link to v7: https://lore.kernel.org/all/20250822132051.266787-1-jackzxcui1989@163.com/
+
+Changes in v6:
+- Use hrtimer_is_queued instead to check whether it is within the callback function.
+  So do not need to add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer
+  as suggested by Willem de Bruijn;
+- Do not need local_irq_save and local_irq_restore to protect the race of the timer
+  callback running in softirq context or the open_block from tpacket_rcv in process
+  context
+  as suggested by Willem de Bruijn;
+- Link to v6: https://lore.kernel.org/all/20250820092925.2115372-1-jackzxcui1989@163.com/
+
+Changes in v5:
+- Remove the unnecessary comments at the top of the _prb_refresh_rx_retire_blk_timer,
+  branch is self-explanatory enough
+  as suggested by Willem de Bruijn;
+- Indentation of _prb_refresh_rx_retire_blk_timer, align with first argument on
+  previous line
+  as suggested by Willem de Bruijn;
+- Do not call hrtimer_start within the hrtimer callback
+  as suggested by Willem de Bruijn
+  So add 'bool callback' parameter to _prb_refresh_rx_retire_blk_timer to indicate
+  whether it is within the callback function. Use hrtimer_forward_now instead of
+  hrtimer_start when it is in the callback function and is doing prb_open_block.
+- Link to v5: https://lore.kernel.org/all/20250819091447.1199980-1-jackzxcui1989@163.com/
+
+Changes in v4:
+- Add 'bool start' to distinguish whether the call to _prb_refresh_rx_retire_blk_timer
+  is for prb_open_block. When it is for prb_open_block, execute hrtimer_start to
+  (re)start the hrtimer; otherwise, use hrtimer_forward_now to set the expiration
+  time as it is more commonly used compared to hrtimer_set_expires.
+  as suggested by Willem de Bruijn;
+- Delete the comments to explain why hrtimer_set_expires(not hrtimer_forward_now)
+  is used, as we do not use hrtimer_set_expires any more;
+- Link to v4: https://lore.kernel.org/all/20250818050233.155344-1-jackzxcui1989@163.com/
+
+Changes in v3:
+- return HRTIMER_NORESTART when pkc->delete_blk_timer is true
+  as suggested by Willem de Bruijn;
+- Drop the retire_blk_tov field of tpacket_kbdq_core, add interval_ktime instead
+  as suggested by Willem de Bruijn;
+- Add comments to explain why hrtimer_set_expires(not hrtimer_forward_now) is used in
+  _prb_refresh_rx_retire_blk_timer
+  as suggested by Willem de Bruijn;
+- Link to v3: https://lore.kernel.org/all/20250816170130.3969354-1-jackzxcui1989@163.com/
+
+Changes in v2:
+- Drop the tov_in_msecs field of tpacket_kbdq_core added by the patch
+  as suggested by Willem de Bruijn;
+- Link to v2: https://lore.kernel.org/all/20250815044141.1374446-1-jackzxcui1989@163.com/
+
+Changes in v1:
+- Do not add another config for the current changes
+  as suggested by Eric Dumazet;
+- Mention the beneficial cases 'HZ=100 or HZ=250' in the changelog
+  as suggested by Eric Dumazet;
+- Add some performance details to the changelog
+  as suggested by Ferenc Fejes;
+- Delete the 'pkc->tov_in_msecs == 0' bounds check which is not necessary
+  as suggested by Willem de Bruijn;
+- Use hrtimer_set_expires instead of hrtimer_start_range_ns when retire timer needs update
+  as suggested by Willem de Bruijn. Start the hrtimer in prb_setup_retire_blk_timer;
+- Just return HRTIMER_RESTART directly as all cases return the same value
+  as suggested by Willem de Bruijn;
+- Link to v1: https://lore.kernel.org/all/20250813165201.1492779-1-jackzxcui1989@163.com/
+- Link to v0: https://lore.kernel.org/all/20250806055210.1530081-1-jackzxcui1989@163.com/
+
+Xin Zhao (2):
+  net: af_packet: remove last_kactive_blk_num field
+  net: af_packet: Use hrtimer to do the retire operation
+
+ net/packet/af_packet.c | 107 +++++++++++------------------------------
+ net/packet/diag.c      |   2 +-
+ net/packet/internal.h  |  12 +----
+ 3 files changed, 32 insertions(+), 89 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
