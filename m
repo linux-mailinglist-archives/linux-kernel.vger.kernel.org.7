@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-793226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AC6B3D0C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:15:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4CFB3D0BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6793BB2D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3129B1A81DA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB62212564;
-	Sun, 31 Aug 2025 02:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED7321765B;
+	Sun, 31 Aug 2025 02:14:59 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0220371E;
-	Sun, 31 Aug 2025 02:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABABF21255B;
+	Sun, 31 Aug 2025 02:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756606496; cv=none; b=mrvZQeg4LSzgV3FeyGviVE0IHuCmhU9K1iQwUr2xmE+1pK0oGXDdQhx23bY9YMqmAB+kP8KMtpTJWbE7pMC2o3FxUsYKk9K6wFoYwVCIbmurOQpfK2TNqTN5iohN+2tC/SZdTPP9eUyA8Yl9WEDpMgEXGccMe680ylk0739Fnu8=
+	t=1756606498; cv=none; b=duxKLSAwO4vTvv6uFfTEmBLwxAHP8WyRbrhMqrd9VYnITuPxAAfRsueHHvvysrqatvxzcRpe1QfTKtGE+K27SWtLPkt55/FGU37gXQs4YlMBTuV+trzDonUl1G8HHn1BB3b5BomVyGUaFRCgZYjnXybGkh0k+BW6YYObs5cNeOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756606496; c=relaxed/simple;
-	bh=VFm5W8lQ1333aqYk+idJd7uzOzrbrc7K+xrGhyYPbvg=;
+	s=arc-20240116; t=1756606498; c=relaxed/simple;
+	bh=DuzOd379NE4e2AVcKOhoMibnDRPoyuNJ8AlG3C0MnF4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a554X52pCW4EQ9hMnVX7Jg+UT8iokdx4yUIqM6qS7HSocxTxzNWY+pUp5ikW0cHWMkisbdPmGErd0tjMcqa53Ic3Ch93B+zoJvqKJMJQZYvKxAAMu/gfmYjRwkZE6sQjg9CA5CqcpLiuzyGW2h1xGbMvjrcCP0efNpbPdOsKAN0=
+	 MIME-Version:Content-Type; b=XRJEKWDd7BaRIWEjd9wbZ795r3waX24pGXgPRRr59Hqa03BhBZQceSE5sYCuvmElHClCW2SeXtxO/mGXJXDU8JaggJgCarqHVISiXrLnY3tn7tgQq4/BeW8rMI3H0vh1GfB4inZmUDPd66+AGB7h3xdbugeWq3Al+pwuo46faXg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -43,9 +43,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Eddie James <eajames@linux.ibm.com>,
 	Lee Jones <lee@kernel.org>, <linux-aspeed@lists.ozlabs.org>,
 	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 3/4] dt-bindings: interrupt-controller: aspeed: Add AST2700 SCU IC compatibles
-Date: Sun, 31 Aug 2025 10:14:37 +0800
-Message-ID: <20250831021438.976893-4-ryan_chen@aspeedtech.com>
+Subject: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU interrupt controllers
+Date: Sun, 31 Aug 2025 10:14:38 +0800
+Message-ID: <20250831021438.976893-5-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
 References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
@@ -58,65 +58,225 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add compatible strings for the four SCU interrupt controller instances
-on the AST2700 SoC (scu-ic0 to 3), following the multi-instance model used
-on AST2600.
+The AST2700 continues the multi-instance SCU interrupt controller model
+introduced in the AST2600, with four independent interrupt domains
+(scu-ic0 to 3).
 
-Also define interrupt indices in the binding header.
+Unlike earlier generations that combine interrupt enable and status bits
+into a single register, the AST2700 separates these into distinct IER and
+ISR registers. Support for this layout is implemented by using register
+offsets and separate chained IRQ handlers.
+
+The variant table is extended to cover AST2700 IC instances, enabling
+shared initialization logic while preserving support for previous SoCs.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 ---
- .../aspeed,ast2500-scu-ic.yaml                     |  6 +++++-
- .../interrupt-controller/aspeed-scu-ic.h           | 14 ++++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-aspeed-scu-ic.c | 123 +++++++++++++++++++++-------
+ 1 file changed, 95 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2500-scu-ic.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2500-scu-ic.yaml
-index d5287a2bf866..d998a9d69b91 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2500-scu-ic.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2500-scu-ic.yaml
-@@ -5,7 +5,7 @@
- $id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2500-scu-ic.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c b/drivers/irqchip/irq-aspeed-scu-ic.c
+index cbfc35919281..ffdd9b4e44c1 100644
+--- a/drivers/irqchip/irq-aspeed-scu-ic.c
++++ b/drivers/irqchip/irq-aspeed-scu-ic.c
+@@ -17,12 +17,16 @@
  
--title: Aspeed AST25XX and AST26XX SCU Interrupt Controller
-+title: Aspeed AST25XX, AST26XX, AST27XX SCU Interrupt Controller
+ #define ASPEED_SCU_IC_STATUS		GENMASK(28, 16)
+ #define ASPEED_SCU_IC_STATUS_SHIFT	16
++#define AST2700_SCU_IC_STATUS		GENMASK(15, 0)
  
- maintainers:
-   - Eddie James <eajames@linux.ibm.com>
-@@ -16,6 +16,10 @@ properties:
-       - aspeed,ast2500-scu-ic
-       - aspeed,ast2600-scu-ic0
-       - aspeed,ast2600-scu-ic1
-+      - aspeed,ast2700-scu-ic0
-+      - aspeed,ast2700-scu-ic1
-+      - aspeed,ast2700-scu-ic2
-+      - aspeed,ast2700-scu-ic3
+ struct aspeed_scu_ic_variant {
+ 	const char		*compatible;
+ 	unsigned long	irq_enable;
+ 	unsigned long	irq_shift;
+ 	unsigned int	num_irqs;
++	bool			split_ier_isr;
++	unsigned long	ier;
++	unsigned long	isr;
+ };
  
-   reg:
-     maxItems: 1
-diff --git a/include/dt-bindings/interrupt-controller/aspeed-scu-ic.h b/include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
-index f315d5a7f5ee..7dd04424afcc 100644
---- a/include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
-+++ b/include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
-@@ -20,4 +20,18 @@
- #define ASPEED_AST2600_SCU_IC1_LPC_RESET_LO_TO_HI	0
- #define ASPEED_AST2600_SCU_IC1_LPC_RESET_HI_TO_LO	1
+ #define SCU_VARIANT(_compat, _shift, _enable, _num) { \
+@@ -30,13 +34,20 @@ struct aspeed_scu_ic_variant {
+ 	.irq_shift		=	_shift,		\
+ 	.irq_enable		=	_enable,	\
+ 	.num_irqs		=	_num,		\
++	.split_ier_isr	=	_split,		\
++	.ier			=	_ier,		\
++	.isr			=	_isr,		\
+ }
  
-+#define ASPEED_AST2700_SCU_IC0_PCIE_PERST_LO_TO_HI	3
-+#define ASPEED_AST2700_SCU_IC0_PCIE_PERST_HI_TO_LO	2
+ static const struct aspeed_scu_ic_variant scu_ic_variants[]	__initconst = {
+-	SCU_VARIANT("aspeed,ast2400-scu-ic",	0,	GENMASK(15, 0),	7),
+-	SCU_VARIANT("aspeed,ast2500-scu-ic",	0,	GENMASK(15, 0), 7),
+-	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0,	GENMASK(5, 0),	6),
+-	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4,	GENMASK(5, 4),	2),
++	SCU_VARIANT("aspeed,ast2400-scu-ic",	0, GENMASK(15, 0),	7,	false,	0,	0),
++	SCU_VARIANT("aspeed,ast2500-scu-ic",	0, GENMASK(15, 0),	7,	false,	0,	0),
++	SCU_VARIANT("aspeed,ast2600-scu-ic0",	0, GENMASK(5, 0),	6,	false,	0,	0),
++	SCU_VARIANT("aspeed,ast2600-scu-ic1",	4, GENMASK(5, 4),	2,	false,	0,	0),
++	SCU_VARIANT("aspeed,ast2700-scu-ic0",	0, GENMASK(3, 0),	4,	true,	0x00, 0x04),
++	SCU_VARIANT("aspeed,ast2700-scu-ic1",	0, GENMASK(3, 0),	4,	true,	0x00, 0x04),
++	SCU_VARIANT("aspeed,ast2700-scu-ic2",	0, GENMASK(3, 0),	4,	true,	0x04, 0x00),
++	SCU_VARIANT("aspeed,ast2700-scu-ic3",	0, GENMASK(1, 0),	2,	true,	0x04, 0x00),
+ };
+ 
+ struct aspeed_scu_ic {
+@@ -45,9 +56,12 @@ struct aspeed_scu_ic {
+ 	unsigned int		num_irqs;
+ 	void __iomem		*base;
+ 	struct irq_domain	*irq_domain;
++	bool				split_ier_isr;
++	unsigned long		ier;
++	unsigned long		isr;
+ };
+ 
+-static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
++static void aspeed_scu_ic_irq_handler_combined(struct irq_desc *desc)
+ {
+ 	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+@@ -84,33 +98,69 @@ static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc)
++{
++	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	unsigned long bit, enabled, max, status;
++	unsigned int sts, mask;
 +
-+#define ASPEED_AST2700_SCU_IC1_PCIE_RCRST_LO_TO_HI	3
-+#define ASPEED_AST2700_SCU_IC1_PCIE_RCRST_HI_TO_LO	2
++	chained_irq_enter(chip, desc);
 +
-+#define ASPEED_AST2700_SCU_IC2_PCIE_PERST_LO_TO_HI	3
-+#define ASPEED_AST2700_SCU_IC2_PCIE_PERST_HI_TO_LO	2
-+#define ASPEED_AST2700_SCU_IC2_LPC_RESET_LO_TO_HI	1
-+#define ASPEED_AST2700_SCU_IC2_LPC_RESET_HI_TO_LO	0
++	mask = scu_ic->irq_enable;
++	sts = readl(scu_ic->base + scu_ic->isr);
++	enabled = sts & scu_ic->irq_enable;
++	sts = readl(scu_ic->base + scu_ic->isr);
++	status = sts & enabled;
 +
-+#define ASPEED_AST2700_SCU_IC3_LPC_RESET_LO_TO_HI	1
-+#define ASPEED_AST2700_SCU_IC3_LPC_RESET_HI_TO_LO	0
++	bit = scu_ic->irq_shift;
++	max = scu_ic->num_irqs + bit;
 +
- #endif /* _DT_BINDINGS_INTERRUPT_CONTROLLER_ASPEED_SCU_IC_H_ */
++	for_each_set_bit_from(bit, &status, max) {
++		generic_handle_domain_irq(scu_ic->irq_domain, bit - scu_ic->irq_shift);
++		writel(BIT(bit), scu_ic->base + scu_ic->isr); // clear interrupt
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
+ static void aspeed_scu_ic_irq_mask(struct irq_data *data)
+ {
+ 	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
+-	unsigned int mask = BIT(data->hwirq + scu_ic->irq_shift) |
+-		(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
+ 
+-	/*
+-	 * Status bits are cleared by writing 1. In order to prevent the mask
+-	 * operation from clearing the status bits, they should be under the
+-	 * mask and written with 0.
+-	 */
+-	writel(readl(scu_ic->base) & ~mask, scu_ic->base);
++	if (scu_ic->split_ier_isr) {
++		writel(readl(scu_ic->base) & ~BIT(data->hwirq + scu_ic->irq_shift),
++		       scu_ic->base + scu_ic->ier);
++	} else {
++		unsigned int mask = BIT(data->hwirq + scu_ic->irq_shift) |
++			(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
++
++		/*
++		 * Status bits are cleared by writing 1. In order to prevent the mask
++		 * operation from clearing the status bits, they should be under the
++		 * mask and written with 0.
++		 */
++		writel(readl(scu_ic->base) & ~mask, scu_ic->base);
++	}
+ }
+ 
+ static void aspeed_scu_ic_irq_unmask(struct irq_data *data)
+ {
+ 	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
+ 	unsigned int bit = BIT(data->hwirq + scu_ic->irq_shift);
+-	unsigned int mask = bit |
+-		(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
+ 
+-	/*
+-	 * Status bits are cleared by writing 1. In order to prevent the unmask
+-	 * operation from clearing the status bits, they should be under the
+-	 * mask and written with 0.
+-	 */
+-	writel((readl(scu_ic->base) & ~mask) | bit, scu_ic->base);
++	if (scu_ic->split_ier_isr) {
++		writel(readl(scu_ic->base) | bit, scu_ic->base + scu_ic->ier);
++	} else {
++		unsigned int mask = bit | (scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
++
++		/*
++		 * Status bits are cleared by writing 1. In order to prevent the unmask
++		 * operation from clearing the status bits, they should be under the
++		 * mask and written with 0.
++		 */
++		writel((readl(scu_ic->base) & ~mask) | bit, scu_ic->base);
++	}
+ }
+ 
+ static int aspeed_scu_ic_irq_set_affinity(struct irq_data *data,
+@@ -151,8 +201,14 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_scu_ic *scu_ic,
+ 		rc = PTR_ERR(scu_ic->base);
+ 		goto err;
+ 	}
+-	writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
+-	writel(0, scu_ic->base);
++
++	if (scu_ic->split_ier_isr) {
++		writel(AST2700_SCU_IC_STATUS, scu_ic->base + scu_ic->isr);
++		writel(0, scu_ic->base + scu_ic->ier);
++	} else {
++		writel(ASPEED_SCU_IC_STATUS, scu_ic->base);
++		writel(0, scu_ic->base);
++	}
+ 
+ 	irq = irq_of_parse_and_map(node, 0);
+ 	if (!irq) {
+@@ -168,8 +224,12 @@ static int aspeed_scu_ic_of_init_common(struct aspeed_scu_ic *scu_ic,
+ 		goto err;
+ 	}
+ 
+-	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
+-					 scu_ic);
++	if (scu_ic->split_ier_isr)
++		irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler_split,
++						 scu_ic);
++	else
++		irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler_combined,
++						 scu_ic);
+ 
+ 	return 0;
+ 
+@@ -202,9 +262,12 @@ static int __init aspeed_scu_ic_of_init(struct device_node *node, struct device_
+ 	if (!scu_ic)
+ 		return -ENOMEM;
+ 
+-	scu_ic->irq_enable    = variant->irq_enable;
+-	scu_ic->irq_shift     = variant->irq_shift;
+-	scu_ic->num_irqs      = variant->num_irqs;
++	scu_ic->irq_enable	= variant->irq_enable;
++	scu_ic->irq_shift	= variant->irq_shift;
++	scu_ic->num_irqs	= variant->num_irqs;
++	scu_ic->split_ier_isr	= variant->split_ier_isr;
++	scu_ic->ier		= variant->ier;
++	scu_ic->isr		= variant->isr;
+ 
+ 	return aspeed_scu_ic_of_init_common(scu_ic, node);
+ }
+@@ -213,3 +276,7 @@ IRQCHIP_DECLARE(ast2400_scu_ic, "aspeed,ast2400-scu-ic", aspeed_scu_ic_of_init);
+ IRQCHIP_DECLARE(ast2500_scu_ic, "aspeed,ast2500-scu-ic", aspeed_scu_ic_of_init);
+ IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0", aspeed_scu_ic_of_init);
+ IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1",     aspeed_scu_ic_of_init);
++IRQCHIP_DECLARE(ast2700_scu_ic0, "aspeed,ast2700-scu-ic0", aspeed_scu_ic_of_init);
++IRQCHIP_DECLARE(ast2700_scu_ic1, "aspeed,ast2700-scu-ic1", aspeed_scu_ic_of_init);
++IRQCHIP_DECLARE(ast2700_scu_ic2, "aspeed,ast2700-scu-ic2", aspeed_scu_ic_of_init);
++IRQCHIP_DECLARE(ast2700_scu_ic3, "aspeed,ast2700-scu-ic3", aspeed_scu_ic_of_init);
 -- 
 2.34.1
 
