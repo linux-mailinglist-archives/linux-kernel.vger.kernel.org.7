@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-793376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0066BB3D2A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:48:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B968B3D2A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF73D4E1259
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C3AA441203
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E281E258ED6;
-	Sun, 31 Aug 2025 11:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A692571A1;
+	Sun, 31 Aug 2025 12:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bp+g97dC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZWycaXla"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5F928F5;
-	Sun, 31 Aug 2025 11:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3E1E868;
+	Sun, 31 Aug 2025 12:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756640914; cv=none; b=f3VQi66K2vSOOM3t6Oc3QAgVRFFNu++YcO2FTB6wZhz+FUuvAA2ubdFd6cBhlj+AqZERVbUQZRp5JzN4b4pWHa3Itg5PqQBv/orvbq5qzZkejnQCR6bwq5rKqK7EIQC9M0LMp36ncFQJ/853yOMFqYp+bfX4YWn0AMtl4yfAcPM=
+	t=1756641735; cv=none; b=WR/HevFyrmBbSGi/spwCDJ63FlS3xdYW4zGBih7cTrDLyrWilaoH7IeklhW5BxNwhva8c03jlITbj3PvtzC0AKl6n80fTudf7OVhpIXQ2M8A1PWfZK5xYJZmH0tc0p1R8eLwZTAMORSIpnpCvi+ZGToKAJaVarOK7gOd9SceeIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756640914; c=relaxed/simple;
-	bh=15ytesglya7+FRpo/qHWnOIxqe9nWdvalbomNJMS2R0=;
+	s=arc-20240116; t=1756641735; c=relaxed/simple;
+	bh=ribR9/AuZOPpiMhK/w14rluUxwkT+8OamddhItszUaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SuOsBurDU3kW1lWU9VIDRbh6jCk74ghokf6EygRRIUuK4eVIDjlYL5edulZcNFXa6cCavNk+bgKChmIkL6e38jzZ9++hk8W/2Uty/lLMmGSyygdTKyVCtgXvhf2/73xf45M/IcDEpQLYaWC1gvtZdYGEsuspD9/c+LVCm4yckqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bp+g97dC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 846D2C4CEED;
-	Sun, 31 Aug 2025 11:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756640913;
-	bh=15ytesglya7+FRpo/qHWnOIxqe9nWdvalbomNJMS2R0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bp+g97dCeKP2Qwqno8SkhNnLB6t1FUU7YXhIgCGeMznzNqlgR2HBFlK/3ke6B8Q6R
-	 b6S05hPv5hkC7aJrwoU7a0zmkpQ80lcXI5gEG1iwE7MCfQFmTGAxAkXQOqhEPt5qTQ
-	 rT4Q8mewxrCUGeV6jY9lm/crVysijHtS9wypK4kXpONqqkV1qe7Pxi0IlYGxF4E/JX
-	 VDqkSoJN1VoXLL3/C028qMhlCFKh1XhIjLV94w5IQrZjFVtg+Kh690DDYao7UWkoPh
-	 27begywPYwzoQLmE8pIw7UwoDZnPlffQYakm+YTJrUBO2CpV2RyNTdut5Q85HMiHCx
-	 HW8OuQOvvjICg==
-Date: Sun, 31 Aug 2025 17:18:23 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com
-Subject: Re: [PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping
-Message-ID: <ymsoyadz2gkura5evnex3m6jeeyzlcmcssdyuvddl25o5ci4bo@6ie4z5tgnpvz>
-References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
- <20250828-ecam_v4-v8-2-92a30e0fa02d@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3M7G4UMStKz9tZrKJdATWGhcMsgk3jxTBIF6MeEsPAFDLWcpAJPwcp9Z34AiTlT1ItyzDbIXwlofNtzQlu9i9rKWh9Y7hfwe2OJ0uC00t14+WkqNj7OyG+13N1g5IFxmbi4lP9ORRbQH6oTuETGwjQ4QV9zHMmwgtEI5Evw0U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZWycaXla; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Usc/bQAs5oZoelpx1f1OtvcvEsjxriw+T4TtYvBvWsg=; b=ZWycaXla7qvrzW5ZDVL7pMaxOS
+	hbzyWbdZsvT65pvof02j5kSqRXTwVmBPptZfKG1A6Yl/hWIIPI6ynUS5sDSX40iUwJF9ampQcna8r
+	6JVgkF2AXmrvBi6Hs//N4qXiAUrdX5qjtn60LfaWhF1FWAltT2d2CIfwyGhqe/4JSYWpbuj0yk7L1
+	311spQ4agm8FWyuCQIh+bMYYpvEhqavgu6aFzkYrBhUOuMEmmwG3M5w1xOUIP4zmaWjjxlgT+X9C8
+	zkNZnzZDxhaxcZ4BEPeUcjB6wGTzro1xIrE6dHlBWAWLKHu3/Bi8U8mrGsrVmN9bznSe8WWSHQWd9
+	TMyucNHg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58808)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1usgl3-000000004tS-191w;
+	Sun, 31 Aug 2025 13:02:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1usgl0-0000000062g-30Gu;
+	Sun, 31 Aug 2025 13:02:02 +0100
+Date: Sun, 31 Aug 2025 13:02:02 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: sfp: add quirk for FLYPRO copper SFP+ module
+Message-ID: <aLQ5upCX_TlhrBlB@shell.armlinux.org.uk>
+References: <20250831105910.3174-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250828-ecam_v4-v8-2-92a30e0fa02d@oss.qualcomm.com>
+In-Reply-To: <20250831105910.3174-1-olek2@wp.pl>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Aug 28, 2025 at 01:04:23PM GMT, Krishna Chaitanya Chundru wrote:
-> External Local Bus Interface(ELBI) registers are optional registers in
-> DWC IPs having vendor specific registers.
+On Sun, Aug 31, 2025 at 12:59:07PM +0200, Aleksander Jan Bajkowski wrote:
+> Add quirk for a copper SFP that identifies itself as "FLYPRO"
+> "SFP-10GT-CS-30M". It uses RollBall protocol to talk to the PHY.
 > 
-> Since ELBI register space is applicable for all DWC based controllers,
-> move the resource get code to DWC core and make it optional.
-> 
-> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 9 +++++++++
->  drivers/pci/controller/dwc/pcie-designware.h | 1 +
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 89aad5a08928cc29870ab258d33bee9ff8f83143..4684c671a81bee468f686a83cc992433b38af59d 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -167,6 +167,15 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->  		}
->  	}
->  
-> +	if (!pci->elbi_base) {
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 
-Why this check is needed? Are we expecting any DWC glue drivers to supply
-'dw_pcie::elbi_base' on their own?
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-- Mani
+Thanks!
 
 -- 
-மணிவண்ணன் சதாசிவம்
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
