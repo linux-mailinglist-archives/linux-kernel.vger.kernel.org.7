@@ -1,442 +1,128 @@
-Return-Path: <linux-kernel+bounces-793559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065ACB3D530
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 22:57:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5997B3D531
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4883B8143
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 20:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745803BA3CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D582223D7C5;
-	Sun, 31 Aug 2025 20:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2401B23F26A;
+	Sun, 31 Aug 2025 21:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3HNmuau"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="w5NPsSo7"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8F72066DE;
-	Sun, 31 Aug 2025 20:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A31DC9B1
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 21:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756673847; cv=none; b=IhHAMbrBNy822OgnxRkbXUUEngNUvfdFGKN/B9rJ7Md5gHSLDUjwgicIQskqwtdrFO9qGI0TA4cGhnnwv/bpZYXQCyUY1cD5rBbwywreeNHkb3yP02X8wVgumpKaItYwYa5/GP9xLO7u6FZNeG6lTt4slEkbL5DZcMelc0qXWY4=
+	t=1756674745; cv=none; b=EIQuB4Ar3goQNrQk6NELt6JepNeBy6taN2cftvtpMYdEPkBuPRTy43KmXE7VQIV1L06XQ6EgA54lSi9m9kLnv5z2JjWB/gNQxcoXSo0WpkHFU1q/5CZyTtzl5tol1b6ixZqXYmmJqKmOnnGhEE3V7GZFpTcW0TFVpT0c0OxfEiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756673847; c=relaxed/simple;
-	bh=vPyvmzUf4s5h/p/bNgG8Mzin8fEQzg+iEgPMmmyNkzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XKZKYW1j7h/atHJDaqBdXidQBRwrgyi9PrNggNj9rNM5UhHj1gUnqADb12FqrFCvngBm9NtF4mGXgquxCwJLW1Q8RsyhwS3N9E0eAR3HXUN4ucOays+ssZ0DuOFKkZ7zxonFdIeNpGtdBPYF00Fqy+ETSnmyQ67amQIv+wTs5kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3HNmuau; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DB7C4CEED;
-	Sun, 31 Aug 2025 20:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756673847;
-	bh=vPyvmzUf4s5h/p/bNgG8Mzin8fEQzg+iEgPMmmyNkzM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=r3HNmuau7rcmbgU/toYxRFcREktXIw7M37zl1QKmzyA7hjHARtudLla9H/qaJfA4d
-	 TeYVchg3d8+G5A49MHjXgdFZ9Z7kmkYRC/pDmgLe6p0ZGG9+4BGVRcAZaHCz6FFUnD
-	 LNGnnHbDWDsDCjqJ6tKAktZ4iwNmSwXkUoyYkKc5/Ep15/bfVzvzeh7X0bJF63H0cc
-	 th8/4RF/L/9nM0OYz6beuMRaMH8L8skc9kjil92qV0tbywTNtrKVyw99N/9ZxTXQ1p
-	 cX0IA1Dh1wa8/zxVDLNdge9xvR8BfM7gs1i44ctwozYK++XMm6qdL1+a4sh7tCIQbF
-	 m5RjoUa3SsHVQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: qat-linux@intel.com,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] crypto: qat: Use library to prepare HMAC keys
-Date: Sun, 31 Aug 2025 13:54:57 -0700
-Message-ID: <20250831205457.36143-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756674745; c=relaxed/simple;
+	bh=hsjeccQzs3yXInmCve4deeW50r08v75A9gdB2Qb6xOE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CuZguGw6sijF3KMA6xAj5LYEqzbzGVsjzxv8oLNTzxrUMVRA+bFF1YRBBnFq/XUa78C1wtrCx0WdNIm/lzDwdSvvX0JMvGiysCBetSYhAgbv5PUfTBNpCxluNazBOcTci89+tLINwy/Fl5m4yPE1wrsboqNuwmS37t3NHtGoA4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=w5NPsSo7; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A55002C02CC;
+	Mon,  1 Sep 2025 09:12:14 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1756674734;
+	bh=hsjeccQzs3yXInmCve4deeW50r08v75A9gdB2Qb6xOE=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=w5NPsSo7/fakftt3QV1Oh2roKBzoclSZrxOprLMYyOZ7LVM38p16rg9Gljn9Jqs6t
+	 Lcj5JShDu6SnHdQQQMPA9bt0/tGN4xDShQV9pwlNb3jXTelu2etVRij2HcEz+ABtPQ
+	 RxoNqI4BbJUnUn/ZUHLCLrToZf7W0EsUzdgzDe3Ct9uRhDICJUsX7Qea9Y00so5Cov
+	 I+131Y8bM8RxrJDW/1hkeioo9oVbttnCvrS80dhOTWbgdKLtgeSkKQ23Pcv0AeODNr
+	 KstreeUa2otmam1PnyN3uWt4C89Fuow/+jChS9nroV7W1/EENTobvpF1jr7RHtdeop
+	 0drNoZmMbIh/g==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B68b4baae0001>; Mon, 01 Sep 2025 09:12:14 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 1 Sep 2025 09:12:14 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Mon, 1 Sep 2025 09:12:14 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Guenter Roeck <linux@roeck-us.net>, "jdelvare@suse.com"
+	<jdelvare@suse.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>,
+	"wenliang202407@163.com" <wenliang202407@163.com>, "jre@pengutronix.de"
+	<jre@pengutronix.de>
+CC: "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v3 2/4] hwmon: (ina238) Correctly clamp temperature
+Thread-Topic: [PATCH v3 2/4] hwmon: (ina238) Correctly clamp temperature
+Thread-Index: AQHcGJG+9pO9Tm0jk0iEWd5utSH5PrR4m64AgAPhzgA=
+Date: Sun, 31 Aug 2025 21:12:14 +0000
+Message-ID: <d5bace8a-003f-4fb5-b9b6-93f0aa7cda41@alliedtelesis.co.nz>
+References: <20250829030512.1179998-1-chris.packham@alliedtelesis.co.nz>
+ <20250829030512.1179998-3-chris.packham@alliedtelesis.co.nz>
+ <ba2f563e-4eb3-42be-af05-c01bcef1d5e3@roeck-us.net>
+In-Reply-To: <ba2f563e-4eb3-42be-af05-c01bcef1d5e3@roeck-us.net>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8ADE375A9AC79641ACB05CC78F261258@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Yo+sRJYX c=1 sm=1 tr=0 ts=68b4baae a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=zPeDNGAr0pQFPY5Fct8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-Reimplementing the sha1, sha256, and sha512 crypto_shash algorithms on
-top of the library APIs caused the recently-added function
-crypto_shash_export_core() to no longer be supported.  Meanwhile, the
-QAT driver was updated to use crypto_shash_export_core().  But it's not
-actually necessary.  Instead, just do the HMAC key preparation using the
-library functions instead of crypto_shash.  This fixes the QAT driver
-and greatly simplifies the code.  Additional benefits include stronger
-typing, and improved performance due to reduced overhead.
-
-Reported-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-Closes: https://lore.kernel.org/r/aLSnCc9Ws5L9y+8X@gcabiddu-mobl.ger.corp.intel.com
-Fixes: ccafe2821cfa ("crypto: qat - Use crypto_shash_export_core")
-Fixes: 8bc79ab67d78 ("crypto: sha1 - Wrap library and add HMAC support")
-Fixes: e0cd37169103 ("crypto: sha256 - Wrap library and add HMAC support")
-Fixes: 469acaa12502 ("crypto: sha512 - Replace sha512_generic with wrapper around SHA-512 library")
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
-
-This patch is targeting libcrypto-fixes.
-
-I'll send a similar one for the cheslio driver too.
-
- drivers/crypto/intel/qat/Kconfig              |   7 +-
- .../crypto/intel/qat/qat_common/qat_algs.c    | 191 ++++++------------
- 2 files changed, 61 insertions(+), 137 deletions(-)
-
-diff --git a/drivers/crypto/intel/qat/Kconfig b/drivers/crypto/intel/qat/Kconfig
-index 359c61f0c8a13..4b4861460dd4e 100644
---- a/drivers/crypto/intel/qat/Kconfig
-+++ b/drivers/crypto/intel/qat/Kconfig
-@@ -4,16 +4,15 @@ config CRYPTO_DEV_QAT
- 	select CRYPTO_AEAD
- 	select CRYPTO_AUTHENC
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_AKCIPHER
- 	select CRYPTO_DH
--	select CRYPTO_HMAC
- 	select CRYPTO_RSA
--	select CRYPTO_SHA1
--	select CRYPTO_SHA256
--	select CRYPTO_SHA512
- 	select CRYPTO_LIB_AES
-+	select CRYPTO_LIB_SHA1
-+	select CRYPTO_LIB_SHA256
-+	select CRYPTO_LIB_SHA512
- 	select FW_LOADER
- 	select CRC8
- 
- config CRYPTO_DEV_QAT_DH895xCC
- 	tristate "Support for Intel(R) DH895xCC"
-diff --git a/drivers/crypto/intel/qat/qat_common/qat_algs.c b/drivers/crypto/intel/qat/qat_common/qat_algs.c
-index 43e6dd9b77b7d..7f638a62e3ade 100644
---- a/drivers/crypto/intel/qat/qat_common/qat_algs.c
-+++ b/drivers/crypto/intel/qat/qat_common/qat_algs.c
-@@ -3,16 +3,14 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/crypto.h>
- #include <crypto/internal/aead.h>
- #include <crypto/internal/cipher.h>
--#include <crypto/internal/hash.h>
- #include <crypto/internal/skcipher.h>
- #include <crypto/aes.h>
- #include <crypto/sha1.h>
- #include <crypto/sha2.h>
--#include <crypto/hmac.h>
- #include <crypto/algapi.h>
- #include <crypto/authenc.h>
- #include <crypto/scatterwalk.h>
- #include <crypto/xts.h>
- #include <linux/dma-mapping.h>
-@@ -66,20 +64,14 @@ struct qat_alg_aead_ctx {
- 	struct qat_alg_cd *dec_cd;
- 	dma_addr_t enc_cd_paddr;
- 	dma_addr_t dec_cd_paddr;
- 	struct icp_qat_fw_la_bulk_req enc_fw_req;
- 	struct icp_qat_fw_la_bulk_req dec_fw_req;
--	struct crypto_shash *hash_tfm;
- 	enum icp_qat_hw_auth_algo qat_hash_alg;
-+	unsigned int hash_digestsize;
-+	unsigned int hash_blocksize;
- 	struct qat_crypto_instance *inst;
--	union {
--		struct sha1_state sha1;
--		struct sha256_state sha256;
--		struct sha512_state sha512;
--	};
--	char ipad[SHA512_BLOCK_SIZE]; /* sufficient for SHA-1/SHA-256 as well */
--	char opad[SHA512_BLOCK_SIZE];
- };
- 
- struct qat_alg_skcipher_ctx {
- 	struct icp_qat_hw_cipher_algo_blk *enc_cd;
- 	struct icp_qat_hw_cipher_algo_blk *dec_cd;
-@@ -92,129 +84,61 @@ struct qat_alg_skcipher_ctx {
- 	struct crypto_cipher *tweak;
- 	bool fallback;
- 	int mode;
- };
- 
--static int qat_get_inter_state_size(enum icp_qat_hw_auth_algo qat_hash_alg)
--{
--	switch (qat_hash_alg) {
--	case ICP_QAT_HW_AUTH_ALGO_SHA1:
--		return ICP_QAT_HW_SHA1_STATE1_SZ;
--	case ICP_QAT_HW_AUTH_ALGO_SHA256:
--		return ICP_QAT_HW_SHA256_STATE1_SZ;
--	case ICP_QAT_HW_AUTH_ALGO_SHA512:
--		return ICP_QAT_HW_SHA512_STATE1_SZ;
--	default:
--		return -EFAULT;
--	}
--}
--
- static int qat_alg_do_precomputes(struct icp_qat_hw_auth_algo_blk *hash,
- 				  struct qat_alg_aead_ctx *ctx,
- 				  const u8 *auth_key,
- 				  unsigned int auth_keylen)
- {
--	SHASH_DESC_ON_STACK(shash, ctx->hash_tfm);
--	int block_size = crypto_shash_blocksize(ctx->hash_tfm);
--	int digest_size = crypto_shash_digestsize(ctx->hash_tfm);
--	__be32 *hash_state_out;
--	__be64 *hash512_state_out;
--	int i, offset;
--
--	memset(ctx->ipad, 0, block_size);
--	memset(ctx->opad, 0, block_size);
--	shash->tfm = ctx->hash_tfm;
--
--	if (auth_keylen > block_size) {
--		int ret = crypto_shash_digest(shash, auth_key,
--					      auth_keylen, ctx->ipad);
--		if (ret)
--			return ret;
--
--		memcpy(ctx->opad, ctx->ipad, digest_size);
--	} else {
--		memcpy(ctx->ipad, auth_key, auth_keylen);
--		memcpy(ctx->opad, auth_key, auth_keylen);
-+	switch (ctx->qat_hash_alg) {
-+	case ICP_QAT_HW_AUTH_ALGO_SHA1: {
-+		struct hmac_sha1_key key;
-+		__be32 *istate = (__be32 *)hash->sha.state1;
-+		__be32 *ostate = (__be32 *)(hash->sha.state1 +
-+					    round_up(sizeof(key.istate.h), 8));
-+
-+		hmac_sha1_preparekey(&key, auth_key, auth_keylen);
-+		for (int i = 0; i < ARRAY_SIZE(key.istate.h); i++) {
-+			istate[i] = cpu_to_be32(key.istate.h[i]);
-+			ostate[i] = cpu_to_be32(key.ostate.h[i]);
-+		}
-+		memzero_explicit(&key, sizeof(key));
-+		return 0;
- 	}
--
--	for (i = 0; i < block_size; i++) {
--		char *ipad_ptr = ctx->ipad + i;
--		char *opad_ptr = ctx->opad + i;
--		*ipad_ptr ^= HMAC_IPAD_VALUE;
--		*opad_ptr ^= HMAC_OPAD_VALUE;
-+	case ICP_QAT_HW_AUTH_ALGO_SHA256: {
-+		struct hmac_sha256_key key;
-+		__be32 *istate = (__be32 *)hash->sha.state1;
-+		__be32 *ostate = (__be32 *)(hash->sha.state1 +
-+					    sizeof(key.key.istate.h));
-+
-+		hmac_sha256_preparekey(&key, auth_key, auth_keylen);
-+		for (int i = 0; i < ARRAY_SIZE(key.key.istate.h); i++) {
-+			istate[i] = cpu_to_be32(key.key.istate.h[i]);
-+			ostate[i] = cpu_to_be32(key.key.ostate.h[i]);
-+		}
-+		memzero_explicit(&key, sizeof(key));
-+		return 0;
- 	}
--
--	if (crypto_shash_init(shash))
--		return -EFAULT;
--
--	if (crypto_shash_update(shash, ctx->ipad, block_size))
--		return -EFAULT;
--
--	hash_state_out = (__be32 *)hash->sha.state1;
--	hash512_state_out = (__be64 *)hash_state_out;
--
--	switch (ctx->qat_hash_alg) {
--	case ICP_QAT_HW_AUTH_ALGO_SHA1:
--		if (crypto_shash_export_core(shash, &ctx->sha1))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
--			*hash_state_out = cpu_to_be32(ctx->sha1.state[i]);
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA256:
--		if (crypto_shash_export_core(shash, &ctx->sha256))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
--			*hash_state_out = cpu_to_be32(ctx->sha256.state[i]);
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA512:
--		if (crypto_shash_export_core(shash, &ctx->sha512))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
--			*hash512_state_out = cpu_to_be64(ctx->sha512.state[i]);
--		break;
--	default:
--		return -EFAULT;
-+	case ICP_QAT_HW_AUTH_ALGO_SHA512: {
-+		struct hmac_sha512_key key;
-+		__be64 *istate = (__be64 *)hash->sha.state1;
-+		__be64 *ostate = (__be64 *)(hash->sha.state1 +
-+					    sizeof(key.key.istate.h));
-+
-+		hmac_sha512_preparekey(&key, auth_key, auth_keylen);
-+		for (int i = 0; i < ARRAY_SIZE(key.key.istate.h); i++) {
-+			istate[i] = cpu_to_be64(key.key.istate.h[i]);
-+			ostate[i] = cpu_to_be64(key.key.ostate.h[i]);
-+		}
-+		memzero_explicit(&key, sizeof(key));
-+		return 0;
- 	}
--
--	if (crypto_shash_init(shash))
--		return -EFAULT;
--
--	if (crypto_shash_update(shash, ctx->opad, block_size))
--		return -EFAULT;
--
--	offset = round_up(qat_get_inter_state_size(ctx->qat_hash_alg), 8);
--	if (offset < 0)
--		return -EFAULT;
--
--	hash_state_out = (__be32 *)(hash->sha.state1 + offset);
--	hash512_state_out = (__be64 *)hash_state_out;
--
--	switch (ctx->qat_hash_alg) {
--	case ICP_QAT_HW_AUTH_ALGO_SHA1:
--		if (crypto_shash_export_core(shash, &ctx->sha1))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
--			*hash_state_out = cpu_to_be32(ctx->sha1.state[i]);
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA256:
--		if (crypto_shash_export_core(shash, &ctx->sha256))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
--			*hash_state_out = cpu_to_be32(ctx->sha256.state[i]);
--		break;
--	case ICP_QAT_HW_AUTH_ALGO_SHA512:
--		if (crypto_shash_export_core(shash, &ctx->sha512))
--			return -EFAULT;
--		for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
--			*hash512_state_out = cpu_to_be64(ctx->sha512.state[i]);
--		break;
- 	default:
- 		return -EFAULT;
- 	}
--	memzero_explicit(ctx->ipad, block_size);
--	memzero_explicit(ctx->opad, block_size);
--	return 0;
- }
- 
- static void qat_alg_init_common_hdr(struct icp_qat_fw_comn_req_hdr *header)
- {
- 	header->hdr_flags =
-@@ -257,11 +181,11 @@ static int qat_alg_aead_init_enc_session(struct crypto_aead *aead_tfm,
- 	memcpy(cipher->aes.key, keys->enckey, keys->enckeylen);
- 	hash->sha.inner_setup.auth_config.config =
- 		ICP_QAT_HW_AUTH_CONFIG_BUILD(ICP_QAT_HW_AUTH_MODE1,
- 					     ctx->qat_hash_alg, digestsize);
- 	hash->sha.inner_setup.auth_counter.counter =
--		cpu_to_be32(crypto_shash_blocksize(ctx->hash_tfm));
-+		cpu_to_be32(ctx->hash_blocksize);
- 
- 	if (qat_alg_do_precomputes(hash, ctx, keys->authkey, keys->authkeylen))
- 		return -EFAULT;
- 
- 	/* Request setup */
-@@ -324,11 +248,11 @@ static int qat_alg_aead_init_dec_session(struct crypto_aead *aead_tfm,
- 	struct qat_dec *dec_ctx = &ctx->dec_cd->qat_dec_cd;
- 	struct icp_qat_hw_auth_algo_blk *hash = &dec_ctx->hash;
- 	struct icp_qat_hw_cipher_algo_blk *cipher =
- 		(struct icp_qat_hw_cipher_algo_blk *)((char *)dec_ctx +
- 		sizeof(struct icp_qat_hw_auth_setup) +
--		roundup(crypto_shash_digestsize(ctx->hash_tfm), 8) * 2);
-+		roundup(ctx->hash_digestsize, 8) * 2);
- 	struct icp_qat_fw_la_bulk_req *req_tmpl = &ctx->dec_fw_req;
- 	struct icp_qat_fw_comn_req_hdr_cd_pars *cd_pars = &req_tmpl->cd_pars;
- 	struct icp_qat_fw_comn_req_hdr *header = &req_tmpl->comn_hdr;
- 	void *ptr = &req_tmpl->cd_ctrl;
- 	struct icp_qat_fw_cipher_cd_ctrl_hdr *cipher_cd_ctrl = ptr;
-@@ -344,11 +268,11 @@ static int qat_alg_aead_init_dec_session(struct crypto_aead *aead_tfm,
- 	hash->sha.inner_setup.auth_config.config =
- 		ICP_QAT_HW_AUTH_CONFIG_BUILD(ICP_QAT_HW_AUTH_MODE1,
- 					     ctx->qat_hash_alg,
- 					     digestsize);
- 	hash->sha.inner_setup.auth_counter.counter =
--		cpu_to_be32(crypto_shash_blocksize(ctx->hash_tfm));
-+		cpu_to_be32(ctx->hash_blocksize);
- 
- 	if (qat_alg_do_precomputes(hash, ctx, keys->authkey, keys->authkeylen))
- 		return -EFAULT;
- 
- 	/* Request setup */
-@@ -366,11 +290,11 @@ static int qat_alg_aead_init_dec_session(struct crypto_aead *aead_tfm,
- 	/* Cipher CD config setup */
- 	cipher_cd_ctrl->cipher_key_sz = keys->enckeylen >> 3;
- 	cipher_cd_ctrl->cipher_state_sz = AES_BLOCK_SIZE >> 3;
- 	cipher_cd_ctrl->cipher_cfg_offset =
- 		(sizeof(struct icp_qat_hw_auth_setup) +
--		 roundup(crypto_shash_digestsize(ctx->hash_tfm), 8) * 2) >> 3;
-+		 roundup(ctx->hash_digestsize, 8) * 2) >> 3;
- 	ICP_QAT_FW_COMN_CURR_ID_SET(cipher_cd_ctrl, ICP_QAT_FW_SLICE_CIPHER);
- 	ICP_QAT_FW_COMN_NEXT_ID_SET(cipher_cd_ctrl, ICP_QAT_FW_SLICE_DRAM_WR);
- 
- 	/* Auth CD config setup */
- 	hash_cd_ctrl->hash_cfg_offset = 0;
-@@ -1148,46 +1072,47 @@ static int qat_alg_skcipher_xts_decrypt(struct skcipher_request *req)
- 
- 	return qat_alg_skcipher_decrypt(req);
- }
- 
- static int qat_alg_aead_init(struct crypto_aead *tfm,
--			     enum icp_qat_hw_auth_algo hash,
--			     const char *hash_name)
-+			     enum icp_qat_hw_auth_algo hash_alg,
-+			     unsigned int hash_digestsize,
-+			     unsigned int hash_blocksize)
- {
- 	struct qat_alg_aead_ctx *ctx = crypto_aead_ctx(tfm);
- 
--	ctx->hash_tfm = crypto_alloc_shash(hash_name, 0, 0);
--	if (IS_ERR(ctx->hash_tfm))
--		return PTR_ERR(ctx->hash_tfm);
--	ctx->qat_hash_alg = hash;
-+	ctx->qat_hash_alg = hash_alg;
-+	ctx->hash_digestsize = hash_digestsize;
-+	ctx->hash_blocksize = hash_blocksize;
- 	crypto_aead_set_reqsize(tfm, sizeof(struct qat_crypto_request));
- 	return 0;
- }
- 
- static int qat_alg_aead_sha1_init(struct crypto_aead *tfm)
- {
--	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA1, "sha1");
-+	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA1,
-+				 SHA1_DIGEST_SIZE, SHA1_BLOCK_SIZE);
- }
- 
- static int qat_alg_aead_sha256_init(struct crypto_aead *tfm)
- {
--	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA256, "sha256");
-+	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA256,
-+				 SHA256_DIGEST_SIZE, SHA256_BLOCK_SIZE);
- }
- 
- static int qat_alg_aead_sha512_init(struct crypto_aead *tfm)
- {
--	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA512, "sha512");
-+	return qat_alg_aead_init(tfm, ICP_QAT_HW_AUTH_ALGO_SHA512,
-+				 SHA512_DIGEST_SIZE, SHA512_BLOCK_SIZE);
- }
- 
- static void qat_alg_aead_exit(struct crypto_aead *tfm)
- {
- 	struct qat_alg_aead_ctx *ctx = crypto_aead_ctx(tfm);
- 	struct qat_crypto_instance *inst = ctx->inst;
- 	struct device *dev;
- 
--	crypto_free_shash(ctx->hash_tfm);
--
- 	if (!inst)
- 		return;
- 
- 	dev = &GET_DEV(inst->accel_dev);
- 	if (ctx->enc_cd) {
-
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
--- 
-2.50.1
-
+DQpPbiAyOS8wOC8yNSAyMTo1NSwgR3VlbnRlciBSb2VjayB3cm90ZToNCj4gT24gOC8yOC8yNSAy
+MDowNSwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+IGluYTIzOF93cml0ZV90ZW1wKCkgd2FzIGF0
+dGVtcHRpbmcgdG8gY2xhbXAgdGhlIHVzZXIgaW5wdXQgYnV0IHdhcw0KPj4gdGhyb3dpbmcgYXdh
+eSB0aGUgcmVzdWx0LiBFbnN1cmUgdGhhdCB3ZSBjbGFtcCB0aGUgdmFsdWUgdG8gdGhlDQo+PiBh
+cHByb3ByaWF0ZSByYW5nZSBiZWZvcmUgaXQgaXMgY29udmVydGVkIGludG8gYSByZWdpc3RlciB2
+YWx1ZS4NCj4+DQo+PiBGaXhlczogMGQ5ZjU5NmIxZmUzICgiaHdtb246IChpbmEyMzgpIE1vZGlm
+eSB0aGUgY2FsY3VsYXRpb24gZm9ybXVsYSANCj4+IHRvIGFkYXB0IHRvIGRpZmZlcmVudCBjaGlw
+cyIpDQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGll
+ZHRlbGVzaXMuY28ubno+DQo+PiAtLS0NCj4+DQo+PiBOb3RlczoNCj4+IMKgwqDCoMKgIENoYW5n
+ZXMgaW4gdjM6DQo+PiDCoMKgwqDCoCAtIE5ldy4gU3BsaXQgb2ZmIGJ1Z2ZpeCBmcm9tIG1haW4g
+cGF0Y2gNCj4+DQo+PiDCoCBkcml2ZXJzL2h3bW9uL2luYTIzOC5jIHwgMiArLQ0KPj4gwqAgMSBm
+aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+Pg0KPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvaHdtb24vaW5hMjM4LmMgYi9kcml2ZXJzL2h3bW9uL2luYTIzOC5jDQo+
+PiBpbmRleCA1YTM5NGVlZmY2NzYuLjRkM2RjMDE4ZWFkOSAxMDA2NDQNCj4+IC0tLSBhL2RyaXZl
+cnMvaHdtb24vaW5hMjM4LmMNCj4+ICsrKyBiL2RyaXZlcnMvaHdtb24vaW5hMjM4LmMNCj4+IEBA
+IC01NzIsNyArNTcyLDcgQEAgc3RhdGljIGludCBpbmEyMzhfd3JpdGVfdGVtcChzdHJ1Y3QgZGV2
+aWNlICpkZXYsIA0KPj4gdTMyIGF0dHIsIGxvbmcgdmFsKQ0KPj4gwqDCoMKgwqDCoMKgwqDCoMKg
+IHJldHVybiAtRU9QTk9UU1VQUDsNCj4+IMKgIMKgwqDCoMKgwqAgLyogU2lnbmVkICovDQo+PiAt
+wqDCoMKgIHJlZ3ZhbCA9IGNsYW1wX3ZhbCh2YWwsIC00MDAwMCwgMTI1MDAwKTsNCj4+ICvCoMKg
+wqAgdmFsID0gY2xhbXBfdmFsKHZhbCwgLTQwMDAwLCAxMjUwMDApOw0KPg0KPiBUaGF0IG5lZWRz
+IGFub3RoZXIgY29ycmVjdGlvbjogQXMgaXQgdHVybnMgb3V0LCB0aGUgZGVmYXVsdCByZWdpc3Rl
+ciANCj4gdmFsdWUNCj4gaXMgMHg3ZmYwLCBvciAyNTU4NzUuIFRoYXQgbWVhbnMgd2UgbmVlZCB0
+byBhY2NlcHQgdGhhdCByYW5nZS4gVGhlIA0KPiBzYW1lIGlzDQo+IHByb2JhYmx5IHRydWUgZm9y
+IG5lZ2F0aXZlIHRlbXBlcmF0dXJlcywgYnV0IEknbGwgbmVlZCB0byBzZWUgdGhlIHJlYWwgDQo+
+IGNoaXANCj4gdG8gYmUgc3VyZS4NCj4NCj4gWWVzLCB0aGUgY2hpcHMgb25seSBzdXBwb3J0IGEg
+bGltaXRlZCB0ZW1wZXJhdHVyZSByYW5nZSwgYnV0IHRoYXQgaXMgdGhlDQo+IGxpbWl0IHJlZ2lz
+dGVyLCBub3QgdGhlIHN1cHBvcnRlZCByYW5nZS4gT3RoZXIgY2hpcHMgaGF2ZSBhIHNpbWlsYXIg
+DQo+IHByb2JsZW0uDQo+IEl0IGlzIG9rIHRvIGxpbWl0IHRoZSBpbnB1dCByYW5nZSBpZiB0aGUg
+Y2hpcCBoYXMgYSByZWFzb25hYmxlIGRlZmF1bHQgDQo+IHNldCwNCj4gYnV0IGlmIHRoZSBhY3R1
+YWwgY2hpcCBkZWZhdWx0IGlzIDB4N2ZmMCBvciAyNTUuODc1IGRlZ3JlZXMgQyB3ZSBuZWVkIHRv
+DQo+IHN1cHBvcnQgd3JpdGluZyB0aGF0IHZhbHVlLg0KSSdtIGd1ZXNzaW5nIHRoYXQgbWlnaHQg
+Y2hhbmdlIG15IGludHJvZHVjdGlvbiBvZiB0ZW1wX21heCBpbiB0aGUgbmV4dCANCnBhdGNoLiBJ
+J2xsIHJlLW9yZGVyIG15IHNlcmllcyB0byBwdXQgdGhlIGJ1Z2ZpeCBmaXJzdCB3aXRoIHRoZSBj
+aGFuZ2VzIA0KbWVudGlvbmVkLg0KPg0KPiBHdWVudGVyDQo+
 
