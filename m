@@ -1,443 +1,172 @@
-Return-Path: <linux-kernel+bounces-793613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9AAB3D60D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20615B3D610
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921E61898AB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7549D1898C2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23516276028;
-	Sun, 31 Aug 2025 23:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231A7253F13;
+	Sun, 31 Aug 2025 23:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KMh8OCUV"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WyYY5Txf"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C381186E2E
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 23:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABD9186E2E
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 23:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756684377; cv=none; b=RCQsY3rORKK2scEIIT+C5GQoTVIYIVzrhtmGQqf4OOaOJxi7gVtcPsOV2acyTen1FHmym73QoDR0CGDe20vVLEdIsP+CW4Ss91LM7YfsT1TsIKlUdZjygbGV/2lrnmJfN+6FlhmUX/XZoF4N6UYANQkxGCOO5w2S8TTMSplIWgY=
+	t=1756684426; cv=none; b=CwaTuuLTztyGynipj6Hc+iLRNh545fH6JMj1QstkxUKi0BP8q/y4ByO21DkoefueWy1uOr9Y73PJ4B03ctjMYk+5Z9B2Md2sCQLCO/vKconsqgmoU+RfTj2j9SXbZ98KEAjvEAv+CY69CFMyOLvpR9oErFV2WU3LIrdQL4EJwHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756684377; c=relaxed/simple;
-	bh=ig/sZ+eWelOju5n20yB6PYu3kS3RW0c8zlT8i6AzOh8=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=YaYP2sgVCFkSJoKhJjGHkCQIzUj7I/ECS14w5qcFskLiEvlLgcwC7/foSWZ8QEa1Qjw11syeLieNJjJYeV7UZV3ixe0cO7N7FAJuiglniKgV/1XP10saBOMzIul58htQFwo+FtGunpcNLMe80M/scFSCNZQFUW1cosSsvHRAs8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KMh8OCUV; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1756684426; c=relaxed/simple;
+	bh=XRMa5Nyj+EgloZQpXXnlKBtZMQtSW8HakSaIrjYylq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbT26a670HySkzUN2MZIVPwPXeeYeqU4PIS05BEemkXN3fH4sbj6EEhFexTXOcoTeOtVaADnTGRn1eXXy7THNJPbQcA1L37dFFgeg8VrigXOP0LG+1+1zObGp1jE9Sm77j/KlQfF+MQlYoS/lOj0nCOh7ywoO5UmNgRiJZrLZd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WyYY5Txf; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61a8c134609so4727590a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 16:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756684423; x=1757289223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SZzD5VUgp4Ev3IaBux7GJ+EciqXgORSO/NRjzJxU14E=;
+        b=WyYY5TxfZD16+oQWcLRNZOp3lIFjfq+YJ8lojszzWE8stWRL8uXucw/MsdhtudYDko
+         H5mH3OSLOfaPVRzBUotRXAxbhtrvzBIe68W90cRV3MDZ053vDnGTs9PGi+bLgwyATU5i
+         9QW2H2ZUsZNaYoiSXR2uYw1gltQ1QRDwfeq8wgJ5tQJtiJpbYpKdRB8aXNPms9JHvwtC
+         heQ0/hUumb0DDvuO1RW99Lk6xf+MLuMsr5/jRA8dYRWjur9Nh9gZI1pkLqZv25wHjo7i
+         /Q3eT3ZfE9e1nFWJ5Smk94GNF+a4mzau+2fK48SDuYeHnCQw1cnPeAz+LhWrLjgHC0JP
+         5swg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756684423; x=1757289223;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZzD5VUgp4Ev3IaBux7GJ+EciqXgORSO/NRjzJxU14E=;
+        b=ioWdpQebwCzjhCBT8ejrf6JAZbiNfjLhS2cY278X+/HqVpBDGsuBFx7rUW9s2RAyww
+         OJNfd7qh3oN6LDsRgJ84J8xR/LfQ2D2i4qzgfDArTBmWnLeQyBeY/Eh5oX7pG2Vd2E0Y
+         TwLZuS+xborcTgZ8rJlnzpRVoXFZkNqEx0edVXtxOy3aDbmZNhoQoEKUCGS2cHF2t39x
+         YUa7CxyQoym5DFgX7jAO37XbNLf+uVXPKy6CSLw2gjYIe0Nb8wzLkTr39nrnKB9WLolA
+         kcX8093CxgOnKCpEWl+PRMn2/yxBvu9QUoL36KSU+9hHdtvUxlWLpeDrVi5t6bJWhFib
+         BFJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZjJJtCfZmqb8w65geHspLO2fK1FsHHUVRrrEivHAVc4Gc1Pl6uZRwwwm0ZMMbWLeqfVbQe1XPuE77Bn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkKOlt4MU85P2TpYCdY1V4fP8X0cK/U9DHEtgbsoRHsiypPXv9
+	Td9BFPMzpXVjyKTkfA4MpxSgIDu3oHe7Qn4aHA1pIjAmQ3C75GvWp2ouQBFXDmRdH+Q=
+X-Gm-Gg: ASbGncvb7Nb062glPNs4tqBX5ivEdISe1yZ7N+cA52tU6tZ8Sh1TFFia3pgnV6vBabZ
+	2fD6NQlAsHKfGRGJhFTBYTzkCT8Z9YZbGJdOKuMCWUq6KbYEFWdXiKqTs5SGdV4Qn4krNfsbLbK
+	tSnduPhmfWEmkBYNt7wIG5VYdG3uw9gkDzxKFucOQ5DGG2cDw+CB3yNkEl/QuP7tWfujmlzIjb/
+	Q4/1670OLJaoftPyTFUkfFOAQdF0+n4OUY3vGZVRp4cHMQ6E+Z6xRnAtpzJAsbHXtY9rspRC36S
+	wqBIFHVycwzluhBcNpW+03Nq/zrIqofWH86648Xh3HX1GUulMkR47h2xN6TaHFUpyWhiuz/9ilR
+	IsZDkn/wgeq/w6AxBSQi9FDV8SXjGR7ukIPDvRnx+EifCC/neXANo2M+/OfPVp9b6T5D4ckXgY9
+	wRZBy/XpgD/HAkuufIEpYuhTL8BuB2og==
+X-Google-Smtp-Source: AGHT+IFVA35Nb2ITQ5xm+F2H5nsoLi18hCULy2IxfZciFpoZhuuHzO03Eo2afLQfaNulmRaf+6lTnw==
+X-Received: by 2002:a17:907:72d5:b0:afe:a6d3:b4a2 with SMTP id a640c23a62f3a-b01d8a39b3fmr584547966b.11.1756684423063;
+        Sun, 31 Aug 2025 16:53:43 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0432937e0esm59177966b.3.2025.08.31.16.53.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 16:53:42 -0700 (PDT)
+Message-ID: <d3161da3-1337-4a39-a16d-ad586f838c0f@linaro.org>
+Date: Mon, 1 Sep 2025 00:53:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756684362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zdDKXjyvTX1LZOIb64Z/sPLFHhGX0GFIijKKU4L5Sco=;
-	b=KMh8OCUV+CFzHKkyejUbzsT2D/PrchP+dqPEmAcPXOQvc44cZIsK3qSKWyew1COdiUxyGh
-	3HDOS+frGuTzAzTwtbwMHqHnBFqgdns2j5TzB9L86ws1U7/i5XL/qmqVaxrULLEMW1dfWI
-	cHQaPKP+AjE+d6+fmWzoI9qLsaTZ2sg=
-Date: Sun, 31 Aug 2025 23:52:40 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Zqiang" <qiang.zhang@linux.dev>
-Message-ID: <547f1b1d1b8615a634b352a268928771bb50d0f9@linux.dev>
-Disposition-Notification-To: qiang.zhang@linux.dev
-X-Confirm-Reading-To: qiang.zhang@linux.dev
-TLS-Required: No
-Subject: Re: [paulmckrcu:dev.2025.08.21a] [rcu] 8bd9383727:
- WARNING:possible_circular_locking_dependency_detected
-To: paulmck@kernel.org
-Cc: "kernel test robot" <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, "Andrii Nakryiko" <andrii@kernel.org>, "Alexei
- Starovoitov" <ast@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <8f43f958-e3e6-44d5-9600-9e096c3a06b7@paulmck-laptop>
-References: <202508261642.b15eefbb-lkp@intel.com>
- <2853a174-76e4-440b-bfc1-71ea30694822@paulmck-laptop>
- <eb1e5ab00253fdae5ba5aa4c97d60a79d357dbfd@linux.dev>
- <f58f7c75-46be-4ddd-be70-ee4f6a3370a9@paulmck-laptop>
- <aefc893f1b7c17049c2e6eb2256a97739a5e328d@linux.dev>
- <8f43f958-e3e6-44d5-9600-9e096c3a06b7@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+ <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->=20
->=20On Sun, Aug 31, 2025 at 02:22:56AM +0000, Zqiang wrote:
->=20
->=20>=20
->=20> On Sat, Aug 30, 2025 at 02:38:35AM +0000, Zqiang wrote:
-> >=20=20
->=20>  >=20
->=20>  > On Tue, Aug 26, 2025 at 04:47:22PM +0800, kernel test robot wrot=
-e:
-> >  >=20
->=20>  > >=20
->=20>  > > hi, Paul,
-> >  > >=20
->=20>  > > the similar issue still exists on this dev.2025.08.21a branch.
-> >  > > again, if the issue is already fixed on later branches, please j=
-ust ignore.
-> >  > > thanks
-> >  > >=20
->=20>  > >=20
->=20>  > > Hello,
-> >  > >=20
->=20>  > > kernel test robot noticed "WARNING:possible_circular_locking_d=
-ependency_detected" on:
-> >  > >=20
->=20>  > > commit: 8bd9383727068a5a18acfecefbdfa44a7d6bd838 ("rcu: Re-imp=
-lement RCU Tasks Trace in terms of SRCU-fast")
-> >  > > https://github.com/paulmckrcu/linux dev.2025.08.21a
-> >  > >=20
->=20>  > > in testcase: rcutorture
-> >  > > version:=20
->=20>  > > with following parameters:
-> >  > >=20
->=20>  > > runtime: 300s
-> >  > > test: default
-> >  > > torture_type: tasks-tracing
-> >  > >=20
->=20>  > >=20
->=20>  > >=20
->=20>  > > config: x86_64-randconfig-003-20250824
-> >  > > compiler: clang-20
-> >  > > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -s=
-mp 2 -m 16G
-> >  > >=20
->=20>  > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> >  > >=20
->=20>  > Again, apologies for being slow, and thank you for your testing =
-efforts.
-> >  >=20
->=20>  > Idiot here forgot about Tiny SRCU, so please see the end of this=
- email
-> >  > for an alleged fix. Does it do the trick for you?
-> >  >=20
->=20>  > Thanx, Paul
-> >  >=20
->=20>  > >=20
->=20>  > > If you fix the issue in a separate patch/commit (i.e. not just=
- a new version of
-> >  > > the same patch/commit), kindly add following tags
-> >  > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> >  > > | Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-l=
-kp@intel.com
-> >  > >=20
->=20>  > >=20
->=20>  > > [ 42.365933][ T393] WARNING: possible circular locking depende=
-ncy detected
-> >  > > [ 42.366428][ T393] 6.17.0-rc1-00035-g8bd938372706 #1 Tainted: G=
- T
-> >  > > [ 42.366985][ T393] --------------------------------------------=
-----------
-> >  > > [ 42.367490][ T393] rcu_torture_rea/393 is trying to acquire loc=
-k:
-> >  > > [ 42.367952][ T393] ffffffffad41dc88 (rcu_tasks_trace_srcu_struc=
-t.srcu_wq.lock){....}-{2:2}, at: swake_up_one (kernel/sched/swait.c:52 (d=
-iscriminator 1))=20
->=20>  > > [ 42.368775][ T393]
-> >  > > [ 42.368775][ T393] but task is already holding lock:
-> >  > > [ 42.369278][ T393] ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, =
-at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture=20
->=20>  > > [ 42.370043][ T393]
-> >  > > [ 42.370043][ T393] which lock already depends on the new lock.
-> >  > > [ 42.370043][ T393]
-> >  > > [ 42.370755][ T393]
-> >  > > [ 42.370755][ T393] the existing dependency chain (in reverse or=
-der) is:
-> >  > > [ 42.371388][ T393]
-> >  > > [ 42.371388][ T393] -> #1 (&p->pi_lock){-.-.}-{2:2}:
-> >  > > [ 42.371903][ T393] _raw_spin_lock_irqsave (include/linux/spinlo=
-ck_api_smp.h:110 kernel/locking/spinlock.c:162)=20
->=20>  > > [ 42.372309][ T393] try_to_wake_up (include/linux/spinlock.h:5=
-57 (discriminator 1) kernel/sched/core.c:4216 (discriminator 1))=20
->=20>  > > [ 42.372669][ T393] swake_up_locked (include/linux/list.h:111)=
-=20
->=20>  > > [ 42.373029][ T393] swake_up_one (kernel/sched/swait.c:54 (dis=
-criminator 1))=20
->=20>  > > [ 42.373380][ T393] tasks_tracing_torture_read_unlock (include=
-/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (di=
-scriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
-=20
->=20>  > > [ 42.373952][ T393] rcutorture_one_extend (kernel/rcu/rcutortu=
-re.c:2141) rcutorture=20
->=20>  > > [ 42.374452][ T393] rcu_torture_one_read_end (kernel/rcu/rcuto=
-rture.c:2357) rcutorture=20
->=20>  > > [ 42.374976][ T393] rcu_torture_one_read (kernel/rcu/rcutortur=
-e.c:?) rcutorture=20
->=20>  > > [ 42.375460][ T393] rcu_torture_reader (kernel/rcu/rcutorture.=
-c:2443) rcutorture=20
->=20>  > > [ 42.375920][ T393] kthread (kernel/kthread.c:465)=20
->=20>  > > [ 42.376241][ T393] ret_from_fork (arch/x86/kernel/process.c:1=
-54)=20
->=20>  > > [ 42.376603][ T393] ret_from_fork_asm (arch/x86/entry/entry_64=
-.S:255)=20
->=20>  > > [ 42.376973][ T393]
-> >  > > [ 42.376973][ T393] -> #0 (rcu_tasks_trace_srcu_struct.srcu_wq.l=
-ock){....}-{2:2}:
-> >  > > [ 42.377657][ T393] __lock_acquire (kernel/locking/lockdep.c:316=
-6)=20
->=20>  > > [ 42.378031][ T393] lock_acquire (kernel/locking/lockdep.c:586=
-8)=20
->=20>  > > [ 42.378378][ T393] _raw_spin_lock_irqsave (include/linux/spin=
-lock_api_smp.h:110 kernel/locking/spinlock.c:162)=20
->=20>  > > [ 42.378794][ T393] swake_up_one (kernel/sched/swait.c:52 (dis=
-criminator 1))=20
->=20>  > > [ 42.379152][ T393] tasks_tracing_torture_read_unlock (include=
-/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (di=
-scriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
-=20
->=20>  > > [ 42.379714][ T393] rcutorture_one_extend (kernel/rcu/rcutortu=
-re.c:2141) rcutorture=20
->=20>  > > [ 42.380217][ T393] rcu_torture_one_read_end (kernel/rcu/rcuto=
-rture.c:2357) rcutorture=20
->=20>  > > [ 42.380731][ T393] rcu_torture_one_read (kernel/rcu/rcutortur=
-e.c:?) rcutorture=20
->=20>  > > [ 42.381220][ T393] rcu_torture_reader (kernel/rcu/rcutorture.=
-c:2443) rcutorture=20
->=20>  > > [ 42.381714][ T393] kthread (kernel/kthread.c:465)=20
->=20>  > > [ 42.382060][ T393] ret_from_fork (arch/x86/kernel/process.c:1=
-54)=20
->=20>  > > [ 42.382420][ T393] ret_from_fork_asm (arch/x86/entry/entry_64=
-.S:255)=20
->=20>  > > [ 42.382796][ T393]
-> >  > > [ 42.382796][ T393] other info that might help us debug this:
-> >  > > [ 42.382796][ T393]
-> >  > > [ 42.383515][ T393] Possible unsafe locking scenario:
-> >  > > [ 42.383515][ T393]
-> >  > > [ 42.384052][ T393] CPU0 CPU1
-> >  > > [ 42.384428][ T393] ---- ----
-> >  > > [ 42.384799][ T393] lock(&p->pi_lock);
-> >  > > [ 42.385083][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.loc=
-k);
-> >  > > [ 42.385707][ T393] lock(&p->pi_lock);
-> >  > > [ 42.386180][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.loc=
-k);
-> >  > > [ 42.386663][ T393]
-> >  > > [ 42.386663][ T393] *** DEADLOCK ***
-> >  > > [ 42.386663][ T393]
-> >  > > [ 42.387236][ T393] 1 lock held by rcu_torture_rea/393:
-> >  > > [ 42.387626][ T393] #0: ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:=
-2}, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture=20
->=20>  > > [ 42.388419][ T393]
-> >  > > [ 42.388419][ T393] stack backtrace:
-> >  > > [ 42.388852][ T393] CPU: 0 UID: 0 PID: 393 Comm: rcu_torture_rea=
- Tainted: G T 6.17.0-rc1-00035-g8bd938372706 #1 PREEMPT(full)
-> >  > > [ 42.389758][ T393] Tainted: [T]=3DRANDSTRUCT
-> >  > > [ 42.390057][ T393] Hardware name: QEMU Standard PC (i440FX + PI=
-IX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> >  > > [ 42.390786][ T393] Call Trace:
-> >  > > [ 42.391020][ T393] <TASK>
-> >  > > [ 42.391225][ T393] dump_stack_lvl (lib/dump_stack.c:123 (discri=
-minator 2))=20
->=20>  > > [ 42.391544][ T393] print_circular_bug (kernel/locking/lockdep=
-.c:2045)=20
->=20>  > > [ 42.391898][ T393] check_noncircular (kernel/locking/lockdep.=
-c:?)=20
->=20>  > > [ 42.392242][ T393] __lock_acquire (kernel/locking/lockdep.c:3=
-166)=20
->=20>  > > [ 42.392594][ T393] ? __schedule (kernel/sched/sched.h:1531 (d=
-iscriminator 1) kernel/sched/core.c:6969 (discriminator 1))=20
->=20>  > > [ 42.392930][ T393] ? lock_release (kernel/locking/lockdep.c:4=
-70 (discriminator 3))=20
->=20>  > > [ 42.393272][ T393] ? swake_up_one (kernel/sched/swait.c:52 (d=
-iscriminator 1))=20
->=20>  > > [ 42.393610][ T393] lock_acquire (kernel/locking/lockdep.c:586=
-8)=20
->=20>  > > [ 42.393930][ T393] ? swake_up_one (kernel/sched/swait.c:52 (d=
-iscriminator 1))=20
->=20>  > > [ 42.394264][ T393] _raw_spin_lock_irqsave (include/linux/spin=
-lock_api_smp.h:110 kernel/locking/spinlock.c:162)=20
->=20>  > > [ 42.394640][ T393] ? swake_up_one (kernel/sched/swait.c:52 (d=
-iscriminator 1))=20
->=20>  > > [ 42.394969][ T393] swake_up_one (kernel/sched/swait.c:52 (dis=
-criminator 1))=20
->=20>  > > [ 42.395281][ T393] tasks_tracing_torture_read_unlock (include=
-/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (di=
-scriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
-=20
->=20>  > > [ 42.395814][ T393] rcutorture_one_extend (kernel/rcu/rcutortu=
-re.c:2141) rcutorture=20
->=20>  > > [ 42.396276][ T393] rcu_torture_one_read_end (kernel/rcu/rcuto=
-rture.c:2357) rcutorture=20
->=20>  > > [ 42.396756][ T393] rcu_torture_one_read (kernel/rcu/rcutortur=
-e.c:?) rcutorture=20
->=20>  > > [ 42.397219][ T393] ? __cfi_rcu_torture_reader (kernel/rcu/rcu=
-torture.c:2426) rcutorture=20
->=20>  > > [ 42.397690][ T393] rcu_torture_reader (kernel/rcu/rcutorture.=
-c:2443) rcutorture=20
->=20>  > > [ 42.398126][ T393] ? __cfi_rcu_torture_timer (kernel/rcu/rcut=
-orture.c:2405) rcutorture=20
->=20>  > > [ 42.398565][ T393] kthread (kernel/kthread.c:465)=20
->=20>  > > [ 42.398857][ T393] ? __cfi_kthread (kernel/kthread.c:412)=20
->=20>  > > [ 42.399169][ T393] ret_from_fork (arch/x86/kernel/process.c:1=
-54)=20
->=20>  > > [ 42.399491][ T393] ? __cfi_kthread (kernel/kthread.c:412)=20
->=20>  > > [ 42.399815][ T393] ret_from_fork_asm (arch/x86/entry/entry_64=
-.S:255)=20
->=20>  > > [ 42.400151][ T393] </TASK>
-> >  > >=20
->=20>  > >=20
->=20>  > > The kernel config and materials to reproduce are available at:
-> >  > > https://download.01.org/0day-ci/archive/20250826/202508261642.b1=
-5eefbb-lkp@intel.com
-> >  > >=20
->=20>  > >=20
->=20>  > >=20
->=20>  > > --=20
->=20>  > > 0-DAY CI Kernel Test Service
-> >  > > https://github.com/intel/lkp-tests/wiki
-> >  > >=20
->=20>  > ----------------------------------------------------------------=
---------
-> >  >=20
->=20>  > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> >  > index 6e9fe2ce1075d5..db63378f062051 100644
-> >  > --- a/kernel/rcu/srcutiny.c
-> >  > +++ b/kernel/rcu/srcutiny.c
-> >  > @@ -106,7 +106,7 @@ void __srcu_read_unlock(struct srcu_struct *ss=
-p, int idx)
-> >  > newval =3D READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
-> >  > WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
-> >  > preempt_enable();
-> >  > - if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
-> >  > + if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !=
-irqs_disabled())
-> >  >=20
->=20>  >=20
->=20>  > The fllowing case may exist:
-> >  >=20
->=20>  >=20
->=20>  > CPU0
-> >  >=20
->=20>  > task1:
-> >  > __srcu_read_lock()
-> >  >=20
->=20>  For mainline kernels, here we must have blocked, correct?
-> >=20=20
->=20>  In -rcu, there is of course:
-> >=20=20
->=20>  740cda2fe1a9 ("EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=3Dn ke=
-rnels")
-> >=20=20
->=20>  And this means that in -rcu kernels built with CONFIG_PREEMPT_NONE=
-=3Dy,
-> >  we could be preempted.
-> >=20=20
->=20>  And maybe this is a reason to drop this commit. Or...
-> >=20=20
->=20>=20=20
->=20>  For tiny srcu, even if the preempt schedule not happend in
-> >  srcu read ctrical section, we can still do voluntary
-> >  scheduling in srcu_read ctrical section, this case is
-> >  also still happend.
-> >=20=20
->=20>  >=20
->=20>  > ....
-> >  >=20
->=20>  >=20
->=20>  > task2 preempt run:
-> >  >=20
->=20>  > srcu_drive_gp()
-> >  > ->swait_event_exclusive()
-> >  >=20
->=20>  >=20
->=20>  > ....
-> >  > task1 continue run:
-> >  > ....
-> >  > raw_spin_lock_irqsave
-> >  > __srcu_read_unlock()
-> >  > ->find all previours condition are met
-> >  > but the irqs_disable() return true,
-> >  > not invoke swake_up_one().
-> >  >=20
->=20>  > task2 maybe always hung.
-> >  >=20
->=20>  The bug that kernel test robot reported existed for a long time.
-> >  The offending commit simply introduced the use case that exercised
-> >  this bug. So we do need a fix.
-> >=20=20
->=20>  One approach would be to impose a rule like we used to have for RC=
-U,
-> >  namely that if interrupts were disabled across srcu_read_unlock(),
-> >  then they must have been disabled since the matching srcu_read_lock(=
-).
-> >  Another would be to make the current swait_event_exclusive() in
-> >  srcu_drive_gp() instead be a loop around wait_event_timeout_exclusiv=
-e()
-> >  that checks ssp->srcu_lock_nesting[].
-> >=20=20
->=20>  But is there a better way?
-> >=20=20
->=20>  I think the second approach is enough :)
-> >=20
->=20Hmmm... OK, how about the incremental patch below?
->=20
->=20 Thanx, Paul
->=20
->=20---------------------------------------------------------------------=
----
->=20
->=20commit a543d73eeaa491021040a02bdf0e8a9148b5c186
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date: Sun Aug 31 09:38:44 2025 -0700
->=20
->=20 squash! rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast
->=20=20
->=20 [ paulmck: Apply Zqiang feedback. ]
->=20=20
->=20 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-Should the previous fix that added irqs_disabled() also be
-added to this patch? or can we use preemptible() instead of
-in_tasks() && irqs_disabled()?
-
-Thanks
-Zqiang
-
-
->=20
->=20diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> index db63378f062051..b52ec45698e85b 100644
-> --- a/kernel/rcu/srcutiny.c
-> +++ b/kernel/rcu/srcutiny.c
-> @@ -113,8 +113,8 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
->=20=20
->=20 /*
->  * Workqueue handler to drive one grace period and invoke any callbacks
-> - * that become ready as a result. Single-CPU and !PREEMPTION operation
-> - * means that we get away with murder on synchronization. ;-)
-> + * that become ready as a result. Single-CPU operation and preemption
-> + * disabling mean that we get away with murder on synchronization. ;-)
->  */
->  void srcu_drive_gp(struct work_struct *wp)
->  {
-> @@ -141,7 +141,12 @@ void srcu_drive_gp(struct work_struct *wp)
->  WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
->  WRITE_ONCE(ssp->srcu_gp_waiting, true); /* srcu_read_unlock() wakes! *=
-/
->  preempt_enable();
-> - swait_event_exclusive(ssp->srcu_wq, !READ_ONCE(ssp->srcu_lock_nesting=
-[idx]));
-> + do {
-> + // Deadlock issues prevent __srcu_read_unlock() from
-> + // doing an unconditional wakeup, so polling is required.
-> + swait_event_timeout_exclusive(ssp->srcu_wq,
-> + !READ_ONCE(ssp->srcu_lock_nesting[idx]), HZ / 10);
-> + } while (READ_ONCE(ssp->srcu_lock_nesting[idx]));
->  preempt_disable(); // Needed for PREEMPT_LAZY
->  WRITE_ONCE(ssp->srcu_gp_waiting, false); /* srcu_read_unlock() cheap. =
-*/
->  WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
->
+On 31/08/2025 22:28, Sebastian Reichel wrote:
+> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
+> which is based on the Qualcomm X1 Elite. Some of the system LEDs
+> and extra keys are only accessible via the EC.
+> 
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>   .../bindings/platform/lenovo,thinkpad-t14s-ec.yaml | 49 ++++++++++++++++++++++
+>   1 file changed, 49 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..bab20df2d9ede9a3cb0359944b26b3d18ff7d9b8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/platform/lenovo,thinkpad-t14s-ec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lenovo Thinkpad T14s Embedded Controller.
+> +
+> +maintainers:
+> +  - Sebastian Reichel <sre@kernel.org>
+> +
+> +description:
+> +  The Qualcomm Snapdragon-based Lenovo Thinkpad T14s has an Embedded Controller
+> +  (EC) which handles things such as keyboard backlight, LEDs or non-standard keys.
+> +  This binding describes the interface, on an I2C bus, to this EC.
+> +
+> +properties:
+> +  compatible:
+> +    const: lenovo,thinkpad-t14s-ec
+> +
+> +  reg:
+> +    const: 0x28
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |+
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c1 {
+> +        clock-frequency = <400000>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        embedded-controller@28 {
+> +            compatible = "lenovo,thinkpad-t14s-ec";
+> +            reg = <0x28>;
+> +            interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
+> +        };
+> +    };
+> +...
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
