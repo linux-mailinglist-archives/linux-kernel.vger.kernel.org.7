@@ -1,135 +1,178 @@
-Return-Path: <linux-kernel+bounces-793338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E04FB3D208
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FDEB3D209
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0C317DA93
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95E517D914
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD5324DD17;
-	Sun, 31 Aug 2025 10:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386492253FD;
+	Sun, 31 Aug 2025 10:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Mjyzh9Ut"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFpKJ7Tn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69762036FE
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D737E42065
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756635277; cv=none; b=kSS2gH0uDmXPPFQr+u1cvzTnFQe7nh5SYlFEPLBBiFU08np00F88kV+t58AB1J9H8tX6X1rjlTJA7cMgoeAMey68Y85wauEjevcIso5Xsjw4S9va8ggYYLn9HtKW/6KiO+4dQcxQXsd85bK6VlHl8eMaTHJhfHaFykqr+kaLeQ8=
+	t=1756635344; cv=none; b=YlGssw7e/FT9xp09C8wL53fLceoreuX2mBQckgZaqhAH9Oboru90H+ZzK/UmtrD6RSJ+A2ufK/95uq75wLHNwASNg/NCD6cCG1cPMqzYZAD03yeKWQZpYRATUyhQowHvSjiE4022JRl/4Br34JxiLP8NcxcA/bCPOEzrJ3lo5M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756635277; c=relaxed/simple;
-	bh=zFcrOKEVSz2lEIu2/v2ECXbA3G4Fm2M3/cTRCm7mhpo=;
+	s=arc-20240116; t=1756635344; c=relaxed/simple;
+	bh=p3WI4FCDeL4So+P3eBVdNKKy1LNMbXqDY5+OtJLZkQc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ecm6fytGEsiHfEx486NAlGo/nMwtOF32mvHCAKHzTwT/Vj0850WzMfvtMquZa8b/hSj5ocMDgMOQe2/NzEHfbI2/jU+yMvZgv9/fNZhHS/G7NKoQgzDOAo/P+hbAXR0u88njg02NSYGgsnvyxMSieYd+qaweCM8OF0jMG23DMpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Mjyzh9Ut; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B841A40E0173;
-	Sun, 31 Aug 2025 10:14:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id W4ZP6i0s5HRB; Sun, 31 Aug 2025 10:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756635269; bh=Xa21vcqncbcx8wZ4HZFNIZrv7kk7WqqHAKq1GV0fcMQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Mjyzh9Ut6ZSC1DXth2eZMcyFLMNB7fktAf/KpuOKzW2FbCkMKkkewjT6ZlrkPNEaf
-	 5zckLzTPLo7EH3OUGohlISlYS+ltHhlkmFwCxCjzI2Taz/u2pNuf+HecbUtqUwfBXi
-	 dQq1FQYFRmjdM5uI/cgJaC6ZEufZQF3cw6hQbEvp4jo3aYAPcP+Yd+fh6OFjoXRna9
-	 hpNVmoNlUY8OELfG2VEj4QHwLrQuGymepd4QJQb6NaZvI8iXCuSwZvIJaW/puZOspx
-	 /XHSR95YOwYALZf+DZCVzGq02KS9QUfBlf5mE4wQsJTISevLafEXg9aafIbAM2G73h
-	 CF2gF8vsEOWxKs6T0ECfyC6caXVXr/I3OicoC647CT9ZgQ1xIFPMPRtG+asf6JJhhM
-	 K2iJ4i2ghOluX8Kzv94cLQzMVJgCY0WrjcN7dEEjPG4LvhOkArPaceIM5z3xugHgzA
-	 0u6fnaQFnfshYSw7RLm6cmsVlKKg320C/ZVSSYUJn3aKnaQL5JH3l3gubXCtFJplI1
-	 h5V7K5iAI+9IUojY5s4iRIzko1JXtt+Gfzdv3OVi0GIKcdAlxR6fxsmEJ1YAIqKQqc
-	 BWOCOZJpugxtCEzNE3A1X4DOfp+EbAwRmfYG1JnUbYRxiVUpHd0hNiX+/WO9ijnvbr
-	 qAhhpLlQ7coZr0kN1cWZYr4w=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7DC6140E00DA;
-	Sun, 31 Aug 2025 10:14:26 +0000 (UTC)
-Date: Sun, 31 Aug 2025 12:14:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/urgent for v6.17-rc4
-Message-ID: <20250831101418.GAaLQgepm-XMwE4n7x@fat_crate.local>
+	 Content-Disposition; b=bWw83cWWhhwjLpB8lmdVjg2ZwLIGcuvrtjs0btJ4WBLVtSow4IQtjq3rc6BcIEgfdlA5EXdx2kIZbxg4NV9KzhFvQB7se15PXqMA5IuPLIjaWhGkK7rGuW7YegDUfyKVMY+k5FP3eRj3kBWMczdWAy4t/rifet1ElfjIOWOLPe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFpKJ7Tn; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756635343; x=1788171343;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=p3WI4FCDeL4So+P3eBVdNKKy1LNMbXqDY5+OtJLZkQc=;
+  b=mFpKJ7TnDzKwVODTcYTctosqrrg7UzUPWJw80fDvUeElTjYuxhTTwCBU
+   LEn17pVEcvIU+r43T+leFbzDQu3X72uijWqfvxOhRmufV4I1qxy5ZDUQ0
+   DZ5VvtAB8o/Y3uUe1opTckU7JgXDVCQ39+2KXibNQPAcunQ/Ddp0xGuC5
+   VcD9eyAWbwxZnEySyWNiUWHlzgUKD0mPQjAVlPoSC8CzKLPRSdHRwrmr6
+   9pa5AK939wYxgcbUcJAQYLuU53iSq34uDM63O/jTj64EqyjKVT8AkzNg+
+   7kvRvh6kYhyLy0JsR60anqstKFQTBW/AUxONw+MK9ug846iXxV+dVi2Ms
+   w==;
+X-CSE-ConnectionGUID: AbCHhZXGScmLgiJVPcyTAA==
+X-CSE-MsgGUID: EAti6D+GRV2CbVteyCUeOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="61492377"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="61492377"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 03:15:42 -0700
+X-CSE-ConnectionGUID: Yd7pGHJCS8a9JmBAGnJB0g==
+X-CSE-MsgGUID: FjUQrYhLTKmLfPBtkw2XBg==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 31 Aug 2025 03:15:41 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1usf5x-000W4h-1a;
+	Sun, 31 Aug 2025 10:15:35 +0000
+Date: Sun, 31 Aug 2025 18:15:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/mprotect.c:450:23: sparse: sparse: cast to non-scalar
+Message-ID: <202508311724.Mp4RhDNi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Linus,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c8bc81a52d5a2ac2e4b257ae123677cf94112755
+commit: cb0f01beb16669e91510fcdb2cea213931aee017 mm/mprotect: fix dax pud handlings
+date:   12 months ago
+config: arm64-randconfig-r121-20250831 (https://download.01.org/0day-ci/archive/20250831/202508311724.Mp4RhDNi-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project ac23f7465eedd0dd565ffb201f573e7a69695fa3)
+reproduce: (https://download.01.org/0day-ci/archive/20250831/202508311724.Mp4RhDNi-lkp@intel.com/reproduce)
 
-please pull the x86/urgent lineup for v6.17-rc4.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508311724.Mp4RhDNi-lkp@intel.com/
 
-Thx.
+sparse warnings: (new ones prefixed by >>)
+   mm/mprotect.c: note: in included file (through include/linux/pgtable.h, include/linux/mm.h, include/linux/pagewalk.h):
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   mm/mprotect.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+   include/linux/rcupdate.h:869:25: sparse: sparse: context imbalance in 'change_pte_range' - unexpected unlock
+>> mm/mprotect.c:450:23: sparse: sparse: cast to non-scalar
+>> mm/mprotect.c:450:23: sparse: sparse: cast from non-scalar
+   mm/mprotect.c: note: in included file (through include/linux/mm.h, include/linux/pagewalk.h):
+   include/linux/pgtable.h:324:16: sparse: sparse: cast to non-scalar
+   include/linux/pgtable.h:324:16: sparse: sparse: cast from non-scalar
+   mm/mprotect.c: note: in included file (through include/linux/pgtable.h, include/linux/mm.h, include/linux/pagewalk.h):
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
 
----
+vim +450 mm/mprotect.c
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.17_rc4
-
-for you to fetch changes up to 8b3641dfb6f902407495c63b9b64482b32319b66:
-
-  x86/bugs: Add attack vector controls for SSB (2025-08-27 18:17:12 +0200)
-
-----------------------------------------------------------------
-- Convert the SSB mitigation to the attack vector controls which got forgotten
-  at the time
-
-- Prevent the CPUID topology hierarchy detection on AMD from overwriting the
-  correct initial APIC ID
-
-- Fix the case of a machine shipping without microcode in the BIOS, in the AMD
-  microcode loader
-
-- Correct the Pentium 4 model range which has a constant TSC
-
-----------------------------------------------------------------
-Borislav Petkov (AMD) (1):
-      x86/microcode/AMD: Handle the case of no BIOS microcode
-
-David Kaplan (1):
-      x86/bugs: Add attack vector controls for SSB
-
-K Prateek Nayak (1):
-      x86/cpu/topology: Use initial APIC ID from XTOPOLOGY leaf on AMD/HYGON
-
-Suchit Karunakaran (1):
-      x86/cpu/intel: Fix the constant_tsc model check for Pentium 4
-
- .../admin-guide/hw-vuln/attack_vector_controls.rst |  5 +----
- arch/x86/kernel/cpu/bugs.c                         |  9 +++++++++
- arch/x86/kernel/cpu/intel.c                        |  2 +-
- arch/x86/kernel/cpu/microcode/amd.c                | 22 +++++++++++++++++++--
- arch/x86/kernel/cpu/topology_amd.c                 | 23 +++++++++++++---------
- 5 files changed, 45 insertions(+), 16 deletions(-)
-
+   428	
+   429	static inline long change_pud_range(struct mmu_gather *tlb,
+   430			struct vm_area_struct *vma, p4d_t *p4d, unsigned long addr,
+   431			unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+   432	{
+   433		struct mmu_notifier_range range;
+   434		pud_t *pudp, pud;
+   435		unsigned long next;
+   436		long pages = 0, ret;
+   437	
+   438		range.start = 0;
+   439	
+   440		pudp = pud_offset(p4d, addr);
+   441		do {
+   442	again:
+   443			next = pud_addr_end(addr, end);
+   444			ret = change_prepare(vma, pudp, pmd, addr, cp_flags);
+   445			if (ret) {
+   446				pages = ret;
+   447				break;
+   448			}
+   449	
+ > 450			pud = READ_ONCE(*pudp);
+   451			if (pud_none(pud))
+   452				continue;
+   453	
+   454			if (!range.start) {
+   455				mmu_notifier_range_init(&range,
+   456							MMU_NOTIFY_PROTECTION_VMA, 0,
+   457							vma->vm_mm, addr, end);
+   458				mmu_notifier_invalidate_range_start(&range);
+   459			}
+   460	
+   461			if (pud_leaf(pud)) {
+   462				if ((next - addr != PUD_SIZE) ||
+   463				    pgtable_split_needed(vma, cp_flags)) {
+   464					__split_huge_pud(vma, pudp, addr);
+   465					goto again;
+   466				} else {
+   467					ret = change_huge_pud(tlb, vma, pudp,
+   468							      addr, newprot, cp_flags);
+   469					if (ret == 0)
+   470						goto again;
+   471					/* huge pud was handled */
+   472					if (ret == HPAGE_PUD_NR)
+   473						pages += HPAGE_PUD_NR;
+   474					continue;
+   475				}
+   476			}
+   477	
+   478			pages += change_pmd_range(tlb, vma, pudp, addr, next, newprot,
+   479						  cp_flags);
+   480		} while (pudp++, addr = next, addr != end);
+   481	
+   482		if (range.start)
+   483			mmu_notifier_invalidate_range_end(&range);
+   484	
+   485		return pages;
+   486	}
+   487	
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
