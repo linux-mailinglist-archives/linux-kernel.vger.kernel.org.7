@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-793488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DECFB3D433
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB208B3D430
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5C567A8B55
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620933A6A19
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630AE26F2B0;
-	Sun, 31 Aug 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A92426F2A0;
+	Sun, 31 Aug 2025 15:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gwaIVq4d"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDzWq3YJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9941126F2A6;
-	Sun, 31 Aug 2025 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831472367C3;
+	Sun, 31 Aug 2025 15:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756654824; cv=none; b=Mw3Tan/ccip4kJhkCSQjLte9sLlBSE0ZkmusfmrB7qQdPgksqZOTY/vDraJPBxniF2wj9twvBDmSNUREWkS508NR1o9Du8O/XJWILYhF96TavP74Nxzkewcg/R1wCv8xVNhg7T1b+XUukZoCuxZOOj13sjn6XqR27S94jIy673s=
+	t=1756654799; cv=none; b=fuOw7EcMWk3Aaod2ybFBwzCn9SwCTJRJp+gwha9j7Bz37vW89wKFyeQZ+Jzn8ep+yUeiJrUGPQYkMR4luh7vT5rhD2CYYH465m5pMbLPiQ7ecUVbpAN7LhqzHXNtn95GeMMNkpQt2nRrOG0f4rsvaL+Pro+XX88veq9y3Z2+hAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756654824; c=relaxed/simple;
-	bh=4qYM50M1ruW12qVdEyVZT7wDFMW61qFZfd8Vcd3+Gl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W8cFhCK6XZwjfRC+MZv1IxqN2JPpTPHbQQJ3oF50JmFsK1NY9VfYT1tk0dK9VpGj3TrZurFTDkSEXL9RUHaQjb46SQJ7D5WCCtLzzalRH/7lMELqnOsqPS9cqbf0A0LasWdLZGvWGrfRnUOi4qfgpdU+oLtd8vF+T5MMztAvtpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gwaIVq4d; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EAD3940E0192;
-	Sun, 31 Aug 2025 15:40:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bzt1d1lsJFp1; Sun, 31 Aug 2025 15:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756654814; bh=UevTnzICdteIzOhn6dJqcmMyhQOKhAKvJOp7WGbG2U4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwaIVq4dv6B7A01+RclqqyndJe0kXjEldcveKKQe9JTqcLjjPN3+xLox+zK75ThUI
-	 C+qXuq8eHSghaezPramxtQe2MhrM/4LFQN6k/VGq2rFOy8Q1M9CrtOoJ13L5/uE5QZ
-	 zvAgskkXK7vW4gOcSH9wDiM+CkUN3ts76rnulUHy8BP3TujgALc5RSJLUY4QWlUhIq
-	 E94hEtN85FohOyQDMmgox9HXMgvODpagd2Jvi1z6EambcDZ4WNF5uVFQW54+vu6WqO
-	 9LC77l9Rfo9ed/6zTVrdWGExvzCuGESOfvr/wD5zlkcwQAs0MlMjU1ZAKwgET6JK2b
-	 PEvD9mEFFEWsjkBK0QghH5sXxhyIg5DBzHM/kYOAFKXnCm/SYqoQ0X8BTZBDr47DUC
-	 qCIU5IrBC3xyenLoS9ELA7SbWdGlIJImXZdUfrYXPuWldtENzpga8WFCK3zAmwmz+o
-	 GhVFSvpJkyfmJC9NHW7ku70wLDV7QiRr4qZwNuhHzhrVu4XgVYmpfJSK6pDawDCsGS
-	 aSI8Z/bK9Sd4YHf89b12tUWbcKkgvqPBh/PymVaHm/q+6FwFVq862jeck/rbpQWpTH
-	 idZWYMSGlPHkoMNS/4hsynyGOhLSnLOo8nkFsWKAOj6N9RWfI3u6vgt4BiKwDrE2t1
-	 QgjLZb5EvEgdFs6e2ZE9c3sI=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7C2A840E0174;
-	Sun, 31 Aug 2025 15:40:01 +0000 (UTC)
-Date: Sun, 31 Aug 2025 17:39:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: seanjc@google.com, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	torvalds@linux-foundation.org, x86@kernel.org, tglx@linutronix.de
-Subject: Re: (Re)boot hangs and refcount errors on next-20250829
-Message-ID: <20250831153941.GCaLRsvf1V_ST2GPAd@fat_crate.local>
-References: <20250831141426.2786-1-spasswolf@web.de>
+	s=arc-20240116; t=1756654799; c=relaxed/simple;
+	bh=GVoUaPV2C+fAqJs1mr7QJ+Zk1P0oaVra7tdzm+wTzqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KokN7NQesea8lJSV+xX2GO6iFgdihe1Rbzh6cB78mzXWv30ZkYh6F9oVEQueXvdW2rQlUo8+J4MjZNoUSL9z6I72r8zdCBYQEeqLl7z1pEPCgOWFFXU6VGJKZk1Vwlw3XMPHm+ur2ywO9lf2cykTH7clhylq8kh/GrPj9nfPC7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDzWq3YJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB65C4CEED;
+	Sun, 31 Aug 2025 15:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756654799;
+	bh=GVoUaPV2C+fAqJs1mr7QJ+Zk1P0oaVra7tdzm+wTzqI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aDzWq3YJ/l6GLSLzO0WrCKAcqGRvEd6OW+wLEAHJ1xQdJTv5dU1inCvRxFfwPmVQR
+	 61n5PVeUpqmXKspTr9q9/xbL2RM6BWwqus4m2KU5hPE6ihurEPdCgni4Ad6gk+Mh4r
+	 k4Yr3CiFJBMUxdGmxfcFDDEsG1DM3BZToE4fFkJCThnVVuBMr7Hh2uV12pysZmsJ8E
+	 DIbzYa2YKbMctZcSe/TSOjsgBTwLEremdxsPJ53whjub3RlDt02vqi3f9SoO+vNYnP
+	 Ah7U6YMB7JcXYPXVyPwQXRH6I30wf1uboUABCrUKVFrP/LKepS78DLzDEuawNasl22
+	 /KrSsmte5DngQ==
+Date: Sun, 31 Aug 2025 16:39:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Gustavo Silva <gustavograzs@gmail.com>, lanzano.alex@gmail.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] iio: ABI: document accel and roc event
+ attributes
+Message-ID: <20250831163949.0dc59265@jic23-huawei>
+In-Reply-To: <CAHp75VckFnumUG8GodAwigG10NVd66Tj-2Tkm3kLWQUET0EorQ@mail.gmail.com>
+References: <20250830115858.21477-1-gustavograzs@gmail.com>
+	<20250830115858.21477-3-gustavograzs@gmail.com>
+	<CAHp75Vf13aqDJj2j7MtfLTAT2MW-S3+M7wtEXsG1Wh7EKfxJSQ@mail.gmail.com>
+	<20250830180534.24a8ad56@jic23-huawei>
+	<20250830180920.7a65df94@jic23-huawei>
+	<CAHp75VckFnumUG8GodAwigG10NVd66Tj-2Tkm3kLWQUET0EorQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250831141426.2786-1-spasswolf@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 31, 2025 at 04:14:24PM +0200, Bert Karwatzki wrote:
-> I think I hit the the same error (and some more ...) when booting next-20250829
-> on my amd64 laptop (no VMs and no kexec were used here):
-> 
-> When I try booting next-20250829 on my debian stable(trixie) amd64 system the boot
-> process hangs every few attempts (without any log messages recorded). When the
-> boot process succeeds the following error message appears in dmesg:
-> 
-> [    8.337248] [     T44] ------------[ cut here ]------------
-> [    8.337250] [     T44] WARNING: kernel/futex/core.c:1604 at futex_ref_rcu+0xe8/0x100, CPU#6: rcuc/6/44
+On Sat, 30 Aug 2025 22:58:17 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-I believe that got fixed, pls try:
+> On Sat, Aug 30, 2025 at 8:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
+g> wrote:
+> > On Sat, 30 Aug 2025 18:05:34 +0100
+> > Jonathan Cameron <jic23@kernel.org> wrote: =20
+> > > On Sat, 30 Aug 2025 15:49:50 +0300
+> > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote: =20
+> > > > On Sat, Aug 30, 2025 at 2:58=E2=80=AFPM Gustavo Silva <gustavograzs=
+@gmail.com> wrote: =20
+> > > > >
+> > > > > Add accelerometer and rate of change event-related sysfs attribut=
+es
+> > > > > exposed by the bmi270 driver. =20
+> > > >
+> > > > Seems to me like the absent attributes that are already in the kern=
+el,
+> > > > should be added in the separate patch. =20
+> > > Agreed that would be ideal. =20
+> >
+> > Actually what did you mean by absent attributes? =20
+>=20
+> Absent in the documentation, but present in the code. That's what this
+> patch adds mainly, no?
+>=20
+> > This is documenting ABI that is part of the general 'scope' of the full
+> > IIO ABI but which hasn't turned up before in this particular combination
+> > (or possibly we missed updating docs when it did!)
+> >
+> > Whether it is worth separating out any we know are in another driver is
+> > an open question, but Gustavo hasn't called out any as being like that.
+> > It's possible that these are all surfacing for the first time in this d=
+river. =20
+>=20
+> Hmm... But if the code handles the attribute which is not documented,
+> that needs to be fixed.
+>=20
+The core code handles a massive number of combinations that make no sense
+because the attributes are constructed from 5+ parameters, each with many
+values. So what matters here is whether a combination is in use, not whethe=
+r it
+could be instantiate by a driver using standard IIO structures.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=locking/urgent
+Sometimes we miss things in reviews so gaps occur. Those absolutely should
+be fixed, but we shouldn't documents stuff on basis it 'might' be ABI in
+future.
 
-which got updated to contain the fix for the warning above.
+Jonathan
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
