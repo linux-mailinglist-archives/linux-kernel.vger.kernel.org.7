@@ -1,120 +1,189 @@
-Return-Path: <linux-kernel+bounces-793243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710A3B3D103
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 07:55:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1575B3D108
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8168517F2EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 05:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D617D8D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 06:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD312153D2;
-	Sun, 31 Aug 2025 05:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6ED2144CF;
+	Sun, 31 Aug 2025 06:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGw0ob/8"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kx3x8bbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FFC168BD;
-	Sun, 31 Aug 2025 05:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCDC4A1A;
+	Sun, 31 Aug 2025 06:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756619725; cv=none; b=NJTlCpUlBvYs1CsbV5pm/y8e8rk3pApBIwqSIC/Ix0YFbEEeHGZajjFSjDQ9brlMkat/0GEUJMGZGwnNNTAezxerx24F3+mLP/Su02tbbjwxlfRfAY4oxQV99j4QpMLLbDBn55QPYQWhpZq7XPsmIeXJjdGe7yaiekGvSbCkOJg=
+	t=1756620434; cv=none; b=daypjGtKcYCwZrQh3wut/dlJLNcFEMBcMkBQcP/WQFH9OQbo3eYknCj7czdJPwwQlwmYdzNG0j8+F4EzSvGgpcrOWpaMyeruBJfwTYlKl6XH/WxwhYxKgZb8DcQPG5sklsm++Om/9afrykVTsJ5IqKuWlncBkO5ikIxAqYWlh9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756619725; c=relaxed/simple;
-	bh=vO7/3e3122L1g9o9OLHB7JkuMo9csml4Ab8aHRvSfiU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a2mEF5PAcu3Km6EnSV/UVTYzrB5UqMP0PAXAkXLu8zkWSzfxwPKlTjjjIeqqkdaBXsJ3dMe2s4hJtu8kWbFY2Qj+3m3QS9ZuYMLga1MHcP0ZcnodlKo0YDZ9PjiwLlogfCKjJP93BaL9MwlZUbPeBdkRaeJZUwu3iOAJLYAqaNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGw0ob/8; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso2567294a91.1;
-        Sat, 30 Aug 2025 22:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756619723; x=1757224523; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vO7/3e3122L1g9o9OLHB7JkuMo9csml4Ab8aHRvSfiU=;
-        b=XGw0ob/8LUTXmp5jMweWxwRjkgD0Bxyr437tLWjp+cLMwPjTcoCzXTiK4g1RFxpP6n
-         8YfRetz82NZ7EMjbgiOeN2Tzd93UItvS0gs5XR+2KiLOQk2Mp1TUYPzyih5ZZnv3+mL1
-         ustuL3ONILqPLy1jrF7zQMO+qUzaA9HmskCOVwzDzuyRsJpALct7ORhXet48IB8qGIbl
-         ybLPtXXgKvLXWYuQpYdFzRhl1yinxSjq9v0WAfvcavNdroGTci1xBjZ897OyuuZFbGav
-         EXTem8CjP3NRo0OvoDD3DSqcACXeREen659jYEj6mGGtzNvIj/h8sRZXiiXc01z1UO0W
-         /ycg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756619723; x=1757224523;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vO7/3e3122L1g9o9OLHB7JkuMo9csml4Ab8aHRvSfiU=;
-        b=uqh3S8YMaobkdUGHqocpCFq0o/kt13F7QAU/D42ml3BuhkdOgL3P/BvPTFgRt0jG/9
-         ilVj+KELpW3H6yF2wlHWQRSWD0DTz51Yn2Nw3knpB/YK7zh2CW2lyAF+d9ExEpF995BX
-         OuulEXk/Z4+Q7F3HBiECXGAyzQyqvGOFiFCQk99ENj3+Wh0iFm26E6hpnG8cb5u84L8Z
-         45rg1rsXs+Br6bdPflhJEZGC6IqWRMol8zPHKVvlWbLXMhptIatZ5Eo2D+Mmj/vvs9E8
-         Q1pK3uS4U8RCMafapn23iv8DK71K8rTw3DlEV2GcaPdMMlghtGgwmRIM8pOs/I6cYEj2
-         +sVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU01ur5gNy4s54f0KSp+MRQa6+7/mWwanKrL8M/fgu1sbXzkW397mzJ6FSzUP66c2CcF5NCXD+kbl72ryk=@vger.kernel.org, AJvYcCV2gR059bBe65dlCGYJ1kq+Oac3BFzH7nLy9q19XkgrWPmJgBXhLCmvvGX4UkjUl02VX9WYLu2U@vger.kernel.org, AJvYcCVO/3VLCJIFDQH98/txlpbs3ZFMn4xA/7E2Ic/3fjRv0aAVjoNqvAznNGkx2BTIMDMiWVuGMXe3Ar8D@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3cuLbC4EKNhWjz/kN9V92VntXoX5yqrByrcoTRx9Dsjy+UuNG
-	OLoA1Ym86joEIZ9B7DWx2jO5SBv4hVAEGjo6TOteR0Ou22qsh+AheJRXR5jPePIBv06hb0+hVk3
-	iEF9oc+2kAYgcYivO3qcbORTq8df3U8o=
-X-Gm-Gg: ASbGnct17wTp0qSprHkA78oWEhL/WTTdyvlxrHmPsP76S42+Zo7kxvnn8bKtmp2hY0D
-	KK+tirlXGiipJE8JH0YULPaF5bcxqfsYS1lRJC/zPcWVPPLZ1hIlx9IppFJO5hUs2nFvFKHuEd+
-	zGo/h4UVAqunWNrv1N61zgzn5x7p9j6TJSj3Q4bKWHUptE/trzjvv0kcAnxkUOL5Y3MewW/KIw1
-	dGrX3OJ+jhxD5M=
-X-Google-Smtp-Source: AGHT+IF4by9wGR+uMdQS9BBU9p7VJ6sygd+W+e0UZ+tlUT9Sl6ihbrDfKrRug2sbMj5W+mfbrhNCAp/9eSrb1ILcCh8=
-X-Received: by 2002:a17:90b:350c:b0:327:972d:6e79 with SMTP id
- 98e67ed59e1d1-328156b6358mr4569060a91.21.1756619723260; Sat, 30 Aug 2025
- 22:55:23 -0700 (PDT)
+	s=arc-20240116; t=1756620434; c=relaxed/simple;
+	bh=ABopUsGvRIKCQV1pVsnu1etx9G+hckoqj745dqdbdv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bg5nG7xrbnkzrJA6eHSRPzn60NmXHrUv+U6pGG7jdTQUpraT4K1bbcFmYghQNuqSRR/2htMdPF5hjt7sloPW2/EDzpAB6yYioNFrpw8xhKU4dZL04x9f+PBoGNicvHigPyENLCs7OgryATZB79WXYjaYaopymm0i8ihPAt8pIM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kx3x8bbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128C1C4CEED;
+	Sun, 31 Aug 2025 06:07:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756620432;
+	bh=ABopUsGvRIKCQV1pVsnu1etx9G+hckoqj745dqdbdv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kx3x8bblaAPaf/loZQgl3jUQIte6fkjPaGOyCwNFx+ROwOkvnPZEpoX84JoD37vuZ
+	 l5CW+sopI2FVBFFjvT+j7jOA0a02CBnNjLX7jIClPNDT0VoDxrcESZYywdRB9uii32
+	 m9VxGqSv3eWq60rd3gdhsIjjD0TDc9v6jBmr9U9tKySAPM7gGZHyAaBCPvDafZIh2O
+	 kWjhZ3XZlbCYMr6ZT1rEHCwrjvGNvE+Fm/ZJkLaQdTA7Dv36hClRTcU5k2h+K+F9BN
+	 YxTdj57G3FywFwNHImv7sTEK8nDvnnyFJTf/SXzKtokMskUREaq6qkY6qWoxMztQxr
+	 TRs56u8kdAZuw==
+Message-ID: <49070681-9111-404a-a965-ca2b2eb2988c@kernel.org>
+Date: Sun, 31 Aug 2025 08:07:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPB3MF5apjd502qpepf8YnFhJuQoFy414u8p=K1yKxr3_FJsOg@mail.gmail.com>
- <CALW65jY4MBCwt=XdzObMQBzN5FgtWjd=XrMBGDHQi9uuknK-og@mail.gmail.com>
- <CAPB3MF7L-O_LW+Gxw8fgNif9zUq0r1WZFK_v2CzB0302RHXNLw@mail.gmail.com>
- <CAPB3MF5x5rSsYCKutpo1f=1DaQbz30QM6ny7fnB9hMGmwfkdbA@mail.gmail.com> <CALW65jafGk-qGtsMQJNYUC0pKE=6xLxvsZtEW_FSXdmGOsftBw@mail.gmail.com>
-In-Reply-To: <CALW65jafGk-qGtsMQJNYUC0pKE=6xLxvsZtEW_FSXdmGOsftBw@mail.gmail.com>
-From: cam enih <nanericwang@gmail.com>
-Date: Sun, 31 Aug 2025 13:55:12 +0800
-X-Gm-Features: Ac12FXwCiAISj3xYLyKHXUoeGCGfEA4uYOeEPsf7QYJotB1spFwoUFkVUrR4Obg
-Message-ID: <CAPB3MF5PV6DeyRngtTmVEVFkhjsp7PjgsWqWQGEZM_6PkQr9=A@mail.gmail.com>
-Subject: Re: [Regression Bug] Re: [PATCH net v3 2/2] ppp: fix race conditions
- in ppp_fill_forward_path
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	linux-ppp@vger.kernel.org, nbd@nbd.name, netdev@vger.kernel.org, 
-	pabeni@redhat.com, pablo@netfilter.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] tty: Add KUnit test framework for TTY drivers
+To: Abhinav Saxena <xandfury@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+References: <20250826-tty-tests-v1-0-e904a817df92@gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250826-tty-tests-v1-0-e904a817df92@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Yes, you are right. FYI the xanmod kernel cherry-picked the commit
-"net: ipv4: fix regression in local-broadcast routes"
-(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3D5189446ba995556eaa3755a6e875bc06675b88bd)
-which cause the regression by fixing another.
+On 27. 08. 25, 0:51, Abhinav Saxena wrote:
+> This patch series introduces a KUnit testing framework for the TTY
+> subsystem, enabling deterministic, automated testing of TTY drivers and
+> core functionality without requiring hardware or userspace interaction.
+> 
+> On an x86_64 build with CONFIG_GCOV enabled, these tests increased
+> TTY subsystem coverage to approximately 10.6% line coverage and
+> 14.7% function coverage [1].
+> 
+> Problem Statement
+> -----------------
+> Testing TTY drivers today requires:
+> - User-space interaction through device nodes
+> - Complex setup with ptys or real hardware
+> - Limited ability to test error paths reliably and deterministically
+> 
+> This series solves these issues by providing in-kernel KUnit tests that
+> exercise real TTY core paths under controlled, deterministic conditions.
+> 
+> What This Series Provides
+> -------------------------
+> 1. Reusable test helpers (`tty_test_helpers.h`):
+>     - Minimal (~150 LOC) infrastructure that any TTY driver should be
+>     able to use
+>     - Automatic resource management
+>     - Integrated into core files under KUnit guard, with
+>       `EXPORT_SYMBOL_IF_KUNIT()` to keep the production symbol table
+>       clean
+> 
+> 2. Mock TTY driver:
+>     - Demonstrates how drivers can leverage the helpers
+>     - Enables deterministic scenarios without hardware
+> 
+> 3. Core TTY tests:
+>     - Validate open/close/read/write/termios paths
+>     - Exercise hangup, resize, and error handling
+>     - Ensure real kernel paths are tested, not mocked stubs
+> 
+> 4. ttynull driver tests:
+>     - Validate data sink behavior of the null driver
+>     - Provide a minimal driver contract baseline
+> 
+> 5. Optional coverage support:
+>     - GCOV integration for test coverage analysis
+> 
+> Future Work
+> -----------
+> With this foundation merged, follow-up work can:
+> - Add more coverage of TTY core functions
+> - Enable each TTY driver to maintain its own KUnit suite
+> - Introduce stress tests and race detection
+> - Extend to include more tests for other tty drivers:
+>    - UART drivers: test interrupt handling without hardware
+>    - USB serial: validate disconnect and reconnect sequences
+>    - PTY drivers: test resize, flow control, and hangups
+>    - Virtual consoles: test Unicode and input handling
+>    
+> Testing
+> -------
+> - All patches pass `checkpatch.pl`
+> - Verified on x86_64 with:
+>      ./tools/testing/kunit/kunit.py run \
+>          --kunitconfig=.kunit/ \
+>          --kunitconfig=drivers/tty/tests/.kunitconfig \
+>          --arch=x86_64
+> - All tests pass (working around tty_read wrapper in progress)
+> 
+> Feedback welcome! :)
 
-Reverting that commit resolves the issue. However, I see this
-problematic commit has been merged into the trunk, which might cause
-large-scale regression in the coming versions, I'm afraid.
+Wow, looks good. Has it found something yet :)?
 
--Eric
 
-On Sat, Aug 30, 2025 at 11:00=E2=80=AFPM Qingfang Deng <dqfext@gmail.com> w=
-rote:
->
-> On Sat, Aug 30, 2025 at 10:39=E2=80=AFPM cam enih <nanericwang@gmail.com>=
- wrote:
-> >
-> > Here comes more details, and it might not be your commit that causes
-> > the panic. sorry but I don't know where to go from here.
->
-> You should try the vanilla kernel and see if the panic persists.
-> If not, you should close the issue and direct your complaint to the
-> fork's maintainers.
+FWIW
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+
+thanks,
+-- 
+js
+suse labs
 
