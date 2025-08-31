@@ -1,344 +1,323 @@
-Return-Path: <linux-kernel+bounces-793504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C760CB3D468
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F118DB3D46C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC8E178A39
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A633BD8E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B711B26FD8E;
-	Sun, 31 Aug 2025 16:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205B426F2AD;
+	Sun, 31 Aug 2025 16:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfYZ+JL1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAyZl3XN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77D525A333;
-	Sun, 31 Aug 2025 16:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D8824676C
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 16:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756658445; cv=none; b=iQGfeRldYNvVbLz2bBbPh8snOjBLUxCNn6Mf1VmUXxhlEU56jJ9caL62a8pIYIXAdQJ8jAiSotxTywFacIg/FqQfdOvJipd8GYeJUVXHg0BE+uyx2+NDOCxVajgvaGv2g+LIZOTFE6rFE6ZFH5i0qHsPWHqS5UUfr4TYObJjFPQ=
+	t=1756658749; cv=none; b=Fi5D1lL7rGNHZEyEe4B4h4Lg9pz2YfTNcJcu4r043PTOo+BtTvj3XOvaLuTZLh0FC8dUgXnpR06F796AXHu6sxq2Nwdsm6oaOjaNVQKc7z8Z7WwMJ9ddx+Ed7qh8cOAMnAWmHbafyvQdH3H/oj9imK4r1ocG407fv8Gwnwp/wEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756658445; c=relaxed/simple;
-	bh=HuzusiPD0/AwotrTzqZxwCSVSAg0xXQvyfDPId+W9p4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KD457A1rjW9BufQnnq7bZPJ2eNt7x98QORUT01tycsuwivwFtQbRdkmZ2zg2ymDuQbd5KR4T46AdjAeJaKJQqkBllBCa5IAMQd0o4Q4+f8uTa9jziUO+eQRMWK6AJUP/LlvsJk+GUYw3b8Oq7vV7iqrJFye3gpfBBn3aghDNfC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfYZ+JL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A41AC4CEED;
-	Sun, 31 Aug 2025 16:40:45 +0000 (UTC)
+	s=arc-20240116; t=1756658749; c=relaxed/simple;
+	bh=Ia+NcoXFFp3Rc17X/ZrTRBLMS8MC0woErKY7A01sbIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bSbAIaDvwPCmciGIVqlRpI4KGG57dz8ZEUNQfNAftcqpUtzZYz8o2K2PtXEowlUAwrZ33F6WtGpQZWaJM2Srw4wuXYjBQ2elFpur/r5x/RfNvSXy8eHzZnW9/YNbRNS2sVgHIvnoIqBdAqhykXxD0TS4oleUvA7Kx3rGbasOFcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAyZl3XN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA20C4CEFA
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 16:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756658445;
-	bh=HuzusiPD0/AwotrTzqZxwCSVSAg0xXQvyfDPId+W9p4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=LfYZ+JL1j/JKyyAv9fANjnNJQcj2q3dLZLDPOJh8/e+708wdPUgArsIxAOGQXHxoz
-	 4hzQBkFgVuy8AlCswkJPn7c5JfkjlABBKmP713+0dpIiBAklX+gsmOOqewFR6DSxZB
-	 kWgSG3yFdZpsLFfPNcmLqW65VaNGSsqnT4mszvc7H7FQ1nHIYdZiZF56yzz6BqtjLN
-	 HAG4Y0suZK3QbX9GlZLwapOSX+fvubGGPwCU0OI7ocNDpRmEFoaczFitc9OVMzfhrZ
-	 GiaajmT5UtA9TIF9ksvC2iF5xSvGkRh2nGs2QYUY0nivtYANiDHPEdqHQOTvKa1zKh
-	 Lbmx/riZqgLAw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CDC0CCE0C15; Sun, 31 Aug 2025 09:40:44 -0700 (PDT)
-Date: Sun, 31 Aug 2025 09:40:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [paulmckrcu:dev.2025.08.21a] [rcu] 8bd9383727:
- WARNING:possible_circular_locking_dependency_detected
-Message-ID: <8f43f958-e3e6-44d5-9600-9e096c3a06b7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202508261642.b15eefbb-lkp@intel.com>
- <2853a174-76e4-440b-bfc1-71ea30694822@paulmck-laptop>
- <eb1e5ab00253fdae5ba5aa4c97d60a79d357dbfd@linux.dev>
- <f58f7c75-46be-4ddd-be70-ee4f6a3370a9@paulmck-laptop>
- <aefc893f1b7c17049c2e6eb2256a97739a5e328d@linux.dev>
+	s=k20201202; t=1756658748;
+	bh=Ia+NcoXFFp3Rc17X/ZrTRBLMS8MC0woErKY7A01sbIg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aAyZl3XNcMqm+IkNAqkqh6MeveKAN5pGmidutv9lrweXc4+N+sapZ2v/yuGj46LW0
+	 JkiJN0ZQNKGFVy+fK6dxwwmqaDAL8EDmLpkVmsuOBK+0fShrvjAUXjUXLsgn1tGdAt
+	 XoZ3e6xbtIvGKmsH3rzOSJUCOePU6Y5faxHeRKFQM5lQyi3kjTQCWjKKjXSHe9FBQm
+	 qrwcRSM61YVnmfPDuw1M4bPg0ZG09ypwQ3tMNvLwCVisvaYpqwawHN21AwJrugj1k6
+	 otDvejGZGonmbTTQa4gCiAa201QjbeK526XiUGnZS2d7d2qH2rlBd0wAxhxS24QYJX
+	 4t+44FE564jYA==
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d603a269cso28838967b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:45:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWkY9E6iaetR4bSffWWDm3pxezCw2Ws1mkg9wIJtpSwjFuKsF7aD3h8rKccHWDzdXOlK/4HL7YJP4rDngk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrR30mESiKYf1F5t9liaBA1og7hONRwzaGZjdznV3J3HO9Km3y
+	6SeRhfFjLD7wKkXG6hp57ksMeNGGnL7xAIF8KCjN1Sg71xrGUYckbak9skPHAskM5JbCsqsPEtR
+	PJIDw7kFHgS0lKiFb2J2pLTX/Q17AEtW6Hyh0XTU1rw==
+X-Google-Smtp-Source: AGHT+IHA0dzOWBSMCR6hNyYZK2bqnpmasmQvgM5hHiHfnQD9K8zKcb35aDvOColV6PdQxuy41cvC3OrOS+7a8UeUeHY=
+X-Received: by 2002:a05:690c:64c7:b0:71f:f049:340a with SMTP id
+ 00721157ae682-72276332d6emr61640757b3.1.1756658747908; Sun, 31 Aug 2025
+ 09:45:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aefc893f1b7c17049c2e6eb2256a97739a5e328d@linux.dev>
+References: <aKXeLCr9DgQ2YfCq@yjaykim-PowerEdge-T330> <CAF8kJuM4f2W6w29VcHY5mgXVMYmTF4yORKaFky6bCjS1xRek9Q@mail.gmail.com>
+ <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330> <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+ <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330> <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
+ <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330> <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+ <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330> <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
+ <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
+In-Reply-To: <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
+From: Chris Li <chrisl@kernel.org>
+Date: Sun, 31 Aug 2025 09:45:36 -0700
+X-Gmail-Original-Message-ID: <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+X-Gm-Features: Ac12FXz0mIIdH1Z1YFPJdDME5qvEoyzFFsKi8o5raJAjx3V5raHA5OX-7s2zxbs
+Message-ID: <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, baohua@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Kairui Song <ryncsn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 31, 2025 at 02:22:56AM +0000, Zqiang wrote:
-> > 
-> > On Sat, Aug 30, 2025 at 02:38:35AM +0000, Zqiang wrote:
-> > 
-> > > 
-> > > On Tue, Aug 26, 2025 at 04:47:22PM +0800, kernel test robot wrote:
-> > >  
-> > >  > 
-> > >  > hi, Paul,
-> > >  > 
-> > >  > the similar issue still exists on this dev.2025.08.21a branch.
-> > >  > again, if the issue is already fixed on later branches, please just ignore.
-> > >  > thanks
-> > >  > 
-> > >  > 
-> > >  > Hello,
-> > >  > 
-> > >  > kernel test robot noticed "WARNING:possible_circular_locking_dependency_detected" on:
-> > >  > 
-> > >  > commit: 8bd9383727068a5a18acfecefbdfa44a7d6bd838 ("rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast")
-> > >  > https://github.com/paulmckrcu/linux dev.2025.08.21a
-> > >  > 
-> > >  > in testcase: rcutorture
-> > >  > version: 
-> > >  > with following parameters:
-> > >  > 
-> > >  > runtime: 300s
-> > >  > test: default
-> > >  > torture_type: tasks-tracing
-> > >  > 
-> > >  > 
-> > >  > 
-> > >  > config: x86_64-randconfig-003-20250824
-> > >  > compiler: clang-20
-> > >  > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> > >  > 
-> > >  > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > >  > 
-> > >  Again, apologies for being slow, and thank you for your testing efforts.
-> > >  
-> > >  Idiot here forgot about Tiny SRCU, so please see the end of this email
-> > >  for an alleged fix. Does it do the trick for you?
-> > >  
-> > >  Thanx, Paul
-> > >  
-> > >  > 
-> > >  > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > >  > the same patch/commit), kindly add following tags
-> > >  > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > >  > | Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-lkp@intel.com
-> > >  > 
-> > >  > 
-> > >  > [ 42.365933][ T393] WARNING: possible circular locking dependency detected
-> > >  > [ 42.366428][ T393] 6.17.0-rc1-00035-g8bd938372706 #1 Tainted: G T
-> > >  > [ 42.366985][ T393] ------------------------------------------------------
-> > >  > [ 42.367490][ T393] rcu_torture_rea/393 is trying to acquire lock:
-> > >  > [ 42.367952][ T393] ffffffffad41dc88 (rcu_tasks_trace_srcu_struct.srcu_wq.lock){....}-{2:2}, at: swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.368775][ T393]
-> > >  > [ 42.368775][ T393] but task is already holding lock:
-> > >  > [ 42.369278][ T393] ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > [ 42.370043][ T393]
-> > >  > [ 42.370043][ T393] which lock already depends on the new lock.
-> > >  > [ 42.370043][ T393]
-> > >  > [ 42.370755][ T393]
-> > >  > [ 42.370755][ T393] the existing dependency chain (in reverse order) is:
-> > >  > [ 42.371388][ T393]
-> > >  > [ 42.371388][ T393] -> #1 (&p->pi_lock){-.-.}-{2:2}:
-> > >  > [ 42.371903][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > [ 42.372309][ T393] try_to_wake_up (include/linux/spinlock.h:557 (discriminator 1) kernel/sched/core.c:4216 (discriminator 1)) 
-> > >  > [ 42.372669][ T393] swake_up_locked (include/linux/list.h:111) 
-> > >  > [ 42.373029][ T393] swake_up_one (kernel/sched/swait.c:54 (discriminator 1)) 
-> > >  > [ 42.373380][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > [ 42.373952][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > [ 42.374452][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > [ 42.374976][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > [ 42.375460][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > [ 42.375920][ T393] kthread (kernel/kthread.c:465) 
-> > >  > [ 42.376241][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > [ 42.376603][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > [ 42.376973][ T393]
-> > >  > [ 42.376973][ T393] -> #0 (rcu_tasks_trace_srcu_struct.srcu_wq.lock){....}-{2:2}:
-> > >  > [ 42.377657][ T393] __lock_acquire (kernel/locking/lockdep.c:3166) 
-> > >  > [ 42.378031][ T393] lock_acquire (kernel/locking/lockdep.c:5868) 
-> > >  > [ 42.378378][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > [ 42.378794][ T393] swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.379152][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > [ 42.379714][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > [ 42.380217][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > [ 42.380731][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > [ 42.381220][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > [ 42.381714][ T393] kthread (kernel/kthread.c:465) 
-> > >  > [ 42.382060][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > [ 42.382420][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > [ 42.382796][ T393]
-> > >  > [ 42.382796][ T393] other info that might help us debug this:
-> > >  > [ 42.382796][ T393]
-> > >  > [ 42.383515][ T393] Possible unsafe locking scenario:
-> > >  > [ 42.383515][ T393]
-> > >  > [ 42.384052][ T393] CPU0 CPU1
-> > >  > [ 42.384428][ T393] ---- ----
-> > >  > [ 42.384799][ T393] lock(&p->pi_lock);
-> > >  > [ 42.385083][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock);
-> > >  > [ 42.385707][ T393] lock(&p->pi_lock);
-> > >  > [ 42.386180][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock);
-> > >  > [ 42.386663][ T393]
-> > >  > [ 42.386663][ T393] *** DEADLOCK ***
-> > >  > [ 42.386663][ T393]
-> > >  > [ 42.387236][ T393] 1 lock held by rcu_torture_rea/393:
-> > >  > [ 42.387626][ T393] #0: ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > [ 42.388419][ T393]
-> > >  > [ 42.388419][ T393] stack backtrace:
-> > >  > [ 42.388852][ T393] CPU: 0 UID: 0 PID: 393 Comm: rcu_torture_rea Tainted: G T 6.17.0-rc1-00035-g8bd938372706 #1 PREEMPT(full)
-> > >  > [ 42.389758][ T393] Tainted: [T]=RANDSTRUCT
-> > >  > [ 42.390057][ T393] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> > >  > [ 42.390786][ T393] Call Trace:
-> > >  > [ 42.391020][ T393] <TASK>
-> > >  > [ 42.391225][ T393] dump_stack_lvl (lib/dump_stack.c:123 (discriminator 2)) 
-> > >  > [ 42.391544][ T393] print_circular_bug (kernel/locking/lockdep.c:2045) 
-> > >  > [ 42.391898][ T393] check_noncircular (kernel/locking/lockdep.c:?) 
-> > >  > [ 42.392242][ T393] __lock_acquire (kernel/locking/lockdep.c:3166) 
-> > >  > [ 42.392594][ T393] ? __schedule (kernel/sched/sched.h:1531 (discriminator 1) kernel/sched/core.c:6969 (discriminator 1)) 
-> > >  > [ 42.392930][ T393] ? lock_release (kernel/locking/lockdep.c:470 (discriminator 3)) 
-> > >  > [ 42.393272][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.393610][ T393] lock_acquire (kernel/locking/lockdep.c:5868) 
-> > >  > [ 42.393930][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.394264][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > [ 42.394640][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.394969][ T393] swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > [ 42.395281][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > [ 42.395814][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > [ 42.396276][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > [ 42.396756][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > [ 42.397219][ T393] ? __cfi_rcu_torture_reader (kernel/rcu/rcutorture.c:2426) rcutorture 
-> > >  > [ 42.397690][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > [ 42.398126][ T393] ? __cfi_rcu_torture_timer (kernel/rcu/rcutorture.c:2405) rcutorture 
-> > >  > [ 42.398565][ T393] kthread (kernel/kthread.c:465) 
-> > >  > [ 42.398857][ T393] ? __cfi_kthread (kernel/kthread.c:412) 
-> > >  > [ 42.399169][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > [ 42.399491][ T393] ? __cfi_kthread (kernel/kthread.c:412) 
-> > >  > [ 42.399815][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > [ 42.400151][ T393] </TASK>
-> > >  > 
-> > >  > 
-> > >  > The kernel config and materials to reproduce are available at:
-> > >  > https://download.01.org/0day-ci/archive/20250826/202508261642.b15eefbb-lkp@intel.com
-> > >  > 
-> > >  > 
-> > >  > 
-> > >  > -- 
-> > >  > 0-DAY CI Kernel Test Service
-> > >  > https://github.com/intel/lkp-tests/wiki
-> > >  > 
-> > >  ------------------------------------------------------------------------
-> > >  
-> > >  diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > >  index 6e9fe2ce1075d5..db63378f062051 100644
-> > >  --- a/kernel/rcu/srcutiny.c
-> > >  +++ b/kernel/rcu/srcutiny.c
-> > >  @@ -106,7 +106,7 @@ void __srcu_read_unlock(struct srcu_struct *ssp, int idx)
-> > >  newval = READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
-> > >  WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
-> > >  preempt_enable();
-> > >  - if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
-> > >  + if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !irqs_disabled())
-> > >  
-> > >  
-> > >  The fllowing case may exist:
-> > >  
-> > >  
-> > >  CPU0
-> > >  
-> > >  task1:
-> > >  __srcu_read_lock()
-> > > 
-> > For mainline kernels, here we must have blocked, correct?
-> > 
-> > In -rcu, there is of course:
-> > 
-> > 740cda2fe1a9 ("EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels")
-> > 
-> > And this means that in -rcu kernels built with CONFIG_PREEMPT_NONE=y,
-> > we could be preempted.
-> > 
-> > And maybe this is a reason to drop this commit. Or...
-> > 
-> 
-> For tiny srcu, even if the preempt schedule not happend in
-> srcu read ctrical section, we can still do voluntary
-> scheduling in srcu_read ctrical section, this case is
-> also still happend.
-> 
-> > > 
-> > > ....
-> > >  
-> > >  
-> > >  task2 preempt run:
-> > >  
-> > >  srcu_drive_gp()
-> > >  ->swait_event_exclusive()
-> > >  
-> > >  
-> > >  ....
-> > >  task1 continue run:
-> > >  ....
-> > >  raw_spin_lock_irqsave
-> > >  __srcu_read_unlock()
-> > >  ->find all previours condition are met
-> > >  but the irqs_disable() return true,
-> > >  not invoke swake_up_one().
-> > >  
-> > >  task2 maybe always hung.
-> > > 
-> > The bug that kernel test robot reported existed for a long time.
-> > The offending commit simply introduced the use case that exercised
-> > this bug. So we do need a fix.
-> > 
-> > One approach would be to impose a rule like we used to have for RCU,
-> > namely that if interrupts were disabled across srcu_read_unlock(),
-> > then they must have been disabled since the matching srcu_read_lock().
-> > Another would be to make the current swait_event_exclusive() in
-> > srcu_drive_gp() instead be a loop around wait_event_timeout_exclusive()
-> > that checks ssp->srcu_lock_nesting[].
-> > 
-> > But is there a better way?
-> 
-> I think the second approach is enough :) 
+On Sun, Aug 31, 2025 at 6:53=E2=80=AFAM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
+> > I think this will be one good question to ask feedback in the LPC MC
+> > discussion.
+>
+> Great=E2=80=94looking forward to it at the LPC MC.
 
-Hmmm...  OK, how about the incremental patch below?
+Ack
 
-							Thanx, Paul
+>
+> > > At this point I feel the main directions are aligned, so I=E2=80=99ll=
+ proceed
+> > > with an initial patch version. My current summary is:
+> > >
+> > > 1. Global interface to group swap priority ranges into tiers by name
+> > >    (/sys/kernel/mm/swap/swaptier).
+> > I suggest "/sys/kernel/mm/swap/tiers" just to make the file name look
+>
+> Yes, I also think "/sys/kernel/mm/swap/tiers" is a better fit.
+>
+> > different from the "swap.tiers" in the cgroup interface.
+> > This former defines all tiers, giving tiers a name and range. The
+> > latter enroll a subset of the tiers.
+> >  I think the tier bit location does not have to follow the priority
+> > order. If we allow adding a new tier, the new tier will get the next
+> > higher bit. But the priority it split can insert into the middle thus
+> > splitting an existing tier range. We do need to expose the tier bits
+> > into the user space. Because for madvise()  to set tiers for VMA, it
+> > will use bitmasks. It needs to know the name of the bitmask mapping,
+> > I was thinking the mm/swap/tiers read back as one tier a line. show:
+> > name, bitmask bit, range low, range high
+>
+> This part relates to my earlier point on runtime modification. My
+> intention was to only allow setting the tiers globally, and to align
+> bitmask with priority ranges. For example, an input like:
+>
+>   ssd:100, hdd:50, network_swap
+>
+> would translate into ranges as 100+ (bit0), 50=E2=80=9399 (bit1), and 0=
+=E2=80=9349
+> (bit2).
+>
+> From your description, I understand you are considering allowing
+> additive updates, insertions and letting bitmask differ from the range pr=
+iority. Is
+> that correct? In that case we probably need a way to distinguish
 
-------------------------------------------------------------------------
+That is right.
 
-commit a543d73eeaa491021040a02bdf0e8a9148b5c186
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Sun Aug 31 09:38:44 2025 -0700
+> between =E2=80=9Cadd=E2=80=9D and =E2=80=9Creset=E2=80=9D. Personally, I =
+feel supporting only reset
+> semantics would make the interface simpler, while still allowing add
+> semantics when the full set is provided again.
 
-    squash! rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast
-    
-    [ paulmck: Apply Zqiang feedback. ]
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+The counterpart of "add" is "remove". There are two possible idea to explor=
+e:
+1) only allow removing  a tier when all swap devices in that tier
+range have been swapped off.
+2) Remove the tier is removing a midpoint from the range. So the lower
+tier automatically gets the range belonging to the tier that was
+removed. Then optionally you can add another tier back in replacement
+with different range boundaries. It effectively achieves replacement
+as well. This approach does not require swap off the swap device. I
+like it better. Because if you don't want the race window where the
+swap device temporarily belongs to the lower tier, you can always swap
+off the device in question before performing 2). so 2) can actually be
+mixed with 1) as well.
 
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index db63378f062051..b52ec45698e85b 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -113,8 +113,8 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
- 
- /*
-  * Workqueue handler to drive one grace period and invoke any callbacks
-- * that become ready as a result.  Single-CPU and !PREEMPTION operation
-- * means that we get away with murder on synchronization.  ;-)
-+ * that become ready as a result.  Single-CPU operation and preemption
-+ * disabling mean that we get away with murder on synchronization.  ;-)
-  */
- void srcu_drive_gp(struct work_struct *wp)
- {
-@@ -141,7 +141,12 @@ void srcu_drive_gp(struct work_struct *wp)
- 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
- 	WRITE_ONCE(ssp->srcu_gp_waiting, true);  /* srcu_read_unlock() wakes! */
- 	preempt_enable();
--	swait_event_exclusive(ssp->srcu_wq, !READ_ONCE(ssp->srcu_lock_nesting[idx]));
-+	do {
-+		// Deadlock issues prevent __srcu_read_unlock() from
-+		// doing an unconditional wakeup, so polling is required.
-+		swait_event_timeout_exclusive(ssp->srcu_wq,
-+					      !READ_ONCE(ssp->srcu_lock_nesting[idx]), HZ / 10);
-+	} while (READ_ONCE(ssp->srcu_lock_nesting[idx]));
- 	preempt_disable();  // Needed for PREEMPT_LAZY
- 	WRITE_ONCE(ssp->srcu_gp_waiting, false); /* srcu_read_unlock() cheap. */
- 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
+>
+> > > 2. Slow path allocation uses bitmask skipping; fast path uses per-cpu
+> > >    tier cluster caches.
+> > If the fast path fails, it will go through the slow path. So the slow
+> > patch is actually a catch all.
+>
+> Do you mean that if the cluster does not belong to the desired tier in
+> the fast path, it will skip and then fall back to the slow path? If so,
+
+I am describing the existing swap cluster allocator behavior. In my
+mind, we are using the existing cluster swap allocator code, with
+constraints that only allow swap entry to be allocated from the
+affected tier bitmask.
+
+> the slow path would need to avoid inserting the cluster back into the
+> cache, otherwise processes with a global swap view may end up using the
+> wrong tier device(which must be referenced firstly assumed)
+> Also cgroup which is tier set experience performance degradation
+> because, there is possibility to try to alloc swap on slowpath most of th=
+e time.
+> Wouldn=E2=80=99t this have performance implications?
+
+I think we are mixing two different concepts. There are swap tiers
+which decide which swap device to use. Then there is the swap
+allocator to allocate a swap from the allowed list.
+
+If we move to the swap tiers, the swap allocator needs to be swap
+tiers aware. So it might move to per cgroup cache list or disable the
+cache for the cgroup that hasn't been allocating for a while. The
+allocation logic should be in the allocator, not in the swap tier
+layer.
+
+> I was thinking that maintaining per-tier per-cpu cluster caches would be
+> simpler. Then each tier manages its own cluster cache, and we only need
+> an array of per-cpu caches of size =E2=80=9Cmax tiers=E2=80=9D.
+
+Again, let's not jump to premature optimizations. Do it the simple way
+first, then let the measurement number guide us.
+It might be per swap file has a cache not necessary per CPU. per-cpu x
+per-tier the combination is too big, I am worried about caching too
+much swap clusters. Each cluster is 2M.
+
+>
+> > > 3. Cgroup interface format modeled after cpuset.
+> > I am not very familiar with the cpuset part of the interface. Maybe
+> > you should explain that to the reader without using cpuset cgroup as a
+> > reference.
+>
+> The similarity with cpuset is only in the text format. Like cpuset.cpus
+> uses a comma-separated list and dash ranges (e.g. "0-4,6,8-10"), the
+> swap tier interface would use the same style but with tier names. For
+> example:
+>   echo ssd-network_device,some_device2 > swap.tiers
+> This makes it easy for users to read and modify at runtime, and keeps
+> the interface consistent with existing cgroup controls.
+> (Reference: https://docs.kernel.org/admin-guide/cgroup-v2.html, Cpuset In=
+terface Files)
+
+Thanks for the explanation. That sounds fine to me.
+
+>
+> > > 4. No inheritance between parent and child cgroup as a perspective of=
+ QoS
+> > In my original proposal of "swap.tiers", if the default is not set on
+> > this tier, it will look up the parent until the root memcg. ...
+>
+> My current thought is that it might be simpler to avoid inheritance
+> entirely. Since this is a QoS interface rather than a resource limit
+> mechanism, inheritance semantics may not be the best fit. I would prefer
+> to always override based on what is explicitly set, and otherwise fall
+> back to global swap. For example, input like:
+>
+>   swap.tiers =3D ssd,network_device,some_device2
+>
+> would always override the setting directly, without any parent lookup.
+
+We DO want some parent level control. That is a real customer
+requirement. The cons with your proposal is that, if you want to
+change the whole set from top level cgroup to child cgroup, you need
+to talk the hieratical chain to set each of the child cgroup. While
+you are walking the child tree, there are races with more sub level
+cgroup added to the tree. You will end up missing the newly created
+cgroup. It is a mess.
+
+It is much cleaner if we can allow the child cgroup to have the
+default "swap.tiers" to be empty. Then you just need to set one value
+to the top level parent cgroup and all child cgroup get it without
+exception. The child can overwrite it if they want, default is getting
+it from the parents.
+
+The whole set of cgroup from top level including child can map into a
+k8s pod. It is common to perform adjustments on the whole set
+atomically. We should support it.
+
+> > > 5. Runtime modification of tier settings allowed.
+> > Need to clarify which tier setting? "swap.tiers" or /sys/kernel/mm/swap=
+/tiers?
+>
+> My earlier comment was about allowing runtime modifications
+> to the global /sys/kernel/mm/swap/tiers.
+
+Ack.
+
+> > > 6. Keep extensibility and broader use cases in mind.
+> > >
+> > > And some open points for further thought:
+> > >
+> > > 1. NUMA autobind
+> > >    - Forbid tier if NUMA priorities exist, and vice versa?
+> > >    - Should we create a dedicated NUMA tier?
+> > >    - Other options?
+> >
+> > I want to verify and remove the NUMA autobind from swap later. That
+> > will make things simpler for swap. I think the reason the NUMA swap
+> > was introduced does not exist any more.
+>
+> Per your suggestion, the question of whether NUMA autobind
+> is needed can be addressed in a dedicated discussion later.
+> I look forward to it. :)
+
+I was thinking of removing the NUMA autobind feature from the Linux
+source code. Deleting codes, if the measurement number shows the NUMA
+autobind does not make much of a difference any more. The performance
+charistic have changed dramatically with the new cluster based swap
+allocator. It is possible NUMA autobind does not make sense to justify
+the complexity to exist in the source code.
+
+> The NUMA autobind removal work.. possible directions could be:
+>
+>   - runtime toggle (default off),
+>   - keep default on but gradually flip to default off,
+>     eventually remove entirely.
+>   - remove it. entirely.
+>
+> Not a proposal =E2=80=94just a thought
+>
+> In my current patch,
+> tier and NUMA priorities are made mutually exclusive so they cannot be se=
+t together.
+
+That is one more reason to remove NUMA priorities completely.
+
+> > > 2. swap.tier.max
+> > >    - percentage vs quantity, and clear use cases.
+> > >   -  sketch concrete real-world scenarios to clarify usage
+> >
+> > Just don't do that. Ignore until there is a real usage case request.
+>
+> Agreed. It is better to defer until we see a concrete use case.
+
+Ack.
+
+> > > 4. Arbitrary ordering
+> > >    - Do we really need it?
+> > >    - If so, maybe provide a separate cgroup interface to reorder tier=
+s.
+> >
+> > No for now. Need to answer how to deal with swap entry LRU order
+> > inversion issue.
+>
+> Right, if we want to support this usage, your point about LRU order must
+> definitely be addressed first.
+
+Ack.
+
+I think we are aligned.
+
+Thanks
+
+Chris
 
