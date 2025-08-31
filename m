@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-793472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30B0B3D406
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:07:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296A7B3D408
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF75B17AF45
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:07:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82397A2319
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6DE264A86;
-	Sun, 31 Aug 2025 15:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289BB258EDB;
+	Sun, 31 Aug 2025 15:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fg1mDL7g"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSfY/9d0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6502635;
-	Sun, 31 Aug 2025 15:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D2F21FF24;
+	Sun, 31 Aug 2025 15:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756652840; cv=none; b=E1+eGkinRQgDufcohIQNyP9iVsJqYNNllFu7T6zzNMdQCiEYmD1ZgVWUvJUIrC1zPxV/qIOk9Kqc5dJajpC/UQBOrPsGoAwQFLDU3UoezkjN5gZcVunh7DeQWUQgRBG45rCTf3vjNRKbh9begkdFr5Fg5iwD53WmVPydzt1jPE8=
+	t=1756652910; cv=none; b=CnPEUcyQ07LlX06ztfFhT3s1yQzvOOFfrka1+fPSmmQ9XaDUXVOUdRxM8iOIllt6hrWD9oa9Fa1BrQb8mn6gQcankkjAUWDR4UkYEHJeM5vJkiH8/t7Y53K3CeE04LIpxmGMUez+R321gg60qJszAJAkN8GMm5VuowR//1uP+lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756652840; c=relaxed/simple;
-	bh=yTV2wjhkDfm25Fp5iDK5v5aI48ggTYgh2TVcsEvuPWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a/r2k6HQzest+kX3khp1bDifH/AkQ+GBuSFVcgkYzyJzW+ppw9tSh3wb17OP6zz1jUta946SAyaensaLhUCS5VNBg2ZNz/h6DFA5hRwD2SgyyapBo0qe7OYZ/g1yvBCV58kyoKFrollqRU/pHTAfM0GIHoSjlce7Eo8No56MWuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fg1mDL7g; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VCoRX2002058;
-	Sun, 31 Aug 2025 15:07:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=dNkoUnPG4puVUSoJqTTyN/b4BozRp
-	WKA7B3AykXKud8=; b=fg1mDL7gZum2NHBsqW4wsQDCxxAtfi3kxlkFLDwfNFwTZ
-	qYvizWBdGpilCInzTo0O5VevsArLvh2PRZIns8kRqMXYjnHf1N8O2ZBzJSa46pL/
-	iPnMMj9IufWkY93Es2C2g/PzkHUWXEmoK6ttH43MlwjHKOLj/OyIkAap9FzdajQ3
-	VLZ2jXjKZb5AlySfZMYaL1iX+/Do1p4xGR2Ip9wX3I+xWammezrUc3GNuvEVne3x
-	sKHPwadYUBViSsR7II3nuFkawbsmF3U1nBpWEiBWhxeQ+tr/a8Li3nhC7/9OL2NR
-	w9ZziOI2FBZldP9g5FpNYf6pvOmdu8gJ+/ORzeDrA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usmn968c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 31 Aug 2025 15:07:14 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57VEt93f004260;
-	Sun, 31 Aug 2025 15:07:14 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48uqr7c7gd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 31 Aug 2025 15:07:14 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57VF7D4A020123;
-	Sun, 31 Aug 2025 15:07:13 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48uqr7c7g5-1;
-	Sun, 31 Aug 2025 15:07:13 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>,
-        Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH] Documentation: dev-tools: Fix a typo in autofdo documentation
-Date: Sun, 31 Aug 2025 08:07:10 -0700
-Message-ID: <20250831150710.1274546-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756652910; c=relaxed/simple;
+	bh=fa5z2uHFvFsznLuoes9NBoTyZMgT7SX4uoYDU6rQe2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SehHKBSFbbiKQRqEQOQrZb6Y4BHUMo78DDjh1R2Kuvv5T1R98yg3zCVOxb4SkWooYTjWkNlwFVSX5646tv+htTiHg6FW3Au36Leg3Grh+VRl/IET/UN9IboNIwylxTBw89Snhq6J2/A3vMmVSYTsNJ5L1lEjF14IIhgUxMclmVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSfY/9d0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD28C4CEED;
+	Sun, 31 Aug 2025 15:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756652909;
+	bh=fa5z2uHFvFsznLuoes9NBoTyZMgT7SX4uoYDU6rQe2Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZSfY/9d00kiTuL8IOI8INhTPrldan9VuoEzXMbndR+UFT8Uq9TjmwTXKIvQcD/xa/
+	 TCaS4IPSjmWRUcdF5LUtmsCU3oAspUaB1pytslgrPVSK9t5JgoAnde6EnmgVieJprh
+	 EwIvP7K3Y+aXqB8uEXorWEFdqX1pRYwyp+Xx+9ql2vJf+dX5KtMENaeknDp/9YjSh8
+	 vLt3jt2ff67pJ0yU6ZyXyN1gkc6kBa36ZnHWKblISBGzCk/bF8NK6H+K24KO/wyYaR
+	 uO/xJXvNNuojPV820CQwjlw4YEtjtYCgKGTlbD5HGkjGxEtgKZmjSnff39LaYwIH1y
+	 WipsJ39m4fb+w==
+Date: Sun, 31 Aug 2025 16:08:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
+Message-ID: <20250831160821.041ce895@jic23-huawei>
+In-Reply-To: <CAE3SzaTNoQujrR_h212XLpBbBWddzmSJb9bbUOFmDTBv20p7Ag@mail.gmail.com>
+References: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
+	<20250825152608.6468c27b@jic23-huawei>
+	<CAE3SzaR14zWWM_g-H4C76+6fBDotuAux7n2V1g94R2xLFQZOYQ@mail.gmail.com>
+	<20250830190806.7dd92eb9@jic23-huawei>
+	<CAE3SzaTNoQujrR_h212XLpBbBWddzmSJb9bbUOFmDTBv20p7Ag@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-31_07,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508310162
-X-Proofpoint-GUID: UKdF-vCp-6ulIfoRVNoP3OdZHD_8hzto
-X-Proofpoint-ORIG-GUID: UKdF-vCp-6ulIfoRVNoP3OdZHD_8hzto
-X-Authority-Analysis: v=2.4 cv=Of2YDgTY c=1 sm=1 tr=0 ts=68b46522 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=agUXu52olvX-UjPa_NkA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX+LOuWJIcBZyL
- 4YXGHl/kkUZn/9C1VtC9SjBl/1UsmRlpXPZcu2ZrV7OgPdHmigLFQ+Saw/f0Jk9JxsPEyqMGaH/
- R2e8651TDQvLOzqX1AU9/2cJ1o8rDsSVp3ZulvRJWBiPpjIgqp3JOs3UXopdoUVKCrk/jOGwKI3
- 4hBwtF1Jea6iJkosKuQKpOZtgvK3MT5V4/S02cJDyuB/ckEzUegt8Qzv8uQnKSqZizocY7IaibV
- BVZfLqlaBWyiHdVb/SdzH2/iUmFlxuPwKts1tpurI4QFRPCKoAfF8+9SCxTO237JH7gIQfsNFIv
- PTz1O5YXwAupvI88Ei55nYEUxpxUZtLz6T5Ctpe6b9Pr4jjMJtb3B5OicvIOnwvWSQxaJsbAErI
- KlmcjBVz
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Use cat /proc/cpuinfo as opposed cat proc/cpuinfo.
+On Sun, 31 Aug 2025 01:19:39 +0530
+Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- Documentation/dev-tools/autofdo.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> On Sat, Aug 30, 2025 at 11:38=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> >
+> > On Tue, 26 Aug 2025 02:29:12 +0530
+> > Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+> > Normally we'd check the register to find out what whether the event
+> > is enabled or not.  If we are asking for the state it is already in
+> > then just return having done nothing.  If bus reads are an overhead
+> > worth avoiding regcache will ensure we only do it once.
+> >
+> > Then if we are doing something, do the runtime pm get / put as appropri=
+ate. =20
+>=20
+> Hi Jonathan,
+> I looked into the code of multiple drivers. Almost every other driver
+> uses a flag
+> inside driver specific data structure to denote whether events are enable=
+d or
+> disabled. Some use masks to mark which events are enabled in case multiple
+> types of events are supported.
+> For eg: bmc150, fxls8962af, kxcjk1013, ad7173, ad7291, ad799x, hi8435,
+> max1363, nct7201, pac1921, palmas_adc, bd79124, ads1015, ad5421, bmg160,
+> bmi323, inv_mpu6050, and the list goes on. I see this in at least 30+ dri=
+vers,
+> maybe more.
+>=20
+> On the other hand, regcache is used by only 4-5 drivers.
+>=20
+> On the basis of the above arguments, I am strongly advocating the usage of
+> irq_enabled flag in ltr390_data. Moreover, using register read to
+> determine existing
+> event config every time we do event configuration, seems to be an unneces=
+sary
+> burden on the bus and increases lines of code which I am finding it tough=
+ to
+> convince myself for.
 
-diff --git a/Documentation/dev-tools/autofdo.rst b/Documentation/dev-tools/autofdo.rst
-index 1f0a451e9ccd..bcf06e7d6ffa 100644
---- a/Documentation/dev-tools/autofdo.rst
-+++ b/Documentation/dev-tools/autofdo.rst
-@@ -131,11 +131,11 @@ Here is an example workflow for AutoFDO kernel:
- 
-      For Zen3::
- 
--      $ cat proc/cpuinfo | grep " brs"
-+      $ cat /proc/cpuinfo | grep " brs"
- 
-      For Zen4::
- 
--      $ cat proc/cpuinfo | grep amd_lbr_v2
-+      $ cat /proc/cpuinfo | grep amd_lbr_v2
- 
-      The following command generated the perf data file::
- 
--- 
-2.50.1
+Alright I'll give in on this though I consider the regcache approach
+superior in this case. It might also be applicable to a number of the above
+but they are old drivers on the whole and I'm not going to pursue changing
+this in those.  Some of those are IIRC conversions from pre regmap code
+where they just didn't go as far as replacing the existing driver specific
+state caching.
+
+Anyhow, not worth arguing about.
+
+Jonathan
+
+
+>=20
+> Having said that, I have prepared a v3. Kindly give your feedback on it.
+>=20
+> Thanks,
+> Akshay.
 
 
