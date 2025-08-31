@@ -1,231 +1,199 @@
-Return-Path: <linux-kernel+bounces-793233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829FBB3D0CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 05:09:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F83B3D0D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 05:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F6D444767
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6FE201A31
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B430207A32;
-	Sun, 31 Aug 2025 03:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B067A214A8B;
+	Sun, 31 Aug 2025 03:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AY7N0m2Y"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYSNMuMi"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D0133F6;
-	Sun, 31 Aug 2025 03:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB243BBF0;
+	Sun, 31 Aug 2025 03:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756609747; cv=none; b=m7dECT23Lfw9PS81YrWjfbQ5LKgVboXdy7VVstr+lAzU1EnWsejCrCyLrc5GI+wXrgIQWig8rvKZreo7JAAfIlasloQtj8wQvaAuPXrN3evnlqLdonl5RyxVyb39SlWzaoq4F62TvmqaYNelmJus+mkMqB+mi/Vf2YOpFSPJRIs=
+	t=1756611817; cv=none; b=OLYkixRn3Nva9BquqQdYDXPzCsZ69jZVkikVjOCrsXR5fcr5mupGyRVtC07DiDuSTAjubQpOLE6PNIp7VfALipeaqld95zhFA3QNDN4qpe++veG8ZyXYWoDgYp8bO0BXCISqfMgs4hAu4WelT/z/t5g0JqMES0P8fjtOyIR618Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756609747; c=relaxed/simple;
-	bh=E/c5XwfqMNpQvNuG966dVUINQPSYJBF74IOw11jxbJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BLoslo5fUlSy9REQYuxwpiWMYFujjP5IPn+yiWEpK2CAP8Q5bt/cIqu//frGp3PrkM+mDyjWCpnhMZs+rOlXtW08DQXd2BfwgrcD0m8hNGGm8vLOmX9PwTmwmj5WnkIEG2qgcDsF6PIVlpUKy6526OkvQJb0DaB61qHBm4gnm4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AY7N0m2Y; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1756611817; c=relaxed/simple;
+	bh=CCgAIXlr6vNsPLTZ0WDt5QpS03SDJgg31v/BcBUXsPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n87k5mDOIV4yl69BTvfanRCwEur7f0NM6CjiIMH36HIAj7Or36r1MAvaDIo55BLT4+7Vaf/Y+sPYfloaQkBAaDrWLRUL63jVGHzu2uvZCyfOy7tEv3mW1vcReIO0ETb5b6u3FfcNLfL1Gi+54QWsJjyn4LmoMRyc+p2cIwnQ3PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYSNMuMi; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7722e0ca299so1298904b3a.1;
-        Sat, 30 Aug 2025 20:09:05 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77247e25a69so14641b3a.2;
+        Sat, 30 Aug 2025 20:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756609745; x=1757214545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GKm+qD3OfdrrZI3Jm4ON90CjWFsbCs/0REOVpBVHcM=;
-        b=AY7N0m2Y1aaqdTYszBB/OfBbzlw5Cr3Jt5J9xn0DAMKiEjWKP6e69rECVkQgzgDnX+
-         8/R/j/1DqkQ+iiiouM46PsNV7uBEMEDD3/ViJj+YgIzEwXiqupwXrP8pH1dI5EN5/ht3
-         eWcys57sut+uDwYzRErMlFv+THTk5L8zSVkqG9Y8CVd+Q7NcaPmht/fj5cgygLYHCFsz
-         To2GSC4kTcFUOf8AX+OzWH6DrSqVEXtzjhjWbYnWR3RsBFUhr6BmSoPQRIwaJvH3FiUm
-         5WDfRZq28Qaiu/8p68HdmJITLKL06SuM3D5dVzCDXe/agD04z9ykLFzM03YNGUnPwxRI
-         eU8Q==
+        d=gmail.com; s=20230601; t=1756611815; x=1757216615; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o28MJXIxWOQ5k5vgBDUjnzOPn+n4LfMbzijeAHLWGj0=;
+        b=hYSNMuMiNfwrtbeAcXFqBZl4FZhmDOcoJjzM4Cw8wP6mxY3Vbw1mO8AQnDM3BFIKmM
+         iWC8PE/53Zm7HNM35Vh5SXOBwGmqUxNi9N5VcXB+gm3EtNTBz+EMRX+jrYFHqOoB52Qv
+         +eK+8U0iOXAtccJwe5UOnhCKhR3LvH84QJ4Zo4IzYa81Jrn/VfUm9e2gb7WVISu/A/nD
+         nDVwl+EQkJu6GQzaeMeLL15hSoL1ujCrmQOQCe3QqoQQwdCNKzO7wy/iVWv28d1wSQ5b
+         tmmSmcNgZfSVfkZJpjuu+qxAOH1dY7dnUxX4uer7PBqXCWO90OosrsLq3gvGmrNZGNL7
+         KNCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756609745; x=1757214545;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5GKm+qD3OfdrrZI3Jm4ON90CjWFsbCs/0REOVpBVHcM=;
-        b=CqS/Y+0ezT4r6yhTsOhOgym4u4er0bpoNTMhudbXU0CJRJwFfZjZVZluWLR8Ee1+TN
-         kLQsgSzPWuTrmA6cckchOs3NQu02B+aMAy+MX5fVis6TVMKQtYjNKDGbGPe6K/Z52JCI
-         03VEfRf3K2Vi8yMxRpvnsmKamn5a3daRQfg6CjMU0z7lfezv6QeiO9UMzqsupudvu2X9
-         YF8y/aldM4TFve6PUiWHWMluRuvHC2eblhkuuIDBL0we7mxhFLSjBM7QmRDh0I/k3BMM
-         WiheE+9tNpsiCRwmNOCtihv/twRyfWMf+lSWmklaHZBVHbdEbrhalpDrDwlpqZ2DJip8
-         YjvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQu/hsjp0iSAWOSiwR5gXAvK1poiDlBfa1KtFHRbPkZoiy7w/KSfd4ia6oucTwyAsKR1nqcAa6OhcUpXE=@vger.kernel.org, AJvYcCV35DqdR0mWbOx8ytyGONeKfXVynK5wBDhLdUebkzFDx94Xm8UXzvvVAqHPjHaKptjS6efN8qjTOKO7@vger.kernel.org, AJvYcCVwVc7KlcFF2fuDxBAru4Gbfd5eySshvooufzOEAuMqHnMlj14rpHzUcUm2E0H1a5J3MwcV65/ZN0WhWgrd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJqtqrpHC9+gQwuK16w4Rx48PHbI+/mSNeL08iO2DrIuXAfz3f
-	VoCr+gh9GpcLTcBCsHvNLo059XUwbvM19tMpKGEKx60L8YUYj5RJnTeF
-X-Gm-Gg: ASbGncuivsLv81mu+5RlAFw6EdwDxkX+4dMgnnxpoPXuahE2NRJUC4QPtFLTYZ2q7r3
-	OYVAq0HzLU0Urcxog/3ajoOKKBZN+ll6F3uojdaSCLDddmTseaqWckw37mG1N0ACOfXlhoxS/95
-	uYZKSHoJmgRzOdZTvWB/Ztbqkq4UqCSa9B2gaRINR2crnXhchjdJHlQW1EIs5ntuxqqhJyXIWP+
-	LAnp8f9S8ASLDEdztyhkG8L/M/z1tyBYhcjrTqlHR00u/aYJn5glaqwnfp1DxNz0Rdw84uSkAmI
-	dq5kPgKQWfn8u6MRjiVN7Iw6ZXiNpOJtItPqoRv6NhoH7QzUge3VQ79cD65B84HeF1h28yVa2+9
-	oeFM/cswNaCKdcl4ddy1yw1fen+0MvUoiwLLeI0lqsm2xSESx0AiSLolPVafTkmY=
-X-Google-Smtp-Source: AGHT+IGWcf0zGjc7ekfR5RDDXj0auhJkplR/XcYdwIEgVWpW8E0z0NQn117liJ9d1gc0MGX41p/OTA==
-X-Received: by 2002:a05:6a00:3d4d:b0:76e:7aba:cb43 with SMTP id d2e1a72fcca58-7723e3ce95amr4798677b3a.15.1756609745251;
-        Sat, 30 Aug 2025 20:09:05 -0700 (PDT)
-Received: from fedora ([172.59.162.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm6593312b3a.18.2025.08.30.20.09.03
+        d=1e100.net; s=20230601; t=1756611815; x=1757216615;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o28MJXIxWOQ5k5vgBDUjnzOPn+n4LfMbzijeAHLWGj0=;
+        b=c9acorXC+bTbVNMf3sBeq4rUPNv9BK5SWrhEPZGPnYPSLUcCFsn3i+0ux1glBiAOV0
+         GeYO+Oy/y/cBCkDAtBpdWpZK6R7MWitXKdP3UgKIdWoTlZNQQnIuVObAkMriEZ0ISyya
+         FQbYYxEdm5XmHv38lSj7hqcIcmSVH3jX9otmpWfwj1lO87gvb6/tRHeihh0AlmuW8/mi
+         YeHLf4pKanGURh0cfPDZ29uzzkqYt75TnwzERHiWksIStBk26DhpuZjr0BKSTbJDqyyo
+         tbqru+z/Ptm3XHSgzys9TDHVzNuXEWIl0ex2btppT3a1xSH7KPOLM6XrRcy13IwjwZ4v
+         /oSg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9IZl3F90hxNeDyayzE3o5JeOWm571BKUQZB2rHYeRyfNsC67ElijohLjxOA5nJ51kkkjgLU+I+qfd@vger.kernel.org, AJvYcCWYTdoj/4XGqhgwn/q6JSDJ5SMQyMhP/VeHXuKGpOVEueUTo6lHntxKNI8HiWdbg39Q6GAq899l6P2B@vger.kernel.org, AJvYcCXWL9IDve6HqgxK15m15z9q0dIFFw3r292Bkgsw9u/FhdJGNO3aH7RJKIpxGJ+gLWPIgRbOH/WuYrEEwQwK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3QJ0Uxw0pPGJuNljT1nus5AAXsIzGecAbULXTJSmRFWIdAGLR
+	B1vN8pt6EMtZniB436iwqsictG2McozHfYfXmllu2BoHAOlp09XuN0oKW+mooIHreZI=
+X-Gm-Gg: ASbGncsjpqTishfe97ovIyhSkf1bYi+1Ml1x0FnlJCaAG0QS9TDStsRK05fra3uX3qF
+	d5ay/6/thOXVQf1kD2xVxa939lPXg+N72WZk9PzwxcAZDLwrSH7sOOWqmixdlX+HU5AXr93JSRs
+	33VweqCR1lqsuFrqehY/ujFyXNDyhqaGgXoK1qbBRdT4UtQysp8KKfvlfe3Gy0l3ifi38o+vN1B
+	kqyro/d72IfwT3iwfsBgSX7bBlqydqeRDrrkXf2DWZP4tuAEE3NK+kwtbVDAbWPOWceWVQOkv25
+	vUNQwK/S/VywjdIokGerIsvCjX8SFnjxwEZT+i1YMdwz5p2dzH6WhM2IMekn5pjTCn9/czRwWJh
+	BoMdG9ShhT6t+qIYJK6Tu191MVRWgaR24xvDotA79stsw0O61eY/wz14mC+Dqai3/a7j2fRVGkt
+	YocruAcA==
+X-Google-Smtp-Source: AGHT+IEGnL7/6l4UZJDjwdfZyfX1leGyM7yvxQ95h54ZDu29KNmGjx9+VWdU4UoG7F3VLufYG2NlTQ==
+X-Received: by 2002:a05:6a00:807:b0:737:6589:81e5 with SMTP id d2e1a72fcca58-77232745936mr4672613b3a.2.1756611814646;
+        Sat, 30 Aug 2025 20:43:34 -0700 (PDT)
+Received: from JSANTO12-L01.ad.analog.com (201-43-64-35.dsl.telesp.net.br. [201.43.64.35])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e3fa1sm6380907b3a.83.2025.08.30.20.43.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Aug 2025 20:09:04 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: broonie@kernel.org
-Cc: lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	shenghao-ding@ti.com,
-	kevin-lu@ti.com,
-	baojun.xu@ti.com,
-	linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH] ASoC: codecs: tlv320dac33: switch to gpiod api
-Date: Sat, 30 Aug 2025 20:08:55 -0700
-Message-ID: <20250831030855.957707-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Sat, 30 Aug 2025 20:43:34 -0700 (PDT)
+Date: Sun, 31 Aug 2025 00:43:27 -0300
+From: Jonathan Santos <jonath4nns@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Michael.Hennerich@analog.com,
+	lars@metafoo.de, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7768-1: add new
+ supported parts
+Message-ID: <aLPE3yiSTReS7B2J@JSANTO12-L01.ad.analog.com>
+Reply-To: 510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org
+References: <20250824040943.9385-1-Jonathan.Santos@analog.com>
+ <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
 
-Changelog:
-- Changed reset GPIO setup that uses 'gpio_request' and
-  'gpio_direction_output' to use 'devm_gpio_request_one' instead 
-  for legacy support.
-- Convert to gpio descriptor for use.
-- Better error handling with 'gpiod_set_value'.
-- Removed cleanup of reset gpio as gpiod api is now used.
+On 08/24, Krzysztof Kozlowski wrote:
+> On 24/08/2025 06:09, Jonathan Santos wrote:
+> > Add compatibles for supported parts in the ad7768-1 family:
+> > 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
+> > 
+> > Add property and checks for AAF gain, supported by ADAQ7767-1
+> > and ADAQ7769-1 parts:
+> > 	adi,gain-milli
+> > 
+> > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> 
+> git send-email v2*
+> 
+> Not patch by patch. You made it very difficult for us to review and to
+> apply.
+> 
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- sound/soc/codecs/tlv320dac33.c | 56 +++++++++++++++++++++++-----------
- 1 file changed, 38 insertions(+), 18 deletions(-)
+Sorry, i will pay more attention
 
-diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
-index 423b9264a..b8e833efb 100644
---- a/sound/soc/codecs/tlv320dac33.c
-+++ b/sound/soc/codecs/tlv320dac33.c
-@@ -15,6 +15,7 @@
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <sound/core.h>
-@@ -109,6 +110,8 @@ struct tlv320dac33_priv {
- 
- 	enum dac33_state state;
- 	struct i2c_client *i2c;
-+
-+	struct gpio_desc *power_gpiod;
- };
- 
- static const u8 dac33_reg[DAC33_CACHEREGNUM] = {
-@@ -383,14 +386,28 @@ static int dac33_hard_power(struct snd_soc_component *component, int power)
- 			goto exit;
- 		}
- 
--		if (dac33->power_gpio >= 0)
--			gpio_set_value(dac33->power_gpio, 1);
-+		if (dac33->power_gpio >= 0) {
-+			ret = gpiod_set_value(dac33->power_gpiod, 1);
-+			if (ret < 0) {
-+				dev_err(&dac33->i2c->dev,
-+					"Failed to set reset GPIO %d: %d\n",
-+					dac33->power_gpio, ret);
-+				goto exit;
-+			}
-+		}
- 
- 		dac33->chip_power = 1;
- 	} else {
- 		dac33_soft_power(component, 0);
--		if (dac33->power_gpio >= 0)
--			gpio_set_value(dac33->power_gpio, 0);
-+		if (dac33->power_gpio >= 0) {
-+			ret = gpiod_set_value(dac33->power_gpiod, 0);
-+			if (ret < 0) {
-+				dev_err(&dac33->i2c->dev,
-+					"Failed to set reset GPIO %d: %d\n",
-+					dac33->power_gpio, ret);
-+				goto exit;
-+			}
-+		}
- 
- 		ret = regulator_bulk_disable(ARRAY_SIZE(dac33->supplies),
- 					     dac33->supplies);
-@@ -1500,14 +1517,22 @@ static int dac33_i2c_probe(struct i2c_client *client)
- 
- 	/* Check if the reset GPIO number is valid and request it */
- 	if (dac33->power_gpio >= 0) {
--		ret = gpio_request(dac33->power_gpio, "tlv320dac33 reset");
-+		ret = devm_gpio_request_one(&client->dev, dac33->power_gpio,
-+					    GPIOF_OUT_INIT_LOW,
-+					    "tlv320dac33 reset");
- 		if (ret < 0) {
- 			dev_err(&client->dev,
--				"Failed to request reset GPIO (%d)\n",
--				dac33->power_gpio);
--			goto err_gpio;
-+				"Failed to request reset GPIO %d: %d\n",
-+				dac33->power_gpio, ret);
-+			goto err;
-+		}
-+
-+		dac33->power_gpiod = gpio_to_desc(dac33->power_gpio);
-+		if (!dac33->power_gpiod) {
-+			dev_err(&client->dev,
-+				"Failed to get reset GPIO descriptor\n");
-+			return -EINVAL;
- 		}
--		gpio_direction_output(dac33->power_gpio, 0);
- 	}
- 
- 	for (i = 0; i < ARRAY_SIZE(dac33->supplies); i++)
-@@ -1518,19 +1543,17 @@ static int dac33_i2c_probe(struct i2c_client *client)
- 
- 	if (ret != 0) {
- 		dev_err(&client->dev, "Failed to request supplies: %d\n", ret);
--		goto err_get;
-+		goto err;
- 	}
- 
- 	ret = devm_snd_soc_register_component(&client->dev,
- 			&soc_component_dev_tlv320dac33, &dac33_dai, 1);
- 	if (ret < 0)
--		goto err_get;
-+		goto err;
- 
- 	return ret;
--err_get:
--	if (dac33->power_gpio >= 0)
--		gpio_free(dac33->power_gpio);
--err_gpio:
-+
-+err:
- 	return ret;
- }
- 
-@@ -1540,9 +1563,6 @@ static void dac33_i2c_remove(struct i2c_client *client)
- 
- 	if (unlikely(dac33->chip_power))
- 		dac33_hard_power(dac33->component, 0);
--
--	if (dac33->power_gpio >= 0)
--		gpio_free(dac33->power_gpio);
- }
- 
- static const struct i2c_device_id tlv320dac33_i2c_id[] = {
--- 
-2.51.0
+> > ---
+> > v2 Changes:
+> > * adi,aaf-gain property renamed to adi,gain-milli. Description was 
+> >   simplified.
+> > * default value add to adi,gain-milli.
+> > ---
+> >  .../bindings/iio/adc/adi,ad7768-1.yaml        | 43 +++++++++++++++++--
+> >  1 file changed, 39 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> > index c06d0fc791d3..0c39491f6179 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> > @@ -4,18 +4,26 @@
+> >  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
+> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  
+> > -title: Analog Devices AD7768-1 ADC device driver
+> > +title: Analog Devices AD7768-1 ADC family
+> >  
+> >  maintainers:
+> >    - Michael Hennerich <michael.hennerich@analog.com>
+> >  
+> >  description: |
+> > -  Datasheet at:
+> > -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> > +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
+> > +
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
+> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
+> >  
+> >  properties:
+> >    compatible:
+> > -    const: adi,ad7768-1
+> > +    enum:
+> > +      - adi,ad7768-1
+> > +      - adi,adaq7767-1
+> > +      - adi,adaq7768-1
+> > +      - adi,adaq7769-1
+> >  
+> >    reg:
+> >      maxItems: 1
+> > @@ -58,6 +66,18 @@ properties:
+> >      description:
+> >        ADC reference voltage supply
+> >  
+> > +  adi,gain-milli:
+> > +    description: |
+> > +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
+> > +       ADC input (in milli units). The hardware gain is determined by which input
+> 
+> 
+> I don't think there is no such thing as "milli units". milli is SI
+> prefix, not unit. So "units" is the unit? Or how exactly?
+> 
+> Basis points were before since 2022 so I don't get why these other
+> bindings introduced in 2024 could not use it?
+> 
+> Anyway, if you ever do not apply reviewers comment, then your commit msg
+> should explain this. Otherwise you get the same discussion here.
+> 
 
+Yes, you are right. We shouldn't use milli as suffix. However, may I
+suggest another option?
+
+I believe -permille is more appropriate because it represents a 1/1000
+proportion, which gives the precision we need to cover all values.
+
+so it would be something like: adi,aaf-gain-permille
+
+Is that ok for you?
+
+Thanks for the feedback,
+Jonathan S.
+
+> Best regards,
+> Krzysztof
 
