@@ -1,163 +1,138 @@
-Return-Path: <linux-kernel+bounces-793239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B226FB3D0F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 06:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D69CB3D0EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 06:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E967AD1C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:56:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 483B37A9D83
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3655822069E;
-	Sun, 31 Aug 2025 04:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38421D5AA;
+	Sun, 31 Aug 2025 04:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b="UjewcU/2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k+Y7ITmh"
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h78myz8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5937261D;
-	Sun, 31 Aug 2025 04:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2A81C27;
+	Sun, 31 Aug 2025 04:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756616256; cv=none; b=n+d4fINVjze/njidc2uIJfkjzHs54tubOqMbWLeOVJv4+z3EG7LEuX1C77FY1SwIkgk1dkeiBhgIRlhi/JCDry0ThMlhgKGLZ+/twlkfo92Pr3UdtbPkKvCFW9FQoOG+25OkWffZ/pSRN6P7JyMpw8i+1sS1fjmd6L5nNSfLgtc=
+	t=1756615652; cv=none; b=UF2jbvKhYYuXH9ZchSTAY2nhJZY9vIs4QzLU7+iqLFIFen7PirBo9KiDUNdGtWDaqhgNk6x6HcEg0AFZGcL6r9YZt+TJZ3Nkgn5Xck1bCfbqYVvriPl6HOyeDdqJHbr4pjNOSsGz28fQZ1OTsdhfmHFYlXPwG5xIg7i64YFGnW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756616256; c=relaxed/simple;
-	bh=ZgdvW6GgvJ1Gj0JKAawiJAVU5WNBvXuwI8BkRynFXcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fNls5JOwVvILrUwP7C06CyyEqgRA2QilvC8GWKqqLRsjbYtA1bO3sVOWFTfZL7VP9wEu+2fsp4HokCeWcS5YqNA7yMdErcek+NW3nlXEFM/eIlvZgoQ+6vxe2MBS4XwHWVcWM2jR5X232PyFeguHMsVNp3yO63VLnDgk9GUEK5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com; spf=pass smtp.mailfrom=debanilchowdhury.com; dkim=pass (2048-bit key) header.d=debanilchowdhury.com header.i=@debanilchowdhury.com header.b=UjewcU/2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k+Y7ITmh; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debanilchowdhury.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debanilchowdhury.com
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailflow.phl.internal (Postfix) with ESMTP id 5323E138027B;
-	Sun, 31 Aug 2025 00:57:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Sun, 31 Aug 2025 00:57:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	debanilchowdhury.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm1;
-	 t=1756616252; x=1756619852; bh=EWxmYn7csugiS8y3bY0p8+D1k3LgZQJI
-	gdJXipDGzfY=; b=UjewcU/28O6nJ39u9OMTxzFMuFZEGZQzY8XzurdIQYNmWjsh
-	JRu0hp3xtF/SOan11vtoDZZR658llIDw/ge+0XK/rquqlat4paZIpZzQcR3WpolL
-	0B4O+HkLNBSBCCgQMe/aMwozsyrshk1z6XTteKempvwgk8O8nujWXcEv5lNL9Iw2
-	g7m9UkH6wS6bg2bPpm/p2MYlrtJjNhrHyFqm/B17817pHBRVVdn7Bzz71zkAbAA5
-	nWDbZeaMe2ECYTPYyajbj8mhuZn/7TDf2ZoTiEA4IeUPIJWpwkCy87Qq2DXPcny9
-	Dn6MicmTtfJxmdNgnzJo9Pp0K5FklDwM2rvBxg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1756616252; x=1756619852; bh=EWxmYn7csugiS8y3bY0p8+D1k3Lg
-	ZQJIgdJXipDGzfY=; b=k+Y7ITmhp6wWsmVi7PSGvsnQB5q9JnbNLqf5SSqm5zRp
-	OJGjn+4HY4VQvTNBrZ54Zk8sih3VuRsn/V1i/ZxkHhMad2JP2TraYKRPrcHjVJCN
-	NCPiG4ojZv9kJb4Q7c3OSTDPathm24is/isEcQ1IQfCdqPocHQQCR5N2W2kqfRiR
-	WIW+aW7WTUCGLfzIuO9QiQvdwzmo4CR0cV2dLLWEyIXfRYp09Dy+HM7THFgDgGqF
-	VagXAVVPt6R17/Um/b1lvKh3Aj/LuFa0L27NbX4Hz8nhdo0KbW54eFuovnFFxIN8
-	gg9AazPcMP2ITzgPTj4i2qL+2qBgTBQga46cKUEe6g==
-X-ME-Sender: <xms:O9azaCy4mdIlWtz4ZTFXOx649xsNKMJzswt3EKZvqWBc-b3s0dv8pQ>
-    <xme:O9azaG42ya4x4-EGlvdvWybMRbuXfQKaLgwWFb9_vVeYs9_uKYcYlVEqqYOZ1N4qP
-    8lLdd-_QJnz1weLRz0>
-X-ME-Received: <xmr:O9azaLzT37qO9rWtI2r0WKT7WJV0n2QkmarMTXuigeWByFI5N8K3QyHgbOwlnULEtnat5QPTOg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeekfeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffogggtgfesthekredtre
-    dtjeenucfhrhhomhepffgvsggrnhhilhcuvehhohifughhuhhrhicuoehkvghrnhgvlhgu
-    vghvseguvggsrghnihhltghhohifughhuhhrhidrtghomheqnecuggftrfgrthhtvghrnh
-    epuddtfefgffffiefgtddugeefvdeuteefhfeltdeuieejvdeludetveettdetheefnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhgvrhhnvg
-    hluggvvhesuggvsggrnhhilhgthhhofiguhhhurhihrdgtohhmpdhnsggprhgtphhtthho
-    pedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhinhgrugeslhhinhhugi
-    drihgsmhdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphht
-    thhopehjuggvlhhvrghrvgesshhushgvrdgtohhmpdhrtghpthhtoheplhhinhhugiesrh
-    hovggtkhdquhhsrdhnvghtpdhrtghpthhtoheplhhinhhugidqhhifmhhonhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhkhhgrnheslhhinhhugihfohhunhgurg
-    htihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggv
-    sheslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:O9azaCcqo7LBaUhSiCmPvYtTSKLBEO5KCZZ92LH05pAhZfQVlyQbUQ>
-    <xmx:O9azaIBnfRJc1QZXgv9bgS0VY0PeqP3ne42Kzl-xblr2kxYbZPJLjA>
-    <xmx:O9azaO5Ks7xpMaJhoQ-g8nZY1KCv8iNLBZirMi6KS75Y580IqoHjng>
-    <xmx:O9azaJf4vhezExlJjSNEeyZFt5Nvd9kjd1P2G7jWSqA1ahILQ_5YaA>
-    <xmx:PNazaO3oJCdaKZEDTqHJiA8IszZT1rRyxfqH8U-9wauUXwtGVQTcLeZi>
-Feedback-ID: i77364836:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 31 Aug 2025 00:57:27 -0400 (EDT)
-From: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-To: ninad@linux.ibm.com,
-	corbet@lwn.net
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Debanil Chowdhury <kerneldev@debanilchowdhury.com>
-Subject: [PATCH v4] hwmon: crps: Fix typos in crps.rst documentation
-Date: Sun, 31 Aug 2025 04:45:54 +0000
-Message-ID: <20250831045710.6009-1-kerneldev@debanilchowdhury.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1756615652; c=relaxed/simple;
+	bh=6Xi0K/W1KlUqGgnI90gdjqSztDt8V0ZroZtXizA2odk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fS2fYLTevbXrcVEF09IX56DJTxikQM5FUwsIbmUbq4SC2yZrF8iQzHP3+zlhDwgpRvJpwmsdOo91MUAeQ2uJgpTJzpL+Wh1ilch37zkwxTnCU5+EHvUjjk54kZ0oOPV8pwkKEs4/ppsjCib026upYqcRTYBTUu5DaBIUocwMdu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h78myz8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A24C4CEED;
+	Sun, 31 Aug 2025 04:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756615652;
+	bh=6Xi0K/W1KlUqGgnI90gdjqSztDt8V0ZroZtXizA2odk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h78myz8E/Lpqgkb404MXDyQ/h2vz9IJzk7/Lt2Znqe2z85N0/RPULaLIFOYcqv0na
+	 +w7EGs1z14rGeD2aek2/SzcqxSAyeklS9eFRK3qDFVedB29fPEuRtWf0LsFJ5brZAn
+	 tqn5/CesHRJOLDD5LLq20N36zjSQpUzB1Y/bmqSFHtfvBnL5GLiQLbRIUSrhzfzWvA
+	 QXa2Be4BBwAiQq+ko+LdqTI/Yiv01Kf/6Uq2xORVlmjkgbOypgIf8K9x9vgRXV63pE
+	 fiFyrw8smWQCVJgueeXQSiR2dOHLL9o0kQk3jBMBWzOdlTfJ3tW5snqY44yf0sXZ09
+	 7cidFvqdI8GwA==
+Date: Sun, 31 Aug 2025 10:17:19 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: kwilczynski@kernel.org, u.kleine-koenig@baylibre.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, bwawrzyn@cisco.com, 
+	bhelgaas@google.com, unicorn_wang@outlook.com, conor+dt@kernel.org, 
+	18255117159@163.com, inochiama@gmail.com, kishon@kernel.org, krzk+dt@kernel.org, 
+	lpieralisi@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
+	s-vadapalli@ti.com, tglx@linutronix.de, thomas.richard@bootlin.com, 
+	sycamoremoon376@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org, sophgo@lists.linux.dev, 
+	rabenda.cn@gmail.com, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, 
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Message-ID: <qyr73crraruct5dgxfko75gv2mrrxxolkzqnu3bngfelcobgfa@wc4rrzfs27gp>
+References: <cover.1756344464.git.unicorn_wang@outlook.com>
+ <c9362bb49e4d48647db85d85c06040de8f38cb83.1756344464.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c9362bb49e4d48647db85d85c06040de8f38cb83.1756344464.git.unicorn_wang@outlook.com>
 
-Changed a misspelling in crps.rst documentation:
-"Critial" → "Critical".
+On Thu, Aug 28, 2025 at 10:16:54AM GMT, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Add binding for Sophgo SG2042 PCIe host controller.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  .../bindings/pci/sophgo,sg2042-pcie-host.yaml | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> new file mode 100644
+> index 000000000000..2cca3d113d11
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/sophgo,sg2042-pcie-host.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sophgo SG2042 PCIe Host (Cadence PCIe Wrapper)
+> +
+> +description:
+> +  Sophgo SG2042 PCIe host controller is based on the Cadence PCIe core.
+> +
+> +maintainers:
+> +  - Chen Wang <unicorn_wang@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,sg2042-pcie-host
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: reg
+> +      - const: cfg
+> +
+> +  vendor-id:
+> +    const: 0x1f1c
+> +
+> +  device-id:
+> +    const: 0x2042
+> +
+> +  msi-parent: true
+> +
+> +allOf:
+> +  - $ref: cdns-pcie-host.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - vendor-id
+> +  - device-id
 
-Found using codespell tool.
+Why are these IDs 'required'? The default IDs are invalid?
 
-Signed-off-by: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
----
-Changed in v4:
-- As per guidelines "Reported-by:" should be immediately followed
-  by "Closes:" with a URL to the report. Since this was locally
-  found, there is no URL. Also since this is just a trivial typo
-  fix, I am just dropping the "Reported-by:" tag.
-  
-Changed in v3:
-- Update subject to correctly identify crps driver documentation 
-  (suggested by Guenter Roeck)
+- Mani
 
-Changed in v2:
-- In previous patch "From" header did not have my name in it. Fixed
-  that.
-  
- Documentation/hwmon/crps.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
-index 87380b496..d42ea59d2 100644
---- a/Documentation/hwmon/crps.rst
-+++ b/Documentation/hwmon/crps.rst
-@@ -43,7 +43,7 @@ curr1_label		"iin"
- curr1_input		Measured input current
- curr1_max		Maximum input current
- curr1_max_alarm		Input maximum current high alarm
--curr1_crit		Critial high input current
-+curr1_crit		Critical high input current
- curr1_crit_alarm	Input critical current high alarm
- curr1_rated_max		Maximum rated input current
- 
-@@ -51,7 +51,7 @@ curr2_label		"iout1"
- curr2_input		Measured output current
- curr2_max		Maximum output current
- curr2_max_alarm		Output maximum current high alarm
--curr2_crit		Critial high output current
-+curr2_crit		Critical high output current
- curr2_crit_alarm	Output critical current high alarm
- curr2_rated_max		Maximum rated output current
- 
 -- 
-2.47.2
-
+மணிவண்ணன் சதாசிவம்
 
