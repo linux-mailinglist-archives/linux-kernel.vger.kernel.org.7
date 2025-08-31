@@ -1,176 +1,140 @@
-Return-Path: <linux-kernel+bounces-793480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D36DB3D419
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:14:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09828B3D41C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338337A4128
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762E818910B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C94A26E6E4;
-	Sun, 31 Aug 2025 15:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5A42080C0;
+	Sun, 31 Aug 2025 15:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mlJgERT6"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2061.outbound.protection.outlook.com [40.92.42.61])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxXcvXzW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09DE269CE6;
-	Sun, 31 Aug 2025 15:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756653281; cv=fail; b=YHB3Pyf43U28Vyl6cbO/fJMU34+y+KOtjnSEDV0DRr/ENpKSn907eJTImKSqGh2aHQKUo0LLImRkkM3FP4JUxzI843ZQGwNiqteGYtPs6EzSJogM2O9qBkZZeHyJGfTdkO6NZ8pJSN3syD5ABDfJkr9a+U9n/3T1SYNe5s1lNKk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756653281; c=relaxed/simple;
-	bh=MY1SvPKDg8qQ4nzczdAwAyvOgAqnydSGNNJPLtgBsSc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lApEXOw+jWeSOexU9aX40LtrhZARD75WyQfLz4EUoyKFCA0NYgWAg0B8/KqZ4mrx7toB5F1BS8VKSzFHZQITxtFgT/58eoF9HXsJvYmrKrub8ikpUb1I0kzxSPAmDW7epgl9fjglTmJhchpoXM26i65VLJaiJlRATbRpMELBo8Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mlJgERT6; arc=fail smtp.client-ip=40.92.42.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N82JmUc+YOdO9mfljgbkiVVi0oBE3q0L0Yvox3B6XVgLXPf2yUiXTvGsOws5FiYe0Co0cVaif4aXnx3uKSNndSiLeSNo2PhQD8tZl1RsJINVkicy66+xl7Bb2sLi97uZbSUTWuJBn1Lkw4A/r5g8Y2y+EKRx5DpTHchMjm8nVXMg4FTByGTQDoa2Ds+C36cCr59ioBxKPKrVyTxGiGFPEeA/aLNO0XHcO7Ci20wBzoIU1w2xOoOs11uqGvzivxy5a6B4eppgZaUd34hjP/BOuB89mUc4Ss6+N4dcUkMO/e+gEg1WHBJ4cRWxIZSiZNZa0i8xhGMsDlF5gug+JUAZMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AEAFKslf6ckmSUz5yaPTc1oUWUS6XLWngdnwHsqI3fI=;
- b=nunHYjcR5B7oPH0Kwo35XZ9eY4SjdBXjJdJ0Z/oQpbH+uKzjJEQqqexD5+6ZlrZ8f8KuPv6eqvaefxPraes2Y+PgnBCi3NMEPfQaj6vzkYxHoJVi8ORGhm+TnKNmSovZ/BX0kNKSuCkfciuQ7b/Rvuyu+5pvEleCJ4VXAYMMLCjh+7gKDpKv0aw7/6iCqYW6nPu3yxzca/i2LrxLiX6ujvxfBbSd+BsFuD9wR8xY+3abQwhQqrJ17mdLBkzgzI5Y6+Zmyepv0hd5a7vj65myKjEc3TKDhOpWJnK2BkJkBFh1gmDlaKQ2DorGPnyobcao9rizinSnKf25KhF6lKWvTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AEAFKslf6ckmSUz5yaPTc1oUWUS6XLWngdnwHsqI3fI=;
- b=mlJgERT6u6hSdpcARBj87zdNfRCunfCw5YkkEq7CoxHBQDSaqiIQ5XjVwUKDD1jTTdeYuZbrjNDIC9zQV42wCtl05HvhOhYhC5cZfjoNpGf3XMThTcX4n02tCz//rUI5VA5NVHSAl9CRbqadQ58OE+4CjN8Pt+0j0YUpuvkxF+Uhp4YGcMoN0Bm1zQAp4Zwu1vlY7HReVGZfPP6ofkVZtq2fbt52/bIChNfJ4fBfGfyHDuBgjiV0t1rNx23S2mYgbT4i7g3/c2POCm2NFi4p+lXzIO9jl3/fA/oSENmEBT0skdLNqbNHO2qsBRl9sB6IGNUOehHMJzHsEh3Dxu2o2A==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DM3PR02MB10273.namprd02.prod.outlook.com (2603:10b6:0:46::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.27; Sun, 31 Aug
- 2025 15:14:38 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.9052.019; Sun, 31 Aug 2025
- 15:14:38 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>
-Subject: RE: [PATCH] fixup! mshv: Add support for a new parent partition
- configuration
-Thread-Topic: [PATCH] fixup! mshv: Add support for a new parent partition
- configuration
-Thread-Index: AQHcGSIJjdvxnEFq5EOgHk4XZb0OrrR84Tpw
-Date: Sun, 31 Aug 2025 15:14:37 +0000
-Message-ID:
- <SN6PR02MB4157682D9C40AF8C00D89399D404A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <1756498672-17603-1-git-send-email-nunodasneves@linux.microsoft.com>
-In-Reply-To:
- <1756498672-17603-1-git-send-email-nunodasneves@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM3PR02MB10273:EE_
-x-ms-office365-filtering-correlation-id: b269ea1c-9773-4cac-da8f-08dde8a11a06
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599012|8060799015|19110799012|13091999003|461199028|31061999003|41001999006|15080799012|3412199025|40105399003|440099028|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?l/DyqJQ/ZEZnofw46yxaY8/YCsOSsZxbALu+RgB1WnbZcrqPcau0Ic3NR0Ip?=
- =?us-ascii?Q?mVwYuJMiRUstuoggwVGLE8WiJj90j62vQyv5Z4HFS5RRPkKVLsOwvEq7ED/e?=
- =?us-ascii?Q?SloeJpIfCxXOvOs2WAbsEW0ND44ABvl45iw5xGjjApenaj0pp9AVilQ1amoq?=
- =?us-ascii?Q?XDU5GNiwxb0qROJKFO14UBWvHOxftBcrwnxuGI6JsvsEzSSnUIUCqJr2SQDi?=
- =?us-ascii?Q?WIbHP7CWbxkd17KM4U6ZxS2zYdvKyQFJVi9jBxuID33Fb7jRQ7GU+2n9D8iB?=
- =?us-ascii?Q?tEfgkMVAQI8F+zZXCnTTmU9p44YpQ9wl9agdJ4/ASU4qAHcAFBdWAl/6ogGq?=
- =?us-ascii?Q?F+zRq7gI5Cf+z3TmRehLpVdNHYsZFgnO/1wknjk1fJwWeFCrGcIKgye7eSCV?=
- =?us-ascii?Q?DlTFO+pqCy/kqBR/fjWg9Oby9753BcVWNW2Xj7/Fzq/ACGm0RFhvPo2+47aq?=
- =?us-ascii?Q?8L7BsHatkiz0ruPz5i9BHoVgMDQhdLRtY5eisOyzFCrvlHH5xR6XD10v0zkw?=
- =?us-ascii?Q?DMQSD2Sl+LFv7DysUASbJu/JyM6QzzQJh7NwGOFGWM7p4k2X9/lbzdBo+KJp?=
- =?us-ascii?Q?O4B3wz/kZbDH6f5Am1W1mmuXkb+Uba3MnagQEcKUfw34adpqfe6tq5awuobR?=
- =?us-ascii?Q?n+iAmJE5Op5bHJc9aQWfejST5x18h3dD/uFs6pqCnA2LIy25v6DRMvoMEmPK?=
- =?us-ascii?Q?kVHliOFO9A7d6p8K+mcrQPpRIDa/HmXc0llIbyu7AA/8klYmNPTX1+4c5hOa?=
- =?us-ascii?Q?akDddQb10kMPSSPS8yXmwf4EmHUkyXuFxdLQALHwB3JjpOdnNr53214jtKhb?=
- =?us-ascii?Q?LPqOf0h/ehvlcl1X+LusP1zlonYKzx+hp5YLWEkCA+kEDbuSj3ytPXDnUB2K?=
- =?us-ascii?Q?nb2b0fSLxyZrZdk7k6I86PSARV1ZNY6aCSQJFQF2PNbiRqtoHTMi2WdD7REk?=
- =?us-ascii?Q?7lgT8ykL0SlZ1WC8S/Hdz4anJJwiDLK/2qfhQbY3pBD2GWKOju7tLfzJaBQs?=
- =?us-ascii?Q?EuCJ2tePFMoDLdH+ECknn+HlYZHEIWjDMDDCawqvtKJwcCdlAawZT9Jdttb1?=
- =?us-ascii?Q?Bq7/SiE4aGwWsecF8vGsZpUnYCtnleOT1lMfGPFrbTtWLIH/2+7iZX7+5DKD?=
- =?us-ascii?Q?yUYyNelku0QoTROwxUrwMsSZAGMZfCrZe7byfz/HWe2IT0z84Fqbz6azQhvX?=
- =?us-ascii?Q?oul2lVcZUtjZ4aAKV+qx7luCKVwP0AYzTNJVNA=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?u8PowvVwWV9aKYY5F6bYbUnj/7X0GU3rjWrMPcVFqz2VgK6JoxF02+p8jGgG?=
- =?us-ascii?Q?15dH+F4qxFm9aay4/GxoEDHxtjAjlmRp3B53cxHcn6rLCoY68v/wSETEeFHC?=
- =?us-ascii?Q?jkr3QGQh2mTZrWlVib5KlyNKehdTe4BGNEK8vS4TUl6/NW2J2Ok5L1bhXr/C?=
- =?us-ascii?Q?lClT99oHS+uisjWbXGfRyqb2OmxHQ6AaAAC/i1iFSkLeEEuOkqYpJDLUaMAH?=
- =?us-ascii?Q?fP2OShMaT64PumxoHq2TR112qlKZRXbVtGqP6kt9ecaNsEBGVLcw0XzgGEvi?=
- =?us-ascii?Q?TguhzQLZFTxYo2GUMyYjzTISzaVUPhPXEjqOXgpYyDND1dDkk5FfsqavlqbS?=
- =?us-ascii?Q?1xrh9Ch200do0r6OjYNJ9LoIv+e4U1RbvzFwtzE04TlfVIAVVCkzuPDXMn1r?=
- =?us-ascii?Q?jdzanPArsj/pVh/MvGh+snormuUmTzQ5ivkeNccJzPlTjCK8n9H+ZLZ/Kz9W?=
- =?us-ascii?Q?tEqm4mOooa6a/sN5wdWqQVNXXE0f8CnpxINmDciQL7QUlN2DBb9FmXX1wAsq?=
- =?us-ascii?Q?wH2XLPegvhxS7uZLwZhlPlrEo6BwvuBTxcF9p8TNLmjFAmW2wmc7RNbfYtI4?=
- =?us-ascii?Q?GltPXbqwUIjrZv5CfaDwnc39YwMwsN+zjPphO5IJ6xWAAAFWVtlmkYqoFL6F?=
- =?us-ascii?Q?ctykmOtj5ge/MeLg+VOT1nPfBODybGKR1/kH+cH0CRhCwMjZ7c33+XnxCCpW?=
- =?us-ascii?Q?UJ607MmF0W4zNz6Kx3z+bgISHkdIyBJXKPzTMl6dMVboSCl6IAoh4UbwJjTM?=
- =?us-ascii?Q?p/aiHi4Otu1OX+QoWKKnLncwTZvADUJVqpgYVgpuAPUmbizREumZCOyG+krh?=
- =?us-ascii?Q?uYOfDOrOKEvS0NKj99eueIzcrcFupci0qf0NmLn7KJeKvcZnxl10YFWhJ0nO?=
- =?us-ascii?Q?ZyWw9bWatbVz3aKUgUWlNLALppXU6wwXHaBuEuOxJzJivmtGZayFvIR5L2k5?=
- =?us-ascii?Q?NABTUiPD7rFAtwNxV/KCAv5MeUMJ14yFfEXOUmH6H4KSiEwwi6DMl3PJOmzD?=
- =?us-ascii?Q?KR3uJJYL2JwzzzbF2TzIWMIUmIQMRE8DBUK7IdnlbaHsPUmiDiYJ06esPHdS?=
- =?us-ascii?Q?ybZ9j4asx1wYARrdVRylYn5mC3QsFZNMmV0bOQdpuemcOhOHxgbvlDfQkQDr?=
- =?us-ascii?Q?bS3m0bau9HaADACdrJK1+IDSifj3LC8DhwgMGMT3gWeunuCloIIwv1y6YQiE?=
- =?us-ascii?Q?w7bY2JXBiiLfKDfG6nUoQF4ExloXmdxFu3ggra6r0yQRgt9laetfN1lNKo4?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74EF9C1;
+	Sun, 31 Aug 2025 15:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756653559; cv=none; b=dFiE53bYAO0KpoA7+slwykIkRfYqmfkNG3aCJaqE6yXShR3qBQvWdAg4VibwccsAJoGH3elqWvR0/nSCIXB3YXCag4rmeYUKu15/WrC5tMi/JZ4x8ew0qrqPKQvwLnTY3+eTy0xa1uBX9d60JLnjQZMd4v5CTBs20ml37lA5bjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756653559; c=relaxed/simple;
+	bh=k5YZDIOppyOF38dq64awhf4ryTjgDCmFCyXppZD/UM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NlHE+il4zu7pg0tHzpkdRhaFd72z5DDVzo2dyQnXSbdae4NBYShIlQVUQOi8kSRzg6dAn3yZXa4p3dPPCwyv7N8IKf0fskqW0AHEnVUopeCVEbFbh0jDiFy0ho2820TMmrH3mPcHZRtXZ8oimguDsA36wDPb0nT10ff2gHRsVgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxXcvXzW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D363C4CEED;
+	Sun, 31 Aug 2025 15:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756653558;
+	bh=k5YZDIOppyOF38dq64awhf4ryTjgDCmFCyXppZD/UM0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bxXcvXzWReOQNLCeTsMYBnzew4uVjTNuOt9hnNDhuM+FbGuZAChutQsOH3axImH0k
+	 OlC8lUYeRJDCTmACu7MT2geiIqGjMSnIsi4Nwd93kn3GroYemd3RZonfXbFDQU1IwK
+	 1civbB6stT7qmsVPfORp+m9gOgrgYkHCkuwXQYoQUUHiG48n6/7Zu0TvcvLwt7UFYB
+	 qeGOohwgDnYUKjP+7Rh3szxlrEOwKjQ36//0Ci+3qHXbHD0YFa7mkjSYDU69+Ce/Gg
+	 ylaOSrVl5GXMwY/NFVjZ/FhJWs9hnP2r0y8BP9a7UB8mAumo5XHUvOLYFYhSVf401H
+	 eIjjeUVg0OSXg==
+Date: Sun, 31 Aug 2025 16:19:09 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ben Collins <bcollins@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] iio: core: Add IIO_VAL_EMPTY type
+Message-ID: <20250831161909.1bc5872a@jic23-huawei>
+In-Reply-To: <2025082614-passionate-panther-8016ba@boujee-and-buff>
+References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
+	<20250825-mcp9600-iir-v7-1-2ba676a52589@kernel.org>
+	<9fd7f08f-51cc-4155-a5e2-c6ba2f1c4897@baylibre.com>
+	<2025082614-passionate-panther-8016ba@boujee-and-buff>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b269ea1c-9773-4cac-da8f-08dde8a11a06
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2025 15:14:37.9993
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR02MB10273
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, Augus=
-t 29, 2025 1:18 PM
->=20
-> ---
->  drivers/hv/hv_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index 8836cf9fad40..e109a620c83f 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -257,7 +257,7 @@ static void hv_kmsg_dump_register(void)
->=20
->  static inline bool hv_output_page_exists(void)
->  {
-> -	return hv_root_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
-> +	return hv_parent_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
->  }
->=20
->  void __init hv_get_partition_id(void)
-> --
-> 2.34.1
->=20
+On Tue, 26 Aug 2025 14:52:27 -0400
+Ben Collins <bcollins@kernel.org> wrote:
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> On Tue, Aug 26, 2025 at 12:00:05PM -0500, David Lechner wrote:
+> > On 8/25/25 7:10 PM, Ben Collins wrote:  
+> > > In certain situations it may be necessary to return nothing when reading
+> > > an attribute.
+> > > 
+> > > For example, when a driver has a filter_type of "none" it should not
+> > > print any information for frequency or available frequencies.
+> > > 
+> > > Signed-off-by: Ben Collins <bcollins@kernel.org>
+> > > ---
+> > >  drivers/iio/industrialio-core.c | 1 +
+> > >  include/linux/iio/types.h       | 1 +
+> > >  2 files changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > > index 159d6c5ca3cec3f5c37ee9b85ef1681cca36f5c7..e4ff5b940223ab58bf61b394cc9357cd3674cfda 100644
+> > > --- a/drivers/iio/industrialio-core.c
+> > > +++ b/drivers/iio/industrialio-core.c
+> > > @@ -702,6 +702,7 @@ static ssize_t __iio_format_value(char *buf, size_t offset, unsigned int type,
+> > >  	case IIO_VAL_INT_64:
+> > >  		tmp2 = (s64)((((u64)vals[1]) << 32) | (u32)vals[0]);
+> > >  		return sysfs_emit_at(buf, offset, "%lld", tmp2);
+> > > +	case IIO_VAL_EMPTY:
+> > >  	default:
+> > >  		return 0;
+> > >  	}
+> > > diff --git a/include/linux/iio/types.h b/include/linux/iio/types.h
+> > > index ad2761efcc8315e1f9907d2a7159447fb463333e..261745c2d94e582bcca1a2abb297436e8314c930 100644
+> > > --- a/include/linux/iio/types.h
+> > > +++ b/include/linux/iio/types.h
+> > > @@ -32,6 +32,7 @@ enum iio_event_info {
+> > >  #define IIO_VAL_FRACTIONAL 10
+> > >  #define IIO_VAL_FRACTIONAL_LOG2 11
+> > >  #define IIO_VAL_CHAR 12
+> > > +#define IIO_VAL_EMPTY 13
+> > >  
+> > >  enum iio_available_type {
+> > >  	IIO_AVAIL_LIST,
+> > >   
+> > 
+> > This is an interesting idea, but I think it would be a lot of work
+> > to teach existing userspace tools to handle this new possibility.
+> > 
+> > On top of that, I'm not quite convinced it is necessary. If a numeric
+> > value is undefined, then there is already a well known expression for
+> > that: "nan". Or in the case of this series, the 3dB point when the
+> > filter is disable could also be considered "inf". Using these would have
+> > a better chance of working with existing userspace tools since things
+> > like `scanf()` can already handle these.  
+> 
+> I'm ok with "inf", but then would there also be an "inf" in available
+> frequencies?
+> 
+> This would take us all the way back to where I could just not even need
+> a filter_type==none and make the 3db available values:
+> 
+> { inf, 0.5xxx, ... }
+> 
+> And inf would just be the filter is disabled.
+> 
+
+Definitely an interesting concept and with appropriate documentation
+additions I rather like it.  What particular formating of INF do
+fscanf and friends accept?  looks like it's the strtod() man page
+which says INF of INFINITY (disregarding case).  So indeed inf seems
+like a valid choice.
+
+Jonathan
 
 
