@@ -1,268 +1,180 @@
-Return-Path: <linux-kernel+bounces-793448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B26B3D380
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:01:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1015B3D384
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29791189DA86
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31C9189D4F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250ED25BF15;
-	Sun, 31 Aug 2025 13:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A04225B30E;
+	Sun, 31 Aug 2025 13:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsTucDx9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF5Qlp0y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA7517993;
-	Sun, 31 Aug 2025 13:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8385513C3CD;
+	Sun, 31 Aug 2025 13:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756645276; cv=none; b=i1o4+rf2kctT+3GOEA0H/8NjXJgB6pRsQZsN0yiNr8eQOzJaDn29bcS3UlmL3OB5VBJ/FatekQaw1ktxxdCDkxkeCLeH/XBMdhJpihTw8upsyUIoLMK+Sc6eYU773tvYgMRhrcfUCdTY4tBT/k+L8P8Jf2LwPuyl8Mb4uzTcQ4s=
+	t=1756645877; cv=none; b=QoPZHI7Ra0Rd/JMdlECReyo26dbADfWlHw+o6FoVTq4oAK0Bi6UinR2iuLdUva1KMwVLqIl3xzB8iR8OboYGsEYv4ZPI6c3cYnkZrRcTzR0I6nkayahLIXtNmt8PuBVwCp/M2p7AVczqB1x6iCk9I5qyjoOl69nKSVLVeJTibkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756645276; c=relaxed/simple;
-	bh=K/RRwgtr/jyuBfa0ugyglnMmaTHqDQfBmdCFjAF1Ls4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ub5swaNi7Q6w2MVwNEvFj+HSUYT1bVoDg0SCxPWzvISeD2CyioDZnT/P/+V0lOk1LmCVQPsLfpio4122mlXS3sJvRMdQhpqf8LnTnG2maqNUTPdPbJOWYsK6RgNZQz3RmgJ4B39Vc0waMWlgRVD5BRhbeRRkZPSs/pJkPCnu62s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsTucDx9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAE8C4CEED;
-	Sun, 31 Aug 2025 13:01:14 +0000 (UTC)
+	s=arc-20240116; t=1756645877; c=relaxed/simple;
+	bh=KyNp6YyWobDLk1CURhcnhqzmpd1iXHtcZgiYjLdBy1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LdoZc2heYlrdko+/GBFRFVBunBXLnp2b7e9hUrBtMw/zDMOjzU7SIrAcDUc2ibu+Wheqbv9d7K5D+pqul7Uqp2NF6hd/xLQmi9PLY1OzVMarTgCg/R2PEhpqpVfDJw9cas+Hislth5Cq33CfOeRe1kuG8mKUtU3uPtMu/RzrWwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF5Qlp0y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00575C4CEED;
+	Sun, 31 Aug 2025 13:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756645275;
-	bh=K/RRwgtr/jyuBfa0ugyglnMmaTHqDQfBmdCFjAF1Ls4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RsTucDx9/vPcmMgdmOOiGi8ikusW3G0Bnh52wZGxkw0HxmhFE7zDlzrkWoSpm9iWy
-	 KvjknB8qSsJC8xztc1SggoAvBCMdn23se+e23jf4Dwfty7iZisNFYUauMNC6vkjT9k
-	 iYUZ+w/+uNNdbpBmitY+/bTRPB+e350Ic1DWnl0C2E079QWZ3HHk8TWK8zHpydWYog
-	 D/g3Y+D5vsTI/7jJVY/XYrvUi0YnLANmT1I0msWi9e9sIZm2XUj4PFXHhYK32+/VEl
-	 sx62O8OLSIF/XecPhgVJFTeYwvG7khRU8p1KUs+TEplh3ptLwbRilEKwJt74xGoiXI
-	 0l3KQeeC50MNQ==
-Message-ID: <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
-Date: Sun, 31 Aug 2025 15:01:12 +0200
+	s=k20201202; t=1756645877;
+	bh=KyNp6YyWobDLk1CURhcnhqzmpd1iXHtcZgiYjLdBy1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pF5Qlp0yPSr5eMhdJz06WdUTqhpsOzTivUEDPEtVR+ANjI5D9iI1xgLsnvtex+38t
+	 MWxME8FtIeYfEvBjqSPpHRineM37+YbRCTAJGn4Kym6pOg1Gq1jDlBOWn/4PQiYvoK
+	 gWelAspX/KkHZ7OGLFCaJaA8janfunm4J2UxBZG0vSR3NlLCjT214BpARueDigECw/
+	 2dtJc+7KhboGJQ+VsYipxJhHfg8Y7w1tFT9xJw8+PGYO7BJYgcJw7rCbSiCQulm+mD
+	 oMY+d4PNnkUf9E3EHWT8iHLMvxmaVPc180x7Wo1XSk8NMKKGDWXx86s+XxLRrlIgIi
+	 I/TmrXwyy7F3w==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f753ec672so849480e87.2;
+        Sun, 31 Aug 2025 06:11:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUR6v7t/FgN6cgvL/g0eTGy9e4T20Ieq1AoW3M+PUJClyqrjC0EgYMPWNRb4wSe3jtX2dCT0wdxyBs=@vger.kernel.org, AJvYcCUwaeNeq2wiSVpI4Oyl5suTV9F9NdwCCOu1fQqQcgyEwwusObbvzBgn7o2ZjDqiWI4/HZBke/IPxDRgnlqw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhLheM4CdDMyY84uJ40dESz9QjoANJCEojgLIGipls6GP2Jy5h
+	Kn1T5MyjbN9/FzdTGghMiD+7ptq5Yiw//cSwbV9MwAqKMCzZxYUuZRgHCD5XC2VL9FBs4mGKLla
+	Dm1b57uWJ7DVnpd4ixuO339kTLif8dp0=
+X-Google-Smtp-Source: AGHT+IEV9OA6K7UeIiXXWN5F40GUs8m+IEFhne6Akm5mzPUKHUXXdAiNfAULslqwViThZEgQUfOsAXUkss1JGlWeGLo=
+X-Received: by 2002:a05:6512:3da0:b0:55f:701f:937 with SMTP id
+ 2adb3069b0e04-55f7089c0ebmr1187119e87.12.1756645875358; Sun, 31 Aug 2025
+ 06:11:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-To: "Leo L. Schwab" <ewhac@ewhac.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814212641.197573-2-ewhac@ewhac.org>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20250814212641.197573-2-ewhac@ewhac.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-29-ardb+git@google.com> <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
+ <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
+ <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
+ <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local> <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
+In-Reply-To: <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 31 Aug 2025 15:11:04 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
+X-Gm-Features: Ac12FXyxNP4FeYk1d8yGT8j5MesBI_-g2_wMjJpQyBSQqCAIO-Y3E1-MjOpvQNM
+Message-ID: <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
+Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
+ out of startup code
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nikunj A Dadhania <nikunj@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Leo,
+On Sun, 31 Aug 2025 at 14:30, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Sun, 31 Aug 2025 at 13:15, Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Sun, Aug 31, 2025 at 12:56:41PM +0200, Ard Biesheuvel wrote:
+> > > OK it appears I've fixed it in the wrong place: the next patch adds
+> > > back the definition of has_cpuflag() so I squashed that hunk into the
+> > > wrong patch, it seems.
+> >
+> > The real question is - and I'm sceptical - whether the startup code runs too
+> > early for boot_cpu_has(). And how is the startup code going to call
+> > boot_cpu_has().
+> >
+> > /me builds .s
+> >
+> > Aha, so it gets converted into a boot_cpu_data access:
+> >
+> > # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
+> >         testb   %r13b, %r13b    # validate
+> >         je      .L46    #,
+> > # ./arch/x86/include/asm/bitops.h:206:          (addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
+> >         movq    80+boot_cpu_data(%rip), %rax    # MEM[(const volatile long unsigned int *)&boot_cpu_data + 80B], _15
+> > # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
+> >
+> > But former question remains: AFAIK, you want to run the startup code waaay
+> > earlier, before we do identify_boot_cpu() which prepares boot_cpu_data, right?
+> >
+>
+> I suppose that in this particular case, things work out fine because
+> calling sev_evict_cache() unnecessarily is harmless. But I agree that
+> in general, relying on CPU flags in code that may be called this early
+> is not great.
+>
+> Perhaps this conditional should be moved into the caller instead
+> (early_set_pages_state()), and early callers from inside the startup
+> code should call sev_evict_cache() unconditionally?
 
-On 14-Aug-25 11:26 PM, Leo L. Schwab wrote:
-> The Logitech G13 is a gaming keypad with general-purpose macro keys,
-> four LED-backlit macro preset keys, five "menu" keys, backlight toggle
-> key, an analog thumbstick, RGB LED backlight, and a monochrome LCD
-> display.
-> 
-> Support input event generation for all keys and the thumbstick, and
-> expose all LEDs.
-> 
-> Signed-off-by: Leo L. Schwab <ewhac@ewhac.org>
+Alternatively, we might consider the below:
 
-Thank you for your patch overal this looks good to me,
-some remarks inline below.
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index 235e557fd10c..bc59a421c7b4 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -342,6 +342,8 @@
+        if (!(eax & BIT(1)))
+                return -ENODEV;
 
-...
++       sev_snp_needs_sfw = !(ebx & BIT(31));
++
+        return ebx & 0x3f;
+ }
 
-> diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
-> index f8605656257b..6e1d79abfb23 100644
-> --- a/drivers/hid/hid-lg-g15.c
-> +++ b/drivers/hid/hid-lg-g15.c
+diff --git a/arch/x86/boot/startup/sev-shared.c
+b/arch/x86/boot/startup/sev-shared.c
+index 8d2476e1ad3b..08cc1568d8af 100644
+--- a/arch/x86/boot/startup/sev-shared.c
++++ b/arch/x86/boot/startup/sev-shared.c
+@@ -31,6 +31,8 @@
+ static u32 cpuid_hyp_range_max __ro_after_init;
+ static u32 cpuid_ext_range_max __ro_after_init;
 
-...
++bool sev_snp_needs_sfw;
++
+ void __noreturn
+ sev_es_terminate(unsigned int set, unsigned int reason)
+ {
+@@ -639,7 +641,7 @@
+         * If validating memory (making it private) and affected by the
+         * cache-coherency vulnerability, perform the cache eviction mitigation.
+         */
+-       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
++       if (validate && sev_snp_needs_sfw)
+                sev_evict_cache((void *)vaddr, 1);
+ }
 
-> +/**
-> + * g13_input_report.keybits[] is not 32-bit aligned, so we can't use the bitops macros.
-> + *
-> + * @ary: Pointer to array of u8s
-> + * @b: Bit index into ary, LSB first.  Not range checked.
-> + */
-> +#define	TEST_BIT(ary, b)	((1 << ((b) & 7)) & (ary)[(b) >> 3])
-> +
-> +/* Table mapping keybits[] bit positions to event codes. */
-> +/* Note: Indices are discontinuous to aid readability. */
-> +static const u16 g13_keys_for_bits[] = {
-> +	/* Main keypad - keys G1 - G22 */
-> +	[0] = KEY_MACRO1,
-> +	[1] = KEY_MACRO2,
-> +	[2] = KEY_MACRO3,
-> +	[3] = KEY_MACRO4,
-> +	[4] = KEY_MACRO5,
-> +	[5] = KEY_MACRO6,
-> +	[6] = KEY_MACRO7,
-> +	[7] = KEY_MACRO8,
-> +	[8] = KEY_MACRO9,
-> +	[9] = KEY_MACRO10,
-> +	[10] = KEY_MACRO11,
-> +	[11] = KEY_MACRO12,
-> +	[12] = KEY_MACRO13,
-> +	[13] = KEY_MACRO14,
-> +	[14] = KEY_MACRO15,
-> +	[15] = KEY_MACRO16,
-> +	[16] = KEY_MACRO17,
-> +	[17] = KEY_MACRO18,
-> +	[18] = KEY_MACRO19,
-> +	[19] = KEY_MACRO20,
-> +	[20] = KEY_MACRO21,
-> +	[21] = KEY_MACRO22,
-> +
-> +	/* LCD menu buttons. */
-> +	[24] = KEY_KBD_LCD_MENU5,	/* "Next page" button */
-> +	[25] = KEY_KBD_LCD_MENU1,	/* Left-most */
-> +	[26] = KEY_KBD_LCD_MENU2,
-> +	[27] = KEY_KBD_LCD_MENU3,
-> +	[28] = KEY_KBD_LCD_MENU4,	/* Right-most */
-> +
-> +	/* Macro preset and record buttons; have red LEDs under them. */
-> +	[29] = KEY_MACRO_PRESET1,
-> +	[30] = KEY_MACRO_PRESET2,
-> +	[31] = KEY_MACRO_PRESET3,
-> +	[32] = KEY_MACRO_RECORD_START,
-> +
-> +	/* 33-35 handled by joystick device. */
-> +
-> +	/* Backlight toggle. */
-> +	[37] = KEY_LIGHTS_TOGGLE,
-> +};
-> +
-> +static const u16 g13_keys_for_bits_js[] = {
-> +	/* Joystick buttons */
-> +	/* These keybits are at bit indices 33, 34, and 35. */
-> +	BTN_BASE,	/* Left side */
-> +	BTN_BASE2,	/* Bottom side */
-> +	BTN_THUMB,	/* Stick depress */
-> +};
+diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
+index 39e7e9d18974..2ddde901c8c5 100644
+--- a/arch/x86/boot/startup/sme.c
++++ b/arch/x86/boot/startup/sme.c
+@@ -521,6 +521,7 @@
+                return;
 
-You are using this 33 offset hardcoded below, maybe
-at a #define for this, e.g. :
+        me_mask = 1UL << (ebx & 0x3f);
++       sev_snp_needs_sfw = !(ebx & BIT(31));
 
-#define G13_JS_KEYBITS_OFFSET	33
+        /* Check the SEV MSR whether SEV or SME is enabled */
+        sev_status = msr = native_rdmsrq(MSR_AMD64_SEV);
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index d3f0f17834fa..32178b8f9b87 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -570,6 +570,8 @@
+ extern u16 ghcb_version;
+ extern struct ghcb *boot_ghcb;
 
-> +
-> +static int lg_g13_event(struct lg_g15_data *g15, u8 const *data)
-> +{
-> +	struct g13_input_report const * const rep = (struct g13_input_report *) data;
-> +	int i, val;
-> +
-> +	/*
-> +	 * Main macropad and menu keys.
-> +	 * Emit key events defined for each bit position.
-> +	 */
-> +	for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits); ++i) {
-> +		if (g13_keys_for_bits[i]) {
-> +			val = TEST_BIT(rep->keybits, i);
-> +			input_report_key(g15->input, g13_keys_for_bits[i], val);
-> +		}
-> +	}
-> +	input_sync(g15->input);
-> +
-> +	/*
-> +	 * Joystick.
-> +	 * Emit button and deflection events.
-> +	 */
-> +	for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits_js); ++i) {
-> +		if (g13_keys_for_bits_js[i]) {
-
-g13_keys_for_bits_js[] is contiguous so no need
-for this if (g13_keys_for_bits_js[i]) test.
-
-> +			val = TEST_BIT(rep->keybits, i + 33);
-> +			input_report_key(g15->input_js, g13_keys_for_bits_js[i], val);
-> +		}
-> +	}
-> +	input_report_abs(g15->input_js, ABS_X, rep->joy_x);
-> +	input_report_abs(g15->input_js, ABS_Y, rep->joy_y);
-> +	input_sync(g15->input_js);
-> +
-> +	if (IS_ENABLED(CONFIG_LEDS_BRIGHTNESS_HW_CHANGED)) {
-
-I do not believe that this IS_ENABLED(CONFIG_LEDS_BRIGHTNESS_HW_CHANGED)
-is necessary, led_classdev_notify_brightness_hw_changed() has a static
-inline replacement when CONFIG_LEDS_BRIGHTNESS_HW_CHANGED is not set,
-so you can just call it unconditionally.
-
-This is already called unconditionally in other places of the code.
-
-> +		/*
-> +		 * Bit 23 of keybits[] reports the current backlight on/off
-> +		 * state.  If it has changed from the last cached value, apply
-> +		 * an update.
-> +		 */
-> +		bool hw_brightness_changed = (!!TEST_BIT(rep->keybits, 23))
-> +					   ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
-> +		if (hw_brightness_changed)
-> +			led_classdev_notify_brightness_hw_changed(
-> +				&g15->leds[0].cdev,
-> +				TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-...
-
-> +static void lg_g13_init_input_dev(struct hid_device *hdev,
-> +				  struct input_dev *input, const char *name,
-> +				  struct input_dev *input_js, const char *name_js)
-> +{
-> +	/* Macropad. */
-> +	lg_g15_init_input_dev_core(hdev, input, name);
-> +	for (int i = 0; i < ARRAY_SIZE(g13_keys_for_bits); ++i) {
-> +		if (g13_keys_for_bits[i])
-> +			input_set_capability(input, EV_KEY, g13_keys_for_bits[i]);
-> +	}
-> +
-> +	/* OBTW, we're a joystick, too... */
-> +	lg_g15_init_input_dev_core(hdev, input_js, name_js);
-> +	for (int i = 0; i < ARRAY_SIZE(g13_keys_for_bits_js); ++i) {
-> +		if (g13_keys_for_bits_js[i])
-> +			input_set_capability(input_js, EV_KEY, g13_keys_for_bits_js[i]);
-
-g13_keys_for_bits_js[] is contiguous so no need
-for this if (g13_keys_for_bits_js[i]) test.
-
-This will also allow you to drop the {} from the for loop.
-
-> +	}
-> +
-> +	input_set_capability(input_js, EV_ABS, ABS_X);
-> +	input_set_abs_params(input_js, ABS_X, 0, 255, 0, 0);
-> +	input_set_capability(input_js, EV_ABS, ABS_Y);
-> +	input_set_abs_params(input_js, ABS_Y, 0, 255, 0, 0);
-> +}
-> +
->  static int lg_g15_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  {
->  	static const char * const led_names[] = {
-...
-
-Besides from my few small remarks this looks good to me,
-feel free to add:
-
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-
-to the next version.
-
-Regards,
-
-Hans
-
-
-
++extern bool sev_snp_needs_sfw;
++
+ struct psc_desc {
+        enum psc_op op;
+        struct svsm_ca *ca;
 
