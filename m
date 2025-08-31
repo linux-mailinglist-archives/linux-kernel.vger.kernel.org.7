@@ -1,711 +1,125 @@
-Return-Path: <linux-kernel+bounces-793315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF33B3D1CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF88B3D1CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C07188790C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA106188AC17
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA1221CC5B;
-	Sun, 31 Aug 2025 10:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7DF23D7E4;
+	Sun, 31 Aug 2025 10:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kg/QekD6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gljRPolR"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BE1A9FBA
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E8222154B;
+	Sun, 31 Aug 2025 10:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756634432; cv=none; b=sDJGBI8UJChuATNdU75NzYWRIY4ls6bITAZqOQtvtP7LRuTfB1T7/giZ17+wLitZAaCeOVWBFC8gc6PR+7Be+Z3WZpp3CS5bSmWsOLbS9PhTja5Fbrn4P2Zblmis8HRp62H7xwqf+8o4udf4T3ZEMnKJTaHNrv1wQzuFTZRfVmc=
+	t=1756634679; cv=none; b=ULEs117CW2wd/QkiOPpNQppnbGnzT+8mK3KLRcSP+4pvUQv+NS3ncBuqk2/4JH8AGk/Dnh45FcofrnEFw0gY+g82YeGR1o5u77evB4i1kCrdwPvIrhurWSpgp+RnEKkuVJgLs6TaRx+XnHAZ4Lag5CPyZwx710MNmQxlruOCHRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756634432; c=relaxed/simple;
-	bh=iFmbQb9JSPT9Qnq1c89NuEhFG4tIwLVQr7w8umJhtYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVn+qaEHFGaaOhGCNQEP8IfbicTvHsQI/h47I3hnIidWcdQKtc9J09F8JGphxi7NuOzmgRboa9A/zQQyG5xPed/sPjo4lBVRK+cqsmj8mTTFkIZ3gW4oYsfY0RzjfwWT+LaYc39nZ3PlB6dI9xb4NoO5JINo4cSa+5eW2PU4VLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kg/QekD6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V6eKXN008998
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qD5oRl6PaN2DjJNUuUSysf512mj6mjwHEypDav6WIT4=; b=kg/QekD6M8g46WOp
-	Ex/OpvguNct1GPmddlTPxc0VbSNcgUL1OUGaOQ1UKSspO/dLtVwW27H/oIQFn0oV
-	3iTHam2elpP1qaggWIkGaiYRcp29t3jX47YAHmk3vpb2SRYg1KbfOfapGsjlwb92
-	M26mbUsLRojMQH/Wx1BSKqOzCIAY01SJ0uxlEljF22YI6NR/OLvNYJauNst8LZbZ
-	6AagqSqgaFZlj//rR+CFLVXbgO+rfVMZYyUatbWIZQUfOR0sLrP6gx4bHx+TXn1u
-	5bBD0RDjnMkbJp+8io56Mqf2ca0A/wSizlD0UgeaXuqmDr13lziooGXMS45bv1IO
-	le1Wuw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvysw0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:29 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b31ba138f7so21193351cf.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:00:29 -0700 (PDT)
+	s=arc-20240116; t=1756634679; c=relaxed/simple;
+	bh=8MSiAJFhyW6DO7wWxoxRzC8Zw4+nLElUnPgM3hXUqDE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SFNrnGBIU27roeaWvkVjtVY0T29yYjqUvXZztOOXBsXZNXC9tu7YTTIWuWcnuZqroMFTPjNUv3UuEI2cTzM7sAuiuK6T74JGlyCXc6wGuKTnST8Erg/O0tZyQnR8Y4cpHcBQrQ9iI05xcDIk5MCm3x/9dy2g96Gbl5152D+pXh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gljRPolR; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-248a61a27acso24754415ad.1;
+        Sun, 31 Aug 2025 03:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756634678; x=1757239478; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8MSiAJFhyW6DO7wWxoxRzC8Zw4+nLElUnPgM3hXUqDE=;
+        b=gljRPolRT91AYDzhRYJggh2HCpW1ILGU1JyrvzOlcZJ9zzCTvtv1fCmTq/S4u+qi2b
+         XS2tQh1we8vb4Ux2OA6wA1VyXhs/a4roWPcBbn3ovlx+I4bRdEbF73oTNjMQZok877mm
+         EWnKoJUxQNvVgN6MphHWHDKwJ6tvlhX2smtfABzrqTLHRpG7OvhyVkcYebSs/0xH11Fs
+         h5tf87nbGgnL1PhL9RTUlSRoG0C2YJodMUazcaMKgYKiGjsr7GStHmY9YysaoKcL33ZC
+         aRBucWW4DC3NvcuBpVus/Fu/+POacjWCM+DJAITGuAEJ5KcZQWbENdsKhSsoQCKtE8rt
+         OsGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756634428; x=1757239228;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qD5oRl6PaN2DjJNUuUSysf512mj6mjwHEypDav6WIT4=;
-        b=WcweWJvHT3fIzDKYYWB/saVZcpRKo+EK3cc6mEXBTmn+LhIVMLwtieFA5q0GLPb8O0
-         dRtjQMoS8PPNkpv7exAMPzteYmS9pywB0FXEDEtdY1NhBv04413MBqSORQ/V72wFzHFv
-         Ok5bU6Cb9E50GPJCyaL/cbt7mDWYjfcG+VcOnSc4aEymdGRiFE7/jwCPQnW/oxk8tOOP
-         wsls2ky21iHZcztf/0fH9d6tmzoY+pYhq/w4xUk2+BvV0gFiOg5Z7k4lxAY4bRgl2b15
-         p/hEVA4l7X1Cs2ACdck7Aw5paFYa9bgNzcvhmwlK3t/qrDPWzQS1Ggn7xLYWDxrmP4YY
-         sTyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJD/HwwpiaESKeXXaMrTl5xz2n4IOpQestMTEXF+Ikj6e8tQHZqegjI/+UmOmScQg5tR63AZ0/JD29TA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HNQgDPbLXDuCylzLmk4ZTHZNRMdgSml9/b8v66EGUVxNVkP5
-	5IcvB0Nup9TpdLTXdtpAD/r91/woksw7GagKavFeEQqnCrd4rMbHoY55aHTu7DTMWIqp2DRku+i
-	HyG9bPCHNaVez9wWwA4PEozqze/nSyQpYTO5C30fkS/Dr9pZ7+HOSkBcJzwy6n5KSh0Y=
-X-Gm-Gg: ASbGncvNGnpX/6ecbTOJxXX7Wy1n7LftMozoBpOgGwrD+i9tmJaSosVg2DCvpdXxMNg
-	glhkgbL6wdOfU0BLgDV8zIvFAW6hLv8/GF3JwJHIQ02Guflrvn/956vAyj8ACVDPW4IcU78b3MM
-	DdDFDSNG2EKlcrtL9p7XSbrxDGosLgwxPo9iWHuR1Irawvao9ktyN3/bLnYxFlu3z/Nr/2a1jcf
-	Vwc9RuKN8QY3jVjCswrgsTFpXGvV2rcQYJtLjOOc3DRBfovY2lb1TJFb478GdmpgBX+f8FPwlsL
-	bH+guwmu6GUCDW2hre8cmFfhJP7FZYIyMKK+Mbaz7Ui6sMQKorDJbRWQrifOVrjPQ8JD7PJOFku
-	GAuCYt8o5mJ8uMH0UgCdEGOi2jJvNROZ6zEIvV1y0sz3KsHWu78mL
-X-Received: by 2002:a05:622a:1812:b0:4b2:94e5:9847 with SMTP id d75a77b69052e-4b31dcac538mr59712371cf.74.1756634428069;
-        Sun, 31 Aug 2025 03:00:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFpiHqGgSFYOFPDu7JwQJBWckE87BwsT8u/A9LiwCj49Zah2l6SdAxeMKGdwGN9bMfC2Cr/A==
-X-Received: by 2002:a05:622a:1812:b0:4b2:94e5:9847 with SMTP id d75a77b69052e-4b31dcac538mr59711811cf.74.1756634427339;
-        Sun, 31 Aug 2025 03:00:27 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f79801b2csm257066e87.117.2025.08.31.03.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 03:00:26 -0700 (PDT)
-Date: Sun, 31 Aug 2025 13:00:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Adam Skladowski <a_skl39@protonmail.com>,
-        Sireesh Kodali <sireeshkodali@protonmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
-        Dang Huynh <danct12@riseup.net>
-Subject: Re: [PATCH v7 4/6] arm64: dts: qcom: Add initial support for MSM8937
-Message-ID: <fv4jz6unxpncqazgptet4ie67vdrqqnq3owpjuh7huqvepoozd@yelivqgci2om>
-References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
- <20250831-msm8937-v7-4-232a9fb19ab7@mainlining.org>
+        d=1e100.net; s=20230601; t=1756634678; x=1757239478;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8MSiAJFhyW6DO7wWxoxRzC8Zw4+nLElUnPgM3hXUqDE=;
+        b=lwUEd3Fyjat2UCjRUZwmZWr+Nr2tCAIP4jKdpls7RLWE+8qbqqN3DJsiuDx9fDy5PZ
+         xOk4ghLsMYiyGFs4J3MqXi/mDgRfBScJ0ovR5VJlGTfn6HGiIAonggETCh5buMyo5q8W
+         h71K6UB5IgUiMdOLZivF6ocXfWQ1FKTwUcHITgaWstX3siwfot6amqyDPm8ku93b56XD
+         nYGYbEEKEjK7TCqedM9sTy816dmVrfm9t+PW/ocg+VFdaIYboMcoynl3oBxklQeg6Ew6
+         EF+K7Dp4M3TXBK8foDw9FZIKHmExqNQsySnDTC2FgvDQZlDe5MN45jGfRP7DFvggV4sz
+         kHYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZ8zABU9a1wUExXEC43xhFVawiLKnEH9nJazFqbeFcnP47ZcNJk3huTE3mRQ2J7Iy4HJMHIti/ywPYXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRn7nCIr3et006M0VB02pyetsPtEjK/2oWOIHyq2BSIHX36haE
+	Ad09BxxFcvET3I3OEOhdLcuejOKKjwp53EgdoHtrmCfNDj14Ku0EchYa9umXezMBaBTaXQ==
+X-Gm-Gg: ASbGncsdFFeiik/wGPhCiJLolxmGayxJM/++KZdlezGS3XF7ZrVzN45kwd/PaHOSOVp
+	Dhgeq0ghp2o5KwNpg7fN+i2BJ8XIR76gsFzTe1CkwLSJuoPnMz++Febpei/++NCsD5IjnH6LCRU
+	kZu6/OYB4LKUK9wBwbFwawNF7OgGMGuNoWkHEQt5KpYSCsgdG1P1/9N9hKQS2l0SNwQxd80gIxI
+	vDT+X+/PaadCa+lgOjz5X9y9LTqW5IkR2t9DY3vS7aSVOoVJjBVD0YByhknHouxj1qqsjoqnO/q
+	fn8ErmIty8U7POh4Z9klL3GTx1Msz+AuVLS2gNjl5r+0ctXxgsmMtPXPEi9t93+QIE53zUXfj/t
+	MdqnVQpeeyGiDT7vMmH8K1+eZXf+VVh6GkB/BnY+U0UY=
+X-Google-Smtp-Source: AGHT+IFOoTNyERuZMFffcSv/0n30wrDtZL5qG7wYKN/yq6xQgQOTOKzyMmchWLg6teNeEuvMwjnuCA==
+X-Received: by 2002:a17:902:ea0e:b0:249:274f:84a8 with SMTP id d9443c01a7336-2493efe0734mr61057395ad.25.1756634677399;
+        Sun, 31 Aug 2025 03:04:37 -0700 (PDT)
+Received: from localhost ([221.216.116.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77236d7eb7fsm5439602b3a.54.2025.08.31.03.04.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 03:04:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250831-msm8937-v7-4-232a9fb19ab7@mainlining.org>
-X-Proofpoint-GUID: 4CifwDjHqNA-fHHYxoNLIuX-Ai1-7EYo
-X-Proofpoint-ORIG-GUID: 4CifwDjHqNA-fHHYxoNLIuX-Ai1-7EYo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX/m3K+xtoM70C
- Z9kWxhxgD3L3MK1udv3ypQEqD+9i5VmOj0FLhTASodcdWXSJg8GqM/HmbGiJoyQYLEK0lvm+BnQ
- hck5d8CnSeSmYHLkKpmRMtOkz8ZytWpkeqBO14LKvSEIGAC34R7AkduSVCxE9YjCv/nZWB4jHtW
- eNPCyZLiwEhg+k8x9IuDN0uGJ+Ty/1RKfb+59YIjX5iF9sUfL/6dLnTp0HlbrHR1mEh9L2DaeqI
- +AQ2ErTptoPoDmSP2Fwh9KUUR+47WZWfiI8g3u6tvJyj0OAYD83NEQ03Q0SpoJRvQ0p9ebA5LcT
- l9vxHM8iKUWWLuuxmfoL004vUzcDCxAdbeOZDJIsdCT58YPBXAf6qD/uwCuCK9tr7miaCf4dO/A
- 5PYRbfbQ
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b41d3d cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=2OwXVqhp2XgA:10 a=bBqXziUQAAAA:8 a=OuZLqq7tAAAA:8 a=BfrjIcddtau6jJL3F9YA:9
- a=r_sqX3LX-aZnKoI4:21 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=BjKv_IHbNJvPKzgot4uq:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-31_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 31 Aug 2025 18:04:32 +0800
+Message-Id: <DCGJ0S0C9ZZH.1IFDOEWH6YF2K@gmail.com>
+Subject: Re: [PATCH v2] docs: scheduler: completion: Document
+ complete_on_current_cpu()
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Andrei
+ Vagin" <avagin@google.com>
+To: "Peter Zijlstra" <peterz@infradead.org>, "Jonathan Corbet"
+ <corbet@lwn.net>
+From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
+X-Mailer: aerc 0.20.1-4-g02324e9d9cab
+References: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com> <87a53h3fzn.fsf@trenco.lwn.net> <20250830190718.GS3289052@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250830190718.GS3289052@noisy.programming.kicks-ass.net>
 
-On Sun, Aug 31, 2025 at 12:38:16AM +0200, Barnabás Czémán wrote:
-> From: Dang Huynh <danct12@riseup.net>
-> 
-> Add initial support for MSM8937 SoC.
-> 
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8937.dtsi | 2134 +++++++++++++++++++++++++++++++++
->  1 file changed, 2134 insertions(+)
+On Sun Aug 31, 2025 at 3:07 AM CST, Peter Zijlstra wrote:
+> On Fri, Aug 29, 2025 at 04:44:28PM -0600, Jonathan Corbet wrote:
+>> Javier Carrasco <javier.carrasco.cruz@gmail.com> writes:
+>>=20
+>> > Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the
+>> > current cpu") introduced this new function to the completion API that
+>> > has not been documented yet.
+>>=20
+>> For a change like this, it is a really good idea to copy the author of
+>> the original patch and others who were involved in it; I have added them
+>> now.
+>
+> This really is a rather specialized thing -- not sure it makes sense to
+> have in the document.
+>
 
-> +	};
-> +
-> +
-> +	firmware {
-> +		scm: scm {
-> +			compatible = "qcom,scm-msm8916", "qcom,scm";
+Hello Peter, thank you for your reply.
 
-"qcom,scm-msm8937", "qcom,scm"
+I agree that it is a rather specialized function, but in my opinion that
+should not be a reason to exclude it from the documentation. Where do
+you draw the line then? It is an exposed function from the API that can
+be called like any other function from the API if the user requires that.
 
-> +			clocks = <&gcc GCC_CRYPTO_CLK>,
-> +				 <&gcc GCC_CRYPTO_AXI_CLK>,
-> +				 <&gcc GCC_CRYPTO_AHB_CLK>;
-> +			clock-names = "core",
-> +				      "bus",
-> +				      "iface";
-> +			#reset-cells = <1>;
-> +
-> +			qcom,dload-mode = <&tcsr 0x6100>;
-> +		};
-> +	};
-> +
-> +	memory@80000000 {
-> +		/* We expect the bootloader to fill in the reg */
-> +		reg = <0 0x80000000 0 0>;
-> +		device_type = "memory";
-> +	};
-> +
-> +	reserved-memory {
-> +		ranges;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +
-> +		qseecom_mem: reserved@85b00000 {
-> +			reg = <0x0 0x85b00000 0x0 0x800000>;
-> +			no-map;
-> +		};
-> +
-> +		smem@86300000 {
-> +			compatible = "qcom,smem";
-> +			reg = <0x0 0x86300000 0x0 0x100000>;
-> +			no-map;
-> +
-> +			hwlocks = <&tcsr_mutex 3>;
-> +			qcom,rpm-msg-ram = <&rpm_msg_ram>;
-> +		};
-> +
-> +		reserved@86400000 {
-> +			reg = <0x0 0x86400000 0x0 0x400000>;
-> +			no-map;
-> +		};
-> +
-> +		rmtfs@92100000 {
-> +			compatible = "qcom,rmtfs-mem";
-> +			reg = <0x0 0x92100000 0x0 0x180000>;
-> +			no-map;
-> +
-> +			qcom,client-id = <1>;
-> +		};
-> +
-> +		adsp_mem: adsp {
-> +			size = <0x0 0x1100000>;
-> +			alignment = <0x0 0x100000>;
-> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-> +			no-map;
-> +			status = "disabled";
-> +		};
-> +
-> +		mba_mem: mba {
-> +			size = <0x0 0x100000>;
-> +			alignment = <0x0 0x100000>;
-> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-> +			no-map;
-> +			status = "disabled";
-> +		};
-> +
-> +		wcnss_mem: wcnss {
-> +			size = <0x0 0x700000>;
-> +			alignment = <0x0 0x100000>;
-> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-> +			no-map;
-> +			status = "disabled";
-> +		};
-> +
-> +		venus_mem: venus {
-> +			size = <0x0 0x400000>;
-> +			alignment = <0x0 0x100000>;
-> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-> +			no-map;
-> +			status = "disabled";
-> +		};
-> +	};
-> +
-> +	cpu_opp_table_c0: opp-table-c0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp-768000000 {
-> +			opp-hz = /bits/ 64 <768000000>;
-> +		};
-> +
-> +		opp-902400000 {
-> +			opp-hz = /bits/ 64 <902400000>;
-> +		};
-> +
-> +		opp-998400000 {
-> +			opp-hz = /bits/ 64 <998400000>;
-> +		};
-> +
-> +		opp-1094400000 {
-> +			opp-hz = /bits/ 64 <1094400000>;
-> +		};
-> +	};
-> +
-> +	cpu_opp_table_c1: opp-table-c1 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp-960000000 {
-> +			opp-hz = /bits/ 64 <960000000>;
-> +		};
-> +
-> +		opp-1094400000 {
-> +			opp-hz = /bits/ 64 <1094400000>;
-> +		};
-> +
-> +		opp-1209600000 {
-> +			opp-hz = /bits/ 64 <1209600000>;
-> +		};
-> +
-> +		opp-1248000000 {
-> +			opp-hz = /bits/ 64 <1248000000>;
-> +		};
-> +
-> +		opp-1344000000 {
-> +			opp-hz = /bits/ 64 <1344000000>;
-> +		};
-> +
-> +		opp-1401600000 {
-> +			opp-hz = /bits/ 64 <1401600000>;
-> +		};
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,cortex-a53-pmu";
-> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	rpm: remoteproc {
-> +		compatible = "qcom,msm8937-rpm-proc", "qcom,rpm-proc";
-> +
-> +		smd-edge {
-> +			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-> +			qcom,ipc = <&apcs1 8 0>;
-> +			qcom,smd-edge = <15>;
-> +
-> +			rpm_requests: rpm-requests {
-> +				compatible = "qcom,rpm-msm8937", "qcom,smd-rpm";
-> +				qcom,smd-channels = "rpm_requests";
-> +
-> +				rpmcc: clock-controller {
-> +					compatible = "qcom,rpmcc-msm8937", "qcom,rpmcc";
-> +					#clock-cells = <1>;
-> +					clocks = <&xo_board>;
-> +					clock-names = "xo";
-> +				};
-> +
-> +				rpmpd: power-controller {
-> +					compatible = "qcom,msm8937-rpmpd", "qcom,msm8917-rpmpd";
-> +					#power-domain-cells = <1>;
-> +					operating-points-v2 = <&rpmpd_opp_table>;
-> +
-> +					rpmpd_opp_table: opp-table {
-> +						compatible = "operating-points-v2";
-> +
-> +						rpmpd_opp_ret: opp1 {
-> +							opp-level = <RPM_SMD_LEVEL_RETENTION>;
-> +						};
-> +
-> +						rpmpd_opp_ret_plus: opp2 {
-> +							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
-> +						};
-> +
-> +						rpmpd_opp_min_svs: opp3 {
-> +							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
-> +						};
-> +
-> +						rpmpd_opp_low_svs: opp4 {
-> +							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
-> +						};
-> +
-> +						rpmpd_opp_svs: opp5 {
-> +							opp-level = <RPM_SMD_LEVEL_SVS>;
-> +						};
-> +
-> +						rpmpd_opp_svs_plus: opp6 {
-> +							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
-> +						};
-> +
-> +						rpmpd_opp_nom: opp7 {
-> +							opp-level = <RPM_SMD_LEVEL_NOM>;
-> +						};
-> +
-> +						rpmpd_opp_nom_plus: opp8 {
-> +							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
-> +						};
-> +
-> +						rpmpd_opp_turbo: opp9 {
-> +							opp-level = <RPM_SMD_LEVEL_TURBO>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	smp2p-adsp {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <443>, <429>;
-> +
-> +		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
-> +
-> +		mboxes = <&apcs1 10>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <2>;
-> +
-> +		adsp_smp2p_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		adsp_smp2p_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-modem {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <435>, <428>;
-> +
-> +		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
-> +
-> +		mboxes = <&apcs1 14>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <1>;
-> +
-> +		modem_smp2p_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		modem_smp2p_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smp2p-wcnss {
-> +		compatible = "qcom,smp2p";
-> +		qcom,smem = <451>, <431>;
-> +
-> +		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
-> +
-> +		mboxes = <&apcs1 18>;
-> +
-> +		qcom,local-pid = <0>;
-> +		qcom,remote-pid = <4>;
-> +
-> +		wcnss_smp2p_out: master-kernel {
-> +			qcom,entry-name = "master-kernel";
-> +
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		wcnss_smp2p_in: slave-kernel {
-> +			qcom,entry-name = "slave-kernel";
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	smsm {
-> +		compatible = "qcom,smsm";
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		mboxes = <0>, <&apcs1 13>, <0>, <&apcs1 19>;
-> +
-> +		apps_smsm: apps@0 {
-> +			reg = <0>;
-> +
-> +			#qcom,smem-state-cells = <1>;
-> +		};
-> +
-> +		hexagon_smsm: hexagon@1 {
-> +			reg = <1>;
-> +			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +
-> +		wcnss_smsm: wcnss@6 {
-> +			reg = <6>;
-> +			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +		ranges = <0 0 0 0xffffffff>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +
-> +		qfprom: qfprom@a4000 {
-> +			compatible = "qcom,msm8937-qfprom", "qcom,qfprom";
-> +			reg = <0x000a4000 0x1000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			tsens_base1: base1@1d8 {
-> +				reg = <0x1d8 0x1>;
-> +				bits = <0 8>;
-> +			};
-> +
-> +			tsens_s5_p1: s5-p1@1d9 {
-> +				reg = <0x1d9 0x1>;
-> +				bits = <0 6>;
-> +			};
-> +
-> +			tsens_s5_p2: s5-p2@1d9 {
-> +				reg = <0x1d9 0x2>;
-> +				bits = <6 6>;
-> +			};
-> +
-> +			tsens_s6_p1: s6-p1@1da {
-> +				reg = <0x1da 0x2>;
-> +				bits = <4 6>;
-> +			};
-> +
-> +			tsens_s6_p2: s6-p2@1db {
-> +				reg = <0x1db 0x1>;
-> +				bits = <2 6>;
-> +			};
-> +
-> +			tsens_s7_p1: s7-p1@1dc {
-> +				reg = <0x1dc 0x1>;
-> +				bits = <0 6>;
-> +			};
-> +
-> +			tsens_s7_p2: s7-p2@1dc {
-> +				reg = <0x1dc 0x2>;
-> +				bits = <6 6>;
-> +			};
-> +
-> +			tsens_s8_p1: s8-p1@1dd {
-> +				reg = <0x1dd 0x2>;
-> +				bits = <4 6>;
-> +			};
-> +
-> +			tsens_s8_p2: s8-p2@1de {
-> +				reg = <0x1de 0x1>;
-> +				bits = <2 6>;
-> +			};
-> +
-> +			tsens_base2: base2@1df {
-> +				reg = <0x1df 0x1>;
-> +				bits = <0 8>;
-> +			};
-> +
-> +			tsens_mode: mode@210 {
-> +				reg = <0x210 0x1>;
-> +				bits = <0 3>;
-> +			};
-> +
-> +			tsens_s0_p1: s0-p1@210 {
-> +				reg = <0x210 0x2>;
-> +				bits = <3 6>;
-> +			};
-> +
-> +			tsens_s0_p2: s0-p2@211 {
-> +				reg = <0x211 0x1>;
-> +				bits = <1 6>;
-> +			};
-> +
-> +			tsens_s1_p1: s1-p1@211 {
-> +				reg = <0x211 0x2>;
-> +				bits = <7 6>;
-> +			};
-> +
-> +			tsens_s1_p2: s1-p2@212 {
-> +				reg = <0x212 0x2>;
-> +				bits = <5 6>;
-> +			};
-> +
-> +			tsens_s2_p1: s2-p1@213 {
-> +				reg = <0x213 0x2>;
-> +				bits = <3 6>;
-> +			};
-> +
-> +			tsens_s2_p2: s2-p2@214 {
-> +				reg = <0x214 0x1>;
-> +				bits = <1 6>;
-> +			};
-> +
-> +			tsens_s3_p1: s3-p1@214 {
-> +				reg = <0x214 0x2>;
-> +				bits = <7 6>;
-> +			};
-> +
-> +			tsens_s3_p2: s3-p2@215 {
-> +				reg = <0x215 0x2>;
-> +				bits = <5 6>;
-> +			};
-> +
-> +			tsens_s4_p1: s4-p1@216 {
-> +				reg = <0x216 0x2>;
-> +				bits = <3 6>;
-> +			};
-> +
-> +			tsens_s4_p2: s4-p2@217 {
-> +				reg = <0x217 0x1>;
-> +				bits = <1 6>;
-> +			};
-> +
-> +			tsens_s9_p1: s9-p1@230 {
-> +				reg = <0x230 0x1>;
-> +				bits = <0 6>;
-> +			};
-> +
-> +			tsens_s9_p2: s9-p2@230 {
-> +				reg = <0x230 0x2>;
-> +				bits = <6 6>;
-> +			};
-> +
-> +			tsens_s10_p1: s10-p1@231 {
-> +				reg = <0x231 0x2>;
-> +				bits = <4 6>;
-> +			};
-> +
-> +			tsens_s10_p2: s10-p2@232 {
-> +				reg = <0x232 0x1>;
-> +				bits = <2 6>;
-> +			};
-> +
-> +			gpu_speed_bin: gpu-speed-bin@601b {
-> +				reg = <0x601b 0x1>;
-> +				bits = <7 1>;
-> +			};
-> +		};
-> +
-> +		usb_hs_phy: phy@6c000 {
-> +			compatible = "qcom,usb-hs-28nm-femtophy";
-> +			reg = <0x0006c000 0x200>;
-> +			#phy-cells = <0>;
-> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +				 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
-> +				 <&gcc GCC_USB2A_PHY_SLEEP_CLK>;
-> +			clock-names = "ref",
-> +				      "ahb",
-> +				      "sleep";
-> +			resets = <&gcc GCC_QUSB2_PHY_BCR>,
-> +				 <&gcc GCC_USB2_HS_PHY_ONLY_BCR>;
-> +			reset-names = "phy",
-> +				      "por";
-> +			status = "disabled";
-> +		};
-> +
-> +		rng@e3000 {
-> +			compatible = "qcom,prng";
-> +			reg = <0x000e3000 0x1000>;
-> +			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-> +			clock-names = "core";
-> +		};
-> +
-> +		tsens: thermal-sensor@4a9000 {
-> +			compatible = "qcom,msm8937-tsens", "qcom,tsens-v1";
-> +			reg = <0x004a9000 0x1000>,
-> +			      <0x004a8000 0x1000>;
-> +			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "uplow";
-> +			nvmem-cells = <&tsens_mode>,
-> +				      <&tsens_base1>, <&tsens_base2>,
-> +				      <&tsens_s0_p1>, <&tsens_s0_p2>,
-> +				      <&tsens_s1_p1>, <&tsens_s1_p2>,
-> +				      <&tsens_s2_p1>, <&tsens_s2_p2>,
-> +				      <&tsens_s3_p1>, <&tsens_s3_p2>,
-> +				      <&tsens_s4_p1>, <&tsens_s4_p2>,
-> +				      <&tsens_s5_p1>, <&tsens_s5_p2>,
-> +				      <&tsens_s6_p1>, <&tsens_s6_p2>,
-> +				      <&tsens_s7_p1>, <&tsens_s7_p2>,
-> +				      <&tsens_s8_p1>, <&tsens_s8_p2>,
-> +				      <&tsens_s9_p1>, <&tsens_s9_p2>,
-> +				      <&tsens_s10_p1>, <&tsens_s10_p2>;
-> +			nvmem-cell-names = "mode",
-> +					   "base1", "base2",
-> +					   "s0_p1", "s0_p2",
-> +					   "s1_p1", "s1_p2",
-> +					   "s2_p1", "s2_p2",
-> +					   "s3_p1", "s3_p2",
-> +					   "s4_p1", "s4_p2",
-> +					   "s5_p1", "s5_p2",
-> +					   "s6_p1", "s6_p2",
-> +					   "s7_p1", "s7_p2",
-> +					   "s8_p1", "s8_p2",
-> +					   "s9_p1", "s9_p2",
-> +					   "s10_p1", "s10_p2";
-> +			#qcom,sensors = <11>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		rpm_msg_ram: sram@60000 {
 
-This node is wrongly placed.
+This one is by the way the only undocumented function from the completion
+API.
 
-> +			compatible = "qcom,rpm-msg-ram";
-> +			reg = <0x00060000 0x8000>;
-> +		};
-> +
-> +		restart@4ab000 {
-> +			compatible = "qcom,pshold";
-> +			reg = <0x004ab000 0x4>;
-> +		};
-> +
-
--- 
-With best wishes
-Dmitry
+Best regards,
+Javier Carrasco
 
