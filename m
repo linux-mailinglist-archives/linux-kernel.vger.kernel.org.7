@@ -1,136 +1,310 @@
-Return-Path: <linux-kernel+bounces-793536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BA8B3D4E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:22:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4E8B3D4E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9783BC6DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 19:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE134179E72
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 19:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4285274B3D;
-	Sun, 31 Aug 2025 19:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E9727602A;
+	Sun, 31 Aug 2025 19:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFk/bAnP"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+svRBbS"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733719D89E;
-	Sun, 31 Aug 2025 19:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEF919D89E;
+	Sun, 31 Aug 2025 19:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756668169; cv=none; b=Rq0SxfoC70ogITyIbAX3A/8JRI/1o1p4Xu1J4OiTbAsszT8nKBZ7WQ+P/Wa+ryJrY1KbR0+d+tLwqX5AQsJZBXLl90Pjb7umqWiKZNfPkAHAttDHlkoyQKgBax54u4akunExGNtthi8xc7qIhTBrzcw/lrR+PkEY5mG1jPu4JnA=
+	t=1756668182; cv=none; b=LeQgKMZONynx26X3RS0CaMXCtKlNOC3xlf62WOiN6leUFuEWBKl9qFPRAaZRWcnXDJD8rkbzdOabUlPhn113GWwg4PqyEw9KzK8aNgsMUXTgl+pOl9Dfg1hfqpxnawJjosews5wOqg60Bb+YkRIRZG+bIXCKvv+roXxLCrJML/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756668169; c=relaxed/simple;
-	bh=HEV6dnlhIoeyc8laZOOHU1IPiRHZVj2PJOI1v6FTq2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X92kQe6+Pb8gCNJH8ki13Yxx6vBkwC1JkmEENbyXWi72tPo+RnMFA7WtQLocEAcANkSLskDOQVsj/ntATPoaunJqEaTS7VEDRmKPSX/0BzY6wvAMrXWk7HY53V4fWb0uDaSMmZv6Y3UJYU/3H5fmJwRlPUBZqvB46mw5WoaBBV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFk/bAnP; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1756668182; c=relaxed/simple;
+	bh=CbCff7WnxsS6J7stxa7pIncOKua91mLgE+ZaX6aIzWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SdHBwhh9/yNgO9uTE6hRRlyNjATl+0D6cDFz+/L9rRDJFTICUFwvhFwFFRx52AHi0LYFZLEfhWHX1p0gXDFZpE2ReyFxQWy5Q/MtrwD5bdlrVcPEA7xkcPugvZX1Jx/mDU+udxFwS3gOyMfNgNSDmuB2yLQ6Z4TceCDXnDfAPhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+svRBbS; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b8b02dd14so2411045e9.1;
-        Sun, 31 Aug 2025 12:22:47 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-327e5b65e2cso1883979a91.2;
+        Sun, 31 Aug 2025 12:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756668166; x=1757272966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6yg3LP6sYvMUQaD/jgzhNvNjKvQd0FCNUTRQbAPX6ik=;
-        b=MFk/bAnPkHS+2WU0Zz1RSbw0+DNyjCLKs98Wi4njg/YqoK7WJM79+Z+qKuckO8k8H6
-         kHHdyFfcYt7NROjQWjCSLRDH485/I4N+uFDSxzuWwqYebxglUTy0Uc/BAH9I4vZfevW9
-         X4XO39pAOv35JWqGGLP1378CJxk7mOL7ZYjTKxM4RmFrK+ya1t9Feme7aKKpmSHqYc4R
-         Kl9Ub2sBz+Yp5sma2xxzdmNf7blF3CZHvae9Zy0H/RjCkNA3Z9pPOdeNda1mu26//biE
-         X8RlkQcRwT2lLrsq7l4BNvHiq18b9BFLYLIMtRiRafvAvHtiXHVi5wFWcSVGOWQ6482N
-         uwKg==
+        d=gmail.com; s=20230601; t=1756668180; x=1757272980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LYdqga2UZn0l7KZz7GVGu4hJVZ86hvaVSdUZ6IyURfo=;
+        b=i+svRBbSK7SiLzoSmEa6DA1jwMKy5mCd1QKfd804tuCCHiurAlmX8YEavYXwokkgb+
+         fjk15vtyFmkZE9nocXzg3iEsvZ9oBfnvvgLCKofv3T7CmW66my4HQQrLaxF8DW9Oi2Q4
+         aL7KAo/X78ZbNF2NwUCpzIDS3GoHof9rXTGr1yB27JXX6JlK0KUpF3jvUZHr9P4jRaLy
+         5/1MeR+iF4KbXzS1+r0OzC8kDd6KEMQxGvaxbydKI1FD9PW1a3Q/ybbJmBdJ922vLpkz
+         9FjuCw363eXjDSc2cU8w8w5YNJSmpVKIC9mP93sAjBVY+9NfAsGTarY+XW9ybGJZ9c82
+         vgnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756668166; x=1757272966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6yg3LP6sYvMUQaD/jgzhNvNjKvQd0FCNUTRQbAPX6ik=;
-        b=ss5LWhSemBsIoRtgzsVwXhn/Yu7p3wEh7Onv/n6+L8ch31CSFh19wfeDIuqt0iFYhO
-         U9zUcqJlYXISrFij/JcsaAflhS1j/SmLSIVzMc+l6pLrjq4zy/PhJ252aXeL/mekCxdq
-         +ynlYCmmtG46QCqJmUvvpdt7VuSDgjUCA3hj22Vd09TZGR9yZHIRFfE85Jf25L6TmvnT
-         RoEyyG6jySx6Kw94sOyrMCqhsVpsaaZd0MiPgr+rBzv8HEsfonIAd3sIEYJqgEnrClja
-         3jG6rZO4mqG0HQ2gwjhenHR1D1TYb3RAYNWKeiKdpaMKmfLSpMPhLrtnzdJ459+MrnhD
-         ZGDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVs2w58FmC8kLWoqdvTkfIplaSNLIBtmM95T8MqYUwpxQET6oHblzstQ5lLyhthrZNYDwev0NetzsyVOaE@vger.kernel.org, AJvYcCXSEOzeak1867Tiq44l2FT6GD/e4MdsRv9cGaw25vD4YqRZOz+624OI9emcZ/SkCBp6GnyK/FwSvLX/1RKQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUegoRCt8RK+IoWqJv/CtHocmYuKVSR6SsqAk+0y0DOLaiLjFA
-	YvLie55VXHQlhuMoFyXd7XILlj4MSiYrf2jhAd9kpCQPN4C++OfLn3ov
-X-Gm-Gg: ASbGncsTi5SykvBmvWPuQi8A62Fl4x6VQrJr4nZrKYT9gMfSKy8WbTxlUDR6JFsCuJ7
-	LpvFHIKF29q3huiJEhEVhaeGfq4KIo60z/+xBZRk3cZ08MF9nksQgXAGSrWbY7HYJvsKIUwd5AB
-	ytcGX80c8avKYK9yf+/kdUTq2SPMUdnnknoH5N3dVcF1EYXRzGg5dJP8RSFrs6VS6n1HjvYS2pW
-	qjjnkNDIqwwHsqq4/M21e07N53YxhQ6pgMFt1CzmV9xYXTaVr6KbBKhZBjvU6+x62Sfou9RT2GM
-	q/tw1/FYPxqCAGP5TLl7v0gaSwEsTjCsS8jMUxgMfXSHN+egCGfg6sTWhEYTWPFPQST7NPL7I+L
-	xgVh5ViSVaBKRvV6TEo+sFDH2GlCqQswEDY4oEXZZky63U5KOrdDUrb7FiGoBlLDG
-X-Google-Smtp-Source: AGHT+IGd5IkEzM8l1SwWm5ZJYvsCXOq3J4HftAYHmzCTd8sAmyihD2uxngc5poeSaVGfGnQuIB2XEw==
-X-Received: by 2002:a05:600c:8b42:b0:45b:79fd:cb3d with SMTP id 5b1f17b1804b1-45b8558b522mr37894525e9.36.1756668165571;
-        Sun, 31 Aug 2025 12:22:45 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm122566655e9.10.2025.08.31.12.22.45
+        d=1e100.net; s=20230601; t=1756668180; x=1757272980;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LYdqga2UZn0l7KZz7GVGu4hJVZ86hvaVSdUZ6IyURfo=;
+        b=uNuCBZWT8+ZlD6TYhHXqk9auTXoUHZ7Hn89N+kZR0FQ7URKYLDJpY2TZi2cZx52vmA
+         6cR/4fReZoDHjlxacv9RCBdpbhRbXml5SzDE1wHHEX8YgFKF8A+6auNAy+jF/Y0hH8Zb
+         V2aE03akE1rE5lMJ77FmiMF5TQb8BByYOaMZUhOdSnqCZ88RnA3nTN5gTOK1ZX3vITzG
+         hmJ0YsGhdNkSAogRr8zPXAKPXLQkj5irZRk89kPzzOvOZcESF/EL4itG+KyzkglQN0uK
+         RRKOZT12p4cTW/z3Z2IUxdeSZyyIJ+RDkAuMNnJhfr3EV2xSYqJQxrOV2Gp+VpyLe40h
+         Ikiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKI0z/BZdKOXZem3BaBGz9Vqpb7Z5q5NShD9YvcWFzr6UQEs/J20QlQAfO8bwpItXj3EyUpr4bk/qS@vger.kernel.org, AJvYcCVr19EKXjk67Eg5N/Io0lAaVaazIvYe9xt3WVcmE2OWzkUke8hiP/qTqQgkrhWoqO0al5FcKvo5ARMp+DY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7AdNl3zZ00tLyvdLPxcn6XiB6iQjL7yjT5SifJGo/15sO0XvI
+	DC65UaDsY+9f+7V4eJMxuuFIIAm1PfX7Wdi2ZjwybzNU5il5hvBxdiXPJ4+4Dd6JRUY=
+X-Gm-Gg: ASbGnct3vQ91ODRyOQA0uvbJanvt2dPgsGCi7Rn0JtdTg7mwhgUPm8t8MPpLkxlZzRl
+	uksgDVHMp0DfXEfxpT/6eVzDzuVscYpLAhpn0euCu5BKRBoq46Bxz32BCI2EIVtO0upjqlLGnEQ
+	vCduXkXsD4w6YsXk/q0u6T1BHPNDRVwjneMNty4L9sgymOd4DiShECYvnheO0kO0QkRya5+IAbM
+	Mb3+BCa7bh484uwTKhw5VkLOQn9Sz3/RDO2qYOVuo6zTebiwkwY6TnoEA/JzM/AVoArDbpZhlm2
+	zR6WwQ2XfTvEcmYDbTJM1/B2uhkuk/9KUvQIqjtV+kwJh2WuBfrVZJew6iSQYl2WoJHmJGnZtBt
+	DrBa+7rVEBZtB+XovCMwU4qTjP6gwZoaUu+92m6LwGoEHMrzefJUPSAxzCzv1lAE=
+X-Google-Smtp-Source: AGHT+IEqQWamZYIQ2ye2qzty0CYeeLql5rk8APf3tzIf/PM4GCbdSeBa0D5K2wt+o+ufEkn5/yTdUw==
+X-Received: by 2002:a17:90b:58a6:b0:327:fb42:2472 with SMTP id 98e67ed59e1d1-328156cc767mr4506361a91.28.1756668179516;
+        Sun, 31 Aug 2025 12:22:59 -0700 (PDT)
+Received: from fedora ([172.59.162.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b65a2sm8402069b3a.34.2025.08.31.12.22.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 12:22:45 -0700 (PDT)
-Date: Sun, 31 Aug 2025 20:22:44 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <20250831202244.290823f2@pumpkin>
-In-Reply-To: <6d37ce87-e6bf-bd3e-81a9-70fdf08b9c4c@ispras.ru>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
-	<20250826220033.GW39973@ZenIV>
-	<0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
-	<20250827115247.GD1603531@mit.edu>
-	<6d37ce87-e6bf-bd3e-81a9-70fdf08b9c4c@ispras.ru>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Sun, 31 Aug 2025 12:22:59 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: stern@rowland.harvard.edu
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1] usb: storage: sddr09: move write buffers into info struct
+Date: Sun, 31 Aug 2025 12:22:47 -0700
+Message-ID: <20250831192247.1120619-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 27 Aug 2025 16:05:51 +0300 (MSK)
-Alexander Monakov <amonakov@ispras.ru> wrote:
+Changelog:
+- Moved allocation of buffers ('blockbuffer', 'buffer') in 
+  'sddr09_write_data' into info struct and freeing into 
+  'sddr09_card_info_destructor' so that the operations are only 
+  performed once.
+- 'buffer' length is now size of a full block instead of being 
+  dependent on sectors.
 
-> On Wed, 27 Aug 2025, Theodore Ts'o wrote:
-> 
-> > On Wed, Aug 27, 2025 at 10:22:14AM +0300, Alexander Monakov wrote:  
-> > > 
-> > > On Tue, 26 Aug 2025, Al Viro wrote:
-> > >   
-> > > > Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
-> > > > tables and some of them are forking (or cloning without shared descriptor tables)
-> > > > while that is going on?  
-> > > 
-> > > I suppose if they could start a new process in a more straightforward manner,
-> > > they would. But you cannot start a new process without fork. Anyway, I'm but
-> > > a messenger here: the problem has been hit by various people in the Go community
-> > > (and by Go team itself, at least twice). Here I'm asking about a potential
-> > > shortcoming in __fput that exacerbates the problem.  
-> > 
-> > I'm assuming that the problem is showing up in real life when users
-> > run a go problem using "go run" where the golang compiler freshly
-> > writes the executable, and then fork/exec's the binary.  And using
-> > multiple threads sharing descriptor tables was just to make a reliable
-> > reproducer?  
-> 
-> You need at least two threads: while one thread does open-write-close-fork,
-> there needs to be another thread that forks concurrently with the write.
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ drivers/usb/storage/sddr09.c | 100 ++++++++++++++++++-----------------
+ 1 file changed, 51 insertions(+), 49 deletions(-)
 
-Is this made worse by the code that defers fput to a worker thread?
-(or am I misremembering things again?)
-
-	David
-
-> 
-> Alexander
-> 
+diff --git a/drivers/usb/storage/sddr09.c b/drivers/usb/storage/sddr09.c
+index e66b920e9..27c318266 100644
+--- a/drivers/usb/storage/sddr09.c
++++ b/drivers/usb/storage/sddr09.c
+@@ -255,6 +255,8 @@ struct sddr09_card_info {
+ 	int		*pba_to_lba;	/* physical to logical map */
+ 	int		lbact;		/* number of available pages */
+ 	int		flags;
++	unsigned char	*buffer; /* staging buffer */
++	unsigned char	*blockbuffer; /* bounce buffer */
+ #define	SDDR09_WP	1		/* write protected */
+ };
+ 
+@@ -847,11 +849,9 @@ sddr09_find_unused_pba(struct sddr09_card_info *info, unsigned int lba) {
+ 	return 0;
+ }
+ 
+-static int
+-sddr09_write_lba(struct us_data *us, unsigned int lba,
+-		 unsigned int page, unsigned int pages,
+-		 unsigned char *ptr, unsigned char *blockbuffer) {
+-
++static int sddr09_write_lba(struct us_data *us, unsigned int lba,
++			    unsigned int page, unsigned int pages)
++{
+ 	struct sddr09_card_info *info = (struct sddr09_card_info *) us->extra;
+ 	unsigned long address;
+ 	unsigned int pba, lbap;
+@@ -890,13 +890,13 @@ sddr09_write_lba(struct us_data *us, unsigned int lba,
+ 	/* read old contents */
+ 	address = (pba << (info->pageshift + info->blockshift));
+ 	result = sddr09_read22(us, address>>1, info->blocksize,
+-			       info->pageshift, blockbuffer, 0);
++			       info->pageshift, info->blockbuffer, 0);
+ 	if (result)
+ 		return result;
+ 
+ 	/* check old contents and fill lba */
+ 	for (i = 0; i < info->blocksize; i++) {
+-		bptr = blockbuffer + i*pagelen;
++		bptr = info->blockbuffer + i * pagelen;
+ 		cptr = bptr + info->pagesize;
+ 		nand_compute_ecc(bptr, ecc);
+ 		if (!nand_compare_ecc(cptr+13, ecc)) {
+@@ -915,9 +915,9 @@ sddr09_write_lba(struct us_data *us, unsigned int lba,
+ 	}
+ 
+ 	/* copy in new stuff and compute ECC */
+-	xptr = ptr;
++	xptr = info->buffer;
+ 	for (i = page; i < page+pages; i++) {
+-		bptr = blockbuffer + i*pagelen;
++		bptr = info->blockbuffer + i * pagelen;
+ 		cptr = bptr + info->pagesize;
+ 		memcpy(bptr, xptr, info->pagesize);
+ 		xptr += info->pagesize;
+@@ -930,7 +930,7 @@ sddr09_write_lba(struct us_data *us, unsigned int lba,
+ 	usb_stor_dbg(us, "Rewrite PBA %d (LBA %d)\n", pba, lba);
+ 
+ 	result = sddr09_write_inplace(us, address>>1, info->blocksize,
+-				      info->pageshift, blockbuffer, 0);
++				      info->pageshift, info->blockbuffer, 0);
+ 
+ 	usb_stor_dbg(us, "sddr09_write_inplace returns %d\n", result);
+ 
+@@ -961,9 +961,6 @@ sddr09_write_data(struct us_data *us,
+ 
+ 	struct sddr09_card_info *info = (struct sddr09_card_info *) us->extra;
+ 	unsigned int lba, maxlba, page, pages;
+-	unsigned int pagelen, blocklen;
+-	unsigned char *blockbuffer;
+-	unsigned char *buffer;
+ 	unsigned int len, offset;
+ 	struct scatterlist *sg;
+ 	int result;
+@@ -975,35 +972,6 @@ sddr09_write_data(struct us_data *us,
+ 	if (lba >= maxlba)
+ 		return -EIO;
+ 
+-	/*
+-	 * blockbuffer is used for reading in the old data, overwriting
+-	 * with the new data, and performing ECC calculations
+-	 */
+-
+-	/*
+-	 * TODO: instead of doing kmalloc/kfree for each write,
+-	 * add a bufferpointer to the info structure
+-	 */
+-
+-	pagelen = (1 << info->pageshift) + (1 << CONTROL_SHIFT);
+-	blocklen = (pagelen << info->blockshift);
+-	blockbuffer = kmalloc(blocklen, GFP_NOIO);
+-	if (!blockbuffer)
+-		return -ENOMEM;
+-
+-	/*
+-	 * Since we don't write the user data directly to the device,
+-	 * we have to create a bounce buffer and move the data a piece
+-	 * at a time between the bounce buffer and the actual transfer buffer.
+-	 */
+-
+-	len = min_t(unsigned int, sectors, info->blocksize) * info->pagesize;
+-	buffer = kmalloc(len, GFP_NOIO);
+-	if (!buffer) {
+-		kfree(blockbuffer);
+-		return -ENOMEM;
+-	}
+-
+ 	result = 0;
+ 	offset = 0;
+ 	sg = NULL;
+@@ -1024,11 +992,10 @@ sddr09_write_data(struct us_data *us,
+ 		}
+ 
+ 		/* Get the data from the transfer buffer */
+-		usb_stor_access_xfer_buf(buffer, len, us->srb,
+-				&sg, &offset, FROM_XFER_BUF);
++		usb_stor_access_xfer_buf(info->buffer, len, us->srb, &sg,
++					 &offset, FROM_XFER_BUF);
+ 
+-		result = sddr09_write_lba(us, lba, page, pages,
+-				buffer, blockbuffer);
++		result = sddr09_write_lba(us, lba, page, pages);
+ 		if (result)
+ 			break;
+ 
+@@ -1037,9 +1004,6 @@ sddr09_write_data(struct us_data *us,
+ 		sectors -= pages;
+ 	}
+ 
+-	kfree(buffer);
+-	kfree(blockbuffer);
+-
+ 	return result;
+ }
+ 
+@@ -1193,6 +1157,36 @@ sddr09_get_cardinfo(struct us_data *us, unsigned char flags) {
+ 	return cardinfo;
+ }
+ 
++static int sddr09_init_card_buffers(struct us_data *us)
++{
++	struct sddr09_card_info *info = (struct sddr09_card_info *)us->extra;
++	unsigned int pagelen, blocklen, len;
++
++	/*
++	 * blockbuffer is used for reading in the old data, overwriting
++	 * with the new data, and performing ECC calculations
++	 */
++	pagelen = (1 << info->pageshift) + (1 << CONTROL_SHIFT);
++	blocklen = (pagelen << info->blockshift);
++	info->blockbuffer = kmalloc(blocklen, GFP_NOIO);
++	if (!info->blockbuffer)
++		return -ENOMEM;
++
++	/*
++	 * Since we don't write the user data directly to the device,
++	 * we have to create a bounce buffer and move the data a piece
++	 * at a time between the bounce buffer and the actual transfer buffer.
++	 */
++	len = info->blocksize * info->pagesize;
++	info->buffer = kmalloc(len, GFP_NOIO);
++	if (!info->buffer) {
++		kfree(info->blockbuffer);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
+ static int
+ sddr09_read_map(struct us_data *us) {
+ 
+@@ -1403,6 +1397,8 @@ sddr09_card_info_destructor(void *extra) {
+ 	if (!info)
+ 		return;
+ 
++	kfree(info->buffer);
++	kfree(info->blockbuffer);
+ 	kfree(info->lba_to_pba);
+ 	kfree(info->pba_to_lba);
+ }
+@@ -1592,6 +1588,8 @@ static int sddr09_transport(struct scsi_cmnd *srb, struct us_data *us)
+ 		if (!cardinfo) {
+ 			/* probably no media */
+ 		init_error:
++			kfree(info->buffer);
++			kfree(info->blockbuffer);
+ 			sensekey = 0x02;	/* not ready */
+ 			sensecode = 0x3a;	/* medium not present */
+ 			return USB_STOR_TRANSPORT_FAILED;
+@@ -1604,6 +1602,10 @@ static int sddr09_transport(struct scsi_cmnd *srb, struct us_data *us)
+ 		info->blocksize = (1 << info->blockshift);
+ 		info->blockmask = info->blocksize - 1;
+ 
++		if (sddr09_init_card_buffers(us)) {
++			goto init_error;
++		}
++
+ 		// map initialization, must follow get_cardinfo()
+ 		if (sddr09_read_map(us)) {
+ 			/* probably out of memory */
+-- 
+2.51.0
 
 
