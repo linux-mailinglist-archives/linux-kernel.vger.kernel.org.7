@@ -1,119 +1,390 @@
-Return-Path: <linux-kernel+bounces-793577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE98B3D568
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B6DB3D56B
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFEE17AA601
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D7B189939A
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556CF24291B;
-	Sun, 31 Aug 2025 21:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D3524676C;
+	Sun, 31 Aug 2025 21:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmOvrJl5"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzALWsh/"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772E9E573;
-	Sun, 31 Aug 2025 21:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D03D35959;
+	Sun, 31 Aug 2025 21:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756676695; cv=none; b=afYG/K8WbGZP3byg10gSWImUO9jDPRgDD2ZIGmaR5f6fFL64TrAMDE23R8UHRM0BM0KEsxo1N9sXsrZ1jEX37i9xFJxBdb89n/lCJ0BJU7455aCqOsA/l0xNH0UrB2L3qxGCyyXFs0ZgvMlYkBKLdc1wdD9hX0TYSjwFOMKQ4sM=
+	t=1756676871; cv=none; b=HnZ4HpSBAyrv7cXb5lKrtwPe5MaCLChdeMrp8tEXDB0edloak3OE00/7WzGMTarB7stBYzGyEju65GFTLipJ7AjpNuT2UbeRxlFG75tyzqceKRcIHgYP9+NNY8sN9cM68EKDgmXnirtu1bVkZfLLqobQNEU1RLRf4pzKmhYRy9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756676695; c=relaxed/simple;
-	bh=ATlX29eggwecSHBFWVx+XL5nfZNPfYyOe/RUNhsSQVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZhuEJItRER8oWL8yslrrM2tAt9CiO4zJl6tyeTq5zsW4zRhfBioRWN4WYCL5Br6MYHwQh0uYbnlmSHSUBzOg54nvXVISo/3zxh1GJuFMwPPVOzxMo6IHIBfrTm1kFJxevry+GR8ESvY8RgeEKH6Gz+4myEhgofCKuZt4PmpcemU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XmOvrJl5; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1756676871; c=relaxed/simple;
+	bh=9raiHXnSlrnEihDjJ9YQ7ImDp+gCn0d1n638ibAel0o=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=TNLxMvbowv6euvnt4ER3vBkfyXOgYXhgqeLJE0uCt2X8NZdQecm1qK6i5/7ZmFbf4f8C/K9+wtO9lkq/P5AmItGf158GpS2lkDwmBWn5uH/ZwqEBItveqSfYqL53pVbr0GqbBjd+sh/Jtufmaemx2FdkSuLBFK3jOoMrCwvwR2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PzALWsh/; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24adcc94338so646275ad.2;
-        Sun, 31 Aug 2025 14:44:53 -0700 (PDT)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7fa334351b1so455936585a.3;
+        Sun, 31 Aug 2025 14:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756676693; x=1757281493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756676868; x=1757281668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ATlX29eggwecSHBFWVx+XL5nfZNPfYyOe/RUNhsSQVE=;
-        b=XmOvrJl5xcvvpkLDwr+Nur2ZE78vmT6uYFmS0q4hLy0ygE7tuowmNdA5jw0fzzt0Uc
-         bFx0y1sdvCTGmT6+AI4JhwJfqP+CwzGt9TxWL9R5GQCypwz51SdYWNPeLd+ilvbboAc3
-         rrYIComN/NJ46zsFhRpqKveZRD2uuyr30TdtCL0K9cmaSNadRP+DVscLIJRX9ac7cNNU
-         cHSf9ZDd0I3LL9vKdnfNGI25km/i3XtsiQd1UrH/okKnOZ4Y5BfWxdsG1FCLSmWJM+77
-         qDx2X82HyjOmK2muY52QItEs9BnUcRKNHz4Xif8+NV4O1tmegCVSS1PkPoGs5UUJws5K
-         1Oag==
+        bh=N+XHNsRVBV1TFw4rANxiIPLT5DUjE4Cp87ZhX3o/1ZU=;
+        b=PzALWsh/nJ2xFqf3aKp/qFqIVDv1Psf+DNyzNrwySB8OSbTX2BI2EEdqf0NUAHjmJC
+         rrf8j2gOlDPNntHsfgH+OXtpsGjzp1B8OVZ2O6IBmEdlTDRG/tT6kk5VOvlEG0LfZxIU
+         S2kyOOlX5yGzxfxgEFuu3suR4hVf40VeQ33xRrUWUeFPd69ie3ISkN8cV7Bduv7wD4wF
+         tQ+FcpECTDgKc2PLjcDH6VGFIq+xvb2B1yJETZILGJhb2/FLUQ4gcc9/zNjS3HElQpeY
+         laQsV2iHqiOv1ho4zlfF+x/rmpLQM5rtcQOA5lhl6stOgmT6Msrg5NOZ32MUJhWe66nQ
+         AIBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756676693; x=1757281493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ATlX29eggwecSHBFWVx+XL5nfZNPfYyOe/RUNhsSQVE=;
-        b=Vcjux8LLIw+cnwvOW5dbS30WbTqUTLBIVBjax1dvKDbvcqTS7Ik4OQCJXj2CzB9X9N
-         uIdMPJ2ybPIPDCOBZp1cbrhcUtc5G/HnxLNiMHsKTTX5FAvAshj6pGW3Xey89PzcJICF
-         ADKAtOyF+NQL/VXumlB8510wzye0nNtSNqFOiyUlrJ5eEHd6RJnVH0COtxbLBAfhp/Rs
-         pQE0EReiZhnLkuHnzc9jnaNEK5CGBJdidpEIiHpXvjzn/Mm1sDGG7yhomVAwdAdbQOsh
-         RTFHabcVnKpUZWVRhvlLt1CJdo+/quiuAAotQdlTYsrcKqGMcuTmr3Fqil7gVVXUTAOB
-         RnYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn2eDU4lBI0rVAXZCcx4n+FFrEkdDPUcpfLhyREMT7XOib9zsa00Y3IXA8r5YdIZ9O1J0oy4wLEjZqOLs=@vger.kernel.org, AJvYcCWs4nnfbBczU8j5Kv2P1YGqkMyO9gDHZMg0ori6vbqvw44f13b6jYLL6Szo+So08vjftLKf4/BSb9CUOw7GLbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpw3DqxDLpVuWI/PK4VMDrPTooM/FCA4dBazCawQHgxL8ckkZp
-	AdyW1R7VqOSW1v7JNdpONc7Z85BTEehqz1k7eQMQ+XLNyc3ZlrUGW534BSo/pgsaAQovYn8Qzwf
-	BOQIy/MRgTK041x7/jmlmHLWU2ZPTdD4=
-X-Gm-Gg: ASbGnctZnDl0+jMNrL6w9/6sZld/ixhvpB0paQ4n2NpUq/+HartGaFF1Tw+NOUIUXCk
-	w4qTLCsfG1aqyP38Mm146EihZotHSATx0L2gdLKykoZNN0WB0aEgxI+HLh6YL6EfE++dWIlFVJc
-	v8Ad4/vqmeWdLCgsfKcSd55juy5JXIXalcCPuadKYFGstX0Xtnb0u3nvro/moROGJ+l15v09bIq
-	bRIp6vwk9x0dyHqIer3Pfa4q54qgc0HYgxIRZ70TsrM1WkxvsDTCIb0yDLkPN1bcKC799RL+X32
-	JP/Db7bepylWIfNOm3RkZCpHNQ==
-X-Google-Smtp-Source: AGHT+IHn8X2bk0G5dh7IMtbUmjvB3ATMrDad+r+JYlgB/nrfuB8xgJXEqdwDFEde9aacqWBGOAXr0FBhUY9DnbpUeos=
-X-Received: by 2002:a17:90b:4c4a:b0:327:e781:3d37 with SMTP id
- 98e67ed59e1d1-327f5be1809mr6603432a91.6.1756676692690; Sun, 31 Aug 2025
- 14:44:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756676868; x=1757281668;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=N+XHNsRVBV1TFw4rANxiIPLT5DUjE4Cp87ZhX3o/1ZU=;
+        b=sxC52Qk/rV4styNi5Gz97+RS9fkaNtqguawf/SR9L8KBlcKCzwaoyxqJl8k6K3wo00
+         sj1CVjsfl6Xv7wDk26fjVF/XTePdLkIH8GHF2tz2XlzydUj2QkG8astACiZqqTWsOKgj
+         tKO0nxdTDQuutESiZtQQoyRiBF2W/D75u51QEMVNNA5VgHmlhBkFz4dJ+8BdwBUdppdc
+         zyT8wSOMDCHRST6KMnJPgwFZSJDlckhZtLHUMWwNf6DrfRxNpcabd89P91MHIzGQe7aS
+         Sl8CbEJb4gpQMfi0w/kbDi62e6MM0+aY1dfJkP1lEkhx71SCnDhvKae6IH4+I6bs9O/Z
+         +Piw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy0HcvK9wRooUwfHUVyFTWbRz17wIbFJs8OU9zwYkrI1UXg2Iy0NSx2moMwCMvjBZpj23V+GUCqseWw4efyiZ1@vger.kernel.org, AJvYcCVr6D+65dsP1/5nQlcN6b19ActPTSHIF9QnkCyzNxaQ8vVOb4XOxQAxHfVcpaZRoo48lDfWU4ZcZMG1lHA=@vger.kernel.org, AJvYcCWGaPcTecBPMpjvqyUla2eccxy4V/53wrnWCsJ7z0/uPHU0gS7kpaQyXwwpDX/whRm1gZuOesjN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPZKX+ZNdkC+8hp8oDlPtZocfQQlZ+ZmL9d2UPcMPSBm1tk+8B
+	mMu0+Al1VHHWFWEuyodRChu11t7hZTGoBTlvF00Si5ODNHWogb7oRtKz
+X-Gm-Gg: ASbGncsx8d5wGg9vD+aLq45uUHot0bLebFESEieuZ8MHbCGxpZlZARqkEfg4P1Cf9fa
+	xc9dSHAs16cmJH5DRJ0kAV//P7e7x5uYYpgnysbznD9LlJZxyL4iGivFpK5Z0qHIovYihShtqH2
+	lF0UucTTandYpUpziGN+BIJ7PSUJRTKUUpw5FIWBM5esy7RSWeg13dgTkdbd1v/JvV9bkwKOXPq
+	EZI85AW4fNXprhevS4yegWGMQM1rVjXXBxoGnBIneuAA780zCJfGxS0AzkSOLUM4twF67eEENge
+	oJ/orFL7U5wKD6oXf++p+XdgS3uzkyMmVAD1RGoXw3kA/IbI1HCh6rT8d3AA+i9pyYJHdsIF/yz
+	Aw7TPll23WOJXMGKfXmoC0WC3CT/zOxry7TGTnXMEOO2qL6AGfA9at+aKQmwNvetloR0yiYr5hl
+	I7lw==
+X-Google-Smtp-Source: AGHT+IENvJz2TPwvagrAmkRYPiYqs1HbhNs9lmFPVmxBam5aeHZKNQxoLpvrWUQAg2zy11vfbg31yA==
+X-Received: by 2002:a05:620a:7089:b0:7e6:261d:76fc with SMTP id af79cd13be357-7ff2a8362dbmr800872585a.40.1756676867749;
+        Sun, 31 Aug 2025 14:47:47 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7fc1500901csm566334485a.46.2025.08.31.14.47.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 14:47:47 -0700 (PDT)
+Date: Sun, 31 Aug 2025 17:47:46 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Brett A C Sheffield <bacs@librecast.net>, 
+ willemdebruijn.kernel@gmail.com
+Cc: bacs@librecast.net, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ gregkh@linuxfoundation.org, 
+ horms@kernel.org, 
+ kuba@kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ pabeni@redhat.com, 
+ shuah@kernel.org, 
+ willemb@google.com
+Message-ID: <willemdebruijn.kernel.10c80f9e245b5@gmail.com>
+In-Reply-To: <20250831102908.14655-1-bacs@librecast.net>
+References: <willemdebruijn.kernel.143e90d593cff@gmail.com>
+ <20250831102908.14655-1-bacs@librecast.net>
+Subject: Re: [PATCH net-next v2] selftests: net: add test for ipv6
+ fragmentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250829195525.721664-1-ojeda@kernel.org>
-In-Reply-To: <20250829195525.721664-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 31 Aug 2025 23:44:40 +0200
-X-Gm-Features: Ac12FXyChBItJccN3j0dFvHJBmKuYD7SYQmA2dMr5jm5bR3YjQ5JkmRcM0hMeJw
-Message-ID: <CANiq72=yJzJTP54WSmp2d0_Ox32KzE9WCDX1-e37GC3b2Mu5Dg@mail.gmail.com>
-Subject: Re: [PATCH] rust: support Rust >= 1.91.0 target spec
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Waffle Maybe <waffle.lapkin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 9:55=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Starting with Rust 1.91.0 (expected 2025-10-30), the target spec format
-> has changed the type of the `target-pointer-width` key from string
-> to integer [1].
->
-> Thus conditionally use one or the other depending on the version.
->
-> Cc: Waffle Maybe <waffle.lapkin@gmail.com>
-> Link: https://github.com/rust-lang/rust/pull/144443 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Brett A C Sheffield wrote:
+> Add selftest for the IPv6 fragmentation regression which affected
+> several stable kernels.
+> 
+> Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
+> stable without some prerequisite commits.  This caused a regression when
+> sending IPv6 UDP packets by preventing fragmentation and instead
+> returning -1 (EMSGSIZE).
+> 
+> Add selftest to check for this issue by attempting to send a packet
+> larger than the interface MTU. The packet will be fragmented on a
+> working kernel, with sendmsg(2) correctly returning the expected number
+> of bytes sent.  When the regression is present, sendmsg returns -1 and
+> sets errno to EMSGSIZE.
+> 
+> Link: https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
+> Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
 > ---
-> Conditional to the PR getting merged.
+> Willem: Thanks for the suggestion to check /sys/class/net/$DEV/operstate
+> 
+> I did try this but, if I call unshare() and THEN create a TAP interface in the
+> new namespace, operstate no longer seems to be visible to the process?
+> 
+> The process can still read operstate for interfaces in the shared namespace, but
+> not ones created in the unshare()d namespace.
+> 
+> I'm sure I'm doing something wrong there, but after trying a few different
+> things including reading operstate from netlink it suddenly occurred to me that
+> a simpler and more reliable way to check whether an interface is ready to send
+> is to, er, send, and then handle the error for the (unlikely) failure case and
+> retry.
+> 
+> I've incorporated your other review suggestions in this v2. Many thanks.
+> 
+> v2 changes:
+>  - remove superfluous namespace calls - unshare(2) suffices
+>  - remove usleep(). Don't wait for the interface to be ready, just send, and
+>    handle the (less likely) error case by retrying.
+>  - set destination address only once
+>  - document our use of the IPv6 link-local source address
+>  - send to port 9 (DISCARD) instead of 4242 (DONT PANIC)
+>  - ensure sockets are closed on failure paths
+>  - use KSFT exit codes for clarity
+> 
+> v1: https://lore.kernel.org/netdev/20250825092548.4436-3-bacs@librecast.net
+> 
+>  tools/testing/selftests/net/.gitignore        |   1 +
+>  tools/testing/selftests/net/Makefile          |   1 +
+>  .../selftests/net/ipv6_fragmentation.c        | 189 ++++++++++++++++++
+>  3 files changed, 191 insertions(+)
+>  create mode 100644 tools/testing/selftests/net/ipv6_fragmentation.c
+> 
+> diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
+> index 47c293c2962f..3d4b4a53dfda 100644
+> --- a/tools/testing/selftests/net/.gitignore
+> +++ b/tools/testing/selftests/net/.gitignore
+> @@ -16,6 +16,7 @@ ip_local_port_range
+>  ipsec
+>  ipv6_flowlabel
+>  ipv6_flowlabel_mgr
+> +ipv6_fragmentation
+>  log.txt
+>  msg_oob
+>  msg_zerocopy
+> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+> index eef0b8f8a7b0..276e0481d996 100644
+> --- a/tools/testing/selftests/net/Makefile
+> +++ b/tools/testing/selftests/net/Makefile
+> @@ -117,6 +117,7 @@ TEST_GEN_FILES += tfo
+>  TEST_PROGS += tfo_passive.sh
+>  TEST_PROGS += broadcast_pmtu.sh
+>  TEST_PROGS += ipv6_force_forwarding.sh
+> +TEST_GEN_PROGS += ipv6_fragmentation
+>  TEST_PROGS += route_hint.sh
+>  
+>  # YNL files, must be before "include ..lib.mk"
+> diff --git a/tools/testing/selftests/net/ipv6_fragmentation.c b/tools/testing/selftests/net/ipv6_fragmentation.c
+> new file mode 100644
+> index 000000000000..4ba16bf56a32
+> --- /dev/null
+> +++ b/tools/testing/selftests/net/ipv6_fragmentation.c
+> @@ -0,0 +1,189 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Author: Brett A C Sheffield <bacs@librecast.net>
+> + *
+> + * Kernel selftest for the IPv6 fragmentation regression which affected stable
+> + * kernels:
+> + *
+> + *   https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
+> + *
+> + * Commit: a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to stable
+> + * without some prerequisite commits.
+> + *
+> + * This caused a regression when sending IPv6 UDP packets by preventing
+> + * fragmentation and instead returning -1 (EMSGSIZE).
+> + *
+> + * This selftest demonstrates the issue by sending an IPv6 UDP packet from
+> + * the autoconfigured link-local address to an arbritrary multicast group.
+> + *
+> + * sendmsg(2) returns bytes sent correctly on a working kernel, and returns -1
+> + * (EMSGSIZE) when the regression is present.
+> + *
+> + * The regression was not present in the mainline kernel, but add this test to
+> + * catch similar breakage in future.
+> + */
+> +
+> +#define _GNU_SOURCE
+> +
+> +#include <fcntl.h>
+> +#include <linux/if_tun.h>
+> +#include <net/if.h>
+> +#include <netinet/in.h>
+> +#include <sched.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/ioctl.h>
+> +#include <sys/socket.h>
+> +#include <unistd.h>
+> +#include "../kselftest.h"
+> +
+> +#define MTU 1500
+> +#define LARGER_THAN_MTU 8192
+> +
+> +/* ensure MTU is smaller than what we plan to send */
+> +static int set_mtu(int ctl, struct ifreq *ifr)
+> +{
+> +	ifr->ifr_mtu = MTU;
+> +	return ioctl(ctl, SIOCSIFMTU, ifr);
+> +}
+> +
+> +/* bring up interface */
+> +static int interface_up(int ctl, struct ifreq *ifr)
+> +{
+> +	if (ioctl(ctl, SIOCGIFFLAGS, ifr) == -1) {
+> +		perror("ioctl SIOCGIFFLAGS");
+> +		return -1;
+> +	}
+> +	ifr->ifr_flags = ifr->ifr_flags | IFF_UP;
+> +	return ioctl(ctl, SIOCSIFFLAGS, ifr);
+> +}
+> +
+> +/* no need to wait for DAD in our namespace */
+> +static int disable_dad(char *ifname)
+> +{
+> +	char sysvar[] = "/proc/sys/net/ipv6/conf/%s/accept_dad";
+> +	char fname[IFNAMSIZ + sizeof(sysvar)];
+> +	int fd;
+> +
+> +	snprintf(fname, sizeof(fname), sysvar, ifname);
+> +	fd = open(fname, O_WRONLY);
+> +	if (fd == -1) {
+> +		perror("open accept_dad");
+> +		return -1;
+> +	}
+> +	if (write(fd, "0", 1) != 1) {
+> +		perror("write");
+> +		return -1;
+> +	}
+> +	return close(fd);
+> +}
+> +
+> +/* create TAP interface that will be deleted when this process exits */
+> +static int create_interface(char *ifname, struct ifreq *ifr)
+> +{
+> +	int fd;
+> +
+> +	fd = open("/dev/net/tun", O_RDWR);
+> +	if (fd == -1) {
+> +		perror("open tun");
+> +		return -1;
+> +	}
+> +
+> +	ifr->ifr_flags = IFF_TAP | IFF_NO_PI;
+> +	if (ioctl(fd, TUNSETIFF, (void *)ifr) == -1) {
+> +		close(fd);
+> +		perror("ioctl: TUNSETIFF");
+> +		return -1;
+> +	}
+> +	strcpy(ifname, ifr->ifr_name);
+> +
+> +	return fd;
+> +}
+> +
+> +static int setup(void)
+> +{
+> +	struct ifreq ifr = {0};
+> +	char ifname[IFNAMSIZ];
+> +	int fd = -1;
+> +	int ctl;
+> +
+> +	/* we need to set MTU, so do this in a namespace to play nicely */
+> +	if (unshare(CLONE_NEWNET) == -1)
+> +		return -1;
+> +
+> +	ctl = socket(AF_LOCAL, SOCK_STREAM, 0);
+> +	if (ctl == -1)
+> +		return -1;
+> +
+> +	memset(ifname, 0, sizeof(ifname));
+> +	fd = create_interface(ifname, &ifr);
+> +	if (fd == -1)
+> +		goto err_close_ctl;
+> +	if (disable_dad(ifname) == -1)
+> +		goto err_close_fd;
+> +	if (interface_up(ctl, &ifr) == -1)
+> +		goto err_close_fd;
+> +	if (set_mtu(ctl, &ifr) == -1)
+> +		goto err_close_fd;
+> +	goto err_close_ctl;
+> +err_close_fd:
+> +	close(fd);
+> +	fd = -1;
+> +err_close_ctl:
+> +	close(ctl);
+> +	return fd;
+> +}
+> +
+> +int main(void)
+> +{
+> +	/* destination doesn't matter, use an IPv6 link-local multicast group */
+> +	struct in6_addr addr = {
+> +		.s6_addr[0] = 0xff, /* multicast */
+> +		.s6_addr[1] = 0x12, /* set flags (T, link-local) */
+> +	};
+> +	struct sockaddr_in6 sa = {
+> +		.sin6_family = AF_INET6,
+> +		.sin6_addr = addr,
+> +		.sin6_port = 9      /* port 9/udp (DISCARD) */
+> +	};
+> +	char buf[LARGER_THAN_MTU] = {0};
+> +	struct iovec iov = { .iov_base = buf, .iov_len = sizeof(buf)};
+> +	struct msghdr msg = {
+> +		.msg_iov = &iov,
+> +		.msg_iovlen = 1,
+> +		.msg_name = (struct sockaddr *)&sa,
+> +		.msg_namelen = sizeof(sa),
+> +	};
+> +	ssize_t rc;
+> +	int ns_fd;
+> +	int err = KSFT_FAIL;
+> +	int s;
+> +
+> +	printf("Testing IPv6 fragmentation\n");
+> +	ns_fd = setup();
+> +	if (ns_fd == -1) {
+> +		printf("[FAIL] test setup failed\n");
+> +		return KSFT_FAIL;
+> +	}
+> +	s = socket(AF_INET6, SOCK_DGRAM, 0);
+> +send_again:
+> +	rc = sendmsg(s, &msg, 0);
+> +	if (rc == -1) {
+> +		/* if interface wasn't ready, try again */
+> +		if (errno == EADDRNOTAVAIL)
+> +			goto send_again;
 
-The PR landed, so applied to `rust-fixes`.
+Here a usleep is in order instead of busy polling on sendmsg.
 
-I may be able to take tags tomorrow, so those are welcome of course
-(thanks in advance!), although it is already getting tested in the
-Rust CI, so it should be pretty safe.
+Responded to v1 earlier, sorry. Most points still hold afaik.
 
-Cheers,
-Miguel
+
+> +		printf("[FAIL] sendmsg: %s\n", strerror(errno));
+> +		goto err_close_socket;
+> +	} else if (rc != LARGER_THAN_MTU) {
+> +		printf("[FAIL] sendmsg() returned %zi\n", rc);
+> +		goto err_close_socket;
+> +	}
+> +	printf("[PASS] sendmsg() returned %zi\n", rc);
+> +	err = KSFT_PASS;
+> +
+> +err_close_socket:
+> +	close(s);
+> +	close(ns_fd);
+> +	return err;
+> +}
+> -- 
+> 2.49.1
+> 
+
+
 
