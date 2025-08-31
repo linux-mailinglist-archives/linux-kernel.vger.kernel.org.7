@@ -1,137 +1,711 @@
-Return-Path: <linux-kernel+bounces-793314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9463EB3D1C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF33B3D1CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B897178AD1
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C07188790C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526CD246BA7;
-	Sun, 31 Aug 2025 09:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA1221CC5B;
+	Sun, 31 Aug 2025 10:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pczittn8"
-Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kg/QekD6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD03D81
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BE1A9FBA
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756634380; cv=none; b=WB/jsqvwE5EMmN4au37jKBcP7sCipZfpJv5mtT10dp83X4NfuaQuwL1TgmBpxTp+OcQAIkN/TRtWP2Mht49st5i610MlTOnxEWkJV7R1/S8ac3LLVooJhYGPQvg8nhpLXyTozTsHKJ+awKrTchu9+Cd6Pl1K6UuaiSnp/h49fKg=
+	t=1756634432; cv=none; b=sDJGBI8UJChuATNdU75NzYWRIY4ls6bITAZqOQtvtP7LRuTfB1T7/giZ17+wLitZAaCeOVWBFC8gc6PR+7Be+Z3WZpp3CS5bSmWsOLbS9PhTja5Fbrn4P2Zblmis8HRp62H7xwqf+8o4udf4T3ZEMnKJTaHNrv1wQzuFTZRfVmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756634380; c=relaxed/simple;
-	bh=0KkjeJy5JVJeESV08AjM2dcetdJEMfhjNI6FtNSH/3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gOwxPhbzOjCuKwBKeo/WHcOZzhbLNykDWIht+6mS3Cr5N/7la+XsRcDwrDmTumEU2GnWMlf6+WQSO8ziy7jCD7hi4hzT0pbkZiV8bHiNq2gqNUFpjV97ojVH4YBJQyTpQWLeoVApuscb1mh2ll4bArOy1hg52APMd6mBUOHugDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pczittn8; arc=none smtp.client-ip=202.108.3.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756634376;
-	bh=Loz27QVYNzLeCVfjJCj4j3wpQlM+hqvyO/PA6Ks0kqQ=;
-	h=From:Subject:Date:Message-ID;
-	b=pczittn8x0tMgW3FVfYCZyNrvAuUl+W2UIEy6kaHkqESO3SuUzOjPK+4Ll9uX44oA
-	 o7kZdLjh4Dg28f30migt4NJWes9yJIpi0FJMcMQnE3iSJ1gFKWZwiqsLTq0gM5YyDx
-	 d4krA/NRXKET0z9QqyB2im+L9DKsTs6mmVV3Q0ZE=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68B41CFD00007605; Sun, 31 Aug 2025 17:59:27 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 244656291923
-X-SMAIL-UIID: 9199A7AECE71468597CE2A563C8960A6-20250831-175927-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] [nfc?] WARNING in nfc_rfkill_set_block
-Date: Sun, 31 Aug 2025 17:59:14 +0800
-Message-ID: <20250831095915.6269-1-hdanton@sina.com>
-In-Reply-To: <68b3f389.a00a0220.1337b0.002e.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756634432; c=relaxed/simple;
+	bh=iFmbQb9JSPT9Qnq1c89NuEhFG4tIwLVQr7w8umJhtYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVn+qaEHFGaaOhGCNQEP8IfbicTvHsQI/h47I3hnIidWcdQKtc9J09F8JGphxi7NuOzmgRboa9A/zQQyG5xPed/sPjo4lBVRK+cqsmj8mTTFkIZ3gW4oYsfY0RzjfwWT+LaYc39nZ3PlB6dI9xb4NoO5JINo4cSa+5eW2PU4VLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kg/QekD6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V6eKXN008998
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qD5oRl6PaN2DjJNUuUSysf512mj6mjwHEypDav6WIT4=; b=kg/QekD6M8g46WOp
+	Ex/OpvguNct1GPmddlTPxc0VbSNcgUL1OUGaOQ1UKSspO/dLtVwW27H/oIQFn0oV
+	3iTHam2elpP1qaggWIkGaiYRcp29t3jX47YAHmk3vpb2SRYg1KbfOfapGsjlwb92
+	M26mbUsLRojMQH/Wx1BSKqOzCIAY01SJ0uxlEljF22YI6NR/OLvNYJauNst8LZbZ
+	6AagqSqgaFZlj//rR+CFLVXbgO+rfVMZYyUatbWIZQUfOR0sLrP6gx4bHx+TXn1u
+	5bBD0RDjnMkbJp+8io56Mqf2ca0A/wSizlD0UgeaXuqmDr13lziooGXMS45bv1IO
+	le1Wuw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvysw0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:00:29 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b31ba138f7so21193351cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:00:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756634428; x=1757239228;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qD5oRl6PaN2DjJNUuUSysf512mj6mjwHEypDav6WIT4=;
+        b=WcweWJvHT3fIzDKYYWB/saVZcpRKo+EK3cc6mEXBTmn+LhIVMLwtieFA5q0GLPb8O0
+         dRtjQMoS8PPNkpv7exAMPzteYmS9pywB0FXEDEtdY1NhBv04413MBqSORQ/V72wFzHFv
+         Ok5bU6Cb9E50GPJCyaL/cbt7mDWYjfcG+VcOnSc4aEymdGRiFE7/jwCPQnW/oxk8tOOP
+         wsls2ky21iHZcztf/0fH9d6tmzoY+pYhq/w4xUk2+BvV0gFiOg5Z7k4lxAY4bRgl2b15
+         p/hEVA4l7X1Cs2ACdck7Aw5paFYa9bgNzcvhmwlK3t/qrDPWzQS1Ggn7xLYWDxrmP4YY
+         sTyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJD/HwwpiaESKeXXaMrTl5xz2n4IOpQestMTEXF+Ikj6e8tQHZqegjI/+UmOmScQg5tR63AZ0/JD29TA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2HNQgDPbLXDuCylzLmk4ZTHZNRMdgSml9/b8v66EGUVxNVkP5
+	5IcvB0Nup9TpdLTXdtpAD/r91/woksw7GagKavFeEQqnCrd4rMbHoY55aHTu7DTMWIqp2DRku+i
+	HyG9bPCHNaVez9wWwA4PEozqze/nSyQpYTO5C30fkS/Dr9pZ7+HOSkBcJzwy6n5KSh0Y=
+X-Gm-Gg: ASbGncvNGnpX/6ecbTOJxXX7Wy1n7LftMozoBpOgGwrD+i9tmJaSosVg2DCvpdXxMNg
+	glhkgbL6wdOfU0BLgDV8zIvFAW6hLv8/GF3JwJHIQ02Guflrvn/956vAyj8ACVDPW4IcU78b3MM
+	DdDFDSNG2EKlcrtL9p7XSbrxDGosLgwxPo9iWHuR1Irawvao9ktyN3/bLnYxFlu3z/Nr/2a1jcf
+	Vwc9RuKN8QY3jVjCswrgsTFpXGvV2rcQYJtLjOOc3DRBfovY2lb1TJFb478GdmpgBX+f8FPwlsL
+	bH+guwmu6GUCDW2hre8cmFfhJP7FZYIyMKK+Mbaz7Ui6sMQKorDJbRWQrifOVrjPQ8JD7PJOFku
+	GAuCYt8o5mJ8uMH0UgCdEGOi2jJvNROZ6zEIvV1y0sz3KsHWu78mL
+X-Received: by 2002:a05:622a:1812:b0:4b2:94e5:9847 with SMTP id d75a77b69052e-4b31dcac538mr59712371cf.74.1756634428069;
+        Sun, 31 Aug 2025 03:00:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFpiHqGgSFYOFPDu7JwQJBWckE87BwsT8u/A9LiwCj49Zah2l6SdAxeMKGdwGN9bMfC2Cr/A==
+X-Received: by 2002:a05:622a:1812:b0:4b2:94e5:9847 with SMTP id d75a77b69052e-4b31dcac538mr59711811cf.74.1756634427339;
+        Sun, 31 Aug 2025 03:00:27 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f79801b2csm257066e87.117.2025.08.31.03.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 03:00:26 -0700 (PDT)
+Date: Sun, 31 Aug 2025 13:00:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Adam Skladowski <a_skl39@protonmail.com>,
+        Sireesh Kodali <sireeshkodali@protonmail.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
+        Dang Huynh <danct12@riseup.net>
+Subject: Re: [PATCH v7 4/6] arm64: dts: qcom: Add initial support for MSM8937
+Message-ID: <fv4jz6unxpncqazgptet4ie67vdrqqnq3owpjuh7huqvepoozd@yelivqgci2om>
+References: <20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org>
+ <20250831-msm8937-v7-4-232a9fb19ab7@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250831-msm8937-v7-4-232a9fb19ab7@mainlining.org>
+X-Proofpoint-GUID: 4CifwDjHqNA-fHHYxoNLIuX-Ai1-7EYo
+X-Proofpoint-ORIG-GUID: 4CifwDjHqNA-fHHYxoNLIuX-Ai1-7EYo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX/m3K+xtoM70C
+ Z9kWxhxgD3L3MK1udv3ypQEqD+9i5VmOj0FLhTASodcdWXSJg8GqM/HmbGiJoyQYLEK0lvm+BnQ
+ hck5d8CnSeSmYHLkKpmRMtOkz8ZytWpkeqBO14LKvSEIGAC34R7AkduSVCxE9YjCv/nZWB4jHtW
+ eNPCyZLiwEhg+k8x9IuDN0uGJ+Ty/1RKfb+59YIjX5iF9sUfL/6dLnTp0HlbrHR1mEh9L2DaeqI
+ +AQ2ErTptoPoDmSP2Fwh9KUUR+47WZWfiI8g3u6tvJyj0OAYD83NEQ03Q0SpoJRvQ0p9ebA5LcT
+ l9vxHM8iKUWWLuuxmfoL004vUzcDCxAdbeOZDJIsdCT58YPBXAf6qD/uwCuCK9tr7miaCf4dO/A
+ 5PYRbfbQ
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b41d3d cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=2OwXVqhp2XgA:10 a=bBqXziUQAAAA:8 a=OuZLqq7tAAAA:8 a=BfrjIcddtau6jJL3F9YA:9
+ a=r_sqX3LX-aZnKoI4:21 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=BjKv_IHbNJvPKzgot4uq:22 a=AKGiAy9iJ-JzxKVHQNES:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-31_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
 
-> Date: Sun, 31 Aug 2025 00:02:33 -0700
-> syzbot has found a reproducer for the following issue on:
+On Sun, Aug 31, 2025 at 12:38:16AM +0200, Barnabás Czémán wrote:
+> From: Dang Huynh <danct12@riseup.net>
 > 
-> HEAD commit:    c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1508ce34580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11019a62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1308ce34580000
+> Add initial support for MSM8937 SoC.
+> 
+> Signed-off-by: Dang Huynh <danct12@riseup.net>
+> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8937.dtsi | 2134 +++++++++++++++++++++++++++++++++
+>  1 file changed, 2134 insertions(+)
 
-Test Kim's patch.
+> +	};
+> +
+> +
+> +	firmware {
+> +		scm: scm {
+> +			compatible = "qcom,scm-msm8916", "qcom,scm";
 
-#syz test
+"qcom,scm-msm8937", "qcom,scm"
 
---- a/net/nfc/core.c
-+++ b/net/nfc/core.c
-@@ -1154,6 +1154,7 @@ EXPORT_SYMBOL(nfc_register_device);
- void nfc_unregister_device(struct nfc_dev *dev)
- {
- 	int rc;
-+	struct rfkill *rfk = NULL;
- 
- 	pr_debug("dev_name=%s\n", dev_name(&dev->dev));
- 
-@@ -1163,14 +1164,18 @@ void nfc_unregister_device(struct nfc_dev *dev)
- 			 "was removed\n", dev_name(&dev->dev));
- 
- 	device_lock(&dev->dev);
-+	dev->shutting_down = true;
- 	if (dev->rfkill) {
--		rfkill_unregister(dev->rfkill);
--		rfkill_destroy(dev->rfkill);
-+		rfk = dev->rfkill;
- 		dev->rfkill = NULL;
- 	}
--	dev->shutting_down = true;
- 	device_unlock(&dev->dev);
- 
-+	if (rfk) {
-+		rfkill_unregister(rfk);
-+		rfkill_destroy(rfk);
-+	}
-+
- 	if (dev->ops->check_presence) {
- 		timer_delete_sync(&dev->check_pres_timer);
- 		cancel_work_sync(&dev->check_pres_work);
---- x/net/bluetooth/hci_core.c
-+++ y/net/bluetooth/hci_core.c
-@@ -1476,8 +1476,14 @@ static void hci_cmd_timeout(struct work_
- 	if (hdev->reset)
- 		hdev->reset(hdev);
- 
-+	rcu_read_lock();
-+	if (hci_dev_test_flag(hdev, HCI_CMD_DRAIN_WORKQUEUE)) {
-+		rcu_read_unlock();
-+		return;
-+	}
- 	atomic_set(&hdev->cmd_cnt, 1);
- 	queue_work(hdev->workqueue, &hdev->cmd_work);
-+	rcu_read_unlock();
- }
- 
- /* HCI ncmd timer function */
---
+> +			clocks = <&gcc GCC_CRYPTO_CLK>,
+> +				 <&gcc GCC_CRYPTO_AXI_CLK>,
+> +				 <&gcc GCC_CRYPTO_AHB_CLK>;
+> +			clock-names = "core",
+> +				      "bus",
+> +				      "iface";
+> +			#reset-cells = <1>;
+> +
+> +			qcom,dload-mode = <&tcsr 0x6100>;
+> +		};
+> +	};
+> +
+> +	memory@80000000 {
+> +		/* We expect the bootloader to fill in the reg */
+> +		reg = <0 0x80000000 0 0>;
+> +		device_type = "memory";
+> +	};
+> +
+> +	reserved-memory {
+> +		ranges;
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +
+> +		qseecom_mem: reserved@85b00000 {
+> +			reg = <0x0 0x85b00000 0x0 0x800000>;
+> +			no-map;
+> +		};
+> +
+> +		smem@86300000 {
+> +			compatible = "qcom,smem";
+> +			reg = <0x0 0x86300000 0x0 0x100000>;
+> +			no-map;
+> +
+> +			hwlocks = <&tcsr_mutex 3>;
+> +			qcom,rpm-msg-ram = <&rpm_msg_ram>;
+> +		};
+> +
+> +		reserved@86400000 {
+> +			reg = <0x0 0x86400000 0x0 0x400000>;
+> +			no-map;
+> +		};
+> +
+> +		rmtfs@92100000 {
+> +			compatible = "qcom,rmtfs-mem";
+> +			reg = <0x0 0x92100000 0x0 0x180000>;
+> +			no-map;
+> +
+> +			qcom,client-id = <1>;
+> +		};
+> +
+> +		adsp_mem: adsp {
+> +			size = <0x0 0x1100000>;
+> +			alignment = <0x0 0x100000>;
+> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
+> +			no-map;
+> +			status = "disabled";
+> +		};
+> +
+> +		mba_mem: mba {
+> +			size = <0x0 0x100000>;
+> +			alignment = <0x0 0x100000>;
+> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
+> +			no-map;
+> +			status = "disabled";
+> +		};
+> +
+> +		wcnss_mem: wcnss {
+> +			size = <0x0 0x700000>;
+> +			alignment = <0x0 0x100000>;
+> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
+> +			no-map;
+> +			status = "disabled";
+> +		};
+> +
+> +		venus_mem: venus {
+> +			size = <0x0 0x400000>;
+> +			alignment = <0x0 0x100000>;
+> +			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
+> +			no-map;
+> +			status = "disabled";
+> +		};
+> +	};
+> +
+> +	cpu_opp_table_c0: opp-table-c0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp-768000000 {
+> +			opp-hz = /bits/ 64 <768000000>;
+> +		};
+> +
+> +		opp-902400000 {
+> +			opp-hz = /bits/ 64 <902400000>;
+> +		};
+> +
+> +		opp-998400000 {
+> +			opp-hz = /bits/ 64 <998400000>;
+> +		};
+> +
+> +		opp-1094400000 {
+> +			opp-hz = /bits/ 64 <1094400000>;
+> +		};
+> +	};
+> +
+> +	cpu_opp_table_c1: opp-table-c1 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+> +
+> +		opp-960000000 {
+> +			opp-hz = /bits/ 64 <960000000>;
+> +		};
+> +
+> +		opp-1094400000 {
+> +			opp-hz = /bits/ 64 <1094400000>;
+> +		};
+> +
+> +		opp-1209600000 {
+> +			opp-hz = /bits/ 64 <1209600000>;
+> +		};
+> +
+> +		opp-1248000000 {
+> +			opp-hz = /bits/ 64 <1248000000>;
+> +		};
+> +
+> +		opp-1344000000 {
+> +			opp-hz = /bits/ 64 <1344000000>;
+> +		};
+> +
+> +		opp-1401600000 {
+> +			opp-hz = /bits/ 64 <1401600000>;
+> +		};
+> +	};
+> +
+> +	pmu {
+> +		compatible = "arm,cortex-a53-pmu";
+> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +	};
+> +
+> +	rpm: remoteproc {
+> +		compatible = "qcom,msm8937-rpm-proc", "qcom,rpm-proc";
+> +
+> +		smd-edge {
+> +			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+> +			qcom,ipc = <&apcs1 8 0>;
+> +			qcom,smd-edge = <15>;
+> +
+> +			rpm_requests: rpm-requests {
+> +				compatible = "qcom,rpm-msm8937", "qcom,smd-rpm";
+> +				qcom,smd-channels = "rpm_requests";
+> +
+> +				rpmcc: clock-controller {
+> +					compatible = "qcom,rpmcc-msm8937", "qcom,rpmcc";
+> +					#clock-cells = <1>;
+> +					clocks = <&xo_board>;
+> +					clock-names = "xo";
+> +				};
+> +
+> +				rpmpd: power-controller {
+> +					compatible = "qcom,msm8937-rpmpd", "qcom,msm8917-rpmpd";
+> +					#power-domain-cells = <1>;
+> +					operating-points-v2 = <&rpmpd_opp_table>;
+> +
+> +					rpmpd_opp_table: opp-table {
+> +						compatible = "operating-points-v2";
+> +
+> +						rpmpd_opp_ret: opp1 {
+> +							opp-level = <RPM_SMD_LEVEL_RETENTION>;
+> +						};
+> +
+> +						rpmpd_opp_ret_plus: opp2 {
+> +							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
+> +						};
+> +
+> +						rpmpd_opp_min_svs: opp3 {
+> +							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
+> +						};
+> +
+> +						rpmpd_opp_low_svs: opp4 {
+> +							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
+> +						};
+> +
+> +						rpmpd_opp_svs: opp5 {
+> +							opp-level = <RPM_SMD_LEVEL_SVS>;
+> +						};
+> +
+> +						rpmpd_opp_svs_plus: opp6 {
+> +							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
+> +						};
+> +
+> +						rpmpd_opp_nom: opp7 {
+> +							opp-level = <RPM_SMD_LEVEL_NOM>;
+> +						};
+> +
+> +						rpmpd_opp_nom_plus: opp8 {
+> +							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
+> +						};
+> +
+> +						rpmpd_opp_turbo: opp9 {
+> +							opp-level = <RPM_SMD_LEVEL_TURBO>;
+> +						};
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	smp2p-adsp {
+> +		compatible = "qcom,smp2p";
+> +		qcom,smem = <443>, <429>;
+> +
+> +		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
+> +
+> +		mboxes = <&apcs1 10>;
+> +
+> +		qcom,local-pid = <0>;
+> +		qcom,remote-pid = <2>;
+> +
+> +		adsp_smp2p_out: master-kernel {
+> +			qcom,entry-name = "master-kernel";
+> +
+> +			#qcom,smem-state-cells = <1>;
+> +		};
+> +
+> +		adsp_smp2p_in: slave-kernel {
+> +			qcom,entry-name = "slave-kernel";
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> +
+> +	smp2p-modem {
+> +		compatible = "qcom,smp2p";
+> +		qcom,smem = <435>, <428>;
+> +
+> +		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
+> +
+> +		mboxes = <&apcs1 14>;
+> +
+> +		qcom,local-pid = <0>;
+> +		qcom,remote-pid = <1>;
+> +
+> +		modem_smp2p_out: master-kernel {
+> +			qcom,entry-name = "master-kernel";
+> +
+> +			#qcom,smem-state-cells = <1>;
+> +		};
+> +
+> +		modem_smp2p_in: slave-kernel {
+> +			qcom,entry-name = "slave-kernel";
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> +
+> +	smp2p-wcnss {
+> +		compatible = "qcom,smp2p";
+> +		qcom,smem = <451>, <431>;
+> +
+> +		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
+> +
+> +		mboxes = <&apcs1 18>;
+> +
+> +		qcom,local-pid = <0>;
+> +		qcom,remote-pid = <4>;
+> +
+> +		wcnss_smp2p_out: master-kernel {
+> +			qcom,entry-name = "master-kernel";
+> +
+> +			#qcom,smem-state-cells = <1>;
+> +		};
+> +
+> +		wcnss_smp2p_in: slave-kernel {
+> +			qcom,entry-name = "slave-kernel";
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> +
+> +	smsm {
+> +		compatible = "qcom,smsm";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		mboxes = <0>, <&apcs1 13>, <0>, <&apcs1 19>;
+> +
+> +		apps_smsm: apps@0 {
+> +			reg = <0>;
+> +
+> +			#qcom,smem-state-cells = <1>;
+> +		};
+> +
+> +		hexagon_smsm: hexagon@1 {
+> +			reg = <1>;
+> +			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +
+> +		wcnss_smsm: wcnss@6 {
+> +			reg = <6>;
+> +			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> +
+> +	soc: soc@0 {
+> +		compatible = "simple-bus";
+> +		ranges = <0 0 0 0xffffffff>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		qfprom: qfprom@a4000 {
+> +			compatible = "qcom,msm8937-qfprom", "qcom,qfprom";
+> +			reg = <0x000a4000 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			tsens_base1: base1@1d8 {
+> +				reg = <0x1d8 0x1>;
+> +				bits = <0 8>;
+> +			};
+> +
+> +			tsens_s5_p1: s5-p1@1d9 {
+> +				reg = <0x1d9 0x1>;
+> +				bits = <0 6>;
+> +			};
+> +
+> +			tsens_s5_p2: s5-p2@1d9 {
+> +				reg = <0x1d9 0x2>;
+> +				bits = <6 6>;
+> +			};
+> +
+> +			tsens_s6_p1: s6-p1@1da {
+> +				reg = <0x1da 0x2>;
+> +				bits = <4 6>;
+> +			};
+> +
+> +			tsens_s6_p2: s6-p2@1db {
+> +				reg = <0x1db 0x1>;
+> +				bits = <2 6>;
+> +			};
+> +
+> +			tsens_s7_p1: s7-p1@1dc {
+> +				reg = <0x1dc 0x1>;
+> +				bits = <0 6>;
+> +			};
+> +
+> +			tsens_s7_p2: s7-p2@1dc {
+> +				reg = <0x1dc 0x2>;
+> +				bits = <6 6>;
+> +			};
+> +
+> +			tsens_s8_p1: s8-p1@1dd {
+> +				reg = <0x1dd 0x2>;
+> +				bits = <4 6>;
+> +			};
+> +
+> +			tsens_s8_p2: s8-p2@1de {
+> +				reg = <0x1de 0x1>;
+> +				bits = <2 6>;
+> +			};
+> +
+> +			tsens_base2: base2@1df {
+> +				reg = <0x1df 0x1>;
+> +				bits = <0 8>;
+> +			};
+> +
+> +			tsens_mode: mode@210 {
+> +				reg = <0x210 0x1>;
+> +				bits = <0 3>;
+> +			};
+> +
+> +			tsens_s0_p1: s0-p1@210 {
+> +				reg = <0x210 0x2>;
+> +				bits = <3 6>;
+> +			};
+> +
+> +			tsens_s0_p2: s0-p2@211 {
+> +				reg = <0x211 0x1>;
+> +				bits = <1 6>;
+> +			};
+> +
+> +			tsens_s1_p1: s1-p1@211 {
+> +				reg = <0x211 0x2>;
+> +				bits = <7 6>;
+> +			};
+> +
+> +			tsens_s1_p2: s1-p2@212 {
+> +				reg = <0x212 0x2>;
+> +				bits = <5 6>;
+> +			};
+> +
+> +			tsens_s2_p1: s2-p1@213 {
+> +				reg = <0x213 0x2>;
+> +				bits = <3 6>;
+> +			};
+> +
+> +			tsens_s2_p2: s2-p2@214 {
+> +				reg = <0x214 0x1>;
+> +				bits = <1 6>;
+> +			};
+> +
+> +			tsens_s3_p1: s3-p1@214 {
+> +				reg = <0x214 0x2>;
+> +				bits = <7 6>;
+> +			};
+> +
+> +			tsens_s3_p2: s3-p2@215 {
+> +				reg = <0x215 0x2>;
+> +				bits = <5 6>;
+> +			};
+> +
+> +			tsens_s4_p1: s4-p1@216 {
+> +				reg = <0x216 0x2>;
+> +				bits = <3 6>;
+> +			};
+> +
+> +			tsens_s4_p2: s4-p2@217 {
+> +				reg = <0x217 0x1>;
+> +				bits = <1 6>;
+> +			};
+> +
+> +			tsens_s9_p1: s9-p1@230 {
+> +				reg = <0x230 0x1>;
+> +				bits = <0 6>;
+> +			};
+> +
+> +			tsens_s9_p2: s9-p2@230 {
+> +				reg = <0x230 0x2>;
+> +				bits = <6 6>;
+> +			};
+> +
+> +			tsens_s10_p1: s10-p1@231 {
+> +				reg = <0x231 0x2>;
+> +				bits = <4 6>;
+> +			};
+> +
+> +			tsens_s10_p2: s10-p2@232 {
+> +				reg = <0x232 0x1>;
+> +				bits = <2 6>;
+> +			};
+> +
+> +			gpu_speed_bin: gpu-speed-bin@601b {
+> +				reg = <0x601b 0x1>;
+> +				bits = <7 1>;
+> +			};
+> +		};
+> +
+> +		usb_hs_phy: phy@6c000 {
+> +			compatible = "qcom,usb-hs-28nm-femtophy";
+> +			reg = <0x0006c000 0x200>;
+> +			#phy-cells = <0>;
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +				 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+> +				 <&gcc GCC_USB2A_PHY_SLEEP_CLK>;
+> +			clock-names = "ref",
+> +				      "ahb",
+> +				      "sleep";
+> +			resets = <&gcc GCC_QUSB2_PHY_BCR>,
+> +				 <&gcc GCC_USB2_HS_PHY_ONLY_BCR>;
+> +			reset-names = "phy",
+> +				      "por";
+> +			status = "disabled";
+> +		};
+> +
+> +		rng@e3000 {
+> +			compatible = "qcom,prng";
+> +			reg = <0x000e3000 0x1000>;
+> +			clocks = <&gcc GCC_PRNG_AHB_CLK>;
+> +			clock-names = "core";
+> +		};
+> +
+> +		tsens: thermal-sensor@4a9000 {
+> +			compatible = "qcom,msm8937-tsens", "qcom,tsens-v1";
+> +			reg = <0x004a9000 0x1000>,
+> +			      <0x004a8000 0x1000>;
+> +			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "uplow";
+> +			nvmem-cells = <&tsens_mode>,
+> +				      <&tsens_base1>, <&tsens_base2>,
+> +				      <&tsens_s0_p1>, <&tsens_s0_p2>,
+> +				      <&tsens_s1_p1>, <&tsens_s1_p2>,
+> +				      <&tsens_s2_p1>, <&tsens_s2_p2>,
+> +				      <&tsens_s3_p1>, <&tsens_s3_p2>,
+> +				      <&tsens_s4_p1>, <&tsens_s4_p2>,
+> +				      <&tsens_s5_p1>, <&tsens_s5_p2>,
+> +				      <&tsens_s6_p1>, <&tsens_s6_p2>,
+> +				      <&tsens_s7_p1>, <&tsens_s7_p2>,
+> +				      <&tsens_s8_p1>, <&tsens_s8_p2>,
+> +				      <&tsens_s9_p1>, <&tsens_s9_p2>,
+> +				      <&tsens_s10_p1>, <&tsens_s10_p2>;
+> +			nvmem-cell-names = "mode",
+> +					   "base1", "base2",
+> +					   "s0_p1", "s0_p2",
+> +					   "s1_p1", "s1_p2",
+> +					   "s2_p1", "s2_p2",
+> +					   "s3_p1", "s3_p2",
+> +					   "s4_p1", "s4_p2",
+> +					   "s5_p1", "s5_p2",
+> +					   "s6_p1", "s6_p2",
+> +					   "s7_p1", "s7_p2",
+> +					   "s8_p1", "s8_p2",
+> +					   "s9_p1", "s9_p2",
+> +					   "s10_p1", "s10_p2";
+> +			#qcom,sensors = <11>;
+> +			#thermal-sensor-cells = <1>;
+> +		};
+> +
+> +		rpm_msg_ram: sram@60000 {
+
+This node is wrongly placed.
+
+> +			compatible = "qcom,rpm-msg-ram";
+> +			reg = <0x00060000 0x8000>;
+> +		};
+> +
+> +		restart@4ab000 {
+> +			compatible = "qcom,pshold";
+> +			reg = <0x004ab000 0x4>;
+> +		};
+> +
+
+-- 
+With best wishes
+Dmitry
 
