@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-793349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4FAB3D226
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:33:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8D3B3D22E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F123B6695
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA8B17CC90
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C068255F53;
-	Sun, 31 Aug 2025 10:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6347D254B1F;
+	Sun, 31 Aug 2025 10:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="E0KbgRZW"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gICgBOix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BFC245010;
-	Sun, 31 Aug 2025 10:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A390B23ABBB;
+	Sun, 31 Aug 2025 10:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756636422; cv=none; b=i1Hqgc2tqK3opvwxz4WgK0X3GukzGY5FEHGVamLnaHbKQzNHhphPVYfYDJSrLexgc6/Rq8oqXEf5XpJfSVDYF4lxMunJtA51ZwecuM0Jp4HQEZINb8mssl/Lg3RJ18xMjpOYptm4XwzT7l4AtEA1LeUCWupnKtlWRIBX2ky7kxI=
+	t=1756636822; cv=none; b=G/u4Rh8ncVWbow8hy1vy+UBOwodmHY/c+R8JqPx+xg4DO5BAkUdJ8zUkD9zjPsUr4QBS8wH+Xf0KmRDHMYUOEaDFGY3mp5JHhQa31nn+nXlsZEKUQC11/CkVxNx1Rtpyiv8PWB6ObUZ8xDmlJ4Cp3foDZ9+NY3/kvicEpNbn30s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756636422; c=relaxed/simple;
-	bh=9JhG6l9aYXd0tr5rpMP/JH7+4zmVZlrSGb616SvhYjU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Buc7kcXJwvIyC/2RBIlAFlTvfBOOilPn8oSyQ1qlobHtBfQTHUujXtq2HvK06TYDbBgqRMJT9kOY46w2yExz5TZ4wlLFXLjT9N+gScJagCKxUvKrmYtGia3j9nBFNtxQ/Z4O9xbwwoCrz0wap0GXZ6KCnBOETxz0XIDxWHdbHh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=E0KbgRZW; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=rlGvPgM9RCjyuzqwy9Jz8R1zuOjSOwFc2U7uSTIgvLY=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1756636411; v=1; x=1757068411;
- b=E0KbgRZW95vL1xuiXutYVE1TgT8oKdytvqGxh5eWODOhdzxV/KGK9njPALJJIyXqsHgW+80D
- LuR/IE3zfeYjOOcrgP3S+VX+JunHRiO9EPWEDJ4b+F1uPqW045qm3MnWqHT8C2/US6yKhE4rE5X
- 9dBztiT32gyHChpQLpdpQ7b+1aYnDSr/3hSyL2scslNPKDCGIt0TOB0RpDpyKOzKhJZHUXvcqH1
- r3I+Ob3Yd6HhEUB+Nm8IZSe02/HVaLFXQVEjXS5GoVK4gltsv8vCv7jGD8gWfW/lYmnRWe21r7w
- Iww+w7BVcFpnriQXmDURH1zBqSGEPqmqt6ng07AlwW1FA==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 02b68ab0; Sun, 31 Aug 2025 12:33:31 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Sun, 31 Aug 2025 12:33:06 +0200
-Subject: [PATCH v2 3/3] mfd: 88pm886: Add GPADC cell
+	s=arc-20240116; t=1756636822; c=relaxed/simple;
+	bh=YV2SSY9ZqeG/b2RIPFwJf1y40Dnim4om2nZdAq3sl5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrDW7ghOgpE+q31yPkcFLbtZcUYPkUaf8TyEYY4CDXz+9wWYajvgLJErHBfDK0AV/xqwiG2/TumApctze2uwkVkRYS+4w32yhfQ62nL+oQTCbF56WTJVi8x6aLmk2ueKBuHje6OMpy/4PhOyCZjy+f+SCb7VP9ymkXQECDdD0Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gICgBOix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC84C4CEED;
+	Sun, 31 Aug 2025 10:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756636822;
+	bh=YV2SSY9ZqeG/b2RIPFwJf1y40Dnim4om2nZdAq3sl5A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gICgBOix1Jp+csjT9+PeNifZNnSNBcf02qIm5JTiGx0SRR2LDP8YD3sTyauwIuGsY
+	 YRPJmP39r+TYhYMCDR3NB/E7ERJ0lFFboqrlG6og9iNMZZIYUqjzhkEExuT1f32HZ5
+	 gOxNX7SkM+wJ8MLNIhrR/XD//v8uOHIWcjHZpXIxPWpbYIIEVIARv5waBE+L5kYYYw
+	 cuylZ9JRB2ob0Ge5MLT9hBlYLkCGcx8pAQTIFDSNH2yAaD1VuCGaBPq6IUvt2iMHFL
+	 FqCxNbzkW+7GRaOwZAqD/CEB7QJAecE/BjpBJY9SJDuUrHbL8mFr0Ab+0LXW/FHoBV
+	 2cANqW0gH2qTA==
+Message-ID: <b5d0e355-2681-4eaa-8a67-82a364312ec5@kernel.org>
+Date: Sun, 31 Aug 2025 12:40:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250831-88pm886-gpadc-v2-3-759c1e14d95f@dujemihanovic.xyz>
-References: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
-In-Reply-To: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=797; i=duje@dujemihanovic.xyz;
- s=20240706; h=from:subject:message-id;
- bh=9JhG6l9aYXd0tr5rpMP/JH7+4zmVZlrSGb616SvhYjU=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBlbVL5rXCz59eGsemH9ix7/Sk4zgykFW19dnXnl8E6lu
- 4H7qvcqd5SyMIhxMciKKbLk/ne8xvtZZOv27GUGMHNYmUCGMHBxCsBE/hkx/A8PvZ2nUKkqvFxO
- 6p+aRfPWeLXbJxp0Jj/5/PzTrHLWRf8ZGV78+MPYEb44e8sDviNvHc1vxb5/udm7/fNzxzl+9qV
- TOTgB
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ #clock-cells
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
+ <20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a cell for the PMIC's onboard General Purpose ADC.
+On 27/08/2025 14:42, Tudor Ambarus wrote:
+> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+> index 442f9e9037dc33198a1cee20af62fc70bbd96605..f1d0df412fdd49b300db4ba88bc0b1674cf0cdf8 100644
+> --- a/include/dt-bindings/clock/google,gs101.h
+> +++ b/include/dt-bindings/clock/google,gs101.h
+> @@ -634,4 +634,19 @@
+>  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
+>  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
 
-Acked-by: Karel Balej <balejk@matfyz.cz> # for the PMIC
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
-v2:
-- Sort cell names
----
- drivers/mfd/88pm886.c | 1 +
- 1 file changed, 1 insertion(+)
+I missed it last time - this is a header for SoC clock controller
+bindings. ACPM firmware is completely different device, so should go to
+its own binding header.
 
-diff --git a/drivers/mfd/88pm886.c b/drivers/mfd/88pm886.c
-index 39dd9a818b0f0e1e5839f76768ff54940f4cefa5..e411d8dee55420e10b6d7ad7069576c681360de1 100644
---- a/drivers/mfd/88pm886.c
-+++ b/drivers/mfd/88pm886.c
-@@ -35,6 +35,7 @@ static const struct resource pm886_onkey_resources[] = {
- };
- 
- static const struct mfd_cell pm886_devs[] = {
-+	MFD_CELL_NAME("88pm886-gpadc"),
- 	MFD_CELL_RES("88pm886-onkey", pm886_onkey_resources),
- 	MFD_CELL_NAME("88pm886-regulator"),
- 	MFD_CELL_NAME("88pm886-rtc"),
-
--- 
-2.51.0
-
+>  
+> +#define CLK_ACPM_DVFS_MIF				0
+> +#define CLK_ACPM_DVFS_INT				1
+> +#define CLK_ACPM_DVFS_CPUCL0				2
+Best regards,
+Krzysztof
 
