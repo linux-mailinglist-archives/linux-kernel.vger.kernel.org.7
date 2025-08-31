@@ -1,542 +1,217 @@
-Return-Path: <linux-kernel+bounces-793310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DCBB3D1B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8270BB3D1BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF3C189050A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0EE3B91B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45522475CB;
-	Sun, 31 Aug 2025 09:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E1923BCE4;
+	Sun, 31 Aug 2025 09:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HJlrU0f/"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hg+JMRZ3"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20634A32
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C314A205E25;
+	Sun, 31 Aug 2025 09:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756633835; cv=none; b=kSVx5PSQ8SfqvLmVdaDEL8KEaUwtiCnwHq4v/rlt4JN7mko7x5Z/qEEXgKAth1pEADmQwxH4Zrn+jUHAOHXKHaMixtY10vQqFsAogkl3TB0n6ATgLHMiSbSObh6KEU0dmOidYVKqdo+Pz3yPuJOlep1R9R4U8jtV66KAcv5J1Z0=
+	t=1756633930; cv=none; b=oHkY4MroM4NtkcKaELGPpa9Nr9ATYDX/QWu5xQP03V9p0+p0oBj8Ne6HjCujw4Zo2XOmn4tC7iu1u2Y9LBgWdHVG8Mxfc2M3gZdeUBia6Nx+jPwzdaqWlFUWHjf869Q/LBFG02/bg13JsCKvMRUak3eC8FBI49iNMEj1BIb5ipM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756633835; c=relaxed/simple;
-	bh=6A4GMp7BO1+rdlclpCGlitO+jmTXztdIl2bN3hRhIBo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=P52Qeikrwyjgc9RVZDPZKj5+ALS7HYqyouwEiTnMrMFItmJWRmrjiDGCLBNzee78VL4vrDz7oRL9MtI5Jscj/2/2Ue+WI1WwHj9QijCIYXzqUEm0YvcMLLAlTmF+kunp6swAu5QiULejob9vLwMavHGoczJIxPLjv6PDhOBSW9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HJlrU0f/; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250831095024epoutp0187171fa85f98f15cc7595be9e56cfd07~g0Sftf3X70695506955epoutp01G
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:50:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250831095024epoutp0187171fa85f98f15cc7595be9e56cfd07~g0Sftf3X70695506955epoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756633824;
-	bh=VtDCAjkm2qkjJ5xjbF4B+w7GJLiCWmEbeGMms+jD7vU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HJlrU0f/LF6hqxh+D1GCsZHhlzSbDnInBdDKKpZlTo3mVhkPBThP2AuMx3EVc5IyJ
-	 DkUp52StSwV63I0R0z7sLRPvZ7CmD8MWuimNDpTiJf0so7l+NeIiULkhTZQMMgt3Xp
-	 szkzJu1KpPbmOqxbPir4+27yGKdX4pZZE0rpovn4=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250831095022epcas1p3204f65f9de5a2e9bd960e45d7b53352c~g0SeryIoL1439614396epcas1p3X;
-	Sun, 31 Aug 2025 09:50:22 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.36.224]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cF6gf4Stwz2SSKX; Sun, 31 Aug
-	2025 09:50:22 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250831095021epcas1p34d0d6eec3f8ce076dbb1c8498de4450a~g0SdhpUrD1439614396epcas1p3W;
-	Sun, 31 Aug 2025 09:50:21 +0000 (GMT)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250831095021epsmtip273f35b972198555fd5ceca8f1775baf4~g0SdeIie20443504435epsmtip25;
-	Sun, 31 Aug 2025 09:50:21 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: "'Ethan Ferguson'" <ethan.ferguson@zetier.com>, <linkinjeon@kernel.org>,
-	<yuezhang.mo@sony.com>
-Cc: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<cpgs@samsung.com>
-In-Reply-To: <20250822202010.232922-2-ethan.ferguson@zetier.com>
-Subject: RE: [PATCH v4 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Sun, 31 Aug 2025 18:50:21 +0900
-Message-ID: <000001dc1a5c$aaac6350$000529f0$@samsung.com>
+	s=arc-20240116; t=1756633930; c=relaxed/simple;
+	bh=Ek+BiIRHxgNs2ntzTc4wtOGbFbtBAir6+BOqV5HXXc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW4nM0O177/YtlXj4gytMmUjQZuimUSKa/0SK9EXrIRk7xBXB8fd9Q3n0itkVwaVM/7r+UXyrfZ9fF7Zyr+xiUS81tQ5eCagZjH6qKFVRVNti7HuptYFMhRF2Cizx2jLOhgAcXjb1kcK6gY7isBOLd43EcLtWNK7eKAhRlXH3EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hg+JMRZ3; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3d3f46e231fso439065f8f.3;
+        Sun, 31 Aug 2025 02:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756633927; x=1757238727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZgIDh3/JXHTnaWBbnGXx9Cu8hTVtAVj9QpuBiEQrzw=;
+        b=hg+JMRZ3E6TE5NHveLxxJwn/2aXtiCdZU2Y9BZo5Nw6sMad2YuM9dFUDApfpsslinn
+         5ALXfNLwuL6nW5on6yVxROuUc+SlokU9bqDU/5kHI48FkTQYJTQwQ7ylp1lNtpvg3slI
+         nT5ii5iYu5PxsZfYQ8gYhbNkjVGjTarRbwoALrB18vhh2QrKcWowd6agPwPnw0dgHbpC
+         hgDgBF20FMcr/hhsL0piyieU84GXFmlhzBSDV8zYLCnwyW3lzofeJn1U7ZukvjcxkrL+
+         THpfKRG2dUY+XFHJZxcsQ/+zaa0DoJJPjSOPbhX+lxJ63C4xHD7pXEhySeV7zAYBAH+m
+         XuQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756633927; x=1757238727;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GZgIDh3/JXHTnaWBbnGXx9Cu8hTVtAVj9QpuBiEQrzw=;
+        b=FChRaaWwz/Vorg/VIIXcdZo9EEK7LDJFky6TVBLKV4n6JOMT1jf5JPi/snJROWAb44
+         yQ0FchduwvrcdX6ubLAaNHiq1JY1LkPmXorwhjfWm40UzB0DhC2ulRP0sIqjnv7tazEz
+         wwzEvUgPpfFp0R8iZG1UJwvkAyliqMvlV+L++N7QsGHRsWShW6mCmO4Uk/fpYGgAfnKl
+         2rAOQ/GqqVhQKIRzEMK3BZeCbEm0zof3UsWjkVISc/gzx1U75k86B3e/9GA5b8HGWIU4
+         kyIZMn05OMa5/aDs5xwlD8+J57e2tsIp+L6BcOCy4yUtDrHAuY9hyDcHeOLoinJC0laP
+         Np9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJcRZxp5vjkLL75Gu1ZTzmP/KhBHfX/XcTK26pesPsB5xNmXNygXdrAm/dKEHqTxPbj3GB1ZhqFTnQew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2c7uAqSUBCuYB8HKfNIRAKhARWaOH1MwP09VA1Ngsz0/MmBH6
+	3dLadbFKqjNJ8jdfHZHJ7orZfMEWY443O8dFFFeEw9XjItK9sCyNMnhU5abUYg95
+X-Gm-Gg: ASbGnctUWBJeALwqnpgUoNQxfrbxm6Ew2IF6wxZrHSbdNN2b6J5dd6I/QXvbC5tpGz1
+	Q5+X2tU8VQ+fxUlSJMGUy4HMYTbNWIxhKMya3k+MB+e9YPAEz17d4SWwk5knXHaMDBGemzyr4tX
+	d1MYWX73YXxYKCDUAacSiA+JVP7GiR/DkrQBa+4DhOEyLJ8oGqZAHhDgJtR0hOn61xvRUWqxRrO
+	ZUUR8XaK42G0+D4lM01wvxNI2yGVhFsCrD7kPU9TlTMOl3GxsOherdqcU0RlmrDzImCJQHFdNAN
+	qxQHnhbNhoV4GowQIRE1IVjamgYsnNpDtJuVxSEr5DBIisW6lE4COWKkMY2z6IfhZmVhnKPKxQP
+	JjO5QUaqPJCWZAss8srtxh5c2LfXLDg6VNUh1D+AZdVcXvShR/yAAI5lGNn9sBA==
+X-Google-Smtp-Source: AGHT+IE+apOcxfuwsEvJHZq4CtQ/7NnQsz01wVBMFkOUFGEHuctYiAnB0nEY0MEXSoErsk4DeVa5Yw==
+X-Received: by 2002:a05:6000:1ace:b0:3ce:e5fc:6215 with SMTP id ffacd0b85a97d-3d1dd337b6cmr2851952f8f.26.1756633926715;
+        Sun, 31 Aug 2025 02:52:06 -0700 (PDT)
+Received: from bookboi.. (v2202404220747262886.hotsrv.de. [152.53.14.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7ef7cfsm109870295e9.6.2025.08.31.02.52.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 02:52:06 -0700 (PDT)
+From: stepeos <stevepeter.oswald@gmail.com>
+X-Google-Original-From: stepeos <onegearmode@gmail.com>
+To: stevepeter.oswald@gmail.com
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: LOFREE: Fix back/forward buttons for
+Date: Sun, 31 Aug 2025 12:52:03 +0300
+Message-ID: <20250831095203.92177-1-onegearmode@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHtaKTtCgn8qsbURORYOPLaF6mHwwEsV41eAYg80em0RBqlsA==
-Content-Language: ko
-X-CMS-MailID: 20250831095021epcas1p34d0d6eec3f8ce076dbb1c8498de4450a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-711,N
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250822202036epcas1p3be9836f29caef35b48c9ade774a47279
-References: <20250822202010.232922-1-ethan.ferguson@zetier.com>
-	<CGME20250822202036epcas1p3be9836f29caef35b48c9ade774a47279@epcas1p3.samsung.com>
-	<20250822202010.232922-2-ethan.ferguson@zetier.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
-> Add support for reading / writing to the exfat volume label from the
-> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
-> 
-> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
-> ---
->  fs/exfat/exfat_fs.h  |   5 +
->  fs/exfat/exfat_raw.h |   6 ++
->  fs/exfat/file.c      |  88 +++++++++++++++++
->  fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 323 insertions(+)
-> 
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-> index f8ead4d47ef0..ed4b5ecb952b 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -267,6 +267,7 @@ struct exfat_sb_info {
->  	struct buffer_head **vol_amap; /* allocation bitmap */
-> 
->  	unsigned short *vol_utbl; /* upcase table */
-> +	unsigned short *volume_label; /* volume name */
-Why is it necessary to allocate and cache it? I didn't find where to reuse
-it.
-Is there a reason why uniname is not used directly as an argument?
-Is there something I missed?
+From: Steve Oswald <stevepeter.oswald@gmail.com>
 
-> 
->  	unsigned int clu_srch_ptr; /* cluster search pointer */
->  	unsigned int used_clusters; /* number of used clusters */
-> @@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct
-> inode *inode)
-[snip]
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 538d2b6ac2ec..970e3ee57c43 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -12,6 +12,7 @@
->  #include <linux/security.h>
->  #include <linux/msdos_fs.h>
->  #include <linux/writeback.h>
-> +#include "../nls/nls_ucs2_utils.h"
-> 
->  #include "exfat_raw.h"
->  #include "exfat_fs.h"
-> @@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block
-> *sb, unsigned long arg)
->  	return exfat_force_shutdown(sb, flags);
->  }
-> 
-> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned
-> long arg)
-> +{
-> +	int ret;
-> +	char utf8[FSLABEL_MAX] = {0};
-> +	struct exfat_uni_name *uniname;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +
-> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-> +	if (!uniname)
-> +		return -ENOMEM;
-> +
-> +	ret = exfat_read_volume_label(sb);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	memcpy(uniname->name, sbi->volume_label,
-> +	       EXFAT_VOLUME_LABEL_LEN * sizeof(short));
-> +	uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
-> +	uniname->name_len = UniStrnlen(uniname->name,
-> EXFAT_VOLUME_LABEL_LEN);
-The volume label length is stored on-disk. It makes sense to retrieve
-it directly. This way, there is no need to unnecessarily include the 
-NLS utility header file.
+---
+ drivers/hid/hid-ids.h    |  3 ++
+ drivers/hid/hid-lofree.c | 96 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 99 insertions(+)
+ create mode 100644 drivers/hid/hid-lofree.c
 
-> +
-> +	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
-> +		ret = -EFAULT;
-> +		goto cleanup;
-> +	}
-> +
-> +	ret = 0;
-> +
-> +cleanup:
-> +	kfree(uniname);
-> +	return ret;
-> +}
-> +
-> +static int exfat_ioctl_set_volume_label(struct super_block *sb,
-> +					unsigned long arg,
-> +					struct inode *root_inode)
-> +{
-> +	int ret, lossy;
-> +	char utf8[FSLABEL_MAX];
-> +	struct exfat_uni_name *uniname;
-> +
-> +	if (!capable(CAP_SYS_ADMIN))
-> +		return -EPERM;
-> +
-> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
-> +	if (!uniname)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
-> +		ret = -EFAULT;
-> +		goto cleanup;
-> +	}
-> +
-> +	if (utf8[0]) {
-> +		ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8,
-> FSLABEL_MAX),
-> +					 uniname, &lossy);
-> +		if (ret < 0)
-> +			goto cleanup;
-> +		else if (lossy & NLS_NAME_LOSSY) {
-> +			ret = -EINVAL;
-> +			goto cleanup;
-> +		}
-> +	} else {
-> +		uniname->name[0] = 0x0000;
-> +		uniname->name_len = 0;
-> +	}
-> +
-> +	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-> +		exfat_info(sb, "Volume label length too long, truncating");
-> +		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
-> +	}
-> +
-> +	ret = exfat_write_volume_label(sb, uniname, root_inode);
-> +
-> +cleanup:
-> +	kfree(uniname);
-> +	return ret;
-> +}
-> +
->  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
->  	u32 __user *user_attr = (u32 __user *)arg;
-> +	struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
-From this point, there is no need to pass root_inode. The root_inode can be
-obtained directly from sb->s_root->d_inode within the function.
-
-> 
->  	switch (cmd) {
->  	case FAT_IOCTL_GET_ATTRIBUTES:
-> @@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd,
-> unsigned long arg)
->  		return exfat_ioctl_shutdown(inode->i_sb, arg);
->  	case FITRIM:
->  		return exfat_ioctl_fitrim(inode, arg);
-> +	case FS_IOC_GETFSLABEL:
-> +		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
-> +	case FS_IOC_SETFSLABEL:
-> +		return exfat_ioctl_set_volume_label(inode->i_sb, arg,
-> root_inode);
->  	default:
->  		return -ENOTTY;
->  	}
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 8926e63f5bb7..7931cdb4a1d1 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -18,6 +18,7 @@
->  #include <linux/nls.h>
->  #include <linux/buffer_head.h>
->  #include <linux/magic.h>
-> +#include "../nls/nls_ucs2_utils.h"
-> 
->  #include "exfat_raw.h"
->  #include "exfat_fs.h"
-> @@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct
-> super_block *sb)
->  	return 0;
->  }
-> 
-> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
-> +				       struct buffer_head **out_bh,
-> +				       struct exfat_dentry **out_dentry,
-> +				       struct inode *root_inode)
-Instead of passing root_inode, it seems more helpful to pass the
-need_create condition to better understand the function's behavior.
-As mentioned earlier, the root_inode can be found directly from
-sb->s_root->d_inode.
-
-> +{
-> +	int i, ret;
-> +	unsigned int type, old_clu;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	struct exfat_chain clu;
-> +	struct exfat_dentry *ep, *deleted_ep = NULL;
-> +	struct buffer_head *bh, *deleted_bh;
-> +
-> +	clu.dir = sbi->root_dir;
-> +	clu.flags = ALLOC_FAT_CHAIN;
-> +
-> +	while (clu.dir != EXFAT_EOF_CLUSTER) {
-> +		for (i = 0; i < sbi->dentries_per_clu; i++) {
-> +			ep = exfat_get_dentry(sb, &clu, i, &bh);
-> +
-> +			if (!ep) {
-> +				ret = -EIO;
-> +				goto end;
-> +			}
-> +
-> +			type = exfat_get_entry_type(ep);
-> +			if (type == TYPE_DELETED && !deleted_ep &&
-root_inode)
-> {
-> +				deleted_ep = ep;
-> +				deleted_bh = bh;
-> +				continue;
-> +			}
-> +
-> +			if (type == TYPE_UNUSED) {
-> +				if (!root_inode) {
-> +					brelse(bh);
-> +					ret = -ENOENT;
-> +					goto end;
-> +				}
-Too many unnecessary operations are being performed here.
-1. Since the VOLUME_LABEL entry requires only one empty entry, if a DELETED
-    or UNUSED entry is found, it can be used directly.
-2. According to the exFAT specification, all entries after UNUSED are
-    guaranteed to be UNUSED.
-
-Therefore, there is no need to allocate additional clusters or
-mark the next entry as UNUSED here.
-
-In the case of need_create(as of now, root_inode is not null),
-if the next cluster is EOF and TYPE_VOLUME, TYPE_DELETED, or TYPE_UNUSED
-entries are not found, then a new cluster should be allocated.
-
-Lastly, if a new VOLUME_LABEL entry is created, initialization of
-hint_femp is required.
-
-> +
-> +				if (deleted_ep) {
-> +					brelse(bh);
-> +					goto end;
-> +				}
-> +
-> +				if (i < sbi->dentries_per_clu - 1) {
-
-> +					deleted_ep = ep;
-> +					deleted_bh = bh;
-> +
-> +					ep = exfat_get_dentry(sb, &clu,
-> +							      i + 1, &bh);
-> +					memset(ep, 0,
-> +					       sizeof(struct exfat_dentry));
-> +					ep->type = EXFAT_UNUSED;
-> +					exfat_update_bh(bh, true);
-> +					brelse(bh);
-> +
-> +					goto end;
-> +				}
-> +
-> +				// Last dentry in cluster
-> +				clu.size = 0;
-> +				old_clu = clu.dir;
-> +				ret = exfat_alloc_cluster(root_inode, 1,
-> +							  &clu, true);
-> +				if (ret < 0) {
-> +					brelse(bh);
-> +					goto end;
-> +				}
-> +
-> +				ret = exfat_ent_set(sb, old_clu, clu.dir);
-> +				if (ret < 0) {
-> +					exfat_free_cluster(root_inode,
-&clu);
-> +					brelse(bh);
-> +					goto end;
-> +				}
-> +
-> +				ret = exfat_zeroed_cluster(root_inode,
-clu.dir);
-> +				if (ret < 0) {
-> +					exfat_free_cluster(root_inode,
-&clu);
-> +					brelse(bh);
-> +					goto end;
-> +				}
-> +
-> +				deleted_ep = ep;
-> +				deleted_bh = bh;
-> +				goto end;
-> +			}
-> +
-> +			if (type == TYPE_VOLUME) {
-> +				*out_bh = bh;
-> +				*out_dentry = ep;
-> +
-> +				if (deleted_ep)
-> +					brelse(deleted_bh);
-> +
-> +				return 0;
-> +			}
-> +
-> +			brelse(bh);
-> +		}
-> +
-> +		if (exfat_get_next_cluster(sb, &(clu.dir))) {
-> +			ret = -EIO;
-> +			goto end;
-> +		}
-> +	}
-> +
-> +	ret = -EIO;
-> +
-> +end:
-> +	if (deleted_ep) {
-> +		*out_bh = deleted_bh;
-> +		*out_dentry = deleted_ep;
-> +		memset((*out_dentry), 0, sizeof(struct exfat_dentry));
-> +		(*out_dentry)->type = EXFAT_VOLUME;
-> +		return 0;
-> +	}
-> +
-> +	*out_bh = NULL;
-> +	*out_dentry = NULL;
-> +	return ret;
-> +}
-> +
-> +static int exfat_alloc_volume_label(struct super_block *sb)
-> +{
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +
-> +	if (sbi->volume_label)
-> +		return 0;
-> +
-> +
-> +	mutex_lock(&sbi->s_lock);
-> +	sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
-> +						     sizeof(short),
-GFP_KERNEL);
-> +	mutex_unlock(&sbi->s_lock);
-> +
-> +	if (!sbi->volume_label)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +int exfat_read_volume_label(struct super_block *sb)
-> +{
-> +	int ret, i;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	struct buffer_head *bh = NULL;
-> +	struct exfat_dentry *ep = NULL;
-> +
-> +	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, NULL);
-> +	// ENOENT signifies that a volume label dentry doesn't exist
-> +	// We will treat this as an empty volume label and not fail.
-> +	if (ret < 0 && ret != -ENOENT)
-> +		goto cleanup;
-> +
-> +	ret = exfat_alloc_volume_label(sb);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	mutex_lock(&sbi->s_lock);
-The sbi->s_lock should be acquired from the beginning of the function.
-
-> +	if (!ep)
-> +		memset(sbi->volume_label, 0, EXFAT_VOLUME_LABEL_LEN);
-If sbi->volume_label remains, a memset operation is required for
-EXFAT_VOLUME_LABEL_LEN * sizeof(short).
-
-> +	else
-> +		for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
-> +			sbi->volume_label[i] = le16_to_cpu(ep-
-> >dentry.volume_label.volume_label[i]);
-> +	mutex_unlock(&sbi->s_lock);
-> +
-> +	ret = 0;
-> +
-> +cleanup:
-> +	if (bh)
-> +		brelse(bh);
-> +
-> +	return ret;
-> +}
-> +
-> +int exfat_write_volume_label(struct super_block *sb,
-> +			     struct exfat_uni_name *uniname,
-> +			     struct inode *root_inode)
-> +{
-> +	int ret, i;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	struct buffer_head *bh = NULL;
-> +	struct exfat_dentry *ep = NULL;
-> +
-> +	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
-> +		ret = -EINVAL;
-> +		goto cleanup;
-> +	}
-> +
-> +	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, root_inode);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	ret = exfat_alloc_volume_label(sb);
-> +	if (ret < 0)
-> +		goto cleanup;
-> +
-> +	memcpy(sbi->volume_label, uniname->name,
-> +	       uniname->name_len * sizeof(short));
-> +
-> +	mutex_lock(&sbi->s_lock);
-The sbi->s_lock should be acquired from the beginning of the function.
-
-> +	for (i = 0; i < uniname->name_len; i++)
-> +		ep->dentry.volume_label.volume_label[i] =
-> +			cpu_to_le16(sbi->volume_label[i]);
-> +	// Fill the rest of the str with 0x0000
-> +	for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
-> +		ep->dentry.volume_label.volume_label[i] = 0x0000;
-> +
-> +	ep->dentry.volume_label.char_count = uniname->name_len;
-> +	mutex_unlock(&sbi->s_lock);
-> +
-> +	ret = 0;
-> +
-> +cleanup:
-> +	if (bh) {
-> +		exfat_update_bh(bh, true);
-> +		brelse(bh);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  /* mount the file system volume */
->  static int __exfat_fill_super(struct super_block *sb,
->  		struct exfat_chain *root_clu)
-> @@ -791,6 +1014,7 @@ static void delayed_free(struct rcu_head *p)
-> 
->  	unload_nls(sbi->nls_io);
->  	exfat_free_upcase_table(sbi);
-> +	kfree(sbi->volume_label);
->  	exfat_free_sbi(sbi);
->  }
-> 
-> --
-> 2.34.1
-
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 33cc5820f2be..cb2704550043 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -848,6 +848,9 @@
+ #define USB_DEVICE_ID_PXN_V12_LITE_2	0x1211
+ #define USB_DEVICE_LITE_STAR_GT987_FF	0x2141
+ 
++#define USB_VENDOR_ID_LOFREE		0x248A
++#define USB_VENDOR_ID_LOFREE_TOUCH		0x8266
++
+ #define USB_VENDOR_ID_LOGITECH		0x046d
+ #define USB_DEVICE_ID_LOGITECH_Z_10_SPK	0x0a07
+ #define USB_DEVICE_ID_LOGITECH_AUDIOHUB 0x0a0e
+diff --git a/drivers/hid/hid-lofree.c b/drivers/hid/hid-lofree.c
+new file mode 100644
+index 000000000000..89383527e519
+--- /dev/null
++++ b/drivers/hid/hid-lofree.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Custom HID driver for Lofree products
++ * Adds support for Back (BTN_SIDE) and Forward (BTN_EXTRA) buttons
++ * 
++ * Copyright (c) 2025 Steve Oswald
++ * based on hid-cherry
++ */
++
++#include <linux/module.h>
++#include <linux/hid.h>
++#include <linux/input.h>
++#include "hid-ids.h"
++
++/*
++ * Remaps back/forward buttons to input events for Lofree Touch.
++ */
++static int lofree_touch_raw_event(struct hid_device *hdev,
++				  struct hid_report *report, u8 *data, int size)
++{
++	struct hid_input *hidinput;
++	struct input_dev *input;
++
++	if (report->id != 3)
++		return 0;
++
++	list_for_each_entry(hidinput, &hdev->inputs, list) {
++		input = hidinput->input;
++		input_report_key(input, BTN_SIDE, !!(data[1] & 0x08));
++		input_report_key(input, BTN_EXTRA, !!(data[1] & 0x10));
++		input_sync(input);
++	}
++
++	return 0;
++}
++
++/*
++ * Apply capabilities.
++ */
++static int lofree_touch_input_configured(struct hid_device *hdev,
++					 struct hid_input *hi)
++{
++	struct input_dev *input = hi->input;
++
++	input_set_capability(input, EV_KEY, BTN_SIDE);
++	input_set_capability(input, EV_KEY, BTN_EXTRA);
++
++	return 0;
++}
++
++static int lofree_probe(struct hid_device *hdev, const struct hid_device_id *id)
++{
++	int ret;
++
++	ret = hid_parse(hdev);
++	if (ret) {
++		hid_err(hdev, "HID parse failed\n");
++		return ret;
++	}
++
++	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
++	if (ret) {
++		hid_err(hdev, "HID hw start failed\n");
++		return ret;
++	}
++
++	hid_info(hdev, "Touch@LOFREE custom HID driver loaded\n");
++	return 0;
++}
++
++static void lofree_remove(struct hid_device *hdev)
++{
++	hid_hw_stop(hdev);
++}
++
++static const struct hid_device_id lofree_touch_devices[] = {
++	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOFREE,
++			       USB_VENDOR_ID_LOFREE_TOUCH) },
++	{}
++};
++MODULE_DEVICE_TABLE(hid, lofree_touch_devices);
++
++static struct hid_driver lofree_touch_driver = {
++	.name = "hid_lofree_touch",
++	.id_table = lofree_touch_devices,
++	.probe = lofree_probe,
++	.remove = lofree_remove,
++	.raw_event = lofree_touch_raw_event,
++	.input_configured = lofree_touch_input_configured,
++};
++
++module_hid_driver(lofree_touch_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION(
++	"HID driver for some special Lofree devices like Lofree Touch mouse.");
+-- 
+2.48.1
 
 
