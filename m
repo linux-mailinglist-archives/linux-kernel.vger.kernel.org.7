@@ -1,178 +1,113 @@
-Return-Path: <linux-kernel+bounces-793339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FDEB3D209
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:15:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC2BB3D20C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95E517D914
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C94D1895105
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386492253FD;
-	Sun, 31 Aug 2025 10:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826B245010;
+	Sun, 31 Aug 2025 10:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFpKJ7Tn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cU7wK/YF"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D737E42065
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2786442065;
+	Sun, 31 Aug 2025 10:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756635344; cv=none; b=YlGssw7e/FT9xp09C8wL53fLceoreuX2mBQckgZaqhAH9Oboru90H+ZzK/UmtrD6RSJ+A2ufK/95uq75wLHNwASNg/NCD6cCG1cPMqzYZAD03yeKWQZpYRATUyhQowHvSjiE4022JRl/4Br34JxiLP8NcxcA/bCPOEzrJ3lo5M8=
+	t=1756635472; cv=none; b=lWUbBbgiiQ8p0iv8RcaCnlUHaxf7au28h2V0FibIAkhG6yHnzJgc3JvaxQ3z0nNlOi7GN4to4qrQrqYoc7m/fKS942OH7w5vtxIrO1dfJO161x7RXwRP2TV36Nctl8c3979YpJVGyWD8e5ODd8TENwvyUVMqgkCuQRxg8dCAtdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756635344; c=relaxed/simple;
-	bh=p3WI4FCDeL4So+P3eBVdNKKy1LNMbXqDY5+OtJLZkQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bWw83cWWhhwjLpB8lmdVjg2ZwLIGcuvrtjs0btJ4WBLVtSow4IQtjq3rc6BcIEgfdlA5EXdx2kIZbxg4NV9KzhFvQB7se15PXqMA5IuPLIjaWhGkK7rGuW7YegDUfyKVMY+k5FP3eRj3kBWMczdWAy4t/rifet1ElfjIOWOLPe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFpKJ7Tn; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756635343; x=1788171343;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=p3WI4FCDeL4So+P3eBVdNKKy1LNMbXqDY5+OtJLZkQc=;
-  b=mFpKJ7TnDzKwVODTcYTctosqrrg7UzUPWJw80fDvUeElTjYuxhTTwCBU
-   LEn17pVEcvIU+r43T+leFbzDQu3X72uijWqfvxOhRmufV4I1qxy5ZDUQ0
-   DZ5VvtAB8o/Y3uUe1opTckU7JgXDVCQ39+2KXibNQPAcunQ/Ddp0xGuC5
-   VcD9eyAWbwxZnEySyWNiUWHlzgUKD0mPQjAVlPoSC8CzKLPRSdHRwrmr6
-   9pa5AK939wYxgcbUcJAQYLuU53iSq34uDM63O/jTj64EqyjKVT8AkzNg+
-   7kvRvh6kYhyLy0JsR60anqstKFQTBW/AUxONw+MK9ug846iXxV+dVi2Ms
-   w==;
-X-CSE-ConnectionGUID: AbCHhZXGScmLgiJVPcyTAA==
-X-CSE-MsgGUID: EAti6D+GRV2CbVteyCUeOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="61492377"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="61492377"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 03:15:42 -0700
-X-CSE-ConnectionGUID: Yd7pGHJCS8a9JmBAGnJB0g==
-X-CSE-MsgGUID: FjUQrYhLTKmLfPBtkw2XBg==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Aug 2025 03:15:41 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usf5x-000W4h-1a;
-	Sun, 31 Aug 2025 10:15:35 +0000
-Date: Sun, 31 Aug 2025 18:15:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: mm/mprotect.c:450:23: sparse: sparse: cast to non-scalar
-Message-ID: <202508311724.Mp4RhDNi-lkp@intel.com>
+	s=arc-20240116; t=1756635472; c=relaxed/simple;
+	bh=WgMXyIuYHUXdsskYc7L9F2jvIhSMcMVwt1SocD3L+tQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VFKCeU3obJn9Mjzbz5cuZyTP6ps5hDFejNw9nJPZ4yZtfVTYPxjvAkqmz7OMuUdc7pifcPiuE9K64KR9jNDBJWbPUQWQCFCNW80GpDmlTpECF5i25ICPnw000hG/LUgp5J9YnacLSR88xK52Z+OjXZs219kALiX/cDJtIx/fZy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cU7wK/YF; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7fac8fdea9fso298276085a.2;
+        Sun, 31 Aug 2025 03:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756635470; x=1757240270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ipp/CqJGnu3UvrsRy3sfGCJOG70DAK1lDD2BMO20XEI=;
+        b=cU7wK/YFujPyQQc+T7Cj8ZJW0KholGExLbmZuUhbvkh4QdCloPzzHeQ6V25ETIZZK9
+         E8snocOm8gfS2S1zAGo6o+Adp6fSzExKP5S6SfI8TOFQFfr2go3nUKqvoiHJDz6DAJV8
+         5JUcakbKkairbDn9TqfiH+ZLnyyDGcvnWLYCoTKzPqBBERY7oNBJnlmP6UIy3a3Dbyn1
+         dduLNTXK4buLIkmyU9QNwzg8PwNF1cd2ytKp87SxdBYOxRStFs3wdrtr2rHAVkfAEu+x
+         lFmpa1+bYqmcQL43iQPCrIRBiy+drP0xBbVRhzZFMljYZmHu6lB6x4x5CtGEsei6fHfB
+         px2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756635470; x=1757240270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ipp/CqJGnu3UvrsRy3sfGCJOG70DAK1lDD2BMO20XEI=;
+        b=c+QBvYX58/HYeTDemves+vKUiyHPXMsptU7a3Blj4vbMdPvbod1m4y0SdRoQdJvUyj
+         fVjEeWmbH34j8Aqx4wKp/NOiCKWZ9WzcViXXzmS4Ao8jqXElqzqQwv9jVOqbXrT6Ivy+
+         EfwN7G6m55BroxRKqOSiNRHnHwHlYIbvJGzYbVoR/v4DMvNcgLDiLvheY4D+F0r/RG5W
+         EymNon1hfw6KCVOe1KY4SOpndSjEIz7/42qWOHnx8eLHFbT8d8HV9E4nkelTsCwEylW8
+         Ee0Lg8BNF2WfJMhyZ1279n5oyyFu6gudehxy0jF+QnEW33H6Jv0tta5DtRi9lVTzchYa
+         ju4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURaUWesqbSNylsQQ8uSmBh0mWmaTIGwiu+JKBmyPm7OOWAl6HKuGBfh/B8R4HQx4mDfyumG3e45BHoQwt8@vger.kernel.org, AJvYcCVLHfaofFL6niWHm3K1UzSmq240atMlqF26benCo1zsu2/CWziC28NLqvOAPUZGj/TsRijj430u69aL0X6CdWOUjBt+@vger.kernel.org, AJvYcCXTTtPpKKWlMPOpz2tRKneHyT8iJJOKwrLyTJybGX62S0QnSS03a4uRoWrq0DpS0HbNws0ghDoHHP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJV0IWK8WNvMH9CZglUvL0LqIuLb6wh8J3CF8m22R5RcPROsrJ
+	oYs1uav+v3r/o0G+mS9DNIIx2JKKLcxKIpO0DE5ejABVRkNa6ZQBk/+l
+X-Gm-Gg: ASbGncvghCIBjVERXWxtB7MUX9AhX2QeEKWBgbWCGGPDcGaUXeoiRjC4KVF4wU7cRdI
+	D4DSVJDG1is/Ixt+ynPk/yz96MzhC+HTaPVkOcw2LN/UNGZTllEX5xB2LXiABwWOZAmunfc16op
+	cEXPCnjwO8H4CtxwOSwvscGdrGYDsv+qk43FA5PHv5ifPBK9dE3KyhiUnLSPFZuWDVK4REIyjBx
+	y9GOTGr5FFt+R6wWvDpWxQRo8EUqE7B8ljKvR1032ZdVnIr6kNhhMZEcavmi9xB/eBZdxfrag2B
+	Kh1GV1kyEKrj9zPVXSksmY3pKMyfrbawHZ5bzGJPyb5XI6A65PWbY75dsVsHDeVFMoADQoGNRJf
+	sMHUiQaCx6jh+ibMgNwHGiBUjMMkQX1Jm9GgOixq5JG2mDfry6v7DxFAdtJ0PKahEPVounn74F/
+	4jRw==
+X-Google-Smtp-Source: AGHT+IHZ1ssnnZzP2UdpQ0Ya7Rknskr0E+/ay0R2C3CfiGo6hckrP+f/i5G8f4xMd9tGm5cHuX19EA==
+X-Received: by 2002:a05:620a:179f:b0:7f3:4a0f:3581 with SMTP id af79cd13be357-7ff26eaaf8fmr392838985a.12.1756635469980;
+        Sun, 31 Aug 2025 03:17:49 -0700 (PDT)
+Received: from seokw-960QHA.mynetworksettings.com ([2600:4041:4491:2000:1bcc:1b67:3f57:d21e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc16536012sm480262785a.66.2025.08.31.03.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 03:17:49 -0700 (PDT)
+From: Ryan Chung <seokwoo.chung130@gmail.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	corbet@lwn.net
+Cc: Ryan Chung <seokwoo.chung130@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH 0/2] trace: minor documentation fixes for clarity and
+Date: Sun, 31 Aug 2025 19:17:27 +0900
+Message-ID: <20250831101736.11519-1-seokwoo.chung130@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c8bc81a52d5a2ac2e4b257ae123677cf94112755
-commit: cb0f01beb16669e91510fcdb2cea213931aee017 mm/mprotect: fix dax pud handlings
-date:   12 months ago
-config: arm64-randconfig-r121-20250831 (https://download.01.org/0day-ci/archive/20250831/202508311724.Mp4RhDNi-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project ac23f7465eedd0dd565ffb201f573e7a69695fa3)
-reproduce: (https://download.01.org/0day-ci/archive/20250831/202508311724.Mp4RhDNi-lkp@intel.com/reproduce)
+Resend: fixed recipients; no changes
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508311724.Mp4RhDNi-lkp@intel.com/
+Hi all,
 
-sparse warnings: (new ones prefixed by >>)
-   mm/mprotect.c: note: in included file (through include/linux/pgtable.h, include/linux/mm.h, include/linux/pagewalk.h):
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   mm/mprotect.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
-   include/linux/rcupdate.h:869:25: sparse: sparse: context imbalance in 'change_pte_range' - unexpected unlock
->> mm/mprotect.c:450:23: sparse: sparse: cast to non-scalar
->> mm/mprotect.c:450:23: sparse: sparse: cast from non-scalar
-   mm/mprotect.c: note: in included file (through include/linux/mm.h, include/linux/pagewalk.h):
-   include/linux/pgtable.h:324:16: sparse: sparse: cast to non-scalar
-   include/linux/pgtable.h:324:16: sparse: sparse: cast from non-scalar
-   mm/mprotect.c: note: in included file (through include/linux/pgtable.h, include/linux/mm.h, include/linux/pagewalk.h):
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast to non-scalar
-   arch/arm64/include/asm/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+This short series cleans up two small wording issues in the tracing docs to
+improve readability. There are no functional changes.
 
-vim +450 mm/mprotect.c
+Ryan Chung (2):
+  trace: rephrase for clearer documentation
+  trace: fix grammar error in debugging.rst
 
-   428	
-   429	static inline long change_pud_range(struct mmu_gather *tlb,
-   430			struct vm_area_struct *vma, p4d_t *p4d, unsigned long addr,
-   431			unsigned long end, pgprot_t newprot, unsigned long cp_flags)
-   432	{
-   433		struct mmu_notifier_range range;
-   434		pud_t *pudp, pud;
-   435		unsigned long next;
-   436		long pages = 0, ret;
-   437	
-   438		range.start = 0;
-   439	
-   440		pudp = pud_offset(p4d, addr);
-   441		do {
-   442	again:
-   443			next = pud_addr_end(addr, end);
-   444			ret = change_prepare(vma, pudp, pmd, addr, cp_flags);
-   445			if (ret) {
-   446				pages = ret;
-   447				break;
-   448			}
-   449	
- > 450			pud = READ_ONCE(*pudp);
-   451			if (pud_none(pud))
-   452				continue;
-   453	
-   454			if (!range.start) {
-   455				mmu_notifier_range_init(&range,
-   456							MMU_NOTIFY_PROTECTION_VMA, 0,
-   457							vma->vm_mm, addr, end);
-   458				mmu_notifier_invalidate_range_start(&range);
-   459			}
-   460	
-   461			if (pud_leaf(pud)) {
-   462				if ((next - addr != PUD_SIZE) ||
-   463				    pgtable_split_needed(vma, cp_flags)) {
-   464					__split_huge_pud(vma, pudp, addr);
-   465					goto again;
-   466				} else {
-   467					ret = change_huge_pud(tlb, vma, pudp,
-   468							      addr, newprot, cp_flags);
-   469					if (ret == 0)
-   470						goto again;
-   471					/* huge pud was handled */
-   472					if (ret == HPAGE_PUD_NR)
-   473						pages += HPAGE_PUD_NR;
-   474					continue;
-   475				}
-   476			}
-   477	
-   478			pages += change_pmd_range(tlb, vma, pudp, addr, next, newprot,
-   479						  cp_flags);
-   480		} while (pudp++, addr = next, addr != end);
-   481	
-   482		if (range.start)
-   483			mmu_notifier_invalidate_range_end(&range);
-   484	
-   485		return pages;
-   486	}
-   487	
+ Documentation/trace/boottime-trace.rst | 2 +-
+ Documentation/trace/debugging.rst      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
