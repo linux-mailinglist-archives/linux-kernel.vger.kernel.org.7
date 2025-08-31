@@ -1,118 +1,268 @@
-Return-Path: <linux-kernel+bounces-793447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C267CB3D37E
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B26B3D380
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1C83BFC77
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29791189DA86
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78847261B8F;
-	Sun, 31 Aug 2025 12:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250ED25BF15;
+	Sun, 31 Aug 2025 13:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFcxsneJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsTucDx9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE08D25A2C3;
-	Sun, 31 Aug 2025 12:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA7517993;
+	Sun, 31 Aug 2025 13:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756645141; cv=none; b=QCMLpefSFjBGDhqbnd/djO3wKP3cec+afpDuNOI7BR1q/IhZwWSVO7UGBuftjCKfGRlfDn4bu4eEKTsaGEs1VMpQ+Ur2Xw+Ne1twPb8UP0/4si0DhD8CTuWydDUeYa6YMqt+lqEr/iO9bFdpt9w7uDSkJ3hk/VE/SPp1Q8BXQhM=
+	t=1756645276; cv=none; b=i1o4+rf2kctT+3GOEA0H/8NjXJgB6pRsQZsN0yiNr8eQOzJaDn29bcS3UlmL3OB5VBJ/FatekQaw1ktxxdCDkxkeCLeH/XBMdhJpihTw8upsyUIoLMK+Sc6eYU773tvYgMRhrcfUCdTY4tBT/k+L8P8Jf2LwPuyl8Mb4uzTcQ4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756645141; c=relaxed/simple;
-	bh=Caa7DDTCiNusl0o9A3cEtcEjFF2MrzAytBi6d98j3S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exLYW43X/+UAJgn5Jg/Kj4oVYo2RkADkmKlHj8E+rCakaMDE2HSrdDLWRcPrk2SRG4ELVXhT9lw6NtJzFyivqSBX3p+mqjJNP5E4h2Rbinj98OgzT+MCIeA+4/svEitvbHfDaqx5jj6X+o4RwA6DK3Ewk/DKLoXchxkbrACIGeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFcxsneJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164B9C4CEED;
-	Sun, 31 Aug 2025 12:58:57 +0000 (UTC)
+	s=arc-20240116; t=1756645276; c=relaxed/simple;
+	bh=K/RRwgtr/jyuBfa0ugyglnMmaTHqDQfBmdCFjAF1Ls4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ub5swaNi7Q6w2MVwNEvFj+HSUYT1bVoDg0SCxPWzvISeD2CyioDZnT/P/+V0lOk1LmCVQPsLfpio4122mlXS3sJvRMdQhpqf8LnTnG2maqNUTPdPbJOWYsK6RgNZQz3RmgJ4B39Vc0waMWlgRVD5BRhbeRRkZPSs/pJkPCnu62s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsTucDx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAE8C4CEED;
+	Sun, 31 Aug 2025 13:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756645141;
-	bh=Caa7DDTCiNusl0o9A3cEtcEjFF2MrzAytBi6d98j3S4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QFcxsneJ2yc/qJGF/QR+zEjVXwzzXAsYLsyttgdyBB2K3VtezkJA8DU88nl0nJ1SA
-	 7zg03mWozxd3aEzXMYl0GGm8YzYE+s/G+dWWBUAgVPidHQ1Tjd+nNB+daYqsJKblzx
-	 0ZCxd63+ipK0AtOF3aPUWEbJKAZ66GHhMlg78uQQj0a98FVWGjHZDAYb1ululBFWBI
-	 2Uxt+/Sg/4eYjV8TNc9m6+xFnTpa+mBplkOm3MS8GnbM1VXgHsbzVkXfStBBFqmnRn
-	 dmqVzM0jwzTjA8Sp6VlRdvsE7e6U14fEk/gbDNxwvwVYXFynJgdZR3fg8GWQS0tQ2a
-	 2sia7IJVIc6jw==
-Date: Sun, 31 Aug 2025 18:28:53 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: "David E. Box" <david.e.box@linux.intel.com>, rafael@kernel.org, 
-	bhelgaas@google.com, vicamo.yang@canonical.com, kenny@panix.com, 
-	ilpo.jarvinen@linux.intel.com, nirmal.patel@linux.intel.com, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
- ASPM/CLKPM link state
-Message-ID: <2fo64esrc5v5vj46iff2ptgcthaeahwicuzug46popwqrryfsi@yt62sqsnv4e3>
-References: <20250825203542.3502368-1-david.e.box@linux.intel.com>
- <20250828204345.GA958461@bhelgaas>
+	s=k20201202; t=1756645275;
+	bh=K/RRwgtr/jyuBfa0ugyglnMmaTHqDQfBmdCFjAF1Ls4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RsTucDx9/vPcmMgdmOOiGi8ikusW3G0Bnh52wZGxkw0HxmhFE7zDlzrkWoSpm9iWy
+	 KvjknB8qSsJC8xztc1SggoAvBCMdn23se+e23jf4Dwfty7iZisNFYUauMNC6vkjT9k
+	 iYUZ+w/+uNNdbpBmitY+/bTRPB+e350Ic1DWnl0C2E079QWZ3HHk8TWK8zHpydWYog
+	 D/g3Y+D5vsTI/7jJVY/XYrvUi0YnLANmT1I0msWi9e9sIZm2XUj4PFXHhYK32+/VEl
+	 sx62O8OLSIF/XecPhgVJFTeYwvG7khRU8p1KUs+TEplh3ptLwbRilEKwJt74xGoiXI
+	 0l3KQeeC50MNQ==
+Message-ID: <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
+Date: Sun, 31 Aug 2025 15:01:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250828204345.GA958461@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
+To: "Leo L. Schwab" <ewhac@ewhac.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250814212641.197573-2-ewhac@ewhac.org>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20250814212641.197573-2-ewhac@ewhac.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 03:43:45PM GMT, Bjorn Helgaas wrote:
-> On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
-> > Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
-> > enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
-> > defaults. Devices in such domains may therefore run without the intended
-> > power management.
-> > 
-> > Add a host-bridge mechanism that lets controller drivers supply their own
-> > defaults. A new aspm_default_link_state field in struct pci_host_bridge is
-> > set via pci_host_set_default_pcie_link_state(). During link initialization,
-> > if this field is non-zero, ASPM and CLKPM defaults come from it instead of
-> > BIOS.
-> > 
-> > This enables drivers like VMD to align link power management with platform
-> > expectations and avoids embedding controller-specific quirks in ASPM core
-> > logic.
-> 
-> I think this kind of sidesteps the real issue.  Drivers for host
-> controllers or PCI devices should tell us about *broken* things, but
-> not about things advertised by the hardware and available for use.
-> 
-> The only documented policy controls I'm aware of for ASPM are:
-> 
->   - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
->     control on this platform")
-> 
->   - _OSC negotiation for control of the PCIe Capability (OS is only
->     allowed to write PCI_EXP_LNKCTL if platform has granted control to
->     the OS)
-> 
-> I think what we *should* be doing is enabling ASPM when it's
-> advertised, subject to those platform policy controls and user choices
-> like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
-> 
-> So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
-> without drivers doing anything at all.  Maybe we have to carve out
-> exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
-> on x86 systems before 2026 can't enable more ASPM than BIOS did," or
-> whatever.  Is there any baby step we can make in that direction?
-> 
+Hi Leo,
 
-I'm not sure about the ACPI world, but for devicetree platforms, BIOS or the
-bootloader won't configure ASPM for the devices (mostly). So the baby step would
-be to set PCIE_LINK_STATE_ALL for all devicetree platforms :)
+On 14-Aug-25 11:26 PM, Leo L. Schwab wrote:
+> The Logitech G13 is a gaming keypad with general-purpose macro keys,
+> four LED-backlit macro preset keys, five "menu" keys, backlight toggle
+> key, an analog thumbstick, RGB LED backlight, and a monochrome LCD
+> display.
+> 
+> Support input event generation for all keys and the thumbstick, and
+> expose all LEDs.
+> 
+> Signed-off-by: Leo L. Schwab <ewhac@ewhac.org>
 
-We did similar thing for enabling D3Hot for bridges earlier:
-a5fb3ff63287 ("PCI: Allow PCI bridges to go to D3Hot on all non-x86")
+Thank you for your patch overal this looks good to me,
+some remarks inline below.
 
-- Mani
+...
 
--- 
-மணிவண்ணன் சதாசிவம்
+> diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
+> index f8605656257b..6e1d79abfb23 100644
+> --- a/drivers/hid/hid-lg-g15.c
+> +++ b/drivers/hid/hid-lg-g15.c
+
+...
+
+> +/**
+> + * g13_input_report.keybits[] is not 32-bit aligned, so we can't use the bitops macros.
+> + *
+> + * @ary: Pointer to array of u8s
+> + * @b: Bit index into ary, LSB first.  Not range checked.
+> + */
+> +#define	TEST_BIT(ary, b)	((1 << ((b) & 7)) & (ary)[(b) >> 3])
+> +
+> +/* Table mapping keybits[] bit positions to event codes. */
+> +/* Note: Indices are discontinuous to aid readability. */
+> +static const u16 g13_keys_for_bits[] = {
+> +	/* Main keypad - keys G1 - G22 */
+> +	[0] = KEY_MACRO1,
+> +	[1] = KEY_MACRO2,
+> +	[2] = KEY_MACRO3,
+> +	[3] = KEY_MACRO4,
+> +	[4] = KEY_MACRO5,
+> +	[5] = KEY_MACRO6,
+> +	[6] = KEY_MACRO7,
+> +	[7] = KEY_MACRO8,
+> +	[8] = KEY_MACRO9,
+> +	[9] = KEY_MACRO10,
+> +	[10] = KEY_MACRO11,
+> +	[11] = KEY_MACRO12,
+> +	[12] = KEY_MACRO13,
+> +	[13] = KEY_MACRO14,
+> +	[14] = KEY_MACRO15,
+> +	[15] = KEY_MACRO16,
+> +	[16] = KEY_MACRO17,
+> +	[17] = KEY_MACRO18,
+> +	[18] = KEY_MACRO19,
+> +	[19] = KEY_MACRO20,
+> +	[20] = KEY_MACRO21,
+> +	[21] = KEY_MACRO22,
+> +
+> +	/* LCD menu buttons. */
+> +	[24] = KEY_KBD_LCD_MENU5,	/* "Next page" button */
+> +	[25] = KEY_KBD_LCD_MENU1,	/* Left-most */
+> +	[26] = KEY_KBD_LCD_MENU2,
+> +	[27] = KEY_KBD_LCD_MENU3,
+> +	[28] = KEY_KBD_LCD_MENU4,	/* Right-most */
+> +
+> +	/* Macro preset and record buttons; have red LEDs under them. */
+> +	[29] = KEY_MACRO_PRESET1,
+> +	[30] = KEY_MACRO_PRESET2,
+> +	[31] = KEY_MACRO_PRESET3,
+> +	[32] = KEY_MACRO_RECORD_START,
+> +
+> +	/* 33-35 handled by joystick device. */
+> +
+> +	/* Backlight toggle. */
+> +	[37] = KEY_LIGHTS_TOGGLE,
+> +};
+> +
+> +static const u16 g13_keys_for_bits_js[] = {
+> +	/* Joystick buttons */
+> +	/* These keybits are at bit indices 33, 34, and 35. */
+> +	BTN_BASE,	/* Left side */
+> +	BTN_BASE2,	/* Bottom side */
+> +	BTN_THUMB,	/* Stick depress */
+> +};
+
+You are using this 33 offset hardcoded below, maybe
+at a #define for this, e.g. :
+
+#define G13_JS_KEYBITS_OFFSET	33
+
+> +
+> +static int lg_g13_event(struct lg_g15_data *g15, u8 const *data)
+> +{
+> +	struct g13_input_report const * const rep = (struct g13_input_report *) data;
+> +	int i, val;
+> +
+> +	/*
+> +	 * Main macropad and menu keys.
+> +	 * Emit key events defined for each bit position.
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits); ++i) {
+> +		if (g13_keys_for_bits[i]) {
+> +			val = TEST_BIT(rep->keybits, i);
+> +			input_report_key(g15->input, g13_keys_for_bits[i], val);
+> +		}
+> +	}
+> +	input_sync(g15->input);
+> +
+> +	/*
+> +	 * Joystick.
+> +	 * Emit button and deflection events.
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits_js); ++i) {
+> +		if (g13_keys_for_bits_js[i]) {
+
+g13_keys_for_bits_js[] is contiguous so no need
+for this if (g13_keys_for_bits_js[i]) test.
+
+> +			val = TEST_BIT(rep->keybits, i + 33);
+> +			input_report_key(g15->input_js, g13_keys_for_bits_js[i], val);
+> +		}
+> +	}
+> +	input_report_abs(g15->input_js, ABS_X, rep->joy_x);
+> +	input_report_abs(g15->input_js, ABS_Y, rep->joy_y);
+> +	input_sync(g15->input_js);
+> +
+> +	if (IS_ENABLED(CONFIG_LEDS_BRIGHTNESS_HW_CHANGED)) {
+
+I do not believe that this IS_ENABLED(CONFIG_LEDS_BRIGHTNESS_HW_CHANGED)
+is necessary, led_classdev_notify_brightness_hw_changed() has a static
+inline replacement when CONFIG_LEDS_BRIGHTNESS_HW_CHANGED is not set,
+so you can just call it unconditionally.
+
+This is already called unconditionally in other places of the code.
+
+> +		/*
+> +		 * Bit 23 of keybits[] reports the current backlight on/off
+> +		 * state.  If it has changed from the last cached value, apply
+> +		 * an update.
+> +		 */
+> +		bool hw_brightness_changed = (!!TEST_BIT(rep->keybits, 23))
+> +					   ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
+> +		if (hw_brightness_changed)
+> +			led_classdev_notify_brightness_hw_changed(
+> +				&g15->leds[0].cdev,
+> +				TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static void lg_g13_init_input_dev(struct hid_device *hdev,
+> +				  struct input_dev *input, const char *name,
+> +				  struct input_dev *input_js, const char *name_js)
+> +{
+> +	/* Macropad. */
+> +	lg_g15_init_input_dev_core(hdev, input, name);
+> +	for (int i = 0; i < ARRAY_SIZE(g13_keys_for_bits); ++i) {
+> +		if (g13_keys_for_bits[i])
+> +			input_set_capability(input, EV_KEY, g13_keys_for_bits[i]);
+> +	}
+> +
+> +	/* OBTW, we're a joystick, too... */
+> +	lg_g15_init_input_dev_core(hdev, input_js, name_js);
+> +	for (int i = 0; i < ARRAY_SIZE(g13_keys_for_bits_js); ++i) {
+> +		if (g13_keys_for_bits_js[i])
+> +			input_set_capability(input_js, EV_KEY, g13_keys_for_bits_js[i]);
+
+g13_keys_for_bits_js[] is contiguous so no need
+for this if (g13_keys_for_bits_js[i]) test.
+
+This will also allow you to drop the {} from the for loop.
+
+> +	}
+> +
+> +	input_set_capability(input_js, EV_ABS, ABS_X);
+> +	input_set_abs_params(input_js, ABS_X, 0, 255, 0, 0);
+> +	input_set_capability(input_js, EV_ABS, ABS_Y);
+> +	input_set_abs_params(input_js, ABS_Y, 0, 255, 0, 0);
+> +}
+> +
+>  static int lg_g15_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  {
+>  	static const char * const led_names[] = {
+...
+
+Besides from my few small remarks this looks good to me,
+feel free to add:
+
+Reviewed-by: Hans de Goede <hansg@kernel.org>
+
+to the next version.
+
+Regards,
+
+Hans
+
+
+
 
