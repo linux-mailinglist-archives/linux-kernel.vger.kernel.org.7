@@ -1,129 +1,179 @@
-Return-Path: <linux-kernel+bounces-793293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4EA8B3D1A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C8EB3D1A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B715189E043
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C2344108D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E9B21B9C1;
-	Sun, 31 Aug 2025 09:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EE0245010;
+	Sun, 31 Aug 2025 09:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OOBfzhKJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="MmIWLg23"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE07212B0A
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5DE1F09AC
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756632700; cv=none; b=bgug5kiFbM77kcF13u5ZDoquINlRE0vPPnrw3zQni+zxVgRt7FyeScp2bOeWHFtc3HibT9UBDlbd0ikCJdvm5HH2ccxW83Vfn6ROsGD9tKdxmxoCGEWxDdWx2+G6ILiYvK20rZfK9BK0Z2AfqtiQ7z3BZQzgeAXZMNZyg4LILxU=
+	t=1756633179; cv=none; b=mNNO+mh+8YXYTC/Ob4n+jXhOeDQwComJt3h+ZDcWCOlI5yJoBVz6gMoO+xk4FyB1YKqwfpJJMOM1NyGTCD02ZSD/bfNA5evC+oziAsWZHEH3vZu6wCtBeZ0oee27E3/SagpKREz2wT6zUSz1uVJLih3yApfAsJMav/mXClqMO5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756632700; c=relaxed/simple;
-	bh=KAM5K51oDjFQaEFuJsdSWs/45wzGFbYurHWb1oeTi40=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mdRd4RdzL+Qjg1HcWc6yRgDWDnMZTBLA+pv/osxWUmL4g1etgg2z2kMqsljqOwnUZ0PexG7+fFMrexpF08YRQhKuoMf3lkGeh0R2y6cG717usi3rSHfY2uIdjJQmIlKdiU8ItQPKTcZKjgKWxUkubULBNtoITCbBImz29MuUE6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OOBfzhKJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1C05F40E0192;
-	Sun, 31 Aug 2025 09:31:34 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2D8NGNNL9zAU; Sun, 31 Aug 2025 09:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756632690; bh=jbds5ZcuYzLaYuM9LP2iUpe5yUddTTA+BMKWaImYZcI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OOBfzhKJx99+IX+nbmLmrDUnkIB+HTNztXlzvXZPm1i2ziEzCwabOzxnnCm9nIW8j
-	 LrVZOokX00Qzz6eL/eYbqHsLJwaqBXu+3VhAgSVKwjKfqgbmUhePRDmZV8gamhCheS
-	 Om1PN41CN7aBJPX/jU2EoLJirjuHkauBCG0guTbYq8GaoMXYXqmFVaCsI/7Z9HvLkV
-	 CIh095GHnu4dbzke+FrEtFrtJfs+TIGoWflH7JZZGokvXpght/HvMBTpSdQh3et6RH
-	 4AuSNZ4kkXJUITwb8yS3dpMdt+R1o14sqC9IQNhUHk4v83pVHnkA78yczjW3C0mDjo
-	 ZUS/wA6Fx88OS5DEsUUf4k3HY6WuMvY1ZBL5xlA4SIKgbDyqrwwM+Fih+RqsmAjgxU
-	 JbKBln9cqBBMubqLM5TYEslcggKfAhgS8GMmIxTlty5+YgrtZdc8gwomJq/ncJL3Eg
-	 taCHM6qhHa/9i4KJ5N4i2Mxbh9Fe8J2YGWK2NBObsWNMKYXs3FoAVVJUUt2gX9LHkj
-	 GtzLuWjK5UjQriVHroNO0BAH4beHpBFfU6y+XXL0HspOqGltfNF6spUCz6oIh6rp97
-	 ul2AVsVxc7C4Quup1Z6/k3wHOs+3O/fGXiZd2tXPaH3BJNb1IDGzhwhjFBQkLTwD3y
-	 xN5IDpr2kv6l4Daj9+H2QAgY=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 68B2D40E0174;
-	Sun, 31 Aug 2025 09:31:27 +0000 (UTC)
-Date: Sun, 31 Aug 2025 11:31:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.17-rc4
-Message-ID: <20250831093118.GAaLQWZnsa4UZdyxFs@fat_crate.local>
+	s=arc-20240116; t=1756633179; c=relaxed/simple;
+	bh=xzNmljUVfv0CKhGpx1yf8BS3A7mLdvDC3nodota5Zr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGJnMe7hWxTjyQ00I/cQP66LtxjGOH63Gye8s1M99JMOtAyGkyA/y9RE6wNfvjmpl/2Utwo3QoHoWeeFcY2dKX5hA34soZcTNyoFmdqKFDPmv9LL6CbGYXmFElfOLmrxwKqhvnse2E7t2iD9sd+UOQHVQbd0G3j5XF4s/yeEtHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=MmIWLg23; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b0225483ca0so153327566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756633176; x=1757237976; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tARiBeQKogmSx6ScuL3aeyFoXa1hfJ2x9S0wEBpMSiY=;
+        b=MmIWLg23KfT4PyGEas6eybxR6F7I1KH88qftyB3DUX9whlBmEKFV7ozeTEPB19dD5m
+         sDpdzFV3FfjTDxZPd0SlKwPjIz3FH6uWgHAFA5xPKICXfPjGKXF6Cz2vJ+7O+WfvanqC
+         hIPRBeUPf85iS8Xq7OXH9JkXP9ASy4C2oQkrzfST1CpHsGyle73xLonlKi8DMzH9+aOb
+         ADOQolgSHYt2QERLGnQsocPOILc+a/VjjbfDUuh4NLsh0pkS6HVOcFnzgL0Qb01ROfvd
+         tr9bDqwy9BXsv5n4rovlOPmKdBh15byFKOASq3zW3gVkNwLzNN11X7QMBzbv45Q1LaY1
+         TyhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756633176; x=1757237976;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tARiBeQKogmSx6ScuL3aeyFoXa1hfJ2x9S0wEBpMSiY=;
+        b=Qc9h1QhYtvo2hfIB6gT2AkTurXyiSj9QP/urjNL8FRMjxHNRCAO0we4om6p2z7uk6r
+         tJ7pCLmRJU6AkzdbuknVvNGAxCqgP6c7xCd2906u/fvjPzvE81rD0/Sp5/2YeySQICLt
+         hRJO3jr6JvU1wJ+m1Nr6k2M+yzZkcD1cfI3nKezVltmoY1t064OYtNeo//EdcA7EH1W8
+         mQ8e29Z+rzeTqkxsTnMoVCKcg0xGn0/jn3WEgV3Nxd9XuLFeZoBl8QURu7EJ58n88GxB
+         KPqxk8fi2iQp2A7qCRmY2n1k+eSNNk7ZAV3CIPanWSVBOinPpZIhS1ezS47k0ULksgoj
+         xYHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMoVTpgdUaUsQ5Shnz0XQXg/rfEIkVSQXsGRLRNYf6wbAPvRa+nou9KbnvNNzfgz2eNK6WiZlMppuGMuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuPKEPUtVVumh2rZePzfraZ83faYFOg7fdcY8u+jO6ejsDXD13
+	ArNWStJ7N9JtDqJ8Y6D5QZjTdNLtpgwID0FbDBK87Dj/UWRGuqiEl6ylCbzTKiDxDX4=
+X-Gm-Gg: ASbGncscL8kIRvk6SgbcMv5KjVkY7Yd+AAOjmcdE2QU6Wt6kyWgwV9NeF6cFnX1GDP7
+	JCngINGJU+HS9096GEkOASb1WhELV8mWeDMu2XlLTF6DpshqfOWdPF0nTGtOAak+WG85J3E3htq
+	jdZfkenaAN1hsrv1Sp7GnBXsC8qI2YdWjFN1LpMIO0WgZ/9x4LkB/7g2z5JEpPTEq/qMKHZe3u2
+	rURIQ/WjyOc42NWrTjK47sWrv2x/fTLm36gKJbBg26TUz+1WYhefVIUYc3YsJ00NN60EDnqArgc
+	cLmW5ut9HzygCSqBnqcIeZ9rWBEx6Q0J7Ic4xkCr1rqHCqSZo/PZLvhtBRj35MTnclMirt8BrPI
+	+yCYTfJ1oDRiG3/uTGqtXab4bpE8ED1DqUUzhAodlzvAfHD8HX/0C9a/kxNZUGANxA8X+eCx/+U
+	mUDwAZnrKLFJPwzEztUM9x5Bq3mo7J8VNf
+X-Google-Smtp-Source: AGHT+IHG4PxpmR9awAfjHMroFIHguhhrmpkWm97SaLqlciSkKd+OCg3v9JMQYZPVhQ3cfJwo9Iu/1g==
+X-Received: by 2002:a17:906:7314:b0:afe:8af3:2ac2 with SMTP id a640c23a62f3a-b01d9730706mr425692466b.39.1756633175692;
+        Sun, 31 Aug 2025 02:39:35 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd8656sm597512566b.56.2025.08.31.02.39.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 02:39:35 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	willy@infradead.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	vishal.moola@gmail.com
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v2 00/12] mm: add `const` to lots of pointer parameters
+Date: Sun, 31 Aug 2025 11:39:06 +0200
+Message-ID: <20250831093918.2815332-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+For improved const-correctness.
 
-please pull the irq/urgent lineup for v6.17-rc4.
+This work was initially posted here:
+ https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
 
-Thx.
+.. but got rejected by Lorenzo Stoakes:
+ https://lore.kernel.org/lkml/d6bf808d-7d74-4e22-ac4b-a6d1f4892262@lucifer.local/
 
+David Hildenbrand and Lorenzo Stoakes suggested splitting the patch
+into smaller chunks.  My second attempt with one smaller patch was met
+with agreement:
+
+ https://lore.kernel.org/lkml/20250828130311.772993-1-max.kellermann@ionos.com/
+
+Now this is the rest of the initial patch in small pieces, plus some
+more.
+
+Establishing const-correctness in this low-level part of the kernel
+enables doing the same in higher-level parts, e.g. filesystems.
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
+v1-> v2:
+- made several parameter values const (i.e. the pointer address, not
+  just the pointed-to memory), as suggested by Andrew Morton and
+  Yuanchu Xie
+- drop existing+obsolete "extern" keywords on lines modified by these
+  patches (suggested by Vishal Moola)
+- add missing parameter names on lines modified by these patches
+  (suggested by Vishal Moola)
+- more "const" pointers (e.g. the task_struct passed to
+  process_shares_mm())
+- add missing "const" to s390, fixing s390 build failure
+- moved the mmap_is_legacy() change in arch/s390/mm/mmap.c from 08/12
+  to 06/12 (suggested by Vishal Moola)
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Max Kellermann (12):
+  mm/shmem: add `const` to lots of pointer parameters
+  include/pagemap.h: add `const` to lots of pointer parameters
+  include/mmzone.h: add `const` to lots of pointer parameters
+  include/fs.h: add `const` to several pointer parameters
+  mm/oom_kill: add `const` to pointer parameter
+  mm/util: add `const` to several pointer parameters
+  parisc/sys_parisc.c: add `const` to mmap_upper_limit() parameter
+  arch, mm/util: add const to arch_pick_mmap_layout() parameter
+  include/mm_types.h: add `const` to several pointer parameters
+  include/mm_inline.h: add `const` to lots of pointer parameters
+  include/mm.h: add `const` to lots of pointer parameters
+  mm/highmem: add `const` to lots of pointer parameters
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.17_rc4
-
-for you to fetch changes up to 35c23871be0072738ccc7ca00354c791711e5640:
-
-  irqchip/gic-v5: Remove undue WARN_ON()s in the IRS affinity parsing (2025-08-24 12:54:06 +0200)
-
-----------------------------------------------------------------
-- Remove unnecessary and noisy WARN_ONs in gic-v5's init path
-
-- Avoid a kmemleak false positive for the gic-v5's L2 IST table entries
-
-- Fix a retval check in mvebu-gicp's probe function
-
-- Fix a wrong conversion to guards in atmel-aic[5] irqchip
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      irqchip/mvebu-gicp: Fix an IS_ERR() vs NULL check in probe()
-
-Edgar Bonet (1):
-      irqchip/atmel-aic[5]: Fix incorrect lock guard conversion
-
-Lorenzo Pieralisi (2):
-      irqchip/gic-v5: Fix kmemleak L2 IST table entries false positives
-      irqchip/gic-v5: Remove undue WARN_ON()s in the IRS affinity parsing
-
- drivers/irqchip/irq-atmel-aic.c  | 2 +-
- drivers/irqchip/irq-atmel-aic5.c | 2 +-
- drivers/irqchip/irq-gic-v5-irs.c | 9 +++++++--
- drivers/irqchip/irq-mvebu-gicp.c | 2 +-
- 4 files changed, 10 insertions(+), 5 deletions(-)
-
+ arch/arm/include/asm/highmem.h      |  6 +--
+ arch/parisc/include/asm/processor.h |  2 +-
+ arch/parisc/kernel/sys_parisc.c     |  2 +-
+ arch/s390/mm/mmap.c                 |  7 ++--
+ arch/sparc/kernel/sys_sparc_64.c    |  5 ++-
+ arch/x86/mm/mmap.c                  |  7 ++--
+ arch/xtensa/include/asm/highmem.h   |  2 +-
+ include/linux/fs.h                  |  7 ++--
+ include/linux/highmem-internal.h    | 38 ++++++++++---------
+ include/linux/highmem.h             |  8 ++--
+ include/linux/mm.h                  | 48 +++++++++++------------
+ include/linux/mm_inline.h           | 26 +++++++------
+ include/linux/mm_types.h            |  4 +-
+ include/linux/mmzone.h              | 42 ++++++++++----------
+ include/linux/pagemap.h             | 59 +++++++++++++++--------------
+ include/linux/sched/mm.h            |  4 +-
+ include/linux/shmem_fs.h            |  4 +-
+ mm/highmem.c                        | 10 ++---
+ mm/oom_kill.c                       |  3 +-
+ mm/shmem.c                          |  6 +--
+ mm/util.c                           | 20 ++++++----
+ 21 files changed, 163 insertions(+), 147 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.47.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
