@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-793355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16505B3D23F
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:50:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E18B3D240
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C606117D296
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:50:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA46917D775
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71627256C6F;
-	Sun, 31 Aug 2025 10:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D54256C70;
+	Sun, 31 Aug 2025 10:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWobBYBH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0ieeVeA"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B049F1BC58;
-	Sun, 31 Aug 2025 10:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2547E1BC58;
+	Sun, 31 Aug 2025 10:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756637443; cv=none; b=S14PKXyN47mtWkfvj5xyVKqVk/QdTSIHFr7OiFOEHrP+DyLIw2HeM/xHLBpXC/a72XVrxNqQo0aPQGLbtZbdSG6p9xPCJJd/k7mFh4PwOe9q44VXmOcoHi0kxxwcN7fUD72qHnx9LgkWeZ+yPv2DYaDEKjY1/syoIEnTSlIHxYQ=
+	t=1756637460; cv=none; b=S0fiRBmcJvvZLKzGSpPufC2OBHZhuWNZ14Y0OR4XGX6A0pwISoWBUopJYCov3XZnSHKTYxTBQKsE1htUnmTbZU2OceXx27aWiUS+k+oRGDBJ2v/5OpJsLw6c3u2G9kGrde96JQl74fKX4qfGzR3wfoGe4DzlhUDoMCeuzTzDEfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756637443; c=relaxed/simple;
-	bh=8Ux488ZO3JpS0NhQiMHmXYrDdFjO370XPpgnu/QOm9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qf2yadhRHoqs2t4I/6cISNoB0Xb6eyowj25Il+uJj7Vr4rWBXHgfsmM6TUBtjEyeMJ5AC6OVPGaoa2fbrR4OH5+uPfcMJdEd3rGe5lD4K9VIoHcolvc2Hs7Xgrp9/Cv2+V8cQ0Gn39TId8KTHlvF67BuWWjHWq+V4Yx5MX/BJQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWobBYBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D26CC4CEED;
-	Sun, 31 Aug 2025 10:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756637443;
-	bh=8Ux488ZO3JpS0NhQiMHmXYrDdFjO370XPpgnu/QOm9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JWobBYBH3Lvd3v6TEhtVVVcGy2ANQyf64v4tYyp9cbgli3DWHrty/3gL4E0U+ItG7
-	 m8lLr+tmQ1w9B/wja9XnctVBIEhYXSfiI7+XU/cV299M2Y4Y3dLtbPhpodJJyrIvW0
-	 X4rBOiuI9j3McD5sS8iO67mvkXuZcDvWMuDbRI9gAKx//GrgrdT9KphTdQ/CupqEqt
-	 tKe/bR3cRpFPi+zwHYP59th+NbTnOq2AmqJA35pM0UzAS3kha+IM2tdsVkvcdV83Rt
-	 IMV2cManh22A7uCsHg5S+UN2/ad2dMe9wBGMnsQjFZpchya1uicxia1vALxxusJ5Vw
-	 96cPcz3UrAU1g==
-Message-ID: <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
-Date: Sun, 31 Aug 2025 12:50:36 +0200
+	s=arc-20240116; t=1756637460; c=relaxed/simple;
+	bh=QHUMTmkYDvB7GFFnj58OHxmDkw+glLVRULTTUbpJ8V0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fDJ/KGt/PSiPi6WzIeLxqLG3HhHkPCyvH+g4crYjORKrh3JrWb1fcxO67qgc/nyAN9n3QgFkMoWzNUUP3xLm7xI4lH1gNZ/dtnAiBu/7HVhQ50aLBuL6oa7J7alp0J/OI6Tzeaa7kvjClCEiRm7fnMT0E1sEN3vCgC+4uwfSWis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0ieeVeA; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b869d35a0so4932065e9.1;
+        Sun, 31 Aug 2025 03:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756637457; x=1757242257; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QHUMTmkYDvB7GFFnj58OHxmDkw+glLVRULTTUbpJ8V0=;
+        b=X0ieeVeAj3fkPt/6hjryzAPNKaUze2H3KkYFylaVqdYPAKOdu575snQbnIVzqcV/Y6
+         SOx/57pugWilM+BPomFtrIShCcJZCoJ3JyCNx1SDjbP0h7Ssmsm9dlAax6RK4TFjNMdh
+         W0pM1eEC67Wp/jvjsM1II4X+wH8JsdKNuk0loyvo1n6BiiphWCbnSBQeq/ZMNb649FGS
+         kTJY6FkcrcfPag0SukP4O0z/N8QLkb3zbHXV8reKqbEs0zXtgmrUFqzi1VPf9vv/IW9A
+         +q60QH8EoaMFz0eGLPPrXQ7N/d2Xo+HyB2CZ1kQd8WbLip63tQ2cMM9AUViKfq21467p
+         Bjxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756637457; x=1757242257;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QHUMTmkYDvB7GFFnj58OHxmDkw+glLVRULTTUbpJ8V0=;
+        b=T0X2nweVtnqICrlmxCwE1f38mE/jaccPu2A+HHDfm90DVD0Y7jNYzS1uOulZ+2zhqm
+         ghC+TQMOF+tvGr6AoluC0Zv+4n5il6SydzQIMV6hFxh4iJ6EIaE/htCB6JOEsanoxH1h
+         cSFDCsG/qLK6KxQp8VdpWmCrJcF6l4Ar+irYUyVHvgnEGbaWh5lSp7G+rNP8zOGDxU8e
+         qc4U3V+nCxn0M5BY93kPJnD6QdokxYKw832yAAlZKHPtOx5LB3t/sTJho3Smn4gx6vU1
+         sCwCj8vHr3LiCFg7KbAt+4dWKz0p/cHG7cBQkRuz+OZv4LmuuqQZU+H4xeW6LGePtS9J
+         xMKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrr4BdPdXYYw52ZvaN8nOuDXp+g6xM+fWumr5e8etcHXRFTYI3GYwtXRQAzjQu5rpdvXdeOO8iH0xTSPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRB3WAdXiMmis2guvx9J0b/RAbJp37/L7TqV8ZA66woL+WkmxW
+	Z68fzvMX58VSxcyCWzsAocmK3TgKfwsrVDY/29yTccYlIWM1jIdFHpEN1Sxdyg==
+X-Gm-Gg: ASbGncvCDtKlGFalZfFvtquFoKwU7YdA1YM8H+k+0jomsHyGs0h4sbLtdMloFNIFyRK
+	bU5KSazCJpntYekA0Lya3hr0pTU5yCyTm96Vlwack9dZ8TUdMB8nbLhK4B50R85rY4+8Yn8HH9I
+	81ETpejqzpodeCco9YzkiUQ5Jr/lEmOIS2lvcOJ4AOwbLyADFJXYEztVSXuLk6JQy/hnV6nsyzn
+	lC2FQDtSyr9Cto1QLlEujciPj0exIYzlnoTqbVVfFw15+4itOtZTl9SZ0DCIeJZZva3pDPtm0pu
+	lHtAvYCZfKyXnLyGa3EacZDs1ZEZ/H3JgMZkdzASXlQtVLsBXrxtaOO2UfdGDcYV3iBRWt62NFu
+	k0MbKYiJ3iTMcNoQeYRKrL21QsLsvA5wo/PHxHr7iED14gFaR3gDkgZYRHVSztAwA4olrxodJ8Q
+	7J
+X-Google-Smtp-Source: AGHT+IEZ8HLONhPPvUp48Mw8vbQZXrQAvE4mhvEjamgPT+/rDgkRt4WQwSrbI1M33byzWSvQxjtyIQ==
+X-Received: by 2002:a05:600c:8209:b0:45b:868e:7f7f with SMTP id 5b1f17b1804b1-45b868e8289mr34054735e9.17.1756637457218;
+        Sun, 31 Aug 2025 03:50:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3fd:be60:4077:be40:d68a:2e71? ([2a01:e0a:3fd:be60:4077:be40:d68a:2e71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf8a64fce8sm10330534f8f.34.2025.08.31.03.50.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 03:50:56 -0700 (PDT)
+Message-ID: <12b048b5-aadd-4b06-a9a7-8480f27c65af@gmail.com>
+Date: Sun, 31 Aug 2025 12:50:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,130 +81,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: linux-bluetooth@vger.kernel.org
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, linux-kernel@vger.kernel.org
+From: 3 <elespink@gmail.com>
+Subject: [PATCH] Bluetooth: btusb: Add support for Mercusys MA530 Bluetooth
+ adapter
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 27/08/2025 14:42, Tudor Ambarus wrote:
-> +
-> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
-> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
-> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
-> +};
+ From becb0b090d9783afddf7d43d739ee69b82fbb32a Mon Sep 17 00:00:00 2001
+From: lespink <lespinks9@gmail.com>
+Date: Sun, 31 Aug 2025 12:35:47 +0200
+Subject: [PATCH] Bluetooth: btusb: Add support for Mercusys MA530 Bluetooth
+  adapter
 
-I don't understand why clocks are defined in the firmware driver, not in
-the clock driver.
+Add support for a Realtek-based Mercusys MA530 Bluetooth 5.3 USB dongle
+which works with USB ID 2c4e:0115. This device was not recognized by the
+kernel with the original device list and thus was non-functional.
 
-This creates dependency of this patch on the clock patch, so basically
-there is no way I will take it in one cycle.
+Signed-off-by: lespink <lespinks9@gmail.com>
+---
+  drivers/bluetooth/btusb.c | 4 ++++
+  1 file changed, 4 insertions(+)
 
-> +
->  /**
->   * acpm_get_saved_rx() - get the response if it was already saved.
->   * @achan:	ACPM channel info.
-> @@ -606,6 +636,7 @@ static void acpm_setup_ops(struct acpm_info *acpm)
->  
->  static int acpm_probe(struct platform_device *pdev)
->  {
-> +	const struct acpm_clk_platform_data *acpm_clk_pdata;
->  	const struct acpm_match_data *match_data;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *shmem;
-> @@ -647,7 +678,30 @@ static int acpm_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, acpm);
->  
-> -	return devm_of_platform_populate(dev);
-> +	acpm_clk_pdata = match_data->acpm_clk_pdata;
-> +	acpm->clk_pdev = platform_device_register_data(dev, "acpm-clocks",
-> +						       PLATFORM_DEVID_NONE,
-> +						       acpm_clk_pdata,
-> +						       sizeof(*acpm_clk_pdata));
-> +	if (IS_ERR(acpm->clk_pdev))
-> +		return dev_err_probe(dev, PTR_ERR(acpm->clk_pdev),
-> +				     "Failed to register ACPM clocks device.\n");
-> +
-> +	ret = devm_of_platform_populate(dev);
-> +	if (ret) {
-> +		platform_device_unregister(acpm->clk_pdev);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 8085fabadde8..84ebeb317dda 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -593,6 +593,10 @@ static const struct usb_device_id quirks_table[] = {
+      { USB_DEVICE(0x0489, 0xe130), .driver_info = BTUSB_REALTEK |
+                               BTUSB_WIDEBAND_SPEECH },
 
-I think this should stick to devm-interfaces everywhere, not mix them,
-to have exactly expected cleanup sequence. Now your remove() first
-unregisters and then de-populates, which is different order than it was
-done in probe(). Use devm-action handler for device unregistering.
++    /* Mercusys MA530 Adapter */
++    { USB_DEVICE(0x2c4e, 0x0115), .driver_info = BTUSB_REALTEK |
++                             BTUSB_WIDEBAND_SPEECH },
++
+      /* Realtek Bluetooth devices */
+      { USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
+        .driver_info = BTUSB_REALTEK },
+--
+2.51.0
 
-Best regards,
-Krzysztof
 
