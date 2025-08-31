@@ -1,97 +1,158 @@
-Return-Path: <linux-kernel+bounces-793388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9CAB3D2C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:22:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23217B3D2CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089CE17942A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0743BC9DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B3E2561B6;
-	Sun, 31 Aug 2025 12:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0F25C70D;
+	Sun, 31 Aug 2025 12:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DvKLYnfc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXdSJ/Rb"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2781461FFE
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAEC21C163
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642931; cv=none; b=XNUsI741MX7e7ZD9q3szIyMw5pifvpPJCDohBK04ISv2cl4w1RWDOzKv5BHc3YduPC2/ZJMsjjkRSXS81691crs8WGNultJqSBzzwrJ22yFzuF1QpJCYwHtYNdE5KC0cVG4LyJqJZ4sfEOEnUpqKEO3wvc3Js8i/gdZAz9eZe7w=
+	t=1756642952; cv=none; b=Lw/Ea65UeU0M+Sa1DMWERj3e8Wj87cJuWw0XMsOWYi4BfEHo5Fra8UbsrHV76M6FJJl2yiSXGvr4UgAxHUziwyanUxvZ7thcKyw5JLTHpWcAvKi72NZkuBdF4+W2RNVW1w14joZQRXf2rkuaUuUH1iPYVt1CSNpV/Q+uDQ7oUKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642931; c=relaxed/simple;
-	bh=dGdbkyakvcLPgUrrpzrlZqt2mia0fWSTKTpiRvkR64I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSP7yYVf/qr/ko2PGl7vTYeB1Sl6MqoErI5t5HyzGlEQ1ShEXc6GcRJ///5OivcAEO8C82j99/0Qe9qJkTPiyZXoCRIcrJk32Y0ZB9AuLMLuG+ldmWSL0aEEgf9TJguC+S2zvdgQm0x7PHBXK3Ol79hTP7ib3ol9adzh1oQHYsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DvKLYnfc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D2C940E019D;
-	Sun, 31 Aug 2025 12:22:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t5bGD-yK8Lqd; Sun, 31 Aug 2025 12:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756642922; bh=PfoPD0AvjYmdQ78gS2NPWjiixVYDFyWshrc+IHdqrmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DvKLYnfcDepThDOYKYeuWQhUn5c9pP4/Ip9N8gH1iZRBVKvarOv0EioRRcK+l8acX
-	 CPaLbNiXTtQcMxDC7lhURMEKq/cUgNVVg31hLcxwGSlI9ybsXNlvDO9vQmzmgHQNpm
-	 FPH37uW55FRfIlHdoBF9zQTkw1su3Up3Zs/V2+DEdiCYGULq61AgAfxRcJ9yilP+yJ
-	 Ci7UHtH9XWfjZGUmOve7yafU/UmtMCYYR0iZbF35w9n6qfMFIiA5OWvtmQDkLfqzAG
-	 oUF/RfLGLwLf99NG8L3WtcQGAeVbtAAoLrHj96g49Ho6q6LfROsGWLfdMkH5DVK6KE
-	 Sbnh84dLc7l2qscj1hHLgid8VKoI1GnM77UyMb1Mp27+Xjkpbmj6eYeEr/imQ/VufH
-	 /14gEl48Vm855eapLRFSKjG3OtzudL9TK62w/yCkeJOtJFXCE5j0sRPSnnfbxswUg1
-	 uIoAhz1SSreIRlnOgZKo5v1VyhBT4+7MZ/eBejVc4r5BZ50ThPXv9w+VS1dbbFpxjY
-	 YlRp7CLaqryontBDHQf1COEkfsndRxkRdxqiTdKxbjs1EQxOqHAqiSWDoh1WWFgQcD
-	 Kjt8RPBD6SL+s/QNJXi/m6ymmUGWJPHGCCNB1cpmywbgFCB95LgO6LD893hPK0L+OA
-	 P4PmrlOkK4rCgZE8Nzi5xQCk=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5A2E740E0174;
-	Sun, 31 Aug 2025 12:21:54 +0000 (UTC)
-Date: Sun, 31 Aug 2025 14:21:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] futex: Initialize mm_struct::futex_ref on mm_init()
-Message-ID: <20250831122145.GBaLQ-WUUgrhyFCwxN@fat_crate.local>
-References: <20250830213806.sEKuuGSm@linutronix.de>
- <20250830222545.GAaLN6aeQzWHYc20BF@fat_crate.local>
+	s=arc-20240116; t=1756642952; c=relaxed/simple;
+	bh=v5nyT8+tGZRsO9dAtikr+4PQWjweFrMo06731HGMRIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KRkeeSXgagOaAKNvIr8OI0hu17HU/7YYnc9wSUHHfugPT4+AFZt+0rbtneeJbCKrrz55VEno0d3xb1Y/l6cKethygkXxZ4JmukBISag0MukrZujnM66ud84jnDQRFsyHr+lgDuf9igDW3xz2SbCZnEWyNzYPDQ80K0akzg1xCac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXdSJ/Rb; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b7c5292caso1159025e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756642947; x=1757247747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tbdz/rnk5XYs1sNxhaGSOYuYNRBLnymKQPJwzl9yArs=;
+        b=jXdSJ/RbAbpnAuXj4grC3XUbRzGcxv2wHbuaahp8+xiC7JVQyQLIWsX9TZbsDAo5mZ
+         4p9VATqUy9iVqNwdn0JIwjdt4sqwpMRHAWqHAB1A5Cx19Oq3KWSsdMj/RqbTf79uRs0P
+         k2JYErNdk6PGy7vJT0NYBbfJaQwZrjs6MfYyccAoHbEgdl+7oY7ToHCDhtHnx+zOX0LT
+         CnDb5DGWi4+a+FQOPMww2v4FauccJPU7KfIqPdj3U7Las6cZX80yjJXYGiThKh1EvNxk
+         M8Je9MZUf3ftOrWaX6REFbiBURXPCsPI96LJkzG6zJZSGBaJlTRZ7ZicVUvFZ21IuF9V
+         cZow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756642947; x=1757247747;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tbdz/rnk5XYs1sNxhaGSOYuYNRBLnymKQPJwzl9yArs=;
+        b=BS1B7uHoJRUDCR7Bk7orq6VzDxec0ap+qv76oKH52vgbGCzM7CKhns53NTUneDUMR/
+         SCXlkC3JS+mxnaCUsX/E1UwZ1kftj2b3Ic+F8vxzfY8zTrNwhPflLQOi5yAIaUj7zNKK
+         3kpyacAyps83NDn25V/DFoaceqKoL7uyQPI+YQh4Fj0gds96i1mV62b82ak/oDV6OolX
+         QiancQTxoNK+KYh42OrdNixn9cXo2Yxs6A8nKJO+cDgmik7wifOj5Iqj+eqhRIB7DD7x
+         6dpypKHje8MqtNj/3WTWdCEvI+aZWMT5WfeizVFbT7tociAC3NbNLXJdhOJehp4/678e
+         j38g==
+X-Forwarded-Encrypted: i=1; AJvYcCVukq+opRLfqTM4YnEfA65j6ktHw/yvRo5l/oIWSH5pDAHRf3vXJ6HVNdUS2iYBSNyMwuMaLujtWmUNqNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Ov5UAufzk2fmWqsdk3Uqr2chT4Cp1SRAx26Pc7JpFcgFZ504
+	b75zPJLPsMSFJt0/nav0KspPERy+Sh4nOj9VlImUYBgzGufwt4Phq9TE2U5Ge2VQT1c=
+X-Gm-Gg: ASbGnct61DrUSSs9lD0xKWXR5gwakxCUfWcUnT1TcCAFDwKkqwvoUQl9i3xwwaiWPzJ
+	w8zc/cbjLnZxJovzc3dzM4csN31L1X46XQkOkJys3YsRYuoFVV9EKCoVEVBQTO9g3mMSs9cxtio
+	AMZOfPOWfYIq9/CJVyQEcjdxDl6J7CxeNTDlURZvw0qR6+XYsXbjJ8i1l/yOlTgRROtNKsMd5TX
+	1aRTjAzjlTiJw48ASrs1WjvwXxO/0Lzad8B7iUoqHGTI7AWi0oTVFhQrTMxzYtc0TLOvIJieHcC
+	5H6+y7HdJtEpGidojGbDcNpE7BbdOgtsd8AFoQW9HB5Hh5Siqx0f4C+28CBMA2Soku3hfFJKspW
+	5c9WvSnmMOqQKNoo2FCiSxZELxiO6JWhsFQ==
+X-Google-Smtp-Source: AGHT+IE/b5iJsNRkZ58Htd00eUR1h8c49rg/ihy2xqZajld0Xwde0K/MZR/16orZ6YWVgu6EdslHzg==
+X-Received: by 2002:a05:600c:4fd5:b0:454:aac0:ce1e with SMTP id 5b1f17b1804b1-45b802c5548mr31769935e9.4.1756642947010;
+        Sun, 31 Aug 2025 05:22:27 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6b99sm194866225e9.4.2025.08.31.05.22.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 05:22:26 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] usb: ohci: s3c2410: Drop support for S3C2410 systems
+Date: Sun, 31 Aug 2025 14:22:23 +0200
+Message-ID: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250830222545.GAaLN6aeQzWHYc20BF@fat_crate.local>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1410; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=v5nyT8+tGZRsO9dAtikr+4PQWjweFrMo06731HGMRIU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBotD5+nEPqC2MIN8fjO2Pd41yMpJ+38QYiDL69b
+ 6llNeR4wHWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLQ+fgAKCRDBN2bmhouD
+ 13HfEACBXdBXTLrrWqCSOgYhgpk6KYuSF8sG1d7wBgJglr/sWcza2pYYGs2qRYb4pn1VFmpkE+Q
+ 6eH4CnJgGZsf6PQmkvKnc/kf9Oy452Iw7gpLFbWkbj0oZgd1LI3hPZriTvqrN+HwIGq7Q+JuY8i
+ sYPNCHqYDXDiDDAE6R4IQhdowiPwx8VUhTA5U+RcyIqmbKuJZmOdHhe710wAsG8yTe70EnkaIiz
+ 51W5JdNTrXjlVEyGR2ucuQ0MlPAptnMVQEjJdYiXOGD9cNaLPbrE7Dt9mhI7Xy2CJlNnf3KRzxH
+ dIo6Lwf863V4no9rAersy28ZUcte3ze4gM24jjmL/oGT04VY7yB4yhHk4YbUzk1EuYCE4dhPXdJ
+ 8s6mCALIBw0SeUk5uC7+gGhug92YNekj7QcmmqO5UyjAzZAnwCZN1GMDxq5JaX3JJI9K92ypb4P
+ iYd240ThCF7IemH/v8ApKYEhBiDW6gacsyOMuaxvImcXEKIAaN02awiJvMVHUWKY3RFkvVsfFlm
+ R2/vNaAFcAnTBLLlvFvUcZzk70dvmfmMPIaYnFr/yr8AvKQVGlNojywNHqvvHMhqFBLOq9y5gSA
+ Bgl1WObRCdpuwRSKU1yTzz1Klpi5TFTlkBkkWOL0uKalgQH07Gk7vbtsFYH6b8NgnTsFD0brJFL akZAgNUk7bJsXpg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 31, 2025 at 12:25:45AM +0200, Borislav Petkov wrote:
-> And then leave it in that branch for one more week for some more testing...
+Samsung S3C24xx family of SoCs was removed the Linux kernel in the
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+2023.  There are no in-kernel users of remaining S3C24xx compatibles.
 
-Ok, boots on one of my machines, fix folded in and force-pushed.
+The driver (named s3c2410) is still being used via platform code for
+S3C64xx platforms.
 
-Thx.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+---
+
+Changes in v2:
+1. Commit subject (Alan).
+---
+ drivers/usb/host/ohci-s3c2410.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index 66d970854357..e623e24d3f8e 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -448,13 +448,6 @@ static const struct dev_pm_ops ohci_hcd_s3c2410_pm_ops = {
+ 	.resume		= ohci_hcd_s3c2410_drv_resume,
+ };
+ 
+-static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
+-	{ .compatible = "samsung,s3c2410-ohci" },
+-	{ /* sentinel */ }
+-};
+-
+-MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
+-
+ static struct platform_driver ohci_hcd_s3c2410_driver = {
+ 	.probe		= ohci_hcd_s3c2410_probe,
+ 	.remove		= ohci_hcd_s3c2410_remove,
+@@ -462,7 +455,6 @@ static struct platform_driver ohci_hcd_s3c2410_driver = {
+ 	.driver		= {
+ 		.name	= "s3c2410-ohci",
+ 		.pm	= &ohci_hcd_s3c2410_pm_ops,
+-		.of_match_table	= ohci_hcd_s3c2410_dt_ids,
+ 	},
+ };
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
