@@ -1,198 +1,278 @@
-Return-Path: <linux-kernel+bounces-793379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BC3B3D2AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59FEB3D2AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9268F188AAC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:09:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48AC441640
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85920253F3A;
-	Sun, 31 Aug 2025 12:09:16 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40306251791;
+	Sun, 31 Aug 2025 12:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MStGD96M"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2FE212566
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA341E47A5;
+	Sun, 31 Aug 2025 12:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642156; cv=none; b=RtoJsSoV30x4UKSGrJ8/MVMDMPXRV1ncPMOwU678tgGoee3xiDr89XZTfGPZc80cS94GPRkFudPyACsaEE6iv21/pf0ZUb47w6cv5KNY9ZLlFyLaCq1qLlrVdSLP0w0eg+XCsrsAj+DWnqiqHiS0c1exKEqGm3h+BqFHJspwnMM=
+	t=1756642265; cv=none; b=QmpDkjx4OGLWZebgWyrsGRY4M3YQqC2mEYWu+P6fh8AXeyM+UIPXBZvpYTf0QohVsSB9ibbt7op8gxW8aDu2LdAqry/Hro4FTmnrHhFFr5TXpnFUO5/NU6CoUYGMMN6UDNni0jcOLMap1Z3OoOgkjfgbhqR6cgtsJNeGUf08FbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642156; c=relaxed/simple;
-	bh=3Ve3trrWT4AM3PrPobhLmvZf2smZyrC3sjxjkDsDtDs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hiNVonTWF91PVBm8Pc4ftu0j+W88HZnE8/eidwtiEGKPwD9WnDHfP6O8axN6yMTJ5d1tPaZGQ5OL2J9mT2/MnUUWoH8etsrORYGVk+Z4iSU4XUBpkFYo1I0vUeo9huqBsy0WnbVRZxQ95m/0+bwBFkUYL6rN4WjvAsavzBqNItw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3f0b5f6aa32so47924305ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:09:13 -0700 (PDT)
+	s=arc-20240116; t=1756642265; c=relaxed/simple;
+	bh=jICduQK12QHrbBJp8MUu9GI3F6Ji/6j0lTVwrNM4gcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H4CeIrdYJdcrpiB63OsVK9DGibIpFhywWjBKYdCJ7qsZVPeeQmfcwfDR7qPYGKn/7tibAGgzn39VYn9H5uEMoCU0s8Cogo4UWmrE6c7rb9vDyLhkaTYqC1HcEBguQ3NACNGmDzDPvgsfRKShgDhd4vq5nHlWPLvZRvDZa1ht9qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MStGD96M; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f98e7782bso3381e87.0;
+        Sun, 31 Aug 2025 05:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756642262; x=1757247062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JG9B+llAHV7LYg7nSulca8AjjzTpBy37d7vM3/vyiO0=;
+        b=MStGD96MzGclUFwGwNC4Se+nVsduW7AQ/6LaovEIh9fg1GCGR7AFAwEs5IYkt+uXzT
+         7EGkS49/eouiD7cDQ39kaDXnyR0LSEilFxNdqDabOuRpQORY+rkWBtQhareD/YO3GYoz
+         557wz1SXzEl6vinM4dRo89tPvcM30JtsiefVHGBpvjSBfzmygQacRZqJesyZdGp8xrWW
+         4kMsR7gqNN32OlVr9MOQ2AJs7urnqYg/yONztSfTnTw0tbcNohTNziY3Ifv0Cd7sQMfB
+         HTiSHJpba7uOwmlhOgac3Trt4SMWqmppzjAXjpdns4DAcR/gvJsz1x4V852eDonB9m7K
+         zXmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756642152; x=1757246952;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUB50GrOOR7NHO33dmG4jNbQ6CudnBjusqcGEwQ7zXA=;
-        b=llrC9joR3zJJSzdsHKoKQLMvKiZgItIxmvUED+3t+dIjpPp6bJQRcJ1cMBgLlgz4aQ
-         oUdtj1ZPstcyHcqofMd4zKLmzbIjx+tf2ErkYcY3BoBiGoZd2/oYnq1scWAjaX6Q/+IZ
-         /RBGU5oeflFl7+FcXqwgb68Ule30R0KYqd6y+gY62jEFdQgkLxo9NZoYyl827TPI95Hd
-         wO9LChzyKd8DvxVn5MzlkHnazXRYsBoc9y8vHvNBq4LH5xRS6NF7R8wLbo8RxxLHWQkr
-         wVl+Na4AibHFwevge0oj9dBLTqj1v1l2Y3c13ESm0cfQ0hNSrm7tL/LKxk4PqYNBiYW1
-         19WQ==
-X-Gm-Message-State: AOJu0YxlL1a2ROWwrt/tHSO/oZPJHyyCFtqI3TuhHUYyORAFfyKZwB1P
-	3kKrAqPNtWnofL8ZKK4Zn7nAqOV2RoJFdqzAFBhiE5U+4+xsjhoLLlWrvfemYtPaJNr3DE1RRKH
-	fbAC/7E4lun2j8GIVf3kvcCOQZIeuk3fufkYn2TVHX3A6GosYwfENuEOtczpycA==
-X-Google-Smtp-Source: AGHT+IE2jZwkQ1JqkjzdcvsZyWn7O/DCBhBhIYBbZFjvAgcajKqZVKM++E0g2pgscGycMqR9D42PbI5nKAH8HL1tfdMUN7/heyXP
+        d=1e100.net; s=20230601; t=1756642262; x=1757247062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JG9B+llAHV7LYg7nSulca8AjjzTpBy37d7vM3/vyiO0=;
+        b=G88H4iqPBT/2XgxK/E/M0TPJERHQ/s7PEO0iczQcdvCYUY3yxQ0L7nnSH1oGMH9o3B
+         BghWG+82Yr19i9fSU/m7Yi8CdrJk58sYMwUeCrtHGjumxnw9xPnKibmGvxoZAKngft1l
+         0l+psRI0uK4gPWNLTrEfGs14CPcJLsqF067Px1NteYuit4p5lsm3aDfc3Po5E8mD1m3C
+         eL5+Jc3BMMmOPgytmjFn+jgnuQQONz1sbcTTZmM1om+lgeOqBo8XyfZoMsPDf5w3qUin
+         gkJ3ivImIbGW2Z1x90VCAOZHyVzBJmBqBMvQmh8Rw1WNFt/hxRpQgFxqqsnw59jS7C4+
+         c0Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFNsm4fQfQeZk5USIB9TzTCalrZwmrK9YIjNX2HDh7C8v/TPi1R7ag9Fu2l+VOpTeeKdkdTjQQ@vger.kernel.org, AJvYcCXxOxnP9YFEkdn6Zg8AkgibRwGVm14fE+dQR3vWnlWtEkAtOC8jYap+nwgCLkpLG17VEmjlK6gebw9c+Zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpXiOBbMCof19hE+qWPoPsycOCQXr3qk8VItMXq/EbINkYsxXY
+	N8CVWcEFjFehRf4ojmcqRs0+PsOoVdtpIqr5zr68c7y8LOvwcxOd1uB62sRAtu+Q
+X-Gm-Gg: ASbGncuhH6JVGUINTsIt2utCHyeZ90tn87ti9/UjLrl/CEDODxxQTCiHddeBzepMIsX
+	mKazJWDT62/j+PHit7rYUJ5GLsPwhMH1/3YaBrjSiAEdt5z+hbP3+mJ3f5chdM2LyyTRuikep+P
+	lYfx3So9VrqhYqfGvrSbPNoCwEmqxEB418YOHhZp2bgXkJlzEeXgyI6iTMBfepy5G57TqqYP+Dz
+	2o24eV79Mq6R8wQR7P8mr/aaSzIIySvfIMyuXFQIU/Odndv1NcyU2D/K2bCMULOU4VYWKvl2bxT
+	mjp0gI2TX7WuxwNYej29vPrhpdkUEvknE4+YX5WIzJpCCkwQ02LeWhPZegwWhi1qp0KDARj6qCG
+	bViZ/2numSsJWbYnjZhbzyq1pHBzo
+X-Google-Smtp-Source: AGHT+IFueuf2oZt8S2Uk0qkd9+oS33qtaqyqR6ss70d2dMC/0TmF2R5rYRs5z4E0tLgmfioWY9AQ/A==
+X-Received: by 2002:a05:6512:3491:b0:55b:83cf:b260 with SMTP id 2adb3069b0e04-55f6f6c39b1mr927648e87.11.1756642261264;
+        Sun, 31 Aug 2025 05:11:01 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f7a3bf9b4sm279519e87.78.2025.08.31.05.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 05:11:00 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mm/vmalloc, mm/kasan: respect gfp mask in kasan_populate_vmalloc()
+Date: Sun, 31 Aug 2025 14:10:58 +0200
+Message-ID: <20250831121058.92971-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180f:b0:3ee:7c7a:c880 with SMTP id
- e9e14a558f8ab-3f4021c3d44mr105242975ab.28.1756642152454; Sun, 31 Aug 2025
- 05:09:12 -0700 (PDT)
-Date: Sun, 31 Aug 2025 05:09:12 -0700
-In-Reply-To: <00000000000074ff7b06199efd7b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b43b68.050a0220.3db4df.01b2.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+kasan_populate_vmalloc() and its helpers ignore the caller's gfp_mask
+and always allocate memory using the hardcoded GFP_KERNEL flag. This
+makes them inconsistent with vmalloc(), which was recently extended to
+support GFP_NOFS and GFP_NOIO allocations.
 
-***
+Page table allocations performed during shadow population also ignore
+the external gfp_mask. To preserve the intended semantics of GFP_NOFS
+and GFP_NOIO, wrap the apply_to_page_range() calls into the appropriate
+memalloc scope.
 
-Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-Author: mst@redhat.com
+This patch:
+ - Extends kasan_populate_vmalloc() and helpers to take gfp_mask;
+ - Passes gfp_mask down to alloc_pages_bulk() and __get_free_page();
+ - Enforces GFP_NOFS/NOIO semantics with memalloc_*_save()/restore()
+   around apply_to_page_range();
+ - Updates vmalloc.c and percpu allocator call sites accordingly.
 
-On Sat, Aug 30, 2025 at 07:21:32PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    11e7861d680c Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17c5c242580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671ba62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1685aa62580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/aa8c34462d5d/disk-11e7861d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f90079573556/vmlinux-11e7861d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8571495e4fea/bzImage-11e7861d.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com
-> 
-> INFO: task syz.0.17:6038 blocked for more than 143 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.17        state:D stack:27224 pid:6038  tgid:6038  ppid:5979   task_flags:0x400040 flags:0x00004004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5357 [inline]
->  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
->  __schedule_loop kernel/sched/core.c:7043 [inline]
->  schedule+0xe7/0x3a0 kernel/sched/core.c:7058
->  schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
->  __vhost_worker_flush+0x1a8/0x1d0 drivers/vhost/vhost.c:296
->  vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
->  vhost_dev_flush+0xac/0x110 drivers/vhost/vhost.c:313
->  vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
->  vhost_vsock_dev_release+0x19f/0x400 drivers/vhost/vsock.c:750
->  __fput+0x402/0xb70 fs/file_table.c:468
->  task_work_run+0x14d/0x240 kernel/task_work.c:227
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
->  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
->  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
->  do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1fdc78ebe9
-> RSP: 002b:00007ffcf43dcf28 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-> RAX: 0000000000000000 RBX: 00007f1fdc9c7da0 RCX: 00007f1fdc78ebe9
-> RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-> RBP: 00007f1fdc9c7da0 R08: 0000000000000000 R09: 00000008f43dd21f
-> R10: 00007f1fdc9c7cb0 R11: 0000000000000246 R12: 00000000000248b9
-> R13: 00007ffcf43dd020 R14: ffffffffffffffff R15: 00007ffcf43dd040
->  </TASK>
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/31:
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
-> 3 locks held by kworker/u9:1/5174:
->  #0: ffff8880605ef148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3211
->  #1: ffffc9000f89fd10 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3212
->  #2: ffff8880256d4dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x175/0x430 net/bluetooth/hci_sync.c:331
-> 2 locks held by getty/5615:
->  #0: ffff88814d35e0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
->  #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 0
-> CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->  nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
->  nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
->  watchdog+0xf0e/0x1260 kernel/hung_task.c:491
->  kthread+0x3c5/0x780 kernel/kthread.c:463
->  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
-> Code: 0c 62 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 12 16 00 fb f4 <e9> 4c 09 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
-> RSP: 0018:ffffc90000197df8 EFLAGS: 000002c2
-> RAX: 000000000015fae9 RBX: 0000000000000001 RCX: ffffffff8b93fc29
-> RDX: 0000000000000000 RSI: ffffffff8de50a38 RDI: ffffffff8c162980
-> RBP: ffffed1003c5d488 R08: 0000000000000001 R09: ffffed10170a6655
-> R10: ffff8880b85332ab R11: 0000000000000000 R12: 0000000000000001
-> R13: ffff88801e2ea440 R14: ffffffff90ab5290 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff8881247b8000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555d26767660 CR3: 000000000e380000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
->  default_idle+0x13/0x20 arch/x86/kernel/process.c:757
->  default_idle_call+0x6d/0xb0 kernel/sched/idle.c:122
->  cpuidle_idle_call kernel/sched/idle.c:190 [inline]
->  do_idle+0x391/0x510 kernel/sched/idle.c:330
->  cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:428
->  start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
->  common_startup_64+0x13e/0x148
->  </TASK>
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 451769ebb7e7 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc")
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ include/linux/kasan.h |  6 +++---
+ mm/kasan/shadow.c     | 31 ++++++++++++++++++++++++-------
+ mm/vmalloc.c          |  8 ++++----
+ 3 files changed, 31 insertions(+), 14 deletions(-)
 
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git d9ea58b5dc6b4b50fbb6a10c73f840e8b10442b7
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 890011071f2b..fe5ce9215821 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -562,7 +562,7 @@ static inline void kasan_init_hw_tags(void) { }
+ #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+ 
+ void kasan_populate_early_vm_area_shadow(void *start, unsigned long size);
+-int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
++int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask);
+ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+ 			   unsigned long free_region_start,
+ 			   unsigned long free_region_end,
+@@ -574,7 +574,7 @@ static inline void kasan_populate_early_vm_area_shadow(void *start,
+ 						       unsigned long size)
+ { }
+ static inline int kasan_populate_vmalloc(unsigned long start,
+-					unsigned long size)
++					unsigned long size, gfp_t gfp_mask)
+ {
+ 	return 0;
+ }
+@@ -610,7 +610,7 @@ static __always_inline void kasan_poison_vmalloc(const void *start,
+ static inline void kasan_populate_early_vm_area_shadow(void *start,
+ 						       unsigned long size) { }
+ static inline int kasan_populate_vmalloc(unsigned long start,
+-					unsigned long size)
++					unsigned long size, gfp_t gfp_mask)
+ {
+ 	return 0;
+ }
+diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+index d2c70cd2afb1..c7c0be119173 100644
+--- a/mm/kasan/shadow.c
++++ b/mm/kasan/shadow.c
+@@ -335,13 +335,13 @@ static void ___free_pages_bulk(struct page **pages, int nr_pages)
+ 	}
+ }
+ 
+-static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
++static int ___alloc_pages_bulk(struct page **pages, int nr_pages, gfp_t gfp_mask)
+ {
+ 	unsigned long nr_populated, nr_total = nr_pages;
+ 	struct page **page_array = pages;
+ 
+ 	while (nr_pages) {
+-		nr_populated = alloc_pages_bulk(GFP_KERNEL, nr_pages, pages);
++		nr_populated = alloc_pages_bulk(gfp_mask, nr_pages, pages);
+ 		if (!nr_populated) {
+ 			___free_pages_bulk(page_array, nr_total - nr_pages);
+ 			return -ENOMEM;
+@@ -353,25 +353,42 @@ static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
+ 	return 0;
+ }
+ 
+-static int __kasan_populate_vmalloc(unsigned long start, unsigned long end)
++static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_t gfp_mask)
+ {
+ 	unsigned long nr_pages, nr_total = PFN_UP(end - start);
+ 	struct vmalloc_populate_data data;
++	unsigned int flags;
+ 	int ret = 0;
+ 
+-	data.pages = (struct page **)__get_free_page(GFP_KERNEL | __GFP_ZERO);
++	data.pages = (struct page **)__get_free_page(gfp_mask | __GFP_ZERO);
+ 	if (!data.pages)
+ 		return -ENOMEM;
+ 
+ 	while (nr_total) {
+ 		nr_pages = min(nr_total, PAGE_SIZE / sizeof(data.pages[0]));
+-		ret = ___alloc_pages_bulk(data.pages, nr_pages);
++		ret = ___alloc_pages_bulk(data.pages, nr_pages, gfp_mask);
+ 		if (ret)
+ 			break;
+ 
+ 		data.start = start;
++
++		/*
++		 * page tables allocations ignore external gfp mask, enforce it
++		 * by the scope API
++		 */
++		if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
++			flags = memalloc_nofs_save();
++		else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
++			flags = memalloc_noio_save();
++
+ 		ret = apply_to_page_range(&init_mm, start, nr_pages * PAGE_SIZE,
+ 					  kasan_populate_vmalloc_pte, &data);
++
++		if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
++			memalloc_nofs_restore(flags);
++		else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
++			memalloc_noio_restore(flags);
++
+ 		___free_pages_bulk(data.pages, nr_pages);
+ 		if (ret)
+ 			break;
+@@ -385,7 +402,7 @@ static int __kasan_populate_vmalloc(unsigned long start, unsigned long end)
+ 	return ret;
+ }
+ 
+-int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
++int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask)
+ {
+ 	unsigned long shadow_start, shadow_end;
+ 	int ret;
+@@ -414,7 +431,7 @@ int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
+ 	shadow_start = PAGE_ALIGN_DOWN(shadow_start);
+ 	shadow_end = PAGE_ALIGN(shadow_end);
+ 
+-	ret = __kasan_populate_vmalloc(shadow_start, shadow_end);
++	ret = __kasan_populate_vmalloc(shadow_start, shadow_end, gfp_mask);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 6dbcdceecae1..5edd536ba9d2 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2026,6 +2026,8 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	if (unlikely(!vmap_initialized))
+ 		return ERR_PTR(-EBUSY);
+ 
++	/* Only reclaim behaviour flags are relevant. */
++	gfp_mask = gfp_mask & GFP_RECLAIM_MASK;
+ 	might_sleep();
+ 
+ 	/*
+@@ -2038,8 +2040,6 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	 */
+ 	va = node_alloc(size, align, vstart, vend, &addr, &vn_id);
+ 	if (!va) {
+-		gfp_mask = gfp_mask & GFP_RECLAIM_MASK;
+-
+ 		va = kmem_cache_alloc_node(vmap_area_cachep, gfp_mask, node);
+ 		if (unlikely(!va))
+ 			return ERR_PTR(-ENOMEM);
+@@ -2089,7 +2089,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+ 	BUG_ON(va->va_start < vstart);
+ 	BUG_ON(va->va_end > vend);
+ 
+-	ret = kasan_populate_vmalloc(addr, size);
++	ret = kasan_populate_vmalloc(addr, size, gfp_mask);
+ 	if (ret) {
+ 		free_vmap_area(va);
+ 		return ERR_PTR(ret);
+@@ -4826,7 +4826,7 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 
+ 	/* populate the kasan shadow space */
+ 	for (area = 0; area < nr_vms; area++) {
+-		if (kasan_populate_vmalloc(vas[area]->va_start, sizes[area]))
++		if (kasan_populate_vmalloc(vas[area]->va_start, sizes[area], GFP_KERNEL))
+ 			goto err_free_shadow;
+ 	}
+ 
+-- 
+2.47.2
 
 
