@@ -1,128 +1,123 @@
-Return-Path: <linux-kernel+bounces-793200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6373FB3D047
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA48B3D048
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399972057D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74EDB1A80DC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 00:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0B4C6E;
-	Sun, 31 Aug 2025 00:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E937B1853;
+	Sun, 31 Aug 2025 00:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gNMObcSI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bl7twUDf"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06B628EB
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 00:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D45639
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 00:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756598601; cv=none; b=KkZBgLg2K7A30mQZGw2TxaUxRrgD83uNfbgGsNIq3rBrkkaVhYO7zic0fikf8fsVBUGZyTDo53Ou2AeVvPLtO1aDDytsDI02DK5k+S8UlIiAO+wJm5CbfmjXNtxhpL32YF7iuwvlFCpCC6FIhCdRNk83U31hRuP5mBez20zKFos=
+	t=1756599172; cv=none; b=clKzqePLWDPSSz7HB8DUdNgi/+g5JsZ/+T3ipTeLkol6rOyK/kUziVbxQTRCi2nE6gVF9EIPnA9hFYCsAFMdGB/JVYrMVTxhUpm7hSOVqRi58Wk50d2Ha9MytQE2U/xSFgeJ/NOMPpOR+ZpX6X6Abv+U2kNWBiM9cUWaUxLmLgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756598601; c=relaxed/simple;
-	bh=2BrtOcf57CNuvwDSSNXh0IHPVsyE5b1IIP0ktB5bFGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4j6s4XhL1k8BnHXQJjJ3cZP1xP9Caf9hKAVmoUDQXF27YU5nYIcTJIemILvEwuhKyQVF9DPsUFNvIZ8Z8Dbd9qSaRwZbozH89NoJgeq3PJfJnqtpwZUf4O6LAUd0a9p9leuFACVYSvyPu6mizmspkKEBDZObA8u35b0GDfm/p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gNMObcSI; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756598600; x=1788134600;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2BrtOcf57CNuvwDSSNXh0IHPVsyE5b1IIP0ktB5bFGY=;
-  b=gNMObcSIfygMflqgUhVXNKK4w6M+TvV03R3TshPlKbDNqGXyzbu1Jw/i
-   SpfSi6NYKcFPp7x4hS2nMbLND7xgpjH+wk7l2PbmIZSipt1M+TGE4xzvU
-   eKyhiWf7N1Hvl40BVf1g5UwHdXmPTRKxekaUdpOAJ1KgfJ5Sj3LugGboq
-   5bDSbGF48MHt+HKP6pMyW8BLd7VReNbCpLjOOxkGjAk87BM+HyQdci7Dm
-   P/QCCW+X4nLd/LpOt6abihWeKoRAOB+edIIpaDmIeH81WaC1iJ92iiuaU
-   8GgIvd2qoIsnNjBPTtoAuu4InMeJPPdXAvFbb5E1HKt7GXRLNPT5w88xP
-   A==;
-X-CSE-ConnectionGUID: xNOxI2fRQoecefO2uwFGnA==
-X-CSE-MsgGUID: FZYyMVRLQneBzn/j7JZKlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="62483083"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="62483083"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2025 17:03:19 -0700
-X-CSE-ConnectionGUID: G1aVsjfxSaeV3Hw0YOtS8A==
-X-CSE-MsgGUID: XEJPcX4ORb+wvMIcIDjafQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170577587"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 30 Aug 2025 17:03:17 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usVXP-000VmJ-00;
-	Sun, 31 Aug 2025 00:03:15 +0000
-Date: Sun, 31 Aug 2025 08:02:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	s=arc-20240116; t=1756599172; c=relaxed/simple;
+	bh=0m5UYi3mvkTtM3OKoTfBEdtfguqSSbi5ZJ1TOLMVzM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bfuOA5IBulKGlRoaLufPWCXE2Pg1AAcuZV/lR/0IE9P0Jqz4/1uzzD04bo+j2d3OPeoOWsA1iOtGkysUybRGuBXK16ynmESf8+d6CpNwQK8Un74dSViL0lGe5XrFo3IT6xy+Wrs+mXwnbiFkJ9QK8Qh3JszWwlmtdI7SVGEmWlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bl7twUDf; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e96e9b9baaaso536643276.1
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 17:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756599170; x=1757203970; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FIpHgZuMEMBIYjGCBCUL23oZ9wiLkUHkgB6ohcFNE1E=;
+        b=bl7twUDf3/V6xEJ+AeTCfoiH+c8STdbsjIDybh+z9T8GI1eb312jdf8h/36ZG/5N1Z
+         NchdBegYueoDkRfjRfNL27FIi9+fol5tY9J6zZaL0iPddc5IktzIKevY1DmGwdi1JHKW
+         lI/oNDBGoZ9fxFJUe813cTV+btCK/uUmDNOxL1E4hOaUJU4QNB6VhRGT2li2O0eFV2Mp
+         lZNDYCUfDDTLwD3ZctwU7XKNfi7a03d39LboUTE4r6wyg0SmLBSLL9EbCfSMmYPLQ+HT
+         fOCZ03cbVXMy74qzO1xfUKGLxZRcxB6X6RtKHflYvV5fxQitRPMbH9q1msW2dHKqB71s
+         wmmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756599170; x=1757203970;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FIpHgZuMEMBIYjGCBCUL23oZ9wiLkUHkgB6ohcFNE1E=;
+        b=KkDsAF+pSEMGd83X5c2pHbmdgmI0Zh4uqFfO1Fp+eme/Xj+a/YVZCJK8kBLYUDS3Mz
+         h5CIRVPCvBimW9zQDk5j25L7h09qmN4RHk3kSnxJjQKW6X/0S6VNnsqkSYUgaovsl3eX
+         Vl+JV7Qs0SYQ8gAeGIZq8YQRIFwMo4RRLaNw9Of2qUCTxFBQV0RHiqNCRdDCRe8Hoyrf
+         3MXu/P/7AGLUW/H4nn1orGw5gU8+T/Jv7RFkTFD92lnNo8K5srdbFUZc21b2h2BmTZSM
+         2PxiskfveGU6vUdVwslwbiCkFdh+uyaGMYKGvfzzuwueVchQvswFXiLAvcrM+WSiVNtj
+         oavg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlj4BZaEjS4VkbYEtJr2eLj2yFFYszCHV1vBMvTeaadUluTGwdTZqrtU5l/ZhxkpjNwZsa/QHOp+/QcCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgEg1/0etBCk2oEgFw9B1/QaYyoiG0HuWR9Ix5Y+HmozqVHdSu
+	eCbZ/nuG3zdc4bM00A3Icn8QALZnHVKZL68TGERZNiPk60jPFlN+JV7p
+X-Gm-Gg: ASbGnct+kejzM7LzWsVt8DEfu8AD+dFtnQ8FGJjz5yP+EcrmrfeHE/L3SoxlBOl32pa
+	WorDQ9X4iuWGAR/QHiHcOCOnO6qiAoTLC7dO1aG4n5dsAfcDPnjUUkdy2F6JbtMplxzOpKGN2Uh
+	z/rR4xxylw6E/pEqlJwDfKbAMkvzyzjuDqSmvAzdLuVg9rQq6q5pRst4N0kKjXHhFea+QINAwcJ
+	JNjDTKHT7yTpRS0JabydrXkeXPIWUIu7lS/un/uGgXnIjai8/Mlwrtqxu3OhM49CUGXrbf5SX4U
+	rWLgHZAe7ctTZ8sNbQHQzTYKfnUqi70JLMBZnWztKqdqWZLMRPors/i2RlHl7ENccFDQEUg9hiB
+	C7SXi/ibQ80c/4/nCPe70IqodZRIvWelLaMF05TaGnCHd5WFA4T7Z4aN9/SuvFUAZrM6u/aFLFS
+	GZ1fWhAHTD4YMlLQIaTeb4EM8L
+X-Google-Smtp-Source: AGHT+IEB12C1slBWMgDluynqUliRzseU7UeHqm9h/4/nwZXuLSw4J/ZpLk5Mtoh9cu0eTNRdQCHBOA==
+X-Received: by 2002:a05:690c:3385:b0:71c:1807:9947 with SMTP id 00721157ae682-7226a3b0062mr44388837b3.5.1756599169700;
+        Sat, 30 Aug 2025 17:12:49 -0700 (PDT)
+Received: from mamin506-9800x3d.attlocal.net (162-197-212-189.lightspeed.sntcca.sbcglobal.net. [162.197.212.189])
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-7227d90301csm4986827b3.62.2025.08.30.17.12.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Aug 2025 17:12:49 -0700 (PDT)
+From: Min Ma <mamin506@gmail.com>
+To: lizhi.hou@amd.com
+Cc: dri-devel@lists.freedesktop.org,
+	jacek.lawrynowicz@linux.intel.com,
 	linux-kernel@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Subject: Re: [PATCH] mfd: max77705: rework interrupts
-Message-ID: <202508310735.f7Evkqz7-lkp@intel.com>
-References: <20250831-max77705-fix_interrupt_handling-v1-1-73e078012e51@gmail.com>
+	mamin506@gmail.com,
+	ogabbay@kernel.org,
+	quic_jhugo@quicinc.com
+Subject: [PATCH v3] MAINTAINERS: Update Min Ma's email for AMD XDNA driver
+Date: Sat, 30 Aug 2025 17:12:28 -0700
+Message-ID: <20250831001228.592-1-mamin506@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <dc0227cb-7e02-10c6-9790-2e2331ddfd6e@amd.com>
+References: <dc0227cb-7e02-10c6-9790-2e2331ddfd6e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831-max77705-fix_interrupt_handling-v1-1-73e078012e51@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Dzmitry,
+I recently left AMD and would like to continue participating in
+the review and maintenance of the XDNA driver using my personal
+email address.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Min Ma <mamin506@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on 3cace99d63192a7250461b058279a42d91075d0c]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/mfd-max77705-rework-interrupts/20250831-061657
-base:   3cace99d63192a7250461b058279a42d91075d0c
-patch link:    https://lore.kernel.org/r/20250831-max77705-fix_interrupt_handling-v1-1-73e078012e51%40gmail.com
-patch subject: [PATCH] mfd: max77705: rework interrupts
-config: hexagon-randconfig-002-20250831 (https://download.01.org/0day-ci/archive/20250831/202508310735.f7Evkqz7-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250831/202508310735.f7Evkqz7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508310735.f7Evkqz7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/mfd/max77705.c:89:37: warning: unused variable 'max77705_topsys_irq_chip' [-Wunused-const-variable]
-      89 | static const struct regmap_irq_chip max77705_topsys_irq_chip = {
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/max77705_topsys_irq_chip +89 drivers/mfd/max77705.c
-
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  88  
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23 @89  static const struct regmap_irq_chip max77705_topsys_irq_chip = {
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  90  	.name		= "max77705-topsys",
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  91  	.status_base	= MAX77705_PMIC_REG_SYSTEM_INT,
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  92  	.mask_base	= MAX77705_PMIC_REG_SYSTEM_INT_MASK,
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  93  	.num_regs	= 1,
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  94  	.irqs		= max77705_topsys_irqs,
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  95  	.num_irqs	= ARRAY_SIZE(max77705_topsys_irqs),
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  96  };
-c8d50f029748b7 Dzmitry Sankouski 2025-01-23  97  
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 10850512c118..6eefa494000c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1231,7 +1231,7 @@ F:	drivers/spi/spi-amd.c
+ F:	drivers/spi/spi-amd.h
+ 
+ AMD XDNA DRIVER
+-M:	Min Ma <min.ma@amd.com>
++M:	Min Ma <mamin506@gmail.com>
+ M:	Lizhi Hou <lizhi.hou@amd.com>
+ L:	dri-devel@lists.freedesktop.org
+ S:	Supported
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
