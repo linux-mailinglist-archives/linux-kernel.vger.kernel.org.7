@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-793385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A55B3D2C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 155D6B3D2C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B2D189072C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2C618936FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4626B25F7A7;
-	Sun, 31 Aug 2025 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1838025A323;
+	Sun, 31 Aug 2025 12:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaQLfK8o"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOJd5viq"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC12594BE;
-	Sun, 31 Aug 2025 12:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B273E1891A9
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642400; cv=none; b=oX3tU7rr59dIaX5TYOabhY/kJuYsKYWNE0dPUdEinSegVQv5g/7N1sIrX3FOl7EMMUeg7d0RTvNiY9JKtzyPLzwnNoitkJ8TLc6h5XRC/PMpFTWWhN4haFy3gOSXoNNlGeRynFpSizVkWvVGpmdQ4JDYM4Oam8z9auwfGbywFn4=
+	t=1756642489; cv=none; b=j+yICpPMaAKiNzmok8bzyy+dL+TibAdLjNuIgAxbJbDLZTuWtD4aiFY5ifxBNUFjrQVNK+n8Y5eMWhhn83JJ8KkDgIjx6B1KrhD+etWRH1b99TYb/Qihj5Gd71bh4OYmn6eM6q589JInDbJlOK2FW4iPfPJFOwInvV9mcqweNhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642400; c=relaxed/simple;
-	bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Is9XZhI1gice9AV6Ju2LbYOz0PS1gqnOG/K9nr5ClxFJ8dazom+1566SeFkr9I65enDmw1rfpeCbkZGBu48v2sXa1iFyGEnHxDJ1KVWNpby91fIFnRr3cC13KmpqIh7WiwcjQnQ8XC16kfoUpWBrI9FyE4ky7qxdnG4qMa63gQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaQLfK8o; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e87061a6d5so355763685a.2;
-        Sun, 31 Aug 2025 05:13:18 -0700 (PDT)
+	s=arc-20240116; t=1756642489; c=relaxed/simple;
+	bh=aPuXpq1/3jiBPymNfKQaTwEd8BMMEOqllpEtuaa6v0k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PjwscCqhjX/U6wf43yQ9JxNh1VXLbJPz+1jK3vNV/cd/GU6o2OCyeY4GFYruxJ8hXYxENAUJ7s0Dy/xI2RzzpysJbZSdWAmenK0q/87juWg9oc25A6cMe8DoSlnU7VWrNDYGPc5WI/y31v7XAUe6LkGsP0uN0+IoQJ5pqVlYFqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XOJd5viq; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61d1f60aac7so334783a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:14:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756642398; x=1757247198; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
-        b=ZaQLfK8olCrrWhvh3mGHI9nR8/PxQEJVJctvs0LNWrQT/EvUoCgXHd0xMmwVFueNTv
-         sXD/tQe1MPqBZ966Ey8q/HlsmoLXzVsDXSQSebUo+AWRgq1fEdVHTm5gBRKuPbQI24oT
-         2QjCSBQs4HR9suHgE2TCIgiRXSzq8NOhc6amiQo5ePqMWE9J4crBPxfUXUQjq+rVgfJ5
-         nVPE6N8HQg7X9VPMvxaoOzLHebgCzEtPHXfwIlUdp+0nP4sqe4FBRHAgsfBmErDTuoBg
-         pDTlKz60QS8wSFYOZtMZ1JWJYiYPaUgZE/C9h1ejPl+0h/jtgLf6yll9UZs9s2W9pKIs
-         xdMg==
+        d=linaro.org; s=google; t=1756642486; x=1757247286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BTxRKPjZEMrk5xpNJpoGqFecmAtlBpCsUg4LzjTof6w=;
+        b=XOJd5viqS78uHuArUCiY6PYBH8RyLsbWPn6CpVaRJagKkHdwbxFTtguJPOUQefwIh3
+         0Y17YX76aB0+jfqaUJhV9Wrp0BC/pvQAnqBiZslbrPmc8vuKSH8a3yX09idBY/znXL4q
+         AfFzGaU9IgP9ndLhdhxEdRzpOnLOKISzXNkMcOc65IP4OVEg3yV/v41/WTfo0W7d+y65
+         d4SPrgaqfsA/QhZle5YixkLeoucaGOjeOiH/HdIBq5KxUWXIc67TCyCiW7iRWMYsnRXi
+         nQtA5ARxy6aPVPE2BRPriAuHGk/x/tUwG7WfFYOzpZWFsyD7ShDAxFBJymap/nohpsLo
+         ZLVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756642398; x=1757247198;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756642486; x=1757247286;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JlZ0v5UR+2xTEmMOu3usxKg9KggAdVQkFrID2DzE4oQ=;
-        b=plxM8yHt4LNyoPwUT0vbMj1YmH4t0A8mDw2dqkz/Vb5b3XYHoB1ahUEun9xudVaJgQ
-         4MR6ilWswDOMTICySwIHibKR8BrVbOKop7Z1iIIB3S+aoCXCQbY+WhcOE5lP+bBrx1jJ
-         hMrb2bhgFaM+JliAESvxv79R4xmyTj4Zqfa1HPCzqDmhg+GpHOTPoB+1Z6uMrHXq8Jj3
-         /wqpMZPDtf2hRTO0CKuQOrmAPY4F9rD1YPFIQzwuJrdzHrRUc2y8tDCtiXQ1D3O4/M9x
-         pvGDx3MzypaceFNpZSiElCRysbvTZkyvxrhC54TZJhXNRZuPQvnSr31rSasVWXcmXgBN
-         gkBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFqJdFsn64/Cd9kuP0aHWuiYblUge4oxDSAf2wXlwbHQxnqMZtQU7Ar9ijJg+MD8W4sE+JD1e0ig24@vger.kernel.org, AJvYcCV3SH8Di3Y2Xv9Zf6vV7KQ/aWRKMqOCUmB2cVLKk+9TC+ziVD42jc0gLfGaY2xbrbEPRCAP3MbQGTSv@vger.kernel.org, AJvYcCWf0jST3Gy/0vyXEedAcnGQQi/uWIvreeB7cfNp7ablRQcheVNFjjMC2Hd0ZVeZYAAgOBunHnNDV9BvRSB8@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ6WfjtCTxPsiMSqFw4PKUiY3ay4Cz2me6WzyQUpWzQoPCbshJ
-	ioTH5xc6EAOfOsxyTh842zuHabxXl6gAKTvumD4RuTxo4ksq6WV3PV9t
-X-Gm-Gg: ASbGncsGsHxFfoYYsvBpiHjzDxNSOumGom0nOKB4j/ZdlnWD5G06HI40d4RjjSa96YE
-	a8Bwn+C76v4qc/iWXTHbr3fBXI9bt/mW4wngszSEr9OWgAgDcZrdfQ21jU0TjEB+WxWGp/TcfRo
-	By91Kv73af9FJBCID0JbIJTMDra91nx66nXpV/DjG5fKPFVZk8iwrJEPCliwms+WeQElDTLYtYG
-	YCpHgEgLtszhz9oqdNtsLMWMDckAETqxiDp9JlGOrI8VL2fDbGliObzhOioxWPokWPDCMZ5qa8+
-	qRndk84Nfq3NMSNWDQOxgYmYWQhUi/9qbITXT69szAT2cje9oLv5NCtykeYPjkfkoX5wWicke/f
-	LH8nPpRsfM3ytX+otkwbkaQew6FXixUQCScO3MCeitlqORVk1+YiN
-X-Google-Smtp-Source: AGHT+IGlRlomj28QsowpW+ggD3fSIRdZkTy4adIY1fcPCIHbaJRIzm6jBaXx0BhL2//vg7rIorOICA==
-X-Received: by 2002:a05:620a:29d0:b0:7f9:44b0:8072 with SMTP id af79cd13be357-7ff26eaae2amr464092785a.4.1756642397911;
-        Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
-Received: from [127.0.0.1] ([135.237.130.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb289f518sm21163776d6.56.2025.08.31.05.13.17
+        bh=BTxRKPjZEMrk5xpNJpoGqFecmAtlBpCsUg4LzjTof6w=;
+        b=Te6948M0qdS+ybwswmbXf9IAftILAeV9cy4J8o/TKSKe2Nwp6yj4SUyhacJCx9oqD5
+         YtPY0ePNVgqOLvMgrkD2ZFABSr4d2f6WOf+yaYHgtBcMCH2GwV8lAjFIAIXcHsh5kPLk
+         VqN6+PBEtRd/i2eBFAvZlyVnP1vvgmHllon9x2HJvNXm6r6cvOKd9U8j5wKG15irRTag
+         vSNeTSGiiCbfKbjEAI9x+Vda/d3rcAuKTNDllq1OZ3NvH8l87L3yBsdXgO6ouCGfZhKh
+         gDgPEVihjAqQXleG8/pf/gWWh6SAKLrzuAC4dn1X80YdR5qkEsqrl0YqfNK+CbhXvR9Q
+         EsBg==
+X-Gm-Message-State: AOJu0YxKsTdr250Nkrucj28bkK+hDH2e4VPssP0tcnuDAMOCe0Scg2+v
+	4dlpJTVW8WV8+7da3QW3hcfW8BZM2Qs/GDQEJGKt85QBchYitNV3kbMQDR49NPvsy2M=
+X-Gm-Gg: ASbGnctB37Cg2OwBHApQ6zkboZ1SX/sRIhlN65t2Jnd6y2bU5+UjqHiSEQfBOLRn6/a
+	Ta7mgQ6DfJw3vW1wd6nlrOZiFy9ptKtvpZ4y3W+Zk039GGJGB3m7M7qSz7PjrHwmXwJ3yr1Uvdj
+	HQLt9kQxMOYdJlDN47w1/UfOx2czT9Lf484jnW4mQRwdwP9YVcqm0UhEYmNDBnx8Rm8JpGfqWNU
+	HbnK3zU1lxKOfIl+BoeVLMCZDSm3yJqIGy7KsGZROrzt0clHqXW5v99CaLOOyD5lh9V8Eelp65m
+	UetCJaXALpupYrMOdoWE7aWNfD1zYy1Li6ftHaijf0xR/yabsucm78Jp0cQra/HvMrdVHClSuCP
+	pcvMZr9HnLcnY4tMW6W8EMdF9A1gBhoXFTv+9Crkh+et8Z9hMVw==
+X-Google-Smtp-Source: AGHT+IFssW74tvTvjz+3fYjfCLUuZKth/+qKSpghRspCt2nEmIjSZt91Zx6O7q+4cCcgww1rczw3Lw==
+X-Received: by 2002:a05:6402:524a:b0:61c:5275:11e0 with SMTP id 4fb4d7f45d1cf-61d0d38e666mr3494780a12.3.1756642486047;
+        Sun, 31 Aug 2025 05:14:46 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5319afsm5194361a12.48.2025.08.31.05.14.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 05:13:17 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sun, 31 Aug 2025 12:13:16 +0000
-Subject: [PATCH v2 3/3] clk: samsung: exynos990: Add missing USB clock
- registers to HSI0
+        Sun, 31 Aug 2025 05:14:44 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
+References: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] w1: matrox: Remove some deadcode in matrox_w1_remove()
+Message-Id: <175664248386.48246.8354721667053625504.b4-ty@linaro.org>
+Date: Sun, 31 Aug 2025 14:14:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,50 +88,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250831-usb-v2-3-00b9c0559733@gmail.com>
-References: <20250831-usb-v2-0-00b9c0559733@gmail.com>
-In-Reply-To: <20250831-usb-v2-0-00b9c0559733@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756642395; l=1180;
- i=wachiturroxd150@gmail.com; s=20250831; h=from:subject:message-id;
- bh=m2f5QF1qzXsZs/+Ale6o6q2WrCrUbiw6HNuUXjNyWQg=;
- b=jhPFbn1//YcT1nfRuEz6+shNgqxHkLrk/WjGXAUF7BRl9XYF/0woSJ0zRfBoxqiOCuHFgPHT5
- lzyoXOz3+rJBxN/8EkFeSdhevcTySRhTi5kPETQZXXWA/eiNYG2SjdE
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=3fZmF8+BzoNPhZuzL19/BkBXzCDwLBPlLqQYILU0U5k=
 
-These registers are required for proper USB operation and were omitted
-in the initial clock controller setup.
 
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- drivers/clk/samsung/clk-exynos990.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, 21 Aug 2025 12:02:21 +0200, Christophe JAILLET wrote:
+> The .remove function can only be called if the .probe() succeeds. So there
+> is no need to keep track of a successful probe in 'found'.
+> 
+> Simplify code accordingly.
+> 
+> 
 
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 7884354d612c54039289fa9b80ad08f34b9b7029..47a1e0850c3020ab66931ae0c5ac4920f41496d0 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -1224,6 +1224,8 @@ static const unsigned long hsi0_clk_regs[] __initconst = {
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSMMU_USB_IPCLKPORT_CLK_S2,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_SYSREG_HSI0_IPCLKPORT_PCLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_ACLK_PHYCTRL,
-+	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USB31DRD_REF_CLK_40,
-+	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_REF_SOC_PLL,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBDPPHY_SCL_APB_PCLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_I_USBPCS_APB_CLK,
- 	CLK_CON_GAT_GOUT_BLK_HSI0_UID_USB31DRD_IPCLKPORT_BUS_CLK_EARLY,
+Applied, thanks!
 
+[1/1] w1: matrox: Remove some deadcode in matrox_w1_remove()
+      https://git.kernel.org/krzk/linux-w1/c/25fb0ea986dc10e05f3f4b43cabde4d1853a1fd7
+
+Best regards,
 -- 
-2.50.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
