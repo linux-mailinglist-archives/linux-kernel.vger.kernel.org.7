@@ -1,146 +1,133 @@
-Return-Path: <linux-kernel+bounces-793429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F74B3D33C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A304CB3D357
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B474F17DB42
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B0B189E920
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0435C2773CB;
-	Sun, 31 Aug 2025 12:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1C2676DE;
+	Sun, 31 Aug 2025 12:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pk5HlR9a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr17j01W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFF026B942;
-	Sun, 31 Aug 2025 12:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68621265620;
+	Sun, 31 Aug 2025 12:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756643798; cv=none; b=VCDXENep3TK6dkWIVwEVmMo7CVHwC+pNCspr3fwaxslejPiCpJJBz22ZB7py0Vi3PKLd0NX6tAY9z3rVGZ6NaHX6MeJZhrZQHJTvaS9+ug6qM2qJ7nUoY/pndYDntoMW6hVJHziPBP88JgQxb0HxtODvHll4M7mK1e85w1yY3H0=
+	t=1756643869; cv=none; b=cfIEAReDz0noDb/RtCN8860BjJf7gZAZXEGgE6R49IesZKjTcLfCZRtfWOmErpnPhf/BXq+ByV1k3LcFaDrfd9ajt4hII9IDFAYNvHwQEf+XaCf6U23sRRTHE4mNAPaihQ2dDejqW8cH6kRVIx/EBBfnzaR3S0DHPAYmnJwmxyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756643798; c=relaxed/simple;
-	bh=BndpzTZJgGQ5KAp6GobzpPt6z1nG2dr2yHF9QYRGqmo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pE8Z8UH+WFs9jb6HuVUFzyNbbvDizc5MvbQxr05Hk/BPNreHGs79drUpu5yBz3/oIRu3lG1eb/LDy5LXSmXFIiMk9ZOrNUrQVxKZMs9NR4yjxw59s8GfZ5MK704UxBQCGiIXKfZhod4FMFIZgYuO5hQw/31Ht6LvDWZ02Vk3his=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pk5HlR9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82794C4CEED;
-	Sun, 31 Aug 2025 12:36:38 +0000 (UTC)
+	s=arc-20240116; t=1756643869; c=relaxed/simple;
+	bh=4ekIaT6XktJE9IS20vPyjK4SVTe96ZVwvYEroL7WlvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p+v5ojJjVuzxazpJOipF+aXlTZZ2e/cF9Yt+LGN73fgOsJlGDRikswsO6zoO091NtVAlixURdEffEHC5JrxjSJENyzLr6LnwdWZPXGlBKgx9XRI96/u75CDfaaFOw7taqXArYA3dU04waj2tTH5S0QjoDoDNehNl9Xl/R12IrS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr17j01W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 945AFC4CEED;
+	Sun, 31 Aug 2025 12:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756643798;
-	bh=BndpzTZJgGQ5KAp6GobzpPt6z1nG2dr2yHF9QYRGqmo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pk5HlR9a3ZewV0KhjQxW0El0EfA02bYCIaaQE6m2cMlHR3Fk7D8gQQqUcqEmrVr+v
-	 0GzvPJJ3nBv+HBziEMURGVXiLp15Bx1Ohk3/H/lWk5CJbnya+9NCoaBo8ajZkL+0d2
-	 otFD8GkLihydpkJrsU7iWD6xRk9G2HySxz3C7lczg4L8Q0wsRJLJHaX2gpJj5e+sNy
-	 ATuzhXUsRz0IdoDIlwV49UNK9VvFbNF5kgIuI3gVZb+Z4J6KBh8zyxISVj0oYVdeEI
-	 yMYNJFUce/W1OaSvf3kYe4RPkaqg1JWMTpK5fayPYaE6y/Z5w7+sx7Pe7VC8wzQyME
-	 bIXV3L39WdtzQ==
-Received: by pali.im (Postfix)
-	id C97641857; Sun, 31 Aug 2025 14:36:37 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 35/35] cifs: Use CREATE_OPTION_EXCLUSIVE when doing SMB1 rmdir on NT server
-Date: Sun, 31 Aug 2025 14:36:02 +0200
-Message-Id: <20250831123602.14037-36-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250831123602.14037-1-pali@kernel.org>
-References: <20250831123602.14037-1-pali@kernel.org>
+	s=k20201202; t=1756643869;
+	bh=4ekIaT6XktJE9IS20vPyjK4SVTe96ZVwvYEroL7WlvY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Jr17j01W9uyPqzUR9Jusftu6WzTYkeITlwvWCBJjXW3L4U6I3/0bkKcgZho+yGoB6
+	 00SylOr7LQZJIImX1pGW8WhHOIHdCEu7TdLmAfOnqn30Q4KOBSby4zOvFmm922GHo/
+	 1byPxh2Cz4/jhJrrba2b8yJPkSqgHcZZmGtcN+ug4A9tc/h5BhhHrqx54JCxoBATra
+	 XyhFJBeKQBW0LDO4rGdtaWYE9MZ2vSWPnrd9jw3CKqMoxDyiZN9vZr9Hkzf15t2V5O
+	 62jjcM0KXjiiurGNOXSjYQ0bMSd1AUloncBwekQWwtjGCY4Xz5zS2e3T1gzsNfNdkx
+	 4uEqQEek4KNQw==
+Date: Sun, 31 Aug 2025 13:37:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ioana Risteiu <Ioana.Risteiu@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ramona Nechita
+ <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] Add IIO backend support for AD7779
+Message-ID: <20250831133738.5ba540c7@jic23-huawei>
+In-Reply-To: <82a21a66-409f-4ec8-9351-365031b8646b@baylibre.com>
+References: <20250825221355.6214-1-Ioana.Risteiu@analog.com>
+	<82a21a66-409f-4ec8-9351-365031b8646b@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Windows NT servers just set the DELETE_PENDING flag when executing the SMB1
-SMB_COM_DELETE_DIRECTORY command. This is opposite of the SMB_COM_DELETE
-command (can be used only on files) which completely removes the file and
-not just transition it into DELETE_PENDING state.
+On Tue, 26 Aug 2025 11:24:26 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-This means that the SMB1 rmdir against Windows NT servers has same issues
-as SMB2+ rmdir and silly rename needs to be used. As in SMB2+ rmdir, use
-the CREATE_OPTION_EXCLUSIVE logic for issuing SMB1 rmdir when communicating
-with NT-based SMB1 server.
+> On 8/25/25 5:13 PM, Ioana Risteiu wrote:
+> >   - Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
+> >   setting number of lanes used by AXI ADC.
+> >   - Add the generic io-backends property to the AD7779 binding to enable
+> >   support for the IIO backend framework.
+> >   - Add the adi,num-lanes property to set the number of lanes used by
+> >   AD7779.
+> >   - Move the initialization specific to communication without iio-backend
+> >   into a separate setup function.
+> >   - Add a new functionality to ad7779 driver that streams data through data
+> >   output interface using IIO backend interface.  
+> 
+> It is more helpful for the cover letter to contain a high-level
+> overview of why you want this series included in the kernel. We
+> can look at the individual patches to see what they are about, so
+> repeating that here isn't especially helpful.
+> 
+> For example, I would write the cover letter for this series like this:
+> 
+> The AD7779 ADC chip has a secondary data bus for high-speed data
+> transfers. To make use of this bus, it is connected to an FPGA IP
+> core [1] which is handled using the IIO backend framework. This IP
+> core connects to the data bus lines as well as the data ready signal
+> on the ADC. This interface can use 1, 2 or 4 lanes at a time.
+> 
+> This series extends the devicetree bindings to describe these wiring
+> configuration, extends the IIO backend framework to allow setting the
+> number of lanes that are being used, and extends the ad7779 driver to
+> allow using such a backend for reading data in buffered reads.
+> 
+> [1]: https://analogdevicesinc.github.io/hdl/projects/ad777x_fmcz/index.html
+> 
+> > 
+> > Ioana Risteiu (4):
+> >   iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
+> >   dt-bindings: iio: adc: add IIO backend support
+> >   iio: adc: extract setup function without backend
+> >   iio: adc: update ad7779 to use IIO backend
+> > 
+> >  .../bindings/iio/adc/adi,ad7779.yaml          |  44 +++-
+> >  drivers/iio/adc/ad7779.c                      | 192 ++++++++++++++----
+> >  drivers/iio/adc/adi-axi-adc.c                 |   1 +
+> >  3 files changed, 196 insertions(+), 41 deletions(-)
+> >   
+> 
+> Please include a changelog of what was changed in each revision of
+> the series along with links to the previous revisions. Tools like
+> b4 can help automate this.
+> 
+> https://docs.kernel.org/6.16/process/submitting-patches.html
+Whilst I fully agree with this, please keep the per patch change logs
+as well as personally I find those more useful.  For those just
+changes from previous version is fine.
 
-With this change Linux rmdir() syscall called on SMB1 mounts from Windows
-NT servers cause that on success the path would not exist anymore and new
-file or directory with that path can be created.
+Anyhow, other than this process stuff the series looks good to me
+so applied to the togreg branch of iio.git and pushed out as testing.
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/cifssmb.c | 45 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Thanks,
 
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index 37bc0541bc21..31638b71ee0c 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -823,8 +823,53 @@ CIFSSMBRmDir(const unsigned int xid, struct cifs_tcon *tcon, const char *name,
- 	int bytes_returned;
- 	int name_len;
- 	int remap = cifs_remap(cifs_sb);
-+	struct cifs_open_parms oparms;
-+	struct cifs_fid fid;
-+	int oplock;
- 
- 	cifs_dbg(FYI, "In CIFSSMBRmDir\n");
-+
-+	/*
-+	 * Do not send SMB_COM_DELETE_DIRECTORY to NT servers. NT servers just
-+	 * sets the DELETE PENDING state on the directory and in case that
-+	 * directory is opened by some other client, it stay in this state and
-+	 * direntry stay present in the parent directory.
-+	 *
-+	 * So for NT servers use NT OPEN in exclusive mode. It fails when some
-+	 * other SMB client has the directory opened, and it triggers the
-+	 * sillyrename code path. After successful NT OPEN in exclusive mode,
-+	 * sets the DELETE PENDING state and close the directory.
-+	 *
-+	 * Servers with UNIX extensions should support SMB_COM_DELETE_DIRECTORY
-+	 * with correct UNIX semantics, so use this NT OPEN + DELETE PENDING
-+	 * only against non-UNIX NT servers.
-+	 */
-+	if ((tcon->ses->capabilities & CAP_NT_SMBS) &&
-+	    !(cap_unix(tcon->ses) &&
-+	      (le64_to_cpu(tcon->fsUnixInfo.Capability) & CIFS_UNIX_POSIX_PATH_OPS_CAP))) {
-+		oparms = CIFS_OPARMS(cifs_sb, tcon, name, DELETE, FILE_OPEN,
-+				     CREATE_OPTION_EXCLUSIVE | CREATE_NOT_FILE | OPEN_REPARSE_POINT,
-+				     ACL_NO_MODE);
-+		oparms.fid = &fid;
-+		oplock = 0;
-+		rc = CIFS_open(xid, &oparms, &oplock, NULL);
-+		if (rc)
-+			return rc;
-+		rc = CIFSSMBSetFileDisposition(xid, tcon, true, fid.netfid, current->tgid);
-+		/*
-+		 * some samba versions return -ENOENT when we try to set the
-+		 * file disposition here. Likely a samba bug, but work around
-+		 * it for now. This means that some cifsXXX files may hang
-+		 * around after they shouldn't.
-+		 *
-+		 * BB: remove this hack after more servers have the fix
-+		 */
-+		if (rc == -ENOENT)
-+			rc = 0;
-+		CIFSSMBClose(xid, tcon, fid.netfid);
-+		return rc;
-+	}
-+
- RmDirRetry:
- 	rc = smb_init(SMB_COM_DELETE_DIRECTORY, 0, tcon, (void **) &pSMB,
- 		      (void **) &pSMBr);
--- 
-2.20.1
+Jonathan
+
 
 
