@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-793362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64229B3D263
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:57:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E111B3D268
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EE6172CD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C972F7A35DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDD9257435;
-	Sun, 31 Aug 2025 10:57:42 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBFC257444;
+	Sun, 31 Aug 2025 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gstl4kKN"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B25155C82;
-	Sun, 31 Aug 2025 10:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8122571B3
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756637861; cv=none; b=iHuSO2p4zD3JmmK2bl+8430rgIvbKwQt5L91Y9/pSUmImjSyM9rTT2DWslWYFfJYepydJHXYcCEJlPdzvZp5DuIU3VigYVy1kNfIam6oIPDeWJYw7aVJrmfBhoqXd4d8JaOUhwj9D4yRGgfd/3uM14OaKMVkVyWLwSroi7vLLLM=
+	t=1756637934; cv=none; b=s5nbNizMGtArdUKmeF+R/tB3esn/FfnDrcRQfC6rTUTt2C5TXgHw06Ct5t5uSsq9Oggc9WqwN6bdz4ddoCpSPwY/819/ZEIXDrYQG0f7lz5oHkf1fGQBEBYwwSorb0iYVL59igxDXjEbue/92INueG+RYeSuq/Nwo5utizhpyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756637861; c=relaxed/simple;
-	bh=7I/zKGdibjpLrai/riJum7CU+tVh0qF1rSsygLIC03Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rV730//OFmwMjlWW+Z32M5S0mmzvlLHPJEt/aKJ63RFbugr/zKxktnfqKV3w0PV+l7DjDH6L3aPYlaqW4HTq8ePlLQ+zACXzg9W4W4GDVrPybj2abaaMzZoMUbeJj8WqgJ0yAEcgJcyYjLtFq4BxoLttI/EpubiMmWfgRV889Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af79b.dynamic.kabel-deutschland.de [95.90.247.155])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7CDEB60288278;
-	Sun, 31 Aug 2025 12:57:25 +0200 (CEST)
-Message-ID: <a80e0cb6-0c2a-4b83-9461-5e2dfc7f6d29@molgen.mpg.de>
-Date: Sun, 31 Aug 2025 12:57:25 +0200
+	s=arc-20240116; t=1756637934; c=relaxed/simple;
+	bh=WVIesh8/RBO7fqb/F+aCLBcMtMA9LcfeCRq+222xUIc=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Tc+LqB7YK3H4yW8zXw8u37K0LTFvfL3dN1CrXK40dW4RedR/MiUZA4+Z9/dGUpujL24jWspOZsJqjOsTjF2ntR54NRNXE7unWxL76wdDM3UOpPUXnLkj9WjB0kSZrjw+os0HCXxc15McZa85OA5T8+NWpD87Xntwvs5nG6Ci0tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gstl4kKN; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b041b155a6dso1417066b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756637931; x=1757242731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w3zy+4FxM6e/ZYJU6tdKRgGniGSW0dORiZkBYaBYdq4=;
+        b=Gstl4kKNr1k2/CoNvVwMBDUgJaKJI7OdDt5JO+aBfCazoJEHMvMwgH6eh0DuAWW73n
+         WirdSYdOIcCmUyzuxB2h0ZQ8ljC70jiyUZo5fG5Y1cDoTfrytPhmP7BUQ3EoeYw25XsQ
+         xWSBw6RxxMbCGwsYMraFUnQIWxrGLcMBTUXl5j/2+JBDYkkftD2QJAURIsHa6NYtmFZs
+         qlkAsbZrC/HvrnGPscZYCsa7/r1pD396RTKhoulstVuUobdQQMAQ0YM6a4z7M24bcU71
+         85LA+8kNv3xADoDUSf37bc2dqzqLkMxqa0fDT8yixNXm9mde5YuzyocbpS67bnxpUhME
+         gOjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756637931; x=1757242731;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w3zy+4FxM6e/ZYJU6tdKRgGniGSW0dORiZkBYaBYdq4=;
+        b=nymtXmKOC2OY6zccaF79gm7ncBy0UNyQ/CHLiGu+SCs8d5IE32cfL7VmHAr9QpnbjN
+         R1r6tFH9OAW/UsCTyu2Hl4bT9zE/+LicdYt1b6b6W5M5MI8+SQiDzaiPu3QD3fZHEau2
+         4ueGnrHvZ+wO1CyO8HwzMm8kDF1pPuAr/s2Kgqphm4zvILD9jWgEYm4FWr9RSNcUs6aD
+         jGst5knJ7M4fD6y/GwOKUgPxc1ryPHUUvevvvrWr7BYMZs0GsEPrLxmO2/Vkd8+tOlpJ
+         no2VetW9OoaiARj/R5sky7a0ZBHcwk4CFLDJe9PKeMsOhOhS912AqagW9zsb3l8AT4uX
+         DztQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHpVx/bMU/s4EwaM8/yqpZN7TS2oGOoB72IcmMWLYtq/IZ+hJTpKQ2yk7fOfN29Q/BvDEt+HeTp6A3+GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhVPBt2h2b2GjcCyL0ORZ1ddyTlYiS6yO4o9quAX64vERTlYtP
+	LWbS86EOEjYWh9Pv3qQ71OHXbqOt1C+fstgjn/OOYN7txAso9/2F0wp2o+kBlfMghpE=
+X-Gm-Gg: ASbGncu4IBD61NjkDEPHM1mqGK+sPz60112KgbIMb9Ipoce+QVB/gtJz2DsUFu+nHnO
+	39VtgB0jlghHbS4+sR9cICIRRlKaur1OiXxwg5OpctNFzNfDGL476v+q1Xcre7H7BilfswvH50W
+	BYBduH5xOLEzxBP87z2kf8VbpNkFUJHqyfl33s+rkQH/k2SYx7yt+8/rt4lL8HOktdGr75Zij23
+	CcC8kC/shn9Lvq729kTw1AEGF26/itcu1gzRzsFXeyZ+rfgrAs/mq3Zcq6Hc5JGYccw21pLuU24
+	fJ17GybR0IYb26Drz/gQMdU7Y47R4RbDVuT8md/5qO9j3q9ew4Cox/0P9jbmcsVziKPP6qe4yP5
+	R1CoXY72i9QusnI+7J6CzMrKlWpQcXL66UcjZniTeETTWCMnY/g==
+X-Google-Smtp-Source: AGHT+IHTBJiyshvnvgCsLBk30RyM3YNR2Y8KXQJ7s2S5taB2fYhC2gtwsyGjCqiwFtwHqMDToZZ4hw==
+X-Received: by 2002:a17:906:c152:b0:afe:c2e7:3707 with SMTP id a640c23a62f3a-aff0ee1afcemr349633566b.4.1756637930739;
+        Sun, 31 Aug 2025 03:58:50 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b017e4b9ed7sm349176466b.90.2025.08.31.03.58.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 03:58:50 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250830093918.24619-2-krzysztof.kozlowski@linaro.org>
+References: <20250830093918.24619-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: exynos2200: Add default GIC address
+ cells
+Message-Id: <175663792937.36292.10292837875011385286.b4-ty@linaro.org>
+Date: Sun, 31 Aug 2025 12:58:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btusb: Add support for Mercusys MA530
- Bluetooth adapter
-To: elespink@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
- luiz.dentz@gmail.com, linux-kernel@vger.kernel.org
-References: <12b048b5-aadd-4b06-a9a7-8480f27c65af@gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <12b048b5-aadd-4b06-a9a7-8480f27c65af@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Dear lespink,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-Thank you for your patch.
-
-Am 31.08.25 um 12:50 schrieb 3:
->  From becb0b090d9783afddf7d43d739ee69b82fbb32a Mon Sep 17 00:00:00 2001
-> From: lespink <lespinks9@gmail.com>
-> Date: Sun, 31 Aug 2025 12:35:47 +0200
-> Subject: [PATCH] Bluetooth: btusb: Add support for Mercusys MA530 Bluetooth adapter
-
-Please use `git send-email` or `b4` to send the patch, as currently it’s 
-not formatted correctly.
-
-> Add support for a Realtek-based Mercusys MA530 Bluetooth 5.3 USB dongle
-> which works with USB ID 2c4e:0115. This device was not recognized by the
-
-… having the id 2c4e:0115.
-
-(Maybe add that id to the summary/title too.)
-
-> kernel with the original device list and thus was non-functional.
-
-According to `git log drivers/bluetooth` it’s common to paste the 
-information from `/sys/kernel/debug/usb/devices` to the commit message.
-
-> Signed-off-by: lespink <lespinks9@gmail.com>
-> ---
->   drivers/bluetooth/btusb.c | 4 ++++
->   1 file changed, 4 insertions(+)
+On Sat, 30 Aug 2025 11:39:19 +0200, Krzysztof Kozlowski wrote:
+> Add missing address-cells 0 to GIC interrupt node.  Value '0' is correct
+> because GIC interrupt controller does not have children.
 > 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 8085fabadde8..84ebeb317dda 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -593,6 +593,10 @@ static const struct usb_device_id quirks_table[] = {
->       { USB_DEVICE(0x0489, 0xe130), .driver_info = BTUSB_REALTEK |
->                                BTUSB_WIDEBAND_SPEECH },
 > 
-> +    /* Mercusys MA530 Adapter */
-> +    { USB_DEVICE(0x2c4e, 0x0115), .driver_info = BTUSB_REALTEK |
-> +                             BTUSB_WIDEBAND_SPEECH },
-> +
->       /* Realtek Bluetooth devices */
->       { USB_VENDOR_AND_INTERFACE_INFO(0x0bda, 0xe0, 0x01, 0x01),
->         .driver_info = BTUSB_REALTEK },
-> -- 
-> 2.51.0
 
-The diff looks fine.
+Applied, thanks!
 
+[1/1] arm64: dts: exynos2200: Add default GIC address cells
+      https://git.kernel.org/krzk/linux/c/59abe5c87267f1f3bd627af20355b490b59f9901
 
-Kind regards,
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Paul
 
