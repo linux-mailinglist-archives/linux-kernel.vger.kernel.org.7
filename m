@@ -1,195 +1,239 @@
-Return-Path: <linux-kernel+bounces-793391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0CCB3D2D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18663B3D2D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EF818976F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58FE17B0AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AAE258CDC;
-	Sun, 31 Aug 2025 12:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F90E25B31C;
+	Sun, 31 Aug 2025 12:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KK/wfnK4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q/INEAt6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrFqNhLz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961B525785C;
-	Sun, 31 Aug 2025 12:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F988259C80;
+	Sun, 31 Aug 2025 12:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756643043; cv=none; b=f00M1Py/yMEg7DK2JPe9DB2vHDmLZ6RwHjtKxh1iw04nc172tOd3NvTxHgHH6R8SgzLAuY/YQlBDIBLCv5Cp6Y32jfhpHeQs8QUfhib1nSxU2l7t+7tRI0J8FlRJfFrKzr0kr5KO0c2hougyiG3i5IOj89163fkKGhUQfj9bjyw=
+	t=1756643264; cv=none; b=oDr31pLx4DDZlqz7w7y+CG9P5TBzGMBtjkaevrq7wMJ3/bOC6Rn0/0FHSo+8UV1OiuM/sgfxcRh7+xzCccRur7/TlYbp32V+scu4BhSwNGzopNfKXEtnL7Ww0kN9c+4QYK2zHhl1Oniwrd4U5t3iYdB07sa4tyD+DuVZcv00sw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756643043; c=relaxed/simple;
-	bh=TkwWDfkc2V4ryy0AWFtUjVoTAYL21FJ1M/VQVsrWIL4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KDxCIW/QV9w3XXNSFep+yL95H0EjUx7rHSkSexl4qokmer0uh9t1uO+2gWpP08U+Wo78STGtRMFmDRZEEY2Tv8ColxpfS8oaavaXdbspY+FxvshIYUsVDhYoX1zJJYFNeBr93V6ExjhDHEJS1RsGJhhx6b7sXMINppJqWOQ+pt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KK/wfnK4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q/INEAt6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 31 Aug 2025 12:23:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756643039;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RUx1wjLxLywXDHDPhrV5rYxI8zpC1+Ce2rYLWx0Q2c4=;
-	b=KK/wfnK4OkOt1WYMeYWs+QHT26koO8ljW8ppkGUav31V5UG80Yp+HkKSYN435YJMoedBO6
-	i5kFabIGj3ZPYHbLY2KEg34Zc/EJKOYK54bmOMCXR8kTTPQwEYAeLFJ+vZJW0SGocGEcBG
-	r20+PdM/naJR7G3p8SSAIc7J8wLuflb1cAu68nNmuYaBMGBoORj4hNFAgDtx9wMciILymE
-	wKC4zudX0ycQrf7/c+O7z5nlySOWqGDtrQQCRsAK1ScSgUXoh4ksOdEyD0JPrBoVsYLsiF
-	Hg5w7WfAye/LwqesC3aktOzUABsDDG3t87glVWgUjnGJzZiNgucLaDQFUismig==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756643039;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RUx1wjLxLywXDHDPhrV5rYxI8zpC1+Ce2rYLWx0Q2c4=;
-	b=Q/INEAt6U1eCifGM0jHVJV6rIsgBVssV5Oab3Uv5qlpqYF/w8wbGECP12MjQjo/e9rcKYM
-	BQ4quI/n3/FbUDAg==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/urgent] futex: Move futex_hash_free() back to __mmput()
-Cc: Jakub Kicinski <kuba@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250822141238.PfnkTjFb@linutronix.de>
-References: <20250822141238.PfnkTjFb@linutronix.de>
+	s=arc-20240116; t=1756643264; c=relaxed/simple;
+	bh=bPKhfTBzMY9I92soo2FdT1/MUwIki7DO1HtC3OssbrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YJ2u1aWeNxCCl+AqVGy9bLktNDlHfFGEhIPHQvBQ+W3xllGOj3lWqBG4JF3PVRzUlKtBH9VuUCrZJLPnykPK0qw3gwceiMdKm1kmz8xSHrTVS3MGoApyZ5en/+ThQerfTCyGmbUlBGT/tuceRIg0Ugu2ruTVP504a8+GFhsscuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrFqNhLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F958C4CEED;
+	Sun, 31 Aug 2025 12:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756643264;
+	bh=bPKhfTBzMY9I92soo2FdT1/MUwIki7DO1HtC3OssbrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KrFqNhLzXXvM/UuFyfKFctDtC/tH+kl2th7u23gvZqoW/QajK9dQ9fBCNUuEQyc14
+	 2eK/eJjiSyGrGYVGPnpkdcc13gcVIn2LauZEZTJ5XnKAzBLIfZfdsFtdQ8SNLSh8cF
+	 4Iw/jk5mSUIKFVKKxRS3QQD/oI8827QEwT7dxjSwutQM6dEy8xFWjhu5723ltXozTz
+	 SvHtwfT/s4hB1bzzpwC8L8lWAT/NbiWdBZoozmDG8axEBG1nUVjNaxEEKu/0KzQQDl
+	 NVBqD391fX+SwSHuKUD8q+1d6yZpICtto2AtxWgf/jrokbqiElQFzSMummdxujmlx/
+	 EMw/uubsmvLFA==
+Date: Sun, 31 Aug 2025 13:27:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, alexandru.ardelean@analog.com,
+ jic23@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, Marcelo.Schmitt@analog.com, dumitru.ceclan@analog.com,
+ Jonathan.Santos@analog.com, dragos.bogdan@analog.com
+Subject: Re: [PATCH v1 2/2] iio: adc: Add initial support for MAX22531 ADC
+Message-ID: <20250831132643.647f7c4d@jic23-huawei>
+In-Reply-To: <edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
+References: <cover.1756115378.git.jain.abhinav177@gmail.com>
+	<edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175664303766.1920.13212322629796216488.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the locking/urgent branch of tip:
+On Tue, 26 Aug 2025 02:55:49 +0530
+Abhinav Jain <jain.abhinav177@gmail.com> wrote:
 
-Commit-ID:     d9b05321e21e4b218de4ce8a590bf375f58b6346
-Gitweb:        https://git.kernel.org/tip/d9b05321e21e4b218de4ce8a590bf375f58=
-b6346
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Fri, 22 Aug 2025 16:12:38 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sun, 31 Aug 2025 11:48:19 +02:00
+> Add device support for MAX22530-MAX22531.
+> Implement scale and read functionality for raw/filtered ADC readings.
+> 
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+Hi Abhinav,
 
-futex: Move futex_hash_free() back to __mmput()
+A few minor style related things and one question on FADC registers address.
 
-To avoid a memory leak via mm_alloc() + mmdrop() the futex cleanup code
-has been moved to __mmdrop(). This resulted in a warnings if the futex
-hash table has been allocated via vmalloc() the mmdrop() was invoked
-from atomic context.
-The free path must stay in __mmput() to ensure it is invoked from
-preemptible context.
+Thanks,
 
-In order to avoid the memory leak, delay the allocation of
-mm_struct::mm->futex_ref to futex_hash_allocate(). This works because
-neither the per-CPU counter nor the private hash has been allocated and
-therefore
-- futex_private_hash() callers (such as exit_pi_state_list()) don't
-  acquire reference if there is no private hash yet. There is also no
-  reference put.
+Jonathan
 
-- Regular callers (futex_hash()) fallback to global hash. No reference
-  counting here.
+>  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index ea3ba1397392..a35c3c945e27 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -933,6 +933,16 @@ config MAX1363
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called max1363.
+>  
+> +config MAX22531
+> +        tristate "Analog Devices MAX22531 ADC Driver"
+> +        depends on SPI
+> +        help
+> +          Say yes here to build support for field-side self-powered 12-bit
+> +	   isolated Maxim ADCs. (max22530, max22531, max22532).
+Use a list
+	  - max22530
+	  - max22531
+etc
+because it means new parts being added create less fuzz.  We've gotten this wrong
+in far too many drivers and ended up with messier follow up series as a result!
 
-The futex_ref member can be allocated in futex_hash_allocate() before
-the private hash itself is allocated. This happens either while the
-first thread is created or on request. In both cases the process has
-just a single thread so there can be either futex operation in progress
-or the request to create a private hash.
+> +
+> +	   To compile this driver as a module, choose M here: the module will be
+> +	   called max22531.
+Should be tab index + 2 spaces for whole help block. 
+> +
 
-Move futex_hash_free() back to __mmput();
-Move the allocation of mm_struct::futex_ref to futex_hash_allocate().
+> diff --git a/drivers/iio/adc/max22531.c b/drivers/iio/adc/max22531.c
+> new file mode 100644
+> index 000000000000..fb035225e426
+> --- /dev/null
+> +++ b/drivers/iio/adc/max22531.c
+> @@ -0,0 +1,191 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * MAX22531 SPI ADC Driver
+> + *
+> + * Copyright (C) 2025 Abhinav Jain
+> + *
+> + * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max22530-max22532.pdf
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/unaligned.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/regulator/consumer.h>
 
-  [ bp: Fold a follow-up fix to prevent a use-after-free:
-    https://lore.kernel.org/r/20250830213806.sEKuuGSm@linutronix.de ]
+As per the build bot report, there are some headers that want to be here and
+aren't. In general aim for following Include What You Use IWYU principles
+for kernel code, subject to some fuzz around headers that are always used via
+an other one.
 
-Fixes:  e703b7e247503 ("futex: Move futex cleanup to __mmdrop()")
-Closes: https://lore.kernel.org/all/20250821102721.6deae493@kernel.org/
-Reported-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20250822141238.PfnkTjFb@linutronix.de
----
- kernel/fork.c       |  2 +-
- kernel/futex/core.c | 16 ++++++++++++----
- 2 files changed, 13 insertions(+), 5 deletions(-)
+> +
+> +#define MAX22531_REG_PROD_ID		0x00
+> +#define MAX22531_REG_ADC_CHAN(x)	((x) + 1)
+> +#define MAX22531_REG_FADC_CHAN(x)	((x) + 1)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index af67385..c4ada32 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -689,7 +689,6 @@ void __mmdrop(struct mm_struct *mm)
- 	mm_pasid_drop(mm);
- 	mm_destroy_cid(mm);
- 	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
--	futex_hash_free(mm);
-=20
- 	free_mm(mm);
- }
-@@ -1138,6 +1137,7 @@ static inline void __mmput(struct mm_struct *mm)
- 	if (mm->binfmt)
- 		module_put(mm->binfmt->module);
- 	lru_gen_del_mm(mm);
-+	futex_hash_free(mm);
- 	mmdrop(mm);
- }
-=20
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index d9bb556..125804f 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -1722,12 +1722,9 @@ int futex_mm_init(struct mm_struct *mm)
- 	RCU_INIT_POINTER(mm->futex_phash, NULL);
- 	mm->futex_phash_new =3D NULL;
- 	/* futex-ref */
-+	mm->futex_ref =3D NULL;
- 	atomic_long_set(&mm->futex_atomic, 0);
- 	mm->futex_batches =3D get_state_synchronize_rcu();
--	mm->futex_ref =3D alloc_percpu(unsigned int);
--	if (!mm->futex_ref)
--		return -ENOMEM;
--	this_cpu_inc(*mm->futex_ref); /* 0 -> 1 */
- 	return 0;
- }
-=20
-@@ -1801,6 +1798,17 @@ static int futex_hash_allocate(unsigned int hash_slots=
-, unsigned int flags)
- 		}
- 	}
-=20
-+	if (!mm->futex_ref) {
-+		/*
-+		 * This will always be allocated by the first thread and
-+		 * therefore requires no locking.
-+		 */
-+		mm->futex_ref =3D alloc_percpu(unsigned int);
-+		if (!mm->futex_ref)
-+			return -ENOMEM;
-+		this_cpu_inc(*mm->futex_ref); /* 0 -> 1 */
-+	}
-+
- 	fph =3D kvzalloc(struct_size(fph, queues, hash_slots),
- 		       GFP_KERNEL_ACCOUNT | __GFP_NOWARN);
- 	if (!fph)
+I'm confused. Why the same registers for both of these?  If they really
+are the same, perhaps one macro is enough.
+
+> +
+> +#define MAX22531_VREF_MV		1800
+> +#define MAX22531_DEVICE_REV_MSK		GENMASK(6, 0)
+> +#define MAX22531_DEVICE_REV		0x01
+> +
+> +#define MAX22531_REG_ADDR_MASK		GENMASK(7, 2)
+> +#define MAX22531_REG_WRITE_MASK		BIT(1)
+> +
+> +enum max22531_id {
+> +	max22530,
+> +	max22531,
+> +	max22532,
+> +};
+> +
+> +struct max22531_chip_info {
+> +	const char *name;
+> +};
+> +
+> +static struct max22531_chip_info max22531_chip_info_tbl[] = {
+> +	[max22530] = {
+> +		.name = "max22530",
+> +	},
+> +	[max22531] = {
+> +		.name = "max22531",
+> +	},
+> +	[max22532] = {
+> +		.name = "max22532",
+> +	},
+> +};
+
+See below for reasoning. Split these into separate structures rather
+than an array.
+
+> +static int max22531_reg_read(struct max22531 *adc, unsigned int reg,
+> +			     unsigned int *readval)
+> +{
+> +	u8 cmd;
+> +
+> +	cmd = FIELD_PREP(MAX22531_REG_ADDR_MASK, reg);
+> +	*readval = spi_w8r16be(adc->spi_dev, cmd);
+
+Rather than having side effect of leaving a negative in *readval, use
+a local variable and only assign readval if all is good.
+
+> +	if (*readval < 0)
+> +		return *readval;
+> +
+> +	return 0;
+> +}
+
+> +static int max22531_probe(struct spi_device *spi)
+> +{
+
+> +	ret = max22531_reg_read(adc, MAX22531_REG_PROD_ID, &prod_id);
+> +	if (ret ||
+A failure to read is a bug that we should fail on, whereas the value
+read not matching is indeed something were a warn or info makes sense.
+So split this check 
+	if (ret)
+		return ret;
+
+	if (FIELD_GET()...
+		dev_warn
+
+> +	    FIELD_GET(MAX22531_DEVICE_REV_MSK, prod_id) != MAX22531_DEVICE_REV)
+> +		dev_warn(&spi->dev, "PROD_ID verification failed\n");
+> +
+> +	return devm_iio_device_register(&spi->dev, indio_dev);
+> +}
+> +
+> +static const struct spi_device_id max22531_id[] = {
+> +	{ "max22530", (kernel_ulong_t)&max22531_chip_info_tbl[max22530] },
+> +	{ "max22531", (kernel_ulong_t)&max22531_chip_info_tbl[max22531] },
+> +	{ "max22532", (kernel_ulong_t)&max22531_chip_info_tbl[max22532] },
+
+Whilst this style used to be common, over time we've come to the conclusion
+that an indexed array for these doesn't bring value. Instead
+just have separate structures with names that indicate which chip they
+are for.  max22532_chip_info etc  That allows the enum to be dropped which
+has the advantage of removing the temptation to use it for anything else
+(which is usually a bad idea)
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(spi, max22531_id);
+> +
+> +static const struct of_device_id max22531_spi_of_id[] = {
+> +	{ .compatible = "adi,max22530",
+> +		.data = &max22531_chip_info_tbl[max22530], },
+> +	{ .compatible = "adi,max22531",
+> +		.data = &max22531_chip_info_tbl[max22531], },
+> +	{ .compatible = "adi,max22532",
+> +		.data = &max22531_chip_info_tbl[max22532], },
+> +	{ }
+
 
