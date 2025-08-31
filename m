@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-793389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23217B3D2CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:22:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A61B3D2CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0743BC9DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE92D3BD2D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0F25C70D;
-	Sun, 31 Aug 2025 12:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA85125D535;
+	Sun, 31 Aug 2025 12:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXdSJ/Rb"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BwKxziMl"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAEC21C163
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D11258EE8
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756642952; cv=none; b=Lw/Ea65UeU0M+Sa1DMWERj3e8Wj87cJuWw0XMsOWYi4BfEHo5Fra8UbsrHV76M6FJJl2yiSXGvr4UgAxHUziwyanUxvZ7thcKyw5JLTHpWcAvKi72NZkuBdF4+W2RNVW1w14joZQRXf2rkuaUuUH1iPYVt1CSNpV/Q+uDQ7oUKU=
+	t=1756642953; cv=none; b=YUecUDy2ouZICpTgG4bVmGkIJURgnB5k/YLWKVzWfkWdYTuGMY5STGIguXAXaB18iSYU+VBfOS6WqN9kJxoQgnxWTpvf/A+eP9yIWwcGznUP8Rx+S55FdZUrsiPv3RjXm9wnHM2/4LQYIjgDsVVJRvVRd1VPETrktc5DIiwE8CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756642952; c=relaxed/simple;
-	bh=v5nyT8+tGZRsO9dAtikr+4PQWjweFrMo06731HGMRIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KRkeeSXgagOaAKNvIr8OI0hu17HU/7YYnc9wSUHHfugPT4+AFZt+0rbtneeJbCKrrz55VEno0d3xb1Y/l6cKethygkXxZ4JmukBISag0MukrZujnM66ud84jnDQRFsyHr+lgDuf9igDW3xz2SbCZnEWyNzYPDQ80K0akzg1xCac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXdSJ/Rb; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1756642953; c=relaxed/simple;
+	bh=zYRCQi+0wejFXM/43WXjQP9aWgNnIJKlUNtum34adHA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jpV+kt5hI/FomrAsl4485HwJSI1Dk2Ho4PN657bQwEzV876hKV39tHETR1hebEyGjZjPV2QZjK7FTKuw+m7km+KIKjsgxk2WJJ7tCPUSKvs1+gyB7aCuVPtJUpcL6eOonpBDBz/jPbmHZzzn8ueR3bqm6pJNFjJd5qK7GimuL38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BwKxziMl; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b7c5292caso1159025e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:22:28 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3cbb5e7f5aaso492340f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756642947; x=1757247747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbdz/rnk5XYs1sNxhaGSOYuYNRBLnymKQPJwzl9yArs=;
-        b=jXdSJ/RbAbpnAuXj4grC3XUbRzGcxv2wHbuaahp8+xiC7JVQyQLIWsX9TZbsDAo5mZ
-         4p9VATqUy9iVqNwdn0JIwjdt4sqwpMRHAWqHAB1A5Cx19Oq3KWSsdMj/RqbTf79uRs0P
-         k2JYErNdk6PGy7vJT0NYBbfJaQwZrjs6MfYyccAoHbEgdl+7oY7ToHCDhtHnx+zOX0LT
-         CnDb5DGWi4+a+FQOPMww2v4FauccJPU7KfIqPdj3U7Las6cZX80yjJXYGiThKh1EvNxk
-         M8Je9MZUf3ftOrWaX6REFbiBURXPCsPI96LJkzG6zJZSGBaJlTRZ7ZicVUvFZ21IuF9V
-         cZow==
+        d=linaro.org; s=google; t=1756642948; x=1757247748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XlZf3qovc7XadcWpXTOZUbLWBNy6tyoy94Ss5nrbIig=;
+        b=BwKxziMl6kNtOdHny7q6UIBmJgLV+0zu51UYrmLTJ3Y2Yf9SSjnnmci9DGpK0t7/UD
+         MISwNmYY3r+UTPqUz4yCl74vCvdIElqyWcjAc9Yutok++8gxaenmFpSLoqCGHlc6LfY6
+         VJQ9VxJeCSeDYyGbDhhQo6Z77cRSeLkESDhB77cyWpvQ3EZsthvcagnADqq5XcFUlUBW
+         mudbRFaxTCulMlqRGHoEI6L2BYH7WlKXtv1gixlZQczUtX0b2DNicVQWHxKIbpGm8R89
+         cP92i6CH7elLR9zhxehL0LaOgTq6B8mbBKwqeLJYAQFV5go5uu5SqCaFIcEv+XOh4WQ3
+         /OQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756642947; x=1757247747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tbdz/rnk5XYs1sNxhaGSOYuYNRBLnymKQPJwzl9yArs=;
-        b=BS1B7uHoJRUDCR7Bk7orq6VzDxec0ap+qv76oKH52vgbGCzM7CKhns53NTUneDUMR/
-         SCXlkC3JS+mxnaCUsX/E1UwZ1kftj2b3Ic+F8vxzfY8zTrNwhPflLQOi5yAIaUj7zNKK
-         3kpyacAyps83NDn25V/DFoaceqKoL7uyQPI+YQh4Fj0gds96i1mV62b82ak/oDV6OolX
-         QiancQTxoNK+KYh42OrdNixn9cXo2Yxs6A8nKJO+cDgmik7wifOj5Iqj+eqhRIB7DD7x
-         6dpypKHje8MqtNj/3WTWdCEvI+aZWMT5WfeizVFbT7tociAC3NbNLXJdhOJehp4/678e
-         j38g==
-X-Forwarded-Encrypted: i=1; AJvYcCVukq+opRLfqTM4YnEfA65j6ktHw/yvRo5l/oIWSH5pDAHRf3vXJ6HVNdUS2iYBSNyMwuMaLujtWmUNqNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6Ov5UAufzk2fmWqsdk3Uqr2chT4Cp1SRAx26Pc7JpFcgFZ504
-	b75zPJLPsMSFJt0/nav0KspPERy+Sh4nOj9VlImUYBgzGufwt4Phq9TE2U5Ge2VQT1c=
-X-Gm-Gg: ASbGnct61DrUSSs9lD0xKWXR5gwakxCUfWcUnT1TcCAFDwKkqwvoUQl9i3xwwaiWPzJ
-	w8zc/cbjLnZxJovzc3dzM4csN31L1X46XQkOkJys3YsRYuoFVV9EKCoVEVBQTO9g3mMSs9cxtio
-	AMZOfPOWfYIq9/CJVyQEcjdxDl6J7CxeNTDlURZvw0qR6+XYsXbjJ8i1l/yOlTgRROtNKsMd5TX
-	1aRTjAzjlTiJw48ASrs1WjvwXxO/0Lzad8B7iUoqHGTI7AWi0oTVFhQrTMxzYtc0TLOvIJieHcC
-	5H6+y7HdJtEpGidojGbDcNpE7BbdOgtsd8AFoQW9HB5Hh5Siqx0f4C+28CBMA2Soku3hfFJKspW
-	5c9WvSnmMOqQKNoo2FCiSxZELxiO6JWhsFQ==
-X-Google-Smtp-Source: AGHT+IE/b5iJsNRkZ58Htd00eUR1h8c49rg/ihy2xqZajld0Xwde0K/MZR/16orZ6YWVgu6EdslHzg==
-X-Received: by 2002:a05:600c:4fd5:b0:454:aac0:ce1e with SMTP id 5b1f17b1804b1-45b802c5548mr31769935e9.4.1756642947010;
-        Sun, 31 Aug 2025 05:22:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756642948; x=1757247748;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XlZf3qovc7XadcWpXTOZUbLWBNy6tyoy94Ss5nrbIig=;
+        b=ZDeWL71+sX40E6bMR0LS/WO9rNKZ6QymDSdK0RW03RHDplBPMsPoRJVkh6+T/LdurP
+         HPVT36sGZeAx7wFZiNXeZfq7SamnLyf8fmjKHV7m8+JQdgArzD6vbaavRv3UpHoGp6EY
+         818H3mr003G2xV/LvAoeyTfbanOCz3EQafPhNkeVwbo0YdA9du7ciJOvCkWAEEnCk3hk
+         sP7f0An62PmlneOWfRVAqlTiZVmSu9k04gsijBDSe6BYtQHoWAKOCx5aqAvkM0WKriMo
+         dOBdgHv1MVr2xtbB+AlImT9VdRnhFmCy6HjkRnLt6eJXbAgTWcttaQO2/NsGPE9z0D/N
+         72eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOjJcNp7bxBD4EjNVbKl7f0WFz6tTzJ2ztqRLDk3FYstgt8vqzZ2D14UpZWrxccTL9z4kMZ1pjEPqTgOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdI5Lh92R0LfzXivOGizFFmZZc7vdqsvtyQOHSo1d9usec0sBJ
+	lJchjth4y/SC8uq1Z4TumayPHMOOkZvnpLPMcnNiQ2wMNfBoFcdSptlLeVLnup9WSbs=
+X-Gm-Gg: ASbGncttbxTJwVjgDwDdXWvgIsTXYtKMCFw/MNIRuqGZYmWrStq3KQulNbCCnRvb9Kc
+	zxrq+U3rIsZSpcZsyTHNGskJfkYdPByR6BpD9lM9LwloJA27Pn+AK0eML+P+Ixzz/jTQgF+VQwe
+	B/16GAWNwmQ4B88vaLmE6ot43/fQ7WCq43q4MCqwmYxjYTRsHdvy58t3NOMD9va7eSFOdngmguH
+	8GJyJ6hhrE1s5dHKrbNQ0C2/OGJFgM0PAqnxpMkO+VrrXcyVSplOTS9vnmgO7hAgHaeBJjBvzRl
+	QgF5ujtiGzNmOfdSY3QafE8F8nHo919ptqZQex/jOm8WxURVmeBH1UF5hQe/7HsdQFyXogKWl4m
+	0Rs0z5AZj57yhxzRBg+Fx77s/gbDzGTkBkqTT0wQVaPNk
+X-Google-Smtp-Source: AGHT+IFnFYjlAZftIcXFAXoUbNXxsZRoP0QGkBeFfD6J1UbS/LZNxNdYQv7RKd53VW6gkvcHWeZOPA==
+X-Received: by 2002:a05:600c:4e0f:b0:458:b6b9:6df5 with SMTP id 5b1f17b1804b1-45b81eb0a80mr29694345e9.1.1756642948423;
+        Sun, 31 Aug 2025 05:22:28 -0700 (PDT)
 Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6b99sm194866225e9.4.2025.08.31.05.22.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6b99sm194866225e9.4.2025.08.31.05.22.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 05:22:26 -0700 (PDT)
+        Sun, 31 Aug 2025 05:22:27 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh@kernel.org>,
@@ -83,29 +85,31 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 1/2] usb: ohci: s3c2410: Drop support for S3C2410 systems
-Date: Sun, 31 Aug 2025 14:22:23 +0200
-Message-ID: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 2/2] dt-bindings: usb: s3c2410-usb: Drop entirely S3C2410
+Date: Sun, 31 Aug 2025 14:22:24 +0200
+Message-ID: <20250831122222.50332-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
+References: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1410; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=v5nyT8+tGZRsO9dAtikr+4PQWjweFrMo06731HGMRIU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBotD5+nEPqC2MIN8fjO2Pd41yMpJ+38QYiDL69b
- 6llNeR4wHWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLQ+fgAKCRDBN2bmhouD
- 13HfEACBXdBXTLrrWqCSOgYhgpk6KYuSF8sG1d7wBgJglr/sWcza2pYYGs2qRYb4pn1VFmpkE+Q
- 6eH4CnJgGZsf6PQmkvKnc/kf9Oy452Iw7gpLFbWkbj0oZgd1LI3hPZriTvqrN+HwIGq7Q+JuY8i
- sYPNCHqYDXDiDDAE6R4IQhdowiPwx8VUhTA5U+RcyIqmbKuJZmOdHhe710wAsG8yTe70EnkaIiz
- 51W5JdNTrXjlVEyGR2ucuQ0MlPAptnMVQEjJdYiXOGD9cNaLPbrE7Dt9mhI7Xy2CJlNnf3KRzxH
- dIo6Lwf863V4no9rAersy28ZUcte3ze4gM24jjmL/oGT04VY7yB4yhHk4YbUzk1EuYCE4dhPXdJ
- 8s6mCALIBw0SeUk5uC7+gGhug92YNekj7QcmmqO5UyjAzZAnwCZN1GMDxq5JaX3JJI9K92ypb4P
- iYd240ThCF7IemH/v8ApKYEhBiDW6gacsyOMuaxvImcXEKIAaN02awiJvMVHUWKY3RFkvVsfFlm
- R2/vNaAFcAnTBLLlvFvUcZzk70dvmfmMPIaYnFr/yr8AvKQVGlNojywNHqvvHMhqFBLOq9y5gSA
- Bgl1WObRCdpuwRSKU1yTzz1Klpi5TFTlkBkkWOL0uKalgQH07Gk7vbtsFYH6b8NgnTsFD0brJFL akZAgNUk7bJsXpg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1505; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=zYRCQi+0wejFXM/43WXjQP9aWgNnIJKlUNtum34adHA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBotD5/mW0FdtzwHuJEB4jcnGQja4NpqHdMXn3m9
+ yr02e1dX5iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLQ+fwAKCRDBN2bmhouD
+ 11FXD/9XsBkrYV+LeU8wPHs+IkpJtomIWP8qNp9O5Fuo8nvKiNG+p1IZgJXhKnfr7WVNTGb8825
+ DkoR99gRgG97/ze6tYvEnIMOF+GuMk35ywxX0maLWdsoVbNK4QAM0hVLsI0FUDZSPHabkrVupA4
+ Nb4VFWumhNpbq196L6xerhRrSR+VRgM7H6dH6Q86Le1VE6YQxtd8yrfBh5glKK0sgI7XT7m92x+
+ elu7YdlGWs08O/sKb5hB05fmWdEwOu1Ll8oIcbCVmhHZARL46oHXXtuIhJftYHBtXnyXQXQxcgF
+ FQDmQCPqeAA9O6ET1I1T/nOySfqXOOFG10cZ6LnaKpFvDkiRNYmvv4GP8cfdeFoeyWPnl0quT4R
+ wuvG1uyUviTUHQMIZJJiwGKvXr4h7tIVj5IndB69owM9m9skryq9szWpz9G9gba2FUYkNCCZk+b
+ 443uSbn5LIYHIyAAC8GGPK/NUu8S6D02qL1+Y2MW5ZMtdBGYMGIguGZ7zC9zJdiqsqtOQwL6vla
+ 2O0Rh5PROZLIGmoFKl1M5br3SFOYN5M+o1z1ys6HbGlXx3kaJX/MI4eRXDadtJVXhDZhwQNOSgS
+ 6TOb32kG2bVZ8U4OVxlNBxBY8n4dNLfKDvkvB1iXXdP2l4lUEVmg42TSvg98KRVZFbh/swPe6Ap Hawqd3N/hMNEfkg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
@@ -113,45 +117,45 @@ Samsung S3C24xx family of SoCs was removed the Linux kernel in the
 commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
 2023.  There are no in-kernel users of remaining S3C24xx compatibles.
 
-The driver (named s3c2410) is still being used via platform code for
-S3C64xx platforms.
-
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
 Changes in v2:
-1. Commit subject (Alan).
+1. None
 ---
- drivers/usb/host/ohci-s3c2410.c | 8 --------
- 1 file changed, 8 deletions(-)
+ .../devicetree/bindings/usb/s3c2410-usb.txt   | 22 -------------------
+ 1 file changed, 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/s3c2410-usb.txt
 
-diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-index 66d970854357..e623e24d3f8e 100644
---- a/drivers/usb/host/ohci-s3c2410.c
-+++ b/drivers/usb/host/ohci-s3c2410.c
-@@ -448,13 +448,6 @@ static const struct dev_pm_ops ohci_hcd_s3c2410_pm_ops = {
- 	.resume		= ohci_hcd_s3c2410_drv_resume,
- };
- 
--static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
--	{ .compatible = "samsung,s3c2410-ohci" },
--	{ /* sentinel */ }
+diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+deleted file mode 100644
+index 26c85afd0b53..000000000000
+--- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Samsung S3C2410 and compatible SoC USB controller
+-
+-OHCI
+-
+-Required properties:
+- - compatible: should be "samsung,s3c2410-ohci" for USB host controller
+- - reg: address and length of the controller memory mapped region
+- - interrupts: interrupt number for the USB OHCI controller
+- - clocks: Should reference the bus and host clocks
+- - clock-names: Should contain two strings
+-		"usb-bus-host" for the USB bus clock
+-		"usb-host" for the USB host clock
+-
+-Example:
+-
+-usb0: ohci@49000000 {
+-	compatible = "samsung,s3c2410-ohci";
+-	reg = <0x49000000 0x100>;
+-	interrupts = <0 0 26 3>;
+-	clocks = <&clocks UCLK>, <&clocks HCLK_USBH>;
+-	clock-names = "usb-bus-host", "usb-host";
 -};
--
--MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
--
- static struct platform_driver ohci_hcd_s3c2410_driver = {
- 	.probe		= ohci_hcd_s3c2410_probe,
- 	.remove		= ohci_hcd_s3c2410_remove,
-@@ -462,7 +455,6 @@ static struct platform_driver ohci_hcd_s3c2410_driver = {
- 	.driver		= {
- 		.name	= "s3c2410-ohci",
- 		.pm	= &ohci_hcd_s3c2410_pm_ops,
--		.of_match_table	= ohci_hcd_s3c2410_dt_ids,
- 	},
- };
- 
 -- 
 2.48.1
 
