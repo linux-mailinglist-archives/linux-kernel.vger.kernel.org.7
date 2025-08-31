@@ -1,192 +1,379 @@
-Return-Path: <linux-kernel+bounces-793228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219AFB3D0C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:21:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B64CB3D0C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D2044558D
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D798202582
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C61F8BA6;
-	Sun, 31 Aug 2025 02:21:36 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A181DF97D;
+	Sun, 31 Aug 2025 02:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O1NtuCfc"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425911D514E
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8B91A5BBC
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756606896; cv=none; b=LyIBgZxLqBxY6TsWBQCA95n8rWM0YNzCRkQdel6SYMnmHZkhJD9c2oiIAsvzTQrulSYeiMOBB4hRaOeYEooEZi2usDL4OyqoJ8UOpa/2SREnX2TX57O/5gP67fbosFEs5GlhT6LjgEqR1dzLmInxDE8PtBrjOav/Y1T8UgDZa2c=
+	t=1756606994; cv=none; b=TaAgxI+gv279WQiogXkarHtIFZWMH0dFB1U5jamix/Z6gw0+CulDGrmeDT9jqqPMeKxY2j4G1dN0nbaLi76lAV9+TDPgPoUGQCn8woQ5FLrnq5z5LbbQElobouRHpbw1IFIM0Pk2cgyjdcGuY3KkN5mxXf7svikZrClOlOhiTwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756606896; c=relaxed/simple;
-	bh=Imc/yaT1bwXvOai6Vk+5b+aubdlF0s89Kor4e2hKFN8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GqFASE+LC78YzgJsPvvuJstmVgsIkGDKkRVmz7M/LI7x9O7HkDu1T0Q0C69YROeJKux/rq12z5ra529qQiaw1gS5zhMcOZzRoIvdkIveCfG7h3vDaqsyHQxykj9uRJna1TcI5YxhuNVX24ppRJaO9KZTmC5hb0Hvjs922dyG7HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88714e1fd48so212942439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 19:21:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756606892; x=1757211692;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ptI15CI03nyPbHDiAUmDlsUqdee/Ga3KVCdRZtkWHXI=;
-        b=FnsDw938rmRmv4s9bEMH5Kc+fGDjz3dHVMF0w1f1NIV7/533oJwqqm36hQUouMrvNS
-         8qaIj1ql4haqmhyX9ew6hcaj+Nzc4edCJ8DDWJh/7qNF415wvhgH37JTX8z4JlAiTMS7
-         mHX1cWmydWijxxvV7XkiHih4ivfcmnIHrtspFQ/kRI+acrqefTRioQYHo4H/2WY+V/g9
-         F5bfhPb224kZMfmJUtg7ZMFuyZkkgKPzrjxMxyJ2+0KId9+c9v/E+G8C5IsZSw5tlHD+
-         dwRubfKYBsQwmyzt6X3yCpQlCceB2QwDUSxpoztp/ezG5NCsBNykoojFNIMl2TL9evr0
-         um3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7+MaZs4V5+sPkIO49GxK1QpJwwRH14DImgJTNeUVlcZaXHRuuKtLivKF1w8WW+SzBfJ5rtftNwVI2Fyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxrWhfw2hPB0WOtzoBrNfRJgsomzIirHp7DKfjUZ4EYvnfYSoT
-	BBttpiklP8zi4dZymEZiWSSvx2eLr2QitVPJmIUI1tnfR2fw8AS5Bjpwd6ngmQq1oYPTsqq5WS4
-	7LLWK6XpdPges8dboBEps5LqmutmtoAxHb57aV+dU9VRd3+x5TfBtF061X/8=
-X-Google-Smtp-Source: AGHT+IGemkqHrGBH1w7NAZA8hHIdcUNasSPYTIdUsWaqiHcJYWvw9V4eXxitGPhOs+Hw+GEBPfc+Ggey0zBHKIuIRK2JmiSR68Ol
+	s=arc-20240116; t=1756606994; c=relaxed/simple;
+	bh=B1iHHWzuxbPFLEOHlpBal++39YyPgok9bAD18xgVKc0=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=kIdAGHEm9yL+A/J4PlneXJHfBohWSR+IP8Y/rIMSriLIukLQGd5OCdd+bqCbGrDPjQYI/8T9aYmk4Dtka20pj8AmtTMp33BkS9upDLzCJHaKExKI+THpJFb0WD7hSVccBdoC+0db8GP1e5WnVKduf5M8rP4XX90theH3Qf6UxGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O1NtuCfc; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c21:b0:3f3:82da:29f2 with SMTP id
- e9e14a558f8ab-3f4021c249bmr68947395ab.24.1756606892189; Sat, 30 Aug 2025
- 19:21:32 -0700 (PDT)
-Date: Sat, 30 Aug 2025 19:21:32 -0700
-In-Reply-To: <00000000000074ff7b06199efd7b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b3b1ac.a70a0220.1c57d1.028b.GAE@google.com>
-Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, brauner@kernel.org, ebiederm@xmission.com, 
-	eperezma@redhat.com, frederic@kernel.org, jasowang@redhat.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michael.christie@oracle.com, mst@redhat.com, netdev@vger.kernel.org, 
-	oleg@redhat.com, seanjc@google.com, sgarzare@redhat.com, stefanha@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756606977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sh7iIOS0yCtIXK27ggEWbI7wTjuMikl0yzjSB6hdsBM=;
+	b=O1NtuCfcKR4QEgbGIOJrc864bDQDu0U0DvHduv8TfS8wu5kogvuSTib7McjiI4PmQ8a6qI
+	GgnqMUpZ8KynBmyWX3xYsHzDajqMI9SSRiNxG/AIJLHtG8r1GcJHw5zK6Z9Fo8SsGI2GBR
+	Z8bCECgbTlbKl4VcEVR61Mc0taJXwOc=
+Date: Sun, 31 Aug 2025 02:22:56 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Zqiang" <qiang.zhang@linux.dev>
+Message-ID: <aefc893f1b7c17049c2e6eb2256a97739a5e328d@linux.dev>
+TLS-Required: No
+Subject: Re: [paulmckrcu:dev.2025.08.21a] [rcu] 8bd9383727:
+ WARNING:possible_circular_locking_dependency_detected
+To: paulmck@kernel.org
+Cc: "kernel test robot" <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, "Andrii Nakryiko" <andrii@kernel.org>, "Alexei
+ Starovoitov" <ast@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <f58f7c75-46be-4ddd-be70-ee4f6a3370a9@paulmck-laptop>
+References: <202508261642.b15eefbb-lkp@intel.com>
+ <2853a174-76e4-440b-bfc1-71ea30694822@paulmck-laptop>
+ <eb1e5ab00253fdae5ba5aa4c97d60a79d357dbfd@linux.dev>
+ <f58f7c75-46be-4ddd-be70-ee4f6a3370a9@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-syzbot has found a reproducer for the following issue on:
+>=20
+>=20On Sat, Aug 30, 2025 at 02:38:35AM +0000, Zqiang wrote:
+>=20
+>=20>=20
+>=20> On Tue, Aug 26, 2025 at 04:47:22PM +0800, kernel test robot wrote:
+> >=20=20
+>=20>  >=20
+>=20>  > hi, Paul,
+> >  >=20
+>=20>  > the similar issue still exists on this dev.2025.08.21a branch.
+> >  > again, if the issue is already fixed on later branches, please jus=
+t ignore.
+> >  > thanks
+> >  >=20
+>=20>  >=20
+>=20>  > Hello,
+> >  >=20
+>=20>  > kernel test robot noticed "WARNING:possible_circular_locking_dep=
+endency_detected" on:
+> >  >=20
+>=20>  > commit: 8bd9383727068a5a18acfecefbdfa44a7d6bd838 ("rcu: Re-imple=
+ment RCU Tasks Trace in terms of SRCU-fast")
+> >  > https://github.com/paulmckrcu/linux dev.2025.08.21a
+> >  >=20
+>=20>  > in testcase: rcutorture
+> >  > version:=20
+>=20>  > with following parameters:
+> >  >=20
+>=20>  > runtime: 300s
+> >  > test: default
+> >  > torture_type: tasks-tracing
+> >  >=20
+>=20>  >=20
+>=20>  >=20
+>=20>  > config: x86_64-randconfig-003-20250824
+> >  > compiler: clang-20
+> >  > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp=
+ 2 -m 16G
+> >  >=20
+>=20>  > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >  >=20
+>=20>  Again, apologies for being slow, and thank you for your testing ef=
+forts.
+> >=20=20
+>=20>  Idiot here forgot about Tiny SRCU, so please see the end of this e=
+mail
+> >  for an alleged fix. Does it do the trick for you?
+> >=20=20
+>=20>  Thanx, Paul
+> >=20=20
+>=20>  >=20
+>=20>  > If you fix the issue in a separate patch/commit (i.e. not just a=
+ new version of
+> >  > the same patch/commit), kindly add following tags
+> >  > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> >  > | Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-lkp=
+@intel.com
+> >  >=20
+>=20>  >=20
+>=20>  > [ 42.365933][ T393] WARNING: possible circular locking dependenc=
+y detected
+> >  > [ 42.366428][ T393] 6.17.0-rc1-00035-g8bd938372706 #1 Tainted: G T
+> >  > [ 42.366985][ T393] ----------------------------------------------=
+--------
+> >  > [ 42.367490][ T393] rcu_torture_rea/393 is trying to acquire lock:
+> >  > [ 42.367952][ T393] ffffffffad41dc88 (rcu_tasks_trace_srcu_struct.=
+srcu_wq.lock){....}-{2:2}, at: swake_up_one (kernel/sched/swait.c:52 (dis=
+criminator 1))=20
+>=20>  > [ 42.368775][ T393]
+> >  > [ 42.368775][ T393] but task is already holding lock:
+> >  > [ 42.369278][ T393] ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, at=
+: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture=20
+>=20>  > [ 42.370043][ T393]
+> >  > [ 42.370043][ T393] which lock already depends on the new lock.
+> >  > [ 42.370043][ T393]
+> >  > [ 42.370755][ T393]
+> >  > [ 42.370755][ T393] the existing dependency chain (in reverse orde=
+r) is:
+> >  > [ 42.371388][ T393]
+> >  > [ 42.371388][ T393] -> #1 (&p->pi_lock){-.-.}-{2:2}:
+> >  > [ 42.371903][ T393] _raw_spin_lock_irqsave (include/linux/spinlock=
+_api_smp.h:110 kernel/locking/spinlock.c:162)=20
+>=20>  > [ 42.372309][ T393] try_to_wake_up (include/linux/spinlock.h:557=
+ (discriminator 1) kernel/sched/core.c:4216 (discriminator 1))=20
+>=20>  > [ 42.372669][ T393] swake_up_locked (include/linux/list.h:111)=
+=20
+>=20>  > [ 42.373029][ T393] swake_up_one (kernel/sched/swait.c:54 (discr=
+iminator 1))=20
+>=20>  > [ 42.373380][ T393] tasks_tracing_torture_read_unlock (include/l=
+inux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (disc=
+riminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
+=20
+>=20>  > [ 42.373952][ T393] rcutorture_one_extend (kernel/rcu/rcutorture=
+.c:2141) rcutorture=20
+>=20>  > [ 42.374452][ T393] rcu_torture_one_read_end (kernel/rcu/rcutort=
+ure.c:2357) rcutorture=20
+>=20>  > [ 42.374976][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.=
+c:?) rcutorture=20
+>=20>  > [ 42.375460][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:=
+2443) rcutorture=20
+>=20>  > [ 42.375920][ T393] kthread (kernel/kthread.c:465)=20
+>=20>  > [ 42.376241][ T393] ret_from_fork (arch/x86/kernel/process.c:154=
+)=20
+>=20>  > [ 42.376603][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S=
+:255)=20
+>=20>  > [ 42.376973][ T393]
+> >  > [ 42.376973][ T393] -> #0 (rcu_tasks_trace_srcu_struct.srcu_wq.loc=
+k){....}-{2:2}:
+> >  > [ 42.377657][ T393] __lock_acquire (kernel/locking/lockdep.c:3166)=
+=20
+>=20>  > [ 42.378031][ T393] lock_acquire (kernel/locking/lockdep.c:5868)=
+=20
+>=20>  > [ 42.378378][ T393] _raw_spin_lock_irqsave (include/linux/spinlo=
+ck_api_smp.h:110 kernel/locking/spinlock.c:162)=20
+>=20>  > [ 42.378794][ T393] swake_up_one (kernel/sched/swait.c:52 (discr=
+iminator 1))=20
+>=20>  > [ 42.379152][ T393] tasks_tracing_torture_read_unlock (include/l=
+inux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (disc=
+riminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
+=20
+>=20>  > [ 42.379714][ T393] rcutorture_one_extend (kernel/rcu/rcutorture=
+.c:2141) rcutorture=20
+>=20>  > [ 42.380217][ T393] rcu_torture_one_read_end (kernel/rcu/rcutort=
+ure.c:2357) rcutorture=20
+>=20>  > [ 42.380731][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.=
+c:?) rcutorture=20
+>=20>  > [ 42.381220][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:=
+2443) rcutorture=20
+>=20>  > [ 42.381714][ T393] kthread (kernel/kthread.c:465)=20
+>=20>  > [ 42.382060][ T393] ret_from_fork (arch/x86/kernel/process.c:154=
+)=20
+>=20>  > [ 42.382420][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S=
+:255)=20
+>=20>  > [ 42.382796][ T393]
+> >  > [ 42.382796][ T393] other info that might help us debug this:
+> >  > [ 42.382796][ T393]
+> >  > [ 42.383515][ T393] Possible unsafe locking scenario:
+> >  > [ 42.383515][ T393]
+> >  > [ 42.384052][ T393] CPU0 CPU1
+> >  > [ 42.384428][ T393] ---- ----
+> >  > [ 42.384799][ T393] lock(&p->pi_lock);
+> >  > [ 42.385083][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock)=
+;
+> >  > [ 42.385707][ T393] lock(&p->pi_lock);
+> >  > [ 42.386180][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock)=
+;
+> >  > [ 42.386663][ T393]
+> >  > [ 42.386663][ T393] *** DEADLOCK ***
+> >  > [ 42.386663][ T393]
+> >  > [ 42.387236][ T393] 1 lock held by rcu_torture_rea/393:
+> >  > [ 42.387626][ T393] #0: ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}=
+, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture=20
+>=20>  > [ 42.388419][ T393]
+> >  > [ 42.388419][ T393] stack backtrace:
+> >  > [ 42.388852][ T393] CPU: 0 UID: 0 PID: 393 Comm: rcu_torture_rea T=
+ainted: G T 6.17.0-rc1-00035-g8bd938372706 #1 PREEMPT(full)
+> >  > [ 42.389758][ T393] Tainted: [T]=3DRANDSTRUCT
+> >  > [ 42.390057][ T393] Hardware name: QEMU Standard PC (i440FX + PIIX=
+, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> >  > [ 42.390786][ T393] Call Trace:
+> >  > [ 42.391020][ T393] <TASK>
+> >  > [ 42.391225][ T393] dump_stack_lvl (lib/dump_stack.c:123 (discrimi=
+nator 2))=20
+>=20>  > [ 42.391544][ T393] print_circular_bug (kernel/locking/lockdep.c=
+:2045)=20
+>=20>  > [ 42.391898][ T393] check_noncircular (kernel/locking/lockdep.c:=
+?)=20
+>=20>  > [ 42.392242][ T393] __lock_acquire (kernel/locking/lockdep.c:316=
+6)=20
+>=20>  > [ 42.392594][ T393] ? __schedule (kernel/sched/sched.h:1531 (dis=
+criminator 1) kernel/sched/core.c:6969 (discriminator 1))=20
+>=20>  > [ 42.392930][ T393] ? lock_release (kernel/locking/lockdep.c:470=
+ (discriminator 3))=20
+>=20>  > [ 42.393272][ T393] ? swake_up_one (kernel/sched/swait.c:52 (dis=
+criminator 1))=20
+>=20>  > [ 42.393610][ T393] lock_acquire (kernel/locking/lockdep.c:5868)=
+=20
+>=20>  > [ 42.393930][ T393] ? swake_up_one (kernel/sched/swait.c:52 (dis=
+criminator 1))=20
+>=20>  > [ 42.394264][ T393] _raw_spin_lock_irqsave (include/linux/spinlo=
+ck_api_smp.h:110 kernel/locking/spinlock.c:162)=20
+>=20>  > [ 42.394640][ T393] ? swake_up_one (kernel/sched/swait.c:52 (dis=
+criminator 1))=20
+>=20>  > [ 42.394969][ T393] swake_up_one (kernel/sched/swait.c:52 (discr=
+iminator 1))=20
+>=20>  > [ 42.395281][ T393] tasks_tracing_torture_read_unlock (include/l=
+inux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (disc=
+riminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture=
+=20
+>=20>  > [ 42.395814][ T393] rcutorture_one_extend (kernel/rcu/rcutorture=
+.c:2141) rcutorture=20
+>=20>  > [ 42.396276][ T393] rcu_torture_one_read_end (kernel/rcu/rcutort=
+ure.c:2357) rcutorture=20
+>=20>  > [ 42.396756][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.=
+c:?) rcutorture=20
+>=20>  > [ 42.397219][ T393] ? __cfi_rcu_torture_reader (kernel/rcu/rcuto=
+rture.c:2426) rcutorture=20
+>=20>  > [ 42.397690][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:=
+2443) rcutorture=20
+>=20>  > [ 42.398126][ T393] ? __cfi_rcu_torture_timer (kernel/rcu/rcutor=
+ture.c:2405) rcutorture=20
+>=20>  > [ 42.398565][ T393] kthread (kernel/kthread.c:465)=20
+>=20>  > [ 42.398857][ T393] ? __cfi_kthread (kernel/kthread.c:412)=20
+>=20>  > [ 42.399169][ T393] ret_from_fork (arch/x86/kernel/process.c:154=
+)=20
+>=20>  > [ 42.399491][ T393] ? __cfi_kthread (kernel/kthread.c:412)=20
+>=20>  > [ 42.399815][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S=
+:255)=20
+>=20>  > [ 42.400151][ T393] </TASK>
+> >  >=20
+>=20>  >=20
+>=20>  > The kernel config and materials to reproduce are available at:
+> >  > https://download.01.org/0day-ci/archive/20250826/202508261642.b15e=
+efbb-lkp@intel.com
+> >  >=20
+>=20>  >=20
+>=20>  >=20
+>=20>  > --=20
+>=20>  > 0-DAY CI Kernel Test Service
+> >  > https://github.com/intel/lkp-tests/wiki
+> >  >=20
+>=20>  ------------------------------------------------------------------=
+------
+> >=20=20
+>=20>  diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> >  index 6e9fe2ce1075d5..db63378f062051 100644
+> >  --- a/kernel/rcu/srcutiny.c
+> >  +++ b/kernel/rcu/srcutiny.c
+> >  @@ -106,7 +106,7 @@ void __srcu_read_unlock(struct srcu_struct *ssp,=
+ int idx)
+> >  newval =3D READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
+> >  WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
+> >  preempt_enable();
+> >  - if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
+> >  + if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !ir=
+qs_disabled())
+> >=20=20
+>=20>=20=20
+>=20>  The fllowing case may exist:
+> >=20=20
+>=20>=20=20
+>=20>  CPU0
+> >=20=20
+>=20>  task1:
+> >  __srcu_read_lock()
+> >=20
+>=20For mainline kernels, here we must have blocked, correct?
+>=20
+>=20In -rcu, there is of course:
+>=20
+>=20740cda2fe1a9 ("EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=3Dn kerne=
+ls")
+>=20
+>=20And this means that in -rcu kernels built with CONFIG_PREEMPT_NONE=3D=
+y,
+> we could be preempted.
+>=20
+>=20And maybe this is a reason to drop this commit. Or...
+>=20
 
-HEAD commit:    11e7861d680c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c5c242580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671ba62580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1685aa62580000
+For=20tiny srcu, even if the preempt schedule not happend in
+srcu read ctrical section, we can still do voluntary
+scheduling in srcu_read ctrical section, this case is
+also still happend.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/aa8c34462d5d/disk-11e7861d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f90079573556/vmlinux-11e7861d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8571495e4fea/bzImage-11e7861d.xz
+> >=20
+>=20> ....
+> >=20=20
+>=20>=20=20
+>=20>  task2 preempt run:
+> >=20=20
+>=20>  srcu_drive_gp()
+> >  ->swait_event_exclusive()
+> >=20=20
+>=20>=20=20
+>=20>  ....
+> >  task1 continue run:
+> >  ....
+> >  raw_spin_lock_irqsave
+> >  __srcu_read_unlock()
+> >  ->find all previours condition are met
+> >  but the irqs_disable() return true,
+> >  not invoke swake_up_one().
+> >=20=20
+>=20>  task2 maybe always hung.
+> >=20
+>=20The bug that kernel test robot reported existed for a long time.
+> The offending commit simply introduced the use case that exercised
+> this bug. So we do need a fix.
+>=20
+>=20One approach would be to impose a rule like we used to have for RCU,
+> namely that if interrupts were disabled across srcu_read_unlock(),
+> then they must have been disabled since the matching srcu_read_lock().
+> Another would be to make the current swait_event_exclusive() in
+> srcu_drive_gp() instead be a loop around wait_event_timeout_exclusive()
+> that checks ssp->srcu_lock_nesting[].
+>=20
+>=20But is there a better way?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com
+I think the second approach is enough :)=20
 
-INFO: task syz.0.17:6038 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.17        state:D stack:27224 pid:6038  tgid:6038  ppid:5979   task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:7058
- schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
- __vhost_worker_flush+0x1a8/0x1d0 drivers/vhost/vhost.c:296
- vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
- vhost_dev_flush+0xac/0x110 drivers/vhost/vhost.c:313
- vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
- vhost_vsock_dev_release+0x19f/0x400 drivers/vhost/vsock.c:750
- __fput+0x402/0xb70 fs/file_table.c:468
- task_work_run+0x14d/0x240 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1fdc78ebe9
-RSP: 002b:00007ffcf43dcf28 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 00007f1fdc9c7da0 RCX: 00007f1fdc78ebe9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007f1fdc9c7da0 R08: 0000000000000000 R09: 00000008f43dd21f
-R10: 00007f1fdc9c7cb0 R11: 0000000000000246 R12: 00000000000248b9
-R13: 00007ffcf43dd020 R14: ffffffffffffffff R15: 00007ffcf43dd040
- </TASK>
+Thanks
+Zqiang
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
-3 locks held by kworker/u9:1/5174:
- #0: ffff8880605ef148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3211
- #1: ffffc9000f89fd10 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3212
- #2: ffff8880256d4dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x175/0x430 net/bluetooth/hci_sync.c:331
-2 locks held by getty/5615:
- #0: ffff88814d35e0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
- watchdog+0xf0e/0x1260 kernel/hung_task.c:491
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
-Code: 0c 62 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 12 16 00 fb f4 <e9> 4c 09 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
-RSP: 0018:ffffc90000197df8 EFLAGS: 000002c2
-RAX: 000000000015fae9 RBX: 0000000000000001 RCX: ffffffff8b93fc29
-RDX: 0000000000000000 RSI: ffffffff8de50a38 RDI: ffffffff8c162980
-RBP: ffffed1003c5d488 R08: 0000000000000001 R09: ffffed10170a6655
-R10: ffff8880b85332ab R11: 0000000000000000 R12: 0000000000000001
-R13: ffff88801e2ea440 R14: ffffffff90ab5290 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881247b8000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555d26767660 CR3: 000000000e380000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:757
- default_idle_call+0x6d/0xb0 kernel/sched/idle.c:122
- cpuidle_idle_call kernel/sched/idle.c:190 [inline]
- do_idle+0x391/0x510 kernel/sched/idle.c:330
- cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:428
- start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x148
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> Either way, good catch! And thank you!!!
+>=20
+>=20 Thanx, Paul
+>
 
