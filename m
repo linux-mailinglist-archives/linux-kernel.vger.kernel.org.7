@@ -1,180 +1,156 @@
-Return-Path: <linux-kernel+bounces-793449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1015B3D384
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AD8B3D387
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31C9189D4F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44F3D189D3DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A04225B30E;
-	Sun, 31 Aug 2025 13:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D5261B83;
+	Sun, 31 Aug 2025 13:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF5Qlp0y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fp/gfpZv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8385513C3CD;
-	Sun, 31 Aug 2025 13:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C74A81AA8;
+	Sun, 31 Aug 2025 13:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756645877; cv=none; b=QoPZHI7Ra0Rd/JMdlECReyo26dbADfWlHw+o6FoVTq4oAK0Bi6UinR2iuLdUva1KMwVLqIl3xzB8iR8OboYGsEYv4ZPI6c3cYnkZrRcTzR0I6nkayahLIXtNmt8PuBVwCp/M2p7AVczqB1x6iCk9I5qyjoOl69nKSVLVeJTibkE=
+	t=1756645955; cv=none; b=F9Tq+fXxZRtJucrBOPmxcDHBRsbe0hTIKeZGK+B3Ji/taoG/iOyZD4ei3YQIU6aPV0MTJJUWBQdN2jGiCL+O8hug/Z27dOLpbSv/7l9kKp5fXGHeDg1OVf5lQdxqdTGvF5AhMi6wtJV+9KVZW8H7eoHslXOXK5aO3QWB86aXOj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756645877; c=relaxed/simple;
-	bh=KyNp6YyWobDLk1CURhcnhqzmpd1iXHtcZgiYjLdBy1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LdoZc2heYlrdko+/GBFRFVBunBXLnp2b7e9hUrBtMw/zDMOjzU7SIrAcDUc2ibu+Wheqbv9d7K5D+pqul7Uqp2NF6hd/xLQmi9PLY1OzVMarTgCg/R2PEhpqpVfDJw9cas+Hislth5Cq33CfOeRe1kuG8mKUtU3uPtMu/RzrWwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF5Qlp0y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00575C4CEED;
-	Sun, 31 Aug 2025 13:11:16 +0000 (UTC)
+	s=arc-20240116; t=1756645955; c=relaxed/simple;
+	bh=s0aG3Pz4rxOaLzqq5OJGfcesnNayyMdkZnhc6vu4xNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlclqZJbwSA09cCLc336B7lmWnOgIZxGWa+tm+weY4WjeQ9Iua5etHVRiXDEB4kgUpJQcbMYFgQ6ejt8tdAWDoty/r2OrNa0564LxOFRrXupkpBl34Z5Ro+IqT4IXhkEB13saM9m01zrUxStHYIPR7qw6XNXGmd8QbTjzyrKbYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fp/gfpZv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F4AC4CEED;
+	Sun, 31 Aug 2025 13:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756645877;
-	bh=KyNp6YyWobDLk1CURhcnhqzmpd1iXHtcZgiYjLdBy1U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pF5Qlp0yPSr5eMhdJz06WdUTqhpsOzTivUEDPEtVR+ANjI5D9iI1xgLsnvtex+38t
-	 MWxME8FtIeYfEvBjqSPpHRineM37+YbRCTAJGn4Kym6pOg1Gq1jDlBOWn/4PQiYvoK
-	 gWelAspX/KkHZ7OGLFCaJaA8janfunm4J2UxBZG0vSR3NlLCjT214BpARueDigECw/
-	 2dtJc+7KhboGJQ+VsYipxJhHfg8Y7w1tFT9xJw8+PGYO7BJYgcJw7rCbSiCQulm+mD
-	 oMY+d4PNnkUf9E3EHWT8iHLMvxmaVPc180x7Wo1XSk8NMKKGDWXx86s+XxLRrlIgIi
-	 I/TmrXwyy7F3w==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f753ec672so849480e87.2;
-        Sun, 31 Aug 2025 06:11:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUR6v7t/FgN6cgvL/g0eTGy9e4T20Ieq1AoW3M+PUJClyqrjC0EgYMPWNRb4wSe3jtX2dCT0wdxyBs=@vger.kernel.org, AJvYcCUwaeNeq2wiSVpI4Oyl5suTV9F9NdwCCOu1fQqQcgyEwwusObbvzBgn7o2ZjDqiWI4/HZBke/IPxDRgnlqw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhLheM4CdDMyY84uJ40dESz9QjoANJCEojgLIGipls6GP2Jy5h
-	Kn1T5MyjbN9/FzdTGghMiD+7ptq5Yiw//cSwbV9MwAqKMCzZxYUuZRgHCD5XC2VL9FBs4mGKLla
-	Dm1b57uWJ7DVnpd4ixuO339kTLif8dp0=
-X-Google-Smtp-Source: AGHT+IEV9OA6K7UeIiXXWN5F40GUs8m+IEFhne6Akm5mzPUKHUXXdAiNfAULslqwViThZEgQUfOsAXUkss1JGlWeGLo=
-X-Received: by 2002:a05:6512:3da0:b0:55f:701f:937 with SMTP id
- 2adb3069b0e04-55f7089c0ebmr1187119e87.12.1756645875358; Sun, 31 Aug 2025
- 06:11:15 -0700 (PDT)
+	s=k20201202; t=1756645955;
+	bh=s0aG3Pz4rxOaLzqq5OJGfcesnNayyMdkZnhc6vu4xNM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fp/gfpZvqPdYs42Itq73X1rP9NQLDxhthmFjdJ62b1JTTNuXvoqTTvxNVIUHKXNDP
+	 5DIn9Mrv4Tr/+BjNwS91rXhZP321pMIGn9mQOrYXpwgFURG4GHmUlcF5xW+O0/1wBt
+	 FqPmk+LUfm2RN3S6x+Y/mCuHPYu65UFUcdqqFiih+8C9GrPl05QZ/dGfHKinNcsokl
+	 p4bCSVOl8YEa4KaP2bnpEYHHC5/lufuTFNK60iIavsJisoReETWTUzzG+767AkjDEY
+	 TucNUTvWD6t0jXMIkCZrNI8SuaxNCHtbrXZ3olhsXu4m0/Zdhiu4Hy4tyyowjCLYnk
+	 v/MEeO7HvoFAA==
+Message-ID: <e98ed14b-ed97-4e1c-a758-97b9bfc8ded4@kernel.org>
+Date: Sun, 31 Aug 2025 15:12:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-29-ardb+git@google.com> <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
- <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
- <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
- <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local> <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
-In-Reply-To: <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 31 Aug 2025 15:11:04 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
-X-Gm-Features: Ac12FXyxNP4FeYk1d8yGT8j5MesBI_-g2_wMjJpQyBSQqCAIO-Y3E1-MjOpvQNM
-Message-ID: <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
-Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
- out of startup code
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
+ parts
+To: linux-kernel@vger.kernel.org
+Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de,
+ jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ marcelo.schmitt1@gmail.com
+References: <20250824040943.9385-1-Jonathan.Santos@analog.com>
+ <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
+ <aLPE3yiSTReS7B2J@JSANTO12-L01.ad.analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aLPE3yiSTReS7B2J@JSANTO12-L01.ad.analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 31 Aug 2025 at 14:30, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Sun, 31 Aug 2025 at 13:15, Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > On Sun, Aug 31, 2025 at 12:56:41PM +0200, Ard Biesheuvel wrote:
-> > > OK it appears I've fixed it in the wrong place: the next patch adds
-> > > back the definition of has_cpuflag() so I squashed that hunk into the
-> > > wrong patch, it seems.
-> >
-> > The real question is - and I'm sceptical - whether the startup code runs too
-> > early for boot_cpu_has(). And how is the startup code going to call
-> > boot_cpu_has().
-> >
-> > /me builds .s
-> >
-> > Aha, so it gets converted into a boot_cpu_data access:
-> >
-> > # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
-> >         testb   %r13b, %r13b    # validate
-> >         je      .L46    #,
-> > # ./arch/x86/include/asm/bitops.h:206:          (addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
-> >         movq    80+boot_cpu_data(%rip), %rax    # MEM[(const volatile long unsigned int *)&boot_cpu_data + 80B], _15
-> > # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
-> >
-> > But former question remains: AFAIK, you want to run the startup code waaay
-> > earlier, before we do identify_boot_cpu() which prepares boot_cpu_data, right?
-> >
->
-> I suppose that in this particular case, things work out fine because
-> calling sev_evict_cache() unnecessarily is harmless. But I agree that
-> in general, relying on CPU flags in code that may be called this early
-> is not great.
->
-> Perhaps this conditional should be moved into the caller instead
-> (early_set_pages_state()), and early callers from inside the startup
-> code should call sev_evict_cache() unconditionally?
+On 31/08/2025 05:43, Jonathan Santos wrote:
+>>>      maxItems: 1
+>>> @@ -58,6 +66,18 @@ properties:
+>>>      description:
+>>>        ADC reference voltage supply
+>>>  
+>>> +  adi,gain-milli:
+>>> +    description: |
+>>> +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
+>>> +       ADC input (in milli units). The hardware gain is determined by which input
+>>
+>>
+>> I don't think there is no such thing as "milli units". milli is SI
+>> prefix, not unit. So "units" is the unit? Or how exactly?
+>>
+>> Basis points were before since 2022 so I don't get why these other
+>> bindings introduced in 2024 could not use it?
+>>
+>> Anyway, if you ever do not apply reviewers comment, then your commit msg
+>> should explain this. Otherwise you get the same discussion here.
+>>
+> 
+> Yes, you are right. We shouldn't use milli as suffix. However, may I
+> suggest another option?
+> 
+> I believe -permille is more appropriate because it represents a 1/1000
+> proportion, which gives the precision we need to cover all values.
+> 
+> so it would be something like: adi,aaf-gain-permille
+> 
+> Is that ok for you?
+> 
+> Thanks for the feedback,
+> Jonathan S.
 
-Alternatively, we might consider the below:
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index 235e557fd10c..bc59a421c7b4 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -342,6 +342,8 @@
-        if (!(eax & BIT(1)))
-                return -ENODEV;
+What's wrong with existing unit I pointed out before?
 
-+       sev_snp_needs_sfw = !(ebx & BIT(31));
-+
-        return ebx & 0x3f;
- }
+BTW, any idea why your reply-to header is completely corrupted (copies
+in-reply-to...)?
 
-diff --git a/arch/x86/boot/startup/sev-shared.c
-b/arch/x86/boot/startup/sev-shared.c
-index 8d2476e1ad3b..08cc1568d8af 100644
---- a/arch/x86/boot/startup/sev-shared.c
-+++ b/arch/x86/boot/startup/sev-shared.c
-@@ -31,6 +31,8 @@
- static u32 cpuid_hyp_range_max __ro_after_init;
- static u32 cpuid_ext_range_max __ro_after_init;
 
-+bool sev_snp_needs_sfw;
-+
- void __noreturn
- sev_es_terminate(unsigned int set, unsigned int reason)
- {
-@@ -639,7 +641,7 @@
-         * If validating memory (making it private) and affected by the
-         * cache-coherency vulnerability, perform the cache eviction mitigation.
-         */
--       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
-+       if (validate && sev_snp_needs_sfw)
-                sev_evict_cache((void *)vaddr, 1);
- }
-
-diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.c
-index 39e7e9d18974..2ddde901c8c5 100644
---- a/arch/x86/boot/startup/sme.c
-+++ b/arch/x86/boot/startup/sme.c
-@@ -521,6 +521,7 @@
-                return;
-
-        me_mask = 1UL << (ebx & 0x3f);
-+       sev_snp_needs_sfw = !(ebx & BIT(31));
-
-        /* Check the SEV MSR whether SEV or SME is enabled */
-        sev_status = msr = native_rdmsrq(MSR_AMD64_SEV);
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index d3f0f17834fa..32178b8f9b87 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -570,6 +570,8 @@
- extern u16 ghcb_version;
- extern struct ghcb *boot_ghcb;
-
-+extern bool sev_snp_needs_sfw;
-+
- struct psc_desc {
-        enum psc_op op;
-        struct svsm_ca *ca;
+Best regards,
+Krzysztof
 
