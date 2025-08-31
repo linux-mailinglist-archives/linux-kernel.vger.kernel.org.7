@@ -1,113 +1,161 @@
-Return-Path: <linux-kernel+bounces-793393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C68BB3D2DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:30:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDB1B3D2DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81E23BFE95
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9444F440A31
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E59255F2D;
-	Sun, 31 Aug 2025 12:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B4C259CA3;
+	Sun, 31 Aug 2025 12:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQiei4E6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR74TKDc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596181CD15;
-	Sun, 31 Aug 2025 12:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953D41CD15;
+	Sun, 31 Aug 2025 12:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756643442; cv=none; b=LQtsWc7sZ/9R6MubyGENQw/8TkEFGmAxIyyPRBkJWCdy1GM7HndyKtCWLrLTDao38VtpEgGtgl0yjxNzEx49Q3vhuN/liM5qjsGhai5XL9TmediCC2rKI+tLmgqOPR/Jw/qi/usOwamSRKpCPeIL6uJ1Lj9p4qdPOB2hxDOQi0k=
+	t=1756643449; cv=none; b=ns04NOsrQM/T4Dd086iFl+o8PGB97ETfYV2PYVfDTmWpQTwJAQPIZzyJGy6HFoUtUisgwXYSDLen0Mu389pGci4skdy6XIuXF8Bo/oRi4/qcdfRxO1gaUW7VSnp9GXWeU7u4ahAh8V7c53kdtXDbAtjguI2KgDHInGEWXc7xHnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756643442; c=relaxed/simple;
-	bh=fp0NecBk67eDoijTtzTAXNUtVQXDgzvZwFD9iIiuTao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FWHJqCYaIXWYheWD9HoeKD6HwbIsMdDsugilPA1PtHxdpBS9GnZyz9HaV255S9zNl6anB+B8swsbj+a58+BRaapWOm270mkVwueA4Y2UrL0cFTPJ0h0BvvGdDz0gPRwu1GkGwA3xvdFkNqsVhe/oXmQ1Nsw+Pi92qDSJXKFLwKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQiei4E6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D36C4CEED;
-	Sun, 31 Aug 2025 12:30:41 +0000 (UTC)
+	s=arc-20240116; t=1756643449; c=relaxed/simple;
+	bh=R8eLqhlHR7/jOIwbmu0MvYDVty+235CBqHedPu5Xeco=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YEvCKdkTPT66PyDGYr8YXJejcbDa8qrogHsl83r/rF16HSGrlCaGM1Ee0mrep/cQhMVqDTRpT0jW5BRgRcaQg4PygJRC/5sWDbka4i/eTHo3kkWwJktrqH0upSptYO5ptaYfEceiQmRBGWasXUsB1S+X2PbDMUa0hLcR69fFbpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR74TKDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0AFC4CEED;
+	Sun, 31 Aug 2025 12:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756643441;
-	bh=fp0NecBk67eDoijTtzTAXNUtVQXDgzvZwFD9iIiuTao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QQiei4E6cgamgDzBArsbpMnpNKqESbR0DlhhSxnRZbrJvMMxjC+6ECmTKO+Im6U4J
-	 Mjwh+V/iiaJgWquJ/Bb0ue+Bd5fzh/h8SUtRHABADzIuA8WOE4VMs0Gx9BjZyaRZtu
-	 Mb9QPHoh0iYoScdimpODusUFScMhZQH8PqslBbTijUxe3DpCzWJP7i955IdEmvinnU
-	 CXqHSepfqYWafid3/pcHtOj0y7nrCsU3bJryJhzNnHdHC6lo35+oxLxiVwn17ydM20
-	 koKZ4vjtmGInc2/rW9ZSBKQSZd5RWlOW1EbxUKQxKT2hc6islCpKLrlner1sAiYcvq
-	 puas9i5j37Hiw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33682342180so31350531fa.0;
-        Sun, 31 Aug 2025 05:30:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYahDbNACOsxrIFLi6UW/1oizADdKpG32DqOh/sTZuQuQvETQvVmGfCYXHB49Cr5rakmjerI4YquMuxOyl@vger.kernel.org, AJvYcCVqcDnGvce36DZkbUDBWEw2I/WTNUYmnVpXCcnClpdB395lvavgDdOwc1suZaZKrvZjP1G3KhQ0hVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywABB+16hZoS4vWWfWzY/0Qriq8hTe2XKMVoJiGQmOKGOnha5L
-	KMb3V0ulUhnwKW1djNwcAN4TAYu5HkDfo3xyCdV3WXI8YmAAUuuR8bjeJ2Sjjb7EM6/JaTntZ+N
-	bpBKCrtu+HJJFwSE9NPBaWtz4NB1x41o=
-X-Google-Smtp-Source: AGHT+IFnvnUY/s56Lavj9vIjkj2XI337CclASlpjXosuobBPXV+3vK3I53AS3L72NB3QR8c7ydHkLRo0iUrFUY3yixA=
-X-Received: by 2002:a05:651c:2210:b0:336:c080:4149 with SMTP id
- 38308e7fff4ca-336caac6994mr11293081fa.18.1756643440303; Sun, 31 Aug 2025
- 05:30:40 -0700 (PDT)
+	s=k20201202; t=1756643449;
+	bh=R8eLqhlHR7/jOIwbmu0MvYDVty+235CBqHedPu5Xeco=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CR74TKDclYSFAjjTFj308sBh+T64w7SYrhqVrmtwp8k6uo1yb/PRRYFWl0oUjuRgS
+	 0k3aZ33KXGoWNu59Zmd4bG4cm14oM4gK3wItDR92G38eaIr8V14ZqrOr5lUBKHSZZ7
+	 dPCXvFF1OFJ6Sz8NL2TRtNMn8IcatZtHaTKY0Hl8nUkxYwrveE5fEtftv00dgsv6kf
+	 3Gba1sezPLixdNbzCobw9XyrLJi0udnt66Q3mEShMAIJZ0vfJ2mJEPPDVaPFiw0DYa
+	 RgHyVzjNr3u1/YHAvKFWw7dgCgQxP/gofCOumAxNGR+TiDUvlFq+s1SswRpY6bqD00
+	 PzKjIh0I/EAEg==
+Date: Sun, 31 Aug 2025 13:30:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <jonath4nns@gmail.com>
+Cc: 20250825154450.75eedc9b@jic23-huawei.smtp.subspace.kernel.org, Jonathan
+ Santos <Jonathan.Santos@analog.com>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael.Hennerich@analog.com, lars@metafoo.de, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1
+ ADC Family
+Message-ID: <20250831133038.026d56e2@jic23-huawei>
+In-Reply-To: <aK50KITsXoPTkRbA@JSANTO12-L01.ad.analog.com>
+References: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+	<20250825154450.75eedc9b@jic23-huawei>
+	<aK50KITsXoPTkRbA@JSANTO12-L01.ad.analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-29-ardb+git@google.com> <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
- <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
- <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com> <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local>
-In-Reply-To: <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 31 Aug 2025 14:30:29 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
-X-Gm-Features: Ac12FXx5EBW5F4f81RiPM-Myf6XGbVWx423QKwsN1YFoiYzN3hrfnM9zXX3Ueig
-Message-ID: <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
-Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
- out of startup code
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 31 Aug 2025 at 13:15, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Sun, Aug 31, 2025 at 12:56:41PM +0200, Ard Biesheuvel wrote:
-> > OK it appears I've fixed it in the wrong place: the next patch adds
-> > back the definition of has_cpuflag() so I squashed that hunk into the
-> > wrong patch, it seems.
->
-> The real question is - and I'm sceptical - whether the startup code runs too
-> early for boot_cpu_has(). And how is the startup code going to call
-> boot_cpu_has().
->
-> /me builds .s
->
-> Aha, so it gets converted into a boot_cpu_data access:
->
-> # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
->         testb   %r13b, %r13b    # validate
->         je      .L46    #,
-> # ./arch/x86/include/asm/bitops.h:206:          (addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
->         movq    80+boot_cpu_data(%rip), %rax    # MEM[(const volatile long unsigned int *)&boot_cpu_data + 80B], _15
-> # arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
->
-> But former question remains: AFAIK, you want to run the startup code waaay
-> earlier, before we do identify_boot_cpu() which prepares boot_cpu_data, right?
->
+On Tue, 26 Aug 2025 23:57:44 -0300
+Jonathan Santos <jonath4nns@gmail.com> wrote:
 
-I suppose that in this particular case, things work out fine because
-calling sev_evict_cache() unnecessarily is harmless. But I agree that
-in general, relying on CPU flags in code that may be called this early
-is not great.
+> On 08/25, Jonathan Cameron wrote:
+> > On Sun, 24 Aug 2025 01:10:13 -0300
+> > Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+> >   
+> > > Add support for ADAQ7767/68/69-1 series, which includes PGIA and
+> > > Anti-aliasing filter (AAF) gains. Unlike the AD7768-1, they do not
+> > > provide a VCM regulator interface.
+> > > 
+> > > The PGA gain is configured in run-time through the scale attribute,
+> > > if supported by the device. PGA is enabled and controlled by the GPIO
+> > > controller (GPIOs 0, 1 and 2) provided by the device with the SPI
+> > > interface.
+> > > 
+> > > The AAF gain is defined by hardware connections and should be specified
+> > > in device tree.
+> > > 
+> > > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>  
+> > Hi Jonathan
+> > 
+> > Various minor comments inline.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> ...
+> > >  	/* Register VCM output regulator */
+> > > -	ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+> > > -	if (ret)
+> > > -		return ret;
+> > > +	if (st->chip->has_vcm_regulator) {
+> > > +		ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	st->aaf_gain = AD7768_AAF_IN1;
+> > > +	ret = device_property_read_u32(&spi->dev, "adi,gain-milli", &val);
+> > > +	if (ret && st->chip->has_variable_aaf)
+> > > +		dev_warn(&spi->dev, "AAF gain not specified, using default\n");
+> > > +
+> > > +	if (!ret && !st->chip->has_variable_aaf)
+> > > +		dev_warn(&spi->dev, "AAF gain not supported for %s\n", st->chip->name);  
+> > 
+> > I'm confused.  If you hit this warn, you then go ahead and set it anyway. How does that
+> > work?
+> >   
+> 
+> I would be setting a variable that will not be used, so no functional impact.
+> I could add another condition to avoid assigning it, or do you believe it
+> is better to return error like before? 
+Just don't set it to avoid confusion.  Alternative would be a comment that says that
+it won't be used, which is probably more complex than the code.
 
-Perhaps this conditional should be moved into the caller instead
-(early_set_pages_state()), and early callers from inside the startup
-code should call sev_evict_cache() unconditionally?
+> 
+> > > +
+> > > +	if (!ret) {  
+> > use a local bool for ret here with a suitable name. Carrying on using ret is
+> > fragile against later code changes where someone doesn't realise it is still in use.
+> >   
+> 
+> Maybe it is better to handle this in a helper function and apply the
+> suggestion.
+
+If that works, sounds good!
+
+J
+> 
+> > > +		/* If provided, validate and set the gain */
+> > > +		switch (val) {
+> > > +		case 1000:
+> > > +			st->aaf_gain = AD7768_AAF_IN1;
+> > > +			break;
+> > > +		case 364:
+> > > +			st->aaf_gain = AD7768_AAF_IN2;
+> > > +			break;
+> > > +		case 143:
+> > > +			st->aaf_gain = AD7768_AAF_IN3;
+> > > +			break;
+> > > +		default:
+> > > +			return dev_err_probe(&spi->dev, -EINVAL,
+> > > +					     "Invalid firmware provided AAF gain\n");
+> > > +		}
+> > > +	}  
+> 
+> Regards,
+> Jonathan S.
+> 
+
 
