@@ -1,215 +1,375 @@
-Return-Path: <linux-kernel+bounces-793208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01670B3D089
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:20:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59431B3D08A
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7AB20079F
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 01:20:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5DC84E02F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 01:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29291865FA;
-	Sun, 31 Aug 2025 01:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A7m1mH6E";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IG5BTjVc"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC29E19007D;
+	Sun, 31 Aug 2025 01:28:36 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535C5224FA;
-	Sun, 31 Aug 2025 01:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756603208; cv=fail; b=lSblTWZ1u/QGP4JJlxdITv7ez5721tj3Iso926I+LZLONjp2aDjKFvbLwWt4arIkW0X36oPttQRRBtGB4u7fXzf6RCinv0+NhrJ6XZNryupTbnqoW8HBwU2u4hIteNg6hJQiKzKb9E145G4V0luesXqq0B4grM5zCx/Xt9WsyvI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756603208; c=relaxed/simple;
-	bh=ZRX/vjwELn9td9SmLkwlfZ1p/xjzI8Zzp4a6eq4O6cs=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=ZGuU9eiOorC+C5mF1gMSd4UQHNUIgzwEUFuvrPu84aKipFGrykxQiggbuTbAj3eLOVPVuAcfemop9qrU3fqRwaFTtwoR2kx78Ok/5jC8bEkquTZxNST2UpLheDBZpqu8nNt2r/S6q2SHRr92y1MwUnyyD8eUdHVDKtlU/IJ4gFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A7m1mH6E; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IG5BTjVc; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V052KG032726;
-	Sun, 31 Aug 2025 01:19:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=WRC7VN8aLY9gTnR/9o
-	Q6+maROMZyw8pmExr/QykuOII=; b=A7m1mH6Eegl6ShXAk7X1Gtt3JFNCw/0My0
-	llpQnKHI11HhcIx/INiglhv4JT7SNPO2DWO9vp9iznuHRCmKMarM7elq6i48Dgr7
-	/u/AFsQ/01s8Y9nrZGA4gHbaRIEdoYvK1grigTnSkJ7imkuHzTm8iKjdd7ZnGg1r
-	qFuC/flK30/kwTlCGvpNDmJrWxcdniyUcT/JtZoc0TcrOOFUL5EQMSBbabFPxOl2
-	jx8RI1Ph/+EbEBoSP302NqQXmD+g+GGA2ouW5eTHyfUcleHMVkIz6AHqFNzQB22m
-	s/pDFiEfN3Bbzs4W/xktlgQfs17cTBgN1Xst/euptH6UtdjC09DQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usm9gm39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 31 Aug 2025 01:19:57 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57UKXQZV032286;
-	Sun, 31 Aug 2025 01:19:56 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2084.outbound.protection.outlook.com [40.107.244.84])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqrd9rsh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 31 Aug 2025 01:19:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G7TBRLxTPlPh6iR9ZhfUIZbjmAjis/O5hl0j8WzKBOPOgdB5Jy0Z+ZsOCbppkPLDnIBLsBG92RWov609wULn8lvIk8M/NKEQvf6ud1E94Z8y4fj1KgIVxkoe0b5hgiEBx7BgZv97WAzbd2XaGdW39Eotv0Ny7lATYLfPGG0LDbJzAAdMfOC8zr5XI1wfwb+NIor7ev+jBuzGlSrYMAaoCdsOuWBXiaZhKTfKD0aOEPOH0CDYfV7AM3s6rVGlPWKKxw1Jdb17soaVeKIhS2SNvC4asJbSyGN5r4/JgqH/6idWzOg70bLmdyStgltkr5lF1NSx27CxY5NB8yvRSZkw9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WRC7VN8aLY9gTnR/9oQ6+maROMZyw8pmExr/QykuOII=;
- b=hTr2bO1vJJIc1gs1imPenB//Xzzvb2NM2E6lurov07JCqTgKFoSSWjOIkzkvdZNbJaw6AQaJoFJZbCwiClO8EVlXNjpIzpSLd29gDNUtjZPU6s5qoFPQoU+hBR9HYGzr+/nDveDjs/sbA1cqc0Gi26bKsfmJbhqYp6MlkNaD7pz2cj9HXhpvQlYRel2ClJkxciFDDyg7sx+JVXrcNTPXUjR3sPriKZJ3BNArNYpEvaJ70Ozueb/EXcKy/rCAhWcCynQ5VMW7OW1AmJfTjy7V6mhgzC8+g/pqZ3ly8EJHKsjH4Wl8eOmiFyZIImaZZkCxrQqcbTVyRmbP5BvKIMvmMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WRC7VN8aLY9gTnR/9oQ6+maROMZyw8pmExr/QykuOII=;
- b=IG5BTjVcnPIl2cbv98T4YoGvH3nzWWioCiLRSCMhkGgavt8HKUq5jtRnCiVA6p+CQydaMgOQLZSO56KOC/Q3NoJVLXOqm3cgm7FdXxvzrUFbYOikxblIMJM7xvj3w2LUa7s10PsrrP05TLeqR74qZPSQwuhEWtJiOsn+fn1WOcM=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by MW4PR10MB6582.namprd10.prod.outlook.com (2603:10b6:303:229::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Sun, 31 Aug
- 2025 01:19:53 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9073.021; Sun, 31 Aug 2025
- 01:19:47 +0000
-To: Abinash Singh <abinashsinghlalotra@gmail.com>
-Cc: bvanassche@acm.org, James.Bottomley@HansenPartnership.com,
-        dlemoal@kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, martin.petersen@oracle.com
-Subject: Re: [PATCH v10 0/3] scsi: sd: Cleanups and warning fixes in
- sd_revalidate_disk()
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250825183940.13211-1-abinashsinghlalotra@gmail.com> (Abinash
-	Singh's message of "Tue, 26 Aug 2025 00:09:37 +0530")
-Organization: Oracle Corporation
-Message-ID: <yq1jz2kffto.fsf@ca-mkp.ca.oracle.com>
-References: <20250825183940.13211-1-abinashsinghlalotra@gmail.com>
-Date: Sat, 30 Aug 2025 21:19:45 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: YQBPR01CA0077.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:3::13) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E76D27735
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756603716; cv=none; b=KqkAr12sp+SpaWHoRsbNgS/b7e2aXE0Zb/z+86CTX0WA7CVm2mPZKd6EoXOv/Z49QawDmeRx6xk9259iKWlyFwaMhRo2dXKHQxmGcIPzAWi5PHFU8E4h8KDhb8JKJ8PFvXDutXBxXYDTr2hhjNI6Y6QZVgHflSBH81aFQSzqDC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756603716; c=relaxed/simple;
+	bh=KDJpfsP4YCTuqoD0AK6B2xe1GvRTYvgCJOP8C8dL5ZM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Ap44fR8kaCCfmFdyfa91CfD8R3oDvajhjMGVWhMytJCfZAyVn6+L0mlYNcDElnNjidFHjyo8TwggqfKVaY8Rz9bnAJRCBFKD5KQGiboWYOjbdI+h70bUBLx4ub4fSts+U82Uukmg5GHDmhhD0s7Sbow6gGa0erTCEDWY8zJw5mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2489359cc48so7481005ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:28:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756603713; x=1757208513;
+        h=content-transfer-encoding:organization:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=isJ9YgsELTrLE7rgj+66ZSG6AsLLiBAnaMmUnZA80zY=;
+        b=YatlZiK6X7Af7zAbFVnmC8BQ2BwR8WyT1/n3vlPAyML2geysJGmmLqSVk6VqJbL2/D
+         kKBeopAnJlgzOMP2z95PhnRqjPpPdU+ouetP4NgI8cWPxgbLmmUq5njr1olcOFsO5JlK
+         ylLYY4btHor7du6oSOnCXUhthMHXG7EnVrD4ybeiYvIexEib2yETR27wLbIq9yN1+9rf
+         dBhSK7cDehAsuLewqo6vD6BKlpLo7s7JWSQwo3t9NMmnXdfvY0lw2esHqNZ+OkO8URs6
+         UC0FJgODxFK8fOsnEBCGx7qvjJ/H0L2+6wQL85b6w/tSsJfyrmQH61dC2MzfHQn2eXFT
+         P3dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc0EyvJTJ2vhsA+cgwNDNDayUM8Du6FRedFyQENIl1LM6fKy+demB5lJ2IcMoQsK35yp1DMDSg1q+cWAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM/wiArwjxKMRTbVpKhyfQE2UrLR2UBuX6URPJA1dI/1j4WLyA
+	BUTwNEivBNp/Mcezi0gtHNHWS0EUYDeLGbSLwo64wIovabrXFxAG2kgA
+X-Gm-Gg: ASbGnctGEwgEyU/qVh1gCKHGPLf19B1jHD9OS/sI0hgS1V6v+82fcQw4lxietllnlAX
+	QuNqJlby9XDif7CXr3mHbWEnHLJ35dDkV5wwwGS3Sf612uMdML+7L8X68l4cSE9UyqgV0BPkdsj
+	8hwto13yR+NBCc23s7eAFaXRPB91liUAQ5miHpXEnNMQpLCJa+2Y51Cl0WwCKXmpGXHzN4bEjNN
+	fgj1pP0L5HFTEiDIZGttUKESualADzbCQxsfQuN2yxDZitnDmJKVN5IcpnQ4iiuzMXqxu+rjrZF
+	+zX91krvsVR4CXeILxWCGtQLlryQLa8WM2tydiVA9vpbBRkoMGEgXgRxBDXsKpoyZJ3+STYWC7s
+	6yDkQy2Pki7cRvGlFnvlRLpdMvenZKwq0ri3GsBEQpIqnuiP7NpAfbV/k9FGWCTAiCPmKAgFb0u
+	qZ9tM9/vmNC6AC3FQJMNrl+hUZQZB5
+X-Google-Smtp-Source: AGHT+IEM/dtlb/OLbYvlIpN8TePT5zSVAl0O7/OiPFKvgTUksOuYDt2OSBd84y+Xx8kFubI42YX25g==
+X-Received: by 2002:a17:90b:1b50:b0:321:75c1:ff04 with SMTP id 98e67ed59e1d1-327f5c090damr4750387a91.8.1756603713371;
+        Sat, 30 Aug 2025 18:28:33 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327e01b21dfsm3433438a91.2.2025.08.30.18.28.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Aug 2025 18:28:32 -0700 (PDT)
+Message-ID: <f564f596-577e-4a66-a501-033c68765bf4@kzalloc.com>
+Date: Sun, 31 Aug 2025 10:28:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|MW4PR10MB6582:EE_
-X-MS-Office365-Filtering-Correlation-Id: acaa2104-0187-426b-8835-08dde82c794d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WpPclncqDGkGpRX/hvNZoO+o5G/chj27wedP54B0bA7Iej72ybBLmupopxQw?=
- =?us-ascii?Q?cwUebQdlZeNrF1UU9aEfT/fNYTdIhuLScjNOM+B+3+pIC6vujvijJoSldoi3?=
- =?us-ascii?Q?gHx0fCz2wuskP6x3tYYAFGrm0BHFUvkEIhoIak66dP/6wSWhzVmdqpWhFeF4?=
- =?us-ascii?Q?+CvZTKTxy3H82ii7amngFaxSvdELrT7E2/9xA2zEi02zdR/DJL6E1PyAx3EC?=
- =?us-ascii?Q?pmA6NMnzDU2XeESbB4/vkJUPbbH5iu+K0A5yFSOemauu2q1l0hfKmMI6rSIa?=
- =?us-ascii?Q?S6BOHuBoEiMaf1T3vQqovIeOIVzBXjkvGKfDGSz2SYgghKLUw/KBr5oAWWF/?=
- =?us-ascii?Q?x+unVKUkcQSvS+EKaqTCg+0jv1D38G+bGTcu2o2hKC75H8/mI4Sh6nEUOIfT?=
- =?us-ascii?Q?op0yGhqI4o3A+Qj6vtDPbCKyOMtNEzwt28EVbG1ULTQAogDi+4RB1ommirTK?=
- =?us-ascii?Q?DglFj8/2q/UF+vcbROFE92GAG2KdiK0SV7C2gQoxP3zwXgvFeStooD97Rpoj?=
- =?us-ascii?Q?OY38E1nk0Izp2c3IYb+noSXLQQSmOZRf2BE+00UurDO4ciPMsYzgbk6XeBxs?=
- =?us-ascii?Q?JTNePN/EtNpz4nk890RbuY9OdCnPMYtJKIYWyz3MYA6nHk4jEoIluwU+Y589?=
- =?us-ascii?Q?pz934ivcgLZHnKTaN66M+k4RU1D6ArOvdRYR4vTkzMwAbfotlGMrtb+0LHjP?=
- =?us-ascii?Q?ZZsm0kq9qu2savBdq3Wgh0iuBR2vrx2r3PkzZ5ecaaT1yxw6KEAtRpN9B/kC?=
- =?us-ascii?Q?fmr5sKW4TWKW33WfI0st0ZcYprQgA+bCL8LJox5JEAmjPl9+oiehpUeNSwgf?=
- =?us-ascii?Q?tKghMqXNxNoZVI32h9kvU5iKiO/pJ28cM5rfrG3DmabEXRv0hrgMSq5IzKgH?=
- =?us-ascii?Q?1yIBwiJo6+XMruuVWMkYWCgvPOYS/Curt+uTj1Ee2zalmXDFiiUI+fLIoW/U?=
- =?us-ascii?Q?OW4M+zIuNwnR0h+NYT9Ae8U8uow1KzAuHeVfRCbXcHascBUJ1DVjD8a5avKm?=
- =?us-ascii?Q?WSnBOguqgEG8dMaFVJCA9cxVwvO81Cpn8pEcSRyao/CZac/P24PPcBf1Dd+L?=
- =?us-ascii?Q?Zq+HpzFcdtFhD1Q7HipRuT9uw/O7dO2CkVetvX7UB6BzCc/3h8CDY71sazda?=
- =?us-ascii?Q?KpZWTbBPWohcTf78RFYdyTMClS1jVuHCZaoanRG+VZuGMREMUugVh5y75KYy?=
- =?us-ascii?Q?RSNAqet41Rw3VdamWg2TnSwQ6Zr6nxla5ZBNSHO21lwjlQdQgATEWhr4Xu80?=
- =?us-ascii?Q?kwM5C6SeWrKON5XKze96JuIWxZEyQ+GCZ4O/GyIs+iZvRWOHoHIe1xcqkXl4?=
- =?us-ascii?Q?XKa4R3ujuDRESXER4iSwopA4azYebe7a6GkZ+50wZpY1vBASNayyQvho7BVZ?=
- =?us-ascii?Q?IZfkrFBq8uXg+XnFzuOnS5P2b/3S2yznMcgmdI3TD+fFaMxkdqGAVKKKB9be?=
- =?us-ascii?Q?7p/xv/dHSJg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jf5ydcGOdDLGk3imzs6YAlXPMC8GErF/tgIQ0cyKq3uG+ZKiEvaRW1PCt6hP?=
- =?us-ascii?Q?EY2CRAtMzRrFXjQaGCIJfLbv7wpEncevuueawUBFaR4i8tpAGWvj90KdmPN2?=
- =?us-ascii?Q?nDu7Lku/Jt3JDEj3Y3YqMXCd6Eg99GjzP5lUlybP+F4UXmYNOU5KlzuHpCJn?=
- =?us-ascii?Q?rjfLZ5gR3GvfrccmCJ/Y7qaRF8nZyLUIDtMGWBAAwTuixqM/zqwIGC27v+sx?=
- =?us-ascii?Q?YFcoIxecaQkh/cbMEdnUY4/scXlAGlLPmditmAsXdfTQcvv2HzLQ1ubcpnpi?=
- =?us-ascii?Q?q/GjUfvG8wNVthj5bEnglzkNDBpO2gVf46bsMVPYrs4cay6/u98vBTEWJta4?=
- =?us-ascii?Q?EQMTBfQ4UwN8UFFWZjWkYgMYx0DzdRp1JlvFNYaC4jA6XIEuRtjZXc/Qrux9?=
- =?us-ascii?Q?mpRMznEfd34iKc4Mcze0GxxuXvAS2LOfA27kZxPVP6n3KTQIYtxblvY3hzRh?=
- =?us-ascii?Q?KzZhE+YqxRb89hNqiHqxDl0oe6BQ7GhJ423iBnjsN7L6/IW2id4iq1KQMCVA?=
- =?us-ascii?Q?Ol4BeuToPUVaFgPQzA+0mrr/SyJIcbsHrOl+QyWCtj2QZOfh6Ph+T9JMHnTj?=
- =?us-ascii?Q?+6ZYiv/zUSwFWre+0/QUQ9qTGYjW8HRRSvZwhQdlT66EpvZcQ47xoXEW7hZV?=
- =?us-ascii?Q?ldX2dgr0521aipKble9evbO1CiBYzOmjK2Xs0Q0PJMoYYcfFK++8vcrumL26?=
- =?us-ascii?Q?9ycfmu3eZsptCWsZMm2KJcvHINtOGl/YF2mrLsUHrY6spxteJS7XgoG/EB0h?=
- =?us-ascii?Q?dkf745fIG7IKVjrMtaJr/f+Hi7fFkKQgZUHHngDusoeatH8zIJR4OMpYM/7t?=
- =?us-ascii?Q?lvaGbffOGdiorS7NIY0vQqkVKuERkiiauQH/yuXH6hgAv8CGpuYkXXnj44nZ?=
- =?us-ascii?Q?JjtkpaHdPBQCuyNGWhtru6AehxHUdbywM8pZzEdcV1mpzxfcvLP9vlVOGXz4?=
- =?us-ascii?Q?1R7N+i1ImQfv2YNkGrAj/vtRdgab5WTkVtvDVw5ZxOFFy4WTTp3o6HClGox4?=
- =?us-ascii?Q?eU5pySI/+tsvjgODEL8ionf1kx69o8e9J9VxVH21kEpELgTnXJXCFyLq6v1h?=
- =?us-ascii?Q?Vj7ADqIif3UJk26ihi4z6tnbtsxiwKJe+FQFsmVlfpJJp9Il++fYgeU6IOd2?=
- =?us-ascii?Q?YkKtF5de11fB2nJN9uR6HstuzGou6DCIQ3Co4JDZUbQGosfp4i08Jf1DZJR/?=
- =?us-ascii?Q?Yvq3pTUYRpdrIdFFhtHiwUjd9nIICmOcOxsW/n5OpLwLzNSN3sagqA0qprHD?=
- =?us-ascii?Q?mmSJhCyciPc3PSVvIebh/oBmMSM9qv9/0Fzp6oRxX1ZyxzhgwMRZo1oJ65X/?=
- =?us-ascii?Q?jZ3Q1DZ1PwhFvKpv/I//ojDxL2NPIR7x3kQzCJTYsaHT78yaNSMghcSiLi4a?=
- =?us-ascii?Q?DplUHg8dGHPgbAPqiWaehpzlV47qGPCDyQ5o1Q2fK0EBO5ibVtLQOJ/aigEC?=
- =?us-ascii?Q?QR4wH+452kEb/PZTTLPLB0J5TMC4jddxM6XcvM9UD156WTdV/3+ZVcsZ1j2b?=
- =?us-ascii?Q?BAllpzlCkNpUudTx19kKpnEZSnisMjp/k+iQE/LTmUsGWAJboBHEKZvEoJr9?=
- =?us-ascii?Q?5gZyUoCE9awrXXGkb4iVLE3/oyefRY1TCwzKdrt250Zdu6JQmAM4ia2/eeX+?=
- =?us-ascii?Q?gA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DyfTh1P/VUIznJOOWTZ6FSjRCSJx1cKV/qHXpyitoKdPc3Qx6rKgdX3eWGpgAjRA7D2pvbUQn0s+cb4p9pDxnXtTjmjppmIGLhAtcrowDEMkBJcDXvtNE5W0kC6mYmiqM6IMmi5jsbSuo/X4LOJuMo4AGiCO/xpKdoqPJxW3n5vPVQgXIKBJ78VItmabeIpOywpBXHjXE+arUieKkMnUFGO3WOce2B8cGYMGp3sewEBhF164+iC1M16QLw38YepnQPpSpQjdFzOTHWSD3XVcP3ByjA2vnYEWUJ6b0+o204e6ziyVH0tkYVlsu+LJZS8oQ96YLyAs2ZpKqLglrNRI6JmHn8ucGi2vTSb0qIddrz330v+Z10hlbA0f6dohuiP+LyQ/oFKifbQkGSGseyOog5wC+KpK0N7mkUDHDJNit++RxeUSckrPrxMZHjHTfSELfHakVRKff8hSMp49/WSFW9rAau+GfowNNV6QAXT/E/Driw2Cih0PCakBXXQlUW/CGrgpCjO/+cjZF1qjYYcSxBRVY1qARRJa0P7kAE9x5XmCcjmeFhPwjwcx/k0mgsQgVthFAw8hDVcq1LnO93cOcbgsL/LbQmslMGuWIp96yso=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acaa2104-0187-426b-8835-08dde82c794d
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2025 01:19:46.9180
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iQKDikOEhphPXD+1BAFJU7sg85usteGpHUqEjsRVe8+WZuRUsO/N0j2s3tqM/FG1D8sTcb+fFNuBd3xQMMiPHLWVrSS/lXC77iVsx6Jx6Bs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB6582
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-30_10,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=619 adultscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508310012
-X-Proofpoint-GUID: 0LPA9sOAD8hF0kE7tv6d-l0cpR0WnAe3
-X-Authority-Analysis: v=2.4 cv=I7xlRMgg c=1 sm=1 tr=0 ts=68b3a33d b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=GoEa3M9JfhUA:10 a=CEIZDvEd9kZ5D99qYfAA:9 cc=ntf awl=host:12069
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX8HEAcqYFovT0
- KDP/r+S0FMp3kerd+qtVDQ17pY0LWi63ttKXbmHKMpbsFOkW/Az1hrlMg9w2+w9GkUrrQZGpcAd
- y7HTYLhP37vJ0ocJpOsNZPwPfnN4gV8Z4EE4rjSeUqbJsxkzFFqNGa9LoaC6tWRkuvNMP1Vc72h
- SfY4cMZwVJsIcI/zQCxS5OZFzQkF8ApXTTZVaqWze1JqfZoX/MYlmPM2IJncD5JkgVYZh0JVDR2
- FaVko8lPGpcX9VzvJqe9290T6KeodU//OOLYc4BRawV9nG4BBLOwlK5xokSi5vZQeO0CpetlWE0
- F3ucmDyXcTNJf/BTfES7GYNKO4iYJFJ1DB2xiHymxS9VuKmG9aN3TDmua0Va90oJzwII19pZTHU
- oXggs/LNx2vp8kk7BNgzmdlU8Ox1+g==
-X-Proofpoint-ORIG-GUID: 0LPA9sOAD8hF0kE7tv6d-l0cpR0WnAe3
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ linux-mm@kvack.org, linux-rt-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Yeoreum Yun <yeoreum.yun@arm.com>,
+ Byungchul Park <byungchul@sk.com>,
+ "max.byungchul.park@gmail.com" <max.byungchul.park@gmail.com>,
+ vvghjk1234@gmail.com
+From: Yunseong Kim <ysk@kzalloc.com>
+Subject: [BUG] mm/slub: Contention caused by kmem_cache_node->list_lock on
+ PREEMPT_RT
+Organization: kzalloc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+I've been analyzing a system critical contention observed on a PREEMPT_RT
+enabled kernel (based on v6.17-rc3). The issue stems from internal lock
+contention within the SLUB allocator, particularly under high memory
+pressure scenarios such as massive RCU callback processing.
 
-Abinash,
+In PREEMPT_RT configurations, spinlock_t is implemented as a sleepable
+RT-Mutex. The kmem_cache_node->list_lock in SLUB protects the node-level
+partial slab lists and is a very hot lock, frequently accessed during the
+memory freeing path.
 
-> This v10 series addresses a build warning and does minor cleanups in
-> sd_revalidate_disk().
+When multiple CPUs contend heavily for this lock, the overhead associated
+with RT-Mutexes (context switching, priority inheritance, sleeping/waking)
+causes severe stagnation in the memory subsystem's progress.
 
-Applied to 6.18/scsi-staging, thanks!
+I observed a scenario where a task performing memory compaction became
+indefinitely stuck waiting for a folio lock. It appears the owner of the
+folio lock was also stalled due to the contention on SLUB's list_lock,
+resulting in a system-wide contention.
 
--- 
-Martin K. Petersen
+The task is stuck in migrate_pages_batch waiting for a folio lock during 
+memory compaction:
+
+ INFO: task hung in migrate_pages_batch
+ INFO: task syz.7.2768:30677 blocked for more than 143 seconds.
+       Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ task:syz.7.2768      state:D stack:0     pid:30677 tgid:30673 ppid:20684  task_flags:0x400040 flags:0x00000011
+ Call trace:
+  __switch_to+0x2b4/0x474 arch/arm64/kernel/process.c:741 (T)
+  context_switch kernel/sched/core.c:5357 [inline]
+  __schedule+0x6c4/0xe2c kernel/sched/core.c:6961
+  __schedule_loop kernel/sched/core.c:7043 [inline]
+  schedule+0x50/0xf0 kernel/sched/core.c:7058
+  io_schedule+0x38/0xa0 kernel/sched/core.c:7903
+  folio_wait_bit_common+0x360/0x698 mm/filemap.c:1317
+  __folio_lock+0x2c/0x3c mm/filemap.c:1675
+  folio_lock include/linux/pagemap.h:1133 [inline]
+  migrate_folio_unmap mm/migrate.c:1246 [inline]
+  migrate_pages_batch+0x448/0x1a80 mm/migrate.c:1873
+  migrate_pages_sync mm/migrate.c:2023 [inline]
+  migrate_pages+0x101c/0x14f4 mm/migrate.c:2105
+  compact_zone+0x1044/0x1ae8 mm/compaction.c:2647
+  compact_node mm/compaction.c:2916 [inline]
+  compact_nodes mm/compaction.c:2938 [inline]
+  sysctl_compaction_handler+0x244/0x3f4 mm/compaction.c:2989
+  proc_sys_call_handler+0x224/0x3fc fs/proc/proc_sysctl.c:600
+  proc_sys_write+0x2c/0x3c fs/proc/proc_sysctl.c:626
+  do_iter_readv_writev+0x314/0x3e0 fs/read_write.c:-1
+  vfs_writev+0x194/0x470 fs/read_write.c:1057
+  do_pwritev fs/read_write.c:1153 [inline]
+  __do_sys_pwritev2 fs/read_write.c:1211 [inline]
+  __se_sys_pwritev2 fs/read_write.c:1202 [inline]
+  __arm64_sys_pwritev2+0xf0/0x194 fs/read_write.c:1202
+  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+  invoke_syscall+0x64/0x168 arch/arm64/kernel/syscall.c:49
+  el0_svc_common+0xb4/0x164 arch/arm64/kernel/syscall.c:132
+  do_el0_svc+0x2c/0x3c arch/arm64/kernel/syscall.c:151
+  el0_svc+0x40/0x144 arch/arm64/kernel/entry-common.c:879
+  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+  el0t_64_sync+0x1b8/0x1bc arch/arm64/kernel/entry.S:596
+ NMI backtrace for cpu 0
+ CPU: 0 UID: 0 PID: 55 Comm: khungtaskd Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
+ Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
+ Call trace:
+  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+  __dump_stack+0x30/0x40 lib/dump_stack.c:94
+  dump_stack_lvl+0x148/0x1d8 lib/dump_stack.c:120
+  dump_stack+0x1c/0x3c lib/dump_stack.c:129
+  nmi_cpu_backtrace+0x278/0x31c lib/nmi_backtrace.c:113
+  nmi_trigger_cpumask_backtrace+0x134/0x2cc lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x30/0x40 arch/arm64/kernel/smp.c:936
+  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+  watchdog+0x858/0x890 kernel/hung_task.c:491
+  kthread+0x314/0x384 kernel/kthread.c:463
+  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+ Sending NMI from CPU 0 to CPUs 1-3:
+ NMI backtrace for cpu 1
+ CPU: 1 UID: 0 PID: 28 Comm: rcuc/1 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
+ Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
+ pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+ pc : __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+ pc : _raw_spin_unlock_irq+0x18/0x70 kernel/locking/spinlock.c:202
+ lr : __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:158 [inline]
+ lr : _raw_spin_unlock_irq+0x10/0x70 kernel/locking/spinlock.c:202
+ sp : ffff800089f0fa40
+ x29: ffff800089f0fa40 x28: ffff0000c0004640 x27: 0000000000000000
+ x26: 0000000000000000 x25: 0000000000001000 x24: ffff8000855f169c
+ x23: 0000000000000001 x22: ffff800089f0fa68 x21: ffff800089f0fb48
+ x20: ffff0000c11e6440 x19: ffff0000c0004640 x18: 000000651c596d12
+ x17: 0000000000000000 x16: 0000000000000008 x15: 0000000000000000
+ x14: 0000000000000000 x13: 0000000000000010 x12: ffff80008b0cfa68
+ x11: 0000000000000008 x10: 00000000ffffffff x9 : ffffffffffffffff
+ x8 : 0000000000000000 x7 : bbbbbbbbbbbbbbbb x6 : 392e39383520205b
+ x5 : ffff8000806849f4 x4 : 0000000000000001 x3 : 0000000000000010
+ x2 : ffff800089f0fa68 x1 : ffff0000c11e6440 x0 : ffff0000c0004640
+ Call trace:
+  __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+  arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
+  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline] (P)
+  _raw_spin_unlock_irq+0x18/0x70 kernel/locking/spinlock.c:202 (P)
+  raw_spin_unlock_irq_wake include/linux/sched/wake_q.h:82 [inline]
+  rtlock_slowlock_locked+0xcb0/0xe0c kernel/locking/rtmutex.c:1864
+  rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
+  rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
+  __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
+  rt_spin_lock+0x6c/0xe0 kernel/locking/spinlock_rt.c:57
+  spin_lock include/linux/spinlock_rt.h:44 [inline]
+  free_to_partial_list+0x74/0x5bc mm/slub.c:4427
+  __slab_free+0x208/0x254 mm/slub.c:4498
+  do_slab_free mm/slub.c:4632 [inline]
+  slab_free mm/slub.c:4681 [inline]
+  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
+  mem_pool_free mm/kmemleak.c:508 [inline]
+  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
+  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+  rcu_core kernel/rcu/tree.c:2861 [inline]
+  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
+  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
+  kthread+0x314/0x384 kernel/kthread.c:463
+  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+ NMI backtrace for cpu 3
+ CPU: 3 UID: 0 PID: 44 Comm: rcuc/3 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
+ Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
+ pstate: 03400005 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+ pc : finish_task_switch+0xb0/0x308 kernel/sched/core.c:5225
+ lr : raw_spin_rq_unlock kernel/sched/core.c:680 [inline]
+ lr : raw_spin_rq_unlock_irq kernel/sched/sched.h:1530 [inline]
+ lr : finish_lock_switch kernel/sched/core.c:5105 [inline]
+ lr : finish_task_switch+0xa8/0x308 kernel/sched/core.c:5223
+ sp : ffff80008b0cf940
+ x29: ffff80008b0cf950 x28: ffff0000c11fab28 x27: ffff800088169df0
+ x26: ffff0000c11fa440 x25: ffff8000855e93b4 x24: ffff800088169df0
+ x23: 0000000000001000 x22: 0000000000000000 x21: bcf48000855e8a30
+ x20: ffff0000c11fa440 x19: ffff0000c1301440 x18: 00000062aca2a5d2
+ x17: fffffffffffff63c x16: 0000000000200b20 x15: 0000000000135c81
+ x14: ffff800088169df0 x13: 000000000132d6aa x12: 00000000001f4245
+ x11: 0000000000000000 x10: 00000000ffffffff x9 : 0000000000000001
+ x8 : 0000000100000001 x7 : bbbbbbbbbbbbbbbb x6 : ffff8000a954fd48
+ x5 : 0000000000000001 x4 : 0000000000001000 x3 : ffff0000c11fa440
+ x2 : 0000000000000001 x1 : ffff80008741f318 x0 : 0000000000000001
+ Call trace:
+  __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
+  arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
+  raw_spin_rq_unlock_irq kernel/sched/sched.h:1531 [inline] (P)
+  finish_lock_switch kernel/sched/core.c:5105 [inline] (P)
+  finish_task_switch+0xb0/0x308 kernel/sched/core.c:5223 (P)
+  context_switch kernel/sched/core.c:5360 [inline]
+  __schedule+0x6c8/0xe2c kernel/sched/core.c:6961
+  __schedule_loop kernel/sched/core.c:7043 [inline]
+  schedule_rtlock+0x24/0x44 kernel/sched/core.c:7122
+  rtlock_slowlock_locked+0xd20/0xe0c kernel/locking/rtmutex.c:1868
+  rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
+  rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
+  __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
+  rt_spin_lock+0x6c/0xe0 kernel/locking/spinlock_rt.c:57
+  spin_lock include/linux/spinlock_rt.h:44 [inline]
+  free_to_partial_list+0x74/0x5bc mm/slub.c:4427
+  __slab_free+0x208/0x254 mm/slub.c:4498
+  do_slab_free mm/slub.c:4632 [inline]
+  slab_free mm/slub.c:4681 [inline]
+  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
+  mem_pool_free mm/kmemleak.c:508 [inline]
+  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
+  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+  rcu_core kernel/rcu/tree.c:2861 [inline]
+  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
+  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
+  kthread+0x314/0x384 kernel/kthread.c:463
+  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+ NMI backtrace for cpu 2
+ CPU: 2 UID: 0 PID: 36 Comm: rcuc/2 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
+ Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
+ pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+ pc : __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+ pc : _raw_spin_unlock_irqrestore+0x2c/0x80 kernel/locking/spinlock.c:194
+ lr : __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:150 [inline]
+ lr : _raw_spin_unlock_irqrestore+0x18/0x80 kernel/locking/spinlock.c:194
+ sp : ffff80008afafa80
+ x29: ffff80008afafa80 x28: ffff0000c0004640 x27: 0000000000000000
+ x26: ffff8000806849f4 x25: ffff8002cf620000 x24: ffff0000c11f0440
+ x23: 0000000000000000 x22: 0000000000000000 x21: ffff0000c11fad30
+ x20: 0000000000000008 x19: 0000000000000000 x18: ffff80008565bf38
+ x17: 0000000000000006 x16: 0000000000000010 x15: 0000000000000000
+ x14: ffff800088169df0 x13: 0000000000000130 x12: 0000000000000110
+ x11: 0000000000000000 x10: 00000000ffffffff x9 : ffffffffffffffff
+ x8 : 00000000000000c0 x7 : bbbbbbbbbbbbbbbb x6 : 000000000000003f
+ x5 : 0000000000000001 x4 : 000000895af9d556 x3 : 0000000000000004
+ x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff0000c11fad30
+ Call trace:
+  __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
+  arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
+  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline] (P)
+  _raw_spin_unlock_irqrestore+0x2c/0x80 kernel/locking/spinlock.c:194 (P)
+  class_raw_spinlock_irqsave_destructor include/linux/spinlock.h:557 [inline]
+  try_to_wake_up+0x3b0/0x7e0 kernel/sched/core.c:4216
+  wake_up_state+0x14/0x20 kernel/sched/core.c:4465
+  rt_mutex_wake_up_q kernel/locking/rtmutex.c:566 [inline]
+  rt_mutex_slowunlock+0x16c/0x2ac kernel/locking/rtmutex.c:1469
+  rt_spin_unlock+0x24/0x34 kernel/locking/spinlock_rt.c:85
+  spin_unlock_irqrestore include/linux/spinlock_rt.h:122 [inline]
+  free_to_partial_list+0x2b8/0x5bc mm/slub.c:4466
+  __slab_free+0x208/0x254 mm/slub.c:4498
+  do_slab_free mm/slub.c:4632 [inline]
+  slab_free mm/slub.c:4681 [inline]
+  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
+  mem_pool_free mm/kmemleak.c:508 [inline]
+  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
+  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+  rcu_core kernel/rcu/tree.c:2861 [inline]
+  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
+  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
+  kthread+0x314/0x384 kernel/kthread.c:463
+  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+
+NMI Backtrace shows RCU threads (rcuc/X) on multiple CPUs are experiencing
+severe contention while trying to acquire the RT-Mutex in
+free_to_partial_list(). Similar contention traces were observed on other
+CPUs.
+
+The core issue is that kmem_cache_node->list_lock is too hot to operate as
+a sleeping lock (RT-Mutex) under high contention scenarios. I've seeking
+community feedback on the best approach to ensure system stability while
+maintaining RT guarantees. Here’s my thought on a possible direction:
+
+1. Convert list_lock to raw_spinlock_t (Immediate Fix)
+
+ The most straightforward solution is to change kmem_cache_node->list_lock
+ from spinlock_t to raw_spinlock_t. This ensures the lock remains a
+ non-sleeping spinlock even on PREEMPT_RT.
+
+   - Pros:
+     Reliably resolves the deadlock by eliminating the RT-Mutex overhead.
+     Minimal code changes required.
+
+   - Cons:
+     Reintroduces a traditional spinlock, which could theoretically
+     slightly increase latency for high-priority RT tasks. However, given
+     the very short critical section protected by this lock, this may be a
+     reasonable trade-off for stability.
+
+2. Reducing Lock Contention
+
+ Instead of changing the lock type, we could reduce the frequency of
+ acquiring the node-level list_lock. Contention primarily occurs when
+ per-CPU partial lists (kmem_cache_cpu->partial) are flushed to the node
+ list (kmem_cache_node->partial).
+ Tuning and Batching: We could adjust the thresholds in flush_cpu_slab()
+ or enhance batch processing when moving slabs to reduce the number of
+ lock acquisitions.
+
+   - Pros:
+     Improves overall SLUB scalability while maintaining PREEMPT_RT locking
+     semantics (using RT-Mutexes).
+
+   - Cons:
+     Implementation and tuning are complex. It may increase per-CPU memory
+     usage and might not entirely resolve contention under extreme loads.
+
+3. Deferring Node List Updates
+
+ A structural change to avoid acquiring the list_lock (RT-Mutex) in the
+ memory freeing fast path. Instead of moving slabs to the node list
+ immediately by the task freeing the memory (especially in RCU callback
+ context), this work could be deferred to a dedicated workqueue or kthread.
+
+   - Pros:
+     Removes heavy RT-Mutex acquisition from the fast path, potentially
+     improving response times.
+
+   - Cons:
+     Adds significant complexity to the SLUB architecture. It might impact
+     performance in non-RT environments or delay memory reclamation.
+
+Given the severity of the observed deadlock, Option 1 using raw_spinlock_t
+appears to be the most pragmatic and immediate solution to guarantee system
+stability. However, I would like to hear the community's opinion on whether
+this is the best approach aligned with PREEMPT_RT goals, or if the MM/RT
+community prefers a longer-term structural improvement like Option 2 or 3.
+
+Please let me know if further adjustments, testing, or reproduction are
+needed. Welcome any feedback or suggestions regarding this issue.
+
+Best regards.
+Yunseong Kim
 
