@@ -1,122 +1,178 @@
-Return-Path: <linux-kernel+bounces-793354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F36B3D23B
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:50:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16505B3D23F
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F82B7AB90F
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C606117D296
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F843254AFF;
-	Sun, 31 Aug 2025 10:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71627256C6F;
+	Sun, 31 Aug 2025 10:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kQAMXCC5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWobBYBH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C011B1BC58;
-	Sun, 31 Aug 2025 10:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B049F1BC58;
+	Sun, 31 Aug 2025 10:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756637412; cv=none; b=EqYJzLlDUpipb0AcGiaDMWUrAu4xcuMz3gFXQs4hcfFHliTUlvTHQ8sIIeYl15UMmmTg8EscNpWjDxFYFyywukSNsFu8XdCK+1OzxlXmgRRWlzex11Kix+jrwwJi0S1JDhzUL+xDgr8iHvef0e+Y9oBJncOTTdFSLfyIzCM5SC4=
+	t=1756637443; cv=none; b=S14PKXyN47mtWkfvj5xyVKqVk/QdTSIHFr7OiFOEHrP+DyLIw2HeM/xHLBpXC/a72XVrxNqQo0aPQGLbtZbdSG6p9xPCJJd/k7mFh4PwOe9q44VXmOcoHi0kxxwcN7fUD72qHnx9LgkWeZ+yPv2DYaDEKjY1/syoIEnTSlIHxYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756637412; c=relaxed/simple;
-	bh=0tnMQdnydsRh2e7UmCcIPnDhSpaZMeywFf0meF4Ub14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piuEOzEL15S8Y/niN06UwhzVFEuva66sfQnc4w09ivTyJtl2yu+m4jJFXqfvawSi6otc+PqMUTrlEYW1CjTmTJIzG5hA8CcWO6Ws0Oq6h2uiNvMjF+a6V9tKNAwbHvB0apx17DGM8K0eQaWJlUaZAjPnwJY60gqMVe7dylYYHD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kQAMXCC5 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CBCD540E00DA;
-	Sun, 31 Aug 2025 10:50:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id VtnZj6S-w4W9; Sun, 31 Aug 2025 10:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756637402; bh=0QQ3TbSlRXbP0x7nwCFn1ZEAWBcDKBLpsPtGx1W0vLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQAMXCC5OzyqAOcheEExmQQLF1pH52QApdXtLLzj4OKJ6tBuRR+B9Oham7DjBLN5Z
-	 T6wPR9J2OvK++dvKdSkKOdqwJ5OUBT8IEAm+acqVb1imYwJilAZ4HYxPcFfTiVVctB
-	 4dijEOq1t8oszW4XwAwpOsquVsm/fOXYG+AytqjuzYckkID7/dGn3keR/DOCFTw2wZ
-	 N4ym54Kx7F0fvyxi+klgY7le9EvV9bGalp9CVLoBKwIQyLcJtyrA5dsO+zDfM162CK
-	 FIednVJ4nJlHgaj1YTohtNOOj1MdLGnH0tcRaQ4xgZPVUFmt1AGbr1/oTsTjeICTfq
-	 /RpAvZmxDFAgACYXHvZSqmblG3HGLRoo0VP4TbxRgpQu27REcfi9ZHC2paLncvurv4
-	 Oy/GX7EcMu2XSIAuZG+4HpJ+49LHZBbETphZ3WyuxIZlDoRhAtyU5Fi5c5+X7/wSPr
-	 PTTUyROSsa65vEKiFNJ/qr4M980guXeRzIkp+OqonLt3auL/K8l9QAukVeAMJibAik
-	 h13Jx4O9qbaUrvFZ4K3QUV91RshQvYb2K2gGv/ySov1mgTf5p0sv3GCvL0ivw2qceE
-	 iUrQgkDV2pOzdt875U2kwoM+k0GqS/f2EIXD5ohtQkcXo8Yo5mfp89N13zOzttSTZS
-	 mpKgXqXS3GxtaFTfVeD4O0Z4=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 9686B40E0192;
-	Sun, 31 Aug 2025 10:49:51 +0000 (UTC)
-Date: Sun, 31 Aug 2025 12:49:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
- out of startup code
-Message-ID: <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-29-ardb+git@google.com>
+	s=arc-20240116; t=1756637443; c=relaxed/simple;
+	bh=8Ux488ZO3JpS0NhQiMHmXYrDdFjO370XPpgnu/QOm9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qf2yadhRHoqs2t4I/6cISNoB0Xb6eyowj25Il+uJj7Vr4rWBXHgfsmM6TUBtjEyeMJ5AC6OVPGaoa2fbrR4OH5+uPfcMJdEd3rGe5lD4K9VIoHcolvc2Hs7Xgrp9/Cv2+V8cQ0Gn39TId8KTHlvF67BuWWjHWq+V4Yx5MX/BJQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWobBYBH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D26CC4CEED;
+	Sun, 31 Aug 2025 10:50:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756637443;
+	bh=8Ux488ZO3JpS0NhQiMHmXYrDdFjO370XPpgnu/QOm9c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JWobBYBH3Lvd3v6TEhtVVVcGy2ANQyf64v4tYyp9cbgli3DWHrty/3gL4E0U+ItG7
+	 m8lLr+tmQ1w9B/wja9XnctVBIEhYXSfiI7+XU/cV299M2Y4Y3dLtbPhpodJJyrIvW0
+	 X4rBOiuI9j3McD5sS8iO67mvkXuZcDvWMuDbRI9gAKx//GrgrdT9KphTdQ/CupqEqt
+	 tKe/bR3cRpFPi+zwHYP59th+NbTnOq2AmqJA35pM0UzAS3kha+IM2tdsVkvcdV83Rt
+	 IMV2cManh22A7uCsHg5S+UN2/ad2dMe9wBGMnsQjFZpchya1uicxia1vALxxusJ5Vw
+	 96cPcz3UrAU1g==
+Message-ID: <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
+Date: Sun, 31 Aug 2025 12:50:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828102202.1849035-29-ardb+git@google.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
+ <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 12:22:08PM +0200, Ard Biesheuvel wrote:
-> diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup=
-/sev-shared.c
-> index 83c222a4f1fa..24cbeaf7ff4f 100644
-> --- a/arch/x86/boot/startup/sev-shared.c
-> +++ b/arch/x86/boot/startup/sev-shared.c
-> @@ -13,12 +13,9 @@
-> =20
->  #ifndef __BOOT_COMPRESSED
->  #define error(v)			pr_err(v)
-> -#define has_cpuflag(f)			boot_cpu_has(f)
+On 27/08/2025 14:42, Tudor Ambarus wrote:
+> +
+> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
+> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
+> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
+> +};
 
-In file included from arch/x86/boot/startup/sev-startup.c:106:
-arch/x86/boot/startup/sev-shared.c: In function =E2=80=98pvalidate_4k_pag=
-e=E2=80=99:
-arch/x86/boot/startup/sev-shared.c:661:26: error: implicit declaration of=
- function =E2=80=98has_cpuflag=E2=80=99 [-Wimplicit-function-declaration]
-  661 |         if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO=
-))
-      |                          ^~~~~~~~~~~
-make[3]: *** [scripts/Makefile.build:287: arch/x86/boot/startup/sev-start=
-up.o] Error 1
-make[2]: *** [scripts/Makefile.build:556: arch/x86/boot/startup] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/linux/Makefile:2011: .] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+I don't understand why clocks are defined in the firmware driver, not in
+the clock driver.
 
-We probably will have to use the CPUID MSR protocol thing here or so...
+This creates dependency of this patch on the clock patch, so basically
+there is no way I will take it in one cycle.
 
---=20
-Regards/Gruss,
-    Boris.
+> +
+>  /**
+>   * acpm_get_saved_rx() - get the response if it was already saved.
+>   * @achan:	ACPM channel info.
+> @@ -606,6 +636,7 @@ static void acpm_setup_ops(struct acpm_info *acpm)
+>  
+>  static int acpm_probe(struct platform_device *pdev)
+>  {
+> +	const struct acpm_clk_platform_data *acpm_clk_pdata;
+>  	const struct acpm_match_data *match_data;
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *shmem;
+> @@ -647,7 +678,30 @@ static int acpm_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, acpm);
+>  
+> -	return devm_of_platform_populate(dev);
+> +	acpm_clk_pdata = match_data->acpm_clk_pdata;
+> +	acpm->clk_pdev = platform_device_register_data(dev, "acpm-clocks",
+> +						       PLATFORM_DEVID_NONE,
+> +						       acpm_clk_pdata,
+> +						       sizeof(*acpm_clk_pdata));
+> +	if (IS_ERR(acpm->clk_pdev))
+> +		return dev_err_probe(dev, PTR_ERR(acpm->clk_pdev),
+> +				     "Failed to register ACPM clocks device.\n");
+> +
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret) {
+> +		platform_device_unregister(acpm->clk_pdev);
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I think this should stick to devm-interfaces everywhere, not mix them,
+to have exactly expected cleanup sequence. Now your remove() first
+unregisters and then de-populates, which is different order than it was
+done in probe(). Use devm-action handler for device unregistering.
+
+Best regards,
+Krzysztof
 
