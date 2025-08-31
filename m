@@ -1,117 +1,168 @@
-Return-Path: <linux-kernel+bounces-793443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85D0B3D371
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:56:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB36B3D373
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6183B97CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7AAF3BFCC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2EC8634C;
-	Sun, 31 Aug 2025 12:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YCsrnuh9"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E8C25EFB6;
+	Sun, 31 Aug 2025 12:56:33 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CBE257848
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 12:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1924745029;
+	Sun, 31 Aug 2025 12:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756644959; cv=none; b=A/P+oY6G4ARsv7XkKD7LCgkDxTQQUNQL1L88bbuZe8aF9UmgtNAS+ykUSku1bPFxlflpqZyksGxIhVPucut8ucBXHpSVNJu1rhkQnBZyb1hX25gPwlohdXfj3fwDhsQ9wxc5WKeGLeq+QLZTDFrhsRIhqlqnvXkar05clXiOs5Q=
+	t=1756644992; cv=none; b=JuhX1fK8iu7TuW/6AaJQymzKQFqY2sbiaq2640lw4SbvvnwAkvn21wCtcxIb83vL55g9JKToHscLlsbiJ7MNGK4w7AAXzfLzZpioPxVAHwJ/yFS5YbRkbT/+rk/4k+x13xOi71MMoGM2LA2GDQvL6PzqXo9IW7CR13zO9VoSdek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756644959; c=relaxed/simple;
-	bh=kQt5ZAHwLEoOMcqUxZJRYUW4ABPDrG3OFWpa0JEgif4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J8xAI2kXOg5Y54rEHTGCEHTSH2J5ZdG+3bjkET6EuJPzQXZNCj23x53Pznuhb7MhvYhLCyQoofYZS4mL/QIWiaeFiy7bYEh76SesccPR/7dZMRzeGhGx+xOYLGNLaEz9GdS48ILgFvk5zScklpAnnvl9ZLhRcK8j/WXdbdMcH9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YCsrnuh9; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55f7cd8ec2cso50164e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 05:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756644956; x=1757249756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vi/Fu/AVii1gBs16M7Z6P1XZ4bS6zvGwg2JRMC6pZNY=;
-        b=YCsrnuh9pTqZlfy7c6Qy849mQzW/frPpodxbRsBcEd8V7UwZDGrU1c1DB/fmXecX64
-         btpta39CQq6ODInJeoOQIMhPvQwH1VmATja1yIi55VyPcE/GT8nwAhzZ8HyRfsXLURgz
-         9LTMjdMMEQnF9G4CLOpx74MxoUhaHDkVr2FS67WDHMFnJYmJqbXaONugRWT1H946uSe2
-         j8X2c6TjWzWVBTXhBTIZLTiSCcMUTnR3Apsh89O+Se1t31fza6nADsBhX9Kl8L7P/r/W
-         NY6SYf7zqXKQ0Cs4/05rbQvJDiC3xjPkdRYX5nZJHbg4BKLHn1zqZx8qvGqXWMVYkuU2
-         NeOw==
+	s=arc-20240116; t=1756644992; c=relaxed/simple;
+	bh=PHb1PQ4tlF+ZkPoai1rMMZRI0SFk0v+RCWPE6rcN9G0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CdUcN5bOsbo5/cQ0PuGdCk3loamshnXqjGuEGDSc2VPi5SKD/w6DvBb0oj627jnlquVHmlY0WOWojJm3MsZet8sL0UlBVUUkrIqVg3lMgg28uKpvdR13zngWfw/5p2yEQY49D8aVpwV3lwGedSE80QsvvYz0pSnGva4Q8UrOP1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2489d5251f0so6563415ad.0;
+        Sun, 31 Aug 2025 05:56:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756644956; x=1757249756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vi/Fu/AVii1gBs16M7Z6P1XZ4bS6zvGwg2JRMC6pZNY=;
-        b=LC6/9ficjbFs8T2j29O1s9WhBjBK9+tKk2IfXLaKZPcDPxXxRJ+PtAjPpGvF/WeMRV
-         9d3vnfSrjnLMLI1ezVmy+xDxkb5/OzwJxpyImALVIH1wsFKBEgbiilznpqIqM2icf+N2
-         8Hm/zSeuA+eXM0tcceytRjUeI8AyCy+j+WhVEVhXQ5Bs6IhNu1j7AHV3FnSiMY0ndQXt
-         UWJOBKYG7L6EaKaXPoPauvvONbWFIls/E9ol9cToI/kh2WLGMGwEjvaEXMbFoRiORKIX
-         6xqv249tMz1Whi70axo11rVHUl/oVnHI0WBFGFevy1TDfP/vPvteFK21uGtM5gJ1m1aF
-         +0uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWV40ewWVtcVLUg7Z3bcn3mF1QJQOmqVU8YB5Whc5h0H28N2LpxuyM3m9V9uwSvFL2tfPXeJA06O/vRel4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLFA66RJIJ8ZBkVZlPA7arLxUfZM+F8RzTf2JgSZekW495erVq
-	nFgKFPFk1x3NB3BJ+xU4icHxGJTOCYko8PoFQH2TxpdkQvs9Q8w/bFJ31UcJVtgEbjwQogrQTlj
-	8fnEaZR4WkYAV8zak4Sn4XGH6k7dNPQnpjijT6BMRcQ==
-X-Gm-Gg: ASbGncsxOgYH4L48OXk8Zfn2vYddgL8rx2cxVDzvG/hhpO6TgfdGoIP86F8iTyS09D1
-	NHRPbbN+TH57vkly2wiv800UNgRBJoJFCPcbpW9lVlx+ZgBIIU/FRmxXNMiF4Pjf1kLiYOmdMUA
-	xGD/5c9TN0RwKG3PVbX0AQUamsx6LKSp8hLkzIfenYLq3TR1MzqHZDt0MzmYjmexoIUAlJ4Plp8
-	HaO7Fjr8yevJi20Dwe1pmyQB/Zr8gQnSL9MJXDur87jek4=
-X-Google-Smtp-Source: AGHT+IHniTXa5/4UjcWJoEBwBQbEyZw/BW9AAZMM7U+Hb9xB55u2uHi/PlTM610ZTLzfQpPenEMzKjZmWLh4kF49NLk=
-X-Received: by 2002:a05:6512:244b:b0:55f:3c07:958c with SMTP id
- 2adb3069b0e04-55f709240e4mr909229e87.37.1756644955560; Sun, 31 Aug 2025
- 05:55:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756644990; x=1757249790;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0VOnG7Zg4hyxcpABPfvTOTnGC7dLIkPViFyHOxvZPfQ=;
+        b=QmJ5Vl+HUJFXSh386Z+0jIuC8GqRR1IGTwltnr1Js/st7qDEzsKs0yKnhKfkIoDmVL
+         qo9FtTkbP7rHdEXevTNDw02dLmLtarbzW0f6IPbDCqn2CrBT8JaAXdyLX0Ujzhh6z6gf
+         Yx6E1up1OjaD8h0Wr3Q2RZmk2qeiJr8R1Wt5OcqXouhFvNFaSJJQKUb7IXvlqSDIuPcJ
+         2+YjKkNaqsffIhh+Ta+L4QYlTS4gJRXQdm1wdI66I8CXYOtsCHDA7YyQfruu9MglD9HC
+         ynABkoRvcBYsaqc1YwtyHiDaltNx5bZWd0UIDglSxsWSwc+84r/fg6ErbpSCbVplnb8d
+         /hkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2oHxTe1cPAq67Nu1m7Dhg8pGNOlVFhU7ojOvls9ibeVKTD4ZwpKY1nablZ8BYOaQS2W7RJ5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoTpR5rlPFfsZMxpqNEv5Nup4FFZDZbE+7VTEA91kLqVCUivwN
+	r2sGMw3mAtiWpvxMaE9T5Hj4h3E3vsMaEXcpQW6NbnwEc4bqFDwYvV50
+X-Gm-Gg: ASbGnctV0a3Elnw83Sy2fiPNepvkaUXiGt6t5RgmdLGoSLbEB5FJN2tSdG9i7bFXOK+
+	lKXl8RSlN+wzDJ460kVDDbf/7Q7qOxTNQW6pU3aCn31j10M0UfhOuK/OuU3A/KH4dpobsj7bL90
+	Sa82Sj6YkmahDve08Gurb4KgIuYtMLQuqpigoCU5F1RJP4pGpawRhWHD+WkbW9a+mqatIdOZ584
+	dgLybFwYlwyBYbjnQypRGePIh/SN4e23LgeR3nMbsoc1m+TLgWisZe/FPCUESpMpCAUJH3UmOUm
+	8CC6Hd8/uZJcGrEJA2Hb8E06s9bVfwT2CLWmfEc6QfnSRYelI+lNwLgTt7gvTS2yRes3uis7CGM
+	j3RMDj0bYzHuJrV7gSujnSWs2zcYgNRtQpEtVr6PZoTSFpPh7KX2U/LPNNxL4P7hlPZqX39Rckd
+	Dth7/MXkvUkZt8oKvsow==
+X-Google-Smtp-Source: AGHT+IGw3re/1F5YuH9z9F3XYz0qQLECMO0rpRpL5Fv1Vazq8EdEloFiVgW1aN1EQAGRnq6n+kwlVQ==
+X-Received: by 2002:a17:903:41cf:b0:248:b43a:3ff with SMTP id d9443c01a7336-2491f246be0mr43496895ad.8.1756644990252;
+        Sun, 31 Aug 2025 05:56:30 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1ca7sm7654095b3a.71.2025.08.31.05.56.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 05:56:29 -0700 (PDT)
+Message-ID: <1df5a745-902a-4a57-8abd-6b48cf54fc87@kzalloc.com>
+Date: Sun, 31 Aug 2025 21:56:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831030855.957707-1-alex.t.tran@gmail.com>
-In-Reply-To: <20250831030855.957707-1-alex.t.tran@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sun, 31 Aug 2025 14:55:44 +0200
-X-Gm-Features: Ac12FXyAQEHnGX5GrlT1HPWQ5rbSTaGU-1EY7XEDobHljDh5pDPBlDId2SDPZLg
-Message-ID: <CAMRc=Me5L4XtriaFSwcE9Vqri+6d+Rfn-4FzKUrN_VSOgfA_WA@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: codecs: tlv320dac33: switch to gpiod api
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	linus.walleij@linaro.org, shenghao-ding@ti.com, kevin-lu@ti.com, 
-	baojun.xu@ti.com, linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [net?] [nfc?] WARNING in nfc_rfkill_set_block
+To: Hillf Danton <hdanton@sina.com>,
+ syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, syzkaller-bugs@googlegroups.com
+References: <20250831095915.6269-1-hdanton@sina.com>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250831095915.6269-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 31, 2025 at 5:09=E2=80=AFAM Alex Tran <alex.t.tran@gmail.com> w=
-rote:
->
-> Changelog:
-> - Changed reset GPIO setup that uses 'gpio_request' and
->   'gpio_direction_output' to use 'devm_gpio_request_one' instead
->   for legacy support.
-> - Convert to gpio descriptor for use.
-> - Better error handling with 'gpiod_set_value'.
-> - Removed cleanup of reset gpio as gpiod api is now used.
->
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
+Oh, thank you Hillf, for your help!
 
-The fact that the call to gpio_request() is still there made me think
-immediately that the conversion is incomplete. I looked into why you
-didn't change that and noticed that the global GPIO number comes
-through platform data, specifically: struct tlv320dac33_platform_data.
-That platform data struct however is not used in the kernel -and even
-the header that defines it - sound/tlv320dac33-plat.h - is never
-included outside of the driver. Seems to me like the main obstacle to
-completing the conversion is not even used in mainline and can be
-dropped?
+On 8/31/25 6:59 PM, Hillf Danton wrote:
+>> Date: Sun, 31 Aug 2025 00:02:33 -0700
+>> syzbot has found a reproducer for the following issue on:
+>>
+>> HEAD commit:    c8bc81a52d5a Merge tag 'arm64-fixes' of git://git.kernel.o..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1508ce34580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11019a62580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1308ce34580000
+> 
+> Test Kim's patch.
+> 
+> #syz test
+> 
+> --- a/net/nfc/core.c
+> +++ b/net/nfc/core.c
+> @@ -1154,6 +1154,7 @@ EXPORT_SYMBOL(nfc_register_device);
+>  void nfc_unregister_device(struct nfc_dev *dev)
+>  {
+>  	int rc;
+> +	struct rfkill *rfk = NULL;
+>  
+>  	pr_debug("dev_name=%s\n", dev_name(&dev->dev));
+>  
+> @@ -1163,14 +1164,18 @@ void nfc_unregister_device(struct nfc_dev *dev)
+>  			 "was removed\n", dev_name(&dev->dev));
+>  
+>  	device_lock(&dev->dev);
+> +	dev->shutting_down = true;
+>  	if (dev->rfkill) {
+> -		rfkill_unregister(dev->rfkill);
+> -		rfkill_destroy(dev->rfkill);
+> +		rfk = dev->rfkill;
+>  		dev->rfkill = NULL;
+>  	}
+> -	dev->shutting_down = true;
+>  	device_unlock(&dev->dev);
+>  
+> +	if (rfk) {
+> +		rfkill_unregister(rfk);
+> +		rfkill_destroy(rfk);
+> +	}
+> +
+>  	if (dev->ops->check_presence) {
+>  		timer_delete_sync(&dev->check_pres_timer);
+>  		cancel_work_sync(&dev->check_pres_work);
+> --- x/net/bluetooth/hci_core.c
+> +++ y/net/bluetooth/hci_core.c
+> @@ -1476,8 +1476,14 @@ static void hci_cmd_timeout(struct work_
+>  	if (hdev->reset)
+>  		hdev->reset(hdev);
+>  
+> +	rcu_read_lock();
+> +	if (hci_dev_test_flag(hdev, HCI_CMD_DRAIN_WORKQUEUE)) {
+> +		rcu_read_unlock();
+> +		return;
+> +	}
+>  	atomic_set(&hdev->cmd_cnt, 1);
+>  	queue_work(hdev->workqueue, &hdev->cmd_work);
+> +	rcu_read_unlock();
+>  }
+>  
+>  /* HCI ncmd timer function */
+> --
 
-Bart
+Last time, as Krzysztof guided, I wanted to try fixing the bugs reported
+by syzbot, but since it was my first time following this process, I needed
+to look up the steps. Including the bug I’m seeing now, is there anything
+else I should do to address these issues?
+
+My plan was to look up the procedure and then revise the patch description
+before submitting a v2 patch.
+
+Thank you!
+
+Best regards,
+Yunseong Kim (金潤成)
+
 
