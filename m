@@ -1,80 +1,126 @@
-Return-Path: <linux-kernel+bounces-793217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5A3B3D09B
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:49:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818F1B3D0AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 04:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D7E17D228
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 01:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3C6200E3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 02:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D611DEFDD;
-	Sun, 31 Aug 2025 01:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A11F3BAE;
+	Sun, 31 Aug 2025 02:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SN5qq5iZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KfE9PX9V"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC9138FA3
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510541A9FBA;
+	Sun, 31 Aug 2025 02:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756604982; cv=none; b=EkcO75mHSAKFaI/oZ+TaPqNJhQzkhCI7Yt1lLblD6YLLdPmI0ms6+biZhcT+sl35+pqr8WSMMfYPPoHHKhJi2IW7A/Djk//lYfHUXDh5Fxz48gp8epGH2ApEDoJTYXVklKW2Rivkp2bkNuckXTN5uzmTWTNwuI0RbDNq7H1KsGk=
+	t=1756606292; cv=none; b=qwTLe43nKVjrYzoLG3ndn/EyKlwr1Ygtz8ejiHW5e1bVIEMBE4YAyqzXgz9NgT3dN8z5Gc83pWaZ3/uFkym4LiGJT20VNHcjW1cdgvKfAmc5V9ObFYPhpe8AnKz7zh/So6F5tnA1ld3K4kwZp6DTxA9xHm3STo4hkfAaBTA7ark=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756604982; c=relaxed/simple;
-	bh=VoenFyvbohpUvKigw6ID2nFxRK7fJ77AkbwwQZiefYc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=VpkwCSg3m0mx7WsiZB2pmRPWJs7ZtvP/ARu1Znn2PUpBOnLVEuiGBZvL8q8zII8x2g3pmzQVIxGVGFHmRhAJMM12hd0CE6wXK4FegiEsRX5nKQWPt96KL5RuGtpYFcs8t0uip8D6Wu/HI0DM0S9peklXn0Sg1BOjBJZuVP6ty/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SN5qq5iZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16588C4CEEB;
-	Sun, 31 Aug 2025 01:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756604981;
-	bh=VoenFyvbohpUvKigw6ID2nFxRK7fJ77AkbwwQZiefYc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SN5qq5iZGhL8d6JW+tDzB7sLsQgImyZlSEgfpbTAufAVhtcS9bkeRaOHsF3+N6WIb
-	 9r8hyd0HFAY0wagAa1iTzGvx06N4NMZgkf7gEMMgGxpQp8K8o4UkY1BlNEoDuathSN
-	 ufql9NV+PtwWjX5VDtdfAB2e1sWySzeB0p9emUKQ=
-Date: Sat, 30 Aug 2025 18:49:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, david@redhat.com,
- axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
- hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com
-Subject: Re: [PATCH 05/12] mm/oom_kill: add `const` to pointer parameter
-Message-Id: <20250830184940.5d83cdda762c849cf74d9dcc@linux-foundation.org>
-In-Reply-To: <CAKPOu+9MBokh6z2o8=GKwTeU61Ce8Pbs7zjTSxo9=d+vKCYZWw@mail.gmail.com>
-References: <20250829183159.2223948-1-max.kellermann@ionos.com>
-	<20250829183159.2223948-6-max.kellermann@ionos.com>
-	<aLIxs1cFhneGU5D9@fedora>
-	<CAKPOu+9MBokh6z2o8=GKwTeU61Ce8Pbs7zjTSxo9=d+vKCYZWw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756606292; c=relaxed/simple;
+	bh=lT1D+6RVackKmQK/ynbm7n03Zn+rICgr0ouGgLi8sLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H4lDfwa/OvX/hX9g6b0Qh+O4JeqVKZSo2UeZKfo6z+xxXt6FAQ9CVwNUG2CHRD7CUJd/01xXegvzbUa6sVwCRgyUiFLJg/CX2X5kgZuvc3vd4A31I5LJw2deq+0xZse5KC7F73gLnuYp0bgt8sDjOkVjNbelf0di/qx1eF1XY7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KfE9PX9V; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57V1dwuJ004381;
+	Sun, 31 Aug 2025 02:11:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=jenNYWLSDLUXcYzIwznB9VjpXxumLSXZxZIS2PYHnJ8=; b=
+	KfE9PX9VIVRXqSiWq/ou10mBr0BBkwKHWcCDAA4NczhTpQ6QvSgaHnuzxw7iZjCc
+	ApsA+eYEUEwsV7ppSDe3PL941X9C0C0rwaLPxhrbep/lwC8Hth3Gl0/5GX0BPqlO
+	mBDBKWHNnd7TMwUWqdVop1qM6v0KWtHLrvB1q+WzTrr2hAyV1uWC5MhrSUW5ImSI
+	HAUaj4407XIaoeeLA/sdYuCF4iwTXdWc8S2wou4IP/4bZZrgcWsjmd07ZECbdheB
+	Ut4soG3n2eh8oJHPWE7PAwaTnoWXR0jXfsNzC+Fu0dJ53EGl5NhtPKOdyCDuV2pu
+	CxR7aXiWNoJ/P77j2ewoUQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usm9gmnh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 31 Aug 2025 02:11:22 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57UMNDqb026849;
+	Sun, 31 Aug 2025 02:11:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01kaagy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 31 Aug 2025 02:11:20 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57V2BKgp033747;
+	Sun, 31 Aug 2025 02:11:20 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48v01kaagp-1;
+	Sun, 31 Aug 2025 02:11:20 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: james.smart@broadcom.com, dick.kennedy@broadcom.com,
+        James.Bottomley@HansenPartnership.com, justintee8345@gmail.com,
+        John Evans <evans1210144@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: lpfc: Fix buffer free/clear order in deferred receive path
+Date: Sat, 30 Aug 2025 22:11:13 -0400
+Message-ID: <175660626140.2289384.9790485479491589467.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250828044008.743-1-evans1210144@gmail.com>
+References: <20250828044008.743-1-evans1210144@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-31_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=716 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508310022
+X-Proofpoint-GUID: kksu-CDHoeIJydm-9tgaWO-9mLPc2Y7v
+X-Authority-Analysis: v=2.4 cv=I7xlRMgg c=1 sm=1 tr=0 ts=68b3af4a cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=XQke2KudmeUMm3TyhKgA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfXxQFGkin0Z7x+
+ 5EWKgU2aEyLBj4SegSBVUr4u2FpNHYEzKwdzOixpKdb+LZMvTnzZxwNPmTYuPRlVLWkcF52IYT+
+ xizfDnIIaWNKlys9D2ixhbx7RXiTj+I/FjbGsDfOWDaO6KW8XXZm/o28nqCQfLzBGrnhHNMSvfK
+ OJ0dTSmDPtwmfY6QfgXDoWygqtfpTi8yCmvxHc2vVfuxl4ltHtTAuEczOwSzjotGxck0/hIcsxd
+ Ypn03MTGuPNh8ehuwxyW25/vjkeQ8uJjv9NV57wVDoGVMb9nln8APucJ2MK1P3R+T2oTWbIYPOi
+ WyhU77doTZdDlO9Ur6WqjZBSYwtOV2WqYtoD/QIUV+Ogy4hAcRXUwtYoOeFImxF6lKmMSh5+qRz
+ 2/Z6eX3X
+X-Proofpoint-ORIG-GUID: kksu-CDHoeIJydm-9tgaWO-9mLPc2Y7v
 
-On Sat, 30 Aug 2025 08:26:07 +0200 Max Kellermann <max.kellermann@ionos.com> wrote:
+On Thu, 28 Aug 2025 12:40:08 +0800, John Evans wrote:
 
-> On Sat, Aug 30, 2025 at 1:03 AM Vishal Moola (Oracle)
-> <vishal.moola@gmail.com> wrote:
-> > > -extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
-> > > +extern bool process_shares_mm(struct task_struct *p, const struct mm_struct *mm);
-> >
-> > Nowadays we're dropping the extern keyword.
+> Fix a use-after-free window by correcting the buffer release sequence in
+> the deferred receive path. The code freed the RQ buffer first and only
+> then cleared the context pointer under the lock. Concurrent paths
+> (e.g., ABTS and the repost path) also inspect and release the same
+> pointer under the lock, so the old order could lead to double-free/UAF.
 > 
-> I can do that - is it acceptable to do that in the same patch?
+> Note that the repost path already uses the correct pattern: detach the
+> pointer under the lock, then free it after dropping the lock. The deferred
+> path should do the same.
+> 
+> [...]
 
-The culture is "ooh ooh ooh, you can't do two things in the same
-patch".  My culture is well, gee, it's simple and obvious and makes the
-kernel better, so I think we can handle it.
+Applied to 6.17/scsi-fixes, thanks!
 
+[1/1] scsi: lpfc: Fix buffer free/clear order in deferred receive path
+      https://git.kernel.org/mkp/scsi/c/9dba9a45c348
+
+-- 
+Martin K. Petersen
 
