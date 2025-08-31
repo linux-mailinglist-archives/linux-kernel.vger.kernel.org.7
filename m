@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-793295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5A8B3D1A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:39:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EE9B3D1A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A271793C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67B7188560B
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805EB253B66;
-	Sun, 31 Aug 2025 09:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C492550BA;
+	Sun, 31 Aug 2025 09:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="YtAFVxvl"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aZjMj7uY"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73663219E8C
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8235521B9C1
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756633180; cv=none; b=ggyEfJrexmznEW45ZIbx52IM7opisnzL6CaV179NdaSeFfG9npySdpVQU2rzvdseNOXU9JsIfFsPuSclSmyFX2jB2+4E1oMJD6vBWAIq+yc6gzAYRw3QGO22LRAv2LoC6LXAw+mCBC8WrxDiWp702DhVPCtx7RCwoRLPnk8RtfQ=
+	t=1756633181; cv=none; b=elThkWPWUbH1xYLrBSFr8HkwJ4m5gyX52l+pJWTU+EZ2xOIsTtvYALNDIjVe1tRRbVmeJZc0nHX4EkSuexwZjIFK2kOoKv7VZojvgHjRKUmxXRs2EGHxQFeDIxDMpN76ddxCgTLDF+060f1Q/Z/P+bice91QrejCj/JqbCUZwL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756633180; c=relaxed/simple;
-	bh=JD+RzaExQ6OG9EIN0zTya2+8ASA7RgRp6zJS9nX4PAw=;
+	s=arc-20240116; t=1756633181; c=relaxed/simple;
+	bh=e8jN8iSCUrThrccW1BHJJcYct0sngJONN8P17gEsOTE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZPUGx2sXLS1tQe2BIs66lTvDcc/IhM6a6/wLf+8NWLejrxmUJqMafnrtm6tUYfTFLjweWkqita+sYnW2CRvYW2PWGd02hG9sgjfMwaCPbIdHWhf7HyIylmoBv1TxJ+aCNILM9cMm6py+j0jF8sgHDF8irH2Q70BYZr05WP/j+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=YtAFVxvl; arc=none smtp.client-ip=209.85.218.53
+	 MIME-Version; b=qJuEq/pIOymZwx1DSZ+NAPbtLaq2G3LauRxrcMOJHciphnVi2DGPjY0+r3mEVDPu3dYlqFbn4daH8sqgMGFuf2n0s1rP4qC26teR3ZPRpC2ZkEJ7rV1W//6CMMAtTjAChf0xITEJRDOStpxR4x1PMK5iqoEbWF4PiHG4aeAF2Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aZjMj7uY; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0428b537e5so5128066b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:39:38 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afee6037847so520752266b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756633177; x=1757237977; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1756633178; x=1757237978; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yZGxnQhsC2P8euySzPswvqJrcJH4ogAsIfO9DHwigow=;
-        b=YtAFVxvlDNxxxdhA3P9Po5SL6/ooINWn8u6ZhbH8iftLjRIPgg/JcQxjotLQqWpz16
-         hHAHp8nNkiU7EBXN0sMPekjZ0Guwud8rCDhMfdW1L73Oyzu2mRqbSPlbKN7IzsgkBtua
-         OLvKNFdbAWLujLis2Hk5mQsrs3uVo/9xi4eYEI6oEJVSoPtcWa+CXQmbs2xQTfu4u1g2
-         mttR3lYTqFfP8EMQFzgTrHK1P/+9H5pSZ74P2E1xOqpqikRR+17rio5Qj2ikHm3kqblo
-         ZL7ASMxDUMifNhi61+fWTlnSPXK0DcXG0sF3mpOorftZ8PNZNafGm10REu+GQHzIblfj
-         wzMw==
+        bh=fS4wJfZ2pDhZvPbiW+R+SY5FbZtgMq1SfXnP2mUytfo=;
+        b=aZjMj7uYK4i5eIeDVOc6wxLYcaZiSGRUgcdsZPFIx6BZyAkyzBpBsnCgWH2rf+cL44
+         IWhpsHBDOWofCnqNaF07B9fyrEOjI3gXHoULl1PWfw9UvA6HALIZnC9fBJljiaWU7PGZ
+         sKR1Laat5grkqv3Fv7R41EZL42NjPnUFN3eI1S5tw2zI04Tf2igifBhZnXBXCtdBYq8c
+         +G8jqjHbb55ePJgkIvoQPjnzzmV6yCacAY3AG97r5YiSBigJdttqcpjV/olbXZ+dbWk0
+         CMGEQteTmO4+8RcjvGOFPy+oRKYSFcEJlmxVIUt2fW8tqUbfOim26OIxrfGHBit4b2rJ
+         JFFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756633177; x=1757237977;
+        d=1e100.net; s=20230601; t=1756633178; x=1757237978;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yZGxnQhsC2P8euySzPswvqJrcJH4ogAsIfO9DHwigow=;
-        b=pMpxb0wNhcmtqE685D60opSSNsv+Mu7pkuDxsSUqleMddhs1jRlYIXVfCpic/f2nNj
-         C+WCW/7aaMSfu6q2HVIDO0OS/gmF3RqVy0EewKykkuCZvduTjMZBolDK+jFYDvuIT9My
-         Leu68C9HnHFv+VLLRlny+KRpknnCtVKFJ93m3j6SloQeNz35fH+zFSBkFXIhVIvuBTm7
-         UAj4FQXVwmPnFNgpjHlNQAPsDEn5SljXRGOx54dGa1bdmPSi9bFHBUZ1/I3nzOr4koa4
-         jj2M/yKnrW4pIVpoxoNpG/Xq+bXLuptPSZhk7Vx21UV/f5oDMf7kOLr9IJv65NIfURwD
-         KPjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCgJzgxanG6ZBZ9fNzVueo+hamyVBYZVqGhntFZWxY998k1HlrR/NrQTDm3hoof1l8qN4Hh4SFVuqoito=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuWRmo+ZY792g5Kj2o2rXRzupnqYOf90O2Ksa7aCPRLX4Kn+Qy
-	mUOdfnNsHbzss5TLFlk4JJJWeEPxXHMNRk3pYfkBxKFT37YyfIj4oHeRW3ZgF3F/jss=
-X-Gm-Gg: ASbGncv3q3DG6SzMC/CQscc79kjeej+o9d48PdSdwyafcwf2soY8JE9Ta/zSvlW0EmN
-	452oUVHjbqSGLJ3Bmu8SrpqTwQfKgMiQRy22urwbfoc01qz7UqCGy6AwTDURzIlBv+fKJw9A2HG
-	6o+Kr+D07k9XNhu3n32icb3KCyf5FG5+l8I2ewdl2lY/pWsHCsmY5z6saEBvrPKjKZV+iabke0o
-	8Sl0Egnh98nl1DtQe+zO97x+VkmGy4xD6heodIZgWtT7Yp5szSmkAF/jRc+UUEBcHBQKtWMOHHP
-	FF7eT1V40Xw6az2nFfZDitrpslYl77jpY2simVMs5LPVeCb17P5Wtps+IZhiiLhi0Xz/wHnKy/3
-	XHZbQoXg+GiXU3LtsDCdWWzSWBQy8dqvaFr6ZD+pzshKMGRSsOo2Wbrl+KbX1qoCvPk+7487PgQ
-	0gTOQKA41uhGOot/83Ih2+3rxO92/OQU5G
-X-Google-Smtp-Source: AGHT+IHsLsYix0uo6uMedopX+OAnJsP45C6YTimEtUIUmbOP23yVgqxQq1YfVopQwWMRzI83RCvrdg==
-X-Received: by 2002:a17:907:80c:b0:af9:a5f8:2f0c with SMTP id a640c23a62f3a-b01d8c9275bmr395699766b.28.1756633176716;
-        Sun, 31 Aug 2025 02:39:36 -0700 (PDT)
+        bh=fS4wJfZ2pDhZvPbiW+R+SY5FbZtgMq1SfXnP2mUytfo=;
+        b=c0eM9LZAbcfX6q/AMXcsG/Q9IkpchzPdmcYcpvr0T1c9M1ttKbZFPfItsMjnCbVF10
+         8zAityAmrcf+2SC5GROXLu66DfQ9Rq7PBZ9ctGm2v8xkypstCDpEd7dkxpvEvJddCtxk
+         RhpnTO1VMuhGv1Qg9BDoUdpPIVPqX+phsXHsK6ttOdn3al4YJshvGe1Pd+oUFFX8wh8N
+         1OQ8DQM8gXNFS/+TFOmEdfEf6+Ym+Yzfa277vWk+ExCaP3o/3K8FBNY8/HJ2b3MdxW7h
+         kdQDesvVxdQmfI7xIsZuo3iRcEcEeh3Iw67PvcYK6hFzV6jb6N+TGP9Y5K2Y0CST8/hc
+         ZYIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtp3I9VB9fHLe3yrGPi1V+T+b3SdFf7qN40vl2FASr3YIMQpf6f6fI2E/uSE6lF0Mai8WyMQSv3/GU+k8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyArZbWJkzVCIUglLl0vTszfMtjoqXkbiM3kYzGNiHDCA/plbl7
+	kjrbSAyJb1107xQ1MlrJWf93G3v27oglvYUU+oURSWykz/gxgYthgE05PCA4zFyXbWI=
+X-Gm-Gg: ASbGncvOPZtFUUtC6Igt3h2oAAZwR/e5X8yn/bwiDBh8ws6NwdwO7YmLDMpWrskvdyz
+	svzM2Sb4FQeGMmeccprLb3+6AT5bpKdhxmyNVc6cFEH/DuUzvgYqQ6/0SccLCL6NtlCZPqUFlsB
+	hNoDHJBpL3AWljBNNN27Emx5fAXYJ0dCISi4yYrlKvblrjU4k6wZqZCiKIIam7GGT51273JEpaj
+	ymYvOoxuQGvWbTMpPN2z9CaHAhUiB0n0GX0LshYi3VW/Ye7SvLSPS6LeaSVQTa7XoE7laXoU40/
+	RCt23xmLa3006hVvq+sNf7UNlJy8smJk0ZwsdEFtks9yz81NMq2/U6+VpiGaz6kysMkR3om60qp
+	rNuB9csa6poHykVwSw6/man8UhM+mKVwTepPiBgyBACf+UTtQNssCMQ7q/IhWuCVbjkqpiJkANJ
+	vKIBnsllIjxPatOgPSwISLQA==
+X-Google-Smtp-Source: AGHT+IFl6wqzfG0vHDTUkL/FnbDFFEhWrqTy9LAAxJMUtnBrhQMoPbd3VxGPn58hYgmzlZMy0V4cTg==
+X-Received: by 2002:a17:907:3f9e:b0:b04:299d:53ab with SMTP id a640c23a62f3a-b04299d590cmr3529566b.37.1756633177663;
+        Sun, 31 Aug 2025 02:39:37 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd8656sm597512566b.56.2025.08.31.02.39.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd8656sm597512566b.56.2025.08.31.02.39.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 02:39:36 -0700 (PDT)
+        Sun, 31 Aug 2025 02:39:37 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -90,9 +90,9 @@ To: akpm@linux-foundation.org,
 	surenb@google.com,
 	vishal.moola@gmail.com
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer parameters
-Date: Sun, 31 Aug 2025 11:39:07 +0200
-Message-ID: <20250831093918.2815332-2-max.kellermann@ionos.com>
+Subject: [PATCH v2 02/12] include/pagemap.h: add `const` to lots of pointer parameters
+Date: Sun, 31 Aug 2025 11:39:08 +0200
+Message-ID: <20250831093918.2815332-3-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250831093918.2815332-1-max.kellermann@ionos.com>
 References: <20250831093918.2815332-1-max.kellermann@ionos.com>
@@ -109,72 +109,238 @@ For improved const-correctness.
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- include/linux/mm.h       | 8 ++++----
- include/linux/shmem_fs.h | 4 ++--
- mm/shmem.c               | 6 +++---
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ include/linux/pagemap.h | 57 +++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 00c8a54127d3..a40a3c42c904 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -979,11 +979,11 @@ static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
-  * The vma_is_shmem is not inline because it is used only by slow
-  * paths in userfault.
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index c9ba69e02e3e..d1244e7dcf0e 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -140,7 +140,7 @@ static inline int inode_drain_writes(struct inode *inode)
+ 	return filemap_write_and_wait(inode->i_mapping);
+ }
+ 
+-static inline bool mapping_empty(struct address_space *mapping)
++static inline bool mapping_empty(const struct address_space *const mapping)
+ {
+ 	return xa_empty(&mapping->i_pages);
+ }
+@@ -166,7 +166,7 @@ static inline bool mapping_empty(struct address_space *mapping)
+  * refcount and the referenced bit, which will be elevated or set in
+  * the process of adding new cache pages to an inode.
   */
--bool vma_is_shmem(struct vm_area_struct *vma);
--bool vma_is_anon_shmem(struct vm_area_struct *vma);
-+bool vma_is_shmem(const struct vm_area_struct *vma);
-+bool vma_is_anon_shmem(const struct vm_area_struct *vma);
- #else
--static inline bool vma_is_shmem(struct vm_area_struct *vma) { return false; }
--static inline bool vma_is_anon_shmem(struct vm_area_struct *vma) { return false; }
-+static inline bool vma_is_shmem(const struct vm_area_struct *vma) { return false; }
-+static inline bool vma_is_anon_shmem(const struct vm_area_struct *vma) { return false; }
- #endif
- 
- int vma_is_stack_for_current(struct vm_area_struct *vma);
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 6d0f9c599ff7..0e47465ef0fd 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -99,9 +99,9 @@ extern unsigned long shmem_get_unmapped_area(struct file *, unsigned long addr,
- 		unsigned long len, unsigned long pgoff, unsigned long flags);
- extern int shmem_lock(struct file *file, int lock, struct ucounts *ucounts);
- #ifdef CONFIG_SHMEM
--bool shmem_mapping(struct address_space *mapping);
-+bool shmem_mapping(const struct address_space *mapping);
- #else
--static inline bool shmem_mapping(struct address_space *mapping)
-+static inline bool shmem_mapping(const struct address_space *mapping)
+-static inline bool mapping_shrinkable(struct address_space *mapping)
++static inline bool mapping_shrinkable(const struct address_space *const mapping)
  {
- 	return false;
- }
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 13cc51df3893..2f765bbc20bc 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -275,18 +275,18 @@ static const struct vm_operations_struct shmem_vm_ops;
- static const struct vm_operations_struct shmem_anon_vm_ops;
- static struct file_system_type shmem_fs_type;
+ 	void *head;
  
--bool shmem_mapping(struct address_space *mapping)
-+bool shmem_mapping(const struct address_space *const mapping)
- {
- 	return mapping->a_ops == &shmem_aops;
- }
- EXPORT_SYMBOL_GPL(shmem_mapping);
- 
--bool vma_is_anon_shmem(struct vm_area_struct *vma)
-+bool vma_is_anon_shmem(const struct vm_area_struct *const vma)
- {
- 	return vma->vm_ops == &shmem_anon_vm_ops;
+@@ -265,7 +265,7 @@ static inline void mapping_clear_unevictable(struct address_space *mapping)
+ 	clear_bit(AS_UNEVICTABLE, &mapping->flags);
  }
  
--bool vma_is_shmem(struct vm_area_struct *vma)
-+bool vma_is_shmem(const struct vm_area_struct *const vma)
+-static inline bool mapping_unevictable(struct address_space *mapping)
++static inline bool mapping_unevictable(const struct address_space *const mapping)
  {
- 	return vma_is_anon_shmem(vma) || vma->vm_ops == &shmem_vm_ops;
+ 	return mapping && test_bit(AS_UNEVICTABLE, &mapping->flags);
+ }
+@@ -275,7 +275,7 @@ static inline void mapping_set_exiting(struct address_space *mapping)
+ 	set_bit(AS_EXITING, &mapping->flags);
+ }
+ 
+-static inline int mapping_exiting(struct address_space *mapping)
++static inline int mapping_exiting(const struct address_space *const mapping)
+ {
+ 	return test_bit(AS_EXITING, &mapping->flags);
+ }
+@@ -285,7 +285,7 @@ static inline void mapping_set_no_writeback_tags(struct address_space *mapping)
+ 	set_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+ }
+ 
+-static inline int mapping_use_writeback_tags(struct address_space *mapping)
++static inline int mapping_use_writeback_tags(const struct address_space *const mapping)
+ {
+ 	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+ }
+@@ -331,7 +331,7 @@ static inline void mapping_set_inaccessible(struct address_space *mapping)
+ 	set_bit(AS_INACCESSIBLE, &mapping->flags);
+ }
+ 
+-static inline bool mapping_inaccessible(struct address_space *mapping)
++static inline bool mapping_inaccessible(const struct address_space *const mapping)
+ {
+ 	return test_bit(AS_INACCESSIBLE, &mapping->flags);
+ }
+@@ -341,18 +341,18 @@ static inline void mapping_set_writeback_may_deadlock_on_reclaim(struct address_
+ 	set_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+ }
+ 
+-static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_space *mapping)
++static inline bool mapping_writeback_may_deadlock_on_reclaim(const struct address_space *const mapping)
+ {
+ 	return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+ }
+ 
+-static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
++static inline gfp_t mapping_gfp_mask(const struct address_space *const mapping)
+ {
+ 	return mapping->gfp_mask;
+ }
+ 
+ /* Restricts the given gfp_mask to what the mapping allows. */
+-static inline gfp_t mapping_gfp_constraint(struct address_space *mapping,
++static inline gfp_t mapping_gfp_constraint(const struct address_space *mapping,
+ 		gfp_t gfp_mask)
+ {
+ 	return mapping_gfp_mask(mapping) & gfp_mask;
+@@ -475,13 +475,13 @@ mapping_min_folio_order(const struct address_space *mapping)
+ }
+ 
+ static inline unsigned long
+-mapping_min_folio_nrpages(struct address_space *mapping)
++mapping_min_folio_nrpages(const struct address_space *const mapping)
+ {
+ 	return 1UL << mapping_min_folio_order(mapping);
+ }
+ 
+ static inline unsigned long
+-mapping_min_folio_nrbytes(struct address_space *mapping)
++mapping_min_folio_nrbytes(const struct address_space *const mapping)
+ {
+ 	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
+ }
+@@ -495,7 +495,7 @@ mapping_min_folio_nrbytes(struct address_space *mapping)
+  * new folio to the page cache and need to know what index to give it,
+  * call this function.
+  */
+-static inline pgoff_t mapping_align_index(struct address_space *mapping,
++static inline pgoff_t mapping_align_index(const struct address_space *const mapping,
+ 					  pgoff_t index)
+ {
+ 	return round_down(index, mapping_min_folio_nrpages(mapping));
+@@ -505,7 +505,7 @@ static inline pgoff_t mapping_align_index(struct address_space *mapping,
+  * Large folio support currently depends on THP.  These dependencies are
+  * being worked on but are not yet fixed.
+  */
+-static inline bool mapping_large_folio_support(struct address_space *mapping)
++static inline bool mapping_large_folio_support(const struct address_space *mapping)
+ {
+ 	/* AS_FOLIO_ORDER is only reasonable for pagecache folios */
+ 	VM_WARN_ONCE((unsigned long)mapping & FOLIO_MAPPING_ANON,
+@@ -520,7 +520,7 @@ static inline size_t mapping_max_folio_size(const struct address_space *mapping)
+ 	return PAGE_SIZE << mapping_max_folio_order(mapping);
+ }
+ 
+-static inline int filemap_nr_thps(struct address_space *mapping)
++static inline int filemap_nr_thps(const struct address_space *const mapping)
+ {
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+ 	return atomic_read(&mapping->nr_thps);
+@@ -934,7 +934,7 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
+  *
+  * Return: The index of the folio which follows this folio in the file.
+  */
+-static inline pgoff_t folio_next_index(struct folio *folio)
++static inline pgoff_t folio_next_index(const struct folio *const folio)
+ {
+ 	return folio->index + folio_nr_pages(folio);
+ }
+@@ -963,7 +963,7 @@ static inline struct page *folio_file_page(struct folio *folio, pgoff_t index)
+  * e.g., shmem did not move this folio to the swap cache.
+  * Return: true or false.
+  */
+-static inline bool folio_contains(struct folio *folio, pgoff_t index)
++static inline bool folio_contains(const struct folio *const folio, pgoff_t index)
+ {
+ 	VM_WARN_ON_ONCE_FOLIO(folio_test_swapcache(folio), folio);
+ 	return index - folio->index < folio_nr_pages(folio);
+@@ -1040,13 +1040,13 @@ static inline loff_t page_offset(struct page *page)
+ /*
+  * Get the offset in PAGE_SIZE (even for hugetlb folios).
+  */
+-static inline pgoff_t folio_pgoff(struct folio *folio)
++static inline pgoff_t folio_pgoff(const struct folio *const folio)
+ {
+ 	return folio->index;
+ }
+ 
+-static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
+-					unsigned long address)
++static inline pgoff_t linear_page_index(const struct vm_area_struct *const vma,
++					const unsigned long address)
+ {
+ 	pgoff_t pgoff;
+ 	pgoff = (address - vma->vm_start) >> PAGE_SHIFT;
+@@ -1466,7 +1466,7 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+  * readahead_pos - The byte offset into the file of this readahead request.
+  * @rac: The readahead request.
+  */
+-static inline loff_t readahead_pos(struct readahead_control *rac)
++static inline loff_t readahead_pos(const struct readahead_control *const rac)
+ {
+ 	return (loff_t)rac->_index * PAGE_SIZE;
+ }
+@@ -1475,7 +1475,7 @@ static inline loff_t readahead_pos(struct readahead_control *rac)
+  * readahead_length - The number of bytes in this readahead request.
+  * @rac: The readahead request.
+  */
+-static inline size_t readahead_length(struct readahead_control *rac)
++static inline size_t readahead_length(const struct readahead_control *const rac)
+ {
+ 	return rac->_nr_pages * PAGE_SIZE;
+ }
+@@ -1484,7 +1484,7 @@ static inline size_t readahead_length(struct readahead_control *rac)
+  * readahead_index - The index of the first page in this readahead request.
+  * @rac: The readahead request.
+  */
+-static inline pgoff_t readahead_index(struct readahead_control *rac)
++static inline pgoff_t readahead_index(const struct readahead_control *const rac)
+ {
+ 	return rac->_index;
+ }
+@@ -1493,7 +1493,7 @@ static inline pgoff_t readahead_index(struct readahead_control *rac)
+  * readahead_count - The number of pages in this readahead request.
+  * @rac: The readahead request.
+  */
+-static inline unsigned int readahead_count(struct readahead_control *rac)
++static inline unsigned int readahead_count(const struct readahead_control *const rac)
+ {
+ 	return rac->_nr_pages;
+ }
+@@ -1502,12 +1502,12 @@ static inline unsigned int readahead_count(struct readahead_control *rac)
+  * readahead_batch_length - The number of bytes in the current batch.
+  * @rac: The readahead request.
+  */
+-static inline size_t readahead_batch_length(struct readahead_control *rac)
++static inline size_t readahead_batch_length(const struct readahead_control *const rac)
+ {
+ 	return rac->_batch_count * PAGE_SIZE;
+ }
+ 
+-static inline unsigned long dir_pages(struct inode *inode)
++static inline unsigned long dir_pages(const struct inode *const inode)
+ {
+ 	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
+ 			       PAGE_SHIFT;
+@@ -1521,8 +1521,8 @@ static inline unsigned long dir_pages(struct inode *inode)
+  * Return: the number of bytes in the folio up to EOF,
+  * or -EFAULT if the folio was truncated.
+  */
+-static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
+-					      struct inode *inode)
++static inline ssize_t folio_mkwrite_check_truncate(const struct folio *const folio,
++						   const struct inode *const inode)
+ {
+ 	loff_t size = i_size_read(inode);
+ 	pgoff_t index = size >> PAGE_SHIFT;
+@@ -1553,7 +1553,8 @@ static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
+  * Return: The number of filesystem blocks covered by this folio.
+  */
+ static inline
+-unsigned int i_blocks_per_folio(struct inode *inode, struct folio *folio)
++unsigned int i_blocks_per_folio(const struct inode *const inode,
++				const struct folio *const folio)
+ {
+ 	return folio_size(folio) >> inode->i_blkbits;
  }
 -- 
 2.47.2
