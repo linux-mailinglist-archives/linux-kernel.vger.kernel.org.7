@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-793508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA71B3D476
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0248B3D478
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88AF189AF93
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34543B5D89
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94483270552;
-	Sun, 31 Aug 2025 16:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4576B27057D;
+	Sun, 31 Aug 2025 16:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmd8d66u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uw5m7J7P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E238E2701D8;
-	Sun, 31 Aug 2025 16:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1C417AE11;
+	Sun, 31 Aug 2025 16:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756658968; cv=none; b=nxpwphirKIp84ZCH5Ium77lteGXU0ThwoieQc7urdm21uGowrwLbHUTgMdLn2SPJ/FEisluZk7d6B7OzT1e8M+g5XJDgaZoOEDsRT6zK3DbQX28fInTGqUbcdQEilPCa9wHCkwKegn3qqQyNh3cqnQYBBlY9p3D5T3fjNHL/XpA=
+	t=1756659025; cv=none; b=uotO+ssMAyIabFiu6t6b8NdNsz+m5KIYE9prlKYMAwdlCbz9BtpDxpuIiLIJx4H/D+AHX6t0Z88TqbzNZIGXaSDkwzN2ZRFUzb1z/wy5HHDsoyB1zPefEoZsLXVGLx+QUJS5GGCZkyQBAnk4Fop3htacMIkaaze25vWYZDFIox0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756658968; c=relaxed/simple;
-	bh=fN75beyYd9fQZUDCcpXgfQXxHpdUy09txv7XCycftak=;
+	s=arc-20240116; t=1756659025; c=relaxed/simple;
+	bh=1JBGJTY8Gln5i2NeB3nnRcPuLFfMQZX1Tr837AkEHME=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LA/SecWBgt7p4MsAXp9tBR/xfPDXfDxqj/au4OxsNQwGElTjNXKC2c5GPDgH9LLlx++wvgadIgqUkaCDKG9tGT9SBxUE7+kiM1A+27X3eFDHjJJHdhwsrlwv978sw04GC70k/JMvFHZWW4Sd4Z2RM3otL7G8KJvaMW3W95cOPO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmd8d66u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96AB0C4CEED;
-	Sun, 31 Aug 2025 16:49:23 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bAW1dqhLBfnlxuAKsF7OkYTLwSkf+K6QMWcTdafvKyyNFryH2xxpkBiX89y6eInwSRlXyp1UGFzho4IilKld3sBYIJTjxkQ0zkyiWn3hNWoFzqkr84NwQNJXWN1aYD2GzOOgcgBoEloaCJoHAA9j+VgGNY/WqGHmnBtAVTTl1D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uw5m7J7P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F813C4CEED;
+	Sun, 31 Aug 2025 16:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756658967;
-	bh=fN75beyYd9fQZUDCcpXgfQXxHpdUy09txv7XCycftak=;
+	s=k20201202; t=1756659025;
+	bh=1JBGJTY8Gln5i2NeB3nnRcPuLFfMQZX1Tr837AkEHME=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pmd8d66ups72nzH0C6pVm3GZY93jIJ3i5M5MIaPeJXuU2hzwzZWOwEdUkUe8gq/vW
-	 dOklp0lvl0Dns3KNPdtpweyezbHQnyiEZWDX8g9tEO8FZ7UAArN3DteJxmajyNju39
-	 bURYTJPm3wwktRJszAR0+dSEJXReymmhXpbXyJKxfYPKmg4AsyZwKCTHwg/BOS0E+1
-	 QST5r1YNd/MbMY/WGIvbu83NWTTXXMypchd2qv3Ez4UShWLrfsQHBGrhyMkzEdk1rU
-	 1lXjof4pPhwgAIYG/bnm8KwbfbM45UOmR0kffTGeyFgYrsf5UAa95pf84R3B9R1m7r
-	 J8lpvy366pFQQ==
-Message-ID: <b460d65a-8bce-4f5d-892b-39e05fbcd0a2@kernel.org>
-Date: Sun, 31 Aug 2025 18:49:21 +0200
+	b=uw5m7J7PCXmqZJ7P269nZaGfBCyUmMQ4nUOPgg4SNI8k0kus0MALKAKYeXk1NiWNA
+	 mi2miH0OziiegPcz/PxYC3flWKt/Xiw0o+GCSAFtR1bSe5oQetwzwfq+QsQB6M8vqH
+	 HqMroWiE/MnYNcPq54s9gfaD5s0Zkq62gWAj5xNOP21h/2zJN3g+hPMNtCF8AhLG/j
+	 JhNfuHqptiJ12RjJvzzNuU4EQPBAh/2yb9u2LmgLnbBh4foVhiiQKiqhfN1h+LsTC/
+	 eYqw/RbqcrecviOnlFFmcc4EBFuibPjnblp5zQLfChfNixImecnoBuFkhPtl1KkBj4
+	 ifCeN2egRA60Q==
+Message-ID: <b27d71c3-80fc-48a4-9cf3-0aa08e2c4410@kernel.org>
+Date: Sun, 31 Aug 2025 18:50:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: 88pm886: Add #io-channel-cells
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
- <20250831-88pm886-gpadc-v2-1-759c1e14d95f@dujemihanovic.xyz>
+Subject: Re: [PATCH] ARM: dts: kirkwood: Fix sound DAI cells for OpenRD
+ clients
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, andrew@lunn.ch,
+ gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, robh@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, shuah@kernel.org
+References: <20250830203750.239890-1-jihed.chaibi.dev@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,17 +102,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250831-88pm886-gpadc-v2-1-759c1e14d95f@dujemihanovic.xyz>
+In-Reply-To: <20250830203750.239890-1-jihed.chaibi.dev@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 31/08/2025 12:33, Duje Mihanović wrote:
-> Add an #io-channel-cells property to the Marvell 88PM886 PMIC binding to
-> allow referencing the IO channels exposed by its GPADC.
+On 30/08/2025 22:37, Jihed Chaibi wrote:
+> A previous commit changed the '#sound-dai-cells' property for the
+> kirkwood audio controller from 1 to 0 in the kirkwood.dtsi file,
+> but did not update the corresponding 'sound-dai' property in the
+> kirkwood-openrd-client.dts file.
 > 
-> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+> This created a mismatch, causing a dtbs_check validation error where
+> the dts provides one cell (<&audio0 0>) while the .dtsi expects zero.
+> 
+> Remove the extraneous cell from the 'sound-dai' property to fix the
+> schema validation warning and align with the updated binding.
+> 
+> Fixes: e662e70fa419 ("arm: dts: kirkwood: fix error in #sound-dai-cells size")
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
