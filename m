@@ -1,205 +1,207 @@
-Return-Path: <linux-kernel+bounces-793251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46635B3D138
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C2FB3D15D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D16B7A7E47
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 07:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066A9189E160
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED9F2236E9;
-	Sun, 31 Aug 2025 07:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="nCgRHu8I"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010065.outbound.protection.outlook.com [52.101.69.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9410E20A5EA;
+	Sun, 31 Aug 2025 08:17:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0035961;
-	Sun, 31 Aug 2025 07:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756623875; cv=fail; b=SE8cR3XvnH/X4HHhFufGSzB9r5BUZpesp52H/osXPxCZk6NNh8B3Lyvr7hUtCwqHaVZV/lQjoGa41i7+9m32is42iq9U9ncdh5YHd2Aus2EVpouPjGQz3K0kdh6OnF+MmPOXI+PAk1Vw2S9AQTo/RH3AJ3bQ5jdXzQ12hwMMovM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756623875; c=relaxed/simple;
-	bh=9Y8fDn8GuMRNAy4UdfQfuSMJtgNDHhRc3FuFxAaT2UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cKyLEQzc4vOSAKiVreQXerEVp6vc99HXB22B7MKFZdWsEAcw/kFQzFsOXz0tr57gV4e4Ch2FGPydrixyLqbxvqx2qUvsFvxmO2P77wODf9o3V1rHi9URLw3FxRumELZXtDkAnajgRpAqqXxZgff0DhWKYqYxGiB+uiLzGx1PlnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=nCgRHu8I; arc=fail smtp.client-ip=52.101.69.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CwR3y5luUnapd+DBQYFkbzDLY7FRC58iKICwyhSKNikiGgmIaMQVocqcH0LcRgEuMICZalrTOq+5eQuBIN/xhdqlRkqBL7kMiXS9ME/AivnIITPngLBJwb/JvmMmbehyxZTvjFtgV6L0l/Qk+CKiSZ30uLgnnkgyidjkKoFw4RKAQiyCFn2VscquG7dZav7SHgva5BFf3lBBKX+vio1f5JTvTx8byHdFhrmP7+Cap5GwBaHi9qOflaP2cRKVyn5VyxRmeb9tbNRHK/fypW5qdhomIr/7eoU7SyYDVt2+YNi6mzZWco3lpVKZbmMfQb4/jtgHsOHD4dSkA9yOWsC9nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pjkLJtnxM98/AgFmjH7Sdk0bVMrTXdTPuwMI7aqdEIQ=;
- b=hg/wpj34Es1eR0PRsQyscS+RGqF5uj5XOqKr7hnVDmWdS0wZFFdaEcQbEN5Pbl1Qja2MeWduHIBEFFzSiShuahpSTC3m+Hg7msm6NJRV1u5OQBG4turoYYkGh0bZ4eV5/QrLO97dvk/gm4RPB70kMucbeP4Qy43l4elczHf+uP3sKzXVZDsOQMUKI5QpJXnmMXtBCSUZH2HoKaCaQTxg2eGlo6FkIPDfm8SIhoqwDyue6eHqA04jKaSpHJZ8KCY0h3ZFjVqOvSmAOy5VmVEBHLmG0bK5fLvLZkS4gHVnie86rONqnO3EXBPbaXnBNzILI05VQeEwik1A1SA8DpbMpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pjkLJtnxM98/AgFmjH7Sdk0bVMrTXdTPuwMI7aqdEIQ=;
- b=nCgRHu8IdjXuvrrCF0TKJ1tojX9SduXYDwrMsu/LX3VS38udP+Q8bnwqwKUg04VvfnAud2KAF20NCQ2JIFX9aYXFfwi2UW/WhOd9K4snpac2gFMiXjybLoJ/5HYccHGmNtYDRa7PPcrJ4592OPrpUPwzUxzzrJnfpfxnJ/Bm1j3cg2VpsEpTF8MxUIy3K/jEHKvnua9iy+o0/qmrurParbgo4S1uCUJk8vUdbiomRtI51Wwa+25+rPI9ogGM3gG3V+dzO6zHwX9Yw0CC/UaneKfuC5Xjap2FSqrlHS8yxBdaz/WHBANWYJXHcYFpZGez8WqrKL2fWvqakC8fR50bqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GV4PR04MB11355.eurprd04.prod.outlook.com (2603:10a6:150:296::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.14; Sun, 31 Aug
- 2025 07:04:28 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9094.011; Sun, 31 Aug 2025
- 07:04:28 +0000
-Date: Sun, 31 Aug 2025 16:15:41 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] firmware: arm_scmi: imx: Add documentation for
- MISC_BOARD_INFO
-Message-ID: <20250831081541.GA17728@nxa18884-linux.ap.freescale.net>
-References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
- <20250827-sm-misc-api-v1-v3-1-82c982c1815a@nxp.com>
- <20250829-handsome-fast-clam-a35afd@sudeepholla>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829-handsome-fast-clam-a35afd@sudeepholla>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI2PR02CA0012.apcprd02.prod.outlook.com
- (2603:1096:4:194::7) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689912AD25
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756628226; cv=none; b=ND7h8HRBcFZwrkaB3vGRoP+5qZGp3KX8caYw9ecwgSe6jP7nppHAvn+ZtNHPvIrNRy+6p5XkPj+663gvpLhX7LNJA4eCI6JYf9ca9VSkL9CmmbwrT7su9WTeOFwPNXSvYwq0ZUoT7Vb5ucQeX8wlsRzo1yz2sTBFGQyr7KjvGug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756628226; c=relaxed/simple;
+	bh=cy4UI5ctTcL0pk6ZEiETC1cfc+TtonnDgpbgk62PAew=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mkCUbNh+FpUg6gVTuBW76P6c/aZdy1tL6bUNLfwZejnV1qEwbTR/Bjs1w1xQdZrf2vj1VZpQ3EWgfievSCHYTLQja1BSExRMxyjj5SsJn26Miqx/4cXrKCvr1FPgXPhZ/2URTR5Y/Use1rNRBjaKoi2OD8/Ad8ENX5sItdRWKbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f568d603e9so2361315ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:17:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756628223; x=1757233023;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=czydMbm0Azoi/1CrKIlfrPdIl2Sf8m0DdH02qzrou0M=;
+        b=Ljb869tygz9Akth2RIp2moSi3FK+dNgIWibAeylCMU12O/IOaMQcEGeeiGehFTNAMu
+         bBSHiIX4owXkwsrI1ezIvU5zgmFW5kedLXDIhuhOPI6X4BWE+CkD2O6f0f5LnP0k3bds
+         lNpz3TbShUB6sUO5yB8Oce3fQp6KdSAiUm1ydjbAv6UX5EsxDNonnwVXLVLPpAYEZHoh
+         lXlHtChWbFGX0qPHQR+dqOUtM020NSdQDhgz1hw7w2Hd6GO3+jZ+OgKYigdCoRZL5eaL
+         zXcKn9EHtOtlFyzSYYPcrtVT3uyO1yo4CHu7pw65VcAULOZTQ4iadPhYf43tb93T/Pf8
+         7bxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjOlXjx+DDmd7vhuRn2XS35s3lYlMzDF2+1uY80qYk7eqIxEyfYFQOOVNcusczeRgt49GJ5b/zM7bNFkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkEuCRZhbmtXwHbtda0ubzrM/FATeXw3MtiDoW/+eHIH06m1f3
+	H8ufM2UNpuhPRY5ljJ3HdQ3KOcsc78gcETcYWgSS+YidE9anpXuhRQRsMC8h45crmbvs1fdokrO
+	QdYz6dt/uB+8cNnsqUjD0QQSuDH/FFO/1w/7OA0uuwJlr2lUxSKCMBsHivU0=
+X-Google-Smtp-Source: AGHT+IEffQtyZX9/TPk/F28Ners4E4NPgFOmV5u+l/pdYS8CHCeIHwRsSj5VYqCIE1ElRhYbE5C4yDxu1v8kWw3T0ngNw5HEZTij
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV4PR04MB11355:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0497540-7f4f-454d-0cf5-08dde85ca06b
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|52116014|7416014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T1psBvtxQ2efH3qWFqsO4srHmqGEWXIqiM9j66oje1Gd0Lj1pCxVE1eFsajv?=
- =?us-ascii?Q?UjN4VVSSm4snTUVzYhskAgPx8Hv/HLM1kRETiy031JlDLIp93tlSOtsYksbI?=
- =?us-ascii?Q?yVhdluq1ZgVsb3CzeyCQT+2PZm+I8bpAiahMnIrTXLcnlbNc+AlOeKVtpXjs?=
- =?us-ascii?Q?BEKjSnYP8qk03XnXzfJ52sjSJPh91nAL7nTn6osMCZykMtiOJLPbHfm03xKK?=
- =?us-ascii?Q?zUtOh+k9uTZYQ84du4IAfmtq4UaApf/T7N3A4WjB9hrCqFryWcmZRt9FZgZP?=
- =?us-ascii?Q?nuvyW+pq5nrYl5dR6VKm2eFPzWA1RBTfpRUVJ6t3G2pH7PLhnF7jj2rhPvLm?=
- =?us-ascii?Q?k9umyeDt4WT4+wfL7k4yM/eKH4cRBgGmxma/6oei3LuhhfoM6vMvhV6cbJNm?=
- =?us-ascii?Q?H8axDjgBTryfcia5mR8zOtXB9VxtR/IjkiLhCN2r7qYGWXts/0Kl+mCsLyV7?=
- =?us-ascii?Q?JsX6ARnmunQzM1tdbwddpz+9tfjVnq3h9H6xY+mWV0Xt1HGasVrvQjsuiX4M?=
- =?us-ascii?Q?mqSYCJwLdqbdYkmJRwUjaUkpnfvL3rIs4iS2XEivUMI88beuDlnqZg4v6vTb?=
- =?us-ascii?Q?seN9Y3RnJR9vSzG4eXGjpVOmj3vgC5cVzVxfXq/STQUi2ZNYLr8CCn9bum2d?=
- =?us-ascii?Q?C47aWfuWA3BHphZtrLfs4BHZMCfoUw3OoDB9emJhT3nCARsgNKrydiQH29X7?=
- =?us-ascii?Q?xd0pcEJZyJe3maIrOOCFIPEIRzpN5Ux4KszMWLqLpFTJhY4U4YRJTIgIFPoy?=
- =?us-ascii?Q?WCeP/UjkXRCeKTx0MO0pe5FGjd90PUR8Eydzj3ZWc7JDRzKQMgJjSHYLKCaI?=
- =?us-ascii?Q?fjJuFRRxwuSjAkD81xlOuURZA1ibUjchWgL8QWi9dTvlcMKtI3+dbRDVOQjL?=
- =?us-ascii?Q?BGOxwWyLeN1jKv8W/Ooa0+dtiLntc+79rG7+FARGIYEpwtn9L4ASbNagiYZG?=
- =?us-ascii?Q?erKyyr52UCs6IIr7abhsCT7tJggeR7kfsVnENN4NbXTFmq5ergWIuNy1R/tD?=
- =?us-ascii?Q?a0EYF8iiXzYm6odCikN3yuci2y0Pa79jfcfTwyQtdAzwnOAhVxByBNjHh6b6?=
- =?us-ascii?Q?RbYQDr34mxipnPAkRAKyvxWAuMRi/FwmkeNrGug9X2Jj7BfDgSDf6U9BmuvD?=
- =?us-ascii?Q?8LtFHq8g7sBF7KGKrnjTPq3ziDbvYMkN3sy1pO8NIfRvmapbh5QcdYBYxebT?=
- =?us-ascii?Q?lujoDjOwm6oDH5gisSeH1u0Oleoyehicjf65dR0FT/faqjwsljpu4QTTTv2Y?=
- =?us-ascii?Q?dLPSpkV/RJckAN5e1hopOBrE8ktlW26bUdkhwvKXhrE8uVsrIms6u0M5ZYVI?=
- =?us-ascii?Q?Z0mPKlpcMq2hWImeH44HOtYotICpn0TaDTX5aUVz4Er/ummpYWTCN1iLwLTU?=
- =?us-ascii?Q?xqiVRZJWDL6Ul2fEECqlq2fihDSy+h1o+MRTD8Aj73Gb0foBNZKjPw2eWgWY?=
- =?us-ascii?Q?qg5ACR3sxpAQfc+fNmNVUmop+lYx6aiQHW9LNTEA0JHwL2AMq20eCA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Fi8aH5bXOU5OZyZ6um0jfon+D5zdcDdEN1rYqK5t7XLmMVm5C5taiwF16nJn?=
- =?us-ascii?Q?1uCU157n34cZ+2xGaogsK1/RFSZtHxkdI9JouSkd0wynzF5YtvrED5kgBh1T?=
- =?us-ascii?Q?hosooRy0mRWc5tD/cuTOc5szGh406520ytJr4GJ2YY+GKcnI08UWWY+qdS1V?=
- =?us-ascii?Q?M9jslYltrPyL7yub16m2pH0UGt5Z1/eBN6EetISZ4RataiVNo9DKYT9DPRCZ?=
- =?us-ascii?Q?0bpzYW/kJDRujqPpKxH+MnMWijAxXaV4+NxGJVafx+uhCB/M7wpIR/UETis+?=
- =?us-ascii?Q?nJJuG1eeCB3gQFfofH7efEKh7BT8fbS37Kr69dRgzI03waPx8T5q3yvMbkwN?=
- =?us-ascii?Q?QwHNt52Fm+0zUXgC0ncttwRSH1/ocFsYWdwu0onbbnrU1/AI1UY+yihPJKd0?=
- =?us-ascii?Q?SYJ/NAdpnav/egUTPb10Id/mOArkNxGqhVjh6dE3M9+FNRgIl94NlGvyYuq+?=
- =?us-ascii?Q?01vGBKeZWg7zCXBHCuiGKqSSD0GsAgOIyxFmS1gY9kZYQMx/Vp7H1t8lMz3l?=
- =?us-ascii?Q?lk7UIz0lTvDZ9mal3Hp/xigfiha0OsFlfmfMo8k6h5AgLO2Cdy5cgYJczTk/?=
- =?us-ascii?Q?Ol/BmBPI2F5wq4sNoqcTeb67Lihi4qONt6r4HwG3N7WNaUUDMyMUfcVTggEd?=
- =?us-ascii?Q?xfIp+bPRWTFzyrSsGaWfnAe7riXx98eUY8jtZu6yOFv4NwE2iNs+aB3E6srv?=
- =?us-ascii?Q?Njlno0zzaQoAOM+a7GtOFU79a8Fu2Xmm1c4Z1Ms5E4Dm+LFI95BvwuqP3NLj?=
- =?us-ascii?Q?ZI8NxeuBOvUVIQjiowa6W07MlTa0haqpPzYcEmBAICY50vtd+6BxBP/YEjem?=
- =?us-ascii?Q?evgdiByHLobx8dKHwezSC2Y3pQL50ddkJ5UbLPORAf8NP+ybaOn76GJQ2jun?=
- =?us-ascii?Q?nBuCK6bFrIK48bErDtKpy4DKs4CoZheBB7f+LKS4Ol3x+BcmiLBKfrRcTTB5?=
- =?us-ascii?Q?xeWb0OBEsrEmNs4vOMg7JzePH4AdZVr5xaulQcGc69VO764vBzgqXfr+sA/I?=
- =?us-ascii?Q?404T6W+9VW6B6+377UwkH2zi7q5l1gE18u3h3IQnsd2xAN8cCOrzAjuMPX6F?=
- =?us-ascii?Q?T2G0cP9uVtn3FqwJWW8cIRHt1hM/9o7phm/K6aScQEFeh6wajLTynPkTI5GH?=
- =?us-ascii?Q?/jLIDXoZd1wZYnlNR/wBCIFP5QjFSsyKof0A2cwEcCRgSvp2ZVSkeXf2LQfF?=
- =?us-ascii?Q?v8HldnVNoddJRljaq6paeo+JB03mOW8Ym9EJvzr9MTV/38rBJhRH+1FdbShC?=
- =?us-ascii?Q?CoCrIRvm2TMnS/wsav/VaLsM6O35u9Yc7034SEC/7C8YN7f/uCx+toiOGlKk?=
- =?us-ascii?Q?EjH7EUgSjLgpJTHnxncOR42U6FZFdLVOXW3TWRzFAr8ApnhI5dvRPcgr1Bv8?=
- =?us-ascii?Q?i7LfSpYWu/QL/zDPZEjC08bOXCfZTmV1H6Q1kxlxgXtT6CuTdtvp4F/SVk8D?=
- =?us-ascii?Q?X3KaFGEUPxWwiASQ3P8cRv1ZPTDji0kAHbUBU9mYLcW7jG7c9zaPXov5bKRA?=
- =?us-ascii?Q?0Zd38ytfvBcmnEcK2q4/NoYfa1yp+614v5gXP+3dUfeXqZIPGFJDMeRqWbAi?=
- =?us-ascii?Q?mZ0aB/lcqGwQUATEp4HXRmVz9zOFqojJM+Atgipy?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0497540-7f4f-454d-0cf5-08dde85ca06b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2025 07:04:28.4672
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6kP6TADOyxUf45WanLDvu1QA2LxlzePZh4Iopx5b/7jUqLgkmG/KxdE0s3IjC0r2VO9sHor9xhRTpp1rdZvoiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11355
+X-Received: by 2002:a05:6e02:1528:b0:3eb:5f74:ed9b with SMTP id
+ e9e14a558f8ab-3f4000971a4mr91152695ab.2.1756628223446; Sun, 31 Aug 2025
+ 01:17:03 -0700 (PDT)
+Date: Sun, 31 Aug 2025 01:17:03 -0700
+In-Reply-To: <20250831073458.6191-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b404ff.a00a0220.1337b0.0032.GAE@google.com>
+Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
+From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 29, 2025 at 11:43:41AM +0100, Sudeep Holla wrote:
->On Wed, Aug 27, 2025 at 12:59:13PM +0800, Peng Fan wrote:
->> System Manager Firmware supports getting board information, add
->> documentation for this API
->
->s/API/MISC_BOARD_INFO command/
->
+Hello,
 
-Fix in V4.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in __vhost_worker_flush
 
->> 
->> +protocol_id: 0x84
->> +
->> ++--------------------+---------------------------------------------------------+
->> +|Return values                                                                 |
->> ++--------------------+---------------------------------------------------------+
->> +|Name                |Description                                              |
->> ++--------------------+---------------------------------------------------------+
->> +|int32 status        |SUCCESS: config name return                              |
->> +|                    |NOT_SUPPORTED: name not available                        |
->> ++--------------------+---------------------------------------------------------+
->> +|uint32 attributes   |Board specific attributes reserved for future expansion  |
->> +|                    |without breaking backwards compatibility                 |
->
->Is 0 the expected value in this version of the spec as it is just reserved ?
->Please state the same explicitly here.
+INFO: task syz.0.17:6483 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.17        state:D stack:27928 pid:6483  tgid:6483  ppid:6379   task_flags:0x400040 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:7058
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
+ __vhost_worker_flush+0x1a8/0x1d0 drivers/vhost/vhost.c:296
+ vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
+ vhost_dev_flush+0xac/0x110 drivers/vhost/vhost.c:313
+ vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
+ vhost_vsock_dev_release+0x19f/0x400 drivers/vhost/vsock.c:750
+ __fput+0x402/0xb70 fs/file_table.c:468
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbbf8f8ebe9
+RSP: 002b:00007ffc4fda04f8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007fbbf91c7da0 RCX: 00007fbbf8f8ebe9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007fbbf91c7da0 R08: 0000000000000000 R09: 000000084fda07ef
+R10: 00007fbbf91c7cb0 R11: 0000000000000246 R12: 000000000001e441
+R13: 00007ffc4fda05f0 R14: ffffffffffffffff R15: 00007ffc4fda0610
+ </TASK>
 
-Yes. The SM firmware set it 0 by default.
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
+5 locks held by kworker/u8:2/35:
+3 locks held by kworker/u9:1/5173:
+ #0: ffff88807d124148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3211
+ #1: ffffc9000f90fd10 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3212
+ #2: ffff8880773d8dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x175/0x430 net/bluetooth/hci_sync.c:331
+2 locks held by getty/5611:
+ #0: ffff88814de1b0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900036bb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
 
-I will add "The firmware set the value to 0 for now".
+=============================================
 
-Thanks,
-Peng
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf0e/0x1260 kernel/hung_task.c:491
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 1167 Comm: kworker/u8:10 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: events_unbound nsim_dev_trap_report_work
+RIP: 0010:mark_lock+0xad/0x610 kernel/locking/lockdep.c:4722
+Code: 54 24 68 65 48 2b 15 ba e6 3e 12 0f 85 e8 04 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc f6 46 22 03 74 8d <41> bd 00 02 00 00 bb 09 00 00 00 eb 8e 44 8b 1d ff 56 4e 19 45 85
+RSP: 0000:ffffc90003e0f480 EFLAGS: 00000002
+RAX: 0000000000000000 RBX: 0000000000000008 RCX: ffffffff95e3eb08
+RDX: 0000000000000008 RSI: ffff888028468b90 RDI: ffff888028468000
+RBP: ffffc90003e0f520 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000000000a0 R11: 0000000000000001 R12: ffff888028468b90
+R13: ffff888028468000 R14: 0000000000000004 R15: ffff888028468000
+FS:  0000000000000000(0000) GS:ffff8881247b8000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564fc0756be0 CR3: 000000000e380000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ mark_usage kernel/locking/lockdep.c:4674 [inline]
+ __lock_acquire+0x3f8/0x1ce0 kernel/locking/lockdep.c:5191
+ lock_acquire kernel/locking/lockdep.c:5868 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
+ unwind_next_frame+0xd1/0x20a0 arch/x86/kernel/unwind_orc.c:479
+ arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2417 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kfree+0x2b4/0x4d0 mm/slub.c:4879
+ skb_kfree_head net/core/skbuff.c:1047 [inline]
+ skb_free_head+0x114/0x210 net/core/skbuff.c:1059
+ skb_release_data+0x795/0x9e0 net/core/skbuff.c:1086
+ skb_release_all net/core/skbuff.c:1151 [inline]
+ __kfree_skb net/core/skbuff.c:1165 [inline]
+ consume_skb net/core/skbuff.c:1397 [inline]
+ consume_skb+0xbf/0x100 net/core/skbuff.c:1391
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:836 [inline]
+ nsim_dev_trap_report_work+0x8bd/0xcf0 drivers/net/netdevsim/dev.c:866
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
->
->-- 
->Regards,
->Sudeep
+
+Tested on:
+
+commit:         c8bc81a5 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=143cce34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11c4ce34580000
+
 
