@@ -1,85 +1,108 @@
-Return-Path: <linux-kernel+bounces-793368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB6BB3D27A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:25:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A76B3D27E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F7F27A7117
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:23:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E0F17CD43
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE172571D8;
-	Sun, 31 Aug 2025 11:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFA625783F;
+	Sun, 31 Aug 2025 11:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCP0TgPY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="BAuJaLot"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC493594E;
-	Sun, 31 Aug 2025 11:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF772376FD;
+	Sun, 31 Aug 2025 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756639513; cv=none; b=KKPeqzVF9CJ+amDESUxVYP9I4qU89PcX8Vv3XA/SCcVRcyqzvG8JK+qx6ygUeYx3XbgO4p4TZh3DvbEmwQh77oOhrd/Wo9UCxIHK777F2qHM4xYjyltAgOjWh2lg5Svzn59zqjVBshBTniWACw9/XJIEgNeWH6v7qAul6pT21fs=
+	t=1756639991; cv=none; b=d0t1RY8HmKFoWcJ9HnOi9VS52tAsgW7kExSddLvTT86I2Tm8KK+3xWFSsTuMxNxyfTKjXf1wvIFeKmvmOCmtugXPBhKp0QyiZb6TmwPbycarpCNNpWaVHgJK7ojfKx/5N0BS0XipJ6x8ojVLvmDIDEMuI9/HPNEP4UXs8XzWk08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756639513; c=relaxed/simple;
-	bh=JStuAIPlMtGfKJp2bwD1DKRz7pxXs0A3UVt9pauzxZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=df29MTrmenzVrO7J7bXOY0MRPoQmM50QJbwkHu5YBPM3txFc8KK2La+BmY707VgPxsr5WWPIxhujNQN4ZGBXKDkP9AcXw39zAdR/Z3nIaZZ3j9JN38fX615LAwYWWU+96hczGizZwJG/lonOV/GvwWR5BgZBVKY62083vZQQujg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCP0TgPY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8318EC4CEED;
-	Sun, 31 Aug 2025 11:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756639512;
-	bh=JStuAIPlMtGfKJp2bwD1DKRz7pxXs0A3UVt9pauzxZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=eCP0TgPYlXUhLpybuJnnKcnr9qsAqB4cibbV1YF/AUW7IlbFoBAg7hS/B4rh89GPa
-	 owH+xc9Tbb9YU69wWWUO0n/92IuYwY9t9VNuNh16PASs7p2r0QQOydx+EIwc9y/gqi
-	 DWLjDlwiiDymrL7CQ46173bIJQoC8CtdA6i9H1d1jMYjgLCSSFQHGDmEFQQH31dBE2
-	 Y4bNKXSjJiBe77Poyk2md9m3HQ2cplhQn3XSV0QeyKFIUF53LThkk1UzxOKsHAgEl/
-	 OX0ggjQ153qIfhgdOSuZn0o/GFosz8u8sDDRAp1b3YX7YueSAPCyNLbn8RGZ8LfuwC
-	 ZH/kjYI6wLoRQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: thierry.reding@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
- robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com, 
- linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, 
- Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
-References: <20250819150436.3105973-1-alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH] PCI: tegra: fix devm_kcalloc argument order for
- port->phys allocation
-Message-Id: <175663950907.10641.11353619819769419728.b4-ty@kernel.org>
-Date: Sun, 31 Aug 2025 16:55:09 +0530
+	s=arc-20240116; t=1756639991; c=relaxed/simple;
+	bh=N6aTPDmdRCL+AEhB5sRE31SuZeCdrOZpV6vf6qMg3wY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7CiCnF7+Fz1ifoz5QRd7/EFNARswXvhxQUU95pri6WvwMetc0KOmybu3uIkdWU64Efju5pwa17HvwDofcNtOukFO8g5v2QN5VjAnk0Jr14y0a6y26WDagGTW0chC4PQASWhkTN67tIguHHW1i+J7d8nWDo1JK/dK+TNguVZjpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=BAuJaLot; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id CB71E25CC7;
+	Sun, 31 Aug 2025 13:25:42 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id rLnMHuF2prBy; Sun, 31 Aug 2025 13:25:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756639542; bh=N6aTPDmdRCL+AEhB5sRE31SuZeCdrOZpV6vf6qMg3wY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BAuJaLotQdE1du/blkqh9q6wAF5LU7Kiw6BI8wvIC/I3IpPzoo+uY2ZK2RyaZLKnu
+	 C9lUU+5wWNCxYu/6VtNaj2l/E2REngKkBOtKKK3N7SRrogSoP6EQWNzlc119SFp2hG
+	 ijqwo0t7SqKmQ72qdyOCSUp0G4oXpM475pWvwicdl8pyR/XZsy9l9oPNQPEy1w9R3n
+	 +RLTigVz7OEV0Xoq3DTKfRiTM3xc4ro/CZQH54VCAq0pF+TvfqNCRSyyz2HkAkAQc0
+	 Np+yDrGYF2gjGIDd24e0sae6NsfrxcVX/91gNiLFgWMJWQjACHUdgLzNJsgCl8P7px
+	 WcMI/b+D1+e8g==
+Date: Sun, 31 Aug 2025 11:25:23 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH 0/3] Support GPIO controller of Loongson 2K0300 SoC
+Message-ID: <aLQxI9oixzsFX4NG@pie>
+References: <20250816035027.11727-2-ziyao@disroot.org>
+ <CAMRc=Meed_x_OODv1fw1m7rpLY4uGic=0pacjV+Mj147_WMZPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Meed_x_OODv1fw1m7rpLY4uGic=0pacjV+Mj147_WMZPg@mail.gmail.com>
 
-
-On Tue, 19 Aug 2025 08:04:08 -0700, Alok Tiwari wrote:
-> Fix incorrect argument order in devm_kcalloc() when allocating
-> port->phys, The original call used sizeof(phy) as the number of
-> elements and port->lanes as the element size, which is reversed.
-> While this happens to produce the correct total allocation size with
-> current pointer size and lane counts, the argument order is wrong.
+On Sat, Aug 30, 2025 at 09:49:46PM +0200, Bartosz Golaszewski wrote:
+> On Sat, Aug 16, 2025 at 5:50 AM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > This series adds support for Loongson 2K0300's GPIO controller. While
+> > being mostly identical to previous implementation, its interrupt
+> > functionality hasn't been implemented in gpio-loongson-64bit.c. PATCH 2
+> > implements its interrupt support with an IRQCHIP, and the code could be
+> > reused for other Loongson SoCs with similar interrupt functionality like
+> > 2K1500 and 2K2000.
+> >
+> > Tested on CTCISZ Forever Pi, reading/writing GPIOs works correctly, and
+> > both level and edge interrupts could be triggered.
+> >
+> > The devicetree patch depends on series "Support reset controller of
+> > Loongson 2K0300 SoC"[1] for a clean apply. Thanks for your time and review.
+> >
+> > [1]: https://lore.kernel.org/all/20250816033327.11359-2-ziyao@disroot.org/
+> >
 > 
+> Hi!
 > 
-> [...]
+> This doesn't apply on top of current gpio/for-next. Can you please
+> rebase and resend?
 
-Applied, thanks!
+Sure. I'll send v2 soon.
 
-[1/1] PCI: tegra: fix devm_kcalloc argument order for port->phys allocation
-      commit: b69f898bf94b374a97d367459ff2fb52b4ab8829
+> Bart
 
 Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+Yao Zi
 
