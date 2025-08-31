@@ -1,128 +1,177 @@
-Return-Path: <linux-kernel+bounces-793286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3729FB3D18C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A30B3D18D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FA8217E6DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360EF17E79D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BCB24DCE9;
-	Sun, 31 Aug 2025 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X0BZ/KLu"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D5253954;
+	Sun, 31 Aug 2025 09:14:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4211A7D07D
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36D224DFF4
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756631642; cv=none; b=qeefcPx0GEU8hRu0TPvAJUzMl7CAYkrgHBgMPztuoDvvYPPq76DCv0X8arlU85tJECqQ3R/IlHYN0drQh2Yh+iUBBcEi2iXJ1tKZhNtxSSMa/BFWUVe0daigLqy6rUpgCpym0V2JG/DcUu2CcTyzJc1rJD5+wtLnm6mqKB6Frqg=
+	t=1756631645; cv=none; b=BvY8xqCwaoOGRWw+jvXNc6iyAH4nkx+MOKZZj7mJtQylCbRkEPX1bEpU1Nk9slLX980Ugmd4xRhxFHGy0VwIHI/CgyW3VmFCGREJfIoeAfo9cMTWsRGvEEyllWZYwMKvMmK/AmUmsYPLw5D/Rj1/40FA+PZBiC/RlfO7gb1Cl2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756631642; c=relaxed/simple;
-	bh=jlQej32j0n7qXEnY5V9OT4gzWzDjJMbxjwZlVZev3a4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HavnmVDLxSRGwlSsQFzBK8c722dkpUO+Nmo2qD4VDRPCFpr6+cJwJqBxtqDPIlltUVr98Cxc5qOxMUUZfApqIztkiwMtuxA573PuWFFENGah+/VQuYdv72f8j69vcFV11jNO7JJB8qiVWHl1U+VlDY9UmAo/Cj3flJ5H7pNkYKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X0BZ/KLu; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-72290cfcf5eso769777b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756631640; x=1757236440; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wBznXUHFnxO7JFFRA+cSHz8XvSsYLiyW87D5PciK1Do=;
-        b=X0BZ/KLuLmmiKWiPrD/+fqJFrsCeGdwUqFj3PlSxxJR+8GKczAgkcW2FLkbVhJGfHf
-         35Sz5yya5i7x7y34b/+dU3HCEq8+w5n6pxpZlTcGac6kbkgLF81oVYx7eUIZIwOEUrZZ
-         vYNrlbF4M/zOutuF1PCFOiMgMYBqqaRzDMLdjFS23QutDNOJh2RDqAvWDltdmb3Ey0Sx
-         g9V+iQgH2E3/VnnRFdTo6DSV5MNRfZrqrFd9njPWUQFcqgbXTRjtISksmGQ0Feilu5rC
-         xa0xpInBNPvV7JSpmIsL1tLt3Xs5twyLTgIW9NYkikoPRHUFSYatlx+/M0yxxqkrbHaR
-         ASIA==
+	s=arc-20240116; t=1756631645; c=relaxed/simple;
+	bh=vqwUr4PJdLzaL+PV0nB/Nuw0k7o8LZZXJCtEefjmQ0A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LBJTtx4cStwlADVbp5MJUeSbQ9W7ahNIvocXXjiNkW2+VzvZ1VVajK4KjsooM2ILtZ9uTxitU25LELa7XBSyUbkW3P81yWZVBp4I6Eb/B0UzwTwMWAnYml3lyqixEQTCDcgUZYQQkHIzd2+BbafKY7qt6O5pa7TKunDHpPTYras=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3f340e9b5c5so38315035ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:14:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756631640; x=1757236440;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wBznXUHFnxO7JFFRA+cSHz8XvSsYLiyW87D5PciK1Do=;
-        b=JZEtYlpxhHMj+MDHn3L34IfZkSUtfGeshroL4Um063Rj1GY4Sau+Q5jz2iCtkqk4GO
-         8dLeJcllt+FDzSQaRhmdnWv8UgqlFOgmRMSbuqlRsrfLdk8lix42ZFF7QpMsXADcPWvW
-         tyqYFbkveYmdJr5A0UphDRPOV/IycjXFAUhBYjuaJPrEAhr3zPMOI/ZmhGVAmXJjeQqI
-         vAzjb8dZLi53+PK79XtJsz7Q+SY964fhSDQEBiRiiD0iR4wUd4S9T5WG8YIKXlziUV9U
-         Cjz9H86B2SS7L3Q+vrsFTwejaNZL7Pvs+Vv0oY2952nJj9llrv4+IIEyWznimI+PNyZD
-         meqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHrxKXHwBmk5W3nzUVwaq9YIv/xM+DS+m4NCf6UVsTna95bvsy3Pka/6oe0gstMT8dOHh7mZMBcaXiasE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqfk83jIGTEyZ/3lLFfVsgiFbRME83HBMT97aS4Asn6TsncE3Q
-	KE4AzQUGbcTnMCJuDwPZfs3jkrRosbFIgHsOZiqrksKxJ4ZGOI7kYulsO2zkDfUbsA==
-X-Gm-Gg: ASbGncsU52qBa+YJSF5yIghSb9JTC3OvuJNuVCSlO+0P9zzCswJBehhvHh+NGLZSaMA
-	2vViQlElT3CNpnQ7K6IPmHStgB+XEoBaqHAkScM9J8x/3zbpzmNuVzYewD13mHgv5HbwA26DPMt
-	oAoccDHfQ6hCt/UIfDUIC1Uc4yIMKY2HtvGqbVaNT6Vyl4xka/MWZiZTCfr2Ozu174A3L9mK97Q
-	niS0JMl5UuloRYIT+IIahHm3MB3j5cyrxezAWk3mh5dXD3WMKwuKN8ktKui2vwS40SzJZconn9p
-	oURiFQUaDf+xHfcwgCrbZL0IkBLNGYk0TkZlNMPj0Owq3pU5NMuycvkddeXvb12YMrfKV01PTGU
-	0DLy1JlZgTmBGdI0zfgQ2bMmJ4lg4TA4Zb2SwdRx1ONoNurK8O61w6v67q26Ln3uaUju1uyUOyY
-	2VYgt7n4CHH7MONi36NN3fIkeemdvbB40e4KQ=
-X-Google-Smtp-Source: AGHT+IF4yPQEPLuQmGbE0pb+TIdmkIJQyKnxChThhXPpgreHU7hHADg7CNY3Cer/6aWfeZDp+UC4KA==
-X-Received: by 2002:a05:690c:6908:b0:721:369e:44d8 with SMTP id 00721157ae682-7227657dc4emr49185577b3.51.1756631639950;
-        Sun, 31 Aug 2025 02:13:59 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7227d67377esm7100867b3.33.2025.08.31.02.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 02:13:58 -0700 (PDT)
-Date: Sun, 31 Aug 2025 02:13:55 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Will Deacon <will@kernel.org>, David Hildenbrand <david@redhat.com>, 
-    Shivank Garg <shivankg@amd.com>, Matthew Wilcox <willy@infradead.org>, 
-    Christoph Hellwig <hch@infradead.org>, Keir Fraser <keirf@google.com>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
-    Frederick Mayle <fmayle@google.com>, Peter Xu <peterx@redhat.com>, 
-    "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
-    Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    Alexander Krabler <Alexander.Krabler@kuka.com>, 
-    Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>, 
-    Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-    Axel Rasmussen <axelrasmussen@google.com>, 
-    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
-    Konstantin Khlebnikov <koct9i@gmail.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: [PATCH 5/7] mm: Revert "mm: vmscan.c: fix OOM on swap stress test"
-In-Reply-To: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
-Message-ID: <bd440614-3d2c-31d6-1b8f-9635c69cef7c@google.com>
-References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
+        d=1e100.net; s=20230601; t=1756631643; x=1757236443;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTgXpDb1YhEkvxCEigA/jIv6QjnIbxoxZPcFqHYLo6Q=;
+        b=LYJTikZJHGOfikHe8455BSnEknpYvBzY8yVRH0SshtJrI9OqGvLDNEl3V/5FzN3b9H
+         YtGd4ORIBIetKZxYJVFes/yOg0r+rw467j9/a7IVMFqVIaf+8PkBQkfdSMgv1hJt2Jir
+         DJUYRL0TB/hxFMEGvLenXaMipCvxL4CIfIotlQy81bTBRxZ/uAjYLN1p/OWvE4+YCZBG
+         LsfT2ffS8Md1iX2GLHcktDPghe5Jlmg2BVC/DkJfPGVHTHI/t2ppBII+dPrBNYPxF27q
+         WwnERzJ4ln45EVo9PZlQ7B6k7iCFNL+JzZQ36ttVht023f3bt0t68iBg2qOovMkkS/ZU
+         z0iA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ0qrq6/1iN4idjUBf1zEgU1EMgrZGkhG0eL/7w4yrWl1dHKs8e+IF6bs4TuF9sk8PtnkwVwtmdseU43M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAOno4uxfTpCMQeGElUaNAhiP++QSwor71kk7Ybu65SBaaKr/3
+	VNQH5Bl8WxS3bJWYATxBOjC4HEx99vBk/EdMhwlxJnX2HC4CLje6aTKoUoC2hxCClZL6XsVGDMg
+	RN/nE9DY18QRo5COSFOTSNQGbjkj7dq8JS+DKx9FCxf41ds1+Y1xNwz03uJk=
+X-Google-Smtp-Source: AGHT+IFGQgEwDK6kXf5+JSL2v19XTf+EKwzMt8yAxAvFMsPxdKwHP1DM+8p/068WJHSN+TfipccTYhK0j82iBI3CoxFsMWQG7yoy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:1747:b0:3ec:2c8a:f35 with SMTP id
+ e9e14a558f8ab-3f4019f6ae7mr94936475ab.18.1756631642765; Sun, 31 Aug 2025
+ 02:14:02 -0700 (PDT)
+Date: Sun, 31 Aug 2025 02:14:02 -0700
+In-Reply-To: <20250831084130.6242-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b4125a.050a0220.3db4df.01b1.GAE@google.com>
+Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
+From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit 0885ef4705607936fc36a38fd74356e1c465b023: that
-was a fix to the reverted 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9.
+Hello,
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
----
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in __vhost_worker_flush
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a48aec8bfd92..674999999cd0 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4507,7 +4507,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
- 	}
- 
- 	/* ineligible */
--	if (!folio_test_lru(folio) || zone > sc->reclaim_idx) {
-+	if (zone > sc->reclaim_idx) {
- 		gen = folio_inc_gen(lruvec, folio, false);
- 		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
- 		return true;
--- 
-2.51.0
+INFO: task syz.0.17:6497 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.17        state:D stack:27928 pid:6497  tgid:6497  ppid:6385   task_flags:0x400040 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:7058
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
+ __vhost_worker_flush+0x1a8/0x1d0 drivers/vhost/vhost.c:296
+ vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
+ vhost_dev_flush+0xac/0x110 drivers/vhost/vhost.c:313
+ vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
+ vhost_vsock_dev_release+0x19f/0x400 drivers/vhost/vsock.c:750
+ __fput+0x3ff/0xb70 fs/file_table.c:468
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f970df8ebe9
+RSP: 002b:00007ffdf6784698 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007f970e1c7da0 RCX: 00007f970df8ebe9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f970e1c7da0 R08: 0000000000000000 R09: 00000008f678498f
+R10: 00007f970e1c7cb0 R11: 0000000000000246 R12: 000000000001e9d9
+R13: 00007ffdf6784790 R14: ffffffffffffffff R15: 00007ffdf67847b0
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
+1 lock held by klogd/5210:
+ #0: ffff8880b843a318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:636
+2 locks held by getty/5611:
+ #0: ffff8880361060a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf0e/0x1260 kernel/hung_task.c:491
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 0c 62 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 12 16 00 fb f4 <e9> 4c 09 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffc90000197df8 EFLAGS: 000002c2
+RAX: 000000000016ae1b RBX: 0000000000000001 RCX: ffffffff8b93fc29
+RDX: 0000000000000000 RSI: ffffffff8de50a38 RDI: ffffffff8c162980
+RBP: ffffed1003c5d488 R08: 0000000000000001 R09: ffffed10170a6655
+R10: ffff8880b85332ab R11: 0000000000000000 R12: 0000000000000001
+R13: ffff88801e2ea440 R14: ffffffff90ab5290 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881247b8000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055cc5af69be0 CR3: 000000000e380000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:757
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:122
+ cpuidle_idle_call kernel/sched/idle.c:190 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:330
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:428
+ start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
+ common_startup_64+0x13e/0x148
+ </TASK>
+
+
+Tested on:
+
+commit:         c8bc81a5 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=102a7a62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=124cc1f0580000
 
 
