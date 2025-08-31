@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-793343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C39B3D214
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:18:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E733B3D210
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B8A442312
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D465E189E6B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD98255F28;
-	Sun, 31 Aug 2025 10:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC91253F3A;
+	Sun, 31 Aug 2025 10:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRDAp72j"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="EB9G+bU0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XogKtSbF"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E52472A8;
-	Sun, 31 Aug 2025 10:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3BC1DDC2B;
+	Sun, 31 Aug 2025 10:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756635511; cv=none; b=X9oWjHwigAiIBQRZlE1dxDyWYLGNNj4hCsloGtlWGgFxBTJWuHCLgdeCaFj0uVBb48qDCjmkwNRk1f86qIuYbxDBnnoyeQI3D5Qi3U2f7L2HbBxoPP9JK5QV0hWHvN/NizXZlzICHUu5HlZq3lgZwChrMtb4K8e1QGvxIkMb0qg=
+	t=1756635485; cv=none; b=D8VxA8h92xhXaUaeDxf8mnzJKYBAAZvW0VRL/qXfTCOEJKeP5BnFXa4KYC8fhCo7F/th01iMvVsI1bhbIK9P6X9ArtrcwZ2lrH0antYFiBtYsc8cWJUNb86OvL8E34xvj69x1mW/oMhLqxQQgir+PmiLT37L+j341hgbn3NfNPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756635511; c=relaxed/simple;
-	bh=D3PAz7xolElE1kPDF1ZM09nYrEAsUXU4EAkgU2JL/Hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g6rrGC7+Y0BmySiy3fdX8CS30nBL+vPytWpNfSFpw8mNkpiBMoe475uRxtvpoF/OgryGYdVMgFYUh+6P+t7AuEW0FeXhN2ioqRoFi8BHaDMNznXwSN5RewWGnYg6VYRmPwgx1dIwgol2/VFpIbO9ruG2+qLmseu40r3585xFlRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRDAp72j; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7f74b42ec59so190897785a.2;
-        Sun, 31 Aug 2025 03:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756635508; x=1757240308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xwLs+yd7Js8fsBQIKUi8xZzZqVUjN83bbv0x9rLvc8Y=;
-        b=cRDAp72jqE4I4fzo9ONUe8fhVkkqt5lvy3Hl1+dEgWkZaKaOQkQpzl8jUy4bAxOcVU
-         NVuZpbCVoiLyFFTbj6hOpXPP/mVkKMUazdPCi1GAui3Is/vXLR0E/QceQd9Hx4Vszbyl
-         Aoejxw+FLiEEtU47phG4zT+l6wMiuj+BdiZtbtZtk9UuHhPcLHkgHJRE48As82ptbLji
-         TCDZFQupYQK3PkNpLQJn/yVolXhDMJ/loY+Uv2gvWCwOLmnzg+GbisgIw28DdSSWIJRZ
-         4nO2cmX0d9L+5aSj25PQVZTHgHe4fwvV37JGkz0TWsmljERmSk7jfVdB+cDLAeRl8RNl
-         9Rkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756635508; x=1757240308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xwLs+yd7Js8fsBQIKUi8xZzZqVUjN83bbv0x9rLvc8Y=;
-        b=M+B3f8n4uhqB1CC3yD3QG0h55XKHIud73l+bpLDnePW/aB/lkhEcAQxGdchr5+06v7
-         Q8bVZdkma62Xtg4B5oGWPS7p5fasTDP8knBx/c9qrMxZWA6kXLIRN93ou/BfmaHBch8s
-         bj8hFob4EauLC9SKOFNNokI68ruOWEBvi1wLtTYnmW2YUn+8gOeDs8neH6poP6tovz9H
-         ZUJIh4/K6UAOQYoVQNC4IJTOPKEGIY+e/qBKUnsU4RyGUns4F5s77sYS7GpZWTE6FVaX
-         haovwLHgZHEwOaQYFKJ/wy6fhqt0rPQ69TWzxPV0fj9xrcsgHRc31ppG9IjkR3CIaDzb
-         gwLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRC4xaa0cbodTdYNXN6Jm5dwb9a7Sx3cZ9/bipt69Ip9XeM3ZAcH9p/B4wZG0W9jnUPCRLgUNiv9M=@vger.kernel.org, AJvYcCWUS8vqbygqreihSqAACPSE2P74G5QQO2QEZlX7Pi/B0yOYlL5fMyC58iXOYGyHhLgAB3HoDR17lX4/S1Fk1+bBmRTD@vger.kernel.org, AJvYcCXB2DhMG2/7c1/SjO+YdSDrUD6EKdL6OtlvsB93ZmRhzKDUYkHMPKxFS8FiD/E+0WM4LWq1BYfHt0dxI2w4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrHhbbvwRpv+FkxeW29yyC9BY2WTAUBWVCYPLRUIs+djJaCXVT
-	WW8VHxUgBzO48Hsvz6B8NHxHxgOSYiAuNJxdGEfIieYD0Ra5EywjWB7e
-X-Gm-Gg: ASbGncsGYb+xfKeDFheDoN3xemyTpgNeGSqCsMWt09ra4kWczNo+gOVnwiiotgB0OxC
-	V0gnG8S96qH1S5voV5FbDBoTCqyO+eyloIiHoPTQRzCoGcLnCmgllmbWwXRZbyfZtFkPyfwruCn
-	2SXvdFR2wG6S0dFds082/unDXj7XaF9YcFr11Qc1jG9m5Ak1lHmzOp9XEvwpIDgc6vaVY3fGTW6
-	JiX9dIJnNMbaDPRy7P0fGBDRfniGDS8nuAK8LOonGuanHZJzcBRiJjz+K1xOSS/HeHjlaaqqJCA
-	Wwda7y7PMWnrbiTVa3owjjg5aDEZNrtmYK/1f8FVtGMl/r8y1xZCwNRHV1jy29QK9lCN2IWfpf8
-	HxUTtChgHP7y593fsd713r7WYbX6j6bCXjtpuChHtqlVwug4HUTuTZWB9syvEZLy5VcSfwmdKw/
-	rSfw==
-X-Google-Smtp-Source: AGHT+IH/eV42QnaFtl89dVVjuVTpB+Zt97KCO2m8CKyT/G4y34cLbd7mLHdxEz/Q63Z4Y96xfRXdZQ==
-X-Received: by 2002:a05:620a:6081:b0:7ff:9fdd:c34c with SMTP id af79cd13be357-7ff9fddc7abmr418325685a.67.1756635507955;
-        Sun, 31 Aug 2025 03:18:27 -0700 (PDT)
-Received: from seokw-960QHA.mynetworksettings.com ([2600:4041:4491:2000:1bcc:1b67:3f57:d21e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc16536012sm480262785a.66.2025.08.31.03.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 03:18:27 -0700 (PDT)
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	corbet@lwn.net
-Cc: Ryan Chung <seokwoo.chung130@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 2/2] trace: fix grammar error in debugging.rst
-Date: Sun, 31 Aug 2025 19:17:29 +0900
-Message-ID: <20250831101736.11519-3-seokwoo.chung130@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250831101736.11519-1-seokwoo.chung130@gmail.com>
-References: <20250831101736.11519-1-seokwoo.chung130@gmail.com>
+	s=arc-20240116; t=1756635485; c=relaxed/simple;
+	bh=IjTYrbBQSPkwxsasV3ZlplpdpKXrOFp0IayCgXtPes0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Ehit2rwNuRMCi56l6ifmfQZUIsg0TyJe98MsNw8U2r3wtNtB3TAxY1IO2jwL1oxbTlhPBIrjXQq1Xh6JmVuFA6yiOIGcqSJWIHc8ETcIpInG5lemVVMt6cloIvf6fSg+enVgOnQtOL2HjOtUyhUUVfUOq0OlJV3sH1Ir8Kb3MR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=EB9G+bU0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XogKtSbF; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 549CB7A006D;
+	Sun, 31 Aug 2025 06:18:02 -0400 (EDT)
+Received: from phl-imap-15 ([10.202.2.104])
+  by phl-compute-06.internal (MEProxy); Sun, 31 Aug 2025 06:18:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1756635482;
+	 x=1756721882; bh=cBqMVR6uqZHT5hLteGW5CLt4CXa6io3Ge5VLQmeY+u8=; b=
+	EB9G+bU0aZue6wB8MyHS9YXRsGUbpXMTlon/5WAEFj0g5Wrt/WhOx3xohoT6jPo8
+	KT6fC1xsOhLddjjs5Ag2BMPLLHAI8VNwlMGIhhg05LRtyruFeDq098VMgWagGkj5
+	THrtJL4KLpizjYmBujoFqqnNv+MH80rIoEwdBqRgZKwA2YQUmY1SrPh36Vfm4tiE
+	Euvm+6mllOSRF0u6myIkqj4mogYhA6IZGXp6sWmsqi/92UYIGHiLREbR5VNSXseE
+	JDks9PCyrS72VpCRVnhfCXaDn781KrXWV2UVXr+YVLnORL1LZ9bnpSvfpPLvGbK0
+	mCaYOKn7aZO36zfk8rPyXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756635482; x=
+	1756721882; bh=cBqMVR6uqZHT5hLteGW5CLt4CXa6io3Ge5VLQmeY+u8=; b=X
+	ogKtSbFudSgjAPdHjAn2kLy5FMwAk7AzNzZvVnm07lZvRWQqFfFV5JDxVm+Bznpg
+	tdKk+sZ1Yzj2mxrW6H8M5gdyxM6vsTnQYh+5ETddmU5xqynQOa2baNkm1B+LbNeG
+	Bf2poVDlNiCLxVqZ7DcR59CRttBUOanhZRHSfX51aPChrp9JCrPOCL3mX1VEKO/r
+	KRSALavb4zPs0ulqOT13fzVBOIonfhkkAX/qZV16/HvTCXjswa/4Nxae3Lbfh5kV
+	rxE1FO10KbkWxVnPDA+XP8RnX0ApGWxgZAE4uXmLuPHwHKEMzsVL45CfZvqKZsOt
+	0hFxzpDRdRu72EPO1HOsw==
+X-ME-Sender: <xms:WCG0aGN_fcKVIQyvjYDeeFl1yGAUG6V99bblBc93iuCTvcLzLCY0dA>
+    <xme:WCG0aE9LHCHNPVN1LuZIU_5eCQSYIyecm66Pjwq67b4uS7WBmZ1Owjrg7_4WqYQsS
+    bO6RlPmM-n3NwpphOI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeeltdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpeflrghmvghs
+    uceosgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeffleeuffekgfefhfejudetheevgfduudefffeifeetveekteefhefffffg
+    heejhfenucffohhmrghinhepthgvshhtvggurdhnvghtnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsgholhgurdiiohhnvgdvfeejfeesfhgr
+    shhtmhgrihhlrdgtohhmpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthho
+    pegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohephhhorhhmsheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrlhhisghuuggrsehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpth
+    htohepughushhtrdhliheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthho
+    pehguhifvghnsehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohepthhonh
+    ihlhhusehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohepmhhjrghmsghi
+    ghhisehlihhnuhigrdhisghmrdgtohhm
+X-ME-Proxy: <xmx:WCG0aOLkjOXqN6rJoVKA1UQ0LIwRZDTHjPwShOCxSeA9E7iwqUaNPw>
+    <xmx:WCG0aO-Nss1w1J_AnXJrQk6RCw1sUI85vFgf0Zb6j2wX-GDsxzsgxw>
+    <xmx:WCG0aADasLgMO_F620l24tlGg7ikE1K8906AILzr9hWBoWsyfqeAXg>
+    <xmx:WCG0aIrWVxpToHIWq8VYCSqG1GC5zn8FTP5-QR-6Moff--9cSXntkg>
+    <xmx:WiG0aIp52qlhtzLh-iwA4EcGo62o8__piBmuviB6sp2AE6X5t_SiEgE_>
+Feedback-ID: ibd7e4881:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C1F277840CC; Sun, 31 Aug 2025 06:18:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AJv3-LmMGI5N
+Date: Sun, 31 Aug 2025 03:17:40 -0700
+From: James <bold.zone2373@fastmail.com>
+To: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com,
+ sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com,
+ tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ "Shuah Khan" <skhan@linuxfoundation.org>
+Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+Message-Id: <4919e89e-cf4c-4ef1-af9a-0a94e92614ac@app.fastmail.com>
+In-Reply-To: <20250831095535.176554-1-bold.zone2373@fastmail.com>
+References: <20250831095535.176554-1-bold.zone2373@fastmail.com>
+Subject: Re: [PATCH] net/smc: Replace use of strncpy on NUL-terminated string with
+ strscpy
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
----
- Documentation/trace/debugging.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/trace/debugging.rst b/Documentation/trace/debugging.rst
-index d54bc500af80..4d88c346fc38 100644
---- a/Documentation/trace/debugging.rst
-+++ b/Documentation/trace/debugging.rst
-@@ -59,7 +59,7 @@ There is various methods of acquiring the state of the system when a kernel
- crash occurs. This could be from the oops message in printk, or one could
- use kexec/kdump. But these just show what happened at the time of the crash.
- It can be very useful in knowing what happened up to the point of the crash.
--The tracing ring buffer, by default, is a circular buffer than will
-+The tracing ring buffer, by default, is a circular buffer that will
- overwrite older events with newer ones. When a crash happens, the content of
- the ring buffer will be all the events that lead up to the crash.
- 
--- 
-2.43.0
 
+On Sun, Aug 31, 2025, at 2:49 AM, James Flowers wrote:
+> strncpy is deprecated for use on NUL-terminated strings, as indicated in
+> Documentation/process/deprecated.rst. strncpy NUL-pads the destination
+> buffer and doesn't guarantee the destination buffer will be NUL
+> terminated.
+>
+> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+> ---
+> Note: this has only been compile tested.
+>
+>  net/smc/smc_pnet.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
+> index 76ad29e31d60..5cfde2b9cad8 100644
+> --- a/net/smc/smc_pnet.c
+> +++ b/net/smc/smc_pnet.c
+> @@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable 
+> *pnettable, char *ib_name,
+>  		return -ENOMEM;
+>  	new_pe->type = SMC_PNET_IB;
+>  	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
+> -	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
+> +	strscpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
+>  	new_pe->ib_port = ib_port;
+> 
+>  	new_ibdev = true;
+> -- 
+> 2.50.1
+
+Please disregard. Sorry, just noticed I should have used the two argument version of strscpy. I will send a V2. 
 
