@@ -1,239 +1,212 @@
-Return-Path: <linux-kernel+bounces-793392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18663B3D2D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E94B3D2E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58FE17B0AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B1917B09C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F90E25B31C;
-	Sun, 31 Aug 2025 12:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1CE260568;
+	Sun, 31 Aug 2025 12:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrFqNhLz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Hd+qEDuh";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qM4n8yt2"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F988259C80;
-	Sun, 31 Aug 2025 12:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530062629F;
+	Sun, 31 Aug 2025 12:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756643264; cv=none; b=oDr31pLx4DDZlqz7w7y+CG9P5TBzGMBtjkaevrq7wMJ3/bOC6Rn0/0FHSo+8UV1OiuM/sgfxcRh7+xzCccRur7/TlYbp32V+scu4BhSwNGzopNfKXEtnL7Ww0kN9c+4QYK2zHhl1Oniwrd4U5t3iYdB07sa4tyD+DuVZcv00sw0=
+	t=1756643451; cv=none; b=ZhFOS2LedEAvlIxw4JxHjX30bkmCbH+NEMnlhVRzvTcNSc3cqUDh1eCLEkdDphmc24yJlIyYtCWro55GAwb9RAcjczGBev0mBbj64oalf3M36I4Xa9huQnoGrSDc+xA61L1iK0k9AiafDllFib6LNirVa9KaiKD1IkZT6P8ItDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756643264; c=relaxed/simple;
-	bh=bPKhfTBzMY9I92soo2FdT1/MUwIki7DO1HtC3OssbrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YJ2u1aWeNxCCl+AqVGy9bLktNDlHfFGEhIPHQvBQ+W3xllGOj3lWqBG4JF3PVRzUlKtBH9VuUCrZJLPnykPK0qw3gwceiMdKm1kmz8xSHrTVS3MGoApyZ5en/+ThQerfTCyGmbUlBGT/tuceRIg0Ugu2ruTVP504a8+GFhsscuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrFqNhLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F958C4CEED;
-	Sun, 31 Aug 2025 12:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756643264;
-	bh=bPKhfTBzMY9I92soo2FdT1/MUwIki7DO1HtC3OssbrY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KrFqNhLzXXvM/UuFyfKFctDtC/tH+kl2th7u23gvZqoW/QajK9dQ9fBCNUuEQyc14
-	 2eK/eJjiSyGrGYVGPnpkdcc13gcVIn2LauZEZTJ5XnKAzBLIfZfdsFtdQ8SNLSh8cF
-	 4Iw/jk5mSUIKFVKKxRS3QQD/oI8827QEwT7dxjSwutQM6dEy8xFWjhu5723ltXozTz
-	 SvHtwfT/s4hB1bzzpwC8L8lWAT/NbiWdBZoozmDG8axEBG1nUVjNaxEEKu/0KzQQDl
-	 NVBqD391fX+SwSHuKUD8q+1d6yZpICtto2AtxWgf/jrokbqiElQFzSMummdxujmlx/
-	 EMw/uubsmvLFA==
-Date: Sun, 31 Aug 2025 13:27:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, lars@metafoo.de,
- Michael.Hennerich@analog.com, alexandru.ardelean@analog.com,
- jic23@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, Marcelo.Schmitt@analog.com, dumitru.ceclan@analog.com,
- Jonathan.Santos@analog.com, dragos.bogdan@analog.com
-Subject: Re: [PATCH v1 2/2] iio: adc: Add initial support for MAX22531 ADC
-Message-ID: <20250831132643.647f7c4d@jic23-huawei>
-In-Reply-To: <edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
-References: <cover.1756115378.git.jain.abhinav177@gmail.com>
-	<edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756643451; c=relaxed/simple;
+	bh=4FfX1QEQR5BhgXz6cJLgVX8UFOXb13D1QrVd1i7A3Ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dgg81rzH0yrqRVoiuAPCXSy+Va+6KBjxznRNU2zxlp3FUKkpkryBmYCVZytL4wW2iW4M12azRdN0J9k3KY66oZlw29I41YnwXK1pUKPbjYSyC8vFGxEKTnaeg3l+QYHXayk0KVLW0eeS//C9XGXL5BCqGjVmsG0y783WGofTAYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Hd+qEDuh; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qM4n8yt2; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1756643368; bh=i2nnWwgWrV153flpsGQ0nvH
+	siD/LEbmYW2t4Po0/UPg=; b=Hd+qEDuhnUJ6CJkydtVGUPpm6I/hJFBD1fzUILmg77uoA13Un3
+	ecx9pDeBOO1KUAzA1tmm2U/BqPROVexIv4/y6bQ48VnOKG1qyJZhj4R+ORl63sdXobWuwUwzIYL
+	hlbS9TwuvzspG6mTKajZT++M+sElsrrJ6Gkh8PZs6NDj4yEImEK+Y6/+d7kLnCdkykqOYI5K61Z
+	ShzR2JWUm5BfXPRZPxqY9mzaTyYHbiSL/ip+8/MdYd7mREEYhmOhuNJpF4RSwH4m3csSZKbtFec
+	BNKRYwiwFfi6qlo6x+SglXIJmipmN6coR/I5Hd5TiaUOt9/XeHkrTas085jKPE92pRw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1756643368; bh=i2nnWwgWrV153flpsGQ0nvH
+	siD/LEbmYW2t4Po0/UPg=; b=qM4n8yt2DHgkuEfcvH6rwSZ7vgDRNky28Ky+mQiCAVCcOYpVkx
+	woRsI6safiOoBsE1itwBpzlLku6VJfEZxLCw==;
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v8 0/7] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Sun, 31 Aug 2025 14:29:23 +0200
+Message-Id: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACNAtGgC/23Q3WrEIBAF4FdZvG6KzpiM9qrvUXrhz5gVmmRJS
+ mhZ8u41C62B5vIMfkfHu1h4zryIl8tdzLzmJU9jCebpIsLVjT03OZYsQEIrQclmWAZjkRoAw0n
+ GgBysKKdvM6f89Wh6ey/5mpfPaf5+FK9qn/52qL+OVTWyoQjEsaNE0rwOLo8fecxj/zzNvdiLV
+ jhgwIqhYG8tlWGHHPEU4xHrirHg6CIFZSCE4E+xrhhVW7EuWCWFwIak0/YUtxVrOOzc7s9O1pD
+ lpHQ8x13FBuqnr92OpZUeXPAd8SmmA8bDzVQwIDibvLLO0z+8bdsPstv+YBECAAA=
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Daniil Titov <daniilt971@gmail.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756643366; l=4016;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=4FfX1QEQR5BhgXz6cJLgVX8UFOXb13D1QrVd1i7A3Ew=;
+ b=B5QHO+A+w0PBU7Z6D2cWI7h+7cQBlvX7Bd5nnGRwNyqCiCjUrY+3pX4v307VM+DEzp2DytdDC
+ nTE7aqNzjtpCgVuuqIQtNdC1+sRANww2PJ0Aj7lDfxOPWTGR1m+ywUX
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Tue, 26 Aug 2025 02:55:49 +0530
-Abhinav Jain <jain.abhinav177@gmail.com> wrote:
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-> Add device support for MAX22530-MAX22531.
-> Implement scale and read functionality for raw/filtered ADC readings.
-> 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-Hi Abhinav,
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
 
-A few minor style related things and one question on FADC registers address.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v8:
+- msm8937:
+  - Fix scm compatible.
+  - Fix position of sram@60000 node.
+- Document qcom,scm-msm8937 compatible
+- Link to v7: https://lore.kernel.org/r/20250831-msm8937-v7-0-232a9fb19ab7@mainlining.org
 
-Thanks,
+Changes in v7:
+- gpu.yaml: update adreno 505 pattern
+- Link to v6: https://lore.kernel.org/r/20250820-msm8937-v6-0-b090b2acb67e@mainlining.org
 
-Jonathan
+Changes in v6:
+- msm8937:
+  - Fix nodes ordering.
+  - Format clocks, reg, dmas and -names properties.
+  - Add gpu_speedbin.
+- Describe A505 clocks.
+- Link to v5: https://lore.kernel.org/r/20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org
 
->  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index ea3ba1397392..a35c3c945e27 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -933,6 +933,16 @@ config MAX1363
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called max1363.
->  
-> +config MAX22531
-> +        tristate "Analog Devices MAX22531 ADC Driver"
-> +        depends on SPI
-> +        help
-> +          Say yes here to build support for field-side self-powered 12-bit
-> +	   isolated Maxim ADCs. (max22530, max22531, max22532).
-Use a list
-	  - max22530
-	  - max22531
-etc
-because it means new parts being added create less fuzz.  We've gotten this wrong
-in far too many drivers and ended up with messier follow up series as a result!
+Changes in v5:
+- msm8937:
+  - Remove wrongly defined idle-states.
+  - Fix thermal zones.
+  - Use the header with DSI phy clock IDs.
+  - Fix the nodes order.
+  - Fix the pinctrls style.
+  - Follow gcc header changes.
+- msm8937-xiaomi-land:
+  - Remove headphone switch and speaker amplifier bindings.
+  - Unify status property style.
+- gcc bindings:
+  - Expand MSM8953 gcc schema with MSM8937.
+  - Add MSM8937 prefix for MSM8937 specific clocks.
+- gcc:
+  - Follow the bindings changes.
+- Drop alwayson clock documentation it will be handled in another
+  patchset.
+- Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
 
-> +
-> +	   To compile this driver as a module, choose M here: the module will be
-> +	   called max22531.
-Should be tab index + 2 spaces for whole help block. 
-> +
+Changes in v4:
+- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
+- msm8937: add missing space after s9-p1@230
+- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
+- Remove applied patches
+- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
 
-> diff --git a/drivers/iio/adc/max22531.c b/drivers/iio/adc/max22531.c
-> new file mode 100644
-> index 000000000000..fb035225e426
-> --- /dev/null
-> +++ b/drivers/iio/adc/max22531.c
-> @@ -0,0 +1,191 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * MAX22531 SPI ADC Driver
-> + *
-> + * Copyright (C) 2025 Abhinav Jain
-> + *
-> + * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/max22530-max22532.pdf
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/unaligned.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/regulator/consumer.h>
+Changes in v3:
+- Fix qcom,gcc-msm8937 dtbinding example 
+- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
 
-As per the build bot report, there are some headers that want to be here and
-aren't. In general aim for following Include What You Use IWYU principles
-for kernel code, subject to some fuzz around headers that are always used via
-an other one.
+Changes in v2:
+- drop applied patches
+- drop gcc schema commits infavor of a new schema for gcc-msm8937
+- document always on clock for adreno 505/506/510
+- msm8937:
+  - set cache size
+  - rename cpu labels
+  - fix style issues addressed by review
+- msm8937-xiaom-land:
+  - remove unused serial0 alias
+  - remove regulator-always-on from pm8937_l6
+  - add blue indicator led for aw2013
+- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
 
-> +
-> +#define MAX22531_REG_PROD_ID		0x00
-> +#define MAX22531_REG_ADC_CHAN(x)	((x) + 1)
-> +#define MAX22531_REG_FADC_CHAN(x)	((x) + 1)
+---
+Barnabás Czémán (5):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+      dt-bindings: firmware: qcom,scm: Add MSM8937
+      dt-bindings: display/msm/gpu: describe A505 clocks
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
 
-I'm confused. Why the same registers for both of these?  If they really
-are the same, perhaps one macro is enough.
+Dang Huynh (1):
+      arm64: dts: qcom: Add initial support for MSM8937
 
-> +
-> +#define MAX22531_VREF_MV		1800
-> +#define MAX22531_DEVICE_REV_MSK		GENMASK(6, 0)
-> +#define MAX22531_DEVICE_REV		0x01
-> +
-> +#define MAX22531_REG_ADDR_MASK		GENMASK(7, 2)
-> +#define MAX22531_REG_WRITE_MASK		BIT(1)
-> +
-> +enum max22531_id {
-> +	max22530,
-> +	max22531,
-> +	max22532,
-> +};
-> +
-> +struct max22531_chip_info {
-> +	const char *name;
-> +};
-> +
-> +static struct max22531_chip_info max22531_chip_info_tbl[] = {
-> +	[max22530] = {
-> +		.name = "max22530",
-> +	},
-> +	[max22531] = {
-> +		.name = "max22531",
-> +	},
-> +	[max22532] = {
-> +		.name = "max22532",
-> +	},
-> +};
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
 
-See below for reasoning. Split these into separate structures rather
-than an array.
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    6 +
+ .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
+ .../devicetree/bindings/display/msm/gpu.yaml       |    2 +-
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    3 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2134 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
+ 10 files changed, 3169 insertions(+), 11 deletions(-)
+---
+base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+change-id: 20250210-msm8937-228ef0dc3ec9
 
-> +static int max22531_reg_read(struct max22531 *adc, unsigned int reg,
-> +			     unsigned int *readval)
-> +{
-> +	u8 cmd;
-> +
-> +	cmd = FIELD_PREP(MAX22531_REG_ADDR_MASK, reg);
-> +	*readval = spi_w8r16be(adc->spi_dev, cmd);
-
-Rather than having side effect of leaving a negative in *readval, use
-a local variable and only assign readval if all is good.
-
-> +	if (*readval < 0)
-> +		return *readval;
-> +
-> +	return 0;
-> +}
-
-> +static int max22531_probe(struct spi_device *spi)
-> +{
-
-> +	ret = max22531_reg_read(adc, MAX22531_REG_PROD_ID, &prod_id);
-> +	if (ret ||
-A failure to read is a bug that we should fail on, whereas the value
-read not matching is indeed something were a warn or info makes sense.
-So split this check 
-	if (ret)
-		return ret;
-
-	if (FIELD_GET()...
-		dev_warn
-
-> +	    FIELD_GET(MAX22531_DEVICE_REV_MSK, prod_id) != MAX22531_DEVICE_REV)
-> +		dev_warn(&spi->dev, "PROD_ID verification failed\n");
-> +
-> +	return devm_iio_device_register(&spi->dev, indio_dev);
-> +}
-> +
-> +static const struct spi_device_id max22531_id[] = {
-> +	{ "max22530", (kernel_ulong_t)&max22531_chip_info_tbl[max22530] },
-> +	{ "max22531", (kernel_ulong_t)&max22531_chip_info_tbl[max22531] },
-> +	{ "max22532", (kernel_ulong_t)&max22531_chip_info_tbl[max22532] },
-
-Whilst this style used to be common, over time we've come to the conclusion
-that an indexed array for these doesn't bring value. Instead
-just have separate structures with names that indicate which chip they
-are for.  max22532_chip_info etc  That allows the enum to be dropped which
-has the advantage of removing the temptation to use it for anything else
-(which is usually a bad idea)
-
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(spi, max22531_id);
-> +
-> +static const struct of_device_id max22531_spi_of_id[] = {
-> +	{ .compatible = "adi,max22530",
-> +		.data = &max22531_chip_info_tbl[max22530], },
-> +	{ .compatible = "adi,max22531",
-> +		.data = &max22531_chip_info_tbl[max22531], },
-> +	{ .compatible = "adi,max22532",
-> +		.data = &max22531_chip_info_tbl[max22532], },
-> +	{ }
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
