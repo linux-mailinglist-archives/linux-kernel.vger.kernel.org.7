@@ -1,250 +1,295 @@
-Return-Path: <linux-kernel+bounces-793494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9F6B3D44D
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:13:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E6DB3D451
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA9D1898968
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4B63BA5F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98ABB26D4E8;
-	Sun, 31 Aug 2025 16:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Z1o7Z0q1"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2016.outbound.protection.outlook.com [40.92.20.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3E1A76BB;
+	Sun, 31 Aug 2025 16:18:26 +0000 (UTC)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94685464E;
-	Sun, 31 Aug 2025 16:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756656783; cv=fail; b=Z3neMkcH/rEOyenjwglxzLOYxRmyu8+a1HE7riscwrKeIAobYcFNoENU9HdV9YVU1og8NP3QJZVL6gePWgswG6cHULfPKURhPqmvecimekQdlfmABKDkNgVm5Wqlery9uAPqQ9Wfi/nQJFicuJpX+/SkA8006lifRRqxP4bIdkA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756656783; c=relaxed/simple;
-	bh=m4gmrVQ3a+yKEKA03u1tfHj6+Hfj8X+XnEss/vJev4Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DWQxl3yi6r6IIy7B1WpW7WBAuqysZkt88iMt8gjPePf154J3N2pQmAfxwXwY2Bt3f4CiTOFodzrRanVYIvWi2/xPdluqZQMiwGy8zTHWSBBlG7U8fMX+zCIzdQ1K9v5J6G9et7bOLaN08NdZoEx52ZJ1JAviYF5Cmo0qOkHLzzc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Z1o7Z0q1; arc=fail smtp.client-ip=40.92.20.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qMRRo079JQoOYeWejkxraEZEnt8e1q9Tcbm3qoQmxYh9slcRLss1WNVjadMF+R2JI5vuV6ESa0PgNZR9CgqYVDwvV3ke7Mu/P5ASjHktkaYXPsgt+7iQL7lf8pbSiXYfY+pTOe1EgsnOk3OyoEh+tCmIlSQbgg8Ug+pjm31KSz1J8NTJk8EHK9DgIFhCRyKRMql0C2II5fNGK39DnmD9FPesq/a3vcS8weZoxGQW066ZbuoyEGkUGrcqnYgP/kqsBVDelGMgEpz61tfyGi34JbvFKNm7xFjFWYdqnahg41PZ7WWzzwEkO6K3fuyaarieljpiqn5vYIG09F19W87ztQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JgEMJ81LK4KpGj+/sfhJQUhnq8cRN0iwa01dK8gFsTc=;
- b=avdQpAMU6SN6lYC3auM+RpRRS0Sjc/oxt01sDCzdVLTgT/3W/smLPaOUFgGOJePs697ziQAfuGBToA4YxyIf0Hj0F5oOeM5tktq2FLdwHgix8EawupdOC2wfmfkJpO3g3sFZvoJR8O57SYOnvUTckPwoYj+AtXMpV0WKrDy9yOHFiVpHqOQdOC3drEMgHWnkQZZXKnARHK387mqx3RzXiN/q5C0EYeQokDZrTjkiExKsdRC4vQlPucV10oSnDSk9BDOlOfGjdV4an2RKf+kLMt5tqoZT0msgNwXe/1EzRXAgZ/VK6oci2n5zuUNFtTryoeZBq0RFYRNDIpxwhb7hsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JgEMJ81LK4KpGj+/sfhJQUhnq8cRN0iwa01dK8gFsTc=;
- b=Z1o7Z0q1ryrFi7mEN7oZfolIdBwD/c80QATnhUiNlnudnO43/T/4Aigly5xT0Pn0+RsCr1506rFhJQujkOoeuAowhP39F+ZRDVrOAsi0VK3xwOQh6xp1WzdK0mlmWmx5qobgzwU/pDhHla2uEORJPKP+TgcvOhRtWumaSHHYa5FFTOabuoN76++uASyDUJ+T9byUsPZPVhBnztbqS8oo4KSexoBF6zaszMrW9A0xWfyVyi1Tmun80w0b2e49L/SzR/HvGyTdigmhI2jDCjRZa5nAFg4UfVc8YyL3KXoe6Qu7th1jA4vwVMia/R2YzG0fBslnRpzMXMK9PpdxJTO8KQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DS2PR02MB10846.namprd02.prod.outlook.com (2603:10b6:8:2ad::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.27; Sun, 31 Aug
- 2025 16:12:59 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.9052.019; Sun, 31 Aug 2025
- 16:12:59 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
- Cui <decui@microsoft.com>, Stephen Hemminger <stephen@networkplumber.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Long Li
-	<longli@microsoft.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2] uio_hv_generic: Let userspace take care of interrupt
- mask
-Thread-Topic: [PATCH v2] uio_hv_generic: Let userspace take care of interrupt
- mask
-Thread-Index: AQHcF9YgahfJQA7jr0mWtTQfM8y95bR887vg
-Date: Sun, 31 Aug 2025 16:12:59 +0000
-Message-ID:
- <SN6PR02MB4157BE838354759E7B301F69D404A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250828044200.492030-1-namjain@linux.microsoft.com>
-In-Reply-To: <20250828044200.492030-1-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS2PR02MB10846:EE_
-x-ms-office365-filtering-correlation-id: fbdd74b1-7d38-4648-b25b-08dde8a9412f
-x-microsoft-antispam:
- BCL:0;ARA:14566002|41001999006|13091999003|19110799012|8062599012|8060799015|461199028|31061999003|15080799012|440099028|51005399003|40105399003|4302099013|3412199025|10035399007|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?WooOQhW/Mkwc5y7TQFGad8qrN7NECB8iRcIH84iiQ6Xw6wLftmWQMARQVe?=
- =?iso-8859-1?Q?M7/4e6hQWCPgps+iip33Xy/Y6pAr9OryM1Nu05zl0RjX7aTZ+l0rhaWgxh?=
- =?iso-8859-1?Q?A2fNnyMV7gi+chjWTMMvhnfTj2ZqK3o2tiGLQoKuFu6RLeCSTewwk4dNE+?=
- =?iso-8859-1?Q?1K/73mkqfT7BCy61cIEIXDDGWpciKdo1FtE53NlAIjROJecaWfHB7bOD0F?=
- =?iso-8859-1?Q?r8Hbgl87ZYSgz/LZKbdnI/wZu8R5d46f9OQgbquHQhaEMrmhyBREddZHuD?=
- =?iso-8859-1?Q?JGJpPCnrKoWhflMKKtxmGSFrXlaIQwlxO3qbSKHHyZAp7PaMpJ8f6Sl/o/?=
- =?iso-8859-1?Q?Fdtwu/Dp+1F11xiBzZ4il364LJf9W3y9C8NG6NdBhWHlKKXMZGNKzI/BTY?=
- =?iso-8859-1?Q?c1arx16Qf7YLZXyDTNuwU0vncZU9zHb9ZlzKTovWOniK7ch9zYPfnPK6+C?=
- =?iso-8859-1?Q?7qPuA7c9jQrLdtkkCv+thxUN9mEll52YmS/Sm88/KKwN9vNB826AnYl+A8?=
- =?iso-8859-1?Q?aNu5stWr+UADHQF2oO/Hk1q72qrDuOmMTBlQMYDscP+p4G4NpMY65+aFO0?=
- =?iso-8859-1?Q?gJe1CiZgGvVSOGLHbvXGWKG2WeiXBiqzsEdomX0rUGOxp3Ef9SLF1M1+3P?=
- =?iso-8859-1?Q?JKYiKVBPBMpLqepk8EN6Qah7v/HUUdi7b5olNEtnWtUmbzID9T1qNJORfL?=
- =?iso-8859-1?Q?Wi1mv0zGO1DCDxb5gohh8ZyOBFtFoPiFjiLtG+IiOxrmTT0tUfdJyuPaIW?=
- =?iso-8859-1?Q?ELt5PhxqpAeqppaBNGfHVxFrXSjVyQToNBkrdAnNpvOM+pDEs+kJE78H8e?=
- =?iso-8859-1?Q?RMYtVYLHeX0aLBMI1WnlI30gqmWyxHF5h3H0zUJ81ejCFM1GkZuwxBAWW6?=
- =?iso-8859-1?Q?nU1LrkMQ5M15b+2g6CcPFyD/040UGAbMc0uKzWsVwidMYk/WMPxQ+f+nfs?=
- =?iso-8859-1?Q?zMrNBsA+maMD0aVJgV6tJWVWsYcWg14cLnLC0I9fYbyxg+oSV5XvacJT0k?=
- =?iso-8859-1?Q?CxfjdXTRdK++STMi0Tcze9EXEsMNL/Qhg5BDqrvimzKjX8BjxplfXKIRbS?=
- =?iso-8859-1?Q?p7VFVEW5VOc0hg5zlQy1Dmz5tw6OQwdw2qA8VoUs2sNNnIcYO4xdTLDChS?=
- =?iso-8859-1?Q?a4cDmizOJnUwtUyoBqh+bF/g3S+lyhC/SMPDn67G4W7SAUPoU8fIlGUPsU?=
- =?iso-8859-1?Q?H3hjOGis0lELbeFFebza/tCBr5m1lQ8b9bwxebIPGAhrENSgklfteOvA3v?=
- =?iso-8859-1?Q?OE/TXmUlmLKcAieSxKz6rBFSgb+Pcn3y5RSlNtXdpJgmlXtI1ftd34Ramx?=
- =?iso-8859-1?Q?Il4SebLniPnctJFy1DRbrXMQR5Bpedn7W6LkMZbp1cPEWh8r2IQo2amLwP?=
- =?iso-8859-1?Q?lsXDkezPSdd38kC6y8gKlc4DNMIKrS8OUMEKSuiLQAritEgSNB/Pejrc0S?=
- =?iso-8859-1?Q?qSprg0mXzWCO6jzc?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?PrsXI1wGprxqkMZqvlu/nvW5xwzxE35chT6bNSG2D1IxE6eBXbPSHTLfoy?=
- =?iso-8859-1?Q?2UGXI6uB7eVnFYzUD0SM1IwrFEnOQFC6t/RbdVWUyK+4GgHMF2Q2BS+S7r?=
- =?iso-8859-1?Q?idB+ongnLU9EhuelRshDF9F522LS1HV82lKpz/QlVK7ztFly+70o3BMNpA?=
- =?iso-8859-1?Q?2Tx84hARAAbqE/WMQVkqWrSB1EP6nD1/xNsEx+Z3IL0uIzMtW95k17XoL4?=
- =?iso-8859-1?Q?bkxrkppW/pzZSxzfZIuVoN0oQnxovfDAV/KOeH60ZZ0egH6He9F02fxgmY?=
- =?iso-8859-1?Q?tZegj1knHYCrf62X9dp5DRIr1G26oLtJxlRncI+vqaNAUhgWSX+V/sVkOj?=
- =?iso-8859-1?Q?l4/f4Sa9QZKY7Mge/OhNiXg8+BXkVa4+ikO5bgd1Nb65uNWOxJ96ARE8Vn?=
- =?iso-8859-1?Q?WmJJsKSSga9oe75LumpQruNUn3rHL86FxXya0s6yVtUqArZ0YQTnfCBT3c?=
- =?iso-8859-1?Q?Vj568uZv4bOHv8kS5Hv539X6QKic+nTcl/KMFXjHaSUs7atonMjbPqn3/u?=
- =?iso-8859-1?Q?X/Af8CEBmyNKbpUVvJjqDEe3deI8013WA2KVUbmXTnFt/gmCJRee/rjphD?=
- =?iso-8859-1?Q?gR2QwXBhAvWaqC/cU/WN1bawRN1TGLPLu+yWum4iN7HduO5Mfc7Vc94Zl7?=
- =?iso-8859-1?Q?LQATGO6xWi5qAd9aJVYWG7xCYSATt118UIrTZ6PFgB7tqBu0rgpq7YhTpB?=
- =?iso-8859-1?Q?PcLFz2Dx3A7NezWw9/5Z+6z7azJN/siUYtBRSW6mRfrJBunWKtSHI9kTAa?=
- =?iso-8859-1?Q?++kNjxB88UsMNzM/mvTvgnvBNzSejt/xanUEDLaroEIBrkoCf71cIC0QTK?=
- =?iso-8859-1?Q?Kv1WdXuKbPrODjnDz3VOBBEcwwK6kgre9YQHdwzmj1oKrk55Xh0DPtUllR?=
- =?iso-8859-1?Q?OcCFeWdzc1LVtvBG1wYFXES4+R6M4d/cyhzDQQVv6FCqZxcZmvIuqw72rZ?=
- =?iso-8859-1?Q?DyMp/GO8XU07YCLDWo1oYXetbEOOX+hWSv4MLvmBleAXdNM1o45/wvHw3r?=
- =?iso-8859-1?Q?TZ/ZTaBwv3NdFpZdmaHGrgHLE7Ntdo76l5z2TY8273kSXYpSgFYYuywCFM?=
- =?iso-8859-1?Q?/zhBk4H1nL6qXOmayUlQrRxHxZeqr+Z6D5+zM6IJPSDJb6vGL8q3MVNFqK?=
- =?iso-8859-1?Q?ybzyEl2L0GS/amyTtnXyojnxRRKnX+qUQtjakDDgytBZ4gqJPKJfAyof6V?=
- =?iso-8859-1?Q?Hibfx5bGHcvQXWvCI4CcqtPoFwnEXHlNzqWhxtK4OVMLO/tDkPCzO0K2Rq?=
- =?iso-8859-1?Q?V1gxFGeKRAWriK2U3e/Yq2zvETA+5p5Js0RQcJVAU=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FA82581;
+	Sun, 31 Aug 2025 16:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756657105; cv=none; b=Pt1olS9fOXfCxm189ffqpBkRfwLwseheODjBmEu6Er5AHWo6mTtMc3NzIBFX1k7mtbKAehXYqsm/RG0m7uY53qMJ2htX24dVm2Heh7ptJgc7tEPx04K3y67QZsBkUET3bIUBSBTOkUeeUrGculP5WWUamsHYB41BnFUCwQOHaAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756657105; c=relaxed/simple;
+	bh=AlZqi77j4tZq9+hCm6jqUyK1j7aIr9HWaAQF/Iat0yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ItqU/nDRN6tWt8ouST32ItQBKtdCIgx1Ba+4YlKn/8hyygu+pZSk09ttIUb7vz2B3j+OtkMoeRsPeSZrc/TZqdYHF7vppJctZqg0OntC5YTv0ne+bTWhpLIqRlkiB+Vpm6ep2KuVHUWQ6vnRy5/MiEPIWkEFJzxQKeyKf1dFZBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2489b7f3d5fso7754535ad.0;
+        Sun, 31 Aug 2025 09:18:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756657103; x=1757261903;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QPgL1f0se+xmCF5cJxlkGRoiKTVxgJno4fZZaW2VANc=;
+        b=Kb1tfYd3LF+KKWFoQn0FQv9ra4PThErJzbkdFfBvQ/wYaI8dJlgOduDbnz1W4qJD9m
+         KwKwxKk5fkhcm6sBX/QsNQYxU6I1hHBhw9JaZT1d54FrSRTOLi2MIFncSUGVI9HeTcaD
+         IchYTy1QkSxDSesCTJDzVwxpP21vn1SGRegb4xMH+CgIsR4Hk1BKmuUGTm9zGVJAqefM
+         mALAr5RFvuPT71qtEkSxxdiNGyyR58xJyl3W4/WijzpQJwcd4jbk99k/IRFLljm+TDEn
+         39kowGSpvAHWOrQnM0MeSlfib5o3juphg3g0OUQTel2Xw2c6zNMO9qVIfr5Wj30Oso75
+         WE9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW358D4vdpwuIvHQKUQYPoIgux2kPJF4vJCdk5wqxr8bxJbT0NTuuaTea/Kwpy26ap0+OPlx+Q5j77UWDY5@vger.kernel.org, AJvYcCWR7fJPtT9Kl4HhlVPQEZgQDufcg0+cd+TEiT+S4GB6gWEuPg5Af7wUuJllryxSHkLpPmSaPO6U05o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbg6YRK5vb4RMkaZVocuwGQDJib3nHhjJ84KIoFR3oqCJ0gLjU
+	FryI+wIYxnYUMzotMEgHxJPRtcYGMxIkWuq3RNewmvMLu7rxpPHGYB+H
+X-Gm-Gg: ASbGncuG2vtkAGiuZgtuww7d75aB/OW7yo/6n1BgbEaSat1Ag2NPykpIfu1FxN7+DJN
+	z7eg9ESNPKZmLth3sBeNDyDYiBtZmaEis9JOoJBtJ9lHzRXbWoj7FVrPg6mAKaq82BEFbSE/auP
+	kqbwQtklQzcGSj6l+I3MmVZy7Htp6Hhwm8YtId9KwCzsIwquMIWaNIIco4ITplFlJO+WpBmO0lC
+	PcQy96qm0yqIP+ZqbtKo+UDrOA/LW1BZRHNWmbvwfmJMSrHhMRKUlTBOLzCO893RjBApXUEOlgi
+	enmjaaJv6/R7sG17lx9wWHmUIewq99/4fnwde3mTW+8ElofU2CIedtrDFcAypwzw4p3mTUupg3M
+	eMhBeU6ENdXKyEFhD0JcGX/RwTO/rYumXAGleticvA6lkoVwGB7IaUvSL/jfNFingwqAxdh92Nt
+	XK5r1bjQ96Kw==
+X-Google-Smtp-Source: AGHT+IFTUEpW76fHmr9GSqQUg6NUG8aP3mwlJdthzy9852Xyp6ayZ6AFEOq4NC3awYEjc/vUh9dAvg==
+X-Received: by 2002:a17:902:f790:b0:24a:af25:34dd with SMTP id d9443c01a7336-24aaf2537acmr14382175ad.10.1756657102779;
+        Sun, 31 Aug 2025 09:18:22 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77244d42b0esm3798774b3a.80.2025.08.31.09.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 09:18:22 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Tejun Heo <tj@kernel.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Hyunchul Lee <cheol.lee@lge.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	SeongJae Park <sj@kernel.org>,
+	Minwoo Im <minwoo.im@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Chanho Min <chanho.min@lge.com>,
+	Taehee Yoo <ap420073@gmail.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	gwan-gyeong.mun@intel.com,
+	yeoreum.yun@arm.com,
+	Mingi Cho <mgcho.minic@gmail.com>,
+	Hyunwoo Kim <imv4bel@gmail.com>,
+	austindh.kim@gmail.com,
+	pmnxis@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <ysk@kzalloc.com>
+Subject: [PATCH v8] Documentation: cve Korean translation
+Date: Sun, 31 Aug 2025 16:16:57 +0000
+Message-ID: <20250831161657.1414453-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbdd74b1-7d38-4648-b25b-08dde8a9412f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2025 16:12:59.6602
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR02MB10846
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, August 27, =
-2025 9:42 PM
->=20
-> Remove the logic to set interrupt mask by default in uio_hv_generic
-> driver as the interrupt mask value is supposed to be controlled
-> completely by the user space. If the mask bit gets changed
-> by the driver, concurrently with user mode operating on the ring,
-> the mask bit may be set when it is supposed to be clear, and the
-> user-mode driver will miss an interrupt which will cause a hang.
->=20
-> For eg- when the driver sets inbound ring buffer interrupt mask to 1,
-> the host does not interrupt the guest on the UIO VMBus channel.
-> However, setting the mask does not prevent the host from putting a
-> message in the inbound ring buffer.=A0So let's assume that happens,
-> the host puts a message into the ring buffer but does not interrupt.
->=20
-> Subsequently, the user space code in the guest sets the inbound ring
-> buffer interrupt mask to 0, saying "Hey, I'm ready for interrupts".
-> User space code then calls pread() to wait for an interrupt.
-> Then one of two things happens:
->=20
-> * The host never sends another message. So the pread() waits forever.
-> * The host does send another message. But because there's already a
->   message in the ring buffer, it doesn't generate an interrupt.
->   This is the correct behavior, because the host should only send an
->   interrupt when the inbound ring buffer transitions from empty to
->   not-empty. Adding an additional message to a ring buffer that is not
->   empty is not supposed to generate an interrupt on the guest.
->   Since the guest is waiting in pread() and not removing messages from
->   the ring buffer, the pread() waits forever.
->=20
-> This could be easily reproduced in hv_fcopy_uio_daemon if we delay
-> setting interrupt mask to 0.
->=20
-> Similarly if hv_uio_channel_cb() sets the interrupt_mask to 1,
-> there's a race condition. Once user space empties the inbound ring
-> buffer, but before user space sets interrupt_mask to 0, the host could
-> put another message in the ring buffer but it wouldn't interrupt.
-> Then the next pread() would hang.
->=20
-> Fix these by removing all instances where interrupt_mask is changed,
-> while keeping the one in set_event() unchanged to enable userspace
-> control the interrupt mask by writing 0/1 to /dev/uioX.
->=20
-> Fixes: 95096f2fbd10 ("uio-hv-generic: new userspace i/o driver for VMBus"=
-)
-> Suggested-by: John Starks <jostarks@microsoft.com>
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> Cc: <stable@vger.kernel.org>
+Understanding the Linux kernel's CVE handling process is becoming
+increasingly critical. This is especially important for Korean companies
+exporting products to regions like Europe, as they must comply with
+regulations such as the Cyber Resilience Act (CRA).
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+This translation aims to raise awareness among Korean kernel developers and
+companies, helping them better understand and adhere to the kernel
+community's security practices.
 
-> ---
-> Changes since v1:
-> https://lore.kernel.org/all/20250818064846.271294-1-namjain@linux.microso=
-ft.com/
-> * Added Fixes and Cc stable tags.
-> ---
->  drivers/uio/uio_hv_generic.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->=20
-> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> index f19efad4d6f8..3f8e2e27697f 100644
-> --- a/drivers/uio/uio_hv_generic.c
-> +++ b/drivers/uio/uio_hv_generic.c
-> @@ -111,7 +111,6 @@ static void hv_uio_channel_cb(void *context)
->  	struct hv_device *hv_dev;
->  	struct hv_uio_private_data *pdata;
->=20
-> -	chan->inbound.ring_buffer->interrupt_mask =3D 1;
->  	virt_mb();
->=20
->  	/*
-> @@ -183,8 +182,6 @@ hv_uio_new_channel(struct vmbus_channel *new_sc)
->  		return;
->  	}
->=20
-> -	/* Disable interrupts on sub channel */
-> -	new_sc->inbound.ring_buffer->interrupt_mask =3D 1;
->  	set_channel_read_mode(new_sc, HV_CALL_ISR);
->  	ret =3D hv_create_ring_sysfs(new_sc, hv_uio_ring_mmap);
->  	if (ret) {
-> @@ -227,9 +224,7 @@ hv_uio_open(struct uio_info *info, struct inode *inod=
-e)
->=20
->  	ret =3D vmbus_connect_ring(dev->channel,
->  				 hv_uio_channel_cb, dev->channel);
-> -	if (ret =3D=3D 0)
-> -		dev->channel->inbound.ring_buffer->interrupt_mask =3D 1;
-> -	else
-> +	if (ret)
->  		atomic_dec(&pdata->refcnt);
->=20
->  	return ret;
-> --
-> 2.34.1
+The translation is based on the contributor's direct experience with the
+Linux kernel security bug process and obtaining CVEs. Furthermore,
+completion of the security training program provided by the Linux
+Foundation ensures the necessary accuracy for this documentation.
+
+After the v7 patch, Austin Kim requested to be removed from the
+Translation Review list, so I deleted his name and fixed the parts that
+were causing the document build to fail.
+
+Below is a link where the changes to the translation so far can be
+tracked version:
+
+[1] https://lore.kernel.org/lkml/20240511195942.30857-1-yskelg@gmail.com/
+[2] https://lore.kernel.org/lkml/20240527102313.27966-1-yskelg@gmail.com/
+[3] https://lore.kernel.org/lkml/20240527103003.29318-1-yskelg@gmail.com/
+[4] https://lore.kernel.org/lkml/20240603161530.80789-1-yskelg@gmail.com/
+[5] https://lore.kernel.org/lkml/20240605010811.19445-1-yskelg@gmail.com/
+[6] https://lore.kernel.org/lkml/20250822131829.50331-2-ysk@kzalloc.com/
+[7] https://lore.kernel.org/lkml/20250823193516.19485-2-ysk@kzalloc.com/
+
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+Reviewed-by: SeongJae Park <sj@kernel.org>
+---
+ Documentation/translations/ko_KR/index.rst    |   1 +
+ .../translations/ko_KR/process/cve.rst        | 137 ++++++++++++++++++
+ 2 files changed, 138 insertions(+)
+ create mode 100644 Documentation/translations/ko_KR/process/cve.rst
+
+diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
+index a20772f9d61c..0bf8f775a215 100644
+--- a/Documentation/translations/ko_KR/index.rst
++++ b/Documentation/translations/ko_KR/index.rst
+@@ -12,6 +12,7 @@
+    :maxdepth: 1
+ 
+    process/howto
++   process/cve
+    core-api/wrappers/memory-barriers.rst
+ 
+ .. raw:: latex
+diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
+new file mode 100644
+index 000000000000..8619cb23a739
+--- /dev/null
++++ b/Documentation/translations/ko_KR/process/cve.rst
+@@ -0,0 +1,137 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. raw:: latex
++
++	\kerneldocCJKoff
++
++NOTE:
++This is a version of Documentation/process/cve.rst translated into Korean.
++This document is maintained by Yunseong Kim <ysk@kzalloc.com>.
++If you find any difference between this document and the original file or
++a problem with the translation, please contact the maintainer of this file.
++
++Please also note that the purpose of this file is to be easier to
++read for non English (read: Korean) speakers and is not intended as
++a fork.  So if you have any comments or updates for this file please
++update the original English file first.  The English version is
++definitive, and readers should look there if they have any doubt.
++
++----------------------------------
++
++.. raw:: latex
++
++	\kerneldocCJKon
++
++이 문서는
++Documentation/process/cve.rst
++의 한글 번역입니다.
++
++:역자: 김윤성 <ysk@kzalloc.com>
++:감수: 박진우 <pmnxis@gmail.com>
++
++----------------------------------
++
++=================
++CVE 항목들 (CVEs)
++=================
++
++공통 취약점 및 노출(Common Vulnerabilities and Exposure, CVE®) 번호는 공개적으로
++알려진 보안 취약점을 식별, 정의하고 목록화하기 위한 명확한 방법으로
++개발되었습니다. 하지만 시간이 지나면서 커널 프로젝트에서는 그 유용성이
++감소했으며, CVE 번호가 부적절한 방식과 이유로 할당되는 경우가 매우 많았습니다.
++이 때문에 커널 개발 커뮤니티는 CVE 사용을 꺼리는 경향이 있었습니다. 그러나
++CVE 및 기타 보안 식별자 할당에 대한 지속적인 압력과, 커널 커뮤니티 외부의
++개인 및 회사들의 지속적인 남용이 결합되면서, 커널 커뮤니티가 이러한 할당에
++대한 통제권을 가져야 한다는 점이 명확해졌습니다.
++
++리눅스 커널 개발팀은 잠재적인 리눅스 커널 보안 이슈에 대해 CVE를 할당할 수
++있습니다. 이 할당은
++:doc:`일반적인 리눅스 커널 보안 버그 보고 절차</process/security-bugs>`
++와는 독립적으로 이루어집니다.
++
++리눅스 커널에 할당된 모든 CVE 목록은 linux-cve 메일링 리스트 아카이브
++https://lore.kernel.org/linux-cve-announce/ 에서 확인할 수 있습니다.
++할당된 CVE에 대한 알림을 받으려면 해당 메일링 리스트를
++`구독<https://subspace.kernel.org/subscribing.html>`_ 하시기 바랍니다.
++
++할당 절차 (Process)
++===================
++
++일반적인 안정(stable) 릴리스 프로세스의 일부로, 잠재적으로 보안 이슈가 될 수
++있는 커널 변경 사항은 CVE 번호 할당 담당 개발자가 식별하여 자동으로 CVE 번호가
++할당됩니다. 이러한 할당 내역은 linux-cve-announce 메일링 리스트에 공지사항으로
++빈번하게 게시됩니다.
++
++참고로, 리눅스 커널이 시스템에서 차지하는 계층의 특성상 거의 모든 버그가 커널
++보안을 침해하는 데 악용될 수 있지만, 버그가 수정될 당시에는 악용 가능성이
++명확하지 않은 경우가 많습니다. 이 때문에 CVE 할당 팀은 매우 신중하게
++접근하며(overly cautious), 식별한 모든 버그 수정(bugfix)에 CVE 번호를
++할당합니다. 이는 리눅스 커널 팀이 발행하는 CVE의 수가 겉보기에 많아 보이는
++이유를 설명합니다.
++
++만약 CVE 할당 팀이 놓친 특정 수정 사항에 대해 CVE가 할당되어야 한다고 생각되면,
++<cve@kernel.org>로 이메일을 보내주십시오. 담당 팀이 협력할 것입니다.
++이 이메일 주소는 이미 릴리스된 커널 트리에 포함된 수정 사항에 대한 CVE 할당
++전용이며, 잠재적인 보안 이슈를 보내서는 안 된다는 점에 유의하십시오.
++아직 수정되지 않은 보안 이슈를 발견했다고 생각되면
++:doc:`일반적인 리눅스 커널 보안 버그 보고 절차</process/security-bugs>`
++를 따르십시오.
++
++리눅스 커널의 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
++않습니다. 할당은 수정 사항이 제공되고 안정(stable) 커널 트리에 적용된 후에만
++자동으로 이루어지며, 원본 수정 사항의 git 커밋 ID로 추적됩니다. 커밋으로
++이슈가 해결되기 전에 CVE를 할당받고자 하는 경우, 커널 CVE 할당
++팀<cve@kernel.org>에 연락하여 예약된 식별자 목록에서 할당받을 수 있습니다.
++
++현재 안정/장기 지원 버전(Stable/LTS) 담당 커널 팀이 적극적으로 지원하지 않는
++커널 버전에서 발견된 이슈에 대해서는 CVE가 할당되지 않습니다. 현재 지원되는
++커널 브랜치 목록은 https://kernel.org/releases.html 에서 확인할 수 있습니다.
++
++할당된 CVE에 대한 이의 제기 (Disputes)
++======================================
++
++특정 커널 변경 사항에 할당된 CVE에 대해 이의를 제기하거나 수정할 권한은 오직
++영향을 받는 관련 서브시스템의 메인테이너에게만 있습니다. 이 원칙은 취약점
++보고의 높은 정확성과 책임성을 보장합니다. 서브시스템에 대한 깊은 전문 지식과
++긴밀한 이해(intimate knowledge)를 가진 개인만이 보고된 취약점의 유효성과
++범위를 효과적으로 평가하고 적절한 CVE 지정을 결정할 수 있습니다. 이 지정된
++권한 밖에서 CVE를 수정하거나 이의를 제기하려는 시도는 혼란, 부정확한 보고,
++그리고 궁극적으로 시스템 침해로 이어질 수 있습니다.
++
++무효한 CVE (Invalid CVEs)
++=========================
++
++리눅스 배포판이 자체적으로 적용한 변경 사항 때문에 해당 배포판에서만 지원되는
++리눅스 커널에서 보안 이슈가 발견된 경우, 또는 배포판이 더 이상 kernel.org에서
++지원하는 않는 커널 버전을 사용하여 보안 이슈가 발견된 경우, 리눅스 커널 CVE
++팀은 CVE를 할당할 수 없으며 해당 리눅스 배포판에 직접 요청해야 합니다.
++
++현재 공식 지원 중인 커널 버전에 대해, 커널 CVE 할당 팀 외 다른 그룹이 지정한
++CVE는 유효한 CVE로 인정되어선 안 됩니다. 커널 CVE 할당 팀<cve@kernel.org>에
++알려주시면 CNA(CVE Numbering Authority) 시정(remediation) 절차를 통해 해당
++항목을 무효화 조치할 것입니다.
++
++특정 CVE의 적용 가능성 (Applicability)
++======================================
++
++리눅스 커널은 다양한 방식으로 사용될 수 있으며, 외부 사용자가 접근하는 방식도
++다양하거나 아예 접근이 없을 수도 있습니다. 따라서 특정 CVE의 적용 가능성(해당
++여부)은 CVE 할당 팀이 아닌 리눅스 사용자가 결정해야 합니다. 특정 CVE의 적용
++가능성을 판단하기 위해 저희에게 연락하지 마십시오.
++
++또한, 소스 트리는 매우 방대하고 개별 시스템은 소스 트리의 작은 부분 집합만을
++사용하므로, 리눅스 사용자는 할당된 수많은 CVE가 자신의 시스템과 관련이 없다는
++점을 인지해야 합니다.
++
++요컨대, 저희는 귀하의 사용 사례(use case)를 알지 못하며 귀하가 커널의 어느
++부분을 사용하는지 알지 못하므로, 특정 CVE가 귀하의 시스템과 관련이 있는지
++판단할 방법이 없습니다.
++
++언제나 그렇듯이, 개별적으로 선별된 변경 사항이 아니라, 많은 커뮤니티 구성원들에
++의해 통합된 전체로서 함께 테스트된 모든 릴리스된 커널 변경 사항을 적용하는 것이
++가장 좋습니다. 또한 많은 버그의 경우, 전체 문제에 대한 해결책은 단일 변경 사항이
++아니라 서로 중첩된 많은 수정 사항의 합으로 발견된다는 점에 유의하십시오.
++이상적으로는 모든 이슈에 대한 모든 수정 사항에 CVE가 할당되지만, 때때로 저희가
++수정 사항을 인지하지 못할 수 있습니다. 따라서 CVE가 할당되지 않은 일부 변경
++사항도 적용하는 것이 관련 있을 수 있다고 가정하십시오.
++
+-- 
+2.50.0
 
 
