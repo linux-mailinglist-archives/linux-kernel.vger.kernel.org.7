@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-793245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480AFB3D10A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:15:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95826B3D10D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833BC188CB99
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 06:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338DA3BA238
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 06:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB91722172E;
-	Sun, 31 Aug 2025 06:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306D721D3F5;
+	Sun, 31 Aug 2025 06:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZQ+Gjq/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oduuk+63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037C622156D;
-	Sun, 31 Aug 2025 06:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDB942050;
+	Sun, 31 Aug 2025 06:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756620898; cv=none; b=hDA99IPZh+o68PIzzpTH64ZDiZU8oCM5X7OFfpATgi2JMXve6bkpJBd/XhvSf2b1KbjadIYt0SJtiR257Om2nJ6uGIDD3qLHZNh+xSAPyu6YGbIrzbs/i4Ntiz3dvFoNUiuk5/xY8BjNI+SnzKbfVPR2WCYvDFPcFMJEYXH7qwA=
+	t=1756621549; cv=none; b=NB2KU0H0YVFHTv+96zYJ8fptBFWDNqfAPVCHJZQW3T1VoqTRY1tCAPlrhHhtg9a4f6mLROFJHAVv14s1MA9TsUvw5QG7CSlyvxVKwqhG7UI/y4DC8ryw9XbA1aFxSx/yApElCta7hkSTlUBxdg/951EyPvhBOkjBrSDpAyYD5c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756620898; c=relaxed/simple;
-	bh=V+YLe5IQWYGwZEbw0X1urY15Dp2x+M8Mc6WWY+aY0y0=;
+	s=arc-20240116; t=1756621549; c=relaxed/simple;
+	bh=+CDr5CmMVVcfHGgCI//H7hmg0CTkNc1KJZwNEhOZN5U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KQPE7THYLpIbU8Tam/nz45xeHiYkA8GkEVUiv3exZjF3+O+fcJshA2T02ug2sxVt0aka6kBfgzkJ+UOrqsygXsu3kb9abOQxfr0l01gYTBrOfFK+szxBJU6C+JiJWOkJF2SnFTuA9fP0hr7zfSYgJUil1pCOWSTcP8wFruuFTpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZQ+Gjq/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2EEC4CEED;
-	Sun, 31 Aug 2025 06:14:56 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QqqhWvuT6WvDbBkYAYvV9TubdCoU7P8IeAUVaaaiC6r+hWkHlsgXHLwo3YBc9VQ0lLsgOZU9uEsKlocoZFudoy7p7nMHnhpEYo4X2Tvh6FwyRWk8ErxuhBJp1/2zy7zKpy8WOHESto5jvff4zeLs9ytKA4LvX401xKUuL1ocDtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oduuk+63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E842C4CEED;
+	Sun, 31 Aug 2025 06:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756620897;
-	bh=V+YLe5IQWYGwZEbw0X1urY15Dp2x+M8Mc6WWY+aY0y0=;
+	s=k20201202; t=1756621549;
+	bh=+CDr5CmMVVcfHGgCI//H7hmg0CTkNc1KJZwNEhOZN5U=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=aZQ+Gjq/ef3m78XD3ozlHdLSFzKy77N8v0QcidJK0vVI7mMW3SJsDLzzO548+A6g7
-	 jC6qWva8naW9yyb1gZWbJTqNTVqVV2NDuK//fMuxu+VuO4eWLtOGMU24NP38vt5Jfq
-	 2ag80tGNHS9VsXDFzJo5fAKPrZXEteqlXamVxbYGjKI4eJkmkQ5i470wgeUSdLGUKM
-	 zYvj/HdUjtaHnJYHk+m0U0kXRga+RM0lKMr3lP0JD/xVaFgUKjwzfO0aWlH6EdE9iK
-	 W2+pJMRsMoHaCWDlYc+tAEICPUL6E2IaeEOQMTUamgcqELU3QgE2ZTRYELhQEqAJDv
-	 arwLjohMXHcVQ==
-Message-ID: <339029f2-1f54-40ea-8880-e68fbd351755@kernel.org>
-Date: Sun, 31 Aug 2025 08:14:54 +0200
+	b=Oduuk+63kXQyoLLGEphjZkDEyT+LZIw5dnHNxQj/n5yFknHWxusjFOyout7addpHx
+	 F0y8uTaazisxsH8wyRsBA2IgE0EW6pRSHbiSIsW06yleRLfoNq28fsLZf0VfR1sNXn
+	 hvnADSXkOMhP/VpCgR20NX2yGKoTPfbI22hpOuYNKOuPP9J7xw9BWupd6hgNIjC3AH
+	 cNT5R2Elo7xxvqn40PNDU+Dkd32/YbUjO07YlcjSxo/IEgRslY4VTauWtKxFA39j5l
+	 sPmZBG05RB5VgppxI6AvH02GY+ZY24rXPZDU59QsYhqyz/xOKDp0b6PXFPbxoMp/Ps
+	 Y2py6jte4WN6Q==
+Message-ID: <6e52d938-3ac2-4779-b70d-9cc58c16c266@kernel.org>
+Date: Sun, 31 Aug 2025 08:25:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,11 +49,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] tty/vt: 8th bit location in vc_uniscr routines
+Subject: Re: [PATCH 2/3] tty/vt: Prevent 8th bit corruption with soft cursor
 To: Zsolt Kajtar <soci@c64.rulez.org>, linux-serial@vger.kernel.org,
  linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 References: <20250829194908.24852-1-soci@c64.rulez.org>
- <20250829194908.24852-2-soci@c64.rulez.org>
+ <20250829194908.24852-3-soci@c64.rulez.org>
 Content-Language: en-US
 From: Jiri Slaby <jirislaby@kernel.org>
 Autocrypt: addr=jirislaby@kernel.org; keydata=
@@ -98,76 +98,49 @@ Autocrypt: addr=jirislaby@kernel.org; keydata=
  f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
  DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
  S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <20250829194908.24852-2-soci@c64.rulez.org>
+In-Reply-To: <20250829194908.24852-3-soci@c64.rulez.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 29. 08. 25, 21:49, Zsolt Kajtar wrote:
-> Both vc_uniscr_check and vc_uniscr_copy_line assume that the 8th bit of
-> glyph is also the 8th bit in the screen buffer. However this is only the
-> case for fbcon at the moment. Vgacon has it on the 11th and so the
-> conversion won't work correctly in that case. The patch corrects this
-> oversight.
+> The attributes of the soft cursor are configurable and one would rightly
+> expect that only the attributes are to be affected. But that's not
+> guaranteed for a font with 512 glyphs as the 8th bit is in the attribute
+> byte. This patch makes sure that really only the attribute bits are
+> changed by the cursor and not the glyph's appearance.
 > 
 > Signed-off-by: Zsolt Kajtar <soci@c64.rulez.org>
 > ---
->   drivers/tty/vt/vt.c | 16 +++++++++++-----
->   1 file changed, 11 insertions(+), 5 deletions(-)
+>   drivers/tty/vt/vt.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
 > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> index 869261141..c6c931047 100644
+> index c6c931047..d54f4d24e 100644
 > --- a/drivers/tty/vt/vt.c
 > +++ b/drivers/tty/vt/vt.c
-> @@ -493,7 +493,7 @@ int vc_uniscr_check(struct vc_data *vc)
+> @@ -823,6 +823,7 @@ static void add_softcursor(struct vc_data *vc)
 >   {
->   	u32 **uni_lines;
->   	unsigned short *p;
-> -	int x, y, mask;
-> +	int x, y;
->   
->   	WARN_CONSOLE_UNLOCKED();
->   
-> @@ -514,11 +514,14 @@ int vc_uniscr_check(struct vc_data *vc)
->   	 * unicode content will be available after a complete screen refresh.
->   	 */
->   	p = (unsigned short *)vc->vc_origin;
-> -	mask = vc->vc_hi_font_mask | 0xff;
->   	for (y = 0; y < vc->vc_rows; y++) {
->   		u32 *line = uni_lines[y];
->   		for (x = 0; x < vc->vc_cols; x++) {
-> -			u16 glyph = scr_readw(p++) & mask;
-> +			u16 w = scr_readw(p++);
-> +			u16 glyph = w & 0xff;
-> +
-> +			if (w & vc->vc_hi_font_mask)
-> +				glyph |= 0x100;
+>   	int i = scr_readw((u16 *) vc->vc_pos);
 
-This makes sense, but introduce a helper, please.
+It's terrible how the current code uses weird types (int here).
 
->   			line[x] = inverse_translate(vc, glyph, true);
->   		}
->   	}
-> @@ -561,10 +564,13 @@ void vc_uniscr_copy_line(const struct vc_data *vc, void *dest, bool viewed,
->   		 * buffer of its own.
->   		 */
->   		u16 *p = (u16 *)pos;
-> -		int mask = vc->vc_hi_font_mask | 0xff;
->   		u32 *uni_buf = dest;
->   		while (nr--) {
-> -			u16 glyph = scr_readw(p++) & mask;
-> +			u16 w = scr_readw(p++);
-> +			u16 glyph = w & 0xff;
-> +
-> +			if (w & vc->vc_hi_font_mask)
-> +				glyph |= 0x100;
+>   	u32 type = vc->vc_cursor_type;
+> +	int mask = vc->vc_hi_font_mask | 0xff;
 
-And use here as well.
+But since you are introducing a new one, use u16, not int. Esp. when it 
+is a mask.
+>   	if (!(type & CUR_SW))
+>   		return;
+> @@ -836,6 +837,7 @@ static void add_softcursor(struct vc_data *vc)
+>   		i ^= CUR_BG;
+>   	if ((type & CUR_INVERT_FG_BG) && (i & CUR_FG) == ((i & CUR_BG) >> 4))
+>   		i ^= CUR_FG;
+> +	i = (i & ~mask) | (softcursor_original & mask);
+>   	scr_writew(i, (u16 *)vc->vc_pos);
+>   	if (con_should_update(vc))
+>   		con_putc(vc, i, vc->state.y, vc->state.x);
 
->   			*uni_buf++ = inverse_translate(vc, glyph, true);
->   		}
->   	}
-
-
+thanks,
 -- 
 js
 suse labs
