@@ -1,129 +1,140 @@
-Return-Path: <linux-kernel+bounces-793597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377E6B3D5B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76560B3D5B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 346E44E143D
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61B91896E3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165FF253B40;
-	Sun, 31 Aug 2025 23:02:39 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7971E253B40;
+	Sun, 31 Aug 2025 23:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWniY+gM"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E61B24290D;
-	Sun, 31 Aug 2025 23:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BED622F14D;
+	Sun, 31 Aug 2025 23:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756681358; cv=none; b=C965mzZBi/MjOfmOmy0NYaOZPxXuxQmeMUNDj/22ieuOiDCr7C80QakKKIgUm+BSDO8K3g5qaDdfu0cA85MnvVe/VNehnGTO5eWZfS9KvCAAy+7g19WIJmjv1y0kWoVozToWGNi+htRCyUoFwxxWqejCfIs6Zc7IKcUDluAhoFI=
+	t=1756681652; cv=none; b=jhtn7XxICT1D1cus1Ng6zvESwyfn63NTkZ6KI+NLvZzpleRx05LrpZKtUHn1mPokxELYXlq1G7XKP/MIeUcehihOQSocZF3NKQqFz8oBJF76eyWOiQYMRNYR4QIskych98o2QdkbZ7bcJ0YzNyFv9EwYmIK1NCDoeoVAmCmyUZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756681358; c=relaxed/simple;
-	bh=iuRLKwj7sFVlu3C7D7aB3zxNlXrFtCUmp9KoG/GKdyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y62uibJ7xHrZjIANmhyhbnafp5+aSTaL7s9/yppDeN5kpdac+A8DH81WTIvbgYAMzkyHoMO6IRVtNz/aaJVIkouxS775oihkdjMbnEmT+upYtyIESwd616sVfXt2sVpQdUDtWm+mNSpF7ERUHzvpPlMGYWPWqj5Wv51pkbYlwpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 2C306B2200E7;
-	Mon,  1 Sep 2025 01:02:32 +0200 (CEST)
-From: E Shattow <e@freeshell.de>
-To: Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	E Shattow <e@freeshell.de>
-Subject: [PATCH v2 5/5] riscv: dts: starfive: add Milk-V Mars CM Lite system-on-module
-Date: Sun, 31 Aug 2025 15:59:30 -0700
-Message-ID: <20250831225959.531393-6-e@freeshell.de>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250831225959.531393-1-e@freeshell.de>
-References: <20250831225959.531393-1-e@freeshell.de>
+	s=arc-20240116; t=1756681652; c=relaxed/simple;
+	bh=/dq1+WkskxLjQfiUna2tnvXAStsMIRt3sNeqPiyojaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qto1ZMax0O2+xWctoDL9zulYabtfvMVd2XLt+t2jqLUhFeLMoZGjUj5IwPi+wCiefj16sjKefI/ziEfRUZ+DWQvDn1u2zj/aAKMUJbwjtqjGqKpI3eoB3nq2zHDAnwy5NsR0YYN5RbbBGCD2UQxAov36dy8IT+3ums3OzvfvZCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWniY+gM; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b8b2712d8so7041875e9.3;
+        Sun, 31 Aug 2025 16:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756681649; x=1757286449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VzORTaj5j85cq2M8IR2sPPrrk6vTYoFG53BsY3IwtmU=;
+        b=RWniY+gM5NFbvvK6Kw+NYWL+uBRJJIIeR277NLFyk1mj5SBKK5GtZzVwGrD+tUUD2R
+         /2KEQbWGt3xMtek1FpIsRgjjvEo0CaL3K3ojtYcrFhiAv5j8+0/l1cCA87mX0irnScHm
+         AN0yvkVFCuwPtZS3JjkXr3fOQmQUIIxHEL37SKx5I/Lb1kwGdVIw4N/fFfLYEnWgCxoA
+         u0W8VWU94/sm4fnDphjReKQL8YanvFj75sHNSzRzmyqYAKWfhf1ArKcefvcFn9+vXot2
+         s9NB+o5lmI9BGIbtmBFrROXwBXNiszQT3/mw9wrVDrfJ6TyqkNycycJmVIrpuRWye9qe
+         YsZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756681649; x=1757286449;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VzORTaj5j85cq2M8IR2sPPrrk6vTYoFG53BsY3IwtmU=;
+        b=KhjRU6YjFyVbJWs4+BcJIcqX6sS/uvxsPswejlpP/nf9OmRdb3cCQoviXViMbRV9pX
+         XmDYhP/MbCTMuMe+MSjj8pOdrrWIC5rHeFT3RchwP0y9PqO8/VN7RBlYa7MHyeJpMJkV
+         LZNY2oWMTq4tXuC2PUyk8mwaJYhYcyhXVj53yTTwB2rFRl+i9VSiSETYGXkX6FlBlvnX
+         Qe4c9lIn9ychfLhQu+dka1RQxFCj69iBHQbCbuQac/H4X9QcHsgOAJrsIpgzF4XbLaRq
+         5FDIHDejKPYAUGiej1mp1WB4i9zp15inQu4urs4GHQ2ysv41dHdlDDvCSdqnQ2DM2xpV
+         2SOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAziffEwyxRYgoMIXWzRFbqRa61u1szZ4CBKdN7zvwGwgqLtzzwdqtEPR/nePpKPNfLtoYIyZ9Ug4=@vger.kernel.org, AJvYcCWIVsZLuv/60kCUfW77mODB2ln8l5nVosD+8qamFrNNhG5xzuRPdojqbxlnmDRR5YEy2M05XBuoXtSLDUGC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfjfQEL2GNVT7npqOJzz/qsVoFVhflFqQ4mO1y5vbm6RO6stJj
+	sxn9awldaTcL/VTjPELU1lvFXpis7HQ9xp6qB63O/EgAutgxKKnJNb90
+X-Gm-Gg: ASbGnctXEFbJx7fiffX38vnZMJwUTSp918TrVLUhNqTu7lCEuOE/WUq1YdCS/ezYO/w
+	W8Tqimdmk9ry9mJr/CnJ9TyRqMCp++YveP/7ISZyRiBuox6ySMRYk1zvUDlKsnLgthb/2s7OL5c
+	MJdD5tY4ohFXMEX+2781SSm+6G5wnM0Zv0rkGg0ynuvnu37HdxDCtktZ1XAaG+Ic79G4udwy5ec
+	ULY03sOQjn3lBvmauAUjNYjBjSGQEUaIo86G20m7lZxhMi69M1j/ru5Mfg2AmADTVHFVUNAAEl6
+	T5bzp1dU/2X8yQuyQQBICTjqw+0YQpBBJhC30+GUQbPgO+wzz0wzDYvdounC4/M4K3ojYaA7czf
+	NF6HL1zkkTSfmTUU1rwHm15RnsjU/56JyKCaN9SZjrw==
+X-Google-Smtp-Source: AGHT+IEvc7GiBSOLL0eVIAnfsFxuuyb9Xs6ZWQt1q85vQuVTGCKCiLZUHxhq+3aytM1K0vb5VJdtTQ==
+X-Received: by 2002:a05:600c:5487:b0:45b:8d2a:ccfe with SMTP id 5b1f17b1804b1-45b8d2acf6dmr7011485e9.13.1756681649334;
+        Sun, 31 Aug 2025 16:07:29 -0700 (PDT)
+Received: from [192.168.100.24] ([102.31.181.245])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e74b72esm133792415e9.0.2025.08.31.16.07.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 16:07:28 -0700 (PDT)
+Message-ID: <c6158f58-7a62-4df3-b025-4fe9f33c4d16@gmail.com>
+Date: Mon, 1 Sep 2025 00:07:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation/driver-api: Fix typo error in cxl
+To: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Cc: linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Gregory Price <gourry@gourry.net>,
+ Alok Tiwari <alok.a.tiwari@oracle.com>,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org
+References: <20250819084116.13108-1-smokthar925@gmail.com>
+ <87iki53gfb.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Moktar sellami <smokthar925@gmail.com>
+In-Reply-To: <87iki53gfb.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Milk-V Mars CM Lite is a System-on-Module based on the Milk-V Mars CM
-without the onboard eMMC storage component populated and configured
-instead for SD3.0 Card Slot on that interface via 100-pin connector.
 
-Link to Milk-V Mars CM Lite schematics: https://github.com/milkv-mars/mars-files/tree/main/Mars-CM_Hardware_Schematices
-Link to StarFive JH7110 Technical Reference Manual: https://doc-en.rvspace.org/JH7110/TRM/index.html
-Link to Raspberry Pi CM4IO datasheet: https://datasheets.raspberrypi.com/cm4io/cm4io-datasheet.pdf
+On 8/29/25 23:35, Jonathan Corbet wrote:
+> Moktar SELLAMI <smokthar925@gmail.com> writes:
+>
+>> Fixed Typo in the driver-api/cxl/devices/devices.rst
+>>
+>> functionalty -> functionality
+>>
+>> Signed-off-by: Moktar SELLAMI <smokthar925@gmail.com>
+>> ---
+>>   Documentation/driver-api/cxl/devices/device-types.rst | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+>> index 923f5d89bc04..7f69dfa4509b 100644
+>> --- a/Documentation/driver-api/cxl/devices/device-types.rst
+>> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
+>> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+>>   Typically used for initialization, configuration, and I/O access for anything
+>>   other than memory (CXL.mem) or cache (CXL.cache) operations.
+>>   
+>> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
+>> +The Linux CXL driver exposes access to .io functionality via the various sysfs
+>>   interfaces and /dev/cxl/ devices (which exposes direct access to device
+>>   mailboxes).
+> This one was fixed a while back, so this patch is not needed.  It is
+> always a good idea to check linux-next when considering changes of this
+> type.
+>
+> Thanks,
+>
+> jon
 
-Add the devicetree file to make use of StarFive JH7110 common supported
-features PMIC, EEPROM, UART, I2C, GPIO, PCIe, QSPI Flash, PWM, and
-Ethernet. Also configure the eMMC interface mmc0 for SD Card use and
-configure the common SD Card interface mmc1 for onboard SDIO BT+WiFi.
+Thank you for the clarification and for pointing me to linux-next. i 
+will try to come up with an other patch thank u.
 
-Signed-off-by: E Shattow <e@freeshell.de>
----
- arch/riscv/boot/dts/starfive/Makefile         |  1 +
- .../dts/starfive/jh7110-milkv-marscm-lite.dts | 26 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
+Moktar
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index 79742617ddab..62b659f89ba7 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-marscm-emmc.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-marscm-lite.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
-new file mode 100644
-index 000000000000..9052e8d515e1
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-marscm-lite.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2025 E Shattow <e@freeshell.de>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110-milkv-marscm.dtsi"
-+
-+/ {
-+	model = "Milk-V Mars CM Lite";
-+	compatible = "milkv,marscm-lite", "starfive,jh7110";
-+};
-+
-+&mmc0 {
-+	bus-width = <4>;
-+	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
-+};
-+
-+&mmc0_pins {
-+	pwren-pins {
-+		pinmux = <GPIOMUX(22, GPOUT_HIGH,
-+				      GPOEN_ENABLE,
-+				      GPI_NONE)>;
-+	};
-+};
-+
--- 
-2.50.0
 
 
