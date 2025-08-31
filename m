@@ -1,149 +1,542 @@
-Return-Path: <linux-kernel+bounces-793313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A47DB3D1C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DCBB3D1B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FC03B77B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF3C189050A
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D5421B9C1;
-	Sun, 31 Aug 2025 09:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45522475CB;
+	Sun, 31 Aug 2025 09:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="dbwfZMbe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VIqfHGHA"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HJlrU0f/"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C8643169;
-	Sun, 31 Aug 2025 09:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20634A32
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756634219; cv=none; b=pbeQXBO9ZDRXU0TluutNNMHkjS1P0CHv/I1vebnqdnIxSj4mkiBmp8KyS4SmRctQASvWXrccUtpuLOKGscu9HOa4G2wbk//xA/42ecNZKwD3by79cV8qSFkog4W342a7kfkIZ7sM6OtltNW9f+/nfgCfxxcMrc99OKMWNASdvEs=
+	t=1756633835; cv=none; b=kSVx5PSQ8SfqvLmVdaDEL8KEaUwtiCnwHq4v/rlt4JN7mko7x5Z/qEEXgKAth1pEADmQwxH4Zrn+jUHAOHXKHaMixtY10vQqFsAogkl3TB0n6ATgLHMiSbSObh6KEU0dmOidYVKqdo+Pz3yPuJOlep1R9R4U8jtV66KAcv5J1Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756634219; c=relaxed/simple;
-	bh=kGtb2RYRdn0Swor8JnLakxT+7d1PidwrZ50+oMn5EfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bU61zLBJwc5cjQDy4yXghDCBGjUzIuJcUBZDpebiL4upmYDbICa9kfbebChdl25bAIrl19QFm92wYWdpVKNj9qn+iNuen0MguE8cZo5QP1piLCp2okCxevU72rc7TqB5hndc3GS+W0a7E/tJQV1OnosHOxF4shdbINo/y1p7DnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=dbwfZMbe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VIqfHGHA; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DF3717A0081;
-	Sun, 31 Aug 2025 05:56:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 31 Aug 2025 05:56:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1756634215; x=1756720615; bh=mMODJHU8uJag0Sf9/rM/P
-	gx0JRSeeuAwd53OX6+7mb8=; b=dbwfZMbeDYjv794TZ23lsZMClqVFnbES34qBk
-	g431yYz8s9qWehiHtDLypgl754h4/XQWRn2/t2Qfe9d+bvDrNnMDETolbmJaRLX0
-	9LytDpC5vLa5w4Fp6ngXSluOF7zk9UP8tkc2YP3UtbCjYJV3ieFsf8tmuzKuwKrH
-	8YEtZx6J4ik7hO9Hdcz7OmKG0lvRdfkp7wazKbKpzboXD0Ne1V6Jd4ZRSAy8hWiG
-	cGbTGqmI1Z3cx/BfIbJzYGW9nFE1oR4ENvZ9HFzHP2LA9/gh1NsbFEnCyk0/Ez1u
-	cA1LjyMuCj2+aRrVBFi9X6zQgIv1p46wQX1zpQxNHl1qjZ6xA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756634215; x=1756720615; bh=mMODJHU8uJag0Sf9/rM/Pgx0JRSeeuAwd53
-	OX6+7mb8=; b=VIqfHGHASRhyo9pBXT9JGZ412656Aed9cntq7ERzVImFXydwQlk
-	GfcF50Gn98ueaA5AvnGElS91yZAOn/bl1HPDbB4Uho8+1ltiOIUgutH37OKSPiKP
-	DknauPeKoSdShFpGfqBOzWjvCPSSfHWEzVg9fS2DV76yG6gyjaiWBbHq7b4AuSWZ
-	7WdzIEqUG70SH3ZyFaa+E6ierO7ebQTDzVXJ7n8KhLpOUDLlB6NwTWgDroAb3SNw
-	xDI7ZcZg6yWhmxU1Mi7u40cQGqk3vU9ZlrTCyjLhif93nKlLWSw1K8XJSLIZ72Kv
-	byvxJwGX3hS//wtqJubzvQtsajaQtPBA1rg==
-X-ME-Sender: <xms:Zhy0aAJC2lhyQmjjshdiop8-ZsiNCm6qardy6_RkNGiJIJS13uB8Yg>
-    <xme:Zhy0aFKEOcgC0dOCb_KUau0Fi8Vw14CxN44j_K5MqiusttCmxKi2Ft7GZIv1YwA8a
-    3ZKPGeC5U5YVg6blV8>
-X-ME-Received: <xmr:Zhy0aBnKYyCWJcfcaFaGLN36oT3URPDIHTwD696tw95zaI-D0fyERlGiTWcK7oax6vLPhhv7G0gW_MdxRS3ZIRR3f7FYxxg6ktJ2T2RNQCNgLaFo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeekleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpeflrghmvghsucfhlhhofigvrhhsuceosgholhgurdiiohhnvgdvfeej
-    feesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeeitdetffdutdfhve
-    dtvdejkefglefgvdeiveduffdvgfeifeeiveejteeitdegkeenucffohhmrghinhepthgv
-    shhtvggurdhnvghtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepsgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhmpdhnsggp
-    rhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgsuh
-    gurgeslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguuhhsthdrlhhi
-    sehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohepshhiughrrgihrgeslh
-    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopeifvghnjhhirgeslhhinhhugidrihgs
-    mhdrtghomhdprhgtphhtthhopehmjhgrmhgsihhgiheslhhinhhugidrihgsmhdrtghomh
-    dprhgtphhtthhopehtohhnhihluheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgt
-    phhtthhopehguhifvghnsehlihhnuhigrdgrlhhisggrsggrrdgtohhmpdhrtghpthhtoh
-    epuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigv
-    thesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:Zhy0aDLG2UOT7rrhj6x0VMrZgK08wSh27r9MfAit9Drri6RBqXmQqw>
-    <xmx:Zhy0aEWmGrQGYcR7ldzuTwK2ryDNvdWYwaaKsb1YGIQVQQQtc3TXyQ>
-    <xmx:Zhy0aANCDraOso4Pgy9jpvONZvnDZvbl3wPXYfzs6cg1insEfmgt0A>
-    <xmx:Zhy0aInU7d3muP6s2nJMO2_PaP0_jvzQOuVgxS76OKYtFVt_8Z0mpA>
-    <xmx:Zxy0aMrsv0wi-BviLZ2YU1JR_k9zRhQM7Y36BKUy-vBqZS8Le8VZnSYr>
-Feedback-ID: ibd7e4881:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 31 Aug 2025 05:56:52 -0400 (EDT)
-From: James Flowers <bold.zone2373@fastmail.com>
-To: alibuda@linux.alibaba.com,
-	dust.li@linux.alibaba.com,
-	sidraya@linux.ibm.com,
-	wenjia@linux.ibm.com,
-	mjambigi@linux.ibm.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	skhan@linuxfoundation.org
-Cc: James Flowers <bold.zone2373@fastmail.com>,
-	linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] net/smc: Replace use of strncpy on NUL-terminated string with strscpy
-Date: Sun, 31 Aug 2025 02:49:47 -0700
-Message-ID: <20250831095535.176554-1-bold.zone2373@fastmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756633835; c=relaxed/simple;
+	bh=6A4GMp7BO1+rdlclpCGlitO+jmTXztdIl2bN3hRhIBo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=P52Qeikrwyjgc9RVZDPZKj5+ALS7HYqyouwEiTnMrMFItmJWRmrjiDGCLBNzee78VL4vrDz7oRL9MtI5Jscj/2/2Ue+WI1WwHj9QijCIYXzqUEm0YvcMLLAlTmF+kunp6swAu5QiULejob9vLwMavHGoczJIxPLjv6PDhOBSW9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HJlrU0f/; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250831095024epoutp0187171fa85f98f15cc7595be9e56cfd07~g0Sftf3X70695506955epoutp01G
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:50:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250831095024epoutp0187171fa85f98f15cc7595be9e56cfd07~g0Sftf3X70695506955epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756633824;
+	bh=VtDCAjkm2qkjJ5xjbF4B+w7GJLiCWmEbeGMms+jD7vU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=HJlrU0f/LF6hqxh+D1GCsZHhlzSbDnInBdDKKpZlTo3mVhkPBThP2AuMx3EVc5IyJ
+	 DkUp52StSwV63I0R0z7sLRPvZ7CmD8MWuimNDpTiJf0so7l+NeIiULkhTZQMMgt3Xp
+	 szkzJu1KpPbmOqxbPir4+27yGKdX4pZZE0rpovn4=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250831095022epcas1p3204f65f9de5a2e9bd960e45d7b53352c~g0SeryIoL1439614396epcas1p3X;
+	Sun, 31 Aug 2025 09:50:22 +0000 (GMT)
+Received: from epcas1p4.samsung.com (unknown [182.195.36.224]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cF6gf4Stwz2SSKX; Sun, 31 Aug
+	2025 09:50:22 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250831095021epcas1p34d0d6eec3f8ce076dbb1c8498de4450a~g0SdhpUrD1439614396epcas1p3W;
+	Sun, 31 Aug 2025 09:50:21 +0000 (GMT)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250831095021epsmtip273f35b972198555fd5ceca8f1775baf4~g0SdeIie20443504435epsmtip25;
+	Sun, 31 Aug 2025 09:50:21 +0000 (GMT)
+From: "Sungjong Seo" <sj1557.seo@samsung.com>
+To: "'Ethan Ferguson'" <ethan.ferguson@zetier.com>, <linkinjeon@kernel.org>,
+	<yuezhang.mo@sony.com>
+Cc: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<cpgs@samsung.com>
+In-Reply-To: <20250822202010.232922-2-ethan.ferguson@zetier.com>
+Subject: RE: [PATCH v4 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Date: Sun, 31 Aug 2025 18:50:21 +0900
+Message-ID: <000001dc1a5c$aaac6350$000529f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHtaKTtCgn8qsbURORYOPLaF6mHwwEsV41eAYg80em0RBqlsA==
+Content-Language: ko
+X-CMS-MailID: 20250831095021epcas1p34d0d6eec3f8ce076dbb1c8498de4450a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-711,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250822202036epcas1p3be9836f29caef35b48c9ade774a47279
+References: <20250822202010.232922-1-ethan.ferguson@zetier.com>
+	<CGME20250822202036epcas1p3be9836f29caef35b48c9ade774a47279@epcas1p3.samsung.com>
+	<20250822202010.232922-2-ethan.ferguson@zetier.com>
 
-strncpy is deprecated for use on NUL-terminated strings, as indicated in
-Documentation/process/deprecated.rst. strncpy NUL-pads the destination
-buffer and doesn't guarantee the destination buffer will be NUL
-terminated.
+Hi,
+> Add support for reading / writing to the exfat volume label from the
+> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+> 
+> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+> ---
+>  fs/exfat/exfat_fs.h  |   5 +
+>  fs/exfat/exfat_raw.h |   6 ++
+>  fs/exfat/file.c      |  88 +++++++++++++++++
+>  fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 323 insertions(+)
+> 
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index f8ead4d47ef0..ed4b5ecb952b 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -267,6 +267,7 @@ struct exfat_sb_info {
+>  	struct buffer_head **vol_amap; /* allocation bitmap */
+> 
+>  	unsigned short *vol_utbl; /* upcase table */
+> +	unsigned short *volume_label; /* volume name */
+Why is it necessary to allocate and cache it? I didn't find where to reuse
+it.
+Is there a reason why uniname is not used directly as an argument?
+Is there something I missed?
 
-Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
----
-Note: this has only been compile tested.
+> 
+>  	unsigned int clu_srch_ptr; /* cluster search pointer */
+>  	unsigned int used_clusters; /* number of used clusters */
+> @@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct
+> inode *inode)
+[snip]
+> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+> index 538d2b6ac2ec..970e3ee57c43 100644
+> --- a/fs/exfat/file.c
+> +++ b/fs/exfat/file.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/security.h>
+>  #include <linux/msdos_fs.h>
+>  #include <linux/writeback.h>
+> +#include "../nls/nls_ucs2_utils.h"
+> 
+>  #include "exfat_raw.h"
+>  #include "exfat_fs.h"
+> @@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block
+> *sb, unsigned long arg)
+>  	return exfat_force_shutdown(sb, flags);
+>  }
+> 
+> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned
+> long arg)
+> +{
+> +	int ret;
+> +	char utf8[FSLABEL_MAX] = {0};
+> +	struct exfat_uni_name *uniname;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+> +	if (!uniname)
+> +		return -ENOMEM;
+> +
+> +	ret = exfat_read_volume_label(sb);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	memcpy(uniname->name, sbi->volume_label,
+> +	       EXFAT_VOLUME_LABEL_LEN * sizeof(short));
+> +	uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
+> +	uniname->name_len = UniStrnlen(uniname->name,
+> EXFAT_VOLUME_LABEL_LEN);
+The volume label length is stored on-disk. It makes sense to retrieve
+it directly. This way, there is no need to unnecessarily include the 
+NLS utility header file.
 
- net/smc/smc_pnet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +
+> +	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
+> +		ret = -EFAULT;
+> +		goto cleanup;
+> +	}
+> +
+> +	ret = 0;
+> +
+> +cleanup:
+> +	kfree(uniname);
+> +	return ret;
+> +}
+> +
+> +static int exfat_ioctl_set_volume_label(struct super_block *sb,
+> +					unsigned long arg,
+> +					struct inode *root_inode)
+> +{
+> +	int ret, lossy;
+> +	char utf8[FSLABEL_MAX];
+> +	struct exfat_uni_name *uniname;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+> +	if (!uniname)
+> +		return -ENOMEM;
+> +
+> +	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
+> +		ret = -EFAULT;
+> +		goto cleanup;
+> +	}
+> +
+> +	if (utf8[0]) {
+> +		ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8,
+> FSLABEL_MAX),
+> +					 uniname, &lossy);
+> +		if (ret < 0)
+> +			goto cleanup;
+> +		else if (lossy & NLS_NAME_LOSSY) {
+> +			ret = -EINVAL;
+> +			goto cleanup;
+> +		}
+> +	} else {
+> +		uniname->name[0] = 0x0000;
+> +		uniname->name_len = 0;
+> +	}
+> +
+> +	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
+> +		exfat_info(sb, "Volume label length too long, truncating");
+> +		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
+> +	}
+> +
+> +	ret = exfat_write_volume_label(sb, uniname, root_inode);
+> +
+> +cleanup:
+> +	kfree(uniname);
+> +	return ret;
+> +}
+> +
+>  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>  	struct inode *inode = file_inode(filp);
+>  	u32 __user *user_attr = (u32 __user *)arg;
+> +	struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
+From this point, there is no need to pass root_inode. The root_inode can be
+obtained directly from sb->s_root->d_inode within the function.
 
-diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-index 76ad29e31d60..5cfde2b9cad8 100644
---- a/net/smc/smc_pnet.c
-+++ b/net/smc/smc_pnet.c
-@@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable *pnettable, char *ib_name,
- 		return -ENOMEM;
- 	new_pe->type = SMC_PNET_IB;
- 	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
--	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
-+	strscpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
- 	new_pe->ib_port = ib_port;
- 
- 	new_ibdev = true;
--- 
-2.50.1
+> 
+>  	switch (cmd) {
+>  	case FAT_IOCTL_GET_ATTRIBUTES:
+> @@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd,
+> unsigned long arg)
+>  		return exfat_ioctl_shutdown(inode->i_sb, arg);
+>  	case FITRIM:
+>  		return exfat_ioctl_fitrim(inode, arg);
+> +	case FS_IOC_GETFSLABEL:
+> +		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
+> +	case FS_IOC_SETFSLABEL:
+> +		return exfat_ioctl_set_volume_label(inode->i_sb, arg,
+> root_inode);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+> index 8926e63f5bb7..7931cdb4a1d1 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/nls.h>
+>  #include <linux/buffer_head.h>
+>  #include <linux/magic.h>
+> +#include "../nls/nls_ucs2_utils.h"
+> 
+>  #include "exfat_raw.h"
+>  #include "exfat_fs.h"
+> @@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct
+> super_block *sb)
+>  	return 0;
+>  }
+> 
+> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
+> +				       struct buffer_head **out_bh,
+> +				       struct exfat_dentry **out_dentry,
+> +				       struct inode *root_inode)
+Instead of passing root_inode, it seems more helpful to pass the
+need_create condition to better understand the function's behavior.
+As mentioned earlier, the root_inode can be found directly from
+sb->s_root->d_inode.
+
+> +{
+> +	int i, ret;
+> +	unsigned int type, old_clu;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct exfat_chain clu;
+> +	struct exfat_dentry *ep, *deleted_ep = NULL;
+> +	struct buffer_head *bh, *deleted_bh;
+> +
+> +	clu.dir = sbi->root_dir;
+> +	clu.flags = ALLOC_FAT_CHAIN;
+> +
+> +	while (clu.dir != EXFAT_EOF_CLUSTER) {
+> +		for (i = 0; i < sbi->dentries_per_clu; i++) {
+> +			ep = exfat_get_dentry(sb, &clu, i, &bh);
+> +
+> +			if (!ep) {
+> +				ret = -EIO;
+> +				goto end;
+> +			}
+> +
+> +			type = exfat_get_entry_type(ep);
+> +			if (type == TYPE_DELETED && !deleted_ep &&
+root_inode)
+> {
+> +				deleted_ep = ep;
+> +				deleted_bh = bh;
+> +				continue;
+> +			}
+> +
+> +			if (type == TYPE_UNUSED) {
+> +				if (!root_inode) {
+> +					brelse(bh);
+> +					ret = -ENOENT;
+> +					goto end;
+> +				}
+Too many unnecessary operations are being performed here.
+1. Since the VOLUME_LABEL entry requires only one empty entry, if a DELETED
+    or UNUSED entry is found, it can be used directly.
+2. According to the exFAT specification, all entries after UNUSED are
+    guaranteed to be UNUSED.
+
+Therefore, there is no need to allocate additional clusters or
+mark the next entry as UNUSED here.
+
+In the case of need_create(as of now, root_inode is not null),
+if the next cluster is EOF and TYPE_VOLUME, TYPE_DELETED, or TYPE_UNUSED
+entries are not found, then a new cluster should be allocated.
+
+Lastly, if a new VOLUME_LABEL entry is created, initialization of
+hint_femp is required.
+
+> +
+> +				if (deleted_ep) {
+> +					brelse(bh);
+> +					goto end;
+> +				}
+> +
+> +				if (i < sbi->dentries_per_clu - 1) {
+
+> +					deleted_ep = ep;
+> +					deleted_bh = bh;
+> +
+> +					ep = exfat_get_dentry(sb, &clu,
+> +							      i + 1, &bh);
+> +					memset(ep, 0,
+> +					       sizeof(struct exfat_dentry));
+> +					ep->type = EXFAT_UNUSED;
+> +					exfat_update_bh(bh, true);
+> +					brelse(bh);
+> +
+> +					goto end;
+> +				}
+> +
+> +				// Last dentry in cluster
+> +				clu.size = 0;
+> +				old_clu = clu.dir;
+> +				ret = exfat_alloc_cluster(root_inode, 1,
+> +							  &clu, true);
+> +				if (ret < 0) {
+> +					brelse(bh);
+> +					goto end;
+> +				}
+> +
+> +				ret = exfat_ent_set(sb, old_clu, clu.dir);
+> +				if (ret < 0) {
+> +					exfat_free_cluster(root_inode,
+&clu);
+> +					brelse(bh);
+> +					goto end;
+> +				}
+> +
+> +				ret = exfat_zeroed_cluster(root_inode,
+clu.dir);
+> +				if (ret < 0) {
+> +					exfat_free_cluster(root_inode,
+&clu);
+> +					brelse(bh);
+> +					goto end;
+> +				}
+> +
+> +				deleted_ep = ep;
+> +				deleted_bh = bh;
+> +				goto end;
+> +			}
+> +
+> +			if (type == TYPE_VOLUME) {
+> +				*out_bh = bh;
+> +				*out_dentry = ep;
+> +
+> +				if (deleted_ep)
+> +					brelse(deleted_bh);
+> +
+> +				return 0;
+> +			}
+> +
+> +			brelse(bh);
+> +		}
+> +
+> +		if (exfat_get_next_cluster(sb, &(clu.dir))) {
+> +			ret = -EIO;
+> +			goto end;
+> +		}
+> +	}
+> +
+> +	ret = -EIO;
+> +
+> +end:
+> +	if (deleted_ep) {
+> +		*out_bh = deleted_bh;
+> +		*out_dentry = deleted_ep;
+> +		memset((*out_dentry), 0, sizeof(struct exfat_dentry));
+> +		(*out_dentry)->type = EXFAT_VOLUME;
+> +		return 0;
+> +	}
+> +
+> +	*out_bh = NULL;
+> +	*out_dentry = NULL;
+> +	return ret;
+> +}
+> +
+> +static int exfat_alloc_volume_label(struct super_block *sb)
+> +{
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +
+> +	if (sbi->volume_label)
+> +		return 0;
+> +
+> +
+> +	mutex_lock(&sbi->s_lock);
+> +	sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
+> +						     sizeof(short),
+GFP_KERNEL);
+> +	mutex_unlock(&sbi->s_lock);
+> +
+> +	if (!sbi->volume_label)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +int exfat_read_volume_label(struct super_block *sb)
+> +{
+> +	int ret, i;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct buffer_head *bh = NULL;
+> +	struct exfat_dentry *ep = NULL;
+> +
+> +	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, NULL);
+> +	// ENOENT signifies that a volume label dentry doesn't exist
+> +	// We will treat this as an empty volume label and not fail.
+> +	if (ret < 0 && ret != -ENOENT)
+> +		goto cleanup;
+> +
+> +	ret = exfat_alloc_volume_label(sb);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	mutex_lock(&sbi->s_lock);
+The sbi->s_lock should be acquired from the beginning of the function.
+
+> +	if (!ep)
+> +		memset(sbi->volume_label, 0, EXFAT_VOLUME_LABEL_LEN);
+If sbi->volume_label remains, a memset operation is required for
+EXFAT_VOLUME_LABEL_LEN * sizeof(short).
+
+> +	else
+> +		for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
+> +			sbi->volume_label[i] = le16_to_cpu(ep-
+> >dentry.volume_label.volume_label[i]);
+> +	mutex_unlock(&sbi->s_lock);
+> +
+> +	ret = 0;
+> +
+> +cleanup:
+> +	if (bh)
+> +		brelse(bh);
+> +
+> +	return ret;
+> +}
+> +
+> +int exfat_write_volume_label(struct super_block *sb,
+> +			     struct exfat_uni_name *uniname,
+> +			     struct inode *root_inode)
+> +{
+> +	int ret, i;
+> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> +	struct buffer_head *bh = NULL;
+> +	struct exfat_dentry *ep = NULL;
+> +
+> +	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
+> +		ret = -EINVAL;
+> +		goto cleanup;
+> +	}
+> +
+> +	ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, root_inode);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	ret = exfat_alloc_volume_label(sb);
+> +	if (ret < 0)
+> +		goto cleanup;
+> +
+> +	memcpy(sbi->volume_label, uniname->name,
+> +	       uniname->name_len * sizeof(short));
+> +
+> +	mutex_lock(&sbi->s_lock);
+The sbi->s_lock should be acquired from the beginning of the function.
+
+> +	for (i = 0; i < uniname->name_len; i++)
+> +		ep->dentry.volume_label.volume_label[i] =
+> +			cpu_to_le16(sbi->volume_label[i]);
+> +	// Fill the rest of the str with 0x0000
+> +	for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
+> +		ep->dentry.volume_label.volume_label[i] = 0x0000;
+> +
+> +	ep->dentry.volume_label.char_count = uniname->name_len;
+> +	mutex_unlock(&sbi->s_lock);
+> +
+> +	ret = 0;
+> +
+> +cleanup:
+> +	if (bh) {
+> +		exfat_update_bh(bh, true);
+> +		brelse(bh);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  /* mount the file system volume */
+>  static int __exfat_fill_super(struct super_block *sb,
+>  		struct exfat_chain *root_clu)
+> @@ -791,6 +1014,7 @@ static void delayed_free(struct rcu_head *p)
+> 
+>  	unload_nls(sbi->nls_io);
+>  	exfat_free_upcase_table(sbi);
+> +	kfree(sbi->volume_label);
+>  	exfat_free_sbi(sbi);
+>  }
+> 
+> --
+> 2.34.1
+
 
 
