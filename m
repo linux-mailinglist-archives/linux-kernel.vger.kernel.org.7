@@ -1,90 +1,92 @@
-Return-Path: <linux-kernel+bounces-793466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F41B3D3E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F183FB3D3E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2C417B320
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 762D53B1459
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2F625A2CD;
-	Sun, 31 Aug 2025 14:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F2A2153EA;
+	Sun, 31 Aug 2025 14:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="cERAsCNE"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="n3Vlqj1l"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA3B1B808
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 14:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2259B19DF4A
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 14:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756650241; cv=none; b=X93W5m8K7qyGKKBG/YHipAG5yQkT7zsev/ME3bohEoZ6o1/k8WkiVEuqZoOf4qOqWfOplKup+DBmsy311j+Ah2qK+T+dYLgYfiXf8IxswJqhRdqqnl0C4VGlWZ8kpwD3fyeIuGPBa3Gfp48xfgMWTVqdHkrF4GepvGva1QDidrE=
+	t=1756650337; cv=none; b=QNnKgSzOBPsBbpy0sFuQo9BpzQbVP4t/iMM4BLIjge+R5s+f7fKIVf4Az7SUBBs9Fax2MkgFLh94pcrYmfAtB14P36Hn3idf7wzZfY3Hh7Z8uq1EK5Cad3A0FnIs8yVgGMLxTIpRnFUVJ+khsAyVCNqxPGjsVmTI+d3a7lOD3F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756650241; c=relaxed/simple;
-	bh=y1zF5JL1EodDQ2qLLuAywaO3QqUb5aQbBUe2g574maM=;
+	s=arc-20240116; t=1756650337; c=relaxed/simple;
+	bh=tia0mrGZ7h1NCfPvef4VGNKt1YRomP862h78mFARS1M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YC2MZMyNvz1AdLkOysw60t02s3BfUyXOMA0LNTmhT+T2am7Cj4dMfkC8r1DN0RKHDJkWtt4K8PocI1E17OF/Xd61oMlIKSoD9VhYNhgZd84tCbAazH42UWiC1vZ3tdNpAk8toO8QyK7iuki1tzvriKxYQG4geZvMFKUpn8W7TLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=cERAsCNE; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version:Content-Type; b=ZwPL22Hd71Xz/G/0UhYHV7wdCTfANCBwtsxdxd0Z69Ox8sty4PpfulIL5BwkCr0JUsr18xYn3CkQXWvL/lHTsbL+xRebR87BayYm9ZcK/M1wn1w3UtLff3SK/bS/+gIc8vT6m4q8hfNKtN8Fq0jpnmCWkajVl3n9EC014QkFn2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=n3Vlqj1l; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24456ce0b96so37136315ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 07:23:57 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77238a3101fso950878b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 07:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1756650237; x=1757255037; darn=vger.kernel.org;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1756650335; x=1757255135; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lAUHWa+mrkdnS2M1tLNwmvLfuGzsdxZRu47bXM4nV+w=;
-        b=cERAsCNE7bDngNBedrvfghgtRKi9GrpXmYY52s0mF/sNMobctPGpyV3bbjUJKDNo7x
-         Jd2vv46AFdEkqn3DQXglyuge/0nB1+4vZhvGb26dFAjOvanEQu2JhK/XLhkVA2EhBZGJ
-         2XuU5K61Pdcdln6mxMTQiJ8NR8eMUCMc2WT/xAd53qfCK8JBjUQib8Wg3VASzHTK7Z1E
-         q2cMJ/HQqW4Rxha/Aw87daog1lK2lPXM7k3nlLnbmxhvGhovttYfgqOuyxn0eAKwFzT6
-         KKt0DcrqCoCc/gU34zcA4td8NzfUOFFYEUTnF6D4+gml4OecW/6jC7Mtad1UKf4GOuWz
-         iGtw==
+        bh=tia0mrGZ7h1NCfPvef4VGNKt1YRomP862h78mFARS1M=;
+        b=n3Vlqj1lBNW1z86PHYxUgo0EUmRALAbbQvB013upW56oRHvEExo8MK0m8zlgrE5TVh
+         BCmszlWKxfCSFnJWuIZQyeIUBQLYRqqYUE9JSgF9oJW/S/4Qluc0vMxLihHyD+dS0+b/
+         ynLdXOpC0F7euJoUBpsxv+MO28rk/LKkYrPWtoijomNhkz1idOXR8Jrn4hQ6D8bBCSbC
+         WZr+c7G6oy3TGmlYwyEZTCmzVgKFajjPjvpWkSH22Cniu+xPelwoMsHiA41VI+0BURY+
+         ocg659AUe8OZgBWuCV6fqFchjEf9BhbXGOHMEkoFxrEjPd+alwT2AAKws0IES5ENXb86
+         TG4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756650237; x=1757255037;
+        d=1e100.net; s=20230601; t=1756650335; x=1757255135;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lAUHWa+mrkdnS2M1tLNwmvLfuGzsdxZRu47bXM4nV+w=;
-        b=AahBvJYO6g0Abuj7oP+xS/m78w2PChdjjdtnwQzWkyx34BkEbPaL7KO5JgRdc1ACQW
-         XYcBPEUeosJo2qGQlLmqHcg3L9fm5gGVLcFS9mir4ZlEJb27N6CR2cXnacgWKIBRMJOM
-         2aYY7RirIYcgEYj/7dpG2y6Kv0/dfQL6GLAsYYWqdnwkTnm/Gd55hV1qHxt6fskojseF
-         hTMyJfcDHkbyMkbqN/3NrdpR3PtsCrVpYkJaezEWHJRweiNwtzn/wWbzNJmCueJdxcAe
-         1QT88CLpVE/gvOaF31LxFTP8K2+1VB21XeQI0206/KrUx+SdDQzszZYG3IpYP9fIKDVj
-         FGVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmfHx/uFGDUJ3p4tHdj2eaqPYmmP9oFFtiMh5IevfO19Lor+vBTg7V1Id4UcOzjIcQXUnnMuZk14ojB0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmwPpO0jOBRAwTJ8ET8ShMDzPgX8K3GPW1i0EHnStb1jCTz7qN
-	rHSPBlyhbEDkLgWhfya0o7X/mmcWAQydTTS/xffcNts76/z02yG+A7u9ywEmKq4mO58=
-X-Gm-Gg: ASbGnct22WA2tnJV4xOP+jUa/jlUOoE5lhkI0hMuPQqr/dhL3wZUt/CPvXUM5Ho0jfV
-	ApblrU4Fw/6pEL10jDCbfGfMA35r5h35UBfnlje1Q4G8mCrvWA1GjAMqtfMX9mk+5Ck5QSVmP/M
-	XEfE14srv8kzSJEvsRJh3mM5v7qH3eri+04bElmuCzjaS4sprx6qaZI+8OBsN+QX36A7vWs6FXR
-	xXAu+y3qpsAihuWJvDYu2aktjFwIXpZAmAd/YEEtFsUoRy7jPedP5lwig9w0OgUmJNEpTbbxylU
-	Yt6oYgBidFUVLT2KE8d6wYt58C0qG3T/CEr0tsRPVCaSlwiOE6SsdjOAlDe8MSieByZ3zCBTGot
-	iKEjeslzbxRpAOmkfuLZ7R9Xmw4xPx6Hnfk5NTHCOyOK8l/1yQILilRCAuo2eRRYG4m7Z
-X-Google-Smtp-Source: AGHT+IFQ56DB3b4SdGl+LhNjvjjBhfPxTg7gFDUHSGh44e9FA9yjLxRBEUKtF6n7IdgfuIaXIBG+5A==
-X-Received: by 2002:a17:903:32d2:b0:248:aa0d:bb30 with SMTP id d9443c01a7336-2494486f180mr66609385ad.2.1756650236666;
-        Sun, 31 Aug 2025 07:23:56 -0700 (PDT)
+        bh=tia0mrGZ7h1NCfPvef4VGNKt1YRomP862h78mFARS1M=;
+        b=wlHijzxCY4F0KZMCSnEhrMKUosL8qtXAeRHYrXnAdb5WExCnPeuppdig3DaHeNiNJH
+         Ar7zlfL/IKxUTyrdmdikWfp5SSAq+bcQNd20KaS8DKnGta5J80TX8xFjMV8sN7iDRibg
+         a/t3bDeiFQrSmZ42l/lcElpdlW/djFi/b8a5ea7JZR58Ds49x4qKJ2xyQtdV0FKx2Mgg
+         CzpmyJbAxwmTkvRaIQVeY2bQVeyvPz/9dMPV5kI9S3v6tZnM0ALAJ8jMF1KWE++a9UhD
+         XYwx8V14Z1/nfQliboIZxzWrB6nb9BV/xEdgUTezT3vo31BIrtYyGs8DBM76c2SYBBkt
+         9c+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVn5IGZW6t7G927EptOcjaWdV/5mOJDLG5OCkKtkiSQAlryQZ+U43lVVx84mqv7X/ZqbRwBTuEhHKW0hjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3EIj0TlR4dL3bxpcTYwN1vuyw7XggiaFLTbPgKQYKKqejA8Nf
+	AsexHvz+5WjjfZuDOa/hFJcTOzqLJMnL0g8d01mgGY7AJTNMfakcfbHH9CMGckG5KDmS1rdNrCq
+	vkEUSR5U=
+X-Gm-Gg: ASbGncvAAcLNifkpgYV6CJgMncAt79lpuLugPlMCdJb48UJcs8BYDUjFgRRdWdagQNf
+	VR9xPvha5z4ebrZNotOGnEKcbierIq3nguis7ZASRTTprBwvLhr1W7KSM2o7kA/BuxYhYX4qWvl
+	16RnSphXhAVv7sCtO8NDWWqGjKbFRsr/iz5EaHx1ze4NvQCv/Peg2DHO+VoQW6elfUnlayyZv8Y
+	8NDpg/UA993DbE3dbGD2N06Q872mlCkDtkJCYQXkWvtug2olh/iQwWZ462nn3rFqCTTimVJFdxz
+	eXfa5eyUaljcN0Xpvyr90iyCcuhgQLNYD2b1M1ONMii6n+zkEAo/GZeYlEFQuP6NlSmv1mn+1Mv
+	NAsAP0ZRWYGHX09kyqr3lYEU2c1d7lsykdmUaykJ3wByVEyE=
+X-Google-Smtp-Source: AGHT+IEzLsF872AQW2WCrkafZsoPe6MW3OMi+DhNMIiv+MgumYXMxcJnQU1vk9tsPiaqMVbYQ3vByw==
+X-Received: by 2002:a05:6a00:1945:b0:736:5e28:cfba with SMTP id d2e1a72fcca58-7723e33888bmr6988197b3a.18.1756650335482;
+        Sun, 31 Aug 2025 07:25:35 -0700 (PDT)
 Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:c382:54ef:4bb4:90ef])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906598815sm76233755ad.117.2025.08.31.07.23.55
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a090c77sm7784647b3a.0.2025.08.31.07.25.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 07:23:56 -0700 (PDT)
+        Sun, 31 Aug 2025 07:25:35 -0700 (PDT)
 From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: ebiggers@kernel.org
+To: linux@weissschuh.net
 Cc: 409411716@gms.tku.edu.tw,
+	ebiggers@kernel.org,
 	jaegeuk@kernel.org,
 	linux-fscrypt@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	tytso@mit.edu
 Subject: Re: [PATCH] fscrypt: optimize fscrypt_base64url_encode() with block processing
-Date: Sun, 31 Aug 2025 22:23:52 +0800
-Message-Id: <20250831142352.16372-1-409411716@gms.tku.edu.tw>
+Date: Sun, 31 Aug 2025 22:25:31 +0800
+Message-Id: <20250831142531.16756-1-409411716@gms.tku.edu.tw>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250830162431.GA1431@quark>
-References: <20250830162431.GA1431@quark>
+In-Reply-To: <38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de>
+References: <38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,120 +96,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Eric,
+Hi Thomas,
 
->On Sat, Aug 30, 2025 at 09:28:32PM +0800, Guan-Chun Wu wrote:
+>On 2025-08-30 21:28:32+0800, Guan-Chun Wu wrote:
 >> Previously, fscrypt_base64url_encode() processed input one byte at a
 >> time, using a bitstream, accumulating bits and emitting characters when
 >> 6 bits were available. This was correct but added extra computation.
->> 
->> This patch processes input in 3-byte blocks, mapping directly to 4 output
->> characters. Any remaining 1 or 2 bytes are handled according to Base64 URL
->> rules. This reduces computation and improves performance.
->> 
->> Performance test (5 runs) for fscrypt_base64url_encode():
->> 
->> 64B input:
->> -------------------------------------------------------
->> | Old method | 131 | 108 | 114 | 122 | 123 | avg ~120 ns |
->> -------------------------------------------------------
->> | New method |  84 |  81 |  84 |  82 |  84 | avg ~83 ns  |
->> -------------------------------------------------------
->> 
->> 1KB input:
->> --------------------------------------------------------
->> | Old method | 1152 | 1121 | 1142 | 1147 | 1148 | avg ~1142 ns |
->> --------------------------------------------------------
->> | New method |  767 |  752 |  765 |  771 |  776 | avg ~766 ns  |
->> --------------------------------------------------------
->> 
->> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 >
->Thanks!
+>Can't the custom base64 implementations in fs/ not pass a custom table
+>and padding to the generic algorithm in lib/? Then we only need to maintain
+>this code once.
 >
->> Tested on Linux 6.8.0-64-generic x86_64
->> with Intel Core i7-10700 @ 2.90GHz
->> 
->> Test is executed in the form of kernel module.
->> 
->> Test script:
 >
->Is there any chance you'd be interested in creating an fscrypt KUnit
->test (in a separate patch) which tests fscrypt_base64url_encode() and
->fscrypt_base64url_decode()?
+>Thomas
 
-I’m interested in adding a KUnit test as a separate patch
-to cover both fscrypt_base64url_encode() and fscrypt_base64url_decode().
+Thanks, that makes sense.
 
-Per Thomas’s suggestion, I’d also like to explore a generic Base64 helper in lib/
-(with encoding table and optional padding), with tests in lib/test/
-covering both the standard and URL-safe variants.
-
->
->> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
->> index 010f9c0a4c2f..adaa16905498 100644
->> --- a/fs/crypto/fname.c
->> +++ b/fs/crypto/fname.c
->> @@ -204,20 +204,31 @@ static const char base64url_table[65] =
->>  static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
->>  {
->>  	u32 ac = 0;
->> -	int bits = 0;
->> -	int i;
->> +	int i = 0;
->>  	char *cp = dst;
->>  
->> -	for (i = 0; i < srclen; i++) {
->> -		ac = (ac << 8) | src[i];
->> -		bits += 8;
->> -		do {
->> -			bits -= 6;
->> -			*cp++ = base64url_table[(ac >> bits) & 0x3f];
->> -		} while (bits >= 6);
->> +	while (i + 2 < srclen) {
->> +		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
->> +		*cp++ = base64url_table[(ac >> 18) & 0x3f];
->> +		*cp++ = base64url_table[(ac >> 12) & 0x3f];
->> +		*cp++ = base64url_table[(ac >> 6) & 0x3f];
->> +		*cp++ = base64url_table[ac & 0x3f];
->> +		i += 3;
->> +	}
->
->To make it a bit easier to understand, how about updating src and srclen
->as we go along?
->
->	while (srclen >= 3) {
->		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8) | (u32)src[2];
->		*cp++ = base64url_table[ac >> 18];
->		*cp++ = base64url_table[(ac >> 12) & 0x3f];
->		*cp++ = base64url_table[(ac >> 6) & 0x3f];
->		*cp++ = base64url_table[ac & 0x3f];
->		src += 3;
->		srclen -= 3;
->	}
->
->	switch (srclen) {
->	case 2:
->		ac = ((u32)src[0] << 16) | ((u32)src[1] << 8);
->		*cp++ = base64url_table[ac >> 18];
->		*cp++ = base64url_table[(ac >> 12) & 0x3f];
->		*cp++ = base64url_table[(ac >> 6) & 0x3f];
->		break;
->	case 1:
->		ac = ((u32)src[0] << 16);
->		*cp++ = base64url_table[ac >> 18];
->		*cp++ = base64url_table[(ac >> 12) & 0x3f];
->		break;
->	}
->
->'srclen >= 3' is much more readable than 'i + 2 < srclen', IMO.
->
->Also, instead of '(ac >> 18) & 0x3f', we can just use 'ac >> 18', since
->'ac' is a 24-bit value.
->
->- Eric
-
-Thanks, Eric. I'll update the loop condition to use 'srclen >= 3' for
-better readability, and drop the redundant '& 0x3f' when shifting the
-24-bit accumulator.
+For v2, I’m considering extending the lib/base64 API to support a custom
+encoding table and optional padding. That way, the fs/ code can just use
+the generic implementation directly, and we only need to maintain the
+logic in one place.
 
