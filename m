@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-793346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C418B3D21A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:27:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F073B3D22A
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B04417DFD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F5F7A3DB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B821253F03;
-	Sun, 31 Aug 2025 10:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACCA2571C2;
+	Sun, 31 Aug 2025 10:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e9AqPRA/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="XgxVDxrJ"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80321E3DD7;
-	Sun, 31 Aug 2025 10:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B39212566;
+	Sun, 31 Aug 2025 10:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756636068; cv=none; b=jk0/xgqC5IsOzbiZQgm84Hn1RrsL/l4aQ1NUCoiFO85i+rx3Gvr4nnqIoiFstXjGwqriAoNMDnE8+KeIhOyYcRFf8OBfQ71cauu4saRSQCpZ1GTd9M6BxzYQdYzdyASee8z+riDo+xp1tD/GF9TBQI1CR4auT5XmM06u5voVVp4=
+	t=1756636423; cv=none; b=fXwE9DKQCFRRARTTIzL2Nu15PfgTVr18M8XD9ERK6QGrjfiPpa/z/vbBaGqn42+4QlTb8Ziqj64gP47puL4mmo9Xm7nWxTS0iJ068s0O5JYbZTJZUqcNITc6rsREEV0/mF1+GG8CdBIZCN4HOh7XH36r0m7+EIlpKe0au0EeoLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756636068; c=relaxed/simple;
-	bh=G3VUUUy+Z0eEDLbmnC2uWZmW+NftXH+FJS/0FINvCZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ed7/nEImxAfIyjD7/UgwlZVjnI0ZBGkuAcf+6KLBLGF09GE8qdrLJfylYq4CUogRUpqlXejzWjqoP0fsvOAMHVEKMilT5ZeqLu2KgsSuU/qmdunjS8t+D2YYgARhgmDFqtBpuCucWT5ps+tXZ7BJNpdfkmtoCd2m1aE2eFXpVP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e9AqPRA/; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756636067; x=1788172067;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G3VUUUy+Z0eEDLbmnC2uWZmW+NftXH+FJS/0FINvCZo=;
-  b=e9AqPRA/vkBV/lz7FLBaNLxmuJfgwemMMHQqAZODxxxAmiqvvd8Jmvd3
-   DXN9VoUCEkRcAZ2084HEjdX7gxAvXeN3X+IitBq+Xk+z4glCRCeVbAMuY
-   nxcxiEA3g+3e7FrjHMW7Q7QezxYVg9Wqb080mS8bnpZcf4oYmRZsV8HBL
-   tx/QjS915KW5CJqh1fg55p0FsdkoVBFcol2RNdwoqzGnEjg0fAN8ag1hT
-   7fLXw9S2Al2+U/a9uoX3ed3u751gXIF7ng7BvCiOU2Vha6/yL0uPs2t1D
-   q+XF8D3NIMH7+scNZsLmyfsNg2/H7ojZLcus1oPllbOeJtfo6PYmJyzGa
-   Q==;
-X-CSE-ConnectionGUID: +5Pqvr0gQF+fcwoZ8BExqg==
-X-CSE-MsgGUID: hc6abGsRSQ6gLHbN9CNqPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="46429009"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="46429009"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 03:27:46 -0700
-X-CSE-ConnectionGUID: XAOUGNalRseEqI7XAhA2rA==
-X-CSE-MsgGUID: t8fpDd0QR+6w+3bfnX9N/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="169989735"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 31 Aug 2025 03:27:42 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usfH3-000W4p-1J;
-	Sun, 31 Aug 2025 10:27:07 +0000
-Date: Sun, 31 Aug 2025 18:26:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Roy, Patrick" <roypat@amazon.co.uk>,
-	"david@redhat.com" <david@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, "Roy, Patrick" <roypat@amazon.co.uk>,
-	"tabba@google.com" <tabba@google.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"rppt@kernel.org" <rppt@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>,
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"Manwaring, Derek" <derekmn@amazon.com>
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-Message-ID: <202508311805.yfcdeaFC-lkp@intel.com>
-References: <20250828093902.2719-4-roypat@amazon.co.uk>
+	s=arc-20240116; t=1756636423; c=relaxed/simple;
+	bh=ope+mfKis5PHmRi4hHU32TZUCGyXa9GWHFlOjUlR70o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mFHn00jMM7aJIBKDe/Y6+B8vorKsfkQoN4KVnSQ90u6eevM+Lgh5udJ4ufFHP4KZekDijLyPxOo7Dv0DE5HX66wd7QWIJjHcWyctgc4kufF6DZSvHDUDZx0/Gpd5u43mjBXW72D1SDcFo3jx4Ra1MnQYvjJNzYjB8besihlYyD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=XgxVDxrJ; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=xPcQftlnTMJXqDvzSyQmVAo4telOxyGxWkU01QZoEeA=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1756636408; v=1; x=1757068408;
+ b=XgxVDxrJF8Gczy0R51NJGwjF9A+6o6FWJxuhSQQmIXwhvPbf7eN1p3SXsPLGkXnOFVBnuIaC
+ kAL1mB7zpMk8N8huusb30pWsloiwNTPYycpgIVsjdeBG9sx7bvfMXzJDXlCMfLnOlpaOTb530ri
+ 3t0accMxVpDjOSFX/qV76/U3uLbt5GbcPuCA9PQ+tPo04bnJsjlZMfPnQyWs3BGX82AxwO2yPhw
+ D9yiQ9qEb5wL951XsoZetfLa7BMJX7qjnFTOs4YwlKob1ALCLrfgpXl7SuSlh9PVlK+AGp60BLs
+ pelySZjXz93fnEAcpc4AyX0ekgRx+ojVbIqXnRhjDQrQA==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 5a3db84b; Sun, 31 Aug 2025 12:33:28 +0200
+From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Subject: [PATCH v2 0/3] Marvell 88PM886 PMIC GPADC driver
+Date: Sun, 31 Aug 2025 12:33:03 +0200
+Message-Id: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828093902.2719-4-roypat@amazon.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN8ktGgC/13OTQrCMBCG4auUWRtJBhqjK+8hXYRk2o7QH5IaW
+ kvubiy4cfl+MA+zQ6TAFOFW7RAoceRpLIGnClxvx44E+9KAEmtp8CKMmQdjtOhm650witBZ5Wt
+ 0BOVmDtTyeniPpnTPcZnCdvBJfdefdP2TkhJStFqiRtS6JXv3rycNXJ6YErvzur2hyTl/ANJce
+ /iyAAAA
+X-Change-ID: 20250827-88pm886-gpadc-81e2ca1d52ce
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1272;
+ i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
+ bh=ope+mfKis5PHmRi4hHU32TZUCGyXa9GWHFlOjUlR70o=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBlbVL5L2J3fzC+3u36G5e1QI4/I55eZlURZzTZ0S4d/s
+ j+m8WdBRykLgxgXg6yYIkvuf8drvJ9Ftm7PXmYAM4eVCWQIAxenAEzkYAbDP4uXCbpFDIxbw27f
+ Wnk4/m/p2WfZLXP61/Ra9QqLTO98VMXwzyZou1vRBVn7mGnsVocS9t9z3BWZ+OhK54Js5VNucq1
+ 3uAA=
+X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
+ fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-Hi Patrick,
+This series adds a driver for the GPADC found on the Marvell 88PM886
+PMIC. The GPADC monitors various system voltages and is a prerequisite
+for battery monitoring on boards using the PMIC.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+---
+Changes in v2:
+- Refactor driver according to comments
+- Add binding patch
+- Link to v1: https://lore.kernel.org/r/20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz
 
-[auto build test WARNING on a6ad54137af92535cfe32e19e5f3bc1bb7dbd383]
+---
+Duje Mihanović (3):
+      dt-bindings: mfd: 88pm886: Add #io-channel-cells
+      iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+      mfd: 88pm886: Add GPADC cell
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roy-Patrick/filemap-Pass-address_space-mapping-to-free_folio/20250828-174202
-base:   a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
-patch link:    https://lore.kernel.org/r/20250828093902.2719-4-roypat%40amazon.co.uk
-patch subject: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-config: loongarch-randconfig-r133-20250831 (https://download.01.org/0day-ci/archive/20250831/202508311805.yfcdeaFC-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20250831/202508311805.yfcdeaFC-lkp@intel.com/reproduce)
+ .../bindings/mfd/marvell,88pm886-a1.yaml           |   4 +
+ MAINTAINERS                                        |   5 +
+ drivers/iio/adc/88pm886-gpadc.c                    | 383 +++++++++++++++++++++
+ drivers/iio/adc/Kconfig                            |  13 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/mfd/88pm886.c                              |   1 +
+ include/linux/mfd/88pm886.h                        |  54 +++
+ 7 files changed, 461 insertions(+)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250827-88pm886-gpadc-81e2ca1d52ce
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508311805.yfcdeaFC-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> mm/secretmem.c:155:39: sparse: sparse: symbol 'secretmem_aops' was not declared. Should it be static?
-
-vim +/secretmem_aops +155 mm/secretmem.c
-
-1507f51255c9ff Mike Rapoport           2021-07-07  154  
-1507f51255c9ff Mike Rapoport           2021-07-07 @155  const struct address_space_operations secretmem_aops = {
-46de8b979492e1 Matthew Wilcox (Oracle  2022-02-09  156) 	.dirty_folio	= noop_dirty_folio,
-6612ed24a24273 Matthew Wilcox (Oracle  2022-05-02  157) 	.free_folio	= secretmem_free_folio,
-5409548df3876a Matthew Wilcox (Oracle  2022-06-06  158) 	.migrate_folio	= secretmem_migrate_folio,
-1507f51255c9ff Mike Rapoport           2021-07-07  159  };
-1507f51255c9ff Mike Rapoport           2021-07-07  160  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Duje Mihanović <duje@dujemihanovic.xyz>
+
 
