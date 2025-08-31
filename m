@@ -1,198 +1,293 @@
-Return-Path: <linux-kernel+bounces-793489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84782B3D43B
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A25B3D43E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DE91894C9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776953B0693
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECFB22DF95;
-	Sun, 31 Aug 2025 15:53:28 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4543A2580D1;
+	Sun, 31 Aug 2025 15:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkTuZ2S+"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C494AEE2
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 15:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6671BF58
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 15:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756655608; cv=none; b=Pfcvdgsdsy88DD2LKqiCCCY+PjI14ntz6x35GFAPdmXe8SGKC6RlwtKfdhpGfKbqqa+DTy//HhVm9SVsNo/xhPggBnh4XSY5WsdccJzsJjFe3oQ3w+QnRtFc7hXDwdnW1SQv94drjQPeduHDODE8xiu+zDB1Q8pJCfkZCKTxAhQ=
+	t=1756655713; cv=none; b=g5WaZGZZ5GtdukUuNvGkCZX3xhGuYIY+dHa02uAxzhKs6L4TAolheUdA9zDpPPpQW52htjcbIZw0OEqlN8nKNWzATr8Z8YkYfkPauvNqgTw7Hk6Jq1+mS0vg21lo2sXhpVLI0Bvx3Hh9gu5mzeJMlZZ8d/h/WJAqC/NsgZp5lpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756655608; c=relaxed/simple;
-	bh=gdNDGZaj9P+qvyOZtRAC0HevSy9cvQ5LOMVYS9WBUsk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l/WhnhXdmJjVGQ75b94OsQTJ/J9PYYcc6z35AW3jX1PrpPVmaVv0h1PMHR3P5rF478ylVFHnxcNhghfS8J6UVr1kgDrfWYHD/g/fE8ypu/O9BWE5E73/IGo/CTKnwA3Pbn65T/+JG2Fj+c7n+BzQrOojtroRC0BtTDdfwgKxv70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f0c32654afso37540675ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:53:26 -0700 (PDT)
+	s=arc-20240116; t=1756655713; c=relaxed/simple;
+	bh=vu7OB5WCFRiIsU5hPqmzDabAlwcJjVGYZr9cnnXb0ls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TMkK49W+Uv+xPzNWZOTrqgs6nktDyw2lgmkRxxpBhiaD3zaVn6WLaSv49kQLBzCOn22CN+VpexL5DmJ/VOVzEo/2oxla6RAQ9Lf0ufhzD4tN6/Sx2QZyWvhqnfwTXgB7u6gOWK6Oz6Ojl74CqAYeZD3i+5Xf9+WOx6MlCX6ezHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkTuZ2S+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aff0365277aso327807466b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756655710; x=1757260510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vu7OB5WCFRiIsU5hPqmzDabAlwcJjVGYZr9cnnXb0ls=;
+        b=gkTuZ2S+331sRy2DriNeq7QHUWDYWQAXlvDZNkFvuNhOvAHSiAtqy5IjbHAk2BtyOb
+         Cstjjgezi7AO17XWaA1iuP3X173mxidA1TGtSRjBrY95rUTeLplXgBvnO5e+qOrGmgR6
+         sq5knc4ARr9OJAshg+hoUvKGuI4Vh3isGJsYOiNt8ksGmXMSoF4ePAF80XTQPXm0FBZu
+         QRkIuRy7i6PjP+HfC33n/8mbxtNpBWEEiJZKsqxrUfYk8J6izBv8g2nzNErubYVfo0U3
+         OhRfCgVHeJQDqoHy7vcF3uE7In9DiBsVSzLmaQ+AmTUaB3hK1CXDzLc4ETLcI9KtWdYa
+         4kEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756655605; x=1757260405;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vWNLuWOkQMX4H0sUMFwIVl3qkLRis7eQ+ojtoaPsLU0=;
-        b=fVOd9F3mi2OQ6oVdgUwimirOyWMWXzsZXa3d0+S3riDXNGkE72bP6vqPPqfvR5Oyhs
-         rHYaU/td7U2ezJBvQSwiS38yhEB5StP00DD1rPKL0uTB5c9iNODN3+klgO+oWs+KGy5Y
-         d2PvX+sQpRBz2i9EgLFshbMT30g8oD6PRPBdk2Ode2FZc2OaNo6yupWuv5xNGTrDXeCN
-         O/AOQap87VbR8+OdX2HNMGEMidYu7aNiqOUpghh3J0W/XI23okvgZljCd8DfJ3PDL3wZ
-         cbdBfYkBCOpIFz68voUUNu5Wb4jspZW6llb4BM/c/ozj60ceXtx5sAlett3BdQg16Ev0
-         EJcA==
-X-Gm-Message-State: AOJu0YwmwtymPB4s3zDypzL66LeOWznx5qzbL9Vb92m13Q/DKFi1kbNX
-	XiLjQ9+fh7win5jBsa7DsHTdkfCazY+BTLqnrPekmRvFpASqzqTaG/taA/MnGucvfjKp04+ommn
-	1MdHmi64hsfKIwDVUCg3guZnvmBNizGCIZD+VZ2mH9iVW/g8Ip6oLYNY6M85dhg==
-X-Google-Smtp-Source: AGHT+IHMzc1VTqpB25sPYFBBrxQw5Y0Rf2xTJVWu2lOg8yUzp6vOrWXy1SQmpWzivWuE8nSY1rtTaXeqvO987vqXUywjS75IG+EN
+        d=1e100.net; s=20230601; t=1756655710; x=1757260510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vu7OB5WCFRiIsU5hPqmzDabAlwcJjVGYZr9cnnXb0ls=;
+        b=r0M4G8rgO/x9+sIfmzTUUgM9whEladYB2pKUnyKxlErkt5Gt4UjS2PHsF82CVcEIxC
+         9VNwn99c9EtkOM4RYAry6ibihZyS15ZpKO93VS3Ll812Ra7LX/vZNAXGHjzGKZ6zwp6o
+         A24onlk8pc7wgmFLPFFb0lJHLfxuyyzPrqG80zKWIueBNIn7fiHH65NUZUI9zdt4rGSe
+         C66mg8MpctNPJZBvdSmNcxaWWdJhf/CgRXMzKhfi4+kx5SHAQ+xPBDML0Ow237HoXlw3
+         WSrf66DJ9L7ANJb/wJPm+vzacZyxBq4NZ8uuOJT26evfRIWuZUuC9Pux0aDyMxblOeEQ
+         dFcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmp4tEr10+eHvLzX8YCLU6xradxmGQoNuW+Ab+XYzS1IHDzJ+mVsqP1rHNOilSFCdg0wpjWHJJeaAs2rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXbbreQPhuk4nYla336wOJT1AuBbI+PxmSOTb/DrYW2swOBJ/C
+	Je0ySJp5iEJsg15KxWeRnHJ9f1ubg8HfBfmIP4R75f2A1pOaQdMWMZBUYDebqx+X3JEdjbIvw2P
+	7dv8hFh+Idk2QF3tt0W/w3vqg9/8+c48=
+X-Gm-Gg: ASbGnctppja1O/LlKKjpe3HxUlWd9N/lm90HVdImCnFxDp0e8UXPH8T5vimnbpQIgsB
+	vHC/aTbSjOQ1Ng9gyZO/qwBsmxl1xlIAqLAlZnAg69hu7M6X93cd2pAETsaleOUwS0fSEax1ycs
+	OAJkI4ecGP+jR8A7jS/u1fvIBTczIBxBqiDrfP3YFT36ngmpxKPYXd4Gr62K5xisuggXA9abnHp
+	J2XZ2Q=
+X-Google-Smtp-Source: AGHT+IGWU/wsTdjnZJPNKAQvWWzNnWEbPVDY8n7oO8LLEmzwufwLGHZVPqASiHpxwHCaSZENKL1K5d3MELtSENT5sCA=
+X-Received: by 2002:a17:906:4fca:b0:afe:ac57:f0be with SMTP id
+ a640c23a62f3a-b010832f5famr574635066b.31.1756655709313; Sun, 31 Aug 2025
+ 08:55:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2186:b0:3f2:69a5:7ee6 with SMTP id
- e9e14a558f8ab-3f3ffda2e8bmr109144995ab.3.1756655605525; Sun, 31 Aug 2025
- 08:53:25 -0700 (PDT)
-Date: Sun, 31 Aug 2025 08:53:25 -0700
-In-Reply-To: <00000000000074ff7b06199efd7b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b46ff5.a00a0220.1337b0.003a.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-From: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-8-ryncsn@gmail.com>
+ <CACePvbXB-G5vhoEt87BZcjDZ8kZWo3mZtAZ60YbR_gcjnPz29w@mail.gmail.com> <CAMgjq7Aznd7=m6JTNGM4EyFj+6pqHTRBCo2hsQL-cKi0LZggOg@mail.gmail.com>
+In-Reply-To: <CAMgjq7Aznd7=m6JTNGM4EyFj+6pqHTRBCo2hsQL-cKi0LZggOg@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Sun, 31 Aug 2025 23:54:32 +0800
+X-Gm-Features: Ac12FXxioZkcEglVFpgNmclPXqeabDsMMCPYtygfFc3dkhi9MFV7CelcKDtuJqM
+Message-ID: <CAMgjq7AdauQ8=X0zeih2r21QoV=-WWj1hyBxLWRzq74n-C=-Ng@mail.gmail.com>
+Subject: Re: [PATCH 7/9] mm, swap: remove contention workaround for swap cache
+To: Chris Li <chrisl@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sat, Aug 30, 2025 at 11:24=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> On Sat, Aug 30, 2025 at 1:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrot=
+e:
+> >
+> > Hi Kairui,
+> >
+> > It feels so good to remove that 64M swap cache space. Thank you for
+> > making it happen.
+> >
+> > Some nitpick follows. I am fine as is as well.
+> >
+> > Acked-by: Chris Li <chrisl@kernel.org>
+>
+> Thanks.
+>
+> >
+> > Chris
+> >
+> > On Fri, Aug 22, 2025 at 12:21=E2=80=AFPM Kairui Song <ryncsn@gmail.com>=
+ wrote:
+> > >
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > Swap cluster setup will try to shuffle the clusters on initialization=
+.
+> > > It was helpful to avoid contention for the swap cache space. The clus=
+ter
+> > > size (2M) was much smaller than each swap cache space (64M), so shuff=
+ling
+> > > the cluster means the allocator will try to allocate swap slots that =
+are
+> > > in different swap cache spaces for each CPU, reducing the chance of t=
+wo
+> > > CPUs using the same swap cache space, and hence reducing the contenti=
+on.
+> > >
+> > > Now, swap cache is managed by swap clusters, this shuffle is pointles=
+s.
+> > > Just remove it, and clean up related macros.
+> > >
+> > > This should also improve the HDD swap performance as shuffling IO is =
+a
+> > > bad idea for HDD, and now the shuffling is gone.
+> >
+> > Did you have any numbers to prove that :-). Last time the swap
+> > allocator stress testing has already destroyed two of my SAS drives
+> > dedicated for testing. So I am not very keen on running the HDD swap
+> > stress test. The HDD swap stress test are super slow to run, it takes
+> > ages.
+>
+> I did some test months before, removing the cluster shuffle did help.
+> I didn't test it again this time, only did some stress test. Doing
+> performance test on HDD is really not a good experience as my HDD
+> drives are too old so a long running test kills them easily.
+>
+> And I couldn't find any other factor that is causing a serial HDD IO
+> regression, maybe the bot can help verify. If this doesn't help, we'll
+> think of something else. But I don't think HDD based SWAP will ever
+> have a practical good performance as they are terrible at rand read...
+>
+> Anyway, let me try again with HDD today, maybe I'll get some useful data.
 
-***
+So I tried to run some HDD test for many rounds, basically doing the
+test in the URL below manually. Test is done using nr_task =3D 8. The
+HDD swap partition size is 8G.
 
-Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-Author: mst@redhat.com
+Do the preparation following:
+https://github.com/intel/lkp-tests/blob/master/setup/swapin_setup
+(Make usemem hold 8G memory and push them to swap)
 
-On Sat, Aug 30, 2025 at 07:21:32PM -0700, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    11e7861d680c Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17c5c242580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671ba62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1685aa62580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/aa8c34462d5d/disk-11e7861d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f90079573556/vmlinux-11e7861d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8571495e4fea/bzImage-11e7861d.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com
-> 
-> INFO: task syz.0.17:6038 blocked for more than 143 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.17        state:D stack:27224 pid:6038  tgid:6038  ppid:5979   task_flags:0x400040 flags:0x00004004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5357 [inline]
->  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
->  __schedule_loop kernel/sched/core.c:7043 [inline]
->  schedule+0xe7/0x3a0 kernel/sched/core.c:7058
->  schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:121
->  __vhost_worker_flush+0x1a8/0x1d0 drivers/vhost/vhost.c:296
->  vhost_worker_flush drivers/vhost/vhost.c:303 [inline]
->  vhost_dev_flush+0xac/0x110 drivers/vhost/vhost.c:313
->  vhost_vsock_flush drivers/vhost/vsock.c:698 [inline]
->  vhost_vsock_dev_release+0x19f/0x400 drivers/vhost/vsock.c:750
->  __fput+0x402/0xb70 fs/file_table.c:468
->  task_work_run+0x14d/0x240 kernel/task_work.c:227
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
->  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
->  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
->  do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1fdc78ebe9
-> RSP: 002b:00007ffcf43dcf28 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-> RAX: 0000000000000000 RBX: 00007f1fdc9c7da0 RCX: 00007f1fdc78ebe9
-> RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-> RBP: 00007f1fdc9c7da0 R08: 0000000000000000 R09: 00000008f43dd21f
-> R10: 00007f1fdc9c7cb0 R11: 0000000000000246 R12: 00000000000248b9
-> R13: 00007ffcf43dd020 R14: ffffffffffffffff R15: 00007ffcf43dd040
->  </TASK>
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/31:
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
->  #0: ffffffff8e5c1220 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
-> 3 locks held by kworker/u9:1/5174:
->  #0: ffff8880605ef148 ((wq_completion)hci2){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3211
->  #1: ffffc9000f89fd10 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3212
->  #2: ffff8880256d4dc0 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x175/0x430 net/bluetooth/hci_sync.c:331
-> 2 locks held by getty/5615:
->  #0: ffff88814d35e0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
->  #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 0
-> CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->  nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
->  nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
->  watchdog+0xf0e/0x1260 kernel/hung_task.c:491
->  kthread+0x3c5/0x780 kernel/kthread.c:463
->  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
-> Code: 0c 62 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 12 16 00 fb f4 <e9> 4c 09 03 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
-> RSP: 0018:ffffc90000197df8 EFLAGS: 000002c2
-> RAX: 000000000015fae9 RBX: 0000000000000001 RCX: ffffffff8b93fc29
-> RDX: 0000000000000000 RSI: ffffffff8de50a38 RDI: ffffffff8c162980
-> RBP: ffffed1003c5d488 R08: 0000000000000001 R09: ffffed10170a6655
-> R10: ffff8880b85332ab R11: 0000000000000000 R12: 0000000000000001
-> R13: ffff88801e2ea440 R14: ffffffff90ab5290 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff8881247b8000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555d26767660 CR3: 000000000e380000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
->  default_idle+0x13/0x20 arch/x86/kernel/process.c:757
->  default_idle_call+0x6d/0xb0 kernel/sched/idle.c:122
->  cpuidle_idle_call kernel/sched/idle.c:190 [inline]
->  do_idle+0x391/0x510 kernel/sched/idle.c:330
->  cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:428
->  start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
->  common_startup_64+0x13e/0x148
->  </TASK>
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+And do the test with:
+https://github.com/intel/lkp-tests/blob/master/programs/swapin/run
+(Use SIGUSR1 to make usemem to read its memory and swapin)
+
+Before this patch:
+Test run 1:
+1073741824 bytes / 878662493 usecs =3D 1193 KB/s
+33019 usecs to free memory
+1073741824 bytes / 891315681 usecs =3D 1176 KB/s
+35144 usecs to free memory
+1073741824 bytes / 898801090 usecs =3D 1166 KB/s
+36305 usecs to free memory
+1073741824 bytes / 925899753 usecs =3D 1132 KB/s
+20498 usecs to free memory
+1073741824 bytes / 927522592 usecs =3D 1130 KB/s
+34397 usecs to free memory
+1073741824 bytes / 928164994 usecs =3D 1129 KB/s
+35908 usecs to free memory
+1073741824 bytes / 929890294 usecs =3D 1127 KB/s
+35014 usecs to free memory
+1073741824 bytes / 929997808 usecs =3D 1127 KB/s
+30491 usecs to free memory
+test done
+
+Test run 2:
+1073741824 bytes / 771932432 usecs =3D 1358 KB/s
+31194 usecs to free memory
+1073741824 bytes / 788739551 usecs =3D 1329 KB/s
+25714 usecs to free memory
+1073741824 bytes / 795853979 usecs =3D 1317 KB/s
+33809 usecs to free memory
+1073741824 bytes / 798019211 usecs =3D 1313 KB/s
+32019 usecs to free memory
+1073741824 bytes / 798771141 usecs =3D 1312 KB/s
+31689 usecs to free memory
+1073741824 bytes / 800384757 usecs =3D 1310 KB/s
+32622 usecs to free memory
+1073741824 bytes / 800822764 usecs =3D 1309 KB/s
+1073741824 bytes / 800882227 usecs =3D 1309 KB/s
+32789 usecs to free memory
+30577 usecs to free memory
+test done
+
+Test run 3:
+1073741824 bytes / 775202370 usecs =3D 1352 KB/s
+31832 usecs to free memory
+1073741824 bytes / 777618372 usecs =3D 1348 KB/s
+30172 usecs to free memory
+1073741824 bytes / 778180006 usecs =3D 1347 KB/s
+32482 usecs to free memory
+1073741824 bytes / 778521023 usecs =3D 1346 KB/s
+30188 usecs to free memory
+1073741824 bytes / 779207791 usecs =3D 1345 KB/s
+29364 usecs to free memory
+1073741824 bytes / 780753200 usecs =3D 1343 KB/s
+29860 usecs to free memory
+1073741824 bytes / 781078362 usecs =3D 1342 KB/s
+30449 usecs to free memory
+1073741824 bytes / 781224993 usecs =3D 1342 KB/s
+19557 usecs to free memory
+test done
 
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 34cf9ba5f00a222dddd9fc71de7c68fdaac7fb97
+After this patch:
+Test run 1:
+1073741824 bytes / 569803736 usecs =3D 1840 KB/s
+29032 usecs to free memory
+1073741824 bytes / 573718349 usecs =3D 1827 KB/s
+30399 usecs to free memory
+1073741824 bytes / 592070142 usecs =3D 1771 KB/s
+31896 usecs to free memory
+1073741824 bytes / 593484694 usecs =3D 1766 KB/s
+30650 usecs to free memory
+1073741824 bytes / 596693866 usecs =3D 1757 KB/s
+31582 usecs to free memory
+1073741824 bytes / 597359263 usecs =3D 1755 KB/s
+26436 usecs to free memory
+1073741824 bytes / 598339187 usecs =3D 1752 KB/s
+30697 usecs to free memory
+1073741824 bytes / 598674138 usecs =3D 1751 KB/s
+29791 usecs to free memory
+test done
 
+Test run 2:
+1073741824 bytes / 578821803 usecs =3D 1811 KB/s
+28433 usecs to free memory
+1073741824 bytes / 584262760 usecs =3D 1794 KB/s
+28565 usecs to free memory
+1073741824 bytes / 586118970 usecs =3D 1789 KB/s
+27365 usecs to free memory
+1073741824 bytes / 589159154 usecs =3D 1779 KB/s
+42645 usecs to free memory
+1073741824 bytes / 593487980 usecs =3D 1766 KB/s
+28684 usecs to free memory
+1073741824 bytes / 606025290 usecs =3D 1730 KB/s
+28974 usecs to free memory
+1073741824 bytes / 607547362 usecs =3D 1725 KB/s
+33221 usecs to free memory
+1073741824 bytes / 607882511 usecs =3D 1724 KB/s
+31393 usecs to free memory
+test done
+
+Test run 3:
+1073741824 bytes / 487637856 usecs =3D 2150 KB/s
+28022 usecs to free memory
+1073741824 bytes / 491211037 usecs =3D 2134 KB/s
+28229 usecs to free memory
+1073741824 bytes / 527698561 usecs =3D 1987 KB/s
+30265 usecs to free memory
+1073741824 bytes / 531719920 usecs =3D 1972 KB/s
+30373 usecs to free memory
+1073741824 bytes / 532555758 usecs =3D 1968 KB/s
+30019 usecs to free memory
+1073741824 bytes / 532942789 usecs =3D 1967 KB/s
+29354 usecs to free memory
+1073741824 bytes / 540793872 usecs =3D 1938 KB/s
+32703 usecs to free memory
+1073741824 bytes / 541343777 usecs =3D 1936 KB/s
+33428 usecs to free memory
+test done
+
+It seems to match the ~33% swapin.throughput regression reported by
+the bot, it's about ~40% faster with this patch applied. I'll add this
+test result to V2.
 
