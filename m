@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-793365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F19AB3D26C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1744B3D273
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 13:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654F21744A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7C3817A395
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1A5254AFF;
-	Sun, 31 Aug 2025 10:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057EF156661;
+	Sun, 31 Aug 2025 11:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNaJ18bA"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZvefeHXr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C100E25742F
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373934C79;
+	Sun, 31 Aug 2025 11:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756637986; cv=none; b=CMXzsZBNCuCHQBlZesEhVIoDYzzbp/20DqXgDypHz5afbHsme/0pS4r1TX/InwsnTOGAoX/wNxF2KD3jhlBCrrznUPyWo2vmbz/vtxXEGdbw8JlcS5kOmyshojCS/Zcu5zZQmS3o/e8NkgJUhK4sIW4KES8ka1vKmRlF7mNgoro=
+	t=1756638946; cv=none; b=S9zieGya28Lm39Ob9lJArvsZiQc4MF309diCGJw+Aq6ZfYsvLkfbjTvSaRK+R2UvwXl85QYXGVtZO8aNmwSTMJ0/HafBeEYFPrutxrXH6FOkaluWR7CKCcBzyZn/iA/Rtd71yhIm6h2NPbBKOCoMwksQmr5Yaq77uUDIswDii6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756637986; c=relaxed/simple;
-	bh=Btw22oIAGmU6sanSX9eSbU/bEcAdOnorrPnzQTd/6lI=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H3rii+pqyUM55HmuRg3GSwyazCD9ZQo2+Qhld+9XAuiV3pAqNO1BorttsQlbBJPHwXq7o5yw3AwpoDrzaFC7bU/f/97FzQVjrfhyLankpPyfOMC0b8OY/I8rUeNqDNY+iJzT3ix1xbxODZyMFuGniwUSSMMWS/WLTMPEECvdFwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNaJ18bA; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61c78dc8b12so382935a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756637983; x=1757242783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gUKJ0++TPvbkMoFrI+Y8BLlk2t3/W/jKbuvYaAm42bE=;
-        b=eNaJ18bA/RVLPavPhBWRsCB1MH7PBajSwduYAL6wMw/QWVgGT/qJvYIbNpjkPxjQ+0
-         aSV/rqYJRbpfwXh8Pumx6g7qbNZYp/YW5XulxLUqd5B0Pt6VxBoN7MPJJVUsrKsaorC/
-         pYyh7QOhNILNey65IBqKGFAGhzPnwvwANoVnv/bNlrbbA+L/cuWpFcOmM5aeOC90SqsP
-         iZBVnnXPZLjxDBw6Lsfajy4p76WT+JOkOueul6jN23nb29a1ba88j9UlXSJ4mfCxKvCg
-         YTVBN1ssmW5vH/6XYw8/mKAzHVShDyQyu1Fsx4fQRCbs3Lm93/58GF2CqD1raSPz+/+p
-         GiBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756637983; x=1757242783;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gUKJ0++TPvbkMoFrI+Y8BLlk2t3/W/jKbuvYaAm42bE=;
-        b=tOdVH9nSjaIN3EoHgDnAjcEb6q7L0x5NN3E32t+dMDzYaZtUaf4igZ781dg8x/NRoS
-         cnG85Hx5lKn2M37Zic9dUYz4T8LanQ0T2LLP7hca/jnSGrx9BFLjfvffJTquw9xovEh3
-         sw2LX90tWNHj+UOAz2IBS716vKepoDIFoz+YZE9E7NUDdRUSTzKJCQfM8YOY+k2QgQQw
-         f46eDqQrQkDTCDkwnoIoD8mu6LCkccowKxZBxvRRcwix0t44/1GKThmXD74u93p+Q9KE
-         9u6qeYsQQ7+PlKWMRHatNrAnAG4X+bWlvJc6GqdnvFa5dSOkMJpNdJ2nngnO1S66Rwgd
-         7ZSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWV/+FRKB5yn2ohh1IMhc8JSznYp8JsmxB+L9Mw2J1m7cx8RZ6ALz4VZAqqUoLqLxrF0ebggKb8KCMOAx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSAjVqzONrVK4mnWgxNYsXzFeiKFeWWmPDSppdntmF4571fCtP
-	+7R7vc4y7fqt0erNU04d8xMhIDa0rNtWInCCkcZjDXzHNzCUv0UxHmkyIzTj90B2Jcw=
-X-Gm-Gg: ASbGncua4vhpmBNfXRd0dBSjjqqxYjWdJJlY3A+R3SSAWlpH1azOYiOESbEph2vIQ1l
-	7Z3Z8V6vxuuu+4tEXjBLLAZ8MNXWoZ9lVihJiQe9EugaX6Wv15soWC6g3rxnQ/J7pgkE86w2+GQ
-	PUQkQ4xrzX8rHRU+2UxHJzZgJN2+J49qV/LqqCHZiP2VjzM7bvkPc3aIkq1boVgQ6huXXInwxuS
-	z29HKOVYGsWhigJEUYNJAP31z6wkYgIO0M6gb9FP0hzMOisifrrcmPhLSZ0yquMEZ1EgrkDbN+p
-	YeR1BtkmcLJtM0EviluXf9GgpZsonqTgr0TBEZPR151vrDF/4zb4l74O0Vrjey2a2RVUi5ziqI3
-	o6ecSkO/g7UjJS6nD4XZhvzxDkdvxzkcn2y64Y7k=
-X-Google-Smtp-Source: AGHT+IH/wnggLYJVXW/m3e9qKO69aqMTz3cVxphx9pE2l9/txvZNELvi65ntEkYfK+vEIC3B6xnNDw==
-X-Received: by 2002:a17:906:c152:b0:afe:c2e7:3707 with SMTP id a640c23a62f3a-aff0ee1afcemr349705566b.4.1756637983020;
-        Sun, 31 Aug 2025 03:59:43 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b041f00d4c2sm105452666b.97.2025.08.31.03.59.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 03:59:42 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
-References: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: dts: socionext: uniphier-ld20: Add default
- PCI interrup controller address cells
-Message-Id: <175663798171.36860.2362489342658881162.b4-ty@linaro.org>
-Date: Sun, 31 Aug 2025 12:59:41 +0200
+	s=arc-20240116; t=1756638946; c=relaxed/simple;
+	bh=5k7duF0ipNWH58QwXJqWAvQlF99m3HqZgPHkyGCxGAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0UwRReJO8lCOMJ6pQQqTCZ86GHnecCyj8fRDRWwc6z9PKL7dIUsFFcHEG2PTaTr+7lOTYxMhSLiMGeTlZBbGw+1eSm9BO5uOwW+ibDgShHUbJeeSxtwWTPqhH+/uWP18/DaNVmCZyhQBFq59/bdfNZ9k3ySI6nEoydhuJLAIJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZvefeHXr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 04A3340E0192;
+	Sun, 31 Aug 2025 11:15:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5TZlxoM4-iDv; Sun, 31 Aug 2025 11:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756638938; bh=I3TfxcrABdz1PMPHtVDNi3kfyLlfci6abeAcftBPJ9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZvefeHXrMdSXG4VAl582u3/MiR7zm4zD+RgKkLRdx7jGRMV9+N2WFZu1BMHv3nO8f
+	 JtfuXVhhvq8yk6opJgg/PhPCSd7Ww8UNPj8DO7hkXXmyyvLqpD5+iL1Iv78saLIFtN
+	 LnEz4xsl1SPLonMMQ1u5vB0iO+9rvASrJLb5XIAC0hWG9Szveit1WCaRytdkbdgdfM
+	 doYuoBihF/88scEpzSdR/fMMIQl618Ak1RECBj56BkvEcpIyjLp48qLslN73w3lyrw
+	 9ccAr6Tlek+rvQe0EuWhj97Cih/BivQtYHOuiAGBYCsfHg2fje87BODavfTJ+JCtTe
+	 KD4/nHsfnlK9HCjeRnCTfdQ2HESAAPNW2A8ix6C9aKOzVUSgplAwuyTGklIypAxfyK
+	 k6Sx4kFCxWXkGf1YqwHpIeW6Muq8dHDrz/Czwj6YVN0sspWKzzCo76/wUbmmejAfti
+	 vYlfTu9sX00oQVplrqlp5o4J/dzMXzmN+K1177IAatliuScocT/Ls4MA/dEQSxAuEy
+	 dwP8nisKoLJylIBUkdI4DKvbBefK4+7rD2yShpAiiv4HpqFOSSs0rp7ZNjl6sLUmFq
+	 hXPJbk6Re2Sg4a2GSlM5tCnoDqpBfmmTqE5KYbYhgJMjggr1+V5Afmloc7SBMa52tF
+	 klVAw/jJ2skXa2k//iojo2LA=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8574C40E0174;
+	Sun, 31 Aug 2025 11:15:27 +0000 (UTC)
+Date: Sun, 31 Aug 2025 13:15:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
+ out of startup code
+Message-ID: <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local>
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-29-ardb+git@google.com>
+ <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
+ <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
+ <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
 
+On Sun, Aug 31, 2025 at 12:56:41PM +0200, Ard Biesheuvel wrote:
+> OK it appears I've fixed it in the wrong place: the next patch adds
+> back the definition of has_cpuflag() so I squashed that hunk into the
+> wrong patch, it seems.
 
-On Fri, 22 Aug 2025 15:33:19 +0200, Krzysztof Kozlowski wrote:
-> Add missing address-cells 0 to the PCI interrupt node to silence W=1
-> warning:
-> 
->   uniphier-ld20.dtsi:941.4-944.29: Warning (interrupt_map): /soc@0/pcie@66000000:interrupt-map:
->     Missing property '#address-cells' in node /soc@0/pcie@66000000/legacy-interrupt-controller, using 0 as fallback
-> 
-> Value '0' is correct because:
-> 1. GIC interrupt controller does not have children,
-> 2. interrupt-map property (in PCI node) consists of five components and
->    the fourth component "parent unit address", which size is defined by
->    '#address-cells' of the node pointed to by the interrupt-parent
->    component, is not used (=0)
-> 
-> [...]
+The real question is - and I'm sceptical - whether the startup code runs too
+early for boot_cpu_has(). And how is the startup code going to call
+boot_cpu_has().
 
-Applied, thanks!
+/me builds .s
 
-[1/2] arm64: dts: socionext: uniphier-ld20: Add default PCI interrup controller address cells
-      https://git.kernel.org/krzk/linux-dt/c/613fb0c8bd49df4fb28bca89aa5363856487096f
-[2/2] arm64: dts: socionext: uniphier-pxs3: Add default PCI interrup controller address cells
-      https://git.kernel.org/krzk/linux-dt/c/a29bf0b10a1a7f51afb91c1ff9edd73b0ca1fd18
+Aha, so it gets converted into a boot_cpu_data access:
 
-Best regards,
+# arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
+        testb   %r13b, %r13b    # validate
+        je      .L46    #,
+# ./arch/x86/include/asm/bitops.h:206:          (addr[nr >> _BITOPS_LONG_SHIFT])) != 0;
+        movq    80+boot_cpu_data(%rip), %rax    # MEM[(const volatile long unsigned int *)&boot_cpu_data + 80B], _15
+# arch/x86/boot/startup/sev-shared.c:662:       if (validate && !has_cpuflag(X86_FEATURE_COHERENCY_SFW_NO))
+
+But former question remains: AFAIK, you want to run the startup code waaay
+earlier, before we do identify_boot_cpu() which prepares boot_cpu_data, right?
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
