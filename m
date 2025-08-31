@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-793279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056ABB3D181
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631C4B3D182
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 11:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65C821899408
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005233BDE38
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 09:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81CF241690;
-	Sun, 31 Aug 2025 08:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6441D239E88;
+	Sun, 31 Aug 2025 09:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mZZwVMBg"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MweJnoqR"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87F8168BD
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C76518EB0
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 09:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756630689; cv=none; b=c2XHR47mlYGkVSb5Y9e0Lk73hQBr08lBzrZ65/+gDPztI+UpZV25L4I4n5A2v4gAif2UfEomhNO08lrLhgN7lSQwjicIai+Ka6WAS4cP1wgoKs3l35Cga1CvJ8xvtwgHHWFjoGjGKYBRlvv+4Dn3rjToEG7Jao90VHEzUtXtgYU=
+	t=1756630883; cv=none; b=mtrGm+o6NZJ+jkGuyauYKoVTyXVqSUQCqq074f9zlVWMZiAGk+dCtuyK1165KaWbmprtiuSCT0qHG3yV8desaOP7HofiKwHVyBTtdBtmJ7kTkfEiWNVGIyy+vEXK6l5SACUMIeCGX5swDV1JPwiws1UOZ6I4v5ubbrZWBPgWMck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756630689; c=relaxed/simple;
-	bh=txjzteEVXWmv1xAz7pMtMwXfOUi4Gjskn09N5aoRED8=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=IAKQUva85jJqno5u51XktBiK265Jj5WlHWfu0FmvdHIaTmD5MR6jWN6yyYl8X7Ab//11BkIFAvpjfYjs2BZRRX8fLWGjBBHSjD+84JLvN80RFiv0jdgdJPaL8CgdtAqsxnpB3L6/YMAbX56ih5c6TNrQUkE6wbju4E+EhtA73c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mZZwVMBg; arc=none smtp.client-ip=209.85.219.178
+	s=arc-20240116; t=1756630883; c=relaxed/simple;
+	bh=Uf1uVShRR8vNo6b19Nwa8ZjRQHJBlZANUYBbgbNySJc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tWQLGuSpaHf0url3Hoi+C9XKORbl2rMksJtKqZ4Iy3j0Bdmgzd0ycp5rZms4BBURfrz8Ura27l63F1Hi6T2EjJlqgvYg3GcoQKg9WUnYe/YAhIAu7+MGOtiLBfe1n5bR4O7QRN+xVN+pe/jeIpKl7ST7A10DQO0PTci1nBPs1+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MweJnoqR; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e96fbf400c0so3769560276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:58:07 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e970acf352fso2726689276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 02:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756630687; x=1757235487; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5ZeU6lVaTvKgctWHbYTWm3oYBbzhyHIjCKCjF1PmS6I=;
-        b=mZZwVMBgEIdNSRiBGrEQ+VsUShrGF3/l4wjyA6WUMdkDGXLMUOBJwt57fB0wadt5Vz
-         rLGvQ4drBM160oh0Xo5GCeRz8dV0ZHFvJnW7ZOPOJYbNFIjS1MH95W3bI91izyKVkhnL
-         wPE5dii+ukbn7k2dzf2/ewHbpjxtdRQWDDPrj7NuEVuE6a6BCy4SzmzExbWChlIeD28P
-         k31iNUx/VVQ76PZxamZCN/UOD8DX7PY0ubWsGg4MsOfAWBNUAQ+D+m72auOk8qD7ofWs
-         DTfqrweKOnIOBvUB3XrgBcg02oYgkCHfjJCzE0Y6rK3REszyGFTz9UHh09cqD8VSdjFA
-         vh/g==
+        d=google.com; s=20230601; t=1756630881; x=1757235681; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xzarj1jXPwwihpFc52AKHrUnyJlvNlaBP1cTsUIn51w=;
+        b=MweJnoqRJCCnU4EZSExqdmuCUvE5cCEpoGJHVkXdz2mZj5Y8P7QIsxuXTMy08lbWpd
+         5tZ2JjQ07dDs3TvnT3ovKhox7+C/bohaDU4hy8NMKq+gmqiuCstkgliSd6IPdQrZtvii
+         Z7e7sjHzEhGUMnycDDOssHOmfIkNZK+UyL2URKnMQXIGu24nNBjolRyAeNWJ4DC+VgEw
+         clModHgajeAZYFcGR+fV+A2YUkcL/yURsX+sgjuublYS/pH87xszyhHLcwLEa1RBrr2r
+         10yQQfxnZrJax1CJtwbPoE2pHJhupiH9rwlG+5AOFWvrwROZjX5geGejJ04FVWdGxGKr
+         wGSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756630687; x=1757235487;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZeU6lVaTvKgctWHbYTWm3oYBbzhyHIjCKCjF1PmS6I=;
-        b=RUFKl05dZ0ZrXGJzrAEeJCnxnb8WF5z4u0TrTTtHp8IOREa58PXl2b/15UnI2v593j
-         AdKnp2ojmKh20nYMngcQq2xV5CsMHLnwfmghqOWoZyQTTcMoeUAebRSM92FLhO/oU5za
-         4hAcPeggxlTlgWHz11cLYOJhlCjM5YSGsxVhTHJcPn433wp/1syq+vmM8JWutW6Je9ab
-         DUboEz2QchWE3EBVyortHXC/c4Nj3vb9cDNupEzVuZd8krwXoBtwZ+m2Wo4vZHZI+ows
-         YL9ll3ym+HvWc13AOPWPmVKyZX6uopCpS4wJbzAf7wfWuMeHQ9bJoiHsGFVIejw0ASoJ
-         Lifw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ5bxsxp+/pPsdtUwCafPnxEaLoS00NQyxZ0xcyfPbakgcFChsEaAQD9S93xojoxpa75J9riP87gujhvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7TEyuRnATpzovgrxF8G8+XL+NuoAqVljR2yW8dnTF3sShfUVo
-	gEVPwjFlOlES100gPSb+lYkaohgXyyKIPf89rw/9GQDHe2X0B13uDlBe7eBya4ON3w==
-X-Gm-Gg: ASbGncs5l+PKrdE8Z7ETg1A/DVJ16R2Zl5VwIl37difbh5BbYbaWu9NGmCq1lzXd7gT
-	p+MqN0GPt6/EtiLjaqKbAHEUR/dVnXNNBGgpuLbH8bAMYQXWaJe5jJIzUHNHle56RUQejLHU1h+
-	VJWwRQ96rEoHCDEYEx/6QYtqjMkB51gqrKqhQvpJOiJvwXd85wwswjXuai8ixdtKYazcHDBszS1
-	H4OA89x5gFh3TM7e+FkbvmOEMg79o3q5qo/2UiiHk1HEgbfsKpUQy3IKhtL4TM7qCEpokyKApMx
-	hX07WD3/DiF4caMzcJA6vhg+yJmSnKjXmV0pKCyE83gi/i33PVmjzA93s/6FQZLtuJuqVOHwOri
-	HLZdglQzYqdAHgrXX1zhFMn5fdK+nyJV/qZdp0UZ+Rk69ArGhI6XFJ7yM//9jjVzJE/HV2yasdC
-	sCSLeXWo4MqehHCWRt8JUj4/SI
-X-Google-Smtp-Source: AGHT+IEhv+G8RBUzMh+8oocyhb+0JLA1GHE6vZtzTByY9E4gGylLDC6UdEPNzNuUx9tTfYuRYvL8PQ==
-X-Received: by 2002:a05:6902:100b:b0:e97:e05:3260 with SMTP id 3f1490d57ef6-e98a581adcemr4810208276.14.1756630686478;
-        Sun, 31 Aug 2025 01:58:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756630881; x=1757235681;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xzarj1jXPwwihpFc52AKHrUnyJlvNlaBP1cTsUIn51w=;
+        b=o9lHdwHU1rjh0O22Pz7plixP2DfsAbh3+xYc1jB9QlUJWvKGNopK7fgZlDhJjZ0Y4I
+         F7ugMkCb6D/aGrpA/GPi70nkUqEdTAul/EvIarlRWw9g6Xq3DOEv8qnUNqlNjw4iMSfM
+         2hfwmV1VbktU3HTFsv7XfQPUGukdrOe7OtYjroimPjZic4/alYHcDIQAXrv7FPsT+O4m
+         Jf2YIOU6A9X1U/KSE3DUMJ2J10HZgZ+cGxkYN9TC3MSVhkLf0bA20Q72gSMKT3E8+eTq
+         mYkQSNsJ2fz71+QsVG0v+erdRLKs2NROkQvaCDHBaKkyN1f75/SJkxZ3DhahoiwFzjHe
+         eiVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiha1NM1ulM+0ETRmxmBi+EM3y/Hjugxwsior5EsGIEm8vonzkafvBWDa6eB06ceTG7ahnZe5L4nw2zYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsQUVqHDZDE2GjJyZ8HH+8BFZdeS4jMOz/wjr7EqN1TzgkiwwS
+	rKhqgBSjFQzXlOg8pkI2BSUQS5QLm9Sca8/cz9D3PstwV7sc8n6Qrw8ts0j8TqdGkw==
+X-Gm-Gg: ASbGnctwb/mRgnGTKB4U8hpQxutiv8A87JP2QwfjGcjGzzfVH8f0uKdUKvIK3EwPlet
+	K6dMkASOLadN46ps3GdrMfV+42QYzbOrKqOtnZ7sZ4D/9YSXKePA1GVME8v1zdqbeNyhpehQCk1
+	2ggmHlWoclUNK/YzIOAr6y01Yo65ZB6yKe4yFYgi64pHtEqgalQH8LnK7HhhxG+RgemOw2p2TL4
+	apuf7MHgDhTsmyVD6Id/AXVZ4hQlRFnxA/0FhZSXkgl3FPq5NrZK11Lt0yxUgKdpBcyIutALNXh
+	vT2mEQmdyRkyyWB4HXXH3FRNkwnq/8sfY4rMk9QzLFj7FT/v6TkCXjJUnD5x+m0WMzVvbbov6XZ
+	B/HngE7XKOcgy5ebzuEU8g1ojtcVYhzMbLkmZYwffCURShATpIrDubUBzhiutzQ5i5a7ubz9al2
+	6JW0pl4T+tl9y9Tw==
+X-Google-Smtp-Source: AGHT+IGpRZTOsrv6OWnEdL6eZ2XWJIrkP0gSOahOzxZcUPGdu6xAkpdJXXS2GNMzOEVXcPVlQWvbAQ==
+X-Received: by 2002:a05:6902:158f:b0:e97:276:400d with SMTP id 3f1490d57ef6-e98a583baf1mr5704848276.36.1756630880977;
+        Sun, 31 Aug 2025 02:01:20 -0700 (PDT)
 Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e98ac57b5fasm973601276.24.2025.08.31.01.58.02
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e98ac4458c7sm985933276.8.2025.08.31.02.01.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 01:58:05 -0700 (PDT)
-Date: Sun, 31 Aug 2025 01:57:50 -0700 (PDT)
+        Sun, 31 Aug 2025 02:01:19 -0700 (PDT)
+Date: Sun, 31 Aug 2025 02:01:16 -0700 (PDT)
 From: Hugh Dickins <hughd@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
@@ -87,8 +88,10 @@ cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>,
     Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
     Konstantin Khlebnikov <koct9i@gmail.com>, linux-kernel@vger.kernel.org, 
     linux-mm@kvack.org
-Subject: [PATCH 0/7] mm: better GUP pin lru_add_drain_all()
-Message-ID: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
+Subject: [PATCH 1/7] mm: fix folio_expected_ref_count() when PG_private_2
+In-Reply-To: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
+Message-ID: <f91ee36e-a8cb-e3a4-c23b-524ff3848da7@google.com>
+References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,27 +100,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-Series of lru_add_drain_all()-related patches, arising from recent
-mm/gup migration report from Will Deacon.  Based on 6.17-rc3 but apply
-to latest mm.git.  I suggest all but 7/7 be hotfixes going to 6.17 and
-stable, but you might not be persuaded by "counter the increase" ones.
+6.16's folio_expected_ref_count() is forgetting the PG_private_2 flag,
+which (like PG_private, but not in addition to PG_private) counts for
+1 more reference: it needs to be using folio_has_private() in place of
+folio_test_private().
 
-1/7 mm: fix folio_expected_ref_count() when PG_private_2
-2/7 mm/gup: check ref_count instead of lru before migration
-3/7 mm/gup: local lru_add_drain() to avoid lru_add_drain_all()
-4/7 mm: Revert "mm/gup: clear the LRU flag of a page before
-5/7 mm: Revert "mm: vmscan.c: fix OOM on swap stress test"
-6/7 mm: folio_may_be_cached() unless folio_test_large()
-7/7 mm: lru_add_drain_all() do local lru_add_drain() first
+But this went wrong earlier: folio_expected_ref_count() was based on
+(and replaced) mm/migrate.c's folio_expected_refs(), which has been
+using folio_test_private() since 6.0 converted to folios(): before
+that, expected_page_refs() was correctly using page_has_private().
 
- include/linux/mm.h   |  4 ++--
- include/linux/swap.h | 10 ++++++++++
- mm/gup.c             |  6 +++++-
- mm/mlock.c           |  6 +++---
- mm/swap.c            | 53 ++++++++++++++++++++++++++++------------------------
- mm/vmscan.c          |  2 +-
- 6 files changed, 50 insertions(+), 31 deletions(-)
+Just a few filesystems are still using PG_private_2 a.k.a. PG_fscache.
+Potentially, this fix re-enables page migration on their folios; but
+it would not be surprising to learn that in practice those folios are
+not migratable for other reasons.
 
-Thanks,
-Hugh
+Fixes: 86ebd50224c0 ("mm: add folio_expected_ref_count() for reference count calculation")
+Fixes: 108ca8358139 ("mm/migrate: Convert expected_page_refs() to folio_expected_refs()")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+---
+ include/linux/mm.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ae97a0b8ec7..ee8e535eadac 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2180,8 +2180,8 @@ static inline int folio_expected_ref_count(const struct folio *folio)
+ 	} else {
+ 		/* One reference per page from the pagecache. */
+ 		ref_count += !!folio->mapping << order;
+-		/* One reference from PG_private. */
+-		ref_count += folio_test_private(folio);
++		/* One reference from PG_private or PG_private_2. */
++		ref_count += folio_has_private(folio);
+ 	}
+ 
+ 	/* One reference per page table mapping. */
+-- 
+2.51.0
+
 
