@@ -1,159 +1,220 @@
-Return-Path: <linux-kernel+bounces-793515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFD8B3D481
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 18:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F48EB3D490
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 19:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D26189B1CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:53:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0FB177ECA
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A856270578;
-	Sun, 31 Aug 2025 16:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AB4272803;
+	Sun, 31 Aug 2025 17:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JywhYH0L"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3iT7VCf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7871EEDE;
-	Sun, 31 Aug 2025 16:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE64417AE11;
+	Sun, 31 Aug 2025 17:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756659193; cv=none; b=iTPI2c5FuDwh0R3/WI80tYlsY6HTF43logq9kMSCf4DSLmwhW3g0LwE1/UxBhrvupHE3PxPYjtzbVqmASpcU0nyv8uiQO9sCh5zgQicH80Ot0IoD+TAbIa8h1TLcg5TkEHKWPKYVpYS/fAIhuGTFDWAH8ZRUmxT/d0ae+rnAdnA=
+	t=1756660418; cv=none; b=Ufg0rFGj4EwjcuCyaSk9k8Ty4V8nKCLRDy2ANjm5LdcInAd0GFb7bS/fbfNsqAsW8hjJldoP37/4O8hQar3Di57l4RyCy6A8mXpExpUl5i/trWJUIS4cB5jonUXie7TTfZvt8y9iSkiLumhoLfCy7Q5Vyu8l0fjblYv3oV2d06A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756659193; c=relaxed/simple;
-	bh=vdgXQRWdEqGlHhCQC5Cy1C6PSMXprMo/vMvVIuQOFkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SdIHCmEvKgiWsg4MSbmu0kITyEsgBm8dY55qK5H/sF/1S4NgdDwNmrffJYGyvCSGb81UvbN4m6uDu8L8g4iWu678MDb5qr5XZ3L9yLGOcTyBhBF8+LpPL6yyuqiZbFQTazNVqLibrP8pMK1vNGhM8Jd3G90MHb5Zyti3zog9YPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JywhYH0L; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-45b87a13242so7956715e9.0;
-        Sun, 31 Aug 2025 09:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756659190; x=1757263990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wO/zcVnjHVcWBSI/bA+qHfM2i/RTTRPucRX1zIL1fo=;
-        b=JywhYH0LI0qmd1/wPKmO0Np6/LoDWqfhzn8w3Qd/y58D1znSZsny9sVvoeMvpQO6ML
-         JV/zTeQAH1W/d3/pq/EQGXq4nKpvuqO+qVI4t6cP7hc/e7pbynOyVnc/cI6yG3vHdWBZ
-         lRJAmPKpPlLge+lyu5Zrn74QQTVQI+1Umm/9AUMEClXz858ktyyYA57SDH1jMBArM4gO
-         XZ57tdif+VNqagvyLOLCuh5YAMpT0r03slellC7wN3YW3vb8r6y2j7aJ6Tne3sRSKZa2
-         LanUMwy7rQLOQJ4cWR3jZyWjwys1odie0u9A7rw+NcWZhc2PiRy2hzVEe67E9lAWgdUv
-         Udpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756659190; x=1757263990;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4wO/zcVnjHVcWBSI/bA+qHfM2i/RTTRPucRX1zIL1fo=;
-        b=InhuQXsH1hCReBElJI1M8CbqY6jmV1hMwTPC6ZQO9jqPQUiuth+YcmoeiUlXTZbvcQ
-         aLJDDEoOuMVI2CsCDUezO93fXdjeNOO9e1jowGuJCzHiPCTK8mpLemDGeiF4plM4e6XR
-         2El2lLL0Ku6SCDu+C/pgDnx6rKS8B+hG6RUll4D7AQoZ+Rg8vYvDYuKdlGPXhSAk6HNr
-         36vIyZF0SP9h9X0eSa6owvpgkCNGiHAWD1XpVZRDJgne7PtkBJK+kOQRNXEx+zL9TluN
-         BaYTEhWkhrxEwIU0c9KF1seDVW8CPSk95Ic+X6uYsjmRt8IiWjQdYDcgGpoxLoHhXV1r
-         FSsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdyoW/Fi0p+facZZi/cqnWu9klkSETW7yyLXganMz2V20tjFa+1898R8gfhXeSju7Cf4VdspCI2sbE2f6Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLloQV4lg32znMrcYN38xejHCT30WORne/RFRIIgIVcTH8fpCj
-	KuwVQ4yA5wZkeYyfX6wqCC85YDW3hTZB4OYd8Aknrhwj7p1/Wh7Ssv0MLAotOUd2
-X-Gm-Gg: ASbGncuGCiThiQTv7GzPPgkH1XKxx3hfhz2bqtusiMh2Rq0ZYJRQvfeejxfoYKGVlNi
-	3+WnrbnNDl35hCrbPXRrUSQ1S4hsmI3AWw2MCZrfzkAmxhGA/0ISy0plApZ0Qd1CeVcQRQsCCPl
-	1m4OALqYeZofYRrFcwRqpWODQxFY4M4NA+bGRevlVp6o1JPmmb+2EvXZiqWLCOsr6PlVKLDGz9K
-	kxMNi7K4Ki0v0KbTJxndPVZvqYWrlz1gVxK+45PtO4gfr5cJ+gMiYjzhQ8HEi51Q2zs6jcD+NE9
-	EsYuiiyQiaMYwL4Cbdqx1EtdOh5L/gcLXbKlFYXfKzzFck+Iz+qV1kDxGosjXQoOT7u3yfKOs54
-	28ZULX/ahSy8JviPg9nyBA6SlQqKZRH44tQ==
-X-Google-Smtp-Source: AGHT+IGFjev2snd4S9w2ey4FWwKVjSGj830DbgRtoZ16pJGqTBHzAjC/9jhGmMoMrfPxZJuR/PwEBg==
-X-Received: by 2002:a5d:5f55:0:b0:3c0:3fcb:ed77 with SMTP id ffacd0b85a97d-3d1dea8dd85mr3504290f8f.47.1756659189935;
-        Sun, 31 Aug 2025 09:53:09 -0700 (PDT)
-Received: from laptop.. ([2a01:e11:2026:c380:9ae0:723f:673b:3552])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3cf270fbd01sm11939066f8f.13.2025.08.31.09.53.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 09:53:09 -0700 (PDT)
-From: Mattia Massarenti <mattiamassarenti.mm@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Mattia Massarenti <mattiamassarenti.mm@gmail.com>
-Subject: [PATCH] add documentation for function parameter
-Date: Sun, 31 Aug 2025 18:53:04 +0200
-Message-ID: <20250831165304.18435-1-mattiamassarenti.mm@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756660418; c=relaxed/simple;
+	bh=bWiw0g/It4XUK2S29HbLGUxlfyTq9EHrd2OtfaB0MZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M8V+AQHtzYc2QjAoxNynQGbPDLmsVEXVkIgMNldlq6ocEUUpO0Dlp3jRu1cVnli0S5HfGN/qDsb5jZURThK8NWFPT9OS2KJpqkcCvhjDNODW6KgAu9tUqGrH+yy3K6wa5ghJL+IOSYyGN3xcaE6DE6Kbsetf9vSg8btGZxW8Qks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3iT7VCf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9BAC4CEED;
+	Sun, 31 Aug 2025 17:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756660418;
+	bh=bWiw0g/It4XUK2S29HbLGUxlfyTq9EHrd2OtfaB0MZM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Z3iT7VCfsxTvLDm1mEUBgalSDB+H6miFjdWAZA3/RfnAuAuWBnEy4sLrE5s+fePGa
+	 kzo7YU8KMXvqloXoTDa/pcxp9XiVKRXpEbSzdolWPrR8xXYarSyyEU799SdDafmN/L
+	 3ce/mkWfZcCFtCQJZrJaY3VH4mNUBtDSjehg6jt9WVitwBDm9XrBW8pZ7TN0jR3uYQ
+	 D929ooqEnalyYG3icwvwbGfoDoaP+6A8bU5fYFa0ERTUs45a49i6rEytcsdLoI+ry6
+	 nkNcF5spufIN11vpek13SyBuvptIGfK4hQCaMlhNUntIit3Z85G6QNP6hCYPGbWYEZ
+	 6joJijGC6FBCw==
+Date: Sun, 31 Aug 2025 19:13:31 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] Bluetooth: Avoid a couple dozen
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <aLSCu8U62Hve7Dau@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add documentation for parameter 'name' in function 'name_contains_dotdot'
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Signed-off-by: Mattia Massarenti <mattiamassarenti.mm@gmail.com>
+Use the new TRAILING_OVERLAP() helper to fix 31 instances of the 
+following type of warnings:
+
+30 net/bluetooth/mgmt_config.c:16:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+1 net/bluetooth/mgmt_config.c:22:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it. This overlays
+the trailing members onto the FAM while preserving the original
+memory layout.
+
+Also, as the structs turn into unions, both members `entry` and
+`value` cannot be statically initialized at once. Create another
+macro to initialize everything after the declaration of `rp`.
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- 1                  |  3 +++
- doc.log            | 27 +++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 3 files changed, 31 insertions(+)
- create mode 100644 1
- create mode 100644 doc.log
+ net/bluetooth/mgmt_config.c | 97 +++++++++++++++++++------------------
+ 1 file changed, 51 insertions(+), 46 deletions(-)
 
-diff --git a/1 b/1
-new file mode 100644
-index 000000000000..9e2cb3b10423
---- /dev/null
-+++ b/1
-@@ -0,0 +1,3 @@
-+Command 'make' not found, but can be installed with:
-+sudo apt install make        # version 4.3-4.1build1, or
-+sudo apt install make-guile  # version 4.3-4.1build1
-diff --git a/doc.log b/doc.log
-new file mode 100644
-index 000000000000..5af85cbcc86b
---- /dev/null
-+++ b/doc.log
-@@ -0,0 +1,27 @@
-+  PARSE   include/uapi/linux/dvb/ca.h
-+  PARSE   include/uapi/linux/dvb/dmx.h
-+  PARSE   include/uapi/linux/dvb/frontend.h
-+  PARSE   include/uapi/linux/dvb/net.h
-+  PARSE   include/uapi/linux/videodev2.h
-+  PARSE   include/uapi/linux/media.h
-+  PARSE   include/uapi/linux/cec.h
-+  PARSE   include/uapi/linux/lirc.h
-+Using alabaster theme
-+WARNING: dot(1) not found, for better output quality install graphviz from https://www.graphviz.org
-+Using Python kernel-doc
-+WARNING: ./include/linux/fs.h:3287 function parameter 'name' not described in 'name_contains_dotdot'
-+WARNING: ./drivers/gpu/drm/amd/display/dc/dc.h:254 struct member 'num_rmcm_3dluts' not described in 'mpc_color_caps'
-+/home/mattia/kernels/linux/Documentation/gpu/drm-kms:360: ./drivers/gpu/drm/drm_fourcc.c:397: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:35.
-+Declaration is '.. c:function:: const struct drm_format_info * drm_format_info (u32 format)'. [duplicate_declaration.c]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-kms:476: ./drivers/gpu/drm/drm_modeset_lock.c:377: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:48.
-+Declaration is '.. c:function:: int drm_modeset_lock (struct drm_modeset_lock *lock, struct drm_modeset_acquire_ctx *ctx)'. [duplicate_declaration.c]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2446: ERROR: Unexpected indentation. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2448: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2452: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2453: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2457: ERROR: Unexpected indentation. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2458: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2459: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2460: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-+/home/mattia/kernels/linux/Documentation/gpu/drm-uapi:574: ./drivers/gpu/drm/drm_ioctl.c:915: WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:69.
-+Declaration is '.. c:function:: bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'. [duplicate_declaration.c]
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d705..a8272ca3306f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3281,6 +3281,7 @@ static inline bool is_dot_dotdot(const char *name, size_t len)
+diff --git a/net/bluetooth/mgmt_config.c b/net/bluetooth/mgmt_config.c
+index 6ef701c27da4..829c9cfcea7d 100644
+--- a/net/bluetooth/mgmt_config.c
++++ b/net/bluetooth/mgmt_config.c
+@@ -12,35 +12,71 @@
+ #include "mgmt_config.h"
  
- /**
-  * name_contains_dotdot - check if a file name contains ".." path components
-+ * @name: file name to check
-  *
-  * Search for ".." surrounded by either '/' or start/end of string.
-  */
+ #define HDEV_PARAM_U16(_param_name_) \
+-	struct {\
+-		struct mgmt_tlv entry; \
++	TRAILING_OVERLAP(struct mgmt_tlv, entry, value, \
+ 		__le16 value; \
+-	} __packed _param_name_
++	) __packed _param_name_
+ 
+ #define HDEV_PARAM_U8(_param_name_) \
+-	struct {\
+-		struct mgmt_tlv entry; \
++	TRAILING_OVERLAP(struct mgmt_tlv, entry, value, \
+ 		__u8 value; \
+-	} __packed _param_name_
++	) __packed _param_name_
+ 
+ #define TLV_SET_U16(_param_code_, _param_name_) \
+ 	{ \
+-		{ cpu_to_le16(_param_code_), sizeof(__u16) }, \
+-		cpu_to_le16(hdev->_param_name_) \
++		rp._param_name_.entry.type = cpu_to_le16(_param_code_); \
++		rp._param_name_.entry.length = sizeof(__u16); \
++		rp._param_name_.value = cpu_to_le16(hdev->_param_name_); \
+ 	}
+ 
+ #define TLV_SET_U8(_param_code_, _param_name_) \
+ 	{ \
+-		{ cpu_to_le16(_param_code_), sizeof(__u8) }, \
+-		hdev->_param_name_ \
++		rp._param_name_.entry.type = cpu_to_le16(_param_code_); \
++		rp._param_name_.entry.length = sizeof(__u8); \
++		rp._param_name_.value = hdev->_param_name_; \
+ 	}
+ 
+ #define TLV_SET_U16_JIFFIES_TO_MSECS(_param_code_, _param_name_) \
+ 	{ \
+-		{ cpu_to_le16(_param_code_), sizeof(__u16) }, \
+-		cpu_to_le16(jiffies_to_msecs(hdev->_param_name_)) \
++		rp._param_name_.entry.type = cpu_to_le16(_param_code_); \
++		rp._param_name_.entry.length = sizeof(__u16); \
++		rp._param_name_.value = cpu_to_le16(jiffies_to_msecs(hdev->_param_name_)); \
+ 	}
+ 
++#define TLV_SET_ALL() \
++{ \
++	TLV_SET_U16(0x0000, def_page_scan_type); \
++	TLV_SET_U16(0x0001, def_page_scan_int); \
++	TLV_SET_U16(0x0002, def_page_scan_window); \
++	TLV_SET_U16(0x0003, def_inq_scan_type);  \
++	TLV_SET_U16(0x0004, def_inq_scan_int); \
++	TLV_SET_U16(0x0005, def_inq_scan_window); \
++	TLV_SET_U16(0x0006, def_br_lsto); \
++	TLV_SET_U16(0x0007, def_page_timeout); \
++	TLV_SET_U16(0x0008, sniff_min_interval); \
++	TLV_SET_U16(0x0009, sniff_max_interval); \
++	TLV_SET_U16(0x000a, le_adv_min_interval); \
++	TLV_SET_U16(0x000b, le_adv_max_interval); \
++	TLV_SET_U16(0x000c, def_multi_adv_rotation_duration); \
++	TLV_SET_U16(0x000d, le_scan_interval); \
++	TLV_SET_U16(0x000e, le_scan_window); \
++	TLV_SET_U16(0x000f, le_scan_int_suspend); \
++	TLV_SET_U16(0x0010, le_scan_window_suspend); \
++	TLV_SET_U16(0x0011, le_scan_int_discovery); \
++	TLV_SET_U16(0x0012, le_scan_window_discovery); \
++	TLV_SET_U16(0x0013, le_scan_int_adv_monitor); \
++	TLV_SET_U16(0x0014, le_scan_window_adv_monitor); \
++	TLV_SET_U16(0x0015, le_scan_int_connect); \
++	TLV_SET_U16(0x0016, le_scan_window_connect); \
++	TLV_SET_U16(0x0017, le_conn_min_interval); \
++	TLV_SET_U16(0x0018, le_conn_max_interval); \
++	TLV_SET_U16(0x0019, le_conn_latency); \
++	TLV_SET_U16(0x001a, le_supv_timeout); \
++	TLV_SET_U16_JIFFIES_TO_MSECS(0x001b, def_le_autoconnect_timeout); \
++	TLV_SET_U16(0x001d, advmon_allowlist_duration); \
++	TLV_SET_U16(0x001e, advmon_no_filter_duration); \
++	TLV_SET_U8(0x001f, enable_advmon_interleave_scan); \
++}
++
+ int read_def_system_config(struct sock *sk, struct hci_dev *hdev, void *data,
+ 			   u16 data_len)
+ {
+@@ -78,40 +114,9 @@ int read_def_system_config(struct sock *sk, struct hci_dev *hdev, void *data,
+ 		HDEV_PARAM_U16(advmon_allowlist_duration);
+ 		HDEV_PARAM_U16(advmon_no_filter_duration);
+ 		HDEV_PARAM_U8(enable_advmon_interleave_scan);
+-	} __packed rp = {
+-		TLV_SET_U16(0x0000, def_page_scan_type),
+-		TLV_SET_U16(0x0001, def_page_scan_int),
+-		TLV_SET_U16(0x0002, def_page_scan_window),
+-		TLV_SET_U16(0x0003, def_inq_scan_type),
+-		TLV_SET_U16(0x0004, def_inq_scan_int),
+-		TLV_SET_U16(0x0005, def_inq_scan_window),
+-		TLV_SET_U16(0x0006, def_br_lsto),
+-		TLV_SET_U16(0x0007, def_page_timeout),
+-		TLV_SET_U16(0x0008, sniff_min_interval),
+-		TLV_SET_U16(0x0009, sniff_max_interval),
+-		TLV_SET_U16(0x000a, le_adv_min_interval),
+-		TLV_SET_U16(0x000b, le_adv_max_interval),
+-		TLV_SET_U16(0x000c, def_multi_adv_rotation_duration),
+-		TLV_SET_U16(0x000d, le_scan_interval),
+-		TLV_SET_U16(0x000e, le_scan_window),
+-		TLV_SET_U16(0x000f, le_scan_int_suspend),
+-		TLV_SET_U16(0x0010, le_scan_window_suspend),
+-		TLV_SET_U16(0x0011, le_scan_int_discovery),
+-		TLV_SET_U16(0x0012, le_scan_window_discovery),
+-		TLV_SET_U16(0x0013, le_scan_int_adv_monitor),
+-		TLV_SET_U16(0x0014, le_scan_window_adv_monitor),
+-		TLV_SET_U16(0x0015, le_scan_int_connect),
+-		TLV_SET_U16(0x0016, le_scan_window_connect),
+-		TLV_SET_U16(0x0017, le_conn_min_interval),
+-		TLV_SET_U16(0x0018, le_conn_max_interval),
+-		TLV_SET_U16(0x0019, le_conn_latency),
+-		TLV_SET_U16(0x001a, le_supv_timeout),
+-		TLV_SET_U16_JIFFIES_TO_MSECS(0x001b,
+-					     def_le_autoconnect_timeout),
+-		TLV_SET_U16(0x001d, advmon_allowlist_duration),
+-		TLV_SET_U16(0x001e, advmon_no_filter_duration),
+-		TLV_SET_U8(0x001f, enable_advmon_interleave_scan),
+-	};
++	} __packed rp;
++
++	TLV_SET_ALL();
+ 
+ 	bt_dev_dbg(hdev, "sock %p", sk);
+ 
 -- 
 2.43.0
 
