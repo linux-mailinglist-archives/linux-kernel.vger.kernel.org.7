@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-793344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F59DB3D216
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:19:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9535FB3D219
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 12:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95446189EB8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176C6189C378
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B266C24DCE9;
-	Sun, 31 Aug 2025 10:19:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44467253B66;
+	Sun, 31 Aug 2025 10:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5Oq8Jvp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB48843169
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 10:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC3321B1BC;
+	Sun, 31 Aug 2025 10:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756635544; cv=none; b=n9pMEnTGYBqmL2gJMvw1hDJg3GE0YOVZiJQubsiIfEHn7+ZiJiN0XS761WzWkK/ot3jNXMsY9zRVjlnDGVkU6v/RVYWJSvJQpnIvG0hVLh7fiNpYgqxK7N4ZowFNNjdh1SMyPiC6AdNkMLJUGqgD9VR7PoKkKbNUIXYB6hX3xWQ=
+	t=1756635947; cv=none; b=INGcjtSPJi2v4H5lLn+jrmk3cYw/kB9hMTF/Q+QjwMmCVkTjNsf68Mq4Cv4SSgB7Zq5eoigI93HrsFX/NrH0/f06nD4dYQ1TuVdopo/x5+Qy/XoDryvnsyyGRE1QW2gGtjClYFKJ35OV2eUxeMlHnVJii/RR73wliYFq8yCZZxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756635544; c=relaxed/simple;
-	bh=RwQHnRYjV/1vKZ1PuwPUfN2604MKwMBwks15ba2icVE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BFiaZH9y0cukICMf5Sq4yEPn0YetEKKuVfj7h1r6c76gYrkUX5UAXC9yP0p4Z29c5bFCogtPtOkD+ZD66GnvTMn9MSw9q6WhgL665fsskGJ82rtLvGvBpB29fuBgTMv5Nk4TOEJ7FCGPlCmNUYXas3AUt9j3THIyLXQUcxKgQkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f29a0a7671so25772515ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 03:19:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756635542; x=1757240342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5wUanWJ9TFUpM54ILEtXgfjoYDPHC9UXWO0NyRChwpE=;
-        b=aB8N4GfN/ESg3joIAEmGOX6dIjj8yYya6joeilFbVU3q5zG5rRiuS7k/Q13fdu7ZmM
-         Vd+UgFQI2TJceSYB44ZIpfQJlNoBNDMhZN37e68z8cGUQwzbQuc/T/eusH8JLLS799Me
-         f5miLtCAt89V2QtVCrlzuBMvjsBNBuLB+JUauqMbxpFsEql7tvQiXsCfvu5YuPMTs+ng
-         6aTf7SVPfw655HI0uoJs+nZ1VGpiKReqOsDhM/5YSkTPd6Q3kF4VRzUBiWryQhIPqmt+
-         vi5lzjcD1qgSut5kjjrt2XWtG6c6+Uu8uazWPYeSBqbMora8HfTgZKPjpCZFqHD+Lw6D
-         2GzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC5rb/vM22NUB35pEAeODMrJmraymY85VUsnLuBVM5EDRrkAoG6Oqqj0n0FAQPWAcqdbsISoyHsy+hf2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvsEwcuOJ4/RBTtrfh/cKgKb0qUat0ZGyaGOppKoWv91i/Gw+3
-	OL2YBwuCHInzLkKRd8YjNxU+jgKzMrO81uTQDIxmMTRORoFrDQ7fJGHHlt2hIoEy7anvhtdQPmc
-	3AgIUcN7ChH8CCoPEEEImSC2RiqP+pEq5vxcv1oTlWBNAO3NAj6kVOlERLvg=
-X-Google-Smtp-Source: AGHT+IGlSESnK/xm1j4DJ0slXKrny4chuiUI7BV8fgeneqMMUxjfgz2lGWrCoGYpAMuCBzA+5PNrTUDu+7WhgNc9Bq6d/287EMK/
+	s=arc-20240116; t=1756635947; c=relaxed/simple;
+	bh=ipKyUM9WxjNqC1HnzZ6ktJyUrafz5kgMNXIe8qKlMzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nZoSM24xYQGzd3dhSjYPQRxqcNmB/OKr0opVAkvLqxf2jJGdwWGVw/6wMxerRftbnUdZezDNTnLBpV/4aslOfVSRr10zSMjBIAfH6+skEr1NWEpgNA+LJNlxfFIhYRHEpHjJ4MnQLoeg9r7zC14V9uT7Of4S2GANQK6c6cCtNDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5Oq8Jvp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA737C4CEED;
+	Sun, 31 Aug 2025 10:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756635947;
+	bh=ipKyUM9WxjNqC1HnzZ6ktJyUrafz5kgMNXIe8qKlMzM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a5Oq8JvpnBvBTdX8QTJMOJTRE/SJzDjmhxTQ3PlKUfssLzxP+FsDeQUlrwms6j6Mg
+	 /3pBeQH3WubgmJLXyXSe/GJvdF+sLeWA07VsHf+Ys5x8XG7RnkCjeV///EUCxUj9pL
+	 ecf3shOCznFjCJSB9VZts8qAYvcYPD+CQkA7Wf2RB+Z9qYdbwxTAZwaDTY3trJJHLL
+	 6TEjkto1MquEaxko2bkWRtwouEoGKIoGmgO7rep4brMehVhAuAsiVXxSER48lqjlYC
+	 KnVSdGZCtWhQyA53EvprsGpiFAhFmRYHZpxsgkmXd1omDtYIvWaY2vK9Cz7lCU7mib
+	 8hkmehDcyrLPA==
+Message-ID: <25605c06-0360-4d3d-9ec1-f46f60f0e758@kernel.org>
+Date: Sun, 31 Aug 2025 12:25:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd8e:0:b0:3f2:9344:6f9e with SMTP id
- e9e14a558f8ab-3f400284ceemr104024655ab.13.1756635541987; Sun, 31 Aug 2025
- 03:19:01 -0700 (PDT)
-Date: Sun, 31 Aug 2025 03:19:01 -0700
-In-Reply-To: <20250831095915.6269-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b42195.a00a0220.1337b0.0034.GAE@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] WARNING in nfc_rfkill_set_block
-From: syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, krzk@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, ysk@kzalloc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: add mfd/max77705 definitions
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
+ <20250831-starqltechn-correct_max77705_nodes-v1-1-5f2af9d13dad@gmail.com>
+ <4atqwegfaq5ivrd6oypsfev3xpgfjhqw3hooxh4mit3fl23rtq@a5vbqtts46vv>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4atqwegfaq5ivrd6oypsfev3xpgfjhqw3hooxh4mit3fl23rtq@a5vbqtts46vv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 31/08/2025 12:05, Dmitry Baryshkov wrote:
+> On Sun, Aug 31, 2025 at 01:21:21AM +0300, Dzmitry Sankouski wrote:
+>> +
+>> +#ifndef _DT_BINDINGS_MFD_MAX77705_H
+>> +#define _DT_BINDINGS_MFD_MAX77705_H
+>> +
+>> +#define MAX77705_IRQ_CHG	0
+>> +#define MAX77705_IRQ_TOP	1
+>> +#define MAX77705_IRQ_FG		2
+>> +#define MAX77705_IRQ_USBC	3
+> 
+> There is usually no need to define IRQs as bindings.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: MAX_LOCKDEP_KEYS too low!
+Yeah, that's not really a binding.
 
-BUG: MAX_LOCKDEP_KEYS too low!
-turning off the locking correctness validator.
-CPU: 0 UID: 0 PID: 25225 Comm: syz.0.3616 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- register_lock_class+0x2e8/0x320 kernel/locking/lockdep.c:1332
- __lock_acquire+0x99/0xd20 kernel/locking/lockdep.c:5112
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- touch_wq_lockdep_map+0xcb/0x180 kernel/workqueue.c:3907
- __flush_workqueue+0x121/0x14b0 kernel/workqueue.c:3949
- drain_workqueue+0xd3/0x390 kernel/workqueue.c:4113
- destroy_workqueue+0xbb/0xc70 kernel/workqueue.c:5869
- nci_unregister_device+0xb1/0x240 net/nfc/nci/core.c:1316
- virtual_ncidev_close+0x59/0x90 drivers/nfc/virtual_ncidev.c:172
- __fput+0x45b/0xa80 fs/file_table.c:468
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9bb98aebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffc624e4c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 0000000000063d39 RCX: 00007f9bb98aebe9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007f9bb9ae7da0 R08: 0000000000000001 R09: 00000003c624e7bf
-R10: 0000001b2c520000 R11: 0000000000000246 R12: 00007f9bb9ae5fac
-R13: 00007f9bb9ae5fa0 R14: ffffffffffffffff R15: 00007fffc624e5e0
- </TASK>
-
-
-Tested on:
-
-commit:         c8bc81a5 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1226c1f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12dac1f0580000
-
+Best regards,
+Krzysztof
 
