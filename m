@@ -1,65 +1,35 @@
-Return-Path: <linux-kernel+bounces-793209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59431B3D08A
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:28:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B256B3D08E
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 03:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5DC84E02F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 01:28:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296D1202CB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 01:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC29E19007D;
-	Sun, 31 Aug 2025 01:28:36 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E302F1A08BC;
+	Sun, 31 Aug 2025 01:30:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E76D27735
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EFC433A6;
+	Sun, 31 Aug 2025 01:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756603716; cv=none; b=KqkAr12sp+SpaWHoRsbNgS/b7e2aXE0Zb/z+86CTX0WA7CVm2mPZKd6EoXOv/Z49QawDmeRx6xk9259iKWlyFwaMhRo2dXKHQxmGcIPzAWi5PHFU8E4h8KDhb8JKJ8PFvXDutXBxXYDTr2hhjNI6Y6QZVgHflSBH81aFQSzqDC0=
+	t=1756603824; cv=none; b=aURAHVWR2J4PmIiR5T6fk35UxnBYGQDdocKsMc7RaxdINgmC6cSPAXEzIyHBPpg4xTh08nOHu9R159+QYvFFvuDVvJO+HCPUgLUsE0CLHC4+dor1WIG35FC/xzBjIP3rQMenqtDC8Pw76nRGkzixSWJOr7cK+eY+lrQR4KweOkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756603716; c=relaxed/simple;
-	bh=KDJpfsP4YCTuqoD0AK6B2xe1GvRTYvgCJOP8C8dL5ZM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Ap44fR8kaCCfmFdyfa91CfD8R3oDvajhjMGVWhMytJCfZAyVn6+L0mlYNcDElnNjidFHjyo8TwggqfKVaY8Rz9bnAJRCBFKD5KQGiboWYOjbdI+h70bUBLx4ub4fSts+U82Uukmg5GHDmhhD0s7Sbow6gGa0erTCEDWY8zJw5mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2489359cc48so7481005ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Aug 2025 18:28:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756603713; x=1757208513;
-        h=content-transfer-encoding:organization:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=isJ9YgsELTrLE7rgj+66ZSG6AsLLiBAnaMmUnZA80zY=;
-        b=YatlZiK6X7Af7zAbFVnmC8BQ2BwR8WyT1/n3vlPAyML2geysJGmmLqSVk6VqJbL2/D
-         kKBeopAnJlgzOMP2z95PhnRqjPpPdU+ouetP4NgI8cWPxgbLmmUq5njr1olcOFsO5JlK
-         ylLYY4btHor7du6oSOnCXUhthMHXG7EnVrD4ybeiYvIexEib2yETR27wLbIq9yN1+9rf
-         dBhSK7cDehAsuLewqo6vD6BKlpLo7s7JWSQwo3t9NMmnXdfvY0lw2esHqNZ+OkO8URs6
-         UC0FJgODxFK8fOsnEBCGx7qvjJ/H0L2+6wQL85b6w/tSsJfyrmQH61dC2MzfHQn2eXFT
-         P3dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc0EyvJTJ2vhsA+cgwNDNDayUM8Du6FRedFyQENIl1LM6fKy+demB5lJ2IcMoQsK35yp1DMDSg1q+cWAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM/wiArwjxKMRTbVpKhyfQE2UrLR2UBuX6URPJA1dI/1j4WLyA
-	BUTwNEivBNp/Mcezi0gtHNHWS0EUYDeLGbSLwo64wIovabrXFxAG2kgA
-X-Gm-Gg: ASbGnctGEwgEyU/qVh1gCKHGPLf19B1jHD9OS/sI0hgS1V6v+82fcQw4lxietllnlAX
-	QuNqJlby9XDif7CXr3mHbWEnHLJ35dDkV5wwwGS3Sf612uMdML+7L8X68l4cSE9UyqgV0BPkdsj
-	8hwto13yR+NBCc23s7eAFaXRPB91liUAQ5miHpXEnNMQpLCJa+2Y51Cl0WwCKXmpGXHzN4bEjNN
-	fgj1pP0L5HFTEiDIZGttUKESualADzbCQxsfQuN2yxDZitnDmJKVN5IcpnQ4iiuzMXqxu+rjrZF
-	+zX91krvsVR4CXeILxWCGtQLlryQLa8WM2tydiVA9vpbBRkoMGEgXgRxBDXsKpoyZJ3+STYWC7s
-	6yDkQy2Pki7cRvGlFnvlRLpdMvenZKwq0ri3GsBEQpIqnuiP7NpAfbV/k9FGWCTAiCPmKAgFb0u
-	qZ9tM9/vmNC6AC3FQJMNrl+hUZQZB5
-X-Google-Smtp-Source: AGHT+IEM/dtlb/OLbYvlIpN8TePT5zSVAl0O7/OiPFKvgTUksOuYDt2OSBd84y+Xx8kFubI42YX25g==
-X-Received: by 2002:a17:90b:1b50:b0:321:75c1:ff04 with SMTP id 98e67ed59e1d1-327f5c090damr4750387a91.8.1756603713371;
-        Sat, 30 Aug 2025 18:28:33 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327e01b21dfsm3433438a91.2.2025.08.30.18.28.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Aug 2025 18:28:32 -0700 (PDT)
-Message-ID: <f564f596-577e-4a66-a501-033c68765bf4@kzalloc.com>
-Date: Sun, 31 Aug 2025 10:28:26 +0900
+	s=arc-20240116; t=1756603824; c=relaxed/simple;
+	bh=8S/O4oVfjEdL65OQNYJJz8P7HcQuEj0ndZSyix0+LT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e4V/ZYOALyrCw3tMrjelYONt0c2d/xCSq1bV7YYA2xgwcN9kzQtkvGRCtTMfaSX7lc9juSejkJkrtmKjqEZMJ23lMeyNETvzJVXNaIVCrvU2qXN6/pDIGfRxOS6tgucmBgM5lZkVxDC0DrcD51UVeJUzpMJpwwcjeTqiZOMIgHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13E7C4CEEB;
+	Sun, 31 Aug 2025 01:30:22 +0000 (UTC)
+Message-ID: <abac67ba-7aff-4ed2-937e-b483cffc635f@kernel.og>
+Date: Sat, 30 Aug 2025 20:30:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,309 +37,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: Agilex5 Add gmac nodes to DTSI for
+ Agilex5
+To: Matthew Gerlach <matthew.gerlach@altera.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ dinguyen@kernel.org, maxime.chevallier@bootlin.com,
+ richardcochran@gmail.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Mun Yew Tham <mun.yew.tham@altera.com>
+References: <20250724154052.205706-1-matthew.gerlach@altera.com>
+ <20250724154052.205706-3-matthew.gerlach@altera.com>
+ <13467efc-7c79-4d06-af1c-301b852a530c@altera.com>
+ <a70d060d-f1c8-4147-8f1b-1c7ce6360252@altera.com>
 Content-Language: en-US
-To: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
- Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- linux-mm@kvack.org, linux-rt-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, Yeoreum Yun <yeoreum.yun@arm.com>,
- Byungchul Park <byungchul@sk.com>,
- "max.byungchul.park@gmail.com" <max.byungchul.park@gmail.com>,
- vvghjk1234@gmail.com
-From: Yunseong Kim <ysk@kzalloc.com>
-Subject: [BUG] mm/slub: Contention caused by kmem_cache_node->list_lock on
- PREEMPT_RT
-Organization: kzalloc
-Content-Type: text/plain; charset=UTF-8
+From: Dinh Nguyen <dinguyen@kernel.og>
+In-Reply-To: <a70d060d-f1c8-4147-8f1b-1c7ce6360252@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-I've been analyzing a system critical contention observed on a PREEMPT_RT
-enabled kernel (based on v6.17-rc3). The issue stems from internal lock
-contention within the SLUB allocator, particularly under high memory
-pressure scenarios such as massive RCU callback processing.
 
-In PREEMPT_RT configurations, spinlock_t is implemented as a sleepable
-RT-Mutex. The kmem_cache_node->list_lock in SLUB protects the node-level
-partial slab lists and is a very hot lock, frequently accessed during the
-memory freeing path.
+On 8/11/25 10:40, Matthew Gerlach wrote:
+>
+>
+> On 8/4/25 7:57 AM, Matthew Gerlach wrote:
+>>
+>> On 7/24/25 8:40 AM, Matthew Gerlach wrote:
+>> > From: Mun Yew Tham <mun.yew.tham@altera.com>
+>> >
+>> > Add the base device tree nodes for gmac0, gmac1, and gmac2 to the DTSI
+>> > for the Agilex5 SOCFPGA.  Agilex5 has three Ethernet controllers 
+>> based on
+>> > Synopsys DWC XGMAC IP version 2.10.
+>> >
+>> > Signed-off-by: Mun Yew Tham <mun.yew.tham@altera.com>
+>> > Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+>> > ---
+>> > v2:
+>> >   - Remove generic compatible string for Agilex5.
+>> > ---
+>> >   .../arm64/boot/dts/intel/socfpga_agilex5.dtsi | 336 
+>> ++++++++++++++++++
+>> >   1 file changed, 336 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi 
+>> b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+>> > index 7d9394a04302..04e99cd7e74b 100644
+>> > --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+>> > +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+>> > @@ -486,5 +486,341 @@ qspi: spi@108d2000 {
+>> >               clocks = <&qspi_clk>;
+>> >               status = "disabled";
+>> >           };
+>>
+>> Is there any feedback for this patch and the next one in the series,
+>> "[PATCH v2 3/4] arm64: dts: socfpga: agilex5: enable gmac2 on the
+>> Agilex5 dev kit"?
+>>
+>> Thanks,
+>> Matthew Gerlach
+>
+> Just checking in again. Is there any feedback on this patch (v2 2/4) 
+> or the next patch (v2 3/4)?
+> https://lore.kernel.org/lkml/20250724154052.205706-1-matthew.gerlach@altera.com/T/#m2a5f9a3d22dfef094986fd8a421051f55667b427 
+>
+> https://lore.kernel.org/lkml/20250724154052.205706-1-matthew.gerlach@altera.com/T/#m3e3d9774dbdb34d646b53c04c46ec49d32254544 
+>
+>
 
-When multiple CPUs contend heavily for this lock, the overhead associated
-with RT-Mutexes (context switching, priority inheritance, sleeping/waking)
-causes severe stagnation in the memory subsystem's progress.
+Applied!
 
-I observed a scenario where a task performing memory compaction became
-indefinitely stuck waiting for a folio lock. It appears the owner of the
-folio lock was also stalled due to the contention on SLUB's list_lock,
-resulting in a system-wide contention.
+Thanks,
 
-The task is stuck in migrate_pages_batch waiting for a folio lock during 
-memory compaction:
+Dinh
 
- INFO: task hung in migrate_pages_batch
- INFO: task syz.7.2768:30677 blocked for more than 143 seconds.
-       Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73
- "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
- task:syz.7.2768      state:D stack:0     pid:30677 tgid:30673 ppid:20684  task_flags:0x400040 flags:0x00000011
- Call trace:
-  __switch_to+0x2b4/0x474 arch/arm64/kernel/process.c:741 (T)
-  context_switch kernel/sched/core.c:5357 [inline]
-  __schedule+0x6c4/0xe2c kernel/sched/core.c:6961
-  __schedule_loop kernel/sched/core.c:7043 [inline]
-  schedule+0x50/0xf0 kernel/sched/core.c:7058
-  io_schedule+0x38/0xa0 kernel/sched/core.c:7903
-  folio_wait_bit_common+0x360/0x698 mm/filemap.c:1317
-  __folio_lock+0x2c/0x3c mm/filemap.c:1675
-  folio_lock include/linux/pagemap.h:1133 [inline]
-  migrate_folio_unmap mm/migrate.c:1246 [inline]
-  migrate_pages_batch+0x448/0x1a80 mm/migrate.c:1873
-  migrate_pages_sync mm/migrate.c:2023 [inline]
-  migrate_pages+0x101c/0x14f4 mm/migrate.c:2105
-  compact_zone+0x1044/0x1ae8 mm/compaction.c:2647
-  compact_node mm/compaction.c:2916 [inline]
-  compact_nodes mm/compaction.c:2938 [inline]
-  sysctl_compaction_handler+0x244/0x3f4 mm/compaction.c:2989
-  proc_sys_call_handler+0x224/0x3fc fs/proc/proc_sysctl.c:600
-  proc_sys_write+0x2c/0x3c fs/proc/proc_sysctl.c:626
-  do_iter_readv_writev+0x314/0x3e0 fs/read_write.c:-1
-  vfs_writev+0x194/0x470 fs/read_write.c:1057
-  do_pwritev fs/read_write.c:1153 [inline]
-  __do_sys_pwritev2 fs/read_write.c:1211 [inline]
-  __se_sys_pwritev2 fs/read_write.c:1202 [inline]
-  __arm64_sys_pwritev2+0xf0/0x194 fs/read_write.c:1202
-  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-  invoke_syscall+0x64/0x168 arch/arm64/kernel/syscall.c:49
-  el0_svc_common+0xb4/0x164 arch/arm64/kernel/syscall.c:132
-  do_el0_svc+0x2c/0x3c arch/arm64/kernel/syscall.c:151
-  el0_svc+0x40/0x144 arch/arm64/kernel/entry-common.c:879
-  el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
-  el0t_64_sync+0x1b8/0x1bc arch/arm64/kernel/entry.S:596
- NMI backtrace for cpu 0
- CPU: 0 UID: 0 PID: 55 Comm: khungtaskd Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
- Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
- Call trace:
-  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
-  __dump_stack+0x30/0x40 lib/dump_stack.c:94
-  dump_stack_lvl+0x148/0x1d8 lib/dump_stack.c:120
-  dump_stack+0x1c/0x3c lib/dump_stack.c:129
-  nmi_cpu_backtrace+0x278/0x31c lib/nmi_backtrace.c:113
-  nmi_trigger_cpumask_backtrace+0x134/0x2cc lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x30/0x40 arch/arm64/kernel/smp.c:936
-  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
-  watchdog+0x858/0x890 kernel/hung_task.c:491
-  kthread+0x314/0x384 kernel/kthread.c:463
-  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
- Sending NMI from CPU 0 to CPUs 1-3:
- NMI backtrace for cpu 1
- CPU: 1 UID: 0 PID: 28 Comm: rcuc/1 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
- Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
- pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
- pc : __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
- pc : _raw_spin_unlock_irq+0x18/0x70 kernel/locking/spinlock.c:202
- lr : __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:158 [inline]
- lr : _raw_spin_unlock_irq+0x10/0x70 kernel/locking/spinlock.c:202
- sp : ffff800089f0fa40
- x29: ffff800089f0fa40 x28: ffff0000c0004640 x27: 0000000000000000
- x26: 0000000000000000 x25: 0000000000001000 x24: ffff8000855f169c
- x23: 0000000000000001 x22: ffff800089f0fa68 x21: ffff800089f0fb48
- x20: ffff0000c11e6440 x19: ffff0000c0004640 x18: 000000651c596d12
- x17: 0000000000000000 x16: 0000000000000008 x15: 0000000000000000
- x14: 0000000000000000 x13: 0000000000000010 x12: ffff80008b0cfa68
- x11: 0000000000000008 x10: 00000000ffffffff x9 : ffffffffffffffff
- x8 : 0000000000000000 x7 : bbbbbbbbbbbbbbbb x6 : 392e39383520205b
- x5 : ffff8000806849f4 x4 : 0000000000000001 x3 : 0000000000000010
- x2 : ffff800089f0fa68 x1 : ffff0000c11e6440 x0 : ffff0000c0004640
- Call trace:
-  __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
-  arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
-  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline] (P)
-  _raw_spin_unlock_irq+0x18/0x70 kernel/locking/spinlock.c:202 (P)
-  raw_spin_unlock_irq_wake include/linux/sched/wake_q.h:82 [inline]
-  rtlock_slowlock_locked+0xcb0/0xe0c kernel/locking/rtmutex.c:1864
-  rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
-  rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
-  __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
-  rt_spin_lock+0x6c/0xe0 kernel/locking/spinlock_rt.c:57
-  spin_lock include/linux/spinlock_rt.h:44 [inline]
-  free_to_partial_list+0x74/0x5bc mm/slub.c:4427
-  __slab_free+0x208/0x254 mm/slub.c:4498
-  do_slab_free mm/slub.c:4632 [inline]
-  slab_free mm/slub.c:4681 [inline]
-  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
-  mem_pool_free mm/kmemleak.c:508 [inline]
-  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
-  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
-  rcu_core kernel/rcu/tree.c:2861 [inline]
-  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
-  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
-  kthread+0x314/0x384 kernel/kthread.c:463
-  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
- NMI backtrace for cpu 3
- CPU: 3 UID: 0 PID: 44 Comm: rcuc/3 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
- Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
- pstate: 03400005 (nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
- pc : finish_task_switch+0xb0/0x308 kernel/sched/core.c:5225
- lr : raw_spin_rq_unlock kernel/sched/core.c:680 [inline]
- lr : raw_spin_rq_unlock_irq kernel/sched/sched.h:1530 [inline]
- lr : finish_lock_switch kernel/sched/core.c:5105 [inline]
- lr : finish_task_switch+0xa8/0x308 kernel/sched/core.c:5223
- sp : ffff80008b0cf940
- x29: ffff80008b0cf950 x28: ffff0000c11fab28 x27: ffff800088169df0
- x26: ffff0000c11fa440 x25: ffff8000855e93b4 x24: ffff800088169df0
- x23: 0000000000001000 x22: 0000000000000000 x21: bcf48000855e8a30
- x20: ffff0000c11fa440 x19: ffff0000c1301440 x18: 00000062aca2a5d2
- x17: fffffffffffff63c x16: 0000000000200b20 x15: 0000000000135c81
- x14: ffff800088169df0 x13: 000000000132d6aa x12: 00000000001f4245
- x11: 0000000000000000 x10: 00000000ffffffff x9 : 0000000000000001
- x8 : 0000000100000001 x7 : bbbbbbbbbbbbbbbb x6 : ffff8000a954fd48
- x5 : 0000000000000001 x4 : 0000000000001000 x3 : ffff0000c11fa440
- x2 : 0000000000000001 x1 : ffff80008741f318 x0 : 0000000000000001
- Call trace:
-  __daif_local_irq_enable arch/arm64/include/asm/irqflags.h:26 [inline] (P)
-  arch_local_irq_enable arch/arm64/include/asm/irqflags.h:48 [inline] (P)
-  raw_spin_rq_unlock_irq kernel/sched/sched.h:1531 [inline] (P)
-  finish_lock_switch kernel/sched/core.c:5105 [inline] (P)
-  finish_task_switch+0xb0/0x308 kernel/sched/core.c:5223 (P)
-  context_switch kernel/sched/core.c:5360 [inline]
-  __schedule+0x6c8/0xe2c kernel/sched/core.c:6961
-  __schedule_loop kernel/sched/core.c:7043 [inline]
-  schedule_rtlock+0x24/0x44 kernel/sched/core.c:7122
-  rtlock_slowlock_locked+0xd20/0xe0c kernel/locking/rtmutex.c:1868
-  rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
-  rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
-  __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
-  rt_spin_lock+0x6c/0xe0 kernel/locking/spinlock_rt.c:57
-  spin_lock include/linux/spinlock_rt.h:44 [inline]
-  free_to_partial_list+0x74/0x5bc mm/slub.c:4427
-  __slab_free+0x208/0x254 mm/slub.c:4498
-  do_slab_free mm/slub.c:4632 [inline]
-  slab_free mm/slub.c:4681 [inline]
-  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
-  mem_pool_free mm/kmemleak.c:508 [inline]
-  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
-  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
-  rcu_core kernel/rcu/tree.c:2861 [inline]
-  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
-  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
-  kthread+0x314/0x384 kernel/kthread.c:463
-  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
- NMI backtrace for cpu 2
- CPU: 2 UID: 0 PID: 36 Comm: rcuc/2 Kdump: loaded Not tainted 6.17.0-rc3-00269-g11e7861d680c-dirty #73 PREEMPT_{RT,(full)} 
- Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
- pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
- pc : __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
- pc : _raw_spin_unlock_irqrestore+0x2c/0x80 kernel/locking/spinlock.c:194
- lr : __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:150 [inline]
- lr : _raw_spin_unlock_irqrestore+0x18/0x80 kernel/locking/spinlock.c:194
- sp : ffff80008afafa80
- x29: ffff80008afafa80 x28: ffff0000c0004640 x27: 0000000000000000
- x26: ffff8000806849f4 x25: ffff8002cf620000 x24: ffff0000c11f0440
- x23: 0000000000000000 x22: 0000000000000000 x21: ffff0000c11fad30
- x20: 0000000000000008 x19: 0000000000000000 x18: ffff80008565bf38
- x17: 0000000000000006 x16: 0000000000000010 x15: 0000000000000000
- x14: ffff800088169df0 x13: 0000000000000130 x12: 0000000000000110
- x11: 0000000000000000 x10: 00000000ffffffff x9 : ffffffffffffffff
- x8 : 00000000000000c0 x7 : bbbbbbbbbbbbbbbb x6 : 000000000000003f
- x5 : 0000000000000001 x4 : 000000895af9d556 x3 : 0000000000000004
- x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff0000c11fad30
- Call trace:
-  __daif_local_irq_restore arch/arm64/include/asm/irqflags.h:175 [inline] (P)
-  arch_local_irq_restore arch/arm64/include/asm/irqflags.h:195 [inline] (P)
-  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline] (P)
-  _raw_spin_unlock_irqrestore+0x2c/0x80 kernel/locking/spinlock.c:194 (P)
-  class_raw_spinlock_irqsave_destructor include/linux/spinlock.h:557 [inline]
-  try_to_wake_up+0x3b0/0x7e0 kernel/sched/core.c:4216
-  wake_up_state+0x14/0x20 kernel/sched/core.c:4465
-  rt_mutex_wake_up_q kernel/locking/rtmutex.c:566 [inline]
-  rt_mutex_slowunlock+0x16c/0x2ac kernel/locking/rtmutex.c:1469
-  rt_spin_unlock+0x24/0x34 kernel/locking/spinlock_rt.c:85
-  spin_unlock_irqrestore include/linux/spinlock_rt.h:122 [inline]
-  free_to_partial_list+0x2b8/0x5bc mm/slub.c:4466
-  __slab_free+0x208/0x254 mm/slub.c:4498
-  do_slab_free mm/slub.c:4632 [inline]
-  slab_free mm/slub.c:4681 [inline]
-  kmem_cache_free+0x320/0x5f0 mm/slub.c:4782
-  mem_pool_free mm/kmemleak.c:508 [inline]
-  free_object_rcu+0x104/0x11c mm/kmemleak.c:536
-  rcu_do_batch kernel/rcu/tree.c:2605 [inline]
-  rcu_core kernel/rcu/tree.c:2861 [inline]
-  rcu_cpu_kthread+0x404/0xcd0 kernel/rcu/tree.c:2949
-  smpboot_thread_fn+0x270/0x474 kernel/smpboot.c:160
-  kthread+0x314/0x384 kernel/kthread.c:463
-  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-
-NMI Backtrace shows RCU threads (rcuc/X) on multiple CPUs are experiencing
-severe contention while trying to acquire the RT-Mutex in
-free_to_partial_list(). Similar contention traces were observed on other
-CPUs.
-
-The core issue is that kmem_cache_node->list_lock is too hot to operate as
-a sleeping lock (RT-Mutex) under high contention scenarios. I've seeking
-community feedback on the best approach to ensure system stability while
-maintaining RT guarantees. Here’s my thought on a possible direction:
-
-1. Convert list_lock to raw_spinlock_t (Immediate Fix)
-
- The most straightforward solution is to change kmem_cache_node->list_lock
- from spinlock_t to raw_spinlock_t. This ensures the lock remains a
- non-sleeping spinlock even on PREEMPT_RT.
-
-   - Pros:
-     Reliably resolves the deadlock by eliminating the RT-Mutex overhead.
-     Minimal code changes required.
-
-   - Cons:
-     Reintroduces a traditional spinlock, which could theoretically
-     slightly increase latency for high-priority RT tasks. However, given
-     the very short critical section protected by this lock, this may be a
-     reasonable trade-off for stability.
-
-2. Reducing Lock Contention
-
- Instead of changing the lock type, we could reduce the frequency of
- acquiring the node-level list_lock. Contention primarily occurs when
- per-CPU partial lists (kmem_cache_cpu->partial) are flushed to the node
- list (kmem_cache_node->partial).
- Tuning and Batching: We could adjust the thresholds in flush_cpu_slab()
- or enhance batch processing when moving slabs to reduce the number of
- lock acquisitions.
-
-   - Pros:
-     Improves overall SLUB scalability while maintaining PREEMPT_RT locking
-     semantics (using RT-Mutexes).
-
-   - Cons:
-     Implementation and tuning are complex. It may increase per-CPU memory
-     usage and might not entirely resolve contention under extreme loads.
-
-3. Deferring Node List Updates
-
- A structural change to avoid acquiring the list_lock (RT-Mutex) in the
- memory freeing fast path. Instead of moving slabs to the node list
- immediately by the task freeing the memory (especially in RCU callback
- context), this work could be deferred to a dedicated workqueue or kthread.
-
-   - Pros:
-     Removes heavy RT-Mutex acquisition from the fast path, potentially
-     improving response times.
-
-   - Cons:
-     Adds significant complexity to the SLUB architecture. It might impact
-     performance in non-RT environments or delay memory reclamation.
-
-Given the severity of the observed deadlock, Option 1 using raw_spinlock_t
-appears to be the most pragmatic and immediate solution to guarantee system
-stability. However, I would like to hear the community's opinion on whether
-this is the best approach aligned with PREEMPT_RT goals, or if the MM/RT
-community prefers a longer-term structural improvement like Option 2 or 3.
-
-Please let me know if further adjustments, testing, or reproduction are
-needed. Welcome any feedback or suggestions regarding this issue.
-
-Best regards.
-Yunseong Kim
 
