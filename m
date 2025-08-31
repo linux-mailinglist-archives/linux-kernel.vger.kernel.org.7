@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-793575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4D1B3D564
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:42:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED9EB3D567
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 23:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3158173B95
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014B618944E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 21:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231FC23F26A;
-	Sun, 31 Aug 2025 21:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSeHyyRa"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F0C170A37
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 21:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B8244669;
+	Sun, 31 Aug 2025 21:44:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083BF800;
+	Sun, 31 Aug 2025 21:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756676544; cv=none; b=cgLOnLL9N2ntXLdFN92+gaasEWvPHd7myuhDNjw6R++CSycuhFayNoWO/HZrtDncYqe1T1I3JJU46KzX/3WAQpHkOZ46qE4ReFQuJMkGJQK9TrT0+8gNacho5xe/VS/WXasXBcRIUWe71zOJNzi1D0WTau2KtxeggKWSp4UqUXY=
+	t=1756676645; cv=none; b=oiGdljkk6N/ZdXFE8wG4B5cM15wIzzijy4nb0oqLNbqcpt4e0u3astynwPqS5HOlACnltJITW/jdgWLpPQG4ScGvgTLE0vUGMayjLskPfK9dDJ9WRCDbgWH1QFMC/2megiqQkTPSaq2uZTnbX/uWRWXHmDCCguU8N45h3w7U4VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756676544; c=relaxed/simple;
-	bh=XrWnjGupWDAHdXimUfuC/NSyB9S8VAE4YTcPqsyV2zU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YqOiG7ne4I48UmNUKIiexW0eP6jp8Ddel5ItMQxWZP2pvzWNMx8yDRftd/mVCVtjA9wBcqPFlZfy1v4GVPMiYnqxUGpB1U78lPADvSLM66/e6JB5XWzm5uYhnDgJDjKIPl5Px65945y4ckYip4dZqNDx4SX542SFcuXBSSbE/dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSeHyyRa; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3d1bf79d6afso943838f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 14:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756676541; x=1757281341; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XrWnjGupWDAHdXimUfuC/NSyB9S8VAE4YTcPqsyV2zU=;
-        b=hSeHyyRaO8TNWVcakL7qALdqskLTKgF8a70nJrV81PYMGUWTKpZKFryGSHOmmInaLP
-         nG7ljTko0rTHLBx4RGT08qhQ16cY12v+nR+ao6HSOPbQPrOpH3hcAlJ7BkU+6QYGEl8b
-         CpHXcjm/Lgim9HEW5jCC8eVOK1JwVxYAxa96m5I8DRoXlgLvuA5g6kqRinFaVc1wdAp4
-         8AgloO+NJzKlrqp5sSlGFBEhsTZenfVmwnw9jiM47KxxiHI92gRzxLcdjubZj3qpLn//
-         qjWPVoOnywpt+wje6U6B4+BNRzTCL55pHB4UplX3N9oKyN332f9RUVP8FWnllQVZt/IS
-         EJwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756676541; x=1757281341;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XrWnjGupWDAHdXimUfuC/NSyB9S8VAE4YTcPqsyV2zU=;
-        b=GVndnmX2IzxX0eVVblWIZ236/N1zDbVRYHesnoAYokkxrkFO4tLzW5HzYOcB1oOlgH
-         sfGm7KRRnbcSE9BGuWRUgelPnP9aV7Xh6xx6Ljq1RKMumU4e9UyW67ZYSnZNcAxyliPS
-         8CGj49wdx0T2aTo7RSUnr6owc8q0Cm+DMqwOErOutQJjCj7J2b4QVw8fZaJ6rty2UVxk
-         zSun+Yk8PHvlSWzUr/01aeBeDATiwDUrx5KaMxke+aAbQEpXmn98ko4JtLWmqyfnFGz6
-         KxcMsH2iTJW2KsD3RGKgDbwbbKJMhmpk1g+pai4L9hlr34k24t2c5feVUL1GeBzU5g9g
-         w/fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY9tKXdRKe383U+5zJgrztVqnaeul0iEJz8cPQRNwvfYtLZ+uzzWcMR+hTmMAe9uYKqhsui0Y+9nBlQio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXd2dzTI/Q/V0bQMp4psdrBDlF7/2i+5ozdhjAqunTqJwSi5cV
-	5tApcWjnF7aSs3os9klmT1bfVKsqUedi3PX1/kNCTNotvnEajtdNtYzX
-X-Gm-Gg: ASbGnctsCg+fnL9f+RAhfrg3qb9CYPuxynEYMBT8jbGcqS6bxmTI0D0/leAhbAhWTh7
-	Sce2CYphe3J7BK+XWShqD+60CfNGq5eGGRukiYmqmIYBuT6cjuzL7GfKslONEnD9MXKGnXdwAuX
-	RBLbkqwkz6hIVU/4i9J2xjnMnbqfaqU/EFx/gBZ/dPa8EfrZnI09UQpJh87hMOSA4ADEesqSQ1a
-	x5OVk8k3WYysmJODXXRR90pJHOrB2g/gDNmTEKJ3aJNU2KrNUlcigkuuhM0aKKYM2xlRFIW6s6J
-	p5sBHwtwHaaGeld6N8vqqvgm5WdIl9swQYizdSQ8Sh1nyCeHdU9JVkoD2R97M2EyzFKRuSmYoPt
-	iXusLjLGZVv36uSJta3obHYi9QoERYqZitQx66IDwSMJyekDRjwKH96KswldveXwkbIS/PAIaO6
-	kKBnoH/wCeW0mMC0O/r4l6O5Sw1TLatYkClt7CO79J1azw0NmjcKrDRAc0mofHWPWSBMT0nuDJ
-X-Google-Smtp-Source: AGHT+IEcpg8XF4kOOyrGus10eY7b1mwm4xr5kWKrRe8C/RxRerNfYyIyHxVayFHtIZ1srX+bh6hP3Q==
-X-Received: by 2002:a05:6000:2007:b0:3cf:3477:6bb7 with SMTP id ffacd0b85a97d-3d1e0a9424cmr5087701f8f.60.1756676541056;
-        Sun, 31 Aug 2025 14:42:21 -0700 (PDT)
-Received: from ?IPv6:2001:4c4e:24c1:9400:d6ab:39bc:9d60:a351? (20014C4E24C19400D6AB39BC9D60A351.dsl.pool.telekom.hu. [2001:4c4e:24c1:9400:d6ab:39bc:9d60:a351])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b69b7529asm127855375e9.0.2025.08.31.14.42.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 14:42:20 -0700 (PDT)
-Message-ID: <14a9ed202a304fe895719f406633e79fe16e8535.camel@gmail.com>
-Subject: Re: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource
- seems too big for the bo
-From: Timur =?ISO-8859-1?Q?Krist=F3f?= <timur.kristof@gmail.com>
-To: Borislav Petkov <bp@alien8.de>, Alex Deucher <alexdeucher@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
-  Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, 	linux-kernel@vger.kernel.org
-Date: Sun, 31 Aug 2025 23:42:19 +0200
-In-Reply-To: <20250830174810.GAaLM5WkiFc2BtQ6kW@fat_crate.local>
-References: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
-	 <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
-	 <20250829194044.GCaLICPKJcGJRYdSfO@fat_crate.local>
-	 <20250829204840.GEaLISKGTwuScnDF8Y@fat_crate.local>
-	 <CADnq5_MbpYmC2PSyOr0gQk7F8mVz0-LG3dZtUZS2HhV8LTgDww@mail.gmail.com>
-	 <20250830174810.GAaLM5WkiFc2BtQ6kW@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756676645; c=relaxed/simple;
+	bh=XhLWBhTPHbzSraYjiFNcsGlZcv2V8Lnl9xjhUeu1L1c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Td2T8rmFipcHD2LFOPqdqsXHAEOkJjJvTxopIxAAzwrvRJYdzG6rHCGidFiyobCRD+yT+mpQmw8X7OPvqWhgjH1tWNx0HWF+V8VzKgjbI2k3+TNH1Te7IgvtpmtBzHk1xcXMOHfCJIWGidv3h4CQ+V/pEVUMcaeVa49qaDUlvoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC7841D13;
+	Sun, 31 Aug 2025 14:43:54 -0700 (PDT)
+Received: from e127648.arm.com (unknown [10.57.78.139])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA9153F694;
+	Sun, 31 Aug 2025 14:44:01 -0700 (PDT)
+From: Christian Loehle <christian.loehle@arm.com>
+To: rafael@kernel.org,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dietmar.eggemann@arm.com,
+	kenneth.crudup@gmail.com,
+	Christian Loehle <christian.loehle@arm.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] PM: EM: Fix late boot with holes in CPU topology
+Date: Sun, 31 Aug 2025 22:43:57 +0100
+Message-Id: <20250831214357.2020076-1-christian.loehle@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2025-08-30 at 19:48 +0200, Borislav Petkov wrote:
->=20
->=20
-> With newer MESA (version 9.0.2 in Debian), the message
+commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
+adjustment") added a mechanism to handle CPUs that come up late by
+retrying when any of the `cpufreq_cpu_get()` call fails.
 
+However, if there are holes in the CPU topology (offline CPUs, e.g.
+nosmt), the first missing CPU causes the loop to break, preventing
+subsequent online CPUs from being updated.
+Instead of aborting on the first missing CPU policy, loop through all
+and retry if any were missing.
 
-Which Mesa version do you use exactly?
-Are you sure that version number is correct?
+Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity adjustment")
+Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f72b8144d@panix.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
+ kernel/power/energy_model.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Mesa 9.0.2 was released on January 22nd, 2013, more than 12 years ago.
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+index ea7995a25780..b63c2afc1379 100644
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
+ static void em_check_capacity_update(void)
+ {
+ 	cpumask_var_t cpu_done_mask;
+-	int cpu;
++	int cpu, failed_cpus = 0;
+ 
+ 	if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
+ 		pr_warn("no free memory\n");
+@@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
+ 
+ 		policy = cpufreq_cpu_get(cpu);
+ 		if (!policy) {
+-			pr_debug("Accessing cpu%d policy failed\n", cpu);
+-			schedule_delayed_work(&em_update_work,
+-					      msecs_to_jiffies(1000));
+-			break;
++			failed_cpus++;
++			continue;
+ 		}
+ 		cpufreq_cpu_put(policy);
+ 
+@@ -814,6 +812,11 @@ static void em_check_capacity_update(void)
+ 		em_adjust_new_capacity(cpu, dev, pd);
+ 	}
+ 
++	if (failed_cpus) {
++		pr_debug("Accessing %d policies failed, retrying\n", failed_cpus);
++		schedule_delayed_work(&em_update_work, msecs_to_jiffies(1000));
++	}
++
+ 	free_cpumask_var(cpu_done_mask);
+ }
+ 
+-- 
+2.34.1
 
-Timur
 
