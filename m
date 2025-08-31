@@ -1,77 +1,91 @@
-Return-Path: <linux-kernel+bounces-793462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FC0B3D3D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:11:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3933B3D3DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 16:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 043F13BF88C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1380F189CE9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 14:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F27926D4DD;
-	Sun, 31 Aug 2025 14:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510EC26D4EB;
+	Sun, 31 Aug 2025 14:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJbvMsBZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="O29geZKM"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AFA263F43;
-	Sun, 31 Aug 2025 14:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188FC257848
+	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 14:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756649478; cv=none; b=aDfBOqeGaEFD05NhCO132jyrTGoQ+RV62XwnYmt929ZPra94wC+JYnolmG8As+X2uBmC9NRsOWGOmmVHAYfEnkz61HMOk/piRJ1VTjoSnfJCWXfFRZf+lsEbUq+BVbGGqT40Ojf3++4AU0ZWajGbv9JfCC9BspUSsnO0uqsomqs=
+	t=1756649604; cv=none; b=t/3SunbULy1KGwb9aIf2TGws9V0QXZZSTmrZteB/Uv44hkGmApxxiJa/jazwdVHe09O8srY5+1z1+t1VZAfHXuYI1iIdGAHEuSLkfe+cahN6V3c/q/b4v8yj99YM0k04/wnKh9JAF7TPn22+gq/KG5E8xNPzipyJd8YsmptOSj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756649478; c=relaxed/simple;
-	bh=RHLB6SbhJ6NwlIcJN+U0qOt1DNSxNE6wDis/g760GdA=;
+	s=arc-20240116; t=1756649604; c=relaxed/simple;
+	bh=NNaRzc54R7CkH8DGod84aqEZIb1kdPD8DIczOdskT5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5XV+BOTsyKbl/97QRHJiEE/p/D/TmUyJsNjnOe2AsUb9ZnUP4EgkU1ME36AJRK2lT7INxNg52mRRYuAWWgW3tDYdliwoGl19bJ7PQU8DAydL8j2tmveTwKSQNg6SWo1euCfdG0eIqaKaozTrnEIvOQZTTIK7GIDBlbbIutcI/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJbvMsBZ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756649477; x=1788185477;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RHLB6SbhJ6NwlIcJN+U0qOt1DNSxNE6wDis/g760GdA=;
-  b=nJbvMsBZK7UOBiLDYtJ3Xy05ANtu1AX6vdF0ml4gZNv711Nhjk45MNPz
-   HoMqiaUkeVKENeMu9PYnRI/eJtn+VB11OU3C1Sx4oWEbgEOQsNDFT6aaY
-   S2MKowCRrsnYAJ2rfETInivY4hljGji9yi7rfY+maUOHkET7uBXutDnLN
-   esn9pB1ZF2t7PNqqx7SIIDg5Mlx6xHlG0Y/8PRvAEBVgzxPa0iG0QqGkF
-   LZI9KeLjwczcayBaHpBzSoZDuameGGa6YDnfZep6u9p2SqW5Lrv1Ofp/E
-   wjgWtP8kbVBYXNnHShmCiZ5coADi0X2M3fI+Eha6uYrDZ2p9Vlj5d6EPC
-   Q==;
-X-CSE-ConnectionGUID: Ygcx7cj0RHmOFVssA62CQA==
-X-CSE-MsgGUID: AI7p4XqlSZuPHh41194BGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62706092"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62706092"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 07:11:16 -0700
-X-CSE-ConnectionGUID: 5+1nmxwsQNKT8tp6ZRSkXg==
-X-CSE-MsgGUID: eV10036mSVWJ8jR5YWddlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="201676250"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 31 Aug 2025 07:11:13 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1usilz-000W9n-1S;
-	Sun, 31 Aug 2025 14:11:11 +0000
-Date: Sun, 31 Aug 2025 22:11:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Tran <alex.t.tran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: oe-kbuild-all@lists.linux.dev, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: Re: [PATCH net v1] Fixes: xircom auto-negoation timer
-Message-ID: <202508312115.rbF0CO44-lkp@intel.com>
-References: <20250825012821.492355-1-alex.t.tran@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0Q/ir4jvi1u8NimW+yN+ESaUxfL5PWh6QpNxYPLql6My6tIgkBc89NFrY3B7663iOgqzROJ4vnEAxR//huXyM/QOQQ2FuaE2bWdIGFt0Qiz891dcwrdcAo/ptwGJMt8T5OGyigPQTiEJozP4BXeC1lo5QWk89uCEsW3mHe0UFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=O29geZKM; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7f901afc2fbso299220685a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 07:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1756649602; x=1757254402; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZYLdktZ4EPO06YD32v1q0DpK8GiNv05c9EBnf+HoCw=;
+        b=O29geZKMmzrLZzRwJdLGYMPODpfdZoO4R5zPykibV8/KA6hWs1WzLvzch2KWTutR1Z
+         rl791j0cLnbpDlo8A9rT/DipI16oUUUloWeCd/8VKM+oEXB0qrmldl6Wn6GoBJQt85Aw
+         eQ/jNuKHtNLYYwnjSdSgDGABnuA0lzGZ8MHoFBU6FVbY83lsm1+eNFNlPOuroC5XlPM+
+         Phue281M/aqU4I+UaeGSFruxx/IlxP1NRxyNswtAUhE/de8VSx8/rbQzRqqTBF92jpc0
+         1c7cKkay188khUT4k4brf1p68kP/X6kn1cfwnSbJBAFqxMF4nwT/lj00pTKDhS2V7oL7
+         gi/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756649602; x=1757254402;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZYLdktZ4EPO06YD32v1q0DpK8GiNv05c9EBnf+HoCw=;
+        b=l+awZYKJ6RPtHvJA6XQiGfGhXwbta6g7yFJSEGvUcCzrJc/PYm0K7Lfe1uqsbdWHN7
+         fYf50ZNBsfuHOVV9Lld7A57Wxwy53ORn8qqeNlSjvf9rU+98xbkYcd3HYsKU+eDZ2Uaz
+         eFTfx6MRSsEb3H+Qtyi68qetiImGVFAhQLeGkRVNqln46y2VAv67ptK55gZ/tzYeEJ0w
+         2vGY1w0h9MtSfj/4NuzlajOdyD/zqgQ1MRpFBHlJwjgjzVIs2r8G9PzCsPV76RNs1Mp4
+         q5JDa1fzgCjnOiGOJqJdcDePNfA0DGGhJOBMo2O+p+e/Eago70/o55uVgcAUnBPYBq1m
+         StOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmoPkKGfxstLtH0QnhCArmaYFVJLjxsysrvNOQyv1PMh1G5e1nmp2ZOjR4EpbTsbKoZFLSyA9YF4THI1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiinKMF8Q4V8xIm50RvkMzJOSe0Kqw/USZGcT8Xm7/NT9Z7jhL
+	B+N06ta0djqHr4Y2uaaDHpC5TE7bm/wvBxzZO6L5CXLifRklAvJKvbvJoZaHLfxk/A==
+X-Gm-Gg: ASbGnct6EPQd+brl99rtXNbBjXnNpjGYABg+Mx5TZDwd8Z+be2BTYchxKATCb17JxFt
+	OfGZSVY2ReEhrx9Sc9s8LdnFmHSeQRoS5ENbxjnDDUJhSeDu/PvJdd95booiWnDOMOjwstQscjK
+	GTCCHBDGaSS8kV6x+po6SYUrs4+tXPERTNxx+KhV6CQJo2rewa1v7psPxe0uwz3qXkOpYl+NZ/9
+	PP0C/0emSxyIYrHgqeu0XPlSbxD/Hy9RsCRZauxQP5eD4E8+YR/+ViDCI3XmX/+c0Zk1ZXNhcGs
+	n/pJpqOC1XKUrkLXZzgRUKz0XEpLXLSNRdvGoOcVXop9RhOBNwT07jr0vkkIN7FOa4qT9IcPxX7
+	WPp2LaRv0f7m19o7e+0AXNE//N+2QAg==
+X-Google-Smtp-Source: AGHT+IE8Mqej1JDZrtuPz7sl66EYUl3Vb5Z2gtzRXa0W+3TefhnO3F5sshyISi1xvDod49i2QcLnew==
+X-Received: by 2002:a05:620a:172a:b0:7ea:61e:3ce with SMTP id af79cd13be357-7ff26f9fd08mr460588985a.4.1756649601956;
+        Sun, 31 Aug 2025 07:13:21 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::f777])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc1484a7a8sm512990985a.43.2025.08.31.07.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 07:13:21 -0700 (PDT)
+Date: Sun, 31 Aug 2025 10:13:18 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] usb: ohci: s3c2410: Drop support for S3C2410
+ systems
+Message-ID: <188881e4-09a7-49fb-8128-ea7ee85147a2@rowland.harvard.edu>
+References: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,92 +94,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825012821.492355-1-alex.t.tran@gmail.com>
+In-Reply-To: <20250831122222.50332-3-krzysztof.kozlowski@linaro.org>
 
-Hi Alex,
+On Sun, Aug 31, 2025 at 02:22:23PM +0200, Krzysztof Kozlowski wrote:
+> Samsung S3C24xx family of SoCs was removed the Linux kernel in the
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+> 2023.  There are no in-kernel users of remaining S3C24xx compatibles.
+> 
+> The driver (named s3c2410) is still being used via platform code for
+> S3C64xx platforms.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
 
-kernel test robot noticed the following build warnings:
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-[auto build test WARNING on net/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Tran/Fixes-xircom-auto-negoation-timer/20250825-093026
-base:   net/main
-patch link:    https://lore.kernel.org/r/20250825012821.492355-1-alex.t.tran%40gmail.com
-patch subject: [PATCH net v1] Fixes: xircom auto-negoation timer
-config: i386-randconfig-r073-20250831 (https://download.01.org/0day-ci/archive/20250831/202508312115.rbF0CO44-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508312115.rbF0CO44-lkp@intel.com/
-
-New smatch warnings:
-drivers/net/ethernet/xircom/xirc2ps_cs.c:1643 init_mii() warn: inconsistent indenting
-
-Old smatch warnings:
-drivers/net/ethernet/xircom/xirc2ps_cs.c:1208 xirc2ps_tx_timeout_task() warn: inconsistent indenting
-drivers/net/ethernet/xircom/xirc2ps_cs.c:1685 init_mii() warn: inconsistent indenting
-
-vim +1643 drivers/net/ethernet/xircom/xirc2ps_cs.c
-
-  1633	
-  1634	/****************
-  1635	 * Initialize the Media-Independent-Interface
-  1636	 * Returns: True if we have a good MII
-  1637	 */
-  1638	static int
-  1639	init_mii(struct net_device *dev)
-  1640	{
-  1641	    struct local_info *local = netdev_priv(dev);
-  1642	    unsigned int ioaddr = dev->base_addr;
-> 1643		unsigned int control, status;
-  1644	
-  1645	    if (if_port == 4 || if_port == 1) { /* force 100BaseT or 10BaseT */
-  1646		dev->if_port = if_port;
-  1647		local->probe_port = 0;
-  1648		return 1;
-  1649	    }
-  1650	
-  1651	    status = mii_rd(ioaddr,  0, 1);
-  1652	    if ((status & 0xff00) != 0x7800)
-  1653		return 0; /* No MII */
-  1654	
-  1655	    local->new_mii = (mii_rd(ioaddr, 0, 2) != 0xffff);
-  1656	    
-  1657	    if (local->probe_port)
-  1658		control = 0x1000; /* auto neg */
-  1659	    else if (dev->if_port == 4)
-  1660		control = 0x2000; /* no auto neg, 100mbs mode */
-  1661	    else
-  1662		control = 0x0000; /* no auto neg, 10mbs mode */
-  1663	    mii_wr(ioaddr,  0, 0, control, 16);
-  1664	    udelay(100);
-  1665	    control = mii_rd(ioaddr, 0, 0);
-  1666	
-  1667	    if (control & 0x0400) {
-  1668		netdev_notice(dev, "can't take PHY out of isolation mode\n");
-  1669		local->probe_port = 0;
-  1670		return 0;
-  1671	    }
-  1672	
-  1673	    if (local->probe_port) {
-  1674		/* according to the DP83840A specs the auto negotiation process
-  1675		 * may take up to 3.5 sec, so we use this also for our ML6692
-  1676		 */
-  1677		local->dev = dev;
-  1678		local->autoneg_attempts = 0;
-  1679		init_completion(&local->autoneg_done);
-  1680		timer_setup(&local->timer, autoneg_timer, 0);
-  1681		local->timer.expires = RUN_AT(AUTONEG_TIMEOUT); /* 100msec intervals*/
-  1682		add_timer(&local->timer);
-  1683		}
-  1684	
-  1685		return 1;
-  1686	}
-  1687	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Changes in v2:
+> 1. Commit subject (Alan).
+> ---
+>  drivers/usb/host/ohci-s3c2410.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+> index 66d970854357..e623e24d3f8e 100644
+> --- a/drivers/usb/host/ohci-s3c2410.c
+> +++ b/drivers/usb/host/ohci-s3c2410.c
+> @@ -448,13 +448,6 @@ static const struct dev_pm_ops ohci_hcd_s3c2410_pm_ops = {
+>  	.resume		= ohci_hcd_s3c2410_drv_resume,
+>  };
+>  
+> -static const struct of_device_id ohci_hcd_s3c2410_dt_ids[] = {
+> -	{ .compatible = "samsung,s3c2410-ohci" },
+> -	{ /* sentinel */ }
+> -};
+> -
+> -MODULE_DEVICE_TABLE(of, ohci_hcd_s3c2410_dt_ids);
+> -
+>  static struct platform_driver ohci_hcd_s3c2410_driver = {
+>  	.probe		= ohci_hcd_s3c2410_probe,
+>  	.remove		= ohci_hcd_s3c2410_remove,
+> @@ -462,7 +455,6 @@ static struct platform_driver ohci_hcd_s3c2410_driver = {
+>  	.driver		= {
+>  		.name	= "s3c2410-ohci",
+>  		.pm	= &ohci_hcd_s3c2410_pm_ops,
+> -		.of_match_table	= ohci_hcd_s3c2410_dt_ids,
+>  	},
+>  };
+>  
+> -- 
+> 2.48.1
+> 
 
