@@ -1,119 +1,158 @@
-Return-Path: <linux-kernel+bounces-793271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB61B3D16D
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD92B3D171
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 10:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1781890C3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6BD189568D
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F1724676D;
-	Sun, 31 Aug 2025 08:44:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AC622578A;
+	Sun, 31 Aug 2025 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKXwFEjr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA876221DB4
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CFB16F265;
+	Sun, 31 Aug 2025 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756629847; cv=none; b=Aa4nTi241H2kPCOcEXAi98zBwazxUWJrLeLp/nQF1Dc6VOUILWwqt/2apNMjwkAxJc/Oi8sJCr471UBXo2CtSxWE+n6h0nWlNcYQxHHCW1Txx5ZuErUQ+FYkVeKBbMim4Cu+dUilIwigUW37wGNbqF4Kc0+oBMu30WJc5s6xv24=
+	t=1756630115; cv=none; b=ZReYtVHJ6bqW7OBRnZv7aG5N2ngPUjVMmX/2esVX2v65XF3jxoBJkXIbSiTQ5cNVzI4DT9CxECY8cVozKq4CZQ64g9X1whLhWjhVWSSJ/NfkORUPUcaXC2I8zKETL9ouLA1N979cDZNzKt0W8QiSd+zZAFJ/vB+rKNlcsk1kPlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756629847; c=relaxed/simple;
-	bh=8SIaP6jgAU1GRrIwVhqhSLqz06aDypvcPsEdLhs2AdA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=geRqacW9eILXnJwYvpqVdZtWpW68Ur09sMC3fTuDbD+Mk3I9h3vVmdOPeXnSF8kD5djQOilJUWlgLEQLhqyTy47TerARgiOfQ7J0j6BnWepoeGMnqh5JAoR49Paa4eM4JbTD+K4mS5RIMEVjp/R5jHh/q7tchcbtixEE4KjRNuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f1ebcf0863so39685275ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 01:44:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756629845; x=1757234645;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+vIXQl+vKZNuMf8TrWAiZ/L8nDzp53gg9EKRtUQLAw=;
-        b=Pf5UfVqxC4xYptzmh0CsVzPLggvK7qHOXYXn51me00koNhiWUy6KHkL3gK6rVpW78d
-         sPXXiqWpvSYxwNks6EKGy8idw9WERnNnD2Y7WB3E3Tg3I+nwn1oSMQmlug9KRq8Aliaj
-         zBAr4Me9GKunlseccEBIacEy3OMGST71JMCbtaFiKkwb2pqpMMIoLj+Kp4ltve+9hnWv
-         oBnl4kg86Bry2M0KRXphCZ55jZfr+OsCDbe3/RQ+hBhOyJBXyfeye5dRCvRaAnslzlTv
-         +EuwuCBRzD2bqWdb9h2doXwEXrSjDsr/GQ6f70ZJ2d/6zY2EJes/zskAB5Yps5FbSZmV
-         AEMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4U5IOl0NkZAQF976y2Z+NxzkA7VaEgM2nUgM8MhBF7M+2qP7OlfE+iXVoV/byD1P4+06Kz/OZRGfs9xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPhAiDMWfWf74O54Svjc0O+oremgUnkBMIsrbca6jVHTJHcODy
-	pneEKq9sGay16VvYybYtfuB2z1xfEh22JuoW6OYbJ+0cYaDpaRc5QoswUYn6iJU0wze/xrTE3pc
-	F/mLNnqq6Kd5XAmCeiHj5Z19gnaH3dsLs6lDK6MN7nsZQQHZZBkPCxi2RyKs=
-X-Google-Smtp-Source: AGHT+IHY/SH7NKEUgcBCjXFl6fIg01ixAxiBt9+LRncmvgqCYjMWnR/RjCnDoTemO/Lg78FXYavCXSlDTvYQgaBlF6oNyAy8HHLa
+	s=arc-20240116; t=1756630115; c=relaxed/simple;
+	bh=gsIYtWeJ1fLlCYX0fpKFEK74vbx4/el36wXfoW44tbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKFPPgnP2I4rNRTIHCgPfzflN5Aechb0bG4LvOSlDFuwoVHY6Gc6+BAmuLzP4h2dyI4XlCBBCNoQFkQayjdOvfQnRDRgc41MI0Y3piHb1zRLx1cI8c+JDPlBegLnRH1C5dBh0eR1ryiGezIli9uFPNkGCwS1a1G7K8I8B7zHwyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKXwFEjr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DCC0C4CEED;
+	Sun, 31 Aug 2025 08:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756630114;
+	bh=gsIYtWeJ1fLlCYX0fpKFEK74vbx4/el36wXfoW44tbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WKXwFEjr2V5PwqZHPrxh/RehA7DoTTJKxmCPhRkhRQgYrhRQzuU0zjnn2v6/6jrqf
+	 PVqWwutm613/6LxaEUaPoqUSPsSrR4td+DYzshEW9xQtX2C3qcTLoG/MNNHw7l/R1e
+	 xTF8dyi/lwG2hue9p7lB5/5EEQKusoIU40x2Iswrjn3qvkigicvA3HfGS3ECzG7LJT
+	 Pq9swnXY3KomS8ZM0ppEpEa+hyYiWVW9x3Gs4+FkBH/Vp1jiS/mhewTuhHK5iBg6jC
+	 Uq1bNjYN0jp+uKQDxqE7fYOsFvMhoMut6cMg+ucnxa4/c2haCMAKPa7rrXUKOQ63IH
+	 K+UfVUDUU37ag==
+Date: Sun, 31 Aug 2025 10:48:27 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
+Message-ID: <ak27gmqpgybt5a22ferayom5wdmn6cfvof5fqvwpu2dugloy6e@chomaex4za3n>
+References: <20250829160200.756194-1-bigeasy@linutronix.de>
+ <20250829160200.756194-4-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2b:b0:3f3:dd9a:63da with SMTP id
- e9e14a558f8ab-3f3fd18b31dmr100586795ab.0.1756629845056; Sun, 31 Aug 2025
- 01:44:05 -0700 (PDT)
-Date: Sun, 31 Aug 2025 01:44:05 -0700
-In-Reply-To: <20250831081933.6215-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b40b55.a70a0220.1c57d1.030a.GAE@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] WARNING in nfc_rfkill_set_block
-From: syzbot <syzbot+535bbe83dfc3ae8d4be3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, krzk@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, ysk@kzalloc.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in call_timer_fn
-
-------------[ cut here ]------------
-workqueue: cannot queue hci_cmd_timeout on wq hci0
-WARNING: CPU: 1 PID: 29 at kernel/workqueue.c:2256 __queue_work+0x2e5/0x1010 kernel/workqueue.c:2254
-Modules linked in:
-CPU: 1 UID: 0 PID: 29 Comm: ktimers/1 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__queue_work+0x2e5/0x1010 kernel/workqueue.c:2254
-Code: 42 80 3c 28 00 74 08 48 89 ef e8 16 a1 93 00 48 8b 75 00 49 81 c6 68 01 00 00 48 c7 c7 60 ed 09 8b 4c 89 f2 e8 ac 3c f9 ff 90 <0f> 0b 90 90 e9 f2 fe ff ff e8 0d 6a 34 00 eb 2e e8 06 6a 34 00 e9
-RSP: 0018:ffffc90000a3f828 EFLAGS: 00010046
-RAX: d228e4afda57de00 RBX: 0000000000000000 RCX: ffff88801ca99dc0
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000100
-RBP: ffff888028754998 R08: 0000000000000000 R09: 0000000000000100
-R10: dffffc0000000000 R11: ffffed1017124863 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff88803d644168 R15: ffff88801ca9a8cc
-FS:  0000000000000000(0000) GS:ffff8881269c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b31e63fff CR3: 00000000281de000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1793 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x709/0x970 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
- handle_softirqs+0x22c/0x710 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
- smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fdismcoyo2tjgiyj"
+Content-Disposition: inline
+In-Reply-To: <20250829160200.756194-4-bigeasy@linutronix.de>
 
 
-Tested on:
+--fdismcoyo2tjgiyj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
+References: <20250829160200.756194-1-bigeasy@linutronix.de>
+ <20250829160200.756194-4-bigeasy@linutronix.de>
+MIME-Version: 1.0
+In-Reply-To: <20250829160200.756194-4-bigeasy@linutronix.de>
 
-commit:         c8bc81a5 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ccc1f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=535bbe83dfc3ae8d4be3
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17122242580000
+Hi Sebastian,
 
+On Fri, Aug 29, 2025 at 06:01:59PM +0200, Sebastian Andrzej Siewior wrote:
+> Based on the date in the comment, the here provided URLs should point to
+> the mails that the gmane URL no longer can.
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Thanks!  I've applied the patch.
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3D2f5536dd43eaffdcb2bf00addf71aac4596c7f8c>
+(use port 80).
+
+
+Have a lovely day!
+Alex
+
+> ---
+>  man/man2/futex.2 | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/man/man2/futex.2 b/man/man2/futex.2
+> index 69df4036ada7f..027e91b826bf1 100644
+> --- a/man/man2/futex.2
+> +++ b/man/man2/futex.2
+> @@ -6,10 +6,10 @@
+>  .\"
+>  .\" FIXME Still to integrate are some points from Torvald Riegel's mail =
+of
+>  .\" 2015-01-23:
+> -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=3D7977
+> +.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triegel.=
+csb
+>  .\"
+>  .\" FIXME Do we need to add some text regarding Torvald Riegel's 2015-01=
+-24 mail
+> -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=3D187=
+3242
+> +.\"       https://lore.kernel.org/lkml/1422105142.29655.16.camel@triegel=
+=2Ecsb
+>  .\"
+>  .TH futex 2 (date) "Linux man-pages (unreleased)"
+>  .SH NAME
+> --=20
+> 2.51.0
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--fdismcoyo2tjgiyj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmi0DFsACgkQ64mZXMKQ
+wqkAFw/+OtyJI74DKQ44/Tq6H5KcDSZ81LVWVgmH72p4i4OwfuPw9G31UzIiOktp
+oVHx4wW+XIo561Env3+NBDXUuWQdTy3XLDD2lPliuIxohzq1liwHsnhbJTYWmRkW
+Tw8+HoesLTyN2403PaXwzRqWFpBjWJlSXQRQZiEpoMs5zTNni9CFA53Rcsw0i4d4
+FblxylfB1Hh2udIEhZJujGtwRVTPor7IX3JbcjGV7+XURaUcgfS+/4Mzt39qzhOv
+ezmA+rM62u5p4YQpmvu+Y/gQW1oIqYme/KWB0olY99yv6MArZn03/O8hV/bgMJy9
+Zjo1N3Xo3PJjfxaZLekd9VjkT3Np2w25sNXwQsqbZHXgJiGPePPUlGVMY6iBxOlt
+KAFROeEGSAgZ/rVcYzVn3eMWXbxFGdhbSGi0u+G0HEbYINPKAetmyJpJQG/7RWXQ
+chfgDyA2VpRZuHuy7H0rfmYvPHPCbHloPf/l/AaRFyIzDGCFkTueFRcSn+XlAw+G
+sm/SZaaVwuMklqfRBVXf2nN1bdYT1ZdcGLzRqOevMshO9BQ6KCboXmyPJc8HP94E
+t0CtxDzHUS6Z10GM4UVGTVS4AL19fSDpc8YvycRMEUr3dmAatqdE6lhQrXtkFFec
+WqyAdlkY61y/6NRSbefjfJaGjQXbbJ1Vji+7VoLFOaCQ+/c1iSw=
+=rE9K
+-----END PGP SIGNATURE-----
+
+--fdismcoyo2tjgiyj--
 
