@@ -1,201 +1,176 @@
-Return-Path: <linux-kernel+bounces-793479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824FCB3D417
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D36DB3D419
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CCF7177B04
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338337A4128
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 15:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6BB26E6E3;
-	Sun, 31 Aug 2025 15:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C94A26E6E4;
+	Sun, 31 Aug 2025 15:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nn3FK+LW"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mlJgERT6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2061.outbound.protection.outlook.com [40.92.42.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF22525A631
-	for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 15:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756653255; cv=none; b=aqyQ4YyBlM6QYOECSWkUYw1SIFlCNlrZaI+D+xIJoZS3NGACx9kA6zW5uqJkXZmzGfujByyFfK3Xmcvx+Af+B85yoaPiUmgIM463hsPBD3hUJPL6Fodu849ZZsLm69VrZG2NnLOKAXOcanuBnsf+VIjExlEdBJezf+5YnntUAn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756653255; c=relaxed/simple;
-	bh=DGJyra+rwgJAphZIeTb6FsB1qNLlyBd7vZfq76WHVp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qkUsIQ57VKXejTA6vxV/SZJCW5DuAkZv4DVJIrGoaA96KrXua5Fg2IcC8qaC43WcXJh4olJ0CG3VJJO48tV5T8IEx2Ary7lzenthHFZc8mnU3olwQ5jD4mnFwGoDmC4k9a3oE4reccPJXzB7C9VLTbTJ/qIiat89t+8wbtZSLE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nn3FK+LW; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0413cda0dbso15409966b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 08:14:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756653251; x=1757258051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5B22inhBsHQPQ7rSsv0dytfBGuA96Htpzu5sxp54L8=;
-        b=Nn3FK+LW0t80ADXbkttn7niF3XoHFsfFPo9Uc/oUl395QO4nMaTYInRfE5I+/MHGwK
-         /DYEo6994c2ugw6yQ6Ozo4P9GPYmDnAxIycBDVfPF0Le1bR7GzLPdDCsRSCrJY4mGo9e
-         PCNSqRo/H9N1G4OYeK21jpaXWE4yZNCaNAT4tQ4umuZoVJnU9fCyJHyqN+q7ONuijJVK
-         pWBfRmHxl0qwFJvn/oHmBx8eGzjF6ApEGvlg2Koiq9VnJNYLyCNp6QiGaiE9X2erU92b
-         MYYVFzo3pJLbo03HiEbmLfRdK3GmH+vYYhziqOkqNsY/G21c/Y1UuLFVhcsCm0ZAUWlg
-         uyGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756653251; x=1757258051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C5B22inhBsHQPQ7rSsv0dytfBGuA96Htpzu5sxp54L8=;
-        b=K1BxUW9CeMfoPNYwfZ7qSio5m5SiQZP9SN7yXxlnu4KubtnAPCdFhsByF6R30+QFGa
-         KYIyPnHbITp+VjC6EPS4DUvwfri6TCMpU5NdfFfufg6fLwVCVLTFn4C8GIW+kFjth6K9
-         s4CHu6u0eRKZ42Er2ObybEufG+dcyExTyEHn2Hqby8ATT6iqbXfJ6xJpoRXuBvxNA/kB
-         C2cTAAi29W592KY29+yL14B3qovwJZ6sDfCYycj4ee6BkiXeOL/42zNYNOSWajyYzf1b
-         ne/dwyJVSP7z/HQzAfsgaJAzs7szBbgq+Kym5ApF22GnGxVK3iJGfK1IICpBclO+A2Ct
-         6l0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXk0XXxb6lNtdTfvTHstdLN63Y35MqYCAbmm7Os/YgIZvc/vDz2+Q2uKRWbQQ64KyCpb5+OEvDxtUkhiXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlPdMJhA2JCJTdl/SXWrQSWFYIMitkLzfBuv3+Hee6KkkknxbQ
-	Yu3IKyoSIInR3M6htn9wHY4C66LDqjFHirWU24ZHIL4hQjgrWRjTabUoL528Lb0TXRo=
-X-Gm-Gg: ASbGnctv8d7PgcO4gevtG07SqF0PUVVheBJVep1Eg0MK0pm/i3KzJDFtj4Wgnu3dgbW
-	i2qoGKddurRTIL6m/Qvu4ySAnR30PfxcERezxfvoMl+vE++tf8LwTMgJjNxUUmcGsLZ9gifCHTM
-	YrNvV0mTqhpBPZxkMqfsqwRa2bq+qsuqEJnBStsFVN6r4K/4Nk9uSDw2wwbHnyoNxef58y36DWO
-	lxXjcbD/G1MFCNzbX/HwbN6pMAiURRtTo3NtTG6+ZJRAVszu/KkieJzgIzO8mx+51IXbwNxITk6
-	5tjS8+9mH/62qk72oXMbg3z9jfTEdi9dAiRVL6jeOvbpchp6auf4B6t9GS/kU+ol6SNcSZVuSvP
-	51PeKAnq1zLWPO78u9TIK+oJBg2cOzmSv5Q==
-X-Google-Smtp-Source: AGHT+IGYNSQVqee984CDJ+qU/cYBl5yGpRS0pEsogwANun04auLoq11OzPQ8DtrTICXP4aURf50JCw==
-X-Received: by 2002:a05:6402:13d1:b0:61c:d24d:e2fa with SMTP id 4fb4d7f45d1cf-61cfe7eb745mr4818387a12.2.1756653250965;
-        Sun, 31 Aug 2025 08:14:10 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5306e6sm5345361a12.47.2025.08.31.08.14.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 08:14:09 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexey Klimov <alexey.klimov@linaro.org>
-Subject: [PATCH] ASoC: codecs: lpass-wsa-macro: Fix speaker quality distortion
-Date: Sun, 31 Aug 2025 17:14:02 +0200
-Message-ID: <20250831151401.30897-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09DE269CE6;
+	Sun, 31 Aug 2025 15:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756653281; cv=fail; b=YHB3Pyf43U28Vyl6cbO/fJMU34+y+KOtjnSEDV0DRr/ENpKSn907eJTImKSqGh2aHQKUo0LLImRkkM3FP4JUxzI843ZQGwNiqteGYtPs6EzSJogM2O9qBkZZeHyJGfTdkO6NZ8pJSN3syD5ABDfJkr9a+U9n/3T1SYNe5s1lNKk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756653281; c=relaxed/simple;
+	bh=MY1SvPKDg8qQ4nzczdAwAyvOgAqnydSGNNJPLtgBsSc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lApEXOw+jWeSOexU9aX40LtrhZARD75WyQfLz4EUoyKFCA0NYgWAg0B8/KqZ4mrx7toB5F1BS8VKSzFHZQITxtFgT/58eoF9HXsJvYmrKrub8ikpUb1I0kzxSPAmDW7epgl9fjglTmJhchpoXM26i65VLJaiJlRATbRpMELBo8Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mlJgERT6; arc=fail smtp.client-ip=40.92.42.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N82JmUc+YOdO9mfljgbkiVVi0oBE3q0L0Yvox3B6XVgLXPf2yUiXTvGsOws5FiYe0Co0cVaif4aXnx3uKSNndSiLeSNo2PhQD8tZl1RsJINVkicy66+xl7Bb2sLi97uZbSUTWuJBn1Lkw4A/r5g8Y2y+EKRx5DpTHchMjm8nVXMg4FTByGTQDoa2Ds+C36cCr59ioBxKPKrVyTxGiGFPEeA/aLNO0XHcO7Ci20wBzoIU1w2xOoOs11uqGvzivxy5a6B4eppgZaUd34hjP/BOuB89mUc4Ss6+N4dcUkMO/e+gEg1WHBJ4cRWxIZSiZNZa0i8xhGMsDlF5gug+JUAZMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AEAFKslf6ckmSUz5yaPTc1oUWUS6XLWngdnwHsqI3fI=;
+ b=nunHYjcR5B7oPH0Kwo35XZ9eY4SjdBXjJdJ0Z/oQpbH+uKzjJEQqqexD5+6ZlrZ8f8KuPv6eqvaefxPraes2Y+PgnBCi3NMEPfQaj6vzkYxHoJVi8ORGhm+TnKNmSovZ/BX0kNKSuCkfciuQ7b/Rvuyu+5pvEleCJ4VXAYMMLCjh+7gKDpKv0aw7/6iCqYW6nPu3yxzca/i2LrxLiX6ujvxfBbSd+BsFuD9wR8xY+3abQwhQqrJ17mdLBkzgzI5Y6+Zmyepv0hd5a7vj65myKjEc3TKDhOpWJnK2BkJkBFh1gmDlaKQ2DorGPnyobcao9rizinSnKf25KhF6lKWvTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AEAFKslf6ckmSUz5yaPTc1oUWUS6XLWngdnwHsqI3fI=;
+ b=mlJgERT6u6hSdpcARBj87zdNfRCunfCw5YkkEq7CoxHBQDSaqiIQ5XjVwUKDD1jTTdeYuZbrjNDIC9zQV42wCtl05HvhOhYhC5cZfjoNpGf3XMThTcX4n02tCz//rUI5VA5NVHSAl9CRbqadQ58OE+4CjN8Pt+0j0YUpuvkxF+Uhp4YGcMoN0Bm1zQAp4Zwu1vlY7HReVGZfPP6ofkVZtq2fbt52/bIChNfJ4fBfGfyHDuBgjiV0t1rNx23S2mYgbT4i7g3/c2POCm2NFi4p+lXzIO9jl3/fA/oSENmEBT0skdLNqbNHO2qsBRl9sB6IGNUOehHMJzHsEh3Dxu2o2A==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by DM3PR02MB10273.namprd02.prod.outlook.com (2603:10b6:0:46::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.27; Sun, 31 Aug
+ 2025 15:14:38 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.9052.019; Sun, 31 Aug 2025
+ 15:14:38 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>
+Subject: RE: [PATCH] fixup! mshv: Add support for a new parent partition
+ configuration
+Thread-Topic: [PATCH] fixup! mshv: Add support for a new parent partition
+ configuration
+Thread-Index: AQHcGSIJjdvxnEFq5EOgHk4XZb0OrrR84Tpw
+Date: Sun, 31 Aug 2025 15:14:37 +0000
+Message-ID:
+ <SN6PR02MB4157682D9C40AF8C00D89399D404A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1756498672-17603-1-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1756498672-17603-1-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM3PR02MB10273:EE_
+x-ms-office365-filtering-correlation-id: b269ea1c-9773-4cac-da8f-08dde8a11a06
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599012|8060799015|19110799012|13091999003|461199028|31061999003|41001999006|15080799012|3412199025|40105399003|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?l/DyqJQ/ZEZnofw46yxaY8/YCsOSsZxbALu+RgB1WnbZcrqPcau0Ic3NR0Ip?=
+ =?us-ascii?Q?mVwYuJMiRUstuoggwVGLE8WiJj90j62vQyv5Z4HFS5RRPkKVLsOwvEq7ED/e?=
+ =?us-ascii?Q?SloeJpIfCxXOvOs2WAbsEW0ND44ABvl45iw5xGjjApenaj0pp9AVilQ1amoq?=
+ =?us-ascii?Q?XDU5GNiwxb0qROJKFO14UBWvHOxftBcrwnxuGI6JsvsEzSSnUIUCqJr2SQDi?=
+ =?us-ascii?Q?WIbHP7CWbxkd17KM4U6ZxS2zYdvKyQFJVi9jBxuID33Fb7jRQ7GU+2n9D8iB?=
+ =?us-ascii?Q?tEfgkMVAQI8F+zZXCnTTmU9p44YpQ9wl9agdJ4/ASU4qAHcAFBdWAl/6ogGq?=
+ =?us-ascii?Q?F+zRq7gI5Cf+z3TmRehLpVdNHYsZFgnO/1wknjk1fJwWeFCrGcIKgye7eSCV?=
+ =?us-ascii?Q?DlTFO+pqCy/kqBR/fjWg9Oby9753BcVWNW2Xj7/Fzq/ACGm0RFhvPo2+47aq?=
+ =?us-ascii?Q?8L7BsHatkiz0ruPz5i9BHoVgMDQhdLRtY5eisOyzFCrvlHH5xR6XD10v0zkw?=
+ =?us-ascii?Q?DMQSD2Sl+LFv7DysUASbJu/JyM6QzzQJh7NwGOFGWM7p4k2X9/lbzdBo+KJp?=
+ =?us-ascii?Q?O4B3wz/kZbDH6f5Am1W1mmuXkb+Uba3MnagQEcKUfw34adpqfe6tq5awuobR?=
+ =?us-ascii?Q?n+iAmJE5Op5bHJc9aQWfejST5x18h3dD/uFs6pqCnA2LIy25v6DRMvoMEmPK?=
+ =?us-ascii?Q?kVHliOFO9A7d6p8K+mcrQPpRIDa/HmXc0llIbyu7AA/8klYmNPTX1+4c5hOa?=
+ =?us-ascii?Q?akDddQb10kMPSSPS8yXmwf4EmHUkyXuFxdLQALHwB3JjpOdnNr53214jtKhb?=
+ =?us-ascii?Q?LPqOf0h/ehvlcl1X+LusP1zlonYKzx+hp5YLWEkCA+kEDbuSj3ytPXDnUB2K?=
+ =?us-ascii?Q?nb2b0fSLxyZrZdk7k6I86PSARV1ZNY6aCSQJFQF2PNbiRqtoHTMi2WdD7REk?=
+ =?us-ascii?Q?7lgT8ykL0SlZ1WC8S/Hdz4anJJwiDLK/2qfhQbY3pBD2GWKOju7tLfzJaBQs?=
+ =?us-ascii?Q?EuCJ2tePFMoDLdH+ECknn+HlYZHEIWjDMDDCawqvtKJwcCdlAawZT9Jdttb1?=
+ =?us-ascii?Q?Bq7/SiE4aGwWsecF8vGsZpUnYCtnleOT1lMfGPFrbTtWLIH/2+7iZX7+5DKD?=
+ =?us-ascii?Q?yUYyNelku0QoTROwxUrwMsSZAGMZfCrZe7byfz/HWe2IT0z84Fqbz6azQhvX?=
+ =?us-ascii?Q?oul2lVcZUtjZ4aAKV+qx7luCKVwP0AYzTNJVNA=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?u8PowvVwWV9aKYY5F6bYbUnj/7X0GU3rjWrMPcVFqz2VgK6JoxF02+p8jGgG?=
+ =?us-ascii?Q?15dH+F4qxFm9aay4/GxoEDHxtjAjlmRp3B53cxHcn6rLCoY68v/wSETEeFHC?=
+ =?us-ascii?Q?jkr3QGQh2mTZrWlVib5KlyNKehdTe4BGNEK8vS4TUl6/NW2J2Ok5L1bhXr/C?=
+ =?us-ascii?Q?lClT99oHS+uisjWbXGfRyqb2OmxHQ6AaAAC/i1iFSkLeEEuOkqYpJDLUaMAH?=
+ =?us-ascii?Q?fP2OShMaT64PumxoHq2TR112qlKZRXbVtGqP6kt9ecaNsEBGVLcw0XzgGEvi?=
+ =?us-ascii?Q?TguhzQLZFTxYo2GUMyYjzTISzaVUPhPXEjqOXgpYyDND1dDkk5FfsqavlqbS?=
+ =?us-ascii?Q?1xrh9Ch200do0r6OjYNJ9LoIv+e4U1RbvzFwtzE04TlfVIAVVCkzuPDXMn1r?=
+ =?us-ascii?Q?jdzanPArsj/pVh/MvGh+snormuUmTzQ5ivkeNccJzPlTjCK8n9H+ZLZ/Kz9W?=
+ =?us-ascii?Q?tEqm4mOooa6a/sN5wdWqQVNXXE0f8CnpxINmDciQL7QUlN2DBb9FmXX1wAsq?=
+ =?us-ascii?Q?wH2XLPegvhxS7uZLwZhlPlrEo6BwvuBTxcF9p8TNLmjFAmW2wmc7RNbfYtI4?=
+ =?us-ascii?Q?GltPXbqwUIjrZv5CfaDwnc39YwMwsN+zjPphO5IJ6xWAAAFWVtlmkYqoFL6F?=
+ =?us-ascii?Q?ctykmOtj5ge/MeLg+VOT1nPfBODybGKR1/kH+cH0CRhCwMjZ7c33+XnxCCpW?=
+ =?us-ascii?Q?UJ607MmF0W4zNz6Kx3z+bgISHkdIyBJXKPzTMl6dMVboSCl6IAoh4UbwJjTM?=
+ =?us-ascii?Q?p/aiHi4Otu1OX+QoWKKnLncwTZvADUJVqpgYVgpuAPUmbizREumZCOyG+krh?=
+ =?us-ascii?Q?uYOfDOrOKEvS0NKj99eueIzcrcFupci0qf0NmLn7KJeKvcZnxl10YFWhJ0nO?=
+ =?us-ascii?Q?ZyWw9bWatbVz3aKUgUWlNLALppXU6wwXHaBuEuOxJzJivmtGZayFvIR5L2k5?=
+ =?us-ascii?Q?NABTUiPD7rFAtwNxV/KCAv5MeUMJ14yFfEXOUmH6H4KSiEwwi6DMl3PJOmzD?=
+ =?us-ascii?Q?KR3uJJYL2JwzzzbF2TzIWMIUmIQMRE8DBUK7IdnlbaHsPUmiDiYJ06esPHdS?=
+ =?us-ascii?Q?ybZ9j4asx1wYARrdVRylYn5mC3QsFZNMmV0bOQdpuemcOhOHxgbvlDfQkQDr?=
+ =?us-ascii?Q?bS3m0bau9HaADACdrJK1+IDSifj3LC8DhwgMGMT3gWeunuCloIIwv1y6YQiE?=
+ =?us-ascii?Q?w7bY2JXBiiLfKDfG6nUoQF4ExloXmdxFu3ggra6r0yQRgt9laetfN1lNKo4?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3285; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=DGJyra+rwgJAphZIeTb6FsB1qNLlyBd7vZfq76WHVp8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBotGa5TMRfOjWazCtrTvyznajNWZMNJZ9mRXGNk
- 7G54joliqiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLRmuQAKCRDBN2bmhouD
- 181LD/9uEBEG/Ygk8wzpQieaPDZqEiuUDRuaegIE9lIa10NkNgHeqQzj130FzD6iKrpu6re7a1H
- VvpsJKQRl4WurWeou12C27HM77g6juxbdYWBR391W1NDlXKCsXriG4VOdxmgvPIv9N259gZ44dT
- aecIK1qgnPVVYDlZlVrpGBZ0XPZT+A9Zyf9a95BRDBWh88OIu4qBlCkR0k38OO4kV0/vFyYuygx
- BfB4hXeDrwGwb5IybkQCIGU61xaysjdRjaz3vdSyopMi7Q2WW4uhVST5pco4aW1B2KpUmk3uCGW
- UPLZE10HBUoXd+LrvcCJuNgqrJ2Ls6+ardjnyHV1Qt7X5gFEKefu95WDYEMR3mejNrHAIKdOQ+C
- 7lTea2lxG2Yv53SA+iBsBUxqiGaArcyCelLhhZTwi/P5HrV74TjuxB5dvp8DHE0z+NZfEwxzQRb
- +lrzZ1CwzVDXJE1L89slqj7j6VaXfuD785KHSc1OGg9u2LjhdK4AKU1CQqSFi0LymonNUbOmOC3
- EeZ2py1NPqJqE7yUUOZifv2hQujFLZTJStFdznkWa7CbwiuY5lYF0EFZc+hjRdZ2a9iAUHiL/Zc
- 421g5tW6MF3j4jfdnhgngH6lJ5nF66tM8NfSEj2zH1zYi2SyTXT96pD5zIC1gQqXg97dEzGN5Jf boPUPr+N8hTnioQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b269ea1c-9773-4cac-da8f-08dde8a11a06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2025 15:14:37.9993
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR02MB10273
 
-Commit bb4a0f497bc1 ("ASoC: codecs: lpass: Drop unused
-AIF_INVALID first DAI identifier") removed first entry in enum with DAI
-identifiers, because it looked unused.  Turns out that there is a
-relation between DAI ID and "WSA RX0 Mux"-like kcontrols (which use
-"rx_mux_text" array).  That "rx_mux_text" array used first three entries
-of DAI IDs enum, with value '0' being invalid.
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, Augus=
+t 29, 2025 1:18 PM
+>=20
+> ---
+>  drivers/hv/hv_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 8836cf9fad40..e109a620c83f 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -257,7 +257,7 @@ static void hv_kmsg_dump_register(void)
+>=20
+>  static inline bool hv_output_page_exists(void)
+>  {
+> -	return hv_root_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
+> +	return hv_parent_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
+>  }
+>=20
+>  void __init hv_get_partition_id(void)
+> --
+> 2.34.1
+>=20
 
-The value passed tp "WSA RX0 Mux"-like kcontrols was used as DAI ID and
-set to configure active channel count and mask, which are arrays indexed
-by DAI ID.
-
-After removal of first AIF_INVALID DAI identifier, this kcontrol was
-updating wrong entries in active channel count and mask arrays which was
-visible in reduced quality (distortions) during speaker playback on
-several boards like Lenovo T14s laptop and Qualcomm SM8550-based boards.
-
-Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
-Fixes: bb4a0f497bc1 ("ASoC: codecs: lpass: Drop unused AIF_INVALID first DAI identifier")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Reported via IRC.
-Fix for current v6.17-RC cycle.
-
-I will be investigating rest of lpass macro codecs a bit later.
----
- sound/soc/codecs/lpass-wsa-macro.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
-index da6adb3de21d..d7eec9fdaf9c 100644
---- a/sound/soc/codecs/lpass-wsa-macro.c
-+++ b/sound/soc/codecs/lpass-wsa-macro.c
-@@ -368,6 +368,7 @@ static struct interp_sample_rate int_mix_sample_rate_val[] = {
- 	{192000, 0x6},	/* 192K */
- };
- 
-+/* Matches also rx_mux_text */
- enum {
- 	WSA_MACRO_AIF1_PB,
- 	WSA_MACRO_AIF_MIX1_PB,
-@@ -465,6 +466,7 @@ static const char *const rx_mix_ec_text[] = {
- 	"ZERO", "RX_MIX_TX0", "RX_MIX_TX1"
- };
- 
-+/* Order must match WSA_MACRO_MAX_DAIS enum (offset by 1) */
- static const char *const rx_mux_text[] = {
- 	"ZERO", "AIF1_PB", "AIF_MIX1_PB"
- };
-@@ -2207,6 +2209,7 @@ static int wsa_macro_rx_mux_put(struct snd_kcontrol *kcontrol,
- 	u32 rx_port_value = ucontrol->value.integer.value[0];
- 	u32 bit_input;
- 	u32 aif_rst;
-+	unsigned int dai_id;
- 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
- 
- 	aif_rst = wsa->rx_port_value[widget->shift];
-@@ -2224,17 +2227,22 @@ static int wsa_macro_rx_mux_put(struct snd_kcontrol *kcontrol,
- 
- 	switch (rx_port_value) {
- 	case 0:
--		if (wsa->active_ch_cnt[aif_rst]) {
--			clear_bit(bit_input,
--				  &wsa->active_ch_mask[aif_rst]);
--			wsa->active_ch_cnt[aif_rst]--;
-+		/*
-+		 * active_ch_cnt and active_ch_mask use DAI IDs (WSA_MACRO_MAX_DAIS).
-+		 * active_ch_cnt == 0 was tested in if() above.
-+		 */
-+		dai_id = aif_rst - 1;
-+		if (wsa->active_ch_cnt[dai_id]) {
-+			clear_bit(bit_input, &wsa->active_ch_mask[dai_id]);
-+			wsa->active_ch_cnt[dai_id]--;
- 		}
- 		break;
- 	case 1:
- 	case 2:
--		set_bit(bit_input,
--			&wsa->active_ch_mask[rx_port_value]);
--		wsa->active_ch_cnt[rx_port_value]++;
-+		/* active_ch_cnt and active_ch_mask use DAI IDs (WSA_MACRO_MAX_DAIS). */
-+		dai_id = rx_port_value - 1;
-+		set_bit(bit_input, &wsa->active_ch_mask[dai_id]);
-+		wsa->active_ch_cnt[dai_id]++;
- 		break;
- 	default:
- 		dev_err(component->dev,
--- 
-2.48.1
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
 
