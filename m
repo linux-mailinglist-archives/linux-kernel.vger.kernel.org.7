@@ -1,142 +1,198 @@
-Return-Path: <linux-kernel+bounces-793518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E53EB3D49C
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 19:26:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A4EB3D49F
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 19:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2B9178A57
-	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009DD3BAC9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 31 Aug 2025 17:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8A7273809;
-	Sun, 31 Aug 2025 17:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA90D27381E;
+	Sun, 31 Aug 2025 17:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty1p/t1y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P284J3ij"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2866818E25;
-	Sun, 31 Aug 2025 17:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77071DFDE;
+	Sun, 31 Aug 2025 17:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756661201; cv=none; b=sYXou4D/A0EUVwHSJoGAQEn1pV6/HSPlG74zkcaQcEiZ7r+dkGobUtY34AtWfRjDj+S/EwPXuUcBE3L9FMGQd+Xu9xFHKylV3TCyIx0O6rJXOQgjX2rMWH8AOedI+JHvPYDo1sbPBAaeVuQVfWJEP73kyhGcGXObD0UaGuFMXmU=
+	t=1756661482; cv=none; b=OPmSl1gHW1ASp+BbKwpKDXNEKIqUjkk5bsfsWiRv8KJ5+6L/Ok6+PgdiF/QPh9tXRy2bVPYhkB3Z3QVJxaq2rbtj9Q6Rx7aNj11r+wJkozSiEXsFoOTtw/4IUfauSpmhtNDLOosGDIl50eA9LQvqEO9LKUlPtJrfhonb1aQ8UCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756661201; c=relaxed/simple;
-	bh=RRtiXiS/TOWMt2m/o+Byy9dAyID/y4LX9MHvorsPaJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=safV+/s2ayHuSE8es2nln67HH65qXLxlF2o1Zgg1j7DxEL0aybc7OGBe+Ctj5cFc8W9Gbr+Qive6ksIOaPbjKwY458lSQ7A8cRWQ+gMiHi82DhU2oQPM9lS5VIjA6VonBy6W2Re2bKuNurqo8/pNVVLpTujG48auwI1VRM5Hxqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ty1p/t1y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460ADC4CEED;
-	Sun, 31 Aug 2025 17:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756661200;
-	bh=RRtiXiS/TOWMt2m/o+Byy9dAyID/y4LX9MHvorsPaJk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ty1p/t1ymjGws9pPzqegwv9izBVk+ZO349PTvsl05400ObmEAdxlLB4GLTXF5wwmC
-	 5h+TW60rnnRXvrF2E0zq0Kr3Bcukeg/1WwlLtgY6R+a+qE1h4wsttzKuKiZsu0iZ1M
-	 eBw1mZebhOzOmKTAO5rSiKuwT16JI94QSMcmJsWhKTVEGQji1F5MhgKkiJ+N8IYdHK
-	 xu2QJ/V/eMMZuWTZZkaIk/EMQtoKJqJWDMqdy9HUpqfMdQfn6+c3xrXvasl/Sidmiq
-	 t4uxqkZzek7PxVR7ouQ7D4t8IJUFaNPPvGvUmpCD5vPLgzAiLS2JgXRe49zlU/PeaK
-	 edLEBEPkCrT7g==
-Message-ID: <f6b6a19a-1671-437c-8e49-9fc832c84931@kernel.org>
-Date: Sun, 31 Aug 2025 19:26:29 +0200
+	s=arc-20240116; t=1756661482; c=relaxed/simple;
+	bh=9R/gIDSvGAo0tnOio612OdWQxgFHok7GPgDa6V9IzTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r5J46asFTWlSvLBBXbX/26dwNeoy8CDnZaC2jg9po4aGmhI9R3jH3yRPAcyODCy8bYlMzPilyqCKj5TAtfXRcCJOPLSVSXrhLoKRsawDxrN4g5+X/dUJIcxDyjHkZOmHrruSYXNeWAlaXvwz4ET9E4j/aurURoiHhsSsxe+DfMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P284J3ij; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4c29d2ea05so3281243a12.0;
+        Sun, 31 Aug 2025 10:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756661480; x=1757266280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0J5tnGYqDn9eu0TWs8GwgpAdtaA2flto4lBb6OtEJ5I=;
+        b=P284J3ijvajnOSaCFPTByiaRKrFHrjW/Fh1T4/05ZBwWw08jG1vdjF6G8rRMV+u60k
+         ggFdleJtEvy2mChFLkhLAHmERKooMwmab2HUTCp+aG67XfdSuVycXD4yawy55RuMJJBE
+         VV0GyNNzri8T4EoOejP5wY45L6PLq1d0qc61rjqmYNC00fJUEPS5d52LruUHjnZY3KzN
+         mJ3Juq1HypC7l6RzBvFVGLrJOZlyTu5o8FNWIF8Gy/B7wRTIQAZAMUyRgkGVuetupBRC
+         cSs1F1lyW6dWfslXS4RVHbMqYJXKtHQWtA7gbcYqcZVCMTF/Z4CKKmvN+7fathhNiyTT
+         qHJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756661480; x=1757266280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0J5tnGYqDn9eu0TWs8GwgpAdtaA2flto4lBb6OtEJ5I=;
+        b=U8D3QFgHYpFFMg21TCuGhMlI/7CxUOMcSFSn4cE5ta9jaUavY848K1MtD4P2DmyHdZ
+         DjMVMQlBzlvGKu/CRPH5X9hgALUU0c0nKK11gmDOu+iuoXJGNImyUcSMwM9MNzfq8JqH
+         tItJ165GD/jxOpPxRI6YJW/X66/JourZ4ebfJbetaHSoIKybidepYItnFs5HrwmKQ0mV
+         Kzm2i3uI8t4xQBoayOWuMs4tpkDEYBH2qpUiOcuHf4Yd/WzMgaLPDYBbbFY0zrh5eSa7
+         VQANAG4fiC+CW4pwC5olEtnhB59cvzpaK60JSKZpItIgVgD9WDZwec8BpsPkcsN2honB
+         1xgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeNKT4DbkUQK7V1JNiAnIO2hL3lFc956Vd8hzh2mGO94NTYftiyX6drHiW/VYGttE3R0k/phsm@vger.kernel.org, AJvYcCVXvs4gAj3oh25Mjygs2+iabzRx0TF1xyiyfB1rIsc8FfRa4WrIHsEK+KMBlI+a9v5ma+SXCTvZPuJJAWNr@vger.kernel.org, AJvYcCW3A8wwivq8BlrjuuK1gSHtvqRYfO0XSKWEpX1Ia0736vY3p5d/QGwhRnHGL7GnVMkfm+/SL7f+1jKLD9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypbWOQmQI71ejlhLk36fGPsjQj1B1SDcn/69mGIexqQQi6yieR
+	bEiF20vG5IJK4xyS+9/1ZVHhEh/FbCzePZVtn93Zx+2ii0jLrM7PXgmQ3afkmxKh13I4qdPVoaH
+	TowGZSDby2tPNroTrGK4iybupyIokQEk=
+X-Gm-Gg: ASbGncueanCbN77xGJAQQnS65UlfadqC0ZxuEvan3XFjvgmXv/78vOdSVC1UABUR6fj
+	ltsHYTiZTOcPucTd4PjDRVGtA2Rwcp+LYBWMCjbXZZOv2ZQ4q4k0w+Qk2p9NHpD0Kfg4qvg0Rg0
+	RQH+0ixuXij+haCO6vXD4RrWrQapXJl9wBRHGdChhGJ+tTkjJ0GDsHwMZgDif4YT6LoQeNkYiek
+	vUsBQPTOWTwVvSre+c=
+X-Google-Smtp-Source: AGHT+IH7JYUwECPVluGNmsmL/DuZUg5eOk43rP0j84gusZSSfSrD4JREcL7++kUd3p6aw3fjSlExji83/E02rq8szW0=
+X-Received: by 2002:a17:902:d549:b0:240:6fc0:3421 with SMTP id
+ d9443c01a7336-2494486f594mr84845425ad.3.1756661479892; Sun, 31 Aug 2025
+ 10:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/7] dt-bindings: firmware: qcom,scm: Add MSM8937
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Dmitry Baryshkov <lumag@kernel.org>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux@mainlining.org
-References: <20250831-msm8937-v8-0-b7dcd63caaac@mainlining.org>
- <20250831-msm8937-v8-3-b7dcd63caaac@mainlining.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250831-msm8937-v8-3-b7dcd63caaac@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250828044200.492030-1-namjain@linux.microsoft.com>
+In-Reply-To: <20250828044200.492030-1-namjain@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 1 Sep 2025 01:30:44 +0800
+X-Gm-Features: Ac12FXyAZjZnyqi8DKZcVw2CqYH4G9SRJFbrKuhxYxDA1TEhpgLaikV9hYstbuc
+Message-ID: <CAMvTesBUJb1xpCuyORzDb0EdrDbkkOpkXB0ZYG5ktbN+LbJtHA@mail.gmail.com>
+Subject: Re: [PATCH v2] uio_hv_generic: Let userspace take care of interrupt mask
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "K . Y . Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Stephen Hemminger <stephen@networkplumber.org>, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Kelley <mhklinux@outlook.com>, Long Li <longli@microsoft.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 31/08/2025 14:29, Barnabás Czémán wrote:
-> Add compatible for MSM8937.
-> 
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+On Thu, Aug 28, 2025 at 12:42=E2=80=AFPM Naman Jain <namjain@linux.microsof=
+t.com> wrote:
+>
+> Remove the logic to set interrupt mask by default in uio_hv_generic
+> driver as the interrupt mask value is supposed to be controlled
+> completely by the user space. If the mask bit gets changed
+> by the driver, concurrently with user mode operating on the ring,
+> the mask bit may be set when it is supposed to be clear, and the
+> user-mode driver will miss an interrupt which will cause a hang.
+>
+> For eg- when the driver sets inbound ring buffer interrupt mask to 1,
+> the host does not interrupt the guest on the UIO VMBus channel.
+> However, setting the mask does not prevent the host from putting a
+> message in the inbound ring buffer. So let=E2=80=99s assume that happens,
+> the host puts a message into the ring buffer but does not interrupt.
+>
+> Subsequently, the user space code in the guest sets the inbound ring
+> buffer interrupt mask to 0, saying =E2=80=9CHey, I=E2=80=99m ready for in=
+terrupts=E2=80=9D.
+> User space code then calls pread() to wait for an interrupt.
+> Then one of two things happens:
+>
+> * The host never sends another message. So the pread() waits forever.
+> * The host does send another message. But because there=E2=80=99s already=
+ a
+>   message in the ring buffer, it doesn=E2=80=99t generate an interrupt.
+>   This is the correct behavior, because the host should only send an
+>   interrupt when the inbound ring buffer transitions from empty to
+>   not-empty. Adding an additional message to a ring buffer that is not
+>   empty is not supposed to generate an interrupt on the guest.
+>   Since the guest is waiting in pread() and not removing messages from
+>   the ring buffer, the pread() waits forever.
+>
+> This could be easily reproduced in hv_fcopy_uio_daemon if we delay
+> setting interrupt mask to 0.
+>
+> Similarly if hv_uio_channel_cb() sets the interrupt_mask to 1,
+> there=E2=80=99s a race condition. Once user space empties the inbound rin=
+g
+> buffer, but before user space sets interrupt_mask to 0, the host could
+> put another message in the ring buffer but it wouldn=E2=80=99t interrupt.
+> Then the next pread() would hang.
+>
+> Fix these by removing all instances where interrupt_mask is changed,
+> while keeping the one in set_event() unchanged to enable userspace
+> control the interrupt mask by writing 0/1 to /dev/uioX.
+>
+> Fixes: 95096f2fbd10 ("uio-hv-generic: new userspace i/o driver for VMBus"=
+)
+> Suggested-by: John Starks <jostarks@microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> Cc: <stable@vger.kernel.org>
 > ---
->  Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+> Changes since v1:
+> https://lore.kernel.org/all/20250818064846.271294-1-namjain@linux.microso=
+ft.com/
+> * Added Fixes and Cc stable tags.
+> ---
+>  drivers/uio/uio_hv_generic.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index f19efad4d6f8..3f8e2e27697f 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -111,7 +111,6 @@ static void hv_uio_channel_cb(void *context)
+>         struct hv_device *hv_dev;
+>         struct hv_uio_private_data *pdata;
+>
+> -       chan->inbound.ring_buffer->interrupt_mask =3D 1;
+>         virt_mb();
+>
+>         /*
+> @@ -183,8 +182,6 @@ hv_uio_new_channel(struct vmbus_channel *new_sc)
+>                 return;
+>         }
+>
+> -       /* Disable interrupts on sub channel */
+> -       new_sc->inbound.ring_buffer->interrupt_mask =3D 1;
+>         set_channel_read_mode(new_sc, HV_CALL_ISR);
+>         ret =3D hv_create_ring_sysfs(new_sc, hv_uio_ring_mmap);
+>         if (ret) {
+> @@ -227,9 +224,7 @@ hv_uio_open(struct uio_info *info, struct inode *inod=
+e)
+>
+>         ret =3D vmbus_connect_ring(dev->channel,
+>                                  hv_uio_channel_cb, dev->channel);
+> -       if (ret =3D=3D 0)
+> -               dev->channel->inbound.ring_buffer->interrupt_mask =3D 1;
+> -       else
+> +       if (ret)
+>                 atomic_dec(&pdata->refcnt);
+>
+>         return ret;
+> --
+> 2.34.1
+>
+>
 
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Tested-by: Tianyu Lan <tiala@microsoft.com>
+--
+Thanks
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Tianyu Lan
 
