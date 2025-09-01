@@ -1,245 +1,173 @@
-Return-Path: <linux-kernel+bounces-794972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEC3B3EB21
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:42:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AEFB3EB4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A31E7AA64F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DAFF16B4D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171902DF145;
-	Mon,  1 Sep 2025 15:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A573E80C02;
+	Mon,  1 Sep 2025 15:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z82cCnVQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YNE8HIwF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6642D5952
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4A332F764;
+	Mon,  1 Sep 2025 15:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741280; cv=none; b=oNwlgDK4T9A5tMI2kBbZIIJFCu7aPQhoWR7ceAAjEXxHVijBloea43mNP4x8oYGJ06uwKSLcEicArGdLpPtNhK/8Ru9HRLN0sZ7G7FzqSl1VglZITVoZPA9wmdfcjczGeqY21rXtxIePK7nOTEx2xwbOVv8SXsZo1XM2znzgqxE=
+	t=1756741355; cv=none; b=NnDsc1oaZa9tnq4inp+qzZopN2UK6DftFVX3DW0QojnFuOTXuNn3k1oey6rJ2sf8z+PE70CU7cgAUraHEasrwszG2bS9I2pc7zgM2qKRh+EIdJj5njG6A5ON8aao40LiX61CMwfzrAW2igxxZCYA9DJjoZUzR58R9rzXdvmBsA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741280; c=relaxed/simple;
-	bh=axNllwfDUkYTDCFBSCmvnLpLRzssBhfNZ58t/kYnHEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mAjWjSmumSzKCk31vLaiWZRB2n9BHLatUFI/26PP5asj4i0QMz8iKoyKwg5RnWbEu5fHEnHJP9hPU9Ual3TxlyBgrjUD9A9hPMxQ5d5JJYSDHQopGU6cfNlntKczIesZVJnpjaMybuBlMqVLs5u3nw9AuklaB3VcAeuCQjjrsyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z82cCnVQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b7ebe667cso27513535e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:41:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756741274; x=1757346074; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bm0pUtqqyLSDsF2Ey+fmrPZF+JfkcIIlkPgCIjpJRXo=;
-        b=Z82cCnVQGccegHYVhHeLJmO7rY5rezT2aZH52OW3TBW9EOFVTb73VN99K1xbbgfPDm
-         KIiTld39jDkk9r9x9nm5S9JH+7s/HBptzmODcfjShNZgQq0JCxI9ZUIosaEGgFZNHV8g
-         6WTZcC6OxITGh17a2IYDyBcQybAyvTxYjboo6UVbEsBDYLuSqhdajhc/lmU6z8n91k7A
-         8iq4GwSanuAqpp8eP/EJ43WwusaH8v8wRXzxEee9EYbpkET/Z2IGWk9lRz0+s48lrXJk
-         Nm96O0QrxLMj3RBjKS4UBZAhyipE3C6JynDTRr1VF+VVJpi/SI/uUPtaKrLozaHEO8zm
-         2GXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756741274; x=1757346074;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bm0pUtqqyLSDsF2Ey+fmrPZF+JfkcIIlkPgCIjpJRXo=;
-        b=W+P7WmU0VsHttaZaSoz1Tog1Fm34Jdmm3xVO990SVSpvG7VXUDB5SNAXiioY8cCK0Q
-         avwijJ0GVlN617LJiwvjOUxjVRU5jVsas/9U8KM0qRy604m9U6E5NDjiD2HsT4WBV4v3
-         AZVyH1F5QI79loern9AO/FcpQZFpF6jhkMmDPn8kSgFj2pYdKShfiEum92EJQ5e8uGMM
-         aMKLApwnkJE4wCEHL4EygKA/QB1CGG21Oou/r//XteydEzmt1u1V6OFR+qGMwk5K3rVZ
-         7Qp7a3rqJ+H/KSboJO+Vgh4ZulpsUXfpP6wgFxTb875w+23ge7/jZoxjv8YS6IHeTLEi
-         zSGw==
-X-Gm-Message-State: AOJu0YyRna/Y5fFgbAYPSLdB9uroNXhtwBetMcq27YHcDFWhmJUZUr3V
-	tGxbRl9sQtI3LacqnaoNkeDc5Ac/zqez7irPzVN9p4Jjnczu+RWsW0GkdF4fNZ3Jt+c=
-X-Gm-Gg: ASbGncvkTnpTIGIJXfCNp2I4CYIKOULbUBRpaBlGtiZ9G0BgcluSV3U4AN6Hz9e/82R
-	4CkZInu/uSlmYT6cOGK8e0RjMzkxCIB2p+cRZLffdhoTx4SRGQ/XcubXLrKgs9Wu6IWdmbb+jWS
-	0o8BbSc2abJCfxLK2GZNcG2pV7Ev9j2d2IbjvJMumpMmmm5ffYW/9P1RyWxJ4svGgWdJwTYXRvS
-	0N0Fu+ErdNAlTYH5vaFhPaYOX4Jhgp+7Ssh3otSuxXEOBogXYiMt7JtSQ1873OUN7ObR7HDr6od
-	WANDaWG372G3YcLR2ZJJo+yi+fhVfzD0NvJ86mUYKJZIggL1oA3MLAY8ALRCJMnAJ3iYweq62Ro
-	x25kvRoJDUWjczjcJZvFudffYWoKMPSWs3dJlipsE+ft2bmkutejFwuOOoThqylHbOkl6P8w=
-X-Google-Smtp-Source: AGHT+IGIQl5uv3T6xSUAchuV/QHFF6se7W+h+98dX15GDdNrxuH2lA6Y6X4R24Zy9hChiymRKhAn1g==
-X-Received: by 2002:a05:600c:3543:b0:45b:8822:d6c2 with SMTP id 5b1f17b1804b1-45b88321d9emr53869155e9.12.1756741274125;
-        Mon, 01 Sep 2025 08:41:14 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm500043f8f.23.2025.09.01.08.41.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 08:41:13 -0700 (PDT)
-Message-ID: <49d90a98-f3fb-4df2-837f-53b109cfcd6d@suse.com>
-Date: Mon, 1 Sep 2025 18:41:12 +0300
+	s=arc-20240116; t=1756741355; c=relaxed/simple;
+	bh=41yILyPaRdGVTtOmRTVGMgEgTRygcovNRJ8+oQjhy8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmzlocrH+zSmweZm0V9MEXA9NH5RUOS5/jEKA8juLpsYOWnNL3uuaw8V6uRMYjtnqCn5AOInW06FwniF1pDN80NCrbgK9a3zm1XQbPDwzImb7h/bsP12ruznfHAJL4ImV1+JBwGkTWh3amH1Av8y509p2BfgE3zj4PoBLKJ6mUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YNE8HIwF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756741354; x=1788277354;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=41yILyPaRdGVTtOmRTVGMgEgTRygcovNRJ8+oQjhy8o=;
+  b=YNE8HIwFc/DHubxUPb4idax8A7WZrEi1IKqAQxW/iJaevMhQnnJqMdfm
+   a1CNUNtDBorCDpx1PEYjrdOJZixGzrc5UvfVTDKLgPnCeXj9r6AWCqi0y
+   oaTxsVjwgJjhwDr26f4tR8avxrmsGJfJXiqtCqBY5Pe+jU58wlXX6JNwu
+   jB9wpOro5OumOgYGvT1DkA7K8j8I9cfzbRq3o+bjzmZ5CiWfQpPK8mIAf
+   +2S7jbYnSluKDNaZwnqPkWqy5ppdyeV2/GIPMU5bt6QuanbZsknDzbs0y
+   RGav6gKNdKILRG4wWxrE8k9/qoExnRUUCXK6ztGIS1JMTvtBDTVjAh4za
+   Q==;
+X-CSE-ConnectionGUID: f+uLuOlZR6y1hbNAq3s76w==
+X-CSE-MsgGUID: aol7O1E8QQGhkQRB/9KiaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="69709201"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="69709201"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:42:33 -0700
+X-CSE-ConnectionGUID: iWIyUrZTS6iG0koM7qv4Fw==
+X-CSE-MsgGUID: lIbgDhB1RhWSK/DxIdYagg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="171902172"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:42:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ut6fr-0000000ASaN-3aHa;
+	Mon, 01 Sep 2025 18:42:27 +0300
+Date: Mon, 1 Sep 2025 18:42:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH 1/2] staging: media: atomisp: Remove typedefs for basic
+ types in vmem.c
+Message-ID: <aLW-45MfPpLSNi0n@smile.fi.intel.com>
+References: <20250901091050.1935505-1-abarnas@google.com>
+ <20250901091050.1935505-2-abarnas@google.com>
+ <aLWS9QsvmzZW4Bak@smile.fi.intel.com>
+ <CAATBrPFnSnxwzBQTOdbt0h=epXW7G5Rj8Sr_erKKzUzCH6xC5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/20] x86/mce/amd: Put list_head in threshold_bank
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
- Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- Smita.KoralahalliChannabasappa@amd.com, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- linux-acpi@vger.kernel.org
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-4-865768a2eef8@amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <20250825-wip-mca-updates-v5-4-865768a2eef8@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAATBrPFnSnxwzBQTOdbt0h=epXW7G5Rj8Sr_erKKzUzCH6xC5g@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Mon, Sep 01, 2025 at 03:27:19PM +0200, Adrian Barnaś wrote:
+> On Mon, Sep 1, 2025 at 2:35 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Sep 01, 2025 at 09:10:49AM +0000, Adrian Barnaś wrote:
 
+...
 
-On 8/25/25 20:33, Yazen Ghannam wrote:
-> The threshold_bank structure is a container for one or more
-> threshold_block structures. Currently, the container has a single
-> pointer to the 'first' threshold_block structure which then has a linked
-> list of the remaining threshold_block structures.
+> > > -static inline hive_uedge
+> > > -subword(hive_uedge w, unsigned int start, unsigned int end)
+> > > +static inline unsigned long long
+> > > +subword(unsigned long long w, unsigned int start, unsigned int end)
+> > >  {
+> > >       return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
+> > >  }
+> > >
+> > >  /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx0000xxxx]LSB */
+> > > -static inline hive_uedge
+> > > -inv_subword(hive_uedge w, unsigned int start, unsigned int end)
+> > > +static inline unsigned long long
+> > > +inv_subword(unsigned long long w, unsigned int start, unsigned int end)
+> > >  {
+> > >       return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1));
+> > >  }
+> >
+> > Also consider to simplify the above (in a separate change).
+> >
+> > static inline unsigned long long
+> > subword(unsigned long long w, unsigned int start, unsigned int end)
+> > {
+> >         return (w & GENMASK_ULL(end, 0)) >> start;
+> > }
+> >
+> > static inline unsigned long long
+> > inv_subword(unsigned long long w, unsigned int start, unsigned int end)
+> > {
+> >         return w & (~GENMASK_ULL(end, 0) | GENMASK_ULL(start, 0));
+> > }
+> >
+> > ...if I'm not mistaken, so double check all these.
+> >
+> > At least in my case the end == 64 is not allowed while it seems the original
+> > code allows it to be equal to the end == 63 case. Needs testing anyway...
 > 
-> This results in an extra level of indirection where the 'first' block is
-> checked before iterating over the remaining blocks.
+> Those functions works odd:
+> when (end = 8, start = 0) it affects bits 0...7
+
+Yes, that's what I meant. But it does the same for 7, 0.
+That's why every caller needs to be carefully checked for these corner cases.
+
+64 is special because it will give complete garbage in my case.
+I suspect they never extracting anything on the non-aligned byte borders.
+
+> This should make the same results, will check twice if i not missed
+> anything and post v2:
 > 
-> Remove the indirection by including the head of the block list in the
-> threshold_bank structure which already acts as a container for all the
-> bank's thresholding blocks.
+> static inline unsigned long long _subword(unsigned long long w,
+> unsigned int start,
+> unsigned int end)
+> {
+> return (w & GENMASK_ULL(end-1, 0)) >> start;
+> }
 > 
-> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Tested-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> static inline unsigned long long _inv_subword(unsigned long long w,
+> unsigned int start,
+> unsigned int end)
+> {
+> return w & (~GENMASK_ULL(end-1, start));
+> }
+
+Maybe, but again needs to be carefully checked and tested.
+
+You can propose a separate patch as RFC.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-> ---
-> 
-> Notes:
->      Link:
->      https://lore.kernel.org/r/20250624-wip-mca-updates-v4-8-236dd74f645f@amd.com
->      
->      v4->v5:
->      * No change.
->      
->      v3->v4:
->      * No change.
->      
->      v2->v3:
->      * Added tags from Qiuxu and Tony.
->      
->      v1->v2:
->      * New in v2.
-> 
->   arch/x86/kernel/cpu/mce/amd.c | 43 ++++++++++++-------------------------------
->   1 file changed, 12 insertions(+), 31 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-> index 580682af432d..54f02bda75aa 100644
-> --- a/arch/x86/kernel/cpu/mce/amd.c
-> +++ b/arch/x86/kernel/cpu/mce/amd.c
-> @@ -241,7 +241,8 @@ struct threshold_block {
->   
->   struct threshold_bank {
->   	struct kobject		*kobj;
-> -	struct threshold_block	*blocks;
-> +	/* List of threshold blocks within this MCA bank. */
-> +	struct list_head	miscj;
->   };
->   
->   static DEFINE_PER_CPU(struct threshold_bank **, threshold_banks);
-> @@ -902,9 +903,9 @@ static void log_and_reset_block(struct threshold_block *block)
->    */
->   static void amd_threshold_interrupt(void)
->   {
-> -	struct threshold_block *first_block = NULL, *block = NULL, *tmp = NULL;
-> -	struct threshold_bank **bp = this_cpu_read(threshold_banks);
-> +	struct threshold_bank **bp = this_cpu_read(threshold_banks), *thr_bank;
->   	unsigned int bank, cpu = smp_processor_id();
-> +	struct threshold_block *block, *tmp;
->   
->   	/*
->   	 * Validate that the threshold bank has been initialized already. The
-> @@ -918,16 +919,11 @@ static void amd_threshold_interrupt(void)
->   		if (!(per_cpu(bank_map, cpu) & BIT_ULL(bank)))
->   			continue;
-
-So the following diff can be applied ontop of this hunk to simplify the function even further:
-
-
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 5c4eb28c3ac9..b35e74292f58 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -932,7 +932,7 @@ static void amd_threshold_interrupt(void)
-  {
-         struct threshold_block *first_block = NULL, *block = NULL, *tmp = NULL;
-         struct threshold_bank **bp = this_cpu_read(threshold_banks);
--       unsigned int bank, cpu = smp_processor_id();
-+       unsigned int bank;
-  
-         /*
-          * Validate that the threshold bank has been initialized already. The
-@@ -943,7 +943,7 @@ static void amd_threshold_interrupt(void)
-                 return;
-  
-         for (bank = 0; bank < this_cpu_read(mce_num_banks); ++bank) {
--               if (!(per_cpu(bank_map, cpu) & BIT_ULL(bank)))
-+               if (!(x86_this_cpu_test_bit(bank, bank_map)))
-                         continue;
-  
-                 first_block = bp[bank]->blocks;
-
-
-Will you integrate it (Boris) at merge time or should I send a patch now (or later) ?
-
-
-<snip>
 
