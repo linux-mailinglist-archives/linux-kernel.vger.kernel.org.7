@@ -1,101 +1,289 @@
-Return-Path: <linux-kernel+bounces-794329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4982B3E013
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFED5B3E016
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30EA18908DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68E23A3BFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5404830F554;
-	Mon,  1 Sep 2025 10:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783BF30E834;
+	Mon,  1 Sep 2025 10:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9iepLqj"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kb7lCGLk"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2702130BF7F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C171F37C5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722303; cv=none; b=M1ZamnsgNwzisBSiEhq8ikfXayGFK9Iniv0VubXCbsBFvkKNd0m0YUG8gxvYxsAH1ZPJ4l1z1puJhg2f5flpflAvS+Q/Ojl6oOFPEHgxKP5wJ8hKJCzNfqPqSn3AhwY0HM6IJ/6gwTUrjuVXVu/FUrGUs4ZvSJ7aAuuHwmKk/cA=
+	t=1756722353; cv=none; b=PqHeDUqGTw9ZSzPD0oZUmn8xDQM7YPmXs1s0tf8hAqFQgdQqnz6qfMbVFiMlzYJFyQcnzftMd+JLkAuKXHHbD/LK0eAZ2RW4IMwiZz+hDgfv18sxcuws5Frlu6p7FhnIwG7HE05+009UvG/Fzj9FzSuAdVdPa5+nymKEPTcbSi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722303; c=relaxed/simple;
-	bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OguZ+pgbzhbPkY2UCISIPhI8O/TrTAJzoHxJ1pWXVoVsf+hGB8hJDFeK0e/r//cHnOzf4Mzi+cJyhXSqHNZJpzFbWNYTiO9uKMKW17WNcr6QE+C9fc/EdwTym9brE5fb1S0pMFq7MVlmee+nm+Vuxo8k8SSpAFPgR/jYMRCcsC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9iepLqj; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3cef6debedcso1771759f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756722299; x=1757327099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
-        b=m9iepLqj1IbnnI64M41hS7psoA8qRIDcO2r50ehlPJxnb1pNueFmpG0kpOMOfFcav8
-         skzTcnO7NSEKeuJRVsKPqOkDdu8jtE0oEkgBVRgDkmcssJXqGqZecop7kfDhBQgjkWSd
-         +D0JM+DgF1+4wQZFrBiBBLrCs69j9KwrUBXvrFEx5CDAn+39IeH3f+SlBB9FGLxCIqtt
-         duIb//Xz8Qwe37OlNUUhWS6a0atK367vob1Qw9+EqI5Hte8gOlG73JCNEdGvJljc6juM
-         FRzzIqXS177oFetVeZB4eHA9xm52w8og+sHRqMB0XVgI5SNUaNDn4QUGOoTIdOTYR4Ka
-         frkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756722299; x=1757327099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
-        b=IQtlrEJs5Mt8Ghz1n5vHKKzNiKihAxeFf+sg+ZMBDDiPqDWnA+05LOA5thHjY/rVwG
-         frvZ210cTA1ZGFUkNPojDGZpTRmApiKdrxlNoFveFm/pCItQjEN5PPzviR/p8B6amyXa
-         T88/FtgE9Mchnbuj05txjHlSrZ/CKa1TBERfOEbt+wyrTMj44K105vAxdMtI+TY9vJ0O
-         vAHf9g3TqxWo1TnG3XUcVD+8OUz6J+j0C0fMIwrkWKCcjvFu3rBGLRDPQKX+D+VT/rzb
-         QMAYNag21CPqts13Cx8xB1TvOJRUQcULPM1Of8LT1TmWt4uxkOATGcEhVOiFuunoCpRp
-         Dhqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWn4NXYkRcQLSAI3AVPUJam3IchxBfZQML81r2RVKm2xCoRiL3gQVhgja6Yr04ZtIVyP9M20+9RjqAZzPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaQwEbltuGHbbQcTDwSM6IYMpIqmS3fNGmpuz2eUf61LTVvA5X
-	WSx8ymTWNYf9CCilJo665kFP94coLsGvVel+pMcy9K8gd3BzXweB6RETmqL8ep1tZKA=
-X-Gm-Gg: ASbGnctkVu1lVxwpEdE26YCfO+GTIhF7Wb7eNaScXKz0Szs+jKmBR7w5iiz5G0/jD/N
-	Kr2QKtaxbYua2EaNIWrxQSqx2Ym+2VDWvsJRmQhMMFs2+tAoJQtl83hEiz9ovx3AaD2/6w6EztO
-	9oiJAt5eRSXuHFxyBYXoLKoESOiO7mrvJAVQ37h9rCmQNI6o1AQ9kwb+Ue9zPmyaYL7bImQGxkh
-	e7RFz6/ei/7BluoAyBMMx1EL3uzN4jC52Q83TTXUuTHc4NHScsfy9dEEUEM0eQguQjTdLgBGwGz
-	cjavQImBYE9SvdmwhWDD+Y1WSvPfBrazeHkRRPpZxVDywDJCHE7ripR4+bsXseKsh80q3uN7AH9
-	436afgKAARmAL5ZBuQDKqSgr3NItIdk3trL9FvA==
-X-Google-Smtp-Source: AGHT+IEec6vgPDcCrTDqOTyHepBVzBKIfJKmIoOvk/faBhoaRvzUBEt6+Jlp+ejld3jTxV+5QEbZEg==
-X-Received: by 2002:a05:6000:1ace:b0:3c4:497f:ecd0 with SMTP id ffacd0b85a97d-3d1de4ba70dmr4550881f8f.31.1756722299510;
-        Mon, 01 Sep 2025 03:24:59 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf275d2717sm14784721f8f.15.2025.09.01.03.24.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 03:24:58 -0700 (PDT)
-Date: Mon, 1 Sep 2025 13:24:55 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
-Subject: Re: [PATCH v3] staging: iio: adc: ad7816: add mutex to serialize
- SPI/GPIO operations
-Message-ID: <aLV0d9sLbVRZdozH@stanley.mountain>
-References: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
+	s=arc-20240116; t=1756722353; c=relaxed/simple;
+	bh=F4xJIUX+Y+FBb3NULBreN3SiwDzfm3V0O4TkmhPwn6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=i3r3IlJvnaoBEpws+Fn07dv08xX65hQXw0LKmsatSTlXU9k8din40BtfWPgOqJnZ66vYcmzb2U0VzJd/APwn2gUFVrKYFBx8ZkZiquuxSi1uRGruJavswSUeTgAMo0cMtRFVWSO3Wt/2JutW0+c7CSWWbOQud69xX1JG1B20SmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kb7lCGLk; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250901102543euoutp016c0988c0d007da82cfe924d44e61fe34~hIan1hoyn0403104031euoutp01I
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:25:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250901102543euoutp016c0988c0d007da82cfe924d44e61fe34~hIan1hoyn0403104031euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756722343;
+	bh=0i5QpIyudkj0DESLieNBClWyAhZMEeba8yZNtq0Apww=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=kb7lCGLk7D9Hdwh9lJSLy1cNVaWOaudPEgFUP5EMD3NnelqzLeRGJKxpkmGosarGy
+	 xyoNgPsLvqKsuvlC+8dVzC43xxh2RD5D7uzGxCCcLpHdV1eOC4rthcfg+NcLgwPLcR
+	 J0x29gjWogIZ9oCQPZiU7IpnyfkRQmO+2+7wp3AI=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250901102542eucas1p2d9dced055a8e021c8fa2c938bc9a9764~hIanQLu1r1127911279eucas1p2M;
+	Mon,  1 Sep 2025 10:25:42 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250901102541eusmtip1e9890e14b6cf3f08dc2ad68f30fc9ad3~hIalo15pj1151611516eusmtip1Y;
+	Mon,  1 Sep 2025 10:25:41 +0000 (GMT)
+Message-ID: <ea57ca6e-4000-49f7-8e0b-899f34b7693a@samsung.com>
+Date: Mon, 1 Sep 2025 12:25:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250901102542eucas1p2d9dced055a8e021c8fa2c938bc9a9764
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+X-EPHeader: CA
+X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+	<20250814104753.195255-1-damon.ding@rock-chips.com>
+	<a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+	<7cb50c9c-ac41-43b6-8c69-5f184e7c94cf@samsung.com>
+	<1ccd3889-5f13-4609-9bd8-2c208e17fc96@rock-chips.com>
+	<f2ebfff1-08ab-4f26-98f3-6d6415d58a5e@samsung.com>
+	<a5e613ba-b404-40ae-b467-0f6f223f5d4c@rock-chips.com>
+	<461daea4-5582-4aa2-bfea-130d2fb93717@samsung.com>
+	<46f9137e-402d-4c0f-a224-10520f80c8b4@rock-chips.com>
 
-Please wait a day between resends to allow everyone to review the patch.
-Same comments apply as to v2.
+On 01.09.2025 05:41, Damon Ding wrote:
+> On 8/29/2025 4:23 PM, Marek Szyprowski wrote:
+>> On 29.08.2025 10:08, Damon Ding wrote:
+>>> On 8/20/2025 5:20 AM, Marek Szyprowski wrote:
+>>>> On 15.08.2025 04:59, Damon Ding wrote:
+>>>>> On 2025/8/15 5:16, Marek Szyprowski wrote:
+>>>>>> On 14.08.2025 16:33, Marek Szyprowski wrote:
+>>>>>>> On 14.08.2025 12:47, Damon Ding wrote:
+>>>>>>>> PATCH 1 is a small format optimization for struct
+>>>>>>>> analogid_dp_device.
+>>>>>>>> PATCH 2 is to perform mode setting in
+>>>>>>>> &drm_bridge_funcs.atomic_enable.
+>>>>>>>> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+>>>>>>>> PATCH 7 is to apply the drm_bridge_connector helper.
+>>>>>>>> PATCH 8-10 are to move the panel/bridge parsing to the Analogix
+>>>>>>>> side.
+>>>>>>>> PATCH 11-12 are preparations for apply panel_bridge helper.
+>>>>>>>> PATCH 13 is to apply the panel_bridge helper.
+>>>>>>>
+>>>>>>> This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's
+>>>>>>> Kconfig,
+>>>>>>> so it causes build break:
+>>>>>>>
+>>>>>>> drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to
+>>>>>>> `drm_bridge_connector_init'
+>>>>>>> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+>>>>>>>
+>>>>>>> After adding this dependency, the Exynos DP driver stops 
+>>>>>>> working. On
+>>>>>>> Samsung Snow Chromebook I observed following issue:
+>>>>>>>
+>>>>>>> [    4.534220] exynos-dp 145b0000.dp-controller: failed to attach
+>>>>>>> following panel or bridge (-16)
+>>>>>>> [    4.543428] exynos-drm exynos-drm: failed to bind
+>>>>>>> 145b0000.dp-controller (ops exynos_dp_ops): -16
+>>>>>>> [    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+>>>>>>> [    4.556559] exynos-dp 145b0000.dp-controller: probe with driver
+>>>>>>> exynos-dp failed with error -16
+>>>>>>>
+>>>>>>> I will investigate details later in the evening.
+>>>>>>
+>>>>>> The failure is caused by trying to add plat_data->next_bridge twice
+>>>>>> (from exynos_dp's .attach callback, and from analogix' ->bind
+>>>>>> callback).
+>>>>>>
+>>>>>>
+>>>>>> Best regards
+>>>>>
+>>>>> I see. The bridge attachment for the next bridge was not well thought
+>>>>> out. It may be better to move panel_bridge addition a little forward
+>>>>> and remove next_bridge attachment on the Analogix side. Then, the
+>>>>> Rockchip side and Exynos side can do their own next_bridge attachment
+>>>>> in &analogix_dp_plat_data.attach() as they want.
+>>>>>
+>>>>> Could you please help test the following modifications(they have been
+>>>>> tested on my RK3588S EVB1 Board) on the Samsung Snow Chromebook? ;-)
+>>>>
+>>>> Assuming that I properly applied the malformed diff, it doesn't solve
+>>>> all the issues. There are no errors reported though, but the display
+>>>> chain doesn't work and no valid mode is reported:
+>>>>
+>>>> # dmesg | grep drm
+>>>> [    3.384992] [drm] Initialized panfrost 1.4.0 for 11800000.gpu on
+>>>> minor 0
+>>>> [    4.487739] [drm] Exynos DRM: using 14400000.fimd device for DMA
+>>>> mapping operations
+>>>> [    4.494202] exynos-drm exynos-drm: bound 14400000.fimd (ops
+>>>> fimd_component_ops)
+>>>> [    4.502374] exynos-drm exynos-drm: bound 14450000.mixer (ops
+>>>> mixer_component_ops)
+>>>> [    4.511930] exynos-drm exynos-drm: bound 145b0000.dp-controller 
+>>>> (ops
+>>>> exynos_dp_ops)
+>>>> [    4.518411] exynos-drm exynos-drm: bound 14530000.hdmi (ops
+>>>> hdmi_component_ops)
+>>>> [    4.529628] [drm] Initialized exynos 1.1.0 for exynos-drm on 
+>>>> minor 1
+>>>> [    4.657434] exynos-drm exynos-drm: [drm] Cannot find any crtc or
+>>>> sizes
+>>>> [    4.925023] exynos-drm exynos-drm: [drm] Cannot find any crtc or
+>>>> sizes
+>>>>
+>>>> # ./modetest -c -Mexynos
+>>>> Connectors:
+>>>> id      encoder status          name            size (mm)       modes
+>>>>      encoders
+>>>> 69      0       disconnected    LVDS-1          0x0             0
+>>>>        68
+>>>>     props:
+>>>>           1 EDID:
+>>>>                   flags: immutable blob
+>>>>                   blobs:
+>>>>
+>>>>                   value:
+>>>>           2 DPMS:
+>>>>                   flags: enum
+>>>>                   enums: On=0 Standby=1 Suspend=2 Off=3
+>>>>                   value: 0
+>>>>           5 link-status:
+>>>>                   flags: enum
+>>>>                   enums: Good=0 Bad=1
+>>>>                   value: 0
+>>>>           6 non-desktop:
+>>>>                   flags: immutable range
+>>>>                   values: 0 1
+>>>>                   value: 0
+>>>>           4 TILE:
+>>>>                   flags: immutable blob
+>>>>                   blobs:
+>>>>
+>>>>                   value:
+>>>> 71      0       disconnected    HDMI-A-1        0x0             0
+>>>>        70
+>>>>     props:
+>>>>           1 EDID:
+>>>>                   flags: immutable blob
+>>>>                   blobs:
+>>>>
+>>>>                   value:
+>>>>           2 DPMS:
+>>>>                   flags: enum
+>>>>                   enums: On=0 Standby=1 Suspend=2 Off=3
+>>>>                   value: 0
+>>>>           5 link-status:
+>>>>                   flags: enum
+>>>>                   enums: Good=0 Bad=1
+>>>>                   value: 0
+>>>>           6 non-desktop:
+>>>>                   flags: immutable range
+>>>>                   values: 0 1
+>>>>                   value: 0
+>>>>           4 TILE:
+>>>>                   flags: immutable blob
+>>>>                   blobs:
+>>>>
+>>>>                   value:
+>>>>
+>>>>
+>>>> I will investigate details later this week.
+>>>>
+>>>
+>>> Could you please provide the related DTS file for the test? I will
+>>> also try to find out the reason for this unexpected issue. ;-)
+>>
+>> Unfortunately I didn't find enough time to debug this further. The above
+>> log is from Samsung Snow Chromebook,
+>> arch/arm/boot/dts/samsung/exynos5250-snow.dts
+>>
+>>
+>
+> I compare the differences in the following display path before and 
+> after this patch series:
+>
+> exynos_dp -> nxp-ptn3460 -> panel "auo,b116xw03"
+>
+> The issue is likely caused by the &drm_connector_funcs.detect() 
+> related logic. Before this patch series, the nxp-ptn3460 connector is 
+> always connector_status_connected because there is not available 
+> &drm_connector_funcs.detect(). After it, the DRM_BRIDGE_OP_DETECT flag 
+> make the connection status depend on analogix_dp_bridge_detect().
+>
+> Could you please add the following patches additionally and try again?
+> (Not the final solution, just validation)
+>
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c 
+> b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index a93ff8f0a468..355911c47354 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -1491,9 +1491,11 @@ int analogix_dp_bind(struct analogix_dp_device 
+> *dp, struct drm_device *drm_dev)
+>                 }
+>         }
+>
+> -       bridge->ops = DRM_BRIDGE_OP_DETECT |
+> -                     DRM_BRIDGE_OP_EDID |
+> +       bridge->ops = DRM_BRIDGE_OP_EDID |
+>                       DRM_BRIDGE_OP_MODES;
+> +       if (drm_bridge_is_panel(dp->plat_data->next_bridge))
+> +               bridge->ops |= DRM_BRIDGE_OP_DETECT;
+> +
+>         bridge->of_node = dp->dev->of_node;
+>         bridge->type = DRM_MODE_CONNECTOR_eDP;
+>         ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
 
-regards,
-dan carpenter
+It is better. Now the display panel is detected and reported to 
+userspace, but it looks that something is not properly initialized, 
+because there is garbage instead of the proper picture.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
