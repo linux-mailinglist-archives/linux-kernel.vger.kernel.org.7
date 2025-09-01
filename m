@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-795179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0EFB3EDE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:31:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EA7B3EDEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17C61A88434
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:31:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 296C77A2E26
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C2D320A1E;
-	Mon,  1 Sep 2025 18:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D29324B10;
+	Mon,  1 Sep 2025 18:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlhxISV+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="X2rMHn7U";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="xUwtK7xf"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0046810FD;
-	Mon,  1 Sep 2025 18:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23BF10FD;
+	Mon,  1 Sep 2025 18:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756751488; cv=none; b=mEwD4y4fpFc8JnRDqEk+piUevrU/EXYi5X0yNMx18WBx8qDodtm05huiq/bvwzQSvgquz070XUyhyZmveTQoCjyqhz18BXbXpGAW0KoSIsEQI1hboLp0dYiEPxAfrNaLseZrdu0HCVjX7uwNmmA4OutrGcQeBaCy3Iksj7V4ox4=
+	t=1756751625; cv=none; b=A5FDS71uomd/s8mBT11LFMshqPXfVvz0mW+5kaRupOX/m/DOmj0u6LZ7KBpGQ5QZoe+gqdl5LPPTdKEUFzgNiysVmPZ0AwhrvgLXsn7iqJ4G8ScaK7EHgR4HdbQ9LU0hmNZ/AW+tb9/QuhPFPO6QOWDmQMh3EYiiAIFJkCukpsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756751488; c=relaxed/simple;
-	bh=pXtfi1ZkzOUO0EvJfw/NLRrBKdRrBqz8G01t4pFGeWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KT2zSPXatWKBEdBdg4b3l4flklTRzSxuFnozSZLkQ7RL6sx7c+UzLXqppguImycKWXZCcnOe2UXBFbNufGSP5t7N2gauEc+x3HivOWV1xWwy4mJeBFb1iAt0oVLaahEvZNPBPyAZZP0X6A53PRaMqe3JrmmqsXWHG2ilJu9r63U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlhxISV+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EB4C4CEF0;
-	Mon,  1 Sep 2025 18:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756751487;
-	bh=pXtfi1ZkzOUO0EvJfw/NLRrBKdRrBqz8G01t4pFGeWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DlhxISV+C2bFL3Ur+Gc1AolquH0MXqaxT0OdmZ0Qk6EiT6R3vfjTAyECGYpQMgdHG
-	 PrnKFo79cAwqBwAbvK7uEuzuOIJuGlvxQtBAAjblxOy2UPcZWm9ZKN/aMwtGNJ4rxI
-	 bzd9q+xf1P+xlVeEJbLWNAz0ojOwb+UpXr6sYxPryWLdLzjlWH4PFyM4GCmxmK+8gD
-	 q8we3bVGX8A9yXkgqGeHWjK4t7YQffHon6UPCx56okONzxj7A2LhJeG5Bap69Hl1ft
-	 3PR9sRLueMNBKY3viTDw+VJih4naUlHe2XZGCwJZidephQiiAut8dAryrdBbm2cZft
-	 RuDUQbl1wQT2w==
-Date: Mon, 1 Sep 2025 11:31:27 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
- migration support
-Message-ID: <202509011125.5879901C@keescook>
-References: <20250830020109.it.598-kees@kernel.org>
- <59c4f103-7f1b-4829-bd82-0d392047fea4@oracle.com>
- <202509010949.9A61A98@keescook>
- <d25b2c63-32e2-4a41-b982-da5131cffd2f@oracle.com>
+	s=arc-20240116; t=1756751625; c=relaxed/simple;
+	bh=d1d5jPzRSjDdDtjv1kql3imYzr4AXIwUF6lyDxXqt88=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=XSnp/6CWv5q4Lbmo8jW7BM5UdrllRM4vfOxXgf9yZkUS1vmhjGMthAIKIgRLIF9rQUD1Czb4T7nFwMkaMUF7cS+F1CiXlqf79x2s+tYP9Thv0VPkY23ZhRbQmlnF7rZwjp6FPzDzCOpfTs2ROitqIrczqW8+m6lyEEBi8hIKc8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=X2rMHn7U; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=xUwtK7xf; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1756751524; bh=T1yPcbAYFYUo/GbWye+XW6V
+	2J91L5+TxwHd/8DHOIbs=; b=X2rMHn7U6uVnShypSWFk+sQ2eifGBU/svttQWFJmfs1nAP83zN
+	cN4CJ0RwEdttuAtQXfKnvbYUZdONxksp7228GoePXuwICKcf3KaSgKLNKbRQOYdFqjsD7K0y4Kv
+	Isbp7amABx7pIA3YwMVBr1dgDnyHbpfsmRHEbA01MUth+Xx2Y3j8DHkLLbNJSsZEGOhQaDD/qmH
+	VVaph/IZhVC8JU++UTX0p1UHxrO0QB3zUixtDYs0Nz4z0pXQMqC+voIxij/E0K4vzLNw67J4/zO
+	MruXR5rVQRPV8ZDmQOp5UMksR7CBrBfuuj5VE5NFCESbyErsVIaBwU4+t1qSMQK32Rw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1756751524; bh=T1yPcbAYFYUo/GbWye+XW6V
+	2J91L5+TxwHd/8DHOIbs=; b=xUwtK7xfluHZUHmvm7G+uqyfp7V5Ac5BBo+s7BFKPcHog6Bv6A
+	ICC8NLrZC2JD2rw0BIBdrHu0awyL+Q55qIAA==;
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Date: Mon, 01 Sep 2025 20:32:04 +0200
+From: barnabas.czeman@mainlining.org
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alejandro Tafalla <atafalla@dnyon.com>, Luca Weiss
+ <luca@lucaweiss.eu>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: msm8953-xiaomi-daisy: fix cd-gpios
+In-Reply-To: <q4t2cmg5xtzbga2u3nnxayvb3mom5zaffhyidki2h7pmctk6f4@syj4byco3pwi>
+References: <20250830-daisy-sd-fix-v1-1-727e83a987b8@mainlining.org>
+ <q4t2cmg5xtzbga2u3nnxayvb3mom5zaffhyidki2h7pmctk6f4@syj4byco3pwi>
+Message-ID: <e9750a64c761c0e66a813e206696dc7f@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d25b2c63-32e2-4a41-b982-da5131cffd2f@oracle.com>
 
-On Mon, Sep 01, 2025 at 08:20:18PM +0200, Vegard Nossum wrote:
+On 2025-09-01 18:01, Bjorn Andersson wrote:
+> On Sat, Aug 30, 2025 at 11:59:30PM +0200, Barnabás Czémán wrote:
+>> Correct cd-gpios in xiaomi-daisy according to downstream sources
+>> it is using GPIO_ACTIVE_HIGH instead of GPIO_ACTIVE_LOW.
 > 
-> On 01/09/2025 18:56, Kees Cook wrote:
-> > > > @@ -459,13 +462,15 @@ void sym_calc_value(struct symbol *sym)
-> > > >    			sym_calc_choice(choice_menu);
-> > > >    			newval.tri = sym->curr.tri;
-> > > >    		} else {
-> > > > -			if (sym->visible != no) {
-> > > > +			if (sym->usable) {
-> > > >    				/* if the symbol is visible use the user value
-> > > >    				 * if available, otherwise try the default value
-> > > >    				 */
-> > > >    				if (sym_has_value(sym)) {
-> > > > +					tristate value = sym->transitional ?
-> > > > +						sym->def[S_DEF_USER].tri : sym->visible;
-> > > >    					newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
-> > > > -							      sym->visible);
-> > > > +							      value);
-> > > This looks a bit odd to me. Just thinking out loud: your new logic is
-> > > there to be able to use a value even though it's not visible. In the
-> > > case where it's transitional you use the .config value instead of the
-> > > condition that makes it visible.
-> > > 
-> > > Could you simply change sym_calc_visibility() instead to always return
-> > > 'yes' when the symbol is transitional? Wouldn't that simplify everything
-> > > in sym_calc_value()?
-> > It's a tristate, so "m" is also possible besides "y". (sym->visible is
-> > also a tristate. 🙂
+> Is the problem you're solving that the DT doesn't match downstream, or
+> that card detect doesn't work? Does it work after this patch, or is it
+> just aligned with downstream?
 > 
-> That would be fine, right?
+> Regards,
+> Bjorn
+
+Both, it was not matching with downstream and card detect was not 
+working.
+It is working with this patch.
 > 
-> We'd pass the if (sym->visible != no) check... we'd do the
-> 
-> newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
-> 
-> EXPR_AND() is basically min() (with n=0, m=1, y=2), so effectively it
-> would end up doing
-> 
-> newval.tri = min(sym->def[S_DEF_USER].tri, 2);
-> 
-> which is the same as
-> 
-> newval.tri = sym->def[S_DEF_USER].tri;
-> 
-> That's what your code is currently doing too, but in a much more
-> roundabout way.
-
-Right, it was this:
-
-    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
-
-But I made it effectively:
-
-  if (sym->transitional)
-    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->def[S_DEF_USER].tri);
-  else
-    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
-
-That first "if" is kind of pointless. I just sent the v3 before I saw
-this email. :P
-
-I was trying to avoid yet more indentation, but I could change it to:
-
-		if (sym->transitional)
-			newval.tri = sym->def[S_DEF_USER].tri;
-		else
-			newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
-					      sym->visible);
-
-?
-
--- 
-Kees Cook
+>> 
+>> Fixes: 38d779c26395 ("arm64: dts: qcom: msm8953: Add device tree for 
+>> Xiaomi Mi A2 Lite")
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts 
+>> b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
+>> index 
+>> 336b916729e4721b5ba8f4f7e368d0d838aa54ab..ddd7af616794290aa1f06228a95cfa1d42b006e6 
+>> 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
+>> +++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-daisy.dts
+>> @@ -296,7 +296,7 @@ &sdhc_2 {
+>>  	vmmc-supply = <&pm8953_l11>;
+>>  	vqmmc-supply = <&pm8953_l12>;
+>> 
+>> -	cd-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
+>> +	cd-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+>> 
+>>  	pinctrl-names = "default", "sleep";
+>>  	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
+>> 
+>> ---
+>> base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+>> change-id: 20250830-daisy-sd-fix-011c23468e2a
+>> 
+>> Best regards,
+>> --
+>> Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> 
 
