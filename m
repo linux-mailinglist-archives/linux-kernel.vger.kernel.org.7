@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-794773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5289AB3E70A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E53CB3E709
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82C53B13BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E259C1A84E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA64A341ACF;
-	Mon,  1 Sep 2025 14:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735CE34167D;
+	Mon,  1 Sep 2025 14:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="E0P6N9GZ";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="wf4Bv+fX"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4DAY7AB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FA2340D96;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02D8340DB9;
 	Mon,  1 Sep 2025 14:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736771; cv=none; b=kgRLdAISoNDxqw5ikHr9wfXahziPRBB8aDlNuWVeEGhyvapCZH8sf1tr0KEFgsESUqWqTqPyqYIY5Yf15inRVSxNiA2ECg593po1kRA1eB90jl3KkT+xErJN2/GyUYk7pcF6s2FY3vFUVp0q+Fow9e0qmIiHDsafr2e0Lc2IHVs=
+	t=1756736769; cv=none; b=p+fX6QM6HxylPf7p2XTDPR81nfVFNa//bviUE7dNxyZ8qB020ISPTlYitMRa9Bt+m/Q7KFCuY1LpF0XVkeM1tjVLL/UslGLzMjJ5fM0d3m6lKT6JW5+f6a63zrdoIurirGVxQesHeM7tdhLNqbRXJBebfRdbk1S/GIxYJeYViig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736771; c=relaxed/simple;
-	bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5+CEnycV8CONHAvLGH2teL5JyIaGrA1SgyHBfnntKZ9VPJy0FPvJY1R4n/SggusPprA4bewiC7YUozvdkMReBUmwEd7ttBYG7D6Z1CLpaTUd//AAMT7o63672qjnUPUvKGvcrQnhePvGraiAoKObVgMJWWZ4shqD9hR1nGmkmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=E0P6N9GZ; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=wf4Bv+fX; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1756736766; bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E0P6N9GZbbkjRIskjMa+wtonmwVN4GP9bxeH7qZLfdq35v5W3VvR/dshN+MJvyXKQ
-	 9HGkP21A2du+9UcmIjzS9ZgR3chEoB0tm9ISLhwGe+fhCyOWdp565Nv4tRdVtOAvFO
-	 SW27zqiTd9zktm9cDXWK3xxYTxlnuvI5LONy52j0MnkFDy3EUs6jeKhCJDJioxxZJY
-	 rnFcPaqbMyi2dKhWw7/Gu3R0mh7HNgNSDAuRLNasS8ooCo5TztU1AHbqeOghcuEs5r
-	 OyjeYszlfoMRR77nr13YKeXVUwXqOGQUNqy0B6xk4gOsn6nLJQGG3xL+oj9WzF5tDK
-	 O23qYVe1+/HSA==
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 06852FB07;
-	Mon,  1 Sep 2025 16:26:06 +0200 (CEST)
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 1a6Wgjm3wm5o; Mon,  1 Sep 2025 16:26:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1756736764; bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wf4Bv+fXrvZ08K5yU/Laf5fNYUpRkUhVpTTVVbEybJVUG6ppyGpgICxnvNGYQCXjh
-	 ECu9ornzdB6Sjud/OaeMVEpxDpG4cGVPgLaWuyvFNUX9eTU1/WlXmRGE4xvPzGGtWN
-	 ZnfEBCcaA7fFCN1skP53LcA1TbU2foAo0w9AHnKjKYU74aIH9HV9bH3aJeRVJaKdSp
-	 Lhu0yEJXoXahUqgmePv/suwWlvUmcIDyAOFJSFT9CZD66tG6cpaDXspPjwTr4gPzmZ
-	 bQYMdDmdvmV8d/t3VwZbOIgWqHYxirGAhudfbyMvVjl6XDNRdS4zIZI8GeYoF9zi7r
-	 txIJFZh1pg7yA==
-Date: Mon, 1 Sep 2025 16:26:03 +0200
-From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Casey Connolly <casey.connolly@linaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: visionox-rm69299: Fix clock frequency for
- SHIFT6mq
-Message-ID: <aLWs-z_bYmuld3q9@quark2.heme.sigxcpu.org>
-References: <e975da213c1f8030db50d66ec1c9597f59f25e35.1756567474.git.agx@sigxcpu.org>
- <e92049c6-1d90-482f-ad4f-0c88bb96989e@linaro.org>
+	s=arc-20240116; t=1756736769; c=relaxed/simple;
+	bh=0WO6REd4oQvsCY4rMsXYlUrit5wokYp9C49/smrjrtE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TovSVA/mPvDDxOobPEgRteJfV0KX1nd/UtpyXPkVRo6QNcX+bnu/IW2tKcgrGl3IvhwSZdpipwmuR4opQpwLYQkuFB060ZWsoIsl30Z0OkOKscDwhTg7+hoS8n+P6HiPHRCcgKgCH0PdT5hEOFMvxJbz51w7DXYV3dCNmYyV4dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4DAY7AB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB0CC4CEF0;
+	Mon,  1 Sep 2025 14:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756736769;
+	bh=0WO6REd4oQvsCY4rMsXYlUrit5wokYp9C49/smrjrtE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q4DAY7ABYkSzdE831zYkR8TEHHcXStCW1kAf5cjAQADJD6wQFfX6pj4vyhO2smCS+
+	 UjNdQ6hRjwqaSAtQ4VM0yJmlpeNJHcu8bgOg8/k1PnQlTFbxqGGKSU6zyK7wxJPNsv
+	 XOkNkvF/vuJ2Q1ihQqpWo3NbOw+sMHcn4u9/v7AhkHBTJemR2HdWTJOV6qCtJBiroH
+	 IAf6YiPlifnl/9q6qSImEeiTpUfBzk5wzELx5t5dZtM6GAyFMssvhSqugYx0mWFYgl
+	 iXaUfp4fTcJA3lXwLozHZ6UoL6laDnmbu2GVgcrjkhSNpZ+Jt0t9/nvV+ScraR/EM7
+	 rV3R4xx28LUfg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1ut5Ty-00000002HzM-3soH;
+	Mon, 01 Sep 2025 14:26:07 +0000
+Date: Mon, 01 Sep 2025 15:26:06 +0100
+Message-ID: <86wm6ickqp.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Gyujeong Jin <wlsrbwjd7232@gmail.com>
+Cc: oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gyutrange <wlsrbwjd643@naver.com>,
+	stable@vger.kernel.org,
+	DongHa Lee <gap-dev@example.com>,
+	Daehyeon Ko <4ncient@example.com>,
+	Geonha Lee <leegn4a@example.com>,
+	Hyungyu Oh <dqpc_lover@example.com>,
+	Jaewon Yang <r4mbb1@example.com>
+Subject: Re: [PATCH] KVM: arm64: nested: Fix VA sign extension in VNCR/TLBI paths
+In-Reply-To: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
+References: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e92049c6-1d90-482f-ad4f-0c88bb96989e@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: wlsrbwjd7232@gmail.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, wlsrbwjd643@naver.com, stable@vger.kernel.org, gap-dev@example.com, 4ncient@example.com, leegn4a@example.com, dqpc_lover@example.com, r4mbb1@example.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Neil,
-
-On Mon, Sep 01, 2025 at 02:24:48PM +0200, Neil Armstrong wrote:
-> On 30/08/2025 17:29, Guido Günther wrote:
-> > Make the clock frequency match what the sdm845 downstream kernel
-> > uses. Otherwise we're seeing timeouts like
-> > 
-> > ```
-> > msm_dsi ae94000.dsi: [drm:dsi_cmds2buf_tx] *ERROR* wait for video done timed out
-> > dsi_cmds2buf_tx: cmd dma tx failed, type=0x5, data0=0x28, len=4, ret=-110
-> > panel-visionox-rm69299 ae94000.dsi.0: sending DCS SET_DISPLAY_OFF failed: -110
-> > ```
-> > 
-> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> > ---
-> >   drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > index 909c280eab1fb..e65697ce6f51c 100644
-> > --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> > @@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
-> >   };
-> >   static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
-> > -	.clock = 158695,
-> > +	.clock = 149360,
-> >   	.hdisplay = 1080,
-> >   	.hsync_start = 1080 + 26,
-> >   	.hsync_end = 1080 + 26 + 2,
+On Mon, 01 Sep 2025 15:15:51 +0100,
+Gyujeong Jin <wlsrbwjd7232@gmail.com> wrote:
 > 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> From: gyutrange <wlsrbwjd643@naver.com>
+> 
+> VNCR/TLBI VA reconstruction currently uses bit 48 as the sign bit,
+> but for 48-bit virtual addresses the correct sign bit is bit 47.
 
-Thanks! I noticed I made a small mistake: the timeouts in the log were
-unrelated but the clock change in itself is correct and needed to make
-the panel show an actual picture. I've corrected that in the commit
-message and folded the patch into more changes for the driver:
+No, that's not the case. Bit 55 is used at all times to determine
+which half of the address space a VA gets resolved from.
 
-  https://lore.kernel.org/phone-devel/20250901-shift6mq-panel-v1-0-444b4abbfaea@sigxcpu.org/T/#t
+> Using 48 can mis-canonicalize addresses in the negative half and may
+> cause missed invalidations.
+> 
+> Although VNCR_EL2 encodes other architectural fields (RESS, BADDR;
+> see Arm ARM D24.2.206), sign_extend64() interprets its second argument
+> as the index of the sign bit. Passing 48 prevents propagation of the
+> canonical sign bit for 48-bit VAs.
+> 
+> Impact:
+> - Incorrect canonicalization of VAs with bit47=1
 
-Cheers,
- -- Guido
+No. We are not trying to make the VA canonical.
+
+> - Potential stale VNCR pseudo-TLB entries after TLBI or MMU notifier
+
+No. The pseudo TLB is never created the first place.
+
+> - Possible incorrect translation/permissions or DoS when combined
+>   with other issues
+
+Please explain, as "other issues" is not a valid argument.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
