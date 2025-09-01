@@ -1,255 +1,139 @@
-Return-Path: <linux-kernel+bounces-793757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D4FB3D7D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDFEB3D7D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B7A189BBCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08185189BF91
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B9922DA1C;
-	Mon,  1 Sep 2025 03:42:21 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770DD238C04;
+	Mon,  1 Sep 2025 03:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyYikQ2w"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB0C228CBC;
-	Mon,  1 Sep 2025 03:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19C221DB9;
+	Mon,  1 Sep 2025 03:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756698141; cv=none; b=bziYfymXIu/HRI4+/H198O4SP75adowkACFy079+cxaChy+8Gj2nbdPiKhHvdw0gMi88wiIhFDcnjteWEMDdk/D0OASWtzdt/cC8wc9Wyz+4QYQNqlcoSSY8odo5ZsGxngSX7L20pSrqzlboz+yhPIhcNr1sMIBKfC7fCh+qEgY=
+	t=1756698183; cv=none; b=u5GgcO7XXYaS4n3bgVq/oPe0AKTlbt9Lz6EUydCIgvTQkzLSWvr9Pfh6ngyPVmlrD99I5uzIZVbhNuzfZpqzBoHpCdrIwOrPCnQi2cDiGUplsdlzEaaoUpKNiyQo9HKIIHkse4Y3b1nNRchPRMfDHBlWeNr2q+jyH3CbjGK/QfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756698141; c=relaxed/simple;
-	bh=D5HsREXXBOlQACsbNPDaG1ZvmpOQAgV+kmk9jVniKU8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mFWkIoZY5RqiARvJnTb4HZkJ8BR8Zpk6thwSlmBRIRG0R9z8riGhFKWNC6IWZyDsJGDTbVJngzsXqt1pVdMc/B7Kvp4wQFC3zcaXUP/t4eu41wNewUgVqoSHzJXlu7hiKrhLFJyPPs9J7CHlACUZZWJByPOweh4wl4YkD1J1rq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFZSV1lfKzYQvDq;
-	Mon,  1 Sep 2025 11:42:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B9DE81A0C05;
-	Mon,  1 Sep 2025 11:42:16 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3QY4WFrVoLX31Aw--.57482S3;
-	Mon, 01 Sep 2025 11:42:16 +0800 (CST)
-Subject: Re: [PATCH v3] brd: use page reference to protect page lifetime
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, houtao1@huawei.com,
- axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250811065628.1829339-1-yukuai1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f84e1519-812b-ee19-ddb6-6670a02a0c40@huaweicloud.com>
-Date: Mon, 1 Sep 2025 11:42:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756698183; c=relaxed/simple;
+	bh=eVDJfS2vmBwBj0ehU+kXujnjMgfdwYhD36j7tAij5nQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TiHlmvbD7x9uDxRgirQFnH8296ymfvzf8eGDwgaj8mbS3S72cd1R9XQljYR8IOk497QVi7sFjyyOa1RSLaadmQzoEhmaJ+jSJRrYczNMIxkQXoRN618DqPMHMKy0s1UwGxIeUeYDHsU5Zn2y52oiqNF//WmQ/PEXYH7J6a5qFB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iyYikQ2w; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b476c67c5easo2638012a12.0;
+        Sun, 31 Aug 2025 20:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756698182; x=1757302982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkUmNTikddeYTMML9G3HM9oCIw6tu9oOLJ0SSZ6TK2o=;
+        b=iyYikQ2wGoA9QSlebcDT2I71uQxMBgBKUXbk2nyyXItQV2QqF0qGrlflNX9+hsVw+q
+         yN+zHL8oHqlaKSNVx2ZkZ6e7EjFSb2xGg+0nJLbP05F3XzRqDoT+6tnaz85EAmtxrmDh
+         Vqk25WYiU2MYDjc9ySwAm8Ct1LNC7A48hF2RxB+xkKAyHL5jVesgTzjO76FV5zK3w7Xt
+         /39RXe7CdRWU4MNPvabJ1c+UxmZG+VNx5/Ts5Zi2kESCeUBTYyYPvyEusjS6YC0C+r8i
+         hdnSPtLu2U3w2TT6Ias7KJBiobwba+au4lz2s5W7ojXvtleVILMxaHD27XbXI/lB2sPS
+         1y1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756698182; x=1757302982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gkUmNTikddeYTMML9G3HM9oCIw6tu9oOLJ0SSZ6TK2o=;
+        b=RqrrbcYbp5aI7CZxYKu3D+Aoeds6qNYptcOouJ5/O1M5Jx7ulKigGOzhOPJVm1hf+v
+         TKgkWCblY0CxMLbJhByj1seG3X+xTG2i6XBXnxrqCE0uDzx6/f9Fznsd71uEGyA7xha1
+         m/c6TkBPCGKQmIOeHRN4tEnRJeYe56vHUD3ulUA+SJxFgUEI3atOadf0TluKWF7kn5B4
+         wbBUzb7nZLzd2/VXT0Fo9WdBXFCho0TqruYsAqA9NONv6yMGNKvVzG0zOAUFn+fgXXuD
+         L2K8lgAtvNyBpnx4fX4H8rT6uXh08uj2TRQITzsDhRgdqeIgWdwnMu/jjwcV6YMMGdhQ
+         h8ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWJlDlCtwPl5zMYBMY0AOVUirXaSqie3yl3UiuMNfZ6yxIFVrkPO6WCWRWI/S5Zt95KJ+o=@vger.kernel.org, AJvYcCWqYsF8Md/X4BQbs1WvD1oFQ5HCNRZGZ+tgSrasOnRciWrvfLu42REzKXbTSnVVALFBMSDj/QW4Soq7ypR/@vger.kernel.org, AJvYcCX8t4w3ydNDXuzLBdsIq96sMv/xNLwThCr0ADj1gJz45iqOmftRrGx+2LrM7+ZmR4bwFEyJDvWerXBN7s2xgEJN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsyTdHdm+UxOwQvlfZd2OBat1BIoCeayl4r52LOHs/QvseK0Nc
+	o68wJWOnkH5k5bJSLeewfk2TBUWHoExSmuXEmj5e2czA/ZQSDgCpMQxi
+X-Gm-Gg: ASbGncvKbB/i4WbwVmIL78qlMBLvgIGqkfmVbrs1t1iIIjzt2Uk9BAiKhELbY3jUJQk
+	mVIFjBjdKZG7OL3ty+yy6AugbndRBcTYbvxgeVVtlSJv2B7CRng1gKTIO2YDLVs2d7/7ztjOh62
+	IPKvpkZCQQTjfycqcje1Q1+TkSyKf6puCkey+0g+ZBbXcAh1cgHdsZkRPrpTehwvP7oM9ovDhmT
+	8tt1zXtWjWkvBXjGITjPU63x6nN6jDa0wCadlwgtqWmJpHZMPfND+9VBK85ubcmFP7r2rIKcbYE
+	TYs20f+m+YfGk+LpqAjGjwhoEiqIFlYyHbqBy4HE4OWnotqIrCQWwE3QWmcilZ6w8J6Pc4Q13Q6
+	5OdfTI4pc7AAv9qyZVGspcoY=
+X-Google-Smtp-Source: AGHT+IFZK2yUvz4eipEije432KTVp+GWRyDeDriQPJeQEwuwH2w/3obW82hgUyWbVqQ1wtm46W5HMg==
+X-Received: by 2002:a17:902:e5cb:b0:249:f73:bbad with SMTP id d9443c01a7336-2493ec11630mr101946855ad.0.1756698181590;
+        Sun, 31 Aug 2025 20:43:01 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249067de9f1sm88398265ad.151.2025.08.31.20.42.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 20:43:01 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: andrii@kernel.org,
+	olsajiri@gmail.com
+Cc: eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	yikai.lin@vivo.com,
+	memxor@gmail.com,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v3 0/3] selftests/bpf: benchmark all symbols for kprobe-multi
+Date: Mon,  1 Sep 2025 11:42:49 +0800
+Message-ID: <20250901034252.26121-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250811065628.1829339-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3QY4WFrVoLX31Aw--.57482S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr4fAr4rtF45tr4Dtr4Utwb_yoWrtw43pF
-	WUJa4fA345Jr17Aw13Xwn8uFyFv34Iga1Sg343G3ySkr1fGr9Iy3WUKry0qa15CrWDCrWD
-	AFsxtF1DCrZ0q3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Friendly ping ...
+Add the benchmark testcase "kprobe-multi-all", which will hook all the
+kernel functions during the testing.
 
-ÔÚ 2025/08/11 14:56, Yu Kuai Ð´µÀ:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> As discussed [1], hold rcu for copying data from/to page is too heavy,
-> it's better to protect page with rcu around for page lookup and then
-> grab a reference to prevent page to be freed by discard.
-> 
-> [1] https://lore.kernel.org/all/eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk/
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
-> Changes from v2:
->   - move xas_reset() to error path;
->   - remove unnecessary checking xa_is_value();
-> Changes from v1:
->   - refer to filemap_get_entry(), use xas_load + xas_reload to fix
->   concurrent problems.
-> 
->   drivers/block/brd.c | 75 +++++++++++++++++++++++++++++----------------
->   1 file changed, 48 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-> index 0c2eabe14af3..9778259b30d4 100644
-> --- a/drivers/block/brd.c
-> +++ b/drivers/block/brd.c
-> @@ -44,45 +44,74 @@ struct brd_device {
->   };
->   
->   /*
-> - * Look up and return a brd's page for a given sector.
-> + * Look up and return a brd's page with reference grabbed for a given sector.
->    */
->   static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
->   {
-> -	return xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
-> +	struct page *page;
-> +	XA_STATE(xas, &brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
-> +
-> +	rcu_read_lock();
-> +repeat:
-> +	page = xas_load(&xas);
-> +	if (xas_retry(&xas, page)) {
-> +		xas_reset(&xas);
-> +		goto repeat;
-> +	}
-> +
-> +	if (!page)
-> +		goto out;
-> +
-> +	if (!get_page_unless_zero(page)) {
-> +		xas_reset(&xas);
-> +		goto repeat;
-> +	}
-> +
-> +	if (unlikely(page != xas_reload(&xas))) {
-> +		put_page(page);
-> +		xas_reset(&xas);
-> +		goto repeat;
-> +	}
-> +out:
-> +	rcu_read_unlock();
-> +
-> +	return page;
->   }
->   
->   /*
->    * Insert a new page for a given sector, if one does not already exist.
-> + * The returned page will grab reference.
->    */
->   static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
->   		blk_opf_t opf)
-> -	__releases(rcu)
-> -	__acquires(rcu)
->   {
->   	gfp_t gfp = (opf & REQ_NOWAIT) ? GFP_NOWAIT : GFP_NOIO;
->   	struct page *page, *ret;
->   
-> -	rcu_read_unlock();
->   	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
-> -	if (!page) {
-> -		rcu_read_lock();
-> +	if (!page)
->   		return ERR_PTR(-ENOMEM);
-> -	}
->   
->   	xa_lock(&brd->brd_pages);
->   	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
->   			page, gfp);
-> -	rcu_read_lock();
-> -	if (ret) {
-> +	if (!ret) {
-> +		brd->brd_nr_pages++;
-> +		get_page(page);
-> +		xa_unlock(&brd->brd_pages);
-> +		return page;
-> +	}
-> +
-> +	if (!xa_is_err(ret)) {
-> +		get_page(ret);
->   		xa_unlock(&brd->brd_pages);
-> -		__free_page(page);
-> -		if (xa_is_err(ret))
-> -			return ERR_PTR(xa_err(ret));
-> +		put_page(page);
->   		return ret;
->   	}
-> -	brd->brd_nr_pages++;
-> +
->   	xa_unlock(&brd->brd_pages);
-> -	return page;
-> +	put_page(page);
-> +	return ERR_PTR(xa_err(ret));
->   }
->   
->   /*
-> @@ -95,7 +124,7 @@ static void brd_free_pages(struct brd_device *brd)
->   	pgoff_t idx;
->   
->   	xa_for_each(&brd->brd_pages, idx, page) {
-> -		__free_page(page);
-> +		put_page(page);
->   		cond_resched();
->   	}
->   
-> @@ -117,7 +146,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->   
->   	bv.bv_len = min_t(u32, bv.bv_len, PAGE_SIZE - offset);
->   
-> -	rcu_read_lock();
->   	page = brd_lookup_page(brd, sector);
->   	if (!page && op_is_write(opf)) {
->   		page = brd_insert_page(brd, sector, opf);
-> @@ -135,13 +163,13 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->   			memset(kaddr, 0, bv.bv_len);
->   	}
->   	kunmap_local(kaddr);
-> -	rcu_read_unlock();
->   
->   	bio_advance_iter_single(bio, &bio->bi_iter, bv.bv_len);
-> +	if (page)
-> +		put_page(page);
->   	return true;
->   
->   out_error:
-> -	rcu_read_unlock();
->   	if (PTR_ERR(page) == -ENOMEM && (opf & REQ_NOWAIT))
->   		bio_wouldblock_error(bio);
->   	else
-> @@ -149,13 +177,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->   	return false;
->   }
->   
-> -static void brd_free_one_page(struct rcu_head *head)
-> -{
-> -	struct page *page = container_of(head, struct page, rcu_head);
-> -
-> -	__free_page(page);
-> -}
-> -
->   static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
->   {
->   	sector_t aligned_sector = round_up(sector, PAGE_SECTORS);
-> @@ -170,7 +191,7 @@ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
->   	while (aligned_sector < aligned_end && aligned_sector < rd_size * 2) {
->   		page = __xa_erase(&brd->brd_pages, aligned_sector >> PAGE_SECTORS_SHIFT);
->   		if (page) {
-> -			call_rcu(&page->rcu_head, brd_free_one_page);
-> +			put_page(page);
->   			brd->brd_nr_pages--;
->   		}
->   		aligned_sector += PAGE_SECTORS;
-> 
+This series is separated out from [1].
+
+Changes since V2:
+* add some comment to attach_ksyms_all, which notes that don't run the
+  testing on a debug kernel
+
+Changes since V1:
+* introduce trace_blacklist instead of copy-pasting strcmp in the 2nd
+  patch
+* use fprintf() instead of printf() in 3rd patch
+
+Link: https://lore.kernel.org/bpf/20250817024607.296117-1-dongml2@chinatelecom.cn/ [1]
+Menglong Dong (3):
+  selftests/bpf: move get_ksyms and get_addrs to trace_helpers.c
+  selftests/bpf: skip recursive functions for kprobe_multi
+  selftests/bpf: add benchmark testing for kprobe-multi-all
+
+ tools/testing/selftests/bpf/bench.c           |   4 +
+ .../selftests/bpf/benchs/bench_trigger.c      |  61 +++++
+ .../selftests/bpf/benchs/run_bench_trigger.sh |   4 +-
+ .../bpf/prog_tests/kprobe_multi_test.c        | 220 +---------------
+ .../selftests/bpf/progs/trigger_bench.c       |  12 +
+ tools/testing/selftests/bpf/trace_helpers.c   | 234 ++++++++++++++++++
+ tools/testing/selftests/bpf/trace_helpers.h   |   3 +
+ 7 files changed, 319 insertions(+), 219 deletions(-)
+
+-- 
+2.51.0
 
 
