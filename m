@@ -1,117 +1,86 @@
-Return-Path: <linux-kernel+bounces-794287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5C8B3DF94
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:05:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2EC1B3DFA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891EF16747D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B213AF502
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F6631280F;
-	Mon,  1 Sep 2025 10:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A421D30F81F;
+	Mon,  1 Sep 2025 10:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nk9KWfMc"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k81Fohbn"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B17310640;
-	Mon,  1 Sep 2025 10:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B230F555
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756721012; cv=none; b=hPWuxclcdpF9Ym+dJ0rLXl4xR/w8jLUP11rheXDp/TpIW5Fuz7cNqeXRTk/LahEZhNqBycWRISjn3VVp8xMVNMxUEEybWCTCcwl/tgQ0MAcZLmytFgmSCSEdsNMmb8ThRzNZoHbiLUML68g+lwDJTmQ2ZKU3MjPJQ8nIPZoyuY4=
+	t=1756721056; cv=none; b=Iu3yGqfIzs2HltvNfQdYnJttO2/7Pauo6nfzBW6jax3ivzKzsZRBNU2Otxxa29L1r2Pl8ITDAmggcfdYvMDle+5AC28N9BLijrvoaLqvaNzjhOGVeFtzECkdJA2OWnKm4BtgKgBSPCyhzk+4jLE31/7l6zWDCN72D9BOIDQf/Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756721012; c=relaxed/simple;
-	bh=yrtQan3KNh29em6qPEBh3l99dn4JDYK0uPL5nCqlsZ0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hrWz4dpuuZ1qh18MAMVPvd2BxRBYuYvlYvFEZt4LEbkAcQ20pLDfaxFdrkVwEzJXGn1hEY9n3WmNaX42dFWBTlOk6lV5FjcXoFK+lt0yIJ8iQMhn+piZm/7+0gwVJsTPuMEan9yDLBk6pYaytSbCJuiJ8+2FzHCWwnD/5tU40Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nk9KWfMc; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 581A2oCs2784754;
-	Mon, 1 Sep 2025 05:02:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756720970;
-	bh=ntOi9ryCAdwqMqj1SOXVPIs/4EOgcjeBjx4xva9890o=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=nk9KWfMcJT59L9FwG28bHQYpBIFz2iV6S6Z3rsKmF6BCbo+2aVZx+H2KTtW+7zzMw
-	 AmK6O8VMW/PJzAk1aCRYNrVwYxwIfkvdVqpOIc+4/yFhh8ykX3G7b56VbDYaGChAFV
-	 5Phs/Tmgf1u+2DP/JpwaYj5RL435sVcBaDuB4EAE=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 581A2oGB1899734
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 1 Sep 2025 05:02:50 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
- Sep 2025 05:02:49 -0500
-Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 1 Sep 2025 05:02:49 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 581A2neW159899;
-	Mon, 1 Sep 2025 05:02:49 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 581A2m0s011203;
-	Mon, 1 Sep 2025 05:02:48 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <namcao@linutronix.de>, <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
-        <christian.koenig@amd.com>, <sumit.semwal@linaro.org>,
-        <sdf@fomichev.me>, <john.fastabend@gmail.com>, <hawk@kernel.org>,
-        <daniel@iogearbox.net>, <ast@kernel.org>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linaro-mm-sig@lists.linaro.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net-next v2 6/6] net: ti: icssg-prueth: Enable zero copy in XDP features
-Date: Mon, 1 Sep 2025 15:32:27 +0530
-Message-ID: <20250901100227.1150567-7-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250901100227.1150567-1-m-malladi@ti.com>
-References: <20250901100227.1150567-1-m-malladi@ti.com>
+	s=arc-20240116; t=1756721056; c=relaxed/simple;
+	bh=MancrAEGA6sdg9/uF8v3qhw78equA5/hoxm98aHb8ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KVW2xIutvy80gS6oBDN73k+DtS07Isz/X/y/Qw84Zb2/TqEUSoL7tdcfESWkASc6HRt24WpqhUbK22QOlB7erGrsc8NuZATRUCobPUUgeZo6QTfxBlD4Ilc8FBaWkpFExpdcyeIJY3BcZt092kHkkTib38RW1NB3wRt1b1hw76Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k81Fohbn; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MancrAEGA6sdg9/uF8v3qhw78equA5/hoxm98aHb8ks=; b=k81FohbneTQTZBlEDnk0CyDtXG
+	dN8wzR74+I87KlL53HPrlSFD9WgjotgPs6Rs7ZOYyg1fAygBJ8mJXz6TE6vWgVdqn9EtxlZTWAYNt
+	C+EDwnIS+NjCkFmxWFpVRn9WVTA7gCMz1QTA3SKU9m+vNYKNjS0PVi9LtiiYaSlRViyo4r0ztiTy8
+	fQAVE3MTsP5xMmUgIiGu06QhL5RseWa1FTF0AkWtZljp4Ynqo2eE+GS2HBMAYhjrgrRdeDnBphVjl
+	73xyAdFyb0Uo/4wXFEvASU6f77PgFGM/mpAHMQGAMO+7k8z9zEigcLymdNsi4mOJlhkrhR2wqfSYt
+	LS0plh0Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ut1OC-00000003hZY-1eEi;
+	Mon, 01 Sep 2025 10:03:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4469B300342; Mon, 01 Sep 2025 12:03:51 +0200 (CEST)
+Date: Mon, 1 Sep 2025 12:03:51 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal Koutn?? <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v4 0/5] Defer throttle when task exits to user
+Message-ID: <20250901100351.GG4067720@noisy.programming.kicks-ass.net>
+References: <20250829081120.806-1-ziqianlu@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829081120.806-1-ziqianlu@bytedance.com>
 
-Enable the zero copy feature flag in xdp_set_features_flag()
-for a given ndev to get the AF-XDP zero copy support running
-for both Tx and Rx.
 
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 63a132a435f9..4aa2da6f32b5 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1550,7 +1550,8 @@ static int prueth_netdev_init(struct prueth *prueth,
- 	xdp_set_features_flag(ndev,
- 			      NETDEV_XDP_ACT_BASIC |
- 			      NETDEV_XDP_ACT_REDIRECT |
--			      NETDEV_XDP_ACT_NDO_XMIT);
-+			      NETDEV_XDP_ACT_NDO_XMIT |
-+			      NETDEV_XDP_ACT_XSK_ZEROCOPY);
- 
- 	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
- 	hrtimer_setup(&emac->rx_hrtimer, &emac_rx_timer_callback, CLOCK_MONOTONIC,
--- 
-2.43.0
-
+Thanks! I'll queue these in queue/sched/core and if nothing goes pop,
+I'll move them along to tip.
 
