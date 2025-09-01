@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-793689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F8CB3D6D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E85B3D6DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15853176F35
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC2118978F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106972045AD;
-	Mon,  1 Sep 2025 02:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3277A21256C;
+	Mon,  1 Sep 2025 02:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AC4NPwnK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDFK9zVG"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EBA1EDA0E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BE610F2;
+	Mon,  1 Sep 2025 02:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756695095; cv=none; b=ORSLTynpgzvcn29bI7v7ygpr0qzRGnjjIfofPbBsQdDFD4GDZdLrS7L/q1W/X00sQWIy4XYCJpQV1fJONSTsRPACCPIU0KKUWDK1xMr2MGslBVOzt5AeUfjOC9wIEF6WJ1lGRuGla6OjNiAxZea55bJpBDlaXuWNk7t3LWllbAs=
+	t=1756695369; cv=none; b=kA6wiNhHSvYm1+1faTq+gqeD1J53JFjh/LP1wpMHzbN+v3Ubwwp2cMv/CcIzpbLIr1CpNcHQj++2lL1ekCRh7OqybaWuOrBVKtnCeE6iO26HC3w2yzxC+7e1wpTX9KtdCmNNEj2Q53mrzdbY0DOd++odadxi28vZv1EGxp/wdHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756695095; c=relaxed/simple;
-	bh=Ph3PHxH3IDjbrn6uZoSPtSu21RAn/NfeUzKOS+rTGHE=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iZkb/SRcm1uEcaXoDAtxAX1d8LjYEDROST1iloZ01TbPMObgyyog0pl953tdKiBZ/lBjeLvhHxBBh1iXRMNrB6WdQYPk+0+weXKUspmpBRtol0iDVAJM2zmUELdwdpbkK5pkpOaMXtAoLt92oaRMlWMJ0OMKb/vfLeaStYy7LS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AC4NPwnK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756695091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/BkoUn/3LVi8bOJIvIwXSjQ7FkDfIUIzvpCA+z3b9AI=;
-	b=AC4NPwnK3WKfgYCCzJzRFwLg/tlvf9c4ITYInhFxEUTfijTXcNm4MSAWA+4qugSSxZnZlW
-	NBRBvoDFpVFXUubd+KgVwMOtnG9O97Hmm6MxsRRrPhU+puu/+Jdy5mrKladhSOK0hQEB7I
-	v1PzFyizSRuf+mPufAGmjMcOAlGCzMA=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-604-zRFpAbOOM7CCb-ZjMo8L6A-1; Sun, 31 Aug 2025 22:51:30 -0400
-X-MC-Unique: zRFpAbOOM7CCb-ZjMo8L6A-1
-X-Mimecast-MFC-AGG-ID: zRFpAbOOM7CCb-ZjMo8L6A_1756695089
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70dd6d255c4so103954556d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:51:30 -0700 (PDT)
+	s=arc-20240116; t=1756695369; c=relaxed/simple;
+	bh=PmewVBZ+ucHRnuv9jxcTPx5wY8ryXlkXK5HxMfeMbF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZaxuWbcZyjJgjnsOQTv2/j+A/LaVg/LL0fUfM1Aw1WHETKsZc1GyGB83FLhx2qqFGys+GZi7RW7kVk6vDpeSOvcs1GFMkROJ42q/6Q3jLfpO4rAFuFZoj1tDh/sbZ+hMqgcyCEL4Jt3P/Qz/U8ntlxMdwbHDdvpwouclnu9v+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDFK9zVG; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-54487445158so913398e0c.3;
+        Sun, 31 Aug 2025 19:56:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756695367; x=1757300167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PmewVBZ+ucHRnuv9jxcTPx5wY8ryXlkXK5HxMfeMbF0=;
+        b=nDFK9zVGlUG5LF/L+nlPKECwWD3ppuXnCvVUq/OiD58B3bYCShGA1xOz64weSU8jNx
+         EIhVJnvVeWGArtQFgvoyHkoCN4cgCMrC6LWoJ5KCGKkxxThWzYhQWv5QA+tPzQngv4J8
+         tpplUSSIHA0lDCzt/1vuBszvya59Xh82ShzDvlhQNyIQYf2DqWNMfuiUZobjAKK2i53m
+         TiuRbvi+kCekKK0/I6t1z8FEV8wKosJgxUwkw0LNwSTUKMeT6spNVuzpYEaJSeNrde5E
+         FzEjtqV/5BYgjiu9S9CEOr8wKpYd2EMiq/2JojyHNe0mTPZ597T+/tSmCjtnXNU+eJD2
+         LmJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756695089; x=1757299889;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/BkoUn/3LVi8bOJIvIwXSjQ7FkDfIUIzvpCA+z3b9AI=;
-        b=o4A8HC1E12UQIf93SJRjgwDJXvdrN0bUuG+rMO6aueVsYV8TYGqFI1iDI1zqUsR96z
-         rapeemHxyDpdhoLB0zgpZBNDv6wmwsbvZOgspaFQHONPDnSbFuh1biNNnCI8HmbIHuFY
-         4HH53sbkpYGkfasYm6OlOfG284cYvYVarYnikztuLFnVMb7g4K7Ev4gX0tUAMFD2TE6g
-         hAG+3p96RORTFH92tPXF/AUtDyrZ/taBm2Xa6AmLhDYbe8dapSHcDKA+KnGeSne02una
-         MUUI0xpYiTE5csO96LEOZyQblR/1KBhsPa9xYIN63e6dSQmgn2FkWS1sNRnJXNSqggBK
-         akXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHKALg+9XF4Yw+q3mn/8/IVvYyleyNh/be5ouYolvsoNEbNZXfWbRwWnti3biOIWAN8QRhu89yz3izRas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaHDPcR8NGN+yjhmE93D2CpcoCduie4wxRtPUNwnAEoxGGUZnz
-	KX/yWOud7oU5FW1jAARqWU0safPg/fE2z1gfXGR9bDTtrIuxEz2EfYqYKVXCWHc8Nz2CiEFtsln
-	Tq0XcYg4RmyZstj3gB1hwcr/X2MpmdknAWjlYQxImAeeEEJoeqkQ2AGgTP5Y94pBQRQ==
-X-Gm-Gg: ASbGncvSxl+kxyB8ZBayNDrxfq0JJoqPEYYTFnEIZ8e4cxuWG/4lNLY9HEZocM1A8OS
-	N2/yqh3OD6/Z2Y+F3rfkoEOhMGlhLf2ANLzcP+6vRMhyIHxg9fwTXtWk1YPJTkNTQp5aGb6wcvc
-	vQtByd+ZfD7GqscPlg0bqEJc6Vyw7CUwj6sJBvIajQZhzBeYM1dgWMmSzlcjhHp0fTqqAoLTPxU
-	oQdM6Q6v+04OPye6WrFDlBmEHBceVBMI9j6VS9Nuuew4rBz3pAsUltvDt9RxFxC+M13CtewV4mZ
-	gs/HlZ6OzP1uOkSe2Iu/pED7vmDVrvX8U1c9NExDNHYIVCWj0SZxwyF79G8YiB+oHGdhOs/2TMz
-	iPMbM4er53A==
-X-Received: by 2002:ac8:58c1:0:b0:4b2:dfc5:fbee with SMTP id d75a77b69052e-4b31da099cbmr70781111cf.32.1756695089407;
-        Sun, 31 Aug 2025 19:51:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkoufCnFgjbgzFW+oNc3o0VuyQRzDbMe1YkLx0QJxMgDX5ZpbTSK/aus3UJJV/ZoqngeX9tw==
-X-Received: by 2002:ac8:58c1:0:b0:4b2:dfc5:fbee with SMTP id d75a77b69052e-4b31da099cbmr70780971cf.32.1756695089001;
-        Sun, 31 Aug 2025 19:51:29 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b54d06csm53949631cf.13.2025.08.31.19.51.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Aug 2025 19:51:28 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <197dd0c0-f4cc-4e75-accb-6bf85ea5291d@redhat.com>
-Date: Sun, 31 Aug 2025 22:51:27 -0400
+        d=1e100.net; s=20230601; t=1756695367; x=1757300167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PmewVBZ+ucHRnuv9jxcTPx5wY8ryXlkXK5HxMfeMbF0=;
+        b=qJDkxD2z1fVAe3ZYlCsva9SMTdN9aRxySg/hgLfrTViu7xL9uR99ic8IarcqGP85Vf
+         GpjAZdLUMGMT56aHhdAms8nwplXIcXvbfgYOxURQI1zyZ0c/6rPpt/BY7Vp6Jsir7QBQ
+         zfjPLdEpMkPhg828I0M93Q/86nIsPT/rjVok7c1zdAHvz3G3XThX5CJg/j2lg5PAiKsy
+         86O0UUNH4of0tkKWsJF1YXe/jQ0a3DYG00cl/90gGgc88PNNqlaO4BJfKTMn6fm/UL9z
+         RISDJh8JR2dI1WU/7E7QhPYDbPESJEjktOy1zSR1MewhKGo484jxIYEyrj/ToYLCIrT5
+         P58w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHTJQhxAGf2imh/5J/UVi3Xhw38LxyD86qDK1Zz6KgT7p2YbuEW6gzO632HJwX3/bNb9mU8rOla2xgwZMN@vger.kernel.org, AJvYcCWf6uAUBy3ia2Tk/6UmYGY82mOy3StDr/c8vvFfvARnD0ucMyKElGWhpaDPa81/oY/8veeadfd3N15c@vger.kernel.org, AJvYcCWnN251zruJqBBIDXtgDL6VJhmE8ODXIgUCgvaTN3AxurC/I0zqpawGdEKPDYjdPqc1oLQu03bE6s2QD+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBU5cqgoOAQLabS2idftTZZRTGNeuRqZ6jTe3WI7VJwdOCzK3J
+	qyQSvmv7h8rCRCr1XB0EzYDDqIqkLUEWilMPoY/PkxwvBMK46/BP1Qr2p5fJLUeyun9EKHucAUD
+	pQLt55Tty0nZxes76ZIUnZI+JXJHi4o8=
+X-Gm-Gg: ASbGnctuEpxEawaKLUBK3uFhAvRlZ/hX9fIAnOHYER3n7vORNi+zJSP4dn10U6mVi7m
+	niG1A/swYgChzVvA/h1TB0u48qoLcNwUAaf5kgVe/n2YnMAi9290N1NsH5Xo0lUWyBGJIdm8EPv
+	eUNDSb2YtDgG0cTD/hztEXUsD5rdBl5Bju1AUpXYGlPVF1Qd6OfmYbqsCu4RBEh6gDL1AEq6958
+	qPuT4gUp31bNJARACGT96elq9ShHPJj53Q0cPA=
+X-Google-Smtp-Source: AGHT+IGobaK+q3RUi/OA10JC+T+4OfjWR7pLORzFTtEml7V6OwEJ7QsO3zMWtwtakawBUK6DStwTfJ6uzLsKLmEJlo0=
+X-Received: by 2002:a05:6122:8c21:b0:541:fdc4:2551 with SMTP id
+ 71dfb90a1353d-544a01d3574mr1426719e0c.3.1756695366911; Sun, 31 Aug 2025
+ 19:56:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/33] cpuset: Propagate cpuset isolation update to
- workqueue through housekeeping
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, cgroups@vger.kernel.org
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-18-frederic@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250829154814.47015-18-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250831030855.957707-1-alex.t.tran@gmail.com> <CAMRc=Me5L4XtriaFSwcE9Vqri+6d+Rfn-4FzKUrN_VSOgfA_WA@mail.gmail.com>
+In-Reply-To: <CAMRc=Me5L4XtriaFSwcE9Vqri+6d+Rfn-4FzKUrN_VSOgfA_WA@mail.gmail.com>
+From: Alex Tran <alex.t.tran@gmail.com>
+Date: Sun, 31 Aug 2025 19:55:55 -0700
+X-Gm-Features: Ac12FXxp9jNWlJRXltqiLXfLh0CVzev7UmdUyV3I03fJLpPIa7QDc_Mrq4p9PY8
+Message-ID: <CA+hkOd6UsrQWbLRPOMyUPLBoytFa_6zew05TRuBEhMSr4T1afg@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: codecs: tlv320dac33: switch to gpiod api
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+	linus.walleij@linaro.org, shenghao-ding@ti.com, kevin-lu@ti.com, 
+	baojun.xu@ti.com, linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Aug 31, 2025 at 5:55=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> The fact that the call to gpio_request() is still there made me think
+> immediately that the conversion is incomplete. I looked into why you
+> didn't change that and noticed that the global GPIO number comes
+> through platform data, specifically: struct tlv320dac33_platform_data.
+> That platform data struct however is not used in the kernel -and even
+> the header that defines it - sound/tlv320dac33-plat.h - is never
+> included outside of the driver. Seems to me like the main obstacle to
+> completing the conversion is not even used in mainline and can be
+> dropped?
+>
+> Bart
 
-On 8/29/25 11:47 AM, Frederic Weisbecker wrote:
-> --- a/kernel/sched/isolation.c
-> +++ b/kernel/sched/isolation.c
-> @@ -102,6 +102,7 @@ EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
->   int housekeeping_update(struct cpumask *mask, enum hk_type type)
->   {
->   	struct cpumask *trial, *old = NULL;
-> +	int err;
->   
->   	if (type != HK_TYPE_DOMAIN)
->   		return -ENOTSUPP;
-> @@ -126,10 +127,11 @@ int housekeeping_update(struct cpumask *mask, enum hk_type type)
->   
->   	mem_cgroup_flush_workqueue();
->   	vmstat_flush_workqueue();
-> +	err = workqueue_unbound_exclude_cpumask(housekeeping_cpumask(type));
->   
->   	kfree(old);
->   
-> -	return 0;
-> +	return err;
->   }
+Since struct tlv320dac33_platform_data isn't used in the kernel and the
+corresponding header file it's in isn't used outside of the driver,
+I'll go ahead
+and drop them and send in a v2. Thanks for the review.
 
-Actually workqueue_unbound_exclude_cpumask() expects a cpumask of all 
-the CPUs that have been isolated. IOW, all the CPUs that are not in 
-housekeeping_cpumask(HK_TYPE_DOMAIN). So we do the inversion here or we 
-rename the function to, e.g. workqueue_unbound_cpumask_update() and make 
-the change there.
-
-Cheers,
-Longman
-
+--=20
+Alex Tran
 
