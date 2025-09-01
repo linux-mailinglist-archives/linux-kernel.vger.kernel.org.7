@@ -1,318 +1,109 @@
-Return-Path: <linux-kernel+bounces-794164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6567B3DDB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D281B3DE2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C4B7A4BBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2565D189C89D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E88307AFA;
-	Mon,  1 Sep 2025 09:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwqZW8nA"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6B33054F4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08B230AAD3;
+	Mon,  1 Sep 2025 09:20:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AB730ACEA
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717866; cv=none; b=gFjyZYaxAigwgzxedOJjSXzYOgmQkKQ5mGYD05VyDzIt88kY2fUeAb5nMrS/ODq4vPqPxjjUUp4u0qsW0Z9B1RJV8RQkGlAkj0lf5NCsQmyIZFtwuuSarlK7dxbrQ07e0wadg8ki3NB3V3Hc4A5ieFEz7FLjcMyCaX99EBDd68E=
+	t=1756718437; cv=none; b=ms2HFqLEwKRHPKbVOqsF1bVBkT2OU+75+oZKLzkgmv0+S5VCqGF8A5wZX5/l+nCHmken/ifG+XH3IofzHuV24I2QoBoZvID2+N9cHlTX8a1f4yuK3nUMr/8D+QENGpkPX2Y2IwR6IdaGoGtMlXShZX9HLZc7DqNaavgE9JEmu2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717866; c=relaxed/simple;
-	bh=C6PSeroBBAXUkCfk//yXsUzvuy7IJKNHAggHy7Mv74s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OcLZkaM8Xp1xMe0ca97Sa4YHx+gxay2dRvvZeOUDnMu1nSQF8Lae6ViQ7qxmcv9QjdkNqnIsw+h/hYkyb9fSMv8whZqCQ+WWCFiJFp0S0olEoFfqVUf1grPXObVU8ZH2gRld7si1xqyIDQem3Z4A0bpYHrV/lFDhm0R5z4SQr7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwqZW8nA; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-61d2ab4bcbeso1740816a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756717863; x=1757322663; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w0cook3tZu/pahjAdhVSuHrsuCcIggtxoSDo9eGj8lY=;
-        b=MwqZW8nAtyuMlF7B2RBeVETH9FrSyktN1GKc8kQX/7DQ8o50W7y0KgSt9zUXEWQSZA
-         ylpXJ2l7m0ItjUSR7zrwbQXF5XXaY9E3MGwUbmMEmuy/8CatiW9RDcBqTL1Ywh3wdxvI
-         N48/n+e1pNOv1oIIL0zk18lY0ZXHAO1IhpFhvL5oiHgj8Kz1AZfi/i0MQyboU4M5oHol
-         xo7bKZUeESQKVrFQAREOeFWajOP3BkCWT9VnrqdX1exmLF3aj4KBlHCzIEGeaeFWuSzk
-         /xtA2L2MM5BqtwKiiiqeYJjhZzo0k0gwoM9wSkPGhOH195Rq9Z5DuLhDFeLdegfBKgHP
-         i/fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756717863; x=1757322663;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w0cook3tZu/pahjAdhVSuHrsuCcIggtxoSDo9eGj8lY=;
-        b=BnrKs3oMDmc7W7hgjIpfqUPBS8T71ku11SvFTVRRor+ZfOMHWiLGOWBRNjx7GMaDQN
-         kZMndavF6n3eX/G4rJ4Bl5nXLXl21M9lcLhUxdysE5ku4qEaKZG4lFE5vrLRKNDnTX0Z
-         aMubEHjq/NcOjtKBVzHCZyW3bczsY4hyl0zJvqthmWKQMUZn/4p//YsViQKYSZWpYdHI
-         g7K5zN/NovQnlR9YXABrGSE7ojfTuQkwdZ5DabBL4ybf9G/Mqj6N/yWGj6SELwBZxICD
-         hqhOxZ6Z7npyN3fkgp2aOIkriKQAxuNB+MtvFc+8bz0Cs41b4qLvXMO2RM6ODWBwso45
-         +DNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo0z/z2Uibh9XRwfcfmkJQ8rC6VIQVFG0UQysN4cIgL9Jaq5ep/aopTdk7v4da51ECje5oEA3qv5yoKc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybEOS9odzF83tr+I+4gZ5364KoLA+EfLnW1sr00f8mGM+iALDR
-	j9Gdkx80+t67fiUP4tIisQH4D3FYInAEglDMJs51IFjvz/ZFWknnfXN0GdZj1fXP6cxnvWn5vdg
-	i7onjdKXf6Q==
-X-Google-Smtp-Source: AGHT+IF4+qEShLjVFt7BDIbHBSFiIQP/xPnM97kkCf5E+r9Z0xWv6LIr8w+OXj7NGIbaiVsTggH4G2R4LI8M
-X-Received: from edj28.prod.google.com ([2002:a05:6402:325c:b0:61c:59a0:3f3b])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:52cb:b0:609:9115:60f1
- with SMTP id 4fb4d7f45d1cf-61d2699f676mr5835853a12.16.1756717857779; Mon, 01
- Sep 2025 02:10:57 -0700 (PDT)
-Date: Mon,  1 Sep 2025 09:10:50 +0000
-In-Reply-To: <20250901091050.1935505-1-abarnas@google.com>
+	s=arc-20240116; t=1756718437; c=relaxed/simple;
+	bh=XzqH1NICLb4/VMOykRFai7epHyrJvlLJ0+3DvxnlzmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GuAlE4Ofzitdbfzcb6zKmYkWgzqfsDHTwYuqdqbeKMIpMIZouyjsgsyU15qcF9tz4BWu/ttv8O+jZSx2W8OZTXfrQ3C+HmjJriszekqb39k4BI2mfu0qAty0Y2aYIKTPNCLAcrzuYmm7H87vPUShfuiA9XwajOlEuvx8wFLfi/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cFjlg27GYz9sSn;
+	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id b3NZTwEC2xRh; Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFjlg1PMcz9sSm;
+	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 17A0B8B78C;
+	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 4ohyUc15GJ95; Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE2AF8B77B;
+	Mon,  1 Sep 2025 11:10:54 +0200 (CEST)
+Message-ID: <35c5cd6d-6929-42e5-9505-b38ed316da8b@csgroup.eu>
+Date: Mon, 1 Sep 2025 11:10:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250901091050.1935505-1-abarnas@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250901091050.1935505-3-abarnas@google.com>
-Subject: [PATCH 2/2] staging:media: atomisp: Whitespaces cleanup in vmem.c
-From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/pasemi: Add a null pointer check to the
+ pas_setup_mce_regs
+To: Kunwu Chan <chentao@kylinos.cn>, mpe@ellerman.id.au, npiggin@gmail.com,
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com,
+ "maddy@linux.ibm.com" <maddy@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20240117091706.153431-1-chentao@kylinos.cn>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20240117091706.153431-1-chentao@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Whitespaces cleanup to conform with kernel style and improve readability.
 
-Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
----
- .../pci/hive_isp_css_common/host/vmem.c       | 91 ++++++-------------
- 1 file changed, 27 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vme=
-m.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-index fd640e100591..d8a9aaa7b302 100644
---- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-+++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-@@ -13,19 +13,18 @@
- #endif
- #include "assert_support.h"
-=20
--
- /* Copied from SDK: sim_semantics.c */
-=20
- /* subword bits move like this:         MSB[____xxxx____]LSB -> MSB[000000=
-00xxxx]LSB */
--static inline unsigned long long
--subword(unsigned long long w, unsigned int start, unsigned int end)
-+static inline unsigned long long subword(unsigned long long w, unsigned in=
-t start,
-+					 unsigned int end)
- {
- 	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
- }
-=20
- /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx00=
-00xxxx]LSB */
--static inline unsigned long long
--inv_subword(unsigned long long w, unsigned int start, unsigned int end)
-+static inline unsigned long long inv_subword(unsigned long long w, unsigne=
-d int start,
-+					     unsigned int end)
- {
- 	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1)=
-);
- }
-@@ -35,13 +34,8 @@ inv_subword(unsigned long long w, unsigned int start, un=
-signed int end)
- #define move_upper_bits(target, target_bit, src, src_bit) move_subword(tar=
-get, target_bit, src, src_bit, uedge_bits)
- #define move_word(target, target_bit, src) move_subword(target, target_bit=
-, src, 0, uedge_bits)
-=20
--static void
--move_subword(
--    unsigned long long *target,
--    unsigned int target_bit,
--    unsigned long long src,
--    unsigned int src_start,
--    unsigned int src_end)
-+static void move_subword(unsigned long long *target, unsigned int target_b=
-it,
-+			 unsigned long long src, unsigned int src_start, unsigned int src_end)
- {
- 	unsigned int start_elem =3D target_bit / uedge_bits;
- 	unsigned int start_bit  =3D target_bit % uedge_bits;
-@@ -51,7 +45,8 @@ move_subword(
-=20
- 	if (subword_width + start_bit > uedge_bits) { /* overlap */
- 		unsigned long long old_val1;
--		unsigned long long old_val0 =3D inv_subword(target[start_elem], start_bi=
-t, uedge_bits);
-+		unsigned long long old_val0 =3D inv_subword(target[start_elem],
-+							  start_bit, uedge_bits);
-=20
- 		target[start_elem] =3D old_val0 | (src_subword << start_bit);
- 		old_val1 =3D inv_subword(target[start_elem + 1], 0,
-@@ -59,18 +54,14 @@ move_subword(
- 		target[start_elem + 1] =3D old_val1 | (src_subword >> (uedge_bits - star=
-t_bit));
- 	} else {
- 		unsigned long long old_val =3D inv_subword(target[start_elem], start_bit=
-,
--						 start_bit + subword_width);
-+							 start_bit + subword_width);
-=20
- 		target[start_elem] =3D old_val | (src_subword << start_bit);
- 	}
- }
-=20
--static void
--hive_sim_wide_unpack(
--    unsigned long long *vector,
--    unsigned long long *elem,
--    hive_uint elem_bits,
--    hive_uint index)
-+static void hive_sim_wide_unpack(unsigned long long *vector, unsigned long=
- long *elem,
-+				 hive_uint elem_bits, hive_uint index)
- {
- 	/* pointers into wide_type: */
- 	unsigned int start_elem =3D (elem_bits * index) / uedge_bits;
-@@ -99,12 +90,8 @@ hive_sim_wide_unpack(
- 	}
- }
-=20
--static void
--hive_sim_wide_pack(
--    unsigned long long *vector,
--    unsigned long long *elem,
--    hive_uint elem_bits,
--    hive_uint index)
-+static void hive_sim_wide_pack(unsigned long long *vector, unsigned long l=
-ong *elem,
-+			       hive_uint elem_bits, hive_uint index)
- {
- 	/* pointers into wide_type: */
- 	unsigned int start_elem =3D (elem_bits * index) / uedge_bits;
-@@ -128,10 +115,7 @@ hive_sim_wide_pack(
- 	}
- }
-=20
--static void load_vector(
--    const isp_ID_t		ID,
--    t_vmem_elem		*to,
--    const t_vmem_elem	*from)
-+static void load_vector(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_e=
-lem *from)
- {
- 	unsigned int i;
- 	unsigned long long *data;
-@@ -154,10 +138,7 @@ static void load_vector(
- 	udelay(1); /* Spend at least 1 cycles per vector */
- }
-=20
--static void store_vector(
--    const isp_ID_t		ID,
--    t_vmem_elem		*to,
--    const t_vmem_elem	*from)
-+static void store_vector(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_=
-elem *from)
- {
- 	unsigned int i;
- 	unsigned int size =3D sizeof(short) * ISP_NWAY;
-@@ -166,9 +147,9 @@ static void store_vector(
- 	//load_vector (&v[1][0], &to[ISP_NWAY]); /* Fetch the next vector, since =
-it will be overwritten. */
- 	unsigned long long *data =3D (unsigned long long *)v;
-=20
--	for (i =3D 0; i < ISP_NWAY; i++) {
-+	for (i =3D 0; i < ISP_NWAY; i++)
- 		hive_sim_wide_pack(data, (unsigned long long *)&from[i], ISP_VEC_ELEMBIT=
-S, i);
--	}
-+
- 	assert(ISP_BAMEM_BASE[ID] !=3D (hrt_address) - 1);
- #if !defined(HRT_MEMORY_ACCESS)
- 	ia_css_device_store(ISP_BAMEM_BASE[ID] + (unsigned long)to, &v, size);
-@@ -179,11 +160,8 @@ static void store_vector(
- 	udelay(1); /* Spend at least 1 cycles per vector */
- }
-=20
--void isp_vmem_load(
--    const isp_ID_t		ID,
--    const t_vmem_elem	*from,
--    t_vmem_elem		*to,
--    unsigned int elems) /* In t_vmem_elem */
-+void isp_vmem_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_elem=
- *to,
-+		   unsigned int elems) /* In t_vmem_elem */
- {
- 	unsigned int c;
- 	const t_vmem_elem *vp =3D from;
-@@ -197,11 +175,8 @@ void isp_vmem_load(
- 	}
- }
-=20
--void isp_vmem_store(
--    const isp_ID_t		ID,
--    t_vmem_elem		*to,
--    const t_vmem_elem	*from,
--    unsigned int elems) /* In t_vmem_elem */
-+void isp_vmem_store(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_elem =
-*from,
-+		    unsigned int elems) /* In t_vmem_elem */
- {
- 	unsigned int c;
- 	t_vmem_elem *vp =3D to;
-@@ -215,15 +190,9 @@ void isp_vmem_store(
- 	}
- }
-=20
--void isp_vmem_2d_load(
--    const isp_ID_t		ID,
--    const t_vmem_elem	*from,
--    t_vmem_elem		*to,
--    unsigned int height,
--    unsigned int width,
--    unsigned int stride_to,  /* In t_vmem_elem */
--
--    unsigned stride_from /* In t_vmem_elem */)
-+void isp_vmem_2d_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_e=
-lem *to,
-+		      unsigned int height, unsigned int width,
-+		      unsigned int stride_to, unsigned int stride_from) /* In t_vmem_ele=
-m */
- {
- 	unsigned int h;
-=20
-@@ -244,15 +213,9 @@ void isp_vmem_2d_load(
- 	}
- }
-=20
--void isp_vmem_2d_store(
--    const isp_ID_t		ID,
--    t_vmem_elem		*to,
--    const t_vmem_elem	*from,
--    unsigned int height,
--    unsigned int width,
--    unsigned int stride_to,  /* In t_vmem_elem */
--
--    unsigned stride_from /* In t_vmem_elem */)
-+void isp_vmem_2d_store(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_el=
-em *from,
-+		       unsigned int height, unsigned int width,
-+		       unsigned int stride_to, unsigned int stride_from) /* In t_vmem_el=
-em */
- {
- 	unsigned int h;
-=20
---=20
-2.51.0.318.gd7df087d1a-goog
+Le 17/01/2024 à 10:17, Kunwu Chan a écrit :
+> kasprintf() returns a pointer to dynamically allocated memory
+> which can be NULL upon failure. Ensure the allocation was successful
+> by checking the pointer validity.
+> 
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   arch/powerpc/platforms/pasemi/setup.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/powerpc/platforms/pasemi/setup.c b/arch/powerpc/platforms/pasemi/setup.c
+> index 0761d98e5be3..8f98f3b58888 100644
+> --- a/arch/powerpc/platforms/pasemi/setup.c
+> +++ b/arch/powerpc/platforms/pasemi/setup.c
+> @@ -165,6 +165,8 @@ static int __init pas_setup_mce_regs(void)
+>   	while (dev && reg < MAX_MCE_REGS) {
+>   		mce_regs[reg].name = kasprintf(GFP_KERNEL,
+>   						"mc%d_mcdebug_errsta", reg);
+> +		if (!mce_regs[reg].name)
+> +			return -ENOMEM;
+
+I think you will leak the reference taken with last call to 
+pci_get_device() here. I think we need a call to pci_dev_put(dev) before 
+bailing out.
+
+By the way there will also be the same leak if the while loop ends when 
+reg reaches MAX_MCE_REGS while dev is still not NULL.
+
+
+>   		mce_regs[reg].addr = pasemi_pci_getcfgaddr(dev, 0x730);
+>   		dev = pci_get_device(PCI_VENDOR_ID_PASEMI, 0xa00a, dev);
+>   		reg++;
 
 
