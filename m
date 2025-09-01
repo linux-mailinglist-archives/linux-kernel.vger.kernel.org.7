@@ -1,127 +1,99 @@
-Return-Path: <linux-kernel+bounces-794772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E53CB3E709
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EC8B3E70E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E259C1A84E4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDF61A850C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735CE34167D;
-	Mon,  1 Sep 2025 14:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396031096F;
+	Mon,  1 Sep 2025 14:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4DAY7AB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHeHYpPz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02D8340DB9;
-	Mon,  1 Sep 2025 14:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806BD248F66;
+	Mon,  1 Sep 2025 14:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736769; cv=none; b=p+fX6QM6HxylPf7p2XTDPR81nfVFNa//bviUE7dNxyZ8qB020ISPTlYitMRa9Bt+m/Q7KFCuY1LpF0XVkeM1tjVLL/UslGLzMjJ5fM0d3m6lKT6JW5+f6a63zrdoIurirGVxQesHeM7tdhLNqbRXJBebfRdbk1S/GIxYJeYViig=
+	t=1756736813; cv=none; b=MMPrdKkpwv9fzXQKSLB+4gFMyDBEapA31h2N55dUm+70UmBlhRGfIfcW3ivn8G4/kvmFaoWqGPORwNUgNW+5ogJz1sZ5DPHjZaX0HrgNmJsGrLvELetBONbQcpom9ZctHhc4rSE+Waq1g5spEY8P+jjEQBAPpPK1Nn2hS7APhrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736769; c=relaxed/simple;
-	bh=0WO6REd4oQvsCY4rMsXYlUrit5wokYp9C49/smrjrtE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TovSVA/mPvDDxOobPEgRteJfV0KX1nd/UtpyXPkVRo6QNcX+bnu/IW2tKcgrGl3IvhwSZdpipwmuR4opQpwLYQkuFB060ZWsoIsl30Z0OkOKscDwhTg7+hoS8n+P6HiPHRCcgKgCH0PdT5hEOFMvxJbz51w7DXYV3dCNmYyV4dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4DAY7AB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB0CC4CEF0;
-	Mon,  1 Sep 2025 14:26:09 +0000 (UTC)
+	s=arc-20240116; t=1756736813; c=relaxed/simple;
+	bh=LXjC1NQJ6fIpfpom6jrKjc2aXq5sLmIuoV+slvDg/+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bMz1Fy+qaF3qi66uT4Wq3GBk30s5eA0Jha3j23LsIQbLsJdJQB1tuDBkxcFmdx81w7UBgV4BFeSXi913kYV7iTffd4bDVONULFpB57PQFHVJhaenCKm7KCewLAdsudWztSzS6hnhNHQIuFtjKKG4xZavgZKMRThPCZ0hfd+8t2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHeHYpPz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EDEC4CEF5;
+	Mon,  1 Sep 2025 14:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756736769;
-	bh=0WO6REd4oQvsCY4rMsXYlUrit5wokYp9C49/smrjrtE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q4DAY7ABYkSzdE831zYkR8TEHHcXStCW1kAf5cjAQADJD6wQFfX6pj4vyhO2smCS+
-	 UjNdQ6hRjwqaSAtQ4VM0yJmlpeNJHcu8bgOg8/k1PnQlTFbxqGGKSU6zyK7wxJPNsv
-	 XOkNkvF/vuJ2Q1ihQqpWo3NbOw+sMHcn4u9/v7AhkHBTJemR2HdWTJOV6qCtJBiroH
-	 IAf6YiPlifnl/9q6qSImEeiTpUfBzk5wzELx5t5dZtM6GAyFMssvhSqugYx0mWFYgl
-	 iXaUfp4fTcJA3lXwLozHZ6UoL6laDnmbu2GVgcrjkhSNpZ+Jt0t9/nvV+ScraR/EM7
-	 rV3R4xx28LUfg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1ut5Ty-00000002HzM-3soH;
-	Mon, 01 Sep 2025 14:26:07 +0000
-Date: Mon, 01 Sep 2025 15:26:06 +0100
-Message-ID: <86wm6ickqp.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Gyujeong Jin <wlsrbwjd7232@gmail.com>
-Cc: oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gyutrange <wlsrbwjd643@naver.com>,
-	stable@vger.kernel.org,
-	DongHa Lee <gap-dev@example.com>,
-	Daehyeon Ko <4ncient@example.com>,
-	Geonha Lee <leegn4a@example.com>,
-	Hyungyu Oh <dqpc_lover@example.com>,
-	Jaewon Yang <r4mbb1@example.com>
-Subject: Re: [PATCH] KVM: arm64: nested: Fix VA sign extension in VNCR/TLBI paths
-In-Reply-To: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
-References: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1756736813;
+	bh=LXjC1NQJ6fIpfpom6jrKjc2aXq5sLmIuoV+slvDg/+I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NHeHYpPzO94hfPPVHJCtXSkApwsTA1DzhhaskN7I4UHG+/Ko09dt1Gwm0e5Gyc9tu
+	 +jAeJvx/Rm79kJXuHjhZQz8bLcgLtMR/7XE0Rva80iYqJ70ucpJvee0fD16lX4NzTD
+	 1qJo2KUf5v72QIOPrUD+WzbSIOw66Fm0aP/skR8VvCiH5rBqUV0j2lCUTCrCH/w+cw
+	 mlDNmSr5eBCDYIWiPIjNuxSLVR8W9spS1InyzJndhiWpjOzfov/s7poBy8iqJH9t2+
+	 pdk4I9fqZQITUISsiDOnR2pipPyE9XHv6kF+2P58i18pO5MvQajtSUnZRP1xaua7/X
+	 AJPgoQ5TyC0kw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f78f32580so959359e87.3;
+        Mon, 01 Sep 2025 07:26:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXN+K7s3SlMmla2EXBZJ3INwPtuxGSUIZn4sR9stkFtUXHe3R1dHCf3XChhUJ5VqhxdDZ7Ht+yFSf4=@vger.kernel.org, AJvYcCXu1k9vgvtEsanHgeCK9/JsO3oAs63Aem2W3/4AmOvA65+/hwhTfvYXBKd/t9JLjGDO31Rah2m9558v3pJj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuuV6zO6MIrxkRsIzc5NA/aQSFgDdRjtLkoWvwmImFXm1Qwokr
+	HTn0AUZfk3cWGbEzAWSoGIJzhYQyriosKKhIery0gIHnfrmdSBLWL4rUHr3xQnQAbxbfwJNE0s5
+	0gOXa8nD+AgdHkKQDXX+lYDHE9WtUmR0=
+X-Google-Smtp-Source: AGHT+IHGpTPGkjK6uGhIf8DLiHwqmQK1RZXPdIJk2HIB90PjPy2+9jpV8BnQ3WaX5u33p3mm1o3ls0RCGCzxZS4PeAc=
+X-Received: by 2002:a05:6512:3e15:b0:55f:6db5:748d with SMTP id
+ 2adb3069b0e04-55f7089c530mr2585393e87.4.1756736811430; Mon, 01 Sep 2025
+ 07:26:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: wlsrbwjd7232@gmail.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, wlsrbwjd643@naver.com, stable@vger.kernel.org, gap-dev@example.com, 4ncient@example.com, leegn4a@example.com, dqpc_lover@example.com, r4mbb1@example.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-29-ardb+git@google.com> <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
+ <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
+ <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
+ <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local> <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
+ <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
+ <20250901135459.GAaLWlsx75fnPHveLl@fat_crate.local> <CAMj1kXFRSJ1zT5XvBE2JT1jm2peOs9aymHeydOYk8AZRO=JDbQ@mail.gmail.com>
+ <20250901142538.GEaLWs4i5CVcdIJvC-@fat_crate.local>
+In-Reply-To: <20250901142538.GEaLWs4i5CVcdIJvC-@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 1 Sep 2025 16:26:40 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHrsR+qGA5a8s1GWsramZ_QEdKWgG2ehb3+kE=5+vaicw@mail.gmail.com>
+X-Gm-Features: Ac12FXwXjjFIMDJQmTU6935iCS3FBewSxEwaX6AHE9rAHIujpLQr92kpO-ceJPc
+Message-ID: <CAMj1kXHrsR+qGA5a8s1GWsramZ_QEdKWgG2ehb3+kE=5+vaicw@mail.gmail.com>
+Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
+ out of startup code
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nikunj A Dadhania <nikunj@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 01 Sep 2025 15:15:51 +0100,
-Gyujeong Jin <wlsrbwjd7232@gmail.com> wrote:
-> 
-> From: gyutrange <wlsrbwjd643@naver.com>
-> 
-> VNCR/TLBI VA reconstruction currently uses bit 48 as the sign bit,
-> but for 48-bit virtual addresses the correct sign bit is bit 47.
+On Mon, 1 Sept 2025 at 16:26, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Sep 01, 2025 at 04:02:04PM +0200, Ard Biesheuvel wrote:
+> > Are you sure this can be removed? It is tested in other places too
+> > (arch/x86/coco/sev/core.c), and AIUI, it is a Linux defined CPU
+> > feature so it will never be set automatically.
+>
+> It it set in scattered.c for the "late" code like sev/core.c:
+>
+> arch/x86/kernel/cpu/scattered.c:51:     { X86_FEATURE_COHERENCY_SFW_NO,         CPUID_EBX, 31, 0x8000001f, 0 },
+>
+> Tom added it to boot/cpuflags.c, in addition, for the early testing which
+> we're doing differently now.
+>
 
-No, that's not the case. Bit 55 is used at all times to determine
-which half of the address space a VA gets resolved from.
-
-> Using 48 can mis-canonicalize addresses in the negative half and may
-> cause missed invalidations.
-> 
-> Although VNCR_EL2 encodes other architectural fields (RESS, BADDR;
-> see Arm ARM D24.2.206), sign_extend64() interprets its second argument
-> as the index of the sign bit. Passing 48 prevents propagation of the
-> canonical sign bit for 48-bit VAs.
-> 
-> Impact:
-> - Incorrect canonicalization of VAs with bit47=1
-
-No. We are not trying to make the VA canonical.
-
-> - Potential stale VNCR pseudo-TLB entries after TLBI or MMU notifier
-
-No. The pseudo TLB is never created the first place.
-
-> - Possible incorrect translation/permissions or DoS when combined
->   with other issues
-
-Please explain, as "other issues" is not a valid argument.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Ah ok, yes that makes sense.
 
