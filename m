@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-793647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DE4B3D66D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:00:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15631B3D66F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59C744E1564
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2583C1898051
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73B21254B;
-	Mon,  1 Sep 2025 02:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A582F21CC5A;
+	Mon,  1 Sep 2025 02:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEvM2nkw"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkZBipRV"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E68A1487E9
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790591F5617
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692038; cv=none; b=CjvJyXY/VPfRYeyZP5YnFA2wIakQdEyrbBQiAOKL4sui7zeEsa+WsSUw7upFmF5J5KzXhbKs1wVpSRzDG5z9wGrpdG87XoHbQ6mbFvEgW3oohKyZ4RfMeUh3QRo2RezWu+1dHu32RC9WlOIx1ZqM6a/5ayEK8Thl++oy+wz4F9I=
+	t=1756692040; cv=none; b=Wh/ydiWes2rEHWxf4/k/SIQrKgOw0alGQH9ShyEfOyLfBpR1fKC+eoFb8VKP6b2HMTV6iJSs+0nNEl0DNP2NX9W+xB9IH3VMeTm5DZmgHj2y673TZ28pjp8rYuZl5Uvpzqk7t1vHzef1dJhzoTaiN5gwyBfQnJnLtILXAe0dgo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692038; c=relaxed/simple;
-	bh=1aWTBAdS4PB+lh6dnTRs/ku6VxyVPsJAiRIyLMSDIL8=;
+	s=arc-20240116; t=1756692040; c=relaxed/simple;
+	bh=SHx/err06cat1Rq44fqyBd180FjnqLoHf/fPnd/fJJ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pMEyLimzkp0wWggukOZTAlZPyahr2XJTLnqllDNxzB0gQvD8po5RZhbip0dNuJslp8PUJsCqlXBNHE9gT7OkJz2Y+pZO0CtF7aPhB9Oqh5F9gSkshCL0feh+eml+GzgidgK4l1zWt+uIo85VZ4C1qWhk89KnOaDnlANDwrvAdWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEvM2nkw; arc=none smtp.client-ip=209.85.160.179
+	 MIME-Version:Content-Type; b=hEDrrwdfCo2LdYb1vov3/Bg0C9ukQ+qT1HjRv9EY4of/jYf9JhiMuyL1/nHYL4GSDTPq2lZBuDBFTIyS6aGiO9s/kz6alzQ+y/Lrc6HDkPpbFFi8okEvFxIPNyi1m2djbnlmUaqFLBoUSU+4j3DHxPnos9KdNNnALFl+a2N+3Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkZBipRV; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109c58e29so69580431cf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:00:36 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7f6f367a248so352361585a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756692036; x=1757296836; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756692037; x=1757296837; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KD5oP3Sp6/nJlHDS88G+RVK/pDe+DHoDDcESnyvvqMA=;
-        b=UEvM2nkw+KfCcTVSdsTu2pKJ6pmafBAppfr2yXOn8cdG/FxacMopTwddXTosboew3z
-         m1WtDkIw8/VH6wUuKRVSI3R8HK2HS16qg38n4YISKZG35MVhn7d7Px5jOOlL6yoeYh1t
-         xLz0yCzh/XDxLNa+BggYHM/jXIDiSEHpv6jzHgSZpiDZYmpZ5r3V7I9HwFmYII5Ij1iv
-         /nUgooDUN/yJtIA2UgE/36vDuK99H1LArCxE5/NEduTUU9md/XNfziK/nPUB9LeYFcSi
-         dY2hGcrcEesJLdgxrSf7XhTFF6Os40YEO4xtus+iKHKXgbAQ5GfpehJII1HfRQRocNkz
-         PGMA==
+        bh=OaD/OWwKQXAYi1ON0/0C3vmv92rVLm893Z0kjykczRg=;
+        b=lkZBipRVs6VLtGIUwNo8y6QzdA+nNJmPySjwbMkoSe0fUBCCGmxJym8mupLDq9TJ7i
+         N/d0O+5Mx9uEtmyW8o/dNJJeXsNxqC1T6Ys7k7VGgnhEeGdKOYJEPZv2Lki4tRIcJftQ
+         2zHzynQz0SBSxKDmj20W2Nc/y1n04C6oawX4DiNRc6DJ80NCzGKuKWurrCresnwux5Wj
+         r+oMkj8SNClPnn2+m09er+GyhXSD9zY1VpwLHuvRyaoYiyaPk1frAdjVTmHCPfJFu+KY
+         Wrh8owicnOA2ng1IcoqgZxSv5biXI9RTQITEvbgOZ8uQ7LGgCd8yK6wqsZwTm7nc3xC5
+         SkPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756692036; x=1757296836;
+        d=1e100.net; s=20230601; t=1756692037; x=1757296837;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KD5oP3Sp6/nJlHDS88G+RVK/pDe+DHoDDcESnyvvqMA=;
-        b=uE02qVYdOVRdCyD9WQzj7P1o6uwl0BzdCQlOfbZev9mxQ4KkXzJQOdMF7oBlETCZDr
-         d6X6z4g5GI6/n6lTqZujEzB2n+GvFVmtT87ZXkVaZ2q2KH8yHT5b4mjJr0zgI7fj+FZL
-         pR+Ff/y7wp12uBEhHtVXexJh1dW6GV7nlZdqcY9KGEdDBakPFpMLJvtTG7sT8+s0OXze
-         /sJ78TimAAKSwCChn3MKsB6J0J4gNBs8Y6kXNy4gBky1B1TWxHxu8+AAXrwWL9ij1zF7
-         MyhV1xqgbeaGKSfHrocw38CColGNGlGpOziSBbdJnqRQX66VZ58BbDWmeDNOG99Xs+yf
-         ingg==
-X-Gm-Message-State: AOJu0YzOMeK5LaHbw5vla0Jo6678Ojs8nZ4hKpR3Ec8lBtmL6Abf9Ktr
-	RgziAcmmTRA+fYrw2WrG4yx6rgiGg3w5btXp5ljorn5PRST3A+j6oZxM
-X-Gm-Gg: ASbGncs+Za20sxO6ZcFmsWdpLRjDFM1+EGSv1nyHtWmlsaB01wS/vv6L47Hxcr6Gotw
-	YtdcYGfqoMi+QpH4mrB7z24oX/kjOaKXgC4OoDOCJZ8H7rBQ8UjVlFoCBb2FHsaDWmNABhW/Ws1
-	wjzl5T84QCrG1dLDTpgUzwOp8pf/rmWZ7oJcQbNfHeWB05eHJxcooEe3GVEroM7DSISZMW8H4tQ
-	N3XpDbGxigcA3ksGnJ5XR7o4TF/xWS0WnJZBfvSqYvC6PE5o+AHpbNpNcUvaRLivoBTuKvI1s5M
-	kDw4M/fM+ubEWlaG65K6CTt2mGKxQEozNj++2PVqKJgU269vAtqnR/ezRacAAiT7Kz2OIzZgtss
-	Zh9tXjc0T/7va50Drk9QaN++POoROZhCemWuexjZB+QklVap9s5nR/g6tP4ud2pkuRrwDIik3D+
-	RXXAc=
-X-Google-Smtp-Source: AGHT+IEEEhOHJHKVo9c2qoDwUkUfdgrICndDqLDF0Y9QKv018f7khAYv85uhvdgp1+VXtxmxOp873A==
-X-Received: by 2002:a05:622a:2cb:b0:4b3:d28:c96 with SMTP id d75a77b69052e-4b31d7f062emr76822691cf.13.1756692035726;
-        Sun, 31 Aug 2025 19:00:35 -0700 (PDT)
+        bh=OaD/OWwKQXAYi1ON0/0C3vmv92rVLm893Z0kjykczRg=;
+        b=AJ/vhWpfYRJJODtklYYpU3S1p750edCfooGmcItoZd1osPgY5Dp7RYvbXjJ9CshykK
+         Jehx7OWzZ1iGpP1Yz++cr/5auN/jgQsRaGozufbwVyb3w2Q1A5bIZLWRwykXt1EzIAqy
+         XsOGUpEugZTU/ltXLBKY06UL7Gg455PcKLbRv3FSv5l8Ad4vgh5sWHUcPP9aTV9O+nlB
+         hB+M7DM3QsEdIwNii1ZuMIvzVrzC+P9DaF+v3sat2kr5WUgWF0yXETlffEOv5OHEbK6V
+         cQTuswuN4n7JdAK7DKznT3AJeFNfydia9r5vhX/3krs8lKUGMXk+7+PBzFNNTyPX5md7
+         WP5g==
+X-Gm-Message-State: AOJu0YzjL2eLfI8Jm33GUOSDVci4qUsQzbq7zU/escrQ2BgPLcw28yrW
+	iIhqQ9esvbo3B0usOxS8ezIF0XChBL4LeGFWV7XSpKZ2nSDG0d4Kgu8JYs4eTg==
+X-Gm-Gg: ASbGncsnydac8zGd19QndWrOham90Rx7lmQRW2ID5/5ORM3eHitliwV0RNf8tA/L2Z+
+	Kb5HSPQ5ntSjiUdcRsACJbsOaOZj/dZAsYVf1XYn5BGCXjQHRbrXlm/ncptokHXmbYVJFvkC+nu
+	V7ytep1bygFLYj428/RQ36ICgOKpbTxP1QPfsbe/PnLpgMfa/DE0nrB2Su8fo/P4xCSujBzLz5K
+	wxeWcIaZl10docZmEcVqOncx8nsjhwjc5QRmfCi1PQlblycO1kMBaDTDuNB/x9WSUEYuB/8gyAg
+	kygYGX3siiScnp+IdNdnCQcYbttTm118l3N1sWr0MQ7nolBT48x4CYUP6xGyKWk9w3D2Fvg1GON
+	keQSIAjbVQdQbOlxrvaFpDPg3HihURJXk4249FajvkWQq/TI59FvTtTZt54nn5wNIPenu
+X-Google-Smtp-Source: AGHT+IEQVAjYL4ImVlKXfF6ZwfIyOQerdjH8mW7wg1Cl1DAKvCXFs0uhgqOgIxuEk2EaWXkTeTHwvw==
+X-Received: by 2002:a05:620a:701a:b0:7fa:40bb:71a4 with SMTP id af79cd13be357-7ff2c32f9e8mr700392485a.72.1756692037147;
+        Sun, 31 Aug 2025 19:00:37 -0700 (PDT)
 Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b584340sm53060731cf.17.2025.08.31.19.00.35
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb263449esm32441416d6.25.2025.08.31.19.00.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 19:00:35 -0700 (PDT)
+        Sun, 31 Aug 2025 19:00:36 -0700 (PDT)
 From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
 To: Andy Shevchenko <andy@kernel.org>,
 	Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] auxdisplay: linedisp: encapsulate container_of usage within to_linedisp
-Date: Sun, 31 Aug 2025 22:00:25 -0400
-Message-ID: <20250901020033.60196-2-jefflessard3@gmail.com>
+Subject: [PATCH 2/5] auxdisplay: linedisp: display static message when length <= display size
+Date: Sun, 31 Aug 2025 22:00:26 -0400
+Message-ID: <20250901020033.60196-3-jefflessard3@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250901020033.60196-1-jefflessard3@gmail.com>
 References: <20250901020033.60196-1-jefflessard3@gmail.com>
@@ -91,107 +90,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Replace direct container_of() calls with a to_linedisp() helper function
-throughout the line-display auxdisplay library module. This abstraction
-prepares for upcoming dual-mode support where linedisp context retrieval
-will need to handle both dedicated child devices and attached parent
-auxdisplay devices.
+Currently, when a message shorter than the display size is written, the
+content wraps around (e.g., "123" on a 4-digit display shows "1231")
+without scrolling, which is confusing and unintuitive.
 
-No functional changes in this patch.
+Change behavior to display short messages statically with space padding
+(e.g. "123 ") while only scrolling messages longer than the display width.
+This provides more natural behavior that aligns with user expectations
+and current linedisp_display() kernel-doc.
+
+The scroll logic is also consolidated into a helper function for clarity.
+
+No API changes are introduced.
 
 Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 ---
- drivers/auxdisplay/line-display.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/auxdisplay/line-display.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
-index 8590a4cd2..e44341b1e 100644
+index e44341b1e..ea23c43bb 100644
 --- a/drivers/auxdisplay/line-display.c
 +++ b/drivers/auxdisplay/line-display.c
-@@ -31,6 +31,11 @@
+@@ -36,6 +36,11 @@ static struct linedisp *to_linedisp(struct device *dev)
+ 	return container_of(dev, struct linedisp, dev);
+ }
  
- #define DEFAULT_SCROLL_RATE	(HZ / 2)
- 
-+static struct linedisp *to_linedisp(struct device *dev)
++static inline bool should_scroll(struct linedisp *linedisp)
 +{
-+	return container_of(dev, struct linedisp, dev);
++	return linedisp->message_len > linedisp->num_chars && linedisp->scroll_rate;
 +}
 +
  /**
   * linedisp_scroll() - scroll the display by a character
   * @t: really a pointer to the private data structure
-@@ -133,7 +138,7 @@ static int linedisp_display(struct linedisp *linedisp, const char *msg,
- static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- 			    char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
+@@ -67,7 +72,7 @@ static void linedisp_scroll(struct timer_list *t)
+ 	linedisp->scroll_pos %= linedisp->message_len;
  
- 	return sysfs_emit(buf, "%s\n", linedisp->message);
+ 	/* rearm the timer */
+-	if (linedisp->message_len > num_chars && linedisp->scroll_rate)
++	if (should_scroll(linedisp))
+ 		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
  }
-@@ -152,7 +157,7 @@ static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- static ssize_t message_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	int err;
  
- 	err = linedisp_display(linedisp, buf, count);
-@@ -164,7 +169,7 @@ static DEVICE_ATTR_RW(message);
- static ssize_t scroll_step_ms_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
+@@ -118,8 +123,16 @@ static int linedisp_display(struct linedisp *linedisp, const char *msg,
+ 	linedisp->message_len = count;
+ 	linedisp->scroll_pos = 0;
  
- 	return sysfs_emit(buf, "%u\n", jiffies_to_msecs(linedisp->scroll_rate));
+-	/* update the display */
+-	linedisp_scroll(&linedisp->timer);
++	if (should_scroll(linedisp)) {
++		/* display scrolling message */
++		linedisp_scroll(&linedisp->timer);
++	} else {
++		/* display static message */
++		memset(linedisp->buf, ' ', linedisp->num_chars);
++		memcpy(linedisp->buf, linedisp->message,
++		       umin(linedisp->num_chars, linedisp->message_len));
++		linedisp->ops->update(linedisp);
++	}
+ 
+ 	return 0;
  }
-@@ -173,7 +178,7 @@ static ssize_t scroll_step_ms_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	unsigned int ms;
- 	int err;
+@@ -186,12 +199,12 @@ static ssize_t scroll_step_ms_store(struct device *dev,
+ 	if (err)
+ 		return err;
  
-@@ -195,7 +200,7 @@ static DEVICE_ATTR_RW(scroll_step_ms);
++	timer_delete_sync(&linedisp->timer);
++
+ 	linedisp->scroll_rate = msecs_to_jiffies(ms);
+-	if (linedisp->message && linedisp->message_len > linedisp->num_chars) {
+-		timer_delete_sync(&linedisp->timer);
+-		if (linedisp->scroll_rate)
+-			linedisp_scroll(&linedisp->timer);
+-	}
++
++	if (should_scroll(linedisp))
++		linedisp_scroll(&linedisp->timer);
  
- static ssize_t map_seg_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 
- 	memcpy(buf, &map->map, map->size);
-@@ -205,7 +210,7 @@ static ssize_t map_seg_show(struct device *dev, struct device_attribute *attr, c
- static ssize_t map_seg_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 
- 	if (count != map->size)
-@@ -232,7 +237,7 @@ static struct attribute *linedisp_attrs[] = {
- static umode_t linedisp_attr_is_visible(struct kobject *kobj, struct attribute *attr, int n)
- {
- 	struct device *dev = kobj_to_dev(kobj);
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 	umode_t mode = attr->mode;
- 
-@@ -263,7 +268,7 @@ static DEFINE_IDA(linedisp_id);
- 
- static void linedisp_release(struct device *dev)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 
- 	kfree(linedisp->map);
- 	kfree(linedisp->message);
+ 	return count;
+ }
 -- 
 2.43.0
 
