@@ -1,146 +1,88 @@
-Return-Path: <linux-kernel+bounces-795117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E861AB3ED05
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:08:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60CAB3ED11
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C342D167B6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE473B5DF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3F6324B1C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43384324B15;
 	Mon,  1 Sep 2025 17:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ul8GqDOm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ks9JmaEi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B155D31B131;
-	Mon,  1 Sep 2025 17:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977B6320A34;
+	Mon,  1 Sep 2025 17:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746488; cv=none; b=LRZq4ltICfdE1BVJ0nkI5TgtB0G2gwHOcz3Y4wPrml5G93BDZcYbJznu5BbgHgWw9Ht0L0wMn08Y1RPK4uRn/i+xjjeyV852NVR8pozBCRbEJOJgdrjwbCS7+yVjr/oh6W9qZ5PD4ZA+mFiZWFyDZNeXAkCKvyUUzI7XUn/mfB0=
+	t=1756746488; cv=none; b=IOpI2b+uLe8/ak3GpDh6ZSenmXgByXQ4xJ+cCcVechTU3P27PMh/8CcL/BYA6vXA29lCEXU/gTcTZ/t/SJtX7hcD2hxVI9zZAYeEMNYe4/6euZ4TaVaoS6Y53w31Ojd7wJsdqY4LAJMn+Ppeu+/5oF2oAJitFW6NYq3XnvQqrZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756746488; c=relaxed/simple;
-	bh=05Hdr82iF1YbIXKusbymYUz7cecOqRa7CtYfnzMwAoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hc1jQnVBxP3MJYrcR8AtGQVUvQbbayD/68AeQ2zZhWAX6BdXaIkUyoNENs9fjBDQDnTmXyvPF85tS/fBEKP42UPgkV0s6yvCaEkyY9kmT6W8qwNBP5FbYbGIYIS21jy7rWFcNJSu9zYV75BvREuMXgJRZl30/SRFvgWaFPt2lwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ul8GqDOm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3D0AE40E01AC;
+	bh=2yYH/cfpjLpeERChnwoG49UtSP4qJklF2fBBnkxU32o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cTbw4/KhwTFqd0pXdqRC4MN+r4j5tG/CbAAeyBMgPTFb2pj1m6JtoRvkge64l4hYIDIPglpR40Sst0PmHOYeDqkbjAKYW/q5M8qUBsDL3z03BrnLZy+jtmzHgd2v0bAr7MI67Anz6FYO/yR40K13EAj621fc6b3cP3n5Z6tMMHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ks9JmaEi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B32E0C4CEF0;
 	Mon,  1 Sep 2025 17:08:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2hKTeMwDrfZW; Mon,  1 Sep 2025 17:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756746480; bh=76b814HQAo2YQibVwpnqtCh1BEw+zBblQWabG+FEBkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ul8GqDOmQk2KMx4yZ1AR3byMLjTnDUVGW/cZ1lF3L6Lid/sdMpWN7BLFYuuTi1a3o
-	 jA8lmg8xGHWVYhEmSwvdmhtsqt29lY7+PCMn7egm3odAVCGGX5UDC4OqrQAB3LrX6C
-	 0rSCt+9KlyWHzxmrJ2eRGsnlT23gwUInlP7BsqxmivcdWyHiCxi07fnN9/EVUhbkHK
-	 86rKoX1NUjhxSsJR6sIoV57JEmAlITzHCERbdLFXsx/WwulNcFUjl+rKLxqGVrZ75L
-	 dAPSCGbUgKXJcziId+fshXDjFaD/7nwuoEQkQz7djdun2RVZI079TcUT+IJaE6dSZo
-	 73+Il+EQB6DTn/x3tOIDMI1IUkVkVJ81VUy5Ki5bbvzuqt1LIrl5ic0owckhdLZplk
-	 QOZ2Lo2R7IblW/nh+qhcY/UxlrsRELaZ7E7n5AolDqGPRNz1Cw3KYGr55WthOx6ZOJ
-	 n+8kTgVArVknA96tWQvLw2eqpKVcZJfutHfS+/VqHEzggttpT+ZeTp/mE1NL0e7L+v
-	 qbGvFGAnG/i6SvkiOSzC/D0LaRst4L3rGbFcEdWP9+xeQM39+YUp1OKqu3xTOrOz7v
-	 6EfZZp6V7SAcRrewN2P0DH+sTAttSH2B6eVk1xr/pwPDwPcABaeXoWEr3faPUD+/ZE
-	 EAkZJIKZTBVSOHXcGXBmEVyc=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id E7EC940E01A3;
-	Mon,  1 Sep 2025 17:07:49 +0000 (UTC)
-Date: Mon, 1 Sep 2025 19:07:41 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 07/20] x86/mce: Reorder __mcheck_cpu_init_generic()
- call
-Message-ID: <20250901170741.GCaLXS3bUdUPksnMs8@fat_crate.local>
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-7-865768a2eef8@amd.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756746488;
+	bh=2yYH/cfpjLpeERChnwoG49UtSP4qJklF2fBBnkxU32o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Ks9JmaEiZVOQXMVVTh13IA7jdlAJvQsTf23dO1/iOd8AqXykPBr/Yb8Wnu/HgkJXY
+	 aZfhz1qk+auJTxe0YNzGAHFPKta5Fc1ouhqd7u22iFqukxMUX3xZl2RKWq4k2GRc/w
+	 yBuJoXUGnsdCyk4tLuNQh3xZMLK2obL0lvQGShYUsEHWbCZjLKYbD+br/MJ8wgSw0I
+	 sUKK2uqE/1RmP0GQ8U2ZPQMailYEB8Wueqgung7Vsb2t2nGHEvuUbYk8PFpc6RZTIi
+	 w2drlZZrv0aIo9B7XAL0mYgR6QIPswTiEhrmN5LPkWbThaojZw36tsIpIBm5lFJlz/
+	 OntQImmwu5Szg==
+From: Vinod Koul <vkoul@kernel.org>
+To: kishon@kernel.org, mani@kernel.org, neil.armstrong@linaro.org, 
+ dmitry.baryshkov@oss.qualcomm.com, andersson@kernel.org, 
+ konradybcio@kernel.org, Nitin Rawat <nitin.rawat@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250830070353.2694-1-nitin.rawat@oss.qualcomm.com>
+References: <20250830070353.2694-1-nitin.rawat@oss.qualcomm.com>
+Subject: Re: [PATCH V4 0/2] Add regulator load support for QMP UFS PHY
+Message-Id: <175674648426.186496.9175302825889906237.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 22:38:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250825-wip-mca-updates-v5-7-865768a2eef8@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Aug 25, 2025 at 05:33:04PM +0000, Yazen Ghannam wrote:
-> Move __mcheck_cpu_init_generic() after __mcheck_cpu_init_prepare_banks()
-> so that MCA is enabled after the first MCA polling event.
-> 
-> This brings the MCA init flow closer to what is described in the x86 docs.
-> 
-> The AMD PPRs say
->   "The operating system must initialize the MCA_CONFIG registers prior
->   to initialization of the MCA_CTL registers.
-> 
->   The MCA_CTL registers must be initialized prior to enabling the error
->   reporting banks in MCG_CTL".
-> 
-> However, the Intel SDM "Machine-Check Initialization Pseudocode" says
-> MCG_CTL first then MCi_CTL.
-> 
-> But both agree that CR4.MCE should be set last.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
-> 
-> Notes:
->     Link:
->     https://lore.kernel.org/r/52a37afe-c41b-4f20-bbdc-bddc3ae26260@suse.com
->     
->     v4->v5:
->     * New in v5.
-> 
->  arch/x86/kernel/cpu/mce/core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 0326fbb83adc..9cbf9e8c8060 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -2272,9 +2272,9 @@ void mcheck_cpu_init(struct cpuinfo_x86 *c)
->  
->  	mca_cfg.initialized = 1;
->  
-> -	__mcheck_cpu_init_generic();
->  	__mcheck_cpu_init_vendor(c);
->  	__mcheck_cpu_init_prepare_banks();
-> +	__mcheck_cpu_init_generic();
 
-With that flow we have now:
+On Sat, 30 Aug 2025 12:33:51 +0530, Nitin Rawat wrote:
+> The series improves regulator handling in the QMP UFS PHY driver and
+> adds load configuration support for all supported platforms.
+> 
+> On some SoCs, regulators are shared between the UFS PHY and other IP
+> blocks. To maintain stability and power efficiency, the regulator
+> framework needs to know the UFS PHY's peak load, as it determines the
+> regulator's operating mode.
+> 
+> [...]
 
-	1. MCA_CTL
-	2. CR4.MCE
-	3. MCG_CTL
+Applied, thanks!
 
-So this is nothing like in the commit message above and the MC*_CTL flow is
-not what the SDM suggests and CR4.MCE is not last.
+[1/2] phy: qcom-qmp-ufs: Add regulator load voting for UFS QMP PHY
+      commit: 0c4916aadb8df892399eec99f775655c31049195
+[2/2] phy: qcom-qmp-ufs: Add PHY and PLL regulator load
+      commit: df4beac9da5f162770c8563d11cda327d748c20b
 
-So what's the point even here?
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+~Vinod
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
