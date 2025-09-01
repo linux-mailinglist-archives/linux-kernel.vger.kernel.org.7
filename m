@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-795264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A840B3EF10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66D4B3EF12
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0850E2C1FB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:59:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF3A4E0331
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029C5261B9D;
-	Mon,  1 Sep 2025 19:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF1E263F54;
+	Mon,  1 Sep 2025 19:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N2nZhoK/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZV1W/hj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F742050;
-	Mon,  1 Sep 2025 19:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185CB42050;
+	Mon,  1 Sep 2025 19:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756756759; cv=none; b=YbSPva7EjXRlBzIejQlC9PxoysGrulb0KXXLQQG1QB6VzutDhMcPpztyvy5mu6shJfX7RpBb6DuhkJGTZpHX9Qp3n+TVY4mK00ahUoq0NFW7P2IsVGy6ECxohfPQ9YTnw/a6v3dTspE56+7LYdPv65UyVWbS+ZNKxZtlZM2CZhE=
+	t=1756756785; cv=none; b=htOVjOgCBTBnV7K3BaEvjG0NMVV3vOocM6fZGvkhUisk9s1f0pVTfDSiJI0Bge1fRyUmoxybEXVJ9x6T2t1tGUE7wKpPXbPzpo+aNWiCNHEQVTKoCd2/Z7FKwz9sN/WG/J/bXVpPuWES7p1nj1vZQRTjrZ8RGZew4uAxJXcHOiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756756759; c=relaxed/simple;
-	bh=C4TZGfosvdpMdKEeuKbEg3eDbne8rkSeMAqsXA1tYqk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XfEBx+frKQNuL65z8Hsl5z7I03X8MiW9TU/Rcf8rmkTyt6Wpuq5LvRD1UIAA8H+/kIiutVIjCTzCb4m2oftdVD2jOAJKzyaLERVHXfpTP52PoaPHAGOHmwZePK2EvlmWeJAhPLfQ3MjOiQ7pKQLhV2Fxt0vZfSFFspA/d6WPKj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N2nZhoK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A35C4CEF0;
-	Mon,  1 Sep 2025 19:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756756758;
-	bh=C4TZGfosvdpMdKEeuKbEg3eDbne8rkSeMAqsXA1tYqk=;
+	s=arc-20240116; t=1756756785; c=relaxed/simple;
+	bh=LjusulijRkUKJpnr1qs0PqNa82Gar7jRHTtIRVpui3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rS+p5CoPV12A0FghDjYx3hSzp9Dz6ppqu8f0eWXufEvM3TWzIpKGQ/MJ/pGhmylSKiodfvpcSRTga755/ranKPkgxQgOelIzk9pYF4S5WTZ75RKY+SbdejugojavGIJFBr6tuTjSiC1/EJAxn4lNCcseFxxw6VMpOot1vk6Zwjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZV1W/hj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC76C4CEF0;
+	Mon,  1 Sep 2025 19:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756756784;
+	bh=LjusulijRkUKJpnr1qs0PqNa82Gar7jRHTtIRVpui3U=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N2nZhoK/Q21LIbrSnildvG4xpGY+k68+D5kfaDcIxkTjgeF3IUDsP7xsKzTzMKStp
-	 GHMPTe3JVyTaKevz1ZPsATz3LZevBNmkcINf5YYDPMuSccRpOz243d4StJy5RGtIeb
-	 xP0OlHp/akySD5KbATJbrZ5IaVKH9SRieMRW8uBg=
-Date: Mon, 1 Sep 2025 12:59:17 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ruan Shiyang <ruansy.fnst@fujitsu.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- ying.huang@linux.alibaba.com, y-goto@fujitsu.com, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
- vschneid@redhat.com, Li Zhijian <lizhijian@fujitsu.com>, Vlastimil Babka
- <vbabka@suse.cz>, Ben Segall <bsegall@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3] mm: memory-tiering: fix PGPROMOTE_CANDIDATE counting
-Message-Id: <20250901125917.e9792e5d0df12ba1c552c537@linux-foundation.org>
-In-Reply-To: <20250901090122.124262-1-ruansy.fnst@fujitsu.com>
-References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
-	<20250901090122.124262-1-ruansy.fnst@fujitsu.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=fZV1W/hjKysAUCJ9xF1iLD4LvckbMHuSKLPpUBsE54akfb7fRZqBmF3onOwJ39QEQ
+	 9TJAIVg5mEqgyx6SS9324wg3LEfhMMq7MY31fJAlpwss+fD1TntbP3vEGkuilIMHUF
+	 7ckBnOcOrK08fVDhTeWDstysOToIyOSVbjDJ9kZ38F3jKFC59vrQjl32RmYDLVXu4d
+	 MkSfLYOFHyOyL//n/pnXs9vNSwb/FFaXEgV1mfpiUOY0d3TxEREVLK2cge0cN1cKtG
+	 1pvvHbKGd5CJ8YDdMYsNIihMLn9fHsU3EJEoSD4D67lgygBEIVDMMVH9czwBaFT0uI
+	 gMzTZJNb/kRoA==
+Date: Mon, 1 Sep 2025 12:59:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Konrad Leszczynski <konrad.leszczynski@intel.com>
+Cc: davem@davemloft.net, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cezary.rojewski@intel.com, sebastian.basierski@intel.com
+Subject: Re: [PATCH net 1/3] net: stmmac: replace memcpy with strscpy in
+ ethtool
+Message-ID: <20250901125943.243efb74@kernel.org>
+In-Reply-To: <20250828100237.4076570-2-konrad.leszczynski@intel.com>
+References: <20250828100237.4076570-1-konrad.leszczynski@intel.com>
+	<20250828100237.4076570-2-konrad.leszczynski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon,  1 Sep 2025 17:01:22 +0800 Ruan Shiyang <ruansy.fnst@fujitsu.com> wrote:
+On Thu, 28 Aug 2025 12:02:35 +0200 Konrad Leszczynski wrote:
+> Fix kernel exception by replacing memcpy with strscpy when used with
+> safety feature strings in ethtool logic.
+> 
+> [  +0.000023] BUG: KASAN: global-out-of-bounds in stmmac_get_strings+0x17d/0x520 [stmmac]
+> [  +0.000115] Read of size 32 at addr ffffffffc0cfab20 by task ethtool/2571
 
-> Goto-san reported confusing pgpromote statistics where the
-> pgpromote_success count significantly exceeded pgpromote_candidate.
-> 
-> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
->  # Enable demotion only
->  echo 1 > /sys/kernel/mm/numa/demotion_enabled
->  numactl -m 0-1 memhog -r200 3500M >/dev/null &
->  pid=$!
->  sleep 2
->  numactl memhog -r100 2500M >/dev/null &
->  sleep 10
->  kill -9 $pid # terminate the 1st memhog
->  # Enable promotion
->  echo 2 > /proc/sys/kernel/numa_balancing
-> 
-> After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
-> $ grep -e pgpromote /proc/vmstat
-> pgpromote_success 2579
-> pgpromote_candidate 0
-> 
-> In this scenario, after terminating the first memhog, the conditions for
-> pgdat_free_space_enough() are quickly met, and triggers promotion.
-> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
-> not in PGPROMOTE_CANDIDATE.
-> 
-> To solve these confusing statistics, introduce PGPROMOTE_CANDIDATE_NRL to
-> count the missed promotion pages.  And also, not counting these pages into
-> PGPROMOTE_CANDIDATE is to avoid changing the existing algorithm or
-> performance of the promotion rate limit.
-> 
-> ...
->
+If you hit this with upstream code please mention which string 
+is not padded. If this can't happen with upstream platforms --
+there is no upstream bug. BTW ethtool_puts() is a better choice.
 
-It would be good to have a Fixes: here, to tell people how far back to
-backport it.
-
-Could be either c6833e10008f or c959924b0dc5 afaict.  I'll go with
-c6833e10008f, OK?
-
+> Fixes: 8bf993a5877e8a0a ("net: stmmac: Add support for DWMAC5 and implement Safety Features")
+> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
+> Reviewed-by: Cezary Rojewski <cezary.rojewski@intel.com>
+> Signed-off-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+> index 77758a7299b4..0433be4bd0c4 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+> @@ -752,7 +752,7 @@ static void stmmac_get_strings(struct net_device *dev, u32 stringset, u8 *data)
+>  				if (!stmmac_safety_feat_dump(priv,
+>  							&priv->sstats, i,
+>  							NULL, &desc)) {
+> -					memcpy(p, desc, ETH_GSTRING_LEN);
+> +					strscpy(p, desc, ETH_GSTRING_LEN);
+>  					p += ETH_GSTRING_LEN;
+>  				}
 
