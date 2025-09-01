@@ -1,127 +1,96 @@
-Return-Path: <linux-kernel+bounces-794064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84E4B3DC53
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2C3B3DC5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620DE3BFC07
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3815A188C9F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFF02F39B3;
-	Mon,  1 Sep 2025 08:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20CF2F39A9;
+	Mon,  1 Sep 2025 08:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="d0/MdPmE"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489402F4A04
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="bkStn7t/"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CE7259C9C;
+	Mon,  1 Sep 2025 08:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715200; cv=none; b=FbgHJT1egMigaOvXuNX6ZtevCSlVRSyYJxvChXkStKwUQWN4c/Vs3W6ZjB5SVOXpwceaZ6TK0waljIShT/AQ60o22APyMzPxQM/fXR/iL3D4j9RB2OeTpBdUpm/ht24eVLceuaUC0ci/94jIoglia+43T4YOmUFK8HIS2iHw0UY=
+	t=1756715385; cv=none; b=i0b8AVEyAgWgvPDGnEVTkXO0KMUWRQsSoa0WQ9QMq5HmgCnJPFL+hE6pyTWVc3u465GZTbCw2p9CV2WqDLshvwlXE2xJo7pbAZBFqOFb3kyfQvkeT2COUQnH+16FWq0MSQD9Sck6EOAt0RKdHQmzsfdW+DRosPnrnzKLsCyF6D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715200; c=relaxed/simple;
-	bh=Py4aYMpGJ+Qx0hCoeF6vFBXKDSrOB/Gzs4Mv6AoSQ7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5r4gsqWLPeTYCvSwAEs72pXhVZ7tTyI6F/VG1anm2H+THv9AmVkfJKPuaxl1aZFeKZ5LHs9qRVmtlmEEPyyAZ45V9w4O4psVAizmk/JXflQWSXNoHGjl5xgAJqn+ZB5f08XHQ3mfMYkQiz06M4JXv4xIxr/hWGdTLj2sBnPWZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=d0/MdPmE; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b040df389easo244254766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756715197; x=1757319997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Py4aYMpGJ+Qx0hCoeF6vFBXKDSrOB/Gzs4Mv6AoSQ7g=;
-        b=d0/MdPmER9SIMiV2+0XT5IrL/RPagvvwfAlSjcTbSc9CCmdBXW3nRnniqCnKjqqtpU
-         W22Eg7j61rRr6a8ttxXad/q0yU/jh5OAkGQcgO36xCr8OU2Kw/x4KjJmA6fOsVcsfFYn
-         lCPa4R1iMo5737qWraZ4k3X4ZN3O6CermZo/76v758y9wGEArOCndQshWbBs9xJb1it5
-         JuWYTXFHN3S3rb84A9h3aK2o7zOQaRKXoJq4n2KYcCgrYhqcQ1/qG/nps5CVf8ZxDpX7
-         sH+yB/U/m44byDYNKe/94+5bI19//AIQ7JlfJEkiD0jO++34o/KB7ZMoXdWW6NMfGI3C
-         ZTpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756715197; x=1757319997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Py4aYMpGJ+Qx0hCoeF6vFBXKDSrOB/Gzs4Mv6AoSQ7g=;
-        b=msPPPahuGQ3xcAMtn7YgJdlouSpAm8w01QTKudAs97rOdX5Xroo+2bXEiKz+R3KXWe
-         IwmQH1Lzuvd5Tbd/ppUH4n7fLC+Yg0M+Cuy9VjcVUIV9qPyvG9LMqS/54DsZPvwJ9SyU
-         qzHYQadtvXVTFaCfISTbsdT7/ahhQZFh1hLAg42fstpC8ScbGgVbaYfr23NgZ7xDcdsj
-         tlrlqD5gPSeZvI+FxonW8tnqWBUJ9mP9d3Kzb09JKEPppkC+MWq1mLefbMy6AFtpG3dW
-         KOaMcQD5YZvh/9zQar4eYEWGUFjBjNp3JzJ/ooXok1w+nKYMcCTZoaB3j+DYHEmqTPBD
-         tZvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcJrXXf0uTWzRb7PPQQpD3hmxFt0oR7vrGceCk6LdjgGCjjo5wyKg7l5C+GSLUZs8nsl98laFWqKEZcik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU34kn3YmMGE/7f3+J0TrkmPZub5r7W1h8DvCptzj4ymmAkTu+
-	savN9yydyFShgC2qXeCCkEeXN+al1o4VlJzmB5xeYsXNvHHDkrvDeUOdZIbH0oUAR05yvpvxebV
-	1hWL4Gu263df/+E9WVFfMPaSGc9pK3AXKSQFGnCUgzA==
-X-Gm-Gg: ASbGncuZuJx/BGNbmS1mo7PlwU2OLTlYdMjiZIGYOB6dUl1keHxAhnq2wIwdoZXNPmY
-	aRCU5jH24vl8SBU+9k/U3MxUhcd1xkwkM9YfC15EMFeKPYpu35b9dyZVz1gCq4R4V//pvrNhEFh
-	R4R2pjmsFW4A6XWBiPCJoGPC1un0KX268ZhIlaSykFKQ7pQwhp+z85mQK40G34LXgTx/KNrgq4a
-	5JzESiDWuRuAoFWnZ5jWkIxNkB/HFxKrT3s5lIyX1eKtA==
-X-Google-Smtp-Source: AGHT+IGXI2msCnx78Su15PAuWs0lHjk7inVPkR/r276bsxb/xC5chRSN2HXFSJE+JAHHxBRmUSvk6/k36E+wpO629AI=
-X-Received: by 2002:a17:906:f5a2:b0:b04:3955:10e2 with SMTP id
- a640c23a62f3a-b0439551a93mr112117066b.25.1756715196549; Mon, 01 Sep 2025
- 01:26:36 -0700 (PDT)
+	s=arc-20240116; t=1756715385; c=relaxed/simple;
+	bh=uiQGrPDGIQy2w2GoqtOwTVJzYrsAW1FwxDcYA3G+Lw8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Psq5OK5VhqZvcDCuwjRV6wPKqUr9ud4yRrhLh/el4AYLnbCIbzLJ60VpyqRY4/ZTobcTnzQaM7V2xYgKhETc5EpZGY9aHa7FhsZjWdgwsIZq3I6PR4lHrYIrTRMvjotC2PnEG/GCCg95y8fxOnHZGgE3cZtcVnUZ0rARV9c+t7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=bkStn7t/ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=j5PJ2+yjz1EmUPb6Z1UJJ6UB8vR7LqQz1AQRzce8lPU=; b=b
+	kStn7t/V8eq/iZd9uruH9IJ86zUK1m5DmyvuNvD0/UCPpRGXYqpVjs/QpEit2QFg
+	6I+HubjY3j0rzOOszSjTm5GfkX8c3OvfWPInRgBJ+t7v2MOY5JLcNzxTslWl3XU5
+	QxhVyvSj+kBPPpsv6LH7+Uqiuhbgb0HfUmMJxStwgU=
+Received: from yangshiguang1011$163.com ( [1.202.162.48] ) by
+ ajax-webmail-wmsvr-40-108 (Coremail) ; Mon, 1 Sep 2025 16:29:02 +0800 (CST)
+Date: Mon, 1 Sep 2025 16:29:02 +0800 (CST)
+From: yangshiguang  <yangshiguang1011@163.com>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+Cc: "David Rientjes" <rientjes@google.com>, harry.yoo@oracle.com,
+	akpm@linux-foundation.org, cl@gentwo.org, roman.gushchin@linux.dev,
+	glittao@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
+Subject: Re:Re: [PATCH v4] mm: slub: avoid wake up kswapd in
+ set_track_prepare
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <7f30ddd1-c6f7-4b2b-a2b9-875844092e28@suse.cz>
+References: <20250830020946.1767573-1-yangshiguang1011@163.com>
+ <c8f6933e-f733-4f86-c09d-8028ad862f33@google.com>
+ <7f30ddd1-c6f7-4b2b-a2b9-875844092e28@suse.cz>
+X-NTES-SC: AL_Qu2eBPuauksv5CKfZOkfmUgRj+k6WsK3s/sn3oNfP5B+jCLp+zE7R3NTB2LO79CDEC6NnQiHawJv0ehAb5dHTZwLRzc2zXorPS8GrhfNFYzcXQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831093918.2815332-1-max.kellermann@ionos.com>
- <20250831093918.2815332-2-max.kellermann@ionos.com> <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
- <CAKPOu+-ZjNr9hEir8H=C5C9ZwbS7ynY4PrJuvnxa-V425A+U3Q@mail.gmail.com> <e3ec5583-adf0-44c3-99c9-5a388c43fb7d@redhat.com>
-In-Reply-To: <e3ec5583-adf0-44c3-99c9-5a388c43fb7d@redhat.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 10:26:24 +0200
-X-Gm-Features: Ac12FXylcJi3zihZv-FAs1g-1p6_jPE5gFpeWtm5gKkpVFqz2VdwhTrMBi47B6E
-Message-ID: <CAKPOu+9CiT-5P--6TZcyq=jHLDhCa8LDh1AYjKr69+0shO8UrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer parameters
-To: David Hildenbrand <david@redhat.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, akpm@linux-foundation.org, 
-	axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org, 
-	hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <11922bd5.7fae.1990464d9c8.Coremail.yangshiguang1011@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bCgvCgD33xlOWbVoDEAmAA--.2284W
+X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/xtbBMRG75Wi1Tx-TjAAEso
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Mon, Sep 1, 2025 at 10:20=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 01.09.25 10:05, Max Kellermann wrote:
-> > On Mon, Sep 1, 2025 at 9:33=E2=80=AFAM Kiryl Shutsemau <kirill@shutemov=
-.name> wrote:
-> >>
-> >> On Sun, Aug 31, 2025 at 11:39:07AM +0200, Max Kellermann wrote:
-> >>> For improved const-correctness.
-> >>
-> >> It is not a proper commit message.
-> >
-> > I believe it is proper for something as trivial as this. I think
-> > adding more text would just be noise, only wasting the time of people
-> > reading it. But that is a matter of perspective: I expect every
-> > competent C developer to know the concept of const-correctness.
-> >
-> > Do you believe the commit message of 29cfe7556bfd ("mm: constify more
-> > page/folio tests") is "proper"?
-> >
->
-> "Constify shmem related test functions for improved const-correctness."
-
-Mentioning "shmem" adds no information because that is already
-mentioned in the subject. "Constify" is just as redundant, it's the
-same as "adding const".
-
-The only new piece of information here is "test". If you want, I can
-change the subject to "mm/shmem: add `const` to pointer parameters of
-test functions" and leave the body. Would that make the commit message
-"proper", or do you insist on having redundant information in the
-body?
+CgpBdCAyMDI1LTA5LTAxIDE2OjE1OjA0LCAiVmxhc3RpbWlsIEJhYmthIiA8dmJhYmthQHN1c2Uu
+Y3o+IHdyb3RlOgo+T24gOS8xLzI1IDA5OjUwLCBEYXZpZCBSaWVudGplcyB3cm90ZToKPj4gT24g
+U2F0LCAzMCBBdWcgMjAyNSwgeWFuZ3NoaWd1YW5nMTAxMUAxNjMuY29tIHdyb3RlOgo+PiAKPj4+
+IEZyb206IHlhbmdzaGlndWFuZyA8eWFuZ3NoaWd1YW5nQHhpYW9taS5jb20+Cj4+PiAKPj4+IEZy
+b206IHlhbmdzaGlndWFuZyA8eWFuZ3NoaWd1YW5nQHhpYW9taS5jb20+Cj4+PiAKPj4gCj4+IER1
+cGxpY2F0ZSBsaW5lcy4KPj4gCj4+PiBzZXRfdHJhY2tfcHJlcGFyZSgpIGNhbiBpbmN1ciBsb2Nr
+IHJlY3Vyc2lvbi4KPj4+IFRoZSBpc3N1ZSBpcyB0aGF0IGl0IGlzIGNhbGxlZCBmcm9tIGhydGlt
+ZXJfc3RhcnRfcmFuZ2VfbnMKPj4+IGhvbGRpbmcgdGhlIHBlcl9jcHUoaHJ0aW1lcl9iYXNlcylb
+bl0ubG9jaywgYnV0IHdoZW4gZW5hYmxlZAo+Pj4gQ09ORklHX0RFQlVHX09CSkVDVFNfVElNRVJT
+LCBtYXkgd2FrZSB1cCBrc3dhcGQgaW4gc2V0X3RyYWNrX3ByZXBhcmUsCj4+PiBhbmQgdHJ5IHRv
+IGhvbGQgdGhlIHBlcl9jcHUoaHJ0aW1lcl9iYXNlcylbbl0ubG9jay4KPj4+IAo+Pj4gQXZvaWQg
+ZGVhZGxvY2sgY2F1c2VkIGJ5IGltcGxpY2l0bHkgd2FraW5nIHVwIGtzd2FwZCBieQo+Pj4gcGFz
+c2luZyBpbiBhbGxvY2F0aW9uIGZsYWdzLiBBbmQgdGhlIHNsYWIgY2FsbGVyIGNvbnRleHQgaGFz
+Cj4+PiBwcmVlbXB0aW9uIGRpc2FibGVkLCBzbyBfX0dGUF9LU1dBUERfUkVDTEFJTSBtdXN0IG5v
+dCBhcHBlYXIgaW4gZ2ZwX2ZsYWdzLgo+Pj4gCj4+IAo+PiBUaGlzIG1lbnRpb25zIF9fR0ZQX0tT
+V0FQRF9SRUNMQUlNLCBidXQgdGhlIHBhdGNoIGFjdHVhbGx5IG1hc2tzIG9mZiAKPj4gX19HRlBf
+RElSRUNUX1JFQ0xBSU0gd2hpY2ggd291bGQgYmUgYSBoZWF2aWVyd2VpZ2h0IG9wZXJhdGlvbi4g
+IERpc2FibGluZyAKPj4gZGlyZWN0IHJlY2xhaW0gZG9lcyBub3QgbmVjZXNzYXJpbHkgaW1wbHkg
+dGhhdCBrc3dhcGQgd2lsbCBiZSBkaXNhYmxlZCBhcyAKPj4gd2VsbC4KPgo+WWVhaCBJIHRoaW5r
+IHRoZSBjaGFuZ2Vsb2cgc2hvdWxkIHNheSBfX0dGUF9ESVJFQ1RfUkVDTEFJTS4KPgo+PiBBcmUg
+eW91IG1lYW5pbmcgdG8gY2xlYXIgX19HRlBfUkVDTEFJTSBpbiBzZXRfdHJhY2tfcHJlcGFyZSgp
+Pwo+Cj5ObyBiZWNhdXNlIGlmIHRoZSBjb250ZXh0IGNvbnRleHQgKGUuZy4gdGhlIGhydGltZXJz
+KSBjYW4ndCBzdXBwb3J0Cj5fX0dGUF9LU1dBUERfUkVDTEFJTSBpdCB3b24ndCBoYXZlIGl0IGlu
+IGdmcF9mbGFncyBhbmQgd2Ugbm93IHBhc3MgdGhlbSB0bwoKPnNldF90cmFja19wcmVwYXJlKCkg
+c28gaXQgYWxyZWFkeSB3b24ndCBiZSB0aGVyZS4KCgpTcnkuIFNob3VsZCBiZSBfX0dGUF9ESVJF
+Q1RfUkVDTEFJTS4gSSB3aWxsIHJlc2VuZCB0aGUgcGF0Y2gu
 
