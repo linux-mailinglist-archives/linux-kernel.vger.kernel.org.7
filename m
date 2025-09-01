@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-794643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D5EB3E4A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:21:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA19B3E4AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471F61A811C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:22:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D292481B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E6F322770;
-	Mon,  1 Sep 2025 13:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxwNXuXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455D200BA1;
+	Mon,  1 Sep 2025 13:22:09 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30BE1DD9AD;
-	Mon,  1 Sep 2025 13:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507D1DF25C;
+	Mon,  1 Sep 2025 13:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732887; cv=none; b=n/Lq+ET6MzH2hb10jdwDufdcp3rtg7t5ylepFzYlLxu8LYSUurApVx2YvObO9p0DQnokVFSdi7swbe0uRXUV4YtMd+o+7XOfiIWvZuMaLjWixt0AKHr6UKrFTzxMrV4tXDcm5zqK2kQC9DgZ2dxOOzImiuN6tQqMQC+IkaMfG8c=
+	t=1756732929; cv=none; b=n4PDnNzrZ17lBDtZVpGmH6LAXDB+ccBlpeqC1v730qlZl6miD56Age3nhrC19j6/11Jf2j8H756ghcGMjVXfQsFjZoKwkYlr2ws1A5fHsTRqCyG9x2YDppjaDiS1gkiXN77Hjwg7XyDct1ZPZe8ATuw13H/jcQAp9yfYLzWIjM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732887; c=relaxed/simple;
-	bh=u2CDTQhsURCCSqa3JpAMaK/gwDrT9364bVhhTnoXS28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DxRVGVWfQq9JGGiHmk3fgZWEnS0BQ8ucu4LzNTE+55rFasKJMjCrUTHdCBSXMgwZd7USb9EzNn4C/sV4FN3PvNk7i5klYdBUfwf3Irotkwi2fNTpDRVtHP7//YXcrtXtzkUlm36tBq2PNNbUrsYThGIwSJBDoDx5orahfxbQRMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxwNXuXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC2CC4AF09;
-	Mon,  1 Sep 2025 13:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756732887;
-	bh=u2CDTQhsURCCSqa3JpAMaK/gwDrT9364bVhhTnoXS28=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OxwNXuXedznJSi2jMRuobh4RjVk3OOQFMSaYcrC0WD+BnuCQBoPJQi/tMn6pLL8Qw
-	 GHgP7OjcXR+zSPJO70P/HBs717bnvnSD6B10AYyMysp+LGLI2l3UvBkoBRElWiR3hI
-	 mETwpZjkKUIyFeFInWIUUV9s06dKUhLbxNOwSgl5mE3gOEvXse1iF2oYolchJVjUSe
-	 YQZf4OSDu8XPCynyrnhHE9rFLYXd32G1Av3gDf02EVOQmCoryYB11eVIF9WrhovoSI
-	 ymxEVzUmNTqWjJ7SNe/oXOmfq876Lo2sVLDQ9yZexg+oDyJZcc42u4HVbPQ7JKYTcE
-	 QTRiXmgiuM3Pw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ut4TN-00000003Dcf-2NzC;
-	Mon, 01 Sep 2025 15:21:25 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Kees Cook <mchehab+huawei@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] docs: kernel_include.py: drop some old behavior
-Date: Mon,  1 Sep 2025 15:21:22 +0200
-Message-ID: <00cdf3cbe2481aac875c543ded14b5eacfe071ec.1756732363.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756732363.git.mchehab+huawei@kernel.org>
-References: <cover.1756732363.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756732929; c=relaxed/simple;
+	bh=1g/A4Wv5mKf+v7+/QCStqvAm704nvGmVmNhs+BbGCT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KM1hufKzVi7HzKHa+vNzaUjDtUKsJYyt32lMYhKoqMqrIN+VdS6ScNgTMP3sKawu7YbjSwlvZ2LccQ6tNzjFAHhNa5X51N0YYN9wAl5CbfUU8OMx7oP3fVp94pZDIFtk6mlkTZLvyVwVv8/s8Z/COzQ13QeD/MUU+9ppi/JY8HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-541f5f63bc9so3248647e0c.1;
+        Mon, 01 Sep 2025 06:22:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756732926; x=1757337726;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FkAvxCU70HoXuWxVwlgIiFldPk5hO8ZyOEAVQLM5S0g=;
+        b=fBPDiwT2NHksLr+T2QeB0G6XjULi2tBzBGbJIkx1nvlEPhwR8k7Mq/fTvFyxhrKp9L
+         aQlz4AGhlubP4XZZa+FF7vPanFG7w1MxKQTm3vmsgOHmZ0fnXiASIJMyK1TO9zrn2k4I
+         uGJGgLObTLcheXhHNcsmtHINoXvlKGN+4ngp5BOrSkXAiRbtj45v7w/n8MgyBJZYNda/
+         0FVfMTCwUfhzXu+0GWydJm9kSsMO2X6cUzu/nYiOl8fiP29S9z0bTnOGeLGQEILKLACE
+         DNfqrRAHu2tFDuZdhlVcrwQF2c8RPQmf7V+fMlHSXCu5XRq+xrsCfFOyqAVKprcmWxcd
+         lAlw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6iqfVSM+/1wmFa08Fckpd1JJvMCpeQtDy9E6bv6nOCGHc7lKOI0uy/efJFS1H2heZI/ARJIKKxlk=@vger.kernel.org, AJvYcCXPSpmOfFs8RJgw8K+lAsM7pc4+kVlrkTnbt88EborMjhn8WZIlSJPgXzTzy7cn9xcdKu/pqtgbrnrpC6rK@vger.kernel.org, AJvYcCXy2yhYJnckrd2w68y0XsmoCT0dkYU/dznEQhYGfP725yHU7IRItEM/7UpK71KSgKU18e7/z3RSa6x8C4WAgEqX5nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywMN3T92iqIToW4vuZJkqdV0WpAcaesO7GBwSJElOcwer3Vl1/
+	0FDOeHgV3tWm3QVK+5lEcUtyB3Uu/F1EbBk1OJtXsjf5GTDCFNMPTDjwR8Da1msN
+X-Gm-Gg: ASbGnct60btjQMBGejsKMhB2vyRRAg7wfCqzIy/jmKu9ON70OvYbmahiC7A1mMm82vg
+	lRjHfzdMQDoFRQskydZx140NHCyDlwr4zYW+WUceRuUI932wqMoWYtJyP45siYYyYWfj4PXLBbJ
+	+cbTZEai2yRivZ1AiTSzRydojn3ptBS94IeJP0eQPwaryT88Brn6ThFZ3QFo7S+wF19+Y8i1bx5
+	nkcgdkO27NFObK3nMYSMmqV7/hGRXu614O85PewGwfUyofTCIAndOl9GRksN6yoMPIPbXbpjApW
+	ozI0jHNSyUUmK1wSEp8fSfRaSLzcxFmme4oT+YEg5lsPJdELEx4ByO66EcUTHPjsm8IHRmJ9xrd
+	giRZNVUnbwv2xhVl6p+IzNRXBTyP0tJ5tpFucFCGdm48AAE4cjpti+Tzw4eSI2jqlTG+21ZM=
+X-Google-Smtp-Source: AGHT+IGt9PiuJmy9AcoxZRYsMv/5bqvzujf8fg2iSjmaO3YkfJ0s6Cr31PgV4V0JCEE/ug7Vv1138Q==
+X-Received: by 2002:a05:6122:1350:b0:539:3bb5:e4d6 with SMTP id 71dfb90a1353d-544a0196ec5mr1998907e0c.1.1756732926046;
+        Mon, 01 Sep 2025 06:22:06 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912c6d3bsm4380059e0c.6.2025.09.01.06.22.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 06:22:05 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8988b982245so266566241.1;
+        Mon, 01 Sep 2025 06:22:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK6kc7SpPsrD+xuaqgwA5NsXE4sDIMe5nFKRHqobsdzRmGDhMr6xUeY15KASkJspwRUD702WOwOlY528TXLnyiZjw=@vger.kernel.org, AJvYcCVgDKrMR+s+c/9tsVIXjoGwEMl3utyx7y2mgZCy0g4RD5bjVfhDtTIwA8WRNJ4VMQpHCN7Vg3w2nuNjT8TP@vger.kernel.org, AJvYcCWhczDfOkxMKd/dqKta/RWPrBDD9FQm90oSLMnzF6q3HPO5LfQNhk5UGqz5WmWOUB4IalNgnN+bGnM=@vger.kernel.org
+X-Received: by 2002:a67:e702:0:b0:52a:f806:3545 with SMTP id
+ ada2fe7eead31-52b19846044mr2352761137.5.1756732925245; Mon, 01 Sep 2025
+ 06:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+References: <20250821141429.298324-1-biju.das.jz@bp.renesas.com> <20250821141429.298324-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250821141429.298324-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 15:21:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdULwzW94LFbs2o=RU-BSrJpdLcuhmrNqeJN4t29JNUSXA@mail.gmail.com>
+X-Gm-Features: Ac12FXwd5dQpKam-6dEqwPDDrkcEmWNCW-XhjykSMpHV-sl6MdP1QUHHQA_7lwo
+Message-ID: <CAMuHMdULwzW94LFbs2o=RU-BSrJpdLcuhmrNqeJN4t29JNUSXA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] can: rcar_canfd: Update RCANFD_CFG_* macros
+To: Biju <biju.das.au@gmail.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The old behavior is not using anymore, so let's drop it.
+On Thu, 21 Aug 2025 at 16:14, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Update RCANFD_CFG_* macros to give a meaning to the magic number using
+> GENMASK macro and extract the values using FIELD_PREP macro.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v1->v2:
+>  * Moved from patch#4 to patch#2.
+>  * Updated commit header and description.
+>  * Kept RCANFD_CFG* macro definitions to give a meaning to the magic
+>    number using GENMASK macro and used FIELD_PREP to extract value.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/sphinx/kernel_include.py | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/sphinx/kernel_include.py b/Documentation/sphinx/kernel_include.py
-index 661ed978bed8..2c4bb8215b4c 100755
---- a/Documentation/sphinx/kernel_include.py
-+++ b/Documentation/sphinx/kernel_include.py
-@@ -316,11 +316,9 @@ class KernelInclude(Directive):
-         env = self.state.document.settings.env
- 
-         #
--        # The include logic accepts only patches relative to:
--        #   - Kernel source tree
--        #   - Documentation output directory
--        #
--        # The logic does check it to prevent directory traverse
-+        # The include logic accepts only patches relative to the
-+        # Kernel source tree.  The logic does check it to prevent
-+        # directory traverse issues.
-         #
- 
-         srctree = os.path.abspath(os.environ["srctree"])
-@@ -331,10 +329,6 @@ class KernelInclude(Directive):
-         if os.path.isfile(src_path):
-             base = srctree
-             path = src_path
--        elif os.path.exists(arg):
--            # Allow patches from output dir
--            base = os.getcwd()
--            path = os.path.abspath(path)
-         else:
-             raise self.warning(f'File "%s" doesn\'t exist', path)
- 
-@@ -359,11 +353,6 @@ class KernelInclude(Directive):
- 
-         env.note_dependency(os.path.abspath(path))
- 
--        # HINT: I had to copy&paste the whole Include.run method. I'am not happy
--        # with this, but due to security reasons, the Include.run method does
--        # not allow absolute or relative pathnames pointing to locations *above*
--        # the filesystem tree where the reST document is placed.
--
-         if not self.state.document.settings.file_insertion_enabled:
-             raise self.warning('"%s" directive disabled.' % self.name)
-         source = self.state_machine.input_lines.source(self.lineno -
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.51.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
