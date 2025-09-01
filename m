@@ -1,184 +1,376 @@
-Return-Path: <linux-kernel+bounces-794003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF67B3DB5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:44:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF661B3DB61
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226707A5A86
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CD516B639
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6592D8367;
-	Mon,  1 Sep 2025 07:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF692E92B3;
+	Mon,  1 Sep 2025 07:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="jhFaYZ/B"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k8frw+VR"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B82E2D7DC9
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712686; cv=none; b=PXhTHoZZJu65se20wGkhE8oC2F3GH7Xao4aHcxDx05lHR/1sf5W7MZBYkvrpf4/Kj2ALP7bCHhYplUXvmBFUHsK/pHRED7Ksu8nO4N9csp0xbfOkRvr8BdzVxJCZuT3P9/6lgPCh3UZQuFD1koDFF5joOWg6rLL7MQLvUOlGD7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712686; c=relaxed/simple;
-	bh=h5ASbpq7GzquVrjE5v2oPRk1/yndZJRiGIfLCAbjbYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1eRDjKuy3LJFpQfY1CLqKjsR0iUr0SpqL3l7GcGfp3lOQb8wqQhOlAzgn1UA8Ez963vTs2hjGsmwoackqnrsxRQBC8wUaT5P+TAhzZIj7xItIdS/017heQ3cQQqo4J2R5KRPDRirr+JkpNnSqoz+vordpweLoww4qFKfghRFkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=jhFaYZ/B; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id saAeuSDHbLIlMszDSuH7yM; Mon, 01 Sep 2025 07:44:38 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id szDQulHR5rnsYszDRuZbNz; Mon, 01 Sep 2025 07:44:37 +0000
-X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=68b54ee5
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10
- a=H2_X3B96ix6R1hjB0M0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VyVL0CUniS3Y2QcF3TIAZDEVTr4tMopQSoLyF8TxjVA=; b=jhFaYZ/B3nqWPBto84JnjMHrrD
-	RSxjYE09m9V3eG3ONgJKzM4xaeMcD43WOFMsiyOxwurcfjal+ewG/4ys/VQAy4u5jWCuTH3jJgGLv
-	7Yk0PSa2sVFGDpmP8vDc3E3I9MFETMkZILOBTsNtLWtiEYDhc2/RJzCU246gsbwxPf3R0Fn7J4jpw
-	5910CxHkM8ndH8TJGeIusrQJ+TuW3YjrmKXUalWybgkykEFnnMlsnbp5qzIXPUyJhRzZZql3TVNVK
-	EIeN7yMj1EdLL4GZ0Ng108GvnLfHainljVWIDjGpDOuv+7Tv9oVhfG40QLh7jD7I/GSup2V/hXcrO
-	NKJfen6w==;
-Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:58286 helo=[10.233.40.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1uszDQ-000000043fh-0wKn;
-	Mon, 01 Sep 2025 02:44:36 -0500
-Message-ID: <65a443d1-be01-4e5b-9086-b4ce2746ab63@embeddedor.com>
-Date: Mon, 1 Sep 2025 09:44:27 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552F22E8B9E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756712805; cv=fail; b=M9ylM94qWmzbmlNVBTswFadxLXYa6HB7BW5fZ5LUkWuf9iTcO4qTMEQsJAV6qrqScAc3TCSKVXBpW1NCWXSP380YAwgxVweXPam+mqYqFDwPGUuknL23JlcJLlwgJ9yehHfNZp8dp7qIttVL3fU+n++3RhngKTu7WqQsYyv3/TQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756712805; c=relaxed/simple;
+	bh=dVy/TK+Uh2FuU9Bz//ZJ9tq5LRvEqgdl+2gLoRHyPik=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=HfY7wSS6DvGzLPrambsjcY19ocarAJK5mbAKS22uNrZY/byGDzZfGP3E1aHWeh6cgbVqaQlMemX0JUal6A66qCLZXPmPEqjZ+nBg4J2DNlywmBLsxRvU+3u4cqQwyrqHH1XLSEybJ+OXj5ro3ZXVFDFaYpW8WEXNRoUH7zXD/mg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k8frw+VR; arc=fail smtp.client-ip=40.107.223.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JUMFD8E41ScYnRR762J52OybpSzBWs5Sucaxt+dhjyXZkZDYuLUSmfK5GzxJabOy26H566i6lK/h0cOEnzLvhRF1c074zCEArsf8euyXV/UdQFOjlKZ8A7+CMqIxAGWyMukKS5/D2n7PYjE7hJCvAGkgua0pre8u1C7135xlhy/K12pPRbT/JyVa+KjfCyua/IGXmGMeLO6ub1ntldgxK0/KSQqmEcKrNsQ71LCn+Qc+s93Im0q0D6xcPKG6bLYNhCML0lGNxdnCvNnc6gUQzwXjGzBzxMHshaB/m4wDYx35Wq+2v7XZwm8mkVuhmcc73qkUZBoDxeamH2vL/g7tcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+IDjt5h3riiJwtfOHnD+iMxqAnIpM4ymCz7aBiJo41w=;
+ b=v69HX+1QTuNxqY2+NPm57dvo4Ataspg8j2aghGc8A3v7+D8a8DiWPouYp4N3LN5M4mJUxl3yMcmRlpJ3chVXvP+tM76JJSr7NOVtA3eqHFhWzMog42YMMBnhL4QEJoW2waU8zj/n+Ku7Zzfygeve7Hrqz+O4PUq/uUCVaGvpEHa20xNFQF+cECk58Cvyr5AsSGtWLkgI4/cpaYLuMYuAqKqGNB2DD+SVGAT9ahYKXTEcDgvchG9ktfvRlQNnL7C1kBbDWM6Ip7+aeGTkCq/CBWvDM6X6LF7aMKxzOKcNB4R+qtoGjX763jEsh83w3SUy8EumVQc/3mLmvs9Wy/SZlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+IDjt5h3riiJwtfOHnD+iMxqAnIpM4ymCz7aBiJo41w=;
+ b=k8frw+VRNa2HFeGw0Flb38Pd/XHPBTHTDTrwK/eIY+VP4wz43U+HBxQzq8y6TLz5utxk/hMup40ORihHOnDFa/1smCsmxCL3K0Lk2XDh0zMTqkk9jjaFhYcNn0b7hBlh2Qd1y1rD7Rb4QSbYZ4SZQni5wLNcSaCD6G7XGYLHtvG/PwuKS5R8lTgD9tvX2DpD3B8EfFOsPiuakeQMSjbbMJLbTnvhgeVdo0f3p+BynPTQN+wncAcHdHojVWhSpbZQfMB4CJYEJx2+6XJLCurdKZIMcIeGW09qkuPlGFlEcuMR/RrJA/7Z36ERTW3KK3Oj4LB4RUbdjhxrfCOea5JdYA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
+ by IA1PR12MB6138.namprd12.prod.outlook.com (2603:10b6:208:3ea::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.24; Mon, 1 Sep
+ 2025 07:46:38 +0000
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
+ 07:46:37 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Sep 2025 16:46:23 +0900
+Message-Id: <DCHAPJRPKSSA.37QLQGAVCERCZ@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 03/10] gpu: nova-core: gsp: Create wpr metadata
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Alistair Popple" <apopple@nvidia.com>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250827082015.959430-4-apopple@nvidia.com>
+In-Reply-To: <20250827082015.959430-4-apopple@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0062.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31a::7) To MN2PR12MB3997.namprd12.prod.outlook.com
+ (2603:10b6:208:161::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
- warnings
-To: Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>
-References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
- <9da518ad-9b44-4dbb-98e5-66cf8a3fe7c2@huaweicloud.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <9da518ad-9b44-4dbb-98e5-66cf8a3fe7c2@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 212.178.105.130
-X-Source-L: No
-X-Exim-ID: 1uszDQ-000000043fh-0wKn
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([10.233.40.44]) [212.178.105.130]:58286
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMkt+ilUtmZ8XdJD/0Qyoy7P2BcGIIEEggQIF5dQkMshOJvGZ605ZD8DdGEftqGEDktyro5bRISOpYHGdAviQ3mqr3a783k/y/6H96jzNHoWqSr6C7Fe
- cUClLGl6IRRK1vVbl7mZSou21wy5R/ZnGm9Fc44GrIHhvjvUWHiFSSaWcjlw8uf+iT5LHCg4U3Wxwi0pug/aw4ENmavpnJ5rWq6vyySBswcOipiXN2hYt05s
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|IA1PR12MB6138:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2ffa7fc-e396-4309-9775-08dde92bab19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUc1c2dsdVMvNDB5RGRSVkNJdkJIYnBYOU01dndzTVdQeDZRUS9vTXhKZkFn?=
+ =?utf-8?B?WHA4a1FtQTcyZFJGU2c3blF2UWltTzhXZHp1OWV2RW9SMmYvK04xRTdVaWJQ?=
+ =?utf-8?B?bkRWcEtXTWxUUzZCT3FralFmblY2UUgwNS9oNUhvUlVuSkNRQjZSb0wwUU05?=
+ =?utf-8?B?MXZQVEtsOUFvRXovOFcyS2czUHFpNVhLUTZZdVB6M3N1dVNmSzB6c2dQSTFN?=
+ =?utf-8?B?RStkM0tENC9kckRqa21RbjZIWDI0Mm1ONmFoM3J3ekRwNDBTOVR2cU1GNWt4?=
+ =?utf-8?B?YW5CeUFBQlY4NnpCSFJMVTJqQkM1Y0FKS2JJcDVuWCtwWWlSWTNSM3JXY0Nk?=
+ =?utf-8?B?bkhCZnVTTWovYXhWZCtOK243UHMycU5ydldhenJqTjQxNUJjMUVvODducVJC?=
+ =?utf-8?B?SlpoUlhPa1N6T3VVbVNpT0FnTTBvQXFmMzkxUWRsRlVuU2NoVkgzcm4rUkdL?=
+ =?utf-8?B?KytOTTNjcnI2Y2gyMHBWeElsQWlaSnpJbVZUMUtHR3Q0VUJ5U1VDZ2ZIK2Yw?=
+ =?utf-8?B?NjZjSkxLNEhCbTQ0N0xJL21uR3BuSytMMUtPSnF0UjUwS3ZXRjV4dHNCT1ZO?=
+ =?utf-8?B?S3pONFhrbjJLdkZxZGl4MG85ZW5qZTlvV1NYWjF1V2xPQTRpd1htVy8rNW40?=
+ =?utf-8?B?UnZlb09rWFEyQjZCN0IzeUd3cmphcmhlUUFMbjhNU2g0R1RQOTZiWTBJNE1n?=
+ =?utf-8?B?UzJ2ZTgzRHRQUFJVdXBUKy9wNjNHM3liUzhuV1hrWVNzRmxxQ1BXYjI2VzhT?=
+ =?utf-8?B?elZpNk9qYlFQUzZ3VXFSMHlUN1FWTTl4OFdBODFLb2JyR0l0Uk0ra0hVeko3?=
+ =?utf-8?B?SEk5TUZveHRmS1FmVlBoM3BxU2doSm93RVlFWGR4UjVOKy9IY2N1enVCNnVJ?=
+ =?utf-8?B?SFpTMkhyU3EyNWJjbFZ5ZFNDSm0vNVduWWJzeUF3cFlJdXZ1eXR3SXRvTGJK?=
+ =?utf-8?B?OUV0NEdRYnFVVXF4cXhDQ0dQTmNubVByYlhaNGVJTmZBRTAwTU5tMUNVdjhv?=
+ =?utf-8?B?UjBGK0JMZHVlMm1vMlRkMWF5OVQ0ZDVuVnJiUXlYbnUwUUpjUHg1bjBWOUxK?=
+ =?utf-8?B?enhRTktPNlFHZDE4bGJ0YksrWTNLQTNQNHdLRmRSWVJyT2lzSllYTXFlZjFx?=
+ =?utf-8?B?NDB4NisxWTFJRXN0RW14aWt1SCtNMDA5T0xpKzlRaThOcjVnb0toRE84YzI1?=
+ =?utf-8?B?VFdZY0V6OS9RVWxkUnNwdWNmRHRQSEtTL2d4aXQ0b0F2L2JmYXlFNHZNT2g2?=
+ =?utf-8?B?d0QxK21Gc1lmMnNadGwwSm1RdXYxcnV5SzlteXhSQk5RcDRKU0RSdjRqMU5t?=
+ =?utf-8?B?RmtsZ2dxQ3NRemZvTERLR1Y3dGI0aHRiY2l4bHYvZ3BDNDR2NXUrWldwTzZ4?=
+ =?utf-8?B?L3A2aUlRZ2krQlkydGZSSEx6UTJFSG96R3pVTjVXNCtqNVpoTU01Ni9IV05Z?=
+ =?utf-8?B?MFZra0gwazFwYXdTbmxnK2lnWEFHWk1yRHVUaTV4MTlmdElpTjkvd0tWSlkw?=
+ =?utf-8?B?cTBCWEVCaXk3RmdWUlk0cUlaMDZhTXlVMmc5YVVJSW93a1hQTEg3THl5b3pv?=
+ =?utf-8?B?M1hIWmw3ZDJpNXBjQVQ2b2JqcGkwem5iQXNQYlJIT3NrbllvR2pNMjc5eEpW?=
+ =?utf-8?B?d2hMMzZ0U0EwSFRZRDRoZ2FJdmtVSk9TRERBUVNiN21seEZVZnloTFBicjVN?=
+ =?utf-8?B?VFRsS0VtN2pTbWY4MmtEeUlyRXd6VWFXSmE0K2ljbjZpV1pzMk93TGh0clZZ?=
+ =?utf-8?B?a2xSUkpQQVo1U2w0VmVTMzA5ejAwVFRMbS9ZdFl6TUpROGhuV293OWxvbG5h?=
+ =?utf-8?B?ZEJ6Y2cxWWk1TmxnYkI4OU44L0czT2RhZ2RCTXdvTHpzQVFtMk5hQkxxZ05q?=
+ =?utf-8?B?c0QrOStHOEljczJDRkNnaU1vNmpIZENuSVFiZzNYNzBaSUJ1MHg0cEtUamVJ?=
+ =?utf-8?Q?dib2jdRqUq4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGN5Nk5jenU1bU8wcnZtNU5RMUwrY0FUeVExdlRXc1NlRFdyRStqeVF1NGta?=
+ =?utf-8?B?TmJJSUZ3R05vTHA0MEVHYkxPbXJwRlgvM3dMOFh0M0szVCtJNEZ2cHFFL0kr?=
+ =?utf-8?B?K1pVay93MTF3UUl0OUx6ZjFnMzhudnczM2dDbkxMaW8zeWtIUFVBRzVmNHl2?=
+ =?utf-8?B?aHZhY2xOU01vaFEvMzdTMGZoKzdlUTh1dW1rdm5adVZEWjVCYlNGNTZXK01z?=
+ =?utf-8?B?RXZDRXBxOCtEeUJEd0c2NEpoamY4UHBzZjNYakJ2Wjk0dFlRc1lpNGlIVFRo?=
+ =?utf-8?B?citUQ2xBbDczSEVXRE0wM0RzblgzMWl0U3ZLQWhtaVJKTlRTdlFRY3Z6dzE5?=
+ =?utf-8?B?dTNMRE1sdVBHQmp0R2pDMDlPWGV2L09LSWZIWnhpZHVNNkJESzgycXRoWE9M?=
+ =?utf-8?B?QzBETVgrZDQ4cWc3emhybWcvYVBHaktqY2UralJyMnh1dHdPZk9rbFkrenpp?=
+ =?utf-8?B?cG1LeUR4WGlHZTNkMUd3Rlpwa0V3OTNwMEVxcWtJTmJGNDhMMUlwcGFEZjEw?=
+ =?utf-8?B?NHlldHRVQ3NxMk9NaG9IeFdmQlFDSlVwVTdrVml0ZThuQUpmSlNaNy9JNDNo?=
+ =?utf-8?B?VnFiNkFkcWRvNklIU1ZGTnRxQm5XUjJoVXBBTXp4NGVBM1R1b0dsa2pLN1NC?=
+ =?utf-8?B?RW55K2xvcm1QYjJiMkNnZlEvZjhHaWtEU2ltRlZPNUxBRmh2eXZiMml4bzJ2?=
+ =?utf-8?B?ZUFpSlB0M29yM2w0MXp3UGNFL1hmSnR0Yjc1VUpBeHZOdDZtKzZxcUJ2bExG?=
+ =?utf-8?B?M3RTaGY2UFlOejRIWFlHbWhDSzZEUjgwUnFyQlp2NHhrWUVGSFlZNUxXSnNO?=
+ =?utf-8?B?UjNjZkd2b3NMU3V2VzkySUZPMjhpQmZ1S0xKTmI2eHZ4Z2pqOFI2MnBhSkVZ?=
+ =?utf-8?B?OFR6cGZ2R1Q0bUZKQktmRHFzQmtNTjFkRTNjZFQ4QWJmVTFvVm9IL0Jjb2RM?=
+ =?utf-8?B?M0pucUFycXRoMVJha3FIRGpyek5SQkExR2JqeFpWU1VXRHpBU1VRM0VCSE5R?=
+ =?utf-8?B?RVFtSEFZb2FKbGpqL2owNlY4WEJHTDdDMk44cHNLSUhNRjl5Rmo0d3BndTZw?=
+ =?utf-8?B?NjVWTWZlcHZ1Q3orWllOWVN4QmNuTFB6WWRhbGJucXRIOVJ2M01jMEtaT1RS?=
+ =?utf-8?B?ekk2M3dkM3RMa3VtYjZNTU1WYTA0QmRXZDBubGV5TVJNbzM4c216TTN5b05H?=
+ =?utf-8?B?OFFOT25pdDdsOG5iT3JSTDZYRGY2ZU5FNG9tS0JSZFh0bThYSGxzRkh3aXQy?=
+ =?utf-8?B?YU9TalRPTjN6c2x3QUQ5L01Rc1RQWHJydlArbDZScTEyWkxRbXYyMFNjZ01C?=
+ =?utf-8?B?eFNPc1pTSW9OdkdDbXdwanRYdXh0ZkxUR1hWbElIT00wTDBaZUh2aldTSFV6?=
+ =?utf-8?B?ZnZxQzRtSTJ4amsrTDZDdlAxTDRBWUtXemF3c29JbXBWU2E2TjB1M0hyMUd6?=
+ =?utf-8?B?UU9GNTBHTVFmRmxWZUR1M3VGNE0xMlE0Wlh6c1ZHdTMxNzdQYVVFUTU4YXNL?=
+ =?utf-8?B?TjlYZXJLeTU3UVo2MmNKYWV4Nmo1UklKZ0VPblJHQ1N4Vms2KzdCZnUrc05J?=
+ =?utf-8?B?QTdhMXZibWk2bzREM2paYTgwV1ovQlU2V0ovU0JFcG01YlhqUWx6elJmS1lT?=
+ =?utf-8?B?dE90SUoyYW1oaHoyWGdiajZzaWw0aVB3L2tRQUErMExXVzMvOHRYZUgzTnJu?=
+ =?utf-8?B?akVDb2J4ZWVmUjBvb1pDQVB1dTdFUkNKZDd3YmI5c2JodU1QeXNJTWoyQ2FD?=
+ =?utf-8?B?UGpWcjlUZ3dlRUZsd20yODBCVG5zZlpwTXFZUDU4WFA3WWxyTmZMaGFLTmgr?=
+ =?utf-8?B?Tm04TWltSlBHbWNlNXhZMVZoaUVsWk52NDlKbEtvMzcxWndPK2ZNamo5SVA2?=
+ =?utf-8?B?UnhVTElxN09KRFMvd3ArWW5tTFAzNHAyVG1yQlkrVlBJaXZBd3JYV01Sblc3?=
+ =?utf-8?B?UVZPaW1VOFA5aVFLSzBJeWVudGgyY29JdEE5RDdVSGVQaGNibDZQRUl5TnJ1?=
+ =?utf-8?B?d2pHQXhBdEROcGhRWk1pNEViOEx5QjU0WXRmSVRha0VnQTI2dURmemhsSUJN?=
+ =?utf-8?B?eHJuMmxRb3o1aGJ4RW5DZ0xNTDZteERZaUpKQk42WVZhT0xaTW55RzZjUGxJ?=
+ =?utf-8?B?T0Z5UGVCWUNLOTlzS05wQnd0TUdzWnlqNHpRR2FtWWJNMkNPNFRFdHpvV2dU?=
+ =?utf-8?Q?jCTOedEcSQyu+/QJxGSewYXCKe+RUfqIdkVGLrxeKY85?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2ffa7fc-e396-4309-9775-08dde92bab19
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 07:46:37.5258
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SDw6eOec4fNXYb0XRaF99BZha7tzsPpeAkZaF0N+m1PrHHe3Fge/lMx5k9OgELeKQTtuNxJ0q1zkxGrn8EHjEA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6138
 
+Hi Alistair,
 
+On Wed Aug 27, 2025 at 5:20 PM JST, Alistair Popple wrote:
+<snip>
+> index 161c057350622..1f51e354b9569 100644
+> --- a/drivers/gpu/nova-core/gsp.rs
+> +++ b/drivers/gpu/nova-core/gsp.rs
+> @@ -6,12 +6,17 @@
+>  use kernel::dma_write;
+>  use kernel::pci;
+>  use kernel::prelude::*;
+> -use kernel::ptr::Alignment;
+> +use kernel::ptr::{Alignable, Alignment};
+> +use kernel::sizes::SZ_128K;
+>  use kernel::transmute::{AsBytes, FromBytes};
+> =20
+> +use crate::fb::FbLayout;
+> +use crate::firmware::Firmware;
+>  use crate::nvfw::{
+> -    LibosMemoryRegionInitArgument, LibosMemoryRegionKind_LIBOS_MEMORY_RE=
+GION_CONTIGUOUS,
+> -    LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_SYSMEM,
+> +    GspFwWprMeta, GspFwWprMetaBootInfo, GspFwWprMetaBootResumeInfo, Libo=
+sMemoryRegionInitArgument,
+> +    LibosMemoryRegionKind_LIBOS_MEMORY_REGION_CONTIGUOUS,
+> +    LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_SYSMEM, GSP_FW_WPR_META=
+_MAGIC,
+> +    GSP_FW_WPR_META_REVISION,
+>  };
+> =20
+>  pub(crate) const GSP_PAGE_SHIFT: usize =3D 12;
+> @@ -25,12 +30,69 @@ unsafe impl AsBytes for LibosMemoryRegionInitArgument=
+ {}
+>  // are valid.
+>  unsafe impl FromBytes for LibosMemoryRegionInitArgument {}
+> =20
+> +// SAFETY: Padding is explicit and will not contain uninitialized data.
+> +unsafe impl AsBytes for GspFwWprMeta {}
+> +
+> +// SAFETY: This struct only contains integer types for which all bit pat=
+terns
+> +// are valid.
+> +unsafe impl FromBytes for GspFwWprMeta {}
+> +
+>  #[allow(unused)]
+>  pub(crate) struct GspMemObjects {
+>      libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
+>      pub loginit: CoherentAllocation<u8>,
+>      pub logintr: CoherentAllocation<u8>,
+>      pub logrm: CoherentAllocation<u8>,
+> +    pub wpr_meta: CoherentAllocation<GspFwWprMeta>,
+> +}
 
-On 9/1/25 03:29, Chen Ridong wrote:
-> 
-> 
-> On 2025/8/30 21:30, Gustavo A. R. Silva wrote:
->> Hi all,
->>
->> I'm working on enabling -Wflex-array-member-not-at-end in mainline, and
->> I ran into thousands (yes, 14722 to be precise) of these warnings caused
->> by an instance of `struct cgroup` in the middle of `struct cgroup_root`.
->> See below:
->>
->> 620 struct cgroup_root {
->>      ...
->> 633         /*
->> 634          * The root cgroup. The containing cgroup_root will be destroyed on its
->> 635          * release. cgrp->ancestors[0] will be used overflowing into the
->> 636          * following field. cgrp_ancestor_storage must immediately follow.
->> 637          */
->> 638         struct cgroup cgrp;
->> 639
->> 640         /* must follow cgrp for cgrp->ancestors[0], see above */
->> 641         struct cgroup *cgrp_ancestor_storage;
->>      ...
->> };
->>
->> Based on the comments above, it seems that the original code was expecting
->> cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
->> memory.
->>
->> However when I take a look at the pahole output, I see that these two members
->> are actually misaligned by 56 bytes. See below:
->>
->> struct cgroup_root {
->>      ...
->>
->>      /* --- cacheline 1 boundary (64 bytes) --- */
->>      struct cgroup              cgrp __attribute__((__aligned__(64))); /*    64  2112 */
->>
->>      /* XXX last struct has 56 bytes of padding */
->>
->>      /* --- cacheline 34 boundary (2176 bytes) --- */
->>      struct cgroup *            cgrp_ancestor_storage; /*  2176     8 */
->>
->>      ...
->>
->>      /* size: 6400, cachelines: 100, members: 11 */
->>      /* sum members: 6336, holes: 1, sum holes: 16 */
->>      /* padding: 48 */
->>      /* paddings: 1, sum paddings: 56 */
->>      /* forced alignments: 1, forced holes: 1, sum forced holes: 16 */
->> } __attribute__((__aligned__(64)));
->>
->> This is due to the fact that struct cgroup have some tailing padding after
->> flexible-array member `ancestors` due to alignment to 64 bytes, see below:
->>
->> struct cgroup {
->>      ...
->>
->>      struct cgroup *            ancestors[];          /*  2056     0 */
->>
-> 
-> Instead of using a flexible array member, could we convert this to a pointer and handle the memory
-> allocation explicitly?
-> 
+I think `wpr_meta` is a bit out-of-place in this structure. There are
+several reason for this:
 
-Yep, that's always an option. However, I also wanted to see what people
-think about the current misalignment between cgrp->ancestors[0] and
-cgrp_ancestor_storage I describe above.
+- All the other members of this structure (including `cmdq` which is
+  added later) are referenced by `libos` and constitute the GSP runtime:
+  they are used as long as the GSP is active. `wpr_meta`, OTOH, does not
+  reference any of the other objects, nor is it referenced by them.
+- `wpr_meta` is never used by the GSP, but needed as a parameter of
+  Booter on SEC2 to load the GSP firmware. It can actually be discarded
+  once this step is completed. This is very different from the rest of
+  this structure, which is used by the GSP.
 
-And if the heap allocation is an acceptable solution in this case, I'm
-happy to go that route.
+So I think it doesn't really belong here, and would probably fit better
+in `Firmware`. Now the fault lies in my own series, which doesn't let
+you build `wpr_meta` easily from there. I'll try to fix that in the v3.
 
-Thanks
--Gustavo
+And with the removal of `wpr_meta`, this structure ends up strictly
+containing the GSP runtime, including the command queue... Maybe it can
+simply be named `Gsp` then? It is even already in the right module! :)
 
+Loosely related, but looking at this series made me realize there is a
+very logical split of our firmware into two "bundles":
+
+- The GSP bundle includes the GSP runtime data, which is this
+  `GspMemObjects` structure minus `wpr_meta`. We pass it as an input
+  parameter to the GSP firmware using the GSP's falcon mbox registers.
+  It must live as long as the GSP is running.
+- The SEC2 bundle includes Booter, `wpr_meta`, the GSP firmware binary,
+  bootloader and its signatures (which are all referenced by
+  `wpr_meta`). All this data is consumed by SEC2, and crucially can be
+  dropped once the GSP is booted.
+
+This separation is important as currently we are stuffing anything
+firmware-related into the `Firmware` struct and keep it there forever,
+consuming dozens of megabytes of host memory that we could free. Booting
+the GSP is typically a one-time operation in the life of the GPU device,
+and even if we ever need to do it again, we can very well build the SEC2
+bundle from scratch again.
+
+I will try to reflect the separation better in the v3 of my patchset -
+then we can just build `wpr_meta` as a local variable of the method that
+runs `Booter`, and drop it (alongside the rest of the SEC2 bundle) upon
+return.
+
+> +
+> +pub(crate) fn build_wpr_meta(
+> +    dev: &device::Device<device::Bound>,
+> +    fw: &Firmware,
+> +    fb_layout: &FbLayout,
+> +) -> Result<CoherentAllocation<GspFwWprMeta>> {
+> +    let wpr_meta =3D
+> +        CoherentAllocation::<GspFwWprMeta>::alloc_coherent(dev, 1, GFP_K=
+ERNEL | __GFP_ZERO)?;
+> +    dma_write!(
+> +        wpr_meta[0] =3D GspFwWprMeta {
+> +            magic: GSP_FW_WPR_META_MAGIC as u64,
+> +            revision: u64::from(GSP_FW_WPR_META_REVISION),
+> +            sysmemAddrOfRadix3Elf: fw.gsp.lvl0_dma_handle(),
+> +            sizeOfRadix3Elf: fw.gsp.size as u64,
+> +            sysmemAddrOfBootloader: fw.gsp_bootloader.ucode.dma_handle()=
+,
+> +            sizeOfBootloader: fw.gsp_bootloader.ucode.size() as u64,
+> +            bootloaderCodeOffset: u64::from(fw.gsp_bootloader.code_offse=
+t),
+> +            bootloaderDataOffset: u64::from(fw.gsp_bootloader.data_offse=
+t),
+> +            bootloaderManifestOffset: u64::from(fw.gsp_bootloader.manife=
+st_offset),
+> +            __bindgen_anon_1: GspFwWprMetaBootResumeInfo {
+> +                __bindgen_anon_1: GspFwWprMetaBootInfo {
+> +                    sysmemAddrOfSignature: fw.gsp_sigs.dma_handle(),
+> +                    sizeOfSignature: fw.gsp_sigs.size() as u64,
+> +                }
+> +            },
+> +            gspFwRsvdStart: fb_layout.heap.start,
+> +            nonWprHeapOffset: fb_layout.heap.start,
+> +            nonWprHeapSize: fb_layout.heap.end - fb_layout.heap.start,
+> +            gspFwWprStart: fb_layout.wpr2.start,
+> +            gspFwHeapOffset: fb_layout.wpr2_heap.start,
+> +            gspFwHeapSize: fb_layout.wpr2_heap.end - fb_layout.wpr2_heap=
+.start,
+> +            gspFwOffset: fb_layout.elf.start,
+> +            bootBinOffset: fb_layout.boot.start,
+> +            frtsOffset: fb_layout.frts.start,
+> +            frtsSize: fb_layout.frts.end - fb_layout.frts.start,
+> +            gspFwWprEnd: fb_layout
+> +                .vga_workspace
+> +                .start
+> +                .align_down(Alignment::new(SZ_128K)),
+> +            gspFwHeapVfPartitionCount: fb_layout.vf_partition_count,
+> +            fbSize: fb_layout.fb.end - fb_layout.fb.start,
+> +            vgaWorkspaceOffset: fb_layout.vga_workspace.start,
+> +            vgaWorkspaceSize: fb_layout.vga_workspace.end - fb_layout.vg=
+a_workspace.start,
+> +            ..Default::default()
+> +        }
+> +    )?;
+> +
+> +    Ok(wpr_meta)
+
+I've discussed the bindings abstractions with Danilo last week. We
+agreed that no layout information should ever escape the `nvfw` module.
+I.e. the fields of `GspFwWprMeta` should not even be visible here.
+
+Instead, `GspFwWprMeta` should be wrapped privately into another
+structure inside `nvfw`:
+
+  /// Structure passed to the GSP bootloader, containing the framebuffer la=
+yout as well as the DMA
+  /// addresses of the GSP bootloader and firmware.
+  #[repr(transparent)]
+  pub(crate) struct GspFwWprMeta(r570_144::GspFwWprMeta);
+
+All its implementations should also be there:
+
+  // SAFETY: Padding is explicit and will not contain uninitialized data.
+  unsafe impl AsBytes for GspFwWprMeta {}
+
+  // SAFETY: This struct only contains integer types for which all bit patt=
+erns
+  // are valid.
+  unsafe impl FromBytes for GspFwWprMeta {}
+
+And lastly, this `new` method can also be moved into `nvfw`, as an impl
+block for the wrapping `GspFwWprMeta` type. That way no layout detail
+escapes that module, and it will be easier to adapt the code to
+potential layout chances with new firmware versions.
+
+(note that my series is the one carelessly re-exporting `GspFwWprMeta`
+as-is - I'll fix that too in v3)
+
+The same applies to `LibosMemoryRegionInitArgument` of the previous
+patch, and other types introduced in subsequent patches. Usually there
+is little more work to do than moving the implentations into `nvfw` as
+everything is already abstracted correctly - just not where we
+eventually want it.
 
