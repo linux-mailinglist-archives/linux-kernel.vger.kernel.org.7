@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-795208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F65B3EE3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135F6B3EE3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69742C0DE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B84487FA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA8324B2E;
-	Mon,  1 Sep 2025 19:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C099260566;
+	Mon,  1 Sep 2025 19:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYASmNv7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJqIcAtS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B8F255F5C;
-	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6BCC2EA;
+	Mon,  1 Sep 2025 19:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753251; cv=none; b=h/BYHUuMdu/1+hUjk2tvs+3pzXpfE8AgVF8YVeZLv8vrSIWGtnUnLvc+UiLpDAyClVrXBiYnGjafy9gtI/Y4ElVJ+qOFWxHwLgopnz0u6D+5JhkE5i+MKVVEvHHhNo8z2CHNBJnb+n46YTkQjMd2Q8fZubtZRku9tJT34ksG2YU=
+	t=1756753305; cv=none; b=ADHhREk8K4vem4Dm6S0DdFhJRMerlYqMbzjwuWbG80eXuTaMHFWhd0oselFM6w8H8+Vr49dzzWgYADb6l7RHk9IHtmk/fWna/hbyxp3UMiJSa1ZCAQkAq3xnWVjAahjI205AFFDqn98iEIgZ8ByZ/Bv/edIZkdH1bEODK+Wuwi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753251; c=relaxed/simple;
-	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFOOTYDnXgOC3966cGc2DkIhkfdJ+8LprM+XgCkbWk5GpumjL43k1smtJ7JehSbwvyhjvs/EKiz+C/5HPqY6G+7EnEDMvbCDYoY9WlWRBg30Qk6SaKmEMYwAkSNs0stfLT35qp1TZLe3L1RTCzhnLJwIXjY4Hzz7SwgKgGJmTAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYASmNv7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB1EC4CEFD;
-	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
+	s=arc-20240116; t=1756753305; c=relaxed/simple;
+	bh=5OnM0jJZm89UsRUpF9KL6hzKhKJ3Cw3RgJN3zSjZYMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSR1tNB9cC5/2jzUvlCo96VR35lhZi6XEbH98l2uOVZ7W4vvGUGfHKkdWsK3/qEPvFhrhrIjxUUEImxe9Uy+VBIj5ohxASVfTEpOx2UnRnN7Q0CISHx4SR5M5fgcCjT+/8tsaOzpZ5ZEu8q7gaVhtrEuFCmCST1fhPkoH8bm42g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJqIcAtS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D33C4CEF0;
+	Mon,  1 Sep 2025 19:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756753250;
-	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GYASmNv7BXhIajZZoRvb4roQdeLOHe6DZu39BcO1fk3XdoM5eh0VcfQtL0m3quuCc
-	 VfY4RDvrJWzYdoloiXZ/XMOyb4IB/7MMqZ3ghTJuyJZRW1PUgkkBbgY8P8JDOArlJq
-	 cXkUAIQvYhsH8rYA6x3c30QbChvUVyxG/UaEM3AIgw10wa8gAYZQ0yaXhuW019nYPq
-	 QZo68hY25IpTFJm1aTzpcT3Qlgk+Q6Li0ieGq05XQ4rps9rWq76W2uTFb/2Qgrh7rb
-	 g9ntoHeNuOJYgLM88vGuTC8GhWhQK0luo8wjjwGvatzvam+tBPCx3FDu8zAaztdpgb
-	 0yOsZCtsOz68A==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so1594431a34.2;
-        Mon, 01 Sep 2025 12:00:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJowj0XZxUqRWTJdUfNeM3puIr6LUHU01MMotlg4y9+zSyx5byRhwwYkVo7twG43M1y6GZoz+3qHdPlAw=@vger.kernel.org, AJvYcCVOFva7j06wBRntkPIloSY6XSBaMB0Un11iIEWqUVva9RJl82Yu4Qz4B3jWTr31ijlc+A/XROI522A=@vger.kernel.org, AJvYcCWCUAWptoHsmgVcUI+ZqQ6vs7MW47UfJISdoZIVOmg+Om+roCV7TLJCbKfwUOBhp+j208Uy/0RCllDy@vger.kernel.org, AJvYcCWpKVhUjRh39OfgOoJdVGA3UOhl6vjj7h5kalO2Q8nrDWY7FcDWEq3JcdBVnqe2HQAIgc7ZlX2g7pZM@vger.kernel.org, AJvYcCXZRWh8KyF7fuN6waQwvuLqacb3XfoEYCyrPfvsRxkoXvjhtMT/K8DM9FjQFemkxvkwJlb+A5VKcuhuZNvb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5yb8uKr3+52nG1hhZH8qxRcrVMsjcQ2N3H6vFazznrilGlOEw
-	gszJQcSWLxdbHZobI/VqJg56yHDkv7iH/kZTj4p1G1YqWGF6FE5PSn1oXbFo4+ARwdN8CkCluUn
-	HcVsYgPkpVErTNqqIZmoCB+42jzVEtcc=
-X-Google-Smtp-Source: AGHT+IF5SaCmHwNGeJ545FabBGFRvWTGFT8zu6kM/v3+zLeQSnjYj3JgLDBA/Na6A5xsnHIoN5OKyg7BUGvdwPDyFD4=
-X-Received: by 2002:a05:6830:6aa3:b0:745:46d6:e73f with SMTP id
- 46e09a7af769-74569d764bamr4473355a34.1.1756753249708; Mon, 01 Sep 2025
- 12:00:49 -0700 (PDT)
+	s=k20201202; t=1756753305;
+	bh=5OnM0jJZm89UsRUpF9KL6hzKhKJ3Cw3RgJN3zSjZYMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UJqIcAtSD++5n/VNUkZO0Jwqw6yfKk3WPzouuLUcQV4OP3K06FBjOzhcZRsZz+vd8
+	 5wu7HYq3f8KvbqPHwRvy79yY0EzjgXBArLHleKq2ZWch3OzfWiXZ6rqb4IDMBzk3wo
+	 xRcq+H4ubUQFKxdzvEAFN3fSc8xL10AG9S2UI3WgGvb8xSpj03JKSnc72fly4wJTQe
+	 2Z/G6jh4IVpYDUp0qkbJlzQr9I9kR/VILzhfrCbitXtGLQcNSLWW/qFtKtUCqobGpG
+	 ZpQKgkcJoc1HY7vvoXXHYjmzgYtH8Thzygxnd4HeoymsoCcD8kH/Sj4bJ2nflrAra/
+	 78d6uL09npK4w==
+Date: Mon, 1 Sep 2025 20:01:40 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, kuniyu@google.com, kay.sievers@vrfy.org,
+	gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
+ device_register fail
+Message-ID: <20250901190140.GO15473@horms.kernel.org>
+References: <20250901063537.1472221-1-wangliang74@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250823200121.1320197-1-sumitg@nvidia.com> <20250823200121.1320197-2-sumitg@nvidia.com>
- <CAJZ5v0jXq48petXAcf1prb5iuHbh3i8XREJBscs88xs5RY_j=A@mail.gmail.com> <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
-In-Reply-To: <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 21:00:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
-X-Gm-Features: Ac12FXyb-_bL-3aCu5Q9p5j1OqNhu9RwBJNUi80YwR1oSvxk_jkaXysXbT37dzA
-Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify naming
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com, 
-	zhenglifeng1@huawei.com, ray.huang@amd.com, gautham.shenoy@amd.com, 
-	mario.limonciello@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901063537.1472221-1-wangliang74@huawei.com>
 
-On Mon, Sep 1, 2025 at 3:46=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wrot=
-e:
->
->
-> On 26/08/25 00:03, Rafael J. Wysocki wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Sat, Aug 23, 2025 at 10:02=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com=
-> wrote:
-> >> Add cppc_get_perf_ctrls() to read performance control register values.
-> >> Rename existing APIs for clarity as:
-> >> - To distinguish between:
-> >>    - Feedback counters (fb_ctrs): Read-only performance monitoring dat=
-a.
-> >>    - Performance controls (perf_ctrls): Read-write config registers.
-> >> - cppc_set_epp_perf() updates both EPP and Autonomous Selection.
-> >>
-> >> API's renamed:
-> >> - cppc_set_perf() to cppc_set_perf_ctrls().
-> >> - cppc_get_perf_ctrs() to cppc_get_perf_fb_ctrs().
-> >> - cppc_get_perf_ctrs_sample() to cppc_get_perf_fb_ctrs_sample().
-> >> - cppc_set_epp_perf() to cppc_set_epp_and_autosel().
-> >> Remove redundant energy_perf field from 'struct cppc_perf_caps' since
-> >> the same information is available in 'struct cppc_perf_ctrls' which is
-> >> actively used.
-> >>
-> >> All existing callers are updated to maintain compatibility.
-> >
-> > First, this is too much in one patch IMV and second, I honestly don't
-> > see a reason for the renames above.
-> >
-> > This generally makes tracking the code changes history harder.
-> >
-> > Thanks!
->
-> Did the renaming for clarity and better readability.
-> If we don't want to do that then i can drop the renaming and keep other
-> changes.
+On Mon, Sep 01, 2025 at 02:35:37PM +0800, Wang Liang wrote:
+> When device_register() return error in atm_register_sysfs(), which can be
+> triggered by kzalloc fail in device_private_init() or other reasons,
+> kmemleak reports the following memory leaks:
+> 
+> unreferenced object 0xffff88810182fb80 (size 8):
+>   comm "insmod", pid 504, jiffies 4294852464
+>   hex dump (first 8 bytes):
+>     61 64 75 6d 6d 79 30 00                          adummy0.
+>   backtrace (crc 14dfadaf):
+>     __kmalloc_node_track_caller_noprof+0x335/0x450
+>     kvasprintf+0xb3/0x130
+>     kobject_set_name_vargs+0x45/0x120
+>     dev_set_name+0xa9/0xe0
+>     atm_register_sysfs+0xf3/0x220
+>     atm_dev_register+0x40b/0x780
+>     0xffffffffa000b089
+>     do_one_initcall+0x89/0x300
+>     do_init_module+0x27b/0x7d0
+>     load_module+0x54cd/0x5ff0
+>     init_module_from_file+0xe4/0x150
+>     idempotent_init_module+0x32c/0x610
+>     __x64_sys_finit_module+0xbd/0x120
+>     do_syscall_64+0xa8/0x270
+>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> When device_create_file() return error in atm_register_sysfs(), the same
+> issue also can be triggered.
+> 
+> Function put_device() should be called to release kobj->name memory and
+> other device resource, instead of kfree().
+> 
+> Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
 
-Please do.
+Thanks Wang Liang,
 
-> Also, split this patch into two as below:
->          Patch1: Add cppc_get_perf() API.
->
->          Patch2:
->            - Update both EPP and Autonomous Selection in
-> cppc_set_epp_perf().
->            - Remove redundant energy_perf field from 'struct
-> cppc_perf_caps'.
+I agree this is a bug.
 
-Sounds reasonable to me.
+I think that the guiding principle should be that on error functions
+unwind any resource allocations they have made, rather than leaving
+it up to callers to clean things up.
 
-Thanks!
+So, as the problem you describe seems to be due to atm_register_sysfs()
+leaking resources if it encounters an error, I think the problem would
+best be resolved there.
+
+Perhaps something like this.
+(Compile tested only!)
+
+diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
+index 54e7fb1a4ee5..62f3d520a80a 100644
+--- a/net/atm/atm_sysfs.c
++++ b/net/atm/atm_sysfs.c
+@@ -148,20 +148,23 @@ int atm_register_sysfs(struct atm_dev *adev, struct device *parent)
+ 	dev_set_name(cdev, "%s%d", adev->type, adev->number);
+ 	err = device_register(cdev);
+ 	if (err < 0)
+-		return err;
++		goto err_put_dev;
+ 
+ 	for (i = 0; atm_attrs[i]; i++) {
+ 		err = device_create_file(cdev, atm_attrs[i]);
+ 		if (err)
+-			goto err_out;
++			goto err_remove_file;
+ 	}
+ 
+ 	return 0;
+ 
+-err_out:
++err_remove_file:
+ 	for (j = 0; j < i; j++)
+ 		device_remove_file(cdev, atm_attrs[j]);
+ 	device_del(cdev);
++err_put_dev:
++	put_device(cdev);
++
+ 	return err;
+ }
+ 
+
+
+Looking over atm_dev_register, it seems to me that it will deadlock
+if it calls atm_proc_dev_deregister() if atm_register_sysfs() fails.
+This is because atm_dev_register() is holding atm_dev_mutex,
+and atm_proc_dev_deregister() tries to take atm_dev_mutex().
+
+If so, I wonder if this can be resolved (in a separate patch to
+the fix for atm_register_sysfs()) like this.
+(Also compile tested only!)
+
+diff --git a/net/atm/resources.c b/net/atm/resources.c
+index b19d851e1f44..3002ff5b60f8 100644
+--- a/net/atm/resources.c
++++ b/net/atm/resources.c
+@@ -112,13 +110,12 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
+ 
+ 	if (atm_proc_dev_register(dev) < 0) {
+ 		pr_err("atm_proc_dev_register failed for dev %s\n", type);
+-		goto out_fail;
++		goto err_free_dev;
+ 	}
+ 
+ 	if (atm_register_sysfs(dev, parent) < 0) {
+ 		pr_err("atm_register_sysfs failed for dev %s\n", type);
+-		atm_proc_dev_deregister(dev);
+-		goto out_fail;
++		goto err_proc_dev_unregister;
+ 	}
+ 
+ 	list_add_tail(&dev->dev_list, &atm_devs);
+@@ -127,7 +124,9 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
+ 	mutex_unlock(&atm_dev_mutex);
+ 	return dev;
+ 
+-out_fail:
++err_proc_dev_unregister:
++	atm_proc_dev_deregister(dev);
++err_free_dev:
+ 	kfree(dev);
+ 	dev = NULL;
+ 	goto out;
+
+Lastly, while not a bug and not material for net, it would be nice to
+follow-up on the above and consolidate the error handling in
+atm_dev_register().
+
+Something like this (compile tested only!):
+
+diff --git a/net/atm/resources.c b/net/atm/resources.c
+index b19d851e1f44..3002ff5b60f8 100644
+--- a/net/atm/resources.c
++++ b/net/atm/resources.c
+@@ -89,9 +89,7 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
+ 		inuse = __atm_dev_lookup(number);
+ 		if (inuse) {
+ 			atm_dev_put(inuse);
+-			mutex_unlock(&atm_dev_mutex);
+-			kfree(dev);
+-			return NULL;
++			goto err_free_dev;
+ 		}
+ 		dev->number = number;
+ 	} else {
+
+...
+
+-- 
+pw-bot: changes-requested
 
