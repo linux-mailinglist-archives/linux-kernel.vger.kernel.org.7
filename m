@@ -1,223 +1,107 @@
-Return-Path: <linux-kernel+bounces-795214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0250B3EE58
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:16:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B522B3EE59
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F08E1B211AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A04488128
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E606258EED;
-	Mon,  1 Sep 2025 19:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81923320A12;
+	Mon,  1 Sep 2025 19:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="BnRKBzEb"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SNxZcUlV"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7212361FFE;
-	Mon,  1 Sep 2025 19:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDF961FFE
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 19:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756754154; cv=none; b=eYIftXpEsBOweuExo+AEDICh7k9Vv/kC2iGHHjgKvIuudMxyfNiHg5crkxWRcaCwiyVC1SUVmR9uMQLEuQ52L0YrSYtdFrXy1dg5V+FBlZRNTe8J/9NUduEadY/lqCMaaWjScrl7FuxZwvAF2RWqRx2BGmAiTtZEEPOms260HZ0=
+	t=1756754203; cv=none; b=GKBNWtV7/yn0/4y/L+JJRwC0IA4sVlRc1LIKm6d53XlRBkjEyQHcspunGRNehwBT+cmneR1IePruCPq7lG9xMnRYeYwwTXGdCtyZaKjyHFZ94NnPgmw+AWrNyZutLnwh3Tv5ULM6HHzB+oFvPJRGxKmymrutzhcTAV1ASY0te4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756754154; c=relaxed/simple;
-	bh=OADMjKVbGZfBk51AbgGnVNr30EslqXh3LG8I+WsA9So=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VBTuhqLUJ8UL04vumhNMso7J1Z96QTUQCiwjQtKj0inGQ8fLOXksAWpDNQxxWphv1J00YrcgVbaUKgxNY8bxe+h1t6bjWlJJNfE0hE+OJ1azJWgS9jzh5QLXDEF8WCpHS4XS6x3s1sH/RTpRWzqKDHlYcpzqz9NMTfrc1KUMSMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=BnRKBzEb; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=iZPEGen8QTpPxF7VLTtnf0+MPAzM/HXhQaSGFhICRNk=; t=1756754150;
-	x=1757358950; b=BnRKBzEbRD/stOEI3LKBqFw0ZwIfjnLF5dPFBP+jKTOmshIBioZ8qM2xfIsNG
-	I/WJDsgztDrMQTla/8YvvinGah8zeamob3IAMWuhrI5541ZoTqIKDxZi1O9+3wDjssWACx6WkDB3G
-	5wllQlGvLpCnY4670nAqAYra0v8XXKPb9ye5wW9yzcgKQqZTCUsVhGp+q7wkTJnmBHpViCj5g8oUs
-	ZuQp/oV01hVbs2BFeTNiXreZ/ZYi8WHMAWZec2uhp8bg/kc7Rb00meUCp0j5JbmzAbLG6AkLG2Hn1
-	THdgRxCCcgW0dfmfukKzCq8SFj8mvaVHoCkpApBuWgf1D+1c0Q==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1utA0K-00000001ran-03dp; Mon, 01 Sep 2025 21:15:48 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1utA0J-000000018Ib-3Juh; Mon, 01 Sep 2025 21:15:47 +0200
-Message-ID: <98564e2e68df2dda0e00c67a75c7f7dfedb33c7e.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2 1/1] sparc: fix accurate exception reporting in
- copy_{from,to}_user for M7
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	linux-kernel@vger.kernel.org
-Cc: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
- Anthony Yznaga <anthony.yznaga@oracle.com>, Tony Rodriguez
- <unixpro1970@gmail.com>
-Date: Mon, 01 Sep 2025 21:15:47 +0200
-In-Reply-To: <20250828130456.2335-1-kernel@mkarcher.dialup.fu-berlin.de>
-References: 
-	<aecb14d84b1af658a87a2b1ba3a49ac13d39560e.camel@physik.fu-berlin.de>
-	 <20250828130456.2335-1-kernel@mkarcher.dialup.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756754203; c=relaxed/simple;
+	bh=emVQb/nP+lLVWaTB9qb8A8fdBisYAbLIpQk8DA/49xs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=V471jnmiRngaYxD0zMjsh2T6/BTsyDBiSrhMeiVoJHgdFzCBfWmgrznnC/0laQPXb2NcjgVgMU9fVVJSWKB7w+OSN0qC7l6OsF9JH6VFDWDe67gsijAr43CdtFe4NPDbhsI4OWq9Imcjq34O0Gfq1WXGClEHWjFgjVKdchOKkS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--praan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SNxZcUlV; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--praan.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b49da7c3ff6so2671429a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 12:16:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756754201; x=1757359001; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v/cDOfjJq1EkYmNa/Gbni2L6YrspyG8pFR//2Lc47Gk=;
+        b=SNxZcUlVfVCpRt4aGA65Vr6PKbvjvmT+2T+WLD6+LnZM8MCR6dxq3kwwKewLlHCOBF
+         CvlE3dOsURUzWqF/NtNl0nnlpQaaO0y2uikPMMX26f2kDky8g/Txh1ll30pOIEpKbEdq
+         OHlao30jwb3GUc3pYCL3e80xR/iWAky5dbOqNLmejkYrYKHLUQL0BZf5roLq4+OrX4+B
+         BxmfpOLaW293d1rFlo/GY4uT5AwIc0b1lYsm1cq1/I4J0Bq/OXGltwAwIkM2TXO5dghH
+         x31jjBItGn8rrnfEgN9Jh/tEmykJBbNnpGiCytpNkOeUfjrWAgAGeQD515+nnpFohLb/
+         n4RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756754201; x=1757359001;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v/cDOfjJq1EkYmNa/Gbni2L6YrspyG8pFR//2Lc47Gk=;
+        b=iVOvrn54VHulB8AoNw06EZE+uowRGxBfsFIaEDkk82WyOzVRey5EkTDn8kvbwMwnrV
+         HYuW2V8Q6cMPGbUqWec3eHzOcXOK4YQrQelbQqwuOX1zlDWyKTFWoiSQJL7XVygi+gy0
+         fjYmf9wA+4TiuIqSi+z8XtBYyOLlXvaF9cwV72AFdJm1iOWyMMt1/SIbzxTOexc/aOKW
+         kTSwNqQLJQT3Ym6CRnGWaeBTDXb7yhlnu7cpl5U4uOWuMSFP3vE7olZraJoQkjSZfhDe
+         pPv+RiEowv9zJA4uaQMa3c06ZUQ4759U2AESaGb0B5bckbmGNEZTgpChxHdlqd1iyjwK
+         pTbA==
+X-Gm-Message-State: AOJu0Yzjw3Saal9aXfgUU98GnA0aGVboWt9YUevGU5J6tHIAf2iK5q1n
+	HjcQjiVrFU4yoAvHKxQ9I3AhEKuk4T+GLBduxEiWf9XYpJmTsGcx5lYU3lg24jcbWbWhXLjAvAF
+	DfaDlWij1C6zEYdGCuE6HCl+1xJHoAyTr+GNpQMDH7vjAj8Jx1jgjPwAuFSWtzOLC/3RRTBL+Ce
+	3F6ekw1Mm8274LvU0E5vwNilwv+V9BqgRZwOV7nJ0=
+X-Google-Smtp-Source: AGHT+IFBehxccmY6P3WUNdAudSMYMDls3w+IAV/u6ENkFf1eu/6U3mKHoh4N54IqPGrSeQVbaHCKLSaL6A==
+X-Received: from pfbih20.prod.google.com ([2002:a05:6a00:8c14:b0:771:f406:9f46])
+ (user=praan job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6d97:b0:243:cc87:f290
+ with SMTP id adf61e73a8af0-243d6fc0e1emr11733424637.60.1756754200767; Mon, 01
+ Sep 2025 12:16:40 -0700 (PDT)
+Date: Mon,  1 Sep 2025 19:16:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250901191619.183116-1-praan@google.com>
+Subject: [PATCH] MAINTAINERS: Add myself as VFIO-platform reviewer
+From: Pranjal Shrivastava <praan@google.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>, Eric Auger <eric.auger@redhat.com>, clg@redhat.com, 
+	Mostafa Saleh <smostafa@google.com>, Pranjal Shrivastava <praan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+While my work at Google Cloud focuses on various areas of the kernel,
+my background in IOMMU and the VFIO subsystem motivates me to help with
+the maintenance effort for vfio-platform (based on the discussion [1])
+and ensure its continued health.
 
-On Thu, 2025-08-28 at 15:04 +0200, Michael Karcher wrote:
-> Fixes 34060b8fffa7 ("arch/sparc: Add accurate exception reporting in M7me=
-mcpy")
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> ---
->  arch/sparc/lib/M7memcpy.S     | 20 ++++++++++----------
->  arch/sparc/lib/Memcpy_utils.S |  9 +++++++++
->  2 files changed, 19 insertions(+), 10 deletions(-)
->=20
-> diff --git a/arch/sparc/lib/M7memcpy.S b/arch/sparc/lib/M7memcpy.S
-> index cbd42ea7c3f7..99357bfa8e82 100644
-> --- a/arch/sparc/lib/M7memcpy.S
-> +++ b/arch/sparc/lib/M7memcpy.S
-> @@ -696,16 +696,16 @@ FUNC_NAME:
->  	EX_LD_FP(LOAD(ldd, %o4+40, %f26), memcpy_retl_o2_plus_o5_plus_40)
->  	faligndata %f24, %f26, %f10
->  	EX_ST_FP(STORE(std, %f6, %o0+24), memcpy_retl_o2_plus_o5_plus_40)
-> -	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_40)
-> +	EX_LD_FP(LOAD(ldd, %o4+48, %f28), memcpy_retl_o2_plus_o5_plus_32)
->  	faligndata %f26, %f28, %f12
-> -	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_40)
-> +	EX_ST_FP(STORE(std, %f8, %o0+32), memcpy_retl_o2_plus_o5_plus_32)
->  	add	%o4, 64, %o4
-> -	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_40)
-> +	EX_LD_FP(LOAD(ldd, %o4-8, %f30), memcpy_retl_o2_plus_o5_plus_24)
->  	faligndata %f28, %f30, %f14
-> -	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_40)
-> -	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_40)
-> +	EX_ST_FP(STORE(std, %f10, %o0+40), memcpy_retl_o2_plus_o5_plus_24)
-> +	EX_ST_FP(STORE(std, %f12, %o0+48), memcpy_retl_o2_plus_o5_plus_16)
->  	add	%o0, 64, %o0
-> -	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_40)
-> +	EX_ST_FP(STORE(std, %f14, %o0-8), memcpy_retl_o2_plus_o5_plus_8)
->  	fsrc2	%f30, %f14
->  	bgu,pt	%xcc, .Lunalign_sloop
->  	 prefetch [%o4 + (8 * BLOCK_SIZE)], 20
-> @@ -728,7 +728,7 @@ FUNC_NAME:
->  	add	%o4, 8, %o4
->  	faligndata %f0, %f2, %f16
->  	subcc	%o5, 8, %o5
-> -	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5)
-> +	EX_ST_FP(STORE(std, %f16, %o0), memcpy_retl_o2_plus_o5_plus_8)
->  	fsrc2	%f2, %f0
->  	bgu,pt	%xcc, .Lunalign_by8
->  	 add	%o0, 8, %o0
-> @@ -772,7 +772,7 @@ FUNC_NAME:
->  	subcc	%o5, 0x20, %o5
->  	EX_ST(STORE(stx, %o3, %o0 + 0x00), memcpy_retl_o2_plus_o5_plus_32)
->  	EX_ST(STORE(stx, %g2, %o0 + 0x08), memcpy_retl_o2_plus_o5_plus_24)
-> -	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_24)
-> +	EX_ST(STORE(stx, %g7, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus_16)
->  	EX_ST(STORE(stx, %o4, %o0 + 0x18), memcpy_retl_o2_plus_o5_plus_8)
->  	bne,pt	%xcc, 1b
->  	 add	%o0, 0x20, %o0
-> @@ -804,12 +804,12 @@ FUNC_NAME:
->  	brz,pt	%o3, 2f
->  	 sub	%o2, %o3, %o2
-> =20
-> -1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_g1)
-> +1:	EX_LD(LOAD(ldub, %o1 + 0x00, %g2), memcpy_retl_o2_plus_o3)
->  	add	%o1, 1, %o1
->  	subcc	%o3, 1, %o3
->  	add	%o0, 1, %o0
->  	bne,pt	%xcc, 1b
-> -	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_g1_plus_1)
-> +	 EX_ST(STORE(stb, %g2, %o0 - 0x01), memcpy_retl_o2_plus_o3_plus_1)
->  2:
->  	and	%o1, 0x7, %o3
->  	brz,pn	%o3, .Lmedium_noprefetch_cp
-> diff --git a/arch/sparc/lib/Memcpy_utils.S b/arch/sparc/lib/Memcpy_utils.=
-S
-> index 64fbac28b3db..207343367bb2 100644
-> --- a/arch/sparc/lib/Memcpy_utils.S
-> +++ b/arch/sparc/lib/Memcpy_utils.S
-> @@ -137,6 +137,15 @@ ENTRY(memcpy_retl_o2_plus_63_8)
->  	ba,pt	%xcc, __restore_asi
->  	 add	%o2, 8, %o0
->  ENDPROC(memcpy_retl_o2_plus_63_8)
-> +ENTRY(memcpy_retl_o2_plus_o3)
-> +	ba,pt	%xcc, __restore_asi
-> +	 add	%o2, %o3, %o0
-> +ENDPROC(memcpy_retl_o2_plus_o3)
-> +ENTRY(memcpy_retl_o2_plus_o3_plus_1)
-> +	add	%o3, 1, %o3
-> +	ba,pt	%xcc, __restore_asi
-> +	 add	%o2, %o3, %o0
-> +ENDPROC(memcpy_retl_o2_plus_o3_plus_1)
->  ENTRY(memcpy_retl_o2_plus_o5)
->  	ba,pt	%xcc, __restore_asi
->  	 add	%o2, %o5, %o0
+Link: https://lore.kernel.org/all/aKxpyyKvYcd84Ayi@google.com/ [1]
+Signed-off-by: Pranjal Shrivastava <praan@google.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-I have had the chance to test this patch on a SPARC S7 machine. After addin=
-g the
-CPU detection fixes from Oracle's UEK kernel [1][2][3] and making sure that
-sparc_m7_patch was invoked for SPARC S7 to enable the M7-specific copy_{fro=
-m,to}_user
-code, I can confirm that the machine runs stable with the patch above.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 840da132c835..eebda43caffa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26464,6 +26464,7 @@ F:	drivers/vfio/pci/pds/
+ VFIO PLATFORM DRIVER
+ M:	Eric Auger <eric.auger@redhat.com>
+ R:	Mostafa Saleh <smostafa@google.com>
++R:	Pranjal Shrivastava <praan@google.com>
+ L:	kvm@vger.kernel.org
+ S:	Maintained
+ F:	drivers/vfio/platform/
+-- 
+2.51.0.318.gd7df087d1a-goog
 
-I even verified that the CPU detection works properly and calls sparc_m7_pa=
-tch by
-using the following hack which made the SPARC S7 indeed hang at boot:
-
-diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
-index c305486501dc..2de3d5139e1f 100644
---- a/arch/sparc/kernel/head_64.S
-+++ b/arch/sparc/kernel/head_64.S
-@@ -613,8 +613,9 @@ niagara_tlb_fixup:
-        cmp     %g1, SUN4V_CHIP_SPARC_M8
-        be,pt   %xcc, sparc_m7_patch
-         nop
-+sparc_s7_loop:
-        cmp     %g1, SUN4V_CHIP_SPARC_S7
--       be,pt   %xcc, sparc_m7_patch
-+       be,pt   %xcc, sparc_s7_loop
-         nop
-=20
-        call    generic_patch_copyops
-
-
-Additionally, the owner of this machine, Tony Rodriguez stress-ng and hardi=
-nfo2
-tests without any problems. Both passed.
-
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-
-Adrian
-
-> [1] https://github.com/oracle/linux-uek/commit/71051596a59897d6fe577d9218=
-4081fbccada7af
-> [2] https://github.com/oracle/linux-uek/commit/01bd59051e17dc04785211350a=
-05fd337460b86b
-> [3] https://github.com/oracle/linux-uek/commit/e3125b871798dcd831daaf70bb=
-05ff3f005277fb
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
