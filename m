@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-794923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8429B3EAE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:37:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2249CB3EA90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4C61B26376
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:31:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB0F7A6553
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5E73451C8;
-	Mon,  1 Sep 2025 15:18:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCE02FE04D;
-	Mon,  1 Sep 2025 15:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513E1DF271;
+	Mon,  1 Sep 2025 15:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXFrVX3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C48334372;
+	Mon,  1 Sep 2025 15:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739905; cv=none; b=b5rEM0KE7GqJe5pL3zgE49g/7kECphJGrpzC0wl72KdnyBKc6EH9teZr7jKp1Udns0NO9PPzgIBCwZ7yC8N0C1JHPK9zXbnKLw2VH4avLCJ4XwAzS+Q0PlyDTdjIsKRJ4+C2sgVw6sNHwFcvJW9/oFHLrylWtQ/vpqM7t6b2P1E=
+	t=1756740049; cv=none; b=gB9e5r9QFibND6V1YzaPjllndm/o5hHQ5Tc7TPQvnGBGKuQ47U+tLGBguV8pE8UZ/nWdWLoI/YNpODPKYyT2tfdZkatTrNfuBWUzQQygai8pIf3+bogsfse6flXpPtIRHgxGbquvUe8DWMgECttG84mXehXQc0XsxsRrQU82jXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739905; c=relaxed/simple;
-	bh=mi1jhE0hSalMzhQcxvX/AVfoKXLeTEfI2y5Rv+u9/3U=;
+	s=arc-20240116; t=1756740049; c=relaxed/simple;
+	bh=fYYU8NMNLyVlLnO0IlrsfJJzJO/BBopDiQds5sD+5IE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kI+Ydu7xg22MoFRqouoWAGcjmObvMKo4cIX1uVToolYgRqfoKjAjwBunNH6PP6Tj4cLX82plOT4ZzKGCUJW1DkUhu4BYGgUf615k1WEpT0xXMnVJdoUQcCcFyGXPqirtngdGSaIhjeNvKIwQ/O6k/kelj23pYsNmqEEw2GG3+eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E701B16A3;
-	Mon,  1 Sep 2025 08:18:14 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DF833F6A8;
-	Mon,  1 Sep 2025 08:18:19 -0700 (PDT)
-Date: Mon, 1 Sep 2025 16:18:16 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 0/5] initialize SCTRL2_ELx
-Message-ID: <aLW5OIgv8/bvvY9E@e133380.arm.com>
-References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d286CR2tFb81j0b+iu4buvV22V8MXkw5ueBe4NseVqWjLkjaj8Yzaf6S+2S37aSAgEBZB1foaFs3s+E88VmSA/AZ1FoJdSiG0UpCSIsVrL1DZozVFf7jAoH+3xzqkxxUlN8RSSLd6I4dgMNW4c72MXY0nYWvqVvQZSC1xrhPiJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXFrVX3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87825C4CEF0;
+	Mon,  1 Sep 2025 15:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756740047;
+	bh=fYYU8NMNLyVlLnO0IlrsfJJzJO/BBopDiQds5sD+5IE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GXFrVX3gf/tcrem+lyBbwfdS6AHuCHPQF2/lq5E7UmoBLTnaPBMOwiLE5YhZPSyEq
+	 uswqR/b+n/8ZhYJ8bkJ6beLW/OMGHNouJc4fIWvPPJkRo3/CqZgdqgqYvJ03FZWxsM
+	 ceFhBIzOPJs8pR5VM4/eXOP772I+SNl8+B3F36xbiRjaVNV9/nNrQKRE7spJ6nMMCw
+	 nr0UJmyC2WonGC/h8bIngoF88Vlv1IU3XoEmFCYKIi1FmTs7/qD+H52yYZqABxiHri
+	 Zd+AbMrsQYN74WRR/haDxIMbZVs/Mwzy3ucow5Cxjv1pUS7gqW1zSAgtCtVwQOXmwk
+	 ZiAihGO1gGPVA==
+Received: by venus (Postfix, from userid 1000)
+	id 545A41801BA; Mon, 01 Sep 2025 17:20:45 +0200 (CEST)
+Date: Mon, 1 Sep 2025 17:20:45 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
+Message-ID: <wyv3ounark6jccvhj4vp5qxgmn4bleq6hsqinr4s6r32kld4xp@lhbmetuhydns>
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+ <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
+ <899b2e79-572d-44f3-8dff-0d301f254b1a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,36 +65,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821172408.2101870-1-yeoreum.yun@arm.com>
+In-Reply-To: <899b2e79-572d-44f3-8dff-0d301f254b1a@linaro.org>
 
-Hi,
+Hello Bryan,
 
-On Thu, Aug 21, 2025 at 06:24:03PM +0100, Yeoreum Yun wrote:
-> This series introduces initial support for the SCTLR2_ELx registers in Linux.
-> The feature is optional starting from ARMv8.8/ARMv9.3,
-> and becomes mandatory from ARMv8.9/ARMv9.4.
+On Mon, Sep 01, 2025 at 09:43:11AM +0100, Bryan O'Donoghue wrote:
+> On 31/08/2025 22:28, Sebastian Reichel wrote:
+> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
+> > is in theory compatible with ThinkPad ACPI. On Linux the system
+> > is booted with device tree, which is not supported by the ThinkPad
+> > ACPI driver. Also most of the hardware compatibility is handled
+> > via ACPI tables, which are obviously not used when booting via
+> > device tree. Thus adding DT compatibility to the existing driver
+> > is not worth it (almost no code sharing).
 > 
-> Currently, Linux has no strict need to modify SCTLR2_ELx--
-> at least assuming that firmware initializes
-> these registers to reasonable defaults.
+> What is the name of that driver, you should name it in your commit
+> log. Lenovo WMI ?
+
+The existing driver is known as "ThinkPad ACPI" and thus already
+referenced in the commit message. You can find it here:
+
+drivers/platform/x86/lenovo/thinkpad_acpi.c
+
+Feel free to suggest a specific wording that I can take over, which
+would have helped you to figure that out :)
+
+> [...]
+> > +	ret = __i2c_transfer(client->adapter, &request, 1);
+> > +	if (ret < 0)
+> > +		goto out;
 > 
-> However, several upcoming architectural features will require configuring
-> control bits in these registers.
-> Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
+> I realise this is your coding style but suggest newline after these gotos.
 
-This looks OK to me now, except for one or two minor issues (see
-replies to the patches).
+I will look into using that style in v2 throughout the file.
 
-I think we will need a way of testing all the code paths before this
-should be merged, though.
+> [...]
+> > +static int thinkpad_t14s_led_blink_set(struct led_classdev *led_cdev,
+> > +				       unsigned long *delay_on,
+> > +				       unsigned long *delay_off)
+> > +{
+> > +	struct thinkpad_t14s_ec_led_classdev *led = container_of(led_cdev,
+> > +			struct thinkpad_t14s_ec_led_classdev, led_classdev);
+> > +
+> > +	/* Can we choose the flash rate? */
+> > +	if (*delay_on == 0 && *delay_off == 0) {
+> > +		/* yes. set them to the hardware blink rate (1 Hz) */
+> > +		*delay_on = 500; /* ms */
+> > +		*delay_off = 500; /* ms */
+> > +	} else if ((*delay_on != 500) || (*delay_off != 500))
+> > +		return -EINVAL;
+> 
+> Those 500s should probably be defines
 
-Have you tested all the code paths, or are there some things that have
-not been tested?
+Ack.
 
+> Aside from those few nits, great to see someone take this on, glorious in
+> fact.
+> 
+> I don't have this particular hardware myself so I can't test but:
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Since this code is not useful by itself, it may make sense to delay
-merging it until we have patches for a feature that depends on SCTLR2.
+Thanks for the review.
 
-Cheers
----Dave
+Greetings,
+
+-- Sebastian
 
