@@ -1,192 +1,115 @@
-Return-Path: <linux-kernel+bounces-795329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F6CB3F021
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C7B3F023
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 927587AF284
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524A32073AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0233274B39;
-	Mon,  1 Sep 2025 20:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C8274B39;
+	Mon,  1 Sep 2025 20:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ICQ0X7e5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0URVk/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6160B1E868;
-	Mon,  1 Sep 2025 20:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D0F1E868;
+	Mon,  1 Sep 2025 20:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756760147; cv=none; b=L1F/CuDDtZBFsi92LCHZEAPKfwRDeSuV2XYzsAJM59vRTqTtqnKFPyfqnjlevjeYpQOnzyjSd8ZMaLDricA03TG6ONzEYlygijUqrkJZjpdfe39QBc35AWhnKzY11+ITK7cNVc4Qkumt+Fae48TYEJWVsd6zdE4A92XtuZsXn34=
+	t=1756760234; cv=none; b=puEFIjzrqp08pFl6reMO0HcqPA73YzP9IPDeIAlqO2MQ3MeMKSgrr/2kpzPtEBJZes27CgE3rqF349edXME3OBF0X8c1wpn2BiEFUMddosduIhlhxIdum+DjuT+LjILWMxKr8VKl35WhTp/AiII0HHO+4DITwBW/0vC0If3LP2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756760147; c=relaxed/simple;
-	bh=rt3zG8i3vlYwmKYtzB8OW4yTeNsqXFE1dxWxwz6rHQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqgIbUBwdcJe/6kQn+m/KfkbNKpcHqd0JeqJbVznnAxE/DdLj3qzXbIInNXstEIu3L7vM+qRnhepZZ6GNt6JchcJBHtV8afBVS8VxlPL7LXnYj/dKBJPWURjqiueF5BJ+KHQv6s19hwRbTNRk0/eByf8QEKij78hKHRXR4fkNLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ICQ0X7e5; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756760146; x=1788296146;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rt3zG8i3vlYwmKYtzB8OW4yTeNsqXFE1dxWxwz6rHQE=;
-  b=ICQ0X7e5XDaUyflU7EXX/1ZJZicQIlD6HTlL2WgtgpjkTNoxOPcidhON
-   7Wo9NJbqzkRSW4I8jO73jusqvUEOzV9dnE0qhzYPxLqVtzPR5FQKD7Rrj
-   yOOZrDvbMzvqWvV40DNSj72SaR80HWVX51TiEllGiu4dRDP7Jq1j4rGkD
-   AUquIB2BSdHqWuiCQOFq8v694CjaDW6dNmVMnE4Om9qnQGszaKhplGiYx
-   SXSwvMDNd/lJMtRU0bWot4z2kBWiIdsmNa7wIAatY9UvEBLV2VCzc7Kl0
-   6aW9eUUaaUGJ9GMsDB63QoU21ukXu3FNvCN5sAx/4WixrRVG3mfFWX9Tw
-   Q==;
-X-CSE-ConnectionGUID: abJ8kfCJTm+7Y9wuR4tkFQ==
-X-CSE-MsgGUID: UmdcaWCETKyTGdazgpHImg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="76464538"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="76464538"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 13:55:44 -0700
-X-CSE-ConnectionGUID: S/zzZFtGR5ug7vVsPVzt6g==
-X-CSE-MsgGUID: 8a59BmLNShWQAAbVCw5dVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="170647873"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.254])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 13:55:41 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id B5D7A11F739;
-	Mon, 01 Sep 2025 23:55:37 +0300 (EEST)
-Date: Mon, 1 Sep 2025 23:55:37 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 07/10] media: i2c: ov9282: add strobe_duration v4l2
- control
-Message-ID: <aLYISb07ziGDmFGS@kekkonen.localdomain>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
+	s=arc-20240116; t=1756760234; c=relaxed/simple;
+	bh=vEf+v35veVMPK8oik7sxeMjUD3BsqjaP57XbnUyh6vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oi5GGXVZocHJtx+jo10JGOHI7jm5w1IwS1HD+byStrSz+63Svc08is7Mfb0OERQaszEeQekj+o/Xdw7ZFW3oMJvWIHFYmg2sDHz2gcPxZA8AbJYRojy3q0DDqsgpUTYdtYVlCkQoIrc/hpbEYC3pGB1lUJRtAQPnXmuJTIR92oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0URVk/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 403A1C4CEF0;
+	Mon,  1 Sep 2025 20:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756760233;
+	bh=vEf+v35veVMPK8oik7sxeMjUD3BsqjaP57XbnUyh6vI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u0URVk/iEH9BcJRB8GQ6HwFcRggKjzsYaSuhex+m+0KayzHOfldbKmMNLEe/jDpRZ
+	 N0aQQVaks3CPm3e8B8gSIXsEcYkY6KRCO2u+Kefn1ONSs5Hbyu7ZseH7KPtBDDYAi4
+	 T2SDucLYl3QjL/5LggpNRkRuMK6XZyiTttPSYiGowJET3IBc/onAEfym8m9RpnyCxR
+	 IKAxcOD4f5amSnlNU9OPiyYx19etP2MkCmT5e/L4Vu65EcVkUXD5wYL2+vR7ggX0Rd
+	 Bx9wb0Icg/SQBfOxP+Yso68JFwNke4xcgzTDdcW0Ldrr3n6HKMvyguCLx/HrM36Tuy
+	 MKhJw0fkze5nw==
+Date: Mon, 1 Sep 2025 13:57:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Colin Foster <colin.foster@in-advantage.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Steve Glendinning
+ <steve.glendinning@shawell.net>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v1] smsc911x: add second read of EEPROM mac when
+ possible corruption seen
+Message-ID: <20250901135712.272f72a9@kernel.org>
+In-Reply-To: <20250828214452.11683-1-colin.foster@in-advantage.com>
+References: <20250828214452.11683-1-colin.foster@in-advantage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Richard,
+On Thu, 28 Aug 2025 16:44:52 -0500 Colin Foster wrote:
+> When the EEPROM MAC is read by way of ADDRH, it can return all 0s the
+> first time. Subsequent reads succeed.
+> 
+> Re-read the ADDRH when this behaviour is observed, in an attempt to
+> correctly apply the EEPROM MAC address.
 
-On Mon, Sep 01, 2025 at 05:05:12PM +0200, Richard Leitner wrote:
-> Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
-> feature of the sensor. This is implemented by transforming the given µs
-> value by an interpolated formula to a "span step width" value and
-> writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> 
-> The maximum control value is set to the period of the current default
-> framerate.
-> 
-> All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> and tested using an ov9281 VisionComponents module.
-> 
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+Please name the device, and FW version if applicable, on which you
+observe the issue.
+
+> Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
 > ---
->  drivers/media/i2c/ov9282.c | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
+>  drivers/net/ethernet/smsc/smsc911x.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb..c405e3411daf37cf98d5af3535702f8321394af5 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -97,6 +97,10 @@
->  #define OV9282_REG_MIPI_CTRL00	0x4800
->  #define OV9282_GATED_CLOCK	BIT(5)
->  
-> +/* Flash/Strobe control registers */
-> +#define OV9282_REG_FLASH_DURATION	0x3925
-> +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001a
+> diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+> index a2e511912e6a9..63ed221edc00a 100644
+> --- a/drivers/net/ethernet/smsc/smsc911x.c
+> +++ b/drivers/net/ethernet/smsc/smsc911x.c
+> @@ -2162,8 +2162,20 @@ static const struct net_device_ops smsc911x_netdev_ops = {
+>  static void smsc911x_read_mac_address(struct net_device *dev)
+>  {
+>  	struct smsc911x_data *pdata = netdev_priv(dev);
+> -	u32 mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> -	u32 mac_low32 = smsc911x_mac_read(pdata, ADDRL);
+> +	u32 mac_high16, mac_low32;
 > +
->  /* Input clock rate */
->  #define OV9282_INCLK_RATE	24000000
->  
-> @@ -687,6 +691,25 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
->  				current_val);
->  }
->  
-> +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-> +{
+> +	mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> +	mac_low32 = smsc911x_mac_read(pdata, ADDRL);
+> +
 > +	/*
-> +	 * Calculate "strobe_frame_span" increments from a given value (µs).
-> +	 * This is quite tricky as "The step width of shift and span is
-> +	 * programmable under system clock domain.", but it's not documented
-> +	 * how to program this step width (at least in the datasheet available
-> +	 * to the author at time of writing).
-> +	 * The formula below is interpolated from different modes/framerates
-> +	 * and should work quite well for most settings.
+
+nit: netdev multi-line comment style doesn't place /* on a separate
+line:
+	
+
+> +	 * The first mac_read always returns 0. Re-read it to get the
+> +	 * full MAC
+
+Always? Strange, why did nobody notice until now?
+
 > +	 */
-> +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> +
-> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
+> +	if (mac_high16 == 0) {
+> +		SMSC_TRACE(pdata, probe, "Re-read MAC ADDRH\n");
+> +		mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> +	}
 
-The bitwise and operation is redundant.
+> 	u8 addr[ETH_ALEN];
 
-Could you do this in a single write?
-
-Also error handling is (largely) missing.
-
-> +}
-> +
->  /**
->   * ov9282_set_ctrl() - Set subdevice control
->   * @ctrl: pointer to v4l2_ctrl structure
-> @@ -756,6 +779,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
->  	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
->  		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
->  		break;
-> +	case V4L2_CID_FLASH_DURATION:
-> +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
-> +		break;
->  	default:
->  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
->  		ret = -EINVAL;
-> @@ -1346,7 +1372,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
->  	u32 lpfr;
->  	int ret;
->  
-> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
-> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
->  	if (ret)
->  		return ret;
->  
-> @@ -1414,6 +1440,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
->  	/* Flash/Strobe controls */
->  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
->  
-> +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-> +			  0, 13900, 1, 8);
-> +
->  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
->  	if (!ret) {
->  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> 
-
+Please don't add code in the middle of variable declarations
 -- 
-Regards,
-
-Sakari Ailus
+pw-bot: cr
 
