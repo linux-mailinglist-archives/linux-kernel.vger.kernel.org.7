@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-793652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AC9B3D674
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ED5B3D676
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96163B9256
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D92189844F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C595228CBC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C89231827;
 	Mon,  1 Sep 2025 02:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPM0LN/f"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuMZeGxP"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405F921B1AA
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D3B22157E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692043; cv=none; b=kRm7crvaeQujaQMXrt5lg/xz9iJrynfGydeNkHYVTrrEhsT3eUShhGZ8pYVii9710sagQCjbgCQq+0hOnbWjpWbulfOB/LsKal40iuvU5uBZ3ns8aJdHRO+JCYwJv2Zz4O4r/BWU3W/vuQhIt8tS/y0UKqRe4X/O2y3lNKOdhhA=
+	t=1756692044; cv=none; b=snw0Hl7Uv8VKzWcS36VcWBUrQIiKVh9KhYhsldAf87gnIdfH/LqPaBnlsPHUSZPPxhv0t7GT9rPgLi96ZeIW/sO2jr+FrX75daU9zxnx/sgII07VojLFxpdZ+dBCe4+ahhLWrr3Y9zZnvXcD95vlVI5t2cMHDuuKzr62tXfsejg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692043; c=relaxed/simple;
-	bh=uCrvTMbf7NF0MNMD7g0oXt0igXQlfP+RbJ5iFk5FAwc=;
+	s=arc-20240116; t=1756692044; c=relaxed/simple;
+	bh=VjSEQuTk8Aic2ULjMShGdIHNMpD4YMEhT97QSvsWINM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eS4y+9hynqaYY4XXzyEHGvS1Jps6Nh56RpbILL8nRrGBECCgiTT7jPV9bqux2upKirV9eNYVRMdDqtuBFbEg+jf5JywYwRHE3fj+Rp39EuyLRVbK3XDTKDcrlivYAlsHfjwB5I3RjZSWXqVpVwgrTvAaQ1iuBYAmMvisX0qhGkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lPM0LN/f; arc=none smtp.client-ip=209.85.219.49
+	 MIME-Version:Content-Type; b=WAXu853WN7BmScIZ5wsukoKOqUPzL8wWRcmqTbNlx0r2DAWe9QDR/OT6P48POD4ZYiMXeiayIkgzw4lPiduQo7IqCzbp7lqOpROLdu+y0pmkPnexmMSQOcDcUVh8vJbMq5eHVwo0Zi1AJUwCHw01qWA6QoizM/PSTcJEw8RZvBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuMZeGxP; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70df92872ceso31591616d6.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:00:40 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-70de9ffcfffso37798436d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756692040; x=1757296840; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756692041; x=1757296841; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=btv2+zrNnBuWpIYtzQbHrU0RH1HbmWmw6AIer95J2Vk=;
-        b=lPM0LN/fDjToCk6umNxMUaLxf/eKuHEIy/wo1B16hsw1j2Jul6E9n6dbhhmCJUxRsb
-         JUB+xrtsBqFOcWVG963psLFazb4b1FnRGIV1X0dr8XfpMpLbos4VGJoPR0k/MSiprx/y
-         hsRNA2rJZZu+R257sdoUN3VrkojXpXMn/J1iqF3sguYcjwe/sBNrB+ybMsu9HVkAqO69
-         BUIkMnfpz/6DSTUdnAeH04W33/0oEOAU52pFB72fiEb5zABVKatJuefg3XvzoSSgxgVw
-         m7PBxt3bT5lp6q+k7qCzY19KNA82BflfbDdKP3zHP0sr7Ot1MJ1Mpc2w+ZNji0PBJ4u5
-         z4Aw==
+        bh=n71lxSZhtaKmDioqwBpuFWbtYkrE4A8cOtuolZZ4xFs=;
+        b=MuMZeGxPjobAqstBIsavnDZ3cXis40ihN86kNASMweGoywuMnXw1GS35UC2EcFD7qO
+         /ApEw92uXKd8FdAvpCOTEyLMe5PFAzkDj0J3OwHSTF2UbDh8X/Pq8JCbb1WLxNfwvSl+
+         cp1yLR82sfsHS59Ad7sOxBK7Gb8mfFAhxca3RyXE1dlU5Mn7V90+q7gybIkVHSJWoxiL
+         mqAA2L3RhZbqmJh1Z+xUt5/0IdKJOTX7KF7ylLUOtdQORIMbYuNcFHt4z+D8nSCA6dVv
+         GN3Q4I7d+rMNAaBxYM4DoOKGjDDvijEPCC/wcRbFauCivGluFfepkiOQQIkT4lXJ3MoR
+         bfMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756692040; x=1757296840;
+        d=1e100.net; s=20230601; t=1756692041; x=1757296841;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=btv2+zrNnBuWpIYtzQbHrU0RH1HbmWmw6AIer95J2Vk=;
-        b=Zzm9E1THcu2rYDhqUscwYDwGkHToQR8hFHm3D4I6/3zMZxXh81R0X5TToQnMX1DBws
-         5sJY9cNad4Ii0vzSlJKsb5y3kh8JRYvJK65mAAlrvxqyKEl/WoQ2yzhfJFedop3So/0I
-         tqrIsGRirlWt5Ao8WupTOQVfCDF/4csUf+5QES0/hcsJnpeKNa4bVvKrQcRPoL87Q/PN
-         Mog9DwsS0k/DxJPrl7HtJZqJ9N/OhUPHBkStjcsLP/lfqtBEjrotHu/7kzW8o7u6aprH
-         DeI0NrNSGfg4St9JZ/kHKs9q3SH2EKw5UEtCP/uqavXT/qUZDvq3LDYc9uPw8M25HV8m
-         I07w==
-X-Gm-Message-State: AOJu0YydInbbf/BH0s66VDY0cMAT1MY6FBfGGDvss96Ok50vBN+SoV7+
-	djzF0fVXTC7E6jlSbVkrw1FdSNy0xeyYMnX0nxoCBGmo6eq4AEsRvMUd
-X-Gm-Gg: ASbGncvxBFPt2kWT5cJ/ouSnbPzc4wAE0HzeEvj9b1Yp5WvfxmFKisCioeyKOXUfpLf
-	FD/1kE8mDgbNpLQCWPfOwXJVgPkOC3YG8RTvlFnYesmuQ44fRkopHz9eQFoKaPTB5+AMgDCSKlY
-	umGPHLb1y1OWF7x4bl5sbaCpto3IcVagHqErVYJk/tl83oqsT+ojLbchkeDJ2rYFDrSzzO7GFOg
-	ZKhbUsBAOXx6+gDQPRY1q97i7Dl+Ydxxy4SlZPmX5EAQO4Dmv7qOHoM9lZMbE92e9fPH/wD7R8p
-	NQF67ALVtMiCaG9lC5jCJEvZH/+exJGvArtNmwvv4GkJonw4VlHXCGl/dLj8XM5SW/R2nJzwnRE
-	2E3gTmuPMm8pQQos2CbeUfz3OqHleR/2CrBG5o2gSo4/IDCLh6n+zOUo/dqaJaacBoYqQSZXzp2
-	KTw2I=
-X-Google-Smtp-Source: AGHT+IHZTBNgW56teLD3sHSLrvkv0m337tB6iNKQKpqlBsfGGabYGgvI0lsbSLvoRIAMxLpvom0IdQ==
-X-Received: by 2002:a05:6214:aca:b0:718:787b:fece with SMTP id 6a1803df08f44-718787c00a2mr23553336d6.16.1756692039841;
-        Sun, 31 Aug 2025 19:00:39 -0700 (PDT)
+        bh=n71lxSZhtaKmDioqwBpuFWbtYkrE4A8cOtuolZZ4xFs=;
+        b=AbhNQrLQWjOy5dY0CvW0eYKpRoJggSZtZvnFcfEZK9INkIjWQFRlE731Qkim4Y6Vtm
+         1AusW9q0LklDKBFyTRogFTqDHNOxUtEedsIH+fLbnWBAX04XekzRlELyeNjjOZvCNNde
+         +w01EAcifG2YthDBSJHwfMG5xPLT7YsA9fDmfsVeJKFVs8dS6DUnl4n4qYuXjbILBYX7
+         69dSLgd1kLSgTb2DH0kz7IXd1NwvUcxq7sr5zCpp311sgJvo1Vy17HWaZyI3fAFzfd07
+         lYlnWPyq84NO8TIx36nwafcjCKLUBbvwx7LSJ76h0oHHoYqdk/oqjgYeqduypB6XoYBb
+         xLIg==
+X-Gm-Message-State: AOJu0YxgFu7aK2vyRQyiuOzFJw1wk8Z6Zy0AZLMD4o4RHNSD+aqh5e/3
+	oEtIeXPj6Lnbip3eLtecxVjlWGwR2PWKT/THyHFWiKwJ7l7C3e0rjPTqoTk/Jw==
+X-Gm-Gg: ASbGncvFesQ9sU3WHroNldwyGanoO5jEOh/EJuzFCD2hD2hga+y425XDWgqutyK05Ex
+	LK4FhUnuCuWYWPj4A1/3OYqSiBoj2oUZaxvoeq2/nVHiKJnyPu/voVXYtsF3i7TgDAIkffoR5gw
+	UVe1G9sFU6/+MAVIBVQo2S+NOuMWPvvnK5AL6H6R0afsnKg4cvGzOHyuH22Q3tCvQy+jbaeRceJ
+	LPAlFmXLhSypUIYnpaUnl/YBynlQucX+6ytjTsXiQwcPjnCfFA08e6uLUyKihtDtxEXS6esmLVs
+	u6J1i3BZXtQRd8xarwY6QYBZUzjSz08IUhd5a/2YZJsTSN1G5U27SFyuN7q4Tz4f6RKLFfIRsf8
+	5ix00S4nveABS61H0d4SjZUknzdnElDs9q+47JfsB31me30c8R1mRtiyIeZQTKQaDavaL
+X-Google-Smtp-Source: AGHT+IEaGu+VYdICMtJaTj4cIkBGcsfziLHVIU6jPygVTgEEWqJYHyBwxY2MAfxI6b1oIhohl443gg==
+X-Received: by 2002:a05:6214:2529:b0:70d:ce68:e019 with SMTP id 6a1803df08f44-70fac6f9d75mr58888606d6.8.1756692041077;
+        Sun, 31 Aug 2025 19:00:41 -0700 (PDT)
 Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb28983fasm31908136d6.54.2025.08.31.19.00.39
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb25c6f49sm32124496d6.15.2025.08.31.19.00.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 19:00:39 -0700 (PDT)
+        Sun, 31 Aug 2025 19:00:40 -0700 (PDT)
 From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
 To: Andy Shevchenko <andy@kernel.org>,
 	Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] auxdisplay: linedisp: support attribute attachment to auxdisplay devices
-Date: Sun, 31 Aug 2025 22:00:28 -0400
-Message-ID: <20250901020033.60196-5-jefflessard3@gmail.com>
+Subject: [PATCH 5/5] docs: ABI: auxdisplay: document linedisp library sysfs attributes
+Date: Sun, 31 Aug 2025 22:00:29 -0400
+Message-ID: <20250901020033.60196-6-jefflessard3@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250901020033.60196-1-jefflessard3@gmail.com>
 References: <20250901020033.60196-1-jefflessard3@gmail.com>
@@ -91,275 +90,123 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Enable linedisp library integration into existing kernel devices (like LED
-class) to provide a uniform 7-segment userspace API without creating
-separate child devices, meeting the consistent interface while maintaining
-coherent device hierarchies.
+Add ABI documentation for sysfs attributes provided by the line-display
+auxdisplay library module. These attributes enable text message display and
+configuration on character-based auxdisplay devices.
 
-This allows uniform 7-segment API across all drivers while solving device
-proliferation and fragmented userspace interfaces.
+Documents previously undocumented attributes:
+- message, scroll_step_ms (introduced in v5.16)
+- map_seg7, map_seg14 (introduced in v6.9)
 
-The provided attributes appear in two locations depending on usage:
-  1. On linedisp.N child devices (legacy linedisp_register())
-  2. On the parent auxdisplay device (new linedisp_attach())
-Functionality is identical in both modes.
+Documents newly added attribute:
+- num_chars (targeted for v6.18)
 
-Existing consumers of linedisp_register() are unaffected. The new API
-enables drivers like TM16XX to integrate 7-segment display functionality
-seamlessly within their LED class device hierarchy.
+The line-display library is used by multiple auxdisplay drivers and
+can expose these attributes either on linedisp.N child devices or
+directly on parent auxdisplay devices.
 
 Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 ---
- drivers/auxdisplay/line-display.c | 160 +++++++++++++++++++++++++++++-
- drivers/auxdisplay/line-display.h |   4 +
- 2 files changed, 161 insertions(+), 3 deletions(-)
+ .../ABI/testing/sysfs-auxdisplay-linedisp     | 90 +++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-auxdisplay-linedisp
 
-diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
-index abeed8812..1176d46f0 100644
---- a/drivers/auxdisplay/line-display.c
-+++ b/drivers/auxdisplay/line-display.c
-@@ -6,20 +6,23 @@
-  * Author: Paul Burton <paul.burton@mips.com>
-  *
-  * Copyright (C) 2021 Glider bv
-+ * Copyright (C) 2025 Jean-François Lessard
-  */
- 
- #ifndef CONFIG_PANEL_BOOT_MESSAGE
- #include <generated/utsrelease.h>
- #endif
- 
--#include <linux/container_of.h>
-+#include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/idr.h>
- #include <linux/jiffies.h>
- #include <linux/kstrtox.h>
-+#include <linux/list.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/sysfs.h>
- #include <linux/timer.h>
-@@ -31,9 +34,72 @@
- 
- #define DEFAULT_SCROLL_RATE	(HZ / 2)
- 
-+struct linedisp_attachment {
-+	struct list_head list;
-+	struct device *device;
-+	struct linedisp *linedisp;
-+	bool owns_device;  /* true for child device mode, false for attached mode */
-+};
+diff --git a/Documentation/ABI/testing/sysfs-auxdisplay-linedisp b/Documentation/ABI/testing/sysfs-auxdisplay-linedisp
+new file mode 100644
+index 000000000..63c47f192
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-auxdisplay-linedisp
+@@ -0,0 +1,90 @@
++What:		/sys/.../message
++Date:		October 2021
++KernelVersion:	5.16
++Description:
++		Controls the text message displayed on character line displays.
 +
-+static LIST_HEAD(linedisp_attachments);
-+static DEFINE_SPINLOCK(linedisp_attachments_lock);
++		Reading returns the current message with a trailing newline.
++		Writing updates the displayed message. Messages longer than the
++		display width will automatically scroll. Trailing newlines in
++		input are automatically trimmed.
 +
-+static int create_attachment(struct device *dev, struct linedisp *linedisp, bool owns_device)
-+{
-+	struct linedisp_attachment *attachment;
++		Writing an empty string clears the display.
 +
-+	attachment = kzalloc(sizeof(*attachment), GFP_KERNEL);
-+	if (!attachment)
-+		return -ENOMEM;
++		Example:
++		  echo "Hello World" > message
++		  cat message			# Returns "Hello World\n"
 +
-+	attachment->device = dev;
-+	attachment->linedisp = linedisp;
-+	attachment->owns_device = owns_device;
++What:		/sys/.../scroll_step_ms
++Date:		October 2021
++KernelVersion:	5.16
++Description:
++		Controls the scrolling speed for messages longer than the display
++		width, specified in milliseconds per scroll step.
 +
-+	guard(spinlock)(&linedisp_attachments_lock);
-+	list_add(&attachment->list, &linedisp_attachments);
++		Setting to 0 disables scrolling. Default is 500ms.
 +
-+	return 0;
-+}
++		Example:
++		  echo "250" > scroll_step_ms	# 4Hz scrolling
++		  cat scroll_step_ms		# Returns "250\n"
 +
-+static struct linedisp *delete_attachment(struct device *dev, bool owns_device)
-+{
-+	struct linedisp_attachment *attachment;
-+	struct linedisp *linedisp;
++What:		/sys/.../num_chars
++Date:		November 2025
++KernelVersion:	6.18
++Contact:	Jean-François Lessard <jefflessard3@gmail.com>
++Description:
++		Read-only attribute showing the character width capacity of
++		the line display device. Messages longer than this will scroll.
 +
-+	guard(spinlock)(&linedisp_attachments_lock);
++		Example:
++		  cat num_chars		# Returns "16\n" for 16-char display
 +
-+	list_for_each_entry(attachment, &linedisp_attachments, list) {
-+		if (attachment->device == dev &&
-+		    attachment->owns_device == owns_device)
-+			break;
-+	}
++What:		/sys/.../map_seg7
++Date:		January 2024
++KernelVersion:	6.9
++Description:
++		Read/write binary blob representing the ASCII-to-7-segment
++		display conversion table used by the linedisp driver, as defined
++		by struct seg7_conversion_map in <linux/map_to_7segment.h>.
 +
-+	if (list_entry_is_head(attachment, &linedisp_attachments, list))
-+		return NULL;
++		Only visible on displays with 7-segment capability.
 +
-+	linedisp = attachment->linedisp;
-+	list_del(&attachment->list);
-+	kfree(attachment);
++		This attribute is not human-readable. Writes must match the
++		struct size exactly, else -EINVAL is returned; reads return the
++		entire mapping as a binary blob.
 +
-+	return linedisp;
-+}
++		This interface and its implementation match existing conventions
++		used in segment-mapped display drivers since 2005.
 +
- static struct linedisp *to_linedisp(struct device *dev)
- {
--	return container_of(dev, struct linedisp, dev);
-+	struct linedisp_attachment *attachment;
++		ABI note: This style of binary sysfs attribute *is an exception*
++		to current "one value per file, text only" sysfs rules, for
++		historical compatibility and driver uniformity. New drivers are
++		discouraged from introducing additional binary sysfs ABIs.
 +
-+	guard(spinlock)(&linedisp_attachments_lock);
++		Reference interface guidance:
++		- include/uapi/linux/map_to_7segment.h
 +
-+	list_for_each_entry(attachment, &linedisp_attachments, list) {
-+		if (attachment->device == dev)
-+			break;
-+	}
++What:		/sys/.../map_seg14
++Date:		January 2024
++KernelVersion:	6.9
++Description:
++		Read/write binary blob representing the ASCII-to-14-segment
++		display conversion table used by the linedisp driver, as defined
++		by struct seg14_conversion_map in <linux/map_to_14segment.h>.
 +
-+	if (list_entry_is_head(attachment, &linedisp_attachments, list))
-+		return NULL;
++		Only visible on displays with 14-segment capability.
 +
-+	return attachment->linedisp;
- }
- 
- static inline bool should_scroll(struct linedisp *linedisp)
-@@ -349,6 +415,87 @@ static int linedisp_init_map(struct linedisp *linedisp)
- #define LINEDISP_INIT_TEXT "Linux " UTS_RELEASE "       "
- #endif
- 
-+/**
-+ * linedisp_attach - attach a character line display
-+ * @linedisp: pointer to character line display structure
-+ * @dev: pointer of the device to attach to
-+ * @num_chars: the number of characters that can be displayed
-+ * @ops: character line display operations
-+ *
-+ * Return: zero on success, else a negative error code.
-+ */
-+int linedisp_attach(struct linedisp *linedisp, struct device *dev,
-+		    unsigned int num_chars, const struct linedisp_ops *ops)
-+{
-+	int err;
++		This attribute is not human-readable. Writes must match the
++		struct size exactly, else -EINVAL is returned; reads return the
++		entire mapping as a binary blob.
 +
-+	memset(linedisp, 0, sizeof(*linedisp));
-+	linedisp->ops = ops;
-+	linedisp->num_chars = num_chars;
-+	linedisp->scroll_rate = DEFAULT_SCROLL_RATE;
++		This interface and its implementation match existing conventions
++		used by segment-mapped display drivers since 2005.
 +
-+	linedisp->buf = kzalloc(linedisp->num_chars, GFP_KERNEL);
-+	if (!linedisp->buf)
-+		return -ENOMEM;
++		ABI note: This style of binary sysfs attribute *is an exception*
++		to current "one value per file, text only" sysfs rules, for
++		historical compatibility and driver uniformity. New drivers are
++		discouraged from introducing additional binary sysfs ABIs.
 +
-+	/* initialise a character mapping, if required */
-+	err = linedisp_init_map(linedisp);
-+	if (err)
-+		goto out_free_buf;
-+
-+	/* initialise a timer for scrolling the message */
-+	timer_setup(&linedisp->timer, linedisp_scroll, 0);
-+
-+	err = create_attachment(dev, linedisp, false);
-+	if (err)
-+		goto out_del_timer;
-+
-+	/* add attribute groups to target device */
-+	err = device_add_groups(dev, linedisp_groups);
-+	if (err)
-+		goto out_del_attach;
-+
-+	/* display a default message */
-+	err = linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
-+	if (err)
-+		goto out_rem_groups;
-+
-+	return 0;
-+
-+out_rem_groups:
-+	device_remove_groups(dev, linedisp_groups);
-+out_del_attach:
-+	delete_attachment(dev, false);
-+out_del_timer:
-+	timer_delete_sync(&linedisp->timer);
-+out_free_buf:
-+	kfree(linedisp->buf);
-+	return err;
-+}
-+EXPORT_SYMBOL_NS_GPL(linedisp_attach, "LINEDISP");
-+
-+/**
-+ * linedisp_detach - detach a character line display
-+ * @dev: pointer of the device to detach from, that was previously
-+ *	 attached with linedisp_attach()
-+ */
-+void linedisp_detach(struct device *dev)
-+{
-+	struct linedisp *linedisp = delete_attachment(dev, false);
-+
-+	if (!linedisp)
-+		return;
-+
-+	timer_delete_sync(&linedisp->timer);
-+
-+	device_remove_groups(dev, linedisp_groups);
-+
-+	kfree(linedisp->map);
-+	kfree(linedisp->message);
-+	kfree(linedisp->buf);
-+}
-+EXPORT_SYMBOL_NS_GPL(linedisp_detach, "LINEDISP");
-+
- /**
-  * linedisp_register - register a character line display
-  * @linedisp: pointer to character line display structure
-@@ -391,10 +538,14 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 	/* initialise a timer for scrolling the message */
- 	timer_setup(&linedisp->timer, linedisp_scroll, 0);
- 
--	err = device_add(&linedisp->dev);
-+	err = create_attachment(&linedisp->dev, linedisp, true);
- 	if (err)
- 		goto out_del_timer;
- 
-+	err = device_add(&linedisp->dev);
-+	if (err)
-+		goto out_del_attach;
-+
- 	/* display a default message */
- 	err = linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
- 	if (err)
-@@ -404,6 +555,8 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 
- out_del_dev:
- 	device_del(&linedisp->dev);
-+out_del_attach:
-+	delete_attachment(&linedisp->dev, true);
- out_del_timer:
- 	timer_delete_sync(&linedisp->timer);
- out_put_device:
-@@ -420,6 +573,7 @@ EXPORT_SYMBOL_NS_GPL(linedisp_register, "LINEDISP");
- void linedisp_unregister(struct linedisp *linedisp)
- {
- 	device_del(&linedisp->dev);
-+	delete_attachment(&linedisp->dev, true);
- 	timer_delete_sync(&linedisp->timer);
- 	put_device(&linedisp->dev);
- }
-diff --git a/drivers/auxdisplay/line-display.h b/drivers/auxdisplay/line-display.h
-index 4348d7a2f..36853b639 100644
---- a/drivers/auxdisplay/line-display.h
-+++ b/drivers/auxdisplay/line-display.h
-@@ -6,6 +6,7 @@
-  * Author: Paul Burton <paul.burton@mips.com>
-  *
-  * Copyright (C) 2021 Glider bv
-+ * Copyright (C) 2025 Jean-François Lessard
-  */
- 
- #ifndef _LINEDISP_H
-@@ -81,6 +82,9 @@ struct linedisp {
- 	unsigned int id;
- };
- 
-+int linedisp_attach(struct linedisp *linedisp, struct device *dev,
-+		    unsigned int num_chars, const struct linedisp_ops *ops);
-+void linedisp_detach(struct device *dev);
- int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 		      unsigned int num_chars, const struct linedisp_ops *ops);
- void linedisp_unregister(struct linedisp *linedisp);
++		Reference interface guidance:
++		- include/uapi/linux/map_to_14segment.h
 -- 
 2.43.0
 
