@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-794054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B7DB3DC38
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:21:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62632B3DC3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4037417662A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5CB18984A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3112EDD77;
-	Mon,  1 Sep 2025 08:21:25 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAB72F1FCC;
+	Mon,  1 Sep 2025 08:21:51 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644B323B632;
-	Mon,  1 Sep 2025 08:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65042F0C41
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756714884; cv=none; b=KRpCQeuiN/A8W8FcH6G2xhZkHM2nPzHVPjKyYkfdntBCL6OJlvw3Q6oVaTH0PW2JYr+6mfLQPWVRu953A1ESPbVCRkVw9sLSl2K1SzkybjshciSjnGPR/hqFDduMWpGE9sYjZsEwDLPUeXVQl0WpRupqX43IwQVMDRWqM5n/jMk=
+	t=1756714910; cv=none; b=LgWEcjAtQjM2SYdLwuL3QxuAwI6suijQ4sxp+qXNHEtNMW4mcMpOpmabAbcODk0b+FXIihTnP80pH1JR4+1hMOAS5/WrOT7SNnNBKs93XYOccngX3SfMl/okuAxeIH4pVZHKJQthGM337Rmyh4xNxJrCpe7CDb0aGFl9dEhqjl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756714884; c=relaxed/simple;
-	bh=v9fif//9C7xOO7pC2ese9vUbSP7DolrbV5tCB3F7bCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hp4heYt9nTRFLmLUcRRsTrxcDR0f9CYwfpjjrOWwdBBcvaNZfHYxgmRE19w07dnk91HVaXOe2se8PvB3qwnc8RMhx1ypDHVJ7u5JH81ZxfqOV5onPxFIV1PPt5FeFkxwd/KwjejOXhbWZbTDBF3541pZo+8BxkTv9hw2pBAtW7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz4t1756714854td02a6ce6
-X-QQ-Originating-IP: OVw0v/uv0qvupYGv9rfV7KCl5TmY2GA9fodwbrC3cXs=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 01 Sep 2025 16:20:52 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15377409509470357136
+	s=arc-20240116; t=1756714910; c=relaxed/simple;
+	bh=CZOS5QghR7MNWOh6P8RwRJdeHu9mu31HNR7Pe+f02Cw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A+zYoFDr5hSYIjE16G+FgKSEEBmRAqjS3PXunygyah1GeXiQ+AFj2sUfwarzYKegP0WjgB1sBdYxoMdR753H9gIOR3YTC8GW1XLDJqoV38J0h+gCsWG2a6ccUXeUvd5mpPqGnv5IhP2JadWS6HROdwHkPxCEVQE5kfNMzeiqdXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <giorgitchankvetadze1997@gmail.com>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v4] mm/hugetlb: retry to allocate for early boot hugepage allocation
 Date: Mon, 1 Sep 2025 16:20:52 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v9 1/5] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <8AD0BD429DAFBD3B+20250901082052.GA49095@nic-Precision-5820-Tower>
-References: <20250828025547.568563-1-dong100@mucse.com>
- <20250828025547.568563-2-dong100@mucse.com>
- <dcfb395d-1582-4531-98e4-8e80add5dea9@lunn.ch>
+Message-ID: <20250901082052.3247-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dcfb395d-1582-4531-98e4-8e80add5dea9@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mf+wQkWJ2TuYoRAc945Q+9sbZ49S6jt/KM5fyBReB+U+2FoPujaarpB8
-	zss4KX1w+2pMKdqIDdd1JEXbl/iDzSB3kS2OfyHoDbCvTdOj6F72wdsHC+0p/OoGP13fFSv
-	h+LqJQ1aEojmkkDaK3COnTTaGOC8QP03drw/KohIZGCGKjod0ScPb/o8/htSCKVSSwXxKbk
-	CO+7ISjmTTRONTd/i9Qyg2xcbwSMpFNmGdgHuiZANWiy1Bmv7tK6wkhSAEDtUlVE0kHkBCS
-	nO+I35axIOZSe4SYKcOQvr7OGX5BnX/KQMb27MHtmX8mS/SpssqR4FrfGknUwscL5a12Iej
-	WEf0Jn+AO+jfjozmqJG07EAmuYu7uIWiO+CjzDXqbVbBifTnstKS2+iiAZzaaNqmLxrpl5w
-	v8XwfmAWqNuyIW985LW135FJWQOThhZXpPt2MJsHmdcR1Pp0LeNLTKmuwrn38VJLTG5vphZ
-	v7auNT5Pam6JCwilXF1P006Qzfqt70AWzRI8HFdn1ah7njQX5Zc0UvCMZvLFBGqumPc0tGD
-	JJz1i5No06PpLEb6iYtvAS6aks3MyBXXVlSRLxe2u+jfDoAD+N58cIgsY/dTmkl0cw2vrE9
-	FarE7E7BNtwSMrixwCbWS24C/5vi/i3/sm0E0PZnfG7tzCF8W7W1MvHk9g3p+aZYyNkwSlL
-	FglY8Xd7Hx8ylDo6d7RQfvISZ2jFoeUvVYKWTtvBtb6+hQ6+Znk+HFQaU5xLR2WMX8ceQJz
-	iNovCG0XMse9LNhhzun3Zcvto5XjrP+kxoPqxnFqQce3PDjzLdpMAlF+73D8z1wQt8fcYRc
-	cDzY2/5I9YGaRBN+xp/p0FKrKtWZEKv2hrsNGZcG9rrx0AOcefw1wXTlEW3xEGERTqiBd/Z
-	JrdVXvkXSl67jZpc8TUuYgO+6yA4iqD6QlOhl73W9fTXqbo607UecT77CKO6OT8j0dpj8FY
-	6NwUFs96OMHTAHfV9lKk6t2s0BkB3SLN2PdaB5R5C8L6UjTinIVonx2jNHI0rAlAHk4dHlo
-	iZ9sLteg==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc4.internal.baidu.com (172.31.50.48) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Thu, Aug 28, 2025 at 02:51:07PM +0200, Andrew Lunn wrote:
-> On Thu, Aug 28, 2025 at 10:55:43AM +0800, Dong Yibo wrote:
+From: Li RongQing <lirongqing@baidu.com>
 
-Hi, Andrew:
+In cloud environments with massive hugepage reservations (95%+ of system
+RAM), single-attempt allocation during early boot often fails due to
+memory pressure.
 
-> > Add build options and doc for mucse.
-> > Initialize pci device access for MUCSE devices.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
->     Andrew
-> 
+Commit 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages") intensified
+this by deferring page frees, increase peak memory usage during allocation.
 
-Should I add 'Reviewed-by: Andrew Lunn <andrew@lunn.ch>' to commit for
-[PATCH 1/5] in the next version?
+Introduce a retry mechanism that leverages vmemmap optimization reclaim
+(~1.6% memory) when available. Upon initial allocation failure, the system
+retries until successful or no further progress is made, ensuring reliable
+hugepage allocation while preserving batched vmemmap freeing benefits.
 
-Thanks for your review.
+Testing on a 256G machine allocating 252G of hugepages:
+Before: 128056/129024 hugepages allocated
+After:  Successfully allocated all 129024 hugepages
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ Diff with v3: rewrite comment
+ Diff with v2: auto retry mechanism
+ Diff with v1: add log if two-phase hugepage allocation is triggered
+ 		add the knod to control split ratio
+
+
+ mm/hugetlb.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 753f99b..af7c36f 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3589,10 +3589,9 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+ 
+ 	unsigned long jiffies_start;
+ 	unsigned long jiffies_end;
++	unsigned long remaining;
+ 
+ 	job.thread_fn	= hugetlb_pages_alloc_boot_node;
+-	job.start	= 0;
+-	job.size	= h->max_huge_pages;
+ 
+ 	/*
+ 	 * job.max_threads is 25% of the available cpu threads by default.
+@@ -3616,10 +3615,29 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+ 	}
+ 
+ 	job.max_threads	= hugepage_allocation_threads;
+-	job.min_chunk	= h->max_huge_pages / hugepage_allocation_threads;
+ 
+ 	jiffies_start = jiffies;
+-	padata_do_multithreaded(&job);
++	do {
++		remaining = h->max_huge_pages - h->nr_huge_pages;
++
++		job.start     = h->nr_huge_pages;
++		job.size      = remaining;
++		job.min_chunk = remaining / hugepage_allocation_threads;
++		padata_do_multithreaded(&job);
++
++		if (h->nr_huge_pages == h->max_huge_pages)
++			break;
++
++		/*
++		 * Retry only if the vmemmap optimization might have been able to free
++		 * some memory back to the system.
++		 */
++		if (!hugetlb_vmemmap_optimizable(h))
++			break;
++
++		/* Continue if progress was made in last iteration */
++	} while (remaining != (h->max_huge_pages - h->nr_huge_pages));
++
+ 	jiffies_end = jiffies;
+ 
+ 	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
+-- 
+2.9.4
+
 
