@@ -1,79 +1,241 @@
-Return-Path: <linux-kernel+bounces-795109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC29B3ECEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:05:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DC3B3ECF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD3B16C0DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:05:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 193A84E3223
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFF3320A0A;
-	Mon,  1 Sep 2025 17:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA133064B8;
+	Mon,  1 Sep 2025 17:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDs2aYC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1+fkbVl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B31320A03;
-	Mon,  1 Sep 2025 17:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ACC31AF21
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 17:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746339; cv=none; b=AxEVN9lr0w2/3d8MglWCSHXZGm/qFQzBdraMHPIsHRAzY+2feyBBopVXQPAwxo4hdGb1TnOFYshpXJSJawGNU0LSYW1cx6NY5YIxhvIkg2u1pDYzyaCo5K0lvRAROl32Zrbw3Tv+26q1Zhx/XIQjpBBaCUiBNlWVk6GtZnN6++Q=
+	t=1756746391; cv=none; b=ZyFOiJk5j//C5v7ZPOncIcX/suCKXLzohxT0YYzSR8UJkpyXx0PfFO2UtpaBVnyqsYcOcACzofOq2YwJOQJxIbXCwIddX8uLCB2C57gfL/r8Fa4WkBQp3Pu1O007wPDZ61MQl1mABbGT9XnTxCZmmUajJ9CVvfAOKKjDI0lIhHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746339; c=relaxed/simple;
-	bh=3SkoNn/o/FjTxi5s9+HexncXthA3P0meTbPdq9Pqarw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uA2uEI4gTUFuyGCW3JgY3nELJCIPjBp7GBeYlORuC+ToKzQO/dsReONM432pYxkcpXxF89uPY37ZD0iXdSACspe2+Hq+JfYdHgZqKiDblR0abmViXebl7LOtHCR+XE0OtybJbatr/bvqXlJEkb70z1XKInPNNiooi4iMFTPL8EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDs2aYC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79476C4CEF0;
-	Mon,  1 Sep 2025 17:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746339;
-	bh=3SkoNn/o/FjTxi5s9+HexncXthA3P0meTbPdq9Pqarw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MDs2aYC6KZMmzTW+rt748f0O+Fe9Ar1WeWycuCJyT5TUnKbYLHsGpkXS0sVhxHJAP
-	 +WSXHdqr9RIDsg8y9IeA4a0IaqZnNHVdf9TLJNL5kZO8zR2l4XK82sFgYqfqi+tDYq
-	 /W1K5Py3J58KvRwLovIq09KPR6wXlpx5uAf3UnCgNL0pcmHzlcVLwYrkirw2Qn3Zds
-	 LAQ3QSbe+hblhdZhY0VJSwM5u7eYQUDxf3nmkF7LrlNjeB1gVkq2jeQvKrogSBOnnU
-	 wU0BXFVlwNA9GGNB9jchHBsyXlFmjK0XYq3IcmToxFdU4i+Px8AayjqWrQ6rM8FQoI
-	 p/KiZo5fx2wFQ==
-Date: Mon, 1 Sep 2025 10:05:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Schmidt
- <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
- callback
-Message-ID: <20250901100537.23a0903e@kernel.org>
-In-Reply-To: <e6cd77a7-bc18-4e0c-9536-5fb107ec4db4@redhat.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
-	<20250813174408.1146717-6-ivecera@redhat.com>
-	<20250818192943.342ad511@kernel.org>
-	<e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
-	<20250829165638.3b50ea2a@kernel.org>
-	<e6cd77a7-bc18-4e0c-9536-5fb107ec4db4@redhat.com>
+	s=arc-20240116; t=1756746391; c=relaxed/simple;
+	bh=eynrKSovxbfwBy/+BGT3YEyavhAj9YttRSHNGp91z6g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VH7+rJ3XqICinNtPZeAloWpIXbiAm6tiYXsklxipv5DIejq4rEdw+Xvh1WaXx2JA9JwU75C/hKt9h9k5a2EO/c8apOHP1AW6zfO1A3/Lh5dz9yvCyhtM/GxKxkS1VyMZxPlaUWlOe410qoGLSgbL55jRDEtkWffCEnuKCPl5E4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1+fkbVl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756746387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eh14gSBsHlX8t4z8lOLowLFjFUmXdmvvFT/ssHquVjA=;
+	b=X1+fkbVl7sGLN0GARW+I1I3jutXA4P9jyFxlcx27f84+gBWuoSs2WvE0cPfWKDp6fkn9Va
+	qpJ4JV+v1rCn38nuRXcaZagubYpFa8oWJY+5l33Z+DTyilh0R5G/03WczYJOrTZMgH72TW
+	cGCrX6f92ykawHcn67qyl0h9CO7ROP4=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-416-ZlGZleWjNAC8Jl861ryoMQ-1; Mon, 01 Sep 2025 13:06:26 -0400
+X-MC-Unique: ZlGZleWjNAC8Jl861ryoMQ-1
+X-Mimecast-MFC-AGG-ID: ZlGZleWjNAC8Jl861ryoMQ_1756746385
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3d17731ab27so2200275f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 10:06:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756746385; x=1757351185;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eh14gSBsHlX8t4z8lOLowLFjFUmXdmvvFT/ssHquVjA=;
+        b=kgVuhX/4Qdx5BYTlnTGwFViI7Sigvt6QmV721WE0NSz/rKcDp9bdYbdyZdNIuzOchy
+         CY8B1iHoCZeTK3qyElpJ2EjUKoLH4lBPByls9Zc9UNxQ1trwMbtOCgjCkV+WUxtSwPtE
+         IkWLopk/2muheoX/1bcFckkfi2SqJaK/QEenzl/Eia8NPUL4DpCjMUfzk3SaAK3foEI1
+         1VGXBpGsGq2dqU95T+OkR6JyzMxO6R52YGLcmyGzp6E35OqcwYMG1x/JI4UNC0QEkGkG
+         KIeqjxz4vV3zrPgyaQ2/68UW2eJT6tsBTuJUIxQp7YBy1ORpVEBLIWrkFQ5n3x6f2MZo
+         H65w==
+X-Forwarded-Encrypted: i=1; AJvYcCVuN0A++mOne4x3oO9+kc2+Jvtn/1g9hjJSKevwWovVecNSErJQvecbE2n209FoBr7Q68mzEx65JOImwEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6vFFcFzCOkSZtK5/fYzMQavibom7TW7P5fgdxdSYc9UdgGc5D
+	vr3eLn/B9kz7Bm5BRjTW7wf56/k59WuIsQ1J6ERPQRDw+4xGWaUB2q+Z5XDIR0g7CyW5gR2LFT8
+	4wTBD36HqeB3VCReUt5uY0rTW1YMqqY6bpihCQlt4xrGIXiNla2AHwfzJ10PoL/BAAA==
+X-Gm-Gg: ASbGncvg0Zip0k9aHSTFPa4bq2T07FzZaKHjhAfLeSy9G0DgbAaB2k8f7ULy56ImEeT
+	+ZW+VdBxacZf50RcygKrBMYnWe1yXEubJ1uE2kVLFk/sMwqqALk1GOaPD254tH4x/uA0vBvGqqN
+	ogc+djgqVs/+Rt/z05h/Sjuu1VCBDwIpKo+eZvCINP1eKtDFw5wHJWh5C1tr7dS57lF/G4MHsxh
+	UXlLLdior8Hz8LY+SBg+FhGO4ytJXK1CoIE20EoplALaAnuYbZLa5yhU7cMi8/fbpPruNRUseBk
+	DiFzNxS9ZSmAKLtsUfhqsh67GiaP07qAgrMcW6rtGY+6YOKm/aK1G1ll6kB6vcSHk+rRZYJwwyv
+	iHvHxatkGs9VXr/ZdVjCaDiLaHNDxGicfuFHYduQEtuWWG+wmbMLaPU7BJ1+cyZZtzE8=
+X-Received: by 2002:a05:6000:4205:b0:3d9:415c:b146 with SMTP id ffacd0b85a97d-3d9415cb164mr902846f8f.15.1756746384882;
+        Mon, 01 Sep 2025 10:06:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtXV1RpZ3Z9Kk/q7xvuAzJpMudeH+8bX9H5YuBYHQqIOkcUcfv4sOsuljm2RvZo8tcSQgolw==
+X-Received: by 2002:a05:6000:4205:b0:3d9:415c:b146 with SMTP id ffacd0b85a97d-3d9415cb164mr902818f8f.15.1756746384422;
+        Mon, 01 Sep 2025 10:06:24 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm247892275e9.14.2025.09.01.10.06.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 10:06:23 -0700 (PDT)
+Message-ID: <bf03c2e2-66fc-4745-952a-de3fbf65c4ab@redhat.com>
+Date: Mon, 1 Sep 2025 19:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+From: David Hildenbrand <david@redhat.com>
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <7d423d50-47e0-4c97-abaa-1fa865ec3e42@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <7d423d50-47e0-4c97-abaa-1fa865ec3e42@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 1 Sep 2025 18:34:14 +0200 Ivan Vecera wrote:
-> 4. Keep my original approach, fix the ignored error code reported by
->     Jakub and pass "re-start normal operation failure" via devlink
->     notification.
+On 01.09.25 18:21, David Hildenbrand wrote:
+> On 19.08.25 15:41, Nico Pache wrote:
+>> The following series provides khugepaged with the capability to collapse
+>> anonymous memory regions to mTHPs.
+>>
+>> To achieve this we generalize the khugepaged functions to no longer depend
+>> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track chunks of
+>> pages (defined by KHUGEPAGED_MTHP_MIN_ORDER) that are utilized. After the
+>> PMD scan is done, we do binary recursion on the bitmap to find the optimal
+>> mTHP sizes for the PMD range. The restriction on max_ptes_none is removed
+>> during the scan, to make sure we account for the whole PMD range. When no
+>> mTHP size is enabled, the legacy behavior of khugepaged is maintained.
+>> max_ptes_none will be scaled by the attempted collapse order to determine
+>> how full a mTHP must be to be eligible for the collapse to occur. If a
+>> mTHP collapse is attempted, but contains swapped out, or shared pages, we
+>> don't perform the collapse. It is now also possible to collapse to mTHPs
+>> without requiring the PMD THP size to be enabled.
+>>
+>> With the default max_ptes_none=511, the code should keep its most of its
+>> original behavior. When enabling multiple adjacent (m)THP sizes we need to
+>> set max_ptes_none<=255. With max_ptes_none > HPAGE_PMD_NR/2 you will
+>> experience collapse "creep" and constantly promote mTHPs to the next
+>> available size. This is due the fact that a collapse will introduce at
+>> least 2x the number of pages, and on a future scan will satisfy the
+>> promotion condition once again.
+>>
+>> Patch 1:     Refactor/rename hpage_collapse
+>> Patch 2:     Some refactoring to combine madvise_collapse and khugepaged
+>> Patch 3-5:   Generalize khugepaged functions for arbitrary orders
+>> Patch 6-8:   The mTHP patches
+>> Patch 9-10:  Allow khugepaged to operate without PMD enabled
+>> Patch 11-12: Tracing/stats
+>> Patch 13:    Documentation
+> 
+> Would it be feasible to start with simply not supporting the
+> max_pte_none parameter in the first version, just like we won't support
+> max_pte_swapped/max_pte_shared in the first version?
+> 
+> That gives us more time to think about how to use/modify the old interface.
+> 
+> For example, I could envision a ratio-based interface, or as discussed
+> with Lorenzo a simple boolean. We could make the existing max_ptes*
+> interface backwards compatible then.
+> 
+> That also gives us the opportunity to think about the creep problem
+> separately.
+> 
+> I'm sure initial mTHP collapse will be valuable even without support for
+> that weird set of parameters.
+> 
+> Would there be implementation-wise a problem?
+> 
+> But let me think further about the creep problem ... :/
 
-4 is fine, we can revisit when another such device appears (tho I
-believe this is an increasingly common way to implement FW update).
+FWIW, I just looked around and there is documented usage of setting 
+max_ptes_none to 0 [1, 2, 3].
+
+In essence, I think it can make sense to set it to 0 when an application 
+wants to manage THP on its own (MADV_COLLAPSE), and avoid khugepaged 
+interfering. Now, using a system-wide toggle for such a use case is 
+rather questionable, but it's all we have.
+
+I did not find anything only recommending to set values different to 0 
+or 511 -- so far.
+
+So *likely* focusing on 0 vs. 511 initially would cover most use cases 
+out there. Ignoring the parameter initially (require all to be !none) 
+could of course also work.
+
+[1] https://www.mongodb.com/docs/manual/administration/tcmalloc-performance/
+[2] https://google.github.io/tcmalloc/tuning.html
+[3] 
+https://support.yugabyte.com/hc/en-us/articles/36558155921165-Mitigating-Excessive-RSS-Memory-Usage-Due-to-THP-Transparent-Huge-Pages
+
+-- 
+Cheers
+
+David / dhildenb
+
 
