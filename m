@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-795256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A92EB3EEE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA845B3EEF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38B01B21F69
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7804E1707
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C07345754;
-	Mon,  1 Sep 2025 19:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002E620296C;
+	Mon,  1 Sep 2025 19:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcGHIgpD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4S03Grd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CA63451DA;
-	Mon,  1 Sep 2025 19:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F9126A1B6;
+	Mon,  1 Sep 2025 19:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756756160; cv=none; b=DDRUBKWJRpoPawk9xXWFOLof+GV56fgaQOh8eoWy673FjEVw9GHgAwGjnOAgro4taF4Fpxlmyq0pvxk4m4S9ygys4apg0Yz+IQkiV65JUQNYZg2ypRP0IbpLVkSej5c+YNcc19Eunq3LxjT8CY0KTLoepAdFcjJj38J6MA/Rt40=
+	t=1756756250; cv=none; b=Ybk72jVCUPTy2e4pUL5VFxxG+OP2Drr+QXzD/lLsoTyFBrhTwoOgfyVB0sBmY+P+tsD3+aXvGQBacBl95hpVN6LTUrCPM8fW/4Z4vWxQM6gOYdDQCwuseegpcGmMt4uW7DdEfMZ5f42za3LkkAdF1kR3qIizDnQ6JuFB+0IddYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756756160; c=relaxed/simple;
-	bh=hWweElT7djCbTed3PF214V8Goh3Wcz0qNLBhwdlVtk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pJYi0sUkp49AHInLGN3JP0/LUOLg/vXRsCm7lSFCe+WmCWWMM/Yo7VmNZyOQtwSX+b339BhZMwbgH4bYAMJXMXiFCTBiVUq5hu4i52P3GEvJaWT7ig+3cInyZ3vQz5juBQdBOVy/9cENldASnUWPrjavhsTAoKGgrMycCPJ2F3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcGHIgpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADD7C4CEFD;
-	Mon,  1 Sep 2025 19:49:18 +0000 (UTC)
+	s=arc-20240116; t=1756756250; c=relaxed/simple;
+	bh=OFdjaiOif/kiG2e1g8vLRRWu9ClQaShYFQD7zmgbTbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ip1TR4bpsLzAqdAaNlSGxGOb8B/UYzBNBS3+pcXnYDK7xjnsnWFLVrTFOyaBQ61wynep0mNDdKVBX2Oyaq2m6L6+byH/EvdjxCiUAhvrOVubnNaZ6CzP73oaAai5swhwUz8/aXZC9gXLwdPRwH0k2xj0eAjfxRoj5ZSTbrx5LB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4S03Grd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD96C4CEF5;
+	Mon,  1 Sep 2025 19:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756756159;
-	bh=hWweElT7djCbTed3PF214V8Goh3Wcz0qNLBhwdlVtk8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fcGHIgpD8FTBPmeuaDgp+Jga7Qn7N3xmuqOJMTIutgiJs9+8Z+TZR5xAAh7WWEvWb
-	 a2ikQ1wXfaMVzabqbY7NXJsCxzEdZSRIEaOglnWAg2vyj0OcZ/EAyHSoRXpYjlE2wE
-	 wfQW6IyEbYFHn7kgxcCttToXvqBJhTCrcyzJNMxQvhC4gmn6OdW+MUyMwv0KMMwoDN
-	 mSTnUBqDSVzcm1HntvxwP0suzEid8kcN7s0SM84zWO0p2y2Lc6sgoBYlaYMR2swFMH
-	 bOCfRCzGVu/UUD09eaN5gNavnz2lS6568QeNU8gUkHRAAPmgVX2nX/mgUfbswMV/jk
-	 JdEot2hjZQu/A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Val Packett <val@packett.cool>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 0/4] Add Dell Inspiron 7441 / Latitude 7455 (X1E-80-100)
-Date: Mon,  1 Sep 2025 14:49:15 -0500
-Message-ID: <175675615152.1797303.10228710316796433483.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250716003139.18543-1-val@packett.cool>
-References: <20250716003139.18543-1-val@packett.cool>
+	s=k20201202; t=1756756249;
+	bh=OFdjaiOif/kiG2e1g8vLRRWu9ClQaShYFQD7zmgbTbI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K4S03Grd0NQGHuaRX9Cuj9fJhT5hRtNdJH9aLpuG7GbAXnFtsmcewy0YO243+uhZN
+	 pq3tf7GBMB14auhJ6syiT3I5t72YIkfBUOwmrAPlPmh9JyY3iVFXjsu3x4UuY3Z68N
+	 /uUSygZIgucIBmj8HeYYRVrIBH/YgGDH+beAfxGXXCXLVy0z04SPDkdTFK6/3YAd+6
+	 S/up8vdqRNjtlU0AZHlJUYldrgHZ+hQDXxenheG0ygRw3yC23pb4/D4FLXEMJM9C77
+	 OjFkmQxlpEW9l6mgvPuqLAoRnHj9Qap6fwrodXnR2eDbQWzhoBKXwyz363EbC/5r0Q
+	 1FKqTyzjkc9pw==
+Date: Mon, 1 Sep 2025 12:50:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: mvpp2: Fix refcount leak in
+ mvpp2_use_acpi_compat_mode
+Message-ID: <20250901125047.4c909ace@kernel.org>
+In-Reply-To: <20250830091854.2111062-1-linmq006@gmail.com>
+References: <20250830091854.2111062-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sat, 30 Aug 2025 17:18:54 +0800 Miaoqian Lin wrote:
+> -	return (!fwnode_property_present(port_fwnode, "phy-handle") &&
+> -		!fwnode_property_present(port_fwnode, "managed") &&
+> -		!fwnode_get_named_child_node(port_fwnode, "fixed-link"));
+> +	if (fwnode_property_present(port_fwnode, "phy-handle") ||
+> +	    fwnode_property_present(port_fwnode, "managed"))
+> +		return false;
+> +
+> +	fixed_link = fwnode_get_named_child_node(port_fwnode, "fixed-link");
 
-On Tue, 15 Jul 2025 21:26:56 -0300, Val Packett wrote:
-> Since v3[1]:
-> 
-> - Applied R-b tags
-> - Skipping the eDP panel ID patch now since it's been applied
-> - Fixed the last remaining '-names before -0' order issue
-> - Changed usb_mp: keep the unused PHYs enabled in the DT
->   (to let them go to sleep), like how it is done for the XPS
-> 
-> [...]
-
-Applied, thanks!
-
-[4/4] firmware: qcom: scm: Allow QSEECOM on Dell Inspiron 7441 / Latitude 7455
-      commit: 30ee285f1e3cdc88ec7010abeaba0cbed800bdcd
-
-Best regards,
+Wouldn't it be easier to switch to fwnode_get_named_child_node_count() ?
 -- 
-Bjorn Andersson <andersson@kernel.org>
+pw-bot: cr
 
