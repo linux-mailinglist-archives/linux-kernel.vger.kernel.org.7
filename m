@@ -1,142 +1,275 @@
-Return-Path: <linux-kernel+bounces-794092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20D9B3DCC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B91FB3DCC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E044E3BA887
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2EC18953F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B92FC000;
-	Mon,  1 Sep 2025 08:39:36 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E082FB992
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE94B2FAC18;
+	Mon,  1 Sep 2025 08:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XsYVzY8D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF182FB62F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715976; cv=none; b=CiIykCCx/embVSVFLyWBEVbkrI1U1pgZqUIii/upKfKYOqRxGIq5JGqYk2fgtn7PFwbK0LDZ3G62W6hquR2QeJOHWXuo6KkFjNk4fW70YBtd3TwbhaweIhWFtUdzimia90GlQCVi+8QiekVytNHowD5M88jlhA1UpGYLdNWBwOg=
+	t=1756716014; cv=none; b=Yjz0VE+2SmEPety2nNKR7oJKF3iOZwWHjgwt61sD7mhHvYwxGmSKrfDLXNOXBrwB70XmnklBZxv2dwt6wFJK3zFEGjmm2lLXtbLJspPJfP0OkDAQpnk9MpbaaKdQEQqoVqeEDirQg8wglRVv+sj9om8s9PoK36F/jEj8ijHIhXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715976; c=relaxed/simple;
-	bh=GIftNVJjFgHrRrN7LUcZ2GN5PRbGvAM7Rm+3Sj9T2vI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TF8Sln92LTB44kWUTLQhFyo+zPS2VxmEMyc/KTRFloJLQI1hrLvy+Iji1+BW5yf3x7Zek1EaV/s1QcJQ3Sa0o4FK8YvmkGQwrMFn5lvAZ4FHKV+zwmnSgy2om5UZxmibNooTliNDPkCYg7pweHYeYePEbR0YBluo/dwnP9dyO0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxG9LEW7VoWUwFAA--.10587S3;
-	Mon, 01 Sep 2025 16:39:32 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxjcHCW7VotI52AA--.55959S3;
-	Mon, 01 Sep 2025 16:39:31 +0800 (CST)
-Subject: Re: [PATCH v1 2/3] objtool/LoongArch: Fix unreachable instruction
- warnings about EFISTUB
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-3-yangtiezhu@loongson.cn>
- <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <82c913b9-4403-cde9-0542-5bd6e04415f5@loongson.cn>
-Date: Mon, 1 Sep 2025 16:39:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1756716014; c=relaxed/simple;
+	bh=4X2CWvlgPVWfzsbQhy30kVFfDZLIXvsWlgAUwcB9Ypg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jc3zoM/A6sJD/PA5m6WbeT5J1pgYoMpQnXYgI7d54T5YDjt3ol6Q0ILFtMwq6UuA1+ho+CYvL+wtBW2R6hXHGlL81k4gN5N8VBYcpM6e48w03zJmlqAQOJlrhLFUFi1o55RaJvzUY7Fk7PgFO0GE3dioA5tr3r69brMzW5AD1O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XsYVzY8D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756716011;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U+Es+FtmQYR5HXyYZrrZ0z0Shosir2um9BQMSS4egjA=;
+	b=XsYVzY8Dv5y72Pa8/iliFYTWuKNc4TsnAgm7Bn/dt8e9iTH5HNOrV6x/HDqrV1jNmhNpf2
+	MWJ1Hmftcp1g5lNCdFCochXXiXY4XvChWJhRDH3BOSlwRiLmCMjqYGXDaN55zSWmJAv+uu
+	yhV0gOsTTqYuiiw0yhKZH8o3MwSZgXU=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-J2MKGL-vN5qt1q69QFFNFg-1; Mon, 01 Sep 2025 04:40:10 -0400
+X-MC-Unique: J2MKGL-vN5qt1q69QFFNFg-1
+X-Mimecast-MFC-AGG-ID: J2MKGL-vN5qt1q69QFFNFg_1756716009
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24a9de13b7eso16541335ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:40:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756716009; x=1757320809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U+Es+FtmQYR5HXyYZrrZ0z0Shosir2um9BQMSS4egjA=;
+        b=R43AXM+I4nkJAL7/u8KhnIpn4L+sZJJ4wmvGsH1DEZbnqXDYnP9uylQMKaFG6cX9ja
+         73xhPinRB+ll2Sjue2XeuVH3C9bgk9vWbQmYlSfsFy/YHLKItq6wix4uJAITLj7J4rP7
+         naHf5Ril4noFDpe4rQ5rDipB2ITPiYyG/so5OYWIY30MLwalRViF31lki798jVDx4LHu
+         PCDZxUtTpQdJk1rwQ/9hWj6oQ/l0WkHxsLR9YTpCAM7vu2KqOY0bnoypbRpdRfgWcvLY
+         EI5BAEnDLNckOlEYZFnrGD5po9+5hY3Vx3DdCIzvwt+k1eMijcPBS1OUVarH5Cvjs14Y
+         Jjgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUU3hQLatHgNj5gVxYB9W289j/hkUz7nYz4nb1y7qSsmYBUoRuYf6uJpeHvqqyQyuhK1RNtZ3yvFD7NYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK1m9WLtrjxZa1dqobA67N2ef//VL1fE4+YomUsKbIeN/XaFq2
+	3pc77ejhJUNbwuy+WzwoVV0u5QLXww7kJVPz5YuDb4FmeyjAV1Yj+//5lUe0ck/4sjzVukH1eZ5
+	CiCyzHLYgJ8uIkY7IjmYSL9cSeBSOIZp8rPXd/WxiMIUAMbwUka3vfgTlIqiQye/FnU+LWPwysR
+	1BmKbFOBU+3LYNGu6UNFOlAenYTpIW+YcoMOjVDjbC
+X-Gm-Gg: ASbGncv8jH8NUY/tcebKlFAcH4J/1pzwceXoms8Yz9eVd2rSdjgV9NOL8BzGhsGL/qV
+	tWw9sArkt1QRuDpJjWh8lxQBM1/2fFHUyH7GIWKd7e4g+XJl6cVpTvKZMWDJ+jY6AoagFXdWyuW
+	XGnqYz7wXFSXCzPikBBwk=
+X-Received: by 2002:a17:902:f70d:b0:248:d917:a57c with SMTP id d9443c01a7336-24944ad11e1mr107308545ad.40.1756716008767;
+        Mon, 01 Sep 2025 01:40:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExoFNMD/FkqxZq0Ff8GbOXpsN/p/2wqpcPV6iygM8eQcyA7WzgsLqmPJySc42yG23m4GKWYE67YkKdXopx47Q=
+X-Received: by 2002:a17:902:f70d:b0:248:d917:a57c with SMTP id
+ d9443c01a7336-24944ad11e1mr107308135ad.40.1756716008361; Mon, 01 Sep 2025
+ 01:40:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250901081904.GB4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxjcHCW7VotI52AA--.55959S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxZF45KF4UWw4DKFy3AFyfZrc_yoW5ZFy7pF
-	47Cryjva90qF1qqw4DGr4ag34ava15Xr4qqF1UJa45K3yjv3Z7tanYyr17CFyqgr4Y9FW3
-	XayUt34DCFyjk3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0b6pPUUUU
-	U==
+References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-3-eperezma@redhat.com>
+ <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
+In-Reply-To: <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 1 Sep 2025 10:39:31 +0200
+X-Gm-Features: Ac12FXxPBNaVOZUytA6g5UG9keuM9opzMPjH0KW7lm_nsdhvAFd7ryYiMyPtW3A
+Message-ID: <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com>
+Subject: Re: [PATCH 2/6] vduse: add vq group support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/9/1 下午4:19, Peter Zijlstra wrote:
-> On Mon, Sep 01, 2025 at 03:21:55PM +0800, Tiezhu Yang wrote:
->> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
->> following objtool warnings:
->>
->>    vmlinux.o: warning: objtool: .head.text+0x0: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x18: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x38: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x3c: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x40: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x44: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x54: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x58: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x6c: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x84: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x94: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x9c: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0xc4: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0xf8: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0xfc: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x104: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x10c: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x11c: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x120: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x124: unreachable instruction
->>    vmlinux.o: warning: objtool: .head.text+0x144: unreachable instruction
->>
->> The instructions in the .head.text section are related with EFISTUB,
->> they are image header and can be ignored by objtool, so just check the
->> section name in ignore_unreachable_insn() to ignore it.
-> 
-> I am confused; why do the efi/libstub functions generate this error?
-> 
-> Is this zboot-header.S perhaps? Why can't we properly annotate that
-> file?
+On Mon, Sep 1, 2025 at 3:59=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
+te:
+>
+> On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
+> >
+> > This allows sepparate the different virtqueues in groups that shares th=
+e
+> > same address space.  Asking the VDUSE device for the groups of the vq a=
+t
+> > the beginning as they're needed for the DMA API.
+> >
+> > Allocating 3 vq groups as net is the device that need the most groups:
+> > * Dataplane (guest passthrough)
+> > * CVQ
+> > * Shadowed vrings.
+> >
+> > Future versions of the series can include dynamic allocation of the
+> > groups array so VDUSE can declare more groups.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v1: Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+> >
+> > RFC v3:
+> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+> >   value to reduce memory consumption, but vqs are already limited to
+> >   that value and userspace VDUSE is able to allocate that many vqs.
+> > * Remove the descs vq group capability as it will not be used and we ca=
+n
+> >   add it on top.
+> > * Do not ask for vq groups in number of vq groups < 2.
+> > * Move the valid vq groups range check to vduse_validate_config.
+> >
+> > RFC v2:
+> > * Cache group information in kernel, as we need to provide the vq map
+> >   tokens properly.
+> > * Add descs vq group to optimize SVQ forwarding and support indirect
+> >   descriptors out of the box.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 51 ++++++++++++++++++++++++++++--
+> >  include/uapi/linux/vduse.h         | 21 +++++++++++-
+> >  2 files changed, 68 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index e7bced0b5542..0f4e36dd167e 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -58,6 +58,7 @@ struct vduse_virtqueue {
+> >         struct vdpa_vq_state state;
+> >         bool ready;
+> >         bool kicked;
+> > +       u32 vq_group;
+> >         spinlock_t kick_lock;
+> >         spinlock_t irq_lock;
+> >         struct eventfd_ctx *kickfd;
+> > @@ -114,6 +115,7 @@ struct vduse_dev {
+> >         u8 status;
+> >         u32 vq_num;
+> >         u32 vq_align;
+> > +       u32 ngroups;
+> >         struct vduse_umem *umem;
+> >         struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> > @@ -592,6 +594,13 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
+ice *vdpa, u16 idx,
+> >         return 0;
+> >  }
+> >
+> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +
+> > +       return dev->vqs[idx]->vq_group;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -678,6 +687,28 @@ static u8 vduse_vdpa_get_status(struct vdpa_device=
+ *vdpa)
+> >         return dev->status;
+> >  }
+> >
+> > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
+> > +{
+> > +       /* All vqs and descs must be in vq group 0 if ngroups < 2 */
+> > +       if (dev->ngroups < 2)
+> > +               return 0;
+> > +
+> > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
+> > +               struct vduse_dev_msg msg =3D { 0 };
+> > +               int ret;
+> > +
+> > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
+> > +               msg.req.vq_group.index =3D i;
+> > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+> > +               if (ret)
+> > +                       return ret;
+> > +
+> > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.group;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 status)
+> >  {
+> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > @@ -685,6 +716,11 @@ static void vduse_vdpa_set_status(struct vdpa_devi=
+ce *vdpa, u8 status)
+> >         if (vduse_dev_set_status(dev, status))
+> >                 return;
+> >
+> > +       if (((dev->status ^ status) & VIRTIO_CONFIG_S_FEATURES_OK) &&
+> > +           (status & VIRTIO_CONFIG_S_FEATURES_OK))
+> > +               if (vduse_fill_vq_groups(dev))
+> > +                       return;
+>
+> I may lose some context but I think we've agreed that we need to
+> extend the status response for this instead of having multiple
+> indepdent response.
+>
 
-This is arch/loongarch/kernel/head.S.
+My understanding was it is ok to start with this version by [1]. We
+can even make it asynchronous on top if we find this is a bottleneck
+and the VDUSE device would need no change, would that work?
 
-There is "OBJECT_FILES_NON_STANDARD_head.o := y" in Makefile
-to skip objtool checking for head.o, but OBJECT_FILES_NON_STANDARD
-does not work for link time validation of vmlinux.o.
+> > +
+> >         dev->status =3D status;
+> >  }
+> >
+> > @@ -789,6 +825,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
+> >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
+> >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
+> > +       .get_vq_group           =3D vduse_get_vq_group,
+> >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
+> >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
+> >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
+> > @@ -1737,12 +1774,19 @@ static bool features_is_valid(struct vduse_dev_=
+config *config)
+> >         return true;
+> >  }
+> >
+> > -static bool vduse_validate_config(struct vduse_dev_config *config)
+> > +static bool vduse_validate_config(struct vduse_dev_config *config,
+> > +                                 u64 api_version)
+> >  {
+> >         if (!is_mem_zero((const char *)config->reserved,
+> >                          sizeof(config->reserved)))
+> >                 return false;
+> >
+> > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> > +               return false;
+> > +
+> > +       if (api_version >=3D VDUSE_API_VERSION_1 && config->ngroups > 0=
+xffff)
+> > +               return false;
+>
+> Let's use a macro instead of magic number.
+>
 
-At the beginning, give UNWIND_HINT_UNDEFINED for these instructions,
-but there is an argument in the previous RFC [1]:
+The rest of the limits are hardcoded, but I'm ok with changing this.
+Is UINT16_MAX ok here, or do you prefer something like MAX_NGROUPS and
+MAX_ASID?
 
-"The efi header is completely not code, the annotations are very strange."
+[...]
 
-Josh suggested to do something to put these instructions in the data
-section, but as said in the previous reply, it needs to modify the link
-process and seems too complicated and expensive for this warning to some
-extent.
-
-So I did this change for objtool.
-
-[1] 
-https://lore.kernel.org/loongarch/CAAhV-H7NNtH-oaqMsN5=2c+EdF0-dy5mxcsO=_KFGWqb-FZj_w@mail.gmail.com/
-[2] 
-https://lore.kernel.org/loongarch/l7l2ik5b2inhwbxmlae7ozrlxi7hbdjbrhjsrykjgotlhflah6@jebephhvtxki/
-
-Thanks,
-Tiezhu
+[1] https://patchew.org/linux/20250807115752.1663383-1-eperezma@redhat.com/=
+20250807115752.1663383-3-eperezma@redhat.com/#CACGkMEuVngGjgPZXnajiPC+pcbt+=
+dr6jqKRQr8OcX7HK1W3WNQ@mail.gmail.com
 
 
