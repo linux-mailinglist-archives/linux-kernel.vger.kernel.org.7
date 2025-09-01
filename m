@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-794447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B492B3E1E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:42:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039B6B3E1E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74EDF188CD71
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:42:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57127AFF6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7B331DDA4;
-	Mon,  1 Sep 2025 11:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074A631A563;
+	Mon,  1 Sep 2025 11:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EJSxSOTI"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SvLmONd6"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9AD31CA5F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3931DDBB
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726916; cv=none; b=gkBcM8pncPpL2Dz8Pz6r5I3aK17Ad8JbPPbVP71wHqZMkqDmGiTAabEW0uI1ZK4FBeRJGOkO9MUrbrsVW/jpDAbEW7Yhg988VuJp+V9OFN36O89Jc6d92ClKbHz6t4WRLG/CDy6L4ErpAs94IOSsAxkLVaBcMKmKG/W6z4Vr+uc=
+	t=1756726920; cv=none; b=b0cPyqK3+ZzSaL3D03qo47esXHnV+zGy3xNBrcQHl8trJkhNJ8JlVeeKsLzeOaTI4Rea4FupX/9x5d2D37uebcS5oxaKQn/75xlt33HNBdaVAp0DzWNKR6mUTis9aaTSneWkgkwUbnSjmWQMaouNvwxr66KnlqZ645GD91+Th6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726916; c=relaxed/simple;
-	bh=bmoCRBZVQHKL7pYu0BadqLLVNtiz9T3RkUnAwpiNyrc=;
+	s=arc-20240116; t=1756726920; c=relaxed/simple;
+	bh=+sZ77WjHTHt90fhAq699UVhWKshOd6ZBE82anXZEMFE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t63wkbRf/SyfIj6pwRB1vDDrhpOtYuBdMFj4fA2/CaLsP7WWRL9mC8tWCr6M9GhuibI+YcgeP5sra7xTRrshT//p+ToBHCl98TD3KzDkyrIBnqd9dwZ9LRBFE/InXAty0c3qbrkL3vwgEpXszpoM8uxr2jZVaHkIJz95uHu5V3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EJSxSOTI; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=P+W4wK7IvL3ASVgQNSl1leGDAuovy1MYEWhscP6ukvRO+Hc9ZddUQz5xHi6D39Z4wltXAHF7TgPV5ropwPXoYsvqd9lq8FyBVFlV+L36CKYcebe9UEYqIqntROxOnvNnwvgBVFTYPeYbxE0GAs7slwfP9pKom/EAgHbJ51t2+go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SvLmONd6; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-248a638dbbeso37885305ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:41:54 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24a9ccbf10dso13094265ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756726914; x=1757331714; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1756726918; x=1757331718; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MLolE06gtjbWk3ZkrQiU7O1WYGsW8aCemQeBBGyQyek=;
-        b=EJSxSOTI/EoJZh4dMR9nka2CukJ827E3kcQK7OsItlIFPVeSUQ9G7tYZnzgerv2y7C
-         0s1I2oRWVkgFGy6S8RSYSWLQueua2grLXEgdY0D4PRy1Dp0xlRKPb2ANdfOdGEZuMoGY
-         /wdjMnBzCVpVEDOJYavMQlKUFMfenq7vSTfQdbZPfoVhwQCYACqbtcH4OBXvykp82JVW
-         8CJgFGKlHFcr2uolBfF5sBACuXUNNNKPIxen51vOllYeXLxEoOeoisIVjmAzP5l9mqP9
-         MkeAlsN2tBU/DxvlYcWwAL7y4H5YYRqpeoVuxIgyWl7rb6Ob267itZz6TZG/J8vEDWp1
-         7MQw==
+        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
+        b=SvLmONd69zoKLDfQmVjryTSWKUwz+OzRFtsSL7Kk93nm1meZuAsU8H8inplhF2gNcs
+         KqQrk9zmi54hgSG+9pJllD1GewKOACe4ZdGtYP4jZ2CeYhD0xJyIWIXK18u7a1+kFTWp
+         dZYLUiXMru5LoYPeqHEwfOs1ln2e690KYKd0Q7ro44NbTpeVxyS13ZIDlZ+LQzZwhmD8
+         3TZANCcwoXifihJ8IlJAWLGCJDK6KVyJPn91N/nnkVUk7e2zvmmLkklystuvwBvaVZx4
+         HZO0v84aHQeodIQw558mH4fGLfL+yAiDwKBQh9ptM2uIPu49PkPV3BAFaudRgSjvqXdj
+         BMfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756726914; x=1757331714;
+        d=1e100.net; s=20230601; t=1756726918; x=1757331718;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MLolE06gtjbWk3ZkrQiU7O1WYGsW8aCemQeBBGyQyek=;
-        b=WQBstWbrrHm4cEIvlL+saIjOa+E88rpN22KxL77NSz8ij+7hTJkdg8Bxr+O48/bmvc
-         1a9qR3/dMpivUMV0zvMHnAi/MyRACG2sih6P/Ct9tapY8N5ogadbP4JlhG+uQjKSVaBT
-         0bGac0M0osFQAsXrgDq1PAd4xuXXVQ6N7SMdTyL9CjBUMD6eq4aaJgaezPxA3an4vN+p
-         /uusEUE/0ec9jYXNmd6fn/CQLRfyim4WBzCRFeHG6sU9y7NLZ8+oubZBmEe1yBdQ/ghM
-         aW7/vGiIuVI4VjHNTwMx+QjSZApt4FWs4J3TZ3CUgtfDnlodARQea/8Vfghq/KF7BUoC
-         TYHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWytqRn54Bfcl+dFBCsb+ke1W/WAxa96W4lABQA/zsogJBtsAp+S9uwvSMWbGbwx2zgl4FBtCdnW0Dgrcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE1aflc50mtK/DIWEyqiHKQ3ZKd+jae3MvkyKw3z0lmnerfetB
-	47V8q8Kd9eJcDmW+twB+IsXN4D9DshzLj8NrOlTlXAayUvya43uKrDH8UuFJepZ+mPVs72K6hVY
-	VneqnFg0=
-X-Gm-Gg: ASbGnctBkjKIe/WMSy8bPt8UoKOXlBHcjyrLFwl8ckmZNVMUyYnAdUKHWgEeACCQgTa
-	l3XYkWWPhE/b4OybmLM7PrlpxldkQFjZSy8K+lb5UZwdQ3h7b7DnbRB7b6auXRo9cHe0+VKKjcU
-	bR0tVaj8f/wHSd2Mp4ZlmV+L5wHKS/wJy+0/HxM4SJKX811wCCUAiGzY3xy1VeR2+wRqAxKMm0i
-	pcSfpEdlcY8+AgBXNJ8LEw8kBfW/O2Fm50lB3L3UBiJanAtXdrNwXoSbQbJ9CQZh19+TSmv8xjX
-	kn0DdqcBcIAWjPqilBuYApp4Zkn0FUXrDVxUtodujJBZjxWA6Ci3sEz9wtIqD1s1o6mKC0wlNl2
-	T1SWV47/yiS2jERXVxFPXj7sxFcw5bPomur022oAuKBn7shOMzWuzmwQK3Mcs9TC99EvvprPrvS
-	WtiEeWXLCmgRKeWHSeNEuNPNNqbpR0tQNRwm7H/IkHSvGHHgfUSvzrKg==
-X-Google-Smtp-Source: AGHT+IE0gpMY+RbD+bbQtAxSuQoUme95REJGQ1QUPydfC5VbbDQitYO6UEhOO5n3dpTz10zYDTEtww==
-X-Received: by 2002:a17:902:e74a:b0:249:1bd6:8a2f with SMTP id d9443c01a7336-2494486ee08mr115512295ad.3.1756726913831;
-        Mon, 01 Sep 2025 04:41:53 -0700 (PDT)
+        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
+        b=DkQmJ1mVW/PZds6eH/i5zOFMwRLOpj/LSuG0ilVACdfunVzuFA+6v6cVhHVYTQAJPf
+         Rx7IemqeCceAp7TgvlW4cEyXMcoFtl4WyNotW9cSFDyNHeMqt/vLZ9CZzZREPRU/ab60
+         JJnGXDI+9Wlto47+CIS+qPiu/X8iCZPbmsfNb9gE/SaGzX7ZmYrcw1bC5gGIqiHrX2zO
+         SnU6awRIKSKbDl++OyGNf1F9bqSvPyhSiSCUfwc/VPlNMIoPCbV1rETnxVZkkSeDCK2H
+         gEd4a5UN3RCcvdj/25NLlEhEJJ1gPXRgmwBX7SQgmO8elXyeqXdzjZwV5USPpY6jgO7l
+         9p2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlSDDz8jfAaNHeDNmUZh3k8m6FK6zynhgltooGc+bXyvipgFF3sPnsHtoYmU3Elimtr5EAidJ70vAuoAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjoZ54bbHAEhmLTNCbdTUirNu6TDHKd7o13mX42ZSoMejZRm+I
+	RveZZVJ435Pw1cYHxsc3AeWd5orOqZz10W6WHRDKWjB8MnduDsH7gwTE4hy8LfMJNIzWq3W3bqL
+	f/LzFqIw=
+X-Gm-Gg: ASbGncuEmKNJQnLOLfgaMezX2LYsykcgPgC7ADpwxS/EB3EDa1JK7/XY/jd9gIkgUfL
+	lojfzIcKoaIpYDNpz5bva9LGNEVi71RkFoQznXbhIjdATLNifXLe+druR0e5085IhK9G4Qdfqki
+	mBulijqG3bIflzbhLdAR0AkzG/CqBWR/zHFJ+EVCKq+tyPuWMzdKsgvmWB+cHNDfMxLk1jprKjB
+	h9839K4vMC4BGz6OLRXAouuWS5A7Q9S+9m9EHDxRo3xYMfZjvmaKR5iAX4Gx1SohazDrRPXIhPP
+	PzgCvWCj06CqDiOCxX+fDl4xe+RAu5FTeTS1zdbpo46yNiAGdNV0YettyTdYH/IMp5kSiaaS6Ld
+	e/er8TR5mTBrBAqm1RUDL2BLC6mW6QxOB0eBguzed46ea56D3yAnT3qm/jreCqFwza/kLCTKmuD
+	iyzpGUUDPcZC+gPKIkYboBEVOqvwZQEJQnC/08lbpiVVTJgdJInd1zSg==
+X-Google-Smtp-Source: AGHT+IH9HacVdhhrlYWDJB9ao9Cj7vL+SYgn/KxsSVzOs5trPZW7TKzXPjSrbltXooT+Y+1VomhKUA==
+X-Received: by 2002:a17:902:f64a:b0:24a:9475:3dcb with SMTP id d9443c01a7336-24a9475437cmr75175655ad.37.1756726917967;
+        Mon, 01 Sep 2025 04:41:57 -0700 (PDT)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249066e042asm103147055ad.146.2025.09.01.04.41.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249066e042asm103147055ad.146.2025.09.01.04.41.54
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 01 Sep 2025 04:41:53 -0700 (PDT)
+        Mon, 01 Sep 2025 04:41:57 -0700 (PDT)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
@@ -84,9 +84,9 @@ Cc: linux-riscv@lists.infradead.org,
 	apw@canonical.com,
 	joe@perches.com,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH RESEND 1/2] riscv: mm: Apply svinval in update_mmu_cache()
-Date: Mon,  1 Sep 2025 19:41:40 +0800
-Message-Id: <20250901114141.5438-2-luxu.kernel@bytedance.com>
+Subject: [PATCH RESEND 2/2] riscv: mm: Clear cpu in mm_cpumask after local_flush_tlb_all_asid
+Date: Mon,  1 Sep 2025 19:41:41 +0800
+Message-Id: <20250901114141.5438-3-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250901114141.5438-1-luxu.kernel@bytedance.com>
 References: <20250901114141.5438-1-luxu.kernel@bytedance.com>
@@ -98,127 +98,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Only flush tlb of the specified mm, and apply svinval if available.
+Clear corresponding bit of current cpu in mm_cpumask after executing
+local_flush_tlb_all_asid().
+
+This reduces the number of IPI due to tlb flush:
+
+* ltp - mmapstress01
+Before: ~98k
+After: 268
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- arch/riscv/include/asm/pgtable.h  | 16 +++++++++++++++-
- arch/riscv/include/asm/tlbflush.h | 23 +++++++++++++++++++++++
- arch/riscv/mm/tlbflush.c          | 23 -----------------------
- 3 files changed, 38 insertions(+), 24 deletions(-)
+ arch/riscv/mm/tlbflush.c | 41 ++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 91697fbf1f901..165cd02d51629 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -495,9 +495,15 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
- 		struct vm_area_struct *vma, unsigned long address,
- 		pte_t *ptep, unsigned int nr)
- {
-+	int i;
-+	unsigned long asid = get_mm_asid(vma->vm_mm);
-+
- 	asm goto(ALTERNATIVE("nop", "j %l[svvptc]", 0, RISCV_ISA_EXT_SVVPTC, 1)
- 		 : : : : svvptc);
- 
-+	asm goto(ALTERNATIVE("nop", "j %l[svinval]", 0, RISCV_ISA_EXT_SVINVAL, 1)
-+		 : : : : svinval);
-+
- 	/*
- 	 * The kernel assumes that TLBs don't cache invalid entries, but
- 	 * in RISC-V, SFENCE.VMA specifies an ordering constraint, not a
-@@ -506,7 +512,15 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
- 	 * the extra traps reduce performance.  So, eagerly SFENCE.VMA.
- 	 */
- 	while (nr--)
--		local_flush_tlb_page(address + nr * PAGE_SIZE);
-+		local_flush_tlb_page_asid(address + nr * PAGE_SIZE, asid);
-+	return;
-+
-+svinval:
-+	local_sfence_w_inval();
-+	for (i = 0; i < nr; i++)
-+		local_sinval_vma(address + nr * PAGE_SIZE, asid);
-+	local_sfence_inval_ir();
-+	return;
- 
- svvptc:;
- 	/*
-diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/tlbflush.h
-index eed0abc405143..9636d07fe9eed 100644
---- a/arch/riscv/include/asm/tlbflush.h
-+++ b/arch/riscv/include/asm/tlbflush.h
-@@ -15,6 +15,29 @@
- #define FLUSH_TLB_NO_ASID       ((unsigned long)-1)
- 
- #ifdef CONFIG_MMU
-+static inline unsigned long get_mm_asid(struct mm_struct *mm)
-+{
-+	return mm ? cntx2asid(atomic_long_read(&mm->context.id)) : FLUSH_TLB_NO_ASID;
-+}
-+
-+static inline void local_sfence_inval_ir(void)
-+{
-+	asm volatile(SFENCE_INVAL_IR() ::: "memory");
-+}
-+
-+static inline void local_sfence_w_inval(void)
-+{
-+	asm volatile(SFENCE_W_INVAL() ::: "memory");
-+}
-+
-+static inline void local_sinval_vma(unsigned long vma, unsigned long asid)
-+{
-+	if (asid != FLUSH_TLB_NO_ASID)
-+		asm volatile(SINVAL_VMA(%0, %1) : : "r" (vma), "r" (asid) : "memory");
-+	else
-+		asm volatile(SINVAL_VMA(%0, zero) : : "r" (vma) : "memory");
-+}
-+
- static inline void local_flush_tlb_all(void)
- {
- 	__asm__ __volatile__ ("sfence.vma" : : : "memory");
 diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 8404530ec00f9..962db300a1665 100644
+index 962db300a1665..571358f385879 100644
 --- a/arch/riscv/mm/tlbflush.c
 +++ b/arch/riscv/mm/tlbflush.c
-@@ -11,24 +11,6 @@
+@@ -17,7 +17,8 @@
+  */
+ unsigned long tlb_flush_all_threshold __read_mostly = 64;
  
- #define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
+-static void local_flush_tlb_range_threshold_asid(unsigned long start,
++static void local_flush_tlb_range_threshold_asid(struct mm_struct *mm,
++						 unsigned long start,
+ 						 unsigned long size,
+ 						 unsigned long stride,
+ 						 unsigned long asid)
+@@ -27,6 +28,8 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
  
--static inline void local_sfence_inval_ir(void)
--{
--	asm volatile(SFENCE_INVAL_IR() ::: "memory");
--}
--
--static inline void local_sfence_w_inval(void)
--{
--	asm volatile(SFENCE_W_INVAL() ::: "memory");
--}
--
--static inline void local_sinval_vma(unsigned long vma, unsigned long asid)
--{
--	if (asid != FLUSH_TLB_NO_ASID)
--		asm volatile(SINVAL_VMA(%0, %1) : : "r" (vma), "r" (asid) : "memory");
--	else
--		asm volatile(SINVAL_VMA(%0, zero) : : "r" (vma) : "memory");
--}
--
- /*
-  * Flush entire TLB if number of entries to be flushed is greater
-  * than the threshold below.
-@@ -110,11 +92,6 @@ static void __ipi_flush_tlb_range_asid(void *info)
- 	local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid);
+ 	if (nr_ptes_in_range > tlb_flush_all_threshold) {
+ 		local_flush_tlb_all_asid(asid);
++		if (mm && mm != current->active_mm)
++			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
+ 		return;
+ 	}
+ 
+@@ -46,21 +49,28 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
+ 	}
  }
  
--static inline unsigned long get_mm_asid(struct mm_struct *mm)
--{
--	return mm ? cntx2asid(atomic_long_read(&mm->context.id)) : FLUSH_TLB_NO_ASID;
--}
--
+-static inline void local_flush_tlb_range_asid(unsigned long start,
+-		unsigned long size, unsigned long stride, unsigned long asid)
++static inline void local_flush_tlb_range_mm(struct mm_struct *mm,
++					    unsigned long start,
++					    unsigned long size,
++					    unsigned long stride)
+ {
+-	if (size <= stride)
++	unsigned long asid = get_mm_asid(mm);
++
++	if (size <= stride) {
+ 		local_flush_tlb_page_asid(start, asid);
+-	else if (size == FLUSH_TLB_MAX_SIZE)
++	} else if (size == FLUSH_TLB_MAX_SIZE) {
+ 		local_flush_tlb_all_asid(asid);
+-	else
+-		local_flush_tlb_range_threshold_asid(start, size, stride, asid);
++		if (mm && mm != current->active_mm)
++			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
++	} else {
++		local_flush_tlb_range_threshold_asid(mm, start, size, stride, asid);
++	}
+ }
+ 
+ /* Flush a range of kernel pages without broadcasting */
+ void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ {
+-	local_flush_tlb_range_asid(start, end - start, PAGE_SIZE, FLUSH_TLB_NO_ASID);
++	local_flush_tlb_range_mm(NULL, start, end - start, PAGE_SIZE);
+ }
+ 
+ static void __ipi_flush_tlb_all(void *info)
+@@ -79,17 +89,17 @@ void flush_tlb_all(void)
+ }
+ 
+ struct flush_tlb_range_data {
+-	unsigned long asid;
++	struct mm_struct *mm;
+ 	unsigned long start;
+ 	unsigned long size;
+ 	unsigned long stride;
+ };
+ 
+-static void __ipi_flush_tlb_range_asid(void *info)
++static void __ipi_flush_tlb_range_mm(void *info)
+ {
+ 	struct flush_tlb_range_data *d = info;
+ 
+-	local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid);
++	local_flush_tlb_range_mm(d->mm, d->start, d->size, d->stride);
+ }
+ 
  static void __flush_tlb_range(struct mm_struct *mm,
- 			      const struct cpumask *cmask,
+@@ -97,7 +107,6 @@ static void __flush_tlb_range(struct mm_struct *mm,
  			      unsigned long start, unsigned long size,
+ 			      unsigned long stride)
+ {
+-	unsigned long asid = get_mm_asid(mm);
+ 	unsigned int cpu;
+ 
+ 	if (cpumask_empty(cmask))
+@@ -107,17 +116,17 @@ static void __flush_tlb_range(struct mm_struct *mm,
+ 
+ 	/* Check if the TLB flush needs to be sent to other CPUs. */
+ 	if (cpumask_any_but(cmask, cpu) >= nr_cpu_ids) {
+-		local_flush_tlb_range_asid(start, size, stride, asid);
++		local_flush_tlb_range_mm(mm, start, size, stride);
+ 	} else if (riscv_use_sbi_for_rfence()) {
+-		sbi_remote_sfence_vma_asid(cmask, start, size, asid);
++		sbi_remote_sfence_vma_asid(cmask, start, size, get_mm_asid(mm));
+ 	} else {
+ 		struct flush_tlb_range_data ftd;
+ 
+-		ftd.asid = asid;
++		ftd.mm = mm;
+ 		ftd.start = start;
+ 		ftd.size = size;
+ 		ftd.stride = stride;
+-		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_asid, &ftd, 1);
++		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_mm, &ftd, 1);
+ 	}
+ 
+ 	put_cpu();
 -- 
 2.20.1
 
