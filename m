@@ -1,178 +1,663 @@
-Return-Path: <linux-kernel+bounces-793665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D96DB3D692
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D6CB3D736
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A2C3B99E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9AA18983D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A77C20E6E1;
-	Mon,  1 Sep 2025 02:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A59F8F7D;
+	Mon,  1 Sep 2025 03:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JnhzgGed"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013032.outbound.protection.outlook.com [40.107.159.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0m1TxZS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA851F61C;
-	Mon,  1 Sep 2025 02:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692658; cv=fail; b=ivpl3N3tRgr+X/WV777hc7Ca8RjOnk97UCnlx3RsMRgU2LFMADNb9SBPIx2AI4SZqFnHT1DCcbsR1m66ZW90JJWamC7HXja/VwUPfFVaxAbx1xoCiRRUxLx62wG8H82DPN3F/7iz3tiy4rOz+ufHkgpofg7C23Wb5jTJXB4FgJY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692658; c=relaxed/simple;
-	bh=q8riTGHkjQ7lxewUGc/0UafRaBp3SNT4WBaqk8+R/Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CcEoSPn/10ERJQGbq4zN2Fka9TMN4IOgtsyUXZgXjFxIO9VvYcaTSrgdpKfwkUkEcJzU7ZHyDH5KxH47vTxhTk7e/ZXyEq11TtH4sDQ4H33r03gDMspugAOrz35L2mgg7Vz6zKmGovIdckm6bbCh8mRIBS2DQNosfi0TLj2HmOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JnhzgGed; arc=fail smtp.client-ip=40.107.159.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HOgPhnTBip57Ack/A5zpY2O1YtSaQA8b1o4L3V8zErLwyaKlPEjlRTyP3cKM/VaPZ8SwxC7fLASKYRmUTsDP4PrvFdvgNY2m643CqsKkjBq/J6xja6R1qTAcqXX+zxbG6utnx0M4l5xkjBn3T81YTRUWyK+5ipNNwyVUf2WAU01WgGCOnPKiKS+pyd/02Xzx69BQycCD25ztSZhs0X4ReDzb41cZDabEhWRTxYxYgBwof8Oo1GgCIky1e6KOvr4SkZ8Xyk9KSsD9N8liIEN3+VUi61aTy4+aVa5+sxVF8mx1ZWgHCjGfKg+Sofrr4jwdMD+DKnIsgVTY2jzcNpdCgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q8riTGHkjQ7lxewUGc/0UafRaBp3SNT4WBaqk8+R/Vo=;
- b=Eb9sLsdoGNLROZBBC3K8xPhF+Ra5qkGfWq28nWtdi7UShdHntaF+8rdmv+1bzSX8OYMSQeS7kNs9vTQ8jvT0tIUhWUNaVHecjMDvfjYHi3JYClnziWInBHFIU3kqG56+J7BA86Nx7srZsd/BIkVb3T/HgND2HJ0YuNU9OfWuMunKwIInmWBrq4PiqhOTeufgieM4VaUoDKaJzKHSc2GNCA/9KJasltI/TB2LUr/tDLbpXnfIcADUfmXRd6tpl6GnLPIFAb8dJAhCEvD8AIHNO3w/338/nnKIt+FvSaYMi2aWk+JNjgdIOYYYBDgVDDSJMeryvQmXd2gM2GEvRzZbSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q8riTGHkjQ7lxewUGc/0UafRaBp3SNT4WBaqk8+R/Vo=;
- b=JnhzgGedt6kVxPxPEMLXe0CO+Kj70ujrPoXQuDw8yt92MsXWG+ivoTnotx5+pFrepMDnZ4bdexkEfSU/9B28FZcLU3p1KdIYWzTP1s4mxxZIwJ8y+QBZXcTWpY+p5OTE25aDn2lhAu0cAKtIOVayI0H8Y5vNpzvLU3S8K0GWJ6ruUa3iX2Btq0vUQETuNihCz4/RO29dBZiLOQzb4yIvMtfeE6L1v6QOF9K1JOtc9jYunsO/tGlORKPCftCFT2iZWS4k5K4zYKDj/H5VPEAYbG6ImpyAUnICmPLcYdA95XYJgzvNycNn1JLk5dINa9x3GPHmQqMCRlmv+v5COnCkzg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AS8PR04MB7831.eurprd04.prod.outlook.com (2603:10a6:20b:2a8::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.12; Mon, 1 Sep
- 2025 02:10:53 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9094.015; Mon, 1 Sep 2025
- 02:10:52 +0000
-Date: Mon, 1 Sep 2025 11:22:03 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: E Shattow <e@freeshell.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-Message-ID: <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
-References: <20250831200516.522179-1-e@freeshell.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831200516.522179-1-e@freeshell.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SG2PR01CA0169.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::25) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B0A1E5B73;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756696968; cv=none; b=qAXlI6jtcvB1km6ofPn0zclejAr0kIgPaAavBEE+Xwy9HjpiSoCutRmTXcVfvLw7FsIbJz9R8A/9rJsaVWBV7GzhAJHfHRnxSOjFtj6JZjVXH1qmX2sdRKnqCWBsVqtN0wYS0j8fYAKiquvC8UxZL4rfZbt+mbC1H9q98ELODj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756696968; c=relaxed/simple;
+	bh=StUO5VnhJhQRZVLn1enpkS9EijuU3kKL+eiOOBaeQXs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QyLCz5Pe9YCyd0kQmoju/78bwRs6dBM1wFfSovB0WX/l+VICPzgBUt6iBXdMRYVutT525e/HIH3pke344/ejD+8flxCV3f89GhfX73l27yjr6E51juofeL8tHFAtjMelX8+NDatsDKu9vHvRYPN4ZGV1roHcyIV8li9WAEeFzoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0m1TxZS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 525BDC4CEF0;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756696968;
+	bh=StUO5VnhJhQRZVLn1enpkS9EijuU3kKL+eiOOBaeQXs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=i0m1TxZSSnC/OxLH80SkMF9g3QlpfYwVDzF82LT7nXzMTSo1G7+rA3RKdRNDuema+
+	 DxzZqaGIzOLQPiY6+hfB/SzpuFukiSjXbEDfl+UcPZfiY9TQBctuEchAckEb/UZXx5
+	 KblOJJnWprBcJ4sLuFxpYsxS20lQ2B53soVrD/K41/KDmL3Gbdk+tENAR1ubt1t19R
+	 zOAXTINOvtg3h0mgktWxqULhhogV27sagagxl7zrubYQXaA41YCXQavTe8pU78wGEa
+	 etE34QEBAsqX3+YXiZzc4mpAnbajV0pz6Ik1AeIWWN5ZY0L4cZr3gxreiMmVgy5WkY
+	 UyMjK4UBvaAPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4059DCA0FFD;
+	Mon,  1 Sep 2025 03:22:48 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sun, 31 Aug 2025 22:22:25 -0500
+Subject: [PATCH] drm/nouveau: Support devfreq for Tegra
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS8PR04MB7831:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6afa6482-8d1d-4960-9bba-08dde8fcc70c
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|7416014|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yfdcNSNM8qKTKfmrQvNdNE/B04EzTh8GtLSEtMSqFSUokwohCe5YkXjHIC+y?=
- =?us-ascii?Q?iQQheRf3gem33as3DqHmht/xSxiJCDtP2YYEdYn0w8SzOkT9nhMwFEMq2LAo?=
- =?us-ascii?Q?DBoqwgt/sxeD6BwSZw70eruv+dVtlY0kWVmC9RM8bpsDG6Xe1ioiPQ97F2Fw?=
- =?us-ascii?Q?Rv9cFKylCfjJdZRhwMt9/Bg6f2pyD7VUxaOFox0EJhvBW8P462yvy/6+x/2U?=
- =?us-ascii?Q?1FeY7gNlcB7cGVr/FMbMULw5k3dlk2n7FuoSl/Ap/qzMgvwBArWmeneNN0ag?=
- =?us-ascii?Q?T/Rdndag+XiUCAkqxB29UyAoa93/dYwrgAWjtcBX9aA1jkYAOZxkzLrQ8ro/?=
- =?us-ascii?Q?kya3hN4VNbgecuetWzgxKJ+qvirRjfa0bzN50qVZiPZMf3Mlz50UzdRrGgTM?=
- =?us-ascii?Q?TS751xEGsJmwDlRpGLegwLMjKAX1/EBfhprYC/ymN/t6wOipztttdOJzYZPV?=
- =?us-ascii?Q?S5Yo4jKQs+VcBO11mDKUCJANnKi75KLGiTFzExtTJVpy2zmiT4tiUu0MhHBg?=
- =?us-ascii?Q?4Vbzz2/Xh2Q7IQFeLCE5cf4nm2HT3tWG3hkipY7r0HtWp4Z3FWULt99iWywD?=
- =?us-ascii?Q?+9WVr4jPFmHa106H6d4tYF65zqmWikTVKV1jLben3z88EANMrFzWDuXkSdG3?=
- =?us-ascii?Q?ZeIFyI1J+x2rc6l6UydgoskL6yEHIhRsTaJj9My1t5m3tyUmgvHOSqg2cS5F?=
- =?us-ascii?Q?nz5sLyOu97qMO66KuNoYxYOnsRyCv/QTClgznjoNLHRR0ytcDuzLIUd3HHeM?=
- =?us-ascii?Q?v+dP+hbfBiPkbnWPpXUAorK9svXzJKt1OaGNPUlSfYMexPPZOr3hesNIQ8tt?=
- =?us-ascii?Q?k1vATocy9ECBKOElwa9unsAIivEW/6rUxjzQ9EQ047w4P6efOcsGiCNQEtsC?=
- =?us-ascii?Q?1ur5WtdMV5a0hi95rsGWRZvQyzDjbrgPcuJ2sdzhOyu9bUFSoR9QdZ0gC8ta?=
- =?us-ascii?Q?iu+vUysiun15a7c6UqZvcScaVKpLymDQ1Y/gJI46jmlp5RvXk3YpivDY157c?=
- =?us-ascii?Q?PLJifdptjEKbAzRN8iW3fztlg4a6qcf3ZHEP5cWIWN+/yAbw1d/xynMwxoQj?=
- =?us-ascii?Q?LEPVdRK5zWXU8Xr2tlf/8TaKZU7daCxszZ+lt2Row18nI4X+OXzIzQBLZbO7?=
- =?us-ascii?Q?W3arM2Qcq/EfO6R+h9Z+E01RxvPYBa0B/XypRmtkLuX1vmKahbPMO5VfYNqa?=
- =?us-ascii?Q?y4fZnP62Jmwcl5Xgi3IlWisYfJmXF2RK6NdIYuPoF+J7UijV8cKuu4tdnTk0?=
- =?us-ascii?Q?7IkTGplYaV7kruqQ3rnvgsS/uqkYcbjP92BhLRc6tTh05fH60SuVp49P7IPS?=
- =?us-ascii?Q?4gRJaZr7Nx5trZu9ajt9tKaVono+srFhrxAVJk25hwa03Iee3FfjxVKiiHKA?=
- =?us-ascii?Q?ROoq98lg3R804ckBjWqGf7bqx5l+2UR4YhRidjRVzFLG9sTQCOFW5HJ+QW39?=
- =?us-ascii?Q?Ez9Wz3DITs3eA1I0jeufaHFY50IRDBl0KcoCgbWls11O/K7wBeUZHw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t07H0xlsPcbJxzRSKblFvmdwd2y9m6B6eaUKqCC7NRBF6Ehcqsm6twJ93iPf?=
- =?us-ascii?Q?a4dev3QWK800EZ6X0tCWOQRfOwEdjU4Qutv/IdhnF+U5cDEa1oJmMgM8F/K2?=
- =?us-ascii?Q?OrU2JYt6Ck7j3t5RbaUopg/tgwPht/3DH13Kjhvkg+awS6pthpSWgnlwC0ec?=
- =?us-ascii?Q?HVi+pC/7rpQKwVtphX9FhtSQbSznOmxsPs36amUMIbK0uLE3hu7AO2mPpBY2?=
- =?us-ascii?Q?RMK3OI+8870WwqITutWjPlluanKZTZIPrppRE6ogPKLOtm9yYzkNovrRK1km?=
- =?us-ascii?Q?dlrQks5UcDR3btmICh1RfU3yHId68MvOhtDQHzKH9kjL+CQTSUWWt4me5FcS?=
- =?us-ascii?Q?tYYFCo7biu8tbzWrnRwH6MudygxIFOnLUYycEo1Z0KdSFxnzSzqT6gI2QiU8?=
- =?us-ascii?Q?ay/nTAs3CxbUV9b0DClqe/vyRVK90ZoF+aoY/7q8JaRFHmY3csgB5iT0w08Q?=
- =?us-ascii?Q?IwQaWE+/X8uRq+fHIngTT6nm7uJ7wgcxI1U9MVHQWd2TmSkAwPFjwiiIQvw5?=
- =?us-ascii?Q?3mtnLeH17c2c3NOh7eS0BdAnDPhz4O5p5lSo/ShIfRvgUEXZRR9NkBb0Zcup?=
- =?us-ascii?Q?WmzNk9buVwHTYhYJt2RZ1Ade3KLI5/qWNG5ZYkLloFt/p8vPsBtC03pmXrXv?=
- =?us-ascii?Q?opfbGQiZAY11ddYDueb0mtDAvfw3QjyipCR4cBTFrp8YlU5Ja8zdrxKLv5O1?=
- =?us-ascii?Q?ZsCs/G0cFvQP1y9MNqjeNYoVdxcYtOYT93P5m7RxMOzz8Z5wo96sNAFx23CC?=
- =?us-ascii?Q?YdBab7Xb5cr27HoRJwLK5zPYiyKM5uo2rvVKSRo02ZYASml7ChaU7Vgv8YjW?=
- =?us-ascii?Q?IYOkyA0nIkFCZKiKBlnFuNbzbhKLQWWOIsNtZfE4n8zIj/EBayLNdTcEHnLU?=
- =?us-ascii?Q?++ZFeyK/K+OZWRmv5nMEwMXUlrisSOQoT+Oy3RljvjU8J3g5bFBfqJGX9jV5?=
- =?us-ascii?Q?sHa6Ud1VpoVhQH7AQSxIb8If7ues+2925x5HRdoijNOv9s7C9sjCOoyVOj5u?=
- =?us-ascii?Q?PE3kwJk3TsZr+B1zJj6lMmrfyvzrgh9nVH33rpJnFWU3bJgzwsX3MwrfP5TP?=
- =?us-ascii?Q?Z4zNCQalyoPdE4LddWJ6o3YOTvROabvMfelN4v13RojfqZlm1XG6oRKmGID5?=
- =?us-ascii?Q?LNyXw5v3R+4uOnHOCkupxwYlwQZYbRponDhDGXr3tJ6s7vYNy3ofYAzoLTK7?=
- =?us-ascii?Q?utfvgxekuINDe+VU79t/fWCDONO38IyzISpFnYv3fxgRdK7av0EaqnP5clvy?=
- =?us-ascii?Q?FbxZj1iqWIuIDMmYH6wYqrGP94K6Ty2B0zlBxl5KvkDLbriwS7DBAt1G1sjb?=
- =?us-ascii?Q?AES7tdsPx6FM1jGhetCzdhTf6ZoDPqXmbrF049iyqjEPxuHkAoqtOjAgaLkC?=
- =?us-ascii?Q?PdG3lp+yk7upgoKckHFAWDY6MVR26co5dkzCrMwZJ64Hy1ccqD7kgLu9E+Ig?=
- =?us-ascii?Q?yvUSr3/RYAKhwxF2CUBYEcFSQLRZ0TXhSopWwCslecbEe37Z9zIfge2mmYC0?=
- =?us-ascii?Q?MZ9gqwkccbGMxtuK1v2qlsz8PRlQBn2ksJxRgBEnltUuKhEpSMIrgvFXdr39?=
- =?us-ascii?Q?C9jyxGYAed+aCgmNHpDX3DDjC8jJOngKg+9pzHch?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6afa6482-8d1d-4960-9bba-08dde8fcc70c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 02:10:52.7805
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nKLkfSz1sud+nQbjZSLeSd0iTqu9lZ6+we7EAOKZc2n+AHKsqwcCDZMo7nrkmZjoV9hXiugzgBP0yiNDnbcMXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7831
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250831-gk20a-devfreq-v1-1-c25a8f1169a8@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHARtWgC/02OSw7CMBBDr1LNmkiTT5umV0FdJOlMiaAfUqiQE
+ HcnohsWXjzLtvyGjXKiDbrqDZn2tKVlLiBPFcSLn0cSaSgMClWNrUYxXhV6MdDOme6CtGOrnQ/
+ SSSidNROn12/v3B9cYs8y+zhMCH4jEZdpSo+uitIGW2PQfnBsalahYUtFbBrrWmOUMYzBwf+dr
+ jrOKCXGVWIQmeJtiVdhbWDdINa+bbpdQf/5fAHxV/GN4AAAAA==
+X-Change-ID: 20250830-gk20a-devfreq-e39f739ab191
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756696967; l=20029;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=Xr6hXQu4yzVCR1Bkrqzjln5SWhf5njgdwi7PmzNazsM=;
+ b=WJj5Skx/w1G03phy8wC70SdoCzGiH4vX0bhPpB4tjeKRuluNXXs6VFhfkZPnm55D7k38MER4r
+ /3EgcC1+B0PAdL8YkrFXegFVChSyVB3RjWEBBM/dNUyhK2in4I+1ciZ
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->Move imx9*-{clock,power}.h headers into
->include/dt-bindings/{clock,power}/ and fix up the DTs
+From: Aaron Kling <webgeek1234@gmail.com>
 
-No. The files should be under arch/arm64/boot/dts/freescale/
-What issue are you trying to fix?
+Using pmu counters for usage stats. This enables dynamic frequency
+scaling on all of the currently supported Tegra gpus.
 
-Regards
-Peng
+The register offsets are valid for gk20a, gm20b, gp10b, and gv11b. If
+support is added for ga10b, this will need rearchitected.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/gpu/drm/nouveau/Kconfig                    |   1 +
+ drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h  |   2 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c         |  20 ++
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   4 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild     |   1 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h    |   1 +
+ .../drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c    | 319 +++++++++++++++++++++
+ .../drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h    |  24 ++
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c    |   5 +
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h    |   1 +
+ 12 files changed, 388 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index d1587639ebb04f904d57bcc09933d1e3662594d3..803b9eb234b7b51fa2e55b778a864622ccadbcef 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -28,6 +28,7 @@ config DRM_NOUVEAU
+ 	select THERMAL if ACPI && X86
+ 	select ACPI_VIDEO if ACPI && X86
+ 	select SND_HDA_COMPONENT if SND_HDA_CORE
++	select PM_DEVFREQ if ARCH_TEGRA
+ 	help
+ 	  Choose this option for open-source NVIDIA support.
+ 
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+index 22f74fc88cd7554334e68bdf2eb72c31848e0304..57bc542780bbe5ffc5c30f18c139cb099b6d07ed 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h
+@@ -9,6 +9,8 @@ struct nvkm_device_tegra {
+ 	struct nvkm_device device;
+ 	struct platform_device *pdev;
+ 
++	void __iomem *regs;
++
+ 	struct reset_control *rst;
+ 	struct clk *clk;
+ 	struct clk *clk_ref;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/drm/nouveau/nouveau_platform.c
+index a5ce8eb4a3be7a20988ea5515e8b58b1801e5842..164aaf09112b6617da2d42899d0fbf9ff75fc4af 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_platform.c
++++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
+@@ -21,6 +21,8 @@
+  */
+ #include "nouveau_platform.h"
+ 
++#include <nvkm/subdev/clk/gk20a_devfreq.h>
++
+ static int nouveau_platform_probe(struct platform_device *pdev)
+ {
+ 	const struct nvkm_device_tegra_func *func;
+@@ -43,6 +45,21 @@ static void nouveau_platform_remove(struct platform_device *pdev)
+ 	nouveau_drm_device_remove(drm);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int nouveau_suspend(struct device *dev)
++{
++	return gk20a_devfreq_suspend(dev);
++}
++
++static int nouveau_resume(struct device *dev)
++{
++	return gk20a_devfreq_resume(dev);
++}
++
++static SIMPLE_DEV_PM_OPS(nouveau_pm_ops, nouveau_suspend,
++			 nouveau_resume);
++#endif
++
+ #if IS_ENABLED(CONFIG_OF)
+ static const struct nvkm_device_tegra_func gk20a_platform_data = {
+ 	.iommu_bit = 34,
+@@ -84,6 +101,9 @@ struct platform_driver nouveau_platform_driver = {
+ 	.driver = {
+ 		.name = "nouveau",
+ 		.of_match_table = of_match_ptr(nouveau_platform_match),
++#ifdef CONFIG_PM_SLEEP
++		.pm = &nouveau_pm_ops,
++#endif
+ 	},
+ 	.probe = nouveau_platform_probe,
+ 	.remove = nouveau_platform_remove,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 114e50ca18270c90c32ad85f8bd8469740a950cb..03aa6f09ec89345225c302f7e5943055d9b715ba 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -259,6 +259,10 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
+ 	tdev->func = func;
+ 	tdev->pdev = pdev;
+ 
++	tdev->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(tdev->regs))
++		return PTR_ERR(tdev->regs);
++
+ 	if (func->require_vdd) {
+ 		tdev->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 		if (IS_ERR(tdev->vdd)) {
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+index 9fe394740f568909de71a8c420cc8b6d8dc2235f..be8f3283ee16f88842e3f0444a63e69cb149d2e0 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/Kbuild
+@@ -11,6 +11,7 @@ nvkm-y += nvkm/subdev/clk/gk104.o
+ nvkm-y += nvkm/subdev/clk/gk20a.o
+ nvkm-y += nvkm/subdev/clk/gm20b.o
+ nvkm-y += nvkm/subdev/clk/gp10b.o
++nvkm-$(CONFIG_PM_DEVFREQ) += nvkm/subdev/clk/gk20a_devfreq.o
+ 
+ nvkm-y += nvkm/subdev/clk/pllnv04.o
+ nvkm-y += nvkm/subdev/clk/pllgt215.o
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+index d573fb0917fc535437a0b81bc3d88c56b036fb22..65f5d0f1f3bfcf88df68db32a3764e0868bcd6e5 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.c
+@@ -23,6 +23,7 @@
+  *
+  */
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ 
+ #include <core/tegra.h>
+@@ -589,6 +590,10 @@ gk20a_clk_init(struct nvkm_clk *base)
+ 		return ret;
+ 	}
+ 
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
+index 286413ff4a9ec7f2273c9446ac7a15eb1a843aeb..ea5b0bab4ccec6e4999531593c2cb03de7599c74 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a.h
+@@ -118,6 +118,7 @@ struct gk20a_clk {
+ 	const struct gk20a_clk_pllg_params *params;
+ 	struct gk20a_pll pll;
+ 	u32 parent_rate;
++	struct gk20a_devfreq *devfreq;
+ 
+ 	u32 (*div_to_pl)(u32);
+ 	u32 (*pl_to_div)(u32);
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..8362b1d9cc1fd7aeceba04f83b28d0d73db467dd
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c
+@@ -0,0 +1,319 @@
++// SPDX-License-Identifier: MIT
++#include <linux/clk.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++
++#include <drm/drm_managed.h>
++
++#include <subdev/clk.h>
++
++#include "nouveau_drv.h"
++#include "nouveau_chan.h"
++#include "priv.h"
++#include "gk20a_devfreq.h"
++#include "gk20a.h"
++#include "gp10b.h"
++
++#define PMU_BUSY_CYCLES_NORM_MAX		1000U
++
++#define PWR_PMU_IDLE_COUNTER_TOTAL		0U
++#define PWR_PMU_IDLE_COUNTER_BUSY		4U
++
++#define PWR_PMU_IDLE_COUNT_REG_OFFSET		0x0010A508U
++#define PWR_PMU_IDLE_COUNT_REG_SIZE		16U
++#define PWR_PMU_IDLE_COUNT_MASK			0x7FFFFFFFU
++#define PWR_PMU_IDLE_COUNT_RESET_VALUE		(0x1U << 31U)
++
++#define PWR_PMU_IDLE_INTR_REG_OFFSET		0x0010A9E8U
++#define PWR_PMU_IDLE_INTR_ENABLE_VALUE		0U
++
++#define PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET	0x0010A9ECU
++#define PWR_PMU_IDLE_INTR_STATUS_MASK		0x00000001U
++#define PWR_PMU_IDLE_INTR_STATUS_RESET_VALUE	0x1U
++
++#define PWR_PMU_IDLE_THRESHOLD_REG_OFFSET	0x0010A8A0U
++#define PWR_PMU_IDLE_THRESHOLD_REG_SIZE		4U
++#define PWR_PMU_IDLE_THRESHOLD_MAX_VALUE	0x7FFFFFFFU
++
++#define PWR_PMU_IDLE_CTRL_REG_OFFSET		0x0010A50CU
++#define PWR_PMU_IDLE_CTRL_REG_SIZE		16U
++#define PWR_PMU_IDLE_CTRL_VALUE_MASK		0x3U
++#define PWR_PMU_IDLE_CTRL_VALUE_BUSY		0x2U
++#define PWR_PMU_IDLE_CTRL_VALUE_ALWAYS		0x3U
++#define PWR_PMU_IDLE_CTRL_FILTER_MASK		(0x1U << 2)
++#define PWR_PMU_IDLE_CTRL_FILTER_DISABLED	0x0U
++
++#define PWR_PMU_IDLE_MASK_REG_OFFSET		0x0010A504U
++#define PWR_PMU_IDLE_MASK_REG_SIZE		16U
++#define PWM_PMU_IDLE_MASK_GR_ENABLED		0x1U
++#define PWM_PMU_IDLE_MASK_CE_2_ENABLED		0x200000U
++
++/**
++ * struct gk20a_devfreq - Device frequency management
++ */
++struct gk20a_devfreq {
++	/** @devfreq: devfreq device. */
++	struct devfreq *devfreq;
++
++	/** @regs: Device registers. */
++	void __iomem *regs;
++
++	/** @gov_data: Governor data. */
++	struct devfreq_simple_ondemand_data gov_data;
++
++	/** @busy_time: Busy time. */
++	ktime_t busy_time;
++
++	/** @total_time: Total time. */
++	ktime_t total_time;
++
++	/** @time_last_update: Last update time. */
++	ktime_t time_last_update;
++};
++
++static struct gk20a_devfreq *dev_to_gk20a_devfreq(struct device *dev)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++
++	switch (drm->nvkm->chipset) {
++	case 0x13b: return gp10b_clk(base)->devfreq; break;
++	default: return gk20a_clk(base)->devfreq; break;
++	}
++}
++
++static void gk20a_pmu_init_perfmon_counter(struct gk20a_devfreq *gdevfreq)
++{
++	u32 data;
++
++	// Set pmu idle intr status bit on total counter overflow
++	writel(PWR_PMU_IDLE_INTR_ENABLE_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_INTR_REG_OFFSET);
++
++	writel(PWR_PMU_IDLE_THRESHOLD_MAX_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_THRESHOLD_REG_OFFSET +
++	       (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_THRESHOLD_REG_SIZE));
++
++	// Setup counter for total cycles
++	data = readl(gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_CTRL_REG_SIZE));
++	data &= ~(PWR_PMU_IDLE_CTRL_VALUE_MASK | PWR_PMU_IDLE_CTRL_FILTER_MASK);
++	data |= PWR_PMU_IDLE_CTRL_VALUE_ALWAYS | PWR_PMU_IDLE_CTRL_FILTER_DISABLED;
++	writel(data, gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_TOTAL * PWR_PMU_IDLE_CTRL_REG_SIZE));
++
++	// Setup counter for busy cycles
++	writel(PWM_PMU_IDLE_MASK_GR_ENABLED | PWM_PMU_IDLE_MASK_CE_2_ENABLED,
++	       gdevfreq->regs + PWR_PMU_IDLE_MASK_REG_OFFSET +
++	       (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_MASK_REG_SIZE));
++
++	data = readl(gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_CTRL_REG_SIZE));
++	data &= ~(PWR_PMU_IDLE_CTRL_VALUE_MASK | PWR_PMU_IDLE_CTRL_FILTER_MASK);
++	data |= PWR_PMU_IDLE_CTRL_VALUE_BUSY | PWR_PMU_IDLE_CTRL_FILTER_DISABLED;
++	writel(data, gdevfreq->regs + PWR_PMU_IDLE_CTRL_REG_OFFSET +
++		     (PWR_PMU_IDLE_COUNTER_BUSY * PWR_PMU_IDLE_CTRL_REG_SIZE));
++}
++
++static u32 gk20a_pmu_read_idle_counter(struct gk20a_devfreq *gdevfreq, u32 counter_id)
++{
++	u32 ret;
++
++	ret = readl(gdevfreq->regs + PWR_PMU_IDLE_COUNT_REG_OFFSET +
++		    (counter_id * PWR_PMU_IDLE_COUNT_REG_SIZE));
++
++	return ret & PWR_PMU_IDLE_COUNT_MASK;
++}
++
++static void gk20a_pmu_reset_idle_counter(struct gk20a_devfreq *gdevfreq, u32 counter_id)
++{
++	writel(PWR_PMU_IDLE_COUNT_RESET_VALUE, gdevfreq->regs + PWR_PMU_IDLE_COUNT_REG_OFFSET +
++					       (counter_id * PWR_PMU_IDLE_COUNT_REG_SIZE));
++}
++
++static u32 gk20a_pmu_read_idle_intr_status(struct gk20a_devfreq *gdevfreq)
++{
++	u32 ret;
++
++	ret = readl(gdevfreq->regs + PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET);
++
++	return ret & PWR_PMU_IDLE_INTR_STATUS_MASK;
++}
++
++static void gk20a_pmu_clear_idle_intr_status(struct gk20a_devfreq *gdevfreq)
++{
++	writel(PWR_PMU_IDLE_INTR_STATUS_RESET_VALUE,
++	       gdevfreq->regs + PWR_PMU_IDLE_INTR_STATUS_REG_OFFSET);
++}
++
++static void gk20a_devfreq_update_utilization(struct gk20a_devfreq *gdevfreq)
++{
++	ktime_t now, last;
++	u64 busy_cycles, total_cycles;
++	u32 norm, intr_status;
++
++	now = ktime_get();
++	last = gdevfreq->time_last_update;
++	gdevfreq->total_time = ktime_us_delta(now, last);
++
++	busy_cycles = gk20a_pmu_read_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	total_cycles = gk20a_pmu_read_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++	intr_status = gk20a_pmu_read_idle_intr_status(gdevfreq);
++
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++
++	if (intr_status != 0UL) {
++		norm = PMU_BUSY_CYCLES_NORM_MAX;
++		gk20a_pmu_clear_idle_intr_status(gdevfreq);
++	} else if (total_cycles == 0ULL || busy_cycles > total_cycles) {
++		norm = PMU_BUSY_CYCLES_NORM_MAX;
++	} else {
++		norm = (u32)(busy_cycles * PMU_BUSY_CYCLES_NORM_MAX
++				/ total_cycles);
++	}
++
++	gdevfreq->busy_time = (gdevfreq->total_time * norm) / PMU_BUSY_CYCLES_NORM_MAX;
++	gdevfreq->time_last_update = now;
++}
++
++static int gk20a_devfreq_target(struct device *dev, unsigned long *freq,
++				  u32 flags)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++	struct nvkm_pstate *pstates = base->func->pstates;
++	int nr_pstates = base->func->nr_pstates;
++	int i, ret;
++
++	for (i = 0; i < nr_pstates - 1; i++)
++		if (pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV >= *freq)
++			break;
++
++	ret = nvkm_clk_ustate(base, pstates[i].pstate, 0);
++	ret |= nvkm_clk_ustate(base, pstates[i].pstate, 1);
++	if (ret) {
++		nvkm_error(subdev, "cannot update clock\n");
++		return ret;
++	}
++
++	*freq = pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static int gk20a_devfreq_get_cur_freq(struct device *dev, unsigned long *freq)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct nvkm_subdev *subdev = nvkm_device_subdev(drm->nvkm, NVKM_SUBDEV_CLK, 0);
++	struct nvkm_clk *base = nvkm_clk(subdev);
++
++	*freq = nvkm_clk_read(base, nv_clk_src_gpc) * GK20A_CLK_GPC_MDIV;
++
++	return 0;
++}
++
++static void gk20a_devfreq_reset(struct gk20a_devfreq *gdevfreq)
++{
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_BUSY);
++	gk20a_pmu_reset_idle_counter(gdevfreq, PWR_PMU_IDLE_COUNTER_TOTAL);
++	gk20a_pmu_clear_idle_intr_status(gdevfreq);
++
++	gdevfreq->busy_time = 0;
++	gdevfreq->total_time = 0;
++	gdevfreq->time_last_update = ktime_get();
++}
++
++static int gk20a_devfreq_get_dev_status(struct device *dev,
++					struct devfreq_dev_status *status)
++{
++	struct nouveau_drm *drm = dev_get_drvdata(dev);
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	gk20a_devfreq_get_cur_freq(dev, &status->current_frequency);
++
++	gk20a_devfreq_update_utilization(gdevfreq);
++
++	status->busy_time = ktime_to_ns(gdevfreq->busy_time);
++	status->total_time = ktime_to_ns(gdevfreq->total_time);
++
++	gk20a_devfreq_reset(gdevfreq);
++
++	NV_DEBUG(drm, "busy %lu total %lu %lu %% freq %lu MHz\n",
++		 status->busy_time, status->total_time,
++		 status->busy_time / (status->total_time / 100),
++		 status->current_frequency / 1000 / 1000);
++
++	return 0;
++}
++
++static struct devfreq_dev_profile gk20a_devfreq_profile = {
++	.timer = DEVFREQ_TIMER_DELAYED,
++	.polling_ms = 50,
++	.target = gk20a_devfreq_target,
++	.get_cur_freq = gk20a_devfreq_get_cur_freq,
++	.get_dev_status = gk20a_devfreq_get_dev_status,
++};
++
++int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **gdevfreq)
++{
++	struct nvkm_device *device = base->subdev.device;
++	struct nouveau_drm *drm = dev_get_drvdata(device->dev);
++	struct nvkm_device_tegra *tdev = device->func->tegra(device);
++	struct nvkm_pstate *pstates = base->func->pstates;
++	int nr_pstates = base->func->nr_pstates;
++	struct gk20a_devfreq *new_gdevfreq;
++	int i;
++
++	new_gdevfreq = drmm_kzalloc(drm->dev, sizeof(struct gk20a_devfreq), GFP_KERNEL);
++	if (!new_gdevfreq)
++		return -ENOMEM;
++
++	new_gdevfreq->regs = tdev->regs;
++
++	for (i = 0; i < nr_pstates; i++)
++		dev_pm_opp_add(base->subdev.device->dev,
++			       pstates[i].base.domain[nv_clk_src_gpc] * GK20A_CLK_GPC_MDIV, 0);
++
++	gk20a_pmu_init_perfmon_counter(new_gdevfreq);
++	gk20a_devfreq_reset(new_gdevfreq);
++
++	gk20a_devfreq_profile.initial_freq =
++		nvkm_clk_read(base, nv_clk_src_gpc) * GK20A_CLK_GPC_MDIV;
++
++	new_gdevfreq->gov_data.upthreshold = 45;
++	new_gdevfreq->gov_data.downdifferential = 5;
++
++	new_gdevfreq->devfreq = devm_devfreq_add_device(device->dev,
++							&gk20a_devfreq_profile,
++							DEVFREQ_GOV_SIMPLE_ONDEMAND,
++							&new_gdevfreq->gov_data);
++	if (IS_ERR(new_gdevfreq->devfreq))
++		return PTR_ERR(new_gdevfreq->devfreq);
++
++	*gdevfreq = new_gdevfreq;
++
++	return 0;
++}
++
++int gk20a_devfreq_resume(struct device *dev)
++{
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	if (!gdevfreq || !gdevfreq->devfreq)
++		return 0;
++
++	return devfreq_resume_device(gdevfreq->devfreq);
++}
++
++int gk20a_devfreq_suspend(struct device *dev)
++{
++	struct gk20a_devfreq *gdevfreq = dev_to_gk20a_devfreq(dev);
++
++	if (!gdevfreq || !gdevfreq->devfreq)
++		return 0;
++
++	return devfreq_suspend_device(gdevfreq->devfreq);
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..5b7ca8a7a5cdc050872743ea940efef6f033b7b9
+--- /dev/null
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: MIT */
++#ifndef __GK20A_DEVFREQ_H__
++#define __GK20A_DEVFREQ_H__
++
++#include <linux/devfreq.h>
++
++struct gk20a_devfreq;
++
++#if defined(CONFIG_PM_DEVFREQ)
++int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **devfreq);
++
++int gk20a_devfreq_resume(struct device *dev);
++int gk20a_devfreq_suspend(struct device *dev);
++#else
++static inline int gk20a_devfreq_init(struct nvkm_clk *base, struct gk20a_devfreq **devfreq)
++{
++	return 0;
++}
++
++static inline int gk20a_devfreq_resume(struct device dev) { return 0; }
++static inline int gk20a_devfreq_suspend(struct device *dev) { return 0; }
++#endif /* CONFIG_PM_DEVFREQ */
++
++#endif /* __GK20A_DEVFREQ_H__ */
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
+index 7c33542f651b2ad011967a1e6ca8003b7b2e6fc5..fa8ca53acbd1a298c26444f23570bd4ca039d328 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gm20b.c
+@@ -27,6 +27,7 @@
+ #include <core/tegra.h>
+ 
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ 
+ #define GPCPLL_CFG_SYNC_MODE	BIT(2)
+@@ -869,6 +870,10 @@ gm20b_clk_init(struct nvkm_clk *base)
+ 		return ret;
+ 	}
+ 
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+index a0be53ffeb4479e4c229bd6bde86bb6bdb082b56..492b62c0ee9633c08538330f1106cf01d6b62771 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.c
+@@ -5,6 +5,7 @@
+ #include <core/tegra.h>
+ 
+ #include "priv.h"
++#include "gk20a_devfreq.h"
+ #include "gk20a.h"
+ #include "gp10b.h"
+ 
+@@ -23,6 +24,10 @@ gp10b_clk_init(struct nvkm_clk *base)
+ 		return ret;
+ 	}
+ 
++	ret = gk20a_devfreq_init(base, &clk->devfreq);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+index 2f65a921a426e3f6339a31e964397f6eefa50250..1dd1c550484be7c643e86a6105d7282c536fe7ed 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gp10b.h
+@@ -5,6 +5,7 @@
+ struct gp10b_clk {
+ 	/* currently applied parameters */
+ 	struct nvkm_clk base;
++	struct gk20a_devfreq *devfreq;
+ 	struct clk *clk;
+ 	u32 rate;
+ 
+
+---
+base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+change-id: 20250830-gk20a-devfreq-e39f739ab191
+prerequisite-change-id: 20250822-gp10b-reclock-77bf36005a86:v2
+prerequisite-patch-id: c4a76f247e85ffbcb8b7e1c4736764796754c3b4
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
