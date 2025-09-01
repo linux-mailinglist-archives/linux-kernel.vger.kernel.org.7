@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-794378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6551BB3E0DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB5EB3E0E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD56E1896991
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CACF2010C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D32D311953;
-	Mon,  1 Sep 2025 11:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EC0311C24;
+	Mon,  1 Sep 2025 11:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfWQ9sjz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bq6Y8EX7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38A6217F55;
-	Mon,  1 Sep 2025 11:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51C1217F55;
+	Mon,  1 Sep 2025 11:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724700; cv=none; b=IpaIlRhxRIOyvyB8myWEtwW+NNZLDOi7kZdvXyVquGSEvvurfRu2Cms9iM88qvfqsaTtt7DnzcC9OghVGuRxmx1QtpHHKnNGQfv8eSmvHCAkYoYupu1jxhMZMDem10+RAbH0W3epqaZaROL5ILqB6C2pxcyPgPKXKLEafv137CM=
+	t=1756724704; cv=none; b=A9zS9kLkGT4ItGJbMhx1WYDv/i8HhdxUYNDfNuqvJv0M8+NJ0hyJ/RNDCxMjt4gH+H7OQT/r6ZCB4bu9cMx1nHGbY0t54qLJ2O7yqSItWyF9q+eCFKkYLEc5ByKXqmCWb+sTp7dS4+4TOuGIrN77F85Y394DKJyfoIqsZlYfHRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724700; c=relaxed/simple;
-	bh=jECQWUPeqYIp+kYy0qMp+mxlsYrMNhCp3lRCnaD5i0o=;
+	s=arc-20240116; t=1756724704; c=relaxed/simple;
+	bh=m5ocoAhQ9i2Yxyd23Uis14ToLuXf0jZLSM0DHyjyLJA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N8If7SZMFE7uZ+2a7w9R9sG77TsH+jQZpLDwsNXHtOYkVhdnaXfYtnxeqBNy3KOjmt5b3FtRzRrqGGqsSh3FxVRJfE93Xk9l++5+ExFobcCWnK2Q3IKrY3U6atxQWvARinPU/mUcdqnt5dW44kvEcbhJkdX0MVklUS/kQFAujAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfWQ9sjz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF20CC4CEF4;
-	Mon,  1 Sep 2025 11:04:55 +0000 (UTC)
+	 MIME-Version; b=aPT47HyorcJ0hShw8ZjDp/Rc+xtY+Y8JGe0mDjVYuCbwf4olkfvtH35mMWMAM7XZbBP4yElwVAdCWthlhzic+jhEGns3QZNBlHKR/aeeRivHcc+qqT91FR9ff27jVBgD0yJvLy+n8t18jnk0Tu0XN/uKF4f9TYME3pSewUZZDJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bq6Y8EX7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8390C4CEF0;
+	Mon,  1 Sep 2025 11:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756724699;
-	bh=jECQWUPeqYIp+kYy0qMp+mxlsYrMNhCp3lRCnaD5i0o=;
+	s=k20201202; t=1756724703;
+	bh=m5ocoAhQ9i2Yxyd23Uis14ToLuXf0jZLSM0DHyjyLJA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AfWQ9sjzOXKkzgqnkTBQAdhVnJYC42z1ZpCbvzM6Ofdj71q+CKR4qzih3qMObRcqK
-	 2EjhcTUaN3J93IPSS1pp1Wi+z88E56LFeyOHwuHMEla8MP7CrWYXoiKlQUL7JGX9GE
-	 S0lpQmaavEZpx41L0ByTP8Tz9y5/zHuTQec39Us9ocDGA1Xo5dtFAZArV06AM6IwgS
-	 FD02yt4WO/1F7ze2Roly+MB7PVH8vEAvAoC+KgR/PK9TxsWr1u2cdnpFryHEFOB+j0
-	 fBN7IAQ1lQ8DSxOmalTnrt8aK4haCMCerEReBB9dzzHZVnnEt9v0sl6FrrD3cR9BeW
-	 57XhFajTAsWMQ==
+	b=Bq6Y8EX7ppY3fE5wNtkCzbJNicM5PKEp91aTlMiYjbAboyoWAEzuxiY9IJLz0KRlb
+	 A9wL4kRm0TKg40uteBK4RO7HJXqRw5zaiQNNHzWU93qcypItGmQr+X6E7fNRv6yUrP
+	 ApbWsR4AyVBjjGdOb9soTx+0d6vWxshEGG+RIJjqV7mw/t4rcu5StTREgBQb268lhY
+	 i9mFVs7zDJuaeBr4CG9xDrMYdxh4YBALwZXlmV9YAA8dSeRbupxonBixMTz84KlCzw
+	 K9sEuy5Dnc04kp9dpUeQurzsNSwYejCclUJpdz6bdgErQp6ae1UjtPPqkj+jCBNrxE
+	 uItuv34qUBjNw==
 From: Conor Dooley <conor@kernel.org>
 To: sboyd@kernel.org
 Cc: conor@kernel.org,
@@ -61,9 +61,9 @@ Cc: conor@kernel.org,
 	linux-kernel@vger.kernel.org,
 	Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 1/9] dt-bindings: mfd: syscon document the control-scb syscon on PolarFire SoC
-Date: Mon,  1 Sep 2025 12:04:13 +0100
-Message-ID: <20250901-shorten-yahoo-223aeaecd290@spud>
+Subject: [PATCH v4 2/9] dt-bindings: soc: microchip: document the simple-mfd syscon on PolarFire SoC
+Date: Mon,  1 Sep 2025 12:04:14 +0100
+Message-ID: <20250901-garbage-hardship-027861fb3380@spud>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250901-rigid-sacrifice-0039c6e6234e@spud>
 References: <20250901-rigid-sacrifice-0039c6e6234e@spud>
@@ -73,47 +73,91 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1505; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=5rg4qG6+r0Tz8RYgLEQxmEix629uHarZjM4QelP6QtY=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9ceDjmisSn0m1FVy/3tt/Un8UrKr/j4d4ooV3PWg l+NsyoFOkpZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjARBm9Ghjcx7eELJzgLlW/+ dJNDVVdPO7D7uZxLxe//VhOnCqVe+szwV/p59wtRNY+mH61y13XP6EtxvSx+WHD2QkxYbdeHhKn WjAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2943; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=b+aGSGhQUJdmsPs1oLuFh7qLo75fMDz/w1qPMM5tYX0=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9eGXrq6UORSxIapJ96K6FccM8zh8rKbsqHPteSd8 Emb/PnrO0pZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCR2RqMDPcn6Z0+Ofdaqq6k 6/9Ixpz1y1Tf2TK8O6gc/d9TY+Pdb+YMPxnNP1Q5RN/+LZM06eaRdbGbHrFEex9rmeBlfv7n/XM b8lgB
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-The "control-scb" region, contains the "tvs" temperature and voltage
-sensors and the control/status registers for the system controller's
-mailbox. The mailbox has a dedicated node, so there's no need for a
-child node describing it, looking the syscon up by compatible is
-sufficient.
+"mss-top-sysreg" contains clocks, pinctrl, resets, an interrupt controller
+and more. At this point, only the reset controller child is described as
+that's all that is described by the existing bindings.
+The clock controller already has a dedicated node, and will retain it as
+there are other clock regions, so like the mailbox, a compatible-based
+lookup of the syscon is sufficient to keep the clock driver working as
+before, so no child is needed. There's also an interrupt multiplexing
+service provided by this syscon, for which there is work in progress at
+[1].
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/linux-gpio/20240723-uncouple-enforcer-7c48e4a4fefe@wendy/ [1]
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-v2:
-add the control-scb syscon here too, since it doesn't have any children.
----
- Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+v3:
+- drop simple-mfd at Krzysztof's request since the child nodes do not
+  yet exist.
 
-diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-index 27672adeb1fed..d18be50dd7127 100644
---- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-+++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-@@ -90,6 +90,7 @@ select:
-           - mediatek,mt8173-pctl-a-syscfg
-           - mediatek,mt8365-syscfg
-           - microchip,lan966x-cpu-syscon
-+          - microchip,mpfs-control-scb
-           - microchip,mpfs-sysreg-scb
-           - microchip,sam9x60-sfr
-           - microchip,sama7d65-ddr3phy
-@@ -197,6 +198,7 @@ properties:
-           - mediatek,mt8365-infracfg-nao
-           - mediatek,mt8365-syscfg
-           - microchip,lan966x-cpu-syscon
-+          - microchip,mpfs-control-scb
-           - microchip,mpfs-sysreg-scb
-           - microchip,sam9x60-sfr
-           - microchip,sama7d65-ddr3phy
+v2:
+- clean up various minor comments from Rob on mpfs-mss-top-sysreg
+- remove mpfs-control-scb from this patch
+---
+ .../microchip,mpfs-mss-top-sysreg.yaml        | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+
+diff --git a/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+new file mode 100644
+index 0000000000000..1ab691db87950
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
++
++maintainers:
++  - Conor Dooley <conor.dooley@microchip.com>
++
++description:
++  An wide assortment of registers that control elements of the MSS on PolarFire
++  SoC, including pinmuxing, resets and clocks among others.
++
++properties:
++  compatible:
++    items:
++      - const: microchip,mpfs-mss-top-sysreg
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  '#reset-cells':
++    description:
++      The AHB/AXI peripherals on the PolarFire SoC have reset support, so
++      from CLK_ENVM to CLK_CFM. The reset consumer should specify the
++      desired peripheral via the clock ID in its "resets" phandle cell.
++      See include/dt-bindings/clock/microchip,mpfs-clock.h for the full list
++      of PolarFire clock/reset IDs.
++    const: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    syscon@20002000 {
++      compatible = "microchip,mpfs-mss-top-sysreg", "syscon";
++      reg = <0x20002000 0x1000>;
++      #reset-cells = <1>;
++    };
++
 -- 
 2.47.2
 
