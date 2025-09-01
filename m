@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-793822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62523B3D8D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E99B3D8D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D613AA9C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:34:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD8C176DA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777B023D7DF;
-	Mon,  1 Sep 2025 05:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798B91FF7C8;
+	Mon,  1 Sep 2025 05:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iQ7+w11O"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CZiN7Cms"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247862356C6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC6223E346
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756704828; cv=none; b=mU7JvXlnYh5twjjMIKLZIlULqkIS4DVo8++wJG+ttJDsaguOPUZkwOPl09KSI3LA2q8jQuUPuC1+iNzXeSrrwGhLZX0oDVWXbQCpnSgw1rzzcqVOdFBt84O2huQaJEx5mskw5K2pfIIjOOmvICRnyhwFJgge8r32knQfPiPdI1E=
+	t=1756704831; cv=none; b=JEwtjNVG27Zhdthlby1a1jxYmkbawBv1s8CR1dl75GK5IuHERQ6t3NKPnzQJtEKip5U+qjZUKyGATEXqa1ItmUdqbcA6cD6XY+t1R2TfxvB2x0BuSwLNttiHK/6dNL2OMsNSYXt+SdvuhNKVJQ4NqWbf/aD8MMZf3QDCTqdehvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756704828; c=relaxed/simple;
-	bh=UE2VAlFBk2DLWyEi3sDsliNgbJ5ypA2e8EdXf7WB3/s=;
+	s=arc-20240116; t=1756704831; c=relaxed/simple;
+	bh=CHpZnKI6qslmG/UOZhdyGWbwJA0vzEsxMasjuRgvRYY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NWPf0k4IGaiYyJPTTzmQuhZDR60yIbfJwNmJBYPqkh1HvNN8JOO8gVVIdk1lHiEnXtITVxizRAVmFcej+G2vizl3ebDt4qjtJSI7+YYcaIS4tfO9Yq081ASVGl17bz0M3WDb6/vgQaniW+Yj14/tO7TzHFdL2TV7Ii8h3uqJkww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iQ7+w11O; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=g12mPbserr+5cskDlu0KqdatfcHOQVE9iUOUpab8JMgYWdjsHKJ1Y/vfK9k2WovB+vcd7xzqtc8knbfCFRyImHwSFSV+KTM+IbWl2WRkjEf+z/2U6pwXUS8mzMrxscmaQkxMPgkpPX0IIeeJpC0u6+a1JO+Psqhh8XoZLSa5Ulo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CZiN7Cms; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VLuXKa026807
-	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 05:33:46 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VMFYUA012638
+	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 05:33:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=IZcy5lp3+vK
-	2Xkym55v5I9nDuPWPklB8MXh1zD3Z1R0=; b=iQ7+w11OrxfQUsfxmvTyDK+EBtq
-	jGmee8zOY9L1DuuEfWOg6r2Mnn11XmjEImMxmJJbn/TWpgB4WU54Em/KY7jHmSva
-	3MnCrQ09cN71KnwzpJRDTCtcDp4A3+44wXBkZUcpcJQS4tzaTa40f8VAnWuQp6xG
-	rKPXoU+s6mfsesd2JDxesa+hHiBV4uP8iPcSuCpbYEcVY12p95R4uteT4WUO4W0E
-	1oTNYFQ73RSMgJah0i3jD8AEI3c3wJVfOmAf5L/Qhb2dTVjJsXDfqMBDvqNEzUrf
-	3+4DrdIdNROugZBrsN8FKMC8Id5w7LZcsT4UURYVf8YVm+E+tVzu63boHZw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8kdb2-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=6QnJVy3Cx4b
+	AD5xl3mAoxpjrmiuwQjGEsSGBJTQmYE4=; b=CZiN7CmsX7PhiXDYfT40wqWPS2W
+	SbWY0MVQy7Mg/xC5A6n5gvTn1Jwximf0Nyl9g0Cex9flHkrVc8U/gkJhiaLhccjt
+	EQQ+KIVal5gnrPB6CCz7Ct+hDRAekoqtkm/mjQWvu4X9e821Ikvl/2AIOOggONbU
+	iovEsW2CGZ3Eu8D0n28K+WYigW63ho9X2WLw933wvGPTmHXCHfzOTcycCnsIuGA/
+	vvhftmRFgB2DE52ppuvqHOhC8JexTXzaCl7n6MNeNUWc7Rf9h3c3CD3OKwAI8ILC
+	N1MPtIncjMPW6xpbips60hdFID2tetNABw0TZf+eKVMYYpnBFgc9yxh509g==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjbd4h-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:33:45 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24abc029ee3so8319095ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:33:45 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:33:48 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2490768ee5fso22704355ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:33:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756704825; x=1757309625;
+        d=1e100.net; s=20230601; t=1756704828; x=1757309628;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IZcy5lp3+vK2Xkym55v5I9nDuPWPklB8MXh1zD3Z1R0=;
-        b=SB5hUBBOTY4X7GMOe2GLq4P+uUCrVqSGM0laoY7x0Tv9kmK/QjoBurt3Lg9xqgl4zV
-         a8E1NCxY1M8+kn3N78XAS5QWKYvhYB2lk/SmhV88ANFfRBZVY9i9kjXVi0XU0OyAoUx1
-         T7cKWznFp8p7TJ909RS73O1cdpM4KrgI6TbnHSA+JyyE58z2VOQBSExjR5Sh/E2/5BnL
-         qGkG8FZwte2zGwtFHcCeL85yO6WpNrAj56JvWcEOw9V8QHa3HpIWhZlxm1Fz/PO06I4Y
-         N1qJS5MFCZt8kYfIOprHYDGaQReIC/ncJtgywuOjF9DHp1cHCDz//Acy+vFVjvXgHSsQ
-         7kWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDlYW0a7L6geLmVQ3cFc+Za/zD0QFI7/qeeiUZKuvjDF0uOaVg5FUu9MWQaBZVCYZfLkp9zzq42HUajQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxdutXlssVeeokF2uKFcCiLfiyinqGdSkcznnmNFU9t5cfqLCg
-	GRDuR85qLEMXmVpD0bv4MiHYfVL+MepKI69qg37kmljYLKbtRk0/Dd5GbFfkM/9kfBkAKcmHqz0
-	cpf+tt9fQJMyhRiV+J+11unveyttF3+ktcofnT87pnhnK7EmniFCv6LyhdIMuPDgNlFw=
-X-Gm-Gg: ASbGnctZ3AX0ceElxCGrQJWQYMz6gRCqdNpXL2E6E9FNG8wjLjxiJlajBZQbt49aH9J
-	vpRZBEB5rKVMS2/O/ZrkFePrfCIbMcUkXVAAdyKZPFvbbQP0ul0e5PldTlM5d4iYE5jkXxqsCj4
-	m6uij8g9TQFEa5xK6mdmKxmKhxAHTuY7iuXhn4k5Ne03VyDbkXogLXpgjtFu0B/FR5Ctkc3i3N8
-	/oAsXxF/ejG+hC6mgNNb8X6fXlamak80pvX5G1O80X1K2T6T+npbuMHILU6to3FuOc+MKe4Yxb/
-	Z+SRwv6yIrYSg9kHuOC/u1y4cemR/TwQZGart/VM1Z54WzULY78oOYXVmU+GG1OYqOnm+d1k
-X-Received: by 2002:a17:902:d4d1:b0:246:6113:f1a8 with SMTP id d9443c01a7336-24944b29febmr97024785ad.40.1756704824572;
-        Sun, 31 Aug 2025 22:33:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/9zfC50PCoALEOMly7nmWm821nvB1XXDGFIo7ShyQjJnQNMbN7EffzVijf65eEHW2zFlzKw==
-X-Received: by 2002:a17:902:d4d1:b0:246:6113:f1a8 with SMTP id d9443c01a7336-24944b29febmr97024405ad.40.1756704824090;
-        Sun, 31 Aug 2025 22:33:44 -0700 (PDT)
+        bh=6QnJVy3Cx4bAD5xl3mAoxpjrmiuwQjGEsSGBJTQmYE4=;
+        b=Ks7hR2FVGQ7CG4l5PxFK+rvt+nd2V/mu159MIxMEHwP7amC9tBpCIYAHPt33LrD8zu
+         89dbx4S1+oiE9kaZtLvL169rZ4Bb33ZGq0xDeZNAYvo8uXb8yB5/yUIdb0vVbeAa8dAn
+         y89p2PIB/DENKJIQFErLqDKUb5ACF5DvJMxck57SJ1X0sjxY6M5H1DzvBa8ObOP16l1J
+         2HgU4jIPhu7KlVIDuzB58hPFVIDpNKvYewOeVYs7tqE7X/mRQ0lT7nT8xA0zQW+T/z29
+         fa1wKL5yjGl4qSWdHJCBe8zdjk7QaTCBZFTVuYNJFJCtPh4x88unl2VCjryUB5l7PcIc
+         9AmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXF7k4ouA+87sGu6kZkSvqeb9B7GJ/6B7rihJmAxBgBVVchV1eN2x6Cxwyj4VeRL1mA7oj3oc90OD2+zkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBC+HLqor1TNTaqkyQh+7Sm6c2ybPhblc35ZpuWgYF09rsifMm
+	Aa0I2c3s202YYBK0zY0XGBYdYSVhCEOYqJeib6Mf+WyAEV1ytWMFWdbqDSVAtkf0GAGC2EnRr9c
+	8AjFKgbFavqlCnYDOb/jFhfaNdaRkp675q4fqrQXdHhdifj9ODtZ4851F7FUyWDZnDo4=
+X-Gm-Gg: ASbGncuAHMhXbewhiVAGvTXdmOt0sg4I8Q6VN9vD9F2GY5IenJsOYjrj5Y/S34LUYee
+	5WBV/nrZsvrxE60upCN80Oh9f9I/meS2NEMcKSI4TWkLGTdNI6KA6FAXQ45PTZJC4/lh67YHTuZ
+	Duz4Q2m9N+RR3G9hW5h5fbo6BwdWNrb79FqWR69RY+2tUJKMqBgRuwodXagfA/yUzSPNQBJOFhM
+	sCw0jFNYslZqSvR36m39NKLG2bkZs+4ozXZLHA0v6XmIYPHVEkzVj5ydJR4dg2u8m7/ZDnU79uQ
+	kQZU9ym1wyOlIhbtMRFPWr3AyZ5O5ikXEbFOi/ZsbNcO54wiCy509FmVmx2uvss1/HOBh7Fd
+X-Received: by 2002:a17:903:2283:b0:246:c826:bd16 with SMTP id d9443c01a7336-249449045afmr97734085ad.23.1756704827702;
+        Sun, 31 Aug 2025 22:33:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESGSlNcSMvh9kqymldfMZ4baXLjakGcjQQ0lY5ahmqYDQGtoEdo10KCkOeIjeZPCdZ3RAj/g==
+X-Received: by 2002:a17:903:2283:b0:246:c826:bd16 with SMTP id d9443c01a7336-249449045afmr97733735ad.23.1756704827231;
+        Sun, 31 Aug 2025 22:33:47 -0700 (PDT)
 Received: from hu-ekangupt-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906589986sm90575215ad.111.2025.08.31.22.33.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906589986sm90575215ad.111.2025.08.31.22.33.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 22:33:43 -0700 (PDT)
+        Sun, 31 Aug 2025 22:33:46 -0700 (PDT)
 From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
 To: srini@kernel.org, linux-arm-msm@vger.kernel.org
 Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
         linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
         dri-devel@lists.freedesktop.org, arnd@arndb.de,
         dmitry.baryshkov@oss.qualcomm.com
-Subject: [PATCH v1 1/3] misc: fastrpc: Move fdlist to invoke context structure
-Date: Mon,  1 Sep 2025 11:03:34 +0530
-Message-Id: <20250901053336.3939595-2-ekansh.gupta@oss.qualcomm.com>
+Subject: [PATCH v1 2/3] misc: fastrpc: Update context ID mask for polling mode support
+Date: Mon,  1 Sep 2025 11:03:35 +0530
+Message-Id: <20250901053336.3939595-3-ekansh.gupta@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250901053336.3939595-1-ekansh.gupta@oss.qualcomm.com>
 References: <20250901053336.3939595-1-ekansh.gupta@oss.qualcomm.com>
@@ -97,90 +97,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: -Gsxd0FjgbL6UVBoQ8nks9ImBH9rxagZ
-X-Proofpoint-GUID: -Gsxd0FjgbL6UVBoQ8nks9ImBH9rxagZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX/xt2quTd0BVP
- s0b3GD4OxiRLgtWMIH5jIro0ILfsmiEkZGxPjh+b644RWzcXogkuuewNvmSQOwVydm8jq0yXCq0
- n3J+Z2nJXzfvKob6ikJbPB1PRJLLUjo0N/avQ270uTR3SawQ1dQIS2M31K6jTMWBvsnauLrlm8R
- bc6fTd1l8bJMPo/lFl1LBLaf1IZPgsnei4yuA6BBW3ZaY52iVnXI8E9rmK4riHWloZNlAe7upfb
- b93G2S1EZFVYzcXrjsa4en7gvUDjGfeq+uan1qzqhq3IEfbNA+QnxSczNLoRSUZDz53lPeHIpH4
- HsqhT6OjZdFMJjJtZ7qFJkiKOIaeOypYAdsnx9VXyG0+r8+/rmeZTlQEQOYIyH0HIGkzYerYxTY
- /eIWgWNj
-X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b53039 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=oXf4Wg5VOEMHQw36ysEA:9
- a=uG9DUKGECoFWVXl0Dc02:22
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b5303d cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=eMrONWwZx6N8dQ6zNQwA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: 6uzano7CMt0XBS5RhCgSYVZ2yfar4Uvw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX+14php5moqKf
+ sw9zzsT7es/hS/vziv4aZAIzkiBBMQYxZ8eE+WwHFEqF6E0fPr5M1IR4K6+G0PxKIfA3Qy0B0on
+ TnUo1y5H0vdaoSGVp71aIsjfuyJinKyNKoX+9YnO2a+bhRuE/MxUiLsValvZU08vXqLo+aCWPm6
+ sqCnRe0K0K7b7zTjBsnxx2VKjeF+wR6qDWdMRW0Re17fqhQ34sVm/h11CDH4sGshggl55/u77sn
+ L8DzhUF+oHbExMujKVCU4iK1Ps1Yi73WoqJxFiXRQ3fsa+n23UYHp2j3jbFgScpNdBCegOttlqE
+ 03638iXjttb7hYqQQyyiFQfEbZknTX0wz3fOVbE5a1re/Jov5jBnjrtPpaa1kqzIclW90G5Q4Zp
+ 0E8q6WI7
+X-Proofpoint-ORIG-GUID: 6uzano7CMt0XBS5RhCgSYVZ2yfar4Uvw
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-01_02,2025-08-28_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
-FD list is part of meta buffer which is calculated during put args.
-Move fdlist to invoke context structure for better maintenance and
-to avoid code duplicacy for calculation of critical meta buffer
-contents that are used by fastrpc driver.
+Current fastrpc message context uses a 12-bit mask where the upper
+8 bits are context ID from idr_alloc_cyclic and the lower 4 bits
+represent PD type. This design works for normal fastrpc calls but
+doesn't work as expected for polling mode. To enable polling mode
+support from DSP(DSP writes to poll memory), DSP expects a 16-bit
+context where the upper 8 bits are context ID, the lower 4 bits are
+PD type and the 5th bit from the end denotes async mode(not yet
+upstreamed). If this bit is set, DSP disables polling. With the
+current design, odd context IDs set this bit, causing DSP to skip
+poll memory updates. Update the context mask to ensure a hole
+which won't get populated, ensuring polling mode works as expected.
 
 Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
 ---
- drivers/misc/fastrpc.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/misc/fastrpc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 621bce7e101c..0991ac487192 100644
+index 0991ac487192..57e118de6e4a 100644
 --- a/drivers/misc/fastrpc.c
 +++ b/drivers/misc/fastrpc.c
-@@ -233,6 +233,7 @@ struct fastrpc_invoke_ctx {
- 	int pid;
- 	int client_id;
- 	u32 sc;
-+	u64 *fdlist;
- 	u32 *crc;
- 	u64 ctxid;
- 	u64 msg_sz;
-@@ -985,6 +986,7 @@ static int fastrpc_get_args(u32 kernel, struct fastrpc_invoke_ctx *ctx)
- 	rpra = ctx->buf->virt;
- 	list = fastrpc_invoke_buf_start(rpra, ctx->nscalars);
- 	pages = fastrpc_phy_page_start(list, ctx->nscalars);
-+	ctx->fdlist = (u64 *)(pages + ctx->nscalars);
- 	args = (uintptr_t)ctx->buf->virt + metalen;
- 	rlen = pkt_size - metalen;
- 	ctx->rpra = rpra;
-@@ -1087,18 +1089,10 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
- 	union fastrpc_remote_arg *rpra = ctx->rpra;
- 	struct fastrpc_user *fl = ctx->fl;
- 	struct fastrpc_map *mmap = NULL;
--	struct fastrpc_invoke_buf *list;
--	struct fastrpc_phy_page *pages;
--	u64 *fdlist;
--	int i, inbufs, outbufs, handles;
-+	int i, inbufs;
- 	int ret = 0;
+@@ -37,7 +37,7 @@
+ #define FASTRPC_CTX_MAX (256)
+ #define FASTRPC_INIT_HANDLE	1
+ #define FASTRPC_DSP_UTILITIES_HANDLE	2
+-#define FASTRPC_CTXID_MASK (0xFF0)
++#define FASTRPC_CTXID_MASK (0xFF00)
+ #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+ #define INIT_FILE_NAMELEN_MAX (128)
+ #define FASTRPC_DEVICE_NAME	"fastrpc"
+@@ -487,7 +487,7 @@ static void fastrpc_context_free(struct kref *ref)
+ 		fastrpc_buf_free(ctx->buf);
  
- 	inbufs = REMOTE_SCALARS_INBUFS(ctx->sc);
--	outbufs = REMOTE_SCALARS_OUTBUFS(ctx->sc);
--	handles = REMOTE_SCALARS_INHANDLES(ctx->sc) + REMOTE_SCALARS_OUTHANDLES(ctx->sc);
--	list = fastrpc_invoke_buf_start(rpra, ctx->nscalars);
--	pages = fastrpc_phy_page_start(list, ctx->nscalars);
--	fdlist = (uint64_t *)(pages + inbufs + outbufs + handles);
+ 	spin_lock_irqsave(&cctx->lock, flags);
+-	idr_remove(&cctx->ctx_idr, ctx->ctxid >> 4);
++	idr_remove(&cctx->ctx_idr, ctx->ctxid >> 8);
+ 	spin_unlock_irqrestore(&cctx->lock, flags);
  
- 	for (i = inbufs; i < ctx->nbufs; ++i) {
- 		if (!ctx->maps[i]) {
-@@ -1120,9 +1114,9 @@ static int fastrpc_put_args(struct fastrpc_invoke_ctx *ctx,
- cleanup_fdlist:
- 	/* Clean up fdlist which is updated by DSP */
- 	for (i = 0; i < FASTRPC_MAX_FDLIST; i++) {
--		if (!fdlist[i])
-+		if (!ctx->fdlist[i])
- 			break;
--		if (!fastrpc_map_lookup(fl, (int)fdlist[i], &mmap))
-+		if (!fastrpc_map_lookup(fl, (int)ctx->fdlist[i], &mmap))
- 			fastrpc_map_put(mmap);
+ 	kfree(ctx->maps);
+@@ -623,7 +623,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
+ 		spin_unlock_irqrestore(&cctx->lock, flags);
+ 		goto err_idr;
  	}
+-	ctx->ctxid = ret << 4;
++	ctx->ctxid = ret << 8;
+ 	spin_unlock_irqrestore(&cctx->lock, flags);
  
+ 	kref_init(&ctx->refcount);
+@@ -2449,7 +2449,7 @@ static int fastrpc_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
+ 	if (len < sizeof(*rsp))
+ 		return -EINVAL;
+ 
+-	ctxid = ((rsp->ctx & FASTRPC_CTXID_MASK) >> 4);
++	ctxid = ((rsp->ctx & FASTRPC_CTXID_MASK) >> 8);
+ 
+ 	spin_lock_irqsave(&cctx->lock, flags);
+ 	ctx = idr_find(&cctx->ctx_idr, ctxid);
 -- 
 2.34.1
 
