@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-793764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD1BB3D7E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48410B3D7E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C4063BE191
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFEB3BE33A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F20B223707;
-	Mon,  1 Sep 2025 03:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkb4mG5m"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E4C212545;
+	Mon,  1 Sep 2025 03:45:52 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5632E1D432D;
-	Mon,  1 Sep 2025 03:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6A6153BE9;
+	Mon,  1 Sep 2025 03:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756698400; cv=none; b=Xee5eg6RFl5k9HGGM0BFKrJQcdcQVJLJrmWL62lB863uxs4QuIylNNx6LL8EVNR/P6QyY+JpGKbnnY8ag7se8i83W9yjNLY2EOrJeuDQcC2H8Rwmux+C+XawHBkYGqyJp1le1GFBuEo6Dix5esEEhAAi84LEWgfPEZvFAGHHIEc=
+	t=1756698352; cv=none; b=Px7QQ5cJhZMvuXKn7qaAHC1Md5Jc61Clpt8C/2e6JBUIojm3IYUg89oZtInfkRbIel2VCx2lD9stFW5/lVjRBJUDkh6M9T+SXQjrdm8WtJ74Og1CrJ8SKND8J2XEhCAFXipbtPnXmsN9UN5zHVvs7bhDyMPyl1GkGu65TUpqEOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756698400; c=relaxed/simple;
-	bh=60r1YdoWzFDEVrwyX1ee7zPgrE8MvRU3cRlKkVfbB8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FT1DkdNc2RR7mqltR+4LlIayrPZN6GEJANzgm/ZFkOs2QNwLNXD27abmXkHXk7r8I7iInTOJbWJZUVrXHlhJgkOivVnV5n5Y8onwYbXWBMWuE6qvurhlRtfETXx1CqPHZJAH84q7V1Xlx54Sc24I3V0o71VptXF2TNq6vKaa1O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkb4mG5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867E4C4CEF0;
-	Mon,  1 Sep 2025 03:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756698400;
-	bh=60r1YdoWzFDEVrwyX1ee7zPgrE8MvRU3cRlKkVfbB8Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gkb4mG5myaEfn49iiCAq8xCKnhhO+O19pDcmzEy7gFWA4uWoZ6nH9BtiqeLbNXwbE
-	 6XLm/G42T/+hRPV/SClJhTM1T12Kh1XBgugsnYzLoLVCzla+BHJaoz5BASRkBviH6S
-	 hUvguqJxjQVhB+Qfc52Y+eTScDq+m1V1oIDtEPOyfQDS8fTIVYq2uEH1JCL3wBo0To
-	 R1452+k/1B+utrpzBr7+Dg4U8umZUPcl75dScMD7UfQXJDgWLJwyBa7XIFIwx9aYlE
-	 4ub9acEaUA0L08t/nszp17NAdohzXB7ewL1xVcfHiOi6C+2D6r8reyo8t29+/u90Wl
-	 5lsJC1ckWbUCA==
-Message-ID: <7ef5c6dc-5eae-41a7-9403-0d8616668c4b@kernel.org>
-Date: Mon, 1 Sep 2025 12:43:43 +0900
+	s=arc-20240116; t=1756698352; c=relaxed/simple;
+	bh=sKgZOVb18ukU6gfr09NK//ApDL9iFlVCo9W1MECGjQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYahpyauH31GjqGE3NAgTro0AxZer32PkRquke1vT92C16TcErO9vRAqs/05U5HXFky8B8Dtd69yxjXtrFxlNIp44nNtBigG17YK3srTRTxW7e09NnJ7SiASJCsqAvk3ms7XpLqFmgukR5NyB4wzeAP/Ez4G3V5Juj0DUuWpCUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FAEBC4CEF0;
+	Mon,  1 Sep 2025 03:45:51 +0000 (UTC)
+Date: Mon, 1 Sep 2025 05:45:49 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/9] dt-bindings: display/msm: dp-controller: fix
+ fallback for SM6350
+Message-ID: <20250901-arboreal-gay-wolf-bcaaec@kuoka>
+References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
+ <20250829-dp_mst_bindings-v7-2-2b268a43917b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 01/15] block: cleanup bio_issue
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
- josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com, satyat@google.com,
- ebiggers@google.com, neil@brown.name, akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-2-yukuai1@huaweicloud.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250901033220.42982-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250829-dp_mst_bindings-v7-2-2b268a43917b@oss.qualcomm.com>
 
-On 9/1/25 12:32 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Fri, Aug 29, 2025 at 01:48:15AM +0300, Dmitry Baryshkov wrote:
+> The SM6350 doesn't have MST support, as such it is not compatible with
+> the SM8350 platform. Add new entry for SM6350 with fallback to SC7180
+> (which belongs to the same generation and also doesn't have MST
+> support).
 > 
-> Now that bio->bi_issue is only used by io-latency to get bio issue time,
-> replace bio_issue with u64 time directly and remove bio_issue to make
-> code cleaner.
+> Fixes: 39086151593a ("dt-bindings: display: msm: dp-controller: document SM6350 compatible")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/display/msm/dp-controller.yaml     | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index aed3bafa67e3c24d2a876acd29660378b367603a..0f814aa6f51406fdbdd7386027f88dfbacb24392 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -31,13 +31,25 @@ properties:
+>            - qcom,sm8650-dp
+>        - items:
+>            - enum:
+> -              - qcom,sar2130p-dp
+>                - qcom,sm6350-dp
+> +          - const: qcom,sc7180-dp
+> +
+> +      # deprecated entry for compatibility with old DT
+> +      - items:
+> +          - enum:
+> +              - qcom,sm6350-dp
+> +          - const: qcom,sm8350-dp
+> +        deprecated: true
 
-It seems that this patch is completely independent of the series.
-Maybe post it separately not as an RFC ?
+If it is only about bindings then there is little benefit in keeping
+this, just drop this case.  However you cannot drop it from DTS, so this
+is a bit pointless.
 
--- 
-Damien Le Moal
-Western Digital Research
+Lack of MST support is not informative enough to claim it is not
+compatible with 8350. For example if it was working fine via fallback,
+then that statement is simply not correct.
+
+And it HAD to work fine, because there is nothing binding to
+qcom,sm6350-dp.
+
+Best regards,
+Krzysztof
+
 
