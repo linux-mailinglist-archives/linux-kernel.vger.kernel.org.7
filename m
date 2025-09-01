@@ -1,234 +1,178 @@
-Return-Path: <linux-kernel+bounces-794998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DFFB3EB9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:56:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4408EB3EB9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB140175027
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:56:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B47997A4C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B486F2DF14C;
-	Mon,  1 Sep 2025 15:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458E82D5951;
+	Mon,  1 Sep 2025 15:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sVXdARRa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+hHGCrV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428042065;
-	Mon,  1 Sep 2025 15:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ED113E02A;
+	Mon,  1 Sep 2025 15:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742172; cv=none; b=ke7X4USVFx1Wq3uoS3GZH4S2OnW5W78LSx4kwy5sP/QawGW/79ZWr10UGswfiL+rcIxUkwIeK9C4dCxn/3zFq/Dw2TCfEK3OofZDRMmFE7ImnuFOP81zoosF8UCJ+LDTLQTySU0eywHG/a1eD3EC+SAWe5StOultzXODUnnynng=
+	t=1756742209; cv=none; b=RovOVivoXqbS07kJV8VgJj6MwdjGc8F0mlY9PoEyLBEDj9i3ma3zAPDBTh6jb7n/ca+EanW+TJB0TBd7in3PKD4F8h1f1wxqE+H88w+KC0ECphgZSuk3KdQd+d6j/6qmZaoed/R0XS/Pndo5auDSYAwnTKz2bwBoTHYNHs07nR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742172; c=relaxed/simple;
-	bh=vuObxFYXtMJ9BEdKeyXvgquRctjqpaumPPQp7sh0bGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYfmr4p5O+uZQmsMGdq5Uw312bsoA2FWZIb5dmFdrshcn6PECFpwP+BR8XhlQ+x4jnno1h4v/FO3w6PzukBb9OjqJrW0U3QHcPRc0OEiJzzrmV/rY4iB1EZoAA3YhxGlvmzo3rY07PmbBruyxh2+CmTtuV9wPyhjLZ+BIXrjiRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sVXdARRa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-63-95.net.vodafone.it [5.90.63.95])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A9FA8E8A;
-	Mon,  1 Sep 2025 17:54:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756742101;
-	bh=vuObxFYXtMJ9BEdKeyXvgquRctjqpaumPPQp7sh0bGs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sVXdARRa1AbokGcelXq0Iam/WG4HwEarr8dHKQ6xIKRUK+3db/q+DoVi2VjjWR2/p
-	 o1or4+bn2+u1n3S/YclKBAhCnTYf8E5OXGk6MHsZshqKIzbS+57swdwHXq8XvS9nF+
-	 yG0NpJLltOoHl+F+wxyjgP222VUA2SIIemG52HvQ=
-Date: Mon, 1 Sep 2025 17:55:59 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
-Message-ID: <bgucngxjf337yyr6c5crnz7ee75dq47phbysspixpolyymppdc@4t7gnmkxrmdm>
-References: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
- <20250901152954.GH1705@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1756742209; c=relaxed/simple;
+	bh=QRrP1L09Z/tIsyyTHnZE5kLupetP4zN0OUXv+gdnLxM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=uNupso6mPITjLJwNcKy/kLVOM554gY6EQlFDstY61zlzos8pBYtB6Z4ZktEvaThYPO0oVrjdRbDBIYJYmyRo9BBAFN5qOGP2gfHoAGkJuS3tgkkkxv6LN1On17tJulPiFGsNtZJu8XIVrCVqHCL4NGdI8Gu3r2hieEjJFPGfcjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+hHGCrV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88B1C4CEF1;
+	Mon,  1 Sep 2025 15:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756742209;
+	bh=QRrP1L09Z/tIsyyTHnZE5kLupetP4zN0OUXv+gdnLxM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s+hHGCrVP5/Uqb2MOTw2HVgpr6oRsF7MUtdSFcFhI89V8gRTjRULuEJoLc8Gpq0hw
+	 F1BdujSnDIEvOHM4ihyrNytqHkb8fvgsjy15fYhOhxn7tRljLmCOJU1bFOKcE6onK5
+	 Le69W7GBDmgmh5rwo2zvdxM3Y4Tz74rPfPmEaHh1xlzVA/Y5g5DNRYsBUdZEEqOnHB
+	 Crdk6XF6mWBQYX0yZoRkV+hxUA70hdzoMFDuWCSs7O2g8rxthmvccZ3etoDMYiyABR
+	 dB6yqUkYYfHZsaKUzxyMR3zpUeNklwKUH/tDMCYI3rSlJqwRQ9RyM7Nu7U8OcA7dQv
+	 MPp2jFt4xrlzA==
+Date: Tue, 2 Sep 2025 00:56:45 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-Id: <20250902005645.8c6436b535731a4917745c5d@kernel.org>
+In-Reply-To: <20250829082604.1e3fd06e@gandalf.local.home>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+	<20250819135008.5f1ba00e@gandalf.local.home>
+	<436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+	<20250829082604.1e3fd06e@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250901152954.GH1705@pendragon.ideasonboard.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent
+On Fri, 29 Aug 2025 08:26:04 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Mon, Sep 01, 2025 at 05:29:54PM +0200, Laurent Pinchart wrote:
-> On Fri, Aug 29, 2025 at 01:12:14PM +0200, Jacopo Mondi wrote:
-> > From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> >
-> > The CRU version on the RZ/V2H SoC supports larger input sizes
-> > (4096x4096) compared to the version on the RZ/G2L (2800x4095).
-> >
-> > Store the per-SoC min/max sizes in the device match info and use them
-> > in place of the hardcoded ones.
-> >
-> > While at it, use the min sizes reported by the info structure to replace
-> > the RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT macros.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> > Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
->
-> Spurious ---
+> 
+> [ Adding arm64 maintainers ]
+> 
+> On Fri, 29 Aug 2025 16:29:07 +0800
+> Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+> 
+> > On 2025/8/20 1:50, Steven Rostedt wrote:
+> > > On Tue, 19 Aug 2025 10:51:52 +0000
+> > > Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+> > >  
+> > >> Both tracing_mark_write and tracing_mark_raw_write call
+> > >> __copy_from_user_inatomic during preempt_disable. But in some case,
+> > >> __copy_from_user_inatomic may trigger page fault, and will call schedule()
+> > >> subtly. And if a task is migrated to other cpu, the following warning will  
+> > > Wait! What?
+> > >
+> > > __copy_from_user_inatomic() is allowed to be called from in atomic context.
+> > > Hence the name it has. How the hell can it sleep? If it does, it's totally
+> > > broken!
+> > >
+> > > Now, I'm not against using nofault() as it is better named, but I want to
+> > > know why you are suggesting this change. Did you actually trigger a bug here?  
+> > 
+> > yes, I trigger this bug in arm64.
+> 
+> And I still think this is an arm64 bug.
 
-It's b4 that should append here the content of the cover letter, which
-I didn't write, mea culpa, as it would just be a repetition of the
-cover message.
+I think it could be.
 
-However this should be ignored when applying the patch ?
+> > >  
+> > >> be trigger:
+> > >>          if (RB_WARN_ON(cpu_buffer,
+> > >>                         !local_read(&cpu_buffer->committing)))
+> > >>
+> > >> An example can illustrate this issue:
 
->
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > ---
-> > Changes in v2:
-> > - Use the size values in the rzg2l_csi2_info instea of going through
-> >   macros
-> > - Use min_width/min_height to initialize the format and drop
-> >   RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT
-> > - Add Tommaso's tag
-> > - Link to v1: https://lore.kernel.org/r/20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com
-> > ---
-> >  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 41 ++++++++++++++--------
-> >  1 file changed, 26 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > index 1520211e74185fea3bca85f36239254f6b4651db..183598d6cf0b255f779b4398e027d626ad1f3c1b 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > @@ -96,13 +96,6 @@
-> >
-> >  #define VSRSTS_RETRIES			20
-> >
-> > -#define RZG2L_CSI2_MIN_WIDTH		320
-> > -#define RZG2L_CSI2_MIN_HEIGHT		240
-> > -#define RZG2L_CSI2_MAX_WIDTH		2800
-> > -#define RZG2L_CSI2_MAX_HEIGHT		4095
-> > -
-> > -#define RZG2L_CSI2_DEFAULT_WIDTH	RZG2L_CSI2_MIN_WIDTH
-> > -#define RZG2L_CSI2_DEFAULT_HEIGHT	RZG2L_CSI2_MIN_HEIGHT
-> >  #define RZG2L_CSI2_DEFAULT_FMT		MEDIA_BUS_FMT_UYVY8_1X16
-> >
-> >  enum rzg2l_csi2_pads {
-> > @@ -137,6 +130,10 @@ struct rzg2l_csi2_info {
-> >  	int (*dphy_enable)(struct rzg2l_csi2 *csi2);
-> >  	int (*dphy_disable)(struct rzg2l_csi2 *csi2);
-> >  	bool has_system_clk;
-> > +	unsigned int min_width;
-> > +	unsigned int min_height;
-> > +	unsigned int max_width;
-> > +	unsigned int max_height;
-> >  };
-> >
-> >  struct rzg2l_csi2_timings {
-> > @@ -418,6 +415,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info = {
-> >  	.dphy_enable = rzg2l_csi2_dphy_enable,
-> >  	.dphy_disable = rzg2l_csi2_dphy_disable,
-> >  	.has_system_clk = true,
-> > +	.min_width = 320,
-> > +	.min_height = 240,
-> > +	.max_width = 2800,
-> > +	.max_height = 4095,
-> >  };
-> >
-> >  static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
-> > @@ -542,6 +543,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info = {
-> >  	.dphy_enable = rzv2h_csi2_dphy_enable,
-> >  	.dphy_disable = rzv2h_csi2_dphy_disable,
-> >  	.has_system_clk = false,
-> > +	.min_width = 320,
-> > +	.min_height = 240,
->
-> As the minimum for all SoCs is the same, I'd keep the MIN macros.
+You've missed an important part.
 
-Unless you feel strong about this, I won't resend just for this
-change.
+> > >>
+> > >> process flow						CPU
+> > >> ---------------------------------------------------------------------
+> > >>
+> > >> tracing_mark_raw_write():				cpu:0
+> > >>     ...
+> > >>     ring_buffer_lock_reserve():				cpu:0
+> > >>        ...
 
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> > +	.max_width = 4096,
-> > +	.max_height = 4096,
-> >  };
-> >
-> >  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
-> > @@ -631,6 +636,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
-> >  				 struct v4l2_subdev_state *state,
-> >  				 struct v4l2_subdev_format *fmt)
-> >  {
-> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-> >  	struct v4l2_mbus_framefmt *src_format;
-> >  	struct v4l2_mbus_framefmt *sink_format;
-> >
-> > @@ -653,9 +659,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
-> >  	sink_format->ycbcr_enc = fmt->format.ycbcr_enc;
-> >  	sink_format->quantization = fmt->format.quantization;
-> >  	sink_format->width = clamp_t(u32, fmt->format.width,
-> > -				     RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX_WIDTH);
-> > +				     csi2->info->min_width,
-> > +				     csi2->info->max_width);
-> >  	sink_format->height = clamp_t(u32, fmt->format.height,
-> > -				      RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_MAX_HEIGHT);
-> > +				     csi2->info->min_height,
-> > +				     csi2->info->max_height);
-> >  	fmt->format = *sink_format;
-> >
-> >  	/* propagate format to source pad */
-> > @@ -668,9 +676,10 @@ static int rzg2l_csi2_init_state(struct v4l2_subdev *sd,
-> >  				 struct v4l2_subdev_state *sd_state)
-> >  {
-> >  	struct v4l2_subdev_format fmt = { .pad = RZG2L_CSI2_SINK, };
-> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-> >
-> > -	fmt.format.width = RZG2L_CSI2_DEFAULT_WIDTH;
-> > -	fmt.format.height = RZG2L_CSI2_DEFAULT_HEIGHT;
-> > +	fmt.format.width = csi2->info->min_width;
-> > +	fmt.format.height = csi2->info->min_height;
-> >  	fmt.format.field = V4L2_FIELD_NONE;
-> >  	fmt.format.code = RZG2L_CSI2_DEFAULT_FMT;
-> >  	fmt.format.colorspace = V4L2_COLORSPACE_SRGB;
-> > @@ -697,16 +706,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
-> >  				      struct v4l2_subdev_state *sd_state,
-> >  				      struct v4l2_subdev_frame_size_enum *fse)
-> >  {
-> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-> > +
-> >  	if (fse->index != 0)
-> >  		return -EINVAL;
-> >
-> >  	if (!rzg2l_csi2_code_to_fmt(fse->code))
-> >  		return -EINVAL;
-> >
-> > -	fse->min_width = RZG2L_CSI2_MIN_WIDTH;
-> > -	fse->min_height = RZG2L_CSI2_MIN_HEIGHT;
-> > -	fse->max_width = RZG2L_CSI2_MAX_WIDTH;
-> > -	fse->max_height = RZG2L_CSI2_MAX_HEIGHT;
-> > +	fse->min_width = csi2->info->min_width;
-> > +	fse->min_height = csi2->info->min_height;
-> > +	fse->max_width = csi2->info->max_width;
-> > +	fse->max_height = csi2->info->max_height;
-> >
-> >  	return 0;
-> >  }
-> >
-> > ---
-> > base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-> > change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
->
-> --
-> Regards,
->
-> Laurent Pinchart
+	preempt_disable_notrace(); --> this is unlocked by ring_buffer_unlock_commit()
+
+> > >>        cpu = raw_smp_processor_id()			cpu:0
+> > >>        cpu_buffer = buffer->buffers[cpu]			cpu:0
+> > >>        ...
+> > >>     ...
+> > >>     __copy_from_user_inatomic():				cpu:0
+
+So this is called under preempt-disabled.
+
+> > >>        ...
+> > >>        # page fault
+> > >>        do_mem_abort():					cpu:0  
+> > > Sounds to me that arm64 __copy_from_user_inatomic() may be broken.
+> > >  
+> > >>           ...
+> > >>           # Call schedule
+> > >>           schedule()					cpu:0
+
+If this does not check the preempt flag, it is a problem.
+Maybe arm64 needs to do fixup and abort instead of do_mem_abort()?
+
+> > >> 	 ...
+> > >>     # the task schedule to cpu1
+> > >>     __buffer_unlock_commit():				cpu:1
+> > >>        ...
+> > >>        ring_buffer_unlock_commit():			cpu:1
+> > >> 	 ...
+> > >> 	 cpu = raw_smp_processor_id()			cpu:1
+> > >> 	 cpu_buffer = buffer->buffers[cpu]		cpu:1
+
+	preempt_enable_notrace(); <-- here we enable preempt again.
+
+> > >>
+> > >> As shown above, the process will acquire cpuid twice and the return values
+> > >> are not the same.
+> > >>
+> > >> To fix this problem using copy_from_user_nofault instead of
+> > >> __copy_from_user_inatomic, as the former performs 'access_ok' before
+> > >> copying.
+> > >>
+> > >> Fixes: 656c7f0d2d2b ("tracing: Replace kmap with copy_from_user() in trace_marker writing")  
+> > > The above commit was intorduced in 2016. copy_from_user_nofault() was
+> > > introduced in 2020. I don't think this would be the fix for that kernel.
+> > >
+> > > So no, I'm not taking this patch. If you see __copy_from_user_inatomic()
+> > > sleeping, it's users are not the issue. That function is.
+
+
+BTW, the biggest difference between __copy_from_user() and
+ __copy_from_user_inatomic() is `might_fault()` and `should_fail_usercopy()`.
+The latter is a fault injection, so we can ignore it. But since
+the `might_fail()` is NOT in __copy_from_user_inatomic(), it is designed
+not to cause fault as Steve said?
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
