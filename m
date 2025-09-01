@@ -1,166 +1,227 @@
-Return-Path: <linux-kernel+bounces-793810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C625B3D884
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74DDB3D888
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD1A175C53
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD0D1897284
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1997A2367CE;
-	Mon,  1 Sep 2025 05:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4B71FFC46;
+	Mon,  1 Sep 2025 05:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXxFGAxC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Yv5WjgD1"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBD928DC4;
-	Mon,  1 Sep 2025 05:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756703517; cv=none; b=DN0TKKXiiO/Lh4ILJTnWHKmAYtPuyyYpVi/PDHJaXr18gZ3cH6GrH8u+XLQeYwJLJr/DH2ZzQBUZ9d1V4u+CQn23i+RMFivwHolnuVBSwryNldvpO0DdvsoL8H8TCK3OxBPlV7jVWVDpZenkKN7e833nPYJBgJUbYP7pOPoV+yE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756703517; c=relaxed/simple;
-	bh=0zcGP1JHy/F4YX2Ldd+o0wMIBnWn3+zAZi/ObO2lfWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lxcr1Np2VWQqY91XAbsVVuILiKci5/sl777FnRUeWEcGt2uBj9tOFL9wI1sfOkEBhaQDY6L2NR7qm2v/O0nwB29bwZZasVdmm+aeUjZK/Bwm+YbPwZ8HdNf+7ZT3Q/B2I05WY+zvb98ww64mRQoZgKKc8kxZt/yIcspBNtatcRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXxFGAxC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E36C4CEF0;
-	Mon,  1 Sep 2025 05:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756703516;
-	bh=0zcGP1JHy/F4YX2Ldd+o0wMIBnWn3+zAZi/ObO2lfWI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iXxFGAxCyAX2Z/ywg/XTCdRGqX79L6oBBeyP61F+WMwJg6iYcL060e1uvnqvJrSVl
-	 eSWFl94eCQPDLdUPxOObV2KH038zR9dClh6XwqdfYpu5Kn6Jkl6fohDg9HlGov+n+M
-	 cX3/YBqSK4WlGVn8u9X/KHKukZAVwT3bndFB94AjkJtef3E6buyP805gRqd0WhaYDK
-	 CxyhnZ82kTr/EesV5DzOmo8iNApgiYBYgbg2VuTIQkovtYJfCpOllYBmYKEwSM/xca
-	 IPSSqumL1ENJEKQPZhvJE6soZ82L0zkISRnoKUleKab0h5OFcAHcInGZLYgbugOeDf
-	 55ua6+AvgjyKA==
-Message-ID: <e3f6d000-bbb7-45c2-93f2-69be9815ca99@kernel.org>
-Date: Mon, 1 Sep 2025 07:11:46 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDA633D8;
+	Mon,  1 Sep 2025 05:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756703793; cv=fail; b=tFJtjRt1/QHB5g9yEJzxmNgZ7QlRrb67h4CJIeiXauMFYMVEwHK7oijTyLNGHxdzmlFL+fBjuTqnwyGn+DRkXNX6LwDRFC5BxTGxVfVkIqh9gj+TzV6++0CxcklN5eRRa2JdKWCbyN2Uxe+l1+/hN4g2VZcfn+cSIJnH7iMK/kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756703793; c=relaxed/simple;
+	bh=r8V4MdJOw8Vk5CuTrgyBgFiqBN1f6YbzBMT5Jhb7Ae4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aK8UZ4rp5dEK8W+Z3HizE3a1jLpl38cyNDiiVQeQRtid+QDdkJfdml/7pjupoKZYdU4ZAiUD+MTFAQvNY5KeQkgjlajXt8vdE8uFpCDmRxZ827DmxU4N5lNXE7/q/CroENrISvEI7h4oOaBHo24Gu1cYE1Rwg8kzfSYGbMPiubI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Yv5WjgD1; arc=fail smtp.client-ip=40.107.236.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J61o/9C9bcZjhcyp9yrtNFrzpfFHYcCN1IS3YOHOowKVMuqkE84e16EuoMPlMTypHQUiBfsShYQWEesXg7XAzLk1y89zdTNeX7Z7cK9yU7qpLTLxQHzDQY2LEczxPqaLKh/vtMldpHnglM6PBApLzz+nd9xJa4OAj2sFgS48Ce5tLmz1whSmzH11bYVW0B/08t3CNP6pS6hUm4vFLk24bRtgWjLLqWFdbP3qGi/Fnj9fpN1EdUMAIoPnHRNftJ0G3n/jtmi5KNNx38B4B6A/NVNI+JWL04rcBJ0leMitMZ1e4cHmsqfoH0OB+UDhiBmEdbBWcI5CS4Ye9rSfHKUXXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VhXfOjQC83Z1bt5svUICR2456jIfocxiPt6obYUFkvE=;
+ b=TREhY7Nyw4XJ/HL8jnTPEGy7OLV0GSSitk/vPRuPoZ5INPiDWJOkKyTSUwlaQGRowIZJMyaBEDPbZSFJvJFnH6SjcuPLe57PMq//tyZ9nBCZrRNUOlQjDWyo7yMVwpS9dNs62kBeVce9XdUVYiv1d4LcgkXM5AOloOk7z5rpZrSCH1/VSR35ODy7z3Y8NbLoxangqBs0QzME6JuUYVK4k6set4nP/X5F/84SOY5dfm5W9UMN+1vF9UVaotvprD7TAKthSa/GWfEOzgCeWVO+yT3f0flqynavCcM8AEYx+n9hacQeRTH4jUtceBpAZDRTltW3Wuqn753yMzEkugBlKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VhXfOjQC83Z1bt5svUICR2456jIfocxiPt6obYUFkvE=;
+ b=Yv5WjgD1Tm8sX0UjsjR7PSE6DwGgoSCk3GuGxJH/tyb6GihfM4grl6Dw09iBYK2JAL3q1fKAwHRRb8lctJbNziFYEOI9e4DIm10WjVxHNDgOZ+8TjHyXeAH/HdBly6mB1DQBvJ8cIK6L+yaNNskjgPV6rl1GPe9g0PVkPk6gATo=
+Received: from MW2PR16CA0039.namprd16.prod.outlook.com (2603:10b6:907:1::16)
+ by SA5PPF634736581.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8cd) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Mon, 1 Sep
+ 2025 05:16:28 +0000
+Received: from SJ1PEPF00002317.namprd03.prod.outlook.com
+ (2603:10b6:907:1:cafe::9a) by MW2PR16CA0039.outlook.office365.com
+ (2603:10b6:907:1::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.26 via Frontend Transport; Mon,
+ 1 Sep 2025 05:16:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF00002317.mail.protection.outlook.com (10.167.242.171) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Mon, 1 Sep 2025 05:16:27 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 1 Sep
+ 2025 00:16:26 -0500
+Received: from kaveri.amd.com (10.180.168.240) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Sun, 31 Aug
+ 2025 22:16:23 -0700
+From: Shivank Garg <shivankg@amd.com>
+To: <pbonzini@redhat.com>, <david@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <shivankg@amd.com>
+Subject: [PATCH kvm-next 1/1] KVM: guest_memfd: Inline kvm_gmem_get_index() and misc cleanups
+Date: Mon, 1 Sep 2025 05:15:34 +0000
+Message-ID: <20250901051532.207874-3-shivankg@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: samsung: Add compatible
- for ARTPEC-8 SoC
-To: Ravi Patel <ravi.patel@samsung.com>, jesper.nilsson@axis.com,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org,
- tomasz.figa@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de
-Cc: ksk4725@coasia.com, kenkim@coasia.com, pjsin865@coasia.com,
- gwk1013@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com,
- smn1196@coasia.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
- inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com,
- dj76.yang@samsung.com, hypmean.kim@samsung.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250825114436.46882-1-ravi.patel@samsung.com>
- <CGME20250825120715epcas5p3a0c8b6eaff7bdd69cbed6ce463079c64@epcas5p3.samsung.com>
- <20250825114436.46882-5-ravi.patel@samsung.com>
- <b8085dd8-e1a0-48b1-a49f-f3edaa0381da@kernel.org>
- <000201dc1af2$537b4e70$fa71eb50$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000201dc1af2$537b4e70$fa71eb50$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002317:EE_|SA5PPF634736581:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac333d52-e4ad-44c8-0d0a-08dde916b439
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1e8ZP6zxTfmORq0kHNSQJCodna+wS7Wl4Y3dqwiw1kcybdK8pbaZIogC8C23?=
+ =?us-ascii?Q?z1HHFtvdyY1A1npUW3yOkdqtsUSvx8l8hkFlyKshN7vDB022ouWcgYc0mO5u?=
+ =?us-ascii?Q?vrZA8ihHv9CvCNDo5nrL9V4Ee0VI/NtSW31bvpTQ9Ml1eM5Sper3R5eIuHrt?=
+ =?us-ascii?Q?7siutKCRyqzKBeP9TULqPKkRhpFpLOf5T5WdwNC0hyXjwILZYr5XAWDYrqXo?=
+ =?us-ascii?Q?gFuC1ZnhB6pHPoLC3uOIEbnd1xm51DprCese6EW5MxngoazDNOd7Hvgvst1W?=
+ =?us-ascii?Q?tiinDKAyGmt8O7k+9P9RMCDYrXsvcK+Wfg45tuaCqkTOks/Z+hHXcZpcxIPo?=
+ =?us-ascii?Q?MMxMP5O/2yVALsL+ITE9/0bST+rVhQ+NTjRHzBR9fqIS2ophOQE7QxZnshID?=
+ =?us-ascii?Q?dYX5siPsavIJFWG7ZpRmW+2n2Jyz/Su3T2yp+5MMh9p4fDxuwn/A9UL3IDJK?=
+ =?us-ascii?Q?+NsJ/DFj9068qJMe+vZsJSG0xRRF1uDFElTDdhyeeshhW1wd3uezPtb3zEA0?=
+ =?us-ascii?Q?mmv5x/qdQnLK+6DdVt61sbsFt0OyQlQvzdLU1sgzfq7exWgWBSWq/fiFhz/a?=
+ =?us-ascii?Q?LSAjPbioItwBYzp6lP3gz9Begk3eH86yPMroK4mJaxcmjClCCYR2bGEp7Rmq?=
+ =?us-ascii?Q?gMp8U99xtaknHLcdI2HnO9X1DQ/eYBUOlBJtbiQF+9gZzyGvWwGHY/wWzLnk?=
+ =?us-ascii?Q?elGvStNlWm7acle1ioNydpGTG0M7IS+qr9+nilrof1QbKJY+bJkuCjmft0hq?=
+ =?us-ascii?Q?r+Pb/QeQwlzx7sM858q5AFZbOGaKI278bssbtgL42JgoUk7VAC+FRuCtc+IE?=
+ =?us-ascii?Q?tM7NL3b1JWSi2TEG/NzzjkI4iN+0UApZnEpogsV2IDKrpCV5ARoMhxKPjO8l?=
+ =?us-ascii?Q?+YeISYK4yUXGvgn1Cwg4sp7Pt/Mgd0WkfA6/WCN3eK/FRM489/+Fbv0PGdDa?=
+ =?us-ascii?Q?TuqNG6IbC6aix27HhWn0qTDdDGPyu200NuMB+kL7LSerEwXdZZRWUloTMjNv?=
+ =?us-ascii?Q?A2seAR8yq6B1awj2l9a6vvyEt60PkWwQYMIr5FnA6tz3lvGzfwXxYJOak9O9?=
+ =?us-ascii?Q?5GM4ewf4LqemELGh9hLQ3mJGFAILkzV9vm9J7hHYoYpK/U2YoaLGUi5xJuGG?=
+ =?us-ascii?Q?Yv6PcspmUPatcNRexaTOZnXHYcEu7zCy2o03W4JPbrdoo6699JUN1hRZ+E3y?=
+ =?us-ascii?Q?axl91FDzR89dNNSDiKbKCFmj3kTqZse4Us8CbtNxLZ3yOJvkwc6MacxJOw0V?=
+ =?us-ascii?Q?C5T2aS9SxKVIVOM+4wSMUspsuSkwP33To+l8UQosgcZyqvF6tjT5dDHKFJFA?=
+ =?us-ascii?Q?ZWy9ezTiKnnX4Eyqe3NaGK8CJxTc5WUl3nfFSUXC8JbP269uMzom/89R9Hb5?=
+ =?us-ascii?Q?wcMZ0smGSV8ymO0qFK+0Oiix/pGtr6i6NtHCXz+mKLVmHlEThrge39pqau9c?=
+ =?us-ascii?Q?qonSvxHgby9mPfZbIUE9WtwGmGw546dOJeKdHebrilLkfHUMB2rXOi+ZGogf?=
+ =?us-ascii?Q?72pedD3QySRrAPBhTnR+XTmk61EmNM0BSen1?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 05:16:27.7310
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac333d52-e4ad-44c8-0d0a-08dde916b439
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002317.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF634736581
 
-On 01/09/2025 05:41, Ravi Patel wrote:
-> 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 31 August 2025 18:55
->> To: Ravi Patel <ravi.patel@samsung.com>; jesper.nilsson@axis.com; mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com; alim.akhtar@samsung.com;
->> linus.walleij@linaro.org; tomasz.figa@gmail.com; catalin.marinas@arm.com; will@kernel.org; arnd@arndb.de
->> Cc: ksk4725@coasia.com; kenkim@coasia.com; pjsin865@coasia.com; gwk1013@coasia.com; hgkim05@coasia.com;
->> mingyoungbo@coasia.com; smn1196@coasia.com; pankaj.dubey@samsung.com; shradha.t@samsung.com; inbaraj.e@samsung.com;
->> swathi.ks@samsung.com; hrishikesh.d@samsung.com; dj76.yang@samsung.com; hypmean.kim@samsung.com; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-arm-kernel@axis.com; linux-
->> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-gpio@vger.kernel.org; soc@lists.linux.dev
->> Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: samsung: Add compatible for ARTPEC-8 SoC
->>
->> On 25/08/2025 13:44, Ravi Patel wrote:
->>> From: SeonGu Kang <ksk4725@coasia.com>
->>>
->>> Document the compatible string for ARTPEC-8 SoC pinctrl block,
->>> which is similar to other Samsung SoC pinctrl blocks.
->>>
->>> Signed-off-by: SeonGu Kang <ksk4725@coasia.com>
->>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->>> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
->>> ---
->>>  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
->>>  1 file changed, 1 insertion(+)
->>
->>
->> No wakeup-eint interrupts here? samsung,pinctrl-wakeup-interrupt.yaml?
-> 
-> I don't see any use case for external wake-up interrupt here (as of now).
+Move kvm_gmem_get_index() to the top of the file and mark it inline.
 
-It is more about hardware, not use case. Does this hardware has EINT
-wakeup pin banks?
+Also clean up __kvm_gmem_get_pfn() by deferring gmem variable
+declaration until after the file pointer check, avoiding unnecessary
+initialization.
 
-> So wakeup-eint entry is not present in dts and yaml both.
+Replace magic number -1UL with ULONG_MAX.
 
+No functional change intended.
 
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
 
-Best regards,
-Krzysztof
+Applies cleanly on kvm-next (a6ad54137) and guestmemfd-preview (3d23d4a27).
+
+ virt/kvm/guest_memfd.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 08a6bc7d25b6..537f297a53cd 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -25,6 +25,11 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
+ 	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
+ }
+ 
++static inline pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
++{
++	return gfn - slot->base_gfn + slot->gmem.pgoff;
++}
++
+ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 				    pgoff_t index, struct folio *folio)
+ {
+@@ -32,6 +37,7 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+ 	kvm_pfn_t pfn = folio_file_pfn(folio, index);
+ 	gfn_t gfn = slot->base_gfn + index - slot->gmem.pgoff;
+ 	int rc = kvm_arch_gmem_prepare(kvm, gfn, pfn, folio_order(folio));
++
+ 	if (rc) {
+ 		pr_warn_ratelimited("gmem: Failed to prepare folio for index %lx GFN %llx PFN %llx error %d.\n",
+ 				    index, gfn, pfn, rc);
+@@ -78,7 +84,7 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	 * checked when creating memslots.
+ 	 */
+ 	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, 1 << folio_order(folio)));
+-	index = gfn - slot->base_gfn + slot->gmem.pgoff;
++	index = kvm_gmem_get_index(slot, gfn);
+ 	index = ALIGN_DOWN(index, 1 << folio_order(folio));
+ 	r = __kvm_gmem_prepare_folio(kvm, slot, index, folio);
+ 	if (!r)
+@@ -280,8 +286,8 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+ 	 * memory, as its lifetime is associated with the inode, not the file.
+ 	 */
+-	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+-	kvm_gmem_invalidate_end(gmem, 0, -1ul);
++	kvm_gmem_invalidate_begin(gmem, 0, ULONG_MAX);
++	kvm_gmem_invalidate_end(gmem, 0, ULONG_MAX);
+ 
+ 	list_del(&gmem->entry);
+ 
+@@ -307,10 +313,6 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
+ 	return get_file_active(&slot->gmem.file);
+ }
+ 
+-static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
+-{
+-	return gfn - slot->base_gfn + slot->gmem.pgoff;
+-}
+ 
+ static bool kvm_gmem_supports_mmap(struct inode *inode)
+ {
+@@ -637,7 +639,7 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
+ 					bool *is_prepared, int *max_order)
+ {
+ 	struct file *gmem_file = READ_ONCE(slot->gmem.file);
+-	struct kvm_gmem *gmem = file->private_data;
++	struct kvm_gmem *gmem;
+ 	struct folio *folio;
+ 
+ 	if (file != gmem_file) {
+-- 
+2.43.0
+
 
