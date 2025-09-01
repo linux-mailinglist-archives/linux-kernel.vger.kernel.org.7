@@ -1,158 +1,598 @@
-Return-Path: <linux-kernel+bounces-794413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FBFB3E15F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:20:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE94BB3E163
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EB5B3BC804
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5B3AED00
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB637314A9E;
-	Mon,  1 Sep 2025 11:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACrmQi/6"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCD242D72;
-	Mon,  1 Sep 2025 11:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D63C314A8E;
+	Mon,  1 Sep 2025 11:21:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99EA3595D;
+	Mon,  1 Sep 2025 11:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756725630; cv=none; b=eqszxzPjoiAY13Knjnc8oPybxXIjl68qs5MaKrAbrmV2RoXMr+BYshc8CGHKCflHYkbD7qvM5Dt+wMx3uoOKnIR3zNoWe5D2w75DUD5ovRiDaDxSm8YCmaOEf9/h91xbzot8vpifRDVRIQaMaxSz8NhBvKhuquAloHUpvMRwZCc=
+	t=1756725683; cv=none; b=ctbXQ5aTGDjixj3moSodWBUHnCQ7U8y7CXT073MincdMq0K2Yxl1NCINs4ocbIUf8vOoJ8MNRkqzgacKSv2dVTdFAY7D++tcUn2eLK+NBhPXT8A0m0FyFH0YkyCd2z2KJcULLubHAsqC/UVljYvK/xNNzKXtn8Ro72GeOabBt+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756725630; c=relaxed/simple;
-	bh=IPhZUxZEvQtUE0FgDVjnEFAeW5GD5N4tJyxUeZ7XkJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=neUmQDsZOGzfN37KifM8etQvez5jLRmQ8v36wU/+wCGQ1T5GiWpgnP9HJ+4DSUCpWGeKWEN51/DtwtSmpSpyqve8ODLBqN1lNtYhxL3iWQ4EbZh2bsZG8pYZokEbXyJM39xL9EWNSvnfBUG75/tk5LyrG2HeDE8/YBgt/OB9evo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACrmQi/6; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3d0b6008a8bso1370069f8f.0;
-        Mon, 01 Sep 2025 04:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756725627; x=1757330427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSHoFyJn+Yap9IxU+R0pI9UF/LQIV/JZEsxiIz7pRy4=;
-        b=ACrmQi/6ND6UmRphc2MnIL5giJSEjQJRbWb7049prhZEbpsKM79kjaeBtlX0WcHQ9E
-         T3iVedF96dF+BeOU7XLhuJdocD5eL9ZY0O1PAaLL6b5SJSv3B621OW4VTquYRJ6l8w/k
-         HdlwzSfbJpzWg+DBtrQarCGOZCtjBg49dZyaCEDrUoyirCiiHFANvQqAdZUviEX6S5w7
-         5VZDptSwPi0SMA22R9mrT7CcoIy9NvTcGQQIeNZVqNE+0wi3Wiis8fLj0UWmkdrqfe4o
-         Z8Wjqa60/tOsr2zFubhRmw+9EAwA8v5aEk7q8uvDQ4EO1V/qcLuC9nEP7jWVAcOjSzfM
-         eqxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756725627; x=1757330427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RSHoFyJn+Yap9IxU+R0pI9UF/LQIV/JZEsxiIz7pRy4=;
-        b=tQ4ewqsP+nFeCh2TeJDn3V1WpUI3Lfqpw8TVM8IFalvA3lK0zhv4MFf0cWYABYWiGO
-         +zMBl5qqQVEQGptWJhoNa0UyMGZk+uw80Os09T6S1Mcd6XpuMgAcdADOAzCRY2umLJz1
-         ImFEK7BDR9Rfffn5FvMHKOL8j2tmekBD1ILk7B1uyvpVpaR6owO2/PrLePdcblMl3dvC
-         Jmqs/B3WHkPpHBgRVV+MSfz3RtB7fA11tkP1zHEvFrJSHWy+u2T4unfBZvYdJA/Td5l0
-         vqYrzCid9T8bdG2V2M59cUCaK0ucJA/dFOcWypStlgaIzBYS6yo/l/e2w5XHOYg7Apkg
-         9/lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE+TxXCZd4BKfzzDxVYO8BOgK8tLF6A4xF9kcC8J99u8icsTdjNRMMbbh+SbBChLSO/0J+TQO/zlp8TGI=@vger.kernel.org, AJvYcCV6ebEm1HVy6O6uJ83TeUo++Va/si4jbIIJZ9Ca5bSMxewrqqiOWt7HP5I+Sjo+8LERMqSmpNY0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTKzcIouqN8eJCIBnXV7DMylOfeebBfv7KlQukbH/QqhkzUQOc
-	U2R7ZlWppAU1HCESHIGz2nm7+dBEK43T+JnbVM986HrU0wA96CAjES7O
-X-Gm-Gg: ASbGncsmF7DJgTDT4mUiLIU4Cc5etzbrP9Gp6miLidOpVsVNNgpzxqOuChoFODCSSFH
-	b6+fQOnNDbv09H5UUS6iCfaxpiwREKSvTTwNi3zw1ecq5fxM+hM6eOR3N5XsOjGjoO3RVH3p6Xv
-	OrVAlLng2G5ZU4RflVaIBFfLV8HFrugc4NBvI+pKgrrk1cqOOvueXkDHMwIBs9JE99jpHKN2W7f
-	1kyNcmvkT6XT3UGH/1k1U9KDaq08RKvaF9NKcV2qXTLs5fwg9uOmr2RW57afF2DtimfPFN+xmXx
-	VbOq9/DWwjfjwap+ACzk9e/bnc3e/3Fa/vhccaa/pXLCZh1f+0HcyjwVEVZw/1cDMBCLN8EaEih
-	ZzWTcCN6Lz+PVZHy3B+gzvob6OWKdI6LRJv/6ezpShLA1GUN+qkKq0Egn
-X-Google-Smtp-Source: AGHT+IG5U8mwhyymgDUr/F8sj+IWl+J4XI4TAAqLmLYpm6Muo/tUhK+s3c4TsHItuVGOqdSgNsf1LA==
-X-Received: by 2002:a05:6000:2007:b0:3cf:3477:6bb7 with SMTP id ffacd0b85a97d-3d1e0a9424cmr6667805f8f.60.1756725626386;
-        Mon, 01 Sep 2025 04:20:26 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:ca6c:86b2:c8f:84d6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e68c83asm161625395e9.20.2025.09.01.04.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 04:20:25 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	stable@kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3] net: pcs: rzn1-miic: Correct MODCTRL register offset
-Date: Mon,  1 Sep 2025 12:20:19 +0100
-Message-ID: <20250901112019.16278-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756725683; c=relaxed/simple;
+	bh=jGdAz412GkPYDNDBzOot9YLlz5jht+cdFHwZ45LUr14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsBcoQh0b0bZCtEnykBsf0ogFjZkXKbvqym+J3CoWUAU7/wTjjdlIjmNCE5YJ5d+HE4XQftb55eVsGMqNPIAXPWkhc/1HJI2DTppLmeK9PenPmQnbW0AaxxHMwEb3OXry9nn+q/9UIZNy51lVS4wS+AX0ugmnstWuG0cW63CSyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D8F01A00;
+	Mon,  1 Sep 2025 04:21:12 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2198E3F6A8;
+	Mon,  1 Sep 2025 04:21:14 -0700 (PDT)
+Date: Mon, 1 Sep 2025 12:21:12 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+Message-ID: <aLWBqNMKoTl9VDIS@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-11-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822153048.2287-11-james.morse@arm.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi James,
 
-Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
-According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
-[0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offset
-0x8, not 0x20 as previously defined.
+On Fri, Aug 22, 2025 at 03:29:51PM +0000, James Morse wrote:
+> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+> only be accessible from those CPUs, and they may not be online.
+> Touching the hardware early is pointless as MPAM can't be used until
+> the system-wide common values for num_partid and num_pmg have been
+> discovered.
+> 
+> Start with driver probe/remove and mapping the MSC.
+> 
+> CC: Carl Worth <carl@os.amperecomputing.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since RFC:
+>  * Check for status=broken DT devices.
+>  * Moved all the files around.
+>  * Made Kconfig symbols depend on EXPERT
+> ---
 
-Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL),
-which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
-definition prevented the driver from configuring the SW_MODE[4:0] bits
-in MODCTRL, which control the internal connection of Ethernet ports. As
-a result, the MIIC could not be switched into the correct mode, leading
-to link setup failures and non-functional Ethernet ports on affected
-systems.
+[...]
 
-[0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn1l-group-users-manual-r-engine-and-ethernet-peripherals?r=1054571
+> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
+> new file mode 100644
+> index 000000000000..dff7b87280ab
+> --- /dev/null
+> +++ b/drivers/resctrl/Kconfig
+> @@ -0,0 +1,11 @@
+> +# Confusingly, this is everything but the CPU bits of MPAM. CPU here means
+> +# CPU resources, not containers or cgroups etc.
 
-Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-Cc: stable@kernel.org
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v2->v3:
-- Dropped net-next prefix as this is a fix.
-- Added tested-by tag from Wolfram.
+Drop confusing comment?
 
-v1->v2:
-- Used correct subject prefix
-- Updated commit message to clarify the issue.
----
- drivers/net/pcs/pcs-rzn1-miic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+CPUs are not mentioned other than in the comment -- I think the
+descriptions are sufficiently self-explanatory that they don't read
+onto CPUs.
 
-diff --git a/drivers/net/pcs/pcs-rzn1-miic.c b/drivers/net/pcs/pcs-rzn1-miic.c
-index d79bb9b06cd2..ce73d9474d5b 100644
---- a/drivers/net/pcs/pcs-rzn1-miic.c
-+++ b/drivers/net/pcs/pcs-rzn1-miic.c
-@@ -19,7 +19,7 @@
- #define MIIC_PRCMD			0x0
- #define MIIC_ESID_CODE			0x4
- 
--#define MIIC_MODCTRL			0x20
-+#define MIIC_MODCTRL			0x8
- #define MIIC_MODCTRL_SW_MODE		GENMASK(4, 0)
- 
- #define MIIC_CONVCTRL(port)		(0x100 + (port) * 4)
--- 
-2.51.0
+> +config ARM64_MPAM_DRIVER
+> +	bool "MPAM driver for System IP, e,g. caches and memory controllers"
+> +	depends on ARM64_MPAM && EXPERT
+> +
+> +config ARM64_MPAM_DRIVER_DEBUG
+> +	bool "Enable debug messages from the MPAM driver."
 
+Nit: spurious full stop.
+
+(i.e., people don't add one in these one-line descriptions.
+They are title-like and self-delimiting, even when the text is a valid
+sentence.)
+
+> +	depends on ARM64_MPAM_DRIVER
+> +	help
+> +	  Say yes here to enable debug messages from the MPAM driver.
+> diff --git a/drivers/resctrl/Makefile b/drivers/resctrl/Makefile
+> new file mode 100644
+> index 000000000000..92b48fa20108
+> --- /dev/null
+> +++ b/drivers/resctrl/Makefile
+> @@ -0,0 +1,4 @@
+> +obj-$(CONFIG_ARM64_MPAM_DRIVER)			+= mpam.o
+> +mpam-y						+= mpam_devices.o
+> +
+> +cflags-$(CONFIG_ARM64_MPAM_DRIVER_DEBUG)	+= -DDEBUG
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> new file mode 100644
+> index 000000000000..a0d9a699a6e7
+> --- /dev/null
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -0,0 +1,336 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2025 Arm Ltd.
+> +
+> +#define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/arm_mpam.h>
+> +#include <linux/cacheinfo.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/gfp.h>
+> +#include <linux/list.h>
+> +#include <linux/lockdep.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/printk.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/srcu.h>
+> +#include <linux/types.h>
+> +
+> +#include <acpi/pcc.h>
+> +
+> +#include "mpam_internal.h"
+> +
+> +/*
+> + * mpam_list_lock protects the SRCU lists when writing. Once the
+> + * mpam_enabled key is enabled these lists are read-only,
+> + * unless the error interrupt disables the driver.
+> + */
+> +static DEFINE_MUTEX(mpam_list_lock);
+> +static LIST_HEAD(mpam_all_msc);
+> +
+> +static struct srcu_struct mpam_srcu;
+> +
+> +/* MPAM isn't available until all the MSC have been probed. */
+
+Comment doesn't really explain the variable.
+
+Maybe something like "Number of MSCs that need to be probed for MPAM
+to be usable" ?
+
+> +static u32 mpam_num_msc;
+
+Any particular reason this is u32 and not unsigned int?
+
+How are accesses to this protected against data races?
+
+If there are supposed to be locks to protect globals in the MPAM driver,
+is it worth wrapping them in access functions with a lockdep assert?
+Otherwise, it feels rather easy to get this wrong -- I think I've found
+at least one bug (see mpam_msc_drv_probe().)
+
+> +
+> +static void mpam_discovery_complete(void)
+> +{
+> +	pr_err("Discovered all MSC\n");
+> +}
+
+As others have commented, if this is non-functional code that gets
+removed later on, it's probably best to drop this up-front?
+
+
+[...]
+
+> +static int mpam_dt_parse_resource(struct mpam_msc *msc, struct device_node *np,
+> +				  u32 ris_idx)
+> +{
+> +	int err = 0;
+> +	u32 level = 0;
+> +	unsigned long cache_id;
+> +	struct device_node *cache;
+> +
+> +	do {
+> +		if (of_device_is_compatible(np, "arm,mpam-cache")) {
+> +			cache = of_parse_phandle(np, "arm,mpam-device", 0);
+> +			if (!cache) {
+> +				pr_err("Failed to read phandle\n");
+> +				break;
+> +			}
+> +		} else if (of_device_is_compatible(np->parent, "cache")) {
+> +			cache = of_node_get(np->parent);
+> +		} else {
+> +			/* For now, only caches are supported */
+> +			cache = NULL;
+> +			break;
+> +		}
+> +
+> +		err = of_property_read_u32(cache, "cache-level", &level);
+> +		if (err) {
+> +			pr_err("Failed to read cache-level\n");
+> +			break;
+> +		}
+> +
+> +		cache_id = cache_of_calculate_id(cache);
+> +		if (cache_id == ~0UL) {
+
+The type of cache_id may change if the return type of
+cache_of_calculate_id() changes (see comments on patch 1).
+
+Possible #define for the exceptional value.
+
+> +			err = -ENOENT;
+> +			break;
+
+The lack of a diagnostic here is inconsistent with the level of
+diagnostics in the rest of the loop.
+
+> +		}
+> +
+> +		err = mpam_ris_create(msc, ris_idx, MPAM_CLASS_CACHE, level,
+> +				      cache_id);
+> +	} while (0);
+
+Abuse of do ... while () here?
+
+There is no loop.  The breaks are stealth "goto"s to this statement:
+
+> +	of_node_put(cache);
+
+(It works either way, but maybe gotos to an explicit label would be
+more readable, as well as avoiding an unnecessary level of indentation.)
+
+> +
+> +	return err;
+> +}
+
+[...]
+
+> +/*
+> + * An MSC can control traffic from a set of CPUs, but may only be accessible
+> + * from a (hopefully wider) set of CPUs. The common reason for this is power
+> + * management. If all the CPUs in a cluster are in PSCI:CPU_SUSPEND, the
+> + * the corresponding cache may also be powered off. By making accesses from
+
+Nit: the the
+
+> + * one of those CPUs, we ensure this isn't the case.
+> + */
+> +static int update_msc_accessibility(struct mpam_msc *msc)
+> +{
+> +	struct device_node *parent;
+> +	u32 affinity_id;
+> +	int err;
+> +
+> +	if (!acpi_disabled) {
+> +		err = device_property_read_u32(&msc->pdev->dev, "cpu_affinity",
+> +					       &affinity_id);
+> +		if (err)
+> +			cpumask_copy(&msc->accessibility, cpu_possible_mask);
+> +		else
+> +			acpi_pptt_get_cpus_from_container(affinity_id,
+> +							  &msc->accessibility);
+> +
+> +		return 0;
+> +	}
+> +
+> +	/* This depends on the path to of_node */
+> +	parent = of_get_parent(msc->pdev->dev.of_node);
+> +	if (parent == of_root) {
+> +		cpumask_copy(&msc->accessibility, cpu_possible_mask);
+> +		err = 0;
+> +	} else {
+> +		err = -EINVAL;
+> +		pr_err("Cannot determine accessibility of MSC: %s\n",
+> +		       dev_name(&msc->pdev->dev));
+> +	}
+> +	of_node_put(parent);
+> +
+> +	return err;
+> +}
+> +
+> +static int fw_num_msc;
+
+Does this need to be protected against data races?
+
+If individual mpam_msc_drv_probe() calls may execute on different CPUs
+from mpam_msc_driver_init(), then seem to be potential races here.
+
+> +
+> +static void mpam_pcc_rx_callback(struct mbox_client *cl, void *msg)
+> +{
+> +	/* TODO: wake up tasks blocked on this MSC's PCC channel */
+
+So, is this broken in this commit?
+
+(If the series does not get broken up or applied piecemail, that's not
+such a concern, though.)
+
+> +}
+> +
+> +static void mpam_msc_drv_remove(struct platform_device *pdev)
+> +{
+
+The MPAM driver cannot currently be built as a module.
+
+Is it possible to exercise the driver remove paths, today?
+
+> +	struct mpam_msc *msc = platform_get_drvdata(pdev);
+> +
+> +	if (!msc)
+> +		return;
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_num_msc--;
+> +	platform_set_drvdata(pdev, NULL);
+> +	list_del_rcu(&msc->glbl_list);
+> +	synchronize_srcu(&mpam_srcu);
+> +	devm_kfree(&pdev->dev, msc);
+> +	mutex_unlock(&mpam_list_lock);
+> +}
+> +
+> +static int mpam_msc_drv_probe(struct platform_device *pdev)
+> +{
+> +	int err;
+> +	struct mpam_msc *msc;
+> +	struct resource *msc_res;
+> +	void *plat_data = pdev->dev.platform_data;
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	do {
+> +		msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+> +		if (!msc) {
+> +			err = -ENOMEM;
+> +			break;
+> +		}
+> +
+> +		mutex_init(&msc->probe_lock);
+> +		mutex_init(&msc->part_sel_lock);
+> +		mutex_init(&msc->outer_mon_sel_lock);
+> +		raw_spin_lock_init(&msc->inner_mon_sel_lock);
+> +		msc->id = mpam_num_msc++;
+> +		msc->pdev = pdev;
+> +		INIT_LIST_HEAD_RCU(&msc->glbl_list);
+> +		INIT_LIST_HEAD_RCU(&msc->ris);
+> +
+> +		err = update_msc_accessibility(msc);
+> +		if (err)
+> +			break;
+> +		if (cpumask_empty(&msc->accessibility)) {
+> +			pr_err_once("msc:%u is not accessible from any CPU!",
+> +				    msc->id);
+> +			err = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		if (device_property_read_u32(&pdev->dev, "pcc-channel",
+> +					     &msc->pcc_subspace_id))
+> +			msc->iface = MPAM_IFACE_MMIO;
+> +		else
+> +			msc->iface = MPAM_IFACE_PCC;
+> +
+> +		if (msc->iface == MPAM_IFACE_MMIO) {
+> +			void __iomem *io;
+> +
+> +			io = devm_platform_get_and_ioremap_resource(pdev, 0,
+> +								    &msc_res);
+> +			if (IS_ERR(io)) {
+> +				pr_err("Failed to map MSC base address\n");
+> +				err = PTR_ERR(io);
+> +				break;
+> +			}
+> +			msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
+> +			msc->mapped_hwpage = io;
+> +		} else if (msc->iface == MPAM_IFACE_PCC) {
+> +			msc->pcc_cl.dev = &pdev->dev;
+> +			msc->pcc_cl.rx_callback = mpam_pcc_rx_callback;
+> +			msc->pcc_cl.tx_block = false;
+> +			msc->pcc_cl.tx_tout = 1000; /* 1s */
+> +			msc->pcc_cl.knows_txdone = false;
+> +
+> +			msc->pcc_chan = pcc_mbox_request_channel(&msc->pcc_cl,
+> +								 msc->pcc_subspace_id);
+> +			if (IS_ERR(msc->pcc_chan)) {
+> +				pr_err("Failed to request MSC PCC channel\n");
+> +				err = PTR_ERR(msc->pcc_chan);
+> +				break;
+> +			}
+> +		}
+
+Should the lock be held across initialisation of the msc fields?
+
+list_add_rcu() might imply sufficient barriers to ensure that the
+initialisations are visible to other threads that obtain the msc
+pointer by iterating over mpam_all_msc.
+
+It's probably cleaner to hold the lock explicitly, though.
+
+What other ways of obtaining the msc pointer exist?
+
+
+> +
+> +		list_add_rcu(&msc->glbl_list, &mpam_all_msc);
+> +		platform_set_drvdata(pdev, msc);
+> +	} while (0);
+> +	mutex_unlock(&mpam_list_lock);
+> +
+> +	if (!err) {
+> +		/* Create RIS entries described by firmware */
+> +		if (!acpi_disabled)
+> +			err = acpi_mpam_parse_resources(msc, plat_data);
+> +		else
+> +			err = mpam_dt_parse_resources(msc, plat_data);
+> +	}
+> +
+> +	if (!err && fw_num_msc == mpam_num_msc)
+
+Unlocked read of mpam_num_msc?
+
+> +		mpam_discovery_complete();
+> +
+> +	if (err && msc)
+> +		mpam_msc_drv_remove(pdev);
+> +
+> +	return err;
+> +}
+> +
+> +static const struct of_device_id mpam_of_match[] = {
+> +	{ .compatible = "arm,mpam-msc", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mpam_of_match);
+> +
+> +static struct platform_driver mpam_msc_driver = {
+> +	.driver = {
+> +		.name = "mpam_msc",
+> +		.of_match_table = of_match_ptr(mpam_of_match),
+> +	},
+> +	.probe = mpam_msc_drv_probe,
+> +	.remove = mpam_msc_drv_remove,
+> +};
+> +
+> +/*
+> + * MSC that are hidden under caches are not created as platform devices
+> + * as there is no cache driver. Caches are also special-cased in
+> + * update_msc_accessibility().
+> + */
+
+Can you elaborate?  I don't understand quite what this is doing.
+
+> +static void mpam_dt_create_foundling_msc(void)
+> +{
+> +	int err;
+> +	struct device_node *cache;
+> +
+> +	for_each_compatible_node(cache, NULL, "cache") {
+> +		err = of_platform_populate(cache, mpam_of_match, NULL, NULL);
+> +		if (err)
+> +			pr_err("Failed to create MSC devices under caches\n");
+> +	}
+> +}
+
+[...]
+
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> new file mode 100644
+> index 000000000000..07e0f240eaca
+> --- /dev/null
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +// Copyright (C) 2024 Arm Ltd.
+> +
+> +#ifndef MPAM_INTERNAL_H
+> +#define MPAM_INTERNAL_H
+> +
+> +#include <linux/arm_mpam.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/io.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mutex.h>
+> +#include <linux/resctrl.h>
+> +#include <linux/sizes.h>
+> +
+> +struct mpam_msc {
+> +	/* member of mpam_all_msc */
+> +	struct list_head        glbl_list;
+
+It is worth making these names less mismatched?
+
+> +
+> +	int			id;
+> +	struct platform_device *pdev;
+> +
+> +	/* Not modified after mpam_is_enabled() becomes true */
+> +	enum mpam_msc_iface	iface;
+> +	u32			pcc_subspace_id;
+> +	struct mbox_client	pcc_cl;
+> +	struct pcc_mbox_chan	*pcc_chan;
+> +	u32			nrdy_usec;
+> +	cpumask_t		accessibility;
+> +
+> +	/*
+> +	 * probe_lock is only take during discovery. After discovery these
+> +	 * properties become read-only and the lists are protected by SRCU.
+> +	 */
+> +	struct mutex		probe_lock;
+
+Can we have more clarify about the locking strategy, including details
+of which things each lock is supposed to apply to and when, and how (if
+at all) the locks are intended to nest?
+
+(Similarly for the global locks.)
+
+> +	unsigned long		ris_idxs[128 / BITS_PER_LONG];
+> +	u32			ris_max;
+
+nrdy_usec, ris_idxs and ris_max appear unused in this patch (though I
+suppose they get initialised by virtue of kzalloc()).  Is this
+intentional?
+
+> +
+> +	/* mpam_msc_ris of this component */
+> +	struct list_head	ris;
+> +
+> +	/*
+> +	 * part_sel_lock protects access to the MSC hardware registers that are
+> +	 * affected by MPAMCFG_PART_SEL. (including the ID registers that vary
+> +	 * by RIS).
+> +	 * If needed, take msc->lock first.
+> +	 */
+
+What's msc->lock ?
+
+> +	struct mutex		part_sel_lock;
+> +
+> +	/*
+> +	 * mon_sel_lock protects access to the MSC hardware registers that are
+> +	 * affeted by MPAMCFG_MON_SEL.
+> +	 * If needed, take msc->lock first.
+> +	 */
+
+Same here.
+
+> +	struct mutex		outer_mon_sel_lock;
+> +	raw_spinlock_t		inner_mon_sel_lock;
+> +	unsigned long		inner_mon_sel_flags;
+> +
+> +	void __iomem		*mapped_hwpage;
+> +	size_t			mapped_hwpage_sz;
+> +};
+> +
+> +#endif /* MPAM_INTERNAL_H */
+
+[...]
+
+Cheers
+---Dave
 
