@@ -1,173 +1,101 @@
-Return-Path: <linux-kernel+bounces-795351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C4AB3F077
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:27:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C471DB3F078
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00EF77AA6A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B382C1038
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB19327991E;
-	Mon,  1 Sep 2025 21:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F046D2798FA;
+	Mon,  1 Sep 2025 21:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkriPSBD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WjM+pQrx"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDDFB67F;
-	Mon,  1 Sep 2025 21:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D38B67F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 21:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756762069; cv=none; b=ItlzXn4YUS9EYHplq7q6U4pNrRMiMG1XKkUQQtlb7zaKs/sDV/aCoM4xC7Ub1CYEwELE6u2vlUgcUKaM9RSSj2uC6E8yDpN4zVpwohbuEJdx0h6cKOGvc52iRIZdjBYaDubhcWzsBgvNJXAsbbomOthThgRlpNWeMHcoCVb6rVM=
+	t=1756762159; cv=none; b=LxSnautJVnIXBIKVmSoEhrE+WoQnIRuCy4KpnfhOIfHuqyZzqLOeo7ZByKv2VaAsBQMCOrGXyKQbrdzaIajApnEhpuR89VI6MbVaTqe5P9ST+moq67/p0nguYqsm+2NgX+h51orFlJwV+YJso+HN2q9pgFjMpDO8Ia5kzjBtvr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756762069; c=relaxed/simple;
-	bh=rjepzkjxlPEQO8AJJenxxd9xqBBdjEOhVPFBaP1Xmo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EhtONE/duHsHYw4OkYHp1cP1bQLklWb2x/iFCpmNXANPWj/NTSbHprZB8MWYj5B/Bz9nmTCSBAHM4PHa//LXr4jfYaEsYSjs+1eFzfpYlNoUec7ZTT1pZq331VlGlqG3St1HhVCU0KdbMlXdEt5dqWvvm12OfqRlgoAyO9mV7mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkriPSBD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C129C4CEF0;
-	Mon,  1 Sep 2025 21:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756762068;
-	bh=rjepzkjxlPEQO8AJJenxxd9xqBBdjEOhVPFBaP1Xmo0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PkriPSBDnNd+FnGFNk+WYvT5SvyvH5i9auminlCxEUpEbdIKNJXoENKdXSI2vJ9Pz
-	 KcXNp/UcfMD1QXRuvqeDmC/oADmmFPGBOaHBGskhDf/PZ/6EUa4EdYrx1b2O2pa9w/
-	 Mn/mXboZ20KeqcHl6fUq9g/lw9cCrjQhDFQJREzqBKiBbSaryoO0uiIN+Xkdgf2Mt3
-	 wlTg54zOzbeE1CtPc1DJ/q9P4fD6e73OGVfSeak1o7B1fMZXw8SPO8d4qqB5OIjnTx
-	 7VSvlNpG5X6li9dzIrT3Yo2EgXra/+royI0ASu0VFEPmqE/RbqPCbRMnSbH4ru8aud
-	 XoaTWp/FSVSCA==
-Date: Mon, 1 Sep 2025 14:27:47 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
- pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, Vikas Gupta
- <vikas.gupta@broadcom.com>, Rajashekar Hudumula
- <rajashekar.hudumula@broadcom.com>
-Subject: Re: [v5, net-next 2/9] bng_en: Add initial support for CP and NQ
- rings
-Message-ID: <20250901142747.6e6f8bfd@kernel.org>
-In-Reply-To: <20250828184547.242496-3-bhargava.marreddy@broadcom.com>
-References: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
-	<20250828184547.242496-3-bhargava.marreddy@broadcom.com>
+	s=arc-20240116; t=1756762159; c=relaxed/simple;
+	bh=552/6JCfc+JUxNZzimncP4Fs+dFS0i0A1bp0y7OqPfY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qFdfTM7UVUQzXlYnqkMULq//aV7rqRd/ocj9zzqAPoBqVN1Rp4/zXV+MCiowdLug0FNBku3Oai4vW6cXjeNIEq9G7snjduGWQXvoT8DU6NCiIPSxI3H4r7fbhuICV6KCxdlVAUe1PjvxGu2sEfcX7OLeFvWtK4/hqAmkQC5agTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WjM+pQrx; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 581LS5Fb223203
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 1 Sep 2025 14:28:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 581LS5Fb223203
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756762087;
+	bh=552/6JCfc+JUxNZzimncP4Fs+dFS0i0A1bp0y7OqPfY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=WjM+pQrxsjaHwPfu5TD4QjlSXAysuaTOWlWdBItkXSo83VaSviwaitzlJnp43OlSH
+	 IbSQ+zJTXkWoYyirIOanfielbrHFkyCx4pxC5LNqdmBUP+vSyv996TvuS9gw2IPcIN
+	 i+SbRviyHAtUh5GUjAOzjIGyKZUuzJuCC5cTMaoup38Cl6XwvceB56NML0McIubCFb
+	 I4pXhMPZ4/Qm1bZ4vIS2fiCZlutFM3d6tqrFozyze1gLQA85oDcFL/I4RsHR86iM1A
+	 M1odYRxp2gRjMObLBO2IDdFZ1ZpWWAc7cGcc1YrYxdQuNI8kpQ1bNof2+mB3n6bm+2
+	 X1AV7tRuDlTYg==
+Date: Mon, 01 Sep 2025 14:28:04 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Marcos Del Sol Vives <marcos@orca.pet>,
+        kernel test robot <oliver.sang@intel.com>
+CC: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Kees Cook <kees@kernel.org>,
+        "Xin Li (Intel)" <xin@zytor.com>,
+        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Subject: Re: [PATCH v2] x86: add hintable NOPs emulation
+User-Agent: K-9 Mail for Android
+In-Reply-To: <51c25fb7-46be-4364-9371-6a7cb6b07625@orca.pet>
+References: <202508291620.bcfb3924-lkp@intel.com> <0ffa7c6e-f32f-4966-85df-3ee5f2426e9e@orca.pet> <33A549B7-B442-402C-A82C-862C0F509274@zytor.com> <51c25fb7-46be-4364-9371-6a7cb6b07625@orca.pet>
+Message-ID: <772C4DE8-8564-430D-9304-A39F88E07EBF@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 28 Aug 2025 18:45:40 +0000 Bhargava Marreddy wrote:
-> Allocate CP and NQ related data structures and add support to
-> associate NQ and CQ rings. Also, add the association of NQ, NAPI,
-> and interrupts.
+On September 1, 2025 4:43:15 AM PDT, Marcos Del Sol Vives <marcos@orca=2Epe=
+t> wrote:
+>El 31/08/2025 a las 21:32, H=2E Peter Anvin escribi=C3=B3:
+>> I'm really, *really* starting to question this approach=2E=20
+>>=20
+>> The right thing would be to not compile in endbr instructions on 32 bit=
+s,
+>> since they aren't supported by the kernel (if you try to enable CET/IBT
+>> you will crash instantly, because there is no endbr32 at the vdso syste=
+m
+>> can entry point right now=2E)
+>>=20
+>> We are talking about a very small number of CPUs stuck between generati=
+on
+>> 5 and generation 6=2E Most likely we are talking about a much smaller n=
+umber
+>> than the i486 support we have been debating lately=2E=2E=2E
+>
+>I assume the kernel is currently simply ignoring the CET flag on ELF for
+>all 32-bit x86 binaries and libraries?
+>
+>Anyhow, seeing this is indeed becoming more tricky and error-prone, I'm
+>contating the sudo developer which is, so far, the only software that
+>has this issue=2E
 
-> +static int bnge_alloc_nq_desc_arr(struct bnge_nq_ring_info *nqr, int n)
-> +{
-> +	nqr->desc_ring = kcalloc(n, sizeof(*nqr->desc_ring), GFP_KERNEL);
-> +	if (!nqr->desc_ring)
-> +		return -ENOMEM;
-> +
-> +	nqr->desc_mapping = kcalloc(n, sizeof(*nqr->desc_mapping), GFP_KERNEL);
-> +	if (!nqr->desc_mapping)
-> +		return -ENOMEM;
-
-Please add appropriate local unwind in all functions. If the function
-fails it should undo its partial updates. The assumptions about unwind
-somewhere deep in the call stack made it hard to work with bnxt.
-
-> +static int alloc_one_cp_ring(struct bnge_net *bn,
-> +			     struct bnge_cp_ring_info *cpr)
-> +{
-> +	struct bnge_ring_mem_info *rmem;
-> +	struct bnge_ring_struct *ring;
-> +	struct bnge_dev *bd = bn->bd;
-> +	int rc;
-> +
-> +	rc = bnge_alloc_cp_desc_arr(cpr, bn->cp_nr_pages);
-> +	if (rc) {
-> +		bnge_free_cp_desc_arr(cpr);
-> +		return -ENOMEM;
-> +	}
-> +	ring = &cpr->ring_struct;
-> +	rmem = &ring->ring_mem;
-> +	rmem->nr_pages = bn->cp_nr_pages;
-> +	rmem->page_size = HW_CMPD_RING_SIZE;
-> +	rmem->pg_arr = (void **)cpr->desc_ring;
-> +	rmem->dma_arr = cpr->desc_mapping;
-> +	rmem->flags = BNGE_RMEM_RING_PTE_FLAG;
-> +	rc = bnge_alloc_ring(bd, rmem);
-> +	if (rc) {
-> +		bnge_free_ring(bd, rmem);
-> +		bnge_free_cp_desc_arr(cpr);
-
-use a goto ladder for centralized error handling, per kernel coding
-style
-
-> +	}
-> +
-> +	return rc;
-> +}
-
-> +static int bnge_set_real_num_queues(struct bnge_net *bn)
-> +{
-> +	struct net_device *dev = bn->netdev;
-> +	struct bnge_dev *bd = bn->bd;
-> +	int rc;
-> +
-> +	rc = netif_set_real_num_tx_queues(dev, bd->tx_nr_rings);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return netif_set_real_num_rx_queues(dev, bd->rx_nr_rings);
-> +}
-
- netif_set_real_num_queues() exists
-
-> +static int bnge_setup_interrupts(struct bnge_net *bn)
-> +{
-> +	struct bnge_dev *bd = bn->bd;
-> +
-> +	if (!bd->irq_tbl) {
-> +		if (bnge_alloc_irqs(bd))
-> +			return -ENODEV;
-> +	}
-> +
-> +	bnge_setup_msix(bn);
-> +
-> +	return bnge_set_real_num_queues(bn);
-> +}
-> +
-> +static int bnge_request_irq(struct bnge_net *bn)
-> +{
-> +	struct bnge_dev *bd = bn->bd;
-> +	int i, rc;
-> +
-> +	rc = bnge_setup_interrupts(bn);
-> +	if (rc) {
-> +		netdev_err(bn->netdev, "bnge_setup_interrupts err: %d\n", rc);
-> +		return rc;
-> +	}
-> +	for (i = 0; i < bd->nq_nr_rings; i++) {
-> +		int map_idx = bnge_cp_num_to_irq_num(bn, i);
-> +		struct bnge_irq *irq = &bd->irq_tbl[map_idx];
-> +
-> +		rc = request_irq(irq->vector, irq->handler, 0, irq->name,
-> +				 bn->bnapi[i]);
-> +		if (rc)
-> +			break;
-> +
-> +		netif_napi_set_irq_locked(&bn->bnapi[i]->napi, irq->vector);
-
-Are you netdev-locked here? I don't see the driver either requesting ops
-lock or implementing any API which enables netdev-lock.
--- 
-pw-bot: cr
+Yep=2E
 
