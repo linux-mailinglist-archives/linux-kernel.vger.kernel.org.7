@@ -1,193 +1,156 @@
-Return-Path: <linux-kernel+bounces-794849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F26B3E80B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:59:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E4EB3E810
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CFA04E2BBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0D9189B34D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D06C34164F;
-	Mon,  1 Sep 2025 14:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093D734164F;
+	Mon,  1 Sep 2025 15:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fm+Y8Lvq"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t+ESQXZo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RMnykGK3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB18F2F1FFE;
-	Mon,  1 Sep 2025 14:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14CC335BB7;
+	Mon,  1 Sep 2025 14:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738760; cv=none; b=TBr4x9+AEgWtFOTGB8VH131VcEosh8Bw3/7i4GjAkwRmFgvrODJuPr9y3/HenpfxfOCTarZldb6JX0ZUYkRyaSXgpRkI9Liza7hSD3BQ5G5T9207Hhwse2rElsL19hlWhVI/rfduSfN+cmj7xrARQFAaf1ZhrQhqNBgOvYQGiuQ=
+	t=1756738799; cv=none; b=seUFy06KlfPU9M+7hgkIgoxv90T664jGaaecO8dcRr3ABx+OugGWeVoHzDKstinzLST22VKoHkMpE305U+TMrnPu7Z5GpgTZ89Nq2KFT6Eyo1YryWV5mmwXqmSbydXZwDGD8++kf+mKXujTyfn1q6HLqTcDs1ipYfOPQtWBJ9QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738760; c=relaxed/simple;
-	bh=/ycGbSkHOxuM3sRpgIzjfmP2guQFUiYSHp1rOlm+S1g=;
+	s=arc-20240116; t=1756738799; c=relaxed/simple;
+	bh=Srmgk0gw2+ryiP1RbMOgD7H4FArhN6lnVB/qDY6fTMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8l7d0jYmglAtfQSw2J13uZME/L9vnABIcq8quVcBE+NwW/pRRPxuAg+b2dWmwbtiHE3BMDMchdxh1HzUo0JLBEYg9N+dC2SStwemkgZ9VFHqd4kX84PRkQS4/HR8fGdJde635N4fFALIE64c4hv4KYzJ/lPXq3MssVypuDIvsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fm+Y8Lvq; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 101BD20075;
-	Mon,  1 Sep 2025 16:59:16 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 8pSPqeFkcKwx; Mon,  1 Sep 2025 16:59:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1756738753; bh=/ycGbSkHOxuM3sRpgIzjfmP2guQFUiYSHp1rOlm+S1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fm+Y8Lvqwnsy2ZfpOBdDIqmHULGETv1XwNudZrjHhxIfFKPL6HqEvsqa6zaD7hKGV
-	 +paBqu6mmz/3GqB5nG5uHRZFKpOkhEFUTGdr2emzHgPinga9yhdW0NvTVM/3NgyBCq
-	 SuazwKJnitM3II1GO5jCJcrReWiZn+hMK+aBKHCJlqsyFAps44/AzjTs5B9eZ0NOdE
-	 5F6dvpXk6fCVkkIqc2qfBE9SW9LEK6YkoqLtjWt83xDoqWaXviejWPEy0o5ao9DsAP
-	 mnpW+AD9ji/ivwhCYocWk4HTLEnY+o/FDiucqFsBsJKub0ko2eQvZA/4rJ371vJPXu
-	 nH2qzkGDIs4zg==
-Date: Mon, 1 Sep 2025 14:58:54 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: loongson: Document GPIO
- controller of 2K0300 SoC
-Message-ID: <aLW0rgvKno3zpXDi@pie>
-References: <20250901133804.38433-1-ziyao@disroot.org>
- <20250901133804.38433-2-ziyao@disroot.org>
- <CAAhV-H5odi479mTr0zmDnX1WF2AmJRXTL34_ts2VCM-g6N7bjA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L09/FuTeecOoVww6RASzJV4TzXPAK9EdwcgHYPI6mabTWVeYZbQn6XSGbIU9beE6GRJwEY6rOgMlxRmHK+902FifrtKoanln+arYgDJ9DjZvcufLrJI8906IQJ6MUtOkZobdxKGVGY8K7pUrl2m3I3IkVhyzcyDUB0FaqHpvYcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t+ESQXZo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RMnykGK3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 1 Sep 2025 16:59:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756738795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PB8zuML1kiuAkBAHseJ49M0Krsa/c4iv5wrswU+E5c8=;
+	b=t+ESQXZozxJaupiaqOxSINQt2HSCGw6UfjgRQVgeAw/kBrfqz88WoroCL/eda+d8orM6SQ
+	wMJCI7zQxDtvSB4mhi3W9lIQyI53jJVfv4v+L80h/AqTs4Dw8Dk/qMzI1N61s+MyfiS468
+	ywFTNFMzIpP/2ta/gIKwkfP0O7tICQC5f7WiIsf+nUWBKVXGw1BjgoFPlu+iEIgcn7zUIC
+	N0miNoJUX5XIcjIWdLkZbrxdmkek3cy4Asi8S0+rd1O519DKZ79vgBsuUVMRE5YtW+w0Bp
+	z8kl/WUxUcK8MsR42PNHED2cncIx+K/4yzTMs4Rw7GlJ+P/tkHE84DARvX39RA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756738795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PB8zuML1kiuAkBAHseJ49M0Krsa/c4iv5wrswU+E5c8=;
+	b=RMnykGK3PAwaMRv7doIdlWV2iQdNcho7lEl07xSeopX5rMxmmKYV9DkU5ije1Iktuyigf6
+	w2XeAUmqPEZwMcAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Andreas Larsson <andreas@gaisler.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
+	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock <nick.alcock@oracle.com>, 
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
+ library
+Message-ID: <20250901164203-efc4e1ca-d83c-4776-bc20-13e1088ac548@linutronix.de>
+References: <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
+ <20250829160020-5aeb38c3-2cb1-45b0-81fd-35e113417b65@linutronix.de>
+ <f1204327-9d67-4ca2-9f55-6777453173f6@gaisler.com>
+ <20250829185830-be502aa8-0f00-46b7-90fe-2d3cf3f1e7af@linutronix.de>
+ <18d9e41c-f05f-4b3e-8217-4b8deb7afabd@gaisler.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H5odi479mTr0zmDnX1WF2AmJRXTL34_ts2VCM-g6N7bjA@mail.gmail.com>
+In-Reply-To: <18d9e41c-f05f-4b3e-8217-4b8deb7afabd@gaisler.com>
 
-On Mon, Sep 01, 2025 at 10:22:04PM +0800, Huacai Chen wrote:
-> Hi, Yao,
+Hi Andreas,
+
+thanks!
+
+On Mon, Sep 01, 2025 at 04:28:52PM +0200, Andreas Larsson wrote:
+> On 2025-08-29 19:07, Thomas Weißschuh wrote:
+> > What does this do?
+> > 
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index e2c928de7d2c..6ae7afae948c 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1299,6 +1299,11 @@ force_sig_info_to_task(struct kernel_siginfo *info, struct task_struct *t,
+> >         struct k_sigaction *action;
+> >         int sig = info->si_signo;
+> >  
+> > +       if (unlikely(is_global_init(t)) && sig == SIGSEGV)
+> > +               panic("killing init, sig=%d errno=%d code=%d addr=%d vdso=%px",
+> > +                     info->si_signo, info->si_errno, info->si_code, info->si_addr,
+> > +                     t->mm->context.vdso);
+> > +
+> >         spin_lock_irqsave(&t->sighand->siglock, flags);
+> >         action = &t->sighand->action[sig-1];
+> >         ignored = action->sa.sa_handler == SIG_IGN;
 > 
-> On Mon, Sep 1, 2025 at 9:38â€¯PM Yao Zi <ziyao@disroot.org> wrote:
-> >
-> > Loongson 2K0300 ships a GPIO controller whose input/output control logic
-> > is similar to previous generation of SoCs. Additionally, it acts as an
-> > interrupt-controller supporting both level and edge interrupts and has a
-> > distinct reset signal.
-> >
-> > Describe its compatible in devicetree. We enlarge the maximum value of
-> > ngpios to 128, since the controller technically supports at most 128
-> > pins, although only 106 are routed out of the package. Properties for
-> > interrupt-controllers and resets are introduced and limited as 2K0300
-> > only.
-> Replace the full name with "Loongson-2K0300" and short name with
-> "LS2K0300", others look good to me.
-> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-
-I don't understand what is improved with this. For the fullname, I don't
-see any difference between "Loongson 2K0300" and "Loongson-2K0300". And
-for the short one, omitting the "LS" prefix doesn't introduce any
-ambiguity, either.
-
-I did a quick search through git log, and found many commits for Loongson
-2K SoCs do include a hyphen for the fullname and "LS" prefix for
-abbreviation in messages, while some merge commits don't do so.
-
-Even the official production page for Loongson 2K0300 refers to it
-without a hyphen[1]. Thus I cannot find out of the point of rewording...
-
-> Loongson 2K0300 is a multi-function SoC build upon the LA264 processor
-> core, ...
-
-I'll appreciate and adapt it if you could explain why the change is
-necessary. Thanks for your patience.
-
-Best regards,
-Yao Zi
-
-[1]: https://loongson.cn/EN/product/show?id=35
-
-> >
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> >  .../bindings/gpio/loongson,ls-gpio.yaml       | 28 ++++++++++++++++++-
-> >  1 file changed, 27 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> > index b68159600e2b..69852444df23 100644
-> > --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> > +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
-> > @@ -14,6 +14,7 @@ properties:
-> >      oneOf:
-> >        - enum:
-> >            - loongson,ls2k-gpio
-> > +          - loongson,ls2k0300-gpio
-> >            - loongson,ls2k0500-gpio0
-> >            - loongson,ls2k0500-gpio1
-> >            - loongson,ls2k2000-gpio0
-> > @@ -36,7 +37,7 @@ properties:
-> >
-> >    ngpios:
-> >      minimum: 1
-> > -    maximum: 64
-> > +    maximum: 128
-> >
-> >    "#gpio-cells":
-> >      const: 2
-> > @@ -49,6 +50,14 @@ properties:
-> >      minItems: 1
-> >      maxItems: 64
-> >
-> > +  "#interrupt-cells":
-> > +    const: 2
-> > +
-> > +  interrupt-controller: true
-> > +
-> > +  resets:
-> > +    maxItems: 1
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > @@ -58,6 +67,23 @@ required:
-> >    - gpio-ranges
-> >    - interrupts
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: loongson,ls2k0300-gpio
-> > +    then:
-> > +      required:
-> > +        - "#interrupt-cells"
-> > +        - interrupt-controller
-> > +        - resets
-> > +    else:
-> > +      properties:
-> > +        "#interrupts-cells": false
-> > +        interrupt-controller: false
-> > +        resets: false
-> > +
-> >  additionalProperties: false
-> >
-> >  examples:
-> > --
-> > 2.50.1
-> >
-> >
+> This (with addr=%px) results in:
 > 
+> [    2.073506] Run /init as init process
+> [    2.076547] Kernel panic - not syncing: killing init, sig=11 errno=0 code=1 addr=0000000000000000 vdso=fff8000100384000
+> [    2.076594] CPU: 7 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc1-00010-gf63e40394cec #11 VOLUNTARY 
+> [    2.076620] Call Trace:
+> [    2.076632] [<0000000000436524>] dump_stack+0x8/0x18
+> [    2.076660] [<00000000004291f4>] vpanic+0xdc/0x320
+> [    2.076682] [<000000000042945c>] panic+0x24/0x30
+> [    2.076700] [<0000000000493240>] force_sig_info_to_task+0x200/0x220
+> [    2.076726] [<0000000000493720>] force_sig_fault+0x40/0x60
+> [    2.076747] [<0000000000439e28>] sun4v_data_access_exception+0xa8/0x140
+> [    2.076770] [<00000000004066d4>] sun4v_dacc+0x28/0x34
+> [    2.077940] Press Stop-A (L1-A) from sun keyboard or send break
+> [    2.077940] twice on console to return to the boot prom
+> [    2.077981] ---[ end Kernel panic - not syncing: killing init, sig=11 errno=0 code=1 addr=0000000000000000 vdso=fff8000100384000 ]---
+
+So a NULL-pointer deref. Please also try the following, to get the trapping code.
+
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1299,6 +1299,14 @@ force_sig_info_to_task(struct kernel_siginfo *info, struct task_struct *t,
+        struct k_sigaction *action;
+        int sig = info->si_signo;
+ 
++       if (unlikely(is_global_init(t)) && sig == SIGSEGV) {
++               struct pt_regs *regs = task_pt_regs(t);
++
++               panic("killing init, sig=%d errno=%d code=%d addr=%px vdso=%px pc=0x%lx vdsopc=0x%lx",
++                     info->si_signo, info->si_errno, info->si_code, info->si_addr,
++                     t->mm->context.vdso, regs->tpc, regs->tpc - (unsigned long)t->mm->context.vdso);
++       }
++
+        spin_lock_irqsave(&t->sighand->siglock, flags);
+        action = &t->sighand->action[sig-1];
+        ignored = action->sa.sa_handler == SIG_IGN;
+
+
+Please give me the disassembly for the address printed as "vdsopc" from
+arch/sparc/vdso/vdso64.so.dbg starting from its function entrypoint.
+
+
+Thomas
 
