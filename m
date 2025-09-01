@@ -1,199 +1,186 @@
-Return-Path: <linux-kernel+bounces-794081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5FFB3DC96
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32371B3DC9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE39E3B600B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308CF440314
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D392FB618;
-	Mon,  1 Sep 2025 08:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B172FB978;
+	Mon,  1 Sep 2025 08:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gA5E2LCD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwwSNaT8"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27D92FAC0E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2F2FAC1B
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715728; cv=none; b=lxDrBqJGeDkjMXeXBjgjsZIAa5DDSpRQRsTSy9LF1VCPRlYeTp1uUzEdWUC7Nv6SuCS/z/ViCaBulazou6WbiNs97EsfsWNCf1nwBXuIdL1zTp5h0QW9FzKtWxpi4LwY5owKUYYNERYz+Fvc5CvGuuwdXweJeHQOiyPhF90Qd9A=
+	t=1756715783; cv=none; b=tcRcFkXoatiOG+p0VvrGC00VlCh9VRI8yXSxsSbe1tvrDvWICIUXUwNCe8BQpMfX5BCWCT7NXcz2RFe2wbanqXp982aMo4Odk002pmCA+L4Jsgig2He9+VLXSwdatS885rRff4HV37oH9W4v+Nkb2PYyySVqY5KTmzCiNnvuMlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715728; c=relaxed/simple;
-	bh=UmR92pqcKCbqblA5mzeeG4b/xKSr411QQ63Fq1MC+d8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AhnJbdo4llXdVAHJZMxupLHFtWnaRpH9Pq9afolP9Lkaxmbvjnc5/V00vD4buuWs0/TuAI7ZT/w0uspJ6w2X1QzTek8RS6ZjYxEWk4NN5vdl0IHUGwfUt6gxGhvUmN0GO7en6/w5wg+GnhpbJ+NOUFDlg3x2p7bTsJuFqzWdDEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gA5E2LCD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756715725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0Rp/f+W0ugUReLNu6gdfFdcYbWimciufzeaE9rDyHW8=;
-	b=gA5E2LCDu6LC0ZIdrE7KGVsZGouVwZtQO72OaLuow+ebkjWrsWNIXD9gLoKNeZVrskwuRU
-	N93Qpmlyj5pA2ZgOlS2PjJOWRi7GS4dD+wlGk+iH9wUvKYQ/qasDkcVTdIqUh2yrmxVEkk
-	AI5q9dzR5+E6KgKWiMum+mOvhSXFI0g=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-2gpWcuGJOJeT9H0eaoDWPw-1; Mon, 01 Sep 2025 04:35:24 -0400
-X-MC-Unique: 2gpWcuGJOJeT9H0eaoDWPw-1
-X-Mimecast-MFC-AGG-ID: 2gpWcuGJOJeT9H0eaoDWPw_1756715723
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b8dde54c1so2934215e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:35:24 -0700 (PDT)
+	s=arc-20240116; t=1756715783; c=relaxed/simple;
+	bh=yGTmQwopt1HdGhxa/Ad97/8uXXqeHBaz5YtUtcqQjCU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tzw8XtrKJ5psdrH6t7PaCYbBbWgJxcpSCK9w/GjEWB7unLzuf9TCx9mcSo89RGn/KGf/4KDLJi4YS1vqaEsZ0YIwRdh4ct8J2LPHojvQT4m1gS5hpD/iAKPfCuIt3EOe8wnCDPCTbVvnWK6IwPYUSOzMYp/hoDerF8+d5JgwU3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwwSNaT8; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b8b02dd14so4928365e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:36:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756715780; x=1757320580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hHm6+8TqjeCNqsd1vb4l6ddQt0tZxWa+70awNp7aNXU=;
+        b=hwwSNaT8/VngiRY0kRUEfhE5Ec/h0JztgogCAdECtVxHn4/yW5Xeua8HuAFpb/RqRZ
+         1BS2VREhDJD+kqo8MyH66od2R9XNSShfdmV50W5wdB8sCBHUd8DqZ0Na2CEqHodbdWxJ
+         CSgC/PODdxpIndyQ1ybQi5M5T/xphNuk3hg5VGwLZjbwRIHQUH6ATL9XYDKkEmvAneW9
+         0RAV6RCUG/NSrFfzEpCwD8Gzyec+03LzhwF0OP7kxk1basGkMqeyj1z8A7gzF+1AHZlF
+         t4j9L3eYw5wQxMASsHGX0xDUJOfsl0pC1Bm/oegYei3H5Iepx2gTzLRUT8pEjV2ckfdx
+         f+2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756715723; x=1757320523;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Rp/f+W0ugUReLNu6gdfFdcYbWimciufzeaE9rDyHW8=;
-        b=qRajJTh2sv8zbuKFzZPKk0IyCsfeLlAbGodP7xkU1VQYzpkDK5sdVJ5T4BlmmF3UuY
-         D4aNrocMdDOFuDRdDS/C+gPQIcRrnj49iELeCNIZ6MDR6LIqOsKul4mRnWYqKFrECnfv
-         layrq+i7/t7U9BcmduSFkis75Yqs79LlgFHE6ENuHLVRNSGNmzyVaKP/aT67yGO0h8di
-         +NDy60j7PRPPvcGWOnbzlUUMf4UWBFZ8avWbADKcxleb/n3AO2idknZbPAdsUmocpwsb
-         sskKxWNTnrdIWCp1QDirgb5dNgAgSd8Ktdakt1GHRQ462l2cmK1WgyRuoezc3iPQjszs
-         cZCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkee7GbZSNEmzKULHueF9QOY6MMLte9GP+id3NlP1OZKWtzI7rpf5wwZ+qsDSYVvEP+sXR4Uzw9WNignM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkg7eRWhUmiNLwEfT3WL2j86CLThyXsJVyDnNGpTVDEuH+/KxP
-	xHCBJGricKIuoh+7h4OpKCHMLns9GHv8utZZ4kr5V4jMtNmxz9zdW1ab1Lm3A/M1vMFFrMGIAap
-	Bzw45REgCQO/V0UPgKNi5lhpZtM/wgOlN6TfE2P1LGTE50xKoy8aOwT8HzuYFOwqSXg==
-X-Gm-Gg: ASbGncuWyvCyutQ8L2NlGvRG0j2nItlFlxcSrw3VSz/Ui3XInMv6UHKcBFdZqMs5REw
-	1zGV8rTiJPzMJrE3BFQeDRVhpmrMGYulbB0wIYQ+ToG5Xk2XZOnrWi931Yi/pfEHHuKeplbAtO8
-	2V9BZGw9wPdl0/S5JWoaNVnQ/Nb4QToLq7JJWOglFUn+AlFHirG1SH+uDlgSEWWka7R6U2tKVuy
-	IjQSgb5krtnCaXJBwcucUedN2I7na7ck2Q0IKOVbovm4ezIXvlONBcuIdxozgXfuJSTsqg5a984
-	PXHK9lLH+kd9d4mpa87Hx9+7wdUx113SE0+oFUHJR+Oi8J1GumlXaTg3tgVTOAuS4dynEnuB5gF
-	ooiO4Ch3OPYGeVZU+y6eipDz3Ne47w7f1eAMTilLEdMOniC55vkSxcRAxfeSq2Oxfd3c=
-X-Received: by 2002:a05:600c:35ca:b0:45b:8939:8b19 with SMTP id 5b1f17b1804b1-45b89398d7amr40695475e9.8.1756715723516;
-        Mon, 01 Sep 2025 01:35:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFddP6f93Y6m5iRNV/zYvBCXZhasJOXAiWFqnS7FH0aiguBZ9WEirTfxYpQJ343zE7hjq4YFA==
-X-Received: by 2002:a05:600c:35ca:b0:45b:8939:8b19 with SMTP id 5b1f17b1804b1-45b89398d7amr40695215e9.8.1756715723093;
-        Mon, 01 Sep 2025 01:35:23 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6db6sm240749605e9.2.2025.09.01.01.35.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 01:35:22 -0700 (PDT)
-Message-ID: <244b73d5-39dc-4bcc-a69c-8ae3010b40d9@redhat.com>
-Date: Mon, 1 Sep 2025 10:35:21 +0200
+        d=1e100.net; s=20230601; t=1756715780; x=1757320580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hHm6+8TqjeCNqsd1vb4l6ddQt0tZxWa+70awNp7aNXU=;
+        b=SDl7eYAEVRLzXMuCh4JVE+WUn4/U9IjnghzXerK/MC4KCtFsrH5uvzmcBKHSE39Iue
+         OovPaFeFA6gK3VXj/pzq/Q1qqDN8t9kBYOJWbIGt612lZ9SOc20nc3pvXShWI7NJrivx
+         OFw4SSdlgYrv8YP9uD5qdlgOVT3jZ1gxiGDtXCqT4a8ljDVzt31atROyuCj8XUBXpS9L
+         JSZ2gg5kXZHUx+8kAwy7RJixHyJQxF34hUwnOnLv3OeY7k4+ZCjdxODN6jmDXxDGsbpN
+         w8aQYOa8f82fuu9OUz8ZEDKbLGx5wot6TIc8iNN27YCId05SAmmvl4jLH9Lchrd+saTt
+         9XDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXr6B/iquk5nImRrKcLFWUpmOb8JgqI87beDKFIOy1vpnvM098maUBiLdSqXpcbM3x6tf3f8hj8hHtmrh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8hJ9mvwJhS018oc1zQJ4jkwhNBVpZ22NjcP5QOuS19imKgmc
+	0fQxkKrZJbxIfi6aMsFE7UnpVlU2yiL/ebZcgISixV7DZAKo7QSKUbMkMGw9NyXSkVI5uBtqcJv
+	G72od6V2Q7wsUOXOZOp9tLfLgVc28DKoFlZRGxZW4
+X-Gm-Gg: ASbGncsRCmIc00Lg+Bo+20pU8dMCkbs5BJ/V2t3VkGCt21/3dfoLKeuPLbQUnGDlABL
+	BJpA1zZEwifvMbLDiseWXB9r26Y8mnaqWpR05rCUr3sf3s4XYo2UJzix62pola4yU50ETwg6uvL
+	VaNort8uU5nQBuQ3OH9IOk2uD4LQpwUdTUGKS9Lsl7Rlujx42JWZZ7ZqWhHgN70YC6jIBLSoEvb
+	8rqHAlvOP9Exy6TIN891xkYVHPm2WTiP6f3r9CdjorBcXN44rmSxPxmPwtZaFZK2WPyjqY1LDbK
+	68dDcIdeHwc=
+X-Google-Smtp-Source: AGHT+IFOyZ/K9inIYcfsBcdFd2sn+axEaovrgR1WQbNKlDCM7EkUFX8hdWD8GiWTp7Mb8lsTdSYIgKbtCsVTIIXZFIE=
+X-Received: by 2002:a05:600c:8b42:b0:45b:79fd:cb3d with SMTP id
+ 5b1f17b1804b1-45b8558b522mr50268455e9.36.1756715779928; Mon, 01 Sep 2025
+ 01:36:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer
- parameters
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, akpm@linux-foundation.org,
- axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
- hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com
-References: <20250831093918.2815332-1-max.kellermann@ionos.com>
- <20250831093918.2815332-2-max.kellermann@ionos.com>
- <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
- <CAKPOu+-ZjNr9hEir8H=C5C9ZwbS7ynY4PrJuvnxa-V425A+U3Q@mail.gmail.com>
- <e3ec5583-adf0-44c3-99c9-5a388c43fb7d@redhat.com>
- <CAKPOu+9CiT-5P--6TZcyq=jHLDhCa8LDh1AYjKr69+0shO8UrQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+9CiT-5P--6TZcyq=jHLDhCa8LDh1AYjKr69+0shO8UrQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-6-ec65006e2f07@kernel.org> <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
+In-Reply-To: <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 1 Sep 2025 10:36:07 +0200
+X-Gm-Features: Ac12FXwspuKkks0jeuxbZRG0FFiSi8FCXOsFN9qbGxckrqaGTXEv6cLZ9MWyrFc
+Message-ID: <CAH5fLgiEi4gZtb6qProd0tXBHU-ZEs2CKCduO25w9V4ZGqgF4g@mail.gmail.com>
+Subject: Re: [PATCH v6 06/18] rust: str: add `bytes_to_bool` helper function
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>, 
+	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01.09.25 10:26, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 10:20 AM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 01.09.25 10:05, Max Kellermann wrote:
->>> On Mon, Sep 1, 2025 at 9:33 AM Kiryl Shutsemau <kirill@shutemov.name> wrote:
->>>>
->>>> On Sun, Aug 31, 2025 at 11:39:07AM +0200, Max Kellermann wrote:
->>>>> For improved const-correctness.
->>>>
->>>> It is not a proper commit message.
->>>
->>> I believe it is proper for something as trivial as this. I think
->>> adding more text would just be noise, only wasting the time of people
->>> reading it. But that is a matter of perspective: I expect every
->>> competent C developer to know the concept of const-correctness.
->>>
->>> Do you believe the commit message of 29cfe7556bfd ("mm: constify more
->>> page/folio tests") is "proper"?
->>>
->>
->> "Constify shmem related test functions for improved const-correctness."
-> 
-> Mentioning "shmem" adds no information because that is already
-> mentioned in the subject. "Constify" is just as redundant, it's the
-> same as "adding const".
-> 
-> The only new piece of information here is "test". If you want, I can
-> change the subject to "mm/shmem: add `const` to pointer parameters of
-> test functions" and leave the body. Would that make the commit message
-> "proper", or do you insist on having redundant information in the
-> body?
+On Wed, Aug 27, 2025 at 3:46=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+>
+>
+> > On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrot=
+e:
+> >
+> > Add a convenience function to convert byte slices to boolean values by
+> > wrapping them in a null-terminated C string and delegating to the
+> > existing `kstrtobool` function. Only considers the first two bytes of
+> > the input slice, following the kernel's boolean parsing semantics.
+> >
+> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> > ---
+> > rust/kernel/str.rs | 35 +++++++++++++++++++++++++++++------
+> > 1 file changed, 29 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> > index d070c0bd86c3..b185262b4851 100644
+> > --- a/rust/kernel/str.rs
+> > +++ b/rust/kernel/str.rs
+> > @@ -921,6 +921,20 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+> >     }
+> > }
+> >
+> > +/// # Safety
+> > +///
+> > +/// - `string` must point to a null terminated string that is valid fo=
+r read.
+> > +unsafe fn kstrtobool_raw(string: *const u8) -> Result<bool> {
+> > +    let mut result: bool =3D false;
+> > +
+> > +    // SAFETY:
+> > +    // - By function safety requirement, `string` is a valid null-term=
+inated string.
+> > +    // - `result` is a valid `bool` that we own.
+> > +    let ret =3D unsafe { bindings::kstrtobool(string, &mut result) };
+> > +
+> > +    kernel::error::to_result(ret).map(|()| result)
+> > +}
+> > +
+> > /// Convert common user inputs into boolean values using the kernel's `=
+kstrtobool` function.
+> > ///
+> > /// This routine returns `Ok(bool)` if the first character is one of 'Y=
+yTt1NnFf0', or
+> > @@ -968,13 +982,22 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+> > /// assert_eq!(kstrtobool(c_str!("2")), Err(EINVAL));
+> > /// ```
+> > pub fn kstrtobool(string: &CStr) -> Result<bool> {
+> > -    let mut result: bool =3D false;
+> > -
+> > -    // SAFETY: `string` is a valid null-terminated C string, and `resu=
+lt` is a valid
+> > -    // pointer to a bool that we own.
+> > -    let ret =3D unsafe { bindings::kstrtobool(string.as_char_ptr(), &m=
+ut result) };
+> > +    // SAFETY:
+> > +    // - The pointer returned by `CStr::as_char_ptr` is guaranteed to =
+be
+> > +    //   null terminated.
+> > +    // - `string` is live and thus the string is valid for read.
+> > +    unsafe { kstrtobool_raw(string.as_char_ptr()) }
+> > +}
+> >
+> > -    kernel::error::to_result(ret).map(|()| result)
+> > +/// Convert `&[u8]` to `bool` by deferring to [`kernel::str::kstrtoboo=
+l`].
+> > +///
+> > +/// Only considers at most the first two bytes of `bytes`.
+> > +pub fn kstrtobool_bytes(bytes: &[u8]) -> Result<bool> {
+> > +    // `ktostrbool` only considers the first two bytes of the input.
+> > +    let stack_string =3D [*bytes.first().unwrap_or(&0), *bytes.get(1).=
+unwrap_or(&0), 0];
+>
+> Can=E2=80=99t this be CStr::from_bytes_with_nul() ?
+>
+> This means that kstrtobool_raw could take a &CStr directly and thus not b=
+e unsafe IIUC?
 
-We usually write complete sentences, and there is nothing wrong with 
-repeating what the subject says.
+That's what Andreas did in the previous version. It ended up being
+pretty complex because CStr::from_bytes_with_nul() requires that we
+compute the length of `stack_string`, which isn't really needed here.
+I recommended having a _raw method like this to avoid that complexity.
+I don't think this is meaningfully more unsafe the way it is in this
+patch.
 
-All the time it takes you to argue here would be better used improving 
-your patch descriptions.
-
--- 
-Cheers
-
-David / dhildenb
-
+Alice
 
