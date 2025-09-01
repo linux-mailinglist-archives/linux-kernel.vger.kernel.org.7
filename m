@@ -1,206 +1,222 @@
-Return-Path: <linux-kernel+bounces-794501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FACB3E2AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEC4B3E2B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723283B8F0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE603A56B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408722727E0;
-	Mon,  1 Sep 2025 12:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470A52EF67A;
+	Mon,  1 Sep 2025 12:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f+s5Pljh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ET6ikEEK"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF76C31355E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976A017A2E6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729522; cv=none; b=hBR2YeO+5kEuBxDKVJLCFztN2Q9XHOIRF5ooC5r/fHXsmi3Ss5t0VGBE5P6yVQi/mK4RpfYKppRDYQYq8KosLq86wZliNeeh7XKd+68jfdz43+hj0FyFPnCx2CY61YI9iVs3PppKUq4hDXo9qx7tyW1X8pm0MIzLj6anwi9fP1k=
+	t=1756729556; cv=none; b=IMblmJ1fSNXMJmm6NZQSZ//WdgbAe80pBhWAETP2lrmNdYqjFn/aWfWc4/zpnRKoHyumdnQ3zOHN4pkEDOOPVYYCR7y+d6dK/WJDt/bmGX6rxIksxKMBr2bisyTKdlM+5MAzlNk8UT70Yg4dxkrRCHWhSRtB1fjNy7kflBAUpHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729522; c=relaxed/simple;
-	bh=vvT8E59Qgse03jpTj3BGdeYp8ChJbxDxfLdL+AMnkZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ccCJzAv5qIbq3fpEkF4KMXBPp6FOo8T8RS1cyKgBr0dGLCgFs4e9nDeZiWRYX/j/rSRzqezzpo/8Si/dtLwnVwFOTzPOZR6gI81nK9GoptPUbN1Lms02VEiG80MLfU4BNQUcgLvfSocp0xU1cS/MCprdct3vIpsOpCHShmeQiF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f+s5Pljh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756729519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ry3HTsvjDYn6ZhWkEuXZ7HIdFuNl7/b7zLeVSRNzby4=;
-	b=f+s5PljhWQ2mvi86o2wC+whlY9Z9dih0SpRtWq/tg4YwLw/FHCXG6klictWrp/yYMsOaKA
-	TsgCSbTW/Z58oaRD0P8A3BaH04CMN8g1eyiB2qBNspyKMwzb3Fp0ggK2qQBdgpbPQEazdV
-	MTnZP2rstkZ89npOSTN2BUsVe9vzKCA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-444-Yi54rIWQMoGTTj4C9Fj5QQ-1; Mon, 01 Sep 2025 08:25:18 -0400
-X-MC-Unique: Yi54rIWQMoGTTj4C9Fj5QQ-1
-X-Mimecast-MFC-AGG-ID: Yi54rIWQMoGTTj4C9Fj5QQ_1756729517
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b7c01a6d3so23693665e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:25:18 -0700 (PDT)
+	s=arc-20240116; t=1756729556; c=relaxed/simple;
+	bh=YRLpPcktydkiMFe1WpSS/gj4C0i9I/Dc1Map8lBk/Tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fqOf2UZS1FikTeTn0fvYHWU19XdwsviYfYgXEitl7CwTfTH4y4dgJIGRjlghANKRrEwPPfHbxiQpI+LAncgGepJbuVftPf4y93sbR0Vcvv07c3f9Puin3WR3bCM68APlj3AsoOjnK0I+NC1T8Hh4Vf7G1T82V3eSEV3oyMwSFIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ET6ikEEK; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b873a2092so15117965e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:25:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756729553; x=1757334353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbycQLF9MWkGkzA+fGZj0+ulP2LwfvU4kMytcoetwe8=;
+        b=ET6ikEEK1mOxIg+9CtZkw+2VmUwBnFCTIvAPwCKV/gn0gQTTI6bPcWmx6ndjsgYR7T
+         czyx2KkswtqJci9bJ5U4eAPZIai3qpbpaevUuw7/qhHuxK09WlutD+KOy0fwZyvaucX3
+         w2kdfC42z2xnsMlvH8/AYwD63cnewzA/7/qeM0Swttn2u8HgDWMkgQB9xhlQZSZxvgCD
+         DLwMvwsX5H7FmE5tYnZciHmAzCzONOnOn0F+KuB3Oxcbgvjpik6TPa+38n7ptZg2knHq
+         HsPfMXgIQj36aizQsa7QCbuMFP+ilsqDVNztFErSkx5keAK+nVmN6Li5Gf63df4BhPV9
+         epYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756729517; x=1757334317;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756729553; x=1757334353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ry3HTsvjDYn6ZhWkEuXZ7HIdFuNl7/b7zLeVSRNzby4=;
-        b=eY0ps2SIDTIk5canBYth+Wz+QEtUPWXfzjAwXmujAXADi1X571BGpIzgsu8dsOzp5f
-         RD5zBs1vMfDeGGzvGvq91cInr5aGMQKzbMC0uM9n0OePOx3kV0nf2qgPFL9aTUKnkec+
-         4iiLqVcD3bO+lbaisQOJqEHjKNwL0ntrY2Q1BPLxFPnYBHUvJwGdQOp5mOXGs9mHuOJc
-         IAAMH455nWjb+WyG3fhrcs0bKxwUopwu5G8yr8VtfHLTNhaetBdBPkq0LXg+j5zLbbSJ
-         toYGv6w4WAWetCcOZKGui7HvPfzaxKLRw5vq1iZ8I4CkKFBnIxfzypVozISWCWDDcpMk
-         1CYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULTGDsd4oXFb2wiLYePDJuawGbmHb37m/5dB0v15mNH7PAj3l3m10c0NV1cvI5GfFaKoelGcFerQGB51E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsyq+/kBIuf7i7hnIsrhAbSuO1dFjskRiN5TRQLFwFa0DZWass
-	Ogw8nwqEdHq9HDEr08ZquqmQqBfTAgSq9RtUqTV/zSCJwo3+VECpyvriT+uCJnx/a+vQ6uoYiqZ
-	sAehIhbeRvZp2KVwYvQdqjJAOAtRh0EdyD77VGGa6+YVGoGBnjZPa/Vq/pyXRqTWj+g==
-X-Gm-Gg: ASbGncuifdIFpbgKB33JPpk5MGdQVX0cFpIPGjhmrOu/Ob9QYZ3g2JGnBga+eLmLi92
-	0KddgEhuzSQNFb4hZ0RgXyVdrg8Ujx+FuLJDK0LwiYefDp3q2gEmaarEApSb2tlJJjxb8Dq15IN
-	z/J+PTLts1BkZ3iBPrrQtPWxpyUI5jRfr37QKmBYAeqgf20K6xKLTv5LmmVDgGRZ6LvRs0WIz7m
-	rWBX0HrSOXysYfEgvosCKg/uYfvzrRmKs9oarTQl+H+1+XHJHUkvBxj/GFC+NSM8q+uu/uvMcYM
-	MI/nHp4jXcZOknB2ltw9zTmAW41x+8rL9fsBLOs7VazhHm2Vv07D4dtpwKBfRxbcFSfWsVCOM47
-	THuJlHf7TaUTHC+KSoFMVgx74WX5y6rvtUnX0cLTivZo5qvtWgW3jXWHzXbi1L+MjIuE=
-X-Received: by 2002:a05:600c:1e89:b0:45b:88ed:9558 with SMTP id 5b1f17b1804b1-45b88ed9bc3mr51982075e9.30.1756729517120;
-        Mon, 01 Sep 2025 05:25:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMGDtOgsZk0c5UDFaUJZJgP3BXCuLTMzz4/00ieMVST2ui2ccALyIM8NlgAkQyyG7Klnzysg==
-X-Received: by 2002:a05:600c:1e89:b0:45b:88ed:9558 with SMTP id 5b1f17b1804b1-45b88ed9bc3mr51981875e9.30.1756729516581;
-        Mon, 01 Sep 2025 05:25:16 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6dc1sm237238175e9.1.2025.09.01.05.25.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 05:25:15 -0700 (PDT)
-Message-ID: <dc21e54c-d7ae-4d7e-9acb-6a3fa573b20f@redhat.com>
-Date: Mon, 1 Sep 2025 14:25:14 +0200
+        bh=qbycQLF9MWkGkzA+fGZj0+ulP2LwfvU4kMytcoetwe8=;
+        b=MXdBmQ+VHwvISZKBbxdO8kJdUFK4jhhVmWUSc2vZFNYoucj8dBL3WPxKo9T51HH0AN
+         LKN72IoSMiNwEd/b3I3antfK9pdZ74eRPlZxQ/8sroj0pOqrTxs+OhWbBITorkwit/k/
+         qVXsRHHNjzfAUHUkFBJ5CIRZ569odxbaHphKbeio+NWxqXkPfD96AcRoOXK9wxYyk5VF
+         xCgw2vM9fxgG7b2ElfpnYGClc7xlzbxIAJHlboGGrZMc09dm4qwoGCak3ZRkkf6bspzd
+         JX6DWS1LG0YJL0Fy+sxDJazyRXH0zcLSFrZSJTeQcqfiJnX7Z5ZPHShORXGFUCeIQ3Y7
+         RAcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWjaxDJmhKIDxlRvURc4zX2sLxvNDctAUsMcuObilbuT2pxmUzi1e2gXpU99kV6PuFVCKhT1nEm1yhYAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLrOPDiYypFt0meyTI/sAohO2/8QgmsW3ODZRQnGzayaLRrmno
+	ij2yIJ0yPw0iaDKyG9oG3rJvUrUjnQxOcTUggJbfPjIXRASMxaTTso+f
+X-Gm-Gg: ASbGncug9egwIcJm8obmYCMqYdSi26AkFXrtgF3Kc+po90n3t/5KJRd5/GDFPtKSKP+
+	wzVIUPDvT0t3IzDdlSPNku4Ylx2pZXr/5Rwc36hwlYZCwrgPI7Wa5q+/nmRyrvHgNo2BRVqkqs0
+	zuGtqW12Wt5i9y2dC5YOdR1xJzSi+wWgsWg2SK/FFLedWQTni/xhPLGtAoy9AiSGzzuM64HyZes
+	LP+gHDXOHOyduyZ8/fw9udx1WOERuwHRtVXo8UhztWSjWebZpQ89BgLZi62xkvdr08RnQQFG96h
+	rYh17ElIRC/wqiGzWDoZ/ap6g6TuC/DVYLqmorI3papPrLCzSA/miivpNUOjLpDvWCSJaLCKcKk
+	xOEOowkCTXgiM1nJSzeBXS9QzUxIa
+X-Google-Smtp-Source: AGHT+IHRynpVpTWD6ySXHOkdCNUyg4PSynT/rcEtXw/LLZpnm9LeRHn2wE/hMLoxu9UKMd4J2YF/7A==
+X-Received: by 2002:a05:600c:a44:b0:45b:7f72:340 with SMTP id 5b1f17b1804b1-45b8557c68cmr69560785e9.25.1756729552446;
+        Mon, 01 Sep 2025 05:25:52 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b74950639sm207297055e9.17.2025.09.01.05.25.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 05:25:51 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	sebastian.wick@redhat.com,
+	xaver.hugl@kde.org,
+	victoria@system76.com,
+	a.hindborg@kernel.org,
+	leitao@debian.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v6 00/16] drm/vkms: Add configfs support
+Date: Mon,  1 Sep 2025 14:25:25 +0200
+Message-ID: <20250901122541.9983-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
-To: Maarten Lankhorst <dev@lankhorst.se>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?=27Thomas_Hellstr=C3=B6m=27?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>,
- Natalie Vock <natalie.vock@gmx.de>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?=27Michal_Koutn=C3=BD=27?=
- <mkoutny@suse.com>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "'Liam R . Howlett'" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-mm@kvack.org
-References: <20250819114932.597600-5-dev@lankhorst.se>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20250819114932.597600-5-dev@lankhorst.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 19.08.25 13:49, Maarten Lankhorst wrote:
-> When exporting dma-bufs to other devices, even when it is allowed to use
-> move_notify in some drivers, performance will degrade severely when
-> eviction happens.
-> 
-> A perticular example where this can happen is in a multi-card setup,
-> where PCI-E peer-to-peer is used to prevent using access to system memory.
-> 
-> If the buffer is evicted to system memory, not only the evicting GPU wher
-> the buffer resided is affected, but it will also stall the GPU that is
-> waiting on the buffer.
-> 
-> It also makes sense for long running jobs not to be preempted by having
-> its buffers evicted, so it will make sense to have the ability to pin
-> from system memory too.
-> 
-> This is dependant on patches by Dave Airlie, so it's not part of this
-> series yet. But I'm planning on extending pinning to the memory cgroup
-> controller in the future to handle this case.
-> 
-> Implementation details:
-> 
-> For each cgroup up until the root cgroup, the 'min' limit is checked
-> against currently effectively pinned value. If the value will go above
-> 'min', the pinning attempt is rejected.
-> 
-> Pinned memory is handled slightly different and affects calculating
-> effective min/low values. Pinned memory is subtracted from both,
-> and needs to be added afterwards when calculating.
+Hi everyone,
 
-The term "pinning" is overloaded, and frequently we refer to 
-pin_user_pages() and friends.
+This series allow to configure one or more VKMS instances without having
+to reload the driver using configfs.
 
-So I'm wondering if there is an alternative term to describe what you 
-want to achieve.
+The process of configuring a VKMS device is documented in "vkms.rst".
 
-Is it something like "unevictable" ?
+In addition, I created a CLI tool to easily control VKMS instances from the
+command line: vkmsctl [1].
 
+The series is structured in 3 blocks:
+
+  - Patches 1..11: Basic device configuration. For simplicity, I kept the
+    available options as minimal as possible.
+
+  - Patches 12 and 13: New option to skip the default device creation and to-do
+    cleanup.
+
+  - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
+    part of the minimal set of options, but I included in this series so it can
+    be used as a template/example of how new configurations can be added.
+
+Finally, the code is thoroughly tested by a collection of IGT tests [2]. The IGT
+series is almost fully reviewed (1 patch is missing) and it is waiting on this
+series to be merged.
+
+I don't know what is preventing this series to be ACK by a DRM maintainer, but
+please, if there is something missing or that needs to be fixed let me know.
+
+I CCed the configfs maintainers in case they can give feedback about the design
+of the configfs API or the configfs related code, just in case that is one of
+the complicated points to review by DRM maintainers.
+
+Best wishes,
+José Expósito
+
+[1] https://github.com/JoseExposito/vkmsctl
+[2] https://lore.kernel.org/igt-dev/20250807074550.6543-1-jose.exposito89@gmail.com/
+
+Changes in v6:
+
+  - No code changes, rebased on top of drm-misc-next
+  - Added Tested-by: Mark Yacoub, who merged the series into the Android tree (thanks!)
+    https://lore.kernel.org/dri-devel/CAC0gqY6ZH8h5aoNh31ck3dP6c3YYtfTRjJ47Obu6xSXSVXm5mA@mail.gmail.com/
+  - Added a link in the cover letter the CLI to configure VKMS: vkmsctl
+  - CCed more people to try to get the series merged
+  - Link to v5: https://lore.kernel.org/dri-devel/20250507135431.53907-1-jose.exposito89@gmail.com/
+
+Changes in v5:
+
+  - No code changes, rebased on top of drm-misc-next
+  - Added Reviewed-by tags, thanks Louis!
+  - Link to v4: https://lore.kernel.org/dri-devel/20250407081425.6420-1-jose.exposito89@gmail.com/
+
+Changes in v4:
+
+  - No code changes, rebased on top of drm-misc-next
+  - Since Louis and I worked on this together, set him as the author of some of
+    the patches and me as co-developed-by to reflect this joint effort.
+  - Link to v3: https://lore.kernel.org/all/20250307163353.5896-1-jose.exposito89@gmail.com/
+
+Changes in v3:
+
+  - Applied review comments by Louis Chauvet: (thanks!!)
+    - Use scoped_guard() instead of guard(mutex)(...)
+    - Fix a use-after-free error in the connector hot-plug code
+  - Rebased on top of drm-misc-next
+  - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose.exposito89@gmail.com/
+
+Changes in v2:
+
+  - Applied review comments by Louis Chauvet:
+    - Use guard(mutex)(...) instead of lock/unlock
+    - Return -EBUSY when trying to modify a enabled device
+    - Move the connector hot-plug related patches to the end
+  - Rebased on top of drm-misc-next
+  - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
+
+José Expósito (6):
+  drm/vkms: Expose device creation and destruction
+  drm/vkms: Allow to configure the default device creation
+  drm/vkms: Remove completed task from the TODO list
+  drm/vkms: Allow to configure connector status
+  drm/vkms: Allow to update the connector status
+  drm/vkms: Allow to configure connector status via configfs
+
+Louis Chauvet (10):
+  drm/vkms: Add and remove VKMS instances via configfs
+  drm/vkms: Allow to configure multiple planes via configfs
+  drm/vkms: Allow to configure the plane type via configfs
+  drm/vkms: Allow to configure multiple CRTCs via configfs
+  drm/vkms: Allow to configure CRTC writeback support via configfs
+  drm/vkms: Allow to attach planes and CRTCs via configfs
+  drm/vkms: Allow to configure multiple encoders via configfs
+  drm/vkms: Allow to attach encoders and CRTCs via configfs
+  drm/vkms: Allow to configure multiple connectors via configfs
+  drm/vkms: Allow to attach connectors and encoders via configfs
+
+ Documentation/gpu/vkms.rst                    | 100 ++-
+ drivers/gpu/drm/vkms/Kconfig                  |   1 +
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+ drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+ drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+ drivers/gpu/drm/vkms/vkms_configfs.c          | 833 ++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+ drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
+ drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
+ drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
+ 12 files changed, 1072 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
+
+
+base-commit: 6b53cf48d9339c75fa51927b0a67d8a6751066bd
 -- 
-Cheers
-
-David / dhildenb
+2.51.0
 
 
