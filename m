@@ -1,129 +1,198 @@
-Return-Path: <linux-kernel+bounces-795346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF0B3F068
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:15:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4001EB3F06C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15941A80774
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA5D4E0871
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79521C16A;
-	Mon,  1 Sep 2025 21:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B8822DA1F;
+	Mon,  1 Sep 2025 21:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxhglIue"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FoD+BIOp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BA5B67F;
-	Mon,  1 Sep 2025 21:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02E4C13B;
+	Mon,  1 Sep 2025 21:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756761326; cv=none; b=G0o3GB8Bj6BtJsWrWo/s1BeF9v1og1bgbhAf3sfCd26DK+qGtgdLf9HTDMn7cD/defEpJo7Ep1t6uMpqZWcF6PvmsrNv5gRC9pzNgigYiAA0c6ctRSqJflDpX5v4FXMPS8nZdiHIwLrqsMdNJLvukHN/3BJ+EVxP/zjWIuoYeck=
+	t=1756761419; cv=none; b=TGTtVLSFUcSDOO3asJ+UZDwt7U5l8fzVRVCZBdSGaulGhKf7VxryeiB/yzF+ZboFt+j5gwOgg9ZLhBo3doKOUcbwvPT3uAFNgErqGosxfX2olhHv0b9iR27Vq7qYuDtqXEFMPa1kra9PTgXyd5w1WKa47lSaEXDsgNd97qZI2fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756761326; c=relaxed/simple;
-	bh=8zUoEQvrtlfwOr9NXnt/0+aoO/B3EsanyptdA/qacNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6Z95q80hsOGsyDV9WqE2o0HEtLhCvRGIvq9mNleXFA2DPm42qSCJhuSdLGsQnhenIaaQE82979cfdxAdXXd+3tijMRnY9PnMYod5//LVH1Ky0hvtff1+M+oVjo9C1cLU1auLk0rd9SCWa5CEHTrbcu7owmu8pDoGG1mjv4PnL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxhglIue; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b873a2092so19022155e9.1;
-        Mon, 01 Sep 2025 14:15:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756761323; x=1757366123; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SEiJAaXmFIGciLe42hjKncbNPOpoGkguWziBkuSpJJs=;
-        b=RxhglIue4c0aay9LoUK/IA033L2WbATghQ9Fk2XvVkx9XAJi1q4huznW8LPjALJlk4
-         qagnoTSh3Mbq1KjGh8W2LCOitrKpCZEFD0fdXKCT9xGB1t+L8La0cnQ4v1JKdHNeWfIa
-         DO2PupIRxOT7TkM2hxXNK1ycIFMnz6U0h2heg2yvBQ33IrDJl3bVJr4AT7JX6JWkbxDP
-         nNiDeU86n+vePLaKn8QL4C1sbzqmtJ+0ClEL4RoiUNuHOcw0hoFoHZg/CkAURDiqIfhn
-         dCxpLjoeLCxVTuY1+F+8PNGF83wRBb3Yg2kuC5sGdE5703nGZ0THessa+lh8c+MjzpLV
-         q9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756761323; x=1757366123;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEiJAaXmFIGciLe42hjKncbNPOpoGkguWziBkuSpJJs=;
-        b=Dp3xccuQw+tbeNjI1NYV/qpBxXa8FFBxREO9dqdvurVhTBJOQ6ppw1aOcTaDmrAvGs
-         wU/ROx2BgVqWetn14ALTsRwMMwEIgeQA3LzTHPHFo+SkMwFaRVclfnnoqXi8iS8TEo11
-         PwoABXwxjzmFYaGUSMiK9E1IWQu81HaKZePCMofJG+B6jx0+vzJj+J5pA6yrCGBZ6+Zr
-         nssrLDFqny5z76lvCt2q3erWAiCU68bv4WOkB2dcAYrUwiR1Az9AIZdYRn/zZDWJ5YP2
-         lZ+49XbJyDidDmufuvkPM4T1/yi5RapQoBjXTkXtYlcidTjThn2VpmZh6MRzIFKTM5Rd
-         j4Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrHkrjhjgwKeH+b6cqT8fEOTBJIlPOjUKEmySzlGOtJKk1uCHfs/YBmPb0ZPnDof3Ey92SRmTZgZNCzCU=@vger.kernel.org, AJvYcCWxLRjLNCjLV9ZZ1BZNzfWJk29l1/+FwCbGiW7kY4p3s22k3wncu1+pxol3YUO2CGz2di/4/mMr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVpAgtNBXlTwiy5sBz5Lr1VSoZlr3oZ2/j41MgVwCcYAErrAru
-	bXF70Pruoz84HvrYNT/kQ5XUWuln3zPXgKD7sot1GbC74n/4fJcSaM/U
-X-Gm-Gg: ASbGncuHJRUBCrc1xLfalobFcdLvJqA7sHw1wjuy2X28n9aWmXQgjnh6OVBawg2mOJ9
-	05u8PZUY0y1Lbyvr4RQI7jBbgxkzfx9VB9U8iVxABk3sLJEBBeSH40xG0VKTVvsxTVWEioEITDb
-	byIrvCd8c2eRpdZBhUpFlpmnTQ5hFT8xX/K9yRrR///cL5IV1O7JcOiT3T4qd+Kt+0nVGQyVByJ
-	/5gulnbxJf/sDdVfjwVOJMex7YrK9RPUEif+mkFdHdE3731ee4r78lDHKXDoXaQlM0hODOkylMH
-	ZEAMFe4zuWqiggzJIaHYm72Nx4XxgX6jgYE1cCNTYwWmYGc0NzIXVIEwpNflrPqND8KUAqtNipZ
-	H6xBrbkW5wy9AB8dupcDqrm1Gjmiz5gcKb3R+kD0rw0NbXrBVmVGappfbr3/OgE8rHvJRU7Cmqp
-	ol2ePMCm2vWA==
-X-Google-Smtp-Source: AGHT+IFzWGRag9fzC9zDs8pjFqgAO9+NbXGM7L6GV0YKnQ6dDbcYiEmW/cMGhlaH1cSXcAHPMa/qTA==
-X-Received: by 2002:a5d:5888:0:b0:3ca:ca52:adb8 with SMTP id ffacd0b85a97d-3d1dfcfb9a8mr7763445f8f.36.1756761322432;
-        Mon, 01 Sep 2025 14:15:22 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d53fda847dsm7717499f8f.0.2025.09.01.14.15.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 14:15:21 -0700 (PDT)
-Message-ID: <27e61dda-c76f-4c8a-bf08-6fa6761e638d@gmail.com>
-Date: Mon, 1 Sep 2025 22:15:20 +0100
+	s=arc-20240116; t=1756761419; c=relaxed/simple;
+	bh=fuLtbWcuMApjPw4Zt2GQ2hRAQyVE7wvAKMyumnRxa/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEBWT6QfvpG9KrzQtCsUD3GbyKS82Fbzhr8dj9ZIle8Qx8MQiSVUaHEIDv9ifLyHD5AdVifBngFrN6q10/vz47JA/+BRer5Nsk7z4rcvg4QdPLBroYBuTBGjeJG/IpIa767OEFdbG+02AApalyD9VCy37fBJdR71zhcEJV55LE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FoD+BIOp; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756761418; x=1788297418;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=fuLtbWcuMApjPw4Zt2GQ2hRAQyVE7wvAKMyumnRxa/s=;
+  b=FoD+BIOpHhvsDId2qfBze/0UDkaR5OWwC58DL2/FE7jfDhROE5D/vQhY
+   nGtbmuzANJbieN0ZmbxhcUIQSjrbhok7v0PzBr5gs7atnMy2gYVSEtnwD
+   /uM1xnms/+YBDjY7rBpR0wS1mStxB1TVNHYExevhIX8MY7Zo7qpF+bEDq
+   PPZZ8ZPD8Bpi6htfOpk271eBmmJMjDZ8NQ7UqdQOL7QLscMNf0pnqMFNx
+   ZXPPCTkveN6KkLqSYfsgXLVY1J3WwKmRUv1hML/nEiCYbgfNO4qKMxWXs
+   zAx2nET6wjLM9cIdteRFGZbzHA1HkOptCaJJqh8pSDOgnPQyAekEQf26w
+   Q==;
+X-CSE-ConnectionGUID: qXyRjuG+T32yp5UX/TrsWw==
+X-CSE-MsgGUID: dj9WZwX6TBK24XCxGO3xxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81602941"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81602941"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:16:57 -0700
+X-CSE-ConnectionGUID: KhwXel9eT0GJMJ+94UV2cw==
+X-CSE-MsgGUID: NM+geiECRziMrMWX5U+T2w==
+X-ExtLoop1: 1
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.254])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:16:54 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id B446C11F738;
+	Tue, 02 Sep 2025 00:16:51 +0300 (EEST)
+Date: Tue, 2 Sep 2025 00:16:51 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 10/10] media: i2c: ov9282: dynamic flash_duration
+ maximum
+Message-ID: <aLYNQ4W8f55G_7HP@kekkonen.localdomain>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 3/5] net: gso: restore ids of outer ip headers
- correctly
-To: Richard Gobert <richardbgobert@gmail.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
- tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
- ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- willemdebruijn.kernel@gmail.com, alexander.duyck@gmail.com,
- linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
-References: <20250901113826.6508-1-richardbgobert@gmail.com>
- <20250901113826.6508-4-richardbgobert@gmail.com>
-Content-Language: en-GB
-From: Edward Cree <ecree.xilinx@gmail.com>
-In-Reply-To: <20250901113826.6508-4-richardbgobert@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
 
-On 01/09/2025 12:38, Richard Gobert wrote:
-> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
-> be mangled. Outer IDs can always be mangled.
+Hi Richard,
+
+On Mon, Sep 01, 2025 at 05:05:15PM +0200, Richard Leitner wrote:
+> This patch sets the current exposure time as maximum for the
+> flash_duration control. As Flash/Strobes which are longer than the
+> exposure time have no effect.
 > 
-> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
-> both inner and outer IDs to be mangled.
-> 
-> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 > ---
-> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
-> index e6b6be549581..24971346df00 100644
-> --- a/drivers/net/ethernet/sfc/ef100_tx.c
-> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
-> @@ -190,6 +190,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
->  	unsigned int len, ip_offset, tcp_offset, payload_segs;
->  	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
-> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
->  	unsigned int outer_ip_offset, outer_l4_offset;
->  	u16 vlan_tci = skb_vlan_tag_get(skb);
->  	u32 mss = skb_shinfo(skb)->gso_size;
+>  drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index b104ae77f00e9e7777342e48b7bf3caa6d297f69..3253d9f271cb3caef6d85837ebec4f5beb466a4d 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -198,6 +198,7 @@ struct ov9282_mode {
+>   * @exp_ctrl: Pointer to exposure control
+>   * @again_ctrl: Pointer to analog gain control
+>   * @pixel_rate: Pointer to pixel rate control
+> + * @flash_duration: Pointer to flash duration control
+>   * @vblank: Vertical blanking in lines
+>   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
+>   * @cur_mode: Pointer to current selected sensor mode
+> @@ -220,6 +221,7 @@ struct ov9282 {
+>  		struct v4l2_ctrl *again_ctrl;
+>  	};
+>  	struct v4l2_ctrl *pixel_rate;
+> +	struct v4l2_ctrl *flash_duration;
+>  	u32 vblank;
+>  	bool noncontinuous_clock;
+>  	const struct ov9282_mode *cur_mode;
+> @@ -611,6 +613,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+>  					mode->vblank_max, 1, mode->vblank);
+>  }
+>  
+> +static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
+> +{
+> +	/* calculate exposure time in µs */
+> +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
+> +	u32 trow_us = (frame_width * 1000000UL) / ov9282->pixel_rate->val;
 
-Reverse xmas tree.
-With that fixed you can add my Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
+Redundant parentheses.
+
+> +
+> +	return exposure * trow_us;
+> +}
+> +
+>  /**
+>   * ov9282_update_exp_gain() - Set updated exposure and gain
+>   * @ov9282: pointer to ov9282 device
+> @@ -622,9 +633,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+>  static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+>  {
+>  	int ret;
+> +	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
+>  
+> -	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
+> -		exposure, gain);
+> +	dev_dbg(ov9282->dev, "Set exp %u (~%u us), analog gain %u",
+> +		exposure, exposure_us, gain);
+>  
+>  	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
+>  	if (ret)
+> @@ -635,6 +647,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+>  		goto error_release_group_hold;
+>  
+>  	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
+> +	if (ret)
+> +		goto error_release_group_hold;
+> +
+> +	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
+> +				       0, exposure_us, 1,
+> +				       OV9282_FLASH_DURATION_DEFAULT);
+>  
+>  error_release_group_hold:
+>  	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
+> @@ -1420,6 +1438,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	struct v4l2_fwnode_device_properties props;
+>  	struct v4l2_ctrl *ctrl;
+>  	u32 hblank_min;
+> +	u32 exposure_us;
+>  	u32 lpfr;
+>  	int ret;
+>  
+> @@ -1491,8 +1510,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	/* Flash/Strobe controls */
+>  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+>  
+> -	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> -			  0, 13900, 1, 8);
+> +	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
+> +	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
+> +						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> +						   0, exposure_us,
+> +						   1, OV9282_FLASH_DURATION_DEFAULT);
+
+Wrap this differently, please, e.g. after '='.
+
+>  
+>  	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
+>  				      V4L2_CID_FLASH_STROBE_SOURCE,
+> 
+
+To me the set looks good but I wouldn't mind about having a bit more
+review.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
