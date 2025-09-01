@@ -1,91 +1,163 @@
-Return-Path: <linux-kernel+bounces-794777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9423B3E713
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C48BB3E714
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CD93B98A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8973BC1C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C46341AAA;
-	Mon,  1 Sep 2025 14:28:09 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F3C341ABF;
+	Mon,  1 Sep 2025 14:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uu8ef1LB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nyLkk+oE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAF3341668
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F262340D94;
+	Mon,  1 Sep 2025 14:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736888; cv=none; b=ECDCI5xaNyx1BLw6Z4eXZ/Tx7gL5ckojcVdDiRJSCvu1fhXthiAOUKalYfJmlnM7B4ASrdIaWgpDDcJ+t1gNWkTRZd0P5jiwtv63Ib3nv1gz6UFL5V5nEVFeqUJsyC82HkcT6Y7LdY9QZ0FzAUO9oU3PsJv46sNrBOzrrAOSxZw=
+	t=1756736895; cv=none; b=aFqKQ7VGQ8ayod87TEt1RjHiK7Gyxj+cnbfE3kj9TQEnTMIvWnySkTFRKGF4ixwIWkBxYISFJ6NBNEnRXFOw6cWVbgUTyTNA4amEtRXHtaxDbkDt/QTHSJtp9utnDfk2s7+k7f1wP6aTyKlUEfqsQB+twH+tNrGEjad3uXGw/bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736888; c=relaxed/simple;
-	bh=SswYK8NK8/NBuIlxZPEINe8a01YkBoblyh0FZHT5vFU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s8js7fyQhSS5YK83u+O6YSQmTaqjZUZgyNBtezZP7jbfQAnaM6M47Up0X2hjU3F3NWeUVBuTAgIIW/TOzfFOWsJmE6I8mVsyeVohJEPswbxfVlTeQPTMaTDyQBY+4o2BmHRALPZe9Fs7d5zE8Gv7v257zXJd9mUHturMsYAXMSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88717723bc0so268005239f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:28:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756736886; x=1757341686;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KzoS/rFpWfbjyEKOrpfdLItOmctXoSuOQ4sdGnPwuk8=;
-        b=mJMF6cQ6fAb27f6ji5AQHXLpMZeavX27LOUMOwBZDlu5Z1Chn4NfGxiQcpRtT7jSIc
-         T5oP+WK/RhsxrD28AqL2ccsNZgp0B4cyv2JjiTOAqX1z/yjrGrYNL2WK1W7sagsE8RBy
-         DwBSMSIZBE2Q439W1Ux41P16P22m7TvmCAMb9H9G/vvdi//a0eeZl5QPxOQIkPA8S1l0
-         +izhdhmBQ0OY0hI+XPUKW+QSDitnHvhT4GpnAO/NbwFp7E1uArfsW16V61WIeHiMpoBF
-         RdITBSdRDkTq2UtTGF1bbwWLCeg2JQgTf8wyj97Qg8+y+V9VUjvIAlQw7/8qVJ89hbR6
-         3N+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgU/ohuX03b8QLDMZWetBcFPzAXxOuzdBHQSRQ0DkdxesuShsuTUpPvfNUOcj9D4d95f9e9YSKTRoPpxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweMeTqTW3tSwYvmH8nNiGfaT3kEWNIgpy6e765n+1+NmqIQSOW
-	RHpwd5gDnkoiFLEJt7D3nRfi0m8/ZdHcqzHr7slBCRhEQABP6jQqR1LkFGagFmB03ZR4wJwfWEl
-	rztqhhzb+0lsNETINB08LEB+JPhBIRHdyDiOP9fGZZpCiasnXFjjLerzpi24=
-X-Google-Smtp-Source: AGHT+IEiesIfDRZe1XchjiZ7FWywLU9bIPuEeclcfhByJXEa2ihgbeBdxEOAoCYTZVWipvfw4VMuDkEPiCeKFq7XWlsmXrNjYa8Q
+	s=arc-20240116; t=1756736895; c=relaxed/simple;
+	bh=xqMlFxYoV1s3mw2QAz/F5yAu/vAD9+0kVbNtBgynCF8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=IzGeearC8An6PreJytp+uCRhWU4cu2HP98NjJgYT/8Z+X4jK1lhMN79EfuXA4JgGfgaTjqXu8l9EPPpKnukiUxUF994uauRVpcrxP2p7qjiRE8Bka3BDfH2k/23gYRiFyBlCqobvYIZbG+muB2GlPbJcKD05JZQNwguo3B2kmn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uu8ef1LB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nyLkk+oE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 01 Sep 2025 14:28:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756736891;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9QpWB6jPNwc2gpFpoc1NM9kYgcVr+ajJ+IvJUIpI1FE=;
+	b=Uu8ef1LB1GtHZ09/ZJlevvsiWAl4SveuGctzW6AF7j5NsncAjaAn6zYSbl23UEYV5LgIUL
+	c+2/UOUtTAgC5VkDBZY955N0DfYWFyReLP6i8fizfybdISSsUCh3YgtNreMDmJyu+apgLo
+	uMP2It9ZKGbymAFkMjQfLMicJ8SnY0FQBK5842EzGV8LuM6d4w20xOrBQ4/HPh2StZrlkA
+	hVELOuSw+r8rHzM9P08su/1AL7lqxeV35Jm6FxpxCR4lHaE3FMqWZKa51A+nQg2kAEOflt
+	9FVwt4TXo+jny8BRLwgsYMWlYyQMFtDayarmLOZhNUmy3cXHwD4+colBdbYdvw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756736891;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9QpWB6jPNwc2gpFpoc1NM9kYgcVr+ajJ+IvJUIpI1FE=;
+	b=nyLkk+oEb97i82bSicaPjT6QN7/YU+BLVxeZlTUApWllz8piteK9nq/v+Bo4gLhguTpQBQ
+	oXvHK4JxZm5I7TAQ==
+From: "tip-bot2 for Dan Carpenter" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/futex] selftests/futex: Fix futex_wait() for 32bit ARM
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, andrealmeid@igalia.com,
+ Anders Roxell <anders.roxell@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250827130011.677600-6-bigeasy@linutronix.de>
+References: <20250827130011.677600-6-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144c:b0:3f3:cd20:d7e4 with SMTP id
- e9e14a558f8ab-3f3ffda2be4mr162622435ab.1.1756736886309; Mon, 01 Sep 2025
- 07:28:06 -0700 (PDT)
-Date: Mon, 01 Sep 2025 07:28:06 -0700
-In-Reply-To: <68721d9e.a00a0220.26a83e.0074.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b5ad76.050a0220.3db4df.01c1.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit (3)
-From: syzbot <syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175673688994.1920.3268727903650888597.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+The following commit has been merged into the locking/futex branch of tip:
 
-commit d0855e210675b8018f4e89ca77cbfa133bce3a71
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Dec 12 09:03:32 2024 +0000
+Commit-ID:     237bfb76c90b184f57bb18fe35ff366c19393dc8
+Gitweb:        https://git.kernel.org/tip/237bfb76c90b184f57bb18fe35ff366c193=
+93dc8
+Author:        Dan Carpenter <dan.carpenter@linaro.org>
+AuthorDate:    Wed, 27 Aug 2025 15:00:11 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 01 Sep 2025 16:26:55 +02:00
 
-    bcachefs: Kill snapshot_t->equiv
+selftests/futex: Fix futex_wait() for 32bit ARM
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f2e242580000
-start commit:   c330cb607721 Merge tag 'i2c-for-6.17-rc3' of git://git.ker..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16f2e242580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f2e242580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6ef9edaba01d5b4e43f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163eac42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136c1862580000
+On 32bit ARM systems gcc-12 will use 32bit timestamps while gcc-13 and later
+will use 64bit timestamps.  The problem is that SYS_futex will continue
+pointing at the 32bit system call.  This makes the futex_wait test fail like
+this:
 
-Reported-by: syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com
-Fixes: d0855e210675 ("bcachefs: Kill snapshot_t->equiv")
+  waiter failed errno 110
+  not ok 1 futex_wake private returned: 0 Success
+  waiter failed errno 110
+  not ok 2 futex_wake shared (page anon) returned: 0 Success
+  waiter failed errno 110
+  not ok 3 futex_wake shared (file backed) returned: 0 Success
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Instead of compiling differently depending on the gcc version, use the
+-D_FILE_OFFSET_BITS=3D64 -D_TIME_BITS=3D64 options to ensure that 64bit times=
+tamps
+are used.  Then use ifdefs to make SYS_futex point to the 64bit system call.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Link: https://lore.kernel.org/20250827130011.677600-6-bigeasy@linutronix.de
+---
+ tools/testing/selftests/futex/functional/Makefile |  2 +-
+ tools/testing/selftests/futex/include/futextest.h | 11 +++++++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testin=
+g/selftests/futex/functional/Makefile
+index 8cfb87f..ddfa61d 100644
+--- a/tools/testing/selftests/futex/functional/Makefile
++++ b/tools/testing/selftests/futex/functional/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ INCLUDES :=3D -I../include -I../../ $(KHDR_INCLUDES)
+-CFLAGS :=3D $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
++CFLAGS :=3D $(CFLAGS) -g -O2 -Wall -pthread -D_FILE_OFFSET_BITS=3D64 -D_TIME=
+_BITS=3D64 $(INCLUDES) $(KHDR_INCLUDES)
+ LDLIBS :=3D -lpthread -lrt -lnuma
+=20
+ LOCAL_HDRS :=3D \
+diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testin=
+g/selftests/futex/include/futextest.h
+index 7a5fd1d..3d48e97 100644
+--- a/tools/testing/selftests/futex/include/futextest.h
++++ b/tools/testing/selftests/futex/include/futextest.h
+@@ -58,6 +58,17 @@ typedef volatile u_int32_t futex_t;
+ #define SYS_futex SYS_futex_time64
+ #endif
+=20
++/*
++ * On 32bit systems if we use "-D_FILE_OFFSET_BITS=3D64 -D_TIME_BITS=3D64" o=
+r if
++ * we are using a newer compiler then the size of the timestamps will be 64b=
+it,
++ * however, the SYS_futex will still point to the 32bit futex system call.
++ */
++#if __SIZEOF_POINTER__ =3D=3D 4 && defined(SYS_futex_time64) && \
++	defined(_TIME_BITS) && _TIME_BITS =3D=3D 64
++# undef SYS_futex
++# define SYS_futex SYS_futex_time64
++#endif
++
+ /**
+  * futex() - SYS_futex syscall wrapper
+  * @uaddr:	address of first futex
 
