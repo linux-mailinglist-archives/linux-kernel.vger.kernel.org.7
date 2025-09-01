@@ -1,122 +1,187 @@
-Return-Path: <linux-kernel+bounces-794907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C6DB3EA7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3337CB3EA77
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E162A3AFA30
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80303AB836
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1026368089;
-	Mon,  1 Sep 2025 15:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="cd/cMr3m"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50566320A34
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9055E340DBD;
+	Mon,  1 Sep 2025 15:13:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED988320A22;
+	Mon,  1 Sep 2025 15:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739600; cv=none; b=eH7o4quDntMOQDLF7O4FtwezMgy+oOzjXV6utwe6qY6zA43T8Sg3tJslua4WLVQRilUKe/8Mu0LjwS3To/Tof2Ls0fUfIZyZDB3cdi+GIkCRRHWtNYj8IprpNXM0V1U+IRvfm7TCNZ2NTga5W5lDALB/ga1vG75zZYz7Ub98/v4=
+	t=1756739598; cv=none; b=eNAdDq79zAHMXo1Ry46RvHw92cUaMTGCiwNYCusWLBnzk1t/ckbR5jJ3zNo0C6fvZ13stsnmqncc17Jwm4UvfAgGzopr4RG7fSDsylYXAS+FwNwqRmlWetFhRz8rb2EbdWJRBF9/x17lm8yjE3FwWSz669O3b+f9/1nFMN4kCC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739600; c=relaxed/simple;
-	bh=A08kBdKHaoJbHo5ouUdZLXPFTzEYHeueCSYh810eJqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rFsnkoz8xgTAx2hJO//9pMC3MqS6/dvce+H5Vtpj7WtYKeOsETfHreMlCJgDFf1rRkY6yEGHTk3bw3v8AasJna9iN6C965NkO2fgR3Ut1OK24FR6M5d6ZOoQ6z/SFPWGnHPwRY7u7teKrCrpkz62sVxmEQY5znPoLGF9prZt+AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=cd/cMr3m; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afebb6d4093so742148866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756739594; x=1757344394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A08kBdKHaoJbHo5ouUdZLXPFTzEYHeueCSYh810eJqo=;
-        b=cd/cMr3mBFUKj/l85MxxINGe2ZL/wWXCouUOLF2P7u7Sbb3G2TSO+T7MMjaT92i8ib
-         xVVye2DysYNSVHq8tJ6lKA4Lfe2j0OP/3aSBx7XrTl+MRwh75YHhMdSJp9YYyfIHRO39
-         Ac9SPC5f1PEpMwBCrIbTUQfFNA7/0Z1pB89UOn0AWo0ZV/a+e7jGsUznoZHpQ+8lCHN6
-         celxCU/rqMtV7FgC/CvN4UVi2u3gRCZv6iXKZLyDlHC0rFJR2xSaHcZV3AVn34Oi4Har
-         ypZu2Kxo7s7oPnvu1oreYhxXi7Igh14F5/Iifs9vIPSXDKTC+a/3Mqq+6OB11kxfPlUU
-         R08Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756739594; x=1757344394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A08kBdKHaoJbHo5ouUdZLXPFTzEYHeueCSYh810eJqo=;
-        b=Ijokm05NDhR/CaNmMKkDpXX2EtEkYaRzhPNPcAR24ezl8oLmwIawy4SwQ7kse5kpG9
-         zd7jgtvlPecPycTpOUtx1HoJVf2A6b6uKqJBHQyWGorn6SQuQfHcSwpXgQry9nFdEud0
-         XqirkiCxVZ+k/K4O+Pga9upNhWwN0rN7+zT1126M6NuzFqxl4dQBZBQpQa6WSNptWDVQ
-         rP3Dgl/gkPgXhnuxy/+JhZ3MCdy6HB4LXHrQLp+e+QcID6mpX2HPFUlGbPUazgELTzOU
-         xa4ZZFRMHUkUx7fXarrJtOTCN4sMxlBYJYf3joF49iVwcaC4GrQrZySZCX6be3nRjOAh
-         mQBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgqHXYG5z/eXENr54nOcfTt9RV7WYTb98fTQIunSLyPeNNqNRDjM15CaAXMWayQs16t1IFCDtQwUdWn7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBKII+USOWp+pR7AiY9mU7nSrecAMSm8Cd6Z2BIPtfSTm5aCzb
-	1N/PyzZFSF86D/jDE+EkXzbNFJHFoyuLbqV8XGzeil8xTlosNR7gU8QW762qbRSirRBSCNR9jdn
-	n244iXjdmd1lPXN4+Rd2h5MPDobBdIKyF0zgyOJgnCQ==
-X-Gm-Gg: ASbGncuixyjtd8FzEkGyoajA9BO6V5rg/7EvqOt9TtrdYg6vTeFaweMk09ASeqAudRc
-	ULA0BhZZW6Z1w6HXW5xFPEXYR1C43lJGreMHvjS2uikXTa6TiNwWOsRWEhzfl8Box/Rky9gyhrj
-	dy1MkY0dMaAgmfIFNjTFyzQeyahdd+Zscu7B7ZK5HGt7LhUZftlXWiDrtD6Ds925yewbYJd3BLU
-	BLhPquS+mg62PCQp19QqaW+BwkZgZHUT6OA4npkx6vXrg==
-X-Google-Smtp-Source: AGHT+IEFPWeGuNqM2+QiOgw6fHvRg/b0a6N13KZkb/trfYqooePyXBS3syenI4NwqPjQnySBBQHmRMnR+cpdOfOLUuA=
-X-Received: by 2002:a17:906:9f85:b0:afc:cbf4:ca7d with SMTP id
- a640c23a62f3a-b01d979fe6emr930093166b.54.1756739594447; Mon, 01 Sep 2025
- 08:13:14 -0700 (PDT)
+	s=arc-20240116; t=1756739598; c=relaxed/simple;
+	bh=qREE9DY6AeaqxRM1Wkl3pRC/CG0ewqa3Bq3lWt63IXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTVDfBleGd4fRoLu/SlDnTGv6CNpDrxOZ3xCqBTWfoK8jdiKWimbahd5JHqPwduxmA5lpVNSZXaZ8vcUJdhNDkNj+AnMlrrctMYmeyogGEu4nyjdJILF6LJQjx0BFkICrp/JWPkJRXjgvsbeBEbOdPEz4Cj2HiBmBA84QuTzAQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9EC916A3;
+	Mon,  1 Sep 2025 08:13:05 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33B8D3F6A8;
+	Mon,  1 Sep 2025 08:13:10 -0700 (PDT)
+Date: Mon, 1 Sep 2025 16:13:07 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
+	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
+	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
+	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com, mbenes@suse.cz,
+	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
+	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 2/5] arm64: initialise SCTLR2_ELx register at boot time
+Message-ID: <aLW4A3rTcJvA0c+j@e133380.arm.com>
+References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
+ <20250821172408.2101870-3-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-11-max.kellermann@ionos.com> <5ff7c9bc-1722-4d8a-ad2e-8d567216a4e4@redhat.com>
-In-Reply-To: <5ff7c9bc-1722-4d8a-ad2e-8d567216a4e4@redhat.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 17:13:03 +0200
-X-Gm-Features: Ac12FXzpx0s0QI5qZl1CeOcQ-w6EceVXiGl7R5sUJVErAX6WQ0b3KxehR5HEiuA
-Message-ID: <CAKPOu+-zBstZVw4LjKz7ZQyTh_PKEJXaWYsgF0-E0+shAaTvwA@mail.gmail.com>
-Subject: Re: [PATCH v5 10/12] mm: constify various inline test functions for
- improved const-correctness
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
-	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, 
-	James.Bottomley@hansenpartnership.com, deller@gmx.de, agordeev@linux.ibm.com, 
-	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net, 
-	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, weixugc@google.com, 
-	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, 
-	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
-	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821172408.2101870-3-yeoreum.yun@arm.com>
 
-On Mon, Sep 1, 2025 at 4:00=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
-> Also some getters hiding (and functions that actually implement logic --
-> folio_migrate_refs())
+Hi,
 
-Indeed; I mentioned that one in the message body, and I thought this
-was good enough, but I dropped the word "test" from the subject line
-to avoid confusion.
+On Thu, Aug 21, 2025 at 06:24:05PM +0100, Yeoreum Yun wrote:
+> The value of the SCTLR2_ELx register is UNKNOWN after reset.
+> If the firmware initializes these registers properly, no additional
+> initialization is required.
+> However, in cases where they are not initialized correctly,
+> initialize the SCTLR2_ELx registers during CPU/vCPU boot
+> to prevent unexpected system behavior caused by invalid values.
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
 
-> > -static inline int folio_lru_gen(struct folio *folio)
-> > +static inline int folio_lru_gen(const struct folio *folio)
->
-> *const ?
+[...]
 
-Right. Added for next revision.
+> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+> index 23be85d93348..c25c2aed5125 100644
+> --- a/arch/arm64/include/asm/assembler.h
+> +++ b/arch/arm64/include/asm/assembler.h
+> @@ -738,6 +738,21 @@ alternative_endif
+>  	set_sctlr sctlr_el2, \reg
+>  .endm
+>  
+> +/* Set SCTLR2_ELx to the @reg value. */
+> +.macro set_sctlr2_elx, el, reg, tmp
+> +	mrs_s	\tmp, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	\tmp, \tmp, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
+> +	cbz	\tmp, .Lskip_sctlr2_\@
+> +	.if	\el == 2
+> +	msr_s	SYS_SCTLR2_EL2, \reg
+> +	.elseif	\el == 12
+> +	msr_s	SYS_SCTLR2_EL12, \reg
+> +	.else
+> +	msr_s	SYS_SCTLR2_EL1, \reg
+> +	.endif
+> +.Lskip_sctlr2_\@:
+> +.endm
+> +
+
+You were right that just doing
+
+	msr_s	SYS_SCTLR_\el, \reg
+
+here doesn't work.  It looks like we rely on the C preprocessor to
+expand the SYS_FOO_REG names to numeric sysreg encodings.  By the time
+the assembler macros are expanded, it is too late to construct sysreg
+names -- the C preprocessor only runs once, before the assembler.
+
+So, your code here looks reasonable.
+
+But, it will still silently do the wrong thing if \el is empty or
+garbage, so it is probably worth adding an error check:
+
+	.else
+	.error "Bad EL \"\el\" in set_sctlr2_elx"
+	.endif
+
+
+Also, looking at all this again, the "1", "2" and "12" suffixes are not
+really numbers: SYS_REG_EL02 would definitely not be the same thing as
+SYS_REG_EL2 (although there is no _EL02 version of this particular
+register).
+
+So, can you use .ifc to do a string comparison instead?
+
+If might be a good idea to migrate other macros that use an "el"
+argument to do something similar -- although that probably doesn't
+belong in this series.
+
+The assembler seems to have no ".elseifc" directive, so you'll need
+separate nested .ifc blocks:
+
+	.ifc	\el,2
+	msr_s	SYS_SCTLR2_EL2, \reg
+	.else
+	.ifc	\el,12
+	msr_s	SYS_SCTLR2_EL12, \reg
+	.else
+	.ifc	\el,1
+	msr_s	SYS_SCTLR2_EL1, \reg
+	.else
+	.error	"Bad EL \"\el\" in set_sctlr2_elx"
+	.endif
+	.endif
+	.endif
+
+(Note, I've not tested this approach.  If you can think of a better
+way, please feel free to suggest.)
+
+[...]
+
+> diff --git a/arch/arm64/kernel/hyp-stub.S b/arch/arm64/kernel/hyp-stub.S
+> index 36e2d26b54f5..ac12f1b4f8e2 100644
+> --- a/arch/arm64/kernel/hyp-stub.S
+> +++ b/arch/arm64/kernel/hyp-stub.S
+> @@ -144,7 +144,17 @@ SYM_CODE_START_LOCAL(__finalise_el2)
+>  
+>  .Lskip_indirection:
+>  .Lskip_tcr2:
+> +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_SCTLRX_SHIFT, #4
+> +	cbz	x1, .Lskip_sctlr2
+> +	mrs_s	x1, SYS_SCTLR2_EL12
+> +	msr_s	SYS_SCTLR2_EL1, x1
+>  
+> +	// clean SCTLR2_EL1
+> +	mov_q	x1, INIT_SCTLR2_EL1
+> +	msr_s	SYS_SCTLR2_EL12, x1
+
+I'm still not sure why we need to do this.  The code doesn't seem to
+clean up by the EL1 value of any other register -- or have I missed
+something?
+
+We have already switched to EL2, via the HVC call that jumped to
+__finalise_el2.  We won't run at EL1 again unless KVM starts a guest --
+but in that case, it's KVM's responsibility to set up the EL1 registers
+before handing control to the guest.
+
+In any case, is SCTLR2_EL1 ever set to anything except INIT_SCTLR2_EL1
+before we get here?
+
+[...]
+
+Cheers
+---Dave
 
