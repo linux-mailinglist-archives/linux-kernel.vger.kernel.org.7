@@ -1,298 +1,211 @@
-Return-Path: <linux-kernel+bounces-794769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA45B3E700
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:25:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA65B3E6F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C4F1A849A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A8C7A6864
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97F7340D99;
-	Mon,  1 Sep 2025 14:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3E02F3C11;
+	Mon,  1 Sep 2025 14:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Y6gX0L/q"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3G/osQx"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35942F49EE;
-	Mon,  1 Sep 2025 14:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736707; cv=pass; b=D3mSN2o/py6DFxLfRofAp3cwkc6Ca3pyyD6IfA37tcM3e3BdyW4xwIKhIT1+bF81G1PCzk2JGMHyv6/t9PcOTyxy2s6M8IXQRbM3YjU72v/X1w2CETU2Ss066vITaDb8Tmii0oHWG5E77CZC8ghOJtyzejmCuDMBhw3Cb3GG+FI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736707; c=relaxed/simple;
-	bh=vuDGbWqm/9R0IuGxg+X+dpyc5ApWMnq2yOclMM/FivU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ICRGpq9T7BC6zPqoTzJ8CLV0knOvssov9ot9HJCzGZmdtvF81awpozL75ILvCsMPF8wI8KVRYhLzfCz5EdJ7Ige5215FnyfVLWPiKNl0j6eU+cKgllc5eff8Uucmei0bo8/LpAuGPfp5CEsDhtxEwrH3/Hsci5h1unBtiSlOOYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Y6gX0L/q; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756736683; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZOsYZVzca7zCva+XosLo++okG+IJSbfsTFLNqsKr6pi1sd5Jxa7YmrHniSOVewp2oMbh1hqD3+Pos1R+zxQnS5Dr4hUs6lHIYRe89PCxqBup5dn6bokSN8kW+oA2+BzJXwF9NmPdVORkb0395cJKjk9NQ04x4xnguJHXTBzQ6rg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756736683; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=W9FCfUG14h2oKCNBF9TsJGENC4lLTZfUyNoDD35vGNw=; 
-	b=BLS6zkLKnABRpdHAbXCwhOHDMZMab6Fq8fzxCSZr2dIY8L3YxtzD5Dqy4K4b4pFviAw0KGl4FsPhv8X0RKG8UBRUhsnTnDIOVyaVG95LoLV9OxjwmRtHhW8qpf5FSuw7hS+VVBeR76sEVYoQ/NtGLBGQWScAcwWlNAVoKptu94Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756736683;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=W9FCfUG14h2oKCNBF9TsJGENC4lLTZfUyNoDD35vGNw=;
-	b=Y6gX0L/qMhN+HAwqWwxOG9cYN7F1EMSbg4gbVdlOT0Mxk3ooSgm4/yvEp30LjNLH
-	PiZkZNQvidOXgLT/ge7LPNJkoJuekxsWIhsY38hVH+c5r8t3mDWHYB9JhDxzgioYBMo
-	wJQfX2PCI0S7GTQvRGu/aiyXhvPrZz34wTDoGf10=
-Received: by mx.zohomail.com with SMTPS id 1756736681642725.040873569627;
-	Mon, 1 Sep 2025 07:24:41 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339731F4621;
+	Mon,  1 Sep 2025 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756736688; cv=none; b=X7rP71fh6XaLx/bgxSUjsSIQNUOaCmABpD4JsWUaiTNjaADBiZBMkkfo2Xneswaf4YWv76lcvF/BtQ++qc9nfQCN+4WpwSvcxikmAbLQIOSsFzRu0L/ZiYHqqfvNVLpv3zXl3wkrH2tfqDsAilzpw116ERCDb+uXqcL8ySbLK0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756736688; c=relaxed/simple;
+	bh=ZtG+wa3X6+HfL309XwwUBOo4DsFffE3TJur0zd963GY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UFOvvIdUSGd3QRzHFbY7oDQL2cnXy+C5zNNOwA1Sil28EZYzkD9mL9OAFW8J9coKmOQkjxo55Sok/jsiPbx8Js4ZqHjQH9O0QwUZ46kdMfzLWskU0b/iyZuExMYBDxHLB8GyGF9A44QUEu4EhhD1q5hSsuZPwKrKv7Y4Yu0/7Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3G/osQx; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b7d485204so34929855e9.0;
+        Mon, 01 Sep 2025 07:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756736684; x=1757341484; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqvcXlp0W7MSF3vmJ03eJQXl6LGqOtNp4w5UN/Mvcy0=;
+        b=E3G/osQxwlSAKuGIn7c0Fb5kj6ej1+O/J8mUkyesc+F4EQDRhKyXgS+1tLBYJzZd3R
+         2RVFnPXeOkqC+kufCcLSdTtBiyhshbBM5hoZojpPr1sxlkxQnLX3/TnDn7MnclngWFYU
+         nKk/obV3RNXGav7y/DinOjfTvdfqzE0+7Y7H/cElW1feVFot8gRiIhCdX+ivTlq0Egv6
+         1xjhgbZa82Rg3bMQg3fNa1u5xUguQpqWZ5y2hk7MtIA9ESDKB5ZUPp5LxVTyoFhQW7nJ
+         n0WBfLkOETKuX8IQRD1I8oxpTXKFqjfldHZeLTKpoBHz56SdtXYN7O/GNxhQT32aIJzb
+         9E0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756736684; x=1757341484;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rqvcXlp0W7MSF3vmJ03eJQXl6LGqOtNp4w5UN/Mvcy0=;
+        b=Cgf3SVYz3Q2H3kiX8ycin96RVXMl+uJb3ixkTlKAjKIUc5ZDxlSx1+8qi2WHBjrTLJ
+         TUEcvMo+E8CWPpvb+VE/gDWDh5df29OKnenzfMA2DqgcHYWrINrkTc4zl8CnD4kKq+GH
+         f+QA03/mCLFiMHakwP0k2bSu4jh1j31wRmv7LLiw6kDBy+fvZNtEXQzp2b5SnrVoTjv5
+         sNDa+JXzz/hKcviQPTvS7S9oQsyUgNZ5t77r13rS9tr3yokUxEakbcjk6tVZ5lAiA3WE
+         /JKSXy1XDy6G9Tl7SJXyQV39DdYFRzbf/S+EZZRpiV8wZ4DHWWIq3B3QdyuOaJHsQ6L+
+         JTkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjnY2p9Gd/sDNCGjls6pjIqRUHAbZPhHYzc29kgHcTd3iF1CokvEyNF1oV3jtmSPALAmGQm3f3@vger.kernel.org, AJvYcCWcWI0nim3uxdEjcsG5sV8/v7u2ZF8k2P5YVsNM0Ozk/n3H+9ane3rqz+0lLofJdsAiceag7czzKT48bqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk+cXrtb9jfZ+NPqMaypcwG2HWfpsaXyQlX/yg10yq9CUocIlU
+	OuWE5g90TwO452gSQjebk1TJyq1MONVTCLvCEquYPdUG6dkTo8Z4Q/zw
+X-Gm-Gg: ASbGncs6Jf7XxeLNPvtAGa1gBtIxy3/tRrdSvkmGYTRTfJ5ITLUSVf7lrvbb0LQDx8D
+	t8xp8XOuoPGKGctREpYgf9aM/hEIz5c2NnEPH5Dz5p3Mxi2LNBJFUFhyxT7MY6QKU6by4tQsXvu
+	gMW7Gnv4LWdMFLnQIQkMziKM18iWmDEqhvR7YByOsUzSt9iT0JYzqoPhDNldRCsDpoR5ESxe+iF
+	g1TY3vUXFiiYhAHMLo8TQrUzksiw5R0L8GAgVoEyCtbevnA9998deumx6ApyQ8upMNZxZuMzknm
+	RClxegYP6/CxSqgoQKw0vHCPFOBzagX2yF08jgiEWBWWc/X3MNAOgBU/1zdSMjzfxAzIXZpkO8v
+	8irXMoKAunCqBfrLtLIMC+HpjQS9WCgf0j5Q1+T0TrTKgl3QryDAX5yfEaia6Fg==
+X-Google-Smtp-Source: AGHT+IHqPtct6XqWPq/LJ5GxcIfD94d0NHMlxPrBgPKNbuLPMxEx6hG7wkfcL+GTCikbm6rlk5HEHQ==
+X-Received: by 2002:a05:6000:2408:b0:3cb:d8e2:48b2 with SMTP id ffacd0b85a97d-3d1dc78e7f4mr7803896f8f.13.1756736684089;
+        Mon, 01 Sep 2025 07:24:44 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3d26f22f5bdsm10142026f8f.37.2025.09.01.07.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 07:24:43 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Mon, 01 Sep 2025 16:24:35 +0200
+Subject: [PATCH v2] mtd: core: always verify OOB offset in
+ mtd_check_oob_ops()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 17/18] rust: block: add remote completion to `Request`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <877bymidos.fsf@t14s.mail-host-address-is-not-set>
-Date: Mon, 1 Sep 2025 11:24:24 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <532104CE-269D-4C38-A248-AF6417C4151F@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-17-ec65006e2f07@kernel.org>
- <R-quyDdhLT8rgM7vBTBx_6hUbT6VXlKvJ0ueHYeoye0JcLGz6WqNuPJQGEn3yBbnokSWZaUWbsLlh-bVJQeSpQ==@protonmail.internalid>
- <680BB9D0-3720-44EC-A25D-83806F635D8D@collabora.com>
- <877bymidos.fsf@t14s.mail-host-address-is-not-set>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250901-mtd-validate-ooboffs-v2-1-c1df86a16743@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKKstWgC/4WNQQ6CMBBFr0Jm7RgKAsWV9zAsajuFSSglLWk0h
+ LtbuYDL95L//g6RAlOEe7FDoMSR/ZKhuhSgJ7WMhGwyQ1VWTSlrgW4zmNTMRm2E3r+8tRGpbnT
+ Xt82ttAR5ugay/D6zzyHzxHHz4XO+JPGzf4JJoEBTW6OpU7Lt5WN0iuer9g6G4zi+14CeK7gAA
+ AA=
+X-Change-ID: 20250831-mtd-validate-ooboffs-e35c796540fe
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
+Using an OOB offset past end of the available OOB data is invalid,
+irregardless of whether the 'ooblen' is set in the ops or not. Move
+the relevant check out from the if statement to always verify that.
 
+The 'oobtest' module executes four tests to verify how reading/writing
+OOB data past end of the devices is handled. It expects errors in case
+of these tests, but this expectation fails in the last two tests on
+MTD devices, which have no OOB bytes available.
 
-> On 29 Aug 2025, at 08:12, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
->=20
->> Hi Andreas,
->>=20
->>> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->>>=20
->>> Allow users of rust block device driver API to schedule completion =
-of
->>> requests via `blk_mq_complete_request_remote`.
->>>=20
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> ---
->>> drivers/block/rnull/rnull.rs       |  9 +++++++++
->>> rust/kernel/block/mq.rs            |  6 ++++++
->>> rust/kernel/block/mq/operations.rs | 19 +++++++++++++++----
->>> rust/kernel/block/mq/request.rs    | 17 +++++++++++++++++
->>> 4 files changed, 47 insertions(+), 4 deletions(-)
->>>=20
->>> diff --git a/drivers/block/rnull/rnull.rs =
-b/drivers/block/rnull/rnull.rs
->>> index 8255236bc550..a19c55717c4f 100644
->>> --- a/drivers/block/rnull/rnull.rs
->>> +++ b/drivers/block/rnull/rnull.rs
->>> @@ -82,4 +82,13 @@ fn queue_rq(_queue_data: (), rq: =
-ARef<mq::Request<Self>>, _is_last: bool) -> Res
->>>    }
->>>=20
->>>    fn commit_rqs(_queue_data: ()) {}
->>> +
->>> +    fn complete(rq: ARef<mq::Request<Self>>) {
->>> +        mq::Request::end_ok(rq)
->>> +            .map_err(|_e| kernel::error::code::EIO)
->>> +            // We take no refcounts on the request, so we expect to =
-be able to
->>> +            // end the request. The request reference must be =
-unique at this
->>> +            // point, and so `end_ok` cannot fail.
->>> +            .expect("Fatal error - expected to be able to end =
-request");
->>> +    }
->>> }
->>> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
->>> index 6e546f4f3d1c..c0ec06b84355 100644
->>> --- a/rust/kernel/block/mq.rs
->>> +++ b/rust/kernel/block/mq.rs
->>> @@ -77,6 +77,12 @@
->>> //!     }
->>> //!
->>> //!     fn commit_rqs(_queue_data: ()) {}
->>> +//!
->>> +//!     fn complete(rq: ARef<Request<Self>>) {
->>> +//!         Request::end_ok(rq)
->>> +//!             .map_err(|_e| kernel::error::code::EIO)
->>> +//!             .expect("Fatal error - expected to be able to end =
-request");
->>> +//!     }
->>> //! }
->>> //!
->>> //! let tagset: Arc<TagSet<MyBlkDevice>> =3D
->>> diff --git a/rust/kernel/block/mq/operations.rs =
-b/rust/kernel/block/mq/operations.rs
->>> index 6fb256f55acc..0fece577de7c 100644
->>> --- a/rust/kernel/block/mq/operations.rs
->>> +++ b/rust/kernel/block/mq/operations.rs
->>> @@ -42,6 +42,9 @@ fn queue_rq(
->>>    /// Called by the kernel to indicate that queued requests should =
-be submitted.
->>>    fn commit_rqs(queue_data: ForeignBorrowed<'_, Self::QueueData>);
->>>=20
->>> +    /// Called by the kernel when the request is completed.
->>> +    fn complete(rq: ARef<Request<Self>>);
->>> +
->>>    /// Called by the kernel to poll the device for completed =
-requests. Only
->>>    /// used for poll queues.
->>>    fn poll() -> bool {
->>> @@ -143,13 +146,21 @@ impl<T: Operations> OperationsVTable<T> {
->>>        T::commit_rqs(queue_data)
->>>    }
->>>=20
->>> -    /// This function is called by the C kernel. It is not =
-currently
->>> -    /// implemented, and there is no way to exercise this code =
-path.
->>> +    /// This function is called by the C kernel. A pointer to this =
-function is
->>> +    /// installed in the `blk_mq_ops` vtable for the driver.
->>>    ///
->>>    /// # Safety
->>>    ///
->>> -    /// This function may only be called by blk-mq C =
-infrastructure.
->>> -    unsafe extern "C" fn complete_callback(_rq: *mut =
-bindings::request) {}
->>> +    /// This function may only be called by blk-mq C =
-infrastructure. `rq` must
->>> +    /// point to a valid request that has been marked as completed. =
-The pointee
->>> +    /// of `rq` must be valid for write for the duration of this =
-function.
->>> +    unsafe extern "C" fn complete_callback(rq: *mut =
-bindings::request) {
->>> +        // SAFETY: This function can only be dispatched through
->>> +        // `Request::complete`. We leaked a refcount then which we =
-pick back up
->>> +        // now.
->>> +        let aref =3D unsafe { Request::aref_from_raw(rq) };
->>> +        T::complete(aref);
->>> +    }
->>>=20
->>>    /// This function is called by the C kernel. A pointer to this =
-function is
->>>    /// installed in the `blk_mq_ops` vtable for the driver.
->>> diff --git a/rust/kernel/block/mq/request.rs =
-b/rust/kernel/block/mq/request.rs
->>> index 3848cfe63f77..f7f757f7459f 100644
->>> --- a/rust/kernel/block/mq/request.rs
->>> +++ b/rust/kernel/block/mq/request.rs
->>> @@ -135,6 +135,23 @@ pub fn end_ok(this: ARef<Self>) -> Result<(), =
-ARef<Self>> {
->>>        Ok(())
->>>    }
->>>=20
->>> +    /// Complete the request by scheduling `Operations::complete` =
-for
->>> +    /// execution.
->>> +    ///
->>> +    /// The function may be scheduled locally, via SoftIRQ or =
-remotely via IPMI.
->>> +    /// See `blk_mq_complete_request_remote` in [`blk-mq.c`] for =
-details.
->>> +    ///
->>> +    /// [`blk-mq.c`]: srctree/block/blk-mq.c
->>> +    pub fn complete(this: ARef<Self>) {
->>> +        let ptr =3D =
-ARef::into_raw(this).cast::<bindings::request>().as_ptr();
->>> +        // SAFETY: By type invariant, `self.0` is a valid `struct =
-request`
->>> +        if !unsafe { bindings::blk_mq_complete_request_remote(ptr) =
-} {
->>> +            // SAFETY: We released a refcount above that we can =
-reclaim here.
->>> +            let this =3D unsafe { Request::aref_from_raw(ptr) };
->>> +            T::complete(this);
->>> +        }
->>> +    }
->>> +
->>>    /// Return a pointer to the [`RequestDataWrapper`] stored in the =
-private area
->>>    /// of the request structure.
->>>    ///
->>>=20
->>> --
->>> 2.47.2
->>>=20
->>>=20
->>=20
->> I had another look here. While I do trust your reasoning, perhaps we =
-should
->> remove the call to expect()?
->>=20
->> If it is not called ever as you said, great, removing the expect() =
-will not
->> change the code behavior. If it is, be it because of some minor =
-oversight or
->> unexpected condition, we should produce some error output instead of =
-crashing
->> the kernel. Maybe we should use a warn() here instead? Or maybe =
-dev/pr_err as
->> applicable?
->=20
-> I think for the example, I would like to keep the `expect`. For
-> demonstration purposes.
+This is indicated in the test output like the following:
 
-I think examples is definitely one place we don=E2=80=99t want to teach =
-people to
-use unwrap and expect because that will kill the system IIUC.
+    [  212.059416] mtd_oobtest: attempting to write past end of device
+    [  212.060379] mtd_oobtest: an error is expected...
+    [  212.066353] mtd_oobtest: error: wrote past end of device
+    [  212.071142] mtd_oobtest: attempting to read past end of device
+    [  212.076507] mtd_oobtest: an error is expected...
+    [  212.082080] mtd_oobtest: error: read past end of device
+    ...
+    [  212.330508] mtd_oobtest: finished with 2 errors
 
->=20
-> We could do `warn!` instead for the rnull driver I guess. But the IO
-> queue that would hit this code would start to hang pretty fast, since =
-no
-> IO would complete. I don't think the kernel can recover from this =
-hang.
->=20
+For reference, here is the corresponding code from the oobtest module:
 
-No I/O would complete for that device, but that doesn't mean that the =
-system is
-unusable IIUC, specially if other devices are available?
+    /* Attempt to write off end of device */
+    ops.mode      = MTD_OPS_AUTO_OOB;
+    ops.len       = 0;
+    ops.retlen    = 0;
+    ops.ooblen    = mtd->oobavail;
+    ops.oobretlen = 0;
+    ops.ooboffs   = 1;
+    ops.datbuf    = NULL;
+    ops.oobbuf    = writebuf;
+    pr_info("attempting to write past end of device\n");
+    pr_info("an error is expected...\n");
+    err = mtd_write_oob(mtd, mtd->size - mtd->writesize, &ops);
+    if (err) {
+            pr_info("error occurred as expected\n");
+    } else {
+            pr_err("error: wrote past end of device\n");
+            errcnt += 1;
+    }
 
->=20
-> Best regards,
-> Andreas Hindborg
+As it can be seen, the code sets 'ooboffs' to 1, and 'ooblen' to
+mtd->oobavail which is zero in our case.
 
-In any case, perhaps this is only my opinion and others may see this
-differently, so I won't complain if you want to keep it.
+Since the mtd_check_oob_ops() function only verifies 'ooboffs' if 'ooblen'
+is not zero, the 'ooboffs' value does not gets validated and the function
+returns success whereas it should fail.
 
+After the change, the oobtest module will bail out early with an error if
+there are no OOB bytes available on the MDT device under test:
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+    # cat /sys/class/mtd/mtd0/oobavail
+    0
+    # insmod mtd_test; insmod mtd_oobtest dev=0
+    [  943.606228]
+    [  943.606259] =================================================
+    [  943.606784] mtd_oobtest: MTD device: 0
+    [  943.612660] mtd_oobtest: MTD device size 524288, eraseblock size 131072, page size 2048, count of eraseblocks 4, pages per eraseblock 64, OOB size 128
+    [  943.616091] mtd_test: scanning for bad eraseblocks
+    [  943.629571] mtd_test: scanned 4 eraseblocks, 0 are bad
+    [  943.634313] mtd_oobtest: test 1 of 5
+    [  943.653402] mtd_oobtest: writing OOBs of whole device
+    [  943.653424] mtd_oobtest: error: writeoob failed at 0x0
+    [  943.657419] mtd_oobtest: error: use_len 0, use_offset 0
+    [  943.662493] mtd_oobtest: error -22 occurred
+    [  943.667574] =================================================
+
+This behaviour is more accurate than the current one where most tests
+are indicating successful writing of OOB data even that in fact nothing
+gets written into the device, which is quite misleading.
+
+Cc: stable@vger.kernel.org
+Fixes: 5cdd929da53d ("mtd: Add sanity checks in mtd_write/read_oob()")
+Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v2:
+  - add Reviewed-by tag from Daniel
+  - add stable and Fixes tags
+  - Link to v1: https://lore.kernel.org/r/20250831-mtd-validate-ooboffs-v1-1-d3fdce7a8698@gmail.com
+---
+ drivers/mtd/mtdcore.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 5ba9a741f5ac3c297ae21329c2827baf5dc471f0..9a3c9f163219bcb9fde66839f228fd8d38310f2d 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -1590,12 +1590,12 @@ static int mtd_check_oob_ops(struct mtd_info *mtd, loff_t offs,
+ 	if (offs < 0 || offs + ops->len > mtd->size)
+ 		return -EINVAL;
+ 
++	if (ops->ooboffs >= mtd_oobavail(mtd, ops))
++		return -EINVAL;
++
+ 	if (ops->ooblen) {
+ 		size_t maxooblen;
+ 
+-		if (ops->ooboffs >= mtd_oobavail(mtd, ops))
+-			return -EINVAL;
+-
+ 		maxooblen = ((size_t)(mtd_div_by_ws(mtd->size, mtd) -
+ 				      mtd_div_by_ws(offs, mtd)) *
+ 			     mtd_oobavail(mtd, ops)) - ops->ooboffs;
+
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250831-mtd-validate-ooboffs-e35c796540fe
+
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
 
