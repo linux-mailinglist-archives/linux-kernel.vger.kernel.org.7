@@ -1,133 +1,305 @@
-Return-Path: <linux-kernel+bounces-794476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC36B3E25D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326E7B3E26C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF90A7A9A11
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14263BD778
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42B827B356;
-	Mon,  1 Sep 2025 12:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E12226D17;
+	Mon,  1 Sep 2025 12:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgM4H5Hr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JmxisZL7"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B092765DB;
-	Mon,  1 Sep 2025 12:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801EF212FB9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728716; cv=none; b=V9sM7oRSTCyAA02xy8ejdmpk3xKLxv+/m/26dzaMC1RG++TbtD3qZ0v9Me/YZweKt4d0/Vav54BnpnFNzCbc8oiTJZUhCxQ1lCOHB8wUBOHYS9nqPypcH0yjsDbU4eHJrm3vJtQraAXnPPNTlQRvj3oINkGBPI339sVA66TwLsE=
+	t=1756728887; cv=none; b=se3LJJa+wiJRzJeQlqV7F7JPed9Hs4migg9i41XbFgt5UrkRyK2syOTMiPqMwDFM/97X4uTMME+YZZVRI8FCMQWlIc32i7fB6q1/qgq49lGD3Io1bluiAMDSIs0GQyPUnjpaK9Y5FCQzSUk56DPRjriN+/wpSqpx7992I7EH4jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728716; c=relaxed/simple;
-	bh=qBCtOBJT2cV+mYRDVrXbHxe214BFli2AJqzlHAFeHmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SkLo0XcLO7BLwMlxPvK/CeSlwuSGqBj2qaIStTWHFyxYdN4bkNU+FSpInAtIEdBn2utzGKwgs6bwpuGlddQUOywBB8EOe/AqoZHzHCAHRrgxBjAgIEbhWeSQIaJVfBgb0fwhH2ilAFutzZ3K8aqvRLFczOtiHGsSBPDOEjoL2Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgM4H5Hr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C32FC4CEF0;
-	Mon,  1 Sep 2025 12:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756728715;
-	bh=qBCtOBJT2cV+mYRDVrXbHxe214BFli2AJqzlHAFeHmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IgM4H5HrKPqzEWKaSZZ7G5TFgQ07XB5abKuclMAVTDyb72U8Mej25CusONsJTcqUA
-	 D8HD6YysFa4BLj7g866Hk/j8mfg7NLIcRq0I57I4DBx+xCOH4xiVd3hwq4Ken3omiY
-	 7P4hMwDYQ2lOEB7aFsWcQ+d7Sb82DMMfmmNCaffJJOTEepv71yzjo3FsRsD6TmfaQV
-	 cT0/PVLi/7Iqh5DsfIOmEYvalaeUnHIjpNQVefdV6+GUxOV/0QZkbt0TC2+34r0eMt
-	 u1fxeyrUs6OGR/HoSCu4I9xWptMRoncdQ2+GqxTpRL9Kx02riRJi1DhTi0bT0DQetk
-	 hxABn07H4QR+w==
-Date: Mon, 1 Sep 2025 17:41:50 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, mani@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, kishon@kernel.org,
-	arnd@arndb.de, m.szyprowski@samsung.com, jh80.chung@samsung.com,
-	pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 10/12] phy: exynos: Add PCIe PHY support for FSD SoC
-Message-ID: <aLWNhv0eLj7LRrvM@vaman>
-References: <20250811154638.95732-1-shradha.t@samsung.com>
- <CGME20250811154738epcas5p1d1202f799c4d950c5d5e7f45e39a51e7@epcas5p1.samsung.com>
- <20250811154638.95732-11-shradha.t@samsung.com>
+	s=arc-20240116; t=1756728887; c=relaxed/simple;
+	bh=uHFks4P6z+NBQPblKW2zC+6zDXB4WugzndH+Ioi+LiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lB0ovcXQgBFz4IGeBur2g/eJ1empQE3HM+WZq32isLCFQrM9TNMtubAJmZTWu9frqMVhM2PQPrZF8Z8B56YUtusnXJjsvKWt78w2JdxmjlNk4J9dFtmiNpblxg3NuMMaohIS60EY0THB9BfEXhK35ZFg16aDMANjcQbAPv4RC3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JmxisZL7; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756728883;
+	bh=uHFks4P6z+NBQPblKW2zC+6zDXB4WugzndH+Ioi+LiU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JmxisZL7gGAsM6w0LnM+cD3yeH/cxF0eMpXFir5ZqJycJWnAM1wfHlEKi/fjonwOq
+	 CHKtvpjrhlX7oYqdIkPWph21DY+VkT+CVPPvzZzhp1FaMgXmBsOIt5267mp7q5b00x
+	 BQCOvwdP4HvLGnNwJciKgpsH57W22CO5Hg8V7KVymNGiMRN3Qo0GE49Qkjo7nf/Ru/
+	 6Lo8bsKEz0I4EHc2Qnis0nju7xnBM0Qk781ChevsiI0nV6u4Ri7oKi3/b0ExM8YIRo
+	 yrm9nSz8KSsLvapkoNb2bce2PJrlCrVi1qdF8pkZs620UF+vFaDDDDsp/hqnxoSn6W
+	 5hN49lPQ04rQg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 06F5D17E0FDB;
+	Mon,  1 Sep 2025 14:14:42 +0200 (CEST)
+Date: Mon, 1 Sep 2025 14:14:39 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ kernel@collabora.com, Rob Herring <robh@kernel.org>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH 2/5] drm/panfrost: Introduce uAPI for JM context
+ creation
+Message-ID: <20250901141439.42740449@fedora>
+In-Reply-To: <56130662-4768-44ff-829e-9d77258c4342@arm.com>
+References: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
+	<20250828023422.2404784-3-adrian.larumbe@collabora.com>
+	<56130662-4768-44ff-829e-9d77258c4342@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811154638.95732-11-shradha.t@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11-08-25, 21:16, Shradha Todi wrote:
-> Add PCIe PHY support for Tesla FSD SoC.
+Hi Steve,
 
-Can you pls add a bit more description of what you are adding, helps to
-understand the change
+On Mon, 1 Sep 2025 11:52:02 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-> +/* FSD: PCIe PCS registers */
-> +#define FSD_PCIE_PCS_BRF_0		0x0004
-> +#define FSD_PCIE_PCS_BRF_1		0x0804
-> +#define FSD_PCIE_PCS_CLK		0x0180
-> +
-> +/* FSD: PCIe SYSREG registers */
-> +#define FSD_PCIE_SYSREG_PHY_0_CON			0x042c
-> +#define FSD_PCIE_SYSREG_PHY_0_CON_MASK			0x03ff
-> +#define FSD_PCIE_SYSREG_PHY_0_REF_SEL			(0x2 << 0)
+> On 28/08/2025 03:34, Adri=C3=A1n Larumbe wrote:
+> > From: Boris Brezillon <boris.brezillon@collabora.com>
+> >=20
+> > The new uAPI lets user space query the KM driver for the available
+> > priorities a job can be given at submit time. These are managed through
+> > the notion of a context, which besides a priority, codifies the list
+> > of L2 caches, shading cores and tiler units a job is allowed to use,
+> > for all three of the available device job slots.
+> >=20
+> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> =20
+>=20
+> There's no cover letter for this series, so maybe I'm missing some
+> context. But I'm not sure why we want to expose the tiler/l2/core masks
+> to user space.
 
-Use GENMASK() please here and elsewhere
+tiler/l2 masks, I'm not sure we need, especially if there's only just
+one tiler unit / l2 cache. I exposed the core mask so one can reserve
+cores for an application.
 
-> +static int fsd_pcie_phy0_reset(struct phy *phy)
-> +{
-> +	struct exynos_pcie_phy *phy_ctrl = phy_get_drvdata(phy);
-> +
-> +	writel(0x1, phy_ctrl->pcs_base + FSD_PCIE_PCS_CLK);
-> +
-> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
-> +			FSD_PCIE_SYSREG_PHY_0_CON_MASK, 0x0);
-> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
-> +		FSD_PCIE_SYSREG_PHY_0_AUX_EN, FSD_PCIE_SYSREG_PHY_0_AUX_EN);
-> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
-> +		FSD_PCIE_SYSREG_PHY_0_REF_SEL_MASK, FSD_PCIE_SYSREG_PHY_0_REF_SEL);
-> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
-> +		FSD_PCIE_SYSREG_PHY_0_INIT_RSTN, FSD_PCIE_SYSREG_PHY_0_INIT_RSTN);
+>=20
+> If you were trying to better support OpenCL on T628 I can just about
+> understand the core mask. But, I doubt you are... (does anyone care
+> about that anymore? ;) ). And really it's the core groups that matter
+> rather than the raw affinities.
 
-pls conform to coding style for these
+Ok, so low vs high bits (don't know the granularity of the core group,
+so low/high might actually bit low/middle-low/middle-high/high) in the
+the affinity register, right?
 
-> +
-> +	return 0;
+>=20
+> The tiler/l2 affinities (and the XAFFINITY register in general) is there
+> as a power saving mechanism. If we know that a job is not going to use
+> the shader cores at all (a tiler-only job) then we can avoid turning
+> them on, but obviously we still need the L2 and tiler blocks to be powere=
+d.
 
-why return a value when this wont ever return anything else than 0?
+Okay, I thought it was more of a "use only these cores, the rest is
+reserved for something else", my bad.
 
-> +
-> +	writel(0x2, pbase + FSD_PCIE_PHY_CMN_RESET);
-> +
-> +	writel(0x00, phy_ctrl->pcs_base + FSD_PCIE_PCS_BRF_0);
-> +	writel(0x00, phy_ctrl->pcs_base + FSD_PCIE_PCS_BRF_1);
-> +	writel(0x00, pbase + FSD_PCIE_PHY_AGG_BIF_RESET);
-> +	writel(0x00, pbase + FSD_PCIE_PHY_AGG_BIF_CLOCK);
-> +
-> +	fsd_pcie_phy_writel(phy_ctrl, FSD_PCIE_PHY_TRSV_REG07B_LN_N, 0x20);
-> +	fsd_pcie_phy_writel(phy_ctrl, FSD_PCIE_PHY_TRSV_REG052_LN_N, 0x00);
-> +	writel(0xaa, pbase + FSD_PCIE_PHY_TRSV_CMN_REG01E);
-> +	writel(0x28, pbase + FSD_PCIE_PHY_TRSV_CMN_REG02D);
-> +	writel(0x28, pbase + FSD_PCIE_PHY_TRSV_CMN_REG031);
-> +	writel(0x21, pbase + FSD_PCIE_PHY_TRSV_CMN_REG036);
-> +	writel(0x12, pbase + FSD_PCIE_PHY_TRSV_CMN_REG05F);
-> +	writel(0x23, pbase + FSD_PCIE_PHY_TRSV_CMN_REG060);
-> +	writel(0x0, pbase + FSD_PCIE_PHY_TRSV_CMN_REG061);
-> +	writel(0x0, pbase + FSD_PCIE_PHY_TRSV_CMN_REG062);
-> +	writel(0x15, pbase + FSD_PCIE_PHY_TRSV_CMN_REG03);
+>=20
+> kbase handled this with a "core_req" field which listed the required
+> cores for each job. We already have a "requirements" field which we
+> could extend for the same purpose (PANFROST_JD_REQ_TILER_ONLY or
+> similar). I don't think this makes sense to include in a "context".
 
-Magic numbers?
--- 
-~Vinod
+It was more a core reservation mechanism, which I expected to be forced
+at context creation time. I mean, it can still be at the UMD level, and
+we would pass the mask of cores to use at job submission time. The
+problem I see with just expressing the maximum number of cores one can
+use is that it doesn't work for core reservation. Also, I went for this
+interface because that's more or less what panthor exposes (mask of
+cores that can be used, and maximum of number of cores that can be used
+in this pool).
+
+>=20
+> But like I said, maybe I'm missing something - what is the use case for
+> controlling affinity?
+>=20
+> [The priority parts look ok here, but that's mixed in with the affinity
+> changes.]
+>=20
+> > ---
+> >  include/uapi/drm/panfrost_drm.h | 93 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 93 insertions(+)
+> >=20
+> > diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfros=
+t_drm.h
+> > index ed67510395bd..2d8b32448e68 100644
+> > --- a/include/uapi/drm/panfrost_drm.h
+> > +++ b/include/uapi/drm/panfrost_drm.h
+> > @@ -22,6 +22,8 @@ extern "C" {
+> >  #define DRM_PANFROST_PERFCNT_DUMP		0x07
+> >  #define DRM_PANFROST_MADVISE			0x08
+> >  #define DRM_PANFROST_SET_LABEL_BO		0x09
+> > +#define DRM_PANFROST_JM_CTX_CREATE		0x0a
+> > +#define DRM_PANFROST_JM_CTX_DESTROY		0x0b
+> > =20
+> >  #define DRM_IOCTL_PANFROST_SUBMIT		DRM_IOW(DRM_COMMAND_BASE + DRM_PANF=
+ROST_SUBMIT, struct drm_panfrost_submit)
+> >  #define DRM_IOCTL_PANFROST_WAIT_BO		DRM_IOW(DRM_COMMAND_BASE + DRM_PAN=
+FROST_WAIT_BO, struct drm_panfrost_wait_bo)
+> > @@ -31,6 +33,8 @@ extern "C" {
+> >  #define DRM_IOCTL_PANFROST_GET_BO_OFFSET	DRM_IOWR(DRM_COMMAND_BASE + D=
+RM_PANFROST_GET_BO_OFFSET, struct drm_panfrost_get_bo_offset)
+> >  #define DRM_IOCTL_PANFROST_MADVISE		DRM_IOWR(DRM_COMMAND_BASE + DRM_PA=
+NFROST_MADVISE, struct drm_panfrost_madvise)
+> >  #define DRM_IOCTL_PANFROST_SET_LABEL_BO		DRM_IOWR(DRM_COMMAND_BASE + D=
+RM_PANFROST_SET_LABEL_BO, struct drm_panfrost_set_label_bo)
+> > +#define DRM_IOCTL_PANFROST_JM_CTX_CREATE	DRM_IOWR(DRM_COMMAND_BASE + D=
+RM_PANFROST_JM_CTX_CREATE, struct drm_panfrost_jm_ctx_create)
+> > +#define DRM_IOCTL_PANFROST_JM_CTX_DESTROY	DRM_IOWR(DRM_COMMAND_BASE + =
+DRM_PANFROST_JM_CTX_DESTROY, struct drm_panfrost_jm_ctx_destroy)
+> > =20
+> >  /*
+> >   * Unstable ioctl(s): only exposed when the unsafe unstable_ioctls mod=
+ule
+> > @@ -71,6 +75,12 @@ struct drm_panfrost_submit {
+> > =20
+> >  	/** A combination of PANFROST_JD_REQ_* */
+> >  	__u32 requirements;
+> > +
+> > +	/** JM context handle. Zero if you want to use the default context. */
+> > +	__u32 jm_ctx_handle;
+> > +
+> > +	/** Padding field. MBZ. */
+> > +	__u32 pad;
+> >  };
+> > =20
+> >  /**
+> > @@ -177,6 +187,7 @@ enum drm_panfrost_param {
+> >  	DRM_PANFROST_PARAM_AFBC_FEATURES,
+> >  	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP,
+> >  	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY,
+> > +	DRM_PANFROST_PARAM_ALLOWED_JM_CTX_PRIORITIES,
+> >  };
+> > =20
+> >  struct drm_panfrost_get_param {
+> > @@ -299,6 +310,88 @@ struct panfrost_dump_registers {
+> >  	__u32 value;
+> >  };
+> > =20
+> > +enum drm_panfrost_jm_ctx_priority {
+> > +	/**
+> > +	 * @PANFROST_JM_CTX_PRIORITY_LOW: Low priority context.
+> > +	 */
+> > +	PANFROST_JM_CTX_PRIORITY_LOW =3D 0,
+> > +
+> > +	/**
+> > +	 * @PANFROST_JM_CTX_PRIORITY_MEDIUM: Medium priority context.
+> > +	 */
+> > +	PANFROST_JM_CTX_PRIORITY_MEDIUM,
+> > +
+> > +	/**
+> > +	 * @PANFROST_JM_CTX_PRIORITY_HIGH: High priority context.
+> > +	 *
+> > +	 * Requires CAP_SYS_NICE or DRM_MASTER.
+> > +	 */
+> > +	PANFROST_JM_CTX_PRIORITY_HIGH,
+> > +};
+> > +
+> > +#define PANFROST_JS_FLAG_ENABLED		(1 << 0)
+> > +
+> > +struct drm_panfrost_js_ctx_info {
+> > +	/** @flags: Combination of PANFROST_JS_FLAG_xxx values */
+> > +	__u32 flags;
+> > +
+> > +	/** @priority: Context priority (see enum drm_panfrost_jm_ctx_priorit=
+y). */
+> > +	__u8 priority;
+> > +
+> > +	/**
+> > +	 * @tiler_mask: Mask encoding tiler units that can be used by the job=
+ slot
+> > +	 *
+> > +	 * When this field is zero, it means the tiler won't be used.
+> > +	 *
+> > +	 * The bits set here should also be set in drm_panthor_gpu_info::tile=
+r_present.
+> > +	 */
+> > +	__u8 tiler_mask;
+> > +
+> > +	/**
+> > +	 * @l2_mask: Mask encoding L2 caches that can be used by the job slot
+> > +	 *
+> > +	 * The bits set here should also be set in drm_panthor_gpu_info::l2_p=
+resent.:
+> > +	 */
+> > +	__u16 l2_mask;
+> > +
+> > +	/**
+> > +	 * @core_mask: Mask encoding cores that can be used by the job slot
+> > +	 *
+> > +	 * When this field is zero, it means the queue won't be used.
+> > +	 *
+> > +	 * The bits set here should also be set in drm_panthor_gpu_info::shad=
+er_present.
+> > +	 */
+> > +	__u64 core_mask;
+> > +};
+> > +
+> > +struct drm_panfrost_jm_ctx_create {
+> > +	/** @handle: Handle of the created JM context */
+> > +	__u32 handle;
+> > +
+> > +	/** @pad: Padding field, MBZ. */
+> > +	__u32 pad;
+> > +
+> > +	/**
+> > +	 * @slots: Job slots
+> > +	 *
+> > +	 * This field must be greater than zero and less than 8 (only three s=
+lots
+> > +	 * available).
+
+Not sure what this doc referred to, but slots is not an integer :D.
+
+> > +	 */
+> > +	struct drm_panfrost_js_ctx_info slots[3]; =20
+>=20
+> We don't allow user space to choose which slot is being targetted, so
+> this feels odd.
+
+Some of this has been extracted from the panthor-ification of JM, and
+you're probably right that it doesn't make sense to expose the
+subqueues in panfrost.
+
+> I guess this allows deliberately disabling slot 1 to
+> force slot 2. But the code in this series doesn't seem to implement
+> this. I'm also not sure I understand why you would want a different
+> priority for different slots?
+
+Internally, a slot maps to a sched entity, which is where the priority
+is defined. Sure, we could have a global priority for the whole context,
+but I figured I'd just expose what the KMD is capable of (per subqueue
+priority) and let the UMD assign the same priority to all slots. But if
+we don't expose the slots directly, we might as well just define a
+priority and the set of resources that can be used by any of the
+subqueues.
+
+Regards,
+
+Boris
 
