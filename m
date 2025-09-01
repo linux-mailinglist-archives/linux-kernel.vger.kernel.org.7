@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-793691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9E4B3D6D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F2AB3D6D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D681896DBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:53:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BF61896D2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1D3214A6A;
-	Mon,  1 Sep 2025 02:53:15 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275EF202C5D;
+	Mon,  1 Sep 2025 02:51:18 +0000 (UTC)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA538212572;
-	Mon,  1 Sep 2025 02:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788AE28F5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756695194; cv=none; b=e3zYQeb9JkmAt6NO7KxzZgXrwnn+Z4S2RHI9zxYCg+euwEFVFgd5Epc0q/mBBkd0g5k/2gtu0e2Q/g4cS3pOCfxZLdXUycFzGfiQaYwpcRcS2AAM3F4XD3BpDkxITXxR32pzp3ntwDVgd8pTXXUciN/bkn0GUWR8jEF5t1yb3Yg=
+	t=1756695077; cv=none; b=PJsdJWWVGXN8bpveFehln2g6vbF3VIgTGTK68clwRcgCVYpPrAtP/aVlABptTXt0+ivmZSmh2NTSjHMCApmnlbvIdxpw4ecZnggCZ7jodyobUY64nU0lNGH2pkoNGh3QOoHb72AR+U6TgCyPO7Fllg+muMY2hOEVKJCA5hlyILM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756695194; c=relaxed/simple;
-	bh=C1oUR4w2D4vfePiU+8EoHjtmudu/vxsFw7sq10XfzS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VBX634HPrj/RWCYcEJeBLrG5otqy1cDdabQsqbc45uhvCakmNz/LYjysMp9FQUr7/oUGJbbySoi19lSK63yGEOWYkimsKX03lLSqqieqe56SCOKreckDh1iCOs89ap+jmL+kc+qJRnR5OfgUv6H69jMqvh+krqVUavlhSAjslLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=none smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=15.184.224.54
+	s=arc-20240116; t=1756695077; c=relaxed/simple;
+	bh=dKbllMyJvq2cWyxNikxqDTkakDd4FTY5P/jf+amsR9U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d3G/UHlBC+SHrU8bCFC4/UIRF002Kz9vuvR4LNNYWWayPnvhNte9OmwwZ5Nf3H3rZs9C5Tt27oB+UL8AsZM/NxJJQ4pChsBTj5998CvoNpoHwhchCdD5M2+UxYC1/QOKpHLkDUhjW8fYfu4oiJR0KZDHqZpzFlohB51B4aEyfRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=pass smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=18.132.163.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chainsx.cn
-X-QQ-mid: zesmtpip4t1756695042t09f9844e
-X-QQ-Originating-IP: inLk59jgu4rpfAkLnWECGvGqi7aoweVxElPZLVfOMls=
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chainsx.cn
+X-QQ-mid: zesmtpip4t1756695045tc264b712
+X-QQ-Originating-IP: ap5qtfwFLDiWsWjGBf9EO9zRS7YU1uzGqHMrPqJn1wo=
 Received: from chainsx-ubuntu-server.lan ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 01 Sep 2025 10:50:39 +0800 (CST)
+	id ; Mon, 01 Sep 2025 10:50:43 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12657077797693184159
-EX-QQ-RecipientCnt: 11
+X-BIZMAIL-ID: 5940222375455868438
+EX-QQ-RecipientCnt: 12
 From: Hsun Lai <i@chainsx.cn>
 To: Fred Bloggs <f.blogs@napier.co.nz>
 Cc: Hsun Lai <i@chainsx.cn>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -48,10 +50,12 @@ Cc: Hsun Lai <i@chainsx.cn>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org
-Subject: [PATCH v3 0/2] Add support for 100ASK DShanPi A1
-Date: Mon,  1 Sep 2025 10:50:35 +0800
-Message-Id: <20250901025037.81548-1-i@chainsx.cn>
+Subject: [PATCH v3 1/2] dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+Date: Mon,  1 Sep 2025 10:50:36 +0800
+Message-Id: <20250901025037.81548-2-i@chainsx.cn>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250901025037.81548-1-i@chainsx.cn>
+References: <20250901025037.81548-1-i@chainsx.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,58 +65,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpip:chainsx.cn:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MEfSrlLLfgMrvUHZOaV9S9TDClVc4goCp2856XzfhJTy55GiHayrICyF
-	PCl6He7EgEYw/iovBsXGJjwh4Ku9yqGZAnR9kfEwcVu1GB24KHOUu8TF5IoGyM82HzAmMgc
-	67wGmToWjV3r4hNCkIPtMXKelXlKOoSdbY3je9EkWtR3h8m9VIb5crtYgWTZb+x3wpcMgjM
-	SdsCZqTWc8j1RMW6gvjk/G8/um4VAiplN2R5ju4QQGLPvChUQwTNT+8K3HrRHiPhW6F0oNG
-	gFiNdxGbvVI8OydRioSASaaf3SEUJW8jY5xDrefXwx14DM502A02CFy9x2xxo6IManj8wLy
-	XONnGQySrgmhfMn6owBa+dBVro0PTybFkh8C9RwOM+NHtSEmF6b14bqBrpqNDiM9G/XMXaC
-	cvMppmgWzurQmMvq/JmNBpAhER7M+G2x784Nnay2bXW2HsJijX04Tnj39mB9st/Iwj9OTgg
-	M2K+Wzqs9xzjIRZstZwn0M6q8eSD/S0ionDq8RgOWsune9CUqMKLiFNAFLtDC9IcdVL404n
-	+8O33hfuVKirDcu+xO9uWTmV7crTMSQleONhN81fuWPpPa18lBhj/u/u4jR5IMgNvb7gR5Z
-	B0dFeHBGznCymB4kS8w4mGMLJExApNXvtfUV5vBuCK3wCsxGJIHoapkAoxZEMmqv9030Xsb
-	IlTAZtsw1JVEdOT0FoRUnqBRTzDokGRWHscpkhkxJRUZOO2guSZOHN4MwsyItHqwSAKhEGS
-	P/uBbYWw8/ds4+rx/O++zuvH4n5YXN0oEfTSElyhTI0zE4aXjnDnxFT4KqKp3I8mJwGeRSB
-	UVM+S/XEN8YQvPcJz+033fP4Y40pk/lqfESZ5C9CnulI6324DhRNphcWYTud9oHbbxmcX1+
-	MSGWMQT4NiARWQKpl35SKqDfAkyPSV6zOUi57GgotZe6DqN/lMeof1JhqzB+uF73uCqqsXD
-	7MN24xYygaaHhmtNlT9tbnioJJRVA4NKBrkLY9wh7RvUnoudya3paoX5QNE4+SU7xHMlpNX
-	OBedgenukcSGs13ic3mAx8aDJl7s3+Vqnww86O/1MclerFIDdqdC4kR+mSt8b1mgNibUTmh
-	+rVvot8v7Ba78MY7992kog7jjcXRuISjGOE8cV9Jd8qVwEe0jsKKT0=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: MPOEa4kVfRKznh3wDjqYJCYaz3YTHkCvUl+OTlfn/oRAPC6tNlX34ywV
+	/qpWB+AFXEDhII8ROEy8b/IMVO6q5AajaWuwIWVIHEwYfGWTODmg5lCaxcW8OGRTX0DEEXl
+	1Ei+skdWZFANKB6cAe7CLhxUPb+rNLA6v8RFRnryO8OkFrJFD9QaG8lZZR/lBuj6ITHKFhr
+	9/hUHAJOV6i/FlwL2RkyEw6JvPPBqT9yHpOGWlKy9v48qeGK3848szLYhDfKyEDMJ8Lhj3w
+	U3MDpbZAyMfw1Rn1J9VaOK75X74K4ien4EEbbJ9LcgGcqr6CqyqB2+/YA9x6XsmyXFRYtgF
+	LuD9G7LbM3hIm3jQ6d9ED37HBHg8FmdQOjWiaZZfgLrjM9Vr7HixYPmFUriHHVu20mpq1ba
+	F72AXujjp9fUWhm/el4mOsiU2GTbugma40B3hxxbNU1EGQkH/0XM67O0VO2eHSmn3fZDR6l
+	vaRw8/R4iuHeHjKeRBYRpblc7Fa5taOdZIIwn5rTy7/YS1qKjg28wkE+3WBxdBEivIPntTj
+	+XR3RTVyKaYI7k12QGu/d7m5njaliCK0UhbY0cSGIF8AjZflOVk58/JAZbFlexoKuHOW4xX
+	0lhn56FLicqC5Lg10lg+ZFb5RTF0dwanEitF1m+BxZAv5inVi4pHjwloIl59q8ttN6H5PZo
+	6LP80xXI9mdaHrGdZPS+Amz5c9xWBn9UjQQ8ys+dPfpodB+F6x/6IWN9ioveAxrpb/jZMWk
+	LcPHjS9Yb3cKVtGZw1V9WJTh7bWiEkVWms2BXHKF1ozM1nmRZAo5ZfljUtvZo+51wPKT47v
+	G0UlDRUWTBfJEq1iV+KXAYoI50Q6s2LdASNkAaQjNnlu9tb7PM1M5pyqx3dxnoPHVGpBEYK
+	/UdZop8Z9rr2s1JixwUK4HjaZJsT3X6+soXypk01hF5RB/Z27X88AppdI/cF6IqfKBfITrn
+	mx6pgf3MO2CenGltcGTvoItqCgobjM7KkfpFTXsSjcMMCKSohdYHTXtkA41zKVFO4fD6S8P
+	bfUFJb+wBGxh4HWApHlaTNNUZJrrsMqL+okXgq/8b9vubihsroXmFzRM1rmEI8dYL7+CErz
+	Q433zUciqxyS50thx1IXVyv8AovF1iJqrycIamvpvrAjchegCoOW8Yvbr2W2Lywow==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 X-QQ-RECHKSPAM: 0
 
-This series add support for 100ASK DShanPi A1.
+This documents 100ASK DShanPi A1 which is a SBC based on RK3576 SoC.
 
-Info of device can be found at:
-https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
+Link: https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
 
-Changes in v3:
-- Update the name of vcc_in regulator (Chukun Pan, v2)
-- Fix PCIE (Chukun Pan, v2)
-- Update the name of typec5v_pwren_h pinctrl (Chukun Pan, v2)
-- Fix USB3 (Chukun Pan, v2)
-- Remove i2c2 node, unsupported RTC model rs4c1338 (Chukun Pan, v2)
+Signed-off-by: Hsun Lai <i@chainsx.cn>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
 
-Changes in v2:
-- Delete the pwm include file (Chukun Pan, v1)
-- Fix vcc3v3_pcie gpios (Chukun Pan, v1)
-- Adjust the order of some nodes (Chukun Pan, v1)
-- Fix sdmmc (Chukun Pan, v1)
-- Add phy-supply for u2phy0_otg (Chukun Pan, v1)
+(no changes since v1)
 
-Changes in v1:
-- Add support for 100ASK DShanPi A1
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Hsun Lai (2):
-  dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
-  arm64: dts: rockchip: add DTs for 100ASK DShanPi A1
-
- .../devicetree/bindings/arm/rockchip.yaml     |   5 +
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../dts/rockchip/rk3576-100ask-dshanpi-a1.dts | 795 ++++++++++++++++++
- 3 files changed, 801 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 28db6bd6a..033730861 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -15,6 +15,11 @@ properties:
+   compatible:
+     oneOf:
+ 
++      - description: 100ASK DshanPi A1 board
++        items:
++          - const: 100ask,dshanpi-a1
++          - const: rockchip,rk3576
++
+       - description: 96boards RK3399 Ficus (ROCK960 Enterprise Edition)
+         items:
+           - const: vamrs,ficus
 -- 
 2.34.1
 
