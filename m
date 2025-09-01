@@ -1,99 +1,141 @@
-Return-Path: <linux-kernel+bounces-795372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ADFB3F0F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA08B3F0F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FFCD7A2064
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5D27A7B97
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06AB284694;
-	Mon,  1 Sep 2025 22:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E708284681;
+	Mon,  1 Sep 2025 22:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KTszi41x"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3il2hLb"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E727E7DF
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 22:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE4223DF0;
+	Mon,  1 Sep 2025 22:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756765114; cv=none; b=NOIIXi0heUfJCwr9raRu4vTfPJIymSjMUg7dYJbWKPtrX27yHsMlcyTw5CZYh7rzxHh8KA6DzIYsJz32anCPiWURCqMy3kl0238b4/FPW7OnMkgIOfq23OfrueipDRmc+b+eLPuhPITTAoESBJCSsetOMN+ywmwhF39e7J5YetA=
+	t=1756765157; cv=none; b=d/vTGmD1imqOU1C2Or0sh7yCGPiQiGvd96Ygzz8QQdRa9iFgNBzByRdnQDtH/oh+EGMXB2qvMySaSmQhGdF4BNOkvd1FjRnbg3jEnnzMOi515PKcO9XZD5wVW3T3Hh96nYuLOx4bfpvUR2NuJWe26P/U4GSUlkw2eARyiqkOt74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756765114; c=relaxed/simple;
-	bh=QvCFQgTjuyNlM8J34Ggn8WKsTd0lz1Qdl41ztODapng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lH8qNuL+PmYHrz2UWA8/6BfVN6zabniFZP1Jcjx7XUcYH4ntWq6N9VltmrYbMHuV41ss0gETvmKvpxjj9dYHfJxyT5GDpAZlzZUaWPze0ZwhbWYMKK7X92FvgMOzyazCkzNlqP32f5341L5LSiqzW0oBMxU+u/fObMaa+in157Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KTszi41x; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0a5588c2-bac5-4d9a-a726-57c6d22341ff@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756765109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5aEzpioEnVAaVyWyNZeOyoP4rfKIhvC7XDRdVAv5wyI=;
-	b=KTszi41xFK5aOcCPIZ/WHGDkVYDB8Nn0oYztx9Mg4O2/Wh6EFjfUcyAHQ1D8reV1U13jm0
-	6aJGFPbvPKDsjAML+vjZ+BG/Av8+/nLdirTRfy9pWDx5R8vGyiIz4izcWTYhQ1bwz6bF8l
-	5K7YULnrmHNK/AfcH1NPULRd89QPAIE=
-Date: Mon, 1 Sep 2025 23:18:15 +0100
+	s=arc-20240116; t=1756765157; c=relaxed/simple;
+	bh=nQ7mO5E7c8hbVdsDf/x9IXrKjmvv3jwdOV8cNDkfb4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odOf/HXZTigbQNhqwoZaSHtrD613mNY4dqtejfU4qg7XsXFwjadhkkJ4D2NAgSmLNQvXm1rrTOry/XHJKSsuzYDYtwEMeVxt5x5R2DRwCwgvz21mcgCTxb4r63Sc+ECcWZ5OBV3UqM70UwQIV/HCl2xAljv5raRJwGJ8XiZUGuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3il2hLb; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445805aa2eso47719155ad.1;
+        Mon, 01 Sep 2025 15:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756765155; x=1757369955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9R6oxqys0ms7HK4n8n9276tCd/V/vMgZikh9AT++SdY=;
+        b=c3il2hLbvMGJUjSxi6o2LTqkxYdV87du4QO3vRtsrlKqxo/F09CzRA1D1iy/ebcG/6
+         RclzayJFuOP4yX+MEs6g16ruEvDL1g1dLtVcngxSNFV16XpeqltM/e90HeYRZhnT8gxh
+         QkfoIBkLXj3+pHqzVqm7zmFOqy610eC6U7OTShTJkKazjitsSEL0vWqETJ2m0sTtBKEN
+         ByfjmVVlMtR6eiJtw5j+dZFFjCu8e/RDP2st6xNIJwQ1NCUchPJZi0Vh1l+sXYYNxqIQ
+         lrx1QTi3lkduo4C5mubOjRMe2THWN0CpXizxpRp8SriAAJbgPbsto4e647JYM4WTzZkF
+         1spQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756765155; x=1757369955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9R6oxqys0ms7HK4n8n9276tCd/V/vMgZikh9AT++SdY=;
+        b=epE2BlH0UOsiUD4UFoAOljMphOBdOSOvg9v98c4SuO3x2F9hjI9J3MR1gSJ2iWkUKU
+         189CzWnM/tS7EPD0HzQaaeI78neQNXUfOLT8+bFCgRhc9pAXHYAW2d7jAIgyUxSTnrcG
+         1fSwtZCTLDmGiT7boM/lPgAJU79dao/haUjK/SY77q/UP1P1MHU57NcEGHmk1fWJGuRG
+         lqOAc0KcsCR6EeTlBSW/NXwQJtfIAWf++hnx4Cq/kbuWaS3GhrdOvxWj7S6a5krB10qI
+         LKArnCoY3dPFuu4ywn7KHM9qhG4QOwpF+zosdvaJZ2C5Wj6ap0YEZVzG4Qa/b7SsRsbD
+         KGTA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3/WTN3CkXnMCGyIHopaICbsqc9+10wh41zCRwWPVOUAcXjZJZ7Dw+j7kgNYsDs0fR22TOuHEzHa+LGkk=@vger.kernel.org, AJvYcCXTBZFIfk5ZJ5LImvCxL61CK/eSzEztAKmuQ+PP2yzsInRzcghmqaeYwNhHIaOOyV//1KXKS8F6B/j/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5jUPnT7FMceCjU8P7zlVt6/XPyKi8+26Bc9VceUdJjwfL/1aB
+	Y24l/do5OjMCI67Xy2KPIdKYafLjZtAJ7jtR2yKJPH3HJPggmHarSfNA
+X-Gm-Gg: ASbGncvrgTii8T88SbfOZEZWejzApzAW4H2hRTW7c5gcOk7UnnScXVtJFbchXldF76p
+	pvbW7b0AV15bod8zdvZBvHRKIc9SCoEqkKK6XnVekdX7AzDGefIKhIg6vcaEIuQQvStETclySFh
+	COcdGwBZMaU6azHDzPRdMlmPjaU2zvr4IE3fwXm5xDWStbEj1eq34rk2CVxa+/XNqzPX+wBzRML
+	WxduFhT254jS0BhaYFMhkr8Q3WwsQ7I+j5IcmVI5mGGIp1pcdhMoiCOcpkhI7t380uXmb98aJcm
+	WgFq5XyXdcrS8x7fQEv5FCMQlGpU9hn1CXeCpPeilf7f7v7tJ5rLISuxjvCRZgI4uXC6S91DfqF
+	fd6qPacQJnBQihHDiMxVtZwpvdbq7Ensv
+X-Google-Smtp-Source: AGHT+IGUevVLHan5orWrgLADbjdtRVczCV+BXnOnV7mGOJM0RgU9y3dnreihOC4mZzOpWQO+v6QpgQ==
+X-Received: by 2002:a17:902:d485:b0:240:9ff:d546 with SMTP id d9443c01a7336-2494488a080mr114983035ad.6.1756765155468;
+        Mon, 01 Sep 2025 15:19:15 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24b15780a11sm712655ad.93.2025.09.01.15.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 15:19:15 -0700 (PDT)
+Date: Tue, 2 Sep 2025 06:19:09 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>, 
+	Anders Roxell <anders.roxell@linaro.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
+	Linux Kernel Functional Testing <lkft@linaro.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Wei Fang <wei.fang@nxp.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Message-ID: <jrowmm4uh62bzxqtuc3bdtjkjxpwsu4zid5khxannuzw7vflum@6i4qzw473ozy>
+References: <20250827230943.17829-1-inochiama@gmail.com>
+ <CADYN=9K7317Pte=dp7Q7HOhfLMMDAfRGcmaWCfvOtCLZ00uC+g@mail.gmail.com>
+ <07dea655-faac-4033-852c-91674c5f09e8@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] net: thunder_bgx: decrement cleanup index before use
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: Sunil Goutham <sgoutham@marvell.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, David Daney <david.daney@cavium.com>,
- "moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250901213314.48599-1-rosenp@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250901213314.48599-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07dea655-faac-4033-852c-91674c5f09e8@nvidia.com>
 
-On 01/09/2025 22:33, Rosen Penev wrote:
-> All paths in probe that call goto defer do so before assigning phydev
-> and thus it makes sense to cleanup the prior index. It also fixes a bug
-> where index 0 does not get cleaned up.
+On Mon, Sep 01, 2025 at 03:56:04PM +0100, Jon Hunter wrote:
 > 
-> Fixes: b7d3e3d3d21a ("net: thunderx: Don't leak phy device references on -EPROBE_DEFER condition.")
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->   drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> On 01/09/2025 14:30, Anders Roxell wrote:
+> > On Thu, 28 Aug 2025 at 01:10, Inochi Amaoto <inochiama@gmail.com> wrote:
+> > > 
+> > > For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> > > the newly added callback irq_startup() and irq_shutdown() for
+> > > pci_msi[x]_template will not unmask/mask the interrupt when startup/
+> > > shutdown the interrupt. This will prevent the interrupt from being
+> > > enabled/disabled normally.
+> > > 
+> > > Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+> > > cond_[startup|shutdown]_parent(). So the interrupt can be normally
+> > > unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+> > > 
+> > > Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
+> > > Reported-by: Nathan Chancellor <nathan@kernel.org>
+> > > Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
+> > > Reported-by: Wei Fang <wei.fang@nxp.com>
+> > > Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
+> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > > Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > Any updates on this?  It pretty much breaks testing on linux-next for ARM.
 > 
-> diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> index 21495b5dce25..90c718af06c1 100644
-> --- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> +++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> @@ -1515,11 +1515,11 @@ static int bgx_init_of_phy(struct bgx *bgx)
->   	 * for phy devices we may have already found.
->   	 */
->   	while (lmac) {
-> +		lmac--;
->   		if (bgx->lmac[lmac].phydev) {
->   			put_device(&bgx->lmac[lmac].phydev->mdio.dev);
->   			bgx->lmac[lmac].phydev = NULL;
->   		}
-> -		lmac--;
->   	}
->   	of_node_put(node);
->   	return -EPROBE_DEFER;
+> Also does it make sense to squash this fix with the original patch? It
+> caused boot failures on at least 3 of our boards and so could impact the
+> ability to bisect other issues.
+> 
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+As Thomas has taken the original series, I think it is hard to do a squash.
+I will ping Thomas to see if he can take it.
+
+Regards,
+Inochi
 
