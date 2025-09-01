@@ -1,150 +1,389 @@
-Return-Path: <linux-kernel+bounces-795097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17634B3ECCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:58:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416E4B3ECCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99ED11B20F3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329697A1EE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922BA30F800;
-	Mon,  1 Sep 2025 16:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79356320A14;
+	Mon,  1 Sep 2025 16:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQm+20zW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIvc8I6q"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC28E1ACEAF;
-	Mon,  1 Sep 2025 16:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C15320A02;
+	Mon,  1 Sep 2025 16:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756745924; cv=none; b=p67VUj61wsSXqWzRwwugN2hzoNmInOmgi5qFqbyhXT5EFNidYlVSj7zVNC3e7IYH5Nnlqf1xR8y6mMcfltTAOYHlLNrmlZbgybNJCUNhrJCE8/YJdgALbNI/8Sb2GxRLCoxHwrEfXwDzdIvlsVhEQ+pkm6Bt+AXRxBwQBHEYURs=
+	t=1756745927; cv=none; b=AcRwwYfxYL6kSnwYLnpwR0ZRzUWGRH7GcQslHTFjOrUpHvN5WIvmOsXwd4MONHILTBXcjDwMfLa566MvcIGBfO/LF+xE5/BChDhtXN8K6nhbsdJK00AnBb3/b7rKrVrlkPNwCSTTUjZOX7i+V4L4ZIRF4sQrOCLheBR8b6wOgAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756745924; c=relaxed/simple;
-	bh=JJvd2FZ5jfxr+1x2GaboYFAVICfun63sxKf9be92ynk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfB51pzd9Lv1BP6F09gX83XsFHMumolrwnEg8THVDg8O4gOveX3HynZakVyD52Ib912D2sCXiwTNYLUuEYBx06v46cJEqYZvYKmI+4a0NBqD2jZVjUs2SWWWRRdy8BoNbWiG2wCtug5Xqj/Di9ijgylKfbGUFZ3dibpGfZS98lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQm+20zW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECF0C4CEF0;
-	Mon,  1 Sep 2025 16:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756745923;
-	bh=JJvd2FZ5jfxr+1x2GaboYFAVICfun63sxKf9be92ynk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AQm+20zWPVLFqm85Zdt5g5WyHklXt3BbfhkciJI+L3MNqpsUgJL6v7L02ZKkhVGLu
-	 WSXblGPvU65aEDNYAM93V66vqLKIFlFDhE2omv4Hn7qay/AX5GrKb7RVPKLOKaUufi
-	 5haEBjjhLGCUGZHyq61KgdKrsyigx7huHb6NaVINmtpP7TIV2v57McZEpg9iNpfuC8
-	 HR0pfKMv+UB+LWwR5d25YKmJnkkLHRx96MLO6XGfAkSHH9HdSM4Sp+t1v+lpi5L6m6
-	 1+0LQirG7l490KZ++KEXKa/4KYWFDm8aBm77EmK/hSFm+rQe62KeTrfuQwckaiXyBQ
-	 1HopyEt3pJ/ZQ==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e482e1857so216434eaf.2;
+	s=arc-20240116; t=1756745927; c=relaxed/simple;
+	bh=K0zm68GTxov0wXe6y6Y91HQcC6XVs9Mvru10uVvQ5p0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h34JIMacxsLPoptSC2gBdiKFfHrbb/2wAjdEb3Eip/srIRZYHhq2A9qOgIolTGyq25kPY8Zd91pkVxB7uqY3yz0pRwevjKgrBMT60OhLsRBwI8zuKfPM5wF2R7N1LVjbSQbC0NkrCtZyzjbEcL+rFo+vtkadJq4jBzFCTHb6bbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIvc8I6q; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b7d497ab9so39687325e9.0;
+        Mon, 01 Sep 2025 09:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756745924; x=1757350724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7JItOdgLR5ewbXV4fusbnqGa1qC5ZXvzXh/D9eLDiYg=;
+        b=UIvc8I6qx7XZxd0bP/Oz7rtAEynKba8+YP9sqfS/TejmrvWzkEmkjyowsXlu89RLIQ
+         rWxpOG+qCUpH5n+jn4ep0K2dLeVwzqCvmZ7iypYLRxzrud45EwK4VeFO6UQeo85QZQ+t
+         PRxa1eXToAsQK1NC6OW+VRtO0V1kyF8raMSV7smcVvNVBwrAqYFBYxmV0IUjBmgwQrkh
+         VRqRa0Xm1bG8jv5UeUHsgs/krVFDrTWtmPsmefHBIPXk2QOBNOEJbS4m1t/MfWLp27cE
+         COzVjj08gVtR5qorXN6QXkDy4RrNtAIKtBKvpvcVqLd6j6ERZ77Usa+XqEi2dDdrnYFX
+         eoIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756745924; x=1757350724;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JItOdgLR5ewbXV4fusbnqGa1qC5ZXvzXh/D9eLDiYg=;
+        b=v8qUrCbI+pL6MeZX6PtgxN55mt5MwBXXal0S0wkJ1DaHlZFPgzEt1s7EzmdniTmWwh
+         igTfFFJ7jKht3RmKdJGFPAFD82jQ2/lnGZKAUb/g1vqjKzNcWhvbDeDXxIESWTXUH0nG
+         5x8WdqOJCjVwxIhXGOrzzzdgSQ6kTF2a6sPvjHySMfYJHM3PsYwCn5ydK5DcOea9U+Bd
+         2LHFX474Xl0DApZBdQ36EdNTaoiIp9dzvuN6rDLFqtSK8gwcrZmyvarJKDeb0rw1aiNk
+         4J3Cyfc2Yiy79u7yTl9GbqgSO+96PaVHE9trSPTjq0AuKtkWSlBpWwG20E/iJ+PdwAwW
+         wtUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkZC8t9IcshDGNthVt6yKY3dyAzWlvf0JuIWgtMW+isvEu0dlKWlBqr1xM3PWCeT1Ae+RcNzGxG3QxeyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcPstXDllrNlW7UrBIZs6iOuSeS9804U9y3i4gilUqiB+pnGvB
+	QYnNSq2Rs2GNrkx0z4Sbhq/R+ExmroGaLvrLu0QK7LQBTzbG8YWzxhJe
+X-Gm-Gg: ASbGncsXq6C4i/Tm5Z8sXKj2BJ3tWhIThuzzRnemRiZhjar/nTdJa7Mc9+yoUwO7Maz
+	Q9cnULVlrK+0UE+nOyM0TNZ8h56oD2rypnvTGnzhWXxmZ58JgnxGSpoJF5wUf4Y6B2bg9UAclGi
+	SkX+pBGhKMkz0ewsdP+RzgLnrODPxKCyG30zRLB0Y8+fv15+GCz/6IB/ZVcGIyCiOD6x0gSjNuJ
+	kpg1L84ue1h8QWmbRg3/WNc1tBzYgAlFY5RmmRr3KCj9DaWKsV/G2ZNtAeqXwI3ldl/CEfVhjpJ
+	jFBD+vYZNA4V0sQBDianbSzTLH0YMcW3bjzvNwjschfwsTUn8Z72PCup9RdaQmTjxpo9V5MjzsO
+	igERqee7J5pbdTiei3RH1lB7GlcmFxE62JnV9fF7fJKfDUnmTfwUd6Arfea50LAFMw/v4kEhkWS
+	sSCRj7YAJGZ20UTBYA
+X-Google-Smtp-Source: AGHT+IGyOhk3e3jN/hGEqPyNnB8EVyFUXlzS1WHqdHefnVTqj+KJFjOBagHkuj7au9j333cI8X+BdA==
+X-Received: by 2002:a05:600c:1914:b0:45b:88d6:8db5 with SMTP id 5b1f17b1804b1-45b88d694d3mr54123665e9.12.1756745923496;
         Mon, 01 Sep 2025 09:58:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU00r1Wz9FqoFrszR6AMoKWLaJPTWLMPdMaz3DK6PnYxvjP0PL3wL2D2kDiEu4/Ktse/KWviqU/8q8=@vger.kernel.org, AJvYcCWyXydDNw2DZGRrpg+Awp9Ud+TBe/77UosTbVLQqjTB7aVYorRgpHFHEryFtk/P1CFGkCb07/Vz@vger.kernel.org, AJvYcCXI4zq53CYhxNST/YaCtQiU9WrDf5zqCV2YuZpueHKirrZdRztIt3eIbr5D2HkXBqegVhBAwsVYB6wuXgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhds7ZMpONg3DfU69fNJFBXkmvQ/PUNLPx1Jadjx35XUw4/i09
-	CguE/WjIRAMsuGPWWleqi4VAVU4SfnpriAE8YaSlM/iEcQeUQkQx7ETZRBWavz3rGYXBqwgOmDu
-	TI53GU2AtCTenKC5x6QYZS2vM1HPb3Oc=
-X-Google-Smtp-Source: AGHT+IEixMpzb+Nb/dROtrEfDYwQ2wKmvujX/nV7y7ACumEGFL5GSsy383+a2XBnxIb44R2GHLaoWcdr1hTDGbHLF9w=
-X-Received: by 2002:a05:6820:1622:b0:61e:1ad6:1336 with SMTP id
- 006d021491bc7-61e3370eff9mr4598474eaf.3.1756745922698; Mon, 01 Sep 2025
- 09:58:42 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::6:8e4b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d92d51982bsm1046743f8f.21.2025.09.01.09.58.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 09:58:42 -0700 (PDT)
+Message-ID: <97c19219-6055-46ae-865a-2833d8367db0@gmail.com>
+Date: Mon, 1 Sep 2025 17:58:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831214357.2020076-1-christian.loehle@arm.com>
-In-Reply-To: <20250831214357.2020076-1-christian.loehle@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 18:58:31 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyJX72zIBt8UBeC0anG1jcEXnb7NOGH6iOvZjeorqPjtLQaLpI9W9mZ-bM
-Message-ID: <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
-Subject: Re: [PATCH] PM: EM: Fix late boot with holes in CPU topology
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: rafael@kernel.org, lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, 
-	kenneth.crudup@gmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
+ PR_THP_DISABLE_EXCEPT_ADVISED
+Content-Language: en-GB
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-man@vger.kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
+ ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20250901160903.2801339-1-usamaarif642@gmail.com>
+ <ejz6kpdn6kxuspktab3m7sjwg3l7eevacoabgroxgsltognb7y@3edyqhpae4vn>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <ejz6kpdn6kxuspktab3m7sjwg3l7eevacoabgroxgsltognb7y@3edyqhpae4vn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 31, 2025 at 11:44=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
-> adjustment") added a mechanism to handle CPUs that come up late by
-> retrying when any of the `cpufreq_cpu_get()` call fails.
->
-> However, if there are holes in the CPU topology (offline CPUs, e.g.
-> nosmt), the first missing CPU causes the loop to break, preventing
-> subsequent online CPUs from being updated.
-> Instead of aborting on the first missing CPU policy, loop through all
-> and retry if any were missing.
->
-> Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity adju=
-stment")
-> Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
-> Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
-> Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f72b8=
-144d@panix.com/
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  kernel/power/energy_model.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index ea7995a25780..b63c2afc1379 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
->  static void em_check_capacity_update(void)
->  {
->         cpumask_var_t cpu_done_mask;
-> -       int cpu;
-> +       int cpu, failed_cpus =3D 0;
->
->         if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
->                 pr_warn("no free memory\n");
-> @@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
->
->                 policy =3D cpufreq_cpu_get(cpu);
->                 if (!policy) {
-> -                       pr_debug("Accessing cpu%d policy failed\n", cpu);
 
-I'm still quite unsure why you want to stop printing this message.  It
-is kind of useful to know which policies have had to be retried, while
-printing the number of them really isn't particularly useful.  And
-this is pr_debug(), so user selectable anyway.
 
-So I'm inclined to retain the line above and drop the new pr_debug() below.
+On 01/09/2025 17:36, Alejandro Colomar wrote:
+> Hi Usama,
+> 
+> On Mon, Sep 01, 2025 at 05:09:03PM +0100, Usama Arif wrote:
+>> PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
+>> THPs when advised. IOW, it allows individual processes to opt-out of THP =
+>> "always" into THP = "madvise", without affecting other workloads on the
+>> system. The series has been merged in [1].
+>>
+>> This patch documents the changes introduced due to the addition of
+>> PR_THP_DISABLE_EXCEPT_ADVISED flag:
+>> - PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
+>>   is configured for the calling thread (with or without
+>>   PR_THP_DISABLE_EXCEPT_ADVISED).
+>> - PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
+>>   completely for the process, or disable except madvise
+>>   (PR_THP_DISABLE_EXCEPT_ADVISED).
+>>
+>> [1] https://lore.kernel.org/all/20250815135549.130506-1-usamaarif642@gmail.com/
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> 
+> Thanks for writing the patch!  Please see some comments below.
 
-Please let me know if this is a problem.
 
-> -                       schedule_delayed_work(&em_update_work,
-> -                                             msecs_to_jiffies(1000));
-> -                       break;
-> +                       failed_cpus++;
-> +                       continue;
->                 }
->                 cpufreq_cpu_put(policy);
->
-> @@ -814,6 +812,11 @@ static void em_check_capacity_update(void)
->                 em_adjust_new_capacity(cpu, dev, pd);
->         }
->
-> +       if (failed_cpus) {
-> +               pr_debug("Accessing %d policies failed, retrying\n", fail=
-ed_cpus);
-> +               schedule_delayed_work(&em_update_work, msecs_to_jiffies(1=
-000));
-> +       }
-> +
->         free_cpumask_var(cpu_done_mask);
->  }
->
-> --
+Thanks for the quick review! Its my first time writing a man page so was apologies
+if there were some basic mistakes in formatting.
+
+> 
+>> ---
+>>  man/man2/madvise.2                      |  4 +-
+>>  man/man2const/PR_GET_THP_DISABLE.2const | 18 ++++++---
+>>  man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
+>>  3 files changed, 61 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/man/man2/madvise.2 b/man/man2/madvise.2
+>> index 10cc21fa4..6a5290f67 100644
+>> --- a/man/man2/madvise.2
+>> +++ b/man/man2/madvise.2
+>> @@ -373,7 +373,9 @@ nor can it be stack memory or backed by a DAX-enabled device
+>>  (unless the DAX device is hot-plugged as System RAM).
+>>  The process must also not have
+>>  .B PR_SET_THP_DISABLE
+>> -set (see
+>> +set without the
+>> +.B PR_THP_DISABLE_EXCEPT_ADVISED
+>> +flag (see
+>>  .BR prctl (2)).
+> 
+> Double negation is confusing.  Please rephrase to something like
+> 
+> 	The process can have X set
+> 	only if Y is also set.
+> 
+
+Yes, makes sense, will change to belwow in the next revision:
+
+The process can have
+.B PR_SET_THP_DISABLE
+set only if
+.B PR_THP_DISABLE_EXCEPT_ADVISED
+flag is set (see
+.BR prctl (2)).
+
+>>  .IP
+>>  The
+>> diff --git a/man/man2const/PR_GET_THP_DISABLE.2const b/man/man2const/PR_GET_THP_DISABLE.2const
+>> index 38ff3b370..df239700f 100644
+>> --- a/man/man2const/PR_GET_THP_DISABLE.2const
+>> +++ b/man/man2const/PR_GET_THP_DISABLE.2const
+>> @@ -6,7 +6,7 @@
+>>  .SH NAME
+>>  PR_GET_THP_DISABLE
+>>  \-
+>> -get the state of the "THP disable" flag for the calling thread
+>> +get the state of the "THP disable" flags for the calling thread
+>>  .SH LIBRARY
+>>  Standard C library
+>>  .RI ( libc ,\~ \-lc )
+>> @@ -18,13 +18,21 @@ Standard C library
+>>  .B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
+>>  .fi
+>>  .SH DESCRIPTION
+>> -Return the current setting of
+>> -the "THP disable" flag for the calling thread:
+>> -either 1, if the flag is set, or 0, if it is not.
+>> +Returns a value whose bits indicate how THP-disable is configured
+> 
+> s/Returns/Return/
+> 
+
+ack
+
+>> +for the calling thread.
+>> +The returned value is interpreted as follows:
+>> +.P
+>> +.nf
+>> +.B "Bits"
+>> +.B " 1 0  Value  Description"
+>> + 0 0    0    No THP-disable behaviour specified.
+>> + 0 1    1    THP is entirely disabled for this process.
+>> + 1 1    3    THP-except-advised mode is set for this process.
+> 
+> We should probably use a table with .TS/.TE.  See examples of this in
+> other manual pages for how to use that (or read tbl(1) if you want).
+> 
+> If you don't know how to use that, I can do it myself.  tbl(1) is a bit
+> weird.
+
+
+I tried below, and it seemed to look ok in the output, but please let me know if
+its ok:
+
+.TS
+allbox;
+cb cb cb l
+c c c l.
+Bit 1	Bit 0	Value	Description
+0	0	0	No THP-disable behaviour specified.
+0	1	1	THP is entirely disabled for this process.
+1	1	3	THP-except-advised mode is set for this process.
+.TE
+
+
+> 
+>> +.fi
+>>  .SH RETURN VALUE
+>>  On success,
+>>  .BR PR_GET_THP_DISABLE ,
+>> -returns the boolean value described above.
+>> +returns the value described above.
+>>  On error, \-1 is returned, and
+>>  .I errno
+>>  is set to indicate the error.
+>> diff --git a/man/man2const/PR_SET_THP_DISABLE.2const b/man/man2const/PR_SET_THP_DISABLE.2const
+>> index 564e005d4..9f0f17702 100644
+>> --- a/man/man2const/PR_SET_THP_DISABLE.2const
+>> +++ b/man/man2const/PR_SET_THP_DISABLE.2const
+>> @@ -6,7 +6,7 @@
+>>  .SH NAME
+>>  PR_SET_THP_DISABLE
+>>  \-
+>> -set the state of the "THP disable" flag for the calling thread
+>> +set the state of the "THP disable" flags for the calling thread
+>>  .SH LIBRARY
+>>  Standard C library
+>>  .RI ( libc ,\~ \-lc )
+>> @@ -15,24 +15,62 @@ Standard C library
+>>  .BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+>>  .B #include <sys/prctl.h>
+>>  .P
+>> -.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
+>> +.BI "int prctl(PR_SET_THP_DISABLE, long " thp_disable ", unsigned long " flags ", 0L, 0L);"
+> 
+> Hmmm, I'm reading this weirdly.
+> 
+> Old code doing prctl(PR_SET_THP_DIABLE, 1, 0L, 0L, 0L); would be
+> transformed from setting the flag before, to now using 0L as flags?
+> 
+> Or how is backwards compatibility handled?
+> 
+
+
+Its still backwards compatible. The name of the arguments is changed, but the arg values have not.
+Before you could do 2 things:
+
+prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0); // to reset THP setting.
+prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0); // to disable THPs completely.
+
+Now in addition to the 2 calls above, you can do:
+prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0); // to disable THPs except madvise.
+
+
+Before arg2 was called flags and arg3 was always 0.
+Now arg2 is called thp_disable, and arg3 is called flags.
+
+
+>>  .fi
+>>  .SH DESCRIPTION
+>> -Set the state of the "THP disable" flag for the calling thread.
+>> +Set the state of the "THP disable" flags for the calling thread.
+>>  If
+>> -.I flag
+>> -has a nonzero value, the flag is set, otherwise it is cleared.
+>> +.I thp_disable
+>> +has a nonzero value, the THP disable flag is set according to the value of
+> 
+> Please break the line after the comma.
+> 
+
+ack
+
+>> +.I flags,
+>> +otherwise it is cleared.
+>>  .P
+>> -Setting this flag provides a method
+>> +This
+>> +.BR prctl (2)
+>> +provides a method
+>>  for disabling transparent huge pages
+>>  for jobs where the code cannot be modified,
+>>  and using a malloc hook with
+>>  .BR madvise (2)
+>>  is not an option (i.e., statically allocated data).
+>> -The setting of the "THP disable" flag is inherited by a child created via
+>> +The setting of the "THP disable" flags is inherited by a child created via
+>>  .BR fork (2)
+>>  and is preserved across
+>>  .BR execve (2).
+>> +.P
+>> +The behavior depends on the value of
+>> +.IR flags:
+>> +.TP
+>> +.B 0
+>> +The
+>> +.BR prctl (2)
+>> +call will disable THPs completely for the process,
+>> +irrespective of global THP controls or
+>> +.BR MADV_COLLAPSE .
+>> +.TP
+>> +.B PR_THP_DISABLE_EXCEPT_ADVISED
+>> +The
+>> +.BR prctl (2)
+>> +call will disable THPs for the process except when the usage of THPs is
+>> +advised.
+> 
+> Please break the line before 'except'.  See 'Use semantic newlines'
+> in man-pages(7).
+
+ack> 
+>> +Consequently, THPs will only be used when:
+>> +.RS
+>> +.IP \[bu] 2
+> 
+> s/2/3/
+
+ack
+
+> 
+> See man-pages(7) ("Lists"):
+> 
+>        There should always be exactly 2 spaces between the list  symbol
+>        and  the  elements.   This doesn't apply to "tagged paragraphs",
+>        which use the default indentation rules.
+> 
+> (If you grep(1) around, you'll see that number everywhere.)
+> 
+>> +Global THP controls are set to "always" or "madvise" and
+>> +.BR madvise (...,
+>> +.BR MADV_HUGEPAGE )
+> 
+> I'd say
+> 
+> 	.I madvise(..., MADV_HUGEPAGE)
+> 
+> as an inlined expression, which goes in full italics; that's simpler.
+
+This results in the entire line being underlined, which is probably not what
+not what we want?
+
+> 
+>> +or
+>> +.BR madvise (...,
+>> +.BR MADV_COLLAPSE )
+>> +is used.
+>> +.IP \[bu]
+>> +Global THP controls are set to "never" and
+>> +.BR madvise (...,
+>> +.BR MADV_COLLAPSE )
+>> +is used.
+>> +This is the same behavior as if THPs would not be disabled on
+>> +a process level.
+> 
+> Please break the line before "as if".
+
+ack
+
+> 
+>> +.RE
+>>  .SH RETURN VALUE
+>>  On success,
+>>  0 is returned.
+> 
+> Have a lovely day!
+> Alex
+> 
+
 
