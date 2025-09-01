@@ -1,68 +1,62 @@
-Return-Path: <linux-kernel+bounces-794694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF80B3E5D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:45:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733E0B3E5DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 262DC7AA951
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2F61A84819
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F383375A3;
-	Mon,  1 Sep 2025 13:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB1133A003;
+	Mon,  1 Sep 2025 13:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bm/3jFxP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1RK5aIB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E81430C35F;
-	Mon,  1 Sep 2025 13:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F343376BC;
+	Mon,  1 Sep 2025 13:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734305; cv=none; b=PVGulJbIZ1ZvpsCuSOrJQeXiwXpOJwJIN4EXIUeI5pnrvRP9btIt0xFd1cUheVFb+zR/QVBLGCuhbdVCh2L7CNAsdlqj3LKXpeDvHKc2tip5uvuKBaJUhGGuOgL9kxnRTwLIKWGIbusTQmn60K+gN+tvCnnPMh92QLwgzNbAusM=
+	t=1756734307; cv=none; b=bwrG1FQ+0VYZh3G0dgRXsnYda8PCIP1qiQveCXKeba21rw/zqQw/ILpUSkyf+lY5C/aykeqtQhmfJPcyzZ7KoEUPmjXscnnLJyfsRc0Xv+2vnZjbxB54E+7BunpFev4IUHCjshZGLnH1TWbEWyPKxqA25u0L9keleJAsMeLJdpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734305; c=relaxed/simple;
-	bh=foGamXMOViIJn4G3j6IQOX71KSnPTeGQ3yBpqoRM1bo=;
+	s=arc-20240116; t=1756734307; c=relaxed/simple;
+	bh=pt6AY0y015CdTaieE7iramjvzEFkNHijou1TJEbXBfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4j3kW9sqHQ/m9upVGrn5tGE0ejnsHoZ8Do4sGeOiMS3zbqM8EdX38TLL8YT5scQbiTRY+rA+fihUV3PGROWoqbk6+PAsgqMTPxmGfmheudF6txwSkrmSH0l4ZkrBIOVwe0pfthqc4CtWOB5WiWNIFm8kPnrGdG2je8Cnit2AAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bm/3jFxP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283D2C4CEF0;
-	Mon,  1 Sep 2025 13:44:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Frciul1FOT3WD50XPat3gu4EWME85y3lz7mqwjWZqr2GEaEB3z/zVWPjhlZI2PHmIIA4I+w1zT+8DCAmiLGjoLfuBlps0wOeyQbZVOc0YNNnVE9VO0Cnk7yrq6/fiFnlb0aPFRbq9bATKYZNxjs1ObZokLjY/hS/KJQTZeT9npg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1RK5aIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 075CDC4CEF4;
+	Mon,  1 Sep 2025 13:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756734305;
-	bh=foGamXMOViIJn4G3j6IQOX71KSnPTeGQ3yBpqoRM1bo=;
+	s=k20201202; t=1756734306;
+	bh=pt6AY0y015CdTaieE7iramjvzEFkNHijou1TJEbXBfc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bm/3jFxPdO3TDTc6l4dEWpafE4Ax0voh/4zrCE265vf2efYVcM6izsEAOEmBDIw2S
-	 6IklfZXNBQmbCcAxXaFtfG23f302OLNHm433bVI0cS1TTbdks5iiBzbvkwgqWvB6ku
-	 HGY8M8PREeQTxRGlBV3057vbbTo64F6EtjD4fgVBM5GWMeMxJLUhumLnq3tLxZEkhR
-	 wpMoMNL68N++yJvIyqd5dIxCRXt16H5LhD+9LMPR08sNdA8x92A6nyLNNwXY5fYXaW
-	 4D2ZlkCKsMQBPurmWa639x6caci0/AyEQAb7tZBzb0NLPuuy2+yfWyPnMLZSEN+iLK
-	 QlgLXyxfLq0MA==
-Date: Mon, 1 Sep 2025 15:44:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, 
-	deller@gmx.de, agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, 
-	hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com, 
-	svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com, 
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
-	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, jack@suse.cz, weixugc@google.com, 
-	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com, 
-	broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au, 
-	nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <20250901-ungut-geerntet-51b9f03284be@brauner>
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+	b=c1RK5aIBq1HXviHh8ulRwz2GNsyLxi29Y3JU+97KLxPyFf5eJqwv1gu/q1iEpsllN
+	 zriFT8QSPMvO1tBZIKd5uH+L0ysOtRby3lq24lJwVFAmhzbohPORSnzhRgbhZdhQCo
+	 plYO9FfaR7a3XpijK+BVZD+Jlvq0f+HDLEGZ6aaBgluhQ+vy7KwvzhwFo3bPDuoOsI
+	 NsitbUgs7/lKD0iZ0P0K4AEHBrdrd+rpbUrGbhqGEzUwXC/uhkeK9ZsitC52+81MVb
+	 BtsKOPX2BswiJxeu1mlN0E0tG6jltxHPvZEqA+RSEL6YBnekcCPQHaZLdZ3LYHg9MV
+	 VDq7xQPlXyiqw==
+Date: Mon, 1 Sep 2025 19:14:56 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
+	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com
+Subject: Re: [PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping
+Message-ID: <75ltyjxknqh44ku46dnmxfrqchcedvewf5fng2ukhmvrrqknyg@aogwxt5lfidc>
+References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+ <20250828-ecam_v4-v8-2-92a30e0fa02d@oss.qualcomm.com>
+ <ymsoyadz2gkura5evnex3m6jeeyzlcmcssdyuvddl25o5ci4bo@6ie4z5tgnpvz>
+ <3cbe6692-2ada-4034-8cb2-bc246bca5611@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,64 +65,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250901123028.3383461-1-max.kellermann@ionos.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3cbe6692-2ada-4034-8cb2-bc246bca5611@oss.qualcomm.com>
 
-On Mon, Sep 01, 2025 at 02:30:16PM +0200, Max Kellermann wrote:
-> For improved const-correctness.
+On Mon, Sep 01, 2025 at 12:25:58PM GMT, Krishna Chaitanya Chundru wrote:
 > 
-> This patch series systematically adds const qualifiers to pointer
-> parameters throughout the memory management subsystem, establishing a
-> foundation for improved const-correctness across the entire Linux
-> kernel.
 > 
-> Const-correctness provides multiple benefits:
+> On 8/31/2025 5:18 PM, Manivannan Sadhasivam wrote:
+> > On Thu, Aug 28, 2025 at 01:04:23PM GMT, Krishna Chaitanya Chundru wrote:
+> > > External Local Bus Interface(ELBI) registers are optional registers in
+> > > DWC IPs having vendor specific registers.
+> > > 
+> > > Since ELBI register space is applicable for all DWC based controllers,
+> > > move the resource get code to DWC core and make it optional.
+> > > 
+> > > Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   drivers/pci/controller/dwc/pcie-designware.c | 9 +++++++++
+> > >   drivers/pci/controller/dwc/pcie-designware.h | 1 +
+> > >   2 files changed, 10 insertions(+)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> > > index 89aad5a08928cc29870ab258d33bee9ff8f83143..4684c671a81bee468f686a83cc992433b38af59d 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > > @@ -167,6 +167,15 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
+> > >   		}
+> > >   	}
+> > > +	if (!pci->elbi_base) {
+> > 
+> > Why this check is needed? Are we expecting any DWC glue drivers to supply
+> > 'dw_pcie::elbi_base' on their own?
+> > 
+> I was following the same way that existed for for dbi_base, where we are
+> allowing DWC glue drivers to supply if they had any different approach
+> like ./pci-dra7xx.c driver.
 > 
-> 1. Type Safety: The compiler enforces that functions marked as taking
->    const parameters cannot accidentally modify the data, catching
->    potential bugs at compile time rather than runtime.
-> 
-> 2. Compiler Optimizations: When the compiler knows data won't be
->    modified, it can generate more efficient code through better
->    register allocation, code motion, and aliasing analysis.
-> 
-> 3. API Documentation: Const qualifiers serve as self-documenting code,
->    making it immediately clear to developers which functions are
->    read-only operations versus those that modify state.
-> 
-> 4. Maintenance Safety: Future modifications to const-correct code are
->    less likely to introduce subtle bugs, as the compiler will reject
->    attempts to modify data that should remain unchanged.
-> 
-> The memory management subsystem is a fundamental building block of the
-> kernel.  Most higher-level kernel subsystems (filesystems, drivers,
-> networking) depend on mm interfaces.  By establishing
-> const-correctness at this foundational level:
-> 
-> 1. Enables Propagation: Higher-level subsystems can adopt
->    const-correctness in their own interfaces.  Without const-correct
->    mm functions, filesystems cannot mark their own parameters const
->    when they need to call mm functions.
-> 
-> 2. Maximum Impact: Changes to core mm APIs benefit the entire kernel, as
->    these functions are called from virtually every subsystem.
-> 
-> 3. Prevents Impedance Mismatch: Without const-correctness in mm, other
->    subsystems must either cast away const (dangerous) or avoid using
->    const altogether (missing optimization opportunities).
-> 
-> Each patch focuses on a specific header or subsystem component to ease review
-> and bisection.
-> 
-> This work was initially posted as a single large patch:
->  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
-> 
-> Following feedback from Lorenzo Stoakes and David Hildenbrand, it has been
-> split into focused, reviewable chunks. The approach was validated with a
-> smaller patch that received agreement:
->  https://lore.kernel.org/lkml/20250828130311.772993-1-max.kellermann@ionos.com/
-> 
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-Seems fine,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+DBI is special because vendor glue drivers were using different name other than
+'dbi' in DT. But for ELBI, all (both Exynos and Qcom EP) are using 'elbi' only.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
