@@ -1,187 +1,170 @@
-Return-Path: <linux-kernel+bounces-794099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E12B3DCDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:44:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2CDB3DCDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC662188AF9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E617217D2DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F482FB976;
-	Mon,  1 Sep 2025 08:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YI5Y6Fu5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0LQRU2Gb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YI5Y6Fu5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0LQRU2Gb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F30D2FE04F;
+	Mon,  1 Sep 2025 08:46:02 +0000 (UTC)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7681C2F39C5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB1C2FDC39;
+	Mon,  1 Sep 2025 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716280; cv=none; b=OMdbgXtrVC3hKe3aV5+bYU3wLOuoAXa5D23MfpIjMcXvjFbEeb+4lyo+t8upEyxF2v2Gn3kFyMtIDgSxezsbPnvG5y63E6xiZ2qB8pPH+Zm9t0sKtHvL2mufAVevK+Vc1HoVZhBG0DMo7Q3J7Poua5SdRC/5AHeGolxozy6wpFk=
+	t=1756716361; cv=none; b=Hu5Vu+vK/CBibGPsocqPUAVfoTq8CpXQisS6WzEHyvIS9mpm8t7rvIGPO6MnB26XEf1JDiNSZ0h4ZDa21vtBmlXPUJFjR5p4SsnaKtM445zzfCX3quJ9nNYP8lr0RU8bt+q3R9lUGBWTA4zzO9du2czo1Txxx+fhCWXnnwmBVHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716280; c=relaxed/simple;
-	bh=JgrniebZA5MUxD6Vin67nWaETutQuO9cOLiuFbvnoME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKlaQ9/kNJXDVSUyhFnxqqbrRgA+/XL0Cpjkp1/KL3dNVWaWAUhU0JY607Ssvo0mE/6AWUBRV/KuVQHH6rvr/JMIxn31oXP+c6V3pmrSEF3vfAFon5/CV5qTsqQ+GpLsgXig86YRtLBkoBgLvmNrvmnZp0CHsX4BuHhbTG44G08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YI5Y6Fu5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0LQRU2Gb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YI5Y6Fu5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0LQRU2Gb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 766431F385;
-	Mon,  1 Sep 2025 08:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756716276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
-	b=YI5Y6Fu5FOeOSWxbzUSkl6LfpY67t6ZGu0YSGjvpz0z0nGFPRcWy0anzr/Vb2UxrVqDCMn
-	Bo5gGdtymVyy6GrTFDV/fJfVPF4s1yMXcf+UbeOot98uZcXP9r0G5gUf80X2qjHha9osbh
-	EkHU51pyQTNpziLm3Bjy/w1ZjzGfQKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756716276;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
-	b=0LQRU2GbJv1+qG7K51OmbKsjnVD6ZNg+QiNPmc99/vM8+eoxSX7eRf7riE+Jq9o0wsoc/P
-	I1/PMQmd2+x62mCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YI5Y6Fu5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0LQRU2Gb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756716276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
-	b=YI5Y6Fu5FOeOSWxbzUSkl6LfpY67t6ZGu0YSGjvpz0z0nGFPRcWy0anzr/Vb2UxrVqDCMn
-	Bo5gGdtymVyy6GrTFDV/fJfVPF4s1yMXcf+UbeOot98uZcXP9r0G5gUf80X2qjHha9osbh
-	EkHU51pyQTNpziLm3Bjy/w1ZjzGfQKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756716276;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
-	b=0LQRU2GbJv1+qG7K51OmbKsjnVD6ZNg+QiNPmc99/vM8+eoxSX7eRf7riE+Jq9o0wsoc/P
-	I1/PMQmd2+x62mCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5996A136ED;
-	Mon,  1 Sep 2025 08:44:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QWbbFfRctWirYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 08:44:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E37DEA099B; Mon,  1 Sep 2025 10:44:27 +0200 (CEST)
-Date: Mon, 1 Sep 2025 10:44:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Alexander Monakov <amonakov@ispras.ru>, Theodore Ts'o <tytso@mit.edu>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <i464joalmbxbu2yow2uvkbo3eioj3l4zihzzl2odegr4qqzr7u@4ycu45fecyz7>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <20250826220033.GW39973@ZenIV>
- <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
- <20250827115247.GD1603531@mit.edu>
- <6d37ce87-e6bf-bd3e-81a9-70fdf08b9c4c@ispras.ru>
- <20250831202244.290823f2@pumpkin>
+	s=arc-20240116; t=1756716361; c=relaxed/simple;
+	bh=ZE9gLmPnDqTqk06S/cgXtqlrzst3rOGf71E5ISS59so=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b2mPf/FQde89G4D+xye4CQ+3T445naqbQX78orqb+jAJ0LDvluEGU4LTJD4C2ofdMsPgQ/ZemvDP+QFJr6BINhYTndLT9OPXlcNUefkwWeSOQOV23aV3zu4moj0Daq9cowDSMeWXNLBdnEIy3egKoBmtdLVZcaiK0q85aG0QIF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5449432a9d7so937432e0c.3;
+        Mon, 01 Sep 2025 01:45:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756716359; x=1757321159;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lu55cGC1shfZahu4nJqSCls01RHf6IMjgCiuEU3j5YM=;
+        b=ir/r4JS8JFxzgC5DZ+MHcVU4YvM/1aSka/Mvcjh6B0kuvJkyZX0D81mBQvb0n12XOB
+         QScHyADdO+aYSooezLcXUzvHs23o1blnsYEfwUNrtGw2gEAHTGQzRrcIR2o2m6muJDeb
+         olod6Qg/5CjH9R4PX5fuOuYued747AbXyvZ9VVitSkjE4aHgDr16dgmNJEiXLjlST8uE
+         gfzLil1IPelkeXHkzCOleGxtrE8vJvAG9ciC07qOoN48qJ1BiHJhuCQxFn7T+o/2Z05U
+         kkK92TLcxLzr1bN7tBhvJM2pXTWc9wIiA1FBhO4LJniO0e5Pr9c24MTmiR0FozB+Ygqb
+         jpzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvbl8oDldURgXWDKDZD1Dbfu40j7CiO+GtIGq7tDGr2nxBllP8Q1+ST2Q+wBpu86I0vtGMbkOe@vger.kernel.org, AJvYcCXOkxMDaeO96ECV1jNvulqNshv43O+YIMrK4ce9esLxVAdne0mPMoC4Pwig1N4AKZCg1hmaQ3bVPza+YVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsLE8nko/uR9Sc6y+kxr7lU+zmL3g2aUX+KBwfDOrcW1Vt5TZj
+	XLKbP+4S6cPcUVMlB+xEyLhzmTY0X3RDrGHu7mXjy10uaZSA4OfUOgDMBNYci72q
+X-Gm-Gg: ASbGncsZGJDKDsYICVI8cZVhJdGwI/1OerVLrJTlhoqxYy27PCBPzK72auzXtApFENC
+	f+qGJirrWHZigTEL0dKZpoEODaeXIfFGaBCVwBheAy2OE/FdvWImYBNUlJ4QwoMpDzALeLufODA
+	dvbJD3A8UzlEs9p2T8oLma9ah3O5WKSUFLCX9MFrpuY6acgzlR82pmrdP4mH90qQn1lIecBQ3Gx
+	NTn/pBD+9waFuBM5P/LB+YIW4qDjR6YhD6dHVTMVSebO5m9PVmsDB5L/9LB8EoQ5v1LV8Yuq6zb
+	O/AXxRk7JW1mPI2X/B/wh8wEhWYtQgDdrmjSo4HLWnplsGmXfovbE/txXcwI1oDgD0vHubGfza5
+	RkUT9PFIHKJ2E3eYs+jjWFDcJ5heIjsmKAEq4b9ANC63dJgdr+4jSk3nCKyK8
+X-Google-Smtp-Source: AGHT+IHcZooVWVxwyGkP6ZWTx7PBgQXv31nIkfFRr939eowCZSPGt/0Z3GKO89bjAXvjNvm/0bRKrQ==
+X-Received: by 2002:a05:6122:3c95:b0:53c:6d68:1cd6 with SMTP id 71dfb90a1353d-544a02b3eccmr1879793e0c.16.1756716358948;
+        Mon, 01 Sep 2025 01:45:58 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912c7125sm4144274e0c.5.2025.09.01.01.45.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 01:45:58 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8972e215df9so114033241.1;
+        Mon, 01 Sep 2025 01:45:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX1VakGci/qNw87b6L9bC/w09d3o8HmVgvqeGk1yG9rRt+XARKG0UrD9IqscLGZaKI7qp1TWNOe/GlpTwA=@vger.kernel.org, AJvYcCX7kBQ/fkLBn6Gq2X/A95ZXKDSzB9sSQ5FNTaSnL3x4SKIcNIZmexH8WNPO8VQq/Pl1povAFTEu@vger.kernel.org
+X-Received: by 2002:a05:6102:162c:b0:51f:66fc:53b4 with SMTP id
+ ada2fe7eead31-52b1bd28af5mr1710735137.30.1756716358063; Mon, 01 Sep 2025
+ 01:45:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831202244.290823f2@pumpkin>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 766431F385
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+ <20250825032743.80641-1-ioworker0@gmail.com> <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org>
+ <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev> <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org>
+ <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev> <d07778f8-8990-226b-5171-4a36e6e18f32@linux-m68k.org>
+ <d95592ec-f51e-4d80-b633-7440b4e69944@linux.dev> <30a55f56-93c2-4408-b1a5-5574984fb45f@linux.dev>
+ <4405ee5a-becc-7375-61a9-01304b3e0b20@linux-m68k.org> <cfb62b9d-9cbd-47dd-a894-3357027e2a50@linux.dev>
+In-Reply-To: <cfb62b9d-9cbd-47dd-a894-3357027e2a50@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 10:45:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV-AtPm-W-QUC1HixJ8Koy_HdESwCCOhRs3Q26=wjWwog@mail.gmail.com>
+X-Gm-Features: Ac12FXyV9h1utoTEvCbocGnG0IAN7uIVG3x3Lc95GJw3v48XpvYZ_YA0jVY7Wlc
+Message-ID: <CAMuHMdV-AtPm-W-QUC1HixJ8Koy_HdESwCCOhRs3Q26=wjWwog@mail.gmail.com>
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Finn Thain <fthain@linux-m68k.org>, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi, 
+	peterz@infradead.org, stable@vger.kernel.org, will@kernel.org, 
+	Lance Yang <ioworker0@gmail.com>, linux-m68k@lists.linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun 31-08-25 20:22:44, David Laight wrote:
-> On Wed, 27 Aug 2025 16:05:51 +0300 (MSK)
-> Alexander Monakov <amonakov@ispras.ru> wrote:
-> 
-> > On Wed, 27 Aug 2025, Theodore Ts'o wrote:
-> > 
-> > > On Wed, Aug 27, 2025 at 10:22:14AM +0300, Alexander Monakov wrote:  
-> > > > 
-> > > > On Tue, 26 Aug 2025, Al Viro wrote:
-> > > >   
-> > > > > Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
-> > > > > tables and some of them are forking (or cloning without shared descriptor tables)
-> > > > > while that is going on?  
-> > > > 
-> > > > I suppose if they could start a new process in a more straightforward manner,
-> > > > they would. But you cannot start a new process without fork. Anyway, I'm but
-> > > > a messenger here: the problem has been hit by various people in the Go community
-> > > > (and by Go team itself, at least twice). Here I'm asking about a potential
-> > > > shortcoming in __fput that exacerbates the problem.  
-> > > 
-> > > I'm assuming that the problem is showing up in real life when users
-> > > run a go problem using "go run" where the golang compiler freshly
-> > > writes the executable, and then fork/exec's the binary.  And using
-> > > multiple threads sharing descriptor tables was just to make a reliable
-> > > reproducer?  
-> > 
-> > You need at least two threads: while one thread does open-write-close-fork,
-> > there needs to be another thread that forks concurrently with the write.
-> 
-> Is this made worse by the code that defers fput to a worker thread?
-> (or am I misremembering things again?)
+Hi Lance,
 
-fput() is offloaded to task work (i.e., it happens on exit of a task to
-userspace). But I don't think it impacts this particular problem in a
-significant way.
+On Thu, 28 Aug 2025 at 04:05, Lance Yang <lance.yang@linux.dev> wrote:
+> On 2025/8/28 07:43, Finn Thain wrote:
+> > On Mon, 25 Aug 2025, Lance Yang wrote:
+> >> Same here, using a global static variable instead of a local one. The
+> >> result is consistently misaligned.
+> >>
+> >> ```
+> >> #include <linux/module.h>
+> >> #include <linux/init.h>
+> >>
+> >> static struct __attribute__((packed)) test_container {
+> >>      char padding[49];
+> >>      struct mutex io_lock;
+> >> } cont;
+> >>
+> >> static int __init alignment_init(void)
+> >> {
+> >>      pr_info("Container base address      : %px\n", &cont);
+> >>      pr_info("io_lock member address      : %px\n", &cont.io_lock);
+> >>      pr_info("io_lock address offset mod 4: %lu\n", (unsigned long)&cont.io_lock % 4);
+> >>      return 0;
+> >> }
+> >>
+> >> static void __exit alignment_exit(void)
+> >> {
+> >>      pr_info("Module unloaded\n");
+> >> }
+> >>
+> >> module_init(alignment_init);
+> >> module_exit(alignment_exit);
+> >> MODULE_LICENSE("GPL");
+> >> MODULE_AUTHOR("x");
+> >> MODULE_DESCRIPTION("x");
+> >> ```
+> >>
+> >> Result from dmesg:
+> >>
+> >> ```
+> >> [Mon Aug 25 19:33:28 2025] Container base address      : ffffffffc28f0940
+> >> [Mon Aug 25 19:33:28 2025] io_lock member address      : ffffffffc28f0971
+> >> [Mon Aug 25 19:33:28 2025] io_lock address offset mod 4: 1
+> >> ```
+> >>
+> >
+> > FTR, I was able to reproduce that result (i.e. static storage):
+> >
+> > [    0.320000] Container base address      : 0055d9d0
+> > [    0.320000] io_lock member address      : 0055da01
+> > [    0.320000] io_lock address offset mod 4: 1
+> >
+> > I think the experiments you sent previously would have demonstrated the
+> > same result, except for the unpredictable base address that you sensibly
+> > logged in this version.
+>
+> Thanks for taking the time to reproduce it!
+>
+> This proves the problem can happen in practice (e.g., with packed structs),
+> so we need to ignore the unaligned pointers on the architectures that don't
+> trap for now.
 
-								Honza
+Putting locks inside a packed struct is definitely a Very Bad Idea
+and a No Go.  Packed structs are meant to describe memory data and
+MMIO register layouts, and must not contain control data for critical
+sections.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
