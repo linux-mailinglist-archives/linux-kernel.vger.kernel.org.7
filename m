@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-794001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F2DB3DB57
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C4AB3DB03
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E71F3A8D76
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5B23BD495
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E672D7818;
-	Mon,  1 Sep 2025 07:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KAzM5ZYm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EA72D73BE
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5650926C38D;
+	Mon,  1 Sep 2025 07:29:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE3B238C08;
+	Mon,  1 Sep 2025 07:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712669; cv=none; b=d6P1focp33kRCjqCiPG+o3uglIOenfIUet5I+QPAlv2/vJ4ENB7kYFMzKOAEcP/bFTEXac7o8CygSNsN4VjXb1vTyLwCMnz4Pbguu4npDQ5TJ9UkSPt6uAILb46lpHYVA/uhYJ0x09NhtmxjW681Ib9Z2RPvTXSWwisKjlb7WlE=
+	t=1756711771; cv=none; b=hUmeWMhlAwHvdiBxlJ+RdV4pPg60cZkdRnKtd0FrgF8fl2mRNahzEjBWwmBbYSNpeivKNEmGgFGf45GbxyjLsNqbDuQUc9TrtibLOa2jBxliR9EQJkdTqASyS8kvp6ZqZc6EPqUEJfmLUkXtemejLnJLZd0YKG/L3GCrYgsl1+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712669; c=relaxed/simple;
-	bh=LAhPlQkwRniWdWdFm7r3ifv986fHloqDlRwZH3JiaWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G0kJiI1cSCQBG6DKIWiqfrszpgH9rICVGNgHXcgZXMX8Jj9UFk7aUESphiLzXeEQi4W4EiaT9/b66HImKucIOdtrgNGfKJYV+rHJd7hWrucZtQBMfQ6riCfjxVOUhHurhxIzMBn4pCYFRZ+f5wQobIfdE9rvIXqoQAhJhLiTtBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KAzM5ZYm; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756712667; x=1788248667;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LAhPlQkwRniWdWdFm7r3ifv986fHloqDlRwZH3JiaWE=;
-  b=KAzM5ZYmUwZrpBM9YgK7MRn6YO1C0evBTVX8RsVnDB6RPrsBXcCmnRDC
-   a6CyxlhQR+OAcgTgFlib2A5y3YJ99GkghA71Qp1gGDsFYlqFt1iUXn/OT
-   zrx7cFfNFrDRhgQsKZggxhVssJwPcEfLsYqBZ68CSERB2xSSdFkhEy14e
-   xyXjhkKbsSODRH20ngHOQUcm/bxwh8LRibw4wSlAVeeDVWyWCOOzfiLVM
-   DXA7zbMGR0+fdKEvSqDGFKrZnDiiekgUIVka6rVqwVOAtIh65C9sdNMV2
-   NalVbAsDbGvhxvC95rJpfMlqKTnZQRCaQ2tdviwnpdFtvCvAsIJUdfxyd
-   g==;
-X-CSE-ConnectionGUID: Ow3PR1JCRGuVv5CoeYyI9Q==
-X-CSE-MsgGUID: VQHTrh/6QSGfbFewwM9xhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58990724"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58990724"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 00:31:09 -0700
-X-CSE-ConnectionGUID: Wxvkcs4rR6uDQ9LaszcfLw==
-X-CSE-MsgGUID: jjggfe7zR4Sg6n4ioQQ63w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="201842614"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 00:31:07 -0700
-Message-ID: <cdd1c8ff-6bb5-4665-a55a-9d86cd81a8ef@linux.intel.com>
-Date: Mon, 1 Sep 2025 15:28:29 +0800
+	s=arc-20240116; t=1756711771; c=relaxed/simple;
+	bh=wXdcPFZWX2vCfAvMrw2gMSpLcpUqjA2fjEZ53dSHtAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mG2yzrUre+34dYS1mlcnshpRt0uaIplym29JZB2ZvKD87bGF2AomJi/z+vakMjW8Ig1dl75vMRJDZkw8cj8yfd0hyVZw4Ai8TnTtzR4wM001HVwx2O0S6dTwMGSYB/eifgqWeU6y5gl8caaeOeRlrxoCdDtmKNyTdkHRskPhGHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3029D1A25;
+	Mon,  1 Sep 2025 00:29:20 -0700 (PDT)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.80.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201C93F63F;
+	Mon,  1 Sep 2025 00:29:28 -0700 (PDT)
+Date: Mon, 1 Sep 2025 08:29:26 +0100
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Lifeng Zheng <zhenglifeng1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rafael@kernel.org,
+	viresh.kumar@linaro.org, beata.michalska@arm.com,
+	sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxarm@huawei.com, jonathan.cameron@huawei.com,
+	vincent.guittot@linaro.org, yangyicong@hisilicon.com,
+	zhanjie9@hisilicon.com, lihuisong@huawei.com, yubowen8@huawei.com,
+	zhangpengjie2@huawei.com, linhongye@h-partners.com
+Subject: Re: [PATCH v5 3/3] arm64: topology: Setup AMU FIE for online CPUs
+ only
+Message-ID: <aLVJdy3M1NRBR5LF@arm.com>
+References: <20250819072931.1647431-1-zhenglifeng1@huawei.com>
+ <20250819072931.1647431-4-zhenglifeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/vt-d: fix iommu pasid memory alloc & max pasid err
-To: Guanghui Feng <guanghuifeng@linux.alibaba.com>, dwmw2@infradead.org,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- alikernel-developer@linux.alibaba.com
-References: <20250830130737.1930726-1-guanghuifeng@linux.alibaba.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250830130737.1930726-1-guanghuifeng@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819072931.1647431-4-zhenglifeng1@huawei.com>
 
-On 8/30/25 21:07, Guanghui Feng wrote:
-> When intel_pasid_alloc_table allocates memory for Scalable Mode PASID
-> directories, the specified memory page order is incorrect, and an
-> additional PAGE_SHIFT is added. There is also an error in calculating
-> the maximum number of supported PASID directories. In the revised
-> implementation, 1 << (order + PASID_PDE_SHIFT - 3) represents the memory
-> occupied by the Scalable Mode PASID directory, divided by 8 to represent
-> the number of PASID directories, and then multiplied by the number of (1
-> << PASID_PDE_SHIFT) entries in each PASID directory.
+Hi,
 
-Do you see any specific issues if the changes described in this patch
-are lacking?
-
+On Tuesday 19 Aug 2025 at 15:29:31 (+0800), Lifeng Zheng wrote:
+> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
+> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
+> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
+> when it shares a cpufreq policy with other CPU(s). After that, when other
+> CPUs are finally online and the support AMU flags of them are set, they'll
+> never have a chance to set up AMU FIE, even though they're eligible.
 > 
-> Signed-off-by: Guanghui Feng <guanghuifeng@linux.alibaba.com>
+> To solve this problem, the process of setting up AMU FIE needs to be
+> modified as follows:
+> 
+> 1. Set up AMU FIE only for the online CPUs.
+> 
+> 2. Try to set up AMU FIE each time a CPU goes online and do the
+> freq_counters_valid() check. If this check fails, clear scale freq source
+> of all the CPUs related to the same policy, in case they use different
+> source of the freq scale.
+> 
+> At the same time, this change also be applied to cpufreq when calling
+> arch_set_freq_scale.
+> 
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
 > ---
->   drivers/iommu/intel/pasid.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
+>  drivers/cpufreq/cpufreq.c    |  4 +--
+>  2 files changed, 54 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-> index 52f678975da7..9969913b600b 100644
-> --- a/drivers/iommu/intel/pasid.c
-> +++ b/drivers/iommu/intel/pasid.c
-> @@ -61,14 +61,14 @@ int intel_pasid_alloc_table(struct device *dev)
->   	size = max_pasid >> (PASID_PDE_SHIFT - 3);
->   	order = size ? get_order(size) : 0;
->   	dir = iommu_alloc_pages_node_sz(info->iommu->node, GFP_KERNEL,
-> -					1 << (order + PAGE_SHIFT));
-> +					1 << order);
+[..]
+>  
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 78ca68ea754d..d1890a2af1af 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -417,7 +417,7 @@ void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
+>  
+>  	cpufreq_notify_post_transition(policy, freqs, transition_failed);
+>  
+> -	arch_set_freq_scale(policy->related_cpus,
+> +	arch_set_freq_scale(policy->cpus,
+>  			    policy->cur,
+>  			    arch_scale_freq_ref(policy->cpu));
+>  
+> @@ -2219,7 +2219,7 @@ unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+>  		return 0;
+>  
+>  	policy->cur = freq;
+> -	arch_set_freq_scale(policy->related_cpus, freq,
+> +	arch_set_freq_scale(policy->cpus, freq,
+>  			    arch_scale_freq_ref(policy->cpu));
 
-This converts the order to the allocation size.
+I think it might be good to keep these calls to arch_set_freq_scale() for
+all related CPUs and not only online ones. This can result in CPUs coming
+out of hotplug with a wrong scale factor, because while they were out, any
+frequency transitions of the policy only modified the scale factor of
+online CPUs. When they come out of hotplug, arch_set_freq_scale() will not
+be called for them until there's a new frequency transition.
 
->   	if (!dir) {
->   		kfree(pasid_table);
->   		return -ENOMEM;
->   	}
->   
->   	pasid_table->table = dir;
-> -	pasid_table->max_pasid = 1 << (order + PAGE_SHIFT + 3);
+I understand that if this is not changed to only pass online CPUs,
+supports_scale_freq_counters() will now fail when called in
+topology_set_freq_scale() for scenarios when only some CPUs in a policy
+are online - e.g. the scenario in your commit message. But I think a
+simple change in supports_scale_freq_counters() that instead checks that
+at least one CPU in the policy supports AMU-based FIE, instead of all,
+is a better fix that does not break the cpufreq-based FIE. If at least
+one CPU is marked as supporting AMUs for FIE we know that the AMU setup
+path is in progress and we should bail out of
+topology_set_freq_scale()/arch_set_freq_scale(). 
 
-With this code, I can get the pasid_table->max_pasid equal to 0x100000
-if the device supports PASID, which is what I expect.
+Hope it helps,
+Ionela.
 
-> +	pasid_table->max_pasid = 1 << (order + PASID_PDE_SHIFT - 3);
->   	info->pasid_table = pasid_table;
->   
->   	if (!ecap_coherent(info->iommu->ecap))
-
-Thanks,
-baolu
+>  	cpufreq_stats_record_transition(policy, freq);
+>  
+> -- 
+> 2.33.0
+> 
+> 
 
