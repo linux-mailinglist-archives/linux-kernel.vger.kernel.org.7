@@ -1,119 +1,73 @@
-Return-Path: <linux-kernel+bounces-795244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F9CB3EEC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:49:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50585B3EEAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA742042DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B572485AB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F3352061;
-	Mon,  1 Sep 2025 19:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1505C3431FA;
+	Mon,  1 Sep 2025 19:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBAB5pK4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxvEDCAN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A401350D67;
-	Mon,  1 Sep 2025 19:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE341ACB;
+	Mon,  1 Sep 2025 19:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755989; cv=none; b=Sa8KBIIpuqHqN2jOoz+RfM2jfeV3l7kUsuLlDJv3QoIVRlUPBQ4Q7CSebs+10AyvCCMV/41xP97XRiCDrF1JZWbxKiEmxYrDLUQjTOwCVvhRjaXuKpMd4If7Ne8Vuey861Uk6kNt+q0W/DigpeZjEnsf+/Ly8uOsDyELEEWxdbA=
+	t=1756755977; cv=none; b=KYbghHtczhzeGzaZ8uRY85GC35AFmtSKh5trtmrzDhtpjsLAFNz5cGhGX5mdqdBOTPFqmJ5PwGlV3zjEG8vEDnz/+mNY2qzm+UD2e5UzNKevDHkPNV/8VlIQE97DC1lixd15okJSNBrwl7k6Zc/7AkFYiHwTgank7u+VRYG4SM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755989; c=relaxed/simple;
-	bh=J2E9jGMtyHGvRN19Ep4DieJw7oA3EZqjwxz7QtxwSUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LAvDOXfjO7fhuxI89FcGWXjTPUQAx0eDlu1nHGW2alqt88gEYhgKKxMG96/Wb3p5Ka33b/OhBbZvD+/xsJtdwdCSZI/c+3n8t5BmakCvXXORcFUItraSlEV6YnxdMkynfl0inJp4YtJt4xRCm7RedGJ1WodFX+OzMHQx7JSNIcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBAB5pK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6408CC4CEF7;
-	Mon,  1 Sep 2025 19:46:26 +0000 (UTC)
+	s=arc-20240116; t=1756755977; c=relaxed/simple;
+	bh=ZRakmcIHvH3f1B8RfyE9ZrQBrbqMERiw45E9xr2Ei08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7VqFspuP++1IDD+1Ssg80hvr36L7XMZeeVi528LqTp/1Sd7Vdq3SJjrRitjghlrLuYUfm6Gg+enhDpEyVW8cusshuYt1NMEAhodEPD/BH+uOheQJobz9IXymsA8ZzCSF74Cxsg+RyratNElJsT+4jXVBNHtQaGoavXcdCkgzxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxvEDCAN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A71C4CEF0;
+	Mon,  1 Sep 2025 19:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756755987;
-	bh=J2E9jGMtyHGvRN19Ep4DieJw7oA3EZqjwxz7QtxwSUk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KBAB5pK43t9rbk7fMu7863/+clAUEyEKGSSWfhQuXfYGmaUR6OvVaeGqo2Jgjw6Dz
-	 SGFnIE+xo/uGDTHIpBjFAykmlpg4ZZJXeA5C7n0GVAH40Iav5VZRi65a9rFSn6rAU1
-	 kxXU4S5AsCn3wX1j5OHIak9msBpSHzf/XDkdQA7oZvn2dwiochcLd5SS3EfH9dMCDU
-	 CF6aQWV8Ox3JMH0r6NDImRGcymO5pLYOSlruuQb6NWhI+8SV1qIInctISvx8aiNYZq
-	 pTNsu5e52N5oDsOEypMWy9jcvPvmY5z0KPNsE8fZn9WoWckhGS0ottWmWpiVW02AXu
-	 nN45VfivpoZMQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Christopher Obbard <christopher.obbard@linaro.org>,
-	Maud Spierings <maud_spierings@hotmail.com>
-Subject: Re: [PATCH v2 00/10] arm64: dts: qcom: x1: Add missing pinctrl for eDP HPD
-Date: Mon,  1 Sep 2025 14:46:07 -0500
-Message-ID: <175675595921.1796591.3596425415580314899.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250822-x1e80100-add-edp-hpd-v2-0-6310176239a6@linaro.org>
-References: <20250822-x1e80100-add-edp-hpd-v2-0-6310176239a6@linaro.org>
+	s=k20201202; t=1756755977;
+	bh=ZRakmcIHvH3f1B8RfyE9ZrQBrbqMERiw45E9xr2Ei08=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NxvEDCANFCg4HqSlMCXmTgHyHef+ufLbqMwojmG4GVg61BL79pZ2hr/Uc3txc3o25
+	 EJTn1olTO/roupsUd88oHI3D5SwwjZgoFMIO2mcLloKeWMWdd3AI+wQj8Xq0Li6Q5s
+	 pwUq6BFEf1eQoXCnx0awGWsjqdygTLqaygHYkd+6xJf/Htc9dQ0CJ+3YbJtT+BE3IU
+	 gozEuxkChZdv8fOYr99iJJ3fSplcr+xryzKYHYjrkfWy9GA2w8C05MrDGxUMgQGbpH
+	 PITutXYblzBzhcCEUgcz+WupY261tAm5F3h5mQnxql4Uq6zV0S65TjoGJKGDu8ZvWM
+	 LC7CklprNex6Q==
+Date: Mon, 1 Sep 2025 12:46:15 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
+ ks8995_probe()
+Message-ID: <20250901124615.10afb6a0@kernel.org>
+In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sat, 30 Aug 2025 19:13:59 +0200 Christophe JAILLET wrote:
+> drivers/net/dsa/ks8995.c
 
-On Fri, 22 Aug 2025 11:28:51 +0200, Stephan Gerhold wrote:
-> At the moment, we indirectly rely on the boot firmware to set up the
-> pinctrl for the eDP HPD line coming from the internal display. If the boot
-> firmware does not configure the display (e.g. because a different display
-> is selected for output in the UEFI settings), then the display fails to
-> come up and there are several errors in the kernel log:
-> 
->  [drm:dpu_encoder_phys_vid_wait_for_commit_done:544] [dpu error]vblank timeout: 80020041
->  [drm:dpu_kms_wait_for_commit_done:524] [dpu error]wait for commit done returned -110
->  [drm:dpu_encoder_frame_done_timeout:2715] [dpu error]enc40 frame done timeout
->  ...
-> 
-> [...]
-
-Applied, thanks!
-
-[01/10] arm64: dts: qcom: x1e80100: Add pinctrl template for eDP0 HPD
-        commit: 6dfa62182c3b2b31b3da5e7e5b87c294dc3ddb5c
-[02/10] arm64: dts: qcom: x1-asus-zenbook-a14: Add missing pinctrl for eDP HPD
-        commit: 35fab4bedcf1fb4a7b2e2f6a5e35b43e9447ad70
-[03/10] arm64: dts: qcom: x1-crd: Add missing pinctrl for eDP HPD
-        commit: 540020f93b22219690d591fcfd5081ab3d34ad66
-[04/10] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Add missing pinctrl for eDP HPD
-        commit: d1126668533eedebd6130515c7626af1ef808abb
-[05/10] arm64: dts: qcom: x1e80100-asus-vivobook-s15: Add missing pinctrl for eDP HPD
-        commit: c95c1ba079f604c504feb8cf7bb038341e2d7805
-[06/10] arm64: dts: qcom: x1e80100-dell-xps13-9345: Add missing pinctrl for eDP HPD
-        commit: a41d23142d8773614cb2745d7b224e5784cc71ab
-[07/10] arm64: dts: qcom: x1e80100-hp-omnibook-x14: Add missing pinctrl for eDP HPD
-        commit: 0e94604702eb9f141ef862b10757d67e3880235c
-[08/10] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: Add missing pinctrl for eDP HPD
-        commit: f6470367bdb2cde247cd88864208db998fed03ac
-[09/10] arm64: dts: qcom: x1e80100-microsoft-romulus: Add missing pinctrl for eDP HPD
-        commit: 4b9165960bf2d25817de6f5fda3d2cd07f787927
-[10/10] arm64: dts: qcom: x1e80100-qcp: Add missing pinctrl for eDP HPD
-        commit: 1616877626228a6ef05ddae4017c9b0f65803a8b
-
-Best regards,
+This file got renamed from drivers/net/phy/spi_ks8995.c in net-next,
+this needs to be regenerated against the real net tree.
 -- 
-Bjorn Andersson <andersson@kernel.org>
+pw-bot: cr
 
