@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-794260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D26AB3DF23
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B87CB3DF24
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7661167C0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 066AC17BB92
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F71230DEBB;
-	Mon,  1 Sep 2025 09:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HJdU9Jgk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C352A30C608;
-	Mon,  1 Sep 2025 09:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E14A30DEAF;
+	Mon,  1 Sep 2025 09:56:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF8F30DD10;
+	Mon,  1 Sep 2025 09:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720609; cv=none; b=udt3rW1cs44pnTt4tvtqCNjdrIEmRPLRhVlEA1D0GObWcvAXtY7K0BkIaK/MDV4OCcIGdAUAvpoWvYPUjSPJgmg0Zs5xD3qgYl8l4eVV+pqLOGLa2e9l/bGdtD5NNrEw/uU2ADGpttacJv0yMGIbfyOX/Q34EuzEky99F3kKV5s=
+	t=1756720616; cv=none; b=iIA8Q6Mh3WSikvzJQX8tUE/nsWXRZZurkYAf7csTDGq4F9P1UEITvTesJ0rdbgFPstOoqR0vljFZ8OR43pLcfvo6Coz72Ywh4LXjcKJBLjvZQTReg14B/vNIvB0LMpHsEZIg0uITjunVYP1UuU2ZyDzcRAbuhHsnITKJP9S8W/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720609; c=relaxed/simple;
-	bh=XYuUf/IGiF9vEN2NrEy1mjOIE3uiMeT6u92FHKswQUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NUdte06jYoSiuK83MXiSZBYENkt0aKj6P+CDtXDIpDepKXoQRJALiL0Q2lV5K000nckDH6+6l1ub/0AT2gBlkXbJA6bG7LxYyPDwYBr9GJjAxE2NWUlMn2QqRNkx3tgRC2oB3FXEtTcwNPOYwvWoixrDjoNMEPwPebM+nLr+r+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HJdU9Jgk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5819eQoS010979;
-	Mon, 1 Sep 2025 09:56:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/g4oflENPVaR+DlCgUOy/m3KfGTkpDmgfblkN/H6dy4=; b=HJdU9JgkRjUnbFbQ
-	jXorGBwD+wjWN6K/WCdFI0EGi/Qz2xB8eoxCejErkFOTO5GCYdoiVKELO7745KV6
-	N1Gis36hTyH+lBugXp/0wY4JH/CHlX4JCfnIRPTTz7IknPngMfcAHa1G3b04oE89
-	Bs0k/YolEKZfiI9kRcY7by6pLzM6yDrc+mkRR2tq/y7s+yenpl/KRkAzqkoF3cCt
-	8VimM7QIY+OXT2+PK2kaZ0guY4lT5NcFCJQebkGemJQmI1he+aaBOSuXE/3eNXtq
-	BA8p/XXKHNDuVWWn2G/ULZEpbHE6r9PnJyZK4vaPXke9WensOybZBVpt0hVlW249
-	dHJPmw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk8v6xx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 09:56:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5819uZpE018301
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Sep 2025 09:56:35 GMT
-Received: from [10.204.66.35] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
- 2025 02:56:30 -0700
-Message-ID: <af4eba15-ea0c-4c56-9b0c-b53454ee5926@quicinc.com>
-Date: Mon, 1 Sep 2025 15:26:21 +0530
+	s=arc-20240116; t=1756720616; c=relaxed/simple;
+	bh=/hqCkOwtBOhHQ1dFLUCN9G4AgIEKlLyHRGqnlAn23so=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tnn7gHygqoMOuUBC7PQdyMCyHf0ncGbaJBN54CNwIZ3Da/zgC5FsLn7+2d6cd1njuIR03xwX3QtdsCZkQFf3PndVYeWXFt20YZi+MUGSS3UAEqnH63PnJNygjl5raTRfVDPjPsC6wepiKkBZmj4x7kD0vL+9/fLMQ47m0RFmxWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00C0C1A25;
+	Mon,  1 Sep 2025 02:56:45 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 308D43F6A8;
+	Mon,  1 Sep 2025 02:56:50 -0700 (PDT)
+Date: Mon, 1 Sep 2025 10:56:47 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <aLVt30-Lc9lesqS6@J2N7QTR9R3>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+ <20250819135008.5f1ba00e@gandalf.local.home>
+ <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+ <20250829082604.1e3fd06e@gandalf.local.home>
+ <20250829083655.3d38d02b@gandalf.local.home>
+ <aLIFRHcsEo2e2GE7@arm.com>
+ <20250829181311.079f33bf@gandalf.local.home>
+ <aLLQ-43Ll8rF7kon@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/9] media: qcom: camss: Add support for VFE 690
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
- <20250703171938.3606998-9-quic_vikramsa@quicinc.com>
- <498db18b-f6bc-4678-9d70-7741e3025185@linaro.org>
-Content-Language: en-US
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-In-Reply-To: <498db18b-f6bc-4678-9d70-7741e3025185@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HLxhf4iuiI4NMt6gRfjBgo1g860f2fmi
-X-Proofpoint-ORIG-GUID: HLxhf4iuiI4NMt6gRfjBgo1g860f2fmi
-X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b56dd4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=l7lVQcmziEWSzHc1fZEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfX269iPiLeKAsE
- EQlQIUv00hkz/x+awTYbjeMGR89huePYe9wh7nu9LGFgZmpTqkP3sPENWHAh1jXs+GJhiY4y8pB
- mlaAsY80lijRC1VVVDpH14+5kI4xolfy1P1bCeetyvtL2lQjZ2aGi+cANTb3Ad5ExoHrbkOfGNi
- I3DO48sRD4OmTBi7YZwIY67orYoKnfSjVfXziwzZDwQv77/xeLQVAQEIWlAG1zcPBMxc+WM13Za
- vVvPEVOe+M04Ib7igdnV4mYtZAQ0Be666EpCGz+9xSMKkQOjC44/ObJPDdHhVuLggzW9xLqogcP
- 4kf/kwDX+yDd+XDnRMh18jk0d5JWxEYphNn0fjpClNcTua15xz5j6XzCPP+DBXy1iwg1GoqA56d
- EqffzhQr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300042
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLLQ-43Ll8rF7kon@arm.com>
 
+On Sat, Aug 30, 2025 at 11:22:51AM +0100, Catalin Marinas wrote:
+> On Fri, Aug 29, 2025 at 06:13:11PM -0400, Steven Rostedt wrote:
+> > On Fri, 29 Aug 2025 20:53:40 +0100
+> > Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > valid user address.
+> > > BTW, arm64 also bails out early in do_page_fault() if in_atomic() but I
+> > > suspect that's not the case here.
+> > > 
+> > > Adding Al Viro since since he wrote a large part of uaccess.h.
+> > 
+> > So, __copy_from_user_inatomic() is supposed to be called if
+> > pagefault_disable() has already been called? If this is the case, can we
+> > add more comments to this code? I've been using the inatomic() version this
+> > way in preempt disabled locations since 2016.
+> 
+> This should work as long as in_atomic() returns true as it's checked in
+> the arm64 fault code. With PREEMPT_NONE, however, I don't think this
+> works.
 
-On 9/1/2025 2:34 PM, Bryan O'Donoghue wrote:
-> On 03/07/2025 18:19, Vikram Sharma wrote:
->> +        !strcmp(clock->name, "camnoc_axi"));
->
-> This is causing a regression on other platforms because they define 
-> camnnoc_axi but not @ the rate of the pixel clock.
->
-> In fact its not very obvious why the CAMNOC AXI would want to have a 
-> pixel clock applied to the interconnect fabric.
->
-> The following resolves the regression for me. I can either merge with 
-> this change or I'll have to drop the VFE690 changes until you come 
-> back with something else.
-Hi Bryan,
+Sorry, what exactly breaks for the PREEMPT_NONE case?
 
-updating camnoc axi to 400Mhz was required for TPG test case.
-As of now you can Merge VFE patch with below change.
+> __copy_from_user_inatomic() could be changed to call
+> pagefault_disable() if !in_atomic() but you might as well call
+> copy_from_user_nofault() in the trace code directly as per Luo's patch.
 
-Meanwhile I will work on an alternative approach to set camnoc_axi and 
-submit as a separate patch.
+That makes sense to me. I'll go check the arm64 users of
+__copy_from_user_inatomic(), in case they're doing something dodgy.
 
->
-> ➜ deckard@sagittarius-a  ~/Development/qualcomm/qlt-kernel 
-> git:(aaa8b5ab704f3) ✗ git diff
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c 
-> b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index e969de74818f1..1aa0ba5ad8d60 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -913,8 +913,7 @@ static int vfe_match_clock_names(struct vfe_device 
-> *vfe,
->
->         return (!strcmp(clock->name, vfe_name) ||
->                 !strcmp(clock->name, vfe_lite_name) ||
-> -               !strcmp(clock->name, "vfe_lite") ||
-> -               !strcmp(clock->name, "camnoc_axi"));
-> +               !strcmp(clock->name, "vfe_lite"));
->
-> ---
-> bod
+> > I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
+> > If anything, it needs to be better documented.
+> 
+> Yeah, I had no idea until I looked at the code. I guess it means it can
+> be safely used if in_atomic() == true (well, making it up, not sure what
+> the intention was).
 
-Best regards,
+I think that was the intention -- it's the caller asserting that they
+know the access won't fault (and hence won't sleep), and that's why
+__copy_to_user_inatomic() and __copy_to_user() only differ by the latter
+calling might_sleep().
 
-Vikram
+It looks like other inconsistencies have crept in by accident. AFAICT
+the should_fail_usercopy() check in __copy_from_user() was accidentally
+missed from __copy_from_user_inatomic() when it was introduced in
+commit:
 
->
+  4d0e9df5e43dba52 ("lib, uaccess: add failure injection to usercopy functions")
+
+... and the instrumentation is ordered inconsistently w.r.t.
+should_fail_usercopy() since commit:
+
+  33b75c1d884e81ec ("instrumented.h: allow instrumenting both sides of copy_from_user()")
+
+... so there's a bunch of scope for cleanup, and we could probably have:
+
+	/*
+	 * TODO: comment saying to only call this directly when you know
+	 * that the fault handler won't sleep.
+	 */
+	static __always_inline __must_check unsigned long
+	__copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
+	{
+		...
+	}
+
+	static __always_inline __must_check unsigned long
+	__copy_from_user(void *to, const void __user *from, unsigned long n)
+	{
+		might_fault();
+		return __copy_from_user_inatomic();
+	}
+
+... to avoid the inconsistency.
+
+Mark.
 
