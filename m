@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-795124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D87B3ED15
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 439B8B3ED1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F4D17BC68
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FFE17DF30
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FED32ED2E;
-	Mon,  1 Sep 2025 17:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB96341ADE;
+	Mon,  1 Sep 2025 17:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnQ6Ymvk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuUQboUP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C960C3064BB;
-	Mon,  1 Sep 2025 17:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC48340DB5;
+	Mon,  1 Sep 2025 17:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746498; cv=none; b=hrsmZ2t/DEv/d+lwBPnvhEKa3bKZpYcUQshaowIoq+yJF7G6PBCkSZoMVonKiMTDO3XbQnMak5k7sSp3HI2sjqDah3k5mjBsowar5L+6cKQehQCcLtosahCRTExNFQvKdC718y6zapsd3ZxjyzHggwxMYSMTaDY8xu9Un6vY/Tw=
+	t=1756746505; cv=none; b=Nj58ImEDhhYGyQWEdh1zmbtUn5QO1e5FBAsE8y39GEVW0vACytx2nb8LrM4eCw2m4W3ivhhShsA1PFRJddValNx3ddhSK4a9wl5krxrIuXzvWQKfYOO7yW9rrH75qcsiQHBAwssZDQ60tFbTJVn2+ou+xHfUePvyAPTXm9iJHdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746498; c=relaxed/simple;
-	bh=Psu+Ha7+6rvVuekjLBry2gD+q3T4H2+4ZpElYNdlzaY=;
+	s=arc-20240116; t=1756746505; c=relaxed/simple;
+	bh=PDPOiTEuTdicTffGYLtYpS4v2Fg8U7SX/u9tZo9cYOw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hA2hhM5nkKRhp8DMMBzDPX6s1sGuqxMlcIA3OyqCxa5jaBueaR/jdyapnsitPEII8UqrCDlQiY8qjCj1euRalzdPQPMjESeTa0YfCti+xrIpGW/djqaQ6s/LvOvQQu4kfqg939fL/0JBgoJ5o318piQy9Fz8NBjq1Ael/ohzC3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnQ6Ymvk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE21EC4CEF0;
-	Mon,  1 Sep 2025 17:08:15 +0000 (UTC)
+	 MIME-Version:Content-Type; b=OLZ7idokjbUAXgnIAOtP4R3IuvqaZUwkNh1DGlPE/O+ewueoiTKIfHOScadMglT0Mjy+5RaUozXggWwkRtwF64M+1vcmf9XWWDAKI985fuH7qDOY27urtlTzqjJpIQFs5/mAH7O95mBVgSHtAhwDCuekgtMxGzbxDFZx3Y+LbQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuUQboUP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72FEEC4CEFC;
+	Mon,  1 Sep 2025 17:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746498;
-	bh=Psu+Ha7+6rvVuekjLBry2gD+q3T4H2+4ZpElYNdlzaY=;
+	s=k20201202; t=1756746505;
+	bh=PDPOiTEuTdicTffGYLtYpS4v2Fg8U7SX/u9tZo9cYOw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FnQ6YmvkM+qxK3POl6Iw+D/ge1mC3CpLAudD5A5iIfqsu/47FZTZuboiRzkVCGdqT
-	 e2h4dDGcIJvltoeVVWErE0qmZhjvscnprvveJItdURwYcee+RC+KlitBe1reT5IGad
-	 uNjD2zZuyqUYWgCv0g4FReQ529CZxP0AYSOgiK9d0CW606W3HdqWZDe4kczVDBOjnL
-	 NMA3WAi98aJKiKzgEF5ZMDuDWxt3dIRYgkaEVMZDDzVmfqQo9R6kXheQ+7VbAt8oaf
-	 aUuhg2Ngyn8rbBtl5PkY5ta6IEbAW8Ai0vjMFB+izJbwSbh0hwEaAfWbZxClTUxN0H
-	 hqssXOUbXSTjw==
+	b=FuUQboUPwa7jfW0jY8/itorT30MmAKHf7aVOgoxVfFiOHAnKMV7l+4iTrNXNtzDWI
+	 0LANj8JpANoNPSwDABsViyTRwQIHO2PqkFHdrZqEWTJe58xFct3qksB4U7AD7bHtrU
+	 F3Iv4DNS7Fse11nOjZfq51PXnXSvzR9vhjMgU9/bDipD/LKDIiddAjqvYGMACvkXLf
+	 V1IlzSpx4kUxB/wgxEM6O9E2eWtbcAEAiHFfC7HfL+uKc8w+Wgiveji3aFXtaSWGPC
+	 ooxNUo3Eep18sYX2rhoOONXgDjJYLy6q++AeAioMiH3adtnEjx/yKuZbF+FTwh7J3E
+	 LOm3Wxy+YdCZw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Josua Mayer <josua@solid-run.com>
-Cc: Yazan Shhady <yazan.shhady@solid-run.com>, 
- Jon Nettleton <jon@solid-run.com>, netdev@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250826-lynx-28g-nullptr-v1-1-e4de0098f822@solid-run.com>
-References: <20250826-lynx-28g-nullptr-v1-1-e4de0098f822@solid-run.com>
-Subject: Re: [PATCH] phy: lynx-28g: check return value when calling
- lynx_28g_pll_get
-Message-Id: <175674649543.186496.4663580683926892498.b4-ty@kernel.org>
-Date: Mon, 01 Sep 2025 22:38:15 +0530
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aswath Govindraju <a-govindraju@ti.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Maud Spierings <maudspierings@gocontroll.com>
+Cc: linux-can@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20250822-can_phy3-v1-0-73b3ba1690ee@gocontroll.com>
+References: <20250822-can_phy3-v1-0-73b3ba1690ee@gocontroll.com>
+Subject: Re: (subset) [PATCH 0/2] dt-bindings: phy: ti,tcan104x-can:
+ Document TI TCAN1051
+Message-Id: <175674649899.186496.9689107932921189012.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 22:38:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +70,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Tue, 26 Aug 2025 20:32:03 +0200, Josua Mayer wrote:
-> The lynx_28g_pll_get function may return NULL when called with an
-> unsupported submode argument.
+On Fri, 22 Aug 2025 11:20:04 +0200, Maud Spierings wrote:
+> The Moduline Display mainboard contains 2 TI TCAN1051 CAN transceivers,
+> properly document these and add them to the devicetree.
 > 
-> This function is only called from the lynx_28g_lane_set_{10gbaser,sgmii}
-> functions, and lynx_28g_set_mode checks available modes before setting a
-> protocol.
+> Thank Peng Fan for inspiring this patch series.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] phy: lynx-28g: check return value when calling lynx_28g_pll_get
-      commit: 9bef84d30f1f724191270044a7d045bfc9d6ad97
+[1/2] dt-bindings: phy: ti,tcan104x-can: Document TI TCAN1051
+      commit: 3d13e378d465e8ae0be1697005342055b07eaf11
 
 Best regards,
 -- 
