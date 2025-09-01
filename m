@@ -1,96 +1,149 @@
-Return-Path: <linux-kernel+bounces-794477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413B0B3E260
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4323CB3E256
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3F91A82507
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2131A815B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD618277026;
-	Mon,  1 Sep 2025 12:12:47 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E3C277030;
+	Mon,  1 Sep 2025 12:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VX12spDQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E902226D17;
-	Mon,  1 Sep 2025 12:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887A92765E3;
+	Mon,  1 Sep 2025 12:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728767; cv=none; b=LVztYQ3Bu0T2ZLMT+NYLuiDixA7U5XJEXuPQyPsu9cSsexQWb+jEmfrMlD4/DaO25E6m60iqdYe/8FuPbFUxV07x0ggKzeh4beFLjoBslhJhRc8Q8uyBiTvl0oQ2LNOl55GFSw7z9ti72RytNtCm2zBFIQtiZyHQPxu0kcjoFjw=
+	t=1756728673; cv=none; b=Spfd41IVAqjHnbsYLPcfrZ7RX2chHgx5CuMB/Q+/oxK8UMWGS0D6W9lY+sHPYlcXUyAan9MsHC4yCq4pVsiWoUFqVVOfNeyATQzLWu5E3ydFGqQoOyWK8aUwGvRqqksfWeR2fKFKCxcY2anDpiL4DrlBKmBMJYbJtbYPplbU5RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728767; c=relaxed/simple;
-	bh=MpykzzBhuyvDECbIBCh5BjPCKqV8M26qmAnPgeJnMqY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=AxN/W55inLzBSsGnYOVeCZ0sf3OW/QJCZpAl/t2WojuLfWjb17GvnmEnzZceJ3hHHXCPpTQiPy+zJ+7jTcjTKXf+9FnCliWHFFWmVE5hIai/tsrmq4cxH1TmY0c+DDIFYnN4IuU71N6arXXwSQAnTYWoqeT2dCyjA42N6UtvuSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cFnnJ1LjRz5PM3M;
-	Mon, 01 Sep 2025 20:12:36 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 581CAN2H024220;
-	Mon, 1 Sep 2025 20:10:23 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 1 Sep 2025 20:10:26 +0800 (CST)
-Date: Mon, 1 Sep 2025 20:10:26 +0800 (CST)
-X-Zmail-TransId: 2afa68b58d328d6-9576f
-X-Mailer: Zmail v1.0
-Message-ID: <202509012010265342J9_GMWSos_c0nszWwdsj@zte.com.cn>
+	s=arc-20240116; t=1756728673; c=relaxed/simple;
+	bh=BhDpfpJvIimS2A5/9ELJfbY3vyKUD5N4q9GhNW02pHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+mukSIKBWqj8/vwmvDM3ezKK5y5c8BvMCaHl9pKlATc6XM9ggfK1I4vsQ2sClsHf0wQkxp/31PnlIka8IGf9i8aceTpI5DgTDBIn90O2e1687h+9g2wPNfsItZKUwdaKENLMOLBXVqzWbT/88gABAEhmLXGeDe3IDftGuz6l+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VX12spDQ; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756728672; x=1788264672;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=BhDpfpJvIimS2A5/9ELJfbY3vyKUD5N4q9GhNW02pHE=;
+  b=VX12spDQpSjRvfmvz5pOo/t0dkDref/RSESt1H+6TeFnTxXDG/xqSY4w
+   ebabpDYFK/0DKg4sNQopRZCZz2pkmGdXOAyldv/SPI7fGQRrJv6DzZuuu
+   0zkrYKlstbFtD17eyfq/OApr4/5XCwCax0emssy5xIBmpX7YRAi6oibB3
+   lRO2Oe5EQbNh9ud4ZcHe/bs3nUIONsQE0nN3S3H3KgUa7buy+Un7PIjVc
+   kjnXzT+DZy32hn4ULAtmjn1VP4kYDglFydd2dOShYKlqrXX3AH/LPeZ+h
+   oX3V4cOPEZfcRAfSJgE0vpIj1isbjMN9FRFcAFdDV5uMNd5j+wi2D87DJ
+   w==;
+X-CSE-ConnectionGUID: lxkgHIx/TYKQ5+C0Ew0FEA==
+X-CSE-MsgGUID: zrFBJE68S1msyEM+qWVRGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58917452"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="58917452"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:11:11 -0700
+X-CSE-ConnectionGUID: tMtO88dqTDW/rGxtV5RDjA==
+X-CSE-MsgGUID: 1y2Gb3UlTTC9+bzzNX+X/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="201932054"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.220])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:11:08 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 5B77D11FA4A;
+	Mon, 01 Sep 2025 15:11:07 +0300 (EEST)
+Date: Mon, 1 Sep 2025 15:11:07 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 03/11] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+Message-ID: <aLWNW1cBCOdXg3nU@kekkonen.localdomain>
+References: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
+ <20250716-ov9282-flash-strobe-v6-3-934f12aeff33@linux.dev>
+ <aKv3uUXf87im8ajX@kekkonen.localdomain>
+ <rcgche43hzctpxbe2xt2cfksjbtyntc6ef26wptgkygcdlg5ga@sdhkkcpdfaek>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>, <corbet@lwn.net>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <fan.yu9@zte.com.cn>, <wang.yaxin@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHRvb2xzL2dldGRlbGF5czogZml4IGZvcm1hdHRpbmcgZXJyb3I=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 581CAN2H024220
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 01 Sep 2025 20:12:36 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68B58DB3.001/4cFnnJ1LjRz5PM3M
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <rcgche43hzctpxbe2xt2cfksjbtyntc6ef26wptgkygcdlg5ga@sdhkkcpdfaek>
 
-From: Fan Yu <fan.yu9@zte.com.cn>
+Hi Richard,
 
-Add a missing space in err() function call for consistency.
-The change improves consistency with the codebase style
-and enhances readability.
+On Mon, Sep 01, 2025 at 12:44:07PM +0200, Richard Leitner wrote:
+> On Mon, Aug 25, 2025 at 08:42:17AM +0300, Sakari Ailus wrote:
+> > Hi Richard,
+> > 
+> > Thanks for the update (and for the ping!).
+> > 
+> > On Wed, Jul 16, 2025 at 11:06:53AM +0200, Richard Leitner wrote:
+> > > Add the new strobe_duration control to v4l uAPI documentation.
+> > > 
+> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > ---
+> > >  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> > > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > > @@ -186,3 +186,8 @@ Flash Control IDs
+> > >      charged before strobing. LED flashes often require a cooldown period
+> > >      after strobe during which another strobe will not be possible. This
+> > >      is a read-only control.
+> > > +
+> > > +``V4L2_CID_FLASH_DURATION (integer)``
+> > > +    Duration the flash should be on when the flash LED is in flash mode
+> > > +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (탎)
+> > > +    if possible.
+> > > 
+> > 
+> > I think we should add this is related to the hardware strobe.
+> > 
+> > How about:
+> > 
+> > ``V4L2_CID_FLASH_DURATION (integer)``
+> > 
+> >     Duration of the flash strobe from the strobe source, typically a camera
+> >     sensor. Controlling the flash LED strobe length this way requires that the
+> >     flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>` is set
+> >     to ``V4L2_FLASH_LED_MODE_FLASH`` and :ref:`strobe source
+> >     <v4l2-cid-strobe-source>` is set to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
+> >     The unit should be microseconds (탎) if possible.
+> > 
+> > This requires of course the appropriate labels.
+> > 
+> > I also wonder whether we should use 0,1 탎 or even ns for the unit.
+> 
+> Thanks for the pointer.
+> 
+> I did a quick internet search and the shortest flash duration of
+> speedlights/studio strobes I found was Profoto D2 with 1/63000 sec ~> 15.9탎.
+> So I IMHO we are fine with 1탎 resolution here.
 
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
----
- tools/accounting/getdelays.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Works for me.
 
-diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
-index 21cb3c3d1331..0c721efafab9 100644
---- a/tools/accounting/getdelays.c
-+++ b/tools/accounting/getdelays.c
-@@ -570,7 +570,7 @@ int main(int argc, char *argv[])
-                                                        task_context_switch_counts((struct taskstats *) NLA_DATA(na));
-                                                if (fd) {
-                                                        if (write(fd, NLA_DATA(na), na->nla_len) < 0) {
--                                                               err(1,"write error\n");
-+                                                               err(1, "write error\n");
-                                                        }
-                                                }
-                                                if (!loop)
 -- 
-2.25.1
+Sakari Ailus
 
