@@ -1,74 +1,59 @@
-Return-Path: <linux-kernel+bounces-793828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E4CB3D8E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:42:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2771FB3D903
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89A537A7927
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:40:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AC147AB9DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7300235061;
-	Mon,  1 Sep 2025 05:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA89242930;
+	Mon,  1 Sep 2025 05:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JPqAGAvJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB0F1F582C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="m+Y48VMk"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98536145355;
+	Mon,  1 Sep 2025 05:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756705312; cv=none; b=ZI6ENW0NWMerlaxTV0HGCh8XyqU6wbPjVUcTJBCIBGPjR4J92YSzYSJ8/9gSTI4KJop0k7lTcDXKSC8YWBwa1+26EHz2M3BS6nABYiDANlQqXd9DE89lv2Ert5ndYB+2hSWggHzO30KTa1I8nwV8mBsNOgBGpRZE+NdbVgyOSmE=
+	t=1756705631; cv=none; b=Jlv+3QJZpKM3ISYW3ZeHcH4mFotODTvII9rhiFPZlsOBm4HiLwMGhw49sOfMw0czP+zzPUxLrUKaZ/NXQ/Tbdkcl4KyVhODA4t64yuhd1HicZxHxk2AxELEEl69qUEjDjjphYUMr5EUcPktTYowlR2ZsUuMjT2BhzwQFkKu1CoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756705312; c=relaxed/simple;
-	bh=NaW/5+ULiwXiwxrRUZsuHyiZHz6ocLyAXETDgsHbvoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d9XW6zkdUaq7FJR0JCi+nk9GXsRGHYc5JK+KLgWxQmJHHgBXYaek1iloIS3FwoF7pTgZQxCeAv/xT5ELbqKn5rHkBwKncWvFgZwBjUoxILor5xgXz17imHYpw9qWL9LOiTXI+uae5wdX7TyQku5XAvEoAdvc/ZdOceiP9kW766s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JPqAGAvJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756705311; x=1788241311;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NaW/5+ULiwXiwxrRUZsuHyiZHz6ocLyAXETDgsHbvoc=;
-  b=JPqAGAvJUFIN35qnMsG9XlipJ2Q+L1/8futdub2s6BSf4eK7u83LtqNO
-   +5+WuSo9YVu6c/Z8jLRF9p2eB8+8crkXn0JtpRmA12wl5mlaOsEIb6SRO
-   77GAT6zEh1KIqllIQpfu97SBE+VpVlsgGBc5qo2UQ47pbO1kuo7shBULw
-   C6nwz1wW7krhwyVJWH5aiiKhGVWWXk/ZXa5xdLgqDxDdbHeQQI+sBH9F/
-   eeOB23aS75NTRZHxU4iQrrjY6svrjGZz+ZiK4jujJNPIjc7aYjQdlgvon
-   5Mj+1R0aGOg5jE5OAQUjGeKBxfiouqAsVzS9Lm+9OcArsY0xBPaEJzmSy
-   Q==;
-X-CSE-ConnectionGUID: QGlSy0XuQq6KBVUDkVaK0w==
-X-CSE-MsgGUID: IdS6AsO/QcqVuK/6ZtYbkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58998196"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58998196"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 22:41:50 -0700
-X-CSE-ConnectionGUID: qdAsDKITStC8oSdaj1yetw==
-X-CSE-MsgGUID: nvmp077rRVuWHTxN9DhsWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="175036722"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa003.jf.intel.com with ESMTP; 31 Aug 2025 22:41:48 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Remove LPIG from page group response descriptor
-Date: Mon,  1 Sep 2025 13:39:43 +0800
-Message-ID: <20250901053943.1708490-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756705631; c=relaxed/simple;
+	bh=p2YwKn1uWr8JFJ6dvzsKi+Ai+re4eghtL2UZZHVDuUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HonDjq6LfhK4hQW/7AFxdAGPNJZR5b++A7IA3z9Y0dFP1BebVIgy1pg1kiIUPV98526byCJ0tyrg5RkVhYIN9D1J7CsbfWv3XFtKrSyo/Rxx1JBk1GbTXLMM0nJhq5/bIEnb/BAGQmLRqpyAhwYOKGMDL/1UZJsTOeSorXJWzNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=m+Y48VMk; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=s4
+	nzgbEshNl3izTVy/ttU4qOpJei9HBJMzHxZa30VA4=; b=m+Y48VMkkRPA/KvgfW
+	1orPJfBCFmZhkP2+cMW6f4CFXKY75ndJGi/Xls0S9ElSYeTrH9J5GYIbDukK6OnV
+	uIBck4Akqgp3NpkWchYWXqya9Q454hPXylv560VHSVV4nrY/FTfqZzjUFghyrWnm
+	2HNl7DLigwQ+rjdOlvvSNqVhc=
+Received: from thinkpadx13gen2i.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDX98EYM7Vo9LrPFw--.40947S2;
+	Mon, 01 Sep 2025 13:46:02 +0800 (CST)
+From: Zongmin Zhou <min_halo@163.com>
+To: kuba@kernel.org,
+	horms@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Zongmin Zhou <zhouzongmin@kylinos.cn>
+Subject: [PATCH v3] selftests: net: avoid memory leak
+Date: Mon,  1 Sep 2025 13:45:57 +0800
+Message-Id: <20250901054557.32811-1-min_halo@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250829191537.4618f815@kernel.org>
+References: <20250829191537.4618f815@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,69 +61,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX98EYM7Vo9LrPFw--.40947S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AF4xuw1kCF18Cr48Kw17ZFb_yoW8XryrpF
+	WxGw1fKr48Ca17JFs8KrsYgF4Ykws3tF48ur17tr1kAw15Jr9Yqr4fKF48tFnFgrZ2qwnx
+	ZF9xu3WY9a18J3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USiigUUUUU=
+X-CM-SenderInfo: pplqsxxdorqiywtou0bp/xtbBzQK7q2i1KxbD7gAAsS
 
-Bit 66 in the page group response descriptor used to be the LPIG (Last
-Page in Group), but it was marked as Reserved since Specification 4.0.
-Remove programming on this bit to make it consistent with the latest
-specification.
+From: Zongmin Zhou <zhouzongmin@kylinos.cn>
 
-Existing hardware all treats bit 66 of the page group response descriptor
-as "ignored", therefore this change doesn't break any existing hardware.
+The buffer be used without free,fix it to avoid memory leak.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
 ---
- drivers/iommu/intel/iommu.h | 1 -
- drivers/iommu/intel/prq.c   | 7 ++-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Changes in v3:
+- move freeaddrinfo() to a separate label.
+Changes in v2:
+- add the label to use instead of directly to use on each case.
+---
+ tools/testing/selftests/net/cmsg_sender.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index d09b92871659..2a3931c4cff9 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -462,7 +462,6 @@ enum {
- #define QI_PGRP_PASID(pasid)	(((u64)(pasid)) << 32)
+diff --git a/tools/testing/selftests/net/cmsg_sender.c b/tools/testing/selftests/net/cmsg_sender.c
+index a825e628aee7..ded9b925865e 100644
+--- a/tools/testing/selftests/net/cmsg_sender.c
++++ b/tools/testing/selftests/net/cmsg_sender.c
+@@ -491,7 +491,8 @@ int main(int argc, char *argv[])
+ 	if (err) {
+ 		fprintf(stderr, "Can't resolve address [%s]:%s\n",
+ 			opt.host, opt.service);
+-		return ERN_SOCK_CREATE;
++		err = ERN_SOCK_CREATE;
++		goto err_free_buff;
+ 	}
  
- /* Page group response descriptor QW1 */
--#define QI_PGRP_LPIG(x)		(((u64)(x)) << 2)
- #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 3)
+ 	if (ai->ai_family == AF_INET6 && opt.sock.proto == IPPROTO_ICMP)
+@@ -500,8 +501,8 @@ int main(int argc, char *argv[])
+ 	fd = socket(ai->ai_family, opt.sock.type, opt.sock.proto);
+ 	if (fd < 0) {
+ 		fprintf(stderr, "Can't open socket: %s\n", strerror(errno));
+-		freeaddrinfo(ai);
+-		return ERN_RESOLVE;
++		err = ERN_RESOLVE;
++		goto err_free_info;
+ 	}
  
+ 	if (opt.sock.proto == IPPROTO_ICMP) {
+@@ -574,6 +575,9 @@ int main(int argc, char *argv[])
  
-diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-index 52570e42a14c..ff63c228e6e1 100644
---- a/drivers/iommu/intel/prq.c
-+++ b/drivers/iommu/intel/prq.c
-@@ -151,8 +151,7 @@ static void handle_bad_prq_event(struct intel_iommu *iommu,
- 			QI_PGRP_PASID_P(req->pasid_present) |
- 			QI_PGRP_RESP_CODE(result) |
- 			QI_PGRP_RESP_TYPE;
--	desc.qw1 = QI_PGRP_IDX(req->prg_index) |
--			QI_PGRP_LPIG(req->lpig);
-+	desc.qw1 = QI_PGRP_IDX(req->prg_index);
- 
- 	qi_submit_sync(iommu, &desc, 1, 0);
+ err_out:
+ 	close(fd);
++err_free_info:
+ 	freeaddrinfo(ai);
++err_free_buff:
++	free(buf);
+ 	return err;
  }
-@@ -379,19 +378,17 @@ void intel_iommu_page_response(struct device *dev, struct iopf_fault *evt,
- 	struct iommu_fault_page_request *prm;
- 	struct qi_desc desc;
- 	bool pasid_present;
--	bool last_page;
- 	u16 sid;
- 
- 	prm = &evt->fault.prm;
- 	sid = PCI_DEVID(bus, devfn);
- 	pasid_present = prm->flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID;
--	last_page = prm->flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE;
- 
- 	desc.qw0 = QI_PGRP_PASID(prm->pasid) | QI_PGRP_DID(sid) |
- 			QI_PGRP_PASID_P(pasid_present) |
- 			QI_PGRP_RESP_CODE(msg->code) |
- 			QI_PGRP_RESP_TYPE;
--	desc.qw1 = QI_PGRP_IDX(prm->grpid) | QI_PGRP_LPIG(last_page);
-+	desc.qw1 = QI_PGRP_IDX(prm->grpid);
- 	desc.qw2 = 0;
- 	desc.qw3 = 0;
- 
 -- 
-2.43.0
+2.34.1
 
 
