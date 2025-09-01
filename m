@@ -1,139 +1,245 @@
-Return-Path: <linux-kernel+bounces-794273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8A1B3DF60
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:01:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C145B3DF65
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5516D3B3246
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72650189E37B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D9430DEC4;
-	Mon,  1 Sep 2025 10:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BD530F7FD;
+	Mon,  1 Sep 2025 10:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvzZEtnf"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OAfDyLPM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270630BBBB;
-	Mon,  1 Sep 2025 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB32FE57C
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720842; cv=none; b=HEomKJJJJF61eqHIVrSEbVUQ2I+/f8sDzmsNLTjvfa/xu/ytKDMcP7T/op+aidqYhqhDynvB6bX+AVBc/byZv23WL0QcIPn7xPsm4HLYqBbI9a5jCb4naEOU/nPUgskk4Bm68npgCL7z1IwhsvmXCZSFOmzlQ2yd0lgrAtlMe+c=
+	t=1756720847; cv=none; b=p3erZHRJvOwno/om+G7wXdEQI2gXxvSz9SGA8dsVB/R/RIwvuRuvAUz8e5nj/hqnNPWnlqp8T28vmJhPdrsOInshYxTWobydJMpgfb4zfU2GaP07E76DEYksSkse78XtFu3Pa0VE6CEZpuj6gRoCavH6FyKRncKceHy1Nv7PTvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720842; c=relaxed/simple;
-	bh=xdBpXog1GiRP0Q+r7/o6p9y3+5U7IVokkzzpPYFL7aM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyK0HS0G2SsgXwVEiamG9tyLPEeBIM+OO15hrwE+aK/lBQaAav+LhF19DqwY0O1+MiKQdMPxVexxL1aEY3l1gAyBQm/YwKQH+GYGpCC3KfIWe2woqgvLQqq8Xn3JOy024684bWNHlymI4D0JNfyPOXupS2jTeI7vb/hodkKmxE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvzZEtnf; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f646b1db8so3785745e87.0;
-        Mon, 01 Sep 2025 03:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756720838; x=1757325638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbZ25W8iCAPDZ+e84V/asPNaTiH1EdBFg9Cchs0HHvk=;
-        b=GvzZEtnfEK9ikObrXvTXVe5HLeSNzcyvSRkVswB953Tyb4FsZaGYgID/exRzr2UT1i
-         KqbILSDhnPewR7gyCdG2SkRkbAj/AHB2j98VOy60IPJy/ACyhnAmgnBErczaq2m5mN0c
-         Skqb2ir5yVLomTW4ZObgk6bHAtd1RG/gAGEhAz6LHDPnMgr6QIsakB7OqEHi1I2LENE+
-         59wmBM/d57j8+MmMCNUARAQlXPncHtWUJ9mVU6jiNv98b7q7bf0vPhSgGQiGdMn9S4vj
-         luuQCf94Y5L3EFF0Dqbj04v74Dx26X6ROdJ+ga5VGpA1pvPstsaOTzgXSL68KWRLkctT
-         +yIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756720838; x=1757325638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cbZ25W8iCAPDZ+e84V/asPNaTiH1EdBFg9Cchs0HHvk=;
-        b=XMJQjBEoRqPfutGparL0hf5wkauZdLF7YuH71H5gA3ZwkUClqEHEwchzsPKgTndacU
-         kNuzwgu7O7u4c6X/jChK7N2b/0K3tYH6Apj6KkR+KHMHz4+cz4R3jBE7XqoWwgzoFE14
-         o6o9epFT1y44lWVQeiKS3fX2B80oeqIbOVzXCuE7y9qe5q6hKlyWvwRVJmJk9D0RTLhJ
-         inibd/P5ANQvhTaA1UtTH3RykAeX6oQhieSjb8NvA6Xe1QUGWidQokOnnfx/sYAvPaMH
-         5EZNZHtdw4pUcz9hEoMLGWOYU3nkbI0s+2OC169L6Jczpcfyy5JWrh49XCqLYORHaNqW
-         /u6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUr9yFYl7gviu3Y2ayV+l/DZ0W4XorNe7vld8NisZ4AHb/jg8UPzUvVyUIo9cdtxdUwpWqegw6I@vger.kernel.org, AJvYcCVvr3bnOIV2obg4/++eSi1fUDMovmaWW506kRryulx5PRgorFregNPjp3RQ8iGzPZnv2IokTHrZjvWTZmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1AtdPDy+iT1RYXCJ/2FsIl0OpoNdVD6cSzsKDH8GFWfBS5Qrf
-	xP1WqyfoTa+xCRRNQJ72HsrENaD9c4NPJ8nz7vLTNNsqAI7zvfkFKPGXzl2Yhv4Q
-X-Gm-Gg: ASbGnct5XmufOvk7UhKfn8Tf+eGXVCSFD2YS+ebN8xRuikGUW/Ox9Mb2pxB3sH5VdxL
-	sz/RKMrIirzWkBcMAcKrDvDjwbm1Sfg+BabELQF4J5TivUjz/vi7AErR/VcOAL6l3EFEQYqh0CE
-	MBqxNOdflLNYYeo7XYzwZNRfC2oeUxOHU54CeyIGvJbLcKCYGgwtgsVB7M6Lg96lf8kESFFlGaP
-	VYFSQnlh8wnSFpbmAZ/A40EEADX60Su2tqJAaRSQg2snGlsWgNPo2oZ1/znM/dzxjfKPh9q6nj2
-	4nUkN4a4lH0q79P3OmBY20uqUPc7DFPDwYCAv9TDmUflIDzhSuRox84gsVAlGIog/v4buEGuuDR
-	+63vUOyT13k29m95Kl99Vk7kfCFdx
-X-Google-Smtp-Source: AGHT+IEkJWQKPGB/V5gDesXHhU7t+HLT3boR3bVvrdNVX0y2aL9Wqfy8sEgiMLTdUoIHPa1mK7qSCQ==
-X-Received: by 2002:a05:6512:b97:b0:55f:4e18:c583 with SMTP id 2adb3069b0e04-55f7099a326mr2203573e87.56.1756720838021;
-        Mon, 01 Sep 2025 03:00:38 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6ff236efsm1951003e87.1.2025.09.01.03.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 03:00:37 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Mon, 1 Sep 2025 12:00:35 +0200
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/vmalloc, mm/kasan: respect gfp mask in
- kasan_populate_vmalloc()
-Message-ID: <aLVuw2UkYUcL_Oi0@pc638.lan>
-References: <20250831121058.92971-1-urezki@gmail.com>
- <20250831122410.fa3dcddb4a11757ebb16b376@linux-foundation.org>
+	s=arc-20240116; t=1756720847; c=relaxed/simple;
+	bh=TiWStABcw7lSysl391uOdXBoQXiu7icDIWGc77HUDaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V9Er+LHfPypAb1sHknqTDBYgO4Byq73LV+3ESSsr1cW4QRarB3sIY/DWOBi/h3xUoPgYfrNvouyJ2fAGuekct3vd0PzX5K51fY1YpWgw6OOtckz9SFZ3xrvpT29tIboUB71kGTi2x+NwvMLeCScmsR61mO3JIqXGqFxZ7OYhEKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OAfDyLPM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 28AFEE92;
+	Mon,  1 Sep 2025 11:59:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756720776;
+	bh=TiWStABcw7lSysl391uOdXBoQXiu7icDIWGc77HUDaU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OAfDyLPMGS+F9o9K07ihTaqKb/ktdXBDaaeLbDCIaL9H7NFCLIyRovUIQW1/dsZNO
+	 PXuCDj2jFUBWOUXhnCGLoSRbfTlG2FseUCijMYrzBbnH+q51YSVRR5xbD+BB6xz6mG
+	 HNsjXyALCESgPhabvcY96VuEulkZ8xgoALm2HooE=
+Message-ID: <e1dd9bd1-0e73-4a8d-947b-7c5a117d8827@ideasonboard.com>
+Date: Mon, 1 Sep 2025 13:00:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831122410.fa3dcddb4a11757ebb16b376@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/6] drm/bridge: cadence: cdns-mhdp8546*: Change
+ drm_connector from structure to pointer
+To: Harikrishna Shenoy <h-shenoy@ti.com>
+Cc: jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, lyude@redhat.com, luca.ceresoli@bootlin.com,
+ viro@zeniv.linux.org.uk, andy.yan@rock-chips.com, linux@treblig.org,
+ javierm@redhat.com, linux-kernel@vger.kernel.org, devarsht@ti.com,
+ j-choudhary@ti.com, u-kumar1@ti.com, s-jain1@ti.com,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, mripard@kernel.org, lumag@kernel.org,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org
+References: <20250811075904.1613519-1-h-shenoy@ti.com>
+ <20250811075904.1613519-3-h-shenoy@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250811075904.1613519-3-h-shenoy@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 31, 2025 at 12:24:10PM -0700, Andrew Morton wrote:
-> On Sun, 31 Aug 2025 14:10:58 +0200 "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
-> 
-> > kasan_populate_vmalloc() and its helpers ignore the caller's gfp_mask
-> > and always allocate memory using the hardcoded GFP_KERNEL flag. This
-> > makes them inconsistent with vmalloc(), which was recently extended to
-> > support GFP_NOFS and GFP_NOIO allocations.
-> > 
-> > Page table allocations performed during shadow population also ignore
-> > the external gfp_mask. To preserve the intended semantics of GFP_NOFS
-> > and GFP_NOIO, wrap the apply_to_page_range() calls into the appropriate
-> > memalloc scope.
-> > 
-> > This patch:
-> >  - Extends kasan_populate_vmalloc() and helpers to take gfp_mask;
-> >  - Passes gfp_mask down to alloc_pages_bulk() and __get_free_page();
-> >  - Enforces GFP_NOFS/NOIO semantics with memalloc_*_save()/restore()
-> >    around apply_to_page_range();
-> >  - Updates vmalloc.c and percpu allocator call sites accordingly.
-> > 
-> > To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> > Cc: <stable@vger.kernel.org>
-> > Fixes: 451769ebb7e7 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc")
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> 
-> Why cc:stable?
-> 
-> To justify this we'll need a description of the userspace visible
-> effects of the bug please.  We should always provide this information
-> when fixing something.  Or when adding something.  Basically, all the
-> time ;)
-> 
-Yes, i am not aware about any report. I was thinking more about that
-"mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc" was incomplete and thus
-is a good candidate for stable.
+Hi,
 
-We can drop it for the stable until there are some reports from people.
-If there are :)
+On 11/08/2025 10:59, Harikrishna Shenoy wrote:
+> From: Jayesh Choudhary <j-choudhary@ti.com>
+> 
+> After adding DBANC framework, mhdp->connector is not initialised during
+> bridge_attach(). The connector is however required in few driver calls
+> like cdns_mhdp_hdcp_enable() and cdns_mhdp_modeset_retry_fn().
 
-Thanks!
+Does this mean that if you apply only the previous commit, mhdp will
+crash/misbehave as mdhp->connector is not initialized?
 
---
-Uladzislau Rezki
+> Use drm_connector pointer instead of structure, set it in bridge_enable()
+> and clear it in bridge_disable(), and make appropriate changes.
+> 
+> Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
+
+This also has a fixes tag, but I don't see any mention of any bug being
+fixed.
+
+For the subjects of the whole series, I think you can just use
+"drm/bridge: cdns-mhdp: ...". That's much shorter.
+
+ Tomi
+
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+>  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 ++++++------
+>  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h |  2 +-
+>  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c |  8 ++++----
+>  3 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> index 08702ade2903..c2ce3d6e5a88 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> @@ -1755,7 +1755,6 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+>  	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
+>  	struct cdns_mhdp_bridge_state *mhdp_state;
+>  	struct drm_crtc_state *crtc_state;
+> -	struct drm_connector *connector;
+>  	struct drm_connector_state *conn_state;
+>  	struct drm_bridge_state *new_state;
+>  	const struct drm_display_mode *mode;
+> @@ -1785,12 +1784,12 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+>  	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
+>  			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
+>  
+> -	connector = drm_atomic_get_new_connector_for_encoder(state,
+> -							     bridge->encoder);
+> -	if (WARN_ON(!connector))
+> +	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
+> +								   bridge->encoder);
+> +	if (WARN_ON(!mhdp->connector))
+>  		goto out;
+>  
+> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
+> +	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
+>  	if (WARN_ON(!conn_state))
+>  		goto out;
+>  
+> @@ -1853,6 +1852,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
+>  		cdns_mhdp_hdcp_disable(mhdp);
+>  
+>  	mhdp->bridge_enabled = false;
+> +	mhdp->connector = NULL;
+>  	cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
+>  	resp &= ~CDNS_DP_FRAMER_EN;
+>  	resp |= CDNS_DP_NO_VIDEO_MODE;
+> @@ -2134,7 +2134,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
+>  
+>  	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
+>  
+> -	conn = &mhdp->connector;
+> +	conn = mhdp->connector;
+>  
+>  	/* Grab the locks before changing connector property */
+>  	mutex_lock(&conn->dev->mode_config.mutex);
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+> index bad2fc0c7306..b297db53ba28 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+> @@ -375,7 +375,7 @@ struct cdns_mhdp_device {
+>  	 */
+>  	struct mutex link_mutex;
+>  
+> -	struct drm_connector connector;
+> +	struct drm_connector *connector;
+>  	struct drm_bridge bridge;
+>  
+>  	struct cdns_mhdp_link link;
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+> index 42248f179b69..59f18c3281ef 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+> @@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
+>  	int ret;
+>  
+>  	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
+> -		mhdp->connector.name, mhdp->connector.base.id);
+> +		mhdp->connector->name, mhdp->connector->base.id);
+>  
+>  	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
+>  
+> @@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
+>  
+>  	dev_err(mhdp->dev,
+>  		"[%s:%d] HDCP link failed, retrying authentication\n",
+> -		mhdp->connector.name, mhdp->connector.base.id);
+> +		mhdp->connector->name, mhdp->connector->base.id);
+>  
+>  	ret = _cdns_mhdp_hdcp_disable(mhdp);
+>  	if (ret) {
+> @@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
+>  	struct cdns_mhdp_device *mhdp = container_of(hdcp,
+>  						     struct cdns_mhdp_device,
+>  						     hdcp);
+> -	struct drm_device *dev = mhdp->connector.dev;
+> +	struct drm_device *dev = mhdp->connector->dev;
+>  	struct drm_connector_state *state;
+>  
+>  	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
+>  	mutex_lock(&mhdp->hdcp.mutex);
+>  	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
+> -		state = mhdp->connector.state;
+> +		state = mhdp->connector->state;
+>  		state->content_protection = mhdp->hdcp.value;
+>  	}
+>  	mutex_unlock(&mhdp->hdcp.mutex);
+
 
