@@ -1,147 +1,82 @@
-Return-Path: <linux-kernel+bounces-794423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A71B3E18C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:29:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D19B3E18F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267657A6AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B7716E319
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B3A31A56B;
-	Mon,  1 Sep 2025 11:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aiSlf2eT"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D8131AF39;
+	Mon,  1 Sep 2025 11:30:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CCB267387
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72931A07F;
+	Mon,  1 Sep 2025 11:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726188; cv=none; b=GB/8CPRtZUKgYznJvKNcd+/AldaWnblg8/1PbzwbD7UpXSYLrJH4p7zU5XUB85bevpNJZeRhTr1mPjabIDBf4FuE/2r0QkIgzpwkNuhY6xU8ypsWySHNRJKNfaKVdTnC7lrhKXPawMqXFRJhdD3KgtldFpxXs6tpBZztnQZ1ekk=
+	t=1756726205; cv=none; b=sSvp+Cgv3zQmFYDO8GcbhHP7etmt6YvltLwB59Ysoi3xFl+4o8MMraPTUQCEm2KzOmmdoBbM3BbsQTshuWiNvLw21+k13sKkz9ue2cPOvfKK2ozX+g+c70nJ+lgHCp5GL0fhVT2o+9f478iuV+GeyGztiwFiaIT6qx05+5mowLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726188; c=relaxed/simple;
-	bh=hwu2Kbbf5ntjzdSbAs6MMa0FLXiSeyDsJHXXkCApxlM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nK/yiD/HTaGf2K22RvvZSxFk9tYDTqB/qWJXg2h02ALlvg5JH18gCFTrV8akOTU2qZqnzPECdF5dZ0RQkLtYfDLoYaUsVhCQ8DVKSJB8/UUWHX+4z4ykaH/V/1jirTh5a1Gyg9c1DSfGSPLv5f6/tdik6p1qbYSh6zSzXlaG87s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aiSlf2eT; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b869d3572so4858155e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756726185; x=1757330985; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lek17aB1MdxVzJYdNsx3fQ/dyCaMBNbVMi2QTvU5Diw=;
-        b=aiSlf2eTEgYxLNQ3tWttvwPXhWiRd6GAD4c9viwUDXEXULthDcrC1sSChUiS23xa2X
-         mImWt11/M/3hO1m97mW2jBEOVz7KSc7RZFg7UFtSZGLEY5SYbUbsv4yggT2fMhQBj5U0
-         NbifMKc0sfNDp2D8J3des2mrpMDAnCgviHAwJqcms0CRT5mdIWstUWnXE+cT5Xkx0VO6
-         odo6hjBgXiht4wVIUanz+6YBQg/qKAe3sQfEMo97yluhGqrljJM7vShdJMM2MnPMTbqh
-         Fvw1fLhMdMmtFZpFn3pqbBcFrlGsEXVwZb+uvcLkGRN62xfzPr9S6G53G6DfR8mP00lS
-         x5RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756726185; x=1757330985;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lek17aB1MdxVzJYdNsx3fQ/dyCaMBNbVMi2QTvU5Diw=;
-        b=PAT765pQgmh9JgLLxzFXpFdv2GbyvncNsMgJtJkvLRs4Ixmi/li34y9FT/zdmRwRX2
-         vm1MQmWNxTbeTHEQ+gVMTGkfxqXVGnUWWkOG6lKUTSaZQDu2u0HSSzE5dGcgi8YvbVyD
-         4MCqHkZu3nWEYmbjRxb/GLCN6NqPPcxbOJSpx2FhfrqgqF6RbMXNPF77JNKv24yJV9RJ
-         0HSTdkGuBDg9CGqW0JgsS3WUbaqBvdNDGXDm+Tl1AiTcMKTcp/PjvSUm9eYoQGIkRo74
-         A+R1euvDlmfw0CjTe/5c3ELVzU5Y5uB4J4zMO0KCHpgL5MxwrExutKtLiZAyUqcdqu/i
-         8R/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWT7MuHproR1w/e48qkJuKzlCmx3lQrdjcms5e/dk6chFHB128QUUuz+KrKJ3sRHKc+ul8Ckn030e1dP+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLnK8J9RCny1J4g71HYY9a4kegYKeBRBHCpCkJ4RWSmhr58vOT
-	f4sA9B+kTZDRkSnuK7MRs1KaWtImFO4CH1aPCcbgIlTfB73xJQscHJLLbfSySSYuXCbNP/QHmv+
-	61lDsZuXoH5Ag3w==
-X-Google-Smtp-Source: AGHT+IF4u4k+AvvaTYncGek0o5I+2pA6zNg1judsWL0THNmQ7yIx18EN0m9On1TLUujNdBUHvq3Ytm4oIUWuoA==
-X-Received: from wmbes21.prod.google.com ([2002:a05:600c:8115:b0:458:bb2b:d73e])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4fcd:b0:459:e025:8c40 with SMTP id 5b1f17b1804b1-45b85533712mr68266195e9.10.1756726184881;
- Mon, 01 Sep 2025 04:29:44 -0700 (PDT)
-Date: Mon, 01 Sep 2025 11:29:44 +0000
-In-Reply-To: <aLNQFmgS2IcDbPmd@levanger>
+	s=arc-20240116; t=1756726205; c=relaxed/simple;
+	bh=QaH7ld6cnJMyrbfR+vt6d6FlkH48cKYHQBNDkSgN+5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PDTjQkjC2OuTlPkT6DKHx7abkjkHCBa78xBt65K3ZHxDqY3E3OxD4GUmnn+v/ZgqJxeTlj/pBVrD/xyqg3XD0/CnV3thz2GC5bFm6XhezXpXcr9fDYRx5W1tOWlHkVMcd9xQa8fByF6hTd/ju1K9QBaTUs4ikny8rhkZTWiFGYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9EEC4CEF0;
+	Mon,  1 Sep 2025 11:30:02 +0000 (UTC)
+Date: Mon, 1 Sep 2025 12:29:59 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
+	akpm@linux-foundation.org, mark.rutland@arm.com,
+	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
+	memxor@gmail.com, zhenglifeng1@huawei.com,
+	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v4 1/5] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+Message-ID: <aLWDt9NpfYO_Utky@arm.com>
+References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
+ <20250829080735.3598416-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827-master-v1-1-19f9f367219c@google.com> <20250829233824.GB1983886@ax162>
- <aLNQFmgS2IcDbPmd@levanger>
-X-Mailer: aerc 0.20.1
-Message-ID: <DCHFGJXCAPAZ.3JG065Y5DZVLZ@google.com>
-Subject: Re: [PATCH] .gitignore: ignore temporary files from 'bear'
-From: Brendan Jackman <jackmanb@google.com>
-To: Nicolas Schier <nsc@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	<linux-kernel@vger.kernel.org>, Justin Stitt <justinstitt@google.com>, 
-	<llvm@lists.linux.dev>, <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829080735.3598416-2-ankur.a.arora@oracle.com>
 
-On Sat Aug 30, 2025 at 7:25 PM UTC, Nicolas Schier wrote:
-> On Fri, Aug 29, 2025 at 04:38:24PM -0700, Nathan Chancellor wrote:
->> Hi Brendan,
->> 
->> On Wed, Aug 27, 2025 at 08:59:43AM +0000, Brendan Jackman wrote:
->> > Bear [0] is a tool for generating compile_commands.json. For Kbuild,
->> > Bear is not useful, since Kbuild already generates the necessary info
->> > and that can be converted to compile_commands.json by
->> > gen_compile_commads.py.
->> > 
->> > However, for code in tools/, it's handy. For example, this command
->> > updates compile_commands.json so that clangd code navigation will also
->> > work for the VMA unit tests:
->> > 
->> > 	bear --append -- make -C tools/testing/vma -j
->> > 
->> > Bear generates some temporary files. These are usually deleted again
->> > but having them show up ephemerally confuses tools that trigger
->> > recompilation on source code changes. Ignore them in Git so that these
->> > tools can tell they aren't source code.
->> > 
->> > [0]: https://github.com/rizsotto/Bear
->> > 
->> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
->> 
->> We can likely take this via the Kbuild tree. I do wonder if this would
->> be better in a tools/.gitignore file since bear is really only of use
->> there but I am not sure it matters much.
->
-> yeah, please consider using tools/.gitignore.  
+On Fri, Aug 29, 2025 at 01:07:31AM -0700, Ankur Arora wrote:
+> Add smp_cond_load_relaxed_timewait(), which extends
+> smp_cond_load_relaxed() to allow waiting for a finite duration.
+> 
+> The additional parameter allows for the timeout check.
+> 
+> The waiting is done via the usual cpu_relax() spin-wait around the
+> condition variable with periodic evaluation of the time-check.
+> 
+> The number of times we spin is defined by SMP_TIMEWAIT_SPIN_COUNT
+> (chosen to be 200 by default) which, assuming each cpu_relax()
+> iteration takes around 20-30 cycles (measured on a variety of x86
+> platforms), amounts to around 4000-6000 cycles.
+> 
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: linux-arch@vger.kernel.org
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-I don't believe that works here, because AFAIK clangd assumes a single
-compile_commands.json, so while we could git-ignore
-tools/compile_commands.json that wouldn't really serve the usecase I
-have here with 'bear --append'.
+Apart from the name, this looks fine (I'd have preferred the "timeout"
+suffix).
 
-> Please have a look at
-> this thread about ignoring files from "external" tools:
->
-> https://lore.kernel.org/lkml/CAHk-=wiJHMje8cpiTajqrLrM23wZK0SWetuK1Bd67c0OGM_BzQ@mail.gmail.com/
-
-Hm, I would read the spirit of that thread as not being about things
-from 'external tools', rather Linus' objection seems to be that the
-_lifetime_ of the mbox files is unrelated to the kernel build. Well, to
-be honest the only coherent principle I can get from it is "don't break
-Linus' workflow". Which... yeah, is still a pretty valid concern.
-
-> If using tools/.gitignore is not possible, I think the best way for
-> ignoring files that are not natively related to kernel build tools is to 
-> update the local ~/.config/git/ignore, as suggested in
->
-> https://lore.kernel.org/lkml/CAK7LNAQas0cK7pgi72tYC3yU=ZkQxnr41YYW1mXd-sWiHtG+UA@mail.gmail.com/
-
-Given this alternative, and given the fact that I'm ignoring a very
-generic suffix in *.tmp (if it was just *.events.json I'd say the
-practical risk has gotta be close to nil), I think we could just drop
-this unless anyone else pops up with evidence that 'bear' is important
-to lots of people or something.
-
-Cheers,
-Brendan
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
