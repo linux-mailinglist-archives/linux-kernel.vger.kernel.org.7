@@ -1,120 +1,186 @@
-Return-Path: <linux-kernel+bounces-794212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936A7B3DE71
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B26AB3DEE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEDB1A80AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065F73B05A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD14530F81C;
-	Mon,  1 Sep 2025 09:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ys8RH9Jg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B338030DEC4;
+	Mon,  1 Sep 2025 09:41:13 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BECB30C354;
-	Mon,  1 Sep 2025 09:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286C623E23C;
+	Mon,  1 Sep 2025 09:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718645; cv=none; b=iDo4Ipkcf6i4rwoj/z1GfUbr2FMYgcsGItEqLYnLHsgZSSs4USwV/BrjS/UIJ704sCOFuD55dA89SyW2fNMX8FJ8czrPat/NfiuwgAB1Gcr8UrsvLcWBC08H7rX+UEPcOE8yidpfRnKerBRGQ8Mq+aprDqWBw+yNgJGg5r5wKNo=
+	t=1756719673; cv=none; b=clhaBZraJXjorHnOgUbwtz+f6dvnS+EUi8c+2I/1WaBeWmpHo82BsDGKrKssN+2e8bETpnmxZwPrbhe7Q9IN+lR/61GZYawMKSgpHBL9KtMkR/lg3tJaa4LERGA2JtwssEWqh9ow/2o/84tW6BnuLM6+mxA/YefOET9mWBzQe5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718645; c=relaxed/simple;
-	bh=T+Xj0rZyysLavFO/ivCHNXIvOAG2SlkbSMufW+nOfw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REpUFgSWDefvjYeULUY6yTnKKcS22ZuOkJFdXiEsFKAeV5AOfWo5I03/iwraOOPLBsQ5KcCbc23GmAD8Lip5RgyrXM/ZrPzEWSl0CDo1G0SzAjLxcmFU/JGi3jeGLcNdAccTaVcGPjZ6OpSwq6Fqtzq/db+kMQhxJNCNBeX6hck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ys8RH9Jg; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756718644; x=1788254644;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T+Xj0rZyysLavFO/ivCHNXIvOAG2SlkbSMufW+nOfw8=;
-  b=Ys8RH9JgAxyZEYP5grd7PPyuldLK41yvSkSMYXIv/6uLw/A6c38BO3FU
-   zgvKjUGcO3mWwwKOJiO1y2Gnueuz4gYsaBIYG6zdCVchanoe88BM/VI71
-   CVHa+Y3EklKXZ4f940d8KHdCA8e6+7jwUa+9NyDvbO51T6XhxgQ5EPOx8
-   SoCfq6Lrr+RsL1BDXl7mdtQr395rnIFSIa0D18e0/CUoLfElct4rzAW7U
-   t1YUIuoFHX6HNJeZM6wEeHLgYiOe7GXJRYKRuvzKcqnxOoBm+rY6T7a60
-   Fah9QoYxi/6aaqRtaMQaX4S+Xwk9LtJswaOJMNXshjI1LZHg+Ir/lOR5x
-   Q==;
-X-CSE-ConnectionGUID: 5kQZBovsQDCgdtreqDdTjA==
-X-CSE-MsgGUID: Hd8y/l1oRKm0BsONTvquHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58904236"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58904236"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 02:24:01 -0700
-X-CSE-ConnectionGUID: KnieA+JKSEuAmMEdyCnOEg==
-X-CSE-MsgGUID: 1RoFlB6oTXagl4Ix4oEuLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="171823134"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 02:23:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ut0lW-0000000AN9U-3oYK;
-	Mon, 01 Sep 2025 12:23:54 +0300
-Date: Mon, 1 Sep 2025 12:23:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>
-Subject: Re: [PATCH v3 0/2] i2c: pxa: fix I2C communication on Armada 3700
-Message-ID: <aLVmKrxEzYgbMUQU@smile.fi.intel.com>
-References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
+	s=arc-20240116; t=1756719673; c=relaxed/simple;
+	bh=tTYf9LKW6XZAWe8Mq9GSfJKgl+eQpwHG4OYySo6GQLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n39j9hn00eH6jAd6oN8WiFXQb8vt/ukkXAuNxAipTKMEPWhnCNjZlHyqTXZwFqqES9rJsqCh2wDf7Vt9djh4/HLUIdE+/6uK3Ikm/Z7D/SDA+lQF2U0bn1XAKkJYY1WIjwd9owpQ13a9y/TY2BicJ7cyEr1+NPOMz72jz9tf84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFk1X1B79z1HBR7;
+	Mon,  1 Sep 2025 17:22:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id CBB331402C4;
+	Mon,  1 Sep 2025 17:24:39 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAXbEFDZrVod9SLAA--.60560S2;
+	Mon, 01 Sep 2025 10:24:38 +0100 (CET)
+Message-ID: <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Aleksa Sarai <cyphar@cyphar.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
+	 <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>,  Kees Cook <keescook@chromium.org>, Paul Moore
+ <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,  Andy Lutomirski
+ <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes
+ <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes
+ <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian Weimer
+ <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu
+ <jeffxu@google.com>,  Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams
+ <ajordanr@google.com>, Lakshmi Ramasubramanian
+ <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, Matt
+ Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet
+ <nicolas.bouchinet@oss.cyber.gouv.fr>,  Robert Waite
+ <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, Scott
+ Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, Steve
+ Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, 
+ linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org
+Date: Mon, 01 Sep 2025 11:24:17 +0200
+In-Reply-To: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+	 <20250826-skorpion-magma-141496988fdc@brauner>
+	 <20250826.aig5aiShunga@digikod.net>
+	 <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-CM-TRANSID:GxC2BwAXbEFDZrVod9SLAA--.60560S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF15Gr15Jr4xtrW8Zw4fKrg_yoWrCFyfpF
+	WFqwnIkF1DJr1Iyw1xC3WxZ3yFywsxJay3Jr95JrykA3W5uF1Igr1fKr4YvFZrCF4fKw1j
+	vrWIv3s8urWDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGi1Q8AC1wAAsc
 
-On Wed, Aug 27, 2025 at 07:13:57PM +0200, Gabor Juhos wrote:
-> There is a long standing bug which causes I2C communication not to
-> work on the Armada 3700 based boards. The first patch in the series
-> fixes that regression. The second patch improves recovery to make it
-> more robust which helps to avoid communication problems with certain
-> SFP modules.
+On Thu, 2025-08-28 at 10:14 +1000, Aleksa Sarai wrote:
+> On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+> > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > Nothing has changed in that regard and I'm not interested in stuffing
+> > > the VFS APIs full of special-purpose behavior to work around the fact
+> > > that this is work that needs to be done in userspace. Change the apps=
+,
+> > > stop pushing more and more cruft into the VFS that has no business
+> > > there.
+> >=20
+> > It would be interesting to know how to patch user space to get the same
+> > guarantees...  Do you think I would propose a kernel patch otherwise?
+>=20
+> You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> nice but IIRC there are ways to get around it anyway). Of course, most
+> interpreters don't mmap their scripts, but this is a potential solution.
+> If the security policy is based on validating the script text in some
+> way, this avoids the TOCTOU.
+>=20
+> Now, in cases where you have IMA or something and you only permit signed
+> binaries to execute, you could argue there is a different race here (an
+> attacker creates a malicious script, runs it, and then replaces it with
+> a valid script's contents and metadata after the fact to get
+> AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
 
-...
+Uhm, let's consider measurement, I'm more familiar with.
 
->   - remove Imre's tag from the cover letter, and replace his SoB tag to
->     Reviewed-by in the individual patches
+I think the race you wanted to express was that the attacker replaces
+the good script, verified with AT_EXECVE_CHECK, with the bad script
+after the IMA verification but before the interpreter reads it.
 
-Note, this can be automated with `b4`.
+Fortunately, IMA is able to cope with this situation, since this race
+can happen for any file open, where of course a file can be not read-
+locked.
 
-	# Start a new branch of the same base
-	git checkout -b v3 ...
-	# Apply last version from the mailing list
-	b4 am $MESSAGE_ID_OF_v2
-	# Do actual development of v3
-	...
+If the attacker tries to concurrently open the script for write in this
+race window, IMA will report this event (called violation) in the
+measurement list, and during remote attestation it will be clear that
+the interpreter did not read what was measured.
 
-Also you can do more with `b4 relay`, but I haven't tried it, so I don't know
-if it makes it possible or better.
+We just need to run the violation check for the BPRM_CHECK hook too
+(then, probably for us the O_DENY_WRITE flag or alternative solution
+would not be needed, for measurement).
 
--- 
-With Best Regards,
-Andy Shevchenko
+Please, let us know when you apply patches like 2a010c412853 ("fs:
+don't block i_writecount during exec"). We had a discussion [1], but
+probably I missed when it was decided to be applied (I saw now it was
+in the same thread, but didn't get that at the time). We would have
+needed to update our code accordingly. In the future, we will try to
+clarify better our expectations from the VFS.
 
+Thanks
+
+Roberto
+
+[1]: https://lore.kernel.org/linux-fsdevel/88d5a92379755413e1ec3c981d9a04e6=
+796da110.camel@huaweicloud.com/#t
+
+> this is even possible with IMA (can an unprivileged user even set
+> security.ima?). But even then, I would expect users that really need
+> this would also probably use fs-verity or dm-verity that would block
+> this kind of attack since it would render the files read-only anyway.
+>=20
+> This is why a more detailed threat model of what kinds of attacks are
+> relevant is useful. I was there for the talk you gave and subsequent
+> discussion at last year's LPC, but I felt that your threat model was
+> not really fleshed out at all. I am still not sure what capabilities you
+> expect the attacker to have nor what is being used to authenticate
+> binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
+> assumptions, but I can't know without knowing what threat model you have
+> in mind, *in detail*.
+>=20
+> For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
+> there are plenty of ways for an attacker to execute their own code
+> without using interpreters (create a new tmpfs with fsopen(2) for
+> instance). Executable memfds are even easier and don't require
+> privileges on most systems (yes, you can block them with vm.memfd_noexec
+> but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
+> mount(2)).
+>=20
+> (As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
+> top-level AT_* bits for a per-syscall flag -- the block comment I added
+> in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
+> allocated") was meant to avoid this happening but it seems you and the
+> reviewers missed that...)
+>=20
 
 
