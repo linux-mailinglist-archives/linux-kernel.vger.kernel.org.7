@@ -1,234 +1,165 @@
-Return-Path: <linux-kernel+bounces-793662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8C9B3D688
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:07:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9EDB3D68B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DACB17ABE0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:05:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDCDE7A1C5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858A202997;
-	Mon,  1 Sep 2025 02:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="q0MvgCLk"
-Received: from esa12.hc1455-7.c3s2.iphmx.com (esa12.hc1455-7.c3s2.iphmx.com [139.138.37.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9EE20E030;
+	Mon,  1 Sep 2025 02:08:48 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0313A258;
-	Mon,  1 Sep 2025 02:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.37.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A96F1B0F19;
+	Mon,  1 Sep 2025 02:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692418; cv=none; b=qknDPpF4DAD4I5GioDljxbmfz69qU021IhtAV+jStqnsHq050YmlzEkra6nkLUm/te5u6Yb/gqRNZVElwzFblHKpDi0pHiyZhd2pMXX5jlLynZojraXoA+u0c7ZUp95fF/hR2kkkxyxuvYjsnPCQ3X3hwN8mSSBhvX65mDUGvl8=
+	t=1756692527; cv=none; b=aUKywGhSwRWNmSHhDWmMLZsw5ZnI672LeDQk+Q6HIf4sXB8tdKyfbKxe+2aUq4fO3LZtLfLXVJ1zmiigvR8STYkutMDqWLrGF21qnt6hGJRrhMhZfj00qOdrGcR3Pn4D8+knqVvLpwKyVUgsRpEe/aOTNfe/E/GHe52o7CZ5Uzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692418; c=relaxed/simple;
-	bh=n1kVlBxB9nyQY/ojhVZA3zpRuBr13yVP8/DwVDm7lxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AvK0WRq4fO4QMpeKr1Z65oXyeNG1fOkJVXPbD0Terv5+YQnM6d8kX2NIACongaEUak34Z2l+jLcilSzohae4AKZXiFD85nawJyHRHDKKcUBLKkgXyMtiHVnVdII0L1Zee9sPpqvF2gPw2xvlI+uLmVwNtnQm2nrtpRXZbFDRj7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=q0MvgCLk; arc=none smtp.client-ip=139.138.37.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1756692416; x=1788228416;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=n1kVlBxB9nyQY/ojhVZA3zpRuBr13yVP8/DwVDm7lxk=;
-  b=q0MvgCLkk58+WQWIo5ffGeF5m7FSW8hc8M+E2wtR9+oFqchmMVYvui2J
-   Re6JVYSj3Qoz4b2fpg7eKPRCwLZEnQgfFPI9sJWEgXivnoc3Ox4Wwyh5w
-   27XsXQjd4JWrGWeggf62aydcUiZq/J7pCh9BHhehdTOFFquBHBqM6wCDW
-   y8uzIVa/Pby/egswvaBb3l7iieq4/KERI4kZQ0oDw1rFpOWGzxT50ATS+
-   eLSnFhWSZZnVs2ZG3KM5h+Afa9Eqf/zgOCCFj0OZhraGvo3dGp1N7ZhHm
-   dDtHBSp+03zMYS/LVvNPK5kI+WhWbss8JGNgmWAxURmYxW63ZGNtDnnDq
-   w==;
-X-CSE-ConnectionGUID: PQl7f5/1SlCNj8cr0LIW8A==
-X-CSE-MsgGUID: rsvm0YlUSXCdWtQTXtAIZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="190112815"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751209200"; 
-   d="scan'208";a="190112815"
-Received: from unknown (HELO az2nlsmgr2.o.css.fujitsu.com) ([20.61.8.234])
-  by esa12.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 11:05:45 +0900
-Received: from az2nlsmgm4.fujitsu.com (unknown [10.150.26.204])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgr2.o.css.fujitsu.com (Postfix) with ESMTPS id D928926E7;
-	Mon,  1 Sep 2025 02:05:44 +0000 (UTC)
-Received: from az2nlsmom4.fujitsu.com (az2nlsmom4.o.css.fujitsu.com [10.150.26.201])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmgm4.fujitsu.com (Postfix) with ESMTPS id 8B8F210001D4;
-	Mon,  1 Sep 2025 02:05:44 +0000 (UTC)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by az2nlsmom4.fujitsu.com (Postfix) with ESMTPS id 2D4052000222;
-	Mon,  1 Sep 2025 02:05:42 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.167.135.81])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 9794A1A0074;
-	Mon,  1 Sep 2025 10:05:38 +0800 (CST)
-From: Ruan Shiyang <ruansy.fnst@fujitsu.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	lkp@intel.com,
-	ying.huang@linux.alibaba.com,
-	akpm@linux-foundation.org,
-	y-goto@fujitsu.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Ben Segall <bsegall@google.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mm: memory-tiering: fix PGPROMOTE_CANDIDATE counting
-Date: Mon,  1 Sep 2025 10:05:38 +0800
-Message-ID: <20250901020538.3960468-1-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
-References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
+	s=arc-20240116; t=1756692527; c=relaxed/simple;
+	bh=Vm/kZN9c7s81CxsjYSlovb7fQlggwebCdtC5M962/Ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhhUVqpd8AvRTok1mQBrW1Kn0f4LspOaStDR9Akh8mrQJJ26a0uTNNYQkiAD15ApwQuZPlDCrrn6nmOAQFK/ze/vHgWKukXzqQGBZQh+1M5tQ5NyyhjbfqqL3G9Qf43mEyQJ99bU0xZKSRC299paVj4RnmwRc7Qz8zasDsepfWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz9t1756692493t00716bf8
+X-QQ-Originating-IP: 4hWyaNGsfTG/p5ecPAf++Im/XolX69MjIDgC8Pm9QiU=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 01 Sep 2025 10:08:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17451087102426230808
+Date: Mon, 1 Sep 2025 10:08:11 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v9 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <384738E266C55C1A+20250901020811.GA21078@nic-Precision-5820-Tower>
+References: <20250828025547.568563-1-dong100@mucse.com>
+ <20250828025547.568563-5-dong100@mucse.com>
+ <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
+ <DB12A33105BC0233+20250829021254.GA904254@nic-Precision-5820-Tower>
+ <8a76222e-8da7-4499-981f-64660e377e1c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a76222e-8da7-4499-981f-64660e377e1c@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NkLA2q2LD229wshJrtN9PYJ1yPuxDSKIY4fbApA8Kr64XeR+MrKuCA8i
+	APafXAyKbnp8x/DwZXUgYDSCXsQPlf3kWJfVXWf/6mizZE5ui37ddNb1tqUrXrUVQiQ3yUu
+	98zcZ+Xf+71Aocf/hrUtCX0zMN8aTLRLxaxy1sA6taS4PfHEl1TY0pMISft/c4DAeHQcUBz
+	MQGisJWRrzpXPotfOTeVyr40VIeXQoKT6NsCmhyHxQUShOQQaSm8DtjiogaJnhpWBOAZFWh
+	IaMaeDehiTPVwzRffvrMvBcnwn2WdsuK5KvLZPu9Xxhvpf+bmLpgvPqicl1WhM8mzGt1Crd
+	E8BveBLvAQ+zJmXyUPtKCFgyOXVnhXy697xe4AXM2c/cqpEEzRkIZT3rT/0lprRSJZ3hGMP
+	+GoXFkI+0PMhSIhZzKJ+SWTJ7GEN+H/xxm0RoTrJPh9hQlHXuk3xA3leA/fI3897qVDNuym
+	3JAwFIK2sbo80t6GmOiXavi2ISnbLcQU0OkOuTYGkKnJOewC5XGyXyNiOVk9nQeVTfDejfi
+	+2EDr3WJrj/k1BccH2KKeT/eMp7YOO4WoPhKzPMiVErPFByt8LEbW2i/t+89qAfuOZ7EtnE
+	jcR3sbSDboUhvilQleS/LkNteBCg8sT86aowHzOi2kdPMBQlxszT4ueRiv1hB3f69K3Md62
+	TJwVc78voN0ykCq44L/sAz8XlA7qrhChkgwaar+MVzQ7hOueVJNUgoA0MqWivF/QkEJ2Tor
+	zEUTI6fHr5eGsbq1xXlTnpvmGxpvLIH1E0P7bH+qqjzq77WeohkUsmXTbUzd1XkTwxgxBXA
+	CVQ9xE2+Hvh1v/oparjaItivnAiYiil3zq9/zrwZQdBxwBnRJshUoDvtLccglULCI81G/4A
+	GkK0dM5/r3fqf7Xuz4G6tw58Nxx9/beCSTMyR/9idQx3P/qBNelZMDOVWVFWoRYpz5SbWyL
+	7GOabwhtB3jRyAPvAKPGn6/EcVB7D0BIRPohaHZEGNjfCa3+j2ZwT5VrzBt/b9sO6HHqUH+
+	ZLhUbYWBEZXeEjAQaWU3LybNPQY6o=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Goto-san reported confusing pgpromote statistics where the
-pgpromote_success count significantly exceeded pgpromote_candidate.
+On Fri, Aug 29, 2025 at 09:48:12PM +0200, Andrew Lunn wrote:
+> > Maybe I should rename it like this?
+> > 
+> > /**
+> >  * mucse_mbx_sync_fw_by_get_capability - Try to sync driver and fw
+> >  * @hw: pointer to the HW structure
+> >  *
+> >  * mucse_mbx_sync_fw_by_get_capability tries to sync driver and fw
+> >  * by get capabitiy mbx cmd. Many retrys will do if it is failed.
+> >  *
+> >  * Return: 0 on success, negative errno on failure
+> >  **/
+> > int mucse_mbx_sync_fw_by_get_capability(struct mucse_hw *hw)
+> > {
+> > 	struct hw_abilities ability = {};
+> > 	int try_cnt = 3;
+> > 	int err;
+> > 	/* It is called once in probe, if failed nothing
+> > 	 * (register network) todo. Try more times to get driver
+> > 	 * and firmware in sync.
+> > 	 */
+> > 	do {
+> > 		err = mucse_fw_get_capability(hw, &ability);
+> > 		if (err)
+> > 			continue;
+> > 		break;
+> > 	} while (try_cnt--);
+> > 
+> > 	if (!err)
+> > 		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
+> > 	return err;
+> > }
+> 
+> Why so much resistance to a NOP or firmware version, something which
+> is not that important? Why do you want to combine getting sync and
+> getting the capabilities?
+> 
 
-On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
- # Enable demotion only
- echo 1 > /sys/kernel/mm/numa/demotion_enabled
- numactl -m 0-1 memhog -r200 3500M >/dev/null &
- pid=$!
- sleep 2
- numactl memhog -r100 2500M >/dev/null &
- sleep 10
- kill -9 $pid # terminate the 1st memhog
- # Enable promotion
- echo 2 > /proc/sys/kernel/numa_balancing
+But firmware not offer a NOP command.
+(https://lore.kernel.org/netdev/8989E7A85A9468B0+20250825013053.GA2006401@nic-Precision-5820-Tower/) 
 
-After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
-$ grep -e pgpromote /proc/vmstat
-pgpromote_success 2579
-pgpromote_candidate 0
+I will rename it like 'mucse_mbx_sync_fw', and rename opcode
+'GET_PHY_ABILITY = 0x0601' to 'SYNC_FW = 0x0601'.
 
-In this scenario, after terminating the first memhog, the conditions for
-pgdat_free_space_enough() are quickly met, and triggers promotion.
-However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
-not in PGPROMOTE_CANDIDATE.
+> > fw reduce working frequency to save power if no driver is probed to this
+> > chip. And fw change frequency to normal after recieve insmod mbx cmd.
+> 
+> So why is this called ifinsmod? Why not power save? If you had called
+> this power save, i would not of questioned what this does, it is
+> pretty obvious, and other drivers probably have something
+> similar. Some drivers probably have something like open/close, which
+> do similar things. Again, i would not of asked. By not following what
+> other drivers are doing, you just cause problems for everybody.
 
-To solve these confusing statistics, introduce PGPROMOTE_CANDIDATE_NRL to
-count the missed promotion pages.  And also, not counting these pages into
-PGPROMOTE_CANDIDATE is to avoid changing the existing algorithm or
-performance of the promotion rate limit.
+Sorry for it.
 
-Link: https://lkml.kernel.org/r/20250729035101.1601407-1-ruansy.fnst@fujitsu.com
-Co-developed-by: Li Zhijian <lizhijian@fujitsu.com>
-Signed-off-by: Ruan Shiyang <ruansy.fnst@fujitsu.com>
-Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
-Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-Changes since v1:
-  1. change Li Zhijian from 'Signed-off-by' to 'Co-developed-by' per Vlastimil.
-  2. add Acked-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/mmzone.h | 16 +++++++++++++++-
- kernel/sched/fair.c    |  5 +++--
- mm/vmstat.c            |  1 +
- 3 files changed, 19 insertions(+), 3 deletions(-)
+> 
+> So please give this a new name. Not just the function, but also the
+> name of the firmware op and everything else to do with this. The
+> firmware does not care what the driver calls it, all it sees is a
+> binary message format, no names.
+> 
+> Please also go through your driver and look at all the other names. Do
+> they match what other drivers use. If not, you might want to rename
+> them, in order to get your code merged with a lot less back and forth
+> with reviewers.
+> 
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 0c5da9141983..9d3ea9085556 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -234,7 +234,21 @@ enum node_stat_item {
- #endif
- #ifdef CONFIG_NUMA_BALANCING
- 	PGPROMOTE_SUCCESS,	/* promote successfully */
--	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
-+	/**
-+	 * Candidate pages for promotion based on hint fault latency.  This
-+	 * counter is used to control the promotion rate and adjust the hot
-+	 * threshold.
-+	 */
-+	PGPROMOTE_CANDIDATE,
-+	/**
-+	 * Not rate-limited (NRL) candidate pages for those can be promoted
-+	 * without considering hot threshold because of enough free pages in
-+	 * fast-tier node.  These promotions bypass the regular hotness checks
-+	 * and do NOT influence the promotion rate-limiter or
-+	 * threshold-adjustment logic.
-+	 * This is for statistics/monitoring purposes.
-+	 */
-+	PGPROMOTE_CANDIDATE_NRL,
- #endif
- 	/* PGDEMOTE_*: pages demoted */
- 	PGDEMOTE_KSWAPD,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..82c8d804c54c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1923,11 +1923,13 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
- 		struct pglist_data *pgdat;
- 		unsigned long rate_limit;
- 		unsigned int latency, th, def_th;
-+		long nr = folio_nr_pages(folio);
- 
- 		pgdat = NODE_DATA(dst_nid);
- 		if (pgdat_free_space_enough(pgdat)) {
- 			/* workload changed, reset hot threshold */
- 			pgdat->nbp_threshold = 0;
-+			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
- 			return true;
- 		}
- 
-@@ -1941,8 +1943,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
- 		if (latency >= th)
- 			return false;
- 
--		return !numa_promotion_rate_limit(pgdat, rate_limit,
--						  folio_nr_pages(folio));
-+		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
- 	}
- 
- 	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 71cd1ceba191..e74f0b2a1021 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1280,6 +1280,7 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_NUMA_BALANCING
- 	[I(PGPROMOTE_SUCCESS)]			= "pgpromote_success",
- 	[I(PGPROMOTE_CANDIDATE)]		= "pgpromote_candidate",
-+	[I(PGPROMOTE_CANDIDATE_NRL)]		= "pgpromote_candidate_nrl",
- #endif
- 	[I(PGDEMOTE_KSWAPD)]			= "pgdemote_kswapd",
- 	[I(PGDEMOTE_DIRECT)]			= "pgdemote_direct",
--- 
-2.43.0
+I see, I will check all names.
+
+> 	Andrew
+> 
+
+Thanks for you feedback.
 
 
