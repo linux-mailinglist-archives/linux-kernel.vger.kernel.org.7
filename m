@@ -1,194 +1,304 @@
-Return-Path: <linux-kernel+bounces-795364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81CFB3F0AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760B3B3F0AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B11F1897E08
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7C53B1E81
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F4F27B358;
-	Mon,  1 Sep 2025 21:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EF227E1C6;
+	Mon,  1 Sep 2025 21:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjKElxbJ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FxjRf7+C"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FE52367C3;
-	Mon,  1 Sep 2025 21:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577F11EE02F;
+	Mon,  1 Sep 2025 21:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756763225; cv=none; b=Izi3sESpLRNIoq7pD0gtnzPaEOFsw/4mZMyYoa/VV5MDoWP/XL8Sk/jvtBTV+0qFEvaWvGtZc9T4i3KlgulpcuJuJlUHMZVCHOQwlIm1XbFO4Hqg1YADrSUITDfSYcjRJ96gF79Rnxh0W6KM+oQ/iM2zDK3RhZTqOlwECMPRCs4=
+	t=1756763289; cv=none; b=tNGlMFIDFbThL65Mn5znPj3nLzP6qqLUr74g4ic4IQ1M8rdCIeOD2GwfiynXs8zAHZ5uDXpuOLXZctw5nCwQLHLh91VzliGByYrS+JO7rcsXgpfQBM1mkQrQ2mU9pVmN4e2QnlIJAo+hkEVAVtenShCxWeMF9DwVhCb7fbrDTSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756763225; c=relaxed/simple;
-	bh=+NY02T3EKXc/p3Ldv7PZSvRzUT4MNdBvJAIeMcl80GM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HxI4oLiNPBa0NOj08S2xIsgAGgpMcb6+lC23vXLcArtFDGnapb1b5Lw5nwt7nVtAL8TAAVAIJhO4dsgM9RLXH7zyxHUXvurEvdw9TLMzfR3j0GKM/KmbNNe+3KwkFqQ2cFxlg8d8fqtwpWPz633msZaA0Sqq1XbqQGYpufQMtII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjKElxbJ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-248ff4403b9so33404385ad.0;
-        Mon, 01 Sep 2025 14:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756763223; x=1757368023; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OlsE2WeMOlyP3bzmlKQubQNSIzHK7RKjbs8UIIIjOHk=;
-        b=LjKElxbJStuoA5WmqRK1sFe9pID3nEASrzQdG60C5w//WMeIASC0qYXoYLqBApPmjJ
-         bnLTZH/fHxS7sfQi30CdS8UFYXAChjrRMf0DLt5NOVXIkL/OCNMEy+b+2zmnzMXD/+qU
-         qnzExx3RL0uEna66NMzDuMMZclBeSpjWiiUxd2nbiAGyASmcNOaAFx899CfA4pbDZn2/
-         WPAgfVKAMMxGy7d9hjagTjafxIGhwuA0Olp3jFkkI+tA1vlKIQub+PK+DSE9HP/d1BeS
-         R/z/ATeDNsgbTiKF5LprZ5ak6LB9CDlgH5z8gyYH87Jqu/+ZGCnHCamiB/9lSeI8cIU9
-         clDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756763223; x=1757368023;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OlsE2WeMOlyP3bzmlKQubQNSIzHK7RKjbs8UIIIjOHk=;
-        b=PPMvZf5CwYjaO3rjm500AXHHM3T1OyJ1wtZcS19P7uSdWBTY3oBs57/okiy6kQSsL2
-         6sGTtkCVmT/BSHTlAO/GhefsSNuBs4nWn0X5Xx/n1MET2m0LU8S+ag+wN1tdyq8Y9oaZ
-         SgGPdXzsaAvbc1UeYhn48X1MaYv5mUR3m6Jb03/jERQrxZuviSul+KJw1SaHnScNwRC9
-         UQqhI7Zn4PQhWSn3YIPjHKO2DU0dVykPiTo4b6d5jOh2f+KuJb7m2ZzGhzAUb41yJVTw
-         h2y37igcvuJIUheAilu8DXKqLzP8le2qMFjpCfgd2Z7nEqtAU52E2optKhpSN+R5oaBH
-         MHAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFYGKTWxoxqB8rKVeERILD0phTAX63n2Quityo2zPSVba7Cor2AKLpxR1/JUo1gupIKtpWWPK8@vger.kernel.org, AJvYcCXjMVA4rOcsrxR6uigLT3kt+5CvhciPXjl/mIA2gbVAgkm0HctNEUT8MwEBB5zMSATGM9pAoHxRyJs1kxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjl1PlNaduqDRuCafhkp2KoZeBsFvBk5MPgtXxAbRFpQPlV4ou
-	sAl/wLAeY1qASXghBS1amozO5X3YkuQOF1+lqcei3dNI0xPsfNTuOZHx
-X-Gm-Gg: ASbGncs1FdzyBfoKTHoI1KN4nSm9O98sW2Nj3fikm/TiEUd5hCKxT2jRvN/Hgzi0fop
-	4ToHUYhZEGgzuUESQDKXzdsT0Zqwqrj1HuvCKS193GzGMnvbHstj8Iys6ZyNsa8xHeSYmbglrJt
-	RJdsirt2HEvWh2zYnkjOhAQOqVuKF+yxPNIzxfxAQ0NoRNFVMTcyno/XiuGm/3XQwTp9MrDuFuJ
-	kglWEesttTmqrssHH5iWHkE0cpMBx7095wbG9xpgNue5JN4Fcddsoa/pfz/xGoaPbxWdeaCK8Mx
-	T+ypdAuyPnW4+eGLY7xzFHcSpiD0G4if9+55JerL0qTCwigX2aN0P9D5vgnTZlgc9ExVT9Tuw/F
-	I9IbctvSuBKxnHlF8nvDVrOxmDuSRWf4tDpBieczwB5a1lJQ=
-X-Google-Smtp-Source: AGHT+IGJ+VbL+KkwAJkiu3byzjAamHyXWU/kRNAZj/DaRKztP3TxkmdmFFWUola7Qz5AGr90A4KQ/Q==
-X-Received: by 2002:a17:902:f608:b0:24a:ad42:3559 with SMTP id d9443c01a7336-24aad4237ddmr89121605ad.56.1756763223308;
-        Mon, 01 Sep 2025 14:47:03 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490373a3a9sm112563485ad.50.2025.09.01.14.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 14:47:02 -0700 (PDT)
-Message-ID: <7d71d5d3c708451372d2cd0580951997ccc4b883.camel@gmail.com>
-Subject: Re: [PATCH] net/tls: allow limiting maximum record size
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: chuck.lever@oracle.com, kernel-tls-handshake@lists.linux.dev, "David S .
- Miller" <davem@davemloft.net>, donald.hunter@gmail.com,
- edumazet@google.com, hare@kernel.org,  Jakub Kicinski	 <kuba@kernel.org>,
- john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, Hannes Reinecke <hare@suse.de>
-Date: Tue, 02 Sep 2025 07:46:55 +1000
-In-Reply-To: <20250901164355.GM15473@horms.kernel.org>
-References: <20250901053618.103198-2-wilfred.opensource@gmail.com>
-	 <20250901164355.GM15473@horms.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756763289; c=relaxed/simple;
+	bh=zOVqnT4CiNvqIL9ntGVIBSSZLn7RBEB0Hk45iI1LVYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=QNFi1vcHqsO9Iop5C6TSekWmesIK9JxZnPXGwZgCtYWrY5dPP+RF+WCGgQeAH8CYsyC/86/eoGNIWYqOwnWnDxO3OxCmspnz93AsQNz6GeI+90WsVhaVnAEPOJ53v1Fm1/LQCpxSdEK0tsU/kRN7noVbeNqYrWIYxd5y8z9ghek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FxjRf7+C; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250901214803euoutp02d79d0cf4cda6546a5817575ed420314a~hRuYkNP0O2070420704euoutp02b;
+	Mon,  1 Sep 2025 21:48:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250901214803euoutp02d79d0cf4cda6546a5817575ed420314a~hRuYkNP0O2070420704euoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756763283;
+	bh=nDcHitW6y2xbmXlK2jIcbndjdtco2y22djXFkarI+Kk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=FxjRf7+Ccpl7snsYCn9LacCiGJXvASl2Bcyshcc3MWcU7wbky050oQOcx4xKJlMqc
+	 EH1xZePjtKif6niNm/ZZNmDVZoJ/hrllrH2T7muDX2gjk12tpAmaQkZRCflGuSDB6/
+	 tvmSX006Ss83xwBwmshU6YU5Q3rwG2epCzq8Yjqg=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250901214802eucas1p2e3b4b360d054bc640a8654e364047c28~hRuXfQpr52428424284eucas1p2C;
+	Mon,  1 Sep 2025 21:48:02 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250901214759eusmtip26af756ba90f133971e3a66f9c5275b48~hRuUiYUac1463914639eusmtip2j;
+	Mon,  1 Sep 2025 21:47:59 +0000 (GMT)
+Message-ID: <26bd901a-0812-492d-9736-4a7bb2e6d6b4@samsung.com>
+Date: Mon, 1 Sep 2025 23:47:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/16] dma-mapping: migrate to physical address-based
+ API
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Abdiel Janulgue
+	<abdiel.janulgue@gmail.com>, Alexander Potapenko <glider@google.com>, Alex
+	Gaynor <alex.gaynor@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>, Jens Axboe
+	<axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, Jonathan Corbet
+	<corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org, Madhavan Srinivasan
+	<maddy@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Michael
+	Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>, Miguel
+	Ojeda <ojeda@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	rust-for-linux@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>, Stefano
+	Stabellini <sstabellini@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250828115729.GA10073@unreal>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250901214802eucas1p2e3b4b360d054bc640a8654e364047c28
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250828115738eucas1p24f3c17326b318c95a5569a2c9651ff92
+X-EPHeader: CA
+X-CMS-RootMailID: 20250828115738eucas1p24f3c17326b318c95a5569a2c9651ff92
+References: <cover.1755624249.git.leon@kernel.org>
+	<CGME20250828115738eucas1p24f3c17326b318c95a5569a2c9651ff92@eucas1p2.samsung.com>
+	<20250828115729.GA10073@unreal>
 
-On Mon, 2025-09-01 at 17:44 +0100, Simon Horman wrote:
->=20
-[snip]
->=20
-> > diff --git a/Documentation/netlink/specs/handshake.yaml
-> > b/Documentation/netlink/specs/handshake.yaml
-> > index 95c3fade7a8d..0dbe5d0c8507 100644
-> > --- a/Documentation/netlink/specs/handshake.yaml
-> > +++ b/Documentation/netlink/specs/handshake.yaml
-> > @@ -87,6 +87,9 @@ attribute-sets:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name: remote-auth
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: u32
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 multi-attr: true
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name: record-si=
-ze-limit
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: u32
->=20
-> nit: This indentation is not consistent with the existing spec.
->=20
-> > =C2=A0
-> > =C2=A0operations:
-> > =C2=A0=C2=A0 list:
->=20
-> And I believe you are missing the following hunk:
->=20
-> @@ -126,6 +126,7 @@ operations:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-- status
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-- sockfd
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-- remote-auth
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - rec=
-ord-size-limit
->=20
-> =C2=A0mcast-groups:
-> =C2=A0=C2=A0 list:
->=20
-> ...
-Ah good catch thanks!
->=20
-> > diff --git a/net/handshake/genl.c b/net/handshake/genl.c
-> > index f55d14d7b726..fb8962ae7131 100644
-> > --- a/net/handshake/genl.c
-> > +++ b/net/handshake/genl.c
-> > @@ -16,10 +16,11 @@ static const struct nla_policy
-> > handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0/* HANDSHAKE_CMD_DONE - do */
-> > -static const struct nla_policy
-> > handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] =3D {
-> > +static const struct nla_policy
-> > handshake_done_nl_policy[__HANDSHAKE_A_DONE_MAX] =3D {
->=20
-> Although it's necessary to update this file in patches,
-> it is automatically generated using: make -C tools/net/ynl/
->=20
-> Accordingly, although the meaning is the same, the line above should
-> be:
->=20
-> static const struct nla_policy
-> handshake_done_nl_policy[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT + 1] =3D {
->=20
-> > =C2=A0	[HANDSHAKE_A_DONE_STATUS] =3D { .type =3D NLA_U32, },
-> > =C2=A0	[HANDSHAKE_A_DONE_SOCKFD] =3D { .type =3D NLA_S32, },
-> > =C2=A0	[HANDSHAKE_A_DONE_REMOTE_AUTH] =3D { .type =3D NLA_U32, },
-> > +	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] =3D { .type =3D NLA_U32,
-> > },
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0/* Ops table for handshake */
-> > @@ -35,7 +36,7 @@ static const struct genl_split_ops
-> > handshake_nl_ops[] =3D {
-> > =C2=A0		.cmd		=3D HANDSHAKE_CMD_DONE,
-> > =C2=A0		.doit		=3D handshake_nl_done_doit,
-> > =C2=A0		.policy		=3D
-> > handshake_done_nl_policy,
-> > -		.maxattr	=3D HANDSHAKE_A_DONE_REMOTE_AUTH,
-> > +		.maxattr	=3D HANDSHAKE_A_DONE_MAX,
->=20
-> And this one should be:
->=20
-> 		.maxattr=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D
-> HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
->=20
-> > =C2=A0		.flags		=3D GENL_CMD_CAP_DO,
-> > =C2=A0	},
-> > =C2=A0};
-Okay did not know I could "make -C tools/net/ynl/" to generate this.
-Will use that going forward. Thanks for the feedback!
 
-Regards,
-Wilfred
+On 28.08.2025 13:57, Leon Romanovsky wrote:
+> On Tue, Aug 19, 2025 at 08:36:44PM +0300, Leon Romanovsky wrote:
+>> Changelog:
+>> v4:
+>>   * Fixed kbuild error with mismatch in kmsan function declaration due to
+>>     rebase error.
+>> v3: https://lore.kernel.org/all/cover.1755193625.git.leon@kernel.org
+>>   * Fixed typo in "cacheable" word
+>>   * Simplified kmsan patch a lot to be simple argument refactoring
+>> v2: https://lore.kernel.org/all/cover.1755153054.git.leon@kernel.org
+>>   * Used commit messages and cover letter from Jason
+>>   * Moved setting IOMMU_MMIO flag to dma_info_to_prot function
+>>   * Micro-optimized the code
+>>   * Rebased code on v6.17-rc1
+>> v1: https://lore.kernel.org/all/cover.1754292567.git.leon@kernel.org
+>>   * Added new DMA_ATTR_MMIO attribute to indicate
+>>     PCI_P2PDMA_MAP_THRU_HOST_BRIDGE path.
+>>   * Rewrote dma_map_* functions to use thus new attribute
+>> v0: https://lore.kernel.org/all/cover.1750854543.git.leon@kernel.org/
+>> ------------------------------------------------------------------------
+>>
+>> This series refactors the DMA mapping to use physical addresses
+>> as the primary interface instead of page+offset parameters. This
+>> change aligns the DMA API with the underlying hardware reality where
+>> DMA operations work with physical addresses, not page structures.
+>>
+>> The series maintains export symbol backward compatibility by keeping
+>> the old page-based API as wrapper functions around the new physical
+>> address-based implementations.
+>>
+>> This series refactors the DMA mapping API to provide a phys_addr_t
+>> based, and struct-page free, external API that can handle all the
+>> mapping cases we want in modern systems:
+>>
+>>   - struct page based cachable DRAM
+>>   - struct page MEMORY_DEVICE_PCI_P2PDMA PCI peer to peer non-cachable
+>>     MMIO
+>>   - struct page-less PCI peer to peer non-cachable MMIO
+>>   - struct page-less "resource" MMIO
+>>
+>> Overall this gets much closer to Matthew's long term wish for
+>> struct-pageless IO to cachable DRAM. The remaining primary work would
+>> be in the mm side to allow kmap_local_pfn()/phys_to_virt() to work on
+>> phys_addr_t without a struct page.
+>>
+>> The general design is to remove struct page usage entirely from the
+>> DMA API inner layers. For flows that need to have a KVA for the
+>> physical address they can use kmap_local_pfn() or phys_to_virt(). This
+>> isolates the struct page requirements to MM code only. Long term all
+>> removals of struct page usage are supporting Matthew's memdesc
+>> project which seeks to substantially transform how struct page works.
+>>
+>> Instead make the DMA API internals work on phys_addr_t. Internally
+>> there are still dedicated 'page' and 'resource' flows, except they are
+>> now distinguished by a new DMA_ATTR_MMIO instead of by callchain. Both
+>> flows use the same phys_addr_t.
+>>
+>> When DMA_ATTR_MMIO is specified things work similar to the existing
+>> 'resource' flow. kmap_local_pfn(), phys_to_virt(), phys_to_page(),
+>> pfn_valid(), etc are never called on the phys_addr_t. This requires
+>> rejecting any configuration that would need swiotlb. CPU cache
+>> flushing is not required, and avoided, as ATTR_MMIO also indicates the
+>> address have no cachable mappings. This effectively removes any
+>> DMA API side requirement to have struct page when DMA_ATTR_MMIO is
+>> used.
+>>
+>> In the !DMA_ATTR_MMIO mode things work similarly to the 'page' flow,
+>> except on the common path of no cache flush, no swiotlb it never
+>> touches a struct page. When cache flushing or swiotlb copying
+>> kmap_local_pfn()/phys_to_virt() are used to get a KVA for CPU
+>> usage. This was already the case on the unmap side, now the map side
+>> is symmetric.
+>>
+>> Callers are adjusted to set DMA_ATTR_MMIO. Existing 'resource' users
+>> must set it. The existing struct page based MEMORY_DEVICE_PCI_P2PDMA
+>> path must also set it. This corrects some existing bugs where iommu
+>> mappings for P2P MMIO were improperly marked IOMMU_CACHE.
+>>
+>> Since ATTR_MMIO is made to work with all the existing DMA map entry
+>> points, particularly dma_iova_link(), this finally allows a way to use
+>> the new DMA API to map PCI P2P MMIO without creating struct page. The
+>> VFIO DMABUF series demonstrates how this works. This is intended to
+>> replace the incorrect driver use of dma_map_resource() on PCI BAR
+>> addresses.
+>>
+>> This series does the core code and modern flows. A followup series
+>> will give the same treatment to the legacy dma_ops implementation.
+>>
+>> Thanks
+>>
+>> Leon Romanovsky (16):
+>>    dma-mapping: introduce new DMA attribute to indicate MMIO memory
+>>    iommu/dma: implement DMA_ATTR_MMIO for dma_iova_link().
+>>    dma-debug: refactor to use physical addresses for page mapping
+>>    dma-mapping: rename trace_dma_*map_page to trace_dma_*map_phys
+>>    iommu/dma: rename iommu_dma_*map_page to iommu_dma_*map_phys
+>>    iommu/dma: extend iommu_dma_*map_phys API to handle MMIO memory
+>>    dma-mapping: convert dma_direct_*map_page to be phys_addr_t based
+>>    kmsan: convert kmsan_handle_dma to use physical addresses
+>>    dma-mapping: handle MMIO flow in dma_map|unmap_page
+>>    xen: swiotlb: Open code map_resource callback
+>>    dma-mapping: export new dma_*map_phys() interface
+>>    mm/hmm: migrate to physical address-based DMA mapping API
+>>    mm/hmm: properly take MMIO path
+>>    block-dma: migrate to dma_map_phys instead of map_page
+>>    block-dma: properly take MMIO path
+>>    nvme-pci: unmap MMIO pages with appropriate interface
+>>
+>>   Documentation/core-api/dma-api.rst        |   4 +-
+>>   Documentation/core-api/dma-attributes.rst |  18 ++++
+>>   arch/powerpc/kernel/dma-iommu.c           |   4 +-
+>>   block/blk-mq-dma.c                        |  15 ++-
+>>   drivers/iommu/dma-iommu.c                 |  61 +++++------
+>>   drivers/nvme/host/pci.c                   |  18 +++-
+>>   drivers/virtio/virtio_ring.c              |   4 +-
+>>   drivers/xen/swiotlb-xen.c                 |  21 +++-
+>>   include/linux/blk-mq-dma.h                |   6 +-
+>>   include/linux/blk_types.h                 |   2 +
+>>   include/linux/dma-direct.h                |   2 -
+>>   include/linux/dma-map-ops.h               |   8 +-
+>>   include/linux/dma-mapping.h               |  33 ++++++
+>>   include/linux/iommu-dma.h                 |  11 +-
+>>   include/linux/kmsan.h                     |   9 +-
+>>   include/trace/events/dma.h                |   9 +-
+>>   kernel/dma/debug.c                        |  71 ++++---------
+>>   kernel/dma/debug.h                        |  37 ++-----
+>>   kernel/dma/direct.c                       |  22 +---
+>>   kernel/dma/direct.h                       |  52 ++++++----
+>>   kernel/dma/mapping.c                      | 117 +++++++++++++---------
+>>   kernel/dma/ops_helpers.c                  |   6 +-
+>>   mm/hmm.c                                  |  19 ++--
+>>   mm/kmsan/hooks.c                          |   5 +-
+>>   rust/kernel/dma.rs                        |   3 +
+>>   tools/virtio/linux/kmsan.h                |   2 +-
+>>   26 files changed, 305 insertions(+), 254 deletions(-)
+> Marek,
+>
+> So what are the next steps here? This series is pre-requirement for the
+> VFIO MMIO patches.
+
+I waited a bit with a hope to get a comment from Robin. It looks that 
+there is no other alternative for the phys addr in the struct page 
+removal process.
+
+I would like to give those patches a try in linux-next, but in meantime 
+I tested it on my test farm and found a regression in dma_map_resource() 
+handling. Namely the dma_map_resource() is no longer possible with size 
+not aligned to kmalloc()'ed buffer, as dma_direct_map_phys() calls 
+dma_kmalloc_needs_bounce(), which in turn calls 
+dma_kmalloc_size_aligned(). It looks that the check for !(attrs & 
+DMA_ATTR_MMIO) should be moved one level up in dma_direct_map_phys(). 
+Here is the log:
+
+------------[ cut here ]------------
+dma-pl330 fe550000.dma-controller: DMA addr 0x00000000fe410024+4 
+overflow (mask ffffffff, bus limit 0).
+WARNING: kernel/dma/direct.h:116 at dma_map_phys+0x3a4/0x3ec, CPU#1: 
+speaker-test/405
+Modules linked in: ...
+CPU: 1 UID: 0 PID: 405 Comm: speaker-test Not tainted 
+6.17.0-rc4-next-20250901+ #10958 PREEMPT
+Hardware name: Hardkernel ODROID-M1 (DT)
+pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : dma_map_phys+0x3a4/0x3ec
+lr : dma_map_phys+0x3a4/0x3ec
+...
+Call trace:
+  dma_map_phys+0x3a4/0x3ec (P)
+  dma_map_resource+0x14/0x20
+  pl330_prep_slave_fifo+0x78/0xd0
+  pl330_prep_dma_cyclic+0x70/0x2b0
+  snd_dmaengine_pcm_trigger+0xec/0x8bc [snd_pcm_dmaengine]
+  dmaengine_pcm_trigger+0x18/0x24 [snd_soc_core]
+  snd_soc_pcm_component_trigger+0x164/0x208 [snd_soc_core]
+  soc_pcm_trigger+0xe4/0x1ec [snd_soc_core]
+  snd_pcm_do_start+0x44/0x70 [snd_pcm]
+  snd_pcm_action_single+0x48/0xa4 [snd_pcm]
+  snd_pcm_action+0x7c/0x98 [snd_pcm]
+  snd_pcm_action_lock_irq+0x48/0xb4 [snd_pcm]
+  snd_pcm_common_ioctl+0xf00/0x1f1c [snd_pcm]
+  snd_pcm_ioctl+0x30/0x48 [snd_pcm]
+  __arm64_sys_ioctl+0xac/0x104
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0x40/0xe8
+  do_el0_svc+0x20/0x2c
+  el0_svc+0x4c/0x160
+  el0t_64_sync_handler+0xa0/0xe4
+  el0t_64_sync+0x198/0x19c
+irq event stamp: 6596
+hardirqs last  enabled at (6595): [<ffff800081344624>] 
+_raw_spin_unlock_irqrestore+0x74/0x78
+hardirqs last disabled at (6596): [<ffff8000813439b0>] 
+_raw_spin_lock_irq+0x78/0x7c
+softirqs last  enabled at (6076): [<ffff8000800c2294>] 
+handle_softirqs+0x4c4/0x4dc
+softirqs last disabled at (6071): [<ffff800080010690>] 
+__do_softirq+0x14/0x20
+---[ end trace 0000000000000000 ]---
+rockchip-i2s-tdm fe410000.i2s: ASoC error (-12): at 
+soc_component_trigger() on fe410000.i2s
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
