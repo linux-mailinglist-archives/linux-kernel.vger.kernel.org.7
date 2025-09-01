@@ -1,212 +1,213 @@
-Return-Path: <linux-kernel+bounces-794079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A6AB3DC92
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2101DB3DC98
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2879189D84A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:36:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13CB2189D3C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4072FD1BB;
-	Mon,  1 Sep 2025 08:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4382F39AE;
+	Mon,  1 Sep 2025 08:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJhi5ygu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qqEV2hED"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E642FD1BA;
-	Mon,  1 Sep 2025 08:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49882F0C75;
+	Mon,  1 Sep 2025 08:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715686; cv=none; b=e+bivPhDOEWcaP1/NvYd4w98ntVRcx7OfcNafdsoP3hcsnKx3anY42OGEn06o3taD27V0t4ah5HtzI2DrH0sfM2YOZB1pcC8TolsG69g6BMSJDB97niiS/FFArMe/+OVkQbLfb7h3vP8QhNJI19RNrSitOJv0q+fQphgNufJImg=
+	t=1756715755; cv=none; b=FpJfkQkZ6iIFQEEjOGww17pO0LeMj4fgvM2835I3KEDJR054GjZvWR6jmaNIUlKBfnBAwrZukLUHhaLDa8GuTb9vhrV5s6CriQsb1QK+2r/Xdusywn8iY4MdeAv7drOFA1EudOfa/lESJLbGuEPXjvnos7zI0Eaql05hjwahlNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715686; c=relaxed/simple;
-	bh=zkkspZlHcKC4C7aIeuCgP1WZ3hWEhniSwzjVItRMrh0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sKlrqtp4rXYoNna5v/TnAgHlj24F5hUAYHEKFKhTdU0StJVtcjE/A4UL1xQSO7FHMTMT9Fmc5cruu4zuhj2CK1srR1iy0GsanPKO5bPaSkVSkq/AKxkWlMY2n8RUfPrqkFv0BoGm2jSKY+dV9HWbSG/Y/VrYKbEE6GXEbSOgHUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJhi5ygu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39ABC4CEF4;
-	Mon,  1 Sep 2025 08:34:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756715686;
-	bh=zkkspZlHcKC4C7aIeuCgP1WZ3hWEhniSwzjVItRMrh0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IJhi5yguJHsnSZp7RF3kwwUDCXuzjvFgxpVADQAv5/mix6G3N9uE1k04Qf/aoEHWV
-	 rWchSAh71hq7+Z5BQmOd6Yda71T9HGIoo902H0K1wDX6Ia5NkN4BesDI/jrP7VoSDg
-	 R/vs//u5RpXX1GmZsYiKSyJII+E7xAqHWaiDRUEzWUyE8icEzuecQAzhMk360tEROs
-	 z4vFOokX3rDir5mkAhQD/XXcZ1mn1uVdVVsbmxmMdWWWpxLEfnZ4t7ST7oUcZlM50r
-	 Hk+c1z0OgS0NivzwoZGwUVMliKnisZAb/zcaO3lNOO09SL0rvMFmPOWM2XPeMBJSYU
-	 U8M2ymxeU7Mkg==
-From: Mike Rapoport <rppt@kernel.org>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Bill Wendling <morbo@google.com>,
-	Daniel Jordan <daniel.m.jordan@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Justin Stitt <justinstitt@google.com>,
+	s=arc-20240116; t=1756715755; c=relaxed/simple;
+	bh=Pv1gPChXFW9aP72GOnZp1EBJBRdrDhsP0cqaXoYRyIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tP9ewMIRmgbsppuc3DYmYttjKPyZsQ0kzwZJXGpc4kvfGfvDLJ9p4tIvjogbtE9qi+OhhbQNHgk2TQdd4XUPOIqXwLYHY+cjH1iGPEVGjR2zhMW2ORMHB4arOw5hmWkv7S/nhNIslV099PDAWqxNLnNAHRS3dnYzbv9fHMA/dlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qqEV2hED; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1dF6fbw1yJI8uaYAJFZd1q8MyMtOzcn+2AD+kfES3EY=; b=qqEV2hEDfIYsiLyIjT6xwlfb2Z
+	qjNR3sTYmNr1NaC0MoP0e1TXctDVgNM5uy7GqDBI8moy1P0EklJDnHcI9IG23VYPYvdg9txYrqLdR
+	r+e3zwIgO7jfG1kPD25hbbprdJvF7NFJYJdGEQVg78D6m2ITPhA0L6bfMu+oC7IYCNL4oYafI+S8y
+	PSPiE2gEJf72Z42pJgFWUMDzRIFrRMKLSnm654JoR3Grjh/akEtBnUxUGki8R2QKTNJf0Yc1vGQKY
+	ZwT9eh1gLvKRwftTrWjzq5arPxFqSiZamrBsEzBjpjdFSNMr1DlKh2ZLQr2SQ6/y+qeuvTW9jwxxo
+	upB6QVBg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ut00J-00000005LHb-2d3q;
+	Mon, 01 Sep 2025 08:35:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C2473300342; Mon, 01 Sep 2025 10:35:07 +0200 (CEST)
+Date: Mon, 1 Sep 2025 10:35:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v2 4/4] memblock: drop for_each_free_mem_pfn_range_in_zone_from()
-Date: Mon,  1 Sep 2025 11:34:23 +0300
-Message-ID: <20250901083423.3061349-5-rppt@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250901083423.3061349-1-rppt@kernel.org>
-References: <20250901083423.3061349-1-rppt@kernel.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
+ MC scheduling bits
+Message-ID: <20250901083507.GD4067720@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
+ <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+ <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+ <7137972e-bc7a-432c-94be-755ba9029d8c@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7137972e-bc7a-432c-94be-755ba9029d8c@linux.ibm.com>
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Thu, Aug 28, 2025 at 08:13:51PM +0530, Shrikanth Hegde wrote:
 
-for_each_free_mem_pfn_range_in_zone_from() and its "backend" implementation
-__next_mem_pfn_range_in_zone() were only used by deferred initialization of
-the memory map.
+> > --- a/arch/powerpc/Kconfig
+> > +++ b/arch/powerpc/Kconfig
+> > @@ -170,6 +170,9 @@ config PPC
+> >   	select ARCH_STACKWALK
+> >   	select ARCH_SUPPORTS_ATOMIC_RMW
+> >   	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
+> > +	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
+> > +	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
+> > +	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
+> 
+> Wondering if this SCHED_MC is necessary here? shouldn't it be set by arch/Kconfig?
 
-Remove them as they are not used anymore.
+Ah, so without this SCHED_MC becomes a user selectable option, with this
+it is an always on option (for ppc64) -- no user prompt.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Link: https://lore.kernel.org/r/20250818064615.505641-5-rppt@kernel.org
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- .clang-format            |  1 -
- include/linux/memblock.h | 22 --------------
- mm/memblock.c            | 64 ----------------------------------------
- 3 files changed, 87 deletions(-)
+That is, this is the only way I found to have similar semantics to this:
 
-diff --git a/.clang-format b/.clang-format
-index 48405c54ef27..f371a13b4d19 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -294,7 +294,6 @@ ForEachMacros:
-   - 'for_each_fib6_node_rt_rcu'
-   - 'for_each_fib6_walker_rt'
-   - 'for_each_file_lock'
--  - 'for_each_free_mem_pfn_range_in_zone_from'
-   - 'for_each_free_mem_range'
-   - 'for_each_free_mem_range_reverse'
-   - 'for_each_func_rsrc'
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index fcda8481de9a..221118b5a16e 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -324,28 +324,6 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
- 	for (i = -1, __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid); \
- 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
- 
--#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
--				  unsigned long *out_spfn,
--				  unsigned long *out_epfn);
--
--/**
-- * for_each_free_mem_pfn_range_in_zone_from - iterate through zone specific
-- * free memblock areas from a given point
-- * @i: u64 used as loop variable
-- * @zone: zone in which all of the memory blocks reside
-- * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-- * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-- *
-- * Walks over free (memory && !reserved) areas of memblock in a specific
-- * zone, continuing from current position. Available as soon as memblock is
-- * initialized.
-- */
--#define for_each_free_mem_pfn_range_in_zone_from(i, zone, p_start, p_end) \
--	for (; i != U64_MAX;					  \
--	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
--
--#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- /**
-  * for_each_free_mem_range - iterate through free memblock areas
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 117d963e677c..120a501a887a 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1445,70 +1445,6 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
- 	return 0;
- }
- 
--#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
--/**
-- * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
-- *
-- * @idx: pointer to u64 loop variable
-- * @zone: zone in which all of the memory blocks reside
-- * @out_spfn: ptr to ulong for start pfn of the range, can be %NULL
-- * @out_epfn: ptr to ulong for end pfn of the range, can be %NULL
-- *
-- * This function is meant to be a zone/pfn specific wrapper for the
-- * for_each_mem_range type iterators. Specifically they are used in the
-- * deferred memory init routines and as such we were duplicating much of
-- * this logic throughout the code. So instead of having it in multiple
-- * locations it seemed like it would make more sense to centralize this to
-- * one new iterator that does everything they need.
-- */
--void __init_memblock
--__next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
--			     unsigned long *out_spfn, unsigned long *out_epfn)
--{
--	int zone_nid = zone_to_nid(zone);
--	phys_addr_t spa, epa;
--
--	__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
--			 &memblock.memory, &memblock.reserved,
--			 &spa, &epa, NULL);
--
--	while (*idx != U64_MAX) {
--		unsigned long epfn = PFN_DOWN(epa);
--		unsigned long spfn = PFN_UP(spa);
--
--		/*
--		 * Verify the end is at least past the start of the zone and
--		 * that we have at least one PFN to initialize.
--		 */
--		if (zone->zone_start_pfn < epfn && spfn < epfn) {
--			/* if we went too far just stop searching */
--			if (zone_end_pfn(zone) <= spfn) {
--				*idx = U64_MAX;
--				break;
--			}
--
--			if (out_spfn)
--				*out_spfn = max(zone->zone_start_pfn, spfn);
--			if (out_epfn)
--				*out_epfn = min(zone_end_pfn(zone), epfn);
--
--			return;
--		}
--
--		__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
--				 &memblock.memory, &memblock.reserved,
--				 &spa, &epa, NULL);
--	}
--
--	/* signal end of iteration */
--	if (out_spfn)
--		*out_spfn = ULONG_MAX;
--	if (out_epfn)
--		*out_epfn = 0;
--}
--
--#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
--
- /**
-  * memblock_alloc_range_nid - allocate boot memory block
-  * @size: size of memory block to be allocated in bytes
--- 
-2.50.1
+> > -config SCHED_MC
+> > -	def_bool y
+> > -	depends on PPC64 && SMP
+> > -
 
+Which is also not a user selectable option.
+
+> nit: Also, can we have so they are still sorted?
+> 	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
+> 	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
+
+Sure, let me flip them. I need to prod that that patch anyway, built
+robot still ain'ted happy.
+
+
+> > --- a/arch/s390/Kconfig
+> > +++ b/arch/s390/Kconfig
+> > @@ -547,15 +547,11 @@ config NODES_SHIFT
+> >   	depends on NUMA
+> >   	default "1"
+> > -config SCHED_SMT
+> > -	def_bool n
+> > -
+> > -config SCHED_MC
+> > -	def_bool n
+> > -
+> >   config SCHED_TOPOLOGY
+> >   	def_bool y
+> >   	prompt "Topology scheduler support"
+> > +	select ARCH_SUPPORTS_SCHED_SMT
+> > +	select ARCH_SUPPORTS_SCHED_MC
+> >   	select SCHED_SMT
+> >   	select SCHED_MC
+> Same here. Above two are needed?
+
+Same issue; previously neither were user selectable symbols. By only
+selecting the ARCH_SUPPORTS_$FOO variants, the $FOO options become user
+selectable. By then explicitly selecting $FOO as well, that user option
+is taken away again.
+
+
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -330,6 +330,10 @@ config X86
+> >   	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+> >   	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+> >   	select ARCH_SUPPORTS_PT_RECLAIM		if X86_64
+> > +	select ARCH_SUPPORTS_SCHED_SMT		if SMP
+> > +	select SCHED_SMT			if SMP
+> Is this SCHED_SMT needed here?
+
+Same again...
+
+> > +	select ARCH_SUPPORTS_SCHED_CLUSTER	if SMP
+> > +	select ARCH_SUPPORTS_SCHED_MC		if SMP
+> >   config INSTRUCTION_DECODER
+> >   	def_bool y
+> > @@ -1036,29 +1040,6 @@ config NR_CPUS
+> >   	  This is purely to save memory: each supported CPU adds about 8KB
+> >   	  to the kernel image.
+> > -config SCHED_CLUSTER
+> > -	bool "Cluster scheduler support"
+> > -	depends on SMP
+> > -	default y
+> > -	help
+> > -	  Cluster scheduler support improves the CPU scheduler's decision
+> > -	  making when dealing with machines that have clusters of CPUs.
+> > -	  Cluster usually means a couple of CPUs which are placed closely
+> > -	  by sharing mid-level caches, last-level cache tags or internal
+> > -	  busses.
+> > -
+> > -config SCHED_SMT
+> > -	def_bool y if SMP
+> > -
+> > -config SCHED_MC
+> > -	def_bool y
+> > -	prompt "Multi-core scheduler support"
+> > -	depends on SMP
+> > -	help
+> > -	  Multi-core scheduler support improves the CPU scheduler's decision
+> > -	  making when dealing with multi-core CPU chips at a cost of slightly
+> > -	  increased overhead in some places. If unsure say N here.
+
+See how SCHED_SMT is not a user option for x86.
 
