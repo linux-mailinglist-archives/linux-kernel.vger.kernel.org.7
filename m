@@ -1,172 +1,167 @@
-Return-Path: <linux-kernel+bounces-794847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712DFB3E7FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E085FB3E803
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 528C27AF340
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D3D4431A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2737A342C95;
-	Mon,  1 Sep 2025 14:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5BC340DAD;
+	Mon,  1 Sep 2025 14:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Zz/3rOz0"
-Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRmTwtB2"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B132341AB7;
-	Mon,  1 Sep 2025 14:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AFB19D88F;
+	Mon,  1 Sep 2025 14:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738606; cv=none; b=hQqHvREpQ2+YN+J/vHTrqh6KjM/r8WrMnqQv0QqSnODcghBaVrn800KTolz6vzkBdIbvumd+zbe1cB7wZoe0HoGtZaAUusPSMvJb4PCxTYdTrtvQOqFmo93OA7WPX6ZPYyrMmAQSoYpXyLePV3r2CVY482ks9c2QbngvPchifO0=
+	t=1756738664; cv=none; b=kIo6i7MMORvnrupxiOYiX3XG+PdDi9jz1yvCg2NBJUQjJjFvI1SxMlzBjDHWz8SkevIduPYI7qQe4fK021LAcDWX8+UOSCY4ACMNqEecdi6duhqPgJv3SqpPGrDLR3bhz9kZYRCR0C1uDMYd44v8C3dbMfMs9xyTTPNBDVHFZi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738606; c=relaxed/simple;
-	bh=0r92TVxw7xStPkhxnOmkl8O336c+4U2sqZq5v2M5rfQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ScokYEA2vvCQm31dBoAo9HBujDStd09RhZ6TfGC95shwawYybN/H1mQw0jlgX2fwmLr5jBAwNlZefws46ddGUb/M49vwK5ygHAK+gvNqXslESD+DKDvq5fNZ5/uQNLKFXW3PKnXCXtZnXrFjwH9CC0uHxqIGwyr6wwZ/lGebgC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Zz/3rOz0; arc=none smtp.client-ip=52.28.197.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1756738664; c=relaxed/simple;
+	bh=KhrAj3svwPmMiNuyFAaTwNKFm+CBl8pX8pjNBKRqhJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msKxTdcMwQehcUrUYGv1irq+x0PBniqoG5/8O+7ZHymw1rHHdC/luUnZiYAlfJfE7ibFNn/yTMBE+aEw418XCF5ZoXMJVQDxAtu2NA4QggAzq0CnUSEqmVhVmOvSsz9SJejtclbmG3JqNsuF5rWJg04h7ZN7zS9SJVeIMymbL+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRmTwtB2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b84367affso20631265e9.3;
+        Mon, 01 Sep 2025 07:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1756738604; x=1788274604;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DzdixQuy30cIOdtGPtZhymwxAjNsuo6l8KhPTQzil28=;
-  b=Zz/3rOz02k0CZijphqp9ZkI2uI+MNzRHVUtqSaZj0zco6n+GKXQecmxT
-   v0winJS3clIBs3DoevV7i21tnrZHvkBYMIzZc488ErWNdDvdPuLXFlic3
-   NuB7uWF4peU+w6IYuB5aimAFu4wNfAFqvXa/fFYQIGJnFRMcutOZpWs9f
-   oqYoFpzHYBbU3aJ4Z+RCn5ucKCSQzhGWMN10ISnPXJMlsJ+uYjPy45Lsu
-   ghCjiS03i/pxxXd1WGydNCWFW2Jf3/yYQg5NHwJNGCbTfwbYRonT8wMzR
-   T34wslWVo3fHlrDg31uws6b6a2gxBCVEp6Bz6wBNIukxyJOYNZmEjo2B4
-   A==;
-X-CSE-ConnectionGUID: TP9bWQ1xROib+ix+/ngIXQ==
-X-CSE-MsgGUID: YwAZ6XeoRvujHV/6Dg0jJQ==
-X-IronPort-AV: E=Sophos;i="6.17,290,1747699200"; 
-   d="scan'208";a="1364214"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:56:34 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:28303]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.36.37:2525] with esmtp (Farcaster)
- id 90fd1a2a-3fc2-46c8-b14d-04ef65bb514a; Mon, 1 Sep 2025 14:56:34 +0000 (UTC)
-X-Farcaster-Flow-ID: 90fd1a2a-3fc2-46c8-b14d-04ef65bb514a
-Received: from EX19D015EUB002.ant.amazon.com (10.252.51.123) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Mon, 1 Sep 2025 14:56:33 +0000
-Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
- EX19D015EUB002.ant.amazon.com (10.252.51.123) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 1 Sep 2025 14:56:33 +0000
-Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
- EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
- 15.02.2562.020; Mon, 1 Sep 2025 14:56:33 +0000
-From: "Roy, Patrick" <roypat@amazon.co.uk>
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-CC: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com"
-	<david@redhat.com>, "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
-	<jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "rppt@kernel.org"
-	<rppt@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-Thread-Topic: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-Thread-Index: AQHcG0fkqK4jccjXtUKv/NLtaS3P1rR+aqUA
-Date: Mon, 1 Sep 2025 14:56:33 +0000
-Message-ID: <20250901145632.28172-1-roypat@amazon.co.uk>
-References: <20250901135408.5965-1-roypat@amazon.co.uk>
-In-Reply-To: <20250901135408.5965-1-roypat@amazon.co.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20230601; t=1756738661; x=1757343461; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
+        b=RRmTwtB20vdGOCCkaO4hmnEL4ggDXjIjBPQ8TxfZb2mAqThEmYaEZ+9huOo2qOjg9i
+         UNJwjzEshj1gYPraSR9NDSc+qRZXbnPBKcHg+4n9kNateuspzRyIQ4pPmpJt4x818b4M
+         /yEHKLetYEuN7WV0s0Osct/lbGGx9aGTnke60uOtOthSoMMaWtNnbhPhTzsHDT3P96HR
+         Sd2NgUVti2CKCAKa11TBOrtMkGFtu4gTcJnPusU/xmjKCTScd3Mpfjx2WONvcIQ0F7/z
+         Cxg/U4/whYwSIRzzW1P+CsLCWqVaPJlwdx8xsSU8VAJpYOGEW1ob9li2R8AVjGXMs2uP
+         65EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756738661; x=1757343461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
+        b=JegxAnuI47VuiZ8D3e/WgWLKuqUYooWJWlNxoGmxX5kR46Ah0nw7AlrXd0d79OtJV9
+         aumODBkH3jXt54s9P+eX01WmIgnIc6LNmlpag3u51faTWwlpvnOmLX4xVghJ0ajhRu2M
+         5WtEgf3ezuTQyVkkG483rVnCE3W3WWTJsh3P915xm5Ybkv99kLZT9ZsMNwPVbE5yrjjM
+         apXVvOfiWolMKs0CQkRF+0MJMlshF9nZaYpM0ORGly92PVftoXL8soXDX8II0xoy0FcI
+         yUr1SSd4b0wQI67C6yATSCCEQmOyo7/trbODn5k6fZFlXq+YvT2NJvqiCZA6sAxjD45R
+         dz8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/OHVLK3KVxuB+s5tHyUiOiDA9NBP0MLvvp8obkkKroDT06Rx0wdkF5+xbx2bCtSN2+9mrGF0NXHcMC7gO@vger.kernel.org, AJvYcCVw+3cy03ZwtyClR6nPKDD8jfvj0z3YFfPV7csYdjhnL3H1QaaWCOjjEecV893yqJnqg+zSj1CrgWFL@vger.kernel.org, AJvYcCWGi+YOQ/9XbMulFnSCsJ34Q1C6B0swQ7lxX3q7+RGApptrS9Jo9gbrzXk8sJz4XV3F7Ux4PWy3J7GS@vger.kernel.org, AJvYcCXY6ffARmyQt+9xYyB1sxgN3JLooj933MDBfpvspEUDkeYQy7AKA1Nkr+z0Xnmy7V6bJeMgmz+/mibK42Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3hQfbIDCuAM0A2ESt+fqAVR6s8D5mlHHqSYWuHbZjeXG7GMy0
+	ksq8gs0P6atcQv7xUJRupHm+pTtdpOwIMVeSBJWwomiyWQc4UGj2ARYC
+X-Gm-Gg: ASbGncu8/vqywxpERMIyXfunOUglQ1lF5z+j8+yHxqA2UOnD5hCtvizLlFxlQLKO3wF
+	4Yby6qgycdixFXPamzpOzD9OnkOGyDea1Nb0/O82s+q83kspMcLzR1KG94pQtE6xleHdlBCxyXn
+	MUJqm6F0yDst+dWj1dog3/LiVEHS9JdS7DZ9YjXmY4Q1mG6bTF0EyNDqLxR6P9zqGjUfeNjbiBU
+	WDsJvotrPy7CfTuP3ChxBQnbe1rI/iZAJXHVBxUXQH6Rv8epIMSjLF4eMmJqo+QxVn7V1rdXlZY
+	5NShOZ2fcBJgaWyYK3FwRsJK2+Btj3tvXEFKVEZL3a45WIs/tq6YfvuHGthks8bIceBJc5YVT4H
+	pRHN+9TFNQHecMiYFmMuo6ilm8+rZIAk6hi9reqOUrYKz4LZL2bgxxHp5yVsdfO45veGUNaubV5
+	lL21UvdGKIlrxGw3U+Lyk=
+X-Google-Smtp-Source: AGHT+IE8oJAQTsRIreD3B3G8iVhHG5yD2Ojfb6uoThjNjE6os7CLdXOhZ5jtB7Lc8aVcNrY1HYylhw==
+X-Received: by 2002:a05:6000:22c2:b0:3c9:b8b7:ea40 with SMTP id ffacd0b85a97d-3d1de5b08ccmr6018724f8f.38.1756738661236;
+        Mon, 01 Sep 2025 07:57:41 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d520eada16sm6918744f8f.41.2025.09.01.07.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 07:57:39 -0700 (PDT)
+Date: Mon, 1 Sep 2025 16:57:37 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+Message-ID: <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
+References: <20250829122235.119745-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tycn7npmaoa7dfae"
+Content-Disposition: inline
+In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
 
-On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:=0A=
-> =0A=
-> Hi Fuad!=0A=
-> =0A=
-> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:=0A=
->> Hi Patrick,=0A=
->>=0A=
->> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:=
-=0A=
->>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h=0A=
->>> index 12a12dae727d..b52b28ae4636 100644=0A=
->>> --- a/include/linux/pagemap.h=0A=
->>> +++ b/include/linux/pagemap.h=0A=
->>> @@ -211,6 +211,7 @@ enum mapping_flags {=0A=
->>>                                    folio contents */=0A=
->>>         AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access t=
-o the mapping */=0A=
->>>         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM =3D 9,=0A=
->>> +       AS_NO_DIRECT_MAP =3D 10,  /* Folios in the mapping are not in t=
-he direct map */=0A=
->>>         /* Bits 16-25 are used for FOLIO_ORDER */=0A=
->>>         AS_FOLIO_ORDER_BITS =3D 5,=0A=
->>>         AS_FOLIO_ORDER_MIN =3D 16,=0A=
->>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_=
-on_reclaim(struct address_spac=0A=
->>>         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping-=
->flags);=0A=
->>>  }=0A=
->>>=0A=
->>> +static inline void mapping_set_no_direct_map(struct address_space *map=
-ping)=0A=
->>> +{=0A=
->>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
->>> +}=0A=
->>> +=0A=
->>> +static inline bool mapping_no_direct_map(struct address_space *mapping=
-)=0A=
->>> +{=0A=
->>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
->>> +}=0A=
->>> +=0A=
->>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *v=
-ma)=0A=
->>> +{=0A=
->>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_ma=
-pping);=0A=
->>> +}=0A=
->>> +=0A=
->> Any reason vma is const whereas mapping in the function that it calls=0A=
->> (defined above it) isn't?=0A=
-> =0A=
-> Ah, I cannot say that that was a conscious decision, but rather an artifa=
-ct of=0A=
-> the code that I looked at for reference when writing these two simply did=
- it=0A=
-> this way.  Are you saying both should be const, or neither (in my mind, b=
-oth=0A=
-> could be const, but the mapping_*() family of functions further up in thi=
-s file=0A=
-> dont take const arguments, so I'm a bit unsure now)?=0A=
-=0A=
-Hah, just saw=0A=
-https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@io=
-nos.com/.=0A=
-Guess that means "both should be const" then :D=0A=
-=0A=
->> Cheers,=0A=
->> /fuad=0A=
-> =0A=
-> Best,=0A=
-> Patrick=0A=
-=0A=
+
+--tycn7npmaoa7dfae
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+MIME-Version: 1.0
+
+On Fri, Aug 29, 2025 at 03:22:30PM +0300, Svyatoslav Ryhel wrote:
+> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> a ring oscillator and translates voltage changes into frequency
+> compensation changes needed to prevent the CPU from failing and is
+> essential for correct CPU frequency scaling.
+>=20
+> ---
+> Changes in v2:
+> - dropped 'drivers:' from commit title
+> - aligned naming to Tegra114
+>=20
+> Changes in v3:
+> - add DFLL support for Tegra 114 was split into dt header addition,
+>   DFLL reset configuration and CVB tables implementation.
+> - added cleaner commit message to dt header commit
+> - added T210_ prefixes to Tegra210 CVB table macros
+>=20
+> Changes in v4:
+> - expanded commit message of car header adding commit
+>=20
+> Changes in v5:
+> - renamed tegra114-car.h to nvidia,tegra114-car.h
+> ---
+>=20
+> Svyatoslav Ryhel (4):
+>   dt-bindings: reset: add Tegra114 car header
+>   clk: tegra: add DFLL DVCO reset control for Tegra114
+>   clk: tegra: dfll: add CVB tables for Tegra114
+>   ARM: tegra: Add DFLL clock support for Tegra114
+
+Hi Michael, Stephen,
+
+Given the cross-dependency between the dt-bindings header, the driver
+and the DT, do you want me to pick this up into the Tegra tree and
+resolve the dependency there?
+
+Thanks,
+Thierry
+
+--tycn7npmaoa7dfae
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmi1tF4ACgkQ3SOs138+
+s6GCjw/9FaBlmOFR66ZgQ4g/k7rwkx5Hgs+m6KaCb08u3lPgkjX0F1Gs9nY3OykP
+jbZkiF/ySaikqLVlRx1tubkMqxUs95IvC7olR0RMdS6LnYhNfYTya9sLsMlRcVFI
+G3vBmESQmnjeNhsRTu09rVJKdm9e+Lf9U+g1OIkc0Am4seATEboMsjmlkAKD0ShG
+lNFBogwug4mR5inB3t0UGoi32e+jAzf1OaayhVCg4B+dQvsu3Z83ezjpGhbvOnwQ
+wZim9UI0P9V/LeaoUsc1zzGjzxhvxRQ2gd7UpcGZAC4jiIrOqm+Tk4KP9uAkPNEC
+Hzmekdf1DUVh90b33DftkXqEYnacfndauCTokb7tbV3pwsgcm+2rgFkxYpnet+pS
+11cmXg9P1Dk8HbzIkoEjv7jypbzVIlbAwWOfkmyoQH2kV0kM7Zr3THv/YdbkOiY9
+vzFfzkDIl73c0XgjEjWDnbpUdCzyMruJwxs+vq4MF4+HxaPWXMKBquScQT10M1S+
+ciVtQkVNEm2VI1KOQIpgqMmOuS41+rOVTzlYZMRYF9hKHJZTl5zm3RpnYcInIi0W
+z8sP+tC6+mgo3y4PDJ/NDdZh6ubHUn2iprz4U4mVJZcKwR1KA+Pm/FKeYEFUm89+
+kbom4wlZgRZA3yh547LyK1yDh5zi+3eg6lcQV3I6Ki1D07k95W0=
+=AP1F
+-----END PGP SIGNATURE-----
+
+--tycn7npmaoa7dfae--
 
