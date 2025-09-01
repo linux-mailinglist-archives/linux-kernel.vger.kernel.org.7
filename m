@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-795270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAC7B3EF1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCD4B3EF23
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404E01B221CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD454E0577
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2B4239E8A;
-	Mon,  1 Sep 2025 20:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5C723D7C4;
+	Mon,  1 Sep 2025 20:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D3ai8ibo"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="syStq+NA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E9E32F753;
-	Mon,  1 Sep 2025 20:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5AF4409;
+	Mon,  1 Sep 2025 20:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756757020; cv=none; b=vAvilyI/aKfo6sS160zo6mKaOviIwvRxMT06zlqGVp+RUsDP95DgCkl1/QbO3JZd2nacU/OKfhVXZ/AMKU8m3Atv2y0W3PPeGv9svMpljDgzMep3DCgeNlUryHw5TLi6Ly0olOSjwOXdJtDxk8IZSXaE8FBDEJCdwO0pCkrBKAo=
+	t=1756757058; cv=none; b=q6HvbExOvlpevOGRzCkq6quLo4IbOt6lF+BqhOVbi5U8Nq4QFHDDODOcAa26FShHvR2ZrXiG5W36onKqRI68YARbbypi1xIMSpaob8Ab0dnniYzmF8v60PyaEutOekK3cOPMkwfNG8VlCqeCdvp8tWqLM/RUt5emiU1sLxzcNoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756757020; c=relaxed/simple;
-	bh=ABBbzPW/6UgCX/sfTGVcUskFfJx+VpJZGLG1GYiZcWw=;
+	s=arc-20240116; t=1756757058; c=relaxed/simple;
+	bh=JjMEb+rcANH9IoHEvd4So3cfv4dWZoqGvcHUiSWe6I0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ms5zytTpHUoTiKQC9LbLOl0OJk+N1Pl2/Ws+L8ieSdABNLje/R1PPrvPpwEEVkEIGjGNgiHbi9/Sst3qVNN6UryaKQXVtamDVqRWg2YvbD6FnNUaQYEZWogSodj/mpetF34SQ3++t6TDJx5Sm8SXCBZkpOI9QhLOzbV3Z9I5FhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D3ai8ibo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15AA6C4CEF0;
-	Mon,  1 Sep 2025 20:03:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1emz+rAdZmPfQDibOCDhFFnkAIb01Ziqrla73WeqAa+yDo09E+ctkvzUH/pEgoFlWnNdkR8WcA5v4eul1tqGO3+pMyaSzMEgGl3mibaaNfLFOJlTsdrnYeFVBD3ZO+1q2mnOHN5frEEPlSHaPV8k4bNat+FGVm0rVYCQgUPhEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=syStq+NA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6CD8C4CEF0;
+	Mon,  1 Sep 2025 20:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756757019;
-	bh=ABBbzPW/6UgCX/sfTGVcUskFfJx+VpJZGLG1GYiZcWw=;
+	s=korg; t=1756757057;
+	bh=JjMEb+rcANH9IoHEvd4So3cfv4dWZoqGvcHUiSWe6I0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D3ai8iboGgoAXYygiCORD/fWBp/WDZ7yk+HF5r5FderXW/vUy6n8FT3LGOPyQ7umR
-	 1UYmXp9hMxp/95BxTO/K8AeIdyGHuYl2fe1eXDJffNj8uO+uJdu2Th4/9H/7iYcOId
-	 tPZrkSxXwNGTxuaHcLFz6FwRGDcmi5O8kzXv5eJ8=
-Date: Mon, 1 Sep 2025 22:03:36 +0200
+	b=syStq+NA4tCIhKOKN571VBlVzKRxvHgdQBE+1pOx0lmdTsOUKrAWuwywf1USnJc39
+	 9QJn68tkB1yKiTYF4Py2dCAl910835pbge0/6i4xvRGyw9iJPCpLdWzRzqMxgDe4wA
+	 zmRsDbEXUN0ppWiNoBgzecrmeY9sCODevGXmxruw=
+Date: Mon, 1 Sep 2025 22:04:14 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Gyujeong Jin <wlsrbwjd7232@gmail.com>
 Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
@@ -51,7 +51,7 @@ Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
 	Jaewon Yang <r4mbb1@example.com>
 Subject: Re: [PATCH] KVM: arm64: nested: Fix VA sign extension in VNCR/TLBI
  paths
-Message-ID: <2025090123-worst-acid-92c8@gregkh>
+Message-ID: <2025090158-kilt-fabulous-3e76@gregkh>
 References: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,7 +65,32 @@ In-Reply-To: <20250901141551.57981-1-wlsrbwjd7232@gmail.com>
 
 On Mon, Sep 01, 2025 at 11:15:51PM +0900, Gyujeong Jin wrote:
 > From: gyutrange <wlsrbwjd643@naver.com>
+> 
+> VNCR/TLBI VA reconstruction currently uses bit 48 as the sign bit,
+> but for 48-bit virtual addresses the correct sign bit is bit 47.
+> Using 48 can mis-canonicalize addresses in the negative half and may
+> cause missed invalidations.
+> 
+> Although VNCR_EL2 encodes other architectural fields (RESS, BADDR;
+> see Arm ARM D24.2.206), sign_extend64() interprets its second argument
+> as the index of the sign bit. Passing 48 prevents propagation of the
+> canonical sign bit for 48-bit VAs.
+> 
+> Impact:
+> - Incorrect canonicalization of VAs with bit47=1
+> - Potential stale VNCR pseudo-TLB entries after TLBI or MMU notifier
+> - Possible incorrect translation/permissions or DoS when combined
+>   with other issues
+> 
+> Fixes: 667304740537 ("KVM: arm64: Mask out non-VA bits from TLBI VA* on VNCR invalidation")
+> Cc: stable@vger.kernel.org
+> Reported-by: DongHa Lee <gap-dev@example.com>
+> Reported-by: Gyujeong Jin <wlsrbwjd7232@gmail.com>
+> Reported-by: Daehyeon Ko <4ncient@example.com>
+> Reported-by: Geonha Lee <leegn4a@example.com>
+> Reported-by: Hyungyu Oh <dqpc_lover@example.com>
+> Reported-by: Jaewon Yang <r4mbb1@example.com>
 
-Does not match your signed-off-by line :(
+Please do not use fake email addresses.
 
 
