@@ -1,252 +1,165 @@
-Return-Path: <linux-kernel+bounces-794733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97522B3E686
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:02:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60943B3E62A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411081882F84
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F2D1A84F8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DDE335BB7;
-	Mon,  1 Sep 2025 14:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F75338F29;
+	Mon,  1 Sep 2025 13:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="peyNlvWF"
-Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="aPtFqVe3"
+Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218891DE881;
-	Mon,  1 Sep 2025 14:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE6533A01C;
+	Mon,  1 Sep 2025 13:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756735320; cv=none; b=P/Gbhnf3dTwwFGG2OCpyjGVuX5Sh/mRgkrwQMkJL8n4G72xasNeiBBzmLrML59sjRMLuQhU+zM7xC8Tz0eSnq7mpoLZjrO0ffIf7jcTviAEwoomyXTzJqCK6OhZUCVJ6O4aZxfOhdnwON+K1NLmTMn+cWefOttKeJPAXHHOP9eg=
+	t=1756734862; cv=none; b=dEEAGy32duP6hw2GnArRzuCcsN+LVChBB6lLmCLzvMDEdeK8bO556dgEjXSXwmTww5ZXtN1BUKUkjz6z/ZUTSTjjY7qsth3BJDt3o3UKDIxy4ex1VbRo+XyudZpTcvfBkcz/m3Q/tMUS2p1hG1UMaD4e/t+8GNecjd6NxPM4+6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756735320; c=relaxed/simple;
-	bh=Mo64ThMsPJ4t4DWyqo9+1IqAjziygbnEExtnaP8EJu8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O2zKvPhDaG0lveaMcf0geptUsl1Ec0uO3jVDejnS87fEeydRtV4YUdMjPAVk/RG1WZdgpj3nT+BOvdWcDg90hA3FDaFWHEIDvlspm4eS7xaM6o5hidJm4XF3ZlY8W3VixXG9y7P30n524U+s24iYX97winDvzZ4DQ6g6Fxa5bgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=peyNlvWF; arc=none smtp.client-ip=178.249.69.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
-Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
-	by m.syntacore.com (Postfix) with ESMTP id 0FFE71A0004;
-	Mon,  1 Sep 2025 13:54:31 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 0FFE71A0004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
-	t=1756734871; bh=Ozw0O54FHk+TR7i9YrzO3JawV9UWD7KG8XrbYOvortQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=peyNlvWFhWIz1gS25XmRT+Gl87AHdP2bmsj7MxlSrvVwy0Hw2XYGoSh1GMIoRvZ5C
-	 VCHoSk4RDu3pZzD6he2aBgueonopmlK7H8M4R66UiNdl60h9xk9b3JRFOhyyhCz/VL
-	 UHG0iX8oYOSp5MK5/MgGQp+AVR5jRUrCu4y2eRyRFk1nFu+ph4ayO1Amp5LY2TMxfo
-	 /OHlpSgFPnq8PsDKeDReiv4K8STUDGC7L17urcTh+doMyuqZQY+Sc7wWfwzw0WooOl
-	 jPDi6uLMVuWwg1JwtD8CNEduS9boa+Y4pnatDgl3sdCm7Pzx2YHNtMjN5vqsrQbof8
-	 QgwW/n2bUoqeA==
-Received: from S-SC-EXCH-01.corp.syntacore.com (mail.syntacore.com [10.76.202.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by m.syntacore.com (Postfix) with ESMTPS;
-	Mon,  1 Sep 2025 13:54:28 +0000 (UTC)
-Received: from localhost (10.30.18.228) by S-SC-EXCH-01.corp.syntacore.com
- (10.76.202.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 1 Sep
- 2025 16:54:21 +0300
-From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-To: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<alex@ghiti.f>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <akpm@linux-foundation.org>,
-	<david@redhat.com>, <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<svetlana.parfenova@syntacore.com>
-Subject: [RFC RESEND v3] binfmt_elf: preserve original ELF e_flags for core dumps
-Date: Mon, 1 Sep 2025 20:53:50 +0700
-Message-ID: <20250901135350.619485-1-svetlana.parfenova@syntacore.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
-References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+	s=arc-20240116; t=1756734862; c=relaxed/simple;
+	bh=6VorQX2phyRDqlOgHM/mTP8lllqO/aVw796zYul7Z28=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rcHsD5GIVZr6ZRgtdU8TiYEn07i1gBC+3UQNHikMwShEvonz+55blrRSBoD9FlMwysyHACdoh4m+ckqil1TZg2Z5dJ14/wbHi/pXw7uNDzzFrhxg/isSc9zshfNqJi96RSRvgo8wpSjoEonXNGPXUsjMIHXOrMyK3v+tO/E2DMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=aPtFqVe3; arc=none smtp.client-ip=63.176.194.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1756734861; x=1788270861;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=8FXGRJshnSKv4swI9rc/O7cu1N6KjNCj8MEEMoNffZ4=;
+  b=aPtFqVe3ZfI0AMMFd/lueMLrwMtvtfGM95AzZ4FPPmtsKEPU0xOptOL3
+   A8smpg3jnooD8whjbXQDlfaGGiIDY/p8fAZuAha41NK8wXiehqigW8Dnx
+   +i5NFhsRNeD5fvazZaa/f1Te+Dr2sTqjJJkAfItdm2WKu70G0sqKokm/7
+   qtLNYz2g4gA0QRMP9RLCQaSHnVlyjFTawwI7SoHLdkldFwyOqjI6kdKnl
+   ClfqOJpmiRXMA+dgkBdsTVP6pSp96kpgRTfw52DI8Dz+cUHr+2Xim3x9K
+   Sqkg4CYQAOvYRmvJeqi71RX1kkdfz7LwFiKSxCVr+voPrGgaEyeKBycjW
+   g==;
+X-CSE-ConnectionGUID: gggXs4BvTVmSlkjjgWje9g==
+X-CSE-MsgGUID: ND6y5eCkQmyPHrPmUhHHJA==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
+   d="scan'208";a="1463813"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 13:54:11 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:18474]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.3.140:2525] with esmtp (Farcaster)
+ id 6c2ba49e-6c86-45f6-b459-405011a28a46; Mon, 1 Sep 2025 13:54:10 +0000 (UTC)
+X-Farcaster-Flow-ID: 6c2ba49e-6c86-45f6-b459-405011a28a46
+Received: from EX19D015EUB001.ant.amazon.com (10.252.51.114) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Mon, 1 Sep 2025 13:54:10 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB001.ant.amazon.com (10.252.51.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 1 Sep 2025 13:54:10 +0000
+Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
+ EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
+ 15.02.2562.020; Mon, 1 Sep 2025 13:54:10 +0000
+From: "Roy, Patrick" <roypat@amazon.co.uk>
+To: "tabba@google.com" <tabba@google.com>
+CC: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com"
+	<david@redhat.com>, "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
+	<jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Roy, Patrick"
+	<roypat@amazon.co.uk>, "rppt@kernel.org" <rppt@kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
+Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+Thread-Topic: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+Thread-Index: AQHcG0fkqK4jccjXtUKv/NLtaS3P1g==
+Date: Mon, 1 Sep 2025 13:54:10 +0000
+Message-ID: <20250901135408.5965-1-roypat@amazon.co.uk>
+References: <CA+EHjTxOmDJkwjSvAUr2O4yqEkyqeQ=_p3E5Uj5yQrPW7Qz_HA@mail.gmail.com>
+In-Reply-To: <CA+EHjTxOmDJkwjSvAUr2O4yqEkyqeQ=_p3E5Uj5yQrPW7Qz_HA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
- S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/01 12:41:00 #27718494
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
 
-Some architectures, such as RISC-V, use the ELF e_flags field to encode
-ABI-specific information (e.g., ISA extensions, fpu support). Debuggers
-like GDB rely on these flags in core dumps to correctly interpret
-optional register sets. If the flags are missing or incorrect, GDB may
-warn and ignore valid data, for example:
-
-    warning: Unexpected size of section '.reg2/213' in core file.
-
-This can prevent access to fpu or other architecture-specific registers
-even when they were dumped.
-
-Save the e_flags field during ELF binary loading (in load_elf_binary())
-into the mm_struct, and later retrieve it during core dump generation
-(in fill_note_info()). Kconfig option CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
-is introduced for architectures that require this behaviour.
-
-Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
----
-Changes in v3:
- - Introduce CONFIG_ARCH_HAS_ELF_CORE_EFLAGS Kconfig option instead of
-   arch-specific ELF_CORE_USE_PROCESS_EFLAGS define.
- - Add helper functions to set/get e_flags in mm_struct.
- - Wrap saved_e_flags field of mm_struct with
-   #ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS.
-
-Changes in v2:
- - Remove usage of Kconfig option.
- - Add an architecture-optional macro to set process e_flags. Enabled
-   by defining ELF_CORE_USE_PROCESS_EFLAGS. Defaults to no-op if not
-   used.
-
- arch/riscv/Kconfig       |  1 +
- fs/Kconfig.binfmt        |  9 +++++++++
- fs/binfmt_elf.c          | 40 ++++++++++++++++++++++++++++++++++------
- include/linux/mm_types.h |  5 +++++
- 4 files changed, 49 insertions(+), 6 deletions(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a4b233a0659e..1bef00208bdd 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -224,6 +224,7 @@ config RISCV
- 	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO
- 	select USER_STACKTRACE_SUPPORT
- 	select ZONE_DMA32 if 64BIT
-+	select ARCH_HAS_ELF_CORE_EFLAGS
- 
- config RUSTC_SUPPORTS_RISCV
- 	def_bool y
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..1949e25c7741 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
- 	  This builds the exec KUnit tests, which tests boundary conditions
- 	  of various aspects of the exec internals.
- 
-+config ARCH_HAS_ELF_CORE_EFLAGS
-+	bool
-+	depends on BINFMT_ELF && ELF_CORE
-+	default n
-+	help
-+	  Select this option if the architecture makes use of the e_flags
-+	  field in the ELF header to store ABI or other architecture-specific
-+	  information that should be preserved in core dumps.
-+
- endmenu
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 4aacf9c9cc2d..e4653bb99946 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -103,6 +103,21 @@ static struct linux_binfmt elf_format = {
- 
- #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
- 
-+static inline void elf_coredump_set_mm_eflags(struct mm_struct *mm, u32 flags)
-+{
-+#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
-+	mm->saved_e_flags = flags;
-+#endif
-+}
-+
-+static inline u32 elf_coredump_get_mm_eflags(struct mm_struct *mm, u32 flags)
-+{
-+#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
-+	flags = mm->saved_e_flags;
-+#endif
-+	return flags;
-+}
-+
- /*
-  * We need to explicitly zero any trailing portion of the page that follows
-  * p_filesz when it ends before the page ends (e.g. bss), otherwise this
-@@ -1290,6 +1305,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	mm->end_data = end_data;
- 	mm->start_stack = bprm->p;
- 
-+	elf_coredump_set_mm_eflags(mm, elf_ex->e_flags);
-+
- 	/**
- 	 * DOC: "brk" handling
- 	 *
-@@ -1804,6 +1821,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 	struct elf_thread_core_info *t;
- 	struct elf_prpsinfo *psinfo;
- 	struct core_thread *ct;
-+	u16 machine;
-+	u32 flags;
- 
- 	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
- 	if (!psinfo)
-@@ -1831,17 +1850,26 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 		return 0;
- 	}
- 
--	/*
--	 * Initialize the ELF file header.
--	 */
--	fill_elf_header(elf, phdrs,
--			view->e_machine, view->e_flags);
-+	machine = view->e_machine;
-+	flags = view->e_flags;
- #else
- 	view = NULL;
- 	info->thread_notes = 2;
--	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
-+	machine = ELF_ARCH;
-+	flags = ELF_CORE_EFLAGS;
- #endif
- 
-+	/*
-+	 * Override ELF e_flags with value taken from process,
-+	 * if arch needs that.
-+	 */
-+	flags = elf_coredump_get_mm_eflags(dump_task->mm, flags);
-+
-+	/*
-+	 * Initialize the ELF file header.
-+	 */
-+	fill_elf_header(elf, phdrs, machine, flags);
-+
- 	/*
- 	 * Allocate a structure for each thread.
- 	 */
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 08bc2442db93..04a2857f12f2 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1102,6 +1102,11 @@ struct mm_struct {
- 
- 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
- 
-+#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
-+		/* the ABI-related flags from the ELF header. Used for core dump */
-+		unsigned long saved_e_flags;
-+#endif
-+
- 		struct percpu_counter rss_stat[NR_MM_COUNTERS];
- 
- 		struct linux_binfmt *binfmt;
--- 
-2.51.0
-
+=0A=
+Hi Fuad!=0A=
+=0A=
+On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:=0A=
+> Hi Patrick,=0A=
+> =0A=
+> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:=
+=0A=
+>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h=0A=
+>> index 12a12dae727d..b52b28ae4636 100644=0A=
+>> --- a/include/linux/pagemap.h=0A=
+>> +++ b/include/linux/pagemap.h=0A=
+>> @@ -211,6 +211,7 @@ enum mapping_flags {=0A=
+>>                                    folio contents */=0A=
+>>         AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access to=
+ the mapping */=0A=
+>>         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM =3D 9,=0A=
+>> +       AS_NO_DIRECT_MAP =3D 10,  /* Folios in the mapping are not in th=
+e direct map */=0A=
+>>         /* Bits 16-25 are used for FOLIO_ORDER */=0A=
+>>         AS_FOLIO_ORDER_BITS =3D 5,=0A=
+>>         AS_FOLIO_ORDER_MIN =3D 16,=0A=
+>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_o=
+n_reclaim(struct address_spac=0A=
+>>         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->=
+flags);=0A=
+>>  }=0A=
+>>=0A=
+>> +static inline void mapping_set_no_direct_map(struct address_space *mapp=
+ing)=0A=
+>> +{=0A=
+>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
+>> +}=0A=
+>> +=0A=
+>> +static inline bool mapping_no_direct_map(struct address_space *mapping)=
+=0A=
+>> +{=0A=
+>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
+>> +}=0A=
+>> +=0A=
+>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vm=
+a)=0A=
+>> +{=0A=
+>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_map=
+ping);=0A=
+>> +}=0A=
+>> +=0A=
+> Any reason vma is const whereas mapping in the function that it calls=0A=
+> (defined above it) isn't?=0A=
+=0A=
+Ah, I cannot say that that was a conscious decision, but rather an artifact=
+ of=0A=
+the code that I looked at for reference when writing these two simply did i=
+t=0A=
+this way.  Are you saying both should be const, or neither (in my mind, bot=
+h=0A=
+could be const, but the mapping_*() family of functions further up in this =
+file=0A=
+dont take const arguments, so I'm a bit unsure now)?=0A=
+=0A=
+> Cheers,=0A=
+> /fuad=0A=
+=0A=
+Best,=0A=
+Patrick=0A=
 
