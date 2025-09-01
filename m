@@ -1,207 +1,226 @@
-Return-Path: <linux-kernel+bounces-793631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B47B3D647
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:21:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C6EB3D64C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 282493B4FF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D293BB1A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4088C1F2BAD;
-	Mon,  1 Sep 2025 01:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6ED1F4617;
+	Mon,  1 Sep 2025 01:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPKzP/Su"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f5GCmpxU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE6143C69;
-	Mon,  1 Sep 2025 01:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756689711; cv=none; b=kgib0YVVIwoQIse22J4nhlrVYEWqT7ahmjo/qOisXRRHjXNsUMJ+xsqK7HrJpAYgOrDNe1Uls0lFl/qrays+utqkpHUSBEE6/gUuhm9gZ+E10JwYmRJKWKMZ8UjwLozH6L8txAGquO96RNSU/ocFc2ZKw9DkEOO9b1nxuXrweiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756689711; c=relaxed/simple;
-	bh=h0pmgnhdCd38gozXQmWVT2pF9iro8pteHNFN2rN3hP8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=f+lUmUQqF4JzzfU/919ZECSvEWJIOlf+TVtXiJikOjON63TtB2koUMjlCIw6fuczvsmHxuYhipjkzHHFVxfquQzdwBUqr4jb94uWih78OFjfj5zjZukFAQY7GDT4JbVAw0BL4n9EFZHxudVKlKHgEvpA4O/6Rn13XBVSafiJ6KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPKzP/Su; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-70ddadde2e9so31954096d6.0;
-        Sun, 31 Aug 2025 18:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756689708; x=1757294508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T/79m2zmAzN1722AGuL1tMJ91+uoyl2xeWqASy06r/U=;
-        b=FPKzP/SumWi//5OiZFWuhpxPbJgzFVIYv5nE2cK5RnlzywefHalo0Jy6i/WWtGW1Sr
-         Pj0o7qpSrx9Wvzp0t2FZtRxkpNHel5E5MVkDU5jK8jcQyqjPHl3ck9Few9iEFsZVO/16
-         Wus8OBOkPRG1TIHbSPoAEo71eWM7sZkk0NNwBFM4Yu7T1FHYchQparmn8jiC3sA8B9TV
-         rwLz8b/me02uBjhmU5t0ec0UBA69R9Mn57XN1+ZE/Zi2dKGaOaGwq+aZMOZBGrD5mvbe
-         O7VUVgw9Yz4XGrmnJj+wwmtwjJpUTD1R0IoI0f0T7LqnRm0i3LU4XbpmAToxbAHcXxiB
-         YOWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756689708; x=1757294508;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=T/79m2zmAzN1722AGuL1tMJ91+uoyl2xeWqASy06r/U=;
-        b=HbjFyvWzI/p1DKDMmLxJQ5a/I8N29wd1q4tZIENWdhiNWnkPTkCVA0PjC1MHJRwn2D
-         KJfzcJj3Cg4Wt5ZXPEReVSHC0rZLMgCWipHyjt9DBN4OVPQPW3O2ba64tlSIHdXEwI5G
-         YNtU+ks7DBKN9lOgHQePkTHSAdvZl73Zpzy8A9WXjMOpHboydJPZoj3mC3jVI0sSnnvw
-         +R+uvmlf4NYDIaE96tp0gNFwYbzZRf6R8jJa76GJTRRFvSbo2YUMdzNQ0jCsnLbJlby8
-         AfJ6QtGHoz6geOq+8LglKSzVkEK54YeBbcpPm2gP7wAIv4cPM/VDAYC7em2v1vwtlRRp
-         5nAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNprfM36UQ1CxKmGkoz9QjJHRq2dxe1Tsvi/Rv+zIIkaVJTtb033UKwfSMj9tDEtsVsPoDeMFg@vger.kernel.org, AJvYcCUgIQgni+1zKSN0sg4FyJ19YbNmXYl5J0vKOD0BA47BXpYU1OChzOdAOZfSIrl52cRN/Cs06UwyHvCSUwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvt3ldVtH4Svv2U1ZBwpPH3x24obbO3l864IdC7vBlbZU+QeRB
-	oaxEXBKSoU1C1L7AX8DUZ7xdjJuR93OgAsPN4Ue1LXx8GiDr442waI/1
-X-Gm-Gg: ASbGnctxKBGYKdOdaMJ8iH6cI+2NMvJxY4E69shAIDYV1aF8ufoJGkH/X2pIQi10izO
-	hGluxKpCpdGBrpEoaE79Uc4a5pjjR3APK92qazZ2mlWo4TIAVDvpS972Y/++lMyqsm9G1eOpoAQ
-	nB77F3HEd4cl+cAvBdb4F3rNMIh3EEo65M3dYG8lFvtpBKmWPTQiPBvA9VO/UHe8eFO9uB4jTlZ
-	LXCydx9nKquGcwNXfYIlOWJ6vnRumpEDce9ho9ty8r1dhvMvE9If5bGmNi0Ds25HvKdZnOU+AP6
-	LwoIoU/XQn0VIdlpZ6xeCSXcnHGbgW+YHHujxVpGasZbOtEcFpTrYKRNojVoi2WDCk1ePrANy0b
-	dpnUlMET+MAv6NeC+g1tWtQ3bBJQzbGQcXQFcXtLQ9AW7EU8AczjQnAr1nZkq530jfkgM4T59Wl
-	eHOQ==
-X-Google-Smtp-Source: AGHT+IEznatcpWOwwZlphQ8FIMDlnIxqqlNxL5waZP6lGRf521vFNjOouylE+58cZRpzSNYbQKAJmA==
-X-Received: by 2002:a05:6214:23c7:b0:70b:a189:a571 with SMTP id 6a1803df08f44-70fac7a01ccmr80190556d6.25.1756689707641;
-        Sun, 31 Aug 2025 18:21:47 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70fb28983fasm31466076d6.54.2025.08.31.18.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 18:21:47 -0700 (PDT)
-Date: Sun, 31 Aug 2025 21:21:46 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <willemdebruijn.kernel.32fdbcb96baeb@gmail.com>
-In-Reply-To: <20250831100822.1238795-3-jackzxcui1989@163.com>
-References: <20250831100822.1238795-1-jackzxcui1989@163.com>
- <20250831100822.1238795-3-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6691F948;
+	Mon,  1 Sep 2025 01:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756690001; cv=fail; b=WdGf1cp8Ojwz4J2Bbt9NiccCEQv7yBZECVwD7JMzqhW37bQs3tMkxZUzitYoF2sm0jJRqTtVdnuI8wQAdEH9ClQaCHUXuVHpjskkE1GghFukAmWfeV83Cj1O7tNv32Ezy4Zi6Gxy0I0vwixeRWDx1gPqyY4jbCTbzBysFtoq1SU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756690001; c=relaxed/simple;
+	bh=F2b3Hp/arEtVPN0k0xWdG7cSVXgCiculwZtJ8f19//k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m+bDLOMFgCqu2Sx4unb72Y35riZVRDot3JhsQUfMLmneZDxk0EG6VIZVeZZFez1KDJN/sFugYMIwH7jyeVjN2oSGScRkA+h3c50f5hvN2ERarBNi3h9N6VYYMuRiE31HlSYI/hJ1wUV+2Tu30zFc0lsmw5VGrq3m68TadEG4AIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f5GCmpxU; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756690000; x=1788226000;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=F2b3Hp/arEtVPN0k0xWdG7cSVXgCiculwZtJ8f19//k=;
+  b=f5GCmpxU4ZyX1giFBSp+MdvzIxtml0tCECPVKQphYCsAJytV93Z+vJrK
+   4bXe5PbLDgZp0b5xqLaby2ZgIcxiN6YxFbBdl5E8nb3YhfeYp+fp6aHlg
+   pUOjQF98tGAVFLamcSS4cx5YLUxMzxuHDMTNoOsc3XCUXOYcqTa/T3ZWT
+   E6t9yYObS1me7vy+OzfikMOqDv6mihLYzwg6ZkXDwbfTIrivMyrP6b2hY
+   INd2VVtaqTumlGRFAnQhfNarSaY0p/CPMAsV0Rssq7nAA5KLSA0dxVFC4
+   /i13uBeV8ukFhY3ZrcDfkZaPQvcOw2042/oNyC27RZsBMjZxeYArGPcnv
+   g==;
+X-CSE-ConnectionGUID: NdJVe1/bRDCYcvWoir/mJA==
+X-CSE-MsgGUID: f2yttiwnSY6Zf1ldMqR6rA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58836495"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58836495"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 18:26:40 -0700
+X-CSE-ConnectionGUID: FddIDDJrSSSU7IMpAbSbug==
+X-CSE-MsgGUID: ztpVhdflRlS0hXMk2AS2GA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="170143460"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 18:26:39 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 31 Aug 2025 18:26:38 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 31 Aug 2025 18:26:38 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.60)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 31 Aug 2025 18:26:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EiiPq9hRpHv4Qtn0XEZo8qCtFOxFcTaREX6yAuPTQ1Cw/AKKK5AfHeSQeLuEw1P/tNhsFAg+nIHoYaeuZG5SAhFJGleVyRLrd7GGGtD+dtzgO/nNfI0RFa4x1xUR3pM7zvgcgAisZPLHyJesjzPrQCADTZm2UIYWWx87MuedmJFVEkwPcMVPT6XCqxpDjaxBEFjsbYSk67/WGWvzZWwkvqRZs5u394gtbA7c/QK5jph04VNwct+gmnEkBGPmB9M+MHS6Kx4F365LyVCfkPw2Vu9eFL1SD7fszTLLzGgS7Sj9xUrecFos7KXihQqhsOYPYcZsqWGm0iUIoHc/2iUIgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gzBF+1UPt/lsOFoWkvM7fpuCSrnBxwP4avgcW4crnAs=;
+ b=vsdm04Y2fkFc4mEkpSd9ldtQBqh7mdF/57jQzU2FawrBzDf0hHfajQJMlrnx95ajRasajt2/Zd13a7K2IReTaGI/GXPPnuM348Sh/Otq6EQoYm4ipA9V7IHbLRleKGcsYBXiVnEzEk2el8s/oDJwsFXtAlFmNqR220vCKgu29KYQy7fEDrlgbGhfdygs2mkbWS0vzYSHhLVPsgCpz6cU2hYRbnIGMVh4GuIQUzfas0rr/uw4HJzNIVnNU95ufA8ssv2+i4X6aSum7RPNIRfDrSfrI/jf3aRvI+Ekbvyp3Rn51+E3CW4FhlBtTIBmynRMGu22AYUH4I9SAEi1PWMunA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ CH3PR11MB7817.namprd11.prod.outlook.com (2603:10b6:610:123::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Mon, 1 Sep
+ 2025 01:26:35 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9052.013; Mon, 1 Sep 2025
+ 01:26:35 +0000
+Date: Mon, 1 Sep 2025 09:25:43 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
+	<seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Weiny, Ira" <ira.weiny@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "michael.roth@amd.com"
+	<michael.roth@amd.com>
+Subject: Re: [RFC PATCH v2 05/18] KVM: TDX: Drop superfluous page pinning in
+ S-EPT management
+Message-ID: <aLT2FwlMySKVYP1i@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+ <20250829000618.351013-6-seanjc@google.com>
+ <49c337d247940e8bd3920e5723c2fa710cd0dd83.camel@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <49c337d247940e8bd3920e5723c2fa710cd0dd83.camel@intel.com>
+X-ClientProxiedBy: SI2PR02CA0036.apcprd02.prod.outlook.com
+ (2603:1096:4:195::15) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CH3PR11MB7817:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f7f2181-347f-49a8-8cd1-08dde8f696f2
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4UpEIVJzErbIn91GDYWSbUCeJtT+a2W8+elPOafcpU9wmP08/2zfHW8wIjsL?=
+ =?us-ascii?Q?vIywMEof/xY4E2B2PheLnnpNhyMRWNvQVLXw+qhfWJdQdb5aRYdkVPlP770+?=
+ =?us-ascii?Q?TeWkfUBTowcvrDHdpoLWC36bcyoaREVOGcWhRYE386y2IlvGOfVGrwJ3xD+S?=
+ =?us-ascii?Q?p5oY+d1uTpj/41pv9O+bakpRwejCq98kRprOBOJih5FC7sEM5i+KS0nerQ+p?=
+ =?us-ascii?Q?f95Tpc1wBptNLNrPK9H8YG+Sk8omiafpl97dnCZkyLL30bl7v3x8aFqMrz8I?=
+ =?us-ascii?Q?/kxtP7c6Jyon7vWpHbQN5sDl4OVnqTQdpmmdsqiuzuOG16KgX+XmX++Hj6pV?=
+ =?us-ascii?Q?b/76xCGHNmBV5U9WescMyd99KZ+YmY9bxZVw2I/3qZIQj4GjiHfpZKd29YwL?=
+ =?us-ascii?Q?UVj5Eco1Aw0UaeoAYmdJCAT+W5HAITG5dg6krQtQ+shyfgZux3VsrhvD9kxh?=
+ =?us-ascii?Q?K54jVmNP59a/78IMIu0yn+exU8QV3zV+9MNvlwNOb9YkFpjuJAzw0nWLOZvx?=
+ =?us-ascii?Q?kO2QzzKbpS1OpiBb/2PNIgXpeZJiswZtSrKBdBPg5XFWRTm5TgSz+lwVSBW8?=
+ =?us-ascii?Q?bBBzZKLAkU61cDgcW22lhhWJzYB/OSTyNLYcbGesKBp8CvcuR8IptmFBPi02?=
+ =?us-ascii?Q?XiaxK7WGPnRngQhsLZokmBhQM+8kvWzrPZ5+v7V4864wHlmdCLVmTWBl801F?=
+ =?us-ascii?Q?JfJ5701ylU335mP3wpADP9JDvOSN/0yZrk56uPVF9+xE90ABPTWY8bb4lX4R?=
+ =?us-ascii?Q?wbffrkTxqDY/lRgFkrCCNaTTnkr5XPREm1CYXbfu1/GCL01m4koGJNCs8+Jz?=
+ =?us-ascii?Q?Tg9ASwxTnZ/r5zrUJsPzTXdftQKmhz9uEorPN2DDk9O9CAKjxxUv5kRPMTrN?=
+ =?us-ascii?Q?TJiLvmSfGMO814eJKJhp64r8WSkN1PMYW+czzlNr8zRDr+uEvd4Vp3BZouKX?=
+ =?us-ascii?Q?cJC/BB1Y/HLL5vxq558ixDIZKUYgSfO3JasNN7pewnU4ezdI5xV8e6kZ76KD?=
+ =?us-ascii?Q?aA1lZq1K3cZVRVvPI8jwIqeIuFEwWrEY8zbPHP4ZrDSp82ZxDVuMdvqfBUr/?=
+ =?us-ascii?Q?QG8X2ojdC71SQVj9C+ooSCMXxy17OK0PDGMNIe1d6KPnduGwOtP+y69WOCp/?=
+ =?us-ascii?Q?KnX8PySpmKuKg+G/j8PZIcwbF7XB+ZQDVcKQrEnM0fXi0whsnCnzi29kqGKI?=
+ =?us-ascii?Q?y5uVNKfgpsCuXcsPD9QGlbq1E4WvW+JeTGQ2G+avhbXCufKx7bD0tjKve+UO?=
+ =?us-ascii?Q?IB6G2PM7mIzYUhWWLcmtmxzlJJxiGr21r0/FiVjYb2FO1P/cEzcTU6MVBALw?=
+ =?us-ascii?Q?I1lVtBBR/A7/Ei0sRm3cTVq86jsuBJpwwF5ax0Y2BTqDor0KVWRkefCZnY47?=
+ =?us-ascii?Q?jZk9ox2gsuY/GolX0asPTgFlvyM3GYJqqYl+zwZOAvX3GKbgPgzL3Bcw9r4p?=
+ =?us-ascii?Q?zqRfvYrxPRU=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4mqu4xaOIxGhTbWwf4hiwlFo+WN8ZrF0KaF17w3Ov3qtHnnxtflbv0Q3ZPuw?=
+ =?us-ascii?Q?1S8Mz6eNZfRUkb+ds3PrAGCZQ6p4JcCzaK7WHIDGRmvgIqSqwYQnGnunYrSP?=
+ =?us-ascii?Q?H58F3GU/9G8zJ/y5R/IlZ+7GN02f4BMElBo9ouXtdMV6kht/5PcnRNBZaWw4?=
+ =?us-ascii?Q?1qBGNaU1wGP/utQ/o5Fy6coFImKPMNYXahdVGzlaULt+DMsquNezvMVt9HW2?=
+ =?us-ascii?Q?53xSER5y5Qj7ZEupJeaDGX71U/t1Vh1gN2NT4QloHGmP4tfH5JrTVlPTaCl9?=
+ =?us-ascii?Q?e3ORXGAfpBUFlBUKi7l8Q4UiLp45rjmxI8xE3wcr/oxNvGBx6XeEWN2e5rHe?=
+ =?us-ascii?Q?h53BJWXW0LXJ1NPKQTRkfWsWHLSyxtZmMNIzJS5vAQOgSEYW3+nYi8RM43pY?=
+ =?us-ascii?Q?mHvehFQqOgFu3LvOuLdslAW9dXuKwINtL7iiXGrOVUo/+b8/REFHbAhme4PT?=
+ =?us-ascii?Q?jeeEvchnP6cEPxUekbYhJMbNcWUrpZgcaKDRu9sfqpuL4F7Snfcg5WuzWDUw?=
+ =?us-ascii?Q?fmORk1jyUfdJDZMpYOjTmU/3qql0AP7FeAkZxGy2Ogfje+xWResSJ9rp76or?=
+ =?us-ascii?Q?ux+97aIiKAYpc0enaKu+AHBj5Ms/GkmT9p4MDbq1/n4cpIV5aE49ShAYGodZ?=
+ =?us-ascii?Q?Y5ZvqaCAxGqjW3i7MvfSZrB1Ez0tPrMUxZTSws+zKqrPb45eO3GBWn3Ygm6M?=
+ =?us-ascii?Q?QfCued0ZIl/EobESnVQFHzcfoNaS5XIh+lXKIj4z2hXgRs9xg2y7DeAb5NFI?=
+ =?us-ascii?Q?ZtUi3Gu3sXxSnsUJ4L1UNgn201ekdbxq5aohloEFX1DHA8qUlkbmUcOCKtj2?=
+ =?us-ascii?Q?p2Vx68R+MYSvxGRrPaYKl+K8XJEWEAtbMPcOTkk2N/YuZWenNeJhwTSFxI9k?=
+ =?us-ascii?Q?YC8ofM6CpHAJjGhaGZkQIPtkq8gesiXNd46267VNNGwlM6oyKIEaIJUpgyue?=
+ =?us-ascii?Q?QzY2oVMiByrffbvpkjrdFEPgz42bQApVMb9nyhcsk6S39tAhcPUFzxVfsk/L?=
+ =?us-ascii?Q?BHFC0eduM1Ga2lWVi2XyRsDxAbESB8SKzTehpaJEaQpuj0OdudghCn37XoWn?=
+ =?us-ascii?Q?60eVnJXNKkWrOsiWKt8qqs6AyEQtLn1IFmyQQK7UQCiZUtwxjMpzfFHeQLvr?=
+ =?us-ascii?Q?d1OQg0mxpxOvNnMnx1vH1tq3RserESK6jhvHUF6wZ/JH7UIQ2j3nRhP0tKzI?=
+ =?us-ascii?Q?n3RStgHp5ePp6maR2YoX0LIFFqxWRk0HNI+Sz5PQUWEi/p4CAlABRi3L4BDU?=
+ =?us-ascii?Q?FF2Cs0M67Cc5xOc5dMdz42LlGRjNiaiJpANrDRZck3vI3zgWUKThs0xM5DnI?=
+ =?us-ascii?Q?cZHhOZ9gt3lHz/DoWxUC9NyLs+Y1MfkeUkNxTV70vTAHoiv/CUxwOIvG6Nc1?=
+ =?us-ascii?Q?f/eADlba3PXRWzUGB/NFDpitquc8Ax2NQNtVOsyLBRRjwroDjaARcm4HGBYm?=
+ =?us-ascii?Q?x6tlrSG664FOHAD0IvUZL9Pj+P6xJG10Oit0mec9G61izTZaeY4uECUQmBoF?=
+ =?us-ascii?Q?HGse0MRS8i79QJGc6hiHiMJNHIiqUX4oR62e5iRe3o9Gu3q2u9lmYFVB4GK2?=
+ =?us-ascii?Q?pe3UYxGJ4SfF4tOLN+uu+lxM/kJS1H0E7YiH2YK8?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f7f2181-347f-49a8-8cd1-08dde8f696f2
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 01:26:35.0708
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z8YarPHyRqHoyT3cA5TifbfrGxYVmzhckA4hu6rsqhIZ/Mw/KR6uty9B7TMACcptKZibo4g9WRGTcgefTIOhZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7817
+X-OriginatorOrg: intel.com
 
-Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
-> 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+On Sat, Aug 30, 2025 at 03:53:24AM +0800, Edgecombe, Rick P wrote:
+> On Thu, 2025-08-28 at 17:06 -0700, Sean Christopherson wrote:
+> > From: Yan Zhao <yan.y.zhao@intel.com>
+> > When S-EPT zapping errors occur, KVM_BUG_ON() is invoked to kick off all
+> > vCPUs and mark the VM as dead. Although there is a potential window that a
+> > private page mapped in the S-EPT could be reallocated and used outside the
+> > VM, the loud warning from KVM_BUG_ON() should provide sufficient debug
+> > information.
+... 
+> Yan, can you clarify what you mean by "there could be a small window"? I'm
+> thinking this is a hypothetical window around vm_dead races? Or more concrete? I
+> *don't* want to re-open the debate on whether to go with this approach, but I
+> think this is a good teaching edge case to settle on how we want to treat
+> similar issues. So I just want to make sure we have the justification right.
+I think this window isn't hypothetical.
 
-Tiny style point that is probably not worth respinning for.
+1. SEAMCALL failure in tdx_sept_remove_private_spte().
+   KVM_BUG_ON() sets vm_dead and kicks off all vCPUs.
+2. guest_memfd invalidation completes. memory is freed.
+3. VM gets killed.
 
-Otherwise
+After 2, the page is still mapped in the S-EPT, but it could potentially be
+reallocated and used outside the VM.
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+From the TDX module and hardware's perspective, the mapping in the S-EPT for
+this page remains valid. So, I'm uncertain if the TDX module might do something
+creative to access the guest page after 2.
 
-
-
-> ---
-> Changes in v8:
-> - Simplify the logic related to setting timeout.
-> 
-> Changes in v7:
-> - Only update the hrtimer expire time within the hrtimer callback.
-> 
-> Changes in v1:
-> - Do not add another config for the current changes.
-> 
-> ---
->  net/packet/af_packet.c | 79 +++++++++---------------------------------
->  net/packet/diag.c      |  2 +-
->  net/packet/internal.h  |  6 ++--
->  3 files changed, 20 insertions(+), 67 deletions(-)
-> 
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index d4eb4a4fe..3e3bb4216 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -203,8 +203,7 @@ static void prb_retire_current_block(struct tpacket_kbdq_core *,
->  static int prb_queue_frozen(struct tpacket_kbdq_core *);
->  static void prb_open_block(struct tpacket_kbdq_core *,
->  		struct tpacket_block_desc *);
-> -static void prb_retire_rx_blk_timer_expired(struct timer_list *);
-> -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *);
-> +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *);
->  static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket3_hdr *);
->  static void prb_clear_rxhash(struct tpacket_kbdq_core *,
->  		struct tpacket3_hdr *);
-> @@ -579,33 +578,13 @@ static __be16 vlan_get_protocol_dgram(const struct sk_buff *skb)
->  	return proto;
->  }
->  
-> -static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> -{
-> -	timer_delete_sync(&pkc->retire_blk_timer);
-> -}
-> -
->  static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
->  		struct sk_buff_head *rb_queue)
->  {
->  	struct tpacket_kbdq_core *pkc;
->  
->  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> -
-> -	spin_lock_bh(&rb_queue->lock);
-> -	pkc->delete_blk_timer = 1;
-> -	spin_unlock_bh(&rb_queue->lock);
-> -
-> -	prb_del_retire_blk_timer(pkc);
-> -}
-> -
-> -static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> -{
-> -	struct tpacket_kbdq_core *pkc;
-> -
-> -	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> -		    0);
-> -	pkc->retire_blk_timer.expires = jiffies;
-> +	hrtimer_cancel(&pkc->retire_blk_timer);
->  }
->  
->  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-> @@ -671,29 +650,22 @@ static void init_prb_bdqc(struct packet_sock *po,
->  	p1->version = po->tp_version;
->  	po->stats.stats3.tp_freeze_q_cnt = 0;
->  	if (req_u->req3.tp_retire_blk_tov)
-> -		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-> +		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
->  	else
-> -		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
-> -						req_u->req3.tp_block_size);
-> -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-> +		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-> +						req_u->req3.tp_block_size));
-
-req_u is not aligned with the line above.
+Besides, a cache flush after 2 can essentially cause a memory write to the page.
+Though we could invoke tdh_phymem_page_wbinvd_hkid() after the KVM_BUG_ON(), the
+SEAMCALL itself can fail.
 
