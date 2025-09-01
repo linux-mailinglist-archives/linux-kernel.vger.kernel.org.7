@@ -1,51 +1,90 @@
-Return-Path: <linux-kernel+bounces-793994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A5BB3DB47
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD0AB3DB4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950B217AD3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699851887AF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5F6271451;
-	Mon,  1 Sep 2025 07:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401AB2BFC74;
+	Mon,  1 Sep 2025 07:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OEnKC/RE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dp/3sbO5"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A4270553
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154672BE655
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712412; cv=none; b=QkhmcQv1VTFZjDsUf5zcJKgXFBvMzBF1dBmNgxZ0G5y0Agb1EviLxVN3US3xwttpP0jIbEIHpoXM3brDCgzlik+J82zqpweIrOuWJdLa2KEFAXtcRWx29F4niSFJ8hMydXz4Elz+ZHS9Rk6Mu0I+I5It0STUIHEI8dabnOnpLa8=
+	t=1756712488; cv=none; b=FlpuG6QDfwwdoVzBNjN+hTU88IiBI6BJpvCH5Phc0YgfZlem+L0oSK4NBTaA92+XotCemFYUsdYqgIUxATYszyRT5fNjdXYYrEEWnrPK97c+4thCayjDMR01ihPLu7yEOuF1m+vWKHLGHRDjomZCtLYJvR8vd1w56fQmJsjaNJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712412; c=relaxed/simple;
-	bh=8WIB6jBzvXtpOGzijwoI7D/TfYlx/JYFZ/Iag0qXF38=;
+	s=arc-20240116; t=1756712488; c=relaxed/simple;
+	bh=DiUtzODySvVQy6C0+MeFAf+GpkdVpkzQ8pTRsz62UYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCHPP1HJejNzgLkb4FaHGOer+lW61hUHOX6BmfiCk6Ulh7ZqG3YZQHKC0o22+wrxx3yvS6+gYs5z11W1uZnNVWI/sEoZa781Dujkr/kQEX0el4WP4NiWfnCcYQochagwuYU6uedKv3fET0YeZ029FidMaoy76+o/+oUxDxv/QZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OEnKC/RE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8872FC4CEF0;
-	Mon,  1 Sep 2025 07:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756712411;
-	bh=8WIB6jBzvXtpOGzijwoI7D/TfYlx/JYFZ/Iag0qXF38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OEnKC/REMDosj1B7BcnHM+kNCqnDb6wBRNwSKiG6TUfFD0ptCgztLPVeGsshnGq4g
-	 ITSfp7+Eij+2+WfFc5GyWSC3odpBENFtErXAgEXh2+DJSFDQD3+Jju3C+kh2GunBi4
-	 PFo7Qydyj9p6Zje7U5tNG+dteTDf9J2HwLqs4iC0=
-Date: Mon, 1 Sep 2025 09:40:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmem: core: Fix OOB read for bit offsets of more than
- one byte
-Message-ID: <2025090158-ending-definite-33f2@gregkh>
-References: <20250901-nvmem-read-oob-bit-offset-v1-1-b610e18cdd3c@jannau.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AqmFEkKeQSrARtpjoLXO1X45i1HJHbxD2dy+h5Mps3Or/AkOFB3/wvhac1tCv6rukcy84eAQYTstOJCsVA3kTRDRdyRslMU2roWWkJxzKoL0c7EY7JYnawZapovX+MD/ZU+kEHvZ0EkCi0kTrhaaXd3H9NL/1k9qPurpig9T/Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dp/3sbO5; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso23333965e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756712482; x=1757317282; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTibsjsZinMAL6mt7SzQqJlZlrTvbHjOaiEQY+Pnxmo=;
+        b=dp/3sbO5V8/LUnRh4XuhKBQg3jWBbraLYlezWUUnyUW7LjFyR8Z53b+rU+Zs1t+a5q
+         6INrOy0QJaCFs9AnXx1JcyNiGZiKVtOeoCiq+iEd5UElojhrVXugTbfj6nWuT0EWU3CP
+         jG5i2zedo+DR1lKEGXF28jAmtBzT13Ib9PpYLV56nxDSVo4cJ+BDbAqIr1ykeR9nEszA
+         jPi5iUBrOhfH9aUORsyGQYz4v5MghePoZCZqNi1PMFp8D+naaPIxd/CMr1WqOSDDmcgM
+         /bD/uvcDo0eJrGxRRIAoXPFa5/mqCY0GTJozqcVCNbSe4ZAAjZJXxAh9sMuUv7F1oEDn
+         kV+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756712482; x=1757317282;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fTibsjsZinMAL6mt7SzQqJlZlrTvbHjOaiEQY+Pnxmo=;
+        b=OZI7ew1RP1eOURpFfFCFN+fUb9ZiQcnwo/NEDV7tM47awQAPPmv0US6Fp3WyCXEoW6
+         8xjXeejnjPBzX+YYoSWEF6NrHJG4w5MUEwsfw20SS816PsNMZfyyeUQsA6vHL1CGC9xl
+         hOR1fejyscaDOY4NEIcn9G6puWUrwRusBzhLxVKWXKXf6Y4PBxJ+P7Je6YEAgNoAOEdp
+         JR/iKdZvJNRVl/nGHvZphI9sjIDsmdDeTQhtY1twuNpu0lAYNDpGsb6r9Fh39mSbLXu2
+         w6UQNAJ29hy2Kyanu1ZFMOm/aH9YU/CdjO6fAMsLLxRuW+22aqXTlN/ztZZIgVaY21OU
+         crdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7tWQFlubHLVe0EBec42LkBnEJDnl4t4rg4UnjmScXOZLmpQQNhBGWJE474jqy4VXj+dOeIADvBkQbrsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWMATDDhX+d0mFz8cGQdoCTSbhTDMsaa0Q83xxIeeASxL7DMfv
+	qtk1Z4RXnHj6a/w9YQsuet/bu5dxvKirxaBpDUiL/WR0nQHHvubvBq/G5MZHAPmYqV6EnqF0Ugy
+	WPlQT
+X-Gm-Gg: ASbGncuZuAPj/LYDhbx34WFrP20PePh/oKsTvL+pU9RWI+D9WaZ+StefJEjPwhvufVK
+	RS7BSL4Gu9WodaSEACRx/6WTjwopTxfkmjNqvuRU3YaPYMV6YiuAxIsdI9Ba7pSaJwAWpW348rt
+	is+Y9CDD4hRf+009u8CsBJmS0DkwyT6hg0Ect1tV+1R2bykzHqGySRrlmgn1JVNiBP32Pk8jL9Q
+	DfT99UgSsn2jPf+ANdtOBvRwB0bIovNcD2vqZSzYeb0YtqyP/8fGVTBJxbs1HDf5jnOQVSMdPS+
+	3vb4EE8Pqet8Ug7qtHMQAbzKzKvOZsQbUBJE4Ab/xIds2lw0+uc8WlWS1YmK/3OwJznOk8MuXew
+	xAJgLafKSN08SvJeRxYeUoc0MSnKj5MgJGgOAn5vEa+KRxkMaQehsZ07K
+X-Google-Smtp-Source: AGHT+IEOHCc1C43y9L1dHpZXh6OP0LizmCzEwU9EaGTg2xElyTZrzgDrpKZg4MhMcKWHXdtU0bUDNQ==
+X-Received: by 2002:a7b:c3ce:0:b0:456:19be:5e8 with SMTP id 5b1f17b1804b1-45b855c980dmr32953665e9.20.1756712481379;
+        Mon, 01 Sep 2025 00:41:21 -0700 (PDT)
+Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e887fdcsm145730905e9.13.2025.09.01.00.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 00:41:21 -0700 (PDT)
+Date: Mon, 1 Sep 2025 09:41:20 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: zhongjinji <zhongjinji@honor.com>
+Cc: rientjes@google.com, shakeel.butt@linux.dev, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, surenb@google.com, liulu.liu@honor.com,
+	feng.han@honor.com, tianxiaobin@honor.com, fengbaopeng@honor.com
+Subject: Re: [PATCH v6 2/2] mm/oom_kill: The OOM reaper traverses the VMA
+ maple tree in reverse order
+Message-ID: <aLVOICSkyvVRKD94@tiehlicka>
+References: <20250829065550.29571-1-zhongjinji@honor.com>
+ <20250829065550.29571-3-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,50 +93,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901-nvmem-read-oob-bit-offset-v1-1-b610e18cdd3c@jannau.net>
+In-Reply-To: <20250829065550.29571-3-zhongjinji@honor.com>
 
-On Mon, Sep 01, 2025 at 09:29:43AM +0200, Janne Grunau wrote:
-> When the bit offset is BITS_PER_BYTE or larger the read position is
-> advanced by `bytes_offset`. This is not taken into account in the
-> per-byte read loop which still reads `cell->bytes` resulting in an out of
-> bounds read of `bytes_offset` bytes. The information read OOB does not
-> leak directly as the erroneously read bits are cleared.
+On Fri 29-08-25 14:55:50, zhongjinji wrote:
+> When a process is OOM killed without reaper delay, the oom reaper and the
+> exit_mmap() thread likely run simultaneously. They traverse the vma's maple
+> tree along the same path and may easily unmap the same vma, causing them to
+> compete for the pte spinlock.
 > 
-> Detected by KASAN while looking for a use-after-free in simplefb.c.
+> When a process exits, exit_mmap() traverses the vma's maple tree from low
+> to high addresses. To reduce the chance of unmapping the same vma
+> simultaneously, the OOM reaper should traverse the vma's tree from high to
+> low address.
 > 
-> Fixes: 7a06ef7510779 ("nvmem: core: fix bit offsets of more than one byte")
-> Signed-off-by: Janne Grunau <j@jannau.net>
+> Reported-by: tianxiaobin <tianxiaobin@honor.com>
+> Reported-by: fengbaopeng <fengbaopeng@honor.com>
+> 
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+
+The changelog could be improved because it is a bit confusing at this
+stage. I haven't payed a close attention to previous discussion (sorry)
+but there are two Reported-bys without any actual problem statement
+(sure contention could happen but so what? What was the observed
+behavior). Also the first paragraph states that "without reaper delay"
+there is a problem but the only situation we do not have a dealay is
+when the task is frozen and there is no racing there.
+
+As already said in the previous response I think this makes conceptual
+sense especially for oom victims with large address spaces which take
+more that the OOM_REAPER_DELAY to die. Maybe you want to use that as a
+justiciation. My wording would be
+"
+Although the oom_reaper is delayed and it gives the oom victim chance to
+clean up its address space this might take a while especially for
+processes with a large address space footprint. In those cases
+oom_reaper might start racing with the dying task and compete for shared
+resources - e.g. page table lock contention has been observed.
+
+Reduce those races by reaping the oom victim from the other end of the
+address space.
+"
+
+Anyway, with a changelog clarified.
+Acked-by: Michal Hocko <mhocko@suse.com>
+
 > ---
->  drivers/nvmem/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  mm/oom_kill.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index a5e9074896a1..01665a666bf1 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  {
+>  	struct vm_area_struct *vma;
+>  	bool ret = true;
+> -	VMA_ITERATOR(vmi, mm, 0);
+> +	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
+>  
+>  	/*
+>  	 * Tell all users of get_user/copy_from_user etc... that the content
+> @@ -526,7 +526,12 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
+>  	 */
+>  	set_bit(MMF_UNSTABLE, &mm->flags);
+>  
+> -	for_each_vma(vmi, vma) {
+> +	/*
+> +	 * When two tasks unmap the same vma at the same time, they may contend
+> +	 * for the pte spinlock. To reduce the probability of unmapping the same vma
+> +	 * as exit_mmap, the OOM reaper traverses the vma maple tree in reverse order.
+> +	 */
+> +	mas_for_each_rev(&mas, vma, 0) {
+>  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
+>  			continue;
+>  
+> -- 
+> 2.17.1
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+Michal Hocko
+SUSE Labs
 
