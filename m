@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-794897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907EFB3EA2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B206B3EACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A3A165069
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA5A16523B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E6C35E4D7;
-	Mon,  1 Sep 2025 15:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FAE3451D5;
+	Mon,  1 Sep 2025 15:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hHBYzpJh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=helsinkinet.fi header.i=@helsinkinet.fi header.b="JamioJuo"
+Received: from smtp.dnamail.fi (sender001.dnamail.fi [83.102.40.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B131F2EF643
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10020334372;
+	Mon,  1 Sep 2025 15:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.102.40.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739468; cv=none; b=SfJLNYlrnyGV8Gzql+yAleOktkYWBTbHLlcmYhTlcZ5W444VRneSx1078LNjnjbNCs67ff6mxb3xo9udoPC+WzPBiRVx9JDFpvHApO1Ue/MRv6cZXSb6EEyF0CE+mLvrhHHWqAVohoxj5AukuBCDLak64a8MHldwR1aTXCJULPY=
+	t=1756740066; cv=none; b=Q+3Lb/tDuGv/ki1lBx99pzTn8aDbaHdrXDY0Pg96PfAbE3PU6G2xft+AdZQtFVgmC757Z2OUBExXaYU5bdgxW4Y9zDjnvq0vUDId+uUVX4S8xlPCmx6urGEGU5EQX13CA6lhWimjaM6tHIUo+wixsFwA5sle+4fPstQJcWCH69Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739468; c=relaxed/simple;
-	bh=Ma/UP1lSiVqJNi8TyJQVaTJF/dk/rmw8jKKc9OcTuvQ=;
+	s=arc-20240116; t=1756740066; c=relaxed/simple;
+	bh=4MXorRygA3iS+ycoLelxrTTNdpMNmF6JkScxrjohY68=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmYY9c8X6ctZubqUGWzmBku8oATf+isKCuJ21UML3dCncc2sTJ2kmu28tD4FeJwYWBiwPyktWpaEZNMT6NQFsjnkB5z92SJYPGlRmxLzQcEbU4lNWXIOEFz6mUt5U+j8xsM0uisv2Jd/osntLfm1HpNFtyGwl4ydDHovbUHoe60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hHBYzpJh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756739465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VMxdRy5rmNFmudF6fK3kGDCxNJBEq1WURzElFRewt34=;
-	b=hHBYzpJhe/5Fy5xlEm2qhQyaFY7U7LZZsL8wzV7k7F7FplZEbBfCXEzf//RX+jzRug9IGz
-	46PvB8XQmGmfNd/2ZdsszYrK9vqwrdgzsELR4Ak7kFVAreCcWfkGziiA/JQPYOZspIuggE
-	hzmEuNGsd9BE9ub5+j27Im5TZmUmJeQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-bPf52TLMNLKMQOoot2-Psg-1; Mon, 01 Sep 2025 11:11:04 -0400
-X-MC-Unique: bPf52TLMNLKMQOoot2-Psg-1
-X-Mimecast-MFC-AGG-ID: bPf52TLMNLKMQOoot2-Psg_1756739464
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b7d497abbso26469555e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756739464; x=1757344264;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VMxdRy5rmNFmudF6fK3kGDCxNJBEq1WURzElFRewt34=;
-        b=lIaO+6vMLCsnf4pwt3I3L3EqypUpKrlSCyGt6cRtmwxZ4ht3JFFiPDIXAQ6IN+L/mx
-         0/q7pKK0sVOaUAgKfItXoowcJzyOMaWeJThboMOWHfT/urzM5uiOz0vOYwtzlf6rOXSg
-         +8XUo2lyrP5829LKmEpcGo1FcjNusGAdQGHWTPpJaBJV3l5vnrGHMBwEkFEZ82eNMnro
-         WgKmaYa0XbI4T4L5fEO2Of6Un7EOhkXdSBZ22d9Tcw/Nv7h1wqeKiBroGqOi3oPlQWa7
-         nycQbOLKTfGttYpNJwwwFWfZH0Try9n5Tg5dJDAzCBYZGHzD9dMJXbYZZ/QyNzyK+lgV
-         jkvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvGZlSCliPWFROIfMi1tOz4PiUdjRtf6Y91fKBhjLGsZPQj2t0epOJhtBb6Yvj4mXxGi1rhwh5y1c4vzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdeC5NIP4xAFCTW8UPuoYdAqoVE1tvYYTGZaXfJ9NzjwdWlvbi
-	/JxGU/igHKVNIte1UF4cgl+1LQs8kxF9+y2/2XP4yAorFLXbyYkK5DiFZl+BXeYO2jnqu0TsR1D
-	e/C3Fnl8VaddMUOXdHoj+lKt8ZKhUitqZmDINbP87g3v3e3kz0zIWy+MVmBtSn+cTuA==
-X-Gm-Gg: ASbGncveOPvpx4OyAs9WGr8moYo/6Gg0oOMo3G1o4I4o4P2fraIp8zRWcFhqdPhh/qQ
-	xmX1hA4qOh0MFCN4ftmXlPXI7yQghghETy6lGSRTT8ENRlRMT58soWIGR66pxGK4u0/QoBy9x/9
-	UMg0LGTPjkUFqNhZ6ciLhaZOQROJ5CZGet165/OFeycVri0gxvYjSw3Dpf1G0e3gj3yNYZsw8t6
-	+OQKMU2VE+/AMdK1HrXEvYNXFmdIWWaR4q9Ieb79IiborYJhyWZCtAIjzGS1oK9oGSbpcu3Svid
-	MucnYX6W2azjm8DXwRlTxq9WRxUstJn/TZ09DKRQ6iROtWmoNPxeDEOjL7xXqF1se+qNtZMQ599
-	x6l5h3GRzF4FvI1tWT4tbekz4t9eIE84zQw3UfXIDC7a1zKPdLBPmyWjB4/TVlQIvphM=
-X-Received: by 2002:a05:600c:3b99:b0:45b:88b1:373f with SMTP id 5b1f17b1804b1-45b88b138cfmr49843495e9.19.1756739463503;
-        Mon, 01 Sep 2025 08:11:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGf6Rd6PfORW/LyvT41zVzRuA2itBBI/jcr5+K/tI5o0lZ645Xd5UGGPJrfen/4NaJ0FQpwRw==
-X-Received: by 2002:a05:600c:3b99:b0:45b:88b1:373f with SMTP id 5b1f17b1804b1-45b88b138cfmr49842935e9.19.1756739462931;
-        Mon, 01 Sep 2025 08:11:02 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab832sm159807805e9.23.2025.09.01.08.11.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 08:11:02 -0700 (PDT)
-Message-ID: <0bcb2d4d-9fb5-40c0-ab61-e021277a6ba3@redhat.com>
-Date: Mon, 1 Sep 2025 17:11:00 +0200
+	 In-Reply-To:Content-Type; b=PCJSk1LMXRvPnMzwbzy3pHrD0SZx7GflFKhnLt1hFJd/ikKk5nchXK79mG8rO1pqOPE0Goa7aYUXkPAGof6XjnwE9dqPTRnbryGEjHZArhDcagzpctjtR6ilxeQrZ3oewcMwLCW7lwjUquCKaCC0az2yNizyJ2ave+YB3zH/5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=helsinkinet.fi; spf=pass smtp.mailfrom=helsinkinet.fi; dkim=pass (2048-bit key) header.d=helsinkinet.fi header.i=@helsinkinet.fi header.b=JamioJuo; arc=none smtp.client-ip=83.102.40.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=helsinkinet.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helsinkinet.fi
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.dnamail.fi (Postfix) with ESMTP id EA3C12113FDE;
+	Mon,  1 Sep 2025 18:13:00 +0300 (EEST)
+X-Virus-Scanned: X-Virus-Scanned: amavis at smtp.dnamail.fi
+Received: from smtp.dnamail.fi ([83.102.40.178])
+ by localhost (dmail-psmtp01.s.dnaip.fi [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id d7tmIfMIGLGX; Mon,  1 Sep 2025 18:12:59 +0300 (EEST)
+Received: from [192.168.101.100] (87-92-61-203.bb.dnainternet.fi [87.92.61.203])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: oak@dnamail.internal)
+	by smtp.dnamail.fi (Postfix) with ESMTPSA id 1426E2113E0B;
+	Mon,  1 Sep 2025 18:12:53 +0300 (EEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dnamail.fi 1426E2113E0B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=helsinkinet.fi;
+	s=2025-03; t=1756739579;
+	bh=pd2r8zAJCyTMArHVQIHS7IIjNpjZF/Rb/ZQJCnx4bzQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JamioJuoeiN7QczyB3T5zGC9ajP+/uWKCaeIzE7JtGaHVdOveU6j5nivGA1bW0r9l
+	 WsHr9r6qBBRP58NeY2GvU5Hle2aWMiJU48BUkxLAa58nZyX5i1oQvZ0Jd6X0qhJRxo
+	 SCUp5f46+KTEuyE8ecbwphl7kob8qqisDgiXQ+7R3wBYDKrXVj1eqYPi2tNOwg/gLz
+	 a3GquxmdlACo4ak1bhoqwGqlWOMkksUuV0zqQOSPtUi4H4KG2x7mk6rOz9rqu6+Wa3
+	 Los+xKGZb/wy3LItojmYirnerShUvTFtbna0BDyw9UScbHYFL57jQLrkNECZhUe1RF
+	 VKEbYv0HKL2bg==
+Message-ID: <617b6c79-2d66-467f-89a0-79d2d2efb714@helsinkinet.fi>
+Date: Mon, 1 Sep 2025 18:12:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,99 +64,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/12] mm, s390: constify mapping related test
- functions for improved const-correctness
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
- willy@infradead.org, hughd@google.com, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
- linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
- agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
- jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
- rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
- broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
- mpe@ellerman.id.au, nysal@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-7-max.kellermann@ionos.com>
- <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
- <CAKPOu+-_E6qKmRo8UXg+5wy9fACX5JHwqjV6uou6aueA_Y7iRA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@linux-m68k.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Lance Yang
+ <lance.yang@linux.dev>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+ <1a5ce56a-d0d0-481e-b663-a7b176682a65@helsinkinet.fi>
+ <CAMuHMdUKgMfL+1EnkZbbqNqTv4aMs_XWocXxq5jVGeOMaQXnDQ@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+-_E6qKmRo8UXg+5wy9fACX5JHwqjV6uou6aueA_Y7iRA@mail.gmail.com>
+From: Eero Tamminen <oak@helsinkinet.fi>
+In-Reply-To: <CAMuHMdUKgMfL+1EnkZbbqNqTv4aMs_XWocXxq5jVGeOMaQXnDQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 01.09.25 17:02, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 3:54 PM David Hildenbrand <david@redhat.com> wrote:
->>> -int vma_is_stack_for_current(struct vm_area_struct *vma);
->>> +int vma_is_stack_for_current(const struct vm_area_struct *vma);
+Hi Geert,
+
+On 1.9.2025 11.51, Geert Uytterhoeven wrote:
+>> On 23.8.2025 10.49, Lance Yang wrote:
+>>   > Anyway, I've prepared two patches for discussion, either of which should
+>>   > fix the alignment issue :)
+>>   >
+>>   > Patch A[1] adjusts the runtime checks to handle unaligned pointers.
+>>   > Patch B[2] enforces 4-byte alignment on the core lock structures.
+>>   >
+>>   > Both tested on x86-64.
+>>   >
+>>   > [1]
+>> https://lore.kernel.org/lkml/20250823050036.7748-1-lance.yang@linux.dev
+>>   > [2] https://lore.kernel.org/lkml/20250823074048.92498-1-
+>>   > lance.yang@linux.dev
 >>
->> Should this also be *const ?
-> 
-> No. These are function protoypes. A "const" on a parameter value
-> (pointer address, not pointed-to memory) makes no sense on a
-> prototype.
+>> Same goes for both of these, except that removing warnings makes minimal
+>> kernel boot 1-2% faster than 4-aligning the whole struct.
 
-But couldn't you argue the same about variable names? In most (not all 
-:) ) we keep declaration + definition in sync. So thus my confusion.
+Note that above result was from (emulated) 68030 Falcon, i.e. something 
+that has really small caches (256-byte i-/d-cache), *and* a kernel 
+config using CONFIG_CC_OPTIMIZE_FOR_SIZE=y (with GCC 12.2).
 
--- 
-Cheers
 
-David / dhildenb
+> That is an interesting outcome! So the gain of naturally-aligning the
+> lock is more than offset by the increased cache pressure due to wasting
+> (a bit?) more memory.
 
+Another reason could be those extra inlined warning checks in:
+-----------------------------------------------------
+$ git grep -e hung_task_set_blocker -e hung_task_clear_blocker kernel/
+kernel/locking/mutex.c: hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
+kernel/locking/mutex.c: hung_task_clear_blocker();
+kernel/locking/rwsem.c:         hung_task_set_blocker(sem, 
+BLOCKER_TYPE_RWSEM_READER);
+kernel/locking/rwsem.c:         hung_task_clear_blocker();
+kernel/locking/rwsem.c:         hung_task_set_blocker(sem, 
+BLOCKER_TYPE_RWSEM_WRITER);
+kernel/locking/rwsem.c:         hung_task_clear_blocker();
+kernel/locking/semaphore.c:     hung_task_set_blocker(sem, 
+BLOCKER_TYPE_SEM);
+kernel/locking/semaphore.c:     hung_task_clear_blocker();
+-----------------------------------------------------
+
+
+> Do you know what was the impact on total kernel size?
+
+As expected, kernel code size is smaller with the static inlined warn 
+checks removed:
+-----------------------------------------------------
+$ size vmlinux-m68k-6.16-fix1 vmlinux-m68k-6.16-fix2
+    text	   data	    bss	    dec	    hex	filename
+3088520	 953532	  84224	4126276	 3ef644	vmlinux-m68k-6.16-fix1  [1]
+3088730	 953564	  84192	4126486	 3ef716	vmlinux-m68k-6.16-fix2  [2]
+-----------------------------------------------------
+
+But could aligning of structs have caused 32 bytes moving from BSS to 
+DATA section?
+
+
+	- Eero
+
+PS. I profiled these 3 kernels on emulated Falcon. According to (Hatari) 
+profiler, main difference in the kernel with the warnings removed, is it 
+doing less than half of the calls to  NCR5380_read() / 
+atari_scsi_reg_read(), compared to the other 2 versions.
+
+These additional 2x calls in the other two versions, seem to mostly come 
+through chain originating from process_scheduled_works(), 
+NCR5380_poll_politely*() functions and bus probing.
+
+After quick look at the WARN_ON_ONCE()s and SCSI code, I have no idea 
+how having those checks being inlined to locking functions, or not, 
+would cause a difference like that.  I've tried patching & building 
+kernels again, and repeating profiling, but result is same.
+
+While Hatari call (graph) tracking might have some issue (due to kernel 
+stack return address manipulation), I don't see how there could be a 
+problem with the profiler instruction counts.  Kernel code at given 
+address does not change during boot in monolithic kernel, (emulator) 
+profiler tracks _every_ executed instruction/address, and it's clearly 
+correct function:
+------------------------------------
+# disassembly with profile data: <instructions percentage>% (<sum of 
+instructions>, <sum of cycles>, <sum of i-cache misses>, <sum of d-cache 
+hits>)
+...
+atari_scsi_falcon_reg_read:
+$001dd826  link.w    a6,#$0      0.43% (414942, 1578432, 44701, 0)
+$001dd82a  move.w    sr,d1       0.43% (414942, 224, 8, 0)
+$001dd82c  ori.w     #$700,sr    0.43% (414942, 414368, 44705, 0)
+$001dd830  move.l    $8(a6),d0   0.43% (414942, 357922, 44705, 414911)
+$001dd834  addi.l    #$88,d0     0.43% (414942, 1014804, 133917, 0)
+$001dd83a  move.w    d0,$8606.w  0.43% (414942, 3618352, 89169, 0)
+$001dd83e  move.w    $8604.w,d0  0.43% (414942, 3620646, 89162, 0)
+$001dd842  move.w    d1,sr       0.43% (414942, 2148, 142, 0)
+$001dd844  unlk      a6          0.43% (414942, 436, 0, 414893)
+$001dd846  rts                   0.43% (414942, 1073934, 134123, 414942)
+atari_scsi_falcon_reg_write:
+$001dd848  link.w    a6,#$0      0.00% (81, 484, 29, 0)
+$001dd84c  move.l    $c(a6),d0   0.00% (81, 326, 29, 73)
+...
+------------------------------------
+
+Maybe those WARN_ON_ONCE() checks just happen to slow down something 
+marginally so that things get interrupted & re-started more for the SCSI 
+code?
+
+PPS. emulated machine has no SCSI drives, only one IDE drive (with 4MB 
+Busybox partition):
+----------------------------------------------------
+scsi host0: Atari native SCSI, irq 15, io_port 0x0, base 0x0, can_queue 
+1, cmd_per_lun 2, sg_tablesize 1, this_id 7, flags { }
+atari-falcon-ide atari-falcon-ide: Atari Falcon and Q40/Q60 PATA controller
+scsi host1: pata_falcon
+ata1: PATA max PIO4 cmd fff00000 ctl fff00038 data fff00000 no IRQ, 
+using PIO polling
+...
+ata1: found unknown device (class 0)
+ata1.00: ATA-7: Hatari  IDE disk 4M, 1.0, max UDMA/100
+ata1.00: 8192 sectors, multi 16: LBA48
+ata1.00: configured for PIO
+...
+scsi 1:0:0:0: Direct-Access     ATA      Hatari  IDE disk 1.0  PQ: 0 ANSI: 5
+sd 1:0:0:0: [sda] 8192 512-byte logical blocks: (4.19 MB/4.00 MiB)
+sd 1:0:0:0: [sda] Write Protect is off
+sd 1:0:0:0: [sda] Mode Sense: 00 3a 00 00
+sd 1:0:0:0: [sda] Write cache: disabled, read cache: enabled, doesn't 
+support DPO or FUA
+sd 1:0:0:0: [sda] Preferred minimum I/O size 512 bytes
+sd 1:0:0:0: [sda] Attached SCSI disk
+VFS: Mounted root (ext2 filesystem) readonly on device 8:0.
+---------------------------------------------------
 
