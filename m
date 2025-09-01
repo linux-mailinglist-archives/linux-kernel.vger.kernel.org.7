@@ -1,86 +1,139 @@
-Return-Path: <linux-kernel+bounces-795284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63692B3EF5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D54B3EF60
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390E91788E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 362901A874AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4EF26D4E3;
-	Mon,  1 Sep 2025 20:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9693D26E6FA;
+	Mon,  1 Sep 2025 20:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqMGrIjp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIzhIB/C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80916223DF0;
-	Mon,  1 Sep 2025 20:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1F826B75C;
+	Mon,  1 Sep 2025 20:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756757849; cv=none; b=JFUrHSQ3KhIRXO/tvK6hs2yJLSs32IeePGZWWx2CLdWMymn6e3edgqlvbUKlcHwWYOkIWLZwH/EC1IKn5yk8hxxWHmpzgth5W7per8fte64B+ixcy7O0iCOs19EeZj1QHFEMWaTpWhtkCAFPLbbk71NRSZQJSnfC78GpK5aC8lo=
+	t=1756758003; cv=none; b=cPUnkgdvCQeS2vsMlLyTk+Ubm/XZIUFxXzHLRJzvH8PpOulHlcKNwP9iT1J50JZkWyUdqYvAwplT10kCHi0CnvWjCjhOYHxrClOZPBULFYjjW/EgJkC0aUhYeRsvwU8183qzNPnbNn5MT+sXf63msWhP+nbivqnF7scpqRgMDB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756757849; c=relaxed/simple;
-	bh=RKwQXF/H4mM8TexV6zQanbTgwCRsx0sgE9ekNciWRT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AF4lNwS77g1c7Myvz3A1ghERzbT/QjXM2Ym3Ro9xUZnz2ZLl7VsXQLv2jwbhKqk2lgqGlgNcfNbAJfDc0Qn6gaEsoDvWQDLQPYu3p9NOdtyLtNaBIyULBaAdr/GorimxQMxXdHM7eN84AMZyK1adMuFZELiSBe25OYgI3nGMuMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqMGrIjp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3401C4CEF0;
-	Mon,  1 Sep 2025 20:17:27 +0000 (UTC)
+	s=arc-20240116; t=1756758003; c=relaxed/simple;
+	bh=LoGorSDHkEkIDGpixgk16+eL3mYFxlvutZWyJcKrM/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BAGgRkeDmO76+S+8LBukZpIFShwqXZ7/LbaQkhiDomeblm2mwWvPYClCHmZoTuIfcAvzN0sh2NB9BqhxsaC55EwqTK9TdVHa1r5ZXNjL32av7Nt10nkej+TmMiJQ5FAVvAYigC8LDw8Cpym9M0xZjwg9kVe9H2KqULQzaUX6RDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIzhIB/C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A09FC4CEF0;
+	Mon,  1 Sep 2025 20:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756757848;
-	bh=RKwQXF/H4mM8TexV6zQanbTgwCRsx0sgE9ekNciWRT8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lqMGrIjpRvDAbgkTbKP5pEBdNsuyFf9b3EEawpxGbDJoYeDrjjVcUlPWfuH2hUYUf
-	 5znz48aCKZv8ivOxXP6bQertUxs6gBfUBSoHSBeTOS+XeyLgS2cwYX2Kv41LxLr11B
-	 VK7BKtboG075hNa7IlSEo4EAQUwgqKTjveQ42axI+0//sLPEOovjWUG82HHTJ5wgHF
-	 Ab24J7B6HuQy/lnLtYWk1JwQvqP9JiWEx1XqmN6GPOZA1AFeSrvqcnC38ANsnAnni8
-	 BRQstalGfue+e5EghVd9YjKiAA0tYe2hJkhQ2Xx4tl/fhQMyPmR9fgSlsOJF4Cz71V
-	 DSnGyMJB4Wpqw==
-Date: Mon, 1 Sep 2025 15:17:27 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	s=k20201202; t=1756758002;
+	bh=LoGorSDHkEkIDGpixgk16+eL3mYFxlvutZWyJcKrM/I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AIzhIB/CNTd0wQFTtQjTvf7CsPNPwGEkwECUVhQOAz+FgHxLrCvXjjQTQKSXXcMB7
+	 HAFQwwyPtBlLZgivyflOdd+HxDbrXS1bYj7HuhR75Pf4piROorXcT+eMYY0cGTaJXz
+	 jU20iRaetmGGLVL8ixBenxqd0DXxsVtgTe/XywK8pjUdRtp0wwsnSycmifhMWTHm3m
+	 gMlqHexiPwAgKPX9uoJRLLtRAbl0TN0vofhHgWAlyV87Rxl7Aokfuo2luCm5+fDzeU
+	 +NKtrOtCxyJd8LDrfZgg29Sxa9hqhUvlHTqooqlRV/VGc/rVqx0DbKF+ABC2/PoCyb
+	 QZDoRWJ6VDFvA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Zhiqi Song <songzhiqi1@huawei.com>,
+	Longfang Liu <liulongfang@huawei.com>,
+	x86@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v2 4/5] dt-bindings: iio: adc: samsung,exynos: Drop
- S3C2410
-Message-ID: <175675784648.271916.11996666409097079918.robh@kernel.org>
-References: <20250830-s3c-cleanup-adc-v2-0-4f8299343d32@linaro.org>
- <20250830-s3c-cleanup-adc-v2-4-4f8299343d32@linaro.org>
+	linuxppc-dev@lists.ozlabs.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/6] Curve25519 cleanup
+Date: Mon,  1 Sep 2025 13:18:09 -0700
+Message-ID: <20250901201815.594177-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830-s3c-cleanup-adc-v2-4-4f8299343d32@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-On Sat, 30 Aug 2025 18:48:33 +0200, Krzysztof Kozlowski wrote:
-> Samsung S3C24xx family of SoCs was removed the Linux kernel in the
-> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
-> 2023.  There are no in-kernel users of remaining S3C24xx compatibles.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml | 4 ----
->  1 file changed, 4 deletions(-)
-> 
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git curve25519-v1
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+This series removes the unused crypto_kpp support for Curve25519,
+migrates curve25519-selftest to a KUnit test suite, and reorganizes the
+generic and arch-optimized Curve25519 code to all be located in
+lib/crypto/ and built into a single libcurve25519 module.
+
+Eric Biggers (6):
+  crypto: curve25519 - Remove kpp support
+  lib/crypto: tests: Migrate Curve25519 self-test to KUnit
+  lib/crypto: tests: Add Curve25519 benchmark
+  lib/crypto: curve25519: Move a couple functions out-of-line
+  lib/crypto: curve25519: Consolidate into single module
+  wireguard: kconfig: Simplify crypto kconfig selections
+
+ arch/arm/crypto/Kconfig                       |   13 -
+ arch/arm/crypto/Makefile                      |    2 -
+ arch/arm/crypto/curve25519-glue.c             |  137 --
+ arch/m68k/configs/amiga_defconfig             |    1 -
+ arch/m68k/configs/apollo_defconfig            |    1 -
+ arch/m68k/configs/atari_defconfig             |    1 -
+ arch/m68k/configs/bvme6000_defconfig          |    1 -
+ arch/m68k/configs/hp300_defconfig             |    1 -
+ arch/m68k/configs/mac_defconfig               |    1 -
+ arch/m68k/configs/multi_defconfig             |    1 -
+ arch/m68k/configs/mvme147_defconfig           |    1 -
+ arch/m68k/configs/mvme16x_defconfig           |    1 -
+ arch/m68k/configs/q40_defconfig               |    1 -
+ arch/m68k/configs/sun3_defconfig              |    1 -
+ arch/m68k/configs/sun3x_defconfig             |    1 -
+ arch/powerpc/crypto/Kconfig                   |   13 -
+ arch/powerpc/crypto/Makefile                  |    2 -
+ arch/s390/configs/debug_defconfig             |    1 -
+ arch/s390/configs/defconfig                   |    1 -
+ arch/x86/crypto/Kconfig                       |   13 -
+ arch/x86/crypto/Makefile                      |    5 -
+ crypto/Kconfig                                |    8 -
+ crypto/Makefile                               |    1 -
+ crypto/curve25519-generic.c                   |   91 --
+ crypto/testmgr.c                              |    6 -
+ crypto/testmgr.h                              | 1225 -----------------
+ drivers/crypto/hisilicon/Kconfig              |    1 -
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c   |  394 ------
+ drivers/net/Kconfig                           |   15 +-
+ include/crypto/curve25519.h                   |   40 +-
+ lib/crypto/Kconfig                            |   37 +-
+ lib/crypto/Makefile                           |   27 +-
+ .../crypto/arm}/curve25519-core.S             |    0
+ lib/crypto/arm/curve25519.h                   |   47 +
+ lib/crypto/curve25519-generic.c               |   25 -
+ lib/crypto/curve25519.c                       |   64 +-
+ .../crypto/powerpc}/curve25519-ppc64le_asm.S  |    0
+ .../crypto/powerpc/curve25519.h               |  124 +-
+ lib/crypto/tests/Kconfig                      |   10 +
+ lib/crypto/tests/Makefile                     |    1 +
+ .../curve25519_kunit.c}                       |  100 +-
+ .../crypto/x86/curve25519.h                   |  127 +-
+ 42 files changed, 232 insertions(+), 2310 deletions(-)
+ delete mode 100644 arch/arm/crypto/curve25519-glue.c
+ delete mode 100644 crypto/curve25519-generic.c
+ rename {arch/arm/crypto => lib/crypto/arm}/curve25519-core.S (100%)
+ create mode 100644 lib/crypto/arm/curve25519.h
+ delete mode 100644 lib/crypto/curve25519-generic.c
+ rename {arch/powerpc/crypto => lib/crypto/powerpc}/curve25519-ppc64le_asm.S (100%)
+ rename arch/powerpc/crypto/curve25519-ppc64le-core.c => lib/crypto/powerpc/curve25519.h (56%)
+ rename lib/crypto/{curve25519-selftest.c => tests/curve25519_kunit.c} (96%)
+ rename arch/x86/crypto/curve25519-x86_64.c => lib/crypto/x86/curve25519.h (94%)
+
+base-commit: 362f92286065d9f8282da5def89e173a12191568
+-- 
+2.50.1
 
 
