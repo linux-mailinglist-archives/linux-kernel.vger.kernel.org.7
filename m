@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-794337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7459EB3E02D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9FEB3E03E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084733B3974
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4981797F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D2430E854;
-	Mon,  1 Sep 2025 10:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C6530F555;
+	Mon,  1 Sep 2025 10:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WShtJv3j"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkWonKTu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C1833F6;
-	Mon,  1 Sep 2025 10:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3470D218596;
+	Mon,  1 Sep 2025 10:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722660; cv=none; b=rIKf94sKyfIQNgX7IEMxn4cXjuoEIkyyAHUPWpy1ZUO/ii/wz5CwKC2XH9ZMBO2kLAdA0dZnQMImqwdYfLoXQct0TxvtKFM0+k77pdHtxQIfEFqmxelYk12YD0x+5vTeI9mX42B+tg0wQLXI6Lk5nmEZg7esOJlB/+juwDlH20U=
+	t=1756722940; cv=none; b=HxeL7DbX+JThJ3rFVm4PrfW0wFQPK84qMsOpxhdtvlg92zrVn45lW3W1AbcuQvX6uhTnIEiOiW5762cDU62w0BG9pXWbN4uj1e8KG8XE4zGNAffPEezjekN3jdju/4qloVJLIVs4R+4F5lexgfIJdvvsfx/N+pRVb+xseTIYjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722660; c=relaxed/simple;
-	bh=cdecocXK5fiAUTGZOd1KKjcZ3IM9twg/URFPgonHzuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfQ+IUELZ55amE2+3zUjVprNdw31dbwOmzfYcS236yo8QKuOoFM1VcpzzjESkdnrJelgWJEXk/wY95G4DK/ta6yOxnUR00BG6+ylb307JupsyncH9v1zpn8sTtUKFuETQ2htbSDlqbXuvBEYuK3B3Im4FjbZzYf1MVpoH1zZ2wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WShtJv3j; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cFlWz3Mvtz9tcx;
-	Mon,  1 Sep 2025 12:30:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756722655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/PBTt0C5Gx6hiojLqBDZVPUdijjHh91VEfxrRkHdGhE=;
-	b=WShtJv3jYxoIoUZHOpT3TftdlXPwi64e9k7p204qwWCaYpF7hboaRyxSstTH0Gt/N1Wpq/
-	AoXnPqp1Lly292ZxMP7aGqW/zeL6imj4B7QiInDdfBoskVZSh8bpYFN0hDKN4eWhvgjcKY
-	4WHXCiPUsv4OKBlTBfj1xtg6yV+pjSq4T9/qGGAugi6EPn/1FQKtZE4KqxttGo8TowB79M
-	AlF4Cg22WQMF9qVUC/eUVEdmmpCpbaiZPE5xj71kZhd7u2YHYLS2a4abYhy7qj8mvDnpxH
-	I2fELANa8yO7AHfvIqzEiPH/L/pCqeMDNiVOc1G17geiy79NhB9OBdXl6uABEA==
-Message-ID: <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
-Date: Mon, 1 Sep 2025 12:30:51 +0200
+	s=arc-20240116; t=1756722940; c=relaxed/simple;
+	bh=PAYtZO8rvHPxpnmsKxZMRGL3a2TAeTujErtp5EkRzUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JvHsX7ROl8Cn0452USwA/4B8ithPg73mB73jLgrvpa3w5wOvTH7Oqyuh8BnEwnE380o6vUg86Z/DrsSM+ybyujUni07EI8KhNqYN/BhLcTpMQtEx2S7Fsxj5lupRfvm9D+je8POnHPfk9EqHqjqM3Zj+G72SYA8CS1EpePZOkyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkWonKTu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8BDC4CEF0;
+	Mon,  1 Sep 2025 10:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756722940;
+	bh=PAYtZO8rvHPxpnmsKxZMRGL3a2TAeTujErtp5EkRzUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qkWonKTuwJXwZwPxsldkF2+jdXEt6d6brcIcClWo7h5sS5PFjiw6tVkMB5PCv6kOc
+	 UFLGAN8SpbSZGAwbMmpHageIXA0lJXx7VnxLaBl4iVubU339KvDguttH9DIW8m77MR
+	 FKJTfCYoYXJFY4SUx25FzniWOTQ3HLd1x6Ov8WsO+Y0plSJoNhikjivnRT2H9g7BNt
+	 VIOJ+rgmL00E521uaCYVYoSG/3NgL/bvZlxKAnv7QI4wOP/x7lVMFAtYspdR9/e6ds
+	 PkfeTbOlx7UdLPmLDJ4BwKfi0DcASgrAmYs5rkn/aZbxouKDrLIYB3H1IYpd+ZhAa4
+	 AQKQD3+dU7Kow==
+Date: Mon, 1 Sep 2025 11:35:35 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alex Tran <alex.t.tran@gmail.com>
+Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
+	shenghao-ding@ti.com, kevin-lu@ti.com, baojun.xu@ti.com,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: codecs: tlv320dac33: switch to gpiod api
+Message-ID: <7de59d85-a72e-4afa-b3d7-8729e22f4c3f@sirena.org.uk>
+References: <20250901035956.1195081-1-alex.t.tran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>, Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- E Shattow <e@freeshell.de>
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: fd3b27795d06f701f7c
-X-MBO-RS-META: 95xap3q14g4r4zuc3ine3z3bbq36zd5w
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0pbq1X1Bu6UZ70ua"
+Content-Disposition: inline
+In-Reply-To: <20250901035956.1195081-1-alex.t.tran@gmail.com>
+X-Cookie: Auction:
 
-On 9/1/25 5:33 AM, Krzysztof Kozlowski wrote:
-> On 01/09/2025 04:22, Marek Vasut wrote:
->> On 9/1/25 5:22 AM, Peng Fan wrote:
->>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->>>> Move imx9*-{clock,power}.h headers into
->>>> include/dt-bindings/{clock,power}/ and fix up the DTs
->>>
->>> No. The files should be under arch/arm64/boot/dts/freescale/
->> Why ? Linux already has include/dt-bindings/clock/ and
->> include/dt-bindings/power directories for exactly those headers , why
->> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
-> 
-> 
-> Because maybe these are not bindings?
 
-Please compare arch/arm64/boot/dts/freescale/imx95-clock.h and 
-include/dt-bindings/clock/imx8mp-clock.h and clarify to me, why the 
-imx95-clock.h is not bindings and the imx8mp-clock.h is bindings.
+--0pbq1X1Bu6UZ70ua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Both files list clock IDs for the clock nodes, one clock one is SCMI 
-clock (iMX95), the other clock node is CCM clock (iMX8MP), and they are 
-both (SCMI and CCM) clock nodes in DT. Both header files may have to be 
-included in drivers, the iMX8MP headers already are, the iMX95 headers 
-currently are included only in U-Boot drivers.
+On Sun, Aug 31, 2025 at 08:59:56PM -0700, Alex Tran wrote:
+> Changelog:
+> - Changed reset GPIO setup that uses 'gpio_request' and
+>   'gpio_direction_output' to use 'devm_gpio_request_one' instead=20
+>   for legacy support.
+> - Convert to gpio descriptor for use.
+> - Better error handling with 'gpiod_set_value'.
+> - Removed cleanup of reset gpio as gpiod api is now used.
+>=20
+>=20
+> - Performed full conversion to gpiod with 'devm_gpiod_get_optional'.
+> - Removed struct 'tlv320dac33_platform_data' as it is
+>   not used in the kernel.
+> - Removed file 'tlv320dac33-plat.h' as it was not included
+>   anywhere outside this driver.
+> - Removed 'power_gpio' and added 'reset_gpiod'.
+> - Added default value for dac33->burst_bclkdiv as it can't be 0 (2-17).
+>   See <https://www.ti.com/lit/ds/symlink/tlv320dac32.pdf>
 
-I really don't see the difference here, sorry.
+This is a set of separate changes which as covered in
+submitting-patches.rst should each be split into individual patches,
+this makes things much easier to review.
 
-> Regardless whether you agree or
-> not, the commit should clearly explain the reason behind.
-Which commit ?
+As also covered in submitting-patches.rst any inter-version changelogs
+should go after the --- so they can be removed by tooling.
+
+--0pbq1X1Bu6UZ70ua
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi1dvYACgkQJNaLcl1U
+h9D9sQf/fvSmTxKv27Nx3uUb+QHN1k5uJGC6hMwPvA/X+F26IX4scR1QPiGoVdf2
+w3Sa5sbaPBeZAak88tCD07XDQ6wUldxd/UhAJbO4Ggvhv4k8cw5WDA0tvFchxnPA
+96WK07tdJtlXFH3gFMhXGOk//knMLqVnqcUZlL+4r3G5V+GrSAHBVNLFAaVU8t5Q
+RYem39bkzoNfMuKYeFEnPqp95IcbzsKQYcJJCKhraJv+jPCuyV7tL8yjNG+Sp3aC
+A2GMKsjHJ4RJQnL6PYddjUhaYlc77Rlfp6AnhAkVT9SVn/8atvYt1qI+G5fFR5DC
+MRqCJ0CGuNTZOOUoYsTPe/75CgDARw==
+=xZKN
+-----END PGP SIGNATURE-----
+
+--0pbq1X1Bu6UZ70ua--
 
