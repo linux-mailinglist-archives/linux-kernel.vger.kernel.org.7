@@ -1,156 +1,148 @@
-Return-Path: <linux-kernel+bounces-793633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5A6B3D64E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06386B3D650
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BD727A1D8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC397A31EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0881F4297;
-	Mon,  1 Sep 2025 01:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12A1F473A;
+	Mon,  1 Sep 2025 01:29:09 +0000 (UTC)
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFA61F948;
-	Mon,  1 Sep 2025 01:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C5F18027;
+	Mon,  1 Sep 2025 01:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756690017; cv=none; b=Bu5XIvnXK8lTkKaaf671MhzutPB/RQPm381k05ljZFC845FYwrUzpFiCVdOUhsd4zazTie5tozZMyy9Zh33Q0GliDOZc0hgzpoJ/A9sXVHtLM1eZO3hg4k/IhqYNsZ6iQ68lG6Zr4efkuAbHnGAbWRf9M/zs68UAd3NKZEdzoX4=
+	t=1756690148; cv=none; b=iVafnO2eJpT06FikRZMfcbEWnQVbfEZbkvFjo3EgB4j2a/PcU94qtYItiHtkypFJ31X3bmIKVOcV9ogx5PTEW3/oeY4G8EuO2pfcanmNPPA6RFYMK00GoHLLSEjy9uuK29iRVlDkBDas3A+eN1xUgphhY97bn71FF9VgU6gTFlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756690017; c=relaxed/simple;
-	bh=tl1vAbw5X6OPmjaq0O548MOD/EZm8fWJ9iTxsp2Vtfk=;
+	s=arc-20240116; t=1756690148; c=relaxed/simple;
+	bh=OykKnMQUBLLM8S9sa+VO88UG8Iy3AxdPViOOGY5vWdU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YOFPrSkXLKWhq74Sgoxtec3ZtUEWhN8tT3/sgsgiI3mMOcv3A+/f9TuTDYbZnob+bhzCCQNyZXQ/NgQcsRyOkVjXIl6UkYrYNDSGWQAn2/vhKD1MNXM9k027rFjNGB8VeRlardUMh98Geoy+dCb/Sc3+ea0VxmiFpGX7nyUKZzA=
+	 In-Reply-To:Content-Type; b=Hm+x+uwhV28hjQk/yZ39liGeInf6SRJSCc2Pwo2+4nf3POdVn5f1/izEvf289vITjRPrlLxNO1l2sx61vGRc1zrcu2oDbscr/hRmmCLa5RzLBrWtLVQG8LnHsJ6MSMYecSd6P+2de8j6k4CrfKbqLCeX+KuhPTcRZKS3ubYLxcQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFWS55DtpzKHMXM;
-	Mon,  1 Sep 2025 09:26:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 88F171A0D5D;
-	Mon,  1 Sep 2025 09:26:45 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYIxT9rRopczqAw--.36104S3;
-	Mon, 01 Sep 2025 09:26:45 +0800 (CST)
-Message-ID: <40fa8f33-22d8-b0f1-7d78-8961bee5b1f3@huaweicloud.com>
-Date: Mon, 1 Sep 2025 09:26:43 +0800
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFWVm3QmKzKHMf9;
+	Mon,  1 Sep 2025 09:29:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 488EB1A0E45;
+	Mon,  1 Sep 2025 09:29:04 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgAn5nve9rRo2fXYAw--.36778S2;
+	Mon, 01 Sep 2025 09:29:04 +0800 (CST)
+Message-ID: <9da518ad-9b44-4dbb-98e5-66cf8a3fe7c2@huaweicloud.com>
+Date: Mon, 1 Sep 2025 09:29:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] md: prevent incoreect update of resync/recovery offset
-To: Yu Kuai <hailan@yukuai.org.cn>, Paul Menzel <pmenzel@molgen.mpg.de>,
- Li Nan <linan666@huaweicloud.com>
-Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20250830090242.4067003-1-linan666@huaweicloud.com>
- <2eadd8d3-7705-4000-982e-cafd222977c1@molgen.mpg.de>
- <969460f8-9ed2-4535-8336-4a7c359f5708@yukuai.org.cn>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <969460f8-9ed2-4535-8336-4a7c359f5708@yukuai.org.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Tejun Heo
+ <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>
+References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYIxT9rRopczqAw--.36104S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFW3ZrW7XryrJr13Wr1xXwb_yoW8ur4fpF
-	WkCF1YkrW5Wr4fAw42vw1UAFyFy34xt34DWr1UGa4DZwnFk3sFqFW2qFnY9FykXr4rGF1j
-	q3s8tFZ3Za1rZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:cCh0CgAn5nve9rRo2fXYAw--.36778S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1xCrWDAF1UJF4fWFy7Awb_yoW8Kw1kpF
+	18Arn8JrWUJrs7Gr1Ut342qryrJry8Jw1UJr1UGa48JrW3AF1qqr1xur1j9F15Jrs7Wr17
+	AF15JryUZry7XF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
 
-在 2025/8/30 19:04, Yu Kuai 写道:
-> Hi,
+On 2025/8/30 21:30, Gustavo A. R. Silva wrote:
+> Hi all,
 > 
-> 在 2025/8/30 17:41, Paul Menzel 写道:
->> Dear Nan,
->>
->>
->> Thank you for your patch. I have some formal comments. In the 
->> summary/title: incor*r*ect.
->>
->> Am 30.08.25 um 11:02 schrieb linan666@huaweicloud.com:
->>> From: Li Nan <linan122@huawei.com>
->>>
->>> In md_do_sync(), when md_sync_action returns ACTION_FROZEN, subsequent
->>> call to md_sync_position() will return MaxSector. This causes
->>> 'curr_resync' (and later 'recovery_offset') to be set to MaxSector too,
->>> which incorrectly signals that recovery/resync has completed even though
->>> disk data has not actually been updated.
->>>
->>> To fix this issue, skip updating any offset values when the sync acion
->>
->> ac*t*ion
->>
->>> is either FROZEN or IDLE.
->>
->> Maybe state that the same holds true for IDLE?
->>
->> Should these two cases be handled differently in `md_sync_position()`. 
->> Does it semantically make sense, that the default of MaxSector is returned?
->>
-> Max sectors will return, however, following procedures will update
-> resync_offset to MaxSector, while recovery can be interuppted by the
-> concurrent frozen, can this will cause data lost.
+> I'm working on enabling -Wflex-array-member-not-at-end in mainline, and
+> I ran into thousands (yes, 14722 to be precise) of these warnings caused
+> by an instance of `struct cgroup` in the middle of `struct cgroup_root`.
+> See below:
 > 
->>> Fixes: 7d9f107a4e94 ("md: use new helpers in md_do_sync()")
->>> Signed-off-by: Li Nan <linan122@huawei.com>
->>> ---
->>>   drivers/md/md.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>> index e78f80d39271..6828a569e819 100644
->>> --- a/drivers/md/md.c
->>> +++ b/drivers/md/md.c
->>> @@ -9397,6 +9397,9 @@ void md_do_sync(struct md_thread *thread)
->>>       }
->>>         action = md_sync_action(mddev);
->>> +    if (action == ACTION_FROZEN || action == ACTION_IDLE)
->>> +        goto skip;
->>> +
->>>       desc = md_sync_action_name(action);
->>>       mddev->last_sync_action = action;
->>
-> Please send a new verison with the typo fixed.
+> 620 struct cgroup_root {
+>     ...
+> 633         /*
+> 634          * The root cgroup. The containing cgroup_root will be destroyed on its
+> 635          * release. cgrp->ancestors[0] will be used overflowing into the
+> 636          * following field. cgrp_ancestor_storage must immediately follow.
+> 637          */
+> 638         struct cgroup cgrp;
+> 639
+> 640         /* must follow cgrp for cgrp->ancestors[0], see above */
+> 641         struct cgroup *cgrp_ancestor_storage;
+>     ...
+> };
 > 
-> Thanks,
-> Kuai
+> Based on the comments above, it seems that the original code was expecting
+> cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
+> memory.
+> 
+> However when I take a look at the pahole output, I see that these two members
+> are actually misaligned by 56 bytes. See below:
+> 
+> struct cgroup_root {
+>     ...
+> 
+>     /* --- cacheline 1 boundary (64 bytes) --- */
+>     struct cgroup              cgrp __attribute__((__aligned__(64))); /*    64  2112 */
+> 
+>     /* XXX last struct has 56 bytes of padding */
+> 
+>     /* --- cacheline 34 boundary (2176 bytes) --- */
+>     struct cgroup *            cgrp_ancestor_storage; /*  2176     8 */
+> 
+>     ...
+> 
+>     /* size: 6400, cachelines: 100, members: 11 */
+>     /* sum members: 6336, holes: 1, sum holes: 16 */
+>     /* padding: 48 */
+>     /* paddings: 1, sum paddings: 56 */
+>     /* forced alignments: 1, forced holes: 1, sum forced holes: 16 */
+> } __attribute__((__aligned__(64)));
+> 
+> This is due to the fact that struct cgroup have some tailing padding after
+> flexible-array member `ancestors` due to alignment to 64 bytes, see below:
+> 
+> struct cgroup {
+>     ...
+> 
+>     struct cgroup *            ancestors[];          /*  2056     0 */
 > 
 
-Sorry for my carelessness. I will send v2 later.
+Instead of using a flexible array member, could we convert this to a pointer and handle the memory
+allocation explicitly?
 
 -- 
-Thanks,
-Nan
-
->>
->> Kind regards,
->>
->> Paul
->>
-> 
-> .
+Best regards,
+Ridong
 
 
