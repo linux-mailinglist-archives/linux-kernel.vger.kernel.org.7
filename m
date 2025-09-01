@@ -1,387 +1,264 @@
-Return-Path: <linux-kernel+bounces-793676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CC8B3D6AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:32:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E80B3D6B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3BF41895468
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D143AD384
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5046157493;
-	Mon,  1 Sep 2025 02:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1E71FBC8C;
+	Mon,  1 Sep 2025 02:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ejC6nLfl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="lZP1kH5H"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3FB17BA3
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BBA17BA3;
+	Mon,  1 Sep 2025 02:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756693915; cv=none; b=QNkVXbm7ZZ0jQ+gJeRDElHK0iN88X4rSh6PR7vaXpA2Q50iJID3CBYnDlLDNtr+aDDRphvf15CfPb1swf15s+dGQFBlyLo/OzpInQP5pePGTsTFMWE/5SfH1hi1WF0+Sd/nxLg7tKA599Sl+Ha/pmHdMja6XiH55E2/znsHcWmw=
+	t=1756693923; cv=none; b=Ay3/uuDqupiT4R1ANWyhJyfTdZgyi4n+xSNyU7cilP2bkfoPDQvoGAS6HUHgL4+/EUCoDRv9/a/updbwPkHslgMFFkVyRdoQqNISK/ppk1ZbGX+O2L7TcKxWEuWJMIIPhHZQhKQ3apVEqu6pnXbg6DexLPFRxg9NfBN6ctahs6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756693915; c=relaxed/simple;
-	bh=siORwdMayUtw4qc5Kckui3izgWW+KqDC/hqt0/gGlSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s6ET2ys4/c6tsvl3jE4xwB5h6bSyMZekNJkWMxk7DL8Kk+ysSJDz6wRL7WqGu1cc0ODBngSRaVKDr4YexGDg9HqZ9BS7LZ5mAY0XmolJmBtQYWcLwPdLC825xjIzfukKUzGaXHqmsMojFk+9AMex9OCpc01sLi3hroyXK8pnXno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ejC6nLfl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756693913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7v4jfKPcBEynUWEFS5XS2jfe0dwO+QCrgAQuf8pEiJU=;
-	b=ejC6nLflt723G5zbbZE24Jp6tfYJXMPcyBE9ZVGuIBki1JnVerY6gT9JmSCRcwnb9KYU0F
-	ZUf8ce8URbQ7GBABp8o2fNlCk+5dhfBkbaDQEx3J2hRDSIycOgNQ3JVBXl+PZkc5Q9TtEI
-	RZNMa1Kqpb5ZXJFbNLY3piiuqpsyBRo=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-91-cu79i27rNw-F52-2R0quzw-1; Sun, 31 Aug 2025 22:31:51 -0400
-X-MC-Unique: cu79i27rNw-F52-2R0quzw-1
-X-Mimecast-MFC-AGG-ID: cu79i27rNw-F52-2R0quzw_1756693910
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24aa3cf81a8so12090085ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:31:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756693910; x=1757298710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7v4jfKPcBEynUWEFS5XS2jfe0dwO+QCrgAQuf8pEiJU=;
-        b=tIo3VkpcbTJQAsv6xoCzKzRmJV8KP84717cT5nJHdPLNzm3vrYArpuBi5gWep2+695
-         kIJkhE/OLuP9R8rTN2VcHIvUvvtOvK1Q7RG2Z6JPcTm0WEsDoz1A/Jx7pHQm/5NmThH6
-         S6PSlIfCMqfBW7LTpTqCbnKSW+IApxDefI8ESr9sx3h1orqGVlC9DpwpPpEYpF0wAG3v
-         4gmCTpN0ATN8oUQ9s/bPdBw2e4dqtT90y9MwNDjX2HgklFXxextDzqgcMx5VQuB4VGeE
-         stXCLx6bLIAf8liuk3jUDIQqmY94F7FZUvvGO69wbzR8fG9WArp0OSJ52SKHzJtY/rrf
-         /4kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIA2JfMCRm6aDNKMQhCJgebzaUIfwqMmgw4Hd1sLVTC/qNKSXuHeKtr74mxwFYV5vs2rUHkr3PV9CngqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9i4itFInBs/Fw4E+9fBrWpe+WA30An67KH6wp8L4WLIWAH8an
-	eGSPpuInBuNy01/NlMhshexDiU84r2IsWVLbpBN2dJlsZEZaGZ3t4aZsM0mYsEPvd9OLI+3vRX+
-	GRL0TL4LQPItOmQQGOL+KvZjfUs6ULcPZWwigLcqAFuIKBtWaLOojS/KqSMsUVjmlt2qluB8Rg7
-	B3E/uYvqoDGl1LckO9g6HAVxUpGopi7EHJ2Jty04+G
-X-Gm-Gg: ASbGncsbkh66iVtT9eOQ1fcYe4nromn/bfVoAPlXxSI33ttTtXrU1hHWSJKGnOTkFYN
-	rHUnlkfOkjrAfP5sjaMUpvPW9JQa9GT/J7R8gt1FRIRN5oSs6KIo2EWR15nv5gSEScUafbwT9UM
-	dpNcHFF9fyzXMTadBGoC3B3w==
-X-Received: by 2002:a17:902:e751:b0:246:b467:eea9 with SMTP id d9443c01a7336-249448f7469mr82210415ad.21.1756693910154;
-        Sun, 31 Aug 2025 19:31:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFy/1HgQ1ByCI84ssI7B6m6fyh0l47ooVje3fuTJLIeZnt/DfOO9DlqV7NJcUN8/8KANq8thIA3Tbs9RO3MHDs=
-X-Received: by 2002:a17:902:e751:b0:246:b467:eea9 with SMTP id
- d9443c01a7336-249448f7469mr82210135ad.21.1756693909538; Sun, 31 Aug 2025
- 19:31:49 -0700 (PDT)
+	s=arc-20240116; t=1756693923; c=relaxed/simple;
+	bh=ChZAicVlkcjKi0EO4v+H0wz/vYmiYh1zGAgB/wYlU+c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F3CVafsO6eOwcdCkKQ+CALbuuqJpA8ssWWHBTKHW4B0TdCxaQsJD24cCPdLGXfBFNizmIctBuZZsE5UUt8xjnZ+SwQ7mDNIzccr7SWfuet0RGH4arpZbfEB2mOrphdsZ6rQTRWH8P7cbDuTbYuY66T8aXPTN0szXDot5Bk6eFPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=lZP1kH5H; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1756693919;
+	bh=xtP+NZRv90BvqwkSiNCov8eSQ4xNLfe3WR5oE65gFUs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=lZP1kH5HsSBMBHLKwtVaWZS75vLVhMpNMA3gxIgpepqoD6Rx17x6u92b5K5c0c5ex
+	 SH7MR5aslwrB/ZRC9j8xPi3DIbTAFHqYSvgLQDFwtcJg7VfchkbHC427HUONOMWM3U
+	 i0e7l/PPoS+nUEnn7pMh6v5x25z0cC0B0o+uzxaUXyA+GIL5y1fftLQisLGDY9sf8C
+	 Z+C1fnmRMXep1xOwutT60BZVnfQInHBt+4BW9YTg791Eh13yN1AhhJJ4wn1NYRdB+I
+	 S3xl887Ih60y3sjDS7AgaUsQQLi93PLLsTOYABdgbRWhy5F/bE1/pe6D6vr5sSWUMN
+	 PfC7wYrCXjSaQ==
+Received: from [192.168.72.161] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 67A2F64CF7;
+	Mon,  1 Sep 2025 10:31:58 +0800 (AWST)
+Message-ID: <c22e5f4dc6d496cec2c5645eac5f43aa448d0c48.camel@codeconstruct.com.au>
+Subject: Re: [PATCH net-next v27 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>, Adam Young
+ <admiyo@os.amperecomputing.com>, Matt Johnston <matt@codeconstruct.com.au>,
+  Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
+	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Huisong Li <lihuisong@huawei.com>
+Date: Mon, 01 Sep 2025 10:31:57 +0800
+In-Reply-To: <e28eeb4f-98a4-4db6-af96-c576019d3af1@amperemail.onmicrosoft.com>
+References: <20250828043331.247636-1-admiyo@os.amperecomputing.com>
+	 <20250828043331.247636-2-admiyo@os.amperecomputing.com>
+	 <eb156195ce9a0f9c0f2c6bc46c7dcdaf6e83c96d.camel@codeconstruct.com.au>
+	 <e28eeb4f-98a4-4db6-af96-c576019d3af1@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-3-eperezma@redhat.com>
- <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
-In-Reply-To: <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 1 Sep 2025 10:31:38 +0800
-X-Gm-Features: Ac12FXxzKO4mimnV_4Q8oNuys-OcPJJIJIw8m0w62YCSwShH75yVJpUZMoIsVBI
-Message-ID: <CACGkMEtQ7byU0+4EjvwEkHC8FLQ=vb9=k8Z=7mKvvc+MhEGLug@mail.gmail.com>
-Subject: Re: [PATCH 2/6] vduse: add vq group support
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 9:59=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > This allows sepparate the different virtqueues in groups that shares th=
-e
-> > same address space.  Asking the VDUSE device for the groups of the vq a=
-t
-> > the beginning as they're needed for the DMA API.
-> >
-> > Allocating 3 vq groups as net is the device that need the most groups:
-> > * Dataplane (guest passthrough)
-> > * CVQ
-> > * Shadowed vrings.
-> >
-> > Future versions of the series can include dynamic allocation of the
-> > groups array so VDUSE can declare more groups.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> > v1: Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
-> >
-> > RFC v3:
-> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
-> >   value to reduce memory consumption, but vqs are already limited to
-> >   that value and userspace VDUSE is able to allocate that many vqs.
-> > * Remove the descs vq group capability as it will not be used and we ca=
-n
-> >   add it on top.
-> > * Do not ask for vq groups in number of vq groups < 2.
-> > * Move the valid vq groups range check to vduse_validate_config.
-> >
-> > RFC v2:
-> > * Cache group information in kernel, as we need to provide the vq map
-> >   tokens properly.
-> > * Add descs vq group to optimize SVQ forwarding and support indirect
-> >   descriptors out of the box.
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 51 ++++++++++++++++++++++++++++--
-> >  include/uapi/linux/vduse.h         | 21 +++++++++++-
-> >  2 files changed, 68 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index e7bced0b5542..0f4e36dd167e 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -58,6 +58,7 @@ struct vduse_virtqueue {
-> >         struct vdpa_vq_state state;
-> >         bool ready;
-> >         bool kicked;
-> > +       u32 vq_group;
-> >         spinlock_t kick_lock;
-> >         spinlock_t irq_lock;
-> >         struct eventfd_ctx *kickfd;
-> > @@ -114,6 +115,7 @@ struct vduse_dev {
-> >         u8 status;
-> >         u32 vq_num;
-> >         u32 vq_align;
-> > +       u32 ngroups;
-> >         struct vduse_umem *umem;
-> >         struct mutex mem_lock;
-> >         unsigned int bounce_size;
-> > @@ -592,6 +594,13 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
-ice *vdpa, u16 idx,
-> >         return 0;
-> >  }
-> >
-> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
-> > +{
-> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > +
-> > +       return dev->vqs[idx]->vq_group;
-> > +}
-> > +
-> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
-> >                                 struct vdpa_vq_state *state)
-> >  {
-> > @@ -678,6 +687,28 @@ static u8 vduse_vdpa_get_status(struct vdpa_device=
- *vdpa)
-> >         return dev->status;
-> >  }
-> >
-> > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
-> > +{
-> > +       /* All vqs and descs must be in vq group 0 if ngroups < 2 */
-> > +       if (dev->ngroups < 2)
-> > +               return 0;
-> > +
-> > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
-> > +               struct vduse_dev_msg msg =3D { 0 };
-> > +               int ret;
-> > +
-> > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
-> > +               msg.req.vq_group.index =3D i;
-> > +               ret =3D vduse_dev_msg_sync(dev, &msg);
-> > +               if (ret)
-> > +                       return ret;
-> > +
-> > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.group;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 status)
-> >  {
-> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > @@ -685,6 +716,11 @@ static void vduse_vdpa_set_status(struct vdpa_devi=
-ce *vdpa, u8 status)
-> >         if (vduse_dev_set_status(dev, status))
-> >                 return;
-> >
-> > +       if (((dev->status ^ status) & VIRTIO_CONFIG_S_FEATURES_OK) &&
-> > +           (status & VIRTIO_CONFIG_S_FEATURES_OK))
-> > +               if (vduse_fill_vq_groups(dev))
-> > +                       return;
->
-> I may lose some context but I think we've agreed that we need to
-> extend the status response for this instead of having multiple
-> indepdent response.
+Hi Adam,
 
-Btw, I wonder why don't we get the vq group per .get_vq_group()
+> > Nice!
+>=20
+> Yeah.=C2=A0 Had a bit of an internal discussion about this one. Ideally, =
+we=20
+> would stop the queue one packet earlier, and not drop anything.=C2=A0 The=
+=20
+> mbox_send_message only returns the index of the next slot in the ring
+> buffer and since it is circular, that does not give us a sense=C2=A0 of t=
+he=20
+> space left.
 
-Thanks
+I think that's okay as-is. If you have access to the tail pointer of the
+ring buffer too, you may be able to calculate space, but that's
+1) optional, and 2) best left to a later change.
 
->
-> > +
-> >         dev->status =3D status;
-> >  }
-> >
-> > @@ -789,6 +825,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
-ig_ops =3D {
-> >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
-> >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
-> >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
-> > +       .get_vq_group           =3D vduse_get_vq_group,
-> >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
-> >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
-> >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
-> > @@ -1737,12 +1774,19 @@ static bool features_is_valid(struct vduse_dev_=
-config *config)
-> >         return true;
-> >  }
-> >
-> > -static bool vduse_validate_config(struct vduse_dev_config *config)
-> > +static bool vduse_validate_config(struct vduse_dev_config *config,
-> > +                                 u64 api_version)
-> >  {
-> >         if (!is_mem_zero((const char *)config->reserved,
-> >                          sizeof(config->reserved)))
-> >                 return false;
-> >
-> > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
-> > +               return false;
-> > +
-> > +       if (api_version >=3D VDUSE_API_VERSION_1 && config->ngroups > 0=
-xffff)
-> > +               return false;
->
-> Let's use a macro instead of magic number.
->
-> > +
-> >         if (config->vq_align > PAGE_SIZE)
-> >                 return false;
-> >
-> > @@ -1858,6 +1902,7 @@ static int vduse_create_dev(struct vduse_dev_conf=
-ig *config,
-> >         dev->device_features =3D config->features;
-> >         dev->device_id =3D config->device_id;
-> >         dev->vendor_id =3D config->vendor_id;
-> > +       dev->ngroups =3D (dev->api_version < 1) ? 1 : (config->ngroups =
-?: 1);
-> >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
-> >         if (!dev->name)
-> >                 goto err_str;
-> > @@ -1936,7 +1981,7 @@ static long vduse_ioctl(struct file *file, unsign=
-ed int cmd,
-> >                         break;
-> >
-> >                 ret =3D -EINVAL;
-> > -               if (vduse_validate_config(&config) =3D=3D false)
-> > +               if (!vduse_validate_config(&config, control->api_versio=
-n))
-> >                         break;
-> >
-> >                 buf =3D vmemdup_user(argp + size, config.config_size);
-> > @@ -2017,7 +2062,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *=
-dev, const char *name)
-> >
-> >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
-> >                                  &vduse_vdpa_config_ops, &vduse_map_ops=
+> > > +static int mctp_pcc_ndo_stop(struct net_device *ndev)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mctp_pcc_ndev *mctp=
+_pcc_ndev =3D
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 netdev_=
+priv(ndev);
+> > Minor: Unneeded wrapping here, and it seems to be suppressing the
+> > warning about a blank line after declarations.
+>=20
+> The Reverse XMasstree format checker I am using seems overly strict.=C2=
+=A0 I=20
+> will try to unwrap all of these.=C2=A0 Is it better to do a separate vari=
+able=20
+> initialization?=C2=A0 Seems a bad coding practice for just a format decis=
+ion=20
+> that is purely aesthetic. But this one is simple to fix.
+
+That shouldn't be tripping any RCT checks here, as it's just one
+variable init?
+
+	mctp_pcc_ndev *mctp_pcc_ndev =3D netdev_priv(ndev);
+
+Keep it in one if possible (as you have done).
+
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0drain_packets(&mctp_pcc_nd=
+ev->outbox.packets);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0drain_packets(&mctp_pcc_nd=
+ev->inbox.packets);
+> > Now that you're no longer doing the pcc_mbox_free_channel() in ndo_stop=
 ,
-> > -                                1, 1, name, true);
-> > +                                dev->ngroups, 1, name, true);
-> >         if (IS_ERR(vdev))
-> >                 return PTR_ERR(vdev);
-> >
-> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> > index 9a56d0416bfe..b1c0e47d71fb 100644
-> > --- a/include/uapi/linux/vduse.h
-> > +++ b/include/uapi/linux/vduse.h
-> > @@ -31,6 +31,7 @@
-> >   * @features: virtio features
-> >   * @vq_num: the number of virtqueues
-> >   * @vq_align: the allocation alignment of virtqueue's metadata
-> > + * @ngroups: number of vq groups that VDUSE device declares
-> >   * @reserved: for future use, needs to be initialized to zero
-> >   * @config_size: the size of the configuration space
-> >   * @config: the buffer of the configuration space
-> > @@ -45,7 +46,8 @@ struct vduse_dev_config {
-> >         __u64 features;
-> >         __u32 vq_num;
-> >         __u32 vq_align;
-> > -       __u32 reserved[13];
-> > +       __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
-> > +       __u32 reserved[12];
-> >         __u32 config_size;
-> >         __u8 config[];
-> >  };
-> > @@ -160,6 +162,16 @@ struct vduse_vq_state_packed {
-> >         __u16 last_used_idx;
-> >  };
-> >
-> > +/**
-> > + * struct vduse_vq_group - virtqueue group
-> > + * @index: Index of the virtqueue
-> > + * @group: Virtqueue group
-> > + */
-> > +struct vduse_vq_group {
-> > +       __u32 index;
-> > +       __u32 group;
-> > +};
-> > +
-> >  /**
-> >   * struct vduse_vq_info - information of a virtqueue
-> >   * @index: virtqueue index
-> > @@ -274,6 +286,7 @@ enum vduse_req_type {
-> >         VDUSE_GET_VQ_STATE,
-> >         VDUSE_SET_STATUS,
-> >         VDUSE_UPDATE_IOTLB,
-> > +       VDUSE_GET_VQ_GROUP,
-> >  };
-> >
-> >  /**
-> > @@ -316,6 +329,7 @@ struct vduse_iova_range {
-> >   * @vq_state: virtqueue state, only index field is available
-> >   * @s: device status
-> >   * @iova: IOVA range for updating
-> > + * @vq_group: virtqueue group of a virtqueue
-> >   * @padding: padding
-> >   *
-> >   * Structure used by read(2) on /dev/vduse/$NAME.
-> > @@ -328,6 +342,8 @@ struct vduse_dev_request {
-> >                 struct vduse_vq_state vq_state;
-> >                 struct vduse_dev_status s;
-> >                 struct vduse_iova_range iova;
-> > +               /* Only if vduse api version >=3D 1 */;
-> > +               struct vduse_vq_group vq_group;
-> >                 __u32 padding[32];
-> >         };
-> >  };
-> > @@ -338,6 +354,7 @@ struct vduse_dev_request {
-> >   * @result: the result of request
-> >   * @reserved: for future use, needs to be initialized to zero
-> >   * @vq_state: virtqueue state
-> > + * @vq_group: virtqueue group of a virtqueue
-> >   * @padding: padding
-> >   *
-> >   * Structure used by write(2) on /dev/vduse/$NAME.
-> > @@ -350,6 +367,8 @@ struct vduse_dev_response {
-> >         __u32 reserved[4];
-> >         union {
-> >                 struct vduse_vq_state vq_state;
-> > +               /* Only if vduse api version >=3D 1 */
-> > +               struct vduse_vq_group vq_group;
-> >                 __u32 padding[32];
-> >         };
-> >  };
-> > --
-> > 2.51.0
-> >
->
-> Thanks
+> > nothing has quiesced the pcc channels at this point, right? In which
+> > case you now have a race between the channels' accesses to skb->data an=
+d
+> > freeing the skbs here.
+>=20
+> (I have written and rewritten this section multiple times, so apoliges=
+=20
+> if soemthing is unclear or awkward...it might reflect and earlier=20
+> thought...)
+>=20
+> OK, I think I do need to call pcc_mbox_free_channel here,
 
+You should ensure that the packet processing has stopped on
+ndo_stop (and has not started before ndo_open). Without doing that, you
+have two issues:
+
+ - the RX packets will continue while the interface is down; and
+ - you cannot free the lists
+
+If there's a way to keep the channel allocated, but suspend the
+processing of messages, that would seem like a good option (and sounds
+like it would solve the MTU complexity).
+
+However, on a cursory look through the pcc/mailbox infrastructure, it
+seems like the pcc_mbox_request_channel starts processing immediately -
+so it looks like you can not have the channel in an allocated-but-idle
+state, since the request_channel does the bind_client, which does a
+pcc_startup.
+
+So, I figure you have two options:
+
+ - only request the channel until the interface is up; or
+
+ - implement your own quiescing in the callbacks - keeping the channels
+   allocated, but check if the netdev is operational (ie, ndo_open has
+   been called) before processing an RX message
+
+> which means I need to allocate them in the pairing function. The ring
+> buffer will still have pointers to the sk_buffs, but they will never
+> be looked at again: the ring buffer will ger reinitialized if another
+> client binds to it.
+
+OK, but the skbs will remain allocated between those operations, which
+has other side-effects (eg, socket mem accounting). You'll want to drain
+the queue (as you are doing) if the queue is no longer making progress.
+
+> The removal was to deal with the setting of the MTU, which requires a
+> channel to read the size of the shared buffer.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mctp_pcc_mtu =3D mctp_pcc=
+_ndev->outbox.chan->shmem_size -
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0sizeof(struct pcc_header);
+>=20
+> I could create a channel, read=C2=A0 the value, and release it.=C2=A0 The=
+ Value I=20
+> need is in the ACPI PCC-table but I don't have direct access to it.=20
+> Perhaps it would be better to initialize the value to -1 and use that to=
+=20
+> optionally reset it to the max value on ndo open.
+
+If you cannot create the channel until ndo_open, I'd you will also need
+to check the current mtu value on open, and failing if it exceeds the
+limit of the channel.
+
+If you have some way to extract this from the ACPI tables, that may be
+preferable. With the -1 approach, you'll also need to ensure that the
+*current* MTU is not larger than the channel max, on ndo_open. For
+example:
+
+  $ mctp link set mctppcc0 mtu 1000
+     # sets current mtu, no max currently specified
+  $ mctp link set mctppcc0 up
+     # driver discovers max is (say) 500, now we have an invalid mtu
+
+So, if you're able to parse the max from ACPI on initial bind, then you
+can detect the error at the time of occurrence (the `link set mtu`)
+rather than later (the `link set up`, and then ndo_open failing).
+
+> Check=C2=A0 me here: The channel has a value ring msg_count that keeps tr=
+ack=20
+> of the number of entires in the ring buffer.=C2=A0 This needs to be set t=
+o0=20
+> in order for it to think the buffer is empty.=C2=A0 It is initialized in=
+=C2=A0=20
+> __mbox_bind_client, called from mbox_bind_client which is in turn called=
+=20
+> from mbox_request_channel
+>=20
+> The networking infra calls stop_ndo, so it must stop sending packets to=
+=20
+> it first.=C2=A0 I can netif_stop_queue(ndev) of course, but that seems=
+=20
+> counterintuitive? Assume i don't need to do that, but can't find the=20
+> calling code.
+
+You won't have any further ->ndo_start_xmit calls at the point that
+->ndo_stop is called.
+
+> > Is there a mbox facility to (synchronously) stop processing the inbound
+> > channel, and completing the outbound channel?
+>=20
+> There is mbox_free_channel which calls shutdown, and that removed the
+> IRQ handler, so no more=C2=A0 messages will be processed.=C2=A0 That shou=
+ld be=20
+> sufficient.
+
+OK, as above, this will depend on the approach you on allocating and
+releasing the channels.
+
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ndev->mtu =3D MCTP_MIN_MTU=
+;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ndev->max_mtu =3D mctp_pcc=
+_mtu;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ndev->min_mtu =3D MCTP_MIN=
+_MTU;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D mctp_register_netde=
+v(ndev, NULL, MCTP_PHYS_BINDING_PCC);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0goto free_netdev;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return devm_add_action_or_=
+reset(dev, mctp_cleanup_netdev, ndev);
+> > As has been mentioned elsewhere, using the devm cleanup mechanism is a
+> > bit unconventional here. You have the device remove callback available,
+> > which lets you do the same, and that way you can demonstrate symmetry
+> > between the add and remove implementations.
+>=20
+> This has gone through a few=C2=A0 iterations and I thought I had it clear=
+.
+>=20
+> I was trying=C2=A0 to make use of automated cleanup as much as possible.
+
+OK, your call there. Using ->remove allows you to be explicit about the
+matching ordering, which would be my approach, but that's certainly not
+the only correct one.
+
+Cheers,
+
+
+Jeremy
 
