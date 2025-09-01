@@ -1,196 +1,182 @@
-Return-Path: <linux-kernel+bounces-794252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2258B3DF01
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:50:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3C7B3DF03
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44018189D896
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1184E3AA02B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC5330DD0B;
-	Mon,  1 Sep 2025 09:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E39A2F39B7;
+	Mon,  1 Sep 2025 09:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfSDfpQ7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vUoxLK2L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfSDfpQ7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vUoxLK2L"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m63Y1nxV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="solHVNiZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5585E304967
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A841B1C862E;
+	Mon,  1 Sep 2025 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720207; cv=none; b=LvNLjdxnZdyNdkcKXQ18PzBZZoTWvefS34f9laYZ6RKM9bjwH1hHHhZsq7VYeCC1LFEvDfivMRlm9+SpVoyniqmJmspaJVxiJ9GtwZsC53XNGQjt6XRVYZPOD9lPFWQc85k8qXJ/ge9eA8iQ3AZ1IF1XBO6Pi8T+V4QNNp4M9DQ=
+	t=1756720273; cv=none; b=nx7sQ0lM/Ig8e+5WdvuvncbJXPyu/tUHeltTXmcusGU0Rv5nkwrdcW0JmgKx5WQqgoz04SEt1tLYPKmRzT2DHKUDcFfm2DGNP/VkStldDFL91c87wEUB1CfFclEn0nI+7P/7lqiCuZrsTCBGxY+oIzp14VVEqWkPmKWCgeqrvGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720207; c=relaxed/simple;
-	bh=dHDbZP2sj7jCTQ5hinMjTOyAGhAfa6rnpImzdZhe0vU=;
+	s=arc-20240116; t=1756720273; c=relaxed/simple;
+	bh=wvzyVV3KRjAs+xblwn4772K7SStlqJ0Z6F7/4ovlrp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ElnLpSPn7jmrWgpYZaoNnSZRbEAqx2aKpyL/mu7ZdOa24zCiA2U0WZoLC3dRQljiJ9v/QMxZF4Y/7ass2B7EqCy9qkdtqfWv/n/qIWzWfbzzP3enpo7jAFanfPwFif0ABy5FnnH6UtXT6SFMbu1MSQN7G+AgZN23BW+Gmb+bWlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfSDfpQ7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vUoxLK2L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfSDfpQ7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vUoxLK2L; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6CAEA1F387;
-	Mon,  1 Sep 2025 09:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756720203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIkfGYWQx+qk6TgQ7fExzGglyZva3Q/asH9VLUOXOxw3k7NeK1lxVcxzx99RghGSTBbkRbE4zcapkg0D8ESR2tLxb091v/sp27aD5CJim1WX80b/985lPFiaCDf95ap6gsuXxIiylaWXbRVvBbY1dZumF1bchgoU7op2/FZXi60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m63Y1nxV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=solHVNiZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 1 Sep 2025 11:51:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756720268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=cfSDfpQ7TLUiY8tDXwJBXvERQa0VEFnDoEofkWiyMxjFrPlOsdrOjtmaELo9CgtIvU+jyV
-	XKEXF4FodgER/szlrn1etZiIXeaiaCIdNHwPilyQ0Kb1zOKO2UW4yGetWrk416P/1QMU9K
-	owlq5Sbxhow+/ZnEA62XaUsx4aGqqwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756720203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=Rxsm9S/NTtsx8WH9JSZwQYNc5IHcQefxbfSvhikEFTA=;
+	b=m63Y1nxVsVkTnr9wRvrhR8TdGXPCqjYawfzp6m9wp9NGGHput1YmJR8WKDulvz9B34AwSd
+	kv6JZ/kcASeOeq1Rhx6tiQyk9/SXFBB3pXqDZIOa7TqhPmPm+MSKnLV90Xrg9ZAJmKNsIh
+	ErxmJAFKIWaNd/0hXq0GNbP71DoF4N8AmLZkvxjEzVUUEOnufPG1sAmLR+ywmRdIo1+yYq
+	D6Tf0nstI/rS58VnMUFxcvg3e+oI6DMGGX/KRg1RfDF7v10jXzYtJzHd1lLENc/aFye+SZ
+	8hbYWaIn9EmOmjaMCDm7/P+y7WuBmDtM9bEhPovEz/5MXCOIDVgcdpwXZSkoBw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756720268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=vUoxLK2Labk2pqA1Dmr4gfh9TPcUuuWZ0mJeLLdzOAhCcS7cVBcmBEmZVR7p3G935JaQd3
-	/yr/8llbeqdBtWAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cfSDfpQ7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vUoxLK2L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756720203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=cfSDfpQ7TLUiY8tDXwJBXvERQa0VEFnDoEofkWiyMxjFrPlOsdrOjtmaELo9CgtIvU+jyV
-	XKEXF4FodgER/szlrn1etZiIXeaiaCIdNHwPilyQ0Kb1zOKO2UW4yGetWrk416P/1QMU9K
-	owlq5Sbxhow+/ZnEA62XaUsx4aGqqwk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756720203;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BhaViFTj1EfSgmyJ/x96zZidf5Hn91zet8lsrdFyjw=;
-	b=vUoxLK2Labk2pqA1Dmr4gfh9TPcUuuWZ0mJeLLdzOAhCcS7cVBcmBEmZVR7p3G935JaQd3
-	/yr/8llbeqdBtWAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51AE9136ED;
-	Mon,  1 Sep 2025 09:50:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vTRrE0tstWhPdQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 09:50:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E5F81A099B; Mon,  1 Sep 2025 11:50:02 +0200 (CEST)
-Date: Mon, 1 Sep 2025 11:50:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: remove vfs_ioctl export
-Message-ID: <rqvb73ltssgkchzyhzblffovfsfbildkkgbo7nhtvgt5np5eo6@f27eomyazdup>
-References: <2025083038-carving-amuck-a4ae@gregkh>
+	bh=Rxsm9S/NTtsx8WH9JSZwQYNc5IHcQefxbfSvhikEFTA=;
+	b=solHVNiZgne0fnB3vejkHUbDY3nNqjtSdCUR989I+ZD9DOdLA1L8mlMYeh59GI3GuG0IPs
+	p0ksYGhJ+uGwU3AA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: userprogs: also inherit byte order and ABI
+ from kernel
+Message-ID: <20250828083747-e819430a-986f-4f71-bbc8-e402e339c9a2@linutronix.de>
+References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+ <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
+ <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
+ <20250827224935.GB414199@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2025083038-carving-amuck-a4ae@gregkh>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 6CAEA1F387
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250827224935.GB414199@ax162>
 
-On Sat 30-08-25 12:55:39, Greg Kroah-Hartman wrote:
-> vfs_ioctl() is no longer called by anything outside of fs/ioctl.c, so
-> remove the global symbol and export as it is not needed.
+On Wed, Aug 27, 2025 at 03:49:35PM -0700, Nathan Chancellor wrote:
+> On Wed, Aug 27, 2025 at 08:31:00AM +0200, Thomas Weißschuh wrote:
+> > On Wed, Aug 13, 2025 at 07:43:41AM +0200, Thomas Weißschuh wrote:
+> ...
+> > > diff --git a/Makefile b/Makefile
+> > > index d0f5262a9c0f3b4aa79a91c20cc149d034ffa0b7..7d40f84d5efde18ed3a2f4d8cf7a9b1ec3610ed4 100644
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -1137,8 +1137,8 @@ ifneq ($(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS),)
+> > >  LDFLAGS_vmlinux	+= --emit-relocs --discard-none
+> > >  endif
+> > >  
+> > > -# Align the bit size of userspace programs with the kernel
+> > > -USERFLAGS_FROM_KERNEL := -m32 -m64 --target=%
+> > > +# Align the bit size, byte order and architecture of userspace programs with the kernel
+> > > +USERFLAGS_FROM_KERNEL := -m32 -m64 -mlittle-endian -mbig-endian -EL -EB --target=% -march=% -mabi=%
+> > >  KBUILD_USERCFLAGS  += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+> > >  KBUILD_USERLDFLAGS += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+
+(...)
+
+> > For architectures with multiple possible byte orders or ABIs the toolchain
+> > might be able to build the kernel for all combinations but might not have a
+> > matching libc for them. Currently userprogs uses the default byteorder and
+> > ABI from the compiler, which will match the included libcs if there is any.
+> > However the resulting binary might not run on the built kernel.
+> > CC_CAN_LINK can be extended to generically handle different byte orders, as
+> > for those we have standard kconfig symbols. But handling ABIs would need to
+> > be architecture specific and a bit more complex.
+> > 
+> > We can't use KBUILD_*FLAGS for CC_CAN_LINK, as they are not yet set during
+> > the configuration stage.
 > 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Indeed. Thanks for the cleanup. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-									Honza
-
-> ---
->  fs/ioctl.c         | 3 +--
->  include/linux/fs.h | 2 --
->  2 files changed, 1 insertion(+), 4 deletions(-)
+> Right, this was the biggest thing that I noticed, which would really
+> help us out...
 > 
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 0248cb8db2d3..3ee1aaa46947 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -41,7 +41,7 @@
->   *
->   * Returns 0 on success, -errno on error.
->   */
-> -int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> +static int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	int error = -ENOTTY;
->  
-> @@ -54,7 +54,6 @@ int vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->   out:
->  	return error;
->  }
-> -EXPORT_SYMBOL(vfs_ioctl);
->  
->  static int ioctl_fibmap(struct file *filp, int __user *p)
->  {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7ab4f96d705..ccf482803525 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2052,8 +2052,6 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group);
->  int vfs_fchmod(struct file *file, umode_t mode);
->  int vfs_utimes(const struct path *path, struct timespec64 *times);
->  
-> -int vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-> -
->  #ifdef CONFIG_COMPAT
->  extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
->  					unsigned long arg);
-> -- 
-> 2.51.0
+> > I see the following options:
+> > 
+> > * Add byte order and architecture-specific ABI handling to CC_CAN_LINK
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> How do you envision this? Different default lines for each combination?
+
+Exactly. The normal cases can be handled generically. For example the kconfig
+below works for architectures which only differ in byte order and 32bit/64bit,
+which are most of them. MIPS should require more logic.
+Also I'm ignoring x32, as it is never the kernel's native ABI.
+
+ config CC_CAN_LINK
+        bool
++       default $(cc_can_link_user,$(m64-flag) -mlittle-endian) if 64BIT && CPU_LITTLE_ENDIAN
++       default $(cc_can_link_user,$(m64-flag) -mbig-endian) if 64BIT && CPU_BIG_ENDIAN
+        default $(cc_can_link_user,$(m64-flag)) if 64BIT
++       default $(cc_can_link_user,$(m32-flag) -mlittle-endian) if CPU_LITTLE_ENDIAN
++       default $(cc_can_link_user,$(m32-flag) -mbig-endian) if CPU_BIG_ENDIAN
+        default $(cc_can_link_user,$(m32-flag))
+
+
+> Feels like that could get complicated quickly but this would probably be
+> the objectively most robust and "hands off" option.
+
+Agreed.
+
+> > * Accept that userprogs might not be runnable on the built kernel
+> 
+> I do wonder how common running the userprogs are. Obviously you hit this
+> in testing but I am curious if others have reported this.
+
+I'm not aware of any reports. Usage of userprogs seems to be fairly low in
+general, judging by the issues I ran into which nobody reported or fixed
+before. One of the original reasons for the introduction of userprogs were
+usermode drivers. These indeed required execution. But the whole framework
+was removed recently, although it might come back at some point.
+
+> > * Let the user manually set CC_CAN_LINK to override the autodetection
+
+(...)
+
+> I am not surethat would actually help us here plus I still do not like
+> the idea of throwing this back to the user.
+
+Agreed. My personal preference would be my proposal from above.
+
+> > * Add separate handling for runnable userprogs
+> 
+> What do you mean by this?
+
+I see two possibilities.
+* New kconfig and FLAGS mirroring the existing ones to build runnable
+  userprogs.
+* Introspection of the userprog executable ELF to see if it can run on the
+  current kernel configuration.
+
+> > * Use tools/include/nolibc/ for userprogs instead of the toolchain libc
+> >   (unlikely, but I wanted do mention the option)
+> 
+> This could be interesting to explore but I assume using a cross libc
+> could be desirable for some people depending on the testing?
+
+Yes, probably. Although the test code in samples/ should interact directly with
+the kernel, without much involvement from libc.
+
+
+Thomas
 
