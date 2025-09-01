@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-794669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A91B3E504
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:31:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5D3B3E51A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ACED2000A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:31:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 238347A1CE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EB3198A11;
-	Mon,  1 Sep 2025 13:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE61E322A1F;
+	Mon,  1 Sep 2025 13:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Icl8e9Vo"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaaVvFJN"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5208915C0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEE684039;
+	Mon,  1 Sep 2025 13:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733469; cv=none; b=QY4lRKxlfjSiuMk6wI7gd7ErMpfrUj8//XxF5XQbB2MRAkQXtYdMoEibA32wLQwdux3jSgImGhEjRCnPounjCMiSOtHMola/9KTGDMkuPI2ihob6BgA4pP/+XeWds90Lst/47xdj0jNDdj/qUSgobvctxBnMe5CVzq95IEoojas=
+	t=1756733541; cv=none; b=ppOjvAtVhwiVpIQ+M66NTKmZax9TEDDtz0jS9zSb+NlH2j/zcyNSiKkLBZKJdeYLlMYYK3xpPL9EA0m2joaWfwAPbr3zttphH+yG+gtE78sp7JrJOr680an/NCIIImXmFKDwGSNRS44qWxwD8kqnM+EHPbGz1lRQeeonU2/LRk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733469; c=relaxed/simple;
-	bh=lCpYxwNZ0fd3/4JdB2UP6w7/TzeFfxBQeM/QCFqRP3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SCKmD9K6TwZoqzVk8v+4kxhvTfPJeTncY6ZUNoK7T41gR4lAqyBzTwr+YHUsK97uecB1xZiit7IHB0FZn5l0ugXnk+uvtddsBD2HK1gPUFRdHLHJGWiBmwBd9gFFr93B3dT8zxsDfCa60ek0imXB7MbXtyVRdRSIwgrO3iHM99k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Icl8e9Vo; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7e8706a55b3so13442385a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:31:08 -0700 (PDT)
+	s=arc-20240116; t=1756733541; c=relaxed/simple;
+	bh=dIuYSDRH0rrAjqku6BMJyJKVrYj+J2ppc/T5xlhcC6M=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=HSUKhfiPz3rh49vfeTdYp3D00Rcw4fPXQVvQrqmqNxdQcI0eEWK0EkMWyd4dxpbt3sYCbH2yEMdx5d6auMuJ9yaUkoIiiJ4dx6jYJlo/uh0kLBmpYmtK4TBI/6ISKK5LwHmVhs98A0cJgECp6i/00YazWUa8R6hCDciVCSagR5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaaVvFJN; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7f777836c94so391697085a.2;
+        Mon, 01 Sep 2025 06:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756733467; x=1757338267; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wCDjZSgl76mrff4NwHQBbFuq61Q1zOmaA8xgmtQ4BxM=;
-        b=Icl8e9Vo+CCN/HQsblT8Yxly/YK+mCbUaDsBQQjUzAAexLHAq8Ex7Gi9+SQfk96woo
-         SyDiTYWOfclLgdO3amCVcIuEWTs9BoeB/0IEcjlGjyRZfM9ZIb79v83al0hXgSxZLmCo
-         EtcqOsOkY5wVS/WA7ERT4Y2TmvZPUcgu1JuVwhPswGeOU8yc/2qI6dG2o7c1aj7c74N8
-         FmSVqJmWCGBUVhytDEXI6rVzazGlrU22FsGJoJKWkvhFhA6OBdRkOXxBpnGISHBo4xUQ
-         sl4R71ejjgQtG0nGqu1yV1vMLQBdi1m5twNnn4Lb0l2X8yW9vO+LDsAmp8RGP/tgyETk
-         i2hw==
+        d=gmail.com; s=20230601; t=1756733538; x=1757338338; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gs0k67j0oMEJLadP5St/TVYqWewj62pdAK/dtRo7zyI=;
+        b=IaaVvFJNoM2e0Fm8Y/Ofzhab5AQLNd0JkbSjVa3lQSZ3SN+/FFicYvMAjBm6OSdRv3
+         RplbIOOLg0GWZe3XcW1FO4Fm0SbFUfzC0px/+2BDOFgxLdaYEVk+lT8ktrGXpMq/3+o+
+         gwDZ15u3oWjm0CEQcosDt4bX2CWejI4ylvR0mbsgnZkIbzs1NghQpKTCLN7NI1RrLj++
+         ify+mBWneztbvOHNRvtajX002EYOndMSHV40lyC64tLW/dVYTdxfXXwfWOzEfhWPoli5
+         3nM5wY5jmn9nXTo3KpeEHfVchKobjpFIJQ44RaRIeQgECdX9R6sY3gEGf9tzfLhBxkr7
+         eSZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756733467; x=1757338267;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wCDjZSgl76mrff4NwHQBbFuq61Q1zOmaA8xgmtQ4BxM=;
-        b=whlChrqoWJwGE5CmsKm4CJNDkDm6niW8PQ6xTIy+z1i0Gxsv5XNY9/V7asuvGUV07c
-         fSM9pSJ2bT1Gi7ui1jIBgTaaRtvzxykOusF4lM+o9OjG6BZKORcOTMl6DzcjH4YLPp4a
-         Cp0+uPAk9M0L3JjIMGh8MB1cW0FgqpDm7+1eOgimyKuxPdMfNiB8EDOpdyqtdE6DdLX1
-         BaKVUAFooMR8OKEAQBJbpZEnvSjm1ElUH3ShoTVQYfHrZc4eVsSJoqyeZ+uq9q3IPXiS
-         u4Xs8hFj9NQWb15e357+/QTjwW/YXqwy7P/xOU/qtms027VUCC5p38qc7cZc3eIPKs9E
-         iS4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8y16L/RXUJ8eyfc0R9lH0y06J6EmAI8Ur6uQgzdH/AnTLWd7RdLSegVuI6ZlrX7Cg8RTngKo6QFElvvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq2VZq0XrFXiXdA4F8JiyWFg0jpwt2781AkPUX+ztisIINo33l
-	fqyNY+m+cuNQ0VYMw7+YaFjltLnFC0QAURo9TXT5LcKR7tMf38qSBDDdJs6UsFHPOOrhP2k1QHR
-	+BTn4ZyJtPAGEf7uUM64Sw8ZdeQzJYpWcBEulfQzzcA==
-X-Gm-Gg: ASbGncsRPRGsefipIgAHYqekGPS2rgKUNVf7MvdO4q4CinkhkdrQ/t+Dy6kTD0bbPHi
-	SDoWNkU0ACbO9PTubFczwnB0S3fh81aHC1sQOzWqq1hxNq8wzxMNmq0aNNu2aaTCTffWFQIwBhO
-	dow/pUG/0MORG6Noclzii4xJjzgNvsjVSjWuDfbJAkl5YLE9HNNuS0RhbA0Dn3udCEj7C5c8CDy
-	Ntjg/+hm4cF2VkEH9nYT6KkKYU=
-X-Google-Smtp-Source: AGHT+IErB4PfzzopI14tCGiVeZs7a9//buOSDYOobMbsVWlDMHk7o0uJw941KlS7WlEBD+FlW1zvW/7hPA+tGMwbVWE=
-X-Received: by 2002:a05:620a:4495:b0:7e8:5bb:b393 with SMTP id
- af79cd13be357-7fd808341d0mr758728985a.4.1756733466773; Mon, 01 Sep 2025
- 06:31:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756733538; x=1757338338;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gs0k67j0oMEJLadP5St/TVYqWewj62pdAK/dtRo7zyI=;
+        b=kxuRLpyrTeSmFjmJDJdAT5clHfWXkBmr2Fs5xK0+HqkCAhr02slOOq6g0qrCr0y9Y3
+         srjxdP5pzb4pTvcjKvZ5BUqJTc9YsX1MXrB7N/hNBaiK/9O5zVvxLeQBDXoqxy5WpF8I
+         aVyx3dQh3IiTOjFa7JcAcFDGTVER6gyfv2iX6w9eBc2Iln/HNx0jvJ3Ynf0TjH/HLHLO
+         p439/t15LvB2jNEJT99jp8/FmrkdoOkDM5uilwiuWuwLu3Hs7pzzAncFEie13YVJFC+q
+         ej32Qk3AeH1sGWTrXsmTih1OJyYL6SOZiXMxwKsZ7JkzkkJbdfG3xRu5ywyoGlqjBgPI
+         JTKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPnvgnR8Zw3E0O+BPoT335HUR9Zi5FZ8k4JNOREKgZyKDpMC0oJfyr6yBquYpnCxt1tRvlFLuW@vger.kernel.org, AJvYcCWKfFfPDuBfwhxpRm1FuvhuaHgvK857H4VUlJCeHXEN76Td+NSDgzbg0GFKWRO6SoUFcekcDQJ4gUyXiO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv9IbBJJG15PY73aTLz1ygk1g3UOQD4pLcET5LFPTolRAeapCf
+	OIwQ0p8VSiQnEGgFStWpcbzcfs0AZRttutZj8c8SnIgpPojXuyBuczhu
+X-Gm-Gg: ASbGncveP+13g42zRL1l8ExVmsLB4dcrmMksd4Sx6+q9SFea7dp4urBL6QFpNgx70tq
+	5kQ5sSpdKeHahIstNYVVfXQqdxoNOBcarTk4qqCYIqinOcWRk1peqGclxdfC79jrrpDhSXab4AV
+	ma2zfK5WNIm98r2sQopKQ/7nOIYe6avW1UCWAJGOM9mTSW5yuWp4BM+HNYlAPX8Yii6AYjnV0KP
+	g5jOYFv52ZhcPjqIT45c2Lu1UL102NxyGBNhhrvpR/ypLMrl0IU7vxDrlrP3Bar/CqMvZMBB6uS
+	GNcvHjSuXe+BPKCLqiV7yhS9IAqXUKQlY7IYVuWiklZaWx8XvwV+o9phrCzTslGTXUp28e0EPNJ
+	KfZA1kXnEyyxxq2R+n8YRXDLBZkBjK6omeslahu6oEB7rIrtLjbp0ep0qqbUTYcKvVrlaTzXqf1
+	MXZ8m87xFsEMWa
+X-Google-Smtp-Source: AGHT+IH3XgEF6WSniy8n1VfNtddSK7rYtC+DCtrf5JZxE3JkOl2PsQ9lMirIavyvCf1CVEdSTUT5Yw==
+X-Received: by 2002:a05:620a:199b:b0:7fe:6673:9796 with SMTP id af79cd13be357-7ff26eaac9bmr845481185a.9.1756733538327;
+        Mon, 01 Sep 2025 06:32:18 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7fc15c829b0sm648517985a.59.2025.09.01.06.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 06:32:17 -0700 (PDT)
+Date: Mon, 01 Sep 2025 09:32:17 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: mysteryli <m13940358460@163.com>, 
+ "David S . Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, 
+ Simon Horman <horms@kernel.org>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Mina Almasry <almasrymina@google.com>, 
+ Jason Xing <kerneljasonxing@gmail.com>, 
+ Michal Luczaj <mhal@rbox.co>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ Eric Biggers <ebiggers@google.com>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Mystery Li <929916200@qq.com>, 
+ Mystery Li <m13940358460@163.com>
+Message-ID: <willemdebruijn.kernel.1137e554f806b@gmail.com>
+In-Reply-To: <20250901060635.735038-1-m13940358460@163.com>
+References: <20250901060635.735038-1-m13940358460@163.com>
+Subject: Re: [PATCH v4] net/core: Replace offensive comment in skbuff.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250827230943.17829-1-inochiama@gmail.com>
-In-Reply-To: <20250827230943.17829-1-inochiama@gmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Mon, 1 Sep 2025 15:30:55 +0200
-X-Gm-Features: Ac12FXyONJJHG25VQtRqcoXABg35o0Wz0jSFgjK27pZDOrhzFTzQjZ7eUFY1fUI
-Message-ID: <CADYN=9K7317Pte=dp7Q7HOhfLMMDAfRGcmaWCfvOtCLZ00uC+g@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent()
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Shradha Gupta <shradhagupta@linux.microsoft.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	Linux Kernel Functional Testing <lkft@linaro.org>, Nathan Chancellor <nathan@kernel.org>, Wei Fang <wei.fang@nxp.com>, 
-	Jon Hunter <jonathanh@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Aug 2025 at 01:10, Inochi Amaoto <inochiama@gmail.com> wrote:
->
-> For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
-> the newly added callback irq_startup() and irq_shutdown() for
-> pci_msi[x]_template will not unmask/mask the interrupt when startup/
-> shutdown the interrupt. This will prevent the interrupt from being
-> enabled/disabled normally.
->
-> Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
-> cond_[startup|shutdown]_parent(). So the interrupt can be normally
-> unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
->
-> Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
-> Reported-by: Wei Fang <wei.fang@nxp.com>
-> Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+mysteryli wrote:
+> From: Mystery Li <929916200@qq.com>
+> 
+> The original comment contained profanity to express the frustration of
+> dealing with a complex and resource-constrained code path. While the
+> sentiment is understandable, the language is unprofessional and
+> unnecessary.
+> Replace it with a more neutral and descriptive comment that maintains
+> the original technical context and conveys the difficulty of the
+> situation without the use of offensive language.
+> Indeed, I do not believe this will offend any particular individual or group.
+> Nonetheless, it is advisable to revise any commit that appears overly emotional or rude.
+> 
+> Signed-off-by: "Mystery Li" <m13940358460@163.com>
 
-Any updates on this?  It pretty much breaks testing on linux-next for ARM.
+You ignored the main feedback to patch v1 about invalid signed-off.
 
-Cheers,
-Anders
+And for some reason sent the same patch again as v2 and v4.
+
+In general old comments are left as is, even those that would perhaps
+be written differently today.
 
