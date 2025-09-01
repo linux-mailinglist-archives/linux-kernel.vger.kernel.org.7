@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-793995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD2BB3DB48
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A5BB3DB47
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABB03AE948
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950B217AD3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5E42737F6;
-	Mon,  1 Sep 2025 07:40:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7B6272E41;
-	Mon,  1 Sep 2025 07:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5F6271451;
+	Mon,  1 Sep 2025 07:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OEnKC/RE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A4270553
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712416; cv=none; b=ujWLgsyYhHgXEQ1p7xRI7hBF5jSaA8bhtGBDtxaVn5Td/u8Jg3C7izDJHBbayWdQNERLLNYO2ZeG4zX9/Do6xOKEH6DUq2hbPnP7C5jg6Q5hkHiZMjnzO3OIUgqVmRxp29R8TuLX/reIKaSRQE5DTIGYmRBjMXUwxaq6md583f8=
+	t=1756712412; cv=none; b=QkhmcQv1VTFZjDsUf5zcJKgXFBvMzBF1dBmNgxZ0G5y0Agb1EviLxVN3US3xwttpP0jIbEIHpoXM3brDCgzlik+J82zqpweIrOuWJdLa2KEFAXtcRWx29F4niSFJ8hMydXz4Elz+ZHS9Rk6Mu0I+I5It0STUIHEI8dabnOnpLa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712416; c=relaxed/simple;
-	bh=YIjKxzEPWY2SYGWXUttLCwx6grvtC94JIZYrLh5T5H8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bE9J/LAXOi2SgNXRWYb9IK5vzXUN1TkYGqoKxikHzyWn7RkIMcAfqPyQmf/6RNz8VH+mnisLBtj+PcAWXQZaKmmj5zNSHdNceXMKR6DA7DTD/UG0gIR5xIYGHTg8IfUX5M1NHd6ZruCChPai+KZv3nEGiSQ/kKEBlzuUTN2xw1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2EC7B1A25;
-	Mon,  1 Sep 2025 00:40:06 -0700 (PDT)
-Received: from [10.57.57.17] (unknown [10.57.57.17])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 195E83F63F;
-	Mon,  1 Sep 2025 00:40:08 -0700 (PDT)
-Message-ID: <3f6e36f1-c942-40d6-8a46-63f3ba0d0d84@arm.com>
-Date: Mon, 1 Sep 2025 09:40:06 +0200
+	s=arc-20240116; t=1756712412; c=relaxed/simple;
+	bh=8WIB6jBzvXtpOGzijwoI7D/TfYlx/JYFZ/Iag0qXF38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RCHPP1HJejNzgLkb4FaHGOer+lW61hUHOX6BmfiCk6Ulh7ZqG3YZQHKC0o22+wrxx3yvS6+gYs5z11W1uZnNVWI/sEoZa781Dujkr/kQEX0el4WP4NiWfnCcYQochagwuYU6uedKv3fET0YeZ029FidMaoy76+o/+oUxDxv/QZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OEnKC/RE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8872FC4CEF0;
+	Mon,  1 Sep 2025 07:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756712411;
+	bh=8WIB6jBzvXtpOGzijwoI7D/TfYlx/JYFZ/Iag0qXF38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OEnKC/REMDosj1B7BcnHM+kNCqnDb6wBRNwSKiG6TUfFD0ptCgztLPVeGsshnGq4g
+	 ITSfp7+Eij+2+WfFc5GyWSC3odpBENFtErXAgEXh2+DJSFDQD3+Jju3C+kh2GunBi4
+	 PFo7Qydyj9p6Zje7U5tNG+dteTDf9J2HwLqs4iC0=
+Date: Mon, 1 Sep 2025 09:40:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Janne Grunau <j@jannau.net>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvmem: core: Fix OOB read for bit offsets of more than
+ one byte
+Message-ID: <2025090158-ending-definite-33f2@gregkh>
+References: <20250901-nvmem-read-oob-bit-offset-v1-1-b610e18cdd3c@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
- function signature
-To: David Hildenbrand <david@redhat.com>, Kees Cook <kees@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Yue Haibing <yuehaibing@huawei.com>,
- Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, Joey Gouly <joey.gouly@arm.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Yeoreum Yun <yeoreum.yun@arm.com>, James Morse <james.morse@arm.com>,
- Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- Zhenhua Huang <quic_zhenhuah@quicinc.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Dev Jain <dev.jain@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250829190721.it.373-kees@kernel.org>
- <c13af2e9-a0ac-4e1d-be8e-4612ae8d9c0f@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <c13af2e9-a0ac-4e1d-be8e-4612ae8d9c0f@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-nvmem-read-oob-bit-offset-v1-1-b610e18cdd3c@jannau.net>
 
-On 29/08/2025 21:13, David Hildenbrand wrote:
->> [...]
->>
->> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
->> index 6e8aa8e72601..49f1a810df16 100644
->> --- a/arch/arm64/include/asm/mmu.h
->> +++ b/arch/arm64/include/asm/mmu.h
->> @@ -17,6 +17,13 @@
->>   #include <linux/refcount.h>
->>   #include <asm/cpufeature.h>
->>   +enum pgtable_type {
->> +    TABLE_PTE, m68k_table_types
->> +    TABLE_PMD,
->> +    TABLE_PUD,
->> +    TABLE_P4D,
->> +};
->
-> Just noting that we now have "enum pgtable_level" in
-> include/linux/pgtable.h that could at some point possibly be used here
-> instead (not in this fix). 
+On Mon, Sep 01, 2025 at 09:29:43AM +0200, Janne Grunau wrote:
+> When the bit offset is BITS_PER_BYTE or larger the read position is
+> advanced by `bytes_offset`. This is not taken into account in the
+> per-byte read loop which still reads `cell->bytes` resulting in an out of
+> bounds read of `bytes_offset` bytes. The information read OOB does not
+> leak directly as the erroneously read bits are cleared.
+> 
+> Detected by KASAN while looking for a use-after-free in simplefb.c.
+> 
+> Fixes: 7a06ef7510779 ("nvmem: core: fix bit offsets of more than one byte")
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+>  drivers/nvmem/core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks for the heads-up! I'll look into using the new generic enum
-instead, there's really no need for every architecture to invent its
-own. m68k could also use it instead of m68k_table_types.
+Hi,
 
-- Kevin
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
