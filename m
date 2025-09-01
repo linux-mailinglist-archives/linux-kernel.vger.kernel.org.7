@@ -1,91 +1,75 @@
-Return-Path: <linux-kernel+bounces-795130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A47B3ED27
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:11:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C1AB3ED31
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF61189E8D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6761A85736
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED91324B16;
-	Mon,  1 Sep 2025 17:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251B4345753;
+	Mon,  1 Sep 2025 17:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFq9HdRO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N33Y/byO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426BF343D7E;
-	Mon,  1 Sep 2025 17:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB863451CC;
+	Mon,  1 Sep 2025 17:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746510; cv=none; b=o2S/0m7ZNTBEt8Bf1qAHleKmr4TgfxBxJyw7rOFayeRr8aTjyIPW/Jo347Bx/tU/XiArZhtVkvWhv2cPbSwtt473oTbKLDCUI5wNcQpE2WRERA0qXPCwRmG69YQ31gm6eryYLDfiBDpowe3lbBYnvyfXFT8tLOJ6m9adu1ZGGPE=
+	t=1756746516; cv=none; b=DZz4xzqKLTKWB7NmpOdFlBBwLg/5bvwREoP96uIlbPHxK2lsHG05lDHZSGo8lEHbMPpo/4uCz8HA0jYkv39/tsNSGB4fk51j3+l7LLrUZ40VsqE2ctH/gIIVAHIOCE1ZhUuvym7SilEcOc/k/n6JRU64DCqTH9aIZi3iMEH/gVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746510; c=relaxed/simple;
-	bh=zD2cqAHxzinu1xqZSy9fx1UkGEK00Mem1gE1dgsjZrs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Pdlhsp/+LinI6SpYIC9HitPn6F/PcwoPuDABnZ2Po2rIYrZM1WB0wZ/y1OPMpU2gieqmry0wcb+ozGT+88BdatpdziLYTDunUmOlEL66BU07iWA1+3qJ77hv50Wjo6I035fJG8ACPH0YzxGGXUHHVC5soPPINowZFqjtwYPSe0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFq9HdRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 252AFC4CEF0;
-	Mon,  1 Sep 2025 17:08:25 +0000 (UTC)
+	s=arc-20240116; t=1756746516; c=relaxed/simple;
+	bh=UxkIIFKap9sAvvGQ8hTKOIfE/eeyxdYvnFXmy8j2qAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=StevVaN018IAy3vphzR87nHUX+Z1v5ZQnUSS53ZE6f3XWVXD5VejHSSNMPYoqNZlk8kK7HTTD5cz+TYRlW4eIzEtJz4aukL1mwbmyM3qNIB87JSg+RiESUm5KO7t6wM09t9BQtHYgqB/p0m6SIRPN36pqLox8Bqy4xeOozIhGoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N33Y/byO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D912C4CEF0;
+	Mon,  1 Sep 2025 17:08:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746509;
-	bh=zD2cqAHxzinu1xqZSy9fx1UkGEK00Mem1gE1dgsjZrs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YFq9HdROE7xurb3UnkwvAxcAkCzWDFW+THL1nvdjEUpikcG2YwGU8qMcoJwcqoaay
-	 MUrgdpYvbDtzXtvWsnfzJvoIOY/RtOxXjh9tjnYyHxTAAcEUsVDiAf+k1pxirp/2ta
-	 MCmKmPodJMBOAB4kCuj2cDsYjI4CzQxP0zO+04Wri7nOVd0zoaIBydITiyXWjwYNpq
-	 xZR6tBta41plEbUU8laQqU31JYOmmyueUR5JHoJZ69qBbiPU50gAdNDkU1YDyRp18s
-	 12W+4X/B7BXVu3h1sqzjiQw+V+KTs7OzKx0Ft5XhaNo8skZ0DPWyqkeXutJPF3EBj1
-	 W6iJkpDZtcYPQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Prabhakar <prabhakar.csengg@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250821155957.1088337-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250821155957.1088337-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Fix ID check logic with
- VBUS valid
-Message-Id: <175674650567.186496.17960330116402166478.b4-ty@kernel.org>
-Date: Mon, 01 Sep 2025 22:38:25 +0530
+	s=k20201202; t=1756746516;
+	bh=UxkIIFKap9sAvvGQ8hTKOIfE/eeyxdYvnFXmy8j2qAI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N33Y/byOWpwsRs43YhOi3Sxws2GaMUo8HT1N0W5XHsQ+mqDpcNSoXX7/HI1Yidfe+
+	 nsrB4CwoCqEMwQo53QnRkabAJF8wsB/Z8kmO9g51UNGO79LSmUN4rGPgt6AXIbaluu
+	 M8XXWIE04hv+ec3mHJnyCCfCZq7DDkQCih1/XiJfAAXOcHVFS514HpnfjRQQYX89CM
+	 SZCdrPnMWDni51N3HqyUeikgCEn1AbvIxa34kSsmjtGgVN5BzOPL1SSZrq03t69qA7
+	 wCFQVJBfQ6NkNmB0ZIRvmMr+rGvgOaKwO+4gYGrwaROKSXfYztnmAoLdfmVpJ7uzdn
+	 MLP31TsqnvAcA==
+Date: Mon, 1 Sep 2025 10:08:34 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, brett.creeley@amd.com,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ corbet@lwn.net, leon@kernel.org, andrew+netdev@lunn.ch, sln@onemain.com,
+ allen.hubbe@amd.com, nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/14] Introduce AMD Pensando RDMA driver
+Message-ID: <20250901100834.130dd527@kernel.org>
+In-Reply-To: <d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
+References: <20250814053900.1452408-1-abhijit.gangurde@amd.com>
+	<20250826155226.GB2134666@nvidia.com>
+	<d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
+On Mon, 1 Sep 2025 11:57:21 +0530 Abhijit Gangurde wrote:
+> Jakub, thank you for looking over the Ethernet side 
+> earlier(https://lore.kernel.org/linux-rdma/20250625144433.351c7be4@kernel.org/#t). 
+> Are you good with them being merged via the RDMA tree? For context, the 
+> ethernet patches are getting applied on net-next, and there are no 
+> further ethernet patches planned for this release.
 
-On Thu, 21 Aug 2025 16:59:57 +0100, Prabhakar wrote:
-> The existing ID detection logic returned false when both IDDIG and
-> VBUSVALID were set, which caused incorrect role determination in some
-> cases. The condition:
-> 
->     !(device && !vbus_valid)
-> 
-> did not properly reflect the intended relationship between IDDIG and
-> VBUSVALID signals.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] phy: renesas: rcar-gen3-usb2: Fix ID check logic with VBUS valid
-      commit: 356590cd61cf89e2420d5628e35b6e73c6b6a770
-
-Best regards,
--- 
-~Vinod
-
-
+Go ahead.
 
