@@ -1,218 +1,258 @@
-Return-Path: <linux-kernel+bounces-795016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F53B3EBDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D732B3EC1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C0F1885727
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3146444363
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D0322A4F6;
-	Mon,  1 Sep 2025 16:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JbBSDBq1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35122EC08F;
+	Mon,  1 Sep 2025 16:21:45 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920417C203;
-	Mon,  1 Sep 2025 16:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742689; cv=fail; b=pvOWufB58U+qDTneV0MDgpTMkxJnR5V2Af2gROjCzVPwpuHktoQbQpR56bsG0Jx9HLeoCQj/0seMnWrmgx+V0jMRUX+40bEg/zE2qu115zKgnx+J3atSnTN5qLesRY17Y1uRJsnEnxKjgv2l4rbNgq0/pERM8Aw2b9GX5s9rEG4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742689; c=relaxed/simple;
-	bh=Wr5FDwWUndXyFWY32rd5uKy92FjlKk+tg98cBLaSawY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ci//MeJ2VJmKUYinJwuXO/doCdpioKuimeaFshRDUKZAHQaN18pHBH4lyRAZ2bjgu9wJy3sv6rwgUBEpdRlxXzw8ZogmheO44o6eIIsTHy7KLKiAveTTiLpJuBELLFQC5YVgbrr+P4r4rPnrqf9PHOd4frofDZOQZ13lA9BRwAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JbBSDBq1; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756742688; x=1788278688;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Wr5FDwWUndXyFWY32rd5uKy92FjlKk+tg98cBLaSawY=;
-  b=JbBSDBq1b7qVOC9YVs1d0r9a2YGdCo3polU/cMu6UTYw/j68IwqnM5Xt
-   SJrAVgWvOWI2RsVeqR2wrsRy9Hadxl+5lJjpQiKRxC7fznMoJbmMtjWLe
-   XcOLsVKFwfpPUyavWHx1rWiTHB1yuRoRBGYzC1u2LBSNVTs/yBp8/tw9R
-   9d1jZl3gEKO6hTyEAvuPTv8k3Qu+tA2oBvx+lJ2l1995aaA07EzjcEbdu
-   L/lfre0TdSdn5wvShzZdK50RbipFOyhcaCQ1ULO98MDmcLpt2ZIJ0PfsS
-   8KMl6P3CWvjf4DB6NBlmS4n2bzuH+X8IpEUo/2wXFIp0ehJAb/guTfuFC
-   Q==;
-X-CSE-ConnectionGUID: veEsgIdeRbW6ZfsEHMh5Yw==
-X-CSE-MsgGUID: haZsaTcbSq6a8tk+CHBFBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="59111803"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="59111803"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 09:04:47 -0700
-X-CSE-ConnectionGUID: vTCceAplSXeXntuYrsQT8w==
-X-CSE-MsgGUID: 6FLNeUR9RLiqT0dJliGqVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="171908173"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 09:04:47 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 1 Sep 2025 09:04:45 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 1 Sep 2025 09:04:45 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.68)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 1 Sep 2025 09:04:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YtmZk/0w2PBlO2HiDgrPUACTg3EMEZg0Ma2xB0nx0vcE4ucbJ4as/aPIlmccOssns8Loywt+yazku+5p5X2ADfAZWTHDYyqZFuOHembIKKX/RVeHAnldsMKxq2Cx/dhk5WcUIwEyQ63XkgvNVWyb5A3HWIUkIoWisAXfnPTWG2a61G/KfXuSSSxx/H/jkBD+xVP8uxdEjg8pjllByV9pGzJfqgKoHCPlauYOkHcoZVz05sgSpURJDjkcHaeLDmu7h9LcBMc9XQJxz6fuilFhevelNlPyylvApAjxMechBNWUIkvK0PAUQzIijQFgXwlAcmDsw3zPL3EztdQrMVAOEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=upqgGT6dIE8XrlqeL8baoCIbalUsdiedGNPOAijXkDc=;
- b=F1pJV87SPpwfYctja9xQkaHoU3C7GHSvERQipE5NVJztT3wxicbwfGpGuMFs8kN1PMESJlmMMDNglVWDUyOsKJ1cEUtYrDHoTz0/g6kAOFmvGkeH/Mtoydpm+z6SUscPUjRRrISHM/l2wDNXqFaygkj+G3KsIaNdKQHmHO56MEI2AFsTITxoeV5QHRzEmp7vRhrmqCcGVkKyIZeZsue8LEFWejT59H9Pz0jnv7EGqDPxWUSubqE2RQ98SVzu3NnW4pQpGYCkL8lIaaNxIV/YrmkEVuxAcqH4AY9P9wU1xUpJBaNP+DXo7GZe1k8MnQlLZibM57k0YWjQV0cvsmtbjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6366.namprd11.prod.outlook.com (2603:10b6:930:3a::8)
- by DS0PR11MB7333.namprd11.prod.outlook.com (2603:10b6:8:13e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
- 2025 16:04:44 +0000
-Received: from CY5PR11MB6366.namprd11.prod.outlook.com
- ([fe80::6826:6928:9e6:d778]) by CY5PR11MB6366.namprd11.prod.outlook.com
- ([fe80::6826:6928:9e6:d778%5]) with mapi id 15.20.9073.026; Mon, 1 Sep 2025
- 16:04:44 +0000
-Date: Mon, 1 Sep 2025 17:04:37 +0100
-From: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-To: Eric Biggers <ebiggers@kernel.org>
-CC: <linux-crypto@vger.kernel.org>, <qat-linux@intel.com>,
-	<linux-kernel@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Jason A .
- Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH] crypto: qat: Use library to prepare HMAC keys
-Message-ID: <aLXEFW/YF4LyukGp@gcabiddu-mobl.ger.corp.intel.com>
-References: <20250831205457.36143-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250831205457.36143-1-ebiggers@kernel.org>
-Organization: Intel Research and Development Ireland Ltd - Co. Reg. #308263 -
- Collinstown Industrial Park, Leixlip, County Kildare - Ireland
-X-ClientProxiedBy: DU7P194CA0002.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:10:553::33) To CY5PR11MB6366.namprd11.prod.outlook.com
- (2603:10b6:930:3a::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEF2D5936
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756743705; cv=none; b=TGHDZbEmIOiGKaMgpz+OZkiwzCWan5vMaQwcP/E5wpqFZve2yrTkvHPP+uUXNC3hSLPN9uDazHBbT/usZ3XzjOJcJB0UIRDzNyFl6hrLd0UfmlMj/Y4fl+lzAXJsXfaHaZ2mqZOHsdoqCVt2cPnOKWK3n1AUfiKsHMlVYBVoBxQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756743705; c=relaxed/simple;
+	bh=AFqHdAfodD4+2yf9u1F2Rp3YBD/K6FRojrAd0mlDvNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQF8FUsvoc0gdTIC4naJBplb7f0hIo9ezNaej9HrsL//QyYd/FOzmfq4hcDFA9Fkq7L9WNKVIQzPGk/2KoVOsfx1KeXUkGGNN2dh363G5FcjnKUWGZAHIJje1u225gfzBQpwqxuHrWRn00cVe+RLm47tKPzvXeVrXAYz0z7rvUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 2 Sep 2025 01:06:41 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Tue, 2 Sep 2025 01:06:41 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
+References: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
+ <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
+ <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330>
+ <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
+ <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
+ <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
+ <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
+ <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
+ <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
+ <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6366:EE_|DS0PR11MB7333:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd55a508-4a38-4c7f-4345-08dde971441f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ttBsguoBxzGsx+jSlxnrBbQV3a5W56UB7xPZ/a+DoM+8lWkp7455Rl66lgu7?=
- =?us-ascii?Q?BAEr5FUyOfNNU9NCQPJLvNt+b7b0iCyzJ6SLlmJ6NSfS9Uzg6p1CBAXJtPCI?=
- =?us-ascii?Q?nBBxHDvKUH/fTGGsHEGDgwSUAUJliaqCz9Nthtxvs4IIxabm+PKubrn6Usw1?=
- =?us-ascii?Q?tQD/K99Evny3bMIFsoGevd3qeObYGbmYaXhlHvhyADJ//b8gxNOl44H3hzeQ?=
- =?us-ascii?Q?ZhYlexGGSzaO8KyKbIzYTJMSyvGbcDA64Oc3DumNJ7+zAmZn91T25TGkgeRg?=
- =?us-ascii?Q?ZuZA59dY5ydrNQpk4Pu/+tMVzTJDxUDhgbwvbgmNZRlMuggrv5Z4XXvhrSG2?=
- =?us-ascii?Q?xL1Tfgs7Gq/ZCy03Jonlc0fCKf+nqi8ROkzn/7lbZ8Kmvf7IHMIimbH62FqJ?=
- =?us-ascii?Q?WuSPc3ubcNjm6MZH5xvWNMBHBmAZr2E/mGSEMGJsLX/Yu7htxD4J/nQ2cGDG?=
- =?us-ascii?Q?ZOXYwJszPz0HaNZx/nDphFiqs2o/syUccn9/S7ACbQSydSVtjeuGgd9TWKbW?=
- =?us-ascii?Q?wWhElvw35PRCsoijI/pw37jVjMpBqMVn7G0yUwH/onuRZHqsV88W0XcRXeG3?=
- =?us-ascii?Q?5yt7zf25zxqLNI1Uzkb+k1HGPWnSinLbvXgQtVZRzn7WU34hPtPtTWMQQyFu?=
- =?us-ascii?Q?lRGlAVsJsjbLdezLb7OUhOjjgtFenlC+s6TetyPhAm5z7pv7W8rvOZRMP9Ts?=
- =?us-ascii?Q?P0+sdz6sAIrXGtN/s5EvSdMF6mG+ZBy/Ug1Dw+bCG/3+Tz8qUbntbnZVRat+?=
- =?us-ascii?Q?bHlR43nw3pZAGiH8X0MQa2rVMpwMcnhoD3GWkpMzhsKe8VCnc9ecLLMSB8aa?=
- =?us-ascii?Q?QiqkGKA46rgaZvU2u5hcTpVMjvIZS7pXbfzf4+1ZPpIXIn8GvOaISdwErC0C?=
- =?us-ascii?Q?StmdBQjWOKsopsOFbXcIKmm9LqyklqXDxSvGXXI1AYyRr5t9q+sko2VdDv70?=
- =?us-ascii?Q?0is67qg3/Q8TUP/97Hx61wkOvcbpzMfeeSSQIl95hb27Mqpfk1jeIB0UXzDy?=
- =?us-ascii?Q?qA+16R88Oj6dnpmvpK+AascEwPjKxITcy41d7X6iliwGgQpgiMIUXgPTdl5b?=
- =?us-ascii?Q?YoGScqvVJoU9/3LjDhjVS+CNsFSGutzkNVb07t7lDM9UTyGwH8qfDG9MjRj0?=
- =?us-ascii?Q?frHuxdtZfxd1hAW1XurfTEuYCkvJLZSgtOsCuWitm2algZ1rdJ0gqqyoaL/v?=
- =?us-ascii?Q?+ogx88L1XFh90yqPier5+kS4GFbuwHWG90lHB1hkTr6+p/PKm4NFWrhIY9Bg?=
- =?us-ascii?Q?i7eYaHG2GUrIFlxIe8dCvlCqflZq+wjUgQ0daQ7vLd7xR/RyqEYmCw7Dqy8G?=
- =?us-ascii?Q?zf/FClJUXFgvVKhN5+c9k7VudyAwpetwXQxIAKwVFuN9bVxV6r0Jzw0n6owh?=
- =?us-ascii?Q?gXc8mr8S0pEgkHd/fLDwZuXvjtsVcG1Gr76y60x559ykdonBynCWoFWeUTRC?=
- =?us-ascii?Q?RShDG290qCg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6366.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?u4UKWRqJt5WJv9Q2xjk3V9EjGrWmjV54WEKeBtA4FtsqRayUd0BdXVUYbphb?=
- =?us-ascii?Q?f3fWvebtbfqE45NAMe5oI2oFnDRJ9oWRPpWqUeZWDMWfB/WbCSZUnZL40R7w?=
- =?us-ascii?Q?Lj6HTTZcClR1vFdER2t+3jfOfbCBhwsK4ltvneUUHIg5HV4GeIblCIqWuGcC?=
- =?us-ascii?Q?5ouWWcgHLM7IsOyC+lUzWL5a+7vbK/mEsUL5p0pvIbyJxIFERVU+EfJbnORw?=
- =?us-ascii?Q?YpqrUyYdPyrrV7OxWPJCYYdcvwCzlenfjuU7Kwfxr5rRa8TlzQzen1jA6QzC?=
- =?us-ascii?Q?XPursKAQwinSvLTdogHJG+9dlLxzFgImtc1NWsH507hTlS1gLPMeKkYD4mQL?=
- =?us-ascii?Q?tYG0h4EPLxmWAMVAks8a6a5bxaXQTz0MZ5t4AlSTiuFc7v/L3CLqW7zSc/+4?=
- =?us-ascii?Q?7W8hRKO0/62Q9iDN57EOoMLggL4nu/IIkmgfinhx3qS5UZBkU/OivxLazL0J?=
- =?us-ascii?Q?EgdmmjJJups4NDyUUulN/EaUnCpFlWtvCwH77/1fktJh4BK3K7dUb90cRwEj?=
- =?us-ascii?Q?RjMaiEOQV+onKjsjKxXfBo1ZYXsQ/jbklMtmorOeuw913+WZTjZ6MMz3nV4b?=
- =?us-ascii?Q?N0MhaKkdiW2Ip/M7Qb2EYujjRKImJa1c1STY/k5l8kgB04Uddya14/l7UkLs?=
- =?us-ascii?Q?RfeNxDYVXLA9gCVuiD2Kpcs6smb0LDuw7kCVk2OXGectQZDpTH4PJIPfz45B?=
- =?us-ascii?Q?eLd17hvZKNA8bahHDbAbkiD0F775SBNw41gCXOd+9F73Dv/vWeuE7n0S3nJV?=
- =?us-ascii?Q?tmMTWUIWMxA/dPxs65H4EUCfflgDCN62bpdf2J/S6cm7wueHTuyOY12HEqcO?=
- =?us-ascii?Q?8XcmJ0EJ8t+/SDoTDLk+M4YN7tjcbvyK8pLu8XmbPNOmKmxNxfhyh5Hww4uu?=
- =?us-ascii?Q?FO8L+aS6Mb/6Mk8SkJHuCPl+ile5kyvVNh25sODmno3pQwE32QHS56zKeJkP?=
- =?us-ascii?Q?Cm0V7JfQd3KF5YqhQGKsks7Lg2sRovnVHXA+eJvMjL8XmZUavv10ocngAKkk?=
- =?us-ascii?Q?2R0DK8NISo5egPWFFl29u7m3c5291N7+YG65KcSl2SE+jLo+3LqrUNY9iQD9?=
- =?us-ascii?Q?x4gQ6nBu9Edht0zaj594Pisk08R2hpCHywAu4flM0S5xsRTvzkVIukG8jkyF?=
- =?us-ascii?Q?4KEGn3FnzHaDbliLhsWkyp7/5ffGs4owHghoua/dkMYcJMtIQyAPN9BiVySf?=
- =?us-ascii?Q?SRM3XYOQP4OBYUs239bM9IFPsDmMIwahLBOhtFr+l34MTev0FftvL1KTv4U5?=
- =?us-ascii?Q?pVK2pR7HWeR2mzUn2Tm9sujjPSRjjuY3Xh8hcWoINcOWNbPV3Xb4C77gKjjv?=
- =?us-ascii?Q?UknKyrYKa81E64UJ3lmmwt2I7mX4yzqeC2oYoxKv3P2a0BYRm8Ccuw9WqV9B?=
- =?us-ascii?Q?9ac2SH6IxJdrBDhvzdaJobrL5VoCNaFi6K1Ibog9elI6HfCkyvP40dkVoadD?=
- =?us-ascii?Q?wHtJjRARx6UGORssYk32OfS4lKQxmTNX5Ok9520PhAL86rQ2sr87BbHrOih/?=
- =?us-ascii?Q?pp/D/Cq0TBkJ66JdDsIicJJMiyyJJ2R1ww7T2IWhfMZYh4v4tIN/1CtUJUO0?=
- =?us-ascii?Q?Ve8zSisXpyTzUrqBmwvCoaDLpz9ec0iC5NZynTc9jIMq/VD3vjHW6uQcHs/t?=
- =?us-ascii?Q?8g=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd55a508-4a38-4c7f-4345-08dde971441f
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6366.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 16:04:44.1682
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zok9ZIhT/DyaQR9suO4n3CZniz+2SY7BYHIakj3C7fuT+Y+eksQKwkdSx5vqa+mVCbG1z3h7fkaVoxmg7Qp/xjSXZ0+WfU7NMh184uogYe4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7333
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
 
-On Sun, Aug 31, 2025 at 01:54:57PM -0700, Eric Biggers wrote:
-> Reimplementing the sha1, sha256, and sha512 crypto_shash algorithms on
-> top of the library APIs caused the recently-added function
-> crypto_shash_export_core() to no longer be supported.  Meanwhile, the
-> QAT driver was updated to use crypto_shash_export_core().  But it's not
-> actually necessary.  Instead, just do the HMAC key preparation using the
-> library functions instead of crypto_shash.  This fixes the QAT driver
-> and greatly simplifies the code.  Additional benefits include stronger
-> typing, and improved performance due to reduced overhead.
-> 
-> Reported-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-> Closes: https://lore.kernel.org/r/aLSnCc9Ws5L9y+8X@gcabiddu-mobl.ger.corp.intel.com
-> Fixes: ccafe2821cfa ("crypto: qat - Use crypto_shash_export_core")
-> Fixes: 8bc79ab67d78 ("crypto: sha1 - Wrap library and add HMAC support")
-> Fixes: e0cd37169103 ("crypto: sha256 - Wrap library and add HMAC support")
-> Fixes: 469acaa12502 ("crypto: sha512 - Replace sha512_generic with wrapper around SHA-512 library")
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> ---
-Thanks.
+Overall, the alignment looks good. Among the three points you suggested,
+I agree with (3) cgroup inheritance. I would like to continue the
+discussion on (1) swap tier lifecycle and (2) allocation logic.
 
-One NIT on the headline, for consistency with the other patches:
-"crypto: qat -".
+1. swap tier lifecycle
+2. allocation logic
+3. cgroup inheritance
 
-Acked-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+> > This part relates to my earlier point on runtime modification. My
+> > intention was to only allow setting the tiers globally, and to align
+> > bitmask with priority ranges. For example, an input like:
+> >
+> >   ssd:100, hdd:50, network_swap
+> >
+> > would translate into ranges as 100+ (bit0), 50–99 (bit1), and 0–49
+> > (bit2).
+> >
+> > From your description, I understand you are considering allowing
+> > additive updates, insertions and letting bitmask differ from the range priority. Is
+> > that correct? In that case we probably need a way to distinguish
+>
+> That is right.
 
-Regards,
+Yes, I agree that add/remove semantics can be supported,
+But it was not fully clear whether there was agreement on the full set
+format, I wanted to state explicitly that my preference is to require
+the full set format for simplicity. That said, if staged insertion and
+removal are considered useful, one possible approach is:
 
--- 
-Giovanni
+(side note! explanation of the interface was somewhat
+descriptive, which may not have been fully clear. If this explanation is
+sufficient to establish the general direction, I will aim to present it
+more concretely in the patch series. Otherwise, I can provide a more
+detailed explanation in a follow-up email.)
+
+  echo "add ssd:100,hdd:50,network_swap" >/sys/kernel/mm/swap/tiers
+  echo "add new:80"  > /sys/kernel/mm/swap/tiers
+  echo "remove hdd" > /sys/kernel/mm/swap/tiers
+
+Alternatively, separate files for add, remove, and show could be used to
+represent staged operations:
+
+  echo "ssd:100,hdd:50,network_swap" >/sys/kernel/mm/swap/tiers/add
+  echo "new:80"  > /sys/kernel/mm/swap/tiers/add
+  echo "hdd" > /sys/kernel/mm/swap/tiers/remove
+
+When using the fullset approach:
+
+  ssd:100(bit0), hdd:50(bit1), network_device(bit2)
+
+If we remove the ssd layer and add a new tier:
+
+  echo new:80,hdd:50,network_device >/sys/kernel/mm/swap/tiers
+
+The show output could display staged state (imaginary output for understanding):
+
+  ssd:100(bit0), new:80(bit3, in stage), hdd:50(bit1, removing), network_device(bit2)
+
+After the hdd tier reference drops to zero:
+
+  ssd:100(bit0), new:80(bit3),  network_device(bit2)
+
+> > between “add” and “reset”. Personally, I feel supporting only reset
+> > semantics would make the interface simpler, while still allowing add
+> > semantics when the full set is provided again.
+>
+> The counterpart of "add" is "remove". There are two possible ideas to explore:
+> 1) only allow removing a tier when all swap devices in that tier
+> range have been swapped off.
+> 2) Remove the tier by removing a midpoint from the range. The lower
+> tier automatically gets the range belonging to the tier that was
+> removed. Optionally, you can add another tier back in replacement
+> with different range boundaries. This effectively achieves replacement
+> as well. This approach does not require swapping off the swap device. I
+> like it better. If you want to avoid the race window where the
+> swap device temporarily belongs to the lower tier, you can always swap
+> off the device before performing 2). So 2) can be mixed with 1) as well.
+
+I have already explained this from the perspective of option 2 mixed
+with option 1. Let me clarify one point:
+
+If...
+ssd:100, hdd:50, network_device.
+Insertion above 100 becomes visible after ssd removal,
+Insertion above 50 becomes visible after hdd removal,
+Insertion above 0 becomes visible after network_device removal.
+
+It means that as long as the tier exists, the referenced priority ranges
+cannot be overridden.
+
+And Regarding swap_tier object lifecycle:
+
+A swap_tier should not be deleted until all devices in the tier are
+swapped off (As you said, references are held). Therefore, cgroups that reference a
+tier should also hold a reference. Silently dropping a tier is problematic
+from a cgroup perspective.
+
+If we allow this, the implementation should behave as follows as I think:
+If a swap_tier is removed, the cgroup’s tier configuration could be
+marked invalid. This should trigger an event to the cgroup to notify
+user space.
+
+> >
+> > > > 2. Slow path allocation uses bitmask skipping; fast path uses per-cpu
+> > > >    tier cluster caches.
+> > > If the fast path fails, it will go through the slow path. So the slow
+> > > patch is actually a catch all.
+> >
+> > Do you mean that if the cluster does not belong to the desired tier in
+> > the fast path, it will skip and then fall back to the slow path? If so,
+>
+> I am describing the existing swap cluster allocator behavior. In my
+> mind, we are using the existing cluster swap allocator code, with
+> constraints that only allow swap entry to be allocated from the
+> affected tier bitmask.
+>
+> > the slow path would need to avoid inserting the cluster back into the
+> > cache, otherwise processes with a global swap view may end up using the
+> > wrong tier device(which must be referenced firstly assumed)
+> > Also cgroup which is tier set experience performance degradation
+> > because, there is possibility to try to alloc swap on slowpath most of the time.
+> > Wouldn’t this have performance implications?
+>
+> I think we are mixing two different concepts. There are swap tiers
+> which decide which swap device to use. Then there is the swap
+> allocator to allocate a swap from the allowed list.
+>
+> If we move to the swap tiers, the swap allocator needs to be swap
+> tiers aware. So it might move to per-cgroup cache list or disable the
+> cache for cgroups that haven't been allocating for a while. The
+> allocation logic should be in the allocator, not in the swap tier
+> layer.
+>
+> > I was thinking that maintaining per-tier per-cpu cluster caches would be
+> > simpler. Then each tier manages its own cluster cache, and we only need
+> > an array of per-cpu caches of size “max tiers”.
+>
+> Again, let's not jump to premature optimizations. Do it the simple way
+> first, then let the measurement numbers guide us.
+> It might be per swap file has a cache not necessary per CPU. per-cpu x
+> per-tier the combination is too big, I am worried about caching too
+> much swap clusters. Each cluster is 2M.
+
+You suggested maintaining per-swap-device cluster caches. As an
+alternative, I would like to suggest a per-device per-CPU cache
+approach, which could be simpler from an integration perspective. It
+would fit more naturally with the existing allocation logic, remove tier
+awareness from the allocator, and should not introduce functional
+differences in behavior. Moreover, since SSD devices are likely to be
+concentrated in only a small number of tiers (with one being the "best"
+tier), the number of clusters actually cached at any time would not be
+large. I am not presenting this as the ultimate solution, but rather as
+a simple and reasonably practical approach to consider. I agree that we
+should revisit and evaluate this approach further.
+
+> We DO want some parent level control. That is a real customer
+> requirement. The cons with your proposal is that, if you want to
+> change the whole set from top-level cgroup to child cgroups, you need
+> to traverse the hierarchical chain to set each child cgroup. While
+> walking the child tree, more sub-level cgroups may be added, and
+> you could miss newly created cgroups. It becomes a mess.
+>
+> It is much cleaner if we allow the child cgroup to have the default
+> "swap.tiers" empty. Then you just need to set one value at the top-level
+> parent cgroup, and all child cgroups inherit it automatically. A child
+> can overwrite it if desired; by default it inherits from its parent.
+>
+> The whole set of cgroups from top-level including children can map
+> into a Kubernetes pod. It is common to perform adjustments on the
+> whole set atomically. We should support it.
+
+Okay I will adopt default inheritance for pod-level and similar use cases. A
+child cgroup inherits the nearest ancestor’s mask upon creation. If it
+later sets its own mask, that configuration will apply to itself.
+
+> I think we are aligned.
+>
+> Thanks
+>
+> Chris
+
+Many thanks for the detailed review. It helped clarify the implementation
+direction, and I look forward to preparing the patch series accordingly.
+
+Youngjun Park
 
