@@ -1,105 +1,96 @@
-Return-Path: <linux-kernel+bounces-795377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568BAB3F101
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:27:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8D7B3F10D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0D61B211ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E136207433
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522A5284690;
-	Mon,  1 Sep 2025 22:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1756B283FE2;
+	Mon,  1 Sep 2025 22:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/jzdxub"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YI4G4ClR"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B892CCDB;
-	Mon,  1 Sep 2025 22:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88C1E260D
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 22:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756765637; cv=none; b=HRj5Ej711te/PBjmkXnaYSIsMAReYfa9vTi5iT7HYO/KR/jJjl8n6nn0TtmEsmW2WamNTGC32NIFL6deWBYngR7T+6tBsMrhpH29DdXVPRa9NkZI/nkEa/6/zaz/jaxgqtEb9Lq5+c+W5SV9qEC4V4RcdGWvt2HLk9iloeBzuFA=
+	t=1756766315; cv=none; b=pyx+3jXMY88epFGGxkgRLNa997v23pq7d1G0Oo3rI1aKX72V3TTCjDw7BTD+9PDnSso60yNcIWJuKM1fFuFgbZ7Y1r3/u5/tfwrIIlcJ9wDasRkgRNyHZ3J0wqA9jXfP9hIdeF2IkQsoTRJ0MLnxG78T37mVCyrPXL84N7Wv7BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756765637; c=relaxed/simple;
-	bh=ES7XTBVdBjn5qMWK9aBFun/HPqY4R9a82L02uT3WVw8=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oAPB41+Q1Md78g1XL+b5kc1VEchw1LxQMCz595CANfHrULxjcpWWAF0hVUcFRuaK+KF4PJ74GjxQm8JNYSG0KxYPTgedSrjPGlPgEswm+PM2m7zb5Pu62xM6aico80tE5XEpm3XSZ6T/F0yNTuETlnOV+Yjg6m+QW7lbSWfXR8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/jzdxub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8488C4CEF0;
-	Mon,  1 Sep 2025 22:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756765637;
-	bh=ES7XTBVdBjn5qMWK9aBFun/HPqY4R9a82L02uT3WVw8=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=e/jzdxubLo3M5U2dnCo3IXbSAFjo3qTzdHBaTn6v64OlC3Y88hb8xpyAIaJhvAQeE
-	 kEpo9QXNZ2k5m26VzjJK31IARqH/LPywvNfGEiyMw0MGLqk4CC8V2VcviBnXkgIRRu
-	 wCFpjUPG0ho7/FeNZRm4HL91mgC43o4USg2MNmwh44cI4kVh2aiP4j+6iBW/qpQbR2
-	 AvYsDW8Lu0CaeBtQHYaifD2IqccEH+7kHi6zHPbgjtwBc58PMW/SvMhJuHs+Z9D0f6
-	 wKGkjBmiA/4iTMZA5w78kvgxwAc39kR67WAjOCFRRZ/H7eddU4wflyyaW4kkPmkdhX
-	 qpIG3NpWzkSbQ==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matthew Gerlach <matthew.gerlach@altera.com>, 
- Niravkumar L Rabara <nirav.rabara@altera.com>, 
- Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-In-Reply-To: <8704fd6bd2ff4d37bba4a0eacf5eba3ba001079e.1756168074.git.khairul.anuar.romli@altera.com>
-References: <8704fd6bd2ff4d37bba4a0eacf5eba3ba001079e.1756168074.git.khairul.anuar.romli@altera.com>
-Subject: Re: [PATCH v3 1/1] spi: cadence-quadspi: Implement refcount to
- handle unbind during busy
-Message-Id: <175676563542.906617.4450367813883915988.b4-ty@kernel.org>
-Date: Mon, 01 Sep 2025 23:27:15 +0100
+	s=arc-20240116; t=1756766315; c=relaxed/simple;
+	bh=1LRvez7G23oqTs/cGke5PIZ0iR3nPJIjQ908hMTiBgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3ripBKAsUVdBAS7n02bGM9stSsr+lv2yCypRMrNDEqJHYhfJy4rVL4H6CzV0cVAuvw9vijCEuDIbvnnBNlLOEaXl1uLQ2KsZWmlp4NKtoA5ODfhPhAeEjxtrDJ8IwASk0juuH21v8Rteq5OdspIoAHjIPlUd2pJvTGW/NIfNRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YI4G4ClR; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 1 Sep 2025 18:38:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756766309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f8HUpFIh/zYnk5qDXxnDpvmui25C29SBF2HbCeY/aUU=;
+	b=YI4G4ClRZlOSVYpa9Y2qlX5diZVzL2WE5Auc7+GOvEQImN8eqvf7giNmKTBMp37Nc/jogL
+	dtrthaXXNpOpcWeprPgplaal+SJVBQU7e2Vt90ROMvn/IJeb2qyodK7LbayevwP3Sst6dw
+	y+TqGlBSk53iUnmQXAKmhb9IsaU1Ut4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: Use int type to store negative error codes
+Message-ID: <wzcnnfwnjkrkbg7gj64cnddwxwcc5gw3jkv6356qmedjccitt4@3gsixqytzn2i>
+References: <20250830135833.112327-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830135833.112327-1-rongqianfeng@vivo.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 26 Aug 2025 08:33:58 +0800, Khairul Anuar Romli wrote:
-> driver support indirect read and indirect write operation with
-> assumption no force device removal(unbind) operation. However
-> force device removal(removal) is still available to root superuser.
+On Sat, Aug 30, 2025 at 09:58:33PM +0800, Qianfeng Rong wrote:
+> Change the 'ret' variable in __bch2_dev_attach_bdev() from unsigned to
+> int, as it needs to store either negative error codes or zero.
 > 
-> Unbinding driver during operation causes kernel crash. This changes
-> ensure driver able to handle such operation for indirect read and
-> indirect write by implementing refcount to track attached devices
-> to the controller and gracefully wait and until attached devices
-> remove operation completed before proceed with removal operation.
+> Storing the negative error codes in unsigned type, doesn't cause an issue
+> at runtime but can be confusing. Additionally, assigning negative error
+> codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+> flag is enabled.
 > 
-> [...]
+> No effect on runtime.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-Applied to
+Thanks, applied
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: cadence-quadspi: Implement refcount to handle unbind during busy
-      commit: 7446284023e8ef694fb392348185349c773eefb3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>  fs/bcachefs/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
+> index 793c16fa8b09..ec20ab0ad84e 100644
+> --- a/fs/bcachefs/super.c
+> +++ b/fs/bcachefs/super.c
+> @@ -1769,7 +1769,7 @@ static int bch2_dev_alloc(struct bch_fs *c, unsigned dev_idx)
+>  static int __bch2_dev_attach_bdev(struct bch_dev *ca, struct bch_sb_handle *sb,
+>  				  struct printbuf *err)
+>  {
+> -	unsigned ret;
+> +	int ret;
+>  
+>  	if (bch2_dev_is_online(ca)) {
+>  		prt_printf(err, "already have device online in slot %u\n",
+> -- 
+> 2.34.1
+> 
 
