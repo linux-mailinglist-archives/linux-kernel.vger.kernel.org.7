@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-795235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50585B3EEAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:47:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09505B3EEC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B572485AB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:47:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8657A939D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1505C3431FA;
-	Mon,  1 Sep 2025 19:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ECE26A0E7;
+	Mon,  1 Sep 2025 19:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxvEDCAN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnpZQOAD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE341ACB;
-	Mon,  1 Sep 2025 19:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810D62690E7;
+	Mon,  1 Sep 2025 19:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755977; cv=none; b=KYbghHtczhzeGzaZ8uRY85GC35AFmtSKh5trtmrzDhtpjsLAFNz5cGhGX5mdqdBOTPFqmJ5PwGlV3zjEG8vEDnz/+mNY2qzm+UD2e5UzNKevDHkPNV/8VlIQE97DC1lixd15okJSNBrwl7k6Zc/7AkFYiHwTgank7u+VRYG4SM4=
+	t=1756756010; cv=none; b=lWt4pkUfOuH2SC08cMT87mapG70DivMTwsQUpWAzit2NMDzXcSMcVkgZC/mTlhLkx7pkT2llpxMBVMQwq3dlhuypEKUf2+xnh7UOjaWPbYwDvD7Jjks+9vs3CAt/wZJ7W3tsXI6uBHpJPjrzQ+ZfyvumIUOkh35rLvj2kYz2LE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755977; c=relaxed/simple;
-	bh=ZRakmcIHvH3f1B8RfyE9ZrQBrbqMERiw45E9xr2Ei08=;
+	s=arc-20240116; t=1756756010; c=relaxed/simple;
+	bh=ryLKVNWHHNr99ui3supYs3n7AEHkdw+L0ecBy0DtCNo=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7VqFspuP++1IDD+1Ssg80hvr36L7XMZeeVi528LqTp/1Sd7Vdq3SJjrRitjghlrLuYUfm6Gg+enhDpEyVW8cusshuYt1NMEAhodEPD/BH+uOheQJobz9IXymsA8ZzCSF74Cxsg+RyratNElJsT+4jXVBNHtQaGoavXcdCkgzxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxvEDCAN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A71C4CEF0;
-	Mon,  1 Sep 2025 19:46:16 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HwtNDY/cfk5ii3pu6p9lSzligyer/g1uR9xi1QdtB89o4ZhkqFhFIE6FpLVBiT9/Amn16zPr6djyI+mcJn1fP3zJTu5p2Lhp58d4gg79fJnqzpT4zWFxXTMRVJ0mtQSNr9heQKF7/aOTZGcjGhOhUad6DzyX2L2j0H2Q++3qLMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnpZQOAD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFB61C4CEF0;
+	Mon,  1 Sep 2025 19:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756755977;
-	bh=ZRakmcIHvH3f1B8RfyE9ZrQBrbqMERiw45E9xr2Ei08=;
+	s=k20201202; t=1756756010;
+	bh=ryLKVNWHHNr99ui3supYs3n7AEHkdw+L0ecBy0DtCNo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NxvEDCANFCg4HqSlMCXmTgHyHef+ufLbqMwojmG4GVg61BL79pZ2hr/Uc3txc3o25
-	 EJTn1olTO/roupsUd88oHI3D5SwwjZgoFMIO2mcLloKeWMWdd3AI+wQj8Xq0Li6Q5s
-	 pwUq6BFEf1eQoXCnx0awGWsjqdygTLqaygHYkd+6xJf/Htc9dQ0CJ+3YbJtT+BE3IU
-	 gozEuxkChZdv8fOYr99iJJ3fSplcr+xryzKYHYjrkfWy9GA2w8C05MrDGxUMgQGbpH
-	 PITutXYblzBzhcCEUgcz+WupY261tAm5F3h5mQnxql4Uq6zV0S65TjoGJKGDu8ZvWM
-	 LC7CklprNex6Q==
-Date: Mon, 1 Sep 2025 12:46:15 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, Helmut Buchsbaum <helmut.buchsbaum@gmail.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: ks8995: Fix some error handling path in
- ks8995_probe()
-Message-ID: <20250901124615.10afb6a0@kernel.org>
-In-Reply-To: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
-References: <95be5a0c504611263952d850124f053fd6204e94.1756573982.git.christophe.jaillet@wanadoo.fr>
+	b=tnpZQOADOfFuqatEL9arhjzFqUnaI8SnD2BQS8K7II/uVlfhOgH6pVaKpT+m6eMKs
+	 OFq/UZvfOdyGVkXmOin84sqtKEwzdRl5DwY5gVJzk5URFNkK5qVAsnwibn2B1tgXv1
+	 md+Z4IGfNRw4uas0u/F25H4ATP9thnlpm/U2KHaDf1C1ZUtqSyCo41qxFVaC+LeEzr
+	 3AEFTDAC4gc97owBvU7oGu++J0Kyy0YARy4KitvFNpNtAN4qcX/S1yxrspLbvelQbH
+	 9+dQYsx8jmLTmKHQwU3/wRmHoJdZ+KKGNcvjAatk1SgmbJFxFeTKoR2vlIUIlkmJ0k
+	 HTdr2YG8jXvSA==
+Date: Mon, 1 Sep 2025 20:46:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>,
+ linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, nuno.sa@analog.com, andy@kernel.org,
+ sonic.zhang@analog.com, vapier@gentoo.org, dan.carpenter@linaro.org
+Subject: Re: [PATCH v4] staging: iio: adc: ad7816: fix race condition in SPI
+ operations
+Message-ID: <20250901204640.3cee61bc@jic23-huawei>
+In-Reply-To: <51042a87-0233-4748-b3c0-b167d3a4fa06@baylibre.com>
+References: <20250901160310.399-1-moahmmad.hosseinii@gmail.com>
+	<51042a87-0233-4748-b3c0-b167d3a4fa06@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,11 +64,77 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 30 Aug 2025 19:13:59 +0200 Christophe JAILLET wrote:
-> drivers/net/dsa/ks8995.c
+On Mon, 1 Sep 2025 12:00:44 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-This file got renamed from drivers/net/phy/spi_ks8995.c in net-next,
-this needs to be regenerated against the real net tree.
--- 
-pw-bot: cr
+> On 9/1/25 11:03 AM, Mohammad Amin Hosseini wrote:
+> > The ad7816 driver lacks proper synchronization around SPI operations
+> > and device state access. Concurrent access from multiple threads can
+> > lead to data corruption and inconsistent device state.
+> > 
+> > The driver performs sequences of GPIO pin manipulations followed by
+> > SPI transactions without any locking. Device state variables (mode,
+> > channel_id, oti_data) are also accessed without synchronization.
+> > 
+> > This bug was found through manual code review using static analysis
+> > techniques. The review focused on identifying unsynchronized access
+> > patterns to shared resources. Key indicators were:
+> > - GPIO pin state changes followed by SPI operations without atomicity
+> > - Shared state variables accessed from multiple sysfs entry points
+> > - No mutex or spinlock protection around sections
+> > - Potential for interleaved execution in multi-threaded environments
+> > 
+> > The review methodology involved tracing data flow paths and identifying
+> > points where concurrent access could corrupt device state or SPI
+> > communication sequences.
+> > 
+> > Add io_lock mutex to protect:
+> > - SPI transactions and GPIO sequences in read/write functions
+> > - Device state variables in sysfs show/store functions
+> > - Concurrent access to chip configuration
+> > 
+> > This prevents race conditions when multiple processes access the device
+> > simultaneously through sysfs attributes or device file operations.
+> > 
+> > Fixes: 7924425db04a ("staging: iio: adc: new driver for AD7816 devices")
+> > 
+> > Signed-off-by: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+> > 
+> > ---
+> > Changes in v4:
+> > - Added locking to reader functions (show_mode, show_channel, show_oti)
+> > - Fixed incomplete reader/writer synchronization that could still race
+> > - Ensured all device state access is properly synchronized
+> > - Replace sprintf() with sysfs_emit() in all sysfs show functions
+> > - Use sysfs_streq() instead of strcmp() for proper input parsing
+> > - Implement locked/unlocked SPI function variants to prevent deadlock
+> > - Use channel snapshot to ensure atomic read operations
+> > - Fix sizeof() usage in spi_read to be more explicit (sizeof(buf))
+> > - Make oti write operations atomic (SPI write + shadow update under lock)
+> > - Fix race condition in ad7816_set_oti() by taking channel_id snapshot under lock
+> > - Fix return type consistency (ssize_t vs int) in show functions
+> > - Use chip->id instead of string comparison for channel validation
+> > - Add explicit cast for narrowing assignment
+> > - Add default case for unknown chip ID validation
+> > - Use cansleep GPIO variants in sleepable context
+> > - Improve lock documentation for protected resources
+> > ---  
+> 
+> This is way to much to do in a single patch. Also, given that this
+> part is obsolete [1] and this driver is in staging, is it really
+> worth all of this effort to fix it up?
+> 
+> [1]: https://www.analog.com/en/products/ad7816.html
+
+Sadly not obsolete (or at least not all of the supported parts).
+I checked these out the other day - the ad7817 is a production part.
+
+Biggest issue here is slow down!  Too may versions, without
+time for thorough review before another one turns up.  Aim for
+at least a few days, or a 1 week between versions.
+
+Jonathan
+
+> 
+
 
