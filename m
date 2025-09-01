@@ -1,189 +1,212 @@
-Return-Path: <linux-kernel+bounces-794143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922D2B3DD7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D3DB3DD84
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85FA91A80234
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5153C1A80581
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ACC2FFDCB;
-	Mon,  1 Sep 2025 08:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59D83002BB;
+	Mon,  1 Sep 2025 09:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ewhl9unN"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881F22FF65F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="SJENFRt+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8313043AB;
+	Mon,  1 Sep 2025 09:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717196; cv=none; b=GePtA2oKFbIbGB7hTc/bbMPUrJpw7ymUhLWo2YQjtBomLKF7cXgENBDsVuY77SoIBUGcOdyDj5eCZ7Zw293mDmiG68Y4eoQ0C3OBPhVRuVVUjvVEoEy2UJJ/t7EUJTjSdR/kir1f63eJ39fQrxnIYA4aFmvXyOdoTbSUE7y6jeQ=
+	t=1756717300; cv=none; b=MsjpqzCwPpOifNr+wpMlTxydyiA5wbUC56Vpq9lNHnSSmrB8cqkj99Ju6ZXphbV0El9s/v7nuWO28XeY1x8JhTNTuef02o1tBDolmfNNIhfeZNITnctN5CkCteqd9ioGmFQ1fyt30SxobfzWJOozP1woJRB80uZxucSAam+g7Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717196; c=relaxed/simple;
-	bh=XpJXofa8Hm3eaUUocpHURpb5fH9SvnPwM+eiZV1UJPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HWE8DNHJjOSzUx+yjv2PQC6cbOJ30YGHOG17Ufmmnd8kIC38gpMaS3qsX+ENrLbQwvXpv48wyJitzNMrDdC/EbMNCkZFXJnguKBxY84Y9TtsuVN9tUsFOaIcBNdpcmUSbKp3BlicUW9N/fXpUH+yxsZbqsS7znEH3MwyX9zEonE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ewhl9unN; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5818xSlH2739412;
-	Mon, 1 Sep 2025 03:59:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756717168;
-	bh=BxSo+3XJP4cV+Z8z0wpsWsIoQkxyNNRAdE0TKlbeLjI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Ewhl9unNDhsRQQ6+gwAwkxJ+mc1Zrm2dVXXOj+Vx2DDmX4+wTM92eBmq8Cx89Ay2a
-	 g/NdX5VDPlcqYDori57uQDf8rRTF6cevHa6czGWcHcTyh6AIPzTs771TKqjTGfVUUI
-	 siSCTYYMoBWHCWgP/htz+ITEF5zh3mC17bWe2YKw=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5818xS3W1991602
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 1 Sep 2025 03:59:28 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
- Sep 2025 03:59:27 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 1 Sep 2025 03:59:27 -0500
-Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5818xNPk2214454;
-	Mon, 1 Sep 2025 03:59:23 -0500
-Message-ID: <7f646e70-73fa-43ea-9fab-c9a0cb64dff6@ti.com>
-Date: Mon, 1 Sep 2025 14:29:22 +0530
+	s=arc-20240116; t=1756717300; c=relaxed/simple;
+	bh=T8pmL3O7KUL/p3J9inxdqh2V6xKPwrfM1z5L7Tsn/lk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=BHH8V1qcgTzEUU58IEX5gCrRkObVXItWLJLpzwJQPN/GgC8irMx22xlBRZZCJ+sQxZ89n0VNnMcPRxLXzOR3CYMk2VuX2NEFYIjKrChYqIbRBALofxD9G/ZOWE1TMV7z4q+epiD7HDYpWAsLh8MFR5UPWCpyQS3hpyP/+UtsZrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=SJENFRt+ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=yn0AK7B4sKTDjs0/uJAX8QXHcbHruHeC3+gk7lMUKRQ=; b=S
+	JENFRt+0lkmJN5HNDq9at1I1Nm+pPTSPy3kE5VgGF4dQpJMW54qAnkeiuro1+KBT
+	8LIDcvJvZY3mrdtP0PpDejA4L42usCptXCzS0tYZHk1JJzPl8JNwvi33pmK89Yqq
+	BlcM9jDbbdKac1bW73vskZDWTVJyKglSQ4qo/65C0M=
+Received: from yangshiguang1011$163.com ( [1.202.162.48] ) by
+ ajax-webmail-wmsvr-40-108 (Coremail) ; Mon, 1 Sep 2025 17:00:48 +0800 (CST)
+Date: Mon, 1 Sep 2025 17:00:48 +0800 (CST)
+From: yangshiguang  <yangshiguang1011@163.com>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+Cc: "David Rientjes" <rientjes@google.com>, harry.yoo@oracle.com,
+	akpm@linux-foundation.org, cl@gentwo.org, roman.gushchin@linux.dev,
+	glittao@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
+Subject: Re:Re: [PATCH v4] mm: slub: avoid wake up kswapd in
+ set_track_prepare
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <c85034fe-d48e-4433-8c65-52bfb1d5d69b@suse.cz>
+References: <20250830020946.1767573-1-yangshiguang1011@163.com>
+ <c8f6933e-f733-4f86-c09d-8028ad862f33@google.com>
+ <7f30ddd1-c6f7-4b2b-a2b9-875844092e28@suse.cz>
+ <11922bd5.7fae.1990464d9c8.Coremail.yangshiguang1011@163.com>
+ <c85034fe-d48e-4433-8c65-52bfb1d5d69b@suse.cz>
+X-NTES-SC: AL_Qu2eBPuauEov7iaYYukfmUgRj+k6WsK3s/sn3oNfP5B+jCLp+zE7R3NTB2LO79CDEC6NnQiHawJv0ehAb5dHTZwLtbWXS9Cj5U2+GvMJvDyyuA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
- bridge
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-CC: <h-shenoy@ti.com>, <devarsht@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
-        <u-kumar1@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jyri.sarha@iki.fi>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <aradhya.bhatia@linux.dev>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-4-s-jain1@ti.com>
- <837a8381-02bd-4882-bfa4-6d5c34f44119@ideasonboard.com>
- <a23b03a2-86d0-41ff-882f-40c152ff6fb0@ti.com>
- <327d2ef2-d670-4677-ba1f-b19c2f0b4f3f@ideasonboard.com>
-Content-Language: en-US
-From: Swamil Jain <s-jain1@ti.com>
-In-Reply-To: <327d2ef2-d670-4677-ba1f-b19c2f0b4f3f@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Message-ID: <623a8fd2.8b7b.1990481f065.Coremail.yangshiguang1011@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:bCgvCgD3kKzAYLVojFEmAA--.2532W
+X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/1tbiEAG75Wi1VZrtiQAFs8
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Tomi,
-
-On 9/1/25 14:22, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 29/08/2025 06:50, Swamil Jain wrote:
->> Hi Tomi,
->>
->> On 8/27/25 14:35, Tomi Valkeinen wrote:
->>> Hi,
->>>
->>> On 19/08/2025 22:21, Swamil Jain wrote:
->>>> From: Jayesh Choudhary <j-choudhary@ti.com>
->>>>
->>>> Since OLDI consumes DSS VP clock directly as serial clock, certain
->>>> checks cannot be performed in tidss driver which should be checked
->>>
->>> I think this is a bit misleading. The OLDI input clock doesn't come from
->>> DSS, so I wouldn't call it "DSS VP clock". The point here is that the
->>> clock from the PLL is used by both OLDI and DSS, and in the current
->>> architecture the OLDI driver manages the clock, so the DSS driver can't
->>> really do checks, it just has to accept the clock rate. All checks need
->>> to be done in the OLDI driver.
->>>
->>>> in OLDI driver. Add check for mode clock and set max_successful_rate
->>>> and max_attempted_rate field for tidss in case the VP is OLDI.
->>>>
->>>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
->>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
->>>> ---
->>>>    drivers/gpu/drm/tidss/tidss_oldi.c | 25 +++++++++++++++++++++++++
->>>>    1 file changed, 25 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/
->>>> tidss/tidss_oldi.c
->>>> index ef01ecc17a12..2ed2d0666ccb 100644
->>>> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
->>>> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
->>>> @@ -309,6 +309,30 @@ static u32
->>>> *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->>>>        return input_fmts;
->>>>    }
->>>>    +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
->>>> +                   struct drm_bridge_state *bridge_state,
->>>> +                   struct drm_crtc_state *crtc_state,
->>>> +                   struct drm_connector_state *conn_state)
->>>> +{
->>>> +    struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
->>>> +    struct drm_display_mode *adjusted_mode;
->>>> +    unsigned long round_clock;
->>>> +
->>>> +    adjusted_mode = &crtc_state->adjusted_mode;
->>>> +
->>>> +    if (adjusted_mode->clock > oldi->tidss-
->>>>> max_successful_rate[oldi->parent_vp]) {
->>>
->>> You can change the above check to <=, and return 0 here early.
->>>
->>>> +        round_clock = clk_round_rate(oldi->serial, adjusted_mode-
->>>>> clock * 7 * 1000);
->>>> +
->>>> +        if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000,
->>>> round_clock) > 5)
->>>> +            return -EINVAL;
->>>> +
->>>> +        oldi->tidss->max_successful_rate[oldi->parent_vp] =
->>>> round_clock;
->>>> +        oldi->tidss->max_attempted_rate[oldi->parent_vp] =
->>>> adjusted_mode->clock * 7 * 1000;
->>>> +    }
->>>
->>> This is not very nice. We should have a function in tidss that we call
->>> here, instead of poking into these tidss's variables directly.
->>>
->>> Actually... Do we even need to use the tidss->max_* fields? The above
->>> code is not checking the VP clock maximum, it's actually looking at the
->>> serial clock maximum. Currently those two clocks are linked, though, but
->>> would it make more sense to have the max_* fields here, in OLDI, for
->>> OLDI's serial clock?We don't require tidss->max_* fields here as we
->>> only have single mode
->> for OLDI. This is added to make it consistent with check_pixel_clock()
->> for validating modes.
->>
->> You are right we shouldn't use tidss->* fields directly in OLDI driver.
->>
->> As Maxime suggested we only have very few modes for OLDI, can we skip
->> caching maximum pixel clock in case of OLDI? What would you suggest Tomi?
-> 
-> I think it's best to at least try the trivial option discussed in this
-> thread: just use clk_round_rate, without any code to cache or seek out
-> the max.
-
-Then for OLDI, we will drop caching the max_pclk.
-
-Regards,
-Swamil
-> 
->   Tomi
-> 
+CgpBdCAyMDI1LTA5LTAxIDE2OjQ2OjEzLCAiVmxhc3RpbWlsIEJhYmthIiA8dmJhYmthQHN1c2Uu
+Y3o+IHdyb3RlOgo+T24gOS8xLzI1IDEwOjI5LCB5YW5nc2hpZ3Vhbmcgd3JvdGU6Cj4+IAo+PiAK
+Pj4gQXQgMjAyNS0wOS0wMSAxNjoxNTowNCwgIlZsYXN0aW1pbCBCYWJrYSIgPHZiYWJrYUBzdXNl
+LmN6PiB3cm90ZToKPj4+T24gOS8xLzI1IDA5OjUwLCBEYXZpZCBSaWVudGplcyB3cm90ZToKPj4+
+PiBPbiBTYXQsIDMwIEF1ZyAyMDI1LCB5YW5nc2hpZ3VhbmcxMDExQDE2My5jb20gd3JvdGU6Cj4+
+Pj4gCj4+Pj4+IEZyb206IHlhbmdzaGlndWFuZyA8eWFuZ3NoaWd1YW5nQHhpYW9taS5jb20+Cj4+
+Pj4+IAo+Pj4+PiBGcm9tOiB5YW5nc2hpZ3VhbmcgPHlhbmdzaGlndWFuZ0B4aWFvbWkuY29tPgo+
+Pj4+PiAKPj4+PiAKPj4+PiBEdXBsaWNhdGUgbGluZXMuCj4+Pj4gCj4+Pj4+IHNldF90cmFja19w
+cmVwYXJlKCkgY2FuIGluY3VyIGxvY2sgcmVjdXJzaW9uLgo+Pj4+PiBUaGUgaXNzdWUgaXMgdGhh
+dCBpdCBpcyBjYWxsZWQgZnJvbSBocnRpbWVyX3N0YXJ0X3JhbmdlX25zCj4+Pj4+IGhvbGRpbmcg
+dGhlIHBlcl9jcHUoaHJ0aW1lcl9iYXNlcylbbl0ubG9jaywgYnV0IHdoZW4gZW5hYmxlZAo+Pj4+
+PiBDT05GSUdfREVCVUdfT0JKRUNUU19USU1FUlMsIG1heSB3YWtlIHVwIGtzd2FwZCBpbiBzZXRf
+dHJhY2tfcHJlcGFyZSwKPj4+Pj4gYW5kIHRyeSB0byBob2xkIHRoZSBwZXJfY3B1KGhydGltZXJf
+YmFzZXMpW25dLmxvY2suCj4+Pj4+IAo+Pj4+PiBBdm9pZCBkZWFkbG9jayBjYXVzZWQgYnkgaW1w
+bGljaXRseSB3YWtpbmcgdXAga3N3YXBkIGJ5Cj4+Pj4+IHBhc3NpbmcgaW4gYWxsb2NhdGlvbiBm
+bGFncy4gQW5kIHRoZSBzbGFiIGNhbGxlciBjb250ZXh0IGhhcwo+Pj4+PiBwcmVlbXB0aW9uIGRp
+c2FibGVkLCBzbyBfX0dGUF9LU1dBUERfUkVDTEFJTSBtdXN0IG5vdCBhcHBlYXIgaW4gZ2ZwX2Zs
+YWdzLgo+Pj4+PiAKPj4+PiAKPj4+PiBUaGlzIG1lbnRpb25zIF9fR0ZQX0tTV0FQRF9SRUNMQUlN
+LCBidXQgdGhlIHBhdGNoIGFjdHVhbGx5IG1hc2tzIG9mZiAKPj4+PiBfX0dGUF9ESVJFQ1RfUkVD
+TEFJTSB3aGljaCB3b3VsZCBiZSBhIGhlYXZpZXJ3ZWlnaHQgb3BlcmF0aW9uLiAgRGlzYWJsaW5n
+IAo+Pj4+IGRpcmVjdCByZWNsYWltIGRvZXMgbm90IG5lY2Vzc2FyaWx5IGltcGx5IHRoYXQga3N3
+YXBkIHdpbGwgYmUgZGlzYWJsZWQgYXMgCj4+Pj4gd2VsbC4KPj4+Cj4+PlllYWggSSB0aGluayB0
+aGUgY2hhbmdlbG9nIHNob3VsZCBzYXkgX19HRlBfRElSRUNUX1JFQ0xBSU0uCj4+Pgo+Pj4+IEFy
+ZSB5b3UgbWVhbmluZyB0byBjbGVhciBfX0dGUF9SRUNMQUlNIGluIHNldF90cmFja19wcmVwYXJl
+KCk/Cj4+Pgo+Pj5ObyBiZWNhdXNlIGlmIHRoZSBjb250ZXh0IGNvbnRleHQgKGUuZy4gdGhlIGhy
+dGltZXJzKSBjYW4ndCBzdXBwb3J0Cj4+Pl9fR0ZQX0tTV0FQRF9SRUNMQUlNIGl0IHdvbid0IGhh
+dmUgaXQgaW4gZ2ZwX2ZsYWdzIGFuZCB3ZSBub3cgcGFzcyB0aGVtIHRvCj4+IAo+Pj5zZXRfdHJh
+Y2tfcHJlcGFyZSgpIHNvIGl0IGFscmVhZHkgd29uJ3QgYmUgdGhlcmUuCj4+IAo+PiAKPj4gU3J5
+LiBTaG91bGQgYmUgX19HRlBfRElSRUNUX1JFQ0xBSU0uIEkgd2lsbCByZXNlbmQgdGhlIHBhdGNo
+Lgo+Cj5JIGhhdmUgYWRqdXN0ZWQgaXQgbG9jYWxseSBhbHJlYWR5LiBBbHNvIG1vdmVkIHRoZSBt
+YXNraW5nIG9mCj5fX0dGUF9ESVJFQ1RfUkVDTEFJTSB0byBfX19zbGFiX2FsbG9jIGl0c2VsZiBh
+cyB0aGF0J3Mgd2hlcmUKPnRoZSBwcmVlbXB0aW9uIGlzIGRpc2FibGVkIHNvIGl0J3MgbW9yZSBv
+YnZpb3VzLgo+Cj5Eb2VzIHRoZSByZXN1bHQgbG9vayBnb29kIHRvIHlvdT8KClRoaXMgbG9va3Mg
+Z29vZC4KQ3VycmVudGx5IG9ubHkgX19fc2xhYl9hbGxvYyBkaXNhYmxlcyBwcmVlbXB0aW9uIGNv
+bnRleHQgY2FsbHMgdG8gc2V0X3RyYWNrLiAKSW4gdGhlIGZ1dHVyZSwgbm90IGFsbCBjYWxsZXJz
+IHdpbGwgZGlzYWJsZSBwcmVlbXB0aW9uLiAKCgo+Cj5jb21taXQgMWI3MDUyYmM1MzY2NTBmOGNh
+MjliNGY2Zjg2ODJkYzlmNTY5MmQxNgo+QXV0aG9yOiB5YW5nc2hpZ3VhbmcgPHlhbmdzaGlndWFu
+Z0B4aWFvbWkuY29tPgo+RGF0ZTogICBTYXQgQXVnIDMwIDEwOjA5OjQ2IDIwMjUgKzA4MDAKPgo+
+ICAgIG1tOiBzbHViOiBhdm9pZCB3YWtlIHVwIGtzd2FwZCBpbiBzZXRfdHJhY2tfcHJlcGFyZQo+
+ICAgIAo+ICAgIHNldF90cmFja19wcmVwYXJlKCkgY2FuIGluY3VyIGxvY2sgcmVjdXJzaW9uLgo+
+ICAgIFRoZSBpc3N1ZSBpcyB0aGF0IGl0IGlzIGNhbGxlZCBmcm9tIGhydGltZXJfc3RhcnRfcmFu
+Z2VfbnMKPiAgICBob2xkaW5nIHRoZSBwZXJfY3B1KGhydGltZXJfYmFzZXMpW25dLmxvY2ssIGJ1
+dCB3aGVuIGVuYWJsZWQKPiAgICBDT05GSUdfREVCVUdfT0JKRUNUU19USU1FUlMsIG1heSB3YWtl
+IHVwIGtzd2FwZCBpbiBzZXRfdHJhY2tfcHJlcGFyZSwKPiAgICBhbmQgdHJ5IHRvIGhvbGQgdGhl
+IHBlcl9jcHUoaHJ0aW1lcl9iYXNlcylbbl0ubG9jay4KPiAgICAKPiAgICBBdm9pZCBkZWFkbG9j
+ayBjYXVzZWQgYnkgaW1wbGljaXRseSB3YWtpbmcgdXAga3N3YXBkIGJ5IHBhc3NpbmcgaW4KPiAg
+ICBhbGxvY2F0aW9uIGZsYWdzLCB3aGljaCBkbyBub3QgY29udGFpbiBfX0dGUF9LU1dBUERfUkVD
+TEFJTSBpbiB0aGUKPiAgICBkZWJ1Z19vYmplY3RzX2ZpbGxfcG9vbCgpIGNhc2UuCj4gICAgU2lu
+Y2UgX19fc2xhYl9hbGxvYygpIGhhcyBwcmVlbXB0aW9uIGRpc2FibGVkIGFuZCB0aHVzIHdhcyB1
+c2luZwo+ICAgIEdGUF9OT1dBSVQsIHdlIGluc3RlYWQgbWFzayBvdXQgX19HRlBfRElSRUNUX1JF
+Q0xBSU0gZnJvbSB0aGUgZmxhZ3MuCj4gICAgCj4gICAgVGhlIG9vcHMgbG9va3Mgc29tZXRoaW5n
+IGxpa2U6Cj4gICAgCj4gICAgQlVHOiBzcGlubG9jayByZWN1cnNpb24gb24gQ1BVIzMsIHN3YXBw
+ZXIvMy8wCj4gICAgIGxvY2s6IDB4ZmZmZmZmOGE0YmYyOWM4MCwgLm1hZ2ljOiBkZWFkNGVhZCwg
+Lm93bmVyOiBzd2FwcGVyLzMvMCwgLm93bmVyX2NwdTogMwo+ICAgIEhhcmR3YXJlIG5hbWU6IFF1
+YWxjb21tIFRlY2hub2xvZ2llcywgSW5jLiBQb3BzaWNsZSBiYXNlZCBvbiBTTTg4NTAgKERUKQo+
+ICAgIENhbGwgdHJhY2U6Cj4gICAgc3Bpbl9idWcrMHgwCj4gICAgX3Jhd19zcGluX2xvY2tfaXJx
+c2F2ZSsweDgwCj4gICAgaHJ0aW1lcl90cnlfdG9fY2FuY2VsKzB4OTQKPiAgICB0YXNrX2NvbnRl
+bmRpbmcrMHgxMGMKPiAgICBlbnF1ZXVlX2RsX2VudGl0eSsweDJhNAo+ICAgIGRsX3NlcnZlcl9z
+dGFydCsweDc0Cj4gICAgZW5xdWV1ZV90YXNrX2ZhaXIrMHg1NjgKPiAgICBlbnF1ZXVlX3Rhc2sr
+MHhhYwo+ICAgIGRvX2FjdGl2YXRlX3Rhc2srMHgxNGMKPiAgICB0dHd1X2RvX2FjdGl2YXRlKzB4
+Y2MKPiAgICB0cnlfdG9fd2FrZV91cCsweDZjOAo+ICAgIGRlZmF1bHRfd2FrZV9mdW5jdGlvbisw
+eDIwCj4gICAgYXV0b3JlbW92ZV93YWtlX2Z1bmN0aW9uKzB4MWMKPiAgICBfX3dha2VfdXArMHhh
+Ywo+ICAgIHdha2V1cF9rc3dhcGQrMHgxOWMKPiAgICB3YWtlX2FsbF9rc3dhcGRzKzB4NzgKPiAg
+ICBfX2FsbG9jX3BhZ2VzX3Nsb3dwYXRoKzB4MWFjCj4gICAgX19hbGxvY19wYWdlc19ub3Byb2Yr
+MHgyOTgKPiAgICBzdGFja19kZXBvdF9zYXZlX2ZsYWdzKzB4NmIwCj4gICAgc3RhY2tfZGVwb3Rf
+c2F2ZSsweDE0Cj4gICAgc2V0X3RyYWNrX3ByZXBhcmUrMHg1Ywo+ICAgIF9fX3NsYWJfYWxsb2Mr
+MHhjY2MKPiAgICBfX2ttYWxsb2NfY2FjaGVfbm9wcm9mKzB4NDcwCj4gICAgX19zZXRfcGFnZV9v
+d25lcisweDJiYwo+ICAgIHBvc3RfYWxsb2NfaG9va1tqdF0rMHgxYjgKPiAgICBwcmVwX25ld19w
+YWdlKzB4MjgKPiAgICBnZXRfcGFnZV9mcm9tX2ZyZWVsaXN0KzB4MWVkYwo+ICAgIF9fYWxsb2Nf
+cGFnZXNfbm9wcm9mKzB4MTNjCj4gICAgYWxsb2Nfc2xhYl9wYWdlKzB4MjQ0Cj4gICAgYWxsb2Nh
+dGVfc2xhYisweDdjCj4gICAgX19fc2xhYl9hbGxvYysweDhlOAo+ICAgIGttZW1fY2FjaGVfYWxs
+b2Nfbm9wcm9mKzB4NDUwCj4gICAgZGVidWdfb2JqZWN0c19maWxsX3Bvb2wrMHgyMmMKPiAgICBk
+ZWJ1Z19vYmplY3RfYWN0aXZhdGUrMHg0MAo+ICAgIGVucXVldWVfaHJ0aW1lcltqdF0rMHhkYwo+
+ICAgIGhydGltZXJfc3RhcnRfcmFuZ2VfbnMrMHg1ZjgKPiAgICAuLi4KPiAgICAKPiAgICBTaWdu
+ZWQtb2ZmLWJ5OiB5YW5nc2hpZ3VhbmcgPHlhbmdzaGlndWFuZ0B4aWFvbWkuY29tPgo+ICAgIEZp
+eGVzOiA1Y2Y5MDljNTUzZTkgKCJtbS9zbHViOiB1c2Ugc3RhY2tkZXBvdCB0byBzYXZlIHN0YWNr
+IHRyYWNlIGluIG9iamVjdHMiKQo+ICAgIENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnCj4gICAg
+U2lnbmVkLW9mZi1ieTogVmxhc3RpbWlsIEJhYmthIDx2YmFia2FAc3VzZS5jej4KPgo+ZGlmZiAt
+LWdpdCBhL21tL3NsdWIuYyBiL21tL3NsdWIuYwo+aW5kZXggMTc4N2U0ZDUxZTQ4Li5kMjU3MTQx
+ODk2YzkgMTAwNjQ0Cj4tLS0gYS9tbS9zbHViLmMKPisrKyBiL21tL3NsdWIuYwo+QEAgLTk2Miwx
+OSArOTYyLDE5IEBAIHN0YXRpYyBzdHJ1Y3QgdHJhY2sgKmdldF90cmFjayhzdHJ1Y3Qga21lbV9j
+YWNoZSAqcywgdm9pZCAqb2JqZWN0LAo+IH0KPiAKPiAjaWZkZWYgQ09ORklHX1NUQUNLREVQT1QK
+Pi1zdGF0aWMgbm9pbmxpbmUgZGVwb3Rfc3RhY2tfaGFuZGxlX3Qgc2V0X3RyYWNrX3ByZXBhcmUo
+dm9pZCkKPitzdGF0aWMgbm9pbmxpbmUgZGVwb3Rfc3RhY2tfaGFuZGxlX3Qgc2V0X3RyYWNrX3By
+ZXBhcmUoZ2ZwX3QgZ2ZwX2ZsYWdzKQo+IHsKPiAJZGVwb3Rfc3RhY2tfaGFuZGxlX3QgaGFuZGxl
+Owo+IAl1bnNpZ25lZCBsb25nIGVudHJpZXNbVFJBQ0tfQUREUlNfQ09VTlRdOwo+IAl1bnNpZ25l
+ZCBpbnQgbnJfZW50cmllczsKPiAKPiAJbnJfZW50cmllcyA9IHN0YWNrX3RyYWNlX3NhdmUoZW50
+cmllcywgQVJSQVlfU0laRShlbnRyaWVzKSwgMyk7Cj4tCWhhbmRsZSA9IHN0YWNrX2RlcG90X3Nh
+dmUoZW50cmllcywgbnJfZW50cmllcywgR0ZQX05PV0FJVCk7Cj4rCWhhbmRsZSA9IHN0YWNrX2Rl
+cG90X3NhdmUoZW50cmllcywgbnJfZW50cmllcywgZ2ZwX2ZsYWdzKTsKPiAKPiAJcmV0dXJuIGhh
+bmRsZTsKPiB9Cj4gI2Vsc2UKPi1zdGF0aWMgaW5saW5lIGRlcG90X3N0YWNrX2hhbmRsZV90IHNl
+dF90cmFja19wcmVwYXJlKHZvaWQpCj4rc3RhdGljIGlubGluZSBkZXBvdF9zdGFja19oYW5kbGVf
+dCBzZXRfdHJhY2tfcHJlcGFyZShnZnBfdCBnZnBfZmxhZ3MpCj4gewo+IAlyZXR1cm4gMDsKPiB9
+Cj5AQCAtOTk2LDkgKzk5Niw5IEBAIHN0YXRpYyB2b2lkIHNldF90cmFja191cGRhdGUoc3RydWN0
+IGttZW1fY2FjaGUgKnMsIHZvaWQgKm9iamVjdCwKPiB9Cj4gCj4gc3RhdGljIF9fYWx3YXlzX2lu
+bGluZSB2b2lkIHNldF90cmFjayhzdHJ1Y3Qga21lbV9jYWNoZSAqcywgdm9pZCAqb2JqZWN0LAo+
+LQkJCQkgICAgICBlbnVtIHRyYWNrX2l0ZW0gYWxsb2MsIHVuc2lnbmVkIGxvbmcgYWRkcikKPisJ
+CQkJICAgICAgZW51bSB0cmFja19pdGVtIGFsbG9jLCB1bnNpZ25lZCBsb25nIGFkZHIsIGdmcF90
+IGdmcF9mbGFncykKPiB7Cj4tCWRlcG90X3N0YWNrX2hhbmRsZV90IGhhbmRsZSA9IHNldF90cmFj
+a19wcmVwYXJlKCk7Cj4rCWRlcG90X3N0YWNrX2hhbmRsZV90IGhhbmRsZSA9IHNldF90cmFja19w
+cmVwYXJlKGdmcF9mbGFncyk7Cj4gCj4gCXNldF90cmFja191cGRhdGUocywgb2JqZWN0LCBhbGxv
+YywgYWRkciwgaGFuZGxlKTsKPiB9Cj5AQCAtMTkyNiw5ICsxOTI2LDkgQEAgc3RhdGljIGlubGlu
+ZSBib29sIGZyZWVfZGVidWdfcHJvY2Vzc2luZyhzdHJ1Y3Qga21lbV9jYWNoZSAqcywKPiBzdGF0
+aWMgaW5saW5lIHZvaWQgc2xhYl9wYWRfY2hlY2soc3RydWN0IGttZW1fY2FjaGUgKnMsIHN0cnVj
+dCBzbGFiICpzbGFiKSB7fQo+IHN0YXRpYyBpbmxpbmUgaW50IGNoZWNrX29iamVjdChzdHJ1Y3Qg
+a21lbV9jYWNoZSAqcywgc3RydWN0IHNsYWIgKnNsYWIsCj4gCQkJdm9pZCAqb2JqZWN0LCB1OCB2
+YWwpIHsgcmV0dXJuIDE7IH0KPi1zdGF0aWMgaW5saW5lIGRlcG90X3N0YWNrX2hhbmRsZV90IHNl
+dF90cmFja19wcmVwYXJlKHZvaWQpIHsgcmV0dXJuIDA7IH0KPitzdGF0aWMgaW5saW5lIGRlcG90
+X3N0YWNrX2hhbmRsZV90IHNldF90cmFja19wcmVwYXJlKGdmcF90IGdmcF9mbGFncykgeyByZXR1
+cm4gMDsgfQo+IHN0YXRpYyBpbmxpbmUgdm9pZCBzZXRfdHJhY2soc3RydWN0IGttZW1fY2FjaGUg
+KnMsIHZvaWQgKm9iamVjdCwKPi0JCQkgICAgIGVudW0gdHJhY2tfaXRlbSBhbGxvYywgdW5zaWdu
+ZWQgbG9uZyBhZGRyKSB7fQo+KwkJCSAgICAgZW51bSB0cmFja19pdGVtIGFsbG9jLCB1bnNpZ25l
+ZCBsb25nIGFkZHIsIGdmcF90IGdmcF9mbGFncykge30KPiBzdGF0aWMgaW5saW5lIHZvaWQgYWRk
+X2Z1bGwoc3RydWN0IGttZW1fY2FjaGUgKnMsIHN0cnVjdCBrbWVtX2NhY2hlX25vZGUgKm4sCj4g
+CQkJCQlzdHJ1Y3Qgc2xhYiAqc2xhYikge30KPiBzdGF0aWMgaW5saW5lIHZvaWQgcmVtb3ZlX2Z1
+bGwoc3RydWN0IGttZW1fY2FjaGUgKnMsIHN0cnVjdCBrbWVtX2NhY2hlX25vZGUgKm4sCj5AQCAt
+Mzg4MSw5ICszODgxLDE0IEBAIHN0YXRpYyB2b2lkICpfX19zbGFiX2FsbG9jKHN0cnVjdCBrbWVt
+X2NhY2hlICpzLCBnZnBfdCBnZnBmbGFncywgaW50IG5vZGUsCj4gCQkJICogRm9yIGRlYnVnIGNh
+Y2hlcyBoZXJlIHdlIGhhZCB0byBnbyB0aHJvdWdoCj4gCQkJICogYWxsb2Nfc2luZ2xlX2Zyb21f
+cGFydGlhbCgpIHNvIGp1c3Qgc3RvcmUgdGhlCj4gCQkJICogdHJhY2tpbmcgaW5mbyBhbmQgcmV0
+dXJuIHRoZSBvYmplY3QuCj4rCQkJICoKPisJCQkgKiBEdWUgdG8gZGlzYWJsZWQgcHJlZW1wdGlv
+biB3ZSBuZWVkIHRvIGRpc2FsbG93Cj4rCQkJICogYmxvY2tpbmcuIFRoZSBmbGFncyBhcmUgZnVy
+dGhlciBhZGp1c3RlZCBieQo+KwkJCSAqIGdmcF9uZXN0ZWRfbWFzaygpIGluIHN0YWNrX2RlcG90
+IGl0c2VsZi4KPiAJCQkgKi8KPiAJCQlpZiAocy0+ZmxhZ3MgJiBTTEFCX1NUT1JFX1VTRVIpCj4t
+CQkJCXNldF90cmFjayhzLCBmcmVlbGlzdCwgVFJBQ0tfQUxMT0MsIGFkZHIpOwo+KwkJCQlzZXRf
+dHJhY2socywgZnJlZWxpc3QsIFRSQUNLX0FMTE9DLCBhZGRyLAo+KwkJCQkJICBnZnBmbGFncyAm
+IH4oX19HRlBfRElSRUNUX1JFQ0xBSU0pKTsKPiAKPiAJCQlyZXR1cm4gZnJlZWxpc3Q7Cj4gCQl9
+Cj5AQCAtMzkxNSw3ICszOTIwLDggQEAgc3RhdGljIHZvaWQgKl9fX3NsYWJfYWxsb2Moc3RydWN0
+IGttZW1fY2FjaGUgKnMsIGdmcF90IGdmcGZsYWdzLCBpbnQgbm9kZSwKPiAJCQlnb3RvIG5ld19v
+YmplY3RzOwo+IAo+IAkJaWYgKHMtPmZsYWdzICYgU0xBQl9TVE9SRV9VU0VSKQo+LQkJCXNldF90
+cmFjayhzLCBmcmVlbGlzdCwgVFJBQ0tfQUxMT0MsIGFkZHIpOwo+KwkJCXNldF90cmFjayhzLCBm
+cmVlbGlzdCwgVFJBQ0tfQUxMT0MsIGFkZHIsCj4rCQkJCSAgZ2ZwZmxhZ3MgJiB+KF9fR0ZQX0RJ
+UkVDVF9SRUNMQUlNKSk7Cj4gCj4gCQlyZXR1cm4gZnJlZWxpc3Q7Cj4gCX0KPkBAIC00NDI2LDgg
+KzQ0MzIsMTIgQEAgc3RhdGljIG5vaW5saW5lIHZvaWQgZnJlZV90b19wYXJ0aWFsX2xpc3QoCj4g
+CXVuc2lnbmVkIGxvbmcgZmxhZ3M7Cj4gCWRlcG90X3N0YWNrX2hhbmRsZV90IGhhbmRsZSA9IDA7
+Cj4gCj4rCS8qCj4rCSAqIFdlIGNhbm5vdCB1c2UgR0ZQX05PV0FJVCBhcyB0aGVyZSBhcmUgY2Fs
+bHNpdGVzIHdoZXJlIHdha2luZyB1cAo+KwkgKiBrc3dhcGQgY291bGQgZGVhZGxvY2sKPisJICov
+Cj4gCWlmIChzLT5mbGFncyAmIFNMQUJfU1RPUkVfVVNFUikKPi0JCWhhbmRsZSA9IHNldF90cmFj
+a19wcmVwYXJlKCk7Cj4rCQloYW5kbGUgPSBzZXRfdHJhY2tfcHJlcGFyZShfX0dGUF9OT1dBUk4p
+Owo+IAo+IAlzcGluX2xvY2tfaXJxc2F2ZSgmbi0+bGlzdF9sb2NrLCBmbGFncyk7Cj4gCg==
 
