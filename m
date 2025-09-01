@@ -1,105 +1,187 @@
-Return-Path: <linux-kernel+bounces-794148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FE8B3DD83
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50899B3DD88
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5AE17231D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB9C7A21FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2943009ED;
-	Mon,  1 Sep 2025 09:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4F53009EE;
+	Mon,  1 Sep 2025 09:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XfLtJIB9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uLsPWZpO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1ED305059
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1440B2FF150
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717340; cv=none; b=Xk9j8bv+3jVjeQeeDcDntpuZ3/rCB4+RYh5SA+h6PYJfe82GxTHT363+P6uMhvY7CphPCiGSpjyaInajuQBp1st6+2bMYKXfzHz9T2yDUY4ESYvhJwiJuaTI+DYeVNpgj46wrWqy93Ra1rqr7VUrxejBwP9qwiOzfSWy4ZEEyQY=
+	t=1756717440; cv=none; b=RArYtTWeIlfTnfZRRYY8Fo8hYQJvfLYRPb7NR7/9fOZ1BEwgPYX+8sd/8t2fKuB8+0OQKrSXQ4Kk2V7yKL283Z+S+KMVZp+Cy3VHdw0OKaf4/i2487NZU1lc/nTO8yEakYwHUkV6MgQwUyhXOlVSsuAbNaQBnDFFSdbesm+Lg1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717340; c=relaxed/simple;
-	bh=ziSK8lEr1aNzouKQKGg3Z2wKaoSBvRJnFd1y2upGG5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBhQkBzfT5q49l4HblbH9KlszNTiISW80Zk/KSazSnNLpOuYZDYlT0ZXwch/7468RldGwBwVUrOkfpLBGe8BxO/Rk4k4Pbk6qB37MrPCeX55rqQgnaN9ojRU7lkEPgKsbbiuEvhJdFC6ub/6hAnSsSA1Vi4n5kq3H1uKaD/h8C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XfLtJIB9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756717336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DPvlEW8PtLKIanxybkO1/0NkrQlUhYQIU4DMz23K2u4=;
-	b=XfLtJIB9oKRGjfeZFRb0eWjRL5cK+I+l6AMhphcU8uRHQPXbBE18Fy/gcU3rEXytmaRNjG
-	pMexDeScIudJ08Z9XYskMzN20ozEaD1Xn0RLs/zQxbbxPaBDbP28j4ddku+8IU3X8yjrld
-	7kB7eQDkBDBfELvT7ZY8HXDJnhQbiac=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-656-8mFGJcPuO_W8J2hAjUmw-w-1; Mon,
- 01 Sep 2025 05:02:12 -0400
-X-MC-Unique: 8mFGJcPuO_W8J2hAjUmw-w-1
-X-Mimecast-MFC-AGG-ID: 8mFGJcPuO_W8J2hAjUmw-w_1756717329
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC7F5180035D;
-	Mon,  1 Sep 2025 09:02:08 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4D57730001A2;
-	Mon,  1 Sep 2025 09:02:06 +0000 (UTC)
-Date: Mon, 1 Sep 2025 17:02:02 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Breno Leitao <leitao@debian.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Coiby Xu <coxu@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 0/3] kexec: Fix invalid field access
-Message-ID: <aLVhCuzhRTRnDytw@MiWiFi-R3L-srv>
-References: <20250827-kbuf_all-v1-0-1df9882bb01a@debian.org>
- <f7d55c91-8877-41aa-8cf0-64af38a9a109@ghiti.fr>
+	s=arc-20240116; t=1756717440; c=relaxed/simple;
+	bh=BRVffIraDrTcVxvFJdlUUUnJJYHLdGtchn0lCofCxlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S5Top5NSISb0oYt/DbbiK+O0xRNZMUTl4fI/UqHG6OwuuQanxctJzQi/SdAV2fwuitITfIzL6cC4B8IXjzQmPuXlEobX47BST4UdZJwUIoRamX4CA02DDDQutXmyPUyabB25o+hIEWgs7zIOA33Ui+679GV/tugNa61SyHaAHk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uLsPWZpO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b8b8d45b3so7993335e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756717437; x=1757322237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MLxQeBkb7pg30Hm1b4BwH3XF1UA4XXnA9/e/abfa5DU=;
+        b=uLsPWZpO019pbS6/8j8oIeTYmgvvc0Ex3Jaa+l0/de6ZS0cox4UQD8OmLDE9g4lidC
+         VdVG/JIYaHK8wonXs2kyiOId1/FJRwxzbS9SPmNKlWxdx28wcFexYlFalBwiCGVSa1Fv
+         qv4ggfNjlB7jWQNTz2rBnAmEvuAE86tioWV1tnb3yqAmmWDxvrZDlu9em/6bEZSJBoEZ
+         a2weE2PMsHZyhb1/uX9ngo/SqovPnAJobqXXsEJMUIs+wS5a0N6WuAf5rq2EOiGqyjPw
+         AUZOUc0rWcO1msp0xKiZoC84VHXPWRSddvx1GZHSHY6nWeuG+dO6pZQFv1KiTARIsBtu
+         khQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756717437; x=1757322237;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MLxQeBkb7pg30Hm1b4BwH3XF1UA4XXnA9/e/abfa5DU=;
+        b=u8ZA/8BfP6sBLoJRYPq02WZi2Q3AOvaVmilaFb5Mp/PLXI6a9Uj4q8g9WQh/O9JLdC
+         E1ZJSAQ+jebFBh9d6Ez9CiFU5MQlYIig9UfnwjJ+OkLllmovd0spJuXNPLCwLrfBfpTp
+         Xy/1pz0ReOzAt6eFrAqLzVizvTc1laS037dguzkhYchPmki3UiQRsBkiaIr68MOLIFBG
+         +KTBT3qEtBNLuLYbrTSy6sXy8VyZ9g/m8Q6van2sXXajK3ENKv27muDe6VBsgUngN0eB
+         Uipn1N/MQBnf4CLqRToGwdHt0GULdZTHtTlAKgb8TWwdbaZB3gPEkA/PLVu1nEX8f49R
+         mVYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbZEQjgzlRWr7NEyWvnB9sXrFbTWPJjKFry9vhN8MQ4dBqflVLfEB6611oVWRCma6GG67edzkRFcThrZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRWq1oI19N8JW5efh7fu6KPgvaISkHwq2+7gykLjw3NWHhDlFL
+	ZRhwtYJkH3j8c9bqUlNLIS/bh+ovER+PfCsGQBjzqLF8v4niU+knCZboupaHLSttu+g=
+X-Gm-Gg: ASbGncv7rjte0Spr8Jq9vWgPUunQpijxG8QEXA18GxnJfUt/4gvmwymfDuZZuWgnaqx
+	pU6Vzc0V0Vf6vJkDk0BzL/MfDR6mg52VF9Qwogoa3FeaXluNfKo5c5/XKBt1IBNiB4xk1lRBlCZ
+	RimBu/TGqEj8jGgUt9iTreKOO5tklOMnaXgXmic6xNb8/JMTOjvrccs96QUDHdDG5p8z+2VquyN
+	/QviSm+JFklvbDIMfynzIdnqMoBEKs8tPKxgYK46OaFhegAEru9vM0gnWpbYq7zxYgXyNB9tOaq
+	2yz9W9ziwe9MzWKqmuV+7sL5fndOUtEWVA/D6dCm+bqf3zMLieIvFALIWiS2jjn+usgBznEsRan
+	wrUnA4HiaspR2MgDGr03Fiit+sVxEtfqpm6njzKG5tc9ETsynxTBA/I3wKN6Q3+XUgobCuAkODH
+	PsfTucwko=
+X-Google-Smtp-Source: AGHT+IFRon1/4eAXp3QDGK+LmMCItN7KW9fmyhhUSOX/aEte7rl35eC/lBri5/0sH+daAyHsLqfoNA==
+X-Received: by 2002:a05:600c:4692:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-45b855983f8mr46646315e9.20.1756717437302;
+        Mon, 01 Sep 2025 02:03:57 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a? ([2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7d9548edsm93591505e9.5.2025.09.01.02.03.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 02:03:56 -0700 (PDT)
+Message-ID: <d39a0299-bbda-4284-b7ab-81648a787305@linaro.org>
+Date: Mon, 1 Sep 2025 11:03:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7d55c91-8877-41aa-8cf0-64af38a9a109@ghiti.fr>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 0/3] platform: arm64: thinkpad-t14s-ec: new driver
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 09/01/25 at 08:42am, Alexandre Ghiti wrote:
-> Hi Breno,
+On 31/08/2025 23:28, Sebastian Reichel wrote:
+> Introduce driver for the ThinkPad T14s Gen6 Snapdragon EC. In theory
+> it seems to be compatible with the ThinkPad ACPI driver, but these
+> devices are booted with device tree. As the name implies, the existing
+> ThinkPad ACPI driver only supports the ACPI interface. Looking at
+> the implementation, the ACPI DSDT contains many mapping functions
+> to translate the low level I2C messages into the interface used by
+> the ThinkPad ACPI driver. Adding DT support to the ThinkPad ACPI driver
+> would require adding all those translation functions, which would add
+> more or less the same amount of code as writing a separate driver using
+> the low level interface directly. I don't think it's sensible to make
+> the existing ACPI driver even more complicated, so I went for a separate
+> driver.
 > 
-> On 8/27/25 12:42, Breno Leitao wrote:
-.....snip... 
+> I managed to get system LEDs, audio LEDs, extra keys and the keyboard
+> backlight control working. The EC also seems to be used for some thermal
+> bits, which I haven't looked into deeply. As far as I understand most
+> thermal and fan control is handled by a different controller
+> (0x36@i2c5) anyways.
 > 
-> I see that the commit those patches fix is in 6.16 so we should add cc:
-> stable.
+> Apart from that the EC is involved in proper system suspend, which
+> is something I do not yet understand (I don't have any documentation
+> apart from the dis-assembled DSDT and existing ACPI driver). Right
+> now I disabled wake capabilities for the IRQ, since it would wake
+> up the system when closing the LID. Hopefully a way to mask specific
+> events will be found in the future.
 > 
-> And who should merge those patches? Should we do it on a per-arch basis?
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+> Sebastian Reichel (3):
+>        dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+>        platform: arm64: thinkpad-t14s-ec: new driver
+>        arm64: dts: qcom: x1e80100-t14s: add EC
+> 
+>   .../bindings/platform/lenovo,thinkpad-t14s-ec.yaml |  49 ++
+>   MAINTAINERS                                        |   6 +
+>   .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  23 +
+>   drivers/platform/arm64/Kconfig                     |  20 +
+>   drivers/platform/arm64/Makefile                    |   1 +
+>   drivers/platform/arm64/lenovo-thinkpad-t14s.c      | 597 +++++++++++++++++++++
+>   6 files changed, 696 insertions(+)
+> ---
+> base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
+> change-id: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+> 
+> Best regards,
 
-It's been in Andrew's akpm-mm/mm-hotfixes-unstable.
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
 
+All worked :-)
+
+Thanks !
+
+Neil
 
