@@ -1,140 +1,428 @@
-Return-Path: <linux-kernel+bounces-795191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A306AB3EE01
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281DEB3EE03
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2167C1B20794
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E865D2C08D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75B132A827;
-	Mon,  1 Sep 2025 18:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BD232C336;
+	Mon,  1 Sep 2025 18:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VUwfRjpT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0mTWK7k"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781232A80E;
-	Mon,  1 Sep 2025 18:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BD034CDD;
+	Mon,  1 Sep 2025 18:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756752139; cv=none; b=bP9Z0w9Lai84m0Hrj9ykUyVmzWQrOlii0lshIGIp7On9Gk6LqNtsqV8Tr9Yx1v4gjEzhueecwQjPFDNyEyA83lzU6r92teYaevdIZLi251+YeAGGE9LHMjkp5YuCF44x0dmQ8NWnA4+ucoJv7/nm7NqrXamCfab9toNNkAtsdK4=
+	t=1756752171; cv=none; b=ViyQvHa2QtejmHgmj+ahu3I4ARvHvIRzyoCzSoh8dTvaUOGQUx0Xirsrwezee5SvkMJiDIjEKjTAJGFPYI/iN7qLni1SN4KXxrm1X7uCOc4zeCIklOmn9VolCgTUK5uP5os2SiKTOWgAAxHDz22NMavmWZUVadgaUS/sPQAtjSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756752139; c=relaxed/simple;
-	bh=GJSV27slXlb1hEkUPKBXiVO6V17cVNRA3zVHR10FCSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tGIq9LlivmNBpAqEOwbUMfK6tthsYNn6veC9XKUr6RyX6NkOU8ORn7cLQRwCcD6qnQfFrSTWmgm1EU0fl3N6rJS0E2jEDxuNum3uxF1u0OIBWWrIY5XBEFRQ1pJOWp6CEU/xzUjrTcIrtwAzEi17R0JhHqzMS1CSpWVyiNeCG28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VUwfRjpT; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756752137; x=1788288137;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=GJSV27slXlb1hEkUPKBXiVO6V17cVNRA3zVHR10FCSE=;
-  b=VUwfRjpTpxnhQbgGyX45td6IfmPM3dU8z6Sa89FU8WQOJjvyBKZ3A8vT
-   Z+CtC7UH6fPFhBWHOT+XlUat9xVCyTspMz9woVI6PCoNPPumFdAMiwFpE
-   oMwQe2VaMxCqdNJC2b42p85M6HEDMjxiO4jsXhlvYjMQ0KbtjkB9NGV2I
-   Y4yiivXmY8oVGNuNlbESJoq4ShdVAL3MkKvX2wRuuzeD0aaTw54Bunemo
-   peLarclnGVQy5U8zyOHnbNpDFE3Sv8t2a5aaEmnaO1cLTBhnc4zzItR3d
-   7lF9RQZMBR66xZIBoKvHtBB9KbxXQ3jWcGToTyVdhIqT0BB90VqQ/WdjV
-   w==;
-X-CSE-ConnectionGUID: qMCc58MATGmPWpi+On/h0Q==
-X-CSE-MsgGUID: TieturWNSVK7J7zgHQh96Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="59084689"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="59084689"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 11:42:16 -0700
-X-CSE-ConnectionGUID: xTaLfrzUQwGEJYXPRpraXw==
-X-CSE-MsgGUID: Q0bFza65TxaDN2pRCtpFAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="171527981"
-Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.109.200]) ([10.125.109.200])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 11:42:16 -0700
-Message-ID: <d9a76e90-7723-49ee-b3ec-85c7533d8023@intel.com>
-Date: Mon, 1 Sep 2025 11:42:15 -0700
+	s=arc-20240116; t=1756752171; c=relaxed/simple;
+	bh=2d52vighkED+vr/UGcFU31UN9cMFJZ/IPGMLNDxIPkE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nI5ny2Yj5DJGUgAfpouLkwWGzOjd5pg6XfYqGVaGbVivHYP4T7cdKmBbMKEoss4CvIEQf723E1PDGixDphUyh2I6XYr2i9P0RXXz0H5j/F8zYJwqob2Az39ncqs/HrjypEYwDyLH4x7ylOVpfrWzHDc6DQ+U1VaqXHK/6z0pANo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0mTWK7k; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4c9a6d3fc7so2542078a12.3;
+        Mon, 01 Sep 2025 11:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756752168; x=1757356968; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvdg41PM5HB8Nwly6FCzzDQZu3k4hdMyTbpLh9jPZ8I=;
+        b=d0mTWK7kyaMzhAYXpjQqgihhgBaOSkFpLQu8YI+a91vKmJDOmsL0Yxt3ObwbogFdd4
+         S6ntlTAyDdFWcke5Vgd8zW/a/4xXhb78UZboeElIh/atOR57YpphXmJtMZzmpHWVMDXC
+         WhcQrwHYDGBTchuNKKP0DwkcRC2YcW7DKPf9vfyTA0krBNHtksgtqPts1Mw+quetUwV5
+         Mcv/3VEF1fg0xaIGPd0+BLU1UFOdiIytbroFRQBxpG1pPtm5naqEGB87UZAVqzOD4LGn
+         RdtwAllBr9ijLQyW1+oC7lAoxl7aXyv00SrW+tCfVBBkVGUWN1lLwfEBj+kgn7qP+UY6
+         T8ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756752168; x=1757356968;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wvdg41PM5HB8Nwly6FCzzDQZu3k4hdMyTbpLh9jPZ8I=;
+        b=u2QA0vwZbRgU1EB4KYJ+A01ac9fAgy2FELe8c0CqiUuqxk0oxU4jlyr4p3VrsEfg7z
+         ppBzrAIRgGAHID2+eNH37dhIGH+blQ7iaeisXpm3f23jGwEY2N/D79i5QELje++d/PbM
+         FR1UBMd5ywnCCS25bbTAobM3Dyj598VIGxweRI/CzClbx12CBy/DMCYVrKbxIhZKGbud
+         IS6aRx8G24JBhBXnDFyVpMJmOteY9YnCPciOX3tu6oM4VsGH/BzN50FgB1WlVDqbpNZB
+         TQ7UkuAH2KXD6cGekFelM0e3EkKaG92tPWouTn0FQGMgar4G6tUu3TN4/usx5EQoBS8l
+         sQRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF+7Sa7dhhzpVbPZJa6T7G7V7bR6+x3SbVaMbxV5CfscMQMfQmhAZ12HezQ9jjOsjN3UlF74jvKmLu49Vd@vger.kernel.org, AJvYcCWOhy0gdfHszGh12gl22z7NF96/MX+h3Zj55qI2ZpPn8R4Ig5SGDKYDbRaRTKv+Qmb5m4c44hO2ROY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVM/wmCRUGFD8eqXk9TNLvnw24BI8glwjwJQEH6IqxGaAqEqPB
+	5/zsqVz6j4wE5pUG3AG3E3plQ2q5wxAPnZNWnM3bPKlj+VS5FJGrWRds
+X-Gm-Gg: ASbGncsPwP03rOcTUaL+sJ4tEK6T/+EkP3sVjkcOcZh26qGHmYif+R/lCirEYktOlGy
+	0i1Acj0JZ68CmmWJyScxYUDGbt7ZtiEf/2QMlTM7VqLr8xhpObzVIUwePCGnoM1VrhpGoJ7cGKS
+	KfL+ZP6rt3rPQwsrielzkN4Y9Ap6RB9uEXec+fBA97xRtimdK92iQ+slJa+itIvVz8fUM5VODzC
+	s22CEDJUy8gblFAwk95ajaQOG+VSVD7eRsl20A3jyttqOMCZvAMC/EKtCJNYc0SNHbAFSVh/JYJ
+	MaXwrJYopT68ZGiyAHzfsmk6RZ6lBHznNbShvoSzhlXQb0Bd0KHVbhOeRDlZ/wD9sI4Zr1R3rXw
+	E8/Uqhykvd+S5vQE2GglbDzDXX2rElewuiyV7P/SYecEtN8ET
+X-Google-Smtp-Source: AGHT+IGncUksVT1kiARASZH8QUiBs3oGOVrxCWOMrQIbKUx3znC0CbWx9PAvS2Hu17P7zkFgl3ZxQg==
+X-Received: by 2002:a17:902:db04:b0:248:f736:1ebb with SMTP id d9443c01a7336-24944b45cdfmr111513155ad.47.1756752168437;
+        Mon, 01 Sep 2025 11:42:48 -0700 (PDT)
+Received: from akshayaj-lenovo.. ([2401:4900:883a:e1ca:2a30:298b:7776:d1af])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065b73f1sm108712645ad.133.2025.09.01.11.42.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 11:42:47 -0700 (PDT)
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+To: anshulusr@gmail.com,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
+	shuah@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] iio: light: ltr390: Implement runtime PM support
+Date: Tue,  2 Sep 2025 00:12:36 +0530
+Message-ID: <20250901184238.34335-1-akshayaj.lkd@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/sgx: Use guard() instead of mutex_lock() to simplify
- code
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "open list:INTEL SGX" <linux-sgx@vger.kernel.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-References: <20250901132229.650658-1-liaoyuanhong@vivo.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250901132229.650658-1-liaoyuanhong@vivo.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/1/25 06:22, Liao Yuanhong wrote:
-> Using guard(mutex) instead of mutex_lock/mutex_unlock pair. Simplifies the
-> error handling to just return in case of error. No need for the 'err_out'
-> label anymore so remove it.
+Implement runtime power management for the LTR390 sensor. The device
+autosuspends after 1s of idle time, reducing current consumption from
+100 µA in active mode to 1 µA in standby mode as per the datasheet.
 
-I don't plan on applying patches like this. Yes, they marginally
-simplify the code, but they do it at the cost of code churn and adding
-new bugs. In other words, they're not worth it.
+Ensure that interrupts continue to be delivered with runtime PM.
+Since the LTR390 cannot be used as a wakeup source during runtime
+suspend, therefore increment the runtime PM refcount when enabling
+events and decrement it when disabling events or powering down.
+This prevents event loss while still allowing power savings when IRQs
+are unused.
 
+Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
+---
+
+Changes since v3:
+=================
+1. Jonathan's feedback:
+-> Keep runtime PM calls only in read_raw, write_event_config and powerdown.
+-> Updated Testing details for the changes.
+
+2. Andy's feedback:
+-> Move include of pm_runtime.h above include of regmap.h
+
+Changes since v2:
+=================
+1. Andy's feedback:
+-> Check return value of pm_runtime_resume_and_get().
+-> Do not check return value of pm_runtime_put_autosuspend().
+
+2. Set data->irq_enabled = true after checking return value of pm_runtime_resume_and_get() only.
+
+Changes since v1:
+================
+1. Andy's feedback:
+-> Refactor iio_info callbacks.
+-> Preserve the order of header file includes.
+-> Avoid redundant usage of pm_runtime_mark_last_busy.
+-> Dissolve the ltr390_set_power_state(data, [true|false]) function.
+-> Avoid macro usage which is internal to header file.
+-> Update changelog with reason of not using wakeup as a source
+capability.
+
+2. David's feedback:
+-> Update Changelog with stats of power savings mentioned in datasheet.
+-> Dissolve ltr390_set_power_state() function.
+
+3. Jonathan's feedback:
+-> Adopt the approach of increment refcount when event enable and
+vice-versa.
+-> Use devm_pm_runtime_set_active_enabled() function.
+-> Better error handling.
+
+4. Testing changes:
+-> Add a test section for module load/unload while event is enabled or disabled.
+-> Add an idempotency check in the Interrupt Handling Verification subsection.
+
+5. Change the heading word from Add-->Implement.
+
+Testing summary:
+================
+
+Extra Testing for v4:
+---------------------
+1. Verified no change in refcount while:
+-> write_raw(): did write on in_illuminance_scale sysfs attribute.
+-> read_event_value(): did read the interrupt threshold & interrupt period sysfs attributes.
+-> read_event_config(): did read on interrupt_en sysfs attributes.
+-> write_event_value(): did write on interrupt threshold & period sysfs attributes.
+
+2. Debugfs testing:
+-> did write from debugfs into INT_PST (0x1a) register. Verified the value change by reading processed value from interrupt period.
+No change in refcount observed.
+
+3. Refcount change only observed when following are triggered:
+-> read_raw(): reading in_illuminance_raw, in_illuminance_scale
+-> write_event_config(): enabling or disabling interrupts.
+-> powerdown(): drops from 1 to 0, if events were enabled before rmmod, else remains 0.
+
+Testing done till v3 (repeated for v4):
+---------------------------------------
+-> Tested on Raspberrypi 4B. Following tests were performed.
+1. Verified that /sys/bus/i2c/devices/i2c-1/1-0053/power/control contains ‘auto’ value.
+2. Verified the /sys/bus/i2c/devices/i2c-1/1-0053/power/autosuspend_delay_ms contains 1000 which is assigned by the driver.
+3. Changed the autosuspend_delay_ms value from 1000 to 2000ms and verified it.
+        3.1 Verified through the timestamp that whatever autosuspend_delay_ms is set, it is being honoured.
+4. Verified that runtime_suspend and runtime_resume callbacks are called whenever any IO is done on a channel attribute.
+        4.1 Verified that power/runtime_status first becomes active and then becomes suspended.
+        4.2 Verified that power/runtime_active_time keeps on increasing with a delta of autosuspend_delay_ms.
+
+Interrupt Handling Verification (repeated for v4 ):
+--------------------------------------------------
+1. Verified that when interrupts are enabled on the device, then the device does not get put in standby mode and keeps sampling.
+        a. As a result interrupts are delivered to the driver and are handled.
+2. Verified that when interrupts are disabled, the device is put in standby mode and stops sampling.
+        a.Since there is no sampling, so no IRQs will be generated. They are only generated when the device is resumed due to I/O
+	on some sysfs attribute from userspace.
+3. Did idempotency check for event enable or disable. This means that occurences like event enable or disable should not
+	erroneously increase or decrease the refcount of the device. 
+
+Module load/unload Verification (repeated for v4):
+--------------------------------------------------
+1. Tested that the refcount should reach 0 when events are enabled.
+2. Did a test of load after unload.
+
+ drivers/iio/light/ltr390.c | 121 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 111 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+index 2e1cf62e8201..2cb72cc463ef 100644
+--- a/drivers/iio/light/ltr390.c
++++ b/drivers/iio/light/ltr390.c
+@@ -26,6 +26,7 @@
+ #include <linux/math.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+ #include <linux/iio/iio.h>
+@@ -105,6 +106,7 @@ struct ltr390_data {
+ 	enum ltr390_mode mode;
+ 	int gain;
+ 	int int_time_us;
++	bool irq_enabled;
+ };
+ 
+ static const struct regmap_range ltr390_readable_reg_ranges[] = {
+@@ -215,9 +217,10 @@ static int ltr390_get_samp_freq_or_period(struct ltr390_data *data,
+ 	return ltr390_samp_freq_table[value][option];
+ }
+ 
+-static int ltr390_read_raw(struct iio_dev *iio_device,
+-			   struct iio_chan_spec const *chan, int *val,
+-			   int *val2, long mask)
++
++static int __ltr390_read_raw(struct iio_dev *iio_device,
++			struct iio_chan_spec const *chan, int *val,
++			int *val2, long mask)
+ {
+ 	int ret;
+ 	struct ltr390_data *data = iio_priv(iio_device);
+@@ -280,6 +283,27 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
+ 	}
+ }
+ 
++static int ltr390_read_raw(struct iio_dev *iio_device,
++			   struct iio_chan_spec const *chan, int *val,
++			   int *val2, long mask)
++{
++	int ret;
++	struct ltr390_data *data = iio_priv(iio_device);
++	struct device *dev = &data->client->dev;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0) {
++		dev_err(dev, "runtime PM failed to resume: %d\n", ret);
++		return ret;
++	}
++
++	ret = __ltr390_read_raw(iio_device, chan, val, val2, mask);
++
++	pm_runtime_put_autosuspend(dev);
++
++	return ret;
++}
++
+ /* integration time in us */
+ static const int ltr390_int_time_map_us[] = { 400000, 200000, 100000, 50000, 25000, 12500 };
+ static const int ltr390_gain_map[] = { 1, 3, 6, 9, 18 };
+@@ -586,7 +610,7 @@ static int ltr390_read_event_config(struct iio_dev *indio_dev,
+ 	return FIELD_GET(LTR390_LS_INT_EN, status);
+ }
+ 
+-static int ltr390_write_event_config(struct iio_dev *indio_dev,
++static int __ltr390_write_event_config(struct iio_dev *indio_dev,
+ 				const struct iio_chan_spec *chan,
+ 				enum iio_event_type type,
+ 				enum iio_event_direction dir,
+@@ -598,7 +622,6 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
+ 	if (!state)
+ 		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
+ 
+-	guard(mutex)(&data->lock);
+ 	ret = regmap_set_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
+ 	if (ret < 0)
+ 		return ret;
+@@ -623,6 +646,37 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
+ 	}
+ }
+ 
++static int ltr390_write_event_config(struct iio_dev *indio_dev,
++				const struct iio_chan_spec *chan,
++				enum iio_event_type type,
++				enum iio_event_direction dir,
++				bool state)
++{
++	int ret;
++	struct ltr390_data *data = iio_priv(indio_dev);
++	struct device *dev = &data->client->dev;
++
++	guard(mutex)(&data->lock);
++
++	if (state && !data->irq_enabled) {
++		ret = pm_runtime_resume_and_get(dev);
++		if (ret < 0) {
++			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
++			return ret;
++		}
++		data->irq_enabled = true;
++	}
++
++	ret = __ltr390_write_event_config(indio_dev, chan, type, dir, state);
++
++	if (!state && data->irq_enabled) {
++		data->irq_enabled = false;
++		pm_runtime_put_autosuspend(dev);
++	}
++
++	return ret;
++}
++
+ static int ltr390_debugfs_reg_access(struct iio_dev *indio_dev,
+ 						unsigned int reg, unsigned int writeval,
+ 						unsigned int *readval)
+@@ -687,15 +741,36 @@ static void ltr390_powerdown(void *priv)
+ 	guard(mutex)(&data->lock);
+ 
+ 	/* Ensure that power off and interrupts are disabled */
+-	if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
+-				LTR390_LS_INT_EN) < 0)
+-		dev_err(&data->client->dev, "failed to disable interrupts\n");
++	if (data->irq_enabled) {
++		if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
++					LTR390_LS_INT_EN) < 0)
++			dev_err(&data->client->dev,
++					"failed to disable interrupts\n");
++		data->irq_enabled = false;
++
++		pm_runtime_put_autosuspend(&data->client->dev);
++	}
+ 
+ 	if (regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
+ 			LTR390_SENSOR_ENABLE) < 0)
+ 		dev_err(&data->client->dev, "failed to disable sensor\n");
+ }
+ 
++static int ltr390_pm_init(struct ltr390_data *data)
++{
++	int ret;
++	struct device *dev = &data->client->dev;
++
++	ret = devm_pm_runtime_set_active_enabled(dev);
++	if (ret)
++		return dev_err_probe(dev, ret,
++					"failed to enable runtime PM\n");
++
++	pm_runtime_set_autosuspend_delay(dev, 1000);
++	pm_runtime_use_autosuspend(dev);
++	return 0;
++}
++
+ static int ltr390_probe(struct i2c_client *client)
+ {
+ 	struct ltr390_data *data;
+@@ -708,6 +783,8 @@ static int ltr390_probe(struct i2c_client *client)
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+ 
++	i2c_set_clientdata(client, indio_dev);
++
+ 	data = iio_priv(indio_dev);
+ 	data->regmap = devm_regmap_init_i2c(client, &ltr390_regmap_config);
+ 	if (IS_ERR(data->regmap))
+@@ -721,6 +798,8 @@ static int ltr390_probe(struct i2c_client *client)
+ 	data->gain = 3;
+ 	/* default mode for ltr390 is ALS mode */
+ 	data->mode = LTR390_SET_ALS_MODE;
++	/* default value of irq_enabled is false*/
++	data->irq_enabled = false;
+ 
+ 	mutex_init(&data->lock);
+ 
+@@ -763,6 +842,7 @@ static int ltr390_probe(struct i2c_client *client)
+ 					     "request irq (%d) failed\n", client->irq);
+ 	}
+ 
++	ltr390_pm_init(data);
+ 	return devm_iio_device_register(dev, indio_dev);
+ }
+ 
+@@ -784,7 +864,28 @@ static int ltr390_resume(struct device *dev)
+ 				LTR390_SENSOR_ENABLE);
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(ltr390_pm_ops, ltr390_suspend, ltr390_resume);
++static int ltr390_runtime_suspend(struct device *dev)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ltr390_data *data = iio_priv(indio_dev);
++
++	return regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
++				LTR390_SENSOR_ENABLE);
++}
++
++static int ltr390_runtime_resume(struct device *dev)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ltr390_data *data = iio_priv(indio_dev);
++
++	return regmap_set_bits(data->regmap, LTR390_MAIN_CTRL,
++				LTR390_SENSOR_ENABLE);
++}
++
++static const struct dev_pm_ops ltr390_pm_ops = {
++	SYSTEM_SLEEP_PM_OPS(ltr390_suspend, ltr390_resume)
++	RUNTIME_PM_OPS(ltr390_runtime_suspend, ltr390_runtime_resume, NULL)
++};
+ 
+ static const struct i2c_device_id ltr390_id[] = {
+ 	{ "ltr390" },
+@@ -802,7 +903,7 @@ static struct i2c_driver ltr390_driver = {
+ 	.driver = {
+ 		.name = "ltr390",
+ 		.of_match_table = ltr390_of_table,
+-		.pm = pm_sleep_ptr(&ltr390_pm_ops),
++		.pm = pm_ptr(&ltr390_pm_ops),
+ 	},
+ 	.probe = ltr390_probe,
+ 	.id_table = ltr390_id,
+-- 
+2.43.0
 
 
