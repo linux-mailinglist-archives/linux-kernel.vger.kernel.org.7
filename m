@@ -1,152 +1,344 @@
-Return-Path: <linux-kernel+bounces-793839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7961CB3D90D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0438BB3D910
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F8E1170EED
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD01C177AC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608A723C4F9;
-	Mon,  1 Sep 2025 05:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95BF239E63;
+	Mon,  1 Sep 2025 05:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGWaSZeE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsABkEUN"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A609213DB9F;
-	Mon,  1 Sep 2025 05:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAFB2248B3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756705960; cv=none; b=XxFNzJ76Z3qBu926HlYmpH/6nwX2s8aWdEnVdvyudHjr9K3HLTChLI0GuMjoI8iKkTnrNGuP6DHcga124UEkaYImOklVvBu5jS/LA5KEoAzuZQCSqL/jnOUBSBe7IhOIYSuWvPPp+/y6y7jk9+XuFmYccEbhHt2MAb6pAVWgdgw=
+	t=1756706007; cv=none; b=qvcsFcIUibbMKqPgWnhhb4bmiw7BIZH71blty3mfySzIB+wAs/UXuBxDRjL13xZhanenaXMjLr8t3yEuIF4Z+oJo8LAzi2dz3NTQvUH2e6Jc3ShQr7i9NxpWmPKnSlzDytnSaipP98LioitLxHPou/LBjhB+2Vdj9UcpUrabem0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756705960; c=relaxed/simple;
-	bh=XoTpNOAyoQ2QagVwjJXE09PuDOMwU4O7m89dZyPiwSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=en58a7ONhug6Ga5jNowxBrvc+R0GuDy1eoiFgwRb/Ly1tveElXts9CwpzJ9qJr3Qy6X2eaBAsXEZIoxqs6Z8DRtKCaH4OpdqRQeAGlU2xW5TAiuV+aIZG1TD0L42gKBzq5rS0ZyC5OGie+tHrsOgVXlco8GaBw8wdsMVPLgHyaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGWaSZeE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FA8C4CEF0;
-	Mon,  1 Sep 2025 05:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756705959;
-	bh=XoTpNOAyoQ2QagVwjJXE09PuDOMwU4O7m89dZyPiwSc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=IGWaSZeEZdzmwetszRWF/zekZx6h8k8kq1SE6iSw72U0kH2ciJ0irXxxY1nPJ7ap4
-	 7kX3uGg7FDThpmuWJ+7NsBd0P5CMreP9f7yEfe/3O1rDHsBP8hkYslrOT0qKM07rT/
-	 GBFg2OuRQMJTCFL47GoqtjjUi/2f/KPGl4PQafQYJMmAFC3BC24fZ3Vaj7AdC4xsfc
-	 OS179rGHV1i001aqZgZ8Yut4mKkXMTu/6aqYFUYkE59Trfl5TCPbuHEd3w9tfJgdGN
-	 lMbeQZzPsZau0QOHDNfABKS9XdRBLqwfww2BXRckT73p7c+AfV+DhNQEjz7DGdyXHX
-	 ahpzDR80xvaQg==
-Message-ID: <f80b0de7-6b31-4b1f-b5ba-84e41a42420b@kernel.org>
-Date: Mon, 1 Sep 2025 07:52:29 +0200
+	s=arc-20240116; t=1756706007; c=relaxed/simple;
+	bh=Nsght4cGx/+ntVQvlD2lz5IACumOFJYEicjOB1fyoho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xm9ApbxMy1UHzfeIkj6Qh+X7qF7gSA4Vo3z5Om9NlTNWH5jL0fyAtSi3c4R3drDHngandrdWI+jyXUgEBTaaX2UrvMGcKCkZKau3yazjZHzzvlJ3kf5HDf7gSF9bK7UEy1BI227inwEc3V0PnnJRiyNuuCPp8JJ0o8NzegoFDmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsABkEUN; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-327f1fef76cso2385540a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:53:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756706005; x=1757310805; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGP46XmM9/Lz93NQbCSlhH30hVvpx/MQhMKzh3a8Erk=;
+        b=xsABkEUNYYgjmY1qQeuvmDNj4osewIhfnKb650+Gjh+s9ShO/e98oCMv2kBe1cEYeu
+         4DCBK5Ioo9jCvqvGdnOLMwDYvR8uFzeHfuBe0vs8UjiZWjHSdkn1iKiMDAs9nncl9r3K
+         oKDmUaWTfe9AXtYPtE0wsvN7vW0qKw2sE/oddXf/KavDHEnqVtiWlYFFujXQhfy0VM+t
+         6zVdSr22P/5Ubg58agKWNMdLiOP0+grngIU2fT7ke1PJApzwblKkXSOXnirlAdmLMrJo
+         0fL0ry47z4Plbd2cQq3eC6mxe7qC5fT1GKtLUjEbV60TtZHNmsWUExZ4OxVsJjRfKUjV
+         IXMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756706005; x=1757310805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGP46XmM9/Lz93NQbCSlhH30hVvpx/MQhMKzh3a8Erk=;
+        b=FVZ15bQBqNXnjAQly2kSgpaafjsuJXrt1VZpKDFOFbOhMFCIqamVd1Dz+yEP84Wv95
+         yGbF3rVAJixE4+tVaPXTJZqbK+u43pVjo+SIiVteMIvrPY53ueKYrW/uZg4OLM7ky837
+         TKcgVZeCYEWCpRUJeC5t5S48Voi7VxVZnqfaCVI24mZNKdCBnCIgIpkaNz6RO2RK26KW
+         kxEIUG7Q8dz+cHblh5Gw51kpoqLPnCfpnQuljvBrhECqQPQzJSenEyrgOAPCMhfE9y2w
+         8FqSFhB/9cHBdeT9Cy8/nopLFmfo4vbS2FE4LJmpQMugC2uW1iwN0uXk/eQUjbom9qk4
+         USkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOY3edEFr0zKTKOODasmRUlW2QFzKjf1JXim3IPzwznS1UwTGz4z9YocQbCqp/v5zZQa5629v00x0UDEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4AWyN2iZr59+aWaqLI970PUa3uUH+JMNkPN6ke/uqN5EYyOOj
+	Hseqi4YnJdgju9Z30PCSFIlA7EUuMi4VjTOYTGv2EUUSFTvs2ovavY/IdvsjHolz+qc=
+X-Gm-Gg: ASbGncvqsMGgjF3rFSqEYoTjVQgAMNtP3r2M7sii8nBmYyyDGXx+SnqFIQZR6/EILjT
+	ucFpnl3qMUcDZhQjHWrdnEDgq1EaaPXFPq99NARS8vlBSnX/krOfm6EIxriTKdLdHy21nBBiH3j
+	On1XF085bwYRUgQsQdWfNwr18s5Bwu9splhSrumJYOw3gJUXXYdwEoDxxLKqv063Flo2yuXTogj
+	flms31erHqZI9xkNPdASuPoH6uRsaQWfiUOo5JJ26kNxDgRn8m0TRS5uqpacXQcgCxv2IIOCzlX
+	a7sEfXUFIm1LJF/hG3ozmJHURVsUy9EiLChwq8LeirYWSRrFMB6tKZbtnET1HLWvvVXmighdjWo
+	EAhRW4bBR1U9w7IKGcPHkzXrt
+X-Google-Smtp-Source: AGHT+IG85eZ1lUcTTphENraaKb78QPO6bGNPiW2YjQsGdyD1VV5pliNBYpWBff3QdMACMqlnvbtkVg==
+X-Received: by 2002:a17:90b:528f:b0:327:e970:4a0d with SMTP id 98e67ed59e1d1-328156c9515mr7841003a91.21.1756706005079;
+        Sun, 31 Aug 2025 22:53:25 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327f5bbd749sm8668289a91.0.2025.08.31.22.53.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 22:53:24 -0700 (PDT)
+Date: Mon, 1 Sep 2025 11:23:22 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: webgeek1234@gmail.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 3/8] cpufreq: tegra186: add OPP support and set bandwidth
+Message-ID: <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] arm64: dts: aspeed: Add AST2700 Evaluation Board
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
- nfraprado@collabora.com, Taniya Das <quic_tdas@quicinc.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Eric Biggers <ebiggers@google.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, soc@lists.linux.dev,
- Mo Elbadry <elbadrym@google.com>, Rom Lemarchand <romlem@google.com>,
- William Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>,
- wthai@nvidia.com, leohu@nvidia.com, dkodihalli@nvidia.com,
- spuranik@nvidia.com
-References: <20250901031311.1247805-1-ryan_chen@aspeedtech.com>
- <20250901031311.1247805-5-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250901031311.1247805-5-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com>
 
-On 01/09/2025 05:13, Ryan Chen wrote:
-> ASPEED AST2700 EVB is prototype development board based
-> on AST2700 SOC.
+On 31-08-25, 22:33, Aaron Kling via B4 Relay wrote:
+> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+> index bd94beebc4cc2fe6870e13ca55343cedb9729e99..f0abb44e2ed00a301161565e4c4f62cfed4a5814 100644
+> --- a/drivers/cpufreq/tegra186-cpufreq.c
+> +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> @@ -18,6 +18,7 @@
+>  #define EDVD_CORE_VOLT_FREQ_F_SHIFT	0
+>  #define EDVD_CORE_VOLT_FREQ_F_MASK	0xffff
+>  #define EDVD_CORE_VOLT_FREQ_V_SHIFT	16
+> +#define KHZ				1000
+
+Can reuse:
+
+include/linux/units.h:#define HZ_PER_KHZ                1000UL
+
+> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
+> +{
+> +	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+> +	struct dev_pm_opp *opp;
+> +	struct device *dev;
+> +	int ret;
+> +
+> +	dev = get_cpu_device(policy->cpu);
+> +	if (!dev)
+> +		return -ENODEV;
+> +
+> +	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +
+> +	ret = dev_pm_opp_set_opp(dev, opp);
+
+Won't it be easier to use dev_pm_opp_set_rate() instead ?
+
+> +	if (ret)
+> +		data->icc_dram_bw_scaling = false;
+> +
+> +	dev_pm_opp_put(opp);
+
+The OPP core supports scope based cleanup helpers now, maybe use them
+to remove all these put calls.
+
+> +	return ret;
+> +}
+> +
+> +static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *policy,
+> +					    struct cpufreq_frequency_table *bpmp_lut,
+> +					    struct cpufreq_frequency_table **opp_table)
+> +{
+> +	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+> +	struct cpufreq_frequency_table *freq_table = NULL;
+> +	struct cpufreq_frequency_table *pos;
+> +	struct device *cpu_dev;
+> +	struct dev_pm_opp *opp;
+> +	unsigned long rate;
+> +	int ret, max_opps;
+> +	int j = 0;
+> +
+> +	cpu_dev = get_cpu_device(policy->cpu);
+> +	if (!cpu_dev) {
+> +		pr_err("%s: failed to get cpu%d device\n", __func__, policy->cpu);
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Initialize OPP table mentioned in operating-points-v2 property in DT */
+> +	ret = dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
+> +	if (!ret) {
+
+If you handle the error case here, then the below can move out of the
+if/else block.
+
+> +		max_opps = dev_pm_opp_get_opp_count(cpu_dev);
+> +		if (max_opps <= 0) {
+> +			dev_err(cpu_dev, "Failed to add OPPs\n");
+> +			return max_opps;
+> +		}
+> +
+> +		/* Disable all opps and cross-validate against LUT later */
+> +		for (rate = 0; ; rate++) {
+
+Maybe using while(1) would be more readable ?
+
+> +			opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+> +			if (IS_ERR(opp))
+> +				break;
+> +
+> +			dev_pm_opp_put(opp);
+> +			dev_pm_opp_disable(cpu_dev, rate);
+> +		}
+> +	} else {
+> +		dev_err(cpu_dev, "Invalid or empty opp table in device tree\n");
+> +		data->icc_dram_bw_scaling = false;
+> +		return ret;
+> +	}
+> +
+> +	freq_table = kcalloc((max_opps + 1), sizeof(*freq_table), GFP_KERNEL);
+> +	if (!freq_table)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * Cross check the frequencies from BPMP-FW LUT against the OPP's present in DT.
+> +	 * Enable only those DT OPP's which are present in LUT also.
+> +	 */
+> +	cpufreq_for_each_valid_entry(pos, bpmp_lut) {
+> +		opp = dev_pm_opp_find_freq_exact(cpu_dev, pos->frequency * KHZ, false);
+> +		if (IS_ERR(opp))
+> +			continue;
+> +
+> +		dev_pm_opp_put(opp);
+> +
+> +		ret = dev_pm_opp_enable(cpu_dev, pos->frequency * KHZ);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		freq_table[j].driver_data = pos->driver_data;
+> +		freq_table[j].frequency = pos->frequency;
+> +		j++;
+> +	}
+> +
+> +	freq_table[j].driver_data = pos->driver_data;
+> +	freq_table[j].frequency = CPUFREQ_TABLE_END;
+> +
+> +	*opp_table = &freq_table[0];
+> +
+> +	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
+> +
+> +	tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
+
+Maybe a comment on why exactly you are changing the freq here ?
+
+> +
+> +	return ret;
+> +}
+> +
+>  static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+>  {
+>  	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+>  	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
+> +	struct cpufreq_frequency_table *freq_table;
+> +	struct cpufreq_frequency_table *bpmp_lut;
+>  	u32 cpu;
+> +	int ret;
+>  
+> -	policy->freq_table = data->clusters[cluster].table;
+>  	policy->cpuinfo.transition_latency = 300 * 1000;
+>  	policy->driver_data = NULL;
+>  
+> @@ -85,6 +191,20 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+>  			cpumask_set_cpu(cpu, policy->cpus);
+>  	}
+>  
+> +	bpmp_lut = data->clusters[cluster].bpmp_lut;
+> +
+> +	if (data->icc_dram_bw_scaling) {
+> +		ret = tegra_cpufreq_init_cpufreq_table(policy, bpmp_lut, &freq_table);
+> +		if (!ret) {
+> +			policy->freq_table = freq_table;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	data->icc_dram_bw_scaling = false;
+> +	policy->freq_table = bpmp_lut;
+> +	pr_info("OPP tables missing from DT, EMC frequency scaling disabled\n");
+> +
+>  	return 0;
+>  }
+>  
+> @@ -102,6 +222,10 @@ static int tegra186_cpufreq_set_target(struct cpufreq_policy *policy,
+>  		writel(edvd_val, data->regs + edvd_offset);
+>  	}
+>  
+> +	if (data->icc_dram_bw_scaling)
+> +		tegra_cpufreq_set_bw(policy, tbl->frequency);
+> +
+> +
+>  	return 0;
+>  }
+>  
+> @@ -136,7 +260,7 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
+>  	.init = tegra186_cpufreq_init,
+>  };
+>  
+> -static struct cpufreq_frequency_table *init_vhint_table(
+> +static struct cpufreq_frequency_table *tegra_cpufreq_bpmp_read_lut(
+>  	struct platform_device *pdev, struct tegra_bpmp *bpmp,
+>  	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
+>  	int *num_rates)
+> @@ -231,6 +355,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	struct tegra186_cpufreq_data *data;
+>  	struct tegra_bpmp *bpmp;
+> +	struct device *cpu_dev;
+>  	unsigned int i = 0, err, edvd_offset;
+>  	int num_rates = 0;
+>  	u32 edvd_val, cpu;
+> @@ -256,9 +381,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+>  	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
+>  		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
+>  
+> -		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
+> -		if (IS_ERR(cluster->table)) {
+> -			err = PTR_ERR(cluster->table);
+> +		cluster->bpmp_lut = tegra_cpufreq_bpmp_read_lut(pdev, bpmp, cluster, i, &num_rates);
+> +		if (IS_ERR(cluster->bpmp_lut)) {
+> +			err = PTR_ERR(cluster->bpmp_lut);
+>  			goto put_bpmp;
+>  		} else if (!num_rates) {
+>  			err = -EINVAL;
+> @@ -267,7 +392,7 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+>  
+>  		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
+>  			if (data->cpus[cpu].bpmp_cluster_id == i) {
+> -				edvd_val = cluster->table[num_rates - 1].driver_data;
+> +				edvd_val = cluster->bpmp_lut[num_rates - 1].driver_data;
+>  				edvd_offset = data->cpus[cpu].edvd_offset;
+>  				writel(edvd_val, data->regs + edvd_offset);
+>  			}
+> @@ -276,6 +401,19 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
+>  
+>  	tegra186_cpufreq_driver.driver_data = data;
+>  
+> +	/* Check for optional OPPv2 and interconnect paths on CPU0 to enable ICC scaling */
+> +	cpu_dev = get_cpu_device(0);
+> +	if (!cpu_dev) {
+> +		err = -EPROBE_DEFER;
+> +		goto put_bpmp;
+> +	}
+> +
+> +	if (dev_pm_opp_of_get_opp_desc_node(cpu_dev)) {
+> +		err = dev_pm_opp_of_find_icc_paths(cpu_dev, NULL);
+> +		if (!err)
+> +			data->icc_dram_bw_scaling = true;
+> +	}
+> +
+>  	err = cpufreq_register_driver(&tegra186_cpufreq_driver);
+>  
+>  put_bpmp:
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  arch/arm64/boot/dts/Makefile               |  1 +
->  arch/arm64/boot/dts/aspeed/Makefile        |  4 ++++
->  arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 22 ++++++++++++++++++++++
->  3 files changed, 27 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
->  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+> -- 
+> 2.50.1
 > 
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index b0844404eda1..3729e7d480db 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -38,3 +38,4 @@ subdir-y += tesla
->  subdir-y += ti
->  subdir-y += toshiba
->  subdir-y += xilinx
-> +subdir-y += aspeed
 
-
-Messed order. We already asked in other patches to keep alphabetical
-order when extending entries.
-
-Best regards,
-Krzysztof
-
+-- 
+viresh
 
