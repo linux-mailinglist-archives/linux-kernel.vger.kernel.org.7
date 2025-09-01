@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-793824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D61B3D8D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C832B3D8DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27B61899587
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B4B1898A30
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DBC22D793;
-	Mon,  1 Sep 2025 05:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A254923DEB6;
+	Mon,  1 Sep 2025 05:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A30KZJ12"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtKHHL2g"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7435D2459E5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412A523D7C4;
+	Mon,  1 Sep 2025 05:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756704835; cv=none; b=k714DqklTiLFawOznaNL53/pwj4nUsY1Azx/5UQoRru76iaxWIKTARU31eYDFj7VGNfbT59xTOF3KJFhG9Mgy5e2XSqIInXCtq+xY2WiVnduEH6sMwo5zboz8IBUlFLE2c5vNZnlDs5n77nFSTpEjYmOw+Lh5m/wwTvx2DQDjmQ=
+	t=1756705018; cv=none; b=ZolsbshXG2ZHZH0qeuo9VnYNMa93dVbiZBoQNPmhsXmU8h6DF6LdUH1pn529zEGAxrG7LfBcpE4K1OczNrR41zEtuW5xXN4qgxbrsIcJxyFf0FWACF9LtZh7g4Z96vpdSsYik7n8FJytjDRHeG3mlejPe8HYkjs0fS0KgWW6tg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756704835; c=relaxed/simple;
-	bh=6KFSeiSuBzuKsITck+2SsO78XsJpd/xEqNQODmg2eJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i4TyB2g5HDtN9Z2W7fn5K56RfoNhpiwg9+o5Rhug9rwDzkEKz7DG4K/g6bYv5BasyQtuG9E2Df716r+P4vZXsmNSuEYWtUOZaISjH7s9cpIcjxHCNkdikzI6FOb9oMgPG6d64SVHYyD8DpYoxzoM+S6qK8/drMwZ9nN+v459Tzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A30KZJ12; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VKw4Gk005313
-	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 05:33:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=PJrhcPrDxtA
-	aLTpVBo5ImLLvyFEL/Po5FpTP77TaIGs=; b=A30KZJ12n1dWhu6mLT9rw9wgQcK
-	gfs9yon9+AtQtNpcldkE85XmjQ8n2KDpnD+JxcS9B7WCuKAkdP5ltQKOtB2LDFJc
-	hNJnchzLUbdI7/ovBr3kkBIiVWqB+pRJg+MQesWf16741dNPhW5COpvLiW+2fUDL
-	diawTtiWSA2qjPl+2DO97qblct/7mWf/xDK/+7I3d8ahV2jTWMVhoi5ZZDO7i1Dp
-	0e/URbQQqewFL3+TogHhqgLAajku5HjBo4q6w2/LiCrKor9WJBwpK1rpSqAuNMZA
-	wDEian1iPbnGu7zoNPrp0kXe3Z4LR1fmpd+CoMXCegnviJJIEnzQZ4VZW+g==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscuuc1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:33:52 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-248942647c5so54971335ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:33:52 -0700 (PDT)
+	s=arc-20240116; t=1756705018; c=relaxed/simple;
+	bh=llhJJljrqXE/nWKIJH6bsdO9U75zcLrBsfAa7Q+iaFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GlZh3wIqIIhAPYMSm8/hEPivFxLU3GhxWeELeFpgZJwnzFDy6HdzXf53BOuYys5m/dBnB2kd4O01QzweIOOVIJwN4T9DNf3HrFmdmZhY/Ju4IdrQfHVpR6RcBd6h4IKNQkmfe/yQrQnw2a70Rf5aN+/qLkiUujBN1wAKe3pDvk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtKHHL2g; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4c645aaa58so2644492a12.2;
+        Sun, 31 Aug 2025 22:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756705016; x=1757309816; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4KAcVYU3uNaOGJX0D+bRdMikx+btd5MUoQ4qyYq/2YM=;
+        b=FtKHHL2g0EmlTR2s3i5Ra3njZcJsHfIfy5ljWwXf6eDakKxJk2q9UZMS6oAYsrWeWD
+         L7SFGMZq1tZLo4Sh4mKPibUG8or7rt0Ex/JS6aRw1uMwd8F7UObMqYni7ihhNtAqslVF
+         tA4Z7MnuEHPVoYM525C+YcnauMQlqqU++m5phqa0JzslnccNnZhb/BqEndblISl82HvJ
+         suqL93KBKZr8IbYVXki4sDwDDJAYTZ6NiXtwD/z27a2F7Ib3wmorYkRrpMtzDCUWv8DM
+         4NB50M0klvuiHWHFOBFRSPS4NU9HifRYUtC5t4mMm9ms/gh3zln4X56PU+/qzxBhZMkq
+         21ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756704831; x=1757309631;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJrhcPrDxtAaLTpVBo5ImLLvyFEL/Po5FpTP77TaIGs=;
-        b=E+phMI1OyCOOfMSHzMMSscecycaZ4+WkSTEteSr3b72dc9Pd6Lua44hxaIXrBHam+o
-         AZ9cQTfJad18VbcD8UE8pdJ+N/sIwecn9S6LjuEqR486y+/+xomOC0sOgokXi28o/6DY
-         UyrA65PfLrbrWeuDnfLJ6ihmFB2Fj6F5SkKjKVkPcrvmSofFf90ZVnuYgvAOXSKjSxke
-         h5NnZucvvmhced0bI/TaHOf/opfVtpILeH66rA1/CHErXlgBRg+vOy2D0zKd/uYQmxqH
-         xwlVqAsPtKNSBVDmJ19XD0bDAGLWUfOBai7Jg3we+qZgPjnShSwmPHKMRTJr8sRRU1hY
-         8h4g==
-X-Forwarded-Encrypted: i=1; AJvYcCULKXtBcWwt9MV0Tn93pJ2iBiZfYZf3gWwUnomsaAqg8w4w6kjMWLvMV5tclY9SPG8DluLgyUoNF6n38XA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys8iHJgVbqZZ+9s4kC6ud7PB8H5R18JJVC8iLjfiihIbnURK+k
-	s1aF4ORmqHkV+itOMSfCxhXcrThjYg1Kwa6X3oFGlw17Bdauhp8rxm62YRboJfCG0WR50w3ga6u
-	lfto7xIaRBvtZzh6OjHokdtrsNM56RSwIH4yeiz1n1bxVhEZT3h3PqVeaCuM9tNtqvAg=
-X-Gm-Gg: ASbGnctPrswneABvkQlZE0JS5ze3lO69u+Sh31Y0I+cQwYnwqm44BOOjsgv0MTeEa5S
-	6OclWYobzRD9Qg7wjIqK9B9bvHzZvFYMTTCxMC//GM7TBtJ+9iHNlPXOTtHVlizH1dMiBCjRDao
-	k4DmllC0mllnOb2OgoeGvIcZT5ZoTKe8hx9tVqpWDwWZDAJdbYdvezzeDLEa6UzW0fSOjKPRWl9
-	+OFf8xWZEPYL2OZZbigx75EZ90X3+JAFH41cSigWTmcV604tnknfJpXBpSx8a1bRZ9ppJvXtYFL
-	RtLQzx9b5hacKbBX4TYkw5hncfowikZ16HNmU7FfXYhBUiHMY3E3TjAN2t87+5lJoInoey9S
-X-Received: by 2002:a17:902:ef43:b0:24a:9342:ecc3 with SMTP id d9443c01a7336-24a9342eedbmr70826225ad.14.1756704830909;
-        Sun, 31 Aug 2025 22:33:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhqpEk7q7A/DBRPo6CsBLfJOQqRNoGke7j4NG1VUXwsA9wGhUFFD0Jkvw/joCd7egv/h07Uw==
-X-Received: by 2002:a17:902:ef43:b0:24a:9342:ecc3 with SMTP id d9443c01a7336-24a9342eedbmr70825845ad.14.1756704830377;
-        Sun, 31 Aug 2025 22:33:50 -0700 (PDT)
-Received: from hu-ekangupt-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906589986sm90575215ad.111.2025.08.31.22.33.47
+        d=1e100.net; s=20230601; t=1756705016; x=1757309816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4KAcVYU3uNaOGJX0D+bRdMikx+btd5MUoQ4qyYq/2YM=;
+        b=hFgbNCFe0IxMgoSjoeJuhjRrWs/UTHZC5MO7Mea/iuBfzZKRWxqE8Kbf+2YsrxUklX
+         yKdQmWARCpE4lpWqssCfYsmEmYuIV65eQ88TBZLI9WmNmQK2uQMgpqF5bR+ALM+fzs0Q
+         WDdcbp1BIybKE2271cvAIPNwbX2VId7z114R+SnynzDF9FoKmxQspRbnUVi2jnGHAzXD
+         jgsM9Rtd7bGu7XGebHUQyH8bYtg7hDRqojpyuYHH4nxOofj5sjZu66z8J70NuNQR3mOT
+         XC+wR3OiwWMON+HeT1LeYEootIlIvU8RjsHSc+WsTr1P/BuRrqHeuEqvmcw2SE4O64bw
+         yhHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOCcjBo/cN8amqP4YRzg+zU4luwmVniaSNJIfNtslwyddv63sgZyNKGfOeb95GNqTrOjggrljf@vger.kernel.org, AJvYcCVeZ4hNUkuVNIiwTgSYdXZ28PZp4xu8HSTgukepGx2PHO/Cu/YJb6yR58qvbFn2nECIMmrDKiyREJf01g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYfD60y2d2BT5C4dVmxVIEc0v8eRPFFksqaHHRbhjK2uxqinp1
+	ARHzl+/sFnPTPLmwuY6on4ruddmIt9qDZDBgQUZe4yU/9dlLANOK8q66266pOA==
+X-Gm-Gg: ASbGncu+a4TQ6FsIa961r7EUKImvgPRVbD9WVa7epnUdrUQSFsxasmqlORcB9GXLb/W
+	5G9gj4jcZWk9m88kBB+TNi3Gs2VQhIS/ktJ1RkekxKlfelwuWZtD2R2fNn5U2meepJ91e/w4oJM
+	4PMeNPD37xePCvYBAUh2WLE6kJKfsJ4WwBCVP2yWJoTn0kzJC6w3md64bT22DDwbpEnRe6ysGjv
+	kiIc7S/aCyI+De+cAcIVvQt9YFJ9+kMHQebulp63PFTWV8lQ+7+vD+Cm1u+OuCaJ8mt0J/1wcGf
+	Lohe9dBCRh57RaqBcvv7gqTnrsowdyuTD2KXo1Fr1JrNFienX4871EsEnteAcVm0sOIONCDppTw
+	nuYBn/PZI6kwktL555KiCEtVmqA==
+X-Google-Smtp-Source: AGHT+IGSocsv1UrbOfElqChC8G4ok7ZHIlxd4vHe9Yfc5PSkMlMar8u2FM+ORvRGYMuaN4FFKpyUSQ==
+X-Received: by 2002:a17:902:e842:b0:242:9be2:102b with SMTP id d9443c01a7336-249446d2e9dmr82660375ad.0.1756705016354;
+        Sun, 31 Aug 2025 22:36:56 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037027casm93399325ad.5.2025.08.31.22.36.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Aug 2025 22:33:50 -0700 (PDT)
-From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-To: srini@kernel.org, linux-arm-msm@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, quic_bkumar@quicinc.com,
-        linux-kernel@vger.kernel.org, quic_chennak@quicinc.com,
-        dri-devel@lists.freedesktop.org, arnd@arndb.de,
-        dmitry.baryshkov@oss.qualcomm.com
-Subject: [PATCH v1 3/3] misc: fastrpc: Add polling mode support for fastRPC driver
-Date: Mon,  1 Sep 2025 11:03:36 +0530
-Message-Id: <20250901053336.3939595-4-ekansh.gupta@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250901053336.3939595-1-ekansh.gupta@oss.qualcomm.com>
-References: <20250901053336.3939595-1-ekansh.gupta@oss.qualcomm.com>
+        Sun, 31 Aug 2025 22:36:55 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: chuck.lever@oracle.com,
+	kernel-tls-handshake@lists.linux.dev
+Cc: "David S . Miller" <davem@davemloft.net>,
+	donald.hunter@gmail.com,
+	edumazet@google.com,
+	hare@kernel.org,
+	horms@kernel.org,
+	jakub.kicinski@kernel.org,
+	john.fastabend@gmail.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	wilfred.mallawa@wdc.com,
+	Hannes Reinecke <hare@suse.de>
+Subject: [PATCH] net/tls: allow limiting maximum record size
+Date: Mon,  1 Sep 2025 15:36:19 +1000
+Message-ID: <20250901053618.103198-2-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,237 +96,207 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX1sU7AhueraWm
- SFKiVLKiDQqByf6MMnCNijpdoQYTgiox7FKk23ELvNqd70TnCc/dO0PwXnYsHfofb37SJVeC0fL
- zDxPesqAINe2m2tmU0gqfGSZrIQ+2JxtDzPUryGIJUlF9GsVk9dJ9yNxj/R6eBqTdqI0grtJU/w
- tFCM/BWV4nynYOrXeyZUoKGDUSDTO/evuDksqbblu9lkV3yn6+FfIlROUXO2re5z40mXzX5wplk
- 7+Qr8gF3PbzK/ouM3UJjjRGZPZqZFXo6H2fN/+W34hS/oDQSQUBSGWHkET2CjQAT36d+Jgx2nG+
- t+gm4Dh1QyCbAz1GCYBmFISVpqbMX78lGRO+GTwWrbhU0tp4eFbkLgfWjwi/t1V38zF3Cn7zaCr
- OgkYLlS3
-X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b53040 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=MwYQ-C_c_HC-XfEYhDkA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: YvvrNhjHsYTXQ4fLM_B6axnrhliU7rog
-X-Proofpoint-GUID: YvvrNhjHsYTXQ4fLM_B6axnrhliU7rog
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
- suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
 
-For any remote call to DSP, after sending an invocation message,
-fastRPC driver waits for glink response and during this time the
-CPU can go into low power modes. This adds latency to overall fastrpc
-call as CPU wakeup and scheduling latencies are included.  Adding a
-polling mode support with which fastRPC driver will poll continuously
-on a memory after sending a message to remote subsystem which will
-eliminate CPU wakeup and scheduling latencies and reduce fastRPC
-overhead.
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+During a handshake, an endpoint may specify a maximum record size limit.
+Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+maximum record size. Meaning that, the outgoing records from the kernel
+can exceed a lower size negotiated during the handshake. In such a case,
+the TLS endpoint must send a fatal "record_overflow" alert [1], and
+thus the record is discarded.
+
+Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+support. For these devices, supporting TLS record size negotiation is
+necessary because the maximum TLS record size supported by the controller
+is less than the default 16KB currently used by the kernel.
+
+This patch adds support for retrieving the negotiated record size limit
+during a handshake, and enforcing it at the TLS layer such that outgoing
+records are no larger than the size negotiated. This patch depends on
+the respective userspace support in tlshd [2] and GnuTLS [3].
+
+[1] https://www.rfc-editor.org/rfc/rfc8449
+[2] https://github.com/oracle/ktls-utils/pull/112
+[3] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
+
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- drivers/misc/fastrpc.c | 121 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 114 insertions(+), 7 deletions(-)
+ Documentation/netlink/specs/handshake.yaml |  3 +++
+ include/net/tls.h                          |  2 ++
+ include/uapi/linux/handshake.h             |  1 +
+ net/handshake/genl.c                       |  5 ++--
+ net/handshake/tlshd.c                      | 29 +++++++++++++++++++++-
+ net/tls/tls_sw.c                           |  6 ++++-
+ 6 files changed, 42 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 57e118de6e4a..939a3e3d29e2 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -22,6 +22,8 @@
- #include <linux/firmware/qcom/qcom_scm.h>
- #include <uapi/misc/fastrpc.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/compiler.h>
-+#include <linux/iopoll.h>
+diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentation/netlink/specs/handshake.yaml
+index 95c3fade7a8d..0dbe5d0c8507 100644
+--- a/Documentation/netlink/specs/handshake.yaml
++++ b/Documentation/netlink/specs/handshake.yaml
+@@ -87,6 +87,9 @@ attribute-sets:
+         name: remote-auth
+         type: u32
+         multi-attr: true
++      -
++          name: record-size-limit
++          type: u32
  
- #define ADSP_DOMAIN_ID (0)
- #define MDSP_DOMAIN_ID (1)
-@@ -37,6 +39,7 @@
- #define FASTRPC_CTX_MAX (256)
- #define FASTRPC_INIT_HANDLE	1
- #define FASTRPC_DSP_UTILITIES_HANDLE	2
-+#define FASTRPC_MAX_STATIC_HANDLE (20)
- #define FASTRPC_CTXID_MASK (0xFF00)
- #define INIT_FILELEN_MAX (2 * 1024 * 1024)
- #define INIT_FILE_NAMELEN_MAX (128)
-@@ -105,6 +108,20 @@
+ operations:
+   list:
+diff --git a/include/net/tls.h b/include/net/tls.h
+index 857340338b69..02e7b59fcc30 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -250,6 +250,8 @@ struct tls_context {
+ 			       */
+ 	unsigned long flags;
  
- #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
- 
-+/* Poll response number from remote processor for call completion */
-+#define FASTRPC_POLL_RESPONSE (0xdecaf)
++	u32 tls_record_size_limit;
 +
-+/* Polling mode timeout limit */
-+#define FASTRPC_POLL_MAX_TIMEOUT_US (10000)
-+
-+/* Response types supported for RPC calls */
-+enum fastrpc_response_flags {
-+	/* normal job completion glink response */
-+	NORMAL_RESPONSE = 0,
-+	/* process updates poll memory instead of glink response */
-+	POLL_MODE = 1,
-+};
-+
- struct fastrpc_phy_page {
- 	u64 addr;		/* physical address */
- 	u64 size;		/* size of contiguous region */
-@@ -235,8 +252,14 @@ struct fastrpc_invoke_ctx {
- 	u32 sc;
- 	u64 *fdlist;
- 	u32 *crc;
-+	/* Poll memory that DSP updates */
-+	u32 *poll;
- 	u64 ctxid;
- 	u64 msg_sz;
-+	/* work done status flag */
-+	bool is_work_done;
-+	/* response flags from remote processor */
-+	enum fastrpc_response_flags rsp_flags;
- 	struct kref refcount;
- 	struct list_head node; /* list of ctxs */
- 	struct completion work;
-@@ -891,7 +914,8 @@ static int fastrpc_get_meta_size(struct fastrpc_invoke_ctx *ctx)
- 		sizeof(struct fastrpc_invoke_buf) +
- 		sizeof(struct fastrpc_phy_page)) * ctx->nscalars +
- 		sizeof(u64) * FASTRPC_MAX_FDLIST +
--		sizeof(u32) * FASTRPC_MAX_CRCLIST;
-+		sizeof(u32) * FASTRPC_MAX_CRCLIST +
-+		sizeof(u32);
+ 	/* cache cold stuff */
+ 	struct proto *sk_proto;
+ 	struct sock *sk;
+diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/handshake.h
+index 662e7de46c54..645eeb76622f 100644
+--- a/include/uapi/linux/handshake.h
++++ b/include/uapi/linux/handshake.h
+@@ -55,6 +55,7 @@ enum {
+ 	HANDSHAKE_A_DONE_STATUS = 1,
+ 	HANDSHAKE_A_DONE_SOCKFD,
+ 	HANDSHAKE_A_DONE_REMOTE_AUTH,
++	HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
  
- 	return size;
+ 	__HANDSHAKE_A_DONE_MAX,
+ 	HANDSHAKE_A_DONE_MAX = (__HANDSHAKE_A_DONE_MAX - 1)
+diff --git a/net/handshake/genl.c b/net/handshake/genl.c
+index f55d14d7b726..fb8962ae7131 100644
+--- a/net/handshake/genl.c
++++ b/net/handshake/genl.c
+@@ -16,10 +16,11 @@ static const struct nla_policy handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
+ };
+ 
+ /* HANDSHAKE_CMD_DONE - do */
+-static const struct nla_policy handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] = {
++static const struct nla_policy handshake_done_nl_policy[__HANDSHAKE_A_DONE_MAX] = {
+ 	[HANDSHAKE_A_DONE_STATUS] = { .type = NLA_U32, },
+ 	[HANDSHAKE_A_DONE_SOCKFD] = { .type = NLA_S32, },
+ 	[HANDSHAKE_A_DONE_REMOTE_AUTH] = { .type = NLA_U32, },
++	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] = { .type = NLA_U32, },
+ };
+ 
+ /* Ops table for handshake */
+@@ -35,7 +36,7 @@ static const struct genl_split_ops handshake_nl_ops[] = {
+ 		.cmd		= HANDSHAKE_CMD_DONE,
+ 		.doit		= handshake_nl_done_doit,
+ 		.policy		= handshake_done_nl_policy,
+-		.maxattr	= HANDSHAKE_A_DONE_REMOTE_AUTH,
++		.maxattr	= HANDSHAKE_A_DONE_MAX,
+ 		.flags		= GENL_CMD_CAP_DO,
+ 	},
+ };
+diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
+index 081093dfd553..8847cbf20d45 100644
+--- a/net/handshake/tlshd.c
++++ b/net/handshake/tlshd.c
+@@ -19,6 +19,7 @@
+ #include <net/handshake.h>
+ #include <net/genetlink.h>
+ #include <net/tls_prot.h>
++#include <net/tls.h>
+ 
+ #include <uapi/linux/keyctl.h>
+ #include <uapi/linux/handshake.h>
+@@ -37,6 +38,8 @@ struct tls_handshake_req {
+ 	key_serial_t		th_certificate;
+ 	key_serial_t		th_privkey;
+ 
++	struct socket		*th_sock;
++
+ 	unsigned int		th_num_peerids;
+ 	key_serial_t		th_peerid[5];
+ };
+@@ -52,6 +55,7 @@ tls_handshake_req_init(struct handshake_req *req,
+ 	treq->th_consumer_data = args->ta_data;
+ 	treq->th_peername = args->ta_peername;
+ 	treq->th_keyring = args->ta_keyring;
++	treq->th_sock = args->ta_sock;
+ 	treq->th_num_peerids = 0;
+ 	treq->th_certificate = TLS_NO_CERT;
+ 	treq->th_privkey = TLS_NO_PRIVKEY;
+@@ -85,6 +89,27 @@ static void tls_handshake_remote_peerids(struct tls_handshake_req *treq,
+ 	}
  }
-@@ -987,6 +1011,8 @@ static int fastrpc_get_args(u32 kernel, struct fastrpc_invoke_ctx *ctx)
- 	list = fastrpc_invoke_buf_start(rpra, ctx->nscalars);
- 	pages = fastrpc_phy_page_start(list, ctx->nscalars);
- 	ctx->fdlist = (u64 *)(pages + ctx->nscalars);
-+	ctx->crc = (u32 *)(ctx->fdlist + FASTRPC_MAX_FDLIST);
-+	ctx->poll = (u32 *)(ctx->crc + FASTRPC_MAX_CRCLIST);
- 	args = (uintptr_t)ctx->buf->virt + metalen;
- 	rlen = pkt_size - metalen;
- 	ctx->rpra = rpra;
-@@ -1155,6 +1181,83 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
  
- }
- 
-+static inline u32 fastrpc_poll_op(void *p)
++static void tls_handshake_record_size(struct tls_handshake_req *treq,
++				      struct genl_info *info)
 +{
-+	struct fastrpc_invoke_ctx *ctx = p;
++	struct tls_context *tls_ctx;
++	struct nlattr *head = nlmsg_attrdata(info->nlhdr, GENL_HDRLEN);
++	struct nlattr *nla;
++	u32 record_size_limit;
++	int rem, len = nlmsg_attrlen(info->nlhdr, GENL_HDRLEN);
 +
-+	dma_rmb();
-+	return READ_ONCE(*ctx->poll);
-+}
-+
-+static int poll_for_remote_response(struct fastrpc_invoke_ctx *ctx)
-+{
-+	u32 val;
-+	int ret;
-+
-+	/*
-+	 * Poll until DSP writes FASTRPC_POLL_RESPONSE into *ctx->poll
-+	 * or until another path marks the work done.
-+	 */
-+	ret = read_poll_timeout_atomic(fastrpc_poll_op, val,
-+				       (val == FASTRPC_POLL_RESPONSE) ||
-+				       ctx->is_work_done, 1,
-+				       FASTRPC_POLL_MAX_TIMEOUT_US, false, ctx);
-+
-+	if (!ret && val == FASTRPC_POLL_RESPONSE) {
-+		ctx->is_work_done = true;
-+		ctx->retval = 0;
-+	}
-+
-+	if (ret == -ETIMEDOUT)
-+		ret = -EIO;
-+
-+	return ret;
-+}
-+
-+static inline int fastrpc_wait_for_response(struct fastrpc_invoke_ctx *ctx,
-+					    u32 kernel)
-+{
-+	int err = 0;
-+
-+	if (kernel) {
-+		if (!wait_for_completion_timeout(&ctx->work, 10 * HZ))
-+			err = -ETIMEDOUT;
-+	} else {
-+		err = wait_for_completion_interruptible(&ctx->work);
-+	}
-+
-+	return err;
-+}
-+
-+static int fastrpc_wait_for_completion(struct fastrpc_invoke_ctx *ctx,
-+				       u32 kernel)
-+{
-+	int err;
-+
-+	do {
-+		switch (ctx->rsp_flags) {
-+		case NORMAL_RESPONSE:
-+			err = fastrpc_wait_for_response(ctx, kernel);
-+			if (err || ctx->is_work_done)
-+				return err;
-+			break;
-+		case POLL_MODE:
-+			err = poll_for_remote_response(ctx);
-+			/* If polling timed out, move to normal response mode */
-+			if (err)
-+				ctx->rsp_flags = NORMAL_RESPONSE;
-+			break;
-+		default:
-+			err = -EBADR;
-+			dev_dbg(ctx->fl->sctx->dev,
-+				"unsupported response type:0x%x\n", ctx->rsp_flags);
++	nla_for_each_attr(nla, head, len, rem) {
++		if (nla_type(nla) == HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT) {
++			record_size_limit = nla_get_u32(nla);
++			if (treq->th_sock) {
++				tls_ctx = tls_get_ctx(treq->th_sock->sk);
++				tls_ctx->tls_record_size_limit = record_size_limit;
++			}
 +			break;
 +		}
-+	} while (!ctx->is_work_done);
-+
-+	return err;
++	}
 +}
 +
- static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
- 				   u32 handle, u32 sc,
- 				   struct fastrpc_invoke_args *args)
-@@ -1190,16 +1293,19 @@ static int fastrpc_internal_invoke(struct fastrpc_user *fl,  u32 kernel,
- 	if (err)
- 		goto bail;
+ /**
+  * tls_handshake_done - callback to handle a CMD_DONE request
+  * @req: socket on which the handshake was performed
+@@ -98,8 +123,10 @@ static void tls_handshake_done(struct handshake_req *req,
+ 	struct tls_handshake_req *treq = handshake_req_private(req);
  
--	if (kernel) {
--		if (!wait_for_completion_timeout(&ctx->work, 10 * HZ))
--			err = -ETIMEDOUT;
--	} else {
--		err = wait_for_completion_interruptible(&ctx->work);
--	}
-+	if (handle > FASTRPC_MAX_STATIC_HANDLE && fl->pd == USER_PD)
-+		ctx->rsp_flags = POLL_MODE;
- 
-+	err = fastrpc_wait_for_completion(ctx, kernel);
- 	if (err)
- 		goto bail;
- 
-+	if (!ctx->is_work_done) {
-+		err = -ETIMEDOUT;
-+		dev_dbg(fl->sctx->dev, "Invalid workdone state for handle 0x%x, sc 0x%x\n",
-+			handle, sc);
-+		goto bail;
+ 	treq->th_peerid[0] = TLS_NO_PEERID;
+-	if (info)
++	if (info) {
+ 		tls_handshake_remote_peerids(treq, info);
++		tls_handshake_record_size(treq, info);
 +	}
- 	/* make sure that all memory writes by DSP are seen by CPU */
- 	dma_rmb();
- 	/* populate all the output buffers with results */
-@@ -2462,6 +2568,7 @@ static int fastrpc_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
  
- 	ctx->retval = rsp->retval;
- 	complete(&ctx->work);
-+	ctx->is_work_done = true;
+ 	if (!status)
+ 		set_bit(HANDSHAKE_F_REQ_SESSION, &req->hr_flags);
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index bac65d0d4e3e..85b1243b4210 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1037,6 +1037,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 	ssize_t copied = 0;
+ 	struct sk_msg *msg_pl, *msg_en;
+ 	struct tls_rec *rec;
++	u32 tls_record_size_limit;
+ 	int required_size;
+ 	int num_async = 0;
+ 	bool full_record;
+@@ -1058,6 +1059,9 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 		}
+ 	}
  
- 	/*
- 	 * The DMA buffer associated with the context cannot be freed in
++	tls_record_size_limit = min_not_zero(tls_ctx->tls_record_size_limit,
++					     TLS_MAX_PAYLOAD_SIZE);
++
+ 	while (msg_data_left(msg)) {
+ 		if (sk->sk_err) {
+ 			ret = -sk->sk_err;
+@@ -1079,7 +1083,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 		orig_size = msg_pl->sg.size;
+ 		full_record = false;
+ 		try_to_copy = msg_data_left(msg);
+-		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
++		record_room = tls_record_size_limit - msg_pl->sg.size;
+ 		if (try_to_copy >= record_room) {
+ 			try_to_copy = record_room;
+ 			full_record = true;
 -- 
-2.34.1
+2.51.0
 
 
