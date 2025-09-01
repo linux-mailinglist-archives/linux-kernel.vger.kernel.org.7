@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-794854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12382B3E817
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 388E3B3E816
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8951C1A8691B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B601A86C1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3514733CE93;
-	Mon,  1 Sep 2025 15:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2633473F;
+	Mon,  1 Sep 2025 15:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lkYQqRoH"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOHqtVu2"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D8E2116E0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF59136672;
+	Mon,  1 Sep 2025 15:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738865; cv=none; b=LJ4UG5t51BNvWQ51Ru48O5KUrT93waC1eJxIuFCHbImY0ayI/itppZYOqGRxQiInX1gv+l43uHG1TaSGlu5i0BD+HAwpxceTf1A5quhYKeqxQxto0yj1ql8ORdH0cwWWUvV67mlABzI8vp9RlnoSovX1Lrro/UNdQUs9wHUkBQQ=
+	t=1756738847; cv=none; b=Zat6z+LMDEhf0+reXY5fn9m8Akv1p4MfzsLamGbFFlu7Bj8sksFSZtaOkv6ENh9rceUUNMsH+y8yxLrnPXftj7+M1jF4rfHg3gfcoqNCJtqnmduCb9eMjHzDovkAXHN0WBW+CHeteqEbVr7H7JiiRXRjAFktMB4Lvg+BRuI/yCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738865; c=relaxed/simple;
-	bh=bhsgslIQ2txcAHts3Qvp0r6de4FEaFaUAz2tbH37AtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9a9pWu2U1IrOHdeejPT2WXUBYBg3mGVw8c1+QQpSJT9dd1E55jp7m4+OCm2t6KKeKIR3H7Z3iw56L2wqTkgXJv/sFibWuE0Bj8xfSDD1VItNwCeysWLLFw9r1u+yZXwLJkN9bLopMJnuBDn1XPTU3vRfoyAyOHQbf5qsI+1WoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lkYQqRoH; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756738858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2wHsii/Qa6huXYM2RR7dWMJJdJHUMFRlSMFRkEDOArg=;
-	b=lkYQqRoHgugZi5tdkd7UNREH9SVGqJHbWHRI6/djRHboUfzP4ulMbA/ZFqpSVvSSfzPXcg
-	qs0yJ57sL3KjoHR7j/XDI1iGxXp7aUsntZRU86vyyOy9w0+uT+qfZwomItFf7L6jJSJghS
-	/09KAsWNt25if4He0pA2/juiJsxi8BQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-rdma@vger.kernel.org,
+	s=arc-20240116; t=1756738847; c=relaxed/simple;
+	bh=F5K3rbEz6hJHw7YJ4IpVd10CtWqVoaUEdEu4A7Xycds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bFTrvaKhZPD7dhFbcqJdmii45s5wCorLlD5ynU+UOP51h9LM/gDGZNUXOA8LnE9dQu+5I5Xmcs5z1INvP8x+pi2/oupUNIfscLYTq5E7QQfTW6PD+DeIWL06u5ZRN7xWvW7eGrN7G6M0g/4Ua/NeX1w93hlMVi9vdH/V1hORxl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOHqtVu2; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-772627dd50aso663580b3a.1;
+        Mon, 01 Sep 2025 08:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756738845; x=1757343645; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJ4WcZ7eOxBtKFx4ULGvvK6qM1Bsr/rRsHz5qzwJR6I=;
+        b=YOHqtVu2/S2E36wocwqNSLCwAAIv9j7JaWmE2bdjneM/BzesUSYX2PaJVzkkRbTI7G
+         HGsyt2LudB+xPSCF21Ujv4z7XSRVG/i1yx58bzDwRbBqCYIu5T3rDYt98FXODEXHH1O4
+         64Cn9t42mTLewGzqPQmPxfoSvmy+euNcZUBzXl19LlpLfNjiQuj04rddl7xereDHFYE9
+         c052gRMCMB/gb7E9rc2IvkwQIb4nCd9D0Bz+B5qor5MBUYTA+TyTUWyJWZ6iNOcOglmi
+         djQfmVhuTFwW+hzasAl9PyvH5mkcjZENwWo6vg7YOHqq0J0t08vuKitbJ8HX/Re2qnBf
+         aYzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756738845; x=1757343645;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lJ4WcZ7eOxBtKFx4ULGvvK6qM1Bsr/rRsHz5qzwJR6I=;
+        b=drA+9rXolewVzkFbQZ4+Az0gixvY2IISRDKEAXMIbfO5zsTh2RgBlFiuzzrCJc+pTp
+         6Zv5fnN3LH6qLSmxOlNZU3+Q2ZflkoqsTMEr7ZLQT4UzzoItOxoozmVd8amBKXvLTAbz
+         KOKB6B2sPLzdEbpHuiA18ApmanCJC9VwWj2MujN1XQ7cliXQCoBlAP8hTYjb0xkbpfRC
+         cBXCLTpm/zD6/4V/J1DOP1aRVQd9+YSb3GCA6Omig6ARLGRGIy0wOAdP8E7g973/PW9R
+         H9HXQzbNoCNKjYoCDpU1eDyrX/vSYntgs4XIk7ng0zc0ZIk+vQO4jAK0K9dT27H2HM9e
+         DJMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbyDO1SNIW1r6nIs1YkR5T6FkAMEUJPyHxvoF/sfnSkFpealmnXSZUvktdevq6mW63NMJkQfz0FKbqMdE=@vger.kernel.org, AJvYcCW1nDv3UB0szbeKgE1FjKhXD/EtB/reSZy6KqtWmmobZQmV3jfcXSC/y2u04Y3mt3Gc1XnsFFPMiaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBYxoLEweQf5zx8w4uyLmm4TI9+h03o9qBVyh+uWBQwx5/8AGA
+	eUTozfwqGUPey4O27xx+oacPcZFnQjgHssugD2MYmb6OKnMmuB6BYnSa
+X-Gm-Gg: ASbGncuFS5Sq5niFEdzucegIGWoCtnEbmSpYo0uFZQzTV4eC9d9wmS7tYl3f8pAM1KZ
+	JfgQspyOEzuxu+OcsfmmUi70c8t9RvvbaS6y7eq8c6rGFM26D760bvoFRVzvMhkPJAK6LLSw58Z
+	TzhxLlvmwWMk+U2pzb2+PD3lq/SvkCxlnXIf7qRiXKweZxFBjzLkYBdkn/zUiKv0UAuQbt4xDqv
+	CDhE2ChdBL38szYWdBv7DikJad0xFKJZJ/FVrT2zdrtnr1TMYViI2HZ5RCZXSm/Q/oj9PlF+MEo
+	4Q291v8y8+Ydpd6wX2cEocnn4wr/4UFk9FCxkmJULXVJgziyvJkXi3+PXuxYI9LSw9ET/TI49yZ
+	al4mcbj+kH+H/MqrfuGjGuxIzbWViXH87lNS9hPfS88wldMHzYHS0Zg7El/2NCJZH9tu+ktk=
+X-Google-Smtp-Source: AGHT+IHSOg6ABAG/AxG8rrQTksVV0NWpwd523gnHpf1IFLyVCZdVy9xfEvfabJwEUah5KqR1OCv6xQ==
+X-Received: by 2002:a05:6a20:42a3:b0:243:a9b6:de9c with SMTP id adf61e73a8af0-243d6f3b987mr10834591637.24.1756738844931;
+        Mon, 01 Sep 2025 08:00:44 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26a3e3sm11065659b3a.13.2025.09.01.08.00.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 08:00:44 -0700 (PDT)
+Date: Mon, 1 Sep 2025 23:00:40 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: rafael@kernel.org, daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, jacob.jun.pan@linux.intel.com,
+	jserv@ccns.ncku.edu.tw, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/bnxt_re: Call strscpy() with correct size argument
-Date: Mon,  1 Sep 2025 17:00:39 +0200
-Message-ID: <20250901150038.227036-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] tmon: Fix undefined behavior in left shift
+Message-ID: <aLW1GEpKXVLo1Oue@visitorckw-System-Product-Name>
+References: <20250901144756.1179834-1-visitorckw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901144756.1179834-1-visitorckw@gmail.com>
 
-In bnxt_re_register_ib(), strscpy() is called with the length of the
-source string rather than the size of the destination buffer.
+On Mon, Sep 01, 2025 at 10:47:56PM +0800, Kuan-Wei Chiu wrote:
+> Using 1 << j when j reaches 31 triggers undefined behavior because
+> the constant 1 is of type int, and shifting it left by 31 exceeds
+> the range of signed int. UBSAN reports:
+> 
+> tmon.c:174:54: runtime error: left shift of 1 by 31 places cannot be represented in type 'int'
+> 
 
-This is fine as long as the destination buffer is larger than the source
-string, but we should still use the destination buffer size instead to
-call strscpy() as intended. And since 'node_desc' has a fixed size, we
-can safely omit the size argument and let strscpy() infer it using
-sizeof().
+I forgot to mention in the commit message that the UBSAN report was
+triggered when running sudo ./tmon -l. Let me know if you'd like me
+to include that detail, and I can update and resend as v2.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/infiniband/hw/bnxt_re/main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
-index df7cf8d68e27..0718421bbf09 100644
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -1323,8 +1323,7 @@ static int bnxt_re_register_ib(struct bnxt_re_dev *rdev)
- 
- 	/* ib device init */
- 	ibdev->node_type = RDMA_NODE_IB_CA;
--	strscpy(ibdev->node_desc, BNXT_RE_DESC " HCA",
--		strlen(BNXT_RE_DESC) + 5);
-+	strscpy(ibdev->node_desc, BNXT_RE_DESC " HCA");
- 	ibdev->phys_port_cnt = 1;
- 
- 	addrconf_addr_eui48((u8 *)&ibdev->node_guid, rdev->netdev->dev_addr);
--- 
-2.51.0
-
+Regards,
+Kuan-Wei
 
