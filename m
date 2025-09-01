@@ -1,134 +1,160 @@
-Return-Path: <linux-kernel+bounces-793946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4443B3DAC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D215B3DAC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0A6174369
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFA73BA560
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7417425F7A5;
-	Mon,  1 Sep 2025 07:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C30325EF90;
+	Mon,  1 Sep 2025 07:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5V7s0Hc"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5XeNc7C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A0E2571DA
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66631804A;
+	Mon,  1 Sep 2025 07:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756710377; cv=none; b=RPg7NikpbEMM6ioMIAxhnJTGLi+lGF/Z+MxkHkbgscGSKDXr7iurbfo64MDO/xK0LbxN33NRcrM3tiIT3ETRzuHFT55izvsQOqmvzvt6ymnNVUvmy3zyIsFdsREyYu0n9qdfqM9wLI7KDfr7bSrjrwj6wo91nI5wPf0oMLRlJYc=
+	t=1756710425; cv=none; b=rOB89z5l6jpw+ptXuJL6gQQgcxr7U4kML5iJOe3/do5SAE+ohXXVmscRYn92EQVaiFVAxzG6nWok8BwrE3coY2Mew5ia8M1jUKXGNiLKY913xqv5Sbzx6FNha0/Q08wDoE29BSHxgrX9CcpW8JBl2pSInH/llNbJ6+2qCqKc3Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756710377; c=relaxed/simple;
-	bh=ghUkVbbL6fSFFM+VnU2xLQumO120VvySAdwvS0T6ve0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5JVG2QuGO+z9n7wFFWPrAAnCCiMuCR5Wh9Mgw4CQKbootCZg6uA0YjyIC7e1swFC9Lq9DP9NIaHrqmR+6qLE37UuTIV5XaIbnLVZwTQchp7jZV6CYi2bQqQeEWnMmkvdRxI385CTZkRnX5nefPAPeKk7GxicZt7J0y+Qu4S8aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5V7s0Hc; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b873a2092so12359155e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:06:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756710374; x=1757315174; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
-        b=L5V7s0HcpxIN9ySwa+9k8bvQSXh6cl0hgNZll5XItb+IdlZ5Vu2bJDbABBorJxKxF0
-         UzscACIGYpDu4Np3yOwYzXlypBbXq7lXYdPo/SNf/vWBrRBfkNm3V5Ow3BgEI+qEntL1
-         Tr904zYYYwi/WIO7yQduQExd5GVJ1lhGjnyClNX4+cuYikU274e/6Ek4ZmQRjEZwTPlH
-         cajgmtQiOwddI1CWRuSaJzNIAwSKBK6Y/69Q4Zr06iuFf7idqzFEtsm/ap1F3jX0Dc8S
-         4gZMLk1w0TGZ0cxhmKra/aIVjvHz6HccPzM4IGvEJM9qVthIB7lOtmUpymMXydjEGtdG
-         VqeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756710374; x=1757315174;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5RiPjeOB66FDKJZfr/ttLTVqavYTkJ/P7VOQby544s4=;
-        b=PDoqA9shX/5jy3X8zYzoOzNGje1fPhSTOu2p420sLID9hNdlk08kP7W+LLGvMhE3v0
-         SKR2kgPR4m9ZfzXO5B7qnGGt9j2hJ/AjLZojLiooHbHjKr2CrzQus6B7wc6xfIaWKavq
-         uTO6ST9CBlfq/2gV7tjVyaLVPIJql0eRFNohQiffU1m0izcwZa+XqE906oq7CdwzcxMo
-         HwrtPhOaO/fd+fB55YDplLEu8O9dZLcoi3Yso1Xl+iClGPjaDCdG6TSB3LoUzR6KJe0P
-         Emg7rIxeyxJd57i+xy+mNIs5zc/o+pzu04rbjgyr5p4wkwnS1KeUOkOeUYtIHfrhBxym
-         hFQw==
-X-Gm-Message-State: AOJu0YxkkqMVNxwtQxbloQL/c5TGyixP1nc4r/kN0GeXGFpHoZJ6pj7H
-	/Y870wauhRvu8TWjZH88D818J+urfERMmsAjG3msY0RaN0mbosn+nHA3T2jYg1InMOY=
-X-Gm-Gg: ASbGncuCmSAGOM2hHsMp377KVTHxvjemV8qfRIWHSNyXV0DkAcy+FobyVNzyFwdj4u8
-	+rYbROIqCLR9WFodq81hTHnAqANkXeweknBdLOPMnAtszOM9+nmEgn0iEEKnuIyiVL+Li36wwHH
-	0y0bKlCClzT+Af1khij+kEI4SXIZAbMa+22yNcJrqgvrjQ1TPKwA4Hv6FntTHYGxb0BkipWnjIm
-	Ezhw5j/VycMtOYPtn+WtLkkUaXS4ahCm8RjEVnS2w3OPn3MXBPLLc85cLBlTER4eA+djLl2mrjC
-	DdPkKIG2YghiAVfnucZLecsFDqW2SRlOSkaLGjKdEvQI73iZCzenvjR5cFlF8IyBgFGLPFFZ29P
-	6foRSZeeZXaBsqviOLdlpzJyN5rMhqmR9GRTvj8dd
-X-Google-Smtp-Source: AGHT+IFnBbOE5ba7PQ9iK6x0QBC9gheBMd69i0QeCPDpf2UAKrxEuZOeM6Cz6ka7pF/Dx8JiLhhRIQ==
-X-Received: by 2002:a05:600c:a44:b0:45b:7f72:340 with SMTP id 5b1f17b1804b1-45b8557c68cmr60349155e9.25.1756710374198;
-        Mon, 01 Sep 2025 00:06:14 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d85f80d8casm541692f8f.54.2025.09.01.00.06.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 00:06:13 -0700 (PDT)
-Message-ID: <73674a4e-2397-4470-8743-763e0fb7435d@linaro.org>
-Date: Mon, 1 Sep 2025 08:06:11 +0100
+	s=arc-20240116; t=1756710425; c=relaxed/simple;
+	bh=t+EbY02dYwHMIRuwPA5LMX8oq95JwdclceCsg6WGxsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGMa/aOl5mzVxux6gSLaWsFA69CMkG57n7Y5mxqM/qP1Eh9RBdBTzjdjSqrmcT8BU5IEcISA8TWZztBoQK+24TEROCjpb43PjvkZ/NIjPszBFg5W8pAm8eY+8EBheOHJtRgnNc3KwSEJifYOR5Srd46Ib2MPGnhSexSOyrz9w1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5XeNc7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36AAC4CEF0;
+	Mon,  1 Sep 2025 07:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756710425;
+	bh=t+EbY02dYwHMIRuwPA5LMX8oq95JwdclceCsg6WGxsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5XeNc7Cv8GxToCWwX2Wxf/Wd6+4Qx6COMqHte76KADDpb+1z8AKRSxY6/EQkZsgR
+	 XU68REjcq5ar0q/5UboMi/cxrMF+TtEIR/lmNmC2jKNclSCAOkiIkggT37yW0Nz5l4
+	 rm1oNIGdwRJ83ZPkjV3V4smIHmG0XyUrsKjkTXLMSfSd9rhIsqNJ25AYmZf0bLVLqC
+	 /BJm/0E2s+8zmuE4ar/44x3lc4owarPZsOPbPGXuGOIeiatzWgOPmRLL6mVuSF53eN
+	 ta3VK1kmgw6yrtxVWfdHJUMBg3Cc7UrhUCP6ozK/Xl59CGRh5NZpeSd6GC8KBBz9lR
+	 rJmN+CkJNRR6A==
+Date: Mon, 1 Sep 2025 09:07:02 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Daniel Stone <daniel@fooishbar.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
+ driver capabilities
+Message-ID: <20250901-voracious-classy-hedgehog-ee28ef@houat>
+References: <20250830-drm-limit-infoframes-v3-0-32fcbec4634e@oss.qualcomm.com>
+ <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
+ <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] exynos-acpm: add DVFS protocol and clock driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <28b5b033-76de-4fed-af6b-6d8342362c47@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ma3smgpulpnwz33z"
+Content-Disposition: inline
+In-Reply-To: <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
 
 
+--ma3smgpulpnwz33z
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
+ driver capabilities
+MIME-Version: 1.0
 
-On 8/31/25 11:42 AM, Krzysztof Kozlowski wrote:
-> On 27/08/2025 14:42, Tudor Ambarus wrote:
->> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
->> are variable and index based. These clocks don't provide an entire range
->> of values between the limits but only discrete points within the range.
->> The firmware also manages the voltage scaling appropriately with the
->> clock scaling. Make the ACPM node a clock provider.
->>
->> Add support for the ACPM DVFS protocol. It translates clock frequency
->> requests to messages that can be interpreted by the ACPM firmware.
->> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
->>
->> All patches can go through the samsung tree.
-> 
-> You really should have explained the dependencies instead of me trying
-> to decipher how to handle this patch. It's really not trivial.
+On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Baryshkov wrote:
+> On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wrote:
+> > Hi Dmitry,
+> >=20
+> > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
+> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> > > It's not uncommon for the particular device to support only a subset =
+of
+> > > HDMI InfoFrames. It's not a big problem for the kernel, since we adop=
+ted
+> > > a model of ignoring the unsupported Infoframes, but it's a bigger
+> > > problem for the userspace: we end up having files in debugfs which do
+> > > mot match what is being sent on the wire.
+> > >
+> > > Sort that out, making sure that all interfaces are consistent.
+> >=20
+> > Thanks for the series, it's a really good cleanup.
+> >=20
+> > I know that dw-hdmi-qp can support _any_ infoframe, by manually
+> > packing it into the two GHDMI banks. So the supported set there is
+> > 'all of the currently well-known ones, plus any two others, but only
+> > two and not more'. I wonder if that has any effect on the interface
+> > you were thinking about for userspace?
+>=20
+> I was mostly concerned with the existing debugfs interface (as it is
+> also used e.g. for edid-decode, etc).
+>=20
+> It seems "everything + 2 spare" is more or less common (ADV7511, MSM
+> HDMI also have those. I don't have at hand the proper datasheet for
+> LT9611 (non-UXC one), but I think its InfoFrames are also more or less
+> generic).  Maybe we should change debugfs integration to register the
+> file when the frame is being enabled and removing it when it gets unset.
 
-My apologies, I forgot. If I tested individual patches, I would have
-remind about the dependency. Something to automate for the next time ...
-> 
-> You do understand that clock is completely different subsystem (Stephen
-> Boyd)?
-> 
+But, like, for what benefit?
 
-Yes, I do, sorry.
+It's a debugfs interface for userspace to consume. The current setup
+works fine with edid-decode already. Why should we complicate the design
+that much and create fun races like "I'm running edid-decode in parallel
+to a modeset that would remove the file I just opened, what is the file
+now?".
 
-Cheers,
-ta
+> Then in the long run we can add 'slots' and allocate some of the frames
+> to the slots. E.g. ADV7511 would get 'software AVI', 'software SPD',
+> 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which can probably be
+> salvaged as another generic one)). MSM HDMI would get 'software AVI',
+> 'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI which I don't
+> want to use). Then the framework might be able to prioritize whether to
+> use generic slots for important data (as DRM HDR, HDMI) or less important
+> (SPD).
+
+Why is it something for the framework to deal with? If you want to have
+extra infoframes in there, just go ahead and create additional debugfs
+files in your driver.
+
+If you want to have the slot mechanism, check in your atomic_check that
+only $NUM_SLOT at most infoframes are set.
+
+Maxime
+
+--ma3smgpulpnwz33z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLVGFgAKCRAnX84Zoj2+
+dllrAX94GZ81N40ectCnxYcKj+nZpN6UcMWR8EYDih6ILK4w0J49eNzGARVXu+eF
+lwB1CJoBfjdbnsga9yVjeXCFRH47XfORMMFpd6RIh/AoUJ7fu6AYlLvYNrTwxgRE
+sw4U5RZ1qg==
+=g974
+-----END PGP SIGNATURE-----
+
+--ma3smgpulpnwz33z--
 
