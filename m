@@ -1,169 +1,156 @@
-Return-Path: <linux-kernel+bounces-795012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36B1B3EBD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34480B3EBCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8D4E32AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:02:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC02174392
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E22F3606;
-	Mon,  1 Sep 2025 16:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0076C2DF15F;
+	Mon,  1 Sep 2025 16:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="due+l53p"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oIBPQkem"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3D62F1FFE;
-	Mon,  1 Sep 2025 16:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E68F2EC0B0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742506; cv=none; b=guyEvH7I1CMvE1GwmZYYD0U4yBjOrx9LuapqqA0FddCm1+erb3zqcJNRHVKLQnDQ2N6o9d72mff9tdpTJzFwqeHLYC7LWO0NXGeFe/1jAaKIqPpnSGpKrgCvsXitww2pSDRvqWAggcdwtfydDzUn0O8hzi0UUs0cAy3sZFLu4qg=
+	t=1756742500; cv=none; b=bJU/RXesNZkOvZ2dVEE31p74RGLfiJhOfoDGV9bg7SsruDyONvCP1+cFZ56XHo77gVBaxmZiF2Bfxy1Hn5soivfD8XjwspBd5zjFDRAZfNQk6vh/yF+TDaziHszDfTENAhh31xHnlPivf2taHtw5z4H4NVd+C8mwNocAZFwWXuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742506; c=relaxed/simple;
-	bh=CbuTuH+TBGhwVIFkBIL83TJMSHa8SRRB5lvz2oJbodc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YC9uC/+n8n6858Q5YmihkMDOBclU4kgMBqCYqFUbzIbx/+KwN6uhcGncuh/BpVXs4isNMQOCx+FKUlYINcpImOjMpqQ1aTqsCdxU21YcZQU7GE0q1NlRnFAiqctT0Yi63+x7g7yXaRV7sKPnW6Cky+HMrEnRAnm2EDW2j0rj9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=due+l53p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B4K9r015350;
-	Mon, 1 Sep 2025 16:01:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tSjAN16Iw0lGYq1u0vWwlJHyKeY8+e/J2VRH9cPhXtc=; b=due+l53pWbWAciUf
-	KZnWo9ztP0CZEZNhluQBrYW6YjHJHFmiEwMO0yjFM+h8OSfxru8gi6rddw3ssrmn
-	USMIzmHxJkQb8v1pE+WT8MMxV4X99lfJWU+oAj6qJLbaaGqy0Jzhmw3Axr6mqQ2q
-	ZxhPqZfx7SlJpkxJq0feJV9cCHcMLwroZDmZJYYsLBuJOmWjxJUZRIkC1Ba0Kit7
-	X6paji2eq1qJHLjhZRT143fxC8g4e+pyA9VX23Y/3G+AP4rLogdjqNloKkJ3FEuG
-	itun4mB5rT3oVSHUc4UDCmr39QUIsbxujT+HcTpfmflL4BtvteNvwEy1DG1IjpPm
-	aTEsiA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utfkd561-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 16:01:33 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581G1XrE008156
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Sep 2025 16:01:33 GMT
-Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
- 2025 09:01:29 -0700
-Message-ID: <922bd9d3-2148-4c26-a9a3-791586c67181@quicinc.com>
-Date: Mon, 1 Sep 2025 21:31:19 +0530
+	s=arc-20240116; t=1756742500; c=relaxed/simple;
+	bh=8TyjAR1n0XSfbG60TdTWK/jacRRmZXapnaL2IGz/6Ag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cMumwHFZ+tlgumIWvVhqLxYm+dL73jR+ks185a1nkH8dzoPxUoxOvEWEdEUnlrliTs8GGhmlqxowcMD3TblJJfPRmltNt8sesq9d1OkrmGHaiQK2442mJMY9Wv9O0YEhvdmPJfH8rTsT3f+Gji5SPezWxZuBIn5NIBZ/GPMmHYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oIBPQkem; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-618660b684fso14243a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756742497; x=1757347297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dZe1rDSyUDwGrcf6JDGl9NSkofhGepazU+Zm8DpoTMU=;
+        b=oIBPQkem/eVPKJ1Zjg/1p8LFqeN/u8T0aMSa5O5IOlCq3YJtIPzeCjNXHdFCxbJFM8
+         w0gNLW35a+syGJ1D8T2wh3ORVNkNOe5gtCNGbnSynicyIZ4n9d1Q6RcgyWDXfkbIkkLz
+         57Vf7Re+Ltz79H8Uxtdlrf8ka0k0TKosb0O9BZreMq+1s5TEvSOrrrY0af4/EfUV97CF
+         Jpc0g8ef0u6m8aM6Eo05mUyM5tMNrd1fUSOjtE1lTXpNk7OQ3eTG157rXnkFXnYFdUtT
+         QD3gRuI70ZZYQwfB+azOwLq/vAyFzH4o/YDnapNOZ5rZlRbu09BdAtF1R/sxXhuLNSAv
+         nlpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756742497; x=1757347297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dZe1rDSyUDwGrcf6JDGl9NSkofhGepazU+Zm8DpoTMU=;
+        b=j6WnSerwY3zngn56EVuUfNAFURjfQPwO6Z+W5tSpq64EWjGC3EAooVIJfhLqnaFjv1
+         SZDs5qMUnW3+x2Bf0K7GuZGxfCZoOHRpnVLwYQ7+H6ir3rkmvmCexFO/1ypGbhwhZoko
+         QeqN10lDnuuv/maUJvNPmImpfxaQc5Mp5SI/J2M/Td4tvCPgzO8wLpULt5kZTuxbywtW
+         ANnwOZH/m6bJ9a4a+HRcjQao3l3ZghaqENsi1br1LWqIx+iZytlvRxXdNqKopGjsuZR8
+         /CS5OValycEejC6LHRzTMbXFjzICSx6QQDxHetakQ9aNiHg35BBKdNsLQlsP50gauXz0
+         XtLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqfwj1x+VBv76srtsf0rBsiNVwDiZne+Y2LdJLpCchEAjdPkYXduK7EU99aA1lfGwjJRbHjtXBCKm1iqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwTymH26CwsdsCSR1NA9rI3RPl/aLpf2NrawcF+OtQ9v8TyIe2
+	BlUPwCbs9zdDWv03E4ZWUo0v2izYCUWRFJJb3+F3y/fOe8B2+IY/DWLOwWnyAdk8+6RQjvM/XCx
+	t6J4H4jEQyqPogTBRTMFTNO+9iZFR03HCiWHgHSu+
+X-Gm-Gg: ASbGnctYI0zAsawE2+TbW6qUZxLDx/vYt3fQt3x4cytFrXNDVkRygk+7pNw37B8yJa/
+	IZxMnM83iBW8Acirq5BWRLI5o89uJgiD7D0aECeEKsjmuRxnn4uLgvI1sJi//cK0cKA0UG0Vo9d
+	d/RGK/g/p1/i5eLalRYPEFrk1DSMuS8jeLwTqbmd2OrAkITOfEGOYTQ1bMRjs7jS7+cg9W5ldAe
+	tJpmxQqmJNgo4xhDlD255eSFCScnhNsHUkFmsMBgcEvZ7PFCdAD
+X-Google-Smtp-Source: AGHT+IFBPjo7BYjYjXhGo6U2wXlVhFIeOC8a9cufcwphz6VE6bbVgfUe4VeQNXzBXooQi/RcCrbbTira2IpHTqtwCBw=
+X-Received: by 2002:a05:6402:2898:b0:61c:32fb:999b with SMTP id
+ 4fb4d7f45d1cf-61d21c8e8f7mr134455a12.1.1756742496601; Mon, 01 Sep 2025
+ 09:01:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-To: Manivannan Sadhasivam <mani@kernel.org>,
-        Bart Van Assche
-	<bvanassche@acm.org>
-CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
- <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
- <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
- <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
- <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
- <6xgsb7thoo7mquz3mxuyhliuqtvrbxj43nc6ga5qpcgcz4ro4u@doe2253ydjbj>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <6xgsb7thoo7mquz3mxuyhliuqtvrbxj43nc6ga5qpcgcz4ro4u@doe2253ydjbj>
+References: <20250826080430.1952982-1-rppt@kernel.org> <20250826080430.1952982-2-rppt@kernel.org>
+ <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch> <aLFdVX4eXrDnDD25@kernel.org>
+In-Reply-To: <aLFdVX4eXrDnDD25@kernel.org>
+From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
+Date: Mon, 1 Sep 2025 18:01:25 +0200
+X-Gm-Features: Ac12FXzkGAkQY2x4K6zNLnLOx6A5Qe40b6_I_CpXPyMEmRkQBFx8GaoL9LPzUlo
+Message-ID: <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM devices
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Tyler Hicks <code@tyhicks.com>, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=eaQ9f6EH c=1 sm=1 tr=0 ts=68b5c35d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=jy_iQL8k7Q2RHFkZsNwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 9o_bWBcIItoGcBJXTnIHbpisg9_rDKSv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MCBTYWx0ZWRfX1wBniPO4V0ln
- hyiYxJhQZl8eFzqTNVXxQj4mX2upheLuhs0JMzLRVCtUsfEdoSpVtbzkejK74GeyPz93j+/QqnG
- FCB7wFIyBMSXNRHDDbe6+Bn+EwtJgJDL62oskmDH3zth+EciDfKItNhMEdhPysWDBgl5In8wmv/
- nDqGQNA/Tl5/uBu+ASzawx5UunTIOz6XnJJ2g/X+PIwKS+ydkJNqoIDTGkdnck4ceysYPTpXDRA
- QB+WZmt8KePlYLQuCjKTMT1a2LNtiy7XYB0H7c6NEvdFjSGhbiBPMpp3fahKxB4dCYuhtEU2wpc
- qGIof+6C5X/RsUDkJdaBGlSEcjeLVfEbiGPIgq0e/iS9/ccowFs0Nd+XX21z4HyB1NYPG5BduuZ
- 8EjMAwT7
-X-Proofpoint-GUID: 9o_bWBcIItoGcBJXTnIHbpisg9_rDKSv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 impostorscore=0 spamscore=0 malwarescore=0
- adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300040
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 29, 2025 at 9:57=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+>
+> Hi Ira,
+>
+> On Thu, Aug 28, 2025 at 07:47:31PM -0500, Ira Weiny wrote:
+> > + Michal
+> >
+> > Mike Rapoport wrote:
+> > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > >
+> > > There are use cases, for example virtual machine hosts, that create
+> > > "persistent" memory regions using memmap=3D option on x86 or dummy
+> > > pmem-region device tree nodes on DT based systems.
+> > >
+> > > Both these options are inflexible because they create static regions =
+and
+> > > the layout of the "persistent" memory cannot be adjusted without rebo=
+ot
+> > > and sometimes they even require firmware update.
+> > >
+> > > Add a ramdax driver that allows creation of DIMM devices on top of
+> > > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
+> >
+> > While I recognize this driver and the e820 driver are mutually
+> > exclusive[1][2].  I do wonder if the use cases are the same?
+>
+> They are mutually exclusive in the sense that they cannot be loaded
+> together so I had this in Kconfig in RFC posting
+>
+> config RAMDAX
+>         tristate "Support persistent memory interfaces on RAM carveouts"
+>         depends on OF || (X86 && X86_PMEM_LEGACY=3Dn)
+>
+> (somehow my rebase lost Makefile and Kconfig changes :( )
+>
+> As Pasha said in the other thread [1] the use-cases are different. My goa=
+l
+> is to achieve flexibility in managing carved out "PMEM" regions and
+> Michal's patches aim to optimize boot time by autoconfiguring multiple PM=
+EM
+> regions in the kernel without upcalls to ndctl.
+>
+> > From a high level I don't like the idea of adding kernel parameters.  S=
+o
+> > if this could solve Michal's problem I'm inclined to go this direction.
+>
+> I think it could help with optimizing the reboot times. On the first boot
+> the PMEM is partitioned using ndctl and then the partitioning remains the=
+re
+> so that on subsequent reboots kernel recreates dax devices without upcall=
+s
+> to userspace.
 
+Using this patch, if I want to divide 500GB of memory into 1GB chunks,
+the last 128kB of every chunk would be taken by the label, right?
 
-On 01-Sep-25 9:37 AM, Manivannan Sadhasivam wrote:
-> On Thu, Aug 28, 2025 at 10:22:28AM GMT, Bart Van Assche wrote:
->> On 8/28/25 9:45 AM, Ram Kumar Dwivedi wrote:
->>> On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
->>>> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
->>>>> +  limit-rate:
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [1, 2]
->>>>> +    default: 2
->>>>> +    description:
->>>>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
->>>>> +      TX and RX directions, often required in automotive environments due
->>>>> +      to hardware limitations.
->>>>
->>>> As far as I know no numeric values are associated with these rates in
->>>> the UFSHCI 4.1 standard nor in any of the previous versions of this
->>>> standard. Does the .yaml syntax support something like "enum: [A, B]"?
->>> Hi Bart,
->>>
->>> As per the MIPI UniPro spec:
->>>
->>> In Section 5.7.12.3.2, the hs_series is defined as:
->>> hs_series = Flags[3] + 1;
->>>
->>> In Section 5.7.7.1, Flags[3] is described as:
->>> Set to ‘0’ for Series A and ‘1’ for Series B (PA_HSSeries).
->>>
->>> While issuing the DME command from the UFS driver to set the rate,
->>> the values 1 and 2 are passed as arguments for Rate A and Rate B
->>> respectively. Additionally, the hs_rate variable is of type u32.
->>
->> Hi Ram,
->>
->> Thanks for having looked this up.
->>
->> Since it is much more common to refer to these rates as "Rate A" and
->> "Rate B" rather than using numbers for these rates, please change the
->> enumeration labels into something like "Rate_A" and "Rate_B".
->>
-> 
-> +1. Since this binding describes the HCI, let's stick to the terminologies in
-> UFSHCI spec.
+My patch disables labels, so we can divide the memory into 1GB chunks
+without any losses and they all remain aligned to the 1GB boundary. I
+think this is necessary for vmemmap dax optimization.
 
-I have taken care of this in the next patchset.
-
-Thanks,
-Ram
-
-
-> 
-> - Mani
-> 
-
+> [1] https://lore.kernel.org/all/CA+CK2bAPJR00j3eFZtF7WgvgXuqmmOtqjc8xO70b=
+GyQUSKTKGg@mail.gmail.com/
 
