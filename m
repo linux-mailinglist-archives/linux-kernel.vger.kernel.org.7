@@ -1,198 +1,89 @@
-Return-Path: <linux-kernel+bounces-795185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A40B3EDF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05848B3EDF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56EAA7A77AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE193AD927
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F410324B2A;
-	Mon,  1 Sep 2025 18:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F7E32A804;
+	Mon,  1 Sep 2025 18:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEVtlqqN"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLR//H/P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E8034CDD;
-	Mon,  1 Sep 2025 18:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A811521B195;
+	Mon,  1 Sep 2025 18:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756751977; cv=none; b=KHC0J6SgkSB+bEQMeSBHkdpvWFotjEg6abAMok8jri3X9a7XlgPJUhkihHULrE7XYq3U7lZ+iKq11Y0J8uS45+Sv5+AJQsRRoZJLjIMB9spihydPsbUedpw4NyapHLn34qi4vPWCO6ylLvXXRLJ87dJLf16b/TxQIWbf66nhlhc=
+	t=1756751998; cv=none; b=sMhfP73kzKMEPnwxEpH3t+mlSPhSTcMgPsa4BrX/9ZiGwUd9UeAEzyo/M1IjSPJIpQsUbAsGEkz0YV7uXvYdHZPNYNYi9JbQe4UCSvBQGIumJj6G93kQjUunfPTJv1VN2kuRZEFeq2c6frDOxlWT/Xp/Mqt8LGL4pu+0ycFY4pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756751977; c=relaxed/simple;
-	bh=B1efNRQOm174YJ981GJzfBCcp9P5sNFLGxsCgQbCU/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIcmKPV6y3oYDvDRTdYZtO9LGnhvfG+gnLY7/AaLcj4dpl4QlKxiD6YiRc6Z12griQJbNhrtIDQ9PYr+77If9lX0jgdmiX9PNS8ACp+TgzQP9xSPaKQrAIKEUEdbqiQ984sAQ0U7WyBvLuBcffzWmMQrqaSARCPiYLCVBKCx4PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEVtlqqN; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so9919914a12.1;
-        Mon, 01 Sep 2025 11:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756751974; x=1757356774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzIgq2g3RlycrS6fYzK9k6VbjF9ba3Cw79xulaFQz9I=;
-        b=IEVtlqqNQl1B+WwuW3bLmVqssb/IgSQrpTmO+Z8lXcEBdgrf/xB5lXCEeAc5l8/HHO
-         rgHXziCwC/qIhFLzt/ecHRRGU5ynuTaeS7zVSZ2hEQvsCKqeUjdLzEFTzP4DEoFQqQek
-         6O3cNHcQzaoLnIoG84wIEQMo9E/dNWoNrfkQXR1rx2aDPWypTc1v4PltAitRszGgAK+7
-         TP+VXDY55Iz06hYnm5Ey0QtauzC9TIHzMO1uFnOc69I7VvkvOZoKK9PBOkHHUsCGOxCY
-         ZgwRDnoeXJ+Hub8HAP2TNyvyiOMnyChPxC4QX0C2NdsL/0H2v3clnYRjWia2jIxt4LPo
-         Ev9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756751974; x=1757356774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzIgq2g3RlycrS6fYzK9k6VbjF9ba3Cw79xulaFQz9I=;
-        b=PBE8bNoQT/2fsm4eYDNWjBGyjZVSXs4QG7ZsDhs9Zz2HXF7Bn86cvkQJN/YZa6B9kZ
-         DoPBIE1PUt6lOnqj8CBbmUhm6Ukj6eiXrBZcjYoMXJNTAxvtPRR4cNqb7wvqtIIcKRsc
-         6aFs5Jp6JR5Nn8H29mo5xU/2PLQGd/MlRNAG5UGVwdWP+p2796o+hNiPworCWM9tOWFC
-         Fse+0zZwqEYSDeVO0p2SSxj5ee7jnDx5C5OASOCcJ05tcfW/A4ksT3O59ftkwmiWP2f6
-         OtiLoKwjKO1kn2ECCY4QQTWKV/5RKRYg0lKKJ70tid3aG5CJ6jCjqE+RE5aimebgi66X
-         lg9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVu/+aLbYihnBZTcYzBPp/EalPWCkCj7iTcouPxk5V0GtAMQEJjOApPjN5iTqWQnndUCkR5tYmxc9rtKtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF8iKZT13x0GY0mtU7ARVsy57KwZDIi/usK31Ry+KvzKkmfpwK
-	tVijRDkx41AjJdc1bMmNprUbrzMrfU3vLkfs1XcA6DXCMN4P0xmqnuPo
-X-Gm-Gg: ASbGncsBKmSL+IGlCTGyodPlOojfsBEfXMob8lJBAuJu1io/6h62B4GZy+FCcO+W7P6
-	f63QXhW2Gh7jkjdosZ0Jjk1BsBpZVvuBntrZTfCTtJSpH/xDwEt//c8m2Lb5ba1XoZqoqGI1Mdx
-	EMrFRamQOOReeg6zmQM2ghm2T0d5k1UiiIOdk9rps2z5gzcQSZwCaKNgzYFA5Dzz2yzUCQXR/MC
-	DUfLZfygP1dadERsIGDzOvNnSZy96odVu0FXpmpk1sUT/1ctSokDO4YJyI7H7tgwUyCgxMstWY3
-	w+5UX3vB6jAdX/PjSGhzaWP/+70+xn91TTnxz+HRKGCcJmq2Nkv4+IG0bu7X0XJFv4BU7kh+5Lr
-	4ev+tZ8C4jlFLMxdJBMlwiVsc/Vu4gelpdli6FDSnxFqq9Dvl
-X-Google-Smtp-Source: AGHT+IFjORG3X7mKcc5B0ao2+rVjEGGIT//XcJU8/kl1ixbbYaTPXIYVn5+mTt3ZMfNJfgt74DrDvg==
-X-Received: by 2002:a17:907:7e82:b0:afe:6648:a243 with SMTP id a640c23a62f3a-b00f67e0eb3mr1042209366b.3.1756751974145;
-        Mon, 01 Sep 2025 11:39:34 -0700 (PDT)
-Received: from f (cst-prg-84-152.cust.vodafone.cz. [46.135.84.152])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61d3174074bsm4628249a12.35.2025.09.01.11.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 11:39:33 -0700 (PDT)
-Date: Mon, 1 Sep 2025 20:39:27 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+	s=arc-20240116; t=1756751998; c=relaxed/simple;
+	bh=hTalmf3FxSTJ4/XJJAwc4bWVa8A9jMCmVmNjtccJ3w4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qGRSCsthGr2S4Xr4iFkk0SlnnkOQlbCIQe+ibMtJjt8iYfSPKmatC2Pqc4syAuTfa1FonEIluL0BQekWJH1dMtyeaMK0LzlcrLeTVz2QI0m9B0NvyAVfQuBtLPxHsVE17UVttbP4V0JlY/5T9mDSbWS0xefj9VItUTNynMm1a2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLR//H/P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8837AC4CEF0;
+	Mon,  1 Sep 2025 18:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756751998;
+	bh=hTalmf3FxSTJ4/XJJAwc4bWVa8A9jMCmVmNjtccJ3w4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XLR//H/PFe9BfF4ZvtaoozkUIs9ZCLZiXesyaj7AcTILECR/e8blAQhj9dUJ4jXmG
+	 U/qOb1kuK0llCNjbjKdNUhuScVlCGqE6VR5yfIZ7xyYBrc6h0EKD6NPt0jWC5jGHnR
+	 VFaB1rLIfWfkMXXY6UOuhJEXA3Li3nl1YgCqNeapLL1wQmKKuEpnkxUGG7OcdELIUy
+	 HpzwxwupP0WOyvwiUGhIWc8v+9lSnfdwahwU6g87lWholwOFbVX5rnqRObmFtzWkqw
+	 sWxoauNxN7uvjrA0fn2vYE59mKKnzyfVuKhsuCu9uN9Uv5Uf8h7VQtLz9X+9Tij5Vm
+	 nDMOhuwzQ36oQ==
+Date: Mon, 1 Sep 2025 11:39:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: chuck.lever@oracle.com, kernel-tls-handshake@lists.linux.dev,
+ donald.hunter@gmail.com, edumazet@google.com, horms@kernel.org,
+ hare@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, wilfred.mallawa@wdc.com, Hannes
+ Reinecke <hare@suse.de>
+Subject: Re: [PATCH] net/tls: allow limiting maximum record size
+Message-ID: <20250901113844.339aa80d@kernel.org>
+In-Reply-To: <20250901053618.103198-2-wilfred.opensource@gmail.com>
+References: <20250901053618.103198-2-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
-> Dear fs hackers,
+On Mon,  1 Sep 2025 15:36:19 +1000 Wilfred Mallawa wrote:
+> During a handshake, an endpoint may specify a maximum record size limit.
+> Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+> maximum record size. Meaning that, the outgoing records from the kernel
+> can exceed a lower size negotiated during the handshake. In such a case,
+> the TLS endpoint must send a fatal "record_overflow" alert [1], and
+> thus the record is discarded.
 > 
-> I suspect there's an unfortunate race window in __fput where file locks are
-> dropped (locks_remove_file) prior to decreasing writer refcount
-> (put_file_access). If I'm not mistaken, this window is observable and it
-> breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> in more detail below.
+> Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+> support. For these devices, supporting TLS record size negotiation is
+> necessary because the maximum TLS record size supported by the controller
+> is less than the default 16KB currently used by the kernel.
 > 
-> The program demonstrating the problem is attached (a slightly modified version
-> of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
-> It makes 20 threads, each executing an infinite loop doing the following:
-> 
-> 1) open an fd for writing with O_CLOEXEC
-> 2) write executable code into it
-> 3) close it
-> 4) fork
-> 5) in the child, attempt to execve the just-written file
-> 
-> If you compile it with -DNOWAIT, you'll see that execve often fails with
-> ETXTBSY.
+> This patch adds support for retrieving the negotiated record size limit
+> during a handshake, and enforcing it at the TLS layer such that outgoing
+> records are no larger than the size negotiated. This patch depends on
+> the respective userspace support in tlshd [2] and GnuTLS [3].
 
-This problem was reported a few times and is quite ancient by now.
+I don't get why you are putting this in the handshake handling code.
+Add a TLS setsockopt, why any TLS socket can use, whether the socket 
+is opened by the kernel or user. GnuTLS can call it directly before 
+it returns the socket to kernel ownership.
 
-While acknowleding the resulting behavior needs to be fixed, I find the
-proposed solutions are merely trying to put more lipstick or a wig on a
-pig.
-
-The age of the problem suggests it is not *urgent* to fix it.
-
-The O_CLOFORM idea was accepted into POSIX and recent-ish implemented in
-all the BSDs (no, really) and illumos, but got NAKed in Linux. It's also
-a part of pig's attire so I think that's the right call.
-
-Not denying execs of files open for writing had to get reverted as
-apparently some software depends on it, so that's a no-go either.
-
-The flag proposed by Christian elsewhere in the thread would sort this
-out, but it's just another hack which would serve no purpose if the
-issue stopped showing up.
-
-The real problem is fork()+execve() combo being crap syscalls with crap
-semantics, perpetuating the unix tradition of screwing you over unless
-you explicitly ask it not to (e.g., with O_CLOEXEC so that the new proc
-does not hang out with surprise fds).
-
-While I don't have anything fleshed out nor have any interest in putting
-any work in the area, I would suggest anyone looking to solve the ETXTBSY
-went after the real culprit instead of damage-controlling the current
-API.
-
-To that end, my sketch of a suggestion boils down to a new API which
-allows you to construct a new process one step at a time explicitly
-spelling out resources which are going to get passed on, finally doing
-an actual exec. You would start with getting a file descriptor to a new
-task_struct which you gradually populate and eventually exec something
-on. There would be no forking.
-
-It could look like this (ignore specific naming):
-
-/* get a file descriptor for the new process. there is no *fork* here,
- * but task_struct & related get allocated
- * clean slate, no sigmask bullshit and similar
- */
-pfd = proc_new();
-
-nullfd = open("/dev/null", O_RDONLY);
-
-/* map /dev/null as 0/1/2 in the new proc */
-proc_install_fd(pfd, nullfd, 0); 
-proc_install_fd(pfd, nullfd, 2); 
-proc_install_fd(pfd, nullfd, 2); 
-
-/* if we can run the proc as someone else, set it up here */
-proc_install_cred(pfd, uid, gid, groups, ...);
-
-proc_set_umask(pfd, ...);
-
-/* finally exec */
-proc_exec_by_path("/bin/sh", argp, envp);
-
-Notice how not once at any point random-ass file descriptors popped into
-the new task, which has a side effect of completely avoiding the
-problem.
-
-you may also notice this should be faster to execute as it does not have
-to pay the mm overhead.
-
-While proc_install_fd is spelled out as singular syscalls, this can be
-batched to accept an array of <from, to> pairs etc.
-
-Also notice the thread executing it is not shackled by any of vfork
-limitations.
-
-So... if someone is serious about the transient ETXTBSY, I would really
-hope you will consider solving the source of the problem, even if you
-come up with someting other than I did (hopefully better). It would be a
-damn shame to add even more hacks to pacify this problem (like the O_
-stuff).
-
-What to do in the meantime? There is a lol hack you can do in userspace
-which so ugly I'm not even going to spell it out, but given the
-temporary nature of ETXTBSY I'm sure you can guess what it is.
-
-Something to ponder, cheers.
+I feel like I already commented to this effect. If you don't understand
+comments from the maintainers - ask for clarifications.
 
