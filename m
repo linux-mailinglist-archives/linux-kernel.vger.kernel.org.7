@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-793634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06386B3D650
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2135B3D652
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC397A31EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 265C97AB2D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12A1F473A;
-	Mon,  1 Sep 2025 01:29:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEAE1EE7C6;
+	Mon,  1 Sep 2025 01:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Te+0EPpe"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C5F18027;
-	Mon,  1 Sep 2025 01:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8401581732
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756690148; cv=none; b=iVafnO2eJpT06FikRZMfcbEWnQVbfEZbkvFjo3EgB4j2a/PcU94qtYItiHtkypFJ31X3bmIKVOcV9ogx5PTEW3/oeY4G8EuO2pfcanmNPPA6RFYMK00GoHLLSEjy9uuK29iRVlDkBDas3A+eN1xUgphhY97bn71FF9VgU6gTFlo=
+	t=1756690296; cv=none; b=uzA+Fe3fO5UF1pwA21migcn56ftZLKnuyT0DtCrM5rDl4koE+tZy0MN98pzSNM7gIk8ispVFDQQYYVUCHeJo8Yc7wC7pktbGQta/C9vckPLhoMSUBuGcb/bJH78bv4V+pD+9dmLmPBJktBifQ9WWEuWNjK7s4CIbgMldz0WUcJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756690148; c=relaxed/simple;
-	bh=OykKnMQUBLLM8S9sa+VO88UG8Iy3AxdPViOOGY5vWdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hm+x+uwhV28hjQk/yZ39liGeInf6SRJSCc2Pwo2+4nf3POdVn5f1/izEvf289vITjRPrlLxNO1l2sx61vGRc1zrcu2oDbscr/hRmmCLa5RzLBrWtLVQG8LnHsJ6MSMYecSd6P+2de8j6k4CrfKbqLCeX+KuhPTcRZKS3ubYLxcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFWVm3QmKzKHMf9;
-	Mon,  1 Sep 2025 09:29:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 488EB1A0E45;
-	Mon,  1 Sep 2025 09:29:04 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgAn5nve9rRo2fXYAw--.36778S2;
-	Mon, 01 Sep 2025 09:29:04 +0800 (CST)
-Message-ID: <9da518ad-9b44-4dbb-98e5-66cf8a3fe7c2@huaweicloud.com>
-Date: Mon, 1 Sep 2025 09:29:02 +0800
+	s=arc-20240116; t=1756690296; c=relaxed/simple;
+	bh=k2yIBHeetjvIe2eMsGwblYzWcuhy4DxsR0y7wG7BIis=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=e5OnZ7EdyLkzlsTnncz2h2iLLoi1vL75kHx2S0X5MMKrWxiX8wUFYxcrF31pdsYBex0Remde3rY6HAjxdCXHdxuJQAmNs/uuhwRRS9sLmBykumwYlWj7+Hd59FF07skc6r0ELiChxRRO0S3fjXvS92dd+ywEWBZa/8xVyYJcP58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Te+0EPpe; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250901013130epoutp049b36e160115660f07f7e55095c6314b8~hBIMFTx8V2057620576epoutp04P
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:31:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250901013130epoutp049b36e160115660f07f7e55095c6314b8~hBIMFTx8V2057620576epoutp04P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756690290;
+	bh=qEQukgl2nisoCJ8UWKyqaVr+jS40V1s8aqemUXAu1rI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Te+0EPpeoKU0Mtjy5czxZjs3wqLE9W1xvGUH0/BBtc/zRGl4/wjdHGv/3q83DmIVS
+	 C0d1R5SvehPNdQVFa8l2ZLQBC62g5gQJ5HuG47JHCR8F2cp34gh4Cp/EcZEjFkTk6u
+	 yhykp1yo59XTgF63fsMFnvawcT9RslHWLW8CjB/M=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250901013129epcas1p3b6322e441267fa862de9dffd227598c4~hBILVJwzJ2586925869epcas1p3J;
+	Mon,  1 Sep 2025 01:31:29 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.36.224]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cFWYY1Rbbz3hhTG; Mon,  1 Sep
+	2025 01:31:29 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250901013128epcas1p43eed1b6be716dc182920ec93476a2854~hBIKXlGAL2416324163epcas1p41;
+	Mon,  1 Sep 2025 01:31:28 +0000 (GMT)
+Received: from dh0421hwang02 (unknown [10.253.101.58]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250901013128epsmtip223e40759f883573dea159c4dc387b14b~hBIKQx2LO1772517725epsmtip2N;
+	Mon,  1 Sep 2025 01:31:28 +0000 (GMT)
+From: "DooHyun Hwang" <dh0421.hwang@samsung.com>
+To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<avri.altman@wdc.com>, <James.Bottomley@HansenPartnership.com>,
+	<martin.petersen@oracle.com>, <peter.wang@mediatek.com>,
+	<manivannan.sadhasivam@linaro.org>, <quic_mnaresh@quicinc.com>
+Cc: <grant.jung@samsung.com>, <jt77.jang@samsung.com>,
+	<junwoo80.lee@samsung.com>, <jangsub.yi@samsung.com>,
+	<sh043.lee@samsung.com>, <cw9316.lee@samsung.com>,
+	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
+In-Reply-To: <239ea120-841f-478d-b6b4-9627aa453795@acm.org>
+Subject: RE: [PATCH 1/2] scsi: ufs: Add an enum for ufs_trace to check ufs
+ cmd error
+Date: Mon, 1 Sep 2025 10:31:28 +0900
+Message-ID: <093601dc1ae0$2389c460$6a9d4d20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
- warnings
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>
-References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn5nve9rRo2fXYAw--.36778S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur1xCrWDAF1UJF4fWFy7Awb_yoW8Kw1kpF
-	18Arn8JrWUJrs7Gr1Ut342qryrJry8Jw1UJr1UGa48JrW3AF1qqr1xur1j9F15Jrs7Wr17
-	AF15JryUZry7XF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQEmYeTjtFjYRI1QNWxgWL0Y7ybfIwITLn2gAaoUPAICiJScSrW2zAQQ
+Content-Language: ko
+X-CMS-MailID: 20250901013128epcas1p43eed1b6be716dc182920ec93476a2854
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d
+References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
+	<CGME20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d@epcas1p3.samsung.com>
+	<20250417023405.6954-2-dh0421.hwang@samsung.com>
+	<239ea120-841f-478d-b6b4-9627aa453795@acm.org>
 
+On 8/29/25 8:15 PM, Bart Van Assche wrote:
+> On 4/16/25 7:34 PM, DooHyun Hwang wrote:
+> > +	EM(UFS_CMD_ERR,		"req_complete_err")		\
+> 
+> Does UFS_CMD_ERR stand for "command error" or "completion error"? Please
+> make the enum label and the text that is displayed in error messages
+> consistent.
+> 
+> Bart.
 
+UFS_CMD_ERR stands for "completion error".
+The enum is converted to a string in the trace log according
+to the definition below.
 
-On 2025/8/30 21:30, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> I'm working on enabling -Wflex-array-member-not-at-end in mainline, and
-> I ran into thousands (yes, 14722 to be precise) of these warnings caused
-> by an instance of `struct cgroup` in the middle of `struct cgroup_root`.
-> See below:
-> 
-> 620 struct cgroup_root {
->     ...
-> 633         /*
-> 634          * The root cgroup. The containing cgroup_root will be destroyed on its
-> 635          * release. cgrp->ancestors[0] will be used overflowing into the
-> 636          * following field. cgrp_ancestor_storage must immediately follow.
-> 637          */
-> 638         struct cgroup cgrp;
-> 639
-> 640         /* must follow cgrp for cgrp->ancestors[0], see above */
-> 641         struct cgroup *cgrp_ancestor_storage;
->     ...
-> };
-> 
-> Based on the comments above, it seems that the original code was expecting
-> cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
-> memory.
-> 
-> However when I take a look at the pahole output, I see that these two members
-> are actually misaligned by 56 bytes. See below:
-> 
-> struct cgroup_root {
->     ...
-> 
->     /* --- cacheline 1 boundary (64 bytes) --- */
->     struct cgroup              cgrp __attribute__((__aligned__(64))); /*    64  2112 */
-> 
->     /* XXX last struct has 56 bytes of padding */
-> 
->     /* --- cacheline 34 boundary (2176 bytes) --- */
->     struct cgroup *            cgrp_ancestor_storage; /*  2176     8 */
-> 
->     ...
-> 
->     /* size: 6400, cachelines: 100, members: 11 */
->     /* sum members: 6336, holes: 1, sum holes: 16 */
->     /* padding: 48 */
->     /* paddings: 1, sum paddings: 56 */
->     /* forced alignments: 1, forced holes: 1, sum forced holes: 16 */
-> } __attribute__((__aligned__(64)));
-> 
-> This is due to the fact that struct cgroup have some tailing padding after
-> flexible-array member `ancestors` due to alignment to 64 bytes, see below:
-> 
-> struct cgroup {
->     ...
-> 
->     struct cgroup *            ancestors[];          /*  2056     0 */
-> 
+in include/trace/events/ufs.h
+#define UFS_CMD_TRACE_STRINGS					\
+	EM(UFS_CMD_SEND,	"send_req")			\
+	EM(UFS_CMD_COMP,	"complete_rsp")			\
++	EM(UFS_CMD_ERR,		"req_complete_err")		\
+	EM(UFS_DEV_COMP,	"dev_complete")			\
+	EM(UFS_QUERY_SEND,	"query_send")			\
+	EM(UFS_QUERY_COMP,	"query_complete")		\
+	EM(UFS_QUERY_ERR,	"query_complete_err")		\
+	EM(UFS_TM_SEND,		"tm_send")			\
+	EM(UFS_TM_COMP,		"tm_complete")			\
+	EMe(UFS_TM_ERR,		"tm_complete_err")
 
-Instead of using a flexible array member, could we convert this to a pointer and handle the memory
-allocation explicitly?
-
--- 
-Best regards,
-Ridong
+Thank you.
+DooHyun Hwang.
 
 
