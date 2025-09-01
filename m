@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-795029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54AF6B3EC01
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:12:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCE0B3EC03
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D89A1761E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC480441D2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A36D2E6CD2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15A02EC097;
 	Mon,  1 Sep 2025 16:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5c37bX7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmPcbDH1"
 Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177B832F771;
-	Mon,  1 Sep 2025 16:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA31E2853;
+	Mon,  1 Sep 2025 16:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743134; cv=none; b=B19xeXvAkADxgxW9HtFJl1aECyi403eSNL+soGGSz6frHTFoeH0JzccazOMed3ZG/PjBgWJhtHUO+XPGAS51OcbaMAVs1rO/FFmi4CHiEyxctKqC9SOAPKpn09tI5d5HxA4bymfXuC+W3+FHgY+NgJnSOHsYS6bmOq43h11f0R4=
+	t=1756743135; cv=none; b=HS+9IPj0xuWDhhCmiOMgAM3qypkS05cYkcOEo3fQfd8rI55YIB8GRoO57SjUjs6ToJvpvuHzF5BSKOiPsmGh7U6VQRxnF93qq0hctQOuASZTiJcqhPbeFmROw93maz+AJ+LzaRPzf9pYQfNfbwy5mHcrSSGxJi9fvOvNJBB9nL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743134; c=relaxed/simple;
-	bh=XefpToXI8faKU7bzWysiCjznkCZwcPNqHAt23kwJPbE=;
+	s=arc-20240116; t=1756743135; c=relaxed/simple;
+	bh=RTgVZ/tWCs/wB1PkBZ+7HN/At0NDQ7KGQy83/JPMBrI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K40hDzXVK3qRcqeLaYBUab9/mu+VBUIQlcUHLnHFNgvOToJeFSv+46RRN7cqrtPWhntG6arVljOWPPY7c7DzeL0xA6FZWdY2Nbc6nuCGyHFipacFPByktvYxAWh7aHiIP/qDDRNOnHTONFz4vBjaIkHWtwWeJDphf9dio/ARdzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5c37bX7; arc=none smtp.client-ip=209.85.167.50
+	 MIME-Version; b=inzybLtaK8MrKvBOI3Pks5EHxN2O7m3pGKzXObOMMnU6FVe05Gb9DIf5JcA5VQouN73bVKjGLb3oRI47TkYWMKYK5YBOaU4uTlb1n+nVOmDT+k8rU+2oPyFyr4jRgKsIazScX4FeA/VySFcA7FcuFKh4G702DPXhXtcEYGRHmGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmPcbDH1; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso1245940e87.1;
-        Mon, 01 Sep 2025 09:12:11 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f6507bd53so4223735e87.3;
+        Mon, 01 Sep 2025 09:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756743130; x=1757347930; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756743131; x=1757347931; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tWJdOsASsTVaMoPyxLoTcgfSjvqU/yV2YgCFw0wJex0=;
-        b=U5c37bX7YC3RSN9BAnH33/FQuZi/JPQY9mWDC4ye2+m/Mg1xwr2hrKdMUyz5U4Rsm+
-         +1hN3sAgtYd8l39YBl1ZBwkY/OOFL9PrXRpTUIWdPRJxoTvn/W4FSvP3ESFzRmGcdYCA
-         XGFF8mU1hIsmM5J3g5t7TFh7LmNsHigsCwIgP8tjjX1S68xgogyIXBQCoCe0dHtX2pns
-         ZX8xi793JGojO7vSAKffZO9xwc5Wbj0nHohePdSsIrW1eXlDdrDzTmEaf9s85+9c8J0V
-         XIOc/iDm96eXyirVkSLPxPgUX/1SE3njkSrUC39qn5DUudpDFYT6nWy7cghvp/ooGKFF
-         b2lQ==
+        bh=jR5U0GiIoCstEf0PCG7w65hy/kq+C+pU3vbHd97JlMw=;
+        b=lmPcbDH1grCwnMvAV+PD9w/ch7I0PFL+3T9goqYNw0BgvxzCqmNVjCnjMyLsVTYJp/
+         93olnL4vALSjo/+9KsVpsenigfqxLs/srrzsve4Tq36QnNShaJ+rQCps7cupRCSlYolI
+         eggS11uI4m8zLsLd7F07t6YBJdutwXdgQWQRh9vqzca1sPPnSBly40EQltmpMmPc42XI
+         bOKkTGZS+8Ifq9T617WuT5wEckxCc0lu2RbtE42Lnl9lKc3xSvDLX8n1dcIk3vfpz87y
+         PPWtCqDzSAnI94BcBEE1wQFoPMBb3aCgAU8Z0pGo4A2EXpuIE3zifOv9wZv3duqKnGSI
+         pcFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756743130; x=1757347930;
+        d=1e100.net; s=20230601; t=1756743131; x=1757347931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tWJdOsASsTVaMoPyxLoTcgfSjvqU/yV2YgCFw0wJex0=;
-        b=T0zRTkmjErFazmLbOLGr1HPfyOWEHZjl8jf9bY8W/7qsrFTZ4RBoZ8590KCppyIRLR
-         0fN3sVcpHUbUcmgAglyvkPdFKrVwM/e/qbTGJk5pC1Uyfr4vN6n9a2ooVzblRv5TTGq0
-         6EaqWWNjM9AeO0JVStoFez7tljptkQTR8Y7NdO7ZpgEHOS9wRysM8K9ChYbQjQdteOzG
-         /Pmjtc3FJmFavjg7d4LVHAFE7INkWLX6CBty3/6rwwjIO5qurkif1kVjrX9Kuwkl7Gok
-         LIactad+liev1YX8XnFO4lf5swGeklVZB8o7eOJQ5MS8LEGSeUmtskJn2QDHQ48TPs0g
-         Gdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDDy6+AAc+XGj7K9HP5hNo6YZW1F7RsZJr19TnX/WDWwtrXT3A+KmJgsQ2nPKolx5WPyzfcNjmHw==@vger.kernel.org, AJvYcCUmvVDhcaRTtXV6RFUYM7ROBFJ9qtapN511p22PfJA1Z5scbeX+ChmPS2J2aFeEqq/6TNSPf9JODFlzx4Wr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwavS29UvmTBWCxu9aBusSBimdmG5SBRsEiDOyMCiKOdlfE9QTP
-	TB/zBaimI94Mj3S5E/S6Q2hzVM0xHAAtj7DepDbb1TCYQzSCDtM92cv7
-X-Gm-Gg: ASbGncviSvMe/DGM187LY/JfRAM0DdHdowk4C52thn/Zq2wbB0Obt2rQWX6A+8xKIbj
-	T3TuNF1lPAF99eqUm866QkiV2jTcPxsA5efjkRi8fjdcRuftfpW2g4Pgkbbsu5lf2BWjiEUhL3U
-	/TfQEa1S3SdA4/3x/bOHwJ54lEfNEZAp553IHTeibMA4vkqogASHPaCu4/fjZErbMTQtpyvNlpC
-	S/rosC/RCxIDveWI7uBvwfgknFNi5CQpWRlbIkcfdlSAoeOUkkaku2VwU9qB/ikpGLaShk/kGdc
-	VLZ+EQJxLjb5sSqX+Qr/3nqeLQg6HOMMCuz1jfN1thpBasHqmJw9EGNECUh9HO1H7iAOEG4WmOM
-	tMAHJOR6Wc+A991I1K9tKsqdAGWmyUO9a2owHvigz46tq4QlpB9z7
-X-Google-Smtp-Source: AGHT+IFTWMLUEQtnoB7hpFoQRkFS5VMsX4Q/s8JYAXjx1U98mhPYfLJJdrhBQSzQ+nV2fqe4Mj4VVQ==
-X-Received: by 2002:a05:6512:448e:b0:55c:e806:6508 with SMTP id 2adb3069b0e04-55f7092c3e0mr2292770e87.43.1756743129896;
-        Mon, 01 Sep 2025 09:12:09 -0700 (PDT)
+        bh=jR5U0GiIoCstEf0PCG7w65hy/kq+C+pU3vbHd97JlMw=;
+        b=CtSeKNEmL2PMyu76ojmm7tG2PUWLEGsv1RCw8yBIFx3vUml9BnmyDnMsjmMOVSQ43t
+         mVdM0gTmaIOdfHlocO7WRWthf+LPG/ozIYuiEYJk15uLNdlZ2XJ6sHo9uAMUDbiMFTxw
+         7r5SiDkeikrGcXorQZQEUdQFDaHmIVYQ5HkSJvesPDq4xJ5gdLo+TOZsDTznHulnfAfi
+         dvlfrO3zpX2XLcBGeYUOMuYX03I0fkyil4rS8/KeBrmk/pk3jPcyWi+i28U7G33hPVqw
+         foeQLqg+9A++QlDNgHl61caeshRFhwZ2+ip3SOQ8J0wBUogFkCrOS6iDiIRJM0LOg6Iv
+         Zmng==
+X-Forwarded-Encrypted: i=1; AJvYcCWF8CwVdZEzuZypA00j3BRe16XGUt5h3TGBLV0vwok+FuCqsnwwdRf4qSp/pMrG7ugCYBCWFtc29Q==@vger.kernel.org, AJvYcCX2wUJ3gXsIoc0KtGEU0Vri7RvnLWUh6yoIlenK2A0t1S66gjaIv7YxtBf5mWP1vT/N7kVxtzFopC63H1eG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyle+Y8/rp5GNGN6LbUb7fz+44pSGKYhNbwwl/WohgAjg3GCBFy
+	NYKY0qUy6Eb8dBQW6saJnAngYBcQVMyxc35KCiy7XmK8n8EOmP0G0Sgn
+X-Gm-Gg: ASbGnctjc0IshdtQXyGBaWa7lEEBB1M6JyqZjeIO9iCNmUJZoy+7Jtkv5k4QUPFSIxs
+	MpUZcs0thoCysxJ/pMbgb7a+5BGJWB2fJLbbt+MTslEvBX618dve5PEA+X6QKMfURCvgkVqL9Wz
+	jEbinszk7DiPYB8pIX3RPfx/rmVPpC+BZFsoVp5MOub7aufh+kLcDpa+bFB+tOapfW99ncjeAyp
+	vHV4QwVSNX3C+ECKTTcql5/3qQQsQu1W2V7JUujed6QqQWtQHQWG9Ybc/6PvmhdlVdLaRMUDpYD
+	SEtjG/S1bVphc0QJyKfLdsaqDydpt/nnTFyHgran1i+Gwv/VD1HcwuSoqndA0MIa70cUVWmDB6e
+	SnsUk6AJNcE2d8H2CGzGSK4J3NdKcYr4D2eSfYa+DKMfHnwjj034GAFCquZeUyC4=
+X-Google-Smtp-Source: AGHT+IFaXqH9CADxycoDgqI+b75bAc2xtq7NLNY7LkOnLxNd2myOg+LoH8eqmbYeCDb6MhFjgIF5fg==
+X-Received: by 2002:a05:6512:a90:b0:55f:6902:c9f0 with SMTP id 2adb3069b0e04-55f7094841emr2964984e87.43.1756743131319;
+        Mon, 01 Sep 2025 09:12:11 -0700 (PDT)
 Received: from NB-6746.corp.yadro.com ([88.201.206.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6771b237sm3028827e87.54.2025.09.01.09.12.09
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6771b237sm3028827e87.54.2025.09.01.09.12.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 09:12:09 -0700 (PDT)
+        Mon, 01 Sep 2025 09:12:11 -0700 (PDT)
 From: Artem Shimko <artyom.shimko@gmail.com>
 To: Sudeep Holla <sudeep.holla@arm.com>,
 	Cristian Marussi <cristian.marussi@arm.com>
@@ -79,12 +79,13 @@ Cc: Artem Shimko <artyom.shimko@gmail.com>,
 	arm-scmi@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] firmware: arm_scmi: Minor cleanups and documentation fixes
-Date: Mon,  1 Sep 2025 19:12:02 +0300
-Message-ID: <20250901161207.2501078-1-artyom.shimko@gmail.com>
+Subject: [PATCH 1/2] firmware: arm_scmi: fix alignment in protocol_id_show and debugfs calls
+Date: Mon,  1 Sep 2025 19:12:03 +0300
+Message-ID: <20250901161207.2501078-2-artyom.shimko@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <y>
+In-Reply-To: <20250901161207.2501078-1-artyom.shimko@gmail.com>
 References: <y>
+ <20250901161207.2501078-1-artyom.shimko@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,35 +94,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello maintainers,
+This patch fixes minor alignment/indentation issues in the SCMI driver:
+Adjusts indentation in protocol_id_show function to maintain consistency
+Fixes alignment in debugfs_create_file_aux_num calls in raw_mode.c
 
-This small patch series addresses some minor issues found in the SCMI driver:
-
-Patch 1 fixes alignment and indentation inconsistencies in two files:
-
-Adjusts function parameter alignment in protocol_id_show()
-
-Fixes debugfs call alignment in raw_mode.c for better readability
-
-Patch 2 adds missing documentation for the xfer_lock spinlock that protects
-access to xfer buffers and transfer allocation mechanism, making the code
-more maintainable and easier to understand.
-
-These are straightforward cleanups that don't change any functionality but
-improve code quality and documentation.
-
-Best regards,
-Artem Shimko
-
-Artem Shimko (2):
-  firmware: arm_scmi: fix alignment in protocol_id_show and debugfs calls
-  firmware: arm_scmi: add missing spinlock documentation
-
+Signed-off-by: Artem Shimko <artyom.shimko@gmail.com>
+---
  drivers/firmware/arm_scmi/bus.c      | 2 +-
- drivers/firmware/arm_scmi/driver.c   | 1 +
  drivers/firmware/arm_scmi/raw_mode.c | 4 ++--
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+index 24e59ddf85e7..e1e82139997c 100644
+--- a/drivers/firmware/arm_scmi/bus.c
++++ b/drivers/firmware/arm_scmi/bus.c
+@@ -298,7 +298,7 @@ static ssize_t modalias_show(struct device *dev,
+ static DEVICE_ATTR_RO(modalias);
+ 
+ static ssize_t protocol_id_show(struct device *dev,
+-				 struct device_attribute *attr, char *buf)
++				struct device_attribute *attr, char *buf)
+ {
+ 	struct scmi_device *scmi_dev = to_scmi_dev(dev);
+ 
+diff --git a/drivers/firmware/arm_scmi/raw_mode.c b/drivers/firmware/arm_scmi/raw_mode.c
+index 73db5492ab44..c85647562ba3 100644
+--- a/drivers/firmware/arm_scmi/raw_mode.c
++++ b/drivers/firmware/arm_scmi/raw_mode.c
+@@ -1280,8 +1280,8 @@ void *scmi_raw_mode_init(const struct scmi_handle *handle,
+ 			chd = debugfs_create_dir(cdir, top_chans);
+ 
+ 			debugfs_create_file_aux_num("message", 0600, chd,
+-					    raw, channels[i],
+-					    &scmi_dbg_raw_mode_message_fops);
++						    raw, channels[i],
++						    &scmi_dbg_raw_mode_message_fops);
+ 
+ 			debugfs_create_file_aux_num("message_async", 0600, chd,
+ 					    raw, channels[i],
 -- 
 2.43.0
 
