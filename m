@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-795146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461C2B3ED72
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:41:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9068BB3ED76
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87321A87681
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE5C207256
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C25324B0B;
-	Mon,  1 Sep 2025 17:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E423064AD;
+	Mon,  1 Sep 2025 17:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1tZ14NR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="KPUiTTfW"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79812E6CDF;
-	Mon,  1 Sep 2025 17:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A5B33E1;
+	Mon,  1 Sep 2025 17:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756748507; cv=none; b=J3cuMPukzFRqks/xcWIswsfEcDgceFcvqM/9PqeY7VTm/KE2h3Mw9HREbUGr8J/ppKPlgviyzIxzDu1bNYLvrrBuoWmrvkiil5peP/UJHeaipKXoCYSHCsaxj9IUWgCAu+FEUahp/3sqKOwqH+iJXsy/4/lFopqr6MLJIZBwdsw=
+	t=1756748727; cv=none; b=dqbt4YalNJoTGlGIqot/GOtvx0WUr+Xlcj+I7oRjCwPTC6U7/xeJR2LRRc851cXkISTm6OJgSezVszzuFR4MziFT1ivp4L+1C4Z9Mt8o4/uwayfi+q3BVJf8GV+thhDFwTeUs+2PFhXbD2hjTEnd5vyJ955OkrVGh7C33u0GlNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756748507; c=relaxed/simple;
-	bh=1wZjdHwOsPto9cpgRr7TJEUhZc8WSboxPhUfyDDvGTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKF8w0YqpxmPK2xLWRQVNTId2cvvJjMIbCpTeLqyvfCmgszKcpb1pdu2AOENPo0vumfblBotPvQw40Ub+IPMT/izuQhifNmEXT4pI5z7mlce7dEJ1RMIoQAtSfOePN/7ow3F6cAOWJTtHub6y86+1y/5v4uvXiZO//Uwke9xI2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1tZ14NR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4D0C4CEF0;
-	Mon,  1 Sep 2025 17:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756748507;
-	bh=1wZjdHwOsPto9cpgRr7TJEUhZc8WSboxPhUfyDDvGTQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A1tZ14NRhB+83cV7mQTWGS7Ogmy8JyL0CSBt68sEqrIh61DIhmoSTXamRZSUoO8Q4
-	 1Qs6xk23m+ghalc8Wa4mzIbQMkVwU+Azslo4CVMPlyKwAeWiGJK7JFKJ3rHb4gGB1W
-	 /0B/YdnDqM7N2G7VhKGPDsjBqegJrizgx0GaeO2yMYYZjfPnGAm9n6yxu2QHZeuzDR
-	 fCMSBpiZbMXWc/BCvgMyAQy+Z+KfDgo6GP5+LNemAoyY4wIxUJ1nrOGpQ55bCLE06X
-	 o/ALVH28jNAalXB77rn0BDBotYG55OQQQOYVjjQ/rHtS9biAKvGps1c+ZJX1Xwuo0b
-	 VCrJ4AdloKauw==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e4c824615so513193eaf.2;
-        Mon, 01 Sep 2025 10:41:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjwsSSWdiN5IET3ai/kKK+NYSo2HlXATgZNB9g6csNevbo3x3hHzO+iFa63ZFvQ6McMhx3kx9AFSs=@vger.kernel.org, AJvYcCXVdVbQvIt8Sm6dPXGvdvLtCrJaIgyXO3jn/sesRQsT7bzXo6eTRXPyfGLX3knH+vq/0hlXIPS1@vger.kernel.org, AJvYcCXrcplm4DTbAFGmYzVt5wsTGm5gS6YsIlJqJtlkOW5p8SHfUEjmFA/XserSzTr5jygO3wEI5b7OuqLIzSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDXo3NhnItryqdLOq2XZtXjLZeGvUk4l9DwOsckkHs1OAxBi/b
-	+OaEQLeBALaBBR6m6v+pP329GU1kZWSKYhldt/SkkpmfKX9aMHmyd8kTQK8elC6HjLuq5pP3xTT
-	NoKVBmfbK/i+MagQxKnW99IySvj8P7tc=
-X-Google-Smtp-Source: AGHT+IGa4xfTnY3Sp9MIANCEgCMoCnAUqHJjLjgbQUIgBxSwzomaui+aS72hy+yHlMeRPAjZGGHn6QEYiI4fpxfWEuQ=
-X-Received: by 2002:a05:6808:144a:b0:437:f66d:a110 with SMTP id
- 5614622812f47-437f7cc19acmr3529062b6e.9.1756748506627; Mon, 01 Sep 2025
- 10:41:46 -0700 (PDT)
+	s=arc-20240116; t=1756748727; c=relaxed/simple;
+	bh=5SxPZzXq38hslc90u0izACa1Htb0IEWp6UUUlHb6Gag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnPJpoq3SBCZqnEQ6A7qecUhA5yf9B7R+8BYETb4YRNc2vXlziLWZk+BZgcK/N6//BwNQqhq3M7s11AuCBZTGkpb/qiBhnkAXPOHU7vTzEYfoUX28OmqOFgUoKqPSm4ukUQTQi6aC70j4sSDh2sZz6FdOVwACwaT+46cIQTEuiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=KPUiTTfW; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.10])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 7BA2440A3264;
+	Mon,  1 Sep 2025 17:45:14 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 7BA2440A3264
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1756748714;
+	bh=N+mVmPr68qNpJWf3ueP9lF65VCD9/t6GdEFkOIVheGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KPUiTTfWzh2z7OKBEVpRmKUv6HLhvWs6NtUgWXSq0L2q876TBX1NflpAstgL5xvD7
+	 LWgd+P7205NcpUEJkzbh0g+/Djnw2V8vvfCuZcsgcYk0qB08n4xGb3V06oCLZV8crv
+	 PIuZur5LZpzNDjZWug8SixyDUWGCG4lYROClQ1gg=
+Date: Mon, 1 Sep 2025 20:45:14 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, 
+	Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang <phhuang@realtek.com>, 
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH rtw v3 3/5] wifi: rtw89: perform tx_wait completions for
+ USB part
+Message-ID: <20250901194743-62fc282f96aeeb9804c34e2f-pchelkin@ispras>
+References: <20250828211245.178843-1-pchelkin@ispras.ru>
+ <20250828211245.178843-4-pchelkin@ispras.ru>
+ <bc1857a0-86d9-40aa-a1ab-f4bc83adf6fa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831214357.2020076-1-christian.loehle@arm.com>
- <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com> <dd2e0cdd-ca95-4c83-9397-0606f3899799@arm.com>
-In-Reply-To: <dd2e0cdd-ca95-4c83-9397-0606f3899799@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 19:41:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jbOwH7T0StbjQLVeQiYhYU2EMCT+yp8jr8r0p4AwNgkw@mail.gmail.com>
-X-Gm-Features: Ac12FXy4YWoYjLnpyHC9xyZgDg-5XYmUIKhhC8G5lwNBwuCxV2o86m6_E_VUs7Y
-Message-ID: <CAJZ5v0jbOwH7T0StbjQLVeQiYhYU2EMCT+yp8jr8r0p4AwNgkw@mail.gmail.com>
-Subject: Re: [PATCH] PM: EM: Fix late boot with holes in CPU topology
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, 
-	kenneth.crudup@gmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bc1857a0-86d9-40aa-a1ab-f4bc83adf6fa@gmail.com>
 
-On Mon, Sep 1, 2025 at 7:33=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 9/1/25 17:58, Rafael J. Wysocki wrote:
-> > On Sun, Aug 31, 2025 at 11:44=E2=80=AFPM Christian Loehle
-> > <christian.loehle@arm.com> wrote:
-> >>
-> >> commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
-> >> adjustment") added a mechanism to handle CPUs that come up late by
-> >> retrying when any of the `cpufreq_cpu_get()` call fails.
-> >>
-> >> However, if there are holes in the CPU topology (offline CPUs, e.g.
-> >> nosmt), the first missing CPU causes the loop to break, preventing
-> >> subsequent online CPUs from being updated.
-> >> Instead of aborting on the first missing CPU policy, loop through all
-> >> and retry if any were missing.
-> >>
-> >> Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity a=
-djustment")
-> >> Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
-> >> Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
-> >> Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f7=
-2b8144d@panix.com/
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> >> ---
-> >>  kernel/power/energy_model.c | 13 ++++++++-----
-> >>  1 file changed, 8 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> >> index ea7995a25780..b63c2afc1379 100644
-> >> --- a/kernel/power/energy_model.c
-> >> +++ b/kernel/power/energy_model.c
-> >> @@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
-> >>  static void em_check_capacity_update(void)
-> >>  {
-> >>         cpumask_var_t cpu_done_mask;
-> >> -       int cpu;
-> >> +       int cpu, failed_cpus =3D 0;
-> >>
-> >>         if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
-> >>                 pr_warn("no free memory\n");
-> >> @@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
-> >>
-> >>                 policy =3D cpufreq_cpu_get(cpu);
-> >>                 if (!policy) {
-> >> -                       pr_debug("Accessing cpu%d policy failed\n", cp=
-u);
-> >
-> > I'm still quite unsure why you want to stop printing this message.  It
-> > is kind of useful to know which policies have had to be retried, while
-> > printing the number of them really isn't particularly useful.  And
-> > this is pr_debug(), so user selectable anyway.
-> >
-> > So I'm inclined to retain the line above and drop the new pr_debug() be=
-low.
-> >
-> > Please let me know if this is a problem.
->
-> For nosmt this leads to a lot of prints every seconds, that's all.
-> I can resend with the pr_debug for every fail, alternatively print a
-> cpumask.
+On Fri, 29. Aug 22:57, Bitterblue Smith wrote:
+> On 29/08/2025 00:11, Fedor Pchelkin wrote:
+> > There is no completion signaling for tx_wait skbs on USB part. This means
+> > rtw89_core_tx_kick_off_and_wait() always returns with a timeout.
+> > 
+> > Moreover, recent rework of tx_wait objects lifecycle handling made the
+> > driver be responsible for freeing the associated skbs, not the core
+> > ieee80211 stack. Lack of completion signaling would cause those objects
+> > being kept in driver internal tx_waits queue until rtw89_hci_reset()
+> > occurs, and then a double free would happen.
+> > 
+> > Extract TX status handling into a separate function, like its
+> > rtw89_pci_tx_status() counterpart. Signal completion from there.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org).
+> > 
+> > Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
+> > Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> > ---
+> > 
+> > New series iteration -> new nuances found.
+> > 
+> > It seems the two previous patches from the series would not be too great
+> > in USB case because there is no completion signaling for tx_wait skbs
+> > there.
+> > 
+> > I don't have this hardware so *the patch is compile tested only*. It'd
+> > be nice if someone gave it a run on top of two previous patches of the
+> > series, thanks!
+> > 
+> 
+> I tested your first three patches with RTL8851BU for a few hours. It's
+> looking good, no explosion yet.
 
-Printing a cpumask might be better, but it would add some complexity
-only needed for the printing.
+Hello Bitterblue,
 
-Maybe it's just better to not print anything at all.
+thank you!  Just in case, rtw89_core_send_nullfunc() has to be called in
+order to trigger all the tx_wait activity touched with the patches, please
+make sure it's called during the tests - it should be done after scan
+complete, 47a498b84f01 ("wifi: rtw89: TX nulldata 0 after scan complete").
+
+There is one more issue we'd also need to solve: perform tx_wait
+completion signaling inside rtw89_usb_ops_reset() (driver shutdown stage
+should probably also be handled with the case).  This'd require having an
+ability to track TX URBs and kill them.  I'm just throwing these thoughts
+now, maybe you have some ideas.  I'm still exploring the USB-part source
+code and hopefully will have a chance to get hands on the USB chip soon.
+
+> 
+> The USB side doesn't have real TX ACK status reporting yet. I only
+> learned recently how to do that. It looks like it will work about the
+> same as in rtw88.
+
+Do you mean similar pattern already exists in rtw88?  Could you give a
+hint on how USB side TX ACK status reporting works there?  At a quick
+glance, I don't see how those TX URB complete callbacks differ from what
+rtw89 has.
 
