@@ -1,205 +1,143 @@
-Return-Path: <linux-kernel+bounces-794089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0504EB3DCB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:39:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2767B3DCB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B458F3B600E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C41178340
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623252FB604;
-	Mon,  1 Sep 2025 08:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jy05AZlF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A63F2FB629;
+	Mon,  1 Sep 2025 08:39:14 +0000 (UTC)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A192FB608
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4082268C40;
+	Mon,  1 Sep 2025 08:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715927; cv=none; b=HUYvL5PPz3HlwFGp8hB08Zquv12dfUAc5RMx+/8+2wFxUgm8p7VeNDx1Wob5yQp5zoSmoWNNdLXpwBf6LOFK7DnTlqhbpfEe+XwWe2O0+r2KGayoCH91PbySJF9fXRHTfvdivPadTVhr5AkPWAHh0t+9x5UG29nunt8q15lnxpQ=
+	t=1756715953; cv=none; b=eKKBq4VZvUHze3M6wVlFK+145oqYjDF/kLe+CUSq8cUGOIiFCYV+bDsQ4kKAf2jzvJBoab8W3cTjze/F+WsHnFeYnin6pm0ZA6k08cxa44Or8WDvKHwb/M0VdYcCtQMuOaEFpGcBZTxK4UvnkQSeZCcRKyelyqKprSBLT96ysWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715927; c=relaxed/simple;
-	bh=ZO87uo9IYsZLjjt/l7L32ClnCZ4s/EkhmsCq9kk/UMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RI//Ct6++1B+e6+x6lsApqwaTBsPOU11lNXSrmmJhxdBPKOAft/hDd327uiu9zIr1JVs4Vix7bpRV5G+Qh5i0WftxaNK7Qbn5fPWCoTQJ+M7R0/SMprENF8QX2xHA6FRu9JbgxnxifxlVzYxsFFPOvq2tYFMgXHyFBfIQ/WsmPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jy05AZlF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5818P4JA004729
-	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 08:38:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1J076/LQgI+3eWtUeFftMALqG6G2irnWWLjDqPX+63E=; b=jy05AZlF4U+KbBD4
-	TfBvoLftuB4zowARI2w17Xd4334aLgFV0N9EiseTD7BVYVyt1s2s98olfk/rRQ61
-	E8BHwT8h/dV70f0+LnMtzZWxg6J0NoiJzfF8H65Cd0UJUgTU9ifXOx/Ur731Sece
-	+H39Ax6zrPz/8EE8+xbiW7RA6aWd4iWbixllIWW91gw/G1f7fNREVAH/7ea+IOlq
-	Lzma4heZYFjyDENVOOJ5CqDN0AXAd076JioKunxRpsRwLnw9nAwM8gwNeBlIHnJ0
-	zA8NbzZlhvhdKiX7peQ7J8+7PD+QmQD8ATQMLkcxMMhmIRqJ4qYIUyvhBxi4Z02u
-	F0Dwwg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48usp7uxm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:38:44 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-772537d9f4aso1136809b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:38:44 -0700 (PDT)
+	s=arc-20240116; t=1756715953; c=relaxed/simple;
+	bh=WTjzIUF3S1zA20EdM2pk/6KkYo46Fw8eYT1zQTtvK4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gfIh/MRg/wMOxn99eHDqYxcs3iAKRy/cUrpTaR6oYZYBS15O5eYpGbe0aRxMsI9vXOEnIMzZFu4vVgoeBBKwhBsXdYg2WIJG9S7fB9ZdckkznfTELuqyxQFTkiS4FW3deAaBq3q6ThyfbHZzNCLYiTqGgBSW4e4uuL55KUGS+N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-523b965b984so2427883137.0;
+        Mon, 01 Sep 2025 01:39:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756715923; x=1757320723;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1J076/LQgI+3eWtUeFftMALqG6G2irnWWLjDqPX+63E=;
-        b=UC3KqMTOchAuM4jJZRgsVCBd9Vzbh5PBpIiZ21tuobN/zP9qVxfDjSgMyHRKg1ftSC
-         2eGCf/ZguEgccqB83lFe4gmxvbdeAerIInqj6LElLV4KGXHqLDbh9md7qbnE5TCWdSI5
-         MpBZzDkQybyrZmyDORIGD8kHlktzcknDKeIuFvUiztj46BxjFR00as6GlccHBss3lDqt
-         2T3Jwtuvb+gwc/sTAW/ijcvO0jGAK4LhkBHlBzFmpsHPZP4oSyHZUeRtqGnEoMH4u9uf
-         MK7Z0mrVl+zS77Dh5kH8UtIVG54/4BnAdCUeDOT+TMmF1rlM6fI/O12fqosF1WV3Dljc
-         hflA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5ODJTCIiOC0+p4uZOCs/q9lInnC6BzalciiIYT/oYS3FKvN64i9RgwL1dAzhuw7sDvFinyaRjkqw0akk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRHiSf9kyDF28mCcq46GXuekBmq4PJiQuHNYgo1I30B1gpc+je
-	xW5BwIsOHbWQFgTe5tvz3ghrWKcXHyHFlP9luIeuF0z8OU3ju3kyCgGvRnchKjeG2pBBtuJhp/O
-	85yJ0xuTyDFEnFR42P9J245JS4wvCIoGd7Jk0qDHUdNZ3Vc4N10HdnrNDyjA97BcjOME=
-X-Gm-Gg: ASbGncutwRKcx8vovhzyXFzuoklHCz+qhnKjfM9GHasYHiqAENYbChrJfwIWSNCOENq
-	+aV13nIinesscCaCBqxxs/uPHU4NGY5ebqfeLt0KmO9Kattg438K15zVIRchLbPFnz3LHHxJx1o
-	H2YbaKe6EDR0bG0PcptZ/pgEUCixrblZ2wPbtHMoZyAO+ceqB7EV/R/45Jp72q8cxxWxnnlUBFz
-	PxLv/zWv2nKz0M7mCblb+rWfH4GmAS2JNjmeNTVjYgfXnApyfY+quAdRfvWYCYii+6ZwQHFyLhu
-	312LsWynJ4V9yCr9o88hx8T2ERuGKjnJpeL3NzLFF28cYP+dwlJXXkHta0e5WLaVnLTmlz+ViKx
-	VTVe2AObbt0IeGM0sNQunCZhpktoY7ecKSg==
-X-Received: by 2002:a05:6a00:1789:b0:772:2e00:831f with SMTP id d2e1a72fcca58-7723e1f1deemr10329859b3a.4.1756715923372;
-        Mon, 01 Sep 2025 01:38:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHsvQVbqKRANvlU7zeqIf181vFzHz2jPH5oH4pRglmEHl2qc84zDD29EMGRW7zDIDTyLCRwSA==
-X-Received: by 2002:a05:6a00:1789:b0:772:2e00:831f with SMTP id d2e1a72fcca58-7723e1f1deemr10329810b3a.4.1756715922864;
-        Mon, 01 Sep 2025 01:38:42 -0700 (PDT)
-Received: from [10.133.33.247] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4beb72sm9925996b3a.61.2025.09.01.01.38.40
+        d=1e100.net; s=20230601; t=1756715950; x=1757320750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ulv02t6E8nasXluvV9ehM0QMWfZqnXi7fBl8WMsUhHw=;
+        b=UFzZZoz2fYAxf05YFDnCiU/eAh2QeOOs3yVSdWzK6nrLMLgHT+PUwsATJKmHV/XEyC
+         fTF2+kQPZoPHqUBo38th9tydfcNw3RsO3eGtSF7SeV0g3H4zp+HoZGSrnYtsvl8SxdIH
+         4zIrO3qC1m+q84x8ruhhosgU2qg1OtCTT/U9kZZsmCQdx5UzoZV5GRQJIqoPzQxE/L+Q
+         mOyzGZRKBsonFoQ7VzM+P71eS7UqFVy/14wBb8/WfSFhE5yZQLJkPq67J4yoDeRqs0TG
+         F72zDFzX00oBPNPYErnuf5QbYsN3hnr6PjxhB+W6wk7SUglYbkKgnIxR1kXA1reUSrXb
+         EE0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwiTptOa1Av5BgelfdxSE1e+BRwf0GGhcVRtAwgw9vEuu+jrckc9fUpGhRsC0iNtwXc8o6Qc5mkdNW@vger.kernel.org, AJvYcCW9/mq41ndd/XwAmIdrb7tKOfYoUTyPeqfKNo6cqui42QNlOSPq2/e8k7DLSOGTrOqL0t0G8+pS4zVYSg==@vger.kernel.org, AJvYcCWLRHVKX63P0GgAGk7A/3NF7jZ+vMOJo7WgqWrwvyo/BbZ26CjIn3Pl1iH1L8dC+Yp53S0gjmC4yPIGYlA=@vger.kernel.org, AJvYcCWccyqFSgGv/szKqZUOXSA8tAwVQBC/hjik2f9ZiGd/LVpwDXUoYXNUZ25ZjHSDo/dQiibZwOcMDDul/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt5lEV5KHu3g8TCEZEkDHgrbTru+fJ1lWJf5D/DT0sAIZiMHuH
+	Sp9UPDLpGG9e6OJ4grAxNIIpk/6P2X3tYc+XD9KQ+Zbsx9MjqwD2WpltR+LKqX0h
+X-Gm-Gg: ASbGncsgBjh21xFkgbhfMnUBykkN5m4vAHFT/UW3TeQTXH43N7blqW5XJpkjM6lJ9Ou
+	hzkOuBvZ64iZdkG0H3FCbV7Y0N3xRl6DjKOHwwvSn6yLjDUxl2hJRatJR7NZesUSKokDvSyW+O1
+	Zh4CpiDeo1lmUXSP4SRqaLrgfgDkwF6D7kZ0RcV6/pPuk1kAhEYtxG+wU5rh+Cc+28Pcdq1vZyw
+	5JvUDrek6tjIDucdYoGZtomZg25XXBV+jGnWjla+lG55Rw4nM5OMRin4EWxQocw96XFNKA9jvNB
+	q0dJPRebPVBQb8BbO4Ldl0p5xYXvwxWYHdj423bwYsPNinVzFME+LtElUN8fFd8n8O8e9HAghvw
+	vrGRp+31KZDLzo8Ag3ZyzSmSBDQWUqfqqhf1b4z2IFjm3bTkNflFlQJiXEKOD
+X-Google-Smtp-Source: AGHT+IEVmL7i6g3P14iHsNDxLrjc/GlcChpd4piofTo7cncsNFgBYbd/qCZ6OBv/3l/PQz24dxz9ew==
+X-Received: by 2002:a05:6102:370b:b0:523:e010:df0f with SMTP id ada2fe7eead31-52b166d7d27mr2018552137.0.1756715950341;
+        Mon, 01 Sep 2025 01:39:10 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af1915741sm2831187137.10.2025.09.01.01.39.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 01:38:42 -0700 (PDT)
-Message-ID: <15147896-1378-4a3d-85ba-4258046f9e31@oss.qualcomm.com>
-Date: Mon, 1 Sep 2025 16:38:39 +0800
+        Mon, 01 Sep 2025 01:39:09 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-52dd67b03c8so717852137.2;
+        Mon, 01 Sep 2025 01:39:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWyIXCFzTwWD5h+A7gwd2pUWvyaw4GOgI7V3A2UnYyYkAokCOcvfiNfuazTlG9c5Ti2r3Ph11jFRPsiewE=@vger.kernel.org, AJvYcCXOi0YN/Myjp3txZ8OejHygPzfSNmCY2N3GAs9OiTafxCQFMbaiSVefbqxWwtaD1veeoZ06oW0aOnkveQ==@vger.kernel.org, AJvYcCXUV9FzWoz9iTFuW+Bh/UA8VcErWSv6AcBvWlgansoNoinvROAtrcxDUvhoKK1L+XmyjWtwiaG4BBn0@vger.kernel.org, AJvYcCXXH6ugfRRGZnKJZUCjMvZa+mfub/WyFPLZbv6je7/j9ehm8LHN95ZtcMkv4RJP9rxj21PjCsYTnBLdnQ==@vger.kernel.org
+X-Received: by 2002:a05:6102:5789:b0:51c:4443:16e0 with SMTP id
+ ada2fe7eead31-52b1be316e5mr1967209137.30.1756715948932; Mon, 01 Sep 2025
+ 01:39:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] coresight-tnoc: Add runtime PM support for
- Interconnect TNOC
-From: yuanfang zhang <yuanfang.zhang@oss.qualcomm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250831-itnoc-v4-0-f0fb0ef822a5@oss.qualcomm.com>
- <20250831-itnoc-v4-3-f0fb0ef822a5@oss.qualcomm.com>
- <b608b4b2-f850-4b49-be65-b2f4e3784dd5@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <b608b4b2-f850-4b49-be65-b2f4e3784dd5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX7il38wz3EMFg
- RlJEdw9LUZm1ITAxjEOviBYwyUvHVvXmWOvA24OpzfaUZUaUkcJuxg/yoMqDqwd8vnsSZ9TeVrm
- B5yZnnFZfbARNcYfJfVRRQKwUwDQIxyYUGJgoirhEXKVKJKH0Cbf/8dL60pTMO3pN7UXINAFkbn
- QGu4N6XDJ9CH8KwsWur31wdAgECfl/iB7m42Btr8GavocpQicwnqiRiFOERQH6HKyMvko33O6hd
- 3eLuhmJRvoDe+njo93/5te6irqrT4eucZZicCVQBJFficIiWBCFVf3vaS3uRblQUsaY+Ws8Sbqr
- 7zYMa96aaYswMGVWl0cz5h6jRED4LTaRcpjqjM0loHX6Ozfxg2Q7uF+9eEIkmrMP+I913x70Lrr
- eXt/goLP
-X-Authority-Analysis: v=2.4 cv=e6wGSbp/ c=1 sm=1 tr=0 ts=68b55b94 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=7CQSdrXTAAAA:8
- a=ZZ2O94ThGh-PlZ2E-5gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-GUID: eylrineb3fBvFpFWvNrLWuTKqeI7NvKV
-X-Proofpoint-ORIG-GUID: eylrineb3fBvFpFWvNrLWuTKqeI7NvKV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300034
+References: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com> <20250827223606.GA915856@bhelgaas>
+In-Reply-To: <20250827223606.GA915856@bhelgaas>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 10:38:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUqKT4OaX6P_1CW_e2U1GwiCmyV5sAoDVa7EWUX2r6SsA@mail.gmail.com>
+X-Gm-Features: Ac12FXyky2hWsQI9uSpsphCp4R_EUgbfbVJ67zlGAAXkq-snhjMBdE6QAlpgqhY
+Message-ID: <CAMuHMdUqKT4OaX6P_1CW_e2U1GwiCmyV5sAoDVa7EWUX2r6SsA@mail.gmail.com>
+Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Andreas Larsson <andreas@gaisler.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-pci@vger.kernel.org, 
+	sparclinux@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Yinghai Lu <yinghai@kernel.org>, Igor Mammedov <imammedo@redhat.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, 
+	linuxppc-dev@lists.ozlabs.org, Greg Ungerer <gerg@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear all,
+CC Greg
 
-Apologies — I mistakenly included an unintended attachment in my previous reply regarding the patch submission.
-
-Please disregard the attachment; it is not relevant to the discussion.
-
-Thank you for your understanding.
-
-Best regards,
-Yuanfang Zhang
-
-On 9/1/2025 4:30 PM, yuanfang zhang wrote:
-> On 9/1/2025 2:58 PM, Yuanfang Zhang wrote:
->> This patch adds runtime power management support for platform-based
->> CoreSight Interconnect TNOC (ITNOC) devices. It introduces suspend and
->> resume callbacks to manage the APB clock (`pclk`) during device runtime
->> transitions.
->>
->> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
->> ---
->>  drivers/hwtracing/coresight/coresight-tnoc.c | 23 +++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
->> index 5be882300d79bc0173aa6a19d7da1d48c4aaca9c..2c5370497076536bfa868f0d80db775ef242968b 100644
->> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
->> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
->> @@ -301,6 +301,28 @@ static void itnoc_remove(struct platform_device *pdev)
->>  	pm_runtime_disable(&pdev->dev);
->>  }
->>  
->> +#ifdef CONFIG_PM
->> +static int itnoc_runtime_suspend(struct device *dev)
->> +{
->> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
->> +
->> +	clk_disable_unprepare(drvdata->pclk);
->> +
->> +	return 0;
->> +}
->> +
->> +static int itnoc_runtime_resume(struct device *dev)
->> +{
->> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev);
->> +
->> +	return clk_prepare_enable(drvdata->pclk);
->> +}
->> +#endif
->> +
->> +static const struct dev_pm_ops itnoc_dev_pm_ops = {
->> +	SET_RUNTIME_PM_OPS(itnoc_runtime_suspend, itnoc_runtime_resume, NULL)
->> +};
->> +
->>  static const struct of_device_id itnoc_of_match[] = {
->>  	{ .compatible = "qcom,coresight-itnoc" },
->>  	{}
->> @@ -314,6 +336,7 @@ static struct platform_driver itnoc_driver = {
->>  		.name = "coresight-itnoc",
->>  		.of_match_table = itnoc_of_match,
->>  		.suppress_bind_attrs = true,
->> +		.pm = &itnoc_dev_pm_ops,
->>  	},
->>  };
->>  
->>
-> 
-> missed Reviewed-by: Leo Yan <leo.yan@arm.com> tag.
-> 
-> thanks,
-> yuanfang.
-
+On Thu, 28 Aug 2025 at 00:36, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Fri, Aug 22, 2025 at 05:55:41PM +0300, Ilpo J=C3=A4rvinen wrote:
+> > This series is based on top of the three resource fitting and
+> > assignment algorithm fixes (v3).
+> >
+> > PCI resource fitting and assignment code needs to find the bridge
+> > window a resource belongs to in multiple places, yet, no common
+> > function for that exists. Thus, each site has its own version of
+> > the decision, each with their own corner cases, misbehaviors, and
+> > some resulting in complex interfaces between internal functions.
+> > ...
+>
+> > I've tried to look out for any trouble that code under arch/ could
+> > cause after the flags start to behave differently and therefore ended
+> > up consolidating arch/ code to use pci_enable_resources(). My
+> > impression is that strictly speaking only the MIPS code would break
+> > similar to PCI core's copy of pci_enable_resources(), the others were
+> > much more lax in checking so they'd likely keep working but
+> > consolidation seemed still the best approach there as the enable checks
+> > seemed diverging for no apparent reason.
+> > ...
+>
+> >   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
+> >   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
+> >   MIPS: PCI: Use pci_enable_resources()
+> > ...
+>
+> >  arch/m68k/kernel/pcibios.c   |  39 +-
+> >  arch/mips/pci/pci-legacy.c   |  38 +-
+> >  arch/sparc/kernel/leon_pci.c |  27 --
+> >  arch/sparc/kernel/pci.c      |  27 --
+> >  arch/sparc/kernel/pcic.c     |  27 --
+> > ...
+>
+> I love the fact that you're doing so much cleanup.  Thanks for all the
+> work in this!
+>
+> Obviously all this code is quite sensitive, so I put it on
+> pci/resource to get more exposure in -next.  If it turns out that we
+> trip over things or just don't feel comfortable yet for v6.18, we can
+> always defer this part until the next cycle.
+>
+> I will also watch for acks from the m68k, mips, and sparc maintainers
+> for those pieces.
 
