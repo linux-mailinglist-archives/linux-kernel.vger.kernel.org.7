@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-794771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0977B3E708
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5289AB3E70A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F33205AA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82C53B13BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EF133EB02;
-	Mon,  1 Sep 2025 14:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA64A341ACF;
+	Mon,  1 Sep 2025 14:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZfuV7txQ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="E0P6N9GZ";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="wf4Bv+fX"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607792EDD76;
-	Mon,  1 Sep 2025 14:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FA2340D96;
+	Mon,  1 Sep 2025 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736767; cv=none; b=EZlurPCb5YaeAogWWXYiUFAiFN6u5ypavwE9x7v3cEEsVNM4O3NpisegzRxuneHzjSzLz/UEIsJhmw0dhQDwa9T7dAQGfWbw+nMpSjkfGHbZ0dlMehluIdPOhWidBp7alBSa3brSejt7bTJoTg2oNs/WkgUyy3qUh31aERhO8qU=
+	t=1756736771; cv=none; b=kgRLdAISoNDxqw5ikHr9wfXahziPRBB8aDlNuWVeEGhyvapCZH8sf1tr0KEFgsESUqWqTqPyqYIY5Yf15inRVSxNiA2ECg593po1kRA1eB90jl3KkT+xErJN2/GyUYk7pcF6s2FY3vFUVp0q+Fow9e0qmIiHDsafr2e0Lc2IHVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736767; c=relaxed/simple;
-	bh=/j+qNkJJlASycZuV2P8ATcjk1hOImpi8fvYSxGWSyDE=;
+	s=arc-20240116; t=1756736771; c=relaxed/simple;
+	bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nA8WugYJ2XD/hdxHFfhw06fs2xJvXC/SO8WnrkkHcWBqTZJBiYtqvlGd0qMqDni+Sq2XosO/PdxBTlVqALYyOTog709ODMuymubAt9miZgX0N+fCG24K0fXfB89l5Y7+vtqbOJ7+G5HvVUopcd4fiGC4TNaSodoYMq725LuAIvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZfuV7txQ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE4EE40E019F;
-	Mon,  1 Sep 2025 14:25:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Mu04a5Vvsywo; Mon,  1 Sep 2025 14:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756736755; bh=HafVoSSKKEGThigXFItzGHLoZb2v+M1AD5rHWsxE4L4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5+CEnycV8CONHAvLGH2teL5JyIaGrA1SgyHBfnntKZ9VPJy0FPvJY1R4n/SggusPprA4bewiC7YUozvdkMReBUmwEd7ttBYG7D6Z1CLpaTUd//AAMT7o63672qjnUPUvKGvcrQnhePvGraiAoKObVgMJWWZ4shqD9hR1nGmkmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=E0P6N9GZ; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=wf4Bv+fX; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1756736766; bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZfuV7txQJpdK5U7Ma21NPCAu2fJDWCfZbE9dFvo3HRojVVMscW4owPu7hjtXswopM
-	 lzuVGGhWmuVi16giHwK09ITvJdsDgeu37rLA8GKqV+XicmrKlNN2bcsIAlBqz2dTo9
-	 daBTgq7OrQmRIAOiBmuE7XbjQQZWsGK9G10s1RUezZDmaWnLOHdjIZR+cNRCJeiQhF
-	 pQqmnPco99MXzpl3M29gMSlCvMjwyqQbUx2hGPryvtdDBsxobO5bSKFBFnNq2KnAEl
-	 s0GRMFDHpHHYdxtBUCYrooqse1QJvRTWRs8aJtTCouko6c/i1QkGPiB5BSN/Z8iTP7
-	 5jJsuccQcY4WnNplgEuwdwvn9iLuisWNDDQfs3zArEdbe6BVaJLn/0kDyTOUY2/BnV
-	 J+MdMymVY81rdxEk6AYol0qXceQmRhwwwmocRx8bPqX4xga6QZShImzC88u5E8kD6K
-	 WaW5y7TnWGxHZh3cHusqrtQRURBQh+qyNS+DhXwrlXXDab3vDg71fsH4SBr+yt9r76
-	 BGmT6nQ4cjmIYI3L6WxYeCqGr2JZPjLZBE01FCAqg+aYjwPpCv1gmUZyacoyIufPgc
-	 KjEf7/SUFbir5xpg6ZAPd1KX+iYWvSZrOiZ7+8Wpk+O7PUscsqD84pjMuJrgqUZBOB
-	 UXvkW5tFa9n/Ljy5036fWYio=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 3759440E019E;
-	Mon,  1 Sep 2025 14:25:44 +0000 (UTC)
-Date: Mon, 1 Sep 2025 16:25:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, x86@kernel.org,
-	Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 05/22] x86/sev: Move GHCB page based HV communication
- out of startup code
-Message-ID: <20250901142538.GEaLWs4i5CVcdIJvC-@fat_crate.local>
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-29-ardb+git@google.com>
- <20250831104945.GAaLQoyYmr316kHrKs@fat_crate.local>
- <CAMj1kXF-aD74+O_xf_f902wq2RdPpiXCEjJ9osbnEwAMoN_5Rw@mail.gmail.com>
- <CAMj1kXEQghhi4qCdV6PrYK-mTYFu5yVcn3fEOSZsC6vR7TiMEg@mail.gmail.com>
- <20250831111521.GAaLQuyYLUSN24_ZmT@fat_crate.local>
- <CAMj1kXFHrkY9R8xjrB_PFqswc2yOHGpPfEBq5WZ0rH_vbo55Mw@mail.gmail.com>
- <CAMj1kXHzK0pSjuRYcZ3E2PQzCx4PTAC-UDHirgFDPYEyLMtoeA@mail.gmail.com>
- <20250901135459.GAaLWlsx75fnPHveLl@fat_crate.local>
- <CAMj1kXFRSJ1zT5XvBE2JT1jm2peOs9aymHeydOYk8AZRO=JDbQ@mail.gmail.com>
+	b=E0P6N9GZbbkjRIskjMa+wtonmwVN4GP9bxeH7qZLfdq35v5W3VvR/dshN+MJvyXKQ
+	 9HGkP21A2du+9UcmIjzS9ZgR3chEoB0tm9ISLhwGe+fhCyOWdp565Nv4tRdVtOAvFO
+	 SW27zqiTd9zktm9cDXWK3xxYTxlnuvI5LONy52j0MnkFDy3EUs6jeKhCJDJioxxZJY
+	 rnFcPaqbMyi2dKhWw7/Gu3R0mh7HNgNSDAuRLNasS8ooCo5TztU1AHbqeOghcuEs5r
+	 OyjeYszlfoMRR77nr13YKeXVUwXqOGQUNqy0B6xk4gOsn6nLJQGG3xL+oj9WzF5tDK
+	 O23qYVe1+/HSA==
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 06852FB07;
+	Mon,  1 Sep 2025 16:26:06 +0200 (CEST)
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 1a6Wgjm3wm5o; Mon,  1 Sep 2025 16:26:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1756736764; bh=8KShl1tm1BjlFSbDUsFgucKEyf5Ghvv9NMK2L8THTz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wf4Bv+fXrvZ08K5yU/Laf5fNYUpRkUhVpTTVVbEybJVUG6ppyGpgICxnvNGYQCXjh
+	 ECu9ornzdB6Sjud/OaeMVEpxDpG4cGVPgLaWuyvFNUX9eTU1/WlXmRGE4xvPzGGtWN
+	 ZnfEBCcaA7fFCN1skP53LcA1TbU2foAo0w9AHnKjKYU74aIH9HV9bH3aJeRVJaKdSp
+	 Lhu0yEJXoXahUqgmePv/suwWlvUmcIDyAOFJSFT9CZD66tG6cpaDXspPjwTr4gPzmZ
+	 bQYMdDmdvmV8d/t3VwZbOIgWqHYxirGAhudfbyMvVjl6XDNRdS4zIZI8GeYoF9zi7r
+	 txIJFZh1pg7yA==
+Date: Mon, 1 Sep 2025 16:26:03 +0200
+From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Casey Connolly <casey.connolly@linaro.org>,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: visionox-rm69299: Fix clock frequency for
+ SHIFT6mq
+Message-ID: <aLWs-z_bYmuld3q9@quark2.heme.sigxcpu.org>
+References: <e975da213c1f8030db50d66ec1c9597f59f25e35.1756567474.git.agx@sigxcpu.org>
+ <e92049c6-1d90-482f-ad4f-0c88bb96989e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXFRSJ1zT5XvBE2JT1jm2peOs9aymHeydOYk8AZRO=JDbQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e92049c6-1d90-482f-ad4f-0c88bb96989e@linaro.org>
 
-On Mon, Sep 01, 2025 at 04:02:04PM +0200, Ard Biesheuvel wrote:
-> Are you sure this can be removed? It is tested in other places too
-> (arch/x86/coco/sev/core.c), and AIUI, it is a Linux defined CPU
-> feature so it will never be set automatically.
+Hi Neil,
 
-It it set in scattered.c for the "late" code like sev/core.c:
+On Mon, Sep 01, 2025 at 02:24:48PM +0200, Neil Armstrong wrote:
+> On 30/08/2025 17:29, Guido Günther wrote:
+> > Make the clock frequency match what the sdm845 downstream kernel
+> > uses. Otherwise we're seeing timeouts like
+> > 
+> > ```
+> > msm_dsi ae94000.dsi: [drm:dsi_cmds2buf_tx] *ERROR* wait for video done timed out
+> > dsi_cmds2buf_tx: cmd dma tx failed, type=0x5, data0=0x28, len=4, ret=-110
+> > panel-visionox-rm69299 ae94000.dsi.0: sending DCS SET_DISPLAY_OFF failed: -110
+> > ```
+> > 
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> > ---
+> >   drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > index 909c280eab1fb..e65697ce6f51c 100644
+> > --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
+> > @@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
+> >   };
+> >   static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
+> > -	.clock = 158695,
+> > +	.clock = 149360,
+> >   	.hdisplay = 1080,
+> >   	.hsync_start = 1080 + 26,
+> >   	.hsync_end = 1080 + 26 + 2,
+> 
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-arch/x86/kernel/cpu/scattered.c:51:     { X86_FEATURE_COHERENCY_SFW_NO,         CPUID_EBX, 31, 0x8000001f, 0 },
+Thanks! I noticed I made a small mistake: the timeouts in the log were
+unrelated but the clock change in itself is correct and needed to make
+the panel show an actual picture. I've corrected that in the commit
+message and folded the patch into more changes for the driver:
 
-Tom added it to boot/cpuflags.c, in addition, for the early testing which
-we're doing differently now.
+  https://lore.kernel.org/phone-devel/20250901-shift6mq-panel-v1-0-444b4abbfaea@sigxcpu.org/T/#t
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers,
+ -- Guido
 
