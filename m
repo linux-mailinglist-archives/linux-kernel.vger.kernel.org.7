@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-795355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A5CB3F07F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:30:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AAE2B3F080
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40ABB7AB70E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E914E09A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976D278154;
-	Mon,  1 Sep 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040B027B4F7;
+	Mon,  1 Sep 2025 21:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zvj1d+sA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LmOU+ixj"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD2221577;
-	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74DE278154
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 21:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756762245; cv=none; b=ubf7EIp8PG3KsHTr1uutRJIECE0lb116AVVpSj3DAgoCdY5YwgYQo8ZZT2CNBt3X22FTum8uWp77pTQ/EAP+zGc73pWHcVCZ/wAu1ol6REcOWUPC7VzDX2S/Ia3klVF0oGPy3G3ScbSeFGLW1nuAyhcXQrLrUG8KogbemzPctVc=
+	t=1756762276; cv=none; b=L0b/uln7hBZs87sBoEDmOwU32KsZlxDD39+uJDC22SrXKw3Fk2PEhDGDJ9xf46h57csQfJX9pB5cB4PE/LQXb72z0BR086QYQzjmP54Fs/DPbtX+u5JJcY4OvZEZxz7ARvMROQTBqS75KS4GHxAgFwQYGuKfitZpASaNKExizlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756762245; c=relaxed/simple;
-	bh=PRaBApLQy8iLSplWAmAp1oVZUt+rfypBd7IUK5L9VhM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C7o+NPAw2HuCXD6kXJMnCCQfiOEkGZnLY1N/vU6jHt6ZZjsCBPr7UK7g73KHRq95jyXWhjpNYpFSxZ5LaaVFlBYJSdjPEE0Bg5jwW250Yl1gDQMb5TENhRrezsVdbp2MWT5p4LhMrBDyZjfOFZB9T2gRa7G4z7XKWEvTz9L2KTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zvj1d+sA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D0C5C4CEF0;
-	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756762245;
-	bh=PRaBApLQy8iLSplWAmAp1oVZUt+rfypBd7IUK5L9VhM=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Zvj1d+sAt2W4YW5Xl57DOgpg8QBsjStyQQfzpfLYcCzxD+9csXNUcimZor2V6P0KW
-	 yM7Q/6yDsMDtuJmgSTJV19AsOcujeKUWGI/it9ftfQj8vSW3TKiZb1RDoFbpwdD0ZN
-	 kp10HtU10FCbTS9unLdXvnkrwd/4nEpUrU729vmeKXKkRy7+fRcF0clKThmLAY3TrH
-	 mzqgxlSwjUMM07bnQ9w2VStWZehcdvgCP//nc+136sODLycBb2IR7hK2+LkqVJjWoV
-	 +9bITXEKehW6YCjfUbxR2ZIkBMmqwUMp3j+iZA6hp3waEqxGcCyCMhoWRLs/ffQ9vs
-	 Zqmdg+VKIThuA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE3ACA1002;
-	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
-From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
-Date: Mon, 01 Sep 2025 23:30:32 +0200
-Subject: [PATCH v2] dmaengine: xilinx: xdma: Fix regmap max_register
+	s=arc-20240116; t=1756762276; c=relaxed/simple;
+	bh=Z+ej9pwp2++y8Si2a5LoNWa0dw/LyT1iXFjl51NEyGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctLr5E1vUbAbATdCUbralSZUqNpgDI5pxG2aTpOjqrTp0ZhMXMpHFMCqqCXBZPXUqJNxV1J/7fJHCGiSt7C17yTxsOgIsy4q763hgMGVdCE69+G9aa44dV34YGQwPI/KP/yyYjMrJJ8iIY/arOAe4CONfboWzlH+RGR/8dfV4Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LmOU+ixj; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b72f7f606so88095e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 14:31:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756762273; x=1757367073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iF6n6sHOgsKd1WpTX20Jc46RPi8oPME1VeuLjiWGbwI=;
+        b=LmOU+ixjJ+aKbLpNcUjrLIW3NR25JCR93ZSId7SVjrifZEzJMEL/0L2mhegw5I90SW
+         fXWJnHsqGpcsm7TXfv6g5LBuflgQk6fh4YCQ3kzUwOQg6tOxNcOrNElvyBEoSSO6NMvH
+         ZZoG+/eoQacG8G0sBGE8gBfEse8xV6yLHdz3l9ApRYtu5LiHZFmRXgIjjJukJt8yYJhC
+         qYtA8RjvkZjivx9bMqYu0aOmU8gk5075ITNfIFZO44MYWaxXqsvRkOD4q8odsbkRMnxM
+         L3FsssYrp+kVXlHGfMM5uMxeYXhop7g/x2UcLFGRV3bgIUtaLDPh1akBiIqXPB41FuxR
+         PjYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756762273; x=1757367073;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iF6n6sHOgsKd1WpTX20Jc46RPi8oPME1VeuLjiWGbwI=;
+        b=lpyIVbl1yoqIAGOlES4Rde/j7zfG3LwySYym+n98nZSDOyvy9xjkCA2sZIEM3cuaLG
+         l4oUI5DMYcudGEbYZkSjLy9NZaJk/odiI5AvSTkQKTIAKlf+vs8v0CrxsLEPaUU1Zw1I
+         Xh6FSCoKsdS0b1zGUD2LQiEFWtFvZJmgOgkw8CY/2Clz729S2/XuyqG7APVTw22+IygS
+         Xv8x4KIn6Qgxg7DLVrNCt+OkWAfHZyPRkBD2bf5mjkjRaNwnqf4EO1U/VBhkTQ2ix41i
+         YzoSBMGfxkdOfOy7Vu7SMix1BQxgsdt+S802kdQWjk25/GCVk5xON0fO/Dzpxpntr/DW
+         rogg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxUrJdnPU1oPghYnfwpwaCw+ZcTfwgbGUED5Dc3ec4ofxiMEqu57W/Tk1M9FYldkXTbNFGUuuRP2f5cxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSPZQap+Npn+n56hjxseeA2yK8c2Z+wzezwzXJF75dVvBGNPEp
+	MqaOys0s/L8w7OYBrP4Jhx7/zAjm15cS+U9N8itg/q78chaC/PNcVpbGEzOwf52KLw==
+X-Gm-Gg: ASbGncttzKtULz1YGoUJnjo4HyzpK83H/D09snIYo+htv6GQAdmE9osNzvrDnr2+n4r
+	8fDN4pxf6rMsLhA4PSmnAulgj6gsFQcbBLHBxvH3LcMGEz1JOaI5o9jZQXTITwTnuiAc0+yKOW4
+	cvkPVdAh71mRVGFJk75yExa853aeMgsk7CB6nrotMk5DlUYBLU8FYF/5toU3hBVOaOOsvQxwnqA
+	YMMRn1k5G95Xro6dXI96SXMsPSjjmN2facmxE6ul41JyKSSVvjEruhtFxSgpMctnoRtTCwE39I3
+	PHPdtcuhKMv39pBkFOJx+bZle78g7K+UedIIGk+0XOPpRDmn+beTEgj3JNiRK2sjJ15vhYehonE
+	MMJjYYaGqM8MaTl5Fa/S60Up/rsjLGZ9JL9weCvubfz4otUtYyt8+DuAFG+vkC+2ZFElzUaoOf3
+	rGeg==
+X-Google-Smtp-Source: AGHT+IGLpKHQN9xZlHfjJ7Ii92fk9qbRgWzKQ/hHtlgk+3xGEtbYRWbas4SwWPxJAuhnPExKzRecwQ==
+X-Received: by 2002:a05:600c:498a:b0:45b:7ac5:f48f with SMTP id 5b1f17b1804b1-45b84b62748mr2268795e9.5.1756762272856;
+        Mon, 01 Sep 2025 14:31:12 -0700 (PDT)
+Received: from google.com (26.38.155.104.bc.googleusercontent.com. [104.155.38.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e74b72esm174837265e9.0.2025.09.01.14.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 14:31:12 -0700 (PDT)
+Date: Mon, 1 Sep 2025 21:31:08 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	eric.auger@redhat.com, praan@google.com
+Subject: Re: [PATCH 0/2] vfio/platform: Deprecate vfio-amba and reset drivers
+Message-ID: <aLYQnKGsslgoHRZh@google.com>
+References: <20250825175807.3264083-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com>
-X-B4-Tracking: v=1; b=H4sIAHcQtmgC/3WOQQqDMBBFryKz7pSMNaF21XsUF6NONWCMJCoW8
- e5N3Xf5HvzH3yFKsBLhke0QZLXR+jFBfsmg6XnsBG2bGHKVa1Uqwq11jI43DNIhmaJsTKHLm75
- DmkxB3nY7c68qcW/j7MPnrK/0s39CKyFhbVgV2pC0NT3ZcVgGjn5Y5vQpXhvvoDqO4wvf58KTs
- wAAAA==
-X-Change-ID: 20250901-xdma-max-reg-1649c6459358
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Anthony Brandon <anthony@amarulasolutions.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2662;
- i=anthony@amarulasolutions.com; h=from:subject:message-id;
- bh=EBsbI+2mqsOLjYpUAS5JaxRB+GFopFCZKJlHq1D/08o=;
- b=owGbwMvMwCUWIi5b4HjluATjabUkhoxtAs3zz7lceM09Jf/+SkHWJQb5fB0zROt2ty1wUwr0v
- 6V96varjlIWBjEuBlkxRZZyHXleD+W6cqWZT4xh5rAygQxh4OIUgInkH2X4nydzSpZLnumGyFw/
- w1l2MyfMWdK0edbmfXkNUnyOpW/0eBn+x/evY7bwklfpea+6/sTppuM1CQ53NvW+7U/VfvD5H1M
- ZCwA=
-X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
- fpr=772C1F0D48237E772299E43354171D7041D4C718
-X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
- with auth_id=505
-X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
-Reply-To: anthony@amarulasolutions.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825175807.3264083-1-alex.williamson@redhat.com>
 
-From: Anthony Brandon <anthony@amarulasolutions.com>
+Hi Alex,
 
-The max_register field is assigned the size of the register memory
-region instead of the offset of the last register.
-The result is that reading from the regmap via debugfs can cause
-a segmentation fault:
+On Mon, Aug 25, 2025 at 11:57:59AM -0600, Alex Williamson wrote:
+> Based on discussion[1] there's still interest in keeping vfio-platform
+> itself, but the use case doesn't involve any of the current reset
+> drivers and doesn't include vfio-amba.  To give any users a chance to
+> speak up, let's mark these as deprecated and generate logs if they're
+> used.
+> 
+> I intend to pull the vfio/fsl-mc removal from the previous series given
+> there were no objections.  Thanks,
+> 
+> Alex
+> 
+> [1] https://lore.kernel.org/all/20250806170314.3768750-1-alex.williamson@redhat.com/
+> 
+> Alex Williamson (2):
+>   vfio/amba: Mark for removal
+>   vfio/platform: Mark reset drivers for removal
+> 
+>  drivers/vfio/platform/Kconfig                            | 5 ++++-
+>  drivers/vfio/platform/reset/Kconfig                      | 6 +++---
+>  drivers/vfio/platform/reset/vfio_platform_amdxgbe.c      | 2 ++
+>  drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c    | 2 ++
+>  drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c | 2 ++
+>  drivers/vfio/platform/vfio_amba.c                        | 2 ++
+>  6 files changed, 15 insertions(+), 4 deletions(-)
 
-tail /sys/kernel/debug/regmap/xdma.1.auto/registers
-Unable to handle kernel paging request at virtual address ffff800082f70000
-Mem abort info:
-  ESR = 0x0000000096000007
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x07: level 3 translation fault
-[...]
-Call trace:
- regmap_mmio_read32le+0x10/0x30
- _regmap_bus_reg_read+0x74/0xc0
- _regmap_read+0x68/0x198
- regmap_read+0x54/0x88
- regmap_read_debugfs+0x140/0x380
- regmap_map_read_file+0x30/0x48
- full_proxy_read+0x68/0xc8
- vfs_read+0xcc/0x310
- ksys_read+0x7c/0x120
- __arm64_sys_read+0x24/0x40
- invoke_syscall.constprop.0+0x64/0x108
- do_el0_svc+0xb0/0xd8
- el0_svc+0x38/0x130
- el0t_64_sync_handler+0x120/0x138
- el0t_64_sync+0x194/0x198
-Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
----[ end trace 0000000000000000 ]---
-note: tail[1217] exited with irqs disabled
-note: tail[1217] exited with preempt_count 1
-Segmentation fault
+For the series:
+Reviewed-by: Mostafa Saleh <smostafa@google.com>
 
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
----
-Changes in v2:
-- Define new constant XDMA_MAX_REG_OFFSET and use that.
-- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
----
- drivers/dma/xilinx/xdma-regs.h | 1 +
- drivers/dma/xilinx/xdma.c      | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Thanks,
+Mostafa
 
-diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
-index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
---- a/drivers/dma/xilinx/xdma-regs.h
-+++ b/drivers/dma/xilinx/xdma-regs.h
-@@ -9,6 +9,7 @@
- 
- /* The length of register space exposed to host */
- #define XDMA_REG_SPACE_LEN	65536
-+#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
- 
- /*
-  * maximum number of DMA channels for each direction:
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--	.max_register = XDMA_REG_SPACE_LEN,
-+	.max_register = XDMA_MAX_REG_OFFSET,
- };
- 
- /**
-
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250901-xdma-max-reg-1649c6459358
-
-Best regards,
--- 
-Anthony Brandon <anthony@amarulasolutions.com>
-
-
+> 
+> -- 
+> 2.50.1
+> 
 
