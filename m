@@ -1,293 +1,137 @@
-Return-Path: <linux-kernel+bounces-794975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03DAB3EB67
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:50:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC82B3EA57
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4945B484644
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:44:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C6A57A00F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9826E1FDE31;
-	Mon,  1 Sep 2025 15:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7095F23D7C5;
+	Mon,  1 Sep 2025 15:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="lE5xbrB2"
-Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QP1aiEL0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251F419CC37;
-	Mon,  1 Sep 2025 15:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A28132F770
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741436; cv=none; b=ijcPdSRZj63qev5OlgLSWIbrdJ55QgFRUJlEdtkzal0d4OULCRgtRjxR+i9dy0nTutofH1lWhLNhKRGCMReZBPXWBtOMW85oD7z+UVzapejpxuijmHcYIbEmZ59AS4JkNUpISgCJHolvSDyZBpLj0K+PNbSZLatquG8zFA+jH3M=
+	t=1756739700; cv=none; b=evuGRPhWf0ALHzCU5UbDmMMmv7EOEQKPMdnqs+9R0yz/SHKreng+ahT1vT9SmR625aTM7FuoSJWm+jHl+mlcUgdlVDO9C6ho2DAoq+lUn+2skGRE+erHOWEUDar8ROlHKUn+g53EGetEbHLHXrRx+rV4M0Yd/hojW8HwVWtd4rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741436; c=relaxed/simple;
-	bh=am4bL3m9AU3nNCPWaO6cdfHt55wwlOiuU308mgqRkQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rNTMoWBilnFMk6oiaCCEsP763G86Fo3RHjT1k8+qtnk1QvMH4EE1lgMsrTeUIL4CjKFvkKspKLXaxdkUClxmoaPSEdMQJa+Ue2zkOQYnOxzGoiaCa9KwgD1lNpXC/Va0bjZYSn4nk6ZYsdGj05+ZFVF221OQzvU7BLxW6gHlzdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=lE5xbrB2; arc=none smtp.client-ip=168.119.41.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
-	 s=mail; h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=wzd0Xe2NufD57luvKvcTjx6X7hryM1+600ih+eNfwKA=; b=lE5xbrB2FQFeNfasHfBCjFAi1B
-	J3n+QDAzSIPOGNCHmxx8ENwSWmkPCvP2IZSjwBukeS9MofF+OvYEV62QeLwA9fbj/NNuHhLDDCDXw
-	sHyGHY0n+Wa6tgwhztjodbluKura3BddKtduJzsqc6NC59bT/C3N61i1dSXGKm3R0ucU=;
-Received: from 194-208-208-245.tele.net ([194.208.208.245]:61156 helo=[127.0.1.1])
-	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <matthias.fend@emfend.at>)
-	id 1ut6E4-009YyN-Kz; Mon, 01 Sep 2025 17:13:45 +0200
-From: Matthias Fend <matthias.fend@emfend.at>
-Date: Mon, 01 Sep 2025 17:13:38 +0200
-Subject: [PATCH 3/3] media: allegro: fix race conditions in channel
- handling
+	s=arc-20240116; t=1756739700; c=relaxed/simple;
+	bh=6qMh0KDCJNwTdqjfkdAMug2wJ6BOezze1tS85Zw9uMo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOMjRdvOASyPUPRzObZHM+vEcXQ5plYMcSjJT/7N6iFkgQApUoqjpSHJGKl/x6LskAw/6K8tq+oeRgJhxIumy3BypF4kBmeZXNqeGRC8hIHiKNsnrWL/Nl878mebzXcHQ5usScX6ZFuygIkTbap7SOflcodAp4nKICl9J93coWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QP1aiEL0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756739696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ym5UK/Mx15ICfCms4UjVMy/cz1F+8Lwq03O7rLyNqnk=;
+	b=QP1aiEL0aUOJP6a5910dCbncuAKyfA5XrOkSLYHMuzQT+2Fe4LSnYfGW1aoO5SaviwrCdh
+	005rAOIPS/ONZuOf2z5tsFTYzCjmFdFIxYpD9sgsGbei+Gp34kyO3k4pGyEQt6cO7z7PQK
+	cbUFmF13KNCuT5gD/4b4vmwtpS35krY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-Fb-r1GJTM_mh1EljF8fClg-1; Mon, 01 Sep 2025 11:14:55 -0400
+X-MC-Unique: Fb-r1GJTM_mh1EljF8fClg-1
+X-Mimecast-MFC-AGG-ID: Fb-r1GJTM_mh1EljF8fClg_1756739695
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b311db2c76so9799891cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:14:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756739695; x=1757344495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ym5UK/Mx15ICfCms4UjVMy/cz1F+8Lwq03O7rLyNqnk=;
+        b=Nd330RHOfWsSSPPYnCmHg5aZ1pyLC9OjPqs3DiuKL0XPtT4/799kPvGs338PJXNDhT
+         rHdHt+Wa7kjqXup27/r04jBnf3uR6dh1m6kBL+4hgLvSr4plI4/Bnj8khngS8TeMZyo+
+         UzvfNOJ7Rk8wKz/FCY1JqBbSbUTGV6hPAG+LRq+uDl6uLSsOtoGlzZ+7LGlo446td2F+
+         Z2iE3pWVI4rmCn7k2ezrGcnIzwAxYiaZwVoJIt48GZRXGNoK9LxSDQJUVH/dbX4EnLyP
+         cVS0e7gRvgsPFxoIDNBs/6nyY5jhoEKq8xd/tHyKtsarEBJFsS32QAmr1GFM3cpyEYuR
+         0Taw==
+X-Gm-Message-State: AOJu0YweQEvlLuG8aPaxu16Hn/iy8O6XS5P9LWwPGcPALyBoPkUqZuH7
+	FCUcz3R83PSujHqD3gCEUMGFBLXvt/4RNvKUU6coy/5o3T6DNvi0LstEwco64Zo/kbFEG6NNyos
+	oZJrYvyWHgE/SW8Fdiktg8nlPXug5AMdfbNooEXxaBvVhEWbdUTgWlxyx+8iiMjsfYpi/Pkysu5
+	Ox
+X-Gm-Gg: ASbGncs5PbcgMoAJKuTfq3LwuCLJU0EJa+Rp1XHKSaUPvSMf3gHck5beRcD1AiqiZAQ
+	JIKrIRZ8GQiQ3rskB2CC/s/6CLqZhQSnTKEdsgYAcucWymOoYrJrE1jh1tFeobkBxtpb96QVxh0
+	A9fsznWSwNuluBM9FAQP2pBnMklO9IN4+s34MES/yuT+FOjyHf3EgyP1OVf+Fw2on2EfhjKY9nc
+	uOPK+bGInYQLusuuC1vZp/j+A4O6lSShfGa2E8RqS9gQpHbS3xlZU4CWYrbT19qQlmwDE4iahIv
+	2KC3XFxilNqIcmyG595d+QDzihs2I79HKjguU5rhqZWPuewK9ygosccBuikinOgaEJyvpyREYQ=
+	=
+X-Received: by 2002:a05:622a:259b:b0:4b2:f2b0:32f4 with SMTP id d75a77b69052e-4b31dcc27camr87769571cf.82.1756739694449;
+        Mon, 01 Sep 2025 08:14:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoSuUWq8d1895qWYOM3TzW432SYmyk5JdQIz0QDRVbZIJavWFSwqVy3xw01uX0V5tPr4oIyA==
+X-Received: by 2002:a05:622a:259b:b0:4b2:f2b0:32f4 with SMTP id d75a77b69052e-4b31dcc27camr87769091cf.82.1756739693926;
+        Mon, 01 Sep 2025 08:14:53 -0700 (PDT)
+Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b67894bsm64286011cf.33.2025.09.01.08.14.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 08:14:53 -0700 (PDT)
+From: Alex Markuze <amarkuze@redhat.com>
+To: ceph-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Slava.Dubeyko@ibm.com,
+	idryomov@gmail.com,
+	Alex Markuze <amarkuze@redhat.com>
+Subject: [PATCH 1/2] ceph/mds_client: transfer CEPH_CAP_PIN when updating r_parent on mismatch
+Date: Mon,  1 Sep 2025 15:14:47 +0000
+Message-Id: <20250901151448.726098-1-amarkuze@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-allegro-dvt-fixes-v1-3-4e4d493836ef@emfend.at>
-References: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-In-Reply-To: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
-To: Michael Tretter <m.tretter@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matthias Fend <matthias.fend@emfend.at>
-X-Mailer: b4 0.14.2
-X-Spam-Score: -1.0
-X-Spam-Bar: -
-X-Spam-Report: Spam detection software, running on the system "lx20.hoststar.hosting",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- 
- Content preview:  Under certain circumstances, not every message written by
-   the MCU to the status mailbox may trigger a corresponding interrupt. This
-   is likely when multiple messages are generated in a very short perio [...]
-    
- 
- Content analysis details:   (-1.0 points, 5.0 required)
- 
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
-  0.0 TVD_RCVD_IP            Message was received from an IP address
-  0.0 Local_hs1_NotHoststar  Sender is not from hoststar.ch|de|com
-  0.0 KAM_DMARC_STATUS       Test Rule for DKIM or SPF Failure with Strict
-                             Alignment
+Content-Transfer-Encoding: 8bit
 
-Since the channel list is used in different contexts, it must be ensured
-that it is always consistent. Also, the channels contained in the list may
-only be released when they are no longer needed in any context.
+When the parent directory lock is not held, req->r_parent can become stale between dentry lookup and request encoding.
+The client updates r_parent to the correct inode based on the encoded path, but previously did not adjust CEPH_CAP_PIN references.
 
-Add a lock to protect the list and reference handling for the channels.
+Release the pin from the old parent and acquire it for the new parent when switching r_parent, ensuring reference accounting stays balanced and avoiding leaks or underflows later in ceph_mdsc_release_request().
 
-Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+Signed-off-by: Alex Markuze <amarkuze@redhat.com>
 ---
- drivers/media/platform/allegro-dvt/allegro-core.c | 64 ++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 14 deletions(-)
+ fs/ceph/mds_client.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
-index d3aea46b7d1d9854307d61d2f1647eaa340d504d..adcaa4f877df1c58807d62ddf3eb21848fb08520 100644
---- a/drivers/media/platform/allegro-dvt/allegro-core.c
-+++ b/drivers/media/platform/allegro-dvt/allegro-core.c
-@@ -177,6 +177,7 @@ struct allegro_dev {
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index ce0c129f4651..4e5926f36e8d 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3053,12 +3053,19 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
  	 */
- 	unsigned long channel_user_ids;
- 	struct list_head channels;
-+	struct mutex channels_lock;
- };
- 
- static const struct regmap_config allegro_regmap_config = {
-@@ -200,6 +201,7 @@ static const struct regmap_config allegro_sram_config = {
- #define fh_to_channel(__fh) container_of(__fh, struct allegro_channel, fh)
- 
- struct allegro_channel {
-+	struct kref ref;
- 	struct allegro_dev *dev;
- 	struct v4l2_fh fh;
- 	struct v4l2_ctrl_handler ctrl_handler;
-@@ -427,33 +429,55 @@ static unsigned long allegro_next_user_id(struct allegro_dev *dev)
- }
- 
- static struct allegro_channel *
--allegro_find_channel_by_user_id(struct allegro_dev *dev,
--				unsigned int user_id)
-+allegro_ref_get_channel_by_user_id(struct allegro_dev *dev,
-+				   unsigned int user_id)
- {
- 	struct allegro_channel *channel;
- 
-+	guard(mutex)(&dev->channels_lock);
-+
- 	list_for_each_entry(channel, &dev->channels, list) {
--		if (channel->user_id == user_id)
--			return channel;
-+		if (channel->user_id == user_id) {
-+			if (kref_get_unless_zero(&channel->ref))
-+				return channel;
-+			break;
-+		}
+ 	if (!parent_locked && req->r_parent && path_info1.vino.ino &&
+ 	    ceph_ino(req->r_parent) != path_info1.vino.ino) {
++		struct inode *old_parent = req->r_parent;
+ 		struct inode *correct_dir = ceph_get_inode(mdsc->fsc->sb, path_info1.vino, NULL);
+ 		if (!IS_ERR(correct_dir)) {
+ 			WARN_ONCE(1, "ceph: r_parent mismatch (had %llx wanted %llx) - updating\n",
+-				  ceph_ino(req->r_parent), path_info1.vino.ino);
+-			iput(req->r_parent);
++			          ceph_ino(old_parent), path_info1.vino.ino);
++			/*
++			 * Transfer CEPH_CAP_PIN from the old parent to the new one.
++			 * The pin was taken earlier in ceph_mdsc_submit_request().
++			 */
++			ceph_put_cap_refs(ceph_inode(old_parent), CEPH_CAP_PIN);
++			iput(old_parent);
+ 			req->r_parent = correct_dir;
++			ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
+ 		}
  	}
  
- 	return ERR_PTR(-EINVAL);
- }
- 
- static struct allegro_channel *
--allegro_find_channel_by_channel_id(struct allegro_dev *dev,
--				   unsigned int channel_id)
-+allegro_ref_get_channel_by_channel_id(struct allegro_dev *dev,
-+				      unsigned int channel_id)
- {
- 	struct allegro_channel *channel;
- 
-+	guard(mutex)(&dev->channels_lock);
-+
- 	list_for_each_entry(channel, &dev->channels, list) {
--		if (channel->mcu_channel_id == channel_id)
--			return channel;
-+		if (channel->mcu_channel_id == channel_id) {
-+			if (kref_get_unless_zero(&channel->ref))
-+				return channel;
-+			break;
-+		}
- 	}
- 
- 	return ERR_PTR(-EINVAL);
- }
- 
-+static void allegro_free_channel(struct kref *ref)
-+{
-+	struct allegro_channel *channel = container_of(ref, struct allegro_channel, ref);
-+
-+	kfree(channel);
-+}
-+
-+static int allegro_ref_put_channel(struct allegro_channel *channel)
-+{
-+	return kref_put(&channel->ref, allegro_free_channel);
-+}
-+
- static inline bool channel_exists(struct allegro_channel *channel)
- {
- 	return channel->mcu_channel_id != -1;
-@@ -2183,7 +2207,7 @@ allegro_handle_create_channel(struct allegro_dev *dev,
- 	int err = 0;
- 	struct create_channel_param param;
- 
--	channel = allegro_find_channel_by_user_id(dev, msg->user_id);
-+	channel = allegro_ref_get_channel_by_user_id(dev, msg->user_id);
- 	if (IS_ERR(channel)) {
- 		v4l2_warn(&dev->v4l2_dev,
- 			  "received %s for unknown user %d\n",
-@@ -2250,6 +2274,7 @@ allegro_handle_create_channel(struct allegro_dev *dev,
- out:
- 	channel->error = err;
- 	complete(&channel->completion);
-+	allegro_ref_put_channel(channel);
- 
- 	/* Handled successfully, error is passed via channel->error */
- 	return 0;
-@@ -2261,7 +2286,7 @@ allegro_handle_destroy_channel(struct allegro_dev *dev,
- {
- 	struct allegro_channel *channel;
- 
--	channel = allegro_find_channel_by_channel_id(dev, msg->channel_id);
-+	channel = allegro_ref_get_channel_by_channel_id(dev, msg->channel_id);
- 	if (IS_ERR(channel)) {
- 		v4l2_err(&dev->v4l2_dev,
- 			 "received %s for unknown channel %d\n",
-@@ -2274,6 +2299,7 @@ allegro_handle_destroy_channel(struct allegro_dev *dev,
- 		 "user %d: vcu destroyed channel %d\n",
- 		 channel->user_id, channel->mcu_channel_id);
- 	complete(&channel->completion);
-+	allegro_ref_put_channel(channel);
- 
- 	return 0;
- }
-@@ -2284,7 +2310,7 @@ allegro_handle_encode_frame(struct allegro_dev *dev,
- {
- 	struct allegro_channel *channel;
- 
--	channel = allegro_find_channel_by_channel_id(dev, msg->channel_id);
-+	channel = allegro_ref_get_channel_by_channel_id(dev, msg->channel_id);
- 	if (IS_ERR(channel)) {
- 		v4l2_err(&dev->v4l2_dev,
- 			 "received %s for unknown channel %d\n",
-@@ -2294,6 +2320,7 @@ allegro_handle_encode_frame(struct allegro_dev *dev,
- 	}
- 
- 	allegro_channel_finish_frame(channel, msg);
-+	allegro_ref_put_channel(channel);
- 
- 	return 0;
- }
-@@ -3079,6 +3106,8 @@ static int allegro_open(struct file *file)
- 	if (!channel)
- 		return -ENOMEM;
- 
-+	kref_init(&channel->ref);
-+
- 	v4l2_fh_init(&channel->fh, vdev);
- 
- 	init_completion(&channel->completion);
-@@ -3245,7 +3274,10 @@ static int allegro_open(struct file *file)
- 		goto error;
- 	}
- 
--	list_add(&channel->list, &dev->channels);
-+	scoped_guard(mutex, &dev->channels_lock) {
-+		list_add(&channel->list, &dev->channels);
-+	}
-+
- 	file->private_data = &channel->fh;
- 	v4l2_fh_add(&channel->fh);
- 
-@@ -3262,17 +3294,20 @@ static int allegro_open(struct file *file)
- static int allegro_release(struct file *file)
- {
- 	struct allegro_channel *channel = fh_to_channel(file->private_data);
-+	struct allegro_dev *dev = channel->dev;
- 
- 	v4l2_m2m_ctx_release(channel->fh.m2m_ctx);
- 
--	list_del(&channel->list);
-+	scoped_guard(mutex, &dev->channels_lock) {
-+		list_del(&channel->list);
-+	}
- 
- 	v4l2_ctrl_handler_free(&channel->ctrl_handler);
- 
- 	v4l2_fh_del(&channel->fh);
- 	v4l2_fh_exit(&channel->fh);
- 
--	kfree(channel);
-+	allegro_ref_put_channel(channel);
- 
- 	return 0;
- }
-@@ -3867,6 +3902,7 @@ static int allegro_probe(struct platform_device *pdev)
- 	dev->plat_dev = pdev;
- 	init_completion(&dev->init_complete);
- 	INIT_LIST_HEAD(&dev->channels);
-+	mutex_init(&dev->channels_lock);
- 
- 	mutex_init(&dev->lock);
- 
-
 -- 
-2.25.1
+2.34.1
 
 
