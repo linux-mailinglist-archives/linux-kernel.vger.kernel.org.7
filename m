@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-793849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5665AB3D922
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:58:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5F8B3D925
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A70D17999E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2DEC3AC0A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8E12459E5;
-	Mon,  1 Sep 2025 05:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IVZUhPAc"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8CB239E8A;
-	Mon,  1 Sep 2025 05:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0651B246770;
+	Mon,  1 Sep 2025 05:59:27 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A8E145355;
+	Mon,  1 Sep 2025 05:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756706332; cv=none; b=sIFK+GKxKoxg5er+Z07lDWkMWRgmCQiU8IrMudsfXag60WlS4DOfutllw4vinH8itEDESzbzL/MqS7r01M7sI16FOwV8ccIwJabYh5cBJpHyoREP+lxaBDMYF6G1hlR73MLSI/4/aIq3NF8tpT5ZkIltYxerf1m/jr878HWE/H8=
+	t=1756706366; cv=none; b=irK087UNhP+xKGalfw1NJajF5su4l06AQYl5mMN4WeR0xbbWOWr7PUDT5odSjrz35rYYOTv9/n8AJWBF7fdiS09lt379yOEWKBHUi4aKzpYhwcgodpwQDjW6ToXDuCrDpqzct6tEAOzIeTCYUSOE3eX19QCkvyGuMFloZjn3tdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756706332; c=relaxed/simple;
-	bh=l7TYveTQiAGcaWLaoAz3d4DyCiFfthjfGnGuYoioYg0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GFJc1rwi/51aRiNQv885cxjzoTN48i9/+syS/klaOJlC/Z0MUmyJMarvLUmjSfzYn7EXWjoVIHkKgc6+2mvUY64COd00WMaiaasw2PunV8CyCS6/rXHfy54Bkbxco/WFzt6fYicgMFtS5N7N+w6fsO6Htl102AdV5FhTEgL3fUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IVZUhPAc; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=3Mq98t2htBIwnw6/bYZGfhhwwQsQntgsCLuT01Wv9DE=;
-	b=IVZUhPAcEl+85CHQbjc+c//jj2tj3mIenkGF0S663XlOFXUaQYJeymX24Y1/dH
-	GXabl1X0vrN0YuPIVMACaKPc2GKSoCFjjQ61VwqOnx3YAupQLTQFFU+Wr4u1cYpc
-	Swj4k5Xlc4MFEMFyxIOEnXrAQhURuZA9kx/rnW8CuDGcU=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wC3VU3uNbVo9KMEFg--.9191S2;
-	Mon, 01 Sep 2025 13:58:07 +0800 (CST)
-From: mysteryli <m13940358460@163.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Michal Luczaj <mhal@rbox.co>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Eric Biggers <ebiggers@google.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mystery Li <929916200@qq.com>
-Subject: [PATCH v2] net/core: Replace offensive comment in skbuff.c
-Date: Mon,  1 Sep 2025 13:58:02 +0800
-Message-Id: <20250901055802.727743-1-m13940358460@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756706366; c=relaxed/simple;
+	bh=wLiM9nosk3p2z406tp4z8uPFX5uJmOynNM4NmY2fO7g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nwqQmSAvT+Qsx7Lo02VN7MQZ+jp5xoxnpSZSny9fGwDL/JbBttCwwxzdaNbOHTDRvlUIdDnNTMHns3irqQLEDHkJpM52WQhS8AdWLoilz/qIsbp/6TRefkjC0CqYDBWsJzNXseGozsL/z3sVn+R2XiMO8NRkB+cVQXxe/iijxHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 1 Sep
+ 2025 13:59:22 +0800
+Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 1 Sep 2025 13:59:22 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>,
+	<lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <linus.walleij@linaro.org>, <p.zabel@pengutronix.de>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-phy@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
+	<linux-gpio@vger.kernel.org>
+CC: <jacky_chou@aspeedtech.com>
+Subject: [PATCH v3 00/10] Add ASPEED PCIe Root Complex support
+Date: Mon, 1 Sep 2025 13:59:12 +0800
+Message-ID: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3VU3uNbVo9KMEFg--.9191S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur4ktryrJr4xZr45Zw17trb_yoWDKrX_Za
-	y0vFZ7Cw4xJFy2kw43Aws3WrZ0v3y8CFyvkayvqrWUta4kJan5Ca4kAFy3ur9xWFyjqwn8
-	WasIgrykurnI9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0jLvtUUUUU==
-X-CM-SenderInfo: jprtmkaqtvmkiwq6il2tof0z/1tbisgq7Omi1LcjBkQAAsR
+Content-Type: text/plain
 
-From: Mystery Li <929916200@qq.com>
+This patch series adds support for the ASPEED PCIe Root Complex,
+including device tree bindings, pinctrl support, and the PCIe host controller
+driver. The patches introduce the necessary device tree nodes, pinmux groups,
+and driver implementation to enable PCIe functionality on ASPEED platforms.
+Currently, the ASPEED PCIe Root Complex only supports a single port.
 
-The original comment contained profanity to express the frustration of
-dealing with a complex and resource-constrained code path. While the
-sentiment is understandable, the language is unprofessional and
-unnecessary.
-Replace it with a more neutral and descriptive comment that maintains
-the original technical context and conveys the difficulty of the
-situation without the use of offensive language.
+Summary of changes:
+- Add device tree binding documents for ASPEED PCIe PHY, PCIe Config, and PCIe RC
+- Update MAINTAINERS for new bindings and driver
+- Add PCIe RC node and PERST control pin to aspeed-g6 device tree
+- Implement ASPEED PCIe PHY driver
+- Implement ASPEED PCIe Root Complex host controller driver
 
-Signed-off-by: “mystery” <929916200@qq.com>
+This series has been tested on AST2600/AST2700 platforms and enables PCIe device
+enumeration and operation.
+
+Jacky Chou (10):
+  dt-bindings: soc: aspeed: Add ASPEED PCIe Config
+  dt-bindings: phy: aspeed: Add ASPEED PCIe PHY
+  dt-bindings: PCI: Add ASPEED PCIe RC support
+  dt-bindings: pinctrl: aspeed,ast2600-pinctrl: Add PCIe RC PERST# group
+  ARM: dts: aspeed-g6: Add AST2600 PCIe RC PERST#
+  ARM: dts: aspeed-g6: Add PCIe RC and PCIe PHY node
+  PHY: aspeed: Add ASPEED PCIe PHY driver
+  PCI: Add FMT and TYPE definition for TLP header
+  PCI: aspeed: Add ASPEED PCIe RC driver
+  MAINTAINERS: Add ASPEED PCIe RC driver
+
+ .../bindings/pci/aspeed,ast2600-pcie.yaml     |  179 +++
+ .../bindings/phy/aspeed,ast2600-pcie-phy.yaml |   42 +
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    2 +
+ .../soc/aspeed/aspeed,ast2700-pcie-cfg.yaml   |   46 +
+ MAINTAINERS                                   |   11 +
+ .../boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |    5 +
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |   56 +
+ drivers/pci/controller/Kconfig                |   16 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-aspeed.c          | 1137 +++++++++++++++++
+ drivers/pci/pci.h                             |   12 +
+ drivers/phy/Kconfig                           |    1 +
+ drivers/phy/Makefile                          |    1 +
+ drivers/phy/aspeed/Kconfig                    |   15 +
+ drivers/phy/aspeed/Makefile                   |    2 +
+ drivers/phy/aspeed/phy-aspeed-pcie.c          |  209 +++
+ 16 files changed, 1735 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/aspeed,ast2600-pcie.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/aspeed,ast2600-pcie-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/aspeed/aspeed,ast2700-pcie-cfg.yaml
+ create mode 100644 drivers/pci/controller/pcie-aspeed.c
+ create mode 100644 drivers/phy/aspeed/Kconfig
+ create mode 100644 drivers/phy/aspeed/Makefile
+ create mode 100644 drivers/phy/aspeed/phy-aspeed-pcie.c
+
 ---
- net/core/skbuff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3:
+ - Add ASPEED PCIe PHY driver
+ - Remove the aspeed,pciecfg property from AST2600 RC node, merged into RC node
+ - Update the binding doc for aspeed,ast2700-pcie-cfg to reflect the changes
+ - Update the binding doc for aspeed,ast2600-pcie to reflect the changes
+ - Update the binding doc for aspeed,ast2600-pinctrl to reflect the changes
+ - Update the device tree source to reflect the changes
+ - Adjusted the use of mutex in RC drivers to use GRAND
+ - Updated from reviewer comments
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index ee0274417948..202c25a01f22 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -5333,7 +5333,7 @@ int skb_cow_data(struct sk_buff *skb, int tailbits, struct sk_buff **trailer)
- 		    skb_has_frag_list(skb1)) {
- 			struct sk_buff *skb2;
- 
--			/* Fuck, we are miserable poor guys... */
-+			/* This is a painfully difficult situation with limited resources... */
- 			if (ntail == 0)
- 				skb2 = skb_copy(skb1, GFP_ATOMIC);
- 			else
+v2:
+ - Moved ASPEED PCIe PHY yaml binding to `soc/aspeed` directory and
+   changed it as syscon
+ - Added `MAINTAINERS` entry for the new PCIe RC driver
+ - Updated device tree bindings to reflect the new structure
+ - Refactored configuration read and write functions to main bus and
+   child bus ops
+ - Refactored initialization to implement multiple ports support
+ - Added PCIe FMT and TYPE definitions for TLP header in
+   `include/uapi/linux/pci_regs.h`
+ - Updated from reviewer comments
+---
+
 -- 
-2.25.1
+2.43.0
 
 
