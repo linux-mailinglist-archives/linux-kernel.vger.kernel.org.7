@@ -1,278 +1,190 @@
-Return-Path: <linux-kernel+bounces-793780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4247B3D81B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:08:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CA2B3D6E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907033B518E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:08:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3541C7A2E52
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39A322156A;
-	Mon,  1 Sep 2025 04:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE31421256C;
+	Mon,  1 Sep 2025 02:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExXBLmxs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lSvbDA8/"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011058.outbound.protection.outlook.com [52.101.65.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D97E2AE77;
-	Mon,  1 Sep 2025 04:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756699692; cv=none; b=ePBHMUS0B6zY0wDHwKUu5Tnp+AEFCe6CTSbwNNW6fd5SbP30sIJQ5z7Oo6SlJzTfzSZkVolAYZmANbX6+iWSk4H1zlSu98f/pMgM9ZmDvXdjyxgkx4bnQlIny9tOAZZq7fRbM+EYIGMkE52EZWE5vC377iHLDd9KTRCRzkTKK6k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756699692; c=relaxed/simple;
-	bh=8n+ZuGOwVskIkUL1IWD7BbgHrNgaykzQ+uT1sWEAI70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhC0xgA8CGhRP4mrXpTtvra0RxT0nV9T9Oit5v/iDVh533vOHr7qgxHF//bNfhEUD1tsX7LsyfqX9ZczPIa5i8BaGr2q5Ze+BGRTBA4pVMk4/3ALHRGaGNXhDjdT3nBtJkL1JAj780+ccObKxTAvB/fJwVIaDiOWZH+o+NzJhNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExXBLmxs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CB1C4CEF0;
-	Mon,  1 Sep 2025 04:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756699691;
-	bh=8n+ZuGOwVskIkUL1IWD7BbgHrNgaykzQ+uT1sWEAI70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ExXBLmxscsUFiN0z6Nb7VMRuNdiCVncTbv1CiE3Fv5VFS/gMGiQ0pEwmCor0/bR2A
-	 or/5xBUiStLYDux18it7pZELTizmmk78Jbz31US70OajjDLOqIXOVyq65EG5lUw8Qw
-	 JP8cm9k1LcBCkzNj4XyFKn0aSNnJeRCpTElDlL+oR4EEroAMhpA4jZyhg6vwl/5bTb
-	 QcqP38ywhwQPxBWH+NVbboPVXDfXaSe7SB7tRYEiZGLya5y11Nf3yq6ibG9oKgJwZh
-	 On7HmtG5QuOxx/7e+Os+VqRUBSJNuB2DicHiUHu59hEg4/ff1n4T04G73savpDo/qg
-	 MVborQyGaZ0gg==
-Date: Mon, 1 Sep 2025 06:08:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: lee@kernel.org, andreas@kemnade.info, krzk+dt@kernel.org, 
-	robh@kernel.org, conor+dt@kernel.org, ukleinek@kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	shuah@kernel.org
-Subject: Re: [PATCH v4] dt-bindings: mfd: twl: Add missing sub-nodes for
- TWL4030 & TWL603x
-Message-ID: <20250901-tough-rigorous-porpoise-f14ae2@kuoka>
-References: <20250830001421.126707-1-jihed.chaibi.dev@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B95610F2;
+	Mon,  1 Sep 2025 02:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756695543; cv=fail; b=fxLb0TIRc7/M/n+UGWoQ3ryZPJAClkXsG9BOuvh9p3B9FMLq9x5OfYJHW/ENBCvsXmZSAJ009S1rYoFjOGzVMVrph/T538XRWsZZDJvvHE3Mrmtn4Rc+W9KpHYLAsZ+9dDiTOdo/cnYp1rew7YeJO1q8XB/MzjDPWfqtSVK2qh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756695543; c=relaxed/simple;
+	bh=aJezsIJ2rp4eLmZctXMoPJsLmwLXiroT+KIZlBWZBC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bVzLUoOW5eamF8WHuF6NbKZM7aQw7kzUHucNXzIedNkDuAaibEVPLtpmWk5TKSLzu5BMcQPXK+Wksy1gsUkb8k8WfTphUTQ8pjVDrbhIm9v9vKv9g5hfYXtZog4sq60TY7YdzQgipDynWpTcQuxVyaC9GWNh5HVoFFHznvCe7vE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=lSvbDA8/; arc=fail smtp.client-ip=52.101.65.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rLIEM544jFuFFYALnC7cD8YafzzDzhD/cBgq4Ug3Mx7kiwsQEg1PCMG1GsqWf5EcVlyqGlUUuyQdz90faRT0XOTDuc/aa6q7usKz75vKEUQE4p+OxInuT3GdhJnYkEU4Sfyxm2W9u0Qo3MvgRU6SLD8iHjcnMY1gwY8ILJYcz0mJqE29zR4kmMsFkvx+yADwO75ciz+5EifDUKLW5IdnYIjqRkJ5LXawX5GK49kS0wPc354D/B29hE8K4QYfXuPoGo9cWT1svaHY0Q6xeUvBjrgfAZN+9kB3WK5xHQV8kz6TSDwWLhwXkZ5j7Xz6cQ2c8ox45Cpf46LIQx+RkF6mzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zpszoBsV4HtMgNhFccg0OurTg12GNhFyaWVChL8D7Tw=;
+ b=B1aJu+NBaImtTZs/xn1abZv6YbYLE9qRNviJ5XzKz8AcGrgUzouftlzv7QQc2HKDHTFRTppoUhX5ZJil1HWbngpUfPx1Vo8ODsFF5amjfR+WYxZ293NvqsiMVgR7QXB9LPxs3GXZXKqLYnE4ZcZ+l0KoStxoKQysfMNA0oticq8Lxu/+GKhO11PISEYKuaaP5Gj3gSALFQSdy7KfTvEtVGdSiTGMEymi1F5Jsd2JFE+Fbowc0h4hbMTQVcFnuqNp7P7ry06BAwJ1PH31qxOJy/pJZUC00R2wCGCD4SKs7CJut3tlTeJzdhTPQ42qdUNst4TvQtEPhZt+O4PyxP3/VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zpszoBsV4HtMgNhFccg0OurTg12GNhFyaWVChL8D7Tw=;
+ b=lSvbDA8/xoaNWp6uDWp4YjEvd5WbJBAGoIk2CTVwtli7qQVMnOr6RHw5y6zREmIdYC9YAVorSDciZIGtg3thkrbaBLv3VyK/xwTOzLVDee29z6CIskFbHQ7Jz7ql8smcvO21QoNN6eoqcVSTHx8oD5vmLc9x9ZOkhTUx+ReLQd1bZ54YN56xOzBDhwLTZPGy8+ZOETkBIxGk5HSlReJ8g43et9WX0FAaKbb3dlutoAe1MflBFJt+yaFl+9HIN1QZsy4LYoF+CiA4xwSh24HvMIMOzOyi9XXkKxY9RtvriBSXbtrP49X/6jAolEunCRNjMFJRT2dIQ2h/9n97GnZPwQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA4PR04MB9269.eurprd04.prod.outlook.com (2603:10a6:102:2a4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.12; Mon, 1 Sep
+ 2025 02:58:57 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9094.015; Mon, 1 Sep 2025
+ 02:58:57 +0000
+Date: Mon, 1 Sep 2025 12:10:13 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v3 0/4] ARM: dts: clean up most ls1021a CHECK_DTB warning
+Message-ID: <20250901041013.GC393@nxa18884-linux.ap.freescale.net>
+References: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: MA5PR01CA0019.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:177::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250830001421.126707-1-jihed.chaibi.dev@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9269:EE_
+X-MS-Office365-Filtering-Correlation-Id: 229bb078-6056-4d23-b17c-08dde9037df7
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|19092799006|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XXxlArLJUsyYY1BS2CM66DBKT2L1/CqBc/AKDRgjRcKsUMRhlPqCzKgz2ypp?=
+ =?us-ascii?Q?igBzvCV74Jsmx/+QahJmrcoATFUx/Pg3yVyGQ4KfBJ52vSpN0+RKHwL/ujZw?=
+ =?us-ascii?Q?lWVkCHj/gsNXj4Unft9galt92Renq8tYdFUjIvv+EqFztZe7/Te/rTlCG6CE?=
+ =?us-ascii?Q?lKjIxKT2Xt+A0W3FSmJRQgp9cfmz5RmX/qwa8vK1B4mj08kSKc86rKuaUFp7?=
+ =?us-ascii?Q?WZQo/5W6np0YWQUGboPO0OYGt5FJDiCGUsSZPNRK7N3TyrZXM6qO7KHD9ytH?=
+ =?us-ascii?Q?icSNUHxdkYHtCA62JcOU8nFE6UyMCr2tQNbZVWqC+qyVIdhULCD0O0VCZL5/?=
+ =?us-ascii?Q?l/ine4OzFuOKEWrMkPFVFf5VbjmICJElqTX1QTHcxgYILq80EMEw9eihySZZ?=
+ =?us-ascii?Q?6ZeRFKPD16lmSJENrXjnRg887ZeRG5d7i4z9Dwimj4oIOWEUPv2hAWg7jTuH?=
+ =?us-ascii?Q?lBlsYSS2cFl0CyoSCk0TFq7NNkiO26j2CatoiCjt9P/MPWgBfumFEIo2MqtS?=
+ =?us-ascii?Q?8Y0ohls1KgRPDG3xp3YqSD4xt9UgH4oXJ24rVM1M3E4sFnRjO2+k8TpQwd9g?=
+ =?us-ascii?Q?v4JHnJtHCECDtVqmFM70KCxXf6VDgh+kzF72e0okNGS5V4TREfqHuVUTIRa4?=
+ =?us-ascii?Q?t/NMydAqVPzN/nsJJeTxfeu/3x9qAYQpJIa7+OzkEm04EJp/kJ1Hgu0OW6rG?=
+ =?us-ascii?Q?ah55RzN4ds0cOluIQflUgfNeLp4Gv/MxpZ3+WEVRj6FModz0ByBWG8pJcAdU?=
+ =?us-ascii?Q?bZRWtNKKogzU5B2Cowm1DwaimcNnYoKXLKKJuubat+J9ekz0ChtSOtgTyJcB?=
+ =?us-ascii?Q?b3kwB0gBvXo+oIfk9m5hk2K8iEJKEHGCvun/WKmSs8idKgWMq992qu6MuKok?=
+ =?us-ascii?Q?AdM2bauKhZ3nDb/32NCceJLji8E1Tf/ms0P/dWlrGP8Z7ipX+Ty911FRgrTQ?=
+ =?us-ascii?Q?od2Cs0X1B/wdNfbeR/ghfnAZtd9kG2sv3Cc6dNJosaHEf00PgyDHhVnMntzU?=
+ =?us-ascii?Q?Z5dJ0Lx5P9gbRzxFv+5/zAoNL6fdrYZpQeMduvJdsHc8s5CsZD93/V0EXH3e?=
+ =?us-ascii?Q?ucCR6hfMauOzrT8t2cwAdLe7qR/3zcvw0t8EFIQWiseSYwUrbI+fg7Ss1mIw?=
+ =?us-ascii?Q?zgzTubAziLjhuMa3PnPF9vim8hvSzJuIWqsmNC3nIimnnfsz//SWRCRSrSDD?=
+ =?us-ascii?Q?hxcqxKfxFfph4gJg3hBj2TP1/9ifJmbRRsGL9X3KOd1o6lPwpovoO5sKGVuy?=
+ =?us-ascii?Q?h3xDqBG8EcHOZDHxARUKpKqx+ZfRTMR2ELC8O1G5j6VueR6WIMhIvjUlVjRV?=
+ =?us-ascii?Q?WCWF8OpnXBzCFtjLGCjKXWuJuwhpbQ9CSopYLwE3grOZhIrwA2gyaCTvJ4VL?=
+ =?us-ascii?Q?fOpLU86r9bDmGnUf9xIynLUyyFDB3eqayxjNdh10yMvfIg9SSToCCuQvpcMm?=
+ =?us-ascii?Q?jTzq3c6fuusGAey+67CkRFwJPUsY6AvO73fouzojjubNd4iCCqVkG2LkshRj?=
+ =?us-ascii?Q?NFZs/B/OUpD3VGs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?horIGs7T9KlGC9rBJ6U4yG8v2oRhT+jvk6JoTKn1Qg7vaSTP57irUds8zQeg?=
+ =?us-ascii?Q?Hm5h0H8rmmji6TItx/xrG3lWqdyUt8vWLCgeKRXPIHAnZOyhyCEpvz5Y+6yn?=
+ =?us-ascii?Q?0zTroxkQvDgAaQ7pKVpA1CMuQbTiXDjrS+OX1Q4lqHBxYbQcr2SIAjWbYmRn?=
+ =?us-ascii?Q?vX3SIhCx7AxG18NOj0xh1ewfqenLRpZvYvwO7NLDhy4Tw1+KZZpOW/MB/OwF?=
+ =?us-ascii?Q?BqBMd+8xr0VpNCRBc52z4NjVs4oYa9+LKHE0yavgu1XbH7OoTZIB8BoVX5oT?=
+ =?us-ascii?Q?drllxGAyhLJ/PHmbcFSjiCAd6olNPGwHs67C4bCZ6G0sBDZOM4WBspsfjseY?=
+ =?us-ascii?Q?llJj4zN30bQ1EtBNFbyoNcID/AeelX210XPHuPy7mN92lHTaHp3/Ij9ZtazF?=
+ =?us-ascii?Q?yqpe+PDnBppw0dhBX5u/qLly/ZwE8RLKbppshMiYQu83HEdWEBv/LfyczBhZ?=
+ =?us-ascii?Q?wD9uCKPwlm+GLNF9zLH5gwNIGlb5yK++gflNb/L12ef29qkuTAwXybAfVHHa?=
+ =?us-ascii?Q?tfh3Ilav3gkHAQamdsz2ZoZKrcFoLrJYP4CtwuzOck/D4IzRouZfMWUvMepN?=
+ =?us-ascii?Q?0ZiW4S3k81OnquLnhb7Y+S3AvJXDocY2TWFQ90YYRmSDYk2zkHVQIjftSySH?=
+ =?us-ascii?Q?xcLWepFFdToDp7um4/YFNu7WbVU19bEHYSYyWiALwtzjj1MUUU9vcRLzwxGs?=
+ =?us-ascii?Q?G+iJ/elrcBpc7jTAx5yDkkWKWL53y4qq8Np73vLW83O1xoidN9fIJdVyVh2c?=
+ =?us-ascii?Q?5AP0dJ3LtS0QppDEz2Ll67qF8Q6B1AAIp/ZoWQtGL+wAE5bFDygbFhfkHmfB?=
+ =?us-ascii?Q?SY5qZscDBYpy1mLi/xI6qjjXEOlAu5keo6Wg1VVKEgo7K5gDr5xIDhvUYf5Q?=
+ =?us-ascii?Q?HhGcvSF1B3NdBDV6X7ezvvXOh8jhFr9RzWqOgmdrzTouoeuutgjHvYN4b0tn?=
+ =?us-ascii?Q?HQSHVIq8yGaqZnrLh+/afy5jL9i5fmCSo3SB9Jf9CZvdVjrA+HiZbhSMJPlb?=
+ =?us-ascii?Q?IvyrLjONJmycS1VMNoFl5VOqo9virNBVxPqX8IaulnbRxC+rygtCHiPm0c02?=
+ =?us-ascii?Q?NFRUwDw5Ebht2PTjaV4eFhzRFkz3r68zfAMBSdQg4fKkdT9whxoWPt0ztGQf?=
+ =?us-ascii?Q?VwQkdE0DIky64HAAQf2h/ab/bfBalB5WRuwsYBDexz32OShiwQyCalFF0LHP?=
+ =?us-ascii?Q?zGFc2UopYeVGNmFbwc/wZsceJJC/8N8X7dCvMj9Id8jZjdfnS58+D9/RtyCH?=
+ =?us-ascii?Q?eSQX3B439opvyczd5kaDnfu8962a16v5HAp45bQRDRpXyvSNaxuDNoImnChY?=
+ =?us-ascii?Q?rKPbPlQ5kG3LaWzDD793jVJIpTCjVh6VSyOT5BytrJUewHvxdCDv4TMQYWoV?=
+ =?us-ascii?Q?g55R4vPcjLvN1HFLFEFIjhKmkZUixaadn1a3m+mFHWfDkZfC0+Ndx3hbbLtp?=
+ =?us-ascii?Q?HrG5vZl3oY4ySIXkLjeMy30OOk7ALu7Z1i8HmALg/hR5L/ayGRXgsD9AQZ3i?=
+ =?us-ascii?Q?mrz7BJ8/kN+TWz04TZqeMU1heyD4C8A83hfHNdBvzCGVcIUKiaQnsZiknRMv?=
+ =?us-ascii?Q?MjgKHmDg0QUWklWe/MlP2PA+gWALTetA1/wuVmsb?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 229bb078-6056-4d23-b17c-08dde9037df7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 02:58:57.6656
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sXagczjVzJ64Y1vsCEzRTytnxHxgGUf7Ps0//hdbTYYwf9odI6kVFQ6XntMe+AYLuc7VXm12n9EbNo1qKyafzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9269
 
-On Sat, Aug 30, 2025 at 02:14:21AM +0200, Jihed Chaibi wrote:
-> Update the main TI TWL-family binding to be self-contained and to fix
-> pre-existing validation errors.
-> 
-> Following maintainer feedback, the simple power and PWM bindings are
-> now defined directly within this file, and their legacy .txt files
-> are removed.
-> 
-> To ensure future patches are bisectable, child nodes whose bindings
-> are in other patches (audio, keypad, usb, etc.) are now defined using
-> a flexible 'additionalProperties: true' pattern. This removes hard
-> dependencies between the MFD and subsystem bindings.
-> 
-> The complete dtbs_check for this binding is clean except for two
-> warnings originating from pre-existing bugs in the OMAP DTS files,
-> for which fixes have already been submitted separately [1][2].
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> 
-> ---
-> Changes in v4:
->   - Reworked binding to be independent and bisectable per maintainer
->     feedback by using 'additionalProperties: true' for child nodes.
->   - Added board-specific compatibles to the 'power' node enum.
->   - Added definitions for 'clocks' and 'clock-names' properties.
->   - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
->     existing Device Tree usage (twl6030.dtsi).
->   - Fixed some spelling/grammar erros in the description.
-> 
-> Changes in v3:
->   - New patch to consolidate simple bindings (power, pwm) and add
->     definitions for all child nodes to fix dtbs_check validation
->     errors found in v2.
-> 
-> Changes in v2:
->   - This patch is split from larger series [3] per maintainer feedback.
->   - Added missing sub-node definitions, resolving dtbs_check errors.
-> 
-> [1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
-> [2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
-> [3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
-> 
-> ---
->  .../devicetree/bindings/mfd/ti,twl.yaml       | 208 +++++++++++++++++-
->  .../devicetree/bindings/mfd/twl4030-power.txt |  48 ----
->  .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
->  .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
->  4 files changed, 206 insertions(+), 84 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
->  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
->  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> index f162ab60c..444e2b2b5 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> @@ -11,9 +11,9 @@ maintainers:
->  
->  description: |
->    The TWLs are Integrated Power Management Chips.
-> -  Some version might contain much more analog function like
-> +  Some versions might contain much more analog functionality like
->    USB transceiver or Audio amplifier.
-> -  These chips are connected to an i2c bus.
-> +  These chips are connected to an I2C bus.
->  
->  allOf:
->    - if:
-> @@ -76,6 +76,107 @@ allOf:
->            properties:
->              compatible:
->                const: ti,twl4030-wdt
-> +
-> +        audio:
-> +          type: object
-> +          properties:
-> +            compatible: true
-
-This should list the compatibles.
-
-> +          additionalProperties: true
-> +
-> +        keypad:
-> +          type: object
-> +          properties:
-> +            compatible: true
-> +          additionalProperties: true
-> +
-> +        pwm:
-> +          type: object
-> +          $ref: /schemas/pwm/pwm.yaml#
-> +          description: PWM1 and PWM2
-> +          properties:
-> +            compatible:
-> +              enum:
-> +                - ti,twl4030-pwm
-> +            '#pwm-cells':
-> +              const: 2
-> +          required:
-> +            - compatible
-> +            - '#pwm-cells'
-> +          additionalProperties: true
-
-This cannot be true.
-
-> +
-> +        pwmled:
-> +          type: object
-> +          $ref: /schemas/pwm/pwm.yaml#
-> +          description: PWMA and PWMB (connected to LEDA & LEDB terminals)
-> +          properties:
-> +            compatible:
-> +              enum:
-> +                - ti,twl4030-pwmled
-> +            '#pwm-cells':
-> +              const: 2
-> +          required:
-> +            - compatible
-> +            - '#pwm-cells'
-> +          additionalProperties: true
-
-Cannot be true.
-
-> +
-> +        twl4030-usb:
-> +          type: object
-> +          properties:
-> +            compatible: true
-
-Missing compatibles.
-
-> +          additionalProperties: true
-> +
-> +        gpio:
-> +          type: object
-> +          properties:
-> +            compatible: true
-> +          additionalProperties: true
-> +
-> +        power:
-> +          type: object
-> +          additionalProperties: false
-> +          description:
-> +            The power management module inside the TWL4030 provides several facilities
-> +            to control the power resources, including power scripts. For now, the
-> +            binding only supports the complete shutdown of the system after poweroff.
-> +          properties:
-> +            compatible:
-> +              description: |
-> +                The compatible string determines the specific power configuration.
-> +                Multiple compatible strings may be used to specify fallback configurations.
-> +                "ti,twl4030-power": Standard power control.
-> +                "ti,twl4030-power-reset": Recommended for OMAP3530 and similar SoCs
-> +                  that require a special configuration for warm reset to work correctly.
-> +                "ti,twl4030-power-idle": Loads the TI-recommended configuration for
-> +                  idle modes into the PMIC.
-> +                "ti,twl4030-power-idle-osc-off": Uses the recommended idle configuration
-> +                  but also shuts down the external oscillator. This may not work on all
-> +                  boards depending on the oscillator wiring.
-> +                Board-specific compatible strings may also be used.
-
-Do not add descriptioons to compatible. You are just duplicating the
-names. Look at other examples if you want to add description to actual
-compatible for some reason.
-
-> +              maxItems: 2
-> +              items:
-> +                enum:
-
-I really do not know what you want to express here. This is not a
-correct syntax.
+On Fri, Aug 22, 2025 at 10:49:57AM -0400, Frank Li wrote:
+>clean up most ls1021a CHECK_DTB warning.
+>
+>Old uboot check esdhc@1560000. The new uboot already switch to check both
+>esdhc@1560000 and mmc@1560000. So we can rename it now.
+>
+>Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>---
+>Changes in v3:
+>- rebase guoshawn/imx/dt tree. Remove patches that were already merged.
+>- Link to v2: https://lore.kernel.org/r/20250820-ls1021a_dts_warning-v2-0-2e39648a32b7@nxp.com
+>
+>Changes in v2:
+>- squash rename to flash patches
+>- remove duplicate patches already post in
+>https://lore.kernel.org/linux-devicetree/20250725061339.266125-1-alexander.stein@ew.tq-group.com/
+>- Link to v1: https://lore.kernel.org/r/20250818-ls1021a_dts_warning-v1-0-7a79b6b4a0e2@nxp.com
+>
+>---
+>Frank Li (4):
+>      ARM: dts: ls1021a: Rename node name nor to flash
+>      ARM: dts: ls1021a: Rename 'mdio-mux-emi1' to 'mdio-mux@54'
+>      ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
+>      ARM: dts: ls1021a-tsn: Remove redundant #address-cells for ethernet-switch@1
+>
 
 
-> +                  - ti,twl4030-power
-> +                  - ti,twl4030-power-reset
-> +                  - ti,twl4030-power-idle
-> +                  - ti,twl4030-power-idle-osc-off
-> +                  - ti,twl4030-power-beagleboard-xm
-
-This wasn't in original binding and I did not see explanation of changes
-in the commit msg.
-
-> +                  - ti,twl4030-power-omap3-evm
-> +                  - ti,twl4030-power-n900
-> +
-> +            ti,system-power-controller:
-> +              type: boolean
-> +              deprecated: true
-> +              description: |
-> +                DEPRECATED. The standard 'system-power-controller' property
-> +                on the parent node should be used instead.
-> +
-> +            ti,use_poweroff:
-> +              type: boolean
-> +              deprecated: true
-> +
-> +          required:
-> +            - compatible
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -115,6 +216,43 @@ allOf:
->            properties:
->              compatible:
->                const: ti,twl6030-gpadc
-> +
-> +        pwm:
-
-Do not define properties in if: block, but in top level.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
