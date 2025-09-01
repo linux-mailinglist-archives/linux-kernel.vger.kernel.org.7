@@ -1,199 +1,137 @@
-Return-Path: <linux-kernel+bounces-794387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A40AB3E0FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD600B3E103
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2645C1A81215
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815941A81845
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504033126CA;
-	Mon,  1 Sep 2025 11:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2456E3128B7;
+	Mon,  1 Sep 2025 11:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhHF+ZPQ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl9J+wxk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D7E3115A6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810DA311963;
+	Mon,  1 Sep 2025 11:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724757; cv=none; b=g6hJJ21AM/TAGS8ZZLtpGVY9Ir7UJRGm1FNo9tirzksy5C4uapBzmELcZ+a0s01FizhwCNkA2zs0DNj34w7SAfQDlbNgBEjhw/2o+b0yMAPMRn3tltDeKp9F3vgilCYJZb1RwWsaibLmJlGMF7zBOVbZxUCqZYcaDvRnQHSuYQI=
+	t=1756724785; cv=none; b=Aa2B+/tQBZcnqM4vC8UCx4FWTe0J5WHMVxkRs5zMsXKgGo7ke2wZoo6Iq+B4iCLy1QYt1YdEckE+7GNfY8AaAKfnrzEtMxfm3bHIRBs9MF3aSGAqWL1NopZyQkO7JRLxPKl2uAtb061OEl2q+sK5yWsqJZYRTwDkMOxfDqF1AKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724757; c=relaxed/simple;
-	bh=p5+1izTU/BboUNRpObEumq/hltcsExWIGEz2Tq4Mlo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fgBtyrU97pXRAk635q4uS/GA/gAqiHy/l/rTibeR4jf29/MMQToE14mWdZxaZOBVhr/lS3+n3Rv1yKbYVW8MOzw3grNEY0Ex8CZPTuLyV6O4BsGKyfPGBKZaNT+I8ABbk2ILzUGTFcloE9ISApBXGnDR6Iq8SwK56d75O4+bACE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhHF+ZPQ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61cfbb21fd1so12848a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756724754; x=1757329554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H2Gn0F3UVjDM2gGMhXQsx0gqpBNXUu+/C4/628F9+6w=;
-        b=zhHF+ZPQQ/cdUNcvWh9wRQxdLj+Q5qvDkcVdB4GsJu8w4TG/Sx7VpadW/u2+VM90kD
-         MWZ7KefcoVJDE66nFlxhSUWnTyKzQ6+8DGPWC0YAb+M7J3SMBjcPUa9fac/4kqFdiRZN
-         bmh8xPNpN356jqTIFE3lvh5rIAIDMSHzPKvvSRz8b1sP/z2gjnf/aYTzUszPpz4eo4Rc
-         Ek7LC+xd7MHhUINzM69dKqVr0ImvVRnaxDNJB100uSTNhQTz98goiqH6BFPo4v+fgMsJ
-         0/sASHjaxJbup7ylconpLxJdRZRsJhpr3kDIQ6pv6z18H/VYgUcwY36BQHszM9smF9JM
-         GKbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756724754; x=1757329554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H2Gn0F3UVjDM2gGMhXQsx0gqpBNXUu+/C4/628F9+6w=;
-        b=Skji54QzXSz85k7S9/gLf2ZTeRj4nU085zBPerph0/ihlQ38iM2jceokO9UQm/01BR
-         VmteI06pRNkx4dpB4gTdUyKEcI67hA8i39FdkU21EnSdPywfvvReMX8tKkvxY2JjmoXq
-         JvbTlkYuEUpODgOjYAG+hpI34PRYzIcAweaNcoGCUWe+Ekwbk2Y5M516XErwvJciwxM1
-         C38aqB2nSmlPzTK3n6TwHe9PL10gMaxnHZPkzTK6fYgYPhWdWy6KWHXWPSAqm9JPN2hA
-         4g8U0tTah1tfw06WbOU4/WgI2GwhHdqkzx8tldldueWpt8m0PUg4tXxDzDAWHaGjNmC3
-         YMnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmx8DBr4a/uAEIiMOL8ceT7Z4F3Gq9folKJcaKm6HznouTiG7wllplbkJSk/B4Gus+lA6CAffiMMz5Pw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykjZ6SIV4roWIWcHToF6Fu6HGQLlJuBf1LXFI3aQFVE99kZvqL
-	jh5PuJqKLxofE4md5ka/OfGDBckPHB7e00GMR+4sVDPbfnwbdcDRzoSLrEcF9Z7cPbY7Yi6jwRi
-	jwSZVEdh9tQG3t/bxUlLC8XFCYm3lzWD1X8Hl+iq9
-X-Gm-Gg: ASbGncvW/V1gOUIE6038oRloDevrfhIQbYfwLaPhhD1F4gSeDJObDjhWuvjwmDLy/jk
-	aDuB3mQskrUiTTgEm+2/XE8VMsUNqMpc7PI8LAQp6Q16LK3gVjaRaWPgoiG/g3czM/HaqzJu/7Z
-	GGRfwZX39+jsPTtJeJafUkuD1HkoY3pirZv7YLDW5mxTcCNRL0AMpm1zPy1T8PQZ12ARquTMJiJ
-	zt1KA81Qj1A7R4+ohHDQVy5jGiKa5FBdiWPtSQZUw==
-X-Google-Smtp-Source: AGHT+IEX9I7U3nv8ZNRMUsZz4F6PIX/KTn5ofQX/L8rVN2zWLtQUH9G0KmEck4019L1pfWH3sn8LvwP06awvWqA6Rb8=
-X-Received: by 2002:a05:6402:14ca:b0:61e:a896:de87 with SMTP id
- 4fb4d7f45d1cf-61ea896df66mr30742a12.2.1756724753434; Mon, 01 Sep 2025
- 04:05:53 -0700 (PDT)
+	s=arc-20240116; t=1756724785; c=relaxed/simple;
+	bh=BLKwIniZaRvZZv+sqfSQfIekcdvuVVsnll7sWAynepU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eJNKqR7PPypWeRsVk7TFH8NfDeaAaqmWoqOiPL+SiHdJKXTJaiwJl2bkPQGcwPzqBfSXeuRgTFILomTzTnfxLKnxPESlW02fK2eFS1i+lv7tFS5j/dzF6GrfNUVC+m0l/2sCqxC8JWPgITYMcJjX4gzTHz4KvD2mfBlcJwlT7Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl9J+wxk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E0CC4CEF0;
+	Mon,  1 Sep 2025 11:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756724785;
+	bh=BLKwIniZaRvZZv+sqfSQfIekcdvuVVsnll7sWAynepU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yl9J+wxkNvzhr4pStX6mk8mohCv/DsVXKf2ZTclhPx46O7qw00o1XY4dUZO/BVnD5
+	 WiiqQvNPcBOv0CJ8Ec1qcnqArCRXALjRnoA4yFoYMZk5Fa87RWM8ANkcPZVsdIzAe1
+	 df9YzIgl5mD97fm4MzUTpDp5ae70dIXsF2sx7QjisTb59KMpWAN2B5vtLqodQ8ELFl
+	 3BAVMIG2rYzLvIL1avpZNOnkdJKnWhfP8v70AAGk0xl77PffAYT4E19+QBkWIJdZhZ
+	 xE9CLN9/rZRybAhWJuivVVyAIN9UE/iAQLvoGJMOlixQ29uE8clvZtTD2nGASS5HDs
+	 V08z73e7KofyQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1ut2Mg-00000002Dh6-35F5;
+	Mon, 01 Sep 2025 11:06:22 +0000
+Date: Mon, 01 Sep 2025 12:06:22 +0100
+Message-ID: <864itme8k1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: nv: Allow shadow stage 2 read fault
+In-Reply-To: <djypsyratk63ovzv3flzb2tmunqtcoryzserwhsaaq5nuogsrx@u3uuwynnafbj>
+References: <20250822031853.2007437-1-r09922117@csie.ntu.edu.tw>
+	<87a53rk83s.wl-maz@kernel.org>
+	<djypsyratk63ovzv3flzb2tmunqtcoryzserwhsaaq5nuogsrx@u3uuwynnafbj>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net> <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
- <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com> <aLDDk4x7QBKxLmoi@mail.hallyn.com>
-In-Reply-To: <aLDDk4x7QBKxLmoi@mail.hallyn.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 1 Sep 2025 13:05:16 +0200
-X-Gm-Features: Ac12FXz5pCbJNirecqxwiyEggxW7kJ9K_j8hu8U2LuwZM19I7qdULHA6wz1yLJg
-Message-ID: <CAG48ez0p1B9nmG3ZyNRywaSYTtEULSpbxueia912nVpg2Q7WYA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: r09922117@csie.ntu.edu.tw, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Aug 28, 2025 at 11:01=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com>=
- wrote:
-> On Wed, Aug 27, 2025 at 05:32:02PM -0700, Andy Lutomirski wrote:
-> > On Wed, Aug 27, 2025 at 5:14=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com=
-> wrote:
-> > >
-> > > On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
-> > > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
-> > > > > Nothing has changed in that regard and I'm not interested in stuf=
-fing
-> > > > > the VFS APIs full of special-purpose behavior to work around the =
-fact
-> > > > > that this is work that needs to be done in userspace. Change the =
-apps,
-> > > > > stop pushing more and more cruft into the VFS that has no busines=
-s
-> > > > > there.
-> > > >
-> > > > It would be interesting to know how to patch user space to get the =
-same
-> > > > guarantees...  Do you think I would propose a kernel patch otherwis=
-e?
-> > >
-> > > You could mmap the script file with MAP_PRIVATE. This is the *actual*
-> > > protection the kernel uses against overwriting binaries (yes, ETXTBSY=
- is
-> > > nice but IIRC there are ways to get around it anyway).
+On Tue, 26 Aug 2025 14:49:27 +0100,
+Wei-Lin Chang <r09922117@csie.ntu.edu.tw> wrote:
+> 
+> Hi Marc,
+> 
+> On Fri, Aug 22, 2025 at 10:40:07AM +0100, Marc Zyngier wrote:
 > >
-> > Wait, really?  MAP_PRIVATE prevents writes to the mapping from
-> > affecting the file, but I don't think that writes to the file will
-> > break the MAP_PRIVATE CoW if it's not already broken.
-> >
-> > IPython says:
-> >
-> > In [1]: import mmap, tempfile
-> >
-> > In [2]: f =3D tempfile.TemporaryFile()
-> >
-> > In [3]: f.write(b'initial contents')
-> > Out[3]: 16
-> >
-> > In [4]: f.flush()
-> >
-> > In [5]: map =3D mmap.mmap(f.fileno(), f.tell(), flags=3Dmmap.MAP_PRIVAT=
-E,
-> > prot=3Dmmap.PROT_READ)
-> >
-> > In [6]: map[:]
-> > Out[6]: b'initial contents'
-> >
-> > In [7]: f.seek(0)
-> > Out[7]: 0
-> >
-> > In [8]: f.write(b'changed')
-> > Out[8]: 7
-> >
-> > In [9]: f.flush()
-> >
-> > In [10]: map[:]
-> > Out[10]: b'changed contents'
->
-> That was surprising to me, however, if I split the reader
-> and writer into different processes, so
+> > This would imply taking the guest's S2 permission at face value, and
+> > only drop W permission when the memslot is RO -- you'd then need to
+> > keep track of the original W bit somewhere. And that's where things
+> > become much harder, because KVM can decide to remap arbitrary ranges
+> > of IPA space as RO, which implies we should track the W bit at all
+> > times, most likely as one of the SW bits in the PTE.
+> 
+> But sorry, I struggle to understand this paragraph after reading it many
+> times, probably my experience with the code isn't enough for me to make
+> the connection. Why are we talking about the W bit suddenly?
+> If you don't mind, can you reword what's discussed here?
+> I only very vaguely get that there will be 2 W bits, one from what L1 set,
+> and one from the L0 memslot, if I didn't completely miss the point..
 
-Testing this in python is a terrible idea because it obfuscates the
-actual syscalls from you.
+Sorry, I quickly drifted into something related.
 
-> P1:
-> f =3D open("/tmp/3", "w")
-> f.write('initial contents')
-> f.flush()
->
-> P2:
-> import mmap
-> f =3D open("/tmp/3", "r")
-> map =3D mmap.mmap(f.fileno(), f.tell(), flags=3Dmmap.MAP_PRIVATE, prot=3D=
-mmap.PROT_READ)
->
-> Back to P1:
-> f.seek(0)
-> f.write('changed')
->
-> Back to P2:
-> map[:]
->
-> Then P2 gives me:
->
-> b'initial contents'
+My take on this category of problems is that we're better off always
+using the permissions that the guest gives us. This is the scheme that
+we have adopted with VNCR. It means we wouldn't have to rewalk the
+guest S2 on permission fault, since we'd be guaranteed to have the
+latest update.
 
-Because when you executed `f.write('changed')`, Python internally
-buffered the write. "changed" is never actually written into the file
-in your example. If you add a `f.flush()` in P1 after this, running
-`map[:]` in P2 again will show you the new data.
+However, S2 management implies that a S2 mapping can be made read-only
+at any point (dirty log, for example). Which means that on a
+permission fault, you'd need to find out whether the page is R/O
+because the guest said so, or because the host decided to make it so.
+
+Which means that somehow you need to work out why you have taken a
+permission fault. You can either
+
+- rewalk the guest S2 as if you missed in the TLB
+- or keep a copy of the W bit in the shadow SW
+
+> > We'll need exactly that if we ever want to implement the
+> > Hardware-managed Dirty Bit, but I have the feeling we need an actual
+> > design for this, and not a quick hack. Your approach is therefore the
+> > correct one for the time being.
+
+And that's why I brought this up: to support HD in the guest S2, we
+need to mark the full shadow S2 as R/O, and update the guest S2 on the
+back of that fault.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
