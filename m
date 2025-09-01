@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-794910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F3AB3EA99
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:33:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3193B3EB68
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBA71B24CE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7FB484C9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D996B32A836;
-	Mon,  1 Sep 2025 15:13:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A9A32A82C;
-	Mon,  1 Sep 2025 15:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A388D2D5950;
+	Mon,  1 Sep 2025 15:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="YXrUhYHR"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4152D593E;
+	Mon,  1 Sep 2025 15:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739614; cv=none; b=DVXmC+nkbqQTwVru9a1KaVLXYVvBHQP4jf0QmjopoxQBfdpSJx4fp117GYPQ1Fozg37DtgbqbcWjBHIL5NkdlNtzGQ7R95TNUtK0wyL3raEEvjJQxGV9HUPSvUYIAOlT1kLHmoHINTtD8GQ3YFusd5weiQA1cM+mt6zoYmtvqpw=
+	t=1756741442; cv=none; b=IdFGgM+OlNaIQG4TAsw6vjdUM0ePUXB5xfJW7jQvy+aNpWJy52nfyW/FL7mJ/frgQSC/dECpO1EOQVhaLhPCKXys0gX0OqjrFCV2pA8XXk/UMeR4kJGPH15LBeqmSW0sq62Vq1871QT4eTuFFxhsarLjO6RgSR3EjMQV+DU+5kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739614; c=relaxed/simple;
-	bh=T/RAEzoBRkli0OidqH8/F4ZUiWPJufg9WZ3CV/HQrVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FmF1F2Fu9XDZldIkKdrBlZh+ydYzdI3y5ABkm6uw6uvoius3Hdl9W7cVsByFyoGOKBDbI76XUjIRBjs/nW8jZl6SKZe1jP7JsvBuFDJhmydAyxI9rATylPuFLUa+dhrk93WKOuekMCN+eNNNuCPUMFgCI15VB8BV2QcWHo/X/1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26719175A;
-	Mon,  1 Sep 2025 08:13:24 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 847B83F6A8;
-	Mon,  1 Sep 2025 08:13:28 -0700 (PDT)
-Date: Mon, 1 Sep 2025 16:13:25 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	maz@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 4/5] arm64: initialise SCTLR2_EL1 at cpu_soft_restart()
-Message-ID: <aLW4FTcqommWSIej@e133380.arm.com>
-References: <20250821172408.2101870-1-yeoreum.yun@arm.com>
- <20250821172408.2101870-5-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1756741442; c=relaxed/simple;
+	bh=LXIBSIO6pDV8V3QkWU7mtWXQrCEg3CtRlBkkoG63Jt0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JHpByGX4xe/A+IGNNLnkTqi6aBHWj7iHiOHIJ/9Oq8zq9edGQ5n6g4eX2C9RJEY5Kmoh3XbkJ1+pz6YvyczlwLlBkFKapkkwmu9fY5triEfPxkW++pjRzcg7EueAfe6ol2uL/xegpYaevc/E1bHJyPGnnTr0iM7h7Nbmo6xr8l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=YXrUhYHR; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=FQJhfrqZwWX8BoGnnRMx78+JY5x+yi7uSulwN+BYSvg=; b=YXrUhYHRaQOpycNyZ4QcKwVhwz
+	EPcVBdbtmUsdFPyu/8qCCcsd9A6bFkyVZERMOacLysQo6VbHG0AfjHezVzUbb5PXqRMGcDg4qB0JO
+	ZBmSvEkxWnChbsQ6abe9m51Bz89akqaLPZwll5Q8rEueFWtDbhqV+uz1En+Y92tK9KnI=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:61156 helo=[127.0.1.1])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1ut6E2-009YyN-Ca; Mon, 01 Sep 2025 17:13:42 +0200
+From: Matthias Fend <matthias.fend@emfend.at>
+Subject: [PATCH 0/3] media: allegro: fixes and improvements
+Date: Mon, 01 Sep 2025 17:13:35 +0200
+Message-Id: <20250901-allegro-dvt-fixes-v1-0-4e4d493836ef@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821172408.2101870-5-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB+4tWgC/x3LQQqAIBBA0avErBswpcKuEi0kRxsQC40IxLsnL
+ R+fXyBTYsqwdAUSPZz5jA1D38F+mOgJ2TaDFHIUWgxoQiCfTrTPjY5fyqiVdHLXs5gUQfuuRH9
+ o27rV+gE5x2K9YwAAAA==
+X-Change-ID: 20250901-allegro-dvt-fixes-932f2c97063e
+To: Michael Tretter <m.tretter@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Matthias Fend <matthias.fend@emfend.at>
+X-Mailer: b4 0.14.2
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-Hi,
+Several fixes and improvements for the Allegro DVT video IP encoder.
+These relate to race conditions that occur when multiple streams are used
+simultaneously.
+The problems could be reproduced on a ZCU-104 eval board with VCU firmware
+version 2019.2 on various kernel versions (6.4, 6.12 and 6.16).
+It is highly likely that these problems can also occur with other firmware
+versions.
 
-On Thu, Aug 21, 2025 at 06:24:07PM +0100, Yeoreum Yun wrote:
-> Explicitly initialize the SCTLR2_ELx register before launching
-> a new kernel via kexec() to avoid leaving SCTLR2_ELx with an
-> arbitrary value when the new kernel runs.
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/kernel/cpu-reset.S      | 4 ++++
->  arch/arm64/kvm/hyp/nvhe/hyp-init.S | 3 +++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu-reset.S b/arch/arm64/kernel/cpu-reset.S
-> index c87445dde674..c8888891dc8d 100644
-> --- a/arch/arm64/kernel/cpu-reset.S
-> +++ b/arch/arm64/kernel/cpu-reset.S
-> @@ -37,6 +37,10 @@ SYM_TYPED_FUNC_START(cpu_soft_restart)
->  	 * regime if HCR_EL2.E2H == 1
->  	 */
->  	msr	sctlr_el1, x12
-> +
-> +	mov_q	x12, INIT_SCTLR2_EL1
-> +	set_sctlr2_elx	1, x12, x8
-> +
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+---
+Matthias Fend (3):
+      media: allegro: print warning if channel creation timeout occurs
+      media: allegro: process all pending status mbox messages
+      media: allegro: fix race conditions in channel handling
 
-Nit: does it matter whether we reset SCTLR2 before SCTLR?
+ drivers/media/platform/allegro-dvt/allegro-core.c | 114 +++++++++++++++++-----
+ 1 file changed, 91 insertions(+), 23 deletions(-)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250901-allegro-dvt-fixes-932f2c97063e
 
-I can't find a convincing architectural reason why they need to be
-reset in a particular order, but it looks a bit strange that the
-cpu_soft_restart and __kvm_handle_stub_hvc versions of this reset the
-registers in the opposite order...
+Best regards,
+-- 
+Matthias Fend <matthias.fend@emfend.at>
 
->  	isb
->  
->  	cbz	x0, 1f				// el2_switch?
-> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-init.S b/arch/arm64/kvm/hyp/nvhe/hyp-init.S
-> index aada42522e7b..cc569656fe35 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/hyp-init.S
-> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-init.S
-> @@ -255,6 +255,9 @@ SYM_CODE_START(__kvm_handle_stub_hvc)
->  	mov	x0, xzr
->  reset:
->  	/* Reset kvm back to the hyp stub. */
-> +	mov_q 	x5, INIT_SCTLR2_EL2
-> +	set_sctlr2_elx	2, x5, x4
-> +
->  	mov_q	x5, INIT_SCTLR_EL2_MMU_OFF
->  	pre_disable_mmu_workaround
->  	msr	sctlr_el2, x5
-
-Otherwise, I guess this is fine.
-
-Cheers
----Dave
 
