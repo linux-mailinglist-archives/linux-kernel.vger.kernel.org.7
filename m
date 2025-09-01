@@ -1,232 +1,124 @@
-Return-Path: <linux-kernel+bounces-795310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6BBB3EFBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 671F5B3EFBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DE01B21140
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C6DB1890CE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241FF269B1C;
-	Mon,  1 Sep 2025 20:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E84926A1B5;
+	Mon,  1 Sep 2025 20:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I0OuUyub";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykD4WBi+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I0OuUyub";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykD4WBi+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QjGAh4L0"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6952264C7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175131F03F3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756758877; cv=none; b=EWxhTPNQvcwsBb3wzA0b+ap/7dgqcgPZTk+7e9AJVB+Xjf4w3FhX8bUd5BNA6GGntwWxrH+0s5zB89xMvuwlq7c8bSs4I+f/X8njEym5U3sab3XR+qyAeDed7jbC1ygAfHyWUFVy0VID6//p0Z69RjgxBKsn7txThh68vZRkRQ4=
+	t=1756758942; cv=none; b=csbTRwHgNon32CQ7GEmRAhRxl4Ie/DiTtYKniuognVb6RKnrVE7lZd5VhLfxm2riZ76/NTOh7caDR8Oa2U5J4SvD2OgFafdmCp6VyygYPQhIbE8Ssqdo6qwCGzZ9t5lwJAXkqykux4gNxog3Rdu3W7pjR2TqNNrHLxqfyHohnCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756758877; c=relaxed/simple;
-	bh=2WM9a8ZjPJzfzthk46LH4Xb1yua1pn4/uW+KV74kfXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ru9gZ3JcXBx8m1EFpT5tMkmzsM9gWJd1lLNM5OvnSXeWQzCIo+X3HoAn+ePDfEhZ5P7L+ZSc3Nu+NgxdkvYQKEzx6qLfS12mX1ELbUL/Hi9rT/roQtFvaJe2O5UtsJditFH7bKdNZAgClRQiddVhTNvAEg1iXocIn3YaJ5YUrJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I0OuUyub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykD4WBi+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I0OuUyub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykD4WBi+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 701211F397;
-	Mon,  1 Sep 2025 20:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756758873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
-	b=I0OuUyubcdYkMHYcJ5Rdj7qiyuZauJOpXotZ1c5cGyKMYqSx/4xOfnRL/BkfHrIjDi15GD
-	/jafyJ3ygWmOOJ8+Td7q8rIJZrWvyrMQkPUr+cN63eQih1RL5aDPJkesQQYAOm2vrjMoFE
-	sH+zJ2ercuv6HviXS7KiX4o6wLcDx1w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756758873;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
-	b=ykD4WBi+G4faz+l8DrI8zBYZmWh1/bNb+yTYqT8vliGLHnTawoTJ1rp1TcwaQee+CF2GWl
-	7RRiZQpEhcMtmyCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=I0OuUyub;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ykD4WBi+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756758873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
-	b=I0OuUyubcdYkMHYcJ5Rdj7qiyuZauJOpXotZ1c5cGyKMYqSx/4xOfnRL/BkfHrIjDi15GD
-	/jafyJ3ygWmOOJ8+Td7q8rIJZrWvyrMQkPUr+cN63eQih1RL5aDPJkesQQYAOm2vrjMoFE
-	sH+zJ2ercuv6HviXS7KiX4o6wLcDx1w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756758873;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
-	b=ykD4WBi+G4faz+l8DrI8zBYZmWh1/bNb+yTYqT8vliGLHnTawoTJ1rp1TcwaQee+CF2GWl
-	7RRiZQpEhcMtmyCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1320D136ED;
-	Mon,  1 Sep 2025 20:34:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6xsTA1kDtmhlOQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 20:34:33 +0000
-Message-ID: <63a6962f-6ffb-47cd-806d-ec568f0b2df7@suse.cz>
-Date: Mon, 1 Sep 2025 22:34:32 +0200
+	s=arc-20240116; t=1756758942; c=relaxed/simple;
+	bh=TuJvWNPuFb8lhmmXMF8/eGqneXv2KRW8zNWdF6sbSgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BwjiGKL9nKRCQGix3A1qDMGhBLpeNCVlYcPDkInNEVXpKqgFuRcMrVMVAKEEQgCgOzdyetAxYq5MEOqeIgmHTjFBFrir7NoBHGI4cFZJwSbc41bjuz/jqHjPVH9kXnJwKXReadeBWxpaYZNDaSaSLvAMa8IPqVWRLRm2JGT5qlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QjGAh4L0; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3d0dd9c9229so2484480f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 13:35:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756758939; x=1757363739; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1eRTCsMTXICAfQlpSFpTCIMhVcisOybnqf4kz8sPero=;
+        b=QjGAh4L013iDZeVgKz7k0mo6pdnGLR1Hylp92qleYkjXuhFrFIVR3kTKwqegruXgsP
+         JznVT3zZX9+QC1U50NVdjx/zUOv+CBOTUNIu0JKvjFxqs6XHhCNFhNPcKziTZzqcnFeA
+         D2FGLPXOIC9o2dhrRzonRyVHmxErbxQat2xPFra/9FUxmRPfTc5ZRVfuOzerYs4K+fkT
+         +QuRn4knZ7x3SvV/meb9zkJCvFLm9ZbsYlkOpuMnUVGrmBtIMKEzngp4F1NJSERHb5H6
+         aPP4R30pfHt4gg5MsTEgwi4DmtM11Wz+0pOt467N1quvLIqJDcjjImcn4zAQET3nTax/
+         pvsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756758939; x=1757363739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1eRTCsMTXICAfQlpSFpTCIMhVcisOybnqf4kz8sPero=;
+        b=GD/qcLVahL5B0ii977QH+V03ED2Ao5/q/Epax8VJKTZm6tEZUXXxcG/iShZXYhC1+6
+         cMih4sXaYcgbM/R7IQ7BhpbPNasZB4m6qx8DQ7I1H4on0uz162N0ImzKIaZVfc4DsTGf
+         Xwc+qexhQn81NkSMqonuCZlYESjfqhQMXkexj6H1f9CYlbyfb7bY6lUiWErrtx0cG7WA
+         1O91padD3A/puhH83QrkE3Qnso3XkfrRTrnPjFOsJgyn9UEEG2jKZIDF2bhy8iXhijKc
+         QZDdgbe8LoxLNZjNViQIY/r9/KqFJumDWlbWvg4eqepYSI9UpdEciIB51QUcMmdiU4iV
+         KMLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCMzRB2a73NzC4/zh1pvgIP6KR6b6wgg3+DX+XusS+0wEzDPo6DH0ms1eWsubPNX/TDqNZ/f3xis31JPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUd/kxZRogmW0UwtANAVHOjyc9CLTbpOodbH0NyY3H+5LD6kaB
+	a1zl7gRiQF77U2rk6Bgm5GUD3E6NprLADfFqxyac458Wn2DgFIBU4QqX5AiP80vDJ6k=
+X-Gm-Gg: ASbGncvgu5YGw5zNbtfT/1z7o63GZzgJagGQ6dOu5huV0ywRdYtkZP7WoQIAgBJmtCp
+	SjrRz55jyjaVRGVR+vbOGF08ouHJ7Nf681cjH6y/qctS/trUtPJoPhWeo2TpsVFsw38ljDUdfLN
+	TJIdh+NhrhktDoGtDSpw+LkSp9yL5g7bhhGZYDOu4jeHuJFL86yD9qn7pckRlCG2noxpJGiXMLA
+	TTbmjTAr6pPfAb4KWGTJAf5BHftLRsl3rnhN83P3Z+eKmzdQk1x3c2ip8jZjMCzqkU7Ji0ON8wL
+	KEs9u5+M/UbFIylINUKjL0a3XiPXuxU8yrOLPLtE2rZYaYx9kbyeenVemGNFbFR/h0QBOvQTwIa
+	z9fLQBavixb1kzHyATIsVPp53U2DClOqnrsSogQ==
+X-Google-Smtp-Source: AGHT+IGfts6LL/oOVZ6w177Mz5mBwqX4/XJO+R28DlBKpdEu9bUq+cutbj9eTfqXRRa/A5cAGRZhgA==
+X-Received: by 2002:a05:6000:402c:b0:3ce:e5fc:620c with SMTP id ffacd0b85a97d-3d1dfc06df7mr6497919f8f.30.1756758939287;
+        Mon, 01 Sep 2025 13:35:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f0c6dc1sm251756355e9.1.2025.09.01.13.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 13:35:38 -0700 (PDT)
+Date: Mon, 1 Sep 2025 23:35:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	NXP S32 Linux Team <s32@nxp.com>, linaro-s32@linaro.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH V2 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
+Message-ID: <aLYDl1lyL1jLMw8c@stanley.mountain>
+References: <cover.1756219848.git.dan.carpenter@linaro.org>
+ <dce51c4706ca4961a2ade23756aab750803b12ec.1756219848.git.dan.carpenter@linaro.org>
+ <aK8zg3sA4csHwAHU@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: memory-tiering: fix PGPROMOTE_CANDIDATE counting
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>,
- Ruan Shiyang <ruansy.fnst@fujitsu.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- ying.huang@linux.alibaba.com, y-goto@fujitsu.com, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
- vschneid@redhat.com, Li Zhijian <lizhijian@fujitsu.com>,
- Ben Segall <bsegall@google.com>, stable@vger.kernel.org
-References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
- <20250901090122.124262-1-ruansy.fnst@fujitsu.com>
- <20250901125917.e9792e5d0df12ba1c552c537@linux-foundation.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250901125917.e9792e5d0df12ba1c552c537@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 701211F397
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK8zg3sA4csHwAHU@lizhi-Precision-Tower-5810>
 
-On 9/1/25 21:59, Andrew Morton wrote:
-> On Mon,  1 Sep 2025 17:01:22 +0800 Ruan Shiyang <ruansy.fnst@fujitsu.com> wrote:
+On Wed, Aug 27, 2025 at 12:34:11PM -0400, Frank Li wrote:
+> > +static int s32g_ocotp_read(void *context, unsigned int offset,
+> > +			    void *val, size_t bytes)
+> > +{
+> > +	struct s32g_ocotp_priv *s32g_data = context;
+> > +	u32 *dst = val;
+> > +
+> > +	while (bytes >= sizeof(u32)) {
+> > +		*dst++ = ioread32(s32g_data->base + offset);
+> > +
+> > +		bytes -= sizeof(u32);
+> > +		offset += sizeof(u32);
+> > +	}
 > 
->> Goto-san reported confusing pgpromote statistics where the
->> pgpromote_success count significantly exceeded pgpromote_candidate.
->> 
->> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
->>  # Enable demotion only
->>  echo 1 > /sys/kernel/mm/numa/demotion_enabled
->>  numactl -m 0-1 memhog -r200 3500M >/dev/null &
->>  pid=$!
->>  sleep 2
->>  numactl memhog -r100 2500M >/dev/null &
->>  sleep 10
->>  kill -9 $pid # terminate the 1st memhog
->>  # Enable promotion
->>  echo 2 > /proc/sys/kernel/numa_balancing
->> 
->> After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
->> $ grep -e pgpromote /proc/vmstat
->> pgpromote_success 2579
->> pgpromote_candidate 0
->> 
->> In this scenario, after terminating the first memhog, the conditions for
->> pgdat_free_space_enough() are quickly met, and triggers promotion.
->> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
->> not in PGPROMOTE_CANDIDATE.
->> 
->> To solve these confusing statistics, introduce PGPROMOTE_CANDIDATE_NRL to
->> count the missed promotion pages.  And also, not counting these pages into
->> PGPROMOTE_CANDIDATE is to avoid changing the existing algorithm or
->> performance of the promotion rate limit.
->> 
->> ...
->>
+> readsw() ?
 > 
-> It would be good to have a Fixes: here, to tell people how far back to
-> backport it.
-> 
-> Could be either c6833e10008f or c959924b0dc5 afaict.  I'll go with
-> c6833e10008f, OK?
 
-LGTM as a helpful pointer, but I don't think Cc: stable is necessary for
-"admin might be confused" kind of thing if that's there since 6.1 and only
-came up now.
+Hi Frank,
+
+I've learned a lot from your reviews.  Thanks.  :)  It would be readsl()
+since it's a u32.  But readsl() doesn't increment the offset, it just
+reads from the same memory address over and over.
+
+I've made all the other changes.
+
+regards,
+dan carpenter
+
 
