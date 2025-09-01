@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-793890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80510B3D9C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:20:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDB7B3D9C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B32617A00A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 363831899A78
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2255E246770;
-	Mon,  1 Sep 2025 06:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCEA252917;
+	Mon,  1 Sep 2025 06:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPOR8vdC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0xuSYst"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3F518EB0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 06:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7903426281;
+	Mon,  1 Sep 2025 06:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756707624; cv=none; b=UKfVH7pJ/DV3coq7yuTnpEkKsCrgJRgID5SU5TYSaptmnWn069Yo++pEzAz/ifJO3bzRxc2MNKtxQpJ5uVa2SoX5ofLC+XUHZGlVKFb67Ty+Gm6LcjhaueaBLUJJIjuUW9I1D9woF40pvuirWBRECky+nGl7DA+3OlQwYa8ohoE=
+	t=1756707670; cv=none; b=WAt+dv3B3lyKHyAbDPjVUW+3pcCbNOowECYni8dwIz/twrS7h79HdBBtbfGmts5bQMCkUvELH4bPAhQWzy4go1/UY4Di6h9+dMqgZIw20BFB2ofs4MvhzabTcRDGjecYgWN4/1XKAEJj3xGMU8wrZZYa7zmARzxljjqgUaYnL0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756707624; c=relaxed/simple;
-	bh=+Ueec6t83OWJF3k7tHZt6/fcZU8oeWGgL0qu2zp6ws4=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=FN/0VAyX5XZV8ahClDT/7dbA9sYszyKBEo7dvO6vDhCTTsYT9yDj+dp+hnsc43bcNWJQfJfKSxSWvfQSitJj1nz0bbVRN6mQjixSsEZsKC9AHPqJFuJJU54NESTeYeVPF0/0xTDFDITdNSKj49vBBxX5HJk25bP2Ah9TaMmyccQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPOR8vdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0CBC4CEF0;
-	Mon,  1 Sep 2025 06:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756707624;
-	bh=+Ueec6t83OWJF3k7tHZt6/fcZU8oeWGgL0qu2zp6ws4=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=DPOR8vdCFImIed5vqRWeN8lwJCnyEw+WEzf3y685ZXhP5eSidPaoB5GIHrC0atCkz
-	 4+gKU3s1AtJE/SCRr8eSwJwDJHU+qnWqJilr7AjWYPlEgTg7XUtZMKGK1bnU2eg5Xx
-	 JhfTWYmop5673CK3f8qhwcjkjUXWne898FNfyuFimj/RgzRbb9tDklgPywblx8E3UT
-	 nIxeYW/q6QTkxsA4mVh17SVrwisw96y9XX13gOTyjcp1sEPQVnOMCKJvzHqtn5uxJq
-	 e0lSsIX7nSgTRQ2hpnXboMkDSEUpjfUVauFSUnmoReXjw3RwNSUP8v7m3OGFYQt4wu
-	 NsEsRpz/H8Bmw==
-Content-Type: multipart/signed;
- boundary=682104e96c29f8012d4fb844ebf0d9c883ce3dc154d455a174da7b9dfef1;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 01 Sep 2025 08:20:19 +0200
-Message-Id: <DCH8VNHTN1LM.3068OZU8IMK3Q@kernel.org>
-Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: fix REFCLK setting
-Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Devarsh
- Thakkar" <devarsht@ti.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Doug Anderson" <dianders@chromium.org>
-X-Mailer: aerc 0.16.0
-References: <20250821122341.1257286-1-mwalle@kernel.org>
- <CAD=FV=Xt-DPHRddZM=t-KTWiGouNfm_QpPps3MA6csd+j=YO+A@mail.gmail.com>
- <CAD=FV=XCOPeEgpjvCuDjT=OjEk1P8vszL6iJqkY-DcpXtpXTjA@mail.gmail.com>
-In-Reply-To: <CAD=FV=XCOPeEgpjvCuDjT=OjEk1P8vszL6iJqkY-DcpXtpXTjA@mail.gmail.com>
+	s=arc-20240116; t=1756707670; c=relaxed/simple;
+	bh=jEIt+3X+NGZuxr9lCHefPQ1whPLGQgrV83ljVA6Wt6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CWpKQ/67dTtCmkjui4uTCWAT37JE9QjLm3N1o9Xrj6oV/nGzlT06awyKkOjaeAUgT+XZv9U9BwhunNb2ia53AwO5q1RXijj/GghQWjQCFDaXiyMBAWAtBbu0ZmlYFiv45BA8GJ4hDOsT7E/yZPISu2XZLBVaWdq2j8T5MrDgv88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0xuSYst; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-248cb0b37dfso36514105ad.3;
+        Sun, 31 Aug 2025 23:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756707669; x=1757312469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QM0VzPvZOoadSqld8QAB06APoe2QVLiP88e6xJF3DNg=;
+        b=T0xuSYstdI80rU0YnJ9hOfd95hSAenLjDIdVF2GbYAQAcfhoJwGfEymk6n5mSrRVej
+         lNZhRVtXLvrVLMZ3fDqaXWraqq5v6UFHp0IARqUwE4m7kNxOPVVE6GSMoWGFNlfTO2gA
+         mc/GN09EUgnGh4Tq/qmiwkJOyoPoIRhd0qiFjR/R6RHAdmkdzJKeTGB4ZmPAQG1BgH+2
+         zNJsCoj6KvJ/dfVzZTqEORbmiVHqlJ/a9UW0tvGCwBndYc1IWgYzcSRpew0UD86C1BfC
+         Wah/JGH59Vd4FB++7WEsJMLjCrzuFkRDE/9QhNHpawdhv//Sml+LrlTCLElWBN/ctWq1
+         K0Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756707669; x=1757312469;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QM0VzPvZOoadSqld8QAB06APoe2QVLiP88e6xJF3DNg=;
+        b=omDEuZOJYOtz9d4iZu0/uokRWU514a+9N33KipodqPrLiAfmH0gSj9VOxnxDH6aVYf
+         1JicnvtjK/yfNAm3vhNZvGPT/tQUlV2pxLJgajU9zxGFXxEVs2kGia7rn63U9pTmTtZ2
+         uDeH90EqKEZHrwz2/YvQwQIEQ5DHDjVO/4hogx19AncYkkk27+CVexgg82hp9ji0lp6e
+         rEZfz/hW9AdWX50mhJ9VcoB6btQGe9u+lfuXNfswo+EJWQwvrORSJImoODjx1JonexaE
+         mrzsyMrr0cW8KGjAnOcMfLLakq/T18Igv7GBo9IFZIqkEJLWdxNHFXZ6R+TRy39pKomz
+         ycGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBkTLcePa9Jc0IteyN0E/DcqevCzdhtPpCgh7EbesPcxEnfRYjQUkyMX622bThaCcUGLrzNyk2RZYGg77b@vger.kernel.org, AJvYcCXJXa6xGXFZ19WwtKn04cTp11swMjq5L5xq8x5ElyTmzMMp9DXsWT0pM91w6mIH+gaSdqhmmRkhUj+/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPW4IEzuvq91o1VSOusx4ip98I4rmVJMkAjq0a5gv3iYKTf7cj
+	3qqIaHZBofs5WERuqUnwrVosfYWDDhOrndjkDvxBhzg0LRUe7Lgmiifs
+X-Gm-Gg: ASbGnctAfOr2eDd/Zce1wKfjWw5UBUTmZ4bGlukItbGwv+JgYl/msdQt7tgy1llfq9q
+	Ycl0BOAzfEq3J5OnZzF/uvcV6c+r1BlUwlY0C2yOZygurxp8efZAnVAx99zI0fj0qgDjpk+OOsX
+	Fy3LavErtYem5OTiPw33avDCea7/wtlrc6+I3rdmcvX5my3bP62EghUhDe9hgAvYYITk22m/FSh
+	N3HGAsT+uGKFal30KqEKP5mJhybIpwBl7D4W2pr84oL9acRco6IThdBp6ckqHJfYbfGd4pnKRQT
+	sCjhZUTcGcj9Ytmu6iwpX8aX0rVO4KTAaWQ4NNSUgO/Sx5V812FGQgwfs/oKBQlsPjOVtDEd4Aj
+	YrETxls5J3S+GKfOr9fLOMHpSiMaCuvXs
+X-Google-Smtp-Source: AGHT+IE9RouoLA3mI1WTQ5bC8+3a6e/YddQasaUm/tDoSV5izF+qFjCdAOy/vlAmLw+ht6FR6TIR+g==
+X-Received: by 2002:a17:903:2347:b0:24a:8d5e:932 with SMTP id d9443c01a7336-24a8d5e0c28mr78375115ad.23.1756707668708;
+        Sun, 31 Aug 2025 23:21:08 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24903727488sm93506135ad.43.2025.08.31.23.21.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 23:21:08 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Zixian Zeng <sycamoremoon376@gmail.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Han Gao <rabenda.cn@gmail.com>
+Subject: Re: [PATCH 0/4] Add SPI NOR DTS node for SG2042 SoC and boards using it
+Date: Mon,  1 Sep 2025 14:20:57 +0800
+Message-ID: <175670760972.211032.6732897578408758943.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
+References: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---682104e96c29f8012d4fb844ebf0d9c883ce3dc154d455a174da7b9dfef1
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Wed, 13 Aug 2025 16:33:16 +0800, Zixian Zeng wrote:
+> [PATCH 1/4] and [PATCH 2/4] are copied from patch set [1]
+> [PATCH v4 4/4] without content changes.
+> 
+> Link: https://lore.kernel.org/linux-riscv/20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com/ [1]
+> 
+> 
 
-Hi,
+Applied to dt/riscv, thanks!
 
-On Fri Aug 29, 2025 at 12:52 AM CEST, Doug Anderson wrote:
-> > On Thu, Aug 21, 2025 at 5:23=E2=80=AFAM Michael Walle <mwalle@kernel.or=
-g> wrote:
-> > >
-> > > The bridge has three bootstrap pins which are sampled to determine th=
-e
-> > > frequency of the external reference clock. The driver will also
-> > > (over)write that setting. But it seems this is racy after the bridge =
-is
-> > > enabled. It was observed that although the driver write the correct
-> > > value (by sniffing on the I2C bus), the register has the wrong value.
-> > > The datasheet states that the GPIO lines have to be stable for at lea=
-st
-> > > 5us after asserting the EN signal. Thus, there seems to be some logic
-> > > which samples the GPIO lines and this logic appears to overwrite the
-> > > register value which was set by the driver. Waiting 20us after
-> > > asserting the EN line resolves this issue.
-> > >
-> > > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> >
-> > nit: officially you're supposed to move your Signed-off-by all the way
-> > at the bottom of all the other tags any time you post a patch. I don't
-> > think it's important enough to re-send, though.
-> >
-> > In any case, thanks for re-posting. I guess it kinda stagnated. I'll
-> > give this another week on the list and then plan to apply to
-> > drm-misc-fixes unless there are any other comments.
->
-> I realized that this is lacking a Fixes: tag. I went back and
-> confirmed that even in the first version of the driver, AKA commit
-> a095f15c00e2 ("drm/bridge: add support for sn65dsi86 bridge driver"),
-> we still had no delay between these two lines:
->
-> pm_runtime_get_sync(pdata->dev);
->
-> /* configure bridge ref_clk */
-> ti_sn_bridge_set_refclk_freq(pdata);
->
-> ...and the last line of the runtime resume function was turning on the
-> enable. So I believe this means that the bug has always been there.
-> Does that sound right to others? If so, I'll add that Fixes tag when
-> applying.,..
+[1/4] riscv: dts: sophgo: Add SPI NOR node for SG2042
+      https://github.com/sophgo/linux/commit/268b9620d86ef002b5e94355e80c44bbbdc736f0
+[2/4] riscv: dts: sophgo: Enable SPI NOR node for PioneerBox
+      https://github.com/sophgo/linux/commit/6baf562e0474b2885405cc8e383a59269807338d
+[3/4] riscv: dts: sophgo: Enable SPI NOR node for SG2042_EVB_V1
+      https://github.com/sophgo/linux/commit/2ea345ad682e2ab89c4360bdf90fd170612b3be9
+[4/4] riscv: dts: sophgo: Enable SPI NOR node for SG2042_EVB_V2
+      https://github.com/sophgo/linux/commit/0bf26eecdd2a6d243a3a19d3ea0df10437ed33c7
 
-Yes, that's right. Thanks for amending the patch.
+Thanks,
+Inochi
 
--michael
-
---682104e96c29f8012d4fb844ebf0d9c883ce3dc154d455a174da7b9dfef1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaLU7JBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/j4RAGAnUlorq1ruoUXSrDpLf3RlZnc/e3t9Nt2
-P2IgL7Nj3zxtBLDXprxO3jMP4bfu07CEAYCYZW3ZN5wl/85JGbuMBAM7/L8ZT4dN
-69oEiasczPIdwr6g+vPpUaemZ1PgMTgbW5g=
-=FEW4
------END PGP SIGNATURE-----
-
---682104e96c29f8012d4fb844ebf0d9c883ce3dc154d455a174da7b9dfef1--
 
