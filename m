@@ -1,226 +1,201 @@
-Return-Path: <linux-kernel+bounces-794995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86902B3EB86
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D8FB3EB9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 560A67ADA2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:51:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FB2188D976
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB3DAD5A;
-	Mon,  1 Sep 2025 15:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C7F2D594D;
+	Mon,  1 Sep 2025 15:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fGrKAEWB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDsaAdUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF249170826
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE32E2D5924;
+	Mon,  1 Sep 2025 15:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741978; cv=none; b=CRoRPsc+MAw8wbS55MfRPI6O+JlcQxri4sNBphFeaYR8zaD5d4Th2ciHhJR1FnRRIIvonafwbVLx0Ynz0WOpoldIjzSATerFkIZCJNx+pB3NCL5dzMIWW6C7cN9rZjzHyCg87/4Qi1DZkHr8XFQR6hd6lP93v439zJPeM6yo3ac=
+	t=1756742076; cv=none; b=lZ7n0dYDkf53JNbKCrHZKcTWBTt9pUenoeH8PyG7l9JuzZnl+vFA0eYutqPDinOjYuDvTvRGAsPlwGhYYRgM4K4zvJbABLYe5Sb9BH/7odoNUKlpb6Xm4D6GhnY0QateAOYgj1B49JdhmN+zmRAPPmADrAfoaKWNo/AlBp4jk+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741978; c=relaxed/simple;
-	bh=Gk5xf+LWqL8BAqZMRhulhezXCkqVROdiR0R2gZqxkY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EnALb5aY/JWtIXtWPHTntAtat3rGejYe5lB4ukC+Xw5yqn2PIHuRB5FAWjAsFTK9XTPUoOHdWmqPdLVzh4b+AFITBNXMXCzmj0E6TVAb7rFz+qOignMlFETyPMT052udJsmFvnxJHFbl/RW3WIdXwVMu6C9Fv/WzZqSnJX0LMOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fGrKAEWB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756741976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mbEdJL0isBBnB3JXZr3cyBmB7UVFLdKlgzj7B1K9tQk=;
-	b=fGrKAEWB4ljc5x+7TuxH4RZIiOuD7ul8CFrWQ7pbPKmiHZTCAQ22hbAwLGuFP1doJ6dR0O
-	+Kl3O0gNMc0Kl8zInrvDfg4fQDZTdsqHsQbMttZK/8Vjv+RkPjo0UZsoGiK9GcdMu5wXwy
-	YZkp5bVWt3NedshltadqTnBBnvUiuP8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-S_JzEgVBNRyX47M8ijhPng-1; Mon, 01 Sep 2025 11:52:54 -0400
-X-MC-Unique: S_JzEgVBNRyX47M8ijhPng-1
-X-Mimecast-MFC-AGG-ID: S_JzEgVBNRyX47M8ijhPng_1756741973
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b7265febdso30610035e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:52:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756741973; x=1757346773;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mbEdJL0isBBnB3JXZr3cyBmB7UVFLdKlgzj7B1K9tQk=;
-        b=W7YpSmqlNFcch9bsexx0Alm1+1c3s0fuY7mfk7RhnVocVK+jOr3nGIqeJrtK9iOH9j
-         heMacF3WE5s2lkanmeHcMsJ3ter8m9oPP2cR2j2+A+mFKnAr1CygwY9hvCkzzuYrEI9b
-         oChfsmMEC8VU6Nvt3RX3/w7odeIiUZ2kJwL0VpfM/ILqRI9uuRE8QkiOhTo+dZQ3dRhf
-         F100+GbFC08ZV551aVCCgknz1p+CLWcJNGABoaQ63AQOXZi0RT3her0fGW/KhTf6qj6V
-         CErZhA1Hwtriza/tc6Nxuo3wD9Fj3a5QkctJMfzwWfSDj+D2dJqb//cpfABigsp6Wz6l
-         6RwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQtSQoUj66NX5uGRRRz6Vj80FLlkojgNwXHiwJ5ZSSZqZtlMSNte5epmQbpqxX9HuS8XoY4DmqYRPDIgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOxYNCdhFX28+fPKF4Iis4Aaa1zqk4q/YRN6Kg0krLl/ZdC6x6
-	MAAR1j5YRDSRNBH47zE3Lo6IDA2cq4YVm+T9BKIaELoQqfl6RZhr38FzUps0qTX+jDR7cAz1JcX
-	oYAI8m3wc2jbkci5RH3uHnoJ+BwlgxywB4HvFQlZ2jnn0+ZOtvd3xkCL2IW/X420BIA==
-X-Gm-Gg: ASbGncuQQTzHMXnBZBxXZ2DZpU/rLBUg4TmefImvpjoJe9JDss0on7YeFequ+REvnUp
-	5Dp17PcWxqnmiXW7+PcjyMN4JoKk88rokfJB0NCuBM0qjbh7S3f+qAqxPp8IQrwv2ZnZdRgnj8m
-	ULdEo8ape8EZ/0uDtQrmf+h4hX+tzokU9W53Ipm9RLIOYBnTrrup6rzp1hqbfJ0995y6Gz8KHiq
-	7F385WXp9Kn90ZDW2VRNDJEEaf9qR63v3czDVipSQJTQCSDE82Q0eUWa5TxewMagdYjBI14gqp3
-	ogrz1/Q6mfRQnNtICIpvEeberWT6MohLq6rj7opQFKguBresfjweznZ06kOqbAK1+DfqTcn3FtY
-	ts9pK5WU4x2baH/cbd+gX31ciTpWOWW2x/V3TqZIvSGHkizeDMioPEdyDc8UnhCLbC4Y=
-X-Received: by 2002:adf:a3d5:0:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-3d30b30546dmr3216753f8f.19.1756741973327;
-        Mon, 01 Sep 2025 08:52:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWAtKuDlQ702dYFHQ1RXyln2bmyih7xTaCXC/Ysq58gGE3o708RIRxMtCSozokpICZYopN0g==
-X-Received: by 2002:adf:a3d5:0:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-3d30b30546dmr3216732f8f.19.1756741972788;
-        Mon, 01 Sep 2025 08:52:52 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9dbfsm15756340f8f.43.2025.09.01.08.52.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 08:52:52 -0700 (PDT)
-Message-ID: <001833dc-ee02-4bd3-8a37-820d0cd56be0@redhat.com>
-Date: Mon, 1 Sep 2025 17:52:47 +0200
+	s=arc-20240116; t=1756742076; c=relaxed/simple;
+	bh=zbaUuwR137ygPnpQ0YzRAfrhZCcuUrJu1SPf+nLYCsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g07qFA6FIso2Agu+WDoo950XJeGX6GyxHzymnpd2A/+pAKgYFrg2qCMrxW5TMud+vn8AcYNMuf4eVb7fEFWe0FOFk6IOH3L5hJqEFqT/0XPFCdJaiBSTndu22scOR74Z9HYt9dfKH6H2+ZiTXVoJhuO9wV7R+UvcJTJTypSbo1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDsaAdUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B14BC4CEF0;
+	Mon,  1 Sep 2025 15:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756742076;
+	bh=zbaUuwR137ygPnpQ0YzRAfrhZCcuUrJu1SPf+nLYCsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VDsaAdUjDt21AAz1YuepphxiXMwMEqxbceRWO1eDFCn3hMyTS0P1AIdUaMqjd9LaY
+	 w4UYGZg7mlCI1TfIxr73JZ4GUGJmOZAv8B0LamR11GLZSQZ99JmN3kwYnbn79q668f
+	 +xy2lfiIDihfknyZ0KSJCXvKeOoWoloviYzJkK3zlAg3++z2h4I4LDqCL113xr9ORu
+	 TrNNLs3a5QVAYlsSPLGOs/oLWL7G2++Qr6o0Zf+LSESwfXV92gYCO8t2zWyoVEy8sp
+	 Wt7ejild3mAw1jXg8Pa8V9BNc2/j0KJcP+ldmmtYXzIGj/EMgFnwE4RMTSwqRNxnoX
+	 5N7daNBwPszmw==
+Date: Mon, 1 Sep 2025 21:24:25 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, lizhi.hou@amd.com, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+Message-ID: <vdn4lomtgr6htab7uodgm75iphju6yyimhlnfonysxxdpudib7@qm4yettsvsrs>
+References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250704161410.3931884-6-claudiu.beznea.uj@bp.renesas.com>
+ <ddxayjj5wcuuish4kvyluzrujkes5seo7zlusmomyjfjcgzcyj@xe3zzzmy2zaj>
+ <8ef466aa-b470-4dcb-9024-0a9c36eb9a6a@tuxon.dev>
+ <zsgncwvhykw4ja3bbqaxwupppjsqq4pcrdgrsduahokmt72xsm@twekpse6uzzh>
+ <CAMuHMdUu0uXBJndcwWoZp8NNyBJox5dZw4aoB8Ex50vBDDtP7g@mail.gmail.com>
+ <6f2hpdkonomgrfzqoupcex2rpqtlhql4lmsqm7hqk25qakp7ax@bfrzflghmnev>
+ <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/12] mm: constify pagemap related test functions for
- improved const-correctness
-To: Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
- willy@infradead.org, hughd@google.com, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com,
- rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
- linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
- agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
- jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
- rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
- broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
- mpe@ellerman.id.au, nysal@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-3-max.kellermann@ionos.com>
- <26cb47bb-df98-4bda-a101-3c27298e4452@lucifer.local>
- <CAKPOu+_aj3wA14VaZo8_k+ukw0OafsSz_Bxa120SQbYi4SqR7g@mail.gmail.com>
- <8e3f20bf-eda7-496c-9fb2-60f5f940af22@lucifer.local>
- <925480c3-d0ff-4f24-ada0-966ad9a83080@suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <925480c3-d0ff-4f24-ada0-966ad9a83080@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUEqKc+qtRXiPzgjhWaer5KLroZ+hCSVLCQ497h3BtOAw@mail.gmail.com>
 
-On 01.09.25 17:47, Vlastimil Babka wrote:
-> On 9/1/25 17:14, Lorenzo Stoakes wrote:
->> On Mon, Sep 01, 2025 at 04:50:50PM +0200, Max Kellermann wrote:
->>> On Mon, Sep 1, 2025 at 4:25 PM Lorenzo Stoakes
->>> <lorenzo.stoakes@oracle.com> wrote:
->>>> 1. (most useful) Const pointer (const <type> *<param>) means that the dereffed
->>>>     value is const, so *<param> = <val> or <param>-><field> = <val> are prohibited.
->>>
->>> Only this was what my initial patch was about.
->>
->> Right agreed then.
->>
->>>
->>>> 2. (less useful) We can't modify the actual pointer value either, so
->>>>     e.g. <param> = <new param> is prohibited.
->>>
->>> This wasn't my idea, it was Andrew Morton's idea, supported by Yuanchu Xie:
->>>   https://lore.kernel.org/lkml/CAJj2-QHVC0QW_4X95LLAnM=1g6apH==-OXZu65SVeBj0tSUcBg@mail.gmail.com/
->>
->> Andrew said:
->>
->> "Not that I'm suggesting that someone go in and make this change."
->>
->> And Yuanchu said:
->>
->> "Longer function readability would benefit from that, but it's IMO infeasible to
->> do so everywhere."
->>
->> (he also mentions it'd be good if gcc could wran on it).
->>
->> So this isn't quite true actually.
+On Mon, Sep 01, 2025 at 04:22:16PM GMT, Geert Uytterhoeven wrote:
+> Hi Mani,
 > 
-> I understood it the same, that it would be nice if gcc treated incoming
-> params (i.e. pointers, not pointed-to values) as const and warn otherwise,
-> but not suggesting we should start doing that manually.
+> On Mon, 1 Sept 2025 at 16:04, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > On Mon, Sep 01, 2025 at 11:25:30AM GMT, Geert Uytterhoeven wrote:
+> > > On Sun, 31 Aug 2025 at 06:07, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> > > > On Sat, Aug 30, 2025 at 02:22:45PM GMT, Claudiu Beznea wrote:
+> > > > > On 30.08.2025 09:59, Manivannan Sadhasivam wrote:
+> > > > > > On Fri, Jul 04, 2025 at 07:14:05PM GMT, Claudiu wrote:
+> > > > > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > > > >>
+> > > > > >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> > > > > >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> > > > > >> only as a root complex, with a single-lane (x1) configuration. The
+> > > > > >> controller includes Type 1 configuration registers, as well as IP
+> > > > > >> specific registers (called AXI registers) required for various adjustments.
+> > > > > >>
+> > > > > >> Hardware manual can be downloaded from the address in the "Link" section.
+> > > > > >> The following steps should be followed to access the manual:
+> > > > > >> 1/ Click the "User Manual" button
+> > > > > >> 2/ Click "Confirm"; this will start downloading an archive
+> > > > > >> 3/ Open the downloaded archive
+> > > > > >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> > > > > >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> > > > > >>
+> > > > > >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> > > > > >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > > > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >
+> > > > > >> +  ret = pm_runtime_resume_and_get(dev);
+> > > > > >> +  if (ret)
+> > > > > >> +          return ret;
+> > > > > >> +
+> > > > > >
+> > > > > > Do you really need to do resume_and_get()? If not, you should do:
+> > > > >
+> > > > > It it's needed to enable the clock PM domain the device is part of.
+> > > > >
+> > > >
+> > > > I've replied below.
+> > > >
+> > > > > >
+> > > > > >     pm_runtime_set_active()
+> > > > > >     pm_runtime_no_callbacks()
+> > > > > >     devm_pm_runtime_enable()
+> > >
+> > > > > >> +static int rzg3s_pcie_suspend_noirq(struct device *dev)
+> > > > > >> +{
+> > > > > >> +  struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
+> > > > > >> +  const struct rzg3s_pcie_soc_data *data = host->data;
+> > > > > >> +  struct regmap *sysc = host->sysc;
+> > > > > >> +  int ret;
+> > > > > >> +
+> > > > > >> +  ret = pm_runtime_put_sync(dev);
+> > > > > >> +  if (ret)
+> > > > > >> +          return ret;
+> > > > > >
+> > > > > > Since there are no runtime callbacks present, managing runtime PM in the driver
+> > > > > > makes no sense.
+> > > > >
+> > > > > The PCIe device is part of a clock power domain. Dropping
+> > > > > pm_runtime_enable()/pm_runtime_put_sync() in this driver will lead to this
+> > > > > IP failing to work as its clocks will not be enabled/disabled. If you don't
+> > > > > like the pm_runtime_* approach that could be replaced with:
+> > > > >
+> > > > > devm_clk_get_enabled() in probe and clk_disable()/clk_enable() on
+> > > > > suspend/resume. W/o clocks the IP can't work.
+> > > >
+> > > > Yes, you should explicitly handle clocks in the driver. Runtime PM makes sense
+> > > > if you have a power domain attached to the IP, which you also do as I see now.
+> > > > So to conclude, you should enable/disable the clocks explicitly for managing
+> > > > clocks and use runtime PM APIs for managing the power domain associated with
+> > > > clock controller.
+> > >
+> > > Why? For the past decade, we've been trying to get rid of explicit
+> > > module clock handling for all devices that are always part of a
+> > > clock domain.
+> > >
+> > > The Linux PM Domain abstraction is meant for both power and clock
+> > > domains.  This is especially useful when a device is present on multiple
+> > > SoCs, on some also part of a power domain,  and the number of module
+> > > clocks that needs to be enabled for it to function is not the same on
+> > > all SoCs.  In such cases, the PM Domain abstraction takes care of many
+> > > of the integration-specific differences.
+> >
+> > Hmm, my understanding was that we need to explicitly handle clocks from the
+> > consumer drivers. But that maybe because, the client drivers I've dealt with
+> > requires configuring the clocks (like setting the rate, re-parenting etc...) on
+> > their own. But if there is no such requirement, then I guess it is OK to rely on
+> > the PM core and clock controller drivers.
 > 
-> I personally agree that adding those extra "const" is of little value and
-> makes the function definition lines longer and harder to read and so would
-> rather not add those.
+> When you need to know the actual clock rate, or change it, you
+> indeed have to handle the clock explicitly.  But it still may be enabled
+> automatically through the clock domain.
 > 
-> I mean we could first collectively decide (and that's not a review
-> half-suggesting we do them) that we want them, and document that, but AFAIK
-> that's not the case yet. While there's already an agreement that const
-> pointed-to values is a good thing and nobody objects that.
 
-Yeah, and discussed elsewhere in this series, it would also have to be 
-clarified how to deal with the *const" (or const values in general) with 
-function declaration vs. definition. I don't think we really have 
-written-down rule for that yet.
+Yeah!
+
+> > > > But please add a comment above pm_runtime_resume_and_get() to make it clear as
+> > > > most of the controller drivers are calling it for no reason.
+> > >
+> > > Note that any child device that uses Runtime PM depends on all
+> > > its parents in the hierarchy to call pm_runtime_enable() and
+> > > pm_runtime_resume_and_get().
+> >
+> > Two things to note from your statement:
+> >
+> > 1. 'child device that uses runtime PM' - Not all child drivers are doing
+> > runtime PM on their own. So there is no need to do pm_runtime_resume_and_get()
+> > unless they depend on the parent for resource enablement as below.
+> 
+> It indeed depends on the child device, and on the bus.  For e.g. an
+> Ethernet controller connected to a simple SoC expansion bus, the bus must
+> be powered and clock, which is what "simple-pm-bus" takes care of
+> ("simple-bus" does not).
+> 
+
+Right. But most of the PCI controller drivers call pm_runtime_resume_and_get()
+for no good reasons. They might have just copied the code from a driver that did
+it on purpose. So I tend to scrutinize these calls whenever they get added for a
+driver.
+
+- Mani
 
 -- 
-Cheers
-
-David / dhildenb
-
+மணிவண்ணன் சதாசிவம்
 
