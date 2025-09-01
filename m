@@ -1,180 +1,144 @@
-Return-Path: <linux-kernel+bounces-794527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D26B3E2E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:31:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583A2B3E2E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D389203266
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B903A9355
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD9A32C32A;
-	Mon,  1 Sep 2025 12:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DvN7JTzn"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9F52586FE;
+	Mon,  1 Sep 2025 12:28:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FE13277BB
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B91225EFBF;
+	Mon,  1 Sep 2025 12:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729628; cv=none; b=mCvC2DDaBoFscgm+hb9SWve4pVGq8xMkSFoDkf4/Nvnwqsh+Bnp2FIlx1/S8aPqAZkcRR4mGVSuH+IJb1M53WMZ1m4hagz6MOJfNYNN7BVB97jPK1bMlSaFLWo/OPwAfFJZ/EuxPBK4c9K0jDecyh9+QEWTqChwf6DO184WvbXg=
+	t=1756729686; cv=none; b=DI1fBLrQEtopje8tCzVhhsmBgI7XE1QajkCJ/nt76BUVRa355w1GbvbOncxaJ6dZPuSbBdZYid8Zb7ERhVIdYaBoff/qvXXJncn0iydpjsQBx78O6WurLwrip2Qy4a3kMIy66xgru+7yfOT2KHwJyxaInrwJJDajJscUJ1Tq3iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729628; c=relaxed/simple;
-	bh=NI3j//K+uv280Ub1AAwzmSKy0oNo3n7zmmHOVS4hqJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r0MUkzOonQND9dYoseMBW19qhpTNbZpB9kSgDqITrUqDFXREVyJxTn6UQ1kZk1AkxHW2VAacd4P2jrQR8HC15jd7UeJOQJd3PY981cdPJo8POkbysuyhdxVB6+OYR/jSpVFIZYLj+zMCxy5R/T63Ej0kdw7JNpTlEanteAtnwAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DvN7JTzn; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2848655f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:27:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756729624; x=1757334424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CvXFM2+EDhInaja9QZo9cQmXYbU073wpqmRBXkRFUBM=;
-        b=DvN7JTznmTgh9C5aWlllMdoPjvzuLsP2rqj0D1Rp6pMS1HNU+9dHfXvc3l7BLcnUQx
-         y8NnaUXXZlO8FQ9BUqCFPLJCGZ8RWM00pfuFH0WzyCW7oR1tBGVCTa0jOCupyiMxp/0Y
-         W0arLHgpl728aSFjv8Hqd3b7IOYygQ2zmdYzv4Htd2iodz99XlNZQeQmbrDGjMvFXc8u
-         FKcWwqwsbpH+ZjZacq/PU7sksS6QMv15u94T9D9EXqr60KEPW/yZf5B7toQk2ldCxSoP
-         pR37goby4lon67/Xo5BZzuHYJRpEzEEgsZNrpRGSOYuz20iDVNkknDg7zohLcCiKJLaF
-         ZGJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756729624; x=1757334424;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CvXFM2+EDhInaja9QZo9cQmXYbU073wpqmRBXkRFUBM=;
-        b=OIPmZCgH92b+KtepiM66p5vMmsP0cufG8cecbWpYWvX4DS5peJmtJ0E3DEvWfJATrD
-         kbDOV33ZZilxTmyWHFq3GzxCmQGW65U/NpvReYQkhB8nJwf2yByA0xPHxfvEAN2RGVZ9
-         wYBPr0ecN2ZVFvyCyrNM/WWYcna4R4oEJLv+j7pnSJkjgHaHnuftilBFPKjzbEHqgtza
-         yuJ/NahBXGFZmcNoUfDGN7KvZKYU/IOnTgIfONjtDXhWFpIT+5gmQ0MbRsEOokmLAsgW
-         x5Mbaj8l/cBmKc8ce0mofVrp+XiATMAAMfVBEOBJnm8rMKXXnEYq1yBdf12Txx4uzERz
-         VQhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe82Ai0xSknzdU5Tb4hZMagZkXxJqQNLsvUpfCgsRSNnVG6ne6A+5sTmbtD/gvsufbCrrrMH1Fd3Fet54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaEV6a0KbzDiHQXioNLFG/OVQ8UiFfXcFJX6MHZWMf1bbrsR20
-	PllWzcp/YItJiXRI2K8nF9twp+Y/kpSVaSz5J2ITrVObkq/EVJfYkvlOrVMzXeLqsP4=
-X-Gm-Gg: ASbGncuDWkhkqHDAuyVyySukRDzt1nkPWGJWEomOTWyz8OiR3pqredM+9j33pUb17LO
-	9Hwev5mS7n9DSI45CjDE2AT9LfO3NEc02/1WMBDnAGx+x3rAWYRPt2vGonQtkcYHD6YTFjVwNKg
-	MBYR6kBiM9/KKXQjH5zJQZgxgFXKtczoLSPN36oukrFPb9g2msuanVa+9Cu9cV2gMnqYOLRseTS
-	Lm7DV+XKkacvriXXj3t7RW8SfAF5YsaQ09bjAFo14/aGmWXu/PWsKlIiCQ7eVRJSs7qg9/Gm6X8
-	DPOY030BhSjwLbMm6cpZbvKICTfoK1/gnBD+C/2s5ggoSPgbzVnYShek23jACJxGon3W23sfJ8n
-	DTWy55W2GxqV04nEPCB4SU9Yc2qn/P0HtbsaWqR3vC1jT6Z6MP66DqQ==
-X-Google-Smtp-Source: AGHT+IGMZj0MUqoNS8l03J940dxpE/Oa7+eZtp6hkgsi4bqmdFUhhinsYeDmT1bsO+4zfR2NPsVVzA==
-X-Received: by 2002:a05:6000:240d:b0:3d7:c86:800f with SMTP id ffacd0b85a97d-3d70c868524mr2579250f8f.60.1756729623615;
-        Mon, 01 Sep 2025 05:27:03 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d7330e4bc9sm3325617f8f.10.2025.09.01.05.27.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 05:27:03 -0700 (PDT)
-Message-ID: <4e215854-59df-489b-b92d-8d2fb2edf522@suse.com>
-Date: Mon, 1 Sep 2025 14:27:02 +0200
+	s=arc-20240116; t=1756729686; c=relaxed/simple;
+	bh=BzE8vul4lNtBZdM3iz/qHFXjV56fh0CqXNS+kpkk+wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gfmy2Ah1V/xkgB7zwQLSfQ4fjfnWoktiR0xND1VWA+xxUuLa1AZFpyz16piVEJWMdH8winSLfcqnWk6yuDw2Qp5ULuwYfkzv8ZftpkVxyGEXhzXQAgr8RB4BCrBfnFbv56AAAeO7j/hiT2lVbXxYQe0z4Zd9O8QY5R07RIg9tDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194E0C4CEF0;
+	Mon,  1 Sep 2025 12:28:03 +0000 (UTC)
+Date: Mon, 1 Sep 2025 13:28:01 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <aLWRUTFeumwr1--E@arm.com>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+ <20250819135008.5f1ba00e@gandalf.local.home>
+ <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+ <20250829082604.1e3fd06e@gandalf.local.home>
+ <20250829083655.3d38d02b@gandalf.local.home>
+ <aLIFRHcsEo2e2GE7@arm.com>
+ <20250829181311.079f33bf@gandalf.local.home>
+ <aLLQ-43Ll8rF7kon@arm.com>
+ <aLVt30-Lc9lesqS6@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/10] scalable symbol flags with __kflagstab
-To: Siddharth Nayyar <sidnayyar@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
- Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250829105418.3053274-1-sidnayyar@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250829105418.3053274-1-sidnayyar@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLVt30-Lc9lesqS6@J2N7QTR9R3>
 
-On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
-> Hi everyone,
+On Mon, Sep 01, 2025 at 10:56:47AM +0100, Mark Rutland wrote:
+> On Sat, Aug 30, 2025 at 11:22:51AM +0100, Catalin Marinas wrote:
+> > On Fri, Aug 29, 2025 at 06:13:11PM -0400, Steven Rostedt wrote:
+> > > On Fri, 29 Aug 2025 20:53:40 +0100
+> > > Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > valid user address.
+> > > > BTW, arm64 also bails out early in do_page_fault() if in_atomic() but I
+> > > > suspect that's not the case here.
+> > > > 
+> > > > Adding Al Viro since since he wrote a large part of uaccess.h.
+> > > 
+> > > So, __copy_from_user_inatomic() is supposed to be called if
+> > > pagefault_disable() has already been called? If this is the case, can we
+> > > add more comments to this code? I've been using the inatomic() version this
+> > > way in preempt disabled locations since 2016.
+> > 
+> > This should work as long as in_atomic() returns true as it's checked in
+> > the arm64 fault code. With PREEMPT_NONE, however, I don't think this
+> > works.
 > 
-> This patch series proposes a new, scalable mechanism to represent
-> boolean flags for exported kernel symbols.
-> 
-> Problem Statement:
-> 
-> The core architectural issue with kernel symbol flags is our reliance on
-> splitting the main symbol table, ksymtab. To handle a single boolean
-> property, such as GPL-only, all exported symbols are split across two
-> separate tables: __ksymtab and __ksymtab_gpl.
-> 
-> This design forces the module loader to perform a separate search on
-> each of these tables for every symbol it needs, for vmlinux and for all
-> previously loaded modules.
-> 
-> This approach is fundamentally not scalable. If we were to introduce a
-> second flag, we would need four distinct symbol tables. For n boolean
-> flags, this model requires an exponential growth to 2^n tables,
-> dramatically increasing complexity.
-> 
-> Another consequence of this fragmentation is degraded performance. For
-> example, a binary search on the symbol table of vmlinux, that would take
-> only 14 comparison steps (assuming ~2^14 or 16K symbols) in a unified
-> table, can require up to 26 steps when spread across two tables
-> (assuming both tables have ~2^13 symbols). This performance penalty
-> worsens as more flags are added.
-> 
-> Proposed Solution:
-> 
-> This series introduces a __kflagstab section to store symbol flags in a
-> dedicated data structure, similar to how CRCs are handled in the
-> __kcrctab.
-> 
-> The flags for a given symbol in __kflagstab will be located at the same
-> index as the symbol's entry in __ksymtab and its CRC in __kcrctab. This
-> design decouples the flags from the symbol table itself, allowing us to
-> maintain a single, sorted __ksymtab. As a result, the symbol search
-> remains an efficient, single lookup, regardless of the number of flags
-> we add in the future.
+> Sorry, what exactly breaks for the PREEMPT_NONE case?
 
-Merging __ksymtab and __ksymtab_gpl into a single section looks ok to
-me, and similarly for __kcrctab and __kcrtab_gpl. The __ksymtab_gpl
-support originally comes from commit 3344ea3ad4 ("[PATCH] MODULE_LICENSE
-and EXPORT_SYMBOL_GPL support") [1], where it was named __gpl_ksymtab.
-The commit doesn't mention why the implementation opts for using
-a separate section, but I suspect it was designed this way to reduce
-memory/disk usage.
+This code would trigger a warning:
 
-A question is whether the symbol flags should be stored in a new
-__kflagstab section, instead of adding a flag member to the existing
-__ksymtab. As far as I'm aware, no userspace tool (particularly kmod)
-uses the __ksymtab data, so we are free to update its format.
+	preempt_disable();
+	WARN_ON(!in_atomic());
+	preempt_enable();
 
-Note that I believe that __kcrctab/__kcrtab_gpl is a separate section
-because the CRC data is available only if CONFIG_MODVERSIONS=y.
+More importantly, a faulting __copy_from_user_inatomic() between
+get/put_cpu() could trigger migration.
 
-Including the flags as part of __ksymtab would be obviously a simpler
-schema. On the other hand, an entry in __ksymtab has in the worst case
-a size of 24 bytes with an 8-byte alignment requirement. This means that
-adding a flag to it would require additional 8 bytes per symbol.
-
+> > > I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
+> > > If anything, it needs to be better documented.
+> > 
+> > Yeah, I had no idea until I looked at the code. I guess it means it can
+> > be safely used if in_atomic() == true (well, making it up, not sure what
+> > the intention was).
 > 
-> The motivation for this change comes from the Android kernel, which uses
-> an additional symbol flag to restrict the use of certain exported
-> symbols by unsigned modules, thereby enhancing kernel security. This
-> __kflagstab can be implemented as a bitmap to efficiently manage which
-> symbols are available for general use versus those restricted to signed
-> modules only.
+> I think that was the intention -- it's the caller asserting that they
+> know the access won't fault (and hence won't sleep), and that's why
+> __copy_to_user_inatomic() and __copy_to_user() only differ by the latter
+> calling might_sleep().
+> 
+> It looks like other inconsistencies have crept in by accident. AFAICT
+> the should_fail_usercopy() check in __copy_from_user() was accidentally
+> missed from __copy_from_user_inatomic() when it was introduced in
+> commit:
 
-I think it would be useful to explain in more detail how this protected
-schema is used in practice and what problem it solves. Who is allowed to
-provide these limited unsigned modules and if the concern is kernel
-security, can't you enforce the use of only signed modules?
+I was wondering about that but some code comment for the inatomic
+variant states that it's the responsibility of the caller to ensure it
+doesn't fault. Not sure one can do other than pinning the page _and_
+taking the mm lock. So I agree we should add the fault injection here as
+well.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=3344ea3ad4b7c302c846a680dbaeedf96ed45c02
+> ... so there's a bunch of scope for cleanup, and we could probably have:
+> 
+> 	/*
+> 	 * TODO: comment saying to only call this directly when you know
+> 	 * that the fault handler won't sleep.
+> 	 */
+> 	static __always_inline __must_check unsigned long
+> 	__copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
+> 	{
+> 		...
+> 	}
+> 
+> 	static __always_inline __must_check unsigned long
+> 	__copy_from_user(void *to, const void __user *from, unsigned long n)
+> 	{
+> 		might_fault();
+> 		return __copy_from_user_inatomic();
+> 	}
+> 
+> ... to avoid the inconsistency.
+
+I think the _inatomic variant should be reserved to arch code that knows
+the conditions. Generic code/drivers may not necessarily be aware of
+what the arch fault handler does. The _nofault API I think is better
+suited in generic code.
 
 -- 
-Thanks,
-Petr
+Catalin
 
