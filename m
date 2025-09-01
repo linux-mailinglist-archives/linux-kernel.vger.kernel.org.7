@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-794392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B15B3E10E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335FBB3E10D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35D71A81871
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C41F3A6C2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE6E311C35;
-	Mon,  1 Sep 2025 11:07:40 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED64B31159A;
+	Mon,  1 Sep 2025 11:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a2ep3R0e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F80630EF9D;
-	Mon,  1 Sep 2025 11:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19730EF7D
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724859; cv=none; b=eGt0T0GcK2SsM/Ik3vBR03vqM65UTwBlfbKDeBcAAubsL306o1Y/8ooLYoq2O2NrWYzA7mV9OJDz/7W7jIz4tc3g0tPLV0y8waUQ/bDvcC+Svi9tdWZ6LIXib5md3Vi33/Wxx6KiSAMOdrOQobiw9bvetADjVRjqPl9Zcxb4lMA=
+	t=1756724858; cv=none; b=YdsY3+aLVfgJAh3IYPqXD/IY4A3mPLpY4hdr53jLE5ymVs6Dc2WYlJ8QglWYaoqblSxhgZGy6FQD15AYG88Z2sKkoVQwctIBILhkaoHRQbvN+cJLUXTfqYBYUfj9L13WQWlC9PpDYnF7+ClpnTiPrPu7mxE+kZLU+Csw5UAdAoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724859; c=relaxed/simple;
-	bh=JK7rLeY8FRK0Hyge6EiISVYQmSlKYuTMhKkZ8B6nZJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mzx8DknACUqOFJ0k6EciutDFosX8r/hSH6V/SDE/jGPUg2IkU4agaVjCkLP7lJkE4TUYKC4fbpFpOUv0ntOk7Rj1QHTrQMckcOOrnrcpQ5y1lLZFw/bPmFESPu1FwpMaWVsZ2SAP5izDMoBhvWrwx/VPcq5aL4EU4XML4/lmfCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [192.168.2.54] (unknown [216.234.200.243])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 7297BB2202BC;
-	Mon,  1 Sep 2025 13:07:31 +0200 (CEST)
-Message-ID: <ef9dab99-f14a-4b1e-883f-d2086435b8d5@freeshell.de>
-Date: Mon, 1 Sep 2025 04:07:29 -0700
+	s=arc-20240116; t=1756724858; c=relaxed/simple;
+	bh=tRPHUUr8jac2+pMZxNzhPsZb6N3jgXYWUxiG9fGUN9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nksyl3aEPHsDWwZMC+3WPtD6D/V0WKFU7eYWnVKicN4h94FQqHN4XxHgWOV2ehNOJaJMiGlxiMurJDzUW8+rLbIgHEt3S8mxpenYOyjotY3Zr2Qr9cvnh907o6BBlEnUOuquNA0RseEaf3h+8a+MM719NHDkamyg1yb1DxCq1cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a2ep3R0e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756724855;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yeyR90kJgS2mYJEGVvh/bOgIfmtxoV36tSEqfoHaceg=;
+	b=a2ep3R0efD4kHlPlLuvERcS5WKCfeMvpL/pZ0LQk/NApzpE3Qfi/+2wbwIaKzngqeRX1vL
+	5gyTEsut8Usrs2MgYn7tlDjjLGVXAVbxXPGOatrkqqHm3vYu2XHeUC3AuQTAdkteol0d7Z
+	0/hAqcVOU3Rw9mq9tR18UW4UEfJfWNk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-397-zrBD-s3hOUeqhiZz1miCHg-1; Mon, 01 Sep 2025 07:07:34 -0400
+X-MC-Unique: zrBD-s3hOUeqhiZz1miCHg-1
+X-Mimecast-MFC-AGG-ID: zrBD-s3hOUeqhiZz1miCHg_1756724853
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ccfd90630aso1805253f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:07:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756724853; x=1757329653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yeyR90kJgS2mYJEGVvh/bOgIfmtxoV36tSEqfoHaceg=;
+        b=GxuY8HVo2VqV9MREeV8LjCA5aEO+OtIkRFHcksjqNVYyxn1d5Hr5VQp/kZxztLejdT
+         qrW65unt9GWujcucoFaWJZljcw/D2Cap5Qk366arjP0j/a63XtsY/LnUsfZNcR3ppHjH
+         vXYgRJaiE7zJg5LagrEzzmnOyrDdI2Nzace/5Fx5mxdkqpAMfyLC6RNEEaUWWDkamYfK
+         8KgtIcUZHhqZNU8NNhpZqEaGjSiv5slfoJfrxUz0B+IJj18xq73qPtrGqn+GNIQBT6Hx
+         7qLxIzfjEWkmfwtKS2PowUc3ur3cYzeMcqo2+2koim1KnEvCA87IFujjrvxdwhiqczNZ
+         JM6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWjmNIqVoUogWVa8OSGepeQ+Au+Ij0aAfv+bljzlDXB42fD9kXR/3JU/ImB4GeFwKhfR1VdRluaAsQ7sT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4cS9FXLCUogZUEq/c7hqw40Hn8f9IUbe7GElZMJn31ofdig0g
+	hmAVW3kvpf4rj1VI0UDqLcl1STVc2MUfoD5F3BA/pxqAKWAYzeRcutwt+VjXHVLxpiz/4JuqEsv
+	jzeP3izt/j5xdB9GzMSnakzMgmM9keO0zrdI65Fv6686oX/k7dFJ55dm3gsW5qj3DDQ==
+X-Gm-Gg: ASbGncsgRYRLxqhI/PbyUGdoHth5vwmUK7hjr+eFxqv9FVuOrrwifR0heQC+HIZdH/m
+	9GljdlUBaoOk0y1J8YpB0KyI9wjyyfkn2qF2LhrO8lQvklKaVyyCeC7Leml6b3LsWi1hkCl8Acr
+	L2JLPOAiGSEoH+O0bi6LF7yXFKTCRkysf0OTm6UJ7ICHNZfEQczdOXb5vWaMA/p3QlDOj6T4Tky
+	D/7Rebk46FpHK3roMvoY1BhYocucGQHnLpBqR/t8oGpWWc/sQn6qtgTRldXfFH1wQED6yc2Pbp+
+	2duB+zMAlamzIgGa0ayv0WI+NLlAVL49+w==
+X-Received: by 2002:a5d:64c2:0:b0:3c9:58b0:dad4 with SMTP id ffacd0b85a97d-3d1dfc06dd9mr5343788f8f.35.1756724852909;
+        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyQ/gTmJddE7MzkBzMXSEOkRhnYpYqf4H9E+J7ETOkCkNOir2xgQgyDgnguhb4xD0Yb+SJVg==
+X-Received: by 2002:a5d:64c2:0:b0:3c9:58b0:dad4 with SMTP id ffacd0b85a97d-3d1dfc06dd9mr5343766f8f.35.1756724852520;
+        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:151f:3500:9587:3ae1:48f2:e5d4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2722sm15020863f8f.19.2025.09.01.04.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
+Date: Mon, 1 Sep 2025 07:07:29 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>,
+	jasowang@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Mike Christie <michael.christie@oracle.com>, stefanha@redhat.com
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] INFO: task hung in
+ __vhost_worker_flush
+Message-ID: <20250901070709-mutt-send-email-mst@kernel.org>
+References: <20240816141505-mutt-send-email-mst@kernel.org>
+ <20250901103043.6331-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Marek Vasut <marek.vasut@mailbox.org>, Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
- <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
- <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
- <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <8920d24b-e796-4b02-b43b-8a5deed3e8fb@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901103043.6331-1-hdanton@sina.com>
 
+On Mon, Sep 01, 2025 at 06:30:42PM +0800, Hillf Danton wrote:
+> On Fri, 16 Aug 2024 14:17:30 -0400 "Michael S. Tsirkin" wrote:
+> > 
+> > Must be this patchset:
+> > 
+> > https://lore.kernel.org/all/20240316004707.45557-1-michael.christie@oracle.com/
+> > 
+> > but I don't see anything obvious there to trigger it, and it's not
+> > reproducible yet...
+> 
+> Mike looks innocent as commit 3652117f8548 failed to survive the syzbot test [1]
+> 
+> [1] https://lore.kernel.org/lkml/68b55f67.050a0220.3db4df.01bf.GAE@google.com/
 
+couldn't figure it out yet, and I'm travelling soon.
 
-On 9/1/25 03:54, Krzysztof Kozlowski wrote:
-> On 01/09/2025 12:30, Marek Vasut wrote:
->> On 9/1/25 5:33 AM, Krzysztof Kozlowski wrote:
->>> On 01/09/2025 04:22, Marek Vasut wrote:
->>>> On 9/1/25 5:22 AM, Peng Fan wrote:
->>>>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->>>>>> Move imx9*-{clock,power}.h headers into
->>>>>> include/dt-bindings/{clock,power}/ and fix up the DTs
->>>>>
->>>>> No. The files should be under arch/arm64/boot/dts/freescale/
->>>> Why ? Linux already has include/dt-bindings/clock/ and
->>>> include/dt-bindings/power directories for exactly those headers , why
->>>> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
->>>
->>>
->>> Because maybe these are not bindings?
->>
->> Please compare arch/arm64/boot/dts/freescale/imx95-clock.h and 
->> include/dt-bindings/clock/imx8mp-clock.h and clarify to me, why the 
->> imx95-clock.h is not bindings and the imx8mp-clock.h is bindings.
-> 
-> That's uno reverse card. I do not have to prove why these are different.
-> You need to prove why imx95 are bindings.
-> 
->>
->> Both files list clock IDs for the clock nodes, one clock one is SCMI 
->> clock (iMX95), the other clock node is CCM clock (iMX8MP), and they are 
-> 
-> Yeah, entirely different things. Like comparing apples and oranges.
-> 
->> both (SCMI and CCM) clock nodes in DT. Both header files may have to be 
->> included in drivers, the iMX8MP headers already are, the iMX95 headers 
-> 
-> No, the SCMI cannot be used in the drivers, because these are not
-> abstract IDs mapping between driver and DTS.
-> 
->> currently are included only in U-Boot drivers.
->>
->> I really don't see the difference here, sorry.
-> 
-> You just pointed out difference - no usage in drivers, no ABI!
-> 
-> Instead of playing this "I found this code somewhere, so I can do
-> whatever the same" answer the first implied question - why these are
-> bindings? Provide arguments what do they bind.
-> 
->>
->>> Regardless whether you agree or
->>> not, the commit should clearly explain the reason behind.
->> Which commit ?
-> 
-> This patch.
-> 
-> 
-> Best regards,
-> Krzysztof
+-- 
+MST
 
-Providing some clarification, the user of this (in U-Boot) via
-devicetree-rebasing leads to some path gymnastics:
-
-(U-Boot code base) arch/arm/mach-imx/imx9/scmi/clock.c:9:#include
-"../../../../../dts/upstream/src/arm64/freescale/imx95-clock.h"
-
-Compared to the patterns of what else is going on I would guess this
-should instead be:
-
-#include <dt-bindings/clock/imx95-clock.h>
-
-which agrees with how it is done for all the other closely similar build
-targets and is less fragile in that build context (although you may not
-be interested in this since it's not Linux kernel code base). Ideally
-I'm trying to make U-Boot flexible to build against different locations
-of devicetree-rebasing or perhaps Linux kernel source tree. This is a
-"one thing is not like the others" moment and it was suggested I send a
-patch.
-
-Whatever is best I'm open to improve the commit message, or take what
-you think ought to be fixed in U-Boot there to improve.
-
-What do we expect users of devicetree-rebasing to do, then?
-
-Thanks,
-
-E Shattow
 
