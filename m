@@ -1,576 +1,541 @@
-Return-Path: <linux-kernel+bounces-793917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B805B3DA1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CD6B3DA1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070E53B1E03
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 520BD189A12F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B224025A2B5;
-	Mon,  1 Sep 2025 06:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5C5258EF0;
+	Mon,  1 Sep 2025 06:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOwyaaSM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zmRKU7+p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qFggzB7I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aEzCrb61";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="N/OeOJPI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9030118EB0;
-	Mon,  1 Sep 2025 06:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5E023D7F3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 06:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756708851; cv=none; b=u2RevPf+JyGBX3j0fg1TGg70Juo1gHYgJIwDfC0XTBnRsK80pl/i+7fs2tBZkTrxVFAbK2/r1UXcVCYuEVbD44V82zzglUbrDgmjjJJ37WXzdXmLREBgO4mOTXzl55Vj2U6QwsgeAa8wUZ7KRF7U1AToFStpcsVWqCx2KkWAmJ0=
+	t=1756708885; cv=none; b=Q2nQbFshQKedrK8J9sI0vipzga/KFLTCnZi8mF3JEAzdu7nUZ60Be4WD3J8ERVt6RsLKAOvUlH8kvL4QnCo/+pQzzxhsYYQJ0luvd+Aeao21jlwVI43Yzt6AiCd2qMminwIrBVrdl3iOzQXzzt5MNpEpTxSX421e1BMM6GYM2QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756708851; c=relaxed/simple;
-	bh=HLIJ/88I9oikGh1FbjwJdvkrDB8odi9uvvX3GgGjNo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZhd8lWTabDrcubwGSOH8L7ReRZJZUh0E1FlQi3LXHMeFgLMtv3R1+2OkYSCNoNGtqBoUW+JqJCMYmfUD7wHp4gmMAWtJNhbFenUOOmr/emvyvvWhHaxh2UO/GB7OLMXMu3U9GYMdFP5rD/4hphnw1ksvZ7j0eFI3TKN3jk6ec4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOwyaaSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98226C4CEF0;
-	Mon,  1 Sep 2025 06:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756708851;
-	bh=HLIJ/88I9oikGh1FbjwJdvkrDB8odi9uvvX3GgGjNo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fOwyaaSMlmfXR1L4T/1YVaGcgMcTtHeTcXst7BofxQGKDyNy+YsUx/P8uNddQML/+
-	 TCYD8ouRMGHvN3B0tO9d/jKMkm8RZTz91zxvwN2WSoL6KH9LW8Atxxo1rCrVDOc5xF
-	 z/RDi00Zv+SQADyIQ7fc+u0zhvjPJ69pZm1Y1/n1kBY3YRpMZQk3BLa/RMYQDaHxiP
-	 hqSuhaFCzG5l7cVPg3JyHPyK1aiWs7RUqpierP8CMsEv90uBCm1jB6t8ykdDUrTuz0
-	 LiFKnarRun3XL1UZaNU3uvCHDMKoAJFrpXPkIYtwJjC5GoVcbijAX4Nk3bG+BizPfn
-	 XTSeLuAafz8uw==
-Date: Mon, 1 Sep 2025 12:10:41 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: zhangsenchuan@eswincomputing.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	p.zabel@pengutronix.de, johan+linaro@kernel.org, quic_schintav@quicinc.com, 
-	shradha.t@samsung.com, cassel@kernel.org, thippeswamy.havalige@amd.com, 
-	mayank.rana@oss.qualcomm.com, inochiama@gmail.com, ningyu@eswincomputing.com, 
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v2 2/2] PCI: eic7700: Add Eswin eic7700 PCIe host
- controller driver
-Message-ID: <jghozurjqyhmtunivotitgs67h6xo4sb46qcycnbbwyvjcm4ek@vgq75olazmoi>
-References: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
- <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
+	s=arc-20240116; t=1756708885; c=relaxed/simple;
+	bh=hxp1nM4Obom8jcOBxLFtaE1swPg5uWoLTkzJp0r6Lcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U7RG/5klSIDBAMhl2XVeBP8tWSL4YGyw0CntnXBIcqFmDY8zmg6wORjkAjbt+CXkkg+O0zth9qb/mw9W8knZyWjPWygjUemjBxhQ3WWoflGLR+K4DjYO0jn8AoOoUdrcuxA5KAxjwnyW+7ZdYkugoQa8sYGmcIjgoFhDaA+cR5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zmRKU7+p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qFggzB7I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aEzCrb61; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=N/OeOJPI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E91B11F38C;
+	Mon,  1 Sep 2025 06:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756708881; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WrFoZ0QeSo/ITcr95rbRexvC2nUdM3Ye/gg171FhKNo=;
+	b=zmRKU7+p+609Bn2RCR5szW6Y6JtKAcm+F8ag3Ab6uvCGLuk6psXa+Bx/Ja1mMxSeWbxJAj
+	+CWJhe1M702n3YTBB4eVmCd1FgKUxzTPdqcu19sXQHTyQ0lkXdmFMwoKymRI4Mw+i1N7xX
+	ani9n+o/Go3nJxUGghQPGn62P8c5wpU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756708881;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WrFoZ0QeSo/ITcr95rbRexvC2nUdM3Ye/gg171FhKNo=;
+	b=qFggzB7Is/1AkERm+Q3/5AW+m27eaM7m3i56qly+s22yz295Kqw38XfLSJ3gcWilAwlkJO
+	0Uo8fQOMCWpOp9Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756708880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WrFoZ0QeSo/ITcr95rbRexvC2nUdM3Ye/gg171FhKNo=;
+	b=aEzCrb61bxB1CzxXTm/uwdsJioWkeQ22t6iJVTIHa2NVQrPH8gmGEH1CA2mxi6J3i0pEH+
+	uontUxVw5PjH0MTGYyrCfb/0E7b7AqjMik9Z1oxJBxNu0jFJah8UU08wBidtuRtfu4CY4r
+	WfdtmgTv46ERN1PQ8YE32LjLX4CVZcs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756708880;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WrFoZ0QeSo/ITcr95rbRexvC2nUdM3Ye/gg171FhKNo=;
+	b=N/OeOJPI5P16wMGnYJzKw2U1E2p+DlzMFTqx/+RUUrY3wVkF3pYj7IVAyYAsmlIbCO4ItP
+	V2wvwxqXjmSI1zAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 116B91378C;
+	Mon,  1 Sep 2025 06:41:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VkeiNA5AtWjlOgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 01 Sep 2025 06:41:18 +0000
+Message-ID: <8715a886-5416-4fd0-ac50-1cb948cc4546@suse.de>
+Date: Mon, 1 Sep 2025 08:41:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/gud: Replace simple display pipe with DRM atomic
+ helpers
+To: Ruben Wauters <rubenru09@aol.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jani Nikula <jani.nikula@intel.com>,
+ Jocelyn Falempe <jfalempe@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250818193553.2162-1-rubenru09.ref@aol.com>
+ <20250818193553.2162-1-rubenru09@aol.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250818193553.2162-1-rubenru09@aol.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,intel.com,redhat.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Fri, Aug 29, 2025 at 04:24:05PM GMT, zhangsenchuan@eswincomputing.com wrote:
-> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> 
-> Add driver for the Eswin EIC7700 PCIe host controller.
-> The controller is based on the DesignWare PCIe core.
-> 
+Hi,
 
-Add more info about the controller: DWC IP revision, data rate, lanes etc...
+apologies for the late review. I simply missed the mail. There's quite 
+some traffic on the list and things get lost.
 
-> Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
-> Signed-off-by: Senchuan Zhang<zhangsenchuan@eswincomputing.com>
+Am 18.08.25 um 21:35 schrieb Ruben Wauters:
+> The simple display pipe is obsolete and the atomic helpers allow for
+> more control over the rendering process. As such, this patch replaces
+> the old simple display pipe system with the newer atomic helpers.
+>
+> As the code is mainly the same, merely replaced with the new atomic
+> system, there should be no change in functionality.
+>
+> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Thank you so much for the update. I added the patch to the drm-misc-next 
+tree. It'll show up in the next Linux release.
+
+Best regards
+Thomas
+
 > ---
->  drivers/pci/controller/dwc/Kconfig        |  12 +
->  drivers/pci/controller/dwc/Makefile       |   1 +
->  drivers/pci/controller/dwc/pcie-eic7700.c | 350 ++++++++++++++++++++++
->  3 files changed, 363 insertions(+)
->  create mode 100644 drivers/pci/controller/dwc/pcie-eic7700.c
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index ff6b6d9e18ec..1c4063107a8a 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -492,4 +492,16 @@ config PCIE_VISCONTI_HOST
->  	  Say Y here if you want PCIe controller support on Toshiba Visconti SoC.
->  	  This driver supports TMPV7708 SoC.
-> 
-> +config PCIE_EIC7700
-> +	tristate "ESWIN PCIe host controller"
-> +	depends on PCI_MSI
-> +	depends on ARCH_ESWIN || COMPILE_TEST
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Enables support for the PCIe controller in the Eswin SoC
-> +	  The PCI controller on Eswin is based on DesignWare hardware
-> +	  It is a high-speed hardware bus standard used to connect
-> +	  processors with external devices.
-
-No need to explain what PCIe bus is.
-
-> Say Y here if you want
-> +	  PCIe controller support for the ESWIN.
-> +
->  endmenu
-> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-> index 6919d27798d1..0717fe73a2a9 100644
-> --- a/drivers/pci/controller/dwc/Makefile
-> +++ b/drivers/pci/controller/dwc/Makefile
-> @@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
->  obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
->  obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
->  obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
-> +obj-$(CONFIG_PCIE_EIC7700) += pcie-eic7700.o
-> 
->  # The following drivers are for devices that use the generic ACPI
->  # pci_root.c driver but don't support standard ECAM config access.
-> diff --git a/drivers/pci/controller/dwc/pcie-eic7700.c b/drivers/pci/controller/dwc/pcie-eic7700.c
-> new file mode 100644
-> index 000000000000..bf942154d971
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-eic7700.c
-> @@ -0,0 +1,350 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ESWIN PCIe root complex driver
-> + *
-> + * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
-> + *
-> + * Authors: Yu Ning <ningyu@eswincomputing.com>
-> + *          Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-> + */
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/resource.h>
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/reset.h>
-> +#include <linux/pm_runtime.h>
-> +
-> +#include "pcie-designware.h"
-> +
-> +struct eswin_pcie {
-> +	struct dw_pcie pci;
-> +	void __iomem *mgmt_base;
-> +	struct clk_bulk_data *clks;
-> +	struct reset_control *powerup_rst;
-> +	struct reset_control *cfg_rst;
-> +	struct reset_control *perst;
-> +
-> +	int num_clks;
+> I noticed as well elsewhere in the driver WARN_ON_ONCE was used instead
+> of drm_WARN_ON_ONCE(). I have fixed it for the ones I've modified, and
+> will fix it for the driver as a whole in another patch.
+>
+> v2 changes:
+> - address review comments by reorganising gud_probe()
+>
+> v3 changes:
+> - fix formatting and spacing
+> - remove unnecessary includes
+> - convert WARN_ON_ONCE() to drm_WARN_ON_ONCE()
+> - remove dst rect intersect check
+> - remove encoder from gud_device and switch to gconn->encoder
+> ---
+>   drivers/gpu/drm/gud/gud_connector.c | 25 +++++------
+>   drivers/gpu/drm/gud/gud_drv.c       | 52 ++++++++++++++++++-----
+>   drivers/gpu/drm/gud/gud_internal.h  | 13 +++---
+>   drivers/gpu/drm/gud/gud_pipe.c      | 64 +++++++++++++++++++----------
+>   4 files changed, 99 insertions(+), 55 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
+> index 0f07d77c5d52..4a15695fa933 100644
+> --- a/drivers/gpu/drm/gud/gud_connector.c
+> +++ b/drivers/gpu/drm/gud/gud_connector.c
+> @@ -16,7 +16,6 @@
+>   #include <drm/drm_modeset_helper_vtables.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   #include <drm/gud.h>
+>   
+>   #include "gud_internal.h"
+> @@ -607,13 +606,16 @@ int gud_connector_fill_properties(struct drm_connector_state *connector_state,
+>   	return gconn->num_properties;
+>   }
+>   
+> +static const struct drm_encoder_funcs gud_drm_simple_encoder_funcs_cleanup = {
+> +	.destroy = drm_encoder_cleanup,
 > +};
 > +
-> +#define PCIE_PM_SEL_AUX_CLK BIT(16)
-> +#define PCIEMGMT_APP_LTSSM_ENABLE BIT(5)
-> +
-> +#define PCIEMGMT_CTRL0_OFFSET 0x0
-> +#define PCIEMGMT_STATUS0_OFFSET 0x100
-> +
-> +#define PCIE_TYPE_DEV_VEND_ID 0x0
-> +#define PCIE_DSP_PF0_MSI_CAP 0x50
-> +#define PCIE_NEXT_CAP_PTR 0x70
-> +#define DEVICE_CONTROL_DEVICE_STATUS 0x78
-> +
-> +#define PCIE_MSI_MULTIPLE_MSG_32 (0x5 << 17)
-> +#define PCIE_MSI_MULTIPLE_MSG_MASK (0x7 << 17)
-> +
-> +#define PCIEMGMT_LINKUP_STATE_VALIDATE ((0x11 << 2) | 0x3)
-> +#define PCIEMGMT_LINKUP_STATE_MASK 0xff
-> +
-> +static int eswin_pcie_start_link(struct dw_pcie *pci)
-> +{
-> +	struct device *dev = pci->dev;
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +	u32 val;
-> +
-> +	/* Enable LTSSM */
-> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-> +	val |= PCIEMGMT_APP_LTSSM_ENABLE;
-> +	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool eswin_pcie_link_up(struct dw_pcie *pci)
-> +{
-> +	struct device *dev = pci->dev;
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
-> +
-> +	return ((val & PCIEMGMT_LINKUP_STATE_MASK) ==
-> +		     PCIEMGMT_LINKUP_STATE_VALIDATE);
-> +}
-> +
-> +static int eswin_pcie_power_on(struct eswin_pcie *pcie)
-> +{
-> +	int ret = 0;
-
-Don't initialize ret.
-
-> +
-> +	/* pciet_cfg_rstn */
-> +	ret = reset_control_deassert(pcie->cfg_rst);
-> +	if (ret) {
-> +		dev_err(pcie->pci.dev, "cfg signal is invalid");
+>   static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
+>   				struct gud_connector_descriptor_req *desc)
+>   {
+>   	struct drm_device *drm = &gdrm->drm;
+>   	struct gud_connector *gconn;
+>   	struct drm_connector *connector;
+> -	struct drm_encoder *encoder;
+>   	int ret, connector_type;
+>   	u32 flags;
+>   
+> @@ -681,20 +683,13 @@ static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
+>   		return ret;
+>   	}
+>   
+> -	/* The first connector is attached to the existing simple pipe encoder */
+> -	if (!connector->index) {
+> -		encoder = &gdrm->pipe.encoder;
+> -	} else {
+> -		encoder = &gconn->encoder;
+> -
+> -		ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
+> -		if (ret)
+> -			return ret;
+> -
+> -		encoder->possible_crtcs = 1;
+> -	}
+> +	gconn->encoder.possible_crtcs = drm_crtc_mask(&gdrm->crtc);
+> +	ret = drm_encoder_init(drm, &gconn->encoder, &gud_drm_simple_encoder_funcs_cleanup,
+> +			       DRM_MODE_ENCODER_NONE, NULL);
+> +	if (ret)
 > +		return ret;
-> +	}
+>   
+> -	return drm_connector_attach_encoder(connector, encoder);
+> +	return drm_connector_attach_encoder(connector, &gconn->encoder);
+>   }
+>   
+>   int gud_get_connectors(struct gud_device *gdrm)
+> diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+> index 5385a2126e45..5f57f841e603 100644
+> --- a/drivers/gpu/drm/gud/gud_drv.c
+> +++ b/drivers/gpu/drm/gud/gud_drv.c
+> @@ -16,6 +16,7 @@
+>   #include <drm/clients/drm_client_setup.h>
+>   #include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_blend.h>
+> +#include <drm/drm_crtc_helper.h>
+>   #include <drm/drm_damage_helper.h>
+>   #include <drm/drm_debugfs.h>
+>   #include <drm/drm_drv.h>
+> @@ -27,7 +28,6 @@
+>   #include <drm/drm_managed.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   #include <drm/gud.h>
+>   
+>   #include "gud_internal.h"
+> @@ -289,7 +289,7 @@ static int gud_get_properties(struct gud_device *gdrm)
+>   			 * but mask out any additions on future devices.
+>   			 */
+>   			val &= GUD_ROTATION_MASK;
+> -			ret = drm_plane_create_rotation_property(&gdrm->pipe.plane,
+> +			ret = drm_plane_create_rotation_property(&gdrm->plane,
+>   								 DRM_MODE_ROTATE_0, val);
+>   			break;
+>   		default:
+> @@ -338,10 +338,30 @@ static int gud_stats_debugfs(struct seq_file *m, void *data)
+>   	return 0;
+>   }
+>   
+> -static const struct drm_simple_display_pipe_funcs gud_pipe_funcs = {
+> -	.check      = gud_pipe_check,
+> -	.update	    = gud_pipe_update,
+> -	DRM_GEM_SIMPLE_DISPLAY_PIPE_SHADOW_PLANE_FUNCS
+> +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs = {
+> +	.atomic_check = drm_crtc_helper_atomic_check
+> +};
 > +
-> +	/* pciet_powerup_rstn */
-> +	ret = reset_control_deassert(pcie->powerup_rst);
-> +	if (ret) {
-> +		dev_err(pcie->pci.dev, "powerup signal is invalid");
-> +		goto err_deassert_powerup;
-> +	}
+> +static const struct drm_crtc_funcs gud_crtc_funcs = {
+> +	.reset = drm_atomic_helper_crtc_reset,
+> +	.destroy = drm_crtc_cleanup,
+> +	.set_config = drm_atomic_helper_set_config,
+> +	.page_flip = drm_atomic_helper_page_flip,
+> +	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+> +};
 > +
-> +	return ret;
-
-	return 0;
-
+> +static const struct drm_plane_helper_funcs gud_plane_helper_funcs = {
+> +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> +	.atomic_check = gud_plane_atomic_check,
+> +	.atomic_update = gud_plane_atomic_update,
+> +};
 > +
-> +err_deassert_powerup:
-> +	reset_control_assert(pcie->cfg_rst);
+> +static const struct drm_plane_funcs gud_plane_funcs = {
+> +	.update_plane = drm_atomic_helper_update_plane,
+> +	.disable_plane = drm_atomic_helper_disable_plane,
+> +	.destroy = drm_plane_cleanup,
+> +	DRM_GEM_SHADOW_PLANE_FUNCS,
+>   };
+>   
+>   static const struct drm_mode_config_funcs gud_mode_config_funcs = {
+> @@ -350,7 +370,7 @@ static const struct drm_mode_config_funcs gud_mode_config_funcs = {
+>   	.atomic_commit = drm_atomic_helper_commit,
+>   };
+>   
+> -static const u64 gud_pipe_modifiers[] = {
+> +static const u64 gud_plane_modifiers[] = {
+>   	DRM_FORMAT_MOD_LINEAR,
+>   	DRM_FORMAT_MOD_INVALID
+>   };
+> @@ -567,12 +587,17 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   			return -ENOMEM;
+>   	}
+>   
+> -	ret = drm_simple_display_pipe_init(drm, &gdrm->pipe, &gud_pipe_funcs,
+> -					   formats, num_formats,
+> -					   gud_pipe_modifiers, NULL);
+> +	ret = drm_universal_plane_init(drm, &gdrm->plane, 0,
+> +				       &gud_plane_funcs,
+> +				       formats, num_formats,
+> +				       gud_plane_modifiers,
+> +				       DRM_PLANE_TYPE_PRIMARY, NULL);
+>   	if (ret)
+>   		return ret;
+>   
+> +	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+> +	drm_plane_enable_fb_damage_clips(&gdrm->plane);
 > +
-> +	return ret;
-> +}
-> +
-> +static void eswin_pcie_power_off(struct eswin_pcie *eswin_pcie)
-> +{
-> +	reset_control_assert(eswin_pcie->powerup_rst);
-> +	reset_control_assert(eswin_pcie->cfg_rst);
-> +}
-> +
-> +static int eswin_pcie_host_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct eswin_pcie *pcie = dev_get_drvdata(pci->dev);
-> +	int ret;
-> +	u32 val;
-> +	u32 retries;
-> +
-> +	/* Fetch clocks */
-
-Drop the comment.
-
-> +	pcie->num_clks = devm_clk_bulk_get_all_enabled(pci->dev, &pcie->clks);
-> +	if (pcie->num_clks < 0)
-> +		return dev_err_probe(pci->dev, pcie->num_clks,
-> +				     "failed to get pcie clocks\n");
-> +
-> +	ret = eswin_pcie_power_on(pcie);
+>   	devm_kfree(dev, formats);
+>   	devm_kfree(dev, formats_dev);
+>   
+> @@ -582,7 +607,12 @@ static int gud_probe(struct usb_interface *intf, const struct usb_device_id *id)
+>   		return ret;
+>   	}
+>   
+> -	drm_plane_enable_fb_damage_clips(&gdrm->pipe.plane);
+> +	ret = drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NULL,
+> +					&gud_crtc_funcs, NULL);
 > +	if (ret)
 > +		return ret;
 > +
-> +	/* set device type : rc */
-> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-> +	val &= 0xfffffff0;
-
-Can you add bitfield definition for the mask?
-
-> +	writel_relaxed(val | 0x4, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-
-Also for 0x4.
-
+> +	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
+>   
+>   	ret = gud_get_connectors(gdrm);
+>   	if (ret) {
+> diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/gud/gud_internal.h
+> index d6fb25388722..d27c31648341 100644
+> --- a/drivers/gpu/drm/gud/gud_internal.h
+> +++ b/drivers/gpu/drm/gud/gud_internal.h
+> @@ -11,11 +11,11 @@
+>   #include <uapi/drm/drm_fourcc.h>
+>   
+>   #include <drm/drm_modes.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   
+>   struct gud_device {
+>   	struct drm_device drm;
+> -	struct drm_simple_display_pipe pipe;
+> +	struct drm_plane plane;
+> +	struct drm_crtc crtc;
+>   	struct work_struct work;
+>   	u32 flags;
+>   	const struct drm_format_info *xrgb8888_emulation_format;
+> @@ -62,11 +62,10 @@ int gud_usb_set_u8(struct gud_device *gdrm, u8 request, u8 val);
+>   
+>   void gud_clear_damage(struct gud_device *gdrm);
+>   void gud_flush_work(struct work_struct *work);
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		   struct drm_plane_state *new_plane_state,
+> -		   struct drm_crtc_state *new_crtc_state);
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		     struct drm_plane_state *old_state);
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			   struct drm_atomic_state *state);
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			     struct drm_atomic_state *atomic_state);
+>   int gud_connector_fill_properties(struct drm_connector_state *connector_state,
+>   				  struct gud_property_req *properties);
+>   int gud_get_connectors(struct gud_device *gdrm);
+> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
+> index 8d548d08f127..54d9aa9998e5 100644
+> --- a/drivers/gpu/drm/gud/gud_pipe.c
+> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+> @@ -20,7 +20,6 @@
+>   #include <drm/drm_gem_framebuffer_helper.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_rect.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   #include <drm/gud.h>
+>   
+>   #include "gud_internal.h"
+> @@ -451,14 +450,15 @@ static void gud_fb_handle_damage(struct gud_device *gdrm, struct drm_framebuffer
+>   	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
+>   }
+>   
+> -int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+> -		   struct drm_plane_state *new_plane_state,
+> -		   struct drm_crtc_state *new_crtc_state)
+> +int gud_plane_atomic_check(struct drm_plane *plane,
+> +			   struct drm_atomic_state *state)
+>   {
+> -	struct gud_device *gdrm = to_gud_device(pipe->crtc.dev);
+> -	struct drm_plane_state *old_plane_state = pipe->plane.state;
+> -	const struct drm_display_mode *mode = &new_crtc_state->mode;
+> -	struct drm_atomic_state *state = new_plane_state->state;
+> +	struct gud_device *gdrm = to_gud_device(plane->dev);
+> +	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
+> +	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
+> +	struct drm_crtc *crtc = new_plane_state->crtc;
+> +	struct drm_crtc_state *crtc_state;
+> +	const struct drm_display_mode *mode;
+>   	struct drm_framebuffer *old_fb = old_plane_state->fb;
+>   	struct drm_connector_state *connector_state = NULL;
+>   	struct drm_framebuffer *fb = new_plane_state->fb;
+> @@ -469,20 +469,37 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	int idx, ret;
+>   	size_t len;
+>   
+> -	if (WARN_ON_ONCE(!fb))
+> +	if (drm_WARN_ON_ONCE(plane->dev, !fb))
+>   		return -EINVAL;
+>   
+> +	if (drm_WARN_ON_ONCE(plane->dev, !crtc))
+> +		return -EINVAL;
 > +
-> +	ret = reset_control_assert(pcie->perst);
-> +	if (ret) {
-> +		dev_err(pci->dev, "perst assert signal is invalid");
-
-'Failed to assert PERST#'
-
-> +		goto err_perst;
-> +	}
-> +	msleep(100);
-> +	ret = reset_control_deassert(pcie->perst);
-> +	if (ret) {
-> +		dev_err(pci->dev, "perst deassert signal is invalid");
-
-'Failed to deassert PERST#'
-
-> +		goto err_perst;
-> +	}
+> +	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
 > +
-> +	/* app_hold_phy_rst */
-> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
-> +	val &= ~(0x40);
-
-Add definition here and everywhere.
-
-> +	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +	mode = &crtc_state->mode;
 > +
-> +	/*
-> +	 * It takes at least 20ms to wait for the pcie
-> +	 * status register to be 0.
-
-Make use of 80 columns for comments.
-
-> +	 */
-> +	retries = 30;
-> +	do {
-> +		val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
-> +		if (!(val & PCIE_PM_SEL_AUX_CLK))
-> +			break;
-> +		usleep_range(1000, 1100);
-> +		retries--;
-> +	} while (retries);
-> +
-> +	if (!retries) {
-> +		dev_err(pci->dev, "No clock exist.\n");
-
-What does this error mean exactly? "No clock exist" is not a valid error. Error
-has something to do with PCIE_PM_SEL_AUX_CLK, no?
-
-> +		ret = -ENODEV;
-
--ETIMEDOUT?
-
-> +		goto err_clock;
-> +	}
-> +
-> +	/* config eswin vendor id and eic7700 device id */
-> +	dw_pcie_writel_dbi(pci, PCIE_TYPE_DEV_VEND_ID, 0x20301fe1);
-
-Does it need to be configured all the time?
-
-> +
-> +	/* lane fix config, real driver NOT need, default x4 */
-
-What do you mean by 'readl driver NOT need'?
-
-> +	val = dw_pcie_readl_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL);
-> +	val &= 0xffffff80;
-> +	val |= 0x44;
-> +	dw_pcie_writel_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL, val);
-> +
-> +	val = dw_pcie_readl_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS);
-> +	val &= ~(0x7 << 5);
-> +	val |= (0x2 << 5);
-> +	dw_pcie_writel_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS, val);
-> +
-> +	/*  config support 32 msi vectors */
-> +	val = dw_pcie_readl_dbi(pci, PCIE_DSP_PF0_MSI_CAP);
-> +	val &= ~PCIE_MSI_MULTIPLE_MSG_MASK;
-> +	val |= PCIE_MSI_MULTIPLE_MSG_32;
-> +	dw_pcie_writel_dbi(pci, PCIE_DSP_PF0_MSI_CAP, val);
-> +
-> +	/* disable msix cap */
-
-Why? Hw doesn't support MSI-X but it advertises MSI-X capability?
-
-> +	val = dw_pcie_readl_dbi(pci, PCIE_NEXT_CAP_PTR);
-> +	val &= 0xffff00ff;
-> +	dw_pcie_writel_dbi(pci, PCIE_NEXT_CAP_PTR, val);
-> +
-> +	return 0;
-> +
-> +err_clock:
-> +	reset_control_assert(pcie->perst);
-> +err_perst:
-> +	eswin_pcie_power_off(pcie);
-> +	return ret;
-> +}
-> +
-> +static const struct dw_pcie_host_ops eswin_pcie_host_ops = {
-> +	.init = eswin_pcie_host_init,
-> +};
-> +
-> +static const struct dw_pcie_ops dw_pcie_ops = {
-> +	.start_link = eswin_pcie_start_link,
-> +	.link_up = eswin_pcie_link_up,
-> +};
-> +
-> +static int eswin_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct dw_pcie *pci;
-> +	struct eswin_pcie *pcie;
-
-Use reverse Xmas order for all local variables in this driver.
-
-> +	int ret;
-> +
-> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return -ENOMEM;
-> +
-> +	pci = &pcie->pci;
-> +	pci->dev = dev;
-> +	pci->ops = &dw_pcie_ops;
-> +	pci->pp.ops = &eswin_pcie_host_ops;
-> +
-> +	/* SiFive specific region: mgmt */
-
-So the DWC glue wrapper belongs to SiFive?
-
-> +	pcie->mgmt_base = devm_platform_ioremap_resource_byname(pdev, "mgmt");
-> +	if (IS_ERR(pcie->mgmt_base))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->mgmt_base),
-> +				     "failed to map mgmt memory\n");
-> +
-> +	/* Fetch reset */
-
-Drop the comment.
-
-> +	pcie->powerup_rst = devm_reset_control_get_optional(&pdev->dev,
-> +							    "powerup");
-> +	if (IS_ERR_OR_NULL(pcie->powerup_rst))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->powerup_rst),
-> +				     "unable to get powerup reset\n");
-> +
-> +	pcie->cfg_rst = devm_reset_control_get_optional(&pdev->dev, "cfg");
-> +	if (IS_ERR_OR_NULL(pcie->cfg_rst))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg_rst),
-> +				     "unable to get cfg reset\n");
-> +
-> +	pcie->perst = devm_reset_control_get_optional(&pdev->dev, "pwren");
-> +	if (IS_ERR_OR_NULL(pcie->perst))
-> +		return dev_err_probe(dev, PTR_ERR(pcie->perst),
-> +				     "unable to get perst reset\n");
-
-All 3 resets are optional? Even the ones you were using to power on the
-controller?
-
-> +
-> +	platform_set_drvdata(pdev, pcie);
-> +
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-
-So by this time controller is powered on? I don't think so, as
-eswin_pcie_power_on() is called from host_init() callback. If I'm right, then
-these should be moved below dw_pcie_host_init().
-
-> +	ret = pm_runtime_get_sync(dev);
-
-Why do you need get_sync? Are you depending on any parent to power on any
-resource?
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
-> +		goto err_get_sync;
-> +	}
-> +
-> +	ret = dw_pcie_host_init(&pci->pp);
-> +	if (ret) {
-> +		dev_err(dev, "failed to initialize host: %d\n", ret);
-> +		goto err_host_init;
-> +	}
-> +
-> +	return ret;
-
-	return 0;
-
-> +
-> +err_host_init:
-> +	pm_runtime_put_sync(dev);
-> +err_get_sync:
-> +	pm_runtime_disable(dev);
-> +	return ret;
-> +}
-> +
-> +static void eswin_pcie_remove(struct platform_device *pdev)
-> +{
-> +	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
-> +
-> +	dw_pcie_host_deinit(&pcie->pci.pp);
-> +	pm_runtime_put_sync(&pdev->dev);
-> +	pm_runtime_disable(&pdev->dev);
-> +
-> +	reset_control_assert(pcie->perst);
-> +	eswin_pcie_power_off(pcie);
-> +}
-> +
-> +static void eswin_pcie_shutdown(struct platform_device *pdev)
-> +{
-> +	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
-> +
-> +	/* Bring down link, so bootloader gets clean state in case of reboot */
-
-Asserting PERST# won't bring down the device. It just provides indication that
-the device might get powered off and it needs to be prepared for that.
-
-Also, I don't get what you mean by 'bootloder'. Is it the host system bootloader
-or device? Usually, shutdown callback is needed to power off the device when the
-host powers down/reboots so that the device will be reset to a clean state.
-
-> +	reset_control_assert(pcie->perst);
-> +}
-> +
-> +static int eswin_pcie_suspend(struct device *dev)
-> +{
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +
-> +	reset_control_assert(pcie->perst);
-> +	eswin_pcie_power_off(pcie);
-
-So you want to power off the device even if it intends to be in D0? Like NVMe.
-
-> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static int eswin_pcie_resume(struct device *dev)
-> +{
-> +	int ret;
-> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
-> +
-> +	ret = eswin_pcie_host_init(&pcie->pci.pp);
-> +	if (ret < 0) {
-
-if (ret)
-
-> +		dev_err(dev, "Failed to init host: %d\n", ret);
+> +	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
+> +						  DRM_PLANE_NO_SCALING,
+> +						  DRM_PLANE_NO_SCALING,
+> +						  false, false);
+> +	if (ret)
 > +		return ret;
-> +	}
 > +
-> +	dw_pcie_setup_rc(&pcie->pci.pp);
-> +	eswin_pcie_start_link(&pcie->pci);
-> +	dw_pcie_wait_for_link(&pcie->pci);
+> +	if (!new_plane_state->visible)
+> +		return 0;
 > +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops eswin_pcie_pm_ops = {
-> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(eswin_pcie_suspend, eswin_pcie_resume)
-> +};
-> +
-> +static const struct of_device_id eswin_pcie_of_match[] = {
-> +	{ .compatible = "eswin,eic7700-pcie" },
-> +	{},
-> +};
-> +
-> +static struct platform_driver eswin_pcie_driver = {
-> +	.driver = {
-> +		.name = "eic7700-pcie",
-> +		.of_match_table = eswin_pcie_of_match,
-> +		.suppress_bind_attrs = true,
-> +		.pm = &eswin_pcie_pm_ops,
-> +	},
-> +	.probe = eswin_pcie_probe,
-> +	.remove = eswin_pcie_remove,
-
-Since this controller implements irqchip using the DWC core driver, it is not
-safe to remove it during runtime.
-
-> +	.shutdown = eswin_pcie_shutdown,
-> +};
-> +
-> +module_platform_driver(eswin_pcie_driver);
-
-builtin_platform_driver()
-
-> +
-> +MODULE_DEVICE_TABLE(of, eswin_pcie_of_match);
-
-Move it below eswin_pcie_of_match[].
-
-> +MODULE_DESCRIPTION("PCIe host controller driver for eic7700 SoCs");
-
-EIC7700?
-
-- Mani
+>   	if (old_plane_state->rotation != new_plane_state->rotation)
+> -		new_crtc_state->mode_changed = true;
+> +		crtc_state->mode_changed = true;
+>   
+>   	if (old_fb && old_fb->format != format)
+> -		new_crtc_state->mode_changed = true;
+> +		crtc_state->mode_changed = true;
+>   
+> -	if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+> +	if (!crtc_state->mode_changed && !crtc_state->connectors_changed)
+>   		return 0;
+>   
+>   	/* Only one connector is supported */
+> -	if (hweight32(new_crtc_state->connector_mask) != 1)
+> +	if (hweight32(crtc_state->connector_mask) != 1)
+>   		return -EINVAL;
+>   
+>   	if (format->format == DRM_FORMAT_XRGB8888 && gdrm->xrgb8888_emulation_format)
+> @@ -500,7 +517,7 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	if (!connector_state) {
+>   		struct drm_connector_list_iter conn_iter;
+>   
+> -		drm_connector_list_iter_begin(pipe->crtc.dev, &conn_iter);
+> +		drm_connector_list_iter_begin(plane->dev, &conn_iter);
+>   		drm_for_each_connector_iter(connector, &conn_iter) {
+>   			if (connector->state->crtc) {
+>   				connector_state = connector->state;
+> @@ -567,16 +584,18 @@ int gud_pipe_check(struct drm_simple_display_pipe *pipe,
+>   	return ret;
+>   }
+>   
+> -void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+> -		     struct drm_plane_state *old_state)
+> +void gud_plane_atomic_update(struct drm_plane *plane,
+> +			     struct drm_atomic_state *atomic_state)
+>   {
+> -	struct drm_device *drm = pipe->crtc.dev;
+> +	struct drm_device *drm = plane->dev;
+>   	struct gud_device *gdrm = to_gud_device(drm);
+> -	struct drm_plane_state *state = pipe->plane.state;
+> -	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(state);
+> -	struct drm_framebuffer *fb = state->fb;
+> -	struct drm_crtc *crtc = &pipe->crtc;
+> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(atomic_state, plane);
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(atomic_state, plane);
+> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(new_state);
+> +	struct drm_framebuffer *fb = new_state->fb;
+> +	struct drm_crtc *crtc = new_state->crtc;
+>   	struct drm_rect damage;
+> +	struct drm_atomic_helper_damage_iter iter;
+>   	int ret, idx;
+>   
+>   	if (crtc->state->mode_changed || !crtc->state->enable) {
+> @@ -611,7 +630,8 @@ void gud_pipe_update(struct drm_simple_display_pipe *pipe,
+>   	if (ret)
+>   		goto ctrl_disable;
+>   
+> -	if (drm_atomic_helper_damage_merged(old_state, state, &damage))
+> +	drm_atomic_helper_damage_iter_init(&iter, old_state, new_state);
+> +	drm_atomic_for_each_plane_damage(&iter, &damage)
+>   		gud_fb_handle_damage(gdrm, fb, &shadow_plane_state->data[0], &damage);
+>   
+>   	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
 
 -- 
-மணிவண்ணன் சதாசிவம்
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
