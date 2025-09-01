@@ -1,418 +1,106 @@
-Return-Path: <linux-kernel+bounces-793785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B087FB3D82B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:22:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3795AB3D831
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C663B8583
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 102C77A447A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00D422259A;
-	Mon,  1 Sep 2025 04:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99811223707;
+	Mon,  1 Sep 2025 04:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="oaBSYFm7"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="X6QJh1Bq"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25151DEFDD
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 04:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6C1DEFDD;
+	Mon,  1 Sep 2025 04:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756700572; cv=none; b=qdJz3l/tjabHxBUZTCE5/N+YH9RNuiV9jDZ6laYQpntXN6lrB5aOACQxWNGZVpRv7RMy3CwiVgL2FU/5leMzyttEwcZbustp5CJaRc5OrP848LppcdSjaHBsLx5/OL3C0spWmOI5VT4dmj7apv8gd+doVKrKxKWuW1d7DgaKb44=
+	t=1756700639; cv=none; b=ubN32nvVc+zTCHtk2Ial4TQW8IseDSGBu+UgSiRSRyk86bIHjdMOy/5jlK27vV/85WDnR6RK2kEeOz0y6khr0YFz+Uao0I+EK3M0nGvlgXc8G2sm7e/gLXdB5Xho13QCVSF0GckF9zKO4cFu3N1/0WZ6T8dJ7555kHdsqnec0hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756700572; c=relaxed/simple;
-	bh=ZF8XrkERlK6k6G+ZcHFn5gwuUK3mqlrkRJO8upg0oqY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ozAf0bT/KqJwmA4RljsHYCnI+mXtN9I1yoHSYrcyaeR+l39691Dk1EXOpAiu9VcxkA0B8YiGeX+m1rJQ0xjfTpH5NI3UJuBZAegKTqCuijm0MrmjoqITCA6irVQbTFlY+CXZ6qp6BOlx+xMHqyc4u3yv3FKSQ04RdO2zTNP4lXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=oaBSYFm7; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
-Received: from NEET (p4246180-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [118.15.79.180])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 5814MfFD050581
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 1 Sep 2025 13:22:41 +0900 (JST)
-	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=D0vXyYDp4P+WBuZAVssT7SZjaNm4rEG6WhmOFW17gQA=;
-        c=relaxed/relaxed; d=mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250315; t=1756700561; v=1;
-        b=oaBSYFm7f2HPXZwJH/2O7im0kshLqFQ9/g8zn4aS9gch5cKx6iUUe43HhFzOSQQo
-         9GvQZTOTWge8CtnXRX9N8t+Nt/msPKxYOmIt0oD8y7kdn7/mxdLPuYaKE/XLZ783
-         C6ONGjZNJGG3i4dR9T4euQQSpfh4WbyKZ1AgTH8nXI9ZYLn4aRkFZKzaxmi0Tl8U
-         UYdwBPuz3pzNcJiDlapcfGkBHmTRNwxxMTjBNJWWwAWZ67farv5JJ98trtoUgRLh
-         bMB/IvcWuqyaXbMtzGMkLb3OBHjkjZEGGx4JZ3FJTZu16JgxYh1Q/RrE3O162XOW
-         ofXVcLZ/VtBsWJz+SkP1gQ==
-Message-ID: <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
-Date: Mon, 1 Sep 2025 13:22:40 +0900
+	s=arc-20240116; t=1756700639; c=relaxed/simple;
+	bh=h8irg1+qrtdt4GYLBVX3WcdvSdq4JPFr1Ov37zh6/xc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=koqNshCJifZU7+IBmWo3Pe8G8VMTbmLcO8bBNqUayxRw/Apra9NFfUFvKFEETM1sdGnPxckPcRv5o75ON44cRLmgwCRpzMqwezvxpgqdVRIQzmwy5kgU/jjDPjQn/OASfvj3JL+lqfBunf/nYCcstjOeVAdO0T9oZ4riguXZX54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=X6QJh1Bq; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 97FD422DE4;
+	Mon,  1 Sep 2025 06:23:53 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ICk8xOlxs98S; Mon,  1 Sep 2025 06:23:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756700633; bh=h8irg1+qrtdt4GYLBVX3WcdvSdq4JPFr1Ov37zh6/xc=;
+	h=From:To:Cc:Subject:Date;
+	b=X6QJh1Bq87FrQRGhg7J+UyVbvgZx/QZhNsxUij15wfNNSgePu1xWE3erysbJlEjD0
+	 i2GQz5wo+SxoI6j97TvUdkkJlWBaW4PfM0La6neo/8HULNwCu5YnSLKQTmJPnWKXLL
+	 CKcpr4t8ujj/NO5+cvGBVZQRfoprpGD1yxMg+uiEL3DwoJjpM7u+FI1pNTXMjxC4Ur
+	 BSC2kJkWAHHLd/xVAB5JbVhwvpt+727G05RsJQzN8yNYPBmB0B8dt7WKWDXYQY7gOb
+	 r+RMLboP5jq9Ev2E29amedxa2Co5utItJApl3KMa9OmtQuqhp2P7c9dy3vvP7T68ef
+	 LIfCdcENaZb6A==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Han Gao <gaohan@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/4] Add reset controllers for other TH1520 subsystems
+Date: Mon,  1 Sep 2025 04:23:16 +0000
+Message-ID: <20250901042320.22865-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kenta Akagi <k@mgml.me>
-Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
- io failure
-To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
-        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
-        Guoqing Jiang <jgq516@gmail.com>
-References: <20250828163216.4225-1-k@mgml.me>
- <20250828163216.4225-2-k@mgml.me>
- <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
- <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
- <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
- <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
- <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
-Content-Language: en-US
-From: Kenta Akagi <k@mgml.me>
-In-Reply-To: <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+TH1520 SoC is split into several subsystems, and each of them comes with
+distinct reset controllers. We've already had the one for VO subsystem
+documented as "thead,th1520-reset" and supported, and this series adds
+support for others, including AO, VI, MISC, AP, DSP and VO.
 
+Note the reset controller for AO subsystem is marked as "reserved" in
+devicetree since AON firmware may make use of it and access in Linux
+side may cause races.
 
-On 2025/09/01 12:22, Li Nan wrote:
-> 
-> 
-> 在 2025/8/31 2:10, Kenta Akagi 写道:
->>
->>
->> On 2025/08/30 17:48, Li Nan wrote:
->>>
->>>
->>> 在 2025/8/29 20:21, Kenta Akagi 写道:
->>>>
->>>>
->>>> On 2025/08/29 11:54, Li Nan wrote:
->>>>>
->>>>> 在 2025/8/29 0:32, Kenta Akagi 写道:
->>>>>> This commit ensures that an MD_FAILFAST IO failure does not put
->>>>>> the array into a broken state.
->>>>>>
->>>>>> When failfast is enabled on rdev in RAID1 or RAID10,
->>>>>> the array may be flagged MD_BROKEN in the following cases.
->>>>>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
->>>>>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
->>>>>
->>>>> [...]
->>>>>
->>>>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->>>>>> index 408c26398321..8a61fd93b3ff 100644
->>>>>> --- a/drivers/md/raid1.c
->>>>>> +++ b/drivers/md/raid1.c
->>>>>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
->>>>>>                 (bio->bi_opf & MD_FAILFAST) &&
->>>>>>                 /* We never try FailFast to WriteMostly devices */
->>>>>>                 !test_bit(WriteMostly, &rdev->flags)) {
->>>>>> +            set_bit(FailfastIOFailure, &rdev->flags);
->>>>>>                 md_error(r1_bio->mddev, rdev);
->>>>>>             }
->>>>>>     @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>>>>>      *    - recovery is interrupted.
->>>>>>      *    - &mddev->degraded is bumped.
->>>>>>      *
->>>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
->>>>>> - * &mddev->fail_last_dev is off.
->>>>>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
->>>>>> + * then @mddev and @rdev will not be marked as failed.
->>>>>> + *
->>>>>> + * @rdev is marked as &Faulty excluding any cases:
->>>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
->>>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
->>>>>>      */
->>>>>>     static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>>     {
->>>>>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>>>>>           if (test_bit(In_sync, &rdev->flags) &&
->>>>>>             (conf->raid_disks - mddev->degraded) == 1) {
->>>>>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
->>>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
->>>>>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
->>>>>> +                "last device but ignoring it\n",
->>>>>> +                mdname(mddev), rdev->bdev);
->>>>>> +            return;
->>>>>> +        }
->>>>>>             set_bit(MD_BROKEN, &mddev->flags);
->>>>>>               if (!mddev->fail_last_dev) {
->>>>>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
->>>>>>         if (test_bit(FailFast, &rdev->flags)) {
->>>>>>             /* Don't try recovering from here - just fail it
->>>>>>              * ... unless it is the last working device of course */
->>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>>>>             md_error(mddev, rdev);
->>>>>>             if (test_bit(Faulty, &rdev->flags))
->>>>>>                 /* Don't try to read from here, but make sure
->>>>>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->>>>>>             fix_read_error(conf, r1_bio);
->>>>>>             unfreeze_array(conf);
->>>>>>         } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
->>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
->>>>>>             md_error(mddev, rdev);
->>>>>>         } else {
->>>>>>             r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->>>>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->>>>>> index b60c30bfb6c7..530ad6503189 100644
->>>>>> --- a/drivers/md/raid10.c
->>>>>> +++ b/drivers/md/raid10.c
->>>>>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
->>>>>>                 dec_rdev = 0;
->>>>>>                 if (test_bit(FailFast, &rdev->flags) &&
->>>>>>                     (bio->bi_opf & MD_FAILFAST)) {
->>>>>> +                set_bit(FailfastIOFailure, &rdev->flags);
->>>>>>                     md_error(rdev->mddev, rdev);
->>>>>>                 }
->>>>>>     
->>>>>
->>>>> Thank you for the patch. There may be an issue with 'test_and_clear'.
->>>>>
->>>>> If two write IO go to the same rdev, MD_BROKEN may be set as below:
->>>>
->>>>> IO1                    IO2
->>>>> set FailfastIOFailure
->>>>>                       set FailfastIOFailure
->>>>>    md_error
->>>>>     raid1_error
->>>>>      test_and_clear FailfastIOFailur
->>>>>                          md_error
->>>>>                         raid1_error
->>>>>                          //FailfastIOFailur is cleared
->>>>>                          set MD_BROKEN
->>>>>
->>>>> Maybe we should check whether FailfastIOFailure is already set before
->>>>> setting it. It also needs to be considered in metadata writes.
->>>> Thank you for reviewing.
->>>>
->>>> I agree, this seems to be as you described.
->>>> So, should it be implemented as follows?
->>>>
->>>> bool old=false;
->>>> do{
->>>>    spin_lock_irqsave(&conf->device_lock, flags);
->>>>    old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
->>>>    spin_unlock_irqrestore(&conf->device_lock, flags);
->>>> }while(old);
->>>>
->>>> However, since I am concerned about potential deadlocks,
->>>> so I am considering two alternative approaches:
->>>>
->>>> * Add an atomic_t counter to md_rdev to track failfast IO failures.
->>>>
->>>> This may set MD_BROKEN at a slightly incorrect timing, but mixing
->>>> error handling of Failfast and non-Failfast IOs appears to be rare.
->>>> In any case, the final outcome would be the same, i.e. the array
->>>> ends up with MD_BROKEN. Therefore, I think this should not cause
->>>> issues. I think the same applies to test_and_set_bit.
->>>>
->>>> IO1                    IO2                    IO3
->>>> FailfastIOFailure      Normal IOFailure       FailfastIOFailure
->>>> atomic_inc
->>>>                                                   md_error                                     atomic_inc
->>>>     raid1_error
->>>>      atomic_dec //2to1
->>>>                          md_error
->>>>                           raid1_error           md_error
->>>>                            atomic_dec //1to0     raid1_error
->>>>                                                   atomic_dec //0
->>>>                                                     set MD_BROKEN
->>>>
->>>> * Alternatively, create a separate error handler,
->>>>     e.g. md_error_failfast(), that clearly does not fail the array.
->>>>
->>>> This approach would require somewhat larger changes and may not
->>>> be very elegant, but it seems to be a reliable way to ensure
->>>> MD_BROKEN is never set at the wrong timing.
->>>>
->>>> Which of these three approaches would you consider preferable?
->>>> I would appreciate your feedback.
->>>>
->>>>
->>>> For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
->>>> when the array is degraded.
->>>>
->>>> Thanks,
->>>> Akagi
->>>>
->>>
->>> I took a closer look at the FailFast code and found a few issues, using
->>> RAID1 as an example:
->>>
->>> For normal read/write IO, FailFast is only triggered when there is another
->>> disk is available, as seen in read_balance() and raid1_write_request().
->>> In raid1_error(), MD_BROKEN is set only when no other disks are available.
->>
->> Hi,
->> Agree, I think so too.
->>
->>> So, the FailFast for normal read/write is not triggered in the scenario you
->>> described in cover-letter.
->>
->> This corresponds to the case described in the commit message of PATCH v3 1/3.
->> "Normally, MD_FAILFAST IOs are not issued to the 'last' rdev, so this is
->> an edge case; however, it can occur if rdevs in a non-degraded
->> array share the same path and that path is lost, or if a metadata
->> write is triggered in a degraded array and fails due to failfast."
->>
->> To describe it in more detail, the flow is as follows:
->>
->> Prerequisites:
->>
->> - Both rdevs are in-sync
->> - Both rdevs have in-flight MD_FAILFAST bios
->> - Both rdevs depend on the same lower-level path
->>    (e.g., nvme-tcp over a single Ethernet interface)
->>
->> Sequence:
->>
->> - A bios with REQ_FAILFAST_DEV fails (e.g., due to a temporary network outage),
->>    in the case of nvme-tcp:
->>     - The Ethernet connection is lost on the node where md is running over 5 seconds
->>     - Then the connection is restored. Idk the details of nvme-tcp implementation,
->>       but it seems that failfast IOs finish only after the connection is back.
->> - All failfast bios fail, raid1_end_write_request is called.
->> - md_error() marks one rdev Faulty; the other rdev becomes the 'last' rdev.
->> - md_error() on the last rdev sets MD_BROKEN on the array - fail_last_dev=1 is unlikely.
->> - The write is retried via handle_write_finished -> narrow_write_error, usually succeeding.
->> - MD_BROKEN remains set, leaving the array in a state where no further writes can occur.
->>
-> 
-> Thanks for your patient explanation. I understand. Maybe we need a separate
-> error-handling path for failfast. How about adding an extra parameter to md_error()?
+This series is based on next-20250829, thanks for your time and review.
 
-Thank you for reviewing.
+Yao Zi (4):
+  dt-bindings: reset: thead,th1520-reset: Add controllers for more
+    subsys
+  reset: th1520: Prepare for supporting multiple controllers
+  reset: th1520: Support reset controllers in more subsystems
+  riscv: dts: thead: Add reset controllers of more subsystems for TH1520
 
-I am thinking of proceeding like as follows.
-md_error is EXPORT_SYMBOL. I think that it is undesirable to change the ABI of this function.
+ .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+ arch/riscv/boot/dts/thead/th1520.dtsi         |  37 +
+ drivers/reset/reset-th1520.c                  | 835 +++++++++++++++++-
+ .../dt-bindings/reset/thead,th1520-reset.h    | 219 ++++-
+ 4 files changed, 1083 insertions(+), 16 deletions(-)
 
-...
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index ac85ec73a409..855cddeb0c09 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8197,3 +8197,3 @@ EXPORT_SYMBOL(md_unregister_thread);
-
--void md_error(struct mddev *mddev, struct md_rdev *rdev)
-+void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail)
- {
-@@ -8204,3 +8204,3 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
-                return;
--       mddev->pers->error_handler(mddev, rdev);
-+       mddev->pers->error_handler(mddev, rdev, nofail);
-
-@@ -8222,4 +8222,26 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
- }
-+
-+void md_error(struct mddev *mddev, struct md_rdev *rdev)
-+{
-+       return _md_error(mddev, rdev, false);
-+}
- EXPORT_SYMBOL(md_error);
-
-+void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev)
-+{
-+       WARN_ON(mddev->pers->head.id != ID_RAID1 &&
-+               mddev->pers->head.id != ID_RAID10);
-+       return _md_error(mddev, rdev, true);
-+}
-+EXPORT_SYMBOL(md_error_failfast);
-+
- /* seq_file implementation /proc/mdstat */
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 51af29a03079..6ca1aea630ce 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -758,3 +758,3 @@ struct md_personality
-         */
--       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev);
-+       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
-        int (*hot_add_disk) (struct mddev *mddev, struct md_rdev *rdev);
-@@ -903,3 +903,5 @@ extern void md_write_end(struct mddev *mddev);
- extern void md_done_sync(struct mddev *mddev, int blocks, int ok);
-+void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
- extern void md_error(struct mddev *mddev, struct md_rdev *rdev);
-+extern void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev);
- extern void md_finish_reshape(struct mddev *mddev);
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index f1d8811a542a..8aea51227a96 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -637,3 +637,4 @@ static void raid0_status(struct seq_file *seq, struct mddev *mddev)
-
--static void raid0_error(struct mddev *mddev, struct md_rdev *rdev)
-+static void raid0_error(struct mddev *mddev, struct md_rdev *rdev,
-+       bool nofail __maybe_unused)
- {
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 408c26398321..d93275899e9e 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1739,2 +1739,3 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
-  * @rdev: member device to fail.
-+ * @nofail: @mdev and @rdev must not fail even if @rdev is the last when @nofail set
-  *
-@@ -1748,6 +1749,8 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
-  *
-- * @rdev is marked as &Faulty excluding case when array is failed and
-- * &mddev->fail_last_dev is off.
-+ * @rdev is marked as &Faulty excluding any cases:
-+ *     - when @mddev is failed and &mddev->fail_last_dev is off
-+ *     - when @rdev is last device and @nofail is true
-  */
--static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
-+static void raid1_error(struct mddev *mddev, struct md_rdev *rdev,
-+       bool nofail)
- {
-@@ -1760,2 +1763,9 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
-            (conf->raid_disks - mddev->degraded) == 1) {
-+               if (nofail) {
-+                       spin_unlock_irqrestore(&conf->device_lock, flags);
-+                       pr_warn_ratelimited("md/raid1:%s: IO failure on %pg, "
-+                               "last device but ignoring it\n",
-+                               mdname(mddev), rdev->bdev);
-+                       return;
-+               }
-                set_bit(MD_BROKEN, &mddev->flags);
-...
-
-> Kuai, do you have any suggestions?
-> 
->>> Normal writes may call md_error() in narrow_write_error. Normal reads do
->>> not execute md_error() on the last disk.
->>>
->>> Perhaps you should get more information to confirm how MD_BROKEN is set in
->>> normal read/write IO.
->>
->> Should I add the above sequence of events to the cover letter, or commit message?
->>
-> 
-> I think we should mention this in the commit message.
-
-Understood. I will explicitly describe this in the commit message in v4.
-
-Thanks,
-Akagi
-
->> Thanks,
->> Akagi
->>
->>> -- 
->>> Thanks,
->>> Nan
->>>
->>>
->>
->>
->> .
-> 
-> -- 
-> Thanks,
-> Nan
-> 
-> 
+-- 
+2.50.1
 
 
