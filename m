@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-794978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CEDB3EB6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A47B3EB5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698F14852B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334C917CA2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39DF2DF151;
-	Mon,  1 Sep 2025 15:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D668270551;
+	Mon,  1 Sep 2025 15:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AulL2Ak9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="fnG+UTrD"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7652DF12C;
-	Mon,  1 Sep 2025 15:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AA432F76B
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741446; cv=none; b=u4m5Hs1BhOTRNh/7vWYJ9lgIX3jXZYub7vgUy5HeXdJnbMTX5sQ9wOPgeEOCapI5fIE0HCFXzqI8Fw//YEFkrV22Un0wP+qkgoDMPnks2MNA3DMmNwdlMi1S0sP2F5Yw92yzszTfS+vmn8DkQ9pcunNX5hERkzVrEt8tJCZXY+8=
+	t=1756741465; cv=none; b=dNlw/96fXOnvessF//iJHClYy0WqE7qLhZdZs8aK3uZp8AHxM67Pv1ijcwMEfmt0NUKyNGg9kOSC4d+dqVSw9fXmOtOCdT++cR6SVUjiz9akOjICRdbttSgJit8mxo/jKyWrQLI2PH3ZOhSNwQR3JS+WlN3XH7JjkdbUJ2VJyQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741446; c=relaxed/simple;
-	bh=pBIzLCGLfnpkMS5ifv2IuIlkVRJcyJWgB32zpPidkuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9mRwVoEY0whptdD5Mt3exg1BuhmlWnXqsVUZP870j4EkgXeYRcuDiN9xfZMoxJZrxxxRHuBhqd0PGeqTU0MLQvEsl4GPEhWQZ+Mw9IWPIChaJnF8RceRJXrE55AtIcMZWwZz7egR64sat1FuZ0aDM90seyC8LjxeOGKDm84GWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AulL2Ak9; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756741445; x=1788277445;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pBIzLCGLfnpkMS5ifv2IuIlkVRJcyJWgB32zpPidkuo=;
-  b=AulL2Ak9J4j9wZytsZpPsdnnsM4dhs0lvsY1rdWiVautfPB2U9h5QgnC
-   v/TD2ySlKyNJMIjEf8C6Y3dTMMXY6Ed26YLwkoaqO/RXVk6NfkTfXYovj
-   6jnsW7p7lVxuVcwXb9AEOWMA7V5AO/IS+GD+r9wHlB0StYjNQzUDcA3yZ
-   zqP4tMDAd3IPYAhNFFf/YhHRBWprz836YdL3Bb1q75TYaz/nImupt2/z5
-   ILstwkRoehvzdoZ4trVAYA4/UgY8yvnN3dafxVsdJQAsyVI9iW7jNgtn5
-   Uw6TxflTJsuzOMD2BobrbednvvFy8BZFnAGhiOZssIwthEoNeGEyP4hCD
-   A==;
-X-CSE-ConnectionGUID: ZkI4vBw7RNu7qmGa4sszRg==
-X-CSE-MsgGUID: RdAMnYNXQmuJOKx+RqORQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="76601048"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="76601048"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:44:04 -0700
-X-CSE-ConnectionGUID: lp/qH+0RSKSUDXdMvDjWIA==
-X-CSE-MsgGUID: r5kQ9S/OTMaUiKdn8829mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170328349"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:44:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ut6hI-0000000ASbS-2NaZ;
-	Mon, 01 Sep 2025 18:43:56 +0300
-Date: Mon, 1 Sep 2025 18:43:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>
-Subject: Re: [PATCH v3 0/2] i2c: pxa: fix I2C communication on Armada 3700
-Message-ID: <aLW_PGzTSFFhJOus@smile.fi.intel.com>
-References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
- <aLVle-fEMXlQlDR-@smile.fi.intel.com>
- <587f46d8-598e-4509-bc19-1e6d1b61a624@gmail.com>
+	s=arc-20240116; t=1756741465; c=relaxed/simple;
+	bh=SlFTiF84cgj//wbn0koUdjPLm1AxeeZRg97sGsQJaVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8sot0c+1dAMQ9/P4Bth1NwaaelRpMfcKkq1hgG3wmm7Pl/fh9cgWjilJ24vrvRJFjK/TAtJMYhFpynJnBdUHaKYMoVoh5ch78AM0VJ0XiclsDFlz8VakPu40HJ3VIKM0b3BhIYzCkyQ6CNoFWrqeiXz2myiY51neAf5gN4PACQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=fnG+UTrD; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e989adfefeaso2694690276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1756741463; x=1757346263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gv8Fs1lCORqoKvCxwSJ1PHBV0IJT6OUFz2w3OLpOTgo=;
+        b=fnG+UTrDw3bInIW6R5FFhfbVENrXz2O73Mjhxc8VikrCGnnOQ91/TZ/XihwepzoGhG
+         nObAb8sTkPiJ19RzKtHW7JCyGAq3dFzf58qKJZXc+Ycpd1bbE/i6sb9lhIQAOJV1hOqg
+         q2LLKbR+ex0KgnPbsY/1xiZhZbN3ppuhu67SH/HLbwqWQHyqV+2IVb6Y2omfd2IUfVLY
+         BiC7BQyNg++Bqs0gyBJwsJMlXVyQn1Z+T5kYY68h6I+j2wibyumyFbW9Jt/Ez1XuUpeL
+         zkFS4lu4GRM4eIBYve7/dZCIQReX1uoq20D5GOsbWZo7AxkP0c4b5bH6eCgIaNgciaqZ
+         Jxbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756741463; x=1757346263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gv8Fs1lCORqoKvCxwSJ1PHBV0IJT6OUFz2w3OLpOTgo=;
+        b=gA4X8o6LlMie0+rtbot4vPGPTTh2kKkiIjln9VZSibRnzb5A2vyyYewHhlR83hBJfR
+         xWF34LxKJC7zyDIgHxKIuGCcvcR9l1OKVjoGSj02d8gmNuSdf9+b08o4sApblie5HPzA
+         I2nl3f1kFJ3WiQA1vCJtPpbrnwZUV9UvscA5rhyxRAjPA3tipOSIIB1uU1+zpYpgEVQl
+         lcpwtnI00TSptIC+8CieJrIWUIlNY4hE08Tls7ep65HpXYjZ0v0woO9ZD8m826tx/J8N
+         Qx/xCEJKhcZzeDiXTkCvlsI7OOj/xgzajWIP2JmO7gk+MTKBtGKt7l9SstrLK74twO2d
+         BVXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHM+4H3UtbsomLz8lYOp5CykCyLlf627DYuep/uArhD8e8TFZzYn9RVdMImrnLRFrk7lIgXFFKIy+IUKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDrcvtPLuN7rmR4xDZc8iuhpKGhXmmEbGyqA3M/l9v+GLDkgbU
+	Edw6oW0D9x8uGKqR6CLl0TZi2KkSgpASg2tFui1KvDtboFcXF9mANH8cSQmjPQk1I5/zcQf3Fi5
+	PdAG4MMaQ2A==
+X-Gm-Gg: ASbGncu102ULMN8VXG8a1SOpajrsXefF6fpJv0mqWM3rl5wF0DslFZ96KwVamh01jDh
+	EAJWP/g0T/xz3k/uMJVLjp8X6GHuGHF8gl96oFotp504Eb44SwIP5s9/S7vMZ/Vq96dNekxHyPq
+	NpjVwbDrYkii1CSj/YzA3vapLDC3lKJc6lPVgEpOABqIccrg92mfSTjb2hCVHqUOHKDHiTXtMZP
+	1e+WvqFu+rUbpC1BdnUAe6WSZ2PPC1V+Vp2Rd0ZK9ehywXZiaMTWYqTfGfYFHmZl5UgGfhWN+Xm
+	bqiiOkyokLQTynQlhgDz83N6YNNJrbcewllMXmLQalC6m33S/6Fg9okblB8uineJHTASwapm3mC
+	BIfGX1ZfCED0XcV94D16tx5SUJrGKLDNearMO2lo/Dnjpk942Hvs5RslmBUKo1RxN0g==
+X-Google-Smtp-Source: AGHT+IGsI66c7iUq/zk0bdetHAFdf6eWhia9OwqGYQFnu2vdC9zxT+t4VRB7nsYMx8V48CvXfMekiA==
+X-Received: by 2002:a05:690c:5085:b0:71f:f726:50aa with SMTP id 00721157ae682-722765006b7mr77606057b3.33.1756741463191;
+        Mon, 01 Sep 2025 08:44:23 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7227d67377esm15461187b3.33.2025.09.01.08.44.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 08:44:22 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e96e3094fd9so3899371276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:44:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXkIoOfXeh/9nLCIOvOH8NF89R2Xz9pN5GwcM2miup9xypSTqpWKEEBTjutCh86o40mu0B8TBC+j5gQ2PM=@vger.kernel.org
+X-Received: by 2002:a05:690c:6903:b0:721:40df:7383 with SMTP id
+ 00721157ae682-7227655ae4fmr106570827b3.41.1756741462296; Mon, 01 Sep 2025
+ 08:44:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <587f46d8-598e-4509-bc19-1e6d1b61a624@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250814113519.1551855-1-heiko@sntech.de>
+In-Reply-To: <20250814113519.1551855-1-heiko@sntech.de>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Mon, 1 Sep 2025 17:44:10 +0200
+X-Gmail-Original-Message-ID: <CAAObsKBZ7rRXv2JmmLO9PKvMY+KLuD2v8zhLYL9_StdaKgyOyQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwcbnQZ_C4li99eU8OMsQt941Fs8LXnbtlzUm57hljet67PvO5cNNPHidE
+Message-ID: <CAAObsKBZ7rRXv2JmmLO9PKvMY+KLuD2v8zhLYL9_StdaKgyOyQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Rocket Kconfig fixes
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: ogabbay@kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 04:49:20PM +0200, Gabor Juhos wrote:
-> 2025. 09. 01. 11:20 keltezéssel, Andy Shevchenko írta:
-> > On Wed, Aug 27, 2025 at 07:13:57PM +0200, Gabor Juhos wrote:
-> >> There is a long standing bug which causes I2C communication not to
-> >> work on the Armada 3700 based boards. The first patch in the series
-> >> fixes that regression. The second patch improves recovery to make it
-> >> more robust which helps to avoid communication problems with certain
-> >> SFP modules.
-> > 
-> >> Changes in v3:
-> >>   - rebase on tip of i2c/for-current
-> > 
-> > Hmm... Why not the i2c/i2c-host branch? (It's Andi's tree)
-> 
-> Simply, because the previous versions of the series were based on that since
-> they contained a patch for the I2C core code. Additionally, I did not notice
-> that there is a separate tree for host driver patches.
-> 
-> Although, I could send a new version, but that seems pointless since the i2c-pxa
-> driver code is the same in both trees currently.
+Thanks, Heiko, I have applied them to drm-misc-next.
 
-Yep, no need for a new version (I haven't implied that need). Just asking...
+Regards,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Tomeu
 
-
+On Thu, Aug 14, 2025 at 1:35=E2=80=AFPM Heiko Stuebner <heiko@sntech.de> wr=
+ote:
+>
+> More common indentation and depending on the actual accel framework.
+>
+> Heiko Stuebner (2):
+>   accel/rocket: Fix indentation of Kconfig entry
+>   accel/rocket: Depend on DRM_ACCEL not just DRM
+>
+>  drivers/accel/rocket/Kconfig | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> --
+> 2.47.2
+>
 
