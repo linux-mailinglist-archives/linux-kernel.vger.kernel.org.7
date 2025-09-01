@@ -1,177 +1,167 @@
-Return-Path: <linux-kernel+bounces-793997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD0AB3DB4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:41:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3552AB3DB51
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699851887AF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F174416A3BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401AB2BFC74;
-	Mon,  1 Sep 2025 07:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4132D6614;
+	Mon,  1 Sep 2025 07:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dp/3sbO5"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VAU40Ozb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154672BE655
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB0A2C0278
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712488; cv=none; b=FlpuG6QDfwwdoVzBNjN+hTU88IiBI6BJpvCH5Phc0YgfZlem+L0oSK4NBTaA92+XotCemFYUsdYqgIUxATYszyRT5fNjdXYYrEEWnrPK97c+4thCayjDMR01ihPLu7yEOuF1m+vWKHLGHRDjomZCtLYJvR8vd1w56fQmJsjaNJA=
+	t=1756712561; cv=none; b=ZcxTFjyS2QbKCT7OzpkyW+6vTneCov+vmcRZU4Z0IWtMb53GPbkUEE2xIKjmlwcygdbumogzuYhiUu70cjDFN0v/xFcWGwGfzTjhoPkN2FvkXnzhj/t+adbFuc3fiNRfKB5dyGFYJfKmL0hUh6roSZmsHlTs1thCCgNdG/oTdvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712488; c=relaxed/simple;
-	bh=DiUtzODySvVQy6C0+MeFAf+GpkdVpkzQ8pTRsz62UYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqmFEkKeQSrARtpjoLXO1X45i1HJHbxD2dy+h5Mps3Or/AkOFB3/wvhac1tCv6rukcy84eAQYTstOJCsVA3kTRDRdyRslMU2roWWkJxzKoL0c7EY7JYnawZapovX+MD/ZU+kEHvZ0EkCi0kTrhaaXd3H9NL/1k9qPurpig9T/Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dp/3sbO5; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso23333965e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756712482; x=1757317282; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTibsjsZinMAL6mt7SzQqJlZlrTvbHjOaiEQY+Pnxmo=;
-        b=dp/3sbO5V8/LUnRh4XuhKBQg3jWBbraLYlezWUUnyUW7LjFyR8Z53b+rU+Zs1t+a5q
-         6INrOy0QJaCFs9AnXx1JcyNiGZiKVtOeoCiq+iEd5UElojhrVXugTbfj6nWuT0EWU3CP
-         jG5i2zedo+DR1lKEGXF28jAmtBzT13Ib9PpYLV56nxDSVo4cJ+BDbAqIr1ykeR9nEszA
-         jPi5iUBrOhfH9aUORsyGQYz4v5MghePoZCZqNi1PMFp8D+naaPIxd/CMr1WqOSDDmcgM
-         /bD/uvcDo0eJrGxRRIAoXPFa5/mqCY0GTJozqcVCNbSe4ZAAjZJXxAh9sMuUv7F1oEDn
-         kV+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756712482; x=1757317282;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fTibsjsZinMAL6mt7SzQqJlZlrTvbHjOaiEQY+Pnxmo=;
-        b=OZI7ew1RP1eOURpFfFCFN+fUb9ZiQcnwo/NEDV7tM47awQAPPmv0US6Fp3WyCXEoW6
-         8xjXeejnjPBzX+YYoSWEF6NrHJG4w5MUEwsfw20SS816PsNMZfyyeUQsA6vHL1CGC9xl
-         hOR1fejyscaDOY4NEIcn9G6puWUrwRusBzhLxVKWXKXf6Y4PBxJ+P7Je6YEAgNoAOEdp
-         JR/iKdZvJNRVl/nGHvZphI9sjIDsmdDeTQhtY1twuNpu0lAYNDpGsb6r9Fh39mSbLXu2
-         w6UQNAJ29hy2Kyanu1ZFMOm/aH9YU/CdjO6fAMsLLxRuW+22aqXTlN/ztZZIgVaY21OU
-         crdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7tWQFlubHLVe0EBec42LkBnEJDnl4t4rg4UnjmScXOZLmpQQNhBGWJE474jqy4VXj+dOeIADvBkQbrsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWMATDDhX+d0mFz8cGQdoCTSbhTDMsaa0Q83xxIeeASxL7DMfv
-	qtk1Z4RXnHj6a/w9YQsuet/bu5dxvKirxaBpDUiL/WR0nQHHvubvBq/G5MZHAPmYqV6EnqF0Ugy
-	WPlQT
-X-Gm-Gg: ASbGncuZuAPj/LYDhbx34WFrP20PePh/oKsTvL+pU9RWI+D9WaZ+StefJEjPwhvufVK
-	RS7BSL4Gu9WodaSEACRx/6WTjwopTxfkmjNqvuRU3YaPYMV6YiuAxIsdI9Ba7pSaJwAWpW348rt
-	is+Y9CDD4hRf+009u8CsBJmS0DkwyT6hg0Ect1tV+1R2bykzHqGySRrlmgn1JVNiBP32Pk8jL9Q
-	DfT99UgSsn2jPf+ANdtOBvRwB0bIovNcD2vqZSzYeb0YtqyP/8fGVTBJxbs1HDf5jnOQVSMdPS+
-	3vb4EE8Pqet8Ug7qtHMQAbzKzKvOZsQbUBJE4Ab/xIds2lw0+uc8WlWS1YmK/3OwJznOk8MuXew
-	xAJgLafKSN08SvJeRxYeUoc0MSnKj5MgJGgOAn5vEa+KRxkMaQehsZ07K
-X-Google-Smtp-Source: AGHT+IEOHCc1C43y9L1dHpZXh6OP0LizmCzEwU9EaGTg2xElyTZrzgDrpKZg4MhMcKWHXdtU0bUDNQ==
-X-Received: by 2002:a7b:c3ce:0:b0:456:19be:5e8 with SMTP id 5b1f17b1804b1-45b855c980dmr32953665e9.20.1756712481379;
-        Mon, 01 Sep 2025 00:41:21 -0700 (PDT)
-Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e887fdcsm145730905e9.13.2025.09.01.00.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 00:41:21 -0700 (PDT)
-Date: Mon, 1 Sep 2025 09:41:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: zhongjinji <zhongjinji@honor.com>
-Cc: rientjes@google.com, shakeel.butt@linux.dev, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, liam.howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, surenb@google.com, liulu.liu@honor.com,
-	feng.han@honor.com, tianxiaobin@honor.com, fengbaopeng@honor.com
-Subject: Re: [PATCH v6 2/2] mm/oom_kill: The OOM reaper traverses the VMA
- maple tree in reverse order
-Message-ID: <aLVOICSkyvVRKD94@tiehlicka>
-References: <20250829065550.29571-1-zhongjinji@honor.com>
- <20250829065550.29571-3-zhongjinji@honor.com>
+	s=arc-20240116; t=1756712561; c=relaxed/simple;
+	bh=VmdNupVV8y1bDvpKIiDVhUBkBnod0a5fvoFV49PmFNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DwXgSpGHyIijR2MVv4c6s511JY8IzEcubJsc8CbCNy3drJmgEeT9mocL46+oFEFCY7vtWsL/9CBtn8CroWCe1h7fZ1yfoSvCKQ82oDmf2HsqBos8q+yW8R8wjmGcpZWbHob60wUVbf8FR4830/qvyfaWdKJZDvF69lSRDMoKvUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VAU40Ozb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2BB1F52;
+	Mon,  1 Sep 2025 09:41:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756712484;
+	bh=VmdNupVV8y1bDvpKIiDVhUBkBnod0a5fvoFV49PmFNI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VAU40OzboE+vXNhNMWM8cbQ+voIx8JxzQ/YQoHrfKnkX88W1xKjDDeYNaVInbzViN
+	 W6hcwvz05NY1FTiIhczwX5HEgJr969ld2eGA1tKezVa+64PIm2xcMXR420iqde8ZTI
+	 erx2NmM0Nivg1F8kqHd30ZXXw7nM5LK91ImaC2XU=
+Message-ID: <9d587099-9212-4107-83cb-be52f3bfe1f7@ideasonboard.com>
+Date: Mon, 1 Sep 2025 10:42:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829065550.29571-3-zhongjinji@honor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] drm/tidss: dispc: Convert to FIELD_* API
+To: Maxime Ripard <mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250827-drm-tidss-field-api-v3-0-7689b664cc63@kernel.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250827-drm-tidss-field-api-v3-0-7689b664cc63@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 29-08-25 14:55:50, zhongjinji wrote:
-> When a process is OOM killed without reaper delay, the oom reaper and the
-> exit_mmap() thread likely run simultaneously. They traverse the vma's maple
-> tree along the same path and may easily unmap the same vma, causing them to
-> compete for the pte spinlock.
+Hi Maxime,
+
+On 27/08/2025 18:12, Maxime Ripard wrote:
+> Hi,
 > 
-> When a process exits, exit_mmap() traverses the vma's maple tree from low
-> to high addresses. To reduce the chance of unmapping the same vma
-> simultaneously, the OOM reaper should traverse the vma's tree from high to
-> low address.
+> The tidss driver rolls its own API equivalent to the FIELD_* API already
+> provided the kernel.
 > 
-> Reported-by: tianxiaobin <tianxiaobin@honor.com>
-> Reported-by: fengbaopeng <fengbaopeng@honor.com>
+> Since it's an ad-hoc implementation, it also is less convenient and
+> doesn't provide some useful features like being able to share the field
+> definitions that will come handy in the future.
 > 
-> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> Thus, this series converts the driver to that API and drops its own
+> version.
 
-The changelog could be improved because it is a bit confusing at this
-stage. I haven't payed a close attention to previous discussion (sorry)
-but there are two Reported-bys without any actual problem statement
-(sure contention could happen but so what? What was the observed
-behavior). Also the first paragraph states that "without reaper delay"
-there is a problem but the only situation we do not have a dealay is
-when the task is frozen and there is no racing there.
+This looks good. I'll push to drm-misc-next.
 
-As already said in the previous response I think this makes conceptual
-sense especially for oom victims with large address spaces which take
-more that the OOM_REAPER_DELAY to die. Maybe you want to use that as a
-justiciation. My wording would be
-"
-Although the oom_reaper is delayed and it gives the oom victim chance to
-clean up its address space this might take a while especially for
-processes with a large address space footprint. In those cases
-oom_reaper might start racing with the dying task and compete for shared
-resources - e.g. page table lock contention has been observed.
+ Tomi
 
-Reduce those races by reaping the oom victim from the other end of the
-address space.
-"
-
-Anyway, with a changelog clarified.
-Acked-by: Michal Hocko <mhocko@suse.com>
-
+> 
+> Let me know what you think,
+> Maxime
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->  mm/oom_kill.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> Changes in v3:
+> - Rebase on top of latest linux-next, fix merge conflicts
+> - Link to v2: https://lore.kernel.org/r/20250820-drm-tidss-field-api-v2-0-43cab671c648@kernel.org
 > 
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index a5e9074896a1..01665a666bf1 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
->  {
->  	struct vm_area_struct *vma;
->  	bool ret = true;
-> -	VMA_ITERATOR(vmi, mm, 0);
-> +	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
->  
->  	/*
->  	 * Tell all users of get_user/copy_from_user etc... that the content
-> @@ -526,7 +526,12 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
->  	 */
->  	set_bit(MMF_UNSTABLE, &mm->flags);
->  
-> -	for_each_vma(vmi, vma) {
-> +	/*
-> +	 * When two tasks unmap the same vma at the same time, they may contend
-> +	 * for the pte spinlock. To reduce the probability of unmapping the same vma
-> +	 * as exit_mmap, the OOM reaper traverses the vma maple tree in reverse order.
-> +	 */
-> +	mas_for_each_rev(&mas, vma, 0) {
->  		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
->  			continue;
->  
-> -- 
-> 2.17.1
+> Changes in v2:
+> - Switch to macros to prevent a gcc error
+> - Link to v1: https://lore.kernel.org/r/20250730-drm-tidss-field-api-v1-0-a71ae8dd2782@kernel.org
+> 
+> ---
+> Maxime Ripard (14):
+>       drm/tidss: dispc: Remove unused OVR_REG_GET
+>       drm/tidss: dispc: Convert accessors to macros
+>       drm/tidss: dispc: Switch to GENMASK instead of FLD_MASK
+>       drm/tidss: dispc: Get rid of FLD_VAL
+>       drm/tidss: dispc: Get rid of FLD_GET
+>       drm/tidss: dispc: Get rid of FLD_MOD
+>       drm/tidss: dispc: Switch REG_GET to using a mask
+>       drm/tidss: dispc: Switch REG_FLD_MOD to using a mask
+>       drm/tidss: dispc: Switch VID_REG_GET to using a mask
+>       drm/tidss: dispc: Switch VID_REG_FLD_MOD to using a mask
+>       drm/tidss: dispc: Switch VP_REG_GET to using a mask
+>       drm/tidss: dispc: Switch VP_REG_FLD_MOD to using a mask
+>       drm/tidss: dispc: Switch OVR_REG_FLD_MOD to using a mask
+>       drm/tidss: dispc: Define field masks being used
+> 
+>  drivers/gpu/drm/tidss/tidss_dispc.c      | 297 ++++++++++++++++---------------
+>  drivers/gpu/drm/tidss/tidss_dispc_regs.h |  76 ++++++++
+>  2 files changed, 225 insertions(+), 148 deletions(-)
+> ---
+> base-commit: a6d3da9a268e3d0a20b76fb40fd3484fe219ff17
+> change-id: 20250729-drm-tidss-field-api-382947a92d44
+> 
+> Best regards,
 
--- 
-Michal Hocko
-SUSE Labs
 
