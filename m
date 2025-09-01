@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-794940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BF5B3EAFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:39:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E479BB3EB1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E466163AB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61494189C8A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102DC324B0C;
-	Mon,  1 Sep 2025 15:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A8F2D5924;
+	Mon,  1 Sep 2025 15:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XVtRrGCf"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0FC32F748;
-	Mon,  1 Sep 2025 15:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ot6/pVbJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8157F191484
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740673; cv=none; b=aXktwFvf3BdgrAjmN+FpfIthQrAJDjyHCr69DJbsdgU6npYBX3isQwRVJK3loLdPo1VVqo2awQGHJcT068ViO9x8edgy0YytdRXUu8gEP0l1RGS70prAgI0uVrDQ9ahK9fvi94c3iTCkn2Z2yUf90LczZ2xU0sWtIACKARljbok=
+	t=1756740750; cv=none; b=p+lgZdcAU6YgrDAGgvflobsUQD7/+Tdz1ykKKJoQE07E2CaIicHRLafCMPWieSkYtRc/NFF6qJfM6a0Q2diadXsCCnWPu3mf2xk/sZMCUo76XsLKUwS9R8kAnnsx9k1OjfJ1gA4NggGeyeCUZdJUXRCqlrHj6Lsjx7uQ0kGTT0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740673; c=relaxed/simple;
-	bh=/8vej4eNYruwNwm97aIZA2Hz7Rzgofi8A9k+GklL0C4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6qieHmOmM0tGcFgs9z1A0rU5bjHSaXl8+9NzFTNpG3QmktI850vGxo4M8p5/58Aqe83ehdHnehFniFXcFDUUpr/gkgGh/s7BFgPg/VNfnfwB8vRDiGdngJQgqjdf9bcIOMnqC4JPOk0HlVH2KW+E7AvZw2ZDq+LPo/ajZE6xOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XVtRrGCf; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JT
-	W7s6g7GEV3g1eaZO9uwvh1qEtAeXGH3zI7t99R1hU=; b=XVtRrGCftiAQsIfP15
-	vWQrOLbYwZhqR3HHaioIvAPC4kc7RCjQLAZqBYkCPGCS9dFCqJ7xA0gSQFzAj0XL
-	eGMMXnHHwzowJtvaQsaXl1iS8Gc6adHmTeO59j3mL48jHUBmD7K6OdhcVFl4A9LC
-	0pcGej2vLmjd7ALllGm4AxgKY=
-Received: from ubuntu22.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgCnhTYcvLVoVj2zBQ--.28532S2;
-	Mon, 01 Sep 2025 23:30:37 +0800 (CST)
-From: chenguanxi11234@163.com
-To: kees@kernel.org
-Cc: tony.luck@intel.com,
-	gpiccoli@igalia.com,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	haonan.chen@zyt.com,
-	xiaocheng.yan@zyt.com
-Subject: [PATCH linux-next v2] pstore/ram: Fix pstore lost information
-Date: Mon,  1 Sep 2025 23:30:32 +0800
-Message-Id: <20250901153032.737442-1-chenguanxi11234@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756740750; c=relaxed/simple;
+	bh=RcvhfihX6YU4et0XfG7utIubbDfCoaYkRi5WUgcIWjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oB6j30/Stw8enUv/e+RLEghFooHi7HgAWBhC38LPH8uk2PEXC1JrWgrUSdcOFiD/rQq1r8Foh5J3UsuOBoEXf5+WLvDgj0Tdfux8msldhwuMA+Smij7ie0z/iv+7ZO/h1jwk27vioy4lNflm20r/WRtE3DcWfefrsRyH6mGyzZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ot6/pVbJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756740747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9ceJOwXYjEfi6iZwg8CY4/yrYQPsO+14he7tUO05MVg=;
+	b=Ot6/pVbJ+g7qjnbP+fyAFBgSzVcai3I15gPnbStutdPJxO9vX0rMcgdH3gvqu37zUf8Yf/
+	8PCoKecfPaUR1vSuXZ9F/UqMw1bwvQBK3eze7p5js/ygn6jOk58ZmC1cUEX/sUBJj4e82A
+	YgSCNiAUDRUYTeFzewnGd+QoHYDEemA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-t9iRqwykPFmsFf3Tbab8zQ-1; Mon,
+ 01 Sep 2025 11:32:24 -0400
+X-MC-Unique: t9iRqwykPFmsFf3Tbab8zQ-1
+X-Mimecast-MFC-AGG-ID: t9iRqwykPFmsFf3Tbab8zQ_1756740743
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5E6B18003FC;
+	Mon,  1 Sep 2025 15:32:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.37])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 53B2F30001A2;
+	Mon,  1 Sep 2025 15:32:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  1 Sep 2025 17:31:00 +0200 (CEST)
+Date: Mon, 1 Sep 2025 17:30:55 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Xiang Gao <gxxa03070307@gmail.com>, joel.granados@kernel.org,
+	lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>, mjguzik@gmail.com,
+	Liam.Howlett@Oracle.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250901153054.GA5587@redhat.com>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner>
+ <20250819142557.GA11345@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgCnhTYcvLVoVj2zBQ--.28532S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7trW7Zr17KrW5KF1fZry5Arb_yoW8Ar1rpw
-	sxJas3KrykG34fJw1vgF1kXr1jya4kta18Z348t34Syw1UKr1kAr10vw1avFZ0gFWrA3W3
-	ArsY9FyfJas8tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwHUDUUUUU=
-X-CM-SenderInfo: xfkh0wxxdq5xirrsjki6rwjhhfrp/xtbBzwSr+mif35eYaAABsU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819142557.GA11345@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Chen Haonan <haonan.chen@zyt.com>
+ping...
 
-Background
-==========
-persistent_ram_zap() is used to prevent the corresponding file from 
-still appearing after an unlink operation in the next boot, but 
-this is unnecessary for console, pmsg, and ftrace. Worse yet, it 
-causes the system to only show logs generated after the deletion 
-operation the next time it reboots, following the removal of the 
-corresponding file under /sys/fs/pstore.
+We need either
 
-Solution
-==========
-Before executing persistent_ram_zap(), check the file type and 
-perform this operation only for dmesg logs. 
+  [1/1] pid: Add a judgment for ns null in pid_nr_ns
+  https://git.kernel.org/vfs/vfs/c/006568ab4c5c
 
-Result View
-==========
-Before patch:
+or
 
-root@ubuntu:/sys/fs/pstore# echo test1 > /dev/pmsg0 
-root@ubuntu:/sys/fs/pstore# rm pmsg-ramoops-0 
-root@ubuntu:/sys/fs/pstore# echo test2 > /dev/pmsg0 
-root@ubuntu:/sys/fs/pstore# reboot
-...
-root@ubuntu:/sys/fs/pstore# cat pmsg-ramoops-0 
-test2
+  [1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+  https://git.kernel.org/vfs/vfs/c/abdfd4948e45
 
-After patch:
+in any case imo the changelog should explain why do we care
+to check ns != NUll, "Sometimes null is returned for task_active_pid_ns"
+doesn't look like a good explanation...
 
-root@ubuntu:/sys/fs/pstore# echo test1 > /dev/pmsg0 
-root@ubuntu:/sys/fs/pstore# rm pmsg-ramoops-0 
-root@ubuntu:/sys/fs/pstore# echo test2 > /dev/pmsg0 
-root@ubuntu:/sys/fs/pstore# reboot
-...
-root@ubuntu:/sys/fs/pstore# cat pmsg-ramoops-0
-test1
-test2
+Oleg.
 
-Signed-off-by: Chen Haonan <haonan.chen@zyt.com>
----
- fs/pstore/ram.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index bc68b4de5287..48e4abd5dcad 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -436,7 +436,8 @@ static int ramoops_pstore_erase(struct pstore_record *record)
- 	}
- 
- 	persistent_ram_free_old(prz);
--	persistent_ram_zap(prz);
-+	if (record->type == PSTORE_TYPE_DMESG)
-+		persistent_ram_zap(prz);
- 
- 	return 0;
- }
--- 
-2.34.1
+On 08/19, Oleg Nesterov wrote:
+>
+> On 08/19, Christian Brauner wrote:
+> >
+> > On Sat, 02 Aug 2025 10:21:23 +0800, Xiang Gao wrote:
+> > > __task_pid_nr_ns
+> > >         ns = task_active_pid_ns(current);
+> > >         pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
+> > >                 if (pid && ns->level <= pid->level) {
+> > >
+> > > Sometimes null is returned for task_active_pid_ns. Then it will trigger kernel panic in pid_nr_ns.
+> > >
+> > > [...]
+> >
+> > Applied to the vfs-6.18.pidfs branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.18.pidfs branch should appear in linux-next soon.
+> >
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> >
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> >
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.18.pidfs
+> >
+> > [1/1] pid: Add a judgment for ns null in pid_nr_ns
+> >       https://git.kernel.org/vfs/vfs/c/006568ab4c5c
+> > [1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+> >       https://git.kernel.org/vfs/vfs/c/abdfd4948e45
+> > [3/4] pid: change bacct_add_tsk() to use task_ppid_nr_ns()
+> >       https://git.kernel.org/vfs/vfs/c/b1afcaddd6c8
+> > [4/4] pid: change task_state() to use task_ppid_nr_ns()
+> >       https://git.kernel.org/vfs/vfs/c/d00f5232851c
+> 
+> Hmm. The 1st patch adds the ns != NULL check into pid_nr_ns().
+> 
+> This means that "[1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers"
+> (commit  abdfd4948e45c51b19 in vfs-6.18.pidfs) is not needed.
+> 
+> OTOH... You didn't take
+> 
+> 	[PATCH 2/4] pid: introduce task_ppid_vnr()
+> 	https://lore.kernel.org/all/20250810173610.GA19995@redhat.com/
+> 
+> currently in -mm tree. It is purely cosmetic, but imo makes sense.
+> 
+> Oleg.
 
 
