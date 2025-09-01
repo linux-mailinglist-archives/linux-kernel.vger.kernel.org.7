@@ -1,138 +1,75 @@
-Return-Path: <linux-kernel+bounces-795348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76FA2B3F06F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C5ABB3F071
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A091A84183
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093C61A8478E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87AD23BCEE;
-	Mon,  1 Sep 2025 21:18:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F10C13B;
-	Mon,  1 Sep 2025 21:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4B427875C;
+	Mon,  1 Sep 2025 21:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6QI0SEQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF616274B2B;
+	Mon,  1 Sep 2025 21:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756761482; cv=none; b=MW6j3eQ0NTbbAAApHLDPGn9FiERqriDvp0FR9DzJ9QbS39aGGYdphOozOkTOqHyu5c/D/dnGn+ybMiTyncSt5f1bqo13C+EUtUJW3wPiclalA3fEQ3y2J9XfgPF5rocHETTrxZsIaJGsyYB/0qzy4hfknAWVyQON81p5X5P5CCo=
+	t=1756761567; cv=none; b=OaDp38/FqCRxvUoQpdlfm48qCqI67+5ERDED43VLVAvqcUi39wf1dKWhvjQiYxXZSy9hJZeDDnVBFygUjr4YhNgncgso4UyMNu9RGgLhzwXSycHw8R0K/F6yqzw/495CnTP3O8nexrwNLIGq1SB26CRF38ht249n2IcJNfCi9tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756761482; c=relaxed/simple;
-	bh=FAfUZYd51XKAFsO1yizBYL4+TL7Q4X2J0zPtZaHdsqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtspSlpKJlT/gINengoEaGxPFchObARJivoLcNgyQnfEEbnKZ/El96E+MZkE+7QP1MdYUTc4f15CdlkoIADPCAtJi9KMBSS9Buxzkksy7gdjmdh3ILDNZlirVFqYDha/cG17q5U7wlwb14gC+MxNRZIpZqq0ikhGekfHPIqo4Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFA6D1692;
-	Mon,  1 Sep 2025 14:17:50 -0700 (PDT)
-Received: from [10.57.65.108] (unknown [10.57.65.108])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 838FE3F694;
-	Mon,  1 Sep 2025 14:17:57 -0700 (PDT)
-Message-ID: <300d135c-fd8e-4c15-bd57-3df2f39c8d25@arm.com>
-Date: Mon, 1 Sep 2025 22:17:55 +0100
+	s=arc-20240116; t=1756761567; c=relaxed/simple;
+	bh=LaSjrQUOcuQP3HQ5GOXMHuEWBSR6i4CG1kwtsdlauRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E9ZYlzpD/4ULBvVHDObt2bT0QG7EQxBOphRgSyrDLbxHRNkXfO0sIwidkOunPosnyVRCNPa1Y/Dh8xXUYCMxBe8VxarLKDCg6XP0UzzuAfOhNlWyFD4UvfE4AJIoXnwwhPS9796nY2O22L8ub4CLPQ4mtaI+N5cd5uFXjqHZ1SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6QI0SEQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9B6C4CEF0;
+	Mon,  1 Sep 2025 21:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756761567;
+	bh=LaSjrQUOcuQP3HQ5GOXMHuEWBSR6i4CG1kwtsdlauRU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M6QI0SEQBoxMN2wj5uasSNpjSq7tTNJ1MvL7+1vcb0qiQdEyr/SBzpvhoed7fmmW2
+	 ACX+BdpkUsH1jCGIpfJ4maL3wEzbSpSqUt8Fq2LWpGI1AbzCmoN5H5jGtaBkrdv31A
+	 sXRRZw/6K9R+QWYwu+B1+WLQACvNPU8SNOahyKKI5x4+fi76uey7703pv2lpN6duwJ
+	 kvHr5RE5xdfA8y+QrtQcemkoWCenrHouf5xnKpszZ58+X1eccE1Mdp3YhVadyovqN1
+	 76LpFDKkM5ikfgzz4l+3u5FKY7OxmRdngREx8hozWKBcpZvQUlGzroBXQ6o3I8qhjy
+	 T0UgH8RaCnfJg==
+Date: Mon, 1 Sep 2025 14:19:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, Vikas Gupta
+ <vikas.gupta@broadcom.com>, Rajashekar Hudumula
+ <rajashekar.hudumula@broadcom.com>
+Subject: Re: [v5, net-next 1/9] bng_en: Add initial support for RX and TX
+ rings
+Message-ID: <20250901141925.2a14de07@kernel.org>
+In-Reply-To: <20250828184547.242496-2-bhargava.marreddy@broadcom.com>
+References: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
+	<20250828184547.242496-2-bhargava.marreddy@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM: EM: Fix late boot with holes in CPU topology
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
- kenneth.crudup@gmail.com, stable@vger.kernel.org
-References: <20250831214357.2020076-1-christian.loehle@arm.com>
- <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
- <dd2e0cdd-ca95-4c83-9397-0606f3899799@arm.com>
- <CAJZ5v0jbOwH7T0StbjQLVeQiYhYU2EMCT+yp8jr8r0p4AwNgkw@mail.gmail.com>
- <CAJZ5v0gOuLJEPm_sG=4xOpqKJ2izY2pbLc7ROq70wvXgtb_m4A@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAJZ5v0gOuLJEPm_sG=4xOpqKJ2izY2pbLc7ROq70wvXgtb_m4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/1/25 20:47, Rafael J. Wysocki wrote:
-> On Mon, Sep 1, 2025 at 7:41 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->> On Mon, Sep 1, 2025 at 7:33 PM Christian Loehle
->> <christian.loehle@arm.com> wrote:
->>>
->>> On 9/1/25 17:58, Rafael J. Wysocki wrote:
->>>> On Sun, Aug 31, 2025 at 11:44 PM Christian Loehle
->>>> <christian.loehle@arm.com> wrote:
->>>>>
->>>>> commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
->>>>> adjustment") added a mechanism to handle CPUs that come up late by
->>>>> retrying when any of the `cpufreq_cpu_get()` call fails.
->>>>>
->>>>> However, if there are holes in the CPU topology (offline CPUs, e.g.
->>>>> nosmt), the first missing CPU causes the loop to break, preventing
->>>>> subsequent online CPUs from being updated.
->>>>> Instead of aborting on the first missing CPU policy, loop through all
->>>>> and retry if any were missing.
->>>>>
->>>>> Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity adjustment")
->>>>> Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
->>>>> Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
->>>>> Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f72b8144d@panix.com/
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->>>>> ---
->>>>>  kernel/power/energy_model.c | 13 ++++++++-----
->>>>>  1 file changed, 8 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
->>>>> index ea7995a25780..b63c2afc1379 100644
->>>>> --- a/kernel/power/energy_model.c
->>>>> +++ b/kernel/power/energy_model.c
->>>>> @@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
->>>>>  static void em_check_capacity_update(void)
->>>>>  {
->>>>>         cpumask_var_t cpu_done_mask;
->>>>> -       int cpu;
->>>>> +       int cpu, failed_cpus = 0;
->>>>>
->>>>>         if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
->>>>>                 pr_warn("no free memory\n");
->>>>> @@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
->>>>>
->>>>>                 policy = cpufreq_cpu_get(cpu);
->>>>>                 if (!policy) {
->>>>> -                       pr_debug("Accessing cpu%d policy failed\n", cpu);
->>>>
->>>> I'm still quite unsure why you want to stop printing this message.  It
->>>> is kind of useful to know which policies have had to be retried, while
->>>> printing the number of them really isn't particularly useful.  And
->>>> this is pr_debug(), so user selectable anyway.
->>>>
->>>> So I'm inclined to retain the line above and drop the new pr_debug() below.
->>>>
->>>> Please let me know if this is a problem.
->>>
->>> For nosmt this leads to a lot of prints every seconds, that's all.
->>> I can resend with the pr_debug for every fail, alternatively print a
->>> cpumask.
->>
->> Printing a cpumask might be better, but it would add some complexity
->> only needed for the printing.
->>
->> Maybe it's just better to not print anything at all.
-> 
-> I've changed the patch to that effect and tentatively applied it, so
-> no need to resend if you agree with this modification.
-> 
-> Thanks!
+On Thu, 28 Aug 2025 18:45:39 +0000 Bhargava Marreddy wrote:
+> +	bn->tx_ring_map = kcalloc(bd->tx_nr_rings, sizeof(u16),
+> +				  GFP_KERNEL);
+> +
+> +	if (!bn->tx_ring_map)
+> +		goto err_free_core;
 
-All good, thanks!
-Yeah I was already leaning towards that now anyway.
-I think Kenneth's report (which although he hasn't confirmed would be
-that these prints were a red herring for him, they are expected) is
-at least an indication that these prints might not be that useful after
-all.
+nit: unnecessary empty line between function call and its error check
 
