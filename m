@@ -1,127 +1,166 @@
-Return-Path: <linux-kernel+bounces-795138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100C6B3ED49
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A830B3ED50
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46D33B1D78
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E1B3A9BAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A523F10F2;
-	Mon,  1 Sep 2025 17:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E79320A22;
+	Mon,  1 Sep 2025 17:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfNy/ozD"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9dmzbN3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB8E314B82;
-	Mon,  1 Sep 2025 17:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D9A2E6CD1;
+	Mon,  1 Sep 2025 17:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756747192; cv=none; b=u5mQIj+cYNrtjbCQCIOnDiVxUQiPHe+h3Pf44uLNtxdgdVXHHm/cDmCgkb4heH67uDRFZ97lJNA8PySlgB9k5p19DH68LvB0N5PraYEkSMwu190YN5qdVJTeq4N3ts19w+BvrH2nVbOTu8o2Qa2SspJATki/ogRwktnwLeRs3KA=
+	t=1756747303; cv=none; b=LY+gILH+444j/5FkwYZo1n67HOSinpA0NQl4l3WB1vKKI8+cv/s75f/fAYvjaTdDkcq4hAnNrDaAe8h4pP7bsSJPrsPglqO2/byfuv3igZpXyEClvRUvW4s/8Sj0liBUQf+BLwbpW4LTagnqIKtgnynpq3KnIqBoWZcGrGoO+so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756747192; c=relaxed/simple;
-	bh=uttqUOM4t100YESwxVDANiQ5D5iHIkjc4YpoaCEcEOQ=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cljFOqpHPRTgmk+4iDQb5q0eL4B1j6HscHUM9FPDQSee2ULCBzhfuMEIdmdKvr2ZudiAcR6cW8kTW0ldkjI8a296sCkg7pdT+fK02/1YMLgPbbQfikYO281gLK/QCtoBr15rdP6uhsAAnZT1xJE4EXjamU3uQF3PZhYcxGfQHUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfNy/ozD; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e97021a3695so3412446276.3;
-        Mon, 01 Sep 2025 10:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756747190; x=1757351990; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MCdLhHwAOZzd1sHfXyw7j9lNMlwcIlkxo40u1/PlOt8=;
-        b=NfNy/ozD2LrjyWD/nr9UKpp4B7gY7QA8pb70xeJUm7syjcS1I2bo1B9QmuIo7fOXvQ
-         JSzF/WJGdTlelsfJmeLMHfNJ0TH2V5VDWD44PUndblF/aE4HqLFVxdXpfkDA923rIf7c
-         6Gvxeb9IO3Tsnp3I6gdpgx1RUBQFRfqnTznwJXnPZ78giFCcQL+w/qiUpxRY4lKZMPGD
-         S5fQfZhs3/5g1yCO5gejRCnI/cOuzOxkqFslAoMUL4OIeHEsDqHXeJxWhgel4+nTsy1F
-         htwzIxocIpJVxANKSmhZdHfGA58DjS8kByCQch6BxSP8UX7PnMt6VCx6UDiOP73fjCle
-         ArWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756747190; x=1757351990;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MCdLhHwAOZzd1sHfXyw7j9lNMlwcIlkxo40u1/PlOt8=;
-        b=Avk3Ala8VkywBgWiSWR42Bd5COr8fkJaZOuiowQtEikc8dxVnaTQnYAfxVrLUhw9ZB
-         YlewbAidOG09Exz9gG8vwmaJJMe7cwHXuejTAGjtUG2GDYNAzzAzFxUyNDWC0VYY0iFx
-         IfxaYUpF8jBE6krIQkF8sIpdpMvLRhMkIiP7jhf/PuW03SDUL9MBCB9rsEdT08YWk5rv
-         ZvWQb+5u1r80ENbfyOwV7mtP4IQczwjTCEW8ZRhBRHoV39d37YBcJXqI2K9HZ6Jpq2YY
-         vU7ewnApKxXJh1ie3GN4hzVDbhegSWkCtGGOeVHqWffnKBCGgwEJlGiPsFLkgQLkm+4A
-         cjjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLgtoQ0dv6xYO71H1hMnrlSFm6vNWdVmWSGreq590b1ZncbSzfDkPpOu5OLc2DBDRkl9PjBQbJ08aLuKa0D2U=@vger.kernel.org, AJvYcCWc68nIhXy5qKPlFSUTp/O6LUn9KZXxmUeBCwow22geAarIGsdxAfpdL/L9qK1n9PFjbGCZFTXMYMuz02Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy75bdKxMY8uUEghhhprFJM+eda7cNltgbytrq6MX5Gx6M0jIZx
-	z0G3Ua/2f2F8l+xkoVEaZENWjM3L+Ym7CrDQ7nwpa4L9RCAvTAGo7VUW
-X-Gm-Gg: ASbGncvmslEHbOgmW5Y+l5XRd09yZQa2kUyHNVnHLTmOsbTbv9VPF5JeCzDfK0MC28T
-	+oiizJDrgWI+TBfdgXzHMsNO9BedaStzV5Gj2DFn5f18uxmT4I9s64j9oMMxbHGjReDb6eWgjm/
-	Z4ogsTW/Q6sTl3oj0mo6s1BQwxpPR653E1pHz9knzNpecuD+TcjBqKgvYdmBCo6Z7EAbbTzqUCn
-	W9uKg77Z3cGhQKSXduKPriddwaQ+VzeusYbA0HaGaOyLHl/z+V2KUjsZEMZom/B+VCDffKEcKbX
-	iDigR5JJTVgahwpV9z+BnXlBUx8ROgkVb9Ad3LPpIkiPwtH7CGlPm8cR2XPCk7X4ugfH7Yy4nO+
-	iekOUttXPE1lhj0kSKPm+HULB7H4sGLs92lfKfE+JyLD3OwuJrUlU
-X-Google-Smtp-Source: AGHT+IEZ8EMPkHUraaN8N2Ftj2JKXXwZhHK6AIOPsA7PriSSOqQ557kpQqGWlv3cm91Il3PyctomLQ==
-X-Received: by 2002:a05:6902:1204:b0:e96:dc00:300f with SMTP id 3f1490d57ef6-e98a581bf26mr7108819276.30.1756747189693;
-        Mon, 01 Sep 2025 10:19:49 -0700 (PDT)
-Received: from [192.168.1.209] (74.211.99.176.16clouds.com. [74.211.99.176])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e98ac466a13sm2171372276.14.2025.09.01.10.19.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 10:19:49 -0700 (PDT)
-From: Asuna <spriteovo@gmail.com>
-X-Google-Original-From: Asuna <SpriteOvO@gmail.com>
-Message-ID: <b1734c45-42ec-46c7-9d4c-2677044aacab@gmail.com>
-Date: Tue, 2 Sep 2025 01:19:42 +0800
+	s=arc-20240116; t=1756747303; c=relaxed/simple;
+	bh=3mhC2/T1c6Z+vgeTqGwgs2Xmkym2DVFtNGG4o+LNDHg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CFTn+nf5k8ItswTJ2AnfouYhj+P8klXiCKkr3MNUjcTu37BKz4N2rqJjKDnrGRekbqEY+cW95AU6Ny/QxcmO1mFbpC/4Xkd+IdqAXjaJIpDDa6iQWj6e5nme+35hQM8gBMK4hTPeCwARXQapOW5qwyVc21RL4Kk8LZpwGlYSSXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9dmzbN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6769C4CEF0;
+	Mon,  1 Sep 2025 17:21:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756747303;
+	bh=3mhC2/T1c6Z+vgeTqGwgs2Xmkym2DVFtNGG4o+LNDHg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=T9dmzbN3vJLJmQDq1Re5bzl8OxpzTbtxHyo9VrZ09/exjPs4/S/UQ/qjokktB5xH0
+	 SSAhxDYKrSqviNam9PJfJyWLgwI4zqdg3I1711MwPV/OjBcVgO1pnXEGeXz3WuK0Xv
+	 UVuAAVWCHK9DEEZHqKg20aHU8P+mQKhAhInpwws4Klng0iRivbKWCQXm3KK6C52Kus
+	 igQubipBz8w3WOXaDSc+DURspm2666u/anhAH4CayF+VNK79UQd6Dcbo23j5PKLmkc
+	 7e7Mzu21+so4+IDhVLL5kTXhZiCBHk37Mq4vGWxsegGW2R/VeQMTHWMDaNdZO+jGo4
+	 NR5zsktrqL/VA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Mike Rapoport <rppt@kernel.org>,  Jason Gunthorpe <jgg@nvidia.com>,
+  pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com> <aLXIcUwt0HVzRpYW@kernel.org>
+	<CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
+Date: Mon, 01 Sep 2025 19:21:31 +0200
+Message-ID: <mafs03496w0kk.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RISC-V: Re-enable GCC+Rust builds
-To: Conor Dooley <conor@kernel.org>
-Cc: Jason Montleon <jmontleo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
- <20250830-cheesy-prone-ee5fae406c22@spud>
- <20250901-lasso-kabob-de32b8fcede8@spud>
-Content-Language: en-US
-In-Reply-To: <20250901-lasso-kabob-de32b8fcede8@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> For example, there's a check in the riscv Kconfig menu to see if 
-> stack-protector-guard=tls can be used via a cc-option check. If that 
-> check passes with gcc as the compiler that option will be passed to 
-> the rust side of the build, where llvm might not support it.
-If I understand correctly, the `-mstack-protector-guard` option is 
-already always filtered out by `bindgen_skip_c_flags` in 
-`rust/Makefile`, regardless of architecture. Therefore, we don't need to 
-do anything more, right?
+Hi Pasha,
 
-> Similarly, turning on an extension like Zacas via a cc-option check 
-> could pass for gcc but not be usable when passed to the rust side, 
-> causing errors.
-That makes sense. I might need to check the version of libclang for each 
-extension that passes the cc-option check for GCC to ensure it supports 
-them.
+On Mon, Sep 01 2025, Pasha Tatashin wrote:
 
-> These sorts of things should be prevented via Kconfig, not show up as 
-> confusing build errors.
-I'm working on a patch, and intend to output an error message in 
-`arch/riscv/Makefile` then exit 1 when detecting an incompatible 
-gcc+libclang mix in use.
+> On Mon, Sep 1, 2025 at 4:23=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wr=
+ote:
+>>
+>> On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
+>> > On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+>> >
+>> > > +   /*
+>> > > +    * Most of the space should be taken by preserved folios. So tak=
+e its
+>> > > +    * size, plus a page for other properties.
+>> > > +    */
+>> > > +   fdt =3D memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_S=
+IZE);
+>> > > +   if (!fdt) {
+>> > > +           err =3D -ENOMEM;
+>> > > +           goto err_unpin;
+>> > > +   }
+>> >
+>> > This doesn't seem to have any versioning scheme, it really should..
+>> >
+>> > > +   err =3D fdt_property_placeholder(fdt, "folios", preserved_size,
+>> > > +                                  (void **)&preserved_folios);
+>> > > +   if (err) {
+>> > > +           pr_err("Failed to reserve folios property in FDT: %s\n",
+>> > > +                  fdt_strerror(err));
+>> > > +           err =3D -ENOMEM;
+>> > > +           goto err_free_fdt;
+>> > > +   }
+>> >
+>> > Yuk.
+>> >
+>> > This really wants some luo helper
+>> >
+>> > 'luo alloc array'
+>> > 'luo restore array'
+>> > 'luo free array'
+>>
+>> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=3D=
+kho/vmalloc/v1
+>
+> The patch looks okay to me, but it doesn't support holes in vmap
+> areas. While that is likely acceptable for vmalloc, it could be a
+> problem if we want to preserve memfd with holes and using vmap
+> preservation as a method, which would require a different approach.
+> Still, this would help with preserving memfd.
+
+I agree. I think we should do it the other way round. Build a sparse
+array first, and then use that to build vmap preservation. Our emails
+seem to have crossed, but see my reply to Mike [0] that describes my
+idea a bit more, along with WIP code.
+
+[0] https://lore.kernel.org/lkml/mafs0ldmyw1hp.fsf@kernel.org/
+
+>
+> However, I wonder if we should add a separate preservation library on
+> top of the kho and not as part of kho (or at least keep them in a
+> separate file from core logic). This would allow us to preserve more
+> advanced data structures such as this and define preservation version
+> control, similar to Jason's store_object/restore_object proposal.
+
+This is how I have done it in my code: created a separate file called
+kho_array.c. If we have enough such data structures, we can probably
+move it under kernel/liveupdate/lib/.
+
+As for the store_object/restore_object proposal: see an alternate idea
+at [1].
+
+[1] https://lore.kernel.org/lkml/mafs0h5xmw12a.fsf@kernel.org/
+
+--=20
+Regards,
+Pratyush Yadav
 
