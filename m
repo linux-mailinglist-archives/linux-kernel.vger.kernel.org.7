@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-794630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C8FB3E475
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9834BB3E469
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F077C16CCAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DE41883349
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED5A1DB34C;
-	Mon,  1 Sep 2025 13:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB78212FB9;
+	Mon,  1 Sep 2025 13:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="JEIZaDVs";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="x8hDoZTV"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqfjciJf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7876A2A1B2
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7BA1B21BF
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732624; cv=none; b=iUV5YzRPozVWDZQhG1VWU+NXwuRzDfArSXTgnk7489fLnZ7tZ2RVKi49zo2fyq0T8Q5bxNnDzaGIDieefIxvC2EwE+2H2xqyiFsq/OXSLMLe6y8r74+JTIiyNKGRj+8BQrwUOAqXt9iXodhnMp7Fs15WzSbpfZfzImB9K9Z622Q=
+	t=1756732556; cv=none; b=UJ/jNdDUSac+PkvkWHDkT17/FFuZiMeKyGXPAug+pyUr8W8lgqWYxFRRhArHBDl/F1U3uPuWoW+GgJMkfrocwmLs9iNKQXpG6FgO95QhiBEAVGkA0LN+14A3Ld/ZsgNcYMcidW5haK0QDp1mt76x99nxFZVWpAgpDkDCnBCIIKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732624; c=relaxed/simple;
-	bh=UNAROwscGWiJGVwNB7APBWmn5bQlb3OTupDa5/PNPHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZoO5Y8SbVutf/AYaAnULg+bxlk6N8izi79O5TOgLSSGDT4Gyy/RWbCxrhZU30pQ80gvktEqBsqzgcO1j4Fzw6+O68PfwXZp3QIdXoQnh3B+QDzo56pz58ZReB8rwaEqIb/8yqA5rdVtICH4ELsRaoG2UPiKbPPnru0wIEusONac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=JEIZaDVs; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=x8hDoZTV; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1756732446; bh=7ECHN7M/kl3GQF4/8IGepx+
-	i7mB1UdMquaG7D1kI94Y=; b=JEIZaDVseVv66Xf/O+7mENL/rSPdZKDxm+P1qfrfG2sKe9cGMm
-	Va2nEqyBaE5cye8aVnHTwcGlR8tSrPNYfbclbY997f3EqaXnBwCO37poOluQSh5vOjD34OjVJUU
-	4VRqHA8ALueGYGeoZhBFGw54pTLRNWFqY1MMDMa4voXWVTtUPhZWZVd9+ZPS5byObB4a4qqL53m
-	akRFj/NFx5rCX9basg3m360cpHoIDGRGArjKOIqL3+Mjs0BD+Zn/6P5WCdCum4mNQ1G3g0Y46+f
-	yMyKpBzh5qjMjWcDb073uaOlBJc9dKYssMCBHSD/F0NYFogg9LkIOsy6vNcMkqpS4Zg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1756732446; bh=7ECHN7M/kl3GQF4/8IGepx+
-	i7mB1UdMquaG7D1kI94Y=; b=x8hDoZTVgRBGz3D10HTukWs4uUrl5iV9qZcHI/xxwHu1JkajeL
-	K1/FU2cv41gjf0Hzp10Zq5ZHTLpC9we09oCQ==;
-Message-ID: <b1a8f459-93dd-4b6c-b29e-c68fba19f6fc@damsy.net>
-Date: Mon, 1 Sep 2025 15:14:05 +0200
+	s=arc-20240116; t=1756732556; c=relaxed/simple;
+	bh=lbW3NpZ8OMo5vXUuKLW7nyZt3k/KN4KzLKs5gPRpd80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCWtIRvQFmSHJzu8KYVasMEa6YcqnsFlWMl8b8SeZ/+ol7zZDUYPdF0L43FtUP+d5yECC3lud5GnU++MuHUpRIH3uTL2ITc7Ycq/uDFGPKRxLsDppT5jdnaZGKHN8THxFBBtILjnBmdzS5mYMTLflB92xhk0ywo5O5o8VDujk10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqfjciJf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986C1C4CEF0;
+	Mon,  1 Sep 2025 13:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756732556;
+	bh=lbW3NpZ8OMo5vXUuKLW7nyZt3k/KN4KzLKs5gPRpd80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rqfjciJfccU1D1ZON4qOg99kMBRfc+vamtPwzv58LXNYrMImE77fIglM0Dxhplsrh
+	 D+gHNIRG4LBZV2kHxPTCvtTq7UL8VTjhyaBoVGha9dJqxd2idy4SDBH7e6ERyLLRT2
+	 zuFxiJOzBaedX2S9lkWw4A16ZDPwm8jtZkk+WEv+WpOj21U0nWlQIaLbbjbl2fap74
+	 WgxWux9mhRyF66dKOper7+TSXeCQ9cwanT9aeOVX7mfHQI1UYOdGN6dIf3NWBescdB
+	 it8LAOIXnL9SqK/D5jbayd5b54px7aq3l5hLrRN7Ll+DbSySr17XOe1WN7rE9b3i70
+	 a+GONJ6IKRniQ==
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BB291F4006C;
+	Mon,  1 Sep 2025 09:15:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 01 Sep 2025 09:15:54 -0400
+X-ME-Sender: <xms:ipy1aNMlQM8QTmBk-zWJqi4g7f1d7WwLIvW7BtYarqxQ1bVQODusFw>
+    <xme:ipy1aFHDc0JV4RcL9PADZN54oMFRfz_rs5NINo8gN0dSYdWraSYlNRf-A58ANkq5i
+    pNbCNSlHBf8fdTbzOo>
+X-ME-Received: <xmr:ipy1aDj5IekzhJZDd2PwoPNKdlzlx9Wn3tMcTMFXOgNaiQfgpg_L_WSQYzrj>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepvdekpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopeguvghvrdhjrghinh
+    esrghrmhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhi
+    ohhnrdhorhhgpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprh
+    gtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeiiihihsehn
+    vhhiughirgdrtghomhdprhgtphhtthhopegsrgholhhinhdrfigrnhhgsehlihhnuhigrd
+    grlhhisggrsggrrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshes
+    ohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhirghmrdhhohiflhgvthhtsehorhgrtg
+    hlvgdrtghomh
+X-ME-Proxy: <xmx:ipy1aBROrRYmndBY8c9P6MCYv06D1z-6_-xaIEvM93HoAH1mfcl9EQ>
+    <xmx:ipy1aL-Jg-uKbWAJ0SZ7WRGmO4xisifTHeQ0dJBjUGUXQXXtULFtcw>
+    <xmx:ipy1aHQqkvcML0xmHZJskeQrIdfIQc1EMIDuJ9rPNPtfYSTWjJP4bA>
+    <xmx:ipy1aCbPm_I0MFPuepm_yqb9zoRDqNjjXTNG0E8x7ELw3rL-sf_eWA>
+    <xmx:ipy1aAS_4F_qwHHmt32tyctlxfJLALBUcDgcMCFyJz0M-j0cjLGOC7yc>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 1 Sep 2025 09:15:53 -0400 (EDT)
+Date: Mon, 1 Sep 2025 14:15:51 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, 
+	willy@infradead.org, hughd@google.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
+	baohua@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: Enable khugepaged to operate on non-writable VMAs
+Message-ID: <csqlc5ajszg6bybykeezkpcfqlx7nv5ochikrgttzrhqqjaxjv@y2hwbmqu4qfr>
+References: <20250901074817.73012-1-dev.jain@arm.com>
+ <7towtl2pjubgdil4csn5rg3usbai5xvzz73wqkwj5b5awh2iim@wfvahykzjrlo>
+ <9c3a2ecd-ceae-4e87-a6d7-6a7121ab7a15@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] drm/sched: limit sched score update to jobs change
-To: phasta@kernel.org,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250822134348.6819-1-pierre-eric.pelloux-prayer@amd.com>
- <20250822134348.6819-2-pierre-eric.pelloux-prayer@amd.com>
- <9b68898ca34483b52d7f4510747a20bce52751c7.camel@mailbox.org>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <9b68898ca34483b52d7f4510747a20bce52751c7.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c3a2ecd-ceae-4e87-a6d7-6a7121ab7a15@redhat.com>
 
-
-
-Le 25/08/2025 à 15:13, Philipp Stanner a écrit :
-> On Fri, 2025-08-22 at 15:43 +0200, Pierre-Eric Pelloux-Prayer wrote:
->> Currently, the scheduler score is incremented when a job is pushed to an
->> entity and when an entity is attached to the scheduler.
+On Mon, Sep 01, 2025 at 10:32:34AM +0200, David Hildenbrand wrote:
 > 
-> It's indeed awkward why attaching is treated equivalently to job
-> submission.
+> > > @@ -676,9 +676,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
+> > >   			writable = true;
+> > >   	}
+> > > -	if (unlikely(!writable)) {
+> > > -		result = SCAN_PAGE_RO;
+> > > -	} else if (unlikely(cc->is_khugepaged && !referenced)) {
+> > > +	if (unlikely(cc->is_khugepaged && !referenced)) {
+> > >   		result = SCAN_LACK_REFERENCED_PAGE;
+> > >   	} else {
+> > >   		result = SCAN_SUCCEED;
+> > > @@ -1421,9 +1419,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+> > >   		     mmu_notifier_test_young(vma->vm_mm, _address)))
+> > >   			referenced++;
+> > >   	}
+> > > -	if (!writable) {
+> > > -		result = SCAN_PAGE_RO;
+> > > -	} else if (cc->is_khugepaged &&
+> > > +	if (cc->is_khugepaged &&
+> > 
+> > The only practical use of the writable is gone. The only other usage is
+> > tracing which can be dropped to as it is not actionable anymore.
+> > 
+> > Could you drop writable? Maybe as a separate commit.
 > 
-> Can you expand the documentation for drm_sched_init_args a bit so that
-> it gets clearer what the score is supposed to do?
+> I think we should just do it in the same patch.
 
+Change in trace_mm_collapse_huge_page_isolate() interface doesn't belong
+to the same patch in my view.
 
-drm_sched_init_args.score is the feature allowing multiple schedulers to share a 
-score so I suppose you meant drm_gpu_scheduler.score?
-
-The doc currently says "score to help loadbalancer pick a idle sched" which is a 
-bit vague. It could be modified to become:
-
-   @score: holds the number of yet-to-be-completed jobs pushed to each scheduler.
-           It's used when load balancing between different schedulers.
-
-What do you think?
-
-> 
->>
->> This leads to some bad scheduling decision where the score value is
->> largely made of idle entities.
->>
->> For instance, a scenario with 2 schedulers and where 10 entities submit
->> a single job, then do nothing, each scheduler will probably end up with
->> a score of 5.
->> Now, 5 userspace apps exit, so their entities will be dropped.
->>
-> 
-> "entities will be dropped" == "drm_sched_entity_kill() gets called",
-> right?
-
-Yes.
-
->> In
->> the worst case, these apps' entities where all attached to the same
-> 
-> s/where/were
-> 
-> or better yet: "could be"
-
-Will fix, thanks.
-
-> 
->> scheduler and we end up with score=5 (the 5 remaining entities) and
->> score=0, despite the 2 schedulers being idle.
-> 
-> Sounds indeed like a (small) problem to me.
-> 
-> 
->> When new entities show up, they will all select the second scheduler
->> based on its low score value, instead of alternating between the 2.
->>
->> Some amdgpu rings depended on this feature, but the previous commit
->> implemented the same thing in amdgpu directly so it can be safely
->> removed from drm/sched.
-> 
-> Can we be that sure that other drivers don't depend on it, though? I
-> suspect it's likely that it's just amdgpu, but…
-> 
-
-Aside from the new "rocket" as pointed out by Tvrtko, amdgpu is the only driver 
-passing more than one schedulers to entities so they're the only ones that could 
-be affected.
-
-I verified amdgpu and Tvrtko pinged the rocket maintainers in the other thread.
-
-> 
-> 
-> BTW, since you're cleaning up related stuff currently: I saw that it
-> seems that the only driver that sets &struct drm_sched_init_args.score
-> is amdgpu. Would be cool if you can take a look whether that's still
-> needed.
-
-It cannot really be removed yet as it's useful when a single hardware block is 
-exposed through different schedulers (so pushing jobs to one of the schedulers 
-should increase the load of the underlying hw).
-
-Thanks,
-Pierre-Eric
-
-> 
-> 
-> P.
-> 
->>
->> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->> ---
->>   drivers/gpu/drm/scheduler/sched_main.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
->> index 5a550fd76bf0..e6d232a8ec58 100644
->> --- a/drivers/gpu/drm/scheduler/sched_main.c
->> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->> @@ -206,7 +206,6 @@ void drm_sched_rq_add_entity(struct drm_sched_rq *rq,
->>   	if (!list_empty(&entity->list))
->>   		return;
->>   
->> -	atomic_inc(rq->sched->score);
->>   	list_add_tail(&entity->list, &rq->entities);
->>   }
->>   
->> @@ -228,7 +227,6 @@ void drm_sched_rq_remove_entity(struct drm_sched_rq *rq,
->>   
->>   	spin_lock(&rq->lock);
->>   
->> -	atomic_dec(rq->sched->score);
->>   	list_del_init(&entity->list);
->>   
->>   	if (rq->current_entity == entity)
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
