@@ -1,121 +1,90 @@
-Return-Path: <linux-kernel+bounces-794391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335FBB3E10D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724DCB3E110
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C41F3A6C2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A891A81756
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED64B31159A;
-	Mon,  1 Sep 2025 11:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91500310654;
+	Mon,  1 Sep 2025 11:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a2ep3R0e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGYpsjpC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE19730EF7D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE972FABF9;
+	Mon,  1 Sep 2025 11:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724858; cv=none; b=YdsY3+aLVfgJAh3IYPqXD/IY4A3mPLpY4hdr53jLE5ymVs6Dc2WYlJ8QglWYaoqblSxhgZGy6FQD15AYG88Z2sKkoVQwctIBILhkaoHRQbvN+cJLUXTfqYBYUfj9L13WQWlC9PpDYnF7+ClpnTiPrPu7mxE+kZLU+Csw5UAdAoI=
+	t=1756724903; cv=none; b=Dt4ucUmtDIJh1JVUmvqlpGELwV9lu4wiVPqQ/yYgnV/Dh+cg9yTO9dX3uaElVq+KBwyhEq0cdD0PmIgGSRsbWAgkH/dGC6gJTTxskv+u1BhylVcZKbNy0RZOL7eOVNHnZctYRpEUHjz85W0L7RlTOiwn+wJzTvLChXZ7OoeFjmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724858; c=relaxed/simple;
-	bh=tRPHUUr8jac2+pMZxNzhPsZb6N3jgXYWUxiG9fGUN9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nksyl3aEPHsDWwZMC+3WPtD6D/V0WKFU7eYWnVKicN4h94FQqHN4XxHgWOV2ehNOJaJMiGlxiMurJDzUW8+rLbIgHEt3S8mxpenYOyjotY3Zr2Qr9cvnh907o6BBlEnUOuquNA0RseEaf3h+8a+MM719NHDkamyg1yb1DxCq1cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a2ep3R0e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756724855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yeyR90kJgS2mYJEGVvh/bOgIfmtxoV36tSEqfoHaceg=;
-	b=a2ep3R0efD4kHlPlLuvERcS5WKCfeMvpL/pZ0LQk/NApzpE3Qfi/+2wbwIaKzngqeRX1vL
-	5gyTEsut8Usrs2MgYn7tlDjjLGVXAVbxXPGOatrkqqHm3vYu2XHeUC3AuQTAdkteol0d7Z
-	0/hAqcVOU3Rw9mq9tR18UW4UEfJfWNk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-zrBD-s3hOUeqhiZz1miCHg-1; Mon, 01 Sep 2025 07:07:34 -0400
-X-MC-Unique: zrBD-s3hOUeqhiZz1miCHg-1
-X-Mimecast-MFC-AGG-ID: zrBD-s3hOUeqhiZz1miCHg_1756724853
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ccfd90630aso1805253f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:07:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756724853; x=1757329653;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yeyR90kJgS2mYJEGVvh/bOgIfmtxoV36tSEqfoHaceg=;
-        b=GxuY8HVo2VqV9MREeV8LjCA5aEO+OtIkRFHcksjqNVYyxn1d5Hr5VQp/kZxztLejdT
-         qrW65unt9GWujcucoFaWJZljcw/D2Cap5Qk366arjP0j/a63XtsY/LnUsfZNcR3ppHjH
-         vXYgRJaiE7zJg5LagrEzzmnOyrDdI2Nzace/5Fx5mxdkqpAMfyLC6RNEEaUWWDkamYfK
-         8KgtIcUZHhqZNU8NNhpZqEaGjSiv5slfoJfrxUz0B+IJj18xq73qPtrGqn+GNIQBT6Hx
-         7qLxIzfjEWkmfwtKS2PowUc3ur3cYzeMcqo2+2koim1KnEvCA87IFujjrvxdwhiqczNZ
-         JM6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWjmNIqVoUogWVa8OSGepeQ+Au+Ij0aAfv+bljzlDXB42fD9kXR/3JU/ImB4GeFwKhfR1VdRluaAsQ7sT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4cS9FXLCUogZUEq/c7hqw40Hn8f9IUbe7GElZMJn31ofdig0g
-	hmAVW3kvpf4rj1VI0UDqLcl1STVc2MUfoD5F3BA/pxqAKWAYzeRcutwt+VjXHVLxpiz/4JuqEsv
-	jzeP3izt/j5xdB9GzMSnakzMgmM9keO0zrdI65Fv6686oX/k7dFJ55dm3gsW5qj3DDQ==
-X-Gm-Gg: ASbGncsgRYRLxqhI/PbyUGdoHth5vwmUK7hjr+eFxqv9FVuOrrwifR0heQC+HIZdH/m
-	9GljdlUBaoOk0y1J8YpB0KyI9wjyyfkn2qF2LhrO8lQvklKaVyyCeC7Leml6b3LsWi1hkCl8Acr
-	L2JLPOAiGSEoH+O0bi6LF7yXFKTCRkysf0OTm6UJ7ICHNZfEQczdOXb5vWaMA/p3QlDOj6T4Tky
-	D/7Rebk46FpHK3roMvoY1BhYocucGQHnLpBqR/t8oGpWWc/sQn6qtgTRldXfFH1wQED6yc2Pbp+
-	2duB+zMAlamzIgGa0ayv0WI+NLlAVL49+w==
-X-Received: by 2002:a5d:64c2:0:b0:3c9:58b0:dad4 with SMTP id ffacd0b85a97d-3d1dfc06dd9mr5343788f8f.35.1756724852909;
-        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHyQ/gTmJddE7MzkBzMXSEOkRhnYpYqf4H9E+J7ETOkCkNOir2xgQgyDgnguhb4xD0Yb+SJVg==
-X-Received: by 2002:a5d:64c2:0:b0:3c9:58b0:dad4 with SMTP id ffacd0b85a97d-3d1dfc06dd9mr5343766f8f.35.1756724852520;
-        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:151f:3500:9587:3ae1:48f2:e5d4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2722sm15020863f8f.19.2025.09.01.04.07.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 04:07:32 -0700 (PDT)
-Date: Mon, 1 Sep 2025 07:07:29 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>,
-	jasowang@redhat.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Mike Christie <michael.christie@oracle.com>, stefanha@redhat.com
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] INFO: task hung in
- __vhost_worker_flush
-Message-ID: <20250901070709-mutt-send-email-mst@kernel.org>
-References: <20240816141505-mutt-send-email-mst@kernel.org>
- <20250901103043.6331-1-hdanton@sina.com>
+	s=arc-20240116; t=1756724903; c=relaxed/simple;
+	bh=W6qDZNjnaacEEGY0j9rmXXyYfk5VcyDKi3Z9QiP9Xhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LgvUJc9pW+1YqEBdCWEYQfqiVGJRGq/1e/qyb5Kf7MEB0odoJ889nTvWD/63gEdXs4yWGS1MrcqpRXG2/6w6kuuEuCINE5qyI7zPbImXn80hj8xENoDAqIpGH62gZzigUmU2JoxNN5ZqOOeglGyplOLe6HBUQb9puSCPHteOpVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGYpsjpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B73C4CEF0;
+	Mon,  1 Sep 2025 11:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756724901;
+	bh=W6qDZNjnaacEEGY0j9rmXXyYfk5VcyDKi3Z9QiP9Xhc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GGYpsjpC2WbpM20NXfXBlZHd5NaziYxGL6XeZ4cjn9QHckMgWinYqk6J42KYG/UUF
+	 qLeHZstigAAH2/7DHKeF+TCXS5vu9kKQoOWW1DqP117lcivjPLKt9O7wXBcOF1YTCP
+	 uoyNtt+G3qTFZCflKfBUoXaR+AOHY8o5xTmwcC7X3SoMLSCWlWVVoYFCswG3GIQclu
+	 HclOghTNN9bTrOzz9WroWCQYA9nPw1ptCPvW7ojyAViVnY8eYFO1PXh3TsrR70gsMl
+	 V4KN80ChMqZilFgw3CxVaA/x25fMRGZT9t7GGUL9A8QtX4CmHvvpkkKMRLSbfjUIeZ
+	 MwNX0BOvP46Sw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: remove vfs_ioctl export
+Date: Mon,  1 Sep 2025 13:08:14 +0200
+Message-ID: <20250901-rodeln-rennen-b9f48d3e4c76@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <2025083038-carving-amuck-a4ae@gregkh>
+References: <2025083038-carving-amuck-a4ae@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901103043.6331-1-hdanton@sina.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=958; i=brauner@kernel.org; h=from:subject:message-id; bh=W6qDZNjnaacEEGY0j9rmXXyYfk5VcyDKi3Z9QiP9Xhc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRsrVtY3hfm27bFvr7w64dbkT9ObP9g5yH3RlS7ytLZ6 FdDq/zejlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInsWMDI8DF1gXvw+a2P53nK Vz54MTHv1/lL7XlvFTIZD0eXpc7d9pnhn/m8KSZdm8xKHjzlUv2qwB/T22EgfDag4+6+pIb09tY b7AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 01, 2025 at 06:30:42PM +0800, Hillf Danton wrote:
-> On Fri, 16 Aug 2024 14:17:30 -0400 "Michael S. Tsirkin" wrote:
-> > 
-> > Must be this patchset:
-> > 
-> > https://lore.kernel.org/all/20240316004707.45557-1-michael.christie@oracle.com/
-> > 
-> > but I don't see anything obvious there to trigger it, and it's not
-> > reproducible yet...
+On Sat, 30 Aug 2025 12:55:39 +0200, Greg Kroah-Hartman wrote:
+> vfs_ioctl() is no longer called by anything outside of fs/ioctl.c, so
+> remove the global symbol and export as it is not needed.
 > 
-> Mike looks innocent as commit 3652117f8548 failed to survive the syzbot test [1]
 > 
-> [1] https://lore.kernel.org/lkml/68b55f67.050a0220.3db4df.01bf.GAE@google.com/
 
-couldn't figure it out yet, and I'm travelling soon.
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
--- 
-MST
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] fs: remove vfs_ioctl export
+      https://git.kernel.org/vfs/vfs/c/e5bca063c150
 
