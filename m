@@ -1,137 +1,96 @@
-Return-Path: <linux-kernel+bounces-795367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF89B3F0D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27FA7B3F0D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC50C1A81CFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938DF483CB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EDF27C864;
-	Mon,  1 Sep 2025 22:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r9dbKAXi"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7A1273D77;
+	Mon,  1 Sep 2025 22:10:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116023D7DF
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 22:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0182274B31
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 22:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756764359; cv=none; b=oEXyYx1xH0Mi0qpMVPwXwX77ckWc5ZUuQ19/aSL6qs5zuTl+24q39ryt0PpzdIoAAuerqx0k8COozktGVdk11g0I9x1d+tFECRUNmt9kdYhq1JiNnRGADm7O0BvJ5E+B3WBPwet7WPg2+DWNjVTnoJVOWAApdhDSTCCPnwbRuWc=
+	t=1756764607; cv=none; b=G3fBvYD1BZqmWeo6MlpGOAOV7c6KJRZeUX3sFWq503frpt2Mtm+kLFHUiSllH8RJxamNUMssnXyXvlr+CQwzyzmKIC/dsbeQoimgsCvu814Jm2BO0Fs3/OV4jAJK/PHaM2EYeT/jVeESIHuaTiNG2gCHrsqrV2MbGERt66nOjfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756764359; c=relaxed/simple;
-	bh=IRucAxRkdYj3+XFl/z4CHJNMo/npxJqZtRe84oNwZdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1FxkXVjG+gmpG4XRpysdWF5B8xW0QfTKL+3+eaFpAOD0pi3jShX2EvcgE5eF3JZ0t5WTjVGuboK5eaPO1MVfZRTHEBIdWgUqdKOycbwQaYI8zEehvqNhOhTf0eHS54PeFydtW3TePrCwJbLvOGfRX4skp1z94qI3e5nGSiAqLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r9dbKAXi; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24936b6f29bso334275ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 15:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756764357; x=1757369157; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iNGclCR4OfhQm1LG6IdweoAsF6Re2IBZ+iy2oOfb3/Y=;
-        b=r9dbKAXiJwiD8ZPUrsbz567F3YSmViOL/dTZobUi1bEqxatHbJ3atYWkuh5oA8L9uA
-         XoZhu+IXb3JWL5dU5iH5FN/ZcqJI4IFIV3rIXrNRCqtZpS4G2HIOSj4gxNayqX/Il3rZ
-         zdok228uSCN1TwhzEAfcyLWFa9uWleh26W9uzKk+goOU+8HY2Dm8224Ag2idqHi8DlgR
-         CWZIulap2BT/8c0yDZ1NdffYONjs5Y3rcKqN+3mHnv+95ZqkFd2NGGeq/9b3Rev0riOP
-         6oe2fzH+uc1Y7OkLqXEDZDl75Fx3So1pMhlK1xRw92miLIpJDtxrPI2O6R/g7hLGbfNG
-         HSJA==
+	s=arc-20240116; t=1756764607; c=relaxed/simple;
+	bh=p0kMM4y7F6N7P9lmCZgTWs3ZjOeXgQCDCsLCsQtEfe0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=scxoo9wDQsEcL6mk1BAhgkwF8a9p9FL320q2B+/pu/+nP+Bl7mMx5ikYwRps/c0L7xGHuzuMJ8nnAwrXHuHD0jJ6s1I+Bqz60A5wFZ2ftUJiujntMRJH/gG4XEiKBslqa5kYw/OQ3Oar7KIzg0J2tUCpKd8muq79sgD1hD9TqL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-886e347d2afso399612539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 15:10:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756764357; x=1757369157;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNGclCR4OfhQm1LG6IdweoAsF6Re2IBZ+iy2oOfb3/Y=;
-        b=utC1A49ea8Hm5+ZsCroUnlv4DxPgepIeNJ4hSdBmj3AJ6Y1X/2IAVETllujt6JOa9c
-         iiLX4OB33jUewnMKGuRSlHqTbHsQtNyZploR/Xor5AIQO1uzBx4yl/AGS4qEDAr4f/Yd
-         3DPLElXwIDgmb5R9H6Lk2alzYZ3g3uEtVXOX1vCZSAGGZ5jFwob7Pm1ssBxBsDratnFH
-         +yXtdE/bB51xuKUBLskeWiv4BInN2Gy4eCYEUBTp6VG+U5WXZZjKh2BJ62MkgQz02Zke
-         POMmW1EkB+uN99/L7WMNiKADH02ka6OlpfD9FX2ViAi/JhID7kj2EIt4VH4d7P3IgCNo
-         f5Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVLnvWGeAHfNVcosY1e2aOYJh7Wh6/hfOjTRVZYlMGRYWFjY2n2TQtj7n03w/SGhUiBQ+e0yEH4f0xVTLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdQUoiCCPJQjU5quYG5u+wTG3HdB5YLt7hyf3/3rYFO0HqPoIS
-	4CHEEyMUVRyvuiO3EQ4aKYfX6VdTBC8CTsfXtMIDjPOFqIoGtaI8OLQTO+mAl9U8xQ==
-X-Gm-Gg: ASbGncuJBSGSvCzFyQPgVyEaLRcQoZAbyU/MtP7cPLDRo3WLLo07LFEsSjLRmO6QYpO
-	zIqxwUVwJvqE/hSGhfY095K0UEf3NCJ1rISo+6fVY6XT+2FhiBKvDHFvhzrsFa2e9MPXMPH+1ru
-	15VJ1Fu9ptL6SSF4ZMPF/mHBASyZZ4KSY6qSa4XsQ8M4Axut5odrasN0YTiQrDXJ2s1G/BaeZZt
-	ZCpULJ+rFzw2YLjXKi7v+XA+oYzgqMY9FGLZybXB/hC2naFTy8N2jN7If8y+5B9HIftkGbfFWEO
-	sirBf90hqq6QNZC66Yfi7qYJt7zZQNeewrKjPyTFKD+bzzRNR2+RuqD3X1KnOTWW1Lko0H54xNe
-	PGKnIgK/n+enTv9XjyihZXWGUnnr+1jKup6NhGX8bj5W5zf7SQDgPF4EfagUVyAQ=
-X-Google-Smtp-Source: AGHT+IGTjJJ+lUPIOI6BFtIHzkUqQ53h8k+cOaGDC+1aTzya9kiOTmJe43O4r98yS5cHzoKAUIUnwA==
-X-Received: by 2002:a17:903:32c7:b0:248:bac6:4fd8 with SMTP id d9443c01a7336-2493e9db864mr7485925ad.15.1756764356920;
-        Mon, 01 Sep 2025 15:05:56 -0700 (PDT)
-Received: from google.com (23.178.142.34.bc.googleusercontent.com. [34.142.178.23])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a5f7a9csm11592840b3a.91.2025.09.01.15.05.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 15:05:56 -0700 (PDT)
-Date: Mon, 1 Sep 2025 22:05:49 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	eric.auger@redhat.com, smostafa@google.com
-Subject: Re: [PATCH 0/2] vfio/platform: Deprecate vfio-amba and reset drivers
-Message-ID: <aLYYvURhjGmJ__Fx@google.com>
-References: <20250825175807.3264083-1-alex.williamson@redhat.com>
+        d=1e100.net; s=20230601; t=1756764605; x=1757369405;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rONquuup1tA/FntPWjZbG/timt5LNSvQmqhWL+HMBzU=;
+        b=CPYpnEoiOsWS2v4lChg3ARoQm/9tY5WBV5Q7ZSdTUWajzq/BAjLRrwhU4aJ5gqOeC1
+         zME4lcWN0iycaSfTRZg7Fs+C5I+jl2lBt3ds4ECskNEa471ahSGb2vevxKvNEYpl8xvc
+         u1/OPW0hnAJXTW6Ldwe/YlscpJztsKeKxllqNTbJdfOmd4wpQtuksYYKpUnHYCUylFtU
+         sYRAS1N1kSCYdthaQBKs2jr0TQ2VBfJAuVPxgk1R8Ux536uB+LS0PpzP+EHR1iXqw5yS
+         CmSD3bJsIxFBTTKu1pnLQGA8j8lVvhDQn9ClNZeZPcEx+YsOhtif3DWROoHHh1NAyrpR
+         vGJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpVN/6kBHD47J8UVy6hTegy+w2OKlcmHC+1FmY4PVhVigvsqYkyIwFpca/epIirPezJebnsCruay2JCo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzcQhoD4j+57owDZqE+xTHBd5hEYmOWzPPC5Ma2+9/j7xDakBe
+	SRUyf5MMv2x4W12MTryHULH1RYJF5+vJ5b8jLayvAVqaYAGkVAR30mZ3MhgoB3KvwzoYcgVCd0j
+	rvyDs8gYsDcL1ES2br/pvZOlZMJ1n65zFVUuwScLSERASn18LYVcg1GxSYeM=
+X-Google-Smtp-Source: AGHT+IEwWIM0KR32k0CrIYVm5MqXLqvHyE40n+Jbcb7UVXKXi5zhmdRI/WfQizUkVs9bev2AbFsAxIgzU7Q7sbXwGYhdaNj7lYwg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825175807.3264083-1-alex.williamson@redhat.com>
+X-Received: by 2002:a05:6e02:1aa2:b0:3f0:78c3:8fc5 with SMTP id
+ e9e14a558f8ab-3f400097882mr176361265ab.5.1756764604779; Mon, 01 Sep 2025
+ 15:10:04 -0700 (PDT)
+Date: Mon, 01 Sep 2025 15:10:04 -0700
+In-Reply-To: <68ac9fd3.050a0220.37038e.0096.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b619bc.050a0220.3db4df.01c5.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] possible deadlock in __bpf_ringbuf_reserve (2)
+From: syzbot <syzbot+fa5c2814795b5adca240@syzkaller.appspotmail.com>
+To: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, 
+	haoluo@google.com, hffilwlqm@gmail.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, memxor@gmail.com, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 25, 2025 at 11:57:59AM -0600, Alex Williamson wrote:
-> Based on discussion[1] there's still interest in keeping vfio-platform
-> itself, but the use case doesn't involve any of the current reset
-> drivers and doesn't include vfio-amba.  To give any users a chance to
-> speak up, let's mark these as deprecated and generate logs if they're
-> used.
-> 
-> I intend to pull the vfio/fsl-mc removal from the previous series given
-> there were no objections.  Thanks,
-> 
-> Alex
-> 
-> [1] https://lore.kernel.org/all/20250806170314.3768750-1-alex.williamson@redhat.com/
-> 
-> Alex Williamson (2):
->   vfio/amba: Mark for removal
->   vfio/platform: Mark reset drivers for removal
-> 
->  drivers/vfio/platform/Kconfig                            | 5 ++++-
->  drivers/vfio/platform/reset/Kconfig                      | 6 +++---
->  drivers/vfio/platform/reset/vfio_platform_amdxgbe.c      | 2 ++
->  drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c    | 2 ++
->  drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c | 2 ++
->  drivers/vfio/platform/vfio_amba.c                        | 2 ++
->  6 files changed, 15 insertions(+), 4 deletions(-)
-> 
+syzbot has bisected this issue to:
 
-The series feels like a sensible compromise. The rationale for
-deprecating vfio-amba and the obsolete reset drivers is sound, as it
-cleans up code that can no longer be tested by the maintainers [1].
+commit 27861fc720be2c39b861d8bdfb68287f54de6855
+Author: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date:   Thu Aug 21 16:26:00 2025 +0000
 
-The changes to Kconfig and the addition of dev_err_once() handle this
-deprecation cleanly.
+    bpf: Drop rqspinlock usage in ringbuf
 
-For the series:
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167eee34580000
+start commit:   dd9de524183a xsk: Fix immature cq descriptor production
+git tree:       bpf
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=157eee34580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=117eee34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c321f33e4545e2a1
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa5c2814795b5adca240
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142da862580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1588aef0580000
 
-Thanks,
-Praan
+Reported-by: syzbot+fa5c2814795b5adca240@syzkaller.appspotmail.com
+Fixes: 27861fc720be ("bpf: Drop rqspinlock usage in ringbuf")
 
-[1] https://kvm-forum.qemu.org/2024/vfio-platform-kvm-forum24-landscape_TtZ3SnC.pdf
-
-> -- 
-> 2.50.1
-> 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
