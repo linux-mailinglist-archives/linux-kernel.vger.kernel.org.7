@@ -1,220 +1,142 @@
-Return-Path: <linux-kernel+bounces-793847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B02B3D91E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:57:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06979B3D91D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC90A18998CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EEE18998B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273A92472BC;
-	Mon,  1 Sep 2025 05:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F20242938;
+	Mon,  1 Sep 2025 05:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GD/IGNcz"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YyYfO+UE"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AE1242D95
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795661C84A2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756706256; cv=none; b=gXzq52ckti1tpLyTxXGHmMdhcICRX0EKQo1vDUx2RDmBtQdeyI4jWzKoTDqJxDl1RMMzO7bTYk2yX0iHVAfNpatRz5V+MnqDPNQHo+nytQEL63VnFRgH+gXQ1TsuAiFUt2O6jpoZy4cYb1LpG3ZsBxLrcvgFzy1gMdmzhZpbKP0=
+	t=1756706254; cv=none; b=FtNopOkTsCcrmEFc679NXDeQGThcMVNHY02HiDtmZCwthM6ynP4mGucjRie1BKgbmtyfd8T2H0CkDdQFgCLbAbh7mCmb474705NHbICw/4gb1hxdTi3S9z7PwHZ6kjzflkvWpb46nPyfYyHegJpZlqWQCtSW3c6gnjfbG8WLvjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756706256; c=relaxed/simple;
-	bh=w32AAvhXSV0MdHV6sniBejLaanWJXswlmthT7KmASNU=;
+	s=arc-20240116; t=1756706254; c=relaxed/simple;
+	bh=FyAsHeoe/zeL0dZKiAKYHqGwqBTz8WBo6jni7UhNvo4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eAsV7418jthrT5ADyqRM/l4shSzI9FEUjBwAR2dSzXy6fYdCTcuDlEbMwfBQlJcqeNixa/2gl74O65c35kpnkpoWGmjHmMs1gu9w4pzK4Nh++QpZNkoF29WIdLY6RubTpl4l9UBlMknjtmDFKMUjTCQBpd3W+gNsO+arNCJ+s58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GD/IGNcz; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb78ead12so632307666b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:57:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y4z22OFW1EQGdAfpBfXn0+S0H9IoQxo8LGrZEtT6FVv9UHp1gM0SO0fXkgZBJ3lIL2tagUgf4/e7lq/xzSaiIvJ3rH8JwafCn0wXhQo9TPGKnp9ZTwrFZi6lvVVe2GOhqLg8D5Cda+hWeUkKqND//sjqu1BBW9xv8clW3uGLeDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YyYfO+UE; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-30cce5cb708so3053395fac.0
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 22:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756706253; x=1757311053; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1756706251; x=1757311051; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=atfmDciT87We9G92rpl9fIpB9K1Hgs3DJ4wP3oz+nOU=;
-        b=GD/IGNczKfUp8lBpdl1yNPqsmlafyDB/MErR6dlwYJM8nUCJvxlaoibYr1RHsVIEto
-         RIDUokNYxb2VmMAJlLdg6p2JQ7ETur4poLyB13YcHm5uLv+SSTfTd/4sF9e5TG1eO5L9
-         9w79mDO7FEb3j4piQQKbc+XuHvUGTHWXHtYKh1/7nozMO8tSldZ5qNTx2CJNnMElICqd
-         VvSBRYfyN2XD/IEC+H8UQCP4sed6YgL09wSPg7C+ZBJB2cBNx+g/UZkUYdzc0NUqVq9u
-         jtquCspUbmAwi7P7bqeGCTw7cNKTxScPiWDlMf27/M9Hup8b6abvzjfy1QgT1m16U9xC
-         duRg==
+        bh=AeQYWbY1S4fZ+YczB8KbzZBm49i+mRKtPu5B3WoNWrY=;
+        b=YyYfO+UELD5VAVOmS2U2dcNZPe/V8rFIdi7bo0gMa6NhRJTi9LqzlnVVkvJpX/lHIv
+         Bk3kyz44pkHSvnB1N48TpgAmcM9MnxclEN0kpzuyznV2SfI6xSlA6bU2gOEk+c1xL1+9
+         W36uHBTYhkZr/C+tHigzXbiOB/AQPk7phZDRbw9a3Z5fQUar/8yGWfyhkfc1Hcei3nuH
+         Ll81OUN7TgFtHPY9qhbbKUAFO5h0Wl5vFM/FQY7i0rmlWD325yuE4zjNuGKjfeCBQRT0
+         TIPV/jNDSVjN3bpY92nEDhStDDkrw6QS9Jx3il4VEB4cUvqn7qLgd9YiI6KaTTtZRUSW
+         Mmuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756706253; x=1757311053;
+        d=1e100.net; s=20230601; t=1756706251; x=1757311051;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=atfmDciT87We9G92rpl9fIpB9K1Hgs3DJ4wP3oz+nOU=;
-        b=vK8sg2SEKQyT+1r33QAlhpkvZ8+fNQ1lpF7r+oZg7mVDDOPduCH7yIifkzM6/PBWGD
-         fSPEgQFVC8PcG8XcZolIp6foj0VgRtk54P3hONzn06QvzHVamgCxfhepHTZDFFzemrbv
-         mVlq4+1II5NRhVIb6qBDSULwqf6UF96dutlqkW+GFH+apzz0Ghypa4dDcKRtBhGd4ute
-         GTWscEOOeDIl6mEpnEy1xzgu682gC8BmBoj4LXBXi3dXL1e6r1S3ii0ua9/Z/IglpW+A
-         KfhR4JcQKXJyoOsIH0li5FqGlVVWuqiwis1fsOsNywhoUIrciW8uGjv3rG9MAO7jM4dP
-         BzgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0xP9GJI6xYppGl1iHoRug4IUc1yOs7uIKBSd6mxG4PJdHZ4T7WLqqrxKRvl+yk5CA0w/YpPL4Ty9ZUtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKm2k2UhDuTPuH46QneAoA4guxE4vnBd34Cdf2S7ydNAuZFHfJ
-	TiyEtr+qKcwDrnZVZ7SzULF/zvXfV9s59M4DH3oEZSjUZOKUiFGsy56fNXkYA+4386JJnJwl8xL
-	HxpbSGs+VrFd6NfMGmq6GLYy+pGv1Pxo=
-X-Gm-Gg: ASbGncshJi4ycaot/NtwltlSE9MOhV1fdMJcHzzLqYZdhSFVG2pjyjHbHiIInRRPafs
-	en1eNi8IOBnIHa3+gmqT8k1jMSvxBmKb0EW8WPK9tqqpc/nLFmRpd0u17J8xHxUgaN1EanbQ0Ib
-	teqvdIFhM49M7DSmpIXThWsEFJMfYgTViheAuKUhKiHod11KTLlgj7aqmNWkaAJ1pxd0s3iAKo/
-	W09YuFmOPBr/T1tYY7Owe4NNkFvjxQEInmAix8UGA==
-X-Google-Smtp-Source: AGHT+IGs2efo+IOitpvfttlp4QpHm+UdTuzypNYlU+dL3lMMdmTt1AUNYkmBc7Tet2CctEcc+m+cKaKxdPgXex6paWQ=
-X-Received: by 2002:a17:907:720f:b0:ad8:9c97:c2e5 with SMTP id
- a640c23a62f3a-b01af2e0b76mr615719166b.0.1756706252682; Sun, 31 Aug 2025
- 22:57:32 -0700 (PDT)
+        bh=AeQYWbY1S4fZ+YczB8KbzZBm49i+mRKtPu5B3WoNWrY=;
+        b=rKoYe3Y3KQxEZPbbfi1Qbu2v7zzTyGi7iBksbTZK7QOUPGIrRw6j+EEAJA/FVlcWrB
+         xfqRXPMbyWX1xPl+fw+Bmw8NZuOBSkFhzulmw7IlcXcECkpB+vRtz5fMkeGcektEG/w5
+         h8iVzYkl4paIpgsvX/UpcTVwNCcuu4zj3gfTLkDOp5wFVRiGP6Tyu+V9H5i9jrLszYoN
+         JKwz/tlDcRIqcXQDzu5W3A0PYqyhcduISSbDOzOzv+vu4QiIlkoOqRLTKZ6Upr8hWdif
+         ZOlM7ABeyzIO+7QBBVf2pyFTCe8rwB1f2AmRvMBgx7RhSSGLLi8zLpjBoV/TEu81G0qs
+         PGfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyEPaJ9nfnLJuXnAzEZLt+F7SqEGyElKdovL6PEcU9hKdKrk82qcT8hQhBZfiDYnKjZLv/xQp93ylBlOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOd3Ve41PlVzPlwxAhcvmUJTmh+RHu14OYQEcFYgMZKQBUWpB2
+	mwABgzQB1km62c5TEVEHh8IrXWXAEyHIIgnvpWePL0t+RZw0llO0+a/5Y2pl1KNqeNPHw2p1Pe4
+	30ZUqwClt72oq75/7n98LSfiFGDMx8vAA0F48CmWqCA==
+X-Gm-Gg: ASbGncvpyEViMYs8RdPWAabPI/xTgCFNMLE3gETMZPhfmRtcPzNZserWzdkwRz647uE
+	ELCLJNSB+8UAO3nOfFMHTVgti0THwJ6wMo8s5fGGElTICo1f9Z9AUyw9HVGD3AY8GR9QhAU2MGR
+	ek2hO/zmk6OTd+9OUpF5jl9oR6621jdjag9jnYp4cHupQfO7SBpDSd0XnCwHZpzad1v80WIWC7q
+	c8bzF+M1Gaha9mFttemFhEy4JIeDw==
+X-Google-Smtp-Source: AGHT+IEtvyL0v+dIqPd4cVuA9FY2MWzZGsXTxWqPBDg5RCf2ntrVdCNu37vpIo27yokw6idnCUTUmPkUJc2WW9ZSX9I=
+X-Received: by 2002:a05:6808:14c2:b0:437:75a1:34ff with SMTP id
+ 5614622812f47-437f7dc9eadmr3255975b6e.43.1756706251452; Sun, 31 Aug 2025
+ 22:57:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <871pp14pkr.ffs@tglx> <20250901040538.381976-1-kaiwan.billimoria@gmail.com>
-In-Reply-To: <20250901040538.381976-1-kaiwan.billimoria@gmail.com>
-From: Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-Date: Mon, 1 Sep 2025 11:27:15 +0530
-X-Gm-Features: Ac12FXxUPY4QvmXb8GUBOvVPhQCnYWtPBmgGFTiodjw4BbIZhYZ-Q9Y4Lx9pjfk
-Message-ID: <CAPDLWs-oikjGMDE1L36UETaN75D6n87E+MLtqRmetHiyhHPA6Q@mail.gmail.com>
-Subject: Re:
-To: tglx@linutronix.de
-Cc: Llillian@star-ark.net, agordeev@linux.ibm.com, akpm@linux-foundation.org, 
-	alexander.shishkin@linux.intel.com, anna-maria@linutronix.de, 
-	bigeasy@linutronix.de, catalin.marinas@arm.com, chenhuacai@kernel.org, 
-	francesco@valla.it, frederic@kernel.org, guoweikang.kernel@gmail.com, 
-	jstultz@google.com, kpsingh@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, mark.rutland@arm.com, maz@kernel.org, 
-	mingo@kernel.org, pmladek@suse.com, rrangel@chromium.org, sboyd@kernel.org, 
-	urezki@gmail.com, v-singh1@ti.com, will@kernel.org
+References: <20250827100959.83023-1-cuiyunhui@bytedance.com>
+ <20250827100959.83023-2-cuiyunhui@bytedance.com> <CAD=FV=WiZ5=4Ck3G2gme=ey6uYQhi-3Wo32DpLj9P53wxGCojw@mail.gmail.com>
+In-Reply-To: <CAD=FV=WiZ5=4Ck3G2gme=ey6uYQhi-3Wo32DpLj9P53wxGCojw@mail.gmail.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Mon, 1 Sep 2025 13:57:20 +0800
+X-Gm-Features: Ac12FXztNIRPMxCTXiinwhNyATXzi2utzF9owhxKyx-0keFQXx7jGWYBvVSkODg
+Message-ID: <CAEEQ3wmBvevbkP8XmwR0_q_1QWQsie5g0UUxTFm6ovS1m41pEQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH 1/2] watchdog: refactor watchdog_hld functionality
+To: Doug Anderson <dianders@chromium.org>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, atish.patra@linux.dev, anup@brainfault.org, will@kernel.org, 
+	mark.rutland@arm.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, catalin.marinas@arm.com, 
+	masahiroy@kernel.org, suzuki.poulose@arm.com, maz@kernel.org, 
+	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, mingo@kernel.org, 
+	lihuafei1@huawei.com, akpm@linux-foundation.org, jpoimboe@kernel.org, 
+	rppt@kernel.org, kees@kernel.org, thomas.weissschuh@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Apologies, subject missing; it's:
-time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
+Hi Doug,
 
+On Sat, Aug 30, 2025 at 5:34=E2=80=AFAM Doug Anderson <dianders@chromium.or=
+g> wrote:
+>
+> Hi,
+>
+> On Wed, Aug 27, 2025 at 3:10=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.c=
+om> wrote:
+> >
+> > Move watchdog_hld.c to kernel/, and rename arm_pmu_irq_is_nmi()
+> > to arch_pmu_irq_is_nmi() for cross-arch reusability.
+> >
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >  arch/arm64/kernel/Makefile                   | 1 -
+> >  drivers/perf/arm_pmu.c                       | 2 +-
+> >  include/linux/nmi.h                          | 1 +
+> >  include/linux/perf/arm_pmu.h                 | 2 --
+> >  kernel/Makefile                              | 2 +-
+> >  {arch/arm64/kernel =3D> kernel}/watchdog_hld.c | 8 ++++++--
+> >  6 files changed, 9 insertions(+), 7 deletions(-)
+> >  rename {arch/arm64/kernel =3D> kernel}/watchdog_hld.c (97%)
+>
+> I'm not a huge fan of the perf hardlockup detector and IMO we should
+> maybe just delete it. Thus spreading it to support a new architecture
+> isn't my favorite thing to do. Can't you use the buddy hardlockup
+> detector?
 
-On Mon, Sep 1, 2025 at 9:36=E2=80=AFAM Kaiwan N Billimoria
-<kaiwan.billimoria@gmail.com> wrote:
+Why is there a plan to remove CONFIG_HARDLOCKUP_DETECTOR_PERF? Could
+you explain the specific reasons? Is the community's future plan to
+favor CONFIG_HARDLOCKUP_DETECTOR_BUDDY?
+
 >
-> > What the heck is BOOT SIG Initiative?
-> Very, very briefly: it's an initiative that plans to measure the complete=
- or
-> unified boot time, i.e., the time it takes to boot the system completely.=
- This
-> includes (or plans to) track the time taken for:
-> - Boot from CPU power-on, ROM code execution
-> - 1st, 2nd, (and possibly) 3rd stage bootloader(s)
-> - Linux kernel upto running the PID 1 process
-> - Include time taken for onboard MCUs (and their apps to come up).
+> That being said, I did a quick look at your patch. I'm pretty sure you
+> can't just move the arm64 "watchdog_hld.c" to be generic. Won't
+> hw_nmi_get_sample_period() conflict with everyone else's (x86 and
+> powerpc)?
 >
-> The plan is to be able to show the cumulative and individual times taken =
-across
-> all of these. Then report it via ASCII text and a GUI system (as of now, =
-a HTML
-> file).
-> For anyone interested, here's the PDF of a super presentation on this top=
-ic by
-> Vishnu P Singh (OP) this August at the OSS EU:
-> https://static.sched.com/hosted_files/osseu2025/a2/EOSS_2025_Unified%20Bo=
-ot%20Time%20log%20based%20measurement.pdf
-> As mentioned by Vishnu, the work is in the very early dev stages.
+> -Doug
 >
-> > -     pr_info("sched_clock: %u bits at %lu%cHz, resolution %lluns, wrap=
-s every %lluns\n",
-> > -             bits, r, r_unit, res, wrap);
-> > +     pr_info("sched_clock: %pS: %u bits at %lu%cHz, resolution %lluns,=
- wraps every %lluns hwcnt: %llu\n",
-> > +             read, bits, r, r_unit, res, wrap, read());
-> --snip--
-> > So let's assume this give you
-> >
-> > [    0.000008] sched_clock: 56 bits at 19MHz, resolution 52ns, wraps
-> >                             every 3579139424256ns hwcnt: 19000000
-> >
-> > Which means that the counter accumulated 19000000 increments since the
-> > hardware was powered up, no?
-> I agree with your approach Thomas (tglx)! (eye-roll)... So, following thi=
-s
-> approach, here's the resulting tiny patch:
->
-> From 1e687ab12269f5f129b17eb7e9c3c5c2cec441b7 Mon Sep 17 00:00:00 2001
-> From: Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-> Date: Mon, 1 Sep 2025 09:17:57 +0530
-> Subject: [PATCH] [sched-clock] Extend printk to show h/w counter in a
->  parseable manner
->
-> Signed-off-by: Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-> ---
->  kernel/time/sched_clock.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-> index cc15fe293719..e4fe900d6b60 100644
-> --- a/kernel/time/sched_clock.c
-> +++ b/kernel/time/sched_clock.c
-> @@ -236,16 +236,14 @@ sched_clock_register(u64 (*read)(void), int bits, u=
-nsigned long rate)
->         /* Calculate the ns resolution of this counter */
->         res =3D cyc_to_ns(1ULL, new_mult, new_shift);
->
-> -       pr_info("sched_clock: %u bits at %lu%cHz, resolution %lluns, wrap=
-s every %lluns\n",
-> -               bits, r, r_unit, res, wrap);
-> +       pr_info("sched_clock: %pS: bits=3D%u,freq=3D%lu %cHz,resolution=
-=3D%llu ns,wraps every=3D%llu ns,hwcnt=3D%llu\n",
-> +                read, bits, r, r_unit, res, wrap, read());
->
->         /* Enable IRQ time accounting if we have a fast enough sched_cloc=
-k() */
->         if (irqtime > 0 || (irqtime =3D=3D -1 && rate >=3D 1000000))
->                 enable_sched_clock_irqtime();
->
->         local_irq_restore(flags);
-> -
-> -       pr_debug("Registered %pS as sched_clock source\n", read);
->  }
->
->  void __init generic_sched_clock_init(void)
-> --
-> 2.43.0
->
-> Of course, this is almost identical to what Thomas has already shown. I'v=
-e
-> added some formatting to make for easier parsing. A sample output obtaine=
-d with
-> this code on a patched kernel for the BeaglePlay k3 am625 board:
-> [    0.000001] sched_clock: arch_counter_get_cntpct+0x0/0x18: bits=3D58,f=
-req=3D200 MHz,resolution=3D5 ns,wraps every=3D4398046511102 ns,hwcnt=3D1409=
-443611
->
-> This printk format allows us to easily parse it; f.e. to obtain the hwcnt=
- value:
-> debian@BeagleBone:~$ dmesg |grep sched_clock |awk -F, '{print $5}'
-> hwcnt=3D1409443611
->
-> So, just confirming: here 1409443611 divided by 200 MHz gives us 7.047218=
-055s
-> since boot, and thus the actual timestamp here is that plus 0.000001s yes=
-?
-> (Over 7s here? yes, it's just that I haven't yet setup U-Boot properly fo=
-r uSD
-> card boot, thus am manually loading commands in U-Boot to boot up, that's=
- all).
->
-> A question (perhaps very stupid): will the hwcnt - the output of the read=
-() -
-> be guaranteed to be (close to) the number of increments since processor
-> power-up (or reset)? Meaning, it's simply a hardware feature and agnostic=
- to
-> what code the core was executing (ROM/BL/kernel), yes?
-> If so, I guess we can move forward with this approach... Else, or otherwi=
-se,
-> suggestions are welcome,
->
-> Regards,
-> Kaiwan.
+
+Thanks,
+Yunhui
 
