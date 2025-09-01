@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-793993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8D98B3DB46
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086F3B3DB45
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 284A93BEFB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5230189C251
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41043270569;
-	Mon,  1 Sep 2025 07:39:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B446D26F445;
+	Mon,  1 Sep 2025 07:39:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79811DE4F1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FD82264B7
 	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712372; cv=none; b=lmoXuourYLeDeAeOnXlr9ofMHg38xk9wXak3IfrFkJEmXP9sN2L93GuvfnZjmZzZJauaZrTShRzePBHs4X/bK6OArg/0ysGzRVm5Z9vnNNXgEIRR/V5ibU+YlgB7jRBr4dBbBY8wBRKUZztf5fseBFwBiUOWt8UeMJKu9EMjBmg=
+	t=1756712372; cv=none; b=HhP9ACT2TWvGUI4kJiktnUSt/D7pheGejEgTLPiLMfx8Tzfe75/ueNNyIMWsi//gLvoT8ajMZlp1QRCdfX1QcYHvMNJ6bQ6OfIUqd25M1ats9effH5M88dA6lLzEBipBnwhdSFopBsNStp8mmWpUfF0RR50di/LN6/XHolHXacI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756712372; c=relaxed/simple;
-	bh=FTzIgiP3NWc0dlW9Txm2qr8tfvqG8X7BrIPcMJvgcVU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I9qs0q+2PtKi8KechD65HfPRbZh9+IWJqxde3IZHGytsoBadKLS6QZeKNbKMSHceyFFN6GW71fmN9yn+C7o5eEFlDoDfC4UzfdGIQ1OTocQVziIbkIlSyotm+086Tnz1tMXF1R8nCpilUlh2+9NZGg3aPWUBDRGQSUiN7s0BlpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+	bh=XBu790sK0ilYfkotHaZg1XvwC5A/vm71bvwcLgHFIHA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F3+ph/7aw7Gs/29GFJAKloUeupIOl3ApPslxvudmitOUSFt0PxGoS6vAWF6jzwJRbpaBkZjB37aEKUAfqtfeHVMaxIBIWLL6SfFHJeJIi5t/TSG3+kYNFT0bc7vCmXiVP4OG8yFHUFdqgL8tO50PVxA0MzDg+PRTfUsGxQ8fUZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f340e9b5c5so58143365ab.1
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3f340e9b5c5so58143295ab.1
         for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:39:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756712370; x=1757317170;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Cb5i58+NzZC4kRXSkAPN+GknIz6siHZM/xyBUa15eg=;
-        b=LaA6+MEbxoP3vK1NwSPeEo7yWVg+Zm0mye7tb4LYoPkzzzcDm8oLJhIoqpSjCyCWYq
-         nXrMy10dKRza44mwyVPkXEDXQzOLBCVt/9D/VjdN8vYUav1tQ6o4C1BRSCc74FPCbHdd
-         rfCHNgBn/UVL0W4qOLREXjLHD9QdHUGNyabHs0He8W7OFArz8KH8XbuRZjHY0pgA2luB
-         Y7JgwzOwYIukkeYNok6202Iqu3KwbJzWqbtXZEjpPx4pUgkK84PiAmS2cyr+OhEU000a
-         5Y72BtI2HBUTKq5y1CvD4DTBrqTHNjNBL+SrfFk9H5vpahnZwOAcZBo74yWCQAuABLlS
-         i1dA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1QD2oG5kemxZ+koMB6RWrLYfG7sspl+pgI2g6lw0hY+ba/f6YiBMG6yPNT3Sin5OGhzZe86yfK4P8Eys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsF/Qv32MdU7NKnPBsdKeixg5IXm4NZ6bN2AWnAGhppPFlJBzu
-	E1U7hzaY/D5J9M+yS34aZsR+otoBHGo4PtKAxGuBwN5/vv3sJMf1waMPEYNAgMDKGf6PGjEKRL9
-	u3/HXApgyfgbWI3W4B29dZnhSKKBJzFzjNINN436yCa0DNVnCFXfYYYkTWXs=
-X-Google-Smtp-Source: AGHT+IGnwZ7A+54s0AbuKXUkUiusLI4q8Ihz8nytKAlR1VgZCVm4v+B+GP9UQOnsZ556EmINXg3OiivQGOjZ2U+9OYKFT163AB/1
+        bh=NI5apfQwrzCscOrcLCa/He6Zn91QYVdhk52tpoNraHQ=;
+        b=qDLS36zRaOUARZk8d2Tm8B0hmwIJ8Az68Us3NeBEIMUYLop9uakN1ehBY4OcadA3bs
+         XiJcP/K84NMX9z1W7WNriN4lzH8KQocpgje/SNU3ECTwpj2yceDvPA8rg9HGTNj3EgP1
+         Br2yduX30sJAtcOy6mXgbieRztQWhf0Jdg7hjoiw9k8P0S0gHRy61XmxCFO24QD0r7Jj
+         OoTlytbTx08j34bRD3mUlmarU6BSMi/Jd3jwYIPR6fztFaHSVqTw5aKavTiVn98gvYLh
+         D/I+b5VMQZ+XBG7rly0dqimr1U766O+AMxs0y4cGz8QDmsBXgvJxInAF6fNVGQNd7t+C
+         vJPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNYERH2i0i4Y6OEaqYty690C4xbEIVSvf9T2dzDNIKm9k6pqtKNpNrr5BXz4n5VrjavtVVTOuQ/3EFDcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYD7HO54hWkJA2t8UvYS90Lh3gLE1aGY8IUeyfVoWLDO85LRTX
+	3Z8oyfFF9eHItgM3gc09vo5CO3d0WHt4MAoAx2AyNbhgM9UaeD0GmRh8n8XaP6oK6SO45A7n//c
+	Z2/MwAryfIK6GXMM56NZbnZ/sCL+ydFByLOT5E8nrnmvlcaQyuzASR9zaQao=
+X-Google-Smtp-Source: AGHT+IGRvXq0UDliP80MzxsO0UoEe7QkLZQOZyBgwKooCR6/E8CMv9UbP+ueafzb9rnLpkceneAtmbk2FbdTwKLuti3RWMW6pPi/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e02:b0:3e9:eec4:9af1 with SMTP id
- e9e14a558f8ab-3f4026c3079mr120619585ab.31.1756712369985; Mon, 01 Sep 2025
+X-Received: by 2002:a05:6e02:1747:b0:3ec:2c8a:f35 with SMTP id
+ e9e14a558f8ab-3f4019f6ae7mr135053725ab.18.1756712369760; Mon, 01 Sep 2025
  00:39:29 -0700 (PDT)
 Date: Mon, 01 Sep 2025 00:39:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b54db1.a70a0220.1c57d1.0545.GAE@google.com>
-Subject: [syzbot] [wpan?] WARNING: ODEBUG bug in hwsim_update_pib
-From: syzbot <syzbot+7932fb418f81bda3ad79@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wpan@vger.kernel.org, miquel.raynal@bootlin.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Message-ID: <68b54db1.a70a0220.1c57d1.0544.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING: ODEBUG bug in cfg80211_update_known_bss
+From: syzbot <syzbot+df9509569a0752b1e83e@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    bd2902e0bcac Merge branch 'locking-fixes-for-fbnic-driver'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=117a1fbc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=7932fb418f81bda3ad79
+HEAD commit:    fab1beda7597 Merge tag 'devicetree-fixes-for-6.17-1' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c65ef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a7016efe6aaa498c
+dashboard link: https://syzkaller.appspot.com/bug?extid=df9509569a0752b1e83e
 compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/866cb9f09108/disk-bd2902e0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/05ea2ff5b4f0/vmlinux-bd2902e0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6b499ed83474/bzImage-bd2902e0.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-fab1beda.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/07d60c58352f/vmlinux-fab1beda.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b6d2b98f110e/bzImage-fab1beda.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7932fb418f81bda3ad79@syzkaller.appspotmail.com
+Reported-by: syzbot+df9509569a0752b1e83e@syzkaller.appspotmail.com
 
-bond2: left promiscuous mode
-8021q: adding VLAN 0 to HW filter on device bond2
-8021q: adding VLAN 0 to HW filter on device bond3
-8021q: adding VLAN 0 to HW filter on device bond4
 ------------[ cut here ]------------
-ODEBUG: activate active (active state 1) object: ffff8880294fa980 object type: rcu_head hint: 0x0
-WARNING: CPU: 1 PID: 13092 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+ODEBUG: activate active (active state 1) object: ffff888052041c80 object type: rcu_head hint: 0x0
+WARNING: CPU: 0 PID: 15 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
 Modules linked in:
-CPU: 1 UID: 0 PID: 13092 Comm: syz.2.2163 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
 RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
-Code: 4c 89 ff e8 97 e8 52 fd 4d 8b 0f 48 c7 c7 20 40 e3 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 2a 1e b3 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 67 8a d3 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc9000e17e5f0 EFLAGS: 00010296
-RAX: cf70889cbb35c600 RBX: dffffc0000000000 RCX: 0000000000080000
-RDX: ffffc9000c66a000 RSI: 000000000007ffff RDI: 0000000000080000
+Code: 4c 89 ff e8 07 d8 52 fd 4d 8b 0f 48 c7 c7 a0 51 e3 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 2a 7a b1 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 57 0c d2 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc9000041ec50 EFLAGS: 00010296
+RAX: f40f5c254b562400 RBX: dffffc0000000000 RCX: 0000000000040000
+RDX: ffffc90001021000 RSI: 00000000000009b7 RDI: 00000000000009b8
 RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
 R10: dffffc0000000000 R11: fffffbfff1bfa1ec R12: 0000000000000000
-R13: ffffffff8be341a0 R14: ffff8880294fa980 R15: ffffffff8b8bd3a0
-FS:  00007fa46bd396c0(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+R13: ffffffff8be35320 R14: ffff888052041c80 R15: ffffffff8b8bd3a0
+FS:  0000000000000000(0000) GS:ffff88808d210000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f25865f1f98 CR3: 0000000075ad6000 CR4: 00000000003526f0
+CR2: 00007f0097729f70 CR3: 0000000043d02000 CR4: 0000000000352ef0
 Call Trace:
  <TASK>
  debug_object_activate+0x26a/0x420 lib/debugobjects.c:842
  debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
  kvfree_call_rcu+0x4f/0x410 mm/slab_common.c:1953
- hwsim_update_pib+0x2d2/0x450 drivers/net/ieee802154/mac802154_hwsim.c:116
- hwsim_set_promiscuous_mode+0x196/0x2e0 drivers/net/ieee802154/mac802154_hwsim.c:323
- drv_set_promiscuous_mode+0x16a/0x2f0 net/mac802154/driver-ops.h:127
- drv_start net/mac802154/driver-ops.h:195 [inline]
- mac802154_slave_open net/mac802154/iface.c:196 [inline]
- mac802154_wpan_open+0x17e7/0x2a40 net/mac802154/iface.c:295
- __dev_open+0x470/0x880 net/core/dev.c:1682
- __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9549
- netif_change_flags+0x88/0x1a0 net/core/dev.c:9612
- do_setlink+0xc55/0x41c0 net/core/rtnetlink.c:3143
- rtnl_group_changelink net/core/rtnetlink.c:3775 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3929 [inline]
- rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4057
- rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa46af8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa46bd39038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fa46b1b5fa0 RCX: 00007fa46af8ebe9
-RDX: 0000000000000000 RSI: 0000200000000000 RDI: 0000000000000006
-RBP: 00007fa46b011e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fa46b1b6038 R14: 00007fa46b1b5fa0 R15: 00007ffcd9bf4da8
+ cfg80211_update_known_bss+0x634/0x1330 net/wireless/scan.c:1936
+ __cfg80211_bss_update+0x147/0x2120 net/wireless/scan.c:1983
+ cfg80211_inform_single_bss_data+0xba9/0x1ac0 net/wireless/scan.c:2375
+ cfg80211_inform_bss_data+0x1fb/0x3b30 net/wireless/scan.c:3234
+ cfg80211_inform_bss_frame_data+0x3d7/0x730 net/wireless/scan.c:3325
+ ieee80211_bss_info_update+0x746/0x9e0 net/mac80211/scan.c:226
+ ieee80211_scan_rx+0x593/0xa20 net/mac80211/scan.c:355
+ __ieee80211_rx_handle_packet net/mac80211/rx.c:5186 [inline]
+ ieee80211_rx_list+0x201c/0x2a90 net/mac80211/rx.c:5423
+ ieee80211_rx_napi+0x1a8/0x3d0 net/mac80211/rx.c:5446
+ ieee80211_rx include/net/mac80211.h:5210 [inline]
+ ieee80211_handle_queued_frames+0xe8/0x1f0 net/mac80211/main.c:453
+ tasklet_action_common+0x369/0x580 kernel/softirq.c:829
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
  </TASK>
 
 
