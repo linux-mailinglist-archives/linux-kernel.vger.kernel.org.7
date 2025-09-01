@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-795063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B3AB3EC6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD01B3EC6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BB13BF314
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6043B632C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4EB30648E;
-	Mon,  1 Sep 2025 16:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EBC312827;
+	Mon,  1 Sep 2025 16:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+CWDHu+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjkkWupj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72D01C5D7D;
-	Mon,  1 Sep 2025 16:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BE31C5D7D;
+	Mon,  1 Sep 2025 16:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744852; cv=none; b=Mknoff8A/rY3Zn6GQiuD76UPmvSI/Hwc86JXAM+tEWTNmOFHfF2rlGxlgLFEHkddjc0P72e0uAg/IM3WwPYKsQArXvct2S8zj7dmsuvHlMQlwyeCcVFK4d7peEv0NAyl5jZZaGNLg57lV7BrioHMcC7SVfscsEuAdCrlhkHxHTY=
+	t=1756744856; cv=none; b=C7yTZsesfO8Yus4LTFCskejXG6Dy+SikJE/Rq3SxNvL5HOXuzJpE8509G/pyLGYNgbQu+lyY8MFIWOfG3BwHUR3hp/8WjZuvfK6WhOu+r08byED/KJifMyc+9O+5rTJ9otMS3WV6cEt+MQgHeEqqNs5/uYLqc50dhk5jMCK9xN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744852; c=relaxed/simple;
-	bh=EYcCtsQW0Wv4uVBxrkecx/q6RsKoRtiUpOXGlQ9kpVg=;
+	s=arc-20240116; t=1756744856; c=relaxed/simple;
+	bh=iJeiMi9VRSfUO8RM1XIwm8HC63zzuJMuJ5giNeAnYAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRdV+xSjHoJ2ZSw8OI7VVEEhk9cgdd9zGDHmaVd5Bmg6r3RriC2CShXVgrieEgBnlZ4GezbIaa2hFIgXkfMNUN/5m14azCz/5l+ov1KtIqbBjEGB6ei4+81vBcmET+kg8XtpehN4jQk/Y1IpvWTXADM0tB7MYc65Yg+D2WhYr0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+CWDHu+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1713AC4CEF0;
-	Mon,  1 Sep 2025 16:40:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkrCDltYfssDCtHrZnLxg/R4NMa4QENiSoM6/yxjruzwF1SgkPu+WfJggt1CK8PHdDT5Kr3sJe7RPv6+x3lcWvjXCViYr8DsJszWI0Qf3QUGY7EEuNqPyofiO5enn86mt6RbaF8phfWnG62UMMYPjLrRkWd667Xur2J8icoVEuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjkkWupj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B96C4CEF0;
+	Mon,  1 Sep 2025 16:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756744851;
-	bh=EYcCtsQW0Wv4uVBxrkecx/q6RsKoRtiUpOXGlQ9kpVg=;
+	s=k20201202; t=1756744855;
+	bh=iJeiMi9VRSfUO8RM1XIwm8HC63zzuJMuJ5giNeAnYAw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G+CWDHu+GSpr35iGDk1Nh9STcszBPHxpfOEINwRxBtNsjUD7dAYvhnUroNnLZhY7d
-	 QE62WXJzvUbBVF6r2efbDNd/PNHftfjEGGXwS0AAj3A6XJ0cWBycpXU+uyVq5Q/8Bg
-	 wBt0Gx4CtrSEZ5TmEODy2vgkGr/3T5LnAlvfv3yPVXyK5sPu3Qjny/UWOjZU3ydrOS
-	 deb/vomGIAOzuE0cr/fWYI0otcMQn2BN/hliuS8CbdNSV8mriJHjaQlxIBxzW4OEq1
-	 N18FPT8I061kxGITJtc2GkFfATUYVbjIFdFocu2petFfuZecgsfIcIGA/2rj/vMkD8
-	 ECK206N/NJKIw==
-Date: Mon, 1 Sep 2025 18:40:43 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: linux-man@vger.kernel.org, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev, 
-	ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com, 
-	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
- PR_THP_DISABLE_EXCEPT_ADVISED
-Message-ID: <hbwmiqb2qjyf4bemcbg2nwil4oceukvevml4jrilm4q4souv6e@hmjk4ubgavg2>
-References: <20250901160903.2801339-1-usamaarif642@gmail.com>
- <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
+	b=DjkkWupjeUDajgy5fDD14Mz+uiylr8E5YZeTV5U3B9EgyVqccxSwHBmlNUuXSBOzU
+	 ADT1gjzI3a9sBDmiaGOf0ZYFca/5J0ppZVNGLGnvbF6qwl7c1g/YNzRMD/obVTg4+6
+	 sZT1ridrtk5aEW6NvrPu9qV+2psAeY1TybkJ/nuMhyZ9hCEI5uXnVJ6OdozHPRklU3
+	 eQerOuAEgqweZFHl8c4W2rLzeZwC67T2DLpHASel4zXgDDuJKzSbVzbUOpDzBPbVAK
+	 8jzAxDAfpytN+9gPYvCv/jFxKHukBeIL2XLkHwPnusVfneFKH0OvKNfVUB3C8WZls2
+	 pPn2kpOIi3org==
+Date: Mon, 1 Sep 2025 11:40:53 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Sai Prakash Ranjan <quic_saipraka@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 04/10] arm64: dts: qcom: sc7180: Explicitly describe the
+ IPA IMEM slice
+Message-ID: <6eqsy3vo7p6pszkyqorpe3gxlk66q2kpeadqdchqfyqerym35p@7rrfea5tgnnt>
+References: <20250523-topic-ipa_mem_dts-v1-0-f7aa94fac1ab@oss.qualcomm.com>
+ <20250523-topic-ipa_mem_dts-v1-4-f7aa94fac1ab@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="twz4n2ienikp6hn5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
+In-Reply-To: <20250523-topic-ipa_mem_dts-v1-4-f7aa94fac1ab@oss.qualcomm.com>
 
+On Fri, May 23, 2025 at 01:18:19AM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> As part of stepping away from crazy hardcoding in the driver, move
+> define the slice explicitly and pass it to the IPA node.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7180.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> index 3afb69921be363bd35a996bc1d6f70ff007c6af8..84b032dc09d36e56eeaf182125cceb44e7333765 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> @@ -1640,6 +1640,8 @@ ipa: ipa@1e40000 {
+>  			qcom,smem-state-names = "ipa-clock-enabled-valid",
+>  						"ipa-clock-enabled";
+>  
+> +			sram = <&ipa_modem_tables>;
 
---twz4n2ienikp6hn5
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: linux-man@vger.kernel.org, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev, 
-	ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com, 
-	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
- PR_THP_DISABLE_EXCEPT_ADVISED
-References: <20250901160903.2801339-1-usamaarif642@gmail.com>
- <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
+Please resubmit the second half of this series, once sram is an accepted
+property.
 
-Hi Usama,
+Thanks,
+Bjorn
 
-On Mon, Sep 01, 2025 at 05:18:22PM +0100, Usama Arif wrote:
-> I am not sure what the right time is to send the mandoc changes.
-> The patches have been merged into mm-new for more than 2 weeks.
-> We can still review it and I can resend if needed after the kernel releas=
-e if that
-> is a more appropriate time?
-
-No, this is fine.  Let's refine the patches for now.
-
-Once we're done, I guess we can either wait until they arrive at Linus's
-tree, or if you're very confident this will reach a release eventually,
-we can merge it now here, and eventually fix it if something small
-changes later.  I don't mind too much.  It's more up to you, and how
-much you expect this to change before the actual release of Linux.
-
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---twz4n2ienikp6hn5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmi1zIsACgkQ64mZXMKQ
-wqngSw//SnTGh3HNPiefx0mB0PXLzEghkGJ8Zt03y4grnPvDOC7jfD8Jl5lBExK4
-uOjLxj/BORfsAuacL64JwMSKem7T6OTKJjebRdqqycSDnti/jYCCzrInJPzJlK30
-G3SeFr6FVCBKZ0cTpMcIcoRDhWPFyh4U9Ikrd0SfiZ6gbvWRsK1+v4uHWvCrZ+89
-5/9n/sL1WPX1JywVZ0ZtvrfLBSgIz22d/tQfvyPU7KpR5L3Tij2iA5Ciiqfu4oRy
-46bpGRH7ZbJfwdM0PWpuixkA3egZcZA/1uqjpzRwcdyNKmJ/bvW9mP23ZXRP8efP
-FltI3AeWhvaq7lFNCFiwhqpSNIkPcuk4UIhKrzdmm1dpCpUqHZK2WTnQmaV0zE91
-oGzisnsxVoJIodeCKob0IC14OMVyhwoSgY+pXdwek7SA+Pggy10uWp3N+faEj/m/
-NtHtdGC8JvexvY+OS50rDkjrV/+b1ZVW/fIBulTi1ZMCLxPL1notFJsmJoPT11as
-yo8ctwQcq+Hi/yiiWRy7OsR/uGPq7l08bMiWX5rQ5wXiHsSU6L2aULaMXas1vHMJ
-wb19jGZOP0HzdY1Eu4NZvpcARB4uTGXuE54LrY0OfIMpyB7K0IytryguFRCcZ84y
-+BKll3fX6Q1uVRa5wSGD2xOlNQ6fkcqoHkViQ7tQWM0p9qfkFMA=
-=/bW3
------END PGP SIGNATURE-----
-
---twz4n2ienikp6hn5--
+> +
+>  			status = "disabled";
+>  		};
+>  
+> @@ -3535,6 +3537,10 @@ sram@14680000 {
+>  
+>  			ranges = <0 0 0x14680000 0x2e000>;
+>  
+> +			ipa_modem_tables: modem-tables@28000 {
+> +				reg = <0x28000 0x2000>;
+> +			};
+> +
+>  			pil-reloc@2a94c {
+>  				compatible = "qcom,pil-reloc-info";
+>  				reg = <0x2a94c 0xc8>;
+> 
+> -- 
+> 2.49.0
+> 
 
