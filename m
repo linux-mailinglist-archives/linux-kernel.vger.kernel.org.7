@@ -1,94 +1,47 @@
-Return-Path: <linux-kernel+bounces-794226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56DDEB3DE9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:32:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0691B3DEA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE311882D10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:33:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1F827A60DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC6C3009FA;
-	Mon,  1 Sep 2025 09:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81F33054D7;
+	Mon,  1 Sep 2025 09:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tG0qZUBr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+omu4DM0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tG0qZUBr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+omu4DM0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="up5IY0Lz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D12B2FB628
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC71248F66;
+	Mon,  1 Sep 2025 09:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756719157; cv=none; b=mxZQFmf0LA9ZBfy/OzTksX7Wf3YdGCbk+tE+QYToTp15aJy9mkGOmo475U0W9sAvv64ULz0Yc8tocBLwZHJ2467toPkOgymj8Ws2MyY1xdx5IzoIVArZSPNl/hIdIhLrp5PJv/jEWQW7eUg+k2BSI+jQy9U2o5T2Uj0cXwPPChY=
+	t=1756719247; cv=none; b=uLazeuC8Vp2boVvntf0WuLsp0Ka8SgYAtI7nLoRfXLqw0JW+meNrRxRgrntLiFVB4oUxkQsZgtgybJAQLYu2coe7G7yjh1x+QyeRTSZpAzmr5KBh2ExTTdbBCTb/bVlXOIYfxbN6NlzuEJ8B2v7Rc8hGD84Y1eHltG6+aLDONR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756719157; c=relaxed/simple;
-	bh=aguGEENBhaYZ/an7PqNGC1szFO/qrFW6lpFPGNISW+Y=;
+	s=arc-20240116; t=1756719247; c=relaxed/simple;
+	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rv5u2erhWA+qH752IwYb9Y/2P4SsBenlY0fhaGo57NC1dRTcIuKbU+SP7bGNB5y3HioYNXrkEJab7lSU6s3VgoShfrcvFhi9qX6tgfyMlt059gFFMjIK5L0AqtCYHSIy+hgXQKQ3NsiVzunvIM+AcJNYBI83935ob8gshTFIT1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tG0qZUBr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+omu4DM0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tG0qZUBr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+omu4DM0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 24CAC1F387;
-	Mon,  1 Sep 2025 09:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756719154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g/lcAibKVHoe/SFW6wzymEv+7fqREhXPbeps/a+UggU=;
-	b=tG0qZUBrPhsyHoo+2TIDDhcbS0ANsOegVRZnFcUAXuJI7xqKzZQ0vHO4lwwzJWohgJPyJO
-	0FtfcQGlCKTSdEai5zY0InBtU/ouLt8pINxx2/1l7Ko+lavCUawIpA/pb5Kz8Oedp6Lauz
-	jCTJv8PICO38mKfFVWSndFeFihnqhC8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756719154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g/lcAibKVHoe/SFW6wzymEv+7fqREhXPbeps/a+UggU=;
-	b=+omu4DM0soeEGog3QmUYjVlrtJrtIz4ik7V5ELraprWzBDHtW4Px5GIjCPYZS2YreTPIlN
-	PbBXEpEVOzpoySBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756719154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g/lcAibKVHoe/SFW6wzymEv+7fqREhXPbeps/a+UggU=;
-	b=tG0qZUBrPhsyHoo+2TIDDhcbS0ANsOegVRZnFcUAXuJI7xqKzZQ0vHO4lwwzJWohgJPyJO
-	0FtfcQGlCKTSdEai5zY0InBtU/ouLt8pINxx2/1l7Ko+lavCUawIpA/pb5Kz8Oedp6Lauz
-	jCTJv8PICO38mKfFVWSndFeFihnqhC8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756719154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g/lcAibKVHoe/SFW6wzymEv+7fqREhXPbeps/a+UggU=;
-	b=+omu4DM0soeEGog3QmUYjVlrtJrtIz4ik7V5ELraprWzBDHtW4Px5GIjCPYZS2YreTPIlN
-	PbBXEpEVOzpoySBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB6FE13A31;
-	Mon,  1 Sep 2025 09:32:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AlmnLzFotWgKcAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 09:32:33 +0000
-Message-ID: <adb9e55e-0023-44b7-bc88-ed95be8dc71c@suse.cz>
-Date: Mon, 1 Sep 2025 11:32:33 +0200
+	 In-Reply-To:Content-Type; b=E/A6m5gN/d17iWrueL+2Qz1GI8ye9l9ORJdj2K1au+SOSVJ7LP1Q6Q2pmBUWvuWs4hyNlike/iVRhOa3vDub4VYgnGMoOUWVm9yTMXZOpPK4FEeOLJlnl8Bx7JMslpqRgxnx2Wqp72N9Yqpnn76lrlMbN/ufGADj6EDNdkmtFcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=up5IY0Lz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF865C4CEF0;
+	Mon,  1 Sep 2025 09:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756719246;
+	bh=3pD43VmzuMnbKqEZBMBvRD8QOeColEDDiPA98Xg+SaI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=up5IY0Lz+TWMrst6sxwJCXHZlvksy+Kyvgdb5EAAQyC+UHTG6/VphlFt01RyHvzdY
+	 SpU7YnF5+Jqv0wV6aIuRTNVyJMCpVHjQyME6P1+siibcpvKIrd1QOnpg8aTaePOXU/
+	 QvT67wDPOMoeNkN9KpE1mREID6KnHbBNmAqEobXL092QepnV9neHZRxgpw6FGBEUUh
+	 NPw6CEx8P9CGBIzoTcXJo+Y3n4/aN7N5E/YDXz95PBTWB2RVvsl7Mfp9smS62ZJXhp
+	 izWNuW6h6BRCHrXysOq6sHn5ZHhZngDG/WcJAe3ynXx+8m1AjDe6cCP1rhiJl+yTmO
+	 67GBt22Hy8KSw==
+Message-ID: <44d8a998-efe7-4c2f-8580-5248b1a98c44@kernel.org>
+Date: Mon, 1 Sep 2025 11:34:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,113 +49,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer
- parameters
+Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
+ <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
+ <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
+ <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
+ <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
+ <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Max Kellermann <max.kellermann@ionos.com>,
- David Hildenbrand <david@redhat.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, akpm@linux-foundation.org,
- axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
- hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com
-References: <20250831093918.2815332-1-max.kellermann@ionos.com>
- <20250831093918.2815332-2-max.kellermann@ionos.com>
- <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
- <CAKPOu+-ZjNr9hEir8H=C5C9ZwbS7ynY4PrJuvnxa-V425A+U3Q@mail.gmail.com>
- <e3ec5583-adf0-44c3-99c9-5a388c43fb7d@redhat.com>
- <CAKPOu+9CiT-5P--6TZcyq=jHLDhCa8LDh1AYjKr69+0shO8UrQ@mail.gmail.com>
- <244b73d5-39dc-4bcc-a69c-8ae3010b40d9@redhat.com>
- <CAKPOu+_wQ9DDHOQDtFeXU7ZqwvwxYqXNqWeSP3zJpfC0Cm2YAA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAKPOu+_wQ9DDHOQDtFeXU7ZqwvwxYqXNqWeSP3zJpfC0Cm2YAA@mail.gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[shutemov.name,linux-foundation.org,google.com,infradead.org,suse.com,vger.kernel.org,kvack.org,oracle.com,kernel.org,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 7bit
 
-On 9/1/25 11:26, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 10:35 AM David Hildenbrand <david@redhat.com> wrote:
->> We usually write complete sentences, and there is nothing wrong with
->> repeating what the subject says.
+On 01/09/2025 10:43, Tudor Ambarus wrote:
+> 
+> 
+> On 9/1/25 8:48 AM, Krzysztof Kozlowski wrote:
+>> On 01/09/2025 08:56, Tudor Ambarus wrote:
+>>>
+>>>
+>>> On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
+>>>> On 27/08/2025 14:42, Tudor Ambarus wrote:
+>>>>> +
+>>>>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
+>>>>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
+>>>>> +};
+>>>>
+>>>> I don't understand why clocks are defined in the firmware driver, not in
+>>>> the clock driver.
+>>>
+>>> I chose to define the clocks in the firmware driver and pass them as 
+>>> platform data to the clock platform device for extensibility. In case
+>>> other SoCs have different clock IDs, they'll be able to pass the
 >>
->> All the time it takes you to argue here would be better used improving
->> your patch descriptions.
+>> You will have to modify firmware driver, so still at least one driver
+>> has to be changed. Having clocks defined in non-clock driver is really
+>> unusual.
+>>
+>> This solution here creates also dependency on clock bindings and makes
+>> merging everything unnecessary difficult.
+>>
+>>> clock data without needing to modify the clock driver. GS201 defines
+>>> the same ACPM clocks as GS101, but I don't have access to other newer
+>>> SoCs to tell if the ACPM clocks differ or not.
+>>>
+>>> The alternative is to define the clocks in the clock driver and
+>>> use platform_device_register_simple() to register the clock platform
+>>> device. The clock driver will be rigid in what clocks it supports.
+>>>
+>>> I'm fine either way for now. What do you prefer?
+>>
+>> Please move them to the driver.
 > 
-> Sure, but first I need to know what is really needed. Reviews on LKML
-> are often contradictory, and it's easy to get pushed around from one
-> corner to the next.
+> Okay, will move the clock definitions to the clock driver.
 > 
-> I just posted v4 with longer commit messages. I think that's a lot of
-> unnecessary noise that takes a lot of time to read, but oh well, if
-> that's what you guys really want...
+>>
+>>>
+>>>>
+>>>> This creates dependency of this patch on the clock patch, so basically
+>>>> there is no way I will take it in one cycle.
+>>>
+>>> Would it work to have an immutable tag for the clock and samsung-soc
+>>> subsytems to use?
+>>
+>> No, just try yourself. Patch #3 depends on patch #2, so that's the cross
+>> tree merge. It's fine, but now patch #4 depends on patch #3, so you need
+>> two merges.
+>>
+>> Or how do you actually see it being merged with immutable tag? What goes
+>> where?
+>>
+> 
+> Unnecessary difficult indeed. Hypothetically, if we kept the current
 
-No I don't think we want a passive-aggressive malicious compliance.
-> (In the days of LLMs, writing is almost free, but reading all that
-> redundant or generated garbage text becomes impossible. I think it is
-> harmful to have so much redundant text because time spent reading it
-> is time wasted. But that's just my opinion.)
+No, it is impossible.
 
+> structure, we could have have a single tag on #4. Since the dependency was
+
+What does it mean tag on #4? There are no further users, so tagging this
+patch has zero effect.
+
+> on a new clock driver, the clock subsystem could have lived without merging
+> the tag, as the chances of conflicts with the clk core are small. But not
+
+Quick look tells me nothing would compile. Really, try yourself. Neither
+patch #3 nor patch #4 builds!
+
+Best regards,
+Krzysztof
 
