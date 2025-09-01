@@ -1,376 +1,528 @@
-Return-Path: <linux-kernel+bounces-794004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF661B3DB61
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:46:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66AAB3DB64
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CD516B639
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:46:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199AA1895C87
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF692E92B3;
-	Mon,  1 Sep 2025 07:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k8frw+VR"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2067.outbound.protection.outlook.com [40.107.223.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A42EDD4F;
+	Mon,  1 Sep 2025 07:48:16 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552F22E8B9E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712805; cv=fail; b=M9ylM94qWmzbmlNVBTswFadxLXYa6HB7BW5fZ5LUkWuf9iTcO4qTMEQsJAV6qrqScAc3TCSKVXBpW1NCWXSP380YAwgxVweXPam+mqYqFDwPGUuknL23JlcJLlwgJ9yehHfNZp8dp7qIttVL3fU+n++3RhngKTu7WqQsYyv3/TQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712805; c=relaxed/simple;
-	bh=dVy/TK+Uh2FuU9Bz//ZJ9tq5LRvEqgdl+2gLoRHyPik=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=HfY7wSS6DvGzLPrambsjcY19ocarAJK5mbAKS22uNrZY/byGDzZfGP3E1aHWeh6cgbVqaQlMemX0JUal6A66qCLZXPmPEqjZ+nBg4J2DNlywmBLsxRvU+3u4cqQwyrqHH1XLSEybJ+OXj5ro3ZXVFDFaYpW8WEXNRoUH7zXD/mg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k8frw+VR; arc=fail smtp.client-ip=40.107.223.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JUMFD8E41ScYnRR762J52OybpSzBWs5Sucaxt+dhjyXZkZDYuLUSmfK5GzxJabOy26H566i6lK/h0cOEnzLvhRF1c074zCEArsf8euyXV/UdQFOjlKZ8A7+CMqIxAGWyMukKS5/D2n7PYjE7hJCvAGkgua0pre8u1C7135xlhy/K12pPRbT/JyVa+KjfCyua/IGXmGMeLO6ub1ntldgxK0/KSQqmEcKrNsQ71LCn+Qc+s93Im0q0D6xcPKG6bLYNhCML0lGNxdnCvNnc6gUQzwXjGzBzxMHshaB/m4wDYx35Wq+2v7XZwm8mkVuhmcc73qkUZBoDxeamH2vL/g7tcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+IDjt5h3riiJwtfOHnD+iMxqAnIpM4ymCz7aBiJo41w=;
- b=v69HX+1QTuNxqY2+NPm57dvo4Ataspg8j2aghGc8A3v7+D8a8DiWPouYp4N3LN5M4mJUxl3yMcmRlpJ3chVXvP+tM76JJSr7NOVtA3eqHFhWzMog42YMMBnhL4QEJoW2waU8zj/n+Ku7Zzfygeve7Hrqz+O4PUq/uUCVaGvpEHa20xNFQF+cECk58Cvyr5AsSGtWLkgI4/cpaYLuMYuAqKqGNB2DD+SVGAT9ahYKXTEcDgvchG9ktfvRlQNnL7C1kBbDWM6Ip7+aeGTkCq/CBWvDM6X6LF7aMKxzOKcNB4R+qtoGjX763jEsh83w3SUy8EumVQc/3mLmvs9Wy/SZlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+IDjt5h3riiJwtfOHnD+iMxqAnIpM4ymCz7aBiJo41w=;
- b=k8frw+VRNa2HFeGw0Flb38Pd/XHPBTHTDTrwK/eIY+VP4wz43U+HBxQzq8y6TLz5utxk/hMup40ORihHOnDFa/1smCsmxCL3K0Lk2XDh0zMTqkk9jjaFhYcNn0b7hBlh2Qd1y1rD7Rb4QSbYZ4SZQni5wLNcSaCD6G7XGYLHtvG/PwuKS5R8lTgD9tvX2DpD3B8EfFOsPiuakeQMSjbbMJLbTnvhgeVdo0f3p+BynPTQN+wncAcHdHojVWhSpbZQfMB4CJYEJx2+6XJLCurdKZIMcIeGW09qkuPlGFlEcuMR/RrJA/7Z36ERTW3KK3Oj4LB4RUbdjhxrfCOea5JdYA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
- by IA1PR12MB6138.namprd12.prod.outlook.com (2603:10b6:208:3ea::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.24; Mon, 1 Sep
- 2025 07:46:38 +0000
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
- 07:46:37 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 01 Sep 2025 16:46:23 +0900
-Message-Id: <DCHAPJRPKSSA.37QLQGAVCERCZ@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH 03/10] gpu: nova-core: gsp: Create wpr metadata
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Alistair Popple" <apopple@nvidia.com>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-4-apopple@nvidia.com>
-In-Reply-To: <20250827082015.959430-4-apopple@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0062.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::7) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3540C2853E2;
+	Mon,  1 Sep 2025 07:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756712895; cv=none; b=is+CSt/UCLQmgzfOZVZeLOnZ4DxyGNfxUE3TeuXFoHuuiAtYjxaIcn7o+jR2YzgENF/t2iUUuc03XXevIfEknx+hCJZA/rNxyTAXXyNN6C06HW0xZTg3xWsl5BfQbFPoDsUCH9tlUpoOjNId1CbF0E0Q3CTk5YcpceFV9sLemSw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756712895; c=relaxed/simple;
+	bh=Zub1GHyN0Zkin2UAVz/4nmj+D7auhJlVoUQSROM/pwM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=hfuz1OC8Bjb76+WReRW5GTsw96HO+ovdZbQfOqb5QFXDrVuA1is5Z2AoZ+v4ghj4bp3kYsFFRRi3KLQm0eAYXb5GFSuKDytgSmQk7yOOYIExXmZK14T2Cz71z7YuTvYhPMllKEJ5Qx94XWze2E+erVsw3iMfWLhaNOLR8iJEug4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFgw81VrhzKHNb6;
+	Mon,  1 Sep 2025 15:48:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 087A31A0B45;
+	Mon,  1 Sep 2025 15:48:08 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCX4o62T7VodRoJBA--.60188S3;
+	Mon, 01 Sep 2025 15:48:07 +0800 (CST)
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Kenta Akagi <k@mgml.me>, Li Nan <linan666@huaweicloud.com>,
+ Song Liu <song@kernel.org>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+ Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+ <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+ <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
+ <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
+ <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
+ <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
+ <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <48902d38-c2a1-b74d-d5fb-3d1cdc0b05dc@huaweicloud.com>
+Date: Mon, 1 Sep 2025 15:48:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|IA1PR12MB6138:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2ffa7fc-e396-4309-9775-08dde92bab19
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cUc1c2dsdVMvNDB5RGRSVkNJdkJIYnBYOU01dndzTVdQeDZRUS9vTXhKZkFn?=
- =?utf-8?B?WHA4a1FtQTcyZFJGU2c3blF2UWltTzhXZHp1OWV2RW9SMmYvK04xRTdVaWJQ?=
- =?utf-8?B?bkRWcEtXTWxUUzZCT3FralFmblY2UUgwNS9oNUhvUlVuSkNRQjZSb0wwUU05?=
- =?utf-8?B?MXZQVEtsOUFvRXovOFcyS2czUHFpNVhLUTZZdVB6M3N1dVNmSzB6c2dQSTFN?=
- =?utf-8?B?RStkM0tENC9kckRqa21RbjZIWDI0Mm1ONmFoM3J3ekRwNDBTOVR2cU1GNWt4?=
- =?utf-8?B?YW5CeUFBQlY4NnpCSFJMVTJqQkM1Y0FKS2JJcDVuWCtwWWlSWTNSM3JXY0Nk?=
- =?utf-8?B?bkhCZnVTTWovYXhWZCtOK243UHMycU5ydldhenJqTjQxNUJjMUVvODducVJC?=
- =?utf-8?B?SlpoUlhPa1N6T3VVbVNpT0FnTTBvQXFmMzkxUWRsRlVuU2NoVkgzcm4rUkdL?=
- =?utf-8?B?KytOTTNjcnI2Y2gyMHBWeElsQWlaSnpJbVZUMUtHR3Q0VUJ5U1VDZ2ZIK2Yw?=
- =?utf-8?B?NjZjSkxLNEhCbTQ0N0xJL21uR3BuSytMMUtPSnF0UjUwS3ZXRjV4dHNCT1ZO?=
- =?utf-8?B?S3pONFhrbjJLdkZxZGl4MG85ZW5qZTlvV1NYWjF1V2xPQTRpd1htVy8rNW40?=
- =?utf-8?B?UnZlb09rWFEyQjZCN0IzeUd3cmphcmhlUUFMbjhNU2g0R1RQOTZiWTBJNE1n?=
- =?utf-8?B?UzJ2ZTgzRHRQUFJVdXBUKy9wNjNHM3liUzhuV1hrWVNzRmxxQ1BXYjI2VzhT?=
- =?utf-8?B?elZpNk9qYlFQUzZ3VXFSMHlUN1FWTTl4OFdBODFLb2JyR0l0Uk0ra0hVeko3?=
- =?utf-8?B?SEk5TUZveHRmS1FmVlBoM3BxU2doSm93RVlFWGR4UjVOKy9IY2N1enVCNnVJ?=
- =?utf-8?B?SFpTMkhyU3EyNWJjbFZ5ZFNDSm0vNVduWWJzeUF3cFlJdXZ1eXR3SXRvTGJK?=
- =?utf-8?B?OUV0NEdRYnFVVXF4cXhDQ0dQTmNubVByYlhaNGVJTmZBRTAwTU5tMUNVdjhv?=
- =?utf-8?B?UjBGK0JMZHVlMm1vMlRkMWF5OVQ0ZDVuVnJiUXlYbnUwUUpjUHg1bjBWOUxK?=
- =?utf-8?B?enhRTktPNlFHZDE4bGJ0YksrWTNLQTNQNHdLRmRSWVJyT2lzSllYTXFlZjFx?=
- =?utf-8?B?NDB4NisxWTFJRXN0RW14aWt1SCtNMDA5T0xpKzlRaThOcjVnb0toRE84YzI1?=
- =?utf-8?B?VFdZY0V6OS9RVWxkUnNwdWNmRHRQSEtTL2d4aXQ0b0F2L2JmYXlFNHZNT2g2?=
- =?utf-8?B?d0QxK21Gc1lmMnNadGwwSm1RdXYxcnV5SzlteXhSQk5RcDRKU0RSdjRqMU5t?=
- =?utf-8?B?RmtsZ2dxQ3NRemZvTERLR1Y3dGI0aHRiY2l4bHYvZ3BDNDR2NXUrWldwTzZ4?=
- =?utf-8?B?L3A2aUlRZ2krQlkydGZSSEx6UTJFSG96R3pVTjVXNCtqNVpoTU01Ni9IV05Z?=
- =?utf-8?B?MFZra0gwazFwYXdTbmxnK2lnWEFHWk1yRHVUaTV4MTlmdElpTjkvd0tWSlkw?=
- =?utf-8?B?cTBCWEVCaXk3RmdWUlk0cUlaMDZhTXlVMmc5YVVJSW93a1hQTEg3THl5b3pv?=
- =?utf-8?B?M1hIWmw3ZDJpNXBjQVQ2b2JqcGkwem5iQXNQYlJIT3NrbllvR2pNMjc5eEpW?=
- =?utf-8?B?d2hMMzZ0U0EwSFRZRDRoZ2FJdmtVSk9TRERBUVNiN21seEZVZnloTFBicjVN?=
- =?utf-8?B?VFRsS0VtN2pTbWY4MmtEeUlyRXd6VWFXSmE0K2ljbjZpV1pzMk93TGh0clZZ?=
- =?utf-8?B?a2xSUkpQQVo1U2w0VmVTMzA5ejAwVFRMbS9ZdFl6TUpROGhuV293OWxvbG5h?=
- =?utf-8?B?ZEJ6Y2cxWWk1TmxnYkI4OU44L0czT2RhZ2RCTXdvTHpzQVFtMk5hQkxxZ05q?=
- =?utf-8?B?c0QrOStHOEljczJDRkNnaU1vNmpIZENuSVFiZzNYNzBaSUJ1MHg0cEtUamVJ?=
- =?utf-8?Q?dib2jdRqUq4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eGN5Nk5jenU1bU8wcnZtNU5RMUwrY0FUeVExdlRXc1NlRFdyRStqeVF1NGta?=
- =?utf-8?B?TmJJSUZ3R05vTHA0MEVHYkxPbXJwRlgvM3dMOFh0M0szVCtJNEZ2cHFFL0kr?=
- =?utf-8?B?K1pVay93MTF3UUl0OUx6ZjFnMzhudnczM2dDbkxMaW8zeWtIUFVBRzVmNHl2?=
- =?utf-8?B?aHZhY2xOU01vaFEvMzdTMGZoKzdlUTh1dW1rdm5adVZEWjVCYlNGNTZXK01z?=
- =?utf-8?B?RXZDRXBxOCtEeUJEd0c2NEpoamY4UHBzZjNYakJ2Wjk0dFlRc1lpNGlIVFRo?=
- =?utf-8?B?citUQ2xBbDczSEVXRE0wM0RzblgzMWl0U3ZLQWhtaVJKTlRTdlFRY3Z6dzE5?=
- =?utf-8?B?dTNMRE1sdVBHQmp0R2pDMDlPWGV2L09LSWZIWnhpZHVNNkJESzgycXRoWE9M?=
- =?utf-8?B?QzBETVgrZDQ4cWc3emhybWcvYVBHaktqY2UralJyMnh1dHdPZk9rbFkrenpp?=
- =?utf-8?B?cG1LeUR4WGlHZTNkMUd3Rlpwa0V3OTNwMEVxcWtJTmJGNDhMMUlwcGFEZjEw?=
- =?utf-8?B?NHlldHRVQ3NxMk9NaG9IeFdmQlFDSlVwVTdrVml0ZThuQUpmSlNaNy9JNDNo?=
- =?utf-8?B?VnFiNkFkcWRvNklIU1ZGTnRxQm5XUjJoVXBBTXp4NGVBM1R1b0dsa2pLN1NC?=
- =?utf-8?B?RW55K2xvcm1QYjJiMkNnZlEvZjhHaWtEU2ltRlZPNUxBRmh2eXZiMml4bzJ2?=
- =?utf-8?B?ZUFpSlB0M29yM2w0MXp3UGNFL1hmSnR0Yjc1VUpBeHZOdDZtKzZxcUJ2bExG?=
- =?utf-8?B?M3RTaGY2UFlOejRIWFlHbWhDSzZEUjgwUnFyQlp2NHhrWUVGSFlZNUxXSnNO?=
- =?utf-8?B?UjNjZkd2b3NMU3V2VzkySUZPMjhpQmZ1S0xKTmI2eHZ4Z2pqOFI2MnBhSkVZ?=
- =?utf-8?B?OFR6cGZ2R1Q0bUZKQktmRHFzQmtNTjFkRTNjZFQ4QWJmVTFvVm9IL0Jjb2RM?=
- =?utf-8?B?M0pucUFycXRoMVJha3FIRGpyek5SQkExR2JqeFpWU1VXRHpBU1VRM0VCSE5R?=
- =?utf-8?B?RVFtSEFZb2FKbGpqL2owNlY4WEJHTDdDMk44cHNLSUhNRjl5Rmo0d3BndTZw?=
- =?utf-8?B?NjVWTWZlcHZ1Q3orWllOWVN4QmNuTFB6WWRhbGJucXRIOVJ2M01jMEtaT1RS?=
- =?utf-8?B?ekk2M3dkM3RMa3VtYjZNTU1WYTA0QmRXZDBubGV5TVJNbzM4c216TTN5b05H?=
- =?utf-8?B?OFFOT25pdDdsOG5iT3JSTDZYRGY2ZU5FNG9tS0JSZFh0bThYSGxzRkh3aXQy?=
- =?utf-8?B?YU9TalRPTjN6c2x3QUQ5L01Rc1RQWHJydlArbDZScTEyWkxRbXYyMFNjZ01C?=
- =?utf-8?B?eFNPc1pTSW9OdkdDbXdwanRYdXh0ZkxUR1hWbElIT00wTDBaZUh2aldTSFV6?=
- =?utf-8?B?ZnZxQzRtSTJ4amsrTDZDdlAxTDRBWUtXemF3c29JbXBWU2E2TjB1M0hyMUd6?=
- =?utf-8?B?UU9GNTBHTVFmRmxWZUR1M3VGNE0xMlE0Wlh6c1ZHdTMxNzdQYVVFUTU4YXNL?=
- =?utf-8?B?TjlYZXJLeTU3UVo2MmNKYWV4Nmo1UklKZ0VPblJHQ1N4Vms2KzdCZnUrc05J?=
- =?utf-8?B?QTdhMXZibWk2bzREM2paYTgwV1ovQlU2V0ovU0JFcG01YlhqUWx6elJmS1lT?=
- =?utf-8?B?dE90SUoyYW1oaHoyWGdiajZzaWw0aVB3L2tRQUErMExXVzMvOHRYZUgzTnJu?=
- =?utf-8?B?akVDb2J4ZWVmUjBvb1pDQVB1dTdFUkNKZDd3YmI5c2JodU1QeXNJTWoyQ2FD?=
- =?utf-8?B?UGpWcjlUZ3dlRUZsd20yODBCVG5zZlpwTXFZUDU4WFA3WWxyTmZMaGFLTmgr?=
- =?utf-8?B?Tm04TWltSlBHbWNlNXhZMVZoaUVsWk52NDlKbEtvMzcxWndPK2ZNamo5SVA2?=
- =?utf-8?B?UnhVTElxN09KRFMvd3ArWW5tTFAzNHAyVG1yQlkrVlBJaXZBd3JYV01Sblc3?=
- =?utf-8?B?UVZPaW1VOFA5aVFLSzBJeWVudGgyY29JdEE5RDdVSGVQaGNibDZQRUl5TnJ1?=
- =?utf-8?B?d2pHQXhBdEROcGhRWk1pNEViOEx5QjU0WXRmSVRha0VnQTI2dURmemhsSUJN?=
- =?utf-8?B?eHJuMmxRb3o1aGJ4RW5DZ0xNTDZteERZaUpKQk42WVZhT0xaTW55RzZjUGxJ?=
- =?utf-8?B?T0Z5UGVCWUNLOTlzS05wQnd0TUdzWnlqNHpRR2FtWWJNMkNPNFRFdHpvV2dU?=
- =?utf-8?Q?jCTOedEcSQyu+/QJxGSewYXCKe+RUfqIdkVGLrxeKY85?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2ffa7fc-e396-4309-9775-08dde92bab19
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 07:46:37.5258
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SDw6eOec4fNXYb0XRaF99BZha7tzsPpeAkZaF0N+m1PrHHe3Fge/lMx5k9OgELeKQTtuNxJ0q1zkxGrn8EHjEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6138
+In-Reply-To: <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCX4o62T7VodRoJBA--.60188S3
+X-Coremail-Antispam: 1UD129KBjvAXoW3Zry3XFWDtrW7XryxXFy7ZFb_yoW8CrW8Ao
+	WxKrnxt3WrXr15Gr1DJw13Jr9xXw1UJws3Jry5JrnxCr1qqw1UX34xJrW5J3yUtr18Wr4U
+	Jr1DJr18AFyUJr17n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYh7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWx
+	JVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Alistair,
+Hi,
 
-On Wed Aug 27, 2025 at 5:20 PM JST, Alistair Popple wrote:
-<snip>
-> index 161c057350622..1f51e354b9569 100644
-> --- a/drivers/gpu/nova-core/gsp.rs
-> +++ b/drivers/gpu/nova-core/gsp.rs
-> @@ -6,12 +6,17 @@
->  use kernel::dma_write;
->  use kernel::pci;
->  use kernel::prelude::*;
-> -use kernel::ptr::Alignment;
-> +use kernel::ptr::{Alignable, Alignment};
-> +use kernel::sizes::SZ_128K;
->  use kernel::transmute::{AsBytes, FromBytes};
-> =20
-> +use crate::fb::FbLayout;
-> +use crate::firmware::Firmware;
->  use crate::nvfw::{
-> -    LibosMemoryRegionInitArgument, LibosMemoryRegionKind_LIBOS_MEMORY_RE=
-GION_CONTIGUOUS,
-> -    LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_SYSMEM,
-> +    GspFwWprMeta, GspFwWprMetaBootInfo, GspFwWprMetaBootResumeInfo, Libo=
-sMemoryRegionInitArgument,
-> +    LibosMemoryRegionKind_LIBOS_MEMORY_REGION_CONTIGUOUS,
-> +    LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_SYSMEM, GSP_FW_WPR_META=
-_MAGIC,
-> +    GSP_FW_WPR_META_REVISION,
->  };
-> =20
->  pub(crate) const GSP_PAGE_SHIFT: usize =3D 12;
-> @@ -25,12 +30,69 @@ unsafe impl AsBytes for LibosMemoryRegionInitArgument=
- {}
->  // are valid.
->  unsafe impl FromBytes for LibosMemoryRegionInitArgument {}
-> =20
-> +// SAFETY: Padding is explicit and will not contain uninitialized data.
-> +unsafe impl AsBytes for GspFwWprMeta {}
+在 2025/09/01 12:22, Kenta Akagi 写道:
+> 
+> 
+> On 2025/09/01 12:22, Li Nan wrote:
+>>
+>>
+>> 在 2025/8/31 2:10, Kenta Akagi 写道:
+>>>
+>>>
+>>> On 2025/08/30 17:48, Li Nan wrote:
+>>>>
+>>>>
+>>>> 在 2025/8/29 20:21, Kenta Akagi 写道:
+>>>>>
+>>>>>
+>>>>> On 2025/08/29 11:54, Li Nan wrote:
+>>>>>>
+>>>>>> 在 2025/8/29 0:32, Kenta Akagi 写道:
+>>>>>>> This commit ensures that an MD_FAILFAST IO failure does not put
+>>>>>>> the array into a broken state.
+>>>>>>>
+>>>>>>> When failfast is enabled on rdev in RAID1 or RAID10,
+>>>>>>> the array may be flagged MD_BROKEN in the following cases.
+>>>>>>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
+>>>>>>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>>>>>> index 408c26398321..8a61fd93b3ff 100644
+>>>>>>> --- a/drivers/md/raid1.c
+>>>>>>> +++ b/drivers/md/raid1.c
+>>>>>>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>>>>>>>                  (bio->bi_opf & MD_FAILFAST) &&
+>>>>>>>                  /* We never try FailFast to WriteMostly devices */
+>>>>>>>                  !test_bit(WriteMostly, &rdev->flags)) {
+>>>>>>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>>                  md_error(r1_bio->mddev, rdev);
+>>>>>>>              }
+>>>>>>>      @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>>>>>>       *    - recovery is interrupted.
+>>>>>>>       *    - &mddev->degraded is bumped.
+>>>>>>>       *
+>>>>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>>>>>> - * &mddev->fail_last_dev is off.
+>>>>>>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+>>>>>>> + * then @mddev and @rdev will not be marked as failed.
+>>>>>>> + *
+>>>>>>> + * @rdev is marked as &Faulty excluding any cases:
+>>>>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>>>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>>>>>       */
+>>>>>>>      static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>>>>      {
+>>>>>>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>>>>            if (test_bit(In_sync, &rdev->flags) &&
+>>>>>>>              (conf->raid_disks - mddev->degraded) == 1) {
+>>>>>>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+>>>>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>>>>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
+>>>>>>> +                "last device but ignoring it\n",
+>>>>>>> +                mdname(mddev), rdev->bdev);
+>>>>>>> +            return;
+>>>>>>> +        }
+>>>>>>>              set_bit(MD_BROKEN, &mddev->flags);
+>>>>>>>                if (!mddev->fail_last_dev) {
+>>>>>>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+>>>>>>>          if (test_bit(FailFast, &rdev->flags)) {
+>>>>>>>              /* Don't try recovering from here - just fail it
+>>>>>>>               * ... unless it is the last working device of course */
+>>>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>>              md_error(mddev, rdev);
+>>>>>>>              if (test_bit(Faulty, &rdev->flags))
+>>>>>>>                  /* Don't try to read from here, but make sure
+>>>>>>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>>>>>>>              fix_read_error(conf, r1_bio);
+>>>>>>>              unfreeze_array(conf);
+>>>>>>>          } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+>>>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>>              md_error(mddev, rdev);
+>>>>>>>          } else {
+>>>>>>>              r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>>>>>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>>>>>> index b60c30bfb6c7..530ad6503189 100644
+>>>>>>> --- a/drivers/md/raid10.c
+>>>>>>> +++ b/drivers/md/raid10.c
+>>>>>>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+>>>>>>>                  dec_rdev = 0;
+>>>>>>>                  if (test_bit(FailFast, &rdev->flags) &&
+>>>>>>>                      (bio->bi_opf & MD_FAILFAST)) {
+>>>>>>> +                set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>>                      md_error(rdev->mddev, rdev);
+>>>>>>>                  }
+>>>>>>>      
+>>>>>>
+>>>>>> Thank you for the patch. There may be an issue with 'test_and_clear'.
+>>>>>>
+>>>>>> If two write IO go to the same rdev, MD_BROKEN may be set as below:
+>>>>>
+>>>>>> IO1                    IO2
+>>>>>> set FailfastIOFailure
+>>>>>>                        set FailfastIOFailure
+>>>>>>     md_error
+>>>>>>      raid1_error
+>>>>>>       test_and_clear FailfastIOFailur
+>>>>>>                           md_error
+>>>>>>                          raid1_error
+>>>>>>                           //FailfastIOFailur is cleared
+>>>>>>                           set MD_BROKEN
+>>>>>>
+>>>>>> Maybe we should check whether FailfastIOFailure is already set before
+>>>>>> setting it. It also needs to be considered in metadata writes.
+>>>>> Thank you for reviewing.
+>>>>>
+>>>>> I agree, this seems to be as you described.
+>>>>> So, should it be implemented as follows?
+>>>>>
+>>>>> bool old=false;
+>>>>> do{
+>>>>>     spin_lock_irqsave(&conf->device_lock, flags);
+>>>>>     old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>     spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>>> }while(old);
+>>>>>
+>>>>> However, since I am concerned about potential deadlocks,
+>>>>> so I am considering two alternative approaches:
+>>>>>
+>>>>> * Add an atomic_t counter to md_rdev to track failfast IO failures.
+>>>>>
+>>>>> This may set MD_BROKEN at a slightly incorrect timing, but mixing
+>>>>> error handling of Failfast and non-Failfast IOs appears to be rare.
+>>>>> In any case, the final outcome would be the same, i.e. the array
+>>>>> ends up with MD_BROKEN. Therefore, I think this should not cause
+>>>>> issues. I think the same applies to test_and_set_bit.
+>>>>>
+>>>>> IO1                    IO2                    IO3
+>>>>> FailfastIOFailure      Normal IOFailure       FailfastIOFailure
+>>>>> atomic_inc
+>>>>>                                                    md_error                                     atomic_inc
+>>>>>      raid1_error
+>>>>>       atomic_dec //2to1
+>>>>>                           md_error
+>>>>>                            raid1_error           md_error
+>>>>>                             atomic_dec //1to0     raid1_error
+>>>>>                                                    atomic_dec //0
+>>>>>                                                      set MD_BROKEN
+>>>>>
+>>>>> * Alternatively, create a separate error handler,
+>>>>>      e.g. md_error_failfast(), that clearly does not fail the array.
+>>>>>
+>>>>> This approach would require somewhat larger changes and may not
+>>>>> be very elegant, but it seems to be a reliable way to ensure
+>>>>> MD_BROKEN is never set at the wrong timing.
+>>>>>
+>>>>> Which of these three approaches would you consider preferable?
+>>>>> I would appreciate your feedback.
+>>>>>
+>>>>>
+>>>>> For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
+>>>>> when the array is degraded.
+>>>>>
+>>>>> Thanks,
+>>>>> Akagi
+>>>>>
+>>>>
+>>>> I took a closer look at the FailFast code and found a few issues, using
+>>>> RAID1 as an example:
+>>>>
+>>>> For normal read/write IO, FailFast is only triggered when there is another
+>>>> disk is available, as seen in read_balance() and raid1_write_request().
+>>>> In raid1_error(), MD_BROKEN is set only when no other disks are available.
+>>>
+>>> Hi,
+>>> Agree, I think so too.
+>>>
+>>>> So, the FailFast for normal read/write is not triggered in the scenario you
+>>>> described in cover-letter.
+>>>
+>>> This corresponds to the case described in the commit message of PATCH v3 1/3.
+>>> "Normally, MD_FAILFAST IOs are not issued to the 'last' rdev, so this is
+>>> an edge case; however, it can occur if rdevs in a non-degraded
+>>> array share the same path and that path is lost, or if a metadata
+>>> write is triggered in a degraded array and fails due to failfast."
+>>>
+>>> To describe it in more detail, the flow is as follows:
+>>>
+>>> Prerequisites:
+>>>
+>>> - Both rdevs are in-sync
+>>> - Both rdevs have in-flight MD_FAILFAST bios
+>>> - Both rdevs depend on the same lower-level path
+>>>     (e.g., nvme-tcp over a single Ethernet interface)
+>>>
+>>> Sequence:
+>>>
+>>> - A bios with REQ_FAILFAST_DEV fails (e.g., due to a temporary network outage),
+>>>     in the case of nvme-tcp:
+>>>      - The Ethernet connection is lost on the node where md is running over 5 seconds
+>>>      - Then the connection is restored. Idk the details of nvme-tcp implementation,
+>>>        but it seems that failfast IOs finish only after the connection is back.
+>>> - All failfast bios fail, raid1_end_write_request is called.
+>>> - md_error() marks one rdev Faulty; the other rdev becomes the 'last' rdev.
+>>> - md_error() on the last rdev sets MD_BROKEN on the array - fail_last_dev=1 is unlikely.
+>>> - The write is retried via handle_write_finished -> narrow_write_error, usually succeeding.
+>>> - MD_BROKEN remains set, leaving the array in a state where no further writes can occur.
+>>>
+>>
+>> Thanks for your patient explanation. I understand. Maybe we need a separate
+>> error-handling path for failfast. How about adding an extra parameter to md_error()?
+> 
+> Thank you for reviewing.
+> 
+> I am thinking of proceeding like as follows.
+> md_error is EXPORT_SYMBOL. I think that it is undesirable to change the ABI of this function.
+> 
+
+It doesn't matter if it's a exported symbol, we should just keep code as
+simple as possible.
+> ...
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index ac85ec73a409..855cddeb0c09 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -8197,3 +8197,3 @@ EXPORT_SYMBOL(md_unregister_thread);
+> 
+> -void md_error(struct mddev *mddev, struct md_rdev *rdev)
+> +void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail)
+>   {
+> @@ -8204,3 +8204,3 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
+>                  return;
+> -       mddev->pers->error_handler(mddev, rdev);
+> +       mddev->pers->error_handler(mddev, rdev, nofail);
+> 
+> @@ -8222,4 +8222,26 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
+>   }
 > +
-> +// SAFETY: This struct only contains integer types for which all bit pat=
-terns
-> +// are valid.
-> +unsafe impl FromBytes for GspFwWprMeta {}
-> +
->  #[allow(unused)]
->  pub(crate) struct GspMemObjects {
->      libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
->      pub loginit: CoherentAllocation<u8>,
->      pub logintr: CoherentAllocation<u8>,
->      pub logrm: CoherentAllocation<u8>,
-> +    pub wpr_meta: CoherentAllocation<GspFwWprMeta>,
+> +void md_error(struct mddev *mddev, struct md_rdev *rdev)
+> +{
+> +       return _md_error(mddev, rdev, false);
 > +}
-
-I think `wpr_meta` is a bit out-of-place in this structure. There are
-several reason for this:
-
-- All the other members of this structure (including `cmdq` which is
-  added later) are referenced by `libos` and constitute the GSP runtime:
-  they are used as long as the GSP is active. `wpr_meta`, OTOH, does not
-  reference any of the other objects, nor is it referenced by them.
-- `wpr_meta` is never used by the GSP, but needed as a parameter of
-  Booter on SEC2 to load the GSP firmware. It can actually be discarded
-  once this step is completed. This is very different from the rest of
-  this structure, which is used by the GSP.
-
-So I think it doesn't really belong here, and would probably fit better
-in `Firmware`. Now the fault lies in my own series, which doesn't let
-you build `wpr_meta` easily from there. I'll try to fix that in the v3.
-
-And with the removal of `wpr_meta`, this structure ends up strictly
-containing the GSP runtime, including the command queue... Maybe it can
-simply be named `Gsp` then? It is even already in the right module! :)
-
-Loosely related, but looking at this series made me realize there is a
-very logical split of our firmware into two "bundles":
-
-- The GSP bundle includes the GSP runtime data, which is this
-  `GspMemObjects` structure minus `wpr_meta`. We pass it as an input
-  parameter to the GSP firmware using the GSP's falcon mbox registers.
-  It must live as long as the GSP is running.
-- The SEC2 bundle includes Booter, `wpr_meta`, the GSP firmware binary,
-  bootloader and its signatures (which are all referenced by
-  `wpr_meta`). All this data is consumed by SEC2, and crucially can be
-  dropped once the GSP is booted.
-
-This separation is important as currently we are stuffing anything
-firmware-related into the `Firmware` struct and keep it there forever,
-consuming dozens of megabytes of host memory that we could free. Booting
-the GSP is typically a one-time operation in the life of the GPU device,
-and even if we ever need to do it again, we can very well build the SEC2
-bundle from scratch again.
-
-I will try to reflect the separation better in the v3 of my patchset -
-then we can just build `wpr_meta` as a local variable of the method that
-runs `Booter`, and drop it (alongside the rest of the SEC2 bundle) upon
-return.
-
+>   EXPORT_SYMBOL(md_error);
+> 
+> +void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev)
+> +{
+> +       WARN_ON(mddev->pers->head.id != ID_RAID1 &&
+> +               mddev->pers->head.id != ID_RAID10);
+> +       return _md_error(mddev, rdev, true);
+> +}
+> +EXPORT_SYMBOL(md_error_failfast);
 > +
-> +pub(crate) fn build_wpr_meta(
-> +    dev: &device::Device<device::Bound>,
-> +    fw: &Firmware,
-> +    fb_layout: &FbLayout,
-> +) -> Result<CoherentAllocation<GspFwWprMeta>> {
-> +    let wpr_meta =3D
-> +        CoherentAllocation::<GspFwWprMeta>::alloc_coherent(dev, 1, GFP_K=
-ERNEL | __GFP_ZERO)?;
-> +    dma_write!(
-> +        wpr_meta[0] =3D GspFwWprMeta {
-> +            magic: GSP_FW_WPR_META_MAGIC as u64,
-> +            revision: u64::from(GSP_FW_WPR_META_REVISION),
-> +            sysmemAddrOfRadix3Elf: fw.gsp.lvl0_dma_handle(),
-> +            sizeOfRadix3Elf: fw.gsp.size as u64,
-> +            sysmemAddrOfBootloader: fw.gsp_bootloader.ucode.dma_handle()=
-,
-> +            sizeOfBootloader: fw.gsp_bootloader.ucode.size() as u64,
-> +            bootloaderCodeOffset: u64::from(fw.gsp_bootloader.code_offse=
-t),
-> +            bootloaderDataOffset: u64::from(fw.gsp_bootloader.data_offse=
-t),
-> +            bootloaderManifestOffset: u64::from(fw.gsp_bootloader.manife=
-st_offset),
-> +            __bindgen_anon_1: GspFwWprMetaBootResumeInfo {
-> +                __bindgen_anon_1: GspFwWprMetaBootInfo {
-> +                    sysmemAddrOfSignature: fw.gsp_sigs.dma_handle(),
-> +                    sizeOfSignature: fw.gsp_sigs.size() as u64,
-> +                }
-> +            },
-> +            gspFwRsvdStart: fb_layout.heap.start,
-> +            nonWprHeapOffset: fb_layout.heap.start,
-> +            nonWprHeapSize: fb_layout.heap.end - fb_layout.heap.start,
-> +            gspFwWprStart: fb_layout.wpr2.start,
-> +            gspFwHeapOffset: fb_layout.wpr2_heap.start,
-> +            gspFwHeapSize: fb_layout.wpr2_heap.end - fb_layout.wpr2_heap=
-.start,
-> +            gspFwOffset: fb_layout.elf.start,
-> +            bootBinOffset: fb_layout.boot.start,
-> +            frtsOffset: fb_layout.frts.start,
-> +            frtsSize: fb_layout.frts.end - fb_layout.frts.start,
-> +            gspFwWprEnd: fb_layout
-> +                .vga_workspace
-> +                .start
-> +                .align_down(Alignment::new(SZ_128K)),
-> +            gspFwHeapVfPartitionCount: fb_layout.vf_partition_count,
-> +            fbSize: fb_layout.fb.end - fb_layout.fb.start,
-> +            vgaWorkspaceOffset: fb_layout.vga_workspace.start,
-> +            vgaWorkspaceSize: fb_layout.vga_workspace.end - fb_layout.vg=
-a_workspace.start,
-> +            ..Default::default()
-> +        }
-> +    )?;
-> +
-> +    Ok(wpr_meta)
 
-I've discussed the bindings abstractions with Danilo last week. We
-agreed that no layout information should ever escape the `nvfw` module.
-I.e. the fields of `GspFwWprMeta` should not even be visible here.
+I will prefer we add a common procedures to fix this problme.
 
-Instead, `GspFwWprMeta` should be wrapped privately into another
-structure inside `nvfw`:
+How about the first patch to serialize all the md_error(), and then
+and a new helper md_bio_failue_error(mddev, rdev, bio), called when
+bio is failed, in this helper:
 
-  /// Structure passed to the GSP bootloader, containing the framebuffer la=
-yout as well as the DMA
-  /// addresses of the GSP bootloader and firmware.
-  #[repr(transparent)]
-  pub(crate) struct GspFwWprMeta(r570_144::GspFwWprMeta);
+1) if bio is not failfast, call md_error() and return true; otherwise:
+2) if rdev contain the last data copy, return false directly, caller
+should check return value and retry, otherwise:
+3) call md_error() and return true;
 
-All its implementations should also be there:
+Then, for raid1, the callers will look like:
 
-  // SAFETY: Padding is explicit and will not contain uninitialized data.
-  unsafe impl AsBytes for GspFwWprMeta {}
+iff --git a/drivers/md/md.c b/drivers/md/md.c
+index 1baaf52c603c..c6d150e9f1a7 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1003,9 +1003,7 @@ static void super_written(struct bio *bio)
+         if (bio->bi_status) {
+                 pr_err("md: %s gets error=%d\n", __func__,
+                        blk_status_to_errno(bio->bi_status));
+-               md_error(mddev, rdev);
+-               if (!test_bit(Faulty, &rdev->flags)
+-                   && (bio->bi_opf & MD_FAILFAST)) {
++               if (!md_bio_failure_error(mddev, rdev, bio)) {
+                         set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+                         set_bit(LastDev, &rdev->flags);
+                 }
 
-  // SAFETY: This struct only contains integer types for which all bit patt=
-erns
-  // are valid.
-  unsafe impl FromBytes for GspFwWprMeta {}
+@@ -466,20 +472,11 @@ static void raid1_end_write_request(struct bio *bio)
+                         set_bit(MD_RECOVERY_NEEDED, &
+                                 conf->mddev->recovery);
 
-And lastly, this `new` method can also be moved into `nvfw`, as an impl
-block for the wrapping `GspFwWprMeta` type. That way no layout detail
-escapes that module, and it will be easier to adapt the code to
-potential layout chances with new firmware versions.
+-               if (test_bit(FailFast, &rdev->flags) &&
+-                   (bio->bi_opf & MD_FAILFAST) &&
+                     /* We never try FailFast to WriteMostly devices */
+-                   !test_bit(WriteMostly, &rdev->flags)) {
+-                       md_error(r1_bio->mddev, rdev);
+-               }
+-
+-               /*
+-                * When the device is faulty, it is not necessary to
+-                * handle write error.
+-                */
+-               if (!test_bit(Faulty, &rdev->flags))
++               if(!test_bit(WriteMostly, &rdev->flags) &&
++                  !md_bio_failure_error(mddev, rdev, bio)) {
+                         set_bit(R1BIO_WriteError, &r1_bio->state);
+-               else {
++               } else {
+                         /* Finished with this branch */
+                         r1_bio->bios[mirror] = NULL;
+                         to_put = bio;
+@@ -2630,7 +2627,6 @@ static void handle_read_error(struct r1conf *conf, 
+struct r1bio *r1_bio)
+          */
 
-(note that my series is the one carelessly re-exporting `GspFwWprMeta`
-as-is - I'll fix that too in v3)
+         bio = r1_bio->bios[r1_bio->read_disk];
+-       bio_put(bio);
+         r1_bio->bios[r1_bio->read_disk] = NULL;
 
-The same applies to `LibosMemoryRegionInitArgument` of the previous
-patch, and other types introduced in subsequent patches. Usually there
-is little more work to do than moving the implentations into `nvfw` as
-everything is already abstracted correctly - just not where we
-eventually want it.
+         rdev = conf->mirrors[r1_bio->read_disk].rdev;
+@@ -2639,19 +2635,18 @@ static void handle_read_error(struct r1conf 
+*conf, struct r1bio *r1_bio)
+                 freeze_array(conf, 1);
+                 fix_read_error(conf, r1_bio);
+                 unfreeze_array(conf);
+-       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+-               md_error(mddev, rdev);
+-       } else {
++       } else if (mddev->ro == 0 &&
++                  !md_bio_failure_error(mddev, rdev, bio)) {
+                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+         }
+
++       bio_put(bio);
+         rdev_dec_pending(rdev, conf->mddev);
+         sector = r1_bio->sector;
+-       bio = r1_bio->master_bio;
+
+         /* Reuse the old r1_bio so that the IO_BLOCKED settings are 
+preserved */
+         r1_bio->state = 0;
+-       raid1_read_request(mddev, bio, r1_bio->sectors, r1_bio);
++       raid1_read_request(mddev, r1_bio->maxter_bio, r1_bio->sectors, 
+r1_bio);
+         allow_barrier(conf, sector);
+  }
+
+
+>   /* seq_file implementation /proc/mdstat */
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 51af29a03079..6ca1aea630ce 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -758,3 +758,3 @@ struct md_personality
+>           */
+> -       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev);
+> +       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
+>          int (*hot_add_disk) (struct mddev *mddev, struct md_rdev *rdev);
+> @@ -903,3 +903,5 @@ extern void md_write_end(struct mddev *mddev);
+>   extern void md_done_sync(struct mddev *mddev, int blocks, int ok);
+> +void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
+>   extern void md_error(struct mddev *mddev, struct md_rdev *rdev);
+> +extern void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev);
+>   extern void md_finish_reshape(struct mddev *mddev);
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index f1d8811a542a..8aea51227a96 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -637,3 +637,4 @@ static void raid0_status(struct seq_file *seq, struct mddev *mddev)
+> 
+> -static void raid0_error(struct mddev *mddev, struct md_rdev *rdev)
+> +static void raid0_error(struct mddev *mddev, struct md_rdev *rdev,
+> +       bool nofail __maybe_unused)
+>   {
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 408c26398321..d93275899e9e 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1739,2 +1739,3 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>    * @rdev: member device to fail.
+> + * @nofail: @mdev and @rdev must not fail even if @rdev is the last when @nofail set
+>    *
+> @@ -1748,6 +1749,8 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>    *
+> - * @rdev is marked as &Faulty excluding case when array is failed and
+> - * &mddev->fail_last_dev is off.
+> + * @rdev is marked as &Faulty excluding any cases:
+> + *     - when @mddev is failed and &mddev->fail_last_dev is off
+> + *     - when @rdev is last device and @nofail is true
+>    */
+> -static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+> +static void raid1_error(struct mddev *mddev, struct md_rdev *rdev,
+> +       bool nofail)
+>   {
+> @@ -1760,2 +1763,9 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>              (conf->raid_disks - mddev->degraded) == 1) {
+> +               if (nofail) {
+> +                       spin_unlock_irqrestore(&conf->device_lock, flags);
+> +                       pr_warn_ratelimited("md/raid1:%s: IO failure on %pg, "
+> +                               "last device but ignoring it\n",
+> +                               mdname(mddev), rdev->bdev);
+> +                       return;
+> +               }
+>                  set_bit(MD_BROKEN, &mddev->flags);
+> ...
+> 
+>> Kuai, do you have any suggestions?
+>>
+>>>> Normal writes may call md_error() in narrow_write_error. Normal reads do
+>>>> not execute md_error() on the last disk.
+>>>>
+>>>> Perhaps you should get more information to confirm how MD_BROKEN is set in
+>>>> normal read/write IO.
+>>>
+>>> Should I add the above sequence of events to the cover letter, or commit message?
+>>>
+>>
+>> I think we should mention this in the commit message.
+> 
+> Understood. I will explicitly describe this in the commit message in v4.
+> 
+> Thanks,
+> Akagi
+> 
+>>> Thanks,
+>>> Akagi
+>>>
+>>>> -- 
+>>>> Thanks,
+>>>> Nan
+>>>>
+>>>>
+>>>
+>>>
+>>> .
+>>
+>> -- 
+>> Thanks,
+>> Nan
+>>
+>>
+> 
+> .
+> 
+
 
