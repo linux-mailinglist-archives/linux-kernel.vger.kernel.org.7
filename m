@@ -1,386 +1,120 @@
-Return-Path: <linux-kernel+bounces-794030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D753EB3DBD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:03:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF16EB3DBD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 926043B659B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B40172A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FC92EB5CD;
-	Mon,  1 Sep 2025 08:03:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266A325A333
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014662EE274;
+	Mon,  1 Sep 2025 08:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEpwW2/R"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3611D8E01;
+	Mon,  1 Sep 2025 08:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713832; cv=none; b=umCfVO8Ux+N/MTfwCX5NZGL3HFR8RwWq0SEtw1yc5hKhHxoIRAFFj4F7uBCIHIt4ZxQ77omC72ePqK6q6IRdIdT+G9aWhJ3jhW2sRhEtoS29Ei+jVVgAcLmfG7xDFhDZspdCJK/F1SDRUO47HvWu7Vg9iBo3RyrG4vvnsLEpulA=
+	t=1756713887; cv=none; b=G6rUFG6jP5/s3bxxQz4PEp1PuHV94qb+sWiVY/wDJQyktwUwxE+Q3uwBSdLz82S9+P1LkU7SK1TEAUmIWyYrHZu+cFEShXuEcG34ar9rCu6rw9/5D89HGgTAR+i2Xr44H8AQc4UqrKnjjdoBFf/U31JiwVh7bVH5sf4iAE4cw8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713832; c=relaxed/simple;
-	bh=bMf6gDBU3p4H/p/6KUTZ+pdk/itqvi5XtE0Xu56h7S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHSOBvKVIaUXTF/Wo00jhjBvSlfLYFKOghRFhiGGUpsuD8nRBwE703LIav+07X7AjvlypLtptGqd5s/HnBPKFoS1VNy/97Cqzz4kt5+fyZ9AmCk6dACmR9S86GSzCjrPDFIWPubxkd4Y1T3SQ1zEpb76qZZXETaTuV5yP2YVBTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 301431A25;
-	Mon,  1 Sep 2025 01:03:41 -0700 (PDT)
-Received: from [10.57.92.127] (unknown [10.57.92.127])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D2293F694;
-	Mon,  1 Sep 2025 01:03:47 -0700 (PDT)
-Message-ID: <dd242f5b-8bbe-48e8-8d5f-be6a835a8841@arm.com>
-Date: Mon, 1 Sep 2025 09:03:46 +0100
+	s=arc-20240116; t=1756713887; c=relaxed/simple;
+	bh=i56wBB4rgAtMJDEKaM2MnQaXskJih+VGQ0oSinL3QQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G2c/00pqRHwrpTmWgsf4mF2AM20G5KKCnyV/nn8i6oQeRj8YxI1NBuFr7I1hpUC2l/2SiZAowLZVuLBfPbrZ2ghjJntEvKpq50/iCNJcczbZfb2uo2PZ98MWnhKuWI21F6raCvNmxb2pe+BdL0La/KIP+Iae1l6oUe9Qg5ucO8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEpwW2/R; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7724df82cabso1050859b3a.2;
+        Mon, 01 Sep 2025 01:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756713885; x=1757318685; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANYnP0mnn2BNW6DSdQB01HVrQ7wQ6DtZcdXbGpJTFao=;
+        b=jEpwW2/RX4AmSMnvo+byJmFiBhC/XRTovXR8GcpZ2TESJpcglFWQ4/NTf1kFbPkT7O
+         y8miSc65oOA5U0ZhoyTcXjrdNRqjsbDIS0IHfMZll3iH1xdWBipom5yqONm6mos2ymFY
+         cE6emd8pgsAmiYKy6mXFpI6aMoz1UmohP7A/u/b9SVAPoLLJ9NQYc5stbpryJmWGAfSk
+         qR/ZI0jzmBqY8O5eyhAK2A25akdmM1XT4Sq30730FzOCZnxhXb+Jw9CYOiOkhCfd94XJ
+         MskllSwsv6fJlafma5PuH159PpHylZP2zwCq7FpcqRlE/W1mC1r8XganIDel4cxeowr9
+         QqTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756713885; x=1757318685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ANYnP0mnn2BNW6DSdQB01HVrQ7wQ6DtZcdXbGpJTFao=;
+        b=k8stDtzyMyuSTkkWKpOVeYYj4mJfoLIaq6Oe/Rf9ii0DG7/IacFiUx9eGiN27DD4Cz
+         Y4/Z/rQRFgLD67wBEUELZwQG7Ua8BcnSB5boSoVAR3V66Vo45F8DqsQi3h+FtpNKPQkX
+         I9PGNvaOYpz36ROMaKseZTSqGznKwc0/WaYv2ToSZBJmYHjzUmR3Qym3s6W1YGn7+CsM
+         4EuI4TkiH4ASn1JgyM5gANTNxbzs9legrwGySmT7rFpAk3the7jGgcyxPhItQdazxjXC
+         r2PzayJSZuW7oVIyYevjnlU4xTXelg8LmNbx2FSZeGNuExZlll6xW7xQZSLBO5AAVxPI
+         wtWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAzmlLzjpFdcY7wANoCamg9Ns4u0gCCre+W63gfTKW/es2YJoHBpREKzxu+t9OXAfhZaCLFvJWwCrp@vger.kernel.org, AJvYcCUPpmZlOwnK9YL2iWXZVlMAh0tzbbKJRc6zf+sJZLaRx5V2AWbWt/8texJGO0IreskdkOm69kHq@vger.kernel.org, AJvYcCXGHCeBTL/KQuBCFep4G2ckHSzS0/zuWhLVp1bgO2M3QMymYzebnQXe9DVOnrJuZDWBYEye5SAw0iUqIb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLi3PFbBSPq8U7fTXr75xlp8LpQoHdcgJlNLK/nhVqe8hFzoK1
+	DbF4rIlO/sOOzZeGd8mfy5RpWJDb3CJVP0sFYgE+T7loDN72b19yc96U
+X-Gm-Gg: ASbGncvjVwrt0urOZ/l6O7GG0x4t3HT+/i9e3DBzY2hUBRXpvQcKVyJgxdmhG4Bu1BT
+	fGUDRdgPaYjt9ztGac0g62TfRi3epyXvjjgd3Lc4SdpSOeaHVB12P7ZadOVMRDlJ+FSAnLLW+L1
+	kq5YIXs7GDE+OiNOHwilptRbN6X3kXLBQQsJV57RR5l8H/rfUWh6YBoYTtXIrM22p6Sd12VNHbx
+	rumsED3uskQ0eBfjTgA1akpKj4H7Jwfr4NNf0ALUtDTCCQYCTcBqISvVX1+uMYMj5ZBkyt5RBKS
+	v35mEf9pBGTEI7oeGGiPqWRUEbBRRQXxtkaiDfQcmFWjBg0sfFK1Q8NPLwGLy8rsFx/xKhgtWTt
+	WIK3RISFN/w0fZAcbu2SWq/hA6ACPWXGNKL3cHFgzndis5PnxiBXN2hn/XVzeXAfNec31giCxZc
+	YRQKau8TlBLFBhHMPvgblGXS9sHkSm7RsE4u8BNiT8uSQ7PgVraK1WFhM=
+X-Google-Smtp-Source: AGHT+IHV+Phuoer5B5gaEp0gOshZXDInSBHq9pKfZrei8iCCGDhU3xkC66HC8hO8CvJ4QSG2GfcDhw==
+X-Received: by 2002:a05:6a21:999a:b0:243:d63b:d264 with SMTP id adf61e73a8af0-243d6f37e4fmr8403209637.47.1756713885340;
+        Mon, 01 Sep 2025 01:04:45 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.164])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-77241f08b45sm5982326b3a.22.2025.09.01.01.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 01:04:44 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] thunderbolt: debugfs: Fix dentry reference leaks in margining_port_init
+Date: Mon,  1 Sep 2025 16:04:37 +0800
+Message-Id: <20250901080438.2278730-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/6] arm64: support FEAT_BBM level 2 and large block
- mapping when rodata=full
-To: Dev Jain <dev.jain@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yang Shi <yang@os.amperecomputing.com>, Ard Biesheuvel <ardb@kernel.org>,
- scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-Content-Language: en-GB
-In-Reply-To: <e722e49a-d982-4b58-98f7-6fef3d0a4468@arm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 01/09/2025 06:04, Dev Jain wrote:
-> 
-> On 29/08/25 5:22 pm, Ryan Roberts wrote:
->> Hi All,
->>
->> This is a new version following on from the v6 RFC at [1] which itself is based
->> on Yang Shi's work. On systems with BBML2_NOABORT support, it causes the linear
->> map to be mapped with large blocks, even when rodata=full, and leads to some
->> nice performance improvements.
->>
->> I've tested this on an AmpereOne system (a VM with 12G RAM) in all 3 possible
->> modes by hacking the BBML2 feature detection code:
->>
->>    - mode 1: All CPUs support BBML2 so the linear map uses large mappings
->>    - mode 2: Boot CPU does not support BBML2 so linear map uses pte mappings
->>    - mode 3: Boot CPU supports BBML2 but secondaries do not so linear map
->>      initially uses large mappings but is then repainted to use pte mappings
->>
->> In all cases, mm selftests run and no regressions are observed. In all cases,
->> ptdump of linear map is as expected:
->>
->> Mode 1:
->> =======
->> ---[ Linear Mapping start ]---
->> 0xffff000000000000-0xffff000000200000           2M PMD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000000200000-0xffff000000210000          64K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000000210000-0xffff000000400000        1984K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL
->> 0xffff000000400000-0xffff000002400000          32M PMD       ro NX SHD
->> AF        BLK UXN    MEM/NORMAL
->> 0xffff000002400000-0xffff000002550000        1344K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL
->> 0xffff000002550000-0xffff000002600000         704K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000002600000-0xffff000004000000          26M PMD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000004000000-0xffff000040000000         960M PMD       RW NX SHD AF   
->> CON BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000040000000-0xffff000140000000           4G PUD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000140000000-0xffff000142000000          32M PMD       RW NX SHD AF   
->> CON BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000142000000-0xffff000142120000        1152K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000142120000-0xffff000142128000          32K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142128000-0xffff000142159000         196K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142159000-0xffff000142160000          28K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142160000-0xffff000142240000         896K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000142240000-0xffff00014224e000          56K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff00014224e000-0xffff000142250000           8K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142250000-0xffff000142260000          64K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142260000-0xffff000142280000         128K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000142280000-0xffff000142288000          32K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142288000-0xffff000142290000          32K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142290000-0xffff0001422a0000          64K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff0001422a0000-0xffff000142465000        1812K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142465000-0xffff000142470000          44K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000142470000-0xffff000142600000        1600K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000142600000-0xffff000144000000          26M PMD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000144000000-0xffff000180000000         960M PMD       RW NX SHD AF   
->> CON BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000180000000-0xffff000181a00000          26M PMD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000181a00000-0xffff000181b90000        1600K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000181b90000-0xffff000181b9d000          52K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181b9d000-0xffff000181c80000         908K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181c80000-0xffff000181c90000          64K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181c90000-0xffff000181ca0000          64K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000181ca0000-0xffff000181dbd000        1140K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181dbd000-0xffff000181dc0000          12K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181dc0000-0xffff000181e00000         256K PTE       RW NX SHD AF   
->> CON     UXN    MEM/NORMAL-TAGGED
->> 0xffff000181e00000-0xffff000182000000           2M PMD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000182000000-0xffff0001c0000000         992M PMD       RW NX SHD AF   
->> CON BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff0001c0000000-0xffff000300000000           5G PUD       RW NX SHD
->> AF        BLK UXN    MEM/NORMAL-TAGGED
->> 0xffff000300000000-0xffff008000000000         500G PUD
->> 0xffff008000000000-0xffff800000000000      130560G PGD
->> ---[ Linear Mapping end ]---
->>
->> Mode 3:
->> =======
->> ---[ Linear Mapping start ]---
->> 0xffff000000000000-0xffff000000210000        2112K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000000210000-0xffff000000400000        1984K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL
->> 0xffff000000400000-0xffff000002400000          32M PMD       ro NX SHD
->> AF        BLK UXN    MEM/NORMAL
->> 0xffff000002400000-0xffff000002550000        1344K PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL
->> 0xffff000002550000-0xffff000143a61000     5264452K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000143a61000-0xffff000143c61000           2M PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000143c61000-0xffff000181b9a000     1015012K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181b9a000-0xffff000181d9a000           2M PTE       ro NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000181d9a000-0xffff000300000000     6261144K PTE       RW NX SHD
->> AF            UXN    MEM/NORMAL-TAGGED
->> 0xffff000300000000-0xffff008000000000         500G PUD
->> 0xffff008000000000-0xffff800000000000      130560G PGD
->> ---[ Linear Mapping end ]---
->>
->>
->> Performance Testing
->> ===================
->>
->> Yang Shi has gathered some compelling results which are detailed in the commit
->> log for patch #3. Additionally I have run this through a random selection of
->> benchmarks on AmpereOne. None show any regressions, and various benchmarks show
->> statistically significant improvement. I'm just showing those improvements here:
->>
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | Benchmark            | Result
->> Class                                             | Improvement vs 6.17-rc1 |
->> +======================+==========================================================+=========================+
->> | micromm/vmalloc      | full_fit_alloc_test: p:1, h:0, l:500000
->> (usec)           |              (I) -9.00% |
->> |                      | kvfree_rcu_1_arg_vmalloc_test: p:1, h:0, l:500000
->> (usec) |              (I) -6.93% |
->> |                      | kvfree_rcu_2_arg_vmalloc_test: p:1, h:0, l:500000
->> (usec) |              (I) -6.77% |
->> |                      | pcpu_alloc_test: p:1, h:0, l:500000
->> (usec)               |              (I) -4.63% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | mmtests/hackbench    | process-sockets-30
->> (seconds)                             |              (I) -2.96% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | mmtests/kernbench    | syst-192
->> (seconds)                                       |             (I) -12.77% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | pts/perl-benchmark   | Test: Interpreter
->> (Seconds)                              |              (I) -4.86% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | pts/pgbench          | Scale: 1 Clients: 1 Read Write
->> (TPS)                     |               (I) 5.07% |
->> |                      | Scale: 1 Clients: 1 Read Write - Latency
->> (ms)            |              (I) -4.72% |
->> |                      | Scale: 100 Clients: 1000 Read Write
->> (TPS)                |               (I) 2.58% |
->> |                      | Scale: 100 Clients: 1000 Read Write - Latency
->> (ms)       |              (I) -2.52% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->> | pts/sqlite-speedtest | Timed Time - Size 1,000
->> (Seconds)                        |              (I) -2.68% |
->> +----------------------
->> +----------------------------------------------------------
->> +-------------------------+
->>
->>
->> Changes since v6 [1]
->> ====================
->>
->> - Patch 1: Minor refactor to implement walk_kernel_page_table_range() in terms
->>    of walk_kernel_page_table_range_lockless(). Also lead to adding *pmd argument
->>    to the lockless variant for consistency (per Catalin).
->> - Misc function/variable renames to improve clarity and consistency.
->> - Share same syncrhonization flag between idmap_kpti_install_ng_mappings and
->>    wait_linear_map_split_to_ptes, which allows removal of bbml2_ptes[] to save
->>    ~20K from kernel image.
->> - Only take pgtable_split_lock and enter lazy mmu mode once for both splits.
->> - Only walk the pgtable once for the common "split single page" case.
->> - Bypass split to contpmd and contpte when spllitting linear map to ptes.
->>
->>
->> Applies on v6.17-rc3.
->>
->>
->> [1] https://lore.kernel.org/linux-arm-kernel/20250805081350.3854670-1-
->> ryan.roberts@arm.com/
->>
->> Thanks,
->> Ryan
->>
->> Dev Jain (1):
->>    arm64: Enable permission change on arm64 kernel block mappings
->>
->> Ryan Roberts (3):
->>    arm64: mm: Optimize split_kernel_leaf_mapping()
->>    arm64: mm: split linear mapping if BBML2 unsupported on secondary CPUs
->>    arm64: mm: Optimize linear_map_split_to_ptes()
->>
->> Yang Shi (2):
->>    arm64: cpufeature: add AmpereOne to BBML2 allow list
->>    arm64: mm: support large block mapping when rodata=full
->>
->>   arch/arm64/include/asm/cpufeature.h |   2 +
->>   arch/arm64/include/asm/mmu.h        |   3 +
->>   arch/arm64/include/asm/pgtable.h    |   5 +
->>   arch/arm64/kernel/cpufeature.c      |  12 +-
->>   arch/arm64/mm/mmu.c                 | 418 +++++++++++++++++++++++++++-
->>   arch/arm64/mm/pageattr.c            | 157 ++++++++---
->>   arch/arm64/mm/proc.S                |  27 +-
->>   include/linux/pagewalk.h            |   3 +
->>   mm/pagewalk.c                       |  36 ++-
->>   9 files changed, 599 insertions(+), 64 deletions(-)
->>
->> -- 
->> 2.43.0
->>
-> 
-> Hi Yang and Ryan,
-> 
-> I observe there are various callsites which will ultimately use
-> update_range_prot() (from patch 1),
-> that they do not check the return value. I am listing the ones I could find:
+The debugfs_lookup() function returns a dentry with an increased
+reference count that must be released by calling dput().
 
-So your concern is that prior to patch #3 in this series, any error returned by
-__change_memory_common() would be due to programming error only. But patch #3
-introduces the possibility of dynamic error (-ENOMEM) due to the need to
-allocate pgtable memory to split a mapping?
+Fixes: d0f1e0c2a699 ("thunderbolt: Add support for receiver lane margining")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/thunderbolt/debugfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-There is a WARN_ON_ONCE(ret) for the return code of split_kernel_leaf_mapping()
-which will at least make the error visible, but I agree it's not a great solution.
-
-> 
-> set_memory_ro() in bpf_jit_comp.c
-
-There is a set_memory_rw() for the same region of memory directly above this,
-which will return -EFAULT on failure. If that one succeeded, then the pgtable
-must already be appropriately split for set_memory_ro() so that should never
-fail in practice. I agree with improving the robustness of the code by returning
--EFAULT (or just propagate the error?) as you suggest though.
-
-> set_memory_valid() in kernel_map_pages() in pageattr.c
-
-This is used by CONFIG_DEBUG_PAGEALLOC to make pages in the linear map invalid
-while they are not in use to catch programming errors. So if making a page
-invalid during freeing fails would not technically lead to a huge issue, it just
-reduces our capability of catching an errant access to that free memory.
-
-In principle, if we were able to make the memory invalid, we should therefore be
-able to make it valid again, because the mappings should be sufficiently split
-already. But that doesn't actually work, because we might be allocating a
-smaller order than was freed so we might not have split at free-time to the
-granularity is required at allocation-time.
-
-But as you say, for CONFIG_DEBUG_PAGEALLOC we disable this whole path anyway, so
-no issue here.
-
-> set_direct_map_invalid_noflush() in vm_reset_perms() in vmalloc.c
-> set_direct_map_default_noflush() in vm_reset_perms() in vmalloc.c, and in
-> secretmem.c
-> (the secretmem.c ones should be safe as explained in the commments therein)
-
-Agreed for secretmem. vmalloc looks like a problem though...
-
-If vmalloc was only setting the linear map back to default permissions, I guess
-this wouldn't be an issue because we must have split the linear map sucessfully
-when changing away from default permissions in the first place. But the fact
-that it is unconditionally setting the linear map pages to invalid then back to
-default causes issues; I guess even without the risk of -ENOMEM, this will cause
-the linear map to be split to PTEs over time as vmalloc allocs and frees?
-
-We probably need to think through how we can solve this. It's not clear to me
-why vm_reset_perms wants to unconditionally transiently set to invalid?
-
-> 
-> The first one I think can be handled easily by returning -EFAULT.
-> 
-> For the second, we are already returning in case of !can_set_direct_map, which
-> renders DEBUG_PAGEALLOC useless. So maybe it is
-> safe to ignore the ret from set_memory_valid?
-> 
-> For the third, the call chain is a sequence of must-succeed void functions.
-> Notably, when using vfree(), we may have to allocate a single
-> pagetable page for splitting.
-> 
-> I am wondering whether we can just have a warn_on_once or something for the case
-> when we fail to allocate a pagetable page. Or, Ryan had
-> suggested in an off-the-list conversation that we can maintain a cache of PTE
-> tables for every PMD block mapping, which will give us
-> the same memory consumption as we do today, but not sure if this is worth it.
-> x86 can already handle splitting but due to the callchains
-> I have described above, it has the same problem, and the code has been working
-> for years :)
-
-I think it's preferable to avoid having to keep a cache of pgtable memory if we
-can...
-
-Thanks,
-Ryan
-
+diff --git a/drivers/thunderbolt/debugfs.c b/drivers/thunderbolt/debugfs.c
+index f8328ca7e22e..2aadbec9a3e5 100644
+--- a/drivers/thunderbolt/debugfs.c
++++ b/drivers/thunderbolt/debugfs.c
+@@ -1770,6 +1770,7 @@ static void margining_port_init(struct tb_port *port)
+ 	port->usb4->margining = margining_alloc(port, &port->usb4->dev,
+ 						USB4_SB_TARGET_ROUTER, 0,
+ 						parent);
++	dput(parent);
+ }
+ 
+ static void margining_port_remove(struct tb_port *port)
+-- 
+2.35.1
 
 
