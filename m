@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-794466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A222B3E229
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:04:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DE4B3E280
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55FB189F8E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA77441358
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C5B257AD3;
-	Mon,  1 Sep 2025 12:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yPIzxOa1"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BEF1FC7C5;
-	Mon,  1 Sep 2025 12:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5F31DD8A;
+	Mon,  1 Sep 2025 12:20:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCDD17A2E6;
+	Mon,  1 Sep 2025 12:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728252; cv=none; b=fCWW5I5sqizIc4Ukgw+SZhJyt0ht1YnAeRdFi/DfHgevk31YPqsqZY5UkHZ0mjI/jRkFYLD0aUuiIb1uSSlJiYIon+yno/DUe/qjgN7gekjYnHNo33dCw3tjOqdbxa9Sx2ROKPBeapItZoeqLKx+2bDAeWx0qvHYEtdn6JCAUIY=
+	t=1756729236; cv=none; b=PSWAb/2bjweEHvragHdJP8AtWR4WUqTiuo6Se14sXwQEyQ3FdFzz7tAQkWYpaME5QKyH5m8Gy8eJxaZBF4dk6Vmj2eSP7pB/zptZWVBOwhMo1c7WIPg24K5srEPhThHjOoIA5HJmBSKmNTWRQCusk8FpEPj/vKwjYt0ad+6ifIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728252; c=relaxed/simple;
-	bh=gHY5lSYrBmGTMeATrmCtIIDaas/UdeCZELU8716Qi/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a04KRjT5ig+z50nNE8Uvy1dcwGRUhh2RHaSVNrl9ulumQoKNWK0AgJeQ+jMm5cb3gcHnSLPmTJwv25+64PL99UfW2GQqy5JnpnKZsUAmbb1zIVfjNsfi9EcSXhWwkYclofpOOytKg9nmBM0Zc3eQViJJ6n2UkuausC8FiQoyOpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yPIzxOa1; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 581C44rR2801951;
-	Mon, 1 Sep 2025 07:04:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756728244;
-	bh=6s67FAZDJUizll6nPEf6TZibmkbOoVBvmJUSm6yE6vc=;
-	h=From:To:CC:Subject:Date;
-	b=yPIzxOa13fWYaShw/EVS1xRj4NZETT0OsRwAi3ieDNmlrKjpdwDnK9KnDNjkqQ+vo
-	 eU+c4dAVhOSDKbZl1tV7QqnMHI68U1Ij7Nqlto1tTxFd8H3SMLokyeSDhBdQyCE4cC
-	 X4Cp1syqPxnRI5hPkq5Ur31+FnJOSzoOaadQdL44=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 581C44Za1527093
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 1 Sep 2025 07:04:04 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
- Sep 2025 07:04:03 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 1 Sep 2025 07:04:03 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 581C3xQj2472040;
-	Mon, 1 Sep 2025 07:04:00 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <vigneshr@ti.com>
-CC: <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] PCI: j721e: Fix module autoloading
-Date: Mon, 1 Sep 2025 17:33:55 +0530
-Message-ID: <20250901120359.3410774-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756729236; c=relaxed/simple;
+	bh=OQso3M18Z5ORcR/fPWxtfj+ukdTn1jxV4K9Dtp+9ezM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+2/VxqoFIOA0rrp5m51IFnwnstEHrwTChvYT39WUdoNuL+D2iQJO06xCZLscN46Hh5U0xyuM0Md+IWHL1ePO0IyuW82nEpOZVJPJYGPAPRphVowfhAgy7+lKuGy93BdvLdD2Kewurag5chdNj+0C1OeH2syEQFTxnYNlSyFBvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cFndC21Vkz9sSh;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id eGxryqrUX_hV; Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFndC0tmwz9sSb;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0A7888B790;
+	Mon,  1 Sep 2025 14:05:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MoqCpBZoSEHQ; Mon,  1 Sep 2025 14:05:34 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D60908B77B;
+	Mon,  1 Sep 2025 14:05:34 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v5 0/7] Add support of IRQs to QUICC ENGINE GPIOs
+Date: Mon,  1 Sep 2025 14:05:07 +0200
+Message-ID: <cover.1756727747.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756728307; l=2473; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=OQso3M18Z5ORcR/fPWxtfj+ukdTn1jxV4K9Dtp+9ezM=; b=Sa0OBzCBpoGN4HMRxzJnWdq9fZNM5lvmxW/10//o9X7BqvBcy9RkfTft0Q6Nj/WX5r6Z8iMS8 woenspJQt4yAzoKwVux1Pqldu+JN1n3addpi4kD64aZS57VTiqX3XlF
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit under Fixes added support to build the driver as a loadable
-module. However, it did not add MODULE_DEVICE_TABLE() which is required
-for autoloading the driver when it is built as a loadable module.
+The QUICC Engine provides interrupts for a few I/O ports. This is
+handled via a separate interrupt ID and managed via a triplet of
+dedicated registers hosted by the SoC.
 
-Fix it.
+Implement an interrupt driver for those IRQs then add change
+notification capability to the QUICC ENGINE GPIOs.
 
-Fixes: a2790bf81f0f ("PCI: j721e: Add support to build as a loadable module")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+The number of GPIOs for which interrupts are supported depends on
+the microcontroller:
+- mpc8323 has 10 GPIOS supporting interrupts
+- mpc8360 has 28 GPIOS supporting interrupts
+- mpc8568 has 18 GPIOS supporting interrupts
 
-Hello,
+Changes in v5:
+- Replaced new DT property "fsl,qe-gpio-irq-mask" by a mask encoded
+in the of_device_id table
+- Converted QE QPIO DT bindings to DT schema
 
-This patch is based on commit
-b320789d6883 Linux 6.17-rc4
-of Mainline Linux.
+Changes in v4:
+- Removed unused headers
+- Using device_property_read_u32() instead of of_property_read_u32()
 
-Patch has been tested on J7200-EVM with the driver configs set to 'm'.
-The pci-j721e.c driver is autoloaded as Linux boots and it doesn't need
-to be manually probed. Logs:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/f64eed4df6fd4f714747b3c7e7876f24
+Changes in v3:
+- Splited dt-bindings update out of patch "soc: fsl: qe: Add support of IRQ in QE GPIO"
+- Reordered DTS node exemples iaw dts-coding-style.rst
 
-Regards,
-Siddharth.
+Changes in v2:
+- Fixed warning on PPC64 build (Patch 1)
+- Using devm_kzalloc() instead of kzalloc (Patch 2)
+- Stop using of-mm-gpiochip (New patch 3)
+- Added fsl,qe-gpio-irq-mask propertie in DT binding doc (Patch 4)
+- Fixed problems reported by 'make dt_binding_check' (Patch 5)
 
- drivers/pci/controller/cadence/pci-j721e.c | 1 +
- 1 file changed, 1 insertion(+)
+Christophe Leroy (7):
+  soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
+  soc: fsl: qe: Change GPIO driver to a proper platform driver
+  soc: fsl: qe: Drop legacy-of-mm-gpiochip.h header from GPIO driver
+  soc: fsl: qe: Add support of IRQ in QE GPIO
+  dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC
+    Engine Ports
+  dt-bindings: soc: fsl: qe: Convert QE GPIO to DT schema
+  dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
 
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 6c93f39d0288..cfca13a4c840 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -440,6 +440,7 @@ static const struct of_device_id of_j721e_pcie_match[] = {
- 	},
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, of_j721e_pcie_match);
- 
- static int j721e_pcie_probe(struct platform_device *pdev)
- {
+ .../fsl/cpm_qe/fsl,mpc8323-qe-pario-bank.yaml |  76 +++++++
+ .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       |  58 +++++
+ .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     |  26 +--
+ arch/powerpc/platforms/Kconfig                |   1 -
+ drivers/soc/fsl/qe/Makefile                   |   2 +-
+ drivers/soc/fsl/qe/gpio.c                     | 209 ++++++++++++------
+ drivers/soc/fsl/qe/qe_ports_ic.c              | 156 +++++++++++++
+ 7 files changed, 438 insertions(+), 90 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,mpc8323-qe-pario-bank.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+ create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
+
 -- 
-2.43.0
+2.49.0
 
 
