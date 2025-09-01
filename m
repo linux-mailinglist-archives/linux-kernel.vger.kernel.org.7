@@ -1,77 +1,62 @@
-Return-Path: <linux-kernel+bounces-794475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED08B3E259
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC36B3E25D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95EC37A864C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF90A7A9A11
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736422765DB;
-	Mon,  1 Sep 2025 12:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42B827B356;
+	Mon,  1 Sep 2025 12:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D2WsIwII"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgM4H5Hr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F02226D17;
-	Mon,  1 Sep 2025 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B092765DB;
+	Mon,  1 Sep 2025 12:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728693; cv=none; b=KnDOjKPm0YoJW7+dwC/i2Nera8Yh6oyE1YEKa1u4jOVq7PuiQ6liv/ExNCufW7J2XK+pdeK5dwq8tnMgc9NnlFFZEgs9UhPU3Jj9x4gsT0/T0n27Co4+HE6M2H4VrEtzRGbjMfbg7UmKfM2x6AMHoWWsP5SUGNXoMwFCP+KS1Kg=
+	t=1756728716; cv=none; b=V9sM7oRSTCyAA02xy8ejdmpk3xKLxv+/m/26dzaMC1RG++TbtD3qZ0v9Me/YZweKt4d0/Vav54BnpnFNzCbc8oiTJZUhCxQ1lCOHB8wUBOHYS9nqPypcH0yjsDbU4eHJrm3vJtQraAXnPPNTlQRvj3oINkGBPI339sVA66TwLsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728693; c=relaxed/simple;
-	bh=/C/aW5THE62pm00uxDi72V+HNmlVGDqPZz9wwAE3x40=;
+	s=arc-20240116; t=1756728716; c=relaxed/simple;
+	bh=qBCtOBJT2cV+mYRDVrXbHxe214BFli2AJqzlHAFeHmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+VWERShbtDYUejIdtBqO3w6uyeKZUs1OCoV1unijj0GUyg0v7g+3dQG2HKy/hPMt3SM0BF7AZO8NpwkyzKzLjlvC7Rk0EGzTnrMdCI5uyJBFR+cPR4CcnHojPjAMauOeqFFzhdJRWPKWNOm0X+3MeWC02iUJWSSZYGffDb2EDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D2WsIwII; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756728692; x=1788264692;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/C/aW5THE62pm00uxDi72V+HNmlVGDqPZz9wwAE3x40=;
-  b=D2WsIwIIX+FqqnurxrfVK1PB6NgB9omrIrCgRzBwy2Ml3Ucl2LjfDCax
-   RbAoN0CSTE/nvAB3Pzse3GuVamrDTYAULKGGtcqe8RTOrx0ZJMzSfYJMJ
-   O/q6seEHw8werFp6F17d6aognDpcyaL+PgmNLUD9LrIxFC5EcOpT4fe1M
-   4mr/nICe6NCq/Io1e4dWmKZp2rkOVmfxGmsL/M/bSgmKaPGiyytNHsZ8C
-   mnqedgpw98L1u3/vNVUf8r/RRN9c5ne46LGKZv+c+y8ApKgOqRvcvngJn
-   kB6715+YUN/Ogxkp/J7QEGtNmCpfL+/Aw/HlQMWn42WJSIx8gVSr8oZvx
-   g==;
-X-CSE-ConnectionGUID: veExn+yaSfGbB64SBJ4OlA==
-X-CSE-MsgGUID: kLHW+s99QzCeGQtkNdgurA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58013962"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58013962"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:11:32 -0700
-X-CSE-ConnectionGUID: tnqWfgWNTUqOPqBMfU6fmA==
-X-CSE-MsgGUID: DDOyonw9RPu7n9l/LqTk1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="176248340"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:11:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ut3Ne-0000000APLS-2b0Q;
-	Mon, 01 Sep 2025 15:11:26 +0300
-Date: Mon, 1 Sep 2025 15:11:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
-Subject: Re: [PATCH v3] staging: iio: adc: ad7816: add mutex to serialize
- SPI/GPIO operations
-Message-ID: <aLWNbm5rNf8GRxwt@smile.fi.intel.com>
-References: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SkLo0XcLO7BLwMlxPvK/CeSlwuSGqBj2qaIStTWHFyxYdN4bkNU+FSpInAtIEdBn2utzGKwgs6bwpuGlddQUOywBB8EOe/AqoZHzHCAHRrgxBjAgIEbhWeSQIaJVfBgb0fwhH2ilAFutzZ3K8aqvRLFczOtiHGsSBPDOEjoL2Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgM4H5Hr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C32FC4CEF0;
+	Mon,  1 Sep 2025 12:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756728715;
+	bh=qBCtOBJT2cV+mYRDVrXbHxe214BFli2AJqzlHAFeHmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IgM4H5HrKPqzEWKaSZZ7G5TFgQ07XB5abKuclMAVTDyb72U8Mej25CusONsJTcqUA
+	 D8HD6YysFa4BLj7g866Hk/j8mfg7NLIcRq0I57I4DBx+xCOH4xiVd3hwq4Ken3omiY
+	 7P4hMwDYQ2lOEB7aFsWcQ+d7Sb82DMMfmmNCaffJJOTEepv71yzjo3FsRsD6TmfaQV
+	 cT0/PVLi/7Iqh5DsfIOmEYvalaeUnHIjpNQVefdV6+GUxOV/0QZkbt0TC2+34r0eMt
+	 u1fxeyrUs6OGR/HoSCu4I9xWptMRoncdQ2+GqxTpRL9Kx02riRJi1DhTi0bT0DQetk
+	 hxABn07H4QR+w==
+Date: Mon, 1 Sep 2025 17:41:50 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, mani@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com, kishon@kernel.org,
+	arnd@arndb.de, m.szyprowski@samsung.com, jh80.chung@samsung.com,
+	pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 10/12] phy: exynos: Add PCIe PHY support for FSD SoC
+Message-ID: <aLWNhv0eLj7LRrvM@vaman>
+References: <20250811154638.95732-1-shradha.t@samsung.com>
+ <CGME20250811154738epcas5p1d1202f799c4d950c5d5e7f45e39a51e7@epcas5p1.samsung.com>
+ <20250811154638.95732-11-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,29 +65,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250811154638.95732-11-shradha.t@samsung.com>
 
-On Mon, Sep 01, 2025 at 11:07:50AM +0330, Mohammad Amin Hosseini wrote:
-> The ad7816 driver was accessing SPI and GPIO lines without
-> synchronization, which could lead to race conditions when accessed
-> concurrently from multiple contexts. This might result in corrupted
-> readings or inconsistent GPIO states.
-> 
-> Introduce an io_lock mutex in the driver structure to serialize:
-> - SPI transactions in ad7816_spi_read() and ad7816_spi_write()
-> - GPIO pin toggling sequences
-> - Updates to device state via sysfs store functions (mode, channel, oti)
-> 
-> The mutex ensures proper mutual exclusion and prevents race
-> conditions under concurrent access.
+On 11-08-25, 21:16, Shradha Todi wrote:
+> Add PCIe PHY support for Tesla FSD SoC.
 
-Why not using cleanup.h and guard()() / scoped_guard()?
+Can you pls add a bit more description of what you are adding, helps to
+understand the change
 
+> +/* FSD: PCIe PCS registers */
+> +#define FSD_PCIE_PCS_BRF_0		0x0004
+> +#define FSD_PCIE_PCS_BRF_1		0x0804
+> +#define FSD_PCIE_PCS_CLK		0x0180
+> +
+> +/* FSD: PCIe SYSREG registers */
+> +#define FSD_PCIE_SYSREG_PHY_0_CON			0x042c
+> +#define FSD_PCIE_SYSREG_PHY_0_CON_MASK			0x03ff
+> +#define FSD_PCIE_SYSREG_PHY_0_REF_SEL			(0x2 << 0)
+
+Use GENMASK() please here and elsewhere
+
+> +static int fsd_pcie_phy0_reset(struct phy *phy)
+> +{
+> +	struct exynos_pcie_phy *phy_ctrl = phy_get_drvdata(phy);
+> +
+> +	writel(0x1, phy_ctrl->pcs_base + FSD_PCIE_PCS_CLK);
+> +
+> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
+> +			FSD_PCIE_SYSREG_PHY_0_CON_MASK, 0x0);
+> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
+> +		FSD_PCIE_SYSREG_PHY_0_AUX_EN, FSD_PCIE_SYSREG_PHY_0_AUX_EN);
+> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
+> +		FSD_PCIE_SYSREG_PHY_0_REF_SEL_MASK, FSD_PCIE_SYSREG_PHY_0_REF_SEL);
+> +	regmap_update_bits(phy_ctrl->fsysreg, FSD_PCIE_SYSREG_PHY_0_CON,
+> +		FSD_PCIE_SYSREG_PHY_0_INIT_RSTN, FSD_PCIE_SYSREG_PHY_0_INIT_RSTN);
+
+pls conform to coding style for these
+
+> +
+> +	return 0;
+
+why return a value when this wont ever return anything else than 0?
+
+> +
+> +	writel(0x2, pbase + FSD_PCIE_PHY_CMN_RESET);
+> +
+> +	writel(0x00, phy_ctrl->pcs_base + FSD_PCIE_PCS_BRF_0);
+> +	writel(0x00, phy_ctrl->pcs_base + FSD_PCIE_PCS_BRF_1);
+> +	writel(0x00, pbase + FSD_PCIE_PHY_AGG_BIF_RESET);
+> +	writel(0x00, pbase + FSD_PCIE_PHY_AGG_BIF_CLOCK);
+> +
+> +	fsd_pcie_phy_writel(phy_ctrl, FSD_PCIE_PHY_TRSV_REG07B_LN_N, 0x20);
+> +	fsd_pcie_phy_writel(phy_ctrl, FSD_PCIE_PHY_TRSV_REG052_LN_N, 0x00);
+> +	writel(0xaa, pbase + FSD_PCIE_PHY_TRSV_CMN_REG01E);
+> +	writel(0x28, pbase + FSD_PCIE_PHY_TRSV_CMN_REG02D);
+> +	writel(0x28, pbase + FSD_PCIE_PHY_TRSV_CMN_REG031);
+> +	writel(0x21, pbase + FSD_PCIE_PHY_TRSV_CMN_REG036);
+> +	writel(0x12, pbase + FSD_PCIE_PHY_TRSV_CMN_REG05F);
+> +	writel(0x23, pbase + FSD_PCIE_PHY_TRSV_CMN_REG060);
+> +	writel(0x0, pbase + FSD_PCIE_PHY_TRSV_CMN_REG061);
+> +	writel(0x0, pbase + FSD_PCIE_PHY_TRSV_CMN_REG062);
+> +	writel(0x15, pbase + FSD_PCIE_PHY_TRSV_CMN_REG03);
+
+Magic numbers?
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+~Vinod
 
