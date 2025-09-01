@@ -1,254 +1,170 @@
-Return-Path: <linux-kernel+bounces-793919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D07B3DA23
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:45:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6175B3DA28
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61BD016AA72
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:45:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 666A77A79E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B225A2C8;
-	Mon,  1 Sep 2025 06:44:54 +0000 (UTC)
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020079.outbound.protection.outlook.com [52.101.225.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC15525E451;
+	Mon,  1 Sep 2025 06:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUWXj12y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EC618EB0;
-	Mon,  1 Sep 2025 06:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756709093; cv=fail; b=czmoJRNgtGYl5IC/Aa8ZchaeS6I8vuc8nyLCGtHSnFIml7r0vq10BkWa5T+Vhp+WPVq8JicNmi7huei89lbUf3ux7sZIb884bagdgwcjIEX1VJNFeZIFNXp3HVDPCSGdviAUKeU+7MaNSxcMYBf+yakFyMrcllICUnQ5xyhNtxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756709093; c=relaxed/simple;
-	bh=pafIvLBB7XQ+MxQfOV7Cam2UbKVW+T0jFBJYbQsNppg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Oidf+W9svkq7hmXGlUhMwNrTUf4OwTzK1w+XLJwxJ157pflTMFcztRJIrS/IbnUEwKT90EqfxizFVOmIq2iwF2SrsNggqigIYgpelWVPoNXr+vdsy00u02MBWWyEw2KWiiGdAE97sGbfDK9uYUlLnH5uLD84tv0TF4xL8eq7muQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cc3tmltMBJLTb7PSu21dweROuh7UOfMG35YIDJohw/WCf2n/f/r5CR559IasN/s5YB6FpWb3bpEFvyvgbwd9ICX9CuAOlnqg4RVCTDf+kbDNUJ83W6jP+7cffPPzJkqUOh3aLk/4E1t0msNjf31E+PWT295RfmRjWbz12BBmjN5JxkEnOCCdE1TSslX8bL8ZsTwZQdsdiek+b0KppQTdVzJvYMrtgAlCGkp8+vZ2VVBc1tQLC9/8fK4YwptHANr8nF8+e1JtCJ9goPjowLvVJVwD0IKQwc+1ienmM0vHp9jrElZIgzG+E54DrDSqg+2yOcstAK8nJkhsoXI4UoQG/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pafIvLBB7XQ+MxQfOV7Cam2UbKVW+T0jFBJYbQsNppg=;
- b=cdrTsvsRqF1pFfCaysm3DD22/SkmarT0IKZG+Ba6cdx03JU2rwDO6BWSXJE5+xvUrmaK1gOlSwk2VuwUhd75sl8+TkedsVzRZq0m2tiVscaO9IxKtr152Zj2+D9XX0MtC0QOMWShAGhEEhoisDymQ+2UMlzECe+q2Ur6fJipzzZ/nA/QKazjeM5yyIx0RXsJ0jSiqX8+TCsqEYbE2a4pRWP1M+NFqRMGsHAtgIxpkDQgDT9uMXn9/Ok8D881lQ9WdTRgzjSYJxBuKgB0uw/ipmsmMhxgRdZOEPXzx2c8hJrY0Wvns6QGzhBWrJfDJGxLQaFplBD3StmRDOT7jXWsAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
- by PN2PPF63CA987B2.INDP287.PROD.OUTLOOK.COM (2603:1096:c04:1::121) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Mon, 1 Sep
- 2025 06:44:46 +0000
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.9052.019; Mon, 1 Sep 2025
- 06:44:46 +0000
-From: Tarang Raval <tarang.raval@siliconsignals.io>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
-CC: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans
- Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan
- O'Donoghue <bryan.odonoghue@linaro.org>, =?iso-8859-1?Q?Andr=E9_Apitzsch?=
-	<git@apitzsch.eu>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Matthias Fend
-	<matthias.fend@emfend.at>, Dongcheng Yan <dongcheng.yan@intel.com>, Sylvain
- Petinot <sylvain.petinot@foss.st.com>, Arnd Bergmann <arnd@arndb.de>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede
-	<hansg@kernel.org>, Jingjing Xiong <jingjing.xiong@intel.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 2/2] media: i2c: add ov2735 image sensor driver
-Thread-Topic: [PATCH v9 2/2] media: i2c: add ov2735 image sensor driver
-Thread-Index: AQHcGMTj/Rv/OrGdGEGuAw4X2ccUPLR95bMD
-Date: Mon, 1 Sep 2025 06:44:46 +0000
-Message-ID:
- <PN3P287MB18298FB93EDC498572742B2A8B07A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-References: <20250829090959.82966-1-hardevsinh.palaniya@siliconsignals.io>
- <20250829090959.82966-3-hardevsinh.palaniya@siliconsignals.io>
-In-Reply-To: <20250829090959.82966-3-hardevsinh.palaniya@siliconsignals.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB1829:EE_|PN2PPF63CA987B2:EE_
-x-ms-office365-filtering-correlation-id: 20672fb3-029b-4a6e-c3f3-08dde9230a90
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?od1GN0bVkSrux7RVBa67/OOwkL3IYeRS7bkIwMW/19K9msM7fbb5n/Wlyt?=
- =?iso-8859-1?Q?DO5z5osQogoDlCI+LFahwPMEdK4gmAVTY5Vzcqg/WYpn8VRSstLGfVNdA1?=
- =?iso-8859-1?Q?6hZOWVALZKhaTdwvQA/mSRi4sJDtUfWZUMC7x35RIQXu+QmhLJ8r8uFKfx?=
- =?iso-8859-1?Q?Sy1WmoU8t/v9nYesMFRruFbJ7lIA009WQ3zQYHzcf+6ddp8OaN4ypcu+Qj?=
- =?iso-8859-1?Q?UiIoKoAqvFguZ251N/FFBMSiKm2LO0h9qFS/5OZBuZDFwAdEP4UTLrJV/A?=
- =?iso-8859-1?Q?H81Mj2BGXNc9tNPndCxa82OZ3W1wfYiHefurXLDy3kcvb6WxI+xPU8myAH?=
- =?iso-8859-1?Q?kMnEWsnAzVJf+nRW/Gx2hVmLmJd0t6trJeoJCvS5Vr9XhPjDrosZX86kea?=
- =?iso-8859-1?Q?0vEtJ+7E+KskCxA4FwvlmbKc2zJRTdbxFI2KUEQaH289A6zo4S2B+QF7yx?=
- =?iso-8859-1?Q?+nAZwbEHkFwCQDMdpZx3T9pkXTJZSo/isaf0bZrFYClesUNPNJ/LEiuxxN?=
- =?iso-8859-1?Q?Yw06GI6fybNrDw4AcYuPOHmSJAFcvWRRvF2pqCvKYHQN5dwYicAT2JbmPr?=
- =?iso-8859-1?Q?k+DcWi2+yW8NKR2ae7zVHi3otmkl35SzJUVJRlX7RImxgc4DEFdhMDq5l9?=
- =?iso-8859-1?Q?dStdLt49Q99fcwkIteZVO+dW+2FG9CfRwRI+qhpTP3gE/zGP/nTWKpqlHr?=
- =?iso-8859-1?Q?0jDNC28iJW1nsnxaKZCXz7hAc2Bn5MVbwtZ8YgoGH8ByV4OBUKzUQtJvvH?=
- =?iso-8859-1?Q?RvVa1uzOResxVucikviJw4T/giwviRH7tuPwobwrdJ4o0UEd/hfpqrvOEW?=
- =?iso-8859-1?Q?gUuJcDToCW/jdxmx92BYTQ2GFs0PTJA1k2HwpCGOjYUh5q0XzcUov27JHf?=
- =?iso-8859-1?Q?RPbo+KdGZjgrIm/NZrKz9MVoGofcWqMKzkbNSSKQJlFJCUWg+0kqC6A0Cu?=
- =?iso-8859-1?Q?bbdcsxnh36lNlGJahdKF7TbzdBZlD7ykC8WCB0OcDe7WCcIlR1FfQx6mY0?=
- =?iso-8859-1?Q?gtsbGF+nu/79ucmaoBpbjKvYXJlARWhaofpot4pLO41aBjewg03E5Ro4O7?=
- =?iso-8859-1?Q?/43mLV3B9nNIap4fGg1LfZ/4dCRmShUzfezJJze1g97VXDiIgTWMnExzJ6?=
- =?iso-8859-1?Q?t2CkET0Jv1GjoE4VTLruJyEPKgqwoztoDohKoD1y/9hwfn1e/6JyaRTT17?=
- =?iso-8859-1?Q?tAmGx/FvH3luT5yZ66zfdaxMYqGeKqPJ4eCEAROzW6nSoplfgF3VJ5Wv/x?=
- =?iso-8859-1?Q?Q2CSZJs5z+UBXydwj4bJzbcu8R2UU+JQQtIqZovpZ2XNw0QnhPy9MesMAf?=
- =?iso-8859-1?Q?GraIPpe6gyFGKEXPJeFm9jC3BecUI/FVEdycM7R+WxyFzwmKkiMBtBwJ/z?=
- =?iso-8859-1?Q?Ut3Nw8Zr4Koip4fZXHU7u0600T4YkpqUQp15XMBdhb3NnFwfw/9lPhPQhn?=
- =?iso-8859-1?Q?DaHCVdm0YFC01tPEiHpjcfWABb/emvaxsZMayaKeLN0ZVRWu5mc9kHJOwU?=
- =?iso-8859-1?Q?68Q2fVLuNFm84pRSdkG+nQWlwRnQ2G/rkhCsq2hrA9FA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?rPKSHPY5g1R0DEVJshc4hJs2H406jGtvIrdZ2S6Ej+ejRjDqH0osULFBqs?=
- =?iso-8859-1?Q?jq91e59Yq28rDFZ+pDALZzJZNFIjEP82aTQ1lN+HGRGNflmkOdZLR9g4IS?=
- =?iso-8859-1?Q?KKz6xNeIriwxi6fEHe4uMYq138HxEyDW0ikoaS5XpPBtk4ha0FjAKjT7d7?=
- =?iso-8859-1?Q?tizP6cDNpeIG9aoglknClSP1aeKwgcoqiLcyAWx/eSDWtDsCu3d8wk7dbE?=
- =?iso-8859-1?Q?qUz1cC6gV22K4Y1BDoyvJVd+uuzfn7QxcNd5Im2EdndYinmAKpAH25QVDw?=
- =?iso-8859-1?Q?zdvEktNy/pcw30gsitfVDZ5QAkTOWVHmkcVXlo3n0aG1FQiIOPCoh9GbhP?=
- =?iso-8859-1?Q?Io50nzgNWjVIfnSYr+dRGA6ROXM15U9xYz2rZlvvwwcrWSs32vpZASdkzg?=
- =?iso-8859-1?Q?sbZzeSrreYkdiYhmkVu8IEGNFaiH84EBDjRnPYVrxPMC7l5dpUVtDUTlqG?=
- =?iso-8859-1?Q?7mzG0BLjOjFxpPODt5lzblPL7nN510zRqbYkyUDgX7R3824AvXcm4/AkFT?=
- =?iso-8859-1?Q?caSBEf9PsJqvdvkII7kSEBvPeV24bYuF9yuiTE04xe9LJC9QPY2hL6ZRrv?=
- =?iso-8859-1?Q?FboOuStF1lmgu6JFdko4Q8FXkPPmD8/CdjfhoMRVIK1IesEt+CKYMFoCpS?=
- =?iso-8859-1?Q?mZqh+CCD7ouhVDdSQ5YJR/iTC4WVLJ8sMTCGQM/B3rLRZm8tce8Vkz8Z5H?=
- =?iso-8859-1?Q?k/dPF524E67udXSMIz69wOiqg87AnMX5EJSV1JxfKDeUrZpR04dY1TVMjn?=
- =?iso-8859-1?Q?nxUaFOS2K9Z4U2JxzzgCcEoLLkPMOPPaHrrqlcO/PWsVP8nkHbJwzNjR1k?=
- =?iso-8859-1?Q?K+3rr7gYasDBTbsEm/NcQH9LWFFNtL7QR7kSwFl9rjMZgbrGbDkjxVvpFZ?=
- =?iso-8859-1?Q?ecnRpa40gO5RmzmghTqhQWVUXLFZI4Vf3l4fA7K7jXljNste6b6HPELQ75?=
- =?iso-8859-1?Q?zAXh6xxLfhxOKzRsLRssXy0UAXJZvWTGcU6//LZRrZAyIJGq3kHtHWL8IB?=
- =?iso-8859-1?Q?1kOn8xNmD6ZwsUBKrzvg6uK/OXnfod2rkKsh0UY+ZZuHf5vNRZqacVGk9F?=
- =?iso-8859-1?Q?6SECdJebJKadApFgglIXtCRMFmzDWHmqQRc8BtKAt6npEB2CckMG5gK2FU?=
- =?iso-8859-1?Q?5iOeKl0GRIpL1tUF/C6R/vAMJssDMyArhoWXXQGZIIyH7FnfFNX8v72HqJ?=
- =?iso-8859-1?Q?GsdJBASpJoz8ae+yx81ygpDz8MBi49/bo+AmEMMKgtf9Xum5/q3KrF7Zy3?=
- =?iso-8859-1?Q?FBjnHvCloddJIird4+0VGpQ7DfBkKO0CQVuBwNKv2qIUvvmmXoxiqRYR/z?=
- =?iso-8859-1?Q?eNlxvL+hNEhOeV8MSI8BsmrJXpl/SfwcLndRA6m3UTovoblTS/+bzH45g6?=
- =?iso-8859-1?Q?lFEDvfrsAreH+tRKh934bVZneXKHoYO7bbt0ZBqiM4d5XGESNaK66DDHe3?=
- =?iso-8859-1?Q?A7v3W/OkYjbn/fzrSU7JnWTUzTOg1+QuD/+pOiRrALOBhFjpitOknUr5AY?=
- =?iso-8859-1?Q?TBnu1nRuQ4e27WH5izYWe8JZSwW7i0Cqh/sGWc/xTQVm9NEXgJXKbHb38B?=
- =?iso-8859-1?Q?fbXofSvoCOGJwataN/IawMF5N+NxiY1lwUpYIyTjjyuSN8xtxFCxM8ZPyf?=
- =?iso-8859-1?Q?kQ5lqM8D8LpiQ02H2n4PDw7HVpqbdtQ1CCxuhMtIvMBQWoog2BxWzoHw?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340D18EB0;
+	Mon,  1 Sep 2025 06:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756709099; cv=none; b=XnJGsuARCuTIkA5oeA6o9YSyTIOJo/8ogRBh0hc/vANCPBJliI6C8fA++rzRFl0OD6vj694+7kBf1KyKbdf/V2Fi8hIfnutjECTaniLVg7JY8GyYOUsw6wPubRJEVEdt3UCDq9kLZgIdCZ6oYuOp0r69+tl9aR+bmRnqEb6QybA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756709099; c=relaxed/simple;
+	bh=v2eZIqPOo2OudPRqDX5kzJtAjfTXJAadp0/fdfmvLZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1ZfZseg5AD+M+lLhyVtpu3uOtXI9vy+CtwEMtY/uufJ8sFpNkH2hwmSaGigMLagf1Wh0Z/cfgPpl8rs7XHoIgC9DtuQyf8P2nayNqH6H5ObPGJOjEi/EWg7zbtnQXsqIAho6Ik4ET6E8KXHJtv3nI0+XzkgxniX6XhXZjQyXEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUWXj12y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90986C4CEF0;
+	Mon,  1 Sep 2025 06:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756709098;
+	bh=v2eZIqPOo2OudPRqDX5kzJtAjfTXJAadp0/fdfmvLZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pUWXj12y/46qUHn/Ji4NDqSOkiEAFPhAk/HA28xDSFlq608cUDldqgm0BqowQfybX
+	 TdqhHMeZjfv+8OP5DfS56YA6zEZDbBuGlWE9fpfDUaC6fJN2PvoRfUNaGy3QxE6zg/
+	 eS7exKNlmjIsKz0Qsox+fhdqhY49+ajcxrR1ZlQv6Z2orPxTxXcV5Yw/te2U0A6jLU
+	 TuZ/b1Q6UOb1fSOaD+72HuuRx2rAQElzhl2R2UW95EpMPrrP3ddKpl8F7ricUw3Psm
+	 52tNVEHJJrzmXIilswkxejmhP8NJJ7P3wHAmjAoqNChN2SKtlE4KKFU/QJO3YZ2V+H
+	 dMbsTxAQLAnhg==
+Date: Mon, 1 Sep 2025 12:14:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, helgaas@kernel.org, kishon@kernel.org, vigneshr@ti.com, 
+	stable@vger.kernel.org, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v3] PCI: j721e: Fix programming sequence of "strap"
+ settings
+Message-ID: <3wc3t6y5gzzspgfeklsqo3bupfp6gsfy6mls6t66hflcqlqsfk@cu26wv3sow4y>
+References: <20250829091707.2990211-1-s-vadapalli@ti.com>
+ <oztilfun77apxtjxumx4tydkcd2gsalsak4m2rvsry2oooqjna@2yvcx6cnuemm>
+ <b2fb9252-6bfc-45da-973a-31cdfcc86b3d@ti.com>
+ <z3ubracmtlq23yicbrhqjgnzrfoqheffm6cvhfnawlvbu4cmmp@ddu2o7xhw5tz>
+ <48e9d897-2cd3-48ef-b46a-635ae75f5ac6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20672fb3-029b-4a6e-c3f3-08dde9230a90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2025 06:44:46.6577
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OicGYOx79qszpX9P144f7RfLr5Uvzc6Kx6JiY/4yR8wPaZomIgzd0at2DqyAm13+noO9X4BjgpO+78OWgYIa7YfIMKpys3Pe8lJUKL9uNko=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPF63CA987B2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <48e9d897-2cd3-48ef-b46a-635ae75f5ac6@ti.com>
 
-Hi Hardev, Sakari=0A=
-=0A=
-> Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.=0A=
-> =0A=
-> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an=0A=
-> active array size of 1920 x 1080.=0A=
-> =0A=
-> The following features are supported:=0A=
-> - Manual exposure an gain control support=0A=
-> - vblank/hblank control support=0A=
-> - Test pattern support control=0A=
-> - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)=0A=
-> =0A=
-> Co-developed-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>=0A=
-> Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>=0A=
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io=
->=0A=
-> ---=0A=
-> =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0=A0 1 =
-+=0A=
-> =A0drivers/media/i2c/Kconfig=A0 |=A0=A0 10 +=0A=
-> =A0drivers/media/i2c/Makefile |=A0=A0=A0 1 +=0A=
-> =A0drivers/media/i2c/ov2735.c | 1109 ++++++++++++++++++++++++++++++++++++=
-=0A=
-> =A04 files changed, 1121 insertions(+)=0A=
-> =A0create mode 100644 drivers/media/i2c/ov2735.c=0A=
-=0A=
-...=0A=
- =0A=
-> +static int ov2735_enum_mbus_code(struct v4l2_subdev *sd,=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_state *sd_state,=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_mbus_code_enum *code)=0A=
-> +{=0A=
-> +=A0=A0=A0=A0=A0=A0 if (code->index >=3D 0)=0A=
-=0A=
-Hardev, I believe this condition is always true.=0A=
-=0A=
-You should write:=0A=
-if (code->index > 0)=0A=
-=0A=
-Sakari, Could you please remove the equals sign when you apply the patch? =
-=0A=
-=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;=0A=
-> +=0A=
-> +=A0=A0=A0=A0=A0=A0 code->code =3D MEDIA_BUS_FMT_SGRBG10_1X10;=0A=
-> +=0A=
-> +=A0=A0=A0=A0=A0=A0 return 0;=0A=
-> +}=0A=
- =0A=
-...=0A=
- =0A=
-> +static const struct of_device_id ov2735_id[] =3D {=0A=
-> +=A0=A0=A0=A0=A0=A0 { .compatible =3D "ovti,ov2735" },=0A=
-> +=A0=A0=A0=A0=A0=A0 { /* sentinel */ }=0A=
-> +};=0A=
-> +MODULE_DEVICE_TABLE(of, ov2735_id);=0A=
-> +=0A=
-> +static struct i2c_driver ov2735_driver =3D {=0A=
-> +=A0=A0=A0=A0=A0=A0 .driver =3D {=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 .name =3D "ov2735",=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 .pm =3D pm_ptr(&ov2735_pm_ops=
-),=0A=
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 .of_match_table =3D ov2735_id=
-,=0A=
-> +=A0=A0=A0=A0=A0=A0 },=0A=
-> +=A0=A0=A0=A0=A0=A0 .probe =3D ov2735_probe,=0A=
-> +=A0=A0=A0=A0=A0=A0 .remove =3D ov2735_remove,=0A=
-> +};=0A=
-> +module_i2c_driver(ov2735_driver);=0A=
-> +=0A=
-> +MODULE_DESCRIPTION("OV2735 Camera Sensor Driver");=0A=
-> +MODULE_AUTHOR("Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.i=
-o>");=0A=
-> +MODULE_AUTHOR("Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>");=
-=0A=
-> +MODULE_LICENSE("GPL");=0A=
-> --=0A=
-> 2.34.1=0A=
-=0A=
-Best Regards,=0A=
-Tarang=
+On Mon, Sep 01, 2025 at 11:51:33AM GMT, Siddharth Vadapalli wrote:
+> On Mon, Sep 01, 2025 at 11:18:23AM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Sep 01, 2025 at 10:27:51AM GMT, Siddharth Vadapalli wrote:
+> > > On Sun, Aug 31, 2025 at 06:15:13PM +0530, Manivannan Sadhasivam wrote:
+> > > 
+> > > Hello Mani,
+> > > 
+> > > > On Fri, Aug 29, 2025 at 02:46:28PM GMT, Siddharth Vadapalli wrote:
+> 
+> [...]
+> 
+> > > > > +	/*
+> > > > > +	 * The PCIe Controller's registers have different "reset-values"
+> > > > > +	 * depending on the "strap" settings programmed into the PCIEn_CTRL
+> > > > > +	 * register within the CTRL_MMR memory-mapped register space.
+> > > > > +	 * The registers latch onto a "reset-value" based on the "strap"
+> > > > > +	 * settings sampled after the PCIe Controller is powered on.
+> > > > > +	 * To ensure that the "reset-values" are sampled accurately, power
+> > > > > +	 * off the PCIe Controller before programming the "strap" settings
+> > > > > +	 * and power it on after that.
+> > > > > +	 */
+> > > > > +	ret = pm_runtime_put_sync(dev);
+> > > > > +	if (ret < 0) {
+> > > > > +		dev_err(dev, "Failed to power off PCIe Controller\n");
+> > > > > +		return ret;
+> > > > > +	}
+> > > > 
+> > > > How does the controller gets powered off after pm_runtime_put_sync() since you
+> > > > do not have runtime PM callbacks? I believe the parent is turning off the power
+> > > > domain?
+> > > 
+> > > By invoking 'pm_runtime_put_sync(dev)', the ref-count is being
+> > > decremented and it results in the device being powered off. I have
+> > > verified it by printing the power domain index within the functions for
+> > > powering off and powering on devices on the J7200 SoC. Logs:
+> > > 
+> > > 	root@j7200-evm:~# modprobe pci_j721e
+> > > 	[   25.231675] [Powering On]: 240
+> > > 	[   25.234848] j721e-pcie 2910000.pcie: host bridge /bus@100000/pcie@2910000 ranges:
+> > > 	[   25.242378] j721e-pcie 2910000.pcie:       IO 0x4100001000..0x4100100fff -> 0x0000001000
+> > > 	[   25.250496] j721e-pcie 2910000.pcie:      MEM 0x4100101000..0x41ffffffff -> 0x0000101000
+> > > 	[   25.258588] j721e-pcie 2910000.pcie:   IB MEM 0x0000000000..0xffffffffffff -> 0x0000000000
+> > > 	[   25.267098] [Powering Off]: 240
+> > > 	[   25.270318] [Powering On]: 240
+> > > 	[   25.273511] [Powering On]: 187
+> > > 	[   26.372361] j721e-pcie 2910000.pcie: PCI host bridge to bus 0000:00
+> > > 	[   26.378666] pci_bus 0000:00: root bus resource [bus 00-ff]
+> > > 	[   26.384156] pci_bus 0000:00: root bus resource [io  0x0000-0xfffff] (bus address [0x1000-0x100fff])
+> > > 	[   26.393197] pci_bus 0000:00: root bus resource [mem 0x4100101000-0x41ffffffff] (bus address [0x00101000-0xffffffff])
+> > > 	[   26.403728] pci 0000:00:00.0: [104c:b00f] type 01 class 0x060400 PCIe Root Port
+> > > 	[   26.411044] pci 0000:00:00.0: PCI bridge to [bus 00]
+> > > 	[   26.416009] pci 0000:00:00.0:   bridge window [io  0x0000-0x0fff]
+> > > 	[   26.422091] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+> > > 	[   26.428874] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+> > > 	[   26.436676] pci 0000:00:00.0: supports D1
+> > > 	[   26.440699] pci 0000:00:00.0: PME# supported from D0 D1 D3hot
+> > > 	[   26.448064] pci 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+> > > 	[   26.456274] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+> > > 	[   26.462923] pci 0000:00:00.0: PCI bridge to [bus 01]
+> > > 	[   26.467933] pci_bus 0000:00: resource 4 [io  0x0000-0xfffff]
+> > > 	[   26.473595] pci_bus 0000:00: resource 5 [mem 0x4100101000-0x41ffffffff]
+> > > 	[   26.480337] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
+> > > 	[   26.487479] pcieport 0000:00:00.0: PME: Signaling with IRQ 701
+> > > 	[   26.493909] pcieport 0000:00:00.0: AER: enabled with IRQ 701
+> > > 
+> > > In the above logs, '240' is the Power Domain Index for the PCIe
+> > > Controller on J7200 SoC. It is powered on initially before the driver is
+> > > probed.
+> > 
+> > In that case, the driver should not call pm_runtime_get_sync() in its probe.
+> > What it should do is:
+> > 
+> > 	pm_runtime_set_active()
+> > 	pm_runtime_enable()
+> 
+> If I understand correctly, are you suggesting the following?
+> 
+> j721e_pcie_probe()
+> 	pm_runtime_set_active()
+> 	pm_runtime_enable()
+> 	ret = j721e_pcie_ctrl_init(pcie);
+> 		/*
+> 		 * PCIe Controller should be powered off here, but is there
+> 		 * a way to ensure that it has been powered off?
+> 		 */
+> 		=> Program the strap settings and return to
+> 		j721e_pcie_probe()
+> 	/* Power on the PCIe Controller now */
+> 	ret = pm_runtime_get_sync(dev);
+
+This pm_runtime_get_sync() should be part of j721e_pcie_ctrl_init() where you
+do power off, program strap and power on.
+
+This should not be part of probe() as by that time, controller is already
+powered on. So pm_runtime_set_active() and pm_runtime_enable() should be enough
+to convey the state of the device to PM core.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
