@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-794077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89824B3DC8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E1FB3DC8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595A917D189
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1520017D224
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590752FC86B;
-	Mon,  1 Sep 2025 08:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EC22FB62B;
+	Mon,  1 Sep 2025 08:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5iytukq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3FYys+6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F672FB609;
-	Mon,  1 Sep 2025 08:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F662FB609;
+	Mon,  1 Sep 2025 08:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715678; cv=none; b=M3MkDJhvsrwQN70NWPmZKJJLFQBXEE6gWQr1M/d+lCYEdmbxRslbd0NJmQUysm7AEcQFxHGprMpilROJqiN3tJWL2fhDDSGTVNIGE5JFFfCbO/GNXC6WtiYazsRDdCtpFXm6EOc9YakBR0Ll/gc+OwBphsAZlVdOHl1niIkiKkw=
+	t=1756715682; cv=none; b=Nxcnr8ORJ71slWElJFJwtgR0QsYbxRTvY9RRion0BdUMn01olsoUm7mD2vOuV9NCTWkSoVMNuLUNrNCGwBVxVOQw3bEvMKA2OeTWBD03cZlhkZijP8tkrJOpUCMqS950Oc+C2Aj+v7zjN570r17wx639csXjy8T1+d3MPfFcMw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715678; c=relaxed/simple;
-	bh=s7gDD17wyPWHQKbzFBz1JNHLt2wfCsHSqppGZ+0gGnI=;
+	s=arc-20240116; t=1756715682; c=relaxed/simple;
+	bh=tijAz1eNA4UUi3u0ThL/Z8I1a2cgIFLE3T1W4G+WSyI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZWcya7oHhOsm7mk6vAIZjkkwg9QssZMaGBI9WIDnj78Ewna66eoSOuGhVl4Xv9qQWRFU3pv/8Tr995RTsO3Zz84hjyTftt44tjxAcje1AV2kBKSJezVzxS5KIKWjB5jYX2ZDGGOLSPpS/Q+CSsKsLQrZTMn4RFvQAziOMps2nPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5iytukq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8653C4CEF8;
-	Mon,  1 Sep 2025 08:34:34 +0000 (UTC)
+	 MIME-Version; b=osWADBA4WxATLpDAs3Lha/DFl8pyUFHM6Ag6zQ9Gdi1X+k+40j0Yu+a1b3nQDjZTbrz81WToMXxXoUMZPX8Xg/rFflQf7OSdLuLR0VbIWXsXLuGS3Sh6/xy02ez+amarUkdgYE0rfH7RiQ1J8RnqyVt3YEgH8f8jJoOxvHzn7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3FYys+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A5BC4CEF0;
+	Mon,  1 Sep 2025 08:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756715678;
-	bh=s7gDD17wyPWHQKbzFBz1JNHLt2wfCsHSqppGZ+0gGnI=;
+	s=k20201202; t=1756715682;
+	bh=tijAz1eNA4UUi3u0ThL/Z8I1a2cgIFLE3T1W4G+WSyI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=D5iytukqVhx8KXkeeNxWYS3iT9qtiWj5ahsGclE358EQFNX0SghXLbqK9QR5HgNMh
-	 SPbUz3nsEgsm8W939duAv+3aIjoKZ0q7Hx9RVKbIkvE0nmFUxH7b8ZPqCkfwlfG4z8
-	 GGDMg37upT/s2kA4ON8tWNt5cRBdJdlWqGssqcKYQeCdRJ+vl2Ca4RBQOJLue0zbeQ
-	 lqWYLLnOZvQE+mphW+5qaXI5a9CTRsPwvp9FsGsKtlF/dYwQpL7eT13qE3NP2+QaAv
-	 5yd2KJoSjoUdNAq3dONOix1WwKl6cVgywQaXjRKLBIfIrRCKzgsojIl5Eh03oe6xao
-	 Tvz//iPPdH0Xw==
+	b=J3FYys+6jyvfehPZwHKVP9GBRngDIMaxwrEHCeOB1+TGU7YqF51o0r0e0KBBOGgfQ
+	 JVrUiwNutdKf9IQk3s/4DfVAbPerLVWa+aqDcguiQV/yxliTGj53ownmsEPk0YNT1Z
+	 v7tkPG1pCNXAmcsRQBQRU+CD5rxRicwuudydwlaLykfYa4DDPihjPXVfy8wRY/Y4Wr
+	 kOc909JfqH1g0uLfCcWkkcQzCPfl81v/EJwnV9uSxQADi6pnKhmiz/hrnoz1/EClnl
+	 N1hZdjPzmqLVjAqIGJspdjjCWzkE0IIadd+sEXE+ILmdDlQLUHox5z6N85D4ORf2Eu
+	 fI+TeLKW52OzQ==
 From: Mike Rapoport <rppt@kernel.org>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -55,9 +55,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Wei Yang <richard.weiyang@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	llvm@lists.linux.dev
-Subject: [PATCH v2 2/4] mm/mm_init: deferred_init_memmap: use a job per zone
-Date: Mon,  1 Sep 2025 11:34:21 +0300
-Message-ID: <20250901083423.3061349-3-rppt@kernel.org>
+Subject: [PATCH v2 3/4] mm/mm_init: drop deferred_init_maxorder()
+Date: Mon,  1 Sep 2025 11:34:22 +0300
+Message-ID: <20250901083423.3061349-4-rppt@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250901083423.3061349-1-rppt@kernel.org>
 References: <20250901083423.3061349-1-rppt@kernel.org>
@@ -71,90 +71,185 @@ Content-Transfer-Encoding: 8bit
 
 From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-deferred_init_memmap() loops over free memory ranges and creates a
-padata_mt_job for every free range that intersects with the zone being
-initialized.
+deferred_init_memmap_chunk() calls deferred_init_maxorder() to initialize
+struct pages in MAX_ORDER_NR_PAGES because according to commit 0e56acae4b4d
+("mm: initialize MAX_ORDER_NR_PAGES at a time instead of doing larger
+sections") this provides better cache locality than initializing the memory
+map in larger sections.
 
-padata_do_multithreaded() then splits every such range to several chunks
-and runs a thread that initializes struct pages in that chunk using
-deferred_init_memmap_chunk(). The number of threads is limited by amount of
-the CPUs on the node (or 1 for memoryless nodes).
+The looping through free memory ranges is quite cumbersome in the current
+implementation as it is divided between deferred_init_memmap_chunk() and
+deferred_init_maxorder(). Besides, the latter has two loops, one that
+initializes struct pages and another one that frees them.
 
-Looping through free memory ranges is then repeated in
-deferred_init_memmap_chunk() first to find the first range that should be
-initialized and then to traverse the ranges until the end of the chunk is
-reached.
+There is no need in two loops because it is safe to free pages in groups
+smaller than MAX_ORDER_NR_PAGES. Even if lookup for a buddy page will
+access a struct page ahead of the pages being initialized, that page is
+guaranteed to be initialized either by memmap_init_reserved_pages() or by
+init_unavailable_range().
 
-Remove the loop over free memory regions in deferred_init_memmap() and pass
-the entire zone to padata_do_multithreaded() so that it will be divided to
-several chunks by the parallelization code.
+Simplify the code by moving initialization and freeing of the pages into
+deferred_init_memmap_chunk() and dropping deferred_init_maxorder().
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Link: https://lore.kernel.org/r/20250818064615.505641-3-rppt@kernel.org
+Link: https://lore.kernel.org/r/20250818064615.505641-4-rppt@kernel.org
 Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 ---
- mm/mm_init.c | 38 ++++++++++++++++----------------------
- 1 file changed, 16 insertions(+), 22 deletions(-)
+ mm/mm_init.c | 127 +++++++++++++--------------------------------------
+ 1 file changed, 32 insertions(+), 95 deletions(-)
 
 diff --git a/mm/mm_init.c b/mm/mm_init.c
-index e73f313dc375..57b256ea9e6c 100644
+index 57b256ea9e6c..7e5e6984bb5d 100644
 --- a/mm/mm_init.c
 +++ b/mm/mm_init.c
-@@ -2179,12 +2179,10 @@ static int __init deferred_init_memmap(void *data)
- {
- 	pg_data_t *pgdat = data;
- 	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
--	unsigned long spfn = 0, epfn = 0;
--	unsigned long first_init_pfn, flags;
-+	int max_threads = deferred_page_init_max_threads(cpumask);
-+	unsigned long first_init_pfn, last_pfn, flags;
- 	unsigned long start = jiffies;
- 	struct zone *zone;
--	int max_threads;
--	u64 i = 0;
+@@ -2046,114 +2046,51 @@ static unsigned long __init deferred_init_pages(struct zone *zone,
+ }
  
- 	/* Bind memory initialisation thread to a local node if possible */
- 	if (!cpumask_empty(cpumask))
-@@ -2212,24 +2210,20 @@ static int __init deferred_init_memmap(void *data)
- 
- 	/* Only the highest zone is deferred */
- 	zone = pgdat->node_zones + pgdat->nr_zones - 1;
+ /*
+- * This function is meant to pre-load the iterator for the zone init from
+- * a given point.
+- * Specifically it walks through the ranges starting with initial index
+- * passed to it until we are caught up to the first_init_pfn value and
+- * exits there. If we never encounter the value we return false indicating
+- * there are no valid ranges left.
+- */
+-static bool __init
+-deferred_init_mem_pfn_range_in_zone(u64 *i, struct zone *zone,
+-				    unsigned long *spfn, unsigned long *epfn,
+-				    unsigned long first_init_pfn)
+-{
+-	u64 j = *i;
 -
--	max_threads = deferred_page_init_max_threads(cpumask);
+-	if (j == 0)
+-		__next_mem_pfn_range_in_zone(&j, zone, spfn, epfn);
 -
--	while (deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn, first_init_pfn)) {
--		first_init_pfn = ALIGN(epfn, PAGES_PER_SECTION);
--		struct padata_mt_job job = {
--			.thread_fn   = deferred_init_memmap_job,
--			.fn_arg      = zone,
--			.start       = spfn,
--			.size        = first_init_pfn - spfn,
--			.align       = PAGES_PER_SECTION,
--			.min_chunk   = PAGES_PER_SECTION,
--			.max_threads = max_threads,
--			.numa_aware  = false,
--		};
--
--		padata_do_multithreaded(&job);
+-	/*
+-	 * Start out by walking through the ranges in this zone that have
+-	 * already been initialized. We don't need to do anything with them
+-	 * so we just need to flush them out of the system.
+-	 */
+-	for_each_free_mem_pfn_range_in_zone_from(j, zone, spfn, epfn) {
+-		if (*epfn <= first_init_pfn)
+-			continue;
+-		if (*spfn < first_init_pfn)
+-			*spfn = first_init_pfn;
+-		*i = j;
+-		return true;
 -	}
-+	last_pfn = SECTION_ALIGN_UP(zone_end_pfn(zone));
-+
-+	struct padata_mt_job job = {
-+		.thread_fn   = deferred_init_memmap_job,
-+		.fn_arg      = zone,
-+		.start       = first_init_pfn,
-+		.size        = last_pfn - first_init_pfn,
-+		.align       = PAGES_PER_SECTION,
-+		.min_chunk   = PAGES_PER_SECTION,
-+		.max_threads = max_threads,
-+		.numa_aware  = false,
-+	};
-+
-+	padata_do_multithreaded(&job);
+-
+-	return false;
+-}
+-
+-/*
+- * Initialize and free pages. We do it in two loops: first we initialize
+- * struct page, then free to buddy allocator, because while we are
+- * freeing pages we can access pages that are ahead (computing buddy
+- * page in __free_one_page()).
++ * Initialize and free pages.
++ *
++ * At this point reserved pages and struct pages that correspond to holes in
++ * memblock.memory are already intialized so every free range has a valid
++ * memory map around it.
++ * This ensures that access of pages that are ahead of the range being
++ * initialized (computing buddy page in __free_one_page()) always reads a valid
++ * struct page.
+  *
+- * In order to try and keep some memory in the cache we have the loop
+- * broken along max page order boundaries. This way we will not cause
+- * any issues with the buddy page computation.
++ * In order to try and improve CPU cache locality we have the loop broken along
++ * max page order boundaries.
+  */
+ static unsigned long __init
+-deferred_init_maxorder(u64 *i, struct zone *zone, unsigned long *start_pfn,
+-		       unsigned long *end_pfn)
++deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
++			   struct zone *zone)
+ {
+-	unsigned long mo_pfn = ALIGN(*start_pfn + 1, MAX_ORDER_NR_PAGES);
+-	unsigned long spfn = *start_pfn, epfn = *end_pfn;
++	int nid = zone_to_nid(zone);
+ 	unsigned long nr_pages = 0;
+-	u64 j = *i;
+-
+-	/* First we loop through and initialize the page values */
+-	for_each_free_mem_pfn_range_in_zone_from(j, zone, start_pfn, end_pfn) {
+-		unsigned long t;
+-
+-		if (mo_pfn <= *start_pfn)
+-			break;
+-
+-		t = min(mo_pfn, *end_pfn);
+-		nr_pages += deferred_init_pages(zone, *start_pfn, t);
+-
+-		if (mo_pfn < *end_pfn) {
+-			*start_pfn = mo_pfn;
+-			break;
+-		}
+-	}
+-
+-	/* Reset values and now loop through freeing pages as needed */
+-	swap(j, *i);
++	phys_addr_t start, end;
++	u64 i = 0;
  
- 	/* Sanity check that the next zone really is unpopulated */
- 	WARN_ON(pgdat->nr_zones < MAX_NR_ZONES && populated_zone(++zone));
+-	for_each_free_mem_pfn_range_in_zone_from(j, zone, &spfn, &epfn) {
+-		unsigned long t;
++	for_each_free_mem_range(i, nid, 0, &start, &end, NULL) {
++		unsigned long spfn = PFN_UP(start);
++		unsigned long epfn = PFN_DOWN(end);
+ 
+-		if (mo_pfn <= spfn)
++		if (spfn >= end_pfn)
+ 			break;
+ 
+-		t = min(mo_pfn, epfn);
+-		deferred_free_pages(spfn, t - spfn);
++		spfn = max(spfn, start_pfn);
++		epfn = min(epfn, end_pfn);
+ 
+-		if (mo_pfn <= epfn)
+-			break;
+-	}
++		while (spfn < epfn) {
++			unsigned long mo_pfn = ALIGN(spfn + 1, MAX_ORDER_NR_PAGES);
++			unsigned long chunk_end = min(mo_pfn, epfn);
+ 
+-	return nr_pages;
+-}
+-
+-static unsigned long __init
+-deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
+-			   struct zone *zone)
+-{
+-	unsigned long nr_pages = 0;
+-	unsigned long spfn, epfn;
+-	u64 i = 0;
++			nr_pages += deferred_init_pages(zone, spfn, chunk_end);
++			deferred_free_pages(spfn, chunk_end - spfn);
+ 
+-	deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn, start_pfn);
++			spfn = chunk_end;
+ 
+-	/*
+-	 * Initialize and free pages in MAX_PAGE_ORDER sized increments so that
+-	 * we can avoid introducing any issues with the buddy allocator.
+-	 */
+-	while (spfn < end_pfn) {
+-		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
+-		if (irqs_disabled())
+-			touch_nmi_watchdog();
+-		else
+-			cond_resched();
++			if (irqs_disabled())
++				touch_nmi_watchdog();
++			else
++				cond_resched();
++		}
+ 	}
+ 
+ 	return nr_pages;
 -- 
 2.50.1
 
