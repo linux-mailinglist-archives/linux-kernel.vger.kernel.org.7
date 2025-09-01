@@ -1,153 +1,238 @@
-Return-Path: <linux-kernel+bounces-793970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BEB3DAFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:27:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D862B3DAFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62207189BA3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:28:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766CA7AC553
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179CF26B771;
-	Mon,  1 Sep 2025 07:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414C726B0A9;
+	Mon,  1 Sep 2025 07:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVC5DeR+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PkXND/HT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A597F26B76C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516351E5219
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756711666; cv=none; b=ualFsBUP3FNg1/xXFHzfwQoPFg+6+4v+y6wYbK2dJTxeZp3jdrsxe5QzFsvkaPjYToFqrBWYL6/YAJqkLD+40CRr29F4ZjLWJjwGra7gv+Y5lIROYLiMLX5MlEnmtjaTIwqD0SDfi7oRTi5J3j5n3HcmoO/CGU4jKg1RBSQIEoY=
+	t=1756711650; cv=none; b=FhLqPGuK/K6Bc6A19fHAKrIhXj+TXZY39T08xSN/BfBSH1B8oMm7FgetaJ6tqRv0p2xy2QSB8cnR7fsWv/ApHJtqdzRR0hZvxN5ps59eBkLI3Mwu6rSD9/ebeY+QRtB2Hx6MN7SWuURC0vz6YXqUb8vKCQKGGVXVGh6mWL/U5Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756711666; c=relaxed/simple;
-	bh=rCQntznBOWf2Inr+Q/6BajRWkn60e+i2NmXc+MaYtyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p8XK8omKpmaUxYKde6tvcnDsyvlvTYTaJUfPoa4PspaVKv6MArOtW5j+UmPERIZfxkUFQiT4DC+dYldqp/epTnZaLSX0aTIuY/vTUtmgiatQkQfY/FQ3plyOKDTKaSmeEVT90Iou0CrEDwGqpkPKLqp78aTNW3Ljo5fj25G23aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EVC5DeR+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756711663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSUiWIPMhwHs96b7ABTVTbCkzVoFmMpEwSL1Ss/Y85c=;
-	b=EVC5DeR+xRGQwqIEkplYtXVFa78/CW9uNjAd7MUo3iXVstT7jM/rCRCLZyAjHWynUhW4I1
-	XmMgDpApMt4v8j+dQ4rEG/oRabynH/qs9nvndrHYbOQ+i/vima2/90KCZ5fQdRkHQKOeeg
-	Id+tHCsoDjXUwpIi7v5Fl5BapyF8mlw=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-d92zZfCSMUe9MuGbmTZdNw-1; Mon, 01 Sep 2025 03:27:41 -0400
-X-MC-Unique: d92zZfCSMUe9MuGbmTZdNw-1
-X-Mimecast-MFC-AGG-ID: d92zZfCSMUe9MuGbmTZdNw_1756711661
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4c928089fdso4324722a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:27:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756711661; x=1757316461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JSUiWIPMhwHs96b7ABTVTbCkzVoFmMpEwSL1Ss/Y85c=;
-        b=h5LjpB/0FMBiGKoBP6BKPf85m+sAm3Kwbp2Va+nEh1iZQ3sywBVW6mBshkY/Cje1hp
-         m8xxNWqQHxANvis3FuJBXa7YlSDYIRhT/in6h6VE3T12x3nKzRx2nQb9cMNgYJCiG32V
-         vsTV2djI22C/eU2SqLiEX03BUYq33EHQDS5aRBz/Li5lPUIADmBUpQYlzAQzr69IQfKa
-         6jJrur5q3N4KMrYztQM2o598Z0i6PVi9X6l09q905HaPxRKxqozByKPs/NbcnW8GK5US
-         Nt8DIlXajUh7o7txaYVaROOLHyrpHu4IkyHVP3LvAvVX3U5vJw5c29qWwhd/DMLq/a/0
-         SCqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUjlnmkWH7ZBG+gXw0fmLj/P6Q82DX0/+D7LYbivEum4pCnVgiPnAkarcqXdb/NA2ShkXeajcjp6BqdKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBzu3ISKdKDfOEzU02JVMvs15EJQz11fzzlOYvOKyB4dGKXKYq
-	hkW6IPPCtNNXrlyOxigf+dvciQ1G9JnmmxTxJMmUBmDmeHR07iorEioaEOfSfeoLgixOceKMdKE
-	xIFo3s3l5jWj8VKx7PyxvEyZowoQR1k6+ZYh3kyHVLXApnpD5iXG17gkBn0NiYmr2+qxEmIOnJl
-	8mY5iykydzF1UY95e7YcmCyOgpEc0lfJUWzLPDg3H2
-X-Gm-Gg: ASbGnctwIbtkvdsnPMhKQI5bT8V8NEOX3Npp8B+wP/c4V/JnmIj4M39U80hFrwmVFFQ
-	idtICvoWin/extmUhKNlXu6BYTNztQM/FS0HySZdeIBuzjyQAur/wki5uLIA+60cgupNmHB36T3
-	NNWMWPqVcMJHiLk6IBmvc=
-X-Received: by 2002:a05:6a20:3d82:b0:243:a3a1:9d96 with SMTP id adf61e73a8af0-243d6dd4f41mr9903704637.6.1756711660941;
-        Mon, 01 Sep 2025 00:27:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJtQGCGbWY0bZdwpI+00f79bdidShp27UJNhnAdSujPUnIi4MoiPXZPPtyTIJ4UkjyEYRD082Miv9aaGATcW4=
-X-Received: by 2002:a05:6a20:3d82:b0:243:a3a1:9d96 with SMTP id
- adf61e73a8af0-243d6dd4f41mr9903675637.6.1756711660568; Mon, 01 Sep 2025
- 00:27:40 -0700 (PDT)
+	s=arc-20240116; t=1756711650; c=relaxed/simple;
+	bh=LAcnBodV1W8hZWleUCLeTPPUE98/reb7yOHhqiqbJ/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W71z6s/H6DTf86LGJxMuA+GsNuTVAJCbDs89kOoM1hHirLb43UNjehatUXeKEO9xsYJDWZF9iEQwRjO0xfzWldsoroDWfybdjbQcIkFBgsYrt+ZreE8FoID6Rnexi4T2NzZuno3+IgrnSct9OjU8T7oVK7GP6YS9cnJ5kJyhBtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PkXND/HT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756711640;
+	bh=LAcnBodV1W8hZWleUCLeTPPUE98/reb7yOHhqiqbJ/o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PkXND/HTsf7p4+y9DgvDdRKdN+1KRkjeu9YmiGWIuA9Nf/JY5F5STyeFZi0PDhPx+
+	 6/nU0K/k6OvH0HbhdJT0tokmcCsbcXTFa9QxsDY+oXD+v4e7Pa/p0xr6z0SHeJxqdt
+	 4fKrV0qXyABD6VcX0vEIciiLc5UEPOeli0mpeEp+uEi5gm3bcsW/p691lPCqjXKAEP
+	 ZXxIOxX4Dy12e8CbBWiSp8hAWXdVI57gkuBc6v2FjqeO/30lJS85ov0UibWMQ2hQzz
+	 4zxgO2UJzERxC0drlt2hb+2wo45eSCFW+N3AkNtFe4ByPIc/g2VtCNzYcbASqVcxZz
+	 lMxmlYX78R0Aw==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EDF2617E0FDB;
+	Mon,  1 Sep 2025 09:27:19 +0200 (CEST)
+Date: Mon, 1 Sep 2025 09:27:11 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: assign unique names to queues
+Message-ID: <20250901092711.15832cfe@fedora>
+In-Reply-To: <20250829230251.3095911-1-olvaffe@gmail.com>
+References: <20250829230251.3095911-1-olvaffe@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-4-eperezma@redhat.com>
- <CACGkMEvUQeA8bgvMthjSAa4u0o3u7Sq3PDoRXTADa9e=c8G7uw@mail.gmail.com>
-In-Reply-To: <CACGkMEvUQeA8bgvMthjSAa4u0o3u7Sq3PDoRXTADa9e=c8G7uw@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Mon, 1 Sep 2025 09:27:03 +0200
-X-Gm-Features: Ac12FXwi-r7BfyYjc6Q_xkFKdMIpOyNdxDR-K3Gu6jhRooSOBB_LbDXz5uoGhI8
-Message-ID: <CAJaqyWeNhEFK9Fh53sTNUENQqZJbeX1oiFc4AaSPDXtE0hNYFA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] vduse: return internal vq group struct as map token
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 1, 2025 at 4:26=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > Return the internal struct that represents the vq group as virtqueue ma=
-p
-> > token, instead of the device.  This allows the map functions to access
-> > the information per group.
-> >
-> > At this moment all the virtqueues share the same vq group, that only
-> > can point to ASID 0.  This change prepares the infrastructure for actua=
-l
-> > per-group address space handling
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> > v3:
-> > * Make the vq groups a dynamic array to support an arbitrary number of
-> >   them.
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 52 ++++++++++++++++++++++++------
-> >  include/linux/virtio.h             |  6 ++--
-> >  2 files changed, 46 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 0f4e36dd167e..cdb3dc2b5e3f 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/uio.h>
-> >  #include <linux/vdpa.h>
-> >  #include <linux/nospec.h>
-> > +#include <linux/virtio.h>
-> >  #include <linux/vmalloc.h>
-> >  #include <linux/sched/mm.h>
-> >  #include <uapi/linux/vduse.h>
-> > @@ -84,6 +85,10 @@ struct vduse_umem {
-> >         struct mm_struct *mm;
-> >  };
-> >
-> > +struct vduse_vq_group_int {
-> > +       struct vduse_dev *dev;
-> > +};
->
-> Nit: I don't get the meaning of the "int" suffix.
->
+On Fri, 29 Aug 2025 16:02:50 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-It means "internal", but I don't think it is a great name so I'm ok
-with changing it.
+> Userspace relies on the ring field of gpu_scheduler tracepoints to
+> identify a drm_gpu_scheduler.  The value of the ring field is taken from
+> sched->name.
+> 
+> Because we typically have multiple schedulers running in parallel in
+> each process, assign unique names to schedulers such that userspace can
+> distinguish them.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> 
+> ---
+> 
+> v2:
+>  - include drm_client_id in the name to be truly unique
+>  - remove unnecessary NULL in drm_sched_init_args initialization
+>  - reformat to column width 100
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c   |  2 +-
+>  drivers/gpu/drm/panthor/panthor_sched.c | 32 +++++++++++++++++--------
+>  drivers/gpu/drm/panthor/panthor_sched.h |  3 ++-
+>  3 files changed, 25 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 9256806eb6623..be962b1387f03 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1105,7 +1105,7 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+>  	if (ret)
+>  		goto out;
+>  
+> -	ret = panthor_group_create(pfile, args, queue_args);
+> +	ret = panthor_group_create(pfile, args, queue_args, file->client_id);
+
+Hm, maybe it's time we start passing drm_file instead of panthor_file
+to limit the number of arguments, but I guess this can be done in a
+follow-up patch.
+
+>  	if (ret < 0)
+>  		goto out;
+>  	args->group_handle = ret;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index ba5dc3e443d9c..62f17476e5852 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -360,6 +360,9 @@ struct panthor_queue {
+>  	/** @entity: DRM scheduling entity used for this queue. */
+>  	struct drm_sched_entity entity;
+>  
+> +	/** @name: DRM scheduler name for this queue. */
+> +	char name[32];
+
+The base string ("panthor-queue---") is already 16 characters. You then
+have a group ID that's below 128 IIRC, and a queue ID that's no more
+than 15, so that's 5 more chars. This leaves you 10 chars for the
+client ID (theoretically a 64-bit integer). I know the logic is sane
+because you truncate the string, but I'm wondering if we shouldn't make
+this string bigger to cover the theoretical max client_id, or simply
+dynamically allocate it (kasprintf()), so we don't have to think about
+it if we end up adding more stuff to the string.
+
+> +
+>  	/**
+>  	 * @remaining_time: Time remaining before the job timeout expires.
+>  	 *
+> @@ -3308,9 +3311,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>  
+>  static struct panthor_queue *
+>  group_create_queue(struct panthor_group *group,
+> -		   const struct drm_panthor_queue_create *args)
+> +		   const struct drm_panthor_queue_create *args,
+> +		   u64 drm_client_id, u32 gid, u32 qid)
+>  {
+> -	const struct drm_sched_init_args sched_args = {
+> +	struct drm_sched_init_args sched_args = {
+>  		.ops = &panthor_queue_sched_ops,
+>  		.submit_wq = group->ptdev->scheduler->wq,
+>  		.num_rqs = 1,
+> @@ -3323,7 +3327,6 @@ group_create_queue(struct panthor_group *group,
+>  		.credit_limit = args->ringbuf_size / sizeof(u64),
+>  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+>  		.timeout_wq = group->ptdev->reset.wq,
+> -		.name = "panthor-queue",
+>  		.dev = group->ptdev->base.dev,
+>  	};
+>  	struct drm_gpu_scheduler *drm_sched;
+> @@ -3398,6 +3401,11 @@ group_create_queue(struct panthor_group *group,
+>  	if (ret)
+>  		goto err_free_queue;
+>  
+> +	/* assign a unique name */
+> +	snprintf(queue->name, sizeof(queue->name), "panthor-queue-%llu-%u-%u",
+> +		 drm_client_id, gid, qid);
+> +	sched_args.name = queue->name;
+> +
+>  	ret = drm_sched_init(&queue->scheduler, &sched_args);
+>  	if (ret)
+>  		goto err_free_queue;
+> @@ -3447,7 +3455,8 @@ static void add_group_kbo_sizes(struct panthor_device *ptdev,
+>  
+>  int panthor_group_create(struct panthor_file *pfile,
+>  			 const struct drm_panthor_group_create *group_args,
+> -			 const struct drm_panthor_queue_create *queue_args)
+> +			 const struct drm_panthor_queue_create *queue_args,
+> +			 u64 drm_client_id)
+>  {
+>  	struct panthor_device *ptdev = pfile->ptdev;
+>  	struct panthor_group_pool *gpool = pfile->groups;
+> @@ -3540,12 +3549,16 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	memset(group->syncobjs->kmap, 0,
+>  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
+>  
+> +	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> +	if (ret)
+> +		goto err_put_group;
+> +
+>  	for (i = 0; i < group_args->queues.count; i++) {
+> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
+> +		group->queues[i] = group_create_queue(group, &queue_args[i], drm_client_id, gid, i);
+>  		if (IS_ERR(group->queues[i])) {
+>  			ret = PTR_ERR(group->queues[i]);
+>  			group->queues[i] = NULL;
+> -			goto err_put_group;
+> +			goto err_erase_gid;
+>  		}
+>  
+>  		group->queue_count++;
+> @@ -3553,10 +3566,6 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
+>  
+> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
+> -	if (ret)
+> -		goto err_put_group;
+> -
+>  	mutex_lock(&sched->reset.lock);
+>  	if (atomic_read(&sched->reset.in_progress)) {
+>  		panthor_group_stop(group);
+> @@ -3575,6 +3584,9 @@ int panthor_group_create(struct panthor_file *pfile,
+>  
+>  	return gid;
+>  
+> +err_erase_gid:
+> +	xa_erase(&gpool->xa, gid);
+> +
+>  err_put_group:
+>  	group_put(group);
+>  	return ret;
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
+> index 742b0b4ff3a3c..f4a475aa34c0a 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.h
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
+> @@ -21,7 +21,8 @@ struct panthor_job;
+>  
+>  int panthor_group_create(struct panthor_file *pfile,
+>  			 const struct drm_panthor_group_create *group_args,
+> -			 const struct drm_panthor_queue_create *queue_args);
+> +			 const struct drm_panthor_queue_create *queue_args,
+> +			 u64 drm_client_id);
+>  int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle);
+>  int panthor_group_get_state(struct panthor_file *pfile,
+>  			    struct drm_panthor_group_get_state *get_state);
 
 
