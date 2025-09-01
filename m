@@ -1,146 +1,101 @@
-Return-Path: <linux-kernel+bounces-794328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A732B3E00E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4982B3E013
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581E417EBD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30EA18908DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A2B30E82D;
-	Mon,  1 Sep 2025 10:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5404830F554;
+	Mon,  1 Sep 2025 10:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="MEkLwsit"
-Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9iepLqj"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205A32F5484;
-	Mon,  1 Sep 2025 10:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2702130BF7F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722288; cv=none; b=I2xmjTa+2yoO/olSl5AMUKTrkPqjvHrEuQdZ9693AY2hKYORSBPjhy1rDXbtKzyk0zPRk9A4R9S5B/fv8iZiD9y5GsDUa+UG2gt/jR4Cad8ZIPBixRjij3R9Z0pULcyftaNhoesSnQxgEDTLe3fHLJgpdkaHbU+s8m3wpSD+pvY=
+	t=1756722303; cv=none; b=M1ZamnsgNwzisBSiEhq8ikfXayGFK9Iniv0VubXCbsBFvkKNd0m0YUG8gxvYxsAH1ZPJ4l1z1puJhg2f5flpflAvS+Q/Ojl6oOFPEHgxKP5wJ8hKJCzNfqPqSn3AhwY0HM6IJ/6gwTUrjuVXVu/FUrGUs4ZvSJ7aAuuHwmKk/cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722288; c=relaxed/simple;
-	bh=u7YCD9fr0ldbGVoQNxWglQgoPoPk6uWhscfR4YAgSE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JoYPJBMMLUSfkVR3a29ilEbsba7/pZVULyya2BqI1Z1qHlf3GGSgLL+gu83O5ZpWmFRAXL0tJZw5eupFzvpYGTJqTHIDINLvuobsXgMOikKTqRURprpBau0+4NKk0IxDPrTa6M8FFZt0MHcbbEmCxisoXiqJzaIqc4bAbiphnTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=MEkLwsit; arc=none smtp.client-ip=209.222.21.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
-	s=default; t=1756722278;
-	bh=u7YCD9fr0ldbGVoQNxWglQgoPoPk6uWhscfR4YAgSE4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MEkLwsitD11xl2cD3/PnCGFmrbkuPWWYg4uyCHww4j27rrZgEcRG4VFMr+pv2ypYA
-	 VSRMs4cWKiZhYipgzNh+khUe1OTde+q8WVLOTwD+ZANLp53bn7pyUpt6JuWozpiCIo
-	 vD1TmzSPwLH9QsS3oJAGZh5EDylfAZuEVDFYobhliLoTJ0jbMUSi9BG3LBaYOOhbLZ
-	 sjPu1leMqMcNo5Y3NsHUMs2OoVDlB5SlhozYqdP0vxsT6wEtyDMON2R+sm8kqq3mlR
-	 1HOEdvMUQbNwqq10W2tLiLDfCt62c/pWcRnocMNwU++Fzmqsov5d1zLYHnEmMYv/BE
-	 WRqoXtBZ9waRQ==
-Received: from WahpenayoPeak.tahoma.link (unknown [IPv6:2600:4040:50be:5a04:19eb:3ff6:89a2:9ef0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by chumsalmon.baetis.net (Postfix) with ESMTPSA id A49DF27E468;
-	Mon,  1 Sep 2025 10:24:38 +0000 (UTC)
-Date: Mon, 1 Sep 2025 06:24:37 -0400
-From: Erik Beck <xunil@tahomasoft.com>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Andrew
- Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add HINLINK H68K
-Message-ID: <20250901062437.780cc71a.xunil@tahomasoft.com>
-In-Reply-To: <20250901070008.68662-1-amadeus@jmu.edu.cn>
-References: <20250830171409.592c1f63.xunil@tahomasoft.com>
-	<20250901070008.68662-1-amadeus@jmu.edu.cn>
-Organization: Tahoma Soft
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756722303; c=relaxed/simple;
+	bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OguZ+pgbzhbPkY2UCISIPhI8O/TrTAJzoHxJ1pWXVoVsf+hGB8hJDFeK0e/r//cHnOzf4Mzi+cJyhXSqHNZJpzFbWNYTiO9uKMKW17WNcr6QE+C9fc/EdwTym9brE5fb1S0pMFq7MVlmee+nm+Vuxo8k8SSpAFPgR/jYMRCcsC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9iepLqj; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3cef6debedcso1771759f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756722299; x=1757327099; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
+        b=m9iepLqj1IbnnI64M41hS7psoA8qRIDcO2r50ehlPJxnb1pNueFmpG0kpOMOfFcav8
+         skzTcnO7NSEKeuJRVsKPqOkDdu8jtE0oEkgBVRgDkmcssJXqGqZecop7kfDhBQgjkWSd
+         +D0JM+DgF1+4wQZFrBiBBLrCs69j9KwrUBXvrFEx5CDAn+39IeH3f+SlBB9FGLxCIqtt
+         duIb//Xz8Qwe37OlNUUhWS6a0atK367vob1Qw9+EqI5Hte8gOlG73JCNEdGvJljc6juM
+         FRzzIqXS177oFetVeZB4eHA9xm52w8og+sHRqMB0XVgI5SNUaNDn4QUGOoTIdOTYR4Ka
+         frkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756722299; x=1757327099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3G7Ld1qpychcmtTgTNSsdZQiAfnbhqLqy04YO6fvdYc=;
+        b=IQtlrEJs5Mt8Ghz1n5vHKKzNiKihAxeFf+sg+ZMBDDiPqDWnA+05LOA5thHjY/rVwG
+         frvZ210cTA1ZGFUkNPojDGZpTRmApiKdrxlNoFveFm/pCItQjEN5PPzviR/p8B6amyXa
+         T88/FtgE9Mchnbuj05txjHlSrZ/CKa1TBERfOEbt+wyrTMj44K105vAxdMtI+TY9vJ0O
+         vAHf9g3TqxWo1TnG3XUcVD+8OUz6J+j0C0fMIwrkWKCcjvFu3rBGLRDPQKX+D+VT/rzb
+         QMAYNag21CPqts13Cx8xB1TvOJRUQcULPM1Of8LT1TmWt4uxkOATGcEhVOiFuunoCpRp
+         Dhqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWn4NXYkRcQLSAI3AVPUJam3IchxBfZQML81r2RVKm2xCoRiL3gQVhgja6Yr04ZtIVyP9M20+9RjqAZzPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaQwEbltuGHbbQcTDwSM6IYMpIqmS3fNGmpuz2eUf61LTVvA5X
+	WSx8ymTWNYf9CCilJo665kFP94coLsGvVel+pMcy9K8gd3BzXweB6RETmqL8ep1tZKA=
+X-Gm-Gg: ASbGnctkVu1lVxwpEdE26YCfO+GTIhF7Wb7eNaScXKz0Szs+jKmBR7w5iiz5G0/jD/N
+	Kr2QKtaxbYua2EaNIWrxQSqx2Ym+2VDWvsJRmQhMMFs2+tAoJQtl83hEiz9ovx3AaD2/6w6EztO
+	9oiJAt5eRSXuHFxyBYXoLKoESOiO7mrvJAVQ37h9rCmQNI6o1AQ9kwb+Ue9zPmyaYL7bImQGxkh
+	e7RFz6/ei/7BluoAyBMMx1EL3uzN4jC52Q83TTXUuTHc4NHScsfy9dEEUEM0eQguQjTdLgBGwGz
+	cjavQImBYE9SvdmwhWDD+Y1WSvPfBrazeHkRRPpZxVDywDJCHE7ripR4+bsXseKsh80q3uN7AH9
+	436afgKAARmAL5ZBuQDKqSgr3NItIdk3trL9FvA==
+X-Google-Smtp-Source: AGHT+IEec6vgPDcCrTDqOTyHepBVzBKIfJKmIoOvk/faBhoaRvzUBEt6+Jlp+ejld3jTxV+5QEbZEg==
+X-Received: by 2002:a05:6000:1ace:b0:3c4:497f:ecd0 with SMTP id ffacd0b85a97d-3d1de4ba70dmr4550881f8f.31.1756722299510;
+        Mon, 01 Sep 2025 03:24:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf275d2717sm14784721f8f.15.2025.09.01.03.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 03:24:58 -0700 (PDT)
+Date: Mon, 1 Sep 2025 13:24:55 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v3] staging: iio: adc: ad7816: add mutex to serialize
+ SPI/GPIO operations
+Message-ID: <aLV0d9sLbVRZdozH@stanley.mountain>
+References: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901073750.22687-1-moahmmad.hosseinii@gmail.com>
 
-On Mon,  1 Sep 2025 15:00:08 +0800
-Chukun Pan <amadeus@jmu.edu.cn> wrote:
+Please wait a day between resends to allow everyone to review the patch.
+Same comments apply as to v2.
 
-> Hi,
-> 
-> > Please change phy-mode here to "rgmii". This change will yield an
-> > ethernet speed throughput change of a factor of 100+.   
-> 
-> > Same as above: Please change phy-mode here to "rgmii". This change
-> > will yield an ethernet speed throughput change of a factor of 100+.   
-> 
-> This doesn't make sense. When I first submitted it to coolsnowwolf/lede
-> in 2022, I used "rgmii-id" as the phy-mode, and it worked:
-> https://github.com/coolsnowwolf/lede/blob/master/target/linux/rockchip/files/arch/arm64/boot/dts/rockchip/rk3568-opc-h68k.dts#L24
-> 
-> Are you experiencing issues with both eth0 and eth1 or just one of them?
-> Are you using the generic-rk3568 target for U-Boot?
-> 
-
-Hi Chukun, thanks for your response. 
-
-At Andrew Lunn's suggestion, I'm doing
-more granular and rigorous testing, now using iperf3. I'll post more details
-of results here after I retest a couple of scenarios. 
-
-However, I will report now that so far, I'm getting better (faster) and more
-consistent results using iperf3.
-
-~Erik
-
-> I can't reproduce your problem in my test.
-> 
-> eth0/gmac1 (as lan):
-> root@OpenWrt:~# iperf3 -c 192.168.1.100
-> Connecting to host 192.168.1.100, port 5201
-> [ ID] Interval           Transfer     Bitrate         Retr
-> [  5]   0.00-10.00  sec  1.10 GBytes   942 Mbits/sec   29            sender
-> [  5]   0.00-10.04  sec  1.10 GBytes   936 Mbits/sec
-> receiver
-> 
-> root@OpenWrt:~# iperf3 -c 192.168.1.100 -R
-> Connecting to host 192.168.1.100, port 5201
-> Reverse mode, remote host 192.168.1.100 is sending
-> [ ID] Interval           Transfer     Bitrate         Retr
-> [  5]   0.00-10.04  sec  1.10 GBytes   939 Mbits/sec    1            sender
-> [  5]   0.00-10.00  sec  1.10 GBytes   941 Mbits/sec
-> receiver
-> 
-> eth1/gmac0 (as wan):
-> root@OpenWrt:~# iperf3 -c 192.168.0.2 -P 4
-> Connecting to host 192.168.0.2, port 5201
-> [ ID] Interval           Transfer     Bitrate         Retr
-> [SUM]   0.00-10.00  sec  1.10 GBytes   945 Mbits/sec  1191
-> sender [SUM]   0.00-10.05  sec  1.09 GBytes   935 Mbits/sec
->  receiver
-> 
-> root@OpenWrt:~# iperf3 -c 192.168.0.2 -R
-> Connecting to host 192.168.0.2, port 5201
-> Reverse mode, remote host 192.168.0.2 is sending
-> [ ID] Interval           Transfer     Bitrate         Retr
-> [  5]   0.00-10.06  sec  1.10 GBytes   939 Mbits/sec    6            sender
-> [  5]   0.00-10.00  sec  1.10 GBytes   941 Mbits/sec
-> receiver
-> 
-> --
-> 2.25.1
-> 
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+regards,
+dan carpenter
 
 
