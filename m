@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-795252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01922B3EED2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:50:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B73B3EEDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D182C0D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:50:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFC44E0120
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41A9338F5F;
-	Mon,  1 Sep 2025 19:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C9B343D6D;
+	Mon,  1 Sep 2025 19:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="2XRtVlFz"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meJ89MjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ED626E6FA;
-	Mon,  1 Sep 2025 19:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A741E343210;
+	Mon,  1 Sep 2025 19:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756756087; cv=none; b=TYSIXjGQba8PrxHVckGKamR09KvM7Z35qvCPjMNv/fWYAUdgJD6MnBOCmnRxk107ETin5aPqpLX/XU/Cw9+swxUwn/ktHvYr52WlzEV7qvqYqO5B2g39MOmbu122RMpCapd/j7wjeAjk+mxk7IreYSkmnyoO4h4XBxPbl9DYcDg=
+	t=1756756090; cv=none; b=QI5KR0LrfV7Mcn9B6wFsVD6lDrP47nchPHVj0TpbLenxAaqjucbmJs/y1WkFYPURQNrmESlMIuJnSj+DkWNqFSIjDfVsNLoroYrg7tTKxrjjCjO+pQUVOK0bSQDOsqTo5mX1W6GW7F5hItj72h3JWWcKxFqJtK+wZ0FJfMOZc1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756756087; c=relaxed/simple;
-	bh=MD4HCwUvfIvFN3UNE2WLqBZ2S3b0H6JiK7ZpEnzQ2RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XXOZhrNNXjV12IbQp/rsaF/w4WpLD33XJLE20PU3cBO1vug2qJLk0TBL1dKzJ2gPVeJtkIfzOGa8WnOJr0gg6pmob2E2QHKRXDKfB8b6eQg89ve+VaXYcoJ1TeAlb7rHxjYUHa2ltgugPALpgkiWz8qz50Lm6+Ur0FBdoEffoMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=2XRtVlFz; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from localhost.localdomain (unknown [IPv6:2a02:2f0e:3503:4a00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id BDC4E173BF2;
-	Mon, 01 Sep 2025 22:47:57 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1756756077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=avicqrcP2k3aEOHhJaiNrVBkKGWsrB69WBiLZbLF7IY=;
-	b=2XRtVlFzZ7FuwhCqcD1KJRDm5ckTeAgWiL3/Ts2qejB6t4QX6Nt28i3oQNr44d69+/beVB
-	I3KcIkCI+Xgx3l9rRSgEtQMA9sES9ThYx0W9dC7AU0uvcX8ob8oJGqT9RHZ368FRQLGwb0
-	Kvl6HYTIz1r6J0DtteiVX6ur/g5z03qpmUnYOYbi9ZIwz5WCDO7vk2rrnFKRX+FVrCCq8v
-	S26mo5X6e6iCaF7wpwRD7fEx4mKhYCleIGxAN12NowuY4FncZWAhy8angQ/v+DIdgB8lMV
-	C9ehWfEm9zqgJPo7TIeCd2QTtKG4wLqvpIm36gzGzRhJYlLfzhu+CqdqnUkW2w==
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Petre Rodan <petre.rodan@subdimension.ro>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH 10/10] iio: accel: BMA220 add maintainer
-Date: Mon,  1 Sep 2025 22:47:36 +0300
-Message-ID: <20250901194742.11599-11-petre.rodan@subdimension.ro>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250901194742.11599-1-petre.rodan@subdimension.ro>
-References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+	s=arc-20240116; t=1756756090; c=relaxed/simple;
+	bh=DGZHTkJldzUyQjKeR9Fu5h08ChhZavUznUG/ig7/IXI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y9WsvSwSKQqIEe1qriFmV5aq7JqeChh8nk4YLuDsDiZEfyfFw7h3wS1D8y6W+9tdoac/app9EUivfHTqSw+f472CCLwK2kZsG7FmH/c1Wfgncg4ENyyGlDVeLAdP6ICr3VS7/yXwr1upIqBbDX7JHIEiITvjiTjiRBkasV52rBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meJ89MjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C585C4CEF7;
+	Mon,  1 Sep 2025 19:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756756090;
+	bh=DGZHTkJldzUyQjKeR9Fu5h08ChhZavUznUG/ig7/IXI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=meJ89MjBHaFLc7CJ9S+9ZYQHtM2CenKIIuAbVB2BqRNDMhzUNSiXJ2FkdoCdfkmV+
+	 Aea4Yqj5mZG/44mlICXAtpI7raYRQr88bSGNVB6Ooel1/7+aPfVXwf17tYL0Vzy/M9
+	 qp1AfQNwfOvHdUqc0ne5ZcY8Ka+uzty9vdk17h86JgMvWwudpmsbCB0RGihyGGTi85
+	 Xv7KYAs+VzVlnUjCW/v83qQEev7vIp+sfIVctMKuai4wedVLpzxDY03MWoRaV+AU6q
+	 js83ksSS7MX50rhswxIQZQpjpzh3i4Q+MXYSJwjCIv4Lp4l7/h9B2yCee6BaFbbL70
+	 8EzwMJLBHCj0w==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7456b27fac1so2013823a34.2;
+        Mon, 01 Sep 2025 12:48:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVye0F62ufKTDXLFVSRBhGqWAqmeLI7XrUEa6HMX6PkrAve/NalsoTH2iJQNeEeuo6dKa3p75z9@vger.kernel.org, AJvYcCX3GXW3e2h1aRIPMJoXAr+UlFbRVZTZGA9ozZZlgxXhdIowEfjUEl9FXkYr6RnCW8UxRloTVQO4B8I=@vger.kernel.org, AJvYcCXTAVPUwBgjmE1KYK8yniTrtxMDx5jqmidHXNW0QZSkaOu6Fzdr8ydoXSQkCTQKtc/61r2q+c6jS4PoUDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQSSADTovrHn2VHJXIrhb0cSoMnyNGq0ty3qDpHfr+uurIMHH0
+	oA+4yxSvhNE40G9lzscW/1xpWlMEmIky07gInn4SCkzj+8pMud8L44r6uzTT/NLhZ5hVkoQttc4
+	s2Pi1pHkbUzA8QV9r0dWKLyU/FHivprc=
+X-Google-Smtp-Source: AGHT+IFUMlmRkB0VAdqBqgHkiKH7N16/2Mtp7BjtUcoC9Ff2BlzVEjq1QWzxOnH23ztVsfzX9y7JNueDkmKcGIo+hMo=
+X-Received: by 2002:a05:6830:7010:b0:741:5d00:e86a with SMTP id
+ 46e09a7af769-74569dbdce6mr4573078a34.8.1756756089427; Mon, 01 Sep 2025
+ 12:48:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250831214357.2020076-1-christian.loehle@arm.com>
+ <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
+ <dd2e0cdd-ca95-4c83-9397-0606f3899799@arm.com> <CAJZ5v0jbOwH7T0StbjQLVeQiYhYU2EMCT+yp8jr8r0p4AwNgkw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jbOwH7T0StbjQLVeQiYhYU2EMCT+yp8jr8r0p4AwNgkw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Sep 2025 21:47:57 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gOuLJEPm_sG=4xOpqKJ2izY2pbLc7ROq70wvXgtb_m4A@mail.gmail.com>
+X-Gm-Features: Ac12FXzhuwiVzSIYKWcXfJbzb2NecGmZKKEToOtHf8uJwsUberAa5nVrgbkTFxs
+Message-ID: <CAJZ5v0gOuLJEPm_sG=4xOpqKJ2izY2pbLc7ROq70wvXgtb_m4A@mail.gmail.com>
+Subject: Re: [PATCH] PM: EM: Fix late boot with holes in CPU topology
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, 
+	kenneth.crudup@gmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add myself as maintainer of this driver.
+On Mon, Sep 1, 2025 at 7:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Mon, Sep 1, 2025 at 7:33=E2=80=AFPM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+> >
+> > On 9/1/25 17:58, Rafael J. Wysocki wrote:
+> > > On Sun, Aug 31, 2025 at 11:44=E2=80=AFPM Christian Loehle
+> > > <christian.loehle@arm.com> wrote:
+> > >>
+> > >> commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
+> > >> adjustment") added a mechanism to handle CPUs that come up late by
+> > >> retrying when any of the `cpufreq_cpu_get()` call fails.
+> > >>
+> > >> However, if there are holes in the CPU topology (offline CPUs, e.g.
+> > >> nosmt), the first missing CPU causes the loop to break, preventing
+> > >> subsequent online CPUs from being updated.
+> > >> Instead of aborting on the first missing CPU policy, loop through al=
+l
+> > >> and retry if any were missing.
+> > >>
+> > >> Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity=
+ adjustment")
+> > >> Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+> > >> Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+> > >> Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854=
+f72b8144d@panix.com/
+> > >> Cc: stable@vger.kernel.org
+> > >> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > >> ---
+> > >>  kernel/power/energy_model.c | 13 ++++++++-----
+> > >>  1 file changed, 8 insertions(+), 5 deletions(-)
+> > >>
+> > >> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model=
+.c
+> > >> index ea7995a25780..b63c2afc1379 100644
+> > >> --- a/kernel/power/energy_model.c
+> > >> +++ b/kernel/power/energy_model.c
+> > >> @@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
+> > >>  static void em_check_capacity_update(void)
+> > >>  {
+> > >>         cpumask_var_t cpu_done_mask;
+> > >> -       int cpu;
+> > >> +       int cpu, failed_cpus =3D 0;
+> > >>
+> > >>         if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
+> > >>                 pr_warn("no free memory\n");
+> > >> @@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
+> > >>
+> > >>                 policy =3D cpufreq_cpu_get(cpu);
+> > >>                 if (!policy) {
+> > >> -                       pr_debug("Accessing cpu%d policy failed\n", =
+cpu);
+> > >
+> > > I'm still quite unsure why you want to stop printing this message.  I=
+t
+> > > is kind of useful to know which policies have had to be retried, whil=
+e
+> > > printing the number of them really isn't particularly useful.  And
+> > > this is pr_debug(), so user selectable anyway.
+> > >
+> > > So I'm inclined to retain the line above and drop the new pr_debug() =
+below.
+> > >
+> > > Please let me know if this is a problem.
+> >
+> > For nosmt this leads to a lot of prints every seconds, that's all.
+> > I can resend with the pr_debug for every fail, alternatively print a
+> > cpumask.
+>
+> Printing a cpumask might be better, but it would add some complexity
+> only needed for the printing.
+>
+> Maybe it's just better to not print anything at all.
 
-Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+I've changed the patch to that effect and tentatively applied it, so
+no need to resend if you agree with this modification.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index af1c8d2bfb3d..dd94505fb9a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4402,6 +4402,13 @@ F:	include/net/bond*
- F:	include/uapi/linux/if_bonding.h
- F:	tools/testing/selftests/drivers/net/bonding/
-
-+BOSCH SENSORTEC BMA220 ACCELEROMETER IIO DRIVER
-+M:	Petre Rodan <petre.rodan@subdimension.ro>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/accel/bosch,bma220.yaml
-+F:	drivers/iio/accel/bma220*
-+
- BOSCH SENSORTEC BMA400 ACCELEROMETER IIO DRIVER
- M:	Dan Robertson <dan@dlrobertson.com>
- L:	linux-iio@vger.kernel.org
---
-2.49.1
-
+Thanks!
 
