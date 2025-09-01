@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-795101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE03B3ECD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:02:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A175B3ECDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39F0482756
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5D84828A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D643064BB;
-	Mon,  1 Sep 2025 17:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6527302CB4;
+	Mon,  1 Sep 2025 17:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rr6k88GV"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iy5EHgqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE2E2D5952;
-	Mon,  1 Sep 2025 17:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A2A32F777;
+	Mon,  1 Sep 2025 17:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746125; cv=none; b=PodBlS47HlxKvDfvZc6M38blKAczbXH5FkRcqWd6rWOGW/iyPAuZt09szC7fAjVa79c2lBGNTkFaYkQYfTqZh797TkN1XMmOGsAHJZpO3UUheUkXi4gIZVsSgfQkDsC7vAKeK1Feavjb4UbEui4OXnwN04LVcjP/gyfDRbjbEnY=
+	t=1756746178; cv=none; b=jAn+YXVC/6IrK3+bMo4UCTLJnIBy4809A3GLy7IqeXB9cneAknheWLskl1ZGmZtD0wV9S4qvn1j7JIWUgeC6DYtOS7RAiFKeljOBn09bzLQE2Z35uO4/ww6Skcno4d+4Usv9e/aLbpEw932lm+egVIozGdR7153o+j8oci4zInQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746125; c=relaxed/simple;
-	bh=J2L6IOIBS5H88YcjwaA+pmHj6LZlputpHNp8msGnmnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eWR/Kf7GccC5ombQomqeldZvS8DCteT2OcaPXsdE5nu4/zVhM6rMGgLbP9NdHaAwNcnSKTlFbRnEI2PjeQJkOB9wu+6ypkPa+ZRdyKp/Aiib5Dtc3ruxNAGmEKcZHNjREWFJDtvl07/+hTPkPaqvIUi08LAKJ2hwJaNcFW0JfTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rr6k88GV; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b88bff3ebso10278755e9.3;
-        Mon, 01 Sep 2025 10:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756746122; x=1757350922; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FRQt+UBjQqYx5yZNwHJXOb/IQAikJ0bwHOaWGViIuvc=;
-        b=Rr6k88GV7yShDbIeW632W/F95sONyG/CrGlORotBT9fLWUuunUBdByzVmOkHdvqUC9
-         V8Cm5lPdeppazoDf4B8+njGKReFI9ZF9ZzkMxjPDJM3ee0zMhZV4ZDeZ5hxj6fGhrifF
-         6p0b3NHV+08P7ezU2FxPftRbQVDf/jZXzFNIek015338roxRS2H7FUl9ZOfIyDl4Apwr
-         miMi5pj6NMkx5t7ebrqe6/oKk6PQoW9X3JCXBDL57nYrzCvRxWmE7wfc6WzAIQmNsVBP
-         PAOtTuQJhnYxbCqL7rCl4VRG3zXOkLNqKduVRcER49qyAZluzJ0DWPoFykbTp8/Wr5oY
-         eYFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756746122; x=1757350922;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRQt+UBjQqYx5yZNwHJXOb/IQAikJ0bwHOaWGViIuvc=;
-        b=PzgPD1BOloKrA50Jyo5DhqL24cHSiOqIr2TxRxM41+KAs7xArTR8T1Gw7IPUaA3n/L
-         D9IRalbHC+NJlB6Il2EhSvIwycwjlpLlEuUF3YOkwpSyU/sNhFwUb7C5Jw24sk+Y0TZe
-         oQmJaPMj8yUSBJEiBNqDjHUbx2lXFMMALOzPkLb0rr0DzZsADSU800DQZpAcL6ACLan/
-         74yu55iomKba724NIRVlpSlWUR5DXDZ+1L8OePaKB1fcuIqP7VOMmDpxVcOQRD1ubGCo
-         Zphzb5xkCHhM11ekXWuTJ/a3BcFiCG01h4VYe0HTtMF6I7H/kGUALc0L+8Z7Q1RhVPhK
-         8FjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWzNzdjCV/1KCMLJAHnJefxaJnnwyrpwHgnRwEnMk2JNwQdPGjzCW1K9Fnf1mxS0eL3MKg88VpaSknzNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY/TO7K7GNRTlLOZ4Wdco+NXxTzvXevIpBnpYZZ1UePeYUOd91
-	yVCOgNyBLIKn/l1t2SoUGjAddf7jNlMfTyR/RtEBUvwZrrlzncrdpEOvF+5oweSQ/5I=
-X-Gm-Gg: ASbGnctD78QhK9ZGnX4GC4zdZv48yQRhS8TvoV2EZGCrYZua85fIlnAiamEovOlyYao
-	26XZfoL5KCyufx8kZIDc74MjoZbjhJK+sdpyhbSw3uZszwWMtJ/D/zqOQ6gbCMdclrlOnptZopg
-	RY5iDj7WO8WCfbuVWbuUnzR7Y18w4Vsf1Mrf92hpiWxWDBY9bmZW1YPk6hk/zSaHUQQRMQwERAH
-	kbzS+r8jijL6APkDIkF9N4of1xzkpSK5lSDvg88XsYnmhaj2/Byn+CkrB+GYRdGue/Ek9McZsO5
-	lVpTdg4eh1XheGfe/g6UFtqgx9OkHVUw+UDV+5q7pvtxjyot8RIGXZlOZMHs6cgglnR/KDqtUn3
-	e3sDlTLtdx+Vlyt5TmZsT2WrLIunD8DjmwWcRSXJjCNae/FOPXaCp9ykEuh0yueKVyegax0I=
-X-Google-Smtp-Source: AGHT+IHf0yGAwvn6kTkWxs2CIz3j2eE7QTqYFeY9RVdyHB7EJ2fftTATOlO8hfqqnwhVRGHdv87Fyg==
-X-Received: by 2002:a05:600c:45c9:b0:458:bbed:a81a with SMTP id 5b1f17b1804b1-45b877be05bmr77481225e9.10.1756746122186;
-        Mon, 01 Sep 2025 10:02:02 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:1449:d619:96c0:8e08? ([2620:10d:c092:500::6:8e4b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d32a2sm265815775e9.9.2025.09.01.10.02.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 10:02:01 -0700 (PDT)
-Message-ID: <ba4acf5d-1092-48f3-9c99-b644a0aa96fa@gmail.com>
-Date: Mon, 1 Sep 2025 18:01:58 +0100
+	s=arc-20240116; t=1756746178; c=relaxed/simple;
+	bh=Mia/xDpMi2KaskL83NHZqheX+zhVtceAPCQiz2ekhVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HI7jHng9eqjXoga1MwTwWWExy379v3+Mva6jZkE3xdIbJ8j+fs/qhH1wR7SrqS/lZwJy0mh5uLoWZ5GsMA0gHpslNqkmrlTJsrbTs2OJthi7Zs4qMF7+EgvbIBi8NnW5pk+N5XV9FBEnAN58AlfvK9egjOWOtvZJD6LS2jBZv9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iy5EHgqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB26C4CEF1;
+	Mon,  1 Sep 2025 17:02:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756746177;
+	bh=Mia/xDpMi2KaskL83NHZqheX+zhVtceAPCQiz2ekhVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iy5EHgqW5aXEt+t6fw4ZfT70/uWtgztA+RaODRcNK6hqyVb2UAFnd/HQ0lmWWMnWP
+	 wc0v/6wDjPpe9K+PBQ5czicG4QH7Y/gxaVnJe8PpqoHMB2/e7+3fzTnHptyld89vIa
+	 pgD99WqfKxROb8fb5TcA6XRK43DocGynjgnwWGUgN2aqy5WTdpoUnGSLb+awumUxv2
+	 kHeeXx89ua0lKd/+XYYWYQv2PoFtCkG69ALaKGFPn4Z2sCBn2QAfPqyeuRkPH/0+JH
+	 7rJr+veUlU7nqfp7jITCifKFDaFrDNvIxIP5t1iUbwqM9HVHha7EUK/HRS0+gVKvSf
+	 nT5VR0W7piaJw==
+Received: by pali.im (Postfix)
+	id 16D0131D; Mon,  1 Sep 2025 19:02:54 +0200 (CEST)
+Date: Mon, 1 Sep 2025 19:02:53 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Ralph =?utf-8?B?QsO2aG1l?= <slow@samba.org>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/35] cifs: Fix SMB rmdir() and unlink() against Windows
+ SMB servers
+Message-ID: <20250901170253.mv63jewqkdo5yqj7@pali>
+References: <20250831123602.14037-1-pali@kernel.org>
+ <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
- PR_THP_DISABLE_EXCEPT_ADVISED
-Content-Language: en-GB
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-man@vger.kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
- ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20250901160903.2801339-1-usamaarif642@gmail.com>
- <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
- <hbwmiqb2qjyf4bemcbg2nwil4oceukvevml4jrilm4q4souv6e@hmjk4ubgavg2>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <hbwmiqb2qjyf4bemcbg2nwil4oceukvevml4jrilm4q4souv6e@hmjk4ubgavg2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
+User-Agent: NeoMutt/20180716
+
+Hello!
+
+On Monday 01 September 2025 09:55:45 Stefan Metzmacher wrote:
+> Hi Pali,
+> 
+> > This patch series improves Linux rmdir() and unlink() syscalls called on
+> > SMB mounts exported from Windows SMB servers which do not implement
+> > POSIX semantics of the file and directory removal.
+> > 
+> > This patch series should have no impact and no function change when
+> > communicating with the POSIX SMB servers, as they should implement
+> > proper rmdir and unlink logic.
+> 
+> Please note that even servers implementing posix/unix extensions,
+> may also have windows clients connected operating on the same files/directories.
+> And in that case even posix clients will see the windows behaviour
+> of DELETE_PENDING for set disposition or on rename
+> NT_STATUS_ACCESS_DENIED or NT_STATUS_DIRECTORY_NOT_EMPTY.
+
+Ok. So does it mean that the issue described here applies also for POSIX
+SMB server?
+
+If yes, then I would propose to first fix the problem with
+Windows/non-POSIX SMB server and then with others. So it is not too big.
+
+> > When issuing remove path command against non-POSIX / Windows SMB server,
+> > it let the directory entry which is being removed in the directory until
+> > all users / clients close all handles / references to that path.
+> > 
+> > POSIX requires from rmdir() and unlink() syscalls that after successful
+> > call, the requested path / directory entry is released and allows to
+> > create a new file or directory with that name. This is currently not
+> > working against non-POSIX / Windows SMB servers.
+> > 
+> > To workaround this problem fix and improve existing cifs silly rename
+> > code and extend it also to SMB2 and SMB3 dialects when communicating
+> > with Windows SMB servers. Silly rename is applied only when it is
+> > necessary (when some other client has opened file or directory).
+> > If no other client has the file / dir open then silly rename is not
+> > used.
+> 
+> If I 'git grep -i silly fs/smb/client' there's no hit, can you
+> please explain what code do you mean with silly rename?
+
+Currently (without this patch series) it is CIFSSMBRenameOpenFile()
+function when called with NULL as 3rd argument.
+
+Cleanup is done in PATCH 11/35, where are more details.
+
+Originally the "Silly rename" is the term used by NFS client, when it
+does rename instead of unlink when the path is in use.
+I reused this term.
 
 
+So for SMB this "silly rename" means:
+- open path with DELETE access and get its handle
+- rename path (via opened handle) to some unique (auto generated) name
+- set delete pending state on the path (via opened handle)
+- close handle
 
-On 01/09/2025 17:40, Alejandro Colomar wrote:
-> Hi Usama,
-> 
-> On Mon, Sep 01, 2025 at 05:18:22PM +0100, Usama Arif wrote:
->> I am not sure what the right time is to send the mandoc changes.
->> The patches have been merged into mm-new for more than 2 weeks.
->> We can still review it and I can resend if needed after the kernel release if that
->> is a more appropriate time?
-> 
-> No, this is fine.  Let's refine the patches for now.
-> 
-> Once we're done, I guess we can either wait until they arrive at Linus's
-> tree, or if you're very confident this will reach a release eventually,
-> we can merge it now here, and eventually fix it if something small
-> changes later.  I don't mind too much.  It's more up to you, and how
-> much you expect this to change before the actual release of Linux.
-> 
+(plus some stuff around to remove READ_ONLY attr which may disallow to
+open path with DELETE ACCESS)
 
-Thanks!
+So above silly rename means that the original path is not occupied
+anymore (thanks to rename) and the original file / dir is removed after
+all clients / users release handles (thanks to set delete pending).
 
-Yeah I wouldnt expect this to change at all before the release. The patches
-were extensively discussed on the mailing list and were acked by the THP
-maintainers and reviewers, so the possibility of the interface changing
-is extremely low.
-> 
-> Have a lovely day!
-> Alex
-> 
-
+It is clear now clear? Or do you need to explain some other steps?
+Sometimes some parts are too obvious for me and I unintentionally omit
+description for something which is important. And seems that this is
+such case. So it is my mistake, I should have explain it better.
 
