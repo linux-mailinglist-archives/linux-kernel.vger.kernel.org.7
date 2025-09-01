@@ -1,167 +1,192 @@
-Return-Path: <linux-kernel+bounces-795210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB67B3EE40
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65618B3EE4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A8848803B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E33487E90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65E3009EF;
-	Mon,  1 Sep 2025 19:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63486324B1A;
+	Mon,  1 Sep 2025 19:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dXEZCX+4"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="CdsM5LXl"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060E255F5C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 19:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D15522F77E;
+	Mon,  1 Sep 2025 19:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753406; cv=none; b=Cspmn0BfPFDTxAt0rcW9ZAL5y5W4aURPpfufBW+58NDm778WrQHuQUUDzgsscAl5oEKX4maahFRsElxXSVjAER9a9gPQvUeNUeHWXABgp7OE0rP0705v1+P9CGmXG/HPOJgrbGcLcs8U5RsZlEYw8hm3YwtiB/DI2VkmGwkMCus=
+	t=1756753530; cv=none; b=dPfSRMrzGjSUznVfeXkO3YV+D+x7Qj9NMCggyiBUo47IubhfBrFxEETzvZ7vb5lDos/988C/mk8NfXqajbdleP5enpPfIEUAXKom7DaoN+OBR/NFmBVJBPyTMbs9UHXvOxDTEBkmxz0LWn++j8CPKiQJXNHPXd4HNebemLiiGmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753406; c=relaxed/simple;
-	bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YIyvFGmcBSXUkYj1k5a34ABTOsrRsJDR4mKvvabXLuuU+QHK0g2jIzbmGixsRi024g5FoEe7AFISHT1AKtoZVkjXMsSoR/VNZkQjq+Xul92laIQBg5LExk2LIIrZRqAQjzEVU+b1G5nLpfFzGxCJySoyzwjGLCMKVdi2lAUmWcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dXEZCX+4; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b33527de1eso7157121cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 12:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1756753403; x=1757358203; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-        b=dXEZCX+4rQJGhIL63KLKRHxqwjXdP2O6g2tY4k3x5FDsPLedpIApTg2PFgMjSph2sb
-         W7+k6ybjgpB8T2XdOJZv3OdlsVYLiahsYawM8Q/8AwB05NAqBv9sxeToI8M2Rgph25dc
-         wdyEOL16F1ynXsEJfcW7o23ZmJ0uhXGiOzLzsMdk2sqK25PahNNtJphys4q/8Gb/VEPY
-         522sx3i2EhJeH97+0xb/adJ1cvG4HxYlAVzdBidmkMqWCLgZxDntJUw/NS4DKICJ+Jrm
-         pAj12VClPYdAOehZgVfoDxJYk/OuCxxSO2v12TUzjm3O8ADkwkleByFpStlo+5BoK3Dg
-         NDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756753403; x=1757358203;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
-        b=oE6qiIYPXt4nddd7oPGGxvfHpjVpUgKICZFZcUlz18mSTwDs2BjB308AQtKRgLb6wD
-         DRgGftlc5OnFYazDf9NN59E+960RS/5Xu1PeRsE5cuAF7CXjTzWTCYwwdImqOuIwqRjH
-         cw4zDMTtD1FO/rLsRijf3+mxGYbDpaemvbBO8LBhtd0w1PIwT6rR+otBhcYNWzg6ld7H
-         vTYSl3JmEYypbkfkYNO1IEcPd5ZeoKsfpzEnnM3B661xL259lTFCs8EM1aLz9j0/8avK
-         IlBQeUEu32k6b+bnZ42EL2tLTjZJNQ05oyT5Wm9KcCjEqcl9Caoh2Xf4bOcecfNRQZ3J
-         GakQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl1OZJ7IB1BLV7a2YMsRigWPFG6fx+E7S/8/8VpKe8Vobl+hzNuMWCqiloJe8q85Z130O2zohY7AxkkuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE06geLsLQuZ/vkWMtmqUrpOeuQqQ4t196PakaTF6m+rBA7Z+v
-	skt9cFRKgqIesbO3Lkan2yxyU91u3IRgH1F1kKmKke//MRX/cQZ76LdZTwDvv2CdHPnMRIkLbad
-	JHzKyxmw58aF7BSzr5iqoYBKyHObH5OwAFD/aut0h/g==
-X-Gm-Gg: ASbGncuxvjsVV97eS5tv45JCij9XXl1wOwoH9kpUYLIQdD3SDX0Dzexhhw4ewPuEhR1
-	X7DJ5w5Pked7YglaVfuu0Ix92+IlDRq3CcZnk0Fn7ShlWzFOSq7/XdM6Vo+mY76ZaSfvBqIlZhH
-	mQK92QAV3Vp35M4gLHD8T0fZaYOCbxRPprUVhfSiEFuCTg+IcU2WvDr/YIL0s+AlZGp4l3Oxg7i
-	LjQoA2GQ5JjGjE=
-X-Google-Smtp-Source: AGHT+IGC4IxxW7gTteEuAiFDY4ARihDdjTh7r8Mht+Ln0Ng2xWrhyAI5gEJNZ2B2JAdSBb2GjROz0/at0WjW2Aw4LfQ=
-X-Received: by 2002:a05:622a:1a0a:b0:4ab:902c:5553 with SMTP id
- d75a77b69052e-4b31da17d84mr113554401cf.52.1756753403110; Mon, 01 Sep 2025
- 12:03:23 -0700 (PDT)
+	s=arc-20240116; t=1756753530; c=relaxed/simple;
+	bh=c7jv6Y5lLzrpX0lcAB3TGgDYZutg9jNfF1Z1oH9PP6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cR0ASk/wnXnT+hqpKq2UghjCzq8b/pwCs5H/GWZlVEGKK+zKEdRFAhFxIJ2rJhiYrEFLNVljVHz/DFK+cYwb/kTKR7GJwTP96ePyGtGvaAlaVzkO14i+OkjWbu2Mhbg2JlTnlvy7fHoazdldOgBXDPEJzasOmvFqadsvzZ8FbOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=CdsM5LXl reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cFyxc0htNz1FXb8;
+	Mon,  1 Sep 2025 21:05:24 +0200 (CEST)
+Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cFyxb4LSdz1FQVx;
+	Mon,  1 Sep 2025 21:05:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1756753524;
+	bh=FxaT//OcrvdqR1vkzq5c0SEQvxciF10LAeUiOe1NZAA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=CdsM5LXlNv388CM8CK8akGS07mTLXaaP6AKonuFVgQt287DIwZCgHW04M9RZUqReQ
+	 bP/LwxQbYGwtmHUbZlqjf/egOcFdo1Q7UnPX5J+kildW6GEzZe35dgFvDyxuZF9kRW
+	 K5PLH/k/bNKC+xJkTuTSowPl7gaSIYc9NEBlAG2LOGxCDwTnjdQ6DQGi4RVu/Yjx0n
+	 HJ3gunk5nNTGVHBxpItRjWqsIKanJ0EyFZT0wnv3RaRmRBkeamptoqDydeK7zaWJ1F
+	 E6JEMGx7lDdihzLQWTZwt76JXS6Amu2ZeCYAVPYiLe2HyVPMBryfY869BIpPaLA6iO
+	 6nFFlfPhBU9AA==
+Message-ID: <3be01877-cfcb-43e2-811d-e8751338dc9c@gaisler.com>
+Date: Mon, 1 Sep 2025 21:05:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
- <aLXIcUwt0HVzRpYW@kernel.org> <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
- <mafs03496w0kk.fsf@kernel.org>
-In-Reply-To: <mafs03496w0kk.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 1 Sep 2025 19:02:46 +0000
-X-Gm-Features: Ac12FXxIFoyzz5jiOJ4O5RxQRUabkrNBq-ldI0H08I8mR4jOJnwP6yzvNT_MXGI
-Message-ID: <CA+CK2bAb6s=gUTCNjMrOqptZ3a_nj3teuVSZs86AvVymvaURQA@mail.gmail.com>
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
+ library
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
+ <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+ Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+ Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+References: <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <7b699dde-2dde-4900-abd6-d902b4cff853@gaisler.com>
+ <20250829160020-5aeb38c3-2cb1-45b0-81fd-35e113417b65@linutronix.de>
+ <f1204327-9d67-4ca2-9f55-6777453173f6@gaisler.com>
+ <20250829185830-be502aa8-0f00-46b7-90fe-2d3cf3f1e7af@linutronix.de>
+ <18d9e41c-f05f-4b3e-8217-4b8deb7afabd@gaisler.com>
+ <20250901164203-efc4e1ca-d83c-4776-bc20-13e1088ac548@linutronix.de>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20250901164203-efc4e1ca-d83c-4776-bc20-13e1088ac548@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> >> > This really wants some luo helper
-> >> >
-> >> > 'luo alloc array'
-> >> > 'luo restore array'
-> >> > 'luo free array'
-> >>
-> >> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
-> >
-> > The patch looks okay to me, but it doesn't support holes in vmap
-> > areas. While that is likely acceptable for vmalloc, it could be a
-> > problem if we want to preserve memfd with holes and using vmap
-> > preservation as a method, which would require a different approach.
-> > Still, this would help with preserving memfd.
->
-> I agree. I think we should do it the other way round. Build a sparse
-> array first, and then use that to build vmap preservation. Our emails
+On 2025-09-01 16:59, Thomas Weißschuh wrote:
+> So a NULL-pointer deref. Please also try the following, to get the trapping code.
+> 
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -1299,6 +1299,14 @@ force_sig_info_to_task(struct kernel_siginfo *info, struct task_struct *t,
+>         struct k_sigaction *action;
+>         int sig = info->si_signo;
+>  
+> +       if (unlikely(is_global_init(t)) && sig == SIGSEGV) {
+> +               struct pt_regs *regs = task_pt_regs(t);
+> +
+> +               panic("killing init, sig=%d errno=%d code=%d addr=%px vdso=%px pc=0x%lx vdsopc=0x%lx",
+> +                     info->si_signo, info->si_errno, info->si_code, info->si_addr,
+> +                     t->mm->context.vdso, regs->tpc, regs->tpc - (unsigned long)t->mm->context.vdso);
+> +       }
+> +
+>         spin_lock_irqsave(&t->sighand->siglock, flags);
+>         action = &t->sighand->action[sig-1];
+>         ignored = action->sa.sa_handler == SIG_IGN;
+> 
+> 
+> Please give me the disassembly for the address printed as "vdsopc" from
+> arch/sparc/vdso/vdso64.so.dbg starting from its function entrypoint.
 
-Yes, sparse array support would help both: vmalloc and memfd preservation.
+I get
 
-> seem to have crossed, but see my reply to Mike [0] that describes my
-> idea a bit more, along with WIP code.
->
-> [0] https://lore.kernel.org/lkml/mafs0ldmyw1hp.fsf@kernel.org/
->
-> >
-> > However, I wonder if we should add a separate preservation library on
-> > top of the kho and not as part of kho (or at least keep them in a
-> > separate file from core logic). This would allow us to preserve more
-> > advanced data structures such as this and define preservation version
-> > control, similar to Jason's store_object/restore_object proposal.
->
-> This is how I have done it in my code: created a separate file called
-> kho_array.c. If we have enough such data structures, we can probably
-> move it under kernel/liveupdate/lib/.
+[    1.680341] Run /init as init process
+[    1.682256] Kernel panic - not syncing: killing init, sig=11 errno=0 code=1 addr=0000000000000000 vdso=fff800010081e000 pc=0xfff800010081e684 vdsopc=0x684
+[    1.682289] CPU: 2 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc1-00011-g1f71a73bede3 #12 VOLUNTARY
+[    1.682313] Call Trace:
+[    1.682324] [<0000000000436524>] dump_stack+0x8/0x18
+[    1.682351] [<00000000004291f4>] vpanic+0xdc/0x320
+[    1.682373] [<000000000042945c>] panic+0x24/0x30
+[    1.682389] [<0000000000493258>] force_sig_info_to_task+0x218/0x240
+[    1.682412] [<0000000000493740>] force_sig_fault+0x40/0x60
+[    1.682430] [<0000000000439e28>] sun4v_data_access_exception+0xa8/0x140
+[    1.682449] [<00000000004066d4>] sun4v_dacc+0x28/0x34
+[    1.683232] Press Stop-A (L1-A) from sun keyboard or send break
+[    1.683232] twice on console to return to the boot prom
+[    1.683252] ---[ end Kernel panic - not syncing: killing init, sig=11 errno=0 code=1 addr=0000000000000000 vdso=fff800010081e000 pc=0xfff800010081e684 vdsopc=0x684 ]---
 
-Yes, let's place it under kernel/liveupdate/lib/. We will add more
-preservation types over time.
+and we have
 
-> As for the store_object/restore_object proposal: see an alternate idea
-> at [1].
->
-> [1] https://lore.kernel.org/lkml/mafs0h5xmw12a.fsf@kernel.org/
+#if defined(CONFIG_SPARC64)
+int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
+{
+ 640:   9d e3 bf 50     save  %sp, -176, %sp
+        __asm__ __volatile__(
+ 644:   40 00 00 03     call  650 <__vdso_clock_gettime+0x10>
+ 648:   01 00 00 00     nop 
+ 64c:   ff ff 79 b4     unknown
+ 650:   9e 03 e0 08     add  %o7, 8, %o7
+ 654:   c6 43 c0 00     ldsw  [ %o7 ], %g3
+ 658:   86 00 c0 0f     add  %g3, %o7, %g3
+        if (!vdso_clockid_valid(clock))
+ 65c:   80 a6 20 17     cmp  %i0, 0x17
+ 660:   18 40 00 3b     bgu,pn   %icc, 74c <__vdso_clock_gettime+0x10c>
+ 664:   84 10 00 03     mov  %g3, %g2
+        msk = 1U << clock;
+ 668:   82 10 20 01     mov  1, %g1
+ 66c:   83 28 40 18     sll  %g1, %i0, %g1
+        if (likely(msk & VDSO_HRES))
+ 670:   80 88 68 83     btst  0x883, %g1
+ 674:   02 40 00 30     be,pn   %icc, 734 <__vdso_clock_gettime+0xf4>
+ 678:   80 88 60 60     btst  0x60, %g1
+        if (!__arch_vdso_hres_capable())
+ 67c:   87 2e 30 04     sllx  %i0, 4, %g3
+ 680:   86 00 80 03     add  %g2, %g3, %g3
+                while (unlikely((seq = READ_ONCE(vc->seq)) & 1)) {
+ 684:   fa 00 80 00     ld  [ %g2 ], %i5                          <-- this one
+ 688:   80 8f 60 01     btst  1, %i5
+ 68c:   12 60 00 39     bne,pn   %xcc, 770 <__vdso_clock_gettime+0x130>
+ 690:   01 00 00 00     nop 
+ ...
 
-What you are proposing makes sense. We can update the LUO API to be
-responsible for passing the compatible string outside of the data
-payload. However, I think we first need to settle on the actual API
-for storing and restoring a versioned blob of data and place that code
-into kernel/liveupdate/lib/. Depending on which API we choose, we can
-then modify the LUO to work accordingly.
+where the READ_ONCE that does the trapping load is the READ_ONCE(vc->seq)
+in do_hres() in lib/vdso/gettimeofday.c. So we seem to  have a NULL vc.
 
->
-> --
-> Regards,
-> Pratyush Yadav
+With patches 1-8 applied on v6.17-rc1, addr2line gives us:
+
+0x640: arch/sparc/vdso/vclock_gettime.c:34
+0x644: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x648: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x64c: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x650: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x654: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x658: arch/sparc/include/asm/vdso/gettimeofday.h:150
+0x65c: lib/vdso/gettimeofday.c:321 (discriminator 1)
+0x660: lib/vdso/gettimeofday.c:321 (discriminator 1)
+0x664: lib/vdso/gettimeofday.c:321 (discriminator 1)
+0x668: lib/vdso/gettimeofday.c:328
+0x66c: lib/vdso/gettimeofday.c:328
+0x670: lib/vdso/gettimeofday.c:329 (discriminator 1)
+0x674: lib/vdso/gettimeofday.c:329 (discriminator 1)
+0x678: lib/vdso/gettimeofday.c:329 (discriminator 1)
+0x67c: lib/vdso/gettimeofday.c:175
+0x680: lib/vdso/gettimeofday.c:175
+0x684: lib/vdso/gettimeofday.c:190 (discriminator 2)
+
+
+Cheers,
+Andreas
 
