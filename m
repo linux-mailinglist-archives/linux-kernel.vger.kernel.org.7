@@ -1,223 +1,379 @@
-Return-Path: <linux-kernel+bounces-794710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ED5B3E623
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6FBB3E626
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42BF87B12FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03D6189B1CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5433A007;
-	Mon,  1 Sep 2025 13:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C383376B7;
+	Mon,  1 Sep 2025 13:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/oc0JM0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFI4WhoV"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE171C27;
-	Mon,  1 Sep 2025 13:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1A1C27;
+	Mon,  1 Sep 2025 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734771; cv=none; b=mnD51KusPD3isbpwKvWpjtOnmB3BXhFyjeXbwnHViauvZA3IOWJssjlgO5KzyB5gDqURKAIipLOf5MwVoLCNkZCtoXOi1tYDLXHgt3zEYhWFo8bvjZomtbs2XLj8oljCqkK722ntnS360jzd74VbbAXfCMLbhkM1rOrjo+ADV6Y=
+	t=1756734839; cv=none; b=PXxZdBveSIpHx6Pu3uDTA1t55iz6OjdRM3Q4gTJOon+EzGcjYCnG9A5IjTDxyjBWMaefznME4i7tc6jSlEm5ofGTHuFfbCOXFhYMMM24Ni6iZochuTNl2/dEHYCSTHawgrx6zBZWOg0QwhpBpwjBx3r8+jLo3XKxTZJ/qD5jskM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734771; c=relaxed/simple;
-	bh=1Sg3rEDoWH1KaBimTkP2BT3g0Ey6+WD6VuLXedDw65k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5UgiMoCL37U8fvpQjTVKRAw19UGkaQIqVeCZpcd2HruW5dKniuPSIxoZE6NR82Lyy4z8VXjwysYgfhnLpvQ+tTujjsKUOCPiuRyMr7wUPGGdenb0FELPY6d1cj4oITdxRMOxVVJ1UddGxGMV7/dVtiJAKSFSZ+IYrptBaBUDL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/oc0JM0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAC1C4CEF0;
-	Mon,  1 Sep 2025 13:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756734770;
-	bh=1Sg3rEDoWH1KaBimTkP2BT3g0Ey6+WD6VuLXedDw65k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M/oc0JM0tTl36NdYr+audgnhtIlSV9TinPArKRXNuXe+nTDoaoPDXyX1fa0yle0Hb
-	 Nrdy0UpyFr65t2jpQrS/EEnyQ51+hdjwruZgDSVgLdhEju20IEAlJWbTIjdjwTNPQr
-	 6urywwJlXvO/DAUDt+kTeS/ZChAxe+qddCYrH8WhXnYNvjacdMVu15JBVb875ceWdm
-	 HwNxKLDwC5OZDwxVf/uW7qk1vtkPxVTaoY7Fw29bHuL71KljseqHG4rPEfEsJzIcpP
-	 X8EiL26zXxkx62ZYSVfvcr/7HyoviK6tJLul5vpqYOfrqDPXC5ZhQdGjND5ct8PK0v
-	 EUxjtuldSxGiw==
-Date: Mon, 1 Sep 2025 19:22:40 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com
-Subject: Re: [PATCH v8 4/5] PCI: dwc: Add ECAM support with iATU configuration
-Message-ID: <camqcq72cy774st365jtodvckqvohzlu2fsklsgpfrgaxzz6re@yk6rvt6vq5y5>
-References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
- <20250828-ecam_v4-v8-4-92a30e0fa02d@oss.qualcomm.com>
+	s=arc-20240116; t=1756734839; c=relaxed/simple;
+	bh=q1l39/qWULtcklU4dvKGAq4X0HcIR7cTEfCWPbaWihs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rrWhi/8PT/eZsGAkoVSGYg3bQbBD8R8tUkSkp4vtTpFiu2pdWCfNKsudjqVitK0NleM4WaUqer85LNGDpp5f+Ssb81W+W0q5kjQC6+Df9X9/vPynO4ELodOUdkaaDXzGFTUNPDvVQ4cy4L8D0T2vCbZ5VXPuo/dV/OfDtMMyoZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFI4WhoV; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4f8bf49aeaso398246a12.1;
+        Mon, 01 Sep 2025 06:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756734837; x=1757339637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rK1EbDKDuWPUrJNs2px748yhqHLstsIWGKUzW9Z511w=;
+        b=jFI4WhoVY/zTZSAy/7CWbrQeIdcM3+RIDr+A1486VfzCN4CmM25InjWvW06ZOA9ag9
+         4Uc4iToU2FZ1DfeUuKGjcGBjZ6MIyYVomK97qphtT47smW2qMBjjphm3TAyqNw8Lnv+/
+         kv2xW/EarT7LNeODp9mixpLoFF2zBRUKImu/Xz3pJCqWk+8bdVCYDAcbECLQkGTn/JN0
+         AS8yLSkvJt3fuUqTuSGbff/g6t3Xjy/WUkXFeN/hgp4OORbI7Tc/IeVepBd0Z5QXujTk
+         5Bj1+IiQWGwH+p5qZglVX3R8Vk306lKpo91P6gpSbfzYAqugzpczkxfmEO0yTODftzWb
+         Al8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756734837; x=1757339637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rK1EbDKDuWPUrJNs2px748yhqHLstsIWGKUzW9Z511w=;
+        b=G7xE/ayDh9HGSJvmm6YmKOO/7glu7aUzveDp1NeIoiKQ7suu8q9x0EYbjtjd5aKiE0
+         qag9TsIEOJZIby/YgaFGNuflMu0w20cjy1qVppBVU6gbgeo4JKFPz4XWXSh8hb67lSB+
+         6vCBj22ha27k3sj9toO4A072PjJgv2gN4uZYDsLyLdP+Rbhml8Hb9BwxWrYzqoVwFjJP
+         36TGpWH8VdYDQetRtlDOrwp0ys6iDkBLAmD4AcGjAALLf+mKDky70dWY9HV1kkcQZVSc
+         mlpafbztnKUCCzpwm9N5k7DIClj0XM2xweTPaLfhCiwOT+7sEAHU2bh0BB2/0FLlIiv4
+         eCqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURBW43WhYI8VUI02zHcShfNTlNgyfIdUv1tZvL0kdZYWw3ZjV3WAKD41UkaehL30zqdeBlTtQ4WmQDvSA5@vger.kernel.org, AJvYcCUdXIwLJp+lskml+dY7wl0HM1X+yvfagY4NHC844TT6hVqcQF92dXZ65SF2rzgFT8lLeYGVZhtCcH8YTg==@vger.kernel.org, AJvYcCXZlrgVXMD23eA0YXF0LpXD4/eN5r886H1tGkk9KPRYwxakM1Wmoj8ohDNvYCHSA0nm+0SQUJYSwC47gFO8/fRE6lB/fg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0geaB6WXk4HjL2/6Chh7BuS+s0feh01xniKZAjk/Fj5Fs8DPE
+	Z9D6S6HGjGHzIHljZhk+wKAsZlbhxHmcEzFywkqezwPWGVcZmywIFjG0hQWU3J+j2mLdBhOb
+X-Gm-Gg: ASbGncsPsdq2wYZMENP/CKz3rDNayGOG4YQMNqXB5WuB+G9bZjzFBpUeH9AOGx417Q6
+	b+rEedawZRlGHF5cyh+RKkGs2ksoMPYq5DTLzk/U9nf8utX562res7eT5sTE55+BaAUwwqqy/XS
+	nizbu2UrPbdlxYJGhIloNjuZwQTUUqrOfEqI4vpIg7WzoJJUAQKXvN5lpwYrm4q0eYMdW8K8vNE
+	CJuYHbInLwSBJntO/5K9E5pqICTcmw4KwXlyjT5Lwy7Jzappc66TUmbMfeWOnG7gX6C3XJ2UoOa
+	XuW9NSxlmcIk/uiKVqCFPNutxtYyPllgsaSybjTM56sI6LkHTd6WjAjXL0lCcJBpeaEY3PGI2YR
+	adujumzQAVLj/vQeXVpwyXiNRL5WZj3EOwjl0Z7L3IT8HBe/jBdfo016s2iHnxs5vw37YuryWml
+	A=
+X-Google-Smtp-Source: AGHT+IHFqCqitZlzdPBclNqo3AnC1Zazlu6sHnOHE7NOv+jzSjNSZPJL+v2HShi62/cyEJsA3T28RQ==
+X-Received: by 2002:a17:903:3c45:b0:242:9be2:f67a with SMTP id d9443c01a7336-24944873f96mr107659715ad.11.1756734837415;
+        Mon, 01 Sep 2025 06:53:57 -0700 (PDT)
+Received: from c12-ThinkPad-X1-Carbon-Gen-12.. ([2404:7a80:b9a1:7100:d5e9:d016:7fe4:a7c2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906390e6bsm106733415ad.96.2025.09.01.06.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 06:53:56 -0700 (PDT)
+From: Vishnu Sankar <vishnuocv@gmail.com>
+To: dmitry.torokhov@gmail.com,
+	hmh@hmh.eng.br,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	derekjohn.clark@gmail.com
+Cc: mpearson-lenovo@squebb.ca,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org,
+	vsankar@lenovo.com,
+	Vishnu Sankar <vishnuocv@gmail.com>
+Subject: [PATCH v3 1/3] input: mouse: trackpoint: Add doubletap enable/disable support
+Date: Mon,  1 Sep 2025 22:53:05 +0900
+Message-ID: <20250901135308.52340-1-vishnuocv@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250828-ecam_v4-v8-4-92a30e0fa02d@oss.qualcomm.com>
 
-On Thu, Aug 28, 2025 at 01:04:25PM GMT, Krishna Chaitanya Chundru wrote:
-> The current implementation requires iATU for every configuration
-> space access which increases latency & cpu utilization.
-> 
-> Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
-> which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
-> would be matched against the Base and Limit addresses) of the incoming
-> CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
-> 
-> Configuring iATU in config shift feature enables ECAM feature to access the
-> config space, which avoids iATU configuration for every config access.
-> 
-> Add "ctrl2" into struct dw_pcie_ob_atu_cfg  to enable config shift feature.
-> 
-> As DBI comes under config space, this avoids remapping of DBI space
-> separately. Instead, it uses the mapped config space address returned from
-> ECAM initialization. Change the order of dw_pcie_get_resources() execution
-> to achieve this.
-> 
-> Enable the ECAM feature if the config space size is equal to size required
-> to represent number of buses in the bus range property.
-> 
-> As per PCIe spec 6, sec 7.2.2 the memory should be aligned to 256MB for
-> ECAM. The synopsys iATU also uses bits [27:12] to form BDF, so the base
-> address must be 256MB aligned. Add a check to ensure the configuration
-> space base address is 256MB aligned before enabling ECAM.
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/Kconfig                |   1 +
->  drivers/pci/controller/dwc/pcie-designware-host.c | 145 +++++++++++++++++++---
->  drivers/pci/controller/dwc/pcie-designware.c      |   2 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |   5 +
->  4 files changed, 138 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index ff6b6d9e18ecfa44273e87931551f9e63fbe3cba..a0e7ad3fb5afec63b0f919732a50147229623186 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -20,6 +20,7 @@ config PCIE_DW_HOST
->  	bool
->  	select PCIE_DW
->  	select IRQ_MSI_LIB
-> +	select PCI_HOST_COMMON
->  
->  config PCIE_DW_EP
->  	bool
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..eda7affcdcb2075d07ba6eeab70e41b6548a4b18 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -8,6 +8,7 @@
->   * Author: Jingoo Han <jg1.han@samsung.com>
->   */
->  
-> +#include <linux/align.h>
->  #include <linux/iopoll.h>
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/irqchip/irq-msi-lib.h>
-> @@ -32,6 +33,8 @@ static struct pci_ops dw_child_pcie_ops;
->  				     MSI_FLAG_PCI_MSIX			| \
->  				     MSI_GENERIC_FLAGS_MASK)
->  
-> +#define IS_256MB_ALIGNED(x) IS_ALIGNED(x, SZ_256M)
-> +
->  static const struct msi_parent_ops dw_pcie_msi_parent_ops = {
->  	.required_flags		= DW_PCIE_MSI_FLAGS_REQUIRED,
->  	.supported_flags	= DW_PCIE_MSI_FLAGS_SUPPORTED,
-> @@ -413,6 +416,92 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
->  	}
->  }
->  
-> +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct dw_pcie_ob_atu_cfg atu = {0};
-> +	resource_size_t bus_range_max;
-> +	struct resource_entry *bus;
-> +	int ret;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +
-> +	/*
-> +	 * Root bus under the host bridge doesn't require any iATU configuration
-> +	 * as DBI region will be used to access root bus config space.
-> +	 * Immediate bus under Root Bus, needs type 0 iATU configuration and
-> +	 * remaining buses need type 1 iATU configuration.
-> +	 */
-> +	atu.index = 0;
-> +	atu.type = PCIE_ATU_TYPE_CFG0;
-> +	atu.parent_bus_addr = pp->cfg0_base + SZ_1M;
-> +	/* 1MiB is to cover 1 (bus) * 32 (devices) * 8 (functions) */
-> +	atu.size = SZ_1M;
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +	ret = dw_pcie_prog_outbound_atu(pci, &atu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bus_range_max = resource_size(bus->res);
-> +
-> +	if (bus_range_max < 2)
-> +		return 0;
-> +
-> +	/* Configure remaining buses in type 1 iATU configuration */
-> +	atu.index = 1;
-> +	atu.type = PCIE_ATU_TYPE_CFG1;
-> +	atu.parent_bus_addr = pp->cfg0_base + SZ_2M;
-> +	atu.size = (SZ_1M * bus_range_max) - SZ_2M;
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +
-> +	return dw_pcie_prog_outbound_atu(pci, &atu);
-> +}
-> +
-> +static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *res)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct device *dev = pci->dev;
-> +	struct resource_entry *bus;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +	if (!bus)
-> +		return -ENODEV;
-> +
-> +	pp->cfg = pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_ops);
-> +	if (IS_ERR(pp->cfg))
-> +		return PTR_ERR(pp->cfg);
-> +
-> +	pci->dbi_base = pp->cfg->win;
-> +	pci->dbi_phys_addr = res->start;
-> +
-> +	return 0;
-> +}
-> +
-> +static bool dw_pcie_ecam_enabled(struct dw_pcie_rp *pp, struct resource *config_res)
-> +{
-> +	struct resource *bus_range;
-> +	u64 nr_buses;
-> +
-> +	/*
-> +	 * 256MB alignment is required for Enhanced Configuration Address Mapping (ECAM),
-> +	 * as per PCIe Spec 6, Sec 7.2.2. It ensures proper mapping of memory addresses
-> +	 * to Bus-Device-Function (BDF) fields in config TLPs.
-> +	 *
-> +	 * The synopsys iATU also uses bits [27:12] to form BDF, so the base address must
-> +	 * be 256MB aligned.
+Add support for enabling and disabling doubletap on TrackPoint devices
+that support this functionality. The feature is detected using firmware
+ID and exposed via sysfs as `doubletap_enabled`.
 
-I've reworded the comment and description to clarify that the alignment
-requirement comes from the PCIe spec, but the 256 MiB requirement comes from DWC
-implementation since DWC always uses 8 bits for representing PCIe buses.
+The feature is only available on newer ThinkPads (2023 and later).The driver
+exposes this capability via a new sysfs attribute:
+"/sys/bus/serio/devices/seriox/doubletap_enabled".
 
-- Mani
+The attribute is only created if the device is detected to be capable of
+doubletap via firmware and variant ID checks. This functionality will be
+used by platform drivers such as thinkpad_acpi to expose and control doubletap
+via user interfaces.
 
+Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
+Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+Changes in v2:
+- Improve commit messages
+- Sysfs attributes moved to trackpoint.c
+- Removed unnecessary comments
+- Removed unnecessary debug messages
+- Using strstarts() instead of strcmp()
+- is_trackpoint_dt_capable() modified
+- Removed _BIT suffix and used BIT() define.
+- Reverse the trackpoint_doubletap_status() logic to return error first.
+- Removed export functions as a result of the design change
+- Changed trackpoint_dev->psmouse to parent_psmouse
+- The path of trackpoint.h is not changed.
+Changes in v3:
+- No changes.
+---
+ drivers/input/mouse/trackpoint.c | 149 +++++++++++++++++++++++++++++++
+ drivers/input/mouse/trackpoint.h |  15 ++++
+ 2 files changed, 164 insertions(+)
+
+diff --git a/drivers/input/mouse/trackpoint.c b/drivers/input/mouse/trackpoint.c
+index 5f6643b69a2c..c6f17b0dec3a 100644
+--- a/drivers/input/mouse/trackpoint.c
++++ b/drivers/input/mouse/trackpoint.c
+@@ -16,6 +16,8 @@
+ #include "psmouse.h"
+ #include "trackpoint.h"
+ 
++static struct trackpoint_data *trackpoint_dev;
++
+ static const char * const trackpoint_variants[] = {
+ 	[TP_VARIANT_IBM]		= "IBM",
+ 	[TP_VARIANT_ALPS]		= "ALPS",
+@@ -63,6 +65,21 @@ static int trackpoint_write(struct ps2dev *ps2dev, u8 loc, u8 val)
+ 	return ps2_command(ps2dev, param, MAKE_PS2_CMD(3, 0, TP_COMMAND));
+ }
+ 
++/* Read function for TrackPoint extended registers */
++static int trackpoint_extended_read(struct ps2dev *ps2dev, u8 loc, u8 *val)
++{
++	u8 ext_param[2] = {TP_READ_MEM, loc};
++	int error;
++
++	error = ps2_command(ps2dev,
++			    ext_param, MAKE_PS2_CMD(2, 1, TP_COMMAND));
++
++	if (!error)
++		*val = ext_param[0];
++
++	return error;
++}
++
+ static int trackpoint_toggle_bit(struct ps2dev *ps2dev, u8 loc, u8 mask)
+ {
+ 	u8 param[3] = { TP_TOGGLE, loc, mask };
+@@ -393,6 +410,131 @@ static int trackpoint_reconnect(struct psmouse *psmouse)
+ 	return 0;
+ }
+ 
++/* List of known incapable device PNP IDs */
++static const char * const dt_incompatible_devices[] = {
++	"LEN0304",
++	"LEN0306",
++	"LEN0317",
++	"LEN031A",
++	"LEN031B",
++	"LEN031C",
++	"LEN031D",
++};
++
++/*
++ * checks if it’s a doubletap capable device
++ * The PNP ID format eg: is "PNP: LEN030d PNP0f13".
++ */
++static bool is_trackpoint_dt_capable(const char *pnp_id)
++{
++	const char *id_start;
++	char id[8];
++
++	if (!strstarts(pnp_id, "PNP: LEN03"))
++		return false;
++
++	/* Points to "LEN03xxxx" */
++	id_start = pnp_id + 5;
++	if (sscanf(id_start, "%7s", id) != 1)
++		return false;
++
++	/* Check if it's blacklisted */
++	for (size_t i = 0; i < ARRAY_SIZE(dt_incompatible_devices); ++i) {
++		if (strcmp(id, dt_incompatible_devices[i]) == 0)
++			return false;
++	}
++	return true;
++}
++
++/* Trackpoint doubletap status function */
++static int trackpoint_doubletap_status(bool *status)
++{
++	struct trackpoint_data *tp = trackpoint_dev;
++	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
++	u8 reg_val;
++	int rc;
++
++	/* Reading the Doubletap register using extended read */
++	rc = trackpoint_extended_read(ps2dev, TP_DOUBLETAP, &reg_val);
++	if (rc)
++		return rc;
++
++	*status = reg_val & TP_DOUBLETAP_STATUS ? true : false;
++
++	return 0;
++}
++
++/* Trackpoint doubletap enable/disable function */
++static int trackpoint_set_doubletap(bool enable)
++{
++	struct trackpoint_data *tp = trackpoint_dev;
++	struct ps2dev *ps2dev = &tp->parent_psmouse->ps2dev;
++	static u8 doubletap_state;
++	u8 new_val;
++
++	if (!tp)
++		return -ENODEV;
++
++	new_val = enable ? TP_DOUBLETAP_ENABLE : TP_DOUBLETAP_DISABLE;
++
++	if (doubletap_state == new_val)
++		return 0;
++
++	doubletap_state = new_val;
++
++	return trackpoint_write(ps2dev, TP_DOUBLETAP, new_val);
++}
++
++/*
++ * Trackpoint Doubletap Interface
++ * Control/Monitoring of Trackpoint Doubletap from:
++ * /sys/bus/serio/devices/seriox/doubletap_enabled
++ */
++static ssize_t doubletap_enabled_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct serio *serio = to_serio_port(dev);
++	struct psmouse *psmouse = psmouse_from_serio(serio);
++	struct trackpoint_data *tp = psmouse->private;
++	bool status;
++	int rc;
++
++	if (!tp || !tp->doubletap_capable)
++		return -ENODEV;
++
++	rc = trackpoint_doubletap_status(&status);
++	if (rc)
++		return rc;
++
++	return sysfs_emit(buf, "%d\n", status ? 1 : 0);
++}
++
++static ssize_t doubletap_enabled_store(struct device *dev,
++					struct device_attribute *attr,
++					const char *buf, size_t count)
++{
++	struct serio *serio = to_serio_port(dev);
++	struct psmouse *psmouse = psmouse_from_serio(serio);
++	struct trackpoint_data *tp = psmouse->private;
++	bool enable;
++	int err;
++
++	if (!tp || !tp->doubletap_capable)
++		return -ENODEV;
++
++	err = kstrtobool(buf, &enable);
++	if (err)
++		return err;
++
++	err = trackpoint_set_doubletap(enable);
++	if (err)
++		return err;
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(doubletap_enabled);
++
+ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+ {
+ 	struct ps2dev *ps2dev = &psmouse->ps2dev;
+@@ -425,6 +567,9 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+ 	psmouse->reconnect = trackpoint_reconnect;
+ 	psmouse->disconnect = trackpoint_disconnect;
+ 
++	trackpoint_dev = psmouse->private;
++	trackpoint_dev->parent_psmouse = psmouse;
++
+ 	if (variant_id != TP_VARIANT_IBM) {
+ 		/* Newer variants do not support extended button query. */
+ 		button_info = 0x33;
+@@ -470,6 +615,10 @@ int trackpoint_detect(struct psmouse *psmouse, bool set_properties)
+ 		     psmouse->vendor, firmware_id,
+ 		     (button_info & 0xf0) >> 4, button_info & 0x0f);
+ 
++	tp->doubletap_capable = is_trackpoint_dt_capable(ps2dev->serio->firmware_id);
++	if (tp->doubletap_capable)
++		device_create_file(&psmouse->ps2dev.serio->dev, &dev_attr_doubletap_enabled);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/input/mouse/trackpoint.h b/drivers/input/mouse/trackpoint.h
+index eb5412904fe0..256e8cb35581 100644
+--- a/drivers/input/mouse/trackpoint.h
++++ b/drivers/input/mouse/trackpoint.h
+@@ -8,6 +8,8 @@
+ #ifndef _TRACKPOINT_H
+ #define _TRACKPOINT_H
+ 
++#include <linux/bitops.h>
++
+ /*
+  * These constants are from the TrackPoint System
+  * Engineering documentation Version 4 from IBM Watson
+@@ -69,6 +71,8 @@
+ 					/* (how hard it is to drag */
+ 					/* with Z-axis pressed) */
+ 
++#define TP_DOUBLETAP		0x58	/* TrackPoint doubletap register */
++
+ #define TP_MINDRAG		0x59	/* Minimum amount of force needed */
+ 					/* to trigger dragging */
+ 
+@@ -139,6 +143,14 @@
+ #define TP_DEF_TWOHAND		0x00
+ #define TP_DEF_SOURCE_TAG	0x00
+ 
++/* Doubletap register values */
++#define TP_DOUBLETAP_ENABLE	0xFF	/* Enable value */
++#define TP_DOUBLETAP_DISABLE	0xFE	/* Disable value */
++
++#define TP_DOUBLETAP_STATUS_BIT 0	/* 0th bit defines enable/disable */
++
++#define TP_DOUBLETAP_STATUS   BIT(TP_DOUBLETAP_STATUS_BIT)
++
+ #define MAKE_PS2_CMD(params, results, cmd) ((params<<12) | (results<<8) | (cmd))
+ 
+ struct trackpoint_data {
+@@ -150,11 +162,14 @@ struct trackpoint_data {
+ 	u8 thresh, upthresh;
+ 	u8 ztime, jenks;
+ 	u8 drift_time;
++	bool doubletap_capable;
+ 
+ 	/* toggles */
+ 	bool press_to_select;
+ 	bool skipback;
+ 	bool ext_dev;
++
++	struct psmouse *parent_psmouse;
+ };
+ 
+ int trackpoint_detect(struct psmouse *psmouse, bool set_properties);
 -- 
-மணிவண்ணன் சதாசிவம்
+2.48.1
+
 
