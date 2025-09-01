@@ -1,154 +1,234 @@
-Return-Path: <linux-kernel+bounces-794997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAFFB3EBA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DFFB3EB9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D221891804
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:56:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB140175027
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5159F2D594B;
-	Mon,  1 Sep 2025 15:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B486F2DF14C;
+	Mon,  1 Sep 2025 15:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="We/Ut0F/"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sVXdARRa"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051351E32A2
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428042065;
+	Mon,  1 Sep 2025 15:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742160; cv=none; b=oaXtwIIVGEVJFY3CJSGF7po9I4PIT/mF6jWFW3VkGc++e8xs0D/h3ijjWwdFv3CsCrmwC26T64CHoUNPfegHWhcvUzTXz29uq3AI7/LOcEp4CjyFoKTvRlTEyNgaNqdKeawGM5YfJX2sS4EslxO98Gpa2d3Bx78WP84Jah2E/iQ=
+	t=1756742172; cv=none; b=ke7X4USVFx1Wq3uoS3GZH4S2OnW5W78LSx4kwy5sP/QawGW/79ZWr10UGswfiL+rcIxUkwIeK9C4dCxn/3zFq/Dw2TCfEK3OofZDRMmFE7ImnuFOP81zoosF8UCJ+LDTLQTySU0eywHG/a1eD3EC+SAWe5StOultzXODUnnynng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742160; c=relaxed/simple;
-	bh=iG3CyEcIA646L0ezNul0+k7QzOwrGcUCyJi0hIVXX7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVg5jQ26RsF8gsRA1E0lriXDQDYTGR8oRLYp3JmEFZ0obLU6WxjdxNi5NGZQfpE9/xqzfRoVnqIZUfMGeJqRCPG5sbH+bqFzXl2lhFJJ1yA4H1MD8zJZtNfEMQ6fwSckecHlVQ6eH/UV3dPlAKdI2Uut0IOB/Q80LB0UGcVVip0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=We/Ut0F/; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cf429f4c2so7581123a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756742157; x=1757346957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MstfD5wYAbipEDd+wsbVGmRuZWNthTIOD73PD+Yzmw0=;
-        b=We/Ut0F/+DD21IwFfrHy1SSo1SbmYMxIQBkYo+fMBPB3WcHp9Soh8Q5Ga6OfOTjF4t
-         /Q2UuRC/EE+0dv9XDJadRdcISgWxnecumtdIxkREFSqtPgu0MEAus1kxypvtoJWY+8tp
-         MH7bFF/YdCvu+QgcXVirTAgL1hNU4cYaHXT1T1CTnOac+DWGbSMPYzgLEt0Op8nzCKU8
-         t4hEYNTVAIGAEoX3rWEogmIWLeoAQ/DZXbz5ENkTSaUvFjQ6auU65Kh1RWvaAfzHUDT6
-         bz9fGSLFOeiGaU5BE0HRuyb4F6comXpLKoW9wbI9vZeKmYNaCoXEG9BYkYaq+g+r2yBe
-         WIkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756742157; x=1757346957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MstfD5wYAbipEDd+wsbVGmRuZWNthTIOD73PD+Yzmw0=;
-        b=sMndXgSzTG/yRpRW+RSo2SIkx13YwYsv+yICzqg4Q8n6olW8pPUwiq4JE2NID6PxjY
-         0YGfoEgdHaLO2FaDGzA1krdu1h3MRzpBklFV52/0ECXfmFzHug2WwJ8PnhIt7E7bQ5Vb
-         Wlp9p8DWc0j1DJgAbU3tOV8LicDh9+bEI731xcX8pI10uAFznKvZll+Xfd5rh5cA0i0P
-         MdrGzIbPMfOTidnkXxt95H085tcsbuSZfD0GFb57j00v+f//VoX9XYlu2V1m8K98ZbcH
-         Jkx4IR8Po2BSYNbrQ2QUQXn2Gz60W7g6ErC+/M3TYwH2d+8ufX+FfNbQloa9iyE2RkNf
-         nktA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjPMDPi+jqH//+2yMEMhJw6fQ5QPq/qmc3YdNBjYTpmXg1MIm6ya7z2tlt4Tyc3ZGjZkv9DRqfxAmJrns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Y+bZn6Fk7vzlgHDCw9FX9SdKVSq9pigk/GtGRUBoA+b/t6Ki
-	toIdnYL1yRVGe+NLKylyPpAYvr/pqRzm86X0eyEAPOIixuL/tKbZ8oSRL9QN/SuYCWt4wFdCHci
-	RcCZxj2C+RpB6zo1NS0JIbyizwfDqiwM=
-X-Gm-Gg: ASbGncuU48JDMh/oNq0tqL0546qtwlIsH6OKi19FirfIDP5OYwGEiKxIM/DAMrcF4+C
-	43fJ5k+lFBM7i/VJ9b7fW1GRQ5mxMouv8Fh62DABn78hTyq/RadCs35RlWZWXmsa1JIM5uI0xS6
-	gBA1z1kRG92Ne7pEos3pyiZSCvh6lo6S83UDod+0EF5Dghp04CEhnBZ0VJMFCfwuCWWh+feu4Mo
-	73nElWLWlWHCV63WA==
-X-Google-Smtp-Source: AGHT+IHunYI/Qc9lPZyBzZCIiHKLCs1ZR1rpiQA9DO6nBXYK1vmW412R+Gi7EJkijOomY7BvH0Vj7F88DYS7BC/2pMk=
-X-Received: by 2002:a05:6402:90a:b0:61c:e9b5:74af with SMTP id
- 4fb4d7f45d1cf-61d270e811amr7402142a12.36.1756742157148; Mon, 01 Sep 2025
- 08:55:57 -0700 (PDT)
+	s=arc-20240116; t=1756742172; c=relaxed/simple;
+	bh=vuObxFYXtMJ9BEdKeyXvgquRctjqpaumPPQp7sh0bGs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYfmr4p5O+uZQmsMGdq5Uw312bsoA2FWZIb5dmFdrshcn6PECFpwP+BR8XhlQ+x4jnno1h4v/FO3w6PzukBb9OjqJrW0U3QHcPRc0OEiJzzrmV/rY4iB1EZoAA3YhxGlvmzo3rY07PmbBruyxh2+CmTtuV9wPyhjLZ+BIXrjiRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sVXdARRa; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-63-95.net.vodafone.it [5.90.63.95])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A9FA8E8A;
+	Mon,  1 Sep 2025 17:54:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756742101;
+	bh=vuObxFYXtMJ9BEdKeyXvgquRctjqpaumPPQp7sh0bGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sVXdARRa1AbokGcelXq0Iam/WG4HwEarr8dHKQ6xIKRUK+3db/q+DoVi2VjjWR2/p
+	 o1or4+bn2+u1n3S/YclKBAhCnTYf8E5OXGk6MHsZshqKIzbS+57swdwHXq8XvS9nF+
+	 yG0NpJLltOoHl+F+wxyjgP222VUA2SIIemG52HvQ=
+Date: Mon, 1 Sep 2025 17:55:59 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
+Message-ID: <bgucngxjf337yyr6c5crnz7ee75dq47phbysspixpolyymppdc@4t7gnmkxrmdm>
+References: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
+ <20250901152954.GH1705@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
- <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner> <20250819142557.GA11345@redhat.com>
- <20250901153054.GA5587@redhat.com> <CAGudoHEoK9f=M6-iOL5yHqK=o4wiJW_78t88BEwsAksAW5HNqQ@mail.gmail.com>
-In-Reply-To: <CAGudoHEoK9f=M6-iOL5yHqK=o4wiJW_78t88BEwsAksAW5HNqQ@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 1 Sep 2025 17:55:44 +0200
-X-Gm-Features: Ac12FXyNPJz1dUjEcSc9c4t4AfnfOnNlH-rsyyfBpK1elpef2R-w9dOQQvpgvGs
-Message-ID: <CAGudoHHY7dMmxAc7x0avSxpNz-MfitQa-Shv2MSisLm-r4GH-A@mail.gmail.com>
-Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Xiang Gao <gxxa03070307@gmail.com>, joel.granados@kernel.org, 
-	lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org, 
-	gaoxiang17 <gaoxiang17@xiaomi.com>, Liam.Howlett@oracle.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250901152954.GH1705@pendragon.ideasonboard.com>
 
-On Mon, Sep 1, 2025 at 5:44=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
->
-> On Mon, Sep 1, 2025 at 5:32=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
-> >
-> > ping...
-> >
-> > We need either
-> >
-> >   [1/1] pid: Add a judgment for ns null in pid_nr_ns
-> >   https://git.kernel.org/vfs/vfs/c/006568ab4c5c
-> >
-> > or
-> >
-> >   [1/4] pid: make __task_pid_nr_ns(ns =3D> NULL) safe for zombie caller=
-s
-> >   https://git.kernel.org/vfs/vfs/c/abdfd4948e45
-> >
-> > in any case imo the changelog should explain why do we care
-> > to check ns !=3D NUll, "Sometimes null is returned for task_active_pid_=
-ns"
-> > doesn't look like a good explanation...
-> >
->
-> Since I caught this a stray patchset I'll bite: given the totally
-> arbitrary task struct in an irq handler, why even allow querying it
-> from that level? The task is literally random, and even possibly dead
-> as in this crash report.
->
-> To my reading the code which runs into woes here is private to a
-> vendor. Maybe I missed something, but I don't see a justification for
-> querying the task in an irq handler to begin with (and per above I
-> don't understand what the point is).
->
-> That is to say, if this was up to me, I would at best assert we are in
-> the process context and that ns is not NULL. As a result I would very
-> much *ban* the call as reported here, unless there is a good reason to
-> make it work (what is it?).
->
-> That's my side rant, feel free to ignore. :->
->
+Hi Laurent
 
-Maybe even go a little further and assert that the task at hand is
-fully constructed and not exiting yet.
+On Mon, Sep 01, 2025 at 05:29:54PM +0200, Laurent Pinchart wrote:
+> On Fri, Aug 29, 2025 at 01:12:14PM +0200, Jacopo Mondi wrote:
+> > From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> >
+> > The CRU version on the RZ/V2H SoC supports larger input sizes
+> > (4096x4096) compared to the version on the RZ/G2L (2800x4095).
+> >
+> > Store the per-SoC min/max sizes in the device match info and use them
+> > in place of the hardcoded ones.
+> >
+> > While at it, use the min sizes reported by the info structure to replace
+> > the RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT macros.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> > Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > ---
+>
+> Spurious ---
 
-The worry here is that normally you would expect the task to be all
-there (so to speak).
+It's b4 that should append here the content of the cover letter, which
+I didn't write, mea culpa, as it would just be a repetition of the
+cover message.
 
-For example imagine the task is mid-teardown, with some pointers
-already freed and whatnot and interrupt comes in. Code might show up
-which will deref parts of task_struct which are no longer legally
-accessible, but this only blows up if you are unlucky enough while
-racing. In practice these accesses might even never trip over anything
-despite being illegal (unless someone nullifies a pointer or
-something), hiding the problem.
+However this should be ignored when applying the patch ?
 
-All in all, this is a can of worms and from my cursory reading no
-justification for doing allowing it was provided.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+>
+> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > ---
+> > Changes in v2:
+> > - Use the size values in the rzg2l_csi2_info instea of going through
+> >   macros
+> > - Use min_width/min_height to initialize the format and drop
+> >   RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT
+> > - Add Tommaso's tag
+> > - Link to v1: https://lore.kernel.org/r/20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com
+> > ---
+> >  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 41 ++++++++++++++--------
+> >  1 file changed, 26 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > index 1520211e74185fea3bca85f36239254f6b4651db..183598d6cf0b255f779b4398e027d626ad1f3c1b 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > @@ -96,13 +96,6 @@
+> >
+> >  #define VSRSTS_RETRIES			20
+> >
+> > -#define RZG2L_CSI2_MIN_WIDTH		320
+> > -#define RZG2L_CSI2_MIN_HEIGHT		240
+> > -#define RZG2L_CSI2_MAX_WIDTH		2800
+> > -#define RZG2L_CSI2_MAX_HEIGHT		4095
+> > -
+> > -#define RZG2L_CSI2_DEFAULT_WIDTH	RZG2L_CSI2_MIN_WIDTH
+> > -#define RZG2L_CSI2_DEFAULT_HEIGHT	RZG2L_CSI2_MIN_HEIGHT
+> >  #define RZG2L_CSI2_DEFAULT_FMT		MEDIA_BUS_FMT_UYVY8_1X16
+> >
+> >  enum rzg2l_csi2_pads {
+> > @@ -137,6 +130,10 @@ struct rzg2l_csi2_info {
+> >  	int (*dphy_enable)(struct rzg2l_csi2 *csi2);
+> >  	int (*dphy_disable)(struct rzg2l_csi2 *csi2);
+> >  	bool has_system_clk;
+> > +	unsigned int min_width;
+> > +	unsigned int min_height;
+> > +	unsigned int max_width;
+> > +	unsigned int max_height;
+> >  };
+> >
+> >  struct rzg2l_csi2_timings {
+> > @@ -418,6 +415,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info = {
+> >  	.dphy_enable = rzg2l_csi2_dphy_enable,
+> >  	.dphy_disable = rzg2l_csi2_dphy_disable,
+> >  	.has_system_clk = true,
+> > +	.min_width = 320,
+> > +	.min_height = 240,
+> > +	.max_width = 2800,
+> > +	.max_height = 4095,
+> >  };
+> >
+> >  static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
+> > @@ -542,6 +543,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info = {
+> >  	.dphy_enable = rzv2h_csi2_dphy_enable,
+> >  	.dphy_disable = rzv2h_csi2_dphy_disable,
+> >  	.has_system_clk = false,
+> > +	.min_width = 320,
+> > +	.min_height = 240,
+>
+> As the minimum for all SoCs is the same, I'd keep the MIN macros.
+
+Unless you feel strong about this, I won't resend just for this
+change.
+
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> > +	.max_width = 4096,
+> > +	.max_height = 4096,
+> >  };
+> >
+> >  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
+> > @@ -631,6 +636,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
+> >  				 struct v4l2_subdev_state *state,
+> >  				 struct v4l2_subdev_format *fmt)
+> >  {
+> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
+> >  	struct v4l2_mbus_framefmt *src_format;
+> >  	struct v4l2_mbus_framefmt *sink_format;
+> >
+> > @@ -653,9 +659,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
+> >  	sink_format->ycbcr_enc = fmt->format.ycbcr_enc;
+> >  	sink_format->quantization = fmt->format.quantization;
+> >  	sink_format->width = clamp_t(u32, fmt->format.width,
+> > -				     RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX_WIDTH);
+> > +				     csi2->info->min_width,
+> > +				     csi2->info->max_width);
+> >  	sink_format->height = clamp_t(u32, fmt->format.height,
+> > -				      RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_MAX_HEIGHT);
+> > +				     csi2->info->min_height,
+> > +				     csi2->info->max_height);
+> >  	fmt->format = *sink_format;
+> >
+> >  	/* propagate format to source pad */
+> > @@ -668,9 +676,10 @@ static int rzg2l_csi2_init_state(struct v4l2_subdev *sd,
+> >  				 struct v4l2_subdev_state *sd_state)
+> >  {
+> >  	struct v4l2_subdev_format fmt = { .pad = RZG2L_CSI2_SINK, };
+> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
+> >
+> > -	fmt.format.width = RZG2L_CSI2_DEFAULT_WIDTH;
+> > -	fmt.format.height = RZG2L_CSI2_DEFAULT_HEIGHT;
+> > +	fmt.format.width = csi2->info->min_width;
+> > +	fmt.format.height = csi2->info->min_height;
+> >  	fmt.format.field = V4L2_FIELD_NONE;
+> >  	fmt.format.code = RZG2L_CSI2_DEFAULT_FMT;
+> >  	fmt.format.colorspace = V4L2_COLORSPACE_SRGB;
+> > @@ -697,16 +706,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
+> >  				      struct v4l2_subdev_state *sd_state,
+> >  				      struct v4l2_subdev_frame_size_enum *fse)
+> >  {
+> > +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
+> > +
+> >  	if (fse->index != 0)
+> >  		return -EINVAL;
+> >
+> >  	if (!rzg2l_csi2_code_to_fmt(fse->code))
+> >  		return -EINVAL;
+> >
+> > -	fse->min_width = RZG2L_CSI2_MIN_WIDTH;
+> > -	fse->min_height = RZG2L_CSI2_MIN_HEIGHT;
+> > -	fse->max_width = RZG2L_CSI2_MAX_WIDTH;
+> > -	fse->max_height = RZG2L_CSI2_MAX_HEIGHT;
+> > +	fse->min_width = csi2->info->min_width;
+> > +	fse->min_height = csi2->info->min_height;
+> > +	fse->max_width = csi2->info->max_width;
+> > +	fse->max_height = csi2->info->max_height;
+> >
+> >  	return 0;
+> >  }
+> >
+> > ---
+> > base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
+> > change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
