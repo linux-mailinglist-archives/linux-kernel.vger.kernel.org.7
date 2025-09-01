@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-794062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F006AB3DC50
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:26:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B57B3DBF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9BD16B515
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B64168D3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F972F3C13;
-	Mon,  1 Sep 2025 08:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6F62EFD86;
+	Mon,  1 Sep 2025 08:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owGyHc2l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bI2mHmKh"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063872F39D3;
-	Mon,  1 Sep 2025 08:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D41C2EE289;
+	Mon,  1 Sep 2025 08:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715193; cv=none; b=qgS3nBjZz7Ge7pQQ+r9M2rNKD/sRIJh1N6TxkxFN4aacbBkm/ObFIA55TrL9xIQcBIWyz/KFIhRDlbsZtbbZZylgzz9vOZxLikQycXSVg9Qlh0O5zcElEQ8CVoPy/CwdbwAIdY6T54fAXG3hDcJZIqnCb7D/qw3BxEIIRkAho0M=
+	t=1756714140; cv=none; b=ujKlKQ/SujIHmm65GjqCWAs+tp7Dv1Gmgbde6Pqt1zNOgNMTwnASHaV1nNSrE1SE1C2NDcAH9T+kW6LIf8IoKyL7mFsLbTkeM4XoPmR4VgS9no74LAqjI0ItVVczCxsJK6UxQPFD+6hyeRmDc6M1LORQgeT4kMI2R5naCaVtfeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715193; c=relaxed/simple;
-	bh=aVR/FswJp3O9rSq3s/eLXFgb9gOuX61s72/nCUCCKWY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gigGjgZE+tf3IA6x5DaT8lJ+tNdEaf0N74A85ewrcov8zheQbCd+s7VaA/gTF5IvKJj6NIpGK+mWTAKQZlg00bPQVVnjbyouHOizDRlbcj7ygfV66/+nth+V8F6cUq+o7SXcKY6xscL6fbu6RYeM2vrID2VABsm1hRAJ+sSJUcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owGyHc2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B495C4CEF0;
-	Mon,  1 Sep 2025 08:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756715192;
-	bh=aVR/FswJp3O9rSq3s/eLXFgb9gOuX61s72/nCUCCKWY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=owGyHc2lRNfNC/7qqcBJtw+EQGlG4Eqcxbum1PxbnaTY+YKC9KXVC0HWQAUAZlFFG
-	 hrEaqFxgrLdMYmzostT5sa0nFVAqqPsfn13MCaPS87/gyOeiTSEOgz77TcUfd27JF/
-	 goiJFLKJZhDn+uNMeRU9FAPw8eO4E/YFO191+URByuDBnvY4vfNiZFi6tViFpLo6d8
-	 na6w0cQuCmY6+B5AB6EeZO+m+sUHyMoYuIZ3rey5xwDrTXz73/mZlw88BvU03awWhh
-	 RiANeCot23bvThsVKZOsXNxNC3KpJHv7BX0SIKcdCC6tLfFKAXsNrRyQYR8hMZpyrI
-	 A2uz5MlKNXWSg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, Breno Leitao
- <leitao@debian.org>, linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 06/18] rust: str: add `bytes_to_bool` helper function
-In-Reply-To: <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-6-ec65006e2f07@kernel.org>
- <ZBoeX_r35qOXEuhUBHIR76laiY4GzAGN0v-K_LUT4qRPkM9SqYVWUIYeGClJCCJ4F8QSYVLKIqvP8teny4R1pg==@protonmail.internalid>
- <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
-Date: Mon, 01 Sep 2025 10:07:27 +0200
-Message-ID: <87y0qyh9z4.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1756714140; c=relaxed/simple;
+	bh=lQFCBESfCD6ZlEd+cqgBBiwcFPKbRecod7f5lgntivA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aJGe9iHfonViDT1R4fKFyyFGdsIb0djteh4VGM+pndtmg/pD75Jo1u5eQkJMWrt3eokicwXb97V0d3qlWYh/x2eDpU+tM4iUUQWTTgGlwcdH0+SysuGwgnAFyMkxoARyPJSj9Yo5q8cnjsUJ5QYDGEIN22MLWCGG6A8PgxWQPXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bI2mHmKh; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58188pCQ2327447;
+	Mon, 1 Sep 2025 03:08:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756714131;
+	bh=6cM/Eb/zYRQtpmXVh1mowJsQxkbwkg9juaU7jUzz+Fo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=bI2mHmKhuTOB1xH1UTA2uufhRkvs4mJZnaOUOiBKF7VKBUnW2g48bsIusZLu0pf6B
+	 KO/IWggKRbQ5UecATekgaDZWROFiTu+NFWK/vENmds4Ftf+ZLa2yGTwjgW+xMVsVS9
+	 FXtWx/8Z9al+giT1Sgx2hHCzEyK0cUL+ZGrn7Yrg=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58188pYT1398511
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 1 Sep 2025 03:08:51 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
+ Sep 2025 03:08:50 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 1 Sep 2025 03:08:50 -0500
+Received: from [172.24.231.157] (hp-z2-tower.dhcp.ti.com [172.24.231.157])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58188lWl1864683;
+	Mon, 1 Sep 2025 03:08:48 -0500
+Message-ID: <25f630c5-8692-4063-9bfc-9f805fd3d3a1@ti.com>
+Date: Mon, 1 Sep 2025 13:38:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
-
->> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrote:
-
-<cut>
-
->> -    kernel::error::to_result(ret).map(|()| result)
->> +/// Convert `&[u8]` to `bool` by deferring to [`kernel::str::kstrtobool=
-`].
->> +///
->> +/// Only considers at most the first two bytes of `bytes`.
->> +pub fn kstrtobool_bytes(bytes: &[u8]) -> Result<bool> {
->> +    // `ktostrbool` only considers the first two bytes of the input.
->> +    let stack_string =3D [*bytes.first().unwrap_or(&0), *bytes.get(1).u=
-nwrap_or(&0), 0];
->
-> Can=E2=80=99t this be CStr::from_bytes_with_nul() ?
->
-> This means that kstrtobool_raw could take a &CStr directly and thus not b=
-e unsafe IIUC?
-
-By design, the input to this function need not be null terminated. My
-use case is parsing the contents of a configfs file, and I would not
-want to change the contents of the file, or allocate to create a null
-terminated string, before calling this method.
-
-We could add another function `kstrtobool_cstr` to do what you are
-asking, but I think that could be a separate patch.
-
-
-Best regards,
-Andreas Hindborg
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] arm64: dts: ti: Add bootph-all tag to USB PHY
+ controllers
+To: Nishanth Menon <nm@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s-vadapalli@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <danishanwar@ti.com>
+References: <20250829074700.1531562-1-h-salunke@ti.com>
+ <20250829120347.v2mhce4tntnewrm7@mushy>
+Content-Language: en-US
+From: Hrushikesh Salunke <h-salunke@ti.com>
+In-Reply-To: <20250829120347.v2mhce4tntnewrm7@mushy>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
 
+On 29/08/25 17:33, Nishanth Menon wrote:
+> On 13:16-20250829, Hrushikesh Salunke wrote:
+>> This patch series adds the bootph-all property to USB0 PHY controller
+>> nodes across multiple TI SoCs (AM62, AM62A, AM62P, J722S).
+>>
+>> The bootph-all tag ensures that these USB PHY controller nodes are
+>> available during all boot phases, which is required for USB DFU
+>> (Device Firmware Upgrade) boot functionality.
+>>
+>> This series is based on commit:
+>> 8cd53fb40a30 Add linux-next specific files for 20250828
+>>
+>> Hrushikesh Salunke (3):
+>>    arm64: dts: ti: k3-am62p-j722s-common-wakeup: Add bootph-all tag to
+>>      usb0-phy-ctrl node
+>>    arm64: dts: ti: k3-am62-wakeup: Add bootph-all tag to usb0-phy-ctrl
+>>      node
+>>    arm64: dts: ti: k3-am62a-wakeup: Add bootph-all tag to usb0-phy-ctrl
+>>      node
+>>
+>>   arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi               | 1 +
+>>   arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi              | 1 +
+>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi | 1 +
+>>   3 files changed, 3 insertions(+)
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+> NAK! please do this for the boards that need this capability. bootph
+> property at SoC dtsi level are mandatory components for ALL bootmodes
+> and all boards.
+> 
+
+Thanks for the feedback. As suggested, I will update the patch series to
+ensure "bootph-all" property is added only to those board specific dts
+files which actually need it rather than the common SoC level dtsi
+files.
+
+Regards,
+Hrushikesh.
 
