@@ -1,150 +1,86 @@
-Return-Path: <linux-kernel+bounces-795045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89BCB3EC3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:34:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F3CB3EC35
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAAE207F0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FA4444593
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321EF2D593F;
-	Mon,  1 Sep 2025 16:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522762EC09E;
+	Mon,  1 Sep 2025 16:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerea.dev header.i=@cerea.dev header.b="AupkGeVK"
-Received: from mail.cerea.dev (vps-88effe85.vps.ovh.net [51.89.23.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="erBBuXVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA68332F763
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.89.23.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9132F745;
+	Mon,  1 Sep 2025 16:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744453; cv=none; b=GRovYIyOP41TcnuqJDGPX+IelPlEsP0jFQTTJw8ZJXgOO9GI9K7QqdyRIKvMdEIli9nX5CQX9nFTCiqLziWDSRPOZc6AAuE0SGzDETDH5geOc+AR5j8fToCDoUOcfFgSaa30ANvI0KeIlIMgxcM2lxgFQv9nzBosON7DvDRA8d8=
+	t=1756744104; cv=none; b=fVj63Tzmd9oC4f2JMaO0yglVXXXvVytBrrBUCoIxxHPTarL8YD464NGs6ME5hLHotK9J4Ad7YGZ9TIdgTc9XXOiTEyT5D1x4LNjcifSWX9XL9egt76hR48Qf6R1Mwrsjw+Z7Wrj8LI2lTgl8l4AuVXLb0BzfftObYf0XfQQfVu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744453; c=relaxed/simple;
-	bh=ayJm6cK14oblj0I0L5LzQ3+TxmbUzbczFC9a+8xWZOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GvxkvSli8tsCgsYqwZUBXrPMCMaDyWpeNYZOvC5i6+X/0UWd7RjDDu/48wcntYEf2uHLH7NxxqKGCMtwaui514VKRIZ9QFuBe0GMAVFEemF/wRmmqe2ZcBLMP50PLXPXLgJ7CgU8u/BlPGLvPa8tF85dHo8d58fGXxRVl1aHl4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cerea.dev; spf=pass smtp.mailfrom=cerea.dev; dkim=pass (2048-bit key) header.d=cerea.dev header.i=@cerea.dev header.b=AupkGeVK; arc=none smtp.client-ip=51.89.23.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cerea.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cerea.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cerea.dev; s=mail;
-	t=1756743971; bh=ayJm6cK14oblj0I0L5LzQ3+TxmbUzbczFC9a+8xWZOU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AupkGeVKS9THwTKoXKOceH+SK2C1Uaz30sEJaMNSveOANoz93TgnWfTg5pSVj3MjI
-	 E7kYue6g2MopXU19U/+K+11lMgoCF1OX3a5/bW7CtwtYXl+dCaDlT8aCPwXaVI/W0B
-	 ezB30bhOHteIFipeyp4A8h+CAyk9PUNx1DeN3c+waNfC//3B4VYSVWS53bCKsaaA6j
-	 a1mUXU08PuFHf27FcVfDlUCni4KN6ajDupQt4ZsMLYz1zlTKL8IlNcE1mvUpa5KKZy
-	 TjD7nWwESqXCZnjGJPsrKt0BAtlzcBfZ7O042pTOZ/EDTrUf9+WGFtHrje8hiyPAnf
-	 8YNkfodENnqpw==
-From: Samuele Cerea <samuele@cerea.dev>
-To: bp@alien8.de
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	Samuele Cerea <samuele@cerea.dev>
-Subject: [PATCH v2] x86/traps: Handle trap flag when instruction is emulated
-Date: Mon,  1 Sep 2025 18:25:28 +0200
-Message-ID: <20250901162527.18247-2-samuele@cerea.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250822170107.GGaKiiU-HFkxnbymhY@fat_crate.local>
-References: <20250822170107.GGaKiiU-HFkxnbymhY@fat_crate.local>
+	s=arc-20240116; t=1756744104; c=relaxed/simple;
+	bh=viw6wcLJ9dNt96CV0hewJVgxtXzq50eavaC2cG7cjho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYChLKky3ps5eax3/0jZB4lRO18dgfRVejbUsv09PT8d98KgqVWmYeEAvvX94mbUNXWrS+x2DbNf/OPWH7fRIoZzofVvMQbvtlO9OVWjYfx8Ag26x6aEAQ5ZVyC/GuRIloUGhO+ustVkYZ5murtFoXP+ZG3mlNHq5gOuJSOp8JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=erBBuXVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414DEC4CEF0;
+	Mon,  1 Sep 2025 16:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756744104;
+	bh=viw6wcLJ9dNt96CV0hewJVgxtXzq50eavaC2cG7cjho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=erBBuXVgQZv37o75NFkFnzj1JNuHwmNa41C2tuunXJAqdAhWWn7gdM8xoRjhLtlbb
+	 l3Gt/sYbTdnD86ODgtofGn00enO0G/o935z81/DrlJ5Uu5GID0rTiTzlM3ybqAxLAK
+	 RwmRKVEGnqQqxUhLF0eELSiFKNoAtsarvrLAJgn01uBwV5aihRhNUHJYvt5L6XjpRP
+	 BYwsqsnVzA0Ay0a8kZxfNDiEhdHDxHBfhoCridA0acWUkU9jfuds893IYqv3islZ+7
+	 0XxVjRvVhzxjbiHM096hMIy3lm0D6+PXyn+tIs++d+MyTIC9fETjiwPCDpQEXgoSAQ
+	 uWNsyn1exfBlg==
+Date: Mon, 1 Sep 2025 21:58:19 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Biju <biju.das.au@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 04/11] phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
+Message-ID: <aLXJozzGsbIndK9P@vaman>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com>
+ <20250820171812.402519-5-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820171812.402519-5-biju.das.jz@bp.renesas.com>
 
-Simulate the trap flag (TF) behavior when the kernel emulates UIMP
-instructions and iopl instructions.
+On 20-08-25, 18:17, Biju wrote:
 
-When an instruction is emulated successfully and the TF is set, send a
-SIGTRAP signal to the process, as it would happen for a normally
-executed instruction.
+> +static int rzg3e_phy_usb3test_phy_init(void __iomem *base)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	writel(0x00000100, base + USB3_TEST_CREGCTRL);
+> +	writel(0x00000303, base + USB3_TEST_RSTCTRL);
+> +	fsleep(20);
+> +
+> +	writel(0x00000004, base + USB3_TEST_CLKCTRL);
+> +	writel(0x0000000d, base + USB3_TEST_LANECONFIG0);
+> +	writel(0x00000301, base + USB3_TEST_RSTCTRL);
 
-Fix a problem with debuggers when signle-stepping instructions where
-emulated instruction would get skipped.
+Magic numbers...?
 
-Here is an example of the problem:
-    NOP
-    SLDT %rax
-    SLDT %rax
-    NOP
-The two SLDT instructions will be skipped an the debugger will step
-directly to the second NOP instruction.
-
-Signed-off-by: Samuele Cerea <samuele@cerea.dev>
----
-I fixed the issues you pointed out, hopefully now everything is correct
-
- arch/x86/include/asm/traps.h |  2 ++
- arch/x86/kernel/traps.c      | 14 ++++++++++++++
- arch/x86/kernel/umip.c       |  1 +
- 3 files changed, 17 insertions(+)
-
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 869b88061801..7742a6d05158 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -39,6 +39,8 @@ void math_emulate(struct math_emu_info *);
- 
- bool fault_in_kernel_space(unsigned long address);
- 
-+void emulate_trap_flag(struct pt_regs *regs);
-+
- #ifdef CONFIG_VMAP_STACK
- void __noreturn handle_stack_overflow(struct pt_regs *regs,
- 				      unsigned long fault_address,
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 36354b470590..bea28473866b 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -678,6 +678,19 @@ static enum kernel_gp_hint get_kernel_gp_address(struct pt_regs *regs,
- 
- #define GPFSTR "general protection fault"
- 
-+void emulate_trap_flag(struct pt_regs *regs)
-+{
-+	struct task_struct *tsk = current;
-+
-+	/* If the instruction was emulated successfully, emulate trap flag */
-+	if (regs->flags & X86_EFLAGS_TF) {
-+		tsk->thread.cr2 = regs->ip;
-+		tsk->thread.trap_nr = X86_TRAP_DB;
-+		tsk->thread.error_code = 0;
-+		force_sig_fault(SIGTRAP, TRAP_TRACE, (void __user *)regs->ip);
-+	}
-+}
-+
- static bool fixup_iopl_exception(struct pt_regs *regs)
- {
- 	struct thread_struct *t = &current->thread;
-@@ -705,6 +718,7 @@ static bool fixup_iopl_exception(struct pt_regs *regs)
- 	}
- 
- 	regs->ip += 1;
-+	emulate_trap_flag(regs);
- 	return true;
- }
- 
-diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
-index 5a4b21389b1d..8a5f33562bb4 100644
---- a/arch/x86/kernel/umip.c
-+++ b/arch/x86/kernel/umip.c
-@@ -407,5 +407,6 @@ bool fixup_umip_exception(struct pt_regs *regs)
- 
- 	/* increase IP to let the program keep going */
- 	regs->ip += insn.length;
-+	emulate_trap_flag(regs);
- 	return true;
- }
 -- 
-2.51.0
-
+~Vinod
 
