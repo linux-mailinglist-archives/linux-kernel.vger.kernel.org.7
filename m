@@ -1,125 +1,232 @@
-Return-Path: <linux-kernel+bounces-795309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467D5B3EFBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6BBB3EFBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DEDD1B211DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DE01B21140
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC9F26562D;
-	Mon,  1 Sep 2025 20:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241FF269B1C;
+	Mon,  1 Sep 2025 20:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lRhvhPcQ"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I0OuUyub";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykD4WBi+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I0OuUyub";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ykD4WBi+"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFA2212545
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6952264C7
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756758832; cv=none; b=kqIaoUPRe6uCgKKQ9KkLgYdlT+pXVLMN/JjG8GN9cNnvjnX2sk6eGdWhPhDK/YDdCWXxsXorobYzNDR+JFsyiDsAvd77aiN6beZkTOsE6jctIyksdwaH/RWZ3dAYTCdoRVBINfjK9rnRw5H3G01OhtAEhbLyVKEc6NyWhsB8uqY=
+	t=1756758877; cv=none; b=EWxhTPNQvcwsBb3wzA0b+ap/7dgqcgPZTk+7e9AJVB+Xjf4w3FhX8bUd5BNA6GGntwWxrH+0s5zB89xMvuwlq7c8bSs4I+f/X8njEym5U3sab3XR+qyAeDed7jbC1ygAfHyWUFVy0VID6//p0Z69RjgxBKsn7txThh68vZRkRQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756758832; c=relaxed/simple;
-	bh=Phlfxeds9jteAg8NpdJVSfF6KkdG4nLGi2ESSLHS1to=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E8UBxY1kggEZWv11fkeovnM9El5BNFAx/yuZlHHOlzofl0rxVBjWllztkCeDTu6UotUxey9xQ5lOvEgOePg9HtHnTnp3kM6hHtS3YDiyXGcwWLyGKKS8/qQjvVVaRvoHU/TMa0F39ndB5iZYuCW9jBjGWBxq2rXl0f+jZeOJ53A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lRhvhPcQ; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Ha1ZIxMm0P7ZWTMQeA2q5fJSTCh3TlBQiNShrH/P17g=; b=lRhvhPcQwjCTYfkCKvS1pfn098
-	m6Y4IiAxRuaHuhU8UxJ/jLZt2bIWfNnN/dBbYg+jStZWyu/IjkDiSWfJ1CHLhWtbXSwpaSMbWobHr
-	DKfzQHAm48tP2u/ytA7JQrZ5fdwQkmcy2Et4kdYpPOz7mNSEgnv+qICDTg4A/7jiy5Jqq6n72PHyp
-	8G4aJvEr9Ka3BY/X6GBEhIHX1t/Kxas/ynKDNvdzv7iKQsEHTHmoIl4FF557P9VBsC+w0yIIOBVK0
-	fAjuEfZyCxD8ypnMLjVBdWgOuR6wtUn8G74icaty+VqhEnQehgQMVV6lxAxFwMpXg++U6SUWIwSsS
-	P9J/vS3w==;
-Received: from [177.139.20.31] (helo=steammachine)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1utBDn-005Qdu-Dv; Mon, 01 Sep 2025 22:33:47 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Waiman Long <longman@redhat.com>,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 2/2] selftest/futex: Reintroduce "Memory out of range" numa_mpol's subtest
-Date: Mon,  1 Sep 2025 17:33:27 -0300
-Message-ID: <20250901203327.53887-2-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250901203327.53887-1-andrealmeid@igalia.com>
-References: <20250901203327.53887-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1756758877; c=relaxed/simple;
+	bh=2WM9a8ZjPJzfzthk46LH4Xb1yua1pn4/uW+KV74kfXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ru9gZ3JcXBx8m1EFpT5tMkmzsM9gWJd1lLNM5OvnSXeWQzCIo+X3HoAn+ePDfEhZ5P7L+ZSc3Nu+NgxdkvYQKEzx6qLfS12mX1ELbUL/Hi9rT/roQtFvaJe2O5UtsJditFH7bKdNZAgClRQiddVhTNvAEg1iXocIn3YaJ5YUrJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I0OuUyub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykD4WBi+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I0OuUyub; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ykD4WBi+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 701211F397;
+	Mon,  1 Sep 2025 20:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756758873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
+	b=I0OuUyubcdYkMHYcJ5Rdj7qiyuZauJOpXotZ1c5cGyKMYqSx/4xOfnRL/BkfHrIjDi15GD
+	/jafyJ3ygWmOOJ8+Td7q8rIJZrWvyrMQkPUr+cN63eQih1RL5aDPJkesQQYAOm2vrjMoFE
+	sH+zJ2ercuv6HviXS7KiX4o6wLcDx1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756758873;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
+	b=ykD4WBi+G4faz+l8DrI8zBYZmWh1/bNb+yTYqT8vliGLHnTawoTJ1rp1TcwaQee+CF2GWl
+	7RRiZQpEhcMtmyCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=I0OuUyub;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ykD4WBi+
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756758873; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
+	b=I0OuUyubcdYkMHYcJ5Rdj7qiyuZauJOpXotZ1c5cGyKMYqSx/4xOfnRL/BkfHrIjDi15GD
+	/jafyJ3ygWmOOJ8+Td7q8rIJZrWvyrMQkPUr+cN63eQih1RL5aDPJkesQQYAOm2vrjMoFE
+	sH+zJ2ercuv6HviXS7KiX4o6wLcDx1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756758873;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8dcBIcGOTls1ytHHhv5Oh0JDQHI8/8jhSi/d7/t8aA8=;
+	b=ykD4WBi+G4faz+l8DrI8zBYZmWh1/bNb+yTYqT8vliGLHnTawoTJ1rp1TcwaQee+CF2GWl
+	7RRiZQpEhcMtmyCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1320D136ED;
+	Mon,  1 Sep 2025 20:34:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6xsTA1kDtmhlOQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 20:34:33 +0000
+Message-ID: <63a6962f-6ffb-47cd-806d-ec568f0b2df7@suse.cz>
+Date: Mon, 1 Sep 2025 22:34:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm: memory-tiering: fix PGPROMOTE_CANDIDATE counting
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Ruan Shiyang <ruansy.fnst@fujitsu.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, lkp@intel.com,
+ ying.huang@linux.alibaba.com, y-goto@fujitsu.com, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, mgorman@suse.de,
+ vschneid@redhat.com, Li Zhijian <lizhijian@fujitsu.com>,
+ Ben Segall <bsegall@google.com>, stable@vger.kernel.org
+References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
+ <20250901090122.124262-1-ruansy.fnst@fujitsu.com>
+ <20250901125917.e9792e5d0df12ba1c552c537@linux-foundation.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250901125917.e9792e5d0df12ba1c552c537@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 701211F397
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-Commit d8e2f919997 ("selftests/futex: Fix some futex_numa_mpol
-subtests") removed the "Memory out of range" subtest due to it being
-dependent on the memory layout of the test process having an invalid
-memory address just after the `*futex_ptr` allocated memory.
+On 9/1/25 21:59, Andrew Morton wrote:
+> On Mon,  1 Sep 2025 17:01:22 +0800 Ruan Shiyang <ruansy.fnst@fujitsu.com> wrote:
+> 
+>> Goto-san reported confusing pgpromote statistics where the
+>> pgpromote_success count significantly exceeded pgpromote_candidate.
+>> 
+>> On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
+>>  # Enable demotion only
+>>  echo 1 > /sys/kernel/mm/numa/demotion_enabled
+>>  numactl -m 0-1 memhog -r200 3500M >/dev/null &
+>>  pid=$!
+>>  sleep 2
+>>  numactl memhog -r100 2500M >/dev/null &
+>>  sleep 10
+>>  kill -9 $pid # terminate the 1st memhog
+>>  # Enable promotion
+>>  echo 2 > /proc/sys/kernel/numa_balancing
+>> 
+>> After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
+>> $ grep -e pgpromote /proc/vmstat
+>> pgpromote_success 2579
+>> pgpromote_candidate 0
+>> 
+>> In this scenario, after terminating the first memhog, the conditions for
+>> pgdat_free_space_enough() are quickly met, and triggers promotion.
+>> However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
+>> not in PGPROMOTE_CANDIDATE.
+>> 
+>> To solve these confusing statistics, introduce PGPROMOTE_CANDIDATE_NRL to
+>> count the missed promotion pages.  And also, not counting these pages into
+>> PGPROMOTE_CANDIDATE is to avoid changing the existing algorithm or
+>> performance of the promotion rate limit.
+>> 
+>> ...
+>>
+> 
+> It would be good to have a Fixes: here, to tell people how far back to
+> backport it.
+> 
+> Could be either c6833e10008f or c959924b0dc5 afaict.  I'll go with
+> c6833e10008f, OK?
 
-Reintroduce this test and make it deterministic, by allocation two
-memory pages and marking the second one with PROT_NONE.
-
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-This patch is aimed for 6.18
----
- .../testing/selftests/futex/functional/futex_numa_mpol.c  | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-index c84441751235..e4b840184b1d 100644
---- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-+++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-@@ -174,10 +174,13 @@ int main(int argc, char *argv[])
- 	ksft_set_plan(1);
- 
- 	mem_size = sysconf(_SC_PAGE_SIZE);
--	futex_ptr = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
-+	futex_ptr = mmap(NULL, mem_size * 2, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
- 	if (futex_ptr == MAP_FAILED)
- 		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
- 
-+	/* Create an invalid memory region for the "Memory out of range" test */
-+	mprotect(futex_ptr + mem_size, mem_size, PROT_NONE);
-+
- 	futex_numa = futex_ptr;
- 
- 	ksft_print_msg("Regular test\n");
-@@ -192,6 +195,9 @@ int main(int argc, char *argv[])
- 	ksft_print_msg("Mis-aligned futex\n");
- 	test_futex(futex_ptr + mem_size - 4, 22);
- 
-+	ksft_print_msg("Memory out of range\n");
-+	test_futex(futex_ptr + mem_size, 14);
-+
- 	futex_numa->numa = FUTEX_NO_NODE;
- 	mprotect(futex_ptr, mem_size, PROT_READ);
- 	ksft_print_msg("Memory, RO\n");
--- 
-2.51.0
-
+LGTM as a helpful pointer, but I don't think Cc: stable is necessary for
+"admin might be confused" kind of thing if that's there since 6.1 and only
+came up now.
 
