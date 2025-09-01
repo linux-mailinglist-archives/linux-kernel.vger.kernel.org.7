@@ -1,428 +1,247 @@
-Return-Path: <linux-kernel+bounces-794468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53169B3E23A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E28B3E240
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB63917C4A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB5C17F514
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3368026FA6F;
-	Mon,  1 Sep 2025 12:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F8F270ED7;
+	Mon,  1 Sep 2025 12:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klJz7aX5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CS+wgIIC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94425EFBF;
-	Mon,  1 Sep 2025 12:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756728429; cv=none; b=bhtAwNs6uJJWOagMybPY841WE6diRCRSkyQUaa0JqciqpLyLGW6p+TYyeyO5OokGTGyo0K0GBokZOuB+DJqNmYuuuAD4BEAETTZrxj6pj/Qfb5UeAyBVp+CZfPfF8EqFovgXIJM/mGk7h4iDoDGedmkBEZwH5xDqGELv1KLBEzI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756728429; c=relaxed/simple;
-	bh=NnnVmDOEYrbdmnujn4Lul2TG+QyYkE2QL0d/N5DPfSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=POJFej5mUiGzaTDN7yXLPfv5ZV+gDh2iMVHC9oAaQpvUQM8Bx8PV1SkKcwEqmo0MsSlA7gvDu5+hz18cz6u2m1YaSXF9lTyrL9pD3WZVORwToxXqfDlQwhBR7RMHD2qeM6uN2qxo7GdnISzPjGxxbPWklywUrIqOFX+eNEr83dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klJz7aX5; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA71E25EFBF;
+	Mon,  1 Sep 2025 12:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756728465; cv=fail; b=iidMW4CtNmMV4v+gkoTqQkMm4NI+MIg7daNl0q2hvs8X/DY4MnoqfFi+E2aCaydXbnY86LoWHs+Pe7PE3e8YhJr9qEgqGPt8XcJszY65QJ5U0nId7OpBija8xNXnvn1Evb+cbEAiTXI8WrBeTOim7GmWWHoomwqiavvFXTu2Ixg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756728465; c=relaxed/simple;
+	bh=eNXcftaHOfPJZ3Z/OK2Lbsy56MLODAUi9581a5yd70s=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nSM+jpmnNe9isOgYBp9KZ+bC5iNSzva0uuLvLsyuGqKjvX6uZhj4hndz/dNw1QM2BIOcA8W/tWQoeWuaAh3+Yp3sC6lvgeUp1GbM2ANono7yFl+cKxZgqpsgzm9D6i81d0aODIyoHXbU7vll8ix7XYLem2ZRQWJUsHoQ/zvqC80=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CS+wgIIC; arc=fail smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756728427; x=1788264427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NnnVmDOEYrbdmnujn4Lul2TG+QyYkE2QL0d/N5DPfSw=;
-  b=klJz7aX5pTvcIX9ZfcW7zfrn1ceiLNnbsVgp+n2vIaPzE8giVIaEOOaw
-   UF/4PC5cC7yacbkJAjEV5Q9K5GvGSo+z0+AMt7ZC2llubjx0H45VoYwT5
-   AiRt+GwlBGeSqrkh+Krhfv6YDu2fG+7KWt0s2xx93rTggQV+O8jW56LAd
-   gHmOKoPCU6rkFEv5ks7onjDbrPbYTsetgcWVajpwTqX4UEPxuzvCsakdF
-   mF6pu8ehXdO4n12EnK9IW6H3IgvavaXmvR7IdtdtJNRFm2fPk8YJPw8Va
-   A1or8KBNA3+Ar8Vsk1MX9kV+iGvAlKVagixclxChKcteXTMzPD/O/xKGc
-   g==;
-X-CSE-ConnectionGUID: 5k3ZKtxcSoO4sgbIpkOBFg==
-X-CSE-MsgGUID: qv6GAFcRQK+NEYm3AZbjrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="76433054"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="76433054"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:07:07 -0700
-X-CSE-ConnectionGUID: FTm+C/DoTSCAJrkzgjTPkQ==
-X-CSE-MsgGUID: UJA0ZIAkSLyy6Wv9SAaDdA==
+  t=1756728463; x=1788264463;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=eNXcftaHOfPJZ3Z/OK2Lbsy56MLODAUi9581a5yd70s=;
+  b=CS+wgIICJNxVmn6Pz5hB+VoVeZdtAMVA858AeuAWJEfdgwLXDT9Tyw/H
+   b4LZ3g+RZyt4+fOUnUx8MLNxqIs7CXXeFh5UeF30EtgAPkxt4ddofB4m9
+   /zdnpDvlSvHEINV2TI4rATYHQ6vUs6ZWpmYbyojyoKioL0xYEWo/CJANF
+   9cESad/dfOcUSDzRgSDh78olzrGQww+yJ2ZKHzVmiiB7W2GhEgQedEngh
+   FdIR0CxUSabCRVCF5h5eip/YnNWRA+RacIvC2NshAcNZ6slAggrMomNJb
+   qymU9/TYBuP0xGhw3WT2JL2qlKNCOm9m0qdjWpz5ItDdnVZ96ukv2Yvyz
+   A==;
+X-CSE-ConnectionGUID: 5eFhWtwgQPS12vbpselHxw==
+X-CSE-MsgGUID: FHYxE+kESLynOvgL0o4tYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81569146"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81569146"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:07:43 -0700
+X-CSE-ConnectionGUID: J8q/Dh5+S9iU+eow/Xh/dA==
+X-CSE-MsgGUID: LZrLA7/9TdK+X41rItEOtQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="175380316"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:07:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ut3JN-0000000APIW-105E;
-	Mon, 01 Sep 2025 15:07:01 +0300
-Date: Mon, 1 Sep 2025 15:07:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
-	broonie@kernel.org, virtio-dev@lists.linux.dev,
-	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hdanton@sina.com,
-	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
-	quic_ztu@quicinc.com, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v9 3/3] SPI: Add virtio SPI driver
-Message-ID: <aLWMZH3NTfM8qOUy@smile.fi.intel.com>
-References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
- <20250828093451.2401448-4-quic_haixcui@quicinc.com>
+   d="scan'208";a="170555430"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:07:42 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 1 Sep 2025 05:07:42 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 1 Sep 2025 05:07:42 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.79)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 1 Sep 2025 05:07:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=meIn4caxFz5xmUy9YmhA3oNrAn0Z/8WUjaslkbE/Zm6ShCyN4MhYCrYnLW98kFZyYaxIrSy7MfbHK+zWS7ZW1nSliW1y0gLyJwBs0QpvfhCYJzhAIPpPAcIYAEdy/t4GGEq9M+UvPM3ZciEkgu7htMVBue8Lq4pKvlp89BXdbzgclj2ZlIzr/Gz64lUPkMYlkcSUvJSj0bDjeSFgOdnPdItiyUQR7RBBrOlr+77QDMCusUKuViI/f8cP/3yrJD/V3KLi+F9bpKm4+K34Ca1Rb69XSpxjhwq8XP05y64A3Xa6nM2qGj29fWRUaOtsB9DNVuurDw45+zqPun5G39D8iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lEfHAzgZ30nU4IHGukFxyxnkisTWVrSioD04O2+uDjk=;
+ b=uu6G6gEEN7qz1G8S4noemI8zQyleCygKAblsLAYSHEQ3eZPIYd3AnK4LvaV4k4aXL/FJjxtoNTy8pHGeGU9jJ4ZFFvmrXUHqL/c9kUi6h1Nh25PtfRV83lRXfVbwfW7IXoEUkIOWLCXZbRDElOUAcnpttKUDXq8kwpLpI3f+gncfbm579OOMqxTfUCZ0YV18RglMMHVRb4/uSsM7Artxsu1DZDB1mA7D5FTfYdKfk9vtDVrFkm0UiInUnkqZAHcs61zeFGEgm6MavLMT83IW+iVw9UFZSzZp29YVRdrkm1CSgIADFAvvo+G1O1jgOGgHcdhTBxtCcRa+pulz2FafZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by DM4PR11MB6141.namprd11.prod.outlook.com (2603:10b6:8:b3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
+ 2025 12:07:38 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905%5]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
+ 12:07:37 +0000
+Message-ID: <86721a4f-1dbd-4ef5-a149-746111170352@intel.com>
+Date: Mon, 1 Sep 2025 15:07:32 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mmc: sdhci-uhs2: Fix calling incorrect
+ sdhci_set_clock() function
+To: Ben Chuang <benchuanggli@gmail.com>, <ulf.hansson@linaro.org>
+CC: <victor.shih@genesyslogic.com.tw>, <ben.chuang@genesyslogic.com.tw>,
+	<HL.Liu@genesyslogic.com.tw>, <SeanHY.Chen@genesyslogic.com.tw>,
+	<victorshihgli@gmail.com>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20250901094046.3903-1-benchuanggli@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20250901094046.3903-1-benchuanggli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB9PR01CA0005.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:1d8::10) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828093451.2401448-4-quic_haixcui@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|DM4PR11MB6141:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f95b32f-0d62-4de8-47b3-08dde9502474
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d0Z4UHFqUnF3T09mNVF2bUsza2xxVlMySkNhcnpNVW1ZSkh1aXR0K0VwMTQx?=
+ =?utf-8?B?MzNaa1lvSEtOQVNGWkxNNkFQcWFpSFp6TzFNSkVvWk1sM3lBeW8rV1NJbW9t?=
+ =?utf-8?B?VUV2VXVsK1ErczYzWFhWVUFtOUZwS3JzSUZwVXo4Z29hOWVqYnNUV2kxeUNp?=
+ =?utf-8?B?eXRXU0MwMkphTTA0QzVGQStBVzZkRyt4SnZSQTg4YVA2b0puMVphbHova3l4?=
+ =?utf-8?B?aDdOV0ZJZFZOMDNEWjJYNVlyc1p2WG94Y2hhKzlOZTRxdm9ES1M1TWIwQlRD?=
+ =?utf-8?B?SlpONUQraFdnWjlRL0VRK0NPYnI2QllPdWw2RU5kenk5ZEFRcXRUR2xiV0FW?=
+ =?utf-8?B?K1Vsd2pCc0tvV3JmVGJIaVBIQVNiUFAxSHpSekM4T0EvMS9vVGlxZ0I0TDRJ?=
+ =?utf-8?B?NmxhaUZHMlc3RXpQaTdnajlwNTdGc3RYNnpCblZPamtMeHVRYzBRejZkOGdz?=
+ =?utf-8?B?UjFuNTFLS3RVeEdjaEdmQUQ1eUFWOXhTVE9nYytNUTZOQmlTdUpMR1ZTYXlt?=
+ =?utf-8?B?dnMrWk1uMCsrdGV5RTFmaW5xUTkvbXdUbG4wUUk0R3VqODg5cmNHNmZKSmVS?=
+ =?utf-8?B?ODhnVTMrL1ZoOWdRcTh0TjIyclBWeDJFUytjZFN0Q1BnVm5NcGNXc2QwNE1U?=
+ =?utf-8?B?SGdxL3F6WFJ6RTk3UFBrODZSenhuSm9lNFVscFJqZEdsSVpBNExFRkttUDdj?=
+ =?utf-8?B?QjZqTlBIeExXVWFCRWx3NzZqOFRENERmYjdkeVRueENuY2E0YnZrSXdxM05F?=
+ =?utf-8?B?c0s2TWtBWit4YjhSZk9CbnR5YVcwWDdSaHdXWmhORklHdXhCQlBlOG9hMEZL?=
+ =?utf-8?B?VnZPdXlvOC9aMDFEUkJhRG0vZG9rZEtCcEU5UTJvcE9PRHdHcE45aTZMaGls?=
+ =?utf-8?B?UHBBeW4xNHNCTjEyL2VNZHRCWTlVRTZCbkd4Ulp6WVdnZEJWUGZ2anUvMVI5?=
+ =?utf-8?B?ZkxRL3VOTnBHZkQ2YTh0NWMzSXBSSExhVEdtQllzYzArVUFVQ2JpUzZQaEZX?=
+ =?utf-8?B?bWl4MzBFeEoxdmJ6YkRHSWQ2SmlpUXB1UVppaTUyV1pmUVYyQ1JjMkloZFhZ?=
+ =?utf-8?B?ZVJBUXdEbmNwQVdxN01JdGZ6djRqOUFCVVNkMVNtZXdVZ3NVUkxKcHRvelZm?=
+ =?utf-8?B?VFgzRmdWNUQ4RmRXaDVlRzJpNWtwekFiWkU3SEVKS2FpQythcUtyKzBpQUJv?=
+ =?utf-8?B?Y0pJTUFEQmdZLzdNNmxTeWVJbW40TlFKeHhXR2NzT1dTY29KT3JqYkFGeGx6?=
+ =?utf-8?B?c2NrdmtsbEVhRzY2MG5YaGtaL0czY3FwSjI5VkkwRVBmbHV6cEtLNVBLN1RP?=
+ =?utf-8?B?R1RGQTU3azNIdFZVOGVEeG50U0hwNGlRZVRIU21HYnVHY2pWTXgvREFwNXFM?=
+ =?utf-8?B?TUxkcmNYQVppNkp2d2RQcHpyUEdndkgreG5kUVJIM3dxSVoxUVRzT1cvbHdF?=
+ =?utf-8?B?b2NYNmsyc3haUEFNcndsQklEaldLL2FvWlRxTEhUOTM4bktxUGZIR2R2bkNq?=
+ =?utf-8?B?eWthUUl3YmYxRkRxZ05oY3kxdW9DcUR3MTVTMm5CWjhnRXZ4UGRDOTBCMXI0?=
+ =?utf-8?B?ZTREZTZ5VVlmSHNZRWJUOGFOL3FoSHBOSk9OZjJpNkpEa0Jzazd5ZExMK2FV?=
+ =?utf-8?B?UTRFT1pRM3UzMkh1cjJrMXdzQVJlTU9TVFJ5YVRYQlVKZ2ZseEZkT0RuNlBw?=
+ =?utf-8?B?VUVjamRaS0VlRzBZWFYzc0V4NmVjWUVJbmRuWDg3L2lnVnlsbVNjYWlDZmh6?=
+ =?utf-8?B?cng2K0k2NHFlbm9tRE9yMngzMmw3SDZCMm5Yak9nYnJaSWNzZ3RLMm1sYkhw?=
+ =?utf-8?B?aFRydExWRVMyazNkditVQy83cFhUSkJQOUVqZnJYREJyVmlkRXdLV1dTcnYy?=
+ =?utf-8?B?OExQUlRxUXZlaWhvbXRaYWNJSzEwV2dYK0Q3aXdDMUxiOHdKK1pTYWx3Wmpi?=
+ =?utf-8?Q?Q1RbgmYv+wY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q3lGSDhEREFvS3gxM09xZFVlT3pONnRacld2TlEwanBkVUFNMnJSMDRnc0kx?=
+ =?utf-8?B?SmszSjhHcmN4WXhBdERWOU5kbVVWaXVJU2YxOEhnWDVyK3BQUXUxem8xcjN0?=
+ =?utf-8?B?TGFsWHJpNGRmUWdTTlBUSFVaSEVYMWUzK2xFYjgxd0w5N2xCaVAyb3dKeHVT?=
+ =?utf-8?B?QzhZVnFmbkZ4Qm1VbVg0S3EyRnpoRFUzYmpPSFNNejRjWHpaUlM3OFRaNmIw?=
+ =?utf-8?B?MWJybEhLOGl3eWR3Y0NPK3lwQlQ2R2dPWWRSSXVIaU1LNys1K3UrT21UcmZG?=
+ =?utf-8?B?cWZXK0lHelJ2VG11ZS95eE1rb2w5Y3hnUzRuajEwN2FCRmxxamJFRk1DWWdy?=
+ =?utf-8?B?S0dtenJnM0tlOElJYW1FRXpnVDZudno5ait2QnpHZXZnN0tZWUxMMVgxNERH?=
+ =?utf-8?B?QTNGL215Sm9EaSs2T0FnaFhQVmpIdlQ4NXE2SUdRbFp6NEJFeE82b3FwZ3lV?=
+ =?utf-8?B?eTRUenMvczhrcnFQWUdMTWRhSm9Ia0Y2Qm5MeDI0aXkvS2xnOFFyTVdlNGly?=
+ =?utf-8?B?N2JCZDZVREFuOHFqS25pMXdTZFRjSkUrOHNnM254a09scE5JYVpzbVBwaHpo?=
+ =?utf-8?B?RDY2L0pwVnEyQ3RBVUhIN3JEamFia0UxVnRsMjc3ZHZoUFZJMjAyTmJxQnJD?=
+ =?utf-8?B?Tlo3RWtjQ1JqenFselJyeTUwZ0RFekQ2S21idEUramUvUWEwYU9BVDR3NGJP?=
+ =?utf-8?B?bHRmY0ZxSkowZlFaNkdrd0hJWGJOSG5PMXlXY0MwZVNMdUs2SjNVWVdUcVRK?=
+ =?utf-8?B?WDYwcVdUV3FjS3FGRTlsdnJ2TDBneDlIb0lSWEdLeDhWemM3S0ptV04rRDdO?=
+ =?utf-8?B?dHJSaFR5SXZkRldpcmJkYUIxam1YS2JVQU53N1FsSEFNUW1vUGVCTkllS1ZO?=
+ =?utf-8?B?ZDMwWlpDS0NEd3FCbEZtbW5YYXVHQjA0dExFOTg5cVNRSWUybHNXQ2lOVkVS?=
+ =?utf-8?B?MTVGSzI5bkZWL1FLMkJJQmhQdXBGQ3VLd2I3eVlNZlFwa0o1UksrbnNBNjNq?=
+ =?utf-8?B?MEJNNGhyVEpSanRhUUdBZ0ltUWV4RG9ybzgvSHBQd3V0dVhDbEZjR3BhN3Z2?=
+ =?utf-8?B?SFl5NjdsUDh5cFQzUlc2WHlQRytrMVdMbFo0MVErTklpU3BwTHB1MkRya0Fu?=
+ =?utf-8?B?bEwwZnlNUjdLVGtpNTVqNVZXWVJUajdmOGd1MFNkTGpHK3BjeTg1WURVZk1E?=
+ =?utf-8?B?aEZaRFlGcEhKSjBqcE0yMTMrc2JWZjFvWFRxeGxuTFhUY1lVWXg2RCtsNE5F?=
+ =?utf-8?B?WU94WFlYSnhJci9wM1Q0MG5RSmR5Snd6d2hnREtBcUovS0xsUkgraDNhZXR6?=
+ =?utf-8?B?Ujc2a2EwVFRRV1oyQVhEanAwWGtTdHFRQnhUNk9Pcmx5OTJUdkNEUVRJUTBz?=
+ =?utf-8?B?WEIzeTZUVHhWYUJCWUZ1cElic05DUFplWjRocy9OQVB1dExuL1hnM2wwWEFS?=
+ =?utf-8?B?QmhkSWZmbERnKzlHVFdkeDdkVmZLem44WHdtZDg5VGNJak1uK0Z2S0NESURn?=
+ =?utf-8?B?KzRGOVZZdnk4WUY0Z1gxbGFhbE1zcEFsU0txdjR4Tm0yc08vZFdXbnAvU0lY?=
+ =?utf-8?B?UHY4WnJzcFhkVERJWWhxbHpvY0drbEVGc2FkZmlUM2wvY2xuOHZQeXhvK1pI?=
+ =?utf-8?B?cW1lV0I4S0FCUTV4L1YrWGxBcTFLeHQ4Ti9zZ2ovNHQrWnFxTFVER25nKzhO?=
+ =?utf-8?B?MDBkTDc1Y24wTzFqSVppRk5ML3JncDRGREZKbjlBRk9MaGhwWU1mdkdvSkRn?=
+ =?utf-8?B?VjNreEpReXBZRm5WSnJxMVorRm5kTzhSQ3J3ZjJya3ZHZWlhMEJyUk5XNHBp?=
+ =?utf-8?B?R2ZIWU0xU2xGWWl0cEc5NEJtVVg4U291UXhRaHdXNm4rdlRkWWpIN2ZzQXVk?=
+ =?utf-8?B?YndTbGc0VHpQS2tRZExpWFAzMlovdU5ubXFiMS9SaXNhdm5aT3VQakMxVzcx?=
+ =?utf-8?B?SGpaMUY5anU1eW55RW9zdmFKcVlQOHJneXBBWjlmZHJLMVFEK1VyYmR1Z1JX?=
+ =?utf-8?B?N3BvSnU2VXJXdytFTXNWL3VGSmd1YVdiT1c0V0g5NUtBN1I5U3NDRFRQYlFk?=
+ =?utf-8?B?M0J5a3pmcTlJSTFUMnltaW4rZGY0YVdsWjlkbGloVlhlVHljQkVla1AxQ01y?=
+ =?utf-8?B?ZGtiRnBvdWFKZzQ0TkJSUWhJT0ZDMmw2RWtWUHZNc3JGQldOMDFweUlQZVRY?=
+ =?utf-8?B?cHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f95b32f-0d62-4de8-47b3-08dde9502474
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 12:07:37.7861
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 92BJmXxZ4/xlGzXh3bWZD3WJAKvfw4ZDn5hkAnbdDcTIbG7Dom64oOiFQ12PyuyExor3o4e7ve7XS1rikMoDkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6141
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 28, 2025 at 05:34:51PM +0800, Haixu Cui wrote:
-> This is the virtio SPI Linux kernel driver.
-
-...
-
-> +#include <linux/completion.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/stddef.h>
-
-A lot of headers are still missing. See below.
-
-...
-
-
-> +struct virtio_spi_priv {
-> +	/* The virtio device we're associated with */
-> +	struct virtio_device *vdev;
-> +	/* Pointer to the virtqueue */
-> +	struct virtqueue *vq;
-> +	/* Copy of config space mode_func_supported */
-> +	u32 mode_func_supported;
-
-uXX (in particular u32) is defined in types.h.
-
-> +	/* Copy of config space max_freq_hz */
-> +	u32 max_freq_hz;
-> +};
-
-...
-
-> +static int virtio_spi_set_delays(struct spi_transfer_head *th,
-> +				 struct spi_device *spi,
-> +				 struct spi_transfer *xfer)
-> +{
-> +	int cs_setup;
-> +	int cs_word_delay_xfer;
-> +	int cs_word_delay_spi;
-> +	int delay;
-> +	int cs_hold;
-> +	int cs_inactive;
-> +	int cs_change_delay;
-> +
-> +	cs_setup = spi_delay_to_ns(&spi->cs_setup, xfer);
-> +	if (cs_setup < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_setup\n");
-
-dev_warn() et al. are defined in dev_printk.h.
-
-> +		return cs_setup;
-> +	}
-> +	th->cs_setup_ns = cpu_to_le32(cs_setup);
-
-This requires
-
-#include <asm/byteorder.h>
-
-> +	cs_word_delay_xfer = spi_delay_to_ns(&xfer->word_delay, xfer);
-> +	if (cs_word_delay_xfer < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_word_delay_xfer\n");
-> +		return cs_word_delay_xfer;
-> +	}
-> +	cs_word_delay_spi = spi_delay_to_ns(&spi->word_delay, xfer);
-> +	if (cs_word_delay_spi < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_word_delay_spi\n");
-> +		return cs_word_delay_spi;
-> +	}
-> +
-> +	th->word_delay_ns = cpu_to_le32(max(cs_word_delay_spi, cs_word_delay_xfer));
-
-max() is defined in math.h.
-
-> +	delay = spi_delay_to_ns(&xfer->delay, xfer);
-> +	if (delay < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert delay\n");
-> +		return delay;
-> +	}
-> +	cs_hold = spi_delay_to_ns(&spi->cs_hold, xfer);
-> +	if (cs_hold < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_hold\n");
-> +		return cs_hold;
-> +	}
-> +	th->cs_delay_hold_ns = cpu_to_le32(delay + cs_hold);
-> +
-> +	cs_inactive = spi_delay_to_ns(&spi->cs_inactive, xfer);
-> +	if (cs_inactive < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_inactive\n");
-> +		return cs_inactive;
-> +	}
-> +	cs_change_delay = spi_delay_to_ns(&xfer->cs_change_delay, xfer);
-> +	if (cs_change_delay < 0) {
-> +		dev_warn(&spi->dev, "Cannot convert cs_change_delay\n");
-> +		return cs_change_delay;
-> +	}
-> +	th->cs_change_delay_inactive_ns =
-> +		cpu_to_le32(cs_inactive + cs_change_delay);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int virtio_spi_transfer_one(struct spi_controller *ctrl,
-> +				   struct spi_device *spi,
-> +				   struct spi_transfer *xfer)
-> +{
-> +	struct virtio_spi_priv *priv = spi_controller_get_devdata(ctrl);
-
-> +	struct virtio_spi_req *spi_req __free(kfree);
-
-This is incorrect template. It's one of the exceptions when we mix code and
-definitions...
-
-> +	struct spi_transfer_head *th;
-> +	struct scatterlist sg_out_head, sg_out_payload;
-> +	struct scatterlist sg_in_result, sg_in_payload;
-
-+ scatterlist.h
-
-> +	struct scatterlist *sgs[4];
-> +	unsigned int outcnt = 0;
-> +	unsigned int incnt = 0;
-> +	int ret;
-
-
-> +	spi_req = kzalloc(sizeof(*spi_req), GFP_KERNEL);
-
-...so this should be
-
-	struct virtio_spi_req *spi_req __free(kfree) =
-		kzalloc(sizeof(*spi_req), GFP_KERNEL);
-
-(or on one line if you are okay with a 100 limit).
-
-And do not forget to include cleanup.h (__free() macro) and
-slab.h (kzalloc() API).
-
-> +	if (!spi_req)
-> +		return -ENOMEM;
-
-+ errno.h
-
-But since you already have IS_ERR()/PTR_ERR() use, just
-
-+ err.h
-
-> +	init_completion(&spi_req->completion);
-> +
-> +	th = &spi_req->transfer_head;
-> +
-> +	/* Fill struct spi_transfer_head */
-> +	th->chip_select_id = spi_get_chipselect(spi, 0);
-> +	th->bits_per_word = spi->bits_per_word;
-> +	th->cs_change = xfer->cs_change;
-> +	th->tx_nbits = xfer->tx_nbits;
-> +	th->rx_nbits = xfer->rx_nbits;
-> +	th->reserved[0] = 0;
-> +	th->reserved[1] = 0;
-> +	th->reserved[2] = 0;
-> +
-> +	static_assert(VIRTIO_SPI_CPHA == SPI_CPHA,
-> +		      "VIRTIO_SPI_CPHA must match SPI_CPHA");
-> +	static_assert(VIRTIO_SPI_CPOL == SPI_CPOL,
-> +		      "VIRTIO_SPI_CPOL must match SPI_CPOL");
-> +	static_assert(VIRTIO_SPI_CS_HIGH == SPI_CS_HIGH,
-> +		      "VIRTIO_SPI_CS_HIGH must match SPI_CS_HIGH");
-> +	static_assert(VIRTIO_SPI_MODE_LSB_FIRST == SPI_LSB_FIRST,
-> +		      "VIRTIO_SPI_MODE_LSB_FIRST must match SPI_LSB_FIRST");
-> +
-> +	th->mode = cpu_to_le32(spi->mode & VIRTIO_SPI_MODE_MASK);
-> +	if (spi->mode & SPI_LOOP)
-> +		th->mode |= cpu_to_le32(VIRTIO_SPI_MODE_LOOP);
-> +
-> +	th->freq = cpu_to_le32(xfer->speed_hz);
-> +
-> +	ret = virtio_spi_set_delays(th, spi, xfer);
-> +	if (ret)
-> +		goto msg_done;
-> +
-> +	/* Set buffers */
-> +	spi_req->tx_buf = xfer->tx_buf;
-> +	spi_req->rx_buf = xfer->rx_buf;
-> +
-> +	/* Prepare sending of virtio message */
-> +	init_completion(&spi_req->completion);
-> +
-> +	sg_init_one(&sg_out_head, th, sizeof(*th));
-> +	sgs[outcnt] = &sg_out_head;
-> +	outcnt++;
-> +
-> +	if (spi_req->tx_buf) {
-> +		sg_init_one(&sg_out_payload, spi_req->tx_buf, xfer->len);
-> +		sgs[outcnt] = &sg_out_payload;
-> +		outcnt++;
-> +	}
-> +
-> +	if (spi_req->rx_buf) {
-> +		sg_init_one(&sg_in_payload, spi_req->rx_buf, xfer->len);
-> +		sgs[outcnt] = &sg_in_payload;
-> +		incnt++;
-> +	}
-> +
-> +	sg_init_one(&sg_in_result, &spi_req->result,
-> +		    sizeof(struct spi_transfer_result));
-> +	sgs[outcnt + incnt] = &sg_in_result;
-> +	incnt++;
-> +
-> +	ret = virtqueue_add_sgs(priv->vq, sgs, outcnt, incnt, spi_req,
-> +				GFP_KERNEL);
-> +	if (ret)
-> +		goto msg_done;
-> +
-> +	/* Simple implementation: There can be only one transfer in flight */
-> +	virtqueue_kick(priv->vq);
-> +
-> +	wait_for_completion(&spi_req->completion);
-> +
-> +	/* Read result from message and translate return code */
-> +	switch (spi_req->result.result) {
-> +	case VIRTIO_SPI_TRANS_OK:
-> +		break;
-> +	case VIRTIO_SPI_PARAM_ERR:
-> +		ret = -EINVAL;
-> +		break;
-> +	case VIRTIO_SPI_TRANS_ERR:
-> +		ret = -EIO;
-> +		break;
-> +	default:
-> +		ret = -EIO;
-> +		break;
-> +	}
-> +
-> +msg_done:
-> +	if (ret)
-> +		ctrl->cur_msg->status = ret;
-> +
-> +	return ret;
-> +}
-
-...
-
-> +static int virtio_spi_find_vqs(struct virtio_spi_priv *priv)
-> +{
-> +	struct virtqueue *vq;
-> +
-> +	vq = virtio_find_single_vq(priv->vdev, virtio_spi_msg_done, "spi-rq");
-> +	if (IS_ERR(vq))
-> +		return PTR_ERR(vq);
-
-See above.
-
-> +	priv->vq = vq;
-> +	return 0;
-> +}
-
-...
-
-> +static int virtio_spi_probe(struct virtio_device *vdev)
-> +{
-> +	struct virtio_spi_priv *priv;
-> +	struct spi_controller *ctrl;
-> +	int ret;
-> +	u32 bus_num;
-> +
-> +	ctrl = devm_spi_alloc_host(&vdev->dev, sizeof(*priv));
-> +	if (!ctrl)
-> +		return -ENOMEM;
-> +
-> +	priv = spi_controller_get_devdata(ctrl);
-> +	priv->vdev = vdev;
-> +	vdev->priv = priv;
-
-> +	device_set_node(&ctrl->dev, dev_fwnode(&vdev->dev));
-> +	dev_set_drvdata(&vdev->dev, ctrl);
-> +	ret = device_property_read_u32(&vdev->dev, "spi,bus-num", &bus_num);
-
-+ device.h
-+ property.h
-
-> +	if (ret || bus_num > S16_MAX)
-
-+ limits.h
-
-> +		ctrl->bus_num = -1;
+On 01/09/2025 12:40, Ben Chuang wrote:
+> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> 
+> Fix calling incorrect sdhci_set_clock() in __sdhci_uhs2_set_ios() when the
+> vendor defines its own sdhci_set_clock().
+> 
+> Fixes: 10c8298a052b ("mmc: sdhci-uhs2: add set_ios()")
+> Cc: stable@vger.kernel.org # v6.13+
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> ---
+>  drivers/mmc/host/sdhci-uhs2.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+> index 0efeb9d0c376..704fdc946ac3 100644
+> --- a/drivers/mmc/host/sdhci-uhs2.c
+> +++ b/drivers/mmc/host/sdhci-uhs2.c
+> @@ -295,7 +295,10 @@ static void __sdhci_uhs2_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	else
+>  		sdhci_uhs2_set_power(host, ios->power_mode, ios->vdd);
+>  
+> -	sdhci_set_clock(host, host->clock);
+> +	if (host->ops->set_clock)
+> +		host->ops->set_clock(host, host->clock);
 > +	else
-> +		ctrl->bus_num = bus_num;
+> +		sdhci_set_clock(host, host->clock);
 
-But why do we need this property at all? And where is it documented in the
-device tree bindings?
+host->ops->set_clock is not optional.  So this should just be:
 
-> +	virtio_spi_read_config(vdev);
-> +
-> +	ctrl->transfer_one = virtio_spi_transfer_one;
-> +
-> +	ret = virtio_spi_find_vqs(priv);
-> +	if (ret)
-> +		return dev_err_probe(&vdev->dev, ret, "Cannot setup virtqueues\n");
-> +
-> +	/* Register cleanup for virtqueues using devm */
-> +	ret = devm_add_action_or_reset(&vdev->dev, virtio_spi_del_vq, vdev);
-> +	if (ret)
-> +		return dev_err_probe(&vdev->dev, ret, "Cannot register virtqueue cleanup\n");
-> +
-> +	/* Use devm version to register controller */
-> +	ret = devm_spi_register_controller(&vdev->dev, ctrl);
-> +	if (ret)
-> +		return dev_err_probe(&vdev->dev, ret, "Cannot register controller\n");
-> +
-> +	return 0;
-> +}
+	host->ops->set_clock(host, host->clock);
 
-...
-
-> +static struct virtio_device_id virtio_spi_id_table[] = {
-
-The type is or should be defined in mod_devicetable.h.
-
-> +	{ VIRTIO_ID_SPI, VIRTIO_DEV_ANY_ID },
-> +	{}
-> +};
-
-...
-
-> +static const struct dev_pm_ops virtio_spi_pm_ops = {
-
-The type is defined in pm.h.
-
-> +	.freeze = pm_sleep_ptr(virtio_spi_freeze),
-> +	.restore = pm_sleep_ptr(virtio_spi_restore),
-> +};
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+>  }
+>  
+>  static int sdhci_uhs2_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 
 
