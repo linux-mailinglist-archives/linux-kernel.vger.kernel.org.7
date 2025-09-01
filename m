@@ -1,163 +1,223 @@
-Return-Path: <linux-kernel+bounces-794709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A121B3E61A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:52:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ED5B3E623
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB681204AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:52:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42BF87B12FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7FE33A02D;
-	Mon,  1 Sep 2025 13:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5433A007;
+	Mon,  1 Sep 2025 13:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jj6nH69F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/oc0JM0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7B833A006
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE171C27;
+	Mon,  1 Sep 2025 13:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734705; cv=none; b=LFCWZvHmwRZk03RfAvMBeKkjPIwTstUq5qun1UGeXnoi/458VT4/z46mXx8C9bVjObityKB9nghSh99Um1JFr4NXPxKcZ3fwY65KCr5VecwOzQi4hXMtpdlhSAOPehla1QpODs6a59mjcHqLxKHO84Brudi5fhJ7q1CBKCSu6Jc=
+	t=1756734771; cv=none; b=mnD51KusPD3isbpwKvWpjtOnmB3BXhFyjeXbwnHViauvZA3IOWJssjlgO5KzyB5gDqURKAIipLOf5MwVoLCNkZCtoXOi1tYDLXHgt3zEYhWFo8bvjZomtbs2XLj8oljCqkK722ntnS360jzd74VbbAXfCMLbhkM1rOrjo+ADV6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734705; c=relaxed/simple;
-	bh=YoY8NfgtkUyKVH/wCj70FqKjQOg08SB6VhoLRtwjubc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=knSC0XOn7O7xvmTJ//mZNrmhsnwIuSeydOpEXnxXbPnIYbx2jjsXT+BnHVS8q/qJJ6Z2pEboDfnWNcQcqFL+LPT9eqMTVjGma44hSCehMX6pcMxJCqpArYv1vdw/T6DZ8FB0TVMxrnlRiBWhbyFm0Ff4Kf76/pNC5+vDd7wdVZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jj6nH69F; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756734703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rNZv88G48kGiSTnEe1GdQJytPUc11wW2bIHAr97ppkA=;
-	b=Jj6nH69FGOXVX8BPjs4OffGuxoHlql6a8z7o/iYwgVjW7o7Q7JN0DvQ10o+l1l+S/iFfN7
-	dFErF8ETdvtaK6JYWtjKRFDZjHjjidqGtt1vbeisUiQk/fRY6Xy26yeEQ5SUFxLRpaY8FY
-	/kvAgu2MzFCvq0MSxw6RwGMccm8rvgU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-26-WCxqRayXNW-SrVVHtX9Tgw-1; Mon, 01 Sep 2025 09:51:42 -0400
-X-MC-Unique: WCxqRayXNW-SrVVHtX9Tgw-1
-X-Mimecast-MFC-AGG-ID: WCxqRayXNW-SrVVHtX9Tgw_1756734701
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b7c4c738cso16341935e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:51:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756734701; x=1757339501;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rNZv88G48kGiSTnEe1GdQJytPUc11wW2bIHAr97ppkA=;
-        b=GNOO8A5gfON3KTCQRqKlzYmqtyMZpMdNlLpMFSWbbyLRKxsQmUfK14eUv4VsIe5v8Z
-         jihZezdS9Ive5SlHCKGAqLMyqcFD0c9+/taZDRQ3e+vpWBJ+24lVYGOCfuCxQrDrS707
-         2XG6cedUG9XwAR0QcmfI5nH/Aq0pmkcFxER76Ae6LbkrMwfodiUihgvFpDIv3B9V1G1C
-         bbnKYUxmwO3MKE79TA5vVvTxkm0bf7Fjlkd6EfG5ItSGFpzcUcD8gQCuRelUjzzuSUXQ
-         3Vjq69Sq5CgbwyhUZZBYLBQG2wu2DpN1W05GXmbWiE3ze/VJX7HZSZ1W91dL+yNI1wRE
-         FaRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU106ZRu8aCd2BIztldUMzmBLZCuZ8zt3RO8HxbNAI91FQV2BWBVIfb794oVLgGOsGy0C8PYKk9VAypoPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp3UN/6pUuEd1cOImKqpZPqjBj4A++x9ybXWoxCv5WCywv/tgg
-	lrNJx0g1JTUKvrQaD3gD8aU7rlcXWjTCQwaCUKcSKlBRRHKR9yiU7crmHRoldX9qDYl3FW7N/21
-	if900CaJLHIlnGpTUejqIhO+dCjpbq9Rz+EjZU6JmNBeX5gwWqFgLRbWo2Gr8dvSQVQ==
-X-Gm-Gg: ASbGncsNwlvHlJVcK+pW/Jq0to51/XChVXS55Do2uGGoCmyQfeNxMT6COf5QvkzHO17
-	N8ak1CNw6phS+6oOdu4ZpnKvwCkyE/Cak9h9Eur8KTox4rbFmMFnnLAx3m7DRd649R6R158WZeL
-	j/6DNNf9Y99ftlKWH/9a+by7lbhodEr46iJFHKiBnBZSDyiHtPoQMU5TxdQL2ekMYtd303XTbia
-	OULOqgY+mW1abxbcwaxfB1AzF0zmIZ+dbLv+awHMpwQlSZp7MvgujGUu18zFCj7uvk8sypwJLGW
-	CQIrx+vUo5SCxA5eT/0ICOow3yl0pXAI2r5arLCdSVz9vYeYHyEwNS8PGfBjOU1T7w==
-X-Received: by 2002:a05:600c:1f08:b0:45b:765a:a8ff with SMTP id 5b1f17b1804b1-45b855333e7mr70347025e9.11.1756734700961;
-        Mon, 01 Sep 2025 06:51:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZG5ym0+uvSyAKRRTSIKOXFShFsslOTmvomyIF3wBHiI22R5u0tBS4cfbprR0gPfxuAplifw==
-X-Received: by 2002:a05:600c:1f08:b0:45b:765a:a8ff with SMTP id 5b1f17b1804b1-45b855333e7mr70346775e9.11.1756734700463;
-        Mon, 01 Sep 2025 06:51:40 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e68c83asm167467245e9.20.2025.09.01.06.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 06:51:39 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: Re: [PATCH v2 0/6] drm/st7571-i2c: add support for grayscale xrgb8888
-In-Reply-To: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
-References: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
-Date: Mon, 01 Sep 2025 15:51:38 +0200
-Message-ID: <87seh6ffh1.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1756734771; c=relaxed/simple;
+	bh=1Sg3rEDoWH1KaBimTkP2BT3g0Ey6+WD6VuLXedDw65k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5UgiMoCL37U8fvpQjTVKRAw19UGkaQIqVeCZpcd2HruW5dKniuPSIxoZE6NR82Lyy4z8VXjwysYgfhnLpvQ+tTujjsKUOCPiuRyMr7wUPGGdenb0FELPY6d1cj4oITdxRMOxVVJ1UddGxGMV7/dVtiJAKSFSZ+IYrptBaBUDL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/oc0JM0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAC1C4CEF0;
+	Mon,  1 Sep 2025 13:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756734770;
+	bh=1Sg3rEDoWH1KaBimTkP2BT3g0Ey6+WD6VuLXedDw65k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M/oc0JM0tTl36NdYr+audgnhtIlSV9TinPArKRXNuXe+nTDoaoPDXyX1fa0yle0Hb
+	 Nrdy0UpyFr65t2jpQrS/EEnyQ51+hdjwruZgDSVgLdhEju20IEAlJWbTIjdjwTNPQr
+	 6urywwJlXvO/DAUDt+kTeS/ZChAxe+qddCYrH8WhXnYNvjacdMVu15JBVb875ceWdm
+	 HwNxKLDwC5OZDwxVf/uW7qk1vtkPxVTaoY7Fw29bHuL71KljseqHG4rPEfEsJzIcpP
+	 X8EiL26zXxkx62ZYSVfvcr/7HyoviK6tJLul5vpqYOfrqDPXC5ZhQdGjND5ct8PK0v
+	 EUxjtuldSxGiw==
+Date: Mon, 1 Sep 2025 19:22:40 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
+	quic_mrana@quicinc.com, quic_vpernami@quicinc.com, mmareddy@quicinc.com
+Subject: Re: [PATCH v8 4/5] PCI: dwc: Add ECAM support with iATU configuration
+Message-ID: <camqcq72cy774st365jtodvckqvohzlu2fsklsgpfrgaxzz6re@yk6rvt6vq5y5>
+References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+ <20250828-ecam_v4-v8-4-92a30e0fa02d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250828-ecam_v4-v8-4-92a30e0fa02d@oss.qualcomm.com>
 
-Marcus Folkesson <marcus.folkesson@gmail.com> writes:
-
-Hello Marcus,
-
-> The goal with this series is to add support for 2bit grayscale with
-> the xrgb8888 pixel format for the st7571 display controller.
->
-> The first patch only corrects a comment of the pixel format.
->
-> The next four patches adds support for inverting pixels. This is
-> necessary as the connected display may or may not use the "right" (0 =>
-> black, 1 => white) pixel format expected by the supported formats
-> (R1/R2/XRGB8888).
->
-> The fifth patch adds a helper function (drm_fb_xrgb8888_to_gray2) to
-> convert xrgb8888 to gray2.
->
-> The last path adds support for gray2 in the st7571 driver.
-> Compare the mono [1] and the gray2 [2] variants of our penguin.
->
-> [1] https://www.marcusfolkesson.se/gray2.png
-> [2] https://www.marcusfolkesson.se/xrgb8888.png
->
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On Thu, Aug 28, 2025 at 01:04:25PM GMT, Krishna Chaitanya Chundru wrote:
+> The current implementation requires iATU for every configuration
+> space access which increases latency & cpu utilization.
+> 
+> Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
+> which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
+> would be matched against the Base and Limit addresses) of the incoming
+> CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
+> 
+> Configuring iATU in config shift feature enables ECAM feature to access the
+> config space, which avoids iATU configuration for every config access.
+> 
+> Add "ctrl2" into struct dw_pcie_ob_atu_cfg  to enable config shift feature.
+> 
+> As DBI comes under config space, this avoids remapping of DBI space
+> separately. Instead, it uses the mapped config space address returned from
+> ECAM initialization. Change the order of dw_pcie_get_resources() execution
+> to achieve this.
+> 
+> Enable the ECAM feature if the config space size is equal to size required
+> to represent number of buses in the bus range property.
+> 
+> As per PCIe spec 6, sec 7.2.2 the memory should be aligned to 256MB for
+> ECAM. The synopsys iATU also uses bits [27:12] to form BDF, so the base
+> address must be 256MB aligned. Add a check to ensure the configuration
+> space base address is 256MB aligned before enabling ECAM.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > ---
-> Changes in v2:
-> - Do not share code between _to_mono() and _to_gray2()
-> - Correct formatting (remove  "|") in the dt bindings
-> - Implement support for inverting pixels for st7567
-> - Link to v1: https://lore.kernel.org/r/20250714-st7571-format-v1-0-a27e5112baff@gmail.com
->
-> ---
-> Marcus Folkesson (6):
->       drm/st7571-i2c: correct pixel data format description
->       dt-bindings: display: sitronix,st7571: add optional inverted property
->       dt-bindings: display: sitronix,st7567: add optional inverted property
->       drm/st7571-i2c: add support for inverted pixel format
->       drm/format-helper: introduce drm_fb_xrgb8888_to_gray2()
->       drm/st7571-i2c: add support for 2bit grayscale for XRGB8888
->
+>  drivers/pci/controller/dwc/Kconfig                |   1 +
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 145 +++++++++++++++++++---
+>  drivers/pci/controller/dwc/pcie-designware.c      |   2 +-
+>  drivers/pci/controller/dwc/pcie-designware.h      |   5 +
+>  4 files changed, 138 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index ff6b6d9e18ecfa44273e87931551f9e63fbe3cba..a0e7ad3fb5afec63b0f919732a50147229623186 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -20,6 +20,7 @@ config PCIE_DW_HOST
+>  	bool
+>  	select PCIE_DW
+>  	select IRQ_MSI_LIB
+> +	select PCI_HOST_COMMON
+>  
+>  config PCIE_DW_EP
+>  	bool
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..eda7affcdcb2075d07ba6eeab70e41b6548a4b18 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -8,6 +8,7 @@
+>   * Author: Jingoo Han <jg1.han@samsung.com>
+>   */
+>  
+> +#include <linux/align.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/irq-msi-lib.h>
+> @@ -32,6 +33,8 @@ static struct pci_ops dw_child_pcie_ops;
+>  				     MSI_FLAG_PCI_MSIX			| \
+>  				     MSI_GENERIC_FLAGS_MASK)
+>  
+> +#define IS_256MB_ALIGNED(x) IS_ALIGNED(x, SZ_256M)
+> +
+>  static const struct msi_parent_ops dw_pcie_msi_parent_ops = {
+>  	.required_flags		= DW_PCIE_MSI_FLAGS_REQUIRED,
+>  	.supported_flags	= DW_PCIE_MSI_FLAGS_SUPPORTED,
+> @@ -413,6 +416,92 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
+>  	}
+>  }
+>  
+> +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct dw_pcie_ob_atu_cfg atu = {0};
+> +	resource_size_t bus_range_max;
+> +	struct resource_entry *bus;
+> +	int ret;
+> +
+> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
+> +
+> +	/*
+> +	 * Root bus under the host bridge doesn't require any iATU configuration
+> +	 * as DBI region will be used to access root bus config space.
+> +	 * Immediate bus under Root Bus, needs type 0 iATU configuration and
+> +	 * remaining buses need type 1 iATU configuration.
+> +	 */
+> +	atu.index = 0;
+> +	atu.type = PCIE_ATU_TYPE_CFG0;
+> +	atu.parent_bus_addr = pp->cfg0_base + SZ_1M;
+> +	/* 1MiB is to cover 1 (bus) * 32 (devices) * 8 (functions) */
+> +	atu.size = SZ_1M;
+> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
+> +	ret = dw_pcie_prog_outbound_atu(pci, &atu);
+> +	if (ret)
+> +		return ret;
+> +
+> +	bus_range_max = resource_size(bus->res);
+> +
+> +	if (bus_range_max < 2)
+> +		return 0;
+> +
+> +	/* Configure remaining buses in type 1 iATU configuration */
+> +	atu.index = 1;
+> +	atu.type = PCIE_ATU_TYPE_CFG1;
+> +	atu.parent_bus_addr = pp->cfg0_base + SZ_2M;
+> +	atu.size = (SZ_1M * bus_range_max) - SZ_2M;
+> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
+> +
+> +	return dw_pcie_prog_outbound_atu(pci, &atu);
+> +}
+> +
+> +static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *res)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct device *dev = pci->dev;
+> +	struct resource_entry *bus;
+> +
+> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
+> +	if (!bus)
+> +		return -ENODEV;
+> +
+> +	pp->cfg = pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_ops);
+> +	if (IS_ERR(pp->cfg))
+> +		return PTR_ERR(pp->cfg);
+> +
+> +	pci->dbi_base = pp->cfg->win;
+> +	pci->dbi_phys_addr = res->start;
+> +
+> +	return 0;
+> +}
+> +
+> +static bool dw_pcie_ecam_enabled(struct dw_pcie_rp *pp, struct resource *config_res)
+> +{
+> +	struct resource *bus_range;
+> +	u64 nr_buses;
+> +
+> +	/*
+> +	 * 256MB alignment is required for Enhanced Configuration Address Mapping (ECAM),
+> +	 * as per PCIe Spec 6, Sec 7.2.2. It ensures proper mapping of memory addresses
+> +	 * to Bus-Device-Function (BDF) fields in config TLPs.
+> +	 *
+> +	 * The synopsys iATU also uses bits [27:12] to form BDF, so the base address must
+> +	 * be 256MB aligned.
 
-When applying I noticed that patch #5 had the following warning [0], but
-I fixed it locally before pushing to drm-misc (drm-misc-next). Thanks!
+I've reworded the comment and description to clarify that the alignment
+requirement comes from the PCIe spec, but the 256 MiB requirement comes from DWC
+implementation since DWC always uses 8 bits for representing PCIe buses.
 
-[0]: CHECK: Alignment should match open parenthesis
-#86: FILE: drivers/gpu/drm/drm_format_helper.c:1415:
-+void drm_fb_xrgb8888_to_gray2(struct iosys_map *dst, const unsigned int *dst_pitch,
-+                            const struct iosys_map *src, const struct drm_framebuffer *fb,
-
-CHECK: Alignment should match open parenthesis
-#153: FILE: include/drm/drm_format_helper.h:140:
-+void drm_fb_xrgb8888_to_gray2(struct iosys_map *dst, const unsigned int *dst_pitch,
-+                            const struct iosys_map *src, const struct drm_framebuffer *fb,
-
-total: 0 errors, 0 warnings, 2 checks, 125 lines checked
+- Mani
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+மணிவண்ணன் சதாசிவம்
 
