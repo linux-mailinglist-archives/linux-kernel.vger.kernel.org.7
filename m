@@ -1,87 +1,54 @@
-Return-Path: <linux-kernel+bounces-794939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD645B3EB04
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B5FB3EB0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47EC6481B72
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6F0482525
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10AE320A36;
-	Mon,  1 Sep 2025 15:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0842F2D5923;
+	Mon,  1 Sep 2025 15:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OXKcvchO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OjcXpLhu"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C417275B13
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47614191484
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740671; cv=none; b=CPHo21bdarOApuZLzBAgrHR/XYLPyJ60xVE0VYuNN7VMu0IpW9H7elsmiOnIb6shmdQS3RyCt21VgJyFvRkH+0BVimQVMTFiJ5qhMbyMEtVJHWxzm5fzANmdQMYfPmewtPE6c3Ac7etCFmAI9t3CXaPu3KddduyFOvgSVXSbLFU=
+	t=1756740795; cv=none; b=rKYAyWcDMLAnz0cI7IdDiTiYNtikrJ8v1ut7LS0zW18mG/dEvjr/8cusWtk9qGzAXgHgtSGakxPwwenZ/M2ujR7VRgmgPvv20jyDsckD940yMJr0bCiH8FKX5FS20AQmCb3lbNRx1yk6V5BTMnKogbtxu7X1SlttUTspCVxxKcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740671; c=relaxed/simple;
-	bh=UmXs/mAAcGXTyBFx7dzdfPfbfWd50ZnzhhH6JngBXr8=;
+	s=arc-20240116; t=1756740795; c=relaxed/simple;
+	bh=XtaQ+t8uDNSujVrF8FDzv1tlD3YLzH/otb/Pemi3ifk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vl/MSoBAklEO7WAK80vC1beYebvF5GWHe1YiQdLs5U7FwsYVMVdTX93zfuNDe2vUB0cj4AA4gaHZnJCKWcmSNiOhpJFAUuxDQWV7do6eU0fzl1ZW4+a313PDjMUa7Q/1x6c8KABmjAFgTdtsgQdL+rwWEhWanMxO3E+lsw6qc1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OXKcvchO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756740668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8YTT8+1IeuyKjTNBNgyuW533+ZZMqmvm3Kt72V4BMjc=;
-	b=OXKcvchO+J+Jb1noTQd6izRm116sWx7PndoDLsErRrTVSwsXNsj4Ly3LTO+WBOn181esi+
-	SxoYegamMq+34qqW3gHRdK/3IYeemxwcYcMHHumYqoeKCAx16aePq1QjTdCn6ai9E45dFj
-	KoRfIycCN7qCipMo2O7x3o0T8ua7fkw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-286-lxTYDLbQONCibxh23H6VuA-1; Mon, 01 Sep 2025 11:31:07 -0400
-X-MC-Unique: lxTYDLbQONCibxh23H6VuA-1
-X-Mimecast-MFC-AGG-ID: lxTYDLbQONCibxh23H6VuA_1756740666
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ce65accfc7so4044884f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:31:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756740666; x=1757345466;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8YTT8+1IeuyKjTNBNgyuW533+ZZMqmvm3Kt72V4BMjc=;
-        b=TBQ6LlFkMz6g7QYO2EXIeKTwnuX3Wmv7cQ4rTb2XBbGUa7yaGkn6DOkP/tGTWzPZ2b
-         Px1Duh3E6FkySbmh5K7XGiGmfo03mApy1MeVOqWf4YAyVaYTwg3F9KrjHOc5raNaLZ/0
-         cmH3b0+70YC5HbmGASqq9C+jamzAb/nzau9/Rqg0XIPKWSSz345J68dlGhQ8tv1XFP9J
-         fwkDpGaHZAm2SToGClqobKllsi0arV9j2Re2QYO+oJqIYBxaYUJGP1uUOqqUHQG+GV8X
-         tsiD4e+icFMW8mEx/IZ23L+sPaacAEj0z9MBB3/+nRibmkSkTcLj8U8g4G37cobP0gXz
-         YRdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC8PV8nvumhPt3QWMMXn6Uob/Fu1NkhKrSpwklgL0n74v08I6/u7cvWGcZQ9Tu566eXLaH0OYwQUStx5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPaGGZ4569jeA2wnweWWB85MVO3x93v2Xj7Uip3ehINFxNoIR1
-	DushnT65SBDJCY77ijy3F87+D0Svm0t722Ju9TYjMPulrivyq+nvJ+NdB5s4sefg7mkO15KcLpO
-	R8RqkCN3hvpNExzWJfLzcYuHshayja8igY5V8F27j+3CbLdSe3dDQjzGvPSNPFrutWA==
-X-Gm-Gg: ASbGncvgzaiNejPLHtQcgMnGHgZ3YLaZ1xWPynOmlywtjyGemkFZ80Iq18tbtNer+4L
-	+xTXXYXFNq7XvZCYs03rfocGD+jh5TXMxlQBxVhOG6n/PW1uwXaCP+/I0GsLu0hgOXuew3jqLxD
-	8Fohwlp1B7JMsJyTpYRQYiUBB78FquZG4fSoK7fRgMJhZqd3zRcXh3jTAIPJpEy8fn9EY+7n4Uz
-	QQevJKaDZStTegio66HCuF37mwwHS1sDE8NQJhriEpXjWpGUlab0fT18IZgMKTFNR/kYsgPZnwt
-	Vmw7Is9SMzo32j3vhm5EsrDr9/P/qVIqkTwSFUBL3GjEn12woBLJmxIz4e6rXzxQf7YYCBCv4yw
-	vZVBpaKf2GIt9hOzkmuS0xWPrUeIoaxaeVse1lVeH5oqk8+Pb/djDCEPcqJHocW9IckE=
-X-Received: by 2002:a05:6000:26c6:b0:3c9:fc3c:3aa3 with SMTP id ffacd0b85a97d-3d1dfc07101mr7979285f8f.40.1756740666104;
-        Mon, 01 Sep 2025 08:31:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKlIIY39+g2NinA80se2q6FMUup0twhlH6ge5YEtWwcm43BDQMJ3/bW/VElP4ZEtqi2ehfyw==
-X-Received: by 2002:a05:6000:26c6:b0:3c9:fc3c:3aa3 with SMTP id ffacd0b85a97d-3d1dfc07101mr7979248f8f.40.1756740665572;
-        Mon, 01 Sep 2025 08:31:05 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d690f2ebb9sm5229370f8f.20.2025.09.01.08.31.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 08:31:04 -0700 (PDT)
-Message-ID: <4597944e-a8f5-44df-adf3-558940e88598@redhat.com>
-Date: Mon, 1 Sep 2025 17:31:01 +0200
+	 In-Reply-To:Content-Type; b=WmBD2wIFihyf33nJlBWPMn4eFZa7DjNj5r0PrGhTpGhz8V7MJiG5XRmd5E+B28ZDl0i25a+pv09Ift201T45l4tXLPZ3hSu/rfqVz2BCppqRuuIR6cfe7qVaZSLsBQie4ueeVFULRhT0GgI6I5hrIYy5xwzuCIMdn+zf71keUC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OjcXpLhu; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 89CBD1A0D9B;
+	Mon,  1 Sep 2025 15:33:09 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5F21D60699;
+	Mon,  1 Sep 2025 15:33:09 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D1861C22DDEC;
+	Mon,  1 Sep 2025 17:33:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756740788; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=MB6QBgcgS/tttvlQ1z41LKTfvpOMECR7AlIxEccvjr0=;
+	b=OjcXpLhu6i/T6lOjHoMk9L3mBkvK5XeA1p3AbqErnkOJxBJ398cOej19OqLHGrmBoUy1+p
+	Fh8k5dwyes81FxMZXlZJeuGrSbxMx/lyGAGEinKfZOcnqkgZMMp9vmRr1hx7mG5Af1BByn
+	LsacVQA2zA9eThzrQCM6uEJQXLk2rd8Mb1Zz0IZ6KRFoIZRazYH/FbgA1Jfp4rCycXGQ/F
+	6wb6EeD7uTf+7daFg9Wulb2Z4NVESWh8RHA8qWi+Afeffx/XAUqhiOXK9hynPajK6O2ZsV
+	FT0qp8XRMoYmu4Axh32gF7thCVT5Fd6z5OP3DtVirY2oUjdtDU10nlCEAogfZA==
+Message-ID: <4005bcd6-968b-4f49-a836-691f522af90e@bootlin.com>
+Date: Mon, 1 Sep 2025 17:33:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,130 +56,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/12] mm, s390: constify mapping related test
- functions for improved const-correctness
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
- willy@infradead.org, hughd@google.com, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
- linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
- agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
- jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
- rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
- broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
- mpe@ellerman.id.au, nysal@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-7-max.kellermann@ionos.com>
- <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
- <CAKPOu+-_E6qKmRo8UXg+5wy9fACX5JHwqjV6uou6aueA_Y7iRA@mail.gmail.com>
- <0bcb2d4d-9fb5-40c0-ab61-e021277a6ba3@redhat.com>
- <CAKPOu+8SdvDAcNS12TjHWq_QL6pXnw4Pnhrq2_4DgJg8ASc67A@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 0/2] drm/vkms: Fix plane blending z-order
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
+Cc: airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, melissa.srw@gmail.com,
+ mripard@kernel.org, simona@ffwll.ch, thomas.petazzoni@bootlin.com,
+ tzimmermann@suse.de
+References: <20250801-vkms-fix-zpos-v1-0-d83ba1e6291d@bootlin.com>
+ <20250901145206.51213-1-jose.exposito89@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+8SdvDAcNS12TjHWq_QL6pXnw4Pnhrq2_4DgJg8ASc67A@mail.gmail.com>
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250901145206.51213-1-jose.exposito89@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 01.09.25 17:22, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 5:11 PM David Hildenbrand <david@redhat.com> wrote:
->>>> Should this also be *const ?
->>>
->>> No. These are function protoypes. A "const" on a parameter value
->>> (pointer address, not pointed-to memory) makes no sense on a
->>> prototype.
+
+
+Le 01/09/2025 à 16:52, José Expósito a écrit :
+> Hi Louis,
+> 
+> I already made some comments about zpos here:
+> https://lore.kernel.org/dri-devel/aJDDr_9soeNRAmm0@fedora/
+> But let's start the conversation here as well!
+> 
+>>   As reported by Marius [1], the current blending algorithm for vkms planes
+>> is not future-proof. Currently the z-ordering is only garanteed by the
+>> creation order. As the future ConfigFS interface will allows to create
+>> planes, this order may vary.
 >>
->> But couldn't you argue the same about variable names? In most (not all
->> :) ) we keep declaration + definition in sync. So thus my confusion.
+>> To avoid this, add the zpos property and blend the planes according to
+>> this zpos order.
+>>
+>> [1]:https://lore.kernel.org/all/aHpGGxZyimpJ8Ehz@xpredator/
 > 
-> Variable names in the prototypes have no effect either, but they serve
-> as useful documentation.
+> In case you want to have a look, 3 years ago I sent a patch adding the
+> property and blending following the zpos order, but it wasn't merged:
+> https://github.com/JoseExposito/linux/commit/befc79a1341b27eb328b582c3841097d17ccce71
+> The way "vkms_state->active_planes" is set is a bit simpler, but it might
+> not be valid anymore due to code changes.
+
+I looked quickly at your series, your solution is better (no complex 
+loops), I need to check if I can use your solution, it is on my 
+todo-list (finish to review igt patches too).
+
+> About this series, I didn't have a chance to run IGT test to validate it,
+> but in general your code looks good.
 > 
-> Whereas the "const" on a parameter value documents nothing - it's an
-> implementation detail whether the function would like to modify
-> parameter values. That implementation detail has no effect for the
-> caller.
+> My only question is, how do we avoid breaking changes in the configfs side?
+
+The "easy" solution is to have zpos in the first iteration of ConfigFS, 
+but that's not cool and will slow down again the merge, I would like to 
+avoid.
+
+> For the mutable/immutable configuration it'd be easy: We set it to
+> immutable by default, i.e, when the user creates a new plane via configfs:
 > 
-> Of course, we could have "const" in the prototype as well. This boils
-> down to personal taste. It's not my taste (has no use, has no effect,
-> documents nothing, only adds noise for no gain), so I didn't add it.
-> If you prefer to have that, I'll leave my taste and home and add it,
-> but only after you guys make up your minds about whether you want to
-> have const parameters at all.
+>    $ sudo mkdir /sys/kernel/config/vkms/<device name>/planes/<plane name>
+> 
+> We set "planes/<plane name>/zpos_mutability" to immutable.
+> 
+> However, we don't know the plane type (required to set the zpos value) when
+> the user creates a new plane on configfs.
 
-Valid points. The problem is that it could very soon become inconsistent.
+Two ideas:
 
-For example, when I write a new function I usually just copy what I have
-from the definition into the declaration.
+if (plane_cfg.zpos was not updated by the user)
+	change the plane_cfg.zpos every time plane_cfg.type is changed
+else
+	don't change plane_cfg.zpos
 
-For example, checkpatch complains about missing variable names and I 
-think it complains when "extern" is used for functions.
+IDK if this is a good idea or not, but it should not break UAPI (older 
+software can't change zpos because it did not exists, new softwares can 
+manually override it).
 
-If we were to decide to go that route (not keep them in perfect sync), I 
-guess it would be reasonable to extend checkpatch to warn if "*const" is 
-used in a declaration. (perl magic, no idea how hard that would be)
+This is not good because it will change the behavior depending on the 
+previous action of the user + we need to track in vkms if the value was 
+changed or not, clearly not ideal.
 
-I'm sure there are false positives in the following:
+Maybe better idea:
 
-$ git grep "\*const" *.h | grep -v inline | wc -l
-403
+plane_cfg.zpos = -1 by default (or whatever special value, I need to 
+check which values are invalid for zpos)
+
+On DRM plane creation:
+if(plane_cfg.zpos == -1)
+	plane.zpos = 1/2/3 depending on plane type
+else
+	plane.zpos = plane_cfg.zpos
+
+> Therefore, we can not set the correct value in "planes/<plane name>/zpos".
+> Have you already figured out a solution for this?
+>
+> Jose
+> 
+> PS - In case you missed it, I created:
+> https://github.com/JoseExposito/vkmsctl
+> I'll add zpos there once we support it in configfs :)
+
+I just received it, amazing tool (in fact, I already had mine (in rust 
+too), but very very dirty and some stuff hardcoded)
+Once I have the time, I will create a PR with some properties I have on 
+my branches, so they will be ready.
 
 -- 
-Cheers
-
-David / dhildenb
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
