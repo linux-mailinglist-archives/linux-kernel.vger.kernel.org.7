@@ -1,83 +1,158 @@
-Return-Path: <linux-kernel+bounces-793723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED59B3D741
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 309E4B3D78B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336E81892610
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842FF188FE00
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083322192F5;
-	Mon,  1 Sep 2025 03:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXcTv0+d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5A821E0AD;
+	Mon,  1 Sep 2025 03:41:19 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571F322157E;
-	Mon,  1 Sep 2025 03:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E604A52F99;
+	Mon,  1 Sep 2025 03:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697400; cv=none; b=JnbReDIgMkQ5JkAtacYFcpGQ5RgaXmyrQKDB3qeFNXR8lZxoeq6okhvkHyxbVrKLhxxS8qV/4KQErJNivuM2rmUGuZn7DHyyA6R4OQyepIzmRs9ThmHq0Y3cVeXlLm2wJhuZ9HxBLCbAWL8ia42QavB1Kk/JqxQevUGT47bVIbo=
+	t=1756698078; cv=none; b=J8rcxPTbsYCtRjbUuwrVg629zPpmFU1oRcoAYl7Nfws5uXYJRS6JlMCuMjpQFFB2pAtuFZpA1+a0DkVfIh49hO/MHX7hJBSivgtL6kc0g4+O49XMDW2Z/8HMCQmSfivYjgAxgdxB9wg93COCwk865WVvh1U58qb6F5uvryr8DXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697400; c=relaxed/simple;
-	bh=p7wrxv825L7YKcyo7ajBHyjNzOafvy6Dqcr8NdfqYWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOp90jgFCLb4HEni0mMBZ0cJV8jQsBv0YzPiI7Kq+a0AzttKcuoBbyFZ9WObY0kcD9LURhPwOyY2kJIJ4x5vCzhRGaBeFCC4kAhWBgBk0dTgazS28AmGR63VJH4JPCWQNurdGYFjF3dO4nQY+y6wE/TtwjKpu/uTvt3wqHn0lEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXcTv0+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C625C4CEF8;
-	Mon,  1 Sep 2025 03:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756697399;
-	bh=p7wrxv825L7YKcyo7ajBHyjNzOafvy6Dqcr8NdfqYWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rXcTv0+dtnlGy7CPUIYuKwA6otz+O7hpNFqv0l3vNuvvtmYXz+iGfRTbLw0oEy/lG
-	 6PTpQi+s7hS7wqlW1eCpTRBK2GhqCo/qWSrhhU/Dkl+KqAPFXhwlYL/mMQ8GLLWiW9
-	 jEN//P4PdR8e/M8c0xqobEba+S/leN+sOlq8/lzg82pi6N4i7CvCkSg9tr2uy13BZE
-	 MjfVk1dIWyx+aUO301kaDLb50qdYX43HyiXl2G/3987VQf/C821/cCNX3YysVAKtIb
-	 7C1zP08dQH44lNb9FYrvEc6/q5lnAp4z5FQNH4eseU9glCVr/EfvDnshsWiCZNokfA
-	 bnCjmocUgjR4g==
-Date: Mon, 1 Sep 2025 05:29:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH 1/5] dt-bindings: iio: imu: Add ICM-20948
-Message-ID: <20250901-hopping-natural-mackerel-1c7b56@kuoka>
-References: <20250831-icm20948-v1-0-1fe560a38de4@gmail.com>
- <20250831-icm20948-v1-1-1fe560a38de4@gmail.com>
+	s=arc-20240116; t=1756698078; c=relaxed/simple;
+	bh=L6kY369ygnM7s2a8RN7xIRPMZh5a0TVH61deIUF6TzI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eCD/2LY7AI9nwk7N56cNWty86Wa1IjaQuYugQYihgX44LgYIG3d79SSbuCwVc8NV5ywNJOdQGObii29EDlNTrAvVSq2FTS577BiNe1LkrRBpDsbXdxz/VDUCWnO6Qe9S4G6eXBv1Tpp0BMDXuBZ1SstOxKrWG80b5vN+iBoVlwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFZRF3ny9zKHN5Q;
+	Mon,  1 Sep 2025 11:41:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 57E691A0877;
+	Mon,  1 Sep 2025 11:41:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIzWFbVotmf1Aw--.38057S4;
+	Mon, 01 Sep 2025 11:41:12 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@infradead.org,
+	colyli@kernel.org,
+	hare@suse.de,
+	dlemoal@kernel.org,
+	tieren@fnnas.com,
+	axboe@kernel.dk,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	song@kernel.org,
+	kmo@daterainc.com,
+	satyat@google.com,
+	ebiggers@google.com,
+	neil@brown.name,
+	akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH RFC v3 00/15] block: fix disordered IO in the case recursive split
+Date: Mon,  1 Sep 2025 11:32:05 +0800
+Message-Id: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250831-icm20948-v1-1-1fe560a38de4@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIzWFbVotmf1Aw--.38057S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7KrW7KryUXF4UJFWfCF15Arb_yoW8KFyxpw
+	43Wr4fZr48GF9IgFsxX3W7tFn5GanYgFy5Gr9aqws5ZFyDZryxtw48Ar18tryUGrWSk34U
+	Xr1UArWUGr15GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRRBT5DUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Aug 31, 2025 at 12:12:45AM +0530, Bharadwaj Raju wrote:
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - invensense,icm20948
-> +
-> +  reg:
-> +    maxItems: 1
-> +
+From: Yu Kuai <yukuai3@huawei.com>
 
-... and this was never tested. Missing additional props.
+Changes in v3:
+ - add patch 1,2 to cleanup bio_issue;
+ - add patch 3,4 to fix missing processing for split bio first;
+ - bypass zoned device in patch 14;
+Changes in v2:
+ - export a new helper bio_submit_split_bioset() instead of
+export bio_submit_split() directly;
+ - don't set no merge flag in the new helper;
+ - add patch 7 and patch 10;
+ - add patch 8 to skip bio checks for resubmitting split bio;
 
-> +examples:
+patch 1,2 cleanup bio_issue;
+patch 3,4 to fix missing processing for split bio;
+patch 5 export a bio split helper;
+patch 6-12 unify bio split code;
+path 13,14 convert the helper to insert split bio to the head of current
+bio list;
+patch 15 is a follow cleanup for raid0;
 
-Best regards,
-Krzysztof
+This set is just test for raid5 for now, see details in patch 9;
+
+Yu Kuai (15):
+  block: cleanup bio_issue
+  block: add QUEUE_FLAG_BIO_ISSUE
+  md: fix mssing blktrace bio split events
+  blk-crypto: fix missing processing for split bio
+  block: factor out a helper bio_submit_split_bioset()
+  md/raid0: convert raid0_handle_discard() to use
+    bio_submit_split_bioset()
+  md/raid1: convert to use bio_submit_split_bioset()
+  md/raid10: add a new r10bio flag R10BIO_Returned
+  md/raid10: convert read/write to use bio_submit_split_bioset()
+  md/raid5: convert to use bio_submit_split_bioset()
+  md/md-linear: convert to use bio_submit_split_bioset()
+  blk-crypto: convert to use bio_submit_split_bioset()
+  block: skip unnecessary checks for split bio
+  block: fix disordered IO in the case recursive split
+  md/raid0: convert raid0_make_request() to use
+    bio_submit_split_bioset()
+
+ block/bio.c                 |  2 +-
+ block/blk-cgroup.h          |  5 ++-
+ block/blk-core.c            | 35 +++++++++++++++++----
+ block/blk-crypto-fallback.c | 15 +++------
+ block/blk-iolatency.c       | 15 +++------
+ block/blk-merge.c           | 63 ++++++++++++++++++++++++-------------
+ block/blk-mq-debugfs.c      |  1 +
+ block/blk-throttle.c        |  2 +-
+ block/blk.h                 | 45 ++------------------------
+ drivers/md/md-linear.c      | 11 ++-----
+ drivers/md/raid0.c          | 30 ++++++------------
+ drivers/md/raid1.c          | 38 ++++++++--------------
+ drivers/md/raid1.h          |  4 ++-
+ drivers/md/raid10.c         | 54 ++++++++++++++-----------------
+ drivers/md/raid10.h         |  2 ++
+ drivers/md/raid5.c          | 10 +++---
+ include/linux/blk_types.h   |  7 ++---
+ include/linux/blkdev.h      |  3 ++
+ 18 files changed, 152 insertions(+), 190 deletions(-)
+
+-- 
+2.39.2
 
 
