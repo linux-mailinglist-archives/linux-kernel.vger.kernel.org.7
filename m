@@ -1,224 +1,189 @@
-Return-Path: <linux-kernel+bounces-795128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36A4B3ED30
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E95F9B3ECFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6753B91C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F8816CF8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D63431F8;
-	Mon,  1 Sep 2025 17:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F43320A08;
+	Mon,  1 Sep 2025 17:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A23Zxf7S"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC+limGa"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59CF321F3F;
-	Mon,  1 Sep 2025 17:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96D32F74A;
+	Mon,  1 Sep 2025 17:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746506; cv=none; b=JTApyvFu3gbBCqM4cRvJwSU6d3OgjT09zN8GdDzlkDcZs+wd0CVgKRemHIbWdGmqbEU3MVHwtgL5N4VpkrkRMzbXoUAFEvI3mPM+VAA5LrqkN0DTZujlVo1R1kiy7yCjd5pF0h+UVeAhoJc+na/ZrWidDMep/22QTdnw0DymT50=
+	t=1756746465; cv=none; b=QOK9sYXYgwkM3lQRaMzaeQFLY7d5AFlOJZZRVrduJuVQv8Vi6zfmHq1+rSP1iA1mSLcgNvp4irxs33vkCZYP+eIQatDiCVRgnBH0gxUXBftDGa3PqdJFnAw3g2PP2MzCP5kLGrYpZ6VBNM9ULPRSV8tDD0+2keCQNHAEVTRmSKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746506; c=relaxed/simple;
-	bh=Qrk2AQCqdkt8cJv7ZTYNLA49te9CK6FbaWObJdfUIso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vl1xS1eCBF5joySxEqGIWU/9J25qHO1iyPcUeHbkBYVvCmBE908A7wN6Ei7rPy4Aezug05qLkAGGXlsZg1DZAL/ktPOd9DpGXhC6JjMGxl6LN6TwOjKsxVXU311oFr2dHBY6AzX3M9lngCpWqjSfwhexv4SOiubVVzBPW1iuwAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A23Zxf7S; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5819eiFa027567;
-	Mon, 1 Sep 2025 17:06:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=r7TOSx
-	JvoSA+1s5N9qqBPrp+KwUNdbucdgWwePjfXTs=; b=A23Zxf7SGvUD7i3F3A7Ihq
-	Mgrdp6wxmrD3U107IbRRMfJWqB7w13pen1yCB1xmIclO/1lUJ46tYNSKh8sILjao
-	HPWROA6XfF4sbwETXcp7VfjJB9U+G6Tco5q523VshsifiJgAUmFFiwhHWFksWhkg
-	8TauF6MGWkOTu6iw6836TOQAQaq4qLI419RrL7I+D5P0bnZm/HgRXLKu86wOPKmo
-	zaKeMooIIUN+8jfDd+SpyDrAvf9IIntvI9z7Kwc1Zu/Jfh30q1SXfdQOHh7vuShm
-	npLWbBq78hUZptxsWLOw72zgApEXMLhXarSgUn82sXfidpdYN2oVuRpXOtxbDIZw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvfhydc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 17:06:55 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 581H6tIo008017;
-	Mon, 1 Sep 2025 17:06:55 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvfhyd9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 17:06:55 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 581Dghh7021191;
-	Mon, 1 Sep 2025 17:06:54 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vcmpeupn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 17:06:54 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 581H6oSQ43385100
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 1 Sep 2025 17:06:50 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 37D6620043;
-	Mon,  1 Sep 2025 17:06:50 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C3DDF20040;
-	Mon,  1 Sep 2025 17:06:40 +0000 (GMT)
-Received: from [9.124.217.216] (unknown [9.124.217.216])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  1 Sep 2025 17:06:40 +0000 (GMT)
-Message-ID: <8eadbf18-f930-41ab-bd0c-344f95324687@linux.ibm.com>
-Date: Mon, 1 Sep 2025 22:36:39 +0530
+	s=arc-20240116; t=1756746465; c=relaxed/simple;
+	bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V2NU+TCHg3boQmoZ/daFFZ1AZwXH/ldDycPYT6WlSFqyah0o9O7KQ+Oh1wYjE/17Zj4/Fjughu0ujWaLTvdjzTco3zWhy0FYpHRQpq7GWvJHOovzdBhwnRK37G8XlbkY5+W2DQe4JNZUXoj8kess2FigjOvGCBkF/XmOGdiGubg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DC+limGa; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso1291753e87.1;
+        Mon, 01 Sep 2025 10:07:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756746462; x=1757351262; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=DC+limGagVIzn//NkTYABji4pGRRusPbtf3Yz3HRU4wGIAPMfLWwtnWrxLamzH8JcG
+         r+usFJAJxoh2BCjTuGtlIMVn0fvrf1KVhFm6h2+T7wKdFErUdXcaQRBaEOawSxSwnWIe
+         s4LQXl419bbUNPm0qDS86wScffl7rWTq4kLZ3xGc5VZBunpMuJ8NT0cS5IYYUxXZxtd2
+         kmOK4lwjyWtEj2MUxAgc4vZPku4il/o1Vjh76tig9jdqsDf6/nqH7CR9iAjSKIqrnugu
+         NCxJMKtDfPdScnAuI6iWbZZh3WTOGa4hIo8OSwG0RVIQUj3GWwkkD064XXXq1VJXej28
+         9Lyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756746462; x=1757351262;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=ZcmQT1MXwl84CAqTZ7/c1plIadkkhg0vl0V/Wv9DmKAi30agrQMQTqA3n85YB1s+Kj
+         wD9FD/9j0qrFbmMISr6QzT4zpM5M6XIKEyXXjrljsi1kbjTC3w9/R1x4P3VCN0AMZ4mQ
+         5a0npqLvD1kQHbcqSanga2WyAavItrrguta24Rhe8XBGjV90lg/1fFiQz3z8fbgpkIen
+         ML7GcTD12lxc6APWgi/P0eIeW5GIH2UkVTqfHHWnsnIPK7YC6Px8mA+mjSgAie6+IITB
+         dGHfCTz9fEzMfbPoiuIvHIWMBvfhfPzOlGX3K0F3iTMcnZtuF+F96WeEF75gW29tK6bu
+         PuEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+aA3mWKf4DekmXHB01tDo7NBjNxuXUE9JkmFBRNRmumwrWbYrrQ0mXA/rR+z6m6r15+EGoqQxjTTQ@vger.kernel.org, AJvYcCVMDr/05wUJsHABJ16eITL9nzmapGfJu1PXPnsqDTAKIGSwzu7ilFURzF+GlEOf9rqKi9mx3umqLbjW@vger.kernel.org, AJvYcCVf43a1yZqh2BQx3EJqpgIHyIU2nx1asN81/mNiHuoX49hvIXkLdeS41Ehnif1htGzz9IVfmIRiQWwU5x/Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzxbN9iG4BnRAvX/tzFzrkiVqv3mAemIyg8r56LnuKuNGGqRph
+	CAJAefGLUI4RTGvHQajhSASgh/EHb5Qm7Lz0RNQksW8LC+PWXmXUQwdo7UuySw==
+X-Gm-Gg: ASbGncv3ih8ZwxJuenbuTsrYEdzKG6gbuj7/TRfGWKz+6qziMQkMpUx060JhRAovpvj
+	DOfMOCTP+oQWhe8FK/GZd93q4niHITH9Qi5AaWRCdidQSU8T65YgxrKm5uetvYQQbyjwg0PgTP/
+	YXlXVLhG126ZJ2XMui5ceL8tA7JiCk3al3qUy3rLBJWuT139yfAGdzwktUzyfQaCHYZGhc+OrkL
+	QqSXtSLrbfvSqWrv5ddg6ysBY1hGhYBQsP3RKBj8dg3EjzGtWxW+o5PsHIbWBCMGyG4Kpe6x19M
+	iNh/od1CwjfNB5VrjhWwH+erWEOjPYBu5GhXtqJSpHrtrdIxBYqo6nI9KFWYV7NgkU9yzYOxpJt
+	qEkUQOBzk2zXHsPP90HPWOrU9TxmfPf8JnzOTp/6/wCOVIg==
+X-Google-Smtp-Source: AGHT+IHWg9rkJXFeOAyLPfI6Jq9upYbCl3QgUTbnRIZyklmbPgPwlM7YtvDYF70o6nvmJLdC8tIBxA==
+X-Received: by 2002:a05:6512:230b:b0:55f:5172:474f with SMTP id 2adb3069b0e04-55f708b50c1mr2491179e87.17.1756746461551;
+        Mon, 01 Sep 2025 10:07:41 -0700 (PDT)
+Received: from tablet.my.domain ([2a00:f44:892:8a37:6b0:21e7:549b:225b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f7abf7abesm1137666e87.55.2025.09.01.10.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 10:07:41 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH RESEND v6 0/9] clk: bcm: kona: Add bus clock support, bus
+ clocks for BCM21664/BCM281xx
+Date: Mon, 01 Sep 2025 19:07:06 +0200
+Message-Id: <20250901-kona-bus-clock-v6-0-c3ac8215bd4d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level
- hack for tl->cpumask()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, thomas.weissschuh@linutronix.de,
-        Li Chen <chenl311@chinatelecom.cn>, Bibo Mao <maobibo@loongson.cn>,
-        Mete Durlu <meted@linux.ibm.com>,
-        Tobias Huschle <huschle@linux.ibm.com>,
-        Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-        Guo Weikang <guoweikang.kernel@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-        Swapnil Sapkal <swapnil.sapkal@amd.com>,
-        "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Andrea Righi <arighi@nvidia.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
- <20250826101328.GV4067720@noisy.programming.kicks-ass.net>
- <xhsmh7bymlg2f.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <5ec9ca8a-9ba9-4600-a7a2-f7bd790fca83@linux.ibm.com>
- <20250901085815.GE4067720@noisy.programming.kicks-ass.net>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250901085815.GE4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=behrUPPB c=1 sm=1 tr=0 ts=68b5d2b0 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=Sj5KfFTFUvDWxMll-IgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: ey1UAu3pK9f_WbwA0sN_jX0wb-cb_G0w
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX/QfoAP97NVM7
- XKphrqhfzjL/bZlQ33D04vSK/Y5g0HsDiqvirGGVLX9joP5tg9AhgxxKu6qmHaXWl0wlRQmQk5m
- GI4F78mcjE8S4/qpfTKnPlSvBnaccaQrUKJN0fiKXBuLB2idWkCGVV2CChSvkWv+rKtCt9hQpT2
- wio6oFLnztXEn/g7lLVTY/xLs+9fbiTOtCNzopCPaQ61Ip8PZoTJAW97xbD+TpEKxt9TVslvPh0
- sbTKVUpW9k/LnhUOK4kIPlR5UTX0coo3L4KN83ZlNSSOlzVrAjhEcf/QJaVWRqeZqmwnNg5Jc9p
- g7hYaPG3n5liTQvl1IQnRnxH3fthaFqyMin2gEvHocb8aVxhG6/sHu1L47Vw55L4ipo5eCDFLwo
- 5jYAwNPn
-X-Proofpoint-GUID: 90AWoj7fnTbaX3KKwPhpLIJMKqs0ANIN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3153;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBotdLIi6PhSFeqmMBEQRv1HVm0Y6me6yRuQg9zb
+ h0pGkVQqemJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaLXSyAAKCRCzu/ihE6BR
+ aMimD/0cI/DWnNL3uvNnof3spp9UvWC6z4WyZGJpVBYGjAlnati6sOENPcj/H2kMAsGSktW2oka
+ D2mm5n0Vcfr1wfJv1l762pW9G4GHJQH2f7RG2Bs3L4tgOHhBhoC7uVgczKSNK46t2zWEGRd8UMb
+ ZwRHgpDoIdAaiq2EW2112cWmBeO/Zg0eJLpBlQ2AGruC087SH+ww2o7850ev2HcWG0Lxc1lweC9
+ eQ9/HjQ1gN3nJw85OJUVGLqaZLgcnAEwc5GzE2khBG1bUDGP69L9kFWOjrSfNpZlEgaviDNVCZ5
+ a6WzZSQjD+Zim+vmGhWkoofoIfLyZvYcl7SgW73kRzVEWnpamHJhp+UUL10er39DevgozHFga3Z
+ qpHaQXhEgn/LUYo9ca64MBT3XZqXFGJBO3UwalRzjFZpSSAa8j0jEymJmjOJw6TgxSrZwhsSDB8
+ 55fOA0pr+4Tsw+2zxq9MUqHe872NBfJa8Y6IHSjGXJisZmBRqwmdH6lYrg6h1rkRoo1PVCuALdr
+ gA4pj+VxDOYdGBHSGW1l8lYnlCpITCA755atn6ion3NyEc8xpiImvSfUoyEuRkS8n0J2iW8vGLx
+ xb6bZdLKNzNf7YAn1EBHjaQAS1AYllXZZuSDAv7qYARlTW7iXT9esNRbTFb4xnVrtya6U4daI7B
+ DgOG6vCyeG85p0g==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
+This patchset does the following:
 
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-On 9/1/25 2:28 PM, Peter Zijlstra wrote:
-> On Fri, Aug 29, 2025 at 02:23:06PM +0530, Shrikanth Hegde wrote:
-> 
->> I was looking at: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
->>
->> Current code doesn't allow one to enable/disable SCHED_MC on ppc since it is set always in kconfig.
->> Used the below patch:
->>
->> I think since the config is there, it would be good to provide a option to disable. no?
-> 
-> So current PPC code has this MC thing unconditional. I've been
-> preserving that behaviour. If PPC maintainers feel they want this
-> selectable, I'm happy to include something like the below, but as a
-> separate patch with a separate changelog that states this explicit
-> choice.
-> 
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
 
-Fair enough. Will send it as separate patch.
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v6:
+- Rebase on v6.16
+- Make kona_bus_clk_ops const, add a new commit to make kona_peri_clk_ops const as well
+- Link to v5: https://lore.kernel.org/r/20250430-kona-bus-clock-v5-0-46766b28b93a@gmail.com/
 
->> ---
->>
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index fc0d1c19f5a1..da5b2f8d3686 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -170,9 +170,8 @@ config PPC
->>   	select ARCH_STACKWALK
->>   	select ARCH_SUPPORTS_ATOMIC_RMW
->>   	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
->> -	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
->>   	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
->> -	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
->> +	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
->>   	select ARCH_USE_BUILTIN_BSWAP
->>   	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
->>   	select ARCH_USE_MEMTEST
->> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
->> index 68edb66c2964..458ec5bd859e 100644
->> --- a/arch/powerpc/kernel/smp.c
->> +++ b/arch/powerpc/kernel/smp.c
->> @@ -1706,10 +1706,12 @@ static void __init build_sched_topology(void)
->>   			SDTL_INIT(tl_cache_mask, powerpc_shared_cache_flags, CACHE);
->>   	}
->> +#ifdef CONFIG_SCHED_MC
->>   	if (has_coregroup_support()) {
->>   		powerpc_topology[i++] =
->>   			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
->>   	}
->> +#endif
->>   	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
->>
+Changes in v5:
+- Pick up Reviewed-by trailer from Krzysztof on patch 3
+- Rebase on v6.14
+- No code changes since v4
+- Link to v4: https://lore.kernel.org/r/20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com
 
+Changes in v4:
+- Rename moved CLOCK_COUNT defines to CLK_COUNT to avoid redefinition
+- Squash BCM21664/BCM281xx bus clock DT bindings commits together
+- Link to v3: https://lore.kernel.org/r/20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com
 
-If possible for below two, please consider tags.
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
 
-https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=sched/core&id=496d4cc3d478a662f90cce3a3e3be4af56f78a02
-https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/commit/?h=sched/core&id=a912f3e2c6d91f7ea7b294c02796b59af4f50078
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
 
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+---
+Artur Weber (9):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 and BCM281xx bus clocks
+      clk: bcm: kona: Make kona_peri_clk_ops const
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add corresponding bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
 
-for powerpc bits:
-Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 +++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 ++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  99 ++++++++++++++-
+ drivers/clk/bcm/clk-bcm281xx.c                     | 141 ++++++++++++++++++++-
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  64 +++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  14 +-
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 540 insertions(+), 45 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
 
