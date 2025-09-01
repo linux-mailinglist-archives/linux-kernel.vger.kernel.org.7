@@ -1,242 +1,182 @@
-Return-Path: <linux-kernel+bounces-793801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A474B3D865
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E51B3D868
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E751899743
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE43BBBD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B50D23507C;
-	Mon,  1 Sep 2025 04:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q4gfxqEV"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA241D6DB6;
-	Mon,  1 Sep 2025 04:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD5C235045;
+	Mon,  1 Sep 2025 04:58:47 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3E0226863;
+	Mon,  1 Sep 2025 04:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756702698; cv=none; b=SbxJAU58NfbK5fIllRnERbOTabmnCMzRg0/0MQOmc1jbRsxK5O+G+7Eh3ISNPC1G8qejWKCZ+f6/JkhLoOdH444GYTAXV68ZFWC/x/KOOHws6MkweeZ3fdhBZtLJj+Om9wvWWG8egQo55WeTTWMPv31Zu7N1GcmQo/KSz0lQH1o=
+	t=1756702726; cv=none; b=lX4jLlZIHOb9ZFeWOXPoQU4176ceEkCg4JWxDkxuvR44Wgr5Bg90jc1Ysz3EBh458GN9AyfnqakHVCtO8Kres2VWVAdgjn/HFDja5hp9f5d8bcxvKMInFzxZn6zY4jGiQv+21g6rlr1oGFVFfhdQMmaFp6Z0s7Uf9SvLiX9gYqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756702698; c=relaxed/simple;
-	bh=qYvO3rK273S+9f2mAAI/8Hr0lIQmrPeuG2c0OgJW9bs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olmXm7HeYNlD2A5gb3iuRhOl3gIjei7VDmV8XYMDM7qO/eWxTDefG+oG4pUfgJ1E4rWdNYMUlrql+G8lGbvpNh+Cvc2zbqjjMX4gu0I3Wvz7X9med+K/4L+RV7UreMaxYahzCDm1F8QYcJM7wGZ6XTuQuX1cF5MoHyzb/fhrseg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q4gfxqEV; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5814vsJm2233063;
-	Sun, 31 Aug 2025 23:57:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756702674;
-	bh=IUjK7Q24oWh6H63KFySDHy5hUw9XYhgGJTDHotf9y5s=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Q4gfxqEVqDLNuozT7TLRCq0YOIGTLi2oWkLk88QE93p2Qxd8As7t48KvaOw/OzoTK
-	 D/nkWfQ8mlm4glXMipvD70VaDdms87LTaNr7WurO4UyMHGXux7wf2QIdjxnTLtybVQ
-	 ESMEJqEaIBJbDQ/rlVuv2Yg8cZkg77Fr15lyP6sg=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5814vsmk1716373
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sun, 31 Aug 2025 23:57:54 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 31
- Aug 2025 23:57:53 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 31 Aug 2025 23:57:53 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5814vqAn1605689;
-	Sun, 31 Aug 2025 23:57:53 -0500
-Date: Mon, 1 Sep 2025 10:27:51 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <helgaas@kernel.org>, <kishon@kernel.org>, <vigneshr@ti.com>,
-        <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v3] PCI: j721e: Fix programming sequence of "strap"
- settings
-Message-ID: <b2fb9252-6bfc-45da-973a-31cdfcc86b3d@ti.com>
-References: <20250829091707.2990211-1-s-vadapalli@ti.com>
- <oztilfun77apxtjxumx4tydkcd2gsalsak4m2rvsry2oooqjna@2yvcx6cnuemm>
+	s=arc-20240116; t=1756702726; c=relaxed/simple;
+	bh=SogQWvNqfqMLWW+Sam3+C1XG+3hPYsmEKbe3pwlLWag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=taB3HmljRBkOMAH5ORbGIB8gVRgkdr7Kpfhc9ONcIMZVN/xRsNurQFVG0YToYfzyogkojZ9t15Taz8/EMg+ebtyEMUOyBDkF1fr+0BwNIbcUralIXd4xX2G8f1rIO9jPPtjkvHU4UWlYUrotZnk3buuQd1Ptgzm5dqo8EijRgZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: 0kT3Ze4dSBWctoXSccUIuw==
+X-CSE-MsgGUID: 4RpDT+V8SoCFr8KTr7Tx2w==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Sep 2025 13:58:37 +0900
+Received: from [127.0.1.1] (unknown [10.226.78.19])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 12CB2400EF75;
+	Mon,  1 Sep 2025 13:58:32 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+Subject: [net-next PATCH v5 0/4] net: renesas: rswitch: R-Car S4 add HW
+ offloading for layer 2 switching
+Date: Mon, 01 Sep 2025 06:58:04 +0200
+Message-Id: <20250901-add_l2_switching-v5-0-5f13e46860d5@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <oztilfun77apxtjxumx4tydkcd2gsalsak4m2rvsry2oooqjna@2yvcx6cnuemm>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANwntWgC/23OwW7CMAyA4VdBOS9T7MSty2nvMSEUkpRGYi1KU
+ AGhvvtSdhioPf6W/NkPkUOKIYvt5iFSGGOOQ1+CPjbCdbY/Bhl9aYEKSVVQSev9/oT7fI0X18X
+ +KLUhgBoUeeVFWTun0Mbbk/zele5ivgzp/rwwwjz9w2plltgIUsm2ZUZr3QGJv1LoQ7b50w0/Y
+ uZGfCV4hcCZaKAloqqC2i4J/UKAWiF0IZyyGlljfTB6SZh/gnHtC1MIbnzx2TE1+E5M0/QLerl
+ plnsBAAA=
+X-Change-ID: 20250616-add_l2_switching-345117105d0d
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Paul Barker <paul@pbarker.dev>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michael Dege <michael.dege@renesas.com>, 
+ Nikita Yushchenko <nikita.yoush@cogentembedded.com>, 
+ Andrew Lunn <andrew@lunn.ch>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756702712; l=4182;
+ i=michael.dege@renesas.com; s=20250523; h=from:subject:message-id;
+ bh=SogQWvNqfqMLWW+Sam3+C1XG+3hPYsmEKbe3pwlLWag=;
+ b=9eVVB6VFzSuBYpfbRtokLsvpirpubmffCKioSZnf8S+oFFlaHeNnTJ/nky35XVlzkNJuluFX/
+ 0X+gUZo3vcCB+ZwHISA9oW4H8Pn6KFu+5mAVL16uDsixKK/9pQtXjzk
+X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
+ pk=+gYTlVQ3/MlOju88OuKnXA7MlapP4lYqJn1F81HZGSo=
 
-On Sun, Aug 31, 2025 at 06:15:13PM +0530, Manivannan Sadhasivam wrote:
+Hello!
 
-Hello Mani,
+The current R-Car S4 rswitch driver only supports port based fowarding.
+This patch set adds HW offloading for L2 switching/bridgeing. The driver
+hooks into switchdev.
 
-> On Fri, Aug 29, 2025 at 02:46:28PM GMT, Siddharth Vadapalli wrote:
-> > The Cadence PCIe Controller integrated in the TI K3 SoCs supports both
-> > Root-Complex and Endpoint modes of operation. The Glue Layer allows
-> > "strapping" the Mode of operation of the Controller, the Link Speed
-> > and the Link Width. This is enabled by programming the "PCIEn_CTRL"
-> > register (n corresponds to the PCIe instance) within the CTRL_MMR
-> > memory-mapped register space. The "reset-values" of the registers are
-> > also different depending on the mode of operation.
-> > 
-> > Since the PCIe Controller latches onto the "reset-values" immediately
-> > after being powered on, if the Glue Layer configuration is not done while
-> > the PCIe Controller is off, it will result in the PCIe Controller latching
-> > onto the wrong "reset-values". In practice, this will show up as a wrong
-> > representation of the PCIe Controller's capability structures in the PCIe
-> > Configuration Space. Some such capabilities which are supported by the PCIe
-> > Controller in the Root-Complex mode but are incorrectly latched onto as
-> > being unsupported are:
-> > - Link Bandwidth Notification
-> > - Alternate Routing ID (ARI) Forwarding Support
-> > - Next capability offset within Advanced Error Reporting (AER) capability
-> > 
-> > Fix this by powering off the PCIe Controller before programming the "strap"
-> > settings and powering it on after that.
-> > 
-> > Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > ---
-> > 
-> > Hello,
-> > 
-> > This patch is based on commit
-> > 07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08-27' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
-> > of Mainline Linux.
-> > 
-> > v2 of this patch is at:
-> > https://lore.kernel.org/r/20250819101336.292013-1-s-vadapalli@ti.com/
-> > Changes since v2:
-> > - Based on Bjorn's feedback at:
-> >   https://lore.kernel.org/r/20250819221748.GA598958@bhelgaas/
-> >   1) Commit message has been rephrased to summarize the issue and the
-> >   fix without elaborating too much on the details.
-> >   2) Description of the issue's symptoms noticeable by a user has been
-> >   added to the commit message.
-> >   3) Comment has been wrapped to fit within 80 columns.
-> >   4) The implementation has been simplified by moving the Controller
-> >   Power OFF and Power ON sequence into j721e_pcie_ctrl_init() as a
-> >   result of which the code reordering as well as function parameter
-> >   changes are no longer required.
-> > - Based on offline feedback from Vignesh, Runtime PM APIs are used
-> >   instead of PM DOMAIN APIs to power off and power on the PCIe
-> >   Controller.
-> > - Rebased patch on latest Mainline Linux.
-> > 
-> > Test Logs on J7200 EVM without the current patch applied show that the
-> > ARI Forwarding Capability incorrectly shows up as not being supported:
-> > https://gist.github.com/Siddharth-Vadapalli-at-TI/768bca36025ed630c4e69bcc3d94501a
-> > 
-> > Test Logs on J7200 EVM with the current patch applied show that the
-> > ARI Forwarding Capability correctly shows up as being supported:
-> > https://gist.github.com/Siddharth-Vadapalli-at-TI/fc1752d17140646c8fa57209eccd86ce
-> > 
-> > As explained in the commit message, this discrepancy is solely due to
-> > the PCIe Controller latching onto the incorrect reset-values which
-> > occurs when the strap settings are programmed after the PCIe Controller
-> > is powered on, at which point, the reset-values don't toggle anymore.
-> > 
-> > Regards,
-> > Siddharth.
-> > 
-> >  drivers/pci/controller/cadence/pci-j721e.c | 22 ++++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> > index 6c93f39d0288..c178b117215a 100644
-> > --- a/drivers/pci/controller/cadence/pci-j721e.c
-> > +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> > @@ -284,6 +284,22 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
-> >  	if (!ret)
-> >  		offset = args.args[0];
-> >  
-> > +	/*
-> > +	 * The PCIe Controller's registers have different "reset-values"
-> > +	 * depending on the "strap" settings programmed into the PCIEn_CTRL
-> > +	 * register within the CTRL_MMR memory-mapped register space.
-> > +	 * The registers latch onto a "reset-value" based on the "strap"
-> > +	 * settings sampled after the PCIe Controller is powered on.
-> > +	 * To ensure that the "reset-values" are sampled accurately, power
-> > +	 * off the PCIe Controller before programming the "strap" settings
-> > +	 * and power it on after that.
-> > +	 */
-> > +	ret = pm_runtime_put_sync(dev);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Failed to power off PCIe Controller\n");
-> > +		return ret;
-> > +	}
-> 
-> How does the controller gets powered off after pm_runtime_put_sync() since you
-> do not have runtime PM callbacks? I believe the parent is turning off the power
-> domain?
+1. Rename the base driver file to keep the driver name (rswitch.ko)
 
-By invoking 'pm_runtime_put_sync(dev)', the ref-count is being
-decremented and it results in the device being powered off. I have
-verified it by printing the power domain index within the functions for
-powering off and powering on devices on the J7200 SoC. Logs:
+2. Add setting of default MAC ageing time in hardware.
 
-	root@j7200-evm:~# modprobe pci_j721e
-	[   25.231675] [Powering On]: 240
-	[   25.234848] j721e-pcie 2910000.pcie: host bridge /bus@100000/pcie@2910000 ranges:
-	[   25.242378] j721e-pcie 2910000.pcie:       IO 0x4100001000..0x4100100fff -> 0x0000001000
-	[   25.250496] j721e-pcie 2910000.pcie:      MEM 0x4100101000..0x41ffffffff -> 0x0000101000
-	[   25.258588] j721e-pcie 2910000.pcie:   IB MEM 0x0000000000..0xffffffffffff -> 0x0000000000
-	[   25.267098] [Powering Off]: 240
-	[   25.270318] [Powering On]: 240
-	[   25.273511] [Powering On]: 187
-	[   26.372361] j721e-pcie 2910000.pcie: PCI host bridge to bus 0000:00
-	[   26.378666] pci_bus 0000:00: root bus resource [bus 00-ff]
-	[   26.384156] pci_bus 0000:00: root bus resource [io  0x0000-0xfffff] (bus address [0x1000-0x100fff])
-	[   26.393197] pci_bus 0000:00: root bus resource [mem 0x4100101000-0x41ffffffff] (bus address [0x00101000-0xffffffff])
-	[   26.403728] pci 0000:00:00.0: [104c:b00f] type 01 class 0x060400 PCIe Root Port
-	[   26.411044] pci 0000:00:00.0: PCI bridge to [bus 00]
-	[   26.416009] pci 0000:00:00.0:   bridge window [io  0x0000-0x0fff]
-	[   26.422091] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-	[   26.428874] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-	[   26.436676] pci 0000:00:00.0: supports D1
-	[   26.440699] pci 0000:00:00.0: PME# supported from D0 D1 D3hot
-	[   26.448064] pci 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-	[   26.456274] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-	[   26.462923] pci 0000:00:00.0: PCI bridge to [bus 01]
-	[   26.467933] pci_bus 0000:00: resource 4 [io  0x0000-0xfffff]
-	[   26.473595] pci_bus 0000:00: resource 5 [mem 0x4100101000-0x41ffffffff]
-	[   26.480337] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
-	[   26.487479] pcieport 0000:00:00.0: PME: Signaling with IRQ 701
-	[   26.493909] pcieport 0000:00:00.0: AER: enabled with IRQ 701
+3. Add the L2 driver extension in a separate file. The HW offloading
+is automatically configured when a port is added to the bridge device.
 
-In the above logs, '240' is the Power Domain Index for the PCIe
-Controller on J7200 SoC. It is powered on initially before the driver is
-probed. During driver probe, we see the logs corresponding to
-"devm_pci_alloc_host_bridge()" from the timestamp of '25.234848' which
-is prior to the invocation of 'j721e_pcie_ctrl_init()'. Some time around
-the '25.267098' timestamp, the 'j721e_pcie_ctrl_init()' function is
-invoked which then decrements the ref-count via 'pm_runtime_put_sync(dev)'
-leading to the PCIe Controller being powered off. This seems to be
-consistent across boot unlike the usage of 'dev_pm_domain_detach' which
-handles the device power off via a workqueue as a result of which it may
-not be powered off yet when 'j721e_pcie_ctrl_init()' is programming the
-strap settings. Hence, I switched from 'dev_pm_domain_detach()' to
-'pm_runtime_put_sync()' in the v3 patch.
+Usage example:
+ip link add name br0 type bridge
+ip link set dev tsn0 master br0
+ip link set dev tsn1 master br0
+ip link set dev br0 up
+ip link set dev tsn0 up
+ip link set dev tsn1 up
 
-Please let me know if you have any suggestions for alternative means to
-power off the device in a reliable manner without deferring it to a
-workqueue as done by the 'dev_pm_domain_detach()' API.
+Layer 2 traffic is now fowarded by HW from port TSN0 to port TSN1.
 
-Regards,
-Siddharth.
+4. Provides the functionality to set the MAC table ageing time in the
+Rswitch.
+
+Usage example:
+ip link change dev br0 type bridge ageing 100
+
+Changes in v5:
+- Updated commit messeges [3/4] and [4/4] using iperative mood.
+- Fixed incorrect id_len setting in rswitch_get_port_parent_id()
+- Removed duplicate initialization of *rdev in 
+  rswitch_update_ageing_time()
+- Link to v4: https://lore.kernel.org/r/20250828-add_l2_switching-v4-0-89d7108c8592@renesas.com
+
+Changes in v4:
+- Added target tree to subject prefix.
+- refactored rswitch_update_l2_hw_learning() and
+  rswitch_update_l2_hw_forwarding() to remove duplicate code. 
+- In function rswitch_update_offload_brdev() removed unused
+  force_update_l2_offload parameter.
+- Link to v3: https://lore.kernel.org/r/20250710-add_l2_switching-v3-0-c0a328327b43@renesas.com
+
+Changes in v3:
+- Split void rswitch_update_l2_offload(struct rswitch_private *priv) 
+  into two functions to reduce the complexity.
+- In rswitch_switchdev_blocking_event() returning -EOPNOTSUPP directly
+  for unsupported events intead of calling function which returned
+  -EOPNOTSUPP.
+- Retuning result from rswitch_reg_wait() directly instead of using
+  local variable at end of function.
+- Restructured rswitch_update_offload_brdev() to fix smatch
+  false-positive report.  
+- Fixed reviewed-by tags in [1/4]
+- Fixed oder of signed-off-by tags in [2/4]
+- Removed magic number in [2/4]
+- Link to v2: https://lore.kernel.org/r/20250708-add_l2_switching-v2-0-f91f5556617a@renesas.com
+
+Changes in v2:
+- Pulled default ageing setting into separate patch.
+- Changed logging priority from info to dbg.
+- Updated usage examples.
+- Fixed passing of ageing parameter. Parameter is already in seconds
+  no need to convert. Parameter checking improved.
+- Updated commit message of [3/4] to point out that the switch hardware
+  only supports the offloading of one bridge device. 
+- Link to v1: https://lore.kernel.org/r/20250704-add_l2_switching-v1-0-ff882aacb258@renesas.com
+
+Thanks,
+
+Michael
+
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+To: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+To: Paul Barker <paul@pbarker.dev>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Michael Dege (4):
+      net: renesas: rswitch: rename rswitch.c to rswitch_main.c
+      net: renesas: rswitch: configure default ageing time
+      net: renesas: rswitch: add offloading for L2 switching
+      net: renesas: rswitch: add modifiable ageing time
+
+ drivers/net/ethernet/renesas/Makefile              |   1 +
+ drivers/net/ethernet/renesas/rswitch.h             |  43 ++-
+ drivers/net/ethernet/renesas/rswitch_l2.c          | 316 +++++++++++++++++++++
+ drivers/net/ethernet/renesas/rswitch_l2.h          |  15 +
+ .../ethernet/renesas/{rswitch.c => rswitch_main.c} |  86 +++++-
+ 5 files changed, 455 insertions(+), 6 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250616-add_l2_switching-345117105d0d
+
+Best regards,
+-- 
+Michael Dege <michael.dege@renesas.com>
+
 
