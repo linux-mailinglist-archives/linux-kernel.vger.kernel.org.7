@@ -1,185 +1,132 @@
-Return-Path: <linux-kernel+bounces-794828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7127B3E7B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:48:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE4BB3E7CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4319C7A1007
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28DA0201494
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D319342CA2;
-	Mon,  1 Sep 2025 14:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCEA3431FF;
+	Mon,  1 Sep 2025 14:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bh7aUgp7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y7BPv5re";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bh7aUgp7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Y7BPv5re"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBiUaHxy"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139CA341665
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605862EDD76;
+	Mon,  1 Sep 2025 14:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738075; cv=none; b=oKvzZ9WTiWTrYA2I6LsEhxFodsIlwUP1/uuY1wlNfx7mUfflVgqSXNgM9dF2pwmekDukoo8B4f1wCGe8FIOjfxh+QNO0qBO+SIfJCocs7cXBa0EtaOTCYYwDUqzQAoebs75Xzkm2idwHfyIbsUeCeddodkVbr2Zmw4yQa3X6FxQ=
+	t=1756738084; cv=none; b=L7MCW1CdWHTY0uYqyvY1YR4tvPdj3CSqRgW0qJks+eRfSwtRPt3sBVWRO/Q7tidi2NnnRurkRYDQThSTrNrp+K6kNbGaNRZhrZLrckn15Q7jMvjd+JbeIrttUOfEvyrDQIDKlTSQAp6g9DPiocOKavulbc2zm24XdQqeUzh5rDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738075; c=relaxed/simple;
-	bh=4PlS+RGkX7iEBQZ6XTQMODjWNQpIR62pAMQXHTcCR+s=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UdDBZWrv1rw77fkbUc07bK3NdIQ6YWvqcKLXC6HimQ65Ekxt/mW/sewoXUDOlBog0Udm4p+/sUj6jbLbp5DRiGOuVplYH2EyvwUnJiWC3eMvJoGFP8iZ6i3ut/Dbd2h4xJgl2Mm6ht2Rio6R5k+erChhzZocGlNq1hhboP3KYOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bh7aUgp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y7BPv5re; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bh7aUgp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Y7BPv5re; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 228FF21191;
-	Mon,  1 Sep 2025 14:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756738070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mI1fQGwM4jEvPoGFhraU1Y/EB1MiDRz7dzQzgQ/Cl4I=;
-	b=Bh7aUgp7v6sE+DjVEpLPd9+B06IYHYvFpXwkSvvrH9nURbpuWra9UKKwWjcz3HkUv/+PZn
-	NseV03HkoovRMnTqWX0uFj00AysRU83gAObrck53RHU/xt9sWR0FydNb1BZm8Hz3sBo5DW
-	le68V16trbdtKvfPMLjEs71yAJ6LnmY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756738070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mI1fQGwM4jEvPoGFhraU1Y/EB1MiDRz7dzQzgQ/Cl4I=;
-	b=Y7BPv5reabX/r6y0lrPDdwTzuey6KihcNsrctyE0SsEx3sf5x1kN0aSBEry1i7W4jxGrI4
-	KUcFLa5nUZdFKdDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Bh7aUgp7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Y7BPv5re
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756738070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mI1fQGwM4jEvPoGFhraU1Y/EB1MiDRz7dzQzgQ/Cl4I=;
-	b=Bh7aUgp7v6sE+DjVEpLPd9+B06IYHYvFpXwkSvvrH9nURbpuWra9UKKwWjcz3HkUv/+PZn
-	NseV03HkoovRMnTqWX0uFj00AysRU83gAObrck53RHU/xt9sWR0FydNb1BZm8Hz3sBo5DW
-	le68V16trbdtKvfPMLjEs71yAJ6LnmY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756738070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mI1fQGwM4jEvPoGFhraU1Y/EB1MiDRz7dzQzgQ/Cl4I=;
-	b=Y7BPv5reabX/r6y0lrPDdwTzuey6KihcNsrctyE0SsEx3sf5x1kN0aSBEry1i7W4jxGrI4
-	KUcFLa5nUZdFKdDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3849136ED;
-	Mon,  1 Sep 2025 14:47:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BWR7MhWytWgWVwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 01 Sep 2025 14:47:49 +0000
-Date: Mon, 01 Sep 2025 16:47:49 +0200
-Message-ID: <87plca5iwa.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Mark Brown <broonie@kernel.org>,
-	Charles Keepax	
- <ckeepax@opensource.cirrus.com>,
-	Bard Liao
- <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart
- <pierre-louis.bossart@linux.dev>,
-	Liam Girdwood <lgirdwood@gmail.com>,
+	s=arc-20240116; t=1756738084; c=relaxed/simple;
+	bh=ZodUXseB6jOlGx8k6PDBGutePoOCdZWayn81mIJLLPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AJOGGgzltwjegTXG2TdSAkJvZlmLI+ouimSAcsZwdC+9gwiWxvTd4NQm7rAt8gpJ5xIGOvrFVy7qA1sL0ybuG7QU48ZoOkSQWAqEDt6VUB+VFBZVXO5GASaZryBLlvt78Uyc9Jas6wt62nd6MdxOv/72kaiRbjPaCOrGDCGneSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBiUaHxy; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-244580523a0so43657045ad.1;
+        Mon, 01 Sep 2025 07:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756738083; x=1757342883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z0FhGqrqMVb2l6eMQQnWxa3xWAyAOmTP51BuC3ToKwk=;
+        b=KBiUaHxy1I7SWgIC0kdnnOI0/A82CgIHxF0bujkNsUmPk+dMKXY5JlhT4ncLoVG3E+
+         a1kSSHPFYjXyvv+8SLFH6FUc8mwBNd/KJHo4zBLr/HYaorjalgbau1Qyh6bFnKZnhIxb
+         stFMyYas4bRiKbqVKYTx1DpRncvE1hKhX/etB8DiMuhS0DRWu/KCc4qaEwQJ7JXa5R4K
+         J8lxcPpSGCkSR3H1Es3/Gf5Q3Exz95TwJTVqG5ojyegFfF2fh4QAv6owpHLZqSw1KAWI
+         a2LkV9tOyiCD0sv7r8h+ee/wMG9kVvqUPWUDECEdGwwzelc+xZ94+lxAF8W2YiGhSYAr
+         v/aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756738083; x=1757342883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z0FhGqrqMVb2l6eMQQnWxa3xWAyAOmTP51BuC3ToKwk=;
+        b=k6ST1FwyHtPxJ3+skaBPLEzUrAq+d1LfNjqDbKanNDUKEe+leGjK4HBTpgXaRm04CW
+         25kF9oB9qB+ikBR/5IZlxs1lXoJPehcWrtbksDfmw3ujbDJT6CyVBQO3ABjWTGo26TtL
+         h3SU6sn2yDrCFC3xCi0zPThS11t9iimEe0MaX2d31CqLSY5zE553gD8SlwVkpr9Bxwjy
+         CTQbaILt6etysswHjnOX+QHzinxxyzc2XSp+rIrJIulKVfeb/InUEFeJA3NCxqgHdCS1
+         9P2XoH4SswxV4P7CRlmqNQYteyRw52wcgEtx+/7Lxv+SdeMIwCGZqxGx7bS7aycg33+Z
+         LMYA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6GsFJrsh/a38mQ+q4To1MuV6UTzbPmVWBq4oqxeAlKSJA1TpH+a3aez2aoZWGSSXYc8HqXhfPTYo=@vger.kernel.org, AJvYcCXqgIm7veWFkhHUHRQOWCs9QQwx8F/1VtEQdqGM37JCGF8aeaWu2YxEkHG/j/h9qHBoruVhh0TmEbKl+x4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeitH6N4PAJ59QLDjAChulm14UutN12KZiezGp+qyojCPpL2lE
+	rHJ2eZHhfcEF/CdLjcr5cYCjuZJoTisPmmfgiK8i6Y22QEId0msQvHvSdRBaWKua
+X-Gm-Gg: ASbGncssnI9j/SCefVPeLQrpinn91q2lSm5W9UTczDuiN4giNgSrkI+DcixU43kfTpF
+	NZeuWCoIsNsCZAAiRSLnGKoT22Q+sShDvkGwteVGU0QAGenRhaaKJfr8d2gciVJ1GG0eaFeRGO1
+	C/fFIMBfzypLpf2c+a6oLEKcKbeY+R5UHtaFJaNB9ifp3048OW3Rhi8ichnwicEGOaaq1qA9eaM
+	4NE4gNIsAxiK6uQeRHCwrueMZm6V8ClJ8m/64q1tttwNtoISyzccIh95uGzkmbChriQ5/eVvmYj
+	fMACx1fSV1hMftSovPM0oFXCMLO8E5DXu7Fe/fQd5ADl5KkbO0nSJIuj4kgQt70cMPTAi5hfw8v
+	2pBeyjCzxH4hDz7d4oytqooeZ8XrNTCeqmaNLAqVAPHzTtBPb/SFkZurFX6tnSEbJOSrr5Mjgkv
+	a6S552WJto
+X-Google-Smtp-Source: AGHT+IHi4NI+DwDO0TL0X09UVCvc+x42nzPdRk1MoMh/XqxGkbOkkM4vF1kBoSrMCukayJK/Nt99RQ==
+X-Received: by 2002:a17:902:d4d1:b0:246:6113:f1a8 with SMTP id d9443c01a7336-24944b29febmr117589645ad.40.1756738082521;
+        Mon, 01 Sep 2025 07:48:02 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490375a9ccsm108059385ad.63.2025.09.01.07.48.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 07:48:01 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	jacob.jun.pan@linux.intel.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH] ASoC: SDCA: Add quirk for incorrect function types for 3 systems
-In-Reply-To: <3643b07326567604a6ba5b59ece84903dffcd3e5.camel@opensource.cirrus.com>
-References: <20250901075755.2070983-1-mstrozek@opensource.cirrus.com>
-	<87tt1m5kvl.wl-tiwai@suse.de>
-	<3643b07326567604a6ba5b59ece84903dffcd3e5.camel@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] tmon: Fix undefined behavior in left shift
+Date: Mon,  1 Sep 2025 22:47:56 +0800
+Message-Id: <20250901144756.1179834-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 228FF21191
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,kernel.org,opensource.cirrus.com,linux.intel.com,linux.dev,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[opensuse.org:url,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
 
-On Mon, 01 Sep 2025 16:28:48 +0200,
-Maciej Strozek wrote:
-> 
-> W dniu pon, 01.09.2025 o godzinie 16∶05 +0200, użytkownik Takashi Iwai
-> napisał:
-> > On Mon, 01 Sep 2025 09:57:46 +0200,
-> > Maciej Strozek wrote:
-> > > 
-> > > Certain systems have CS42L43 DisCo that claims to conform to
-> > > version 0.6.28
-> > > but uses the function types from the 1.0 spec. Add a quirk as a
-> > > workaround.
-> > > 
-> > > Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
-> > 
-> > It's a fix for the report below, right?
-> >   https://github.com/thesofproject/linux/issues/5515
-> > Then please put it to Link tag.  Also at best give Fixes tag if you
-> > can give some hint for the stable backports.
-> > 
-> That's correct, will put the Link in v2, thanks.
-> Not sure however if Fixes tag is appropriate (not fixing a bug in a
-> kernel commit but in the ACPI after all) - maybe a "Cc:
-> stable@vger.kernel.org" is going to be enough?
+Using 1 << j when j reaches 31 triggers undefined behavior because
+the constant 1 is of type int, and shifting it left by 31 exceeds
+the range of signed int. UBSAN reports:
 
-I thought it's a regression, judging from the original bug report on
-  https://bugzilla.opensuse.org/show_bug.cgi?id=1248239
-but Cc-to-stable works, too.
+tmon.c:174:54: runtime error: left shift of 1 by 31 places cannot be represented in type 'int'
 
+According to the C11 standard:
 
-thanks,
+"If E1 has a signed type and E1 x 2^E2 is not representable in the
+result type, the behavior is undefined."
 
-Takashi
+Fix this by using 1U << j, ensuring the shift is performed on an
+unsigned type where all 32 bits are representable.
+
+Fixes: 94f69966faf8 ("tools/thermal: Introduce tmon, a tool for thermal subsystem")
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ tools/thermal/tmon/tmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/thermal/tmon/tmon.c b/tools/thermal/tmon/tmon.c
+index 7eb3216a27f4..ef67cd1a4861 100644
+--- a/tools/thermal/tmon/tmon.c
++++ b/tools/thermal/tmon/tmon.c
+@@ -171,7 +171,7 @@ static void prepare_logging(void)
+ 
+ 		memset(binding_str, 0, sizeof(binding_str));
+ 		for (j = 0; j < 32; j++)
+-			binding_str[j] = (ptdata.tzi[i].cdev_binding & (1 << j)) ?
++			binding_str[j] = (ptdata.tzi[i].cdev_binding & (1U << j)) ?
+ 				'1' : '0';
+ 
+ 		fprintf(tmon_log, "#thermal zone %s%02d cdevs binding: %32s\n",
+-- 
+2.34.1
+
 
