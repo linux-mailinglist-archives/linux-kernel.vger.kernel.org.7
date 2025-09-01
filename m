@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-794036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3A1B3DBE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:06:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21CBB3DBE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F62189CAA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:06:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 827E84E1A35
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092FF2EE272;
-	Mon,  1 Sep 2025 08:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1ABD2EE610;
+	Mon,  1 Sep 2025 08:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aCTGUFsX"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d31Dni85"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35822E091B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8811A5BBF;
+	Mon,  1 Sep 2025 08:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713969; cv=none; b=RGd964gnJyhGD5aokhyWQ1VKRScps2Kdq0jWpG+zFUzt0DO9IHTQklBl+lSl8iZVVWII/8V3cCNViDWb9xfNKq9c2pGIBsvI270MLi/Xp4UUdeCgQXRD+hDyWhO3ulvHSBoOiXIxHRdYXBxG60flRqyo/DibVz4GCt12lm4LiYo=
+	t=1756713962; cv=none; b=hf+CLCd4CvDXBnjobmxHwoo/ALPBFfwWB78OQmLlXsCSbAu/uq/lr8Aj2WqPONo7xHfV0GlBFMTsU91Sie99NmItVKuS8hYeZW1zldgro7U9gDUR6BREV1pzu0MqXoSxnGt0sf3vDJU5Nl/LQJSWkSvvKPYqGY53xG0r0yNIpws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713969; c=relaxed/simple;
-	bh=qAL+Ft8jZKINEz5jqSKOTaXOoS9hZhZen+9WCiONySg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W4DTWhjr2meWgU2973hKZ6voA/5uJp8uM1iaK8xxvwgHT2IEFTewQiVqzRtShRhbTjWfvY9x2TMVOHDLYpPClx+2GLu0CTg6gZJuKYbdr8VXd7vYsGBdBY/W21i8i9A7+R7YTLZdntGFnS79XzRQWmBb1Z3zeTxHkug+dEtJ3DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aCTGUFsX; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a16441so624751466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756713965; x=1757318765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qAL+Ft8jZKINEz5jqSKOTaXOoS9hZhZen+9WCiONySg=;
-        b=aCTGUFsXp+rQl2HG/PLevcug8U4r+2TqlUlXaqIyiOoX7s6o3wlsv260YN2HekNAo6
-         qXgmXgjIQNDegsAbHwI5lKmB/kbSkWAHcx3ZtCl/XPynNtLjjrWUClDoQ+0ZtsXGD1pq
-         QfoyM6Y6GwCrUk5MncPIfI0+OGsLy3UlX0xAkQ3unls1RgT8Ex41SRX6pt918ayRqmwo
-         RxgKCOQcmZUmfyHOA3qN46bxYoJIOc0iC9M6mTwDIqt2HoX87+JTmGsc/Zu8cp2O8HVB
-         8MQMtHCeS7I2s5jxrLwNMFSA8wYnw6AOMCB9U7gpnqAWFWtlHVp0ZQV/cVUr56ADYrzh
-         Jrnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756713965; x=1757318765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qAL+Ft8jZKINEz5jqSKOTaXOoS9hZhZen+9WCiONySg=;
-        b=dXouuh3duMBhsdABzyyeiXp9ThJHl/ObAiJQLmyp+ajCBIAqL4E88QRTeCB8NBFinA
-         e0iTOxmppgeRWdkr01GgNPrwH41gk/iNCNZ47wAta8OhHJ+V0XrFqpsRhDrkHo10AJtb
-         K9sXDObY7JcGcXGSc7JU6ZHuMUAFnOSXmoUtvD2OUbS0Na2JoZ+zq1FJEiOyFtH6turl
-         Ddw/FFuKpqJUKarN6RYjyol7U9zaFmv0UfF1hYBKmB0D186xkMS7r3/pz/ZYHtgGq4Dm
-         M/rmRmM8EwadQReZw86GJ6LWxcvcTynmKdNxlSHg4DkFO5D+F03j070a5siScBKi7wWC
-         fAjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRbRWkUdjwdZt9cJAUTa1jeQ3oz+ZU7KVkJyAvZTuTxZBbEPws6dPLUGwLGH7FSx2NBpsFPIN9J82jdoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBWDmh7yIEd1KfW8ebAO96x4+r+RcUKmEDWAOCNAwoN+c/bYFv
-	1AUuBy0gHOz4iYagTduDTrvMG/q8DFv2opoP2q0P1nwAlptoo+6lUKTxKmR0PYln8kfLlvQyEjT
-	vbCRqnwNKyb8BV4X4doMD4Ighy5iMvmUYCO8oxC/7eQ==
-X-Gm-Gg: ASbGncvyDvqp0vVt/kCons81X02YNpi7Qq1k533sgd3yL909CCEktCHvJDlu8Rg55Ch
-	OvZr7wOOKpKfGG0AkMJC7/EvrLPF09kcZk9QgtmRckpEYRIb3gsdbbdRadFA+TuX8iIS1oJA5uC
-	ys/ZdB95KwpbysECTGDDL7tUvKuncy/boX7L9RoaPNFjokmMdT8O5h2tuRaR04/1/ZY/UFL0FTi
-	JFx43HW42VoyH/kYKAuQOm1V3USXznFzsSgTR3XulpsoA==
-X-Google-Smtp-Source: AGHT+IFK/vpnhnC8MFCfb2PlngGVphNQ4y6sY8x+yQGgbEfQ7yDgJFs09MGa/LJUiNzBGyccnGU+5pXcPn0H2ulkhFc=
-X-Received: by 2002:a17:907:7f89:b0:afe:d62a:f053 with SMTP id
- a640c23a62f3a-b01d8a322c4mr662439666b.10.1756713963933; Mon, 01 Sep 2025
- 01:06:03 -0700 (PDT)
+	s=arc-20240116; t=1756713962; c=relaxed/simple;
+	bh=bnNAN6za/atPZ+puSToYaKFOAZ7qP0i0YUB/QHVuRx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DprEg0fjB3JTdaYy3zPhxa4Htqk9GLppthH9DWezI4gkyAO6x1UfnMzI8KLWKm5kDJvX4GK3o9qJOLrYeyZM30hSkUoj1qp27zo7vFMQiKWYgR6puAuy1/5id9651YCsdjgp0rf4Q//gKNxmFqIHIO6uPGJ3cgr4T3N63n3D8yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d31Dni85; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE62C4CEF0;
+	Mon,  1 Sep 2025 08:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756713961;
+	bh=bnNAN6za/atPZ+puSToYaKFOAZ7qP0i0YUB/QHVuRx8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d31Dni85W91IBxBr02Ry1P3ZzoYllduxEH5O5Pokxdgkbhw0B4WKpGWvf4HdiVLzg
+	 RBh8ycIKkbTztectlGpYlrCounHSt6BHPvfqnM366t9jRu9HOpnRXer6zYqh3m5Tf/
+	 IQrUBXiv7AlJKxvMp4hG8HAiV4zJMV+Kn8kQVWJWMZtj/91RkVQ87DgtTcS9yEdymM
+	 KY7m4S+teqtndQKepixaS+NnlJxSzMlsScoiyZ5WFdBHdYaKXVlCkmlZStDSladVBT
+	 0wuLBqTeL42GQS4CHIjpjtrcHFqGFz15j8h1d/7DYiwd842i1N82y3Ooi3UVKQsBcv
+	 sAsTvS8dc1T0w==
+Message-ID: <b049c4be-f3c1-49e4-8737-c29c52185e60@kernel.org>
+Date: Mon, 1 Sep 2025 10:05:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831093918.2815332-1-max.kellermann@ionos.com>
- <20250831093918.2815332-2-max.kellermann@ionos.com> <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
-In-Reply-To: <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 10:05:53 +0200
-X-Gm-Features: Ac12FXxX58JRZPaOdEl4T5aT3e1fpiWibxYF7xAAx6MHZtWjPDWsooQ_zsQAR-Y
-Message-ID: <CAKPOu+-ZjNr9hEir8H=C5C9ZwbS7ynY4PrJuvnxa-V425A+U3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer parameters
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/5] arm64: dts: qcom: sm8650: Enable MCQ support for
+ UFS controller
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, James.Bottomley@hansenpartnership.com,
+ martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org
+References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
+ <20250821112403.12078-5-quic_rdwivedi@quicinc.com>
+ <eeecc7a3-8ce3-4cfd-8d40-988736fc0c59@kernel.org>
+ <34aqaxgkykyhenrjfj3vrarin2c3uebgfaya7rxi7d5p5skhom@ie4gitcw36mr>
+ <ba227580-add8-4ea8-a973-c39083301e67@kernel.org>
+ <aonf4hobz6b3a75lwiblu44gxvae4hnp2mcnh5sqlyzo6k7hwe@a5toymspbkdy>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <aonf4hobz6b3a75lwiblu44gxvae4hnp2mcnh5sqlyzo6k7hwe@a5toymspbkdy>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 1, 2025 at 9:33=E2=80=AFAM Kiryl Shutsemau <kirill@shutemov.nam=
-e> wrote:
->
-> On Sun, Aug 31, 2025 at 11:39:07AM +0200, Max Kellermann wrote:
-> > For improved const-correctness.
->
-> It is not a proper commit message.
+On 01/09/2025 06:15, Manivannan Sadhasivam wrote:
+>>>>
+>>>> I don't understand why you combine DTS patch into UFS patchset. This
+>>>> creates impression of dependent work, which would be a trouble for merging.
+>>>>
+>>>
+>>> What trouble? Even if the DTS depends on the driver/bindings change, can't it
+>>> still go through a different tree for the same cycle? It happened previously as
+>>
+>> It all depends on sort of dependency.
+>>
+>>> well, unless the rule changed now.
+>>
+>> No, the point is that there is absolutely nothing relevant between the
+>> DTS and drivers here. Combining unrelated patches, completely different
+>> ones, targeting different subsystems into one patchset was always a
+>> mistake. This makes only life of maintainers more difficult, for no gain.
+>>
+> 
+> Ok. Since patch 2 is just a refactoring, it should not be required for enabling
+> MCQ. But it is not clear if that is the case.
+> 
+> @Ram/Nitin: Please confirm if MCQ can be enabled without patch 2. If yes, then
+> post the DTS separately, otherwise, you need to rewrite the commit message of
+> patch 2 to state it explicitly.
 
-I believe it is proper for something as trivial as this. I think
-adding more text would just be noise, only wasting the time of people
-reading it. But that is a matter of perspective: I expect every
-competent C developer to know the concept of const-correctness.
+Dependency of DTS on driver would be another issue and in any case must
+be clearly documented, not implicit via patch order.
 
-Do you believe the commit message of 29cfe7556bfd ("mm: constify more
-page/folio tests") is "proper"?
+Best regards,
+Krzysztof
 
