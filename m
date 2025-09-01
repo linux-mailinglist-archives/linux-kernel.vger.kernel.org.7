@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-794221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628CAB3DE92
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D099EB3DE8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6306C1A81647
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6E5C7A9DFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E330DD0F;
-	Mon,  1 Sep 2025 09:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5752D30F540;
+	Mon,  1 Sep 2025 09:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+mTvftj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KQDJez3P"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00C12FB986
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC6B248F66
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718984; cv=none; b=RZgcm6OKzoxwUqTF+HIemq+EAUqclZ85aS7G3ELt3rzNxk/REzgWVGSAgQs1zhMFKhcDoB87BTZ/NwmiuhLZp0HbG00fs+HUUuPs0ms9/zA2QJDM4i6BMKLNHPa1cix/Nfbci1aMdukOCFwZTNkycHJHlR7SIcLIXRNfaRI5b0c=
+	t=1756719019; cv=none; b=lD6/7Ni5bOqOGOYB3lt9OiohC+y3fcyxOqYppH9nuVt6XJQMYzLPQwvMVKh8qXT+5V3US/wdigyBrTFVtgWEnYBDUxRsTsekE7vNLCabtfno/dipUISAj/YerCfOG6VOWRcA5x6sOyGtrqAO2hKwK6i0yKOanfxOBEBbg4nj1B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718984; c=relaxed/simple;
-	bh=+77LpAQwApfrcXf+koZH/J0LGzOh+hJKuVFMuxmXuMs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EoZMUTs0ENUsC/a6cPZHYaHheSYsb4Srs2viKpK3ZvScP7Df5v5gHjGc5ZXaSuLafI8Qhg9mU4ZI/AebRdBEw8r4BJoxkiblV7Fl6qBg9PWVxy36IC7/RsepbljvtAO3zfkScdLxo8cFB8sdrd06adKjl/mGqfi8RkhkwG8GNQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+mTvftj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756718978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gLIfWutU/YiglT+ISVkDDOc433nVPWRihDwo9lIf2vg=;
-	b=Q+mTvftjPt2UBB3eYmjserIqr5N0eZVngI7XZBoWAONT/Hnt008KGmjrAbReHMUe4Y2oGC
-	SSidZanwX5dHfWciml5vtXTwsOuKXB2stmAi/jTreajqLpJDmSzVGxoVWhhZAedL+PVr84
-	T8lTJR+Z0LPOUR67zXDcZWIrm4vx9gQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-nXgmFWaFM_-dlv8kqiFsvA-1; Mon, 01 Sep 2025 05:29:37 -0400
-X-MC-Unique: nXgmFWaFM_-dlv8kqiFsvA-1
-X-Mimecast-MFC-AGG-ID: nXgmFWaFM_-dlv8kqiFsvA_1756718976
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b869d3572so4245525e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:29:37 -0700 (PDT)
+	s=arc-20240116; t=1756719019; c=relaxed/simple;
+	bh=a0NDcR75d+O/mfjnpFO7rOU4DSlH61V/u19FiJLYD3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=HD8uf/F00FCZtr+ILq257Ou+rUUVU1wJlPfapSTNGl3zYFxjifC/Ox5lTRZA831MkxTt1A//DL0Hg8jEUYA0eEEv7apRNvbTZETkBHd+62mbJkRTsryfIe1wqF+09X8p8qdrai/PDG9Mx1wXWtFTWYhxTafK5GtWbwN/KslqqRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KQDJez3P; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b873a2092so13604045e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756719012; x=1757323812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3O46In+nyvkhXwMUza5HjmWuLjmeqVrP/Df0WayjpU4=;
+        b=KQDJez3P8MXsZNd7CIFUg3YNM3HXEhEomN7FQnIqo4JoKepCjpPJxT4wVa5Yh1n1gd
+         3/gxTJR6VYiGEcsffnGgQsMaL71vLGQmFxYSf49LKVAzLlP7TjPTMRhSOTy9vX6gD499
+         5gnDAqda7T0epqZgNmKo23CIR0qD2HMqF86zhs8VJ96h80nSY7NqNu9PKuFMV2Xbsv57
+         TOQ7IykewhvTA7DAPLkjO3oKF6MatpgoPPymxgfHNneD2IJqWDFq/5UZKTOIUIpOJfxI
+         rMWhGUtn2XvipeaJOd0t/J+qBe8lsV+BRL3BPEG3VvZHfkkHxY+62zSPmXGhXsw4a9xP
+         k1fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756718976; x=1757323776;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gLIfWutU/YiglT+ISVkDDOc433nVPWRihDwo9lIf2vg=;
-        b=b/ePFbWsg0+wV8UPLA2u0knfGr5Jp9pcc4lNpsUGAsNJaE1zRghcpv8axMOp8wjNsN
-         lHba3taTRa5gLj/3IClTPlqXSGm1AFLJANThMxxMwUuM52fhcfJNtKtjqAYWyaR4Yhrj
-         EtX7PkpZsxl8M8xXx4D++RceGgfo+2wEKsGkXe+RrfU2f/L7BVJhgaGO4lFTOrfDpUln
-         i7uWFzevqHNQg122PBaR3er31/8PZ9qFHfkeKZx3tGB0/B62G/Dxoaz0maYeNB8//RJ4
-         yE3tBn2YkJphJrjpsbuFJ6dSWA8j51cIRO7mFTbarFvVirgnIPXJlrPujJD6XDqM6QIw
-         ZJSQ==
-X-Gm-Message-State: AOJu0Yzs7JHX48nLX/2fIhGTi2LlJ/I+oKYSdY1/W+BsnMr8b6r1Vj/6
-	9zzog7Hzx31NhNqXtFUQSLzFJGqW+VQBHDLL46pfEUISz0IlN0TmVWt4Cana48KTxKw7Z79J9q3
-	aco3vkAelOGmKab1Vxa1xRWNmyOsG3K8pfICxPpiEGbrV/0opCl2NrlKlfXJoKZFIbA==
-X-Gm-Gg: ASbGncvthypIdwwvCXbCdTonBHlPyJwXoCDEKAdefE8TzEipWhnGmdl/sbc8bYh61hK
-	0KEp+NfLNYPVmZMXHn+38qXoqsy9q2AmregUdX63ECvMnZdD296Az+KuEC+92QFWwY3waCAEjip
-	Ly0Y6nFIluI4qP5cZSTmUKhyHeqXIZy1/Qn2E92VdlsIjgGS2LfsnIZntmh3M9OybLqz1S9Owaf
-	0/H4HzZpiJq2pzuaMIH8rpMDmjhh4nbRiLMkC7hdKpOhGMPTNi5WF7ym4tX+dpT3BJunTJsOxDQ
-	ToHkHi4eUv+KNdR0ojwW9NJHVJtzJVEIrMYNgu/G9DF5/bFQZOzzbIYsqLlNWUCFhA==
-X-Received: by 2002:a05:600c:1d07:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-45b8553417fmr73118815e9.16.1756718976027;
-        Mon, 01 Sep 2025 02:29:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFv92lhrsAt3OXKOOSRcUvb13YtIbGD8LLn3o0PT6k8/S7ZFs5axHkJaP2LWNR34AeeM9XjJw==
-X-Received: by 2002:a05:600c:1d07:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-45b8553417fmr73118475e9.16.1756718975616;
-        Mon, 01 Sep 2025 02:29:35 -0700 (PDT)
-Received: from localhost ([89.128.88.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b73cf86f4sm207079325e9.6.2025.09.01.02.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 02:29:34 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, David
- Airlie <airlied@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Marcus Folkesson
- <marcus.folkesson@gmail.com>, Maxime Ripard <mripard@kernel.org>, Simona
- Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm/sitronix/st7571-i2c: Make st7571_panel_data
- variables static const
-In-Reply-To: <w4tlpcw6s6yogacneo4gthor5annn3qjyxswrtrisoqawdbf3p@y5r7gkrmzmdo>
-References: <20250718152534.729770-1-javierm@redhat.com>
- <w4tlpcw6s6yogacneo4gthor5annn3qjyxswrtrisoqawdbf3p@y5r7gkrmzmdo>
-Date: Mon, 01 Sep 2025 11:29:33 +0200
-Message-ID: <874itmv7uq.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1756719012; x=1757323812;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3O46In+nyvkhXwMUza5HjmWuLjmeqVrP/Df0WayjpU4=;
+        b=Op1xI1MsANJtZ48kIvmCi2WMi/3qfPSDiODdPrz70JcIL3omaT9EXE8uZ6JTJ+IsLJ
+         KDfkeRo7+rTQ8VnLsBXwkdWN/xmbDA/HgdSjxztEfu3xuUtTasfOzLuMPanHwJLRqCkX
+         DZCLgtb+VTolPdoB6JYFz9pM9R/M0VtE9bzokrmNsLuFCTv2Q2AdZP7S34ZgZYdgPtkz
+         Je850y3urAyQqJTtyd7VZHyKs4ado+JXAjKWmzmLMSfFnCnamXntURv158bKRFkoJbPB
+         N/YokCdQ9LPBMLxOJpgKMWsBIucyEGj9nBxWioUWkQPJM+LaDeVVX4bm4triSpA+MW7l
+         0iuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHHovbZo9kjqQXteAk4BeUWTe7O84DuKNAu07dw8ImkUMGL7sZ1qAqS55rmzrDlsiCxZQiksjH19yLTBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFwuPcaETg2+Q8xETF2uUqAd3IlEFRREW9n58wKML89Je8U4KE
+	6NiE45Bno23eNiGZ1T92VwUvnaXWKeHc1FmBcddjbvQl02x7dnrknnIKSubE2fo7N5Y=
+X-Gm-Gg: ASbGncumI7wtC8tYATz3C/Z3FNvTHqM6tXedLEtoX0mhxwlHkB4xrSX8t1e6REC7hts
+	aD7nyQvtQV6hORoyujRJ4KgpxeItzHnkv03+l9X+4J31SjG4cU0QpZZw6K1zHrRtjDZdU+IKRHm
+	UQDTbXeJPE3M2Pv5Ofjaccard+lyBQLGrhxu55APRn2pqBMh4B4uk41vwkUdVGsAtvmLQoE1TcF
+	bsJx9qoSstWTdLox0nLcW5mn7+ym1ii4MeZ9lr24lFzKRZwD2M+oohIzVf3FS2C285W70KhSdGt
+	Qm61AtTUjuIg7gCVth0ggy6QrdPwUWnzz0ZqgI03NO4Dwc5knaA4NySU38WcYzr5RmwqueCKzY3
+	+X9JdAXkOJl/KrPYNUZitouBn3px5ZpMTAtSudproz32GUPTSfB/O1Q==
+X-Google-Smtp-Source: AGHT+IHbfldmXalTHs74Qjn+LCgHIRtognchtI6YU5kylx/Aeh4PMN+YtrSztzHAM0TUn6JS1ozS9A==
+X-Received: by 2002:a05:600c:3543:b0:45b:8822:d683 with SMTP id 5b1f17b1804b1-45b88321c6dmr44024635e9.4.1756719012076;
+        Mon, 01 Sep 2025 02:30:12 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b73cf86f4sm207103535e9.6.2025.09.01.02.30.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 02:30:11 -0700 (PDT)
+Message-ID: <5ac979fd-7a84-4633-a53a-55be955faed4@suse.com>
+Date: Mon, 1 Sep 2025 11:30:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] module: centralize no-versions force load check
+To: Jinchao Wang <wangjinchao600@gmail.com>
+References: <20250829084927.156676-1-wangjinchao600@gmail.com>
+ <20250829084927.156676-4-wangjinchao600@gmail.com>
+Content-Language: en-US
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250829084927.156676-4-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> writes:
+On 8/29/25 10:49 AM, Jinchao Wang wrote:
+> Move try_to_force_load() call from check_version() to
+> check_modstruct_version() to handle "no versions" case only once before
+> other version checks.
+> 
+> Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  kernel/module/version.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/module/version.c b/kernel/module/version.c
+> index 2beefeba82d9..7a458c681049 100644
+> --- a/kernel/module/version.c
+> +++ b/kernel/module/version.c
+> @@ -41,9 +41,9 @@ int check_version(const struct load_info *info,
+>  		return 1;
+>  	}
+>  
+> -	/* No versions at all?  modprobe --force does this. */
+> +	/* No versions? Ok, already tainted in check_modstruct_version(). */
+>  	if (versindex == 0)
+> -		return try_to_force_load(mod, symname) == 0;
+> +		return 1;
+>  
+>  	versions = (void *)sechdrs[versindex].sh_addr;
+>  	num_versions = sechdrs[versindex].sh_size
+> @@ -80,6 +80,7 @@ int check_modstruct_version(const struct load_info *info,
+>  		.gplok	= true,
+>  	};
+>  	bool have_symbol;
+> +	char *reason;
+>  
+>  	/*
+>  	 * Since this should be found in kernel (which can't be removed), no
+> @@ -90,6 +91,11 @@ int check_modstruct_version(const struct load_info *info,
+>  		have_symbol = find_symbol(&fsa);
+>  	BUG_ON(!have_symbol);
+>  
+> +	/* No versions at all?  modprobe --force does this. */
+> +	if (!info->index.vers && !info->index.vers_ext_crc) {
+> +		reason = "no versions for imported symbols";
+> +		return try_to_force_load(mod, reason) == 0;
+> +	}
+>  	return check_version(info, "module_layout", mod, fsa.crc);
+>  }
+>  
 
-> On Fri, Jul 18, 2025 at 05:25:25PM +0200, Javier Martinez Canillas wrote:
->> The kernel test robot reported that sparse gives the following warnings:
->> 
->> make C=2 M=drivers/gpu/drm/sitronix/
->>   CC [M]  st7571-i2c.o
->>   CHECK   st7571-i2c.c
->> st7571-i2c.c:1027:26: warning: symbol 'st7567_config' was not declared. Should it be static?
->> st7571-i2c.c:1039:26: warning: symbol 'st7571_config' was not declared. Should it be static?
->>   MODPOST Module.symvers
->>   LD [M]  st7571-i2c.ko
->> 
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202507180503.nfyD9uRv-lkp@intel.com
->> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
->> ---
->> 
->> Changes in v2:
->> - Also make the st7571_panel_data variables to be const (Thomas Zimmermann).
->> 
->>  drivers/gpu/drm/sitronix/st7571-i2c.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->
+Nit: I would prefer this to be formatted as:
 
-Pushed to drm-misc (drm-misc-next). Thanks!
++	/* No versions at all?  modprobe --force does this. */
++	if (!info->index.vers && !info->index.vers_ext_crc)
++		return try_to_force_load(
++			       mod, "no versions for imported symbols") == 0;
++
+
+Nonetheless, it looks ok to me functionality-wise.
+
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+Thanks,
+Petr
 
