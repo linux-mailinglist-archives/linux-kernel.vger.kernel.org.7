@@ -1,133 +1,314 @@
-Return-Path: <linux-kernel+bounces-794929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5080B3EAF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35898B3EAD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5421884FC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB667178343
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07D12D5947;
-	Mon,  1 Sep 2025 15:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C032DF12C;
+	Mon,  1 Sep 2025 15:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="V8FU0ftV"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2are97St"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2084.outbound.protection.outlook.com [40.107.236.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2845B2D593E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740181; cv=none; b=MozLhJQPgUWTu8ziW0+AyoSQb6ypMTOFfaXNfCnYi9U0mAsU/gp0+/EEStsyQcluiiRN0uH8UEA2A1ryXvwjFo2VKoUg8C+F+SN5D1UJ58MkHkRf/IsjGrfTyGc26YBMQYpVmq5sjG3NrIe6+13BQCEMSq0yCUU2RW/PKyszEuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740181; c=relaxed/simple;
-	bh=xqYJE8gaVl+wcM64SwwllZC2T3TpIFwcaihrMWL4cIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TNjxpyQceEshMz7J9SmffSVT+gQVPRNB3xXAXILjhSKTS85Z3wVs282+7YQgwlqJHGInqP/jDhgaCkLCEfp0ZYTW1fR8p0M7G8QreWrNnnjikszGJ9Xu3ZPKEqc0blpyFkd7iihqbeq30KpnSodhOhFzJr2AZGYsvku7f7Lee0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=V8FU0ftV; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b042cc3953cso131331766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756740177; x=1757344977; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqYJE8gaVl+wcM64SwwllZC2T3TpIFwcaihrMWL4cIs=;
-        b=V8FU0ftVpb2p3tqAzIFJXxS9Ss99K7zDrWutbLl7NXM+DVbrHRVuPdUwELaYxrUoJ5
-         m9CACTX/9p5DCsmSlRkv3pow87OTYaHJ+U/hZ3zV1ObOLfuEdmJ6W2D0SdgImFxt1rGc
-         YBOBj8dcjxunOFCA4rlg2VL4iJpu8cz9Q9kZ9wh7pakm9lptgJPkdDmrl9Wbumvavx55
-         PEVAgB14GA468wMQXDOyGILndkwcV4tLIz9txw9r/0k6Jh3z/xgkmkWzHLxAwFIh0tWW
-         A2IhGwemR1wxv1W8X5/qKELXxe8HrfXNd6ANkNeRr8EAxaYN82MI94epPvY+f9P4695p
-         dzFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756740177; x=1757344977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqYJE8gaVl+wcM64SwwllZC2T3TpIFwcaihrMWL4cIs=;
-        b=fWacQRQer3yXCs19dyDqtQB5PP/2g90WlwiVz4hIx7luebEiZwENXgzdtP/ScKYcNU
-         +L/o4hZ80400cmuOgIKcBbUDbIt+osnaPIsNKF/zUbZ5VCayAbIIzAoLhzs4ecvrBbb0
-         XM/hpFB/kyoDe2aRBvx2OiZovibKm5D2IJb5jdHczfsObY0BaRMcAUIrC5T4T5HZRsG0
-         TTg+PmRP4r5u0y0PZTLLoL15/7GxZWsHrxgQTkqc9vxv2Pc+v8tesrw9amWcSeLR5mu9
-         2ZYwyEg0QGzLA7lDmP1qGRTWHeI53T3bfDzeBopmxSejBXYjkNS9Fzn9A4rDBbTpEdbp
-         hT/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXicDjk1KG8A1AjVlkw7scqUqL/RHoDMVNuDzzt62KmYjxL62f0PreDhg2EqDSQMWpHuC0SQM9HKOhc8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywjK+sDR0l/PwyMo0TVijyfZ4fKZVpMhd0N1Yo9f6P+bgni8rX
-	5KnN5Zn9tfwaePseCuo3RaWez+Js+Vg7VbYuoRz6sw0FRiWnmH5WS1vLrmLqjj8J7YBCIpCiEGC
-	pOFlsIt5HwDtlnEartsqKie0h/M0T0811bFUPW4jn7A==
-X-Gm-Gg: ASbGnctMA5hhp0vOBZLYDL0qnpqrICvNIpUmSP8JZY8AfHOugcNURFQeNebvILIgWWD
-	FHgGxNvkPC95jqrbSesi9TjSsE49Gktot+GDoeGJVBB0agmM1lMLsHhdTXK/KIsmu5qWYo3QHcP
-	kUxedIh4QcEOHFFYYUJxczq34jrYIW4o5h9mznpKTl0NibB6mkyUGd1gPU4l9gyNaUqWaOOHmlU
-	dA8MYuGDYJVOdaMJVJvLRHVAwJN2EZPqsg=
-X-Google-Smtp-Source: AGHT+IGyHGBQU5Fmr9N1bQCrhCA+i8zJzAFx27YAdwJf0bpouLhs7aYdtEtaq8rinlUX8phhR2x58GzGpQKldL70zDk=
-X-Received: by 2002:a17:907:60cf:b0:afe:a7f0:80e6 with SMTP id
- a640c23a62f3a-b01d9756fb9mr875954466b.33.1756740177075; Mon, 01 Sep 2025
- 08:22:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE692DF125;
+	Mon,  1 Sep 2025 15:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756740231; cv=fail; b=b/DJiAMhiXcf96QEkQLIlMGTj4dUxwMAPMnMU+yKxbDSGL3qbq/z37w2E0rt1czIjBByl1kgPNlY0kfTxpXNH0HyOcfUvJctGm0yKtwPow4BH/g2c0aCv+mfVAl5GotPa767Bg45FheC7M/gthpcF6LohbQXaj40MAjFwKRQd/o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756740231; c=relaxed/simple;
+	bh=61kdytOf0LnfHx0XPJI03MLyuhDwnu6rnKw/hJ9d5Ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hP2rY1NgkcCVzHITC8fuuRD5Bo/SpW5tlWlic1M5pNQDpZhWFEyCFT7Ki0Y2wGqOWlKIplaCsolZEwWRvxS7xcJRXAHAYHEZeQSreziqLJXs6JCNl50bMFoj7SQqS1fR8K9WK2pOcSTzg+u8c3lHBshEgqf9GJLxhffwjEvY2cc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2are97St; arc=fail smtp.client-ip=40.107.236.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j6gbuFW7bKzHuye5tg545c6YE9lVBMRjPw5KN8uyFO4MHHgwwJWWBnD+KUDsRHP4uOX/iToQhqCnn5wq6nRGlFv/GdYqizqHuSj2cq9Ll2s7yzUw51yFV3KWNRS9IichpGSm7/ItvbTNXzy6yOFpevJu1MUjZNDkfDj9LNODQMIvqJf22pS4sPDBEV5wynbl277a5MmTfK+vgNC3yd2AL0UhbQmrNYdtZYHviFy0zumIWn0hPiu2zoBQXu4ovA+wF76RroruVYOV6r3BOYXP0Kzk6LchzkDA9xlmawgDFSbBfEd7yCO7C65w7mfT9JABzbcf6lWNlrnxOFuQd/zwTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UCU9ls1nX69ppn6m09Vtme3WiWBgkcKqkbKjB6s6EmI=;
+ b=wslsGDt/mUJButEHamHyI4Q0gwPgutvtXmLYk4cSjUrPgTvsJtMfdpvxwIaLr6X7ucnWqL6jFVODlqRHenXv7bpodbL4IjtbxRrThNusJE88ByUtuVewiD/xHzY5iWshfrzSApZ9e9wy0gM1v7U2iH6bcEam/Rag/BTMjVhtk8d6QoSnf4xF5LT1M6kvQ7ORRnU4EUgsfi5KwvM9ZxUe1QD+/ODOJVgm5FsKaNp34cdtgabNptXkbhzh6teLx0CjqTAkzogKQIX3giG7tkPvh9Pas+P35xJdiveTWP6VNGr+aeyHgXNdLroq0PdtnmAb/3Nf8CUQjd/dh1a6qxwVIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UCU9ls1nX69ppn6m09Vtme3WiWBgkcKqkbKjB6s6EmI=;
+ b=2are97Ste7vBIA6619tOYxdg7sTw2XydSeS+Ki0PWzIplF9tnsp6JQXdMY4D3qNdbRqtA/ekJhb4hEE7M3tKQGuhfkfG6/seZgAssewCLnHVFqG3AHuoen3WA4N4x31QkEY813Ar92/OiTXFBztZn1pknlxMy8Ruhb5D/9N8b/4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by DM6PR12MB4204.namprd12.prod.outlook.com (2603:10b6:5:212::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
+ 2025 15:23:45 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9052.014; Mon, 1 Sep 2025
+ 15:23:45 +0000
+Date: Mon, 1 Sep 2025 17:23:39 +0200
+From: Robert Richter <rrichter@amd.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ALOK TIWARI <alok.a.tiwari@oracle.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Gregory Price <gourry@gourry.net>
+Subject: Re: [PATCH v4] cxl: docs/driver-api/conventions resolve conflicts
+ between CFMWS, LMH, Decoders
+Message-ID: <aLW6e0tOI4HDSl7u@rric.localdomain>
+References: <20250820150655.1170975-1-fabio.m.de.francesco@linux.intel.com>
+ <aK27hvifBdqZK5-v@rric.localdomain>
+ <4179950.vuYhMxLoTh@fdefranc-mobl3>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4179950.vuYhMxLoTh@fdefranc-mobl3>
+X-ClientProxiedBy: FR4P281CA0010.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c8::9) To CYYPR12MB8750.namprd12.prod.outlook.com
+ (2603:10b6:930:be::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-7-max.kellermann@ionos.com> <ce720df8-cdf2-492a-9eeb-e7b643bffa91@redhat.com>
- <CAKPOu+-_E6qKmRo8UXg+5wy9fACX5JHwqjV6uou6aueA_Y7iRA@mail.gmail.com> <0bcb2d4d-9fb5-40c0-ab61-e021277a6ba3@redhat.com>
-In-Reply-To: <0bcb2d4d-9fb5-40c0-ab61-e021277a6ba3@redhat.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 17:22:45 +0200
-X-Gm-Features: Ac12FXxiiebv9X2d18G9zaz1-52NeLol_OdOPtBiylMXolSmoqbk-OqNT_yTCiM
-Message-ID: <CAKPOu+8SdvDAcNS12TjHWq_QL6pXnw4Pnhrq2_4DgJg8ASc67A@mail.gmail.com>
-Subject: Re: [PATCH v5 06/12] mm, s390: constify mapping related test
- functions for improved const-correctness
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
-	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, 
-	James.Bottomley@hansenpartnership.com, deller@gmx.de, agordeev@linux.ibm.com, 
-	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net, 
-	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, weixugc@google.com, 
-	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, 
-	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
-	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM6PR12MB4204:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d953138-c98f-4ddb-db68-08dde96b8a8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VU9Wa1c0QVpXazJCZ1V0eFc3TjYzME92V3VSYm1hZ0o1cmkrNkJqT2NBQ1lQ?=
+ =?utf-8?B?TW9yMGNtK0ZLbXRwYVNSWDR0UFIrZThPNHo0Tm9lR0RGVlBhQ09LamRscmxt?=
+ =?utf-8?B?Y3RpaUV1K3N4cENWNmlUK3RPSGhlYVVpd1Vsd0t2NHJGYUNkbXFxbGxJTm80?=
+ =?utf-8?B?NGdnT3VRQ0dkYU8wbWk5VnZOdlVEWHd5Q2RtYnpLaFova0lnTjBuZ1lVYmFG?=
+ =?utf-8?B?MUdoNzRLRVF0YmI0L2NWMEVpRnZGVjNHa1FEMmxsV0JSUWNhbWZKWlZmWmtX?=
+ =?utf-8?B?N0NtajR3MDI1WEdGNHFxdzljVzAva3kxQy9tN2lOd2NQRHZOaUxrbTBYOE12?=
+ =?utf-8?B?Y0JraUlDSHRUb1hQU3ZaZ1NYUWQ5YnBpd3pBVjNBZVMvNkN5TmhwVmJIbGJl?=
+ =?utf-8?B?a3haaUNHUVNHRVpIakIxamNqbGppc2YzQU5zNmFLWGt4ZXNEVEhtYkEyZ2FB?=
+ =?utf-8?B?UC9QOHBnZlVGWXVmZnhISGdkUkYwY0pneUl0Umc2emRUSktSOGlKQ1VVN3BQ?=
+ =?utf-8?B?OWkzd1kxZ1JqY25GbkxVV0VPc3Rxazd3Y2c4ci9YTlBQNFltSWJSQTBseWRq?=
+ =?utf-8?B?Q1A0d3J0bWhoc3ZVVUFjeGZJWmFSRDJ1eW4yVFlDZXc2Z09idjd2UGQ3K0pk?=
+ =?utf-8?B?QVJqaklKa0hiOTNRRDViMkc1aVVVOENNQWp1dWQ1TGtyeUFiYzQzUERSZlFO?=
+ =?utf-8?B?dWNzZENZbmptMGcxVWNmcmtneEUyMmVQbzYyU1QvYndzUFpaK2VFcjJyK091?=
+ =?utf-8?B?Yjh0REI5b0ZremM1Uy9sTzVQcUpnOURZM3NqQVZiejEzZ285TnhOaGxlSG52?=
+ =?utf-8?B?ejlncGVDTG16NEFTVGdxSDJxZTQ5a2xHN1JzODIxcExyQVBBSWRaQWZGdDlx?=
+ =?utf-8?B?ZHJ1aVU2U0xxV2dJVzBjZmNhNHBlOTBJWkV0UnRDWDdtSjJLeHVTTkNRa3lq?=
+ =?utf-8?B?QVFuMnFHV2pJQlN5WFdMWlpGTjhvbDkwNzVkWDFWdWNuYnNuenlZenlVdkFq?=
+ =?utf-8?B?a2RqRGQ3amZyRC9sNlp5Tjc5MjZkaUR4RWJLVFg3N3pPbzNZbGpNcFlodmk4?=
+ =?utf-8?B?MlVqbXoxdHg3YmQ2MzNnMmhvNE0vOVI2QWpSUS9Va0FVa2JxZzBvaUJpMWRx?=
+ =?utf-8?B?RmxVazdUajVjcmd6TmdNOXJzRlA5OExwTzBzYXo5azlLcGxJYzdrbG9zK1lP?=
+ =?utf-8?B?VjIvUHJaa3pIREpBRVdDbHZhNjdhSHJyNm44SGhyZlZId1dkQmxGTyt1SmtH?=
+ =?utf-8?B?djNkbkl6SS9JZ0hwM2cwTDVQcVBSb3d4NDc5RHBtaldiU0F1S0ZUVmJ6WXNl?=
+ =?utf-8?B?WU9oV2dPRkZtTHVHcGJOd2VERDBNNlZhNG5OMGZkcVV1bm94cTFqcTlxaGRt?=
+ =?utf-8?B?NlQ1L3pJL3Z6ZjYwS1FvRTF4a0xFUVFLTjhCa0NKRjZJQWpzd3RxNmYySm5v?=
+ =?utf-8?B?MTgraWlneU1qNzJRVjVuQkRPa3ZWQTdhWXVTNGpWSERiOWh3dEU3VVpadjRu?=
+ =?utf-8?B?SjQrRWU3YlpGVTJGSjVzcExHV3RLblZWZ3FzUVlCTlNWRGlGZlgrc2FwRUZ0?=
+ =?utf-8?B?NERNbEMxUlVJT2NmR0JucG5VbUxPQlZnVmEvdEdrUEdJMkxZSlJ6Z2E3bFNU?=
+ =?utf-8?B?WDN4ckxpT1BINlc5ZGtiRHlYbWVvc3ZkaEpYWm4xUXYrd2FKYTdQK1FVSUl6?=
+ =?utf-8?B?eUdFRUY2SWVLNEoyYnJYSTlSbEN3S2xkMkdxakFCbjVBS2hyUjhHcXphMjlm?=
+ =?utf-8?B?WTE2YXBnRGF3eVlSVVhCY213akVodUh0dnlHQUlZM1FFVHNreTU0V1gvNXZ6?=
+ =?utf-8?B?UDVOaXRqRmE1WDJidWNES2d0Z3o3S1h3RXh2Z0hQa0hFV09sVTd0aFNuaGtQ?=
+ =?utf-8?B?ekRQUFBxS1M0ZU9QL21JVXJYWWNHZC9JWGNJWTJkUCs1MlRQVVF3VFl0UHhs?=
+ =?utf-8?Q?WW1+IIR5+Mc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K20zd3VDZlJJR3RScVJhYWkyRnZNRFVJMHhra3llZ3VsbXpPUDJaS0FBM2VB?=
+ =?utf-8?B?R0Z3bmFqSENhRHRvenlyL29lMlZKa3J3RlNVOTA4Z0E0ejhvb2VqMEsrYUtE?=
+ =?utf-8?B?Ui81UTVjaitFWjVuK2p0bnBDc1lQZlNhL1IyRytwdXRiRUhlZXBxU3JhcjNx?=
+ =?utf-8?B?R1lTd21DQ1FRTUVWenJ1T29OR21McVlCUk5DMUtQZTBNTGVUZ0c3bDhuNzlO?=
+ =?utf-8?B?T2ZDS0J0VWpmZklCNlFWbE1Cem85Q1F0MS8wZUlYcnMzVHJmUDNXVlVhMk43?=
+ =?utf-8?B?OE9QZkRpRWlLNmREcmpnQzNTZFZQNjA2ZzBiL3lsNFNaSysrbGVhVUU1Nk55?=
+ =?utf-8?B?UFJWTlJPNkVDdUxFOG5PWXlOYkQvVmZiK0NKNkM3UEdVNHVybE5FT0JvWDhB?=
+ =?utf-8?B?YllCSWlmNlBtbG4vcGN0dkJLdmRrbHlqTlNYUlJpSUFaT3JhMm02b003QUQx?=
+ =?utf-8?B?Ny9jS20ybnVpWmR3S2R4T250OHZyb0dmRlRBN3VJMHc5blpNdktSRHJ1bG5I?=
+ =?utf-8?B?STJJNXFtSC9RaE1LSGNFaU4wVzV5WlJKVmFqMXM3aE5KMnF2RHNPbWVuSWlz?=
+ =?utf-8?B?aTk5aEJ5ZVFnNFowTHpnT2tPNHRwSEkybFBNMEN4MEYzbVYwTzYwRERHTkRZ?=
+ =?utf-8?B?UnpMc3RmUjhuR1EwRXR3QnZqY2NLR1Y1Zm9ZTzRRQStSRmJZQTVHQlhCNzhX?=
+ =?utf-8?B?RDZxQzFldVA5TVEyTjB1RUZGSy9NVmt5NFRPbjJwanFGdlRrSUYzakJvVnpB?=
+ =?utf-8?B?OWdWYUVPZ0hlMUZFaU5Xd2tGUGVGc09tWGw5Rkhia0pUMVh1d0p1TzBKbHNQ?=
+ =?utf-8?B?NWtDT0crWUJ5akloTHMvY0IraUVqWjZqZEtiVWZyN3VsdjV0dHc5ZWVXRGwy?=
+ =?utf-8?B?K0M1U3FYYVAzb2ZHcjFabmFVYllCaGhISVFwc2VuT0k0NVpHU1h5NnNldDdi?=
+ =?utf-8?B?eEFNdzJSTTYvM1FOdnpHYlBnR0pVSE5oOThFV3hxNXhQem5Nc0NKNS94V1B6?=
+ =?utf-8?B?V2JlSVRqL21SQmxtQjdZalpxN2JqNnBjYUcvSHd2NFMwTDI0NUJOTFFxQ2g1?=
+ =?utf-8?B?L05jYU00c01FWWYyL0xLMVJ5NHM3aiswWDU3cTdwNitBQjQwQmMxU2ZJcjlB?=
+ =?utf-8?B?bEQyZjdlSm93OVA4amtlNGRXRXF3Z2FaY0xBUGtVUGNRdmhwRjZkRU1Hc0x6?=
+ =?utf-8?B?TXdVeFlHN2hXbTIwYmtRQXBZczYrMU9VYkJWKzh4WTUzOGFZOXlHQVpaZktx?=
+ =?utf-8?B?V2lxOUFjOUtlT2YxOXZySDJOUjB4OGhucjRlcW9VbVZONm11OFBydlVzVW9N?=
+ =?utf-8?B?TGRaaWdOeXlUNDNyR0g4QTRhTWN1Vk9KM08xMitoRjR0c2lRNWZCWXFkSXZY?=
+ =?utf-8?B?SDRFcVhxNUFVWGxBSzJra01FUGZjTnUwM1pxdEg3U2c0U0QvRGxMZWgzeVd4?=
+ =?utf-8?B?d3lXMnFodlVBSlhiL245MHllSkVDaFpJeFF4NUdlVmpIR2Z3NE1kd2g5Ymor?=
+ =?utf-8?B?Ym9DMkVkSmsxaHNsd29GRjhpOVA5V0NLM0Y5WW5mQ3NFUnZBQXNsYWtQNmVo?=
+ =?utf-8?B?NmJrc1FyRTFlU0hTMUxVK3l1QXBIS0tMYWgreXF1Qmd1WVh2bGxUSzcvazkx?=
+ =?utf-8?B?aGJkb1BLelZVdHYyMi9jblRybWU3TyswcEcwUDdmVW95UjZLcEJjM21tMEVH?=
+ =?utf-8?B?NEJuaE52eURTbERhamtmN2QvOGxxV05PZmdPYk1ZWVErTW1MRjJOTzJhMmZr?=
+ =?utf-8?B?UXZlYVFwTVc3di9lN0hDUzFrL3NqK2t2T3d0andvcnZiZHp4bGVtQmZKZ3FS?=
+ =?utf-8?B?dDJZYnVEcjVjMkVLSTVDdVJJQ0tJK0l0dk92RHd3cTIySnoyR2Z6S0QxTkNL?=
+ =?utf-8?B?OHc4MDVwak5xQzZwREZSS0tDcDRtLzN1Q2xUYVZPd0ZNZzhJSldGWklQVTlO?=
+ =?utf-8?B?bHFRYmJ2V2FWSkZsZThYcUVHMCtLc3o0NkxIMzhYVVF4NkYvTzZyd1JXbFYy?=
+ =?utf-8?B?RSt4NlRyZEhsMXhqT21aUCtPR0FncXhoeEYvNnZBMlExaUxxK0pGTFVxVUZJ?=
+ =?utf-8?B?ZmZiK1MzUjFOb3RYUG4zSTVBSUFFUVBMOC9TOEQ2SDY1OFJPZktUa2gxbzNo?=
+ =?utf-8?Q?+ocQ1hIDgaMYrmNgODlYEfTwz?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d953138-c98f-4ddb-db68-08dde96b8a8d
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 15:23:45.4357
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BgRyrmzBhPAT/97mlSm1lQgsq514cuhveg0/1+PePerHybgecOiwgNzLm6qXN2ZG+3w/jzHlZLPXi0x2mT9NpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4204
 
-On Mon, Sep 1, 2025 at 5:11=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
-> >> Should this also be *const ?
+On 01.09.25 14:22:00, Fabio M. De Francesco wrote:
+> Hi Robert,
+> 
+> On Tuesday, August 26, 2025 3:49:58 PM Central European Summer Time Robert Richter wrote:
+> > Hi Fabio,
+> > 
+> > questions inline.
+> > 
+> [snip]
 > >
-> > No. These are function protoypes. A "const" on a parameter value
-> > (pointer address, not pointed-to memory) makes no sense on a
-> > prototype.
->
-> But couldn't you argue the same about variable names? In most (not all
-> :) ) we keep declaration + definition in sync. So thus my confusion.
+> > > +
+> > > +On these systems, BIOS publishes CFMWS to communicate the active System
+> > > +Physical Address (SPA) ranges that map to a subset of the Host Physical
+> > > +Address (HPA) ranges. The SPA range trims out the hole, resulting in lost
+> > > +capacity in the endpoint with no SPA to map to the CXL HPA range that
+> > > +exceeds the matching CFMWS range.
+> > > +
+> > > +E.g, a real x86 platform with two CFMWS, 384 GB total memory, and LMH
+> > > +starting at 2 GB:
+> > > +
+> > > +Window | CFMWS Base | CFMWS Size | HDM Decoder Base | HDM Decoder Size | Ways | Granularity
+> > > +  0    |   0 GB     |     2 GB   |      0 GB        |       3 GB       |  12  |    256
+> > 
+> > Could you explain the zero-base limit and how this is special to LMH
+> >
+> Linux follows the CXL specs and so it allows the construction of CXL Regions
+> and the attachment of HDM Decoders to them only if the Specs are not violated.
+> 
+> This document addresses only one of many possible violations. The proposed 
+> solution is not general to every possible Memory Hole on purpose.[1]
+> 
+> The proposed strategy wants to allow exceptions only if the CFMWS HPA range
+> starts at 0 and ends before 4GB. It only deals with Holes in Low Memory. The
+> many other combination of circumstances that lead to failures are out of the
+> scope of this document.
+> > 
+> > or multiple of 3-way configs?
+> >
+> It applies to all possible NIW configs.
+> >
+> > What if the HPA range is non-cxl already?
+> >
+> This solution applies to all CFMWS HPA range that start at zero and end 
+> before 4GB, regardless of the motivation behind memory reserve.
+> >
+> > E.g. my system shows this:
+> > 
+> > [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff] reserved
+> > [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000075b5ffff] usable
+> > [    0.000000] BIOS-e820: [mem 0x0000000075b60000-0x0000000075baafff] ACPI NVS
+> > ...
 
-Variable names in the prototypes have no effect either, but they serve
-as useful documentation.
+See below, it is still unclear you you are handling this.
 
-Whereas the "const" on a parameter value documents nothing - it's an
-implementation detail whether the function would like to modify
-parameter values. That implementation detail has no effect for the
-caller.
+> > 
+> > > +  1    |   4 GB     |   380 GB   |      0 GB        |     380 GB       |  12  |    256
+> > 
+> > The EP's HDM decoder's HPA ranges overlap now as both start at 0.
+> > Isn't that a spec violation: "Decoder m must cover an HPA range that
+> > is below decoder m+1."?
+> > 
+> The HDM Decoder's HPA range in the second line starts at the fourth GB.
+> I made a copy/paste mistake and I'll fix it with the next version of this
+> patch. Thanks for spotting it.
+> > 
+> > For the second decoder, shouldn't the upper limit be cut at 378 GB
+> > (multiple of 3, or 372, multiple of 12)? But since the CFMWS Base is
+> > non-zero that range is not detected to cut it?
+> >
+> Another mistake. Anyway, please notice that all ranges above 4GB are 
+> out of the scope of this document. On purpose. 
 
-Of course, we could have "const" in the prototype as well. This boils
-down to personal taste. It's not my taste (has no use, has no effect,
-documents nothing, only adds noise for no gain), so I didn't add it.
-If you prefer to have that, I'll leave my taste and home and add it,
-but only after you guys make up your minds about whether you want to
-have const parameters at all.
+Let's see your fixes.
+
+> > >
+> [snip]
+> >
+> > > +Detailed Description of the Change
+> > > +----------------------------------
+> > > +
+> > > +The description of the Window Size field in table 9-22 needs to account
+> > > +for platforms with Low Memory Holes, where SPA ranges might be subsets of
+> > > +the endpoints' HPA. Therefore, it has to be changed to the following:
+> > > +
+> > > +"The total number of consecutive bytes of HPA this window represents.
+> > > +This value shall be a multiple of NIW * 256 MB. On platforms that reserve
+
+Add a line break to mark the text as a special case.
+
+> > > +physical addresses below 4 GB, such as the Low Memory Hole for PCIe MMIO
+> > > +on x86 or a requirement for greater than 8-way interleave CXL Regions
+> > > +starting at address 0, an instance of CFMWS whose Base HPA is 0 might have
+> > > +a window size that doesn't align with the NIW * 256 MB constraint. Note
+> > > +that the matching intermediate Switch and Endpoint Decoders' HPA range
+> > > +sizes must still align to the above-mentioned rule, but the memory capacity
+> > > +that exceeds the CFMWS window size will not be accessible."
+> > 
+> > Have you considered to just allow smaller CFMWS ranges that just cut
+> > the boundaries accordingly? That is, just search for a CFMWS range
+> > within the EP's HPA ranges (or even multiple CFMWS ranges) and only
+> > enable that HPA range? That would be more general and removes some
+> > limitations, such as zero-base and below 4 GB only.
+> > 
+> This solution doesn't want to be a general solution for all kinds of Memory 
+> Holes. Dan has been very clear about cutting out solutions to general cases.
+> This solution is limited on purpose.[1]
+
+I still don't get how you set the actual base address if it must be
+zero to trigger the quirk. How does this work with SRAT and what about
+other memory ranges that are in the same range?
+
+It should be clearly marked as a quirk that only under the specific
+conditions. The implemenation should be separate from the main path to
+better isolate the change. That was unclear to me. Still, there are
+the questions above.
+
+Thanks,
+
+-Robert
+
+> 
+> Thanks,
+> 
+> Fabio
+> 
+> [1] https://lore.kernel.org/linux-cxl/67ec4d61c3fd6_288d2947b@dwillia2-xfh.jf.intel.com.notmuch/
+> 
+> 
+> 
 
