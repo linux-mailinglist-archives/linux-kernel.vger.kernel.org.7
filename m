@@ -1,274 +1,150 @@
-Return-Path: <linux-kernel+bounces-795095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E50CB3ECC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17634B3ECCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 382BD2C0B9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99ED11B20F3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551943064B4;
-	Mon,  1 Sep 2025 16:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922BA30F800;
+	Mon,  1 Sep 2025 16:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DcPdTN+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQm+20zW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A22DF150;
-	Mon,  1 Sep 2025 16:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC28E1ACEAF;
+	Mon,  1 Sep 2025 16:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756745813; cv=none; b=F1X0Y4o8UqLRjWalqliWB1nmv47P/McHnN5oCUJIn51ITEYaEU1K+mabq9TiS0p8xpf6H53wAzxNDfBQf/AXxW88hsVO7mXyBRv8YNqb3sEux0v3mNPBF7bSp5qK0B9blaTCEdqmfQs6OiTTrV1E7FoMDM0wxiLJ3eDuubX5mig=
+	t=1756745924; cv=none; b=p67VUj61wsSXqWzRwwugN2hzoNmInOmgi5qFqbyhXT5EFNidYlVSj7zVNC3e7IYH5Nnlqf1xR8y6mMcfltTAOYHlLNrmlZbgybNJCUNhrJCE8/YJdgALbNI/8Sb2GxRLCoxHwrEfXwDzdIvlsVhEQ+pkm6Bt+AXRxBwQBHEYURs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756745813; c=relaxed/simple;
-	bh=20LR7yZxZ7jgK8PFAyG1nr1bSN9YMTK88U5EEu7oj88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q9FR3QGjnA8Vb6D0X+Q6qukJ7C+zMfuAKTTqaVrSJkim6NjIg0JJMZofc41CYqxqPV9HgXILaTz1jwcfvIYVSvcbA5bkaYXe4zGwTx2PUfrSxTyNX5zM2Rb7TQTf+BRslH6+iYt8o8/phhw7hOjMo2rwwpWlVULse19mpwegvE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DcPdTN+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5596FC4CEF0;
-	Mon,  1 Sep 2025 16:56:53 +0000 (UTC)
+	s=arc-20240116; t=1756745924; c=relaxed/simple;
+	bh=JJvd2FZ5jfxr+1x2GaboYFAVICfun63sxKf9be92ynk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MfB51pzd9Lv1BP6F09gX83XsFHMumolrwnEg8THVDg8O4gOveX3HynZakVyD52Ib912D2sCXiwTNYLUuEYBx06v46cJEqYZvYKmI+4a0NBqD2jZVjUs2SWWWRRdy8BoNbWiG2wCtug5Xqj/Di9ijgylKfbGUFZ3dibpGfZS98lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQm+20zW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECF0C4CEF0;
+	Mon,  1 Sep 2025 16:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756745813;
-	bh=20LR7yZxZ7jgK8PFAyG1nr1bSN9YMTK88U5EEu7oj88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DcPdTN+WWGE96roQtfgI5hduqOYqDQqpH5rYt/4CPVQ4g6HiuFjnVxDWy0CMjznbu
-	 vYAUwZSnim6X233yoi6pSPwDAYZORQvORdLJm2wdbchjEimGwS7DtP+bNGxkRWM3JL
-	 JT2GTySo8NSWG/9i7puLZ2CstVwLtYdLVfBKz/cIrPbLiZ3qNaV8LAFaODdJYu0l5i
-	 N52zDGiLV+svuusOfRhV9E9uJoBfhBP2dL1M3SRJL6thygg8BDnIDwj7PBjiuUEek8
-	 Y3psAJJUqytLwJr5NYMdGkWd8v32nHb3N2gl4uZFE1GAUBx90ajSCp0qYviGyLO1xJ
-	 h8LGAR5uYtMUQ==
-Date: Mon, 1 Sep 2025 09:56:52 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
- migration support
-Message-ID: <202509010949.9A61A98@keescook>
-References: <20250830020109.it.598-kees@kernel.org>
- <59c4f103-7f1b-4829-bd82-0d392047fea4@oracle.com>
+	s=k20201202; t=1756745923;
+	bh=JJvd2FZ5jfxr+1x2GaboYFAVICfun63sxKf9be92ynk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AQm+20zWPVLFqm85Zdt5g5WyHklXt3BbfhkciJI+L3MNqpsUgJL6v7L02ZKkhVGLu
+	 WSXblGPvU65aEDNYAM93V66vqLKIFlFDhE2omv4Hn7qay/AX5GrKb7RVPKLOKaUufi
+	 5haEBjjhLGCUGZHyq61KgdKrsyigx7huHb6NaVINmtpP7TIV2v57McZEpg9iNpfuC8
+	 HR0pfKMv+UB+LWwR5d25YKmJnkkLHRx96MLO6XGfAkSHH9HdSM4Sp+t1v+lpi5L6m6
+	 1+0LQirG7l490KZ++KEXKa/4KYWFDm8aBm77EmK/hSFm+rQe62KeTrfuQwckaiXyBQ
+	 1HopyEt3pJ/ZQ==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61e482e1857so216434eaf.2;
+        Mon, 01 Sep 2025 09:58:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU00r1Wz9FqoFrszR6AMoKWLaJPTWLMPdMaz3DK6PnYxvjP0PL3wL2D2kDiEu4/Ktse/KWviqU/8q8=@vger.kernel.org, AJvYcCWyXydDNw2DZGRrpg+Awp9Ud+TBe/77UosTbVLQqjTB7aVYorRgpHFHEryFtk/P1CFGkCb07/Vz@vger.kernel.org, AJvYcCXI4zq53CYhxNST/YaCtQiU9WrDf5zqCV2YuZpueHKirrZdRztIt3eIbr5D2HkXBqegVhBAwsVYB6wuXgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhds7ZMpONg3DfU69fNJFBXkmvQ/PUNLPx1Jadjx35XUw4/i09
+	CguE/WjIRAMsuGPWWleqi4VAVU4SfnpriAE8YaSlM/iEcQeUQkQx7ETZRBWavz3rGYXBqwgOmDu
+	TI53GU2AtCTenKC5x6QYZS2vM1HPb3Oc=
+X-Google-Smtp-Source: AGHT+IEixMpzb+Nb/dROtrEfDYwQ2wKmvujX/nV7y7ACumEGFL5GSsy383+a2XBnxIb44R2GHLaoWcdr1hTDGbHLF9w=
+X-Received: by 2002:a05:6820:1622:b0:61e:1ad6:1336 with SMTP id
+ 006d021491bc7-61e3370eff9mr4598474eaf.3.1756745922698; Mon, 01 Sep 2025
+ 09:58:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <59c4f103-7f1b-4829-bd82-0d392047fea4@oracle.com>
+References: <20250831214357.2020076-1-christian.loehle@arm.com>
+In-Reply-To: <20250831214357.2020076-1-christian.loehle@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Sep 2025 18:58:31 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyJX72zIBt8UBeC0anG1jcEXnb7NOGH6iOvZjeorqPjtLQaLpI9W9mZ-bM
+Message-ID: <CAJZ5v0idnFDYviDBusv8hvFD+yH71kL=Q_ARpn5cUBbAg838RQ@mail.gmail.com>
+Subject: Re: [PATCH] PM: EM: Fix late boot with holes in CPU topology
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: rafael@kernel.org, lukasz.luba@arm.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, 
+	kenneth.crudup@gmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 10:34:19AM +0200, Vegard Nossum wrote:
-> Drive-by review... consider it more as "here's some stuff that could be
-> worth looking at" rather than blocking in any way.
+On Sun, Aug 31, 2025 at 11:44=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> commit e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity
+> adjustment") added a mechanism to handle CPUs that come up late by
+> retrying when any of the `cpufreq_cpu_get()` call fails.
+>
+> However, if there are holes in the CPU topology (offline CPUs, e.g.
+> nosmt), the first missing CPU causes the loop to break, preventing
+> subsequent online CPUs from being updated.
+> Instead of aborting on the first missing CPU policy, loop through all
+> and retry if any were missing.
+>
+> Fixes: e3f1164fc9ee ("PM: EM: Support late CPUs booting and capacity adju=
+stment")
+> Suggested-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+> Reported-by: Kenneth Crudup <kenneth.crudup@gmail.com>
+> Closes: https://lore.kernel.org/linux-pm/40212796-734c-4140-8a85-854f72b8=
+144d@panix.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+>  kernel/power/energy_model.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index ea7995a25780..b63c2afc1379 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -778,7 +778,7 @@ void em_adjust_cpu_capacity(unsigned int cpu)
+>  static void em_check_capacity_update(void)
+>  {
+>         cpumask_var_t cpu_done_mask;
+> -       int cpu;
+> +       int cpu, failed_cpus =3D 0;
+>
+>         if (!zalloc_cpumask_var(&cpu_done_mask, GFP_KERNEL)) {
+>                 pr_warn("no free memory\n");
+> @@ -796,10 +796,8 @@ static void em_check_capacity_update(void)
+>
+>                 policy =3D cpufreq_cpu_get(cpu);
+>                 if (!policy) {
+> -                       pr_debug("Accessing cpu%d policy failed\n", cpu);
 
-Thanks for looking at it!
+I'm still quite unsure why you want to stop printing this message.  It
+is kind of useful to know which policies have had to be retried, while
+printing the number of them really isn't particularly useful.  And
+this is pr_debug(), so user selectable anyway.
 
-> 
-> On 30/08/2025 04:01, Kees Cook wrote:
-> > During kernel option migrations (e.g. CONFIG_CFI_CLANG to CONFIG_CFI),
-> > existing .config files need to maintain backward compatibility while
-> > preventing deprecated options from appearing in newly generated
-> > configurations. This is challenging with existing Kconfig mechanisms
-> > because:
-> > 
-> > 1. Simply removing old options breaks existing .config files.
-> > 2. Manually listing an option as "deprecated" leaves it needlessly
-> >     visible and still writes them to new .config files.
-> > 3. Using any method to remove visibility (.e.g no 'prompt', 'if n',
-> >     etc) prevents the option from being processed at all.
-> > 
-> > Add a "transitional" attribute that creates symbols which are:
-> > - Processed during configuration (can influence other symbols' defaults)
-> > - Hidden from user menus (no prompts appear)
-> > - Omitted from newly written .config files (gets migrated)
-> > - Restricted to only having help sections (no defaults, selects, etc)
-> >    making it truly just a "prior value pass-through" option.
-> > 
-> > The transitional syntax requires a type argument and prevents type
-> > redefinition:
-> > 
-> >      config OLD_OPTION
-> >          transitional bool
-> >          help
-> >            Transitional config for OLD_OPTION migration.
-> > 
-> >      config NEW_OPTION
-> >          bool "New option"
-> >          default OLD_OPTION
-> 
-> Can you add this to scripts/kconfig/tests/ + both positive and negative
-> tests? Tests are run with 'make testconfig' but (AFAICT) doesn't
-> actually recompile config/mconf/etc. before running the tests, so small
-> gotcha there.
+So I'm inclined to retain the line above and drop the new pr_debug() below.
 
-Yes, I will get that added if people are generally happy with this
-feature idea. :)
+Please let me know if this is a problem.
 
-> > diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-> > index fe2231e0e6a4..be51574d6c77 100644
-> > --- a/scripts/kconfig/expr.h
-> > +++ b/scripts/kconfig/expr.h
-> > @@ -127,6 +127,21 @@ struct symbol {
-> >   	/* SYMBOL_* flags */
-> >   	int flags;
-> > +	/*
-> > +	 * Transitional symbol - processed during configuration but hidden from
-> > +	 * user in menus and omitted from newly written .config files. Used for
-> > +	 * backward compatibility during config option migrations (e.g.,
-> > +	 * CFI_CLANG → CFI). Transitional symbols can still influence default
-> > +	 * expressions of other symbols.
-> > +	 */
-> > +	bool transitional:1;
-> > +
-> > +	/*
-> > +	 * Symbol usability - calculated as (visible != no || transitional).
-> > +	 * Determines if symbol can be used in expressions.
-> > +	 */
-> > +	bool usable:1;
-> > +
-> 
-> It's a bit of a "red flag" to see bitfield bools just after an "int
-> flags;" member... should these be SYMBOL_ flags?
-> 
-> Speaking of SYMBOL_ flags, there's apparently one that controls whether
-> a given symbol should be written out to .config:
-
-Yeah, I mentioned this in the commit log, and maybe I just have to make
-this not as easily readable? But you have a point about "usable" below...
-
-> scripts/kconfig/expr.h:#define SYMBOL_WRITE      0x0200  /* write symbol to
-> file (KCONFIG_CONFIG) */
-> 
-> This seems like something you'd like to use somehow -- maybe simply
-> clear it in sym_calc_value() if it's transitional? Similar to how it's
-> done for choice values:
-> 
->         if (sym_is_choice(sym))
->                 sym->flags &= ~SYMBOL_WRITE;
-
-This is actually handled naturally as part of this logic:
-
-> >   	if (sym->visible != no)
-> >   		sym->flags |= SYMBOL_WRITE;
-
-i.e. "usable" doesn't change SYMBOL_WRITE getting set.
-
-> > @@ -205,6 +206,16 @@ config_option: T_PROMPT T_WORD_QUOTE if_expr T_EOL
-> >   	printd(DEBUG_PARSE, "%s:%d:prompt\n", cur_filename, cur_lineno);
-> >   };
-> > +config_option: T_TRANSITIONAL type T_EOL
-> > +{
-> > +	if (current_entry->sym->type != S_UNKNOWN)
-> > +		yyerror("transitional type cannot be set after symbol type is already defined");
-> > +	menu_set_type($2);
-> > +	current_entry->sym->transitional = true;
-> > +	printd(DEBUG_PARSE, "%s:%d:transitional(%u)\n", cur_filename, cur_lineno,
-> > +		$2);
-> > +};
-> 
-> You could also consider making this an attribute similar to the
-> "modules" flags and simplify:
-> 
-> config_option: T_TRANSITIONAL T_EOL
-> {
->        current_entry->sym->transitional = true;
->        printd(DEBUG_PARSE, "%s:%d:transitional\n", cur_filename,
-> cur_lineno);
-> };
-> 
-> ...it would mean the config options look this way:
-> 
-> config OLD_OPTION
->     bool
->     transitional
-> 
-> (If not, menu_set_type() does already contain a check for whether the
-> type has already been set.)
-
-I went back and forth on how I wanted it to look and ultimately decided
-it was awkward to say "use transitional but only with a type that
-doesn't have a prompt". Instead it seemed better to have the type
-explicitly set.
-
-menu_set_type() does check already, but it's a warning only.
-
-> > @@ -558,6 +606,9 @@ void conf_parse(const char *name)
-> >   		if (menu->sym && sym_check_deps(menu->sym))
-> >   			yynerrs++;
-> > +		if (transitional_check_sanity(menu))
-> > +			yynerrs++;
-> > +
-> >   		if (menu->sym && sym_is_choice(menu->sym)) {
-> >   			menu_for_each_sub_entry(child, menu)
-> >   				if (child->sym && choice_check_sanity(child))
-> > diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-> > index 26ab10c0fd76..b822c0c897e5 100644
-> > --- a/scripts/kconfig/symbol.c
-> > +++ b/scripts/kconfig/symbol.c
-> > @@ -447,6 +447,9 @@ void sym_calc_value(struct symbol *sym)
-> >   	if (sym->visible != no)
-> >   		sym->flags |= SYMBOL_WRITE;
-> > +	/* Calculate usable flag */
-> > +	sym->usable = (sym->visible != no || sym->transitional);
-> > +
-> 
-> Is this actually ever used outside of this function? (IOW could this
-> just be a local variable instead of a sym-> flag/member?) Or do we need
-> to set it here because sym_calc_value() calls itself recursively? To me
-> it looks like we only ever access sym->usable for the "sym" that was
-> passed as an argument to the function.
-
-Ah! It's not any more, no. I had an earlier version where I was
-examining it elsewhere, but yeah, this is only needed here.
-
-> 
-> >   	/* set default if recursively called */
-> >   	sym->curr = newval;
-> > @@ -459,13 +462,15 @@ void sym_calc_value(struct symbol *sym)
-> >   			sym_calc_choice(choice_menu);
-> >   			newval.tri = sym->curr.tri;
-> >   		} else {
-> > -			if (sym->visible != no) {
-> > +			if (sym->usable) {
-> >   				/* if the symbol is visible use the user value
-> >   				 * if available, otherwise try the default value
-> >   				 */
-> >   				if (sym_has_value(sym)) {
-> > +					tristate value = sym->transitional ?
-> > +						sym->def[S_DEF_USER].tri : sym->visible;
-> >   					newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
-> > -							      sym->visible);
-> > +							      value);
-> 
-> This looks a bit odd to me. Just thinking out loud: your new logic is
-> there to be able to use a value even though it's not visible. In the
-> case where it's transitional you use the .config value instead of the
-> condition that makes it visible.
-> 
-> Could you simply change sym_calc_visibility() instead to always return
-> 'yes' when the symbol is transitional? Wouldn't that simplify everything
-> in sym_calc_value()?
-
-It's a tristate, so "m" is also possible besides "y". (sym->visible is
-also a tristate. :)
-
-I will send a v3 with better bit fields.
-
--Kees
-
--- 
-Kees Cook
+> -                       schedule_delayed_work(&em_update_work,
+> -                                             msecs_to_jiffies(1000));
+> -                       break;
+> +                       failed_cpus++;
+> +                       continue;
+>                 }
+>                 cpufreq_cpu_put(policy);
+>
+> @@ -814,6 +812,11 @@ static void em_check_capacity_update(void)
+>                 em_adjust_new_capacity(cpu, dev, pd);
+>         }
+>
+> +       if (failed_cpus) {
+> +               pr_debug("Accessing %d policies failed, retrying\n", fail=
+ed_cpus);
+> +               schedule_delayed_work(&em_update_work, msecs_to_jiffies(1=
+000));
+> +       }
+> +
+>         free_cpumask_var(cpu_done_mask);
+>  }
+>
+> --
 
