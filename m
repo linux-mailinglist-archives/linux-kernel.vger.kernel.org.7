@@ -1,194 +1,229 @@
-Return-Path: <linux-kernel+bounces-795224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509D5B3EE87
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:41:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70CCB3EE8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CD2484695
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:41:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53686165E92
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0775232ED45;
-	Mon,  1 Sep 2025 19:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4EA32ED2D;
+	Mon,  1 Sep 2025 19:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jnd1KNY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mIp5z6bC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7C2EC0B7;
-	Mon,  1 Sep 2025 19:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2106126AA93;
+	Mon,  1 Sep 2025 19:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755708; cv=none; b=fG4wvJX3xxEZB5eRwXmzFIgTB1igyeCCT0Mky9a76rsEH0mmjBVqdHW5lbODiJI9ZYtrH1SixQD0yK5fZ13wNierE8n/2WmobSCX2LsQTnn9DQ0HXQDDcTjkzqk8R7+cYeg7hvwXiqBiw/+mG4eRGE3Z5Vzvyveh0sijyfPoLGI=
+	t=1756755723; cv=none; b=Vjg087XK0CBElSM2CRRY1nzNveF6uwMvUNEfujR/uGdnkEYkWGo2LQnv1Q6djZz7FVaBGv4T6wEvoqixdP3sElhJdTDjcU+pLCX5bVtD5IRy3hzd2M9YA/PFaDoksc4QTIYdcBMZPRyDB5b89n5BB2lI9qVlv4hQzfegHyxIg8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755708; c=relaxed/simple;
-	bh=JuWyd0w7O3KJOfMGhW7hd+J8ZubplXvZt1GO/a4nZAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KeiKEOcqxl2cU3Z9hyUXHJOm7uUh+Hn57JUKiTUd/xZmht1tbhbQv8w1GQY+zSIjU2v5rJ9doZzNzNN0dmeYm+eqC59/ifmfyoj7o6MF/P7CfLDXfWSDTcq05ETPK1S/unr5vMF9pQCDMKL39Fp+xjop0wpTbziip+s4wj0ErJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jnd1KNY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F68C4CEF1;
-	Mon,  1 Sep 2025 19:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756755706;
-	bh=JuWyd0w7O3KJOfMGhW7hd+J8ZubplXvZt1GO/a4nZAs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Jnd1KNY/RlxiFI+o7kNxEmaQ+asWSzuNuZWG6Ne+kctMEDiKMfj5ptxUiGKPaLHbi
-	 hvIIQbjXTZTJwocZjIxd6sMj7KVSBSEJWd0lq1g9s1MtHzV7u50B+Hmxd4k6l6WKD9
-	 Z9dLTAp6YZ9K/zq16ZdOfi9uuiuExw1kdlBxI056oJPymY8HNWhHeEP/VWnQnAUgHG
-	 tPaah8yUdKTfWm+feiWq3cAjk6R5BeQ/5R1LYyeaFSFUcgovhAntOUnp54y8+nbyoI
-	 6/AactEzgWEUc12VVhjWYld79ktMDj+07DchchdRyK4ZZBkv2s2Lal9JOSk26ZrzC5
-	 gJJTGsuB5qL3Q==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61e093930f6so1781760eaf.0;
-        Mon, 01 Sep 2025 12:41:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAC+Q+t55bNJ8STP5C3kAxZzu/C1wSXwRCQ6fzqy8ZPuUya9EVvOOWfiyXEeKfo3oprQDB0axn2Wg=@vger.kernel.org, AJvYcCVjP6eSO9+m3rcXAZjQw5CLMokh/tzx7VrfMUzfqcod3w6OkF2UeqYKla3HzWDnX8prNp7IJC+QrUjs@vger.kernel.org, AJvYcCWOpir/8woe/+vtx+VcMVdnL2Y95br+YeoTacTPK5CF4uknC2MAJS0jc7kQXa3ZkU+25VZmTS9swJtQEDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz01PDfrbkjc/qAFVyvTjaDGSaqwGHmftqUNA9pieOcSLl6vUXG
-	tm5qiDNxrkiovhm+NcHB0jXnVYMSV+S3mudDQ5Ie+lqk8XPWGUYCM6uyq2f2zRWnDKUXqBZ/uXu
-	Xvi/OXe98CdXeKQPTLDM/jEoEoys8Knw=
-X-Google-Smtp-Source: AGHT+IFg56Nj4wj5MrZO8OjqXwWe6nfcHuoA34JbFlEqQ8Bec9Z7cOVb26N8Bi461FJpPvtZZpqhq2zfYCuFVmsoQ6w=
-X-Received: by 2002:a05:6820:1622:b0:61b:e931:c6c7 with SMTP id
- 006d021491bc7-61e33773844mr4431933eaf.4.1756755705899; Mon, 01 Sep 2025
- 12:41:45 -0700 (PDT)
+	s=arc-20240116; t=1756755723; c=relaxed/simple;
+	bh=keFYPcsoi58SdBX3NhlcJNv+qZnJirwK4c2TZ6485gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsC/tWACIoo2BZPFmTf/VSlVZI/Fdsl80OGK7o459C0y5huQ2o0CZUPfgCD4/JWuTLK1GEysdW6Er/egTXWZLYGXcfxEx6Hxd6flPMx9pVz861wFkpZo45tN4CuWEahLvcYYyLBMIFh2om9t65CJpG0ojUhw65s6sbUFDG1Iuv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mIp5z6bC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OXmQwmuMTAG2HSIdNxmQ9RuY2Q8gE5vO81foFabz8EM=; b=mIp5z6bCmDN8CVf6e95RVanZY3
+	3fs7ps5/6g3Kljt72q2L9SLWFPd6uRmqzLSHOVyBQ1XFJeFs7GhbDYSVgbEThdun76IK0wEGA6i1y
+	PShFtPw+wCRuzBJKLhbeBjvgHpNEZX3wpKSyd5yrL6QPcJBD2grhKasAogHUNhEGnEvUtEZeIRGT5
+	KPigGs+AQXMZS8CRletpvvIge7yfv16jUqGGGJnl8uUX0Knv50WdgYiVM8KBBpE+MvtwPYbwFMIko
+	Az15hxI8cb2fpnL8NqUTh78c9T8HuQHBGSgKgAm5BgNk5+VEKgRCh2Q1LjteqHDVotxnchij1EUhK
+	AYRGYM8Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utAPZ-00000003qbD-0LLf;
+	Mon, 01 Sep 2025 19:41:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EBAB0300342; Mon, 01 Sep 2025 21:41:51 +0200 (CEST)
+Date: Mon, 1 Sep 2025 21:41:51 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
+Cc: christian.koenig@amd.com, matthew.auld@intel.com,
+	jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, alexander.deucher@amd.com
+Subject: Re: [PATCH v5 1/2] drm/buddy: Optimize free block management with RB
+ tree
+Message-ID: <20250901194151.GJ4067720@noisy.programming.kicks-ass.net>
+References: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
- <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
- <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
- <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
- <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com> <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
-In-Reply-To: <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 21:41:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyoeBwDzo3KAOFlkYZ2PQBJ5Q6IDHcvI5AcrlVWPtB3Sxlgn4Z5K2YrgtE
-Message-ID: <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
 
-On Fri, Aug 29, 2025 at 9:58=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
-du> wrote:
->
-> On Fri, Aug 29, 2025 at 09:23:12PM +0200, Rafael J. Wysocki wrote:
-> > On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM Alan Stern <stern@rowland.harva=
-rd.edu> wrote:
-> > > It sounds like the real question is how we should deal with an
-> > > interrupted system suspend.  Suppose parent device A and child device=
- B
-> > > are both in runtime suspend when a system sleep transition begins.  T=
-he
-> > > PM core invokes the ->suspend callback of B (and let's say the callba=
-ck
-> > > doesn't need to do anything because B is already suspended with the
-> > > appropriate wakeup setting).
-> > >
-> > > But then before the PM core invokes the ->suspend callback of A, the
-> > > system sleep transition is cancelled.  So the PM core goes through th=
-e
-> > > device tree from parents to children, invoking the ->resume callback =
-for
-> > > all the devices whose ->suspend callback was called earlier.  Thus, A=
-'s
-> > > ->resume is skipped because A's ->suspend wasn't called, but B's
-> > > ->resume callback _is_ invoked.  This callback fails, because it can'=
-t
-> > > resume B while A is still in runtime suspend.
-> > >
-> > > The same problem arises if A isn't a parent of B but there is a PM
-> > > dependency from B to A.
-> > >
-> > > It's been so long since I worked on the system suspend code that I do=
-n't
-> > > remember how we decided to handle this scenario.
-> >
-> > We actually have not made any specific decision in that respect.  That
-> > is, in the error path, the core will invoke the resume callbacks for
-> > devices whose suspend callbacks were invoked and it won't do anything
-> > beyond that because it has too little information on what would need
-> > to be done.
-> >
-> > Arguably, though, the failure case described above is not different
-> > from regular resume during which the driver of A decides to retain the
-> > device in runtime suspend.
-> >
-> > I'm not sure if the core can do anything about it.
-> >
-> > But at the time when the B's resume callback is invoked, runtime PM is
-> > enabled for A, so the driver of B may as well use runtime_resume() to
-> > resume the device if it wants to do so.  It may also decide to do
-> > nothing like in the suspend callback.
->
-> Good point.  Since both devices were in runtime suspend before the sleep
-> transition started, there's no reason they can't remain in runtime
-> suspend after the sleep transition is cancelled.
->
-> On the other hand, it seems clear that this scenario doesn't get very
-> much testing.
+On Tue, Sep 02, 2025 at 12:26:04AM +0530, Arunpravin Paneer Selvam wrote:
+> Replace the freelist (O(n)) used for free block management with a
+> red-black tree, providing more efficient O(log n) search, insert,
+> and delete operations. This improves scalability and performance
+> when managing large numbers of free blocks per order (e.g., hundreds
+> or thousands).
 
-No, it doesn't in general AFAICS.
+Did you consider the interval tree?
 
-> I'm pretty sure the USB subsystem in general is
-> vulnerable to this problem; it doesn't consider suspended devices to be
-> in different states according to the reason for the suspend.  That is, a
-> USB device suspended for runtime PM is in the same state as a device
-> suspended for system PM (aside from minor details like wakeup settings).
-> Consequently the ->resume and ->runtime_resume callbacks do essentially
-> the same thing, both assuming the parent device is not suspended.  As we
-> have discussed, this assumption isn't always correct.
->
-> I'm open to suggestions for how to handle this.  Should we keep track of
-> whether a device was in runtime suspend when a system suspend happens,
-> so that the ->resume callback can avoid doing anything?  Will that work
-> if the device was the source of a wakeup request?
 
-Generally speaking, for proper integration of system suspend with
-runtime suspend at all levels, it is necessary to track whether or not
-the given device has been suspended prior to system suspend.
+> @@ -41,23 +43,53 @@ static void drm_block_free(struct drm_buddy *mm,
+>  	kmem_cache_free(slab_blocks, block);
+>  }
+>  
+> -static void list_insert_sorted(struct drm_buddy *mm,
+> -			       struct drm_buddy_block *block)
+> +static void rbtree_insert(struct drm_buddy *mm,
+> +			  struct drm_buddy_block *block)
+>  {
+> +	struct rb_root *root = &mm->free_tree[drm_buddy_block_order(block)];
+> +	struct rb_node **link = &root->rb_node;
+> +	struct rb_node *parent = NULL;
+>  	struct drm_buddy_block *node;
+> -	struct list_head *head;
+> +	u64 offset;
+> +
+> +	offset = drm_buddy_block_offset(block);
+>  
+> -	head = &mm->free_list[drm_buddy_block_order(block)];
+> -	if (list_empty(head)) {
+> -		list_add(&block->link, head);
+> -		return;
+> +	while (*link) {
+> +		parent = *link;
+> +		node = rb_entry(parent, struct drm_buddy_block, rb);
+> +
+> +		if (offset < drm_buddy_block_offset(node))
+> +			link = &parent->rb_left;
+> +		else
+> +			link = &parent->rb_right;
+>  	}
+>  
+> -	list_for_each_entry(node, head, link)
+> -		if (drm_buddy_block_offset(block) < drm_buddy_block_offset(node))
+> -			break;
+> +	rb_link_node(&block->rb, parent, link);
+> +	rb_insert_color(&block->rb, root);
+> +}
 
-In fact, there are even ways to opt-in for assistance from the PM core
-and bus types in that respect to some extent.
+static inline bool __drm_bb_less(const struct drm_buddy_block *a,
+				 const struct drm_buddy_block *b)
+{
+	return drm_buddy_block_offset(a) < drm_buddy_block_offset(b);
+}
 
-In the particular case at hand though, the PM core is not involved in
-making the decision whether or not to leave the devices in runtime
-suspend during system suspend and it all depends on the drivers of A
-and B.
+#define __node_2_drm_bb(node) rb_entry((node), struct drm_buddy_block, rb)
 
-Note here that the problematic situation occurs when the suspend of B
-has run, but the suspend of A has not run yet and the transition is
-aborted between them, so the driver of A cannot do much to help.  The
-driver of B has a couple of options though.
+static inline bool rb_drm_bb_less(struct rb_node *a, const struct rb_node *b)
+{
+	return __drm_bb_less(__node_2_drm_bb(a), __node_2_drm_bb(b));
+}
 
-First off, it might decide to runtime-resume the device in its system
-suspend callback (as long as we are talking about the "suspend" phase
-and not any later phases of system suspend) before suspending it again
-which will also cause A to runtime-resume and aborting system suspend
-would not be problematic any more.  So that's one of the options, but
-it is kind of wasteful and time-consuming.
+static void rbtree_insert(struct drm_buddy *mm, struct drm_buddy_block *block)
+{
+	rb_add(block->rb, &mm->free_tree[drm_buddy_block_order(block)], rb_drm_bb_less);
+}
 
-Another option, which I mentioned before, might be to call
-runtime_resume() from the system resume callback of B (again, as long
-as we are talking about the "resume" phase, not any of the earlier
-phases of system resume).  This assumes that runtime PM is enabled at
-this point for both A and B and so it should work properly.
+> +
+> +static void rbtree_remove(struct drm_buddy *mm,
+> +			  struct drm_buddy_block *block)
+> +{
+> +	struct rb_root *root;
+> +
+> +	root = &mm->free_tree[drm_buddy_block_order(block)];
+> +	rb_erase(&block->rb, root);
+>  
+> -	__list_add(&block->link, node->link.prev, &node->link);
+> +	RB_CLEAR_NODE(&block->rb);
+> +}
+> +
+> +static inline struct drm_buddy_block *
+> +rbtree_last_entry(struct drm_buddy *mm, unsigned int order)
+> +{
+> +	struct rb_node *node = rb_last(&mm->free_tree[order]);
+> +
+> +	return node ? rb_entry(node, struct drm_buddy_block, rb) : NULL;
+> +}
 
-Now, if the driver of B needs to do something special to the device in
-its system suspend callback, it may want (and likely should) disable
-runtime PM prior to this and in that case it will have to check what
-the runtime PM status of the device is and adjust its actions
-accordingly.  That really depends on what those actions are etc, so
-I'd rather not talk about it without a specific example.
+rb_add_cached() caches the leftmost entry, if you invert the key, the
+last is first.
+
+> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+> index 8d2ba3749866..17190bb4837c 100644
+> --- a/include/linux/rbtree.h
+> +++ b/include/linux/rbtree.h
+> @@ -79,6 +79,62 @@ static inline void rb_link_node_rcu(struct rb_node *node, struct rb_node *parent
+>  	   ____ptr ? rb_entry(____ptr, type, member) : NULL; \
+>  	})
+>  
+> +/**
+> + * rbtree_for_each_entry - iterate in-order over rb_root of given type
+> + *
+> + * @pos:	the 'type *' to use as a loop cursor.
+> + * @root:	'rb_root *' of the rbtree.
+> + * @member:	the name of the rb_node field within 'type'.
+> + */
+> +#define rbtree_for_each_entry(pos, root, member) \
+> +	for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), member); \
+> +	     (pos); \
+> +	     (pos) = rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member))
+> +
+> +/**
+> + * rbtree_reverse_for_each_entry - iterate in reverse in-order over rb_root
+> + * of given type
+> + *
+> + * @pos:	the 'type *' to use as a loop cursor.
+> + * @root:	'rb_root *' of the rbtree.
+> + * @member:	the name of the rb_node field within 'type'.
+> + */
+> +#define rbtree_reverse_for_each_entry(pos, root, member) \
+> +	for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), member); \
+> +	     (pos); \
+> +	     (pos) = rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member))
+> +
+> +/**
+> + * rbtree_for_each_entry_safe - iterate in-order over rb_root safe against removal
+> + *
+> + * @pos:	the 'type *' to use as a loop cursor
+> + * @n:		another 'type *' to use as temporary storage
+> + * @root:	'rb_root *' of the rbtree
+> + * @member:	the name of the rb_node field within 'type'
+> + */
+> +#define rbtree_for_each_entry_safe(pos, n, root, member) \
+> +	for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), member), \
+> +	     (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member) : NULL; \
+> +	     (pos); \
+> +	     (pos) = (n), \
+> +	     (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member) : NULL)
+> +
+> +/**
+> + * rbtree_reverse_for_each_entry_safe - iterate in reverse in-order over rb_root
+> + * safe against removal
+> + *
+> + * @pos:	the struct type * to use as a loop cursor.
+> + * @n:		another struct type * to use as temporary storage.
+> + * @root:	pointer to struct rb_root to iterate.
+> + * @member:	name of the rb_node field within the struct.
+> + */
+> +#define rbtree_reverse_for_each_entry_safe(pos, n, root, member) \
+> +	for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), member), \
+> +	     (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member) : NULL; \
+> +	     (pos); \
+> +	     (pos) = (n), \
+> +	     (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member) : NULL)
+> +
+
+Not really a fan of these. That's typically a sign you're doing it
+wrong. Full tree iteration is actually slower than linked list.
 
