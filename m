@@ -1,122 +1,230 @@
-Return-Path: <linux-kernel+bounces-794411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8D3B3E155
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:18:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DE8B3E15C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B963AE8D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A231A817CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E69302CAE;
-	Mon,  1 Sep 2025 11:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E589314B7A;
+	Mon,  1 Sep 2025 11:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="aK6I6f2H"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883852F37;
-	Mon,  1 Sep 2025 11:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="toRBMDb5"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAF7242D72;
+	Mon,  1 Sep 2025 11:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756725506; cv=none; b=JaPJ3QixAG6D8l8DIaqCZ55HvNdAWjYeKjJdsMoCRUZD5RRcYQUA76IuP9FRMXq1xc7Lw7OVJlCfRn93Amj3UXfhBh/+i31RrRztvuRiGJFAJovjIRm5oeuRwkEHtjpHyPaeQoM6yZFPuHIj5z9MM91jvMgYg12Qrgc8GDczF4Q=
+	t=1756725616; cv=none; b=XPTQJdC7iR+mGrFvvQTRJQEKHfZIBzgFZZmkrWEC5WFQ47u/ei3w4Zi6OB7rkE6y9YuWmWbJb4zjRGs2i1TEQ1KhBTOyz0Uxn9mTbNfgNsEfAi5ja4UIWcfNYuOJj7S00nDCiVdNsdqD5V1xhn/+L8IB6K5Kq3UzUqvV39YRRSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756725506; c=relaxed/simple;
-	bh=IVmbxiakIq39e/9ee4FAF69TVetQLrpss0ewxo3jaVk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=DuScCQ5f0RAEGK3USo31iuh5J18v3knelpWDnLOCzEJtz2W8JwPcg1fal6WKWkrr50pK7uxqFDv0YqDjvS6/ejZZchU0J2ihhdU6bMIe8cpI6ZK+xXYOurWcJbbQSygF1tnuXjCtOyUH3w9epmy9RxVbGu2mVbB5gVkgUJQ+Hcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=aK6I6f2H reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=TlHUQQuyeZYSu+OfqT//Uc4L/7XQ/BI0UmWamh72sGQ=; b=a
-	K6I6f2Hqhw7QHkwy9i3dmvpvz7nduWqzSGXsHa4yq3lxdd8+Zh7Y+0BsWxG6s8S7
-	shgl6mHfhWf3+f2seFW6U8cm4/Bb7POnzlwT0J+tR51ok1WDvJzEmUhNgU5npYuC
-	DFSP+1+kQjcQAOCHhLp23Nx/vXPRvGLFWTX4qhg6UI=
-Received: from 00107082$163.com ( [111.35.190.191] ) by
- ajax-webmail-wmsvr-40-118 (Coremail) ; Mon, 1 Sep 2025 19:17:38 +0800 (CST)
-Date: Mon, 1 Sep 2025 19:17:38 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Mathias Nyman" <mathias.nyman@linux.intel.com>
-Cc: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>,
-	WeitaoWang-oc@zhaoxin.com, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, surenb@google.com,
-	kent.overstreet@linux.dev
-Subject: Re: [REGRESSION 6.17-rc3] usb/xhci: possible memory leak after
- suspend/resume cycle.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <f9476552-a6dc-4f1c-91da-b15c8f0d9844@linux.intel.com>
-References: <20250829181354.4450-1-00107082@163.com>
- <20250830114828.3dd8ed56.michal.pecio@gmail.com>
- <5051e27a.2ba3.198fa7b5f31.Coremail.00107082@163.com>
- <f9476552-a6dc-4f1c-91da-b15c8f0d9844@linux.intel.com>
-X-NTES-SC: AL_Qu2eBPuZukwu7iCeYOkZnEYQheY4XMKyuPkg1YJXOp80qCTy+hwydm5aNHzv3PmOGwymoQmreip/791XQrd1U54+YxnU7kfbLoF40EGGjjrz
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1756725616; c=relaxed/simple;
+	bh=1FoA9Bobi7dQfWRXWJ0vsiOuwP1xN5/YuFESRs3cHHA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fT2cXEWHZWaFbsud0TQB02PKlUqAFlZoFL+jJWomQwAEMfwvrCVIF1lWAhYTq5Qz51w9QZyL0dtezMhlcymDgsRWuu6kW8nhWW+XKlm8Tn9SMj6SDT2OSdU/R1gu/MEOTsEGzkpQ5BHUIEtzjUmb2ZNZojcM6AWgUzPl4Y6zw5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=toRBMDb5; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 581BK4oI2795916;
+	Mon, 1 Sep 2025 06:20:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756725604;
+	bh=+iZ8MmCCQxNn7JJJ2JVsdMX74JFKS2INmkF2wJx8RyE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=toRBMDb5ogTWkr0FtS/Qulh3bMM4iUThgURHskyzcHgbNbNmBG6RlusJE2mMM5GsD
+	 DId21QBzXITHvMFsgGycEWdWTP28zeOxEUZiYvajT1MOtyQF5OmtLDzsIQyXF7Y6fN
+	 9lwJjBdDoH/cBfhnUw2CM++wbe4ckppigFxYGWTQ=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 581BK4IS2688665
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 1 Sep 2025 06:20:04 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
+ Sep 2025 06:20:03 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 1 Sep 2025 06:20:03 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 581BK2oL2408054;
+	Mon, 1 Sep 2025 06:20:03 -0500
+Date: Mon, 1 Sep 2025 16:50:02 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <helgaas@kernel.org>, <kishon@kernel.org>, <vigneshr@ti.com>,
+        <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v3] PCI: j721e: Fix programming sequence of "strap"
+ settings
+Message-ID: <9d2bba15-52e4-432a-8f7f-a0f5d7c2e4ad@ti.com>
+References: <20250829091707.2990211-1-s-vadapalli@ti.com>
+ <oztilfun77apxtjxumx4tydkcd2gsalsak4m2rvsry2oooqjna@2yvcx6cnuemm>
+ <b2fb9252-6bfc-45da-973a-31cdfcc86b3d@ti.com>
+ <z3ubracmtlq23yicbrhqjgnzrfoqheffm6cvhfnawlvbu4cmmp@ddu2o7xhw5tz>
+ <48e9d897-2cd3-48ef-b46a-635ae75f5ac6@ti.com>
+ <3wc3t6y5gzzspgfeklsqo3bupfp6gsfy6mls6t66hflcqlqsfk@cu26wv3sow4y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7e8a138e.af64.19904ff3496.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:digvCgD3X_jTgLVotogmAA--.3994W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBEBO7qmi1e6ChNQABsB
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3wc3t6y5gzzspgfeklsqo3bupfp6gsfy6mls6t66hflcqlqsfk@cu26wv3sow4y>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-CkF0IDIwMjUtMDktMDEgMTg6MTQ6MzIsICJNYXRoaWFzIE55bWFuIiA8bWF0aGlhcy5ueW1hbkBs
-aW51eC5pbnRlbC5jb20+IHdyb3RlOgo+T24gMzAuOC4yMDI1IDEzLjE3LCBEYXZpZCBXYW5nIHdy
-b3RlOgo+PiAKPj4gQXQgMjAyNS0wOC0zMCAxNzo0ODoyOCwgIk1pY2hhxYIgUGVjaW8iIDxtaWNo
-YWwucGVjaW9AZ21haWwuY29tPiB3cm90ZToKPj4+Cj4+PiBIaSwKPj4+Cj4+PiBHb29kIHdvcmss
-IGxvb2tzIGxpa2Ugc3VzcGVuZC9yZXN1bWUgaXMgYSBsaXR0bGUgdW5kZXJzdGVzdGVkIGNvcm5l
-cgo+Pj4gb2YgdGhpcyBkcml2ZXIuCj4+Pgo+Pj4gRGlkIHlvdSBjaGVjayB3aGV0aGVyIHRoZSBz
-YW1lIGxlYWsgb2NjdXJzIGlmIHlvdSBzaW1wbHkgZGlzY29ubmVjdAo+Pj4gYSBkZXZpY2Ugb3Ig
-aWYgaXQncyB0cnVseSB1bmlxdWUgdG8gc3VzcGVuZD8KPj4+Cj4+Pj4gQW5kIGJpc2VjdCBuYXJy
-b3cgZG93biB0byBjb21taXQgMmViMDMzNzYxNTFiYjg1ODVjYWEyM2VkMjY3MzU4MzEwN2JiNTE5
-MygKPj4+PiAidXNiOiB4aGNpOiBGaXggc2xvdF9pZCByZXNvdXJjZSByYWNlIGNvbmZsaWN0Iik6
-Cj4+Pgo+Pj4gSSBzZWUgYSB0cml2aWFsIGJ1ZyB3aGljaCBldmVyeW9uZSAobXlzZWxmIGluY2x1
-ZGVkIHRiaCkgbWlzc2VkIGJlZm9yZS4KPj4+IERvZXMgdGhpcyBoZWxwPwo+Pj4KPj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktbWVtLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3ho
-Y2ktbWVtLmMKPj4+IGluZGV4IGYxMWUxM2Y5Y2RiNC4uZjI5NDAzMmMyYWQ3IDEwMDY0NAo+Pj4g
-LS0tIGEvZHJpdmVycy91c2IvaG9zdC94aGNpLW1lbS5jCj4+PiArKysgYi9kcml2ZXJzL3VzYi9o
-b3N0L3hoY2ktbWVtLmMKPj4+IEBAIC05MzIsNyArOTMyLDcgQEAgdm9pZCB4aGNpX2ZyZWVfdmly
-dF9kZXZpY2Uoc3RydWN0IHhoY2lfaGNkICp4aGNpLCBzdHJ1Y3QgeGhjaV92aXJ0X2RldmljZSAq
-ZGV2LAo+Pj4gICAqLwo+Pj4gc3RhdGljIHZvaWQgeGhjaV9mcmVlX3ZpcnRfZGV2aWNlc19kZXB0
-aF9maXJzdChzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIGludCBzbG90X2lkKQo+Pj4gewo+Pj4gLQlz
-dHJ1Y3QgeGhjaV92aXJ0X2RldmljZSAqdmRldjsKPj4+ICsJc3RydWN0IHhoY2lfdmlydF9kZXZp
-Y2UgKnZkZXYsICp0bXBfdmRldjsKPj4+IAlzdHJ1Y3QgbGlzdF9oZWFkICp0dF9saXN0X2hlYWQ7
-Cj4+PiAJc3RydWN0IHhoY2lfdHRfYndfaW5mbyAqdHRfaW5mbywgKm5leHQ7Cj4+PiAJaW50IGk7
-Cj4+PiBAQCAtOTUyLDggKzk1Miw4IEBAIHN0YXRpYyB2b2lkIHhoY2lfZnJlZV92aXJ0X2Rldmlj
-ZXNfZGVwdGhfZmlyc3Qoc3RydWN0IHhoY2lfaGNkICp4aGNpLCBpbnQgc2xvdF9pCj4+PiAJCWlm
-ICh0dF9pbmZvLT5zbG90X2lkID09IHNsb3RfaWQpIHsKPj4+IAkJCS8qIGFyZSBhbnkgZGV2aWNl
-cyB1c2luZyB0aGlzIHR0X2luZm8/ICovCj4+PiAJCQlmb3IgKGkgPSAxOyBpIDwgSENTX01BWF9T
-TE9UUyh4aGNpLT5oY3NfcGFyYW1zMSk7IGkrKykgewo+Pj4gLQkJCQl2ZGV2ID0geGhjaS0+ZGV2
-c1tpXTsKPj4+IC0JCQkJaWYgKHZkZXYgJiYgKHZkZXYtPnR0X2luZm8gPT0gdHRfaW5mbykpCj4+
-PiArCQkJCXRtcF92ZGV2ID0geGhjaS0+ZGV2c1tpXTsKPj4+ICsJCQkJaWYgKHRtcF92ZGV2ICYm
-ICh0bXBfdmRldi0+dHRfaW5mbyA9PSB0dF9pbmZvKSkKPj4+IAkJCQkJeGhjaV9mcmVlX3ZpcnRf
-ZGV2aWNlc19kZXB0aF9maXJzdCgKPj4+IAkJCQkJCXhoY2ksIGkpOwo+PiAKPj4gSSBjb25maXJt
-ZWQgdGhpcyAqc2lsbHkqIGNvZGUgaXMgdGhlIHJvb3QgY2F1c2Ugb2YgdGhpcyBtZW1vcnkgbGVh
-ay4KPj4gQW5kIEkgd291bGQgc3VnZ2VzdCBzaW1wbGVyIGNvZGUgY2hhbmdlcyAod2hpY2ggaXMg
-d2hhdCBJIHdhcyB0ZXN0aW5nKToKPj4gCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2Iv
-aG9zdC94aGNpLW1lbS5jIGIvZHJpdmVycy91c2IvaG9zdC94aGNpLW1lbS5jCj4+IGluZGV4IDgx
-ZWFhZDg3YTNkOS4uYzRhNjU0NGFhMTA3IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3VzYi9ob3N0
-L3hoY2ktbWVtLmMKPj4gKysrIGIvZHJpdmVycy91c2IvaG9zdC94aGNpLW1lbS5jCj4+IEBAIC05
-NjIsNyArOTYyLDcgQEAgc3RhdGljIHZvaWQgeGhjaV9mcmVlX3ZpcnRfZGV2aWNlc19kZXB0aF9m
-aXJzdChzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIGludCBzbG90X2kKPj4gICBvdXQ6Cj4+ICAgICAg
-ICAgIC8qIHdlIGFyZSBub3cgYXQgYSBsZWFmIGRldmljZSAqLwo+PiAgICAgICAgICB4aGNpX2Rl
-YnVnZnNfcmVtb3ZlX3Nsb3QoeGhjaSwgc2xvdF9pZCk7Cj4+IC0gICAgICAgeGhjaV9mcmVlX3Zp
-cnRfZGV2aWNlKHhoY2ksIHZkZXYsIHNsb3RfaWQpOwo+PiArICAgICAgIHhoY2lfZnJlZV92aXJ0
-X2RldmljZSh4aGNpLCB4aGNpLT5kZXZzW3Nsb3RfaWRdLCBzbG90X2lkKTsKPj4gICB9Cj4+ICAg
-Cj4+ICAgaW50IHhoY2lfYWxsb2NfdmlydF9kZXZpY2Uoc3RydWN0IHhoY2lfaGNkICp4aGNpLCBp
-bnQgc2xvdF9pZCwKPj4gCj4KPlRoYW5rcyB0byBib3RoIGZvciBjYXRjaGluZyB0aGlzCj4KPkkg
-Y2FuIHF1aWNrbHkgdHVybiB0aGlzIGludG8gYSBwcm9wZXIgcGF0Y2ggdW5sZXNzIG9uZSBvZiB5
-b3Ugd291bGQgbGlrZSB0byBzdWJtaXQgb25lPwoKT2gsIEkgd2FzIG5vdCBwbGFubmluZyB0byBz
-dWJtaXQgYSBwYXRjaCBhdCBhbGwsIHNpbmNlIE1pY2hhxYIgUGVjaW8gZ290IHRoZSBjcmVkaXQg
-b2YgcHVibGlzaGluZyB0aGUgZmlyc3QgcGF0Y2guCgpUaGFua3MKRGF2aWQKCj4KPlRoYW5rcwo+
-TWF0aGlhcwo=
+On Mon, Sep 01, 2025 at 12:14:51PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Sep 01, 2025 at 11:51:33AM GMT, Siddharth Vadapalli wrote:
+> > On Mon, Sep 01, 2025 at 11:18:23AM +0530, Manivannan Sadhasivam wrote:
+> > > On Mon, Sep 01, 2025 at 10:27:51AM GMT, Siddharth Vadapalli wrote:
+> > > > On Sun, Aug 31, 2025 at 06:15:13PM +0530, Manivannan Sadhasivam wrote:
+> > > > 
+> > > > Hello Mani,
+> > > > 
+> > > > > On Fri, Aug 29, 2025 at 02:46:28PM GMT, Siddharth Vadapalli wrote:
+> > 
+> > [...]
+> > 
+> > > > > > +	/*
+> > > > > > +	 * The PCIe Controller's registers have different "reset-values"
+> > > > > > +	 * depending on the "strap" settings programmed into the PCIEn_CTRL
+> > > > > > +	 * register within the CTRL_MMR memory-mapped register space.
+> > > > > > +	 * The registers latch onto a "reset-value" based on the "strap"
+> > > > > > +	 * settings sampled after the PCIe Controller is powered on.
+> > > > > > +	 * To ensure that the "reset-values" are sampled accurately, power
+> > > > > > +	 * off the PCIe Controller before programming the "strap" settings
+> > > > > > +	 * and power it on after that.
+> > > > > > +	 */
+> > > > > > +	ret = pm_runtime_put_sync(dev);
+> > > > > > +	if (ret < 0) {
+> > > > > > +		dev_err(dev, "Failed to power off PCIe Controller\n");
+> > > > > > +		return ret;
+> > > > > > +	}
+> > > > > 
+> > > > > How does the controller gets powered off after pm_runtime_put_sync() since you
+> > > > > do not have runtime PM callbacks? I believe the parent is turning off the power
+> > > > > domain?
+> > > > 
+> > > > By invoking 'pm_runtime_put_sync(dev)', the ref-count is being
+> > > > decremented and it results in the device being powered off. I have
+> > > > verified it by printing the power domain index within the functions for
+> > > > powering off and powering on devices on the J7200 SoC. Logs:
+> > > > 
+> > > > 	root@j7200-evm:~# modprobe pci_j721e
+> > > > 	[   25.231675] [Powering On]: 240
+> > > > 	[   25.234848] j721e-pcie 2910000.pcie: host bridge /bus@100000/pcie@2910000 ranges:
+> > > > 	[   25.242378] j721e-pcie 2910000.pcie:       IO 0x4100001000..0x4100100fff -> 0x0000001000
+> > > > 	[   25.250496] j721e-pcie 2910000.pcie:      MEM 0x4100101000..0x41ffffffff -> 0x0000101000
+> > > > 	[   25.258588] j721e-pcie 2910000.pcie:   IB MEM 0x0000000000..0xffffffffffff -> 0x0000000000
+> > > > 	[   25.267098] [Powering Off]: 240
+> > > > 	[   25.270318] [Powering On]: 240
+> > > > 	[   25.273511] [Powering On]: 187
+> > > > 	[   26.372361] j721e-pcie 2910000.pcie: PCI host bridge to bus 0000:00
+> > > > 	[   26.378666] pci_bus 0000:00: root bus resource [bus 00-ff]
+> > > > 	[   26.384156] pci_bus 0000:00: root bus resource [io  0x0000-0xfffff] (bus address [0x1000-0x100fff])
+> > > > 	[   26.393197] pci_bus 0000:00: root bus resource [mem 0x4100101000-0x41ffffffff] (bus address [0x00101000-0xffffffff])
+> > > > 	[   26.403728] pci 0000:00:00.0: [104c:b00f] type 01 class 0x060400 PCIe Root Port
+> > > > 	[   26.411044] pci 0000:00:00.0: PCI bridge to [bus 00]
+> > > > 	[   26.416009] pci 0000:00:00.0:   bridge window [io  0x0000-0x0fff]
+> > > > 	[   26.422091] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+> > > > 	[   26.428874] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+> > > > 	[   26.436676] pci 0000:00:00.0: supports D1
+> > > > 	[   26.440699] pci 0000:00:00.0: PME# supported from D0 D1 D3hot
+> > > > 	[   26.448064] pci 0000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+> > > > 	[   26.456274] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+> > > > 	[   26.462923] pci 0000:00:00.0: PCI bridge to [bus 01]
+> > > > 	[   26.467933] pci_bus 0000:00: resource 4 [io  0x0000-0xfffff]
+> > > > 	[   26.473595] pci_bus 0000:00: resource 5 [mem 0x4100101000-0x41ffffffff]
+> > > > 	[   26.480337] pcieport 0000:00:00.0: of_irq_parse_pci: failed with rc=-22
+> > > > 	[   26.487479] pcieport 0000:00:00.0: PME: Signaling with IRQ 701
+> > > > 	[   26.493909] pcieport 0000:00:00.0: AER: enabled with IRQ 701
+> > > > 
+> > > > In the above logs, '240' is the Power Domain Index for the PCIe
+> > > > Controller on J7200 SoC. It is powered on initially before the driver is
+> > > > probed.
+> > > 
+> > > In that case, the driver should not call pm_runtime_get_sync() in its probe.
+> > > What it should do is:
+> > > 
+> > > 	pm_runtime_set_active()
+> > > 	pm_runtime_enable()
+> > 
+> > If I understand correctly, are you suggesting the following?
+> > 
+> > j721e_pcie_probe()
+> > 	pm_runtime_set_active()
+> > 	pm_runtime_enable()
+> > 	ret = j721e_pcie_ctrl_init(pcie);
+> > 		/*
+> > 		 * PCIe Controller should be powered off here, but is there
+> > 		 * a way to ensure that it has been powered off?
+> > 		 */
+> > 		=> Program the strap settings and return to
+> > 		j721e_pcie_probe()
+> > 	/* Power on the PCIe Controller now */
+> > 	ret = pm_runtime_get_sync(dev);
+> 
+> This pm_runtime_get_sync() should be part of j721e_pcie_ctrl_init() where you
+> do power off, program strap and power on.
+> 
+> This should not be part of probe() as by that time, controller is already
+> powered on. So pm_runtime_set_active() and pm_runtime_enable() should be enough
+> to convey the state of the device to PM core.
+
+I have tried out the suggestion in the following manner:
+
+	j721e_pcie_probe()
+		...
+		pm_runtime_set_active(dev);
+		pm_runtime_enable(dev);
+		ret = j721e_pcie_ctrl_init(pcie);
+			... within j721e_pcie_ctrl_init()
+			ret = pm_runtime_put_sync(dev);
+			/* Program Strap Settings */
+			ret = pm_runtime_get_sync(dev);
+			...
+		...
+		exit probe
+
+Since a 'pm_runtime_get_sync()' hasn't yet been invoked prior to the
+section where 'pm_runtime_put_sync()' is invoked, it leads to a ref-count
+underflow error at runtime. Please let me know if I am missing
+something.
+
+The following is the working implementation from the current patch:
+
+	j721e_pcie_probe()
+		...
+		/*
+		 * The following two lines are identical to the existing
+		 * driver code
+		 */
+		pm_runtime_enable(dev);
+		ret = pm_runtime_get_sync(dev);
+		...
+		ret = j721e_pcie_ctrl_init(pcie);
+			... within j721e_pcie_ctrl_init()
+			ret = pm_runtime_put_sync(dev);
+			...
+			/* PCIe Controller is now powered off */
+			/* Program the strap settings */
+			...
+			ret = pm_runtime_get_sync(dev);
+			...
+		...
+		exit probe
+
+Regards,
+Siddharth.
 
