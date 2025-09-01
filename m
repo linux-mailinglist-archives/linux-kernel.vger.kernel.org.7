@@ -1,194 +1,169 @@
-Return-Path: <linux-kernel+bounces-795009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113F3B3EBC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:01:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36B1B3EBD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C164B20247C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:01:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8D4E32AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B70E2E6CDE;
-	Mon,  1 Sep 2025 16:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E22F3606;
+	Mon,  1 Sep 2025 16:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GT9XLlIL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="due+l53p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C872DF125
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3D62F1FFE;
+	Mon,  1 Sep 2025 16:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742489; cv=none; b=oWCErJ7BYmhiXxYRGSIbvFJWYQlQnT2mQBhXd2cOgCGXF7ROBJlLn4b+ppypS+a5pVDXVCULrO2aWmbOcPD3H+4Dz8QgDsTIhBPSdS4pxhlj50IfEF2atipNvMxp2ctypuzYBuPRLxbrJNBTpeYhM/fK3FKhCRDISKY6OTeftmw=
+	t=1756742506; cv=none; b=guyEvH7I1CMvE1GwmZYYD0U4yBjOrx9LuapqqA0FddCm1+erb3zqcJNRHVKLQnDQ2N6o9d72mff9tdpTJzFwqeHLYC7LWO0NXGeFe/1jAaKIqPpnSGpKrgCvsXitww2pSDRvqWAggcdwtfydDzUn0O8hzi0UUs0cAy3sZFLu4qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742489; c=relaxed/simple;
-	bh=fRGtPoXNXozo7EUo/+X+0CRDT4KEoSMrhbUl6FXLK04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LSoXRrFJ2y7VIlp0pY97q/3dgf6jiNtuPqLlgfbS7fpkyxlhv+b+xGsjvCgzZ4RJKqVOagZxlL8DgOTSfdRQNBUezUtwpFcaZBQz4JeIILRO8tsB5iQM2W2gu0EuqlJQ+Z4uiJ1iU3AxcVKRKQJFsVD6P3KF8Ffo/nz7gvjcAso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GT9XLlIL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46F7C2BC9E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756742488;
-	bh=fRGtPoXNXozo7EUo/+X+0CRDT4KEoSMrhbUl6FXLK04=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GT9XLlILxbzJQKfZrcncv5FDmb5xqXm7lWoVNtxQxqSnrU226V7KsM+H4vLScYY1c
-	 zDGYrWFQTMh4ugpctY6Bv6RnrKv60oTJOwcRX75wJIwxuTy6raFhsWBBfZX3bJuinj
-	 d1fx/1HZsgoS1bagdzfR7ra/lFmxZRQMbRXC8FiDNRfA+qXUvhAXVZwVlAGHE4c+5Z
-	 1Y4J1MxU3Vg0Su1HxCL4z4wQt1pzQNiW3J0hlc/stH8fbUMewCr+gx88yqG95Q970W
-	 tzYu9cantZryBxbFwAt9HnQPxF2HqfmEmiIDITAIuoolltbu4BH20iM9MGlzq81cgV
-	 dHiypGhT3AWeQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f74c6d316so1836567e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:01:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWP6jL/tlQ/oY4jwjsSzVdAzSSCRNPiqeV+7R8bV4QnI5m25XtMTPenI9FkZsCSxtAL3rbtewRN8KQQiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0LDfyqDvLDMwbY2Eqj0MhEzR6HrL9Hk708QFm7E8LxRxpaSj7
-	Q3o5hTd2zp/9BjsCDWOVep2efHxDE7u2D29gb33BK4Jx5R/Xd23v+S3OLObp42k/HGK/14lYckR
-	XWDWltiGcU4YGdiDTYy/eR4TeLnwkEJGDjH4nS+nh
-X-Google-Smtp-Source: AGHT+IHnj6OIwdQiXJlgVo5UF3VJeh7L4asptxGZmWwqZWC31UpjffLFt4qPv8DDjEOzi1qlSKdOs+b3QNOSTgcuUzg=
-X-Received: by 2002:a05:6512:448e:b0:55f:4485:9620 with SMTP id
- 2adb3069b0e04-55f709bf748mr1461445e87.51.1756742486920; Mon, 01 Sep 2025
- 09:01:26 -0700 (PDT)
+	s=arc-20240116; t=1756742506; c=relaxed/simple;
+	bh=CbuTuH+TBGhwVIFkBIL83TJMSHa8SRRB5lvz2oJbodc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YC9uC/+n8n6858Q5YmihkMDOBclU4kgMBqCYqFUbzIbx/+KwN6uhcGncuh/BpVXs4isNMQOCx+FKUlYINcpImOjMpqQ1aTqsCdxU21YcZQU7GE0q1NlRnFAiqctT0Yi63+x7g7yXaRV7sKPnW6Cky+HMrEnRAnm2EDW2j0rj9Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=due+l53p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B4K9r015350;
+	Mon, 1 Sep 2025 16:01:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tSjAN16Iw0lGYq1u0vWwlJHyKeY8+e/J2VRH9cPhXtc=; b=due+l53pWbWAciUf
+	KZnWo9ztP0CZEZNhluQBrYW6YjHJHFmiEwMO0yjFM+h8OSfxru8gi6rddw3ssrmn
+	USMIzmHxJkQb8v1pE+WT8MMxV4X99lfJWU+oAj6qJLbaaGqy0Jzhmw3Axr6mqQ2q
+	ZxhPqZfx7SlJpkxJq0feJV9cCHcMLwroZDmZJYYsLBuJOmWjxJUZRIkC1Ba0Kit7
+	X6paji2eq1qJHLjhZRT143fxC8g4e+pyA9VX23Y/3G+AP4rLogdjqNloKkJ3FEuG
+	itun4mB5rT3oVSHUc4UDCmr39QUIsbxujT+HcTpfmflL4BtvteNvwEy1DG1IjpPm
+	aTEsiA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utfkd561-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Sep 2025 16:01:33 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581G1XrE008156
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Sep 2025 16:01:33 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
+ 2025 09:01:29 -0700
+Message-ID: <922bd9d3-2148-4c26-a9a3-791586c67181@quicinc.com>
+Date: Mon, 1 Sep 2025 21:31:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net> <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
- <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
- <aLDDk4x7QBKxLmoi@mail.hallyn.com> <CAG48ez0p1B9nmG3ZyNRywaSYTtEULSpbxueia912nVpg2Q7WYA@mail.gmail.com>
-In-Reply-To: <CAG48ez0p1B9nmG3ZyNRywaSYTtEULSpbxueia912nVpg2Q7WYA@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Mon, 1 Sep 2025 09:01:15 -0700
-X-Gmail-Original-Message-ID: <CALCETrUM7LAzm-pXwgTVACvO7uvaUZ0B7j=6Vy0BrDkngpu=yg@mail.gmail.com>
-X-Gm-Features: Ac12FXwKS6-FHwq3nvpTeXOsn_tseUs4dZWGKJnLf2Z-xopwBmsE6DWor8ej0K0
-Message-ID: <CALCETrUM7LAzm-pXwgTVACvO7uvaUZ0B7j=6Vy0BrDkngpu=yg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-To: Jann Horn <jannh@google.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Bart Van Assche
+	<bvanassche@acm.org>
+CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
+ <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+ <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
+ <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
+ <6xgsb7thoo7mquz3mxuyhliuqtvrbxj43nc6ga5qpcgcz4ro4u@doe2253ydjbj>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <6xgsb7thoo7mquz3mxuyhliuqtvrbxj43nc6ga5qpcgcz4ro4u@doe2253ydjbj>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=eaQ9f6EH c=1 sm=1 tr=0 ts=68b5c35d cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=jy_iQL8k7Q2RHFkZsNwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 9o_bWBcIItoGcBJXTnIHbpisg9_rDKSv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MCBTYWx0ZWRfX1wBniPO4V0ln
+ hyiYxJhQZl8eFzqTNVXxQj4mX2upheLuhs0JMzLRVCtUsfEdoSpVtbzkejK74GeyPz93j+/QqnG
+ FCB7wFIyBMSXNRHDDbe6+Bn+EwtJgJDL62oskmDH3zth+EciDfKItNhMEdhPysWDBgl5In8wmv/
+ nDqGQNA/Tl5/uBu+ASzawx5UunTIOz6XnJJ2g/X+PIwKS+ydkJNqoIDTGkdnck4ceysYPTpXDRA
+ QB+WZmt8KePlYLQuCjKTMT1a2LNtiy7XYB0H7c6NEvdFjSGhbiBPMpp3fahKxB4dCYuhtEU2wpc
+ qGIof+6C5X/RsUDkJdaBGlSEcjeLVfEbiGPIgq0e/iS9/ccowFs0Nd+XX21z4HyB1NYPG5BduuZ
+ 8EjMAwT7
+X-Proofpoint-GUID: 9o_bWBcIItoGcBJXTnIHbpisg9_rDKSv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300040
 
-On Mon, Sep 1, 2025 at 4:06=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> On Thu, Aug 28, 2025 at 11:01=E2=80=AFPM Serge E. Hallyn <serge@hallyn.co=
-m> wrote:
-> > On Wed, Aug 27, 2025 at 05:32:02PM -0700, Andy Lutomirski wrote:
-> > > On Wed, Aug 27, 2025 at 5:14=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.c=
-om> wrote:
-> > > >
-> > > > On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
-> > > > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote=
-:
-> > > > > > Nothing has changed in that regard and I'm not interested in st=
-uffing
-> > > > > > the VFS APIs full of special-purpose behavior to work around th=
-e fact
-> > > > > > that this is work that needs to be done in userspace. Change th=
-e apps,
-> > > > > > stop pushing more and more cruft into the VFS that has no busin=
-ess
-> > > > > > there.
-> > > > >
-> > > > > It would be interesting to know how to patch user space to get th=
-e same
-> > > > > guarantees...  Do you think I would propose a kernel patch otherw=
-ise?
-> > > >
-> > > > You could mmap the script file with MAP_PRIVATE. This is the *actua=
-l*
-> > > > protection the kernel uses against overwriting binaries (yes, ETXTB=
-SY is
-> > > > nice but IIRC there are ways to get around it anyway).
-> > >
-> > > Wait, really?  MAP_PRIVATE prevents writes to the mapping from
-> > > affecting the file, but I don't think that writes to the file will
-> > > break the MAP_PRIVATE CoW if it's not already broken.
-> > >
-> > > IPython says:
-> > >
-> > > In [1]: import mmap, tempfile
-> > >
-> > > In [2]: f =3D tempfile.TemporaryFile()
-> > >
-> > > In [3]: f.write(b'initial contents')
-> > > Out[3]: 16
-> > >
-> > > In [4]: f.flush()
-> > >
-> > > In [5]: map =3D mmap.mmap(f.fileno(), f.tell(), flags=3Dmmap.MAP_PRIV=
-ATE,
-> > > prot=3Dmmap.PROT_READ)
-> > >
-> > > In [6]: map[:]
-> > > Out[6]: b'initial contents'
-> > >
-> > > In [7]: f.seek(0)
-> > > Out[7]: 0
-> > >
-> > > In [8]: f.write(b'changed')
-> > > Out[8]: 7
-> > >
-> > > In [9]: f.flush()
-> > >
-> > > In [10]: map[:]
-> > > Out[10]: b'changed contents'
-> >
-> > That was surprising to me, however, if I split the reader
-> > and writer into different processes, so
->
-> Testing this in python is a terrible idea because it obfuscates the
-> actual syscalls from you.
->
-> > P1:
-> > f =3D open("/tmp/3", "w")
-> > f.write('initial contents')
-> > f.flush()
-> >
-> > P2:
-> > import mmap
-> > f =3D open("/tmp/3", "r")
-> > map =3D mmap.mmap(f.fileno(), f.tell(), flags=3Dmmap.MAP_PRIVATE, prot=
-=3Dmmap.PROT_READ)
-> >
-> > Back to P1:
-> > f.seek(0)
-> > f.write('changed')
-> >
-> > Back to P2:
-> > map[:]
-> >
-> > Then P2 gives me:
-> >
-> > b'initial contents'
->
-> Because when you executed `f.write('changed')`, Python internally
-> buffered the write. "changed" is never actually written into the file
-> in your example. If you add a `f.flush()` in P1 after this, running
-> `map[:]` in P2 again will show you the new data.
->
 
-These days, one can type in Python, ask an LLM to translate to C, and
-get almost-correct output :)  Or one can use os.write(), which is
-exactly what I should have done.
 
---Andy
+On 01-Sep-25 9:37 AM, Manivannan Sadhasivam wrote:
+> On Thu, Aug 28, 2025 at 10:22:28AM GMT, Bart Van Assche wrote:
+>> On 8/28/25 9:45 AM, Ram Kumar Dwivedi wrote:
+>>> On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
+>>>> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
+>>>>> +  limit-rate:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>> +    enum: [1, 2]
+>>>>> +    default: 2
+>>>>> +    description:
+>>>>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
+>>>>> +      TX and RX directions, often required in automotive environments due
+>>>>> +      to hardware limitations.
+>>>>
+>>>> As far as I know no numeric values are associated with these rates in
+>>>> the UFSHCI 4.1 standard nor in any of the previous versions of this
+>>>> standard. Does the .yaml syntax support something like "enum: [A, B]"?
+>>> Hi Bart,
+>>>
+>>> As per the MIPI UniPro spec:
+>>>
+>>> In Section 5.7.12.3.2, the hs_series is defined as:
+>>> hs_series = Flags[3] + 1;
+>>>
+>>> In Section 5.7.7.1, Flags[3] is described as:
+>>> Set to ‘0’ for Series A and ‘1’ for Series B (PA_HSSeries).
+>>>
+>>> While issuing the DME command from the UFS driver to set the rate,
+>>> the values 1 and 2 are passed as arguments for Rate A and Rate B
+>>> respectively. Additionally, the hs_rate variable is of type u32.
+>>
+>> Hi Ram,
+>>
+>> Thanks for having looked this up.
+>>
+>> Since it is much more common to refer to these rates as "Rate A" and
+>> "Rate B" rather than using numbers for these rates, please change the
+>> enumeration labels into something like "Rate_A" and "Rate_B".
+>>
+> 
+> +1. Since this binding describes the HCI, let's stick to the terminologies in
+> UFSHCI spec.
+
+I have taken care of this in the next patchset.
+
+Thanks,
+Ram
+
+
+> 
+> - Mani
+> 
+
 
