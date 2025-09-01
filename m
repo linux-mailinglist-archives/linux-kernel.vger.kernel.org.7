@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-794158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1FEB3DDA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FDEB3DD93
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE0417AD34
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F30189F544
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1542B305047;
-	Mon,  1 Sep 2025 09:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0452330103B;
+	Mon,  1 Sep 2025 09:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="cljPwtmr"
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1pb/YGX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A933043B0;
-	Mon,  1 Sep 2025 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF34D30146E;
+	Mon,  1 Sep 2025 09:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717766; cv=none; b=tzmkd8H68Cdef9pA8/2OP+95AyE8A0sFwHcHwI+bMZWAh8goKBUcLo02LZBr5Aa7SqPsUkQE5vjkbivV9cxc/sa8iuzKvpyoYiIJSqqMx/F1ipJLUk3QDUpFcj2Q9lSa3f3xOQfrIcpn+qCVlUO7cYHU17ppvu35QwQwPZC12fs=
+	t=1756717457; cv=none; b=JdVBLiUcYgKvufiIYNXcT81lXhh30IgtrB3ZLms2XTy9pKSM0OC3VU4/6f5uJqV78JRhH/TRUMIy/sBNX59XmFPaWKjF1nbgS4sw1BGlANeSsNKcX5HGqlPnc4tCXqLynlnL6ukU1lg8nQ0cczBO1U4N7QkqwiMd8E+wV7ePg0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717766; c=relaxed/simple;
-	bh=T8ihf112g9u2f1A9yPNf17Zec+yVLlF4arukt8xeoQs=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=rtdTKIjep/1TyDtlOeLbTDleVUgyKjHGT77hLwjnHnYkAFjYEGNQf7gztt83y228Gy0WrSD0j83ChMALcW2B/GgbUv9EnEOTn52MWtx2IMhm72Nw8YB//AqfJM/Sn5S/I5lsaAg2MoUmJza4L134laH5+fDmtEqWXphXlzURDTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=cljPwtmr; arc=none smtp.client-ip=203.205.221.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756717455;
-	bh=yaTeFtLRO5tvXwPuK3rKpMfJKgvbP8eLKfJv8XhYE/E=;
-	h=From:To:Cc:Subject:Date;
-	b=cljPwtmrAkZeg8IkGCVBuGqJPAgyLgrV6xteO5Jd2rdpEwZVwqjx4d/rOQ/7UJ+fm
-	 dU4lDMh/0QHzqKGIPDMG9r88STauudtDsjU5p5n+YgEqd+UyzipY/Hkc3fz3WQ28Mv
-	 eTcNagklQwIxyt1dAKuz5OZgLBKnqRAdVw2Z+Upw=
-Received: from localhost.localdomain ([112.94.77.11])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 10D1883F; Mon, 01 Sep 2025 17:04:13 +0800
-X-QQ-mid: xmsmtpt1756717453t5ocrcnwm
-Message-ID: <tencent_64909A540A8CD9063D28DEFD0A684AF9B709@qq.com>
-X-QQ-XMAILINFO: NRYSeI3Ux+UPKBqenge/iM5apnt4JgNSf6hICTmL6hwIFOvHFwQt6jEpO5mfZ7
-	 ff7W+zARH/K2ohCTAQtNOZ9K/+dzervwNbcHVb7ZOPLd7PFftSOx24rKqtKjN+SI/46ipWyJp+mf
-	 N3Vw6kZdPI4mUdaLfxCn+zYw1OSGkXo3qA/OwlYGCwxG91UYkF3Cy1JKiXIKAyo20QP36SsvL0ed
-	 tQFXw+789q+0a+vxtOOjcO6tatqpp0YuagsZ8T32dJvGzouFltZSPd2V3hpo0+F9s4ltPnnkbJ/n
-	 aXqtwu6CUGo8ihauxjnGFUKOePrn0m008hP4OBzwYE6/ZCb+d4RiuwfLymeh7VllGN1tGTCIA+Fb
-	 bIvDpbgBCz2zZdxUZh3IO0gxHZGK9wssu6IfrSi/NC6ocMWQkqI3oAHnEjwwnAB/pWr/vCQbYKTw
-	 4l8FPj2hLZ/TJU8jaNnfWyiyt9PGFwZOYiGbuZoI+CbqC8gTSFodeRYfl5jmRcv2JX/BjNDXCtpN
-	 UwBeMQqqVwn8IXoFrkFZFWBlozXZt0cEkaB6axoiIAA/5Q1FD4mJJvugXIaT7EJjP+SvF/yq32FS
-	 LeocQal7ou8z3QjpOcPDH4OXXRNmJr7d42lY3tl1sC+b+Dy7WKdekCzJ0It5GumRrocnY4XEytUe
-	 ux78PRYagET3mDYgss9ymWWPySrgAAQJy4U26Q5NEJLvxAfwCr4omlw3m+5hsez52WvPj6KpRBan
-	 3quRgn7OWzmeMGfxM0hcpX5i75UBVnGquZfJP/TQQ5fcAswl0X4ioJj6cGPADKxMu39Q8Q5DulYE
-	 rOa7nDnNzIcF0qYoxlJRs/zSd3DsxjQhvEgwE5zbE2+YqF/TCM5J06JlKgrzDQ1ULxkewBgMXQSn
-	 LRqY5L7U+FK+w6pFRr83xq+rDeKAgaQJV+txukzFb1nEzRnU8hvFEgK8Wpzp0mMjUHV0nDa+XtcT
-	 5ehyRPrRKcKkW14IUAaGrNdTGrZOAPY6NsT2JaevrDdeiH5NrQ/3tIA5Yzz9O9zu8923LMv+h8PR
-	 ktlx0pYv/6fKaJI8SqHQ7rc1dXt6w=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Conley Lee <conleylee@foxmail.com>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	wens@csie.org,
-	mripard@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	Conley Lee <conleylee@foxmail.com>
-Subject: [PATCH] arm: dts: sun4i-emac enable dma rx in sun4i
-Date: Mon,  1 Sep 2025 17:04:03 +0800
-X-OQ-MSGID: <20250901090403.533184-1-conleylee@foxmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756717457; c=relaxed/simple;
+	bh=hoPwDEUVNjFvKPgr4nDs6U8M+KKVFQQSzWDP+GtJxMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjHk29sDQms3QlHk/MzGDCewJLcFdb7L3u02dHLdFZgqCcqCozgPbbFfSdTZRbUizMxUqp71e/SwlULQ0uMBSMkYX/6h1/9m5bpaw1T8Q0kFkJ5fLval61B+dlR58aZnFrJaK8+MtzXJXhMtitlQSbw7xlSzPHFUOUAjeCcerQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1pb/YGX; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756717456; x=1788253456;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hoPwDEUVNjFvKPgr4nDs6U8M+KKVFQQSzWDP+GtJxMQ=;
+  b=H1pb/YGXjS4J4eBB4xioD8BY70DusvMBLm4R2b3NRxq4eYNaJeohll2H
+   KqHd6ew+KzJ1ge7bRhoo6ajFnZu6SfDILY0/OGL/2q/t1d4HM7JUQsHHS
+   IgbZdpGhfongvBzplh2EjUYx6kCJmy7eXxFJLqy2LbEfAwsEEVA2ihVJA
+   Jo05To6gegddJxvFd8QCNGml/r+lEzODMYO/BzhgIsyiJaFbtqX05js67
+   LRIwcJDc/jaE0e0oAolhiwmNlrsH+sbDInzowgm6g0+YdcxEZu0JNzyVY
+   TKxuebGWaxflpFvtp72ZgVABUUl+OKJpn4qufwt6uIx9ekmfD2/Q1tyBh
+   g==;
+X-CSE-ConnectionGUID: dm6NPY8cR5aflnYMIEG86g==
+X-CSE-MsgGUID: 9idTNztJR3ayuajP2B+kwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="62613046"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="62613046"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 02:04:15 -0700
+X-CSE-ConnectionGUID: i7u0poHqRTKPrl9hIWrF2w==
+X-CSE-MsgGUID: aEMnrN8xRqyolytZZUIu9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="201897708"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 02:04:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ut0SQ-0000000AMqp-1kPB;
+	Mon, 01 Sep 2025 12:04:10 +0300
+Date: Mon, 1 Sep 2025 12:04:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v1] gpiolib: acpi: Ignore touchpad wakeup on GPD G1619-05
+Message-ID: <aLVhijm0pXWItwAt@smile.fi.intel.com>
+References: <20250827175842.3697418-1-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827175842.3697418-1-lkml@antheas.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The current sun4i-emac driver supports receiving data packets using DMA,
-but this feature is not enabled in the device tree (dts) configuration.
-This patch enables the DMA receive option in the dts file.
+On Wed, Aug 27, 2025 at 07:58:42PM +0200, Antheas Kapenekakis wrote:
+> Same issue as G1619-04 in commit 805c74eac8cb ("gpiolib: acpi: Ignore
+> touchpad wakeup on GPD G1619-04"), Strix Point lineup uses 05.
 
-Signed-off-by: Conley Lee <conleylee@foxmail.com>
----
- arch/arm/boot/dts/allwinner/sun4i-a10.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Pushed to my review and testing queue, thanks!
 
-diff --git a/arch/arm/boot/dts/allwinner/sun4i-a10.dtsi b/arch/arm/boot/dts/allwinner/sun4i-a10.dtsi
-index 51a6464aa..b20ef5841 100644
---- a/arch/arm/boot/dts/allwinner/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/allwinner/sun4i-a10.dtsi
-@@ -317,6 +317,8 @@ emac: ethernet@1c0b000 {
- 			allwinner,sram = <&emac_sram 1>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&emac_pins>;
-+			dmas = <&dma SUN4I_DMA_DEDICATED 7>;
-+			dma-names = "rx";
- 			status = "disabled";
- 		};
- 
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
 
 
 
