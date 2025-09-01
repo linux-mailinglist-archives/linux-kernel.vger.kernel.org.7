@@ -1,63 +1,102 @@
-Return-Path: <linux-kernel+bounces-795225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70CCB3EE8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:42:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C72CB3EE8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53686165E92
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225A2202C01
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4EA32ED2D;
-	Mon,  1 Sep 2025 19:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BAF32ED3D;
+	Mon,  1 Sep 2025 19:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mIp5z6bC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ohVYjYyX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rP7qM9jg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ohVYjYyX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rP7qM9jg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2106126AA93;
-	Mon,  1 Sep 2025 19:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAF632ED2E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 19:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755723; cv=none; b=Vjg087XK0CBElSM2CRRY1nzNveF6uwMvUNEfujR/uGdnkEYkWGo2LQnv1Q6djZz7FVaBGv4T6wEvoqixdP3sElhJdTDjcU+pLCX5bVtD5IRy3hzd2M9YA/PFaDoksc4QTIYdcBMZPRyDB5b89n5BB2lI9qVlv4hQzfegHyxIg8Q=
+	t=1756755739; cv=none; b=Xc8HvZ+DtdO9iXGrAFbg2/NQHQtNUJVFEP9Yy7lKuiCP0BYhvSMrS4Z7gfrHAWjaOoFHXdCNgLCAfJmyTLCSv9PMB83sujAjEgsQiGe7+pvOxqlNsiuhaAm0TVcqdopOWzLNrLaHifzdUNqN4NzA+w9ai+xBWguDjlLWfBnJ8+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755723; c=relaxed/simple;
-	bh=keFYPcsoi58SdBX3NhlcJNv+qZnJirwK4c2TZ6485gI=;
+	s=arc-20240116; t=1756755739; c=relaxed/simple;
+	bh=ZULjEP4wPmnLlP52Q74L9hpN0R/J3NtJdFxzS7CO8XA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jsC/tWACIoo2BZPFmTf/VSlVZI/Fdsl80OGK7o459C0y5huQ2o0CZUPfgCD4/JWuTLK1GEysdW6Er/egTXWZLYGXcfxEx6Hxd6flPMx9pVz861wFkpZo45tN4CuWEahLvcYYyLBMIFh2om9t65CJpG0ojUhw65s6sbUFDG1Iuv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mIp5z6bC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OXmQwmuMTAG2HSIdNxmQ9RuY2Q8gE5vO81foFabz8EM=; b=mIp5z6bCmDN8CVf6e95RVanZY3
-	3fs7ps5/6g3Kljt72q2L9SLWFPd6uRmqzLSHOVyBQ1XFJeFs7GhbDYSVgbEThdun76IK0wEGA6i1y
-	PShFtPw+wCRuzBJKLhbeBjvgHpNEZX3wpKSyd5yrL6QPcJBD2grhKasAogHUNhEGnEvUtEZeIRGT5
-	KPigGs+AQXMZS8CRletpvvIge7yfv16jUqGGGJnl8uUX0Knv50WdgYiVM8KBBpE+MvtwPYbwFMIko
-	Az15hxI8cb2fpnL8NqUTh78c9T8HuQHBGSgKgAm5BgNk5+VEKgRCh2Q1LjteqHDVotxnchij1EUhK
-	AYRGYM8Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utAPZ-00000003qbD-0LLf;
-	Mon, 01 Sep 2025 19:41:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EBAB0300342; Mon, 01 Sep 2025 21:41:51 +0200 (CEST)
-Date: Mon, 1 Sep 2025 21:41:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
-Cc: christian.koenig@amd.com, matthew.auld@intel.com,
-	jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, alexander.deucher@amd.com
-Subject: Re: [PATCH v5 1/2] drm/buddy: Optimize free block management with RB
- tree
-Message-ID: <20250901194151.GJ4067720@noisy.programming.kicks-ass.net>
-References: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncMePg98d9ZjO6D/rUfNA4BFRvaI/eksBEUThgWcr+DFlzS0GZMmVhNf4Fl+bKVWyGYrAUOOR68DPmr2mZimxAPMD+dPr6+imVlAQTXA5LjCMDISxKSvK41+6/pXp22nN3mndFHaBXYf0GFPnk2E9cAORYxP48T8gF84mALkvJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ohVYjYyX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rP7qM9jg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ohVYjYyX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rP7qM9jg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A3FD211C9;
+	Mon,  1 Sep 2025 19:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756755736;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9I8Bci2kmrkA6sH9Cg5w6kJmECHIACLmH3gwZq85Fk=;
+	b=ohVYjYyXb5l4mYcpUTXNZVFnAmNkfimr1owSu6YrrZRtBMa0Ye2pAt5Gjc7da+9DZpVHUd
+	0kA3UOPQo9ACYQVOO8ifmAfGVwFSfHOLHJhJq0e4yMyKuuwh/KTWO7t6W9TzvNc7q6OSgc
+	MC50JrtggupMq1Ul9py3l/ZyIyMkxyY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756755736;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9I8Bci2kmrkA6sH9Cg5w6kJmECHIACLmH3gwZq85Fk=;
+	b=rP7qM9jgttE132LYw7pKOG/wWnMIZ/OiPpIEnRwPKO5ZW3UMycgThiKeOHK6u2Czzz/PV+
+	mWxfR25mZnTfEvCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ohVYjYyX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rP7qM9jg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756755736;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9I8Bci2kmrkA6sH9Cg5w6kJmECHIACLmH3gwZq85Fk=;
+	b=ohVYjYyXb5l4mYcpUTXNZVFnAmNkfimr1owSu6YrrZRtBMa0Ye2pAt5Gjc7da+9DZpVHUd
+	0kA3UOPQo9ACYQVOO8ifmAfGVwFSfHOLHJhJq0e4yMyKuuwh/KTWO7t6W9TzvNc7q6OSgc
+	MC50JrtggupMq1Ul9py3l/ZyIyMkxyY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756755736;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9I8Bci2kmrkA6sH9Cg5w6kJmECHIACLmH3gwZq85Fk=;
+	b=rP7qM9jgttE132LYw7pKOG/wWnMIZ/OiPpIEnRwPKO5ZW3UMycgThiKeOHK6u2Czzz/PV+
+	mWxfR25mZnTfEvCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A4151378C;
+	Mon,  1 Sep 2025 19:42:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aoEHAhj3tWimKwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 01 Sep 2025 19:42:16 +0000
+Date: Mon, 1 Sep 2025 21:42:14 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: scrub: replace max_t()/min_t() with clamp_t() in
+ scrub_throttle_dev_io()
+Message-ID: <20250901194214.GE5333@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250901150144.227149-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,164 +105,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250901185604.2222-1-Arunpravin.PaneerSelvam@amd.com>
+In-Reply-To: <20250901150144.227149-2-thorsten.blum@linux.dev>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1A3FD211C9
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:dkim,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.21
 
-On Tue, Sep 02, 2025 at 12:26:04AM +0530, Arunpravin Paneer Selvam wrote:
-> Replace the freelist (O(n)) used for free block management with a
-> red-black tree, providing more efficient O(log n) search, insert,
-> and delete operations. This improves scalability and performance
-> when managing large numbers of free blocks per order (e.g., hundreds
-> or thousands).
+On Mon, Sep 01, 2025 at 05:01:44PM +0200, Thorsten Blum wrote:
+> Replace max_t() followed by min_t() with a single clamp_t(). Manually
+> casting 'bwlimit / (16 * 1024 * 1024)' to u32 is also redundant when
+> using max_t(u32,,) or clamp_t(u32,,) and can be removed.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Did you consider the interval tree?
-
-
-> @@ -41,23 +43,53 @@ static void drm_block_free(struct drm_buddy *mm,
->  	kmem_cache_free(slab_blocks, block);
->  }
->  
-> -static void list_insert_sorted(struct drm_buddy *mm,
-> -			       struct drm_buddy_block *block)
-> +static void rbtree_insert(struct drm_buddy *mm,
-> +			  struct drm_buddy_block *block)
->  {
-> +	struct rb_root *root = &mm->free_tree[drm_buddy_block_order(block)];
-> +	struct rb_node **link = &root->rb_node;
-> +	struct rb_node *parent = NULL;
->  	struct drm_buddy_block *node;
-> -	struct list_head *head;
-> +	u64 offset;
-> +
-> +	offset = drm_buddy_block_offset(block);
->  
-> -	head = &mm->free_list[drm_buddy_block_order(block)];
-> -	if (list_empty(head)) {
-> -		list_add(&block->link, head);
-> -		return;
-> +	while (*link) {
-> +		parent = *link;
-> +		node = rb_entry(parent, struct drm_buddy_block, rb);
-> +
-> +		if (offset < drm_buddy_block_offset(node))
-> +			link = &parent->rb_left;
-> +		else
-> +			link = &parent->rb_right;
->  	}
->  
-> -	list_for_each_entry(node, head, link)
-> -		if (drm_buddy_block_offset(block) < drm_buddy_block_offset(node))
-> -			break;
-> +	rb_link_node(&block->rb, parent, link);
-> +	rb_insert_color(&block->rb, root);
-> +}
-
-static inline bool __drm_bb_less(const struct drm_buddy_block *a,
-				 const struct drm_buddy_block *b)
-{
-	return drm_buddy_block_offset(a) < drm_buddy_block_offset(b);
-}
-
-#define __node_2_drm_bb(node) rb_entry((node), struct drm_buddy_block, rb)
-
-static inline bool rb_drm_bb_less(struct rb_node *a, const struct rb_node *b)
-{
-	return __drm_bb_less(__node_2_drm_bb(a), __node_2_drm_bb(b));
-}
-
-static void rbtree_insert(struct drm_buddy *mm, struct drm_buddy_block *block)
-{
-	rb_add(block->rb, &mm->free_tree[drm_buddy_block_order(block)], rb_drm_bb_less);
-}
-
-> +
-> +static void rbtree_remove(struct drm_buddy *mm,
-> +			  struct drm_buddy_block *block)
-> +{
-> +	struct rb_root *root;
-> +
-> +	root = &mm->free_tree[drm_buddy_block_order(block)];
-> +	rb_erase(&block->rb, root);
->  
-> -	__list_add(&block->link, node->link.prev, &node->link);
-> +	RB_CLEAR_NODE(&block->rb);
-> +}
-> +
-> +static inline struct drm_buddy_block *
-> +rbtree_last_entry(struct drm_buddy *mm, unsigned int order)
-> +{
-> +	struct rb_node *node = rb_last(&mm->free_tree[order]);
-> +
-> +	return node ? rb_entry(node, struct drm_buddy_block, rb) : NULL;
-> +}
-
-rb_add_cached() caches the leftmost entry, if you invert the key, the
-last is first.
-
-> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
-> index 8d2ba3749866..17190bb4837c 100644
-> --- a/include/linux/rbtree.h
-> +++ b/include/linux/rbtree.h
-> @@ -79,6 +79,62 @@ static inline void rb_link_node_rcu(struct rb_node *node, struct rb_node *parent
->  	   ____ptr ? rb_entry(____ptr, type, member) : NULL; \
->  	})
->  
-> +/**
-> + * rbtree_for_each_entry - iterate in-order over rb_root of given type
-> + *
-> + * @pos:	the 'type *' to use as a loop cursor.
-> + * @root:	'rb_root *' of the rbtree.
-> + * @member:	the name of the rb_node field within 'type'.
-> + */
-> +#define rbtree_for_each_entry(pos, root, member) \
-> +	for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), member); \
-> +	     (pos); \
-> +	     (pos) = rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member))
-> +
-> +/**
-> + * rbtree_reverse_for_each_entry - iterate in reverse in-order over rb_root
-> + * of given type
-> + *
-> + * @pos:	the 'type *' to use as a loop cursor.
-> + * @root:	'rb_root *' of the rbtree.
-> + * @member:	the name of the rb_node field within 'type'.
-> + */
-> +#define rbtree_reverse_for_each_entry(pos, root, member) \
-> +	for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), member); \
-> +	     (pos); \
-> +	     (pos) = rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member))
-> +
-> +/**
-> + * rbtree_for_each_entry_safe - iterate in-order over rb_root safe against removal
-> + *
-> + * @pos:	the 'type *' to use as a loop cursor
-> + * @n:		another 'type *' to use as temporary storage
-> + * @root:	'rb_root *' of the rbtree
-> + * @member:	the name of the rb_node field within 'type'
-> + */
-> +#define rbtree_for_each_entry_safe(pos, n, root, member) \
-> +	for ((pos) = rb_entry_safe(rb_first(root), typeof(*(pos)), member), \
-> +	     (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member) : NULL; \
-> +	     (pos); \
-> +	     (pos) = (n), \
-> +	     (n) = (pos) ? rb_entry_safe(rb_next(&(pos)->member), typeof(*(pos)), member) : NULL)
-> +
-> +/**
-> + * rbtree_reverse_for_each_entry_safe - iterate in reverse in-order over rb_root
-> + * safe against removal
-> + *
-> + * @pos:	the struct type * to use as a loop cursor.
-> + * @n:		another struct type * to use as temporary storage.
-> + * @root:	pointer to struct rb_root to iterate.
-> + * @member:	name of the rb_node field within the struct.
-> + */
-> +#define rbtree_reverse_for_each_entry_safe(pos, n, root, member) \
-> +	for ((pos) = rb_entry_safe(rb_last(root), typeof(*(pos)), member), \
-> +	     (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member) : NULL; \
-> +	     (pos); \
-> +	     (pos) = (n), \
-> +	     (n) = (pos) ? rb_entry_safe(rb_prev(&(pos)->member), typeof(*(pos)), member) : NULL)
-> +
-
-Not really a fan of these. That's typically a sign you're doing it
-wrong. Full tree iteration is actually slower than linked list.
+Added to for-next, thanks.
 
