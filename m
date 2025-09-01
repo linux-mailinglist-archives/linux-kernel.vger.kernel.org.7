@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-793668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A981B3D69B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1A4B3D69D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF360189820F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:19:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D61176D28
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CCD19AD90;
-	Mon,  1 Sep 2025 02:18:58 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68871AF0AF;
+	Mon,  1 Sep 2025 02:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="ihoikpdX"
+Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B2A323E;
-	Mon,  1 Sep 2025 02:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1BB1957FC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756693137; cv=none; b=F/9gG/HCXjIYbeIN7yVxCLO00sYueHO30SOcIiyMl+3/2iNL+7TSBc7b0zveuWDRiCMbi1sjzbJNFZ133ypXvS9RZT3ebP5RxJpKKaH9cEJBZSTZKGJQGpmzplvM4y3mTSVrawbbq22ufVHBPt+YbMdZPmcamqk4HfSyRVimkk0=
+	t=1756693244; cv=none; b=TpJyZUZ1qHfS1f51/vzdpAVVAo6mwp1qDn7BePLiU65hHsAxhgbCNmU4R2hepRx9yPAlz4uZ0M4x1Rf8D5vyWtyerY6LEXvxJsD1bTyy+x2L4dz+TJNfBiFB6mTbvJooosOeFPkmlj1CAHTyYwoKT7ciaeQWuxPXyE978Dknigw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756693137; c=relaxed/simple;
-	bh=l3G0qHAM4WT8AXO5JVFutlptffSlEQXTIdxKQUT1hhU=;
+	s=arc-20240116; t=1756693244; c=relaxed/simple;
+	bh=JT8xpHm5akD0SVc+wble1gZNpbaz8K54nMXqsQ2BeDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JF0RTsfMpNV7SYGoU3fA26M3RR6+qrqZ8xY7gy2YWR3aBf3wZsoxgAnn/HZG6YJx2adzRVCVroZBZIKWIHsAnHsWJBvpnIqUmzdfli0/Kfep6Iw2BRyzPhCr+l2nuW75WkVFm/rXheeVPobGkE3xCEphVkorZ6+pPznT7DYOQNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz6t1756693105t63f78bb9
-X-QQ-Originating-IP: AlFXuqCpeK5FT3bIkgeoOb8S+ZD0AByeYpc3IJFsmYY=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 01 Sep 2025 10:18:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3786511421050913974
-Date: Mon, 1 Sep 2025 10:18:22 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v9 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <5A57083856F7D3CC+20250901021822.GB21078@nic-Precision-5820-Tower>
-References: <20250828025547.568563-1-dong100@mucse.com>
- <20250828025547.568563-6-dong100@mucse.com>
- <e0f71a7d-1288-4971-804d-123e3e8a153f@lunn.ch>
- <A5B215AE5EB4FE9D+20250829023648.GB904254@nic-Precision-5820-Tower>
- <6768f943-e226-4d57-b3a8-692aff4cc430@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJzwEM+vARhx6Q1SX3RwM63/KQ3xWC5l6rmNnzr+nuyToGrS31fp6uiI25+BqMaTVfnkN8mBdwSYJiLRWelh6VmOJCE+he+7m+nmX6dTn91XCIYbCAMYQLyeVqUikg7HKe6r/E9bCe2EYRtv6TXpKlX8KwS7wP1cVENz39bSCic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=ihoikpdX; arc=none smtp.client-ip=171.64.64.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=cs.stanford.edu; s=cs2308; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ucGLHetyfvHvORDISd/LhKKU2NT0oX5XnMJyBYchNJs=; t=1756693241; x=1757557241; 
+	b=ihoikpdX9gKP1ctStIORSGXvJCtlbIlr338I6AHZMZ44fngMcfuAHPqWwuc63f9bT8H0D3IgSvG
+	GTY0dr2cIvlheMZraWTPhgN/nFVwpDa3hQSQb7tMIKMSXtFALucfIw04z09p/Kgp6a7FAaRVSkQe2
+	5ghfNNqeK4FaEBUw1U0XNViMbIRLPtcRZUSZWrCgZ68UjbIVU2WwZqvorAgkGxpx9P2L9bcmCVooB
+	23k3x58McxrU33Dkzosz8kz8psR6yZV8MwrJKm+2xE0fFLxhRQMY4Hrwq0sW56lthmVFH254UtNo1
+	2q6+fh5qkKtmOBTHIWWds/T87AL+F+MdFCdg==;
+Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:58629 helo=macbookair.lan)
+	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <jgnieto@cs.stanford.edu>)
+	id 1usu9t-0001Iv-Bg; Sun, 31 Aug 2025 19:20:37 -0700
+Date: Sun, 31 Aug 2025 19:20:14 -0700
+From: Javier Nieto <jgnieto@cs.stanford.edu>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: luiz.dentz@gmail.com, marcel@holtmann.org,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
+Message-ID: <aLUC3u3ZrF35nIb6@macbookair.lan>
+References: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
+ <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6768f943-e226-4d57-b3a8-692aff4cc430@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OKpEC/bXOl3K4aIDlsEieN2HqZ+6UhYrCxWNhtjbWXx75Xs7yXJVFK1M
-	FqBwDXrv4zlv9R8VoJ+qK6PA0VX1r8WSfkm3fzwf8dlaN3+eV0agA07G3bDFm65rhrseKk0
-	HX/RtIV9pW+w3cMPw3xtbr0+DAtek8r0hqoxnQ6be+mTNrCPPgOBqzTg0puNFH9RLM+wkSY
-	iE6z8S67VKalizRUcOmiOwe8Tx6lBzYdRvJHy5C+jWoZgAn7/k+f0+kyNS4w/qHsX2a7gJT
-	2U84pAxNGeBmAlNdjNqLnibpnukhlfEiVD1RlP8Oy6DKmLDmVjgrCidglmppcLH215no7SK
-	n2ToBvbfNkEqu39e/Yl71qkHONHc84s9AaA/POaz2O75J2mz//ymF5ibL7yLMdfrXYmBnq5
-	++kS5XahKD/1bT4SKHGj9CMleWo7IW3GTVFdlz3eMzxoVCgHKIVcSmr+2YjSIhX9qOwsoA/
-	sPgdrF57gvwnDzxD2iDNwEAlVAobq289C8pBGsdPMHP/t5uSmJi8NBPQLJocH1xkDfOeBcx
-	i4P8s9ytBF5ApcqtmROZjsgn9wzOILHh4XwUl5EIRX2X7tkS8htMLJyR2vSylJK6/fJC+Ff
-	CuziqdR/GXTlx3N11HqfXoM9X74UCfaATcCyPzA/wVuePs50dkRpZEk7znJkNmT8x3Wo2T9
-	d6P1cBmPpBBbU/99mjOBLtThHoArJ5pSFw2IPYZVx3SrFpASackTXp3h7wJItSxulQX8WAI
-	ughAtT246qWV/6AzbTt5bQC48axwcgf1DExwCCy5JvM255x9lFBICXxsaxmiYP/hJI67voR
-	DyL4KzQftPZvxRLei2mJcEWBQIhFIBfzVszW/WVSYCpDndb0Lap3nlYeqOvi4jsY+4r/QUK
-	41u4mPxVCLXj7lj6o3F2WmfMBNHfHvUak528Kl2v1NHak5MPTwHAbYnNKo0hijw6dnXDRI9
-	QG+OLklXpmQJOQj/mJxpD7sFnU3APpxxS/kzlhqInrwUq9gXdrHElrSs0+BJxDKAA+q/1D+
-	BJVgmPvx+eAVj+R6PHmkjWPTzF0+Eh4zXhnzEs7epDcsErkYUW
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de>
+X-Spam-Score: 0.8
+X-Scan-Signature: f69c4e6b4bf914f22ae37cd490358bf0
 
-On Fri, Aug 29, 2025 at 09:51:57PM +0200, Andrew Lunn wrote:
-> > > Back to the ^C handling. This could be interrupted before the firmware
-> > > is told the driver is loaded. That EINTR is thrown away here, so the
-> > > driver thinks everything is O.K, but the firmware still thinks there
-> > > is no MAC driver. What happens then?
-> > > 
-> > 
-> > The performance will be very poor since low working frequency,
-> > that is not we want.
-> > 
-> > > And this is the same problem i pointed out before, you ignore EINTR in
-> > > a void function. Rather than fix one instance, you should of reviewed
-> > > the whole driver and fixed them all. You cannot expect the Reviewers
-> > > to do this for you.
-> > 
-> > I see, I will change 'void' to 'int' in order to handle err, and try to check
-> > other functions.
+Dear Paul,
+
+Thanks for the review!
+
+On Wed, Aug 27, 2025 at 12:56:50PM +0200, Paul Menzel wrote:
+
+> Any btmon trace?
+
+The presence of CRC is limited to the H5 layer, so it is not visible on
+btmon. However, I did advertise and connect to a few devices while
+running btmon and everything worked and looked as normal. I also ensured
+that CRC was being used by adding temporary debugging prints.
+
+> I´d add the above to the proper commit message.
+
+Should I resubmit the patch as v2?
+
+> >   static u8 h5_cfg_field(struct h5 *h5)
+> >   {
+> > -	/* Sliding window size (first 3 bits) */
+> > -	return h5->tx_win & 0x07;
+> > +	/* Sliding window size (first 3 bits) and CRC request (fifth bit). */
+> > +	return (h5->tx_win & 0x07) | 0x10;
 > 
-> Also, consider, do you really want ^C handling? How many other drivers
-> do this? How much time and effort is it going to take you to fix up
-> all the calls which might return -EINTR and your code is currently
-> broken?
+> Could a macro be defined for the CRC request bit?
+
+I thought about this, but decided against it since 0x10 is only used
+here and in one other place. Also, the existing code does not define a
+macro for the window size bits 0x07. I am not opposed to adding it if
+someone feels strongly about it though.
+
+> The diff looks good. Feel free to carry:
 > 
-> 	Andrew
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 > 
+> 
+> Kind regards,
+> 
+> Paul
 
-Originally ^C is designed to handle '/sys/xxxâ€™, and as you said before,
-'It is pretty unusual for ethernet drivers to export data in /sys'.
-I should use 'metex_lock', not 'mutex_lock_interruptible'.
+I see that my patch fails a few test cases because it fails to link
+crc-ccitt. Do you know whether this is a problem with my patch or the
+test environment and where the code for the tests is found?
 
-Thanks for your feedback.
+Thanks again for your feedback.
 
+Javier
 
