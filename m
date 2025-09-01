@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-795028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B6B3EBFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:12:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCAB9B3EBE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D1B1A81A82
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6F832008F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908DC306492;
-	Mon,  1 Sep 2025 16:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEE32E6CDF;
+	Mon,  1 Sep 2025 16:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="geTNsA+1"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFWu2fmi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084652EFDA0;
-	Mon,  1 Sep 2025 16:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F6B2E6CA3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743042; cv=none; b=GGxhL/wjJg91zFX/BZoOJKi6M+3dNZADJNPRIvBeYisJQMZLWXTRU6kSFdwZuG9e9Hdgxyk14qPdHO+YD1ym9AMvRXit/mDO7pp8raSLu9uQeF5uk13cytRLPyDHUrcPmOCcscKSppHmbC1U0G1r4EqllS8PNnq6YzgG7CxgmIo=
+	t=1756742980; cv=none; b=unjBed3NfvckCd6r3jZGhOU5ZwXFWFJItZylG9etJBK87aMUOeof5yhwD/WvTeY7uQxFZDZtTwuRP4axF9oe4Ck2HKxLqwEJ9ux8UwR0dzimnzXt3pywmAI7/a1qnmCY2jBDJ36gVLOzzAEalSGh1ej36e9/XlFs5+yPo7bvwuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743042; c=relaxed/simple;
-	bh=7K6o2zszYWNiRVKlGv3YzgED9jhr4TnD0NyMid5UR8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D0f5E+mp61PH+iHuyxowBKTmGVKJ69QbLytQLDk5Piqy+uJC52PF9HUVys4nFURCqDSlkc9UuDtWU93AQ+RYlkVPGy12vmzvWeAzx1wBxrTAvHvNJANXL464Nc+K9nJzzFMW4csxk7lq8N+HqIUrxZro/xKHHp50fGdIepjMnxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=geTNsA+1; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7f777836c94so403041685a.2;
-        Mon, 01 Sep 2025 09:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756743040; x=1757347840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2nodLcNRZplFTeJWN+CFsT+xl+niXAxoWKtGPtFk90=;
-        b=geTNsA+10NyqX6bcBqHQ5yir0QdTVqLvIXUkBZ4boXqGEV20kl24uiXJz5O5vrSGOk
-         7xiYnylswcX3neJf51JNiPA8j3qjyDZUHsP4/jStBU4cd15Aq4fCha327cg9V+dbR7Qv
-         kevXg1o8FVIJCq8UXjLzQ7XwpyxM1RXWgbHu2ty26ZJC1RGXvhYX9zMkwOo8+WXreL9N
-         lfPZGFelVv/R9FRZTkPChiUIwKs5fAzEREFgcAHxrJr2HZyNXnCURn6XqOKwtOEznwlu
-         X6qTYGRxkYNBG8e6NTrulYH1UFhJj/CDTsd+7IUfDP+7RHQi02KJfkovuGtZgWQyoBUi
-         On9w==
+	s=arc-20240116; t=1756742980; c=relaxed/simple;
+	bh=zuH01+UpwPD6uQfjMhilATGk1akMpM0cfutCtijrf20=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RojDcZ6sffuBbiVazLvLPaRaPixBpP/SvKEx6az2lJlxPgVXFula0RQHO+LZPfpuXDovRmnS5kD1ymrWG8uZh6XBolzBlKbK2vlRu0wTN0qv2PiiwHXCfocqMcuRj470Ebw3wqe+YMF6Ui60lWub1qVx8UzjTu/Prp+Rgwz0rfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AFWu2fmi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756742978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qUxQDVOQO7QvM97v0jkL71CCIdvm08KWkYVR9FcGA/c=;
+	b=AFWu2fmiZLrCpLDgjniyIx4hEgZjo4bMa6tfivAdfaa+YdZTSANnS+4592uklTymMJmf67
+	v7IgWL8XoTzeCzNx7SHEWncgKU7gIccBVE+r8UKha//+3UqxPwmfTv6K6bzS31FOVheUpW
+	GbWa7Vt/qUALdJZkt50uDmEtOM6a2y8=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-389-oC4NBYB7MDiC4X4rj4Tlig-1; Mon, 01 Sep 2025 12:09:37 -0400
+X-MC-Unique: oC4NBYB7MDiC4X4rj4Tlig-1
+X-Mimecast-MFC-AGG-ID: oC4NBYB7MDiC4X4rj4Tlig_1756742976
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70dfd87a763so46598336d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:09:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756743040; x=1757347840;
+        d=1e100.net; s=20230601; t=1756742975; x=1757347775;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m2nodLcNRZplFTeJWN+CFsT+xl+niXAxoWKtGPtFk90=;
-        b=gM1J63UCMYwzV2xFtv734UCm8Wv4YQN38F4Zn2o7lt4c45B5eWVGRClx47q89wuz/u
-         hLsZNPFUg+whHEjibFouAALQwvcdvbMgLOGalm1espzCFVvlR03sLyxFdW6u7PPsK2y7
-         WKIYma3pamocqG8IN8hetb4S/yGSj8LeP1tKGL8Ssd3xCCofIA9vElhQeahoqPF8pi5Z
-         beKoWNr9bHSieVm5Sm4gyEStMiaW+oDBmr0WAT6Q0i6XzIZ4Y0zJpyjPvfbUCxZJLa09
-         VxZuCOusgLeZQJrihzqIkC+ykIlcjMOmjWAWknfeGy8QWnnOlFt5hMs622wwzPg83uJW
-         F1Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdb0XDcAP3y4ewmQqGTqbIu3lAmc3zz4aCNMV/h9y9h1EGFMto5bp9IJt5Y/6lg65lR9rxNNw4rVTd5HM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHCHVKG8CytYbCiLc/DrChrPWTkGd+eSu/gaRJLLXWSQzskEmI
-	U9yMNEWUUEZU1bJnDU3CPhonYkvzMJg3kWmMCRIUWT1gh3aWILmwl/nb
-X-Gm-Gg: ASbGncuaqiJ/XHVrHkOmD/gQq+swRPOekPlugf5KSMym7PqJeWfp8+thUnxGqc0NTCN
-	Cv1Gr2rl3nPRHxVYJeaV5lieq/JRWVn+nfeezoYqQzWv2mU9rL4eFgoptMiJWncCGwsYGXWk298
-	b8iKqbGV67pvkE6nG0eY6H3sQSTU9vJtWpjBq6RNQI1iDl3sxY2FU3m1wqCTuhNq/8Q60dimVh2
-	OD/P8dr6m6wCZvI4pU6pSLBysA3yce5ilKnZxNKfIjSUO6nTRbTs37QDG1+YhCO4inJPMooK9dl
-	HreK4N72b1AkN61InClrq24RLrgVe1sgoOYpohtwW4SaAdrY2gy73YhXm0XUAOT2/JZCcy+JeeJ
-	iik3v0B0TVkLYxpdt/Uo=
-X-Google-Smtp-Source: AGHT+IFPhlHihAARuGxCffUXp7rORQs4i4fLcxmCgsymcnF6anq3dMMvQwgBAKmCpT1c7kxCAEIHzg==
-X-Received: by 2002:a05:620a:1a16:b0:7e6:9961:fd27 with SMTP id af79cd13be357-7ff2b97c498mr1088378885a.65.1756743039576;
-        Mon, 01 Sep 2025 09:10:39 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:2::])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc16341017sm683721285a.63.2025.09.01.09.10.38
+        bh=qUxQDVOQO7QvM97v0jkL71CCIdvm08KWkYVR9FcGA/c=;
+        b=iWPnLLy3wRirhHnf0GZiSd9IMNKgcceIfmYZNa0Rg8Slom5haTHVaDPLXTp9zK7ljT
+         +Q8zXNVzDm1pOMeqK3gQFQSUIeo1l0GITRgyE9DQ13RgW1H4nd/4YC7EMVSvxQMYlg7G
+         bEx86eRbPnqTY41UDLkvUF8451t9jp53q/66TH9b/Cv3sekRee5sC6be3gfpdMl8cEZJ
+         FIdJP+znCo52vBITm6+QWmtCGkjmIOlcws4kwS2ZX8Ph8sZFa4KQQaIGBQTvtFGyMkTY
+         E7YaBiQJL+XI1S/ynl/WRah/YmXGthsUiYNqHgKUl123XRPPfGO+KZ1RO9RVafzwqScp
+         rpEQ==
+X-Gm-Message-State: AOJu0YyhgZmyGczDHlXd34Y1sRaNEAWSUclBl44Pdk+lnadRPaermPDV
+	xQH2gYCBwyLIO3/8ykxPOl1epvLtXaQMBqTzuE78wKm77FsR+m3ip3C9f9wpahuplwgtH6eH5WC
+	9+I5qbu/FvE4ri53pmhnm5YT/IFRoOBlxMN77C0YSRY46JsylsPHEf5Tp/sxpUDeQBUDWolyAXq
+	WQt3eDWj+VxyQwIVtygxVkietxVhTOG+ucu9Uxv4EVkx7GsHWbpg==
+X-Gm-Gg: ASbGncvOaq3sqHTmRYSNbpPuLh3dCllNYrse1gQIuvvEWMrIde8huk73Kflmx1d6CPC
+	yNqmbIKz4ZFE3iokK8fAHTN50wVZnY9KDCNBs4QcPWttRT/TWGz0xvjlPX/8vCRdMaPT6AGk/Hg
+	TgrZWGA1wmE8KXrWHMudyd9VrVEx/W4qnIsX6M4NXvzKBbzNVQKsrRqOkFA8cad/sBGSIstkIk1
+	vJNQQ76/XiazpVeb5pnkfiYxxd7lQSkOI6sAwcoIGFFXhG+T7UdN/xko3ilw8X7fqUDpS2pyZwJ
+	elkUtn5ENhFa4VzyCiv/SqfDiECyXiNV6tJJsflbbDojzyzSIcbfXKmM9Ho3pUdSaIOHaf9Ia27
+	+e4Pmfh+udx2Fc6xuNVUoLKvagKJE+mnUfGx3XPzO9wkSwhbHMiLGvVotrR0SPZv9V1xe
+X-Received: by 2002:ad4:5746:0:b0:70d:b541:8084 with SMTP id 6a1803df08f44-70fac89260bmr97925786d6.34.1756742975477;
+        Mon, 01 Sep 2025 09:09:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFI1Ixvv9KmfyodssHHyS8ameq0QtvIfGvGQZk2Ge7kf/hycu1G7Hr2lBrFcKsR5VeRyQhoZw==
+X-Received: by 2002:ad4:5746:0:b0:70d:b541:8084 with SMTP id 6a1803df08f44-70fac89260bmr97925146d6.34.1756742974841;
+        Mon, 01 Sep 2025 09:09:34 -0700 (PDT)
+Received: from [10.201.49.111] (nat-pool-mxp-t.redhat.com. [149.6.153.186])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb26484eesm41516466d6.33.2025.09.01.09.09.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 09:10:38 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: alx@kernel.org
-Cc: linux-man@vger.kernel.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	hannes@cmpxchg.org,
-	baohua@kernel.org,
-	shakeel.butt@linux.dev,
-	ziy@nvidia.com,
-	laoar.shao@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of PR_THP_DISABLE_EXCEPT_ADVISED
-Date: Mon,  1 Sep 2025 17:09:03 +0100
-Message-ID: <20250901160903.2801339-1-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.47.3
+        Mon, 01 Sep 2025 09:09:34 -0700 (PDT)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: dave.hansen@intel.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	thomas.lendacky@amd.com,
+	x86@kernel.org,
+	kas@kernel.org,
+	rick.p.edgecombe@intel.com,
+	dwmw@amazon.co.uk,
+	kai.huang@intel.com,
+	seanjc@google.com,
+	reinette.chatre@intel.com,
+	isaku.yamahata@intel.com,
+	dan.j.williams@intel.com,
+	ashish.kalra@amd.com,
+	nik.borisov@suse.com,
+	chao.gao@intel.com,
+	sagis@google.com,
+	farrah.chen@intel.com
+Subject: [PATCH v8 0/7] TDX host: kexec/kdump support
+Date: Mon,  1 Sep 2025 18:09:23 +0200
+Message-ID: <20250901160930.1785244-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,166 +113,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
-THPs when advised. IOW, it allows individual processes to opt-out of THP =
-"always" into THP = "madvise", without affecting other workloads on the
-system. The series has been merged in [1].
+Currently kexec() support and TDX host are muturally exclusive in the
+Kconfig.  This series adds the TDX host kexec support so that they can
+be both enabled in Kconfig.
 
-This patch documents the changes introduced due to the addition of
-PR_THP_DISABLE_EXCEPT_ADVISED flag:
-- PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
-  is configured for the calling thread (with or without
-  PR_THP_DISABLE_EXCEPT_ADVISED).
-- PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
-  completely for the process, or disable except madvise
-  (PR_THP_DISABLE_EXCEPT_ADVISED).
+With this series, the user can kexec (including crash kdump) to the new
+kernel at any time regardless of whether TDX has been enabled in the
+first kernel.  One limitation is if the first kernel has ever enabled
+TDX, for now the second kernel cannot use TDX.  This is the future work
+in my TODO list.
 
-[1] https://lore.kernel.org/all/20250815135549.130506-1-usamaarif642@gmail.com/
+This series should go in through the tip tree.
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- man/man2/madvise.2                      |  4 +-
- man/man2const/PR_GET_THP_DISABLE.2const | 18 ++++++---
- man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
- 3 files changed, 61 insertions(+), 13 deletions(-)
+Thanks,
 
-diff --git a/man/man2/madvise.2 b/man/man2/madvise.2
-index 10cc21fa4..6a5290f67 100644
---- a/man/man2/madvise.2
-+++ b/man/man2/madvise.2
-@@ -373,7 +373,9 @@ nor can it be stack memory or backed by a DAX-enabled device
- (unless the DAX device is hot-plugged as System RAM).
- The process must also not have
- .B PR_SET_THP_DISABLE
--set (see
-+set without the
-+.B PR_THP_DISABLE_EXCEPT_ADVISED
-+flag (see
- .BR prctl (2)).
- .IP
- The
-diff --git a/man/man2const/PR_GET_THP_DISABLE.2const b/man/man2const/PR_GET_THP_DISABLE.2const
-index 38ff3b370..df239700f 100644
---- a/man/man2const/PR_GET_THP_DISABLE.2const
-+++ b/man/man2const/PR_GET_THP_DISABLE.2const
-@@ -6,7 +6,7 @@
- .SH NAME
- PR_GET_THP_DISABLE
- \-
--get the state of the "THP disable" flag for the calling thread
-+get the state of the "THP disable" flags for the calling thread
- .SH LIBRARY
- Standard C library
- .RI ( libc ,\~ \-lc )
-@@ -18,13 +18,21 @@ Standard C library
- .B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
- .fi
- .SH DESCRIPTION
--Return the current setting of
--the "THP disable" flag for the calling thread:
--either 1, if the flag is set, or 0, if it is not.
-+Returns a value whose bits indicate how THP-disable is configured
-+for the calling thread.
-+The returned value is interpreted as follows:
-+.P
-+.nf
-+.B "Bits"
-+.B " 1 0  Value  Description"
-+ 0 0    0    No THP-disable behaviour specified.
-+ 0 1    1    THP is entirely disabled for this process.
-+ 1 1    3    THP-except-advised mode is set for this process.
-+.fi
- .SH RETURN VALUE
- On success,
- .BR PR_GET_THP_DISABLE ,
--returns the boolean value described above.
-+returns the value described above.
- On error, \-1 is returned, and
- .I errno
- is set to indicate the error.
-diff --git a/man/man2const/PR_SET_THP_DISABLE.2const b/man/man2const/PR_SET_THP_DISABLE.2const
-index 564e005d4..9f0f17702 100644
---- a/man/man2const/PR_SET_THP_DISABLE.2const
-+++ b/man/man2const/PR_SET_THP_DISABLE.2const
-@@ -6,7 +6,7 @@
- .SH NAME
- PR_SET_THP_DISABLE
- \-
--set the state of the "THP disable" flag for the calling thread
-+set the state of the "THP disable" flags for the calling thread
- .SH LIBRARY
- Standard C library
- .RI ( libc ,\~ \-lc )
-@@ -15,24 +15,62 @@ Standard C library
- .BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
- .B #include <sys/prctl.h>
- .P
--.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
-+.BI "int prctl(PR_SET_THP_DISABLE, long " thp_disable ", unsigned long " flags ", 0L, 0L);"
- .fi
- .SH DESCRIPTION
--Set the state of the "THP disable" flag for the calling thread.
-+Set the state of the "THP disable" flags for the calling thread.
- If
--.I flag
--has a nonzero value, the flag is set, otherwise it is cleared.
-+.I thp_disable
-+has a nonzero value, the THP disable flag is set according to the value of
-+.I flags,
-+otherwise it is cleared.
- .P
--Setting this flag provides a method
-+This
-+.BR prctl (2)
-+provides a method
- for disabling transparent huge pages
- for jobs where the code cannot be modified,
- and using a malloc hook with
- .BR madvise (2)
- is not an option (i.e., statically allocated data).
--The setting of the "THP disable" flag is inherited by a child created via
-+The setting of the "THP disable" flags is inherited by a child created via
- .BR fork (2)
- and is preserved across
- .BR execve (2).
-+.P
-+The behavior depends on the value of
-+.IR flags:
-+.TP
-+.B 0
-+The
-+.BR prctl (2)
-+call will disable THPs completely for the process,
-+irrespective of global THP controls or
-+.BR MADV_COLLAPSE .
-+.TP
-+.B PR_THP_DISABLE_EXCEPT_ADVISED
-+The
-+.BR prctl (2)
-+call will disable THPs for the process except when the usage of THPs is
-+advised.
-+Consequently, THPs will only be used when:
-+.RS
-+.IP \[bu] 2
-+Global THP controls are set to "always" or "madvise" and
-+.BR madvise (...,
-+.BR MADV_HUGEPAGE )
-+or
-+.BR madvise (...,
-+.BR MADV_COLLAPSE )
-+is used.
-+.IP \[bu]
-+Global THP controls are set to "never" and
-+.BR madvise (...,
-+.BR MADV_COLLAPSE )
-+is used.
-+This is the same behavior as if THPs would not be disabled on
-+a process level.
-+.RE
- .SH RETURN VALUE
- On success,
- 0 is returned.
+Paolo
+
+v7->v8: stub out the new code when kexec is not enabled in the kernel.
+	Of course even the smallest code change is subject to bikeshedding,
+	and I chose my preferred color for the bikeshed.  But it's pastel
+	green and I'm sure you'll agree that it's beautiful.
+
+
+Kai Huang (7):
+  x86/kexec: Consolidate relocate_kernel() function parameters
+  x86/sme: Use percpu boolean to control WBINVD during kexec
+  x86/virt/tdx: Mark memory cache state incoherent when making SEAMCALL
+  x86/kexec: Disable kexec/kdump on platforms with TDX partial write
+    erratum
+  x86/virt/tdx: Remove the !KEXEC_CORE dependency
+  x86/virt/tdx: Update the kexec section in the TDX documentation
+  KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
+
+ Documentation/arch/x86/tdx.rst       | 14 ++++-----
+ arch/x86/Kconfig                     |  1 -
+ arch/x86/include/asm/kexec.h         | 12 ++++++--
+ arch/x86/include/asm/processor.h     |  2 ++
+ arch/x86/include/asm/tdx.h           | 31 +++++++++++++++++++-
+ arch/x86/kernel/cpu/amd.c            | 17 +++++++++++
+ arch/x86/kernel/machine_kexec_64.c   | 44 ++++++++++++++++++++++------
+ arch/x86/kernel/process.c            | 24 +++++++--------
+ arch/x86/kernel/relocate_kernel_64.S | 36 +++++++++++++++--------
+ arch/x86/kvm/vmx/tdx.c               | 10 +++++++
+ arch/x86/virt/vmx/tdx/tdx.c          | 23 +++++++++++++--
+ 11 files changed, 167 insertions(+), 47 deletions(-)
+
 -- 
-2.47.3
+2.51.0
 
 
