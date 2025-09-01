@@ -1,74 +1,57 @@
-Return-Path: <linux-kernel+bounces-794756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DACCB3E6D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FD6B3E6DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB0AD3BF9DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C758189396E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AB721A457;
-	Mon,  1 Sep 2025 14:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12E82F0C66;
+	Mon,  1 Sep 2025 14:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cebitec.uni-bielefeld.de header.i=@cebitec.uni-bielefeld.de header.b="BciIhNQn"
-Received: from smtp.CeBiTec.Uni-Bielefeld.DE (smtp.CeBiTec.Uni-Bielefeld.DE [129.70.160.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPQ9smyL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59BB13A244;
-	Mon,  1 Sep 2025 14:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.160.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B426D4F8
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736305; cv=none; b=PPdCHPxC5FAmSTaT7S+l/lrqTQtzdSqjSwIW07WbE7+n8iN2WijZ0tjtdgz0C+XRPUA5HZB+UQc17lMi7Ydf48emgRWovHlvQ361Sriplcx36uFSXTktmjHwNJzHxq/mpGGuEMIKSz4lo9pkTXH4lOOrzjdsahJ+8iwq71N2rP4=
+	t=1756736393; cv=none; b=n5ypcPZ+tuLQA+egw9TRNxg7Ubj7aTMT1LZspwKu2K/UCm/GTJoy8qsCGOG/6cA7Q9ExM+YGdrRsnQnYsN4HGHb8x2APOJYbeDZZjCj/RIp48b7WOdqCGBeqpd86ZiaVcJCqSbHGTiGh8++75cgUk+HrVWAmCtJuU7oFKtB8fpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736305; c=relaxed/simple;
-	bh=HX0WaoTrp/btXeyLMGnRU3Iygy+Fmu4W+bVNct25BOw=;
+	s=arc-20240116; t=1756736393; c=relaxed/simple;
+	bh=qwR4eNLSEphXQYoDu4XlkNku43wQhu7Bs42cSMtT540=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AWoXDdtxQbvkP7EWxwiURQrwvxx6yvPJwPZzVHJcoCUtqqgKlb0/I4WqHHU/vJTlT+uMl3vuwbC1/M0W17vn+ml8laG1uQ/UATHLTLmz+waPUnDDQ6eabKeI4nkmNOOX+9iL6VVf6SoFExinhz7RCqtfRa3Uc8zwOi3kvmBngQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=CeBiTec.Uni-Bielefeld.DE; spf=pass smtp.mailfrom=cebitec.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=cebitec.uni-bielefeld.de header.i=@cebitec.uni-bielefeld.de header.b=BciIhNQn; arc=none smtp.client-ip=129.70.160.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=CeBiTec.Uni-Bielefeld.DE
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cebitec.uni-bielefeld.de
-Received: from localhost (localhost.CeBiTec.Uni-Bielefeld.DE [127.0.0.1])
-	by smtp.CeBiTec.Uni-Bielefeld.DE (Postfix) with ESMTP id 18B7AB9F5A;
-	Mon,  1 Sep 2025 16:18:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-	cebitec.uni-bielefeld.de; h=content-type:content-type
-	:mime-version:user-agent:message-id:date:date:references
-	:in-reply-to:subject:subject:from:from:received:received; s=
-	20200306; t=1756736295; bh=HX0WaoTrp/btXeyLMGnRU3Iygy+Fmu4W+bVNc
-	t25BOw=; b=BciIhNQnsGZQDzRfm2d0hPML6v/WYZf4DZH9v9bm02hicCUfD5Nv4
-	0yvZtymdEDxgkeSmhZvHVMlIgFgb1Qb5tdlUFfyu59qWbVkPdtWvzayA8p5EZ3/l
-	CEgPWO4VfszOyKDn+d/i+4By7CtSwGlZPAj7y/z47kvoBCgWgPhvK62RQ+YBjTh4
-	Rna7o8EK5QyJkjTt1bYEjOBpBVRhst9mKS3XgdIu9xjtw1gY5BD/orMt2tiNHzeL
-	zGDbW8vs7fQ+NVXvu6GYKg/s4YVbpeqaKX2nv/ASPF++cdMWjwxlGp2r/oqxoWSL
-	vlC9v6ACiTSrT2vWNKvZjl2UYbRmPrwuQ==
-X-Virus-Scanned: amavisd-new at cebitec.uni-bielefeld.de
-Received: from smtp.CeBiTec.Uni-Bielefeld.DE ([127.0.0.1])
-	by localhost (smtp.cebitec.uni-bielefeld.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id SY2vdEiCoxuz; Mon,  1 Sep 2025 16:18:15 +0200 (CEST)
-Received: from manam.CeBiTec.Uni-Bielefeld.DE (p50854244.dip0.t-ipconnect.de [80.133.66.68])
-	(Authenticated sender: ro)
-	by smtp.CeBiTec.Uni-Bielefeld.DE (Postfix) with ESMTPSA id 3A00DB9F59;
-	Mon,  1 Sep 2025 16:18:15 +0200 (CEST)
-From: Rainer Orth <ro@CeBiTec.Uni-Bielefeld.DE>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
-  linux-kernel@vger.kernel.org,  sparclinux@vger.kernel.org,  Andreas
- Larsson <andreas@gaisler.com>,  Anthony Yznaga <anthony.yznaga@oracle.com>
-Subject: Re: [PATCH v2 1/1] sparc: fix accurate exception reporting in
- copy_{from,to}_user for M7
-In-Reply-To: <4c92d08cff24c04023bff8555ecf3bbd2eb0e944.camel@physik.fu-berlin.de>
-	(John Paul Adrian Glaubitz's message of "Mon, 01 Sep 2025 09:05:58
-	+0200")
-References: <aecb14d84b1af658a87a2b1ba3a49ac13d39560e.camel@physik.fu-berlin.de>
-	<20250828130456.2335-1-kernel@mkarcher.dialup.fu-berlin.de>
-	<240f0f51687dcb146656a47932ec075b0821b605.camel@physik.fu-berlin.de>
-	<yddjz2i64j9.fsf@CeBiTec.Uni-Bielefeld.DE>
-	<4c92d08cff24c04023bff8555ecf3bbd2eb0e944.camel@physik.fu-berlin.de>
-Date: Mon, 01 Sep 2025 16:18:14 +0200
-Message-ID: <ydd4itm45p5.fsf@CeBiTec.Uni-Bielefeld.DE>
+	 MIME-Version:Content-Type; b=mzmEDy7IWptSfnaPnNRD/Xd1QvfaD6O8aBIZxJicPPV9iN3C20vsD14YwDL1srlgZ+hhNtFNa1N7vP1Bj+I4X8nzQJgbuLDxku4bMLvpFWPOmNByE4d+jiD9yXyatDt0ODiHnpcPj9Hr+AtU+fV1iNnEtFT+Q2Sah3sIc9+o1Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPQ9smyL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B60C4CEF0;
+	Mon,  1 Sep 2025 14:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756736392;
+	bh=qwR4eNLSEphXQYoDu4XlkNku43wQhu7Bs42cSMtT540=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=mPQ9smyLLZAOt+/sSFM7ixGpGSb10fjRr5tJga38Wd9eFLAgpvsiQ1TQL0MRV3O05
+	 H2eEK+HKCPbbl6h0gsXf43vrh8Ux/adqtnV37GuJ7P6Ph8gdRGXhJQiPb9KSw2E3ck
+	 oCS5EfvU/ET1HkFBSBGVugHIIqNRBUfdHfgTIIafMv7ImXYo839qUldjCPZVF4DNxl
+	 2AJrk6D7HLXsPfDkjLDhsSbH739ZUVySZrn+bZV/rtQuCrPMmMYloLtKqHL2piXEWP
+	 /9JGaMNeOstIrkOERXwYtLKKqVJT3YV5BJWvAV/49olDe13PrOj4LqtB32ShqidNkF
+	 mBICWiww/imRQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: ziniu.wang_1@nxp.com
+Cc: pratyush@kernel.org,  tudor.ambarus@linaro.org,  mwalle@kernel.org,
+  miquel.raynal@bootlin.com,  richard@nod.at,  vigneshr@ti.com,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  haibo.chen@nxp.com,  han.xu@nxp.com
+Subject: Re: [PATCH v3 1/2] mtd: spi-nor: core: avoid odd length/address
+ reads on 8D-8D-8D mode
+In-Reply-To: <20250708091646.292-1-ziniu.wang_1@nxp.com>
+References: <20250708091646.292-1-ziniu.wang_1@nxp.com>
+Date: Mon, 01 Sep 2025 16:19:49 +0200
+Message-ID: <mafs0tt1mw8ze.fsf@kernel.org>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,41 +61,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Hi Adrian,
+Hi,
 
-> On Mon, 2025-09-01 at 09:00 +0200, Rainer Orth wrote:
->> > in the past, you reported stability issues with the Linux kernel when running
->> > inside an LDOM on SPARC M7/M8. Could you verify whether the patch above fixes
->> > these problems or whether at least they don't introduce regressions?
->> 
->> thanks for the heads-up.  Indeed the hangs persist even when the system
->> is idle.  However, I've never built a Linux kernel before and have way
->> too much on the plate to try now.  Besides, I don't have a reproducer
->> for the issue, so even with a patch I'd have to wait for an extended
->> period of time to see if the issue is gone, so I'll just wait until the
->> patch lands in the Debian/sparc64 repo and see if it helps.
+On Tue, Jul 08 2025, ziniu.wang_1@nxp.com wrote:
+
+> From: Pratyush Yadav <p.yadav@ti.com>
 >
-> Would it work if I built a kernel for you plus installation instructions
-> and a quick explanation how to test it?
-
-I wouldn't mind trying, but as I said it's difficult to say when I can
-claim success given the lack of a reproducer.  All I can report reliably
-is failure ;-)
-
-> FWIW, we consider the patch already acceptable when it doesn't introduce
-> any regressions.
+> On Octal DTR capable flashes like Micron Xcella reads cannot start or
+> end at an odd address in Octal DTR mode. Extra bytes need to be read at
+> the start or end to make sure both the start address and length remain
+> even.
 >
-> I did some testing on a SPARC S7 yesterday, but the problem is that the
-> support for SPARC S7 in the Linux kernel is incomplete at the moment and
-> I had to add it quickly myself which did actually work but I really would
-> like to verify it on M7 or M8 again to at least not cause regressions.
+> To avoid allocating too much extra memory, thereby putting unnecessary
+> memory pressure on the system, the temporary buffer containing the extra
+> padding bytes is capped at PAGE_SIZE bytes. The rest of the 2-byte
+> aligned part should be read directly in the main buffer.
+>
+> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> Reviewed-by: Michael Walle <michael@walle.cc>
+> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
 
-The only system that I can test on is S7 (a Netra S7-2 actually).  While
-I also have a T8-1, that's reserved for cfarm work.
+Series applied to spi-nor/next. Thanks!
 
-	Rainer
+[...]
 
 -- 
------------------------------------------------------------------------------
-Rainer Orth, Center for Biotechnology, Bielefeld University
+Regards,
+Pratyush Yadav
 
