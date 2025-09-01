@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-794750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73073B3E6C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C5EB3E6CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C549A1A8125C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9494C7A3953
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9251341657;
-	Mon,  1 Sep 2025 14:12:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDB7340D99;
+	Mon,  1 Sep 2025 14:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axSOgp/S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD072566DD;
-	Mon,  1 Sep 2025 14:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799871804A;
+	Mon,  1 Sep 2025 14:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756735940; cv=none; b=JVkKVQLPALP2Q4aRppyFxYnqp5KCRYrMNU1vZSQHJYoB78+6c/A3n/6pq3GDx3Ptg1jUw8mfZz08QLH0wxTriKqg3H5TyKJlZ2LOUJw5iPW0MG8nN/9JmTOjQB/YE8DWay97yuSz+LDX2M/6+QXRES74zZYf36bYQTuRrOj5LLQ=
+	t=1756736067; cv=none; b=YZDGDfzHshEUfPipmNktaSFCs7k/hkQyvCRaulBFW4Ehy6PYVjoFzr/c1PRNHNxyzEPt5P6Kyis/lwtVB3EyGE3H6wZe8qRxm3Ff29wsWxMawTQggxdtQwGFf7Hf/o/hIziGC9yXARpvDk5SsJhhs2TxiGaknqc1V6HKlU4qdFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756735940; c=relaxed/simple;
-	bh=7VYC4GVQ+wJbWCcOh4OjnCUW+Yn9Q6pn2Z0LIg8klIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dqzGlqKMNRi5Y5NrJ3hxFq684QhsHm97W+yF5azMa4zFC2V53HIwFY/I6jJOe68nWdfiNWv2WELI8Zd8QdX1r5p78cmobOhTNaVs28FBeT6uWpkonDfW/Rlp9JfDb7OmeFkgYlK6uVJEXSWIJ7+uBRR/XTCW6nZo0GdeIlihTwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cFrQF32xWztTXp;
-	Mon,  1 Sep 2025 22:11:17 +0800 (CST)
-Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 210A31402CF;
-	Mon,  1 Sep 2025 22:12:14 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemj200013.china.huawei.com (7.202.194.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 1 Sep 2025 22:12:13 +0800
-Message-ID: <bbfe06eb-125a-4c41-9026-77de56d99286@huawei.com>
-Date: Mon, 1 Sep 2025 22:12:12 +0800
+	s=arc-20240116; t=1756736067; c=relaxed/simple;
+	bh=RZ4KGqP2cdIxmSmm54RD6q9JseO1TT++MM74St5Kp4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rJQ5c3UwweOwHbcEoigXH+yP5WMRLhiGT02RcP5A1KG/E9/JfQUHQ595pfjlzsHwlqYTYkdgZvlOTmAerQjft6w5VejRFaIfiByN+YjqL7Y+naPYNkdwSLito4G7dcPx4CFIX4SSy8aJFfLgBD1bdjXMWHo7P75TMOFMhrMtjMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axSOgp/S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB2FC4CEF0;
+	Mon,  1 Sep 2025 14:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756736067;
+	bh=RZ4KGqP2cdIxmSmm54RD6q9JseO1TT++MM74St5Kp4Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=axSOgp/S2x3mrEikVHNI80eUTvkBOGKITEnQFVS6RQjxPC0tEBvKrrm0oOR4gz2bK
+	 WDZ3X+m69PVmvkvC8J4p2r27sqd5xUbhdje8izl/yHnEmEE3YxjLOY39BYYFfvAjc3
+	 2M/rE2nlofwfKgVCjPcFxcXX4XQFKkZH2r8B+uC6o9P2xm/6YmBwr2v4kGSkBDDzMJ
+	 89UnxQIIoc10MKiYmfi/lY0G9U2op2etJpsaa1KSq/HZzTprO1hpkD9BlOjSfcJHi2
+	 p+u/JEjsa9o2RQU8LiImv0DTh6DuSCN2B+IpqBXwr1HqfIrA/rMG3pPCJuj5sksh0I
+	 uGz8weKAkG3jw==
+Message-ID: <fff4d178-cc0c-471b-90f4-ddc16e41a284@kernel.org>
+Date: Mon, 1 Sep 2025 16:14:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: [Question]nfs: never returned delegation
-To: Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
-	"zhangjian (CG)" <zhangjian496@huawei.com>, <anna@kernel.org>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chuck Lever
-	<chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, yangerkun
-	<yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao
-	<houtao1@huawei.com>, "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>, Li
- Lingfeng <lilingfeng@huaweicloud.com>
-References: <ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com>
- <e539e0ed77438b4f4353a78451add2ab5e69ec38.camel@kernel.org>
- <de669327-c93a-49e5-a53b-bda9e67d34a2@huawei.com>
- <5664a9dfe03b5ed7ef496a8c03384643023bb63b.camel@kernel.org>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <5664a9dfe03b5ed7ef496a8c03384643023bb63b.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemj200013.china.huawei.com (7.202.194.25)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] media: iris: vpu3x: Add MNoC low power handshake
+ during hardware power-off
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250822-sm8650-power-sequence-fix-v4-1-e3d587e1f9e6@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250822-sm8650-power-sequence-fix-v4-1-e3d587e1f9e6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 22/08/2025 07:53, Dikshita Agarwal wrote:
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..bfc52eb04ed0e1c88efe74a8d27bb95e8a0ca331 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> @@ -19,6 +19,9 @@
+>  #define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+>  #define REQ_POWER_DOWN_PREP			BIT(0)
+>  #define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+> +#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
+> +#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
+> +#define NOC_LPI_STATUS_ACTIVE		BIT(2) /* Indicates the NOC is active */
+>  #define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+>  #define CORE_CLK_RUN				0x0
+>  
+> @@ -109,7 +112,9 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+>  
+>  static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>  {
+> +	bool handshake_done = false, handshake_busy = false;
+>  	u32 reg_val = 0, value, i;
+> +	u32 count = 0;
 
-在 2025/9/1 19:40, Jeff Layton 写道:
-> On Mon, 2025-09-01 at 17:07 +0800, Li Lingfeng wrote:
->> Hi,
->>
->> 在 2025/8/11 21:03, Trond Myklebust 写道:
->>> On Mon, 2025-08-11 at 20:48 +0800, zhangjian (CG) wrote:
->>>> Recently, we meet a NFS problem in 5.10. There are so many
->>>> test_state_id request after a non-privilaged request in tcpdump
->>>> result. There are 40w+ delegations in client (I read the delegation
->>>> list from /proc/kcore).
->>>> Firstly, I think state manager cost a lot in
->>>> nfs_server_reap_expired_delegations. But I see they are all in
->>>> NFS_DELEGATION_REVOKED state except 6 in NFS_DELEGATION_REFERENCED (I
->>>> read this from /proc/kcore too).
->>>> I analyze NFS code and find if NFSPROC4_CLNT_DELEGRETURN procedure
->>>> meet ETIMEOUT, delegation will be marked as NFS4ERR_DELEG_REVOKED and
->>>> never return it again. NFS server will keep the revoked delegation in
->>>> clp->cl_revoked forever. This will result in following sequence
->>>> response with RECALLABLE_STATE_REVOKED flag. Client will send
->>>> test_state_id request for all non-revoked delegation.
->>>> This can only be solved by restarting NFS server.
->>>> I think ETIMEOUT in NFSPROC4_CLNT_DELEGRETURN procedure may be not
->>>> the only case that cause lots of non-terminable test_state_id
->>>> requests after any non-privilaged request.
->>>> Wish NFS experts give some advices on this problem.
->>>>
->>> You have the following options:
->>>
->>>      1. Don't ever use "soft" or "softerr" on the NFS client.
->>>      2. Reboot your server every now and again.
->>>      3. Change the server code to not bother caching revoked state. Doing
->>>         so is rather pointless, since there is nothing a client can do
->>>         differently when presented with NFS4ERR_DELEG_REVOKED vs.
->>>         NFS4ERR_BAD_STATEID.
->>>      4. Change the server code to garbage collect revoked stateids after
->>>         a while.
->>>
->> I found that a server-side bug could also cause such behavior, and I've
->> reproduced the issue based on the master (commit b320789d6883).
->> nfs4_laundromat                       nfsd4_delegreturn
-> I think you may be right about the race. The details are a little off
-> though. The important bit here is that the laundromat also calls this
-> unhash_delegation_locked before doing the list_add/del.
->>    list_add // add dp to reaplist
->>             // by dl_recall_lru
->>    list_del_init // delete dp from
->>                  // reaplist
->>                                          destroy_delegation
->>                                           unhash_delegation_locked
-> ...which _should_ make the above unhash_delegation_locked return false,
-> so that list_del_init never happens.
-Thank you for your correction. The delegreturn indeed does not perform
-list_del_init in such concurrent scenarios.
->
->>                                            list_del_init
->>                                            // dp was not added to any list
->>                                            // via dl_recall_lru
->>    revoke_delegation
->>    list_add // add dp to cl_revoked
->>             // by dl_recall_lru
->>
->> The delegation will be left in cl_revoked.
->>
->> I agree with Trond's suggestion to change the server code to fix it.
->>
->>
-> ...but there is at least one variation on what you wrote above where it
-> could get stuck back on the cl_revoked list after the delegreturn. The
-> delegreturn does set the SC_STATUS_CLOSED bit on the stateid, so
-> something like this (untested) patch, perhaps?
-However, as you noted, since laundromat calls unhash_delegation_locked
-first, I think the delegreturn will skip setting SC_STATUS_CLOSED due to
-delegation_hashed returning false in unhash_delegation_locked.
->
-> ------------8<----------
->
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index d2d5e8e397a4..e594ded49e60 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -1506,7 +1506,7 @@ static void revoke_delegation(struct nfs4_delegation *dp)
->          trace_nfsd_stid_revoke(&dp->dl_stid);
->   
->          spin_lock(&clp->cl_lock);
-> -       if (dp->dl_stid.sc_status & SC_STATUS_FREED) {
-> +       if (dp->dl_stid.sc_status & (SC_STATUS_FREED | SC_STATUS_CLOSED)) {
->                  list_del_init(&dp->dl_recall_lru);
->                  goto out;
->          }
->
-Thanks,
-Lingfeng
+unsigned int, that's not a register but standard kernel counting type.
+
+>  	int ret;
+>  
+>  	if (iris_vpu3x_hw_power_collapsed(core))
+> @@ -128,13 +133,36 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>  			goto disable_power;
+>  	}
+
+
+Best regards,
+Krzysztof
 
 
