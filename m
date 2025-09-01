@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-795055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3D9B3EC5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BFCB3EC5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9DB7A135E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:36:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785E91B20030
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4DB312827;
-	Mon,  1 Sep 2025 16:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886BC3064BC;
+	Mon,  1 Sep 2025 16:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ny/GUxBW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N5sq0L53";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dz9gmZUG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFAB2DF13F;
-	Mon,  1 Sep 2025 16:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309DD2EC097
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744688; cv=none; b=VVhu2cIaldqwe0QuNbGUggtJTaKwVgBODundfsj9Q+2YykLUyjiDxRiDrCz9SR04aqgbBNd3MM3rOl9wy+UuufPHxjjfyDfV2I7Ln4JwRxTLPdomNqrsFrAFx+5CvDl+45lF6igCNHK8B35kcFpr3n+oMkhKejZtotZZ5NsziqU=
+	t=1756744698; cv=none; b=Enlmaop0i+tNr+nJ2KJ/QQhTaKYfMTCmFhR5ldyrNArSZ2r2AZNwnOgc81QDKviX4m9rdBEormyqI7q0KsB0i31SImqUWE+TZ4665k0Q3VQa8Rjr/7em7trFn3ZtatIKIbiLvqw18170Aol+bCWgm0tC6qRX4Secz4szfpTfFEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744688; c=relaxed/simple;
-	bh=8G+3XGg+quEZEXW/fQFez+5wUY0vAqJwQES5pLF72xQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rHLCbizKqsGV2lhg+UHQpi6Y75CUXmY7xuLlM3dqiDhpYJXSQihrGrXsfphAMyauCmyNXJ5pl/Z9UN0h6N6bb00LqiV+EPrNGhKStAHDbowRAJBev7XmqNe0Xv/wrB3opWph21gtRcZXHsIXEfVN1nSGgEQQqvHceli2Pg6dk9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ny/GUxBW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64067C4CEF1;
-	Mon,  1 Sep 2025 16:38:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756744688;
-	bh=8G+3XGg+quEZEXW/fQFez+5wUY0vAqJwQES5pLF72xQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ny/GUxBWZwE4W1umy2rxcrMweeo9RKyZRsJLOg13X3WfmceJw7p0TpnGAA0vUst+i
-	 zDQt2MMPOi8Zmlkr4jxd4j1hKfyqWGaTnxpiFmpmGRaPyKCiJ9fFRd8ZEVsdKLDoWu
-	 whjRJXANxxKovvZPyx+1agpkPN60AqE8Lbt9tYRu8liNFOmXH8n9o1QT4DTitdgmf+
-	 QuzcbdNo1IgRliehimrqSFLHPHg+FgUZcJrdQ/Po0MMR269d7c4BPSMupe+oZs0yj0
-	 3XNYhWJuwuAK7UclXFwXI/16WrScUuZ2/VPgBNGDZorm4IAuU1fByO1VRE3EtjyxHU
-	 4XKC7YTedG3aQ==
-Date: Mon, 1 Sep 2025 17:38:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] iio: adc: samsung: Simplify, cleanup and drop
- S3C2410
-Message-ID: <20250901173800.48133c60@jic23-huawei>
-In-Reply-To: <20250830-s3c-cleanup-adc-v2-0-4f8299343d32@linaro.org>
-References: <20250830-s3c-cleanup-adc-v2-0-4f8299343d32@linaro.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756744698; c=relaxed/simple;
+	bh=d/RBdc3nc4ZOoFn7y+X3s8cM0fRI9Sg/fZH6MKrcceo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rifynTsUSwPVN1JDpG8oa836ECSGoyBTvx0X/L1TAWJryTNWhTMnJfDN3UyJ+5CZK+7Dmrl1TEqP/5dZX2I3B68P7RBb0pN6zM+dppPFYjGWrjyJW8HoIFjoNfUS3latE/FmPp1gV1JEzMbUJtnVi8mkobVIMy2DDW0WBMjNI2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N5sq0L53; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dz9gmZUG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756744695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C4cHD+2DwuVrmZw2dVYltot/Px0ddS/Ap45pQhFUjiQ=;
+	b=N5sq0L53mBXi5MMXw9+gdKQCdrnI2iM0cSHQaxRRYi2TDs7dCWSxKnfrCsnGBxtgtY/H7M
+	/15A1hwols33MyAr42myxNSAJky7L4J03HxnubhdUE70qNQbISIWfwmUjn7seea3cpzf2Y
+	BrLByGegqf+b/H3FZL4G4WkmKUIEYMHgtJJJZwdv460+u/qrUG9VofV3q8on/QGz88V+WQ
+	VKqLVCR0EBGrzUP6DzZpgpfT+CVayFnC0Ss7KZs4riyDA2I65hTnru3bX9+nV8Kin3zO47
+	nBshV0Ear6SwgaQ1dKJ1cti1SDGiuoYqwahs2dqioK8IzGCfCCzf59e+ToQHMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756744695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C4cHD+2DwuVrmZw2dVYltot/Px0ddS/Ap45pQhFUjiQ=;
+	b=Dz9gmZUGFLAIiNS2wlBhX7O+u4oyeu4Y58mXlFMz88aUBz+TDjZVLDQD5l/t6jGR07n9OD
+	E4CZhohPqTvoGOBg==
+To: linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Clark Williams <clrkwllms@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v2 0/3] Allow to drop the softirq-BKL lock on PREEMPT_RT
+Date: Mon,  1 Sep 2025 18:38:08 +0200
+Message-ID: <20250901163811.963326-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 30 Aug 2025 18:48:29 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Users which rely on synchronisation within a BH-disabled section as in
+- access to per-CPU data
+- per-CPU timers
+- synchronisation against another user within a BH-disabled section
 
-> Changes in v2:
-> - Patch #5: Fix S5Pv210 interrupts
-> - Patch #3: Drop touchscreen-s3c2410.h
-> - Add Rb tags
-> - Link to v1: https://lore.kernel.org/r/20250830-s3c-cleanup-adc-v1-0-de54dfb1d9ea@linaro.org
-> 
-> S3C2410 is gone from kernel, so we can drop its support and remaining
-> related pieces.
+rely on the local_lock_t lock in local_bh_disable() on PREEMPT_RT.
+Almost all users dropped their dependency. The remaining (identified)
+user in networking (pipapo) is in net-next.
+What is left is the infrastructure as in tasklet and workqueue (for
+bh-worker).
+Both are part of this series. The last patch in the series adds an
+option to drop the lock.
 
-I've queued this up to get some test coverage from zero day.
-I'll not push it out for linux-next for a few more days though so happy to
-add tags (or drop it if anything comes up!)
+v1 tasklet https://lore.kernel.org/all/20250812143930.22RBn5BW@linutronix.de
+v1 workqueue https://lore.kernel.org/all/20250820103657.vDuDuLx6@linutronix=
+.de
+v1 lock-drop https://lore.kernel.org/all/20250613105653.1860729-2-bigeasy@l=
+inutronix.de
 
-Jonathan
+Sebastian Andrzej Siewior (3):
+  workqueue: Provide a handshake for canceling BH workers
+  softirq: Provide a handshake for canceling tasklets via polling
+  softirq: Allow to drop the softirq-BKL lock on PREEMPT_RT
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (5):
->       iio: adc: exynos_adc: Drop S3C2410 support
->       iio: adc: exynos_adc: Drop touchscreen support
->       iio: adc: exynos_adc: Drop platform data support
->       dt-bindings: iio: adc: samsung,exynos: Drop S3C2410
->       dt-bindings: iio: adc: samsung,exynos: Drop touchscreen support
-> 
->  .../bindings/iio/adc/samsung,exynos-adc.yaml       |  26 +-
->  drivers/iio/adc/exynos_adc.c                       | 282 +--------------------
->  include/linux/platform_data/touchscreen-s3c2410.h  |  22 --
->  3 files changed, 14 insertions(+), 316 deletions(-)
-> ---
-> base-commit: 642543fe9a04beda174633dff607429dc1734b2a
-> change-id: 20250830-s3c-cleanup-adc-71ac80978520
-> 
-> Best regards,
+ kernel/Kconfig.preempt |  13 ++++
+ kernel/softirq.c       | 145 ++++++++++++++++++++++++++++++++++-------
+ kernel/workqueue.c     |  51 ++++++++++++---
+ 3 files changed, 175 insertions(+), 34 deletions(-)
+
+--=20
+2.51.0
 
 
