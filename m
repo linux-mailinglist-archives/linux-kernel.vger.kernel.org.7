@@ -1,54 +1,101 @@
-Return-Path: <linux-kernel+bounces-793661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1814DB3D685
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:04:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8C9B3D688
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6431790F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DACB17ABE0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853251F4C87;
-	Mon,  1 Sep 2025 02:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858A202997;
+	Mon,  1 Sep 2025 02:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6r5rwrV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="q0MvgCLk"
+Received: from esa12.hc1455-7.c3s2.iphmx.com (esa12.hc1455-7.c3s2.iphmx.com [139.138.37.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB37E4594A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0313A258;
+	Mon,  1 Sep 2025 02:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.37.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692260; cv=none; b=ST3c76Dlv9yuQG+VCPXgmxvbxOOV9oluu/2nEzWoJIRZdAtrqac4CEHAD8qAFAFIPnSUHoXQ/74GwqFIUS9CbmUhOCaxuTFbzgTLSkJj4hw0rXELRBS6vGUok/6fPcM7ycshKVrRSpDHp9jIuME9MULwwb/hwvxxjw+39o67nQc=
+	t=1756692418; cv=none; b=qknDPpF4DAD4I5GioDljxbmfz69qU021IhtAV+jStqnsHq050YmlzEkra6nkLUm/te5u6Yb/gqRNZVElwzFblHKpDi0pHiyZhd2pMXX5jlLynZojraXoA+u0c7ZUp95fF/hR2kkkxyxuvYjsnPCQ3X3hwN8mSSBhvX65mDUGvl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692260; c=relaxed/simple;
-	bh=ausF7AVg0t1Vf+HSZjrDosL4uEuyprEfDFeCeFJ4G2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZ2R4aAOCl9PBmLfWElF65i440RsdawMqPNSnbwZkTk8EePiNbNUROijKn3EbpSHTJC3XnhVlHpsuXuWxgfr2geUNiJ1uBeHWUb5zGSFiPC7s49FzkYGhbzQ9MmfgqRxO9O0EVz83PBXnMhy8WJjau1vx/ZtVhvlHlDwnJNmumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6r5rwrV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CE3C4CEED;
-	Mon,  1 Sep 2025 02:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756692260;
-	bh=ausF7AVg0t1Vf+HSZjrDosL4uEuyprEfDFeCeFJ4G2o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=g6r5rwrVnOoPscDz45G0jlVqx6GCrUkDBXO3/9amBMoMwmLhLRLc3DMcNTXlASmV6
-	 t5Riq2j3Km5b2zf65klx7F+5AXLZZAKtrC0VMM5D3tKMhfWLjz4X3bpw0+gXBcO4ui
-	 jf+yzHWPK1Cv89sIrcL8Wcn9OGq3l9RXwLXNWII2UYeBdPnNOKnPFZQajJ62iLxcOE
-	 +TtkgL3asfD6p4zysQPjKp8bMAwxxy7SXFM+Qd7v8URKga1v+M78Z/7U4sL3+Iukf8
-	 88+ZQ122u9Nqvu/YYgDKy5sSgE0sCb/Qg9tEJa8JjXtC5Zc+ZhI0Mvo38HpC2IQQZE
-	 Ogeb1NynZDlsg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] f2fs: fix to avoid migrating empty section
-Date: Mon,  1 Sep 2025 10:04:15 +0800
-Message-ID: <20250901020416.2172182-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+	s=arc-20240116; t=1756692418; c=relaxed/simple;
+	bh=n1kVlBxB9nyQY/ojhVZA3zpRuBr13yVP8/DwVDm7lxk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AvK0WRq4fO4QMpeKr1Z65oXyeNG1fOkJVXPbD0Terv5+YQnM6d8kX2NIACongaEUak34Z2l+jLcilSzohae4AKZXiFD85nawJyHRHDKKcUBLKkgXyMtiHVnVdII0L1Zee9sPpqvF2gPw2xvlI+uLmVwNtnQm2nrtpRXZbFDRj7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=q0MvgCLk; arc=none smtp.client-ip=139.138.37.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1756692416; x=1788228416;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=n1kVlBxB9nyQY/ojhVZA3zpRuBr13yVP8/DwVDm7lxk=;
+  b=q0MvgCLkk58+WQWIo5ffGeF5m7FSW8hc8M+E2wtR9+oFqchmMVYvui2J
+   Re6JVYSj3Qoz4b2fpg7eKPRCwLZEnQgfFPI9sJWEgXivnoc3Ox4Wwyh5w
+   27XsXQjd4JWrGWeggf62aydcUiZq/J7pCh9BHhehdTOFFquBHBqM6wCDW
+   y8uzIVa/Pby/egswvaBb3l7iieq4/KERI4kZQ0oDw1rFpOWGzxT50ATS+
+   eLSnFhWSZZnVs2ZG3KM5h+Afa9Eqf/zgOCCFj0OZhraGvo3dGp1N7ZhHm
+   dDtHBSp+03zMYS/LVvNPK5kI+WhWbss8JGNgmWAxURmYxW63ZGNtDnnDq
+   w==;
+X-CSE-ConnectionGUID: PQl7f5/1SlCNj8cr0LIW8A==
+X-CSE-MsgGUID: rsvm0YlUSXCdWtQTXtAIZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="190112815"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751209200"; 
+   d="scan'208";a="190112815"
+Received: from unknown (HELO az2nlsmgr2.o.css.fujitsu.com) ([20.61.8.234])
+  by esa12.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 11:05:45 +0900
+Received: from az2nlsmgm4.fujitsu.com (unknown [10.150.26.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmgr2.o.css.fujitsu.com (Postfix) with ESMTPS id D928926E7;
+	Mon,  1 Sep 2025 02:05:44 +0000 (UTC)
+Received: from az2nlsmom4.fujitsu.com (az2nlsmom4.o.css.fujitsu.com [10.150.26.201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmgm4.fujitsu.com (Postfix) with ESMTPS id 8B8F210001D4;
+	Mon,  1 Sep 2025 02:05:44 +0000 (UTC)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by az2nlsmom4.fujitsu.com (Postfix) with ESMTPS id 2D4052000222;
+	Mon,  1 Sep 2025 02:05:42 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.167.135.81])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 9794A1A0074;
+	Mon,  1 Sep 2025 10:05:38 +0800 (CST)
+From: Ruan Shiyang <ruansy.fnst@fujitsu.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	lkp@intel.com,
+	ying.huang@linux.alibaba.com,
+	akpm@linux-foundation.org,
+	y-goto@fujitsu.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Ben Segall <bsegall@google.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: memory-tiering: fix PGPROMOTE_CANDIDATE counting
+Date: Mon,  1 Sep 2025 10:05:38 +0800
+Message-ID: <20250901020538.3960468-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
+References: <20250729035101.1601407-1-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,87 +104,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It reports a bug from device w/ zufs:
+Goto-san reported confusing pgpromote statistics where the
+pgpromote_success count significantly exceeded pgpromote_candidate.
 
-F2FS-fs (dm-64): Inconsistent segment (173822) type [1, 0] in SSA and SIT
-F2FS-fs (dm-64): Stopped filesystem due to reason: 4
+On a system with three nodes (nodes 0-1: DRAM 4GB, node 2: NVDIMM 4GB):
+ # Enable demotion only
+ echo 1 > /sys/kernel/mm/numa/demotion_enabled
+ numactl -m 0-1 memhog -r200 3500M >/dev/null &
+ pid=$!
+ sleep 2
+ numactl memhog -r100 2500M >/dev/null &
+ sleep 10
+ kill -9 $pid # terminate the 1st memhog
+ # Enable promotion
+ echo 2 > /proc/sys/kernel/numa_balancing
 
-Thread A				Thread B
-- f2fs_expand_inode_data
- - f2fs_allocate_pinning_section
-  - f2fs_gc_range
-   - do_garbage_collect w/ segno #x
-					- writepage
-					 - f2fs_allocate_data_block
-					  - new_curseg
-					   - allocate segno #x
+After a few seconds, we observeed `pgpromote_candidate < pgpromote_success`
+$ grep -e pgpromote /proc/vmstat
+pgpromote_success 2579
+pgpromote_candidate 0
 
-The root cause is: fallocate on pinning file may race w/ block allocation
-as above, result in do_garbage_collect() from fallocate() may migrate
-segment which is just allocated by a log, the log will update segment type
-in its in-memory structure, however GC will get segment type from on-disk
-SSA block, once segment type changes by log, we can detect such
-inconsistency, then shutdown filesystem.
+In this scenario, after terminating the first memhog, the conditions for
+pgdat_free_space_enough() are quickly met, and triggers promotion.
+However, these migrated pages are only counted for in PGPROMOTE_SUCCESS,
+not in PGPROMOTE_CANDIDATE.
 
-In this case, on-disk SSA shows type of segno #173822 is 1 (SUM_TYPE_NODE),
-however segno #173822 was just allocated as data type segment, so in-memory
-SIT shows type of segno #173822 is 0 (SUM_TYPE_DATA).
+To solve these confusing statistics, introduce PGPROMOTE_CANDIDATE_NRL to
+count the missed promotion pages.  And also, not counting these pages into
+PGPROMOTE_CANDIDATE is to avoid changing the existing algorithm or
+performance of the promotion rate limit.
 
-Change as below to fix this issue:
-- check whether current section is empty before gc
-- add sanity checks on do_garbage_collect() to avoid any race case, result
-in migrating segment used by log.
-- btw, it fixes misc issue in printed logs: "SSA and SIT" -> "SIT and SSA".
-
-Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
+Link: https://lkml.kernel.org/r/20250729035101.1601407-1-ruansy.fnst@fujitsu.com
+Co-developed-by: Li Zhijian <lizhijian@fujitsu.com>
+Signed-off-by: Ruan Shiyang <ruansy.fnst@fujitsu.com>
+Reported-by: Yasunori Gotou (Fujitsu) <y-goto@fujitsu.com>
+Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- fs/f2fs/gc.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Changes since v1:
+  1. change Li Zhijian from 'Signed-off-by' to 'Co-developed-by' per Vlastimil.
+  2. add Acked-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ include/linux/mmzone.h | 16 +++++++++++++++-
+ kernel/sched/fair.c    |  5 +++--
+ mm/vmstat.c            |  1 +
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ed3acbfc83ca..a7708cf80c04 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1794,6 +1794,13 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 		struct folio *sum_folio = filemap_get_folio(META_MAPPING(sbi),
- 					GET_SUM_BLOCK(sbi, segno));
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 0c5da9141983..9d3ea9085556 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -234,7 +234,21 @@ enum node_stat_item {
+ #endif
+ #ifdef CONFIG_NUMA_BALANCING
+ 	PGPROMOTE_SUCCESS,	/* promote successfully */
+-	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
++	/**
++	 * Candidate pages for promotion based on hint fault latency.  This
++	 * counter is used to control the promotion rate and adjust the hot
++	 * threshold.
++	 */
++	PGPROMOTE_CANDIDATE,
++	/**
++	 * Not rate-limited (NRL) candidate pages for those can be promoted
++	 * without considering hot threshold because of enough free pages in
++	 * fast-tier node.  These promotions bypass the regular hotness checks
++	 * and do NOT influence the promotion rate-limiter or
++	 * threshold-adjustment logic.
++	 * This is for statistics/monitoring purposes.
++	 */
++	PGPROMOTE_CANDIDATE_NRL,
+ #endif
+ 	/* PGDEMOTE_*: pages demoted */
+ 	PGDEMOTE_KSWAPD,
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a059315c..82c8d804c54c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1923,11 +1923,13 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+ 		struct pglist_data *pgdat;
+ 		unsigned long rate_limit;
+ 		unsigned int latency, th, def_th;
++		long nr = folio_nr_pages(folio);
  
-+		if (is_cursec(sbi, GET_SEC_FROM_SEG(sbi, segno))) {
-+			f2fs_err(sbi, "%s: segment %u is used by log",
-+							__func__, segno);
-+			f2fs_bug_on(sbi, 1);
-+			goto skip;
-+		}
-+
- 		if (get_valid_blocks(sbi, segno, false) == 0)
- 			goto freed;
- 		if (gc_type == BG_GC && __is_large_section(sbi) &&
-@@ -1805,7 +1812,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		pgdat = NODE_DATA(dst_nid);
+ 		if (pgdat_free_space_enough(pgdat)) {
+ 			/* workload changed, reset hot threshold */
+ 			pgdat->nbp_threshold = 0;
++			mod_node_page_state(pgdat, PGPROMOTE_CANDIDATE_NRL, nr);
+ 			return true;
+ 		}
  
- 		sum = folio_address(sum_folio);
- 		if (type != GET_SUM_TYPE((&sum->footer))) {
--			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SSA and SIT",
-+			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SIT and SSA",
- 				 segno, type, GET_SUM_TYPE((&sum->footer)));
- 			f2fs_stop_checkpoint(sbi, false,
- 				STOP_CP_REASON_CORRUPTED_SUMMARY);
-@@ -2068,6 +2075,13 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
- 			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 		};
+@@ -1941,8 +1943,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
+ 		if (latency >= th)
+ 			return false;
  
-+		/*
-+		 * avoid migrating empty section, as it can be allocated by
-+		 * log in parallel.
-+		 */
-+		if (!get_valid_blocks(sbi, segno, true))
-+			continue;
-+
- 		if (is_cursec(sbi, GET_SEC_FROM_SEG(sbi, segno)))
- 			continue;
+-		return !numa_promotion_rate_limit(pgdat, rate_limit,
+-						  folio_nr_pages(folio));
++		return !numa_promotion_rate_limit(pgdat, rate_limit, nr);
+ 	}
  
+ 	this_cpupid = cpu_pid_to_cpupid(dst_cpu, current->pid);
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 71cd1ceba191..e74f0b2a1021 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1280,6 +1280,7 @@ const char * const vmstat_text[] = {
+ #ifdef CONFIG_NUMA_BALANCING
+ 	[I(PGPROMOTE_SUCCESS)]			= "pgpromote_success",
+ 	[I(PGPROMOTE_CANDIDATE)]		= "pgpromote_candidate",
++	[I(PGPROMOTE_CANDIDATE_NRL)]		= "pgpromote_candidate_nrl",
+ #endif
+ 	[I(PGDEMOTE_KSWAPD)]			= "pgdemote_kswapd",
+ 	[I(PGDEMOTE_DIRECT)]			= "pgdemote_direct",
 -- 
-2.49.0
+2.43.0
 
 
