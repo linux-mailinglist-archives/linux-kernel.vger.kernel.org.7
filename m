@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-795182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35223B3EDEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA097B3EDF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0AF17F0AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D59A483040
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D453C324B2A;
-	Mon,  1 Sep 2025 18:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CDB324B07;
+	Mon,  1 Sep 2025 18:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBukxT1i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IFgZvYXk"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B14202997;
-	Mon,  1 Sep 2025 18:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11734CDD
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 18:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756751666; cv=none; b=tSm0P6mB2H3jr+GMMjAbGWljqtz/Ad9CkFntp/2PEDWkRV7BCh+40dtKcD34EITRVce1pTH7J9xJM+UaEC4bo8thpnLYVQX5+sQXVk/s/hd+R2+oMr6UKLaoXFXZrepv5tHqndFy6/0BEAYU0JOUxikKPK8Dx/CvUbwqksamMn0=
+	t=1756751876; cv=none; b=mvgb0BOB9lrgzVERe2XE/ujGS+SJlHwos0ukCa2OPNxVJev63ggkxNroCBJ/SAojrsKxSzLQO+goqi/VuoNoX3e7Nmvev+OGWC5EXNMNBkgaa4zoeaokC/fmQFBnHvPFEueY1VwwoXAnAT5WnYWiOBJeUz+TcglZYh7Tb7LJIm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756751666; c=relaxed/simple;
-	bh=D46GHdoN/n1k1YzmS3UciOt8fqGu8n9y7YtX+yxd3l4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=rKEWBx+PgY2YG6KCReYdCdttkkJrD6BZ8aR5W1nm60YGcAODaNYhLCkHqfgb3Z2a7yOsbwqtlfH7TTY++v6V5NREU0Fsd3n/cYFYX3mBaUZCDLuIUt8b562DwtXVUQJw0jVIT0FD/+XOHWfpvIKI2UvytaYDXVPXRe7iW00TiZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBukxT1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C22BC4CEF0;
-	Mon,  1 Sep 2025 18:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756751664;
-	bh=D46GHdoN/n1k1YzmS3UciOt8fqGu8n9y7YtX+yxd3l4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=tBukxT1iDHx1MtlqYb8fa5G/EVEJe6WC3XgUqfEcxiQ2ZJhI/SzJww12udDUSbQy3
-	 4fOregpneiqU7aVHY5ywvuIYjQlPpZk6SKfnwNfx1x4t2TndKWpxCir7rsnZbZo3MP
-	 cGB8XYZLNeU//1qHdGRX9LaZhcmubUO5uk0MJL0tVf4+5ldPr/sSHE7rPMjVlZG/+G
-	 D4pcdCbtxj/vQhIJ0CwFaCD3vP9/vjQgzfB4F8kCHT7w91i42+DM8ecAjUf+k3fuXX
-	 f7MRpKZiOB8mxdQQ7t8szTsQpQFijWcjikananK+HYPFZuCfysR1rfRQac5yNsAWGp
-	 8ft45he34eFhg==
-Date: Mon, 01 Sep 2025 13:34:23 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1756751876; c=relaxed/simple;
+	bh=jflA4KKvdEKboLEf3KkUNt8Mmf15f4f7H187gFzHrkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=abPpi/cv3gcwqosaBQgJPF/O8XfOzANRIr00uhruwVxL3za9/6xUwNFNND5Lygrr8rTVTQsyZjBTOwCbtFKEp4Fqc9X7uLIMKbGzktUNhPOyKz9etG1YCx0GCKrCsEStjJex2z2klYg8RcLIldNjnLtjUATVyx+TjtA6Oi8GTp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IFgZvYXk; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oBLVwqjZ9ozuQvAMG2IXEqSvWHfxO3m3fGuPczFQRQg=; b=IFgZvYXkggEb1ow5yxf/KGJbZ/
+	x5Wg7L4Ye33R00WYkqPItOz3yetWNs0A2liQxWzjh8MfBm13wWL1ZMgJ1JrfbZgGaeLqychhWXpGV
+	upmItKwf5+/oUVYn8OQKMrZ+EV3uArtsxP7bErpBz4CxX9xAk4qWJefJ6oChQvPw2t9KZ/vEjPfi9
+	A6lDy3U177zvNRBTOugg7VLaobc3Ct3uZ55HNU3zeIJt/Qr258QMikECG0HGCXFBHRHPBXAd3Xw+f
+	uy95H/xMV077c6ZSDMNM+FsVv7hChs8bXD1Dm4KMM8h0EFuSbjz7yVFVOi2x7eRlUDwjRtjl6UoIA
+	UA/wa3UQ==;
+Received: from 179-125-64-234-dinamico.pombonet.net.br ([179.125.64.234] helo=quatroqueijos.lan)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ut9PX-005Oj2-F0; Mon, 01 Sep 2025 20:37:47 +0200
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Zi Yan <ziy@nvidia.com>,
+	kernel-dev@igalia.com,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Subject: [PATCH] mm: show_mem: show number of zspages in show_free_areas
+Date: Mon,  1 Sep 2025 15:37:28 -0300
+Message-ID: <20250901183729.3900578-1-cascardo@igalia.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Iyappan Subramanian <iyappan@os.amperecomputing.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Quan Nguyen <quan@os.amperecomputing.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
- Keyur Chudgar <keyur@os.amperecomputing.com>, 
- "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-In-Reply-To: <20250829202817.1271907-1-robh@kernel.org>
-References: <20250829202817.1271907-1-robh@kernel.org>
-Message-Id: <175675161498.5921.10650849049249219942.robh@kernel.org>
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: Convert apm,xgene-enet
- to DT schema
+Content-Transfer-Encoding: 8bit
 
+When OOM is triggered, it will show where the pages might be for each zone.
+When using zram, it might look like lots of pages are missing. After this
+patch, zspages are shown as below.
 
-On Fri, 29 Aug 2025 15:28:14 -0500, Rob Herring (Arm) wrote:
-> Convert the APM XGene Ethernet binding to DT schema format.
-> 
-> Add the missing apm,xgene2-sgenet and apm,xgene2-xgenet compatibles.
-> Drop "reg-names" as required. Add support for up to 16 interrupts.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/net/apm,xgene-enet.yaml          | 114 ++++++++++++++++++
->  .../bindings/net/apm-xgene-enet.txt           |  91 --------------
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 115 insertions(+), 92 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/apm,xgene-enet.yaml
->  delete mode 100644 Documentation/devicetree/bindings/net/apm-xgene-enet.txt
-> 
+[   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[   48.792962] lowmem_reserve[]: 0 956 956 956 956
+[   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepending:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB bounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
+[   48.793118] lowmem_reserve[]: 0 0 0 0 0
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+---
+ mm/show_mem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/apm,xgene-enet.example.dtb: ethernet-phy-id001c.c915@3 (ethernet-phy-id001c.c915): $nodename:0: 'ethernet-phy-id001c.c915@3' does not match '^ethernet-phy(@[a-f0-9]+)?$'
-	from schema $id: http://devicetree.org/schemas/net/realtek,rtl82xx.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/apm,xgene-enet.example.dtb: ethernet-phy-id001c.c915@3 (ethernet-phy-id001c.c915): Unevaluated properties are not allowed ('reg' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/realtek,rtl82xx.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250829202817.1271907-1-robh@kernel.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/mm/show_mem.c b/mm/show_mem.c
+index 41999e94a56d..ecf20a93ea54 100644
+--- a/mm/show_mem.c
++++ b/mm/show_mem.c
+@@ -310,6 +310,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+ 			" inactive_file:%lukB"
+ 			" unevictable:%lukB"
+ 			" writepending:%lukB"
++			" zspages:%lukB"
+ 			" present:%lukB"
+ 			" managed:%lukB"
+ 			" mlocked:%lukB"
+@@ -332,6 +333,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
+ 			K(zone_page_state(zone, NR_ZONE_INACTIVE_FILE)),
+ 			K(zone_page_state(zone, NR_ZONE_UNEVICTABLE)),
+ 			K(zone_page_state(zone, NR_ZONE_WRITE_PENDING)),
++			K(zone_page_state(zone, NR_ZSPAGES)),
+ 			K(zone->present_pages),
+ 			K(zone_managed_pages(zone)),
+ 			K(zone_page_state(zone, NR_MLOCK)),
+-- 
+2.47.2
 
 
