@@ -1,150 +1,245 @@
-Return-Path: <linux-kernel+bounces-794363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0906B3E09B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:51:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD77B3E09E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E651A80B98
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:51:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E7A7B4E07A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9962580DE;
-	Mon,  1 Sep 2025 10:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DsyzgiWT"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE61211290
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8952765D4;
+	Mon,  1 Sep 2025 10:52:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38653211290
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756723869; cv=none; b=tcM4A52kwrebgPGOgHNiW3pBK0ivGn5oxjlkWdZBhVjGELQsxLTrTYMK8s++OdgRm3PEakVPv9yx+grP5N+jUt/Ahg7KR/tqjFj8Zv2wFCNhW3TOtzICzER02a9otfFKwoNb22PUrc1ld0L3Ui6+QwL05fXU7cfM5FNWmlf9Vlw=
+	t=1756723928; cv=none; b=Xpj1RlaCVOl2gI79ZO93Ld+ZnwekXbraIGz8L6+uTgb1Y7SGpEUjclVsHrOFN9iZY5gIIoS3elxKK5DahXCXUGXFVc57Z91uUZlEHG0t/azCWVd8jcpFGnEAF8r0hsKhNfuLqwLyPh4m8mlCc4H4M1IES4bhUly7sS9Vn6vLxdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756723869; c=relaxed/simple;
-	bh=c3AWq2+aRE6uJyjTcxkkvR1nFxFlag6Rj997piwPcZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gkqgq3EVjheUdqFsnY0G3fcAuneYE0B3RnDMOA2Z5TFN8G57ZilXPjfCVgr96LOB6b1Xi1kIx/OKoHHCVUalTw3OpBxE2OQ39rPqnjy4mrQ2mrn25QHA1yMyl8umOF3JNNpRlUrwc6U246xJgTmlqasBqNQ7OuflrX61iEM6K18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DsyzgiWT; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d3f46e231fso861945f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756723865; x=1757328665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOpFznUBHcwhp4Aa+t8/Mwg69Xfy6GS/mz3K6gMcmbM=;
-        b=DsyzgiWTJVhWnQfZJ0I4lx9sPGvOeZCSFKfbPT22j95VUHfnK846UkDka4TtsZ/yWw
-         bI2SrELLQJE4dDMFBNSr3rK6C2KlqL7TWijqeGeCs9hGE18rcww75ndGvUUWdu2oiYOY
-         SNRbfLTK3CXKnPu/UA/lGBN1pDG4DJbV2Y+ZbAC5KYQXvq+hL+Us5kpbcMFaR062DFeB
-         +/uQJhWJlUykH6UKrrU8SGZvq/Y8iQNNISP72a5mC7R/kGSjsqbqC2kmLbGA4oCM4w0J
-         +CN0MXXUPdmvV4/fO0tdJdJ7sfc/myqgNQ0biq643nZXmTkYfzJoJzwplo85ZG6MHccz
-         k18g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756723865; x=1757328665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wOpFznUBHcwhp4Aa+t8/Mwg69Xfy6GS/mz3K6gMcmbM=;
-        b=cp9j7bNq1T9Pdl5J/wr5pPnecR/zofhV8KF0bMRxs7xXM2fNgSTdbeYKS5IlJyvhtJ
-         YtTuOS1oJ8RogEcKXs8aIGWt87XL8JdtJZYNnJbY+cqlRS4ABSghLay7KESTJPn6cWlf
-         4HSYI+/GMnUcvjDSbzbVkZa6RumRIShZYBWmbcJkvkCbO/1bSHEPys0PYTvsbIaE5e/E
-         C6BsQ3DATIkZPt+rDiC7no9nwF4KzFKwB3zZ3VzWXjA7vYX6jBPirw1JM1HrHwp7+KtO
-         hNpg3NiYucdmrA46LMw0JyHXv8lINMc/9EIJy6wTWE+VW/7/RjWSoogTuKSutvl3oMBy
-         kqYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVApLnihixkbFr8LfFISLR8DRGHToPe3vnyCiJt8PcPHkWB4ecV1m/anSBaFoBUk1IcQ4ZG4pqw5ULGB94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn2wI81ia9SBiObFBKrMN4iS1aG/6FDTskdBOB0Hp6aTdhWvNQ
-	orx7UTGLTuY4q0QSWnR0mWFBTGRcBhk7uV36Vd8gda8D0kVt5pM3zZuGyDbeA0UyD/k=
-X-Gm-Gg: ASbGncv1/EZ0Yh50EkccW9y+64vSGI10juruRHSwSUMs25V9FYgxLEbhXWrsysEv9Wl
-	NgrCroOU/vQIk9pNU/doT4b4YyC7hTNlxPTKtThYN0f/5d/lxuG/cftz1ibc/jyUUdkmjbQHl1o
-	K2llIyzHVsbUV4cvYWiaZFxdCk3v+m7q06I3lR2SgyfQWj4+ptTnAEYPjeqAE9/GkvX9Wfqatq0
-	dza4NCLSYSFBsblpvKIRmQV16obrA5sXT1h0US73NzcrwFoTRRjGwwXVYzJXwhJ1Zf+UbGxsGST
-	GR7I7WB9I5JNS1xrRTyl7enpI0HuK5hHJZ1VlK9OOjTyOglXtrGNrdDBM3uQR8+/WzHGiTd/OzV
-	5kYmygBllg4BIxxzWic8fFVfnD1c=
-X-Google-Smtp-Source: AGHT+IHHuD3FBRfv5Nxn4YsvqK/oKdbA0bdrkOdxRnh4/fqC0X90je6gaBStTovt5jXxCQ/QupdLWQ==
-X-Received: by 2002:a05:6000:4022:b0:3d8:1f1b:9c9f with SMTP id ffacd0b85a97d-3d81f1b9fcemr1107840f8f.55.1756723864751;
-        Mon, 01 Sep 2025 03:51:04 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e7ef7cfsm151725455e9.6.2025.09.01.03.51.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 03:51:04 -0700 (PDT)
-Date: Mon, 1 Sep 2025 13:51:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>
-Cc: gregkh@linuxfoundation.org, aleksander.lobakin@intel.com,
-	sergio.paracuellos@gmail.com, pabeni@redhat.com,
-	abhishektamboli9@gmail.com, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: octeon: use fixed-width integer types
-Message-ID: <aLV6lF2gutK24RtV@stanley.mountain>
-References: <20250829200107.132443-1-osama.abdelkader@gmail.com>
+	s=arc-20240116; t=1756723928; c=relaxed/simple;
+	bh=7298Ci+lJdM5KRsrwbHWAsqnB5iVMe+a/13y2W4RZ0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p6B0Y1RkvTSvhMQdX8Pa4m3SvfsCVnSX6eah7rK+Ae0bM77B+OXNPtYdd3SuQFpU+z1goKqD2dBYMpnvzZF9UYjBxVALXcGDtMPmgyGl4blIflLTfv6ci/E8zhTf1JKCeIhE1/kjPg3N0seqK+Rq0dhFyi9OxvJ+t93N2QDEA1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31D8016A3;
+	Mon,  1 Sep 2025 03:51:58 -0700 (PDT)
+Received: from [10.57.4.133] (unknown [10.57.4.133])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A45243F6A8;
+	Mon,  1 Sep 2025 03:52:04 -0700 (PDT)
+Message-ID: <56130662-4768-44ff-829e-9d77258c4342@arm.com>
+Date: Mon, 1 Sep 2025 11:52:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829200107.132443-1-osama.abdelkader@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm/panfrost: Introduce uAPI for JM context creation
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+References: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
+ <20250828023422.2404784-3-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250828023422.2404784-3-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 10:01:07PM +0200, Osama Abdelkader wrote:
-> The kernel coding style prefers fixed-width integer types defined in
-> <linux/types.h> (u8, u16, u32, u64, etc.) over the C99 stdint.h types
-> (e.g. uint64_t).
+On 28/08/2025 03:34, Adrián Larumbe wrote:
+> From: Boris Brezillon <boris.brezillon@collabora.com>
 > 
-> Replace uint64_t with u64, uint32_t with u32, uint16_t with u16
-> uint8_t with u8 in octeon-stubs.h.
+> The new uAPI lets user space query the KM driver for the available
+> priorities a job can be given at submit time. These are managed through
+> the notion of a context, which besides a priority, codifies the list
+> of L2 caches, shading cores and tiler units a job is allowed to use,
+> for all three of the available device job slots.
 > 
-> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+> Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+
+There's no cover letter for this series, so maybe I'm missing some
+context. But I'm not sure why we want to expose the tiler/l2/core masks
+to user space.
+
+If you were trying to better support OpenCL on T628 I can just about
+understand the core mask. But, I doubt you are... (does anyone care
+about that anymore? ;) ). And really it's the core groups that matter
+rather than the raw affinities.
+
+The tiler/l2 affinities (and the XAFFINITY register in general) is there
+as a power saving mechanism. If we know that a job is not going to use
+the shader cores at all (a tiler-only job) then we can avoid turning
+them on, but obviously we still need the L2 and tiler blocks to be powered.
+
+kbase handled this with a "core_req" field which listed the required
+cores for each job. We already have a "requirements" field which we
+could extend for the same purpose (PANFROST_JD_REQ_TILER_ONLY or
+similar). I don't think this makes sense to include in a "context".
+
+But like I said, maybe I'm missing something - what is the use case for
+controlling affinity?
+
+[The priority parts look ok here, but that's mixed in with the affinity
+changes.]
+
 > ---
->  drivers/staging/octeon/octeon-stubs.h | 1745 +++++++++++++------------
->  1 file changed, 873 insertions(+), 872 deletions(-)
+>  include/uapi/drm/panfrost_drm.h | 93 +++++++++++++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
 > 
-> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
-> index 44cced319c11..ff6509b28cdd 100644
-> --- a/drivers/staging/octeon/octeon-stubs.h
-> +++ b/drivers/staging/octeon/octeon-stubs.h
-> @@ -43,144 +43,144 @@
->  #define CVMX_POW_WQ_INT_PC		0
+> diff --git a/include/uapi/drm/panfrost_drm.h b/include/uapi/drm/panfrost_drm.h
+> index ed67510395bd..2d8b32448e68 100644
+> --- a/include/uapi/drm/panfrost_drm.h
+> +++ b/include/uapi/drm/panfrost_drm.h
+> @@ -22,6 +22,8 @@ extern "C" {
+>  #define DRM_PANFROST_PERFCNT_DUMP		0x07
+>  #define DRM_PANFROST_MADVISE			0x08
+>  #define DRM_PANFROST_SET_LABEL_BO		0x09
+> +#define DRM_PANFROST_JM_CTX_CREATE		0x0a
+> +#define DRM_PANFROST_JM_CTX_DESTROY		0x0b
 >  
->  union cvmx_pip_wqe_word2 {
-> -	uint64_t u64;
-> +	u64 u64;
+>  #define DRM_IOCTL_PANFROST_SUBMIT		DRM_IOW(DRM_COMMAND_BASE + DRM_PANFROST_SUBMIT, struct drm_panfrost_submit)
+>  #define DRM_IOCTL_PANFROST_WAIT_BO		DRM_IOW(DRM_COMMAND_BASE + DRM_PANFROST_WAIT_BO, struct drm_panfrost_wait_bo)
+> @@ -31,6 +33,8 @@ extern "C" {
+>  #define DRM_IOCTL_PANFROST_GET_BO_OFFSET	DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_GET_BO_OFFSET, struct drm_panfrost_get_bo_offset)
+>  #define DRM_IOCTL_PANFROST_MADVISE		DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_MADVISE, struct drm_panfrost_madvise)
+>  #define DRM_IOCTL_PANFROST_SET_LABEL_BO		DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_SET_LABEL_BO, struct drm_panfrost_set_label_bo)
+> +#define DRM_IOCTL_PANFROST_JM_CTX_CREATE	DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_JM_CTX_CREATE, struct drm_panfrost_jm_ctx_create)
+> +#define DRM_IOCTL_PANFROST_JM_CTX_DESTROY	DRM_IOWR(DRM_COMMAND_BASE + DRM_PANFROST_JM_CTX_DESTROY, struct drm_panfrost_jm_ctx_destroy)
+>  
+>  /*
+>   * Unstable ioctl(s): only exposed when the unsafe unstable_ioctls module
+> @@ -71,6 +75,12 @@ struct drm_panfrost_submit {
+>  
+>  	/** A combination of PANFROST_JD_REQ_* */
+>  	__u32 requirements;
+> +
+> +	/** JM context handle. Zero if you want to use the default context. */
+> +	__u32 jm_ctx_handle;
+> +
+> +	/** Padding field. MBZ. */
+> +	__u32 pad;
+>  };
+>  
+>  /**
+> @@ -177,6 +187,7 @@ enum drm_panfrost_param {
+>  	DRM_PANFROST_PARAM_AFBC_FEATURES,
+>  	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP,
+>  	DRM_PANFROST_PARAM_SYSTEM_TIMESTAMP_FREQUENCY,
+> +	DRM_PANFROST_PARAM_ALLOWED_JM_CTX_PRIORITIES,
+>  };
+>  
+>  struct drm_panfrost_get_param {
+> @@ -299,6 +310,88 @@ struct panfrost_dump_registers {
+>  	__u32 value;
+>  };
+>  
+> +enum drm_panfrost_jm_ctx_priority {
+> +	/**
+> +	 * @PANFROST_JM_CTX_PRIORITY_LOW: Low priority context.
+> +	 */
+> +	PANFROST_JM_CTX_PRIORITY_LOW = 0,
+> +
+> +	/**
+> +	 * @PANFROST_JM_CTX_PRIORITY_MEDIUM: Medium priority context.
+> +	 */
+> +	PANFROST_JM_CTX_PRIORITY_MEDIUM,
+> +
+> +	/**
+> +	 * @PANFROST_JM_CTX_PRIORITY_HIGH: High priority context.
+> +	 *
+> +	 * Requires CAP_SYS_NICE or DRM_MASTER.
+> +	 */
+> +	PANFROST_JM_CTX_PRIORITY_HIGH,
+> +};
+> +
+> +#define PANFROST_JS_FLAG_ENABLED		(1 << 0)
+> +
+> +struct drm_panfrost_js_ctx_info {
+> +	/** @flags: Combination of PANFROST_JS_FLAG_xxx values */
+> +	__u32 flags;
+> +
+> +	/** @priority: Context priority (see enum drm_panfrost_jm_ctx_priority). */
+> +	__u8 priority;
+> +
+> +	/**
+> +	 * @tiler_mask: Mask encoding tiler units that can be used by the job slot
+> +	 *
+> +	 * When this field is zero, it means the tiler won't be used.
+> +	 *
+> +	 * The bits set here should also be set in drm_panthor_gpu_info::tiler_present.
+> +	 */
+> +	__u8 tiler_mask;
+> +
+> +	/**
+> +	 * @l2_mask: Mask encoding L2 caches that can be used by the job slot
+> +	 *
+> +	 * The bits set here should also be set in drm_panthor_gpu_info::l2_present.:
+> +	 */
+> +	__u16 l2_mask;
+> +
+> +	/**
+> +	 * @core_mask: Mask encoding cores that can be used by the job slot
+> +	 *
+> +	 * When this field is zero, it means the queue won't be used.
+> +	 *
+> +	 * The bits set here should also be set in drm_panthor_gpu_info::shader_present.
+> +	 */
+> +	__u64 core_mask;
+> +};
+> +
+> +struct drm_panfrost_jm_ctx_create {
+> +	/** @handle: Handle of the created JM context */
+> +	__u32 handle;
+> +
+> +	/** @pad: Padding field, MBZ. */
+> +	__u32 pad;
+> +
+> +	/**
+> +	 * @slots: Job slots
+> +	 *
+> +	 * This field must be greater than zero and less than 8 (only three slots
+> +	 * available).
+> +	 */
+> +	struct drm_panfrost_js_ctx_info slots[3];
 
-This was already done upstream so the patch doesn't apply.
+We don't allow user space to choose which slot is being targetted, so
+this feels odd. I guess this allows deliberately disabling slot 1 to
+force slot 2. But the code in this series doesn't seem to implement
+this. I'm also not sure I understand why you would want a different
+priority for different slots?
 
-The point of the octeon-stubs.h file is it allows us to compile test
-a bunch of code which is specific to Octeon.  The real code lives
-in arch/mips/include/asm/octeon/cvmx-wqe.h.  These files have diverged
-quite a bit, unfortunately.  But I guess everything still builds...
-I don't know if it's really useful to cleanup this fake code while
-leaving the real code as-is.
+Thanks,
+Steve
 
-
-> @@ -1380,12 +1380,13 @@ static inline union cvmx_gmxx_rxx_rx_inbnd cvmx_spi4000_check_speed(int interfac
->  	return r;
+> +};
+> +
+> +struct drm_panfrost_jm_ctx_destroy {
+> +	/**
+> +	 * @handle: Handle of the JM context to destroy.
+> +	 *
+> +	 * Must be a valid context handle returned by DRM_IOCTL_PANTHOR_JM_CTX_CREATE.
+> +	 */
+> +	__u32 handle;
+> +
+> +	/** @pad: Padding field, MBZ. */
+> +	__u32 pad;
+> +};
+> +
+>  #if defined(__cplusplus)
 >  }
->  
-> -static inline void cvmx_pko_send_packet_prepare(uint64_t port, uint64_t queue,
-> +static inline void cvmx_pko_send_packet_prepare(u64 port, u64 queue,
->  						cvmx_pko_lock_t use_locking)
->  { }
->  
-> -static inline cvmx_pko_status_t cvmx_pko_send_packet_finish(uint64_t port,
-> -		uint64_t queue, union cvmx_pko_command_word0 pko_command,
-> +static inline cvmx_pko_status_t cvmx_pko_send_packet_finish(u64 port,
-> +							    u64 queue,
-> +								union cvmx_pko_command_word0 cmd,
->  		union cvmx_buf_ptr packet, cvmx_pko_lock_t use_locking)
-
-This is messed up now.  Just leave the indenting as it was and fix it in
-another change if you want to.
-
-regards,
-dan carpenter
+>  #endif
 
 
