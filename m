@@ -1,40 +1,47 @@
-Return-Path: <linux-kernel+bounces-793937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C45AB3DA75
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1D0B3DA2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93B63BDE83
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742773A2FFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F37A25C83A;
-	Mon,  1 Sep 2025 06:58:55 +0000 (UTC)
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBE3258EF0;
+	Mon,  1 Sep 2025 06:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfa3FHBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F7725A631;
-	Mon,  1 Sep 2025 06:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3470C212556;
+	Mon,  1 Sep 2025 06:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756709935; cv=none; b=Dk8zVLTx7bU3OjCoyYI54CC8qP5vkR6bcRFFlr883AGlIwBjpx96WZWdk9y/3eL581DuLGAuZQFTfiXvt4KwBfzNFgoSHRFe78WmU4XPyxhnUyzcQ/HLEJRC/7uYfBi0Nv9+dromLeXsp4dPsbzQniaeotml05PJLmSxoQlKILc=
+	t=1756709166; cv=none; b=AvP0Tv5gkuoFoGRELLE+CWyj9HrjMacR0iC/HCOeG+gCfYIx8wJ/GlFVvRvoCL6rYBbchdsynqMBja5AfguUwva/QKqM8p4z2fK2xJ5BHPvF0IPbv+erkZqQ920w55Ldc9gV26MbpUFHrBY7iNMALKPf4Rw507qpcb2oBWYcjqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756709935; c=relaxed/simple;
-	bh=bzJJHmbX9vM5aOF/O9o6rY71Kq2Iv7irkIXBpj8H6B8=;
+	s=arc-20240116; t=1756709166; c=relaxed/simple;
+	bh=X2GCkYyQOfwSHl/aSR0IV35FfoaQULmEkq2Kt26dOSs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCGve1U3lCE1Glbom+HmMP1p660pfl0zFDfawl7zLeRo+l+5dBgoVZ5hjUVmBsR3qtFFXWsDYkpDgyC0WDTllIqEXuyvfn6yY+Q+HsvPCERoxe41E8wa9pxwA4C4OtukIMtY3dCmq46nbLzPid6fMiK2BXfXGOh0dsgm0RcraMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::225])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 23474582078;
-	Mon,  1 Sep 2025 06:43:04 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4140743A5E;
-	Mon,  1 Sep 2025 06:42:52 +0000 (UTC)
-Message-ID: <f7d55c91-8877-41aa-8cf0-64af38a9a109@ghiti.fr>
-Date: Mon, 1 Sep 2025 08:42:51 +0200
+	 In-Reply-To:Content-Type; b=i3fRbJQ9Fuomx5KImc1jrOoJn2Cec+5Nj/w85MDTl6GgaHcXee7WtQwu6BCz9wpJ4M9jrPxSsnaF1XtIGo7tP7TfbRBKBB9UIxhR90BLegaCUsHsyD+jgLz3lXI6vfaGVFKKTrowH2wy0XzKHqKMfigQhfco25wJ8FTwLO5rTJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfa3FHBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40841C4CEF0;
+	Mon,  1 Sep 2025 06:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756709165;
+	bh=X2GCkYyQOfwSHl/aSR0IV35FfoaQULmEkq2Kt26dOSs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tfa3FHBdEk3nw/gaelP270KbUvclYJGWxo5WfWjJn8vITFt+6gdYzTnqRfAMQihdm
+	 juSzVw5zanTh8J6DeP2EwlSYa4BX6ucc16TBT49B13nrBsJPvosIZ+MnrRck+fTSP7
+	 0i4dp5oYPwk2qQXKUosesEztD2n4qXma0QkJUMbSUv29SQPvHnaS76WvCyqhgWO/5A
+	 q/o1Xor5bKmBKk8la0A0VOKn1xNTG8jLjkbKYGe9LJuTJFOJP9W7ttqI+BDJwYYL1H
+	 tMYXb2NVlWkX61Am7YjObnl21R2ct7pVNLxPGxO3PCNt/blSI5PkuGE56Naze4FP4n
+	 5hmLscojRiFCw==
+Message-ID: <9b9b78cd-06aa-407d-a224-a5903752599f@kernel.org>
+Date: Mon, 1 Sep 2025 15:43:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,96 +49,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] kexec: Fix invalid field access
-To: Breno Leitao <leitao@debian.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Coiby Xu <coxu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- kernel-team@meta.com
-References: <20250827-kbuf_all-v1-0-1df9882bb01a@debian.org>
+Subject: Re: [PATCH RFC v3 07/15] md/raid1: convert to use
+ bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com, satyat@google.com,
+ ebiggers@google.com, neil@brown.name, akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-8-yukuai1@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250827-kbuf_all-v1-0-1df9882bb01a@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Organization: Western Digital Research
+In-Reply-To: <20250901033220.42982-8-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledugeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejkeeugfdthefhveelffdvgeetgeelteeijeekheehfeevtdduvdfgteevgfehffenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemkeehrgekmeehrggvugemsggrsgefmeeijeelheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemkeehrgekmeehrggvugemsggrsgefmeeijeelhedphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemkeehrgekmeehrggvugemsggrsgefmeeijeelhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudelpdhrtghpthhtoheplhgvihhtrghoseguvggsihgrnhdrohhrghdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmr
- dgtohhmpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghhvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghogihusehrvgguhhgrthdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomh
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Breno,
+On 9/1/25 12:32 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Unify bio split code, and prepare to fix disordered split IO.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-On 8/27/25 12:42, Breno Leitao wrote:
-> The kexec_buf structure was previously declared without initialization.
-> commit bf454ec31add ("kexec_file: allow to place kexec_buf randomly")
-> added a field that is always read but not consistently populated by all
-> architectures. This un-initialized field will contain garbage.
->
-> This is also triggering a UBSAN warning when the uninitialized data was
-> accessed:
->
-> 	------------[ cut here ]------------
-> 	UBSAN: invalid-load in ./include/linux/kexec.h:210:10
-> 	load of value 252 is not a valid value for type '_Bool'
->
-> Zero-initializing kexec_buf at declaration ensures all fields are
-> cleanly set, preventing future instances of uninitialized memory being
-> used.
->
-> An initial fix was already landed for arm64[0], and this patchset fixes
-> the problem on the remaining arm64 code and on riscv, as raised by Mark.
->
-> Discussions about this problem could be found at[1][2].
->
-> Link: https://lore.kernel.org/all/20250826180742.f2471131255ec1c43683ea07@linux-foundation.org/ [0]
-> Link: https://lore.kernel.org/all/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3/ [1]
-> Link: https://lore.kernel.org/all/20250826-akpm-v1-1-3c831f0e3799@debian.org/ [2]
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Breno Leitao (3):
->        arm64: kexec: Initialize kexec_buf struct in load_other_segments()
->        riscv: kexec: Initialize kexec_buf struct
->        s390: kexec: Initialize kexec_buf struct
->
->   arch/arm64/kernel/machine_kexec_file.c | 2 +-
->   arch/riscv/kernel/kexec_elf.c          | 4 ++--
->   arch/riscv/kernel/kexec_image.c        | 2 +-
->   arch/riscv/kernel/machine_kexec_file.c | 2 +-
->   arch/s390/kernel/kexec_elf.c           | 2 +-
->   arch/s390/kernel/kexec_image.c         | 2 +-
->   arch/s390/kernel/machine_kexec_file.c  | 6 +++---
->   7 files changed, 10 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 3c642997252eef4449cb6b6e02af3dc22515d817
-> change-id: 20250827-kbuf_all-b9d55c9291eb
->
-> Best regards,
-> --
-> Breno Leitao <leitao@debian.org>
+[...]
+
+> @@ -1586,18 +1577,13 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>  		max_sectors = min_t(int, max_sectors,
+>  				    BIO_MAX_VECS * (PAGE_SIZE >> 9));
+>  	if (max_sectors < bio_sectors(bio)) {
+> -		struct bio *split = bio_split(bio, max_sectors,
+> -					      GFP_NOIO, &conf->bio_split);
+> -
+> -		if (IS_ERR(split)) {
+> -			error = PTR_ERR(split);
+> +		bio = bio_submit_split_bioset(bio, max_sectors,
+> +					      &conf->bio_split);
+> +		if (!bio) {
+> +			set_bit(R1BIO_Returned, &r1_bio->state);
+
+Before it was "set_bit(R1BIO_Uptodate, &r1_bio->state);" that was done. Now it
+is R1BIO_Returned that is set. The commit message does not mention this change
+at all. Is this a bug fix ? If yes, that should be in a pre patch before the
+conversion to using bio_submit_split_bioset().
+
+>  			goto err_handle;
+>  		}
+>  
+> -		bio_chain(split, bio);
+> -		trace_block_split(split, bio->bi_iter.bi_sector);
+> -		submit_bio_noacct(bio);
+> -		bio = split;
+>  		r1_bio->master_bio = bio;
+>  		r1_bio->sectors = max_sectors;
+>  	}
+> @@ -1687,8 +1673,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>  		}
+>  	}
+>  
+> -	bio->bi_status = errno_to_blk_status(error);
+> -	set_bit(R1BIO_Uptodate, &r1_bio->state);
+>  	raid_end_bio_io(r1_bio);
+>  }
 
 
-I see that the commit those patches fix is in 6.16 so we should add cc: 
-stable.
-
-And who should merge those patches? Should we do it on a per-arch basis?
-
-Thanks,
-
-Alex
-
-
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+Damien Le Moal
+Western Digital Research
 
