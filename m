@@ -1,223 +1,144 @@
-Return-Path: <linux-kernel+bounces-795037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1698AB3EC22
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:24:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EECB3EC2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB011A86127
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3C45205F9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF483064A1;
-	Mon,  1 Sep 2025 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221633064A2;
+	Mon,  1 Sep 2025 16:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AjCJaNXq"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7IU2/Fs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C9F2EC0B0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C46F306486
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743826; cv=none; b=BdSCVV3sQ7DjvGl+pdA6+Da2aYnyyuwBkXNEWC8VH0NF1Iip2kEHrqnwoNUOLP3CixuDoVMhAYASowpPPU1l2zO8tmxa+CX9WimRYV1sc7ACNufNCaGWxkFHKvEOl9QXlD8VZ3k5uAAfrGjbzwlFlSOQ2VStp1PwNHW83iIAyB8=
+	t=1756743923; cv=none; b=G6aAT8xAargBPBEaQ1LCbs8x5R385Gq5WOfZH+8+ejrA+az5rRNrMRjjbPGx1B2L3C0eH9old5WF9fBLRBxeGhHALMeFiSfq4rENz5Wf36Tei9+3rHQBhX5VHvdRYwfyNcym3Az9mlLPyqkg6Btm8VVwaewvMPzSG02/BiW/X1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743826; c=relaxed/simple;
-	bh=iq/TFsGHrI2sNHKrO9iqbNsl1yT5Gg67zRmEG5x38pA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lqw48r03lGxOg2M4z4ilQuz2bY6xde6wbX6HwFZkOeJEUSNLGFfHZyomN2MhHk8y1cQFKzmYfQfsNjxBRjZbM1OMjsct+gupJqgCsKLqPhtcFyf/oNv7wXXT0UgBHRvT2a03zbZ7cbqiGGzpqGOnU0IY3tyR/IIyQCFloCEog60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AjCJaNXq; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b8b25296fso10225295e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756743823; x=1757348623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4GzUXHSEp7eJvbjtj7nsj+hJJCBJtb1k9nwnWapBwc0=;
-        b=AjCJaNXq1UhrHlynKsWU72cAl1v8Hl6BfY3MKo/LsH3YTrZtAU0bXeL6qS0ikPn6t0
-         EONnSwVPlBcRSi+uE0NuxxPtuyjDLyVK75uPnpNfl+QxbpyzdZMlFRFEy1gXaCmUN5FU
-         78hoIF/2SmGguQ9V61rYV3JdD0KMGMGhYHgfhJ3/D/Oq++CjbKL4vJwy9AJDmvIZOG8+
-         BpNBQ2on4p9865ewvLNHv2l4ugV6CgrtTVpkFe+eMUfqRv73484rFFk1esItVHiXnXFE
-         A86DUr1y9HQrpA6VCmaxuai6Smy+yii4ux19wgTsjA4Pi2XLjLkirgMnmtoMLqGL+2P4
-         Qj7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756743823; x=1757348623;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4GzUXHSEp7eJvbjtj7nsj+hJJCBJtb1k9nwnWapBwc0=;
-        b=niYXbofMjIAv3QGs+mDuSdA3LwnZ3HXi52eaK+HwComudUs0N2LeqL+InD1xyAqvDg
-         vHIxJlvFNXNyv8p56fn78zxdsxrrU+e7XpqFhmaf55pgvm8F9hRZJYCgfHNJGYAK6evO
-         StUuCXHl/YCKYUU+InhoeeY3BPIZ8mpp5YKtSnBgV7OXf04oKAM91WmhRQCP7GoIaqLb
-         gvhWhA4Iu6daPygBnDPWEZrNvCnYEVe8X+eD3nKlogFtYvCSTMZuQJWsUT2tOpUnspjR
-         lJ99Kl2La/fU3c0D7y+1Tie27jfhrOL8SJQjxtgWje5S7mBu77VoN1o+lHNsQIwtnMNt
-         ivdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjRZ7WXnJxkKFjfKrMlotNXoytrw/UJkp4FgTlH4nbYyxecUc0Gwlo8v1HFvgrOyP+CmqkTAgSnZQDepw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw201X5SU1i3ND+KTGLfsUrH14lAW3kkbf+jKKsEeuZEPedzgSS
-	lNmq1cjpIS6ypS58suMYDyiMFXz0gy0iVaSLh+feoB2DJ85Smy+Qj1z7xoq7uX9nvSI=
-X-Gm-Gg: ASbGncsacyD9tyhzCVCGZ7oZbPLOKAMi06VCb04NOnjZ2LdwMCTK1owHtDgXXozWIwB
-	7M/be6MW860Hg0/tSN+ffezRKkr8r2H0mU5HCq+3jSrBKyqJcVdnl58063Ff+A6yKd5UQ6Bwz5n
-	Bs/yw6DqGH8pj9DeRDZotPLHy3uvqRClpF3qYnY+sktbzbITcu/TWB03WwF56kmsMK51rkHHsOb
-	xLz01lB1MvxVZdL4T0dQCHwx2Ek7uCfuQc1UpLVjSlUqzeNzjRpCuj1NthkeY2v/D/cq8iqdMZy
-	6LDfRoV6X62xDK0Zr2bIO28EPK/1dGy4ps9RNXOjWGg/uJYxxaqqv4qmbgcprDPPFW5yYEFuhPl
-	Dmx8dumLt+Ln2r0WRYIHQU+2oKqm7Beu1AVqxOw4sMjFuN0OeNmAxYFxFYpWqLTNzzv5R9hE7
-X-Google-Smtp-Source: AGHT+IGOiAaP7qHZISQMW/8CIihks4EKOOBLIZhO0W40c2pGhFYTuXr7Dc/THjMvr7cxrtgMTC0jlQ==
-X-Received: by 2002:a05:600c:35ca:b0:45b:87a6:cf8 with SMTP id 5b1f17b1804b1-45b87a61003mr52789485e9.27.1756743823059;
-        Mon, 01 Sep 2025 09:23:43 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a? ([2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7df3ff72sm101954645e9.1.2025.09.01.09.23.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 09:23:42 -0700 (PDT)
-Message-ID: <2e5fc8dd-4dc2-4fea-9321-80daa5177163@linaro.org>
-Date: Mon, 1 Sep 2025 18:23:41 +0200
+	s=arc-20240116; t=1756743923; c=relaxed/simple;
+	bh=Xy9c0RnED3HT39yD+fhi1E7AHRKldhfJxdRE7gKyi/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CfK7jk5tLE3wJ6CHwf5IJLvSjaixKrNHWAyepV+SAx2h+p9veL3kAH09iosy3XS/z7MgW90afOpXUmy8Nw5zvROGmhok5M2BJJ9WanfNCPGiUhvWBzKgIWOUJm7KAbyJZRt0wvDI6K69xWgC7TC2/urXdTOKpD1QPma2Ikciquo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7IU2/Fs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A30C4CEFC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756743923;
+	bh=Xy9c0RnED3HT39yD+fhi1E7AHRKldhfJxdRE7gKyi/E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z7IU2/FsWPS2YWB0kzeYM2ObtiwET9Kra0CYZYw06ild8oKNLCkxWc7Vfsm9bVuQe
+	 4ZzPUt4sqB2bDQ+SI3eAssF/kmXIB0Y93UTATCsPHb5bGk1BvbNvXgMO3iYCBTXLLs
+	 8c7e+7i1hw/nfIVNVge3CR/QjSNdpGWvLuaCuXYIbWk6PLSrrLq6JyYopyxuqgCZrN
+	 Zmkgq+utnmXu+vCfB1DRCRZ1kVm7edWVi9ifrqSx0PAq/TsjN6omcEtXW6BUWSBlAz
+	 vfW8gEZO7B/KKnMedjJbfDn/aXGDweWBmAuE1REQj04J8I9H9uv0be/+OS0n+iCF1Y
+	 2JunIyl9GjxiQ==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f918d71eso34478781fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:25:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvQUBfp3ODXGNwziMs1234cZ926gPqr/R4GTYb7Q30k/bw30T4t6Y9xyR/+0P/0xQ8tfp+2ZcIdSAMG6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7uyci3uavxOGaT+3rk0I3gmOhS1zPFhPpPGmbwPOzxPzqjTcv
+	jPA3Hk8P7GKT0/IrnrN7mZb9qFTzQYpq1tvrLJAGKNKuKhaN/mxagAKwQKQV363nX4ShwjY+Gkf
+	2YTm7cTPLnICKjPYyNInbRH2DAduNrol8LtyxZYuA
+X-Google-Smtp-Source: AGHT+IHQaKnUNWLNFQYNtSQSa47g2pu7CpYY6T/b9pUgP8BH0aybd+qYJdHgPCMppjygHDMCLF/KHVs2OD16WVL33oA=
+X-Received: by 2002:a05:651c:1543:b0:336:e1c4:6c6f with SMTP id
+ 38308e7fff4ca-336e1c47336mr14179671fa.19.1756743920925; Mon, 01 Sep 2025
+ 09:25:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-To: Sebastian Reichel <sre@kernel.org>,
- Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
- <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
- <ea0b329e-ab3e-4655-8f27-e7a74784302a@app.fastmail.com>
- <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net> <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+ <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
+In-Reply-To: <54e27d05bae55749a975bc7cbe109b237b2b1323.camel@huaweicloud.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Mon, 1 Sep 2025 09:25:09 -0700
+X-Gmail-Original-Message-ID: <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
+X-Gm-Features: Ac12FXxyw6xiBo675X_GNr-mU7ryRcDYbQiEmCEhhXrRzSi1-YYVHnkbnMyWAA0
+Message-ID: <CALCETrUtJmWxKYSi6QQAGpQR_ETNfoBidCu_VEq8Lx9iJAOyEw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/09/2025 18:10, Sebastian Reichel wrote:
-> Hello Mark,
-> 
-> On Mon, Sep 01, 2025 at 09:48:39AM -0400, Mark Pearson wrote:
->> On Sun, Aug 31, 2025, at 5:28 PM, Sebastian Reichel wrote:
->>> Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
->>> is in theory compatible with ThinkPad ACPI. On Linux the system
->>> is booted with device tree, which is not supported by the ThinkPad
->>> ACPI driver. Also most of the hardware compatibility is handled
->>> via ACPI tables, which are obviously not used when booting via
->>> device tree. Thus adding DT compatibility to the existing driver
->>> is not worth it (almost no code sharing).
->>>
->>> The driver currently exposes features, which are not available
->>> via other means:
->>>
->>>   * Extra Keys
->>>   * System LEDs
->>>   * Keyboard Backlight Control
->>>
->>> The driver has been developed by reading the ACPI DSDT. There
->>> are some more features around thermal control, which are not
->>> yet supported by the driver.
->>>
->>
->> Thanks for working on this - it's great.
-> 
-> It's a personal scratch your own itch project, as I daily drive the
-> machine.
-> 
->> I'll see if I can get the EC spec so I can do some checking on the
->> values (I thought I had it already, but I can't find it). If this
->> file can be used for other platforms then it might be good to
->> rename the file to not be specific to the t14s? I'm curious if it
->> can be used on the X13s or the Yoga platform.
-> 
-> Maybe. I only have the T14s (apart of my older Intel/AMD ThinkPads,
-> which use the ACPI driver). The ACPI DSDT functions completley
-> abstract the lowlevel I2C interface, so in theory every ThinkPad
-> could have a completley different EC and still use the same ACPI
-> driver. So this needs to be checked per-device. Hopefully the low
-> level interface is similar in those, so that we don't need to spam
-> the kernel tree with multiple different EC drivers :)
-> 
->> Couple of notes
->>   - I do agree it doesn't make sense to add this to thinkpad_acpi.
->>     That file is too big anyway.
->>   - If there are other pieces like this where some detail of the
->>     platform is needed, please do let me know. I never got enough
->>     time to work on this platform directly, and it wasn't in our
->>     Linux program, but I do have access and support from the
->>     platform team for getting details on it. If I can help, so not
->>     too much reverse engineering is needed, I'm happy to.
-> 
-> Thanks for the offer.
-> 
-> I would be interested in bits around system suspend. Right now
-> support on X1E is limited to sending the CPU into suspend. Much of
-> the machine seems to be still powered. Right now the keyboard
-> backlight and all the status LEDs stay on and the LID + power led
-> does not go into the typical breathing pattern. Additionally I had
-> to disable wakeup capabilities for the EC interrupt, as closing the
-> LID generates an event and thus an interrupt, which wakes the
-> system. Obviousy that is undesired from user's perspective. My guess
-> is, that there might be some register to mask events, but I haven't
-> found it so far. Alternatively the EC might mask them automatically
-> when the system is send into suspend, which I also have not yet
-> figured out :) The only bit I know is, that EC register 0xE0 is
-> involved in modern standby.
+Can you clarify this a bit for those of us who are not well-versed in
+exactly what "measurement" does?
 
-I was wondering if there's a command to poweroff the system when still plugged in ?
-The actual behavior does a PSCI poweroff using the PMICs but since the EC
-keeps the power on and is not aware we want to poweroff, if just reboots.
+On Mon, Sep 1, 2025 at 2:42=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> > Now, in cases where you have IMA or something and you only permit signe=
+d
+> > binaries to execute, you could argue there is a different race here (an
+> > attacker creates a malicious script, runs it, and then replaces it with
+> > a valid script's contents and metadata after the fact to get
+> > AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
+>
+> Uhm, let's consider measurement, I'm more familiar with.
+>
+> I think the race you wanted to express was that the attacker replaces
+> the good script, verified with AT_EXECVE_CHECK, with the bad script
+> after the IMA verification but before the interpreter reads it.
+>
+> Fortunately, IMA is able to cope with this situation, since this race
+> can happen for any file open, where of course a file can be not read-
+> locked.
 
-Neil
+I assume you mean that this has nothing specifically to do with
+scripts, as IMA tries to protect ordinary (non-"execute" file access)
+as well.  Am I right?
 
-> 
-> Apart from that and (probably) unrelated to the EC: I noticed that
-> accessing the built-in webcam (with the X1E camera patches from
-> Bryan O'Donoghue) does not enable the status LED. It would be
-> nice if you can check how that is wired, so that it can be enabled
-> when a camera stream is started.
-> 
-> Greetings,
-> 
-> -- Sebastian
+>
+> If the attacker tries to concurrently open the script for write in this
+> race window, IMA will report this event (called violation) in the
+> measurement list, and during remote attestation it will be clear that
+> the interpreter did not read what was measured.
+>
+> We just need to run the violation check for the BPRM_CHECK hook too
+> (then, probably for us the O_DENY_WRITE flag or alternative solution
+> would not be needed, for measurement).
 
+This seems consistent with my interpretation above, but ...
+
+>
+> Please, let us know when you apply patches like 2a010c412853 ("fs:
+> don't block i_writecount during exec"). We had a discussion [1], but
+> probably I missed when it was decided to be applied (I saw now it was
+> in the same thread, but didn't get that at the time). We would have
+> needed to update our code accordingly. In the future, we will try to
+> clarify better our expectations from the VFS.
+
+... I didn't follow this.
+
+Suppose there's some valid contents of /bin/sleep.  I execute
+/bin/sleep 1m.  While it's running, I modify /bin/sleep (by opening it
+for write, not by replacing it), and the kernel in question doesn't do
+ETXTBSY.  Then the sleep process reads (and executes) the modified
+contents.  Wouldn't a subsequent attestation fail?  Why is ETXTBSY
+needed?
 
