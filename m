@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-795062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED13B3EC69
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B3AB3EC6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840651B20461
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BB13BF314
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3533C30648D;
-	Mon,  1 Sep 2025 16:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4EB30648E;
+	Mon,  1 Sep 2025 16:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzqleyRw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+CWDHu+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923262356CE;
-	Mon,  1 Sep 2025 16:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72D01C5D7D;
+	Mon,  1 Sep 2025 16:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744812; cv=none; b=DP8BfLswRM+UWewDSp9bKd7MggDYLhfHfryQHiMZjWDXBINmxaMP3kczFy7z8dI1V+Tb/YbHLnPEiAcYdWMeoiiROBC51xdSW/sfEjHl+0CKiNWUpT+wKYj54BEc4zcS+du6u4UC5jRugtwnUJ1azzk8vrguYYRiRut1S2oFB3Q=
+	t=1756744852; cv=none; b=Mknoff8A/rY3Zn6GQiuD76UPmvSI/Hwc86JXAM+tEWTNmOFHfF2rlGxlgLFEHkddjc0P72e0uAg/IM3WwPYKsQArXvct2S8zj7dmsuvHlMQlwyeCcVFK4d7peEv0NAyl5jZZaGNLg57lV7BrioHMcC7SVfscsEuAdCrlhkHxHTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744812; c=relaxed/simple;
-	bh=tDb88lFCA9cbKoJXMvuaDvWAEZD/O4+t/o9l90JG9lQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lFZUaSVRyXCGnm3nMelssy1IyKXWvMDMBtFuJR6oodv/0icpd/Rty10zLMw0qKJRf30wXxXIveARdLTbYRON8nD5cgHMztj+cwMjk5VDei33r1Xo4kbNPXK6sdzJf21PyYtdajEmKGcDtn/bZGiEsjy3fDJwixSyi0MosRYZPxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzqleyRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD5FC4CEF0;
-	Mon,  1 Sep 2025 16:40:09 +0000 (UTC)
+	s=arc-20240116; t=1756744852; c=relaxed/simple;
+	bh=EYcCtsQW0Wv4uVBxrkecx/q6RsKoRtiUpOXGlQ9kpVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRdV+xSjHoJ2ZSw8OI7VVEEhk9cgdd9zGDHmaVd5Bmg6r3RriC2CShXVgrieEgBnlZ4GezbIaa2hFIgXkfMNUN/5m14azCz/5l+ov1KtIqbBjEGB6ei4+81vBcmET+kg8XtpehN4jQk/Y1IpvWTXADM0tB7MYc65Yg+D2WhYr0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+CWDHu+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1713AC4CEF0;
+	Mon,  1 Sep 2025 16:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756744812;
-	bh=tDb88lFCA9cbKoJXMvuaDvWAEZD/O4+t/o9l90JG9lQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AzqleyRwkS3wNp0SvAlt6HCrlQLpgiFr7gIiNBtDDk8QQOXWAlE7gwzQ44BphC959
-	 sCvWWbqPuleCkuHiUZPdH1Sw33Gu8BkTa0SKYOcF0MqulJc1Z6DsD1sB1MI8QETYc8
-	 52hRCeVrC8UMUoUh0re0QPEPPJyHC8pWdqStB8f2+fUdX+BS+i9d4EqjZ9PLvmPR2/
-	 iZEZCRgRxTgYxOAtBBhhYX5BGY9oB89drdZUL7wAU7B9waXYR8ClIRZGF7uQ0XQPJH
-	 SqWiaQ04KZ43W17ZbfGNEwAvGRZs8I6migogvognStf6oXre8Q9Qvs/gVVRRfAdayy
-	 tDEsbFAo9mCMw==
-Date: Mon, 1 Sep 2025 17:40:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@suse.de>, linux-iio@vger.kernel.org (open
- list:IIO SUBSYSTEM AND DRIVERS), linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH v2 0/2] iio: use int type to store negative error codes
-Message-ID: <20250901174006.11bf48a8@jic23-huawei>
-In-Reply-To: <20250901135726.17601-1-rongqianfeng@vivo.com>
-References: <20250901135726.17601-1-rongqianfeng@vivo.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756744851;
+	bh=EYcCtsQW0Wv4uVBxrkecx/q6RsKoRtiUpOXGlQ9kpVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G+CWDHu+GSpr35iGDk1Nh9STcszBPHxpfOEINwRxBtNsjUD7dAYvhnUroNnLZhY7d
+	 QE62WXJzvUbBVF6r2efbDNd/PNHftfjEGGXwS0AAj3A6XJ0cWBycpXU+uyVq5Q/8Bg
+	 wBt0Gx4CtrSEZ5TmEODy2vgkGr/3T5LnAlvfv3yPVXyK5sPu3Qjny/UWOjZU3ydrOS
+	 deb/vomGIAOzuE0cr/fWYI0otcMQn2BN/hliuS8CbdNSV8mriJHjaQlxIBxzW4OEq1
+	 N18FPT8I061kxGITJtc2GkFfATUYVbjIFdFocu2petFfuZecgsfIcIGA/2rj/vMkD8
+	 ECK206N/NJKIw==
+Date: Mon, 1 Sep 2025 18:40:43 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: linux-man@vger.kernel.org, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev, 
+	ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
+ PR_THP_DISABLE_EXCEPT_ADVISED
+Message-ID: <hbwmiqb2qjyf4bemcbg2nwil4oceukvevml4jrilm4q4souv6e@hmjk4ubgavg2>
+References: <20250901160903.2801339-1-usamaarif642@gmail.com>
+ <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="twz4n2ienikp6hn5"
+Content-Disposition: inline
+In-Reply-To: <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
 
-On Mon,  1 Sep 2025 21:57:24 +0800
-Qianfeng Rong <rongqianfeng@vivo.com> wrote:
 
-> Use int instead of unsigned int for 'ret' variable in ad5360_update_ctrl()
-> and ad5421_update_ctrl() to store negative error codes or zero returned by
-> other functions.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
-> v2: Split each driver into a separate patch.
-Thanks for doing that.
+--twz4n2ienikp6hn5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: linux-man@vger.kernel.org, david@redhat.com, 
+	lorenzo.stoakes@oracle.com, hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev, 
+	ziy@nvidia.com, laoar.shao@gmail.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of
+ PR_THP_DISABLE_EXCEPT_ADVISED
+References: <20250901160903.2801339-1-usamaarif642@gmail.com>
+ <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <d45bfc2d-91da-4a70-90d2-4e0319c5241c@gmail.com>
 
-Applied to the fixes-togreg branch of iio.git and marked for stable inclusion.
+Hi Usama,
 
-Thanks,
+On Mon, Sep 01, 2025 at 05:18:22PM +0100, Usama Arif wrote:
+> I am not sure what the right time is to send the mandoc changes.
+> The patches have been merged into mm-new for more than 2 weeks.
+> We can still review it and I can resend if needed after the kernel releas=
+e if that
+> is a more appropriate time?
 
-Jonathan
+No, this is fine.  Let's refine the patches for now.
 
-> ---
-> Qianfeng Rong (2):
->   iio: dac: ad5360: use int type to store negative error codes
->   iio: dac: ad5421: use int type to store negative error codes
-> 
->  drivers/iio/dac/ad5360.c | 2 +-
->  drivers/iio/dac/ad5421.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
+Once we're done, I guess we can either wait until they arrive at Linus's
+tree, or if you're very confident this will reach a release eventually,
+we can merge it now here, and eventually fix it if something small
+changes later.  I don't mind too much.  It's more up to you, and how
+much you expect this to change before the actual release of Linux.
 
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--twz4n2ienikp6hn5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmi1zIsACgkQ64mZXMKQ
+wqngSw//SnTGh3HNPiefx0mB0PXLzEghkGJ8Zt03y4grnPvDOC7jfD8Jl5lBExK4
+uOjLxj/BORfsAuacL64JwMSKem7T6OTKJjebRdqqycSDnti/jYCCzrInJPzJlK30
+G3SeFr6FVCBKZ0cTpMcIcoRDhWPFyh4U9Ikrd0SfiZ6gbvWRsK1+v4uHWvCrZ+89
+5/9n/sL1WPX1JywVZ0ZtvrfLBSgIz22d/tQfvyPU7KpR5L3Tij2iA5Ciiqfu4oRy
+46bpGRH7ZbJfwdM0PWpuixkA3egZcZA/1uqjpzRwcdyNKmJ/bvW9mP23ZXRP8efP
+FltI3AeWhvaq7lFNCFiwhqpSNIkPcuk4UIhKrzdmm1dpCpUqHZK2WTnQmaV0zE91
+oGzisnsxVoJIodeCKob0IC14OMVyhwoSgY+pXdwek7SA+Pggy10uWp3N+faEj/m/
+NtHtdGC8JvexvY+OS50rDkjrV/+b1ZVW/fIBulTi1ZMCLxPL1notFJsmJoPT11as
+yo8ctwQcq+Hi/yiiWRy7OsR/uGPq7l08bMiWX5rQ5wXiHsSU6L2aULaMXas1vHMJ
+wb19jGZOP0HzdY1Eu4NZvpcARB4uTGXuE54LrY0OfIMpyB7K0IytryguFRCcZ84y
++BKll3fX6Q1uVRa5wSGD2xOlNQ6fkcqoHkViQ7tQWM0p9qfkFMA=
+=/bW3
+-----END PGP SIGNATURE-----
+
+--twz4n2ienikp6hn5--
 
