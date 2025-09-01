@@ -1,211 +1,189 @@
-Return-Path: <linux-kernel+bounces-793819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97321B3D8C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0920BB3D8C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B871897DDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064C63A89D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0473323D7D6;
-	Mon,  1 Sep 2025 05:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF5F23D7C4;
+	Mon,  1 Sep 2025 05:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="glE3PBsn"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kLUxhvjW"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3AC21FF44;
-	Mon,  1 Sep 2025 05:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB168239E67
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756704525; cv=none; b=shxF8iWdWtCSDmrML03BQMWz4vDhwMtZR/LNpkw3iyTHRMtSqL9OSdsnVRSNyN4uCVMiETeqKdDtkngGNDimGVlzPXDmaoUEIXrIwUn2+qknOy1nuA8QH7/9a5mfqvBfaY+Gx1GOum3fQTQcZDBl6LBpc9+wIGzTGM0RFm1/0og=
+	t=1756704600; cv=none; b=rAU86gtdbkxdF0GwhkZfuATL7xm1PADPgs/aANFUhqhmqbWyz9u6RzJlAy6IN4j9R+u0otPjjnGlkJFEaqtn2ZsJohMrapzGqzcpMTGImB059f86xP/vbISETAZq9BqgZsGK1alyUqnq6XfjIrKTZZfnTUbQyqhWzkrVh9C7TBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756704525; c=relaxed/simple;
-	bh=VH+6KCioF7nPyFiaGHvYI106SEQk852VC3TqE8gkjzk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BxBcMMgzxR1k4kt4S4XEJUO62kSUoLPB7L1XrecpLWWaPFRtR248PpYjpV7dekSbWan8VxvYWYSLOzzz9Qat9r3KkLG7VYXUWfsXKay0p73wRJKdE1lsAcpzlAv4hEGOIfN2RSL8xw7cpvfIXTRrJ41pdNWuf0ckdUm1jmIgrbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=glE3PBsn; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=0RpMW/QmoSWZmxGRn2TYP438jGsUybJgguDX0wk4nWE=; b=glE3PBsns+8CeBPeVzCFehbg3A
-	bMwdEcHS+cK1l3/Fc4rZ1OAItsxMPvqRHYMbGl6VrP+hIgyv7CFXmlPJWM3uqsfyIYzqUt8mgaHk2
-	d46b/jEBJaSXRtzq9ztcRdmzDF+qT5XOM/ReU481SKEL7cDJkixL0z816Hv6o3ALJfD80FFLxsmqM
-	u1Y65lk+Lu00QeqFa8Ou3mZWqx4aJ56egqx0mw1aYaP4niRoPBzz/Tooz9afPJ3DveEQ9XzUM3oRE
-	Sm4KLe95n+KMsuXO73IoFIW8NQtxR6X5Io/DBLV7Gj8/n1Wm1VkYH4rzOF5pREspa0sOB2CxduujR
-	nkasc42A==;
-Received: from [223.233.71.70] (helo=[192.168.1.8])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1usx5f-0058MA-4e; Mon, 01 Sep 2025 07:28:27 +0200
-Message-ID: <d48f66cf-9843-1575-bcf0-5117a5527004@igalia.com>
-Date: Mon, 1 Sep 2025 10:58:17 +0530
+	s=arc-20240116; t=1756704600; c=relaxed/simple;
+	bh=f0VTLj2oJi5Q/8tVmqZKyqiwP/jE3Chg74tuZB6REWs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=mlyRX01jeSyF2FCFOOepA2ZGFf0PnmSUaSnMBQwbLvFWXmH+ClhLWAc+63NN8DWZjp4LRuDgSJKQ2EuTTYfqhb0ao+dU2nF9m1104vJy98O3gjlqocnZyMz+bYxZnluj+uuW9c2vin6T7M5HDhNL8/r142kPm/uqOxuzHZ+eEro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kLUxhvjW; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250901052955epoutp010711caba7ffc2bf59f8395c2c4c3d6ab~hEYXGk9ko0380903809epoutp01R
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 05:29:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250901052955epoutp010711caba7ffc2bf59f8395c2c4c3d6ab~hEYXGk9ko0380903809epoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756704595;
+	bh=z74vgOVZHNwhfErJhL2+ZnEEShq8T4mkIJ9fIx6HkJQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=kLUxhvjWD/mYbZWj/N8LeoPc+73L39Dh+Lr0tUT3Ccl9ZUQ5rAfoo13t+w1sq8Uno
+	 JLYajbXO0xArhoVcbQ/SSA8UfvitXvIdlyK3TkcBmT5JONGMQncr1f/FZsYAz/Hc0y
+	 stSRy8pUgrj70HWDSK+E2B6OJ+klryW6TQCscd/s=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250901052955epcas5p22cc7004bedc0128438190393c0253af3~hEYWQVkKp0411204112epcas5p2p;
+	Mon,  1 Sep 2025 05:29:55 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFcrf0XRtz6B9mF; Mon,  1 Sep
+	2025 05:29:54 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250901052953epcas5p18a498f14a81ac41b86c227ad4c8acef4~hEYUxtHhj1182311823epcas5p1C;
+	Mon,  1 Sep 2025 05:29:53 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250901052948epsmtip1608cfb6e73b057139f6d612781fccdea~hEYQcXvfw0550105501epsmtip1f;
+	Mon,  1 Sep 2025 05:29:48 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <jesper.nilsson@axis.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <s.nawrocki@samsung.com>,
+	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
+	<linus.walleij@linaro.org>, <tomasz.figa@gmail.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>
+Cc: <ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
+	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
+	<smn1196@coasia.com>, <shradha.t@samsung.com>, <inbaraj.e@samsung.com>,
+	<swathi.ks@samsung.com>, <hrishikesh.d@samsung.com>,
+	<dj76.yang@samsung.com>, <hypmean.kim@samsung.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-arm-kernel@axis.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <soc@lists.linux.dev>
+In-Reply-To: <e3f6d000-bbb7-45c2-93f2-69be9815ca99@kernel.org>
+Subject: RE: [PATCH v3 04/10] dt-bindings: pinctrl: samsung: Add compatible
+ for ARTPEC-8 SoC
+Date: Mon, 1 Sep 2025 10:59:47 +0530
+Message-ID: <000301dc1b01$71e4f5a0$55aee0e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-From: Bhupesh Sharma <bhsharma@igalia.com>
-Subject: Re: [PATCH v8 4/5] treewide: Switch memcpy() users of 'task->comm' to
- a more safer implementation
-To: Kees Cook <kees@kernel.org>, Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
- brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- linux-trace-kernel@vger.kernel.org, torvalds@linux-foundation.org
-References: <20250821102152.323367-1-bhupesh@igalia.com>
- <20250821102152.323367-5-bhupesh@igalia.com> <202508250656.9D56526@keescook>
-Content-Language: en-US
-In-Reply-To: <202508250656.9D56526@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHHo9j0Rv1rvZf0N1R8AXn4x9PYUAMDo+/eAkhMLtUCILeh+gILpIJwAZ3h4W+0TgkigA==
+Content-Language: en-in
+X-CMS-MailID: 20250901052953epcas5p18a498f14a81ac41b86c227ad4c8acef4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250825120715epcas5p3a0c8b6eaff7bdd69cbed6ce463079c64
+References: <20250825114436.46882-1-ravi.patel@samsung.com>
+	<CGME20250825120715epcas5p3a0c8b6eaff7bdd69cbed6ce463079c64@epcas5p3.samsung.com>
+	<20250825114436.46882-5-ravi.patel@samsung.com>
+	<b8085dd8-e1a0-48b1-a49f-f3edaa0381da@kernel.org>
+	<000201dc1af2$537b4e70$fa71eb50$@samsung.com>
+	<e3f6d000-bbb7-45c2-93f2-69be9815ca99@kernel.org>
 
-Hi Kees,
 
-On 8/25/25 7:31 PM, Kees Cook wrote:
-> On Thu, Aug 21, 2025 at 03:51:51PM +0530, Bhupesh wrote:
->> As Linus mentioned in [1], currently we have several memcpy() use-cases
->> which use 'current->comm' to copy the task name over to local copies.
->> For an example:
->>
->>   ...
->>   char comm[TASK_COMM_LEN];
->>   memcpy(comm, current->comm, TASK_COMM_LEN);
->>   ...
->>
->> These should be rather calling a wrappper like "get_task_array()",
->> which is implemented as:
->>
->>     static __always_inline void
->>         __cstr_array_copy(char *dst,
->>              const char *src, __kernel_size_t size)
->>     {
->>          memcpy(dst, src, size);
->>          dst[size] = 0;
->>     }
->>
->>     #define get_task_array(dst,src) \
->>        __cstr_array_copy(dst, src, __must_be_array(dst))
->>
->> The relevant 'memcpy()' users were identified using the following search
->> pattern:
->>   $ git grep 'memcpy.*->comm\>'
->>
->> Link:https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/  #1
->>
->> Signed-off-by: Bhupesh<bhupesh@igalia.com>
->> ---
->>   include/linux/coredump.h                      |  2 +-
->>   include/linux/sched.h                         | 32 +++++++++++++++++++
->>   include/linux/tracepoint.h                    |  4 +--
->>   include/trace/events/block.h                  | 10 +++---
->>   include/trace/events/oom.h                    |  2 +-
->>   include/trace/events/osnoise.h                |  2 +-
->>   include/trace/events/sched.h                  | 13 ++++----
->>   include/trace/events/signal.h                 |  2 +-
->>   include/trace/events/task.h                   |  4 +--
->>   tools/bpf/bpftool/pids.c                      |  6 ++--
->>   .../bpf/test_kmods/bpf_testmod-events.h       |  2 +-
->>   11 files changed, 54 insertions(+), 25 deletions(-)
->>
->> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
->> index 68861da4cf7c..bcee0afc5eaf 100644
->> --- a/include/linux/coredump.h
->> +++ b/include/linux/coredump.h
->> @@ -54,7 +54,7 @@ extern void vfs_coredump(const kernel_siginfo_t *siginfo);
->>   	do {	\
->>   		char comm[TASK_COMM_LEN];	\
->>   		/* This will always be NUL terminated. */ \
->> -		memcpy(comm, current->comm, sizeof(comm)); \
->> +		get_task_array(comm, current->comm); \
->>   		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
->>   			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
->>   	} while (0)	\
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 5a58c1270474..d26d1dfb9904 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1960,12 +1960,44 @@ extern void wake_up_new_task(struct task_struct *tsk);
->>   
->>   extern void kick_process(struct task_struct *tsk);
->>   
->> +/*
->> + * - Why not use task_lock()?
->> + *   User space can randomly change their names anyway, so locking for readers
->> + *   doesn't make sense. For writers, locking is probably necessary, as a race
->> + *   condition could lead to long-term mixed results.
->> + *   The logic inside __set_task_comm() should ensure that the task comm is
->> + *   always NUL-terminated and zero-padded. Therefore the race condition between
->> + *   reader and writer is not an issue.
->> + */
->> +
->>   extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
->>   #define set_task_comm(tsk, from) ({			\
->>   	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
->>   	__set_task_comm(tsk, from, false);		\
->>   })
->>   
->> +/*
->> + * 'get_task_array' can be 'data-racy' in the destination and
->> + * should not be used for cases where a 'stable NUL at the end'
->> + * is needed. Its better to use strscpy and friends for such
->> + * use-cases.
->> + *
->> + * It is suited mainly for a 'just copy comm to a constant-sized
->> + * array' case - especially in performance sensitive use-cases,
->> + * like tracing.
->> + */
->> +
->> +static __always_inline void
->> +	__cstr_array_copy(char *dst, const char *src,
->> +			  __kernel_size_t size)
->> +{
->> +	memcpy(dst, src, size);
->> +	dst[size] = 0;
->> +}
-> Please don't reinvent the wheel. :) We already have memtostr, please use
-> that (or memtostr_pad).
 
-Sure, but wouldn't we get a static assertion failure: "must be array" 
-for memtostr() usage, because of the following:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 01 September 2025 10:42
+> To: Ravi Patel <ravi.patel=40samsung.com>; jesper.nilsson=40axis.com; mtu=
+rquette=40baylibre.com; sboyd=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; s.nawrocki=40samsung.com; cw=
+00.choi=40samsung.com; alim.akhtar=40samsung.com;
+> linus.walleij=40linaro.org; tomasz.figa=40gmail.com; catalin.marinas=40ar=
+m.com; will=40kernel.org; arnd=40arndb.de
+> Cc: ksk4725=40coasia.com; kenkim=40coasia.com; pjsin865=40coasia.com; gwk=
+1013=40coasia.com; hgkim05=40coasia.com;
+> mingyoungbo=40coasia.com; smn1196=40coasia.com; pankaj.dubey=40samsung.co=
+m; shradha.t=40samsung.com; inbaraj.e=40samsung.com;
+> swathi.ks=40samsung.com; hrishikesh.d=40samsung.com; dj76.yang=40samsung.=
+com; hypmean.kim=40samsung.com; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com; linux-
+> clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-gpio=40vger.ke=
+rnel.org; soc=40lists.linux.dev
+> Subject: Re: =5BPATCH v3 04/10=5D dt-bindings: pinctrl: samsung: Add comp=
+atible for ARTPEC-8 SoC
+>=20
+> On 01/09/2025 05:41, Ravi Patel wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 31 August 2025 18:55
+> >> To: Ravi Patel <ravi.patel=40samsung.com>; jesper.nilsson=40axis.com; =
+mturquette=40baylibre.com; sboyd=40kernel.org; robh=40kernel.org;
+> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; s.nawrocki=40samsung.com;=
+ cw00.choi=40samsung.com; alim.akhtar=40samsung.com;
+> >> linus.walleij=40linaro.org; tomasz.figa=40gmail.com; catalin.marinas=
+=40arm.com; will=40kernel.org; arnd=40arndb.de
+> >> Cc: ksk4725=40coasia.com; kenkim=40coasia.com; pjsin865=40coasia.com; =
+gwk1013=40coasia.com; hgkim05=40coasia.com;
+> >> mingyoungbo=40coasia.com; smn1196=40coasia.com; pankaj.dubey=40samsung=
+.com; shradha.t=40samsung.com; inbaraj.e=40samsung.com;
+> >> swathi.ks=40samsung.com; hrishikesh.d=40samsung.com; dj76.yang=40samsu=
+ng.com; hypmean.kim=40samsung.com; linux-
+> >> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linu=
+x-samsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com; linux-
+> >> clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-gpio=40vger=
+.kernel.org; soc=40lists.linux.dev
+> >> Subject: Re: =5BPATCH v3 04/10=5D dt-bindings: pinctrl: samsung: Add c=
+ompatible for ARTPEC-8 SoC
+> >>
+> >> On 25/08/2025 13:44, Ravi Patel wrote:
+> >>> From: SeonGu Kang <ksk4725=40coasia.com>
+> >>>
+> >>> Document the compatible string for ARTPEC-8 SoC pinctrl block,
+> >>> which is similar to other Samsung SoC pinctrl blocks.
+> >>>
+> >>> Signed-off-by: SeonGu Kang <ksk4725=40coasia.com>
+> >>> Acked-by: Rob Herring (Arm) <robh=40kernel.org>
+> >>> Signed-off-by: Ravi Patel <ravi.patel=40samsung.com>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml =7C 1=
+ +
+> >>>  1 file changed, 1 insertion(+)
+> >>
+> >>
+> >> No wakeup-eint interrupts here? samsung,pinctrl-wakeup-interrupt.yaml?
+> >
+> > I don't see any use case for external wake-up interrupt here (as of now=
+).
+>=20
+> It is more about hardware, not use case. Does this hardware has EINT
+> wakeup pin banks?
 
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
-__must_be_array(arr))
-
-I think it would be easier just to set:
-
-   memcpy(dst, src, size);
-   dst[size -1] = 0;
-
-instead as Linus and Steven suggested.
+I checked SFR sheet, ARTPEC-8 does not have any EINT wakeup pins or SFRs.
 
 Thanks,
-Bhupesh
+Ravi
 
->> +
->> +#define get_task_array(dst, src) \
->> +	__cstr_array_copy(dst, src, __must_be_array(dst))
-> Uh, __must_be_array(dst) returns 0 on success. :P Are you sure you
-> tested this?
->
+>=20
+> > So wakeup-eint entry is not present in dts and yaml both.
+>=20
+>=20
+>=20
+> Best regards,
+> Krzysztof
 
 
