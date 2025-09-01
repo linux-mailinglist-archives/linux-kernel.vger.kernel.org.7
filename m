@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-795061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AF0B3EC67
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED13B3EC69
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B686188187E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840651B20461
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4B832F763;
-	Mon,  1 Sep 2025 16:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3533C30648D;
+	Mon,  1 Sep 2025 16:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aHih8uWP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzqleyRw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C531ACEAF;
-	Mon,  1 Sep 2025 16:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923262356CE;
+	Mon,  1 Sep 2025 16:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744794; cv=none; b=qmAIWD0qN9WCUVeigIk6T30zX3vLtSsvL+SX1zNLsYuCYQ0r9t3yqhyIuJ/ujR+BhdinSH+XEomasylq1QLUiLNgSJb7ixk3nxHPLBRLNQ9RSXGx3UGnSLqVWXSnXtLYKLQHB7+0E8e5FWucSyVo/7X5kmrLJoacaTmJnNKJAwY=
+	t=1756744812; cv=none; b=DP8BfLswRM+UWewDSp9bKd7MggDYLhfHfryQHiMZjWDXBINmxaMP3kczFy7z8dI1V+Tb/YbHLnPEiAcYdWMeoiiROBC51xdSW/sfEjHl+0CKiNWUpT+wKYj54BEc4zcS+du6u4UC5jRugtwnUJ1azzk8vrguYYRiRut1S2oFB3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744794; c=relaxed/simple;
-	bh=l4tl2zGuMxK613stp7sFJEo37zoRZcEcj5uJVSv60LI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNWSBUubdKt0S4yiK5bsi9YznOrgUadoRaqafGa7ABqDwYjV+YddhALB2t0BBqaW/Hb0JVxcKVhm36sT2Akt6jS9yf+IBGr9Yr2XjU5YswSF9tqk4Wk6RK/3Wr4VBYbQ7OvmYujfY0VLpmnlX/ji/8wYQX4bz2idbOtAyJrhv/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aHih8uWP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=DRSjUWWTyoOLGxr/Io9XlzhZ4h0IRQjCBc1qkh5X+1A=; b=aHih8uWP/8+EryVTNdecuhTzag
-	Uwlz5iJs0GPDnfvGzKiP6a3ru/ZBmL9NKPO3zoCHOeEIEenavc9ppbgXLRdLzeVXyv4wyB1wkwM1e
-	AeCdB+iADH3AgWtaaP8Lr+pa8Qnxfha1HZ0Dc4I16IY7piQSu+yPweraK2x2axysYNRtOttb1VH0R
-	Ns0NN36loE7+7bsGd0O9UCE0lf24TONfzkqmBMIRoktp6PNXQ2NOhGY8zQMocesVHhXpg7mtUa/yg
-	lrjhSfv0BSftoIeESgc5ID/3n76A4adayr4tY86FFq04r50FokIIFijnRQzkeVkGddQDouLRUu2Ly
-	js0i2jnQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ut7ZL-0000000DJXf-1zYl;
-	Mon, 01 Sep 2025 16:39:47 +0000
-Message-ID: <a123ab8b-a335-48a1-9ac3-e3b348d78cd1@infradead.org>
-Date: Mon, 1 Sep 2025 09:39:46 -0700
+	s=arc-20240116; t=1756744812; c=relaxed/simple;
+	bh=tDb88lFCA9cbKoJXMvuaDvWAEZD/O4+t/o9l90JG9lQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lFZUaSVRyXCGnm3nMelssy1IyKXWvMDMBtFuJR6oodv/0icpd/Rty10zLMw0qKJRf30wXxXIveARdLTbYRON8nD5cgHMztj+cwMjk5VDei33r1Xo4kbNPXK6sdzJf21PyYtdajEmKGcDtn/bZGiEsjy3fDJwixSyi0MosRYZPxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzqleyRw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD5FC4CEF0;
+	Mon,  1 Sep 2025 16:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756744812;
+	bh=tDb88lFCA9cbKoJXMvuaDvWAEZD/O4+t/o9l90JG9lQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AzqleyRwkS3wNp0SvAlt6HCrlQLpgiFr7gIiNBtDDk8QQOXWAlE7gwzQ44BphC959
+	 sCvWWbqPuleCkuHiUZPdH1Sw33Gu8BkTa0SKYOcF0MqulJc1Z6DsD1sB1MI8QETYc8
+	 52hRCeVrC8UMUoUh0re0QPEPPJyHC8pWdqStB8f2+fUdX+BS+i9d4EqjZ9PLvmPR2/
+	 iZEZCRgRxTgYxOAtBBhhYX5BGY9oB89drdZUL7wAU7B9waXYR8ClIRZGF7uQ0XQPJH
+	 SqWiaQ04KZ43W17ZbfGNEwAvGRZs8I6migogvognStf6oXre8Q9Qvs/gVVRRfAdayy
+	 tDEsbFAo9mCMw==
+Date: Mon, 1 Sep 2025 17:40:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Greg Kroah-Hartman <gregkh@suse.de>, linux-iio@vger.kernel.org (open
+ list:IIO SUBSYSTEM AND DRIVERS), linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2 0/2] iio: use int type to store negative error codes
+Message-ID: <20250901174006.11bf48a8@jic23-huawei>
+In-Reply-To: <20250901135726.17601-1-rongqianfeng@vivo.com>
+References: <20250901135726.17601-1-rongqianfeng@vivo.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
- migration support
-To: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>,
- Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>,
- Stephen Brennan <stephen.s.brennan@oracle.com>,
- Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250830020109.it.598-kees@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250830020109.it.598-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Kees,
+On Mon,  1 Sep 2025 21:57:24 +0800
+Qianfeng Rong <rongqianfeng@vivo.com> wrote:
 
-On 8/29/25 7:01 PM, Kees Cook wrote:
-> During kernel option migrations (e.g. CONFIG_CFI_CLANG to CONFIG_CFI),
-> existing .config files need to maintain backward compatibility while
-> preventing deprecated options from appearing in newly generated
-> configurations. This is challenging with existing Kconfig mechanisms
-> because:
+> Use int instead of unsigned int for 'ret' variable in ad5360_update_ctrl()
+> and ad5421_update_ctrl() to store negative error codes or zero returned by
+> other functions.
 > 
-> 1. Simply removing old options breaks existing .config files.
-> 2. Manually listing an option as "deprecated" leaves it needlessly
->    visible and still writes them to new .config files.
-> 3. Using any method to remove visibility (.e.g no 'prompt', 'if n',
->    etc) prevents the option from being processed at all.
-> 
-> Add a "transitional" attribute that creates symbols which are:
-> - Processed during configuration (can influence other symbols' defaults)
-> - Hidden from user menus (no prompts appear)
-> - Omitted from newly written .config files (gets migrated)
-> - Restricted to only having help sections (no defaults, selects, etc)
->   making it truly just a "prior value pass-through" option.
-> 
-> The transitional syntax requires a type argument and prevents type
-> redefinition:
-> 
->     config OLD_OPTION
->         transitional bool
->         help
->           Transitional config for OLD_OPTION migration.
-> 
->     config NEW_OPTION
->         bool "New option"
->         default OLD_OPTION
-> 
-> This allows seamless migration: olddefconfig processes existing
-> CONFIG_OLD_OPTION=y settings to enable CONFIG_NEW_OPTION=y, while
-> CONFIG_OLD_OPTION is omitted from newly generated .config files.
-> 
-> Implementation details:
-> - Parser validates transitional symbols can only have help sections
-> - Symbol visibility logic updated: usable = (visible != no || transitional)
-> - Transitional symbols preserve user values during configuration
-> - Type safety enforced to prevent redefinition after transitional declaration
-> - Used distinct struct members instead of new flags for readability
-> - Documentation added to show the usage
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 > ---
-> With help from Claude Code to show me how to navigate the kconfig parser.
+> v2: Split each driver into a separate patch.
+Thanks for doing that.
 
-Are you (implicitly?) saying that all previous attempts at transitional
-kconfig symbols have failed?  If so, I just wasn't aware of that.
+Applied to the fixes-togreg branch of iio.git and marked for stable inclusion.
 
-Or is there some new prime directive that requires this?
+Thanks,
 
-Thanks.
--- 
-~Randy
+Jonathan
+
+> ---
+> Qianfeng Rong (2):
+>   iio: dac: ad5360: use int type to store negative error codes
+>   iio: dac: ad5421: use int type to store negative error codes
+> 
+>  drivers/iio/dac/ad5360.c | 2 +-
+>  drivers/iio/dac/ad5421.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
 
 
