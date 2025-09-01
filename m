@@ -1,221 +1,126 @@
-Return-Path: <linux-kernel+bounces-794938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12092B3EAF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BF5B3EAFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49CFD204B64
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E466163AB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA633064AD;
-	Mon,  1 Sep 2025 15:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102DC324B0C;
+	Mon,  1 Sep 2025 15:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uRCQ1bUW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8608A1DEFE8;
-	Mon,  1 Sep 2025 15:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XVtRrGCf"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0FC32F748;
+	Mon,  1 Sep 2025 15:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740618; cv=none; b=FzOqAnJuHaFAlzt+XQqLEVblsihzrbaigceV838y1Ot/CsUTDD5O3lBW9rvozMkFke9p4rJa0qNwwF2YatuWIxzlNw6uSE3huANttoZzhKpoK4FZrYiYa+TrgC2QuWETrHgefP4tSnF/7J4NFHgZA70/Gaf7P57V+ExD/5VmEW4=
+	t=1756740673; cv=none; b=aXktwFvf3BdgrAjmN+FpfIthQrAJDjyHCr69DJbsdgU6npYBX3isQwRVJK3loLdPo1VVqo2awQGHJcT068ViO9x8edgy0YytdRXUu8gEP0l1RGS70prAgI0uVrDQ9ahK9fvi94c3iTCkn2Z2yUf90LczZ2xU0sWtIACKARljbok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740618; c=relaxed/simple;
-	bh=kX/tZVYiEk5ptHhznnvQ9//utnSoIvf0wDikGmrLZD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qlf7ZTTblTaNXDMDsjaMPyrGOxUXrtlEEaEzxEzAx6QQCo82Nj81KUAhaxqSSuPo4a/1vLDbWGy8kxs7wWwBXvP/28T7bdBx8PtCfp9+sD6sDCcaJ7PEGsqmWrUQWcyC9H/VH+ay2auM017qdfqg29HxXCcdqe46d/hZNm6E5Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uRCQ1bUW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id BFC9EB63;
-	Mon,  1 Sep 2025 17:29:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756740547;
-	bh=kX/tZVYiEk5ptHhznnvQ9//utnSoIvf0wDikGmrLZD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uRCQ1bUWAoopTIxGVntirUbeLed9iVrDYu/KGOXF1pNadYVR0TUSnhluZh/tPMFJL
-	 SWS1RDZ+0dS5ARvJsLgAkXvtWX+Rc3+kWa8MtqhLgdyHoCjA5wZJnjVRpH7ENJKCfi
-	 MNvVz8/rU5JtklAakY97YN9G8lKhAgSbC+WQwdNc=
-Date: Mon, 1 Sep 2025 17:29:54 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
-Message-ID: <20250901152954.GH1705@pendragon.ideasonboard.com>
-References: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
+	s=arc-20240116; t=1756740673; c=relaxed/simple;
+	bh=/8vej4eNYruwNwm97aIZA2Hz7Rzgofi8A9k+GklL0C4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6qieHmOmM0tGcFgs9z1A0rU5bjHSaXl8+9NzFTNpG3QmktI850vGxo4M8p5/58Aqe83ehdHnehFniFXcFDUUpr/gkgGh/s7BFgPg/VNfnfwB8vRDiGdngJQgqjdf9bcIOMnqC4JPOk0HlVH2KW+E7AvZw2ZDq+LPo/ajZE6xOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XVtRrGCf; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JT
+	W7s6g7GEV3g1eaZO9uwvh1qEtAeXGH3zI7t99R1hU=; b=XVtRrGCftiAQsIfP15
+	vWQrOLbYwZhqR3HHaioIvAPC4kc7RCjQLAZqBYkCPGCS9dFCqJ7xA0gSQFzAj0XL
+	eGMMXnHHwzowJtvaQsaXl1iS8Gc6adHmTeO59j3mL48jHUBmD7K6OdhcVFl4A9LC
+	0pcGej2vLmjd7ALllGm4AxgKY=
+Received: from ubuntu22.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgCnhTYcvLVoVj2zBQ--.28532S2;
+	Mon, 01 Sep 2025 23:30:37 +0800 (CST)
+From: chenguanxi11234@163.com
+To: kees@kernel.org
+Cc: tony.luck@intel.com,
+	gpiccoli@igalia.com,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	haonan.chen@zyt.com,
+	xiaocheng.yan@zyt.com
+Subject: [PATCH linux-next v2] pstore/ram: Fix pstore lost information
+Date: Mon,  1 Sep 2025 23:30:32 +0800
+Message-Id: <20250901153032.737442-1-chenguanxi11234@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgCnhTYcvLVoVj2zBQ--.28532S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7trW7Zr17KrW5KF1fZry5Arb_yoW8Ar1rpw
+	sxJas3KrykG34fJw1vgF1kXr1jya4kta18Z348t34Syw1UKr1kAr10vw1avFZ0gFWrA3W3
+	ArsY9FyfJas8tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwHUDUUUUU=
+X-CM-SenderInfo: xfkh0wxxdq5xirrsjki6rwjhhfrp/xtbBzwSr+mif35eYaAABsU
 
-On Fri, Aug 29, 2025 at 01:12:14PM +0200, Jacopo Mondi wrote:
-> From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> 
-> The CRU version on the RZ/V2H SoC supports larger input sizes
-> (4096x4096) compared to the version on the RZ/G2L (2800x4095).
-> 
-> Store the per-SoC min/max sizes in the device match info and use them
-> in place of the hardcoded ones.
-> 
-> While at it, use the min sizes reported by the info structure to replace
-> the RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT macros.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
+From: Chen Haonan <haonan.chen@zyt.com>
 
-Spurious ---
+Background
+==========
+persistent_ram_zap() is used to prevent the corresponding file from 
+still appearing after an unlink operation in the next boot, but 
+this is unnecessary for console, pmsg, and ftrace. Worse yet, it 
+causes the system to only show logs generated after the deletion 
+operation the next time it reboots, following the removal of the 
+corresponding file under /sys/fs/pstore.
 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
-> Changes in v2:
-> - Use the size values in the rzg2l_csi2_info instea of going through
->   macros
-> - Use min_width/min_height to initialize the format and drop
->   RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT
-> - Add Tommaso's tag
-> - Link to v1: https://lore.kernel.org/r/20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com
-> ---
->  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 41 ++++++++++++++--------
->  1 file changed, 26 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index 1520211e74185fea3bca85f36239254f6b4651db..183598d6cf0b255f779b4398e027d626ad1f3c1b 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -96,13 +96,6 @@
->  
->  #define VSRSTS_RETRIES			20
->  
-> -#define RZG2L_CSI2_MIN_WIDTH		320
-> -#define RZG2L_CSI2_MIN_HEIGHT		240
-> -#define RZG2L_CSI2_MAX_WIDTH		2800
-> -#define RZG2L_CSI2_MAX_HEIGHT		4095
-> -
-> -#define RZG2L_CSI2_DEFAULT_WIDTH	RZG2L_CSI2_MIN_WIDTH
-> -#define RZG2L_CSI2_DEFAULT_HEIGHT	RZG2L_CSI2_MIN_HEIGHT
->  #define RZG2L_CSI2_DEFAULT_FMT		MEDIA_BUS_FMT_UYVY8_1X16
->  
->  enum rzg2l_csi2_pads {
-> @@ -137,6 +130,10 @@ struct rzg2l_csi2_info {
->  	int (*dphy_enable)(struct rzg2l_csi2 *csi2);
->  	int (*dphy_disable)(struct rzg2l_csi2 *csi2);
->  	bool has_system_clk;
-> +	unsigned int min_width;
-> +	unsigned int min_height;
-> +	unsigned int max_width;
-> +	unsigned int max_height;
->  };
->  
->  struct rzg2l_csi2_timings {
-> @@ -418,6 +415,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info = {
->  	.dphy_enable = rzg2l_csi2_dphy_enable,
->  	.dphy_disable = rzg2l_csi2_dphy_disable,
->  	.has_system_clk = true,
-> +	.min_width = 320,
-> +	.min_height = 240,
-> +	.max_width = 2800,
-> +	.max_height = 4095,
->  };
->  
->  static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
-> @@ -542,6 +543,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info = {
->  	.dphy_enable = rzv2h_csi2_dphy_enable,
->  	.dphy_disable = rzv2h_csi2_dphy_disable,
->  	.has_system_clk = false,
-> +	.min_width = 320,
-> +	.min_height = 240,
+Solution
+==========
+Before executing persistent_ram_zap(), check the file type and 
+perform this operation only for dmesg logs. 
 
-As the minimum for all SoCs is the same, I'd keep the MIN macros.
+Result View
+==========
+Before patch:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+root@ubuntu:/sys/fs/pstore# echo test1 > /dev/pmsg0 
+root@ubuntu:/sys/fs/pstore# rm pmsg-ramoops-0 
+root@ubuntu:/sys/fs/pstore# echo test2 > /dev/pmsg0 
+root@ubuntu:/sys/fs/pstore# reboot
+...
+root@ubuntu:/sys/fs/pstore# cat pmsg-ramoops-0 
+test2
 
-> +	.max_width = 4096,
-> +	.max_height = 4096,
->  };
->  
->  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
-> @@ -631,6 +636,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
->  				 struct v4l2_subdev_state *state,
->  				 struct v4l2_subdev_format *fmt)
->  {
-> +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
->  	struct v4l2_mbus_framefmt *src_format;
->  	struct v4l2_mbus_framefmt *sink_format;
->  
-> @@ -653,9 +659,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
->  	sink_format->ycbcr_enc = fmt->format.ycbcr_enc;
->  	sink_format->quantization = fmt->format.quantization;
->  	sink_format->width = clamp_t(u32, fmt->format.width,
-> -				     RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX_WIDTH);
-> +				     csi2->info->min_width,
-> +				     csi2->info->max_width);
->  	sink_format->height = clamp_t(u32, fmt->format.height,
-> -				      RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_MAX_HEIGHT);
-> +				     csi2->info->min_height,
-> +				     csi2->info->max_height);
->  	fmt->format = *sink_format;
->  
->  	/* propagate format to source pad */
-> @@ -668,9 +676,10 @@ static int rzg2l_csi2_init_state(struct v4l2_subdev *sd,
->  				 struct v4l2_subdev_state *sd_state)
->  {
->  	struct v4l2_subdev_format fmt = { .pad = RZG2L_CSI2_SINK, };
-> +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
->  
-> -	fmt.format.width = RZG2L_CSI2_DEFAULT_WIDTH;
-> -	fmt.format.height = RZG2L_CSI2_DEFAULT_HEIGHT;
-> +	fmt.format.width = csi2->info->min_width;
-> +	fmt.format.height = csi2->info->min_height;
->  	fmt.format.field = V4L2_FIELD_NONE;
->  	fmt.format.code = RZG2L_CSI2_DEFAULT_FMT;
->  	fmt.format.colorspace = V4L2_COLORSPACE_SRGB;
-> @@ -697,16 +706,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
->  				      struct v4l2_subdev_state *sd_state,
->  				      struct v4l2_subdev_frame_size_enum *fse)
->  {
-> +	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
-> +
->  	if (fse->index != 0)
->  		return -EINVAL;
->  
->  	if (!rzg2l_csi2_code_to_fmt(fse->code))
->  		return -EINVAL;
->  
-> -	fse->min_width = RZG2L_CSI2_MIN_WIDTH;
-> -	fse->min_height = RZG2L_CSI2_MIN_HEIGHT;
-> -	fse->max_width = RZG2L_CSI2_MAX_WIDTH;
-> -	fse->max_height = RZG2L_CSI2_MAX_HEIGHT;
-> +	fse->min_width = csi2->info->min_width;
-> +	fse->min_height = csi2->info->min_height;
-> +	fse->max_width = csi2->info->max_width;
-> +	fse->max_height = csi2->info->max_height;
->  
->  	return 0;
->  }
-> 
-> ---
-> base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-> change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
+After patch:
 
+root@ubuntu:/sys/fs/pstore# echo test1 > /dev/pmsg0 
+root@ubuntu:/sys/fs/pstore# rm pmsg-ramoops-0 
+root@ubuntu:/sys/fs/pstore# echo test2 > /dev/pmsg0 
+root@ubuntu:/sys/fs/pstore# reboot
+...
+root@ubuntu:/sys/fs/pstore# cat pmsg-ramoops-0
+test1
+test2
+
+Signed-off-by: Chen Haonan <haonan.chen@zyt.com>
+---
+ fs/pstore/ram.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index bc68b4de5287..48e4abd5dcad 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -436,7 +436,8 @@ static int ramoops_pstore_erase(struct pstore_record *record)
+ 	}
+ 
+ 	persistent_ram_free_old(prz);
+-	persistent_ram_zap(prz);
++	if (record->type == PSTORE_TYPE_DMESG)
++		persistent_ram_zap(prz);
+ 
+ 	return 0;
+ }
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
 
