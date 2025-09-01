@@ -1,129 +1,82 @@
-Return-Path: <linux-kernel+bounces-794984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72CCB3EB3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A94FB3EB64
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26AF37A1F2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B293616A40B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B722D5947;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4430D2D5924;
 	Mon,  1 Sep 2025 15:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QBG6Gal+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUjiaBj5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4F919EED3;
-	Mon,  1 Sep 2025 15:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9568D1DF99C;
+	Mon,  1 Sep 2025 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741539; cv=none; b=jiJr+4HE+LsKOy6RkLjBIzI4YiguyXyKW2CqaQL9dC3rNOcn+luRTXv1NfZVLQj4fEOJIauFcuV74CUSL5NDpc0YyUU7nJEKD4+1crjLnAINQeUyo6A6vdbAUOd8H6JGESZujjhokgk+7lfuxJbfIbKaO5QS8mfygU9YkV7Z0T0=
+	t=1756741538; cv=none; b=QH9zXK28Bfs4w6992cjxMM3rVE3jMGCbmNrH592UsmkRId9pEBRmM53pC5BE+HCsSdFGM/7d/fh/EH5LKkzWopTgki83FCrdNcm7m1s5aQ/dGedyN8q10TA0rjGx4qcjBNSG0Q5OcnDCWmJhrvptVfzYGngxIbuHLIqHlkHaM1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741539; c=relaxed/simple;
-	bh=zxaxdww8toDhus2z2vp/yYJXW2OksJavlXEQDZZP3JI=;
+	s=arc-20240116; t=1756741538; c=relaxed/simple;
+	bh=7DReLwRtWvWlXnSp8wrZ4WuZxyJ9hshhoM7p5A6SQKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2uA7HICkHONI1G+6M49JnbJNzgAKNCvNlph45XQgfFeiEVUbCTfk8vcDj651iud70ZvfFU+UR8iqhBJSOzZG3vmEeqLOAdhyFP8KGrMsIQc6DQAADDHe9dEPQnBmADkchICBP4/YsyjYPjylOF08NWDxkV5YknBPIdDepCxMws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QBG6Gal+; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756741538; x=1788277538;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=zxaxdww8toDhus2z2vp/yYJXW2OksJavlXEQDZZP3JI=;
-  b=QBG6Gal+WbVfxpp9I4S1nQaOdhhjHA/vlfdHlaNK10QFelGEecGtlSab
-   mW9EQ6gGjX6SB3XMh/Fp2/0AcuuRXkFv7bBdOMdYjpXs4GXLqtgUL5SPf
-   S3sv+UkpdyhFOJ80sjxEsv1uVEIzZsCps6DRoFEjh7BtMIgzyn008N6QN
-   jYWF3g6FdevYIMqebrqlCDqicyXusePxXICHcVHN8vwkvGdIP3eowTlmT
-   c6qOw95IKZOpJZciIGLv6AgoUSyi1NKD11ncQvJUJYwcCx108vH0oPxrN
-   PgNRVWAMjPHmQqGEsWJ3415RI/5MLlc0DZGBvSOKIZPauIaO1yjE9QZmm
-   g==;
-X-CSE-ConnectionGUID: SmtdwcGeTBGDPgmIKVLQnA==
-X-CSE-MsgGUID: lJ1sBseqQLykJjSOy8G3VA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70433353"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="70433353"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:45:37 -0700
-X-CSE-ConnectionGUID: L5oquOi4RzSHvuGPIcM5QQ==
-X-CSE-MsgGUID: meWZh0FPSAi3ZPDUVfbplQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170917036"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 08:45:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ut6io-0000000AScj-2OEy;
-	Mon, 01 Sep 2025 18:45:30 +0300
-Date: Mon, 1 Sep 2025 18:45:30 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>
-Subject: Re: [PATCH v3 0/2] i2c: pxa: fix I2C communication on Armada 3700
-Message-ID: <aLW_mqrhnRIsW-pc@smile.fi.intel.com>
-References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
- <aLVmKrxEzYgbMUQU@smile.fi.intel.com>
- <3d3c9d5a-d3a4-4c94-8199-a5870474aa23@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKo2qqBRAWwlqe3fTFa/GerODpapYdkMFtdJ7WXgMs6NO9ceMaBRQVkUvDEwB18285wQBx3K9ugZqZoeK7FZzDtSxv+QaEF8l7UJgRFfpUOeX2xIIovmonw0SRY2D9wDgZFQZo5F2TRiNW5vgTJgOfNr34oHRgxBIGaj3jzMfw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUjiaBj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C568C4CEF0;
+	Mon,  1 Sep 2025 15:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756741538;
+	bh=7DReLwRtWvWlXnSp8wrZ4WuZxyJ9hshhoM7p5A6SQKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AUjiaBj5Jw38xsC+JT/Xfb3oaENxUMs06rlSXJl6nFRE14Y/BAAlxuJmbvQ9X/BJd
+	 gCcU/fIErJPr7X2bshBWqLDCjl4aCDDIrCLVnL9eYYnGDiIWVdMEAvB6clifYdmCQy
+	 oad7LuDaMIZy4SEqiH20MwNcWddI9+Kg7qCx4WJJDtx4VLNgAytoU/TA18md+9yiou
+	 hOBCXqsLdoVisMqnWnKPjYnl2s8eVPte3Zm6gT4lrEf1q2yP3PlllZ7VtJEq/OYEj/
+	 byqDI20XQlxYgwGhyOOmRd2gJelUG0uOBENcUcXOadZ/iz4gHVJ1PUoxGvfyIC+b8C
+	 M1mud4qsuUxdw==
+Date: Mon, 1 Sep 2025 16:45:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	Cosmin Ratiu <cratiu@nvidia.com>, Nimrod Oren <noren@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/3] selftests: drv-net: Fix and clarify TC bandwidth
+ split in devlink_rate_tc_bw.py
+Message-ID: <20250901154533.GH15473@horms.kernel.org>
+References: <20250831080641.1828455-1-cjubran@nvidia.com>
+ <20250831080641.1828455-2-cjubran@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3d3c9d5a-d3a4-4c94-8199-a5870474aa23@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250831080641.1828455-2-cjubran@nvidia.com>
 
-On Mon, Sep 01, 2025 at 05:24:51PM +0200, Gabor Juhos wrote:
-> 2025. 09. 01. 11:23 keltezéssel, Andy Shevchenko írta:
-> > On Wed, Aug 27, 2025 at 07:13:57PM +0200, Gabor Juhos wrote:
-
-...
-
-> >>   - remove Imre's tag from the cover letter, and replace his SoB tag to
-> >>     Reviewed-by in the individual patches
-> > 
-> > Note, this can be automated with `b4`.
-> > 
-> > 	# Start a new branch of the same base
-> > 	git checkout -b v3 ...
-> > 	# Apply last version from the mailing list
-> > 	b4 am $MESSAGE_ID_OF_v2
-> > 	# Do actual development of v3
-> > 	...
+On Sun, Aug 31, 2025 at 11:06:39AM +0300, Carolina Jubran wrote:
+> Correct the documented bandwidth distribution between TC3 and TC4
+> from 80/20 to 20/80. Update test descriptions and printed messages
+> to consistently reflect the intended split.
 > 
-> As far as I know it can be used only to collect tags offered publicly on the
-> mailing lists. I can even use 'b4 trailers --update' for that on an existing b4
-> tracked branch.
-> 
-> However, the current case is a bit different. I have replaced Imre's tag
-> manually according to our previous discussion [1].
+> Fixes: 23ca32e4ead4 ("selftests: drv-net: Add test for devlink-rate traffic class bandwidth distribution")
+> Tested-by: Carolina Jubran <cjubran@nvidia.com>
+> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> Reviewed-by: Nimrod Oren <noren@nvidia.com>
 
-Right, but technically it can be done via `b4`. I thought you have done that
-manually. Seems I misinterpreted things.
-
-> [1] https://lore.kernel.org/all/aJyM3N9T4xI4Xo1G@smile.fi.intel.com/
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
