@@ -1,97 +1,72 @@
-Return-Path: <linux-kernel+bounces-794716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EB9B3E637
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:55:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97522B3E686
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4203B655F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:55:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411081882F84
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD333CE98;
-	Mon,  1 Sep 2025 13:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DDE335BB7;
+	Mon,  1 Sep 2025 14:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY4lXt4c"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="peyNlvWF"
+Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7073833A01A;
-	Mon,  1 Sep 2025 13:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218891DE881;
+	Mon,  1 Sep 2025 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734882; cv=none; b=poIbVOel7XhVipBNMgHbMMj51ItlJvUBjp9IHGMm2sa1+lHW0e59yc/9G0zKrZBTHx0hFrLsplcRwkrPi15KVrILso4byDBMMAzO0BpiC1ZZj4YRp8w6ViFut4P4iGM4Uo5nIRv4wDheExlFpFtv/9HATNAnEPce9qdWIRAes7U=
+	t=1756735320; cv=none; b=P/Gbhnf3dTwwFGG2OCpyjGVuX5Sh/mRgkrwQMkJL8n4G72xasNeiBBzmLrML59sjRMLuQhU+zM7xC8Tz0eSnq7mpoLZjrO0ffIf7jcTviAEwoomyXTzJqCK6OhZUCVJ6O4aZxfOhdnwON+K1NLmTMn+cWefOttKeJPAXHHOP9eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734882; c=relaxed/simple;
-	bh=QVK+8sL7qG8wagIwyT0IjqC80DQFdFOPePRJZwwL4+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h0lbRD3dteescDXcVRhY2Ek6qmKNJlZuUMY+3mJ19o05spVFXNd6l8rw9GZfV+7tgydQlQNNxE/yc9Hp+YUqva2nOWffqz6ZPuLdQHEY616vtxJP3H3g7PGiZHkC5dnyuXDvv+LlCZuBhFTn6sP9p0HENv+nhflHzLn349V0Czs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RY4lXt4c; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4d5886f825so2382870a12.0;
-        Mon, 01 Sep 2025 06:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756734880; x=1757339680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qmat2k9pfOSO69Tb0r7zHqSs9B7iOPv+szdxWbx8dGw=;
-        b=RY4lXt4chXJ5ktNZndNcg2rVqE2YJczWQ/HDB1wv8jaapEFvHz+1fRrByMwvQjt/6e
-         vpTX91NGl/kIKpMV1QEjqoZ1LDzGko9YB8hcKPkBe9gPc7+5HwQspacDLbkp8+tJM6g5
-         5x3tGgrn4cVsE6Q/Jxnp3Ftt358EzfhxcjocnI7IJb/EogrFJjJZlb2X7PPoCks3JB38
-         VFKlM+1X1dG1044j9T0X4tDh+Qzhwl+XAXz+iVLvhOJhlIAn16sKhphntzxZXIS98slT
-         x3hW1fWWYF/mNUuf9425hf6bfo0OBw++WTcFzbhd8cX5raNxfJjO1nIG3TPFKS1G3quV
-         gaaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756734880; x=1757339680;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qmat2k9pfOSO69Tb0r7zHqSs9B7iOPv+szdxWbx8dGw=;
-        b=GfUOU9fC/fbDh5zpF6RsbX1sNUmUoE4BgweixHFgRBGKJR+tY8UARgUEubYs/BTt0a
-         ACTkAjOYWjTqozsCwhepb6Pt58tXkWtFWMlLs/GtNDBJnTj1Eaf+Nu4oByo30akN1rqz
-         Z7ichQYsqE8HJ3k7dLM+crm/rB11PYP9SNkESvS2mQr7VWtVHJD5av3DEDqRjwpInav6
-         tcKo6pTGMma9oW0C0TDLOMayQiVOrYbzXTaa3os1YOCyC0QjFlmOaKIJBewBnZ+L/RvB
-         nYUhddW+x4VVcjwnIChzcrY/3+TjL8A5B5iCW1mAlzoXxKcVaR6DNfv9qkDzGHJmmEqo
-         sbAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsFVeDQTOQAqDppSeBgVtQRPyLnz86FNf/+tjQKojcKzJLgU6WvbYsJFSezjNjDhGQnwffSKBshz2z1TN0@vger.kernel.org, AJvYcCWPrqIMqhBVbYEC9SXDV29dPyszl9Hvb/8ior7alKaV7NdVXE60MtnvYxOL3E2HZ1yBR67gXmGJXw9OpA==@vger.kernel.org, AJvYcCXqDh3MyRBZu32tYcICpJlewt2IpkwSwGDQM/yQXwkEoBCP4vc53IMwPQRQFWGRAvDqnIgoHgyJB21Fv4IYE0xLpiMgZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrcjW8OOY3cDsD3QTh2Jm8hz4kZgCHkW4VzhjCPG2DIe1x1vEj
-	awvMkXvJTpuCF769JXU3/sHiuHym/X+P/yImfX4XdqEio6jNyW06O+hd
-X-Gm-Gg: ASbGncuGGgvIUcOGI75txvZgAhf7Q3/2EMeoxzoet2ndR3Z9iLJ44iqtMxBSJqrtzaq
-	8oqoVtIwIbWGoZK0qqnW6Gukix6n1oRJqEgyaJPDWxC8p9K0W0dcSOM7XvXH0vUVqO3ukxj8nHG
-	KZ/2yZ5ZiJ7WP5xFMAtGtO1jXp3J7kACSOq4JFLJRevWs/xAVM93oPPK3StOgFHSF2C0H1dtY/O
-	a7M/+Bikv0j+LTFE8ClwJcpWxc9PN0kmkDJbG0JCDnFAND9iP5vVuWIRzxQ40+t7xDJ2ZWIacCa
-	fBBhxrQPBRJ/c3/fPCR6uh0/C1SmkXvtTQoROQlYJKRe6XrZvm2qef+EGzNtCuTMFa940aNpLz6
-	bpWLOTwmIDDqNRk7m8xzCIdwnBwodlQNIETolhAQQKMCewQA8xd5pJTnUWjZYNv+dTdD7DMkpLa
-	M=
-X-Google-Smtp-Source: AGHT+IG/Q4L45KXe+/gksjaOcTZyKvCY1W3Jewqq8/y5N+D8XoPHGgEBozIvDzGI/eqExhq1Jik3Qw==
-X-Received: by 2002:a17:902:ccd1:b0:246:de32:10d2 with SMTP id d9443c01a7336-24944a458c3mr103898685ad.15.1756734879524;
-        Mon, 01 Sep 2025 06:54:39 -0700 (PDT)
-Received: from c12-ThinkPad-X1-Carbon-Gen-12.. ([2404:7a80:b9a1:7100:d5e9:d016:7fe4:a7c2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906390e6bsm106733415ad.96.2025.09.01.06.54.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 06:54:39 -0700 (PDT)
-From: Vishnu Sankar <vishnuocv@gmail.com>
-To: dmitry.torokhov@gmail.com,
-	hmh@hmh.eng.br,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	derekjohn.clark@gmail.com
-Cc: mpearson-lenovo@squebb.ca,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	vsankar@lenovo.com,
-	Vishnu Sankar <vishnuocv@gmail.com>
-Subject: [PATCH v3 3/3] platform/x86: thinkpad_acpi: Use trackpoint doubletap interface via sysfs
-Date: Mon,  1 Sep 2025 22:53:07 +0900
-Message-ID: <20250901135308.52340-3-vishnuocv@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250901135308.52340-1-vishnuocv@gmail.com>
-References: <20250901135308.52340-1-vishnuocv@gmail.com>
+	s=arc-20240116; t=1756735320; c=relaxed/simple;
+	bh=Mo64ThMsPJ4t4DWyqo9+1IqAjziygbnEExtnaP8EJu8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O2zKvPhDaG0lveaMcf0geptUsl1Ec0uO3jVDejnS87fEeydRtV4YUdMjPAVk/RG1WZdgpj3nT+BOvdWcDg90hA3FDaFWHEIDvlspm4eS7xaM6o5hidJm4XF3ZlY8W3VixXG9y7P30n524U+s24iYX97winDvzZ4DQ6g6Fxa5bgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=peyNlvWF; arc=none smtp.client-ip=178.249.69.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
+Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
+	by m.syntacore.com (Postfix) with ESMTP id 0FFE71A0004;
+	Mon,  1 Sep 2025 13:54:31 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 0FFE71A0004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
+	t=1756734871; bh=Ozw0O54FHk+TR7i9YrzO3JawV9UWD7KG8XrbYOvortQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=peyNlvWFhWIz1gS25XmRT+Gl87AHdP2bmsj7MxlSrvVwy0Hw2XYGoSh1GMIoRvZ5C
+	 VCHoSk4RDu3pZzD6he2aBgueonopmlK7H8M4R66UiNdl60h9xk9b3JRFOhyyhCz/VL
+	 UHG0iX8oYOSp5MK5/MgGQp+AVR5jRUrCu4y2eRyRFk1nFu+ph4ayO1Amp5LY2TMxfo
+	 /OHlpSgFPnq8PsDKeDReiv4K8STUDGC7L17urcTh+doMyuqZQY+Sc7wWfwzw0WooOl
+	 jPDi6uLMVuWwg1JwtD8CNEduS9boa+Y4pnatDgl3sdCm7Pzx2YHNtMjN5vqsrQbof8
+	 QgwW/n2bUoqeA==
+Received: from S-SC-EXCH-01.corp.syntacore.com (mail.syntacore.com [10.76.202.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by m.syntacore.com (Postfix) with ESMTPS;
+	Mon,  1 Sep 2025 13:54:28 +0000 (UTC)
+Received: from localhost (10.30.18.228) by S-SC-EXCH-01.corp.syntacore.com
+ (10.76.202.20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 1 Sep
+ 2025 16:54:21 +0300
+From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+To: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<alex@ghiti.f>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>,
+	<vbabka@suse.cz>, <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+	<svetlana.parfenova@syntacore.com>
+Subject: [RFC RESEND v3] binfmt_elf: preserve original ELF e_flags for core dumps
+Date: Mon, 1 Sep 2025 20:53:50 +0700
+Message-ID: <20250901135350.619485-1-svetlana.parfenova@syntacore.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,249 +74,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/01 12:41:00 #27718494
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-TrackPoint devices supporting doubletap expose a sysfs attribute under
-/sys/devices/.../trackpoint/doubletap_enabled. This patch enables
-thinkpad_acpi to detect if the system has a TrackPoint device with
-doubletap capability, and allows toggling the feature via sysfs.
+Some architectures, such as RISC-V, use the ELF e_flags field to encode
+ABI-specific information (e.g., ISA extensions, fpu support). Debuggers
+like GDB rely on these flags in core dumps to correctly interpret
+optional register sets. If the flags are missing or incorrect, GDB may
+warn and ignore valid data, for example:
 
-This avoids direct linking between subsystems and relies on sysfs
-as the interface for coordination between input and platform drivers.
+    warning: Unexpected size of section '.reg2/213' in core file.
 
-Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-Suggested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This can prevent access to fpu or other architecture-specific registers
+even when they were dumped.
+
+Save the e_flags field during ELF binary loading (in load_elf_binary())
+into the mm_struct, and later retrieve it during core dump generation
+(in fill_note_info()). Kconfig option CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
+is introduced for architectures that require this behaviour.
+
+Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
 ---
-Changes in v2:
-- Updated commit message to clarify dependency on trackpoint driver
-- Now handling sysfs read/write of trackpoint driver using file read/write
-- Removed sysfs attribute creation of trackpoint double tap here.
-- Reversed the logic and return false right away
-- Dropped unnecessary debug messages
-- Using dev_dbg() instead of pr_xxxx()
 Changes in v3:
-- No changes
----
- drivers/platform/x86/lenovo/thinkpad_acpi.c | 155 +++++++++++++++++++-
- 1 file changed, 147 insertions(+), 8 deletions(-)
+ - Introduce CONFIG_ARCH_HAS_ELF_CORE_EFLAGS Kconfig option instead of
+   arch-specific ELF_CORE_USE_PROCESS_EFLAGS define.
+ - Add helper functions to set/get e_flags in mm_struct.
+ - Wrap saved_e_flags field of mm_struct with
+   #ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS.
 
-diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-index cc19fe520ea9..f5070442a7ba 100644
---- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-+++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-@@ -72,6 +72,13 @@
- #include <linux/units.h>
- #include <linux/workqueue.h>
+Changes in v2:
+ - Remove usage of Kconfig option.
+ - Add an architecture-optional macro to set process e_flags. Enabled
+   by defining ELF_CORE_USE_PROCESS_EFLAGS. Defaults to no-op if not
+   used.
+
+ arch/riscv/Kconfig       |  1 +
+ fs/Kconfig.binfmt        |  9 +++++++++
+ fs/binfmt_elf.c          | 40 ++++++++++++++++++++++++++++++++++------
+ include/linux/mm_types.h |  5 +++++
+ 4 files changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index a4b233a0659e..1bef00208bdd 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -224,6 +224,7 @@ config RISCV
+ 	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO
+ 	select USER_STACKTRACE_SUPPORT
+ 	select ZONE_DMA32 if 64BIT
++	select ARCH_HAS_ELF_CORE_EFLAGS
  
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/err.h>
-+#include <linux/fcntl.h>
-+#include <linux/namei.h>
-+#include <linux/kernel_read_file.h>
+ config RUSTC_SUPPORTS_RISCV
+ 	def_bool y
+diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+index bd2f530e5740..1949e25c7741 100644
+--- a/fs/Kconfig.binfmt
++++ b/fs/Kconfig.binfmt
+@@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
+ 	  This builds the exec KUnit tests, which tests boundary conditions
+ 	  of various aspects of the exec internals.
+ 
++config ARCH_HAS_ELF_CORE_EFLAGS
++	bool
++	depends on BINFMT_ELF && ELF_CORE
++	default n
++	help
++	  Select this option if the architecture makes use of the e_flags
++	  field in the ELF header to store ABI or other architecture-specific
++	  information that should be preserved in core dumps.
 +
- #include <acpi/battery.h>
- #include <acpi/video.h>
+ endmenu
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 4aacf9c9cc2d..e4653bb99946 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -103,6 +103,21 @@ static struct linux_binfmt elf_format = {
  
-@@ -373,7 +380,8 @@ static struct {
- 	u32 hotkey_poll_active:1;
- 	u32 has_adaptive_kbd:1;
- 	u32 kbd_lang:1;
--	u32 trackpoint_doubletap:1;
-+	u32 trackpoint_doubletap_state:1;
-+	u32 trackpoint_doubletap_capable:1;
- 	struct quirk_entry *quirks;
- } tp_features;
+ #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
  
-@@ -2879,6 +2887,107 @@ static DEVICE_ATTR_RW(hotkey_poll_freq);
- 
- #endif /* CONFIG_THINKPAD_ACPI_HOTKEY_POLL */
- 
-+/*
-+ * Trackpoint doubletap handlers
-+ * These set of functions will communicate with the sysfs attributes of TrackPoint driver
-+ * Attribute : /sys/bus/serio/devices/seriox/doubletap_enabled
-+ */
-+
-+/* Global buffer to reuse path */
-+static char trackpoint_doubletap_path[128];
-+
-+/* Function to find the correct serio path with TrackPoint attribute "doubletap_enabled" */
-+static int thinkpad_find_trackpoint_path(void)
++static inline void elf_coredump_set_mm_eflags(struct mm_struct *mm, u32 flags)
 +{
-+	struct path serio_path;
-+	char path_buf[128];
-+	int i;
-+
-+	for (i = 0; i < 10; i++) {
-+		snprintf(path_buf, sizeof(path_buf),
-+		"/sys/bus/serio/devices/serio%d/doubletap_enabled", i);
-+
-+		if (!kern_path(path_buf, LOOKUP_FOLLOW, &serio_path)) {
-+			path_put(&serio_path);
-+			snprintf(trackpoint_doubletap_path, sizeof(trackpoint_doubletap_path),
-+				"%s", path_buf);
-+			pr_info("ThinkPad ACPI: TrackPoint doubletap found at %s\n",
-+				trackpoint_doubletap_path);
-+			return 0;
-+		}
-+	}
-+	return -ENODEV;
++#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
++	mm->saved_e_flags = flags;
++#endif
 +}
 +
-+/* Writing to the sysfs attribute of Trackpoint "doubletap_enabled" */
-+static int write_doubletap_sysfs_value(const void *buf, size_t count, loff_t *pos)
++static inline u32 elf_coredump_get_mm_eflags(struct mm_struct *mm, u32 flags)
 +{
-+	struct file *filp;
-+	ssize_t written;
-+
-+	if (!buf)
-+		return -EINVAL;
-+
-+	filp = filp_open(trackpoint_doubletap_path, O_WRONLY | O_CREAT, 0644);
-+	if (IS_ERR(filp))
-+		return PTR_ERR(filp);
-+
-+	/* Required to avoid EINVAL from vfs checks in some cases */
-+	if (!(filp->f_mode & FMODE_CAN_WRITE)) {
-+		filp_close(filp, NULL);
-+		return -EINVAL;
-+	}
-+
-+	/* Write using kernel_write */
-+	written = kernel_write(filp, buf, count, pos);
-+	filp_close(filp, NULL);
-+
-+	return written < 0 ? written : 0;
++#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
++	flags = mm->saved_e_flags;
++#endif
++	return flags;
 +}
 +
-+/* Function to read the TrackPoint doubletap status */
-+static int trackpoint_read_doubletap_status(bool *enabled)
-+{
-+	struct file *filp;
-+	loff_t pos = 0;
-+	char buf[8];
-+	ssize_t ret;
-+
-+	if (!enabled)
-+		return -EINVAL;
-+
-+	if (!trackpoint_doubletap_path[0])
-+		return -ENODEV;
-+
-+	filp = filp_open(trackpoint_doubletap_path, O_RDONLY, 0);
-+	if (IS_ERR(filp))
-+		return PTR_ERR(filp);
-+
-+	ret = kernel_read(filp, buf, sizeof(buf) - 1, &pos);
-+	filp_close(filp, NULL);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	buf[ret] = '\0'; // Safe: ret < sizeof(buf)
-+
-+	*enabled = (buf[0] == '1');
-+
-+	return 0;
-+}
-+
-+/* Function to check the TrackPoint doubletap status */
-+static int thinkpad_set_doubletap_status(bool enable)
-+{
-+	const char *val = enable ? "1" : "0";
-+	loff_t pos = 0;
-+
-+	if (!trackpoint_doubletap_path[0])
-+		return -ENODEV;
-+
-+	return write_doubletap_sysfs_value(val, strlen(val), &pos);
-+}
-+
- /* sysfs hotkey radio_sw (pollable) ------------------------------------ */
- static ssize_t hotkey_radio_sw_show(struct device *dev,
- 			   struct device_attribute *attr,
-@@ -3326,6 +3435,8 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
- 	bool radiosw_state  = false;
- 	bool tabletsw_state = false;
- 	int hkeyv, res, status, camera_shutter_state;
-+	bool dt_state;
-+	int rc;
+ /*
+  * We need to explicitly zero any trailing portion of the page that follows
+  * p_filesz when it ends before the page ends (e.g. bss), otherwise this
+@@ -1290,6 +1305,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	mm->end_data = end_data;
+ 	mm->start_stack = bprm->p;
  
- 	vdbg_printk(TPACPI_DBG_INIT | TPACPI_DBG_HKEY,
- 			"initializing hotkey subdriver\n");
-@@ -3557,9 +3668,22 @@ static int __init hotkey_init(struct ibm_init_struct *iibm)
- 
- 	hotkey_poll_setup_safe(true);
- 
--	/* Enable doubletap by default */
--	tp_features.trackpoint_doubletap = 1;
-+	/* Checking doubletap status by default */
-+	rc = thinkpad_find_trackpoint_path();
-+	if (rc) {
-+		dev_dbg(&tpacpi_pdev->dev, "Could not find TrackPoint doubletap sysfs path\n");
-+		tp_features.trackpoint_doubletap_capable = false;
-+		return 0;
-+	}
-+	tp_features.trackpoint_doubletap_capable = true;
- 
-+	rc = trackpoint_read_doubletap_status(&dt_state);
-+	if (rc) {
-+		/* Disable if access to register fails */
-+		dt_state = false;
-+		dev_dbg(&tpacpi_pdev->dev, "Doubletap failed to check status\n");
-+	}
-+	tp_features.trackpoint_doubletap_state = dt_state;
- 	return 0;
- }
- 
-@@ -3863,9 +3987,7 @@ static bool hotkey_notify_8xxx(const u32 hkey, bool *send_acpi_ev)
- {
- 	switch (hkey) {
- 	case TP_HKEY_EV_TRACK_DOUBLETAP:
--		if (tp_features.trackpoint_doubletap)
--			tpacpi_input_send_key(hkey, send_acpi_ev);
--
-+		*send_acpi_ev = true;
- 		return true;
- 	default:
- 		return false;
-@@ -11194,6 +11316,7 @@ static struct platform_driver tpacpi_hwmon_pdriver = {
- static bool tpacpi_driver_event(const unsigned int hkey_event)
- {
- 	int camera_shutter_state;
-+	int rc;
- 
- 	switch (hkey_event) {
- 	case TP_HKEY_EV_BRGHT_UP:
-@@ -11285,8 +11408,24 @@ static bool tpacpi_driver_event(const unsigned int hkey_event)
- 		mutex_unlock(&tpacpi_inputdev_send_mutex);
- 		return true;
- 	case TP_HKEY_EV_DOUBLETAP_TOGGLE:
--		tp_features.trackpoint_doubletap = !tp_features.trackpoint_doubletap;
--		return true;
-+		if (tp_features.trackpoint_doubletap_capable) {
-+			rc = thinkpad_set_doubletap_status(!tp_features.trackpoint_doubletap_state);
++	elf_coredump_set_mm_eflags(mm, elf_ex->e_flags);
 +
-+			if (rc) {
-+				dev_dbg(&tpacpi_pdev->dev, "Trackpoint doubletap toggle failed\n");
-+			} else {
-+				tp_features.trackpoint_doubletap_state =
-+					!tp_features.trackpoint_doubletap_state;
-+				dev_dbg(&tpacpi_pdev->dev, "Trackpoint doubletap is %s\n",
-+						tp_features.trackpoint_doubletap_state ? "enabled" : "disabled");
-+				return true;
-+			}
-+		}
-+		/*
-+		 * Suppress the event if Doubletap is not supported
-+		 * or if the trackpoint_set_doubletap_status() is failing
-+		 */
-+		return false;
- 	case TP_HKEY_EV_PROFILE_TOGGLE:
- 	case TP_HKEY_EV_PROFILE_TOGGLE2:
- 		platform_profile_cycle();
+ 	/**
+ 	 * DOC: "brk" handling
+ 	 *
+@@ -1804,6 +1821,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 	struct elf_thread_core_info *t;
+ 	struct elf_prpsinfo *psinfo;
+ 	struct core_thread *ct;
++	u16 machine;
++	u32 flags;
+ 
+ 	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
+ 	if (!psinfo)
+@@ -1831,17 +1850,26 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * Initialize the ELF file header.
+-	 */
+-	fill_elf_header(elf, phdrs,
+-			view->e_machine, view->e_flags);
++	machine = view->e_machine;
++	flags = view->e_flags;
+ #else
+ 	view = NULL;
+ 	info->thread_notes = 2;
+-	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
++	machine = ELF_ARCH;
++	flags = ELF_CORE_EFLAGS;
+ #endif
+ 
++	/*
++	 * Override ELF e_flags with value taken from process,
++	 * if arch needs that.
++	 */
++	flags = elf_coredump_get_mm_eflags(dump_task->mm, flags);
++
++	/*
++	 * Initialize the ELF file header.
++	 */
++	fill_elf_header(elf, phdrs, machine, flags);
++
+ 	/*
+ 	 * Allocate a structure for each thread.
+ 	 */
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 08bc2442db93..04a2857f12f2 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1102,6 +1102,11 @@ struct mm_struct {
+ 
+ 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+ 
++#ifdef CONFIG_ARCH_HAS_ELF_CORE_EFLAGS
++		/* the ABI-related flags from the ELF header. Used for core dump */
++		unsigned long saved_e_flags;
++#endif
++
+ 		struct percpu_counter rss_stat[NR_MM_COUNTERS];
+ 
+ 		struct linux_binfmt *binfmt;
 -- 
-2.48.1
+2.51.0
 
 
