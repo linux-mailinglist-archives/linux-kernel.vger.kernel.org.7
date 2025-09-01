@@ -1,173 +1,168 @@
-Return-Path: <linux-kernel+bounces-793727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648BEB3D74F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:34:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A8CB3D77A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7A51898717
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C86C9178B95
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A27721C9E3;
-	Mon,  1 Sep 2025 03:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F74253932;
+	Mon,  1 Sep 2025 03:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dxpygT4g"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8tqZHLt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D799B19F41C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5653223DCE;
+	Mon,  1 Sep 2025 03:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697646; cv=none; b=p+RS8Gi31yANQWQyNVhdT/95v5Dd2qpvKQJIofluHRcdn6WyeWyn9X7OicCz6qDllkbNi68qJjk3kKZuckgZirYXOsIt4QyJ48Vv2qcJHHerAoaYq6Ns1UoT7vlt9ZS0IDZ5Q8WQYUbHNu+kzsl2w2xnsghe6YFjp+CRY8DWMWE=
+	t=1756697664; cv=none; b=vF5bV+YHvPUIAyFqymnkjzx5wDlc6ZAQfVlKG/Dpi1r+JigYRLsIVXSdHdSIbcAQtw+jAlA4fuqfx+Q45LSxeJqUaNJ7kznhCTuSUjvNgUqSQrRKeMi0VARmXf4XQo0CQaEwbaJLe1nVSycIUy0bgbPYxRZgowUZtv0TbIqGeaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697646; c=relaxed/simple;
-	bh=qtZoxAkXv495MzlPMfGyn54WlNk7BPz08rPmn2O5hoI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=gMx6vcvSxOge4hcIBLL8bJcaQtCQXaqjkISVwA8X/Q1fhR6JteW7ejqnj0M5IsRALT8w4vVXuRJR1cm7GAqv9A8wqQrN9WGmfLU/a6CzYOOYDOnvD4Looc8tGgWX2ZD/UHNHdL6hbjfsyYcCjhwEpXpHFbMEX8mzoYtIh6ur0dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dxpygT4g; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250901033401epoutp016c88c8881d0e94a7cca58701f49149a1~hCzJ5ENGJ2474224742epoutp01z
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:34:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250901033401epoutp016c88c8881d0e94a7cca58701f49149a1~hCzJ5ENGJ2474224742epoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756697641;
-	bh=uU0UrKirjvX5fa8m8MUKd9RwSD+yLy9b8io3irBzxG8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dxpygT4gWAUUKJDRI4VWQHqVa+8eUzjre26YsG4Ptm4PqPBDH51a58f513uU8Atr1
-	 BgOyW0SMz+bc6D0x2mhIaeDy8euSza/RGRx2aquPIM1Uet1PCcLr+WfJWcfaUepqPZ
-	 UWO/H7BKnKwtS0Vb2SLUGcWp6AnhnWnrVMk3zgvs=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250901033359epcas5p1c283a30d1db11caef94473d360e336f5~hCzI40H2Z2963529635epcas5p1V;
-	Mon,  1 Sep 2025 03:33:59 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFZGt6tycz6B9mB; Mon,  1 Sep
-	2025 03:33:58 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250901033358epcas5p155659ad43787629cdd3221f359b8a72a~hCzHQdwnE2963529635epcas5p1R;
-	Mon,  1 Sep 2025 03:33:58 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250901033353epsmtip17c5fa910804d2969d332336802e28da9~hCzCu9gwp0939709397epsmtip1E;
-	Mon,  1 Sep 2025 03:33:53 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <jesper.nilsson@axis.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>,
-	<tomasz.figa@gmail.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<arnd@arndb.de>, <ksk4725@coasia.com>, <kenkim@coasia.com>,
-	<pjsin865@coasia.com>, <gwk1013@coasia.com>, <hgkim05@coasia.com>,
-	<mingyoungbo@coasia.com>, <smn1196@coasia.com>, <shradha.t@samsung.com>,
-	<inbaraj.e@samsung.com>, <swathi.ks@samsung.com>,
-	<hrishikesh.d@samsung.com>, <dj76.yang@samsung.com>,
-	<hypmean.kim@samsung.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-arm-kernel@axis.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<soc@lists.linux.dev>
-In-Reply-To: <20250829-attentive-watchful-guan-b79ccc@kuoka>
-Subject: RE: [PATCH v3 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8
- SoC support
-Date: Mon, 1 Sep 2025 09:03:52 +0530
-Message-ID: <000001dc1af1$4026d700$c0748500$@samsung.com>
+	s=arc-20240116; t=1756697664; c=relaxed/simple;
+	bh=r3pUzrkcWVNCbofMp9WGG3qQXL4dcWz8Z9kujWaLZG4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jyMfb+nLFX6sGN2Vl1rTlvvA6/h3nXGilVvGImWm6WuNIjbrmaUzbWwTHmgJPWfgd+I0Rqacs5vZs8ZvgBpLitp9fXhgoEQ71+TKaNOA2oLMdWGuh5MsTR+/dOiiSuUuW043HTwq/ToEUno04bEIxSUGS9g3UugQ0N04wAs0prc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8tqZHLt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 625DAC113CF;
+	Mon,  1 Sep 2025 03:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756697664;
+	bh=r3pUzrkcWVNCbofMp9WGG3qQXL4dcWz8Z9kujWaLZG4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=O8tqZHLtz7at6qJhS9j4YrLQHNFw+3Yuj0+5iVkxGsD+B4Q6XthybflzuCWaIQhOp
+	 273wgYHdHeBVghLPTq11XlZTV8INNULHWbvsvPlukjGoraCYILtIMXXD3HHEotG43v
+	 txOO7UXVz5m2cR0KFja+5LIyoP+pOLH3JZ78G7YA/ChRoBkRDUQ9qZh/lof8eexSL0
+	 p0lMsD9aUzchL/ThMXov2G0wdxdsF+2X1PD5tZ+tIKsV0yO6JwKUxPbbSkvuEXk0ds
+	 4SgXr3N2dmAvOrkkxww3DOC1ddIHU08g6dh9fAS0BREn9joRUNrXDLgycsjju+tkkD
+	 0W0/QihrctuHA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A738CA1005;
+	Mon,  1 Sep 2025 03:34:24 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Sun, 31 Aug 2025 22:33:53 -0500
+Subject: [PATCH 5/8] memory: tegra186: Support icc scaling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHHo9j0Rv1rvZf0N1R8AXn4x9PYUAJmRP9VAu8V1FcBMgRwRbRyXiFg
-Content-Language: en-in
-X-CMS-MailID: 20250901033358epcas5p155659ad43787629cdd3221f359b8a72a
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250825120735epcas5p3c86b9db5f17c0938f1d53ef6014ab342
-References: <20250825114436.46882-1-ravi.patel@samsung.com>
-	<CGME20250825120735epcas5p3c86b9db5f17c0938f1d53ef6014ab342@epcas5p3.samsung.com>
-	<20250825114436.46882-9-ravi.patel@samsung.com>
-	<20250829-attentive-watchful-guan-b79ccc@kuoka>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250831-tegra186-icc-v1-5-607ddc53b507@gmail.com>
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+In-Reply-To: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756697663; l=2383;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=oxIJSUp3ozTyoLouc+lEW3YE1MQYQJbWMy5w5OZ/8c0=;
+ b=6HE3/jakqKvQK0W06roOceFvPeItZFKCHApDFX9RQY94sI/gq8GlhcW0BqVLloyCF2g9NDBIK
+ puTwzDavdgDA8WSjScPk/vExPYyuwRC9wL2Q2tPYVhWIcgpHfae/U4w
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+From: Aaron Kling <webgeek1234@gmail.com>
 
+Add Interconnect framework support to dynamically set the DRAM
+bandwidth from different clients. The MC driver is added as an ICC
+provider and the EMC driver is already a provider.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 29 August 2025 13:26
-...
-> Subject: Re: [PATCH v3 08/10] arm64: dts: exynos: axis: Add initial ARTPEC-8 SoC support
-> 
-> On Mon, Aug 25, 2025 at 05:14:34PM +0530, Ravi Patel wrote:
-> >  config ARCH_AXIADO
-> >  	bool "Axiado SoC Family"
-> >  	select GPIOLIB
-> > diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> > index bdb9e9813e50..bcca63136557 100644
-> > --- a/arch/arm64/boot/dts/exynos/Makefile
-> > +++ b/arch/arm64/boot/dts/exynos/Makefile
-> > @@ -1,4 +1,5 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> > +subdir-y += axis
-> >  subdir-y += google
-> >
-> >  dtb-$(CONFIG_ARCH_EXYNOS) += \
-> > diff --git a/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h b/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..70bd1dcac85e
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/axis/artpec-pinctrl.h
-> > @@ -0,0 +1,36 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> 
-> Does not match rest of licenses.
-> 
-> > +/*
-> > + * Axis ARTPEC-8 SoC device tree pinctrl constants
-> > + *
-> > + * Copyright (c) 2025 Samsung Electronics Co., Ltd.
-> > + *             https://www.samsung.com
-> > + * Copyright (c) 2025  Axis Communications AB.
-> > + *             https://www.axis.com
-> > + */
-> > +
-> > +#ifndef __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__
-> > +#define __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__
-> > +
-> > +#define ARTPEC_PIN_PULL_NONE		0
-...
-> > +#define ARTPEC_PIN_DRV_SR6		0xd
-> > +
-> > +#endif /* __DTS_ARM64_SAMSUNG_EXYNOS_AXIS_ARTPEC_PINCTRL_H__ */
-> > diff --git a/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
-> > new file mode 100644
-> > index 000000000000..8d239a70f1b4
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/axis/artpec8-pinctrl.dtsi
-> > @@ -0,0 +1,120 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> 
-> This is Dual license, so why pincltr header is not?
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/memory/tegra/tegra186.c | 48 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-Thanks for the review.
-I will update the Dual license in pinctrl header in the next version.
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index aee11457bf8e032637d1772affb87da0cac68494..1384164f624af5d4aaccedc84443d203ba3db2c6 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -899,9 +899,56 @@ static const struct tegra_mc_client tegra186_mc_clients[] = {
+ 				.security = 0x51c,
+ 			},
+ 		},
++	}, {
++		.id = TEGRA_ICC_MC_CPU_CLUSTER0,
++		.name = "sw_cluster0",
++		.type = TEGRA_ICC_NISO,
++	}, {
++		.id = TEGRA_ICC_MC_CPU_CLUSTER1,
++		.name = "sw_cluster1",
++		.type = TEGRA_ICC_NISO,
+ 	},
+ };
+ 
++static int tegra186_mc_icc_set(struct icc_node *src, struct icc_node *dst)
++{
++	/* TODO: program PTSA */
++	return 0;
++}
++
++static int tegra186_mc_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
++				     u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
++{
++	struct icc_provider *p = node->provider;
++	struct tegra_mc *mc = icc_provider_to_tegra_mc(p);
++
++	if (node->id == TEGRA_ICC_MC_CPU_CLUSTER0 ||
++	    node->id == TEGRA_ICC_MC_CPU_CLUSTER1) {
++		if (mc)
++			peak_bw = peak_bw * mc->num_channels;
++	}
++
++	*agg_avg += avg_bw;
++	*agg_peak = max(*agg_peak, peak_bw);
++
++	return 0;
++}
++
++static int tegra186_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *peak)
++{
++	*avg = 0;
++	*peak = 0;
++
++	return 0;
++}
++
++static const struct tegra_mc_icc_ops tegra186_mc_icc_ops = {
++	.xlate = tegra_mc_icc_xlate,
++	.aggregate = tegra186_mc_icc_aggregate,
++	.get_bw = tegra186_mc_icc_get_init_bw,
++	.set = tegra186_mc_icc_set,
++};
++
+ const struct tegra_mc_soc tegra186_mc_soc = {
+ 	.num_clients = ARRAY_SIZE(tegra186_mc_clients),
+ 	.clients = tegra186_mc_clients,
+@@ -912,6 +959,7 @@ const struct tegra_mc_soc tegra186_mc_soc = {
+ 		   MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
+ 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
+ 	.ops = &tegra186_mc_ops,
++	.icc_ops = &tegra186_mc_icc_ops,
+ 	.ch_intmask = 0x0000000f,
+ 	.global_intstatus_channel_shift = 0,
+ };
 
-Thanks,
-Ravi
-
-> 
-> Best regards,
-> Krzysztof
+-- 
+2.50.1
 
 
 
