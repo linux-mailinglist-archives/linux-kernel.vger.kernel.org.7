@@ -1,287 +1,140 @@
-Return-Path: <linux-kernel+bounces-794069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B147B3DC61
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:31:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B309AB3DC64
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC83F17704E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:31:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D27437A116D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B828215767;
-	Mon,  1 Sep 2025 08:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1nAkyNn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660492F99B1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7052F83D9;
+	Mon,  1 Sep 2025 08:31:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187902F83D8
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715489; cv=none; b=tHWCXpb9Kgsqhj0T70+zejxOCRE4rDIulQgB3hofH24yql0SQSWiqV9spyaBfzBWzX//RwApooH5mB7rOT2X2P66xivvSRyX1had4DnGJhiztHDrci/cwR/PjL9N7EyYWcAL5GFk/MQh8vnDZip3Fva2m9ekPmFma8lMq6cYVeQ=
+	t=1756715505; cv=none; b=uXemrDzyO852Iyq7LknwbrUK/q7AgKYG1ik63ABObhtDt0oHFgkJ6e2k3STd8GavdHAfny6NnDBD03FNyBFKa0ohUzkoMZ3hiBy18Jfyk05w9TUx13akIVBeZRbSsWuxCJBQ3IhJGmwncr4tYkP9XzE6fa9dJSMSjfyW9Lxu268=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715489; c=relaxed/simple;
-	bh=KH7Bi0satXiuEt+iUfxg2rFDS/DtKwZ5mSXucRghtVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EUDZ6F3rco4160S/PiBTzpU4FZelFvCzvfpHpUpYG6hJzb3VUy8mRQU6HFp5POOCQ4yDMwn3XCwfeKpLwWrpoWZ0Wn27ADoAo7KpplIARbqx2Oj/OXG0Sz3YaeFvPVFgtJk0WREqDT0MLRFnNObJIfaZi4htfgXr0ZVrhPCWgpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1nAkyNn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D33C4C4CEF0;
-	Mon,  1 Sep 2025 08:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756715487;
-	bh=KH7Bi0satXiuEt+iUfxg2rFDS/DtKwZ5mSXucRghtVI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=k1nAkyNnpNEhA8zBalU7njJx6iDL5Q1PvtolTvWHg5EhOZ5QutpNkJAkFwpGPKgGV
-	 8DHY5gDYTh304lSkrjAHS233RPb+QimDLsV98/1DmA/LH4IYIEJ7OrcHMzMIdXvHjG
-	 ecnT0/jUVyi2qpIyP+1aJB5dbt7yWCV/0jdHR4dbtQNgYcIjnqWj9gvha0JbpPXOG1
-	 ZbvD0aefVJnhOQlvZV5dYDLLGsRCpx22tFnN9oRZIQEuiQFZ8lLTtRNOPWmBzBjjI7
-	 cdQxyFfPP6L7Ryl79Szpg3kus3P7+FlOJmXXlC/BXOr/naGKSDahDCKhFX0F485Wl8
-	 6N4fNCNip8bpw==
-From: Philipp Stanner <phasta@kernel.org>
-To: Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <phasta@kernel.org>
-Subject: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched teardown"
-Date: Mon,  1 Sep 2025 10:31:08 +0200
-Message-ID: <20250901083107.10206-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1756715505; c=relaxed/simple;
+	bh=VcHsK1OBhOnKkgN7PU7CkPFpJGZLnQT0rG1KgXhfG7Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RFKHSxWeVf2pqG/Vt4aZecsEAmV8UbUrMO77Eek0Q5wjwt/BVf7NpzGw76LXUdE53d4qlx/IkXAKCqcgGe566OBtOlRw0RbC3IZT5HX3664gvlEQBAJBpT37Ii4cg/8hHGc1D21TfDkyDw5xHLV8OgF+2ZY+oH3Fqv2yQkRdSLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Dxb_DrWbVoWksFAA--.11025S3;
+	Mon, 01 Sep 2025 16:31:39 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJCxXMHpWbVoUYt2AA--.55997S3;
+	Mon, 01 Sep 2025 16:31:37 +0800 (CST)
+Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about
+ efi_boot_kernel()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
+ <20250901072156.31361-2-yangtiezhu@loongson.cn>
+ <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <a59b3eaa-133d-88bf-f1f3-41328d023c4a@loongson.cn>
+Date: Mon, 1 Sep 2025 16:31:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxXMHpWbVoUYt2AA--.55997S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tr4kJFWrGFWDAw48WFyfAFc_yoW8KFWxpa
+	yUCFyUCFs8Jr4xta4kXw4F9Fy3XwsrtrWaga48J3s5Aw4DZFn2vF4Fgr1avF9rZr47Gw1a
+	vF40qrnI9a4DAagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
+	xhVjvjDU0xZFpf9x07jYSoJUUUUU=
 
-This reverts:
+On 2025/9/1 下午4:16, Peter Zijlstra wrote:
+> On Mon, Sep 01, 2025 at 03:21:54PM +0800, Tiezhu Yang wrote:
+>> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+>> the following objtool warning:
+>>
+>>    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+>>    falls through to next function __efistub_exit_boot_func()
+>>
+>> This is because efi_boot_kernel() doesn't end with a return instruction
+>> or an unconditional jump, then objtool has determined that the function
+>> can fall through into the next function.
+>>
+>> At the beginning, try to do something to make efi_boot_kernel() ends with
+>> an unconditional jump instruction, but it is not a proper way.
+>>
+>> After more analysis, one simple way is to ignore these EFISTUB functions
+>> in validate_branch() of objtool since they are useless for stack unwinder.
+>>
+> 
+> This is drivers/firmware/efi/libstub/loongarch.c:efi_boot_kernel(),
+> right?
+> 
+> Why not simply do something like:
+> 
+> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/efi/libstub/loongarch.c
+> index 3782d0a187d1..082611a5f1f0 100644
+> --- a/drivers/firmware/efi/libstub/loongarch.c
+> +++ b/drivers/firmware/efi/libstub/loongarch.c
+> @@ -81,4 +81,5 @@ efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
+>   
+>   	real_kernel_entry(true, (unsigned long)cmdline_ptr,
+>   			  (unsigned long)efi_system_table);
+> +	BUG();
+>   }
 
-commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teardown")
+At the beginning, I did the above change, but no effect.
 
-from the drm/sched teardown leak fix series:
+The first thing is to remove the attribute __noreturn for
+real_kernel_entry(), otherwise the compiler can not generate
+instructions after that.
 
-https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel.org/
+But there is an argument in the previous RFC [1]:
 
-The aforementioned series removed a blocking waitqueue from
-nouveau_sched_fini(). It was mistakenly assumed that this waitqueue only
-prevents jobs from leaking, which the series fixed.
+"From my point of view this is incorrect, this function is indeed a
+noreturn function, and this modification makes LoongArch different to
+other architectures."
 
-The waitqueue, however, also guarantees that all VM_BIND related jobs
-are finished in order, cleaning up mappings in the GPU's MMU. These jobs
-must be executed sequentially. Without the waitqueue, this is no longer
-guaranteed, because entity and scheduler teardown can race with each
-other.
+Josh suggested to do something so that the EFI stub code isn't linked 
+into vmlinux.o [2], it needs to modify the link process and seems too
+complicated and expensive for this warning to some extent.
 
-Revert all patches related to the waitqueue removal.
+So I did this change for objtool.
 
-Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-Changes in v2:
-  - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence container helper usable driver-wide")
-  - Add Fixes-tag
----
- drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
- drivers/gpu/drm/nouveau/nouveau_fence.h |  1 -
- drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++---------------
- drivers/gpu/drm/nouveau/nouveau_sched.h |  9 ++++---
- drivers/gpu/drm/nouveau/nouveau_uvmm.c  |  8 +++---
- 5 files changed, 24 insertions(+), 44 deletions(-)
+[1] 
+https://lore.kernel.org/loongarch/CAAhV-H5wW_04NHQ7z+SCPb6-T5Hc__n+x=ykg-u9vn4b4GXuww@mail.gmail.com/
+[2] 
+https://lore.kernel.org/loongarch/xyrcgkl7ud5pgh4h5yjyejz646bc22fnnwxahaoafqvnqintf3@mdhtfaybai67/
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index 9f345a008717..869d4335c0f4 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
- 	return ret;
- }
- 
--void
--nouveau_fence_cancel(struct nouveau_fence *fence)
--{
--	struct nouveau_fence_chan *fctx = nouveau_fctx(fence);
--	unsigned long flags;
--
--	spin_lock_irqsave(&fctx->lock, flags);
--	if (!dma_fence_is_signaled_locked(&fence->base)) {
--		dma_fence_set_error(&fence->base, -ECANCELED);
--		if (nouveau_fence_signal(fence))
--			nvif_event_block(&fctx->event);
--	}
--	spin_unlock_irqrestore(&fctx->lock, flags);
--}
--
- bool
- nouveau_fence_done(struct nouveau_fence *fence)
- {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/nouveau/nouveau_fence.h
-index 9957a919bd38..183dd43ecfff 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
-@@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
- 
- int  nouveau_fence_emit(struct nouveau_fence *);
- bool nouveau_fence_done(struct nouveau_fence *);
--void nouveau_fence_cancel(struct nouveau_fence *fence);
- int  nouveau_fence_wait(struct nouveau_fence *, bool lazy, bool intr);
- int  nouveau_fence_sync(struct nouveau_bo *, struct nouveau_channel *, bool exclusive, bool intr);
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index 0cc0bc9f9952..e60f7892f5ce 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -11,7 +11,6 @@
- #include "nouveau_exec.h"
- #include "nouveau_abi16.h"
- #include "nouveau_sched.h"
--#include "nouveau_chan.h"
- 
- #define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
- 
-@@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
- {
- 	struct nouveau_sched *sched = job->sched;
- 
--	spin_lock(&sched->job_list.lock);
-+	spin_lock(&sched->job.list.lock);
- 	list_del(&job->entry);
--	spin_unlock(&sched->job_list.lock);
-+	spin_unlock(&sched->job.list.lock);
-+
-+	wake_up(&sched->job.wq);
- }
- 
- void
-@@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
- 	}
- 
- 	/* Submit was successful; add the job to the schedulers job list. */
--	spin_lock(&sched->job_list.lock);
--	list_add(&job->entry, &sched->job_list.head);
--	spin_unlock(&sched->job_list.lock);
-+	spin_lock(&sched->job.list.lock);
-+	list_add(&job->entry, &sched->job.list.head);
-+	spin_unlock(&sched->job.list.lock);
- 
- 	drm_sched_job_arm(&job->base);
- 	job->done_fence = dma_fence_get(&job->base.s_fence->finished);
-@@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sched_job)
- 	nouveau_job_fini(job);
- }
- 
--static void
--nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
--{
--	struct nouveau_fence *fence;
--	struct nouveau_job *job;
--
--	job = to_nouveau_job(sched_job);
--	fence = to_nouveau_fence(job->done_fence);
--
--	nouveau_fence_cancel(fence);
--}
--
- static const struct drm_sched_backend_ops nouveau_sched_ops = {
- 	.run_job = nouveau_sched_run_job,
- 	.timedout_job = nouveau_sched_timedout_job,
- 	.free_job = nouveau_sched_free_job,
--	.cancel_job = nouveau_sched_cancel_job,
- };
- 
- static int
-@@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 		goto fail_sched;
- 
- 	mutex_init(&sched->mutex);
--	spin_lock_init(&sched->job_list.lock);
--	INIT_LIST_HEAD(&sched->job_list.head);
-+	spin_lock_init(&sched->job.list.lock);
-+	INIT_LIST_HEAD(&sched->job.list.head);
-+	init_waitqueue_head(&sched->job.wq);
- 
- 	return 0;
- 
-@@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
- 	return 0;
- }
- 
-+
- static void
- nouveau_sched_fini(struct nouveau_sched *sched)
- {
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
- 
-+	rmb(); /* for list_empty to work without lock */
-+	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
-+
- 	drm_sched_entity_fini(entity);
- 	drm_sched_fini(drm_sched);
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
-index b98c3f0bef30..20cd1da8db73 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-@@ -103,9 +103,12 @@ struct nouveau_sched {
- 	struct mutex mutex;
- 
- 	struct {
--		struct list_head head;
--		spinlock_t lock;
--	} job_list;
-+		struct {
-+			struct list_head head;
-+			spinlock_t lock;
-+		} list;
-+		struct wait_queue_head wq;
-+	} job;
- };
- 
- int nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-index d94a85509176..79eefdfd08a2 100644
---- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-@@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 	u64 end = addr + range;
- 
- again:
--	spin_lock(&sched->job_list.lock);
--	list_for_each_entry(__job, &sched->job_list.head, entry) {
-+	spin_lock(&sched->job.list.lock);
-+	list_for_each_entry(__job, &sched->job.list.head, entry) {
- 		struct nouveau_uvmm_bind_job *bind_job = to_uvmm_bind_job(__job);
- 
- 		list_for_each_op(op, &bind_job->ops) {
-@@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 
- 				if (!(end <= op_addr || addr >= op_end)) {
- 					nouveau_uvmm_bind_job_get(bind_job);
--					spin_unlock(&sched->job_list.lock);
-+					spin_unlock(&sched->job.list.lock);
- 					wait_for_completion(&bind_job->complete);
- 					nouveau_uvmm_bind_job_put(bind_job);
- 					goto again;
-@@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 			}
- 		}
- 	}
--	spin_unlock(&sched->job_list.lock);
-+	spin_unlock(&sched->job.list.lock);
- }
- 
- static int
--- 
-2.49.0
+Thanks,
+Tiezhu
 
 
