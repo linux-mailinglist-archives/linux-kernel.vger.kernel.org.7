@@ -1,271 +1,137 @@
-Return-Path: <linux-kernel+bounces-794015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81B5B3DB80
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0A8B3DB83
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B48160D4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CC7188D697
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69CB2EDD6C;
-	Mon,  1 Sep 2025 07:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uME8i/Vq"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFAC27F170;
+	Mon,  1 Sep 2025 07:52:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B022B9A4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7005A2475C2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713035; cv=none; b=VdZ93Od1k6XvG9uqbMx2gTqkF/wRJTcJY+H4Yfx7R4euSuSZXlJJVUqxEGbCmraIIH7eBgdK7aoOF2jI6Ve/QbiXCyp1jnxhQ6Wnb1iSOAvq5BIcT/NyNmCq0u5rjtio+yiAloiGwIWVg3ujgsFdHW4XXYMlE4oR2Idy4NNk8kU=
+	t=1756713124; cv=none; b=R31Xg4i5LRGvbrLDPpwP1kSHgniNA15vNaplVBtLdmEmJVLpux2u8Hj5KfCEvHtN6TS3QZ9Zjmoy444LNcwAsAHzdZ8kswfMAwlLjiv4XWtFZOF7xTxRJTswtmk2LeuEJj2glG6ZLqFtK4/lZmXRVFMgPk1hufDeVQZWIcYS9Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713035; c=relaxed/simple;
-	bh=GCYHl0IzJ/AoEA1OjQZxe5WGrSnqEi8TLuJFcy7EEeQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VQj3LOIRu3YKzXmi+IOjrBS0AKMogIng4/rOaLXIYwbwA4yeaVUJ/6Dl2YOC/X9W2/UaMyWWQZwUEcCMlAfW9xUyBmWCISkPuYCFY9lf8LSB2LwHCKrqLMPOSuqOGKELYd3BoGOHorLiGgC3VMMeFTaGQ9+eE3kNv1nq7B2Gsxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uME8i/Vq; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24ab15b6f09so117275ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756713033; x=1757317833; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkNip8h6TggKbPC4j1tIEtRIjWnEKoxCcwgwzmMlJgs=;
-        b=uME8i/Vq+bfOKqj7mQYv6Z+nhA3lmu9Ya8paVKhEcIIhedqSNv4W0Q/DMtisEM9A40
-         vdUCzjKcpLRtVMHc/ffb0sNyA2LUjjQ3LYl1+z2XSquigHjJcLeMgfOS2j29EEHPJlEI
-         YhH48/kkmLxxpyR/jelzIuCwp+RrWwG/b7x2s4FOLd2qgf5DGqI0nU3NlrxG6iJ+A7P0
-         qWkMqvAimvdEY6RkZTfXbDgZOymkwc5CqYdEa6VxgyPdRMGDXr9Xbk3UlDW7m5CzWE0N
-         Sy6G+FGqc2427y76pWN4a2JNHWD1Qx4bXi+9G+dKxwkX4GqUdWbBJY1sTO2FWf0SEOGd
-         pfKg==
+	s=arc-20240116; t=1756713124; c=relaxed/simple;
+	bh=QcZbd2wBa8znXCKEb3B3P4dOWUY2YKzZKy+k4ycUt9E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LlhQI+OBefS/8tClplILEsWC4SfI5zP+cYmJLSRqjtXa6jWoECqBx4vzgg+H9JgZMhGztfqAJzm5cue/9w8dqH6XTmxdCb0uglH+Na0awr1MYZUt0Q/5qym0Dj3mHB4oTr7LLSFJEIbeq52tNoPk5qsFZeLQSMUoi5/hOaduT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3efa61f3ab5so90609705ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:52:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756713033; x=1757317833;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkNip8h6TggKbPC4j1tIEtRIjWnEKoxCcwgwzmMlJgs=;
-        b=LqbRskEk2tqh2f1StVt80HK0E9o7cM5ZLFNXHVx6DqcAKJenwSNjn+79AOI+9IXvuR
-         SDgN0RwszYzL8ZqOW8gCk5HOxZJBtf81ubBOdG3reI7ClR6LUScasDy9dOnOaMtN628M
-         Lfxi2IivQsqtqoLNNK26iM1yDcUhdWLi2NUS0r7iC64x+Pw/ooqaE8XNZP+DNIeK+H1B
-         79GhMytJoAly1C6o0k/sWZWo1BYcrjsXpkz+HD3AmMGtBIVr8l9l5eUCHmoTbQfNyN3R
-         6VDHxexzyZReHgnLTzCgujCYI81nCp/Hi8m5x9FqUsHreQsZZ8pFLWTWuJjyjrhscJIC
-         Gldg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLUQNp+XfCX8xpfOqLGLjiMXPkYR2WCSkBo+cULBCSbvIn/Xe0hyD9LNBwA+OvmOITujAYxsFtOxlssaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVDvLWo4YP/eNrP/SKCkyaEqzLZJQxap55r1ctITPx90L9/rIv
-	CIhtUQ8UBu2MNPqVnGMW1CxjaKIiryFzqkbDBftNhYNS0qe3oMUn/iYxvySCx2FkIg==
-X-Gm-Gg: ASbGncsvWZygDCicB/xwhfjHUXRZ6eilu5Uimw7zrjfP2XqTwOx562KhU2yRO1bbNSY
-	gqPz5l3RCwKZMlKBR7hKvB479/W2upvIHDaE8sbT9eqmCkROnfKYrkAr0QbiQhmUtl1W4fUhHOo
-	3rRqLUlDvOB+YPPthTHRegRYlIif/UsTwS2oj2BymKWO76rBGZQsZJPuB4GpNRnrMgHHTfvguZI
-	KxICWdeiu4/I+kFk7r8EGc/UxauYdoVa8ivOn0QlZL2hL6yucxhcvjceA7R/LFVNDPBCvx+tbr3
-	K/YX7+eq2+xAvre+JyPIBM2w73mivFT7mtgnHBqiyHdsWRJwHrimlt0qIhU5S3W2A1aWRYDSAnL
-	rxPTpbhFsIUDdVxy0Fk5lmvKKt3g6FvnU5hoC7EQJmd8/7zy6xZzXRdAyMRZgwMkdY0QFGhtNPD
-	L+pXgAhu8KQHsMeuuIxsWeV4eJGDUTsHlx2AtNCgI2AO2P9rgMt6V9
-X-Google-Smtp-Source: AGHT+IGn9QHXHHFTCaWm9H+w1dJZ0iGEeksBYBpp44VGJjpcufhxypiFwN2ftuqbOtcBBJEaj/QBwg==
-X-Received: by 2002:a17:902:ce84:b0:248:f76d:2c67 with SMTP id d9443c01a7336-2493e7b9d86mr4983845ad.4.1756713032826;
-        Mon, 01 Sep 2025 00:50:32 -0700 (PDT)
-Received: from [2a00:79e0:2eb0:8:cfcf:e85f:553:d0bf] ([2a00:79e0:2eb0:8:cfcf:e85f:553:d0bf])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcf0567sm15934209a91.27.2025.09.01.00.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 00:50:31 -0700 (PDT)
-Date: Mon, 1 Sep 2025 00:50:29 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: yangshiguang1011@163.com
-cc: harry.yoo@oracle.com, vbabka@suse.cz, akpm@linux-foundation.org, 
-    cl@gentwo.org, roman.gushchin@linux.dev, glittao@gmail.com, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v4] mm: slub: avoid wake up kswapd in set_track_prepare
-In-Reply-To: <20250830020946.1767573-1-yangshiguang1011@163.com>
-Message-ID: <c8f6933e-f733-4f86-c09d-8028ad862f33@google.com>
-References: <20250830020946.1767573-1-yangshiguang1011@163.com>
+        d=1e100.net; s=20230601; t=1756713122; x=1757317922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tC+RnlGqxK0XL5Kr9k4mIpuEP2/N3INOHwuttHO3Xsk=;
+        b=Tx0n6Fo2qxP9MysUDVFDHiQRH2QZSDOFLBgPGNHE/JtzsCk76wj48tFEdMuvlqkKb5
+         Q5s8EH/oh5zYNrV7YDw+6pCB6kMpwknc/22ZGG53KFq1+K8bEEGEm/fuGeraZ/KjzagX
+         sDtkXQ1t4lXaQGXbKnZLyN0a1JZ7HCl15rWOs/Q0pUC0zLFQcqBGOch+lu9SOvaL/nIe
+         r+yUq3hQRjV/n74ZHo+s8RGlVmP63pA4C98cZAVJPCEa58qcpVZt9kx9BThIXFebYYSJ
+         gDuOxJNTYls4Vl6/lYF5QCqTqcM8AADDpY0kGQlri6Qj5YrHgnccm6abDf5E/TGyFDMS
+         2FNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4JMDFxSvX/ytuibB33E6JBtSP+dsCQn6G4X6vxbCoy3IcTOJs4VzDfgik7LVftXmkeBLOD1SrN1F8iRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9zDZUYasGdN0dZmFR+LoUKbzqzgA2qaLke26Ip93ym3okwGpi
+	UjiI+agzFLuTdc0hz0NNlQyY7ugyFgtN7i00M1gZxxlax0yC8NGUHKmFPhom7XB+EBc8ai82jyF
+	OT0YPqV7QpY9oW4uwXaE5iiYjMGruyCme2Ii9g+NVuMhKx+uuOU+3LIomumI=
+X-Google-Smtp-Source: AGHT+IGDbfDQb6Hlu6dqF5PgfcnVJmssI4FSoS6BH9VCDTwbtVfMrI15SJQKY46qjrSxYOkdzEgsdUZG/pl34xi6fqfIj6es2rk/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:12c8:b0:3f3:bbda:d037 with SMTP id
+ e9e14a558f8ab-3f4026bd7e1mr143545815ab.26.1756713122724; Mon, 01 Sep 2025
+ 00:52:02 -0700 (PDT)
+Date: Mon, 01 Sep 2025 00:52:02 -0700
+In-Reply-To: <697876e4-0b24-498a-8c4f-184077c3a1bc@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b550a2.a70a0220.1c57d1.0547.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_write_end_io
+From: syzbot <syzbot+803dd716c4310d16ff3a@syzkaller.appspotmail.com>
+To: chao@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 30 Aug 2025, yangshiguang1011@163.com wrote:
+Hello,
 
-> From: yangshiguang <yangshiguang@xiaomi.com>
-> 
-> From: yangshiguang <yangshiguang@xiaomi.com>
-> 
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in f2fs_write_end_io
 
-Duplicate lines.
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/data.c:362!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 1159 Comm: kworker/u8:9 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: events_unbound nsim_dev_trap_report_work
+RIP: 0010:f2fs_write_end_io+0xb52/0xb60 fs/f2fs/data.c:361
+Code: e8 33 f1 14 fe e9 91 f6 ff ff 89 d9 80 e1 07 38 c1 0f 8c e3 f6 ff ff 48 89 df e8 a9 f1 14 fe e9 d6 f6 ff ff e8 8f b4 b3 fd 90 <0f> 0b 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90000007d38 EFLAGS: 00010246
+RAX: ffffffff840bf6a1 RBX: 0000000000000000 RCX: ffff888027291e00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 000000000000000b
+RBP: ffff8880744dd8c0 R08: ffffea0001685247 R09: 1ffffd40002d0a48
+R10: dffffc0000000000 R11: fffff940002d0a49 R12: 0000000000000006
+R13: ffffea0001685240 R14: 000000000000000b R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888125c54000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2aab608000 CR3: 0000000033b1a000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ blk_update_request+0x57e/0xe60 block/blk-mq.c:989
+ blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1151
+ blk_complete_reqs block/blk-mq.c:1226 [inline]
+ blk_done_softirq+0x107/0x160 block/blk-mq.c:1231
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:835 [inline]
+ nsim_dev_trap_report_work+0x7c7/0xb80 drivers/net/netdevsim/dev.c:866
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:f2fs_write_end_io+0xb52/0xb60 fs/f2fs/data.c:361
+Code: e8 33 f1 14 fe e9 91 f6 ff ff 89 d9 80 e1 07 38 c1 0f 8c e3 f6 ff ff 48 89 df e8 a9 f1 14 fe e9 d6 f6 ff ff e8 8f b4 b3 fd 90 <0f> 0b 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90000007d38 EFLAGS: 00010246
+RAX: ffffffff840bf6a1 RBX: 0000000000000000 RCX: ffff888027291e00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 000000000000000b
+RBP: ffff8880744dd8c0 R08: ffffea0001685247 R09: 1ffffd40002d0a48
+R10: dffffc0000000000 R11: fffff940002d0a49 R12: 0000000000000006
+R13: ffffea0001685240 R14: 000000000000000b R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888125c54000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2aab608000 CR3: 0000000033b1a000 CR4: 00000000003526f0
 
-> set_track_prepare() can incur lock recursion.
-> The issue is that it is called from hrtimer_start_range_ns
-> holding the per_cpu(hrtimer_bases)[n].lock, but when enabled
-> CONFIG_DEBUG_OBJECTS_TIMERS, may wake up kswapd in set_track_prepare,
-> and try to hold the per_cpu(hrtimer_bases)[n].lock.
-> 
-> Avoid deadlock caused by implicitly waking up kswapd by
-> passing in allocation flags. And the slab caller context has
-> preemption disabled, so __GFP_KSWAPD_RECLAIM must not appear in gfp_flags.
-> 
 
-This mentions __GFP_KSWAPD_RECLAIM, but the patch actually masks off 
-__GFP_DIRECT_RECLAIM which would be a heavierweight operation.  Disabling 
-direct reclaim does not necessarily imply that kswapd will be disabled as 
-well.
+Tested on:
 
-Are you meaning to clear __GFP_RECLAIM in set_track_prepare()?
+commit:         e78352f9 f2fs: fix to do sanity check on node footer i..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
+console output: https://syzkaller.appspot.com/x/log.txt?x=12306662580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8283cde63d6907
+dashboard link: https://syzkaller.appspot.com/bug?extid=803dd716c4310d16ff3a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-> The oops looks something like:
-> 
-> BUG: spinlock recursion on CPU#3, swapper/3/0
->  lock: 0xffffff8a4bf29c80, .magic: dead4ead, .owner: swapper/3/0, .owner_cpu: 3
-> Hardware name: Qualcomm Technologies, Inc. Popsicle based on SM8850 (DT)
-> Call trace:
-> spin_bug+0x0
-> _raw_spin_lock_irqsave+0x80
-> hrtimer_try_to_cancel+0x94
-> task_contending+0x10c
-> enqueue_dl_entity+0x2a4
-> dl_server_start+0x74
-> enqueue_task_fair+0x568
-> enqueue_task+0xac
-> do_activate_task+0x14c
-> ttwu_do_activate+0xcc
-> try_to_wake_up+0x6c8
-> default_wake_function+0x20
-> autoremove_wake_function+0x1c
-> __wake_up+0xac
-> wakeup_kswapd+0x19c
-> wake_all_kswapds+0x78
-> __alloc_pages_slowpath+0x1ac
-> __alloc_pages_noprof+0x298
-> stack_depot_save_flags+0x6b0
-> stack_depot_save+0x14
-> set_track_prepare+0x5c
-> ___slab_alloc+0xccc
-> __kmalloc_cache_noprof+0x470
-> __set_page_owner+0x2bc
-> post_alloc_hook[jt]+0x1b8
-> prep_new_page+0x28
-> get_page_from_freelist+0x1edc
-> __alloc_pages_noprof+0x13c
-> alloc_slab_page+0x244
-> allocate_slab+0x7c
-> ___slab_alloc+0x8e8
-> kmem_cache_alloc_noprof+0x450
-> debug_objects_fill_pool+0x22c
-> debug_object_activate+0x40
-> enqueue_hrtimer[jt]+0xdc
-> hrtimer_start_range_ns+0x5f8
-> ...
-> 
-> Signed-off-by: yangshiguang <yangshiguang@xiaomi.com>
-> Fixes: 5cf909c553e9 ("mm/slub: use stackdepot to save stack trace in objects")
-> Cc: stable@vger.kernel.org
-> ---
-> 
-> v1 -> v2:
->     propagate gfp flags to set_track_prepare()
-> v2 -> v3:
->     Remove the gfp restriction in set_track_prepare()
-> v3 -> v4:
->     Re-describe the comments in set_track_prepare.
-> 
-> [1]https://lore.kernel.org/all/20250801065121.876793-1-yangshiguang1011@163.com/
-> [2]https://lore.kernel.org/all/20250814111641.380629-2-yangshiguang1011@163.com/
-> [3]https://lore.kernel.org/all/20250825121737.2535732-1-yangshiguang1011@163.com/
-> ---
->  mm/slub.c | 26 ++++++++++++++++----------
->  1 file changed, 16 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 30003763d224..b0af51a5321b 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -962,19 +962,25 @@ static struct track *get_track(struct kmem_cache *s, void *object,
->  }
->  
->  #ifdef CONFIG_STACKDEPOT
-> -static noinline depot_stack_handle_t set_track_prepare(void)
-> +static noinline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
->  {
->  	depot_stack_handle_t handle;
->  	unsigned long entries[TRACK_ADDRS_COUNT];
->  	unsigned int nr_entries;
-> +	/*
-> +	 * Preemption is disabled in ___slab_alloc() so we need to disallow
-> +	 * blocking. The flags are further adjusted by gfp_nested_mask() in
-> +	 * stack_depot itself.
-> +	 */
-> +	gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
->  
->  	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 3);
-> -	handle = stack_depot_save(entries, nr_entries, GFP_NOWAIT);
-> +	handle = stack_depot_save(entries, nr_entries, gfp_flags);
->  
->  	return handle;
->  }
->  #else
-> -static inline depot_stack_handle_t set_track_prepare(void)
-> +static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
->  {
->  	return 0;
->  }
-> @@ -996,9 +1002,9 @@ static void set_track_update(struct kmem_cache *s, void *object,
->  }
->  
->  static __always_inline void set_track(struct kmem_cache *s, void *object,
-> -				      enum track_item alloc, unsigned long addr)
-> +				      enum track_item alloc, unsigned long addr, gfp_t gfp_flags)
->  {
-> -	depot_stack_handle_t handle = set_track_prepare();
-> +	depot_stack_handle_t handle = set_track_prepare(gfp_flags);
->  
->  	set_track_update(s, object, alloc, addr, handle);
->  }
-> @@ -1921,9 +1927,9 @@ static inline bool free_debug_processing(struct kmem_cache *s,
->  static inline void slab_pad_check(struct kmem_cache *s, struct slab *slab) {}
->  static inline int check_object(struct kmem_cache *s, struct slab *slab,
->  			void *object, u8 val) { return 1; }
-> -static inline depot_stack_handle_t set_track_prepare(void) { return 0; }
-> +static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags) { return 0; }
->  static inline void set_track(struct kmem_cache *s, void *object,
-> -			     enum track_item alloc, unsigned long addr) {}
-> +			     enum track_item alloc, unsigned long addr, gfp_t gfp_flags) {}
->  static inline void add_full(struct kmem_cache *s, struct kmem_cache_node *n,
->  					struct slab *slab) {}
->  static inline void remove_full(struct kmem_cache *s, struct kmem_cache_node *n,
-> @@ -3878,7 +3884,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->  			 * tracking info and return the object.
->  			 */
->  			if (s->flags & SLAB_STORE_USER)
-> -				set_track(s, freelist, TRACK_ALLOC, addr);
-> +				set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
->  
->  			return freelist;
->  		}
-> @@ -3910,7 +3916,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->  			goto new_objects;
->  
->  		if (s->flags & SLAB_STORE_USER)
-> -			set_track(s, freelist, TRACK_ALLOC, addr);
-> +			set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
->  
->  		return freelist;
->  	}
-> @@ -4422,7 +4428,7 @@ static noinline void free_to_partial_list(
->  	depot_stack_handle_t handle = 0;
->  
->  	if (s->flags & SLAB_STORE_USER)
-> -		handle = set_track_prepare();
-> +		handle = set_track_prepare(__GFP_NOWARN);
->  
->  	spin_lock_irqsave(&n->list_lock, flags);
->  
-> -- 
-> 2.43.0
-> 
-> 
+Note: no patches were applied.
 
