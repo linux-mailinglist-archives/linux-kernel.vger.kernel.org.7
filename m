@@ -1,121 +1,231 @@
-Return-Path: <linux-kernel+bounces-794592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5C8B3E39A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E5AB3E3A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0960B4423D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:46:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D08161833
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D824D327789;
-	Mon,  1 Sep 2025 12:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF7631CA67;
+	Mon,  1 Sep 2025 12:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSJfNhCs"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=natalie.vock@gmx.de header.b="E4/UvYma"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F8A2749D1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9543917CA1B;
+	Mon,  1 Sep 2025 12:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730754; cv=none; b=DuC3QfvhKvR5pjvUt6SHH7U4yxDc4cVv8eLf5SxZ0/Zv+aPcozq+BnxkQqumDzZaSg05WjfifA+s1hjlkdHeyod908rUquw2+aGkRD2ntoaQ6/5UafdujC44LxirbebGWOQQ3LwSPFMdggCd431ma6slvHIClNjBsoAaYGD0sRc=
+	t=1756730766; cv=none; b=aPOBr6yNJ0KD7jszeNV4D/n10mdsQs9Rcf2e8OcZU0kpNHL5hY52Zrz4q5Df0bToZS4f7/IB34CTk6ECQQxKPyoPZJLj55SvC0SvXjlgNVfVKd4iNADdThYHbVSJh75CfvvP5rhdGfLQx46Y2SS1pITFCGtCnWHrwcS2ZZM/keY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730754; c=relaxed/simple;
-	bh=kKPxwMDQ12/QlFsJHDAQpUGCRuy72hF3jfEmjy7TKnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fK5NgFHdiCdZq3zvKrZg4LheOvmkKPv4WgOI+0On4S4Be6NQ4r0opO9keLPaUSjIoDZ2bthTsV6oEY7m95joO5VdKpC6APFatmNq8vndUORYeM1iuQcS8EgdhH7o62/flF+vWxHPoMb/GwDliGpeXlyYCxr7ZZ184rHGV2d1iZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSJfNhCs; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b475b63ab66so561050a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756730752; x=1757335552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0LJ4r9mMq8e3mdNbo2g6rD5aD5gZi5B+2aiqw18aFtk=;
-        b=MSJfNhCsg6l7+jA+lUrhyGBeNv3JjmGFsJK96QsReaEt0kgenTbJ6NE0utV2K/kMW4
-         s1T/DZmz+EtpvcIHKdTyJCoNpYtQhXBujgGgI76LDboA+y66P8diKBtyBrwsr6ESWMrq
-         KV+PgcLQ7Kmtc7L7DW8rZPfeTnExXY1pydiF0GdzI0lsLJ+dQn47vDYA4wQNT11WF5CX
-         Jy6/m1tcVjsgQuod3irsj2BxK5u3CzdwpmwxjdGMDurI2mWixibCgtVQPYjRJqsXosSE
-         LbL/a3S6+8fJ32+t65Qw3+b9GR9eeJGSOzjQ5vtJw3hlPNwSxWFo9tbKDE2FANRr4wgu
-         bKjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756730752; x=1757335552;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0LJ4r9mMq8e3mdNbo2g6rD5aD5gZi5B+2aiqw18aFtk=;
-        b=Na+oV4LpxNW9lqLQ4ne1+v0QGptQ52LP3hW8ZAKMxXdZjIv7KjFc0dUnO2+xpzoRCo
-         evUNt3pZH5LQ8WH3XbvUeeQ+YSRZ/CRG8KiUUXU6lOlr9n0mbXvY/C6pbP3jdQnZ4t6V
-         qrPK2QQ9UdbEyl8V6yqk+iKNDXmApt2O9VJOWuRzzkk1otM+kqqLI0URVF0THmxex648
-         cJc+PBR6Ne/uKVdO0yDCPdEjtUy/ILFF0mC0qMza30bnX/YnL2TIveQTUYJ3zhfnOTAQ
-         zynUEJvMC9AAGHoSCrtPLwTPFpCXn5Y2HGvK29OUvXkY9vfKC3GmRG31YB/MRztjSoj8
-         jFMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtpCb6WJrHx90cKheH3KBBZ2Qezy1Au+d7AaVm/Kx8c/EOsT7IDbeoI9xZ7f6UJND5QavscSvwOLVwSQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0bMUzyjjMwrEMoIAFNgdiNB8J4DEIb+5VfIUwb1xCj1PELMIL
-	Dg/CyW4/GFK4FlYRezi42k0y8rUx/Gm+9jszT+Q1N0H5Gii3hF5S3M3q
-X-Gm-Gg: ASbGncsSUMeAgPy2BEBcpKxKs6U1sc4QzA5sD64mNabUsYrR7i5OhKYMfjO68VtB1un
-	mFWP0JsfvBjG45kKkUDsCDt1dVBzFXWASZunDO340M28IJj5JZcQRGfJFww9YAXXV90iPLhTZ1E
-	bv2LzWkFLncwCSl4Yq58vskDBE+EV4v+/3FJNFAHuAnIKhaG6wG3qXGIhAJeLM3PR4b1TO83Mxv
-	cdjdAm8O5hnJo+hbPODk4KheRV5WwQJUmjjxyVtKgarnKAk7hXNtMNWkPFIfJVaNhhw2sEo+BN4
-	GoWnI5URynURGADrCHztorsMLbyO9S5KmDi8YqgFVzIhfUaLy3KJf3tsKNUTOO5NyLl1ZJzUSYK
-	IA3uXUBm/PC4JOg8ikgaoEg==
-X-Google-Smtp-Source: AGHT+IHN71zGlOOMRyH+O5wcaJBAY1QklGt6JPB0plU5qIlkRtUqi8nYhrHaVrv2vP+4Uv8jYf4bYQ==
-X-Received: by 2002:a05:6a00:928d:b0:771:eec7:a71f with SMTP id d2e1a72fcca58-77232874e8cmr5779479b3a.4.1756730752213;
-        Mon, 01 Sep 2025 05:45:52 -0700 (PDT)
-Received: from localhost ([114.70.121.22])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7723d79fcfesm7553805b3a.16.2025.09.01.05.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 05:45:51 -0700 (PDT)
-From: Gyujeong Jin <wlsrbwjd7232@gmail.com>
-To: maz@kernel.org,
-	oliver.upton@linux.dev
-Cc: joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	wlsrbwjd7232@gmail.com,
-	gyutrange <wlsrbwjd643@naver.com>
-Subject: [PATCH] KVM: arm64: nested: Fix VA sign extension in VNCR/TLBI paths
-Date: Mon,  1 Sep 2025 21:45:20 +0900
-Message-ID: <20250901124520.54259-1-wlsrbwjd7232@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756730766; c=relaxed/simple;
+	bh=JKv0uVEnJesH0HkICcU4KY7pmHLi9Hup07tiqedKWdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BJEOJF8JXbVdoGdwyENezXE3GNPqSq4M2uP1b6nB1QLTrA+RuevOhKmNXPiltneQH90mWG74NfLW/x1w6Ils21O2DxUKGgsavFoh7HCGCzdwHKbtpQ9hl5AYToMZwrsKZRyrctukfwhb58NjEpHq4YX/+LbQuGVFlSm8bDiw+K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=natalie.vock@gmx.de header.b=E4/UvYma; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1756730733; x=1757335533; i=natalie.vock@gmx.de;
+	bh=vk19hrLmTMX1+o07BsugobTZFFY1uG8ZJ4maDm0wMWc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E4/UvYmaKAFUAPb7HRhMVnenDOtQJ4PkllkSG20ti17my6nC1CvBao9VJ9+RoIWt
+	 ay1+uT0Mow6bgbniCwXv0LTxoUHfDwLOrB9p6ivrOGmefcgDroJmCsJRKzt+Fyypo
+	 kfgNkJrHtSAkbnfBNhQkhX/3ae1AyQgWwUXJP+cOpj+v0KgMwZL+I0g1D038G5ijP
+	 vZjF76CNeyCSpJ4EfIDyLqDf7Tyl/2iAiU3uL3s6W0dKBwbVzqCbx+oTIY3YRTwhZ
+	 s+ASx8AJitMt1/4zKWs0sJXvRvXzabNHBc2Ex9IvHfRhD/FOY0cZK4ngrjpt8GXGG
+	 BlK6+++yY+2PX1+mUw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.3] ([109.91.201.165]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MA7Ka-1un3cl0fQw-00AguE; Mon, 01
+ Sep 2025 14:45:33 +0200
+Message-ID: <25b42c8e-7233-4121-b253-e044e022b327@gmx.de>
+Date: Mon, 1 Sep 2025 14:45:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
+To: Maarten Lankhorst <dev@lankhorst.se>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?=27Thomas_Hellstr=C3=B6m=27?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?=27Michal_Koutn=C3=BD=27?= <mkoutny@suse.com>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "'Liam R . Howlett'" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org
+References: <20250819114932.597600-5-dev@lankhorst.se>
+Content-Language: en-US
+From: Natalie Vock <natalie.vock@gmx.de>
+In-Reply-To: <20250819114932.597600-5-dev@lankhorst.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RAl06NMOpU7f46c0WobJ33qXFn/0aYGSKvrRkX5ESDCqF/Tb6ix
+ 2grj9iQdjAGWbMyKVnIkaR0gfzsQfgZVneVcK4nXTGbdrBuKLQfOAHH8FncM3JMKYO44hb/
+ BXiFGIjGezs/HoO7Kp7Np8OM2FstFzNBcerte5dUe+wrHU+9jyk/AUFBMzvS6TMdxRzz6K4
+ WnLynZfSsJAqg8Ktv1gyw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U2xrOcMtXIc=;jh3Jz8lKaZo68OUS0Kk4/pKIoAz
+ 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
 
-From: gyutrange <wlsrbwjd643@naver.com>
+Hi,
 
-Signed-off-by: gyutrange <wlsrbwjd643@naver.com>
----
- arch/arm64/kvm/nested.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/19/25 13:49, Maarten Lankhorst wrote:
+> When exporting dma-bufs to other devices, even when it is allowed to use
+> move_notify in some drivers, performance will degrade severely when
+> eviction happens.
+>=20
+> A perticular example where this can happen is in a multi-card setup,
+> where PCI-E peer-to-peer is used to prevent using access to system memor=
+y.
+>=20
+> If the buffer is evicted to system memory, not only the evicting GPU whe=
+r
+> the buffer resided is affected, but it will also stall the GPU that is
+> waiting on the buffer.
+>=20
+> It also makes sense for long running jobs not to be preempted by having
+> its buffers evicted, so it will make sense to have the ability to pin
+> from system memory too.
+>=20
+> This is dependant on patches by Dave Airlie, so it's not part of this
+> series yet. But I'm planning on extending pinning to the memory cgroup
+> controller in the future to handle this case.
+>=20
+> Implementation details:
+>=20
+> For each cgroup up until the root cgroup, the 'min' limit is checked
+> against currently effectively pinned value. If the value will go above
+> 'min', the pinning attempt is rejected.
 
-diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-index 77db81bae86f..eaa6dd9da086 100644
---- a/arch/arm64/kvm/nested.c
-+++ b/arch/arm64/kvm/nested.c
-@@ -1169,7 +1169,7 @@ int kvm_vcpu_allocate_vncr_tlb(struct kvm_vcpu *vcpu)
- 
- static u64 read_vncr_el2(struct kvm_vcpu *vcpu)
- {
--	return (u64)sign_extend64(__vcpu_sys_reg(vcpu, VNCR_EL2), 48);
-+	return (u64)sign_extend64(__vcpu_sys_reg(vcpu, VNCR_EL2), 47);
- }
- 
- static int kvm_translate_vncr(struct kvm_vcpu *vcpu)
--- 
-2.43.0
+Why do you want to reject pins in this case? What happens in desktop=20
+usecases (e.g. PRIME buffer sharing)? AFAIU, you kind of need to be able=
+=20
+to pin buffers and export them to other devices for that whole thing to=20
+work, right? If the user doesn't explicitly set a min value, wouldn't=20
+the value being zero mean any pins will be rejected (and thus PRIME=20
+would break)?
+
+If your objective is to prevent pinned buffers from being evicted,=20
+perhaps you could instead make TTM try to avoid evicting pinned buffers=20
+and prefer unpinned buffers as long as there are unpinned buffers to=20
+evict? As long as the total amount of pinned memory stays below min, no=20
+pinned buffers should get evicted with that either.
+
+Best,
+Natalie
+
+>=20
+> Pinned memory is handled slightly different and affects calculating
+> effective min/low values. Pinned memory is subtracted from both,
+> and needs to be added afterwards when calculating.
+>=20
+> This is because increasing the amount of pinned memory, the amount of
+> free min/low memory decreases for all cgroups that are part of the
+> hierarchy.
+>=20
+> Maarten Lankhorst (3):
+>    page_counter: Allow for pinning some amount of memory
+>    cgroup/dmem: Implement pinning device memory
+>    drm/xe: Add DRM_XE_GEM_CREATE_FLAG_PINNED flag and implementation
+>=20
+>   drivers/gpu/drm/xe/xe_bo.c      | 66 +++++++++++++++++++++-
+>   drivers/gpu/drm/xe/xe_dma_buf.c | 10 +++-
+>   include/linux/cgroup_dmem.h     |  2 +
+>   include/linux/page_counter.h    |  8 +++
+>   include/uapi/drm/xe_drm.h       | 10 +++-
+>   kernel/cgroup/dmem.c            | 57 ++++++++++++++++++-
+>   mm/page_counter.c               | 98 ++++++++++++++++++++++++++++++---
+>   7 files changed, 237 insertions(+), 14 deletions(-)
+>=20
 
 
