@@ -1,164 +1,129 @@
-Return-Path: <linux-kernel+bounces-794835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E820BB3E7E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E73B3E7D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C5A1890A15
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68EFA1A829FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF847341AD7;
-	Mon,  1 Sep 2025 14:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD239335BAB;
+	Mon,  1 Sep 2025 14:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U6I6+Ffd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="N6IgICCA"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3B34167B;
-	Mon,  1 Sep 2025 14:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A22D6E58
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738271; cv=none; b=HDregFQB0keeXvhGfGKOFVMuda96wqaVHJrmjj31/uRxun6Mq+Igt0nR00PK2vb9CrMURiLp2SJocrFD8pFrdO4w3/QjxH+cjV84Ask4BQh9r1a+WJKZpPSIItz53sZ6IIIJuHkOL7tdZl8bIULdv8uk6YYv+0ohgfI8MC9g7QA=
+	t=1756738266; cv=none; b=MsYIV/gm1bvoOu1DgIcgxMK24tFYlJvwXk1gyVndYCJm4jEaA2XPiVn+nHAvoQACg1NxST/MKXsCtA3A/hEeMQth4MJaiOlK9ObFvS8Uhc6s/bUZ0idUbrpQR8EcVI5rfMx8pDW9YYz3XtylniGE74r4U5iXiSRC1uOxEh8Yu8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738271; c=relaxed/simple;
-	bh=HMfcWtZH4GfvP8ZQjqKKGaNEwZCreXFhbBtPKK8hH3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hxDoqNUtfUJ1hIbSNnoJhB2s+NcAFV5XsLYMnzFn7koIYmJhwSLU4r8hxdKXRaDotOLL6pHUgqd7Q7/XNVDGK6MBmEZ+hPZcByFqZ49gN20saModee2S4JDuNv/NxGgxHdsm1n0xJHhf1OnV0fWiWaijT5tGjHylT+orHy523QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U6I6+Ffd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B4I7B013737;
-	Mon, 1 Sep 2025 14:50:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WylkCM7GEVrZp/hwxRtLeGV36zbXgc2z6PnvbtJ5bTc=; b=U6I6+Ffd9KhhFhgg
-	aX76Nih1gnjMMXNYR8+C5ZtuND0JQaKvRrFC8nD3LOhWhy3rKgpglfZjbSERqmvD
-	KcXyVJB1xFYCaVD0eANfRHpkAk9GTBI60MfiKnJlbW0/Yq4Frd8+sNenqHtM/jZH
-	4MxXPefptHLKNdPnThRaHGbchXg9aaJtUWuExdCdhjr2XNm1VSXPbjHZkFca1yHh
-	8kH+PVJvaMOj1+ZGqnRfUv4f+EaP0e7GIBVO41Q1udRu0HrK4zy0jWRA4+jZk2Ml
-	WVg5ZyAYHhwZkyMefBgxlqDuwyVGUMbMaOMRAlIkBLQKTkYRKVKgb3kbqnGyAwlV
-	tpqWlA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8n2ys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 14:50:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581Eoawx020499
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Sep 2025 14:50:36 GMT
-Received: from [10.216.44.84] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
- 2025 07:50:31 -0700
-Message-ID: <0fb24c50-1f4f-4dd8-a3c7-4c84fd0bb7c1@quicinc.com>
-Date: Mon, 1 Sep 2025 20:20:29 +0530
+	s=arc-20240116; t=1756738266; c=relaxed/simple;
+	bh=JMFdiHPLwPv1+gLtBINWH78t6YBFk5g7hlH1uky4h3g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JbGn8lxlR6WBpevHw1EVpy59f8S9h+WOV+pIbAu1fxewSbDF7N5toerZR7DXj8ym2khsf4lBvBh6sIEBVXQjtqwXpB4UOeZzhE9DDa2YgOVyq/H4xvtR3AklgSeipy6gytIddTPYt74RR3SVhZmNMTYdIMLdJJHp30MFvyAU0qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=N6IgICCA; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae31caso850940566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756738263; x=1757343063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ou2wtlN8PDWTGj+LZ1aCRhABiZ7uTVFHZhzB51NR+RA=;
+        b=N6IgICCAmvICqyz1QZVXwn9zdAPkQ3RxYExpHMX7aHn04rvBwoMvru7QwcAsqxf6tH
+         h+egZ8BcufnW55evIN76YXIirKK1LGiLx5FPt/6vrAWk82Sc34Zlv51UgU9tGOiTpgsk
+         +3M2IuLcSNH0UkFcyeg/BOTpMAojqqIkQ9LdZQ1FtUGgy4PhD0BdrS5Im87V/nA5eSYo
+         DEjCCEG9GxEaQT/oMCVRufvirj044CI6tA9DlQTQlV0d48wIpI7S0Yaj7V7wo7BOT52d
+         YL/cfpu4Jph4Pcr3Q2W7cbAeJLzna3z5IeX5/5YT1N8fSAM0ShN+4EZa/YtzoxoUY4A5
+         0rIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756738263; x=1757343063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ou2wtlN8PDWTGj+LZ1aCRhABiZ7uTVFHZhzB51NR+RA=;
+        b=SMwiiFTN8RtxIsuCeyqC5crTa8ZD/dTCYIibT50wlxupWPONVStPIO4JLX35rjEXMy
+         +aHt795M3b1zAhxQZtT6Abc6L00pdv36hcOpFY72b5VRmcsw+eWMrUy6ArMGVnZ1y4p+
+         YRioiybRKRYFw5MN67mcWbZK8QGLj5Ml2TJL5YdfMl7V0MhyzoJOHCpB7AoNV8346wko
+         uenXgj/10EpyACTCizppb0CSbpZZZGmd/L4z7Vok+ZX9dSq+DIhOS+aqUnwKaoBxUErh
+         oImSu97YuC9lDtxzsRljTz6tssIz8LAMmdYwqHZSpiEA10sMf+/9nOyys0KnsEwxpnyV
+         ZCGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGSmI0RQ4U0DLSe546rBag+eFhPKzS7E+4rneeRWUiWbDcH5EdzKxVjVeuJyUlK29XvLPyxkhDevCrY54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeTAo3jTIk5AtqzGNu/ODYQrzaX07Wd0bebHn2QHou98XZa/Gm
+	YA+tBhbTh8n/QMUjKpwZ3/4ch8ule8RDriDSJdxsAvQDOz1B4pcHTlc0mbAyfhCenD5D+4L22g9
+	JqtshxHBzbOTxcQAJKz2/DJkBIL7eqci6YqOWHHiKyQ==
+X-Gm-Gg: ASbGncv1ataIxKFDcVkdRzU3LICYv80XH4Bq8xUlqmmk2Eny9sFoUD9QPxkChwizWbO
+	Wcuvk0V7PAI2pR+5NBUtYqE2JDTKCmd+RGyu/H149BM06rPVpMY1JrI3+JBBZQPeOSbR4RsXUbB
+	Z9+Gy3O6TpRLTrZkucjQCZH1vUjTR77vvyUlW7D54SGrJMyAVKcOZeUmiXeVILRgxiEAi+H5c0Z
+	zcCE+3iolKlWqOlCJN3OICZbgUpmXG4NP6gTVwZ8dFUlA==
+X-Google-Smtp-Source: AGHT+IFqo0rWyO2Tzcdh9OXq9LZuz+iBrgY4hQc2106202QGZ76zZ9E9VZRcm0Gdr2Fju1hLpDpwI4qcelZS2+NEezM=
+X-Received: by 2002:a17:907:60d3:b0:afe:8d25:770f with SMTP id
+ a640c23a62f3a-b01d8a26de5mr847287566b.3.1756738262736; Mon, 01 Sep 2025
+ 07:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 4/5] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Manivannan Sadhasivam
-	<mani@kernel.org>
-CC: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <James.Bottomley@hansenpartnership.com>,
-        <martin.petersen@oracle.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-5-quic_rdwivedi@quicinc.com>
- <eeecc7a3-8ce3-4cfd-8d40-988736fc0c59@kernel.org>
- <34aqaxgkykyhenrjfj3vrarin2c3uebgfaya7rxi7d5p5skhom@ie4gitcw36mr>
- <ba227580-add8-4ea8-a973-c39083301e67@kernel.org>
- <aonf4hobz6b3a75lwiblu44gxvae4hnp2mcnh5sqlyzo6k7hwe@a5toymspbkdy>
- <b049c4be-f3c1-49e4-8737-c29c52185e60@kernel.org>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <b049c4be-f3c1-49e4-8737-c29c52185e60@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1Az8Emd4kY7JrAF6MIzkayett6GvseOy
-X-Proofpoint-GUID: 1Az8Emd4kY7JrAF6MIzkayett6GvseOy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfXzTCkh25E7X7T
- VQcMM6bincj015S4W+/aheJUuVxgHnBwRv8M4N+1EY7U/ML7AwQGQUlXhOmFJzxOqqsiUTFC28G
- sXRQ+cvXdvKFmV7unLCeXOZpMScuOYLpYuCF8K7VQ53WCmGEn+fnH2W4RjQbGFMb2uEiIUuBuIE
- KRUWiyhFlDM7NhLNFAw0rqefJgStjpgF7KHKerVkaA850mihnr4mrIMbd0xDimuTkfIRYKQ3VCi
- P/WnCcj1NQDd+lzLZu9F5pjOIpxvLpaYdybogeX0qdfNt2aZ2kIfLL9Bx1OOZAZMDGDFyd94m4F
- 4tXSQfdflrtazmJCUzbWpcJrh2qkv28DRwkiEpXRZJiSaDaU4pDhaM6DB5NqcSJHClXqoRH0atX
- J1xeTLJ+
-X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b5b2bd cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=WDwdR3GTf5Sq1hJQ3NcA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <20250901123028.3383461-3-max.kellermann@ionos.com> <26cb47bb-df98-4bda-a101-3c27298e4452@lucifer.local>
+In-Reply-To: <26cb47bb-df98-4bda-a101-3c27298e4452@lucifer.local>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 1 Sep 2025 16:50:50 +0200
+X-Gm-Features: Ac12FXzHZvMcadklQ3Hi-QaCR2-dPItzNryZ7uqKCm4rMw8McLpdl959UlJ37Wg
+Message-ID: <CAKPOu+_aj3wA14VaZo8_k+ukw0OafsSz_Bxa120SQbYi4SqR7g@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] mm: constify pagemap related test functions for
+ improved const-correctness
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
+	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com, 
+	linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de, 
+	agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, 
+	gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, 
+	davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com, 
+	luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net, 
+	jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com, 
+	shakeel.butt@linux.dev, thuth@redhat.com, broonie@kernel.org, 
+	osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au, 
+	nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 1, 2025 at 4:25=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> 1. (most useful) Const pointer (const <type> *<param>) means that the der=
+effed
+>    value is const, so *<param> =3D <val> or <param>-><field> =3D <val> ar=
+e prohibited.
 
+Only this was what my initial patch was about.
 
-On 9/1/2025 1:35 PM, Krzysztof Kozlowski wrote:
-> On 01/09/2025 06:15, Manivannan Sadhasivam wrote:
->>>>>
->>>>> I don't understand why you combine DTS patch into UFS patchset. This
->>>>> creates impression of dependent work, which would be a trouble for merging.
->>>>>
->>>>
->>>> What trouble? Even if the DTS depends on the driver/bindings change, can't it
->>>> still go through a different tree for the same cycle? It happened previously as
->>>
->>> It all depends on sort of dependency.
->>>
->>>> well, unless the rule changed now.
->>>
->>> No, the point is that there is absolutely nothing relevant between the
->>> DTS and drivers here. Combining unrelated patches, completely different
->>> ones, targeting different subsystems into one patchset was always a
->>> mistake. This makes only life of maintainers more difficult, for no gain.
->>>
->>
->> Ok. Since patch 2 is just a refactoring, it should not be required for enabling
->> MCQ. But it is not clear if that is the case.
->>
->> @Ram/Nitin: Please confirm if MCQ can be enabled without patch 2. If yes, then
->> post the DTS separately, otherwise, you need to rewrite the commit message of
->> patch 2 to state it explicitly.
-> 
-> Dependency of DTS on driver would be another issue and in any case must
-> be clearly documented, not implicit via patch order.
+> 2. (less useful) We can't modify the actual pointer value either, so
+>    e.g. <param> =3D <new param> is prohibited.
 
-Hi Krzysztof/Mani,
+This wasn't my idea, it was Andrew Morton's idea, supported by Yuanchu Xie:
+ https://lore.kernel.org/lkml/CAJj2-QHVC0QW_4X95LLAnM=3D1g6apH=3D=3D-OXZu65=
+SVeBj0tSUcBg@mail.gmail.com/
+You know that because you participated in the discussion. In that
+thread, nobody objected, so I took the time and adjusted all of my
+patches.
+There is some value, but of course it's very small.
 
-We've verified that the driver and DTS function correctly when tested 
-independently. We Will submit separate patches for the driver and DTS.
-
-Regards,
-Nitin
-
-
-
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Note that I added the value-level "const" only to the implementation,
+never to prototypes, because it would have no effect there.
 
