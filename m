@@ -1,262 +1,172 @@
-Return-Path: <linux-kernel+bounces-794846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3788B3E7FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:56:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712DFB3E7FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 491044415A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 528C27AF340
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47339340D86;
-	Mon,  1 Sep 2025 14:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2737A342C95;
+	Mon,  1 Sep 2025 14:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSuOjyba"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Zz/3rOz0"
+Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81E830DEBE;
-	Mon,  1 Sep 2025 14:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B132341AB7;
+	Mon,  1 Sep 2025 14:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738601; cv=none; b=ZD4gy8HCAQsEuchfjlfMNmBN5AN5yyL25//OwYv+ID7uRoQ95FEhCHNkmwKCUaDj0r1jPx+Utlak4GJwJ/uR9PPvZmxcgMIGcs0UKLV0pXJ7cSIn/xUq7vO3HBoOBWQsTOJn3bISD0PPj9s6MSTIZRHHuq7PwpnyQ5i6JHcCPYc=
+	t=1756738606; cv=none; b=hQqHvREpQ2+YN+J/vHTrqh6KjM/r8WrMnqQv0QqSnODcghBaVrn800KTolz6vzkBdIbvumd+zbe1cB7wZoe0HoGtZaAUusPSMvJb4PCxTYdTrtvQOqFmo93OA7WPX6ZPYyrMmAQSoYpXyLePV3r2CVY482ks9c2QbngvPchifO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738601; c=relaxed/simple;
-	bh=Q7vtAAS4pPrBwgb174S42nZs6J3IFkl9a4ExFnlCZwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjFI/S6pdvy+WCCjyI/Rbfj9x2NuW/zLuaV7nF7EYMkNsnaY70z7+sitQQOS3J3a27ZNO8pzdoQ8xj+FS1ibhpeUXhrF/VQldNM4MBl+qqYGgAFOELfrE/r3kzrMJun5sJqqvXlgFOAuI+X7vgWdOJNDMkhusOYq4kA3Yx4d7z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSuOjyba; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b869d35a0so12589115e9.1;
-        Mon, 01 Sep 2025 07:56:39 -0700 (PDT)
+	s=arc-20240116; t=1756738606; c=relaxed/simple;
+	bh=0r92TVxw7xStPkhxnOmkl8O336c+4U2sqZq5v2M5rfQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ScokYEA2vvCQm31dBoAo9HBujDStd09RhZ6TfGC95shwawYybN/H1mQw0jlgX2fwmLr5jBAwNlZefws46ddGUb/M49vwK5ygHAK+gvNqXslESD+DKDvq5fNZ5/uQNLKFXW3PKnXCXtZnXrFjwH9CC0uHxqIGwyr6wwZ/lGebgC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Zz/3rOz0; arc=none smtp.client-ip=52.28.197.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756738598; x=1757343398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1USGZjLZDxsf6DuJdOKwwC3PA6DI/XPMPASznB/+fs=;
-        b=kSuOjyba2GVaWPw6tLy6FWzb7LZxMIBRX3obeOb1jvlUiu6H27rnEwdigwEhfJ7Mzp
-         gonrEvnZXNr5HwP3Mvtdny6YplZej9jA8h7CqrfmAgYQkBme5vQeftuQE5q9x8Ctshik
-         WgtqXCzw56YaUGzP0NS3eBTldx2KEEb9GnpsuYYqqLmFOWlEhFn+f4DrB6D2QlN2R+aB
-         Ipu8RrVxYSBwx3en0YUUpqggE7ny/3Ci2MtRh1REb6MSCgHnvkvwUyEzYHBmcM0K7Yba
-         RoElz3I8r4gi+q28gwXq4hA+cbWx2WD2Lp1a/hfkY8jagem27+EQc9DJYddqW62e7IHE
-         SLww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756738598; x=1757343398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g1USGZjLZDxsf6DuJdOKwwC3PA6DI/XPMPASznB/+fs=;
-        b=vCtkgh3YVmWLWEG6uTnxi7IElKlfnsbc78Jp/Xory4tFXm3TzheAPXgXVCP798X42M
-         b2aXTBEPLWZuJcIRlFU/XmDmgvbhUgU8tCOJfGpbk+86qNk4xBAvqkllVF+zt8m2nwpm
-         JtzUKfCFL5OPb/P1rszcz/IDLcV90eH742+oElvv7XcbXzLRx9nn57r98Q+4WXqXIwWW
-         HV6GsRS7Yp8N8bhGa1nu57brpXxIlpss5Y33eaGIK7PdkH5L+lq28j2vymk0lngYwzj8
-         fODKmS5C7K5bkC3/XxGNblRvvU+CWnwttPH9rwJWRjWUxjHobMAXzV7YxkOJhlDX0d+9
-         gh4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXMXKLj7+38Lir2B2xsY0WyM5VxDneEB5NnwlVqNdaqwdy9/PxvrrtWAw844dwCDZXHpIg8jPxGBRwCE8=@vger.kernel.org, AJvYcCXzCoYSOSx/DjQB7mRL86tvZjJLMdHpwKisjosoGf/K4AiFq8MmPQZxIBtTR4SJwqRrtnzzbqXQJ7FtRTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHmtPPaYFlbreCLDPjLtUN0wwrMy5L2QMRq8Q7qNTQrvPdYnw7
-	OxxTkso+aoP1vG8qTY0D2Fy2dpVfdIqMIJPHEDibg2yGDY1bVuNFokouQMmU76YyJ377cVg01s9
-	4B6NuuIN9LlMpBNYcmOB3CjMkOT5qo+M=
-X-Gm-Gg: ASbGncvfH87d/aIptq2+cDBsuh/jxtVlyJhyZyUsa3kDJp/3H9qebu3g0Ho8fmhyNID
-	87y9354XcEff1oZTe5kpiJTD6bgPE/+77A7TyOZbEhvX/oUVg0e6IHwbQeDHOi+Y2MgI+FDxLCU
-	PLz3swNmTHQETn5HURJUIyIynXUq0LNH3Ttz12MEBqMvIu3Uu4TgUwmcUdkvdggB2oqcGN11hnb
-	9rB20o=
-X-Google-Smtp-Source: AGHT+IHK90Unn6qwA9knnbDmxsWr35H/JutAIfB4QBaEcXcrhMufG6E5PBhHvtXwzueHpCDrnO1EsJPWJskPIN8DZN8=
-X-Received: by 2002:a05:600c:8b23:b0:45b:47e1:ef6c with SMTP id
- 5b1f17b1804b1-45b855b2b0emr63168335e9.35.1756738597648; Mon, 01 Sep 2025
- 07:56:37 -0700 (PDT)
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1756738604; x=1788274604;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DzdixQuy30cIOdtGPtZhymwxAjNsuo6l8KhPTQzil28=;
+  b=Zz/3rOz02k0CZijphqp9ZkI2uI+MNzRHVUtqSaZj0zco6n+GKXQecmxT
+   v0winJS3clIBs3DoevV7i21tnrZHvkBYMIzZc488ErWNdDvdPuLXFlic3
+   NuB7uWF4peU+w6IYuB5aimAFu4wNfAFqvXa/fFYQIGJnFRMcutOZpWs9f
+   oqYoFpzHYBbU3aJ4Z+RCn5ucKCSQzhGWMN10ISnPXJMlsJ+uYjPy45Lsu
+   ghCjiS03i/pxxXd1WGydNCWFW2Jf3/yYQg5NHwJNGCbTfwbYRonT8wMzR
+   T34wslWVo3fHlrDg31uws6b6a2gxBCVEp6Bz6wBNIukxyJOYNZmEjo2B4
+   A==;
+X-CSE-ConnectionGUID: TP9bWQ1xROib+ix+/ngIXQ==
+X-CSE-MsgGUID: YwAZ6XeoRvujHV/6Dg0jJQ==
+X-IronPort-AV: E=Sophos;i="6.17,290,1747699200"; 
+   d="scan'208";a="1364214"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:56:34 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:28303]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.36.37:2525] with esmtp (Farcaster)
+ id 90fd1a2a-3fc2-46c8-b14d-04ef65bb514a; Mon, 1 Sep 2025 14:56:34 +0000 (UTC)
+X-Farcaster-Flow-ID: 90fd1a2a-3fc2-46c8-b14d-04ef65bb514a
+Received: from EX19D015EUB002.ant.amazon.com (10.252.51.123) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Mon, 1 Sep 2025 14:56:33 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB002.ant.amazon.com (10.252.51.123) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 1 Sep 2025 14:56:33 +0000
+Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
+ EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
+ 15.02.2562.020; Mon, 1 Sep 2025 14:56:33 +0000
+From: "Roy, Patrick" <roypat@amazon.co.uk>
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+CC: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com"
+	<david@redhat.com>, "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
+	<jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "rppt@kernel.org"
+	<rppt@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
+Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+Thread-Topic: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+Thread-Index: AQHcG0fkqK4jccjXtUKv/NLtaS3P1rR+aqUA
+Date: Mon, 1 Sep 2025 14:56:33 +0000
+Message-ID: <20250901145632.28172-1-roypat@amazon.co.uk>
+References: <20250901135408.5965-1-roypat@amazon.co.uk>
+In-Reply-To: <20250901135408.5965-1-roypat@amazon.co.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
-In-Reply-To: <20250829-rzv2h-cru-sizes-v2-1-cc5050ddb145@ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 1 Sep 2025 15:56:11 +0100
-X-Gm-Features: Ac12FXyMShyDzcyRd-vi9KcD-sV_GXgPwGVXkEy6vz9NKnDRug5zBpPdt9kdijs
-Message-ID: <CA+V-a8vKRJq1BLRCYv27yLi2SQ+EJt5Vmxdn-1+QHUoPWo7U=g@mail.gmail.com>
-Subject: Re: [PATCH v2] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 12:12=E2=80=AFPM Jacopo Mondi
-<jacopo.mondi@ideasonboard.com> wrote:
->
-> From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
->
-> The CRU version on the RZ/V2H SoC supports larger input sizes
-> (4096x4096) compared to the version on the RZ/G2L (2800x4095).
->
-> Store the per-SoC min/max sizes in the device match info and use them
-> in place of the hardcoded ones.
->
-> While at it, use the min sizes reported by the info structure to replace
-> the RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT macros.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
-> Changes in v2:
-> - Use the size values in the rzg2l_csi2_info instea of going through
->   macros
-> - Use min_width/min_height to initialize the format and drop
->   RZG2L_CSI2_DEFAULT_WIDTH/HEIGHT
-> - Add Tommaso's tag
-> - Link to v1: https://lore.kernel.org/r/20250826-rzv2h-cru-sizes-v1-1-dbd=
-fc54bba11@ideasonboard.com
-> ---
->  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 41 ++++++++++++++--=
-------
->  1 file changed, 26 insertions(+), 15 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/driv=
-ers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index 1520211e74185fea3bca85f36239254f6b4651db..183598d6cf0b255f779b4398e=
-027d626ad1f3c1b 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -96,13 +96,6 @@
->
->  #define VSRSTS_RETRIES                 20
->
-> -#define RZG2L_CSI2_MIN_WIDTH           320
-> -#define RZG2L_CSI2_MIN_HEIGHT          240
-> -#define RZG2L_CSI2_MAX_WIDTH           2800
-> -#define RZG2L_CSI2_MAX_HEIGHT          4095
-> -
-> -#define RZG2L_CSI2_DEFAULT_WIDTH       RZG2L_CSI2_MIN_WIDTH
-> -#define RZG2L_CSI2_DEFAULT_HEIGHT      RZG2L_CSI2_MIN_HEIGHT
->  #define RZG2L_CSI2_DEFAULT_FMT         MEDIA_BUS_FMT_UYVY8_1X16
->
->  enum rzg2l_csi2_pads {
-> @@ -137,6 +130,10 @@ struct rzg2l_csi2_info {
->         int (*dphy_enable)(struct rzg2l_csi2 *csi2);
->         int (*dphy_disable)(struct rzg2l_csi2 *csi2);
->         bool has_system_clk;
-> +       unsigned int min_width;
-> +       unsigned int min_height;
-> +       unsigned int max_width;
-> +       unsigned int max_height;
->  };
->
->  struct rzg2l_csi2_timings {
-> @@ -418,6 +415,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info =
-=3D {
->         .dphy_enable =3D rzg2l_csi2_dphy_enable,
->         .dphy_disable =3D rzg2l_csi2_dphy_disable,
->         .has_system_clk =3D true,
-> +       .min_width =3D 320,
-> +       .min_height =3D 240,
-> +       .max_width =3D 2800,
-> +       .max_height =3D 4095,
->  };
->
->  static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
-> @@ -542,6 +543,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info =
-=3D {
->         .dphy_enable =3D rzv2h_csi2_dphy_enable,
->         .dphy_disable =3D rzv2h_csi2_dphy_disable,
->         .has_system_clk =3D false,
-> +       .min_width =3D 320,
-> +       .min_height =3D 240,
-> +       .max_width =3D 4096,
-> +       .max_height =3D 4096,
->  };
->
->  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
-> @@ -631,6 +636,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *=
-sd,
->                                  struct v4l2_subdev_state *state,
->                                  struct v4l2_subdev_format *fmt)
->  {
-> +       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
->         struct v4l2_mbus_framefmt *src_format;
->         struct v4l2_mbus_framefmt *sink_format;
->
-> @@ -653,9 +659,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev =
-*sd,
->         sink_format->ycbcr_enc =3D fmt->format.ycbcr_enc;
->         sink_format->quantization =3D fmt->format.quantization;
->         sink_format->width =3D clamp_t(u32, fmt->format.width,
-> -                                    RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX=
-_WIDTH);
-> +                                    csi2->info->min_width,
-> +                                    csi2->info->max_width);
->         sink_format->height =3D clamp_t(u32, fmt->format.height,
-> -                                     RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_M=
-AX_HEIGHT);
-> +                                    csi2->info->min_height,
-> +                                    csi2->info->max_height);
->         fmt->format =3D *sink_format;
->
->         /* propagate format to source pad */
-> @@ -668,9 +676,10 @@ static int rzg2l_csi2_init_state(struct v4l2_subdev =
-*sd,
->                                  struct v4l2_subdev_state *sd_state)
->  {
->         struct v4l2_subdev_format fmt =3D { .pad =3D RZG2L_CSI2_SINK, };
-> +       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
->
-> -       fmt.format.width =3D RZG2L_CSI2_DEFAULT_WIDTH;
-> -       fmt.format.height =3D RZG2L_CSI2_DEFAULT_HEIGHT;
-> +       fmt.format.width =3D csi2->info->min_width;
-> +       fmt.format.height =3D csi2->info->min_height;
->         fmt.format.field =3D V4L2_FIELD_NONE;
->         fmt.format.code =3D RZG2L_CSI2_DEFAULT_FMT;
->         fmt.format.colorspace =3D V4L2_COLORSPACE_SRGB;
-> @@ -697,16 +706,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_s=
-ubdev *sd,
->                                       struct v4l2_subdev_state *sd_state,
->                                       struct v4l2_subdev_frame_size_enum =
-*fse)
->  {
-> +       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
-> +
->         if (fse->index !=3D 0)
->                 return -EINVAL;
->
->         if (!rzg2l_csi2_code_to_fmt(fse->code))
->                 return -EINVAL;
->
-> -       fse->min_width =3D RZG2L_CSI2_MIN_WIDTH;
-> -       fse->min_height =3D RZG2L_CSI2_MIN_HEIGHT;
-> -       fse->max_width =3D RZG2L_CSI2_MAX_WIDTH;
-> -       fse->max_height =3D RZG2L_CSI2_MAX_HEIGHT;
-> +       fse->min_width =3D csi2->info->min_width;
-> +       fse->min_height =3D csi2->info->min_height;
-> +       fse->max_width =3D csi2->info->max_width;
-> +       fse->max_height =3D csi2->info->max_height;
->
->         return 0;
->  }
->
-> ---
-> base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-> change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
->
-> Best regards,
-> --
-> Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->
->
+On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:=0A=
+> =0A=
+> Hi Fuad!=0A=
+> =0A=
+> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:=0A=
+>> Hi Patrick,=0A=
+>>=0A=
+>> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:=
+=0A=
+>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h=0A=
+>>> index 12a12dae727d..b52b28ae4636 100644=0A=
+>>> --- a/include/linux/pagemap.h=0A=
+>>> +++ b/include/linux/pagemap.h=0A=
+>>> @@ -211,6 +211,7 @@ enum mapping_flags {=0A=
+>>>                                    folio contents */=0A=
+>>>         AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W access t=
+o the mapping */=0A=
+>>>         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM =3D 9,=0A=
+>>> +       AS_NO_DIRECT_MAP =3D 10,  /* Folios in the mapping are not in t=
+he direct map */=0A=
+>>>         /* Bits 16-25 are used for FOLIO_ORDER */=0A=
+>>>         AS_FOLIO_ORDER_BITS =3D 5,=0A=
+>>>         AS_FOLIO_ORDER_MIN =3D 16,=0A=
+>>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_=
+on_reclaim(struct address_spac=0A=
+>>>         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping-=
+>flags);=0A=
+>>>  }=0A=
+>>>=0A=
+>>> +static inline void mapping_set_no_direct_map(struct address_space *map=
+ping)=0A=
+>>> +{=0A=
+>>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
+>>> +}=0A=
+>>> +=0A=
+>>> +static inline bool mapping_no_direct_map(struct address_space *mapping=
+)=0A=
+>>> +{=0A=
+>>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
+>>> +}=0A=
+>>> +=0A=
+>>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *v=
+ma)=0A=
+>>> +{=0A=
+>>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_ma=
+pping);=0A=
+>>> +}=0A=
+>>> +=0A=
+>> Any reason vma is const whereas mapping in the function that it calls=0A=
+>> (defined above it) isn't?=0A=
+> =0A=
+> Ah, I cannot say that that was a conscious decision, but rather an artifa=
+ct of=0A=
+> the code that I looked at for reference when writing these two simply did=
+ it=0A=
+> this way.  Are you saying both should be const, or neither (in my mind, b=
+oth=0A=
+> could be const, but the mapping_*() family of functions further up in thi=
+s file=0A=
+> dont take const arguments, so I'm a bit unsure now)?=0A=
+=0A=
+Hah, just saw=0A=
+https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@io=
+nos.com/.=0A=
+Guess that means "both should be const" then :D=0A=
+=0A=
+>> Cheers,=0A=
+>> /fuad=0A=
+> =0A=
+> Best,=0A=
+> Patrick=0A=
+=0A=
 
