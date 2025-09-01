@@ -1,370 +1,938 @@
-Return-Path: <linux-kernel+bounces-793623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10A1B3D632
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 880DDB3D635
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C84C3AF8B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9FE3BAE90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A565B1487E9;
-	Mon,  1 Sep 2025 01:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448F71A83F9;
+	Mon,  1 Sep 2025 01:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3kU+ei5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="Pqghb3zL"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023097.outbound.protection.outlook.com [52.101.127.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01D17D2;
-	Mon,  1 Sep 2025 01:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756688764; cv=none; b=BsRjkseug2Kh1L85F+Wqp8aOKs8zR9e5VA2NYObRHo//LLuHL7/9Sit1ZZwgsoFwwoMJVcVwRfi6Ee8UHx2T0qfyCi2IY1jwOsGHzHUtlKwEpi6UE8SmbjQDYjtmPpSov8UzCZImDS5kZHTe/IR5ssNeM0WuP9/KzUbdtt2o9rc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756688764; c=relaxed/simple;
-	bh=tW5GP3nM0dmLFputh4mJZ3bANGoIWpg3vmUdui0IhwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCI7sHnuSz75tGOE8uaWbyDEysQm0q2hfVe3dkL9VmO01vEq4vOACzHBOYcUUst5Ke4DqVK1HIrTiXsaOCiSrHSMpq2YED7+kXWFre8RGxg8vIwxIYE0fUTgUf5RzDbyr8BUjRYz1RAe8yqclGJ/kmMq2uq3/niPwi45e650fpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3kU+ei5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A42C4CEED;
-	Mon,  1 Sep 2025 01:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756688764;
-	bh=tW5GP3nM0dmLFputh4mJZ3bANGoIWpg3vmUdui0IhwY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=O3kU+ei5gqZXLPMJ/iZEktM/r/yPmEtvI/pDTiZoyBQntve5hZ+TXA4kVPIFG5wnB
-	 S6mzC1+M76dv+CfJ6rUrQtBt9KPFi80WP13Vzq3NizHfy0UxzE37hH8jO2dPMsn6a1
-	 PuQCTM0AUrhw9tE8EOsFv3UHwAFZDic22nibOT9bO+rZ9daEkyg7bCJpyphZ/vXU9w
-	 eQtctyrGMrScqJjUzyiLjirKR1MraMQgspwGYsUCiDnyrHOc/Rz4sOZ4zJMHyfgzq0
-	 g+klvHU7FsLWefAn6cuMnMKxlwp7g0gzP0XClA5swOpwNpKVgGgoKwtUdPr1GvFn4h
-	 jk15AUkT6LYew==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 84BADCE0E95; Sun, 31 Aug 2025 18:06:03 -0700 (PDT)
-Date: Sun, 31 Aug 2025 18:06:03 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [paulmckrcu:dev.2025.08.21a] [rcu] 8bd9383727:
- WARNING:possible_circular_locking_dependency_detected
-Message-ID: <711fe3bf-0ac2-4ae9-9dda-97ba047eb64f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202508261642.b15eefbb-lkp@intel.com>
- <2853a174-76e4-440b-bfc1-71ea30694822@paulmck-laptop>
- <eb1e5ab00253fdae5ba5aa4c97d60a79d357dbfd@linux.dev>
- <f58f7c75-46be-4ddd-be70-ee4f6a3370a9@paulmck-laptop>
- <aefc893f1b7c17049c2e6eb2256a97739a5e328d@linux.dev>
- <8f43f958-e3e6-44d5-9600-9e096c3a06b7@paulmck-laptop>
- <547f1b1d1b8615a634b352a268928771bb50d0f9@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7861CD15;
+	Mon,  1 Sep 2025 01:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756688795; cv=fail; b=lWGJpsd+USobA03YRGSr6ZaHNrNZTtIB4l+ct7IxgLNR00bMCpuzaUKdJ0YtT5tu8WA38Y+tsHF6nP44L4x0weGLKEFtugQmnLzt7AM8Xi2qNBqZKGke2Ln6KnxlEqB/Fg+qWoRou+Z1AFA+58i9NoWXjgmhM8z4drkqapsthLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756688795; c=relaxed/simple;
+	bh=OZFbGo0EMwg72DzOrHFaBkDAaCN9WknTrjxh9YukRik=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Rsd1gJe5hZFJBxDI7Dw6nRmiysq3+WSN+ferKd7BCCbm2GWrL+HrCylO9TEPVQ+1eL3ret9zDuYHEHJzWD971lnmKqVx7FzJVJcVX3i5zktB3g6XqfCf4prDju+CT62HdJV6FqPS12XOnG7Lxel1u/W+nGHH+y0foRgC5pJPEhs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=Pqghb3zL; arc=fail smtp.client-ip=52.101.127.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AVmH5/7zl1fVqjv57hZr8JWksE9YW1EvxYEyuE06rvEePvk1Nv8LaMqkrpyA/uNJzVFZmBrtcpxgDkS3MxLZdG2eJTS/eqxQky1JzXy1nC9oRHrYBC0qtfhIyWd1Q2rZgnmJmGjUm/uGLCoAc4iubWeKi1sA+KRxqQKn8am6e7rDyz0ZuvNIshgx331ViW1IKwSHDOWJ9lL8+ztddCQ90EuHmuGpU3/bfxchgCbkncJ5WlOrdV5fQ5iHawqZCjsjF3BSfIlpndP1u7FlT/SRuGi1NSq3JX3oARS6DqTH4HGSgWKgN0ELD9FNOMF5T7OFUJMWAJOUJrFw3bxLPRN9Ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V+xfgeqXfcZqAOojhdbvV5ksLOGydFvVWtQjQr8UXi4=;
+ b=LW7zPUJW47lZUNEi2v+t2dz0fCnJLpOL9/OhQd8jIVGZLYFiONCQhpmd/h0R37nlRNrOPn9IdLOcrT1w0ysSt21y6oyrXHVfp6ljmxHkBaHMNog/Fg6xT+hWLCYcTAm6LAp9m7MnWGb7ipLbvl1FMfBI9iUWnRp2FvlNFiLY7SpPsU2ZjABMsXtHN3UwajGPoG/7xUR9TXumrD3ymSEBK5D7OdEyQEHN+kNxx5eQ8y+FzClK/ifNGmJ/toPfIGHnYvHcAjdtd7X5r0g9Wg2g8rHu4iFBDrle0WookxWfCbYWkstVJXoPZHWFuH/DPMSZGsQaEov2TT4CePWHqj3czw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V+xfgeqXfcZqAOojhdbvV5ksLOGydFvVWtQjQr8UXi4=;
+ b=Pqghb3zLR8+0/uIpmy1SMAMhwjuaUG0h5k89bIWFUREs+cnaSm6urIJtF5Nb1X5sh/khycKiC+2Ht99bjej3K2yU6YurgwaFkj9PIDsX8m2+2q1V52T+bJDJyBCCMLBR59ZTHXO61WUi+Wz7IEO2yAEbM2/CZk1t/yb6KOH/H7Z61e5QQVug3iTUx3/9DdN3q5tQZeLpxkIYsum1K2tkiBLfmgWfLPhkOs+d4orP0+rzMMjhwVVjBFXpXOoibD9wIX49pmLu5wdsFFmdMnv5Sb6euX7nRnkoJtos+fjgoAdFsdZQCiHta5gwRWF81Yfho0bY3p47ZuC4+X4iq9s2Ew==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by TYZPR06MB6142.apcprd06.prod.outlook.com (2603:1096:400:336::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.26; Mon, 1 Sep
+ 2025 01:06:28 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
+ 01:06:28 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, "benh@kernel.crashing.org"
+	<benh@kernel.crashing.org>, "joel@jms.id.au" <joel@jms.id.au>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "naresh.solanki@9elements.com"
+	<naresh.solanki@9elements.com>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>
+Subject: RE: [PATCH v18 3/3] i2c: ast2600: Add target mode support
+Thread-Topic: [PATCH v18 3/3] i2c: ast2600: Add target mode support
+Thread-Index: AQHcEZHj/2ZS7X9ozUeVFo/iyMWUxLR9leGQ
+Date: Mon, 1 Sep 2025 01:06:28 +0000
+Message-ID:
+ <OS8PR06MB75419AAE072E44CB2F1839C0F207A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250820051832.3605405-1-ryan_chen@aspeedtech.com>
+ <20250820051832.3605405-4-ryan_chen@aspeedtech.com>
+In-Reply-To: <20250820051832.3605405-4-ryan_chen@aspeedtech.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|TYZPR06MB6142:EE_
+x-ms-office365-filtering-correlation-id: 92f7e770-1518-485e-bc41-08dde8f3c7cc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?JcrsBZwzqcFpv2TlhHF6lWk4Xo2J5xWCaI7CW3tK8UirSvC9K/lYylbUQqp8?=
+ =?us-ascii?Q?cT7Hfe73190AevjE9Vwkcti5Q98zNtk8oPOziDkf23BxhWvcco5C7g/pqY3z?=
+ =?us-ascii?Q?beMAxMI80cRtbgeaCLOXtMmgp/SiMqMpC7jfZe1wZPIt//va9+CkCfHjoZxQ?=
+ =?us-ascii?Q?hFreKUkFfDEyKJV7leN0uFAQ6uK9inOk5BSoUC3a32BMbLfFTwS6rtqK5eg1?=
+ =?us-ascii?Q?iqy3xW3jHScykdM1HqRytfR97GEmsJbIQcyJzUOoyp7LKkMlSlWTCBIiPmp0?=
+ =?us-ascii?Q?ipAgJ1s9rRGzXGYgO6aqozDPZ38HK8hOUi9icuSPgaiGYnfnXbUk6IoSxLc4?=
+ =?us-ascii?Q?LnqQSTIS56bW7LS/RV4j+MmJjngEOgKXHxBIIofxSONmQQbi6b65tDqLcInZ?=
+ =?us-ascii?Q?LDMczEddOOS4HUcj6sWdoSq+ahpa6auDw9tCRe0LqT/OtxiKeG1vCEaWlpFM?=
+ =?us-ascii?Q?3xPXrl1iGh78jYvxLQTNT1RyjVoGm4VqUQ6gXQHE1Vu0oj+z716W5iEUJSf9?=
+ =?us-ascii?Q?RPIMKo8jLtXUoTRPXR18mWFtE1jgksc21c41QfGG3+mMRlE6YCgPddUDc0+H?=
+ =?us-ascii?Q?a/juBHmZzYBiBBhJL/L4DPf8y0oP+p5Xhsarf44Fe+PnWbhtRRcSU++YKXRE?=
+ =?us-ascii?Q?hSiKFyRVcFpVdLrTs503elLKsj9V0WRo2xCL1uKOcs1bzBNfeBhDVMK0ny8m?=
+ =?us-ascii?Q?67p5xXwLXoGB+MiUUFTJjqUS4P5U2J2x2yDmi5O9fDRw8AK5vmfLN7xAl1uE?=
+ =?us-ascii?Q?+YtJzsxY3QBs1Ofy5aXOlBspBzJfvblJx0G2dO/QzJcBFXwLx5R7q96Rqji1?=
+ =?us-ascii?Q?DHtNTFgAUe2jSwJ24c7uGd9uFAMyTati8mpW0+Hq2FkVMV5XBFlmKdDnuGXB?=
+ =?us-ascii?Q?9UZheSEhLG2d4wl8YoaH+NjEJBKC+ItxafluV5Z6ZXk0DG6p6VFktIHhWmUT?=
+ =?us-ascii?Q?pMNmBItUaRuEXForOkbWhKyDFDMmcTfpmO2T03c00HRN2EYw8IORxBoLbfkH?=
+ =?us-ascii?Q?mDMNp10ESs8uw3VDIcQ6oelYG5Ymcrl87aEHrWe6I7Z4fqtEeKKtah+m6Qdw?=
+ =?us-ascii?Q?8S2LYgd+F6NMG8FUXxFIbltd3maQRNC9RoggDAHlTLrPuzW91D7SXG/ur4L9?=
+ =?us-ascii?Q?nza1zamjBnbgHP1DwbFKVGcA0jqnwMU5hrarPvVzf8D5SgxSq3+MysN4LOpM?=
+ =?us-ascii?Q?r1I6xLnmT/TKXuSDakZUlZMJFP2lIF0824zl99NWWyou12lyFbBaLGw/aSAL?=
+ =?us-ascii?Q?ACkUjDq151YS1GO5XvjGfh+axvwW2K1MeQuelfbKkC/5NY4/IPKeEoKuguA5?=
+ =?us-ascii?Q?PU9YC40MAcqM9Ih/Ejpwzc/tjg/G7ngkc8JdoO0L/mKmRYdlR2CvdLsqnYq5?=
+ =?us-ascii?Q?wmRakrp2ulSff66AkGKXrI7CU0AdJfSuySvbZ8Aa5a6m9mTI8XsZF3nZLCe4?=
+ =?us-ascii?Q?C5LhKpN4cVlU98QcvTZOd6DEfohJZSMR8D7o/cY4rdHLSA4MWryLVSjaNurs?=
+ =?us-ascii?Q?2n6IOfhznwJ0w3U=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ta9SZkr/Dr6qfQUXZxwXVey7edxIt65uw4gY8Szo2Q5vGr8Ci+8M/tLoArlQ?=
+ =?us-ascii?Q?MiGFOu5+mzQtIz2NKnlsXuU2aCpz8GhczQ2DlLFxAkQ+vp7q7XEFDsqHxecP?=
+ =?us-ascii?Q?RVnOnVTzCx5TBltNHDt8a3oWzCs0d8AdN7MSwwy0JsbwXjhXs77LgDLgNIeA?=
+ =?us-ascii?Q?CbsosU/6Ni6b4avY4MltblfXer/P3Pnm3ZCMXZWmjkGPu5YQArPtzUeMuatV?=
+ =?us-ascii?Q?DkQYDM83DZZ6ShXTxBbsL/PggFVePMMaLCJZwcXvM1uExJzqFERU8LMGZrwg?=
+ =?us-ascii?Q?wY0XNcbuOe0kmgu7yacqxVAQRda8Wb9ieUkbqKZ3m3KLwxeO8rckgK3PQrQ9?=
+ =?us-ascii?Q?+AWOsJgblVyv08ADuRYuIEE1KSgqPgSv4ssB5R0ImmC/Btwgiw4P6dugDm/g?=
+ =?us-ascii?Q?nsRUcsrK098MO6Qkycx9mwtf9SPtmkFl2ZCUYqP2EvLnR31Xd2hx2Z9pR8du?=
+ =?us-ascii?Q?H0Ds9GG+tJhG7YJRaqQ/6838wv0oGoh1aJv6z8WFoUn00Gg8nxp813yzfILJ?=
+ =?us-ascii?Q?zvY2ZNwVkr1OtiESSTw2frkIwuft33UTG0r/C/l5JGn6AyslhG2lhYkJmOuq?=
+ =?us-ascii?Q?is9dXlmVKOfe4TSpSDr6rz2IYDy30e+bO1PSHek3auctmM2bBRwKcMf71j7/?=
+ =?us-ascii?Q?jgkS5qZNSnPApkfeD8KIECUe30VfVupcG0IfrpEZ8/GmPgd01RhwkBnOrrRY?=
+ =?us-ascii?Q?BTrkB2raz/MieXmhjyKk11Y3yzUDKMP8fV5aWciIRYjjC402p4AdrrnIdg22?=
+ =?us-ascii?Q?XWZY237CxuEOo0Dx08BIhp2ptlOJpz+LA9W/mryJwcslfPRsqaJiBg+ZTDPn?=
+ =?us-ascii?Q?BWzFzwh2UfxnB5s9sej2t1i7qrwARI6mUbWbgakemz3qW1T28TH+uRCkUz20?=
+ =?us-ascii?Q?HvYWRPoD9BsVhfkIGc35ghJv+/UH6MbjslTiC2OWf1gx9gun3/1shuQlU2b3?=
+ =?us-ascii?Q?IyP5NerOcNVMRzHS3O5KQydql6Xh1GciDMcu41iozHhiGxpNLlIzzIDk8bwO?=
+ =?us-ascii?Q?hZ6FifNqCjRICQNdIW6Igfug0iOvodM3pQPSYDDdqWU1b3ysqQkjMAJgMk4K?=
+ =?us-ascii?Q?5SNq+NfyhBymJPkRLJb2JDt10P8/8JK3kyC0pXyHfrQ/22g94usmPI7twLQN?=
+ =?us-ascii?Q?ZkThkLG1Dcqmb0Bvb0zv1tsPOneNaA/iofvlAzBeZb8dgf2mYM8b+cF0HLLN?=
+ =?us-ascii?Q?sXQYek3NgmGhma2PACyfsbTNZSDWfXjsncZvlCgvfyiCln3Yn0UZ0urQATtW?=
+ =?us-ascii?Q?QkjW/piWBOWoCIUeSAAzwSyQ+ZYfIcU73mNL+BU/xtNvwhDr6mvdDihzqOj1?=
+ =?us-ascii?Q?3EAO+KDU7VspHzR0IEpG4chWIYsnBZcjG0ERHKlogrbbUYZGbqPdVRT8e+/1?=
+ =?us-ascii?Q?q/lnlZFOj/YBORZEWVhqz9M+YB7Y/OMgl8deV3VSHJHPxmxsCAsC2FvJrWp8?=
+ =?us-ascii?Q?+uUZOCESdUD1B93ZlodvzvzO8L4182kcsuBDK8Je3wmOCBvaRROKizJO/bg5?=
+ =?us-ascii?Q?0MOlDbL40epLuRIO328GFSD8BgBhZE0iZBqd7UQxG0YZA+qcTw6f/kfeCzSP?=
+ =?us-ascii?Q?RR4GS74AK+3kWFOn9bGkOOyQeTukGJU6yLBpS7qG?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <547f1b1d1b8615a634b352a268928771bb50d0f9@linux.dev>
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92f7e770-1518-485e-bc41-08dde8f3c7cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2025 01:06:28.3098
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PxaPUCZcpLJBZtqamUf8y8kOb3Kxz/ehboaPljqaJgTTWZtgkj2Q99AY8GfbIzfWMXYV88pWwlp1PyrSNo6HCJjsr+nrKeZ5KYsmKL2n29s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6142
 
-On Sun, Aug 31, 2025 at 11:52:40PM +0000, Zqiang wrote:
-> > 
-> > On Sun, Aug 31, 2025 at 02:22:56AM +0000, Zqiang wrote:
-> > 
-> > > 
-> > > On Sat, Aug 30, 2025 at 02:38:35AM +0000, Zqiang wrote:
-> > >  
-> > >  > 
-> > >  > On Tue, Aug 26, 2025 at 04:47:22PM +0800, kernel test robot wrote:
-> > >  > 
-> > >  > > 
-> > >  > > hi, Paul,
-> > >  > > 
-> > >  > > the similar issue still exists on this dev.2025.08.21a branch.
-> > >  > > again, if the issue is already fixed on later branches, please just ignore.
-> > >  > > thanks
-> > >  > > 
-> > >  > > 
-> > >  > > Hello,
-> > >  > > 
-> > >  > > kernel test robot noticed "WARNING:possible_circular_locking_dependency_detected" on:
-> > >  > > 
-> > >  > > commit: 8bd9383727068a5a18acfecefbdfa44a7d6bd838 ("rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast")
-> > >  > > https://github.com/paulmckrcu/linux dev.2025.08.21a
-> > >  > > 
-> > >  > > in testcase: rcutorture
-> > >  > > version: 
-> > >  > > with following parameters:
-> > >  > > 
-> > >  > > runtime: 300s
-> > >  > > test: default
-> > >  > > torture_type: tasks-tracing
-> > >  > > 
-> > >  > > 
-> > >  > > 
-> > >  > > config: x86_64-randconfig-003-20250824
-> > >  > > compiler: clang-20
-> > >  > > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> > >  > > 
-> > >  > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > >  > > 
-> > >  > Again, apologies for being slow, and thank you for your testing efforts.
-> > >  > 
-> > >  > Idiot here forgot about Tiny SRCU, so please see the end of this email
-> > >  > for an alleged fix. Does it do the trick for you?
-> > >  > 
-> > >  > Thanx, Paul
-> > >  > 
-> > >  > > 
-> > >  > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > >  > > the same patch/commit), kindly add following tags
-> > >  > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > >  > > | Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-lkp@intel.com
-> > >  > > 
-> > >  > > 
-> > >  > > [ 42.365933][ T393] WARNING: possible circular locking dependency detected
-> > >  > > [ 42.366428][ T393] 6.17.0-rc1-00035-g8bd938372706 #1 Tainted: G T
-> > >  > > [ 42.366985][ T393] ------------------------------------------------------
-> > >  > > [ 42.367490][ T393] rcu_torture_rea/393 is trying to acquire lock:
-> > >  > > [ 42.367952][ T393] ffffffffad41dc88 (rcu_tasks_trace_srcu_struct.srcu_wq.lock){....}-{2:2}, at: swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.368775][ T393]
-> > >  > > [ 42.368775][ T393] but task is already holding lock:
-> > >  > > [ 42.369278][ T393] ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > > [ 42.370043][ T393]
-> > >  > > [ 42.370043][ T393] which lock already depends on the new lock.
-> > >  > > [ 42.370043][ T393]
-> > >  > > [ 42.370755][ T393]
-> > >  > > [ 42.370755][ T393] the existing dependency chain (in reverse order) is:
-> > >  > > [ 42.371388][ T393]
-> > >  > > [ 42.371388][ T393] -> #1 (&p->pi_lock){-.-.}-{2:2}:
-> > >  > > [ 42.371903][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > > [ 42.372309][ T393] try_to_wake_up (include/linux/spinlock.h:557 (discriminator 1) kernel/sched/core.c:4216 (discriminator 1)) 
-> > >  > > [ 42.372669][ T393] swake_up_locked (include/linux/list.h:111) 
-> > >  > > [ 42.373029][ T393] swake_up_one (kernel/sched/swait.c:54 (discriminator 1)) 
-> > >  > > [ 42.373380][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > > [ 42.373952][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > > [ 42.374452][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > > [ 42.374976][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > > [ 42.375460][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > > [ 42.375920][ T393] kthread (kernel/kthread.c:465) 
-> > >  > > [ 42.376241][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > > [ 42.376603][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > > [ 42.376973][ T393]
-> > >  > > [ 42.376973][ T393] -> #0 (rcu_tasks_trace_srcu_struct.srcu_wq.lock){....}-{2:2}:
-> > >  > > [ 42.377657][ T393] __lock_acquire (kernel/locking/lockdep.c:3166) 
-> > >  > > [ 42.378031][ T393] lock_acquire (kernel/locking/lockdep.c:5868) 
-> > >  > > [ 42.378378][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > > [ 42.378794][ T393] swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.379152][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > > [ 42.379714][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > > [ 42.380217][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > > [ 42.380731][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > > [ 42.381220][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > > [ 42.381714][ T393] kthread (kernel/kthread.c:465) 
-> > >  > > [ 42.382060][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > > [ 42.382420][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > > [ 42.382796][ T393]
-> > >  > > [ 42.382796][ T393] other info that might help us debug this:
-> > >  > > [ 42.382796][ T393]
-> > >  > > [ 42.383515][ T393] Possible unsafe locking scenario:
-> > >  > > [ 42.383515][ T393]
-> > >  > > [ 42.384052][ T393] CPU0 CPU1
-> > >  > > [ 42.384428][ T393] ---- ----
-> > >  > > [ 42.384799][ T393] lock(&p->pi_lock);
-> > >  > > [ 42.385083][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock);
-> > >  > > [ 42.385707][ T393] lock(&p->pi_lock);
-> > >  > > [ 42.386180][ T393] lock(rcu_tasks_trace_srcu_struct.srcu_wq.lock);
-> > >  > > [ 42.386663][ T393]
-> > >  > > [ 42.386663][ T393] *** DEADLOCK ***
-> > >  > > [ 42.386663][ T393]
-> > >  > > [ 42.387236][ T393] 1 lock held by rcu_torture_rea/393:
-> > >  > > [ 42.387626][ T393] #0: ffff88813d1ff2e8 (&p->pi_lock){-.-.}-{2:2}, at: rcutorture_one_extend (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > > [ 42.388419][ T393]
-> > >  > > [ 42.388419][ T393] stack backtrace:
-> > >  > > [ 42.388852][ T393] CPU: 0 UID: 0 PID: 393 Comm: rcu_torture_rea Tainted: G T 6.17.0-rc1-00035-g8bd938372706 #1 PREEMPT(full)
-> > >  > > [ 42.389758][ T393] Tainted: [T]=RANDSTRUCT
-> > >  > > [ 42.390057][ T393] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> > >  > > [ 42.390786][ T393] Call Trace:
-> > >  > > [ 42.391020][ T393] <TASK>
-> > >  > > [ 42.391225][ T393] dump_stack_lvl (lib/dump_stack.c:123 (discriminator 2)) 
-> > >  > > [ 42.391544][ T393] print_circular_bug (kernel/locking/lockdep.c:2045) 
-> > >  > > [ 42.391898][ T393] check_noncircular (kernel/locking/lockdep.c:?) 
-> > >  > > [ 42.392242][ T393] __lock_acquire (kernel/locking/lockdep.c:3166) 
-> > >  > > [ 42.392594][ T393] ? __schedule (kernel/sched/sched.h:1531 (discriminator 1) kernel/sched/core.c:6969 (discriminator 1)) 
-> > >  > > [ 42.392930][ T393] ? lock_release (kernel/locking/lockdep.c:470 (discriminator 3)) 
-> > >  > > [ 42.393272][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.393610][ T393] lock_acquire (kernel/locking/lockdep.c:5868) 
-> > >  > > [ 42.393930][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.394264][ T393] _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162) 
-> > >  > > [ 42.394640][ T393] ? swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.394969][ T393] swake_up_one (kernel/sched/swait.c:52 (discriminator 1)) 
-> > >  > > [ 42.395281][ T393] tasks_tracing_torture_read_unlock (include/linux/srcu.h:408 (discriminator 1) include/linux/rcupdate_trace.h:81 (discriminator 1) kernel/rcu/rcutorture.c:1112 (discriminator 1)) rcutorture 
-> > >  > > [ 42.395814][ T393] rcutorture_one_extend (kernel/rcu/rcutorture.c:2141) rcutorture 
-> > >  > > [ 42.396276][ T393] rcu_torture_one_read_end (kernel/rcu/rcutorture.c:2357) rcutorture 
-> > >  > > [ 42.396756][ T393] rcu_torture_one_read (kernel/rcu/rcutorture.c:?) rcutorture 
-> > >  > > [ 42.397219][ T393] ? __cfi_rcu_torture_reader (kernel/rcu/rcutorture.c:2426) rcutorture 
-> > >  > > [ 42.397690][ T393] rcu_torture_reader (kernel/rcu/rcutorture.c:2443) rcutorture 
-> > >  > > [ 42.398126][ T393] ? __cfi_rcu_torture_timer (kernel/rcu/rcutorture.c:2405) rcutorture 
-> > >  > > [ 42.398565][ T393] kthread (kernel/kthread.c:465) 
-> > >  > > [ 42.398857][ T393] ? __cfi_kthread (kernel/kthread.c:412) 
-> > >  > > [ 42.399169][ T393] ret_from_fork (arch/x86/kernel/process.c:154) 
-> > >  > > [ 42.399491][ T393] ? __cfi_kthread (kernel/kthread.c:412) 
-> > >  > > [ 42.399815][ T393] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> > >  > > [ 42.400151][ T393] </TASK>
-> > >  > > 
-> > >  > > 
-> > >  > > The kernel config and materials to reproduce are available at:
-> > >  > > https://download.01.org/0day-ci/archive/20250826/202508261642.b15eefbb-lkp@intel.com
-> > >  > > 
-> > >  > > 
-> > >  > > 
-> > >  > > -- 
-> > >  > > 0-DAY CI Kernel Test Service
-> > >  > > https://github.com/intel/lkp-tests/wiki
-> > >  > > 
-> > >  > ------------------------------------------------------------------------
-> > >  > 
-> > >  > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > >  > index 6e9fe2ce1075d5..db63378f062051 100644
-> > >  > --- a/kernel/rcu/srcutiny.c
-> > >  > +++ b/kernel/rcu/srcutiny.c
-> > >  > @@ -106,7 +106,7 @@ void __srcu_read_unlock(struct srcu_struct *ssp, int idx)
-> > >  > newval = READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
-> > >  > WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
-> > >  > preempt_enable();
-> > >  > - if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
-> > >  > + if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !irqs_disabled())
-> > >  > 
-> > >  > 
-> > >  > The fllowing case may exist:
-> > >  > 
-> > >  > 
-> > >  > CPU0
-> > >  > 
-> > >  > task1:
-> > >  > __srcu_read_lock()
-> > >  > 
-> > >  For mainline kernels, here we must have blocked, correct?
-> > >  
-> > >  In -rcu, there is of course:
-> > >  
-> > >  740cda2fe1a9 ("EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels")
-> > >  
-> > >  And this means that in -rcu kernels built with CONFIG_PREEMPT_NONE=y,
-> > >  we could be preempted.
-> > >  
-> > >  And maybe this is a reason to drop this commit. Or...
-> > >  
-> > >  
-> > >  For tiny srcu, even if the preempt schedule not happend in
-> > >  srcu read ctrical section, we can still do voluntary
-> > >  scheduling in srcu_read ctrical section, this case is
-> > >  also still happend.
-> > >  
-> > >  > 
-> > >  > ....
-> > >  > 
-> > >  > 
-> > >  > task2 preempt run:
-> > >  > 
-> > >  > srcu_drive_gp()
-> > >  > ->swait_event_exclusive()
-> > >  > 
-> > >  > 
-> > >  > ....
-> > >  > task1 continue run:
-> > >  > ....
-> > >  > raw_spin_lock_irqsave
-> > >  > __srcu_read_unlock()
-> > >  > ->find all previours condition are met
-> > >  > but the irqs_disable() return true,
-> > >  > not invoke swake_up_one().
-> > >  > 
-> > >  > task2 maybe always hung.
-> > >  > 
-> > >  The bug that kernel test robot reported existed for a long time.
-> > >  The offending commit simply introduced the use case that exercised
-> > >  this bug. So we do need a fix.
-> > >  
-> > >  One approach would be to impose a rule like we used to have for RCU,
-> > >  namely that if interrupts were disabled across srcu_read_unlock(),
-> > >  then they must have been disabled since the matching srcu_read_lock().
-> > >  Another would be to make the current swait_event_exclusive() in
-> > >  srcu_drive_gp() instead be a loop around wait_event_timeout_exclusive()
-> > >  that checks ssp->srcu_lock_nesting[].
-> > >  
-> > >  But is there a better way?
-> > >  
-> > >  I think the second approach is enough :)
-> > > 
-> > Hmmm... OK, how about the incremental patch below?
-> > 
-> >  Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > commit a543d73eeaa491021040a02bdf0e8a9148b5c186
-> > Author: Paul E. McKenney <paulmck@kernel.org>
-> > Date: Sun Aug 31 09:38:44 2025 -0700
-> > 
-> >  squash! rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast
-> >  
-> >  [ paulmck: Apply Zqiang feedback. ]
-> >  
-> >  Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Should the previous fix that added irqs_disabled() also be
-> added to this patch? or can we use preemptible() instead of
-> in_tasks() && irqs_disabled()?
+> Subject: [PATCH v18 3/3] i2c: ast2600: Add target mode support
+Hello Andy,
+	sorry to bother you, do you have time to review this patch?
+Ryan=20
 
-Yes, both this fix and the addition of the !irqw_disabled() check
-are to be squashed into the original commit:
+>=20
+> Add target mode support to the AST2600 I2C driver using new register layo=
+ut.
+>=20
+> Target mode features implemented include:
+> - Add target interrupt handling
+> - Address match and response logic
+> - Separate Tx/Rx DMA address and length configuration
+>=20
+> This complements the existing controller-mode support, enabling dual-role
+> capability.
+>=20
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  drivers/i2c/busses/i2c-ast2600.c | 560 +++++++++++++++++++++++++++++++
+>  1 file changed, 560 insertions(+)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-ast2600.c b/drivers/i2c/busses/i2c-as=
+t2600.c
+> index 885b451030ac..81d1eb51334a 100644
+> --- a/drivers/i2c/busses/i2c-ast2600.c
+> +++ b/drivers/i2c/busses/i2c-ast2600.c
+> @@ -81,6 +81,7 @@
+>  #define AST2600_I2CC_THDDAT(x)			(((x) & GENMASK(1, 0)) <<
+> 10)
+>  #define AST2600_I2CC_TOUTBASECLK(x)			(((x) & GENMASK(1, 0))
+> << 8)
+>  #define AST2600_I2CC_TBASECLK(x)			((x) & GENMASK(3, 0))
+> +#define AST2600_I2CC_AC_TIMING_MASK		GENMASK(23, 0)
+>=20
+>  /* 0x08 : I2CC Controller/Target Transmit/Receive Byte Buffer Register *=
+/
+>  #define AST2600_I2CC_STS_AND_BUFF		0x08
+> @@ -271,6 +272,13 @@ struct ast2600_i2c_bus {
+>  	/* Buffer mode */
+>  	void __iomem		*buf_base;
+>  	struct i2c_smbus_alert_setup	alert_data;
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	/* target structure */
+> +	int			target_operate;
+> +	unsigned char	*target_dma_buf;
+> +	dma_addr_t		target_dma_addr;
+> +	struct i2c_client	*target;
+> +#endif
+>  };
+>=20
+>  static u32 ast2600_select_i2c_clock(struct ast2600_i2c_bus *i2c_bus) @@
+> -361,6 +369,423 @@ static int ast2600_i2c_recover_bus(struct
+> ast2600_i2c_bus *i2c_bus)
+>  	return ret;
+>  }
+>=20
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +static void ast2600_i2c_target_packet_dma_irq(struct ast2600_i2c_bus
+> +*i2c_bus, u32 sts) {
+> +	int target_rx_len =3D 0;
+> +	u32 cmd =3D 0;
+> +	u8 value;
+> +	int i;
+> +
+> +	sts &=3D ~(AST2600_I2CS_SLAVE_PENDING);
+> +	/* Handle i2c target timeout condition */
+> +	if (AST2600_I2CS_INACTIVE_TO & sts) {
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		cmd |=3D AST2600_I2CS_RX_DMA_EN;
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +		writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_ISR);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		return;
+> +	}
+> +
+> +	sts &=3D ~(AST2600_I2CS_PKT_DONE | AST2600_I2CS_PKT_ERROR);
+> +
+> +	switch (sts) {
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_WAIT_RX_DMA:
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_WAIT_RX_DMA:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		target_rx_len =3D
+> AST2600_I2C_GET_RX_DMA_LEN(readl(i2c_bus->reg_base +
+> +						      AST2600_I2CS_DMA_LEN_STS));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> +					&i2c_bus->target_dma_buf[i]);
+> +		}
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_STOP:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE_NAK |
+> +			AST2600_I2CS_RX_DONE | AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_WAIT_RX_DMA |
+> +			AST2600_I2CS_RX_DONE | AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_RX_DONE_NAK | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_WAIT_RX_DMA |
+> AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_WAIT_RX_DMA:
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_STOP:
+> +		if (sts & AST2600_I2CS_SLAVE_MATCH)
+> +			i2c_slave_event(i2c_bus->target,
+> I2C_SLAVE_WRITE_REQUESTED, &value);
+> +
+> +		target_rx_len =3D
+> AST2600_I2C_GET_RX_DMA_LEN(readl(i2c_bus->reg_base +
+> +						      AST2600_I2CS_DMA_LEN_STS));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> +					&i2c_bus->target_dma_buf[i]);
+> +		}
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		if (sts & AST2600_I2CS_STOP)
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_DMA_EN;
+> +		break;
+> +
+> +	/* it is Mw data Mr coming -> it need send tx */
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_WAIT_TX_DMA:
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_WAIT_TX_DMA:
+> +		/* it should be repeat start read */
+> +		if (sts & AST2600_I2CS_SLAVE_MATCH)
+> +			i2c_slave_event(i2c_bus->target,
+> I2C_SLAVE_WRITE_REQUESTED, &value);
+> +
+> +		target_rx_len =3D
+> AST2600_I2C_GET_RX_DMA_LEN(readl(i2c_bus->reg_base +
+> +						      AST2600_I2CS_DMA_LEN_STS));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> +					&i2c_bus->target_dma_buf[i]);
+> +		}
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> +				&i2c_bus->target_dma_buf[0]);
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CS_DMA_LEN_STS);
+> +		writel(AST2600_I2CS_SET_TX_DMA_LEN(1),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_TX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_WAIT_TX_DMA:
+> +		/* First Start read */
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> +				&i2c_bus->target_dma_buf[0]);
+> +		writel(AST2600_I2CS_SET_TX_DMA_LEN(1),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_TX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_WAIT_TX_DMA:
+> +		/* it should be next start read */
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_PROCESSED,
+> +				&i2c_bus->target_dma_buf[0]);
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CS_DMA_LEN_STS);
+> +		writel(AST2600_I2CS_SET_TX_DMA_LEN(1),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_TX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_TX_NAK | AST2600_I2CS_STOP:
+> +		/* it just tx complete */
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CS_DMA_LEN_STS);
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_DMA_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE:
+> +		cmd =3D 0;
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		break;
+> +	case AST2600_I2CS_STOP:
+> +		cmd =3D 0;
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		break;
+> +	default:
+> +		dev_dbg(i2c_bus->dev, "unhandled target isr case %x, sts %x\n", sts,
+> +			readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF));
+> +		break;
+> +	}
+> +
+> +	if (cmd)
+> +		writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +	writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_ISR);
+> +	readl(i2c_bus->reg_base + AST2600_I2CS_ISR); }
+> +
+> +static void ast2600_i2c_target_packet_buff_irq(struct ast2600_i2c_bus
+> +*i2c_bus, u32 sts) {
+> +	int target_rx_len =3D 0;
+> +	u32 cmd =3D 0;
+> +	u8 value;
+> +	int i;
+> +
+> +	/* due to controller target is common buffer, need force the master sto=
+p
+> not issue */
+> +	if (readl(i2c_bus->reg_base + AST2600_I2CM_CMD_STS) & GENMASK(15,
+> 0)) {
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CM_CMD_STS);
+> +		i2c_bus->cmd_err =3D -EBUSY;
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		complete(&i2c_bus->cmd_complete);
+> +	}
+> +
+> +	/* Handle i2c target timeout condition */
+> +	if (AST2600_I2CS_INACTIVE_TO & sts) {
+> +		/* Reset timeout counter */
+> +		u32 ac_timing =3D readl(i2c_bus->reg_base +
+> AST2600_I2CC_AC_TIMING) &
+> +				AST2600_I2CC_AC_TIMING_MASK;
+> +
+> +		writel(ac_timing, i2c_bus->reg_base + AST2600_I2CC_AC_TIMING);
+> +		ac_timing |=3D AST2600_I2CC_TTIMEOUT(i2c_bus->timeout);
+> +		writel(ac_timing, i2c_bus->reg_base + AST2600_I2CC_AC_TIMING);
+> +		writel(TARGET_TRIGGER_CMD, i2c_bus->reg_base +
+> AST2600_I2CS_CMD_STS);
+> +		writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_ISR);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		i2c_bus->target_operate =3D 0;
+> +		return;
+> +	}
+> +
+> +	sts &=3D ~(AST2600_I2CS_PKT_DONE | AST2600_I2CS_PKT_ERROR);
+> +
+> +	if (sts & AST2600_I2CS_SLAVE_MATCH)
+> +		i2c_bus->target_operate =3D 1;
+> +
+> +	switch (sts) {
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_WAIT_RX_DMA |
+> +		 AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_SLAVE_PENDING |
+> +		 AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_SLAVE_PENDING |
+> +		 AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_STOP:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		fallthrough;
+> +	case AST2600_I2CS_SLAVE_PENDING |
+> +		 AST2600_I2CS_WAIT_RX_DMA | AST2600_I2CS_SLAVE_MATCH |
+> AST2600_I2CS_RX_DONE:
+> +	case AST2600_I2CS_WAIT_RX_DMA | AST2600_I2CS_SLAVE_MATCH |
+> AST2600_I2CS_RX_DONE:
+> +	case AST2600_I2CS_WAIT_RX_DMA | AST2600_I2CS_SLAVE_MATCH:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		if (sts & AST2600_I2CS_RX_DONE) {
+> +			target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +							       AST2600_I2CC_BUFF_CTRL));
+> +			for (i =3D 0; i < target_rx_len; i++) {
+> +				value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +				i2c_slave_event(i2c_bus->target,
+> I2C_SLAVE_WRITE_RECEIVED, &value);
+> +			}
+> +		}
+> +		if (readl(i2c_bus->reg_base + AST2600_I2CS_CMD_STS) &
+> AST2600_I2CS_RX_BUFF_EN)
+> +			cmd =3D 0;
+> +		else
+> +			cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_BUFF_EN;
+> +
+> +		writel(AST2600_I2CC_SET_RX_BUF_LEN(i2c_bus->buf_size),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		break;
+> +	case AST2600_I2CS_WAIT_RX_DMA | AST2600_I2CS_RX_DONE:
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +						       AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		cmd |=3D AST2600_I2CS_RX_BUFF_EN;
+> +		writel(AST2600_I2CC_SET_RX_BUF_LEN(i2c_bus->buf_size),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		break;
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_WAIT_RX_DMA |
+> +				AST2600_I2CS_RX_DONE | AST2600_I2CS_STOP:
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +								 AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		cmd |=3D AST2600_I2CS_RX_BUFF_EN;
+> +		writel(AST2600_I2CC_SET_RX_BUF_LEN(i2c_bus->buf_size),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		break;
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_STOP:
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +								 AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		/* workaround for avoid next start with len !=3D 0 */
+> +		writel(BIT(0), i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		break;
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_STOP:
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +								 AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		/* workaround for avoid next start with len !=3D 0 */
+> +		writel(BIT(0), i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		break;
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_RX_DONE |
+> +	     AST2600_I2CS_WAIT_TX_DMA | AST2600_I2CS_STOP:
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +								 AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> &value);
+> +		writeb(value, i2c_bus->buf_base);
+> +		break;
+> +	case AST2600_I2CS_WAIT_TX_DMA | AST2600_I2CS_SLAVE_MATCH:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> &value);
+> +		writeb(value, i2c_bus->buf_base);
+> +		writel(AST2600_I2CC_SET_TX_BUF_LEN(1),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_TX_BUFF_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_STOP |
+> +	     AST2600_I2CS_TX_NAK | AST2600_I2CS_SLAVE_MATCH |
+> AST2600_I2CS_RX_DONE:
+> +	case AST2600_I2CS_SLAVE_PENDING | AST2600_I2CS_WAIT_RX_DMA |
+> AST2600_I2CS_STOP |
+> +	     AST2600_I2CS_TX_NAK | AST2600_I2CS_SLAVE_MATCH |
+> AST2600_I2CS_RX_DONE:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +						AST2600_I2CC_BUFF_CTRL));
+> +		for (i =3D 0; i < target_rx_len; i++) {
+> +			value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &value);
+> +		}
+> +		writel(AST2600_I2CC_SET_RX_BUF_LEN(i2c_bus->buf_size),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_BUFF_EN;
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_WAIT_TX_DMA |
+> AST2600_I2CS_RX_DONE:
+> +	case AST2600_I2CS_WAIT_TX_DMA | AST2600_I2CS_RX_DONE:
+> +	case AST2600_I2CS_WAIT_TX_DMA:
+> +		if (sts & AST2600_I2CS_SLAVE_MATCH)
+> +			i2c_slave_event(i2c_bus->target,
+> I2C_SLAVE_WRITE_REQUESTED, &value);
+> +
+> +		if (sts & AST2600_I2CS_RX_DONE) {
+> +			target_rx_len =3D
+> AST2600_I2CC_GET_RX_BUF_LEN(readl(i2c_bus->reg_base +
+> +							AST2600_I2CC_BUFF_CTRL));
+> +			for (i =3D 0; i < target_rx_len; i++) {
+> +				value =3D readb(i2c_bus->buf_base + 0x10 + i);
+> +				i2c_slave_event(i2c_bus->target,
+> I2C_SLAVE_WRITE_RECEIVED, &value);
+> +			}
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> &value);
+> +		} else {
+> +			i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_PROCESSED,
+> &value);
+> +		}
+> +		writeb(value, i2c_bus->buf_base);
+> +		writel(AST2600_I2CC_SET_TX_BUF_LEN(1),
+> +		       i2c_bus->reg_base + AST2600_I2CC_BUFF_CTRL);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_TX_BUFF_EN;
+> +		break;
+> +	/* workaround : trigger the cmd twice to fix next state keep 1000000 */
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		cmd =3D TARGET_TRIGGER_CMD | AST2600_I2CS_RX_BUFF_EN;
+> +		writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +		break;
+> +
+> +	case AST2600_I2CS_TX_NAK | AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_STOP:
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		break;
+> +	default:
+> +		dev_dbg(i2c_bus->dev, "unhandled target isr case %x, sts %x\n", sts,
+> +			readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF));
+> +		break;
+> +	}
+> +
+> +	if (cmd)
+> +		writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +	writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_ISR);
+> +	readl(i2c_bus->reg_base + AST2600_I2CS_ISR);
+> +
+> +	if ((sts & AST2600_I2CS_STOP) && !(sts &
+> AST2600_I2CS_SLAVE_PENDING))
+> +		i2c_bus->target_operate =3D 0;
+> +}
+> +
+> +static void ast2600_i2c_target_byte_irq(struct ast2600_i2c_bus
+> +*i2c_bus, u32 sts) {
+> +	u32 i2c_buff =3D readl(i2c_bus->reg_base +
+> AST2600_I2CC_STS_AND_BUFF);
+> +	u32 cmd =3D AST2600_I2CS_ACTIVE_ALL;
+> +	u8 byte_data;
+> +	u8 value;
+> +
+> +	switch (sts) {
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_WAIT_RX_DMA:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_REQUESTED,
+> &value);
+> +		/* first address match is address */
+> +		byte_data =3D AST2600_I2CC_GET_RX_BUFF(i2c_buff);
+> +		break;
+> +	case AST2600_I2CS_RX_DONE | AST2600_I2CS_WAIT_RX_DMA:
+> +		byte_data =3D AST2600_I2CC_GET_RX_BUFF(i2c_buff);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_WRITE_RECEIVED,
+> &byte_data);
+> +		break;
+> +	case AST2600_I2CS_SLAVE_MATCH | AST2600_I2CS_RX_DONE |
+> AST2600_I2CS_WAIT_TX_DMA:
+> +		cmd |=3D AST2600_I2CS_TX_CMD;
+> +		byte_data =3D AST2600_I2CC_GET_RX_BUFF(i2c_buff);
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_REQUESTED,
+> &byte_data);
+> +		writel(byte_data, i2c_bus->reg_base +
+> AST2600_I2CC_STS_AND_BUFF);
+> +		break;
+> +	case AST2600_I2CS_TX_ACK | AST2600_I2CS_WAIT_TX_DMA:
+> +		cmd |=3D AST2600_I2CS_TX_CMD;
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_READ_PROCESSED,
+> &byte_data);
+> +		writel(byte_data, i2c_bus->reg_base +
+> AST2600_I2CC_STS_AND_BUFF);
+> +		break;
+> +	case AST2600_I2CS_STOP:
+> +	case AST2600_I2CS_STOP | AST2600_I2CS_TX_NAK:
+> +		i2c_slave_event(i2c_bus->target, I2C_SLAVE_STOP, &value);
+> +		break;
+> +	default:
+> +		dev_dbg(i2c_bus->dev, "unhandled pkt isr %x\n", sts);
+> +		break;
+> +	}
+> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +	writel(sts, i2c_bus->reg_base + AST2600_I2CS_ISR);
+> +	readl(i2c_bus->reg_base + AST2600_I2CS_ISR); }
+> +
+> +static int ast2600_i2c_target_irq(struct ast2600_i2c_bus *i2c_bus) {
+> +	u32 ier =3D readl(i2c_bus->reg_base + AST2600_I2CS_IER);
+> +	u32 isr =3D readl(i2c_bus->reg_base + AST2600_I2CS_ISR);
+> +
+> +	if (!(isr & ier))
+> +		return 0;
+> +
+> +	/*
+> +	 * Target interrupt coming after Master package done
+> +	 * So need handle master first.
+> +	 */
+> +	if (readl(i2c_bus->reg_base + AST2600_I2CM_ISR) &
+> AST2600_I2CM_PKT_DONE)
+> +		return 0;
+> +
+> +	isr &=3D ~(AST2600_I2CS_ADDR_INDICATE_MASK);
+> +
+> +	if (AST2600_I2CS_ADDR1_NAK & isr)
+> +		isr &=3D ~AST2600_I2CS_ADDR1_NAK;
+> +
+> +	if (AST2600_I2CS_ADDR2_NAK & isr)
+> +		isr &=3D ~AST2600_I2CS_ADDR2_NAK;
+> +
+> +	if (AST2600_I2CS_ADDR3_NAK & isr)
+> +		isr &=3D ~AST2600_I2CS_ADDR3_NAK;
+> +
+> +	if (AST2600_I2CS_ADDR_MASK & isr)
+> +		isr &=3D ~AST2600_I2CS_ADDR_MASK;
+> +
+> +	if (AST2600_I2CS_PKT_DONE & isr) {
+> +		if (i2c_bus->mode =3D=3D DMA_MODE)
+> +			ast2600_i2c_target_packet_dma_irq(i2c_bus, isr);
+> +		else
+> +			ast2600_i2c_target_packet_buff_irq(i2c_bus, isr);
+> +	} else {
+> +		ast2600_i2c_target_byte_irq(i2c_bus, isr);
+> +	}
+> +
+> +	return 1;
+> +}
+> +#endif
+> +
+>  static int ast2600_i2c_setup_dma_tx(u32 cmd, struct ast2600_i2c_bus
+> *i2c_bus)  {
+>  	struct i2c_msg *msg =3D &i2c_bus->msgs[i2c_bus->msgs_index];
+> @@ -690,6 +1115,20 @@ static void
+> ast2600_i2c_controller_package_irq(struct ast2600_i2c_bus *i2c_bus,
+>  		}
+>  		break;
+>  	case AST2600_I2CM_RX_DONE:
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +		/*
+> +		 * Workaround for controller/target package mode enable rx done
+> stuck issue
+> +		 * When master go for first read (RX_DONE), target mode will also
+> effect
+> +		 * Then controller will send nack, not operate anymore.
+> +		 */
+> +		if (readl(i2c_bus->reg_base + AST2600_I2CS_CMD_STS) &
+> AST2600_I2CS_PKT_MODE_EN) {
+> +			u32 target_cmd =3D readl(i2c_bus->reg_base +
+> AST2600_I2CS_CMD_STS);
+> +
+> +			writel(0, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +			writel(target_cmd, i2c_bus->reg_base +
+> AST2600_I2CS_CMD_STS);
+> +		}
+> +		fallthrough;
+> +#endif
+>  	case AST2600_I2CM_RX_DONE | AST2600_I2CM_NORMAL_STOP:
+>  		/* do next rx */
+>  		if (i2c_bus->mode =3D=3D DMA_MODE) {
+> @@ -799,6 +1238,12 @@ static irqreturn_t ast2600_i2c_bus_irq(int irq, voi=
+d
+> *dev_id)  {
+>  	struct ast2600_i2c_bus *i2c_bus =3D dev_id;
+>=20
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	if (readl(i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL) &
+> AST2600_I2CC_SLAVE_EN) {
+> +		if (ast2600_i2c_target_irq(i2c_bus))
+> +			return IRQ_HANDLED;
+> +	}
+> +#endif
+>  	return IRQ_RETVAL(ast2600_i2c_controller_irq(i2c_bus));
+>  }
+>=20
+> @@ -815,12 +1260,30 @@ static int ast2600_i2c_controller_xfer(struct
+> i2c_adapter *adap, struct i2c_msg
+>  			return ret;
+>  	}
+>=20
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	if (i2c_bus->mode =3D=3D BUFF_MODE) {
+> +		if (i2c_bus->target_operate)
+> +			return -EBUSY;
+> +		/* disable target isr */
+> +		writel(0, i2c_bus->reg_base + AST2600_I2CS_IER);
+> +		if (readl(i2c_bus->reg_base + AST2600_I2CS_ISR) ||
+> i2c_bus->target_operate) {
+> +			writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_IER);
+> +			return -EBUSY;
+> +		}
+> +	}
+> +#endif
+> +
+>  	i2c_bus->cmd_err =3D 0;
+>  	i2c_bus->msgs =3D msgs;
+>  	i2c_bus->msgs_index =3D 0;
+>  	i2c_bus->msgs_count =3D num;
+>  	reinit_completion(&i2c_bus->cmd_complete);
+>  	ret =3D ast2600_i2c_do_start(i2c_bus);
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	/* avoid race condication target is wait and master wait 1st target ope=
+rate
+> */
+> +	if (i2c_bus->mode =3D=3D BUFF_MODE)
+> +		writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_IER);
+> +#endif
+>  	if (ret)
+>  		goto controller_out;
+>  	timeout =3D wait_for_completion_timeout(&i2c_bus->cmd_complete,
+> i2c_bus->adap.timeout); @@ -837,7 +1300,26 @@ static int
+> ast2600_i2c_controller_xfer(struct i2c_adapter *adap, struct i2c_msg
+>  		    (readl(i2c_bus->reg_base + AST2600_I2CC_STS_AND_BUFF) &
+>  		    AST2600_I2CC_BUS_BUSY_STS))
+>  			ast2600_i2c_recover_bus(i2c_bus);
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +		if (ctrl & AST2600_I2CC_SLAVE_EN) {
+> +			u32 cmd =3D TARGET_TRIGGER_CMD;
+>=20
+> +			if (i2c_bus->mode =3D=3D DMA_MODE) {
+> +				cmd |=3D AST2600_I2CS_RX_DMA_EN;
+> +				writel(i2c_bus->target_dma_addr,
+> +				       i2c_bus->reg_base + AST2600_I2CS_RX_DMA);
+> +				writel(i2c_bus->target_dma_addr,
+> +				       i2c_bus->reg_base + AST2600_I2CS_TX_DMA);
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +				       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +			} else if (i2c_bus->mode =3D=3D BUFF_MODE) {
+> +				cmd =3D TARGET_TRIGGER_CMD;
+> +			} else {
+> +				cmd &=3D ~AST2600_I2CS_PKT_MODE_EN;
+> +			}
+> +			writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +		}
+> +#endif
+>  		ret =3D -ETIMEDOUT;
+>  	} else {
+>  		ret =3D i2c_bus->cmd_err;
+> @@ -886,7 +1368,78 @@ static void ast2600_i2c_init(struct ast2600_i2c_bus
+> *i2c_bus)
+>=20
+>  	/* Clear Interrupt */
+>  	writel(GENMASK(27, 0), i2c_bus->reg_base + AST2600_I2CM_ISR);
+> +
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	/* for memory buffer initial */
+> +	if (i2c_bus->mode =3D=3D DMA_MODE) {
+> +		i2c_bus->target_dma_buf =3D
+> +			dmam_alloc_coherent(i2c_bus->dev,
+> I2C_TARGET_MSG_BUF_SIZE,
+> +					    &i2c_bus->target_dma_addr, GFP_KERNEL);
+> +		if (!i2c_bus->target_dma_buf)
+> +			return;
+> +	}
+> +
+> +	writel(GENMASK(27, 0), i2c_bus->reg_base + AST2600_I2CS_ISR);
+> +
+> +	if (i2c_bus->mode =3D=3D BYTE_MODE)
+> +		writel(GENMASK(15, 0), i2c_bus->reg_base + AST2600_I2CS_IER);
+> +	else
+> +		writel(AST2600_I2CS_PKT_DONE, i2c_bus->reg_base +
+> AST2600_I2CS_IER);
+> +#endif }
+> +
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +static int ast2600_i2c_reg_target(struct i2c_client *client) {
+> +	struct ast2600_i2c_bus *i2c_bus =3D i2c_get_adapdata(client->adapter);
+> +	u32 cmd =3D TARGET_TRIGGER_CMD;
+> +
+> +	if (i2c_bus->target)
+> +		return -EINVAL;
+> +
+> +	dev_dbg(i2c_bus->dev, "target addr %x\n", client->addr);
+> +
+> +	writel(0, i2c_bus->reg_base + AST2600_I2CS_ADDR_CTRL);
+> +	writel(AST2600_I2CC_SLAVE_EN | readl(i2c_bus->reg_base +
+> AST2600_I2CC_FUN_CTRL),
+> +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> +
+> +	/* trigger rx buffer */
+> +	if (i2c_bus->mode =3D=3D DMA_MODE) {
+> +		cmd |=3D AST2600_I2CS_RX_DMA_EN;
+> +		writel(i2c_bus->target_dma_addr, i2c_bus->reg_base +
+> AST2600_I2CS_RX_DMA);
+> +		writel(i2c_bus->target_dma_addr, i2c_bus->reg_base +
+> AST2600_I2CS_TX_DMA);
+> +
+> 	writel(AST2600_I2CS_SET_RX_DMA_LEN(I2C_TARGET_MSG_BUF_SIZE),
+> +		       i2c_bus->reg_base + AST2600_I2CS_DMA_LEN);
+> +	} else if (i2c_bus->mode =3D=3D BUFF_MODE) {
+> +		cmd =3D TARGET_TRIGGER_CMD;
+> +	} else {
+> +		cmd &=3D ~AST2600_I2CS_PKT_MODE_EN;
+> +	}
+> +
+> +	writel(cmd, i2c_bus->reg_base + AST2600_I2CS_CMD_STS);
+> +	i2c_bus->target =3D client;
+> +	/* Set target addr. */
+> +	writel(client->addr | AST2600_I2CS_ADDR1_ENABLE,
+> +	       i2c_bus->reg_base + AST2600_I2CS_ADDR_CTRL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ast2600_i2c_unreg_target(struct i2c_client *client) {
+> +	struct ast2600_i2c_bus *i2c_bus =3D i2c_get_adapdata(client->adapter);
+> +
+> +	/* Turn off target mode. */
+> +	writel(~AST2600_I2CC_SLAVE_EN & readl(i2c_bus->reg_base +
+> AST2600_I2CC_FUN_CTRL),
+> +	       i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
+> +	writel(readl(i2c_bus->reg_base + AST2600_I2CS_ADDR_CTRL) &
+> ~AST2600_I2CS_ADDR1_MASK,
+> +	       i2c_bus->reg_base + AST2600_I2CS_ADDR_CTRL);
+> +
+> +	i2c_bus->target =3D NULL;
+> +
+> +	return 0;
+>  }
+> +#endif
+>=20
+>  static u32 ast2600_i2c_functionality(struct i2c_adapter *adap)  { @@ -89=
+6,6
+> +1449,10 @@ static u32 ast2600_i2c_functionality(struct i2c_adapter *adap=
+)
+> static const struct i2c_algorithm i2c_ast2600_algorithm =3D {
+>  	.xfer =3D ast2600_i2c_controller_xfer,
+>  	.functionality =3D ast2600_i2c_functionality,
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	.reg_target =3D ast2600_i2c_reg_target,
+> +	.unreg_target =3D ast2600_i2c_unreg_target, #endif
+>  };
+>=20
+>  static int ast2600_i2c_probe(struct platform_device *pdev) @@ -930,6
+> +1487,9 @@ static int ast2600_i2c_probe(struct platform_device *pdev)
+>  		regmap_write(i2c_bus->global_regs, AST2600_I2CG_CLK_DIV_CTRL,
+> I2CCG_DIV_CTRL);
+>  	}
+>=20
+> +#if IS_ENABLED(CONFIG_I2C_SLAVE)
+> +	i2c_bus->target_operate =3D 0;
+> +#endif
+>  	i2c_bus->dev =3D dev;
+>  	i2c_bus->mode =3D BUFF_MODE;
+>  	if (!device_property_read_string(dev, "aspeed,transfer-mode",
+> &xfer_mode)) {
+> --
+> 2.34.1
 
-f56bf5dd7ffc ("rcu: Re-implement RCU Tasks Trace in terms of SRCU-fast")
-
-But I do not immediately see how checking preemptible() would help,
-especially in (say) CONFIG_PREEMPT_NONE=y kernels in which this function
-always returns zero.  What am I missing here?
-
-							Thanx, Paul
-
-> Thanks
-> Zqiang
-> 
-> 
-> > 
-> > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > index db63378f062051..b52ec45698e85b 100644
-> > --- a/kernel/rcu/srcutiny.c
-> > +++ b/kernel/rcu/srcutiny.c
-> > @@ -113,8 +113,8 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
-> >  
-> >  /*
-> >  * Workqueue handler to drive one grace period and invoke any callbacks
-> > - * that become ready as a result. Single-CPU and !PREEMPTION operation
-> > - * means that we get away with murder on synchronization. ;-)
-> > + * that become ready as a result. Single-CPU operation and preemption
-> > + * disabling mean that we get away with murder on synchronization. ;-)
-> >  */
-> >  void srcu_drive_gp(struct work_struct *wp)
-> >  {
-> > @@ -141,7 +141,12 @@ void srcu_drive_gp(struct work_struct *wp)
-> >  WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
-> >  WRITE_ONCE(ssp->srcu_gp_waiting, true); /* srcu_read_unlock() wakes! */
-> >  preempt_enable();
-> > - swait_event_exclusive(ssp->srcu_wq, !READ_ONCE(ssp->srcu_lock_nesting[idx]));
-> > + do {
-> > + // Deadlock issues prevent __srcu_read_unlock() from
-> > + // doing an unconditional wakeup, so polling is required.
-> > + swait_event_timeout_exclusive(ssp->srcu_wq,
-> > + !READ_ONCE(ssp->srcu_lock_nesting[idx]), HZ / 10);
-> > + } while (READ_ONCE(ssp->srcu_lock_nesting[idx]));
-> >  preempt_disable(); // Needed for PREEMPT_LAZY
-> >  WRITE_ONCE(ssp->srcu_gp_waiting, false); /* srcu_read_unlock() cheap. */
-> >  WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
-> >
 
