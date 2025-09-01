@@ -1,239 +1,304 @@
-Return-Path: <linux-kernel+bounces-795395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991C1B3F162
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:55:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010DAB3F163
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F24486A5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:55:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FC524E1758
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266BD2848A3;
-	Mon,  1 Sep 2025 23:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HI608HjD"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FAE2848A3;
+	Mon,  1 Sep 2025 23:57:33 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71010267729
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 23:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756770945; cv=fail; b=NmG8zf4M1jQAvRhcVrXF2Q7H9e7S8BiJWCEr0Oa6/CCu6u0Etr+EZgZEXfhGYY+OwhwvKFLnp+1n8JDg33TjeulFiGYE0TrjGoOrKwtwD7sde27Isf8YC8sLZkfvJkjn71K49SvMaE7vODeY43hlA8IJxAm+v5kMifHroau9UQU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756770945; c=relaxed/simple;
-	bh=UM6pH3ACSZwC7cLM6jzBvb5ZVT8KTwIGjsK0ZSU9MjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bdbnBDhoieQvawrNslPRkKZ3eXxDIqd8JRDRZT3B6PwuFe9FD/hF2rNDk9hF1nEd7y0J3x8DCBsi3DEDsnsc+Cl/PjaA9OfuoF9n85zEEwXutLCnR7lzhre86630IBRnF+qapKK1R2IR9ASn6mPQ4XU/XG6S1j9XrstZXW2F8b4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HI608HjD; arc=fail smtp.client-ip=40.107.93.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YG2/MvgReZxJfmRUEZKbl+RMP1KOrdHTgUxyL3M+TdzxpoP4KEA1XqnCrTVcR84VG0FSK0M6Fz9aGrUXDOa4ByX6lzDzULRxdzttQIPcWjLOoD/NM2qgRSU14FujRwLURUarZv8KH4ccgdH9RKb5Bjke3Usn1T/ldbhvQCrfbGOhL+vQ9k5FxnYVxMKTdsUxr+4L3XmVdV1YQFEEukKTxSbGXNSm5Xh8p+QUzUNz6XZLwFZpkPvKQVhda8CWgLTcm+qXLvKWOyQy9LPX0X/4ChMrmgCMPAAOLtI0nEodkjI0ilDIckUKiiuK/FiZLFGPOl0O05LtxhNGNqSWdnEjkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cqUdnr7FFb9kRbE9Ebj/CvlLAwdlcR9o3/4AyQQMoJ4=;
- b=ernIlRHdMAbiY9pDcUA7EXaQSm3CPx2rlTHi687GvLP0fvzzac73Q4A8u4PH29GC4L9+82YyTrRzSOywCSac6uwRv78ZJqVcRI2RgQ9tQXJggYKRUMxV12iwOgVJuf74zYz3n0U6c0QRqa/NB+KG2O4/DocUeX2B5P9IblFebOd0zKr10EcjhIglwfm3zK868vKIdxpwiJu1KVaU9yipP2/mwyjThtPZZ/3SlAwdZkIAUfO3uGHIpzMWYQL0G6Te5JuazNrYeCmO3Xv1EkZVViylE4XMVisuNAH6XoWpUiMFYTfsRGcjNQjLYWhrLmJOw2tQJ3CcclCv3qbQBZK+Rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cqUdnr7FFb9kRbE9Ebj/CvlLAwdlcR9o3/4AyQQMoJ4=;
- b=HI608HjDPY0/T/YM4uMTQenT1xL1YutAqsHDOWf6aPvZcqhkHQLxSy2eVdrp5klrawwJV0TWKmELfyxjUBDCOXOaTnyvLctajggOXSfjx0FgbveyFWo9olrycaSuFEPYHdWxV3FQXetcHH5h3Rmh5X10/RPgnNfVStoMeIv2RaT2RVFa0NPO/g4TYZ+S6rkJcfFVJijmRxFUCa1jJKOP/rVjivw3whmaveSraLoBkpKVHZHqNtZfF4aNtCPIT6NdFt9i6zBGJExY9PIr2IEgRq+1YDwj7vf3pf854msqqF8MZqzLTmNnqm+pL5wO2Y6b9NpirG+50FanJP56KnXAcg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS1SPRMB0005.namprd12.prod.outlook.com (2603:10b6:8:1e3::12) by
- LV9PR12MB9784.namprd12.prod.outlook.com (2603:10b6:408:2ed::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.26; Mon, 1 Sep
- 2025 23:55:41 +0000
-Received: from DS1SPRMB0005.namprd12.prod.outlook.com
- ([fe80::7629:20ac:4306:5f4f]) by DS1SPRMB0005.namprd12.prod.outlook.com
- ([fe80::7629:20ac:4306:5f4f%5]) with mapi id 15.20.9073.021; Mon, 1 Sep 2025
- 23:55:40 +0000
-Date: Tue, 2 Sep 2025 09:55:34 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH 01/10] gpu: nova-core: Set correct DMA mask
-Message-ID: <jbkvgmj2lc7petnt5wen4hvkpyu46t6rn7e7r2sekpqdvojgj3@qste4uzb2w2l>
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-2-apopple@nvidia.com>
- <b5f42338-e5b3-4823-8aa9-9374c22f1209@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5f42338-e5b3-4823-8aa9-9374c22f1209@nvidia.com>
-X-ClientProxiedBy: SYBPR01CA0177.ausprd01.prod.outlook.com
- (2603:10c6:10:52::21) To DS1SPRMB0005.namprd12.prod.outlook.com
- (2603:10b6:8:1e3::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5048B267729
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 23:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756771053; cv=none; b=WMF7Y8pWy1tILGBsTOzjidiOCirx5BrEnSgjYJYlYJ0PoUh3gSR80d1NxliZQG6Gj8KpflwtLejK8xEKdrYI6pD6OuQsrHBFESBmTU0xNl7gs3SoOrWYlDTzbdSlAdu3LWvj8zh5aZpS59S1YPbpKjDAKlTNCuNGNFC+Y9ztfdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756771053; c=relaxed/simple;
+	bh=pGGhDe0i6ukzp8J4HZ311zCV/VCylteEPe71pB+MH/0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CSeinB+/Okjw0L2YhANxHa0km3bZrYBaAdA6HnwA/goj8/fT6Q+GdFjV9zLzHdTAhQr9nlslxDSHp7efqJd1AKtZPsbVrnj6LHvgi1qEUTccNwR4rCoVANZWdrsuaGkYedMngS1uzD2Rp4hV7BM5SyZNm7O3JWiKyUNtXJWqHaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3f12be6bc4aso59756375ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 16:57:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756771050; x=1757375850;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljqWUGA/ZdvNr3Z30VH18f0Fqo5f4CUZ6fgrdyQLz+A=;
+        b=pFZUkcu2Aozw0hbImuYyKkWGA/NJUoj2H7amGqLJl3uLIIR0BqBMqV4CCWDhx+6bI5
+         8CfWXF1023l8ufjGSDwynFMBW6USXZngw5bTg45F5WylIXCddTn6a7Vw/CxBZUZEUfE7
+         ZSkaZwQSLnqMDgBIH42R7zrs5X3FvMsOrjG4fNy1C0rlzgEJWA0H51p7sPjoy8Mkxb6N
+         x4KBJQxUMf4Qmi3ilNDARZRXOdFLFTpsEelskPUhSbwoZFr2G+JDwaGNi6kkmuMbbDbV
+         lfMngbedUPjzEjspJnQzotzmlbCVa79vArdhccvNowdMS/gvcfN2SUU7bgBX00v/AbFr
+         2y8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnL0wthNBWkZQoHqfV4vMUfNJgjh2mph0uqQCB+5jq/zD9oDsbAMmS+tcLrYolY0hpfAoEZVT2+A85QxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLCvd2ldCjeLWwNUMNQQXGPx6VPpi1fHel3FLa70scqLPneHHI
+	GnDKdSKI+WtGzQ5nPl0Y795qaaFXM0r6bnqsSj0EWpj4FurWBg/jcViENdbmwI4IWV4LjOUI5Im
+	Z09X2GciKOcG/9e3Mg+lUYI0nJUYadC+AySdEzfNkgUYGFRs282nWuriY3po=
+X-Google-Smtp-Source: AGHT+IE4bPGTKny4Gfi0vsxFW04+0/A3tZ6UdvQZ6JpzzZbh2yVW6tn5Ey93DMTq6U8DXfbEoUb9TK81Tr/2XiJKdRoZYvSnL48k
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1SPRMB0005:EE_|LV9PR12MB9784:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52280785-8104-4a9b-47b4-08dde9b30dfa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vn8mEaLHaa5Sb1UyMtn7ajjU2UfcScfQ8ryjEIfaOETqg5ktnVNZO8qkFDFx?=
- =?us-ascii?Q?jqaiDARSRnadB5D/dicdOhcnLoEVwEOkNLkSrwPYa6dZ/lEVWDpb4BAd0G7n?=
- =?us-ascii?Q?PmpwY97X+IRufu4aZXeT5/VQ7Y7o5ahxKaihFX96ME3oD8jpbjHrFe6ct2vN?=
- =?us-ascii?Q?Dxae2FG0XjPeiyuAeIQIyobEUcBWNZSl9s0OEW83s6pfntjHmQLnQhXi24Pe?=
- =?us-ascii?Q?XisLK47VaBfZngC+6uMunkdN7fw+VX3gFX/CVscJLbFdB4amVMBcxgNzpPrE?=
- =?us-ascii?Q?Xg9xNNCaoPoJWRms29YYtGh5JP1OFGmfCd0byXTfASsd9D93bGG4gFTrMyK3?=
- =?us-ascii?Q?6QN2KbzmJq+GpecXfbxQhHpM+SL0/gjXg//KbVdNlg8TG93KpHeQQ/szljS5?=
- =?us-ascii?Q?FHDyK/XQYvx97FyTgyH53Iaon5NjyH8R1qXT/KlRLDvilF+7E6YoTTdcDMCM?=
- =?us-ascii?Q?Mkl/lYJ4LiI+MG9DmLyezgf3h2MEuTUD2Mp3ZH5hGv0c47AY78D9eo506vhL?=
- =?us-ascii?Q?y/CvPT1PtBW09kmfWnGXVe3LQRfniLILD32y8PL6deQOb8zHv3e6wiyw3ebz?=
- =?us-ascii?Q?Em9LYUJkiOslkm8JMHZUhd6igANaS3M/wZygjH8pCi8YJO/Ae2lrwaZ4VUw3?=
- =?us-ascii?Q?2CCe1+lRFwn54XRfz/wjvtv6dJjeMawlmcf3kw2drvRiJRJLNhcNvdfTe4Uq?=
- =?us-ascii?Q?ePc3ELRbfOZNJ/XYVc8m3bwKNqOQEBKe2UC92XTI9xeyBcBgG4L4ZrGOAwTd?=
- =?us-ascii?Q?oAu5EkCFuKOeg8e1Y9e1aVlO4Q631a4Qs7u3SvgJuqDepK4ByVzGy6LGYTeG?=
- =?us-ascii?Q?sLW8c0aOKd66rgmi9bNrvGpowJ1h+aA/LdineQVmFDsVXhOAoKZQU9gPmWGe?=
- =?us-ascii?Q?1KrBUe9wxDyxW3gayCHDwL1yONc47W/a7gXQDd7bWeki3J7A2sqKeoRSapyJ?=
- =?us-ascii?Q?4RDUhRSazWe6qOlqACzuOHy6ym9O7SqAJcrLLlY92R6/J3GhTyuU5bqVWeRf?=
- =?us-ascii?Q?saEOIHXfWmnGbcAu5QO+/ZA4mPgmQ72P0olwaMPPoqkx0hyPyiWJ8bTPcgNY?=
- =?us-ascii?Q?lgM2n40DqtlU2SB/26dlrr8f7z5enaIKwNOBcCq1Vy9hcqhG1NQhQpY1dXdO?=
- =?us-ascii?Q?PyEQ0sLdpbb6Vv+89XyrqPfUgqIvbS7r+J9V9BTJH5s5Qw+P6n6N9JcG+IVh?=
- =?us-ascii?Q?fXziVP5dy5jbZVlvIXxyL/NMRmSk4cfOKLPfrVG7COnbuvE0GGG/LyAhVkaI?=
- =?us-ascii?Q?ep2T1hln5jmvNCLLsnLdBXcroA+pissPYZUXD8OtuIu7xQIqXEzWfkwVoNdy?=
- =?us-ascii?Q?HwiDxt8J5tFtnaIeYEXYl9J/EhKpsx0uuHPVAzwPT3dnGxsdSQuCF7AoZ1dB?=
- =?us-ascii?Q?Wd16dEbjsm2CzDo26+8abOcot96rjd57cBHT+8s3k9792YV4bE8EXlP7UCsG?=
- =?us-ascii?Q?foe5CvPaHGs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS1SPRMB0005.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DQTzWZKNn5F/9KZjntDZexD8LmnwV+PNqfK99PDdwc4VqQNS0GV4FjJHukJH?=
- =?us-ascii?Q?kegqmq5xE3AjbtdnfKbs5xMDvueNn2afeA3LA4CjExNjspTeXYOiT8LnsMwN?=
- =?us-ascii?Q?r+OKK/shSBD+xvqGGvZB1JmrnkVoNqfkv+KFL9rd20XBOzTI9O/DZ2D0noIE?=
- =?us-ascii?Q?kLqY5l9G2XdRS53zLN2VL9VhMgCnloDBjgp3oeaARFftyd8mptbxBOdS+xhS?=
- =?us-ascii?Q?6UwsUT9gS/hYQ7Yo1YThuzulv7UuiVsqrUh7AteR7DKiSDn5NoxpM0gcdmGT?=
- =?us-ascii?Q?sTdBUU7rcWlSwN6izMDsV732lNATrp+E1H11ixahiuyBZYTBpQaMTB0M5U27?=
- =?us-ascii?Q?fs1lpvELw1cIzJ5oAa6e2SiP1hTGSJn0wYv8rI3ikt1WcVPn8GqO9eNUD0z/?=
- =?us-ascii?Q?A/Ovl8yTrdz3gxus/ufbecfiwAVhxyZ1c91iZBTid1bcmkBaulUIsebxzIHE?=
- =?us-ascii?Q?6ZSpchYmXzTiFOeuuMahpgD+K2T5FmD6+gAqnQuHeJWbzems2Cw2PxKKqso0?=
- =?us-ascii?Q?jlqCZQLapcLcossnnYRqE3kGnpcgydlyWoXgHf1Su9GmtXmLAQ2y4TpgpLbn?=
- =?us-ascii?Q?ju88MpP70JSfbF+vqOf26LYDj1+D3fO6lfclYXJe/o5s1/i19PVkAgIkZyzF?=
- =?us-ascii?Q?/gJ8dcL2OyNeXM5RVLoT2k8YMxY1iaBpm1ilM7cUkWK31plu5A+SbaoZ31ad?=
- =?us-ascii?Q?1077wntIuj3iir/Av+FKqCSosb6XBqgue7PIwsBMGkFwhdD7u/3w51D+GDuh?=
- =?us-ascii?Q?8y/X9WIXsaObx4eni/MOBL8nRgglACCp/R67Cf4Pp5U03gr11bCZKxwV6q9N?=
- =?us-ascii?Q?PNna6saYpzBc/zbQIelMA0AlWGoX3xDMVNMflo4J7Ka3t+jx6X6CAq8woO4U?=
- =?us-ascii?Q?k294tlAk3/zVfTJxP2AwLIKUzRgzlo6FD+82xnvOfCVYAchqR8OL9ble0egS?=
- =?us-ascii?Q?yEy3NKdD4MCaZha3PDb63BLlAjFOYsd3Z87oQSVy6X+TTXiQ0sFJwoqew486?=
- =?us-ascii?Q?MlDNZzTuY5jHOfZWjjSNwGLAyUiUlgw+vyP5nWHp8WlDe9tqO7Sxw7FHD4Vo?=
- =?us-ascii?Q?sogKtZKTcu2ARy5jNgQZQCqrmFiEpUWj8al+FihPaiI8V1vSVFHjYrAzFt4d?=
- =?us-ascii?Q?lJQxut1viyqUnYINORL7vGldVBTH6CW1tH+J/dkNdx54zEuGOhI3wZobVa4f?=
- =?us-ascii?Q?vraCmmkQmtguOcMRQfd5mRbqVsO1EojZnCkbmH6XeHVTnnpJ/+U6jvntWmGM?=
- =?us-ascii?Q?r8ONB4bQUDzfZEU3UeYUQ8l0SSyDjZR+9HoNo0UNkmdnNMChqWozucFeZBaZ?=
- =?us-ascii?Q?iCr0l8Qb8ZkS2m3KoKsK4kbsT7eSZg5GQZil4r3E/HNwyvkOgjFUgJGR1FKO?=
- =?us-ascii?Q?0gf7JWDd57GH6UKCzBCTPNRGd2FDWLgGeTqjRqt/Lp3g0zIgEElr/srXZ2ul?=
- =?us-ascii?Q?sv7sPJUymukaTP0lFi6fBq3tjWTQeMBh6mHHKqAuxsXSNYXnRGBGX/zmvz+D?=
- =?us-ascii?Q?S+eBHBQHHd+Y1FCPPfcOz0mMcaHMTDMJ/M8CjiY4P2Mp4oo2fksCVhljkC19?=
- =?us-ascii?Q?32HImM+lYmdx/EMWuky9P+Tksf2rqS1LkYhm37f4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52280785-8104-4a9b-47b4-08dde9b30dfa
-X-MS-Exchange-CrossTenant-AuthSource: DS1SPRMB0005.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 23:55:40.2940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aIAMsV2AkHC8ptXuYiGrMhzgp5IUxI0Lw0CRvjtdHwtmCK2SeZHPvquOKPqOtlkOFpht/D72BXMNVs7X0ZTNCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9784
+X-Received: by 2002:a05:6e02:1b0d:b0:3ef:1b56:c8ea with SMTP id
+ e9e14a558f8ab-3f40028ad1dmr168200055ab.11.1756771050435; Mon, 01 Sep 2025
+ 16:57:30 -0700 (PDT)
+Date: Mon, 01 Sep 2025 16:57:30 -0700
+In-Reply-To: <0000000000000f69e106206619b6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b632ea.a70a0220.1c57d1.0590.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_truncate_file
+From: syzbot <syzbot+2515179cbeb82ea01c88@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-08-30 at 09:55 +1000, John Hubbard <jhubbard@nvidia.com> wrote...
-> On 8/27/25 1:19 AM, Alistair Popple wrote:
-> > Set the correct DMA mask. Without this DMA will fail on some setups.
-> > 
-> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> > ---
-> >  drivers/gpu/nova-core/driver.rs | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-> > index 274989ea1fb4a..3e154ffb6be4b 100644
-> > --- a/drivers/gpu/nova-core/driver.rs
-> > +++ b/drivers/gpu/nova-core/driver.rs
-> > @@ -1,6 +1,9 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  
-> > -use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
-> > +use kernel::{
-> > +    auxiliary, bindings, c_str, device::Core, dma::Device, dma::DmaMask, pci, prelude::*,
-> > +    sizes::SZ_16M, sync::Arc,
-> > +};
-> >  
-> >  use crate::gpu::Gpu;
-> >  
-> > @@ -34,6 +37,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-> >          pdev.enable_device_mem()?;
-> >          pdev.set_master();
-> >  
-> > +        // SAFETY: No DMA allocations have been made yet
-> > +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<48>())? };
-> 
-> Eventually, should be 52 bits wide, rather than 48. Or so I believe from
-> looking at various drivers, including Nouveau (which uses 52-bit for 
-> Blackwell) and mlx* (which use a 64-bit mask).
-> 
-> However, it works for the current series, because this series only supports
-> Ampere GPUs, and 48 bits suffices for those.
+syzbot has found a reproducer for the following issue on:
 
-Actually based on both Nouveau and our internal docs this should be 47-bits. I
-suspect I just chose 48 during initial bring-up because that's what most CPUs
-support but neglected to add the TODO to actually go and check this. So will fix
-for v2.
+HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11684a42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+dashboard link: https://syzkaller.appspot.com/bug?extid=2515179cbeb82ea01c88
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1587d662580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1387d662580000
 
-> So, you could leave this patch as-is, and I'll change 48 --> 52 in the
-> upcoming Hopper/Blackwell series. Or you can change it now.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/3516a666bab0/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=1187d662580000)
 
-We can't of course just change this to 52 bits because this needs to reflect
-what the GPU HW supports. So ideally this needs to come from the HAL. I left
-this hard-coded because in the short-term leaving it as 47 bits even for
-Blackwell won't cause any issues. It may force usage of an IOMMU to address
-physical addresses greater than 47-bits when it otherwise wouldn't for
-Hopper/Blackwell (it would always have to for Ampere/Turing), but short-term I
-doubt many systems actually have physical memory above 47-bits anyway.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2515179cbeb82ea01c88@syzkaller.appspotmail.com
 
-In other words you could leave this as 47 bits in the upcoming Hopper/Blackwell
-series or use the HAL we have come up with (if that is available) to obtain the
-optimal value.
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+======================================================
+WARNING: possible circular locking dependency detected
+6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 Not tainted
+------------------------------------------------------
+syz.0.17/6752 is trying to acquire lock:
+ffff0000ca2da618 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
+ffff0000ca2da618 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_truncate_file+0x5b0/0x12f4 fs/ocfs2/file.c:500
 
-> Either way is fine, so:
-> 
-> 
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+but task is already holding lock:
+ffff0000f3cacda0 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_truncate_file+0x30c/0x12f4 fs/ocfs2/file.c:471
 
-Thanks.
+which lock already depends on the new lock.
 
-> thanks,
-> -- 
-> John Hubbard
-> 
-> > +
-> >          let bar = Arc::pin_init(
-> >              pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0")),
-> >              GFP_KERNEL,
-> 
-> 
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (&oi->ip_alloc_sem){++++}-{4:4}:
+       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
+       ocfs2_xattr_ibody_find+0x100/0x668 fs/ocfs2/xattr.c:2689
+       ocfs2_xattr_set_handle+0x2bc/0x5e4 fs/ocfs2/xattr.c:3503
+       ocfs2_init_security_set+0xb4/0xd8 fs/ocfs2/xattr.c:7307
+       ocfs2_mknod+0x106c/0x1cf0 fs/ocfs2/namei.c:422
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3708 [inline]
+       open_last_lookups fs/namei.c:3807 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4043
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #3 (&oi->ip_xattr_sem){++++}-{4:4}:
+       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
+       ocfs2_init_acl+0x258/0x5f0 fs/ocfs2/acl.c:366
+       ocfs2_mknod+0x1028/0x1cf0 fs/ocfs2/namei.c:413
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3708 [inline]
+       open_last_lookups fs/namei.c:3807 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4043
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #2 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0xe74/0x10dc fs/jbd2/transaction.c:444
+       jbd2__journal_start+0x288/0x51c fs/jbd2/transaction.c:501
+       jbd2_journal_start+0x3c/0x4c fs/jbd2/transaction.c:540
+       ocfs2_start_trans+0x368/0x6b0 fs/ocfs2/journal.c:374
+       ocfs2_mknod+0xc50/0x1cf0 fs/ocfs2/namei.c:364
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3708 [inline]
+       open_last_lookups fs/namei.c:3807 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4043
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #1 (&journal->j_trans_barrier){.+.+}-{4:4}:
+       down_read+0x58/0x2f8 kernel/locking/rwsem.c:1537
+       ocfs2_start_trans+0x35c/0x6b0 fs/ocfs2/journal.c:372
+       ocfs2_mknod+0xc50/0x1cf0 fs/ocfs2/namei.c:364
+       ocfs2_create+0x190/0x474 fs/ocfs2/namei.c:676
+       lookup_open fs/namei.c:3708 [inline]
+       open_last_lookups fs/namei.c:3807 [inline]
+       path_openat+0x12d8/0x2c40 fs/namei.c:4043
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+-> #0 (sb_internal#2){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+       lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs.h:1798 [inline]
+       sb_start_intwrite include/linux/fs.h:1981 [inline]
+       ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+       ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
+       ocfs2_truncate_file+0x5b0/0x12f4 fs/ocfs2/file.c:500
+       ocfs2_setattr+0x1148/0x17a0 fs/ocfs2/file.c:1212
+       notify_change+0x9a4/0xc50 fs/attr.c:552
+       do_truncate+0x198/0x210 fs/open.c:68
+       handle_truncate fs/namei.c:3508 [inline]
+       do_open fs/namei.c:3891 [inline]
+       path_openat+0x25a0/0x2c40 fs/namei.c:4046
+       do_filp_open+0x18c/0x36c fs/namei.c:4073
+       do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+       do_sys_open fs/open.c:1450 [inline]
+       __do_sys_openat fs/open.c:1466 [inline]
+       __se_sys_openat fs/open.c:1461 [inline]
+       __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+       el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_internal#2 --> &oi->ip_xattr_sem --> &oi->ip_alloc_sem
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&oi->ip_alloc_sem);
+                               lock(&oi->ip_xattr_sem);
+                               lock(&oi->ip_alloc_sem);
+  rlock(sb_internal#2);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.17/6752:
+ #0: ffff0000ca2da428 (sb_writers#11){.+.+}-{0:0}, at: mnt_want_write+0x44/0x9c fs/namespace.c:557
+ #1: ffff0000f3cad100 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
+ #1: ffff0000f3cad100 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x164/0x210 fs/open.c:63
+ #2: ffff0000f3cacda0 (&oi->ip_alloc_sem){++++}-{4:4}, at: ocfs2_truncate_file+0x30c/0x12f4 fs/ocfs2/file.c:471
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6752 Comm: syz.0.17 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
+ __dump_stack+0x30/0x40 lib/dump_stack.c:94
+ dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2043
+ check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x1774/0x30a4 kernel/locking/lockdep.c:5237
+ lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5868
+ percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+ percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+ __sb_start_write include/linux/fs.h:1798 [inline]
+ sb_start_intwrite include/linux/fs.h:1981 [inline]
+ ocfs2_start_trans+0x1f4/0x6b0 fs/ocfs2/journal.c:370
+ ocfs2_orphan_for_truncate fs/ocfs2/file.c:396 [inline]
+ ocfs2_truncate_file+0x5b0/0x12f4 fs/ocfs2/file.c:500
+ ocfs2_setattr+0x1148/0x17a0 fs/ocfs2/file.c:1212
+ notify_change+0x9a4/0xc50 fs/attr.c:552
+ do_truncate+0x198/0x210 fs/open.c:68
+ handle_truncate fs/namei.c:3508 [inline]
+ do_open fs/namei.c:3891 [inline]
+ path_openat+0x25a0/0x2c40 fs/namei.c:4046
+ do_filp_open+0x18c/0x36c fs/namei.c:4073
+ do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
