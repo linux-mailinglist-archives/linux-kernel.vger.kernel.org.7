@@ -1,167 +1,193 @@
-Return-Path: <linux-kernel+bounces-794848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E085FB3E803
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:57:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F26B3E80B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D3D4431A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:57:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CFA04E2BBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5BC340DAD;
-	Mon,  1 Sep 2025 14:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D06C34164F;
+	Mon,  1 Sep 2025 14:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRmTwtB2"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fm+Y8Lvq"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AFB19D88F;
-	Mon,  1 Sep 2025 14:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB18F2F1FFE;
+	Mon,  1 Sep 2025 14:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738664; cv=none; b=kIo6i7MMORvnrupxiOYiX3XG+PdDi9jz1yvCg2NBJUQjJjFvI1SxMlzBjDHWz8SkevIduPYI7qQe4fK021LAcDWX8+UOSCY4ACMNqEecdi6duhqPgJv3SqpPGrDLR3bhz9kZYRCR0C1uDMYd44v8C3dbMfMs9xyTTPNBDVHFZi8=
+	t=1756738760; cv=none; b=TBr4x9+AEgWtFOTGB8VH131VcEosh8Bw3/7i4GjAkwRmFgvrODJuPr9y3/HenpfxfOCTarZldb6JX0ZUYkRyaSXgpRkI9Liza7hSD3BQ5G5T9207Hhwse2rElsL19hlWhVI/rfduSfN+cmj7xrARQFAaf1ZhrQhqNBgOvYQGiuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738664; c=relaxed/simple;
-	bh=KhrAj3svwPmMiNuyFAaTwNKFm+CBl8pX8pjNBKRqhJ4=;
+	s=arc-20240116; t=1756738760; c=relaxed/simple;
+	bh=/ycGbSkHOxuM3sRpgIzjfmP2guQFUiYSHp1rOlm+S1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msKxTdcMwQehcUrUYGv1irq+x0PBniqoG5/8O+7ZHymw1rHHdC/luUnZiYAlfJfE7ibFNn/yTMBE+aEw418XCF5ZoXMJVQDxAtu2NA4QggAzq0CnUSEqmVhVmOvSsz9SJejtclbmG3JqNsuF5rWJg04h7ZN7zS9SJVeIMymbL+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRmTwtB2; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b84367affso20631265e9.3;
-        Mon, 01 Sep 2025 07:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756738661; x=1757343461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
-        b=RRmTwtB20vdGOCCkaO4hmnEL4ggDXjIjBPQ8TxfZb2mAqThEmYaEZ+9huOo2qOjg9i
-         UNJwjzEshj1gYPraSR9NDSc+qRZXbnPBKcHg+4n9kNateuspzRyIQ4pPmpJt4x818b4M
-         /yEHKLetYEuN7WV0s0Osct/lbGGx9aGTnke60uOtOthSoMMaWtNnbhPhTzsHDT3P96HR
-         Sd2NgUVti2CKCAKa11TBOrtMkGFtu4gTcJnPusU/xmjKCTScd3Mpfjx2WONvcIQ0F7/z
-         Cxg/U4/whYwSIRzzW1P+CsLCWqVaPJlwdx8xsSU8VAJpYOGEW1ob9li2R8AVjGXMs2uP
-         65EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756738661; x=1757343461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oGbqfiTvrLcDF8H1hydxp4U/XcoYOTOG9IjwOSDF2oI=;
-        b=JegxAnuI47VuiZ8D3e/WgWLKuqUYooWJWlNxoGmxX5kR46Ah0nw7AlrXd0d79OtJV9
-         aumODBkH3jXt54s9P+eX01WmIgnIc6LNmlpag3u51faTWwlpvnOmLX4xVghJ0ajhRu2M
-         5WtEgf3ezuTQyVkkG483rVnCE3W3WWTJsh3P915xm5Ybkv99kLZT9ZsMNwPVbE5yrjjM
-         apXVvOfiWolMKs0CQkRF+0MJMlshF9nZaYpM0ORGly92PVftoXL8soXDX8II0xoy0FcI
-         yUr1SSd4b0wQI67C6yATSCCEQmOyo7/trbODn5k6fZFlXq+YvT2NJvqiCZA6sAxjD45R
-         dz8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/OHVLK3KVxuB+s5tHyUiOiDA9NBP0MLvvp8obkkKroDT06Rx0wdkF5+xbx2bCtSN2+9mrGF0NXHcMC7gO@vger.kernel.org, AJvYcCVw+3cy03ZwtyClR6nPKDD8jfvj0z3YFfPV7csYdjhnL3H1QaaWCOjjEecV893yqJnqg+zSj1CrgWFL@vger.kernel.org, AJvYcCWGi+YOQ/9XbMulFnSCsJ34Q1C6B0swQ7lxX3q7+RGApptrS9Jo9gbrzXk8sJz4XV3F7Ux4PWy3J7GS@vger.kernel.org, AJvYcCXY6ffARmyQt+9xYyB1sxgN3JLooj933MDBfpvspEUDkeYQy7AKA1Nkr+z0Xnmy7V6bJeMgmz+/mibK42Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3hQfbIDCuAM0A2ESt+fqAVR6s8D5mlHHqSYWuHbZjeXG7GMy0
-	ksq8gs0P6atcQv7xUJRupHm+pTtdpOwIMVeSBJWwomiyWQc4UGj2ARYC
-X-Gm-Gg: ASbGncu8/vqywxpERMIyXfunOUglQ1lF5z+j8+yHxqA2UOnD5hCtvizLlFxlQLKO3wF
-	4Yby6qgycdixFXPamzpOzD9OnkOGyDea1Nb0/O82s+q83kspMcLzR1KG94pQtE6xleHdlBCxyXn
-	MUJqm6F0yDst+dWj1dog3/LiVEHS9JdS7DZ9YjXmY4Q1mG6bTF0EyNDqLxR6P9zqGjUfeNjbiBU
-	WDsJvotrPy7CfTuP3ChxBQnbe1rI/iZAJXHVBxUXQH6Rv8epIMSjLF4eMmJqo+QxVn7V1rdXlZY
-	5NShOZ2fcBJgaWyYK3FwRsJK2+Btj3tvXEFKVEZL3a45WIs/tq6YfvuHGthks8bIceBJc5YVT4H
-	pRHN+9TFNQHecMiYFmMuo6ilm8+rZIAk6hi9reqOUrYKz4LZL2bgxxHp5yVsdfO45veGUNaubV5
-	lL21UvdGKIlrxGw3U+Lyk=
-X-Google-Smtp-Source: AGHT+IE8oJAQTsRIreD3B3G8iVhHG5yD2Ojfb6uoThjNjE6os7CLdXOhZ5jtB7Lc8aVcNrY1HYylhw==
-X-Received: by 2002:a05:6000:22c2:b0:3c9:b8b7:ea40 with SMTP id ffacd0b85a97d-3d1de5b08ccmr6018724f8f.38.1756738661236;
-        Mon, 01 Sep 2025 07:57:41 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d520eada16sm6918744f8f.41.2025.09.01.07.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 07:57:39 -0700 (PDT)
-Date: Mon, 1 Sep 2025 16:57:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, 
-	Svyatoslav Ryhel <clamor95@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
-Message-ID: <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
-References: <20250829122235.119745-1-clamor95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8l7d0jYmglAtfQSw2J13uZME/L9vnABIcq8quVcBE+NwW/pRRPxuAg+b2dWmwbtiHE3BMDMchdxh1HzUo0JLBEYg9N+dC2SStwemkgZ9VFHqd4kX84PRkQS4/HR8fGdJde635N4fFALIE64c4hv4KYzJ/lPXq3MssVypuDIvsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fm+Y8Lvq; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 101BD20075;
+	Mon,  1 Sep 2025 16:59:16 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 8pSPqeFkcKwx; Mon,  1 Sep 2025 16:59:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756738753; bh=/ycGbSkHOxuM3sRpgIzjfmP2guQFUiYSHp1rOlm+S1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=fm+Y8Lvqwnsy2ZfpOBdDIqmHULGETv1XwNudZrjHhxIfFKPL6HqEvsqa6zaD7hKGV
+	 +paBqu6mmz/3GqB5nG5uHRZFKpOkhEFUTGdr2emzHgPinga9yhdW0NvTVM/3NgyBCq
+	 SuazwKJnitM3II1GO5jCJcrReWiZn+hMK+aBKHCJlqsyFAps44/AzjTs5B9eZ0NOdE
+	 5F6dvpXk6fCVkkIqc2qfBE9SW9LEK6YkoqLtjWt83xDoqWaXviejWPEy0o5ao9DsAP
+	 mnpW+AD9ji/ivwhCYocWk4HTLEnY+o/FDiucqFsBsJKub0ko2eQvZA/4rJ371vJPXu
+	 nH2qzkGDIs4zg==
+Date: Mon, 1 Sep 2025 14:58:54 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: loongson: Document GPIO
+ controller of 2K0300 SoC
+Message-ID: <aLW0rgvKno3zpXDi@pie>
+References: <20250901133804.38433-1-ziyao@disroot.org>
+ <20250901133804.38433-2-ziyao@disroot.org>
+ <CAAhV-H5odi479mTr0zmDnX1WF2AmJRXTL34_ts2VCM-g6N7bjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tycn7npmaoa7dfae"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H5odi479mTr0zmDnX1WF2AmJRXTL34_ts2VCM-g6N7bjA@mail.gmail.com>
 
+On Mon, Sep 01, 2025 at 10:22:04PM +0800, Huacai Chen wrote:
+> Hi, Yao,
+> 
+> On Mon, Sep 1, 2025 at 9:38 PM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > Loongson 2K0300 ships a GPIO controller whose input/output control logic
+> > is similar to previous generation of SoCs. Additionally, it acts as an
+> > interrupt-controller supporting both level and edge interrupts and has a
+> > distinct reset signal.
+> >
+> > Describe its compatible in devicetree. We enlarge the maximum value of
+> > ngpios to 128, since the controller technically supports at most 128
+> > pins, although only 106 are routed out of the package. Properties for
+> > interrupt-controllers and resets are introduced and limited as 2K0300
+> > only.
+> Replace the full name with "Loongson-2K0300" and short name with
+> "LS2K0300", others look good to me.
+> Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
---tycn7npmaoa7dfae
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
-MIME-Version: 1.0
+I don't understand what is improved with this. For the fullname, I don't
+see any difference between "Loongson 2K0300" and "Loongson-2K0300". And
+for the short one, omitting the "LS" prefix doesn't introduce any
+ambiguity, either.
 
-On Fri, Aug 29, 2025 at 03:22:30PM +0300, Svyatoslav Ryhel wrote:
-> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
-> a ring oscillator and translates voltage changes into frequency
-> compensation changes needed to prevent the CPU from failing and is
-> essential for correct CPU frequency scaling.
->=20
-> ---
-> Changes in v2:
-> - dropped 'drivers:' from commit title
-> - aligned naming to Tegra114
->=20
-> Changes in v3:
-> - add DFLL support for Tegra 114 was split into dt header addition,
->   DFLL reset configuration and CVB tables implementation.
-> - added cleaner commit message to dt header commit
-> - added T210_ prefixes to Tegra210 CVB table macros
->=20
-> Changes in v4:
-> - expanded commit message of car header adding commit
->=20
-> Changes in v5:
-> - renamed tegra114-car.h to nvidia,tegra114-car.h
-> ---
->=20
-> Svyatoslav Ryhel (4):
->   dt-bindings: reset: add Tegra114 car header
->   clk: tegra: add DFLL DVCO reset control for Tegra114
->   clk: tegra: dfll: add CVB tables for Tegra114
->   ARM: tegra: Add DFLL clock support for Tegra114
+I did a quick search through git log, and found many commits for Loongson
+2K SoCs do include a hyphen for the fullname and "LS" prefix for
+abbreviation in messages, while some merge commits don't do so.
 
-Hi Michael, Stephen,
+Even the official production page for Loongson 2K0300 refers to it
+without a hyphen[1]. Thus I cannot find out of the point of rewording...
 
-Given the cross-dependency between the dt-bindings header, the driver
-and the DT, do you want me to pick this up into the Tegra tree and
-resolve the dependency there?
+> Loongson 2K0300 is a multi-function SoC build upon the LA264 processor
+> core, ...
 
-Thanks,
-Thierry
+I'll appreciate and adapt it if you could explain why the change is
+necessary. Thanks for your patience.
 
---tycn7npmaoa7dfae
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+Yao Zi
 
------BEGIN PGP SIGNATURE-----
+[1]: https://loongson.cn/EN/product/show?id=35
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmi1tF4ACgkQ3SOs138+
-s6GCjw/9FaBlmOFR66ZgQ4g/k7rwkx5Hgs+m6KaCb08u3lPgkjX0F1Gs9nY3OykP
-jbZkiF/ySaikqLVlRx1tubkMqxUs95IvC7olR0RMdS6LnYhNfYTya9sLsMlRcVFI
-G3vBmESQmnjeNhsRTu09rVJKdm9e+Lf9U+g1OIkc0Am4seATEboMsjmlkAKD0ShG
-lNFBogwug4mR5inB3t0UGoi32e+jAzf1OaayhVCg4B+dQvsu3Z83ezjpGhbvOnwQ
-wZim9UI0P9V/LeaoUsc1zzGjzxhvxRQ2gd7UpcGZAC4jiIrOqm+Tk4KP9uAkPNEC
-Hzmekdf1DUVh90b33DftkXqEYnacfndauCTokb7tbV3pwsgcm+2rgFkxYpnet+pS
-11cmXg9P1Dk8HbzIkoEjv7jypbzVIlbAwWOfkmyoQH2kV0kM7Zr3THv/YdbkOiY9
-vzFfzkDIl73c0XgjEjWDnbpUdCzyMruJwxs+vq4MF4+HxaPWXMKBquScQT10M1S+
-ciVtQkVNEm2VI1KOQIpgqMmOuS41+rOVTzlYZMRYF9hKHJZTl5zm3RpnYcInIi0W
-z8sP+tC6+mgo3y4PDJ/NDdZh6ubHUn2iprz4U4mVJZcKwR1KA+Pm/FKeYEFUm89+
-kbom4wlZgRZA3yh547LyK1yDh5zi+3eg6lcQV3I6Ki1D07k95W0=
-=AP1F
------END PGP SIGNATURE-----
-
---tycn7npmaoa7dfae--
+> >
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> >  .../bindings/gpio/loongson,ls-gpio.yaml       | 28 ++++++++++++++++++-
+> >  1 file changed, 27 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > index b68159600e2b..69852444df23 100644
+> > --- a/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > +++ b/Documentation/devicetree/bindings/gpio/loongson,ls-gpio.yaml
+> > @@ -14,6 +14,7 @@ properties:
+> >      oneOf:
+> >        - enum:
+> >            - loongson,ls2k-gpio
+> > +          - loongson,ls2k0300-gpio
+> >            - loongson,ls2k0500-gpio0
+> >            - loongson,ls2k0500-gpio1
+> >            - loongson,ls2k2000-gpio0
+> > @@ -36,7 +37,7 @@ properties:
+> >
+> >    ngpios:
+> >      minimum: 1
+> > -    maximum: 64
+> > +    maximum: 128
+> >
+> >    "#gpio-cells":
+> >      const: 2
+> > @@ -49,6 +50,14 @@ properties:
+> >      minItems: 1
+> >      maxItems: 64
+> >
+> > +  "#interrupt-cells":
+> > +    const: 2
+> > +
+> > +  interrupt-controller: true
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -58,6 +67,23 @@ required:
+> >    - gpio-ranges
+> >    - interrupts
+> >
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: loongson,ls2k0300-gpio
+> > +    then:
+> > +      required:
+> > +        - "#interrupt-cells"
+> > +        - interrupt-controller
+> > +        - resets
+> > +    else:
+> > +      properties:
+> > +        "#interrupts-cells": false
+> > +        interrupt-controller: false
+> > +        resets: false
+> > +
+> >  additionalProperties: false
+> >
+> >  examples:
+> > --
+> > 2.50.1
+> >
+> >
+> 
 
