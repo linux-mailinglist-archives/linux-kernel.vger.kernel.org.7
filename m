@@ -1,220 +1,258 @@
-Return-Path: <linux-kernel+bounces-794627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E00B3E46E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:16:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF41B3E46C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92131165E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:16:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD9444E2AA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FA01EA7DD;
-	Mon,  1 Sep 2025 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78285276038;
+	Mon,  1 Sep 2025 13:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="oRY1MLCy"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012068.outbound.protection.outlook.com [40.107.75.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DEmUUu1c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8941EA6F;
-	Mon,  1 Sep 2025 13:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732581; cv=fail; b=BCyO68Tff2tkaaYjpLyBtwLXXgk2HO5DRAM3s5j97fIrm2u6XF5SKtRuhP0bR30a0I7pIZgkhLzcmwA5AbROkaJacmmYFXVm3Hw6UsObbPsMFaxhAI80YM5gCJuCZqtpVhGt+5+FUNadwPIkt6vs7GXUruz1FHxAKyUa5IQzO4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732581; c=relaxed/simple;
-	bh=Lf42zaxX/x/Xs008z0gVf3QOtrDBudRrvZy+oFb2vRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TJpETt+3QhdaKFjP7vsxb4MVElCW3bwiSphHrJA0mOWth08R+x2fw4MGcN7x+HlGAtIdM4G7yvSApkd55UanuzMvgBkaqD9SdszjSfTxmUieKNk4rVz6sF0Sn/BMw580v6o9/qRqzneZZrlfA+ZCe7zpNt4Puudsxvc85TRIDLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=oRY1MLCy; arc=fail smtp.client-ip=40.107.75.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kAabzDgtLLd7dc1H9h3bwTPos2PXXMnyIVgOJCpFzuYaLE5OqadAwlQfszehAUxsdt6ugl4j5OA6fPOim3dJg2oxnaUmG9cepl/esJij0burQvtt7Zk0gN+j8FTUzinGTHZdZoGq66ESeEa/ZciqozWgJE1Z2KxkLDtYj5jlw9KyY9mOv3kO8OlPqxJlchuAt2LWpZT7aCgmtVOCHFkaYsLdOswy1ot+TpmzCpkgd3/Mlj0f+cA8sGN/NNqS66gq5OUUTQJVzrbUE1QeZ4LHevuOrg99pV3swvQ3AKgMnQIoGHIfmFPG7Sg6ZLw9YhEgdN59Tu6S5hYDEoRe67us/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vHYRzjB/nuyZd7sJ7GiuHPKxCefOmmGqxYUPuaQHEBI=;
- b=JdqLv5w/FG1g9EfkMra6WJyV8o0q0bVjN/s/BxU8gk6oqsJUwnuvDWD6zchWkR5cyvUHB0GhGWTgOZbSLkD1boUvIcozXjSVq+mktmtIU0bDTkgFeEWGs7AYfDpxTFYxvVELNy6J52uVBfcwb1LYlz1JCnugTnwNmhAhFmAnAfc4umhBGy3rvlSx8RS67Mtsdj25js9DV0DvSiQk4ti3kokV77YdLv9x0KOpBdXfo6B3H9+rVTTsJPXB+wmSNUQPyXyOcJOrsZWYY8kiDQBjW9LwsNystS4kg45JdZdA+Th/pXyvhSK0yEC3FWcGW2lqzd2S1+V/9GGahbtaUFSqug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vHYRzjB/nuyZd7sJ7GiuHPKxCefOmmGqxYUPuaQHEBI=;
- b=oRY1MLCy9c+tB0GzTEF+TiVxlSBSyINt25SPVrLqZvl/H0dqw/7Qmj7A18B0bIWP92Ey6JI+34PzQU3ioC33Si7kYkLhDisevi7URsfoCpdi7GKPVKWfH+R7B0dxOoj0+XEWaP7aXzltws3cok1S+rGNrYkWxZEId9TLr5ZQw8TDFR1EgJGxDm63hR0mQWchdl9FfOn9aSVeF5sqHLUzduuzsMLdbXnpFQo5yKyPl4kJK99r3KGLwGGlOyMwJE+Y8TysIqFsBPM8K0ZHcaTSNcoEnTHCMIvdtcBPmy9bPL/9QbLC0YPYVKmApNNEPx/ixO8uBkSVzXikoLw1VYXATg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TY0PR06MB4982.apcprd06.prod.outlook.com (2603:1096:400:1ae::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.23; Mon, 1 Sep
- 2025 13:16:15 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.026; Mon, 1 Sep 2025
- 13:16:15 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H. Peter Anvin" <hpa@zytor.com>,
-	kvm@vger.kernel.org (open list:KVM X86 HYPER-V (KVM/hyper-v)),
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] KVM: x86: hyper-v: Use guard() instead of mutex_lock() to simplify code
-Date: Mon,  1 Sep 2025 21:16:04 +0800
-Message-Id: <20250901131604.646415-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0148.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::16) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA342A1B2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756732583; cv=none; b=AomkBQnhcmROmSvuqKi+c0sbj/ybKb425Yw4FykixoVcmUxbXkFCUJoGd1TxaFJEOy8ZSpaxhvjwL6RQL2lHwbwNcejoquwGp6mKaE3iN5fPgYFIOUAV2VO+Ieg+72wounHpiDxZJfn5vHZ2tahvz07tPisDlAZfhCbpIfmJPHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756732583; c=relaxed/simple;
+	bh=gX/EAXoM/dONMYmXEMYJZOIob5MMJ1RbyfRP2W8w0wE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KkPX3x6TeBRxZJLhuseHKeHkqCRdfvNodtUueH+eN/7CXSSEAvB5GyZ8PjPJCyxnsGT2TN48Bobz8JEP/U3OepXyAEmbEt3v3gYiP532cxyx9PXbIbCcKlB0Y+jtzrHN7u1+O9Curlj7FwLsI5Bq1f2Uago3Sz+4L7RsMTGYwgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DEmUUu1c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756732580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/E9FHFC9caBJzTnTpVFypUS6buU8BbMb0alSV3yJyng=;
+	b=DEmUUu1cfQCAD6brj3YA7E8YeKIwUQfmhjPJWFyeKaJC8kepJTQWiFY0ZJ+fe7yJqUW2f/
+	JtFAeluwIRP68CMXeD+pqpkHUX8Bwbj7bybpWULXoRV0I9I26AY2w3rNBS/7GNbLq7TNrP
+	e6qji+Te5WOQWE5AeRQ/w1SZTBMYWKg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-103-qTVe35A0NquiVI3eJsINBg-1; Mon, 01 Sep 2025 09:16:19 -0400
+X-MC-Unique: qTVe35A0NquiVI3eJsINBg-1
+X-Mimecast-MFC-AGG-ID: qTVe35A0NquiVI3eJsINBg_1756732578
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3cf48ec9dcbso3568344f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:16:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756732578; x=1757337378;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/E9FHFC9caBJzTnTpVFypUS6buU8BbMb0alSV3yJyng=;
+        b=nrvQ2PEP1bhBDNrkJnZNpGcLCYkmKK2bj+6KhNl8Y1Z8Oug0RMsAI66/deZtwrKQPR
+         sAEFd1eVW1/PF7v1eofZLmdaO3+3K3bCCsfczXaBq20UobLFsClyoPuNvkQTckdxKjeN
+         SoNDQVB+wKAu85FNcDjDGuOYLvtAe/q0UOeoRTkShvWmRstPOuG1SIcbB1tH1jRtikUn
+         jp3qWQpV0ifCD81UIFvfflvlQrEVMvQtl3kinLfD82uLWPTe88fTyNxyjwUv5s2Q1Vz0
+         6azSCfpDfSX26X8uH7pS6in714z+jWC6XZ3XinHsVtuxnJXdN/z4zG90C5MgLNGN2SYM
+         m/Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnJsgis5OYzOAuz64EdhJCTaXXx0J3+hGYMGIvy8Gqi5aAXKa2sJnbhL8ubBHPWiOPMsa6w0rPRBWy3IE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLWxYEgPwmaEVHyYbGQ2vUxeEaeWx84NDzqQFnS9O07POvWzph
+	YZHi8ZnAOhf8W3+QflNm0Hd6z+IZm/kwIefvDhp5nuGVXIltI7aUDsTPXrSHLkqGx23NesEEKZT
+	q2Q8r7to9dDn1hhxoiU7dd22dBvoNVkKzmHor2d1xVTqmlELGACA3MBSgdVCDUMEsgQ==
+X-Gm-Gg: ASbGnctG19J1iXWSEnw7cZ+u20DWKM3S4krdRxzioS1zPrWPJX/YzYTZZhmN2fGlQYo
+	Lh9k0O5YaN9EUdlkkBBcA6vRVMbhrei5AmfEAn6KjcmQxCkm7m7w6vr/gleI36WaJhgVq+9F6ay
+	CJAYWrQTqLU9uvFwBHO10WxQKEw3266M0cfErCQJsqWy37vtm2PjcYpzSdl7XTzD4qiKiFJPI4T
+	q2q7/ShSLi1dimvDohCrHeOVLERSOp/78r1NzWQmYXQZNV4lYXIFymYFPvHJAbn8VDZXEp2JCPc
+	xHhq4ZImPLPC6AmJwYt8CIu7wJtl2WCp0Mw5ihcYEgdG4kGfT8InNyd/m0WsNHb0rQQcnEkjPcC
+	6ZE4=
+X-Received: by 2002:adf:a350:0:b0:3d2:52e3:920c with SMTP id ffacd0b85a97d-3d252e39ae7mr4259414f8f.44.1756732578158;
+        Mon, 01 Sep 2025 06:16:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMMo/FX6gLCbb9MPBn1nmMCgGwLpPc/FdeUFPte52EQzVd0EWOwOLg5M0J2p3dvJsJSOVvAw==
+X-Received: by 2002:adf:a350:0:b0:3d2:52e3:920c with SMTP id ffacd0b85a97d-3d252e39ae7mr4259394f8f.44.1756732577622;
+        Mon, 01 Sep 2025 06:16:17 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8efb280csm14242245e9.3.2025.09.01.06.16.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 06:16:17 -0700 (PDT)
+Message-ID: <29f77752-a4df-4a12-96d3-4ccd52bd5b89@redhat.com>
+Date: Mon, 1 Sep 2025 15:16:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TY0PR06MB4982:EE_
-X-MS-Office365-Filtering-Correlation-Id: e884da59-dde0-4ef2-955d-08dde959bab0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5AbVQxw/5HT32XYbPXSvcWOK+lwY2eL7I0VFIptlSu2qV4BuGo/Ygqddf5kc?=
- =?us-ascii?Q?553v+cBhMm1bLWuDu0QbDreza/rRgoEHMBUlVX4Nw0L3AOYZom/OkEyypGt1?=
- =?us-ascii?Q?SbWVDhVHxiMDu6+2+UcEeqdo8gilc++UjrXO7WCqPAscqcO1vZZO7dRNcT7Y?=
- =?us-ascii?Q?ODmdVTBNotEMEp4U/PtZ4LB8v7vk2g+fx7ELZ4JPS/KIMJIupMhsVePcl6EN?=
- =?us-ascii?Q?9UejObZ8jEi3VaDgc3qJ97lV16Dd4lJ6jmQYgnIX8fpE3N12bwPfeeyrBV34?=
- =?us-ascii?Q?D4eBFusA3NfqWxIb74ytEmVtW8DVDgCCHwXRVX1WUBTTDzW/NIWZWU3vbtvV?=
- =?us-ascii?Q?yNzvNk6W2iS/ebC53XpSjPR5H43UqYtrfD6h7AE/h4QxWCwDViuBwLmYDcUy?=
- =?us-ascii?Q?vbeywf84M+38diW7jikPkrvJlzLwhcOOeGTqgMIF0i7EyLxmKDxi90AjRScF?=
- =?us-ascii?Q?gE9So8gsLBQgm+IslLst6zfUNNWci9HrVj0Sj1z37N+2b3OWq7NqxvaPmgpp?=
- =?us-ascii?Q?eF28i99EyjbdjquMQhEOaBuj1SWBNoS9ytLtUSeVsL620XU+IQC5LFH1TK1G?=
- =?us-ascii?Q?eew7KG9auyYTqWajOiuOLRGPJfaio29DvHT5KtG1Se+gmKYUjIwmemBW402S?=
- =?us-ascii?Q?d6K6WYsW5CigCqY1AbefARSFM8vXnNeDmDpYPx8fYCqcNzGUvBY4r3DRKZQQ?=
- =?us-ascii?Q?D4CMbVN8Aoc6pGN5f8vUrmt800foQ1wPKk4bazvUKsvzT40D8tyt7cVTzCqb?=
- =?us-ascii?Q?8O22FBmpyeCtCVMJxKFYC6xsJQuNwuFF2yx0D7Z82vP5ka2sCdnHuTMHcPO6?=
- =?us-ascii?Q?K0VCwBfQMK/8hgofeqs1FuacTWm0gm/8bpDtUqkYdqizOk0nrnWf2u8IbJ8D?=
- =?us-ascii?Q?1BOjVKr+yQ98gukPDmGgur7T19McPGuTbbvfGGGXgEPEIaXJ8HBvBcT52OIw?=
- =?us-ascii?Q?f4LDQs1R+i9Ln1cYt+W+kcnwNsUmBUEt3TEjwv6Ivons+U/tWyGmLPMyJXgA?=
- =?us-ascii?Q?7yM027cCeWaWevLJOpZaTXHj4EBlhfQ4/E7ZRn0He6mP4yFXD+QmfZC6nvd7?=
- =?us-ascii?Q?XWtO0eUMHXJFGp3SkS28LyvUi5cFZky2Fv+Kai02aN4JRMONHE3Ep+vrud2O?=
- =?us-ascii?Q?JZPDEMtLMMIJ/jjs/ohdmNsT8ZBn5jqhIVUtTpxTMio5M2CkGWqfMrjgdEdi?=
- =?us-ascii?Q?PZPbO+txurAgnOyAZh/LP+Pg4oJXUAZCmBbcwW0ivZ7JSP7qHQR8oAaxo/pp?=
- =?us-ascii?Q?rR2Rm/JUxTwANjumEpSoL2jNo6vlSdC8asD9GlR7kSToT1495tHQxSaZDLXg?=
- =?us-ascii?Q?9kuOEq7dLMt84/qXkY4xy5RO9MVHKOHXJyqG2ZjNz18jznbfxllCFFfe/q/b?=
- =?us-ascii?Q?LmlPBVR/2APnhzODilPadN14IOlgfXajuR2kSIxpLdNAisw4LNqVo6wVGwt0?=
- =?us-ascii?Q?k7HBpAJNg55ittbQNpk0LH2P6ahDChK7xSUZJXFYh2GswlbWfRz0aC94P7es?=
- =?us-ascii?Q?4lyOG/DNU5i1sJ8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KwNiURnw3FMERLQHIt2wjGxUFz0AsiBuFZRzR+/ieawzpCIlPS+8KhEAy8eI?=
- =?us-ascii?Q?ioWsGqOK8k3c8efU2g/3Doff9xCNwmwHqAs1l63nUHEg8ebsK8M+iwrH/UcD?=
- =?us-ascii?Q?+aRcLWZ3pOie0Icu9D7gAa4o3W0if5LciuYR9N5cfeQM7P42V0O1s7VTCKoD?=
- =?us-ascii?Q?lpjQGWcBogKvkwilGw9rvGWbHv/bz0kDI4oVR9jK9gA98zotWziCfJXxOBQr?=
- =?us-ascii?Q?5vhqtgqK5Uw6Yptc2NVKDilAyHaV/lUy5VdGNPGfiWK4f7P59Rcjf3+TcLvd?=
- =?us-ascii?Q?bjgyxvu+Rsbm2InxW7ASGk3aVnyxBUVE+EN1EKNAHZcKczJ5O5yGA+dkRG6D?=
- =?us-ascii?Q?Cv6RfJbSO2xl+TFgJdNZqN9B+kntXm0v2JRxCvs2PK+BpDGnSuj3MLOru3gm?=
- =?us-ascii?Q?jKjkk1JKs98W/FYCY2Av9tBX/sr3gJYk8v5sEsJTgwbD+ZCqmZbGIvRYPb+I?=
- =?us-ascii?Q?TgqL7JKrbBU8R1NCSFWCnt/XqA134XqCrvwDk/kJ5FAqqHSnbds5pBTG7QJC?=
- =?us-ascii?Q?htQyQQ2Pw0eB2UtxTbvqsgDrx/pMoVEJWwXRciauMQGdT38remKxxMpraJXG?=
- =?us-ascii?Q?ifJARhHV8TgqRCJHc2RX3NQKc5RhwuiJLzb7vKGxRS1/T3fErx3xkdRTZrSg?=
- =?us-ascii?Q?0fz5gOl3+yjaMLrwm9IQn99oSeCA9SrirC6suCQuPqXzQ8H8bm3nlIySi9sV?=
- =?us-ascii?Q?e6KemdoMT0l3KV40ijxWNWb+2g4+O9xoW0K4iaDTGy5t+Q6NH5v0dgansGQP?=
- =?us-ascii?Q?9AbktkIZDZcM6WqvF51qcYwFk/OPYfIwwSBEuibLnr6rYvdS3Fy79tjTAQeV?=
- =?us-ascii?Q?tYG49rGyLkHZR1goyLF9Htox8I2WzxVoxvU1Qt03xucUZ0tdhmz8FymA2JJZ?=
- =?us-ascii?Q?oor64iadbIW/xqhQNDlYKnY7ZE9tz7ItDOIeLgxrT/9m8JnR7F3zpEBYwKaF?=
- =?us-ascii?Q?V2jDnaElfO+R/CENleDn93yqTrkzJrGvKMss1s8mN8bY+FvSpNcUyaFcFNgO?=
- =?us-ascii?Q?QHwv43WqoWtG6/j8ctI07ctDwwTgv3XyR/dQvpsUgHOVOaAQsW4eilRI1JwU?=
- =?us-ascii?Q?OdHBsREsaEH+m2UrLoCijnLA9tOQIz/Ijaecoy0QWp2Sznbv0nFHJBzZOw+I?=
- =?us-ascii?Q?n3O4D0YHaWstkwYLSfYfQEoyeXVvIXguvfSjB0LOZBLgNSTJMXEJof1eFGFS?=
- =?us-ascii?Q?mfRan5aOu3T8fNrx4JX1dDq93U4qIVbEPbaSfv7VgF181hwMgDngkPpZPTrv?=
- =?us-ascii?Q?IVDLQVZgUgNEMoEFeW6UptP1lN67w/NY0Lha8BU5SqvenxtTWGb8J4IyKaTD?=
- =?us-ascii?Q?MSF0h8VS107Bgb2MPBJFdink2zgQfsZGFRsaZj7j4IC9/QqCccfjMpsyxPde?=
- =?us-ascii?Q?SE8ebXkZQk7uHP89DHZ9xi3z5D86zn7wDHafUWdTTX2QY4TxiE7nUGSuTiFL?=
- =?us-ascii?Q?kEBw7G4nqZUyx95HLQoudya4kTfTduUM5Moqo9dV3iD0INxWd6c0RsKAgEN1?=
- =?us-ascii?Q?rfxny1UMvtebKuE5RlKePr7kvYiWdkOEr3sR/vgSb/E5AaQGp6seoraXpi8z?=
- =?us-ascii?Q?mMAlViMCSl2uO/cNgxxmJpw4+kXO4B2eUTBCBPLw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e884da59-dde0-4ef2-955d-08dde959bab0
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 13:16:15.1738
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TZSGbmq43d2CWXpleQov4Vq6dgGxbR2VQR5BCKyB5DkQb70kGt6q8AgOTz56/OzFMfvNfIYIYv7OhtnOidYOoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB4982
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] drm/panic: Add a kconfig option to dump kunits
+ results to png
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250821095228.648156-1-jfalempe@redhat.com>
+ <20250821095228.648156-4-jfalempe@redhat.com>
+ <20250827-imperial-amigurumi-malkoha-b99a9d@houat>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250827-imperial-amigurumi-malkoha-b99a9d@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Using guard(mutex) instead of mutex_lock/mutex_unlock pair. Simplifies the
-error handling to just return in case of error. No need for the
-'out_unlock' label anymore so remove it.
+On 27/08/2025 11:52, Maxime Ripard wrote:
+> Hi,
+> 
+> On Thu, Aug 21, 2025 at 11:49:07AM +0200, Jocelyn Falempe wrote:
+>> This is a bit hacky, but very handy if you want to customize the
+>> panic screen.
+>> It allows to dump the generated images to the logs, and then a python
+>> script can convert it to .png files. It makes it easy to check how
+>> the panic screen will look on different resolutions, without having
+>> to crash a VM.
+>> To not pollute the logs, it uses a monochrome framebuffer, compress
+>> it with zlib, and base64 encode it.
+>>
+>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+>> ---
+>>   drivers/gpu/drm/Kconfig.debug          |  14 ++++
+>>   drivers/gpu/drm/tests/drm_panic_test.c | 111 +++++++++++++++++++++++++
+>>   scripts/kunitpanic2png.py              |  53 ++++++++++++
+>>   3 files changed, 178 insertions(+)
+>>   create mode 100755 scripts/kunitpanic2png.py
+>>
+>> diff --git a/drivers/gpu/drm/Kconfig.debug b/drivers/gpu/drm/Kconfig.debug
+>> index 05dc43c0b8c5..d8ae85132d32 100644
+>> --- a/drivers/gpu/drm/Kconfig.debug
+>> +++ b/drivers/gpu/drm/Kconfig.debug
+>> @@ -84,6 +84,20 @@ config DRM_KUNIT_TEST
+>>   
+>>   	  If in doubt, say "N".
+>>   
+>> +config DRM_PANIC_KUNIT_TEST_DUMP
+>> +	bool "Enable screen dump to logs in KUnit tests for drm_panic"
+>> +	default n
+>> +	depends on DRM && DRM_PANIC && DRM_KUNIT_TEST
+>> +	select ZLIB_DEFLATE
+>> +	help
+>> +	  This allows to dump the panic screen to the KUnit tests logs.
+>> +	  It's possible with a small python script to write pngs from the logs.
+>> +
+>> +	  This is only to help developers customizing the drm_panic screen,
+>> +	  checking the result for different resolutions.
+>> +
+>> +	  If in doubt, say "N"
+>> +
+>>   config DRM_TTM_KUNIT_TEST
+>>   	tristate "KUnit tests for TTM" if !KUNIT_ALL_TESTS
+>>   	default n
+>> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
+>> index 46ff3e5e0e5d..8cddb845aea9 100644
+>> --- a/drivers/gpu/drm/tests/drm_panic_test.c
+>> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
+>> @@ -115,24 +115,135 @@ static void drm_test_panic_screen_user_page(struct kunit *test)
+>>   	kfree(pages);
+>>   }
+>>   
+>> +#ifdef CONFIG_DRM_PANIC_KUNIT_TEST_DUMP
+>> +#include <linux/base64.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/zlib.h>
+>> +
+>> +#define LINE_LEN 128
+>> +
+>> +#define COMPR_LEVEL 6
+>> +#define WINDOW_BITS 12
+>> +#define MEM_LEVEL 4
+>> +
+>> +static int compress_image(u8 *src, int size, u8 *dst)
+>> +{
+>> +	struct z_stream_s stream;
+>> +
+>> +	stream.workspace = kmalloc(zlib_deflate_workspacesize(WINDOW_BITS, MEM_LEVEL),
+>> +				   GFP_KERNEL);
+>> +
+>> +	if (zlib_deflateInit2(&stream, COMPR_LEVEL, Z_DEFLATED, WINDOW_BITS,
+>> +			      MEM_LEVEL, Z_DEFAULT_STRATEGY) != Z_OK)
+>> +		return -EINVAL;
+>> +
+>> +	stream.next_in = src;
+>> +	stream.avail_in = size;
+>> +	stream.total_in = 0;
+>> +	stream.next_out = dst;
+>> +	stream.avail_out = size;
+>> +	stream.total_out = 0;
+>> +
+>> +	if (zlib_deflate(&stream, Z_FINISH) != Z_STREAM_END)
+>> +		return -EINVAL;
+>> +
+>> +	if (zlib_deflateEnd(&stream) != Z_OK)
+>> +		return -EINVAL;
+>> +
+>> +	kfree(stream.workspace);
+>> +
+>> +	return stream.total_out;
+>> +}
+>> +
+>> +static void dump_image(u8 *fb, unsigned int width, unsigned int height)
+>> +{
+>> +	int len = 0;
+>> +	char *dst;
+>> +	char *compressed;
+>> +	int sent = 0;
+>> +	int stride = DIV_ROUND_UP(width, 8);
+>> +	int size = stride * height;
+>> +
+>> +	compressed = vzalloc(size);
+>> +	if (!compressed)
+>> +		return;
+>> +	len = compress_image(fb, size, compressed);
+>> +	if (len < 0) {
+>> +		pr_err("Compression failed %d", len);
+>> +		return;
+>> +	}
+>> +
+>> +	dst = vzalloc(4 * DIV_ROUND_UP(len, 3) + 1);
+>> +	if (!dst)
+>> +		return;
+>> +
+>> +	len = base64_encode(compressed, len, dst);
+>> +
+>> +	pr_info("KUNIT PANIC IMAGE DUMP START %dx%d", width, height);
+>> +	while (len > 0) {
+>> +		char save = dst[sent + LINE_LEN];
+>> +
+>> +		dst[sent + LINE_LEN] = 0;
+>> +		pr_info("%s", dst + sent);
+>> +		dst[sent + LINE_LEN] = save;
+>> +		sent += LINE_LEN;
+>> +		len -= LINE_LEN;
+>> +	}
+>> +	pr_info("KUNIT PANIC IMAGE DUMP END");
+> 
+> The kunit test output format is defined, and we should probably use a
+> diagnostic line for this:
+> https://docs.kernel.org/dev-tools/ktap.html#diagnostic-lines
+> 
+> We should probably cc the kunit maintainers about this too.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- arch/x86/kvm/hyperv.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Thanks for the pointer, I will also experiment with debugfs, as 
+suggested by Thomas.
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 72b19a88a776..a471900c7325 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1168,15 +1168,15 @@ void kvm_hv_setup_tsc_page(struct kvm *kvm,
- 	BUILD_BUG_ON(sizeof(tsc_seq) != sizeof(hv->tsc_ref.tsc_sequence));
- 	BUILD_BUG_ON(offsetof(struct ms_hyperv_tsc_page, tsc_sequence) != 0);
- 
--	mutex_lock(&hv->hv_lock);
-+	guard(mutex)(&hv->hv_lock);
- 
- 	if (hv->hv_tsc_page_status == HV_TSC_PAGE_BROKEN ||
- 	    hv->hv_tsc_page_status == HV_TSC_PAGE_SET ||
- 	    hv->hv_tsc_page_status == HV_TSC_PAGE_UNSET)
--		goto out_unlock;
-+		return;
- 
- 	if (!(hv->hv_tsc_page & HV_X64_MSR_TSC_REFERENCE_ENABLE))
--		goto out_unlock;
-+		return;
- 
- 	gfn = hv->hv_tsc_page >> HV_X64_MSR_TSC_REFERENCE_ADDRESS_SHIFT;
- 	/*
-@@ -1192,7 +1192,7 @@ void kvm_hv_setup_tsc_page(struct kvm *kvm,
- 			goto out_err;
- 
- 		hv->hv_tsc_page_status = HV_TSC_PAGE_SET;
--		goto out_unlock;
-+		return;
- 	}
- 
- 	/*
-@@ -1228,12 +1228,10 @@ void kvm_hv_setup_tsc_page(struct kvm *kvm,
- 		goto out_err;
- 
- 	hv->hv_tsc_page_status = HV_TSC_PAGE_SET;
--	goto out_unlock;
-+	return;
- 
- out_err:
- 	hv->hv_tsc_page_status = HV_TSC_PAGE_BROKEN;
--out_unlock:
--	mutex_unlock(&hv->hv_lock);
- }
- 
- void kvm_hv_request_tsc_page_update(struct kvm *kvm)
+Best regards,
+
 -- 
-2.34.1
+
+Jocelyn
+
+
+
+> 
+> Maxime
 
 
