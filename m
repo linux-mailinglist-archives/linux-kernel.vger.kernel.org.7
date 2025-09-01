@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-794538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492A0B3E2F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10237B3E2FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044CA3A70AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D483ACBDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55233A02D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6271233EAF9;
 	Mon,  1 Sep 2025 12:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jNBVc2Jj"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="s166XnEY"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD34322DD5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F252D33A033;
+	Mon,  1 Sep 2025 12:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729787; cv=none; b=MdH53VzpdF6+p1FRFr5wQzz5UmQGCqbDcwdsGkfNgNbLZ/n3oeFB8S6TFtrCAtkNuq22yhpmhYngHPzsQcMHoogoZFuQseb1E8yCS7sWU6rB2pgOO0CAvU/b4AqIayN8F3DE7Gi+AQ8pTb0E16yZru+WZbnzvsWl/MXxA9nL6Kw=
+	t=1756729787; cv=none; b=ouvzxLXivnFHChkg0AiQF1Ql2wYm3TiE0XGWfkL5MjLzTXfsJwwFGI2KU6bUmlgRmvfqU79BcHk4CPvGO7dfEbycCzq5cLcyvOURFXfMdFieSe81x5ET9SJjatqCVOje9leI8Joh6SEQuMxbP9WkOKWH76M3NcllFGA0eR5XR38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756729787; c=relaxed/simple;
-	bh=mqW/3j/qm/a4/xvzFgOJO1ThExGROqxggDbWXjya4Uw=;
+	bh=HNSSy4gLC/9WHWrA6B4/A8MHvyXbz9mhhtWbCBRnPyM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DoHqS5ukS+eumTQTOcGkfGp0vugUETfgXoy9ltaqtLY+3VYvYPruEPlGPgGdQj42qq1VtVzgJp/Mvtg5D8pfbE0h1cSqkTzTias359IJ5dOkOpCQi8Pazu6GODC7BUs2em9kB2pNe0gE3TcEb1/8Ru0XGKQRYlQO0ARjFxc1Gfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jNBVc2Jj; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version:Content-Type; b=q/5p5h85HVgmebjjR2Ax5IjkGmBcORbVmnNt6jsql8imJlOmA2inVz6aI+hIPc69ihdrBxGDb687O1PqfOf8o9YqxFaYx/TaazRnEaURSp/kE26iBXdoI4VeQuLF6mKDX/wIysKbdfYyPe9t+cPR9Ogey7xp6NgW9WB7VxeZZEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=s166XnEY; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C1BAD4E40C66;
-	Mon,  1 Sep 2025 12:29:43 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id A7CE54E40C68;
+	Mon,  1 Sep 2025 12:29:44 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9524660699;
-	Mon,  1 Sep 2025 12:29:43 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EDE6B1C22D5F0;
-	Mon,  1 Sep 2025 14:29:40 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8158660699;
+	Mon,  1 Sep 2025 12:29:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 729D61C22D87C;
+	Mon,  1 Sep 2025 14:29:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756729783; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1756729784; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=b5dX9UoBbxev9aaHEY9TfqgQYiczy1eLN+APvPcn4go=;
-	b=jNBVc2JjX2nONGCForZYed73fEntZDDaaveghRpy68HctZphQwN2+ejwn9TaUDJwF2cHku
-	BodA4L5vPGA0QjNY5YxIKNnIcszDAV17SgIIpL1DMrbEuWMpQdGTnDTF/VpZbmdVuA9Ago
-	omS/3BaNjxBDo4gCNp7SjlsmXuGVEQRBMnKImiUYwKngf2XhmXGpnox3NQgNXp0ar6p/VW
-	ggSw4ivEVoqQAHRD1HzZEviqCtMtpiLsUASnRjk3uYh7/JVt7cTO3p+8zc9TxmV3BcAWtv
-	UWRbwh6gdYlZHNq7t6hRpJen9zTeU3/cNSfk90MOkZrniMoE7Yb5hHlqAps5yA==
+	bh=hzPjYWwkBf4kBKB+qdhiUwv4m8+EB5tTZp+VN+Z62n4=;
+	b=s166XnEYapxNciGn9V5rIDeHThG8ouyPX9jXbkRG54FjA2+7yjcfuJSiiHxneFGocTw2d9
+	UHUsO9Co3DVK/m8BzO4d3Zc62eCActgif96/54bSTGV8r/AWslhKp2TQr6ZWbMWu5X7JBi
+	79vZLgIptVKBsUCEz3lVAS9wFRcmLqJiWarzpGwrGiKURZXe9jkH+F+jPwbONl2euXZES3
+	n55X6WHANTmdWcGKse/6DCHQgHyyJVaUlpA1fV0lFEFirHUv3akhVDFVF0nXF8xc2An29r
+	/kyPqJWMQ+uy5POgd5irVXQzC4Z2l6oTeIfnzy5TpgcuT3wD2GuxBDwRhuQN/Q==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-mtd@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250730135934.1712198-1-arnd@kernel.org>
-References: <20250730135934.1712198-1-arnd@kernel.org>
-Subject: Re: [PATCH] mtd: map: add back asm/barrier.h inclusion
-Message-Id: <175672978089.48892.5892042326459406309.b4-ty@bootlin.com>
-Date: Mon, 01 Sep 2025 14:29:40 +0200
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250731094613.2164604-1-colin.i.king@gmail.com>
+References: <20250731094613.2164604-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] mtd: jedec_probe: Remove space before newline
+Message-Id: <175672978328.48892.14632603085435940884.b4-ty@bootlin.com>
+Date: Mon, 01 Sep 2025 14:29:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,21 +68,17 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 30 Jul 2025 15:59:24 +0200, Arnd Bergmann wrote:
-> The mb() macro is used in this header:
+On Thu, 31 Jul 2025 10:46:13 +0100, Colin Ian King wrote:
+> There is a extraneous space before a newline in a pr_debug message.
+> Remove the space and remove a space after ( and before literal string
+> to clean up checkpatch warning.
 > 
-> In file included from include/linux/mtd/qinfo.h:5,
->                  from include/linux/mtd/pfow.h:8,
->                  from drivers/mtd/lpddr/lpddr_cmds.c:14:
-> include/linux/mtd/map.h: In function 'inline_map_write':
-> include/linux/mtd/map.h:428:9: error: implicit declaration of function 'mb' [-Wimplicit-function-declaration]
 > 
-> [...]
 
 Applied to mtd/next, thanks!
 
-[1/1] mtd: map: add back asm/barrier.h inclusion
-      commit: 6538d039c524304a00b8fac651982fdf1fe24cc3
+[1/1] mtd: jedec_probe: Remove space before newline
+      commit: 1371b126ac3d89d911c7b75a753c7d17458a4853
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
