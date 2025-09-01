@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-793899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011CEB3D9DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:25:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DE9B3D9D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0DF174E1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353A93B789F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06C2253F3A;
-	Mon,  1 Sep 2025 06:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="QfaS5yZR"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A05254B18;
+	Mon,  1 Sep 2025 06:23:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A4722156A;
-	Mon,  1 Sep 2025 06:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914F203706;
+	Mon,  1 Sep 2025 06:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756707942; cv=none; b=eXpHhP35+eRZV584Tpvg9gXrDjDQETjAhWTkugUADUvk2pNFB4xXQA2YRvaszIUHdaGtz36n7vcn52+jumnKnqw9O3SeqqImmGLcupIdDDjKIcbi74kT6bgAcbI6mcU38iCPiuF1X/1oa7NXSNtO380/8inoI9kVTd/JuK71UqI=
+	t=1756707787; cv=none; b=l8y0hJXySk8aBCVynib1HtTocG0HO0nDQFpylF916HN3EgtnBlasDwd4Ufr5/iH5RfI1HnbL7YvZF4V42fuZTdCUJ+YiFH4Q8YSKpE01LIJDzwkotEQAt/ja0n/C63Qg0Nn3Mx23g5JYA6GGqfcQj89WlD/rTgs11bwkPysw4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756707942; c=relaxed/simple;
-	bh=7HI3Ro/EE5rzV6n5s5bDuj18Rzg2uhMCG0Mah0c++i0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHCz8r+FLGCojZA51ncSmh+c4y3smWzu1PvdNGDQxxCQxXKZ8UmV1EeIc9pkDQkr8Esl7IgOL1/2OvbYHxLIA1tmsjQp7lwYnYUnPSljDPL9rnVc6jO1gFMOPLEgzjRp0BN7dI0VT09AdkcTf+3flfCLUabgTLAW3xpU8wHIP2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=QfaS5yZR; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756707940; x=1788243940;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7HI3Ro/EE5rzV6n5s5bDuj18Rzg2uhMCG0Mah0c++i0=;
-  b=QfaS5yZR9v+v+bAzrjvPpegMqOFJ4RZyCQKP+Q0CJBM3VSBApUwmWnci
-   deX4klyVrqtjdOYMlLSuTMBlBQOenM18+szgH7aE0IjhNTz+fiot+wGmB
-   rTI9TM1ui+u7IQ8CyjvgryVs/xgV33RgBGsZJhtuGc+R6HVGrbWrsgDwc
-   OK1zvUVTOMROLQPHE2FE3poMb3abFN9ZNhwul1jAT5Bap73Bd+lIKWebK
-   sRTWTgnLepvSAQrVjohKNm83ggKcGwVG7zsFpbfRdHf5ui0gXDHYWj1EM
-   PwOlpS5w3x7NUjctTQpINLeAPoKkBkctG0yb2roI+UID7Sk31yi+AeRsj
-   A==;
-X-CSE-ConnectionGUID: P1DTPltMS2ie8GsA4XUqfg==
-X-CSE-MsgGUID: vaIqiNDtRpGipA7cJJ5VXg==
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="46446076"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Aug 2025 23:25:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sun, 31 Aug 2025 23:25:18 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Sun, 31 Aug 2025 23:25:18 -0700
-Date: Mon, 1 Sep 2025 08:21:40 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>,
-	<Parthiban.Veerasooran@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 2/2] net: phy: micrel: Add PTP support for
- lan8842
-Message-ID: <20250901062140.df6pqpvs7dyv564l@DEN-DL-M31836.microchip.com>
-References: <20250829134836.1024588-1-horatiu.vultur@microchip.com>
- <20250829134836.1024588-3-horatiu.vultur@microchip.com>
- <20250829165310.2b97569b@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1756707787; c=relaxed/simple;
+	bh=W2Z++sDS9nUnLNBneF07oL8yJ0fb58gxs1WgCjdwSOE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pM0aw/yF82Utg1IIbemYTxVeJoziDWytX0wOmGK8HI8iwP3Qo9OoaGmIYP5zlW5ys9NXywvrUI81nme2BX9fnT60C5+MgxaeEK5xYlJWwcsjgpzwHkOp5Gl13esUXjB8LbHnGrOyYZIZdEl0C0Jac/EkmJiRlodOC/QTfNdCw0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFf1y5R3GzYQvlf;
+	Mon,  1 Sep 2025 14:23:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3FC261A084B;
+	Mon,  1 Sep 2025 14:23:01 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8IzCO7VoyUICBA--.57685S3;
+	Mon, 01 Sep 2025 14:23:00 +0800 (CST)
+Subject: Re: [PATCH RFC v3 01/15] block: cleanup bio_issue
+To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
+ axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
+ akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-2-yukuai1@huaweicloud.com>
+ <7ef5c6dc-5eae-41a7-9403-0d8616668c4b@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2fc7611b-ed38-7006-580d-f18b12c24ae7@huaweicloud.com>
+Date: Mon, 1 Sep 2025 14:22:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+In-Reply-To: <7ef5c6dc-5eae-41a7-9403-0d8616668c4b@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250829165310.2b97569b@kmaincent-XPS-13-7390>
+X-CM-TRANSID:gCh0CgCn8IzCO7VoyUICBA--.57685S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4xXw1rZr4kAw1ktFyrZwb_yoW3XrX_WF
+	sYkrZ2yw17X3Wxtwn5tFnxZ3ykGw4fXryUXrWxG3WfG3WkArWktFs5Jrs8Xw4Uu397J34r
+	Krn0gwsxJr1IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbS8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The 08/29/2025 16:53, Kory Maincent wrote:
-> 
-> On Fri, 29 Aug 2025 15:48:36 +0200
-> Horatiu Vultur <horatiu.vultur@microchip.com> wrote:
-> 
-> > It has the same PTP IP block as lan8814, only the number of GPIOs is
-> > different, all the other functionality is the same. So reuse the same
-> > functions as lan8814 for lan8842.
-> > There is a revision of lan8842 called lan8832 which doesn't have the PTP
-> > IP block. So make sure in that case the PTP is not initialized.
-> 
-> ...
-> 
-> > @@ -5817,6 +5831,43 @@ static int lan8842_probe(struct phy_device *phydev)
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > +     /* Revision lan8832 doesn't have support for PTP, therefore don't add
-> > +      * any PTP clocks
-> > +      */
-> > +     ret = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-> > +                                LAN8842_SKU_REG);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     priv->rev = ret;
-> > +     if (priv->rev == 0x8832)
-> > +             return 0;
-> 
-> Is the lan8832 PHY ID the same as the lan8842? This would be surprising.
-> If they have different PHY ID, it will never enter the lan8842 probe function as
-> it is not added to mdio_device_id.
-> Also you should add a define instead of using several time 0x8832.
+Hi,
 
-They will have the same PHY ID. And it is the LAN8842_SKU_REG which
-determines which revision of the PHY it is.
-I will add a define for 0x8832.
+在 2025/09/01 11:43, Damien Le Moal 写道:
+> On 9/1/25 12:32 PM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Now that bio->bi_issue is only used by io-latency to get bio issue time,
+>> replace bio_issue with u64 time directly and remove bio_issue to make
+>> code cleaner.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > 
-> ...
+> It seems that this patch is completely independent of the series.
+> Maybe post it separately not as an RFC ?
 > 
-> > @@ -5912,6 +5989,26 @@ static irqreturn_t lan8842_handle_interrupt(struct
-> > phy_device *phydev) ret = IRQ_HANDLED;
-> >       }
-> >
-> > +     /* Phy revision lan8832 doesn't have support for PTP threrefore
-> 
-> nitpick: therefore
 
-Good catch. I will fix this in the next version.
+Actually, functionaly patch 1,2 must be applied before the following
+cleanup, otherwise bio_submit_split_bioset() will add unnecessary
+blk_time_get_ns() from blkcg_bio_issue_init() for mdraid, because
+iolatency can never be initialized for mdraid, which is bio based.
 
-> 
-> Regards,
-> --
-> Köry Maincent, Bootlin
-> Embedded Linux and kernel engineering
-> https://bootlin.com
+Thanks,
+Kuai
 
--- 
-/Horatiu
 
