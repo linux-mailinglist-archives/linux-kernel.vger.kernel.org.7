@@ -1,186 +1,122 @@
-Return-Path: <linux-kernel+bounces-794083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32371B3DC9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:37:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5988BB3DCAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308CF440314
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941173B3FCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B172FB978;
-	Mon,  1 Sep 2025 08:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A262FC016;
+	Mon,  1 Sep 2025 08:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwwSNaT8"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUox1ZQe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2F2FAC1B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591962FC004
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756715783; cv=none; b=tcRcFkXoatiOG+p0VvrGC00VlCh9VRI8yXSxsSbe1tvrDvWICIUXUwNCe8BQpMfX5BCWCT7NXcz2RFe2wbanqXp982aMo4Odk002pmCA+L4Jsgig2He9+VLXSwdatS885rRff4HV37oH9W4v+Nkb2PYyySVqY5KTmzCiNnvuMlo=
+	t=1756715890; cv=none; b=HPWGaoeJiUusnEzyV3P/8VPg2d7Esgnq9AQ42TcI7F2pf2b4Ln7UeV3uI8dljg/KhmaiIm03sPX28iJGXwYCvwIGvD3iO8gFTmeU9f7wFzDf8xVQ0g8rZRSGMbsp+EuVwShh6hQd2sVzGt9eMr5mMu6XUkAwqJXEordpO6EFMBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756715783; c=relaxed/simple;
-	bh=yGTmQwopt1HdGhxa/Ad97/8uXXqeHBaz5YtUtcqQjCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzw8XtrKJ5psdrH6t7PaCYbBbWgJxcpSCK9w/GjEWB7unLzuf9TCx9mcSo89RGn/KGf/4KDLJi4YS1vqaEsZ0YIwRdh4ct8J2LPHojvQT4m1gS5hpD/iAKPfCuIt3EOe8wnCDPCTbVvnWK6IwPYUSOzMYp/hoDerF8+d5JgwU3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwwSNaT8; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b8b02dd14so4928365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:36:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756715780; x=1757320580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hHm6+8TqjeCNqsd1vb4l6ddQt0tZxWa+70awNp7aNXU=;
-        b=hwwSNaT8/VngiRY0kRUEfhE5Ec/h0JztgogCAdECtVxHn4/yW5Xeua8HuAFpb/RqRZ
-         1BS2VREhDJD+kqo8MyH66od2R9XNSShfdmV50W5wdB8sCBHUd8DqZ0Na2CEqHodbdWxJ
-         CSgC/PODdxpIndyQ1ybQi5M5T/xphNuk3hg5VGwLZjbwRIHQUH6ATL9XYDKkEmvAneW9
-         0RAV6RCUG/NSrFfzEpCwD8Gzyec+03LzhwF0OP7kxk1basGkMqeyj1z8A7gzF+1AHZlF
-         t4j9L3eYw5wQxMASsHGX0xDUJOfsl0pC1Bm/oegYei3H5Iepx2gTzLRUT8pEjV2ckfdx
-         f+2g==
+	s=arc-20240116; t=1756715890; c=relaxed/simple;
+	bh=FFDoK6eZw/raOR+8vpbrZnJPVub4O/sPTswfcIGLU3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+1Dc5Rz6lLVb082IDzOfPUiJHTg4nz6HWrzaT1CoQToTwbO20skyGynzh6oVv4B/ZzCbrSQ2fvPqxhVVF+YfVDwOiNuPM9L5W8OwezJkZALs4vy0ZPUIlC+Z5s5MR0HNoV6gAr5ZPxcpyNfnilOzXDnmTEFKEg3POP5rdOsoAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUox1ZQe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756715888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P+EUDX1W/ihdzaBuV48woqw6avcEjywzB+FadyRSMcI=;
+	b=WUox1ZQeAhGaEMn/ZeXG1Gn2WZKQHuxLlvGyGapJ52GWR5lXI3eVT7iN7f5/ppgjag/EnR
+	ed7FdDIZNc2tAe83ElCb6LzYVTP0z3dc/3CrQWpT1VekchEDXn0/RYb8TDbxYiJKg5d3vz
+	ieJpYwa25RveRYW8MRUiAl9FZClZ2No=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-7-e3mhX2AcN1q0z1dRxznVTw-1; Mon, 01 Sep 2025 04:38:06 -0400
+X-MC-Unique: e3mhX2AcN1q0z1dRxznVTw-1
+X-Mimecast-MFC-AGG-ID: e3mhX2AcN1q0z1dRxznVTw_1756715886
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-772642f9fa3so248414b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756715780; x=1757320580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hHm6+8TqjeCNqsd1vb4l6ddQt0tZxWa+70awNp7aNXU=;
-        b=SDl7eYAEVRLzXMuCh4JVE+WUn4/U9IjnghzXerK/MC4KCtFsrH5uvzmcBKHSE39Iue
-         OovPaFeFA6gK3VXj/pzq/Q1qqDN8t9kBYOJWbIGt612lZ9SOc20nc3pvXShWI7NJrivx
-         OFw4SSdlgYrv8YP9uD5qdlgOVT3jZ1gxiGDtXCqT4a8ljDVzt31atROyuCj8XUBXpS9L
-         JSZ2gg5kXZHUx+8kAwy7RJixHyJQxF34hUwnOnLv3OeY7k4+ZCjdxODN6jmDXxDGsbpN
-         w8aQYOa8f82fuu9OUz8ZEDKbLGx5wot6TIc8iNN27YCId05SAmmvl4jLH9Lchrd+saTt
-         9XDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXr6B/iquk5nImRrKcLFWUpmOb8JgqI87beDKFIOy1vpnvM098maUBiLdSqXpcbM3x6tf3f8hj8hHtmrh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd8hJ9mvwJhS018oc1zQJ4jkwhNBVpZ22NjcP5QOuS19imKgmc
-	0fQxkKrZJbxIfi6aMsFE7UnpVlU2yiL/ebZcgISixV7DZAKo7QSKUbMkMGw9NyXSkVI5uBtqcJv
-	G72od6V2Q7wsUOXOZOp9tLfLgVc28DKoFlZRGxZW4
-X-Gm-Gg: ASbGncsRCmIc00Lg+Bo+20pU8dMCkbs5BJ/V2t3VkGCt21/3dfoLKeuPLbQUnGDlABL
-	BJpA1zZEwifvMbLDiseWXB9r26Y8mnaqWpR05rCUr3sf3s4XYo2UJzix62pola4yU50ETwg6uvL
-	VaNort8uU5nQBuQ3OH9IOk2uD4LQpwUdTUGKS9Lsl7Rlujx42JWZZ7ZqWhHgN70YC6jIBLSoEvb
-	8rqHAlvOP9Exy6TIN891xkYVHPm2WTiP6f3r9CdjorBcXN44rmSxPxmPwtZaFZK2WPyjqY1LDbK
-	68dDcIdeHwc=
-X-Google-Smtp-Source: AGHT+IFOyZ/K9inIYcfsBcdFd2sn+axEaovrgR1WQbNKlDCM7EkUFX8hdWD8GiWTp7Mb8lsTdSYIgKbtCsVTIIXZFIE=
-X-Received: by 2002:a05:600c:8b42:b0:45b:79fd:cb3d with SMTP id
- 5b1f17b1804b1-45b8558b522mr50268455e9.36.1756715779928; Mon, 01 Sep 2025
- 01:36:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756715885; x=1757320685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P+EUDX1W/ihdzaBuV48woqw6avcEjywzB+FadyRSMcI=;
+        b=mSN5F4Nu8mE+fYsNPSmlm0vrm8XI1KSIh4HFD4H2W8igW0atpkamYrPRDfUKIpRdHY
+         Qsc1U83qOh84e3lU3CQPFWxVUjmmGNiyUFOFslt7Wl87Zj+fZGT2wmAhjDPa7dDnnLm3
+         U8/UUF/qM4OALRmBDbyYiAIFEiLb2gtRG7h4qiv+ADiFcl3ghd8YYfPlCGDEwNoYtCxO
+         QO2bi5Rg1ooZzjERmcimOMb2rob4eqbeDuZ2mmInuSZPXn2xff+1uAoXlJAtSwIScG2N
+         REaNphcCe3QR9Zgic6FZh1VcmgjIkq2nGid+QexFZ3D8gTw9DpWyWS1BpmLk3jp78pUO
+         XqFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXYT+XTHdvgGF2l3oj1Z2qY7op2L93CyF0xoB0eohl5ltFQkzXqlIbAWudct9MMl9aXD8GXO8nPlvD6Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHyf6be0mmpwQPdFru0AZxB0t04ZyO5LDgsOyO0rzSJ+MVLcMV
+	zR+lXtpdW49D0ulWej0/FBaAxY6G8GHq+B96cSavTuNGwslOaNc3GuP43CB6/QDvXBhgWhlodhZ
+	TNNoaiQf10272yPCd5RJ+7TuV9xW9A5mH1j2gNFNTIoKyXwrb5JMkvXSLkNhHhCQSdw==
+X-Gm-Gg: ASbGnctofaVMb/0o9TyyV4fn8V8M/Ug3GqNkpAjL1vp1IUHEP2L5tCH8kTe2nXa3UyB
+	uKXtzhMcdeFd9qCHXQgG3mGbjKLIbAZM3q0ysM6fPtYwBe8hyz49FJNbDZOfTInWNu+y2AnjHjM
+	QR7NULVhK5dIWO0I6SBsb0Gnudo3puCSuFwQap0fyOOv57K8ZR3/I63S6Mq8M2zlAdRrm9Qd76K
+	K0QdT8Ea1g3ffKSEoJRe2zH3oyjocYo3tXzUZBh5MZLww58iSTS4Nc2ljd1vopVDGapN3Uf7kHr
+	qq+r3Uxl/r36pMosgVmPsRAfJxABXDeFhtI=
+X-Received: by 2002:a05:6a20:12ce:b0:243:9587:a774 with SMTP id adf61e73a8af0-243d6f7ef50mr9510681637.28.1756715885658;
+        Mon, 01 Sep 2025 01:38:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHICmbVBLeWJ6x4FNJkNFYJdgYcXmjleynjZn+8qv0o+FPmxhi1TGcD3dIfwmIF/wHRSCKB3A==
+X-Received: by 2002:a05:6a20:12ce:b0:243:9587:a774 with SMTP id adf61e73a8af0-243d6f7ef50mr9510665637.28.1756715885279;
+        Mon, 01 Sep 2025 01:38:05 -0700 (PDT)
+Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26ae02sm9815337b3a.21.2025.09.01.01.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 01:38:04 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: zack.rusin@broadcom.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jfalempe@redhat.com
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH drm-misc-next 0/1] add drm_panic_support for stdu
+Date: Mon,  1 Sep 2025 17:36:54 +0900
+Message-ID: <20250901083701.32365-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-6-ec65006e2f07@kernel.org> <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
-In-Reply-To: <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 1 Sep 2025 10:36:07 +0200
-X-Gm-Features: Ac12FXwspuKkks0jeuxbZRG0FFiSi8FCXOsFN9qbGxckrqaGTXEv6cLZ9MWyrFc
-Message-ID: <CAH5fLgiEi4gZtb6qProd0tXBHU-ZEs2CKCduO25w9V4ZGqgF4g@mail.gmail.com>
-Subject: Re: [PATCH v6 06/18] rust: str: add `bytes_to_bool` helper function
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 3:46=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
->
->
-> > On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrot=
-e:
-> >
-> > Add a convenience function to convert byte slices to boolean values by
-> > wrapping them in a null-terminated C string and delegating to the
-> > existing `kstrtobool` function. Only considers the first two bytes of
-> > the input slice, following the kernel's boolean parsing semantics.
-> >
-> > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> > ---
-> > rust/kernel/str.rs | 35 +++++++++++++++++++++++++++++------
-> > 1 file changed, 29 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> > index d070c0bd86c3..b185262b4851 100644
-> > --- a/rust/kernel/str.rs
-> > +++ b/rust/kernel/str.rs
-> > @@ -921,6 +921,20 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
-> >     }
-> > }
-> >
-> > +/// # Safety
-> > +///
-> > +/// - `string` must point to a null terminated string that is valid fo=
-r read.
-> > +unsafe fn kstrtobool_raw(string: *const u8) -> Result<bool> {
-> > +    let mut result: bool =3D false;
-> > +
-> > +    // SAFETY:
-> > +    // - By function safety requirement, `string` is a valid null-term=
-inated string.
-> > +    // - `result` is a valid `bool` that we own.
-> > +    let ret =3D unsafe { bindings::kstrtobool(string, &mut result) };
-> > +
-> > +    kernel::error::to_result(ret).map(|()| result)
-> > +}
-> > +
-> > /// Convert common user inputs into boolean values using the kernel's `=
-kstrtobool` function.
-> > ///
-> > /// This routine returns `Ok(bool)` if the first character is one of 'Y=
-yTt1NnFf0', or
-> > @@ -968,13 +982,22 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
-> > /// assert_eq!(kstrtobool(c_str!("2")), Err(EINVAL));
-> > /// ```
-> > pub fn kstrtobool(string: &CStr) -> Result<bool> {
-> > -    let mut result: bool =3D false;
-> > -
-> > -    // SAFETY: `string` is a valid null-terminated C string, and `resu=
-lt` is a valid
-> > -    // pointer to a bool that we own.
-> > -    let ret =3D unsafe { bindings::kstrtobool(string.as_char_ptr(), &m=
-ut result) };
-> > +    // SAFETY:
-> > +    // - The pointer returned by `CStr::as_char_ptr` is guaranteed to =
-be
-> > +    //   null terminated.
-> > +    // - `string` is live and thus the string is valid for read.
-> > +    unsafe { kstrtobool_raw(string.as_char_ptr()) }
-> > +}
-> >
-> > -    kernel::error::to_result(ret).map(|()| result)
-> > +/// Convert `&[u8]` to `bool` by deferring to [`kernel::str::kstrtoboo=
-l`].
-> > +///
-> > +/// Only considers at most the first two bytes of `bytes`.
-> > +pub fn kstrtobool_bytes(bytes: &[u8]) -> Result<bool> {
-> > +    // `ktostrbool` only considers the first two bytes of the input.
-> > +    let stack_string =3D [*bytes.first().unwrap_or(&0), *bytes.get(1).=
-unwrap_or(&0), 0];
->
-> Can=E2=80=99t this be CStr::from_bytes_with_nul() ?
->
-> This means that kstrtobool_raw could take a &CStr directly and thus not b=
-e unsafe IIUC?
+Add drm_panic support for stdu in vmwgfx. This patch was tested in 
+a VM with VMSVGA on Virtual Box.
 
-That's what Andreas did in the previous version. It ended up being
-pretty complex because CStr::from_bytes_with_nul() requires that we
-compute the length of `stack_string`, which isn't really needed here.
-I recommended having a _raw method like this to avoid that complexity.
-I don't think this is meaningfully more unsafe the way it is in this
-patch.
+Ryosuke Yasuoka (1):
+  drm/vmwgfx: add drm_panic support for stdu
 
-Alice
+ drivers/gpu/drm/vmwgfx/vmwgfx_blit.c   |  43 ++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c |  11 ++
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h    |   4 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c    |  48 +++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h    |   1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c   | 139 +++++++++++++++++++++++++
+ 6 files changed, 246 insertions(+)
+
+
+base-commit: 73cfd166e045769a1b42d36897accaa6e06b8102
+-- 
+2.51.0
+
 
