@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-794589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6BFB3E3A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B23B3E3A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625D5170B4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1031E17663D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF838322DD4;
-	Mon,  1 Sep 2025 12:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CB32A3E0;
+	Mon,  1 Sep 2025 12:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXdQuO4T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM4wnWCw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A291257849;
-	Mon,  1 Sep 2025 12:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664F0257849;
+	Mon,  1 Sep 2025 12:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730598; cv=none; b=nlm48f9BXh6XWxDStx3zmSP3Dj+Qaj2ErHptKBvm/xFcxZVmjiR3g8HMe0eQZWVoVLdEF4v2Ft8sEUXAH4qE5Qmu0x5El/l8wss3GPsYZqigehFx3KdkH0qYw2aNRXUic5W4+UORvKvWbpJiWYPadT0BES+jw0e2l2h5g6VNkQc=
+	t=1756730647; cv=none; b=oKxrEuSrPL9rDA9YlYRHJ+P0Sdy1EmLTB5ED+NGx7J33IryiyORytYE3Cdn59vx6kIVrDvpJU71bOBIQos38Csw19MjA5i01+Vwbj5Nk7q8KaoyGQUontBtXYfKD3GmMijrTbXqgEceBhEjyETDq8yCCiXjnvEIIRac+uVepbMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730598; c=relaxed/simple;
-	bh=JV3RmCj1JMN6vIPs9w1LUVvRoHj1GcIh6KrLOIR/RlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TC48KyguTpVE9nVVNZFHXwIoNDH8lkvgTB9j2sB/qT1hMbwOxalBY4kISceQgHT3nx/0t5ExKxfmRVjZ7kpWDdKmYUEQnTxnz/4dJG0mXihB//AdyA0pFPJpOP1mPOdEINWYB4xBaAEsxC+Nlhm7qTlMZfKgpmn2kTICK2yLLI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXdQuO4T; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756730596; x=1788266596;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JV3RmCj1JMN6vIPs9w1LUVvRoHj1GcIh6KrLOIR/RlU=;
-  b=jXdQuO4T89qdaspNpy0KKe3sSbeg28/wTlP8sjFuSCYbjrIvsBCpKKXE
-   NZJ+DWtsMYQAmAjdvyJan2SrKRzf+u8dSQWXt+BEqwMW8SKHMgQtCiyuG
-   j4PTbE/FL3P5PIIxFWCThtrXl0b27/vBU4GSoKRhPm4LhjnH+vkQfoaVJ
-   lrPAxG7Su0MDM/v8D/Qa6PoQSpB4PnrIU3hZkAxP84vXPXJirm2Bm7DPR
-   xCb797AxUoBVrBJUsI0yv8XAZEzAB5KJOJh2f63Kuvy9wupYpCVmBHC31
-   kF0sxtWBr4DSonnTZtRq8KjCa5VI+ZYD8ozMqIk16CU6TofbZxwms4EYZ
-   Q==;
-X-CSE-ConnectionGUID: 3Vn31p95R1mtzhQ05BJgww==
-X-CSE-MsgGUID: kPMLKY2ETaimIhBb9JmNZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62821495"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62821495"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:43:16 -0700
-X-CSE-ConnectionGUID: BuhrxOKbQ9+4gTuoB5MZsg==
-X-CSE-MsgGUID: 6uN3xkOnSVOA2l5NeF2Alg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170868578"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:43:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ut3sL-0000000APj6-1CGF;
-	Mon, 01 Sep 2025 15:43:09 +0300
-Date: Mon, 1 Sep 2025 15:43:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Karel Balej <balejk@matfyz.cz>,
-	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-Message-ID: <aLWU3AwC37jpV9W_@smile.fi.intel.com>
-References: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
- <20250831-88pm886-gpadc-v2-2-759c1e14d95f@dujemihanovic.xyz>
- <DCGUXTSZ8B9G.2S2Q2JXYMBSRY@matfyz.cz>
- <5048048.31r3eYUQgx@radijator>
+	s=arc-20240116; t=1756730647; c=relaxed/simple;
+	bh=xS03v2TkqZ914q+CnyNuJM7g8ydeDJk4rbXJkzSNvzo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IhpnG5SHMTQhkSUiaH2FmwjSW4zCn8H0evgEsgdEa+bHoQ3zLBseAZi3Diosrlldw9M06teJtS6OyHAD7i/Q7mz2Fr3e7Y/J0q8dojX0I1j5Paiwhk4Qx68WfqG5HHGXOUlLkMjZfQeGXtuoNKM7yyIaGF0dD3VRQAP5VGJRaYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM4wnWCw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3317C4CEF0;
+	Mon,  1 Sep 2025 12:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756730647;
+	bh=xS03v2TkqZ914q+CnyNuJM7g8ydeDJk4rbXJkzSNvzo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZM4wnWCw3tsA75GNFGlp/0sQun8y4D4YdR2MCR8YW+lJXSw9ZktiGYeFb423TrUQ0
+	 0dtvqMY6EzjZ7A1O/5dS0YchqbOY7sZnzDUwyGtVfXN/aH6pPdw71z3gwixyxTyn2t
+	 yVZ3s9wpExIlZd346VsPR9bHG5bO3AySlSy6saktl8Uvd11mVQ6WNZMdTgEs7YyWrg
+	 6cSswBws8PKdP6wopplVz2HkQPC0G6YQud4LukjK2ZbNhxZZhhYolKmnAP1s6Rxwtc
+	 M5Wx6bFTaF35RAyg/mAGOYa8Oh8QM8C0D6hc+lfdKn7fWavTRV8ewVaceBleoXFlZI
+	 xuKOPzlvTA0FQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1ut3tE-00000002Fm1-2nPt;
+	Mon, 01 Sep 2025 12:44:04 +0000
+Date: Mon, 01 Sep 2025 13:44:04 +0100
+Message-ID: <861poqe417.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v7 00/29] KVM: arm64: Implement support for SME
+In-Reply-To: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
+References: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5048048.31r3eYUQgx@radijator>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, Dave.Martin@arm.com, tabba@google.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, Aug 31, 2025 at 10:19:38PM +0200, Duje Mihanović wrote:
-> On Sunday, 31 August 2025 21:24:54 Central European Summer Time Karel Balej wrote:
-> > Duje Mihanović, 2025-08-31T12:33:05+02:00:
-
-...
-
-> > > +	iio->dev.of_node = dev->parent->of_node;
-> > 
-> > Didn't you mean to drop this since Jonathan pointed out that it's done
-> > by the core?
+On Fri, 22 Aug 2025 02:53:29 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Actually I have found that device tree consumers fail to get their IO
-> channels without this line, so I left it.
+> I've removed the RFC tag from this version of the series, but the items
+> that I'm looking for feedback on remains the same:
+> 
+>  - The userspace ABI, in particular:
+>   - The vector length used for the SVE registers, access to the SVE
+>     registers and access to ZA and (if available) ZT0 depending on
+>     the current state of PSTATE.{SM,ZA}.
+>   - The use of a single finalisation for both SVE and SME.
 
-because the passed device is not parent?
+How about Cc'ing the QEMU folks? They are the ones consuming these
+APIs. Peter Maydell and Eric Auger spring to mind as potential
+targets.
 
-In any case this line is problematic. Use device_set_node() instead with the
-proper dev_fwnode() parameter.
+	M.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Without deviation from the norm, progress is not possible.
 
