@@ -1,222 +1,136 @@
-Return-Path: <linux-kernel+bounces-795313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF19BB3EFCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F6BB3EFCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 884E14E157D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960FF20640A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5BE272E41;
-	Mon,  1 Sep 2025 20:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13794271476;
+	Mon,  1 Sep 2025 20:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkHy7zYn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CRagE8GT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF4D26CE3A;
-	Mon,  1 Sep 2025 20:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5590271450
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756759238; cv=none; b=Dxmlo73frlSekk8PMp3leN3DYOOciRLAi7mAxORYxPf0yJ/n//W8e7nd5Nu0mw1UHvX5Ze/dpz/zU7mX4TMNQQJ8e/JppDyVFCKwLqV+qFVmB7oFUXkuECz+43yAMrZQ2Rl8z4fnPhpVW48D1ZLlJ8jezk1U069Eb/SkZev8P0s=
+	t=1756759251; cv=none; b=UZaSFl867was53oHvpFcd/iaPkeHiqMIf3GVaZRdhizahToJhaJ2lU9ZJD7lKLcQrGO8npN8nxp6h+Lsg6EY+qCACbYBFBb7xhO+1xHgXL2TUi8nPJgEGiEbyVR/qUydqXl0OvkTx0oPeQ6ZaCDhJ1T3ew+3XcAvwGkT2ellFDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756759238; c=relaxed/simple;
-	bh=qygvqnPVTLVPc7F2G9GUBXCTIt0bz9f4pcFJIFmo5MY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i7HYvfHWQuIWTdxuwXz8uKGfJ9NPGBCGTSltCSSZP1++vI/gLFTt9apfmx2Eq3dqXbzOuyrmNM+EPN85n2fSMtIqQ9XGPLS6hmVZm290QlkRW1MCMwK2yhSMi1SMGyVQ/Ie7VjTrO/RTn6IVbUuZBb+G3js2D9T4O8Qdx8TTM5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WkHy7zYn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBED8C4CEF7;
-	Mon,  1 Sep 2025 20:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756759237;
-	bh=qygvqnPVTLVPc7F2G9GUBXCTIt0bz9f4pcFJIFmo5MY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WkHy7zYnsFXBai212YbrT/68mFbNkTsIIU6s6bmSLrbyctm604ezppyREjDkzs7X3
-	 eigGTEiRzo19/JGVFRPm+4e6w4gOVQ0XSYvm/n9aXfT18Au0QQMPR6guAKPT1zxZGG
-	 nShOHwMF5Vj3lgpqTcPXp1tY7ZxZfC4S0y+xGlY1cfFGb3XtJkLece9fZmmLGZBZzh
-	 WKYyqF5LrHk9N0mqkTNN/2mbVdsBAIoezmWq4J5OgUNdEsJ5mVIfODR40uAkF01I26
-	 jb4ipeusps/rg4ZkUFRySAgnswUqFexunsqj5tnyNfQNOm8VR2MD6ravBnBbyyNz0L
-	 RX1j3bt3PTVjw==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-61bd4d14bc4so2579529eaf.1;
-        Mon, 01 Sep 2025 13:40:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/Cd97sB2nnpVwiepnUWCefmBwdSGwsSbbgwJ74uccEGxIbw4KVGnzUv/vJakD9qOgEbD6n0FbXOY=@vger.kernel.org, AJvYcCVADPMcGLGnzHPW+MkmIngVm1UU7+YEQs0Xvd4ajo9U2g+9jywCnThNVg/y7cz9uy/kxyahLuZMbld72Cw=@vger.kernel.org, AJvYcCXOT0/UaCItuJOdkaS3M94B/luJGC+4MASb5kdpQH2lm9vPbH7LeDuJ0h/YxWltSUdI4ZHUiNNl1XSO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZqYjWiTBvpcw4hfweACfY2QY/WgvLgPRwbxTvyVDcCT0s5oEq
-	BFVms+AdHLW+SIxghaT74lE5rcUwVkhnBRxNyLkCkPU2vxM6CQPi1GgCWDulmy4iFl7IrEzQ/ey
-	vGJr4Qf/okDx7TmpToZ7iwg0grubrdQg=
-X-Google-Smtp-Source: AGHT+IEHgorDUlefSMlIfkV7MKPXOXpe1teq+UGG3UeasIMKLioaOhksTWveVQdimpj5xsyNPxe9dgUvPvTAo/Vx3zk=
-X-Received: by 2002:a05:6820:548:b0:61d:ce66:3715 with SMTP id
- 006d021491bc7-61e337170cbmr4752697eaf.3.1756759236986; Mon, 01 Sep 2025
- 13:40:36 -0700 (PDT)
+	s=arc-20240116; t=1756759251; c=relaxed/simple;
+	bh=5n34Vy3SJGpIBzxpUQYczMFS+9WatvVkOg5dSEsG9O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tr2kuagRP/XHFLFFTA2zs/09z/JHNHqGaYwHhRkGNIDN4T6XR9tgYx1RGyxz7mg97cZUvEnzRSThQjPygubQaJqmTm2b6Fv8XebtJOgPWOf2njqxFtfpuzPTwqBwHvFcHktgD0H/4ZJCJ1fchCt6WnwOxn4wd1W6ybMwfWPZiHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CRagE8GT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756759248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+B9VAsu0RKzYj0L0AfU6O0ugzD+pX5xv1/kXNBRGfIw=;
+	b=CRagE8GTwzjSBbZn2Kq6Uth95FySfwa5+HitAP7sArhzOltlqopJuQceItRI/klOXebDK7
+	95FWVWNie2G3nzFINV/MG1mBpQq+CX7oYFVvPIRq+T4V5vRKMpGF3QgH7A7ZmbMedlh121
+	/0NBosmXBBgkF+tWHDVY2U8i0kdtugc=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-zmzmhTQXMJ-S9J_iMy4N3g-1; Mon, 01 Sep 2025 16:40:47 -0400
+X-MC-Unique: zmzmhTQXMJ-S9J_iMy4N3g-1
+X-Mimecast-MFC-AGG-ID: zmzmhTQXMJ-S9J_iMy4N3g_1756759247
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3f3ee323cd8so5166825ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 13:40:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756759246; x=1757364046;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+B9VAsu0RKzYj0L0AfU6O0ugzD+pX5xv1/kXNBRGfIw=;
+        b=VXuUgZq2V3nebT8NKzlCLdNN7kAhRIcS5eJ/vnPbjGB58uV+CGe9X39MqIWhgvns4h
+         wtXZydKf2zT68u6Slyl+5A+cBqnjZj0ypWRwscc8i7MN8slwXCsRZuL7+lQ3EYQniGYu
+         TMYPQbzsfYjIr7dDx/XDm0a19Jc4t4VsmGmbrAsOHSxYB6xsxX/YUKMO2BZmaS2jZIld
+         K/4OVmhAAax/5RpGzveNHftX8SChGpcIFZsUMK67f2SoiiDs+UGhAKUIRQxoBHuMYR38
+         ytAA72uSe5jW07Lx5CYut4JYA4JCanB4ZZMA85UudVwzkzLxGetDH85ZzCnTvkEpCLAK
+         Aw2w==
+X-Gm-Message-State: AOJu0Yxu3xTt8GLyxjXOFrVkzpbjem/hmDS3ZagMjnIAX1xRcI2vmfxc
+	RKKvvVClvHZStFTNoleetf28iXFUw5k1nvY5uuAJTLMwujVuf5as5GiCoY4D9gnuoTm3hpDkLtp
+	P5qMAxgaZu5gfnDWu/hYdCI+kYbbyFk03yakKW7vdmQ+VgiImck5vSKXo/MlJO/KEzLZfUSx4RA
+	==
+X-Gm-Gg: ASbGncuynFdIGZFioF8nNrAo1yvF++riya4q6q+k9rSTeai375kJLHvJKc4co1M2NkP
+	6wY6I3fIVK2qtsrse8LugHC+DhyCmlX6r2v4dwgikloAF9DafYXbBw1UYhB+GmyM7/DvH+T0DIT
+	kvedcwWl1vnAz02VkoOoRGqFJs8Q5V9ytCNzZNn7UN+O2e+kNt7MaLBZa2RznGGJkFT+W6ZTyAC
+	wuV0EnsbKmFOZEMzGxZOm6N1gGUcA6jrCUPf28dFSZfHJRcEFdiNO2FMq1flUwtypElHom8CgWE
+	wn9IuIIpmrIDdAnVPqQQaTBK6XfTdakccyVtSEjA/xQ=
+X-Received: by 2002:a05:6e02:1a45:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3f3247c6570mr87671205ab.6.1756759245911;
+        Mon, 01 Sep 2025 13:40:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDCjj9eJz63KAon0nZj1U3iZU1nYx18LdGI9Q8LOi5kKaPZkcCjO1mvqyzR7bme00h+xlmOg==
+X-Received: by 2002:a05:6e02:1a45:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3f3247c6570mr87671145ab.6.1756759245503;
+        Mon, 01 Sep 2025 13:40:45 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d8f361038sm2501739173.56.2025.09.01.13.40.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 13:40:44 -0700 (PDT)
+Date: Mon, 1 Sep 2025 14:40:43 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Eric Auger
+ <eric.auger@redhat.com>, clg@redhat.com, Mostafa Saleh
+ <smostafa@google.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as VFIO-platform reviewer
+Message-ID: <20250901144043.122f70bb.alex.williamson@redhat.com>
+In-Reply-To: <20250901191619.183116-1-praan@google.com>
+References: <20250901191619.183116-1-praan@google.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
- <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
- <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
- <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
- <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com>
- <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu> <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 22:40:25 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com>
-X-Gm-Features: Ac12FXzQ9hcEjurH8eUEd3X09l0F1Sv2FyEpPrrVXnlvaPC7gF5PlnObyV0V71Y
-Message-ID: <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, ryan zhou <ryanzhou54@gmail.com>, 
-	Roy Luo <royluo@google.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 1, 2025 at 9:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Fri, Aug 29, 2025 at 9:58=E2=80=AFPM Alan Stern <stern@rowland.harvard=
-.edu> wrote:
-> >
-> > On Fri, Aug 29, 2025 at 09:23:12PM +0200, Rafael J. Wysocki wrote:
-> > > On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM Alan Stern <stern@rowland.har=
-vard.edu> wrote:
-> > > > It sounds like the real question is how we should deal with an
-> > > > interrupted system suspend.  Suppose parent device A and child devi=
-ce B
-> > > > are both in runtime suspend when a system sleep transition begins. =
- The
-> > > > PM core invokes the ->suspend callback of B (and let's say the call=
-back
-> > > > doesn't need to do anything because B is already suspended with the
-> > > > appropriate wakeup setting).
-> > > >
-> > > > But then before the PM core invokes the ->suspend callback of A, th=
-e
-> > > > system sleep transition is cancelled.  So the PM core goes through =
-the
-> > > > device tree from parents to children, invoking the ->resume callbac=
-k for
-> > > > all the devices whose ->suspend callback was called earlier.  Thus,=
- A's
-> > > > ->resume is skipped because A's ->suspend wasn't called, but B's
-> > > > ->resume callback _is_ invoked.  This callback fails, because it ca=
-n't
-> > > > resume B while A is still in runtime suspend.
-> > > >
-> > > > The same problem arises if A isn't a parent of B but there is a PM
-> > > > dependency from B to A.
-> > > >
-> > > > It's been so long since I worked on the system suspend code that I =
-don't
-> > > > remember how we decided to handle this scenario.
-> > >
-> > > We actually have not made any specific decision in that respect.  Tha=
-t
-> > > is, in the error path, the core will invoke the resume callbacks for
-> > > devices whose suspend callbacks were invoked and it won't do anything
-> > > beyond that because it has too little information on what would need
-> > > to be done.
-> > >
-> > > Arguably, though, the failure case described above is not different
-> > > from regular resume during which the driver of A decides to retain th=
-e
-> > > device in runtime suspend.
-> > >
-> > > I'm not sure if the core can do anything about it.
-> > >
-> > > But at the time when the B's resume callback is invoked, runtime PM i=
-s
-> > > enabled for A, so the driver of B may as well use runtime_resume() to
-> > > resume the device if it wants to do so.  It may also decide to do
-> > > nothing like in the suspend callback.
-> >
-> > Good point.  Since both devices were in runtime suspend before the slee=
-p
-> > transition started, there's no reason they can't remain in runtime
-> > suspend after the sleep transition is cancelled.
-> >
-> > On the other hand, it seems clear that this scenario doesn't get very
-> > much testing.
->
-> No, it doesn't in general AFAICS.
->
-> > I'm pretty sure the USB subsystem in general is
-> > vulnerable to this problem; it doesn't consider suspended devices to be
-> > in different states according to the reason for the suspend.  That is, =
-a
-> > USB device suspended for runtime PM is in the same state as a device
-> > suspended for system PM (aside from minor details like wakeup settings)=
-.
-> > Consequently the ->resume and ->runtime_resume callbacks do essentially
-> > the same thing, both assuming the parent device is not suspended.  As w=
-e
-> > have discussed, this assumption isn't always correct.
-> >
-> > I'm open to suggestions for how to handle this.  Should we keep track o=
-f
-> > whether a device was in runtime suspend when a system suspend happens,
-> > so that the ->resume callback can avoid doing anything?  Will that work
-> > if the device was the source of a wakeup request?
->
-> Generally speaking, for proper integration of system suspend with
-> runtime suspend at all levels, it is necessary to track whether or not
-> the given device has been suspended prior to system suspend.
->
-> In fact, there are even ways to opt-in for assistance from the PM core
-> and bus types in that respect to some extent.
->
-> In the particular case at hand though, the PM core is not involved in
-> making the decision whether or not to leave the devices in runtime
-> suspend during system suspend and it all depends on the drivers of A
-> and B.
->
-> Note here that the problematic situation occurs when the suspend of B
-> has run, but the suspend of A has not run yet and the transition is
-> aborted between them, so the driver of A cannot do much to help.  The
-> driver of B has a couple of options though.
->
-> First off, it might decide to runtime-resume the device in its system
-> suspend callback (as long as we are talking about the "suspend" phase
-> and not any later phases of system suspend) before suspending it again
-> which will also cause A to runtime-resume and aborting system suspend
-> would not be problematic any more.  So that's one of the options, but
-> it is kind of wasteful and time-consuming.
->
-> Another option, which I mentioned before, might be to call
-> runtime_resume() from the system resume callback of B (again, as long
-> as we are talking about the "resume" phase, not any of the earlier
-> phases of system resume).  This assumes that runtime PM is enabled at
-> this point for both A and B and so it should work properly.
->
-> Now, if the driver of B needs to do something special to the device in
-> its system suspend callback, it may want (and likely should) disable
-> runtime PM prior to this and in that case it will have to check what
-> the runtime PM status of the device is and adjust its actions
-> accordingly.  That really depends on what those actions are etc, so
-> I'd rather not talk about it without a specific example.
+On Mon,  1 Sep 2025 19:16:19 +0000
+Pranjal Shrivastava <praan@google.com> wrote:
 
-Of course, the driver of B may also choose to leave the device in
-runtime suspend in its system resume callback.  This requires checking
-the runtime PM status of the device upfront, but the driver needs to
-do that anyway in order to leave the device in runtime suspend during
-system suspend, so it can record the fact that the device has been
-left in runtime suspend.  That record can be used later during system
-resume.
+> While my work at Google Cloud focuses on various areas of the kernel,
+> my background in IOMMU and the VFIO subsystem motivates me to help with
+> the maintenance effort for vfio-platform (based on the discussion [1])
+> and ensure its continued health.
+> 
+> Link: https://lore.kernel.org/all/aKxpyyKvYcd84Ayi@google.com/ [1]
+> Signed-off-by: Pranjal Shrivastava <praan@google.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 840da132c835..eebda43caffa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26464,6 +26464,7 @@ F:	drivers/vfio/pci/pds/
+>  VFIO PLATFORM DRIVER
+>  M:	Eric Auger <eric.auger@redhat.com>
+>  R:	Mostafa Saleh <smostafa@google.com>
+> +R:	Pranjal Shrivastava <praan@google.com>
+>  L:	kvm@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/vfio/platform/
 
-The kind of tricky aspect of this is when the device triggers a system
-wakeup by generating a wakeup signal.  In that case, it is probably
-better to resume it during system resume, but the driver should know
-that it is the case (it has access to the device's registers after
-all).  It may, for example, use runtime_resume() for resuming the
-device (and its parent etc) then.
+This would be all the more convincing if either of the proposed new
+reviewers were to actually review the outstanding series[1] touching
+drivers/vfio/platform/.  Thanks,
+
+Alex
+
+[1]https://lore.kernel.org/all/20250825175807.3264083-1-alex.williamson@redhat.com
+
 
