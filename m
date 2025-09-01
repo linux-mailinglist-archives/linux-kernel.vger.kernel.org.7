@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-793726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431FFB3D74E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D14B3D781
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BF11782DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD482165B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5B81F03C9;
-	Mon,  1 Sep 2025 03:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C0021CC43;
+	Mon,  1 Sep 2025 03:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlCPiZZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vnzxd3Zy"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D691D86D6;
-	Mon,  1 Sep 2025 03:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C821ABAC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697645; cv=none; b=KCb6RL+jQQL3+yIlbXmkesGg5b5OPHeyw/2s9rSgc0VJ5iPUjnf3nMtdJoS5zfIrKmWgT8pClFh3b/ep+PtONv3ksNUqrFvvS0Qt/KPtJfNywJU7KOSFbvbuqcugfxMfJSLgYp61conzYI8pPQOWTfejLgJ4uEOlspdiuUnhPoE=
+	t=1756697764; cv=none; b=T2p/tG53GYvlqUZK36a8XN4tePJHvQVtLqsfMHciM2/fKMVHmIpV0/YPg8fKA4Wkq8ewO8ONI126UQx0UOQf4XNZgdPOB4By/BiLJ4FMImlytM3MC3yWz1dbI9S1EjAPKcO1tPPWZtXJbn1ZUkShzdQRgi3fnIDVBsvN4AwroLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697645; c=relaxed/simple;
-	bh=3IMxmQrY05RHnLpjanoo61eVTxFix1to4caUCV0hfOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hv0XibRwtRVVkBylEDLM2hQ2A8HXswiykJGjzUx7GZHjDlWo45YkquVcALQrsU1umUKHJTVpxOYbgnt/66uJL4YS6MGrQQXmC8S26g65ZriCzBVWoSC0UmmW0pUPr/wq7pwZ4+w8bmB733zalbaqS+TRxdGJsSYqC/4yAxEhJSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlCPiZZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9BEC4CEF0;
-	Mon,  1 Sep 2025 03:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756697645;
-	bh=3IMxmQrY05RHnLpjanoo61eVTxFix1to4caUCV0hfOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GlCPiZZP7edJWIneHpeMhTT3Sd+vngEEMLNO8Py0P39Wn/HMRKt7AbbTDm8hmlEOT
-	 JttDPwtEQ1c+8nzra99vy/KFo0SgaMJnge0pshJcDmSRJZ7HDEnW100FH3ZQWj3Cg4
-	 FqSRGanicMqsty6hBFGlX6UN+AWuQuuPbH6EZUgiMb9/A9k7O3m7FVFncnJ5xwkyfL
-	 rDJ4U6sJjCmQeYyDuTuLGJD3m2CpWYg3ssVX761x0EeOucM0Z6pqYafrS4Rcp7LD2+
-	 IQj5iWzXDymbRzv6/Bct7t6sAotOZH/on2R63gYLradTs562AllsZ+AFqQH0n5nKK4
-	 mAeUpyAxTUJng==
-Message-ID: <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
-Date: Mon, 1 Sep 2025 05:33:58 +0200
+	s=arc-20240116; t=1756697764; c=relaxed/simple;
+	bh=SLph87s8uTl1mRNhEJdvueXclNiF3X9Ct/qHq8xkbxc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=jKVtUN5HFZFt6F4odBJ40ZOGq5ZgnWKQFwpiPPPaiGCiW5bYy1C9lwFQc6YPiPToSQhZWjOLUri97UrKxoR+CZZnYzHBHoeEMi+CUlekCnBbyess6ErW1miKc5eUU2xSLL/mFgD/8pQe7qKNbnVNUpRspb8X5sNx2pGy8TkfCQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vnzxd3Zy; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250901033555epoutp03c05881488fdffb3610e8b1ed60f4c2c4~hC00YLmAs2470624706epoutp03W
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:35:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250901033555epoutp03c05881488fdffb3610e8b1ed60f4c2c4~hC00YLmAs2470624706epoutp03W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756697755;
+	bh=SLph87s8uTl1mRNhEJdvueXclNiF3X9Ct/qHq8xkbxc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Vnzxd3Zyttevv+8cM067HoYIE3M7gBjG24JKRDbOxR923nuB014ryLPY2dqqmPkAk
+	 2MVePyYtmkBGNkRdl6pMNV4hbSaFL9Mq1vSp1Llhu6b0EUYx/zRyoUpV9re4VkL4G1
+	 USHmIhEgtX9C5ll3CgGqUQBl09sGHKQdJHvN0K1Q=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250901033554epcas5p3bf93e89b823f346c64490171a2f3a95a~hC0zLD_ZI2697626976epcas5p3E;
+	Mon,  1 Sep 2025 03:35:54 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cFZK473pJz2SSKY; Mon,  1 Sep
+	2025 03:35:52 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250901033552epcas5p10b35ebcca823a43b8d282064733414c4~hC0xcw4bL0189601896epcas5p1G;
+	Mon,  1 Sep 2025 03:35:52 +0000 (GMT)
+Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250901033547epsmtip2a6cc484678d50e13aa2c0a4577703238~hC0s-tZa92354723547epsmtip2B;
+	Mon,  1 Sep 2025 03:35:47 +0000 (GMT)
+From: "Ravi Patel" <ravi.patel@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Linus Walleij'"
+	<linus.walleij@linaro.org>
+Cc: <jesper.nilsson@axis.com>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<alim.akhtar@samsung.com>, <tomasz.figa@gmail.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
+	<ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
+	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
+	<smn1196@coasia.com>, <shradha.t@samsung.com>, <inbaraj.e@samsung.com>,
+	<swathi.ks@samsung.com>, <hrishikesh.d@samsung.com>,
+	<dj76.yang@samsung.com>, <hypmean.kim@samsung.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-arm-kernel@axis.com>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <soc@lists.linux.dev>, "'Priyadarsini G'"
+	<priya.ganesh@samsung.com>
+In-Reply-To: <32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
+Subject: RE: [PATCH v3 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific
+ configuration
+Date: Mon, 1 Sep 2025 09:05:46 +0530
+Message-ID: <000101dc1af1$84438410$8cca8c30$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: Marek Vasut <marek.vasut@mailbox.org>, Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- E Shattow <e@freeshell.de>
-References: <20250831200516.522179-1-e@freeshell.de>
- <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
- <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 01/09/2025 04:22, Marek Vasut wrote:
-> On 9/1/25 5:22 AM, Peng Fan wrote:
->> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
->>> Move imx9*-{clock,power}.h headers into
->>> include/dt-bindings/{clock,power}/ and fix up the DTs
->>
->> No. The files should be under arch/arm64/boot/dts/freescale/
-> Why ? Linux already has include/dt-bindings/clock/ and 
-> include/dt-bindings/power directories for exactly those headers , why 
-> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ632k4xbrD7jhK5O/rHG9LFVDGhAHHo9j0ArVvYJACmL3/qQEjiZNhsv5Y8CA=
+Content-Language: en-in
+X-CMS-MailID: 20250901033552epcas5p10b35ebcca823a43b8d282064733414c4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2
+References: <CGME20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2@epcas5p4.samsung.com>
+	<20250825114436.46882-1-ravi.patel@samsung.com>
+	<20250825114436.46882-6-ravi.patel@samsung.com>
+	<CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
+	<32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
 
 
-Because maybe these are not bindings? Regardless whether you agree or
-not, the commit should clearly explain the reason behind.
 
-
-Best regards,
-Krzysztof
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 29 August 2025 15:59
+> To: Linus Walleij <linus.walleij=40linaro.org>; Ravi Patel <ravi.patel=40=
+samsung.com>
+> Cc: jesper.nilsson=40axis.com; mturquette=40baylibre.com; sboyd=40kernel.=
+org; robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> s.nawrocki=40samsung.com; cw00.choi=40samsung.com; alim.akhtar=40samsung.=
+com; tomasz.figa=40gmail.com; catalin.marinas=40arm.com;
+> will=40kernel.org; arnd=40arndb.de; ksk4725=40coasia.com; kenkim=40coasia=
+.com; pjsin865=40coasia.com; gwk1013=40coasia.com;
+> hgkim05=40coasia.com; mingyoungbo=40coasia.com; smn1196=40coasia.com; pan=
+kaj.dubey=40samsung.com; shradha.t=40samsung.com;
+> inbaraj.e=40samsung.com; swathi.ks=40samsung.com; hrishikesh.d=40samsung.=
+com; dj76.yang=40samsung.com; hypmean.kim=40samsung.com;
+> linux-kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; l=
+inux-samsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com;
+> linux-clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-gpio=40v=
+ger.kernel.org; soc=40lists.linux.dev; Priyadarsini G
+> <priya.ganesh=40samsung.com>
+> Subject: Re: =5BPATCH v3 05/10=5D pinctrl: samsung: Add ARTPEC-8 SoC spec=
+ific configuration
+>=20
+> On 29/08/2025 12:11, Linus Walleij wrote:
+> > Hi Ravi / SeonGu,
+> >
+> > thanks for your patch=21
+> >
+> > On Mon, Aug 25, 2025 at 2:07=E2=80=AFPM=20Ravi=20Patel=20<ravi.patel=40=
+samsung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>>=20From:=20SeonGu=20Kang=20<ksk=
+4725=40coasia.com>=0D=0A>=20>>=0D=0A>=20>>=20Add=20Axis=20ARTPEC-8=20SoC=20=
+specific=20configuration=20data=20to=20enable=20pinctrl.=0D=0A>=20>>=0D=0A>=
+=20>>=20Signed-off-by:=20SeonGu=20Kang=20<ksk4725=40coasia.com>=0D=0A>=20>>=
+=20Signed-off-by:=20Priyadarsini=20G=20<priya.ganesh=40samsung.com>=0D=0A>=
+=20>>=20Signed-off-by:=20Ravi=20Patel=20<ravi.patel=40samsung.com>=0D=0A>=
+=20>=0D=0A>=20>=20Please=20avoid=20CC=20to=20soc=40kernel.org=20on=20these=
+=20patches,=20they=20end=20up=20in=20the=0D=0A>=20>=20patchwork=20for=20imm=
+ediate=20merging=20for=20SoC:=0D=0A>=20>=20https://patchwork.kernel.org/pro=
+ject/linux-soc/patch/20250825114436.46882-6-ravi.patel=40samsung.com/=0D=0A=
+>=20=0D=0A>=20Yeah,=20that's=20odd=20-=20most=20likely=20old=20CC-list.=20T=
+his=20could=20happen=20if=20using=0D=0A>=20b4=20but=20there=20is=20no=20b4=
+=20being=20used=20here,=20so=20why=20Cc-ing=20according=20to=20some=0D=0A>=
+=20old=20files?=0D=0A>=20=0D=0A>=20>=0D=0A>=20>=20I=20think=20this=20is=20n=
+ot=20you=20intention,=20the=20pinctrl=20portions=20will=20be=20merged=20by=
+=0D=0A>=20>=20Krzysztof=20who=20sends=20it=20to=20me=20once=20that=20part=
+=20is=20finished=20reviewing.=0D=0A>=20Version=20for=20review=20should=20no=
+t=20be=20merged=20via=20soc=40,=20so=20that's=20wrong=0D=0A>=20process=20in=
+=20any=20case.=20But=20you=20are=20right=20that=20I=20will=20be=20taking=20=
+everything,=0D=0A>=20thus=20soc=40=20is=20not=20involved=20at=20all.=0D=0A=
+=0D=0AOk,=20I=20will=20remove=20soc=40=20while=20sending=20next=20version.=
+=0D=0A=0D=0AThanks,=0D=0ARavi=0D=0A=0D=0A>=20=0D=0A>=20Best=20regards,=0D=
+=0A>=20Krzysztof=0D=0A=0D=0A
 
